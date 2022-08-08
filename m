@@ -2,99 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B58C00140
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 06:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432BBC00140
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 10:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235528AbiHHGRW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Aug 2022 02:17:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
+        id S235940AbiHHKBS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Aug 2022 06:01:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235118AbiHHGRT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 02:17:19 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB1D6434
-        for <linux-clk@vger.kernel.org>; Sun,  7 Aug 2022 23:17:17 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id f20so11177668lfc.10
-        for <linux-clk@vger.kernel.org>; Sun, 07 Aug 2022 23:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=T8rNmdfGQpLyT9LR1PlSucPj1KAkeGsYwmxlQxDnSLI=;
-        b=n81MxZvnNSuI3qedxwTMbxCFELlr2YlwnyP2qLYqK1c/SiDxMXsTtUG3FtobrlPbYP
-         MqpGRBS7hjPRvy5ZbJcmxV3y+h4X55ggJZGQsx1ZzRI19tyuNRIp0m3YrIyb9gFIdECT
-         OwpOT7oR+kzjXXn1347GjVpsS9NpKCCLugjrkK8VCkbryi/Vg+dAD9nFbYB4y3yXoNEx
-         Xl0qk28VL2+ndU05Pa/NdmtNyu07O0NewSgFCMOQUvyH9vS1nvVj4LpzYKfnVqm2XQXB
-         EMZ+3RO9+IUyO7wZvyLdupA2MsUVmfwlaNY1ipTkBVGTW/AO6rlODxdELiXJM/y/Eoem
-         BhPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=T8rNmdfGQpLyT9LR1PlSucPj1KAkeGsYwmxlQxDnSLI=;
-        b=JcQ5PVTCbGH7VRs9Y/yVdLMQV4kewWVFngFo94I0gbesEqPjyIwoa9vPR66LvjUlaH
-         aR/MY/2gAZGaFoVLvhFogGQvoT192hcZ64yLVT5fStYVu+2O0kUgiddpJ3nq92p4A6ux
-         Msl4+L918+mEJpCBxBkRp7MrDFD6Vcnhx+CuCh8EUEzqCfPx3Sz1ADmbxJpZPlIAt1HD
-         CSR4QLUjj5b3hOHdeKCYdJzaMJNvsrM5b/NhqS166kTWR7/dYlcrAPP3rw+5k/mEotLn
-         sxmKnpJlaGvdwRvc9OSw9VhHf0GzZNc1jbvPCjVyTzAWwlFbXw5pipmp7yYgV6HAXGub
-         94Mg==
-X-Gm-Message-State: ACgBeo37+OhSNu0+hEPT6UDjDQdnZdhyZlGf4IzzD+i7OLa8hUOcesFw
-        CFUfFwgW9y0Ejq40YLVnTk3FKw==
-X-Google-Smtp-Source: AA6agR6wuDSwNpJO7sX9bE+MUbq7BFPZE72HpVs62s7NS6I5udUt1KcwXlyjOTAa/6+TRhKTd/fxMA==
-X-Received: by 2002:ac2:43d4:0:b0:48a:f6bf:1185 with SMTP id u20-20020ac243d4000000b0048af6bf1185mr5938168lfl.197.1659939436119;
-        Sun, 07 Aug 2022 23:17:16 -0700 (PDT)
-Received: from [192.168.1.39] ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id f12-20020a056512360c00b0047f77eb8f0csm1310277lfs.36.2022.08.07.23.17.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Aug 2022 23:17:15 -0700 (PDT)
-Message-ID: <fe04e8ab-f8de-2c03-17e8-8960e5b460af@linaro.org>
-Date:   Mon, 8 Aug 2022 09:17:14 +0300
+        with ESMTP id S242352AbiHHKAw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 06:00:52 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CEBAEA3;
+        Mon,  8 Aug 2022 03:00:51 -0700 (PDT)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Mon, 8 Aug 2022
+ 18:00:48 +0800
+Message-ID: <7c635801-4d8b-2d52-6ad9-03be2e27f74a@amlogic.com>
+Date:   Mon, 8 Aug 2022 18:00:48 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH V3 5/6] arm64: dts: meson: add S4 Soc Peripheral clock
- controller in DT
+Subject: Re: [PATCH V3 4/6] dt-bindings: clk: meson: add S4 SoC peripheral
+ clock controller bindings
 Content-Language: en-US
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Neil Armstrong" <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-6-yu.tu@amlogic.com>
- <60f30470-ca14-1e12-3ed2-7b34c7a93f8a@linaro.org>
- <759c681e-ec03-4230-b34e-0b2ee67ac870@amlogic.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <759c681e-ec03-4230-b34e-0b2ee67ac870@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+ <20220805085716.5635-5-yu.tu@amlogic.com>
+ <562043e1-83d4-d4ab-2c18-20b770b02955@linaro.org>
+ <4d923b9e-61d4-b4cc-906f-cb186a16e1f4@amlogic.com>
+ <e78f108d-ab29-1d92-d96e-07393aaf2a65@linaro.org>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <e78f108d-ab29-1d92-d96e-07393aaf2a65@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/08/2022 11:36, Yu Tu wrote:
->>> @@ -100,6 +102,30 @@ clkc_pll: pll-clock-controller@8000 {
->>>   				#clock-cells = <1>;
->>>   			};
->>>   
->>> +			clkc_periphs: periphs-clock-controller {
->>
->> Node names should be generic, so "clock-controller"
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->>
->> You miss here unit address. Test your DTS with dtbs check and with
->> regular compile with W=1.
-> I will change to clkc_periphs: clock-controller@0 {.
-> Is that okay?
+Hi Krzysztof,
 
-I cut the context, so if "0" was the value in reg, then it is OK.
+On 2022/8/8 14:16, Krzysztof Kozlowski wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> On 05/08/2022 11:33, Yu Tu wrote:
+>> Hi Krzysztof,
+>> 	Thank you for your reply.
+>>
+>> On 2022/8/5 17:15, Krzysztof Kozlowski wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> On 05/08/2022 10:57, Yu Tu wrote:
+>>>> Add peripheral clock controller compatible and dt-bindings header for
+>>>> the of the S4 SoC.
+>>>>
+>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>> ---
+>>>>    .../bindings/clock/amlogic,s4-clkc.yaml       |  92 ++++++++++++
+>>>>    include/dt-bindings/clock/amlogic,s4-clkc.h   | 131 ++++++++++++++++++
+>>>>    2 files changed, 223 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
+>>>>    create mode 100644 include/dt-bindings/clock/amlogic,s4-clkc.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..2471276afda9
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
+>>>
+>>> Filename should be based on compatible, so amlogic,s4-periphs-clkc.yaml
+>> I will correct as you suggest in the next version.
+>>>
+>>>> @@ -0,0 +1,92 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/clock/amlogic,s4-clkc.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Amlogic Meson S serials Peripheral Clock Controller Device Tree Bindings
+>>>
+>>> s/Device Tree Bindings//
+>> what's mean?
+> 
+> It's a expression (simplified not accurate) from many Linux tools, e.g.
+> sed, vim etc
+> s/SEARCH/REPLACE/
+> so just drop that piece I wrote above.
+Do you mean you need me to delete "Device Tree Bindings"?
 
-Best regards,
-Krzysztof
+> 
+> Best regards,
+> Krzysztof
+> 
+> .
