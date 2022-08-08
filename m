@@ -2,224 +2,206 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D105C00140
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 15:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A20C00140
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 16:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243604AbiHHPQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Aug 2022 11:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58876 "EHLO
+        id S233327AbiHHQqz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Aug 2022 12:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235105AbiHHPQN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 11:16:13 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2048.outbound.protection.outlook.com [40.107.21.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CF12613;
-        Mon,  8 Aug 2022 08:16:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KjfqkgrCw55INK1EaMr4b8hWOhJzVMoLrpW8vCzTm//jO4SVlCrFrl8oB1+Rt1C9RxLlbUGnVnB0czpvZ1Rdeau9ntsQLclzYkRJiqoRa7xhQQRYHjfr47+q0w5T6q89jvvfcMwlT6SFlqHmdZ5PR7cf1zySoEobtWCsOCej/O240P4YbVB+At+SivsRSNAFmLr1mx+qtX8QHHNR8TNWYu3m+LzGkAvRF+NQbcacOCfgjQh3KxWNff9X0Aqva0yoEZcnVzJGMe+pFCZVz1MH5uiVxF5CAk9cTNQc/eqC5EyIOQ6qep7tHzEhzcACCSYi44DFjZCoXDnug/mrqJcYlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xaZYEqXdWU6P2QHexEQdv5Srqj8UoZWKYBa0SZ+B0fA=;
- b=nySMtBEBitxOmeYv+K+F/qNYX5x9q9lcvwObqChQw6SCozT5Cn0KUP/mVHdqrC9muM784UW1+SxIwS9ELyCPIbsR+Aft2Eb0kR+rk8BppXXL074mzjcUzHsq17zZK0/dKK0u6+yGM8eDKEz/V5/Ex448gRyjv6qndMBHZNGPoJZdkC1gZd0VPfuhYPrnzH/4AjpAFHyzOZVMKeiagfP4Uov/AvU/XFs/A2SYpvv/Eacr9Z6GjjfBi7/Mss42FrELamzKJ+YYHMq2rVqstRSUI4MrLmAyb8DqVOyj0iw9YPxvCUNOkEtZXP/2CqaVKSEhKG5P6v27f61BBxZSoBg8Bw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xaZYEqXdWU6P2QHexEQdv5Srqj8UoZWKYBa0SZ+B0fA=;
- b=g54tD311MYWIG3a4P/8xXhCM9TfxsKyJEE+J37HYuGHY5Yv9TC3hRk+DdfL76iHkk4XUn8tz4ljihbCLDvVApUX0V5DgzVra6UizqfXH4xVzNPMATvqFWEc6GVMszQ5QOvoTFEH7BrgH8H+xZViTqy1EvGsb19OfBmmme5PrSW3f+oWYOQkUWS5rkhHXH05Z+Z1ww0uM2f35kgfZkDo7MMvCvAivjCPTG9wjAL/2siNv64OwuYsuFgsLRLvO8tV7G7sGHOCNExgJVOixoUmf8SyFy9P+lT5GFNGEtJikTaWCcxlKfd5BeOsSFEZEJ1JDwY7GvHhjPG3m/QI+r4IQMA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from DB7PR03MB4972.eurprd03.prod.outlook.com (2603:10a6:10:7d::22)
- by AM0PR03MB6164.eurprd03.prod.outlook.com (2603:10a6:20b:15b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.20; Mon, 8 Aug
- 2022 15:16:08 +0000
-Received: from DB7PR03MB4972.eurprd03.prod.outlook.com
- ([fe80::ecaa:a5a9:f0d5:27a2]) by DB7PR03MB4972.eurprd03.prod.outlook.com
- ([fe80::ecaa:a5a9:f0d5:27a2%4]) with mapi id 15.20.5504.019; Mon, 8 Aug 2022
- 15:16:08 +0000
-Subject: Re: [PATCH v4 3/8] dt-bindings: clock: Add ids for Lynx 10g PLLs
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-phy@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20220804220602.477589-1-sean.anderson@seco.com>
- <20220804220602.477589-4-sean.anderson@seco.com>
- <bee3d724-1efb-d5c7-6698-c98a198e69fd@linaro.org>
- <b97f113b-f429-c8c5-96ee-7f1a68e16117@seco.com>
- <6aac8854-599e-c43f-0a49-0650fce91179@linaro.org>
-From:   Sean Anderson <sean.anderson@seco.com>
-Message-ID: <04b08e1c-4af2-581e-7be5-96c5b7b00ae5@seco.com>
-Date:   Mon, 8 Aug 2022 11:16:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-In-Reply-To: <6aac8854-599e-c43f-0a49-0650fce91179@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR1501CA0005.namprd15.prod.outlook.com
- (2603:10b6:207:17::18) To DB7PR03MB4972.eurprd03.prod.outlook.com
- (2603:10a6:10:7d::22)
+        with ESMTP id S230034AbiHHQqz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 12:46:55 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE7B11821;
+        Mon,  8 Aug 2022 09:46:54 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id q19so8571120pfg.8;
+        Mon, 08 Aug 2022 09:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FBFzu78PXQ4VkKxZwnG7kf/6swmTQSKdX2ioFA0j04A=;
+        b=qtCKz9+U6OvrOCj/Z/uIgVSWfZbJ/cubcPUV8ynY41755o7M7TnpfE7bMz73zr/DoU
+         H65KikCgCXlRGwD+NW+W/SFiuxw9o4xYNYlBQixPwYhgsZHgvzYlBRhR+uYqzcKImER3
+         UQu238n2NAUoJRrkmb4mmnHAmC/MIeOA4HP4J7RlxiCdoMPuKWfo6h5kF6hJ3R+atCYu
+         1aOj0o0KItt1vEaqLI5f/Hj+LC9FF2EdDLGvhtUJjCKQ9rj2/8qnmqDGr2s5fWnDaST/
+         LZ4t+rsnFVJOm9X0RY+WGKJZNxo7z67gNjjKIRu/8NlXlv+sErbRiCcp01hCZP0CorPO
+         0daw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FBFzu78PXQ4VkKxZwnG7kf/6swmTQSKdX2ioFA0j04A=;
+        b=La71gNIP3NRRLAEQ51WO/SkZAeJtZM09G0lQfsZJCKEjn1UsZjduYqBdQOu5l8zJNr
+         dzSyZrOwhk7/Y7FR6bApkUHQsCZEtj53jYSFwMLZoe16lNUF8zprnor8FS6G00GDaoVX
+         qPCL+qnBTS+8TvOmt7WbND7lEFKhDzMMcAOdQhHyvN54LRTZ0+ZMBzsy+Rhc8maGdVU6
+         M3jejM3fRDfvfbA36XSQXF5KkcuFqx4psplw2PrVLLtHz9qCpiaDtZUV70/GNLLX02cH
+         SvneH8d7xXIHFfP0pGdGwiwSz1uVJzPIfxChzyUmpPwYH/WYpjykT4k8Lu1xKBDyg6GV
+         osWw==
+X-Gm-Message-State: ACgBeo1XVp0CjXTAAn47MG+4pkifZu83ATSK3MQuHhrFrezd/fr1PZ3X
+        DIv9PcHkpASF3ENdR2ozp6M=
+X-Google-Smtp-Source: AA6agR5KQPdp6ySa5gZVS9LerIqlvA9ymZMjzhnxDguXQjKNToBUW0QoZOkXX6gzNmnUk4ZoEGMpVw==
+X-Received: by 2002:a63:8949:0:b0:41d:1f89:a37c with SMTP id v70-20020a638949000000b0041d1f89a37cmr10903686pgd.243.1659977213810;
+        Mon, 08 Aug 2022 09:46:53 -0700 (PDT)
+Received: from Mahakal ([2401:4900:36ab:9d3a:cf26:15dd:368e:8685])
+        by smtp.gmail.com with ESMTPSA id j18-20020a170903029200b0016db43e5212sm8963610plr.175.2022.08.08.09.46.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Aug 2022 09:46:53 -0700 (PDT)
+Date:   Mon, 8 Aug 2022 22:16:46 +0530
+From:   "<Vishal Badole>" <badolevishal1116@gmail.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
+        vimal.kumar32@gmail.com, Mintu Patel <mintupatel89@gmail.com>
+Subject: Re: [PATCH v3] Common clock: To list active consumers of clocks
+Message-ID: <20220808164644.GA5239@Mahakal>
+References: <20220624010550.582BBC341C7@smtp.kernel.org>
+ <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f54c330b-3498-4c06-40b8-08da7950eb54
-X-MS-TrafficTypeDiagnostic: AM0PR03MB6164:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: t4ZMMUhLGy2wlGycgg3zhxd/OyDBp376EhWkV+pCzeFRtA9dHCGUiR4oJYTQBVmApru17FiXVlfyr3GowCzjl5hrBNaae84/1/PaTKqlMIcoMnJKNleM/J0BPpELoGaJhX+ZeSGbiFlpj1mM1C5vQcGDceqzqRsQLiHyU1AorSuhiznR7QPAKS61Upb6gnjel+FN9PQJxpr3Rvtf0Q9Dg/usycZcqhshDfQjyyh1gDN3JUXCk4eSV+YDcCS4hRXQGJCEiaajtzEzLDsDgJn/5jbfyO7CN4NjKG1MrXYLW3KaF3pwNAqVKj9tZYemXltznaokTHj98zziD1/ATRS59goMl4zVPtfrqUfmn+BwzwvBGT7qfQuHkHKvThwoNixL1VPfA+rDlRvRkS3aCwYHZQibvUodP+AZ/Xlh5jnvMMgYhaHgkpfFQpXeSs5yeTz9tNbFj0vxH/r1s5I3H3hV2gZCgGTmrsPrEDVw7QUj8ciW9TMMz0E+Yght7trlcwcy2WdXWSaZDPTeA3Vf93eLMq62HpOA4sGDR+/aDkcgasT5gWwodX/RWCPKZik5QPh0mBWdMX4LMTnttFh9OpgbgxwLrkq9fzi0rjgUo+CpFKdph1lU6c8UbUzgsGnj1RI45rHIY0TsSdNH9imvcOE3VRDrAAtHCd0i/q7u3Dkk+A0tfKFP580vQK4jElA8WALZE6OGCGiKSzVWyAtAdvfp4mwFpgSEOCAgFHGIhTB4nchV865/MrSYHljO1ikAU+Po+LaDJuLcEqW9rnKjH088tZ0+o4dCSfxPZ7aGOQ2vJ8s+3tsgeO8B8Uj88Bv+21WPY634ejIta6RhU8ec6JlS2qDOHI3MX+456rRYro5ls7Q=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4972.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(39850400004)(366004)(376002)(136003)(396003)(346002)(41300700001)(6666004)(66946007)(83380400001)(6512007)(26005)(52116002)(6506007)(53546011)(4326008)(31696002)(8676002)(66556008)(66476007)(186003)(86362001)(6486002)(316002)(110136005)(54906003)(478600001)(36756003)(2616005)(44832011)(2906002)(31686004)(38350700002)(5660300002)(7416002)(38100700002)(8936002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U1VEYk1qY3V5UVJ0ZTlCa0hRcHFJS0dTUTRaUkxPcG1xVkhkWWtubUFRZE14?=
- =?utf-8?B?OHpGeWE4N25oaGZQRXJxWTBYMFdWREJCMExXaXRzOVR2eUg3eGtMc3JlWjJP?=
- =?utf-8?B?SCtJdVFoK0EvcXgzaHFKTk41YXZFOGtCeHpZaEphVU5oYXdXNTZSRlJINlZ1?=
- =?utf-8?B?VUlpRW1FS1VuTFBJSFFSVjJpMHB1Q3BEU2VJcFZkak83T2xiOUxSMFQ4UXY5?=
- =?utf-8?B?N2wzd05xTXI5SDFobmc0RXNDcm14TmZodDU2UWZVSGVJQzlTK01GZ2NwNEt3?=
- =?utf-8?B?RkE0S2F5Z1pLdnNNL294QWtMczJXbE5FOU0wTk0wSGc0WjgvdlpqcjJwR1lM?=
- =?utf-8?B?d1ByZGZSa0hrWGdVblJTVnZUSHpaRVNSb2dNWjRQbnJ2cUNQbVBkajc1Q3dh?=
- =?utf-8?B?VDhTaEJTd21GUFdTY1Z5cGJYcjhIaDZaM3p4M3k4aEhPb0hvN0l2UnhSRlBJ?=
- =?utf-8?B?MkdNUm5KemtrQXIrUVFNK1pUdVEvbnphRWNEZXRWR3JPT1RZYnFmZU5xUzlu?=
- =?utf-8?B?Y1lpdi9JNXBqL1JDb3Vtc3BwRzQ5VVoycXBwOEsvZVZpWUt1NFJOOTVxOGN4?=
- =?utf-8?B?bzNJYzdRQ0VrOTkvZ1MzTXFneXdGdHZROWdSeEhxdC8rcnhLeG4rZC94anhq?=
- =?utf-8?B?NWpZL2pacEJqN3lhS3BWV1ZjcEFMNHhUaTZsS3NMNnFqcDlHdm1EeGVuQkJp?=
- =?utf-8?B?SUFZd01zSWoyb2k5d040VUJpazNscnFHMXl2Zi9wSUlIcStCdU95dkZ0T25U?=
- =?utf-8?B?cHNXV1lkcUJkU3cxK1lBaUdGb2FHMzhiTXBiaFFlVmJOUXVTclY1T3lQWmY2?=
- =?utf-8?B?UHBMRWRQbHJwVUJmYXpHclVxemlueVNFQjFPTVRralRZUk9SbWZwZjRpL3R4?=
- =?utf-8?B?M1dWNHhPeFpDVGNmY0N2T1E2T1VOTFVINWNxWHFoaFVQcXByTzRzaklYUHN1?=
- =?utf-8?B?Uy9HZERtOXYwQU9aS1pUMFZYbitLVGRHeVZZNzNtaWFVaCtFMDBVcmdoYkRk?=
- =?utf-8?B?MEdNK2NKbzZod1NmM1paOVZGbWF6RDRCa0NTcmpUMXlDQ1VMcWJ1RnVMOTZv?=
- =?utf-8?B?UmU1QnArT2QrejBEMUdDVG5BeHF1T2U1cUZRNXN2V1JvMTE2Z2VtZExSS3ZL?=
- =?utf-8?B?YkVrWlJUVmNCVno2U2pjaDI5U1VxZy9zUjZTRTMyL2NudkRQZE5ZbkN6SDRN?=
- =?utf-8?B?RVVIVStxYXhiZXBiR2RSMEk0QlRIRlJzK2NDSHVLK0RnNC8xOFFqMTRFNWxW?=
- =?utf-8?B?VjlIR0R4cDFaRGZINWlZWVpXcjJFbHMxbHFBWVR1a2lJdDQ4ZmkvV0kyaU5m?=
- =?utf-8?B?MWhacGdGc2s4TTl6NDJMZ2NPU2FlRmN4V3FqV1cwODJOUkRMRUhFQTFOU2Rp?=
- =?utf-8?B?VmtXMFdNRGpXeE1zVWZkWVdyZG1rL3FGZk5OVVNHQlhtNm5ITEdUV1JHSHZ0?=
- =?utf-8?B?eTM4UkswcHZ5Z25ZZHBrcWg2cmdUejdkMUZBelhDdDlBWUcrb05IZmlYSmt0?=
- =?utf-8?B?eS9RYWkvOU9KQ2FmazVNR0pWUTREYzVUMnc4bG83Mmp2WFEzcHdTSlU3cHhx?=
- =?utf-8?B?aTJFUlRyczNtRWJQUHFzeUh1T3dtVS9wb2paR0l3dFZ2d1FqZy9BOFRvTVQv?=
- =?utf-8?B?VDI1TkZRKzg2QzMva1BtU0k4Y1hVZ0VBWjc3czdyWHh1bWVTajJDbWpqZTho?=
- =?utf-8?B?NWYxNVl3ODY3ajBXYjFrZzM5ZjVOdjMyR0c5TTJjbksvNktHbHA1RnRZNWxi?=
- =?utf-8?B?T1ZaUVI3aGpDYnVkV2lud3kxQlRTMWFwNXVUY29QOVk3b0NVSkp4UUJ1NHZJ?=
- =?utf-8?B?dDZxT211QStxUG1HbzNCSzZJdkFROXhubjg5ejRIU283Sm1kOUNvd1lOdUZF?=
- =?utf-8?B?V29uMlRkNzc1Nkd0S2xQeVJEOFlNdDF6QXRQVUpoeTdhSkpDR0VkaTZIamx4?=
- =?utf-8?B?cEUxbk5sS3FZTFlVRmpFQmJoT092RE9WSGtMYjlmU0xJdjhweVdvMHhSWFRj?=
- =?utf-8?B?SmxYVHVqMjVSbUoxVkE2NjFLWEF0OUdMaEtxVWFhTGd3NlpoOXJneFMyVnRO?=
- =?utf-8?B?TGtMZ3E3NzlnajNzWGZYWmh1MHVWZVNpb2pvbWlJK3FEMFNTZ1hiNjJWd1ZE?=
- =?utf-8?B?V0FRVk80dndUZUY2cmxuaGRwVHBMWmM1OE56TS9IV0JjS3BvakRtSWJMeHhx?=
- =?utf-8?B?Tnc9PQ==?=
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f54c330b-3498-4c06-40b8-08da7950eb54
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4972.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2022 15:16:08.0264
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: onPvGUP13skZYCLhVsIeQo1Ch5wTPSU4+RyBr8GqdfxsdWaXN2TBQ8RG4N8x2l/PT8aNx0LFuJ9/C4P0INJ/Nw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR03MB6164
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 8/8/22 1:46 AM, Krzysztof Kozlowski wrote:
-> On 05/08/2022 17:17, Sean Anderson wrote:
->> 
->> 
->> On 8/5/22 2:53 AM, Krzysztof Kozlowski wrote:
->>> On 05/08/2022 00:05, Sean Anderson wrote:
->>>> This adds ids for the Lynx 10g SerDes's internal PLLs. These may be used
->>>> witn assigned-clock* to specify a particular frequency to use.
->>>>
->>>> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
->>>> ---
->>>>
->>>> Changes in v4:
->>>> - New
->>>>
->>>>  include/dt-bindings/clock/fsl,lynx-10g.h | 14 ++++++++++++++
->>>>  1 file changed, 14 insertions(+)
->>>>  create mode 100644 include/dt-bindings/clock/fsl,lynx-10g.h
->>>>
->>>> diff --git a/include/dt-bindings/clock/fsl,lynx-10g.h b/include/dt-bindings/clock/fsl,lynx-10g.h
->>>> new file mode 100644
->>>> index 000000000000..f5b955658106
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/clock/fsl,lynx-10g.h
->>>> @@ -0,0 +1,14 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>
->>> This should be dual license.
->> 
->> This is just matching what the majority (263 out of 326) clock dt-bindings headers do.
+On Tue, Aug 02, 2022 at 11:39:47PM +0530, Vishal Badole wrote:
+> This feature lists the clock consumer's name and per-user enable count
+> in clock summary. Using this feature user can easily check which device
+> has acquired a perticular clock and it is enabled by respective device
+> or not.
+> for example:
+> $ cat /sys/kernel/debug/clk/clk_summary
+>                       enable  prepare  protect                           duty  hardware                            per-user
+>    clock               count    count    count    rate   accuracy phase cycle    enable   consumer                    count
+> ----------------------------------------------------------------------------------------------------------------------------
+>  clk_mcasp0_fixed         0        0        0    24576000      0     0  50000     Y      deviceless                      0
+>                                                                                          deviceless                      0
+>     clk_mcasp0            0        0        0    24576000      0     0  50000     N          simple-audio-card,cpu           0
+>                                                                                              deviceless                      0
 > 
-> Then please license it just like bindings, so dual license with BSD.
-
-OK
-
->> 
->>>> +/*
->>>> + * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
->>>
->>> It's confusing to see personal copyrights with company email. Either the
->>> copyright is attributed to your employer or to you. If to you, use
->>> private email.
->> 
->> I hold the copyright, and I would like inquiries to be directed to my work
->> email (as I don't have this hardware at home).
+> Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+> Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+> Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
+> Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
+> Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
+> Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
+> Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
+> ---
+>  drivers/clk/clk.c | 46 +++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 35 insertions(+), 11 deletions(-)
 > 
-> OK, I guess I won't be the only one confused :).
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f00d4c1..c96079f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -102,6 +102,7 @@ struct clk {
+>  	unsigned long min_rate;
+>  	unsigned long max_rate;
+>  	unsigned int exclusive_count;
+> +	unsigned int enable_count;
+>  	struct hlist_node clks_node;
+>  };
+>  
+> @@ -1008,6 +1009,10 @@ void clk_disable(struct clk *clk)
+>  		return;
+>  
+>  	clk_core_disable_lock(clk->core);
+> +
+> +	if (clk->enable_count > 0)
+> +		clk->enable_count--;
+> +
+>  }
+>  EXPORT_SYMBOL_GPL(clk_disable);
+>  
+> @@ -1169,10 +1174,16 @@ EXPORT_SYMBOL_GPL(clk_restore_context);
+>   */
+>  int clk_enable(struct clk *clk)
+>  {
+> +	int ret;
+> +
+>  	if (!clk)
+>  		return 0;
+>  
+> -	return clk_core_enable_lock(clk->core);
+> +	ret = clk_core_enable_lock(clk->core);
+> +	if (!ret)
+> +		clk->enable_count++;
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_enable);
+>  
+> @@ -2953,28 +2964,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+>  				 int level)
+>  {
+>  	int phase;
+> +	struct clk *clk_user;
+> +	int multi_node = 0;
+>  
+> -	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+> +	seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
+>  		   level * 3 + 1, "",
+> -		   30 - level * 3, c->name,
+> +		   35 - level * 3, c->name,
+>  		   c->enable_count, c->prepare_count, c->protect_count,
+>  		   clk_core_get_rate_recalc(c),
+>  		   clk_core_get_accuracy_recalc(c));
+>  
+>  	phase = clk_core_get_phase(c);
+>  	if (phase >= 0)
+> -		seq_printf(s, "%5d", phase);
+> +		seq_printf(s, "%-5d", phase);
+>  	else
+>  		seq_puts(s, "-----");
+>  
+> -	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
+> +	seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
+>  
+>  	if (c->ops->is_enabled)
+> -		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
+> +		seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
+>  	else if (!c->ops->enable)
+> -		seq_printf(s, " %9c\n", 'Y');
+> +		seq_printf(s, " %5c ", 'Y');
+>  	else
+> -		seq_printf(s, " %9c\n", '?');
+> +		seq_printf(s, " %5c ", '?');
+> +
+> +	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
+> +		seq_printf(s, "%*s%-*s  %-4d\n",
+> +			   level * 3 + 2 + 105 * multi_node, "",
+> +			   30,
+> +			   clk_user->dev_id ? clk_user->dev_id : "deviceless",
+> +			   clk_user->enable_count);
+> +
+> +		multi_node = 1;
+> +	}
+> +
+>  }
+>  
+>  static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+> @@ -2995,9 +3019,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+>  	struct clk_core *c;
+>  	struct hlist_head **lists = (struct hlist_head **)s->private;
+>  
+> -	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+> -	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+> -	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
+> +	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            per-user\n");
+> +	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                    count\n");
+> +	seq_puts(s, "-------------------------------------------------------------------------------------------------------------------------------------------\n");
+>  
+>  	clk_prepare_lock();
+>  
+> -- 
+> 2.7.4
+>
+Hi Stephen,
+Have you got a chance to review the above patch? 
+We have made the changes as per the reviews, please have a look on the
+patch.
 
-You're the first person to comment on this.
-
-> This entry here is not
-> parsed for any tools and only sometimes people look at it. The questions
-> are directed via entry in maintainers file or via git history, so you
-> can put company email just there.
-
-As I understand it, the email is simply informative. There are literally
-hundreds of examples of mixing a "personal" copyright with a company email.
-It is easy to find if you grep. If you are so opposed to it, then I will
-remove the email and simply use my name.
-
->> 
->>>> + */
->>>> +
->>>> +#ifndef __DT_BINDINGS_CLK_LYNX_10G_H
->>>> +#define __DT_BINDINGS_CLK_LYNX_10G_H
->>>> +
->>>> +#define LYNX10G_CLKS_PER_PLL 2
->>>> +
->>>> +#define LYNX10G_PLLa(a)		((a) * LYNX10G_CLKS_PER_PLL)
->>>> +#define LYNX10G_PLLa_EX_DLY(a)	((a) * LYNX10G_CLKS_PER_PLL + 1)
->>>
->>> These do not look like proper IDs for clocks for bindings. Numbering
->>> starts from 0 or 1 and any "a" needs to be clearly explained. What do
->>> you bind here?
->> 
->> This matches "a" is the index of the PLL. E.g. registers PLL1RSTCTL etc.
->> This matches the notation used in the reference manual.
-> 
-> This is a file for bindings, not for storing register values. There is
-> no single need to store register values (offsets, indexes) as bindings
-> as it is not appropriate. Therefore if you do not use it as an ID, just
-> remove the bindings header.
-
-This *is* just for IDs, as stated in the commit message. The above example
-was only to illustrate that the clock controlled via the PLL1RSTCTL register
-(among others) would have an ID of LYNX10G_PLLa(0).
-
-If you doubt it, review the driver.
-
---Sean
+Regards,
+Vishal
