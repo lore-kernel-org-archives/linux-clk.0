@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB973C00140
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 18:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A67C25B08
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 18:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232098AbiHHSQB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Aug 2022 14:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48144 "EHLO
+        id S244152AbiHHSQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Aug 2022 14:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235271AbiHHSP7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 14:15:59 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C93BDEBD
-        for <linux-clk@vger.kernel.org>; Mon,  8 Aug 2022 11:15:58 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id n185so5188025wmn.4
-        for <linux-clk@vger.kernel.org>; Mon, 08 Aug 2022 11:15:58 -0700 (PDT)
+        with ESMTP id S229519AbiHHSQB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 14:16:01 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F669FF9
+        for <linux-clk@vger.kernel.org>; Mon,  8 Aug 2022 11:16:00 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id v5so5210084wmj.0
+        for <linux-clk@vger.kernel.org>; Mon, 08 Aug 2022 11:16:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc;
-        bh=N0YWcYm3d7mIGu9NuVyOkucoriM5WUeBmD8ZP+rQP0U=;
-        b=GNylwCkzpQPatgX5rPWJnN8jA0fAp7fl0T68smMCOTL2q71loAf7XfEteoIaBmcRv1
-         mfJBioIs443o8R2EWXBQnTd8ahubQJv4gtY5ed6Yg05di6WrDgsc82ABIibKnLrsVeDB
-         6Ph0iUVMnlkr0E8i5C9fnnNMnyZ4C8rRvbig8HeSYoO6zCbC1mav91xASl32E47l2Ift
-         APXm4hSXxH/YhmlxEZuhTMc8ikP+bNjpdVG4HsBpRYPi54ARygvBblMxZ0/vNjaFnkda
-         KJPrVNyEtvq5NaSQECMtLq+R1jNK/kcigZ6n4lWQ/XYZysUr6zFLJHHwP5sFQsnLw8V2
-         woSA==
+        bh=QRWRO8agMBm5i20KyVm3mywJyV1BaORmn3HrLI4GpCc=;
+        b=pwqMX7Q9CHrO7SpRd5ToAko8dl6oZZDH80VvBOh5clpHnWpVs8NYF+2Lkcj/Jw0LFg
+         4Xtg6KIDgW8qhTgvAPdYszHFLRiKAjIqAnt/HZ8rQXwdCG6EmEIplo+avaxIuNqeQX68
+         Zu0ZKXPRcC8uYjCkBUd8qnhxmeYOVU0p9gJWjaphj713cnryNMs6wZ7sqe/7XAb0ZjmO
+         QuevMnxxe7c8L0tEm0bcVRFPfnziEaJJPaVhkvGlU+T0WEUV8ksHddoi1B43e2szwym8
+         sTXGjTcFxw3GY781nUbWgkzvVahVhEWor/v2H2pbzTZeOyFA2KtH9304WtRPyAIdjIQw
+         XMUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc;
-        bh=N0YWcYm3d7mIGu9NuVyOkucoriM5WUeBmD8ZP+rQP0U=;
-        b=drYJtg7dMHUfoTC/X5EmTltsi+smCpG6lzmPxhGqJHFDqaH615nmVElgX3rTlIutPn
-         AwZRyg5jzOw79JrJ/XwLfkX1pSMUp85zlQCist3DH9y86U3zp9iBKBvX1/1AHyVCm9BF
-         f/Wakq534BDvrQggOoa4g3RUYkukLTuWL3EC7m3moT9+9YFIJAM16ETYGEREFCHIP796
-         GzEveM866eB0b/JT5u+fLzN5O3ps9999uRHndOF9KRs1cOAfeS6Q530WG3lncqZsS2EB
-         HTu//6IWValtY9TkomG7iwTWI+sACJN77gvU4SODjXL8qRI9aoEWJmV/qsHJMZmoL3JA
-         uKKA==
-X-Gm-Message-State: ACgBeo2KDH3U3xoWQrBRFvSjQfTKHR2HhLYOX4M9tnfZCeptz91+zKeI
-        uVXn3KYFRabwTUh1v6Vswy8cYw==
-X-Google-Smtp-Source: AA6agR7uIQNJY/KUYJyYbtaFZH5Jo6FalM2qfD+ZEMKEFb9WGSQbnUNbsKVFgfhra3Ne+RxO12aLHA==
-X-Received: by 2002:a05:600c:3d17:b0:3a3:2bc8:6132 with SMTP id bh23-20020a05600c3d1700b003a32bc86132mr13427684wmb.24.1659982557094;
-        Mon, 08 Aug 2022 11:15:57 -0700 (PDT)
+        bh=QRWRO8agMBm5i20KyVm3mywJyV1BaORmn3HrLI4GpCc=;
+        b=EUJdXmywalZWbBa+jygoeAIDSDmHTsuM8/p2Fz8fJ3ECFYiW+x5S7iOcGgjLc+/sOp
+         VCuS4F0Iaz6c4JKq87pethCFgPIkSZsyhuCBQ70aitucbv6xu6pYPJB0gOrA8a/n/LVM
+         bFm6uC8W2XYBfDAgG8wSiXbydUdADaBpZ0i2vlFlKojj4/DOVq50gp8K7Ka38GNXxPU5
+         BM8A+mG77U3Mx7fTtK4w+tX4NXiCzgWRPnCA6GCiyw12/o5Trq8HVQtWNSC0RZS5njwG
+         m9nnGDazUndCmw/7hjsEiBU/qspDBbOlVlHbLRD0gBNKTExYHbQcZe/Lq7LpZ0frFi+d
+         O2Mw==
+X-Gm-Message-State: ACgBeo31wUPb1u7xeL3DJ+8Dzy2L7AAc4L673v+b1oS41p+jyh0RDQwk
+        JxzdchYMjyiHhPDCqG6+j1hkWA==
+X-Google-Smtp-Source: AA6agR4Wuu50Mj+pYnt7tY3CJjHpyNSUyGeVjSHsZ5J4loZftwx36rOlwB40WstVF6ooDbr2f8BTRA==
+X-Received: by 2002:a05:600c:4f07:b0:3a3:2277:7064 with SMTP id l7-20020a05600c4f0700b003a322777064mr13267433wmq.181.1659982558784;
+        Mon, 08 Aug 2022 11:15:58 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id u7-20020a05600c210700b003a3561d4f3fsm3188184wml.43.2022.08.08.11.15.55
+        by smtp.gmail.com with ESMTPSA id m1-20020a7bcb81000000b003a3278d5cafsm18572351wmi.28.2022.08.08.11.15.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Aug 2022 11:15:55 -0700 (PDT)
+        Mon, 08 Aug 2022 11:15:58 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>
 Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -60,9 +60,9 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] clk: samsung: exynos850: Add CMUs needed for SysMMU
-Date:   Mon,  8 Aug 2022 21:15:55 +0300
-Message-Id: <20220808181555.10333-1-semen.protsenko@linaro.org>
+Subject: [PATCH 1/7] dt-bindings: clock: Add bindings for Exynos850 CMU_AUD
+Date:   Mon,  8 Aug 2022 21:15:57 +0300
+Message-Id: <20220808181557.10385-1-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -70,37 +70,138 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series implements some missing Exynos850 clock domains. Right
-now those are mainly required for SysMMU clocks, although of course
-there is a lot of other clocks generated by those CMUs.
+CMU_AUD generates Cortex-A32 clock, bus clock and audio clocks for
+BLK_AUD. Add clock indices and binding documentation for CMU_AUD.
 
-Exynos850 has next SysMMU instances:
-  - SYSMMU_AUD
-  - SYSMMU_DPU
-  - SYSMMU_IS0
-  - SYSMMU_IS1
-  - SYSMMU_MFCMSCL
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ .../clock/samsung,exynos850-clock.yaml        | 19 ++++++
+ include/dt-bindings/clock/exynos850.h         | 68 ++++++++++++++++++-
+ 2 files changed, 86 insertions(+), 1 deletion(-)
 
-As CMU_DPU is already implemented, that leaves CMU_AUD, CMU_IS and
-CMU_MFCMSCL to be implemented, which is done in this series:
-  - CMU_AUD: audio clocks
-  - CMU_IS: camera clocks (Image Signal Processing)
-  - CMU_MFCMSCL: multi-format codec and scaler clocks
-
-Sam Protsenko (7):
-  dt-bindings: clock: Add bindings for Exynos850 CMU_AUD
-  dt-bindings: clock: Add bindings for Exynos850 CMU_IS
-  dt-bindings: clock: Add bindings for Exynos850 CMU_MFCMSCL
-  clk: samsung: exynos850: Style fixes
-  clk: samsung: exynos850: Implement CMU_AUD domain
-  clk: samsung: exynos850: Implement CMU_IS domain
-  clk: samsung: exynos850: Implement CMU_MFCMSCL domain
-
- .../clock/samsung,exynos850-clock.yaml        |  69 ++
- drivers/clk/samsung/clk-exynos850.c           | 682 +++++++++++++++++-
- include/dt-bindings/clock/exynos850.h         | 136 +++-
- 3 files changed, 883 insertions(+), 4 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+index 80ba60838f2b..523fdfaae891 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+@@ -33,6 +33,7 @@ properties:
+     enum:
+       - samsung,exynos850-cmu-top
+       - samsung,exynos850-cmu-apm
++      - samsung,exynos850-cmu-aud
+       - samsung,exynos850-cmu-cmgp
+       - samsung,exynos850-cmu-core
+       - samsung,exynos850-cmu-dpu
+@@ -88,6 +89,24 @@ allOf:
+             - const: oscclk
+             - const: dout_clkcmu_apm_bus
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-aud
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: AUD clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_aud
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+index 0b6a3c6a7c90..3dc55d4e5b9e 100644
+--- a/include/dt-bindings/clock/exynos850.h
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -58,7 +58,10 @@
+ #define CLK_MOUT_CLKCMU_APM_BUS		46
+ #define CLK_DOUT_CLKCMU_APM_BUS		47
+ #define CLK_GOUT_CLKCMU_APM_BUS		48
+-#define TOP_NR_CLK			49
++#define CLK_MOUT_AUD			49
++#define CLK_GOUT_AUD			50
++#define CLK_DOUT_AUD			51
++#define TOP_NR_CLK			52
+ 
+ /* CMU_APM */
+ #define CLK_RCO_I3C_PMIC		1
+@@ -87,6 +90,69 @@
+ #define CLK_GOUT_SYSREG_APM_PCLK	24
+ #define APM_NR_CLK			25
+ 
++/* CMU_AUD */
++#define CLK_DOUT_AUD_AUDIF		1
++#define CLK_DOUT_AUD_BUSD		2
++#define CLK_DOUT_AUD_BUSP		3
++#define CLK_DOUT_AUD_CNT		4
++#define CLK_DOUT_AUD_CPU		5
++#define CLK_DOUT_AUD_CPU_ACLK		6
++#define CLK_DOUT_AUD_CPU_PCLKDBG	7
++#define CLK_DOUT_AUD_FM			8
++#define CLK_DOUT_AUD_FM_SPDY		9
++#define CLK_DOUT_AUD_MCLK		10
++#define CLK_DOUT_AUD_UAIF0		11
++#define CLK_DOUT_AUD_UAIF1		12
++#define CLK_DOUT_AUD_UAIF2		13
++#define CLK_DOUT_AUD_UAIF3		14
++#define CLK_DOUT_AUD_UAIF4		15
++#define CLK_DOUT_AUD_UAIF5		16
++#define CLK_DOUT_AUD_UAIF6		17
++#define CLK_FOUT_AUD_PLL		18
++#define CLK_GOUT_AUD_ABOX_ACLK		19
++#define CLK_GOUT_AUD_ASB_CCLK		20
++#define CLK_GOUT_AUD_CA32_CCLK		21
++#define CLK_GOUT_AUD_CNT_BCLK		22
++#define CLK_GOUT_AUD_CODEC_MCLK		23
++#define CLK_GOUT_AUD_DAP_CCLK		24
++#define CLK_GOUT_AUD_GPIO_PCLK		25
++#define CLK_GOUT_AUD_PPMU_ACLK		26
++#define CLK_GOUT_AUD_PPMU_PCLK		27
++#define CLK_GOUT_AUD_SPDY_BCLK		28
++#define CLK_GOUT_AUD_SYSMMU_CLK		29
++#define CLK_GOUT_AUD_SYSREG_PCLK	30
++#define CLK_GOUT_AUD_TZPC_PCLK		31
++#define CLK_GOUT_AUD_UAIF0_BCLK		32
++#define CLK_GOUT_AUD_UAIF1_BCLK		33
++#define CLK_GOUT_AUD_UAIF2_BCLK		34
++#define CLK_GOUT_AUD_UAIF3_BCLK		35
++#define CLK_GOUT_AUD_UAIF4_BCLK		36
++#define CLK_GOUT_AUD_UAIF5_BCLK		37
++#define CLK_GOUT_AUD_UAIF6_BCLK		38
++#define CLK_GOUT_AUD_WDT_PCLK		39
++#define CLK_MOUT_AUD_CPU		40
++#define CLK_MOUT_AUD_CPU_HCH		41
++#define CLK_MOUT_AUD_CPU_USER		42
++#define CLK_MOUT_AUD_FM			43
++#define CLK_MOUT_AUD_PLL		44
++#define CLK_MOUT_AUD_TICK_USB_USER	45
++#define CLK_MOUT_AUD_UAIF0		46
++#define CLK_MOUT_AUD_UAIF1		47
++#define CLK_MOUT_AUD_UAIF2		48
++#define CLK_MOUT_AUD_UAIF3		49
++#define CLK_MOUT_AUD_UAIF4		50
++#define CLK_MOUT_AUD_UAIF5		51
++#define CLK_MOUT_AUD_UAIF6		52
++#define IOCLK_AUDIOCDCLK0		53
++#define IOCLK_AUDIOCDCLK1		54
++#define IOCLK_AUDIOCDCLK2		55
++#define IOCLK_AUDIOCDCLK3		56
++#define IOCLK_AUDIOCDCLK4		57
++#define IOCLK_AUDIOCDCLK5		58
++#define IOCLK_AUDIOCDCLK6		59
++#define TICK_USB			60
++#define AUD_NR_CLK			61
++
+ /* CMU_CMGP */
+ #define CLK_RCO_CMGP			1
+ #define CLK_MOUT_CMGP_ADC		2
 -- 
 2.30.2
 
