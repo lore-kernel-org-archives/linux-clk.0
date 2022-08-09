@@ -2,71 +2,257 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4FBC3F6B0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Aug 2022 18:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779E8C3F6B0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Aug 2022 20:26:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245752AbiHISXX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Aug 2022 14:23:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52394 "EHLO
+        id S233401AbiHIU0A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Aug 2022 16:26:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346307AbiHISVD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 14:21:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842D030F42;
-        Tue,  9 Aug 2022 11:07:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2AE8EB818D8;
-        Tue,  9 Aug 2022 18:07:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE785C43470;
-        Tue,  9 Aug 2022 18:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660068420;
-        bh=2EdjzasIB09m+gY3gToosq99knMnczwU9bRriEj/PHU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=c1B7ErLrUkL2D0AfWZ630nEllP0wRB5x2SrJ/43UfDEoqJ8KUfFWubojQSoA05sLB
-         q/P7JrySK0pw+C1zV4u3bdXr/WicT0eT8eZFe25OvEbRZwXLTDh6GpBzU47NZ4X+VX
-         0vb40g8RtiQV+V2Ubbfe8G4D7Vmr5NZiutl3u2Q5xbl7ObyEvNZviib8IWWIaAQkeu
-         6dEetgrnGfD8PKc5U9WDQoqktd0mkCaAJosBrdhiORlBsEfYc8cDkU9+gcCj2tW6Zd
-         6JwH8yOyhnZEjsA4A/wcrJeDWtb9EYvvYEMKeYI/wBoG5Q3nFesHO78ufd6kfE5VGM
-         EKNIpDMOp21vg==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S1343816AbiHIUZu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 16:25:50 -0400
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17262640
+        for <linux-clk@vger.kernel.org>; Tue,  9 Aug 2022 13:25:49 -0700 (PDT)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1168e046c85so5547597fac.13
+        for <linux-clk@vger.kernel.org>; Tue, 09 Aug 2022 13:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=oyLlRoOfhFin1nY24GxzTdq3Zzne1Rl50dg/CrRO5/Y=;
+        b=fFZMVXdeVQyp2EGRuSwBMRW2bUYDLnH4BmR3ZGIpeibfJo59JEpUyvDjMlBucUGkJb
+         zjRm8Z9cFHPvy9HDk2JFzNaEvYZ+5qtk21cKhVTrKGKZI1nceKJV1fLm9aBX5660oAm0
+         huhH0bzv7QeFOqD4UFd7AOryRqEBl6kJa641zvcp2OKZcVZHw/Tl43gHDqgTQBphpKdJ
+         lMwEtq29Flya17u3JjOmgh6+6FFjz6fxng93Y6mQt48mwhE/y664U9cTjUv8DxOllX9T
+         ep8jGl+I2QShxiuq1cztBVjUgZuQF1tMvicoh+op8gn5jKHUJbhalA4c196EQ37QWpVv
+         s92Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=oyLlRoOfhFin1nY24GxzTdq3Zzne1Rl50dg/CrRO5/Y=;
+        b=5XR0c22BbkBcmdcL0ZAZ8PHhaLpCALsVINdRKhv8cpYAa1X53csnnEe4m4EqqxrL8Z
+         Qp6e2Lgks63hT57PjMqjfvIXuM4eelU1TFEZvEylgfU7iEcrHpVOxDWD+7PknROsiPFd
+         m3Ez1RgDBfJFbwHlQNsK2JcQ4num48urzW3MW+WWf6064lKGd1S3m/sSATWsTBOCKYNu
+         TYiaZcnMRnqfHDB29mEWBw0WGVp+BmyPv9HzUoMjVRSAHSG3w7FbBDO2TTn4fJE0rqZp
+         LFg0FR5cv+00+SRjtxN/9l4qJ4bxrWkMo5GVmjO3faCN5fiCEf1e47YmOc9FxTaPHaRj
+         yeBg==
+X-Gm-Message-State: ACgBeo2DkfZZqalT6yt9/9GT9Y62GPer5Bd9DzrNrwv+D4fzCAeClWla
+        3sPZ3BxkPR9gUEDGNzYYVjsniQ==
+X-Google-Smtp-Source: AA6agR69qi0ar9dNZiz8nbBAL+WcOiF9myeniXMJEDJi/MvH7cKYz+/kMm0Zmfjao3RfRlWpPq+3IQ==
+X-Received: by 2002:a05:6870:5494:b0:10e:63c7:2a0c with SMTP id f20-20020a056870549400b0010e63c72a0cmr95029oan.85.1660076748315;
+        Tue, 09 Aug 2022 13:25:48 -0700 (PDT)
+Received: from baldur ([2600:380:785a:7aa8:200:ff:fe00:0])
+        by smtp.gmail.com with ESMTPSA id fo34-20020a0568709a2200b0010e47737471sm3341706oab.49.2022.08.09.13.25.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Aug 2022 13:25:47 -0700 (PDT)
+Date:   Tue, 9 Aug 2022 15:25:39 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 1/9] clk: qcom: qcc-sdm845: Collapse gdsc structs into
+ macros
+Message-ID: <YvLCwyB9rBWXmfZt@baldur>
+References: <20220726142303.4126434-1-abel.vesa@linaro.org>
+ <20220726142303.4126434-2-abel.vesa@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d92dd996-6961-5291-9504-1fe284b40dd6@gmail.com>
-References: <20220419051114.1569291-1-seanga2@gmail.com> <d92dd996-6961-5291-9504-1fe284b40dd6@gmail.com>
-Subject: Re: [RFT PATCH] clk: ls1c: Fix PLL rate calculation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Du Huanpeng <dhu@hodcarrier.org>,
-        Yang Ling <gnaygnil@gmail.com>
-To:     Sean Anderson <seanga2@gmail.com>, linux-clk@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Date:   Tue, 09 Aug 2022 11:06:58 -0700
-User-Agent: alot/0.10
-Message-Id: <20220809180700.BE785C43470@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220726142303.4126434-2-abel.vesa@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sean Anderson (2022-08-03 16:28:41)
-> On 4/19/22 1:11 AM, Sean Anderson wrote:
-> >  =20
-> >       pll =3D __raw_readl(LS1X_CLK_PLL_FREQ);
-> > -     rate =3D ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-> > +     rate =3D (pll & 0xff00) + ((pll >> 16) & 0xff);
-> >       rate *=3D OSC;
-> > -     rate >>=3D 2;
-> > +     rate >>=3D 10;
-> >  =20
-> >       return rate;
-> >   }
-> >=20
->=20
-> Since there have been no objections, can we apply this?
->=20
+On Tue 26 Jul 09:22 CDT 2022, Abel Vesa wrote:
 
-Can you resend it? I can apply it after the merge window closes next
-week.
+> Collapse gdsc structs definitions into macros to make them
+> more compact visually.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-sdm845.c | 129 ++++------------------------------
+>  drivers/clk/qcom/gdsc.h       |  10 +++
+>  2 files changed, 23 insertions(+), 116 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index 58aa3ec9a7fc..8529e9c8c90c 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -3191,122 +3191,19 @@ static struct clk_branch gcc_lpass_sway_clk = {
+>  };
+>  #endif
+>  
+> -static struct gdsc pcie_0_gdsc = {
+> -	.gdscr = 0x6b004,
+> -	.pd = {
+> -		.name = "pcie_0_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR,
+> -};
+> -
+> -static struct gdsc pcie_1_gdsc = {
+> -	.gdscr = 0x8d004,
+> -	.pd = {
+> -		.name = "pcie_1_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR,
+> -};
+> -
+> -static struct gdsc ufs_card_gdsc = {
+> -	.gdscr = 0x75004,
+> -	.pd = {
+> -		.name = "ufs_card_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR,
+> -};
+> -
+> -static struct gdsc ufs_phy_gdsc = {
+> -	.gdscr = 0x77004,
+> -	.pd = {
+> -		.name = "ufs_phy_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR,
+> -};
+> -
+> -static struct gdsc usb30_prim_gdsc = {
+> -	.gdscr = 0xf004,
+> -	.pd = {
+> -		.name = "usb30_prim_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR,
+> -};
+> -
+> -static struct gdsc usb30_sec_gdsc = {
+> -	.gdscr = 0x10004,
+> -	.pd = {
+> -		.name = "usb30_sec_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR,
+> -};
+> -
+> -static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
+> -	.gdscr = 0x7d030,
+> -	.pd = {
+> -		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> -
+> -static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+> -	.gdscr = 0x7d03c,
+> -	.pd = {
+> -		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> -
+> -static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+> -	.gdscr = 0x7d034,
+> -	.pd = {
+> -		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> -
+> -static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+> -	.gdscr = 0x7d038,
+> -	.pd = {
+> -		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> -
+> -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+> -	.gdscr = 0x7d040,
+> -	.pd = {
+> -		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> -
+> -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+> -	.gdscr = 0x7d048,
+> -	.pd = {
+> -		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> -
+> -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+> -	.gdscr = 0x7d044,
+> -	.pd = {
+> -		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+> -	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> -};
+> +DEFINE_QCOM_CC_GDSC(pcie_0_gdsc, 0x6b004, "pcie_0_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> +DEFINE_QCOM_CC_GDSC(pcie_1_gdsc, 0x8d004, "pcie_1_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> +DEFINE_QCOM_CC_GDSC(ufs_card_gdsc, 0x75004, "ufs_card_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> +DEFINE_QCOM_CC_GDSC(ufs_phy_gdsc, 0x77004, "ufs_phy_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> +DEFINE_QCOM_CC_GDSC(usb30_prim_gdsc, 0xf004, "usb30_prim_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> +DEFINE_QCOM_CC_GDSC(usb30_sec_gdsc, 0x10004, "usb30_sec_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc, 0x7d030, "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc, 0x7d03c, "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_tbu1_gdsc, 0x7d034, "hlos1_vote_aggre_noc_mmu_tbu1_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_tbu2_gdsc, 0x7d038, "hlos1_vote_aggre_noc_mmu_tbu2_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc, 0x7d040, "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc, 0x7d048, "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_sf_gdsc, 0x7d044, "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc", PWRSTS_OFF_ON, VOTABLE);
+
+Personally I have a really hard time looking at such a compact chunk of
+text and hence this is harder for me to spot mistakes and differences
+in.
+
+While I like the effort of making things easier to maintain this made me
+further appreciate the change we've done in the interconnect providers,
+where we're doing the exact opposite - and remove magical macros.
+
+Regards,
+Bjorn
+
+>  
+>  static struct clk_regmap *gcc_sdm845_clocks[] = {
+>  	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 5de48c9439b2..c0e616b49dee 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -78,6 +78,16 @@ struct gdsc_desc {
+>  	size_t num;
+>  };
+>  
+> +#define DEFINE_QCOM_CC_GDSC(_name, _gdscr, _pd_name, _pwrsts, _flags) \
+> +	static struct gdsc _name = {			\
+> +		.gdscr = _gdscr,		\
+> +		.pd = {				\
+> +			.name = _pd_name,	\
+> +		},				\
+> +		.pwrsts = _pwrsts,		\
+> +		.flags = _flags,		\
+> +	}
+> +
+>  #ifdef CONFIG_QCOM_GDSC
+>  int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
+>  		  struct regmap *);
+> -- 
+> 2.34.3
+> 
