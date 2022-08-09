@@ -2,109 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8D5C19F2D
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Aug 2022 11:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34485C3F6B0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Aug 2022 14:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242480AbiHILqQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Aug 2022 07:46:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36356 "EHLO
+        id S243928AbiHIOnM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Aug 2022 10:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242197AbiHILqO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 07:46:14 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD111248D1
-        for <linux-clk@vger.kernel.org>; Tue,  9 Aug 2022 04:46:12 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id l10so8117168lje.7
-        for <linux-clk@vger.kernel.org>; Tue, 09 Aug 2022 04:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=QsmUqL/K7yU3SMzZ0FTopGj6zj1tOvzFKhz171z4vRY=;
-        b=QTHzvwv/41mQMSEBfjxOTjKs8N4fwJGEfzsaCC0mt/Ihiv3I3PcDjCpAmjDTbs/uxF
-         EIn0/mCBPJTSgtJ9ICMCNob8aGvq6IUlcNqhH5EbJliIytnq1AY+nL9nr1QZ+Bedc31v
-         NlDQf0q31jKIfztN03g1jZxVeAiLIsLNxqJxg3HK2vkS6i8TNHvqGap0+MOHhxL5bRwK
-         13POO0aAlCuOhu8p7ZTlPoPj/K8v40sLuvINWM6DyDlHldBkLUU92pHrWgjTV7x9B7C/
-         J8pjg0kDs46WT1AwPDzQYQrBguHsRBBZZDkbpzvoZS7cyVx+PkUZxkUU5ernSavqaQ4u
-         x6vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=QsmUqL/K7yU3SMzZ0FTopGj6zj1tOvzFKhz171z4vRY=;
-        b=jDT9ZLsAl3KgvvYXRxjthEFn8VzYcDMDWtD0b9GC1eHrRCKjHcvcmMta3iqknQjZ6X
-         rFtvxMSdVtTTkwKXs6AsxuJ9imnxVNYFq3DYjFyFZYjA6TjVrJyQCGqAEKX9IVc+9Q29
-         sBNkjOFxvHJ/ysM8jqswR2m2G21TMS+wO0rGlwk81cNUXyEICo5Jfa2GMABuT4xisW+L
-         V4jJ80H6sMmSFzn+aXongkjD/k8BDhV42Su3NqvyAuFOebfBc0CBJowfYoJ1ILTTRuCR
-         AImzCvdapIV/FwWmRpPrZDIoEIt+loxm9IF8bX4tBaIui9Tpo5JKQfGuZweWIxOXShna
-         /oYw==
-X-Gm-Message-State: ACgBeo1kJ7OgsBWfZpxHJ2oD5Vc+pjzCqAGLdm8VfTQhMWhES/TpKyfV
-        CV6B54IVUjL3VVtfWXc+Uf0SbbeNSOqVNw2Og3WgBA==
-X-Google-Smtp-Source: AA6agR64z/0ZB46ZAz00rHuh7z2Dk81PNldSaQZLPyWTwsm2PmcCZAGxyQg2VQnsxR5Tdof9+9x2LT0E/6IFrcwwqFk=
-X-Received: by 2002:a2e:a4d6:0:b0:25e:439e:39d0 with SMTP id
- p22-20020a2ea4d6000000b0025e439e39d0mr7029084ljm.169.1660045571001; Tue, 09
- Aug 2022 04:46:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220808181555.10333-1-semen.protsenko@linaro.org>
-In-Reply-To: <20220808181555.10333-1-semen.protsenko@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 9 Aug 2022 14:45:59 +0300
-Message-ID: <CAPLW+4nFzxa6gH_uxRuypWFS3WzrENS5Wz5j32L6q53T7eZG_Q@mail.gmail.com>
-Subject: Re: [PATCH 0/7] clk: samsung: exynos850: Add CMUs needed for SysMMU
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        with ESMTP id S244022AbiHIOnK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 10:43:10 -0400
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-eopbgr140080.outbound.protection.outlook.com [40.107.14.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA0671CFFA;
+        Tue,  9 Aug 2022 07:43:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JXJbYznFM3g30JfdT3KCPN8n5njBL4TpRG5V79PaCxWMw4UIAEV/knZ+Qq73o39tDiPnyV8fR2axCHaGPTofFHRrZqBC/95BWQa4Ss7zaREWid5WI+u9+PvDN+q6QIynTapSm+wSGKhecsg5KnLUMMjtFgaE7U3PuwRJjBSjTNF7C59iUYv8XHAs9K9EeAL3QhaB8RpJ57ccgMr1C/rM/ehnNbaNqo9GEAKbeOTlfYlnhOZPchUritLNCmZFlYfngrSDOWCZsYIBdin1mPSNtmElqfCK99cXroWe5yrjNyn9uL1whXdw9fVMiH8gRL/E4PmUGEAco00EGMWhcEq7zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4ux9qy82zliuVwPE1Nz9lDMb8zl37Y/mg0ffhQNwd1o=;
+ b=PPQeuRtlWkj93Hn7j/XYekSEeRRU6zB5lAmnj6p9nDVxqzqrY8XWKGvtWCMCWfVkj3Sb2KdGBIz5QmMEhnTq42DjbDusRsofj8C8xcV9BvVTsSFoiP4DvmZQISOJEj7xPSH0x3czN7OzB96io9FL3sNZwC+AoCULJ39Y9AS65TzN1iUWuu2+ypADfgwoWWbEWbROPIE0P5BSOe47DRaMddHS7yduTTXzuH7rJizDZEs6sqtPotHq3rKxdgVzpfNPWrFPSl3kw7gk5X5F+QmZFNSMQUnltSh3TNgIoKFojUk1R+l3MloPSII4PG5VeCxSgbiI5gPfcMSpg1XXH0CAWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ux9qy82zliuVwPE1Nz9lDMb8zl37Y/mg0ffhQNwd1o=;
+ b=0lpHbcAWyFnvpE49yFXn5xnldiSw4Nr4QIuMZB5Zx869MOeATioPe6KkjcVsGDFNTdgtZK/9FQWUZ31tVPr6drviMM8mQZjcGC8Gctzug+PmC7tf/OUSsriboQPpkAsCAc+TZDpabCvMRhdwCcjcLR/IgjMowtJtBRtgQuFkYIoKVdZi9V4uXMigKt1OB7MiTclkGYi4tUV1nH057prA2SLghLQe7e87kjPQtTIOsoeuC1lNAZtVUjQSN5mIXThuylRAKQ+KWea6o1aIsyUW8xYmGxJRQm3wRsPC2UiwiNP0TaNlcE0olaRlGrrmMvWvMSwYo416OM8icDiCfxpxkw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB7PR03MB4972.eurprd03.prod.outlook.com (2603:10a6:10:7d::22)
+ by PR3PR03MB6378.eurprd03.prod.outlook.com (2603:10a6:102:5f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.21; Tue, 9 Aug
+ 2022 14:43:03 +0000
+Received: from DB7PR03MB4972.eurprd03.prod.outlook.com
+ ([fe80::ecaa:a5a9:f0d5:27a2]) by DB7PR03MB4972.eurprd03.prod.outlook.com
+ ([fe80::ecaa:a5a9:f0d5:27a2%4]) with mapi id 15.20.5504.019; Tue, 9 Aug 2022
+ 14:43:03 +0000
+Subject: Re: [PATCH v4 3/8] dt-bindings: clock: Add ids for Lynx 10g PLLs
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-phy@lists.infradead.org
+Cc:     devicetree@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        linuxppc-dev@lists.ozlabs.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+References: <20220804220602.477589-1-sean.anderson@seco.com>
+ <20220804220602.477589-4-sean.anderson@seco.com>
+ <bee3d724-1efb-d5c7-6698-c98a198e69fd@linaro.org>
+ <b97f113b-f429-c8c5-96ee-7f1a68e16117@seco.com>
+ <6aac8854-599e-c43f-0a49-0650fce91179@linaro.org>
+ <04b08e1c-4af2-581e-7be5-96c5b7b00ae5@seco.com>
+ <a387164a-d42c-fc1e-529c-6000aa2db33e@linaro.org>
+From:   Sean Anderson <sean.anderson@seco.com>
+Message-ID: <39c3c2f0-5efd-aae5-b89b-9a1883f27177@seco.com>
+Date:   Tue, 9 Aug 2022 10:42:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <a387164a-d42c-fc1e-529c-6000aa2db33e@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0412.namprd13.prod.outlook.com
+ (2603:10b6:208:2c2::27) To DB7PR03MB4972.eurprd03.prod.outlook.com
+ (2603:10a6:10:7d::22)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 449bfaed-0d22-4419-5ecf-08da7a1575bb
+X-MS-TrafficTypeDiagnostic: PR3PR03MB6378:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: g2uPtOGSy7qi/WxNZs6dwJ1FeNqJkUPGBoIxdN3ZTqKXil/eEUiiHMRCoiPq/3ho1vXVvJZ7klvLO8tibzFq6mecODBP79dnLDQTE6oo5kxIehD5Z/Sui9sD/d4uJxvMVlPOiGT/A5sM/4jKjS1+2UtfMFQ1IJYLmbmVyrLj2lKJkO3NBAoM5fYNxf3UAPOOkrzbBpkQ9ERx/Mk3QyZCuJU240y3zmQTjWfaYzeLKmj3DpamqZdM+H7X0y1S/Zi6DK1BhLmv/67cH1LpDq5SH2e/zb08/kEu56FEW16ecIc9nzKFKWy8zIFEDUwcfAPurttqHaxa9uIY6OJLQr5w5ypP5g4dWwbjXiCZcYBK8bsXjssHndSChDV92JlwPSZvhkA+bUtcJ3fGovFT9q7ZxVzCwmUL9t2yvcIUDQGBGJDk3Qk+VHQKVohdHYhU0m0nTwWTk3MGmHlrn5I7gHon9KgZeo8TjGMwyiB8LgHn8jIznhhP9A6heTq/hEbLbgR8vowqnrWaKfxH3SPOxGFgee8nJ9WUlc1eDmEK167dl2dJtYw2sqCfiiMhzRkp5+Wj9yMQgK7scxIHwHWcF3MWwoV6tMNtzM2QM/AHn9BQBEE3amYAGQ6p502vwlYXSKlBkgM/Zh66AZQawC2ngQ1wrHZYpq7ErxfhLjFGK0WJxJoV4uUGqLPerFO/CBLcbd0V3Frwwqf7B5uHAUj2tCya7Pp5q7x7wPbB3S8MRjwJVrBPqqHkt2oLSbOrhqZ923tqa3xqUPLrVWB+XnZArkUDvINlq9eFlRFjZiulD6yt91zgwnPr/b+229v8bn7ZAy5lcHHt4VyTsY8ZYUBWZVUE5LjD+kvSm9roXR/yb/aoRIw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4972.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(396003)(136003)(366004)(376002)(346002)(39850400004)(86362001)(31696002)(38350700002)(38100700002)(31686004)(54906003)(8676002)(66556008)(66476007)(66946007)(110136005)(4326008)(316002)(44832011)(5660300002)(2616005)(7416002)(6486002)(8936002)(6512007)(26005)(6506007)(53546011)(186003)(41300700001)(83380400001)(6666004)(52116002)(478600001)(2906002)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bVhOTUpjNmFNeHY1d1JzMzUxcFYyS3ovWTFDTVoram1oU0VSL3kwTllXczU0?=
+ =?utf-8?B?UEpFM3RucWMwU0t2alZyWTZidzRJaVNTVmptT2tVcU8wVGdCS0FVVldqL2du?=
+ =?utf-8?B?aEZDVnpRVEpYS3pDSVFUTDJ2UmxzbTRNbzhsc051VHBQdDVRRmJ1enRmVnc3?=
+ =?utf-8?B?TkJ0YUxQeFZDWS9wbFpJNFpNenNqbW91cTJwck1jbTFhb2NRUTV1Yk9wMjFp?=
+ =?utf-8?B?MmpZN2R2S0RNZkplV1djWC9IYzlEeHpXNXpOZnNiQkgxS1hidzdlRFJFTjhp?=
+ =?utf-8?B?SXhieEdzbVNwUWVKMi9uSWNyS1pyeHMva0tMbmhiRGhwQU51THZaRHRTaHdu?=
+ =?utf-8?B?L0x6ellrc2d4QS9GRmwyOC9zM1BqenZPNnV2UUFMTHpKa1VpcVdOOVhIQ2Jn?=
+ =?utf-8?B?ZHYrYWhRcXFGL01NdXRnR1FQczRuelArellMUXNZVGxIYjJvOGtxbWE1OWNn?=
+ =?utf-8?B?YTVMSWxBWVlBZGNYV2dJRHg2ZWdCSkZBaGdpUFRLQWVZQklRdk9CT0tPdkhU?=
+ =?utf-8?B?VTBBK1RPbk9BbGR4cTlrT3lmWlRsMGZjd2N4QkZJUUJCN1hnNzc0NlVRQ25Q?=
+ =?utf-8?B?dlRScnJTRDBoNVFjUUJxVXpsNFdqWFVUTDRPTU9zUlVlanNkWXFST2w2OCtE?=
+ =?utf-8?B?Mm5SR25YOXg2Y1hSMVhhYkU4c0NVS0VrN28raVcySDVXM3grdXorbkZpYTJQ?=
+ =?utf-8?B?RksyVkxBVnUyblVvVFFIZ3lOSHNhUXNSeWdHajd1c0dyVktMVitUUkpmMUky?=
+ =?utf-8?B?RFVYY0l4Y2VVRERLWm5XSEo0YVVmL1M3VDJrVWhXNHpKQ0ZTM2NNQ3RVZ2hW?=
+ =?utf-8?B?YXREWFdTS2NhRzJJVE00ZXNPbmdCTU04eE5UTGVUcmpIaElVQ2FubFpoL3Nm?=
+ =?utf-8?B?OW5wSU1IOW9JWUhnRk5PUkh5OHZiU3R5RWlFR3krb0xNOEEyczkxWWpMVFI0?=
+ =?utf-8?B?OEM3bXhkVnY5NjdBSlpzU3l5M3hVYVh3ZXdFUXZRYnpHVis0WHFSMG84bVM0?=
+ =?utf-8?B?M09NT1BBdlpOTHdhUkUvM2VKTHBIRUZIdk5NaG4wY3FtcitwWmxjTFFoVnIy?=
+ =?utf-8?B?UDNjZCsrY0pwa3NUamtvWWhLU0R5ekdLRVQ1bGV4eUhLbHdFNGFwWmd0Y05Y?=
+ =?utf-8?B?bU1vamg5TlY3TXNpZy9sM2tNakYzYkwvUGpHUW1GeVRoWnphQ0RpZ0MydGZ0?=
+ =?utf-8?B?ai9tR2YrU3d0OHl1TUJKUU1pZHpweThlQzc2M1ZPVDB2SnBDR0N2Mm1RNjlk?=
+ =?utf-8?B?dDh2bjZDQjVBMjNaKzllN3pubURNQk9YQTZ3dVZadDhHS0VkM213UTZld2xW?=
+ =?utf-8?B?dEVydUNneFJ6TDZSZkMyNzdKNXNGSi92OHA5MGdSVmVkeXRRcFlIYm5xek5p?=
+ =?utf-8?B?OXJGeVRYWmJHZUNKaklOZnd4V2tEMjFTeTJBU3V5N3JDaDFTaDU4RlZkTUlQ?=
+ =?utf-8?B?WEtRNCtsREhETnc0eWxBWFl0Mjd2TW1oZTFaRzdZMi96cEQ0OExnSFAwVjdy?=
+ =?utf-8?B?SnhSeVdaQzdQcStDbDVPTUNRaDhpQk5YRHFJUncrMzZyOTVja0xwbnYyNTdJ?=
+ =?utf-8?B?ME9EV1hvdDNYZzhPZXh4WHRIMnJ3UHRtb1RKOFJGb0YvZHpSdDZIb2tRMGpK?=
+ =?utf-8?B?cEhvT1RGV2tXR0tBRzRQR1NwOG9odEQxQkp6WFlBUFppdGF1STFVbVlGSlFF?=
+ =?utf-8?B?TittQ3pvZktuM1VmWGhOVkNmZG11YUJ3WGlQNGxnN2tyMnZwMFpKK3RmVnZD?=
+ =?utf-8?B?bEtwOThjVGkyNHZKTk1Od1pyYk93b3VmYnkzTTJtQzM5b3BVQ0RZdDFIZjF4?=
+ =?utf-8?B?QU9aM3RzU3p3QkJlMkVWUTloZktrejRXZ0NLeHBIZ1A3UEROVXpwbE82TE1N?=
+ =?utf-8?B?WmpkRUFGamFHbERodVI2aTZxWjBFNDIrMWlrNmlKRkxGWVFBd2RvY0JTdjV1?=
+ =?utf-8?B?RndsS1puNGh6bTBObGxuTytXeXNjN2wyT1o1NnJsbmJWR3Q0WklKbm54ejE1?=
+ =?utf-8?B?V2RqVmhjRWR0Q3Q5TjFKenI4M2dzOCtSeTlqZDRWNWg0VGZ1N2RKOTV2YmlJ?=
+ =?utf-8?B?OGJLZEZ1MjBxTHdxRFhJWWN1WUFseU50bHYwWVRHVmxPeDhhK2FZOW5QRi9l?=
+ =?utf-8?B?MWx4YkRUb28xZFdZZEdxNExRcTh1WjE4U0RuM1g1ZVFNRXJ1RVp5Z2x4WWxT?=
+ =?utf-8?B?clE9PQ==?=
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 449bfaed-0d22-4419-5ecf-08da7a1575bb
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4972.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2022 14:43:03.1804
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yq3bYqo+8Yx2AW85/CPRN1xyq9zvcp/s5aA7i+MMxZRnEPijoWIkcPsLrcNIuOhJYQlIILOgeUs/C4NxZkLRJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR03MB6378
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 8 Aug 2022 at 21:15, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->
-> This patch series implements some missing Exynos850 clock domains. Right
-> now those are mainly required for SysMMU clocks, although of course
-> there is a lot of other clocks generated by those CMUs.
->
-> Exynos850 has next SysMMU instances:
->   - SYSMMU_AUD
->   - SYSMMU_DPU
->   - SYSMMU_IS0
->   - SYSMMU_IS1
->   - SYSMMU_MFCMSCL
->
-> As CMU_DPU is already implemented, that leaves CMU_AUD, CMU_IS and
-> CMU_MFCMSCL to be implemented, which is done in this series:
->   - CMU_AUD: audio clocks
->   - CMU_IS: camera clocks (Image Signal Processing)
->   - CMU_MFCMSCL: multi-format codec and scaler clocks
->
-> Sam Protsenko (7):
->   dt-bindings: clock: Add bindings for Exynos850 CMU_AUD
->   dt-bindings: clock: Add bindings for Exynos850 CMU_IS
->   dt-bindings: clock: Add bindings for Exynos850 CMU_MFCMSCL
->   clk: samsung: exynos850: Style fixes
->   clk: samsung: exynos850: Implement CMU_AUD domain
->   clk: samsung: exynos850: Implement CMU_IS domain
->   clk: samsung: exynos850: Implement CMU_MFCMSCL domain
->
->  .../clock/samsung,exynos850-clock.yaml        |  69 ++
->  drivers/clk/samsung/clk-exynos850.c           | 682 +++++++++++++++++-
->  include/dt-bindings/clock/exynos850.h         | 136 +++-
->  3 files changed, 883 insertions(+), 4 deletions(-)
->
-> --
-> 2.30.2
->
 
-This patch series is superseded by v2 here: [1].
 
-[1] https://lkml.org/lkml/2022/8/9/328
+On 8/9/22 1:21 AM, Krzysztof Kozlowski wrote:
+> On 08/08/2022 18:16, Sean Anderson wrote:
+>> 
+>>> This entry here is not
+>>> parsed for any tools and only sometimes people look at it. The questions
+>>> are directed via entry in maintainers file or via git history, so you
+>>> can put company email just there.
+>> 
+>> As I understand it, the email is simply informative. There are literally
+>> hundreds of examples of mixing a "personal" copyright with a company email.
+>> It is easy to find if you grep. If you are so opposed to it, then I will
+>> remove the email and simply use my name.
+> 
+> No, no problem for me.
+> 
+>> 
+>>>>
+>>>>>> + */
+>>>>>> +
+>>>>>> +#ifndef __DT_BINDINGS_CLK_LYNX_10G_H
+>>>>>> +#define __DT_BINDINGS_CLK_LYNX_10G_H
+>>>>>> +
+>>>>>> +#define LYNX10G_CLKS_PER_PLL 2
+>>>>>> +
+>>>>>> +#define LYNX10G_PLLa(a)		((a) * LYNX10G_CLKS_PER_PLL)
+>>>>>> +#define LYNX10G_PLLa_EX_DLY(a)	((a) * LYNX10G_CLKS_PER_PLL + 1)
+>>>>>
+>>>>> These do not look like proper IDs for clocks for bindings. Numbering
+>>>>> starts from 0 or 1 and any "a" needs to be clearly explained. What do
+>>>>> you bind here?
+>>>>
+>>>> This matches "a" is the index of the PLL. E.g. registers PLL1RSTCTL etc.
+>>>> This matches the notation used in the reference manual.
+>>>
+>>> This is a file for bindings, not for storing register values. There is
+>>> no single need to store register values (offsets, indexes) as bindings
+>>> as it is not appropriate. Therefore if you do not use it as an ID, just
+>>> remove the bindings header.
+>> 
+>> This *is* just for IDs, as stated in the commit message. The above example
+>> was only to illustrate that the clock controlled via the PLL1RSTCTL register
+>> (among others) would have an ID of LYNX10G_PLLa(0).
+>> 
+>> If you doubt it, review the driver.
+> 
+> Indeed, thanks. Except the driver, where is the DTS user of these
+> bindings? It's neither in bindings example, nor in the DTS patches.
+
+The primary purpose is to allow using assigned-clocks. The reference manual
+for the processor may specify that certain PLLs must be used with a certain
+rate when in some configuration (this is not necessary for the LS1046A or
+LS1088A, but there are restrictions for e.g. the LS1043A). Using
+assigned-clock-rates allows specifying which PLL is to be used at which rate
+(especially if it differs from the bootloader). Of course, the driver could
+adjust this later, but it will always use the configured PLL rate before
+reconfiguring anything.
+
+--Sean
