@@ -2,99 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F97C25B0C
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Aug 2022 18:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4FBC3F6B0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Aug 2022 18:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344167AbiHISGF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Aug 2022 14:06:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39984 "EHLO
+        id S245752AbiHISXX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Aug 2022 14:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344672AbiHISFT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 14:05:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF2827CEA;
-        Tue,  9 Aug 2022 11:02:29 -0700 (PDT)
+        with ESMTP id S1346307AbiHISVD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 14:21:03 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842D030F42;
+        Tue,  9 Aug 2022 11:07:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 649EEB81722;
-        Tue,  9 Aug 2022 18:02:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D78C433D7;
-        Tue,  9 Aug 2022 18:02:28 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2AE8EB818D8;
+        Tue,  9 Aug 2022 18:07:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE785C43470;
+        Tue,  9 Aug 2022 18:07:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660068148;
-        bh=lJgNFnKBAD3W6+nMLS3KtRGHN5jjeaSLik2catrtBLQ=;
+        s=k20201202; t=1660068420;
+        bh=2EdjzasIB09m+gY3gToosq99knMnczwU9bRriEj/PHU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=EVR37ynfgVxGgjgEcwtYqTtzrPixXH1kEcatTawE2JTaQLXiYyQYFS0BBFgeu+h8v
-         EZPPjLlL/PYOBVCfiH6txoSdeeTnHfasPst7YWKv2JM/YJ4GYmcU3rR37gYXoG6T8G
-         tP3gn/ge/WhxnN44ArX0nXU7HFUhS3tkP4Zx6HylJl5+wXPeC49Wp/ofPrRlTGdNNQ
-         CUQ1VOZ0EcrHZIDDngG6IXDCLZo9KD7Y73NN7nfVNkqbmKCVH7EvYpfFwnsb1DQ10F
-         j2JbGFZ3NV0Bqz36vvyXli++/yhGzj4O+GzL4xloblwzImWisqCTTFFhT3W0ST4dWB
-         IuAaqtX+CtyuQ==
+        b=c1B7ErLrUkL2D0AfWZ630nEllP0wRB5x2SrJ/43UfDEoqJ8KUfFWubojQSoA05sLB
+         q/P7JrySK0pw+C1zV4u3bdXr/WicT0eT8eZFe25OvEbRZwXLTDh6GpBzU47NZ4X+VX
+         0vb40g8RtiQV+V2Ubbfe8G4D7Vmr5NZiutl3u2Q5xbl7ObyEvNZviib8IWWIaAQkeu
+         6dEetgrnGfD8PKc5U9WDQoqktd0mkCaAJosBrdhiORlBsEfYc8cDkU9+gcCj2tW6Zd
+         6JwH8yOyhnZEjsA4A/wcrJeDWtb9EYvvYEMKeYI/wBoG5Q3nFesHO78ufd6kfE5VGM
+         EKNIpDMOp21vg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAP6Zq1ib==k_E3XaS2bZB3m=yn0B_3hL2XuaHe1UiyM670snoA@mail.gmail.com>
-References: <20220711123519.217219-1-tmaimon77@gmail.com> <20220718191454.5B5D3C341C0@smtp.kernel.org> <CAP6Zq1ju08GSjNnEG+zDUC8W6aQMJxd5He7QJxy9++hTy0Dc7A@mail.gmail.com> <20220723030226.8E43CC341C6@smtp.kernel.org> <CAP6Zq1gUvMFG9BNObVNLpVgbMRpV7e--HFxknP8kvL4nGk8Hsw@mail.gmail.com> <20220729225603.12528C433D6@smtp.kernel.org> <CAP6Zq1hOxG+2X-qTbvPkrVHQ5zf04GO21m1n328Jiqgzns2CMA@mail.gmail.com> <20220804200549.60512C433C1@smtp.kernel.org> <CAP6Zq1j2r9df0CpT7pi32JuVLQBDjt7cCK7LmDJehtufG8M4-Q@mail.gmail.com> <CAP6Zq1ib==k_E3XaS2bZB3m=yn0B_3hL2XuaHe1UiyM670snoA@mail.gmail.com>
-Subject: Re: [PATCH v8 04/16] clk: npcm8xx: add clock controller
+In-Reply-To: <d92dd996-6961-5291-9504-1fe284b40dd6@gmail.com>
+References: <20220419051114.1569291-1-seanga2@gmail.com> <d92dd996-6961-5291-9504-1fe284b40dd6@gmail.com>
+Subject: Re: [RFT PATCH] clk: ls1c: Fix PLL rate calculation
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Olof Johansson <olof@lixom.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Robert Hancock <robert.hancock@calian.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas G leixner <tglx@linutronix.de>,
-        Patrick Venture <venture@google.com>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Nancy Yuen <yuenn@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        SERIAL DRIVERS <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Date:   Tue, 09 Aug 2022 11:02:26 -0700
+Cc:     linux-kernel@vger.kernel.org,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Du Huanpeng <dhu@hodcarrier.org>,
+        Yang Ling <gnaygnil@gmail.com>
+To:     Sean Anderson <seanga2@gmail.com>, linux-clk@vger.kernel.org,
+        linux-mips@vger.kernel.org
+Date:   Tue, 09 Aug 2022 11:06:58 -0700
 User-Agent: alot/0.10
-Message-Id: <20220809180228.22D78C433D7@smtp.kernel.org>
+Message-Id: <20220809180700.BE785C43470@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tomer Maimon (2022-08-08 06:08:08)
-> On Mon, 8 Aug 2022 at 15:37, Tomer Maimon <tmaimon77@gmail.com> wrote:
-> > > Using platform APIs means using platform_*() functions, not of_*()
-> > > functions, which are open-firmware/DT related. Regmap can be used to
-> > > operate on registers mapped as __iomem, which is different from platf=
-orm
-> > > APIs.
-> > I will use platform_get_resource() and devm_ioremap_resource()
-> > functions in the next version.
-> I will use platform_get_resource() and ioremap() function next
-> veriosn, is it fine?
+Quoting Sean Anderson (2022-08-03 16:28:41)
+> On 4/19/22 1:11 AM, Sean Anderson wrote:
+> >  =20
+> >       pll =3D __raw_readl(LS1X_CLK_PLL_FREQ);
+> > -     rate =3D ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
+> > +     rate =3D (pll & 0xff00) + ((pll >> 16) & 0xff);
+> >       rate *=3D OSC;
+> > -     rate >>=3D 2;
+> > +     rate >>=3D 10;
+> >  =20
+> >       return rate;
+> >   }
+> >=20
+>=20
+> Since there have been no objections, can we apply this?
+>=20
 
-As stated earlier it will work for now but eventually you'll get patches
-from janitors trying to convert to a devm based API that reserves the
-register region. Can you ioremap the register once and register an
-auxiliary device and driver for the reset (or clk) part so that the
-driver can be moved out to the drivers/reset/ path?
+Can you resend it? I can apply it after the merge window closes next
+week.
