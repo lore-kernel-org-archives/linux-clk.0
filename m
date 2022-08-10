@@ -2,128 +2,265 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB7FC19F2D
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Aug 2022 01:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B3FC3F6B0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Aug 2022 07:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbiHJBlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Aug 2022 21:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34804 "EHLO
+        id S231231AbiHJHpv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Aug 2022 03:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbiHJBk2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Aug 2022 21:40:28 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61A31AF09;
-        Tue,  9 Aug 2022 18:40:26 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0C60D5C0279;
-        Tue,  9 Aug 2022 21:40:26 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 09 Aug 2022 21:40:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm2; t=1660095626; x=1660182026; bh=HbNBRJbRBFm3jhvzvtzDhklvn
-        z1h/RDiPgNM6S1lCOs=; b=XMg4KnU6zR9ZtIGpxJ3kAKJ7k0dYTZ9pnYWdZW1v2
-        rJWwyGYs5fT1Y9LXtbkskFqSJEp87cZdVdbsUlu6kskCXqC5AFrBWtDhPhKpAjJz
-        e62zK2f8wZ3CXEFiVeshZZrt05u/8GjiKT9vfe+BhhZB3ZLb2CUpN+eAh1UmqQeG
-        ZgbaaB1f1rtEM+2EzPyMRkudi1SuSU/ZyTL46jd9q6LDcllV89MYOeeUqXwiF8Yq
-        S+r6y7Kk/crm7MqxVj6hWrvbVrdCBDp+3anKYJ9Wf/reQsPkflk2kfT184LmUOH0
-        9Ke+t80OwpGvYXmk+Gd9s9FYKVnk9se2GajRoLS9DkIDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1660095626; x=1660182026; bh=HbNBRJbRBFm3jhvzvtzDhklvnz1h/RDiPgN
-        M6S1lCOs=; b=yNGG+zBxLzBI/dOaH2dXM4jhniKVX5CXV/wlLHdvHXRDmdfcUmG
-        ZuzsDUP6ZtgFG3dIo+fL7RParwG+z0JmdV2Y/i4oXh12YzV4mPtPjuYuoHV101hi
-        49T/pM0RSGEvYH82rADFU8/nf60t0A3AfUvRSHIUsA8Atw2HzktRpCfnGmkyr2JD
-        HLjzObOQZQvbSlrfF++Heeo7G+tPTivLpdYMu8PnVIWGbfT9vimP4+b92X1hL+VA
-        g6FHtC7aoxs9bBJWy7G/aUTLQd0MV8aDROpNFPq0oHyn2YEgt3XdcsttKK0zJOvI
-        TwJqceu1+l/HtNsXp/qDwOjwCngInanOkkA==
-X-ME-Sender: <xms:iQzzYol0vKW0PCUOSREp05jEXC6L1ASP8jkd5VDZ0U_pqAyI_nBobw>
-    <xme:iQzzYn3QMmYyloj5Wl91g3hqOhvRPjhB1GRxBBgNzwVxEG8Gk-DbX4gVl7A65_b5e
-    isRK6Y4WPinWsFioA>
-X-ME-Received: <xmr:iQzzYmprj7vcbcnD0heskfd8z9uMOyMAUV6Z5n1WzkvkHHmTjy1nGIdfgc9uvtHK7gOpJJo1JOpkuudb46YdnBOH_4fDXteUU_ZcagYOjZn9Lf4gSPHzDJmoGaJDY5qvrhwgKA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdeguddghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuggftrf
-    grthhtvghrnhepkeevlefhjeeuleeltedvjedvfeefteegleehueejffehgffffeekhefh
-    hfekkeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:iQzzYklkLe1wSQMadIOch1mQ2M83eAQN4nId6NO6ZESlg9KN1mKxEA>
-    <xmx:iQzzYm0N_cEP3eR-lW1oTNkblI_fgOncwK_SobPOCzkjG0ooNhu2Bg>
-    <xmx:iQzzYrtBMVqt4uGr-y6-tX7nGIpawh4YofINRXsnPhfNujwItRjKyA>
-    <xmx:igzzYvlzlaO2x23gwnqomuDk-8mGGB9Bz8TpKSKlBgv8QoM86L2g4A>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Aug 2022 21:40:25 -0400 (EDT)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: [PATCH] clk: sunxi-ng: mp: Avoid computing the rate twice
-Date:   Tue,  9 Aug 2022 20:40:24 -0500
-Message-Id: <20220810014024.27568-1-samuel@sholland.org>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S231216AbiHJHpu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2022 03:45:50 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C474361B27
+        for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2022 00:45:48 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id p10so16754984wru.8
+        for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2022 00:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=6Uw3kz/8NE9eLSWipW36eeeHUbFLrCfATfO5HX/aFsE=;
+        b=WbkMFHWquUz7qTU+9q0NJ9P6FwGVlfW5SrbnX7wPWfRZxpeSryTVFtn0BhW1tUOjKf
+         WT552D/0+Xtm18djn8Rsz67hJ1+kqsNu4lKiFgqUQxuKy6K4U6Fmlgio3C15pvZVYnOm
+         WZIcYx7s+WLqKTIrd4CMYStGhunJR8ZFbN/3jx8xwjxobzkVNRv1SMB7kAMhBFd/6JgX
+         YBQD9lICB8Y31u87Xs2DyPVKciMuT6H5rL3RoJB8XI7f7CFySR+wwjpFY0hcl7/nd87a
+         ifC5ClDCinIJcYgsaG/E57dHk00jlKaLTq7kedUCFEcG/76qdPrjG4RCaDoIm0GxnAxF
+         g4Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=6Uw3kz/8NE9eLSWipW36eeeHUbFLrCfATfO5HX/aFsE=;
+        b=sDX0oB12wOSsDrjewzr5cKXx+IYIEFMrAODi/Dc9afDxzZeeHApp3N5ks+ct+5Wk4i
+         xNFs3vcWjHkIzHOyfWJLZmdqV32Qj7PgeUGvVPV4DlsE6UtP09JQIyWnPD4I8dY1ogTC
+         Wh1tJ/1EYE1gXn69QxKf0PnJtwgO7vwxjf+3NdGFKbggTZX4ZTluAj92AGy9M2EPMmvK
+         Cb7+MyLo9LqGnoRhGk34m7hpva1rA0gscS70VI7QdsDTCseORpTDO49y+40qP8khsnQ5
+         k7jDPspkAKRdlQQ2RlYJRgOzdWwpCjrSRoWB0ex/zZuEMWeYsjMRxKDBqxwaNq8Bvi/i
+         B27A==
+X-Gm-Message-State: ACgBeo3A6h8VtFCDCE9MjhbHEtiOwkenuOZyS5SbOpswxDWXovudivsm
+        HwVoiTKCtop8YMgERnYjFaQDeg==
+X-Google-Smtp-Source: AA6agR55Cpy1O8VEdoM8U/q8g1TM0O2Oy7uvLADwG6awex+w3YOrSzCm+V28bsDgSwR0VRBj4TpFlA==
+X-Received: by 2002:a05:6000:786:b0:222:764d:9e9e with SMTP id bu6-20020a056000078600b00222764d9e9emr10722013wrb.503.1660117547202;
+        Wed, 10 Aug 2022 00:45:47 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id q4-20020a1c4304000000b003a5a5069107sm1380853wma.24.2022.08.10.00.45.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Aug 2022 00:45:46 -0700 (PDT)
+Date:   Wed, 10 Aug 2022 10:45:45 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 1/9] clk: qcom: qcc-sdm845: Collapse gdsc structs into
+ macros
+Message-ID: <YvNiKRHywar2YbtC@linaro.org>
+References: <20220726142303.4126434-1-abel.vesa@linaro.org>
+ <20220726142303.4126434-2-abel.vesa@linaro.org>
+ <YvLCwyB9rBWXmfZt@baldur>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YvLCwyB9rBWXmfZt@baldur>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ccu_mp_find_best() already computes a best_rate at the same time as the
-best m and p factors. Return it so the caller does not need to duplicate
-the division.
+On 22-08-09 15:25:39, Bjorn Andersson wrote:
+> On Tue 26 Jul 09:22 CDT 2022, Abel Vesa wrote:
+> 
+> > Collapse gdsc structs definitions into macros to make them
+> > more compact visually.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  drivers/clk/qcom/gcc-sdm845.c | 129 ++++------------------------------
+> >  drivers/clk/qcom/gdsc.h       |  10 +++
+> >  2 files changed, 23 insertions(+), 116 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> > index 58aa3ec9a7fc..8529e9c8c90c 100644
+> > --- a/drivers/clk/qcom/gcc-sdm845.c
+> > +++ b/drivers/clk/qcom/gcc-sdm845.c
+> > @@ -3191,122 +3191,19 @@ static struct clk_branch gcc_lpass_sway_clk = {
+> >  };
+> >  #endif
+> >  
+> > -static struct gdsc pcie_0_gdsc = {
+> > -	.gdscr = 0x6b004,
+> > -	.pd = {
+> > -		.name = "pcie_0_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR,
+> > -};
+> > -
+> > -static struct gdsc pcie_1_gdsc = {
+> > -	.gdscr = 0x8d004,
+> > -	.pd = {
+> > -		.name = "pcie_1_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR,
+> > -};
+> > -
+> > -static struct gdsc ufs_card_gdsc = {
+> > -	.gdscr = 0x75004,
+> > -	.pd = {
+> > -		.name = "ufs_card_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR,
+> > -};
+> > -
+> > -static struct gdsc ufs_phy_gdsc = {
+> > -	.gdscr = 0x77004,
+> > -	.pd = {
+> > -		.name = "ufs_phy_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR,
+> > -};
+> > -
+> > -static struct gdsc usb30_prim_gdsc = {
+> > -	.gdscr = 0xf004,
+> > -	.pd = {
+> > -		.name = "usb30_prim_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR,
+> > -};
+> > -
+> > -static struct gdsc usb30_sec_gdsc = {
+> > -	.gdscr = 0x10004,
+> > -	.pd = {
+> > -		.name = "usb30_sec_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
+> > -	.gdscr = 0x7d030,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+> > -	.gdscr = 0x7d03c,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+> > -	.gdscr = 0x7d034,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+> > -	.gdscr = 0x7d038,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+> > -	.gdscr = 0x7d040,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+> > -	.gdscr = 0x7d048,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > -
+> > -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+> > -	.gdscr = 0x7d044,
+> > -	.pd = {
+> > -		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+> > -	},
+> > -	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = VOTABLE,
+> > -};
+> > +DEFINE_QCOM_CC_GDSC(pcie_0_gdsc, 0x6b004, "pcie_0_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> > +DEFINE_QCOM_CC_GDSC(pcie_1_gdsc, 0x8d004, "pcie_1_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> > +DEFINE_QCOM_CC_GDSC(ufs_card_gdsc, 0x75004, "ufs_card_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> > +DEFINE_QCOM_CC_GDSC(ufs_phy_gdsc, 0x77004, "ufs_phy_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> > +DEFINE_QCOM_CC_GDSC(usb30_prim_gdsc, 0xf004, "usb30_prim_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> > +DEFINE_QCOM_CC_GDSC(usb30_sec_gdsc, 0x10004, "usb30_sec_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc, 0x7d030, "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc, 0x7d03c, "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_tbu1_gdsc, 0x7d034, "hlos1_vote_aggre_noc_mmu_tbu1_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_tbu2_gdsc, 0x7d038, "hlos1_vote_aggre_noc_mmu_tbu2_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc, 0x7d040, "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc, 0x7d048, "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_sf_gdsc, 0x7d044, "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc", PWRSTS_OFF_ON, VOTABLE);
+> 
+> Personally I have a really hard time looking at such a compact chunk of
+> text and hence this is harder for me to spot mistakes and differences
+> in.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
+Understood.
 
- drivers/clk/sunxi-ng/ccu_mp.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> While I like the effort of making things easier to maintain this made me
+> further appreciate the change we've done in the interconnect providers,
+> where we're doing the exact opposite - and remove magical macros.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-index 57cf2d615148..cc94a694cb67 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.c
-+++ b/drivers/clk/sunxi-ng/ccu_mp.c
-@@ -10,9 +10,9 @@
- #include "ccu_gate.h"
- #include "ccu_mp.h"
- 
--static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
--			     unsigned int max_m, unsigned int max_p,
--			     unsigned int *m, unsigned int *p)
-+static unsigned long ccu_mp_find_best(unsigned long parent, unsigned long rate,
-+				      unsigned int max_m, unsigned int max_p,
-+				      unsigned int *m, unsigned int *p)
- {
- 	unsigned long best_rate = 0;
- 	unsigned int best_m = 0, best_p = 0;
-@@ -35,6 +35,8 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
- 
- 	*m = best_m;
- 	*p = best_p;
-+
-+	return best_rate;
- }
- 
- static unsigned long ccu_mp_find_best_with_parent_adj(struct clk_hw *hw,
-@@ -109,8 +111,7 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
- 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
- 
- 	if (!clk_hw_can_set_rate_parent(&cmp->common.hw)) {
--		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
--		rate = *parent_rate / p / m;
-+		rate = ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
- 	} else {
- 		rate = ccu_mp_find_best_with_parent_adj(hw, parent_rate, rate,
- 							max_m, max_p);
--- 
-2.35.1
+Lets ignore this patchset then.
 
+> 
+> Regards,
+> Bjorn
+> 
+> >  
+> >  static struct clk_regmap *gcc_sdm845_clocks[] = {
+> >  	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
+> > diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> > index 5de48c9439b2..c0e616b49dee 100644
+> > --- a/drivers/clk/qcom/gdsc.h
+> > +++ b/drivers/clk/qcom/gdsc.h
+> > @@ -78,6 +78,16 @@ struct gdsc_desc {
+> >  	size_t num;
+> >  };
+> >  
+> > +#define DEFINE_QCOM_CC_GDSC(_name, _gdscr, _pd_name, _pwrsts, _flags) \
+> > +	static struct gdsc _name = {			\
+> > +		.gdscr = _gdscr,		\
+> > +		.pd = {				\
+> > +			.name = _pd_name,	\
+> > +		},				\
+> > +		.pwrsts = _pwrsts,		\
+> > +		.flags = _flags,		\
+> > +	}
+> > +
+> >  #ifdef CONFIG_QCOM_GDSC
+> >  int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
+> >  		  struct regmap *);
+> > -- 
+> > 2.34.3
+> > 
