@@ -2,193 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED6DC25B08
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Aug 2022 11:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE179C00140
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Aug 2022 11:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231828AbiHJLVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Aug 2022 07:21:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52442 "EHLO
+        id S231288AbiHJLb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Aug 2022 07:31:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbiHJLVq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2022 07:21:46 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2EC74CED;
-        Wed, 10 Aug 2022 04:21:44 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id v7so15781366ljj.4;
-        Wed, 10 Aug 2022 04:21:44 -0700 (PDT)
+        with ESMTP id S232068AbiHJLbe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2022 07:31:34 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7439D6DF96;
+        Wed, 10 Aug 2022 04:31:33 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id x19so12538260lfq.7;
+        Wed, 10 Aug 2022 04:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc;
-        bh=MDXsuS7bCLyJovVM/zN8Gc+YTKu8QKa1fCETEAhhdEc=;
-        b=iEfQn8Ph3GPcCFZWReFNg8EC6VPFGukAxX54b92wWMnS8d8CJoCBoiY14N9uxO9KMX
-         u0CLtO8vMByG+7eB9eUQ/2PzhGXDFibh75h4E+gr88WKce1Y2CgF4LAkSsCX4jUyOdnE
-         UeINMuBnfwbUBG77tZQ5JRbzVaHnLWFoGFyzqXSHC8j2ct6tllOdW12jkdlNM5NvQI3b
-         gW5sei7sm+x015PF2IubFBGVDWDFUEGHXovDm0ir3QVMJhxRST+4Er5S/GmEXV6NeVe9
-         cTOxnMWLrhTwl/NiC1ojtif+Cw3RKZeZM7E9GenufC7lvSo8eZeUuL6kdC/p0vAiy8I/
-         /xrw==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=orgHsxCL/eDSeRNUzdbN1mK+oxAKvucrAmf97xEKdZ4=;
+        b=aQBbvfoxFa5ZcvxCLanORYq1fw6LPa6LJS0OX6FJ0JtBpG5jUfth69xuLBOg1Pb36N
+         W/3oXgvSrJxxSowDotXK1W7QR/tQX+wOJ3vc4ZGNP50sdBTohycLImlEEdHbKEBuf6MC
+         JDEqLFaQ55xdrfizREF5egPILUc0JxUeBxHGr1fIVbur0jVNRixK97P/J6FvCi3W0bl/
+         nVGWZFxHEAsOeqCKKqYc0OzbCU9uunyxjcDwiCxvsWOMqVzjq8xc69l946Q6IWAuQHF9
+         xtbIuMg/I1lCvB7wvfHTh1n7CSw6HjBr/3kT7LuX25ZQH0TEdPtlJG17wzbGaE0jSWen
+         f/Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=MDXsuS7bCLyJovVM/zN8Gc+YTKu8QKa1fCETEAhhdEc=;
-        b=iHCr+cuHK0NMlIchCTiVZIjms/VjVnF1f3Z2H31Wl5xo+NG6NMAgZNESHWfKFD6RNT
-         xiOwp30z+9K4mKSqBaKiNKWiVmCZrCLPxAVfWPqThFxxh4rGoQHgV69IpqkusmkWM+7b
-         p+N3yu0xZZ8Rhoa9uwlRUzq1Xs+EiHibCnkSoC1gMGv0g3VecLbk5zvTxmydvrOxijpm
-         JzoM5xjYXluaidOmbs/hzI48ommys7mC5I/s21jvVznccBlKvmu5tT3SpOj/eUH5F+xc
-         R7rCm027CRBCpKD0aVFZUxAYj3BHnagFZMGegfNzJM7I8VdlF5+gBYmT8pvvA8sOuLo+
-         xpnQ==
-X-Gm-Message-State: ACgBeo0h7I4zqlDjeifg5g4DH6VI1qr+hUH9+0D2mRIoVhurWcBZhDA8
-        D30JOUZzphw+K1e+Avu9nQk=
-X-Google-Smtp-Source: AA6agR72Sm3VXMvQ1lwL6i9KB9sJK09jFulLRlSgTvS9dZ4O15l427iKpq7AZ8NyU/Vy/lamLyX/kg==
-X-Received: by 2002:a2e:9b0a:0:b0:25f:dd91:9413 with SMTP id u10-20020a2e9b0a000000b0025fdd919413mr4179368lji.225.1660130502577;
-        Wed, 10 Aug 2022 04:21:42 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=orgHsxCL/eDSeRNUzdbN1mK+oxAKvucrAmf97xEKdZ4=;
+        b=nAkYku9lWJOk0KuKTmL2DIeq/QAXf9AHLU4gLL83+FgVLHfD26OE6gL25kA1NpQULJ
+         ilUQLhyAxvIh1j21BgXostRqF6YGw3IXf3PO/iCcJ7mn5BsSFLRwhLEI4dZakuNNBOfC
+         Ymz/LQ21n8aEc5Mp0Wc8kcvNvchcw3utwbVcLcL5P6RebbP7yPtqCiDqKpd9vX43Esnv
+         fTnIcIhCXjfTLxG9MM3EHA3FBvQLamTatdOCkIJgoN8VQq8EJUD8s7u3yURTpLVUAS11
+         NuD6WZyrCgYnqGB2+Etd1yw1MWgcXvoUQjcX7cJC0Unc2Jafxz55FYKu1hIFMLTmn9CR
+         Yr6w==
+X-Gm-Message-State: ACgBeo0BEIcXALls2yF3ryx48fM0NFYB0A1EXprdx9iEw9q7MqZqj68h
+        CMaBpfDJ+4r+VEzJ+dQOHLCh6M+8xzhwgQ==
+X-Google-Smtp-Source: AA6agR7JBR57kzyt+os6biJsAEIfgSQ8d2KfZwIU6MqbBsmV7bTr8/YkqnI+aQiMYBwj/s8+hOWD6g==
+X-Received: by 2002:a05:6512:32c5:b0:48b:969a:9c24 with SMTP id f5-20020a05651232c500b0048b969a9c24mr6704678lfg.300.1660131091804;
+        Wed, 10 Aug 2022 04:31:31 -0700 (PDT)
 Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id q15-20020a19a40f000000b0048b2cde8c3dsm300168lfc.269.2022.08.10.04.21.41
+        by smtp.gmail.com with ESMTPSA id f18-20020a19ae12000000b0048b998be041sm300359lfc.309.2022.08.10.04.31.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 04:21:41 -0700 (PDT)
-Date:   Wed, 10 Aug 2022 14:21:18 +0300
+        Wed, 10 Aug 2022 04:31:30 -0700 (PDT)
+Date:   Wed, 10 Aug 2022 14:31:16 +0300
 From:   Matti Vaittinen <mazziesaccount@gmail.com>
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Peter Rosin <peda@axentia.se>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-iio@vger.kernel.org
-Subject: [RFC PATCH 0/7] Devm helpers for regulator get and enable
-Message-ID: <cover.1660127865.git.mazziesaccount@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 4/7] clk: cdce925: simplify using
+ devm_regulator_get_enable()
+Message-ID: <7daaf2e66cc72d646e88a93e8cca39e104ef6505.1660127865.git.mazziesaccount@gmail.com>
+References: <cover.1660127865.git.mazziesaccount@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pDdi69woxyL3F9N3"
+        protocol="application/pgp-signature"; boundary="pjh2KveCiReW/EIb"
 Content-Disposition: inline
+In-Reply-To: <cover.1660127865.git.mazziesaccount@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---pDdi69woxyL3F9N3
+--pjh2KveCiReW/EIb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Devm helpers for regulator get and enable
+Simplify the driver using devm_regulator_get_enable() instead of
+open-coding the devm_add_action_or_reset().
 
-First patch in the series is actually just a simple documentation fix
-which could be taken in as it is now (even though the rest of the series
-is a RFC).
+A (minor?) functional change is that we don't print an error in case of a
+deferred probe. Now we also print the error no matter which of the
+involved calls caused the failure.
 
-A few* drivers seem to pattern demonstrated by pseudocode:
-
-- devm_regulator_get()
-- regulator_enable()
-- devm_add_action_or_reset(regulator_disable())
-
-(*) A rough idea what 'a few' means in this context can be get by issuing:
-"git grep -In -A10 devm_regulator_get |grep -B5 -A5 add_action |less"
-and then further checking some of the reported drivers. This is what I did
-when I realized I needed to enable a regulator for accelerometer and
-thought I'd go with devm-action...
-
-Introducing devm helpers for this pattern would remove bunch of code from
-drivers. Typically at least following:
-
-- replace 3 calls (devm_regulator_get[_optional](), regulator_enable(),
-  devm_add_action_or_reset()) with just one
-  (devm_regulator_get_enable[_optional]()).
-- drop disable callback.
-
-I believe this simplifies things by removing some dublicated code.
-
-The other RFC aspect besides the question if this actually is useful, is
-whether the devm_regulator_get_enable[_optional]() should return a pointer
-to the obtained regulator or not. This RFC version does not return the
-pointer for user because any call to regulator_disable() may lead to
-regulator enable count imbalance upon device detach. (Eg, if someone calls
-regulator_disable() and the device is then detached before user has
-re-enabled the regulator). Not returning the pointer to obtained regulator
-to caller is a good hint that the enable/disable should not be manually
-handled when this API is used.
-
-OTOH, not returning the pointer reduces the use-cases by not allowing
-the consumers to perform other regulator actions. For example request the
-voltages. A few drivers which used the "get, enable,
-devm_action_to_disable" did also query the voltages. The suggested form of
-the API does not suit needs of such users. The new API in its current form
-really allows to only cover the very dummy cases where regulator is only
-enabled for a lifetime of the driver. I am unsure if this is really
-beneficial (well, there seems to be bunch of drivers doing just this) - or
-if we should go with a version returning the struct regulator *
-
-Some drivers did also manually disable the regulator (even though they had
-registered the devm-action for disable) for PM functionality. I am unsure
-if such use for suspend is actually safe(?) I didn't check if we can
-guarantee that the driver is not detached after the PM suspend has disabled
-the regulator(?)
-
-This RFC converts only few a drivers to demonstrate benefits. This makes it
-easier to rework the series if people thinks returning the pointer to
-struct regulator should be done. I can't promise I'll convert all drivers
-so, there is still plenty of fish in the sea for people who like to improve
-the code (or count the beans ;]).
-
-Finally - most of the converted drivers have not been tested (other than
-compile-tested) due to lack of HW. All reviews and testing is _highly_
-appreciated (as always!). I have the driver changes in individual patches
-to make reviewing easier. I will squash the driver changes into one patch /
-subsystem when I'll drop the "RFC" from the series.
-
-Patch 1:
-	Fix docmentation (devres API list) for regulator APIs
-Patch 2:
-	The devm helpers.
-Patch 3:
-	Add new devm-helper APIs to docs.
-Patches 4 ... 7:
-	Example drivers.
-
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
+ drivers/clk/clk-cdce925.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-Matti Vaittinen (7):
-  docs: devres: regulator: Add missing devm_* functions to devres.rst
-  regulator: Add devm helpers for get and enable
-  docs: devres: regulator: Add new get_enable functions to devres.rst
-  clk: cdce925: simplify using devm_regulator_get_enable()
-  gpu: drm: meson: simplify using devm_regulator_get_enable_optional()
-  hwmon: lm90: simplify using devm_regulator_get_enable()
-  adc: ad7192: simplify using devm_regulator_get_enable()
-
- .../driver-api/driver-model/devres.rst        |  9 +++
- drivers/clk/clk-cdce925.c                     | 21 ++-----
- drivers/gpu/drm/meson/meson_dw_hdmi.c         | 23 +-------
- drivers/hwmon/lm90.c                          | 21 +------
- drivers/iio/adc/ad7192.c                      | 15 +----
- drivers/regulator/devres.c                    | 59 +++++++++++++++++++
- include/linux/regulator/consumer.h            | 13 ++++
- 7 files changed, 92 insertions(+), 69 deletions(-)
-
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index ef9a2d44e40c..6350682f7e6d 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -603,28 +603,15 @@ of_clk_cdce925_get(struct of_phandle_args *clkspec, v=
+oid *_data)
+ 	return &data->clk[idx].hw;
+ }
+=20
+-static void cdce925_regulator_disable(void *regulator)
+-{
+-	regulator_disable(regulator);
+-}
+-
+ static int cdce925_regulator_enable(struct device *dev, const char *name)
+ {
+-	struct regulator *regulator;
+ 	int err;
+=20
+-	regulator =3D devm_regulator_get(dev, name);
+-	if (IS_ERR(regulator))
+-		return PTR_ERR(regulator);
+-
+-	err =3D regulator_enable(regulator);
+-	if (err) {
+-		dev_err(dev, "Failed to enable %s: %d\n", name, err);
+-		return err;
+-	}
++	err =3D devm_regulator_get_enable(dev, name);
++	if (err)
++		dev_err_probe(dev, err, "Failed to enable %s:\n", name);
+=20
+-	return devm_add_action_or_reset(dev, cdce925_regulator_disable,
+-					regulator);
++	return err;
+ }
+=20
+ /* The CDCE925 uses a funky way to read/write registers. Bulk mode is
 --=20
 2.37.1
 
@@ -205,19 +138,19 @@ Simon says - in Latin please.
 ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
 Thanks to Simon Glass for the translation =3D]=20
 
---pDdi69woxyL3F9N3
+--pjh2KveCiReW/EIb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmLzlJcACgkQeFA3/03a
-ocV2PQgArPtq6fGhnguN4T+treXljaUZmu/KeIDzK/puztafyKwaM8MjOI2N1+u9
-kYlGFs2SNWiHi1k2ten+7jFiAblcg6WUIduMx3fDa+WLpBiY3U5IzAttE6GwWws2
-wwCI+3z57pBMTGJ2QBw4QQqpTR0H9A2oSxN4mlp7ogSsAi4iZkVZKUiFo0Cnu1zb
-nhDs1Z6ARm7XFRy6Bu0rJt8FJSk493fIIrUYasd/0avkheuGRNTur3MpN2IC4Lxt
-2sifYC51mh3VKVcHAV2iNetItGmOKqgDSd/lk73fukoFWOvbdQhGkDrzFZ5NBdgT
-fvMsE5gmqvUTGdsNVLyqHH3omMJopQ==
-=uzmB
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmLzlwQACgkQeFA3/03a
+ocXROAgAmxCDpZZxZ93CGZ6jIwXn4OGmKyfR7a6PjxqD5qL2rGck9VBS1VZPenS7
++C7/Qu9ViKNCG+VU2ftVKQDh/PhHC83+6e7YPJQERS53clNvRZoth/Qntoaer1FA
+T3mWCTJyo/UDvWGixLOCtC4dMUXHys9vHKyTOiHXAGFU/rsvWHu0alSrv7ENm3Wr
+TzJWewPAYrUbHVGBG8/E3rYVTdQB7tAKYtC8h0ZqFwQwi6hrp4I8Vy1Y3TTdfX7K
+HDUFrIGbVEbISD+fLFTlTR8i2BNiUAVGfb+QAZSX6gkLUMGlaxylNKG73ovbvg3X
+Y3/dNRzZrKxRMPaGVYCbBKZUOnJ/qQ==
+=3blC
 -----END PGP SIGNATURE-----
 
---pDdi69woxyL3F9N3--
+--pjh2KveCiReW/EIb--
