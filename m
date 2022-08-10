@@ -2,265 +2,222 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B3FC3F6B0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Aug 2022 07:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED6DC25B08
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Aug 2022 11:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbiHJHpv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Aug 2022 03:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38392 "EHLO
+        id S231828AbiHJLVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Aug 2022 07:21:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231216AbiHJHpu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2022 03:45:50 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C474361B27
-        for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2022 00:45:48 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id p10so16754984wru.8
-        for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2022 00:45:48 -0700 (PDT)
+        with ESMTP id S229680AbiHJLVq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2022 07:21:46 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2EC74CED;
+        Wed, 10 Aug 2022 04:21:44 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id v7so15781366ljj.4;
+        Wed, 10 Aug 2022 04:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=6Uw3kz/8NE9eLSWipW36eeeHUbFLrCfATfO5HX/aFsE=;
-        b=WbkMFHWquUz7qTU+9q0NJ9P6FwGVlfW5SrbnX7wPWfRZxpeSryTVFtn0BhW1tUOjKf
-         WT552D/0+Xtm18djn8Rsz67hJ1+kqsNu4lKiFgqUQxuKy6K4U6Fmlgio3C15pvZVYnOm
-         WZIcYx7s+WLqKTIrd4CMYStGhunJR8ZFbN/3jx8xwjxobzkVNRv1SMB7kAMhBFd/6JgX
-         YBQD9lICB8Y31u87Xs2DyPVKciMuT6H5rL3RoJB8XI7f7CFySR+wwjpFY0hcl7/nd87a
-         ifC5ClDCinIJcYgsaG/E57dHk00jlKaLTq7kedUCFEcG/76qdPrjG4RCaDoIm0GxnAxF
-         g4Wg==
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc;
+        bh=MDXsuS7bCLyJovVM/zN8Gc+YTKu8QKa1fCETEAhhdEc=;
+        b=iEfQn8Ph3GPcCFZWReFNg8EC6VPFGukAxX54b92wWMnS8d8CJoCBoiY14N9uxO9KMX
+         u0CLtO8vMByG+7eB9eUQ/2PzhGXDFibh75h4E+gr88WKce1Y2CgF4LAkSsCX4jUyOdnE
+         UeINMuBnfwbUBG77tZQ5JRbzVaHnLWFoGFyzqXSHC8j2ct6tllOdW12jkdlNM5NvQI3b
+         gW5sei7sm+x015PF2IubFBGVDWDFUEGHXovDm0ir3QVMJhxRST+4Er5S/GmEXV6NeVe9
+         cTOxnMWLrhTwl/NiC1ojtif+Cw3RKZeZM7E9GenufC7lvSo8eZeUuL6kdC/p0vAiy8I/
+         /xrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=6Uw3kz/8NE9eLSWipW36eeeHUbFLrCfATfO5HX/aFsE=;
-        b=sDX0oB12wOSsDrjewzr5cKXx+IYIEFMrAODi/Dc9afDxzZeeHApp3N5ks+ct+5Wk4i
-         xNFs3vcWjHkIzHOyfWJLZmdqV32Qj7PgeUGvVPV4DlsE6UtP09JQIyWnPD4I8dY1ogTC
-         Wh1tJ/1EYE1gXn69QxKf0PnJtwgO7vwxjf+3NdGFKbggTZX4ZTluAj92AGy9M2EPMmvK
-         Cb7+MyLo9LqGnoRhGk34m7hpva1rA0gscS70VI7QdsDTCseORpTDO49y+40qP8khsnQ5
-         k7jDPspkAKRdlQQ2RlYJRgOzdWwpCjrSRoWB0ex/zZuEMWeYsjMRxKDBqxwaNq8Bvi/i
-         B27A==
-X-Gm-Message-State: ACgBeo3A6h8VtFCDCE9MjhbHEtiOwkenuOZyS5SbOpswxDWXovudivsm
-        HwVoiTKCtop8YMgERnYjFaQDeg==
-X-Google-Smtp-Source: AA6agR55Cpy1O8VEdoM8U/q8g1TM0O2Oy7uvLADwG6awex+w3YOrSzCm+V28bsDgSwR0VRBj4TpFlA==
-X-Received: by 2002:a05:6000:786:b0:222:764d:9e9e with SMTP id bu6-20020a056000078600b00222764d9e9emr10722013wrb.503.1660117547202;
-        Wed, 10 Aug 2022 00:45:47 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id q4-20020a1c4304000000b003a5a5069107sm1380853wma.24.2022.08.10.00.45.46
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc;
+        bh=MDXsuS7bCLyJovVM/zN8Gc+YTKu8QKa1fCETEAhhdEc=;
+        b=iHCr+cuHK0NMlIchCTiVZIjms/VjVnF1f3Z2H31Wl5xo+NG6NMAgZNESHWfKFD6RNT
+         xiOwp30z+9K4mKSqBaKiNKWiVmCZrCLPxAVfWPqThFxxh4rGoQHgV69IpqkusmkWM+7b
+         p+N3yu0xZZ8Rhoa9uwlRUzq1Xs+EiHibCnkSoC1gMGv0g3VecLbk5zvTxmydvrOxijpm
+         JzoM5xjYXluaidOmbs/hzI48ommys7mC5I/s21jvVznccBlKvmu5tT3SpOj/eUH5F+xc
+         R7rCm027CRBCpKD0aVFZUxAYj3BHnagFZMGegfNzJM7I8VdlF5+gBYmT8pvvA8sOuLo+
+         xpnQ==
+X-Gm-Message-State: ACgBeo0h7I4zqlDjeifg5g4DH6VI1qr+hUH9+0D2mRIoVhurWcBZhDA8
+        D30JOUZzphw+K1e+Avu9nQk=
+X-Google-Smtp-Source: AA6agR72Sm3VXMvQ1lwL6i9KB9sJK09jFulLRlSgTvS9dZ4O15l427iKpq7AZ8NyU/Vy/lamLyX/kg==
+X-Received: by 2002:a2e:9b0a:0:b0:25f:dd91:9413 with SMTP id u10-20020a2e9b0a000000b0025fdd919413mr4179368lji.225.1660130502577;
+        Wed, 10 Aug 2022 04:21:42 -0700 (PDT)
+Received: from fedora ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q15-20020a19a40f000000b0048b2cde8c3dsm300168lfc.269.2022.08.10.04.21.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 00:45:46 -0700 (PDT)
-Date:   Wed, 10 Aug 2022 10:45:45 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 1/9] clk: qcom: qcc-sdm845: Collapse gdsc structs into
- macros
-Message-ID: <YvNiKRHywar2YbtC@linaro.org>
-References: <20220726142303.4126434-1-abel.vesa@linaro.org>
- <20220726142303.4126434-2-abel.vesa@linaro.org>
- <YvLCwyB9rBWXmfZt@baldur>
+        Wed, 10 Aug 2022 04:21:41 -0700 (PDT)
+Date:   Wed, 10 Aug 2022 14:21:18 +0300
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Peter Rosin <peda@axentia.se>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        linux-iio@vger.kernel.org
+Subject: [RFC PATCH 0/7] Devm helpers for regulator get and enable
+Message-ID: <cover.1660127865.git.mazziesaccount@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pDdi69woxyL3F9N3"
 Content-Disposition: inline
-In-Reply-To: <YvLCwyB9rBWXmfZt@baldur>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-09 15:25:39, Bjorn Andersson wrote:
-> On Tue 26 Jul 09:22 CDT 2022, Abel Vesa wrote:
-> 
-> > Collapse gdsc structs definitions into macros to make them
-> > more compact visually.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >  drivers/clk/qcom/gcc-sdm845.c | 129 ++++------------------------------
-> >  drivers/clk/qcom/gdsc.h       |  10 +++
-> >  2 files changed, 23 insertions(+), 116 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> > index 58aa3ec9a7fc..8529e9c8c90c 100644
-> > --- a/drivers/clk/qcom/gcc-sdm845.c
-> > +++ b/drivers/clk/qcom/gcc-sdm845.c
-> > @@ -3191,122 +3191,19 @@ static struct clk_branch gcc_lpass_sway_clk = {
-> >  };
-> >  #endif
-> >  
-> > -static struct gdsc pcie_0_gdsc = {
-> > -	.gdscr = 0x6b004,
-> > -	.pd = {
-> > -		.name = "pcie_0_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR,
-> > -};
-> > -
-> > -static struct gdsc pcie_1_gdsc = {
-> > -	.gdscr = 0x8d004,
-> > -	.pd = {
-> > -		.name = "pcie_1_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR,
-> > -};
-> > -
-> > -static struct gdsc ufs_card_gdsc = {
-> > -	.gdscr = 0x75004,
-> > -	.pd = {
-> > -		.name = "ufs_card_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR,
-> > -};
-> > -
-> > -static struct gdsc ufs_phy_gdsc = {
-> > -	.gdscr = 0x77004,
-> > -	.pd = {
-> > -		.name = "ufs_phy_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR,
-> > -};
-> > -
-> > -static struct gdsc usb30_prim_gdsc = {
-> > -	.gdscr = 0xf004,
-> > -	.pd = {
-> > -		.name = "usb30_prim_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR,
-> > -};
-> > -
-> > -static struct gdsc usb30_sec_gdsc = {
-> > -	.gdscr = 0x10004,
-> > -	.pd = {
-> > -		.name = "usb30_sec_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
-> > -	.gdscr = 0x7d030,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
-> > -	.gdscr = 0x7d03c,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
-> > -	.gdscr = 0x7d034,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
-> > -	.gdscr = 0x7d038,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
-> > -	.gdscr = 0x7d040,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
-> > -	.gdscr = 0x7d048,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > -
-> > -static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
-> > -	.gdscr = 0x7d044,
-> > -	.pd = {
-> > -		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
-> > -	},
-> > -	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = VOTABLE,
-> > -};
-> > +DEFINE_QCOM_CC_GDSC(pcie_0_gdsc, 0x6b004, "pcie_0_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
-> > +DEFINE_QCOM_CC_GDSC(pcie_1_gdsc, 0x8d004, "pcie_1_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
-> > +DEFINE_QCOM_CC_GDSC(ufs_card_gdsc, 0x75004, "ufs_card_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
-> > +DEFINE_QCOM_CC_GDSC(ufs_phy_gdsc, 0x77004, "ufs_phy_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
-> > +DEFINE_QCOM_CC_GDSC(usb30_prim_gdsc, 0xf004, "usb30_prim_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
-> > +DEFINE_QCOM_CC_GDSC(usb30_sec_gdsc, 0x10004, "usb30_sec_gdsc", PWRSTS_OFF_ON, POLL_CFG_GDSCR);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc, 0x7d030, "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc, 0x7d03c, "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_tbu1_gdsc, 0x7d034, "hlos1_vote_aggre_noc_mmu_tbu1_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_aggre_noc_mmu_tbu2_gdsc, 0x7d038, "hlos1_vote_aggre_noc_mmu_tbu2_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc, 0x7d040, "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc, 0x7d048, "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> > +DEFINE_QCOM_CC_GDSC(hlos1_vote_mmnoc_mmu_tbu_sf_gdsc, 0x7d044, "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc", PWRSTS_OFF_ON, VOTABLE);
-> 
-> Personally I have a really hard time looking at such a compact chunk of
-> text and hence this is harder for me to spot mistakes and differences
-> in.
 
-Understood.
+--pDdi69woxyL3F9N3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> While I like the effort of making things easier to maintain this made me
-> further appreciate the change we've done in the interconnect providers,
-> where we're doing the exact opposite - and remove magical macros.
+Devm helpers for regulator get and enable
 
-Lets ignore this patchset then.
+First patch in the series is actually just a simple documentation fix
+which could be taken in as it is now (even though the rest of the series
+is a RFC).
 
-> 
-> Regards,
-> Bjorn
-> 
-> >  
-> >  static struct clk_regmap *gcc_sdm845_clocks[] = {
-> >  	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
-> > diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> > index 5de48c9439b2..c0e616b49dee 100644
-> > --- a/drivers/clk/qcom/gdsc.h
-> > +++ b/drivers/clk/qcom/gdsc.h
-> > @@ -78,6 +78,16 @@ struct gdsc_desc {
-> >  	size_t num;
-> >  };
-> >  
-> > +#define DEFINE_QCOM_CC_GDSC(_name, _gdscr, _pd_name, _pwrsts, _flags) \
-> > +	static struct gdsc _name = {			\
-> > +		.gdscr = _gdscr,		\
-> > +		.pd = {				\
-> > +			.name = _pd_name,	\
-> > +		},				\
-> > +		.pwrsts = _pwrsts,		\
-> > +		.flags = _flags,		\
-> > +	}
-> > +
-> >  #ifdef CONFIG_QCOM_GDSC
-> >  int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
-> >  		  struct regmap *);
-> > -- 
-> > 2.34.3
-> > 
+A few* drivers seem to pattern demonstrated by pseudocode:
+
+- devm_regulator_get()
+- regulator_enable()
+- devm_add_action_or_reset(regulator_disable())
+
+(*) A rough idea what 'a few' means in this context can be get by issuing:
+"git grep -In -A10 devm_regulator_get |grep -B5 -A5 add_action |less"
+and then further checking some of the reported drivers. This is what I did
+when I realized I needed to enable a regulator for accelerometer and
+thought I'd go with devm-action...
+
+Introducing devm helpers for this pattern would remove bunch of code from
+drivers. Typically at least following:
+
+- replace 3 calls (devm_regulator_get[_optional](), regulator_enable(),
+  devm_add_action_or_reset()) with just one
+  (devm_regulator_get_enable[_optional]()).
+- drop disable callback.
+
+I believe this simplifies things by removing some dublicated code.
+
+The other RFC aspect besides the question if this actually is useful, is
+whether the devm_regulator_get_enable[_optional]() should return a pointer
+to the obtained regulator or not. This RFC version does not return the
+pointer for user because any call to regulator_disable() may lead to
+regulator enable count imbalance upon device detach. (Eg, if someone calls
+regulator_disable() and the device is then detached before user has
+re-enabled the regulator). Not returning the pointer to obtained regulator
+to caller is a good hint that the enable/disable should not be manually
+handled when this API is used.
+
+OTOH, not returning the pointer reduces the use-cases by not allowing
+the consumers to perform other regulator actions. For example request the
+voltages. A few drivers which used the "get, enable,
+devm_action_to_disable" did also query the voltages. The suggested form of
+the API does not suit needs of such users. The new API in its current form
+really allows to only cover the very dummy cases where regulator is only
+enabled for a lifetime of the driver. I am unsure if this is really
+beneficial (well, there seems to be bunch of drivers doing just this) - or
+if we should go with a version returning the struct regulator *
+
+Some drivers did also manually disable the regulator (even though they had
+registered the devm-action for disable) for PM functionality. I am unsure
+if such use for suspend is actually safe(?) I didn't check if we can
+guarantee that the driver is not detached after the PM suspend has disabled
+the regulator(?)
+
+This RFC converts only few a drivers to demonstrate benefits. This makes it
+easier to rework the series if people thinks returning the pointer to
+struct regulator should be done. I can't promise I'll convert all drivers
+so, there is still plenty of fish in the sea for people who like to improve
+the code (or count the beans ;]).
+
+Finally - most of the converted drivers have not been tested (other than
+compile-tested) due to lack of HW. All reviews and testing is _highly_
+appreciated (as always!). I have the driver changes in individual patches
+to make reviewing easier. I will squash the driver changes into one patch /
+subsystem when I'll drop the "RFC" from the series.
+
+Patch 1:
+	Fix docmentation (devres API list) for regulator APIs
+Patch 2:
+	The devm helpers.
+Patch 3:
+	Add new devm-helper APIs to docs.
+Patches 4 ... 7:
+	Example drivers.
+
+---
+
+Matti Vaittinen (7):
+  docs: devres: regulator: Add missing devm_* functions to devres.rst
+  regulator: Add devm helpers for get and enable
+  docs: devres: regulator: Add new get_enable functions to devres.rst
+  clk: cdce925: simplify using devm_regulator_get_enable()
+  gpu: drm: meson: simplify using devm_regulator_get_enable_optional()
+  hwmon: lm90: simplify using devm_regulator_get_enable()
+  adc: ad7192: simplify using devm_regulator_get_enable()
+
+ .../driver-api/driver-model/devres.rst        |  9 +++
+ drivers/clk/clk-cdce925.c                     | 21 ++-----
+ drivers/gpu/drm/meson/meson_dw_hdmi.c         | 23 +-------
+ drivers/hwmon/lm90.c                          | 21 +------
+ drivers/iio/adc/ad7192.c                      | 15 +----
+ drivers/regulator/devres.c                    | 59 +++++++++++++++++++
+ include/linux/regulator/consumer.h            | 13 ++++
+ 7 files changed, 92 insertions(+), 69 deletions(-)
+
+--=20
+2.37.1
+
+
+--=20
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =3D]=20
+
+--pDdi69woxyL3F9N3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmLzlJcACgkQeFA3/03a
+ocV2PQgArPtq6fGhnguN4T+treXljaUZmu/KeIDzK/puztafyKwaM8MjOI2N1+u9
+kYlGFs2SNWiHi1k2ten+7jFiAblcg6WUIduMx3fDa+WLpBiY3U5IzAttE6GwWws2
+wwCI+3z57pBMTGJ2QBw4QQqpTR0H9A2oSxN4mlp7ogSsAi4iZkVZKUiFo0Cnu1zb
+nhDs1Z6ARm7XFRy6Bu0rJt8FJSk493fIIrUYasd/0avkheuGRNTur3MpN2IC4Lxt
+2sifYC51mh3VKVcHAV2iNetItGmOKqgDSd/lk73fukoFWOvbdQhGkDrzFZ5NBdgT
+fvMsE5gmqvUTGdsNVLyqHH3omMJopQ==
+=uzmB
+-----END PGP SIGNATURE-----
+
+--pDdi69woxyL3F9N3--
