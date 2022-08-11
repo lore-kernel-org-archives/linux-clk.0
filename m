@@ -2,167 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2EDC19F2A
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Aug 2022 09:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3D2C19F2A
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Aug 2022 09:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234404AbiHKJIt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Aug 2022 05:08:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50778 "EHLO
+        id S234496AbiHKJJR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Aug 2022 05:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234179AbiHKJIs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Aug 2022 05:08:48 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26F18E9B0
-        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 02:08:46 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id x9so14971616ljj.13
-        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 02:08:46 -0700 (PDT)
+        with ESMTP id S234307AbiHKJJQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Aug 2022 05:09:16 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21208E9A7
+        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 02:09:15 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id j3so11493576ljo.0
+        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 02:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=8aSxfgZmzS7jY0Wm/91weUN86D1g6cOcN/ECGe85/Mw=;
-        b=VJi6eQu2X/Hg0BkM8imHTSLscImoh2e6jRLRcfHyZx8Ws7DKUpfQWbcjDsaYVkxBwZ
-         DEhyAI27+iFIF2Y48nNZJryt+F335Ec2ANB9KJJ3ciqTDJv6vhDfktuGXPQ2piZOjZEP
-         ezsMy3XHN5iSIyDfrY4XjZGyycovioa8mdhHum7VnUvDcdvAOdqJxfUooZlZh7/ZLKbV
-         pk/TBXSfqUya963g/la+KLxWg1ngdoBcFQtC35RHfokFBr+NL3vmXkcHvI4pi8TAKZFN
-         dOw+LqpH/r7bjq5PuiwBS5Ymeyvm9ed98Z0Lv3+GdX/ZA6Qd5B9Z7sZYpZ09Jjm70aKh
-         8QOw==
+        bh=OuNBLM8BAbWtCheZfxDwqu8ugdq6TeyCqLVXqfB8AQU=;
+        b=tRUbUgQ7Z4NEozErrjbYsFQdh3BOQSl1mcSUnYMrjW47LdxtNSXjhsWqZXEfOx68BY
+         ZX/pRtHyTEIsM66BtZYKj9F06QIufj0ZJtheFfth7sujngmdNxQ67mlJiYYW6OQhWG4V
+         GllVC/j/0Hmc/VbLqRC+ULH8iWdR6m3XdanHE1MInU7VCiZlt10ld8/TXsp3ofZ2HXPT
+         Jt4VtmbqpVKZtnZATOMuLLhtxyROJy9z+Ycx8QdA+bd0I+D4EF4g+2gtsFERHnpYWLdG
+         dHBXWtvTaG/cTvHkGBtoLLxb4WAtLr7+3aDd3OA10tm+NvgBkiQQrtfb5LkeXCqA1GjG
+         KAxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=8aSxfgZmzS7jY0Wm/91weUN86D1g6cOcN/ECGe85/Mw=;
-        b=iqZ7uu0Q24pZpWEOme6+4RINvkUboPsgH9SMarCu0XKHQXNNZw/Yk/kqTLATSS6qV5
-         HdbJ9Re6x38hwmp9H7SM37vw/Y7Ku2o/KFoOq5LDuqA6R0OV+gQhqLWiy1gdbnj6cm2V
-         0eMKXMKrQhNGcavR5KOsj3k8kv+xVDoBJxnHPExIiGkI3ROV/wFDJOxGnzeUkRoF6R+1
-         rYTa1sFmrd7Q5RrLY5IkXwHmLiHmgoaJ3ag/EZkWead78MuRkF/90Le0BAKaLjNoqT7j
-         pweanhsS8CuNyBX2BPERQYhYLkewBcLE4iaux/IeUHB76h3ZUL0lf+zXbKEJiPIEluCr
-         YlWw==
-X-Gm-Message-State: ACgBeo2rKTSTMeTifhQufkMgPs3cgQmiEMqD/ggD/GfeKzgaaMxSpcfD
-        5K7PXkN1nW7kcVV+OFLSf9AQTA==
-X-Google-Smtp-Source: AA6agR63X2/DgUWMlPAH/IH8NaEBpjkuL0URYpm8GnHi1XArMqSkvElKF31N5dtQhFvHz3JN7oLraQ==
-X-Received: by 2002:a2e:a593:0:b0:25f:e6ac:c28e with SMTP id m19-20020a2ea593000000b0025fe6acc28emr5496200ljp.485.1660208925348;
-        Thu, 11 Aug 2022 02:08:45 -0700 (PDT)
+        bh=OuNBLM8BAbWtCheZfxDwqu8ugdq6TeyCqLVXqfB8AQU=;
+        b=TRYTlu0Uk5uOcqZPacdJh6SC4IEIsH1Umv+hVsbF20FovG4xW1+Qa4FUM2568nbL8m
+         2NS0J4Y/dfFmrL3vxR22UjKshisr1jRyT4K6Rp8W9I75W1kZMxXM0aTTj4+5NsDBGmdd
+         UBYv10BC8dlQePxl7opIjik9a0eXl6GGpEMD0k0cnKaYAOlJ5JqanvY8YThLt5G8z0Ud
+         CZfuC9D/4l8aQtz1L2KIr0kw0M68iTW3dRcixanawtUyVUDCuxueTWn3x2tTUCl+oR7W
+         p4s4q42TeLhulk44gI1POUzLHT2lljBogRWBkfk7a7ZuhW+ARpNxEzRcgL3CSsyK8jBv
+         FTOA==
+X-Gm-Message-State: ACgBeo3ZxiyUjrBV4sCYe0bdkL8GTRnRkqymSAbSbLf/MlJYCQ7zexY4
+        w1ZrbM8PvPRvknYTZK+JZ9p5Dw==
+X-Google-Smtp-Source: AA6agR7YslF70qu+nSE+gMvlKJgMKIhfnR3xp3n4p+4AlNM0wWjwnr4uY7K9QMoK8NtwKqFjnn/dFQ==
+X-Received: by 2002:a2e:9d91:0:b0:25e:dd34:f5d6 with SMTP id c17-20020a2e9d91000000b0025edd34f5d6mr6679686ljj.501.1660208955427;
+        Thu, 11 Aug 2022 02:09:15 -0700 (PDT)
 Received: from [192.168.1.39] ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id u5-20020ac25185000000b0048b3768d2ecsm634751lfi.174.2022.08.11.02.08.44
+        by smtp.gmail.com with ESMTPSA id v18-20020a2ea612000000b0025e4e2a5bbesm743871ljp.1.2022.08.11.02.09.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Aug 2022 02:08:44 -0700 (PDT)
-Message-ID: <38ef15b3-382c-12b2-0a34-900208ac3638@linaro.org>
-Date:   Thu, 11 Aug 2022 12:08:43 +0300
+        Thu, 11 Aug 2022 02:09:14 -0700 (PDT)
+Message-ID: <080c6442-b45f-242a-6535-1f833fbf6cca@linaro.org>
+Date:   Thu, 11 Aug 2022 12:09:13 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Qualcomm SC8280XP display
- clock bindings
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GPU binding
 Content-Language: en-US
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220811041211.3825786-1-bjorn.andersson@linaro.org>
- <20220811041211.3825786-2-bjorn.andersson@linaro.org>
+References: <20220811042855.3867774-1-bjorn.andersson@linaro.org>
+ <20220811042855.3867774-2-bjorn.andersson@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220811041211.3825786-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20220811042855.3867774-2-bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/08/2022 07:12, Bjorn Andersson wrote:
-> The Qualcomm SC8280XP platform has two display clock controllers, add a
-> binding for these.
+On 11/08/2022 07:28, Bjorn Andersson wrote:
+> Add compatible for the Qualcomm SC8280XP GPU.
 > 
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  .../bindings/clock/qcom,dispcc-sc8280xp.yaml  |  98 +++++++++++++++++
->  .../dt-bindings/clock/qcom,dispcc-sc8280xp.h  | 100 ++++++++++++++++++
->  2 files changed, 198 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
-> new file mode 100644
-> index 000000000000..98e5dfd53f76
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
-> @@ -0,0 +1,98 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sc8280xp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Display Clock & Reset Controller Binding for SC8280XP
-> +
-> +maintainers:
-> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
-> +
-> +description: |
-> +  Qualcomm display clock control module which supports the clocks, resets and
-> +  power domains for the two MDSS instances on SC8280XP.
-> +
-> +  See also:
-> +    include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sc8280x-dispcc0
-> +      - qcom,sc8280x-dispcc1
 
-These are two independent and different devices, right? Driver seems to
-confirm this which would justify using indexes in compatible.
-
-> +
-> +  clocks:
-> +    items:
-> +      - description: AHB interface clock,
-> +      - description: SoC CXO clock
-> +      - description: SoC sleep clock
-> +      - description: DisplayPort 0 link clock
-> +      - description: DisplayPort 0 VCO div clock
-> +      - description: DisplayPort 1 link clock
-> +      - description: DisplayPort 1 VCO div clock
-> +      - description: DisplayPort 2 link clock
-> +      - description: DisplayPort 2 VCO div clock
-> +      - description: DisplayPort 3 link clock
-> +      - description: DisplayPort 3 VCO div clock
-> +      - description: DSI 0 PLL byte clock
-> +      - description: DSI 0 PLL DSI clock
-> +      - description: DSI 1 PLL byte clock
-> +      - description: DSI 1 PLL DSI clock
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    description:
-> +      A phandle and PM domain specifier for the MMCX power domain.
-> +    maxItems: 1
-
-Three lines can be shorter:
-
-items:
- - description: MMCX power domain
-
-With above:
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
