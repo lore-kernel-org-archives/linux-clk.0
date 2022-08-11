@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D469AC25B0C
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Aug 2022 08:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4912AC25B06
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Aug 2022 08:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234711AbiHKIpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Aug 2022 04:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49032 "EHLO
+        id S234691AbiHKIpT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Aug 2022 04:45:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234685AbiHKIou (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Aug 2022 04:44:50 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DDC91089
-        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 01:44:44 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id z22so22056791edd.6
-        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 01:44:44 -0700 (PDT)
+        with ESMTP id S234670AbiHKIoy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Aug 2022 04:44:54 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579D190C74
+        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 01:44:53 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id v10so15127408ljh.9
+        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 01:44:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=5tIyJd7B0eaGhd67Ybtop510tDngvww4odk8IMMRG6s=;
-        b=59PQQYMw0Zm5ulpJrfvpl5YbbZlB3E3YXKz3F0lHJa6V9iyaHOXFllzSGUA/WttF5q
-         cu8gTEqEoMGsfp58/p3FdS3pDNMN5JgoWaO+ZPACoomPjbxXxxY99qb15ry/coipDDlL
-         ysRZoptSSvNz0FpRKYueVI75Be3rKGACAhrouLBKsiAGEH5aCd6t5npSHGot1XHmPZHZ
-         d2ZnbiE8aJodxHkc7bzA6LlFcohOuu5FyCG8nqxXzUPWxvB+FQDzBwM70Kqd/KMH6ywj
-         KPRPEkmjiF513VWcx3dkX3fg0U+V2vtqrNS5uwzka+VdOiDUe2pooDH6oLyJkoFgrROR
-         jdqg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=ynpT2u7FSHsjUUbW/rTosphDOzEZ4ibPFW5PkzVc0cc=;
+        b=7cMsM2ZGmT08GpiDMYW+Ucm2C8Wq1ba3l8M1fQY0wFlhRkgJXU0Y/j92/R3IZNia4L
+         9MO8vS7suGciXw0Xq4jSTvGtIeYDanHitUMUjjEqhuQbz+fdJXXjfLfgEJFbpYbnwnaO
+         Ck7xlqc/ClH4VXfQLmNJ6oE7QMCQ4WfS+XoblvLcj+H27zX4Eb3UWhD2+5PNy7OKcqPX
+         FelnqQ2/n/T6p87fmiv5R7KnWFcZyg7Vj3CXyD5NHA6XPqSQb2VaBPNkNw7FQbU518t/
+         O6w0CwIys1Ek3/Rv9G7gjOLU1xNtPN5SFvn5w17ZfI+mCJJaVv6t0QvxQ9k1mdOWEkFt
+         FLDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=5tIyJd7B0eaGhd67Ybtop510tDngvww4odk8IMMRG6s=;
-        b=6gNScYBEw8NM6ufhsMhjrZJCGEc3O+O4Nqb5kjz3O2gNWDSUDYHL1ZTqRrD994Viy4
-         XIMOyTJTxRvzL5qTtyV5NbLlArYg+PvzCVTK0SuUUqmiQGtrQo5lUrdTg+6YQ6CGjqFL
-         FYt4+JBbTetV8gg7V5FSQpg9SWYm+WLqEZ4Oy7pI7H5At7ftYSK/qyflXDGkWZTvr5/t
-         iR2B6wJhm0bTE5pybLFIgRH4sY0aQOsG3cKXcG1A1xs32dFq/e6+eQVyHo3A0f+l3/Po
-         nI3DSYHlmPnYPkGxJg8yhFJD2/AO0/thNkF41B8RRbGs9Gd4jJbrOWx27RNdHPU5ZUaN
-         tEwQ==
-X-Gm-Message-State: ACgBeo088JSNw9kQytdZ51DRL0klQdNeFew0mLmUdmx9E+bpwz5XeqHe
-        jrMxDC8hoaZuiUQZPljusb5ZTfQ629C2iQ==
-X-Google-Smtp-Source: AA6agR6jeK54Uy/TCm3EvDq24pgOJe+pznfoFX6xcVV9Pdh3UyU3/O14iqVLE5vRIMnGnrlKJY5YqQ==
-X-Received: by 2002:a05:6402:2398:b0:43d:fd2c:b0a2 with SMTP id j24-20020a056402239800b0043dfd2cb0a2mr30114294eda.172.1660207482897;
-        Thu, 11 Aug 2022 01:44:42 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=ynpT2u7FSHsjUUbW/rTosphDOzEZ4ibPFW5PkzVc0cc=;
+        b=3Ys4J7gNV0OEvFCCW3A1qqVxKMEtEd9uhr1bamFVx9ceIeRQpOdJ15Z4b3iz+01eyo
+         DlyYqqV8GMAej5iimfdM9IstwjSjkfCBG1DMedBjzHdx4XIcBO2jUiy8EKcYUXw1RxHZ
+         datCptW+DvhSkSHGvyaWtkAIrrGYti/9c5xRg3+34fV2uwbZXn1vpAB3JAu9D2m1UOcl
+         mL1eC9x6/xKJfCTsGBi26JVZM8MuvOD8JZ1yH3neFZQvQIXf5zbAy+E/sQtq8zYGMCtz
+         YgyQKTd2pJbI/zadIm8NtYnIXgtfb1DuE8IE2KVOSPXpRQijgxy9hv6fN/YJFYw2g7lI
+         AQNQ==
+X-Gm-Message-State: ACgBeo336aONqJYNbPhAOkli6VrOn/5doqZZHy1jNd6jtvZKCJlnjRaf
+        yrU3MpoKp3tlg7NUSNhiueFrcnivp7oxxA==
+X-Google-Smtp-Source: AA6agR41NqYZDGykDDjqTUYpGVxwq4m0Fa6wrajT2ypGNG2Kpp29w64LKpS46XhbgoSwniJNqNZOlQ==
+X-Received: by 2002:a17:906:8445:b0:730:ba5a:ef59 with SMTP id e5-20020a170906844500b00730ba5aef59mr24540364ejy.182.1660207480710;
+        Thu, 11 Aug 2022 01:44:40 -0700 (PDT)
 Received: from blmsp.fritz.box ([2001:4090:a243:8036:200c:a862:4253:884])
-        by smtp.gmail.com with ESMTPSA id d15-20020aa7d5cf000000b0043d6ece495asm8799314eds.55.2022.08.11.01.44.41
+        by smtp.gmail.com with ESMTPSA id d15-20020aa7d5cf000000b0043d6ece495asm8799314eds.55.2022.08.11.01.44.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Aug 2022 01:44:42 -0700 (PDT)
+        Thu, 11 Aug 2022 01:44:40 -0700 (PDT)
 From:   Markus Schneider-Pargmann <msp@baylibre.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -60,97 +60,66 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: [PATCH v3 2/4] clk: mediatek: Provide mtk_devm_alloc_clk_data
-Date:   Thu, 11 Aug 2022 10:44:31 +0200
-Message-Id: <20220811084433.2598575-3-msp@baylibre.com>
+Subject: [PATCH v3 0/4] clk: mediatek: Add mt8365 support
+Date:   Thu, 11 Aug 2022 10:44:29 +0200
+Message-Id: <20220811084433.2598575-1-msp@baylibre.com>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220811084433.2598575-1-msp@baylibre.com>
-References: <20220811084433.2598575-1-msp@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Provide a helper that replaces the kzalloc with devm_kzalloc so error
-handling gets easier.
+Hi,
 
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
----
+This series adds a clock driver for the mt8365 SoC. I took over the series from
+Fabien who posted v1 and v2.
 
-Notes:
-    Changes in v3:
-    - New patch
+Thanks you Angelo for the feedback on v2. I think I fixed everything you
+mentioned.
 
- drivers/clk/mediatek/clk-mtk.c | 33 ++++++++++++++++++++++++++++-----
- drivers/clk/mediatek/clk-mtk.h |  2 ++
- 2 files changed, 30 insertions(+), 5 deletions(-)
+Changes are listed in the individual patches.
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index b9188000ab3c..a317e69cf298 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -18,19 +18,42 @@
- #include "clk-mtk.h"
- #include "clk-gate.h"
- 
--struct clk_hw_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
-+static void mtk_init_clk_data(struct clk_hw_onecell_data *clk_data,
-+			      unsigned int clk_num)
- {
- 	int i;
-+
-+	clk_data->num = clk_num;
-+
-+	for (i = 0; i < clk_num; i++)
-+		clk_data->hws[i] = ERR_PTR(-ENOENT);
-+}
-+
-+struct clk_hw_onecell_data *mtk_devm_alloc_clk_data(struct device *dev,
-+						    unsigned int clk_num)
-+{
- 	struct clk_hw_onecell_data *clk_data;
- 
--	clk_data = kzalloc(struct_size(clk_data, hws, clk_num), GFP_KERNEL);
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, clk_num),
-+				GFP_KERNEL);
- 	if (!clk_data)
- 		return NULL;
- 
--	clk_data->num = clk_num;
-+	mtk_init_clk_data(clk_data, clk_num);
- 
--	for (i = 0; i < clk_num; i++)
--		clk_data->hws[i] = ERR_PTR(-ENOENT);
-+	return clk_data;
-+}
-+EXPORT_SYMBOL_GPL(mtk_devm_alloc_clk_data);
-+
-+struct clk_hw_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
-+{
-+	struct clk_hw_onecell_data *clk_data;
-+
-+	clk_data = kzalloc(struct_size(clk_data, hws, clk_num), GFP_KERNEL);
-+	if (!clk_data)
-+		return NULL;
-+
-+	mtk_init_clk_data(clk_data, clk_num);
- 
- 	return clk_data;
- }
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index adb1304d35d4..4390058d172c 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -182,6 +182,8 @@ void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds, int num,
- 				 struct clk_hw_onecell_data *clk_data);
- 
- struct clk_hw_onecell_data *mtk_alloc_clk_data(unsigned int clk_num);
-+struct clk_hw_onecell_data *mtk_devm_alloc_clk_data(struct device *dev,
-+						    unsigned int clk_num);
- void mtk_free_clk_data(struct clk_hw_onecell_data *clk_data);
- 
- struct clk_hw *mtk_clk_register_ref2usb_tx(const char *name,
+Best,
+Markus
+
+v2 - https://lore.kernel.org/linux-mediatek/20220530214434.1012889-1-fparent@baylibre.com/
+
+Fabien Parent (2):
+  dt-bindings: clock: mediatek: add bindings for MT8365 SoC
+  clk: mediatek: add driver for MT8365 SoC
+
+Markus Schneider-Pargmann (2):
+  clk: mediatek: Provide mtk_devm_alloc_clk_data
+  clk: mediatek: Export required common code symbols
+
+ .../bindings/clock/mediatek,mt8365-clock.yaml |   42 +
+ .../clock/mediatek,mt8365-sys-clock.yaml      |   47 +
+ drivers/clk/mediatek/Kconfig                  |   50 +
+ drivers/clk/mediatek/Makefile                 |    7 +
+ drivers/clk/mediatek/clk-gate.c               |    1 +
+ drivers/clk/mediatek/clk-mt8365-apu.c         |   55 +
+ drivers/clk/mediatek/clk-mt8365-cam.c         |   57 +
+ drivers/clk/mediatek/clk-mt8365-mfg.c         |   63 +
+ drivers/clk/mediatek/clk-mt8365-mm.c          |  112 ++
+ drivers/clk/mediatek/clk-mt8365-vdec.c        |   63 +
+ drivers/clk/mediatek/clk-mt8365-venc.c        |   52 +
+ drivers/clk/mediatek/clk-mt8365.c             | 1155 +++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                |   37 +-
+ drivers/clk/mediatek/clk-mtk.h                |    2 +
+ .../dt-bindings/clock/mediatek,mt8365-clk.h   |  373 ++++++
+ 15 files changed, 2111 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8365-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8365-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8365-apu.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8365-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8365-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8365-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8365-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8365-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8365.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt8365-clk.h
+
 -- 
 2.36.1
 
