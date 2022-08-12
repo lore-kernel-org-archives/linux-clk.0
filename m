@@ -2,159 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38887C19F2A
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Aug 2022 17:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39368C00140
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 07:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236185AbiHKRMn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Aug 2022 13:12:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
+        id S237180AbiHLHfb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Aug 2022 03:35:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236049AbiHKRM1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Aug 2022 13:12:27 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B83181A808
-        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 09:51:57 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id z16so21923747wrh.12
-        for <linux-clk@vger.kernel.org>; Thu, 11 Aug 2022 09:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=SFxEksE2XS5sPTWpIrVAk+v9LrXMBOEgsU+KG0qKIyY=;
-        b=r0hD3Q6bOJgFNfGXc3f+wbdJdOsQNQJlK9T0Cbk8mbgtdC5YXUCGvy6tpSLPbcMiLz
-         fwZlk8AQYiz97mRvTUml3bkYERf9/oP013iDIeM7Du4sA3DDc5u3AhY0j74JqVoYEVDd
-         8p9w67uRINhI4mXAoIq4tDLjVQ7/aWHGAKwcl1Y0iVWrtNOL63L+BEPimO0S2N5n3CI4
-         peWsQqz7JJ81xmF5eO08enfunCCDviG23hDLwuUyzfzxRqCYj8l+kVOcjIyJ2fE2OffR
-         xwjU0QFI0y2asrbmMTD1S3dP/t/vwxYkjizsT5O8IetYrFYkQEwGi8eJKVtMwzB8QCSc
-         7KkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=SFxEksE2XS5sPTWpIrVAk+v9LrXMBOEgsU+KG0qKIyY=;
-        b=2U8Gpt/UOz+IHR0YRny7WJo/8k7NtJTER3OUvuD5OKCSsTooqXwP/ehDyJZIroqcVs
-         8XdtzndKvgak6cLoqypAJToK6U1AVdqFpsKPVZI7H3FqoDUJJ5yMnm5XLdwPEQoG+vh/
-         z9wP8Dw6OH9BE0WA+JMa9DPduRfD/HeeU2xBeCr50/ip4adJzAlw79eFdYajvIkO6bMI
-         9lWdKduHLWg+wU2Q7SHPUHm6Kx4xSW9Ugl2UMrweX5FdwHpozylQtIoBd83jZYx2vZNG
-         A3oFlZ94iBtEU87x8DFO5zUKXWHl46QDB+j12bQtgs1awXrQe5sCsgusksd9dKZe8M28
-         rZgw==
-X-Gm-Message-State: ACgBeo3tFTMTTw1vCOcxdGB+XtnSiOoJTjdnxbNi7msLIwd3wOnp+s1D
-        VetrabSgwVZHf3/4qv5xDlTQyg==
-X-Google-Smtp-Source: AA6agR55jytdesfttuX9FiyyIrdDTFOmkAWH8Dtj8DUkvdDVnF1nrYOD3+J2/85m0xDOkmzklvFT6w==
-X-Received: by 2002:a5d:48c8:0:b0:21e:5134:c78c with SMTP id p8-20020a5d48c8000000b0021e5134c78cmr20253728wrs.233.1660236716254;
-        Thu, 11 Aug 2022 09:51:56 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id l21-20020a1ced15000000b0039747cf8354sm6383509wmh.39.2022.08.11.09.51.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Aug 2022 09:51:55 -0700 (PDT)
-Date:   Thu, 11 Aug 2022 19:51:54 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     Peng Fan <peng.fan@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
-Message-ID: <YvUzqojzlc3HqXGo@linaro.org>
-References: <YrnOTaLS2r7QBMNx@linaro.org>
- <66f689d9-a691-8bf6-62a2-48fac6eb3938@denx.de>
- <YrqxZFvKen7QybA9@linaro.org>
- <8d3fcbd9-2fd0-bf90-afa0-a21a79c81dbb@denx.de>
- <DU0PR04MB9417D9CE71ED2A72C5515D91889F9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <e54590c4-7e94-0b97-9415-c970a170c6e1@denx.de>
- <YvUQMpfxjH+szgpx@linaro.org>
- <0255ea59-fb70-4dc6-6477-5531981366e1@denx.de>
- <YvUaKPkv3jWFVeAL@linaro.org>
- <9e56dc70-e489-7288-784c-289da9325ed1@denx.de>
+        with ESMTP id S231848AbiHLHfa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 03:35:30 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB72C1ADA6;
+        Fri, 12 Aug 2022 00:35:27 -0700 (PDT)
+Received: from mail-ed1-f44.google.com ([209.85.208.44]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MZk5x-1nqM8n0VCJ-00WoSR; Fri, 12 Aug 2022 09:35:26 +0200
+Received: by mail-ed1-f44.google.com with SMTP id s11so294349edd.13;
+        Fri, 12 Aug 2022 00:35:26 -0700 (PDT)
+X-Gm-Message-State: ACgBeo0bVORcpUdPkNi38i/1V0ULSx/xaKzagu/Kryfme4MHVWBnte1t
+        Ddd8T+3rh+Qt35WcOb361JzODZmUpablBllbV0I=
+X-Google-Smtp-Source: AA6agR7d73K1JI+2j3beJFux8c8Wf4kaJC0XjVT9fnbjKPpCy0Fq1z0rMFQPm9SjjvRe8XGdGR1auu7RdSUkFtG8HTA=
+X-Received: by 2002:a05:6402:3693:b0:43d:1a40:21fd with SMTP id
+ ej19-20020a056402369300b0043d1a4021fdmr2423687edb.206.1660289725735; Fri, 12
+ Aug 2022 00:35:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e56dc70-e489-7288-784c-289da9325ed1@denx.de>
+References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+ <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+ <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+ <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
+ <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
+ <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
+ <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
+ <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+ <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
+ <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
+ <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
+ <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
+ <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
+ <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
+ <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
+ <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
+ <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
+ <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com>
+ <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
+ <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
+ <CAGm1_ksF1UPpdeiTnADiQK8MFbvP8-eDhc=yaCL75EsE_pG=-g@mail.gmail.com>
+ <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
+ <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
+ <CAGm1_kswMZkoV9_DnB71ugVTF_rh5SV2NazkHROwXiFqhxTWYA@mail.gmail.com>
+ <CAK8P3a0Qdav2JaF8yLydxr9amQp30gnY67CVx+ubowUHeG1VeA@mail.gmail.com>
+ <CAMj1kXEL48=w08A2t7522y1visAUcnkkq4LA6ERRP_FbCbEgiw@mail.gmail.com>
+ <CAMj1kXFmFfQ1oZ-CUcwe+ojSkk+9KBH1azhGrEJ4=-pZgMXX-Q@mail.gmail.com>
+ <CAGm1_ku-tygQJrgvHnvJd0xzb6Vw3t_qdz_VKHJx4YWSxCEryA@mail.gmail.com>
+ <CAMj1kXHUoDQ0xZ4yBx9uT6D9=6xfOsJoWLoOKho_-=Z9uYS30w@mail.gmail.com>
+ <CAGm1_ks8g3RNwOkC8C_B2eYz56cEA7L-6CRdmqmNwSvAg-JP_g@mail.gmail.com>
+ <CAMj1kXH+WR03MX94rd1p7Yz60mfrkOvOx=NYoZ9FCSnqMP4nTw@mail.gmail.com>
+ <CAGm1_kvZ_6tPgfrTc3pH+6TedoU+mvuEXb+7aEp5mXfx516fmA@mail.gmail.com>
+ <CAMj1kXEfKLYYxt9imEO155oxWTzXtWPpF8txGZ-xCs_6vez-WA@mail.gmail.com>
+ <CAGm1_kvJpoDk=G3xYKT5UD5QnjRGr9Npft-8OCgtB9+qCjRtqQ@mail.gmail.com>
+ <CAGm1_kvrivJLsFJaZtr6ojryDZFu3Xmpum8FURoFT9vMr54LUA@mail.gmail.com>
+ <CAK8P3a2113EnZw9BNjCYYmKuNqEk4CtZCC0ydBNNQXetvzTSEg@mail.gmail.com>
+ <CAGm1_kuUVKAxcxENnvsq5AGzeXAeXP6yLmjt1MQSpfjdcvZjng@mail.gmail.com>
+ <CAK8P3a1VeP6YMYV6hh13K1Q3epuO5wRUmTByY7YVVT86J1giqg@mail.gmail.com>
+ <CAMj1kXEzK2eEXLHP2OH6APpw+yC66XQafFWs6kMni1i+bDC4uA@mail.gmail.com> <CAGm1_kvutEPNXSVLD6PJ+ND8urrTksKHtELwCLd7sboBUyoz+w@mail.gmail.com>
+In-Reply-To: <CAGm1_kvutEPNXSVLD6PJ+ND8urrTksKHtELwCLd7sboBUyoz+w@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 12 Aug 2022 09:35:09 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0H4kA0atdyDc_Tr95uZPc1nbPxx3CTQ8o35J1YjYW14g@mail.gmail.com>
+Message-ID: <CAK8P3a0H4kA0atdyDc_Tr95uZPc1nbPxx3CTQ8o35J1YjYW14g@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Yegor Yefremov <yegorslists@googlemail.com>
+Cc:     Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:yG7FIwRbY+Xt91aAA4Yefo/FMrjYsoC4BoLjNhKugx3LHQQgcJd
+ JAndxn0bFs+zCy+PLyANhPQVYKXu6A+DL736gsw6R2yy02c8mO1uICTjs/SmsF83sU9Nw3U
+ eAgkfiTiU6j5oq+sQP7aEatSotXiDgyFV4tDnS3SPHvcGYtUhWOzCi0dEYFNoO838OUi35d
+ QXlnd9Jz75laebKGLDsXg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WvaY+IWhHpg=:Yyi+2YnvbvSOgU7dr98dLf
+ 6OQ6PyWjYij5xoIzQiw9eI/xyax6aJG+kDUitIlNlOO4K0mj4ysAfrZuuo66fXv3pENefCR7R
+ dougE6NfTZ7Iw86klJmHa57v3DGzGICCenhgAxR3TgZS7U5CV6YsMg0XpMyD2uVl8RFJqFhH6
+ J0qnXIBxIPjJv72cojmsRQbGzmMD0+WEkhYKekyFOUXyJOyni4egBScYu2UloTJC5C0OdKZEV
+ sgncDs5khDxDiiDe5beCRY02T1VyFVoQ8hirQ6tHUruzSaFTJlEzt6by0IpcMTqn6mYL0dJz6
+ zYQekB+iX36vqMibuMN0u1azpdsngmPJDfUkwb0zVgKOAyzaBAr1MHkerCadg5w+vmxBdZ2l7
+ twCYdVLDS1yWVSUbA0CdpyuVf/lnyg0XoJXsQWKBw5pFkshEpomfdlzu9eqIGB7LHG3vrfp0F
+ ql2/7/AeEt0WPvDzwdqv2/j7YnFQMLX6tgxitSNtd5LVS0CwyJ2XfSetDCocZfMpDCOpM5gkV
+ G+5NEtugSXaxsqUwHbUOIb8lCO3p9PH9WrNQ/KKLdSH1pCGN4MHqCMmN5XJoVjRvh3E7ixM/R
+ k6pxXfr+5YqWFm3LF5j9W3aWToxh0t5CQgRB3ed6TxV1cKUojNqWolOHpCTDTp1OuU0BvzbQw
+ k7Tm9/07/+3ZstWqbU8/Y3dq58ufIj1cvysngS/KSHDsE42lC4T64kPO8v9Xn1OL7fUlzp9Hj
+ N8XZ8O5deb5rJD06IHdzaNrvhVZdo+wdc0zr5Q==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-11 18:38:49, Marek Vasut wrote:
-> On 8/11/22 17:03, Abel Vesa wrote:
-> > On 22-08-11 16:30:20, Marek Vasut wrote:
-> > > On 8/11/22 16:20, Abel Vesa wrote:
-> > > > On 22-08-04 11:31:33, Marek Vasut wrote:
-> > > > > On 8/4/22 11:13, Peng Fan wrote:
-> > > > > > > Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
-> > > > > > > 
-> > > > > > > On 6/28/22 09:44, Abel Vesa wrote:
-> > > > > > > > On 22-06-27 18:23:33, Marek Vasut wrote:
-> > > > > > > > > On 6/27/22 17:35, Abel Vesa wrote:
-> > > > > > > > > > On 22-06-25 03:32:32, Marek Vasut wrote:
-> > > > > > > > > > > Unlike the other block control IPs in i.MX8M, the audiomix is
-> > > > > > > > > > > mostly a series of clock gates and muxes. Model it as a large
-> > > > > > > > > > > static table of gates and muxes with one exception, which is the
-> > > > > > > > > > > PLL14xx . The PLL14xx SAI PLL has to be registered separately.
-> > > > > > > > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > Again, there is a chance that the blk-ctrl driver might disable the
-> > > > > > > > > > PD from under this.
-> > > > > > > > > 
-> > > > > > > > > Can you elaborate a bit more on this ? How/why do you think so ?
-> > > > > > > > 
-> > > > > > > > At some point, the PDs from the Audiomix IP block will be added to the
-> > > > > > > > drivers/soc/imx/imx8mp-blk-ctrl.c. Then, you'll have 2 drivers with
-> > > > > > > > the same address range and the imx8mp-blk-ctrl also has runtime PM
-> > > > > > > enabled.
-> > > > > > > 
-> > > > > > > Why would the PDs be added into the block control driver?
-> > > > > > > 
-> > > > > > > The audiomix is purely a clock mux driver, not really a block control driver
-> > > > > > > providing PDs of its own.
-> > > > > > 
-> > > > > > I recalled that with with blk-ctrl working as clock provider, there is dead lock
-> > > > > > issue, if the blk-ctrl node has a power-domain entry. Not very sure.
-> > > > > 
-> > > > > How can I verify that ? Lockdep ?
-> > > > > 
-> > > > > I run this series for months and haven't seen a lock up or splat.
-> > > > 
-> > > > Audiomix (and every mix actually) has a PD. Once you add the PD, you'll
-> > > > end up with an ABBA deadlock between genpd lock and clock prepare lock.
-> > > 
-> > > Unlike the other mix drivers, this is a pure clock driver, not a power
-> > > domain driver. The PD is already available to this clock driver, see:
-> > > [PATCH v3 5/6] arm64: dts: imx8mp: Add SAI, SDMA, AudioMIX
-> > 
-> > When you will enable the runtime PM for this driver, the deadlock is
-> > going to happen and it will be in some scenario like:
-> >      clk_disable_unused_subtree
-> >        -> clk_prepare (takes prepare lock) (for a clock from your driver)
-> > 	-> runtime pm (takes genpd lock)
-> > 	  -> clk_prepare (tries to take prepare lock again) (for the clock of the PD)
-> 
-> Since you seem to have a test case, can you share the test case, verbatim,
-> so I can reproduce it locally ?
+On Tue, Jun 7, 2022 at 10:55 AM Yegor Yefremov
+<yegorslists@googlemail.com> wrote:
+> On Sun, Jun 5, 2022 at 4:59 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+> > On Fri, 3 Jun 2022 at 22:47, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Fri, Jun 3, 2022 at 9:11 PM Yegor Yefremov <yegorslists@googlemail.com> wrote:
+> > > >
+> > > > With compiled-in drivers the system doesn't stall. All other tests and
+> > > > related outputs will come next week.
+> > >
+> > > Ah, nice!
+> > >
+> > > It's probably a reasonable assumption that the smp-patched get_current()
+> > > is (at least sometimes) broken in modules but working in the kernel itself.
+> > > I suppose that means in the worst case we can hot-fix the issue by
+> > > having an 'extern' version of get_current() for the case of
+> > > armv6+smp+module ;-)
+> > >
+> >
+> > I've coded something up along those lines, and pushed it to my
+> > am335x-stall-test branch.
+> >
+> > > Maybe start with the ".long 0xe7f001f2" hack I suggested in my last
+> > > mail. If that gives you an oops for the module case, then we know
+> > > that the patching doesn't work at all and you don't have to try anything
+> > > else, otherwise it's more likely that an incorrect instruction sequence
+> > > is patched in.
+> > >
+> >
+> > Yeah, I'd be really surprised if the patching misses some occurrences,
+> > so I have no clue what is going on here.
+> >
+> > Yegor, can you please try my branch with the original config (i.e.,
+> > slcan and ftdio as modules)
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=am335x-stall-test
+>
+> @Arnd: I have applied your patch with this change:
+>
+> asm("0: .long 0xe7f001f2                        \n\t" // BUG() trap
+>
+> But it revealed nothing new:
+>
+> [   50.754130] rcu: INFO: rcu_sched self-detected stall on CPU
+>
+> @Ard: I have tried your branch
+> (21b6671c82d4df52ea0c7837705331acb375c5c8). The system still stalls.
 
-I do not have a test case, but we do have a prior experience with this
-happening.
+Getting back to this old thread, as we never found out what is
+actually going on.
 
-> 
-> I seem to be asking for that repeatedly and I am not getting any clear
-> answer.
+It seems we are still stuck trying to figure out why a kernel with ARMv6
+support and SMP patching is broken, or if the same bug might also affect
+other configurations without ARMv6 support. This is of course very
+unfortunate, but unless someone has an idea for how to debug the problem
+further, I suppose we should at least prevent that broken configuration and
+disallow enabling CONFIG_SMP in combination with ARMv6 (pre-ARMv6K)
+CPUs, to keep others from running into the same problem.
 
-I do not have a board to test on anymore.
+Any other suggestions?
 
-But anyway, lets apply it and if there is a problem, we can figure it
-out later.
-
-> 
-> > > Can you please elaborate on the deadlock problem ?
-> > > Because really, I just don't see it.
-> > > 
-> > > Were you able to reproduce the deadlock with this driver ?
-> 
-> [...]
+        Arnd
