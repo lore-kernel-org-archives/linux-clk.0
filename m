@@ -2,160 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D71B8C00140
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 10:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A912C2BB47
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 15:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238137AbiHLKLv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Aug 2022 06:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34008 "EHLO
+        id S238854AbiHLPOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Aug 2022 11:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238009AbiHLKLW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 06:11:22 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A08BAB1AD;
-        Fri, 12 Aug 2022 03:11:21 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id u3so701251lfk.8;
-        Fri, 12 Aug 2022 03:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=aLFMMy8sY7JakSoVwJi7F7tkYJbV0p0vrNiVSXwI33Q=;
-        b=g3fQSUdZRhNr/Lh1HQZu8MtvXU5V43uZ3QtsGL/7TNjEpRexPInHyQ/FTUVcyYirYK
-         PjZspZUtTwlNNIeoRZzMQry0I4PcRmA4YSqtL5zWHuAejyExLQiBSGJ0ddkoOOKlT8wQ
-         1x0Q/8cEiH6ZgrLMaE2A9Ne/Zn82Kj+a2UHJoxHLCvVzCSlHHSoPtMbGbw/S+bB1Di+R
-         M3XqxOWErbXyqfzUQ8YaqzAMzM+Ku6dgrnMcHKN9BvWBmbY2wN1LjoRglG3nWers6eMs
-         qYoy24HbrClTD2pX2ni9qbfSV9TfbGYaHDJX+YkqWufG5u/3TA2W2f2RgnMJle4wxPCJ
-         6i/w==
+        with ESMTP id S238913AbiHLPOF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 11:14:05 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A19A722F;
+        Fri, 12 Aug 2022 08:14:05 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id l24so1019977ion.13;
+        Fri, 12 Aug 2022 08:14:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=aLFMMy8sY7JakSoVwJi7F7tkYJbV0p0vrNiVSXwI33Q=;
-        b=wsuUwTpYBsfV3+KdwLN4oSI7DRxFrUqj7iqijZJeJhMBDpKgJKlD3L9VeOjyosX9a4
-         c/B6USBGcDFQJoGLKJvl4pDZ61QxD8ILPNzrGYFM5Dsb6c7lqSFzHFG6UNCk6qBBcsv5
-         sVQ+/YpwVO+UjQV8dWSayJX36s67mbmEoyY0L6Yt/jwBITs3AgCHMufSSJaK/Hb8tR/W
-         GUc8bqFqQtPyI+PZfCk+VE1gNox1jLAEHVfNS2FdwOBkBXqlNp3oZpVfLkOaa3EaPidb
-         GEHr6tArjGf+p121ub3Esum9ukA6ELNZKgU1aaIN/bKJRZPsXliq0mJYUkmbYDbEs5KW
-         3sVA==
-X-Gm-Message-State: ACgBeo1Um2tW1O7fVdIw33kNYUPx2PjIrdT611ad1cxoukHDtNiYhWFU
-        Y/rrQrOrqKFHI1SeTfsaOvsXb7DM9imriA==
-X-Google-Smtp-Source: AA6agR7oahz66TXK+4xNXwJ7WBweepHiLx1X956pR6Ll0CKUFsU/T6iafnKR0xdF0fNekUNxKpZZ6A==
-X-Received: by 2002:a05:6512:12c5:b0:48c:df54:a41a with SMTP id p5-20020a05651212c500b0048cdf54a41amr987403lfg.464.1660299079802;
-        Fri, 12 Aug 2022 03:11:19 -0700 (PDT)
-Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id v4-20020a05651203a400b0048b17ecee71sm154675lfp.302.2022.08.12.03.11.18
+        h=message-id:date:subject:references:in-reply-to:cc:to:from
+         :x-gm-message-state:from:to:cc;
+        bh=ONt5nx2+29vl7Qr6xNunvQr9OJIHCb4OXvsiVQGITMk=;
+        b=377bRkpo961e/4QBLuAtI1vN2rDsCsv9fvRrPb+yxmL8q8DTxK4rKPQvLnm7bBj7pT
+         J/C3hprJLBlqzm4eNJwyAUATw6lSyHG9MNmRcWk6TIeCjnf6O6BPJ+MCjIyvqN4JKjds
+         vCFTH6JqH5IgTi6UAS0h3oqIUKzp8bn11NX4/l5gMKj2gIN83FJhEuaWdv5bdVuQ4SID
+         tXGGLi/7fdegGV8nfE51cDUgzWV8heeEX+ho8r/elPrMkPGlyRpMqBnkJ7NET7G5WrRG
+         yIe3xjha0pnq1j7wHeU+yz/f4RgGeg9M9tARmUVyrPlJuHWeKcUG+LpmcZt4+Wz4vBcq
+         5Eag==
+X-Gm-Message-State: ACgBeo1lrEeQquY9EDSre/VFRkVhKZl8uEKFSo0/MjgD/GPyPnKsa1ap
+        q7W7Zm4MNXurxcmhxMcqMg==
+X-Google-Smtp-Source: AA6agR6/k7i13MbTw9Ucz8u/ZYHR2+EJuvxKe8322+8bMQWkeANhkN3kZnqAKLFsDE7qtOs+P0Gi/g==
+X-Received: by 2002:a6b:690c:0:b0:681:c99a:c197 with SMTP id e12-20020a6b690c000000b00681c99ac197mr1837877ioc.92.1660317244503;
+        Fri, 12 Aug 2022 08:14:04 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id e20-20020a056638021400b00342919722e7sm1051849jaq.174.2022.08.12.08.14.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Aug 2022 03:11:19 -0700 (PDT)
-Date:   Fri, 12 Aug 2022 13:11:16 +0300
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-To:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/7] clk: cdce925: simplify using
- devm_regulator_get_enable()
-Message-ID: <18255e2d364e19d4a4ba6c6329892a7a77c92ecd.1660292316.git.mazziesaccount@gmail.com>
-References: <cover.1660292316.git.mazziesaccount@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7YgUNn3cJXMVqVHU"
-Content-Disposition: inline
-In-Reply-To: <cover.1660292316.git.mazziesaccount@gmail.com>
+        Fri, 12 Aug 2022 08:14:04 -0700 (PDT)
+Received: (nullmailer pid 168976 invoked by uid 1000);
+        Fri, 12 Aug 2022 15:13:53 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>
+In-Reply-To: <20220811041211.3825786-2-bjorn.andersson@linaro.org>
+References: <20220811041211.3825786-1-bjorn.andersson@linaro.org> <20220811041211.3825786-2-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Qualcomm SC8280XP display clock bindings
+Date:   Fri, 12 Aug 2022 09:13:53 -0600
+Message-Id: <1660317233.422992.168975.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 10 Aug 2022 21:12:10 -0700, Bjorn Andersson wrote:
+> The Qualcomm SC8280XP platform has two display clock controllers, add a
+> binding for these.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../bindings/clock/qcom,dispcc-sc8280xp.yaml  |  98 +++++++++++++++++
+>  .../dt-bindings/clock/qcom,dispcc-sc8280xp.h  | 100 ++++++++++++++++++
+>  2 files changed, 198 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
+> 
 
---7YgUNn3cJXMVqVHU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Simplify the driver using devm_regulator_get_enable() instead of
-open-coding the devm_add_action_or_reset().
+yamllint warnings/errors:
 
-A (minor?) functional change is that we don't print an error in case of a
-deferred probe. Now we also print the error no matter which of the
-involved calls caused the failure.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.example.dtb:0:0: /example-0/clock-controller@af00000: failed to match any schema with compatible: ['qcom,sc8280xp-dispcc0']
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+doc reference errors (make refcheckdocs):
 
----
-RFCv1 =3D> v2:
-- No changes
----
- drivers/clk/clk-cdce925.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+See https://patchwork.ozlabs.org/patch/
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index ef9a2d44e40c..6350682f7e6d 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -603,28 +603,15 @@ of_clk_cdce925_get(struct of_phandle_args *clkspec, v=
-oid *_data)
- 	return &data->clk[idx].hw;
- }
-=20
--static void cdce925_regulator_disable(void *regulator)
--{
--	regulator_disable(regulator);
--}
--
- static int cdce925_regulator_enable(struct device *dev, const char *name)
- {
--	struct regulator *regulator;
- 	int err;
-=20
--	regulator =3D devm_regulator_get(dev, name);
--	if (IS_ERR(regulator))
--		return PTR_ERR(regulator);
--
--	err =3D regulator_enable(regulator);
--	if (err) {
--		dev_err(dev, "Failed to enable %s: %d\n", name, err);
--		return err;
--	}
-+	err =3D devm_regulator_get_enable(dev, name);
-+	if (err)
-+		dev_err_probe(dev, err, "Failed to enable %s:\n", name);
-=20
--	return devm_add_action_or_reset(dev, cdce925_regulator_disable,
--					regulator);
-+	return err;
- }
-=20
- /* The CDCE925 uses a funky way to read/write registers. Bulk mode is
---=20
-2.37.1
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---=20
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+pip3 install dtschema --upgrade
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =3D]=20
+Please check and re-submit.
 
---7YgUNn3cJXMVqVHU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmL2J0MACgkQeFA3/03a
-ocVv2QgAo/YlNOW1HA2mG+CxYq7xFKcBzQbPKj/51C44Hv7PuOZ9qYKQl2y0ALO2
-W9nyE1+wXsUrxSpRSh3RR84zgGGTiTVoZcSwjvgWhsd/DFQRRM+tYwdVCvCxuHK9
-eAAEN+/nNjDmsBlWtCP/6+3ET6F5AyOvkqw9MFQK1qS9UxErBIT9PESsvFNcPv9z
-fmvywKBtskYFk1KKsVEJcg1Fjj01MsV7IjagPW9O25cXGLtWAoi54Zr7TpnWrMw/
-335TVbgmXr0NKguxFMGICeYv8lIsO2fEycNIEazSjI//t4UebsJUK1Ah/RFOwFBA
-OZUe74M3LJAT+rE9WV/YV2RYnAYhBA==
-=ZUnt
------END PGP SIGNATURE-----
-
---7YgUNn3cJXMVqVHU--
