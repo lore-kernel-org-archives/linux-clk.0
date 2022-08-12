@@ -2,132 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EE2C25B0F
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 08:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCBAC3F6B0
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 08:47:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236890AbiHLIA4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Aug 2022 04:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41044 "EHLO
+        id S237569AbiHLIrC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Aug 2022 04:47:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237807AbiHLIAy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 04:00:54 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271F7DE98;
-        Fri, 12 Aug 2022 01:00:52 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8939E5C0064;
-        Fri, 12 Aug 2022 04:00:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 12 Aug 2022 04:00:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm2; t=1660291251; x=1660377651; bh=8ACGRm0dwGVoAVmIuINlfIamT
-        QCxuccBvGOj1vSpQxs=; b=wLvbqfvt6dUV1CYy9j1IYKCSz0dq6jwCyFzLdIvvY
-        CZZSGcTw3w9K8aHYY8uA2alIUDMXsSeFUr6k3fVFmQy/S0F8KeLe/fBunR9UcOpC
-        N2LCzzv4zs0VWPju8mR4Y1Ooi3R5LgJkcNYVv/Wkt5Z+6sTmZ2RgT00ZuXECWtGF
-        ZI7MZGTd8YAkqbvizAwPuPhXYZ1aGf0KN69jdYum73rxXKQW+JJLcEx5fh3w/LF+
-        l21oVObjq9gi+9cfEYw9L/gwoHbNwsSdwZDT/B1WN8gPZsA0h2Cv3FIEsLwxyK7G
-        DjUwCpdwaaEWk2AcrffWXF7O2MCJTAkDPQHPiTwAz9GkQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1660291251; x=1660377651; bh=8ACGRm0dwGVoAVmIuINlfIamTQCxuccBvGO
-        j1vSpQxs=; b=wxoSlat8ZO4yKvbQu7hCvPD+NdsMKmkvq4Tz8CBjMBdBfX8tNjr
-        Mxukx/yl07nfR/Tg0Sty6j8qevkLu4XtBEYnNAG62pUxyTNPgwG6YJwWdk8d/kpx
-        cxElSLAi1fFTJszkeGsLKh/wdwdkQk2IbyHDrXs+2d9R+KBVbSzySNwOAXWpb7CK
-        7jDXdBu46SQte/iuT0c84yjd+4p1lK1c0Sz6vhc3twuAQeUtNCThA2BbMvbEY2Rv
-        1mpMhK2l94sPmqA62IXgFo9FXN788yBXvRqkkVWZm0/Hg7xD8DVxWA4PbJ38CYwi
-        67ECugefkieeSvMhiHN1K8HNtNSfFW+isYQ==
-X-ME-Sender: <xms:swj2Yhz3RNKkmDIaHa5EA13S3R-VWB12euh8WEv_pI5t6EfNZFg6eg>
-    <xme:swj2YhR7JttJ0dIdlc1NSbdvIKXoOZs3EjSpGK5ReQmEgVMSkjSqXGFu3HEJhw6QH
-    zJ-kRGj-DnMrLOfIg>
-X-ME-Received: <xmr:swj2YrW3xqeGu-yIkfnP8x1lS7yQ6hngTYBjpSrj0CjEP6j1acdyRVvKvylRKCvC31Qe25BFEjK2jI_JuHsWNPS6eQAVlUZSQ0yW96rgrbP5WLnCAZc9SII_12x_NuuubrSR1Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdeghedguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpeekveelhfejueelleetvdejvdeffeetgeelheeujeffhefgffefkeeh
-    hffhkeekgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:swj2YjhCaI6QScNxW-3I5v6-Cfh5HqQErFRrJ1WYAo0Hnl0iBJzwFQ>
-    <xmx:swj2YjBGxiX12Id0ux0xBNUF20fhE9VLW3NcCRJBvevXStfNfIdl7g>
-    <xmx:swj2YsKeoQ0F13qarPOhAKAL5n1qOmdPtzTsCAYki9pQ_6degQKY_Q>
-    <xmx:swj2YlDyNCnESDzoN5hJXTjdw4hwtolizpLCMF6UMGcZkT1LuOMkJQ>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Aug 2022 04:00:50 -0400 (EDT)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Samuel Holland <samuel@sholland.org>,
+        with ESMTP id S237565AbiHLIrB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 04:47:01 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3379F77B
+        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 01:46:59 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id c17so465920lfb.3
+        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 01:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=f3JKjv//LxKB5+mzdQGHJih1IuquG0rT5vJK16EtzN0=;
+        b=i5VSMG47Ah0V1K1Iuqp1Gf0y4LldoyH1+p6zB/LHb2a6IGIyPi01kfOLOQa+h02/oV
+         jP7Dx4jZG7DLWgTbDk723PZ+E4oZvBgDPW0oKpt/9OFq5L7HI1UeElMuIflIpZQ3x/I/
+         6m7G0e2058QmJ9tPMhuuol5nSGnVeW+9GQ9rE9Ca5iiymlvYRrb76EIS6NsL+C/R1OxR
+         mhcoxEyCTvVRPf1up+4dbzANRbatDrfYWeYAR7G5L+YyJ1DcWRngbRzEo8ybx42sMcjk
+         1olPvnDSw2cCJgeMvf0bFammshX4FZSqpU1GBwsspoWLx0lXSvqyg+6+/YgWXj3JBbGJ
+         vg4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=f3JKjv//LxKB5+mzdQGHJih1IuquG0rT5vJK16EtzN0=;
+        b=tX35JmU1mFA14qw8JfrVewu9RbaaddXOfTdL7q37Ri8Ws7fn9wP4rbJXCfa1MyJ2EM
+         exuLSDFp4MBba8a1BetqxdpOTxD0JCREfINXkTIqb7RoHKDcMISaxgXUpr2720ANzOxo
+         B+VYT4m0CfZk8gpGcgCENUjql1CVPXybAEsUnqgbzp0LmcXOP87r1HJ3wIY2NalF4Jut
+         2AdJ8opl/XqBPefpFbWN8YMKMvvrPsBFqjG4SFMNXZXpRvNgSoW4ld1MdFuMMvzvFTtp
+         5jethLrx285TFUU7/actvegE1MsdvP8oaLIFlIAsPxZDoqpFOQqCcEipzASJuwps2IwS
+         mo/Q==
+X-Gm-Message-State: ACgBeo3I4bzTQzeQym/gxwPXWFAMWAxjhyFFxx1doiUneXq8RzuE1BlF
+        IzJFcwaNOjIOq8ItV0gfqax6wQ==
+X-Google-Smtp-Source: AA6agR7D+3HXmSlpB+0CeSYLis3QxIqroHYiRty6hNmfJ6O/3i9rARi5pP/pDUc8uZFVkTZFLHzUwQ==
+X-Received: by 2002:ac2:5c02:0:b0:48b:29ed:6e1e with SMTP id r2-20020ac25c02000000b0048b29ed6e1emr917307lfp.560.1660294018040;
+        Fri, 12 Aug 2022 01:46:58 -0700 (PDT)
+Received: from [192.168.1.39] ([83.146.140.105])
+        by smtp.gmail.com with ESMTPSA id f16-20020ac25090000000b0048b99e4a26dsm136876lfm.145.2022.08.12.01.46.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Aug 2022 01:46:57 -0700 (PDT)
+Message-ID: <eaba9c5b-792d-5fa1-7d71-d225e789d29f@linaro.org>
+Date:   Fri, 12 Aug 2022 11:46:51 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v2 1/9] dt-bindings: clock: Add bindings for Exynos850
+ CMU_AUD
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: [PATCH] clk: sunxi-ng: d1: Limit PLL rates to stable ranges
-Date:   Fri, 12 Aug 2022 03:00:49 -0500
-Message-Id: <20220812080050.59850-1-samuel@sholland.org>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220809113323.29965-1-semen.protsenko@linaro.org>
+ <20220809113323.29965-2-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220809113323.29965-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Set the min/max rates for audio and video PLLs to keep them from going
-outside their documented stable ranges. Use the most restrictive of the
-"stable" and "actual" frequencies listed in the manual.
+On 09/08/2022 14:33, Sam Protsenko wrote:
+> CMU_AUD generates Cortex-A32 clock, bus clock and audio clocks for
+> BLK_AUD. Add clock indices and binding documentation for CMU_AUD.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+> Changes in v2:
+>   - (none)
+> 
+>  .../clock/samsung,exynos850-clock.yaml        | 19 ++++++
+>  include/dt-bindings/clock/exynos850.h         | 68 ++++++++++++++++++-
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
 
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-index 51058ba4db4d..8ef3cdeb7962 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-@@ -104,6 +104,8 @@ static struct ccu_nm pll_video0_4x_clk = {
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-+	.min_rate	= 252000000U,
-+	.max_rate	= 2400000000U,
- 	.common		= {
- 		.reg		= 0x040,
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-video0-4x", osc24M,
-@@ -126,6 +128,8 @@ static struct ccu_nm pll_video1_4x_clk = {
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-+	.min_rate	= 252000000U,
-+	.max_rate	= 2400000000U,
- 	.common		= {
- 		.reg		= 0x048,
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-video1-4x", osc24M,
-@@ -175,6 +179,8 @@ static struct ccu_nm pll_audio0_4x_clk = {
- 	.m		= _SUNXI_CCU_DIV(16, 6),
- 	.sdm		= _SUNXI_CCU_SDM(pll_audio0_sdm_table, BIT(24),
- 					 0x178, BIT(31)),
-+	.min_rate	= 180000000U,
-+	.max_rate	= 3000000000U,
- 	.common		= {
- 		.reg		= 0x078,
- 		.features	= CCU_FEATURE_SIGMA_DELTA_MOD,
-@@ -202,6 +208,8 @@ static struct ccu_nm pll_audio1_clk = {
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1),
-+	.min_rate	= 180000000U,
-+	.max_rate	= 3000000000U,
- 	.common		= {
- 		.reg		= 0x080,
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-audio1", osc24M,
--- 
-2.35.1
+Sylwester,
+The DTS depends on these, so I can apply headers and provide you a tag
+with them. We could try also the other way, but Arnd is picky about it.
 
+Best regards,
+Krzysztof
