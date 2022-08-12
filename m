@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCBAC3F6B0
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 08:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBD5C25B0F
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 08:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237569AbiHLIrC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Aug 2022 04:47:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60034 "EHLO
+        id S237628AbiHLIr3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Aug 2022 04:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237565AbiHLIrB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 04:47:01 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3379F77B
-        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 01:46:59 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id c17so465920lfb.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 01:46:59 -0700 (PDT)
+        with ESMTP id S237603AbiHLIr3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 04:47:29 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5C48A8CDA
+        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 01:47:27 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id x19so452590lfq.7
+        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 01:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=f3JKjv//LxKB5+mzdQGHJih1IuquG0rT5vJK16EtzN0=;
-        b=i5VSMG47Ah0V1K1Iuqp1Gf0y4LldoyH1+p6zB/LHb2a6IGIyPi01kfOLOQa+h02/oV
-         jP7Dx4jZG7DLWgTbDk723PZ+E4oZvBgDPW0oKpt/9OFq5L7HI1UeElMuIflIpZQ3x/I/
-         6m7G0e2058QmJ9tPMhuuol5nSGnVeW+9GQ9rE9Ca5iiymlvYRrb76EIS6NsL+C/R1OxR
-         mhcoxEyCTvVRPf1up+4dbzANRbatDrfYWeYAR7G5L+YyJ1DcWRngbRzEo8ybx42sMcjk
-         1olPvnDSw2cCJgeMvf0bFammshX4FZSqpU1GBwsspoWLx0lXSvqyg+6+/YgWXj3JBbGJ
-         vg4g==
+        bh=wKN6M4QIFB9YzafE2xGwaTO0/e6+URKgqPrZCeBFSec=;
+        b=jwoXwv9gl3TpgIn9F0jAEdWP6T+Jz8k7F932qtZNL46y4+p3KKZTgEOzdR9YB7+IAs
+         wxWHGP1sO4ahr0CR+BLeNK+w9Kix1+Y9JzU6nzqkc66NCLfuor0bhawUgK0kLiPjp/zS
+         kVs2z0MIU7h5D038tAkjVwbRHds7132+2asalI74BMIvG4AnYb60zD8e02g3jqu+rUfW
+         zedJ1mpQNHQ+ui4JC4cMaPwwW/jKLXQqOGQaNo4v09zaNnDtNm7TXQoLjh8OZlHHL0LP
+         voY3o4F22sGMhLF91UXBqRgNhMe9Flyj9MFoaIo9ZYePZL/CDsfJIzrJvMh747c70LJc
+         ujnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=f3JKjv//LxKB5+mzdQGHJih1IuquG0rT5vJK16EtzN0=;
-        b=tX35JmU1mFA14qw8JfrVewu9RbaaddXOfTdL7q37Ri8Ws7fn9wP4rbJXCfa1MyJ2EM
-         exuLSDFp4MBba8a1BetqxdpOTxD0JCREfINXkTIqb7RoHKDcMISaxgXUpr2720ANzOxo
-         B+VYT4m0CfZk8gpGcgCENUjql1CVPXybAEsUnqgbzp0LmcXOP87r1HJ3wIY2NalF4Jut
-         2AdJ8opl/XqBPefpFbWN8YMKMvvrPsBFqjG4SFMNXZXpRvNgSoW4ld1MdFuMMvzvFTtp
-         5jethLrx285TFUU7/actvegE1MsdvP8oaLIFlIAsPxZDoqpFOQqCcEipzASJuwps2IwS
-         mo/Q==
-X-Gm-Message-State: ACgBeo3I4bzTQzeQym/gxwPXWFAMWAxjhyFFxx1doiUneXq8RzuE1BlF
-        IzJFcwaNOjIOq8ItV0gfqax6wQ==
-X-Google-Smtp-Source: AA6agR7D+3HXmSlpB+0CeSYLis3QxIqroHYiRty6hNmfJ6O/3i9rARi5pP/pDUc8uZFVkTZFLHzUwQ==
-X-Received: by 2002:ac2:5c02:0:b0:48b:29ed:6e1e with SMTP id r2-20020ac25c02000000b0048b29ed6e1emr917307lfp.560.1660294018040;
-        Fri, 12 Aug 2022 01:46:58 -0700 (PDT)
+        bh=wKN6M4QIFB9YzafE2xGwaTO0/e6+URKgqPrZCeBFSec=;
+        b=Ht+wfg4l+YSYR/BH/6EdspHOw0BNDXVFCByk4wbrRALIV2ad+7NNGcOvK+glgO8TiM
+         hgUjT7/dzowi42ZcsT0VWCjBlLJQjXKQRuCjBUGG9N4Vk1PmWLEomDNaBVN07xm+nzIX
+         H1jG6C83075v3q0iRXVh8zwFylwDwYCjIE6nDUFEieYWjY5V+Frobv5hG5R6qbUl06+M
+         OvskO4s4a/Hz0YML7ElfVjGv1Y2x3rJJIYJ8OaPfPG2EJWHqNXesw/YgwSLRLU08WqGb
+         JuFSwo1WiN5VMRzUj9717EuVekUmHNDWCTRFlSV7DgtfyhSTKiYiDe9S6+GrpjH1c6Rc
+         jUZQ==
+X-Gm-Message-State: ACgBeo0E+E8I6sYeHh+5HHiPIylridJVuCfZ9F1bdPw3dedNdoAeuX+Q
+        QzzmrrErbJvKacjgupY3lO8D6g==
+X-Google-Smtp-Source: AA6agR5T5c35Mt3eXh9J4qVtmai3eKcCwCCuy2td0MfoO1IBZgZ+3EuQu4Q6B4f9v9L4/3XMbKMoZQ==
+X-Received: by 2002:ac2:418a:0:b0:48b:aa2:1d9f with SMTP id z10-20020ac2418a000000b0048b0aa21d9fmr1050838lfh.195.1660294046075;
+        Fri, 12 Aug 2022 01:47:26 -0700 (PDT)
 Received: from [192.168.1.39] ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id f16-20020ac25090000000b0048b99e4a26dsm136876lfm.145.2022.08.12.01.46.53
+        by smtp.gmail.com with ESMTPSA id b14-20020ac25e8e000000b0048b365176d9sm131255lfq.286.2022.08.12.01.47.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Aug 2022 01:46:57 -0700 (PDT)
-Message-ID: <eaba9c5b-792d-5fa1-7d71-d225e789d29f@linaro.org>
-Date:   Fri, 12 Aug 2022 11:46:51 +0300
+        Fri, 12 Aug 2022 01:47:25 -0700 (PDT)
+Message-ID: <5664f423-5628-8d89-8def-621f27bfea83@linaro.org>
+Date:   Fri, 12 Aug 2022 11:47:20 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH v2 1/9] dt-bindings: clock: Add bindings for Exynos850
- CMU_AUD
+Subject: Re: [PATCH v2 4/9] clk: samsung: exynos850: Style fixes
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -73,9 +72,9 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 References: <20220809113323.29965-1-semen.protsenko@linaro.org>
- <20220809113323.29965-2-semen.protsenko@linaro.org>
+ <20220809113323.29965-5-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220809113323.29965-2-semen.protsenko@linaro.org>
+In-Reply-To: <20220809113323.29965-5-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,23 +82,19 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 09/08/2022 14:33, Sam Protsenko wrote:
-> CMU_AUD generates Cortex-A32 clock, bus clock and audio clocks for
-> BLK_AUD. Add clock indices and binding documentation for CMU_AUD.
+> Fix some typos in comments and do small coding style improvements.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
 > Changes in v2:
 >   - (none)
 > 
->  .../clock/samsung,exynos850-clock.yaml        | 19 ++++++
->  include/dt-bindings/clock/exynos850.h         | 68 ++++++++++++++++++-
+>  drivers/clk/samsung/clk-exynos850.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Sylwester,
-The DTS depends on these, so I can apply headers and provide you a tag
-with them. We could try also the other way, but Arnd is picky about it.
 
 Best regards,
 Krzysztof
