@@ -2,109 +2,230 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D71C25B0F
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 09:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D90C00140
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Aug 2022 10:08:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238155AbiHLJzz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Aug 2022 05:55:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43548 "EHLO
+        id S237920AbiHLKIm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Aug 2022 06:08:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237512AbiHLJzY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 05:55:24 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F95C11A2D
-        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 02:55:22 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id r17so634229lfm.11
-        for <linux-clk@vger.kernel.org>; Fri, 12 Aug 2022 02:55:22 -0700 (PDT)
+        with ESMTP id S237117AbiHLKIm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2022 06:08:42 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA9CA6C26;
+        Fri, 12 Aug 2022 03:08:40 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id j3so518602ljo.0;
+        Fri, 12 Aug 2022 03:08:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc;
-        bh=T5iIzTCDVHqt30FHfCBf7QyCkBoOs7GPL9+XgJpnyHY=;
-        b=wzhT+buoDcE5KBLNi6WAqq2oLZi0r2AKjAMCS+H+73hksv87Nlik8u7vCpU7xCGkTK
-         dbcrW/+mteB6uMRvRmsI/DfdobEjH2Wnom7i3hOCWUTPkbQCBZ01C2nVnEWWndW0NNX8
-         Vy6PYOdE9cf5pXDtLm/MlNkuiIWbd0qZoFH95l7i8aeyMi+DqpKI7NWazSRwg/JaR+nT
-         We4m8IRm5bg4qOtwNGwEJFJHVoCaxIxqbxEL6jhbnsDmXV59L6FIK8eCm79/6gaSy/gl
-         +/amH1RU58cCY2dclZUCOu9cHem5YidgDAH7eR9xifYlXAWe2F1zdLwHZYXBJWMCNc4o
-         OxWw==
+        bh=Lmz4Vp5Brwa2cnS1Itqbq4P7WlJbdn5Ij99xtrfTr8M=;
+        b=iEyjjw4/6LOvsqXXLJfKSDsKCPFS1lsCd3GFjln5BRbpEVK+IxPLTm7rcyG93QIZk+
+         88yi8KH6gvXJDvAT2iJmEEgic6e5xx0q1DKAArQr6IsDtfmi59kqWYa2UGaGfXS3VSaK
+         Ue1RRivzkHWRRntJf8Nj3UygycU591g7FvDbXXPISHrJl0pSI+iaxhQbKbKFIDo009Nx
+         YRbrQ96bnjJ32m+mQlKOnmdnhn9CdHqdOUXvvoSlLCe1vmnHBmTBp6k2Z+fdg9MFNnzG
+         j1uItRCaZ/Xq/eonFgQcwhzRDK2O+3EbVyX7YZw1+qPPUoViEfraU5/ALcyhG2omF8g+
+         Zsbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc;
-        bh=T5iIzTCDVHqt30FHfCBf7QyCkBoOs7GPL9+XgJpnyHY=;
-        b=S02zzs1FpgrRd0/q0gAzKLWBlH2bSgTd2lECYXXaRJuV//z1nirSRJevxhBFrJ97VH
-         mZ7atgz8qbxRig2NVMtOt94yLF6r9K8lQSB0U+jXyncF002fMyiIYheSjbreOU3XnxJK
-         kzSMgxZ5ytDpnkVSXRIMjkbe9Whq+Bi7MRzRKadsxK5aoet70iBWjG4HUkMyINuanaD1
-         g2lmvqg9sZkl/tGtuSO7BFIbqfrlv4rHOlYxVp4/Kf1zvLh2wCNIqugvDfv349y6VaFF
-         YiV35SKMEtMncf1ZqyrZYBPLl8j/NBFzPFUDJ1+fOUecz/hCWexgtDC+Ry46mC7/iTn+
-         4Pqg==
-X-Gm-Message-State: ACgBeo0UwWKB6CEdizGPjPh6xuqJCtX+f7w9rOYGbbFhku+34Iz9WD3f
-        CpSy+Zoeq2XU0CRp7C375cAKIQ==
-X-Google-Smtp-Source: AA6agR7+AJPeAcWzIKKPAUQqUNDiGibnaRRiY1ldxGkU5iEvz7Z8KODNoh3VQbhU39rSPYcKl7QjEg==
-X-Received: by 2002:a05:6512:1585:b0:48d:158:7013 with SMTP id bp5-20020a056512158500b0048d01587013mr1116184lfb.536.1660298120968;
-        Fri, 12 Aug 2022 02:55:20 -0700 (PDT)
-Received: from [192.168.1.39] ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id s12-20020a05651c048c00b0025e4ed638dcsm301594ljc.59.2022.08.12.02.55.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Aug 2022 02:55:20 -0700 (PDT)
-Message-ID: <af463efe-1656-5638-b41a-5daea3099812@linaro.org>
-Date:   Fri, 12 Aug 2022 12:55:15 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v2 7/9] clk: samsung: exynos850: Implement CMU_MFCMSCL
- domain
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        bh=Lmz4Vp5Brwa2cnS1Itqbq4P7WlJbdn5Ij99xtrfTr8M=;
+        b=scFRtmceAkTfJuf6YYgppAv7E88MgG3LVamnh2HDuGHT7WUqkCegxkJB9/AQJMs7w6
+         SIfDEDhOu3/1RaTCMOw/w3tO7iz6SVqejkVHYKiMdKEf4X9TmyXipx/GmEjsptQp0ri5
+         sy+KiclDtLDb0jBe0Mn/SXMZji9H2bLvYnG6/iRtCh4OKY/jitFn79VeTobD78i4/G+m
+         hEvDhYe34J9DQ4Fv2XxeGsiWbwJfh+Xr1Y/oxaEciVzxTP9BVhdfUKRgCyUutiQHl1n5
+         bPrD05zaXDAf0BgJI6dk+xQ8ogc/Xqgi4fDbDd6TnWID/ccAySA3EDS5TCr9fL5bcrZL
+         P/8Q==
+X-Gm-Message-State: ACgBeo32DCwA++mQXqQhJNiCkuHp8tyWKX1ROIvBqCKY0hfi/DUbXLS6
+        LGffRPxIhc9t8c5i/d1F0f07Ihynbc154w==
+X-Google-Smtp-Source: AA6agR48G+sAfnTk456AdMmoWmwqiUxwIqWZm+aCORAI6x+9Wf6EMIhQ9lCGq1KjCDmWMsEc4se5Fg==
+X-Received: by 2002:a2e:7311:0:b0:25e:c66f:2be0 with SMTP id o17-20020a2e7311000000b0025ec66f2be0mr908055ljc.100.1660298919064;
+        Fri, 12 Aug 2022 03:08:39 -0700 (PDT)
+Received: from fedora ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id k2-20020ac24562000000b0048a79e3dd6csm165585lfm.26.2022.08.12.03.08.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Aug 2022 03:08:38 -0700 (PDT)
+Date:   Fri, 12 Aug 2022 13:08:17 +0300
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+To:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220809113323.29965-1-semen.protsenko@linaro.org>
- <20220809113323.29965-8-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220809113323.29965-8-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        linux-iio@vger.kernel.org
+Subject: [PATCH v2 0/7] Devm helpers for regulator get and enable
+Message-ID: <cover.1660292316.git.mazziesaccount@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="THWirS5KE0K9xFXH"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/08/2022 14:33, Sam Protsenko wrote:
-> CMU_MFCMSCL clock domain provides clocks for MFC (Multi-Format Codec),
-> JPEG Codec and Scaler IP-cores. According to Exynos850 TRM, CMU_MFCMSCL
-> generates MFC, M2M, MCSC and JPEG clocks for BLK_MFCMSCL.
-> 
-> This patch adds next clocks:
->   - bus clocks in CMU_TOP for CMU_MFCMSCL
->   - all internal CMU_MFCMSCL clocks
->   - leaf clocks for MFCMSCL, TZPC (TrustZone Protection Controller),
->     JPEG codec, M2M (Memory-to-Memory), MCSC (Multi-Channel Scaler),
->     MFC (Multi-Format Codec), PPMU (Platform Performance Monitoring
->     Unit), SysMMU and SysReg
-> 
-> MFCMSCL related gate clocks in CMU_TOP were marked as CLK_IS_CRITICAL,
-> because:
->   1. All of those have to be enabled in order to read
->      /sys/kernel/debug/clk/clk_summary file
->   2. When some user driver (e.g. exynos-sysmmu) disables some derived
->      leaf clock, it can lead to CMU_TOP clocks disable, which then makes
->      the system hang. To prevent that, the CLK_IS_CRITICAL flag is used,
->      as CLK_IGNORE_UNUSED is not enough.
 
-No, same as with ISP these are not critical clocks.
+--THWirS5KE0K9xFXH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Devm helpers for regulator get and enable
+
+First patch in the series is actually just a simple documentation fix
+which could be taken in as it is now.
+
+A few* drivers seem to use pattern demonstrated by pseudocode:
+
+- devm_regulator_get()
+- regulator_enable()
+- devm_add_action_or_reset(regulator_disable())
+
+Introducing devm helpers for this pattern would remove bunch of code from
+drivers. Typically following:
+
+- replace 3 calls (devm_regulator_get[_optional](), regulator_enable(),
+  devm_add_action_or_reset()) with just one
+  (devm_regulator_get_enable[_optional]()).
+- drop disable callback.
+- remove stored pointer to struct regulator - which can lead to problem
+  when an devm action for regulator_disable is used.
+
+I believe this simplifies things by removing some dublicated code.
+
+The suggested managed 'get_enable' APIs do not return the pointer to
+regulators for user because any call to regulator_disable()
+(or regulator_enable()) may easily lead to regulator enable count imbalance
+upon device detach. (Eg, if someone calls regulator_disable() and the
+device is then detached before user has re-enabled the regulator). Not
+returning the pointer to obtained regulator to caller is a good hint that
+the enable/disable should not be manually handled when these APIs are used.
+
+OTOH, not returning the pointer reduces the use-cases by not allowing
+the consumers to perform other regulator actions. For example request the
+voltages. A few drivers which used the "get, enable,
+devm_action_to_disable" did also query the voltages. The API does not suit
+needs of such users.
+
+This series reowrks only a few drivers as I am short of time. So, there is
+still plenty of fish in the sea for people who like to improve the code
+(or count the beans ;]).
+
+Finally - most of the converted drivers have not been tested (other than
+compile-tested) due to lack of HW. All reviews and testing is _highly_
+appreciated (as always!).
+
+Revision history:
+
+RFCv1 =3D> v2:
+	- Add devm_regulator_bulk_get_enable() and
+	  devm_regulator_bulk_put()
+	- Convert a couple of drivers to use the new
+	  devm_regulator_bulk_get_enable().
+	- Squash all IIO patches into one.
+
+Patch 1:
+	Fix docmentation (devres API list) for regulator APIs
+Patch 2:
+	The new devm helpers.
+Patch 3:
+	Add new devm-helper APIs to docs.
+Patch 4:
+	simplified CLK driver(s)
+Patch 5:
+	simplified GPU driver(s)
+Patch 6:
+	simplified hwmon driver(s)
+Patch 7:
+	simplified IIO driver(s)
+
+---
+
+Matti Vaittinen (7):
+  docs: devres: regulator: Add missing devm_* functions to devres.rst
+  regulator: Add devm helpers for get and enable
+  docs: devres: regulator: Add new get_enable functions to devres.rst
+  clk: cdce925: simplify using devm_regulator_get_enable()
+  gpu: drm: simplify drivers using devm_regulator_*get_enable*()
+  hwmon: lm90: simplify using devm_regulator_get_enable()
+  iio: Simplify drivers using devm_regulator_*get_enable()
+
+ .../driver-api/driver-model/devres.rst        |  11 ++
+ drivers/clk/clk-cdce925.c                     |  21 +--
+ drivers/gpu/drm/bridge/sii902x.c              |  22 +--
+ drivers/gpu/drm/meson/meson_dw_hdmi.c         |  23 +--
+ drivers/hwmon/lm90.c                          |  21 +--
+ drivers/iio/adc/ad7192.c                      |  15 +-
+ drivers/iio/dac/ltc2688.c                     |  23 +--
+ drivers/iio/gyro/bmg160_core.c                |  24 +--
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h       |   2 -
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c  |  30 +---
+ drivers/regulator/devres.c                    | 164 ++++++++++++++++++
+ include/linux/regulator/consumer.h            |  27 +++
+ 12 files changed, 227 insertions(+), 156 deletions(-)
+
+--=20
+2.37.1
+
+
+--=20
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =3D]=20
+
+--THWirS5KE0K9xFXH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmL2JpAACgkQeFA3/03a
+ocUSNQgAuAnEh7oW1oRPo5wLIiymBTMRDGKLvapsGYq8bT8IiRWVR/NN37Qd9GHU
+VgE85GmmR24A+GFaR7q+L+mQWvDaumb+BgzGbPbeXnm5Dveh1vORzNhM6TvAgGCM
+VpCgwcMRbSzCGEiYEvHcp5tiZ5Np7fUSmSuLz30BMES+TDdENIMbxGWb4Qa1pG3o
+/5DaGsNxfF2H/5tdaH4S8t9MSKBvCXn4BmrIAEjCVRGZj9+2kSMb8cwNnrp9RBES
+aePeoFBXuq8yiDwtJZn4vkzSle448d+Sg/VqDI0CFD/DBCa1/TAhQmuUM0f17KSD
+wsLBh7G8SRracLoYB+zXLFT7fBaIHg==
+=AV00
+-----END PGP SIGNATURE-----
+
+--THWirS5KE0K9xFXH--
