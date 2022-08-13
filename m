@@ -2,105 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90A0C25B08
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Aug 2022 08:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1A1C19F2D
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Aug 2022 10:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235435AbiHMIex (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Aug 2022 04:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40756 "EHLO
+        id S237459AbiHMKpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Aug 2022 06:45:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiHMIew (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Aug 2022 04:34:52 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17106B664;
-        Sat, 13 Aug 2022 01:34:51 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id l22so3419053wrz.7;
-        Sat, 13 Aug 2022 01:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=IkARQOyCkbKRyiQVo0E+3fF3PnzXAw1PITXNc7Jpyh0=;
-        b=iy2tGlJJWOePjP4JMIf2lWvBMTtWcxBCklDT3Rer6sFEgnlJJEM8z97vQMqav6pmT4
-         Is04EhSQMJadSQuv0fQj0oYzHiIpgrfvRQ2ZvQFvsdsnkk4gSZk/N3G1jAwUMHp71imR
-         kimdykDY14s0nu8Enb9f9vSCxCHQzqjYVfmjceGisBBurTmDOI4G6A4/MLrow2KUmh7p
-         6I8BLVpwbxceUC7ozfY62oeon/v9MJ9RtG++gaUugVc938y4pSUotBSwG7Egl5CAv0/s
-         dLSRQ9l4/yS2jxQI0GEYexvHn3vk/iRdZTKI12cTYXen00JY58bnctTmka273oG6i1Ue
-         fEiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=IkARQOyCkbKRyiQVo0E+3fF3PnzXAw1PITXNc7Jpyh0=;
-        b=VeGzH/AWH0YaFoTPNgh4q2GODouZRGQpehsLfcsP1Bk9nCZNmYuoooeUnUJiHjUuuQ
-         ofsrRBymS2zOiXgr0lX1LQ3nfR6PAM9SaDduBZyjS2qLMzP8jNY5T9v9tYUQ5Nb4UvDX
-         PCBT9GNwpQZWjyUi+WSw8Zyk2BiPfoQ31fVD4hPU0zeoqKAF0JkIAxAq7k96IbvwyMQL
-         8FZ5Ex+f5QoaGI+5BEOjIhl7yhHM4JgrM8u0LuQGkjGrDI5WRjwNnaSuBLgUWMkZ3WXy
-         6t8vsdY9THVpKpU61FmCNCudbyc2Olt7tkbeo0r8l/SzInCnOg5p5KHylmPvu4DRdywi
-         u2Ew==
-X-Gm-Message-State: ACgBeo2lOpNafZi00ka6Sbk+E8qelSextO++jqKGHxxhg+7JK2t62ThZ
-        alzvgFH/iSoMTeFOAEvgb0A=
-X-Google-Smtp-Source: AA6agR7rr8NCgKEiWScS7tmJrKZ0xvzCBH96rM1Fx03ZPKypl/m1UJj5NiIZA8ksFaWKOBT90pXuGA==
-X-Received: by 2002:a05:6000:547:b0:218:5f6a:f5db with SMTP id b7-20020a056000054700b002185f6af5dbmr4024036wrf.480.1660379690470;
-        Sat, 13 Aug 2022 01:34:50 -0700 (PDT)
-Received: from localhost.localdomain ([105.235.129.49])
-        by smtp.gmail.com with ESMTPSA id q4-20020a05600000c400b0021e8d205705sm1471365wrx.51.2022.08.13.01.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Aug 2022 01:34:50 -0700 (PDT)
-From:   Yassine Oudjana <yassine.oudjana@gmail.com>
-X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Yassine Oudjana <yassine.oudjana@gmail.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: mediatek: Use mtk_clk_register_gates_with_dev in simple probe
-Date:   Sat, 13 Aug 2022 09:33:20 +0100
-Message-Id: <20220813083319.45455-1-y.oudjana@protonmail.com>
-X-Mailer: git-send-email 2.37.1
+        with ESMTP id S239338AbiHMKpK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Aug 2022 06:45:10 -0400
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86494286CC
+        for <linux-clk@vger.kernel.org>; Sat, 13 Aug 2022 03:45:09 -0700 (PDT)
+Date:   Sat, 13 Aug 2022 10:44:49 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1660387504; x=1660646704;
+        bh=mr68/NsAdXC+G9X9bG8jF/vpINHVnEQJpv90ExGKKdA=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
+         References:Feedback-ID:From:To:Cc:Date:Subject:Reply-To:
+         Feedback-ID:Message-ID;
+        b=sPTb7QdnrMFKFLTxJiv9LuHcKHXbKBlTYsJHejRrkAUAV5Vmpih9IN1+QZNDG4Za3
+         ImsN0zxdTjD0AmiHohdOyBA42ulCa+cMR9Y6Nxed8ee01z7X6JNvTazf9IV9xakLI+
+         LuQ31sYYBz1r1Y5kW+7lFK2CP7jprsDtqME8lSzDjeGTmWUSyIuChl06+HxZrpU667
+         I/y763WUz1i4bHA3C9TXJLiw4rl1M7rUKhGEBknQMjZDRKDgn64BpeaVfDqsGKpGBh
+         PQzjAZVRAUkXlpN8MvfKyaxXE/1jB0OYtWhXTc7yZ/YsOvP3g42wjJocCdFu0Oej0F
+         RKC+f4Dekb9Aw==
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+From:   Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Miles Chen <miles.chen@mediatek.com>, yassine.oudjana@gmail.com,
+        bgolaszewski@baylibre.com, chun-jie.chen@mediatek.com,
+        devicetree@vger.kernel.org, ikjn@chromium.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        matthias.bgg@gmail.com, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, sam.shih@mediatek.com,
+        sboyd@kernel.org, tinghan.shen@mediatek.com, weiyi.lu@mediatek.com,
+        wenst@chromium.org, ~postmarketos/upstreaming@lists.sr.ht
+Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: Re: [PATCH v2 4/4] clk: mediatek: Add drivers for MediaTek MT6735 main clock drivers
+Message-ID: <lAB8fLfWTwUu6FUqPZWoKNEC0ZPYHnvo05u6BGriYQVjanlTzorHaZAflEbzoml-0UVZe-02r6CfzKwGdBCp7E0YeT_hF86P26r-Zeivda4=@protonmail.com>
+In-Reply-To: <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
+References: <NJC6CR.M4CF312LSXXV1@gmail.com> <20220520093501.28758-1-miles.chen@mediatek.com> <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
+Feedback-ID: 6882736:user:proton
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yassine Oudjana <y.oudjana@protonmail.com>
+On Friday, May 20th, 2022 at 11:26 AM, AngeloGioacchino Del Regno <angelogi=
+oacchino.delregno@collabora.com> wrote:
 
-Register gates with dev in mtk_clk_simple_probe.
+> Il 20/05/22 11:35, Miles Chen ha scritto:
+>
+> > > > Thanks for submitting this patch.
+> > > >
+> > > > I compare this with drivers/clk/mediatek/clk-mt7986-apmixed.c,
+> > > > and other clk files are using macros to make the mtk_pll_data array
+> > > > more readable.
+> > >
+> > > I'd actually argue that macros make it less readable. While reading
+> > > other drivers I had a lot of trouble figuring out which argument
+> > > is which field of the struct, and had to constantly go back to the
+> > > macro definitions and count arguments to find it. Having it this
+> > > way, each value is labeled clearly with the field it's in. I think
+> > > the tradeoff between line count and readability here is worth it.
+> >
+> > It is easier for multiple developers to work together if we have a comm=
+on style.
+> >
+> > How do you think?
+>
+>
+> In my opinion, Yassine is definitely right about this one: unrolling thes=
+e macros
+> will make the code more readable, even though this has the side effect of=
+ making
+> it bigger in the source code form (obviously, when compiled, it's going t=
+o be the
+> exact same size).
+>
+> I wouldn't mind getting this clock driver in without the usage of macros,=
+ as much
+> as I wouldn't mind converting all of the existing drivers to open-code ev=
+erything
+> instead of using macros that you have to find in various headers... this =
+practice
+> was done in multiple drivers (clock or elsewhere), so I don't think that =
+it would
+> actually be a bad idea to do it here on MediaTek too, even though I'm not=
+ aware of
+> any rule that may want us to do that: if you check across drivers/clk/*, =
+there's
+> a big split in how drivers are made, where some are using macros (davinci=
+, renesas,
+> samsung, sprd, etc), and some are not (bcm, sunxi-ng, qcom, tegra, versat=
+ile, etc),
+> so it's really "do it as you wish"...
+>
+> ... but:
+>
+> Apart from that, I also don't think that it is a good idea to convert the=
+ other
+> MTK clock drivers right now, as this would make the upstreaming of MediaT=
+ek clock
+> drivers harder for some of the community in this moment... especially whe=
+n we look
+> at how many MTK SoCs are out there in the wild, and how many we have upst=
+ream:
+> something like 10% of them, or less.
+>
+> I see the huge benefit of having a bigger community around MediaTek platf=
+orms as
+> that's beneficial to get a way better support and solidity for all SoCs a=
+s they
+> are sharing the same drivers and same framework, and expanding the suppor=
+t to more
+> of them will only make it better with highly valuable community contribut=
+ions.
+>
+>
+> That said, Yassine, you should've understood that you have my full suppor=
+t on
+> unrolling these macros - but it's not time to do that yet: you definitely=
+ know
+> that MediaTek clock drivers are going through a big cleanup phase which i=
+s, at
+> this point, unavoidable... if we are able to get the aid of scripts (cocc=
+i and
+> others), that will make our life easier in this cleanup, and will also ma=
+ke us
+> able to perform the entire cleanup with less effort and in less overall t=
+ime.
+>
+> With that, I'm sad but I have to support Miles' decision on this one, and=
+ I also
+> have to ask you to use macros in this driver.
 
-Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
-This patch was originally part of a series, and is sent alone now since
-it doesn't depend on the rest of it and can be applied directly:
-https://lore.kernel.org/linux-clk/20220519134728.456643-1-y.oudjana@protonmail.com/
+I'm picking up this series again now after taking a long break to allow for
+ongoing cleanup and refactoring work to settle down. I was going to make th=
+is
+change but then I couldn't find the PLL macro defined in any common header.
+It seems that it is defined in every driver that uses it, with slight varia=
+tions
+in some of them. Should I just do the same, or would it be better to define=
+ it
+in clk-pll.h? Also, would now be a good time to unroll the macros in all dr=
+ivers,
+or is it still too soon?
 
- drivers/clk/mediatek/clk-mtk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Another thing: Since I've been out of touch with the cleanup work for a whi=
+le,
+it would be great if someone makes me aware of any pending cleanup patches =
+that
+I should know of so that I base my patches on them and avoid duplicating wo=
+rk.
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 05a188c62119..4977870912b1 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -434,7 +434,8 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
- 	if (!clk_data)
- 		return -ENOMEM;
- 
--	r = mtk_clk_register_gates(node, mcd->clks, mcd->num_clks, clk_data);
-+	r = mtk_clk_register_gates_with_dev(node, mcd->clks, mcd->num_clks,
-+					    clk_data, &pdev->dev);
- 	if (r)
- 		goto free_data;
- 
--- 
-2.37.1
-
+> ...
