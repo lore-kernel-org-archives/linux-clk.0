@@ -2,58 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73820C25B0F
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Aug 2022 21:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D46AC25B06
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Aug 2022 21:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240739AbiHNV0c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Aug 2022 17:26:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36816 "EHLO
+        id S240597AbiHNV0q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Aug 2022 17:26:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232190AbiHNV0U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Aug 2022 17:26:20 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D5321A9
-        for <linux-clk@vger.kernel.org>; Sun, 14 Aug 2022 14:24:48 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id qn6so10642089ejc.11
-        for <linux-clk@vger.kernel.org>; Sun, 14 Aug 2022 14:24:48 -0700 (PDT)
+        with ESMTP id S240640AbiHNV01 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Aug 2022 17:26:27 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A297639D
+        for <linux-clk@vger.kernel.org>; Sun, 14 Aug 2022 14:25:36 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id s11so7468733edd.13
+        for <linux-clk@vger.kernel.org>; Sun, 14 Aug 2022 14:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
+        h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:from:to:cc;
         bh=xQQcsinkBD55XZnA3Rx8KZUstdukRPl8F+heSycPoHI=;
-        b=Xs2VrrzvmLsyH+hJRZNUJZgI2UgrYiUWsrlPMZ36jPPYAVszv08PHRLhLjfLp6Bfrv
-         YZOhQ3dGW54YvbbVI9tCJAF6OByRQXWgI/a4pZlQfhgn12nBHzwz+omjpjy79e39MhUF
-         YmERME28kY5R85B5Afu7ZAchrc9WEKGtxRHkF5eGN6RGOfDADBMdTtJv8gPFB99wi8S/
-         V9ptLemIPoQQ4OmXhQkS0A4LPZdktDltawbfOo6KS2VEYGheC2Tk5BQj7Z1lFNqFh+CR
-         ND0ZbnFFpVmm5V1J23akX6FNxYuD9Y9PyLlwBRTAkipaEfyHi0wvug36z27Rly2to0HG
-         lBbw==
+        b=Qe5DWC0r7rxYJhIfXceDeB8WPgaRF9tvqMILk+vpu0/C7UVQ4yMexOoyvKmOytyyJh
+         n2EqCZLZhM5cJMhiLA8KIc+uWmJjlTQ4U05VuGBJuRdPcLUkxohdEzHPQPl0buauL3FQ
+         IYpanbKgaHIpDVgpnH2PuaTgexmRLRFw9aNGwL7fXqy5j0IlBCo0+QvVbplkStzs1PZo
+         ilDFlW6KoBmmdpk8DDRE5gl/a7/AlGGRNwt+/jmC9r+p5JG1OWGUWf84p9Jf/IO7+zMD
+         tkWHe+X/Et2rnlzJgxv4c/CEZoqapq9lZKMK5J/PeVZfHrAURMUJNR9CN/s3UUggGef7
+         U6iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
+        h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc;
         bh=xQQcsinkBD55XZnA3Rx8KZUstdukRPl8F+heSycPoHI=;
-        b=EA/nIObEKUVAopZaIT+5RPgGVwR4i8UpGOpmTGYaaFqU9dGQsKulRMBIXwc4niFuXJ
-         9TcUFl8JHbDwRBRYZD2efQjxn/PBNorD3tMKhVQP8GHuG3POsjglLQlGArQunDXxmUF3
-         fG9M0GyKHIYZAHrmjXQB4xWHsgVUky9JRllz/HY6U/yj6xpFCecQWkEC44RMqHtCFl58
-         9J37212yRWBtC9WkurU94/Qan5Bh6Qy2QAVoPq7Fx3c7HKjQRp8Bbv7ZORVcDpSDqXZd
-         nNOVgwobRSl37VsnY3fltWKlhPgVvZ0K+iqXxXEXzXsgvo+TCP6gA/Rm6pH5QXfGK/WL
-         9hVA==
-X-Gm-Message-State: ACgBeo1O+QIga5ILUTdj+HsK0dvAyD/asWCt1ETWnQIYLq7g+mGmoZwG
-        adZ1ik+WqjVoRWCy/RklXqBX4MS0LYs=
-X-Google-Smtp-Source: AA6agR4qBFMCJH3ypksedrohz+KCGvROtq1GbZ4RYBN5NpUdX40/VFaL7P6q9Ww7l1Wy6FhKV+KPvw==
-X-Received: by 2002:a17:907:2c4a:b0:730:87ff:b69 with SMTP id hf10-20020a1709072c4a00b0073087ff0b69mr8585364ejc.116.1660512286556;
-        Sun, 14 Aug 2022 14:24:46 -0700 (PDT)
+        b=NwWeDkJH897NLmdLU5MB5OBSWWnrCYKIKdbPJBGJ7nc36QK88ny6LjAQzFThBebtAZ
+         vWp1sgPlh8Bvpl1ztdpzPVoaVvNkxs2KnZ1nv47ZO8sFkytqqyhuC4v798RNl8q5a9ce
+         n00UsEKVLT/8PQ1ee8th9ChDfPpGMz419+aUd9FDIF6YL10VXmya3B46hRchu4459eeM
+         K8TH9FfjGkATfCAKic4vmXdr/tGFojMTPt8jcQ3kEZJBgzRLHi1/rgWgPN8VCq5kdYvT
+         gy5TRrJe4TAnUxxXfvWCnD9SHtsCg8cDUJ7eTJjFDIrmTmG6Ob4HLzXv3KZuAXOnI1XG
+         6K5w==
+X-Gm-Message-State: ACgBeo3Kl23OPkEb4ApqQkX4U2fAUJSUuaSfmCSqylgCLtHpCLkphDmU
+        PhXwKnUWIgJz5WOq+1eKyLY=
+X-Google-Smtp-Source: AA6agR5yCvVRH21XQkQPF1Wfk2uvfyUNgSVB2S64Y12RTxJ0Qdq+0H838y2Ax7VnyAyrPfaKKoxjHw==
+X-Received: by 2002:a05:6402:26c5:b0:43e:2f1b:31c2 with SMTP id x5-20020a05640226c500b0043e2f1b31c2mr11769063edd.424.1660512334996;
+        Sun, 14 Aug 2022 14:25:34 -0700 (PDT)
 Received: from ?IPV6:2a01:c23:c1a2:1a00:2049:10ba:dbb:6620? (dynamic-2a01-0c23-c1a2-1a00-2049-10ba-0dbb-6620.c23.pool.telefonica.de. [2a01:c23:c1a2:1a00:2049:10ba:dbb:6620])
-        by smtp.googlemail.com with ESMTPSA id dk19-20020a0564021d9300b0043df042bfc6sm5409260edb.47.2022.08.14.14.24.45
+        by smtp.googlemail.com with ESMTPSA id o10-20020a056402038a00b0043a7134b381sm5357856edv.11.2022.08.14.14.25.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Aug 2022 14:24:46 -0700 (PDT)
-Message-ID: <c31a2f7e-4506-5b83-be5b-674980777859@gmail.com>
-Date:   Sun, 14 Aug 2022 23:24:38 +0200
+        Sun, 14 Aug 2022 14:25:34 -0700 (PDT)
+Message-ID: <cc80cda0-4dda-2e3e-3fc8-afa97717479b@gmail.com>
+Date:   Sun, 14 Aug 2022 23:25:31 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Content-Language: en-US
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH RESEND] clk: meson: pll: copy retry workaround from vendor
+ driver
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -64,8 +66,7 @@ Cc:     "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
         linux-clk@vger.kernel.org,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: clk: meson: pll: copy retry workaround from vendor driver
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
