@@ -2,505 +2,731 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA3AC3F6B0
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Aug 2022 14:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF31CC28B2C
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Aug 2022 15:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbiHNOpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Aug 2022 10:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58868 "EHLO
+        id S239967AbiHNP25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Aug 2022 11:28:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiHNOpK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Aug 2022 10:45:10 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440E713D0D;
-        Sun, 14 Aug 2022 07:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660488308; x=1692024308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AYYB80h5J0hH7YIzGUq77C10XX9XcCKmL2B3VlWTR9M=;
-  b=VCH5dxcP98W5kdGVjpgvJdqFmoIDfrbMSpR2ot9VCxCMqqMDUorP3Cnx
-   Oyek7eVoLL3H/MyEnKmYQaGoGkgJcpjvO7MUEumqOiCI+rMROp64wM4Fh
-   icqUIp6iCNA+NeVO5LkV6pT30kyky1UwFn5guQ287BEg/WNxKqtAU+YDx
-   u9Qh8sbZnbpcAqcA5pQlb9NzYsKOSPjTgUCKE6w4t0KGy2ITIwrIkZS0c
-   olXEmKViZ0D1XUbCpEnyCDXAbcj7UABTkDNXBe4qmh4ajm67UOnql2aV1
-   EojrXj61VKweB5aYP0CDNmdSDkcqWyc6LqKldOZ84kqZuwYer6DJQq2mm
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10439"; a="271603477"
-X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
-   d="scan'208";a="271603477"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2022 07:45:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
-   d="scan'208";a="709510885"
-Received: from lkp-server02.sh.intel.com (HELO 3d2a4d02a2a9) ([10.239.97.151])
-  by fmsmga002.fm.intel.com with ESMTP; 14 Aug 2022 07:45:00 -0700
-Received: from kbuild by 3d2a4d02a2a9 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oNErL-0000Be-1j;
-        Sun, 14 Aug 2022 14:44:59 +0000
-Date:   Sun, 14 Aug 2022 22:44:52 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jesse Taube <mr.bossman075@gmail.com>, linux-imx@nxp.com
-Cc:     kbuild-all@lists.01.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, stefan@agner.ch, linus.walleij@linaro.org,
-        daniel.lezcano@linaro.org, tglx@linutronix.de, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
-        abel.vesa@nxp.com, dev@lynxeye.de, marcel.ziswiler@toradex.com,
-        tharvey@gateworks.com, leoyang.li@nxp.com,
-        sebastian.reichel@collabora.com, cniedermaier@dh-electronics.com,
-        Mr.Bossman075@gmail.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 07/12] clk: imx: Update pllv3 to support i.MXRT1170
-Message-ID: <202208142248.DFj3YiOA-lkp@intel.com>
-References: <20220723160513.271692-8-Mr.Bossman075@gmail.com>
+        with ESMTP id S239893AbiHNP2h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Aug 2022 11:28:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6B8AE51;
+        Sun, 14 Aug 2022 08:28:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1D461B80B56;
+        Sun, 14 Aug 2022 15:28:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F787C433D6;
+        Sun, 14 Aug 2022 15:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660490911;
+        bh=oOazxn9uOIeeULy3xFLCdFRAGjrwMz6aIQQcYwFNT4I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JJIBNEN8SwoczU64vFpo6bKC0z+HeZdweoFGqi8c/nbomjnxkyWgvYqhH/Os9ATTJ
+         OKnHuJJwoGA182aJeJ/wC0Xinq0QgdJ+i6KWvTyst/GQmTiwX5M70Ybh9gcQy033+m
+         xZQ/uBprUqtskts5Agi4+5TldXbBCQYx8lnsNkJ3DFYCS0nXmSojsePTelXp3jrLg7
+         aS9rFUXu0Qsk0FU3YnRYXxqgscHRWKIbgxBTzsy+PBsdqP+aJrz5XnBcA20RiLkBgd
+         SXR3IE85g9QNt2YeoFHsaPD4mfLE9r5239XM1M4fRNpHWiH3YIX59oHhwZ6Di7j4Zk
+         lujc6TC8GQfnA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
+        robh@kernel.org, jakobkoschel@gmail.com, Julia.Lawall@inria.fr,
+        linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.19 17/64] clk: ti: Stop using legacy clkctrl names for omap4 and 5
+Date:   Sun, 14 Aug 2022 11:23:50 -0400
+Message-Id: <20220814152437.2374207-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220814152437.2374207-1-sashal@kernel.org>
+References: <20220814152437.2374207-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220723160513.271692-8-Mr.Bossman075@gmail.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jesse,
+From: Tony Lindgren <tony@atomide.com>
 
-Thank you for the patch! Yet something to improve:
+[ Upstream commit 255584b138343d4a28c6d25bd82d04b09460d672 ]
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on abelvesa/clk/imx v5.19]
-[cannot apply to soc/for-next linus/master next-20220812]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+With the addition of clock-output-names, we can now unify the internal
+clock naming for omap4 and 5 to follow the other TI SoCs.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesse-Taube/Add-support-for-the-i-MXRT1170-evk/20220724-000710
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20220814/202208142248.DFj3YiOA-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/96413cc0300321ec18d27ca9983f349a41f99706
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Jesse-Taube/Add-support-for-the-i-MXRT1170-evk/20220724-000710
-        git checkout 96413cc0300321ec18d27ca9983f349a41f99706
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+We are still using legacy clkctrl names for omap4 and 5 based on the clock
+manager name which is wrong. Instead, we want to use the clkctrl clock
+based naming.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+We must now also drop the legacy TI_CLK_CLKCTRL_COMPAT quirk for the
+clkctrl clock.
 
-All errors (new ones prefixed by >>):
+This change will allow further devicetree warning cleanup as already
+done for am3/4 and dra7.
 
-   In file included from drivers/clk/imx/clk-imx6q.c:21:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c: In function 'imx6q_clocks_init':
->> drivers/clk/imx/clk-imx6q.c:477:101: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     477 |         hws[IMX6QDL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-         |                                                                                                     ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c:478:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     478 |         hws[IMX6QDL_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c:479:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     479 |         hws[IMX6QDL_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c:480:101: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     480 |         hws[IMX6QDL_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-         |                                                                                                     ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c:481:101: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     481 |         hws[IMX6QDL_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-         |                                                                                                     ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c:482:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     482 |         hws[IMX6QDL_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6q.c:483:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     483 |         hws[IMX6QDL_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
---
-   In file included from drivers/clk/imx/clk-imx6sl.c:16:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c: In function 'imx6sl_clocks_init':
->> drivers/clk/imx/clk-imx6sl.c:217:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     217 |         hws[IMX6SL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c:218:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     218 |         hws[IMX6SL_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c:219:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     219 |         hws[IMX6SL_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c:220:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     220 |         hws[IMX6SL_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c:221:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     221 |         hws[IMX6SL_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c:222:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     222 |         hws[IMX6SL_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sl.c:223:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     223 |         hws[IMX6SL_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
---
-   In file included from drivers/clk/imx/clk-imx6sll.c:17:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c: In function 'imx6sll_clocks_init':
->> drivers/clk/imx/clk-imx6sll.c:123:110: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     123 |         hws[IMX6SLL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,  "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
-         |                                                                                                              ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c:124:112: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     124 |         hws[IMX6SLL_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
-         |                                                                                                                ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c:125:109: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     125 |         hws[IMX6SLL_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,  "pll3", "pll3_bypass_src", base + 0x10, 0x3);
-         |                                                                                                             ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c:126:110: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     126 |         hws[IMX6SLL_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,   "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
-         |                                                                                                              ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c:127:110: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     127 |         hws[IMX6SLL_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,   "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
-         |                                                                                                              ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c:128:117: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     128 |         hws[IMX6SLL_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,         "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
-         |                                                                                                                     ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sll.c:129:109: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     129 |         hws[IMX6SLL_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,  "pll7", "pll7_bypass_src", base + 0x20, 0x3);
-         |                                                                                                             ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
---
-   In file included from drivers/clk/imx/clk-imx6sx.c:19:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c: In function 'imx6sx_clocks_init':
->> drivers/clk/imx/clk-imx6sx.c:160:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     160 |         hws[IMX6SX_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c:161:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     161 |         hws[IMX6SX_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c:162:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     162 |         hws[IMX6SX_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c:163:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     163 |         hws[IMX6SX_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c:164:100: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     164 |         hws[IMX6SX_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-         |                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c:165:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     165 |         hws[IMX6SX_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6sx.c:166:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     166 |         hws[IMX6SX_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
---
-   In file included from drivers/clk/imx/clk-imx6ul.c:18:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c: In function 'imx6ul_clocks_init':
->> drivers/clk/imx/clk-imx6ul.c:149:98: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     149 |         hws[IMX6UL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,   "pll1", "osc", base + 0x00, 0x7f);
-         |                                                                                                  ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c:150:99: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     150 |         hws[IMX6UL_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-         |                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c:151:97: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     151 |         hws[IMX6UL_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,   "pll3", "osc", base + 0x10, 0x3);
-         |                                                                                                 ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c:152:98: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     152 |         hws[IMX6UL_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,    "pll4", "osc", base + 0x70, 0x7f);
-         |                                                                                                  ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c:153:98: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     153 |         hws[IMX6UL_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,    "pll5", "osc", base + 0xa0, 0x7f);
-         |                                                                                                  ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c:154:97: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     154 |         hws[IMX6UL_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,  "pll6", "osc", base + 0xe0, 0x3);
-         |                                                                                                 ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx6ul.c:155:97: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     155 |         hws[IMX6UL_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,   "pll7", "osc", base + 0x20, 0x3);
-         |                                                                                                 ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
---
-   In file included from drivers/clk/imx/clk-imx7d.c:19:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx7d.c: In function 'imx7d_clocks_init':
->> drivers/clk/imx/clk-imx7d.c:409:108: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     409 |         hws[IMX7D_PLL_ARM_MAIN]  = imx_clk_hw_pllv3(IMX_PLLV3_SYS, "pll_arm_main", "osc", base + 0x60, 0x7f);
-         |                                                                                                            ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx7d.c:410:114: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     410 |         hws[IMX7D_PLL_DRAM_MAIN] = imx_clk_hw_pllv3(IMX_PLLV3_DDR_IMX7, "pll_dram_main", "osc", base + 0x70, 0x7f);
-         |                                                                                                                  ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx7d.c:411:111: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     411 |         hws[IMX7D_PLL_SYS_MAIN]  = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll_sys_main", "osc", base + 0xb0, 0x1);
-         |                                                                                                               ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx7d.c:412:114: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     412 |         hws[IMX7D_PLL_ENET_MAIN] = imx_clk_hw_pllv3(IMX_PLLV3_ENET_IMX7, "pll_enet_main", "osc", base + 0xe0, 0x0);
-         |                                                                                                                  ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx7d.c:413:115: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     413 |         hws[IMX7D_PLL_AUDIO_MAIN] = imx_clk_hw_pllv3(IMX_PLLV3_AV_IMX7, "pll_audio_main", "osc", base + 0xf0, 0x7f);
-         |                                                                                                                   ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-imx7d.c:414:116: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     414 |         hws[IMX7D_PLL_VIDEO_MAIN] = imx_clk_hw_pllv3(IMX_PLLV3_AV_IMX7, "pll_video_main", "osc", base + 0x130, 0x7f);
-         |                                                                                                                    ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
---
-   In file included from drivers/clk/imx/clk-vf610.c:12:
-   drivers/clk/imx/clk.h:268:74: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     268 |                 const char *parent_name, void __iomem *base, u32 div_mask);
-         |                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c: In function 'vf610_clocks_init':
->> drivers/clk/imx/clk-vf610.c:219:107: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     219 |         clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
-         |                                                                                                           ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c:220:107: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     220 |         clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
-         |                                                                                                           ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c:221:111: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     221 |         clk[VF610_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB_VF610,     "pll3", "pll3_bypass_src", PLL3_CTRL, 0x2);
-         |                                                                                                               ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c:222:106: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     222 |         clk[VF610_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", PLL4_CTRL, 0x7f);
-         |                                                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c:223:105: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     223 |         clk[VF610_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll5", "pll5_bypass_src", PLL5_CTRL, 0x3);
-         |                                                                                                         ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c:224:106: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     224 |         clk[VF610_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll6", "pll6_bypass_src", PLL6_CTRL, 0x7f);
-         |                                                                                                          ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
-   drivers/clk/imx/clk-vf610.c:225:111: error: macro "imx_clk_hw_pllv3" requires 8 arguments, but only 5 given
-     225 |         clk[VF610_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB_VF610,     "pll7", "pll7_bypass_src", PLL7_CTRL, 0x2);
-         |                                                                                                               ^
-   drivers/clk/imx/clk.h:107: note: macro "imx_clk_hw_pllv3" defined here
-     107 | #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-         | 
+Cc: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Tero Kristo <kristo@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Link: https://lore.kernel.org/r/20220615064306.22254-1-tony@atomide.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/ti/clk-44xx.c | 210 +++++++++++++++++++-------------------
+ drivers/clk/ti/clk-54xx.c | 160 ++++++++++++++---------------
+ drivers/clk/ti/clkctrl.c  |   4 -
+ 3 files changed, 185 insertions(+), 189 deletions(-)
 
-
-vim +/imx_clk_hw_pllv3 +477 drivers/clk/imx/clk-imx6q.c
-
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  430  
-53bb71da1c5c14 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2013-05-21  431  static void __init imx6q_clocks_init(struct device_node *ccm_node)
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  432  {
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  433  	struct device_node *np;
-5d283b08380086 drivers/clk/imx/clk-imx6q.c   Fabio Estevam 2016-10-17  434  	void __iomem *anatop_base, *base;
-a94f8ecb2f778f arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2013-07-18  435  	int ret;
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  436  
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  437  	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  438  					  IMX6QDL_CLK_END), GFP_KERNEL);
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  439  	if (WARN_ON(!clk_hw_data))
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  440  		return;
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  441  
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  442  	clk_hw_data->num = IMX6QDL_CLK_END;
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  443  	hws = clk_hw_data->hws;
-a29be9185d195b drivers/clk/imx/clk-imx6q.c   Lucas Stach   2018-11-15  444  
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  445  	hws[IMX6QDL_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
-a29be9185d195b drivers/clk/imx/clk-imx6q.c   Lucas Stach   2018-11-15  446  
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  447  	hws[IMX6QDL_CLK_CKIL] = imx6q_obtain_fixed_clk_hw(ccm_node, "ckil", 0);
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  448  	hws[IMX6QDL_CLK_CKIH] = imx6q_obtain_fixed_clk_hw(ccm_node, "ckih1", 0);
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  449  	hws[IMX6QDL_CLK_OSC] = imx6q_obtain_fixed_clk_hw(ccm_node, "osc", 0);
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  450  
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  451  	/* Clock source from external clock via CLK1/2 PADs */
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  452  	hws[IMX6QDL_CLK_ANACLK1] = imx6q_obtain_fixed_clk_hw(ccm_node, "anaclk1", 0);
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  453  	hws[IMX6QDL_CLK_ANACLK2] = imx6q_obtain_fixed_clk_hw(ccm_node, "anaclk2", 0);
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  454  
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  455  	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
-5d283b08380086 drivers/clk/imx/clk-imx6q.c   Fabio Estevam 2016-10-17  456  	anatop_base = base = of_iomap(np, 0);
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  457  	WARN_ON(!base);
-c9ec1d8fef31b5 drivers/clk/imx/clk-imx6q.c   Yangtao Li    2018-12-26  458  	of_node_put(np);
-2acd1b6f889c04 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2012-04-04  459  
-2df1d026edc11e arch/arm/mach-imx/clk-imx6q.c Philipp Zabel 2013-03-29  460  	/* Audio/video PLL post dividers do not work on i.MX6q revision 1.0 */
-961dfd37fa165c arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2015-04-26  461  	if (clk_on_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_1_0) {
-2df1d026edc11e arch/arm/mach-imx/clk-imx6q.c Philipp Zabel 2013-03-29  462  		post_div_table[1].div = 1;
-2df1d026edc11e arch/arm/mach-imx/clk-imx6q.c Philipp Zabel 2013-03-29  463  		post_div_table[2].div = 1;
-2df1d026edc11e arch/arm/mach-imx/clk-imx6q.c Philipp Zabel 2013-03-29  464  		video_div_table[1].div = 1;
-81ef447950bf09 arch/arm/mach-imx/clk-imx6q.c Gary Bisson   2014-12-03  465  		video_div_table[3].div = 1;
-d2a10a1727b394 arch/arm/mach-imx/clk-imx6q.c Dmitry Voytik 2014-11-06  466  	}
-2df1d026edc11e arch/arm/mach-imx/clk-imx6q.c Philipp Zabel 2013-03-29  467  
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  468  	hws[IMX6QDL_PLL1_BYPASS_SRC] = imx_clk_hw_mux("pll1_bypass_src", base + 0x00, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  469  	hws[IMX6QDL_PLL2_BYPASS_SRC] = imx_clk_hw_mux("pll2_bypass_src", base + 0x30, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  470  	hws[IMX6QDL_PLL3_BYPASS_SRC] = imx_clk_hw_mux("pll3_bypass_src", base + 0x10, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  471  	hws[IMX6QDL_PLL4_BYPASS_SRC] = imx_clk_hw_mux("pll4_bypass_src", base + 0x70, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  472  	hws[IMX6QDL_PLL5_BYPASS_SRC] = imx_clk_hw_mux("pll5_bypass_src", base + 0xa0, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  473  	hws[IMX6QDL_PLL6_BYPASS_SRC] = imx_clk_hw_mux("pll6_bypass_src", base + 0xe0, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29  474  	hws[IMX6QDL_PLL7_BYPASS_SRC] = imx_clk_hw_mux("pll7_bypass_src", base + 0x20, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-b1f156db47ae91 arch/arm/mach-imx/clk-imx6q.c Shawn Guo     2014-09-01  475  
-2b254693bef4f1 arch/arm/mach-imx/clk-imx6q.c Sascha Hauer  2012-11-22  476  	/*                                    type               name    parent_name        base         div_mask */
-992b703b5b3897 drivers/clk/imx/clk-imx6q.c   Abel Vesa     2019-05-29 @477  	hws[IMX6QDL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-
+diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
+index d078e5d73ed9..868bc7af21b0 100644
+--- a/drivers/clk/ti/clk-44xx.c
++++ b/drivers/clk/ti/clk-44xx.c
+@@ -56,7 +56,7 @@ static const struct omap_clkctrl_bit_data omap4_aess_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_func_dmic_abe_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0018:26",
++	"abe-clkctrl:0018:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -76,7 +76,7 @@ static const struct omap_clkctrl_bit_data omap4_dmic_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_func_mcasp_abe_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0020:26",
++	"abe-clkctrl:0020:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -89,7 +89,7 @@ static const struct omap_clkctrl_bit_data omap4_mcasp_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_func_mcbsp1_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0028:26",
++	"abe-clkctrl:0028:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -102,7 +102,7 @@ static const struct omap_clkctrl_bit_data omap4_mcbsp1_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap4_func_mcbsp2_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0030:26",
++	"abe-clkctrl:0030:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -115,7 +115,7 @@ static const struct omap_clkctrl_bit_data omap4_mcbsp2_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap4_func_mcbsp3_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0038:26",
++	"abe-clkctrl:0038:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -183,18 +183,18 @@ static const struct omap_clkctrl_bit_data omap4_timer8_bit_data[] __initconst =
+ 
+ static const struct omap_clkctrl_reg_data omap4_abe_clkctrl_regs[] __initconst = {
+ 	{ OMAP4_L4_ABE_CLKCTRL, NULL, 0, "ocp_abe_iclk" },
+-	{ OMAP4_AESS_CLKCTRL, omap4_aess_bit_data, CLKF_SW_SUP, "abe_cm:clk:0008:24" },
++	{ OMAP4_AESS_CLKCTRL, omap4_aess_bit_data, CLKF_SW_SUP, "abe-clkctrl:0008:24" },
+ 	{ OMAP4_MCPDM_CLKCTRL, NULL, CLKF_SW_SUP, "pad_clks_ck" },
+-	{ OMAP4_DMIC_CLKCTRL, omap4_dmic_bit_data, CLKF_SW_SUP, "abe_cm:clk:0018:24" },
+-	{ OMAP4_MCASP_CLKCTRL, omap4_mcasp_bit_data, CLKF_SW_SUP, "abe_cm:clk:0020:24" },
+-	{ OMAP4_MCBSP1_CLKCTRL, omap4_mcbsp1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0028:24" },
+-	{ OMAP4_MCBSP2_CLKCTRL, omap4_mcbsp2_bit_data, CLKF_SW_SUP, "abe_cm:clk:0030:24" },
+-	{ OMAP4_MCBSP3_CLKCTRL, omap4_mcbsp3_bit_data, CLKF_SW_SUP, "abe_cm:clk:0038:24" },
+-	{ OMAP4_SLIMBUS1_CLKCTRL, omap4_slimbus1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0040:8" },
+-	{ OMAP4_TIMER5_CLKCTRL, omap4_timer5_bit_data, CLKF_SW_SUP, "abe_cm:clk:0048:24" },
+-	{ OMAP4_TIMER6_CLKCTRL, omap4_timer6_bit_data, CLKF_SW_SUP, "abe_cm:clk:0050:24" },
+-	{ OMAP4_TIMER7_CLKCTRL, omap4_timer7_bit_data, CLKF_SW_SUP, "abe_cm:clk:0058:24" },
+-	{ OMAP4_TIMER8_CLKCTRL, omap4_timer8_bit_data, CLKF_SW_SUP, "abe_cm:clk:0060:24" },
++	{ OMAP4_DMIC_CLKCTRL, omap4_dmic_bit_data, CLKF_SW_SUP, "abe-clkctrl:0018:24" },
++	{ OMAP4_MCASP_CLKCTRL, omap4_mcasp_bit_data, CLKF_SW_SUP, "abe-clkctrl:0020:24" },
++	{ OMAP4_MCBSP1_CLKCTRL, omap4_mcbsp1_bit_data, CLKF_SW_SUP, "abe-clkctrl:0028:24" },
++	{ OMAP4_MCBSP2_CLKCTRL, omap4_mcbsp2_bit_data, CLKF_SW_SUP, "abe-clkctrl:0030:24" },
++	{ OMAP4_MCBSP3_CLKCTRL, omap4_mcbsp3_bit_data, CLKF_SW_SUP, "abe-clkctrl:0038:24" },
++	{ OMAP4_SLIMBUS1_CLKCTRL, omap4_slimbus1_bit_data, CLKF_SW_SUP, "abe-clkctrl:0040:8" },
++	{ OMAP4_TIMER5_CLKCTRL, omap4_timer5_bit_data, CLKF_SW_SUP, "abe-clkctrl:0048:24" },
++	{ OMAP4_TIMER6_CLKCTRL, omap4_timer6_bit_data, CLKF_SW_SUP, "abe-clkctrl:0050:24" },
++	{ OMAP4_TIMER7_CLKCTRL, omap4_timer7_bit_data, CLKF_SW_SUP, "abe-clkctrl:0058:24" },
++	{ OMAP4_TIMER8_CLKCTRL, omap4_timer8_bit_data, CLKF_SW_SUP, "abe-clkctrl:0060:24" },
+ 	{ OMAP4_WD_TIMER3_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ 0 },
+ };
+@@ -287,7 +287,7 @@ static const struct omap_clkctrl_bit_data omap4_fdif_bit_data[] __initconst = {
+ 
+ static const struct omap_clkctrl_reg_data omap4_iss_clkctrl_regs[] __initconst = {
+ 	{ OMAP4_ISS_CLKCTRL, omap4_iss_bit_data, CLKF_SW_SUP, "ducati_clk_mux_ck" },
+-	{ OMAP4_FDIF_CLKCTRL, omap4_fdif_bit_data, CLKF_SW_SUP, "iss_cm:clk:0008:24" },
++	{ OMAP4_FDIF_CLKCTRL, omap4_fdif_bit_data, CLKF_SW_SUP, "iss-clkctrl:0008:24" },
+ 	{ 0 },
+ };
+ 
+@@ -320,7 +320,7 @@ static const struct omap_clkctrl_bit_data omap4_dss_core_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l3_dss_clkctrl_regs[] __initconst = {
+-	{ OMAP4_DSS_CORE_CLKCTRL, omap4_dss_core_bit_data, CLKF_SW_SUP, "l3_dss_cm:clk:0000:8" },
++	{ OMAP4_DSS_CORE_CLKCTRL, omap4_dss_core_bit_data, CLKF_SW_SUP, "l3-dss-clkctrl:0000:8" },
+ 	{ 0 },
+ };
+ 
+@@ -336,7 +336,7 @@ static const struct omap_clkctrl_bit_data omap4_gpu_bit_data[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l3_gfx_clkctrl_regs[] __initconst = {
+-	{ OMAP4_GPU_CLKCTRL, omap4_gpu_bit_data, CLKF_SW_SUP, "l3_gfx_cm:clk:0000:24" },
++	{ OMAP4_GPU_CLKCTRL, omap4_gpu_bit_data, CLKF_SW_SUP, "l3-gfx-clkctrl:0000:24" },
+ 	{ 0 },
+ };
+ 
+@@ -372,12 +372,12 @@ static const struct omap_clkctrl_bit_data omap4_hsi_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_usb_host_hs_utmi_p1_clk_parents[] __initconst = {
+-	"l3_init_cm:clk:0038:24",
++	"l3-init-clkctrl:0038:24",
+ 	NULL,
+ };
+ 
+ static const char * const omap4_usb_host_hs_utmi_p2_clk_parents[] __initconst = {
+-	"l3_init_cm:clk:0038:25",
++	"l3-init-clkctrl:0038:25",
+ 	NULL,
+ };
+ 
+@@ -418,7 +418,7 @@ static const struct omap_clkctrl_bit_data omap4_usb_host_hs_bit_data[] __initcon
+ };
+ 
+ static const char * const omap4_usb_otg_hs_xclk_parents[] __initconst = {
+-	"l3_init_cm:clk:0040:24",
++	"l3-init-clkctrl:0040:24",
+ 	NULL,
+ };
+ 
+@@ -452,14 +452,14 @@ static const struct omap_clkctrl_bit_data omap4_ocp2scp_usb_phy_bit_data[] __ini
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l3_init_clkctrl_regs[] __initconst = {
+-	{ OMAP4_MMC1_CLKCTRL, omap4_mmc1_bit_data, CLKF_SW_SUP, "l3_init_cm:clk:0008:24" },
+-	{ OMAP4_MMC2_CLKCTRL, omap4_mmc2_bit_data, CLKF_SW_SUP, "l3_init_cm:clk:0010:24" },
+-	{ OMAP4_HSI_CLKCTRL, omap4_hsi_bit_data, CLKF_HW_SUP, "l3_init_cm:clk:0018:24" },
++	{ OMAP4_MMC1_CLKCTRL, omap4_mmc1_bit_data, CLKF_SW_SUP, "l3-init-clkctrl:0008:24" },
++	{ OMAP4_MMC2_CLKCTRL, omap4_mmc2_bit_data, CLKF_SW_SUP, "l3-init-clkctrl:0010:24" },
++	{ OMAP4_HSI_CLKCTRL, omap4_hsi_bit_data, CLKF_HW_SUP, "l3-init-clkctrl:0018:24" },
+ 	{ OMAP4_USB_HOST_HS_CLKCTRL, omap4_usb_host_hs_bit_data, CLKF_SW_SUP, "init_60m_fclk" },
+ 	{ OMAP4_USB_OTG_HS_CLKCTRL, omap4_usb_otg_hs_bit_data, CLKF_HW_SUP, "l3_div_ck" },
+ 	{ OMAP4_USB_TLL_HS_CLKCTRL, omap4_usb_tll_hs_bit_data, CLKF_HW_SUP, "l4_div_ck" },
+ 	{ OMAP4_USB_HOST_FS_CLKCTRL, NULL, CLKF_SW_SUP, "func_48mc_fclk" },
+-	{ OMAP4_OCP2SCP_USB_PHY_CLKCTRL, omap4_ocp2scp_usb_phy_bit_data, CLKF_HW_SUP, "l3_init_cm:clk:00c0:8" },
++	{ OMAP4_OCP2SCP_USB_PHY_CLKCTRL, omap4_ocp2scp_usb_phy_bit_data, CLKF_HW_SUP, "l3-init-clkctrl:00c0:8" },
+ 	{ 0 },
+ };
+ 
+@@ -530,7 +530,7 @@ static const struct omap_clkctrl_bit_data omap4_gpio6_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_per_mcbsp4_gfclk_parents[] __initconst = {
+-	"l4_per_cm:clk:00c0:26",
++	"l4-per-clkctrl:00c0:26",
+ 	"pad_clks_ck",
+ 	NULL,
+ };
+@@ -570,12 +570,12 @@ static const struct omap_clkctrl_bit_data omap4_slimbus2_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l4_per_clkctrl_regs[] __initconst = {
+-	{ OMAP4_TIMER10_CLKCTRL, omap4_timer10_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0008:24" },
+-	{ OMAP4_TIMER11_CLKCTRL, omap4_timer11_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0010:24" },
+-	{ OMAP4_TIMER2_CLKCTRL, omap4_timer2_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0018:24" },
+-	{ OMAP4_TIMER3_CLKCTRL, omap4_timer3_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0020:24" },
+-	{ OMAP4_TIMER4_CLKCTRL, omap4_timer4_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0028:24" },
+-	{ OMAP4_TIMER9_CLKCTRL, omap4_timer9_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0030:24" },
++	{ OMAP4_TIMER10_CLKCTRL, omap4_timer10_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0008:24" },
++	{ OMAP4_TIMER11_CLKCTRL, omap4_timer11_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0010:24" },
++	{ OMAP4_TIMER2_CLKCTRL, omap4_timer2_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0018:24" },
++	{ OMAP4_TIMER3_CLKCTRL, omap4_timer3_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0020:24" },
++	{ OMAP4_TIMER4_CLKCTRL, omap4_timer4_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0028:24" },
++	{ OMAP4_TIMER9_CLKCTRL, omap4_timer9_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0030:24" },
+ 	{ OMAP4_ELM_CLKCTRL, NULL, 0, "l4_div_ck" },
+ 	{ OMAP4_GPIO2_CLKCTRL, omap4_gpio2_bit_data, CLKF_HW_SUP, "l4_div_ck" },
+ 	{ OMAP4_GPIO3_CLKCTRL, omap4_gpio3_bit_data, CLKF_HW_SUP, "l4_div_ck" },
+@@ -588,14 +588,14 @@ static const struct omap_clkctrl_reg_data omap4_l4_per_clkctrl_regs[] __initcons
+ 	{ OMAP4_I2C3_CLKCTRL, NULL, CLKF_SW_SUP, "func_96m_fclk" },
+ 	{ OMAP4_I2C4_CLKCTRL, NULL, CLKF_SW_SUP, "func_96m_fclk" },
+ 	{ OMAP4_L4_PER_CLKCTRL, NULL, 0, "l4_div_ck" },
+-	{ OMAP4_MCBSP4_CLKCTRL, omap4_mcbsp4_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:00c0:24" },
++	{ OMAP4_MCBSP4_CLKCTRL, omap4_mcbsp4_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:00c0:24" },
+ 	{ OMAP4_MCSPI1_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MCSPI2_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MCSPI3_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MCSPI4_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MMC3_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MMC4_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+-	{ OMAP4_SLIMBUS2_CLKCTRL, omap4_slimbus2_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0118:8" },
++	{ OMAP4_SLIMBUS2_CLKCTRL, omap4_slimbus2_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0118:8" },
+ 	{ OMAP4_UART1_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_UART2_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_UART3_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+@@ -630,7 +630,7 @@ static const struct omap_clkctrl_reg_data omap4_l4_wkup_clkctrl_regs[] __initcon
+ 	{ OMAP4_L4_WKUP_CLKCTRL, NULL, 0, "l4_wkup_clk_mux_ck" },
+ 	{ OMAP4_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ OMAP4_GPIO1_CLKCTRL, omap4_gpio1_bit_data, CLKF_HW_SUP, "l4_wkup_clk_mux_ck" },
+-	{ OMAP4_TIMER1_CLKCTRL, omap4_timer1_bit_data, CLKF_SW_SUP, "l4_wkup_cm:clk:0020:24" },
++	{ OMAP4_TIMER1_CLKCTRL, omap4_timer1_bit_data, CLKF_SW_SUP, "l4-wkup-clkctrl:0020:24" },
+ 	{ OMAP4_COUNTER_32K_CLKCTRL, NULL, 0, "sys_32k_ck" },
+ 	{ OMAP4_KBD_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ 0 },
+@@ -644,7 +644,7 @@ static const char * const omap4_pmd_stm_clock_mux_ck_parents[] __initconst = {
+ };
+ 
+ static const char * const omap4_trace_clk_div_div_ck_parents[] __initconst = {
+-	"emu_sys_cm:clk:0000:22",
++	"emu-sys-clkctrl:0000:22",
+ 	NULL,
+ };
+ 
+@@ -662,7 +662,7 @@ static const struct omap_clkctrl_div_data omap4_trace_clk_div_div_ck_data __init
+ };
+ 
+ static const char * const omap4_stm_clk_div_ck_parents[] __initconst = {
+-	"emu_sys_cm:clk:0000:20",
++	"emu-sys-clkctrl:0000:20",
+ 	NULL,
+ };
+ 
+@@ -716,73 +716,73 @@ static struct ti_dt_clk omap44xx_clks[] = {
+ 	 * hwmod support. Once hwmod is removed, these can be removed
+ 	 * also.
+ 	 */
+-	DT_CLK(NULL, "aess_fclk", "abe_cm:0008:24"),
+-	DT_CLK(NULL, "cm2_dm10_mux", "l4_per_cm:0008:24"),
+-	DT_CLK(NULL, "cm2_dm11_mux", "l4_per_cm:0010:24"),
+-	DT_CLK(NULL, "cm2_dm2_mux", "l4_per_cm:0018:24"),
+-	DT_CLK(NULL, "cm2_dm3_mux", "l4_per_cm:0020:24"),
+-	DT_CLK(NULL, "cm2_dm4_mux", "l4_per_cm:0028:24"),
+-	DT_CLK(NULL, "cm2_dm9_mux", "l4_per_cm:0030:24"),
+-	DT_CLK(NULL, "dmic_sync_mux_ck", "abe_cm:0018:26"),
+-	DT_CLK(NULL, "dmt1_clk_mux", "l4_wkup_cm:0020:24"),
+-	DT_CLK(NULL, "dss_48mhz_clk", "l3_dss_cm:0000:9"),
+-	DT_CLK(NULL, "dss_dss_clk", "l3_dss_cm:0000:8"),
+-	DT_CLK(NULL, "dss_sys_clk", "l3_dss_cm:0000:10"),
+-	DT_CLK(NULL, "dss_tv_clk", "l3_dss_cm:0000:11"),
+-	DT_CLK(NULL, "fdif_fck", "iss_cm:0008:24"),
+-	DT_CLK(NULL, "func_dmic_abe_gfclk", "abe_cm:0018:24"),
+-	DT_CLK(NULL, "func_mcasp_abe_gfclk", "abe_cm:0020:24"),
+-	DT_CLK(NULL, "func_mcbsp1_gfclk", "abe_cm:0028:24"),
+-	DT_CLK(NULL, "func_mcbsp2_gfclk", "abe_cm:0030:24"),
+-	DT_CLK(NULL, "func_mcbsp3_gfclk", "abe_cm:0038:24"),
+-	DT_CLK(NULL, "gpio1_dbclk", "l4_wkup_cm:0018:8"),
+-	DT_CLK(NULL, "gpio2_dbclk", "l4_per_cm:0040:8"),
+-	DT_CLK(NULL, "gpio3_dbclk", "l4_per_cm:0048:8"),
+-	DT_CLK(NULL, "gpio4_dbclk", "l4_per_cm:0050:8"),
+-	DT_CLK(NULL, "gpio5_dbclk", "l4_per_cm:0058:8"),
+-	DT_CLK(NULL, "gpio6_dbclk", "l4_per_cm:0060:8"),
+-	DT_CLK(NULL, "hsi_fck", "l3_init_cm:0018:24"),
+-	DT_CLK(NULL, "hsmmc1_fclk", "l3_init_cm:0008:24"),
+-	DT_CLK(NULL, "hsmmc2_fclk", "l3_init_cm:0010:24"),
+-	DT_CLK(NULL, "iss_ctrlclk", "iss_cm:0000:8"),
+-	DT_CLK(NULL, "mcasp_sync_mux_ck", "abe_cm:0020:26"),
+-	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe_cm:0028:26"),
+-	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe_cm:0030:26"),
+-	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe_cm:0038:26"),
+-	DT_CLK(NULL, "mcbsp4_sync_mux_ck", "l4_per_cm:00c0:26"),
+-	DT_CLK(NULL, "ocp2scp_usb_phy_phy_48m", "l3_init_cm:00c0:8"),
+-	DT_CLK(NULL, "otg_60m_gfclk", "l3_init_cm:0040:24"),
+-	DT_CLK(NULL, "per_mcbsp4_gfclk", "l4_per_cm:00c0:24"),
+-	DT_CLK(NULL, "pmd_stm_clock_mux_ck", "emu_sys_cm:0000:20"),
+-	DT_CLK(NULL, "pmd_trace_clk_mux_ck", "emu_sys_cm:0000:22"),
+-	DT_CLK(NULL, "sgx_clk_mux", "l3_gfx_cm:0000:24"),
+-	DT_CLK(NULL, "slimbus1_fclk_0", "abe_cm:0040:8"),
+-	DT_CLK(NULL, "slimbus1_fclk_1", "abe_cm:0040:9"),
+-	DT_CLK(NULL, "slimbus1_fclk_2", "abe_cm:0040:10"),
+-	DT_CLK(NULL, "slimbus1_slimbus_clk", "abe_cm:0040:11"),
+-	DT_CLK(NULL, "slimbus2_fclk_0", "l4_per_cm:0118:8"),
+-	DT_CLK(NULL, "slimbus2_fclk_1", "l4_per_cm:0118:9"),
+-	DT_CLK(NULL, "slimbus2_slimbus_clk", "l4_per_cm:0118:10"),
+-	DT_CLK(NULL, "stm_clk_div_ck", "emu_sys_cm:0000:27"),
+-	DT_CLK(NULL, "timer5_sync_mux", "abe_cm:0048:24"),
+-	DT_CLK(NULL, "timer6_sync_mux", "abe_cm:0050:24"),
+-	DT_CLK(NULL, "timer7_sync_mux", "abe_cm:0058:24"),
+-	DT_CLK(NULL, "timer8_sync_mux", "abe_cm:0060:24"),
+-	DT_CLK(NULL, "trace_clk_div_div_ck", "emu_sys_cm:0000:24"),
+-	DT_CLK(NULL, "usb_host_hs_func48mclk", "l3_init_cm:0038:15"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3_init_cm:0038:13"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3_init_cm:0038:14"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3_init_cm:0038:11"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3_init_cm:0038:12"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3_init_cm:0038:8"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3_init_cm:0038:9"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3_init_cm:0038:10"),
+-	DT_CLK(NULL, "usb_otg_hs_xclk", "l3_init_cm:0040:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3_init_cm:0048:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3_init_cm:0048:9"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3_init_cm:0048:10"),
+-	DT_CLK(NULL, "utmi_p1_gfclk", "l3_init_cm:0038:24"),
+-	DT_CLK(NULL, "utmi_p2_gfclk", "l3_init_cm:0038:25"),
++	DT_CLK(NULL, "aess_fclk", "abe-clkctrl:0008:24"),
++	DT_CLK(NULL, "cm2_dm10_mux", "l4-per-clkctrl:0008:24"),
++	DT_CLK(NULL, "cm2_dm11_mux", "l4-per-clkctrl:0010:24"),
++	DT_CLK(NULL, "cm2_dm2_mux", "l4-per-clkctrl:0018:24"),
++	DT_CLK(NULL, "cm2_dm3_mux", "l4-per-clkctrl:0020:24"),
++	DT_CLK(NULL, "cm2_dm4_mux", "l4-per-clkctrl:0028:24"),
++	DT_CLK(NULL, "cm2_dm9_mux", "l4-per-clkctrl:0030:24"),
++	DT_CLK(NULL, "dmic_sync_mux_ck", "abe-clkctrl:0018:26"),
++	DT_CLK(NULL, "dmt1_clk_mux", "l4-wkup-clkctrl:0020:24"),
++	DT_CLK(NULL, "dss_48mhz_clk", "l3-dss-clkctrl:0000:9"),
++	DT_CLK(NULL, "dss_dss_clk", "l3-dss-clkctrl:0000:8"),
++	DT_CLK(NULL, "dss_sys_clk", "l3-dss-clkctrl:0000:10"),
++	DT_CLK(NULL, "dss_tv_clk", "l3-dss-clkctrl:0000:11"),
++	DT_CLK(NULL, "fdif_fck", "iss-clkctrl:0008:24"),
++	DT_CLK(NULL, "func_dmic_abe_gfclk", "abe-clkctrl:0018:24"),
++	DT_CLK(NULL, "func_mcasp_abe_gfclk", "abe-clkctrl:0020:24"),
++	DT_CLK(NULL, "func_mcbsp1_gfclk", "abe-clkctrl:0028:24"),
++	DT_CLK(NULL, "func_mcbsp2_gfclk", "abe-clkctrl:0030:24"),
++	DT_CLK(NULL, "func_mcbsp3_gfclk", "abe-clkctrl:0038:24"),
++	DT_CLK(NULL, "gpio1_dbclk", "l4-wkup-clkctrl:0018:8"),
++	DT_CLK(NULL, "gpio2_dbclk", "l4-per-clkctrl:0040:8"),
++	DT_CLK(NULL, "gpio3_dbclk", "l4-per-clkctrl:0048:8"),
++	DT_CLK(NULL, "gpio4_dbclk", "l4-per-clkctrl:0050:8"),
++	DT_CLK(NULL, "gpio5_dbclk", "l4-per-clkctrl:0058:8"),
++	DT_CLK(NULL, "gpio6_dbclk", "l4-per-clkctrl:0060:8"),
++	DT_CLK(NULL, "hsi_fck", "l3-init-clkctrl:0018:24"),
++	DT_CLK(NULL, "hsmmc1_fclk", "l3-init-clkctrl:0008:24"),
++	DT_CLK(NULL, "hsmmc2_fclk", "l3-init-clkctrl:0010:24"),
++	DT_CLK(NULL, "iss_ctrlclk", "iss-clkctrl:0000:8"),
++	DT_CLK(NULL, "mcasp_sync_mux_ck", "abe-clkctrl:0020:26"),
++	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe-clkctrl:0028:26"),
++	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe-clkctrl:0030:26"),
++	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe-clkctrl:0038:26"),
++	DT_CLK(NULL, "mcbsp4_sync_mux_ck", "l4-per-clkctrl:00c0:26"),
++	DT_CLK(NULL, "ocp2scp_usb_phy_phy_48m", "l3-init-clkctrl:00c0:8"),
++	DT_CLK(NULL, "otg_60m_gfclk", "l3-init-clkctrl:0040:24"),
++	DT_CLK(NULL, "per_mcbsp4_gfclk", "l4-per-clkctrl:00c0:24"),
++	DT_CLK(NULL, "pmd_stm_clock_mux_ck", "emu-sys-clkctrl:0000:20"),
++	DT_CLK(NULL, "pmd_trace_clk_mux_ck", "emu-sys-clkctrl:0000:22"),
++	DT_CLK(NULL, "sgx_clk_mux", "l3-gfx-clkctrl:0000:24"),
++	DT_CLK(NULL, "slimbus1_fclk_0", "abe-clkctrl:0040:8"),
++	DT_CLK(NULL, "slimbus1_fclk_1", "abe-clkctrl:0040:9"),
++	DT_CLK(NULL, "slimbus1_fclk_2", "abe-clkctrl:0040:10"),
++	DT_CLK(NULL, "slimbus1_slimbus_clk", "abe-clkctrl:0040:11"),
++	DT_CLK(NULL, "slimbus2_fclk_0", "l4-per-clkctrl:0118:8"),
++	DT_CLK(NULL, "slimbus2_fclk_1", "l4-per-clkctrl:0118:9"),
++	DT_CLK(NULL, "slimbus2_slimbus_clk", "l4-per-clkctrl:0118:10"),
++	DT_CLK(NULL, "stm_clk_div_ck", "emu-sys-clkctrl:0000:27"),
++	DT_CLK(NULL, "timer5_sync_mux", "abe-clkctrl:0048:24"),
++	DT_CLK(NULL, "timer6_sync_mux", "abe-clkctrl:0050:24"),
++	DT_CLK(NULL, "timer7_sync_mux", "abe-clkctrl:0058:24"),
++	DT_CLK(NULL, "timer8_sync_mux", "abe-clkctrl:0060:24"),
++	DT_CLK(NULL, "trace_clk_div_div_ck", "emu-sys-clkctrl:0000:24"),
++	DT_CLK(NULL, "usb_host_hs_func48mclk", "l3-init-clkctrl:0038:15"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3-init-clkctrl:0038:13"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3-init-clkctrl:0038:14"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3-init-clkctrl:0038:11"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3-init-clkctrl:0038:12"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3-init-clkctrl:0038:8"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3-init-clkctrl:0038:9"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3_init-clkctrl:0038:10"),
++	DT_CLK(NULL, "usb_otg_hs_xclk", "l3-init-clkctrl:0040:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3-init-clkctrl:0048:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3-init-clkctrl:0048:9"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3-init-clkctrl:0048:10"),
++	DT_CLK(NULL, "utmi_p1_gfclk", "l3-init-clkctrl:0038:24"),
++	DT_CLK(NULL, "utmi_p2_gfclk", "l3-init-clkctrl:0038:25"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clk-54xx.c b/drivers/clk/ti/clk-54xx.c
+index 90e0a9ea6351..b4aff76eb373 100644
+--- a/drivers/clk/ti/clk-54xx.c
++++ b/drivers/clk/ti/clk-54xx.c
+@@ -50,7 +50,7 @@ static const struct omap_clkctrl_bit_data omap5_aess_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap5_dmic_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0018:26",
++	"abe-clkctrl:0018:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -70,7 +70,7 @@ static const struct omap_clkctrl_bit_data omap5_dmic_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap5_mcbsp1_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0028:26",
++	"abe-clkctrl:0028:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -83,7 +83,7 @@ static const struct omap_clkctrl_bit_data omap5_mcbsp1_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap5_mcbsp2_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0030:26",
++	"abe-clkctrl:0030:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -96,7 +96,7 @@ static const struct omap_clkctrl_bit_data omap5_mcbsp2_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap5_mcbsp3_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0038:26",
++	"abe-clkctrl:0038:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -136,16 +136,16 @@ static const struct omap_clkctrl_bit_data omap5_timer8_bit_data[] __initconst =
+ 
+ static const struct omap_clkctrl_reg_data omap5_abe_clkctrl_regs[] __initconst = {
+ 	{ OMAP5_L4_ABE_CLKCTRL, NULL, 0, "abe_iclk" },
+-	{ OMAP5_AESS_CLKCTRL, omap5_aess_bit_data, CLKF_SW_SUP, "abe_cm:clk:0008:24" },
++	{ OMAP5_AESS_CLKCTRL, omap5_aess_bit_data, CLKF_SW_SUP, "abe-clkctrl:0008:24" },
+ 	{ OMAP5_MCPDM_CLKCTRL, NULL, CLKF_SW_SUP, "pad_clks_ck" },
+-	{ OMAP5_DMIC_CLKCTRL, omap5_dmic_bit_data, CLKF_SW_SUP, "abe_cm:clk:0018:24" },
+-	{ OMAP5_MCBSP1_CLKCTRL, omap5_mcbsp1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0028:24" },
+-	{ OMAP5_MCBSP2_CLKCTRL, omap5_mcbsp2_bit_data, CLKF_SW_SUP, "abe_cm:clk:0030:24" },
+-	{ OMAP5_MCBSP3_CLKCTRL, omap5_mcbsp3_bit_data, CLKF_SW_SUP, "abe_cm:clk:0038:24" },
+-	{ OMAP5_TIMER5_CLKCTRL, omap5_timer5_bit_data, CLKF_SW_SUP, "abe_cm:clk:0048:24" },
+-	{ OMAP5_TIMER6_CLKCTRL, omap5_timer6_bit_data, CLKF_SW_SUP, "abe_cm:clk:0050:24" },
+-	{ OMAP5_TIMER7_CLKCTRL, omap5_timer7_bit_data, CLKF_SW_SUP, "abe_cm:clk:0058:24" },
+-	{ OMAP5_TIMER8_CLKCTRL, omap5_timer8_bit_data, CLKF_SW_SUP, "abe_cm:clk:0060:24" },
++	{ OMAP5_DMIC_CLKCTRL, omap5_dmic_bit_data, CLKF_SW_SUP, "abe-clkctrl:0018:24" },
++	{ OMAP5_MCBSP1_CLKCTRL, omap5_mcbsp1_bit_data, CLKF_SW_SUP, "abe-clkctrl:0028:24" },
++	{ OMAP5_MCBSP2_CLKCTRL, omap5_mcbsp2_bit_data, CLKF_SW_SUP, "abe-clkctrl:0030:24" },
++	{ OMAP5_MCBSP3_CLKCTRL, omap5_mcbsp3_bit_data, CLKF_SW_SUP, "abe-clkctrl:0038:24" },
++	{ OMAP5_TIMER5_CLKCTRL, omap5_timer5_bit_data, CLKF_SW_SUP, "abe-clkctrl:0048:24" },
++	{ OMAP5_TIMER6_CLKCTRL, omap5_timer6_bit_data, CLKF_SW_SUP, "abe-clkctrl:0050:24" },
++	{ OMAP5_TIMER7_CLKCTRL, omap5_timer7_bit_data, CLKF_SW_SUP, "abe-clkctrl:0058:24" },
++	{ OMAP5_TIMER8_CLKCTRL, omap5_timer8_bit_data, CLKF_SW_SUP, "abe-clkctrl:0060:24" },
+ 	{ 0 },
+ };
+ 
+@@ -268,12 +268,12 @@ static const struct omap_clkctrl_bit_data omap5_gpio8_bit_data[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_l4per_clkctrl_regs[] __initconst = {
+-	{ OMAP5_TIMER10_CLKCTRL, omap5_timer10_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0008:24" },
+-	{ OMAP5_TIMER11_CLKCTRL, omap5_timer11_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0010:24" },
+-	{ OMAP5_TIMER2_CLKCTRL, omap5_timer2_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0018:24" },
+-	{ OMAP5_TIMER3_CLKCTRL, omap5_timer3_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0020:24" },
+-	{ OMAP5_TIMER4_CLKCTRL, omap5_timer4_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0028:24" },
+-	{ OMAP5_TIMER9_CLKCTRL, omap5_timer9_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0030:24" },
++	{ OMAP5_TIMER10_CLKCTRL, omap5_timer10_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0008:24" },
++	{ OMAP5_TIMER11_CLKCTRL, omap5_timer11_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0010:24" },
++	{ OMAP5_TIMER2_CLKCTRL, omap5_timer2_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0018:24" },
++	{ OMAP5_TIMER3_CLKCTRL, omap5_timer3_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0020:24" },
++	{ OMAP5_TIMER4_CLKCTRL, omap5_timer4_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0028:24" },
++	{ OMAP5_TIMER9_CLKCTRL, omap5_timer9_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0030:24" },
+ 	{ OMAP5_GPIO2_CLKCTRL, omap5_gpio2_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+ 	{ OMAP5_GPIO3_CLKCTRL, omap5_gpio3_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+ 	{ OMAP5_GPIO4_CLKCTRL, omap5_gpio4_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+@@ -345,7 +345,7 @@ static const struct omap_clkctrl_bit_data omap5_dss_core_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_dss_clkctrl_regs[] __initconst = {
+-	{ OMAP5_DSS_CORE_CLKCTRL, omap5_dss_core_bit_data, CLKF_SW_SUP, "dss_cm:clk:0000:8" },
++	{ OMAP5_DSS_CORE_CLKCTRL, omap5_dss_core_bit_data, CLKF_SW_SUP, "dss-clkctrl:0000:8" },
+ 	{ 0 },
+ };
+ 
+@@ -378,7 +378,7 @@ static const struct omap_clkctrl_bit_data omap5_gpu_core_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_gpu_clkctrl_regs[] __initconst = {
+-	{ OMAP5_GPU_CLKCTRL, omap5_gpu_core_bit_data, CLKF_SW_SUP, "gpu_cm:clk:0000:24" },
++	{ OMAP5_GPU_CLKCTRL, omap5_gpu_core_bit_data, CLKF_SW_SUP, "gpu-clkctrl:0000:24" },
+ 	{ 0 },
+ };
+ 
+@@ -389,7 +389,7 @@ static const char * const omap5_mmc1_fclk_mux_parents[] __initconst = {
+ };
+ 
+ static const char * const omap5_mmc1_fclk_parents[] __initconst = {
+-	"l3init_cm:clk:0008:24",
++	"l3init-clkctrl:0008:24",
+ 	NULL,
+ };
+ 
+@@ -405,7 +405,7 @@ static const struct omap_clkctrl_bit_data omap5_mmc1_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap5_mmc2_fclk_parents[] __initconst = {
+-	"l3init_cm:clk:0010:24",
++	"l3init-clkctrl:0010:24",
+ 	NULL,
+ };
+ 
+@@ -430,12 +430,12 @@ static const char * const omap5_usb_host_hs_hsic480m_p3_clk_parents[] __initcons
+ };
+ 
+ static const char * const omap5_usb_host_hs_utmi_p1_clk_parents[] __initconst = {
+-	"l3init_cm:clk:0038:24",
++	"l3init-clkctrl:0038:24",
+ 	NULL,
+ };
+ 
+ static const char * const omap5_usb_host_hs_utmi_p2_clk_parents[] __initconst = {
+-	"l3init_cm:clk:0038:25",
++	"l3init-clkctrl:0038:25",
+ 	NULL,
+ };
+ 
+@@ -494,8 +494,8 @@ static const struct omap_clkctrl_bit_data omap5_usb_otg_ss_bit_data[] __initcons
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_l3init_clkctrl_regs[] __initconst = {
+-	{ OMAP5_MMC1_CLKCTRL, omap5_mmc1_bit_data, CLKF_SW_SUP, "l3init_cm:clk:0008:25" },
+-	{ OMAP5_MMC2_CLKCTRL, omap5_mmc2_bit_data, CLKF_SW_SUP, "l3init_cm:clk:0010:25" },
++	{ OMAP5_MMC1_CLKCTRL, omap5_mmc1_bit_data, CLKF_SW_SUP, "l3init-clkctrl:0008:25" },
++	{ OMAP5_MMC2_CLKCTRL, omap5_mmc2_bit_data, CLKF_SW_SUP, "l3init-clkctrl:0010:25" },
+ 	{ OMAP5_USB_HOST_HS_CLKCTRL, omap5_usb_host_hs_bit_data, CLKF_SW_SUP, "l3init_60m_fclk" },
+ 	{ OMAP5_USB_TLL_HS_CLKCTRL, omap5_usb_tll_hs_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+ 	{ OMAP5_SATA_CLKCTRL, omap5_sata_bit_data, CLKF_SW_SUP, "func_48m_fclk" },
+@@ -519,7 +519,7 @@ static const struct omap_clkctrl_reg_data omap5_wkupaon_clkctrl_regs[] __initcon
+ 	{ OMAP5_L4_WKUP_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ OMAP5_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ OMAP5_GPIO1_CLKCTRL, omap5_gpio1_bit_data, CLKF_HW_SUP, "wkupaon_iclk_mux" },
+-	{ OMAP5_TIMER1_CLKCTRL, omap5_timer1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0020:24" },
++	{ OMAP5_TIMER1_CLKCTRL, omap5_timer1_bit_data, CLKF_SW_SUP, "wkupaon-clkctrl:0020:24" },
+ 	{ OMAP5_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ OMAP5_KBD_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ 0 },
+@@ -549,58 +549,58 @@ const struct omap_clkctrl_data omap5_clkctrl_data[] __initconst = {
+ static struct ti_dt_clk omap54xx_clks[] = {
+ 	DT_CLK(NULL, "timer_32k_ck", "sys_32k_ck"),
+ 	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin"),
+-	DT_CLK(NULL, "dmic_gfclk", "abe_cm:0018:24"),
+-	DT_CLK(NULL, "dmic_sync_mux_ck", "abe_cm:0018:26"),
+-	DT_CLK(NULL, "dss_32khz_clk", "dss_cm:0000:11"),
+-	DT_CLK(NULL, "dss_48mhz_clk", "dss_cm:0000:9"),
+-	DT_CLK(NULL, "dss_dss_clk", "dss_cm:0000:8"),
+-	DT_CLK(NULL, "dss_sys_clk", "dss_cm:0000:10"),
+-	DT_CLK(NULL, "gpio1_dbclk", "wkupaon_cm:0018:8"),
+-	DT_CLK(NULL, "gpio2_dbclk", "l4per_cm:0040:8"),
+-	DT_CLK(NULL, "gpio3_dbclk", "l4per_cm:0048:8"),
+-	DT_CLK(NULL, "gpio4_dbclk", "l4per_cm:0050:8"),
+-	DT_CLK(NULL, "gpio5_dbclk", "l4per_cm:0058:8"),
+-	DT_CLK(NULL, "gpio6_dbclk", "l4per_cm:0060:8"),
+-	DT_CLK(NULL, "gpio7_dbclk", "l4per_cm:00f0:8"),
+-	DT_CLK(NULL, "gpio8_dbclk", "l4per_cm:00f8:8"),
+-	DT_CLK(NULL, "mcbsp1_gfclk", "abe_cm:0028:24"),
+-	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe_cm:0028:26"),
+-	DT_CLK(NULL, "mcbsp2_gfclk", "abe_cm:0030:24"),
+-	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe_cm:0030:26"),
+-	DT_CLK(NULL, "mcbsp3_gfclk", "abe_cm:0038:24"),
+-	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe_cm:0038:26"),
+-	DT_CLK(NULL, "mmc1_32khz_clk", "l3init_cm:0008:8"),
+-	DT_CLK(NULL, "mmc1_fclk", "l3init_cm:0008:25"),
+-	DT_CLK(NULL, "mmc1_fclk_mux", "l3init_cm:0008:24"),
+-	DT_CLK(NULL, "mmc2_fclk", "l3init_cm:0010:25"),
+-	DT_CLK(NULL, "mmc2_fclk_mux", "l3init_cm:0010:24"),
+-	DT_CLK(NULL, "sata_ref_clk", "l3init_cm:0068:8"),
+-	DT_CLK(NULL, "timer10_gfclk_mux", "l4per_cm:0008:24"),
+-	DT_CLK(NULL, "timer11_gfclk_mux", "l4per_cm:0010:24"),
+-	DT_CLK(NULL, "timer1_gfclk_mux", "wkupaon_cm:0020:24"),
+-	DT_CLK(NULL, "timer2_gfclk_mux", "l4per_cm:0018:24"),
+-	DT_CLK(NULL, "timer3_gfclk_mux", "l4per_cm:0020:24"),
+-	DT_CLK(NULL, "timer4_gfclk_mux", "l4per_cm:0028:24"),
+-	DT_CLK(NULL, "timer5_gfclk_mux", "abe_cm:0048:24"),
+-	DT_CLK(NULL, "timer6_gfclk_mux", "abe_cm:0050:24"),
+-	DT_CLK(NULL, "timer7_gfclk_mux", "abe_cm:0058:24"),
+-	DT_CLK(NULL, "timer8_gfclk_mux", "abe_cm:0060:24"),
+-	DT_CLK(NULL, "timer9_gfclk_mux", "l4per_cm:0030:24"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3init_cm:0038:13"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3init_cm:0038:14"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p3_clk", "l3init_cm:0038:7"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3init_cm:0038:11"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3init_cm:0038:12"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p3_clk", "l3init_cm:0038:6"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3init_cm:0038:8"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3init_cm:0038:9"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3init_cm:0038:10"),
+-	DT_CLK(NULL, "usb_otg_ss_refclk960m", "l3init_cm:00d0:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3init_cm:0048:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3init_cm:0048:9"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3init_cm:0048:10"),
+-	DT_CLK(NULL, "utmi_p1_gfclk", "l3init_cm:0038:24"),
+-	DT_CLK(NULL, "utmi_p2_gfclk", "l3init_cm:0038:25"),
++	DT_CLK(NULL, "dmic_gfclk", "abe-clkctrl:0018:24"),
++	DT_CLK(NULL, "dmic_sync_mux_ck", "abe-clkctrl:0018:26"),
++	DT_CLK(NULL, "dss_32khz_clk", "dss-clkctrl:0000:11"),
++	DT_CLK(NULL, "dss_48mhz_clk", "dss-clkctrl:0000:9"),
++	DT_CLK(NULL, "dss_dss_clk", "dss-clkctrl:0000:8"),
++	DT_CLK(NULL, "dss_sys_clk", "dss-clkctrl:0000:10"),
++	DT_CLK(NULL, "gpio1_dbclk", "wkupaon-clkctrl:0018:8"),
++	DT_CLK(NULL, "gpio2_dbclk", "l4per-clkctrl:0040:8"),
++	DT_CLK(NULL, "gpio3_dbclk", "l4per-clkctrl:0048:8"),
++	DT_CLK(NULL, "gpio4_dbclk", "l4per-clkctrl:0050:8"),
++	DT_CLK(NULL, "gpio5_dbclk", "l4per-clkctrl:0058:8"),
++	DT_CLK(NULL, "gpio6_dbclk", "l4per-clkctrl:0060:8"),
++	DT_CLK(NULL, "gpio7_dbclk", "l4per-clkctrl:00f0:8"),
++	DT_CLK(NULL, "gpio8_dbclk", "l4per-clkctrl:00f8:8"),
++	DT_CLK(NULL, "mcbsp1_gfclk", "abe-clkctrl:0028:24"),
++	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe-clkctrl:0028:26"),
++	DT_CLK(NULL, "mcbsp2_gfclk", "abe-clkctrl:0030:24"),
++	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe-clkctrl:0030:26"),
++	DT_CLK(NULL, "mcbsp3_gfclk", "abe-clkctrl:0038:24"),
++	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe-clkctrl:0038:26"),
++	DT_CLK(NULL, "mmc1_32khz_clk", "l3init-clkctrl:0008:8"),
++	DT_CLK(NULL, "mmc1_fclk", "l3init-clkctrl:0008:25"),
++	DT_CLK(NULL, "mmc1_fclk_mux", "l3init-clkctrl:0008:24"),
++	DT_CLK(NULL, "mmc2_fclk", "l3init-clkctrl:0010:25"),
++	DT_CLK(NULL, "mmc2_fclk_mux", "l3init-clkctrl:0010:24"),
++	DT_CLK(NULL, "sata_ref_clk", "l3init-clkctrl:0068:8"),
++	DT_CLK(NULL, "timer10_gfclk_mux", "l4per-clkctrl:0008:24"),
++	DT_CLK(NULL, "timer11_gfclk_mux", "l4per-clkctrl:0010:24"),
++	DT_CLK(NULL, "timer1_gfclk_mux", "wkupaon-clkctrl:0020:24"),
++	DT_CLK(NULL, "timer2_gfclk_mux", "l4per-clkctrl:0018:24"),
++	DT_CLK(NULL, "timer3_gfclk_mux", "l4per-clkctrl:0020:24"),
++	DT_CLK(NULL, "timer4_gfclk_mux", "l4per-clkctrl:0028:24"),
++	DT_CLK(NULL, "timer5_gfclk_mux", "abe-clkctrl:0048:24"),
++	DT_CLK(NULL, "timer6_gfclk_mux", "abe-clkctrl:0050:24"),
++	DT_CLK(NULL, "timer7_gfclk_mux", "abe-clkctrl:0058:24"),
++	DT_CLK(NULL, "timer8_gfclk_mux", "abe-clkctrl:0060:24"),
++	DT_CLK(NULL, "timer9_gfclk_mux", "l4per-clkctrl:0030:24"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3init-clkctrl:0038:13"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3init-clkctrl:0038:14"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p3_clk", "l3init-clkctrl:0038:7"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3init-clkctrl:0038:11"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3init-clkctrl:0038:12"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p3_clk", "l3init-clkctrl:0038:6"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3init-clkctrl:0038:8"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3init-clkctrl:0038:9"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3init-clkctrl:0038:10"),
++	DT_CLK(NULL, "usb_otg_ss_refclk960m", "l3init-clkctrl:00d0:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3init-clkctrl:0048:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3init-clkctrl:0048:9"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3init-clkctrl:0048:10"),
++	DT_CLK(NULL, "utmi_p1_gfclk", "l3init-clkctrl:0038:24"),
++	DT_CLK(NULL, "utmi_p2_gfclk", "l3init-clkctrl:0038:25"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 617360e20d86..e23bf0458632 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -528,10 +528,6 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	char *c;
+ 	u16 soc_mask = 0;
+ 
+-	if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
+-	    of_node_name_eq(node, "clk"))
+-		ti_clk_features.flags |= TI_CLK_CLKCTRL_COMPAT;
+-
+ 	addrp = of_get_address(node, 0, NULL, NULL);
+ 	addr = (u32)of_translate_address(node, addrp);
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
