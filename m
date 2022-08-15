@@ -2,102 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D786DC00140
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 13:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D35C25B0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 15:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiHON6P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Aug 2022 09:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42528 "EHLO
+        id S231955AbiHOPbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Aug 2022 11:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231513AbiHON6K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 09:58:10 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A68A21279
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 06:58:09 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oNabN-0002nz-5Y; Mon, 15 Aug 2022 15:57:57 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oNabM-00075V-1g; Mon, 15 Aug 2022 15:57:56 +0200
-Date:   Mon, 15 Aug 2022 15:57:56 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, kernel@pengutronix.de,
-        festevam@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: imx8m: introduce
- fsl,protected-clocks property
-Message-ID: <20220815135756.GC17485@pengutronix.de>
-References: <20220815033632.1687854-1-peng.fan@oss.nxp.com>
- <20220815033632.1687854-2-peng.fan@oss.nxp.com>
+        with ESMTP id S231313AbiHOPbk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 11:31:40 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC5D167C9;
+        Mon, 15 Aug 2022 08:31:38 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 32B75320014C;
+        Mon, 15 Aug 2022 11:31:34 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 15 Aug 2022 11:31:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1660577493; x=1660663893; bh=COYSOGHtOo
+        o3W+aHmo+tp/Q30caAeddvYY/qrRqsGjo=; b=fYjFKqLO6pKb0yjRHGlSVvezIg
+        ZMrauuc4fW73ObCeuBlID5ww9vUdNUOAyKtHST9YjDK2rEJ+uw0zXj/+I/u3lNKw
+        DEZbagxR+Mwps3H7VlcbakwLF3TOAGcfNqo1rR7YogdxCWyh6o2StJWXyCTO3ywB
+        dV++JJNL5HIVZiW9xZP8NZRtVqP2g1I3Nojofg03oMiOJtzghN1rgVM4J50VVdY1
+        tK4Xep2fBhJYEzxiaXpmH8I3tTkmAgi7BQTCLoRcLnwHr8T+P4Xe/Z1W4E6FRM80
+        DF8SH++A2OiwmIxu+mum3H7KJ3DHsKkypBFZiLa+eY0Z/gqfU9z+dThqOXNA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1660577493; x=1660663893; bh=COYSOGHtOoo3W
+        +aHmo+tp/Q30caAeddvYY/qrRqsGjo=; b=Mux3WR3JB19iIJH9Mlfz3+op3f4uH
+        F9nTN7bp14nIexoCPfyFN7u3olPD/477qAt4qsN9xlk91C+sx3sItLiEWRDZfz0u
+        2JROpwRb1/TteFUhj+SJHD6rjevm9r8Bx668IA86gY/sGP1FC8zDG9nIz/AyOIV4
+        +x87Ozxvdp2Fn1IlAZDz20nGPP44HSPKVmpyacJNeQuy/ZgGWaumQpBMavPRPmX3
+        cw7HTpBKTbQOivLRp0A7etCUdEmG4eNJD8F4+Gu4Pe5NYOo9i60XhzRv9eUOIGOa
+        klaaH5CmlUj1h2elrOaQPdB4bzmhJoEdLfb0G0/eTvriUoYMa+5DyLrPA==
+X-ME-Sender: <xms:1Wb6YpEXT3QZJJGqa14waDdYqYYre6RcqOVVhCITHxS6uwqLqc5_lQ>
+    <xme:1Wb6YuVqe1Sv4dNOa-MndCYSmNYh-Ggr3h5nxBldM4lmxwTia_fVB25mH6g9oWYyy
+    XmMRmDqcpgZ-glppSs>
+X-ME-Received: <xmr:1Wb6YrKZEvOsaHSM_isGgiXHXHuCHM8MkqMPuwAJy7NJxVMuszbrDfvkP9pS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehvddgleduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofggtgfogfesthekredtredtjeenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeehgeekgeekkedvfeehgfelleeiffejfeevhfdtfeekjeeggeetkefhteek
+    leejtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:1Wb6YvHI_IVBZMQM5-i3zr_z__C1401Pz4M0vkt-JojBK7anPHA3CQ>
+    <xmx:1Wb6YvXYmaE8GGGiB0goZnrtTG_ulqpNWBuk3D3VbAtlqCDtdz6wBQ>
+    <xmx:1Wb6YqMaMADgsJFRYQWmowjzgkTUQNl_vykmF1CehZ1_Ggtqu-YU6Q>
+    <xmx:1Wb6YoXPL3bQqtucI4THci3-Dw1_UVdQxIOmxVafwksxteMnN8ek4g>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Aug 2022 11:31:32 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Scott Branden <sbranden@broadcom.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Emma Anholt <emma@anholt.net>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/7] drm/vc4: Fix the core clock behaviour
+Date:   Mon, 15 Aug 2022 17:31:22 +0200
+Message-Id: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220815033632.1687854-2-peng.fan@oss.nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.10.0-dev-a76f5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1621; i=maxime@cerno.tech; h=from:subject:message-id; bh=NvfqtszeIkfBJ8DEBN1/EaTyTba+UU+/5+hHzJQzAnU=; b=owGbwMvMwCX2+D1vfrpE4FHG02pJDEm/0k7ohQdLG/6cnWrqd1Nrsymv2pdr1iKLYv7M+RJqG22u mPS/o4SFQYyLQVZMkSVG2HxJ3KlZrzvZ+ObBzGFlAhnCwMUpABN52svwo3/yiwB+zoUTFY5f+Mr61E j9559viy2P73s3T9xc88kJJUaGE0f6ghiVfPfcfdOf9cF3o6bunw+7Tq6Sf+uzKLRoSesNdgA=
+X-Developer-Key: i=maxime@cerno.tech; a=openpgp; fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Peng,
+Hi,
 
-On Mon, Aug 15, 2022 at 11:36:31AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX8M Linux run on top of Jailhouse hypervisor, the root cell Linux
-> should not disable clocks used by inmate. This would also benifit
-> AMP to avoid Linux disable clocks used by Cortex-M4/M7.
-> 
-> So introduce fsl,protected-clocks for above case.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> index 458c7645ee68..0ec490ff9a09 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> @@ -39,6 +39,10 @@ properties:
->        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
->        for the full list of i.MX8M clock IDs.
->  
-> +  fsl,protected-clocks:
-> +    description: List of the Protected clock.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+Those patches used to be part of a larger clock fixes series:
+https://lore.kernel.org/linux-clk/20220715160014.2623107-1-maxime@cerno.tech/
 
-There already is a generic protected-clocks property described in
-https://github.com/devicetree-org/dt-schema/blob/0d1b78cd0c3d9a3d523ced17d7da64b03f6c18ea/dtschema/schemas/clock/clock.yaml#L131
-We probably shouldn't add a property with the same name but different
-meaning.
+However, that series doesn't seem to be getting anywhere, so I've split out
+these patches that fix a regression that has been there since 5.18 and that
+prevents the 4k output from working on the RaspberryPi4.
 
-I am not sure if we want to go the route of a fsl specific property, it
-looks like other SoCs could have similar problems and it might be worth
-solving this problem with a broader view.
+Hopefully, we will be able to merge those patches through the DRM tree to avoid
+any further disruption.
 
-Anyway, please add a description to the binding what this property
-actually does.
+Let me know what you think,
+Maxime
 
-Sascha
+---
+Dom Cobley (1):
+      drm/vc4: hdmi: Add more checks for 4k resolutions
 
+Maxime Ripard (6):
+      clk: bcm: rpi: Create helper to retrieve private data
+      clk: bcm: rpi: Add a function to retrieve the maximum
+      clk: bcm: rpi: Add a function to retrieve the minimum
+      drm/vc4: hdmi: Fix hdmi_enable_4kp60 detection
+      drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection code
+      drm/vc4: Make sure we don't end up with a core clock too high
+
+ drivers/clk/bcm/clk-raspberrypi.c        | 73 ++++++++++++++++++++++++++++----
+ drivers/gpu/drm/vc4/vc4_drv.h            | 14 ++++++
+ drivers/gpu/drm/vc4/vc4_hdmi.c           | 25 +++++------
+ drivers/gpu/drm/vc4/vc4_hdmi.h           |  8 ----
+ drivers/gpu/drm/vc4/vc4_hvs.c            | 13 ++++++
+ drivers/gpu/drm/vc4/vc4_kms.c            | 17 +++++---
+ include/soc/bcm2835/raspberrypi-clocks.h | 21 +++++++++
+ 7 files changed, 138 insertions(+), 33 deletions(-)
+---
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+change-id: 20220815-rpi-fix-4k-60-17273650429d
+
+Best regards,
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Maxime Ripard <maxime@cerno.tech>
