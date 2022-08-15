@@ -2,64 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE078C25B0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 15:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C51C00140
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 15:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232726AbiHOPmM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Aug 2022 11:42:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
+        id S233131AbiHOPmS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Aug 2022 11:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232682AbiHOPlz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 11:41:55 -0400
+        with ESMTP id S232884AbiHOPmG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 11:42:06 -0400
 Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C080764E6
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 08:41:53 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 42BF23200904;
-        Mon, 15 Aug 2022 11:41:52 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A741313F49
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 08:42:02 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 287C6320014C;
+        Mon, 15 Aug 2022 11:42:01 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 15 Aug 2022 11:41:53 -0400
+  by compute5.internal (MEProxy); Mon, 15 Aug 2022 11:42:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1660578111; x=1660664511; bh=LBrIlKuNM/
-        1w06yBdXUfUaffM3mVFpisH4+kIlM2aFc=; b=gBFsI99qClhjB1N6OBUsfXkp2i
-        HZptqJPGVJg+AV1YJYuIEFWOIKVPRlD0FnVByISfKdjuejnbXKT0gJjZkLTjmQxq
-        GR8igLMgHXOKuSceVnbMlO+WnCR6k7IkmCyWtYnvtzuABuCv4eJwprwVAGjnpEDO
-        um8EaRATec/mX6jAW8l2rofHYDdmWKvAsu/UST/YTinZ9lWapzjm9gR2NEO+lqhF
-        ZwX7BGP5M4h9fRFelWl0+WvSb148hhpN7U7DcpMjmpH/xhUsBeESozDdoMMrW9OL
-        OQLLlXVMEYlO/8OQ1SeeWvp4QUe1AYZslwKZk1Bxvp2XnXqHZMTswJUt110g==
+        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1660578120; x=1660664520; bh=WD
+        yaqM8srmU1YTrUZgp/e7Vi6T4o1cvbz4ny/A1rc0w=; b=rffwLboSUzlEmSGzdc
+        II0sqYk9sRbBHofsH3xtNCIDdTl3ZtZOLOuPhUBOkYjcIhIleMN8M+IsQEPOp4Gk
+        zRczQv4Vvg3hIZPX7uIZ6BaabNj3iUFmg4+syHlqtsoV9hfMwcQ9FB2UYse77/ZU
+        bJpbko+c+cIYAGx2A6S4EKpaScK0frI3nil7WihM/Yoz6vNBQfRy6SGX/TEICwZs
+        MJH9F6CYCskRBh1cyWXXa31zX9wtfzYSKTcX62Z2pU8dxTVJTXqvIal+Dv78nurc
+        qskQOj6RXHu+kp6tfpiVZ0heZR/vLBUquLb2S6hSvlIb2vrxKh7UMOTVp+qRIfca
+        sFcw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1660578111; x=1660664511; bh=LBrIlKuNM/1w0
-        6yBdXUfUaffM3mVFpisH4+kIlM2aFc=; b=ergL5aPVRGtCGEEFb6py/iVPwgC4d
-        AW9w7BjnNrDhMiMejlypgZ8TOktVfhV5RzC5Oi6m4NvH2Vwg3InIJRrCiYvbiFTG
-        WKdZl+KHc9S+3JyugTF2WaYFTH+rRXtmCwdZg6o+PAiQ4sZncFCI0Oh+68Fv9ggI
-        HWTb32AHFDtJ0FXotgEboc2ZJUdhyt2FxhkRsnQP26fgbx2naco433oqFkym++Hj
-        HhZWKaYW4fJjL8RbkNecTjV2a986Nm0zn6UCODlNwhdYne1i4XPSodGYnizygz0u
-        Fk/SD5JiaX7lBh8KEJ7PHrBy1Nbm5tPEWgZNlRtwL3NtvUTojYlbonTIg==
-X-ME-Sender: <xms:Pmn6YjPcEQXspacaZPgWnKX9bzVHPpZrB2meiIDUzSkfbmAfyESj1A>
-    <xme:Pmn6Yt-varVnFLGLxPs2aM8Hke42ycNhdZ3D_xor93pd6Ag88vVJy4UQICGJz8GcV
-    ptGL0wsuuZQ84BEyiM>
-X-ME-Received: <xmr:Pmn6YiSUY5PIzd4dQ9slP3X2g1KMh5fMZoSFA9lnXkTRYxdn5lb1Yq78YdkX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehvddgleefucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm1; t=1660578120; x=1660664520; bh=WDyaqM8srmU1Y
+        TrUZgp/e7Vi6T4o1cvbz4ny/A1rc0w=; b=euFyZkbekpcgUHnYiqL16sQksKdkj
+        OcfyQJGHAntQL/mE0x9fE0AObe3zXVLuuC7/3PAO3P6rTHcjB+8yDX9NShzYECW8
+        gJmLfYaBj1AV43IWPV/eba3kV5EmwHsF7MQTUOXM5NLUvcb+mBhCKEFbq3dM3h4d
+        P9FlFz5eAlIwRbDgV59lzpATny9WDUY4YBFl+uEVSVo9CkEu4QLwqAy1sBQYikjr
+        SWnb4A7sU2+nVwXANOYT9slftJjzQm4NwYgGHXYvVVIq0i38rHv255qG3974QoHG
+        kORMBOXQyFL/HBAg7wwL9Y+KO3C+3vEm0vV6cQ/hyiX89E+wylyn6GsDw==
+X-ME-Sender: <xms:SGn6YtZLlbufhIeeXT2ClcuEuhkSe8PHG7t_zni8lXaiWaBaxNBYzw>
+    <xme:SGn6Ykaq8cWQT25VvfOuyLkpioLhcxVZdGz9QQmdh7yWE9x6AcJ7DZmnvq7swV5-R
+    Vt1B6Kj7GeraHn2ms4>
+X-ME-Received: <xmr:SGn6Yv-7yAqA6dGFgVKnkA3f15xpVzJKPQ5hDTU728YY2cYoZbnf7GrQxLMx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehvddgledvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgtggfgsehtkeertdertdejnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepledvtdegkeegtdejvdejvdejleeifeegfeevueegvddvleevieeghffhtdet
-    geffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:Pmn6YnvXkUbz1j2jAJVmZYthxzHdluxHRiTgD_aFZJL8IbDnCy_cIQ>
-    <xmx:Pmn6YrcFWZ8En5QsakPUZ8GRUhGLDVyvNnF8KjLb5UV6WfrpkYbPXw>
-    <xmx:Pmn6Yj11pEtzVLjAbpkBB89hNDxBsud_qsxp4XWo7I1YQt-enaLCyA>
-    <xmx:P2n6YsVz-O5DkN2VvxTN7qlIWvayR0Vr5rSLk1bYUnpb9LKMsa1Niw>
+    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
+    vdejhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:SGn6YrqRVqY4Ta3kr2_8GSjzixQA3VywMlxGjBzh6i0wEEuAT15BJA>
+    <xmx:SGn6YorshHnlgP46pP3bCPZAe1q8FIjgC6tVim-5crBCYDX6KhCdTw>
+    <xmx:SGn6YhRPO2b7cVXNVdi9aJktUJtH1y41vPWf8MyeK5N8X5CSJeIMmw>
+    <xmx:SGn6Yli1h2OLEJvTp_DJMsTPJaSgVgrqLX87mdK6KN68UQpj80UIbQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Aug 2022 11:41:49 -0400 (EDT)
+ 15 Aug 2022 11:41:59 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     linux-clk@vger.kernel.org,
         Mike Turquette <mturquette@baylibre.com>,
@@ -73,134 +74,257 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v8 00/25] clk: More clock rate fixes and tests
-Date:   Mon, 15 Aug 2022 17:41:22 +0200
-Message-Id: <20220815154147.1631441-1-maxime@cerno.tech>
+Subject: [PATCH v8 02/25] clk: Drop the rate range on clk_put()
+Date:   Mon, 15 Aug 2022 17:41:24 +0200
+Message-Id: <20220815154147.1631441-3-maxime@cerno.tech>
 X-Mailer: git-send-email 2.37.1
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20220815154147.1631441-1-maxime@cerno.tech>
+References: <20220815154147.1631441-1-maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+When clk_put() is called we don't make another clk_set_rate() call to
+re-evaluate the rate boundaries. This is unlike clk_set_rate_range()
+that evaluates the rate again each time it is called.
 
-Thanks to the feedback I got on the previous series, I found and fixed a
-number of bugs in the clock framework and how it deals with rates,
-especially when it comes to orphan clocks.
+However, clk_put() is essentially equivalent to clk_set_rate_range()
+since after clk_put() completes the consumer's boundaries shouldn't be
+enforced anymore.
 
-In order to make sure this doesn't pop up again as a regression, I've
-extended the number of tests.
+Let's add a call to clk_set_rate_range() in clk_put() to make sure those
+rate boundaries are dropped and the clock provider drivers can react. In
+order to be as non-intrusive as possible, we'll just make that call if
+the clock had non-default boundaries.
 
-The first patch reintroduces the clk_set_rate_range call on clk_put, but
-this time will only do so if there was a range set on that clock to
-begin with. It should be less intrusive, and reduce the number of
-potential side effects considerably.
+Also add a few tests to make sure this case is covered.
 
-We then have a fix for the qcom rcg2 issue that has been reported
-recently.
+Fixes: c80ac50cbb37 ("clk: Always set the rate on clk_set_range_rate")
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meson g12b
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+---
+ drivers/clk/clk.c      |  45 +++++++++++------
+ drivers/clk/clk_test.c | 110 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 141 insertions(+), 14 deletions(-)
 
-All the other patches should be probably be flagged as fixes, but
-they've never seem to have shown any real-world issues until now, and
-they aren't all really trivial to backport either, so I'm not sure it's
-worth it.
-
-There's also some documentation improvements for recalc_rate and
-clk_get_rate to hopefully make the documentation less ambiguous and
-acknowledge that recalc_rate() returning 0 on error is fine.
-
-Let me know what you think,
-Maxime
-
-Changes from v7:
-  - Dropped the RPi fixes
-  - Rebased on 6.0-rc1
-
-Changes from v6:
-  - Fixed a kernel build bot warning
-
-Changes from v5:
-  - Rebased on current next (next-20220711)
-  - Dropped clk_get_rate_range, and used a custom function instead
-  - Switched all tests to use clk_hw_get_clk() instead of struct clk_hw->clk
-  - Removed some intermediate variables
-  - Added some comments
-  - Dropped clk_get_parent() changes
-  - Dropped test on clk_hw pointer non-NULL in clk_hw_get_name
-  - Made clk_has_parent more const
-
-Changes from v4:
-  - Fix build breakage on SAM9x60
-
-Changes from v3:
-  - constness warning fix in clk_core_forward_rate_req
-
-Changes from v2:
-  - Rebased on top of current next
-  - Fixed locking issue in clk_get_rate_range
-
-Changes from v1:
-  - Rebased on top of next-20220428
-  - Dropped the patch to prevent non-orphan clocks from registering if
-    their recalc_rate hook returns 0
-  - Added some patches to clarify the clk_get_rate and recalc_rate
-    documentation
-  - Dropped the patch to skip the range setup on an orphan clock that
-    was introducing a regression on RaspberryPi3 when a monitor wasn't
-    connected at boot
-  - Added a patch to skip the rate clamping in clk_round_rate() when
-    min_rate == max_rate == 0
-  - Added a new set of functions to query the clk boundaries and fix a
-    regression with the RaspberryPi4
-  - Fixed all the drivers hand-crafting their clk_rate_request
-  - Reworded the test suite descriptions
-  - Reordered a few patches to ease the review
-  - Reworded some commit logs to better explain the issues they address
-  - Collected the Tested-by of Alexander and Marek
-  - More tests
-
-Maxime Ripard (25):
-  clk: test: Switch to clk_hw_get_clk
-  clk: Drop the rate range on clk_put()
-  clk: Skip clamping when rounding if there's no boundaries
-  clk: Mention that .recalc_rate can return 0 on error
-  clk: Clarify clk_get_rate() expectations
-  clk: tests: Add test suites description
-  clk: tests: Add reference to the orphan mux bug report
-  clk: tests: Add tests for uncached clock
-  clk: tests: Add tests for single parent mux
-  clk: tests: Add tests for mux with multiple parents
-  clk: tests: Add some tests for orphan with multiple parents
-  clk: Take into account uncached clocks in clk_set_rate_range()
-  clk: Set req_rate on reparenting
-  clk: Change clk_core_init_rate_req prototype
-  clk: Move clk_core_init_rate_req() from clk_core_round_rate_nolock()
-    to its caller
-  clk: Introduce clk_hw_init_rate_request()
-  clk: Add our request boundaries in clk_core_init_rate_req
-  clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock
-  clk: Introduce clk_core_has_parent()
-  clk: Constify clk_has_parent()
-  clk: Stop forwarding clk_rate_requests to the parent
-  clk: Zero the clk_rate_request structure
-  clk: Introduce the clk_hw_get_rate_range function
-  clk: qcom: clk-rcg2: Take clock boundaries into consideration for
-    gfx3d
-  clk: tests: Add missing test case for ranges
-
- drivers/clk/at91/clk-generated.c  |    5 +-
- drivers/clk/at91/clk-master.c     |    9 +-
- drivers/clk/at91/clk-peripheral.c |    4 +-
- drivers/clk/clk-composite.c       |    6 +-
- drivers/clk/clk-divider.c         |   20 +-
- drivers/clk/clk.c                 |  284 ++++--
- drivers/clk/clk_test.c            | 1413 ++++++++++++++++++++++++++++-
- drivers/clk/qcom/clk-rcg2.c       |    9 +
- include/linux/clk-provider.h      |   18 +-
- include/linux/clk.h               |    2 +-
- 10 files changed, 1661 insertions(+), 109 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7fc191c15507..a5e0ab8bd6be 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2325,19 +2325,15 @@ int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
+ 
+-/**
+- * clk_set_rate_range - set a rate range for a clock source
+- * @clk: clock source
+- * @min: desired minimum clock rate in Hz, inclusive
+- * @max: desired maximum clock rate in Hz, inclusive
+- *
+- * Returns success (0) or negative errno.
+- */
+-int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
++static int clk_set_rate_range_nolock(struct clk *clk,
++				     unsigned long min,
++				     unsigned long max)
+ {
+ 	int ret = 0;
+ 	unsigned long old_min, old_max, rate;
+ 
++	lockdep_assert_held(&prepare_lock);
++
+ 	if (!clk)
+ 		return 0;
+ 
+@@ -2350,8 +2346,6 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 		return -EINVAL;
+ 	}
+ 
+-	clk_prepare_lock();
+-
+ 	if (clk->exclusive_count)
+ 		clk_core_rate_unprotect(clk->core);
+ 
+@@ -2395,6 +2389,28 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 	if (clk->exclusive_count)
+ 		clk_core_rate_protect(clk->core);
+ 
++	return ret;
++}
++
++/**
++ * clk_set_rate_range - set a rate range for a clock source
++ * @clk: clock source
++ * @min: desired minimum clock rate in Hz, inclusive
++ * @max: desired maximum clock rate in Hz, inclusive
++ *
++ * Return: 0 for success or negative errno on failure.
++ */
++int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
++{
++	int ret;
++
++	if (!clk)
++		return 0;
++
++	clk_prepare_lock();
++
++	ret = clk_set_rate_range_nolock(clk, min, max);
++
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
+@@ -4348,9 +4364,10 @@ void __clk_put(struct clk *clk)
+ 	}
+ 
+ 	hlist_del(&clk->clks_node);
+-	if (clk->min_rate > clk->core->req_rate ||
+-	    clk->max_rate < clk->core->req_rate)
+-		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++
++	/* If we had any boundaries on that clock, let's drop them. */
++	if (clk->min_rate > 0 || clk->max_rate < ULONG_MAX)
++		clk_set_rate_range_nolock(clk, 0, ULONG_MAX);
+ 
+ 	owner = clk->core->owner;
+ 	kref_put(&clk->core->ref, __clk_release);
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 7646356f30cb..7d9da88c39ee 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -793,9 +793,66 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
+ 	clk_put(clk);
+ }
+ 
++/*
++ * Test that if we have several subsequent calls to
++ * clk_set_rate_range(), across multiple users, the core will reevaluate
++ * whether a new rate is needed, including when a user drop its clock.
++ *
++ * With clk_dummy_maximize_rate_ops, this means that the rate will
++ * trail along the maximum as it evolves.
++ */
++static void clk_range_test_multiple_set_range_rate_put_maximized(struct kunit *test)
++{
++	struct clk_dummy_context *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *user1, *user2;
++	unsigned long rate;
++
++	user1 = clk_hw_get_clk(hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
++
++	user2 = clk_hw_get_clk(hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
++
++	KUNIT_ASSERT_EQ(test,
++			clk_set_rate(clk, DUMMY_CLOCK_RATE_2 + 1000),
++			0);
++
++	KUNIT_ASSERT_EQ(test,
++			clk_set_rate_range(user1,
++					   0,
++					   DUMMY_CLOCK_RATE_2),
++			0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++
++	KUNIT_ASSERT_EQ(test,
++			clk_set_rate_range(user2,
++					   0,
++					   DUMMY_CLOCK_RATE_1),
++			0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	clk_put(user2);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(user1);
++	clk_put(clk);
++}
++
+ static struct kunit_case clk_range_maximize_test_cases[] = {
+ 	KUNIT_CASE(clk_range_test_set_range_rate_maximized),
+ 	KUNIT_CASE(clk_range_test_multiple_set_range_rate_maximized),
++	KUNIT_CASE(clk_range_test_multiple_set_range_rate_put_maximized),
+ 	{}
+ };
+ 
+@@ -913,9 +970,62 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
+ 	clk_put(clk);
+ }
+ 
++/*
++ * Test that if we have several subsequent calls to
++ * clk_set_rate_range(), across multiple users, the core will reevaluate
++ * whether a new rate is needed, including when a user drop its clock.
++ *
++ * With clk_dummy_minimize_rate_ops, this means that the rate will
++ * trail along the minimum as it evolves.
++ */
++static void clk_range_test_multiple_set_range_rate_put_minimized(struct kunit *test)
++{
++	struct clk_dummy_context *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *user1, *user2;
++	unsigned long rate;
++
++	user1 = clk_hw_get_clk(hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
++
++	user2 = clk_hw_get_clk(hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
++
++	KUNIT_ASSERT_EQ(test,
++			clk_set_rate_range(user1,
++					   DUMMY_CLOCK_RATE_1,
++					   ULONG_MAX),
++			0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	KUNIT_ASSERT_EQ(test,
++			clk_set_rate_range(user2,
++					   DUMMY_CLOCK_RATE_2,
++					   ULONG_MAX),
++			0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(user2);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	clk_put(user1);
++	clk_put(clk);
++}
++
+ static struct kunit_case clk_range_minimize_test_cases[] = {
+ 	KUNIT_CASE(clk_range_test_set_range_rate_minimized),
+ 	KUNIT_CASE(clk_range_test_multiple_set_range_rate_minimized),
++	KUNIT_CASE(clk_range_test_multiple_set_range_rate_put_minimized),
+ 	{}
+ };
+ 
 -- 
 2.37.1
 
