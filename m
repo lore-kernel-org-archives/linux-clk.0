@@ -2,65 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DC9C00140
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 15:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE078C25B0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 15:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231176AbiHOPmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Aug 2022 11:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58716 "EHLO
+        id S232726AbiHOPmM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Aug 2022 11:42:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232196AbiHOPl7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 11:41:59 -0400
+        with ESMTP id S232682AbiHOPlz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 11:41:55 -0400
 Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 371D66468
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 08:41:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C080764E6
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 08:41:53 -0700 (PDT)
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id AD0933200902;
-        Mon, 15 Aug 2022 11:41:56 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 15 Aug 2022 11:41:57 -0400
+        by mailout.west.internal (Postfix) with ESMTP id 42BF23200904;
+        Mon, 15 Aug 2022 11:41:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 15 Aug 2022 11:41:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1660578116; x=1660664516; bh=zT
-        KOvMlWhmDMPDVX2j5zwmCEJLFnRU2TChEvF1cvZwU=; b=otlLzeqyfgSesdW3S3
-        jPg94JR+DolFlGD0dABLJENtJuZH+kLqq/IH44+mI6YNTRtmzEfsn0NbNUu5Pcpk
-        ZbT+erVDq154KTbaPD/1lX8/fIoot2nWOb4d87+kRfINxUiBczQFDNumT2DLgC88
-        RitfCwpGflXNHunv+dliFbSH49WAr2heVsTrfV9kkuKB2k7l3mpQXNBzNGvhu5nu
-        Qr4ngN0C4EnIudpT1OUGwfZQIg2RaSE2YiWzbmXQqqAZqVqJWDnAIUD6zWXv3pCX
-        /mUi+3kKeS3JEekxpGWhS5pJFuDEbX7x09AYz8be/M8+ru2XkOK24+46a7VwqNDo
-        OyZQ==
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1660578111; x=1660664511; bh=LBrIlKuNM/
+        1w06yBdXUfUaffM3mVFpisH4+kIlM2aFc=; b=gBFsI99qClhjB1N6OBUsfXkp2i
+        HZptqJPGVJg+AV1YJYuIEFWOIKVPRlD0FnVByISfKdjuejnbXKT0gJjZkLTjmQxq
+        GR8igLMgHXOKuSceVnbMlO+WnCR6k7IkmCyWtYnvtzuABuCv4eJwprwVAGjnpEDO
+        um8EaRATec/mX6jAW8l2rofHYDdmWKvAsu/UST/YTinZ9lWapzjm9gR2NEO+lqhF
+        ZwX7BGP5M4h9fRFelWl0+WvSb148hhpN7U7DcpMjmpH/xhUsBeESozDdoMMrW9OL
+        OQLLlXVMEYlO/8OQ1SeeWvp4QUe1AYZslwKZk1Bxvp2XnXqHZMTswJUt110g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1660578116; x=1660664516; bh=zTKOvMlWhmDMP
-        DVX2j5zwmCEJLFnRU2TChEvF1cvZwU=; b=GqUCjO7RfghViTLuUoT6+JsYOxcFO
-        SFiaGcCX4diCA9Du5046gVwsTz7vusEMYBankSzVE0n5S5vpXfha1FxcM0kENqhu
-        OLNUmxlrigAjFbSR2VW19Dh1ve+sYzmwfjyb6B6S+PuHhSwhOnY3EtbZapC3drcl
-        f7pMilaYR92+6PTdQZ8Dwnot8yPV5cAWl854N9tMifU+oRn9P0iYO/44+CT6EqmJ
-        Ygwzw1oKvdBYPZV2CdpixkPbXoYnynNLnojhQuF6vSicceLs/DQoop/9/OM79LP2
-        zIBAaFcWPnrg2TjkUDVaJnY3a0dz2YFnuO2Zo+Hfd1K6YE62ZvexCsrtg==
-X-ME-Sender: <xms:RGn6YgrgiXZKKKQ_ZDN5ljYEqHtC6FVytR8Zp9xod04j9hXHMn_zgQ>
-    <xme:RGn6Ymp8K9XRzGmMcUTkuaK-bE_pFal4yHkvLmk8EDIR2LxUty3vFOxieTQrGuF-K
-    jRt9rQCLklvwhJSVpw>
-X-ME-Received: <xmr:RGn6YlONY2oYvI-gasKQd6QYB888Gl0z6n1jaRfNN1-2RmZVGJYy2gMKKOrN>
+        :x-sasl-enc; s=fm1; t=1660578111; x=1660664511; bh=LBrIlKuNM/1w0
+        6yBdXUfUaffM3mVFpisH4+kIlM2aFc=; b=ergL5aPVRGtCGEEFb6py/iVPwgC4d
+        AW9w7BjnNrDhMiMejlypgZ8TOktVfhV5RzC5Oi6m4NvH2Vwg3InIJRrCiYvbiFTG
+        WKdZl+KHc9S+3JyugTF2WaYFTH+rRXtmCwdZg6o+PAiQ4sZncFCI0Oh+68Fv9ggI
+        HWTb32AHFDtJ0FXotgEboc2ZJUdhyt2FxhkRsnQP26fgbx2naco433oqFkym++Hj
+        HhZWKaYW4fJjL8RbkNecTjV2a986Nm0zn6UCODlNwhdYne1i4XPSodGYnizygz0u
+        Fk/SD5JiaX7lBh8KEJ7PHrBy1Nbm5tPEWgZNlRtwL3NtvUTojYlbonTIg==
+X-ME-Sender: <xms:Pmn6YjPcEQXspacaZPgWnKX9bzVHPpZrB2meiIDUzSkfbmAfyESj1A>
+    <xme:Pmn6Yt-varVnFLGLxPs2aM8Hke42ycNhdZ3D_xor93pd6Ag88vVJy4UQICGJz8GcV
+    ptGL0wsuuZQ84BEyiM>
+X-ME-Received: <xmr:Pmn6YiSUY5PIzd4dQ9slP3X2g1KMh5fMZoSFA9lnXkTRYxdn5lb1Yq78YdkX>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehvddgleefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:RGn6Yn4qw0SdY-nEXDaytCGoN-z6gIMlztutgrBIxf1WYru6zHLAZA>
-    <xmx:RGn6Yv4Psks0O6_P_7-E2UNo9GDbxpInwEwXyOXfoaQuktnqVayNfQ>
-    <xmx:RGn6YnifPbhsh20V0remr6_CxIiGD_iI6s6Dz9WxGasnJlHYH39qRg>
-    <xmx:RGn6Ysyd1KtjdSbWIG5FZSoFpLbZDXlNl6-6tBhPVrA-WM61TIvfPQ>
+    cujfgurhephffvvefufffkofgtggfgsehtkeertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepledvtdegkeegtdejvdejvdejleeifeegfeevueegvddvleevieeghffhtdet
+    geffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:Pmn6YnvXkUbz1j2jAJVmZYthxzHdluxHRiTgD_aFZJL8IbDnCy_cIQ>
+    <xmx:Pmn6YrcFWZ8En5QsakPUZ8GRUhGLDVyvNnF8KjLb5UV6WfrpkYbPXw>
+    <xmx:Pmn6Yj11pEtzVLjAbpkBB89hNDxBsud_qsxp4XWo7I1YQt-enaLCyA>
+    <xmx:P2n6YsVz-O5DkN2VvxTN7qlIWvayR0Vr5rSLk1bYUnpb9LKMsa1Niw>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Aug 2022 11:41:55 -0400 (EDT)
+ 15 Aug 2022 11:41:49 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     linux-clk@vger.kernel.org,
         Mike Turquette <mturquette@baylibre.com>,
@@ -74,368 +73,134 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v8 01/25] clk: test: Switch to clk_hw_get_clk
-Date:   Mon, 15 Aug 2022 17:41:23 +0200
-Message-Id: <20220815154147.1631441-2-maxime@cerno.tech>
+Subject: [PATCH v8 00/25] clk: More clock rate fixes and tests
+Date:   Mon, 15 Aug 2022 17:41:22 +0200
+Message-Id: <20220815154147.1631441-1-maxime@cerno.tech>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220815154147.1631441-1-maxime@cerno.tech>
-References: <20220815154147.1631441-1-maxime@cerno.tech>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following the clk_hw->clk pointer is equivalent to calling
-clk_hw_get_clk(), but will make the job harder if we need to rework that
-part in the future.
+Hi,
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk_test.c | 74 +++++++++++++++++++++++++++++++-----------
- 1 file changed, 55 insertions(+), 19 deletions(-)
+Thanks to the feedback I got on the previous series, I found and fixed a
+number of bugs in the clock framework and how it deals with rates,
+especially when it comes to orphan clocks.
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 6731a822f4e3..7646356f30cb 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -160,12 +160,14 @@ static void clk_test_get_rate(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, ctx->rate);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -179,7 +181,7 @@ static void clk_test_set_get_rate(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -189,6 +191,8 @@ static void clk_test_set_get_rate(struct kunit *test)
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -202,7 +206,7 @@ static void clk_test_set_set_get_rate(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -216,6 +220,8 @@ static void clk_test_set_set_get_rate(struct kunit *test)
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -226,7 +232,7 @@ static void clk_test_round_set_get_rate(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rounded_rate, set_rate;
- 
- 	rounded_rate = clk_round_rate(clk, DUMMY_CLOCK_RATE_1);
-@@ -240,6 +246,8 @@ static void clk_test_round_set_get_rate(struct kunit *test)
- 	set_rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, set_rate, 0);
- 	KUNIT_EXPECT_EQ(test, rounded_rate, set_rate);
-+
-+	clk_put(clk);
- }
- 
- static struct kunit_case clk_test_cases[] = {
-@@ -314,7 +322,7 @@ static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
- {
- 	struct clk_single_parent_ctx *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate, new_rate;
- 
- 	rate = clk_get_rate(clk);
-@@ -329,6 +337,8 @@ static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
- 	new_rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, new_rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, new_rate);
-+
-+	clk_put(clk);
- }
- 
- static struct kunit_case clk_orphan_transparent_single_parent_mux_test_cases[] = {
-@@ -352,7 +362,7 @@ static void clk_range_test_set_range(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -365,6 +375,8 @@ static void clk_range_test_set_range(struct kunit *test)
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
- 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -375,13 +387,15 @@ static void clk_range_test_set_range_invalid(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 
- 	KUNIT_EXPECT_LT(test,
- 			clk_set_rate_range(clk,
- 					   DUMMY_CLOCK_RATE_1 + 1000,
- 					   DUMMY_CLOCK_RATE_1),
- 			0);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -420,7 +434,7 @@ static void clk_range_test_set_range_round_rate_lower(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -433,6 +447,8 @@ static void clk_range_test_set_range_round_rate_lower(struct kunit *test)
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
- 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -443,7 +459,7 @@ static void clk_range_test_set_range_set_rate_lower(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -460,6 +476,8 @@ static void clk_range_test_set_range_set_rate_lower(struct kunit *test)
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
- 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -472,7 +490,7 @@ static void clk_range_test_set_range_set_round_rate_consistent_lower(struct kuni
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	long rounded;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -489,6 +507,8 @@ static void clk_range_test_set_range_set_round_rate_consistent_lower(struct kuni
- 			0);
- 
- 	KUNIT_EXPECT_EQ(test, rounded, clk_get_rate(clk));
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -499,7 +519,7 @@ static void clk_range_test_set_range_round_rate_higher(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -512,6 +532,8 @@ static void clk_range_test_set_range_round_rate_higher(struct kunit *test)
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
- 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -522,7 +544,7 @@ static void clk_range_test_set_range_set_rate_higher(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -539,6 +561,8 @@ static void clk_range_test_set_range_set_rate_higher(struct kunit *test)
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
- 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -551,7 +575,7 @@ static void clk_range_test_set_range_set_round_rate_consistent_higher(struct kun
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	long rounded;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -568,6 +592,8 @@ static void clk_range_test_set_range_set_round_rate_consistent_higher(struct kun
- 			0);
- 
- 	KUNIT_EXPECT_EQ(test, rounded, clk_get_rate(clk));
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -582,7 +608,7 @@ static void clk_range_test_set_range_get_rate_raised(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -598,6 +624,8 @@ static void clk_range_test_set_range_get_rate_raised(struct kunit *test)
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -612,7 +640,7 @@ static void clk_range_test_set_range_get_rate_lowered(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -628,6 +656,8 @@ static void clk_range_test_set_range_get_rate_lowered(struct kunit *test)
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- static struct kunit_case clk_range_test_cases[] = {
-@@ -664,7 +694,7 @@ static void clk_range_test_set_range_rate_maximized(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -700,6 +730,8 @@ static void clk_range_test_set_range_rate_maximized(struct kunit *test)
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -714,7 +746,7 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	struct clk *user1, *user2;
- 	unsigned long rate;
- 
-@@ -758,6 +790,7 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
- 
- 	clk_put(user2);
- 	clk_put(user1);
-+	clk_put(clk);
- }
- 
- static struct kunit_case clk_range_maximize_test_cases[] = {
-@@ -785,7 +818,7 @@ static void clk_range_test_set_range_rate_minimized(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	unsigned long rate;
- 
- 	KUNIT_ASSERT_EQ(test,
-@@ -821,6 +854,8 @@ static void clk_range_test_set_range_rate_minimized(struct kunit *test)
- 	rate = clk_get_rate(clk);
- 	KUNIT_ASSERT_GT(test, rate, 0);
- 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-+
-+	clk_put(clk);
- }
- 
- /*
-@@ -835,7 +870,7 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
- {
- 	struct clk_dummy_context *ctx = test->priv;
- 	struct clk_hw *hw = &ctx->hw;
--	struct clk *clk = hw->clk;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
- 	struct clk *user1, *user2;
- 	unsigned long rate;
- 
-@@ -875,6 +910,7 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
- 
- 	clk_put(user2);
- 	clk_put(user1);
-+	clk_put(clk);
- }
- 
- static struct kunit_case clk_range_minimize_test_cases[] = {
+In order to make sure this doesn't pop up again as a regression, I've
+extended the number of tests.
+
+The first patch reintroduces the clk_set_rate_range call on clk_put, but
+this time will only do so if there was a range set on that clock to
+begin with. It should be less intrusive, and reduce the number of
+potential side effects considerably.
+
+We then have a fix for the qcom rcg2 issue that has been reported
+recently.
+
+All the other patches should be probably be flagged as fixes, but
+they've never seem to have shown any real-world issues until now, and
+they aren't all really trivial to backport either, so I'm not sure it's
+worth it.
+
+There's also some documentation improvements for recalc_rate and
+clk_get_rate to hopefully make the documentation less ambiguous and
+acknowledge that recalc_rate() returning 0 on error is fine.
+
+Let me know what you think,
+Maxime
+
+Changes from v7:
+  - Dropped the RPi fixes
+  - Rebased on 6.0-rc1
+
+Changes from v6:
+  - Fixed a kernel build bot warning
+
+Changes from v5:
+  - Rebased on current next (next-20220711)
+  - Dropped clk_get_rate_range, and used a custom function instead
+  - Switched all tests to use clk_hw_get_clk() instead of struct clk_hw->clk
+  - Removed some intermediate variables
+  - Added some comments
+  - Dropped clk_get_parent() changes
+  - Dropped test on clk_hw pointer non-NULL in clk_hw_get_name
+  - Made clk_has_parent more const
+
+Changes from v4:
+  - Fix build breakage on SAM9x60
+
+Changes from v3:
+  - constness warning fix in clk_core_forward_rate_req
+
+Changes from v2:
+  - Rebased on top of current next
+  - Fixed locking issue in clk_get_rate_range
+
+Changes from v1:
+  - Rebased on top of next-20220428
+  - Dropped the patch to prevent non-orphan clocks from registering if
+    their recalc_rate hook returns 0
+  - Added some patches to clarify the clk_get_rate and recalc_rate
+    documentation
+  - Dropped the patch to skip the range setup on an orphan clock that
+    was introducing a regression on RaspberryPi3 when a monitor wasn't
+    connected at boot
+  - Added a patch to skip the rate clamping in clk_round_rate() when
+    min_rate == max_rate == 0
+  - Added a new set of functions to query the clk boundaries and fix a
+    regression with the RaspberryPi4
+  - Fixed all the drivers hand-crafting their clk_rate_request
+  - Reworded the test suite descriptions
+  - Reordered a few patches to ease the review
+  - Reworded some commit logs to better explain the issues they address
+  - Collected the Tested-by of Alexander and Marek
+  - More tests
+
+Maxime Ripard (25):
+  clk: test: Switch to clk_hw_get_clk
+  clk: Drop the rate range on clk_put()
+  clk: Skip clamping when rounding if there's no boundaries
+  clk: Mention that .recalc_rate can return 0 on error
+  clk: Clarify clk_get_rate() expectations
+  clk: tests: Add test suites description
+  clk: tests: Add reference to the orphan mux bug report
+  clk: tests: Add tests for uncached clock
+  clk: tests: Add tests for single parent mux
+  clk: tests: Add tests for mux with multiple parents
+  clk: tests: Add some tests for orphan with multiple parents
+  clk: Take into account uncached clocks in clk_set_rate_range()
+  clk: Set req_rate on reparenting
+  clk: Change clk_core_init_rate_req prototype
+  clk: Move clk_core_init_rate_req() from clk_core_round_rate_nolock()
+    to its caller
+  clk: Introduce clk_hw_init_rate_request()
+  clk: Add our request boundaries in clk_core_init_rate_req
+  clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock
+  clk: Introduce clk_core_has_parent()
+  clk: Constify clk_has_parent()
+  clk: Stop forwarding clk_rate_requests to the parent
+  clk: Zero the clk_rate_request structure
+  clk: Introduce the clk_hw_get_rate_range function
+  clk: qcom: clk-rcg2: Take clock boundaries into consideration for
+    gfx3d
+  clk: tests: Add missing test case for ranges
+
+ drivers/clk/at91/clk-generated.c  |    5 +-
+ drivers/clk/at91/clk-master.c     |    9 +-
+ drivers/clk/at91/clk-peripheral.c |    4 +-
+ drivers/clk/clk-composite.c       |    6 +-
+ drivers/clk/clk-divider.c         |   20 +-
+ drivers/clk/clk.c                 |  284 ++++--
+ drivers/clk/clk_test.c            | 1413 ++++++++++++++++++++++++++++-
+ drivers/clk/qcom/clk-rcg2.c       |    9 +
+ include/linux/clk-provider.h      |   18 +-
+ include/linux/clk.h               |    2 +-
+ 10 files changed, 1661 insertions(+), 109 deletions(-)
+
 -- 
 2.37.1
 
