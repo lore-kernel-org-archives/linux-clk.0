@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CF8C25B0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 09:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BBBC25B0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 09:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241794AbiHOJKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Aug 2022 05:10:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34266 "EHLO
+        id S241597AbiHOJMk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Aug 2022 05:12:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231359AbiHOJKA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 05:10:00 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FE121827
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 02:09:58 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id k18-20020a05600c0b5200b003a5dab49d0bso3061680wmr.3
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 02:09:58 -0700 (PDT)
+        with ESMTP id S241885AbiHOJMi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 05:12:38 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026EA220D2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 02:12:37 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id h13so8362399wrf.6
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 02:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=KbV88Nyfrl4D5bH5/FyHyQsFA/7mQKDev2c0JUEvauU=;
-        b=USMSxPjaLyEqSmOQ+JNN+dZVW+o9dCB2RaU8Pv+eZeHGjWtBbUjmstLH8bSjQ++6x2
-         kNEtBgTVplhY4ClvB/8+vUiE7nLRptbhCKdxOfmBKH1U6EezrlndG+b5CVeRY9eNKeTR
-         qdB0fVb/1aLzjvQKIPcKptj/PBCJIIumKARLKhsfmfWm77+DFUkhGfzRpFQrMsnfYPTl
-         TJXHF5c4VDZtHdeUBAjBtlgP6CPzdWvNixDxThTIY8lrhRcmXkCeCrEySGN1C3j/kdiF
-         WmJGbmgplTIb+k1cEWo/H435UKgWDCR2n7P26AS6sM8WMzWUs1tuPKIFrCvo0ZFSctdR
-         4qWQ==
+        bh=mZGNEIa1pqWi28sYb3bc4F38nKBbuQz26ll0NQAydIc=;
+        b=VhLb3fH+gl+hRv8bCbnX9IKPW+Z4faV4V6Ta2OZT+8e/NlnviwsfWIcwQaPbz5lldW
+         EcXJyhqjJHrT1YRTYnn6yar+BRSHvON/LyFf4cwvV8skNiKHl8KOq8nAkOofCnUfJtHl
+         fCx3gr52DU8RXMCJX8iEjwDR9jpIMkjqtE+nxm46NCuluM59G1d4UeBQAvYy0c5O9abe
+         r1+CZalq6T3OI67sUotRCxM68nhDxvNMKle/X7APXs+ERgk2NIiK926XrXaG9kL7wpAt
+         p7aTH9lCAekFv7+rcYA0Jalnf3TvwuNXkKVKJV4zj2XpNBqUXZp6c2yyQW6Om2duSXz7
+         3i1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=KbV88Nyfrl4D5bH5/FyHyQsFA/7mQKDev2c0JUEvauU=;
-        b=3xXjDl3gFtmoEN7Qq1EcDL4sEBYDBhcLSSPaHd2uT+mFeNkgCPpNTOId0BVouepLK8
-         yT2A7gW4LmbLu5cm7WpYriFCyrGFYm5VDKZkJkdMMyKIkQ+92feu2/W5ePsuYwbzmXHK
-         vkxsPTDAVuSoINUhDpCORWGPb+bhRVE3tWYaPVRhinT/kuSz+3bVpbf/Ub99h+H3w0Qm
-         s/tTc7enj6AMliw1Pp8AbMjSVeBh/bQeaA5aEUteEr4b7AIxeK97ciF0EIHk+1cO8TgL
-         uzs/j2yB1bCE7KR8M5b0aYuQCE6eoSaiyNBThgjo6CVPsSyoSUuZKBjeBmNW4p1ARhdK
-         Cn0w==
-X-Gm-Message-State: ACgBeo0AxRca7x14JSnv8F1Y6IhQIOcv9lxUH2XMITkOuRAHHmHgBm7k
-        qcO2IwDVC3R9GSSBQ+jVy1+bJw==
-X-Google-Smtp-Source: AA6agR5+bgtG2yUf7658VOqMIddUylxAqR2nIRuGuCRZU2nZPbNOpPJOIXjHe9nh7q6W/suV5c3erA==
-X-Received: by 2002:a05:600c:19c6:b0:3a5:ffb3:d527 with SMTP id u6-20020a05600c19c600b003a5ffb3d527mr890642wmq.106.1660554597513;
-        Mon, 15 Aug 2022 02:09:57 -0700 (PDT)
+        bh=mZGNEIa1pqWi28sYb3bc4F38nKBbuQz26ll0NQAydIc=;
+        b=61X0C8WfYDtWHzv78kn0iohkhYoS/nJfQqYYyInjysykQpKxvZFAMR4/8yMzn4Tc3X
+         IW5GAIFNmcv9mgFOXxf2mT+27abb3hPRg6pH0UaQurLRGfcZOIEFGBjLcyrZz6idVP86
+         vPMn+J1jyc32SrK2WC0L7Cy95b0yF+M5L0puZGAUiaZpLoOsEIM4x1i/7nXObxGa6YEa
+         2ffP7LlPLgIZjAvahsLgkY3qDIyh4o19eARiaywgozcd+JIWcNH/Wc0mf5jLLQ5at3xe
+         vkkju6jPce1OyjWutz/nR/NQp2CsXCxJ1PgyOvkV+XRyg0XYekdvPQXNZ7qGsYjIj/4F
+         WZGg==
+X-Gm-Message-State: ACgBeo3w5xi1frZfkcj4nAuqlF8DTAVIqY5MImg/eRUUzNZVe2JP9k/h
+        PmIeJUNsFjnqh0QzalOl4XPfFw==
+X-Google-Smtp-Source: AA6agR5eXQemuYfviMG9u2GM6Erb8/7KMsoyHCidkfaSXGw3KPxNvEbaJ+VcyGH4MM8tz9h/JWb8VA==
+X-Received: by 2002:adf:fd4f:0:b0:220:60bc:3fc9 with SMTP id h15-20020adffd4f000000b0022060bc3fc9mr8217875wrs.398.1660554755381;
+        Mon, 15 Aug 2022 02:12:35 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id b21-20020a05600c4e1500b003a50924f1c0sm8834296wmq.18.2022.08.15.02.09.55
+        by smtp.gmail.com with ESMTPSA id b5-20020adff905000000b002205ffe88edsm6705381wrr.31.2022.08.15.02.12.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 02:09:56 -0700 (PDT)
-Date:   Mon, 15 Aug 2022 12:09:54 +0300
+        Mon, 15 Aug 2022 02:12:34 -0700 (PDT)
+Date:   Mon, 15 Aug 2022 12:12:33 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -55,71 +55,67 @@ Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, kernel@pengutronix.de,
         festevam@gmail.com, linux-imx@nxp.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-        Ye Li <ye.li@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH V2 7/8] clk: imx93: add MU1/2 clock
-Message-ID: <YvoNYidBvJ/dkonW@linaro.org>
+        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2 8/8] clk: imx93: add SAI IPG clk
+Message-ID: <YvoOAYvLF9TTfK+w@linaro.org>
 References: <20220815013039.474970-1-peng.fan@oss.nxp.com>
- <20220815013039.474970-8-peng.fan@oss.nxp.com>
+ <20220815013039.474970-9-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220815013039.474970-8-peng.fan@oss.nxp.com>
+In-Reply-To: <20220815013039.474970-9-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-15 09:30:38, Peng Fan (OSS) wrote:
+On 22-08-15 09:30:39, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> The clk tree should be as:
-> bus_aon_root------>\               /--->MU1_B IP
->                     -->MU_B gate-->
-> bus_wakeup_root--->/               \--->MU2_B IP
+> The clk topology is as below:
+> bus_aon_root------>\                  /--->SAI IPG
+>                     -->SAI LPCG gate-->
+> sai[x]_clk_root--->/                  \--->SAI MCLK
 > 
-> bus_aon_root------>\               /--->MU1_A IP
->                     -->MU_A gate-->
-> bus_wakeup_root--->/               \--->MU2_A IP
-> 
-> So need use shared count gate. And linux use MU_B,
-> so set MU_A clk as CLK_IGNORE_UNUSED.
+> So use shared count as i.MX93 MU_B gate.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Ye Li <ye.li@nxp.com>
-> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-imx93.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/clk/imx/clk-imx93.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 73d30a2e64b0..4008ab075dfe 100644
+> index 4008ab075dfe..6a76b9fdf18d 100644
 > --- a/drivers/clk/imx/clk-imx93.c
 > +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -28,6 +28,8 @@ enum clk_sel {
+> @@ -28,6 +28,9 @@ enum clk_sel {
 >  	MAX_SEL
 >  };
 >  
-> +static u32 share_count_mub;
-> +
+> +static u32 share_count_sai1;
+> +static u32 share_count_sai2;
+> +static u32 share_count_sai3;
+>  static u32 share_count_mub;
+>  
 >  static const char *parent_names[MAX_SEL][4] = {
->  	{"osc_24m", "sys_pll_pfd0_div2", "sys_pll_pfd1_div2", "video_pll"},
->  	{"osc_24m", "sys_pll_pfd0_div2", "sys_pll_pfd1_div2", "sys_pll_pfd2_div2"},
-> @@ -159,8 +161,10 @@ static const struct imx93_clk_ccgr {
->  	{ IMX93_CLK_WDOG5_GATE,		"wdog5",	"osc_24m",		0x8400, },
->  	{ IMX93_CLK_SEMA1_GATE,		"sema1",	"bus_aon_root",		0x8440, },
->  	{ IMX93_CLK_SEMA2_GATE,		"sema2",	"bus_wakeup_root",	0x8480, },
-> -	{ IMX93_CLK_MU_A_GATE,		"mu_a",		"bus_aon_root",		0x84c0, },
-> -	{ IMX93_CLK_MU_B_GATE,		"mu_b",		"bus_aon_root",		0x8500, },
-> +	{ IMX93_CLK_MU1_A_GATE,		"mu1_a",	"bus_aon_root",		0x84c0, CLK_IGNORE_UNUSED },
-> +	{ IMX93_CLK_MU2_A_GATE,		"mu2_a",	"bus_wakeup_root",	0x84c0, CLK_IGNORE_UNUSED },
-> +	{ IMX93_CLK_MU1_B_GATE,		"mu1_b",	"bus_aon_root",		0x8500, 0, &share_count_mub },
-> +	{ IMX93_CLK_MU2_B_GATE,		"mu2_b",	"bus_wakeup_root",	0x8500, 0, &share_count_mub },
->  	{ IMX93_CLK_EDMA1_GATE,		"edma1",	"m33_root",		0x8540, },
->  	{ IMX93_CLK_EDMA2_GATE,		"edma2",	"wakeup_axi_root",	0x8580, },
->  	{ IMX93_CLK_FLEXSPI1_GATE,	"flexspi",	"flexspi_root",		0x8640, },
+> @@ -215,9 +218,12 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_USDHC1_GATE,	"usdhc1",	"usdhc1_root",		0x9380, },
+>  	{ IMX93_CLK_USDHC2_GATE,	"usdhc2",	"usdhc2_root",		0x93c0, },
+>  	{ IMX93_CLK_USDHC3_GATE,	"usdhc3",	"usdhc3_root",		0x9400, },
+> -	{ IMX93_CLK_SAI1_GATE,		"sai1",		"sai1_root",		0x9440, },
+> -	{ IMX93_CLK_SAI2_GATE,		"sai2",		"sai2_root",		0x9480, },
+> -	{ IMX93_CLK_SAI3_GATE,		"sai3",		"sai3_root",		0x94c0, },
+> +	{ IMX93_CLK_SAI1_GATE,          "sai1",         "sai1_root",            0x9440, 0, &share_count_sai1},
+> +	{ IMX93_CLK_SAI1_IPG,		"sai1_ipg_clk", "bus_aon_root",		0x9440, 0, &share_count_sai1},
+> +	{ IMX93_CLK_SAI2_GATE,          "sai2",         "sai2_root",            0x9480, 0, &share_count_sai2},
+> +	{ IMX93_CLK_SAI2_IPG,		"sai2_ipg_clk", "bus_wakeup_root",	0x9480, 0, &share_count_sai2},
+> +	{ IMX93_CLK_SAI3_GATE,          "sai3",         "sai3_root",            0x94c0, 0, &share_count_sai3},
+> +	{ IMX93_CLK_SAI3_IPG,		"sai3_ipg_clk", "bus_wakeup_root",	0x94c0, 0, &share_count_sai3},
+>  	{ IMX93_CLK_MIPI_CSI_GATE,	"mipi_csi",	"media_apb_root",	0x9580, },
+>  	{ IMX93_CLK_MIPI_DSI_GATE,	"mipi_dsi",	"media_apb_root",	0x95c0, },
+>  	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, },
 > -- 
 > 2.37.1
 > 
