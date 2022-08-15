@@ -2,202 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69518C25B0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 08:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E38C00140
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 08:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbiHOIc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Aug 2022 04:32:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
+        id S241166AbiHOIkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Aug 2022 04:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbiHOIc6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 04:32:58 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCEE1FCE8
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:32:55 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id h13so8257605wrf.6
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:32:55 -0700 (PDT)
+        with ESMTP id S233314AbiHOIkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 04:40:12 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A8A1FCDE
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:40:10 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id bs25so8292837wrb.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=EXcUj6FUGMW2MlOtvV9/2PElSz+xwYewruvcgvdHfEI=;
-        b=E+a4ffEeT4ZE69D3v3rLDGnXGAvAneqQiKTSOUhWZoeEWxqK+CFjMXxsFy1IAn4Wtn
-         rIMYWZmEb/mqrLK/nAOKnkiwLG8cJuGYE9bgjjoglIp02wsesEkBq3NLkntaNEbsu6jI
-         3wbQhyMul1lUBDNcHVvf2GnFxeOsCbDcHmsbKL1nImj3KLg+ws4SnQir2K0k5Q5iDapf
-         TUsSOjcoApfw48ane2ipyMEEPqwDAqS8HT35M5Y/k/ajpfz2OwWj+O1dnCPhSr/I8zIx
-         CKW3+aNTiGK/AYKoYzE8Y3WO67ZprZa1uzjMiwZXB3zTnPxH9Az3AdYMFVbSkAx4j95W
-         EOLg==
+        bh=bm9cYKRK81euJlBrGN8MvVluF+drZ+BzmhRUFWVH330=;
+        b=gJ5yrzBGibuV05aqPOSwb1FoEJAQ8a7yyHsvre8Cq5bFu/sT1A5miPn20lP1i5oi/i
+         dl4IpoSCsZ4OZUvf5Hai/FSvREYx6TgHG/nfPodyIJ02MV7m6HTKw+JMTLJQJkxb4QGi
+         ZRlYVQn8URafRJURRlNLQypBkEHjHIJwrna6lJ/424xgrUnaaux8J0SsWwUGyOl1DJRl
+         Zl+XHgrwW0YjPQVdWtA21tikSMParSQLhf3jiOWJee9V4j/b9P3vOVwVT1juPosc1+19
+         ZoikzieoyimJmgbeG4gKB35wpO2qZAjKJp07yPiU/QGE8mHe0W6tv+WpJxReTfqi6W41
+         3kiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=EXcUj6FUGMW2MlOtvV9/2PElSz+xwYewruvcgvdHfEI=;
-        b=mcMQ4t9SPoow0RUca8BYu5FPTS9LzE5KUtYBD3hPec6wFWsbZXK715immwozMpGvMo
-         5lJxDxYtinyZdzNoEUD3oCt7LT07r1GTJ45n9ggRB6wIt8EhAG0B6oEEqhenIxTg8QFf
-         W6rZuTBOzZJOeCye4Fz5tf51kHczT4IKJ1TLxYle+JjN2254M0Vafvh7z3P6eWePjfy3
-         YKNCLJ9/McaXb0I13Q0VRc3t7GPKJG3o7SUdt5OVF/PXQ7YD2+jyIM2sxSE/BrJ2sYFF
-         d1QIfCuU0jaCHK6fQaqnL9ieCY9iIJ/S0m3JhuXqyh9LhLvsuL5WRMALpgYNH4O1gDgG
-         N49w==
-X-Gm-Message-State: ACgBeo31snqcmOO4AdaFZyl6MMrfTopvTPOTu+KEWDWR16tcIX+SIfMz
-        V76t4453deAUDoe8PISVA2W+zV+ewf+9rA==
-X-Google-Smtp-Source: AA6agR6VhKLPX5i7Rn7Iy/3Orf0DZCRUMR3GZVnyS56g6AwGZI40CXBX8nlzjn+iA74ifxnIGCNYBg==
-X-Received: by 2002:a05:6000:1092:b0:21f:13e7:3cc with SMTP id y18-20020a056000109200b0021f13e703ccmr8544750wrw.671.1660552374551;
-        Mon, 15 Aug 2022 01:32:54 -0700 (PDT)
+        bh=bm9cYKRK81euJlBrGN8MvVluF+drZ+BzmhRUFWVH330=;
+        b=VL/1sAGIXM+5oNmyRQLLTuY5Oy9lviTXc6BqKIoBkLOpBsXYifI4O5JL5rIQfwcm6X
+         11Y+FsD2GskSUCX314aJhXvICgnLmtFOIvWrkID0Wb1lyri0mANQrw+wft9D0NP/gU8S
+         3E6/kT/Nm4C46NPfx+fI2rnhEiftsNxOkefFu9zd4xcyVB54LStmL8enGULsyL1SowEJ
+         rJRVC8X8hYK7LxV7752/RSyCDH9t7J5uoG1eSkAhSbKX+VpoQyxS3j1yX65keyqhiJZr
+         aQTSake68DMsK/pqxX93q0gaOuvMUoKghXUL76bjw8To9tL21ucO6mJD2M+r1NzNwO4S
+         /cwg==
+X-Gm-Message-State: ACgBeo24A+KzGqY5Fixjqvj0HAMPDQIpssvmFUXO896k2NCfrl3ELok7
+        kPzXrh8q7Q/32ZWAt5S6OP6W2g==
+X-Google-Smtp-Source: AA6agR4PzPl+pDuLWXzH5XMOvYgo5VUH0K440o80nb9n02ikvcPs1DEmxQgy5UVZZbh8rYoA6zT3VA==
+X-Received: by 2002:adf:fb0e:0:b0:21a:34a2:5ca9 with SMTP id c14-20020adffb0e000000b0021a34a25ca9mr8205199wrr.472.1660552809331;
+        Mon, 15 Aug 2022 01:40:09 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id r187-20020a1c44c4000000b003a5f2cc2f1dsm4138540wma.42.2022.08.15.01.32.53
+        by smtp.gmail.com with ESMTPSA id s4-20020adfdb04000000b002211fc70174sm8028501wri.99.2022.08.15.01.40.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 01:32:53 -0700 (PDT)
-Date:   Mon, 15 Aug 2022 11:32:52 +0300
+        Mon, 15 Aug 2022 01:40:08 -0700 (PDT)
+Date:   Mon, 15 Aug 2022 11:40:06 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] clk: imx: support fsl,protected-clocks
-Message-ID: <YvoEtKd7GCL865C3@linaro.org>
-References: <20220815033632.1687854-1-peng.fan@oss.nxp.com>
- <20220815033632.1687854-3-peng.fan@oss.nxp.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, abelvesa@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 1/8] dt-bindings: clock: imx93-clock: add more MU/SAI
+ clocks
+Message-ID: <YvoGZqrLOsxDWsWG@linaro.org>
+References: <20220815013039.474970-1-peng.fan@oss.nxp.com>
+ <20220815013039.474970-2-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220815033632.1687854-3-peng.fan@oss.nxp.com>
+In-Reply-To: <20220815013039.474970-2-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-15 11:36:32, Peng Fan (OSS) wrote:
+On 22-08-15 09:30:32, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> For the clocks listed in fsl,protected-clocks, enable them to avoid
-> Linux disable them. This will benifit root Linux and inmate cell run
-> on top of Jailhouse hypervisor, and benifit AMP case.
-
-Nitpick: s/benifit/benefit/
-
-AMP?
-
+> Add MU[1,2]_[A,B] clock entries.
+> Add SAI IPG clock entries.
 > 
+> Acked-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
 > ---
->  drivers/clk/imx/clk-imx8mm.c |  2 ++
->  drivers/clk/imx/clk-imx8mn.c |  2 ++
->  drivers/clk/imx/clk-imx8mp.c |  2 ++
->  drivers/clk/imx/clk-imx8mq.c |  2 ++
->  drivers/clk/imx/clk.c        | 21 +++++++++++++++++++++
->  drivers/clk/imx/clk.h        |  2 ++
->  6 files changed, 31 insertions(+)
+>  include/dt-bindings/clock/imx93-clock.h | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index b6d275855b36..24ddb1620bce 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -611,6 +611,8 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
+> diff --git a/include/dt-bindings/clock/imx93-clock.h b/include/dt-bindings/clock/imx93-clock.h
+> index 21fda9c5cb5e..19bc32788d81 100644
+> --- a/include/dt-bindings/clock/imx93-clock.h
+> +++ b/include/dt-bindings/clock/imx93-clock.h
+> @@ -196,6 +196,13 @@
+>  #define IMX93_CLK_TMC_GATE		187
+>  #define IMX93_CLK_PMRO_GATE		188
+>  #define IMX93_CLK_32K			189
+> -#define IMX93_CLK_END			190
+> +#define IMX93_CLK_SAI1_IPG		190
+> +#define IMX93_CLK_SAI2_IPG		191
+> +#define IMX93_CLK_SAI3_IPG		192
+> +#define IMX93_CLK_MU1_A_GATE		193
+> +#define IMX93_CLK_MU1_B_GATE		194
+> +#define IMX93_CLK_MU2_A_GATE		195
+> +#define IMX93_CLK_MU2_B_GATE		196
+> +#define IMX93_CLK_END			197
 >  
->  	imx_register_uart_clocks(4);
->  
-> +	imx_clk_protect(dev, hws);
-> +
->  	return 0;
->  
->  unregister_hws:
-> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-> index d37c45b676ab..57c486317d28 100644
-> --- a/drivers/clk/imx/clk-imx8mn.c
-> +++ b/drivers/clk/imx/clk-imx8mn.c
-> @@ -604,6 +604,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
->  
->  	imx_register_uart_clocks(4);
->  
-> +	imx_clk_protect(dev, hws);
-> +
->  	return 0;
->  
->  unregister_hws:
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 652ae58c2735..a95862cc04a4 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -713,6 +713,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  
->  	imx_register_uart_clocks(4);
->  
-> +	imx_clk_protect(dev, hws);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> index 882dcad4817d..2868e2390667 100644
-> --- a/drivers/clk/imx/clk-imx8mq.c
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -603,6 +603,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
->  
->  	imx_register_uart_clocks(4);
->  
-> +	imx_clk_protect(dev, hws);
-> +
->  	return 0;
->  
->  unregister_hws:
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index 5582f18dd632..307da8bd5243 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -2,6 +2,7 @@
->  #include <linux/bits.h>
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/device.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> @@ -214,4 +215,24 @@ static int __init imx_clk_disable_uart(void)
->  late_initcall_sync(imx_clk_disable_uart);
 >  #endif
->  
-> +int imx_clk_protect(struct device *dev, struct clk_hw * const clks[])
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	struct property *prop;
-> +	const __be32 *p;
-> +	u32 i;
-> +	int ret;
-> +
-> +	of_property_for_each_u32(np, "fsl,protected-clocks", prop, p, i) {
-> +		ret = clk_prepare_enable(clks[i]->clk);
-
-I might be wrong here, but wouldn't CLK_IGNORE_UNUSED have the same effect?
-
-I don't think we should circumvent that by adding vendor specific dts properties.
-
-> +		if (ret) {
-> +			dev_err(dev, "failed to enable %s\n", clk_hw_get_name(clks[i]));
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(imx_clk_protect);
-> +
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index dd49f90110e8..3f8099190b99 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -22,6 +22,8 @@ void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
->  void imx_unregister_clocks(struct clk *clks[], unsigned int count);
->  void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count);
->  
-> +int imx_clk_protect(struct device *dev, struct clk_hw * const clks[]);
-> +
->  extern void imx_cscmr1_fixup(u32 *val);
->  
->  enum imx_pllv1_type {
 > -- 
 > 2.37.1
 > 
