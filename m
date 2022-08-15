@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2EEC25B0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 08:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04D7C25B0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Aug 2022 08:56:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232536AbiHOIyZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Aug 2022 04:54:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
+        id S232406AbiHOI4K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Aug 2022 04:56:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231685AbiHOIyY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 04:54:24 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A889D20BFB
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:54:22 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id v3so8347748wrp.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:54:22 -0700 (PDT)
+        with ESMTP id S230423AbiHOI4J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Aug 2022 04:56:09 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 767621BEBF
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:56:07 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id bd26-20020a05600c1f1a00b003a5e82a6474so1957266wmb.4
+        for <linux-clk@vger.kernel.org>; Mon, 15 Aug 2022 01:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=iidtuaE8s+DCGaLOdt5ZKpKtusZpSzaBfJPqYoME7mI=;
-        b=UIl8fcznIabQRcconZq+r+VdCAMu5ynRV5wJw56zB6P8OflqhLPyyuLkzBWh3Aw54z
-         AqXWK9SbrysFB8qbsSyQ6bN+EkJnaFnC+vC9pgVvZQcGvc6XsqocGWTXK2UmcICHX/1A
-         wSSS1y/b64RblHHpj/qzpoc+Nforg0AzeBQ04wiyH/AYTx763jN3Mtf+Ea8rZTOcxUud
-         gJkDE3fEyW78naqeAr0Eol/C9Z1zV2RmuAMvWeD+z6mVqXyjI05UReYGojWDsLYuuAK9
-         H0QyFVyZL+9xwLRxO51/TiAPf4HjjInFGcJbJiwys03F0jg49eoq67b7X9EJYPCV7VwS
-         V9ww==
+        bh=v5hR97e/qTREUkp5JZeR/iRVGz5CsnRy8vmciOBHjlI=;
+        b=nmPrt2V6VgsW7SCOA20K6CehQN/O7Juwc1O2ZngeAd9mWmzoPYhYUW6bwTwfF03V1H
+         s+I34LqBn1oEouADmpyiA/eWgjhGbL2B11VCxoTbANpD8mcD0dD7lbx5xesnrsHFuHNm
+         MzbZ9fmtoDvk44LscDAX1CO92FIo6G2yU23nkNJQAvw+tOkON0EAQLaEIcd2cHdlMpzz
+         fTb1wVLWjRUTQ9yAehBVPwlCnwfSVQtmpWrl2maZh2Ru5a+QQKTF4/S24KBPMMn47ExB
+         jC8Nc//yS84Gfg5QOaI/TSqOrF47k0xGkANlbGuWnuXb4qbB4Z+rPPIgfeevZ3o98Mk6
+         06Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=iidtuaE8s+DCGaLOdt5ZKpKtusZpSzaBfJPqYoME7mI=;
-        b=oOFYnQQFoET2gI9B9JyZfb1aOI3PGJue2JPXh5/BhDZAJv5TPkzjDl6nUs6B7ycAgm
-         Cjmp9z0OcTdWZROSUQ10ti+UkSC8xKdjiVQWlKDF4vUj7jGIX0fMce3KoZuFssdui3q8
-         SH7WSR2TYQGa8XrymfUbjTqqcEEJgMCiMZOYIWpr4jDipxK38+Kkb9wW0q7h6HkJRITy
-         EcVZYsEkCvURcwUm5uZW88PurHcDZIC0/aL7vuERhZlXe5PWGrCn8BWvp5w6Sr7IXtFQ
-         lCr31PjLEti8SC4Xk2zLN/S7YiIr6HvWnOJcgCdIzth2WlxGcFI4QOlb2BBtlo2Ufbh8
-         Emog==
-X-Gm-Message-State: ACgBeo1WbqfnK7h58Vo4QjlrGbnk3YttLDEEf/EOcM70iHD0fge90CFB
-        yUV6wcQpuhedldZSUDQpWLgsPA==
-X-Google-Smtp-Source: AA6agR6YiDuscaXokbybBjZAvFR/jtnraP/BMqaoEW68eHcfYMpWEyoDGJ/2ThjvAxYRi0M7YVM0Ew==
-X-Received: by 2002:a5d:4705:0:b0:21f:3890:8619 with SMTP id y5-20020a5d4705000000b0021f38908619mr7976536wrq.104.1660553661190;
-        Mon, 15 Aug 2022 01:54:21 -0700 (PDT)
+        bh=v5hR97e/qTREUkp5JZeR/iRVGz5CsnRy8vmciOBHjlI=;
+        b=hoHLDxYzLhn1YbxkWqPP+67M3ogzgveBtXjCrDkVFNWIH3NgjEPBvp5ug/RSkJNykQ
+         QZeCN7wmhc8ckNIQNFaw2YOB/KttsClFNw09BEgFxa8dKdHZKCCsZev4ac85BngHlMKS
+         OuUTAHTwiH167TD9MIxZN8vjYjPGQqFIW3mMIXf7qxeM3vYkKO+9enRffsno4XO8lejM
+         iiiZwwMN3gbbNTKrcK+jy07Cp8U+ynTzikntTgl3VHAUibUl7VoPcts4nkha3dHnVLtq
+         zQmnLPhaNs8kC2buzfz07ZJ8rXS47WmzkCiRa2OlXiebW49ii+vmVe1PaY7w5nuNyaxU
+         aLPA==
+X-Gm-Message-State: ACgBeo0Ohw+YLZZGNrEFmVXqsAkDIsegMutWGoezPWCvh3JEUXTHDJE4
+        gtDqtfxtv0+egt4LOetolPjyvg==
+X-Google-Smtp-Source: AA6agR7qfrrl8M+Apau2RszgGLt5YMKpBoE+Es60MUI4fRPgameuYNGPb0cwHhsRNYevaowyh4n8Tw==
+X-Received: by 2002:a05:600c:1549:b0:3a5:e92f:cc68 with SMTP id f9-20020a05600c154900b003a5e92fcc68mr4135239wmg.29.1660553766016;
+        Mon, 15 Aug 2022 01:56:06 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id a16-20020a056000051000b00223b8168b15sm6655136wrf.66.2022.08.15.01.54.19
+        by smtp.gmail.com with ESMTPSA id l40-20020a05600c1d2800b003a5b6086381sm9287547wms.48.2022.08.15.01.56.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 01:54:20 -0700 (PDT)
-Date:   Mon, 15 Aug 2022 11:54:18 +0300
+        Mon, 15 Aug 2022 01:56:05 -0700 (PDT)
+Date:   Mon, 15 Aug 2022 11:56:03 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -57,29 +57,29 @@ Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
         Ye Li <ye.li@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH V2 3/8] clk: imx: clk-composite-93: check slice busy
-Message-ID: <YvoJuo5pJ0KFvFHK@linaro.org>
+Subject: Re: [PATCH V2 4/8] clk: imx: clk-composite-93: check white_list
+Message-ID: <YvoKI5GeiUrZLJHs@linaro.org>
 References: <20220815013039.474970-1-peng.fan@oss.nxp.com>
- <20220815013039.474970-4-peng.fan@oss.nxp.com>
+ <20220815013039.474970-5-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220815013039.474970-4-peng.fan@oss.nxp.com>
+In-Reply-To: <20220815013039.474970-5-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-15 09:30:34, Peng Fan (OSS) wrote:
+On 22-08-15 09:30:35, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> i.MX93 CCM ROOT STAT register has a SLICE_BUSY bit:
-> indication for clock generation logic is applying new setting.
-> 0b - Clock generation logic is not busy.
-> 1b - Clock generation logic is applying new setting.
+> The CCM ROOT AUTHEN register WHITE_LIST indicate:
+> Each bit in this field represent for one domain. Bit16~Bit31 represent
+> for DOMAIN0~DOMAIN15 respectively. Only corresponding bit of the domains
+> is set to 1 can change the registers of this Clock Root.
 > 
-> So when set parent/rate/gate, need check this bit.
-> 
-> Introduce specific ops to do the work.
+> i.MX93 DID is 3, so if BIT(3 + WHITE_LIST_SHIFT) is 0, the clk should be
+> set to read only. To make the imx93_clk_composite_flags be reusable,
+> add a new parameter named did(domain id);
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > Reviewed-by: Ye Li <ye.li@nxp.com>
@@ -88,204 +88,81 @@ On 22-08-15 09:30:34, Peng Fan (OSS) wrote:
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-composite-93.c | 163 ++++++++++++++++++++++++++++-
->  1 file changed, 160 insertions(+), 3 deletions(-)
+>  drivers/clk/imx/clk-composite-93.c | 8 ++++++--
+>  drivers/clk/imx/clk-imx93.c        | 2 +-
+>  drivers/clk/imx/clk.h              | 5 +++--
+>  3 files changed, 10 insertions(+), 5 deletions(-)
 > 
 > diff --git a/drivers/clk/imx/clk-composite-93.c b/drivers/clk/imx/clk-composite-93.c
-> index b44619aa5ca5..19f4037e6cca 100644
+> index 19f4037e6cca..74a66b0203e4 100644
 > --- a/drivers/clk/imx/clk-composite-93.c
 > +++ b/drivers/clk/imx/clk-composite-93.c
-> @@ -9,20 +9,176 @@
->  #include <linux/errno.h>
->  #include <linux/export.h>
->  #include <linux/io.h>
-> +#include <linux/iopoll.h>
->  #include <linux/slab.h>
->  
->  #include "clk.h"
->  
-> +#define TIMEOUT_US	500U
-> +
->  #define CCM_DIV_SHIFT	0
->  #define CCM_DIV_WIDTH	8
->  #define CCM_MUX_SHIFT	8
->  #define CCM_MUX_MASK	3
->  #define CCM_OFF_SHIFT	24
-> +#define CCM_BUSY_SHIFT	28
->  
-> +#define STAT_OFFSET	0x4
->  #define AUTHEN_OFFSET	0x30
+> @@ -28,6 +28,8 @@
 >  #define TZ_NS_SHIFT	9
 >  #define TZ_NS_MASK	BIT(9)
 >  
-> +static int imx93_clk_composite_wait_ready(struct clk_hw *hw, void __iomem *reg)
-> +{
-> +	int ret;
-> +	u32 val;
+> +#define WHITE_LIST_SHIFT	16
 > +
-> +	ret = readl_poll_timeout_atomic(reg + STAT_OFFSET, val, !(val & BIT(CCM_BUSY_SHIFT)),
-> +					0, TIMEOUT_US);
-> +	if (ret)
-> +		pr_err("Slice[%s] busy timeout\n", clk_hw_get_name(hw));
-> +
-> +	return ret;
-> +}
-> +
-> +static void imx93_clk_composite_gate_endisable(struct clk_hw *hw, int enable)
-> +{
-> +	struct clk_gate *gate = to_clk_gate(hw);
-> +	unsigned long flags;
-> +	u32 reg;
-> +
-> +	if (gate->lock)
-> +		spin_lock_irqsave(gate->lock, flags);
-> +
-> +	reg = readl(gate->reg);
-> +
-> +	if (enable)
-> +		reg &= ~BIT(gate->bit_idx);
-> +	else
-> +		reg |= BIT(gate->bit_idx);
-> +
-> +	writel(reg, gate->reg);
-> +
-> +	imx93_clk_composite_wait_ready(hw, gate->reg);
-> +
-> +	if (gate->lock)
-> +		spin_unlock_irqrestore(gate->lock, flags);
-> +}
-> +
-> +static int imx93_clk_composite_gate_enable(struct clk_hw *hw)
-> +{
-> +	imx93_clk_composite_gate_endisable(hw, 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx93_clk_composite_gate_disable(struct clk_hw *hw)
-> +{
-> +	imx93_clk_composite_gate_endisable(hw, 0);
-> +}
-> +
-> +static const struct clk_ops imx93_clk_composite_gate_ops = {
-> +	.enable = imx93_clk_composite_gate_enable,
-> +	.disable = imx93_clk_composite_gate_disable,
-> +	.is_enabled = clk_gate_is_enabled,
-> +};
-> +
-> +static unsigned long
-> +imx93_clk_composite_divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	return clk_divider_ops.recalc_rate(hw, parent_rate);
-> +}
-> +
-> +static long
-> +imx93_clk_composite_divider_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *prate)
-> +{
-> +	return clk_divider_ops.round_rate(hw, rate, prate);
-> +}
-> +
-> +static int
-> +imx93_clk_composite_divider_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-> +{
-> +	return clk_divider_ops.determine_rate(hw, req);
-> +}
-> +
-> +static int imx93_clk_composite_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-> +						unsigned long parent_rate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	int value;
-> +	unsigned long flags = 0;
-> +	u32 val;
-> +	int ret;
-> +
-> +	value = divider_get_val(rate, parent_rate, divider->table, divider->width, divider->flags);
-> +	if (value < 0)
-> +		return value;
-> +
-> +	if (divider->lock)
-> +		spin_lock_irqsave(divider->lock, flags);
-> +
-> +	val = readl(divider->reg);
-> +	val &= ~(clk_div_mask(divider->width) << divider->shift);
-> +	val |= (u32)value << divider->shift;
-> +	writel(val, divider->reg);
-> +
-> +	ret = imx93_clk_composite_wait_ready(hw, divider->reg);
-> +
-> +	if (divider->lock)
-> +		spin_unlock_irqrestore(divider->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct clk_ops imx93_clk_composite_divider_ops = {
-> +	.recalc_rate = imx93_clk_composite_divider_recalc_rate,
-> +	.round_rate = imx93_clk_composite_divider_round_rate,
-> +	.determine_rate = imx93_clk_composite_divider_determine_rate,
-> +	.set_rate = imx93_clk_composite_divider_set_rate,
-> +};
-> +
-> +static u8 imx93_clk_composite_mux_get_parent(struct clk_hw *hw)
-> +{
-> +	return clk_mux_ops.get_parent(hw);
-> +}
-> +
-> +static int imx93_clk_composite_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct clk_mux *mux = to_clk_mux(hw);
-> +	u32 val = clk_mux_index_to_val(mux->table, mux->flags, index);
-> +	unsigned long flags = 0;
-> +	u32 reg;
-> +	int ret;
-> +
-> +	if (mux->lock)
-> +		spin_lock_irqsave(mux->lock, flags);
-> +
-> +	reg = readl(mux->reg);
-> +	reg &= ~(mux->mask << mux->shift);
-> +	val = val << mux->shift;
-> +	reg |= val;
-> +	writel(reg, mux->reg);
-> +
-> +	ret = imx93_clk_composite_wait_ready(hw, mux->reg);
-> +
-> +	if (mux->lock)
-> +		spin_unlock_irqrestore(mux->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int
-> +imx93_clk_composite_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-> +{
-> +	return clk_mux_ops.determine_rate(hw, req);
-> +}
-> +
-> +static const struct clk_ops imx93_clk_composite_mux_ops = {
-> +	.get_parent = imx93_clk_composite_mux_get_parent,
-> +	.set_parent = imx93_clk_composite_mux_set_parent,
-> +	.determine_rate = imx93_clk_composite_mux_determine_rate,
-> +};
-> +
->  struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *parent_names,
->  					 int num_parents, void __iomem *reg,
->  					 unsigned long flags)
-> @@ -74,9 +230,10 @@ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *p
->  		gate->flags = CLK_GATE_SET_TO_DISABLE;
+>  static int imx93_clk_composite_wait_ready(struct clk_hw *hw, void __iomem *reg)
+>  {
+>  	int ret;
+> @@ -180,7 +182,7 @@ static const struct clk_ops imx93_clk_composite_mux_ops = {
+>  };
 >  
->  		hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-> -					       mux_hw, &clk_mux_ops, div_hw,
-> -					       &clk_divider_ops, gate_hw,
-> -					       &clk_gate_ops, flags | CLK_SET_RATE_NO_REPARENT);
-> +					       mux_hw, &imx93_clk_composite_mux_ops, div_hw,
-> +					       &imx93_clk_composite_divider_ops, gate_hw,
-> +					       &imx93_clk_composite_gate_ops,
-> +					       flags | CLK_SET_RATE_NO_REPARENT);
+>  struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *parent_names,
+> -					 int num_parents, void __iomem *reg,
+> +					 int num_parents, void __iomem *reg, u32 domain_id,
+>  					 unsigned long flags)
+>  {
+>  	struct clk_hw *hw = ERR_PTR(-ENOMEM), *mux_hw;
+> @@ -189,6 +191,7 @@ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *p
+>  	struct clk_gate *gate = NULL;
+>  	struct clk_mux *mux = NULL;
+>  	bool clk_ro = false;
+> +	u32 authen;
+>  
+>  	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+>  	if (!mux)
+> @@ -211,7 +214,8 @@ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *p
+>  	div->lock = &imx_ccm_lock;
+>  	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
+>  
+> -	if (!(readl(reg + AUTHEN_OFFSET) & TZ_NS_MASK))
+> +	authen = readl(reg + AUTHEN_OFFSET);
+> +	if (!(authen & TZ_NS_MASK) || !(authen & BIT(WHITE_LIST_SHIFT + domain_id)))
+>  		clk_ro = true;
+>  
+>  	if (clk_ro) {
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 5099048b7916..0d5c11bb3659 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -293,7 +293,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  		root = &root_array[i];
+>  		clks[root->clk] = imx93_clk_composite_flags(root->name,
+>  							    parent_names[root->sel],
+> -							    4, base + root->off,
+> +							    4, base + root->off, 3,
+>  							    root->flags);
 >  	}
 >  
->  	if (IS_ERR(hw))
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 5061a06468df..396a5ea75083 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -445,9 +445,10 @@ struct clk_hw *imx93_clk_composite_flags(const char *name,
+>  					 const char * const *parent_names,
+>  					 int num_parents,
+>  					 void __iomem *reg,
+> +					 u32 domain_id,
+>  					 unsigned long flags);
+> -#define imx93_clk_composite(name, parent_names, num_parents, reg) \
+> -	imx93_clk_composite_flags(name, parent_names, num_parents, reg, \
+> +#define imx93_clk_composite(name, parent_names, num_parents, reg, domain_id) \
+> +	imx93_clk_composite_flags(name, parent_names, num_parents, reg, domain_id \
+>  				  CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+>  
+>  struct clk_hw *imx_clk_hw_divider_gate(const char *name, const char *parent_name,
 > -- 
 > 2.37.1
 > 
