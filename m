@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0636AC25B0E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8898BC28B2B
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234971AbiHPLvg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 07:51:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46914 "EHLO
+        id S235003AbiHPLvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 07:51:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235112AbiHPLu1 (ORCPT
+        with ESMTP id S235136AbiHPLu1 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:50:27 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A17C653F
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:25:51 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 04F1D3200932;
-        Tue, 16 Aug 2022 07:25:49 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1E9D3E74
+        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:25:56 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id BF7E832002B6;
+        Tue, 16 Aug 2022 07:25:54 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 16 Aug 2022 07:25:51 -0400
+  by compute5.internal (MEProxy); Tue, 16 Aug 2022 07:25:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1660649149; x=1660735549; bh=wk
-        0Sqd9dl+QUsXUDPiBpUeqYKlJdHWrgnstCr5mfz3Q=; b=gEd/iroluHfRf5Wv8A
-        pcG8Nq0MCYzsddxEwXqDSytYNDDI0q4wN6WbRtVHp0bj0vJ5dg91l2Mt2tx710v+
-        a8UdjbrBhmv8joggjbLBqNQSmOOr3S8qoj1E1xkpIf6HsujfGUBSlOAZxNx62R9J
-        5Ej9dIsFcr8+QyBBf972Jjm+YFWN0OHXFWZMMUv6RvCs3tnnnyqNrY4OeIL1OQEX
-        OvNVX5crskgaP9Uy/dp1WlQn1F1prgM+bwofU9kZjRfplQyz44wyRWV0z/Q6aIg0
-        zFKix5B4zEHjLQ4KRJpTLXEX9hCblDcuLbNM5B2f4iKY34UcXgj1ohOdgOVWOhqM
-        3NpA==
+        :subject:subject:to:to; s=fm3; t=1660649154; x=1660735554; bh=zb
+        2dVZo2WpyG/1yQQi7ww5p21PRXXtVfeTsvD+y8ezc=; b=bfEeKhbrKdlE/29W68
+        uGty0krfOotx+zGfuGyn/Zz9NKrPY2R/kNmOZ/xiORGeKCH6z+8MZOihIFXBbQGm
+        ILgip6J+CSv5R/7CiUxqmGUA3mFw6VlOxQMQIeNCC95ZAeeb8pLd9aUY00rxjaL+
+        O1T+eNt/pA4aB/1B2CMG4bCkSuyyN92psjPFEM81DEdTU3lDCaR+WV4QC4rv6B51
+        rClHCyjIfGFJnR0k7briuHIH499R4JpLykQ4CVQRrw32IyDGu6mWKbzIzmKMNYRn
+        NHIcd3kr5PLy/k6h+KPAgAsmg6PDBcTwACxdsVU5zNgz1I/GwnqIA6Svq9f3Jrsf
+        n+Bg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1660649149; x=1660735549; bh=wk0Sqd9dl+QUs
-        XUDPiBpUeqYKlJdHWrgnstCr5mfz3Q=; b=2Euss7joT7qTrHw+dnZhk5KoouMtn
-        Mw1E9rX6JTGrvE02QcDHMlV7hhHed9qWjD3hrNLQVwSI2/fePmGQJN0cfnwX4DiN
-        fRGC7ynNTvw2P7UEMTVicqYx85WI9BFYrLSXBADLFFdVWBs3g6D1TdF1LKP3bqFX
-        wgN+UvJnzm5fLNRk9w9xFxfMEQSlrk6/9fOaa06AuASH4/T3ek3jXF+GxYiat0CH
-        Ve8uZx2UIwgpfNKEskMHzOZuUV3ovRQ5ER7vYla30EAyIpUqEom71n5zBIBFmb5k
-        OW85iDQ+huSBeer/lS6HS/Z3TkjLLMZQViBSJrTJXnv+7jB1YL1C27gTA==
-X-ME-Sender: <xms:vX77Yg8ryBpP3WJ-A0O_SbJet0cIaT7X-lYaMEp-O23OFE-Im9jQyw>
-    <xme:vX77YovrszkqLPFhHh5M8Kkk1_vE0ddlh_cclUhHi_0iJTCGZGju99YtgM9BS8OlL
-    g2-3pz84UpqJqI6Ycw>
-X-ME-Received: <xmr:vX77YmCEvtxGDuvEB-yRKvvIYOq77Q8u28cNEh1QwQn9jXbmjRv8zrWTE50>
+        :x-sasl-enc; s=fm1; t=1660649154; x=1660735554; bh=zb2dVZo2WpyG/
+        1yQQi7ww5p21PRXXtVfeTsvD+y8ezc=; b=Od04v0CqUT1t7EraUf2HFlG0YZyXA
+        /C3TdHcbeQdFtNa79tZEt7qPsaquwZLTeJrRHYk7S2F+O6sCKoYc0Z1SM+ukUdve
+        IfqwhgDPY+76R+vAkJnXAWVdHrfv2EGAyBHMXmamFsOPu84WHubokP0cZ/7kHB4C
+        nOavb18wiZq7GM0oedIJn7j+Fb/6qwZTwNVqJmYASmZeeTPqghEy7k3u3P8QgygF
+        vQyarwSE38C+JOcvg9QPxm0hdYu3uE2QCKphmMHpTuDpB+t2fnCfRUWiLCGUry6/
+        OMHt+Mi65q+StTeuwJydB1ec/7Rz6IZbLf78g4TzMjTf8BprKLx35bXbw==
+X-ME-Sender: <xms:wn77YhjwV0LcYu2DmrI-O0P8qXYQN7Fq-KsnruPtQiC1y3VW4jwVjw>
+    <xme:wn77YmDmPK9oVmpr8MsQdbm1Y2_kyWG4om4kzoJ-uYz28F-QAi50zQA0bb4WQF_LF
+    gjn_IAIUagBM5hXpPs>
+X-ME-Received: <xmr:wn77YhGvyOtX7obdDhqg4lYuWDQ2mflXSvcc7w1Aj4UH5SIA8f8y0M4MG5M>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedggeduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -54,13 +54,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedggeduucetufdoteggod
     htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
     vdejhfenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:vX77YgcJcLV2a_2O29uWkjikgtT2oTSt7w4bgpJ0_duEoxcH83oUkA>
-    <xmx:vX77YlPmh4lFMOdhZe5xsOwDJKQHzHnNhKDl6vYydNu04Dvx6H72PQ>
-    <xmx:vX77Yqk_Nne8W-Ng6c4W7GB7uNJSeWRI_yYQmUOwTG69hNoLNSu-sQ>
-    <xmx:vX77YmGzUAklhc-MTqJHfGhPSfyelKqf3yNgWUVwqyZigzZSiv-Qiw>
+X-ME-Proxy: <xmx:wn77YmQ8SxjrBiN9C5L2N1MJ4MEfLmccF6-AJu5fVnrlkzrAMMt1tA>
+    <xmx:wn77YuxSvpCtAtkQjr-YqCUX7dFv-itS-xZpDrFgSZoJ2Jj3v1xI6g>
+    <xmx:wn77Ys7y_znTrbw5Wdx2pDK51uzamsJePAdUhsiO4bXknQ8eCgR9Nw>
+    <xmx:wn77Yjp4T-CYA__iA38vplrmhlVAAqGIBmZcqwdMNMyp7VPyPzRFeQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Aug 2022 07:25:48 -0400 (EDT)
+ 16 Aug 2022 07:25:53 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -73,9 +73,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Yassine Oudjana <y.oudjana@protonmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v9 03/25] clk: Skip clamping when rounding if there's no boundaries
-Date:   Tue, 16 Aug 2022 13:25:08 +0200
-Message-Id: <20220816112530.1837489-4-maxime@cerno.tech>
+Subject: [PATCH v9 04/25] clk: Mention that .recalc_rate can return 0 on error
+Date:   Tue, 16 Aug 2022 13:25:09 +0200
+Message-Id: <20220816112530.1837489-5-maxime@cerno.tech>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20220816112530.1837489-1-maxime@cerno.tech>
 References: <20220816112530.1837489-1-maxime@cerno.tech>
@@ -85,52 +85,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 948fb0969eae ("clk: Always clamp the rounded rate") recently
-started to clamp the request rate in the clk_rate_request passed as an
-argument of clk_core_determine_round_nolock() with the min_rate and
-max_rate fields of that same request.
+Multiple platforms (amlogic, imx8) return 0 when the clock rate cannot
+be determined properly by the recalc_rate hook. Mention in the
+documentation that the framework is ok with that.
 
-While the clk_rate_requests created by the framework itself always have
-those fields set, some drivers will create it themselves and don't
-always fill min_rate and max_rate.
-
-In such a case, we end up clamping the rate with a minimum and maximum
-of 0, thus always rounding the rate to 0.
-
-Let's skip the clamping if both min_rate and max_rate are set to 0 and
-complain so that it gets fixed.
-
-Fixes: 948fb0969eae ("clk: Always clamp the rounded rate")
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ include/linux/clk-provider.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a5e0ab8bd6be..9d63163244d4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1341,7 +1341,19 @@ static int clk_core_determine_round_nolock(struct clk_core *core,
- 	if (!core)
- 		return 0;
- 
--	req->rate = clamp(req->rate, req->min_rate, req->max_rate);
-+	/*
-+	 * Some clock providers hand-craft their clk_rate_requests and
-+	 * might not fill min_rate and max_rate.
-+	 *
-+	 * If it's the case, clamping the rate is equivalent to setting
-+	 * the rate to 0 which is bad. Skip the clamping but complain so
-+	 * that it gets fixed, hopefully.
-+	 */
-+	if (!req->min_rate && !req->max_rate)
-+		pr_warn("%s: %s: clk_rate_request has initialized min or max rate.\n",
-+			__func__, core->name);
-+	else
-+		req->rate = clamp(req->rate, req->min_rate, req->max_rate);
- 
- 	/*
- 	 * At this point, core protection will be disabled
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1615010aa0ec..9a14cfa0d201 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -118,8 +118,9 @@ struct clk_duty {
+  *
+  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
+  *		parent rate is an input parameter.  It is up to the caller to
+- *		ensure that the prepare_mutex is held across this call.
+- *		Returns the calculated rate.  Optional, but recommended - if
++ *		ensure that the prepare_mutex is held across this call. If the
++ *		driver cannot figure out a rate for this clock, it must return
++ *		0. Returns the calculated rate. Optional, but recommended - if
+  *		this op is not set then clock rate will be initialized to 0.
+  *
+  * @round_rate:	Given a target rate as input, returns the closest rate actually
 -- 
 2.37.1
 
