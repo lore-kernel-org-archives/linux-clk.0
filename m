@@ -2,191 +2,220 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C0DC3F6B0
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 07:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6A1C32772
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 09:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbiHPHWl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 03:22:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50214 "EHLO
+        id S233346AbiHPJDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 05:03:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbiHPHW0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 03:22:26 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E68E2B70BD;
-        Mon, 15 Aug 2022 21:56:12 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id z20so9551441ljq.3;
-        Mon, 15 Aug 2022 21:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc;
-        bh=lMyaBQ0fr/YKfcqNoaKSdb+50RM2Rxj1DLsmzLOg6p8=;
-        b=emj3c4qKkUjUv1uibUM0Ft8DTfEO05AQs/3Y741be7NMkNUqfjGZwGCKNZo9C6YjXp
-         T3u8ogp+Q7xyqUvWTbVxqcfKvlVXs+sCdEW176mhvN95YWDcTH1MCuzscHr20UM4t23y
-         efx6c0daYiXNg01uKsfggL1TIi4sG62wT7fq7xNMdYWmSyv0IojrLQ3X+x3JlfiYjCWI
-         ZGleJlTBA7imnc87Mtsd2wKxuRqiB4CfXoOM/VC02Ai37op0ZH3k+3vNM5TFazrPwDbX
-         I3K6wSQIq8cyMpVj2t+/iVXSTMsuGrDBGJEDknJ3KmY9XUsqIPVIorSVNOoEmEoQm85s
-         ld9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=lMyaBQ0fr/YKfcqNoaKSdb+50RM2Rxj1DLsmzLOg6p8=;
-        b=06RuMdOREB1iZHynztVX70X9jzVEPb5+aCMjJLwDUrBp6brrkz54u0d/NP1XjA1t0r
-         vLTPtDXbYl3lNx4dprlUjMiOz4fmj+mpgH+MixdP8qHqgzKCDBI3e6fCEgcRX2hOc/Ky
-         3FJU9dr/881+QVIaX3facFlua5Prv566fzjbCWTzsz7nuy7/8cqKskEbK1N0RpOsxu8j
-         eRPp2iHplznsh6R8X9qNb6E92hKQRWRa+dmxGf8+oMU2BZHD9Ni+snK3r1Kn8FdyscL5
-         0ikcCRUc3aNZfyg7bF56N//ky0+qbt8M2cT6OCtW7aUQnAR9XCmWZxRSGdh2MSFFJdTC
-         7snw==
-X-Gm-Message-State: ACgBeo2PFMiyiGOQqi6dB1A261Fp8aoAnk9y3qZimBklcpmSZ7lp31Fl
-        0oXLo7Gn4s2PKG/nXPkB6+c=
-X-Google-Smtp-Source: AA6agR5Now0GlaC9p5MWRyZT/Uc6WkRd+5NRB4I7ljhPTH6IshCkE/HR/M28GX+goQncDQyVAAYQYQ==
-X-Received: by 2002:a05:651c:1241:b0:261:9313:9cb9 with SMTP id h1-20020a05651c124100b0026193139cb9mr1021791ljh.213.1660625769185;
-        Mon, 15 Aug 2022 21:56:09 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:16ee:fa00::9? (dc73szyyyyyyyyyyyyyft-3.rev.dnainternet.fi. [2001:14ba:16ee:fa00::9])
-        by smtp.gmail.com with ESMTPSA id w9-20020ac24429000000b0048a7b1530cesm1254427lfl.284.2022.08.15.21.56.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Aug 2022 21:56:08 -0700 (PDT)
-Message-ID: <57c312b3-ca5b-6efb-6356-43b6513a0c88@gmail.com>
-Date:   Tue, 16 Aug 2022 07:56:06 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
+        with ESMTP id S233241AbiHPJCi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 05:02:38 -0400
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80054.outbound.protection.outlook.com [40.107.8.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6629DD124C;
+        Tue, 16 Aug 2022 00:13:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A8Z3O44fkgqR3Ktg6OnY5MNf4K+b7M65PJavswtm0cnWoK/jpaBTWCirSVU6p8yPXeLwDyXfumCtCc2Ag15BW28Wy2y0iQx8CioVSABjnRTiCxGXW3WYq+3yJADX11bOCMqMbxqDtZqLW2e1mlWqh1r0I6xOEE7kgXKCFdwFVbVlT3Vg25l39aNfs+xctbojGeMCQHxfL6GbOcErPikCiSvU6eGs/lzXudUDDuHNEw9iiR6SH8VjjDQT2R2hG3/p2Ir9y9BIFP93qD+n35ipzmCpKveUIIR1tz/cFC1LMQaLBtIx2FRiBH2YYx9bYUMMyc5iZWyyVBewDCtihYHjRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f79xZ7Y0PY2d9LM1Vn+NIHqF5+iG6Epdj2KBV8nd6ak=;
+ b=G+vVHRdZM/KuEra4IIdnK1Rf6qL1qXGX8duGxKbJNlKU36c4d97+Z/lLv+dkI5ikV6Hm2cIVqQvjzQX14Xz+sj39NysvIuw5cugvIGKnPHoRtVlvOdRWUDwfnE/qXlZUgJzm0lSAJpWC2bLs4mzMAjFKVeFBIcFR6WQ56DXEtnXrpY4oK6x8ffce+sOLIlz8MMTQeHbqbPk/wLufMHl+xf63U7lQWgNZyeTALxwEuoOgKzcmAbhGn9GRKbh2i9TQaEMREXr172R3eOrF9m/BH+7Ninka+KVKkGgCXxnCuOLQrPd6iVb9d5jikIXiVwIQGWvAqzxHnz3k67ZucFx8YA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f79xZ7Y0PY2d9LM1Vn+NIHqF5+iG6Epdj2KBV8nd6ak=;
+ b=OBBuuVJC+H8SqGWBt63mAJ/w+F/EmF7bLQ9CVVRh81Zq6UIuay66+kei03MN8azbXU7SC0ghyP+psZh6I/VVGeZEi1w7LDw4o9qqKgfQTC/ej7A9w6/LChnBJz5BplL8VPNQEQHW+AhQFOxF2+fAQm8D9aJimukZpKCZ4t3jn/8=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB7PR04MB5547.eurprd04.prod.outlook.com (2603:10a6:10:89::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.10; Tue, 16 Aug
+ 2022 07:13:27 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::3c6c:b7e6:a93d:d442]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::3c6c:b7e6:a93d:d442%4]) with mapi id 15.20.5525.011; Tue, 16 Aug 2022
+ 07:13:27 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Sascha Hauer <s.hauer@pengutronix.de>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC:     "abelvesa@kernel.org" <abelvesa@kernel.org>,
+        "abel.vesa@linaro.org" <abel.vesa@linaro.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 1/2] dt-bindings: clock: imx8m: introduce
+ fsl,protected-clocks property
+Thread-Topic: [PATCH 1/2] dt-bindings: clock: imx8m: introduce
+ fsl,protected-clocks property
+Thread-Index: AQHYsFgAb9/Dm+cZSEyj68dAWhpa+K2v/VoAgAEfCpA=
+Date:   Tue, 16 Aug 2022 07:13:27 +0000
+Message-ID: <DU0PR04MB9417593B87BB5A23A29D732E886B9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20220815033632.1687854-1-peng.fan@oss.nxp.com>
+ <20220815033632.1687854-2-peng.fan@oss.nxp.com>
+ <20220815135756.GC17485@pengutronix.de>
+In-Reply-To: <20220815135756.GC17485@pengutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Mark Brown <broonie@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        dri-devel@lists.freedesktop.org,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        linux-amlogic@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Michael Turq uette <mturquette@baylibre.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        linux-hwmon@vger.kernel.org, linux-clk@vger.kernel.org,
-        =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        David Airlie <airlied@linux.ie>, linux-iio@vger.kernel.org
-References: <cover.1660292316.git.mazziesaccount@gmail.com>
- <166057828406.697572.228317501909350108.b4-ty@kernel.org>
- <YvpsRbguMXn74GhR@pendragon.ideasonboard.com>
- <Yvp1Qkuh7xfeb/B2@sirena.org.uk>
- <YvqV9Mq6I3gXQaf2@pendragon.ideasonboard.com>
- <20220815205857.308B1C433D6@smtp.kernel.org>
- <Yvq33T+XCduoqv7Z@pendragon.ideasonboard.com>
- <YvrO+velKdYdGVve@sirena.org.uk>
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: (subset) [PATCH v2 0/7] Devm helpers for regulator get and enable
-In-Reply-To: <YvrO+velKdYdGVve@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 472caf3e-a2fe-4151-5289-08da7f56d10e
+x-ms-traffictypediagnostic: DB7PR04MB5547:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2a0KwfCikCjjp7cIOEam0jjvK96SR1Pb30TRINh+7PjYj0Lrh2KvR155dSl8nF5ziAA9juHiUaZ5GLl79GGTkrmVdeP7GaYM0yRskCgjImNc5dbooidG/1c44nJE1idgmqBsXV+V6lI9D4Ppl4v5lih/oThRpJNFl6bA356CHcPHZ1vbrWyXhcPoi3i6+LxVe+S5ueQ6Qcsgy8bWQjvVmZWKEMyTI98FQs6QI8vZYIzvyOPij61aPFBAlogzJ8ieTcpXGoHmpgrx9dXcVFAblbszGxaTj4laPxiUZVfpgOkRKUYHal/YljvRftJaI+GvGaiPBGWrVyuO3Tk+KXZok7Uqpl48eqbh56MFokW0boBfSwEBJXxCOk9VviptT8ynRqcRsEmT1d55tkJTQb6QMXqrEIwKhYSm8TkL2cIEty6ejkMspmJe8LuzSwm4+frynodTK9tWamExw4abprPPt7bml46gg4E9saWcXlQiYFTRYpqmSCJYUWfCgaUNcs0v1+dcuZs1xbdHaaUbk/+/FQxsAT/fG7egnAmUG2WxohkvuoMUXY4WQJ4+Kg9tS5ne/qtVKoQprVnijNGb4couul3CRHFr83/vZ3NrCbE6HSy94CE0H9yMCLmF+DVq5JN1Z9X99kGin7uY9HbXOy/9GEbw36rTqMuy6sVZf+t+0pc39hp5IBuBVdW6DgF6ZVW2RJeScywUjckjUg4f0YL+UEP4uVk8gPeBHsA3pNANS3hxjLaNTWvHByI9Phbtt6nKSfaC47qm8zudTBRUwLMoaJQ4P0fXH1l010JINnfUD4NNdfD8cdu3f61dmGJyf31OzjBScUslW+p67DTpHh8ZVnM0ZHtWpUAsQcYO12NzDPJ7A7aoe8G40hDVgHcb3RG92dcMErBTiHuYcAzJXewUYQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(396003)(376002)(366004)(346002)(7416002)(76116006)(54906003)(38070700005)(52536014)(44832011)(5660300002)(316002)(45080400002)(66556008)(41300700001)(64756008)(110136005)(4326008)(86362001)(6506007)(8676002)(66476007)(9686003)(122000001)(33656002)(2906002)(66946007)(26005)(8936002)(66446008)(7696005)(55016003)(83380400001)(186003)(38100700002)(478600001)(966005)(71200400001)(32563001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wV+59e2TirHWB9kwHDvMxvu8u1Vj48t+PSrkudEMB6JFFpe0B+VzfOMHNwSW?=
+ =?us-ascii?Q?B9fAljJ7ytNWc+Vra+EckP5Ospv3Z1oHPnNOvJ3Hk3ckH7aAI9laOQJLYHfA?=
+ =?us-ascii?Q?kwEUdBVmYs98A3h+BgyXxLK88rDRwoojZ3TtWsKwKTScz/33uEed0xgeJ9Cf?=
+ =?us-ascii?Q?ZH45ZUY6bMI6mfMZyKVwyN+oijYgwkL4fGg4WJlyAVRZ22DhfdqbUCn3uS5W?=
+ =?us-ascii?Q?UhFwkGWzMI0rX465/a2EtFJzpvBWoJNWjE1NQm53V170zqJp91nqwW//4vdh?=
+ =?us-ascii?Q?yK6IvSA3Od+nhcb64WDrCUHRbXhFwxNw3KqyOIf0tYRROem1a8gdZw6aj1F+?=
+ =?us-ascii?Q?wurjHZQ+qULpZXw+14SmsRx2hFkRXUOihvyK8TymDuocyC8JBUUCkO/oDqSd?=
+ =?us-ascii?Q?ytd4fnPQGmwTESKX4v5mxm481Vio5YbxknDSqUF1pQImZpxNeL2Z6p0Nok4l?=
+ =?us-ascii?Q?JzEMTx1JL7TOtWdz/T5VK7lh6xprs5nDAlEt6hV/5hqVX7JDqvJDxIuTod8f?=
+ =?us-ascii?Q?t5y1WDFthxWKVUydA3rBoq6AIrVyoeVvfUEazM401hlCbaSkuoTt01TRBfkZ?=
+ =?us-ascii?Q?vJYUNLu4wBEt+qIzq16xywCNDoBEN/RI35BRjjVOiYoFnOoyBa8v2MlOERfa?=
+ =?us-ascii?Q?zxKKx+lIjqDYIqCty7hohNBGJ0Y9exX+0pmiJNS5FI6n+Ki4YD1TSNbjKHHp?=
+ =?us-ascii?Q?rFm3vANuXroMx+xAF4MdXSc5rVbAK9liMLqFz3yGp9IlXnsmEpYPovSi/vfc?=
+ =?us-ascii?Q?ubJr+SxUuD7OOW7XmVpsvW7eoYGyqOfEWkVnN8Ng5bYiZGUlzU3nEitoU/xg?=
+ =?us-ascii?Q?SGhbKgGweedBmD3LuW11mTfZ9FQi7KFPiqWBmwPbkEP/+5oyL+e6TNorDiYP?=
+ =?us-ascii?Q?QriB8Q4mN1Qy7S8z8rER0NC38FCmhqYaSTCvjiKqZrgbvxvlCZ8x7myK7vM0?=
+ =?us-ascii?Q?gD3RT5da3ae6s8AM0vrehtY5z1cC+INRUKjYXMf5DxwX/N0aRqLRuUcl8MoV?=
+ =?us-ascii?Q?Qq8jy4kVlYGDh9dQD/10zrSETxuA+ct+oVMKNlSFVL2JvgAgUq5U8wxgLv9w?=
+ =?us-ascii?Q?3ijYa5rh06sE3QnXouudmU4Ik4bvDpUw4BfClQGStUNLDMMbShupQLRI/WQq?=
+ =?us-ascii?Q?FFio8BjTrFKZMFXVCJJSe1DZ/DmnCcyl6oRxupJw45pVY2X61zIsXX0MDVlt?=
+ =?us-ascii?Q?U0mQh4kYzcU5bcyT65GemSihL6hzutJ+cnJCyRrK3Myr2fvfyG3Px9x3FWDt?=
+ =?us-ascii?Q?dN0JVW/lLQ3Nl8Y41vYRFTqYDRXqfphgGpJZMkjTJbzDYrIjKEaLq0H/4v4G?=
+ =?us-ascii?Q?5Gjh2UCZpAAxK4LBK+2W73TlxKByuZy8wQ/Lj3PkLj7RPUtZRI0nl304yj8H?=
+ =?us-ascii?Q?E4kquIMXRqpRuikiJHg9NzvxXYzzus0PpLBPLjBcu0EUoi04d/uJnjuKamWE?=
+ =?us-ascii?Q?gN0YYyg9XoI18+OSohvTJycVsj7iz1z5D+2P37EmjSt5fEMkWcjVfF4WNQLw?=
+ =?us-ascii?Q?k6Tr8MOrnYlR6fRhDtjHdHq8z5OOouLB+Pj88lWy81+UUbWY1DqynGIRPsI7?=
+ =?us-ascii?Q?21p6dyj1o0MaBuTR5S0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 472caf3e-a2fe-4151-5289-08da7f56d10e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2022 07:13:27.7482
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4CQ8dgiBFC3kXC1pHRs67hX5wUfT98Lz0olEdDjy2xPZVs6i94tFI0HJh0MKRCLbnXpXQt7yUj2k0YbnP3zWtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5547
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi dee Ho Mark, Laurent, Stephen, all
+Hi Sascha,
 
-On 8/16/22 01:55, Mark Brown wrote:
-> On Tue, Aug 16, 2022 at 12:17:17AM +0300, Laurent Pinchart wrote:
->> On Mon, Aug 15, 2022 at 01:58:55PM -0700, Stephen Boyd wrote:
-> 
->> You will very quickly see drivers doing this (either directly or
->> indirectly):
-> 
->> probe()
->> {
->> 	devm_clk_get_enabled();
->> 	devm_regulator_get_enable();
->> }
-> 
->> Without a devres-based get+enable API drivers can get the resources they
->> need in any order, possibly moving some of those resource acquisition
->> operations to different functions, and then have a clear block of code
->> that enables the resources in the right order.
+> Subject: Re: [PATCH 1/2] dt-bindings: clock: imx8m: introduce fsl,protect=
+ed-
+> clocks property
+>=20
+> Hi Peng,
+>=20
+> On Mon, Aug 15, 2022 at 11:36:31AM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > i.MX8M Linux run on top of Jailhouse hypervisor, the root cell Linux
+> > should not disable clocks used by inmate. This would also benifit AMP
+> > to avoid Linux disable clocks used by Cortex-M4/M7.
+> >
+> > So introduce fsl,protected-clocks for above case.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > index 458c7645ee68..0ec490ff9a09 100644
+> > --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > @@ -39,6 +39,10 @@ properties:
+> >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/i=
+mx8m-
+> clock.h
+> >        for the full list of i.MX8M clock IDs.
+> >
+> > +  fsl,protected-clocks:
+> > +    description: List of the Protected clock.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>=20
+> There already is a generic protected-clocks property described in
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgithu
+> b.com%2Fdevicetree-org%2Fdt-
+> schema%2Fblob%2F0d1b78cd0c3d9a3d523ced17d7da64b03f6c18ea%2Fdtsc
+> hema%2Fschemas%2Fclock%2Fclock.yaml%23L131&amp;data=3D05%7C01%7
+> Cpeng.fan%40nxp.com%7C5dbc72639c9147765af208da7ec63315%7C686ea
+> 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637961686968811809%7CUn
+> known%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI
+> 6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=3DD%2BfJA5h
+> wblaX8VH%2BdQoN0pEFmCipfZHHf0ZVo07B4kg%3D&amp;reserved=3D0
+> We probably shouldn't add a property with the same name but different
+> meaning.
+>=20
 
-I agree. And I think that drivers which do that should stick with it. 
-Still, as you know the devm-unwinding is also done in well defined 
-order. I believe that instead of fighting against the devm we should try 
-educate people to pay attention in the order of unwinding (also when not 
-handled by the devm. Driver writers occasionally break things also w/o 
-devm for example by freeing resources needed by IRQ handlers prior 
-freeing the IRQ.)
+Thanks for sharing the info. I should check the common bindings before
+cook this patchset.
 
-If "purging" must not be done in reverse order compared to the 
-aquisition - then one should not use devm. I know people have done 
-errors with devm - OTOH, I've seen devm also fixing bunch of errors.
+> I am not sure if we want to go the route of a fsl specific property, it l=
+ooks
+> like other SoCs could have similar problems and it might be worth solving
+> this problem with a broader view.
+>=20
 
->> These devres helpers give
->> a false sense of security to driver authors and they will end up
->> introducing problems, the same way that devm_kzalloc() makes it
->> outrageously easy to crash the kernel by disconnecting a device that is
->> in use.
+I see qcom just drop the clock entries before registering the clocks. But t=
+o
+i.MX8M, it is not feasible to drop those clocks, unless check the
+protected-clocks property before registering every clock. This is odd.
 
-I think this is going a bit "off-topic" but I'd like to understand what 
-is behind this statement? From device-writer's perspective - I don't 
-know much better alternatives to free up the memory. I don't see how 
-freeing stuff at .remove would be any better? As far as I understand - 
-if someone is using driver's resources after the device has gone and the 
-driver is detached, then there is not much the driver could do to 
-free-up the stuff be it devm or not? This sounds like fundamentally 
-different problem (to me).
+So here I just wanna let i.MX8M clk driver prepare enable the clocks listed
+in protected-clocks property to avoid linux disable those clocks.
+> Anyway, please add a description to the binding what this property actual=
+ly
+> does.
+I will switch to use the common bindings.
 
-> TBH I think the problem you have here is with devm not with this
-> particular function.
-
-I must say I kind of agree with Mark. If we stop for a second to think 
-what would the Laurent's example look like if there were no 
-devm_regulator_get_enable() provided. I bet the poor driver author could 
-have used devm_clk_get_enabled() - and then implemented a .remove for 
-disabling the regulator. That would be even worse, right?
-
-> That's a different conversation, and a totally
-> valid one especially when you start looking at things like implementing
-> userspace APIs which need to cope with hardware going away while still
-> visible to userspace.
-
-This is interesting. It's not easy for me to spot how devm changes 
-things here? If we consider some removable device - then I guess also 
-the .remove() is ran only after HW has already gone? Yes, devm might 
-make the time window when userspace can see hardware that has gone 
-longer but does it bring any new problem there? It seems to me devm can 
-make hitting the spot more likely - but I don't think it brings 
-completely new issues? (Well, I may be wrong here - wouldn't be the 
-first time :])
-
-> It's *probably* more of a subsystem conversation
-> than a driver one though, or at least I think subsystems should try to
-> arrange to make it so.
-
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
-Discuss - Estimate - Plan - Report and finally accomplish this:
-void do_work(int time) __attribute__ ((const));
+Thanks,
+Peng.
+>=20
+> Sascha
+>=20
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Steuerwalder Str. 21                       |
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.
+> pengutronix.de%2F&amp;data=3D05%7C01%7Cpeng.fan%40nxp.com%7C5dbc
+> 72639c9147765af208da7ec63315%7C686ea1d3bc2b4c6fa92cd99c5c301635
+> %7C0%7C0%7C637961686968811809%7CUnknown%7CTWFpbGZsb3d8eyJW
+> IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7
+> C3000%7C%7C%7C&amp;sdata=3D7UqyWwDDhaze2qZJ%2FknZ6Am7Y%2Bs%
+> 2Fbpyv9SITJHgsZPw%3D&amp;reserved=3D0  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
