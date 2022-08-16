@@ -2,65 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 080A5C32789
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50572C25B0E
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235039AbiHPLvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S235051AbiHPLvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 16 Aug 2022 07:51:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44692 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235201AbiHPLu3 (ORCPT
+        with ESMTP id S235179AbiHPLu3 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:50:29 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25CC4D633F
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:26:05 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 8682F320091C;
-        Tue, 16 Aug 2022 07:26:03 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2A3227B13
+        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:26:00 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 36D30320091C;
+        Tue, 16 Aug 2022 07:25:59 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 16 Aug 2022 07:26:04 -0400
+  by compute5.internal (MEProxy); Tue, 16 Aug 2022 07:26:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1660649163; x=1660735563; bh=LX
-        vB2jq6MwccAlAMpMLozRtwBQO+PLl0qYhsk/XlH78=; b=gWXqem83/CRj64mnqU
-        tPWWG378tFSIkqfa2pmjyndirFAvKjml5CsqDailkP0Ohx9PvgW69FIhERrSXoyU
-        /B7natU0aSqktRGUBltKZvYo22RDvIR+9ckZIo1Nlb1bay+W2Mywq7B7z0piJ23+
-        NsoUvT5nROn+awEcchNTLykqjo0u6YFzVP8YFHEQY+mHPFav+3ievio0By9OUGbb
-        2JwotCdmQbVycgVUobdreLYiKcCxCdzqHLxzDLp9/hyUaoLXFYF16I391YTw5qzo
-        7aN8s5GVI4jm59Yup3IaEolHv9EtoFOOQmFSg8aBw34RNl5jATGULsxSfsP7p9Ma
-        2SYQ==
+        :subject:subject:to:to; s=fm3; t=1660649158; x=1660735558; bh=9m
+        SIvZirEfrsLvGqMlF8wdE5r27omc05ePk56j5Bha4=; b=NEgzF34Z+E6rSxRryR
+        tGt1bbhoq4DQYd9Jkq7brg8naEHPjIgE4Uw8GBpV9roXzpShi1e+3Asa5pWwYG2P
+        i8Ode3E1EPVa9e/KO0kdNkcuYLKHg34uW892utE/9dMRfPSJtLD3XiKyGv6xaOoE
+        DqYR0Bzfuu99eMGmxv4IWK2jtIGkT6rEsa0NE+FYrmrDZDZMGExTVUUDzMRqcrDw
+        FNbjqd9DAll/tCBKEWWRk8o+FLfYbt+4CEKou8bnAmt03SC3MRCtQPF7ybR0FVeK
+        vMPW1fOPFBhvWtuiwsJLayttVuf2QdAlvrvhLdXUKNcGnUCD15KPwsv0hzyg8uGN
+        feQw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1660649163; x=1660735563; bh=LXvB2jq6MwccA
-        lAMpMLozRtwBQO+PLl0qYhsk/XlH78=; b=toNzRIdeZzRcEV5RB2tfZLLVsV5ii
-        vyxOY4zLihR05aNALaxFcsfykj9PyMDAmGLudY8yUyrv6j2xoMicG9Cc6pVkBp0X
-        lb/Ie0rtFOzXBuU40F6mv1RwOAc+AcQGljgDx3K4SfLveATfw7md7H8qMa0jNsrH
-        66NWlBTtj+E0qto6sFtxDMimRz2FzWRfPk/0m9Wob2B7qp+dp/idSZYhmxJM4+R3
-        VDTrKGtVeRShZ7umOSDoHtG+L+uUp79qes3gcm9PPrFrOybFMckjfVpbGWzvS+Wi
-        hxtqSijBSJEnKGeGRz9R48sO9gGQNgbxQVcxuBlo5Du85Zf8RxUlfIHKg==
-X-ME-Sender: <xms:yn77Yrb4sxB0vSpb9sMLSrFWR_kbMcT7S-Uzkv-TGOHmWXBPPC1MVw>
-    <xme:yn77YqaF0jH9sUx5-mOxt-tXeKMU_K8bkKYrrNKFDCPWa0CCBuL4qPXjGPzMKEJcm
-    swoEv9Gm54GQbc0WZg>
-X-ME-Received: <xmr:yn77Yt9jHnvNy1WRZd_Laze7CV3mieBQk219KgbR1I08P_D90tSIhGOLvyc>
+        :x-sasl-enc; s=fm1; t=1660649158; x=1660735558; bh=9mSIvZirEfrsL
+        vGqMlF8wdE5r27omc05ePk56j5Bha4=; b=4e0oTzrBc8+pz7Kf0u8jqR7S8/9/b
+        8nE22YkN6soL93RsPnvD1FGLzGPVo2G9fuwu+qYzn/igT+JQvB5vxIttu2rq37vH
+        Nr7bsq6aCMaIXM/MIdxtjmHYFM3+n6pBp7TRpHaqWPhcdG4xUt0dSkHqVdxqB7AB
+        2E3vt8IOP/88Sy+P07hx3CqxHbdeyDFdSnUW0Z2Cnq+IvuxAzc/ObwUmHWpDL//X
+        seBy1Yzn1tgO5DwyK8rxO7ufuNzJN0FzkAOfLrMi6M68jZNParRkLJg4u0rZrvJG
+        fb0vEGSfbEsefRD9WLNma+tme91RNOOeWnQOd7BADh6SlXWOF0uDrkr3g==
+X-ME-Sender: <xms:xn77YnmkBIU7dpZUPucBlnOSigQNyV-itTnbowQ9BNHU6GrI0FMF4A>
+    <xme:xn77Yq3ZQKQtB4_R05QwQR5OpLpYKOePaldrlOl3XKvzFFG2oVmpORRsquc0-W_jv
+    YMao5T_9f_rx7koa4U>
+X-ME-Received: <xmr:xn77Ytp0Ctxmh9sFpeQjKwQITh2LCrTF6_8QgR51rkM0x0Uk0m8IRo0AoN4>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedggeduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
     htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    vdejhfenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:yn77YhpMInIZ_DfEiJIvTCX1vtOPDdZxdFPuTAxirO3vQsngb2tfug>
-    <xmx:yn77YmqHNVmmUxFMO-CKaY9tgPAidlXnjM9ao03gC1nblrDaCtPl-Q>
-    <xmx:yn77YnSAElaWB56ZEPaUfY2vUyKVMmrxm_swQSomzIVjU3d_Fs0-rg>
-    <xmx:y377YjjIFL6aGSxLuhf2aHbA08n0xESU72K2Ik4lTfPVMy1h9Cq10A>
+X-ME-Proxy: <xmx:xn77YvkISx9FKhMrKlGELtPUyMgZGDGQ5imKpXbz5Q79NfieyeMBUg>
+    <xmx:xn77Yl1M0iw2bMzj_y2TGK9vWdzVSYdfcBIMzpDEpUfsFzyRgwKraA>
+    <xmx:xn77YuutyJKEk5jVUPfW68ixMm4DPMi7b-tVpaRIh7vENVeqxb92_A>
+    <xmx:xn77YuuviBCfwMRGY39O1ocS1BmedTUVCcgR9ZqLlD_WWQxi_rhAAA>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Aug 2022 07:26:02 -0400 (EDT)
+ 16 Aug 2022 07:25:57 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -73,9 +73,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Yassine Oudjana <y.oudjana@protonmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v9 06/25] clk: tests: Add test suites description
-Date:   Tue, 16 Aug 2022 13:25:11 +0200
-Message-Id: <20220816112530.1837489-7-maxime@cerno.tech>
+Subject: [PATCH v9 05/25] clk: Clarify clk_get_rate() expectations
+Date:   Tue, 16 Aug 2022 13:25:10 +0200
+Message-Id: <20220816112530.1837489-6-maxime@cerno.tech>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20220816112530.1837489-1-maxime@cerno.tech>
 References: <20220816112530.1837489-1-maxime@cerno.tech>
@@ -85,92 +85,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We start to have a few test suites, and we'll add more, so it will get
-pretty confusing to figure out what is supposed to be tested in what
-suite.
+As shown by a number of clock users already, clk_get_rate() can be
+called whether or not the clock is enabled.
 
-Let's add some comments to explain what setup they create, and what we
-should be testing in every suite.
+Similarly, a number of clock drivers will return a rate of 0 whenever
+the rate cannot be figured out.
 
-Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meson g12b
+Since it was a bit ambiguous before, let's make it clear in the
+clk_get_rate() documentation.
+
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk_test.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/clk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 7d9da88c39ee..1a7cb482ec58 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -258,6 +258,11 @@ static struct kunit_case clk_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate API with simple scenarios
-+ */
- static struct kunit_suite clk_test_suite = {
- 	.name = "clk-test",
- 	.init = clk_test_init,
-@@ -346,6 +351,14 @@ static struct kunit_case clk_orphan_transparent_single_parent_mux_test_cases[] =
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic mux clock with one parent. The parent is
-+ * registered after its child. The clock will thus be an orphan when
-+ * registered, but will no longer be when the tests run.
-+ *
-+ * These tests make sure a clock that used to be orphan has a sane,
-+ * consistent, behaviour.
-+ */
- static struct kunit_suite clk_orphan_transparent_single_parent_test_suite = {
- 	.name = "clk-orphan-transparent-single-parent-test",
- 	.init = clk_orphan_transparent_single_parent_mux_test_init,
-@@ -675,6 +688,12 @@ static struct kunit_case clk_range_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate range API: clk_set_rate_range(),
-+ * clk_set_min_rate(), clk_set_max_rate(), clk_drop_range().
-+ */
- static struct kunit_suite clk_range_test_suite = {
- 	.name = "clk-range-test",
- 	.init = clk_test_init,
-@@ -856,6 +875,13 @@ static struct kunit_case clk_range_maximize_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate range API: clk_set_rate_range(),
-+ * clk_set_min_rate(), clk_set_max_rate(), clk_drop_range(), with a
-+ * driver that will always try to run at the highest possible rate.
-+ */
- static struct kunit_suite clk_range_maximize_test_suite = {
- 	.name = "clk-range-maximize-test",
- 	.init = clk_maximize_test_init,
-@@ -1029,6 +1055,13 @@ static struct kunit_case clk_range_minimize_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate range API: clk_set_rate_range(),
-+ * clk_set_min_rate(), clk_set_max_rate(), clk_drop_range(), with a
-+ * driver that will always try to run at the lowest possible rate.
-+ */
- static struct kunit_suite clk_range_minimize_test_suite = {
- 	.name = "clk-range-minimize-test",
- 	.init = clk_minimize_test_init,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9d63163244d4..caa2eb640441 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1672,8 +1672,9 @@ static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
+  * @clk: the clk whose rate is being returned
+  *
+  * Simply returns the cached rate of the clk, unless CLK_GET_RATE_NOCACHE flag
+- * is set, which means a recalc_rate will be issued.
+- * If clk is NULL then returns 0.
++ * is set, which means a recalc_rate will be issued. Can be called regardless of
++ * the clock enabledness. If clk is NULL, or if an error occurred, then returns
++ * 0.
+  */
+ unsigned long clk_get_rate(struct clk *clk)
+ {
 -- 
 2.37.1
 
