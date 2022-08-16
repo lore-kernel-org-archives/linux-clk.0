@@ -2,270 +2,208 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6ABC25B0E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92260C25B0E
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:51:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234024AbiHPLnp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 07:43:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59710 "EHLO
+        id S234857AbiHPLv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 07:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233206AbiHPLnY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:43:24 -0400
+        with ESMTP id S235003AbiHPLuY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:50:24 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E3275483
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:14:09 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 562093200913;
-        Tue, 16 Aug 2022 07:14:06 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 16 Aug 2022 07:14:07 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05C823ECEC
+        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:25:38 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 7BD513200921;
+        Tue, 16 Aug 2022 07:25:36 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 16 Aug 2022 07:25:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1660648445; x=1660734845; bh=JaNHNQVRKx
-        1olBfhn9E559Y42MkiaQ5Fw6Yf3w1MJ8s=; b=NSzYtPiZWjkBUzDstKavaY6371
-        rr7YnkIJhbGWZHnf2BI+eBBt9ADma2HqD7nr/fAw/84VgaZCeIy/zGSY7F7Yxrgj
-        r9a9yB8YlxumghfFuVuJ3VBN4bgnVnyTuVm/Hb2MGbME34jCr1jzZ7Hbet+1wtKj
-        JTwTpdnIlQ4hlOutDVpoJ/TmHfNfGlredZSOuEmH3LBvV/BP771zsctzMhvud8ST
-        RaOg6NZHAPcV678vewfem9dY5mAr9LEV1UaM6u3uUWkWjYXoLbXtMcMnSRFOTIYq
-        YhkpgBklYxVypQWqO9t/dzOuGBqUCpVjZslavGHC37jUH0YeHH840x/6VVaQ==
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1660649136; x=1660735536; bh=6prhc53UPP
+        aO1noQ5A69LuSsUInxzCnRGeHJJeRAVms=; b=nT3CYJxQQ3phgdRG3XeuLmULeb
+        4m6Ssgn72CR6ySKKF9bqgv6ZNTfE+wnTY+XrZEHFFOiShfc4u2DmYMmq61FV87LS
+        uUcMcHrfXA5sDWHlt6VHM2pxmKyPYFFSH6l8I7BZiWSuxy/koHDjB+D0RA1hayJd
+        4x7jH6/rrJgeEwOBp1uTYVNZ5ZerF//p8Zpl7iPpb9e+OM8ge/g1jBieuFdhiqgV
+        +w5NNJGClOLiNk9RLHwGOtxYIyPFQDWV9kd+Gkh6ki5t14nxNziXsM7wlQNYufbi
+        pYlccc8CB51m0dmWJAYLnGBJBQMY10pk9/cpakkf23yKdDjelOn7ciQaAs9A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1660648445; x=1660734845; bh=JaNHNQVRKx1olBfhn9E559Y42Mki
-        aQ5Fw6Yf3w1MJ8s=; b=lCirj1ixQK2hzLE27JF5OOlVzBfP4Ygp0XVRuikDVms7
-        U3/RcniGy2gio7QAAtBSlD8utyFQoMvjIEX1lEeBfgZmVKHvIU3ll5dcuiYtTfWU
-        U+qy0SJdvTlBm1a/3fRI9SafbZxbfLJkEMuBb0XZ6yD1hyKShFjZGuOvrA+jy30i
-        44TcZOu8bG6YVb3XrfQZvtPdsklTo/zrKbLMrFEEmjDLkA+W3CqsHpeBpKpRMBC6
-        Z2DigEZ9pXR/3h7+ytt5TgHgWLhEVQ1Rr/JYt3iyx9G8DenX/PmRrzTEr8ws7J6/
-        6UNCVaYczyd3gzByp5iCKC+MyEDVbAtQ65kQN7oHTA==
-X-ME-Sender: <xms:_Hv7YkTDRnVWEkBXkSxA1brdVDd2XgaAsHaVR3elpkISjfs9bb_Idw>
-    <xme:_Hv7YhxYNsXHCVEZELIK-JMvRMmgbJwYYaKx7cHJcG9CKlgH5hUz5kSMN5uCSPjWf
-    DfUcpNol0rxr411KUY>
-X-ME-Received: <xmr:_Hv7Yh0EfUTHZx8MIexPbyDx26CG_bzo0CVqlHNIY_LB04yJJdA2eafeOag>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedgfeekucetufdoteggodetrfdotf
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1660649136; x=1660735536; bh=6prhc53UPPaO1
+        noQ5A69LuSsUInxzCnRGeHJJeRAVms=; b=e4hGB0wCSUKSoEp59EhyYO2xb/Ln6
+        cxxXTVWmNxm/NfXVT/UMMmZdedPZNVGKvCQDS9gjkLXFjSTqswqGBz1jrRs4u9Av
+        rsVtRO2nU5h9vT5nZVatES0R8MIntJu8oPPNi3OYGde/ZWU+NhhLwP0gMvWxloY8
+        vtqKvG/4flM7e1C4K+mvmBFGlOT7KMyQzQyfCAKRjTkf0lkYve+flctI7Fipqg2D
+        E3f1aTOKBwLpR86k6T0ZwWjGVB9wL+wCLjzDvATNV2zQ9+XH1KyEp0rpThAF6vYQ
+        Kqy+SufWNycFb0mvSok1p/KIH1xWzfoSe+1+GyNLB5RN/+AjrqpPBWOYA==
+X-ME-Sender: <xms:rn77YrKRNZnO7jxQH08VCRbDJKw-IXmuDzQoPOFJOKJEK5cw7EREDA>
+    <xme:rn77YvIQw1B9KT-hgmFqs8ST97N-g4SD-HbqcMgCuHZ5-H06BHOF3YiIhQxveOm2l
+    snit9-5s5dg_PxzffM>
+X-ME-Received: <xmr:rn77Yjv7vxZre0jrLXWp8i_f8qzwbXeYc_CQYSYcjfe9nnluL34WxFzkCYU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedggeduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
-    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:_Hv7YoA6jLAiMxqX8IMaKZGu08dUnowP4OBOWEZSl36QCwP_J6sChA>
-    <xmx:_Hv7Ytish1L72Az6AXHOXXMmXB9k3ZM_wuaBNI_iehTktvEGHrlUJg>
-    <xmx:_Hv7YkpEFTGymibl661TkeIH3TQPbcZTf3UlWvv3jMmgbuJ2grhUnw>
-    <xmx:_Xv7YkP7JIs15xokmaU76CXOJHX1IEHm-QT8X6iSl_4YJow2Y5snJQ>
+    cujfgurhephffvvefufffkofgtggfgsehtkeertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepledvtdegkeegtdejvdejvdejleeifeegfeevueegvddvleevieeghffhtdet
+    geffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:rn77YkZmvDR-F_UFPK6IdR5wogNb5GfAHP0IVgY5LEioZxDMZb7afw>
+    <xmx:rn77YiY05vCUzqVDrYdCzaO7Z1zmPINqhyP1WTpvY21I3NCMMv4peQ>
+    <xmx:rn77YoD0zOwoAFJr_SuKJkp1HY7ZzITsRz8O4Ghffmeyk6nbWKpuqQ>
+    <xmx:sH77YvQbemjpTDpnB-QRXZJ5AzWhAnAbSUdk97pbUwHxHISSXGRnHA>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Aug 2022 07:14:03 -0400 (EDT)
-Date:   Tue, 16 Aug 2022 13:14:01 +0200
+ 16 Aug 2022 07:25:33 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     linux-clk@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH v8 13/25] clk: Set req_rate on reparenting
-Message-ID: <20220816111401.tq5cvupjtshhdyew@houat>
-References: <20220815154147.1631441-1-maxime@cerno.tech>
- <3660057.R56niFO833@steina-w>
- <20220816092416.uofjed254rvrb4tn@houat>
- <2024590.taCxCBeP46@steina-w>
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v9 00/25] clk: More clock rate fixes and tests
+Date:   Tue, 16 Aug 2022 13:25:05 +0200
+Message-Id: <20220816112530.1837489-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.37.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t6uypwh55xwykkbo"
-Content-Disposition: inline
-In-Reply-To: <2024590.taCxCBeP46@steina-w>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
---t6uypwh55xwykkbo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks to the feedback I got on the previous series, I found and fixed a
+number of bugs in the clock framework and how it deals with rates,
+especially when it comes to orphan clocks.
 
-On Tue, Aug 16, 2022 at 11:57:26AM +0200, Alexander Stein wrote:
-> Hello Maxime,
->=20
-> Am Dienstag, 16. August 2022, 11:24:16 CEST schrieb Maxime Ripard:
-> > * PGP Signed by an unknown key
-> >=20
-> > Hi Alexander,
-> >=20
-> > On Tue, Aug 16, 2022 at 10:30:47AM +0200, Alexander Stein wrote:
-> > > Hello Maxime,
-> > >=20
-> > > Am Montag, 15. August 2022, 17:41:35 CEST schrieb Maxime Ripard:
-> > > > If a non-rate clock started by default with a parent that never
-> > > > registered, core->req_rate will be 0. The expectation is that whene=
-ver
-> > > > the parent will be registered, req_rate will be updated with the new
-> > > > value that has just been computed.
-> > > >=20
-> > > > However, if that clock is a mux, clk_set_parent() can also make that
-> > > > clock no longer orphan. In this case however, we never update req_r=
-ate.
-> > > > Let's make sure it's the case for the newly unorphan clock and all =
-its
-> > > > children.
-> > >=20
-> > > This works with my basic board DT, but adding an I2C attached audio c=
-odec
-> > >=20
-> > > (sound/soc/codecs/tlv320aic32x4-clk.c) I get the following error:
-> > > > BUG: sleeping function called from invalid context at
-> > > > kernel/locking/mutex.c:283 in_atomic(): 1, irqs_disabled(): 128,
-> > > > non_block:
-> > > > 0, pid: 217, name: kworker/u8:6 preempt_count: 1, expected: 0
-> > > > RCU nest depth: 0, expected: 0
-> > > > CPU: 3 PID: 217 Comm: kworker/u8:6 Not tainted 6.0.0-rc1-next-20220=
-816+
-> > > > #521 ac6fe0b093ec56bf12af4f3eda948091742739aa Hardware name: TQ-Sys=
-tems
-> > > > i.MX8MPlus TQMa8MPxL on MBa8MPxL (DT)
-> > > > Workqueue: events_unbound deferred_probe_work_func
-> > > >=20
-> > > > Call trace:
-> > > >  dump_backtrace+0xd4/0x114
-> > > >  show_stack+0x14/0x4c
-> > > >  dump_stack_lvl+0x64/0x7c
-> > > >  dump_stack+0x14/0x2c
-> > > >  __might_resched+0x124/0x154
-> > > >  __might_sleep+0x58/0xcc
-> > > >  mutex_lock+0x20/0x70
-> > > >  regmap_lock_mutex+0xc/0x1c
-> > > >  regmap_read+0x38/0x70
-> > > >  clk_aic32x4_div_recalc_rate+0x34/0x70 [snd_soc_tlv320aic32x4
-> > > >  4f2256fee3bc49277632fba80c047a2b8a3ad122] clk_recalc+0x44/0xe0
-> > > >  clk_core_update_orphan_child_rates+0x28/0x60
-> > > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > > >  clk_reparent+0xa4/0x14c
-> > > >  __clk_set_parent_before+0x40/0xa0
-> > > >  clk_core_set_parent_nolock+0x11c/0x27c
-> > > >  clk_set_parent+0x3c/0x140
-> > > >  __set_clk_parents+0x114/0x244
-> > > >  of_clk_set_defaults+0x20/0x50
-> > > >  platform_probe+0x38/0x100
-> > > >  call_driver_probe+0x28/0x140
-> > > >  really_probe+0xc0/0x334
-> > > >  __driver_probe_device+0x84/0x144
-> > > >  driver_probe_device+0x38/0x130
-> > > >  __device_attach_driver+0xc8/0x17c
-> > > >  bus_for_each_drv+0x74/0xc4
-> > > >  __device_attach+0xa8/0x204
-> > > >  device_initial_probe+0x10/0x1c
-> > > >  bus_probe_device+0x90/0xa0
-> > > >  deferred_probe_work_func+0x9c/0xf0
-> > > >  process_one_work+0x1d0/0x330
-> > > >  worker_thread+0x68/0x390
-> > > >  kthread+0xf4/0xfc
-> > > >  ret_from_fork+0x10/0x20
-> > >=20
-> > > The audio codec driver provides clocks as well which can't be used in
-> > > atomic contexts.
-> >=20
-> > So, this is due to clk_reparent() being called with enable_lock taken in
-> > __clk_set_parent_before(), and enable_lock is a spinlock.
-> >=20
-> > The other call sites of clk_reparent() are __clk_set_parent(), that
-> > takes that lock too, and clk_core_reparent() that doesn't.
-> >=20
-> > __clk_set_parent() is used exclusively by clk_core_set_parent_nolock()
-> > and has the assumption that only the prepare_lock (mutex) is taken.
-> >=20
-> > clk_core_reparent() is used exclusively by clk_hw_reparent(), which is
-> > then used by four drivers (clk-stm32mp1.c, stm32/clk-stm32-core.c,
-> > clk/tegra/clk-tegra124-emc.c and tegra/clk-tegra210-emc.c)
-> >=20
-> > All but tegra124 use clk_hw_reparent() in their set_parent
-> > implementation. The set_parent hook is called in __clk_set_parent() and
-> > clk_change_rate(), both times without the enable_lock taken.
-> >=20
-> > tegra210 has it in its set_rate implementation, called only by
-> > clk_change_rate(), without the enable_lock taken too.
-> >=20
-> > So I think that if we move the call to
-> > clk_core_update_orphan_child_rates() to the clk_reparent() call sites,
-> > after the enable_lock has been released if it was taken, we should be
-> > safe.
-> >=20
-> > Could you test the following patch?
-> >=20
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 5bdfd645f1dc..453e2ff10961 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1941,7 +1941,6 @@ static void clk_reparent(struct clk_core *core, s=
-truct
-> > clk_core *new_parent) }
-> >=20
-> >  	core->parent =3D new_parent;
-> > -	clk_core_update_orphan_child_rates(core);
-> >  }
-> >=20
-> >  static struct clk_core *__clk_set_parent_before(struct clk_core *core,
-> > @@ -1987,6 +1986,8 @@ static struct clk_core *__clk_set_parent_before(s=
-truct
-> > clk_core *core, clk_reparent(core, parent);
-> >  	clk_enable_unlock(flags);
-> >=20
-> > +	clk_core_update_orphan_child_rates(core);
-> > +
-> >  	return old_parent;
-> >  }
-> >=20
-> > @@ -2031,6 +2032,8 @@ static int __clk_set_parent(struct clk_core *core,
-> > struct clk_core *parent, flags =3D clk_enable_lock();
-> >  		clk_reparent(core, old_parent);
-> >  		clk_enable_unlock(flags);
-> > +
-> > +		clk_core_update_orphan_child_rates(core);
-> >  		__clk_set_parent_after(core, old_parent, parent);
-> >=20
-> >  		return ret;
-> > @@ -2654,6 +2657,7 @@ static void clk_core_reparent(struct clk_core *co=
-re,
-> >  				  struct clk_core *new_parent)
-> >  {
-> >  	clk_reparent(core, new_parent);
-> > +	clk_core_update_orphan_child_rates(core);
-> >  	__clk_recalc_accuracies(core);
-> >  	__clk_recalc_rates(core, POST_RATE_CHANGE);
-> >  }
->=20
-> With this patch applied the BUG message is gone and the system boots with=
-out=20
-> any issue.
+In order to make sure this doesn't pop up again as a regression, I've
+extended the number of tests.
 
-Thanks for testing :)
+The first patch reintroduces the clk_set_rate_range call on clk_put, but
+this time will only do so if there was a range set on that clock to
+begin with. It should be less intrusive, and reduce the number of
+potential side effects considerably.
 
-I've merged that patch into the original one, updated the commit log and
-will submit a new version of this series.
+We then have a fix for the qcom rcg2 issue that has been reported
+recently.
 
+All the other patches should be probably be flagged as fixes, but
+they've never seem to have shown any real-world issues until now, and
+they aren't all really trivial to backport either, so I'm not sure it's
+worth it.
+
+There's also some documentation improvements for recalc_rate and
+clk_get_rate to hopefully make the documentation less ambiguous and
+acknowledge that recalc_rate() returning 0 on error is fine.
+
+Let me know what you think,
 Maxime
 
---t6uypwh55xwykkbo
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes from v8:
+  - Fixed a regression when probing a clock driver backed by a device accessed
+    through a bus that might sleep
 
------BEGIN PGP SIGNATURE-----
+Changes from v7:
+  - Dropped the RPi fixes
+  - Rebased on 6.0-rc1
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYvt7+QAKCRDj7w1vZxhR
-xUTUAQDN3ckTB3Z9MEp3WnMIJG8p4b2xR/6nICMpteRNtjQDeQEAkYmlzQW5W0Ar
-XqEsCyzH9Ns5csYwdEIylPzgPxPQ+QI=
-=tO3D
------END PGP SIGNATURE-----
+Changes from v6:
+  - Fixed a kernel build bot warning
 
---t6uypwh55xwykkbo--
+Changes from v5:
+  - Rebased on current next (next-20220711)
+  - Dropped clk_get_rate_range, and used a custom function instead
+  - Switched all tests to use clk_hw_get_clk() instead of struct clk_hw->clk
+  - Removed some intermediate variables
+  - Added some comments
+  - Dropped clk_get_parent() changes
+  - Dropped test on clk_hw pointer non-NULL in clk_hw_get_name
+  - Made clk_has_parent more const
+
+Changes from v4:
+  - Fix build breakage on SAM9x60
+
+Changes from v3:
+  - constness warning fix in clk_core_forward_rate_req
+
+Changes from v2:
+  - Rebased on top of current next
+  - Fixed locking issue in clk_get_rate_range
+
+Changes from v1:
+  - Rebased on top of next-20220428
+  - Dropped the patch to prevent non-orphan clocks from registering if
+    their recalc_rate hook returns 0
+  - Added some patches to clarify the clk_get_rate and recalc_rate
+    documentation
+  - Dropped the patch to skip the range setup on an orphan clock that
+    was introducing a regression on RaspberryPi3 when a monitor wasn't
+    connected at boot
+  - Added a patch to skip the rate clamping in clk_round_rate() when
+    min_rate == max_rate == 0
+  - Added a new set of functions to query the clk boundaries and fix a
+    regression with the RaspberryPi4
+  - Fixed all the drivers hand-crafting their clk_rate_request
+  - Reworded the test suite descriptions
+  - Reordered a few patches to ease the review
+  - Reworded some commit logs to better explain the issues they address
+  - Collected the Tested-by of Alexander and Marek
+  - More tests
+
+Maxime Ripard (25):
+  clk: test: Switch to clk_hw_get_clk
+  clk: Drop the rate range on clk_put()
+  clk: Skip clamping when rounding if there's no boundaries
+  clk: Mention that .recalc_rate can return 0 on error
+  clk: Clarify clk_get_rate() expectations
+  clk: tests: Add test suites description
+  clk: tests: Add reference to the orphan mux bug report
+  clk: tests: Add tests for uncached clock
+  clk: tests: Add tests for single parent mux
+  clk: tests: Add tests for mux with multiple parents
+  clk: tests: Add some tests for orphan with multiple parents
+  clk: Take into account uncached clocks in clk_set_rate_range()
+  clk: Set req_rate on reparenting
+  clk: Change clk_core_init_rate_req prototype
+  clk: Move clk_core_init_rate_req() from clk_core_round_rate_nolock()
+    to its caller
+  clk: Introduce clk_hw_init_rate_request()
+  clk: Add our request boundaries in clk_core_init_rate_req
+  clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock
+  clk: Introduce clk_core_has_parent()
+  clk: Constify clk_has_parent()
+  clk: Stop forwarding clk_rate_requests to the parent
+  clk: Zero the clk_rate_request structure
+  clk: Introduce the clk_hw_get_rate_range function
+  clk: qcom: clk-rcg2: Take clock boundaries into consideration for
+    gfx3d
+  clk: tests: Add missing test case for ranges
+
+ drivers/clk/at91/clk-generated.c  |    5 +-
+ drivers/clk/at91/clk-master.c     |    9 +-
+ drivers/clk/at91/clk-peripheral.c |    4 +-
+ drivers/clk/clk-composite.c       |    6 +-
+ drivers/clk/clk-divider.c         |   20 +-
+ drivers/clk/clk.c                 |  288 ++++--
+ drivers/clk/clk_test.c            | 1413 ++++++++++++++++++++++++++++-
+ drivers/clk/qcom/clk-rcg2.c       |    9 +
+ include/linux/clk-provider.h      |   18 +-
+ include/linux/clk.h               |    2 +-
+ 10 files changed, 1665 insertions(+), 109 deletions(-)
+
+-- 
+2.37.1
+
