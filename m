@@ -2,234 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A21CC25B0E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C94C32773
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235261AbiHPLGd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 07:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44134 "EHLO
+        id S235335AbiHPLJI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 07:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235271AbiHPLGN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:06:13 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 267343ED52
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 02:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1660643851; x=1692179851;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=94iD7x5bIzJpFwswRkFuW+dVLGBPNfAognNhNYBCTfc=;
-  b=kdIa8smjwEC4M6+2UbagdTLsLTSWs6LJZKLHEzNBqHWuM6ougQdQeSNW
-   SS7L2QUOux6HlLZOPNTFTqb5VjocynZw/UmVPJbarLIy1QfpUHPNoxEU+
-   ZGH7qYQ0VcxyVdHhgX9+Mlm34lb6GDhRGC5YZtHxfKLY7VV+N6ZNkyBXh
-   WqcoTla1SSJhrpmYgdKhyeOSZCyy09lwl+itZvDrmmNM43OFYWcHhQEoK
-   T3vSCS4ZmJKXPs0F4YKK1QX5URBSbKakopehkROCFIsUrXyJBTFTRQHvH
-   vkwE99eeqBf5hv45wc9aO2csl6OLoN1stKbYj95U2sCjCuiZeCslo9xiL
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,240,1654552800"; 
-   d="scan'208";a="25624740"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 16 Aug 2022 11:57:29 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 16 Aug 2022 11:57:29 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 16 Aug 2022 11:57:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1660643849; x=1692179849;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=94iD7x5bIzJpFwswRkFuW+dVLGBPNfAognNhNYBCTfc=;
-  b=jkjJ7AP2S73wefO3PvTyRWJKuC+TdHWiWQ19lPRBdYtRg6VkAr5oPphT
-   9jmAYnDkWWtU+wQcxike0VJ9y/JHARvgKP3I3RGuikuVl22+sNiTLqFyK
-   biqZu4mic+qMxRlEr/swJBhMDWPz4haVkHGYVaoYmC3/5U1w7vlWVzNao
-   wIuCQd/W95fP6RgY+xj3N+Iq3lXzzXZkQOx87IwP1wFNhCghonyL25QXl
-   UK2xTt4OZDfTinlCM26CGoEFNr9wpO0yuCvE3e+e/IySSEvxD6HpNPqO6
-   s8GoiipSg74K6RKLa0U0QMM37VM5KtDmsP6ZONjQoPxsigmkgxxioMa4u
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,240,1654552800"; 
-   d="scan'208";a="25624739"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 16 Aug 2022 11:57:28 +0200
-Received: from steina-w.localnet (unknown [10.123.49.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        with ESMTP id S235201AbiHPLIg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:08:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F2B379EE2;
+        Tue, 16 Aug 2022 03:36:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id A77D4280056;
-        Tue, 16 Aug 2022 11:57:28 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-clk@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 940F060ED3;
+        Tue, 16 Aug 2022 10:36:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61562C433C1;
+        Tue, 16 Aug 2022 10:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660646195;
+        bh=iOXSGtGGb7/LTwG0TCouGLbcXIpY5jR5zxVoRU1xG64=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lUUOABwqNtfygdSbxVtRwiQcHdpC24YKzgZXj+DWz2eF1D/evnVSS/Hql8X4SdZ4L
+         WQQurTRAs+dB9imN/fIDHYslwtDrMHA/aTWmV+YgQy8OCApUny7L+zJ26fr/xB9NY+
+         BMghYD2aIx7nvS3FuCpENUJPvqy9djR3RCN/sUQqlRr+tw/RFZdWVtAmwngvEPnnJy
+         b7u6tPu0fiawHefOc7mUDgKaohbk7S1fNy5qwX0xIodIgMfgb8z81pEnRtw03EH2VN
+         jK2ekE0Cg1LOSL0u+FvR7jEsvnhly8YoYa9gDopXUFJLo399tuM0DdsIDu1am9P/gb
+         /YaPwx1XnpXSg==
+Date:   Tue, 16 Aug 2022 11:36:23 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        dri-devel@lists.freedesktop.org,
+        Johan Hovold <johan+linaro@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH v8 13/25] clk: Set req_rate on reparenting
-Date:   Tue, 16 Aug 2022 11:57:26 +0200
-Message-ID: <2024590.taCxCBeP46@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20220816092416.uofjed254rvrb4tn@houat>
-References: <20220815154147.1631441-1-maxime@cerno.tech> <3660057.R56niFO833@steina-w> <20220816092416.uofjed254rvrb4tn@houat>
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+        linux-amlogic@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Michael Turq uette <mturquette@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        linux-hwmon@vger.kernel.org, linux-clk@vger.kernel.org,
+        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        David Airlie <airlied@linux.ie>, linux-iio@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/7] Devm helpers for regulator get and enable
+Message-ID: <YvtzJw3jmocM0JFi@sirena.org.uk>
+References: <cover.1660292316.git.mazziesaccount@gmail.com>
+ <166057828406.697572.228317501909350108.b4-ty@kernel.org>
+ <YvpsRbguMXn74GhR@pendragon.ideasonboard.com>
+ <Yvp1Qkuh7xfeb/B2@sirena.org.uk>
+ <YvqV9Mq6I3gXQaf2@pendragon.ideasonboard.com>
+ <20220815205857.308B1C433D6@smtp.kernel.org>
+ <Yvq33T+XCduoqv7Z@pendragon.ideasonboard.com>
+ <YvrO+velKdYdGVve@sirena.org.uk>
+ <57c312b3-ca5b-6efb-6356-43b6513a0c88@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MVZ75Zz0qn0/IYvJ"
+Content-Disposition: inline
+In-Reply-To: <57c312b3-ca5b-6efb-6356-43b6513a0c88@gmail.com>
+X-Cookie: A bachelor is an unaltared male.
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Maxime,
 
-Am Dienstag, 16. August 2022, 11:24:16 CEST schrieb Maxime Ripard:
-> * PGP Signed by an unknown key
-> 
-> Hi Alexander,
-> 
-> On Tue, Aug 16, 2022 at 10:30:47AM +0200, Alexander Stein wrote:
-> > Hello Maxime,
-> > 
-> > Am Montag, 15. August 2022, 17:41:35 CEST schrieb Maxime Ripard:
-> > > If a non-rate clock started by default with a parent that never
-> > > registered, core->req_rate will be 0. The expectation is that whenever
-> > > the parent will be registered, req_rate will be updated with the new
-> > > value that has just been computed.
-> > > 
-> > > However, if that clock is a mux, clk_set_parent() can also make that
-> > > clock no longer orphan. In this case however, we never update req_rate.
-> > > Let's make sure it's the case for the newly unorphan clock and all its
-> > > children.
-> > 
-> > This works with my basic board DT, but adding an I2C attached audio codec
-> > 
-> > (sound/soc/codecs/tlv320aic32x4-clk.c) I get the following error:
-> > > BUG: sleeping function called from invalid context at
-> > > kernel/locking/mutex.c:283 in_atomic(): 1, irqs_disabled(): 128,
-> > > non_block:
-> > > 0, pid: 217, name: kworker/u8:6 preempt_count: 1, expected: 0
-> > > RCU nest depth: 0, expected: 0
-> > > CPU: 3 PID: 217 Comm: kworker/u8:6 Not tainted 6.0.0-rc1-next-20220816+
-> > > #521 ac6fe0b093ec56bf12af4f3eda948091742739aa Hardware name: TQ-Systems
-> > > i.MX8MPlus TQMa8MPxL on MBa8MPxL (DT)
-> > > Workqueue: events_unbound deferred_probe_work_func
-> > > 
-> > > Call trace:
-> > >  dump_backtrace+0xd4/0x114
-> > >  show_stack+0x14/0x4c
-> > >  dump_stack_lvl+0x64/0x7c
-> > >  dump_stack+0x14/0x2c
-> > >  __might_resched+0x124/0x154
-> > >  __might_sleep+0x58/0xcc
-> > >  mutex_lock+0x20/0x70
-> > >  regmap_lock_mutex+0xc/0x1c
-> > >  regmap_read+0x38/0x70
-> > >  clk_aic32x4_div_recalc_rate+0x34/0x70 [snd_soc_tlv320aic32x4
-> > >  4f2256fee3bc49277632fba80c047a2b8a3ad122] clk_recalc+0x44/0xe0
-> > >  clk_core_update_orphan_child_rates+0x28/0x60
-> > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > >  clk_core_update_orphan_child_rates+0x48/0x60
-> > >  clk_reparent+0xa4/0x14c
-> > >  __clk_set_parent_before+0x40/0xa0
-> > >  clk_core_set_parent_nolock+0x11c/0x27c
-> > >  clk_set_parent+0x3c/0x140
-> > >  __set_clk_parents+0x114/0x244
-> > >  of_clk_set_defaults+0x20/0x50
-> > >  platform_probe+0x38/0x100
-> > >  call_driver_probe+0x28/0x140
-> > >  really_probe+0xc0/0x334
-> > >  __driver_probe_device+0x84/0x144
-> > >  driver_probe_device+0x38/0x130
-> > >  __device_attach_driver+0xc8/0x17c
-> > >  bus_for_each_drv+0x74/0xc4
-> > >  __device_attach+0xa8/0x204
-> > >  device_initial_probe+0x10/0x1c
-> > >  bus_probe_device+0x90/0xa0
-> > >  deferred_probe_work_func+0x9c/0xf0
-> > >  process_one_work+0x1d0/0x330
-> > >  worker_thread+0x68/0x390
-> > >  kthread+0xf4/0xfc
-> > >  ret_from_fork+0x10/0x20
-> > 
-> > The audio codec driver provides clocks as well which can't be used in
-> > atomic contexts.
-> 
-> So, this is due to clk_reparent() being called with enable_lock taken in
-> __clk_set_parent_before(), and enable_lock is a spinlock.
-> 
-> The other call sites of clk_reparent() are __clk_set_parent(), that
-> takes that lock too, and clk_core_reparent() that doesn't.
-> 
-> __clk_set_parent() is used exclusively by clk_core_set_parent_nolock()
-> and has the assumption that only the prepare_lock (mutex) is taken.
-> 
-> clk_core_reparent() is used exclusively by clk_hw_reparent(), which is
-> then used by four drivers (clk-stm32mp1.c, stm32/clk-stm32-core.c,
-> clk/tegra/clk-tegra124-emc.c and tegra/clk-tegra210-emc.c)
-> 
-> All but tegra124 use clk_hw_reparent() in their set_parent
-> implementation. The set_parent hook is called in __clk_set_parent() and
-> clk_change_rate(), both times without the enable_lock taken.
-> 
-> tegra210 has it in its set_rate implementation, called only by
-> clk_change_rate(), without the enable_lock taken too.
-> 
-> So I think that if we move the call to
-> clk_core_update_orphan_child_rates() to the clk_reparent() call sites,
-> after the enable_lock has been released if it was taken, we should be
-> safe.
-> 
-> Could you test the following patch?
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 5bdfd645f1dc..453e2ff10961 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1941,7 +1941,6 @@ static void clk_reparent(struct clk_core *core, struct
-> clk_core *new_parent) }
-> 
->  	core->parent = new_parent;
-> -	clk_core_update_orphan_child_rates(core);
->  }
-> 
->  static struct clk_core *__clk_set_parent_before(struct clk_core *core,
-> @@ -1987,6 +1986,8 @@ static struct clk_core *__clk_set_parent_before(struct
-> clk_core *core, clk_reparent(core, parent);
->  	clk_enable_unlock(flags);
-> 
-> +	clk_core_update_orphan_child_rates(core);
-> +
->  	return old_parent;
->  }
-> 
-> @@ -2031,6 +2032,8 @@ static int __clk_set_parent(struct clk_core *core,
-> struct clk_core *parent, flags = clk_enable_lock();
->  		clk_reparent(core, old_parent);
->  		clk_enable_unlock(flags);
-> +
-> +		clk_core_update_orphan_child_rates(core);
->  		__clk_set_parent_after(core, old_parent, parent);
-> 
->  		return ret;
-> @@ -2654,6 +2657,7 @@ static void clk_core_reparent(struct clk_core *core,
->  				  struct clk_core *new_parent)
->  {
->  	clk_reparent(core, new_parent);
-> +	clk_core_update_orphan_child_rates(core);
->  	__clk_recalc_accuracies(core);
->  	__clk_recalc_rates(core, POST_RATE_CHANGE);
->  }
+--MVZ75Zz0qn0/IYvJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-With this patch applied the BUG message is gone and the system boots without 
-any issue.
+On Tue, Aug 16, 2022 at 07:56:06AM +0300, Matti Vaittinen wrote:
+> On 8/16/22 01:55, Mark Brown wrote:
+> > On Tue, Aug 16, 2022 at 12:17:17AM +0300, Laurent Pinchart wrote:
 
-Thanks
-Alexander
+> > > These devres helpers give
+> > > a false sense of security to driver authors and they will end up
+> > > introducing problems, the same way that devm_kzalloc() makes it
+> > > outrageously easy to crash the kernel by disconnecting a device that is
+> > > in use.
 
+> I think this is going a bit "off-topic" but I'd like to understand what is
+> behind this statement? From device-writer's perspective - I don't know much
+> better alternatives to free up the memory. I don't see how freeing stuff at
+> .remove would be any better? As far as I understand - if someone is using
+> driver's resources after the device has gone and the driver is detached,
+> then there is not much the driver could do to free-up the stuff be it devm
+> or not? This sounds like fundamentally different problem (to me).
 
+If a driver has done something like create a file that's accessible to
+userspace then that file may be held open by userspace even after the
+device goes away, the driver that created the file needs to ensure that
+any storage that's used by the file remains allocated until the file is
+also freed (typically this is data specific to the file rather than the
+full device data).  Similar situations can exist elsewhere, that's just
+the common case.  There'll be a deletion callback on whatever other
+object causes the problem, the allocation needs to be reference counted
+against both the the device and whatever other users there might be.
 
+> > That's a different conversation, and a totally
+> > valid one especially when you start looking at things like implementing
+> > userspace APIs which need to cope with hardware going away while still
+> > visible to userspace.
+
+> This is interesting. It's not easy for me to spot how devm changes things
+> here? If we consider some removable device - then I guess also the .remove()
+> is ran only after HW has already gone? Yes, devm might make the time window
+> when userspace can see hardware that has gone longer but does it bring any
+> new problem there? It seems to me devm can make hitting the spot more likely
+> - but I don't think it brings completely new issues? (Well, I may be wrong
+> here - wouldn't be the first time :])
+
+See above, something can still know the device was there even after it's
+gone.
+
+--MVZ75Zz0qn0/IYvJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmL7cycACgkQJNaLcl1U
+h9CzyQf/bDMqScPGw8MQIW6yZaN+9P25oNyQJTQ0X6hRYgasG5lC1b2j2/0LCuJQ
+0Flnz8b/wQI5LbmpExV6c8/Kt/xKopO8No6Af3gUUtkUNPQYHn0CJoB9HDQmSBe+
+uVrf5bEH9+GCi7WumAXuvFxT73bF4jt4WVbhNzBAGDD4hnxAF9hpyhSJ9uWS+b2z
+f+b77s+ubFb6gbYAqAVnq06cStPvi8aZrAT3UjDUVe3vF8LGQiz7VIdeFA0m0nVl
+eQNPvf5a0fCYw0M93B570wvMMPiX1lmfNt6iAWHwq9rKryHWKxB3Ntj5z+5EKDep
+0DAfDf7LZH1UUNZzCXclRPka0Fd9kw==
+=RD3o
+-----END PGP SIGNATURE-----
+
+--MVZ75Zz0qn0/IYvJ--
