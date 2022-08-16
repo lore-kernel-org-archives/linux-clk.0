@@ -2,165 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA145C28B2B
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A67C3F6B0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 11:54:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234710AbiHPLxN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 07:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47022 "EHLO
+        id S234998AbiHPLyk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 07:54:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234701AbiHPLwy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:52:54 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007764620E
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 04:27:31 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 5EE0D32002FB;
-        Tue, 16 Aug 2022 07:27:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 16 Aug 2022 07:27:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1660649249; x=1660735649; bh=At
-        3V6ZkUa2LFlTQMXRTxt/5U1TKMVvb4QVZVWFkJh9E=; b=r6PWWUvSwEbnbibExr
-        05sM983ne0J27YnrCj40KWj8xoyd41RKUL5i0eXq8KBJk4iUv5lj03uYNNdo7Tgb
-        5h3DxCvBFpDqqME81M3FtPMTXO653KBjX4snBE8IU94ubI4v1+Ay+XAOXwRb24Uy
-        GHiUDDKc++U84bwk0XOQGH+wNGScCVhf2u9X0kKulvNioytPiV64GwRuoKWcaseW
-        bvgHCXSVp4AZAbwxchSepeUxxfSTnL+lbTBZGvoJ8ezPyfK4ridrdeXK8yLKBqZW
-        1BZ/pAyZry48QU3sWEH0CG7Av8IQlDuEck0kAVdrvECSoKHry8cV8xjzl7h80PwK
-        j1mQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1660649249; x=1660735649; bh=At3V6ZkUa2LFl
-        TQMXRTxt/5U1TKMVvb4QVZVWFkJh9E=; b=3fNJM/oC8dz2FOawh4cwpgWL/gpsu
-        vmAPTXPBRSpCTSBb1eMIFZtFvyTVcOBOZHn2T9JRWkYktSjMCvCXv9frKAIdj3lH
-        YTULa1OWEY6nyOdyGGVXFYYRjfpPnvj5ZfHwBXfNzEDoHhWrCSEDxHwdIuQDB3vc
-        Nf9D+Em9MHKkQTfOntG9T9QGPN1aF7f0zS75F1jP6O/4ZDj2Mq0AauT7jfVmkn6f
-        r1/WfL46Sn6VO8Z0eRn/XCcnQFZVGu84vPh3rjv+kBH9me5XZ5idQ52IkjajG9yv
-        F4Yl6YHA8qKPNwzbBONKtlOEb0+wjJ3ouky0dF0CFTdcCgyUY86mUTBgg==
-X-ME-Sender: <xms:IX_7YtiEg-a0he2iRsvO_gyRV_XuB0hogrrP29mvAst9JmtqaUM-Nw>
-    <xme:IX_7YiC8b14pQQjkysrS6tqJz3ook20-Vf1hwu5E6ZHKMh1W8aS9h3XilIu_A5QT-
-    zGPvyRZfOFqit-JtaU>
-X-ME-Received: <xmr:IX_7YtExeL3kx4ljPmzr5vr2ICdUjkb7eiXkA0oNkk8kLbFopkJlhbiw_Ds>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:IX_7YiRofhgRZ0AuE9jRr9JeeHsYw7_6b_L8b5SU_udHP-ZpvCEWNw>
-    <xmx:IX_7Yqxz1nRLjExuflcEKSBuieCw8P9SytqKdBqPOSm4KVcgclEPlg>
-    <xmx:IX_7Yo5ksrbE8GIuRZVhbf95xBIgbv6xcH0AK82X5r5a-FRB9vVevA>
-    <xmx:IX_7YvpIsdFyYBhBrN4XVIe7T29KyG0mgxrOgniLPsImRC2BEhOEbQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Aug 2022 07:27:28 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        with ESMTP id S234969AbiHPLyX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 07:54:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08E0A4063;
+        Tue, 16 Aug 2022 04:31:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 66ABFB816A7;
+        Tue, 16 Aug 2022 11:31:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9B8C433C1;
+        Tue, 16 Aug 2022 11:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660649502;
+        bh=DNGxZGCzNE/W9SNa3AOcpRXwEUSzLHawjI4GPUOozEs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ibyaO5o/Nr/cFFgJEL7PPVekFs+0Q3USPuDu3QwvW87IXj9cmqYanCsbSmFkhICCI
+         /bS/xCmD23/cb+FBxGnzpVz3kjeVAkO2lYjT75WQKNF5axNhVAwouihZTg6FbLvEAY
+         J4D9uKaJlitqM9D4ZYgx+VikKjvj7peGJBkuhBXKCVwCi46fJVtOhi63JN8hMrZFCH
+         UkfZ0SYPO3LlM1dZqhAEgMC/gX42n3x6mQYJi/OWry/0M9xvDVAnxC5iuOOswm5mZI
+         QOIIYWVpSbd9EF5OhCbydJMADpl7C+bCAHQspCqNHYt9riKK17LZaBtj0TiuX1S5h2
+         kfxfjwbz6D43A==
+Date:   Tue, 16 Aug 2022 12:31:31 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v9 25/25] clk: tests: Add missing test case for ranges
-Date:   Tue, 16 Aug 2022 13:25:30 +0200
-Message-Id: <20220816112530.1837489-26-maxime@cerno.tech>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220816112530.1837489-1-maxime@cerno.tech>
-References: <20220816112530.1837489-1-maxime@cerno.tech>
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Michael Turq uette <mturquette@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: Re: (subset) [PATCH v2 0/7] Devm helpers for regulator get and enable
+Message-ID: <YvuAE0Y3QbAf9Zh/@sirena.org.uk>
+References: <166057828406.697572.228317501909350108.b4-ty@kernel.org>
+ <YvpsRbguMXn74GhR@pendragon.ideasonboard.com>
+ <Yvp1Qkuh7xfeb/B2@sirena.org.uk>
+ <YvqV9Mq6I3gXQaf2@pendragon.ideasonboard.com>
+ <20220815205857.308B1C433D6@smtp.kernel.org>
+ <Yvq33T+XCduoqv7Z@pendragon.ideasonboard.com>
+ <YvrO+velKdYdGVve@sirena.org.uk>
+ <57c312b3-ca5b-6efb-6356-43b6513a0c88@gmail.com>
+ <YvtzJw3jmocM0JFi@sirena.org.uk>
+ <bb590e14-f99b-5bfb-414b-a45ca77045c2@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GRi4H55EvexP+ViS"
+Content-Disposition: inline
+In-Reply-To: <bb590e14-f99b-5bfb-414b-a45ca77045c2@fi.rohmeurope.com>
+X-Cookie: A bachelor is an unaltared male.
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Let's add a test on the rate range after a reparenting. This fails for
-now, but it's worth having it to document the corner cases we don't
-support yet.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk_test.c | 53 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+--GRi4H55EvexP+ViS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 5a5b7a8baba2..8e0c76ab1a6d 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -514,9 +514,62 @@ clk_test_multiple_parents_mux_has_parent(struct kunit *test)
- 	clk_put(clk);
- }
- 
-+/*
-+ * Test that for a clock with a multiple parents, if we set a range on
-+ * that clock and the parent is changed, its rate after the reparenting
-+ * is still within the range we asked for.
-+ *
-+ * FIXME: clk_set_parent() only does the reparenting but doesn't
-+ * reevaluate whether the new clock rate is within its boundaries or
-+ * not.
-+ */
-+static void
-+clk_test_multiple_parents_mux_set_range_set_parent_get_rate(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
-+	struct clk *parent1, *parent2;
-+	unsigned long rate;
-+	int ret;
-+
-+	kunit_skip(test, "This needs to be fixed in the core.");
-+
-+	parent1 = clk_hw_get_clk(&ctx->parents_ctx[0].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent1);
-+	KUNIT_ASSERT_TRUE(test, clk_is_match(clk_get_parent(clk), parent1));
-+
-+	parent2 = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent2);
-+
-+	ret = clk_set_rate(parent1, DUMMY_CLOCK_RATE_1);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ret = clk_set_rate(parent2, DUMMY_CLOCK_RATE_2);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ret = clk_set_rate_range(clk,
-+				 DUMMY_CLOCK_RATE_1 - 1000,
-+				 DUMMY_CLOCK_RATE_1 + 1000);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ret = clk_set_parent(clk, parent2);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1 - 1000);
-+	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_1 + 1000);
-+
-+	clk_put(parent2);
-+	clk_put(parent1);
-+	clk_put(clk);
-+}
-+
- static struct kunit_case clk_multiple_parents_mux_test_cases[] = {
- 	KUNIT_CASE(clk_test_multiple_parents_mux_get_parent),
- 	KUNIT_CASE(clk_test_multiple_parents_mux_has_parent),
-+	KUNIT_CASE(clk_test_multiple_parents_mux_set_range_set_parent_get_rate),
- 	{}
- };
- 
--- 
-2.37.1
+On Tue, Aug 16, 2022 at 11:06:21AM +0000, Vaittinen, Matti wrote:
 
+> I wonder if writing such 'release callbacks' is compulsory? I mean, if I=
+=20
+> was writing a driver to some new (to me) subsystem and was required to=20
+> write an explicit release-callback for a resource - then it'd surely=20
+> rang a bell about potentially double freeing stuff with devm. Especially=
+=20
+> if the doc stated the callback can be called after the driver has been=20
+> detached.
+
+Generally yes, thoguh people can and do leave them blank and it's easy
+enough to do some cleanup in there that assumes that the device is still
+present and not think the device might've gone away especially if the
+hardware isn't practically hotpluggable.
+
+--GRi4H55EvexP+ViS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmL7gBIACgkQJNaLcl1U
+h9AzDwf9HyzkouCr6DLxGa2jy+krXW2whkKczGUewYVjLonIovCKJI3OKOOMeqaZ
+rggHFUZDlyHpe4f23sQn190TBdngSGLYf1nrOt1WMUf3vCkLA05c7RcsGPCZdlGm
+TaL1HglUSxZ6Mce97JyRZ3k3Uw28ImBl0LWx3nunXvOqv6UUjs0cc0NdiGSD3JEA
+q7cLUiSYA4BzPVJg8bAXNNgXRdqY08D9aqih79uT+vgmcurosxM9InLGjKWb4xRw
+UlVPhgqtHOGKTfgLfNuPG7s+nSv91LUEf43AMjI0HE92IutdyHoYhleNfB5V7kAU
+vbqH3vEZToSso212DUSGKfURUbqHBg==
+=2bTO
+-----END PGP SIGNATURE-----
+
+--GRi4H55EvexP+ViS--
