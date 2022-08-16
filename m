@@ -2,152 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3C5C2BB41
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 10:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D2AC2BB41
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 10:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233740AbiHPKO7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 06:14:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50312 "EHLO
+        id S232478AbiHPKUy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 06:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234421AbiHPKOY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 06:14:24 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CF0D11986B
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 01:14:23 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oNriC-00087l-C0; Tue, 16 Aug 2022 10:14:08 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oNriB-000640-9A; Tue, 16 Aug 2022 10:14:07 +0200
-Date:   Tue, 16 Aug 2022 10:14:07 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        "abel.vesa@linaro.org" <abel.vesa@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: imx8m: introduce
- fsl,protected-clocks property
-Message-ID: <20220816081407.GH17485@pengutronix.de>
-References: <20220815033632.1687854-1-peng.fan@oss.nxp.com>
- <20220815033632.1687854-2-peng.fan@oss.nxp.com>
- <20220815135756.GC17485@pengutronix.de>
- <DU0PR04MB9417593B87BB5A23A29D732E886B9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+        with ESMTP id S234444AbiHPKUY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 06:20:24 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3974116ECD;
+        Tue, 16 Aug 2022 01:24:11 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id s11so7593785qtx.6;
+        Tue, 16 Aug 2022 01:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=URNWhoG6Jht3PNpZTFjRMq9C2xuK/GPJGs5c4/qP8Qo=;
+        b=WMTSsJZCsuR2GWexgektS/N4A4uFwS5j+U4U9bXLj9a3L47qI380JV+vKz4DRgUo7m
+         JQ0ZPw6GRXuu40crI4HPnyfuU8Mwuj1qNeEIP4TcZGai2JWBghl1MLZHSVb55P06F6bx
+         B1nlcqlENsza+hf4Ohd1X2ICgnXG9gNZC7PGiYkFdA7ZFjkUfcc87MSd36YKblkLzxGa
+         2BnwA9oruaCFleVvpGTBbHY4dKpfAmqqekOjjv8m9YDssWVu8bRB/z5KMz8EGrrjZ7Sy
+         Eu4fOB4U87dlJ/FQykdL1H5XL0UdE1RlRY7jmsZJ10A3yVUtG2esLd0xOaEnLq9ua0pr
+         3xdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=URNWhoG6Jht3PNpZTFjRMq9C2xuK/GPJGs5c4/qP8Qo=;
+        b=e4x9YMl4hoo1y89HM5Ci5Jp5LKPTYqOmkNWgQFQGsjBx+NmR/0QUz+lTTckOgi277Y
+         sAPdfcHZjQVHg9hewQQXtcxUg8RTEZ0j0pQeKcviFFrL/+4ut/xbVyRtEUekQNnY2qEI
+         VzS4MtsQsQGYk0G0/k7AvC2pWn/Z/BDD8tERXZkBi74SqtUBkVnPc7OXkocfF1JTGqZo
+         ogb/nuvWjIZ5Jk8m2li+OOEKJtoKZSdhxg4OpDOjm35js34vAhrN/VQ0qsx1jRJaErS6
+         ezntuXFXJbWCkWpKmsnSXfai1RWb1MqbM3wOpdvOwxAKC90BGy1fhg0KFjiqZN132yPx
+         N4tw==
+X-Gm-Message-State: ACgBeo3Zxe0nTE8F6Trk56qb222CQX/jl1QENzmY1g7Hj5bNS+aTtykf
+        p2fkJqHSkNCgnflRw6RnvDqcOgJL2AFJiZ3AUyk=
+X-Google-Smtp-Source: AA6agR5pnQGi7oingWiXnnixDq3edlax9wsTNuhcRBi9pIKjuflZ8obEieyrcjYpsw/u/5tbgjY0kZ/rOVvlBmyXAN8=
+X-Received: by 2002:a05:622a:14cf:b0:343:5b6:68ca with SMTP id
+ u15-20020a05622a14cf00b0034305b668camr16705479qtx.195.1660638245828; Tue, 16
+ Aug 2022 01:24:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9417593B87BB5A23A29D732E886B9@DU0PR04MB9417.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <cover.1660292316.git.mazziesaccount@gmail.com>
+ <166057828406.697572.228317501909350108.b4-ty@kernel.org> <YvpsRbguMXn74GhR@pendragon.ideasonboard.com>
+ <Yvp1Qkuh7xfeb/B2@sirena.org.uk> <YvqV9Mq6I3gXQaf2@pendragon.ideasonboard.com>
+In-Reply-To: <YvqV9Mq6I3gXQaf2@pendragon.ideasonboard.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 16 Aug 2022 11:23:29 +0300
+Message-ID: <CAHp75VcAS2Km_aWOV-XhMe9JkLER-1DYbJbkM9pa-i9yhHqsFQ@mail.gmail.com>
+Subject: Re: (subset) [PATCH v2 0/7] Devm helpers for regulator get and enable
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        linux-hwmon@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-iio <linux-iio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 07:13:27AM +0000, Peng Fan wrote:
-> Hi Sascha,
-> 
-> > Subject: Re: [PATCH 1/2] dt-bindings: clock: imx8m: introduce fsl,protected-
-> > clocks property
-> > 
-> > Hi Peng,
-> > 
-> > On Mon, Aug 15, 2022 at 11:36:31AM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > i.MX8M Linux run on top of Jailhouse hypervisor, the root cell Linux
-> > > should not disable clocks used by inmate. This would also benifit AMP
-> > > to avoid Linux disable clocks used by Cortex-M4/M7.
-> > >
-> > > So introduce fsl,protected-clocks for above case.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > > b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > > index 458c7645ee68..0ec490ff9a09 100644
-> > > --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > > @@ -39,6 +39,10 @@ properties:
-> > >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-
-> > clock.h
-> > >        for the full list of i.MX8M clock IDs.
-> > >
-> > > +  fsl,protected-clocks:
-> > > +    description: List of the Protected clock.
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > 
-> > There already is a generic protected-clocks property described in
-> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithu
-> > b.com%2Fdevicetree-org%2Fdt-
-> > schema%2Fblob%2F0d1b78cd0c3d9a3d523ced17d7da64b03f6c18ea%2Fdtsc
-> > hema%2Fschemas%2Fclock%2Fclock.yaml%23L131&amp;data=05%7C01%7
-> > Cpeng.fan%40nxp.com%7C5dbc72639c9147765af208da7ec63315%7C686ea
-> > 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637961686968811809%7CUn
-> > known%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI
-> > 6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=D%2BfJA5h
-> > wblaX8VH%2BdQoN0pEFmCipfZHHf0ZVo07B4kg%3D&amp;reserved=0
-> > We probably shouldn't add a property with the same name but different
-> > meaning.
-> > 
-> 
-> Thanks for sharing the info. I should check the common bindings before
-> cook this patchset.
-> 
-> > I am not sure if we want to go the route of a fsl specific property, it looks
-> > like other SoCs could have similar problems and it might be worth solving
-> > this problem with a broader view.
-> > 
-> 
-> I see qcom just drop the clock entries before registering the clocks. But to
-> i.MX8M, it is not feasible to drop those clocks, unless check the
-> protected-clocks property before registering every clock. This is odd.
-> 
-> So here I just wanna let i.MX8M clk driver prepare enable the clocks listed
-> in protected-clocks property to avoid linux disable those clocks.
-> > Anyway, please add a description to the binding what this property actually
-> > does.
-> I will switch to use the common bindings.
+On Mon, Aug 15, 2022 at 11:20 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Aug 15, 2022 at 05:33:06PM +0100, Mark Brown wrote:
 
-There were cases when a property first started with a "soc," prefix and
-later when people realized that it could be useful for other
-drivers/SoCs as well, the prefix was removed. With that in mind I
-would expect that a "fsl,protected-clocks" property behaves the same
-as a "protected-clocks" property without the prefix.
+...
 
-If it doesn't please pick a different name. I didn't want to suggest
-to just drop the "fsl," prefix and to use the generic property name
-when the properties have a different meaning.
+> However, should a devm_clk_get_enable() or similar function be
+> implemented, we'll run into trouble.
 
-Sascha
+And in 5.19 we have devm_clk_get_enable(), are we already in trouble?
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+With Best Regards,
+Andy Shevchenko
