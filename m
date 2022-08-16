@@ -2,220 +2,251 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6A1C32772
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 09:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E748C32771
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 09:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233346AbiHPJDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 05:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
+        id S233529AbiHPJum (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 05:50:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233241AbiHPJCi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 05:02:38 -0400
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80054.outbound.protection.outlook.com [40.107.8.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6629DD124C;
-        Tue, 16 Aug 2022 00:13:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A8Z3O44fkgqR3Ktg6OnY5MNf4K+b7M65PJavswtm0cnWoK/jpaBTWCirSVU6p8yPXeLwDyXfumCtCc2Ag15BW28Wy2y0iQx8CioVSABjnRTiCxGXW3WYq+3yJADX11bOCMqMbxqDtZqLW2e1mlWqh1r0I6xOEE7kgXKCFdwFVbVlT3Vg25l39aNfs+xctbojGeMCQHxfL6GbOcErPikCiSvU6eGs/lzXudUDDuHNEw9iiR6SH8VjjDQT2R2hG3/p2Ir9y9BIFP93qD+n35ipzmCpKveUIIR1tz/cFC1LMQaLBtIx2FRiBH2YYx9bYUMMyc5iZWyyVBewDCtihYHjRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f79xZ7Y0PY2d9LM1Vn+NIHqF5+iG6Epdj2KBV8nd6ak=;
- b=G+vVHRdZM/KuEra4IIdnK1Rf6qL1qXGX8duGxKbJNlKU36c4d97+Z/lLv+dkI5ikV6Hm2cIVqQvjzQX14Xz+sj39NysvIuw5cugvIGKnPHoRtVlvOdRWUDwfnE/qXlZUgJzm0lSAJpWC2bLs4mzMAjFKVeFBIcFR6WQ56DXEtnXrpY4oK6x8ffce+sOLIlz8MMTQeHbqbPk/wLufMHl+xf63U7lQWgNZyeTALxwEuoOgKzcmAbhGn9GRKbh2i9TQaEMREXr172R3eOrF9m/BH+7Ninka+KVKkGgCXxnCuOLQrPd6iVb9d5jikIXiVwIQGWvAqzxHnz3k67ZucFx8YA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f79xZ7Y0PY2d9LM1Vn+NIHqF5+iG6Epdj2KBV8nd6ak=;
- b=OBBuuVJC+H8SqGWBt63mAJ/w+F/EmF7bLQ9CVVRh81Zq6UIuay66+kei03MN8azbXU7SC0ghyP+psZh6I/VVGeZEi1w7LDw4o9qqKgfQTC/ej7A9w6/LChnBJz5BplL8VPNQEQHW+AhQFOxF2+fAQm8D9aJimukZpKCZ4t3jn/8=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB7PR04MB5547.eurprd04.prod.outlook.com (2603:10a6:10:89::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.10; Tue, 16 Aug
- 2022 07:13:27 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::3c6c:b7e6:a93d:d442]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::3c6c:b7e6:a93d:d442%4]) with mapi id 15.20.5525.011; Tue, 16 Aug 2022
- 07:13:27 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Sascha Hauer <s.hauer@pengutronix.de>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC:     "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        "abel.vesa@linaro.org" <abel.vesa@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 1/2] dt-bindings: clock: imx8m: introduce
- fsl,protected-clocks property
-Thread-Topic: [PATCH 1/2] dt-bindings: clock: imx8m: introduce
- fsl,protected-clocks property
-Thread-Index: AQHYsFgAb9/Dm+cZSEyj68dAWhpa+K2v/VoAgAEfCpA=
-Date:   Tue, 16 Aug 2022 07:13:27 +0000
-Message-ID: <DU0PR04MB9417593B87BB5A23A29D732E886B9@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20220815033632.1687854-1-peng.fan@oss.nxp.com>
- <20220815033632.1687854-2-peng.fan@oss.nxp.com>
- <20220815135756.GC17485@pengutronix.de>
-In-Reply-To: <20220815135756.GC17485@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 472caf3e-a2fe-4151-5289-08da7f56d10e
-x-ms-traffictypediagnostic: DB7PR04MB5547:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2a0KwfCikCjjp7cIOEam0jjvK96SR1Pb30TRINh+7PjYj0Lrh2KvR155dSl8nF5ziAA9juHiUaZ5GLl79GGTkrmVdeP7GaYM0yRskCgjImNc5dbooidG/1c44nJE1idgmqBsXV+V6lI9D4Ppl4v5lih/oThRpJNFl6bA356CHcPHZ1vbrWyXhcPoi3i6+LxVe+S5ueQ6Qcsgy8bWQjvVmZWKEMyTI98FQs6QI8vZYIzvyOPij61aPFBAlogzJ8ieTcpXGoHmpgrx9dXcVFAblbszGxaTj4laPxiUZVfpgOkRKUYHal/YljvRftJaI+GvGaiPBGWrVyuO3Tk+KXZok7Uqpl48eqbh56MFokW0boBfSwEBJXxCOk9VviptT8ynRqcRsEmT1d55tkJTQb6QMXqrEIwKhYSm8TkL2cIEty6ejkMspmJe8LuzSwm4+frynodTK9tWamExw4abprPPt7bml46gg4E9saWcXlQiYFTRYpqmSCJYUWfCgaUNcs0v1+dcuZs1xbdHaaUbk/+/FQxsAT/fG7egnAmUG2WxohkvuoMUXY4WQJ4+Kg9tS5ne/qtVKoQprVnijNGb4couul3CRHFr83/vZ3NrCbE6HSy94CE0H9yMCLmF+DVq5JN1Z9X99kGin7uY9HbXOy/9GEbw36rTqMuy6sVZf+t+0pc39hp5IBuBVdW6DgF6ZVW2RJeScywUjckjUg4f0YL+UEP4uVk8gPeBHsA3pNANS3hxjLaNTWvHByI9Phbtt6nKSfaC47qm8zudTBRUwLMoaJQ4P0fXH1l010JINnfUD4NNdfD8cdu3f61dmGJyf31OzjBScUslW+p67DTpHh8ZVnM0ZHtWpUAsQcYO12NzDPJ7A7aoe8G40hDVgHcb3RG92dcMErBTiHuYcAzJXewUYQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(396003)(376002)(366004)(346002)(7416002)(76116006)(54906003)(38070700005)(52536014)(44832011)(5660300002)(316002)(45080400002)(66556008)(41300700001)(64756008)(110136005)(4326008)(86362001)(6506007)(8676002)(66476007)(9686003)(122000001)(33656002)(2906002)(66946007)(26005)(8936002)(66446008)(7696005)(55016003)(83380400001)(186003)(38100700002)(478600001)(966005)(71200400001)(32563001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wV+59e2TirHWB9kwHDvMxvu8u1Vj48t+PSrkudEMB6JFFpe0B+VzfOMHNwSW?=
- =?us-ascii?Q?B9fAljJ7ytNWc+Vra+EckP5Ospv3Z1oHPnNOvJ3Hk3ckH7aAI9laOQJLYHfA?=
- =?us-ascii?Q?kwEUdBVmYs98A3h+BgyXxLK88rDRwoojZ3TtWsKwKTScz/33uEed0xgeJ9Cf?=
- =?us-ascii?Q?ZH45ZUY6bMI6mfMZyKVwyN+oijYgwkL4fGg4WJlyAVRZ22DhfdqbUCn3uS5W?=
- =?us-ascii?Q?UhFwkGWzMI0rX465/a2EtFJzpvBWoJNWjE1NQm53V170zqJp91nqwW//4vdh?=
- =?us-ascii?Q?yK6IvSA3Od+nhcb64WDrCUHRbXhFwxNw3KqyOIf0tYRROem1a8gdZw6aj1F+?=
- =?us-ascii?Q?wurjHZQ+qULpZXw+14SmsRx2hFkRXUOihvyK8TymDuocyC8JBUUCkO/oDqSd?=
- =?us-ascii?Q?ytd4fnPQGmwTESKX4v5mxm481Vio5YbxknDSqUF1pQImZpxNeL2Z6p0Nok4l?=
- =?us-ascii?Q?JzEMTx1JL7TOtWdz/T5VK7lh6xprs5nDAlEt6hV/5hqVX7JDqvJDxIuTod8f?=
- =?us-ascii?Q?t5y1WDFthxWKVUydA3rBoq6AIrVyoeVvfUEazM401hlCbaSkuoTt01TRBfkZ?=
- =?us-ascii?Q?vJYUNLu4wBEt+qIzq16xywCNDoBEN/RI35BRjjVOiYoFnOoyBa8v2MlOERfa?=
- =?us-ascii?Q?zxKKx+lIjqDYIqCty7hohNBGJ0Y9exX+0pmiJNS5FI6n+Ki4YD1TSNbjKHHp?=
- =?us-ascii?Q?rFm3vANuXroMx+xAF4MdXSc5rVbAK9liMLqFz3yGp9IlXnsmEpYPovSi/vfc?=
- =?us-ascii?Q?ubJr+SxUuD7OOW7XmVpsvW7eoYGyqOfEWkVnN8Ng5bYiZGUlzU3nEitoU/xg?=
- =?us-ascii?Q?SGhbKgGweedBmD3LuW11mTfZ9FQi7KFPiqWBmwPbkEP/+5oyL+e6TNorDiYP?=
- =?us-ascii?Q?QriB8Q4mN1Qy7S8z8rER0NC38FCmhqYaSTCvjiKqZrgbvxvlCZ8x7myK7vM0?=
- =?us-ascii?Q?gD3RT5da3ae6s8AM0vrehtY5z1cC+INRUKjYXMf5DxwX/N0aRqLRuUcl8MoV?=
- =?us-ascii?Q?Qq8jy4kVlYGDh9dQD/10zrSETxuA+ct+oVMKNlSFVL2JvgAgUq5U8wxgLv9w?=
- =?us-ascii?Q?3ijYa5rh06sE3QnXouudmU4Ik4bvDpUw4BfClQGStUNLDMMbShupQLRI/WQq?=
- =?us-ascii?Q?FFio8BjTrFKZMFXVCJJSe1DZ/DmnCcyl6oRxupJw45pVY2X61zIsXX0MDVlt?=
- =?us-ascii?Q?U0mQh4kYzcU5bcyT65GemSihL6hzutJ+cnJCyRrK3Myr2fvfyG3Px9x3FWDt?=
- =?us-ascii?Q?dN0JVW/lLQ3Nl8Y41vYRFTqYDRXqfphgGpJZMkjTJbzDYrIjKEaLq0H/4v4G?=
- =?us-ascii?Q?5Gjh2UCZpAAxK4LBK+2W73TlxKByuZy8wQ/Lj3PkLj7RPUtZRI0nl304yj8H?=
- =?us-ascii?Q?E4kquIMXRqpRuikiJHg9NzvxXYzzus0PpLBPLjBcu0EUoi04d/uJnjuKamWE?=
- =?us-ascii?Q?gN0YYyg9XoI18+OSohvTJycVsj7iz1z5D+2P37EmjSt5fEMkWcjVfF4WNQLw?=
- =?us-ascii?Q?k6Tr8MOrnYlR6fRhDtjHdHq8z5OOouLB+Pj88lWy81+UUbWY1DqynGIRPsI7?=
- =?us-ascii?Q?21p6dyj1o0MaBuTR5S0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S234054AbiHPJuW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 05:50:22 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF758923E6
+        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 02:24:23 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id C378D3200313;
+        Tue, 16 Aug 2022 05:24:21 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 16 Aug 2022 05:24:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1660641861; x=1660728261; bh=FwCBT5Fgpt
+        Gj3xxsZlIIWiFvTEbC510MOIzrzIcORbw=; b=nPCJM8Y+fw0hAcuiTW27f/ELI+
+        JCzzuvGUM7fENI2NvauO7aGB6ePiTLJD04jdJI7uSgWXxzOj/fuodW+L+kEVASNc
+        eVbYdb/gWiM1D0JhXnhy8lwP+7KctHCii1SGVbNUfPd+OiPw00lkEauk9l5FrW7p
+        /SoMvFeC9YOkDb1R7BKWHCB6bg4uC1C+cWDZolGOQHFJJHeQHBFztSttnwe/6egV
+        p9dImLHQISxpiT5yOivvWEhFMAatfSSxno1a3rl1dge5pNyInlw4/MMIm+T2pAw5
+        zPwVGtJh9/ehnt1jWfYEs3+tM1AxqwueFv5dku3udjUDmhVVNdb0msBw+gxQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1660641861; x=1660728261; bh=FwCBT5FgptGj3xxsZlIIWiFvTEbC
+        510MOIzrzIcORbw=; b=t0Xoc7mk/NyPyWfDNbGQTlVZryeCbNP0+DnsB5jtZM80
+        Rn8aRKmDMYUTJI/FmC9OpsMeBD82NTT2OMLGLUc4qmZg+ytS3a7uwT/mEP0jKLMq
+        AsUF6hfs/xTfAN3aaoiXInLLDWT88n5OrCxrXGzsxwF/TzjzXgy83twPZHWFrluf
+        GtabqV2Ll73L4Q8vnQFbZLV0/AwnREMwvt75k8TUocFKfaYWXcx0D8Li3Y4uY13F
+        0A6QvodsE4cMQNJ4AZE3rAZeAuYOLg4btifWOzQtXs+Wdqo7i2xxi8elcDEqskzk
+        kw3spRaU+z8hut9IjpCnflSQCOoJHqCM/PCHX8OaxA==
+X-ME-Sender: <xms:Q2L7YimhIRZS4ijLG1_4hTs7f7YgsbIJN4mZTFUTCp6Z7WKrMwlrOA>
+    <xme:Q2L7Yp2Q3gqnovMq13HetNihj-y5nIwivt1utx1q-9sipaIWOGkN0xYygFBXXcCJu
+    cQLnZBefy8Hz-Q3IAo>
+X-ME-Received: <xmr:Q2L7Ygr5zASRNKTc8pIIlSsqqt18zseC9UHNlw1q5_fWSaAG9Md83xrsiLk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehgedgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:Q2L7YmlxILlOgDe7p6zq5Cq_kpi4KDczDgemSSDUrfMuwgxObM6Mog>
+    <xmx:Q2L7Yg1kxM9POvfh6j_1aRPJxDdWO8jRAKyVC7ggijgGaa_qHeAEhA>
+    <xmx:Q2L7YtvjZOsLxSIILqY0Oy7NzxgYvNDD--XGF6aJGa2ITakKk-r86g>
+    <xmx:RWL7Ymy-yCKJ7Z6v7eOEZnWJoc643G9mw1ks2emJWWLMhvUQSEPyEw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Aug 2022 05:24:19 -0400 (EDT)
+Date:   Tue, 16 Aug 2022 11:24:16 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     linux-clk@vger.kernel.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH v8 13/25] clk: Set req_rate on reparenting
+Message-ID: <20220816092416.uofjed254rvrb4tn@houat>
+References: <20220815154147.1631441-1-maxime@cerno.tech>
+ <20220815154147.1631441-14-maxime@cerno.tech>
+ <3660057.R56niFO833@steina-w>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 472caf3e-a2fe-4151-5289-08da7f56d10e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2022 07:13:27.7482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4CQ8dgiBFC3kXC1pHRs67hX5wUfT98Lz0olEdDjy2xPZVs6i94tFI0HJh0MKRCLbnXpXQt7yUj2k0YbnP3zWtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5547
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2vetoogtpfj447oa"
+Content-Disposition: inline
+In-Reply-To: <3660057.R56niFO833@steina-w>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sascha,
 
-> Subject: Re: [PATCH 1/2] dt-bindings: clock: imx8m: introduce fsl,protect=
-ed-
-> clocks property
->=20
-> Hi Peng,
->=20
-> On Mon, Aug 15, 2022 at 11:36:31AM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > i.MX8M Linux run on top of Jailhouse hypervisor, the root cell Linux
-> > should not disable clocks used by inmate. This would also benifit AMP
-> > to avoid Linux disable clocks used by Cortex-M4/M7.
-> >
-> > So introduce fsl,protected-clocks for above case.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > index 458c7645ee68..0ec490ff9a09 100644
-> > --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> > @@ -39,6 +39,10 @@ properties:
-> >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/i=
-mx8m-
-> clock.h
-> >        for the full list of i.MX8M clock IDs.
-> >
-> > +  fsl,protected-clocks:
-> > +    description: List of the Protected clock.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
->=20
-> There already is a generic protected-clocks property described in
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgithu
-> b.com%2Fdevicetree-org%2Fdt-
-> schema%2Fblob%2F0d1b78cd0c3d9a3d523ced17d7da64b03f6c18ea%2Fdtsc
-> hema%2Fschemas%2Fclock%2Fclock.yaml%23L131&amp;data=3D05%7C01%7
-> Cpeng.fan%40nxp.com%7C5dbc72639c9147765af208da7ec63315%7C686ea
-> 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637961686968811809%7CUn
-> known%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI
-> 6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=3DD%2BfJA5h
-> wblaX8VH%2BdQoN0pEFmCipfZHHf0ZVo07B4kg%3D&amp;reserved=3D0
-> We probably shouldn't add a property with the same name but different
-> meaning.
->=20
+--2vetoogtpfj447oa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for sharing the info. I should check the common bindings before
-cook this patchset.
+Hi Alexander,
 
-> I am not sure if we want to go the route of a fsl specific property, it l=
-ooks
-> like other SoCs could have similar problems and it might be worth solving
-> this problem with a broader view.
+On Tue, Aug 16, 2022 at 10:30:47AM +0200, Alexander Stein wrote:
+> Hello Maxime,
 >=20
-
-I see qcom just drop the clock entries before registering the clocks. But t=
-o
-i.MX8M, it is not feasible to drop those clocks, unless check the
-protected-clocks property before registering every clock. This is odd.
-
-So here I just wanna let i.MX8M clk driver prepare enable the clocks listed
-in protected-clocks property to avoid linux disable those clocks.
-> Anyway, please add a description to the binding what this property actual=
-ly
-> does.
-I will switch to use the common bindings.
-
-Thanks,
-Peng.
+> Am Montag, 15. August 2022, 17:41:35 CEST schrieb Maxime Ripard:
+> > If a non-rate clock started by default with a parent that never
+> > registered, core->req_rate will be 0. The expectation is that whenever
+> > the parent will be registered, req_rate will be updated with the new
+> > value that has just been computed.
+> >=20
+> > However, if that clock is a mux, clk_set_parent() can also make that
+> > clock no longer orphan. In this case however, we never update req_rate.
+> > Let's make sure it's the case for the newly unorphan clock and all its
+> > children.
 >=20
-> Sascha
+> This works with my basic board DT, but adding an I2C attached audio codec=
+=20
+> (sound/soc/codecs/tlv320aic32x4-clk.c) I get the following error:
+> > BUG: sleeping function called from invalid context at
+> > kernel/locking/mutex.c:283 in_atomic(): 1, irqs_disabled(): 128, non_bl=
+ock:
+> > 0, pid: 217, name: kworker/u8:6 preempt_count: 1, expected: 0
+> > RCU nest depth: 0, expected: 0
+> > CPU: 3 PID: 217 Comm: kworker/u8:6 Not tainted 6.0.0-rc1-next-20220816+=
+ #521
+> > ac6fe0b093ec56bf12af4f3eda948091742739aa Hardware name: TQ-Systems
+> > i.MX8MPlus TQMa8MPxL on MBa8MPxL (DT)
+> > Workqueue: events_unbound deferred_probe_work_func
+> >=20
+> > Call trace:
+> >  dump_backtrace+0xd4/0x114
+> >  show_stack+0x14/0x4c
+> >  dump_stack_lvl+0x64/0x7c
+> >  dump_stack+0x14/0x2c
+> >  __might_resched+0x124/0x154
+> >  __might_sleep+0x58/0xcc
+> >  mutex_lock+0x20/0x70
+> >  regmap_lock_mutex+0xc/0x1c
+> >  regmap_read+0x38/0x70
+> >  clk_aic32x4_div_recalc_rate+0x34/0x70 [snd_soc_tlv320aic32x4
+> >  4f2256fee3bc49277632fba80c047a2b8a3ad122] clk_recalc+0x44/0xe0
+> >  clk_core_update_orphan_child_rates+0x28/0x60
+> >  clk_core_update_orphan_child_rates+0x48/0x60
+> >  clk_core_update_orphan_child_rates+0x48/0x60
+> >  clk_core_update_orphan_child_rates+0x48/0x60
+> >  clk_core_update_orphan_child_rates+0x48/0x60
+> >  clk_reparent+0xa4/0x14c
+> >  __clk_set_parent_before+0x40/0xa0
+> >  clk_core_set_parent_nolock+0x11c/0x27c
+> >  clk_set_parent+0x3c/0x140
+> >  __set_clk_parents+0x114/0x244
+> >  of_clk_set_defaults+0x20/0x50
+> >  platform_probe+0x38/0x100
+> >  call_driver_probe+0x28/0x140
+> >  really_probe+0xc0/0x334
+> >  __driver_probe_device+0x84/0x144
+> >  driver_probe_device+0x38/0x130
+> >  __device_attach_driver+0xc8/0x17c
+> >  bus_for_each_drv+0x74/0xc4
+> >  __device_attach+0xa8/0x204
+> >  device_initial_probe+0x10/0x1c
+> >  bus_probe_device+0x90/0xa0
+> >  deferred_probe_work_func+0x9c/0xf0
+> >  process_one_work+0x1d0/0x330
+> >  worker_thread+0x68/0x390
+> >  kthread+0xf4/0xfc
+> >  ret_from_fork+0x10/0x20
 >=20
-> --
-> Pengutronix e.K.                           |                             =
-|
-> Steuerwalder Str. 21                       |
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.
-> pengutronix.de%2F&amp;data=3D05%7C01%7Cpeng.fan%40nxp.com%7C5dbc
-> 72639c9147765af208da7ec63315%7C686ea1d3bc2b4c6fa92cd99c5c301635
-> %7C0%7C0%7C637961686968811809%7CUnknown%7CTWFpbGZsb3d8eyJW
-> IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7
-> C3000%7C%7C%7C&amp;sdata=3D7UqyWwDDhaze2qZJ%2FknZ6Am7Y%2Bs%
-> 2Fbpyv9SITJHgsZPw%3D&amp;reserved=3D0  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+> The audio codec driver provides clocks as well which can't be used in ato=
+mic=20
+> contexts.
+
+So, this is due to clk_reparent() being called with enable_lock taken in
+__clk_set_parent_before(), and enable_lock is a spinlock.
+
+The other call sites of clk_reparent() are __clk_set_parent(), that
+takes that lock too, and clk_core_reparent() that doesn't.
+
+__clk_set_parent() is used exclusively by clk_core_set_parent_nolock()
+and has the assumption that only the prepare_lock (mutex) is taken.
+
+clk_core_reparent() is used exclusively by clk_hw_reparent(), which is
+then used by four drivers (clk-stm32mp1.c, stm32/clk-stm32-core.c,
+clk/tegra/clk-tegra124-emc.c and tegra/clk-tegra210-emc.c)
+
+All but tegra124 use clk_hw_reparent() in their set_parent
+implementation. The set_parent hook is called in __clk_set_parent() and
+clk_change_rate(), both times without the enable_lock taken.
+
+tegra210 has it in its set_rate implementation, called only by
+clk_change_rate(), without the enable_lock taken too.
+
+So I think that if we move the call to
+clk_core_update_orphan_child_rates() to the clk_reparent() call sites,
+after the enable_lock has been released if it was taken, we should be
+safe.
+
+Could you test the following patch?
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5bdfd645f1dc..453e2ff10961 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1941,7 +1941,6 @@ static void clk_reparent(struct clk_core *core, struc=
+t clk_core *new_parent)
+ 	}
+
+ 	core->parent =3D new_parent;
+-	clk_core_update_orphan_child_rates(core);
+ }
+
+ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+@@ -1987,6 +1986,8 @@ static struct clk_core *__clk_set_parent_before(struc=
+t clk_core *core,
+ 	clk_reparent(core, parent);
+ 	clk_enable_unlock(flags);
+
++	clk_core_update_orphan_child_rates(core);
++
+ 	return old_parent;
+ }
+
+@@ -2031,6 +2032,8 @@ static int __clk_set_parent(struct clk_core *core, st=
+ruct clk_core *parent,
+ 		flags =3D clk_enable_lock();
+ 		clk_reparent(core, old_parent);
+ 		clk_enable_unlock(flags);
++
++		clk_core_update_orphan_child_rates(core);
+ 		__clk_set_parent_after(core, old_parent, parent);
+
+ 		return ret;
+@@ -2654,6 +2657,7 @@ static void clk_core_reparent(struct clk_core *core,
+ 				  struct clk_core *new_parent)
+ {
+ 	clk_reparent(core, new_parent);
++	clk_core_update_orphan_child_rates(core);
+ 	__clk_recalc_accuracies(core);
+ 	__clk_recalc_rates(core, POST_RATE_CHANGE);
+ }
+
+Thanks!
+Maxime
+
+--2vetoogtpfj447oa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYvtiQAAKCRDj7w1vZxhR
+xeROAP9PjDKO1c+xcnBZFQQEpPithXZnPauu9pjrZJdsDqpniAEAoS/Sbw332wYh
+05bfvJAXUcE4xXls5zxkObf+sG/1QQM=
+=5nmP
+-----END PGP SIGNATURE-----
+
+--2vetoogtpfj447oa--
