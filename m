@@ -2,88 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0D3C25B0E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 15:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7B5C25B0E
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Aug 2022 19:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233260AbiHPPF3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Aug 2022 11:05:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42820 "EHLO
+        id S237134AbiHPTdG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Aug 2022 15:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236018AbiHPPFH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 11:05:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0895858526
-        for <linux-clk@vger.kernel.org>; Tue, 16 Aug 2022 08:02:17 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oNy4w-0000Sj-T5; Tue, 16 Aug 2022 17:02:02 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oNy4v-0005Bt-Vv; Tue, 16 Aug 2022 17:02:01 +0200
-Date:   Tue, 16 Aug 2022 17:02:01 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V2] clk: imx: support protected-clocks
-Message-ID: <20220816150201.GS2387@pengutronix.de>
-References: <20220816130327.2987710-1-peng.fan@oss.nxp.com>
+        with ESMTP id S237146AbiHPTdF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2022 15:33:05 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09708876AD;
+        Tue, 16 Aug 2022 12:33:03 -0700 (PDT)
+Received: from notapiano.myfiosgateway.com (unknown [70.107.189.129])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id DCDE3660159A;
+        Tue, 16 Aug 2022 20:33:00 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1660678382;
+        bh=NDZOYYtE7Z7aJgkBinWoKrxMwniorPfp7MHSzfu5Mmk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dZbky2nCHVH0QRnFC1mUdc0o0fJ2I2afS2OKokeQglstEyosRSwGdiHi4l/MQWb1/
+         +LWG8GI8AoA0jfk32bVYxSjDpjw2+oJ/Ze1/4umZwbevfBrui0ftCdVNSsOT3dX3P6
+         TsiUVH1uYkJGi34+30XCMXJ/697KhVR2xA9Of8OqY+ZKGF/obOlfwJczmEZCEzUjXC
+         oHc3LpP0ce1rpJofE+8lKdwy8LrtO8Dqep5fqWeiPLyuaGXb+s7yUAEAv1JP8Py1U7
+         hvOZ5YrWaYPnB5ry7IQgd69LpShv4++oJe7e+RaCbxrs12mN0Im9FsXdeYDfp2clS9
+         cwKHFCRX3wdqg==
+From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     Bo-Chen Chen <rex-bc.chen@mediatek.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [RESEND PATCH v3 0/2] MediaTek Kompanio 1200 MT8195 - DisplayPort clocks fixes
+Date:   Tue, 16 Aug 2022 15:32:54 -0400
+Message-Id: <20220816193257.658487-1-nfraprado@collabora.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220816130327.2987710-1-peng.fan@oss.nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 16:59:46 up 139 days,  3:29, 84 users,  load average: 0.17, 0.13,
- 0.10
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 09:03:27PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> For the clocks listed in protected-clocks, enable them to avoid
-> Linux disable them. This will benifit root Linux and inmate cell run
-> on top of Jailhouse hypervisor, and benifit the other case(
-> A53 Linux run together with M7 RTOS).
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V2:
->  Per Sascha, use common protected-clocks property.
 
-See my mail to v1. I did not request that you should use the
-protected-clocks property:
+This series fixes the two DPINTF clocks to propagate rate change
+requests to their own parent (and also fixes vdo1_dpintf's parent name).
 
-> There were cases when a property first started with a "soc," prefix and
-> later when people realized that it could be useful for other
-> drivers/SoCs as well, the prefix was removed. With that in mind I
-> would expect that a "fsl,protected-clocks" property behaves the same
-> as a "protected-clocks" property without the prefix.
-> 
-> If it doesn't please pick a different name. I didn't want to suggest
-> to just drop the "fsl," prefix and to use the generic property name
-> when the properties have a different meaning.
+This is needed in order to stay clean in the DisplayPort driver and
+avoid adding (now useless) custom handling of clocks reparenting based
+on the wanted final clock rate.
 
-Sascha
+Original v3: https://lore.kernel.org/all/20220617111248.90505-1-angelogioacchino.delregno@collabora.com/
+
+Changes in v3:
+- Fixed tags ordering.
+
+AngeloGioacchino Del Regno (2):
+  clk: mediatek: clk-mt8195-vdo0: Set rate on vdo0_dp_intf0_dp_intf's
+    parent
+  clk: mediatek: clk-mt8195-vdo1: Reparent and set rate on vdo1_dpintf's
+    parent
+
+ drivers/clk/mediatek/clk-mt8195-vdo0.c | 7 ++++++-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c | 6 +++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.37.1
+
