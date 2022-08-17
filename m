@@ -2,197 +2,223 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6926CC2BB41
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Aug 2022 19:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F30DC25B08
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Aug 2022 20:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233741AbiHQTfe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Aug 2022 15:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
+        id S241517AbiHQUYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Aug 2022 16:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241283AbiHQTfO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Aug 2022 15:35:14 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC097A405F;
-        Wed, 17 Aug 2022 12:34:23 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id jm11so10603557plb.13;
-        Wed, 17 Aug 2022 12:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=jmv+2JiArmh2uqWeGwCuCSChHG+U1IB821gw+BfUF7s=;
-        b=oWFeTwHq9oNo9te/RcgQE9tjTWmaSX1Itf7Hj+bMq1927VxdB0NZ3uFpj8NAlPcnWY
-         /XwDolWN4VmlreJ/XbhimiP0ljZMG7LyvNs6MAR0NybxCR8OCdE7eUeKAKeCWgQcfqsk
-         ljWSfHNe10mpPP0+F3cZr2P8zVo119V2AwlM2C6HFXEqDKq6cwlnpxQDVFsA4Ziayp95
-         l1kzQPW/EnW+IVDLHs/s2iXVMnKQSmunklKoc//3s2U382NBUzr+jL3/3Ybs7FuLrtqq
-         fgL8Mos3onsuU+nphS2Na8dkQyYw29RPasoeV0Ml66PQs3zKDxwmReCkf3iVuoVaITRd
-         VAMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=jmv+2JiArmh2uqWeGwCuCSChHG+U1IB821gw+BfUF7s=;
-        b=TUf8KYsH+BBx3M6nFvn2TUe3uSdaOFN2VRoNnh4diiCydcT2co3X0573d7Yxattk9c
-         sYDnv1noDtlggUrIVRhIsxuIJM5/8FPVjlQ15Rs+Py2va4csHd+h4YukXvqgpyozQSPP
-         21lGCUSClWW1qgAApbgO5Y3EiESC9sFrPN89GE09HfbD7FcNk/9McNeSKiamfxo1UId/
-         ocivKOU7QMmwZkI8bAp3/qjsBhg+o4HwDzWP7uVk5eTbL/C5FKuJizfBR7+LEzrc6II5
-         TtwUtM0bbpaj4E5U0bOYm32JmHrjtxuHnYPgJMs2Xvud8PybVS653R1M+jW7U+vpX217
-         WEiA==
-X-Gm-Message-State: ACgBeo3Q+2WubWYXhhIrN6MOLkrKadSbaDZiskHY03DjRXjpX57z447A
-        fIlFDH0AQaKZHaM/87ba0Y8=
-X-Google-Smtp-Source: AA6agR6TBtrFUcFOKMxzJCHDAYaFnbYYaCLDZweebRQ7bglpTPZnFFxIQqy8RI8oUEdE5aAsGQSHhQ==
-X-Received: by 2002:a17:902:788f:b0:170:8b18:8812 with SMTP id q15-20020a170902788f00b001708b188812mr27556461pll.1.1660764863206;
-        Wed, 17 Aug 2022 12:34:23 -0700 (PDT)
-Received: from [172.30.1.52] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id a3-20020aa79703000000b0052d4cb47339sm10819078pfg.151.2022.08.17.12.34.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Aug 2022 12:34:22 -0700 (PDT)
-Message-ID: <bd60a27e-1a47-1f8f-4664-9310aff79344@gmail.com>
-Date:   Thu, 18 Aug 2022 04:34:16 +0900
+        with ESMTP id S241216AbiHQUYi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Aug 2022 16:24:38 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DE746613B;
+        Wed, 17 Aug 2022 13:24:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1660767877; x=1692303877;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IIOssEjqoV4OTzY2YH29W6lbg95l6doUvPncIkn+X60=;
+  b=ime8ws5+moZwlEtYbyCZR2zFl5GwXMDKYZQb/9bwK0eshsv/HswIyMmt
+   K0v2lizQSSb76qVRSMAze0m/5i+OGm/7Mu1+GgAvsW/NCJ73qQFrdM1wv
+   ORADtK7ql85vDFJxTKPh7GcHqAivi6A00xsml92yBHcHyN/uXlLfGY1kQ
+   r07YwlKyuOOEoyPNSk8xn4K5QSs57kDFkytpZZ5rXevL4pmfviPgB0a6Y
+   LYLIj/n3oPTJ2R6ji08NH4iXxbcFwW3iPdNXd0fk5uf2pfp7rgEJlVNVd
+   HkrxI90C/bHHSiml8BH0BtYTwKkJ0Ow2eK+TAhl75ySKfxtvqTLPdfYGd
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10442"; a="275648382"
+X-IronPort-AV: E=Sophos;i="5.93,244,1654585200"; 
+   d="scan'208";a="275648382"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2022 13:24:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,244,1654585200"; 
+   d="scan'208";a="583913548"
+Received: from lkp-server02.sh.intel.com (HELO 81d7e1ade3ba) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 17 Aug 2022 13:24:34 -0700
+Received: from kbuild by 81d7e1ade3ba with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oOPab-0001JS-2L;
+        Wed, 17 Aug 2022 20:24:33 +0000
+Date:   Thu, 18 Aug 2022 04:23:45 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Qin Jian <qinjian@cqplus1.com>
+Subject: Re: [PATCH] clk: Add Sunplus SP7021 clock driver
+Message-ID: <202208180400.EvwdX195-lkp@intel.com>
+References: <20220817070113.415971-1-qinjian@cqplus1.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 3/9] dt-bindings: clock: Add bindings for Exynos850
- CMU_MFCMSCL
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220809113323.29965-1-semen.protsenko@linaro.org>
- <20220809113323.29965-4-semen.protsenko@linaro.org>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <20220809113323.29965-4-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220817070113.415971-1-qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22. 8. 9. 20:33, Sam Protsenko wrote:
-> CMU_MFCMSCL generates MFC, M2M, MCSC and JPEG clocks for BLK_MFCMSCL.
-> Add clock indices and binding documentation for CMU_MFCMSCL.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> Changes in v2:
->   - (none)
-> 
->  .../clock/samsung,exynos850-clock.yaml        | 25 +++++++++++++++
->  include/dt-bindings/clock/exynos850.h         | 32 ++++++++++++++++++-
->  2 files changed, 56 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> index 7f2e0b1c764c..141cf173f87d 100644
-> --- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> @@ -39,6 +39,7 @@ properties:
->        - samsung,exynos850-cmu-dpu
->        - samsung,exynos850-cmu-hsi
->        - samsung,exynos850-cmu-is
-> +      - samsung,exynos850-cmu-mfcmscl
->        - samsung,exynos850-cmu-peri
->  
->    clocks:
-> @@ -216,6 +217,30 @@ allOf:
->              - const: dout_is_vra
->              - const: dout_is_gdc
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos850-cmu-mfcmscl
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +            - description: Multi-Format Codec clock (from CMU_TOP)
-> +            - description: Memory to Memory Scaler clock (from CMU_TOP)
-> +            - description: Multi-Channel Scaler clock (from CMU_TOP)
-> +            - description: JPEG codec clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: dout_mfcmscl_mfc
-> +            - const: dout_mfcmscl_m2m
-> +            - const: dout_mfcmscl_mcsc
-> +            - const: dout_mfcmscl_jpeg
-> +
->    - if:
->        properties:
->          compatible:
-> diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
-> index f8bf26f118c1..88d5289883d3 100644
-> --- a/include/dt-bindings/clock/exynos850.h
-> +++ b/include/dt-bindings/clock/exynos850.h
-> @@ -73,7 +73,19 @@
->  #define CLK_DOUT_IS_ITP			61
->  #define CLK_DOUT_IS_VRA			62
->  #define CLK_DOUT_IS_GDC			63
-> -#define TOP_NR_CLK			64
-> +#define CLK_MOUT_MFCMSCL_MFC		64
-> +#define CLK_MOUT_MFCMSCL_M2M		65
-> +#define CLK_MOUT_MFCMSCL_MCSC		66
-> +#define CLK_MOUT_MFCMSCL_JPEG		67
-> +#define CLK_GOUT_MFCMSCL_MFC		68
-> +#define CLK_GOUT_MFCMSCL_M2M		69
-> +#define CLK_GOUT_MFCMSCL_MCSC		70
-> +#define CLK_GOUT_MFCMSCL_JPEG		71
-> +#define CLK_DOUT_MFCMSCL_MFC		72
-> +#define CLK_DOUT_MFCMSCL_M2M		73
-> +#define CLK_DOUT_MFCMSCL_MCSC		74
-> +#define CLK_DOUT_MFCMSCL_JPEG		75
-> +#define TOP_NR_CLK			76
->  
->  /* CMU_APM */
->  #define CLK_RCO_I3C_PMIC		1
-> @@ -225,6 +237,24 @@
->  #define CLK_GOUT_IS_SYSREG_PCLK		23
->  #define IS_NR_CLK			24
->  
-> +/* CMU_MFCMSCL */
-> +#define CLK_MOUT_MFCMSCL_MFC_USER		1
-> +#define CLK_MOUT_MFCMSCL_M2M_USER		2
-> +#define CLK_MOUT_MFCMSCL_MCSC_USER		3
-> +#define CLK_MOUT_MFCMSCL_JPEG_USER		4
-> +#define CLK_DOUT_MFCMSCL_BUSP			5
-> +#define CLK_GOUT_MFCMSCL_CMU_MFCMSCL_PCLK	6
-> +#define CLK_GOUT_MFCMSCL_TZPC_PCLK		7
-> +#define CLK_GOUT_MFCMSCL_JPEG_ACLK		8
-> +#define CLK_GOUT_MFCMSCL_M2M_ACLK		9
-> +#define CLK_GOUT_MFCMSCL_MCSC_CLK		10
-> +#define CLK_GOUT_MFCMSCL_MFC_ACLK		11
-> +#define CLK_GOUT_MFCMSCL_PPMU_ACLK		12
-> +#define CLK_GOUT_MFCMSCL_PPMU_PCLK		13
-> +#define CLK_GOUT_MFCMSCL_SYSMMU_CLK		14
-> +#define CLK_GOUT_MFCMSCL_SYSREG_PCLK		15
-> +#define MFCMSCL_NR_CLK				16
-> +
->  /* CMU_PERI */
->  #define CLK_MOUT_PERI_BUS_USER		1
->  #define CLK_MOUT_PERI_UART_USER		2
+Hi Qin,
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on 568035b01cfb107af8d2e4bd2fb9aea22cf5b868]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Qin-Jian/clk-Add-Sunplus-SP7021-clock-driver/20220817-151010
+base:   568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+config: arm-randconfig-r013-20220818 (https://download.01.org/0day-ci/archive/20220818/202208180400.EvwdX195-lkp@intel.com/config)
+compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project aed5e3bea138ce581d682158eb61c27b3cfdd6ec)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
+        # https://github.com/intel-lab-lkp/linux/commit/5673230d6a56d6c37b8db18d202c0ef526f52b2e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Qin-Jian/clk-Add-Sunplus-SP7021-clock-driver/20220817-151010
+        git checkout 5673230d6a56d6c37b8db18d202c0ef526f52b2e
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/clk-sp7021.c:317:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+           r0 |= HWM_FIELD_PREP(MASK_SEL_FRA, clk->p[SEL_FRA]);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-sp7021.c:44:15: note: expanded from macro 'HWM_FIELD_PREP'
+           (_m << 16) | FIELD_PREP(_m, value);     \
+                        ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
+                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
+                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/compiler_types.h:354:22: note: expanded from macro 'compiletime_assert'
+           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:342:23: note: expanded from macro '_compiletime_assert'
+           __compiletime_assert(condition, msg, prefix, suffix)
+           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:334:9: note: expanded from macro '__compiletime_assert'
+                   if (!(condition))                                       \
+                         ^~~~~~~~~
+   drivers/clk/clk-sp7021.c:318:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+           r0 |= HWM_FIELD_PREP(MASK_SDM_MOD, clk->p[SDM_MOD]);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-sp7021.c:44:15: note: expanded from macro 'HWM_FIELD_PREP'
+           (_m << 16) | FIELD_PREP(_m, value);     \
+                        ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
+                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
+                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/compiler_types.h:354:22: note: expanded from macro 'compiletime_assert'
+           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:342:23: note: expanded from macro '_compiletime_assert'
+           __compiletime_assert(condition, msg, prefix, suffix)
+           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:334:9: note: expanded from macro '__compiletime_assert'
+                   if (!(condition))                                       \
+                         ^~~~~~~~~
+   drivers/clk/clk-sp7021.c:319:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+           r0 |= HWM_FIELD_PREP(MASK_PH_SEL, clk->p[PH_SEL]);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-sp7021.c:44:15: note: expanded from macro 'HWM_FIELD_PREP'
+           (_m << 16) | FIELD_PREP(_m, value);     \
+                        ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
+                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
+                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/compiler_types.h:354:22: note: expanded from macro 'compiletime_assert'
+           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:342:23: note: expanded from macro '_compiletime_assert'
+           __compiletime_assert(condition, msg, prefix, suffix)
+           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:334:9: note: expanded from macro '__compiletime_assert'
+                   if (!(condition))                                       \
+                         ^~~~~~~~~
+   drivers/clk/clk-sp7021.c:320:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+           r0 |= HWM_FIELD_PREP(MASK_NFRA, clk->p[NFRA]);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-sp7021.c:44:15: note: expanded from macro 'HWM_FIELD_PREP'
+           (_m << 16) | FIELD_PREP(_m, value);     \
+                        ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
+                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
+                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/compiler_types.h:354:22: note: expanded from macro 'compiletime_assert'
+           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:342:23: note: expanded from macro '_compiletime_assert'
+           __compiletime_assert(condition, msg, prefix, suffix)
+           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:334:9: note: expanded from macro '__compiletime_assert'
+                   if (!(condition))                                       \
+                         ^~~~~~~~~
+   drivers/clk/clk-sp7021.c:322:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+           r1  = HWM_FIELD_PREP(MASK_DIVR, clk->p[DIVR]);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-sp7021.c:44:15: note: expanded from macro 'HWM_FIELD_PREP'
+           (_m << 16) | FIELD_PREP(_m, value);     \
+                        ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
+                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
+                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+
+
+vim +317 drivers/clk/clk-sp7021.c
+
+   310	
+   311	static int plltv_set_rate(struct sp_pll *clk)
+   312	{
+   313		unsigned long flags;
+   314		u32 r0, r1, r2;
+   315	
+   316		r0  = BIT(clk->bp_bit + 16);
+ > 317		r0 |= HWM_FIELD_PREP(MASK_SEL_FRA, clk->p[SEL_FRA]);
+   318		r0 |= HWM_FIELD_PREP(MASK_SDM_MOD, clk->p[SDM_MOD]);
+   319		r0 |= HWM_FIELD_PREP(MASK_PH_SEL, clk->p[PH_SEL]);
+   320		r0 |= HWM_FIELD_PREP(MASK_NFRA, clk->p[NFRA]);
+   321	
+   322		r1  = HWM_FIELD_PREP(MASK_DIVR, clk->p[DIVR]);
+   323	
+   324		r2  = HWM_FIELD_PREP(MASK_DIVN, clk->p[DIVN] - 1);
+   325		r2 |= HWM_FIELD_PREP(MASK_DIVM, clk->p[DIVM] - 1);
+   326	
+   327		spin_lock_irqsave(&clk->lock, flags);
+   328		writel(r0, clk->reg);
+   329		writel(r1, clk->reg + 4);
+   330		writel(r2, clk->reg + 8);
+   331		spin_unlock_irqrestore(&clk->lock, flags);
+   332	
+   333		return 0;
+   334	}
+   335	
 
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+0-DAY CI Kernel Test Service
+https://01.org/lkp
