@@ -2,101 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91345C3F6B0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 21:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876B5C25B0E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 21:30:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346306AbiHRVAz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Aug 2022 17:00:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35890 "EHLO
+        id S239255AbiHRVat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Aug 2022 17:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346197AbiHRVAK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 17:00:10 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11FDD34E1
-        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2022 14:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=SHA4hd2cUXkZXhzTqpB70Kl4pAm
-        N1KSped5g6UY1HzY=; b=nKpiY4GLvo6KjLX5QPQS9eSYs1un+yVlj9nJLig/9aS
-        NpFaXuVLkhumLzrZ/BOz2LUNRwfQvIIRuwotxMWpDc3D4fbWH28+jDTiAvhbITja
-        JP4IZ4QX7gemh6P33Q39mq9Gx4mHsOfHATHi0uRd5t+x8/1nSR54eLqmGQzQ/3eg
-        =
-Received: (qmail 3959590 invoked from network); 18 Aug 2022 23:00:01 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Aug 2022 23:00:01 +0200
-X-UD-Smtp-Session: l3s3148p1@m4TNQ4rm2bkucref
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] clk: move from strlcpy with unused retval to strscpy
-Date:   Thu, 18 Aug 2022 23:00:00 +0200
-Message-Id: <20220818210000.6600-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S1347168AbiHRVab (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 17:30:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF9BB8F12;
+        Thu, 18 Aug 2022 14:29:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 316176168E;
+        Thu, 18 Aug 2022 21:29:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC43C433D6;
+        Thu, 18 Aug 2022 21:29:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660858153;
+        bh=FipX6TVhrxxHlLkeH5ciwQ7iKPbNA0jvMsmy8hdNRVs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=NXopHnykGh+XHvpPSsAr1PicYgKojNMOjbNGWZ2RLkbOutAOlwZlGtBHjKiDClZ/h
+         mFdGpx625eZyQcJ7gtko3p0RysfP8L8LHRcAeKpwCXoV8gNlYblZq0tyYC/DEc9sEe
+         ApZedc47hAVg4FG/QM00AaJpXnrLOsgN+q2cbNQgVOPpXDE9/RCA10cCWzqLXUqiBX
+         AyXijggm84IOZPXK+wloH42vbZL/uMhbqnSiKEsL2p65FJhp8eTc+9O2umwqgSitm0
+         W0sGhKd/LNZyJ+dmbUfi9mzd33atwR6qbTy60Yl/5agGESK5MPCs/ekf/3Mrfer0eU
+         5FR7MMDmo65ww==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220818124132.125304-11-jagan@edgeble.ai>
+References: <20220818124132.125304-1-jagan@edgeble.ai> <20220818124132.125304-11-jagan@edgeble.ai>
+Subject: Re: [PATCH v3 10/19] dt-bindings: clock: rockchip: Document RV1126 CRU
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Jagan Teki <jagan@edgeble.ai>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Heiko Stuebner <heiko@sntech.de>, Jagan Teki <jagan@edgeble.ai>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 18 Aug 2022 14:29:11 -0700
+User-Agent: alot/0.10
+Message-Id: <20220818212913.7FC43C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Follow the advice of the below link and prefer 'strscpy' in this
-subsystem. Conversion is 1:1 because the return value is not used.
-Generated by a coccinelle script.
+Quoting Jagan Teki (2022-08-18 05:41:23)
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: xin24m
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon managing the "general register files" (GRF),
+> +      if missing pll rates are not changeable, due to the missing pll
+> +      lock status.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
 
-Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/clkdev.c             | 2 +-
- drivers/clk/mvebu/dove-divider.c | 2 +-
- drivers/clk/tegra/clk-bpmp.c     | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Why aren't clocks required?
 
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 67f601a41023..a4d4bd3f5be5 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -165,7 +165,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
- 
- 	cla->cl.clk_hw = hw;
- 	if (con_id) {
--		strlcpy(cla->con_id, con_id, sizeof(cla->con_id));
-+		strscpy(cla->con_id, con_id, sizeof(cla->con_id));
- 		cla->cl.con_id = cla->con_id;
- 	}
- 
-diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
-index 7e35c891e168..0a90452ee808 100644
---- a/drivers/clk/mvebu/dove-divider.c
-+++ b/drivers/clk/mvebu/dove-divider.c
-@@ -170,7 +170,7 @@ static struct clk *clk_register_dove_divider(struct device *dev,
- 		.num_parents = num_parents,
- 	};
- 
--	strlcpy(name, dc->name, sizeof(name));
-+	strscpy(name, dc->name, sizeof(name));
- 
- 	dc->hw.init = &init;
- 	dc->base = base;
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index 3748a39dae7c..d82a71f10c2c 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -349,7 +349,7 @@ static int tegra_bpmp_clk_get_info(struct tegra_bpmp *bpmp, unsigned int id,
- 	if (err < 0)
- 		return err;
- 
--	strlcpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
-+	strscpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
- 	info->num_parents = response.num_parents;
- 
- 	for (i = 0; i < info->num_parents; i++)
--- 
-2.35.1
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    cru: clock-controller@ff490000 {
+> +      compatible =3D "rockchip,rv1126-cru";
+> +      reg =3D <0xff490000 0x1000>;
+> +      rockchip,grf =3D <&grf>;
+> +      #clock-cells =3D <1>;
+> +      #reset-cells =3D <1>;
 
+Can you add 'clocks' property to the binding?
