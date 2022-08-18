@@ -2,91 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876B5C25B0E
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 21:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE815C00140
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 22:06:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239255AbiHRVat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Aug 2022 17:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40658 "EHLO
+        id S243965AbiHRWGe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Aug 2022 18:06:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347168AbiHRVab (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 17:30:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF9BB8F12;
-        Thu, 18 Aug 2022 14:29:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 316176168E;
-        Thu, 18 Aug 2022 21:29:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC43C433D6;
-        Thu, 18 Aug 2022 21:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660858153;
-        bh=FipX6TVhrxxHlLkeH5ciwQ7iKPbNA0jvMsmy8hdNRVs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NXopHnykGh+XHvpPSsAr1PicYgKojNMOjbNGWZ2RLkbOutAOlwZlGtBHjKiDClZ/h
-         mFdGpx625eZyQcJ7gtko3p0RysfP8L8LHRcAeKpwCXoV8gNlYblZq0tyYC/DEc9sEe
-         ApZedc47hAVg4FG/QM00AaJpXnrLOsgN+q2cbNQgVOPpXDE9/RCA10cCWzqLXUqiBX
-         AyXijggm84IOZPXK+wloH42vbZL/uMhbqnSiKEsL2p65FJhp8eTc+9O2umwqgSitm0
-         W0sGhKd/LNZyJ+dmbUfi9mzd33atwR6qbTy60Yl/5agGESK5MPCs/ekf/3Mrfer0eU
-         5FR7MMDmo65ww==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232990AbiHRWGd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 18:06:33 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396ABD21F7;
+        Thu, 18 Aug 2022 15:06:32 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id w19so5670395ejc.7;
+        Thu, 18 Aug 2022 15:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=JCTh8kG/kYdyoUHtyXB+jjX01mOnfuolr7Ild9fizAg=;
+        b=Elp+bln4oYJ2TL8Kz11eRwuDXELrurfYX7F96HcVgoDhNrih84Wi1fwB5zaEPrordD
+         UP1Blce+6zK/CiMXxfzsnNOEelFQuLC2uLO7v0btgAW614L1OTem1BW8lvPVfanvWKL7
+         fFeyj7k1uobaoghg+g0CHxn2vLI4CWqcXRxaruzE/L2QrxzaffSxSwgfZF4HBxnXXIcE
+         l89PNc9mbU8jA8XFk7qBnIO8C0LRoY9U6RfPzFCtuqesZdEswP90weWEmz/xTs1k+3+0
+         Uyq+Gzka5gO0s6bxUSdMOPYVcz+BOxgMJ+pttNBJ4XYifLOJQ4z0UgcqA7KYegBK1j7k
+         lozw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=JCTh8kG/kYdyoUHtyXB+jjX01mOnfuolr7Ild9fizAg=;
+        b=CpVQyuwPVCeb5mdbHyFAT3V4kTH68YdswM+5g/BG0mIxQ4zuBpi092ju26AtjOrDuV
+         lvcZbXwXSWh0Wmqusux2uC6aYRFr8cNH+aLMtc86SeppHxJcB5pIQRr23sYVRN/eZrI1
+         qwQ7okKcwx1WwVHlDLxLr6WN1VxVUfFhST4k4BUY1ugjSa1GF/s9ASgHawOAdzUWzk3B
+         blwhwD1jjJmyEagZOfF5WtLJb1hVOx4GlHyrI0vbMBM32Awi9AVrUJrhITe4LOjaOphM
+         Dm3pmwDc04tYfB2WC82wKoAUTbKfaBN4tYv2VHjpe1k6u1o2gprot2ElzjXRVMGk0/kq
+         H7MA==
+X-Gm-Message-State: ACgBeo3WYqo8KfglYXSMQfJBCDjC19csaU0jkqYck9bBYQ7aHmulHRYA
+        cwttXi0vlf64Glq4/8mRMrE=
+X-Google-Smtp-Source: AA6agR4xImEt3gc0hR6OSGR8kI9kikSTupIwRDS50TI7JIiPFifM6tDC+Iykx66rN2W8OEDh6lfH9w==
+X-Received: by 2002:a17:907:608b:b0:731:8a9d:5a2d with SMTP id ht11-20020a170907608b00b007318a9d5a2dmr3104711ejc.443.1660860390741;
+        Thu, 18 Aug 2022 15:06:30 -0700 (PDT)
+Received: from fedora.robimarko.hr (cpe-94-253-165-74.zg.cable.xnet.hr. [94.253.165.74])
+        by smtp.googlemail.com with ESMTPSA id dk5-20020a0564021d8500b00442d5054a51sm1851584edb.87.2022.08.18.15.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Aug 2022 15:06:30 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sivaprak@codeaurora.org,
+        dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Robert Marko <robimarko@gmail.com>
+Subject: [PATCH v3 1/9] clk: qcom: clk-rcg2: add rcg2 mux ops
+Date:   Fri, 19 Aug 2022 00:06:20 +0200
+Message-Id: <20220818220628.339366-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220818124132.125304-11-jagan@edgeble.ai>
-References: <20220818124132.125304-1-jagan@edgeble.ai> <20220818124132.125304-11-jagan@edgeble.ai>
-Subject: Re: [PATCH v3 10/19] dt-bindings: clock: rockchip: Document RV1126 CRU
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        Jagan Teki <jagan@edgeble.ai>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Heiko Stuebner <heiko@sntech.de>, Jagan Teki <jagan@edgeble.ai>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 18 Aug 2022 14:29:11 -0700
-User-Agent: alot/0.10
-Message-Id: <20220818212913.7FC43C433D6@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jagan Teki (2022-08-18 05:41:23)
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: xin24m
-> +
-> +  rockchip,grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the syscon managing the "general register files" (GRF),
-> +      if missing pll rates are not changeable, due to the missing pll
-> +      lock status.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +  - "#reset-cells"
+From: Christian Marangi <ansuelsmth@gmail.com>
 
-Why aren't clocks required?
+An RCG may act as a mux that switch between 2 parents.
+This is the case on IPQ6018 and IPQ8074 where the APCS core clk that feeds
+the CPU cluster clock just switches between XO and the PLL that feeds it.
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    cru: clock-controller@ff490000 {
-> +      compatible =3D "rockchip,rv1126-cru";
-> +      reg =3D <0xff490000 0x1000>;
-> +      rockchip,grf =3D <&grf>;
-> +      #clock-cells =3D <1>;
-> +      #reset-cells =3D <1>;
+Add the required ops to add support for this special configuration and use
+the generic mux function to determine the rate.
 
-Can you add 'clocks' property to the binding?
+This way we dont have to keep a essentially dummy frequency table to use
+RCG2 as a mux.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/clk-rcg.h  | 1 +
+ drivers/clk/qcom/clk-rcg2.c | 7 +++++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 012e745794fd..01581f4d2c39 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -167,6 +167,7 @@ struct clk_rcg2_gfx3d {
+ 
+ extern const struct clk_ops clk_rcg2_ops;
+ extern const struct clk_ops clk_rcg2_floor_ops;
++extern const struct clk_ops clk_rcg2_mux_closest_ops;
+ extern const struct clk_ops clk_edp_pixel_ops;
+ extern const struct clk_ops clk_byte_ops;
+ extern const struct clk_ops clk_byte2_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 28019edd2a50..609c10f8d0d9 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -509,6 +509,13 @@ const struct clk_ops clk_rcg2_floor_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
+ 
++const struct clk_ops clk_rcg2_mux_closest_ops = {
++	.determine_rate = __clk_mux_determine_rate_closest,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_mux_closest_ops);
++
+ struct frac_entry {
+ 	int num;
+ 	int den;
+-- 
+2.37.2
+
