@@ -2,115 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5880EC25B0E
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 04:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B221C00140
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 06:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242756AbiHRERx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Aug 2022 00:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46606 "EHLO
+        id S243711AbiHRGoR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Aug 2022 02:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243171AbiHRERh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 00:17:37 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5922A7228;
-        Wed, 17 Aug 2022 21:17:31 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27I4C0hD003644;
-        Thu, 18 Aug 2022 04:17:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=H31UzLEojwM3wgQfVzmfwrfB8cyUdcUtpJwyaBqUfKs=;
- b=gtEmTYGpGlLJI5tlY91wfouuqeSIX+bYqu/PtmpZLn6mylhzYgVFmhxxn8u9/7N0GyU8
- TqJ+cP71Av+KI2+F4pi+0VhoKDtbTj28slALS/EEeIHOsb6ATPhlElTBFYehaKSiEhGM
- sq5G3M+rigMfkg05NapCu7e3lckUJ86PD647S/xci+P1oACxUYDrjK8WNwK0Byh8LcVC
- YcX2rkpLTCgE8vgHq//dYtv3UxR/PnM0/kB40yTI7YQK7uzLkiOIT2zOG7IcJcYXvWx9
- svvF+udhW8twtggIodFPocpnmqtgNtBRvOXoZ6vH/X2Bn3SndN+7+y/VhOoSPZVkDZsf wg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j13v1j9tn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Aug 2022 04:17:22 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27I4HI1S018163
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Aug 2022 04:17:21 GMT
-Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 17 Aug 2022 07:58:14 -0700
-From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
-To:     freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Stephen Boyd" <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     Douglas Anderson <dianders@chromium.org>,
-        <krzysztof.kozlowski@linaro.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/5] clk/qcom: Support gdsc collapse polling using 'reset' inteface
-Date:   Wed, 17 Aug 2022 20:27:49 +0530
-Message-ID: <1660748274-39239-1-git-send-email-quic_akhilpo@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S239017AbiHRGoQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 02:44:16 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF514CA2D
+        for <linux-clk@vger.kernel.org>; Wed, 17 Aug 2022 23:44:15 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id gb36so1475622ejc.10
+        for <linux-clk@vger.kernel.org>; Wed, 17 Aug 2022 23:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=3ZYCwILBte/HmI9Y2M6IrznEqjJ+qtgLVppYIES6VKI=;
+        b=Z5KrGE9ZGvzyeBtkPtdSzP2kWXJWn+Fk6Y/M97kQxumDXYm2A2N46esyw383HZa5Oz
+         xoR9dubRSVEPFFtCTESQVC2+5HXvCpVMUNBGepS+A2CqRtcd1LmBZhVcHR9C/zrr6vja
+         AW8/TJrooJHvepb9HMGA0cPaVk32vTwGkulZ5CLOzhgsC/ft0wC/IbU+xZmJbcvuUBKY
+         XxIN2+hfWkqkN7KxYWFKBD5nD9bI4IAsoP2IJpCAaEdY+tipp/WCtny184kWdzakl87B
+         mnf8HzVZAVrZlhnCNQQ+4HpCa/Dj11ySfM98wGqmIpa5AOzKM1AsLRakcvYo/vNBcMId
+         T9Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=3ZYCwILBte/HmI9Y2M6IrznEqjJ+qtgLVppYIES6VKI=;
+        b=1CbeYp0VW0cYxp15TcofGuithWr3yzNY4feSfLF7tAcrhvhOI/uaAhkZHf/1L5RAa5
+         eo/P/5HzJom7HRE75J4uJJpkqKAiqwrZGlwp1rtO+nmF3jTX2MC9J/4/ENz2MpPoBwo2
+         Wgj4src4LtHxH+1QDtFbKoreG92BbSHYAJd8J/nB2oBA1qidnpklx/kADy/6XhTOBtEX
+         N+xBTvJ31cPXJaS+SDLceQXxizUR1V+7dWT7h3wTOGDHhX6oGbkkIqgs0qEYoqryi604
+         6Gy2tgHLnXeEQRFDl09q44iqcBOhe+tKHaA712fvDCdpszwM4KdEPNQKJBBuLIRpI+hG
+         QZxQ==
+X-Gm-Message-State: ACgBeo3XioHLX1CFyH9Ejh3i5Pv0wp+AqK/8URqdQs22RpFdcXf0mICS
+        giaru4VamSO95psH1ARP9zFlwQVw1ZCH/WjTDA3DDg==
+X-Google-Smtp-Source: AA6agR71dG3YPa2aBpepiTfQBorxFxGTMigyL8gRH/3d6cZQkt3DeR8ki41bHX5gybk82DAYpT0T5grAiOGf2LwLBww=
+X-Received: by 2002:a17:907:b590:b0:730:9e4c:3d5f with SMTP id
+ qx16-20020a170907b59000b007309e4c3d5fmr999403ejc.169.1660805053381; Wed, 17
+ Aug 2022 23:44:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3P1GUtWu8JPrHUcEyEHZk5UsUB0eEMhe
-X-Proofpoint-ORIG-GUID: 3P1GUtWu8JPrHUcEyEHZk5UsUB0eEMhe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-18_02,2022-08-16_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxscore=0 clxscore=1015 malwarescore=0 mlxlogscore=674 bulkscore=0
- phishscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208180014
+References: <20220816112530.1837489-1-maxime@cerno.tech>
+In-Reply-To: <20220816112530.1837489-1-maxime@cerno.tech>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 18 Aug 2022 12:14:01 +0530
+Message-ID: <CA+G9fYsPK8HXHqudSyrOAYsSavenqcgDJMAeXKAH=sF7rO23-Q@mail.gmail.com>
+Subject: Re: [PATCH v9 00/25] clk: More clock rate fixes and tests
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 16 Aug 2022 at 16:55, Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> Hi,
+>
+> Thanks to the feedback I got on the previous series, I found and fixed a
+> number of bugs in the clock framework and how it deals with rates,
+> especially when it comes to orphan clocks.
+>
+> In order to make sure this doesn't pop up again as a regression, I've
+> extended the number of tests.
+>
+> The first patch reintroduces the clk_set_rate_range call on clk_put, but
+> this time will only do so if there was a range set on that clock to
+> begin with. It should be less intrusive, and reduce the number of
+> potential side effects considerably.
+>
+> We then have a fix for the qcom rcg2 issue that has been reported
+> recently.
+>
+> All the other patches should be probably be flagged as fixes, but
+> they've never seem to have shown any real-world issues until now, and
+> they aren't all really trivial to backport either, so I'm not sure it's
+> worth it.
+>
+> There's also some documentation improvements for recalc_rate and
+> clk_get_rate to hopefully make the documentation less ambiguous and
+> acknowledge that recalc_rate() returning 0 on error is fine.
+>
+> Let me know what you think,
+> Maxime
+>
+> Changes from v8:
+>   - Fixed a regression when probing a clock driver backed by a device accessed
+>     through a bus that might sleep
+>
+> Changes from v7:
+>   - Dropped the RPi fixes
+>   - Rebased on 6.0-rc1
+>
+> Changes from v6:
+>   - Fixed a kernel build bot warning
+>
+> Changes from v5:
+>   - Rebased on current next (next-20220711)
+>   - Dropped clk_get_rate_range, and used a custom function instead
+>   - Switched all tests to use clk_hw_get_clk() instead of struct clk_hw->clk
+>   - Removed some intermediate variables
+>   - Added some comments
+>   - Dropped clk_get_parent() changes
+>   - Dropped test on clk_hw pointer non-NULL in clk_hw_get_name
+>   - Made clk_has_parent more const
+>
+> Changes from v4:
+>   - Fix build breakage on SAM9x60
+>
+> Changes from v3:
+>   - constness warning fix in clk_core_forward_rate_req
+>
+> Changes from v2:
+>   - Rebased on top of current next
+>   - Fixed locking issue in clk_get_rate_range
+>
+> Changes from v1:
+>   - Rebased on top of next-20220428
+>   - Dropped the patch to prevent non-orphan clocks from registering if
+>     their recalc_rate hook returns 0
+>   - Added some patches to clarify the clk_get_rate and recalc_rate
+>     documentation
+>   - Dropped the patch to skip the range setup on an orphan clock that
+>     was introducing a regression on RaspberryPi3 when a monitor wasn't
+>     connected at boot
+>   - Added a patch to skip the rate clamping in clk_round_rate() when
+>     min_rate == max_rate == 0
+>   - Added a new set of functions to query the clk boundaries and fix a
+>     regression with the RaspberryPi4
+>   - Fixed all the drivers hand-crafting their clk_rate_request
+>   - Reworded the test suite descriptions
+>   - Reordered a few patches to ease the review
+>   - Reworded some commit logs to better explain the issues they address
+>   - Collected the Tested-by of Alexander and Marek
+>   - More tests
+>
+> Maxime Ripard (25):
+>   clk: test: Switch to clk_hw_get_clk
+>   clk: Drop the rate range on clk_put()
+>   clk: Skip clamping when rounding if there's no boundaries
+>   clk: Mention that .recalc_rate can return 0 on error
+>   clk: Clarify clk_get_rate() expectations
+>   clk: tests: Add test suites description
+>   clk: tests: Add reference to the orphan mux bug report
+>   clk: tests: Add tests for uncached clock
+>   clk: tests: Add tests for single parent mux
+>   clk: tests: Add tests for mux with multiple parents
+>   clk: tests: Add some tests for orphan with multiple parents
+>   clk: Take into account uncached clocks in clk_set_rate_range()
+>   clk: Set req_rate on reparenting
+>   clk: Change clk_core_init_rate_req prototype
+>   clk: Move clk_core_init_rate_req() from clk_core_round_rate_nolock()
+>     to its caller
+>   clk: Introduce clk_hw_init_rate_request()
+>   clk: Add our request boundaries in clk_core_init_rate_req
+>   clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock
+>   clk: Introduce clk_core_has_parent()
+>   clk: Constify clk_has_parent()
+>   clk: Stop forwarding clk_rate_requests to the parent
+>   clk: Zero the clk_rate_request structure
+>   clk: Introduce the clk_hw_get_rate_range function
+>   clk: qcom: clk-rcg2: Take clock boundaries into consideration for
+>     gfx3d
+>   clk: tests: Add missing test case for ranges
+>
+>  drivers/clk/at91/clk-generated.c  |    5 +-
+>  drivers/clk/at91/clk-master.c     |    9 +-
+>  drivers/clk/at91/clk-peripheral.c |    4 +-
+>  drivers/clk/clk-composite.c       |    6 +-
+>  drivers/clk/clk-divider.c         |   20 +-
+>  drivers/clk/clk.c                 |  288 ++++--
+>  drivers/clk/clk_test.c            | 1413 ++++++++++++++++++++++++++++-
+>  drivers/clk/qcom/clk-rcg2.c       |    9 +
+>  include/linux/clk-provider.h      |   18 +-
+>  include/linux/clk.h               |    2 +-
+>  10 files changed, 1665 insertions(+), 109 deletions(-)
 
-Some clients like adreno gpu driver would like to ensure that its gdsc
-is collapsed at hardware during a gpu reset sequence. This is because it
-has a votable gdsc which could be ON due to a vote from another subsystem
-like tz, hyp etc or due to an internal hardware signal. To allow
-this, gpucc driver can expose an interface to the client driver using
-reset framework. Using this the client driver can trigger a polling within
-the gdsc driver.
+I have done build testing, boot testing and LTP syscalls testing on
+arm64 devices Rpi4 and db410c all test pass.
 
-This series is rebased on top of linus's master branch.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-Related discussion: https://patchwork.freedesktop.org/patch/493144/
+Build link:
+https://builds.tuxbuild.com/2DUDJVgnEeotDGSNrcOuFswbTRm/
 
-Changes in v2:
-- Return error when a particular custom reset op is not implemented. (Dmitry)
+Test runs links:
+https://lkft.validation.linaro.org/scheduler/job/5402030
+https://lkft.validation.linaro.org/scheduler/job/5402031
 
-Akhil P Oommen (5):
-  dt-bindings: clk: qcom: Support gpu cx gdsc reset
-  clk: qcom: Allow custom reset ops
-  clk: qcom: gdsc: Add a reset op to poll gdsc collapse
-  clk: qcom: gpucc-sc7280: Add cx collapse reset support
-  arm64: dts: qcom: sc7280: Add Reset support for gpu
-
- arch/arm64/boot/dts/qcom/sc7280.dtsi          |  3 +++
- drivers/clk/qcom/gdsc.c                       | 23 +++++++++++++++++++----
- drivers/clk/qcom/gdsc.h                       |  7 +++++++
- drivers/clk/qcom/gpucc-sc7280.c               | 10 ++++++++++
- drivers/clk/qcom/reset.c                      | 27 +++++++++++++++++++++++++++
- drivers/clk/qcom/reset.h                      |  8 ++++++++
- include/dt-bindings/clock/qcom,gpucc-sc7280.h |  3 +++
- 7 files changed, 77 insertions(+), 4 deletions(-)
-
--- 
-2.7.4
-
+- Naresh
