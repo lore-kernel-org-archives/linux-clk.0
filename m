@@ -2,62 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65675C32772
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 08:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E80FC32772
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Aug 2022 08:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239095AbiHRIQg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Aug 2022 04:16:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52434 "EHLO
+        id S241486AbiHRIbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Aug 2022 04:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232816AbiHRIQd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 04:16:33 -0400
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D544786F0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2022 01:16:32 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 1CA9F22F81; Thu, 18 Aug 2022 08:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1660810591; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=ZewrFvLOtzwui8l1mTduA82OqD+yQEfH/weM1TUuKV1oOi4zgJMSgins/MjzZeHKO
-         ckqLML05OOJqbQtnffFpUG3s3TUjikc7DFDmlQFlkeOyk6pF0yO8VRfwFWnxv4TQDl
-         /H60zVwrdblve93VeffUTuimgJemL36l3nAMKaiLLjfMNvVDFDNlWhRIVbW2+nEE/F
-         pGHKkmdxyJgkDB0eJCidazjVHPmpuqH1d+J2qiGJM6WTVLhgrYSEc9RoXnd89YsFEb
-         xcqepV8fJEyoJwO2f9ye2ft2HHaOUbNXPaeZ2AA/nH8rsiwlZd4gyMSUOXIenkUhdQ
-         54CycpRL8ZOhw==
-Received: by mail.fadrush.pl for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2022 08:16:20 GMT
-Message-ID: <20220818064500-0.1.13.58pk.0.939gx8pgr2@fadrush.pl>
-Date:   Thu, 18 Aug 2022 08:16:20 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        with ESMTP id S240361AbiHRIbm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2022 04:31:42 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D0D8E442
+        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2022 01:31:41 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id l1so697246lfk.8
+        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2022 01:31:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=+AYPEavLhHjc8NjLvs2dPmTNTkd/CClCaa85BTp1bjY=;
+        b=STFobP21Yf2PS4rMrkrrI1sUpvSs479ohgcZAloOUX2+29lmRpHvnoKRozLgY8Ad4Q
+         aiWmAQbPCyFB18jyBhZs/wvxpouI7EfXvY9QWLqMilE33HTFMFEwmvjMWS5dEj2Veu8T
+         PhCSZVEijtHF0t3bMsBPGBmMbm5631aFxu+Kov7KCEo5LCI39jgo9Nsw6jOWCqAYCZVR
+         140b0tmSgLrB1BClwsCeVREqpChu1a883q80Fg+91UPcYTDbtGqW7bf03ANXbtgFl1vV
+         hc8EPuYMOCVWmyJObWXiqaWZyI+ObhZXSk5L7bf2EVy4hptRFSCq8NmvJDrZ6vqi6jOh
+         qoXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=+AYPEavLhHjc8NjLvs2dPmTNTkd/CClCaa85BTp1bjY=;
+        b=vSy0OF5OdI6+ha/bFRiJ5dW3fyF0rpMYu+QN3vy9plqqrn7jHipY4vpb/9QRPc83tk
+         gpsoi8O7xQe/v8Z9W0bJjrV0AoIBuHNl5RBcVRAnRWv/wd0uFRtG+4ZkjUuaCO/M2FVl
+         6Z5wM3IbQqSuSnPpAZic8x4kmLvNNcYxbIxp73SKA67NptEZwfvn7E09TP7vUCUFS2TC
+         FohanwZfm4AClk7L3wDEoHsYlNKwatkInMXRQnP+Pu0p2RmS11Mq88HfY0Gq8HAff4Qg
+         cl0tscVohEG1MI3lKCfBMnXKHXNBVS9rRUoI6i3tVsngKjmdEnpEWHx6vKr3MkzZYt0s
+         1V2A==
+X-Gm-Message-State: ACgBeo3bnD/ZzdP4BFfDypI5+z/ptdWpkZIQJCvdlNwaVtDeyQTEJWDN
+        BS9A9UHR6EFJjrFlr817Z6OXQg==
+X-Google-Smtp-Source: AA6agR5X7kpcMjGLMeLZIEZPXs6j4sMZGb7uMlfWVX7VavZBdDerNtf9zWUanDu7lBUtNOuVQzN/iA==
+X-Received: by 2002:a05:6512:118a:b0:492:a32d:3678 with SMTP id g10-20020a056512118a00b00492a32d3678mr575248lfr.259.1660811499593;
+        Thu, 18 Aug 2022 01:31:39 -0700 (PDT)
+Received: from ?IPV6:2001:14bb:ae:539c:53ab:2635:d4f2:d6d5? (d15l54z9nf469l8226z-4.rev.dnainternet.fi. [2001:14bb:ae:539c:53ab:2635:d4f2:d6d5])
+        by smtp.gmail.com with ESMTPSA id e24-20020a2e9e18000000b0025e48907929sm134615ljk.23.2022.08.18.01.31.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Aug 2022 01:31:39 -0700 (PDT)
+Message-ID: <6741e694-1400-bf76-b0f2-67a42c43edd0@linaro.org>
+Date:   Thu, 18 Aug 2022 11:31:37 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 1/5] dt-bindings: mfd: atmel,sama5d2-flexcom: Add SPI
+ child node ref binding
+Content-Language: en-US
+To:     Sergiu Moga <sergiu.moga@microchip.com>, lee@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com, radu_nicolae.pirea@upb.ro,
+        richard.genoud@gmail.com, mturquette@baylibre.com,
+        sboyd@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        admin@hifiphile.com, kavyasree.kotagiri@microchip.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20220817075517.49575-1-sergiu.moga@microchip.com>
+ <20220817075517.49575-2-sergiu.moga@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220817075517.49575-2-sergiu.moga@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 17/08/2022 10:55, Sergiu Moga wrote:
+> Another functionality of FLEXCOM is that of SPI. In order for
+> the proper validation of the SPI children nodes through the binding
+> to occur, the proper binding for SPI must be referenced.
+> 
+> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+> ---
+>  .../devicetree/bindings/mfd/atmel,sama5d2-flexcom.yaml       | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/atmel,sama5d2-flexcom.yaml b/Documentation/devicetree/bindings/mfd/atmel,sama5d2-flexcom.yaml
+> index 568da7cb630c..e158af47c326 100644
+> --- a/Documentation/devicetree/bindings/mfd/atmel,sama5d2-flexcom.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/atmel,sama5d2-flexcom.yaml
+> @@ -78,10 +78,9 @@ patternProperties:
+>        of USART bindings.
+>  
+>    "^spi@[0-9a-f]+$":
+> -    type: object
+> +    $ref: ../spi/atmel,at91rm9200-spi.yaml
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
+Full schemas path, so:
 
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
-
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
-
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
+/schemas/spi/atmel....
 
 
-Pozdrawiam
-Jakub Olejniczak
+Best regards,
+Krzysztof
