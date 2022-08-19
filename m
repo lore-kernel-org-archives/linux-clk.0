@@ -2,115 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC959C32771
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 14:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4612C28B2B
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 17:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349558AbiHSOfS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Aug 2022 10:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42218 "EHLO
+        id S1352856AbiHSRWk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Aug 2022 13:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349548AbiHSOfR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 10:35:17 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363A4EC4CC
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 07:35:16 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id z6so6364254lfu.9
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 07:35:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=SeHZ27XNszROnXvDUYzNdYyTiRb4BIM2jQzW5MqSyEc=;
-        b=fbb2z35hagDVu/Vg+G7F5H05F7hWxuAt0ZwmlDzFzuM4i1aO4sFlU2Y00/zuyo7/5T
-         8FlxQNdqmf3CE1KeZC3pwOhWFEibAmKmjH+OF9IkzzlGmMVM2bLySkK0Jyjz+90FiV4R
-         db6WpvpkhZxEFJb2lhcNXg10wOC1Yg6bv+kseazCF2v3BFGbeoJDa5GEL17uqf5zHoVV
-         WJFEt1ZOzRgc/MAQDMj72DDJc5KYg9GUStNnZwVF2dAdnNX6Vg/8VDTK16kSO+l5kBl3
-         zSPhOzBx7G3NlCNRMTUmOOPxL++gXO14fdgr/yxsuQBLSTaOUrq/8Sr38zi8/kFOCdO3
-         jCoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=SeHZ27XNszROnXvDUYzNdYyTiRb4BIM2jQzW5MqSyEc=;
-        b=N/r8vuSvwzLNKxK2Ftcxi99sqsScQMs45QzmNRBP2CBnxEOsPQRf/g/ZbpsqnhL9hf
-         HQ1jXuDiu/8jxdpPO+847hFgO9z6omkvNbPZRxkW/cZo9xPUqT4+bTZak479RcQLGr3z
-         lOQ+6FylgYm9XDk3PviAD7T4hDd4KS50jQwhEHIJaBQ3LPZnXZW9oQYmQ5dHTDWWMGF1
-         RsteQfmB2C28Uo6PoDdO1OsLPp8sHgAtXERVzAbucJSRI1Ba7jL5uDs89vqWGTtvu5CK
-         a1U/TZ+IwRdJTmyOo5jLk7eyiBa5ErMfsGlUFPFHE+rltyw+1/Y5yFYAz+/a1bcJVezp
-         dj0w==
-X-Gm-Message-State: ACgBeo3Nj+oRLD4pQvuEJyNth7kZs9qJn7CYwqbkAKabpGz5048CmtCT
-        uGVQCyIKYx31pBjNlyV6fALfcA==
-X-Google-Smtp-Source: AA6agR7Zi6Ib+jSmmdNrH2FE8pP3qnIypeXUxNqJmIpV/7jD9ZnC1uDf4dVnk9URUxLDS2lqc7BDHA==
-X-Received: by 2002:a05:6512:1193:b0:492:7e33:870 with SMTP id g19-20020a056512119300b004927e330870mr2642782lfr.37.1660919714599;
-        Fri, 19 Aug 2022 07:35:14 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5? (d1xw6v77xrs23np8r6z-4.rev.dnainternet.fi. [2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5])
-        by smtp.gmail.com with ESMTPSA id s25-20020a05651c049900b00261c241d4a1sm35245ljc.59.2022.08.19.07.35.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Aug 2022 07:35:14 -0700 (PDT)
-Message-ID: <200e3faf-e377-9fab-7cb2-bbea07be00cf@linaro.org>
-Date:   Fri, 19 Aug 2022 17:35:12 +0300
+        with ESMTP id S1350349AbiHSRWY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 13:22:24 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 033FF125D64;
+        Fri, 19 Aug 2022 09:41:30 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27JGbWfu015591;
+        Fri, 19 Aug 2022 16:41:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=y5Wja1p/9P93G5DwYgWzDk04yKR4AAF3vxxCF5pAYHk=;
+ b=eypOYiGvXzYToLFBNqywWBW6arNUa1KxS4AGcuk61cNYzRe9JYEQSzNDcXXxoeEIB9Qk
+ CuKaFoKFa7dM04YNggEqt6g5krjam0kIHjEISgjluXiIXKOKXupFAmdEHsMYJVCG9I/s
+ a8KI0G2/+kLMtGp5YIeetO7l6hyBVkb9zYyAUKJTIz4VOIpMynPLMul2svJO18n0anMQ
+ dtNSZejgBeu0p9p0uquwV4n7Ca8wa4PmnCALBSbZNQicbCduwA5tUNLGrQgSqfl3V04k
+ WnIrp7iM13MG+skOFZo1NXsoc+qF2VHOo7IZ31RRLbaBqUvOQ5S4iHd2DOdWL0YP1/wg RA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j253khnw7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Aug 2022 16:41:09 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27JGf80d019026
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Aug 2022 16:41:08 GMT
+Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 19 Aug 2022 09:41:02 -0700
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+To:     freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Stephen Boyd" <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        <krzysztof.kozlowski@linaro.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/6] dt-bindings: clk: qcom: Support gpu cx gdsc reset
+Date:   Fri, 19 Aug 2022 22:10:40 +0530
+Message-ID: <20220819221017.v4.1.I68b749219741db01356a42d782f74265d29a2ac3@changeid>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1660927246-11327-1-git-send-email-quic_akhilpo@quicinc.com>
+References: <1660927246-11327-1-git-send-email-quic_akhilpo@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 6/6] riscv: dts: microchip: add the mpfs' fabric clock
- control
-Content-Language: en-US
-To:     Conor.Dooley@microchip.com, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
-        Daire.McNamara@microchip.com
-Cc:     paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20220819122259.183600-1-conor.dooley@microchip.com>
- <20220819122259.183600-7-conor.dooley@microchip.com>
- <3df8d4bd-3d38-cecd-6589-ccc1be01b886@linaro.org>
- <3ffba600-bda9-8ffa-a435-9a6f94e072b8@microchip.com>
- <f3d8be5c-737b-8c71-9926-a4036c797769@linaro.org>
- <19ca2ca1-c678-c669-4214-e92416e37191@microchip.com>
- <138af26e-8e36-63a0-d3a0-5af866318839@linaro.org>
- <f8496006-7487-7b7e-1a53-ec38492dfe70@microchip.com>
- <4e12e8c3-2170-eaab-d910-f674bcc93f79@linaro.org>
- <560e80df-4819-1062-50ee-eb1d1d19bae1@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <560e80df-4819-1062-50ee-eb1d1d19bae1@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LVkLCeiR2WLM30mcQLPzfbtOasrKZVDS
+X-Proofpoint-ORIG-GUID: LVkLCeiR2WLM30mcQLPzfbtOasrKZVDS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-19_08,2022-08-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 phishscore=0 spamscore=0 impostorscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208190060
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/08/2022 17:32, Conor.Dooley@microchip.com wrote:
->> The clock names should not really matter, so if you have conflict of
->> names among multiple controllers, I think driver should embed unit
->> address in the name (as fallback of clock-output-name) and the binding
->> should not enforce specific pattern.
-> 
-> Not sure if you just passed over it, but I agree:
->>> Truncated base address I suppose would be a meaningful thing
->>> to fall back to afterwards.
+Add necessary definitions in gpucc bindings to ensure gpu cx gdsc collapse
+through 'reset' framework for SC7280.
 
-Yeah, indeed, you mentioned it.
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
 
-> 
-> But if the names aren't an ABI, then either there's not much point in
-> having the regex at all for clock-output-names or failing the check for
-> it does not matter. I'll have a think over the weekend about what
-> exactly to do, but I think the driver side of this is clear to me now &
-> what not to do in the binding is too.
+(no changes since v1)
 
-Yes.
+ include/dt-bindings/clock/qcom,gpucc-sc7280.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> 
->> I can easily imagine a real hardware board design with
->> "sexy_duck_ccc_pll1_out3" clock names. :)
-> 
-> If Alestorm made a board with our FPGA, I could see that..
-> I'd buy the t-shirt too!
-> 
+diff --git a/include/dt-bindings/clock/qcom,gpucc-sc7280.h b/include/dt-bindings/clock/qcom,gpucc-sc7280.h
+index 669b23b..843a31b 100644
+--- a/include/dt-bindings/clock/qcom,gpucc-sc7280.h
++++ b/include/dt-bindings/clock/qcom,gpucc-sc7280.h
+@@ -32,4 +32,7 @@
+ #define GPU_CC_CX_GDSC				0
+ #define GPU_CC_GX_GDSC				1
+ 
++/* GPU_CC reset IDs */
++#define GPU_CX_COLLAPSE				0
++
+ #endif
+-- 
+2.7.4
 
-
-Best regards,
-Krzysztof
