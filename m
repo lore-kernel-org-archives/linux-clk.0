@@ -2,209 +2,216 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDABC32771
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 12:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A34B2C32771
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 12:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348731AbiHSMGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Aug 2022 08:06:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60310 "EHLO
+        id S1348613AbiHSMVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Aug 2022 08:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348641AbiHSMG2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 08:06:28 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979DE100964
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:06:26 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id z25so5885435lfr.2
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:06:26 -0700 (PDT)
+        with ESMTP id S1348525AbiHSMVa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 08:21:30 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F743100F3D
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:21:29 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id x25so4365021ljm.5
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:21:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=/Sb3w6Y1BeOgZMrIBk6x8kpTOxRss537p36tvRmvnAg=;
-        b=dH9RyMR3lKC/qZOXxXjEafcK7XBKChilHFvq0LsT4iA780RiPQKoXew3aujRndsSfM
-         9WHc33SEm49OFB78kb/hStFA6mKaEQmQlBw0XJ04mfvWdymVok5fsh1xOFJEHLgvgLPm
-         Yp3uOpwElmcoTR2sh6KeSZ/zf/HMZ3YG2IFsWbexZPGa4OtUlAXXQ2uLt+pJ5vFNB9zm
-         bbB9S8SzHl9EIDkvMetWJVwb4LexM/85N+ZGrEXtUv1PipNEw7aTnQEAwi6PSREWjHh6
-         w99N2AtiTCixlxSc8KvbnhCDiUEtlgSqXHjRkqz0qbINVJgGwrblkZwfXu/5VAqYwKFy
-         JmNQ==
+        bh=Nu3VLDUqU+jU9Ulv1RKGhBZJe/ApM+TsuNJuzdtSY+M=;
+        b=icCaSFYl9TTYDLZjSUnfxcI0YMgzci2BRFPyleEvRJdU+T1TBi3QED1EcIV+5EUEF7
+         ZzCByTkLldBb3PcS4W0m4bNFBRWfn++1kIijqJw/O6lJS/IHoam6Hv2LH+bozhv/REGN
+         kTX09folP9hdjbJ0yisTi54ebfxFgeqwgttCYqbkxj4jLdVFv3GYRX2Jzu6mbWdB5+GF
+         vVbZkVsDKDd2G1cslwfnFm17c7APLx6ufQWu+Ei8KHWOyp4mCoTWdV5pvmU5265GnTeX
+         f6wLGlQZQ8IeNOG3Qz86cyJ5WBeRBt3b1RuR2v8ZJ72wA+5FapAMVLBz+tyMN0zYKcRe
+         6XcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=/Sb3w6Y1BeOgZMrIBk6x8kpTOxRss537p36tvRmvnAg=;
-        b=iqT6Dytqt50ZdfuFbMWJZrMCxZPRFuvxi00C3WNp0DVL71ZkZuQ6WfGf/VQ9z/7dSH
-         SFL3ybk4Y8ibGGrT3flZeOcOMxgk98Z29cJjfX7V3UrmiTkR/h42J+ngywe8voUtZ0E4
-         NcV1nFgi5PPhTBi+EKxZjtVHPkiLFj3OAZG7V1ImzRX8Qld022P/bC1GE/V43pfRz+Rq
-         8lE0Uh7Apkd1M6og6nOn/s/VBqEj2x4n4Gyfm98sMfWQRX7vNEyNnJXuogwsIwSvvM0w
-         PvfNf8BCduyla5I/EiK8nubFZdBgHjWwEGGWFtWRTR25rYzEBSfyCFa7Clg2UxUNXs1N
-         UkjQ==
-X-Gm-Message-State: ACgBeo0eQjuF2WT9AcA4WcVaGzizEQWgAm/hRZQ05dDms8FRkE+E44OP
-        ugd6r/oVu0QkxkTEkZGJUO6/FA==
-X-Google-Smtp-Source: AA6agR4UDDM3tfvRJzYG1IzCN1p3rR1zz78x4mZxht+ZjrTuTapl3U/WvyNHyNKsLsCkmdOM4E5jTg==
-X-Received: by 2002:a05:6512:358d:b0:48b:37f:dce2 with SMTP id m13-20020a056512358d00b0048b037fdce2mr2131532lfr.267.1660910784888;
-        Fri, 19 Aug 2022 05:06:24 -0700 (PDT)
+        bh=Nu3VLDUqU+jU9Ulv1RKGhBZJe/ApM+TsuNJuzdtSY+M=;
+        b=cjp7sanFUFLIoNq5AqINConMVaYgx0Sp1enI165Fg5XNyEVOQ8th8NemyhFHlQQw6A
+         XYZo6vZsaPGOWdNnayW5DFQjuCrWrLo00kR907EAT7l4WWlbQUg6y3eRsiasokkcq/3J
+         wECc3uBr9XzGJINF+JsImlkStv9S8u9s4qENe9gFRxuIvHNdI7MFunvAlzP2BqlbaUBY
+         KlTJ5texG7TMEGj3UXnNwyp5v6Z2pcmtu3c5cCizLkqYJFsL0KWXGHHC4WUt9ITkCT1e
+         TJm7WhEzabezb+NdeOtjrr0OCwHxhV5O5eQNldiy19jrmsIYgPr6enOC+CRzgqt8XHZH
+         GY6w==
+X-Gm-Message-State: ACgBeo320+yKMYrUevH6vVLpvNnQIQ/PM6ti077oqi4WhWcjapZbbk9B
+        T20DwJLRs1VClXo8BoVSKhIBAw==
+X-Google-Smtp-Source: AA6agR595KwMfyX0sVhhUEYlgdd7hbmxKDXxniItF7Yjp2Fh/BhRyNo1Zh0kLJkHkh4xFhiOIyc0zQ==
+X-Received: by 2002:a05:651c:516:b0:25f:f52b:3c86 with SMTP id o22-20020a05651c051600b0025ff52b3c86mr2111392ljp.523.1660911687788;
+        Fri, 19 Aug 2022 05:21:27 -0700 (PDT)
 Received: from ?IPV6:2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5? (d1xw6v77xrs23np8r6z-4.rev.dnainternet.fi. [2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5])
-        by smtp.gmail.com with ESMTPSA id u24-20020ac258d8000000b00492cebbeefbsm115021lfo.59.2022.08.19.05.06.23
+        by smtp.gmail.com with ESMTPSA id t20-20020a2e8e74000000b0025e1ec74e25sm595362ljk.43.2022.08.19.05.21.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Aug 2022 05:06:24 -0700 (PDT)
-Message-ID: <0871f3af-cb37-e490-f0b3-88703652b089@linaro.org>
-Date:   Fri, 19 Aug 2022 15:06:22 +0300
+        Fri, 19 Aug 2022 05:21:27 -0700 (PDT)
+Message-ID: <bccd3a79-faa2-e4c5-3783-25ffaea69d00@linaro.org>
+Date:   Fri, 19 Aug 2022 15:21:25 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH 2/5] dt-bindings: mfd: atmel,at91-usart: convert to
- json-schema
+Subject: Re: [PATCH 1/2] dt-bindings: clock: add QCOM SM6115 display clock
+ bindings
 Content-Language: en-US
-To:     Sergiu.Moga@microchip.com, lee@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, Claudiu.Beznea@microchip.com,
-        radu_nicolae.pirea@upb.ro, richard.genoud@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        admin@hifiphile.com, Kavyasree.Kotagiri@microchip.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20220817075517.49575-1-sergiu.moga@microchip.com>
- <20220817075517.49575-3-sergiu.moga@microchip.com>
- <c1a98a3e-609e-7783-b1b7-3bb39caa8c65@linaro.org>
- <ddd8ca9a-1fc1-7d37-07e8-f6f7f4617eef@microchip.com>
+To:     Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220818151850.19917-1-a39.skl@gmail.com>
+ <20220818151850.19917-2-a39.skl@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ddd8ca9a-1fc1-7d37-07e8-f6f7f4617eef@microchip.com>
+In-Reply-To: <20220818151850.19917-2-a39.skl@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/08/2022 12:25, Sergiu.Moga@microchip.com wrote:
-> On 18.08.2022 11:38, Krzysztof Kozlowski wrote:
->> On 17/08/2022 10:55, Sergiu Moga wrote:
->>> Convert at91 USART DT Binding for Atmel/Microchip SoCs to
->>> json-schema format.
->>>
->>> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
->>> ---
->>>   .../bindings/mfd/atmel,at91-usart.yaml        | 190 ++++++++++++++++++
->>>   .../devicetree/bindings/mfd/atmel-usart.txt   |  98 ---------
->>>   2 files changed, 190 insertions(+), 98 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
->>>   delete mode 100644 Documentation/devicetree/bindings/mfd/atmel-usart.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml b/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
->>> new file mode 100644
->>> index 000000000000..cf15d73fa1e8
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
->>> @@ -0,0 +1,190 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +# Copyright (C) 2022 Microchip Technology, Inc. and its subsidiaries
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/mfd/atmel,at91-usart.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Atmel Universal Synchronous Asynchronous Receiver/Transmitter (USART)
->>> +
->>> +maintainers:
->>> +  - Richard Genoud <richard.genoud@gmail.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->> This looks quite different than bindings and you commit msg is saying it
->> is only a conversion. Mention any changes against original bindings.
->>
->>> +      - const: atmel,at91rm9200-usart
->>> +      - const: atmel,at91sam9260-usart
->>> +      - const: microchip,sam9x60-usart
->> That's an enum
->>
->>> +      - items:
->>> +          - const: atmel,at91rm9200-dbgu
->>> +          - const: atmel,at91rm9200-usart
->>> +      - items:
->>> +          - const: atmel,at91sam9260-dbgu
->>> +          - const: atmel,at91sam9260-usart
->>> +      - items:
->>> +          - const: microchip,sam9x60-dbgu
->>> +          - const: microchip,sam9x60-usart
->>> +      - items:
->>> +          - const: microchip,sam9x60-usart
->>> +          - const: atmel,at91sam9260-usart
->> This is not correct - contradicts earlier one.
->>
->>> +      - items:
->>> +          - const: microchip,sam9x60-dbgu
->>> +          - const: microchip,sam9x60-usart
->>> +          - const: atmel,at91sam9260-dbgu
->>> +          - const: atmel,at91sam9260-usart
->> What? You wrote above that microchip,sam9x60-dbgu is compatible only
->> with microchip,sam9x60-usart. Now you write it is also compatible with
->> other ones?
->>
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  clock-names:
->>> +    contains:
->>> +      const: usart
->> No, this has to be specific/fixed list.
->>
->>> +
->>> +  clocks:
->>> +    minItems: 1
->>> +    maxItems: 2
->> Not really - define the items. One item could be optional, though.
->>
->>> +
->>> +  dmas:
->>> +    items:
->>> +      - description: TX DMA Channel
->>> +      - description: RX DMA Channel
->>> +
->>> +  dma-names:
->>> +    items:
->>> +      - const: tx
->>> +      - const: rx
->>> +
->>> +  atmel,usart-mode:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: |
->> No need for |
->>
->>> +      Must be either 1 for SPI or 0 for USART.
->> Mention the header.
->>
->>> +    enum: [ 0, 1 ]
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - interrupts
->>> +  - clock-names
->>> +  - clocks
->>> +
->>> +if:
->> Put it under allOf.
+On 18/08/2022 18:18, Adam Skladowski wrote:
+> Add device tree bindings for display clock controller for
+> Qualcomm Technology Inc's SM6115 SoC.
 > 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  .../bindings/clock/qcom,dispcc-sm6115.yaml    | 88 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,dispcc-sm6115.h    | 36 ++++++++
+>  2 files changed, 124 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm6115.h
 > 
-> I missed this in the first read, but what do you mean by under allOf? 
-> The only allOf's in this file are under the then:'s.
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml
+> new file mode 100644
+> index 000000000000..2b9671112934
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm6115.yaml#
 
-It means that "if:" is preferred to be under allOf, just like example
-schema is showing:
-https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml
+Filename based on compatible, so:
+qcom,sm6115-dispcc.yaml
 
-Not some other allOf, which could be many in your bindings. The one
-allOf in top-level, just like example schema.
+I know it creates irregularity, but that's the naming convention for all.
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Display Clock Controller Binding for SM6115
+> +
+> +maintainers:
+> +  - Taniya Das <tdas@codeaurora.org>
+
+I don't think the email is correct. Please use Bjorn's (and optionally
+you can add yourself if you want to maintain this binding).
+
+> +
+> +description: |
+> +  Qualcomm display clock control module which supports the clocks and
+> +  power domains on SM6115.
+> +
+> +  See also:
+> +    dt-bindings/clock/qcom,dispcc-sm6115.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm6115-dispcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Byte clock from DSI PHY0
+> +      - description: Pixel clock from DSI PHY0
+> +      - description: GPLL0 clock from GCC
+> +      - description: GPLL0 div clock from GCC
+> +      - description: Board sleep clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: dsi0_phy_pll_out_byteclk
+> +      - const: dsi0_phy_pll_out_dsiclk
+> +      - const: gcc_disp_gpll0_clk_src
+> +      - const: gcc_disp_gpll0_div_clk_src
+> +      - const: sleep_clk
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmcc.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sm6115.h>
+> +    clock-controller@5f00000 {
+> +      compatible = "qcom,sm6115-dispcc";
+> +      reg = <0x5f00000 0x20000>;
+> +      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +               <&dsi0_phy 0>,
+> +               <&dsi0_phy 1>,
+> +               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
+> +               <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
+> +               <&sleep_clk>;
+> +      clock-names = "bi_tcxo",
+> +                    "dsi0_phy_pll_out_byteclk",
+> +                    "dsi0_phy_pll_out_dsiclk",
+> +                    "gcc_disp_gpll0_clk_src",
+> +                    "gcc_disp_gpll0_div_clk_src",
+> +                    "sleep_clk";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,dispcc-sm6115.h b/include/dt-bindings/clock/qcom,dispcc-sm6115.h
+> new file mode 100644
+> index 000000000000..d1a6c45b5029
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,dispcc-sm6115.h
+
+Filename based on compatible.
+
+> @@ -0,0 +1,36 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6115_H
+> +#define _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6115_H
+> +
 
 
 Best regards,
