@@ -2,73 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A75C32773
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 19:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F19CC32773
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 20:13:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351330AbiHSTkJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Aug 2022 15:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42948 "EHLO
+        id S1351376AbiHSUNU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Aug 2022 16:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350891AbiHSTkI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 15:40:08 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F06B3112F80;
-        Fri, 19 Aug 2022 12:40:07 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.93,248,1654527600"; 
-   d="scan'208";a="131896575"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2022 04:40:07 +0900
-Received: from localhost.localdomain (unknown [10.226.92.25])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A7E01400D4D3;
-        Sat, 20 Aug 2022 04:40:05 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 1/3] clk: renesas: r9a09g011: Add IIC clock and reset entries
-Date:   Fri, 19 Aug 2022 20:39:42 +0100
-Message-Id: <20220819193944.337599-2-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220819193944.337599-1-phil.edworthy@renesas.com>
-References: <20220819193944.337599-1-phil.edworthy@renesas.com>
+        with ESMTP id S1351758AbiHSUNS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 16:13:18 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B93C614E;
+        Fri, 19 Aug 2022 13:13:15 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id v10so5462159ljh.9;
+        Fri, 19 Aug 2022 13:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=IcngjGV4zbZSOi+jrmaVhNkVii+NAIYV4colFiC23+E=;
+        b=OfzHVubGC+1Rb/Q9WXF+4lnZWDgHRWUVYsWb/iRlxABOUpe9xu4EJXuTFnhA2WD3dR
+         gyb1b5Im3UciVP6Hn1fd4ooggQQXaQ9fg15O18YaIgbQTCLWMZL7ABYXz0uBgzSZce1E
+         8NxIa3n7vKt7sH82PlWOXafKLWmHEONXOi743c6cwMaQ+b+++Uf9C+3pP5a0XTnIu8CD
+         fR5TI59FrfzZPJlk4mNRuVXFsjM/i8nGXLyhHJGzc0KhhLeioDzv60NNaXmv47TqX/qm
+         eijFduGtk/9D+G3sXNYVYV5HyzFdjBo0ZYRFLm1De2EiCDgSyzKcn+u8nlNhoUXQ49Qv
+         SkLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=IcngjGV4zbZSOi+jrmaVhNkVii+NAIYV4colFiC23+E=;
+        b=0O6T4gfW7adbLaae8ZPLgB/53v7RRqCrWroYcsgre4LjI+J6xeZpWnI4XxQFCt7kkm
+         FLWJpEbw8pAAQPZRwk4Pt4lVLupNWTPd+/N2yuyVnSDCARQ3gXWwLs1jD0RvMpiYifUl
+         z4KA/KElSYtUByGI3aio5y4pxY8k00LC/1kY52b/3+GEZwNex3p1tKMh/IFCYGZLtquf
+         JiRi4YNNXKjWc6r9ikXl4pOj7CZUWa/MvC3sCYqfbugtHjIGoOLi8+6U/4GQZuIRDMKN
+         EEXZGMFEpYwmjPSk4Ejx8qs89vyLF7sZl2+9mInn75yihAwDNkaAixxO+s1NLzh0ag3E
+         MBqQ==
+X-Gm-Message-State: ACgBeo1TSH8mBKraJtIWxSZSkVljqSAb8drmgq+NkL+erro3jKvw/c2R
+        Y5aWXN23R0y5lQjmjfmqn7dNyigZpIE=
+X-Google-Smtp-Source: AA6agR6MsxnDx/xQDuFezqzCmoeAapiezI9Y2xzEeTt6Sdc9D4VihW/YVyw15kGNZNkOuR2TApK8ew==
+X-Received: by 2002:a2e:940d:0:b0:261:c5c8:3403 with SMTP id i13-20020a2e940d000000b00261c5c83403mr76538ljh.86.1660939993307;
+        Fri, 19 Aug 2022 13:13:13 -0700 (PDT)
+Received: from localhost.localdomain (admv234.neoplus.adsl.tpnet.pl. [79.185.51.234])
+        by smtp.gmail.com with ESMTPSA id h25-20020ac250d9000000b004916f129729sm753895lfm.50.2022.08.19.13.13.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Aug 2022 13:13:12 -0700 (PDT)
+From:   Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Add DISPCC driver for SM6115
+Date:   Fri, 19 Aug 2022 22:12:20 +0200
+Message-Id: <20220819201231.23474-1-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add IIC groups clock and reset entries to CPG driver.
-IIC Group A consists of IIC0 and IIC1. IIC Group B consists of
-IIC2 and IIC3. To confuse things, IIC_PCLK0 is used by group A
-and IIC_PCLK1 is used by group B.
+This patch series introduce support for SM6115 display clock controller,
+this driver is based on QCM2290 one.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/clk/renesas/r9a09g011-cpg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changes since v1
+================
+1. Changed bindings file names to Vendor,SoC-IP format.
+2. Changed include in dispcc-sm6115 to reflect name change of bindings.
 
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index b21915cf6648..fbef1b35d254 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -132,6 +132,8 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
- 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
- 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
-+	DEF_MOD("iic_pclk0",	R9A09G011_IIC_PCLK0,	 CLK_SEL_E,    0x420, 12),
-+	DEF_MOD("iic_pclk1",	R9A09G011_IIC_PCLK1,	 CLK_SEL_E,    0x424, 12),
- 	DEF_MOD("wdt0_pclk",	R9A09G011_WDT0_PCLK,	 CLK_SEL_E,    0x428, 12),
- 	DEF_MOD("wdt0_clk",	R9A09G011_WDT0_CLK,	 CLK_MAIN,     0x428, 13),
- 	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	 CLK_SEL_E,    0x438, 4),
-@@ -143,6 +145,8 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
- 	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
- 	DEF_RST_MON(R9A09G011_ETH0_RST_HW_N,	0x608, 11, 11),
- 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
-+	DEF_RST(R9A09G011_IIC_GPA_PRESETN,	0x614, 8),
-+	DEF_RST(R9A09G011_IIC_GPB_PRESETN,	0x614, 9),
- 	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
- };
- 
+Adam Skladowski (2):
+  dt-bindings: clock: add QCOM SM6115 display clock bindings
+  clk: qcom: Add display clock controller driver for SM6115
+
+ .../bindings/clock/qcom,sm6115-dispcc.yaml    |  88 +++
+ drivers/clk/qcom/Kconfig                      |   9 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/dispcc-sm6115.c              | 615 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm6115-dispcc.h    |  36 +
+ 5 files changed, 749 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm6115-dispcc.h
+
 -- 
-2.34.1
+2.25.1
 
