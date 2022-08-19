@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BE3C25B0E
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 08:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F936C25B0E
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 08:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347341AbiHSIlx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Aug 2022 04:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48464 "EHLO
+        id S1347769AbiHSIrk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Aug 2022 04:47:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245475AbiHSIlr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 04:41:47 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75A226B664
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 01:41:44 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id b38so2638187lfv.4
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 01:41:44 -0700 (PDT)
+        with ESMTP id S1346144AbiHSIrj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 04:47:39 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19D7C742B
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 01:47:37 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id i19so5250659lfr.10
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 01:47:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=CRnuTsAE9g4131Gs1Ch+MF8rdf+eDVa6Xez0TyG+a0A=;
-        b=V7WH7QjsIZrOhFjZEoS5Hp1lBUUj/KrXDaY23Htx+8JpSFUB8BlrdppWhAU7pEdgsv
-         oT/t3nWpySkKzLc3u/0c1i2e5+dsenLdH5FXMO4jy+R2qoM+gmu+DC7H/BnjOUEI2br/
-         iviv0sz8OnaHsEKw89AwM6eOvGlyurUv9SE4RbQnlA/KuCzoaTgDmH4Vi5robLyGi4se
-         I4f45nZrl8lDIx3d7Y/t5a8S37ptwSD1RTPgihhPpikOBmG0fvg90h++2VrJRFtYJA2r
-         FYU2xaKVv5zBjt5mfAOcaeY8FHJPyPJsIZpDB8W9j/RQ3d8UKxJEymaVfjM2mnIUeZAB
-         BeOw==
+        bh=2BIoy1M8A0rRrH0tn3bSeIeYW/rETi9BBL+JwsRpCCs=;
+        b=erMtm3Dq+6NNg/t96Z2Mv0CU3VUE1mOa8n5A6nrGYIfVe5PkNecJOz36mXgiiWmcN9
+         8dlaji7sB6hnbn17o2qUOGGOH2zdCPlY+tuO33hVTO3fNxtme43MMm8cedsC5z5AS1NO
+         6EWDWOgJbapbowtQK72ZBKM1c+woUNl2VtklMND+Q+pzPxjjM+GBm/ch+tzXCJ2/wxKl
+         VJLpTkYPitEbQuLkNiQsYtNXfp1qQCsyuz+wY4zG1ocmFNSSu/kgRA063Mnly6sxoi5q
+         BrL6cAJidJBDJdei14nUMrMGjfzGSwt64Hlc0q7A0LCqx6/UERU8IuQfXdPK9wYEPUVQ
+         tgTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=CRnuTsAE9g4131Gs1Ch+MF8rdf+eDVa6Xez0TyG+a0A=;
-        b=x7MOOJVvAQJJr1Yz7B2ID6kpxro+GhbOuiRGK05z0gQIDj2hHP53uNg4aqxRcIBp7G
-         1ky1F/OzuxhrFJAuWhWyEIABzXxEvb0OywvOoUFvDB4b1KiZ2hS409qsas0sP0Us4wVl
-         ME+swllKIPow5PxM6EZLSIH4adhRigE+aPckdr3CJHbmiyok2F4bu1ZH8+Mdz4pTeduO
-         DugnZb3JT2OTIhoiBSXDvEmFGO2xsPS5xsPBPi9tY0JG2OoQJg5ZsZbL0+LCUAnrrqyt
-         7a4l5s5ax4Esypd9WXpKpzrR52SjvdtmS4J5SG0ZSJIfg3LccSp7DR8eTwW3wooYVXdd
-         FLIg==
-X-Gm-Message-State: ACgBeo1NTVjlj/mlS44cMZhg6GpbZaiXsFecmDFoh36hZeH/I0NP7j9M
-        DzhaqN43sSosmeCtUYbJRfIYgA==
-X-Google-Smtp-Source: AA6agR4wD3EqU9y0mOORxLi5pTs4j3x4Q1X/qtUS/M7PdaGN8KlxcT2G4pkJ/ZXRfgKQ4SF0TxW/tA==
-X-Received: by 2002:a05:6512:2291:b0:48b:492e:ef35 with SMTP id f17-20020a056512229100b0048b492eef35mr2081867lfu.494.1660898502773;
-        Fri, 19 Aug 2022 01:41:42 -0700 (PDT)
+        bh=2BIoy1M8A0rRrH0tn3bSeIeYW/rETi9BBL+JwsRpCCs=;
+        b=u4FnIytvWG6ea/l3WvmqJDjEGmUI9GYQPMjMsJ+GgijIJW1AuElzxdriL72+40DoML
+         ZYhHx6g1DOnTzGYuRxg5a86ucT8E9qpkQ+y8zKfccp5AT7ONirbNYSGQ64UMuwJSSFHT
+         cefYJYlCGMLSEhg8OfU5QEY6u/41yi0tCoD/6ZXvai7zU4Oo93BLu28ao8e427SCCmsy
+         OXaWrvR73Y5ayXypSJJiqvMw5fxyYbF5QqnBdCUmRmCce+QK5mCWwdmBGYMD2iR6uoYv
+         FXHLSS5mP7R0vsl7Z92adKKMlXg67a4Yy92TZJGWuG9wdiVNz9ZplyXhIUH6cnKMqvAn
+         Ku0g==
+X-Gm-Message-State: ACgBeo3FggzapDNmkEHmWcbL6PFsCKdoDp8l1Q8ZXdo+s3ShZxvKfhJz
+        Fvv37L7tRbbGBAWdMulSOkJvDw==
+X-Google-Smtp-Source: AA6agR6Pc0sEIBMPS2jfk3o6KO1NlURYtLObz6ZX4+MDhFAP6r0djwefsu/vbv0h6nxQXUeREJHtTw==
+X-Received: by 2002:a05:6512:3fa2:b0:48a:16df:266f with SMTP id x34-20020a0565123fa200b0048a16df266fmr2075802lfa.414.1660898856143;
+        Fri, 19 Aug 2022 01:47:36 -0700 (PDT)
 Received: from ?IPV6:2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5? (d1xw6v77xrs23np8r6z-4.rev.dnainternet.fi. [2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5])
-        by smtp.gmail.com with ESMTPSA id d11-20020ac25ecb000000b00492b494c4dbsm557072lfq.89.2022.08.19.01.41.41
+        by smtp.gmail.com with ESMTPSA id x4-20020a056512078400b0048d20e3333csm555053lfr.242.2022.08.19.01.47.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Aug 2022 01:41:42 -0700 (PDT)
-Message-ID: <aa659b2e-44cb-b2e2-eced-1ef7f5de5647@linaro.org>
-Date:   Fri, 19 Aug 2022 11:41:40 +0300
+        Fri, 19 Aug 2022 01:47:35 -0700 (PDT)
+Message-ID: <ec86420c-a210-facd-ab3a-5baf84a736f3@linaro.org>
+Date:   Fri, 19 Aug 2022 11:47:33 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
@@ -69,82 +69,54 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
 References: <20220817075517.49575-1-sergiu.moga@microchip.com>
  <20220817075517.49575-3-sergiu.moga@microchip.com>
- <c1a98a3e-609e-7783-b1b7-3bb39caa8c65@linaro.org>
- <5fd68d8e-7132-2f58-0ef9-cd4a0fe45127@microchip.com>
+ <942accc5-70aa-3bb2-63dd-306a39ee5ea4@linaro.org>
+ <d1aad8ea-3852-f36b-366b-7aa67d2dd9d5@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <5fd68d8e-7132-2f58-0ef9-cd4a0fe45127@microchip.com>
+In-Reply-To: <d1aad8ea-3852-f36b-366b-7aa67d2dd9d5@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/08/2022 11:37, Sergiu.Moga@microchip.com wrote:
-
->>> +      - items:
->>> +          - const: atmel,at91rm9200-dbgu
->>> +          - const: atmel,at91rm9200-usart
->>> +      - items:
->>> +          - const: atmel,at91sam9260-dbgu
->>> +          - const: atmel,at91sam9260-usart
->>> +      - items:
->>> +          - const: microchip,sam9x60-dbgu
->>> +          - const: microchip,sam9x60-usart
->>> +      - items:
->>> +          - const: microchip,sam9x60-usart
->>> +          - const: atmel,at91sam9260-usart
->> This is not correct - contradicts earlier one.
+On 19/08/2022 11:38, Sergiu.Moga@microchip.com wrote:
+> On 18.08.2022 11:39, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 >>
+>> On 17/08/2022 10:55, Sergiu Moga wrote:
+>>> Convert at91 USART DT Binding for Atmel/Microchip SoCs to
+>>> json-schema format.
+>>>
+>>> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+>>> ---
+>>>   .../bindings/mfd/atmel,at91-usart.yaml        | 190 ++++++++++++++++++
+>>>   .../devicetree/bindings/mfd/atmel-usart.txt   |  98 ---------
+>>>   2 files changed, 190 insertions(+), 98 deletions(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
+>>>   delete mode 100644 Documentation/devicetree/bindings/mfd/atmel-usart.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml b/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
+>>> new file mode 100644
+>>> index 000000000000..cf15d73fa1e8
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
+>> One more thing - I think this should be in serial directory, not mfd,
+>> even though it includes SPI. MFD is just a Linux naming/wrapper device.
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> Yes, this was for a DT node we have internally, my bad. You are right, 
-> it does not really make sense and it should not be the other way around: 
-> having the DT validate the binding. I will remove this combination in 
-> the next version.
+> I would rather keep it in this directory, since its corresponding driver 
+> is also in the mfd directory.
 
-You need to fix any out of tree DTS or upstream it.
-> 
-> 
->>> +      - items:
->>> +          - const: microchip,sam9x60-dbgu
->>> +          - const: microchip,sam9x60-usart
->>> +          - const: atmel,at91sam9260-dbgu
->>> +          - const: atmel,at91sam9260-usart
->> What? You wrote above that microchip,sam9x60-dbgu is compatible only
->> with microchip,sam9x60-usart. Now you write it is also compatible with
->> other ones?
-> 
-> 
-> Yes, this one is intended because the 9x60 IP has new functionalities on 
-> top of 9260, and some nodes do keep all four as fallback.
+Sorry, but that's poor argument. Driver subsystems match Linux
+convention, not necessarily hardware type/naming. Bindings directories
+match hardware. MFD bindings are only for MFD wrapper drivers and this
+is a serial interface. Not a MFD. You even do not add MFD devices in the
+driver but add *always one* device depending on serial feature you want.
+This is not even MFD device but regular platform device with children.
 
-Then all nodes should keep fallbacks.
-
-> 
-> 
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  clock-names:
->>> +    contains:
->>> +      const: usart
->> No, this has to be specific/fixed list.
-> 
-> 
-> I wanted to highlight the fact that it must contain either:
-> clock-names = "usart";
-> or
-> clock-names = "usart", "gclk";
-> 
-> What would be the recommended way of doing this then?
-
-We have an example for this.
-
-https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L91
-
+You put it in SoC, though, because all other SoCs store it there...
 
 Best regards,
 Krzysztof
