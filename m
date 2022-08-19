@@ -2,217 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34B2C32771
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 12:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3011AC32771
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 12:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348613AbiHSMVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Aug 2022 08:21:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53606 "EHLO
+        id S1348249AbiHSM2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Aug 2022 08:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348525AbiHSMVa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 08:21:30 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F743100F3D
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:21:29 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id x25so4365021ljm.5
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=Nu3VLDUqU+jU9Ulv1RKGhBZJe/ApM+TsuNJuzdtSY+M=;
-        b=icCaSFYl9TTYDLZjSUnfxcI0YMgzci2BRFPyleEvRJdU+T1TBi3QED1EcIV+5EUEF7
-         ZzCByTkLldBb3PcS4W0m4bNFBRWfn++1kIijqJw/O6lJS/IHoam6Hv2LH+bozhv/REGN
-         kTX09folP9hdjbJ0yisTi54ebfxFgeqwgttCYqbkxj4jLdVFv3GYRX2Jzu6mbWdB5+GF
-         vVbZkVsDKDd2G1cslwfnFm17c7APLx6ufQWu+Ei8KHWOyp4mCoTWdV5pvmU5265GnTeX
-         f6wLGlQZQ8IeNOG3Qz86cyJ5WBeRBt3b1RuR2v8ZJ72wA+5FapAMVLBz+tyMN0zYKcRe
-         6XcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=Nu3VLDUqU+jU9Ulv1RKGhBZJe/ApM+TsuNJuzdtSY+M=;
-        b=cjp7sanFUFLIoNq5AqINConMVaYgx0Sp1enI165Fg5XNyEVOQ8th8NemyhFHlQQw6A
-         XYZo6vZsaPGOWdNnayW5DFQjuCrWrLo00kR907EAT7l4WWlbQUg6y3eRsiasokkcq/3J
-         wECc3uBr9XzGJINF+JsImlkStv9S8u9s4qENe9gFRxuIvHNdI7MFunvAlzP2BqlbaUBY
-         KlTJ5texG7TMEGj3UXnNwyp5v6Z2pcmtu3c5cCizLkqYJFsL0KWXGHHC4WUt9ITkCT1e
-         TJm7WhEzabezb+NdeOtjrr0OCwHxhV5O5eQNldiy19jrmsIYgPr6enOC+CRzgqt8XHZH
-         GY6w==
-X-Gm-Message-State: ACgBeo320+yKMYrUevH6vVLpvNnQIQ/PM6ti077oqi4WhWcjapZbbk9B
-        T20DwJLRs1VClXo8BoVSKhIBAw==
-X-Google-Smtp-Source: AA6agR595KwMfyX0sVhhUEYlgdd7hbmxKDXxniItF7Yjp2Fh/BhRyNo1Zh0kLJkHkh4xFhiOIyc0zQ==
-X-Received: by 2002:a05:651c:516:b0:25f:f52b:3c86 with SMTP id o22-20020a05651c051600b0025ff52b3c86mr2111392ljp.523.1660911687788;
-        Fri, 19 Aug 2022 05:21:27 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5? (d1xw6v77xrs23np8r6z-4.rev.dnainternet.fi. [2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5])
-        by smtp.gmail.com with ESMTPSA id t20-20020a2e8e74000000b0025e1ec74e25sm595362ljk.43.2022.08.19.05.21.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Aug 2022 05:21:27 -0700 (PDT)
-Message-ID: <bccd3a79-faa2-e4c5-3783-25ffaea69d00@linaro.org>
-Date:   Fri, 19 Aug 2022 15:21:25 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add QCOM SM6115 display clock
- bindings
-Content-Language: en-US
-To:     Adam Skladowski <a39.skl@gmail.com>
-Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230513AbiHSM2J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 08:28:09 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF4BE3945;
+        Fri, 19 Aug 2022 05:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1660912088; x=1692448088;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OuppHraavVdcPp0ARLA7zsvgdMH5yWNmIVqS5fqgRKI=;
+  b=1Mk9Xf4Ast+avbeztI+O2FJqBhx9XNxq5B00trA936Zr+bQYOa8u5SU4
+   FCK3pg94ER2GY/H0Kjoh5vLxBzmIDw92Ia9LGoJxKIK0C9ZVbJNj/Pooo
+   moYRO6BZ5euUwTM+FBzL/kTq+7slwe6fMGTHgkeaj6x6ZnykxBOSSsF02
+   o5wNA9ZRA02MC9XHTvtFVK2DJgCLvwJslodVMS5qBnFhrE2cMlUTgeSdB
+   8ogfoLLVHUX9cMtYkdazJnqa+/2sIyy0+SxsCRo3dQFRQtZsOqGLLfP6B
+   8U+ub3y+5xAw0j17mLvURUWVGDy3YOjArryGJZGAKkJIO31fUBmbHrZse
+   g==;
+X-IronPort-AV: E=Sophos;i="5.93,247,1654585200"; 
+   d="scan'208";a="173199554"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Aug 2022 05:28:07 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Fri, 19 Aug 2022 05:28:02 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Fri, 19 Aug 2022 05:27:59 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220818151850.19917-1-a39.skl@gmail.com>
- <20220818151850.19917-2-a39.skl@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220818151850.19917-2-a39.skl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>
+Subject: [PATCH 0/6] Add PolarFire SoC Fabric Clock Conditioning Circuitry Support
+Date:   Fri, 19 Aug 2022 13:22:54 +0100
+Message-ID: <20220819122259.183600-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/08/2022 18:18, Adam Skladowski wrote:
-> Add device tree bindings for display clock controller for
-> Qualcomm Technology Inc's SM6115 SoC.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
->  .../bindings/clock/qcom,dispcc-sm6115.yaml    | 88 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,dispcc-sm6115.h    | 36 ++++++++
->  2 files changed, 124 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm6115.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml
-> new file mode 100644
-> index 000000000000..2b9671112934
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6115.yaml
-> @@ -0,0 +1,88 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm6115.yaml#
+Hey all,
 
-Filename based on compatible, so:
-qcom,sm6115-dispcc.yaml
+PolarFire SoC has 4 clock source blocks, each with 2 PLLs and 2 DLLs,
+in the corners of the FPGA fabric. Add bindings, a driver supporting
+the PLLs and the requisite changes to the devicetrees for PolarFire
+SoC based boards. These clocks were already in use, but which clock
+specifically was chosen was decided by the synthesis tool. In our
+end-of-September release of our FPGA reference design, constraints will
+be added to force the synthesis tool to pick the "north west" CCC,
+making it possible to read the configuration from the CCC's registers.
 
-I know it creates irregularity, but that's the naming convention for all.
+I am mainly looking for feedback on the dt-bindings on this version,
+so that if something dt-abi related needs to change it can be done in
+advance.
 
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Display Clock Controller Binding for SM6115
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
+There are no maintainers changes in this series, but they are required
+due to the binding rename. I am waiting for some changes queued in the
+soc tree before rebasing on a later -rc before including that patch.
 
-I don't think the email is correct. Please use Bjorn's (and optionally
-you can add yourself if you want to maintain this binding).
+Thanks,
+Conor.
 
-> +
-> +description: |
-> +  Qualcomm display clock control module which supports the clocks and
-> +  power domains on SM6115.
-> +
-> +  See also:
-> +    dt-bindings/clock/qcom,dispcc-sm6115.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm6115-dispcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Byte clock from DSI PHY0
-> +      - description: Pixel clock from DSI PHY0
-> +      - description: GPLL0 clock from GCC
-> +      - description: GPLL0 div clock from GCC
-> +      - description: Board sleep clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: dsi0_phy_pll_out_byteclk
-> +      - const: dsi0_phy_pll_out_dsiclk
-> +      - const: gcc_disp_gpll0_clk_src
-> +      - const: gcc_disp_gpll0_div_clk_src
-> +      - const: sleep_clk
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmcc.h>
-> +    #include <dt-bindings/clock/qcom,gcc-sm6115.h>
-> +    clock-controller@5f00000 {
-> +      compatible = "qcom,sm6115-dispcc";
-> +      reg = <0x5f00000 0x20000>;
-> +      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> +               <&dsi0_phy 0>,
-> +               <&dsi0_phy 1>,
-> +               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-> +               <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
-> +               <&sleep_clk>;
-> +      clock-names = "bi_tcxo",
-> +                    "dsi0_phy_pll_out_byteclk",
-> +                    "dsi0_phy_pll_out_dsiclk",
-> +                    "gcc_disp_gpll0_clk_src",
-> +                    "gcc_disp_gpll0_div_clk_src",
-> +                    "sleep_clk";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,dispcc-sm6115.h b/include/dt-bindings/clock/qcom,dispcc-sm6115.h
-> new file mode 100644
-> index 000000000000..d1a6c45b5029
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,dispcc-sm6115.h
+Conor Dooley (6):
+  dt-bindings: clk: rename mpfs-clkcfg binding
+  dt-bindings: clk: document PolarFire SoC fabric clocks
+  dt-bindings: clk: add PolarFire SoC fabric clock ids
+  clk: microchip: add PolarFire SoC fabric clock support
+  dt-bindings: riscv: microchip: document icicle reference design
+  riscv: dts: microchip: add the mpfs' fabric clock control
 
-Filename based on compatible.
-
-> @@ -0,0 +1,36 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6115_H
-> +#define _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6115_H
-> +
+ .../bindings/clock/microchip,mpfs-ccc.yaml    |  80 +++++
+ ...p,mpfs.yaml => microchip,mpfs-clkcfg.yaml} |   2 +-
+ .../devicetree/bindings/riscv/microchip.yaml  |   1 +
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  27 +-
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    |   4 +
+ .../dts/microchip/mpfs-polarberry-fabric.dtsi |   5 +
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 +-
+ drivers/clk/microchip/Makefile                |   1 +
+ drivers/clk/microchip/clk-mpfs-ccc.c          | 294 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  23 ++
+ 10 files changed, 458 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
+ rename Documentation/devicetree/bindings/clock/{microchip,mpfs.yaml => microchip,mpfs-clkcfg.yaml} (96%)
+ create mode 100644 drivers/clk/microchip/clk-mpfs-ccc.c
 
 
-Best regards,
-Krzysztof
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+-- 
+2.36.1
+
