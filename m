@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30819C32771
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 12:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02988C32771
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Aug 2022 12:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349063AbiHSMq2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Aug 2022 08:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57378 "EHLO
+        id S1348363AbiHSMr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Aug 2022 08:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348552AbiHSMqZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 08:46:25 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 200088C03B
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:46:24 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id z25so6013229lfr.2
-        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:46:24 -0700 (PDT)
+        with ESMTP id S1348878AbiHSMrx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2022 08:47:53 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2D4101C5F
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:47:51 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id s1so3191745lfp.6
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2022 05:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=K29+GrLurEVMz+IcmJCvsL3+V3VFmxk9IgPRnZQasec=;
-        b=TCew6KzbEtV2gO9hXzpONAq4N4e+nQyw/iU+jfOE5az9Be/FXPJIBc6GNySAnomO20
-         FgIqmRs+DEWlBchnjqHuoz3YZE/geyl87pjMz/Ohgiyr98XF9LbdAXYkAh1tN961/zPe
-         nvE0Puw8RuLjR+ICfL2cnUsxHafBSNqAxo7/f0FDLkrQBKd/PfhZ/XQ1uall65czZmHI
-         mS1Qz+aPkdTW1EnsyUJFILOw8mHFqrISCcZlrg2QEGnc1BV+YJUaqY+92Vi2aAOj6RFp
-         90pqM0ZgqacFn5pYXGPSz1TOerkmaYMdg85naGczDEuR53WgtlRXDWo4pwIQTxpTFJWM
-         jdvw==
+        bh=D4OnEbAEzRBeQeg3hRcaY4ZzP+Li/Cr5jkVWg1DWFSg=;
+        b=lUxIIhlKYF+UhNDXmDvDFbRA4kClWNgyDPOsVtb3kuftUEwO4MeFUaeifgbEcC1aIH
+         cZgXGrQwVMEGV7gfIY6+mClPE+MLwiZaDBHo4UBrArheiUhVyfatxJ2VXI3qS2AfhXN4
+         hPOg+Y+YdNTJFT5w+/dF9BudPumS4EXob0iX3+kyzC/3bzXe0xhpgcOmcYkGlgzHYPXq
+         9svJNwzD2yH+MO/nF5qjstIbCGs24QwzKQ6COhxkdLbjBhMwBKscGpbB+fAlvOp78XB5
+         RbQedp8cHp++FOI8dfG0/CVSlEu9GOXcooRZy0iPh50g0A23X1Pui73nf8OtHyv//8c+
+         LhlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=K29+GrLurEVMz+IcmJCvsL3+V3VFmxk9IgPRnZQasec=;
-        b=xJzXnqHgmGnqnXy6iDi3Lc2Qyap8bt8Z2A+oAtpSiSSwFLRFm884IsC5SkgQVCzTjf
-         brl5e4bNSztaj4uz/yj7sd6kiRNkIS2jxbQ4KRaEadct71Vkh4KI0bwku6C+r+Cqk2I6
-         gwQZXuOfe1v2S9UxwcMdbStTdUv/UaOzaauWZAJsAPj6edJYE22UIw1rHM7gL5MZIMI5
-         nM+H5Mgqi8gvDIWm17PU5/9ANn4h8KX/ee21pnUpNITB6MBXW6jk6wgBjsbE3oUkJ/hR
-         QKJu4Jr7UzSJBo2LIJYnm86hxCKNN0L0GHsbIOtPlTyIuHXcioqSOvOA/7WbtWLau2sQ
-         Iklg==
-X-Gm-Message-State: ACgBeo0VeJYQkqWKPzYc8KRhck6ZxYOdS5qk2cEUCLNj64BGbtncmrO/
-        aAx4sFFHVmBi2PO2XcNYgLGgPg==
-X-Google-Smtp-Source: AA6agR5/vAR5q5Kr0vJwYrqhtgqJma98MRzgessllT6tIdcRYL/NOV9mrbay71eWVKq/BdtNDBUSLw==
-X-Received: by 2002:a05:6512:10cb:b0:48c:e0a6:221b with SMTP id k11-20020a05651210cb00b0048ce0a6221bmr2775454lfg.218.1660913182522;
-        Fri, 19 Aug 2022 05:46:22 -0700 (PDT)
+        bh=D4OnEbAEzRBeQeg3hRcaY4ZzP+Li/Cr5jkVWg1DWFSg=;
+        b=IvafYOJJYqFjJJJvMs8tf92MLNdy4IGk+KSaVklICN4tL1nvcFAIAPMZn+KAHeGIsp
+         R4DXB2swLi1wbZrj1oQlGPe/NzpD8fNLp2eUAbUZuMYQhjVid2P1UR5dGVEdo0lz+ov/
+         Pzd/TxVMdg8XKMM51OpHUKJ6D5x3ZS1NT0IlJvFQE454tHhkQMb6OWukVFXmJb/DcO24
+         SnY72L7AXx7TvfnsByjbHFY3gI0MvY2/BxnppBY5J9GA6KPLAdbfgi5T5qwrfpQupC4o
+         2GL6XOg+MJpLJ2LkFdMweCh/rm2xFVqakhWiq8DH5QMsYmlJryOm1sJpqsP6hB1hHAp/
+         E+ow==
+X-Gm-Message-State: ACgBeo19dQ5uy5Yq1Vj3oyf6fzh+Ged6R9EXS5yek09rVTp+jEBlRs6s
+        ZyMXf/61zAcL0ObaFjKkJ+lqVQ==
+X-Google-Smtp-Source: AA6agR7Zs8KA0ne3v89QRnCqm9aIw3aFDvAsKmTiXOuNK0AqKhLhnAX2WGbHijJgwKLH2Poxeoq5IQ==
+X-Received: by 2002:ac2:5f77:0:b0:48b:3886:5d55 with SMTP id c23-20020ac25f77000000b0048b38865d55mr2259653lfc.668.1660913270258;
+        Fri, 19 Aug 2022 05:47:50 -0700 (PDT)
 Received: from ?IPV6:2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5? (d1xw6v77xrs23np8r6z-4.rev.dnainternet.fi. [2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5])
-        by smtp.gmail.com with ESMTPSA id c3-20020a056512074300b0048aee825e2esm88260lfs.282.2022.08.19.05.46.20
+        by smtp.gmail.com with ESMTPSA id v28-20020ac258fc000000b0048b37d29256sm631729lfo.63.2022.08.19.05.47.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Aug 2022 05:46:21 -0700 (PDT)
-Message-ID: <3b1a99df-58ed-9bed-aa11-14a1cd8b62b5@linaro.org>
-Date:   Fri, 19 Aug 2022 15:46:20 +0300
+        Fri, 19 Aug 2022 05:47:49 -0700 (PDT)
+Message-ID: <3df8d4bd-3d38-cecd-6589-ccc1be01b886@linaro.org>
+Date:   Fri, 19 Aug 2022 15:47:48 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH 5/6] dt-bindings: riscv: microchip: document icicle
- reference design
+Subject: Re: [PATCH 6/6] riscv: dts: microchip: add the mpfs' fabric clock
+ control
 Content-Language: en-US
 To:     Conor Dooley <conor.dooley@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -69,28 +69,46 @@ Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
 References: <20220819122259.183600-1-conor.dooley@microchip.com>
- <20220819122259.183600-6-conor.dooley@microchip.com>
+ <20220819122259.183600-7-conor.dooley@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220819122259.183600-6-conor.dooley@microchip.com>
+In-Reply-To: <20220819122259.183600-7-conor.dooley@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/08/2022 15:22, Conor Dooley wrote:
-> Add a new compatible for the icicle kit reference design's 22.09
-> release, which made some changes to the memory map - including adding
-> the ability to read the CCCs via the system controller bus. Technically
-> that was always possible, but the specific CC chosen could vary per
-> run of the synthesis tool. Hopefully this is the last reference design
-> version impacting the memory map.
+On 19/08/2022 15:23, Conor Dooley wrote:
+> The "fabric clocks" in current PolarFire SoC device trees are not
+> really fixed clocks. Their frequency is set by the bitstream, so having
+> them located in -fabric.dtsi is not a problem - they're just as "fixed"
+> as the IP blocks etc used in the FPGA fabric.
+> However, their configuration can be read at runtime (and to an extent
+> they can be controlled, although the intended usage is static
+> configurations set by the bitstream) through the system controller bus.
 > 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
 
+Thank you for your patch. There is something to discuss/improve.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +&pcie {
+> +	clocks = <&fabric_clk1>, <&fabric_clk1>, <&fabric_clk3>;
+> +	clock-names = "fic0", "fic1", "fic3";
+> +};
+> diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+> index 499c2e63ad35..dd15b6d1a3c9 100644
+> --- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
+> +++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+> @@ -236,6 +236,38 @@ clkcfg: clkcfg@20002000 {
+>  			#clock-cells = <1>;
+>  		};
+>  
+> +		ccc_se: cccseclk@38010000 {
+
+Although you call it "Clock Conditioning Circuitry", but the role of
+this device is a clock-controller, isn't it? If so, node names should be
+generic, so "clock-controller".
+
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
 
 Best regards,
