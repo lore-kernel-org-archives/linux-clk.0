@@ -2,152 +2,210 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43637C00140
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Aug 2022 17:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD71AC00140
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Aug 2022 18:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbiHUR7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Aug 2022 13:59:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45326 "EHLO
+        id S231339AbiHUSGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Aug 2022 14:06:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiHUR7X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Aug 2022 13:59:23 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B8421B786;
-        Sun, 21 Aug 2022 10:59:22 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id e19so7720873pju.1;
-        Sun, 21 Aug 2022 10:59:22 -0700 (PDT)
+        with ESMTP id S229491AbiHUSGu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Aug 2022 14:06:50 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715AC1D329;
+        Sun, 21 Aug 2022 11:06:46 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id w29so2845662pfj.3;
+        Sun, 21 Aug 2022 11:06:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc;
-        bh=V8bMKICvP7gE2r6LcG1wlsTsLSU26soKtKY7qWy9Wdc=;
-        b=S0XUUuEUtqHoMKuAHC6MaSekJn5w0mUC5kPanzQid4f55PZHgge8jF9nLWBEoxSVP/
-         5CjEYnvcKyLLHHFobQkfx5iOXFAbwc+0FPD1JjfA7vjQlkwRdA5wwTKpz87KjVjt6bvw
-         CY9U0SOGEW6nASmQlPKsN2dt+/ewWpQO7Syw046EJTIi2oe1lPQOq3eHO4zZAkGCmIKF
-         dc4fdZT5k0VxRVDWhKM7fqBLbbgs9JvzIE0BdvtcSzRxUaAZhDwtDPrP4qH/xKx4inHH
-         jSQ9bnbTjPmQT7g6oyqt+eMIUBp/KMAE+pW+DImQ8z9/wMjUarWRyjpc4PhoISv6UzF1
-         rvdw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc;
+        bh=WZPcPJT9zvWPvsEM4NAAw/0jxPWsF3FxCjtklAsTneU=;
+        b=d+ULP6ImPM4qyQrpoTcaxqS4t1rNIDKoG7OxOCf0dGUgm5Xme3cn1hIdNHSCG0xZlF
+         5nmCYf2ya7e7bYzma6ZvFeJEUl2HEJeZ9FNJVyQBGRbZvsz4Pzj8cTWFGe/xoP02yQdd
+         X7YIlSX/3ZocjQouKIyOXu3TkXsIeM5SYrgTvqw0bDuymnkWeYuFwFnuCkHdTcXdD1Lp
+         E3T+p1pGQms5b89qhUX8OwwBpHd49rhVGdKQAJSGhnc/Y9b01iqRrPK1baV7QKLERUg6
+         TIxwdBGZIILGF+fEumPKLix/FH3ra5b93ySOBTX67dtpkZLH45WQ7urFmA+RIYPSaQ/w
+         jkYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc;
-        bh=V8bMKICvP7gE2r6LcG1wlsTsLSU26soKtKY7qWy9Wdc=;
-        b=hkpU36q5ONiuaLHjej6wxm+m84biU5QUI4FUfYhpCTwbdGS49u6zi8hlSNTE7uNuEW
-         kSxk48CsF2TxABSxoAe8taW1i2XMr35s/dZfwHKaGutKlGV7h7OcowCKrLvNZf9q8+Py
-         RMOL9QY5I+bfaCiqtiGVTq+UeR0WB3QXS5OX4Qu/Ir78FM4ZtfbMzy5EeLFoDM/n6nU6
-         7rw/UNVvbSv0SbmKVfU5jMkm6KDoxHSltR7ZRfdUbIycitqS0Et4ePa/DaD/BaoXrJqH
-         xjaXkA89bwzzQzSN/hDp0Tg8vc9Ek07S+a3tOWqwZCYMqWEq6Jaw8P/9KH7atyiiIpIM
-         fBRA==
-X-Gm-Message-State: ACgBeo2RUHOQYf4C65TI/AT/j/KLU/9/9j1KLdfr6v18MYl2gfxEzyzE
-        oe5emOpROgPBj8kl4635gaA=
-X-Google-Smtp-Source: AA6agR5EHmpdNmL63tYfMWUIEIcspviH71F+4o95fTsCQaD/vkiojCk0zfoe3xW4KvqaYbdTbYR8Ug==
-X-Received: by 2002:a17:90a:1c02:b0:1e0:df7:31f2 with SMTP id s2-20020a17090a1c0200b001e00df731f2mr24020256pjs.222.1661104761500;
-        Sun, 21 Aug 2022 10:59:21 -0700 (PDT)
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=WZPcPJT9zvWPvsEM4NAAw/0jxPWsF3FxCjtklAsTneU=;
+        b=DKxEPcRgtAISCc0jgq4HCksTQyXHHEuUQ456pH73CURTvIcko+tX5jKMJH/2mrLJhi
+         0OEci3CNQD7ezy9R/L4LsPN/0FUEGvx6Fj8+M824079NjCbNblhNcfl345zaImL0g4/x
+         XHtWAFLOqujJG4+ZMH2J8tKqAoDfkJKKgcUhGIESEHe21hOYBt/GJa8d1c6ffbXVDZCE
+         hwqHatvN6dfB+1NZRGzD2gAtd/2gOqtOBvVNtQU1QNuyAC4uL+mxibqdBOXMv4VVlNeW
+         y0NZoo39AhLH8Jz0Q1wdkv8Sug79TRTLfQWsWHu+1UkoInebDGFFnt2Jk1ufI/75rt/6
+         75bQ==
+X-Gm-Message-State: ACgBeo1gf0gd/u29gFplEBvW/lXJEEDKaYwhr/A0B8XVSkTvh4EZGcoY
+        K2T3Ul8oax7v4btVxfyNg0iThoa7SvlnqA==
+X-Google-Smtp-Source: AA6agR7/vOXpsOzVSFiar3eeaTq2ScO0QeQ6uUTKJ/rNxtuujGomojIJYEGv4V4ZtwhlE8m7Y5CKuw==
+X-Received: by 2002:a63:4d4a:0:b0:423:1b0:e5c1 with SMTP id n10-20020a634d4a000000b0042301b0e5c1mr13719679pgl.585.1661105205846;
+        Sun, 21 Aug 2022 11:06:45 -0700 (PDT)
 Received: from Mahakal ([2401:4900:36a0:636e:62bf:3813:d194:e46f])
-        by smtp.gmail.com with ESMTPSA id 201-20020a6214d2000000b0052dbad1ea2esm6947355pfu.6.2022.08.21.10.59.17
+        by smtp.gmail.com with ESMTPSA id r26-20020aa7989a000000b005367c6db0a4sm1424311pfl.183.2022.08.21.11.06.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Aug 2022 10:59:21 -0700 (PDT)
-Date:   Sun, 21 Aug 2022 23:29:14 +0530
+        Sun, 21 Aug 2022 11:06:45 -0700 (PDT)
+Date:   Sun, 21 Aug 2022 23:36:39 +0530
 From:   "<Vishal Badole>" <badolevishal1116@gmail.com>
-To:     "Elliott, Robert (Servers)" <elliott@hpe.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chinmoyghosh2001@gmail.com" <chinmoyghosh2001@gmail.com>,
-        "mintupatel89@gmail.com" <mintupatel89@gmail.com>,
-        "vimal.kumar32@gmail.com" <vimal.kumar32@gmail.com>
-Subject: Re: [PATCH] Common clock: =?utf-8?B?4oCL?= =?utf-8?B?4oCLVG8=?= list
- active consumers of clocks
-Message-ID: <20220821175912.GA6946@Mahakal>
-References: <CAEXpiVQihEadxsNodarz2-wxSAipfpzEaA8zKpnozszC+weYTQ@mail.gmail.com>
- <20220610194013.DD39DC34114@smtp.kernel.org>
- <20220622170219.GA6978@Mahakal>
- <20220624010550.582BBC341C7@smtp.kernel.org>
- <20220626182517.GA26001@Mahakal>
- <MW5PR84MB1842824E0F57D0EC46381B09AB9D9@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
- <20220808170001.GB5239@Mahakal>
- <MW5PR84MB18429934C99C9AE6289D620BAB6E9@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
+        vimal.kumar32@gmail.com, Mintu Patel <mintupatel89@gmail.com>
+Subject: Re: [PATCH v3] Common clock: To list active consumers of clocks
+Message-ID: <20220821180637.GB6946@Mahakal>
+References: <20220624010550.582BBC341C7@smtp.kernel.org>
+ <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <MW5PR84MB18429934C99C9AE6289D620BAB6E9@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+In-Reply-To: <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Aug 21, 2022 at 05:07:00AM +0000, Elliott, Robert (Servers) wrote:
+On Tue, Aug 02, 2022 at 11:39:47PM +0530, Vishal Badole wrote:
+> This feature lists the clock consumer's name and per-user enable count
+> in clock summary. Using this feature user can easily check which device
+> has acquired a perticular clock and it is enabled by respective device
+> or not.
+> for example:
+> $ cat /sys/kernel/debug/clk/clk_summary
+>                       enable  prepare  protect                           duty  hardware                            per-user
+>    clock               count    count    count    rate   accuracy phase cycle    enable   consumer                    count
+> ----------------------------------------------------------------------------------------------------------------------------
+>  clk_mcasp0_fixed         0        0        0    24576000      0     0  50000     Y      deviceless                      0
+>                                                                                          deviceless                      0
+>     clk_mcasp0            0        0        0    24576000      0     0  50000     N          simple-audio-card,cpu           0
+>                                                                                              deviceless                      0
 > 
+> Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+> Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+> Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
+> Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
+> Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
+> Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
+> Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
+> ---
+>  drivers/clk/clk.c | 46 +++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 35 insertions(+), 11 deletions(-)
 > 
-> > -----Original Message-----
-> > From: <Vishal Badole> <badolevishal1116@gmail.com>
-> > Sent: Monday, August 8, 2022 12:00 PM
-> > To: Elliott, Robert (Servers) <elliott@hpe.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>; mturquette@baylibre.com; inux-
-> > clk@vger.kernel.org; linux-kernel@vger.kernel.org; chinmoyghosh2001@gmail.com;
-> > mintupatel89@gmail.com; vimal.kumar32@gmail.com
-> > Subject: Re: [PATCH] Common clock: ​​To list active consumers of clocks
-> > 
-> > On Tue, Aug 02, 2022 at 10:49:17PM +0000, Elliott, Robert (Servers) wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: <Vishal Badole> <badolevishal1116@gmail.com>
-> > > > Sent: Sunday, June 26, 2022 1:25 PM
-> > > > To: Stephen Boyd <sboyd@kernel.org>; mturquette@baylibre.com; inux-
-> > > > clk@vger.kernel.org; linux-kernel@vger.kernel.org
-> > > > Cc: chinmoyghosh2001@gmail.com; mintupatel89@gmail.com;
-> > > > vimal.kumar32@gmail.com
-> > > > Subject: Re: [PATCH] Common clock: ​​To list active consumers of clocks
-> > > >
-> > > ...
-> > > > We will remove above prints in the revised patch. We are facing
-> > > > indentation issue whle printing consumer in summary
-> > > > as given below
-> > > >                                  enable  prepare  protect
-> > duty  hardware            per-user
-> > > >   clock                          count    count    count
-> > rateccuracy phase  cycle    enable  consumer   count
-> > > >   clk_mcasp0_fixed                   0        0        0
-> > 24576000     0  50000         Y
-> > > >   deviceless        0
-> > >
-> > > Consider making the kernel output simple, greppable, and parseable (e.g.,
-> > > comma-separated fields, one entry per line, no multi-line column headers)
-> > > and let a userspace tool do the fancy formatting.
-> > >
-> > Hi Robert,
-> > We have raised another patch for the same. Please find the below link
-> > for reference:
-> > 
-> > https://www.spinics.net/lists/kernel/msg4459705.html
-> 
-> That output is still not parsable.
-> 
-> I suggest making the kernel output more like:
->   clock,enable count,prepare count,protect count,rate,accuracy,phase,duty cycle,hardware enable,consumer,per-user count
->   clk_mcasp0_fixed,0,0,0,24576000,0,0,50000,Y,deviceless,0
->   clk_mcasp0,0,0,0,24576000,0,0,50000,N,simple-audio-card;cpu,0
-> 
-> and make a userspace program like lsmod, lscpu, lsblk, lspci, 
-> or lsusb to print the data with fancy columns or apply
-> other filters.
-> 
-> That allows adding or removing column headers, assuming the
-> userspace program doesn't hardcode assumptions about them.
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f00d4c1..c96079f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -102,6 +102,7 @@ struct clk {
+>  	unsigned long min_rate;
+>  	unsigned long max_rate;
+>  	unsigned int exclusive_count;
+> +	unsigned int enable_count;
+>  	struct hlist_node clks_node;
+>  };
+>  
+> @@ -1008,6 +1009,10 @@ void clk_disable(struct clk *clk)
+>  		return;
+>  
+>  	clk_core_disable_lock(clk->core);
+> +
+> +	if (clk->enable_count > 0)
+> +		clk->enable_count--;
+> +
+>  }
+>  EXPORT_SYMBOL_GPL(clk_disable);
+>  
+> @@ -1169,10 +1174,16 @@ EXPORT_SYMBOL_GPL(clk_restore_context);
+>   */
+>  int clk_enable(struct clk *clk)
+>  {
+> +	int ret;
+> +
+>  	if (!clk)
+>  		return 0;
+>  
+> -	return clk_core_enable_lock(clk->core);
+> +	ret = clk_core_enable_lock(clk->core);
+> +	if (!ret)
+> +		clk->enable_count++;
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_enable);
+>  
+> @@ -2953,28 +2964,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+>  				 int level)
+>  {
+>  	int phase;
+> +	struct clk *clk_user;
+> +	int multi_node = 0;
+>  
+> -	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+> +	seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
+>  		   level * 3 + 1, "",
+> -		   30 - level * 3, c->name,
+> +		   35 - level * 3, c->name,
+>  		   c->enable_count, c->prepare_count, c->protect_count,
+>  		   clk_core_get_rate_recalc(c),
+>  		   clk_core_get_accuracy_recalc(c));
+>  
+>  	phase = clk_core_get_phase(c);
+>  	if (phase >= 0)
+> -		seq_printf(s, "%5d", phase);
+> +		seq_printf(s, "%-5d", phase);
+>  	else
+>  		seq_puts(s, "-----");
+>  
+> -	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
+> +	seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
+>  
+>  	if (c->ops->is_enabled)
+> -		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
+> +		seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
+>  	else if (!c->ops->enable)
+> -		seq_printf(s, " %9c\n", 'Y');
+> +		seq_printf(s, " %5c ", 'Y');
+>  	else
+> -		seq_printf(s, " %9c\n", '?');
+> +		seq_printf(s, " %5c ", '?');
+> +
+> +	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
+> +		seq_printf(s, "%*s%-*s  %-4d\n",
+> +			   level * 3 + 2 + 105 * multi_node, "",
+> +			   30,
+> +			   clk_user->dev_id ? clk_user->dev_id : "deviceless",
+> +			   clk_user->enable_count);
+> +
+> +		multi_node = 1;
+> +	}
+> +
+>  }
+>  
+>  static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+> @@ -2995,9 +3019,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+>  	struct clk_core *c;
+>  	struct hlist_head **lists = (struct hlist_head **)s->private;
+>  
+> -	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+> -	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+> -	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
+> +	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            per-user\n");
+> +	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                    count\n");
+> +	seq_puts(s, "-------------------------------------------------------------------------------------------------------------------------------------------\n");
+>  
+>  	clk_prepare_lock();
+>  
+> -- 
+> 2.7.4
 >
 
-Hi Robert,
-As per the review given by stephen Boyd, who is one of maintainer of
-clk.c, suggested to add consumer's name and per user count in clock
-summary only. We are also getting proper formatted and parsable output
-on our target board console but when we copy and paste the same in
-commit message its format is getting changed. Please apply this patch
-and check on your target.
+Hi Stephen,
+Please review the above patch. Here we have made the changes as per your
+review points. 
+Note: The example format in commit meassage is getting changed during
+copy paste but we are getting proper formatted and parsable output on
+actual target.
+
 
 Regards,
 Vishal
