@@ -2,91 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C452C00140
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Aug 2022 07:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A31C00140
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Aug 2022 15:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbiHUHwv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Aug 2022 03:52:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35098 "EHLO
+        id S229630AbiHUPgn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Aug 2022 11:36:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiHUHwv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Aug 2022 03:52:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1991129CAA;
-        Sun, 21 Aug 2022 00:52:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C04E2B80B2E;
-        Sun, 21 Aug 2022 07:52:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D7B7C433C1;
-        Sun, 21 Aug 2022 07:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661068367;
-        bh=4HE7PUbyJI7Wuw654atuUptpii9Iqk65EOWgePXwnDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=imCBLy+6MmOGiG0ms6vdKrV5LnCD9Lz8SrrOhZRDTCQ2/QmI+urIxKVU/nEoxRyyP
-         5imkBICLmymFVI93bRqHuThTiie2Lz0PY3vLAxKAxmNb6iXSkIArlRxPg3mBOPtsN7
-         iaM0VYtl+YNYjhi9y7+GDubAKO3tCWJlaKCUiacXDgbNMowynh1tWd3ifz36a1U75g
-         +q+qZCWhMoKIuo0V/FQ2ftVDovJMEP1q/8QMj96EWs9IPZ/Y2+5urwm7J5HkqkwVoJ
-         yj7imvbj+av555TiqzWBbURPXB8hLjdVnoMAmP6pH6I5XCrnxUf/MPc7tYOFbkJph1
-         4t2d7X2LsboUw==
-Date:   Sun, 21 Aug 2022 15:52:39 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Arnaud Ferraris <arnaud.ferraris@collabora.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <dev@lynxeye.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] ARM: arm64: dts/clk: imx8mm: indentation
- whitespace cleanup
-Message-ID: <20220821075239.GP149610@dragon>
-References: <20220722215445.3548530-1-marcel@ziswiler.com>
+        with ESMTP id S229505AbiHUPgm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Aug 2022 11:36:42 -0400
+Received: from bg5.exmail.qq.com (bg4.exmail.qq.com [43.154.54.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E2AD1ADA2;
+        Sun, 21 Aug 2022 08:36:41 -0700 (PDT)
+X-QQ-mid: bizesmtp90t1661096165t374baa6
+Received: from localhost.localdomain ( [182.148.14.124])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sun, 21 Aug 2022 23:36:03 +0800 (CST)
+X-QQ-SSF: 0100000000200020B000B00A0000000
+X-QQ-FEAT: DCPPvtqe8IzjFnN8vSMSGBUwANjnMiqsqhv9KSe9/xAj/mxepGoZuYvIWSMWS
+        4d1ypT1J91f6T7xsvIZpMyzvsz8jQ7HD9XhhtJKw8qtJ1qmZm9P/mMQ2bM5RTszDD0vBfSR
+        AaRrVkFzh/NWpLFn5rymWFvEcnfEq3XcdqwAnZ2BijNGUHiEHAodluCXCwdSj2k+WWj2VTA
+        mquAI/IiaeoweCAk4DRLFzIzfJBt8ZmZSzFDkfLMBdnPnixSzRq3foExNseKy/pNKVVReOr
+        iMr5EtKv9etj/PlXyWwNuu1Te4nFZ+pEoy8rNFVRRO2HdRmXav7og6yAksY8hPc6Gu7ZMms
+        19s5WGRwU78EUujABoNp34yPtxHAyr+JcaYxKGRmtXcL0XmP1FA4zX+MB6ZZA==
+X-QQ-GoodBg: 0
+From:   wangjianli <wangjianli@cdjrlc.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, narmstrong@baylibre.com,
+        jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
+        khilman@baylibre.com
+Cc:     linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        wangjianli <wangjianli@cdjrlc.com>
+Subject: [PATCH] clk/meson: fix repeated words in comments
+Date:   Sun, 21 Aug 2022 23:35:46 +0800
+Message-Id: <20220821153546.7358-1-wangjianli@cdjrlc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220722215445.3548530-1-marcel@ziswiler.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr7
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 22, 2022 at 11:54:33PM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> 
-> While synchronising them imx device trees with U-Boot I stumbled over
-> various checkpatch warnings. This series addresses those trivial
-> indentation and/or whitespace cleanups.
-> 
-> Changes in v2:
-> - The GPL part of the boilerplate license was actually GPL-2.0 only.
-> - Add Alexander's acked-by. Thanks!
-> - Add Lucas' acked-by. Thanks!
-> 
-> Marcel Ziswiler (12):
->   ARM: dts: imx6-sabrelite: change to use SPDX identifiers
->   ARM: dts: imx6qdl-mba6: don't use multiple blank lines
->   ARM: dts: imx6qdl: phytec: no spaces at start of line, indent use tabs
->   ARM: dts: imx6qdl-sabre: change to use SPDX identifiers
->   ARM: dts: imx7d-pico: indent use tabs, no spaces at start of line
->   ARM: dts: vf610: no spaces in indent but tabs
->   ARM: dts: vf610-twr: indent use tabs, no spaces at start of line
->   ARM: dts: vf610: don't use multiple blank lines
->   arm64: dts: imx8mm-venice-gw72xx-0x: blank line at end of file
->   arm64: dts: imx8mp-verdin: don't use multiple blank lines
->   arm64: dts: mnt-reform2: don't use multiple blank lines
->   clk: imx8mm: don't use multiple blank lines
+ Delete the redundant word 'by'.
 
-Applied all, thanks!
+Signed-off-by: wangjianli <wangjianli@cdjrlc.com>
+---
+ arch/x86/tools/relocs.c        | 2 +-
+ drivers/clk/meson/clk-regmap.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index e2c5b296120d..3f8ab8efb674 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -764,7 +764,7 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
+  *	to the start of the per_cpu area that does not change).
+  *
+  *	Relocations that apply to the per_cpu area need to have their
+- *	offset adjusted by by the value of __per_cpu_load to make them
++ *	offset adjusted by the value of __per_cpu_load to make them
+  *	point to the correct place in the loaded image (because the
+  *	virtual address of .data..percpu is 0).
+  *
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+index e365312da54e..e08a9fa0cc36 100644
+--- a/drivers/clk/meson/clk-regmap.h
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -18,7 +18,7 @@
+  * @data:	data specific to the clock type
+  *
+  * Clock which is controlled by regmap backed registers. The actual type of
+- * of the clock is controlled by the clock_ops and data.
++ * the clock is controlled by the clock_ops and data.
+  */
+ struct clk_regmap {
+ 	struct clk_hw	hw;
+-- 
+2.36.1
+
