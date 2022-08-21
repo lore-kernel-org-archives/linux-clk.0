@@ -2,81 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91375C00140
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Aug 2022 16:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43637C00140
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Aug 2022 17:59:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbiHUQN1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Aug 2022 12:13:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37438 "EHLO
+        id S230416AbiHUR7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Aug 2022 13:59:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiHUQN0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Aug 2022 12:13:26 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 070E62DD9;
-        Sun, 21 Aug 2022 09:13:25 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-333a4a5d495so234733017b3.10;
-        Sun, 21 Aug 2022 09:13:24 -0700 (PDT)
+        with ESMTP id S229491AbiHUR7X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Aug 2022 13:59:23 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B8421B786;
+        Sun, 21 Aug 2022 10:59:22 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id e19so7720873pju.1;
+        Sun, 21 Aug 2022 10:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=4jWg3pa8oTEiXPQ4lpu76iaATY92QDHZb7IidOt0SyI=;
-        b=Hyw9U2ZJCY3p7yK7rox0xxNjkaiTWB1F5GdXRAPnPf2MWoFkGV6ORCHDkO1941iuSO
-         +/PnnYHK4rHyGhNkl/nJRgpcFb3KvTnGapYMU1YUOuZFrv8qA3fWIMMKf3kTaAhrPA25
-         auDQ2JtJP6oEcHceFMLGuuGg9zKj72qg7b4gMfo6u45suzU/ocu4ZR+trx63fBK7VCI3
-         K5WHgDi13KbTv61zvYAPbtJ9oxrhQhMBmBge6ZuxZuwzkJHv8tB+U0XtezStcgVSc5+3
-         YokCyHA/0qKvkvmLNKNB7L3S+Ht7xUi89861BIianntbkHP69pFUWsYoHLhFNhz9aIWv
-         uWpQ==
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc;
+        bh=V8bMKICvP7gE2r6LcG1wlsTsLSU26soKtKY7qWy9Wdc=;
+        b=S0XUUuEUtqHoMKuAHC6MaSekJn5w0mUC5kPanzQid4f55PZHgge8jF9nLWBEoxSVP/
+         5CjEYnvcKyLLHHFobQkfx5iOXFAbwc+0FPD1JjfA7vjQlkwRdA5wwTKpz87KjVjt6bvw
+         CY9U0SOGEW6nASmQlPKsN2dt+/ewWpQO7Syw046EJTIi2oe1lPQOq3eHO4zZAkGCmIKF
+         dc4fdZT5k0VxRVDWhKM7fqBLbbgs9JvzIE0BdvtcSzRxUaAZhDwtDPrP4qH/xKx4inHH
+         jSQ9bnbTjPmQT7g6oyqt+eMIUBp/KMAE+pW+DImQ8z9/wMjUarWRyjpc4PhoISv6UzF1
+         rvdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=4jWg3pa8oTEiXPQ4lpu76iaATY92QDHZb7IidOt0SyI=;
-        b=znP3KWaPIhj7Za0LvoV4gfoc+Rb+vT0i6LsMGgV13rdLcyi+xPf98Y09SE6Iex3QeA
-         vfFFtAmy9b7CinHuXrL04W7gAqLuprqR93KsViyqgkLbrc3mgLiqsufGoQBAEhYQIIq/
-         xUAH1yvo9eTuE1NN0ao9O19dkcnJzArszHxObqq9/DZvCKb8Djt6jclag78c1lW5ZY+A
-         zfCR6JHkxRScfLVbNwN81TIYgp0t/qpO0UBbaPqAWeexYZAS2vWtSqvffquBJ2sr1mo7
-         DCCkqN6gDJ5WImG/rTmaHt4nM81/PqGf5eX8ItyJxyhhKZPNJ7lKrsz9QLS/58AYJZ1x
-         sxXA==
-X-Gm-Message-State: ACgBeo0RoNLlbPm6dVNMFwqq7eFnMBRBeMJcJQ9x/i/xIUmRmj6AgOcR
-        msEK7VmGAbQ4LmCJ74s/Nu2wpz+0L6LbEfw5QNY=
-X-Google-Smtp-Source: AA6agR6p921NJbFG9woz8lz8NnF5oqa7HuAlDjs784eoChdosYBnVJWRG9lGJIGcdKLbM+FeEsFNg0dcrrNBcmMPAqE=
-X-Received: by 2002:a81:d543:0:b0:325:2240:ce5 with SMTP id
- l3-20020a81d543000000b0032522400ce5mr16442058ywj.210.1661098404182; Sun, 21
- Aug 2022 09:13:24 -0700 (PDT)
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc;
+        bh=V8bMKICvP7gE2r6LcG1wlsTsLSU26soKtKY7qWy9Wdc=;
+        b=hkpU36q5ONiuaLHjej6wxm+m84biU5QUI4FUfYhpCTwbdGS49u6zi8hlSNTE7uNuEW
+         kSxk48CsF2TxABSxoAe8taW1i2XMr35s/dZfwHKaGutKlGV7h7OcowCKrLvNZf9q8+Py
+         RMOL9QY5I+bfaCiqtiGVTq+UeR0WB3QXS5OX4Qu/Ir78FM4ZtfbMzy5EeLFoDM/n6nU6
+         7rw/UNVvbSv0SbmKVfU5jMkm6KDoxHSltR7ZRfdUbIycitqS0Et4ePa/DaD/BaoXrJqH
+         xjaXkA89bwzzQzSN/hDp0Tg8vc9Ek07S+a3tOWqwZCYMqWEq6Jaw8P/9KH7atyiiIpIM
+         fBRA==
+X-Gm-Message-State: ACgBeo2RUHOQYf4C65TI/AT/j/KLU/9/9j1KLdfr6v18MYl2gfxEzyzE
+        oe5emOpROgPBj8kl4635gaA=
+X-Google-Smtp-Source: AA6agR5EHmpdNmL63tYfMWUIEIcspviH71F+4o95fTsCQaD/vkiojCk0zfoe3xW4KvqaYbdTbYR8Ug==
+X-Received: by 2002:a17:90a:1c02:b0:1e0:df7:31f2 with SMTP id s2-20020a17090a1c0200b001e00df731f2mr24020256pjs.222.1661104761500;
+        Sun, 21 Aug 2022 10:59:21 -0700 (PDT)
+Received: from Mahakal ([2401:4900:36a0:636e:62bf:3813:d194:e46f])
+        by smtp.gmail.com with ESMTPSA id 201-20020a6214d2000000b0052dbad1ea2esm6947355pfu.6.2022.08.21.10.59.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Aug 2022 10:59:21 -0700 (PDT)
+Date:   Sun, 21 Aug 2022 23:29:14 +0530
+From:   "<Vishal Badole>" <badolevishal1116@gmail.com>
+To:     "Elliott, Robert (Servers)" <elliott@hpe.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chinmoyghosh2001@gmail.com" <chinmoyghosh2001@gmail.com>,
+        "mintupatel89@gmail.com" <mintupatel89@gmail.com>,
+        "vimal.kumar32@gmail.com" <vimal.kumar32@gmail.com>
+Subject: Re: [PATCH] Common clock: =?utf-8?B?4oCL?= =?utf-8?B?4oCLVG8=?= list
+ active consumers of clocks
+Message-ID: <20220821175912.GA6946@Mahakal>
+References: <CAEXpiVQihEadxsNodarz2-wxSAipfpzEaA8zKpnozszC+weYTQ@mail.gmail.com>
+ <20220610194013.DD39DC34114@smtp.kernel.org>
+ <20220622170219.GA6978@Mahakal>
+ <20220624010550.582BBC341C7@smtp.kernel.org>
+ <20220626182517.GA26001@Mahakal>
+ <MW5PR84MB1842824E0F57D0EC46381B09AB9D9@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+ <20220808170001.GB5239@Mahakal>
+ <MW5PR84MB18429934C99C9AE6289D620BAB6E9@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-References: <20220821153546.7358-1-wangjianli@cdjrlc.com>
-In-Reply-To: <20220821153546.7358-1-wangjianli@cdjrlc.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 21 Aug 2022 18:13:13 +0200
-Message-ID: <CAFBinCCb-t2+F=EFBYc6QhPa8bL8SaXDcUBAQbW+WE9P0N=cHg@mail.gmail.com>
-Subject: Re: [PATCH] clk/meson: fix repeated words in comments
-To:     wangjianli <wangjianli@cdjrlc.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, narmstrong@baylibre.com,
-        jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <MW5PR84MB18429934C99C9AE6289D620BAB6E9@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
-
-On Sun, Aug 21, 2022 at 5:37 PM wangjianli <wangjianli@cdjrlc.com> wrote:
+On Sun, Aug 21, 2022 at 05:07:00AM +0000, Elliott, Robert (Servers) wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: <Vishal Badole> <badolevishal1116@gmail.com>
+> > Sent: Monday, August 8, 2022 12:00 PM
+> > To: Elliott, Robert (Servers) <elliott@hpe.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>; mturquette@baylibre.com; inux-
+> > clk@vger.kernel.org; linux-kernel@vger.kernel.org; chinmoyghosh2001@gmail.com;
+> > mintupatel89@gmail.com; vimal.kumar32@gmail.com
+> > Subject: Re: [PATCH] Common clock: ​​To list active consumers of clocks
+> > 
+> > On Tue, Aug 02, 2022 at 10:49:17PM +0000, Elliott, Robert (Servers) wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: <Vishal Badole> <badolevishal1116@gmail.com>
+> > > > Sent: Sunday, June 26, 2022 1:25 PM
+> > > > To: Stephen Boyd <sboyd@kernel.org>; mturquette@baylibre.com; inux-
+> > > > clk@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > > Cc: chinmoyghosh2001@gmail.com; mintupatel89@gmail.com;
+> > > > vimal.kumar32@gmail.com
+> > > > Subject: Re: [PATCH] Common clock: ​​To list active consumers of clocks
+> > > >
+> > > ...
+> > > > We will remove above prints in the revised patch. We are facing
+> > > > indentation issue whle printing consumer in summary
+> > > > as given below
+> > > >                                  enable  prepare  protect
+> > duty  hardware            per-user
+> > > >   clock                          count    count    count
+> > rateccuracy phase  cycle    enable  consumer   count
+> > > >   clk_mcasp0_fixed                   0        0        0
+> > 24576000     0  50000         Y
+> > > >   deviceless        0
+> > >
+> > > Consider making the kernel output simple, greppable, and parseable (e.g.,
+> > > comma-separated fields, one entry per line, no multi-line column headers)
+> > > and let a userspace tool do the fancy formatting.
+> > >
+> > Hi Robert,
+> > We have raised another patch for the same. Please find the below link
+> > for reference:
+> > 
+> > https://www.spinics.net/lists/kernel/msg4459705.html
+> 
+> That output is still not parsable.
+> 
+> I suggest making the kernel output more like:
+>   clock,enable count,prepare count,protect count,rate,accuracy,phase,duty cycle,hardware enable,consumer,per-user count
+>   clk_mcasp0_fixed,0,0,0,24576000,0,0,50000,Y,deviceless,0
+>   clk_mcasp0,0,0,0,24576000,0,0,50000,N,simple-audio-card;cpu,0
+> 
+> and make a userspace program like lsmod, lscpu, lsblk, lspci, 
+> or lsusb to print the data with fancy columns or apply
+> other filters.
+> 
+> That allows adding or removing column headers, assuming the
+> userspace program doesn't hardcode assumptions about them.
 >
->  Delete the redundant word 'by'.
->
-> Signed-off-by: wangjianli <wangjianli@cdjrlc.com>
-> ---
->  arch/x86/tools/relocs.c        | 2 +-
->  drivers/clk/meson/clk-regmap.h | 2 +-
-The clk-regmap.h change is fine but it needs to be separated from the
-x86 change.
-Can you please send an updated patch?
 
+Hi Robert,
+As per the review given by stephen Boyd, who is one of maintainer of
+clk.c, suggested to add consumer's name and per user count in clock
+summary only. We are also getting proper formatted and parsable output
+on our target board console but when we copy and paste the same in
+commit message its format is getting changed. Please apply this patch
+and check on your target.
 
-Thank you and best regards,
-Martin
+Regards,
+Vishal
