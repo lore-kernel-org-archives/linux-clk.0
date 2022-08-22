@@ -2,99 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6968DC28D13
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 17:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC21CC28D13
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 18:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236415AbiHVRbS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 13:31:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50776 "EHLO
+        id S237532AbiHVSaP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 14:30:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236497AbiHVRbQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 13:31:16 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D523ED6B
-        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 10:31:15 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id l21so11292903ljj.2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 10:31:15 -0700 (PDT)
+        with ESMTP id S237496AbiHVS3x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 14:29:53 -0400
+Received: from mail.baikalelectronics.com (mail.baikalelectronics.com [87.245.175.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 01B88491F4;
+        Mon, 22 Aug 2022 11:29:38 -0700 (PDT)
+Received: from mail (mail.baikal.int [192.168.51.25])
+        by mail.baikalelectronics.com (Postfix) with ESMTP id 65849BC2;
+        Mon, 22 Aug 2022 21:32:51 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.com 65849BC2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=UIBQLdznziJppE7OJpXEV1+Wn96b8SDqR1x+484CyS0=;
-        b=UslXPosZJEVEMBCrm+Bq270dy0ernwsV/tH5hBf9F+jDyKMTpzjX3vU/ntechaMWyC
-         f2V3lmnsowQFtbJYqlZmhLSahLY7uz2a0pPFVDC2HmynRQ2B7G+ATb+r4N3n88ZP7G2R
-         EeHBM+SvXIFsu1/YOUyWD5KpYo4Rlcpj4PAZ4d5x2eM4zfJL7NglVUKbHZCJFzwcRNMc
-         F3O6sb/JJlHq1MPi3jxXDKS76D9EeT1dg3mp6StAa4jljGjpf03dN2k3bA1CmpOa+ZXl
-         U9FhuBipFIKX/9HTcg491Edkwuujswxqn6C6ZREzh8u5+4ISq8Np0HuqW7p635Z6ptw/
-         Lceg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=UIBQLdznziJppE7OJpXEV1+Wn96b8SDqR1x+484CyS0=;
-        b=ptHs/0gA/9jeAjPzXjopwAvYBaRq5ixqDW4PWJPwlNvGQIXDOGdwmNRdQ2rxmdIY1F
-         0PBVkp5sBwYV0iuAlwmHvEgzGp3+SefV0BZLTipfZwA/EOewZZXKDYMf/Cf2x2RxuJZC
-         KwTEfm/2MmrlRUZq2A/1vN53YRK4cK4yDjxbnnnUInTIVbV+lvREqdsY2LeLlm2Oct0r
-         /fv2eJVMxx0/sd/qYgo3qabqxH5MW9waJHwXcJK2wa2DKpxJhoby4WLm2EdUKBIi+yko
-         qEmkwyCeF4P2qjX3OYXoLcetUVtYdKeN93uHnBtVc7JqU/5aGNdN4PHAAk4kii3PN2I0
-         YhNQ==
-X-Gm-Message-State: ACgBeo12wwCgfXuaQ6JqQf6XTMknikNuRTz4uLNxPmWzmhl0DjmrJj4v
-        rb98gWcmks15a0lHfFNsJg8rDA==
-X-Google-Smtp-Source: AA6agR6VFNpgt+MgZFrbKH8HTyfO7Yf/rgWPBwBmR3CL0NGx4uLKRhwHLYhAMoTx3/06p4INGZihLw==
-X-Received: by 2002:a2e:9604:0:b0:25e:4ed7:ef45 with SMTP id v4-20020a2e9604000000b0025e4ed7ef45mr5835729ljh.389.1661189473507;
-        Mon, 22 Aug 2022 10:31:13 -0700 (PDT)
-Received: from [192.168.0.11] (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
-        by smtp.gmail.com with ESMTPSA id t10-20020a056512208a00b0048aeff37812sm2010642lfr.308.2022.08.22.10.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Aug 2022 10:31:12 -0700 (PDT)
-Message-ID: <3815ce73-b021-4643-6bbb-ad0d35178b94@linaro.org>
-Date:   Mon, 22 Aug 2022 20:31:12 +0300
+        d=baikalelectronics.ru; s=mail; t=1661193171;
+        bh=3CwkXuGdeaekQknXVsyKQfInjlMHmHvNJb7YGZdJWx0=;
+        h=From:To:CC:Subject:Date:From;
+        b=QcQiVXBo6rHDB2QKLpt9iEW4pWu3PZ2fVDzHHtlLpsENqjnQ3fhDvXGv1w/K4LUp+
+         f6yDSVSfxXJD2RiSDMxgW1fVHbsJ8+T+N7LVwQYkHp5JYuhxfKmYzexdaK2Ql22FsQ
+         /ksPxitEnijQjLC4AYuY1s5qrCa8XUrAm0rGdPEA=
+Received: from localhost (192.168.168.10) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 22 Aug 2022 21:29:36 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND v10 0/7] clk/resets: baikal-t1: Add DDR/PCIe resets and xGMAC/SATA fixes
+Date:   Mon, 22 Aug 2022 21:29:26 +0300
+Message-ID: <20220822182934.23734-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: mediatek: add bindings for
- MT8365 SoC
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Markus Schneider-Pargmann <msp@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fabien Parent <parent.f@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabien Parent <fparent@baylibre.com>
-References: <20220822152652.3499972-1-msp@baylibre.com>
- <20220822152652.3499972-2-msp@baylibre.com>
- <0de7f878-1471-4916-9384-9d966e840d74@linaro.org>
-In-Reply-To: <0de7f878-1471-4916-9384-9d966e840d74@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/08/2022 20:29, Krzysztof Kozlowski wrote:
-> On 22/08/2022 18:26, Markus Schneider-Pargmann wrote:
->> From: Fabien Parent <fparent@baylibre.com>
->>
->> Add the clock bindings for the MediaTek MT8365 SoC.
->>
->> Signed-off-by: Fabien Parent <fparent@baylibre.com>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Hm, when did I review it?
+@Stephen, @Michael
 
-Ah, I reviewed v2 and still had comments in v3.
+It has been over seven months since the first series submission for
+review. Moreover the reset-part has already got @Philipp's ab tag.
+Please merge it in.
 
-I see these fixed, so everything looks fine!
+Short summary regarding this patchset. The series starts from fixing of
+the clocks glitching cause by the Renesas 5P49V6901 chip in some
+circumstances. Afterwards a few more modifications are introduced to
+finally finish the Baikal-T1 CCU unit support up and prepare the code
+before adding the Baikal-T1 PCIe/xGMAC support. First of all it turned out
+I specified wrong DW xGMAC PTP reference clock divider in my initial
+patches. It must be 8, not 10. Secondly I was wrong to add a joint xGMAC
+Ref and PTP clock instead of having them separately defined.  The SoC
+manual describes these clocks as separate fixed clock wrappers. Finally
+in order to close the SoC clock/reset support up we need to add the DDR
+and PCIe interfaces reset controls support. It's done in two steps. First
+I've moved the reset-controls-related code into a dedicated module. Then
+the DDR/PCIe reset-control functionality is added. As the series
+finalization we've decided to convert the Baikal-T1 clock/reset source
+drivers to mainly being the platform device driver and pre-initialize the
+basic clocks only at the early kernel boot stages.
 
-Best regards,
-Krzysztof
+Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v2:
+- Resubmit the series with adding @Philipp to the list of the recipients.
+
+Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v3:
+- No comments. Just resend the series.
+- Rebased from v5.17 onto v5.18-rc3.
+
+Link: https://lore.kernel.org/linux-clk/20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v4:
+- Completely split the CCU Dividers and Resets functionality up. (@Stephen)
+- Add a new fixes patch: "clk: baikal-t1: Actually enable SATA internal
+  ref clock".
+- Add a new fixes patch: "reset: Fix devm bulk optional exclusive control
+  getter".
+- Add a new fixes patch: "clk: vc5: Fix 5P49V6901 outputs disabling when
+  enabling FOD".
+- Add a new feagure patch: "clk: baikal-t1: Convert to platform device
+  driver".
+- Change the internal clock ID to the XGMAC-referred name.
+- Rebase onto the kernel v5.18.
+
+Link: https://lore.kernel.org/lkml/20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v5:
+- Just resend.
+- Rebase onto the kernel v5.19-rcX.
+
+Link: https://lore.kernel.org/linux-clk/20220624141853.7417-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v6:
+- Drop the patch
+  [PATCH RESEND v5 1/8] reset: Fix devm bulk optional exclusive control getter
+  since it has already been accepted by @Philipp.
+- Refactor the reset-control code to support the linear reset IDs only.
+  (@Philipp)
+- Combine the reset-related code into a single file. (@Philipp)
+- Drop CCU_DIV_RST_MAP() macro. It's no longer used.
+
+Link: https://lore.kernel.org/linux-clk/20220708192725.9501-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v7:
+- Fix "Alignment should match open parenthesis" warning for the
+  pr_err() method invocations. (@Philipp)
+- Drop empty line from the sys_rst_info structure initialization block.
+  (@Philipp)
+
+Link: https://lore.kernel.org/linux-clk/20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v8:
+- Fix "sef-deasserted" spelling in the CLK_BT1_CCU_RST config help
+  text. (@Randy)
+
+Link: https://lore.kernel.org/linux-clk/20220712121505.5671-1-Sergey.Semin@baikalelectronics.ru
+Changelog v9:
+- Just resend.
+
+Link: https://lore.kernel.org/linux-clk/20220728105736.8266-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v10:
+- Just resend.
+- Rebase onto the kernel 6.0-rc2.
+- Drop the already merged in patch:
+  [PATCH RESEND v5 1/8] reset: Fix devm bulk optional exclusive control getter
+
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Serge Semin (7):
+  clk: vc5: Fix 5P49V6901 outputs disabling when enabling FOD
+  clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+  clk: baikal-t1: Add shared xGMAC ref/ptp clocks internal parent
+  clk: baikal-t1: Add SATA internal ref clock buffer
+  clk: baikal-t1: Move reset-controls code into a dedicated module
+  clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+  clk: baikal-t1: Convert to platform device driver
+
+ drivers/clk/baikal-t1/Kconfig       |  12 +-
+ drivers/clk/baikal-t1/Makefile      |   1 +
+ drivers/clk/baikal-t1/ccu-div.c     |  84 +++++++--
+ drivers/clk/baikal-t1/ccu-div.h     |  17 +-
+ drivers/clk/baikal-t1/ccu-pll.h     |   8 +
+ drivers/clk/baikal-t1/ccu-rst.c     | 217 +++++++++++++++++++++++
+ drivers/clk/baikal-t1/ccu-rst.h     |  67 +++++++
+ drivers/clk/baikal-t1/clk-ccu-div.c | 264 ++++++++++++++++------------
+ drivers/clk/baikal-t1/clk-ccu-pll.c | 129 +++++++++++---
+ drivers/clk/clk-versaclock5.c       |   2 +-
+ include/dt-bindings/reset/bt1-ccu.h |   9 +
+ 11 files changed, 649 insertions(+), 161 deletions(-)
+ create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+ create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+
+-- 
+2.35.1
+
