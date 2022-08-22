@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F37C28D13
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 08:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6950FC32772
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 08:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbiHVIOq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 04:14:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46908 "EHLO
+        id S232913AbiHVIOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 04:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230229AbiHVIOo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 04:14:44 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056E61B7B2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 01:14:43 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id g18so10226075pju.0
-        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 01:14:43 -0700 (PDT)
+        with ESMTP id S233602AbiHVIOr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 04:14:47 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1811BEB0
+        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 01:14:45 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id w13so3650813pgq.7
+        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 01:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=vFL4Ok6aVz+SF4AwWxLqDJ9FHif8ySEihParxtYrieU=;
-        b=byGR/js11m4a8Js4TSQCX47v+0BUDKlOmW4jrvz+e1uNJeU7y2gEvVdl7VJwzGPvUi
-         fsk+l1iQUDEZrrivhKeoUL+vHAMvMk9UgYv9U9t4Oe8k805g27z4t3vLplIAc/zalee/
-         UkrohqvCiKb93QewIV1rqfjJF7IyqR+GS/wn4=
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=IE9z0fBhPksiP/pwlYETW9TxjlMXMx385aynhNYxesU=;
+        b=a4xELweNAdtImdOryMuf97q6wznTft+2pd2NXGi9/Uu45MwqTCJeS8d9uIVlcK0R1t
+         Wbc8Dwgtwhbpzq5tvdebGhyB+UdIUfeu0d9Qj9dA3p/WRL3HJHY/6KjrSoUqT46kAKRF
+         AW4N7OsQirmPq4MiHJqK22PhIFuZtzTleTqVE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=vFL4Ok6aVz+SF4AwWxLqDJ9FHif8ySEihParxtYrieU=;
-        b=RwQn2saatU2w3aIZrS2OgTVN6x0E+0CsyboHLwtPrwRjCn7nB8CIeZILegmlytRMKb
-         mhiJOgaNHqz/thQUSfyi9AqdEVGDC/2aRSEsCZ4kBxYP4OPnfYT1HbSYelGlhuJQ/SPp
-         1B0rjNnUuK3Lexi31K4wSBRaV1i6ft8CIJp6no9mtNdulc2ynJ7nmYsxAVrjuDkw89nK
-         VgoyDxbVHUovZ03YtWqL770Da710BQM3xhLulQJLmGrY61XQVYOVcoBdUws9YvtSzh3z
-         9+MUklrR34c68kOQ11IETVeb54bbYjOpvOIxnh5BjmwDcXJVa82rygXDV0aUC0/xYZba
-         ioqA==
-X-Gm-Message-State: ACgBeo0ykFtHPMR9CR7Eiay5M64JNgBrt/hr+Y/w7WGUiIgbVaS2LnZ2
-        lBke2F9LFCj5NbN2jMsUTDRMGA==
-X-Google-Smtp-Source: AA6agR5x1ulnqmLHSRLCyJZRdkdDCiS5g9qlKQK1unmkvno1XeD7aFXF1CYQBd5BdFlFECphtFU0Nw==
-X-Received: by 2002:a17:902:be02:b0:172:d409:e057 with SMTP id r2-20020a170902be0200b00172d409e057mr9499042pls.90.1661156082565;
-        Mon, 22 Aug 2022 01:14:42 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=IE9z0fBhPksiP/pwlYETW9TxjlMXMx385aynhNYxesU=;
+        b=RRAsFj2zEpsmTTZZrFcsMpW0JpS2p6jHbtQXAm1UBK5p/BKQPUrDkC9zEJ0a1w2A80
+         1mhKsKENfDxf6j2cV5hpAOSdPjJlnSBsa+TwxwBoeJ/Q/MeBuN4RvlmKe+bG3cSpFmCL
+         saKlsRIOXquqobtOkDBpxBk7Fqc2MQjiMre/QDoDbuqfyRbAMZpUc0+2PZDkf7ZA72Gi
+         jSE77wREwrCJVRSZTYAA+gQGfQ8vAB8I8Y1uVEny/PvXAngiCNXJRcZieTgM5m7FBV+G
+         Gh/Ad+igTw+ne2wJvEx82YOWnHFe1Z1To5Gtwhojr4xasb0lrdwYm63+VY8+gAEENizb
+         HbRA==
+X-Gm-Message-State: ACgBeo3isy94rS3p6SaPhtjK/id9/2pqLz+Do6S39tOG5JXB74M5gtTN
+        Kggc2nE9aeo/D5Hzb3/TiyR+Pw==
+X-Google-Smtp-Source: AA6agR6Jupl9v7GziBhTOH0kDalXXlDMdRXBBnW8kLYLAJqa3IodQup2do2g2gD+AwNYygTwOsFPjg==
+X-Received: by 2002:a63:f94f:0:b0:429:7aef:e252 with SMTP id q15-20020a63f94f000000b004297aefe252mr16679215pgk.270.1661156084627;
+        Mon, 22 Aug 2022 01:14:44 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d583:9d7d:3429:1b4b])
-        by smtp.gmail.com with ESMTPSA id f184-20020a6238c1000000b00536b3fe1300sm1204858pfa.13.2022.08.22.01.14.40
+        by smtp.gmail.com with ESMTPSA id f184-20020a6238c1000000b00536b3fe1300sm1204858pfa.13.2022.08.22.01.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 01:14:42 -0700 (PDT)
+        Mon, 22 Aug 2022 01:14:44 -0700 (PDT)
 From:   Chen-Yu Tsai <wenst@chromium.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -53,10 +53,12 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
         <nfraprado@collabora.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v2 0/2] clk: Fix CLK_OPS_PARENT_ENABLE and runtime PM
-Date:   Mon, 22 Aug 2022 16:14:22 +0800
-Message-Id: <20220822081424.1310926-1-wenst@chromium.org>
+Subject: [PATCH RESEND v2 1/2] clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops
+Date:   Mon, 22 Aug 2022 16:14:23 +0800
+Message-Id: <20220822081424.1310926-2-wenst@chromium.org>
 X-Mailer: git-send-email 2.37.1.595.g718a3a8f04-goog
+In-Reply-To: <20220822081424.1310926-1-wenst@chromium.org>
+References: <20220822081424.1310926-1-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,40 +66,115 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+In the previous commits that added CLK_OPS_PARENT_ENABLE, support for
+this flag was only added to rate change operations (rate setting and
+reparent) and disabling unused subtree. It was not added to the
+clock gate related operations. Any hardware driver that needs it for
+these operations will either see bogus results, or worse, hang.
 
-Resending this series from last month. This is now based on
-next-20220822, but should apply cleanly to v6.0-rc1.
-
-Here are a couple fixes for the clk core. They are unrelated but overlap
-in diff context, so I'm sending them together.
-
-Patch 1 makes the clk core honor CLK_OPS_PARENT_ENABLE for clk gate ops.
-Without this, dumping clk_summary on the MT8192 would cause the system
+This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
+drivers set this, but dumping debugfs clk_summary would cause it
 to hang.
 
-Patch 2 reorders the runtime PM call in clk_core_unprepare() to match
-the order described in its original commit, and the opposite of that
-in clk_core_prepare().
+Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ drivers/clk/clk.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Changes since v1
-- Use clk_core_{enable,disable}_lock() instead of non-locking variant.
-  Reported by Nícolas
-- Added coverage for clk_core_is_prepared()
-- Correct sequencing in clk_core_is_enabled() so that runtime PM is
-  handled before parent clock is enabled, matching other functions.
-
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (2):
-  clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops
-  clk: core: Fix runtime PM sequence in clk_core_unprepare()
-
- drivers/clk/clk.c | 31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7fc191c15507..9b365cd6d14b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -196,6 +196,9 @@ static bool clk_core_rate_is_protected(struct clk_core *core)
+ 	return core->protect_count;
+ }
+ 
++static int clk_core_prepare_enable(struct clk_core *core);
++static void clk_core_disable_unprepare(struct clk_core *core);
++
+ static bool clk_core_is_prepared(struct clk_core *core)
+ {
+ 	bool ret = false;
+@@ -208,7 +211,11 @@ static bool clk_core_is_prepared(struct clk_core *core)
+ 		return core->prepare_count;
+ 
+ 	if (!clk_pm_runtime_get(core)) {
++		if (core->flags & CLK_OPS_PARENT_ENABLE)
++			clk_core_prepare_enable(core->parent);
+ 		ret = core->ops->is_prepared(core->hw);
++		if (core->flags & CLK_OPS_PARENT_ENABLE)
++			clk_core_disable_unprepare(core->parent);
+ 		clk_pm_runtime_put(core);
+ 	}
+ 
+@@ -244,7 +251,13 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 		}
+ 	}
+ 
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_prepare_enable(core->parent);
++
+ 	ret = core->ops->is_enabled(core->hw);
++
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_unprepare(core->parent);
+ done:
+ 	if (core->rpm_enabled)
+ 		pm_runtime_put(core->dev);
+@@ -812,6 +825,9 @@ int clk_rate_exclusive_get(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
+ 
++static int clk_core_enable_lock(struct clk_core *core);
++static void clk_core_disable_lock(struct clk_core *core);
++
+ static void clk_core_unprepare(struct clk_core *core)
+ {
+ 	lockdep_assert_held(&prepare_lock);
+@@ -835,6 +851,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 
+ 	WARN(core->enable_count > 0, "Unpreparing enabled %s\n", core->name);
+ 
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_enable_lock(core->parent);
++
+ 	trace_clk_unprepare(core);
+ 
+ 	if (core->ops->unprepare)
+@@ -843,6 +862,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	clk_pm_runtime_put(core);
+ 
+ 	trace_clk_unprepare_complete(core);
++
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_lock(core->parent);
+ 	clk_core_unprepare(core->parent);
+ }
+ 
+@@ -891,6 +913,9 @@ static int clk_core_prepare(struct clk_core *core)
+ 		if (ret)
+ 			goto runtime_put;
+ 
++		if (core->flags & CLK_OPS_PARENT_ENABLE)
++			clk_core_enable_lock(core->parent);
++
+ 		trace_clk_prepare(core);
+ 
+ 		if (core->ops->prepare)
+@@ -898,6 +923,9 @@ static int clk_core_prepare(struct clk_core *core)
+ 
+ 		trace_clk_prepare_complete(core);
+ 
++		if (core->flags & CLK_OPS_PARENT_ENABLE)
++			clk_core_disable_lock(core->parent);
++
+ 		if (ret)
+ 			goto unprepare;
+ 	}
 -- 
 2.37.1.595.g718a3a8f04-goog
 
