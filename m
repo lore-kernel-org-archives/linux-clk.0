@@ -2,93 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B455C32792
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 21:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0BAC28D13
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 23:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238399AbiHVVx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 17:53:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48260 "EHLO
+        id S235691AbiHVXGu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 19:06:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235042AbiHVVxy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 17:53:54 -0400
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FBB815724;
-        Mon, 22 Aug 2022 14:53:52 -0700 (PDT)
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-11d2dcc31dbso6449119fac.7;
-        Mon, 22 Aug 2022 14:53:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=bcDzoWFkVNTZ2Tko5DKpI1+Q/hCmaWzs38DtfFsmGpY=;
-        b=iKMKv1gO5hfW4XqhsGT8a5UtUeW9fmysX0ZywtHYjw6SdQGKk6eE/FzMtIJMhhoVor
-         XpAcMvC0DCdZFWiBwXdi57sHMCCGwT5E00ALhWtxKsLqyUMH3bps45KPXa6El7XIujyR
-         LeMbtGHPkkvWmIjEx7z5sqUodyadWWHflGe8P4xR/7sjwotLGe3XUHA6+XaTLd+9v9Vh
-         ImrN3GclW3R5xo8pRyau8Nt6zkfowFcPy6nbJ7FpENIxoAlAvM6HwoRvLrbjW34rqzsZ
-         5Csglfoke6wfMbnADrvK3Sn0Wr36KgG75b2ALu2TYSidfoUOA8yZTULTxnKLucNEtKLe
-         b6mA==
-X-Gm-Message-State: ACgBeo0C/UoQFwoI6phYKYlTYozlM/JEQAy7YWoLgViU5Rzy7bvZaQXp
-        0mJ4QQh3mrZPyrbg576TSQ==
-X-Google-Smtp-Source: AA6agR4F4261CrVdouxraTqRKAlEX9mH87I0UOzWRhgc3aFcX60CBsldqkUugDri/nQw2U17krFs9w==
-X-Received: by 2002:a05:6870:9690:b0:11d:1e78:2674 with SMTP id o16-20020a056870969000b0011d1e782674mr160632oaq.90.1661205231495;
-        Mon, 22 Aug 2022 14:53:51 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f30-20020a056870899e00b00108b31bf8fbsm3183119oaq.53.2022.08.22.14.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 14:53:50 -0700 (PDT)
-Received: (nullmailer pid 923856 invoked by uid 1000);
-        Mon, 22 Aug 2022 21:53:49 -0000
-Date:   Mon, 22 Aug 2022 16:53:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Conor.Dooley@microchip.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, linux-riscv@lists.infradead.org,
-        palmer@dabbelt.com, sboyd@kernel.org, aou@eecs.berkeley.edu,
-        Hugh.Breslin@microchip.com, krzysztof.kozlowski+dt@linaro.org,
-        paul.walmsley@sifive.com, linux-clk@vger.kernel.org,
-        Daire.McNamara@microchip.com
-Subject: Re: [PATCH v2 2/6] dt-bindings: clk: document PolarFire SoC fabric
- clocks
-Message-ID: <20220822215349.GA913400-robh@kernel.org>
-References: <20220822112928.2727437-1-conor.dooley@microchip.com>
- <20220822112928.2727437-3-conor.dooley@microchip.com>
- <1661197242.557172.413609.nullmailer@robh.at.kernel.org>
- <92e15fa9-65f4-1dea-48eb-f3afbea5d3f4@microchip.com>
+        with ESMTP id S232256AbiHVXGt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 19:06:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCEC543E5E;
+        Mon, 22 Aug 2022 16:06:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 667196134B;
+        Mon, 22 Aug 2022 23:06:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF20C433D6;
+        Mon, 22 Aug 2022 23:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661209607;
+        bh=rgeuZBFqOE86KbbcuzF7iDJSa0+fmJB6mEfGx/OvRGw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=WZC3GDJ3bV0MXzJFkl+wCVhvtTSb/sELPKXA63f4QeQNiqJ2eeqLzYLldjtdFUaw9
+         cy39Qifas1EhEL6Rnq29NIFQ+CmMvwWiNJ1up/ldaMAIWqiMkeOvjI6HNYu8HYh7jM
+         CNomiaKNmua92EuUMyhBoNyTfbq298ZRxxSK7cIOaTtEtNW1cGVWb49tJKecOx6CFN
+         KglwKUsL4Up+dtC3gk1tRiostScB1bvNA3/ZV6js0siCYZ75AzgVlxy0rSHxlmiCHq
+         biHgpwASixvhjH9t7IYJSOyyFkqe0I2PxM8iAY52AOfUCSiYWPhlQoihiC5JYy70cb
+         GCbjtfXga26YQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92e15fa9-65f4-1dea-48eb-f3afbea5d3f4@microchip.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220613081632.2159-2-lukas.bulwahn@gmail.com>
+References: <20220613081632.2159-1-lukas.bulwahn@gmail.com> <20220613081632.2159-2-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Move lochnagar.h to dt-bindings/clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        devicetree@vger.kernel.org, patches@opensource.cirrus.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Joe Perches <joe@perches.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Mon, 22 Aug 2022 16:06:45 -0700
+User-Agent: alot/0.10
+Message-Id: <20220822230647.AFF20C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 22, 2022 at 07:44:20PM +0000, Conor.Dooley@microchip.com wrote:
-> On 22/08/2022 20:40, Rob Herring wrote:
-> > On Mon, 22 Aug 2022 12:29:25 +0100, Conor Dooley wrote:
-> >> On PolarFire SoC there are 4 PLL/DLL blocks, located in each of the
-> >> ordinal corners of the chip, which our documentation refers to as
-> >> "Clock Conditioning Circuitry". PolarFire SoC is an FPGA, these are
-> >> highly configurable & many of the input clocks are optional.
-> >>
-> >> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> >> ---
-> >>  .../bindings/clock/microchip,mpfs-ccc.yaml    | 81 +++++++++++++++++++
-> >>  1 file changed, 81 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-> >>
-> > 
-> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> Heh, been waiting for this one all day. Messed up squashing commits
-> before sending v2... fixed locally & I'll respin later in the week.
-> I tried to mark it "changes required" in patchwork so you'd not waste
-> time on it but I think that got reverted?
+Quoting Lukas Bulwahn (2022-06-13 01:16:31)
+> Most of the clock-related dt-binding header files are located in
+> include/dt-bindings/clock. It would be good to keep all the similar
+> header files at a single location.
+>=20
+> This was discovered while investigating the state of ownership of the fil=
+es
+> in include/dt-bindings/ according to the MAINTAINERS file.
+>=20
+> This change here is similar to commit 8e28918a85a0 ("dt-bindings: clock:
+> Move ti-dra7-atl.h to dt-bindings/clock") and commit 35d35aae8177
+> ("dt-bindings: clock: Move at91.h to dt-bindigs/clock").
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Could have. The CI job messes with the state and then I do, and my 
-scripts don't expect the state changing underneath it. Most users don't 
-have PW accounts.
-
-Don't worry, I don't spend much time on failing patches.
-
-Rob
+Applied to clk-next
