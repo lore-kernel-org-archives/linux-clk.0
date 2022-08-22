@@ -2,102 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47A4C28D13
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 23:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE019C28D13
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 23:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbiHVXpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 19:45:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48746 "EHLO
+        id S233622AbiHVXuR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 19:50:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238888AbiHVXpc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 19:45:32 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 893483ECFA;
-        Mon, 22 Aug 2022 16:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661211931; x=1692747931;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JEtffjsv/UU5sWGCyM3iXEbl5ZR5P6LGzBjiHq53Suo=;
-  b=hSL5iawT1IxYkN7mKGnmhagaDSae5m5rYlCVC08/XmRZdOFMJ9Gb5EX3
-   Jg2hZyIAfNuB7yv0Yal3VkFT9d6tRfEzxgUTqVs5qj8XAuc1EM5AWxVY8
-   BuDMP/3jT4iFcIBAxy4otQWrviwsFVRodRL1AifDjbZwPW0FOXVTKNTNB
-   icUFBxpSaKXJuS/IYTPjWL6/wAzXvZtobFbwNDNwOCd8VCdVovWLNR+Yi
-   kCTiU8VGS10nsXIuaxLkl6esvxUpiJaZX+9PXQwowBA6VMpuHyX0TSZQB
-   PbLmw8LJqjNDDkcUzLZUl8eGEiZjQ/ljz8P6St0vza82Qyoqm4yj+lMnj
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10447"; a="319585897"
-X-IronPort-AV: E=Sophos;i="5.93,255,1654585200"; 
-   d="scan'208";a="319585897"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2022 16:45:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,255,1654585200"; 
-   d="scan'208";a="642225949"
-Received: from lkp-server01.sh.intel.com (HELO dd9b29378baa) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 22 Aug 2022 16:45:15 -0700
-Received: from kbuild by dd9b29378baa with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oQH6Y-0000rl-1P;
-        Mon, 22 Aug 2022 23:45:14 +0000
-Date:   Tue, 23 Aug 2022 07:44:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Markus Schneider-Pargmann <msp@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fabien Parent <parent.f@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: Re: [PATCH v4 2/4] clk: mediatek: Provide mtk_devm_alloc_clk_data
-Message-ID: <202208230714.8DNW6JjZ-lkp@intel.com>
-References: <20220822152652.3499972-3-msp@baylibre.com>
+        with ESMTP id S238361AbiHVXuQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 19:50:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7014E86F;
+        Mon, 22 Aug 2022 16:50:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 35F3761388;
+        Mon, 22 Aug 2022 23:50:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86203C433D6;
+        Mon, 22 Aug 2022 23:50:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661212214;
+        bh=tXNjbCxB6WYOWNNVp+WbEUxxjT5qLs6LlQxsR075G/Q=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=W2hqZgq0oir8PTpr8YN0aZtc/2V8mZtvHtUEkLL+atV30eknq0sCDGPWusW8FN8st
+         uVQMpVXVdOMIPViGj6f4DY1QVi0TlFl3bBJFQYgsdTFDOZdzUML4T4tRbfFR0issin
+         NeH6HL20WXPBQDDVekGhLh/DfsJuh3Cpx3p1NvDg66nnE5Ca+WSax83si2pEhAalgH
+         78NZKN/y5kFAd7NpeW9Ra9krI9dxaguugo36KmibSaB+2JIwWCB6UUiQYGy7svj7zN
+         Od/AKUc1HcwjsbEynGjN6lVctbTpaenz0TjwCvdkSSrU3SSYJFuEbc87HmHYV8zjFu
+         9nLmx33PFGUqw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220822152652.3499972-3-msp@baylibre.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
+References: <20220624010550.582BBC341C7@smtp.kernel.org> <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
+Subject: Re: [PATCH v3] Common clock: To list active consumers of clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
+        vimal.kumar32@gmail.com,
+        Vishal Badole <badolevishal1116@gmail.com>,
+        Mintu Patel <mintupatel89@gmail.com>
+To:     Vishal Badole <badolevishal1116@gmail.com>
+Date:   Mon, 22 Aug 2022 16:50:12 -0700
+User-Agent: alot/0.10
+Message-Id: <20220822235014.86203C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Markus,
+Quoting Vishal Badole (2022-08-02 11:09:47)
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f00d4c1..c96079f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -102,6 +102,7 @@ struct clk {
+>         unsigned long min_rate;
+>         unsigned long max_rate;
+>         unsigned int exclusive_count;
+> +       unsigned int enable_count;
+>         struct hlist_node clks_node;
+>  };
+> =20
+> @@ -1008,6 +1009,10 @@ void clk_disable(struct clk *clk)
+>                 return;
+> =20
+>         clk_core_disable_lock(clk->core);
+> +
+> +       if (clk->enable_count > 0)
+> +               clk->enable_count--;
+> +
+>  }
+>  EXPORT_SYMBOL_GPL(clk_disable);
+> =20
+> @@ -1169,10 +1174,16 @@ EXPORT_SYMBOL_GPL(clk_restore_context);
+>   */
+>  int clk_enable(struct clk *clk)
+>  {
+> +       int ret;
+> +
+>         if (!clk)
+>                 return 0;
+> =20
+> -       return clk_core_enable_lock(clk->core);
+> +       ret =3D clk_core_enable_lock(clk->core);
+> +       if (!ret)
+> +               clk->enable_count++;
+> +
+> +       return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_enable);
 
-Thank you for the patch! Perhaps something to improve:
+We'll want the above three hunks to be a different patch so we can
+discuss the merits of tracking per user enable counts. Do you have a
+usecase for this or is it "just for fun"? By adding a count we have more
+code, and we waste more memory to track this stat. I really would rather
+not bloat just because, so please elaborate on your use case.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on robh/for-next linus/master v6.0-rc2 next-20220822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> =20
+> @@ -2953,28 +2964,41 @@ static void clk_summary_show_one(struct seq_file =
+*s, struct clk_core *c,
+>                                  int level)
+>  {
+>         int phase;
+> +       struct clk *clk_user;
+> +       int multi_node =3D 0;
+> =20
+> -       seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+> +       seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
+>                    level * 3 + 1, "",
+> -                  30 - level * 3, c->name,
+> +                  35 - level * 3, c->name,
+>                    c->enable_count, c->prepare_count, c->protect_count,
+>                    clk_core_get_rate_recalc(c),
+>                    clk_core_get_accuracy_recalc(c));
+> =20
+>         phase =3D clk_core_get_phase(c);
+>         if (phase >=3D 0)
+> -               seq_printf(s, "%5d", phase);
+> +               seq_printf(s, "%-5d", phase);
+>         else
+>                 seq_puts(s, "-----");
+> =20
+> -       seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
+> +       seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
+> =20
+>         if (c->ops->is_enabled)
+> -               seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N=
+');
+> +               seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N'=
+);
+>         else if (!c->ops->enable)
+> -               seq_printf(s, " %9c\n", 'Y');
+> +               seq_printf(s, " %5c ", 'Y');
+>         else
+> -               seq_printf(s, " %9c\n", '?');
+> +               seq_printf(s, " %5c ", '?');
+> +
+> +       hlist_for_each_entry(clk_user, &c->clks, clks_node) {
+> +               seq_printf(s, "%*s%-*s  %-4d\n",
+> +                          level * 3 + 2 + 105 * multi_node, "",
+> +                          30,
+> +                          clk_user->dev_id ? clk_user->dev_id : "devicel=
+ess",
+> +                          clk_user->enable_count);
+> +
+> +               multi_node =3D 1;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: loongarch-randconfig-c004-20220821 (https://download.01.org/0day-ci/archive/20220823/202208230714.8DNW6JjZ-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 12.1.0
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/clk/mediatek/clk-mtk.c:64:1-6: WARNING: invalid free of devm_ allocated data
-
-vim +64 drivers/clk/mediatek/clk-mtk.c
-
-9741b1a68035b54 James Liao    2015-04-23  61  
-609cc5e1a82394e Chen-Yu Tsai  2022-05-19  62  void mtk_free_clk_data(struct clk_hw_onecell_data *clk_data)
-300796cad22153f Chun-Jie Chen 2021-09-14  63  {
-300796cad22153f Chun-Jie Chen 2021-09-14 @64  	kfree(clk_data);
-300796cad22153f Chun-Jie Chen 2021-09-14  65  }
-609cc5e1a82394e Chen-Yu Tsai  2022-05-19  66  EXPORT_SYMBOL_GPL(mtk_free_clk_data);
-300796cad22153f Chun-Jie Chen 2021-09-14  67  
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+This part that prints the dev_id might be useful and can be the first
+patch in the series. In that same patch, please print the con_id so we
+know which clk it is for the device. We should also improve of_clk_get()
+so that the index is visible to the 'struct clk::con_id' somehow. Maybe
+we can convert the integer index into a string and assign that to con_id
+in that case as well.
