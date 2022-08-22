@@ -2,211 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7E2C3F6B0
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 08:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1868DC32789
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 11:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233707AbiHVIk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 04:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
+        id S234284AbiHVL37 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 07:29:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233407AbiHVIk5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 04:40:57 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CAD26101;
-        Mon, 22 Aug 2022 01:40:56 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27M8RKva006168;
-        Mon, 22 Aug 2022 08:40:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : in-reply-to : mime-version;
- s=corp-2022-7-12; bh=VfqHMGFtIPy8qos8yATeUuPVXWc3E5Np/suIq6FvCno=;
- b=dPvJvKsYqg1DPf2iz3/gpsuSf45qy/PksZBYImyBarNUxPvyGI3YvDPAdSrudLUu7UFn
- hFI7XKD2xsFpEWFCb7jr2pXMjb6/taOqc3xGG2SV3Ggj9w9yF+9izNSZBZjTBhenMCi+
- CBXYa/kBGJvOBcY2mHQRes8M2z19R1LaF6bNQ08k4V9g5Py7oRMtJk97oPb64anVFUuz
- qICEi+twYXiTA7qvEmZOdB7zHcTFRvaiunBalP9DonBG7M3FYvLaYGUSylZPRSPak0jt
- s9E5Ct1N0rTnV9yNPwrdo6cmQFCV+XbtvbZNdPxSmTOOxbjjq9zrVXTat+IYJZLh5O0m Og== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3j46a6r169-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Aug 2022 08:40:32 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 27M8Zwc8038244;
-        Mon, 22 Aug 2022 08:40:31 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2104.outbound.protection.outlook.com [104.47.70.104])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3j3mkfs5a1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Aug 2022 08:40:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gOwOLfOTrdDH6m20x0+O6urLyoKrt19ahbFaI6jPmfibjCoTeFBHLlb2Vou2pZghJ0TnzrAes8mwpkq8NpPhL+VDL9IWeOuq+jxgnfyGZtxYygIxjAdf+BScxjfoHB7vMhFgQpsqiZL+PxqNCjXf3yJhX2PIo4pdy2HnDN7bGDED0OUoI4GrejDGXwKY6SKizH23/Xa5N/l4P5iGWEqmhGOgzJWVNqf5oXJZY2LP1FIe69Lt6UImGu4RNbNNdECfhnCcrbKgD9HTsrzR2T9fj6AnwDixuA8CosEiP3WR3Lcl/TqhK7Pg1FgiywNEvT/J1/6G7a/UQL01abS2oVhErA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VfqHMGFtIPy8qos8yATeUuPVXWc3E5Np/suIq6FvCno=;
- b=MpOPsXHD7OmT/TbO6g6NCcqJc+s9EGpjivjekQc8mgE/axNC1H/E21oHyrEFPql1Z0tQp/p6++EOwa1mJCy/r+oxbqEQ07gKINORJG5YLFZWo2DKjN0x9W1A9kBxeKuwBSaNwHlOGBzUhW6FVsfPdgW7XyakgSupBogREaxorZ6oX+C4y/33PZjHAimLkXgTGSyAzrvVqQWDCu1QySVJ2GaG60kXtQyszN5PUxoxTv4Z//QcFqByhrVtjkmqhpO+ocaEKcuNZvMwN5uV0EbpLoN8spyHw57RJ5nHhi6GwrkjMPIVJOcV7gcmlyuPHLeKy6bg6Yn2VHB44hMzxXoM3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VfqHMGFtIPy8qos8yATeUuPVXWc3E5Np/suIq6FvCno=;
- b=NKaw04Ky373JFZU7fxH2HUuDmZ/VZRhTqWF0/xmIL75COSiFyP6BKB2+5iFW/lzKDfAeTuxmACM4ueXqTNXYQL0l+wqcXQpLCoJLrUz5bD5Q8FVh0lL9qemf9gLWbGPb1MzsvWIc1+QVWatlgMolrclkvZ88oKYyFeuYMmYLB8g=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CY4PR10MB1895.namprd10.prod.outlook.com
- (2603:10b6:903:123::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5546.21; Mon, 22 Aug
- 2022 08:40:27 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::209e:de4d:68ea:c026]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::209e:de4d:68ea:c026%3]) with mapi id 15.20.5546.022; Mon, 22 Aug 2022
- 08:40:27 +0000
-Date:   Mon, 22 Aug 2022 11:40:14 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbuild@lists.01.org, Qin Jian <qinjian@cqplus1.com>,
-        sboyd@kernel.org
-Cc:     lkp@intel.com, kbuild-all@lists.01.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Qin Jian <qinjian@cqplus1.com>
-Subject: Re: [PATCH] clk: Add Sunplus SP7021 clock driver
-Message-ID: <202208212144.aUofUlUt-lkp@intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220817070113.415971-1-qinjian@cqplus1.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MR2P264CA0164.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:1::27) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        with ESMTP id S234170AbiHVL36 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 07:29:58 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A024D33349;
+        Mon, 22 Aug 2022 04:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1661167797; x=1692703797;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RJ04Kh5e1eZ1WoCexWG+Naw0DQ2en6wdmxTB7LzJfB4=;
+  b=WYFdwjaQzwiZoh+S9vNJBjfc/HO0JxggjnYtSNiBAFLbYZQS+KV/OtW1
+   cAjmsuhgHq+rzgWi808rnkhaCeQHOBiICZs8P1SzOAKZGCo8ENPXaIUAM
+   /SsgXFH0r07lvqmL7ECB5ke0PX+kYiAuzQa0grlAZqhJQVYn0yQ8367Gk
+   XnHBh4BiqRevNV/PcwvSypiV+WzdsxCvtz/AilxWbV43OYSobCWzuRzbg
+   zMr8DL6d4GQgXnDUl5eUjFtqxunFsrYn36w6vWUJhxTG81NMMewrbv7YK
+   Rgd0Hy/WZbEBF5aez7mX3HKl55xgtxIIntQH+l7K7tDXN3NfC+YUCNjAd
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.93,254,1654585200"; 
+   d="scan'208";a="110092089"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Aug 2022 04:29:56 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Mon, 22 Aug 2022 04:29:54 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Mon, 22 Aug 2022 04:29:51 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Hugh Breslin <hugh.breslin@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>
+Subject: [PATCH v2 0/6] Add PolarFire SoC Fabric Clock Conditioning Circuitry Support
+Date:   Mon, 22 Aug 2022 12:29:23 +0100
+Message-ID: <20220822112928.2727437-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 92cf6e26-2203-4716-35a7-08da8419f659
-X-MS-TrafficTypeDiagnostic: CY4PR10MB1895:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: k3BFcxZCfxWd/9RmBQS3LOLpIDylyCrAkissrCMnv11TXtxhx/nR5ySODFyBMkF7E+8bxpJzfOWokTkvpBfwbv3XRreAezoKOVZ+G84NlvQ7oLg2ro9fQZX/NHONClceQK3U0nOlY5oX+sV5wVGO22FCI3b+VqMmUU3E+s2FbpXVJ2I2OsSI0V8YI1ewPaG7YNDrYZcePtZw43/G807LIQBUk+ZIf1ENku8oRyT1hEGtYSR+wVCk5MlU/skVY+OYVgGL9gKLJ+aUTWWOhFpC7BF9YSb+TSumxxt8m0o1c4P/0gC+4b4QRtURv5jNqmjfgdeS8CuHbuYQ2eIb8vzDgf1dflI7UQKey6wslaOVxkKkNPWbcHMsYsQ7iz+/DyiYx97h6KNqYpcDHT0GrYGrF3onpBfYELQS+7vmZN8BgGi6zX5FUiVUNndcUvFv73PoxtHrBe+K5SbyrKLkTWtEFeBsCMkmHYC0GN8HNeFnrf4PhjCFyc3luPbETuI5XBMuqxxBV7HsNnn5P9VYECyIra1+JK1F1pI90rk70qXg/exCC4mecDG9ysXSzTeIJEcti8xhCxUM/OZuq+8ebwffjToP50bhFPPzCBQjdeGwso3dh0bo9bx9dsPtU9e971c5lZEbqjE3HFuQqTfwMfu2uqX8iD51kQ7bcl7kGeYCAR7i3sgSngyTMQElmJWbigjX12+yScOKmRKHMWY/Dy9etLD0/3sw+uPFAKBPWAGYMkULBg8hbXcalz03EIEGFmLiS/SAIcklSR/y3q+GrgT+I8vgjVlaWh61+WLu84ejkp9H2Az0lnQ2ziM4ZnB07/6czIpfLbEWRJ9AIq9DO9ZbtQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(396003)(39860400002)(376002)(366004)(136003)(86362001)(316002)(83380400001)(26005)(52116002)(6506007)(6666004)(9686003)(6512007)(1076003)(966005)(186003)(38350700002)(66946007)(6486002)(44832011)(38100700002)(478600001)(41300700001)(8936002)(66556008)(8676002)(2906002)(4326008)(36756003)(5660300002)(66476007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?E0TnpwQGkiwJjBPqsvB8DPdan1ZuK7wJtw3lGHd7KRgE0Ri3v8hwEQpPNzXK?=
- =?us-ascii?Q?SnHCkAe0qEcZJNWXNhTeLqRfsn4waVwUu/V1OAritfsr6U/OBqKTv/TSlOR4?=
- =?us-ascii?Q?RAMXjyzXrGx5PvIxN3N/677yscbwJiQYy1gNgHgyPyXpMTyePVp9lCII5Kyt?=
- =?us-ascii?Q?KqJm468hFXa1ASAvjpJo7bAS9Mc1Hljf8WZ7jRZypqgFTtkDAY4xsIM/TnjV?=
- =?us-ascii?Q?ft1j7JR6WMy/rrNGt51J3PiMblWILwc4zS5GvKWWhSsn+IW/8xHJWLhpmCY9?=
- =?us-ascii?Q?BEKANo3TVdxQNxQake3XFvaXOCTFMGpLV48HWdQDZZOHxssHMCCr2XhbY0hi?=
- =?us-ascii?Q?6ufH7RO2wi35Mq1pyGiB2QqD/MXQdNt07st9Q8DXJd7YeLVIdy2mTJaCSxdG?=
- =?us-ascii?Q?T9+ctBhanSo6OsDY3Xb5tkPebA3b+f9Brm4jgV42MgKPK/XnforzVhXkLOE4?=
- =?us-ascii?Q?qG5F0XtOrhv0gJSLhrC1LT+QMDxIRxH9+gXBGZhDTTngl5Hh9oVeN+svfH14?=
- =?us-ascii?Q?FoVyCIEwtvGbubm6PTL99aFLRaR/PzUJ4bGaJ76agCI8K3OpHjH2KrOHndzj?=
- =?us-ascii?Q?+r+pAwemK2fkaDToRaj7OQQRCfeqMuhRA0cGYqbGSp1u+wpEVbiYaPw7fG8O?=
- =?us-ascii?Q?jG4z3Z+YzWGiYC0fJaqKqtB0B1ryqmhdac0t/zVs4oU/dkME5QkTVT+uKQB2?=
- =?us-ascii?Q?Q+a26vhsMt/+FDujdpERAY+ATOK6KPwfXKFQ7VrHY+TdvkkE6Yq6C3cwvWUv?=
- =?us-ascii?Q?/GI68xR+C+SILAlq+3kLUdDl0nDhKy4qKwA38DJFW65ebYlcHuuC2TBGqZh/?=
- =?us-ascii?Q?J9Uc1FdkZVBV/44v0uROOBqgYWKAi5OfcsJ2R9o7ZjZEjB6IO9SiWKB5Hvp/?=
- =?us-ascii?Q?f/YiAyvTG3D1NAh3vhMzXLTGr3WZItoHjghlgAAtBxNjgnk++Cm4hpH9M1/C?=
- =?us-ascii?Q?6JeVNLdKoaejErB2k1PAKYOdRs6X0ZzXqnqm0lJqfPnKhjAUAqCschm+Fw72?=
- =?us-ascii?Q?LXG8eow5CG4zjf5wUYxQp8ixVhvwyOPKGRywLMvTC+KSCdMgRjBkk5Z+IdvI?=
- =?us-ascii?Q?CXcWZeENbshpdOZXmrIdepCRJKekED0Ff1S6NN4JqsZyGjEuD9bgd68fyc8v?=
- =?us-ascii?Q?kZblvt/RGPjxLCQFCpDNSZVTDkF7hw5+6pudPmUoZO5X2QEISCR2tEDfRbRv?=
- =?us-ascii?Q?p6GcePkeBbPwgTnWp0plmBzuhn7zohksgrP/iiIVqGIzEuD45JVcr1cwzZna?=
- =?us-ascii?Q?z/hUwfITRp5js5Ni35b2MfadR2BAFCcKh948NPIGd4tI15IB8KfmBR6WDYfc?=
- =?us-ascii?Q?MEUk690nc814L5HfULPtfh/obSne8uHeGLTQ6Yfajx35PT07rPmexU4OZh11?=
- =?us-ascii?Q?DLb02bNgANLmuCQvRZzQxcPrU8mjbZzSkXKND/Ur1CTn+k/sXw34B1YniH5z?=
- =?us-ascii?Q?ZQJ+s82fLWbXdRhepOxzILeNR7qoqPyyImBxaFlu/xLCiYrjeBu6SSzfQ4Z2?=
- =?us-ascii?Q?52oFfgZemVmKevcfXsm6vttHES291MdWdaAPC/NBlr8ORpoCDOj1GsNCyzbp?=
- =?us-ascii?Q?Yw/z5y/830MZzrRVJ2SiXmTjrU9NoM51T+hEpNTyqoiTZvLBuVF9Go1UJ5G9?=
- =?us-ascii?Q?Cg=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92cf6e26-2203-4716-35a7-08da8419f659
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2022 08:40:27.2499
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NZFW8ka2bSwhubQgWBFLmByIWwoaXfM+kNXQjTxgiWc0reDUiEQgTY5fyQQca6CNUXiUcvGloFQKgNpeW8ZJPDwu3hZTbXSl0EoAMTeWjaI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1895
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-22_04,2022-08-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- phishscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208220036
-X-Proofpoint-ORIG-GUID: eoMgX1hhtfRsFilP8qG96OUFymAtIAMK
-X-Proofpoint-GUID: eoMgX1hhtfRsFilP8qG96OUFymAtIAMK
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Qin,
+Hey all,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Qin-Jian/clk-Add-Sunplus-SP7021-clock-driver/20220817-151010
-base:   568035b01cfb107af8d2e4bd2fb9aea22cf5b868
-config: arm64-randconfig-m031-20220821 (https://download.01.org/0day-ci/archive/20220821/202208212144.aUofUlUt-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.1.0
+PolarFire SoC has 4 clock source blocks, each with 2 PLLs and 2 DLLs,
+in the corners of the FPGA fabric. Add bindings, a driver supporting
+the PLLs and the requisite changes to the devicetrees for PolarFire
+SoC based boards. These clocks were already in use, but which clock
+specifically was chosen was decided by the synthesis tool. In our
+end-of-September release of our FPGA reference design, constraints will
+be added to force the synthesis tool to pick the "north west" CCC,
+making it possible to read the configuration from the CCC's registers.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+I am mainly looking for feedback on the dt-bindings on this version,
+so that if something dt-abi related needs to change it can be done in
+advance.
 
-smatch warnings:
-drivers/clk/clk-sp7021.c:171 plltv_integer_div() error: buffer overflow 'm_table' 19 <= 19 (assuming for loop doesn't break)
+There are no maintainers changes in this series, but they are required
+due to the binding rename. I am waiting for some changes queued in the
+soc tree before rebasing on a later -rc before including that patch.
 
-vim +171 drivers/clk/clk-sp7021.c
+Thanks,
+Conor.
 
-5673230d6a56d6 Qin Jian 2022-08-17  145  static long plltv_integer_div(struct sp_pll *clk, unsigned long freq)
-5673230d6a56d6 Qin Jian 2022-08-17  146  {
-5673230d6a56d6 Qin Jian 2022-08-17  147  	/* valid m values: 27M must be divisible by m */
-5673230d6a56d6 Qin Jian 2022-08-17  148  	static const u32 m_table[] = {
-5673230d6a56d6 Qin Jian 2022-08-17  149  		1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24, 25, 27, 30, 32
-5673230d6a56d6 Qin Jian 2022-08-17  150  	};
-5673230d6a56d6 Qin Jian 2022-08-17  151  	u32 m, n, r;
-5673230d6a56d6 Qin Jian 2022-08-17  152  	unsigned long fvco, nf;
-5673230d6a56d6 Qin Jian 2022-08-17  153  	long ret;
-5673230d6a56d6 Qin Jian 2022-08-17  154  
-5673230d6a56d6 Qin Jian 2022-08-17  155  	freq = clamp(freq, F_MIN, F_MAX);
-5673230d6a56d6 Qin Jian 2022-08-17  156  
-5673230d6a56d6 Qin Jian 2022-08-17  157  	/* DIVR 0~3 */
-5673230d6a56d6 Qin Jian 2022-08-17  158  	for (r = 0; r <= 3; r++) {
-5673230d6a56d6 Qin Jian 2022-08-17  159  		fvco = freq << r;
-5673230d6a56d6 Qin Jian 2022-08-17  160  		if (fvco <= FVCO_MAX)
-5673230d6a56d6 Qin Jian 2022-08-17  161  			break;
-5673230d6a56d6 Qin Jian 2022-08-17  162  	}
-5673230d6a56d6 Qin Jian 2022-08-17  163  
-5673230d6a56d6 Qin Jian 2022-08-17  164  	/* DIVM */
-5673230d6a56d6 Qin Jian 2022-08-17  165  	for (m = 0; m < ARRAY_SIZE(m_table); m++) {
-5673230d6a56d6 Qin Jian 2022-08-17  166  		nf = fvco * m_table[m];
-5673230d6a56d6 Qin Jian 2022-08-17  167  		n = nf / F_27M;
-5673230d6a56d6 Qin Jian 2022-08-17  168  		if ((n * F_27M) == nf)
-5673230d6a56d6 Qin Jian 2022-08-17  169  			break;
-5673230d6a56d6 Qin Jian 2022-08-17  170  	}
-5673230d6a56d6 Qin Jian 2022-08-17 @171  	m = m_table[m];
-                                                ^^^^^^^^^^^^^^^
-If we know the for loop is going to break then why bother with a limit?
+Changes since v1:
+- Stopped using the dt node name to generate the clk name. Rather than
+  use clock-output-names etc, I just opted to call each PLL after it's
+  individual base address:
+  cccrefclk
+    ccc@38100000_pll0
+      ccc@38100000_pll0_out3
+      ccc@38100000_pll0_out2
+      ccc@38100000_pll0_out1
+      ccc@38100000_pll0_out0
+- dt nodes are now all called "clock-controller"
 
-5673230d6a56d6 Qin Jian 2022-08-17  172  
-5673230d6a56d6 Qin Jian 2022-08-17  173  	if (!m) {
-5673230d6a56d6 Qin Jian 2022-08-17  174  		ret = -EINVAL;
-5673230d6a56d6 Qin Jian 2022-08-17  175  		goto err_not_found;
-5673230d6a56d6 Qin Jian 2022-08-17  176  	}
-5673230d6a56d6 Qin Jian 2022-08-17  177  
-5673230d6a56d6 Qin Jian 2022-08-17  178  	/* save parameters */
-5673230d6a56d6 Qin Jian 2022-08-17  179  	clk->p[SEL_FRA] = 0;
-5673230d6a56d6 Qin Jian 2022-08-17  180  	clk->p[DIVR]    = r;
-5673230d6a56d6 Qin Jian 2022-08-17  181  	clk->p[DIVN]    = n;
-5673230d6a56d6 Qin Jian 2022-08-17  182  	clk->p[DIVM]    = m;
-5673230d6a56d6 Qin Jian 2022-08-17  183  
-5673230d6a56d6 Qin Jian 2022-08-17  184  	return freq;
-5673230d6a56d6 Qin Jian 2022-08-17  185  
-5673230d6a56d6 Qin Jian 2022-08-17  186  err_not_found:
-5673230d6a56d6 Qin Jian 2022-08-17  187  	pr_err("%s: %s freq:%lu not found a valid setting\n",
-5673230d6a56d6 Qin Jian 2022-08-17  188  	       __func__, clk_hw_get_name(&clk->hw), freq);
-5673230d6a56d6 Qin Jian 2022-08-17  189  
-5673230d6a56d6 Qin Jian 2022-08-17  190  	return ret;
-5673230d6a56d6 Qin Jian 2022-08-17  191  }
+Conor Dooley (6):
+  dt-bindings: clk: rename mpfs-clkcfg binding
+  dt-bindings: clk: document PolarFire SoC fabric clocks
+  dt-bindings: clk: add PolarFire SoC fabric clock ids
+  clk: microchip: add PolarFire SoC fabric clock support
+  dt-bindings: riscv: microchip: document icicle reference design
+  riscv: dts: microchip: add the mpfs' fabric clock control
 
+ .../bindings/clock/microchip,mpfs-ccc.yaml    |  81 +++++
+ ...p,mpfs.yaml => microchip,mpfs-clkcfg.yaml} |   2 +-
+ .../devicetree/bindings/riscv/microchip.yaml  |   1 +
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  27 +-
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    |   4 +
+ .../dts/microchip/mpfs-polarberry-fabric.dtsi |   5 +
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 +-
+ drivers/clk/microchip/Makefile                |   1 +
+ drivers/clk/microchip/clk-mpfs-ccc.c          | 293 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  23 ++
+ 10 files changed, 458 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
+ rename Documentation/devicetree/bindings/clock/{microchip,mpfs.yaml => microchip,mpfs-clkcfg.yaml} (96%)
+ create mode 100644 drivers/clk/microchip/clk-mpfs-ccc.c
+
+
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.36.1
 
