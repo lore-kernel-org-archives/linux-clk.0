@@ -2,102 +2,221 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93621C32772
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 18:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5FBC32774
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Aug 2022 19:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237871AbiHVSy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 14:54:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37678 "EHLO
+        id S236208AbiHVTVL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 15:21:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237913AbiHVSyK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 14:54:10 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0ABA25F0
-        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 11:53:18 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id f21so11878853pjt.2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 11:53:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=GA3c/GZjUQaaitae2gW9tKtCQv1+a7TEeayxV3K4Hgw=;
-        b=nohrL7qgMauyN3H6qU/Pcb9Zj1rjUJ5KPJQDupWnvb5otZfv18t9cnG5SlPjIOzgyz
-         jXSeYoyn48NLHmSHqWAC3+mvaC5vuEB5pp37DTBXtnfhaTAsa3JOhzNaKd0OP53npl9P
-         4CBgE6nr9Rxbq7XHZ/Vf77HEDBIaCpRhCYoqE=
+        with ESMTP id S238612AbiHVTUt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 15:20:49 -0400
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF9D54F672;
+        Mon, 22 Aug 2022 12:19:43 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id 53-20020a9d0838000000b006371d896343so8349852oty.10;
+        Mon, 22 Aug 2022 12:19:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=GA3c/GZjUQaaitae2gW9tKtCQv1+a7TEeayxV3K4Hgw=;
-        b=N80m+wYl70A4MAjpV6wmffeBBKuxzpoznwIDVB0FEairtBfWpLHFG3tdHO3ADFabDP
-         FxqlUvzMlZsgAud74uRMvS9g6C2P0GTBaid4cWeOYIKHEdNgE9w2UkONxS+XUDa+5VIK
-         K8tO7KjvzRs6NF6E49pmB9Av4NjQOLkgaSAJhb7c698xzDAM0C7aZUCfk0Pzd+sy6tEc
-         GJNeB48ar8898FfmGRVLQ1PBRQGGS6rMBBECChcupmoadKeOb+3aTDuhx/jE5nnlq+cx
-         QzU8r/zwArG8HIGS1aItSSOqcGK4wBXRCT/4NbwT0QnJs5lOyhftTxMozmKoeGDLaob5
-         rBpg==
-X-Gm-Message-State: ACgBeo1/dqYYdKDFPPBK7WH8hWGTeGxm9mkXtHpCgGC/ydBFOAbrFzbU
-        aCHOzfUQ77hy8EoD7np++Ymobg==
-X-Google-Smtp-Source: AA6agR6IgcQdruU28Yk2u5gkyWvHVyZ/g3OywX3bEvdNobN795P5crDloxA6vR8K5z1yVfd5tjxC1Q==
-X-Received: by 2002:a17:903:24e:b0:172:6c9d:14e0 with SMTP id j14-20020a170903024e00b001726c9d14e0mr21534899plh.84.1661194398373;
-        Mon, 22 Aug 2022 11:53:18 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:1969:d650:d765:53ef])
-        by smtp.gmail.com with UTF8SMTPSA id f184-20020a6238c1000000b00536b3fe1300sm2244190pfa.13.2022.08.22.11.53.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Aug 2022 11:53:18 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=RZ1oGebuMKpJEbiPzGnoljYw5urwJldyFB+scivuSGA=;
+        b=J82D8BoNx8nY5YAT05F57vtD23DoQL5hq63k8TB6ClweDHPX8oKZdyEoqt4Ay/OHrR
+         qcgC59QwDI6A4fp00S8cRXwQbCjwZDBvpaqezCn0Z7hSAaFaLbPwf/YSPLktHcZH9dkM
+         WprT+m1RL5Vk665ruTBBgtmF3rYomZFW/v7BNcW1oS28pqhYMkdTL+4KV2Br/PcQSnaX
+         gF2NHAPAbK6k/DW++PsAvzLcMz55R/9NCDbFfNgIhC9xxBru6Xat/zX7psiApmq99DBP
+         eBpf9ASbNOxDlBvQhStgIwsXHPZVOh1CL6z7nFN4Lf35aiHYYqYgG2wRP/obN5M6r/ER
+         l3XA==
+X-Gm-Message-State: ACgBeo0//PG61Eq4U+qlCBxUwsNXKaLp9HE2XDzwCJCo2kHO4NEidrMx
+        eCRxquZ+viAMNfbKsoXG7A==
+X-Google-Smtp-Source: AA6agR7jg9n404zse1cC27270kM/5YJfT5XwC0i0bGLJFJD/IXgbOA6s+I+Nbp/hMQQGJ1ESzcH1bg==
+X-Received: by 2002:a05:6830:56:b0:639:bbb:f0cf with SMTP id d22-20020a056830005600b006390bbbf0cfmr5802691otp.161.1661195983103;
+        Mon, 22 Aug 2022 12:19:43 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id w16-20020a4a3550000000b00435785e7b49sm2599297oog.19.2022.08.22.12.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Aug 2022 12:19:42 -0700 (PDT)
+Received: (nullmailer pid 278879 invoked by uid 1000);
+        Mon, 22 Aug 2022 19:19:41 -0000
+Date:   Mon, 22 Aug 2022 14:19:41 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/2] clk: qcom: gcc-sc7280: Keep USB GDSC power domains on when USB wakeup is enabled
-Date:   Mon, 22 Aug 2022 11:53:11 -0700
-Message-Id: <20220822115246.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
-X-Mailer: git-send-email 2.37.1.595.g718a3a8f04-goog
-In-Reply-To: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
-References: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: add QCOM SM6115 display clock
+ bindings
+Message-ID: <20220822191941.GA262452-robh@kernel.org>
+References: <20220819201231.23474-1-a39.skl@gmail.com>
+ <20220819201231.23474-2-a39.skl@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220819201231.23474-2-a39.skl@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Set GENPD_FLAG_ACTIVE_WAKEUP for the USB GDSC power domains of SC7280.
+On Fri, Aug 19, 2022 at 10:12:21PM +0200, Adam Skladowski wrote:
+> Add device tree bindings for display clock controller for
+> Qualcomm Technology Inc's SM6115 SoC.
+> 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  .../bindings/clock/qcom,sm6115-dispcc.yaml    | 88 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,sm6115-dispcc.h    | 36 ++++++++
+>  2 files changed, 124 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm6115-dispcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+> new file mode 100644
+> index 000000000000..c9b97281171c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-dispcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Display Clock Controller Binding for SM6115
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Suggested-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
+As of today, bouncing...
 
- drivers/clk/qcom/gcc-sc7280.c | 2 ++
- 1 file changed, 2 insertions(+)
+Otherwise, looks fine.
 
-diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-index 7ff64d4d5920..4ff855269467 100644
---- a/drivers/clk/qcom/gcc-sc7280.c
-+++ b/drivers/clk/qcom/gcc-sc7280.c
-@@ -3125,6 +3125,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
- 	.gdscr = 0xf004,
- 	.pd = {
- 		.name = "gcc_usb30_prim_gdsc",
-+		.flags = GENPD_FLAG_ACTIVE_WAKEUP,
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
-@@ -3134,6 +3135,7 @@ static struct gdsc gcc_usb30_sec_gdsc = {
- 	.gdscr = 0x9e004,
- 	.pd = {
- 		.name = "gcc_usb30_sec_gdsc",
-+		.flags = GENPD_FLAG_ACTIVE_WAKEUP,
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
--- 
-2.37.1.595.g718a3a8f04-goog
-
+> +
+> +description: |
+> +  Qualcomm display clock control module which supports the clocks and
+> +  power domains on SM6115.
+> +
+> +  See also:
+> +    dt-bindings/clock/qcom,sm6115-dispcc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm6115-dispcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Byte clock from DSI PHY0
+> +      - description: Pixel clock from DSI PHY0
+> +      - description: GPLL0 clock from GCC
+> +      - description: GPLL0 div clock from GCC
+> +      - description: Board sleep clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: dsi0_phy_pll_out_byteclk
+> +      - const: dsi0_phy_pll_out_dsiclk
+> +      - const: gcc_disp_gpll0_clk_src
+> +      - const: gcc_disp_gpll0_div_clk_src
+> +      - const: sleep_clk
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmcc.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sm6115.h>
+> +    clock-controller@5f00000 {
+> +      compatible = "qcom,sm6115-dispcc";
+> +      reg = <0x5f00000 0x20000>;
+> +      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +               <&dsi0_phy 0>,
+> +               <&dsi0_phy 1>,
+> +               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
+> +               <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
+> +               <&sleep_clk>;
+> +      clock-names = "bi_tcxo",
+> +                    "dsi0_phy_pll_out_byteclk",
+> +                    "dsi0_phy_pll_out_dsiclk",
+> +                    "gcc_disp_gpll0_clk_src",
+> +                    "gcc_disp_gpll0_div_clk_src",
+> +                    "sleep_clk";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,sm6115-dispcc.h b/include/dt-bindings/clock/qcom,sm6115-dispcc.h
+> new file mode 100644
+> index 000000000000..d1a6c45b5029
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm6115-dispcc.h
+> @@ -0,0 +1,36 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6115_H
+> +#define _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6115_H
+> +
+> +/* DISP_CC clocks */
+> +#define DISP_CC_PLL0			0
+> +#define DISP_CC_PLL0_OUT_MAIN		1
+> +#define DISP_CC_MDSS_AHB_CLK		2
+> +#define DISP_CC_MDSS_AHB_CLK_SRC	3
+> +#define DISP_CC_MDSS_BYTE0_CLK		4
+> +#define DISP_CC_MDSS_BYTE0_CLK_SRC	5
+> +#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC	6
+> +#define DISP_CC_MDSS_BYTE0_INTF_CLK	7
+> +#define DISP_CC_MDSS_ESC0_CLK		8
+> +#define DISP_CC_MDSS_ESC0_CLK_SRC	9
+> +#define DISP_CC_MDSS_MDP_CLK		10
+> +#define DISP_CC_MDSS_MDP_CLK_SRC	11
+> +#define DISP_CC_MDSS_MDP_LUT_CLK	12
+> +#define DISP_CC_MDSS_NON_GDSC_AHB_CLK	13
+> +#define DISP_CC_MDSS_PCLK0_CLK		14
+> +#define DISP_CC_MDSS_PCLK0_CLK_SRC	15
+> +#define DISP_CC_MDSS_ROT_CLK		16
+> +#define DISP_CC_MDSS_ROT_CLK_SRC	17
+> +#define DISP_CC_MDSS_VSYNC_CLK		18
+> +#define DISP_CC_MDSS_VSYNC_CLK_SRC	19
+> +#define DISP_CC_SLEEP_CLK		20
+> +#define DISP_CC_SLEEP_CLK_SRC		21
+> +
+> +/* DISP_CC GDSCR */
+> +#define MDSS_GDSC			0
+> +
+> +#endif
+> -- 
+> 2.25.1
+> 
+> 
