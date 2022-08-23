@@ -2,80 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2876C32772
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 17:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A04CC32789
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 18:25:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231569AbiHWRm6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39300 "EHLO
+        id S230045AbiHWSZj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 14:25:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231786AbiHWRmf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 13:42:35 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5DE9D66B
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 08:37:17 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id v12-20020a9d7d0c000000b00638e210c995so10003019otn.13
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 08:37:17 -0700 (PDT)
+        with ESMTP id S232748AbiHWSZ0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 14:25:26 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4467E038
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 09:42:55 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id y127so11018034pfy.5
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 09:42:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc;
-        bh=v31+jjDAe8b8bSeB3m7vjA69108ZFOl1IwaE1C9+p6g=;
-        b=ehS+dPduFec0TYms+eKA7qJx5obDw3y+LyCRyq+Ru6CDFRO9kkTL+5xanQd7oqRdiG
-         rfEPeHr4mHdBWzi7mplNImhxtTIhIoMKT4DZLWbu04u5YQ+HwsNb3VwbdbeceUIyK4SP
-         HwIxxp0MbVCJSlzH3nF5cNt8u5+NZ7V5aNiaw=
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=CiTVAMBmeZgTNns54/ZRjjMIll+fZRM35ET0N/iSCew=;
+        b=gM9QSsTQkKhWzpfwX/ZmC9QIytz881CKpNrrJlXiSi70CtWBcfBGdCBmHaLM2eWszH
+         FK+bdgBu9fnF6/omQ5DvDr/CNzqUfLnL3lM7LHAVyiHcQCRltHkopFIcHkRarM3g/s+7
+         Q86Y/S49n0krQ2Bl+DoWxWEtpo0Xu18WStexI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc;
-        bh=v31+jjDAe8b8bSeB3m7vjA69108ZFOl1IwaE1C9+p6g=;
-        b=kJCaP7Q3p6ciVdwtGy4yY2/iAawfLqTAuF+orR8bUOKB9ZjGvfNSu5mRa5KlSwFPp4
-         bNM19MnGzblfKxO6lxvldI4Fzf54M38GWh/xCwjUsYN7uVrkMV6NPZb8us5CboCE8EmC
-         UepjCqHsggo/WGWYJCAWU+QgN5b+bVo3LInomx693IBpP2UkZxYMiUdm9KzBZPU2ZtE8
-         hPIyUlpRaXMcDhn8IK6cyyC8c5fe0e1+orwxC/efpnh5sGjniGzOaYzj2jz9xxv8Wsvx
-         /ebxGoD8ZrKyU0BUCY7zG+0gwzarY5sJ+nMr61U8kpn+bkAsqzPT4m7ELt9b/jr8wbTx
-         9pRw==
-X-Gm-Message-State: ACgBeo0Kb3XLNNRsZBy3I/iMNh5gDrbr1lmmi/zeEbFdDKioL7/2sE9K
-        z29uKuVVtcWp55gisn+GvoJae0/CsLKzWEffjI1IZv83Z+0=
-X-Google-Smtp-Source: AA6agR7oXCZFuTC7Lzxlb4CwuONinxB3CRhuL08aLXINitOJmy/axmk0nwSsMf7iBwFXey4c13CPaDhDmRFCPlSAl6I=
-X-Received: by 2002:a9d:738c:0:b0:638:9962:8cb6 with SMTP id
- j12-20020a9d738c000000b0063899628cb6mr9407094otk.73.1661269036462; Tue, 23
- Aug 2022 08:37:16 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 23 Aug 2022 10:37:15 -0500
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=CiTVAMBmeZgTNns54/ZRjjMIll+fZRM35ET0N/iSCew=;
+        b=5yR89O46VP57Bv5UjNyRVAX2NrnEumMEr9Qd8WGZoQVvgeLqL4eD8akxI6jKvTeQ5l
+         0kgfprlfvc32ZHGaSKQzlQcsuIvy4XLRK2kbD6EpFh6Y6UICu8KP5w/E9rn+0K521osM
+         NFb6F6Fqs09lVkJAnRa5V6IF3ADmR0Z5Ve1z+ff+04TsjIKnHPP5qtriGE+QQQbCHACO
+         GEdVstQcD9AvE8CnekmwiqX7Ri3jrdDXmW+TSzVpJODxBLpk09/FSMenbPsUafDhfzcX
+         mTG6tdywSvGqhCr+sJXsQPEsGmi3kVfUMGNhlBeS3qtU7fux+ZpNmr1d8O9yVhVKvSZ2
+         /dOQ==
+X-Gm-Message-State: ACgBeo3B/SIObS2CcGhrVAaAYJGeDWvdjvXPCK8jmuwJBy99e6NIytPs
+        c5qlS5QjgYCH2V6XEjxVmYKTBw==
+X-Google-Smtp-Source: AA6agR4b+B+CmYuZ7X6Ph1GzceiQelM5K4w7fEKztUhStEjaw1yKzCRdAdoek0y/fzvxtiqc0Ej1dA==
+X-Received: by 2002:a05:6a00:35c3:b0:536:ab9f:ceca with SMTP id dc3-20020a056a0035c300b00536ab9fcecamr9635768pfb.37.1661272975462;
+        Tue, 23 Aug 2022 09:42:55 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:fee6:a961:5d1d:553])
+        by smtp.gmail.com with UTF8SMTPSA id p4-20020aa79e84000000b00535fd0cb58bsm9425178pfq.111.2022.08.23.09.42.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Aug 2022 09:42:55 -0700 (PDT)
+Date:   Tue, 23 Aug 2022 09:42:53 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc7280: Keep USB GDSC power domains
+ on when USB wakeup is enabled
+Message-ID: <YwUDjaG6n95Ddij2@google.com>
+References: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
+ <20220822115246.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
+ <YwS3FCOqIeajMEgz@hovoldconsulting.com>
 MIME-Version: 1.0
-In-Reply-To: <1661245527-5596-1-git-send-email-quic_c_skakit@quicinc.com>
-References: <1661245527-5596-1-git-send-email-quic_c_skakit@quicinc.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Tue, 23 Aug 2022 10:37:15 -0500
-Message-ID: <CAE-0n50g9UUH9Jyy1_CGKLbXd096waP_Y4kPJiFmfqBaKMhG5w@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: lpass: Fix the invalid index errors seen at bootup
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Satya Priya <quic_c_skakit@quicinc.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Andy Gross <agross@kernel.org>, mka@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_tdas@quicinc.com, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YwS3FCOqIeajMEgz@hovoldconsulting.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Satya Priya (2022-08-23 02:05:27)
-> After support for resets is added, qcom_cc_really_probe()
-> would be called twice for the same cc which causes
-> invalid index errors in qcom_clk_hw_get().
->
-> qcom_cc_clk_hw_get: invalid index 5
-> qcom_cc_clk_hw_get: invalid index 6
-> qcom_cc_clk_hw_get: invalid index 7
->
-> Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
-> ---
-> This patch depends on [1]
-> [1] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=667984
+On Tue, Aug 23, 2022 at 01:16:36PM +0200, Johan Hovold wrote:
+> On Mon, Aug 22, 2022 at 11:53:11AM -0700, Matthias Kaehlcke wrote:
+> > Set GENPD_FLAG_ACTIVE_WAKEUP for the USB GDSC power domains of SC7280.
+> > 
+> > Suggested-by: Johan Hovold <johan+linaro@kernel.org>
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > 
+> >  drivers/clk/qcom/gcc-sc7280.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> > index 7ff64d4d5920..4ff855269467 100644
+> > --- a/drivers/clk/qcom/gcc-sc7280.c
+> > +++ b/drivers/clk/qcom/gcc-sc7280.c
+> > @@ -3125,6 +3125,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
+> >  	.gdscr = 0xf004,
+> >  	.pd = {
+> >  		.name = "gcc_usb30_prim_gdsc",
+> > +		.flags = GENPD_FLAG_ACTIVE_WAKEUP,
+> 
+> Have you verified that the power-domain doesn't need to remain on also
+> when USB isn't used for wakeup?
 
-Why not resend the series and squash this patch into it?
+So far I haven't observed issues with this on sc7180 and sc7280 when USB
+wakeup is disabled.
+
+> This is the case for sc8280xp and indicates that there are further
+> missing pieces here (at least for that platform).
+
+What are you observing on sc8280xp when wakeup is disabled?
