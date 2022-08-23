@@ -2,67 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AB0C28D13
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 02:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECABC28D13
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 02:27:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239270AbiHWCUr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 22:20:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45610 "EHLO
+        id S239581AbiHWC1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 22:27:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239556AbiHWCUi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 22:20:38 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B85E5AC7F;
-        Mon, 22 Aug 2022 19:20:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B8A61B81A7F;
-        Tue, 23 Aug 2022 02:20:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBEFC433C1;
-        Tue, 23 Aug 2022 02:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661221231;
-        bh=9+q9kiKL50YG4CdosiWGTc8Tk1I5wulTBdKIfEXqaIs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LSZhy/w14YQKxIYE/XipCJZr5OZEIdF8LkW1e4U53/pp2AleUS9QtUEDg9Dko23LJ
-         wvK4wTR5ie0fEK2pb8Wr4hQaZe0uQUnoZrEVYUwGHZg7SDeRVdxtyTm9QcEdmA6WgH
-         qBTUXYBbYQvuvG4tr5Y4qcIL71DCHiYAEvycciv8C8Ht8hXUIB/jRDCtMe+1ODEXWs
-         tZGNaAmtdB38A4c0Xt1Cwa/zojqdy4VizSSNLKVWNGb+vhTtBz47zP/omyPVydlN7l
-         oZMAX0i9/uZKK9Qbku6BA+SuCVnLcj1wzVhKklPqIjAPfp+dz0TUeHdmXUb9Jj6SRY
-         UJB8NEDhxoaGw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1659054220.git.chanho61.park@samsung.com>
-References: <CGME20220729003611epcas2p1fe80f3eb06160c48c41f10b35d7c03eb@epcas2p1.samsung.com> <cover.1659054220.git.chanho61.park@samsung.com>
-Subject: Re: [PATCH v2 0/6] fsys0/1 clock support for Exynos Auto v9 SoC
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chanho Park <chanho61.park@samsung.com>
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233491AbiHWC1e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 22:27:34 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D50BD5B053;
+        Mon, 22 Aug 2022 19:27:32 -0700 (PDT)
+Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.9; Tue, 23 Aug 2022
+ 10:27:30 +0800
+From:   Yu Tu <yu.tu@amlogic.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Mon, 22 Aug 2022 19:20:28 -0700
-User-Agent: alot/0.10
-Message-Id: <20220823022031.6FBEFC433C1@smtp.kernel.org>
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Yu Tu <yu.tu@amlogic.com>
+Subject: [PATCH V4 0/6] Add S4 SoC PLL and Peripheral clock controller
+Date:   Tue, 23 Aug 2022 10:26:24 +0800
+Message-ID: <20220823022630.25007-1-yu.tu@amlogic.com>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.18.11.248]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chanho Park (2022-07-28 17:30:18)
-> CMU_FSYS0 block provides clocks for PCIe Gen3 1 x 4Lanes and 2 x 2
-> Lanes. Similarly, CMU_FSYS1 provides clocks for USB(2 x USB3.1 Gen-1,
-> 2 x USB 2.0) and mmc. For MMC clocks, PLL_MMC(PLL0831X type) is also
-> supported as a PLL source clock provider.
+1. Add PLL and Peripheral clock controller driver for S4 SOC.
 
-Is someone at Samsung going to pick up the Samsung clk driver patches
-and send them as a PR? I didn't see anything last cycle.
+Yu Tu (6):
+  dt-bindings: clock: meson: add S4 SoC PLL clock controller bindings
+  arm64: dts: meson: add S4 Soc PLL clock controller in DT
+  clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
+  dt-bindings: clk: meson: add S4 SoC peripheral clock controller
+    bindings
+  arm64: dts: meson: add S4 Soc Peripheral clock controller in DT
+  clk: meson: s4: add s4 SoC peripheral clock controller driver
+
+V3 -> V4: change format and clock flags.
+V2 -> V3: Use two clock controller.
+V1 -> V2: Change format as discussed in the email.
+
+Link:https://lore.kernel.org/all/20220805085716.5635-7-yu.tu@amlogic.com/
+
+ .../clock/amlogic,s4-peripherals-clkc.yaml    |  105 +
+ .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   51 +
+ MAINTAINERS                                   |    1 +
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |   34 +
+ drivers/clk/meson/Kconfig                     |   25 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/s4-peripherals.c            | 3813 +++++++++++++++++
+ drivers/clk/meson/s4-peripherals.h            |  218 +
+ drivers/clk/meson/s4-pll.c                    |  880 ++++
+ drivers/clk/meson/s4-pll.h                    |   88 +
+ .../clock/amlogic,s4-peripherals-clkc.h       |  131 +
+ .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   30 +
+ 12 files changed, 5378 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/s4-peripherals.c
+ create mode 100644 drivers/clk/meson/s4-peripherals.h
+ create mode 100644 drivers/clk/meson/s4-pll.c
+ create mode 100644 drivers/clk/meson/s4-pll.h
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+
+
+base-commit: 08fc500fe3d4b1f0603fb97ad353f246a3d52d2d
+-- 
+2.33.1
+
