@@ -2,111 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361F0C32772
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 15:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A19C32789
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 15:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242050AbiHWPQ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 11:16:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37668 "EHLO
+        id S243059AbiHWP3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 11:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242879AbiHWPNU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 11:13:20 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32015149A34
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 03:23:36 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id l21so13072189ljj.2
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 03:23:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=yn5Cp9zoeWqGbxL3HM65C3eQTNCudh4CzSg5Uvw3JAk=;
-        b=QAJc4lxwTmf0W3KWKXRjlw6qcyC3eHPyQ5QoGuhnvAn60+muAHk9sdN/Zcrm1cUMIq
-         s/MnHrcCQNq3gmf9HYQNuccxGkfgpsLZL3+qnn86GSOLQoFZfN1u8KnQ3gDYLaOCKcgW
-         fLKxap4SHvHxX6tr3L632x2JnYqbZa2/5J3CopLcqmYJfyGRzPyGN50TuOW8DZUOhphs
-         zIJsqGjIJRIiRgqM/V447asxh+qfPATLOZ2Ic9S7QL+s5C7vfITWKfI8dfruPLKw483q
-         WpUr3abO2RFu4eWv6TQUVEkjTKgPnmC0rnSEyrkHDsyWTtzGPQEzEXrNtaE6dS5IrIWZ
-         Kyjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=yn5Cp9zoeWqGbxL3HM65C3eQTNCudh4CzSg5Uvw3JAk=;
-        b=h8og1xmK9AKbgBQupKyX6UImjeOzwUb08GnmJjsYnmsDe+TapPm0QyRda7CWBIEfDV
-         XDpRAj1JnEw4pjFO9dhGc8WrNuLkhZn8BFrkvbwoX7m1phbQ2pfPzoLrp+yJ2k73Cp8W
-         EG5OlkbTODmjTP8hD0ck0Xyu0b4YGsBU4lSej0ifZaTIwy/SnWkznNMekl6NO6uGdrLj
-         cS6Qwo6JbrP/MRKDWmy+4bQoTGLf+NvUZ3dUJ7nB7uJ4+VUCv9XNjTPFIIY4s2Kecxl4
-         mpd2G/9tUhhEw+dIKaHMZ8hWB5xi/U8mzrIE/8wt+cKeHv9mLQnqmXkbK+T2X62YySeM
-         9gGg==
-X-Gm-Message-State: ACgBeo2cWHi2/lytKr80eai7e8QEB2QMYLGnrjDE1iAWIXpeuoilj3b9
-        T0IE2DCIzhWrkfZlSwiw0uCIUg==
-X-Google-Smtp-Source: AA6agR4D5aExJIR72fiYWF97zzNBynY+4arB6wbMmJjNpCzNC+/Ov4i9Sl/PcwnVnQxQKarFz5l0fg==
-X-Received: by 2002:a05:651c:114b:b0:25b:e13b:6900 with SMTP id h11-20020a05651c114b00b0025be13b6900mr6417785ljo.462.1661250214179;
-        Tue, 23 Aug 2022 03:23:34 -0700 (PDT)
-Received: from [192.168.0.11] (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
-        by smtp.gmail.com with ESMTPSA id c4-20020a196544000000b00489e2156285sm2434193lfj.104.2022.08.23.03.23.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 03:23:33 -0700 (PDT)
-Message-ID: <c3831c5a-7e10-2112-83e0-4ec2d70001c2@linaro.org>
-Date:   Tue, 23 Aug 2022 13:23:32 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH RESEND v10 6/7] clk: baikal-t1: Add DDR/PCIe directly
- controlled resets support
-Content-Language: en-US
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S242984AbiHWP2r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 11:28:47 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED683B6D4E;
+        Tue, 23 Aug 2022 04:10:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EA515B81CD7;
+        Tue, 23 Aug 2022 11:09:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E3EDC433D6;
+        Tue, 23 Aug 2022 11:09:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661252974;
+        bh=UpEoL/7Dt4dHrMZYSGjJSXKxqA1hFx3KNHDWHtgrliQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XTjGj4vRbWLLEGxGZ03VClIdP7C+R35uKFwlMeibUAhMbp54Ni0IRvL+5Zo1DGnWS
+         mDaCSiVKu+U6Ao4kE1ILd95fJr9hQkpnqg5Y71XJLja/6SHl0BAD+d00V6uA56OGYr
+         RHfZqHEMInlMJNHnxmtsILKLaiz8uDCqhGDO4O2MLJxHCBMykVEzXj8xgDf7r+XBOF
+         xESw7EcE3aoNa08cQNgVmYIvg1ih5Z6wST+HbY4aICW0nDtdoOOYY8s+kUJL+bFFnE
+         pyoAjiafC4n4ndQwL+AJr6MZfyrIp+rzSk6BDLThCoQW8+xncTcnN1UZlvQstj4alp
+         BpZI8nQaCkhpw==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oQRmn-0002G1-Rh; Tue, 23 Aug 2022 13:09:34 +0200
+Date:   Tue, 23 Aug 2022 13:09:33 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20220822182934.23734-1-Sergey.Semin@baikalelectronics.ru>
- <20220822182934.23734-7-Sergey.Semin@baikalelectronics.ru>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220822182934.23734-7-Sergey.Semin@baikalelectronics.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: gcc-sc8280xp: fix broken suspend
+Message-ID: <YwS1bWufBYE6buSy@hovoldconsulting.com>
+References: <20220805121250.10347-1-johan+linaro@kernel.org>
+ <20220823021528.7291FC433D6@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220823021528.7291FC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/08/2022 21:29, Serge Semin wrote:
-> Aside with a set of the trigger-like resets Baikal-T1 CCU provides two
-> additional blocks with directly controlled reset signals. In particular it
-> concerns DDR full and initial resets and various PCIe sub-domains resets.
-> Let's add the direct reset assertion/de-assertion of the corresponding
-> flags support into the Baikal-T1 CCU driver then. It will be required at
-> least for the PCIe platform driver. Obviously the DDR controller isn't
-> supposed to be fully reset in the kernel, so the corresponding controls
-> are added just for the sake of the interface implementation completeness.
+On Mon, Aug 22, 2022 at 07:15:25PM -0700, Stephen Boyd wrote:
+> Quoting Johan Hovold (2022-08-05 05:12:48)
+> > The Qualcomm PCIe driver currently does not implement suspend at all so
+> > we need to mark the GDSCs as always-on to prevent genpd from disabling
+> > them.
+> > 
+> > Similarly, the Qualcomm dwc3 USB suspend implementation is also
+> > incomplete and the controller doesn't currently survive a suspend cycle
+> > unless the GDSC is kept on. Note that this has nothing to with whether
+> > wakeup is enabled or not (cf. [1]).
+> > 
+> > With these two workarounds, we have somewhat functional suspend on the
+> > SC8280XP reference design and Lenovo Thinkpad X13s until the missing
+> > driver support is in place (even USB remote wakeup works with [2]
+> > applied).
 > 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
-> ---
-> 
-> Changelog v6:
-> - Refactor the code to support the linear reset IDs only. (@Philipp)
-> 
-> Changelog v7:
-> - Drop empty line from the sys_rst_info structure initialization block.
->   (@Philipp)
-> ---
->  drivers/clk/baikal-t1/ccu-rst.c     | 66 +++++++++++++++++++++++++++++
->  drivers/clk/baikal-t1/ccu-rst.h     | 10 +++++
->  include/dt-bindings/reset/bt1-ccu.h |  9 ++++
+> Are these urgently needed for this release or does suspend not really
+> work yet on sc8280xp? I'm trying to understand if we need to apply
+> these to the fixes tree (in which case why isn't there a Fixes tag
+> targetting whatever commit broke suspend) or if they can wait for the
+> next release and come through clk-next.
 
-Do not mix drivers and bindings. Bindings always go separately, so this
-has to be split.
+They are urgently needed as sc8280xp does not survive a suspend cycle
+without them (e.g. crashes on resume) and this is not something that
+users expect when closing the lid of their laptops.
 
-Best regards,
-Krzysztof
+This is not a regression, but I guess I could have pointed to the commit
+adding the sc8280xp clock driver and GDSC power-domain definitions:
+
+Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+
+As several Qualcomm drivers simply ignore system PM and, for example,
+leave clocks enabled during suspend, we also need to keep the
+power-domains enabled.
+
+I noticed that Bjorn applied these for 6.1, but I believe this is 6.0
+material (or at the least the USB one is as PCI support for sc8280xp is
+being added in 6.1).
+
+Johan
