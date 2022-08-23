@@ -2,105 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81975C32772
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 10:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC506C32793
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 11:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354591AbiHWKaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 06:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53606 "EHLO
+        id S1357709AbiHWLmc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 07:42:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354566AbiHWK2W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 06:28:22 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59779A4B0D;
-        Tue, 23 Aug 2022 02:06:08 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27N3tqFm001761;
-        Tue, 23 Aug 2022 09:05:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=LM0sqG3wWiXEL/Wnkor2Tjkj6umw1AfTQiffQFf5arI=;
- b=AuQfXJFyFQha7cfahHhXSpUtM8hBgRip4e0cqGURMloBhUL4rzP19uSJJNQwofaqJtym
- Jazbsv39STH+YE450RNbOnCQdsITtNC8/mYNDNzkhTU1s50K+lFvfjJ08YcOP0N9e+E4
- ziSZMmSDVw/09OkNN2UxFC9eACIqeeqsTDSR6hlUS0ZVjlWxru9PmYDppmTM6ajwklyY
- ryvNb00zvQ0A93PWW4qIsX8OFBrb8sKgJR9i1Sgft7cEIv/RJgrYckIueGVkuvGB7Yf8
- 62Jyva9p0CsH9VoB0J2eQjn1uYEQ8drffIZyGXDDJb0PTfZ1poBsVicdLDZj62n6wc90 7g== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j4dgy2kbj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Aug 2022 09:05:58 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27N95vPV010885
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Aug 2022 09:05:57 GMT
-Received: from c-skakit-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 23 Aug 2022 02:05:53 -0700
-From:   Satya Priya <quic_c_skakit@quicinc.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andy Gross <agross@kernel.org>, <mka@chromium.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_tdas@quicinc.com>, <quic_c_skakit@quicinc.com>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH] clk: qcom: lpass: Fix the invalid index errors seen at bootup
-Date:   Tue, 23 Aug 2022 14:35:27 +0530
-Message-ID: <1661245527-5596-1-git-send-email-quic_c_skakit@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S1358459AbiHWLlx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 07:41:53 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B27CC323
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 02:29:24 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id r16so16247808wrm.6
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 02:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile-fr.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=b5SqvktMLhNdA3mMaOmzLY6p2cT5md25GAzVuMoc4r4=;
+        b=CIp0kiP5yLD5kCI5UiDO5IlEgewnVN+5NJDKY0BQOcuMfrfzjlyZW9FNLVmiUTybS+
+         qvxGi43zIhsaCgvMi5VTXrLCUTs+c9COja1v/TXJCkF5MSNvp6RsIZJEYuLmP/altkxe
+         Oz1HJhPIYL6gHiggAuF5Orb+8BcZ7uXTp+/FGiVimmgvJV2oUl0nnTJLfOkpl7ePesaY
+         hnxofDecgzIsB3aUOstMzBJbtzunQJnI6ijG7+6/Xt8aBFsW8I8lgeXoU/rMoeyTXOqJ
+         jfaIb0hT0b5XPOn/l3xmfiC9hHS/w+vLIVBQdh9fi5AhRt99K/lwa2DThLqKsDjxxNnk
+         byLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=b5SqvktMLhNdA3mMaOmzLY6p2cT5md25GAzVuMoc4r4=;
+        b=WpqAUJOqOPOG7VWK2/zQOX7H3Xo8DwVSj1wLqTCpiY2BStze2V2Civ9YjwTvkE+ybU
+         NGjcy2NvK3VH1aFqEL8s3d7SOy+5KzI1bNrtL6WUzk3JN18ZXdJGBuO3xcF3tLZli5ph
+         ZQE7QdN+NFMQbbg3KqSoGmi6u92cI0x+KsLDP6v0DvtECF3f2p7w7fmbEE8ImtSONKQk
+         6Zklnj8g5h875NWWq77ZZ03ycUeYbEvnmPgmUxXQy79E6eU9P6fmzLO2G4Vd5h8y5Cag
+         nPDO/Euk9s0li5uq/PIxbeRnJwqwr4oyuEAERYCkho6Z2VxF3CLYb14hu2CtE98ulSXa
+         r4rg==
+X-Gm-Message-State: ACgBeo0znwO24RLUuVwK5VfTV0RAJu3oy7qaRhg1cyOYtZDbdZ66Vtec
+        FnWPccjajUM4k2Dp4XHYKbS6kw==
+X-Google-Smtp-Source: AA6agR4YYoSedYVviurRFDL2MlH/IvkuklQao1Lewjf01WxdkCHF4BXPKT/acLkLZeVw7OZxj5trNQ==
+X-Received: by 2002:a5d:59c3:0:b0:225:512d:23b8 with SMTP id v3-20020a5d59c3000000b00225512d23b8mr5786037wry.505.1661246962417;
+        Tue, 23 Aug 2022 02:29:22 -0700 (PDT)
+Received: from ?IPV6:2a01:cb05:8f8a:1800:1c97:b8d1:b477:d53f? (2a01cb058f8a18001c97b8d1b477d53f.ipv6.abo.wanadoo.fr. [2a01:cb05:8f8a:1800:1c97:b8d1:b477:d53f])
+        by smtp.gmail.com with ESMTPSA id c19-20020a05600c4a1300b003a30fbde91dsm19014200wmp.20.2022.08.23.02.29.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Aug 2022 02:29:21 -0700 (PDT)
+Message-ID: <c62649f0-2be1-459c-bfa5-4c94a3e4300f@smile.fr>
+Date:   Tue, 23 Aug 2022 11:29:21 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wPDLZBy73CuDUBPiGVk9AIEq5_wa6DS3
-X-Proofpoint-GUID: wPDLZBy73CuDUBPiGVk9AIEq5_wa6DS3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-23_04,2022-08-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 adultscore=0 mlxlogscore=859 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
- definitions=main-2208230035
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: ti: Fix reference imbalance in
+ ti_find_clock_provider
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+References: <63d9211f-d5ce-562e-358a-50f26c7caf35@siemens.com>
+ <20220819212337.AECB9C433D6@smtp.kernel.org>
+From:   Romain Naour <romain.naour@smile.fr>
+In-Reply-To: <20220819212337.AECB9C433D6@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After support for resets is added, qcom_cc_really_probe()
-would be called twice for the same cc which causes
-invalid index errors in qcom_clk_hw_get().
+Hello,
 
-qcom_cc_clk_hw_get: invalid index 5
-qcom_cc_clk_hw_get: invalid index 6
-qcom_cc_clk_hw_get: invalid index 7
+Le 19/08/2022 à 23:23, Stephen Boyd a écrit :
+> Quoting Jan Kiszka (2022-08-08 15:26:58)
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> When a clock is found via clock-output-names, we need to reference it
+>> explicitly to match of_find_node_by_name behavior. Failing to do so
+>> causes warnings like this:
+>>
+> 
+> Is this superseeded by
+> https://lore.kernel.org/r/20220621091118.33930-1-tony@atomide.com?
 
-Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280")
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
----
-This patch depends on [1] 
-[1] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=667984
+I noticed the same issue and tested separately with both patches.
 
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Indeed, this patch is not needed anymore with "[PATCH] clk: ti: Fix missing
+of_node_get() ti_find_clock_provider()" applied.
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 063e036..5d4bc56 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -785,7 +785,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
- 	regmap_write(regmap, 0x4, 0x3b);
- 	regmap_write(regmap, 0x8, 0xff05);
- 
--	ret = qcom_cc_really_probe(pdev, &lpass_audio_cc_sc7280_desc, regmap);
-+	ret = qcom_cc_probe_by_index(pdev, 0, &lpass_audio_cc_sc7280_desc);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
- 		pm_runtime_disable(&pdev->dev);
--- 
-2.7.4
-
+Best regards,
+Romain
