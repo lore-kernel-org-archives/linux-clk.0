@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CC0C32772
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 09:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6F1C32793
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 10:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348371AbiHWJRL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 05:17:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49648 "EHLO
+        id S243961AbiHWKMe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 06:12:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348305AbiHWJOn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 05:14:43 -0400
+        with ESMTP id S1352886AbiHWKJ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 06:09:28 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC4886FF9;
-        Tue, 23 Aug 2022 01:32:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01542659F5;
+        Tue, 23 Aug 2022 01:55:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B96B7B81C35;
-        Tue, 23 Aug 2022 08:31:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA6F4C433C1;
-        Tue, 23 Aug 2022 08:31:56 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8B3A0B81C3B;
+        Tue, 23 Aug 2022 08:55:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC25AC433C1;
+        Tue, 23 Aug 2022 08:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1661243517;
-        bh=oOazxn9uOIeeULy3xFLCdFRAGjrwMz6aIQQcYwFNT4I=;
+        s=korg; t=1661244917;
+        bh=cCEb61r0Y2wt8EAuBv6xy9ICBFJ6QBNcUN34lz7odSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vWhftixQOr2PEqGWZTBYQk44N/74pM9dHU4luIiymYlIntjmDURPIZghhBiyViaYK
-         d6HHYeIoKimXVnSd3qEKMzLsJlLBOhs2b1CV6jivkmLDONS3FBC7gUK145RZABtUrI
-         aiw2p+b+1Y/Gp8j4aPd0OQBVkCjhn1cOsTSAX+mU=
+        b=IvzZCcSdFtTVACDxxzciW8GJHtKT/4OKi9Z8g6uLyC1SwKrwewNklzCZSsY/3az/y
+         XWdzac6ztnafT2hTHZ8OS3DPc7AdJuR2XzH0BQnbLQQSjHs8mA/hpNfeVwd6MNLtFs
+         tXcuC+3eRqSb88Hqe5TXQ0AqWSXFz4Wmg21+vm08=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tero Kristo <kristo@kernel.org>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.19 272/365] clk: ti: Stop using legacy clkctrl names for omap4 and 5
-Date:   Tue, 23 Aug 2022 10:02:53 +0200
-Message-Id: <20220823080129.555791196@linuxfoundation.org>
+Subject: [PATCH 5.15 172/244] clk: ti: Stop using legacy clkctrl names for omap4 and 5
+Date:   Tue, 23 Aug 2022 10:25:31 +0200
+Message-Id: <20220823080105.016135088@linuxfoundation.org>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220823080118.128342613@linuxfoundation.org>
-References: <20220823080118.128342613@linuxfoundation.org>
+In-Reply-To: <20220823080059.091088642@linuxfoundation.org>
+References: <20220823080059.091088642@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -710,10 +710,10 @@ index 90e0a9ea6351..b4aff76eb373 100644
  };
  
 diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 617360e20d86..e23bf0458632 100644
+index 864c484bde1b..08a85c559f79 100644
 --- a/drivers/clk/ti/clkctrl.c
 +++ b/drivers/clk/ti/clkctrl.c
-@@ -528,10 +528,6 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+@@ -511,10 +511,6 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
  	char *c;
  	u16 soc_mask = 0;
  
