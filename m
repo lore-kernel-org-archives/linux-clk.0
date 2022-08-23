@@ -2,201 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D4BC25B08
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 03:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51544C32774
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 05:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239695AbiHWDff (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 23:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
+        id S235968AbiHWFcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 01:32:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240148AbiHWDfe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 23:35:34 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 175385301F;
-        Mon, 22 Aug 2022 20:35:33 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id cb8so9526759qtb.0;
-        Mon, 22 Aug 2022 20:35:33 -0700 (PDT)
+        with ESMTP id S237692AbiHWFcR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 01:32:17 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4270A5D100
+        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 22:32:16 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id s6so6960961lfo.11
+        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2022 22:32:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc;
-        bh=S7kkoLuNhQ00abOUTZOeGzFT/B6ZjSVP0n1Y49zWBjQ=;
-        b=JdTkhWq1vq+LJ6+lCIrFJjrhYkNLpB3dYW7fjICh6fjyiKOWM5MQLNWF3y3E7y4mNM
-         icWNHGy8KqSnVgv6UxpjNTaeKehtzUalGYzFtdcreTTdJ2Zv5CXRt/MtMk7HbBxl31p3
-         zdq+7t7iVd1tiQUXg2X/8HIhyVjOTJT3DGHPO13yL3G5VqfhMbees8g389+bPst4HlUd
-         SONn+ODQAeoo5ObgotrnfZFn/Fk+diXJn3quomTAk/BGPq7n6KdvwJQuWMdGqRk36qi9
-         a3F7akbRgbygjCv/k/eWsEmSfd0W9b7C/+SsBO6xBJtEkbfgQVbW9p5zJkM5gCu1mJJu
-         T1HQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=R/QjFUcNKUdiXauvJpNpmHEGX/WH97nlgtVw8sVWY1g=;
+        b=TYmHBG9HD9Q1YM2al5mGOFB0/dXez1jKaL+dBGjSWlR4ECz3VY5V5pHNpv9UQ5jfAk
+         E4xPPuqeibjHcaeEq7/crPaaYl9QIYYqBrmi/wz9eQPJPByMtE8/dFh02hNt1/1hM0jA
+         /8K4F7gEmD+zNXMuHt0YK7MHImrsHYMazvW5yAIFjQYZFWt7Auh8CC9s217k3fvresQN
+         EuaKmkFB+YKGPzrq8Y0bNFdeGk9rNptxOo+3afQN1xrkn55MWjFQ5fh6XqtOLKiAR0al
+         prMKeLK94cKBna+PFB8BSnc3Wu93DhrQfbkbTkM2MO3w/+SrG5plPc2VCGIs4pjhA/1M
+         S4ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=S7kkoLuNhQ00abOUTZOeGzFT/B6ZjSVP0n1Y49zWBjQ=;
-        b=i8zTs1mLDRDups38A1zDxSnNhLVLxjGyKIpWLKiOV5a3uarDRmmpGmHhh3vv3W2Cf4
-         HvFu6XcubSrqHzpUIcgiBleLH/jnx17rW9POIY992E5Avpr8mSdMGkxG+3RuMJW5CbB1
-         N9izHdCSYkuQujyizpWUbD3YbATRjmRC11uNAw5NdmgNYSapvo1iDD7IxrMKDY0UCh/v
-         YVqpg+OzUwwH2lLIcRXSIs8AaYfsfGmTaXQcFZA1hBjPL8fmqqoA7WCV53Z3qUCmHCQR
-         ckU009+yg0WZtg9jRkztz9EBzfFbRxXO/P0rLTtr1kx0eo19vRUccdV6fmJNh1JT91k6
-         Wb9Q==
-X-Gm-Message-State: ACgBeo26KVmUa2hJtfl1bDXtva94SloRAS/JIgAo//N3AFc7dCuiNNup
-        oMtdJZoa0VLALWzqS8g5+GxM/4o/Irk=
-X-Google-Smtp-Source: AA6agR5f3PUrASfnlz3yFpIlcpQDfUGYTTtFf82i3OjcmEdO41o7MDFECKT9CC/XSNDydlE2DYHNkw==
-X-Received: by 2002:ac8:5c89:0:b0:343:4e44:3dbe with SMTP id r9-20020ac85c89000000b003434e443dbemr17715136qta.531.1661225732213;
-        Mon, 22 Aug 2022 20:35:32 -0700 (PDT)
-Received: from [192.168.1.201] (pool-173-73-95-180.washdc.fios.verizon.net. [173.73.95.180])
-        by smtp.gmail.com with ESMTPSA id bp37-20020a05620a45a500b006b9c355ed75sm11575583qkb.70.2022.08.22.20.35.31
+        bh=R/QjFUcNKUdiXauvJpNpmHEGX/WH97nlgtVw8sVWY1g=;
+        b=rG9p/x5JUK867Rck2sJQ0Q1OGyd+BusPmRuVu8EAtlgOqhU5Dn4pGwBKdxxjfv8JnL
+         z+2LWKfdF8f3MqyTooUx5ZwXTqSAx2qoCOJ463M99Uf3+ZCvCAODiZdh8aggD+pQiAWW
+         yWlTYCZ0cAGFXejdk4Xc6c1x2LSfpnTVWFdRh9gXnUImLCQKtrsDPjFwXz7oIflo5Ppx
+         ebPxqAUshT3k6MlWXKPwTlYAN345ut8LsbuRT7A78gJOHvnsetmxhZxhYKGmR4K6APGs
+         A+kEDV5hgIZMp4Qe72IW+cENHH9jvpRWdRBINnpSpirQIHrgfw9yERp2s3hHNgcu+Yut
+         MhQw==
+X-Gm-Message-State: ACgBeo1GNpXNgnFDkg7mayc2p121/vGfBEHGHwmGXZuT+uLGl0Nudkb/
+        1GQxsPB19r/7xEQumYJRJJM00g==
+X-Google-Smtp-Source: AA6agR4OvDADMwaWRuLgwGpQwmAz8EFd9IyuXL6RMcnA9HrdZmz4xE5aeC+taMS+A4H2C29Y3KZO2Q==
+X-Received: by 2002:a05:6512:1507:b0:492:b9ae:5d51 with SMTP id bq7-20020a056512150700b00492b9ae5d51mr7677243lfb.14.1661232734412;
+        Mon, 22 Aug 2022 22:32:14 -0700 (PDT)
+Received: from [192.168.0.11] (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
+        by smtp.gmail.com with ESMTPSA id z28-20020a2eb53c000000b0026181a42284sm2163307ljm.88.2022.08.22.22.32.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Aug 2022 20:35:31 -0700 (PDT)
-Subject: Re: [RESEND PATCH] clk: ls1c: Fix PLL rate calculation
-To:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Yang Ling <gnaygnil@gmail.com>, linux-kernel@vger.kernel.org,
-        Kelvin Cheung <keguang.zhang@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Du Huanpeng <dhu@hodcarrier.org>
-References: <20220823033414.198525-1-seanga2@gmail.com>
-From:   Sean Anderson <seanga2@gmail.com>
-Message-ID: <a43019fd-67c4-022a-83ac-40f0302c7cf4@gmail.com>
-Date:   Mon, 22 Aug 2022 23:35:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Mon, 22 Aug 2022 22:32:13 -0700 (PDT)
+Message-ID: <f56e69ae-809f-fe4e-a167-cc2ad10696f7@linaro.org>
+Date:   Tue, 23 Aug 2022 08:32:12 +0300
 MIME-Version: 1.0
-In-Reply-To: <20220823033414.198525-1-seanga2@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v2 0/6] fsys0/1 clock support for Exynos Auto v9 SoC
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <CGME20220729003611epcas2p1fe80f3eb06160c48c41f10b35d7c03eb@epcas2p1.samsung.com>
+ <cover.1659054220.git.chanho61.park@samsung.com>
+ <20220823022031.6FBEFC433C1@smtp.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220823022031.6FBEFC433C1@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/22/22 11:34 PM, Sean Anderson wrote:
-> While reviewing Dhu's patch adding ls1c300 clock support to U-Boot [1],=
- I
-> noticed the following calculation, which is copied from
-> drivers/clk/loongson1/clk-loongson1c.c:
->=20
-> ulong ls1c300_pll_get_rate(struct clk *clk)
-> {
-> 	unsigned int mult;
-> 	long long parent_rate;
-> 	void *base;
-> 	unsigned int val;
->=20
-> 	parent_rate =3D clk_get_parent_rate(clk);
-> 	base =3D (void *)clk->data;
->=20
-> 	val =3D readl(base + START_FREQ);
-> 	mult =3D FIELD_GET(FRAC_N, val) + FIELD_GET(M_PLL, val);
-> 	return (mult * parent_rate) / 4;
-> }
->=20
-> I would like to examine the use of M_PLL and FRAC_N to calculate the mu=
-ltiplier
-> for the PLL. The datasheet has the following to say:
->=20
-> START_FREQ =E4=BD=8D    =E7=BC=BA=E7=9C=81=E5=80=BC      =E6=8F=8F=E8=BF=
-=B0
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> FRAC_N     23:16 0           PLL =E5=80=8D=E9=A2=91=E7=B3=BB=E6=95=B0=E7=
-=9A=84=E5=B0=8F=E6=95=B0=E9=83=A8=E5=88=86
->=20
->                   =E7=94=B1          PLL =E5=80=8D=E9=A2=91=E7=B3=BB=E6=
-=95=B0=E7=9A=84=E6=95=B4=E6=95=B0=E9=83=A8=E5=88=86
-> M_PLL      15:8  NAND_D[3:0] (=E7=90=86=E8=AE=BA=E5=8F=AF=E4=BB=A5=E8=BE=
-=BE=E5=88=B0 255=EF=BC=8C=E5=BB=BA=E8=AE=AE=E4=B8=8D=E8=A6=81=E8=B6=85=E8=
-=BF=87 100)
->                   =E9=85=8D=E7=BD=AE
->=20
-> which according to google translate means
->=20
-> START_FREQ Bits  Default       Description
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> FRAC_N     23:16 0             Fractional part of the PLL multiplicatio=
-n factor
->=20
->                   Depends on    Integer part of PLL multiplication fact=
-or
-> M_PLL      15:8  NAND_D[3:0]   (Theoretically it can reach 255, [but] i=
-t is
->                   configuration  recommended not to exceed 100)
->=20
-> So just based on this description, I would expect that the formula to b=
-e
-> something like
->=20
-> 	rate =3D parent * (256 * M_PLL + FRAC_N) / 256 / 4
->=20
-> However, the datasheet also gives the following formula:
->=20
-> 	rate =3D parent * (M_PLL + FRAC_N) / 4
->=20
-> which is what the Linux driver has implemented. I find this very unusua=
-l.
-> First, the datasheet specifically says that these fields are the intege=
-r and
-> fractional parts of the multiplier. Second, I think such a construct do=
-es not
-> easily map to traditional PLL building blocks. Implementing this formul=
-a in
-> hardware would likely require an adder, just to then set the threshold =
-of a
-> clock divider.
->=20
-> I think it is much more likely that the first formula is correct. The a=
-uthor of
-> the datasheet may think of a multiplier of (say) 3.14 as
->=20
-> 	M_PLL =3D 3
-> 	FRAC_N =3D 0.14
->=20
-> which together sum to the correct multiplier, even though the actual va=
-lue
-> stored in FRAC_N would be 36.
->=20
-> I suspect that this has slipped by unnoticed because when FRAC_N is 0, =
-there is
-> no difference in the formulae. The following patch is untested, but I s=
-uspect
-> it will fix this issue. I would appreciate if anyone with access to the=
+On 23/08/2022 05:20, Stephen Boyd wrote:
+> Quoting Chanho Park (2022-07-28 17:30:18)
+>> CMU_FSYS0 block provides clocks for PCIe Gen3 1 x 4Lanes and 2 x 2
+>> Lanes. Similarly, CMU_FSYS1 provides clocks for USB(2 x USB3.1 Gen-1,
+>> 2 x USB 2.0) and mmc. For MMC clocks, PLL_MMC(PLL0831X type) is also
+>> supported as a PLL source clock provider.
+> 
+> Is someone at Samsung going to pick up the Samsung clk driver patches
+> and send them as a PR? I didn't see anything last cycle.
 
-> hardware could measure the output of the PLL (or one of its derived clo=
-cks) and
-> determine the correct formula.
->=20
-> [1] https://lore.kernel.org/u-boot/20220418204519.19991-1-dhu@hodcarrie=
-r.org/T/#u
->=20
-> Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
-> Signed-off-by: Sean Anderson <seanga2@gmail.com>
-> ---
->=20
->   drivers/clk/loongson1/clk-loongson1c.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loong=
-son1/clk-loongson1c.c
-> index 1ebf740380ef..2aa839b05d6b 100644
-> --- a/drivers/clk/loongson1/clk-loongson1c.c
-> +++ b/drivers/clk/loongson1/clk-loongson1c.c
-> @@ -21,9 +21,9 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_=
-hw *hw,
->   	u32 pll, rate;
->  =20
->   	pll =3D __raw_readl(LS1X_CLK_PLL_FREQ);
-> -	rate =3D ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-> +	rate =3D (pll & 0xff00) + ((pll >> 16) & 0xff);
->   	rate *=3D OSC;
-> -	rate >>=3D 2;
-> +	rate >>=3D 10;
->  =20
->   	return rate;
->   }
->=20
+The DTS changes also wait for the ack on bindings (we need to split these).
 
-+CC Stephen Boyd
+Sylwester, shall I handle everything?
 
+Best regards,
+Krzysztof
