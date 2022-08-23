@@ -2,67 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF63C32789
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 02:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE99C28D13
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 02:11:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239449AbiHWCG3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 22:06:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34792 "EHLO
+        id S238431AbiHWCLw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 22:11:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235768AbiHWCG2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 22:06:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14F412AF5;
-        Mon, 22 Aug 2022 19:06:27 -0700 (PDT)
+        with ESMTP id S232437AbiHWCLv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 22:11:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E444D14C;
+        Mon, 22 Aug 2022 19:11:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DB0161224;
-        Tue, 23 Aug 2022 02:06:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC695C433D6;
-        Tue, 23 Aug 2022 02:06:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A2E43B81A3C;
+        Tue, 23 Aug 2022 02:11:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C5EBC433D6;
+        Tue, 23 Aug 2022 02:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661220386;
-        bh=OPYilaXNqSN66IcN7hBTc8VxRASQY+HVHTakl3BRzCo=;
+        s=k20201202; t=1661220708;
+        bh=c8yjdxQHEEIT0eSO6SawNYH6Dw/u9o+9BlM0G/6qXE0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sC4WBXXCwDxzgWtrnY8VBywxsnDh2qYgGCegZ/IK1zcQ/jAhv+1ARPy8zz+sLAQH+
-         S+kMginYgTtkiNC3QtnncpFWhhhlQNQh9gQimhCprRiUKLggqGZjrw/vkS7oarTJcy
-         P5aRFh7M5NZ0LKxUOaz1KRk1i5KB8CsFlCiMJiYukASIzYsu66GkFJPnhTMaN0wotu
-         Cs5Jq76DkCmC5otm1R1LxPnTf359ozK1g/W4i0wy5heSkgf/oeH0B298PIM0duJXZD
-         Zge8ndwccA74rUHPvFa/0FDYGAhNMKsOVFeY7uTgNXvhjQzH7BJ2eVYnpbOpscvxFf
-         XHFfylMOUrsGg==
+        b=gWznI177FZE6q7pzoUGsIy1kNvkCoURpygs05rZgfbVtvkQtrfshF2qkzHE+ttosN
+         TMrubEbkXIE7xWcnt2O2dWxLnqAvlraUDn4uFIznWosG0ca+l7LvFKx6jGoKi8oBWd
+         p8vE3T3bVj7A52fZ8AHawZFY3z2OrzRSLy5iRHvzvNY0kjmh+3HnojyRbd61aOZ2X6
+         Mg4Jgtz3kSwFVRwRfMr6o/tNHq0Tg4JaaBUAr+S+7de4G9kL6jnAT/HWL43HTeLxA8
+         IkmDws83faf8J7zC0YDK6uArvpR531V5ATfdCLE+zTL33WSKgbe2PE6bvywWZbAfSu
+         T3EIWS9R5IfXw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220523152811.19692-1-linmq006@gmail.com>
-References: <20220523152811.19692-1-linmq006@gmail.com>
-Subject: Re: [PATCH] clk: tegra20: Fix refcount leak in tegra20_clock_init
+In-Reply-To: <20220811140030.28886-1-wangborong@cdjrlc.com>
+References: <20220811140030.28886-1-wangborong@cdjrlc.com>
+Subject: Re: [PATCH] clk: Fix comment typo
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linmq006@gmail.com
-To:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mike Turquette <mturquette@linaro.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Date:   Mon, 22 Aug 2022 19:06:25 -0700
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jason Wang <wangborong@cdjrlc.com>
+To:     Jason Wang <wangborong@cdjrlc.com>
+Date:   Mon, 22 Aug 2022 19:11:45 -0700
 User-Agent: alot/0.10
-Message-Id: <20220823020626.DC695C433D6@smtp.kernel.org>
+Message-Id: <20220823021148.5C5EBC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miaoqian Lin (2022-05-23 08:28:11)
-> of_find_matching_node() returns a node pointer with refcount
-> incremented, we should use of_node_put() on it when not need anymore.
-> Add missing of_node_put() to avoid refcount leak.
+Quoting Jason Wang (2022-08-11 07:00:30)
+> The double `to' is duplicated in the comment, remove one.
 >=20
-> Fixes: 37c26a906527 ("clk: tegra: add clock support for Tegra20")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
 > ---
 
 Applied to clk-next
