@@ -2,105 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EF9C32793
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 07:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A173C32793
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 07:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241087AbiHWHcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 03:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
+        id S240400AbiHWHgJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 03:36:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241089AbiHWHcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 03:32:08 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4FC663F2C
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 00:31:58 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id l21so12708260ljj.2
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 00:31:58 -0700 (PDT)
+        with ESMTP id S240147AbiHWHgI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 03:36:08 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF5A642E2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 00:36:07 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id v10so12699625ljh.9
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 00:36:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=7YI1/mD3H5QF1O/Ij6koXffrhM7CpoDCp7KLGJ6O08c=;
-        b=G00hZRHnUf2Hz3UvWhraxzEB0JU27Y0SFqnd5o1A18QbOAY7d/xlIN22REHnZfO1Dh
-         7jprbbDtgbnLsIfJflevOAEYkZHOHTTgrFeJsuWeLFglnC1imgmANcRb8VDhUsMM1jHe
-         u3xrNgozooLDNcpSmLiy+zztG1yrsRGbzmbJ5wP4Iph3jb7PTt/ZHGz14Qc+yQC3XZqC
-         aUHzAuwxDwv1k6l7E6Qm+qzZAnTDqUqQ3JldMyPjGKiMUtnjeAST5hmJqXBSr21sAVMy
-         Cyawd5b1H03v8bu9zYxwYSUjb6yM/WGTl0TjsnX+iYJSoqCUPwbLCXbYWewcgIT+0MUX
-         cNMQ==
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=1WnyUrxG3+0D+bkCR+RrfEDpgP7RPyFSX27GTaFeZvk=;
+        b=J8QF/2ADbBqtCL//z4PO+FlWzzjjCC3uog8Q0A/NRZElFKcSmcg60oaMNCIyZlgWok
+         5jZ+pFWF+HntgNVLAfIgZFZA/2bdla1bKjncJDycPiF1BSyFVNOdQGQWuhXMBGdYn+jG
+         UoCzokxv3mCqZO9byqaSLH0JDzacuQ2E6WIbHIHv6v+3iHszy7afLGT4wn0mq/w0sO17
+         lJP6A4wY86VXBPCG+ucGCaJUCCCVpntwjhZK1rEZjINCgFM0RB5VesC3LdLTHcrf+ff7
+         cpzF0S+SA6k2rCbjnWMU4C/4PG1NNrKnaxHH0dcT2ce68VFkbM0rVg32q+TdjBlKZ1CC
+         /BGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=7YI1/mD3H5QF1O/Ij6koXffrhM7CpoDCp7KLGJ6O08c=;
-        b=UkO4pjbGptoMMPDOy8Wg2jDL/aoqgdHc6m1nhp0XVsHtR2h6N5IfY8hdBJ3aBxPnpN
-         enBpE7guq5xok+tTDYfuyyzBJ+6m/u/SG80mEsTyvqAj8SMKHTAJXMTkhe9kRT16a7nL
-         XMBhKnlcK3/RbC4fWQSLVmOudWyyMR6PNa1e8Jaj2ESFtxzDN8ry+yVFbweUdcghI6KU
-         ybxHC1WZf1APULhYwOj5ID49vY6MC0UXqC1OU7Whuiuz4beb2j3gRFH+NxuVUnDbkG5T
-         0GmQh4Du8EmzkPIVHE8nu0hZV3jkiJLeYx8kOC2lg4rHlq5nJoDFXPMN3lxYnQTBg6Ag
-         0J0A==
-X-Gm-Message-State: ACgBeo21Xdb89tSZJBpDYUEJndSzmIIoMFnYge+mW3kudSJbBMklAvmQ
-        89Mjw/eswdQ4a4pXOMXlZkDNDA==
-X-Google-Smtp-Source: AA6agR67LH3YIXGRYOJYLyEPYICUo0sBRP/ptta4AAYJ64nephyTvVgVKF/3OT3Y7CTNH/7bXXCODw==
-X-Received: by 2002:a2e:9d97:0:b0:261:bb31:4b6e with SMTP id c23-20020a2e9d97000000b00261bb314b6emr5479712ljj.59.1661239916815;
-        Tue, 23 Aug 2022 00:31:56 -0700 (PDT)
-Received: from krzk-bin.. (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
-        by smtp.gmail.com with ESMTPSA id z13-20020a056512370d00b00492f21c161esm398504lfr.123.2022.08.23.00.31.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Aug 2022 00:31:56 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
-Date:   Tue, 23 Aug 2022 10:31:54 +0300
-Message-Id: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=1WnyUrxG3+0D+bkCR+RrfEDpgP7RPyFSX27GTaFeZvk=;
+        b=NgRjWx+CKcC512AV12+c+9uJQx48aKlHTvobILgRpzSk2OCTYSxwBh5POwAGyMZaiI
+         gfYzX57wvZ6UvME8XrE5E2Yml/5AtaNz9fCU6OdupcdpgrT+a8i2j5OIWM6MrRI0kbl/
+         CzW8OGOQtY1miS6IinRJZeQxZQAsoKdsLZSmCdQXnjgQUyNJnP2qvf8/8yO/1BavjZeb
+         jy7yYnTKOAoovCJ0wyhIFP4ng8Crw3KeyOq7knalyIgEI46gAGlAvDtLxbCHRs9e3pW4
+         TbT8GBbz80Nzu4UZUrIeGR7/LfBicOG62b5lY/q11ZGoiq3phvvMAM/wFzhgLZJB+kUW
+         dQUA==
+X-Gm-Message-State: ACgBeo1Z4mz9Lkea3L/Q9vmWD9zEgapE7FIi92l8n/IfycOWbTP+FZSK
+        IZDvvWtwu5JKi7NLjOUKiZRi+Q==
+X-Google-Smtp-Source: AA6agR4dszY23uh+Budd60dsBsxWTmMmGjIGTRp7z+9LCFbLyuA24rj7/BK9THdfr4Z8DZFjD6Ajfw==
+X-Received: by 2002:a05:651c:a04:b0:25e:7523:20b2 with SMTP id k4-20020a05651c0a0400b0025e752320b2mr6290283ljq.424.1661240165622;
+        Tue, 23 Aug 2022 00:36:05 -0700 (PDT)
+Received: from [192.168.0.11] (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
+        by smtp.gmail.com with ESMTPSA id d13-20020a05651c01cd00b0025e6e1c836dsm2210966ljn.126.2022.08.23.00.36.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Aug 2022 00:36:04 -0700 (PDT)
+Message-ID: <6b5730d7-997e-518b-e0dd-2a20045242c1@linaro.org>
+Date:   Tue, 23 Aug 2022 10:36:03 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+References: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
-clock maintainer to handle the patches.
+On 23/08/2022 10:31, Krzysztof Kozlowski wrote:
+> Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
+> clock maintainer to handle the patches.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Agreed with Sylwester who is recently busy. Let me handle some patches
+> as I already handle rest of Samsung SoC.
+> 
+> I plan to send pulls the same way Sylwester did - to Stephen.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
+Hi Sam and Chanho,
 
-Agreed with Sylwester who is recently busy. Let me handle some patches
-as I already handle rest of Samsung SoC.
+Please accept our apologies for any delays in handling the patches.
 
-I plan to send pulls the same way Sylwester did - to Stephen.
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+I went through archives and grabbed few remaining Samsung clk patchsets:
+1. bindings:
+https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-v6.0/samsung-clk-dt-bindings
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5a72b303aed5..13d2b804dfa1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18048,12 +18048,14 @@ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
- F:	drivers/media/platform/samsung/exynos4-is/
- 
- SAMSUNG SOC CLOCK DRIVERS
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
- L:	linux-samsung-soc@vger.kernel.org
- S:	Supported
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
- F:	Documentation/devicetree/bindings/clock/samsung,*.yaml
- F:	Documentation/devicetree/bindings/clock/samsung,s3c*
--- 
-2.34.1
+2. clk:
+https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=next/clk
 
+3. and DTS via my regular branches.
+
+Everything should pop-up in next linux-next.
+
+If something is still missing/pending/lost, please kindly resend.
+
+Also thanks for your upstream Samsung contributions!
+
+Best regards,
+Krzysztof
