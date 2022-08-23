@@ -2,91 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977D5C32789
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 19:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C58C32772
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 21:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232459AbiHWT44 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 15:56:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
+        id S231559AbiHWVpc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 17:45:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232347AbiHWT4i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 15:56:38 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388479320C
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 12:05:34 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id 73so13047308pgb.9
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 12:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=Kdb8TxBwkoe3B83ftbWvI5bDuEon4/Ru3EI6rNbmWGQ=;
-        b=Z43eXf7sSp1pEmvfjoOW73lKT1LlllQnMFnv9B3dxhgO56wTdDsGRHhL+uMhTwxJxe
-         6hNMX3LPN8+gR924uesklbfSY7g4v3CrRBOEhPQPmQprz2riJgnmlZV6S1ItTsUk6p0f
-         Yai/xfjAr7wSQXab8eWRJEHot/0yLlRO3HyYU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=Kdb8TxBwkoe3B83ftbWvI5bDuEon4/Ru3EI6rNbmWGQ=;
-        b=Vti7RwFHY27aojRkdBPQWdXXp8UUFS0EutqSbJeaDO/aneOJHba6LxdQHeQsugzeeq
-         11Kp3FL8152AD1MNCuP7/+oNpQ7YNN8Lw32rQKz/57MGcMVSlpxJM/0u0ad+BagkVfW3
-         /FZZCH1vt4trvuknhhDLMeMbBCRWRXwiaPwuGSrOYi8DBf9mNSipklMSXSQei0jJxVXH
-         2gUJD4mi8EYj0C+v+46FzZxIAEGHpPPLLWDtPgjzq7Re/dHmcka5G7AtGZ98doCP0VVg
-         U8cH/s1vYqUU3GCbttUbidlMHRt7LyUpSZsXFrDwl+nIyRH2W9jMZVZRBZKBcKGI+zgv
-         F5Bg==
-X-Gm-Message-State: ACgBeo2E+cSOTUTUV5Z9Oyo2aqGt3vlkk3A96oThnXEdaAGQ1OXEq2Ef
-        HiQ98NsWbICsQKB9YReTasqJ0A==
-X-Google-Smtp-Source: AA6agR6IieQ04uStZ7vlgwdj4aRqXinsIAlMP+KbxaXdW2rId0+ARMMoqZr7isvwnxHsH3I//9epxw==
-X-Received: by 2002:a63:5418:0:b0:42a:d773:cbd6 with SMTP id i24-20020a635418000000b0042ad773cbd6mr5543100pgb.106.1661281533664;
-        Tue, 23 Aug 2022 12:05:33 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:fee6:a961:5d1d:553])
-        by smtp.gmail.com with UTF8SMTPSA id e3-20020a170902784300b00172de80fec4sm5824250pln.69.2022.08.23.12.05.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 12:05:33 -0700 (PDT)
-Date:   Tue, 23 Aug 2022 12:05:31 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-sc7180: Keep USB GDSC power domain on
- when USB wakeup is enabled
-Message-ID: <YwUk+ymRUdwzBTnX@google.com>
-References: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
- <20220822235207.A4D8EC433D6@smtp.kernel.org>
+        with ESMTP id S231661AbiHWVp2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 17:45:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B765B05C;
+        Tue, 23 Aug 2022 14:45:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 900B3615E2;
+        Tue, 23 Aug 2022 21:45:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58D2C433D6;
+        Tue, 23 Aug 2022 21:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661291126;
+        bh=X30kn0j1tf3o9w7U/F06rH85HS3GWLWJ8x42GeFSqQ0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=TMEBwYImcn2yuEmwMv5wrYVjwBQpennI4DII2IiypmekKj0VwDJBQPh7mrNilyOR8
+         PbqrdYD0/WOiesY+mVqhdRb/bsyqDiLEyjMXZeKt0PIMYOzHCrQc+aXujxijpzPgiZ
+         oBAjBk1yNyjNzacHK8ChplPBUzLKli2YGnr2ve7WH9WL0taZKKye9W1WI0KcA053EI
+         R6u3aIsk5eHqBbGqywMiNBZVPYF4bLR3WTimxfHuHboQAOfzKbdwLk1NFFbDADl4zS
+         d0GB6WnXm+XC9Xss1xjT9F68pkc+uoRInb8j/daOMPhcIPh1Nh7bA8luYhUO7YRPTO
+         aSiQPRFwDyTfQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220822235207.A4D8EC433D6@smtp.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+References: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Date:   Tue, 23 Aug 2022 14:45:24 -0700
+User-Agent: alot/0.10
+Message-Id: <20220823214526.D58D2C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Quoting Krzysztof Kozlowski (2022-08-23 00:31:54)
+> Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
+> clock maintainer to handle the patches.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> ---
 
-On Mon, Aug 22, 2022 at 04:52:05PM -0700, Stephen Boyd wrote:
-> Quoting Matthias Kaehlcke (2022-08-22 11:53:10)
-> > Set GENPD_FLAG_ACTIVE_WAKEUP for the USB GDSC power domain of SC7180.
-> 
-> Why? Does it fix something? Please add details to the commit text so we
-> know how urgent of a patch it is and why it is important.
-
-Without it USB is broken after resume when the PHYs remain enabled
-during suspend.
-
-Johan just sent a patch [1] that always disables the PHYs (again)
-during system suspend, with that this series shouldn't be needed.
-It is possible that in the future we add a mechanism to keep the
-PHYs on depending on some config option (quick, kconfig, ...). If
-that happens we'll have to revisit this series, for now it
-shouldn't be needed assuming Johan's patch gets landed.
-
-[1] https://patchwork.kernel.org/project/linux-usb/patch/20220823124047.14634-1-johan+linaro@kernel.org/
+Acked-by: Stephen Boyd <sboyd@kernel.org>
