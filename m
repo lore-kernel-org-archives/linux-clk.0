@@ -2,56 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE99C28D13
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 02:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5C9C28D13
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 02:15:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238431AbiHWCLw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Aug 2022 22:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39194 "EHLO
+        id S239585AbiHWCPt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Aug 2022 22:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232437AbiHWCLv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 22:11:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E444D14C;
-        Mon, 22 Aug 2022 19:11:50 -0700 (PDT)
+        with ESMTP id S239318AbiHWCPa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2022 22:15:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0235141E;
+        Mon, 22 Aug 2022 19:15:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A2E43B81A3C;
-        Tue, 23 Aug 2022 02:11:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C5EBC433D6;
-        Tue, 23 Aug 2022 02:11:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 290C6611CD;
+        Tue, 23 Aug 2022 02:15:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7291FC433D6;
+        Tue, 23 Aug 2022 02:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661220708;
-        bh=c8yjdxQHEEIT0eSO6SawNYH6Dw/u9o+9BlM0G/6qXE0=;
+        s=k20201202; t=1661220928;
+        bh=ekv+kHPsa3ERTf8s5MZWSsBHuJoLYwnb90GldnXMkhc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gWznI177FZE6q7pzoUGsIy1kNvkCoURpygs05rZgfbVtvkQtrfshF2qkzHE+ttosN
-         TMrubEbkXIE7xWcnt2O2dWxLnqAvlraUDn4uFIznWosG0ca+l7LvFKx6jGoKi8oBWd
-         p8vE3T3bVj7A52fZ8AHawZFY3z2OrzRSLy5iRHvzvNY0kjmh+3HnojyRbd61aOZ2X6
-         Mg4Jgtz3kSwFVRwRfMr6o/tNHq0Tg4JaaBUAr+S+7de4G9kL6jnAT/HWL43HTeLxA8
-         IkmDws83faf8J7zC0YDK6uArvpR531V5ATfdCLE+zTL33WSKgbe2PE6bvywWZbAfSu
-         T3EIWS9R5IfXw==
+        b=hfsujWiKgzi2VkTHvLEzunBRU0fJ4MIkH5ID2nRFONl4ug0OVvgib5Regsb7ma5Yg
+         3miuwu/CVkN0pXPDoA2k5OkBLdoUNBwGiwAtXTjnxHAgGLcR/pnqTdkMRP+xwvKkFj
+         9R9rr2710BmTUbiZkiFsTSnbMfKGVLSaS8LY7t8UUXqOS1P9vz4QZnfslik69UyCbs
+         iUGNOj+vSCUlaNYAlOh+t3+U1f31J3h4s2KHLbv98BjK7u66WPfjjqnBPlBHnfp5nv
+         MA586WEuIjm0T4dYruh2c9yvL5wxhmJlzSylKT4sXpHvVUiJpeDDIdYcT8gKy6Xs3l
+         6WyvGyaXgXZBg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220811140030.28886-1-wangborong@cdjrlc.com>
-References: <20220811140030.28886-1-wangborong@cdjrlc.com>
-Subject: Re: [PATCH] clk: Fix comment typo
+In-Reply-To: <20220805121250.10347-1-johan+linaro@kernel.org>
+References: <20220805121250.10347-1-johan+linaro@kernel.org>
+Subject: Re: [PATCH 0/2] clk: gcc-sc8280xp: fix broken suspend
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jason Wang <wangborong@cdjrlc.com>
-To:     Jason Wang <wangborong@cdjrlc.com>
-Date:   Mon, 22 Aug 2022 19:11:45 -0700
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>
+Date:   Mon, 22 Aug 2022 19:15:25 -0700
 User-Agent: alot/0.10
-Message-Id: <20220823021148.5C5EBC433D6@smtp.kernel.org>
+Message-Id: <20220823021528.7291FC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jason Wang (2022-08-11 07:00:30)
-> The double `to' is duplicated in the comment, remove one.
+Quoting Johan Hovold (2022-08-05 05:12:48)
+> The Qualcomm PCIe driver currently does not implement suspend at all so
+> we need to mark the GDSCs as always-on to prevent genpd from disabling
+> them.
 >=20
-> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
-> ---
+> Similarly, the Qualcomm dwc3 USB suspend implementation is also
+> incomplete and the controller doesn't currently survive a suspend cycle
+> unless the GDSC is kept on. Note that this has nothing to with whether
+> wakeup is enabled or not (cf. [1]).
+>=20
+> With these two workarounds, we have somewhat functional suspend on the
+> SC8280XP reference design and Lenovo Thinkpad X13s until the missing
+> driver support is in place (even USB remote wakeup works with [2]
+> applied).
 
-Applied to clk-next
+Are these urgently needed for this release or does suspend not really
+work yet on sc8280xp? I'm trying to understand if we need to apply
+these to the fixes tree (in which case why isn't there a Fixes tag
+targetting whatever commit broke suspend) or if they can wait for the
+next release and come through clk-next.
