@@ -2,54 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEEBC00140
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 07:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F9FC00140
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 07:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234198AbiHXHot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Aug 2022 03:44:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54194 "EHLO
+        id S232881AbiHXHxH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Aug 2022 03:53:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233356AbiHXHot (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 03:44:49 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45783B5;
-        Wed, 24 Aug 2022 00:44:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D443922534;
-        Wed, 24 Aug 2022 07:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661327083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9CVLEu5X5W558Mdwud6PEFNhZNUWDtayqH7r9TTDZuA=;
-        b=Lz/ACUxILC+R3yz2Ui0SJh6CaW4tttXbYGqKExsC2hkoEsZCegFXYFc22ajQzGRvdjEryQ
-        3CotfVecb7dxD8/WETOSvYRosDVKGJM3RkXu2/Cz96AiSW7ON9ujL0feO/uL9jEDd7Zl+h
-        Ba3bmdinRxLW6ofOfbyC0I3KWkqj9FE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661327083;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9CVLEu5X5W558Mdwud6PEFNhZNUWDtayqH7r9TTDZuA=;
-        b=tl3Xm9YZ2vhlGUbXJNfule+zMvT2R4ylbRHH+Q3QSBJF/vfQm60/mcW6ZWE/UtUCRMNmGt
-        ZBO5wTmc8lAY3PBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B707713AC0;
-        Wed, 24 Aug 2022 07:44:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id elupLOvWBWPhUgAAMHmgww
-        (envelope-from <iivanov@suse.de>); Wed, 24 Aug 2022 07:44:43 +0000
-Date:   Wed, 24 Aug 2022 10:44:43 +0300
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
+        with ESMTP id S234222AbiHXHxG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 03:53:06 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D82683BF9
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 00:53:04 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id z72so12771727iof.12
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 00:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=9r/o+kbVQuRgd3he3vY5TSCEIo6rMCGZbm88wIqFP8Q=;
+        b=eMXIxPRGdnHxWWurrEzfpDzZsVgdUEI1TRoy42m0Dzr7/LEOSVr0qgBLVn2S4cdjNg
+         8NNplilxBrpW4w2v/+0aYUstSMgr6x114Xh5WblS6A781kvgUwgoepfN2jxcjHdvN/zf
+         ieSXvQh3KEV7EdsSt/U71vN6Bxvan0bGM0hOq/3BV71XvylDtFvnoj6V6uFVeyP+ZEtF
+         7fGtUUOQa7bk3lWTEh2JROmiGw0qRkcPwjRqUO/49Lb35nrCUhS2zXshjXZoHAUdbJkW
+         nZSI5huxEmCPfjOG/GV0m8XuNP0eIZs4Kp5dOxVfAA7IYIJYUt7Lf4fZx7N1fTmGCBhc
+         UTvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=9r/o+kbVQuRgd3he3vY5TSCEIo6rMCGZbm88wIqFP8Q=;
+        b=JWLjtIH/6Xeti+2BUX2IkXPpWII8O5/msEFL+yb5j8gwuSW20skxI2opBO1DyRpQqW
+         PNY+nowgerDcztbbLzcpLBaadO/BlHmarEIcQicJ21+YhLqWG2BrLbqg9W3+AkNzXCZl
+         wnBGeAWLAyaeiWrIy9Q8IksOAu5LEBFc52lgnFepfFiDeKamVmCb5mpQzIXyD5JishCm
+         PRtFuGGrahNwyIMKqSF/Nn+RX+IeidnIWyErvL0OHwn1sxCgyQ2t2UCGOBxFqHbvZ/m2
+         J3k35l633hAXpxynRdvlO1kbdCpCq8ZPLpCIUaTorf/KD+i6ns4z9pLyEqsVbBZ+EMW9
+         Yy9Q==
+X-Gm-Message-State: ACgBeo2AetYYfyVNpZSzSMqyezIC2E1lQtIjSwv2sdTSKbWP4x9HmgwW
+        fiX7RAxVIC/h+L054yZQyJIdEZz+iAErp97FLTIzgw==
+X-Google-Smtp-Source: AA6agR4mfF2ro5+qjUp49hz4FOBZZAOyRo1US7nx2yAd8Tst61WFeQtDsY3aU2BgycMHgnUiI9L+G/cYdPQyHt3NXsQ=
+X-Received: by 2002:a02:3f63:0:b0:349:cef9:d8c2 with SMTP id
+ c35-20020a023f63000000b00349cef9d8c2mr7667351jaf.231.1661327583663; Wed, 24
+ Aug 2022 00:53:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220527102900.144894-1-iivanov@suse.de> <20220823230842.AB8BAC433C1@smtp.kernel.org>
+ <20220824074443.nvrnqhpvqrtn72p4@suse>
+In-Reply-To: <20220824074443.nvrnqhpvqrtn72p4@suse>
+From:   Phil Elwell <phil@raspberrypi.com>
+Date:   Wed, 24 Aug 2022 08:52:53 +0100
+Message-ID: <CAMEGJJ3mh1UFTQhyDLnr1ztZccH8LKmz83_jcTYrSF11TWgbfw@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: bcm2835: Round UART input clock up
+To:     "Ivan T. Ivanov" <iivanov@suse.de>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,70 +69,71 @@ Cc:     Albert Ou <aou@eecs.berkeley.edu>,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3] clk: bcm2835: Round UART input clock up
-Message-ID: <20220824074443.nvrnqhpvqrtn72p4@suse>
-References: <20220527102900.144894-1-iivanov@suse.de>
- <20220823230842.AB8BAC433C1@smtp.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220823230842.AB8BAC433C1@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08-23 16:08, Stephen Boyd wrote:
-> Date: Tue, 23 Aug 2022 16:08:40 -0700
-> From: Stephen Boyd <sboyd@kernel.org>
-> To: Albert Ou <aou@eecs.berkeley.edu>, Broadcom internal kernel review list
->  <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli
->  <f.fainelli@gmail.com>, "Ivan T. Ivanov" <iivanov@suse.de>, Michael
->  Turquette <mturquette@baylibre.com>, Nicolas Saenz Julienne
->  <nsaenz@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
->  <paul.walmsley@sifive.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
->  <sbranden@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>
-> Cc: "Ivan T. Ivanov" <iivanov@suse.de>, Phil Elwell <phil@raspberrypi.org>,
->  kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
->  linux-rpi-kernel@lists.infradead.org,
->  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
->  linux-riscv@lists.infradead.org
-> Subject: Re: [PATCH v3] clk: bcm2835: Round UART input clock up
-> Message-Id: <20220823230842.AB8BAC433C1@smtp.kernel.org>
-> 
-> Quoting Ivan T. Ivanov (2022-05-27 03:29:00)
-> > It was reported that RPi3[1] and RPi Zero 2W boards have issues with
-> > the Bluetooth. It turns out that when switching from initial to
-> > operation speed host and device no longer can talk each other because
-> > host uses incorrect UART baud rate.
-> > 
-> > The UART driver used in this case is amba-pl011. Original fix, see
-> > below Github link[2], was inside pl011 module, but somehow it didn't
-> > look as the right place to fix. Beside that this original rounding
-> > function is not exactly perfect for all possible clock values. So I
-> > deiced to move the hack to the platform which actually need it.
-> > 
-> > The UART clock is initialised to be as close to the requested
-> > frequency as possible without exceeding it. Now that there is a
-> > clock manager that returns the actual frequencies, an expected
-> > 48MHz clock is reported as 47999625. If the requested baud rate
-> > == requested clock/16, there is no headroom and the slight
-> > reduction in actual clock rate results in failure.
-> > 
-> > If increasing a clock by less than 0.1% changes it from ..999..
-> > to ..000.., round it up.
-> > 
-> > [1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
-> > [2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
-> > 
-> > Cc: Phil Elwell <phil@raspberrypi.org>
-> > Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
-> > ---
-> 
-> This is waiting for someone like Stefan to review. It's customary to
-> include previous reviewers on new versions of patches.
+Hi Ivan.
 
-Thanks for fixing me mistake.
+On Wed, 24 Aug 2022 at 08:44, Ivan T. Ivanov <iivanov@suse.de> wrote:
+>
+> On 08-23 16:08, Stephen Boyd wrote:
+> > Date: Tue, 23 Aug 2022 16:08:40 -0700
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > To: Albert Ou <aou@eecs.berkeley.edu>, Broadcom internal kernel review list
+> >  <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli
+> >  <f.fainelli@gmail.com>, "Ivan T. Ivanov" <iivanov@suse.de>, Michael
+> >  Turquette <mturquette@baylibre.com>, Nicolas Saenz Julienne
+> >  <nsaenz@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+> >  <paul.walmsley@sifive.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
+> >  <sbranden@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>
+> > Cc: "Ivan T. Ivanov" <iivanov@suse.de>, Phil Elwell <phil@raspberrypi.org>,
+> >  kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+> >  linux-rpi-kernel@lists.infradead.org,
+> >  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+> >  linux-riscv@lists.infradead.org
+> > Subject: Re: [PATCH v3] clk: bcm2835: Round UART input clock up
+> > Message-Id: <20220823230842.AB8BAC433C1@smtp.kernel.org>
+> >
+> > Quoting Ivan T. Ivanov (2022-05-27 03:29:00)
+> > > It was reported that RPi3[1] and RPi Zero 2W boards have issues with
+> > > the Bluetooth. It turns out that when switching from initial to
+> > > operation speed host and device no longer can talk each other because
+> > > host uses incorrect UART baud rate.
+> > >
+> > > The UART driver used in this case is amba-pl011. Original fix, see
+> > > below Github link[2], was inside pl011 module, but somehow it didn't
+> > > look as the right place to fix. Beside that this original rounding
+> > > function is not exactly perfect for all possible clock values. So I
+> > > deiced to move the hack to the platform which actually need it.
+> > >
+> > > The UART clock is initialised to be as close to the requested
+> > > frequency as possible without exceeding it. Now that there is a
+> > > clock manager that returns the actual frequencies, an expected
+> > > 48MHz clock is reported as 47999625. If the requested baud rate
+> > > == requested clock/16, there is no headroom and the slight
+> > > reduction in actual clock rate results in failure.
+> > >
+> > > If increasing a clock by less than 0.1% changes it from ..999..
+> > > to ..000.., round it up.
+> > >
+> > > [1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
+> > > [2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
+> > >
+> > > Cc: Phil Elwell <phil@raspberrypi.org>
+> > > Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+> > > ---
+> >
+> > This is waiting for someone like Stefan to review. It's customary to
+> > include previous reviewers on new versions of patches.
+>
+> Thanks for fixing me mistake.
 
-Regards,
-Ivan
+If I am going to be mentioned in the commit (and I'm not bothered
+either way), I would prefer it to be as phil@raspberrypi.com - the
+.org address will expire at some point.
 
+Thanks,
+
+Phil
