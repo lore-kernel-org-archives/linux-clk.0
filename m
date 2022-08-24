@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C59C00140
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 13:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BAEC32796
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 13:38:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237823AbiHXNhM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Aug 2022 09:37:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52048 "EHLO
+        id S238315AbiHXNiA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Aug 2022 09:38:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237449AbiHXNhL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 09:37:11 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB1B7D7A8
-        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:37:09 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id m3so18348452lfg.10
-        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:37:09 -0700 (PDT)
+        with ESMTP id S238279AbiHXNhy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 09:37:54 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223A57D7A8
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:37:53 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id d23so19679749lfl.13
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:37:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=3OQC25wWN31BCwSbCduRMMv4rNNc0uP1j1+GX/KbrNs=;
-        b=wpEQNzNKOT3YdGIQFc9W5b5/EtVd8HmW0cSRtQ3McUNiI5LisGZjuU2uYAt2mKyQru
-         AzMBKiyOgm8/Q3bG8aYCqcpFdm9vkK4P3WehHpgPTlCHqL6yuPNdZVF7C8uNWKCYlINn
-         6+qUm2A6XD3U7BSDZ7Ou+pQ8uFQLnxaZ5xpm7Af3Es0Vkr2Ay4dmtnUkOdN3jXejV+nJ
-         1k89Tr5XCrXGp0N2FYyKADU9eQnhR3PcvV86MxfyI/Vz5kstDIweKPpOOTfzTbuVb95p
-         lpdUqQgEUOyHo3dBPAZfOOtruz07kPs1C7CdeE84Tq1nMu3TA4KnPpmaOAvqPJhPhf8v
-         F8Fw==
+        bh=FNnIJyZLA/DkTE9+Zpr6Ng3J1POb/zmR9BDJb09121Q=;
+        b=h6BdaQtrsWihUPz25ye52qmPW2BJdRf34tszfDgYIc54i4TMcnZJ/JvenaEIMRYjDZ
+         QUM5a3L1gNjDID5UjU0pq5tW23N5jHdQbD8KAItUKzFOwX9vx6pT+K364t3h0/tzoxjt
+         wJvmk/NyPj0GQR5dtiriZbkkW5uMLQmEx5S8ChFTSeNw0u7IMLUlVhIHsu7ZWeoe/AG5
+         8qo6ppqtNVcNZk18+mJ8rOfMhkXjNYH0UJK57wrPlQSU88H/lslZiUX9sLfsZOd4EQjR
+         /JY7RnDCDgg0aV8OiX1iM7xzv1KG3mmLnccyGTFVMVq8rDRx/GmWXi1Xl6mSB29RVGxc
+         9i4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=3OQC25wWN31BCwSbCduRMMv4rNNc0uP1j1+GX/KbrNs=;
-        b=nvTRXg42czlCW7dlfAIBlzAceRrqSv+nABiyolXgsYfV1rRuZyJRn4znA0abdYI465
-         drQVLVfK1w/tu80TebESX9qKqkmeLpown3A4PDRtYJ+2PD2OYHr0wmNqSMXzH7pOJByB
-         cmVaLaWTmauajlKjeY/btAGaMIDz0uvQ9d8YaWCc+HH0Bkzpcka5TJbxBRyggQQA0q4Y
-         IrsHJoJiffgXg8gvQ5juigtangpWxiVl0cVCal6EZZnRucd66ii5OOdR22jBoSSe6Onm
-         F0nEAKD+BEwiCLYhyxEiBW90X6Wgb/fRewbHO3SFJNNiPHZv5LP8gXmAnL+MZ1/iTUBs
-         r+Rg==
-X-Gm-Message-State: ACgBeo1mAcwZnoizSULea7o8pjbUs9KN1TIpRuayCSeajJKk0HO609TS
-        ZUdbdkLHddYkdkez0rawUKBjBQ==
-X-Google-Smtp-Source: AA6agR5mW8yFmhKsYKo2N4/NXGAdRcP64LGKPZsWPykSgeE9dIVxYgh3zulrgO870O0ziP3kisYhfg==
-X-Received: by 2002:a05:6512:2385:b0:492:e4cc:17ca with SMTP id c5-20020a056512238500b00492e4cc17camr5102483lfv.132.1661348227725;
-        Wed, 24 Aug 2022 06:37:07 -0700 (PDT)
-Received: from [10.243.4.185] ([194.204.13.210])
-        by smtp.gmail.com with ESMTPSA id t17-20020a2e9c51000000b0025e4c49969fsm108927ljj.98.2022.08.24.06.37.06
+        bh=FNnIJyZLA/DkTE9+Zpr6Ng3J1POb/zmR9BDJb09121Q=;
+        b=LX/QHGuTXTMLBmAbJeXxEqsYykChIWmlgrmFuqh5BvXppHu2Bp7dU0c0eqP8Mczqvh
+         00WmqCFimV7JKxOpBgOaf/2X3aOEfzGHcSRUHb4tBf72hM/zH0jWHpY8CuzCQyyMh1hd
+         N7ovmPLfKYYBf7DG2XyQWHjVitDHUcLKvQqPSwu0Yk35M59rxYE07Hrm2RV3Vj96WtjI
+         LwCUQYqi+Xy7tJ0E9/tAItfQb+Ob3ysMR+NXlSjba/+4kCsJJcu33Lw/kkNs9Xz5VUtp
+         VFC8/GSPSg3sis4WTQ3WmMUHge+4epv1MRuzjWX8shMNYTM1Vp8n5HHum/csP6GPOujY
+         QQaA==
+X-Gm-Message-State: ACgBeo1QBJeFzNk71vgiu36/N2Fj53TPIF4hYV+2ewVFSATesMkQUKJn
+        jvCLrvadc+CPzbT3m7nYrEC9aA==
+X-Google-Smtp-Source: AA6agR5/XXVW1Gc7QE0nZt5Z1Bn77q2PqqOB2dPRp0AQNRayelqdqv1+ki+d/TSM2zjY+7pI4vB+Kw==
+X-Received: by 2002:a05:6512:b12:b0:492:daa9:75ea with SMTP id w18-20020a0565120b1200b00492daa975eamr7338464lfu.297.1661348271490;
+        Wed, 24 Aug 2022 06:37:51 -0700 (PDT)
+Received: from [10.243.4.185] (94-12-180-213.sta.estpak.ee. [213.180.12.94])
+        by smtp.gmail.com with ESMTPSA id 22-20020ac24856000000b0048a921664e8sm3033917lfy.37.2022.08.24.06.37.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Aug 2022 06:37:07 -0700 (PDT)
-Message-ID: <c6826de7-591f-97f9-af44-35a6293d17ea@linaro.org>
-Date:   Wed, 24 Aug 2022 16:37:05 +0300
+        Wed, 24 Aug 2022 06:37:50 -0700 (PDT)
+Message-ID: <bf882a57-adaf-e093-fee0-39e197dbcda0@linaro.org>
+Date:   Wed, 24 Aug 2022 16:37:48 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH V4 1/6] dt-bindings: clock: meson: add S4 SoC PLL clock
- controller bindings
+Subject: Re: [PATCH V4 4/6] dt-bindings: clk: meson: add S4 SoC peripheral
+ clock controller bindings
 Content-Language: en-US
 To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -69,9 +69,9 @@ To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 References: <20220823022630.25007-1-yu.tu@amlogic.com>
- <20220823022630.25007-2-yu.tu@amlogic.com>
+ <20220823022630.25007-5-yu.tu@amlogic.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220823022630.25007-2-yu.tu@amlogic.com>
+In-Reply-To: <20220823022630.25007-5-yu.tu@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -79,10 +79,11 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 23/08/2022 05:26, Yu Tu wrote:
-> Add the documentation to support Amlogic S4 SoC PLL clock driver and
-> add S4 SoC PLL clock controller bindings.
+> Add peripheral clock controller compatible and dt-bindings header for
+> the of the S4 SoC.
 > 
 > Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+> ---
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
