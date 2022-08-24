@@ -2,57 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A542FC32793
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 00:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0049AC38142
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 01:30:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbiHXAyP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 20:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50446 "EHLO
+        id S229949AbiHXBau (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 21:30:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232878AbiHXAyN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 20:54:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BFF6883EE;
-        Tue, 23 Aug 2022 17:54:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BE2B461742;
-        Wed, 24 Aug 2022 00:54:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2143CC433C1;
-        Wed, 24 Aug 2022 00:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661302452;
-        bh=vb1AoOQnvMSkt7W/efbuY6c35sEFtEFY9X4IOcZc6fg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YDmtMnEP0j48a/JH6JpCC03D4EoNdh5sPuGYHss02A2qPsZRGpqMtexY5VE2jNCt6
-         JYzjhm1Phnv6Dcl3r4h/h+HAvE9qPrkO/K0Vrv0Eeav0zcDnYbgwqvgE9HMAMx6ZBS
-         XzVYaOjuaFqAaIkJT3UngrZPo3zxqnixaZglAXtpSkYUp1qyXbqlMCOyFglLLhGtig
-         rxFIS7Gi4CxRWdBzJM7/RoeevgGv4tsGfufi6Hojk6BXqaldsY2U0eodgFAjV3eNOf
-         Ij9BPsYK0W6bKku6KHSs6hYD8pwP4R/dTWpCxZ9hewFgtArY4pvbiVlRNVoR3htUw0
-         wvPqxCVpq2PTQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232963AbiHXBar (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 21:30:47 -0400
+X-Greylist: delayed 135 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 Aug 2022 18:30:45 PDT
+Received: from p3plsmtpa06-01.prod.phx3.secureserver.net (p3plsmtpa06-01.prod.phx3.secureserver.net [173.201.192.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC04D1BE92
+        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 18:30:44 -0700 (PDT)
+Received: from black ([121.35.128.89])
+        by :SMTPAUTH: with ESMTPSA
+        id QfBxo3UvK8KflQfBzoFS6c; Tue, 23 Aug 2022 18:28:29 -0700
+X-CMAE-Analysis: v=2.4 cv=WdvJ12tX c=1 sm=1 tr=0 ts=63057ebd
+ a=Ts6IU5S7MsxbcnDc+OdCiQ==:117 a=Ts6IU5S7MsxbcnDc+OdCiQ==:17
+ a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=_twTT5zqAAAA:8
+ a=pGLkceISAAAA:8 a=ATfU8fHJlrvmeOZnxusA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=ILoXdGDbYT3DTB7Z0gVI:22
+X-SECURESERVER-ACCT: dhu@hodcarrier.org
+Date:   Wed, 24 Aug 2022 09:28:25 +0800
+From:   Du Huanpeng <dhu@hodcarrier.org>
+To:     Sean Anderson <seanga2@gmail.com>
+Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        Yang Ling <gnaygnil@gmail.com>, linux-kernel@vger.kernel.org,
+        Kelvin Cheung <keguang.zhang@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [RESEND PATCH] clk: ls1c: Fix PLL rate calculation
+Message-ID: <20220824012825.GA2956@black>
+References: <20220823033414.198525-1-seanga2@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220630151205.3935560-2-claudiu.beznea@microchip.com>
-References: <20220630151205.3935560-1-claudiu.beznea@microchip.com> <20220630151205.3935560-2-claudiu.beznea@microchip.com>
-Subject: Re: [PATCH 2/2] clk: do not initialize ret
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        mturquette@baylibre.com
-Date:   Tue, 23 Aug 2022 17:54:10 -0700
-User-Agent: alot/0.10
-Message-Id: <20220824005412.2143CC433C1@smtp.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220823033414.198525-1-seanga2@gmail.com>
+X-CMAE-Envelope: MS4xfB7Qh1/JJak2gztQXiYgXTUVMZsO1KSPSanPLPhuJCyRNNIvHZpItw6k8A1HpaGJ2vq9orllLlr7Kh7lh85IQK47meW/+e3/Do+4DgYrkECkZeFgsSD1
+ n5SGWQdhCBGejZWA2Uab7HIcjO6kgYAufbUq+JtB95WoogF8GYjxYiRt0TJDV8VS41n12PtIe/QTVoi9nB+vuiG81U4moMcnh/q0AvPuKaxaXg+MKqAqnFPR
+ JloMvp8VsjCXD6+9WO0BFKRxOiwqVZfpKjOSYLSMaQxZVTvn6WOC5vZZ10illBB8eeBd99M25IKEqJz7k1qAnHpzy7iDdHsogxEQmCSUNKhmEbgJB/R54ar+
+ ABfLLY0/J+neyz1N2ulop7IPzuFk25+EDqLwDBxh3HVcSpPfJj8=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Claudiu Beznea (2022-06-30 08:12:05)
-> There is no need to initialize ret.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
+On Mon, Aug 22, 2022 at 11:34:14PM -0400, Sean Anderson wrote:
+Dear Sean,
+> While reviewing Dhu's patch adding ls1c300 clock support to U-Boot [1], I
+> noticed the following calculation, which is copied from
+I didn't copy it from this driver, I read the document and ``try'' to
+understand it.
+I also write a excel [1] file to calculate values for clock nodes.
 
-Applied to clk-next
+[1] https://github.com/hodcarrier/ls1c300_bsp
+> drivers/clk/loongson1/clk-loongson1c.c:
+> 
+> ulong ls1c300_pll_get_rate(struct clk *clk)
+> {
+> 	unsigned int mult;
+> 	long long parent_rate;
+> 	void *base;
+> 	unsigned int val;
+> 
+> 	parent_rate = clk_get_parent_rate(clk);
+> 	base = (void *)clk->data;
+> 
+> 	val = readl(base + START_FREQ);
+> 	mult = FIELD_GET(FRAC_N, val) + FIELD_GET(M_PLL, val);
+> 	return (mult * parent_rate) / 4;
+> }
+> 
+> I would like to examine the use of M_PLL and FRAC_N to calculate the multiplier
+> for the PLL. The datasheet has the following to say:
+> 
+> START_FREQ 位    缺省值      描述
+> ========== ===== =========== ====================================
+> FRAC_N     23:16 0           PLL 倍频系数的小数部分
+> 
+>                  由          PLL 倍频系数的整数部分
+> M_PLL      15:8  NAND_D[3:0] (理论可以达到 255，建议不要超过 100)
+>                  配置
+> 
+> which according to google translate means
+> 
+> START_FREQ Bits  Default       Description
+> ========== ===== ============= ================================================
+> FRAC_N     23:16 0             Fractional part of the PLL multiplication factor
+> 
+>                  Depends on    Integer part of PLL multiplication factor
+> M_PLL      15:8  NAND_D[3:0]   (Theoretically it can reach 255, [but] it is
+>                  configuration  recommended not to exceed 100)
+> 
+> So just based on this description, I would expect that the formula to be
+> something like
+> 
+> 	rate = parent * (256 * M_PLL + FRAC_N) / 256 / 4
+> 
+> However, the datasheet also gives the following formula:
+> 
+> 	rate = parent * (M_PLL + FRAC_N) / 4
+> 
+> which is what the Linux driver has implemented. I find this very unusual.
+> First, the datasheet specifically says that these fields are the integer and
+> fractional parts of the multiplier. Second, I think such a construct does not
+> easily map to traditional PLL building blocks. Implementing this formula in
+> hardware would likely require an adder, just to then set the threshold of a
+> clock divider.
+> 
+> I think it is much more likely that the first formula is correct. The author of
+> the datasheet may think of a multiplier of (say) 3.14 as
+> 
+> 	M_PLL = 3
+> 	FRAC_N = 0.14
+> 
+> which together sum to the correct multiplier, even though the actual value
+> stored in FRAC_N would be 36.
+> 
+> I suspect that this has slipped by unnoticed because when FRAC_N is 0, there is
+> no difference in the formulae. The following patch is untested, but I suspect
+> it will fix this issue. I would appreciate if anyone with access to the
+> hardware could measure the output of the PLL (or one of its derived clocks) and
+> determine the correct formula.
+> 
+> [1] https://lore.kernel.org/u-boot/20220418204519.19991-1-dhu@hodcarrier.org/T/#u
+> 
+> Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
+> Signed-off-by: Sean Anderson <seanga2@gmail.com>
+> ---
+> 
+>  drivers/clk/loongson1/clk-loongson1c.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
+> index 1ebf740380ef..2aa839b05d6b 100644
+> --- a/drivers/clk/loongson1/clk-loongson1c.c
+> +++ b/drivers/clk/loongson1/clk-loongson1c.c
+> @@ -21,9 +21,9 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+>  	u32 pll, rate;
+>  
+>  	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
+> -	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
+> +	rate = (pll & 0xff00) + ((pll >> 16) & 0xff);
+>  	rate *= OSC;
+> -	rate >>= 2;
+> +	rate >>= 10;
+>  
+>  	return rate;
+>  }
+> -- 
+> 2.37.1
+> 
