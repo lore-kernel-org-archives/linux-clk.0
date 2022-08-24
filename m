@@ -2,154 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0049AC38142
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 01:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1E4C32774
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 02:57:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbiHXBau (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 21:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48616 "EHLO
+        id S231516AbiHXC5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 22:57:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232963AbiHXBar (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 21:30:47 -0400
-X-Greylist: delayed 135 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 Aug 2022 18:30:45 PDT
-Received: from p3plsmtpa06-01.prod.phx3.secureserver.net (p3plsmtpa06-01.prod.phx3.secureserver.net [173.201.192.102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC04D1BE92
-        for <linux-clk@vger.kernel.org>; Tue, 23 Aug 2022 18:30:44 -0700 (PDT)
-Received: from black ([121.35.128.89])
-        by :SMTPAUTH: with ESMTPSA
-        id QfBxo3UvK8KflQfBzoFS6c; Tue, 23 Aug 2022 18:28:29 -0700
-X-CMAE-Analysis: v=2.4 cv=WdvJ12tX c=1 sm=1 tr=0 ts=63057ebd
- a=Ts6IU5S7MsxbcnDc+OdCiQ==:117 a=Ts6IU5S7MsxbcnDc+OdCiQ==:17
- a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=_twTT5zqAAAA:8
- a=pGLkceISAAAA:8 a=ATfU8fHJlrvmeOZnxusA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=ILoXdGDbYT3DTB7Z0gVI:22
-X-SECURESERVER-ACCT: dhu@hodcarrier.org
-Date:   Wed, 24 Aug 2022 09:28:25 +0800
-From:   Du Huanpeng <dhu@hodcarrier.org>
-To:     Sean Anderson <seanga2@gmail.com>
-Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        Yang Ling <gnaygnil@gmail.com>, linux-kernel@vger.kernel.org,
-        Kelvin Cheung <keguang.zhang@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [RESEND PATCH] clk: ls1c: Fix PLL rate calculation
-Message-ID: <20220824012825.GA2956@black>
-References: <20220823033414.198525-1-seanga2@gmail.com>
+        with ESMTP id S229445AbiHXC5W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 22:57:22 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A4D7D7AC;
+        Tue, 23 Aug 2022 19:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661309839; x=1692845839;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jy6uHgqMUfjwvrFCqsckoPadRCKuYpnXSLFD6tiP3I0=;
+  b=npxwTA/EKED1rzNAWLSBGUd7A4JqneayEA75qvJGdo5FeyQiOdeBZ98s
+   3i1MvxtA89BacIcMkYGU3iu4nA1kAIaXjRXBVNJWEJucDPawOgLnKwl6a
+   lByCKWbDJiC1q9+YxOZWXJ+F+4OnH7KcjtTwXA2nxSf8xVeAU3WrELPXP
+   VdiisgDEvE+3Y+LqzwfheejavYssnZH1x+8btujcQfBszUpELn2E+YefS
+   6OV6U3ug13wZqbOdxQZMyOl28wtQY9VN77NJtrC75jkvAipiDnKNfFVKJ
+   GyhMboN5ZPZ3XQxYf4OPzp5gDlKe7QlnXew5XhB0UgOpZ3QZGeJPJ2lCW
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10448"; a="291415128"
+X-IronPort-AV: E=Sophos;i="5.93,259,1654585200"; 
+   d="scan'208";a="291415128"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2022 19:57:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,259,1654585200"; 
+   d="scan'208";a="937723909"
+Received: from lkp-server02.sh.intel.com (HELO 9bbcefcddf9f) ([10.239.97.151])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Aug 2022 19:57:15 -0700
+Received: from kbuild by 9bbcefcddf9f with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oQgZv-0000tf-0o;
+        Wed, 24 Aug 2022 02:57:15 +0000
+Date:   Wed, 24 Aug 2022 10:57:12 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Markus Schneider-Pargmann <msp@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Fabien Parent <parent.f@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: Re: [PATCH v4 4/4] clk: mediatek: add driver for MT8365 SoC
+Message-ID: <202208241051.Xi9D8DaW-lkp@intel.com>
+References: <20220822152652.3499972-5-msp@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220823033414.198525-1-seanga2@gmail.com>
-X-CMAE-Envelope: MS4xfB7Qh1/JJak2gztQXiYgXTUVMZsO1KSPSanPLPhuJCyRNNIvHZpItw6k8A1HpaGJ2vq9orllLlr7Kh7lh85IQK47meW/+e3/Do+4DgYrkECkZeFgsSD1
- n5SGWQdhCBGejZWA2Uab7HIcjO6kgYAufbUq+JtB95WoogF8GYjxYiRt0TJDV8VS41n12PtIe/QTVoi9nB+vuiG81U4moMcnh/q0AvPuKaxaXg+MKqAqnFPR
- JloMvp8VsjCXD6+9WO0BFKRxOiwqVZfpKjOSYLSMaQxZVTvn6WOC5vZZ10illBB8eeBd99M25IKEqJz7k1qAnHpzy7iDdHsogxEQmCSUNKhmEbgJB/R54ar+
- ABfLLY0/J+neyz1N2ulop7IPzuFk25+EDqLwDBxh3HVcSpPfJj8=
+In-Reply-To: <20220822152652.3499972-5-msp@baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 22, 2022 at 11:34:14PM -0400, Sean Anderson wrote:
-Dear Sean,
-> While reviewing Dhu's patch adding ls1c300 clock support to U-Boot [1], I
-> noticed the following calculation, which is copied from
-I didn't copy it from this driver, I read the document and ``try'' to
-understand it.
-I also write a excel [1] file to calculate values for clock nodes.
+Hi Markus,
 
-[1] https://github.com/hodcarrier/ls1c300_bsp
-> drivers/clk/loongson1/clk-loongson1c.c:
-> 
-> ulong ls1c300_pll_get_rate(struct clk *clk)
-> {
-> 	unsigned int mult;
-> 	long long parent_rate;
-> 	void *base;
-> 	unsigned int val;
-> 
-> 	parent_rate = clk_get_parent_rate(clk);
-> 	base = (void *)clk->data;
-> 
-> 	val = readl(base + START_FREQ);
-> 	mult = FIELD_GET(FRAC_N, val) + FIELD_GET(M_PLL, val);
-> 	return (mult * parent_rate) / 4;
-> }
-> 
-> I would like to examine the use of M_PLL and FRAC_N to calculate the multiplier
-> for the PLL. The datasheet has the following to say:
-> 
-> START_FREQ 位    缺省值      描述
-> ========== ===== =========== ====================================
-> FRAC_N     23:16 0           PLL 倍频系数的小数部分
-> 
->                  由          PLL 倍频系数的整数部分
-> M_PLL      15:8  NAND_D[3:0] (理论可以达到 255，建议不要超过 100)
->                  配置
-> 
-> which according to google translate means
-> 
-> START_FREQ Bits  Default       Description
-> ========== ===== ============= ================================================
-> FRAC_N     23:16 0             Fractional part of the PLL multiplication factor
-> 
->                  Depends on    Integer part of PLL multiplication factor
-> M_PLL      15:8  NAND_D[3:0]   (Theoretically it can reach 255, [but] it is
->                  configuration  recommended not to exceed 100)
-> 
-> So just based on this description, I would expect that the formula to be
-> something like
-> 
-> 	rate = parent * (256 * M_PLL + FRAC_N) / 256 / 4
-> 
-> However, the datasheet also gives the following formula:
-> 
-> 	rate = parent * (M_PLL + FRAC_N) / 4
-> 
-> which is what the Linux driver has implemented. I find this very unusual.
-> First, the datasheet specifically says that these fields are the integer and
-> fractional parts of the multiplier. Second, I think such a construct does not
-> easily map to traditional PLL building blocks. Implementing this formula in
-> hardware would likely require an adder, just to then set the threshold of a
-> clock divider.
-> 
-> I think it is much more likely that the first formula is correct. The author of
-> the datasheet may think of a multiplier of (say) 3.14 as
-> 
-> 	M_PLL = 3
-> 	FRAC_N = 0.14
-> 
-> which together sum to the correct multiplier, even though the actual value
-> stored in FRAC_N would be 36.
-> 
-> I suspect that this has slipped by unnoticed because when FRAC_N is 0, there is
-> no difference in the formulae. The following patch is untested, but I suspect
-> it will fix this issue. I would appreciate if anyone with access to the
-> hardware could measure the output of the PLL (or one of its derived clocks) and
-> determine the correct formula.
-> 
-> [1] https://lore.kernel.org/u-boot/20220418204519.19991-1-dhu@hodcarrier.org/T/#u
-> 
-> Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
-> Signed-off-by: Sean Anderson <seanga2@gmail.com>
-> ---
-> 
->  drivers/clk/loongson1/clk-loongson1c.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-> index 1ebf740380ef..2aa839b05d6b 100644
-> --- a/drivers/clk/loongson1/clk-loongson1c.c
-> +++ b/drivers/clk/loongson1/clk-loongson1c.c
-> @@ -21,9 +21,9 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
->  	u32 pll, rate;
->  
->  	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
-> -	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-> +	rate = (pll & 0xff00) + ((pll >> 16) & 0xff);
->  	rate *= OSC;
-> -	rate >>= 2;
-> +	rate >>= 10;
->  
->  	return rate;
->  }
-> -- 
-> 2.37.1
-> 
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next linus/master v6.0-rc2 next-20220823]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220824/202208241051.Xi9D8DaW-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/51c1bac1ab0d284ab6c444966eee437c23095a85
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
+        git checkout 51c1bac1ab0d284ab6c444966eee437c23095a85
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "mtk_clk_register_gates_with_dev" [drivers/clk/mediatek/clk-mt8365-mm.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
