@@ -2,103 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1E4C32774
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 02:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEEBC00140
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 07:44:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231516AbiHXC5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 22:57:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59698 "EHLO
+        id S234198AbiHXHot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Aug 2022 03:44:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbiHXC5W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 22:57:22 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A4D7D7AC;
-        Tue, 23 Aug 2022 19:57:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661309839; x=1692845839;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jy6uHgqMUfjwvrFCqsckoPadRCKuYpnXSLFD6tiP3I0=;
-  b=npxwTA/EKED1rzNAWLSBGUd7A4JqneayEA75qvJGdo5FeyQiOdeBZ98s
-   3i1MvxtA89BacIcMkYGU3iu4nA1kAIaXjRXBVNJWEJucDPawOgLnKwl6a
-   lByCKWbDJiC1q9+YxOZWXJ+F+4OnH7KcjtTwXA2nxSf8xVeAU3WrELPXP
-   VdiisgDEvE+3Y+LqzwfheejavYssnZH1x+8btujcQfBszUpELn2E+YefS
-   6OV6U3ug13wZqbOdxQZMyOl28wtQY9VN77NJtrC75jkvAipiDnKNfFVKJ
-   GyhMboN5ZPZ3XQxYf4OPzp5gDlKe7QlnXew5XhB0UgOpZ3QZGeJPJ2lCW
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10448"; a="291415128"
-X-IronPort-AV: E=Sophos;i="5.93,259,1654585200"; 
-   d="scan'208";a="291415128"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2022 19:57:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,259,1654585200"; 
-   d="scan'208";a="937723909"
-Received: from lkp-server02.sh.intel.com (HELO 9bbcefcddf9f) ([10.239.97.151])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Aug 2022 19:57:15 -0700
-Received: from kbuild by 9bbcefcddf9f with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oQgZv-0000tf-0o;
-        Wed, 24 Aug 2022 02:57:15 +0000
-Date:   Wed, 24 Aug 2022 10:57:12 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Markus Schneider-Pargmann <msp@baylibre.com>,
+        with ESMTP id S233356AbiHXHot (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 03:44:49 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45783B5;
+        Wed, 24 Aug 2022 00:44:45 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D443922534;
+        Wed, 24 Aug 2022 07:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1661327083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9CVLEu5X5W558Mdwud6PEFNhZNUWDtayqH7r9TTDZuA=;
+        b=Lz/ACUxILC+R3yz2Ui0SJh6CaW4tttXbYGqKExsC2hkoEsZCegFXYFc22ajQzGRvdjEryQ
+        3CotfVecb7dxD8/WETOSvYRosDVKGJM3RkXu2/Cz96AiSW7ON9ujL0feO/uL9jEDd7Zl+h
+        Ba3bmdinRxLW6ofOfbyC0I3KWkqj9FE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1661327083;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9CVLEu5X5W558Mdwud6PEFNhZNUWDtayqH7r9TTDZuA=;
+        b=tl3Xm9YZ2vhlGUbXJNfule+zMvT2R4ylbRHH+Q3QSBJF/vfQm60/mcW6ZWE/UtUCRMNmGt
+        ZBO5wTmc8lAY3PBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B707713AC0;
+        Wed, 24 Aug 2022 07:44:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id elupLOvWBWPhUgAAMHmgww
+        (envelope-from <iivanov@suse.de>); Wed, 24 Aug 2022 07:44:43 +0000
+Date:   Wed, 24 Aug 2022 10:44:43 +0300
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fabien Parent <parent.f@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: Re: [PATCH v4 4/4] clk: mediatek: add driver for MT8365 SoC
-Message-ID: <202208241051.Xi9D8DaW-lkp@intel.com>
-References: <20220822152652.3499972-5-msp@baylibre.com>
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Phil Elwell <phil@raspberrypi.org>,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3] clk: bcm2835: Round UART input clock up
+Message-ID: <20220824074443.nvrnqhpvqrtn72p4@suse>
+References: <20220527102900.144894-1-iivanov@suse.de>
+ <20220823230842.AB8BAC433C1@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220822152652.3499972-5-msp@baylibre.com>
+In-Reply-To: <20220823230842.AB8BAC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Markus,
+On 08-23 16:08, Stephen Boyd wrote:
+> Date: Tue, 23 Aug 2022 16:08:40 -0700
+> From: Stephen Boyd <sboyd@kernel.org>
+> To: Albert Ou <aou@eecs.berkeley.edu>, Broadcom internal kernel review list
+>  <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli
+>  <f.fainelli@gmail.com>, "Ivan T. Ivanov" <iivanov@suse.de>, Michael
+>  Turquette <mturquette@baylibre.com>, Nicolas Saenz Julienne
+>  <nsaenz@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+>  <paul.walmsley@sifive.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
+>  <sbranden@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: "Ivan T. Ivanov" <iivanov@suse.de>, Phil Elwell <phil@raspberrypi.org>,
+>  kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+>  linux-rpi-kernel@lists.infradead.org,
+>  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+>  linux-riscv@lists.infradead.org
+> Subject: Re: [PATCH v3] clk: bcm2835: Round UART input clock up
+> Message-Id: <20220823230842.AB8BAC433C1@smtp.kernel.org>
+> 
+> Quoting Ivan T. Ivanov (2022-05-27 03:29:00)
+> > It was reported that RPi3[1] and RPi Zero 2W boards have issues with
+> > the Bluetooth. It turns out that when switching from initial to
+> > operation speed host and device no longer can talk each other because
+> > host uses incorrect UART baud rate.
+> > 
+> > The UART driver used in this case is amba-pl011. Original fix, see
+> > below Github link[2], was inside pl011 module, but somehow it didn't
+> > look as the right place to fix. Beside that this original rounding
+> > function is not exactly perfect for all possible clock values. So I
+> > deiced to move the hack to the platform which actually need it.
+> > 
+> > The UART clock is initialised to be as close to the requested
+> > frequency as possible without exceeding it. Now that there is a
+> > clock manager that returns the actual frequencies, an expected
+> > 48MHz clock is reported as 47999625. If the requested baud rate
+> > == requested clock/16, there is no headroom and the slight
+> > reduction in actual clock rate results in failure.
+> > 
+> > If increasing a clock by less than 0.1% changes it from ..999..
+> > to ..000.., round it up.
+> > 
+> > [1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
+> > [2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
+> > 
+> > Cc: Phil Elwell <phil@raspberrypi.org>
+> > Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+> > ---
+> 
+> This is waiting for someone like Stefan to review. It's customary to
+> include previous reviewers on new versions of patches.
 
-Thank you for the patch! Yet something to improve:
+Thanks for fixing me mistake.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next linus/master v6.0-rc2 next-20220823]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Regards,
+Ivan
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220824/202208241051.Xi9D8DaW-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/51c1bac1ab0d284ab6c444966eee437c23095a85
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
-        git checkout 51c1bac1ab0d284ab6c444966eee437c23095a85
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "mtk_clk_register_gates_with_dev" [drivers/clk/mediatek/clk-mt8365-mm.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
