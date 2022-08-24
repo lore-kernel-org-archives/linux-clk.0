@@ -2,110 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2715DC32793
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 08:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F14EC3F6B0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 09:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236256AbiHXIse (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Aug 2022 04:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34598 "EHLO
+        id S229884AbiHXJeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Aug 2022 05:34:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236163AbiHXIsP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 04:48:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ABEA7AC00;
-        Wed, 24 Aug 2022 01:47:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 25F12617AE;
-        Wed, 24 Aug 2022 08:47:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FF0C433D6;
-        Wed, 24 Aug 2022 08:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661330862;
-        bh=KsYrz7x6IcbX0pgtIwi510gAC8itg404yw0MYtsog74=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y1M0khDi+IP4HCcNiZ09RpeBhBSSog68O8ucahvlGBkZvemyAPXzntTYDV4/LPl3l
-         ZkOPnxhflT6SNwsh/b5C6qsFvpoh0Z2tFNBesdyWWdJnVR2s3O1OcwSUAxBIKlLhxD
-         kGmpQOD427tZJwa3JpjmaGD8L45/ttt9tMNwK7W9aR0dL89OcNh1r08tiKzw94fGO3
-         1xCGDta2tFX+SyenXianEog0Zam0s3gJPjGvYVbiOD4/i7bhD+juUjv2BL4+SSX/L8
-         SEYJFX1yY4FMpyjyhF/gUbI8L5KLHg+SGb0QPLrNqBm1kMEGdv3nH6rI2SNDj3R4JS
-         dwJbRsEWOk5lg==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oQm36-0004ZD-Cb; Wed, 24 Aug 2022 10:47:45 +0200
-Date:   Wed, 24 Aug 2022 10:47:44 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc7280: Keep USB GDSC power domains
- on when USB wakeup is enabled
-Message-ID: <YwXlsK3pjK/q1xwO@hovoldconsulting.com>
-References: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
- <20220822115246.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
- <YwS3FCOqIeajMEgz@hovoldconsulting.com>
- <YwUDjaG6n95Ddij2@google.com>
+        with ESMTP id S229542AbiHXJeT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 05:34:19 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA9984EEA;
+        Wed, 24 Aug 2022 02:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1661333659; x=1692869659;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6/9bHIY/hzWRwp2EdYp1b9h1WrFSvYNmvafvDtchgVc=;
+  b=nVmxz3Y1XaQOI2khhhVGrkwXxOhKeKZ7PHDE0XE9vueKmqsIColtmJpe
+   m/2R2d3KTGnEKeDtqOzh1i9Hiym0VYRWHoY+OsGZffq2pwN+g5KiVLYGX
+   dfdOdMmim2lNzfHCIRENuJA9Z0K1H4LMO5H8TpCNcf1MGf0JGrM23QZ3+
+   5nDx3zGdu/2WKKBHx3qSY+uWXHdwCSiQaP9GOsDC419atc6fl8tSEPf4n
+   s4hn+SOVOi/rYFtlGDsq+uPlaFnFXeyi8szwX5yetTrNkXPuXW2hN7Vs0
+   5ft+sw9S3d0LfSFGaXjOR0X/Pgx75M8cmjSecTG83TdgEgAUFDSN+qQNW
+   A==;
+X-IronPort-AV: E=Sophos;i="5.93,260,1654585200"; 
+   d="scan'208";a="170697507"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Aug 2022 02:34:19 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Wed, 24 Aug 2022 02:34:17 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Wed, 24 Aug 2022 02:34:14 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Hugh Breslin <hugh.breslin@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>
+Subject: [PATCH v3 0/5] Add PolarFire SoC Fabric Clock Conditioning Circuitry Support
+Date:   Wed, 24 Aug 2022 10:33:38 +0100
+Message-ID: <20220824093342.187844-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YwUDjaG6n95Ddij2@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 09:42:53AM -0700, Matthias Kaehlcke wrote:
-> On Tue, Aug 23, 2022 at 01:16:36PM +0200, Johan Hovold wrote:
-> > On Mon, Aug 22, 2022 at 11:53:11AM -0700, Matthias Kaehlcke wrote:
-> > > Set GENPD_FLAG_ACTIVE_WAKEUP for the USB GDSC power domains of SC7280.
-> > > 
-> > > Suggested-by: Johan Hovold <johan+linaro@kernel.org>
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > > 
-> > >  drivers/clk/qcom/gcc-sc7280.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-> > > index 7ff64d4d5920..4ff855269467 100644
-> > > --- a/drivers/clk/qcom/gcc-sc7280.c
-> > > +++ b/drivers/clk/qcom/gcc-sc7280.c
-> > > @@ -3125,6 +3125,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
-> > >  	.gdscr = 0xf004,
-> > >  	.pd = {
-> > >  		.name = "gcc_usb30_prim_gdsc",
-> > > +		.flags = GENPD_FLAG_ACTIVE_WAKEUP,
-> > 
-> > Have you verified that the power-domain doesn't need to remain on also
-> > when USB isn't used for wakeup?
-> 
-> So far I haven't observed issues with this on sc7180 and sc7280 when USB
-> wakeup is disabled.
+Hey all,
 
-Ok, good.
+PolarFire SoC has 4 clock source blocks, each with 2 PLLs and 2 DLLs,
+in the corners of the FPGA fabric. Add bindings, a driver supporting
+the PLLs and the requisite changes to the devicetrees for PolarFire
+SoC based boards. These clocks were already in use, but which clock
+specifically was chosen was decided by the synthesis tool. In our
+end-of-September release of our FPGA reference design, constraints will
+be added to force the synthesis tool to pick the "north west" CCC,
+making it possible to read the configuration from the CCC's registers.
 
-I would have assumed that it needed to stay always-on before the
-s/device_can_wakeup/device_may_wakeup/ change as before that the PHYs
-would be left on regardless of the (sysfs) wakeup setting.
+I am mainly looking for feedback on the dt-bindings on this version,
+so that if something dt-abi related needs to change it can be done in
+advance.
 
-> > This is the case for sc8280xp and indicates that there are further
-> > missing pieces here (at least for that platform).
-> 
-> What are you observing on sc8280xp when wakeup is disabled?
+There are no maintainers changes in this series, but they are required
+due to the binding rename. I am waiting for some changes queued in the
+soc tree before rebasing on a later -rc before including that patch.
 
-The wakeup setting doesn't seem to have anything to do with the genpd
-issues on sc8280xp and the controller doesn't resume properly regardless
-of whether the PHYs have been disabled or not during suspend unless the
-PD is left on.
+Thanks,
+Conor.
 
-Wakeup itself notably works either way.
+Changes since v2:
+- Removed the unintentionaly leftover clock-output-names
+- Dropped the riscv/microchip dt-binding update. I am moving it to
+  another series for the dts, which is likely to be applied first
+  so it does not depend on this series.
 
-Johan
+Changes since v1:
+- Stopped using the dt node name to generate the clk name. Rather than
+  use clock-output-names etc, I just opted to call each PLL after it's
+  individual base address:
+  cccrefclk
+    ccc@38100000_pll0
+      ccc@38100000_pll0_out3
+      ccc@38100000_pll0_out2
+      ccc@38100000_pll0_out1
+      ccc@38100000_pll0_out0
+- dt nodes are now all called "clock-controller"
+
+Conor Dooley (5):
+  dt-bindings: clk: rename mpfs-clkcfg binding
+  dt-bindings: clk: document PolarFire SoC fabric clocks
+  dt-bindings: clk: add PolarFire SoC fabric clock ids
+  clk: microchip: add PolarFire SoC fabric clock support
+  riscv: dts: microchip: add the mpfs' fabric clock control
+
+ .../bindings/clock/microchip,mpfs-ccc.yaml    |  80 +++++
+ ...p,mpfs.yaml => microchip,mpfs-clkcfg.yaml} |   2 +-
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  27 +-
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    |   4 +
+ .../dts/microchip/mpfs-polarberry-fabric.dtsi |   5 +
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 +-
+ drivers/clk/microchip/Makefile                |   1 +
+ drivers/clk/microchip/clk-mpfs-ccc.c          | 293 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  23 ++
+ 9 files changed, 456 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
+ rename Documentation/devicetree/bindings/clock/{microchip,mpfs.yaml => microchip,mpfs-clkcfg.yaml} (96%)
+ create mode 100644 drivers/clk/microchip/clk-mpfs-ccc.c
+
+
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+-- 
+2.36.1
+
