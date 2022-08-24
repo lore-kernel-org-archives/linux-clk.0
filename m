@@ -2,81 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B82FC38142
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 13:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B61C00140
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 13:27:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238052AbiHXNMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Aug 2022 09:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49710 "EHLO
+        id S238258AbiHXN1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Aug 2022 09:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235137AbiHXNMR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 09:12:17 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A88121E2E
-        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:12:12 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id m5so13265647lfj.4
-        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:12:12 -0700 (PDT)
+        with ESMTP id S237172AbiHXN1S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 09:27:18 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A148672EE4
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:27:17 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id q7so20302673lfu.5
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:27:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc;
-        bh=r+ASC3oRaNs40i1Zi0sR0tnL7ZgVnCM0wgXLHL0rIow=;
-        b=z66l8KV/M2ajnf+BKwBbC2pfnne8mNrvln8Edj/p8+WH8xvpRh83bB4lfw5csZkOGA
-         dJf5dGm0pqzUIw+WUcC3WbKw0nx4eFIKUsQ2fUSLunE1QigLbjXsnrLeVKnrWq/XHVEc
-         Zl9cJCaeyUSfJCtJfvq4Cvqv/+MBzYXhWeWsasTH0sfqBtujxI906nNgulGnD7gkg4D5
-         09N2yvcmYLdqXKqtMRoZ3IXgvEhgQSauqTTQy/pqi0tX5u8og6iACqgMlrCZru6JO1Cv
-         wn/8NL4smIoUWMBwa5ogYxm+apnxbizeyBAT/sGtXzcaPxLTIVwMDyowwH1qHxxIcn6m
-         h+cg==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=c45lYX8RXqinZK4YfOxUYn7I1dL1A9tsyXH/7KdT7zo=;
+        b=j17KyB8x4HHjQgrh7HEBJuDHYBcdyG5IYrfjIAfF29/vOt5ceX5mYiEN9Lhr26iEHT
+         uguDoQY5k75hXyfRORn/LIoIIZXgnfjsRkknswONFXYgOB6hu46c6q1jCnKRxMozx+U8
+         IwKzb8fz1FtUJ3u86SjBVR7KbiYwf8HBMfLUmwVCJ/UuLhWIKFo4Pdl6hhFe/FfHb6id
+         K2GtQCOpwdX/IHCXHISI4qDW0RlADt+S/e7StA3OHH++Kzi3UWW0QFVE0vImgiKB0Nm1
+         QLkXkED2ft0zCWwkSHcqsPk5AtknEvFaxsj74ToimQwyfjoBNeAZhSssV2mdV5JY0KkE
+         N+jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc;
-        bh=r+ASC3oRaNs40i1Zi0sR0tnL7ZgVnCM0wgXLHL0rIow=;
-        b=EQDDzohxBja65WXz919FkrPvHzzJX63psSqmvPXrrjbtq5EXBkKtgOICR1PIvIwnqC
-         zlOUK6bki5HvapnIZld8+AQsGr3FpEzIpQJcM2xQGjCCFk6ErX/5s2T+xPBXDOX0FDP2
-         2x6UXl2jCda6f586jVPLNrw60GmUVB2eD/yvKOSxLpdk6f9i1wmgqTSr6232nBoi1uZr
-         QqS9kBqSEIKrz/SNpfynx8JjaTiyM7TTGJviKqQFLiFAIIGgsvAK/BVkyRbDMEYGOY7/
-         hPzyBmrQiIf8OOSNLxiDiczzg7RTxJdk0QMHHeXucC/w+W0QYgqKrl4CVIDow93FjoJv
-         yCdQ==
-X-Gm-Message-State: ACgBeo0ne9Lp5zDqNflCgOyCYwFhOI5G0TxrjJHJcCg2dfOy2bhnsI6k
-        rBOILuIiFpOTKmeZZD4GObdTEg==
-X-Google-Smtp-Source: AA6agR69XSYfJplsCoH90jpaWGzP3LcQMrKD5PQUFuRSK50NVKpyjOuIvqcqBdr6NfAuT8UOI7UMDQ==
-X-Received: by 2002:ac2:4d29:0:b0:492:e965:b6aa with SMTP id h9-20020ac24d29000000b00492e965b6aamr4111277lfk.495.1661346730825;
-        Wed, 24 Aug 2022 06:12:10 -0700 (PDT)
-Received: from krzk-bin.. ([194.204.13.210])
-        by smtp.gmail.com with ESMTPSA id w17-20020ac25991000000b00477c0365b20sm3013046lfn.188.2022.08.24.06.11.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Aug 2022 06:12:10 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     sboyd@kernel.org, cw00.choi@samsung.com, tomasz.figa@gmail.com,
-        krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
-        s.nawrocki@samsung.com, mturquette@baylibre.com,
-        alim.akhtar@samsung.com, linux-clk@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
-Date:   Wed, 24 Aug 2022 16:11:26 +0300
-Message-Id: <166134667696.17579.16496249801589294435.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
-References: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=c45lYX8RXqinZK4YfOxUYn7I1dL1A9tsyXH/7KdT7zo=;
+        b=PifiqSZf0FPktqwUh6+DmMvHun/3MaauFab3Mqgu1+eiWaRzYnm531r0p4pTqSDaJe
+         6m4LlzbxYvU3X2Kuf545lBUxWMD/GlO2RFoRH0OjkOtHE6jn75sRn5ClW1sGRxrwv1Zu
+         zreIKefioHU+0AqMHkbN/fxP9Zp6nTIBdIDPmy597LmsJGtEin98n8oWP0FgO5080JBH
+         LJ7euEUO/VPRiUw1fwTKZJ6Ir6m57PXdVvhyzKEKKlSO/veNC8b9BOAraLbYkSO/OEw1
+         wrGrMvtcfvw6hgDCMs0NoUyDTrNjJESnyBCFWttlbBuCjIlOjUZdWFnmtxAfojG0Z0jo
+         yyfA==
+X-Gm-Message-State: ACgBeo2VUv7KUENysoiaOoe6WiAnnsscoABePD8kn/NHkF7dVUlbAiJ0
+        qc9r/ScOzCYk+k9fp1h9RMquSw==
+X-Google-Smtp-Source: AA6agR5+dvoQAGR9/rB/GV9HncXOGxbKuFJefiohubaUP2MqmRN7gCj3f7ww8Mwsdzj3XsY8oLCoKg==
+X-Received: by 2002:ac2:4465:0:b0:493:b4:c4ac with SMTP id y5-20020ac24465000000b0049300b4c4acmr1848654lfl.446.1661347636057;
+        Wed, 24 Aug 2022 06:27:16 -0700 (PDT)
+Received: from [10.243.4.185] (107-129-159-217.sta.estpak.ee. [217.159.129.107])
+        by smtp.gmail.com with ESMTPSA id z13-20020a056512376d00b0049288e0bd61sm3028871lft.58.2022.08.24.06.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Aug 2022 06:27:15 -0700 (PDT)
+Message-ID: <a9125027-a23a-ef58-cede-0b1d019f362c@linaro.org>
+Date:   Wed, 24 Aug 2022 16:27:14 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v3 2/5] dt-bindings: clk: document PolarFire SoC fabric
+ clocks
+Content-Language: en-US
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Hugh Breslin <hugh.breslin@microchip.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+References: <20220824093342.187844-1-conor.dooley@microchip.com>
+ <20220824093342.187844-3-conor.dooley@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220824093342.187844-3-conor.dooley@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 23 Aug 2022 10:31:54 +0300, Krzysztof Kozlowski wrote:
-> Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
-> clock maintainer to handle the patches.
+On 24/08/2022 12:33, Conor Dooley wrote:
+> On PolarFire SoC there are 4 PLL/DLL blocks, located in each of the
+> ordinal corners of the chip, which our documentation refers to as
+> "Clock Conditioning Circuitry". PolarFire SoC is an FPGA, these are
+> highly configurable & many of the input clocks are optional.
 > 
-> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-Applied, thanks!
 
-[1/1] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
-      https://git.kernel.org/krzk/linux/c/ef96c458888fa2a329b14efc7991530f645fbddb
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
