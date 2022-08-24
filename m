@@ -2,68 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A296C32772
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Aug 2022 22:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372AFC32793
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 00:54:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231835AbiHWWwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Aug 2022 18:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50666 "EHLO
+        id S231487AbiHXAyD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Aug 2022 20:54:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231348AbiHWWwI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 18:52:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF178C457;
-        Tue, 23 Aug 2022 15:52:06 -0700 (PDT)
+        with ESMTP id S230350AbiHXAyC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Aug 2022 20:54:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CEC85FF7;
+        Tue, 23 Aug 2022 17:54:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EC798B821EA;
-        Tue, 23 Aug 2022 22:52:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B6DC433D6;
-        Tue, 23 Aug 2022 22:52:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 612E46178B;
+        Wed, 24 Aug 2022 00:54:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8FBFC433D6;
+        Wed, 24 Aug 2022 00:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661295123;
-        bh=ypcp98VMiz7kBu3cGUG6LeZApIJKQVW/y2vnoL910eE=;
+        s=k20201202; t=1661302440;
+        bh=RrTk1BfDHuYcJZnVddzCtxqhxk8N8F+LC2UoGUuzIEw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DZr0NmbKznJeIxoMhkhF17OzDK9v7sRfbGjSpGHBhpuFXyaHu8pNRwi/f4WhYs1gu
-         fekrHQ9D3yzuX7WWC9la2iCPghUT/3qpBnlV2W+ecrQekSCy1AuZS+x0Q9ITg7vxwq
-         kqDbik3OjleTwSvxURbUmFKUVr9Qlj3oR+nuq1v0HACDIpkYN1ZVMQP1vxVdvfFL28
-         daUG1+gDBGClvtNGSaBHq3pBpfmKnHGbiEb1tWlquRDv1zfMlpceI2OWt+kdXL2L+8
-         QmiOq4fP2jZetKEMikK6z3hOqwNJhTGV8qPoOaI2pC/d5yPnDvrHSX7VAXOb2o/Xyg
-         ULw0dMO4rLqNw==
+        b=BnQdLYBR7AZnmnjYm5sfiLVAct1DrClvKdqpuj9DIXBypIwIZEAotOdqD2KAaCbGq
+         tdHt5tJTsQvsPoEgVVtOCNEuq5vkJSLRuaa19H/gttvRZHIs5A2JZlo/dytSVOIsUk
+         wWhLA7RVUAnoZorkH4O7XYT6fLGwNi/trOo7s5iKzRAM3Redg36HElr8Am7JTi5oD9
+         ToV9s6ewP2L01T9+hoCBZDL4EoysPe4SfuZJ64VDt1hvmy50GjSk+Gd7y78+oZx9Mw
+         5WALUBSSrwMJXsxXFPaNsSMePVABF5zXPsBnALcBsX7xu3aZRTCHV7/qeOzfOAMTTL
+         3M63xTa00a0VA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220713154953.3336-2-stefan.wahren@i2se.com>
-References: <20220713154953.3336-1-stefan.wahren@i2se.com> <20220713154953.3336-2-stefan.wahren@i2se.com>
-Subject: Re: [PATCH 1/3] clk: bcm: rpi: Prevent out-of-bounds access
+In-Reply-To: <20220630151205.3935560-1-claudiu.beznea@microchip.com>
+References: <20220630151205.3935560-1-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH 1/2] clk: remove extra empty line
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Phil Elwell <phil@raspberrypi.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Date:   Tue, 23 Aug 2022 15:52:01 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        mturquette@baylibre.com
+Date:   Tue, 23 Aug 2022 17:53:58 -0700
 User-Agent: alot/0.10
-Message-Id: <20220823225203.92B6DC433D6@smtp.kernel.org>
+Message-Id: <20220824005400.B8FBFC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stefan Wahren (2022-07-13 08:49:51)
-> The while loop in raspberrypi_discover_clocks() relies on the assumption
-> that the id of the last clock element is zero. Because this data comes
-> from the Videocore firmware and it doesn't guarantuee such a behavior
-> this could lead to out-of-bounds access. So fix this by providing
-> a sentinel element.
+Quoting Claudiu Beznea (2022-06-30 08:12:04)
+> Remove extra empty line.
 >=20
-> Fixes: 93d2725affd6 ("clk: bcm: rpi: Discover the firmware clocks")
-> Link: https://github.com/raspberrypi/firmware/issues/1688
-> Suggested-by: Phil Elwell <phil@raspberrypi.com>
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
