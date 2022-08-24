@@ -2,84 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F5FC32796
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 12:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B82FC38142
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Aug 2022 13:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237462AbiHXMwa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Aug 2022 08:52:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52210 "EHLO
+        id S238052AbiHXNMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Aug 2022 09:12:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237458AbiHXMw3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 08:52:29 -0400
+        with ESMTP id S235137AbiHXNMR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2022 09:12:17 -0400
 Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF4E95E5D
-        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 05:52:28 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id s6so12626025lfo.11
-        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 05:52:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A88121E2E
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:12:12 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id m5so13265647lfj.4
+        for <linux-clk@vger.kernel.org>; Wed, 24 Aug 2022 06:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=ZwNSTKnVcPIYK6dbm0TWSHkaFbJiNUWrAYxpc2cQruw=;
-        b=Ix90db/x25enO75JqAudO2Fr12aKUu/W8WOwZL7LYqPtppftySDvVFkRwUluS3S/wE
-         P0z8H6tHvrvCnNrNUzNdfBe96gzrHIGRPbZ3ZDSDSnY2H+69PyF8cvo0dHU7zNMuwYKs
-         3XAF3Dk2Yu2d/4sDOqwhuKBJ32SJiTqJTrMb61hZ9qneNiALxmXEXuf2lVoSfy2Y+nUe
-         WZGIIQsM5pIOSNKMYHnABwZkv8cKdweAPb0cbJtuGmqaZtu46nYgRfD4de1wv52ypgLJ
-         mExU9thjfVlm9wPJTNL3TbBYcjT94qPe4OZlJDUnSjrAaBynS8Yq1613gcIGOZ40wkjq
-         38Fw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc;
+        bh=r+ASC3oRaNs40i1Zi0sR0tnL7ZgVnCM0wgXLHL0rIow=;
+        b=z66l8KV/M2ajnf+BKwBbC2pfnne8mNrvln8Edj/p8+WH8xvpRh83bB4lfw5csZkOGA
+         dJf5dGm0pqzUIw+WUcC3WbKw0nx4eFIKUsQ2fUSLunE1QigLbjXsnrLeVKnrWq/XHVEc
+         Zl9cJCaeyUSfJCtJfvq4Cvqv/+MBzYXhWeWsasTH0sfqBtujxI906nNgulGnD7gkg4D5
+         09N2yvcmYLdqXKqtMRoZ3IXgvEhgQSauqTTQy/pqi0tX5u8og6iACqgMlrCZru6JO1Cv
+         wn/8NL4smIoUWMBwa5ogYxm+apnxbizeyBAT/sGtXzcaPxLTIVwMDyowwH1qHxxIcn6m
+         h+cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=ZwNSTKnVcPIYK6dbm0TWSHkaFbJiNUWrAYxpc2cQruw=;
-        b=wBANcU4VKZHi+50B5dpUqLJWSwhsDoo5rU+csl1AFMUd64S2N4QzgmAC0+XiCw8E5T
-         aJG2pH++hUbBRathNS38VgTkc01drvaTYwrxGPUTwb0BP50Irlp6IlFc6ZFfA2eIqgru
-         iXExvvdSinCEQ6Zu6Jj6g+ujjW1ZyLo1ElSrrj78/5Z7clARacCslflj7+GmtNrap48a
-         AeLNfkasEERcMUQC8aCaKMkT0LO+RPYIWJCFGhk4WROaJcRyxBa316e9rfsefGVVhi+L
-         Zek7oKfhu2m2hx7jgh6S9mahbFkXFxd3LU5MLsiH3heJ9m1/3q7xMd1sVUUlNvQl+cnA
-         /CkA==
-X-Gm-Message-State: ACgBeo10AD7J9QcI+WMiAwRtgMLQslNZHEXtoowquaHz64jkXra+pJb3
-        g+6mJrm7uk3qC41VOd9X8WBXvQ==
-X-Google-Smtp-Source: AA6agR4Sl1C1PIBuf+7AFbf2WFYP6PKZHBPj1Cqt/XCdlSfl6eNtX6pgeP/X5QCWGx9INqfdG3JCNw==
-X-Received: by 2002:a05:6512:210b:b0:492:e4cb:b93a with SMTP id q11-20020a056512210b00b00492e4cbb93amr4558908lfr.601.1661345546939;
-        Wed, 24 Aug 2022 05:52:26 -0700 (PDT)
-Received: from [10.243.4.185] ([194.157.23.230])
-        by smtp.gmail.com with ESMTPSA id c4-20020a196544000000b00489e2156285sm3006920lfj.104.2022.08.24.05.52.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Aug 2022 05:52:25 -0700 (PDT)
-Message-ID: <72f2a044-6271-4d4e-1782-0271516cc7b3@linaro.org>
-Date:   Wed, 24 Aug 2022 15:52:24 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 1/2] dt-bindings: clocks: imx8mp: Add ID for usb suspend
- clock
-Content-Language: en-US
-To:     Li Jun <jun.li@nxp.com>, abelvesa@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <1661328262-3867-1-git-send-email-jun.li@nxp.com>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc;
+        bh=r+ASC3oRaNs40i1Zi0sR0tnL7ZgVnCM0wgXLHL0rIow=;
+        b=EQDDzohxBja65WXz919FkrPvHzzJX63psSqmvPXrrjbtq5EXBkKtgOICR1PIvIwnqC
+         zlOUK6bki5HvapnIZld8+AQsGr3FpEzIpQJcM2xQGjCCFk6ErX/5s2T+xPBXDOX0FDP2
+         2x6UXl2jCda6f586jVPLNrw60GmUVB2eD/yvKOSxLpdk6f9i1wmgqTSr6232nBoi1uZr
+         QqS9kBqSEIKrz/SNpfynx8JjaTiyM7TTGJviKqQFLiFAIIGgsvAK/BVkyRbDMEYGOY7/
+         hPzyBmrQiIf8OOSNLxiDiczzg7RTxJdk0QMHHeXucC/w+W0QYgqKrl4CVIDow93FjoJv
+         yCdQ==
+X-Gm-Message-State: ACgBeo0ne9Lp5zDqNflCgOyCYwFhOI5G0TxrjJHJcCg2dfOy2bhnsI6k
+        rBOILuIiFpOTKmeZZD4GObdTEg==
+X-Google-Smtp-Source: AA6agR69XSYfJplsCoH90jpaWGzP3LcQMrKD5PQUFuRSK50NVKpyjOuIvqcqBdr6NfAuT8UOI7UMDQ==
+X-Received: by 2002:ac2:4d29:0:b0:492:e965:b6aa with SMTP id h9-20020ac24d29000000b00492e965b6aamr4111277lfk.495.1661346730825;
+        Wed, 24 Aug 2022 06:12:10 -0700 (PDT)
+Received: from krzk-bin.. ([194.204.13.210])
+        by smtp.gmail.com with ESMTPSA id w17-20020ac25991000000b00477c0365b20sm3013046lfn.188.2022.08.24.06.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Aug 2022 06:12:10 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1661328262-3867-1-git-send-email-jun.li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     sboyd@kernel.org, cw00.choi@samsung.com, tomasz.figa@gmail.com,
+        krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
+        s.nawrocki@samsung.com, mturquette@baylibre.com,
+        alim.akhtar@samsung.com, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+Date:   Wed, 24 Aug 2022 16:11:26 +0300
+Message-Id: <166134667696.17579.16496249801589294435.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+References: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/08/2022 11:04, Li Jun wrote:
-> usb suspend clock has a gate shared with usb_root_clk.
+On Tue, 23 Aug 2022 10:31:54 +0300, Krzysztof Kozlowski wrote:
+> Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
+> clock maintainer to handle the patches.
 > 
-> Signed-off-by: Li Jun <jun.li@nxp.com>
+> 
 
+Applied, thanks!
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+[1/1] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+      https://git.kernel.org/krzk/linux/c/ef96c458888fa2a329b14efc7991530f645fbddb
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
