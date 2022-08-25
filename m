@@ -2,85 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E888ECAAA3
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 21:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A92ECAAA2
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 22:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244162AbiHYVsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Aug 2022 17:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        id S233990AbiHYWRD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Aug 2022 18:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244190AbiHYVro (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 17:47:44 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F27DC57B8;
-        Thu, 25 Aug 2022 14:46:00 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id s23so10823617wmj.4;
-        Thu, 25 Aug 2022 14:45:59 -0700 (PDT)
+        with ESMTP id S230308AbiHYWRC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 18:17:02 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1232B3A49E
+        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2022 15:17:01 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id g8so5393plq.11
+        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2022 15:17:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=mE/4YBZh38TyYLhC6G5fQYeRHrAbzB7JvF8agv/vdQg=;
-        b=P6++xFNR1j0FfYdfcet9OwwFkgk8uW+QeGrsGedHWY32iLGlB2WTWHd0wEKUvrLfyw
-         8PIs4gz3vkR9Mxv5wfuXVMTHU5ZYIkrj2GBHeqM27WwzY2tF1tPpbagfTsmfbx5BWVPp
-         DOePwUjptMdp2mN1L2K2lS6WdQXAd6gNyRoxaMAiNlGePB3owtm/aCrRQguMiHKITf/4
-         VuMJC7mvsdos057Hw1T5i8rDb58UF3RBi40wqWBJpnN75SZxCwMjbhaogevZ3kXA+BN8
-         RsJ9P04/SH/PsScmrAk2cxLYQ7MuPMUBB5HUnXSfEKoNqoNx3PVdxp0gvFUiBwB/zH5t
-         Jpjw==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=vBeKGRK+cVut8bnT/6A/lBEbRGscI4sDYwtvLgwZl6U=;
+        b=F2p4W6OpYD0wiVHVa4HW9N6SRDY4WeCbz0KXJ48rzzY498kDUBYTVxhaII6smH2bl7
+         pcIcQkWepEKfD5Kjjj3kYSawEceO4eGv+SGFZjIZ0JOoAIjgbJoaiiiekqXOFQ71QRRK
+         uHY1EooZ5DsTIyZdDCXnakFYtopCAu+rSEDVg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=mE/4YBZh38TyYLhC6G5fQYeRHrAbzB7JvF8agv/vdQg=;
-        b=2KutgZh1XuQzq9269azltC5iTxWchSx6IervfQGXF/GH12+kJdRO3EdN0yki9cyuYv
-         3iYVr7HPWgMi7jfhdEMalS5vLrj5LSdwNV1yOd/xw+xBOmQokZTparZ6nKqEpWlJ/8hB
-         M6WRb82zsXovtkzZ+ZcvV+bJry6cYxVnyy6MMSxWO9UVS8BnwjQAaoFN3PDTYQbFHg8o
-         RWzaLrePkVOnUF/UiN1tVm5AzhGaVogWC/3di1GB0EskQBeBkxaIqd9mghZai1dfE2kY
-         QvtN2ayM2m3uIoVnFpl34Ytgqnm0u+ioDc0bV1fKadOzhXdtSsUMULkbesfyB+pbojlg
-         ySXA==
-X-Gm-Message-State: ACgBeo2ukbfk6Tv+K/pc32LDVjKpz4ZA75xkIt3/rIpr6bjML8jGtfTd
-        lZAETDacNZCh7e+L+iBkzew=
-X-Google-Smtp-Source: AA6agR7230MGbs821+A8YN82pus383ho1o4vUi1fAFFJ5dzUVRhvyyd967MFX7/eyIwgOmyNIlfCpQ==
-X-Received: by 2002:a05:600c:4ed0:b0:3a6:de8:5e7d with SMTP id g16-20020a05600c4ed000b003a60de85e7dmr9320639wmq.181.1661463957948;
-        Thu, 25 Aug 2022 14:45:57 -0700 (PDT)
-Received: from kista.localnet (82-149-1-172.dynamic.telemach.net. [82.149.1.172])
-        by smtp.gmail.com with ESMTPSA id az41-20020a05600c602900b003a60bc8ae8fsm466499wmb.21.2022.08.25.14.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 14:45:57 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=vBeKGRK+cVut8bnT/6A/lBEbRGscI4sDYwtvLgwZl6U=;
+        b=J4usep8oZe20O4vbSb3TXv15OiYUtGqnnpg2x90XCpDC0pPN4G9h7FXXZMHykwh6Rs
+         hOdzKvD1P8/T55kyy26my7r9267oG/C6KlkU8ZtNSlGQMCbb6I3k8ffTmKn/feAXqNOa
+         O1yERkDU2iJPDJIBMO/3eL0m9j6cv7ybfw1/X3p/HKyB9BfhOEIwZTgtIjoAFBAn+U1o
+         rFDWWFR1ROePxjQ9pUtgmen/LHX78jYfHy5L1FIWaimlrsjsuZKRAbE8vDOL45OApiLy
+         oIF1+MnI7IjTzghIu9cEJz/5dYWHIQpMQvw49+752j0Qs8V/TtCBVHu1d5mZF4NrxppO
+         JaPQ==
+X-Gm-Message-State: ACgBeo03MCgsNwZnmzAWvxl7P/XyT82iT8B97PMcT+EmdflTrLiITGYd
+        d0PGR1YCvLgf2VdL65Riz4ogKw==
+X-Google-Smtp-Source: AA6agR5G1m9x4dJMFRPTSXgA6jT+Mbg6vfutpOV+lyq4yqeuTtNPsN56w4DyMpOhxmehjU5CznzYcg==
+X-Received: by 2002:a17:90a:7805:b0:1fa:bdab:7d59 with SMTP id w5-20020a17090a780500b001fabdab7d59mr1141849pjk.37.1661465820535;
+        Thu, 25 Aug 2022 15:17:00 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:d529:f79d:2a1a:4e61])
+        by smtp.gmail.com with UTF8SMTPSA id w9-20020a17090a15c900b001fa9f86f20csm213319pjd.49.2022.08.25.15.16.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Aug 2022 15:17:00 -0700 (PDT)
+Date:   Thu, 25 Aug 2022 15:16:58 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: Re: [PATCH] clk: sunxi-ng: d1: Limit PLL rates to stable ranges
-Date:   Thu, 25 Aug 2022 23:45:56 +0200
-Message-ID: <1870351.taCxCBeP46@kista>
-In-Reply-To: <2839208.e9J7NaK4W3@jernej-laptop>
-References: <20220812080050.59850-1-samuel@sholland.org> <2839208.e9J7NaK4W3@jernej-laptop>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc7280: Keep USB GDSC power domains
+ on when USB wakeup is enabled
+Message-ID: <Ywf02oIXEL8G/Heo@google.com>
+References: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
+ <20220822115246.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
+ <YwS3FCOqIeajMEgz@hovoldconsulting.com>
+ <YwUDjaG6n95Ddij2@google.com>
+ <YwXlsK3pjK/q1xwO@hovoldconsulting.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YwXlsK3pjK/q1xwO@hovoldconsulting.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne nedelja, 14. avgust 2022 ob 09:47:42 CEST je Jernej =C5=A0krabec napisa=
-l(a):
-> Dne petek, 12. avgust 2022 ob 10:00:49 CEST je Samuel Holland napisal(a):
-> > Set the min/max rates for audio and video PLLs to keep them from going
-> > outside their documented stable ranges. Use the most restrictive of the
-> > "stable" and "actual" frequencies listed in the manual.
-> >=20
-> > Signed-off-by: Samuel Holland <samuel@sholland.org>
->=20
-> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+On Wed, Aug 24, 2022 at 10:47:44AM +0200, Johan Hovold wrote:
+> On Tue, Aug 23, 2022 at 09:42:53AM -0700, Matthias Kaehlcke wrote:
+> > On Tue, Aug 23, 2022 at 01:16:36PM +0200, Johan Hovold wrote:
+> > > On Mon, Aug 22, 2022 at 11:53:11AM -0700, Matthias Kaehlcke wrote:
+> > > > Set GENPD_FLAG_ACTIVE_WAKEUP for the USB GDSC power domains of SC7280.
+> > > > 
+> > > > Suggested-by: Johan Hovold <johan+linaro@kernel.org>
+> > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > ---
+> > > > 
+> > > >  drivers/clk/qcom/gcc-sc7280.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> > > > index 7ff64d4d5920..4ff855269467 100644
+> > > > --- a/drivers/clk/qcom/gcc-sc7280.c
+> > > > +++ b/drivers/clk/qcom/gcc-sc7280.c
+> > > > @@ -3125,6 +3125,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
+> > > >  	.gdscr = 0xf004,
+> > > >  	.pd = {
+> > > >  		.name = "gcc_usb30_prim_gdsc",
+> > > > +		.flags = GENPD_FLAG_ACTIVE_WAKEUP,
+> > > 
+> > > Have you verified that the power-domain doesn't need to remain on also
+> > > when USB isn't used for wakeup?
+> > 
+> > So far I haven't observed issues with this on sc7180 and sc7280 when USB
+> > wakeup is disabled.
+> 
+> Ok, good.
+> 
+> I would have assumed that it needed to stay always-on before the
+> s/device_can_wakeup/device_may_wakeup/ change as before that the PHYs
+> would be left on regardless of the (sysfs) wakeup setting.
 
-Applied, thanks!
+That make sense, not sure why GENPD_FLAG_ACTIVE_WAKEUP works with wakeup
+disabled.
 
-Best regards,
-Jernej
+In any case setting the genpd flags directly in the gdsc descriptor doesn't
+seem to be the right thing to do. With GENPD_FLAG_ALWAYS_ON my sc7280 system
+stalls at boot. It boots when ALWAYS_ON is set in the gdsc flags, which ends
+up setting GENPD_FLAG_ALWAYS_ON of the genpd. I'll send a new version of this
+series which sets the correct flag.
 
+> > > This is the case for sc8280xp and indicates that there are further
+> > > missing pieces here (at least for that platform).
+> > 
+> > What are you observing on sc8280xp when wakeup is disabled?
+> 
+> The wakeup setting doesn't seem to have anything to do with the genpd
+> issues on sc8280xp and the controller doesn't resume properly regardless
+> of whether the PHYs have been disabled or not during suspend unless the
+> PD is left on.
 
+I'm essentially seeing the same. USB is hosed after resume unless the PD
+is left on.
 
+On Chrome OS we currently work around that with a version of commit
+d9be8d5c5b03 ("usb: dwc3: qcom: Keep power domain on to retain controller
+status") which was reverted upstream. I'm not sure whether USB worked after
+resume before we enabled wakeup support. I would have sworn it did, but we
+landed an old version of the wakeup patches a long time ago, so my
+memory might be failing me.
+
+I wonder what the status on other QC platforms is, from a quick grep it
+seems only msm8953 sets the USB gdsc to ALWAYS_ON.
