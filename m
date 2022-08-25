@@ -2,109 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1D9ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 20:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E888ECAAA3
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 21:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243746AbiHYUia (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Aug 2022 16:38:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
+        id S244162AbiHYVsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Aug 2022 17:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232026AbiHYUi3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 16:38:29 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53463BB013
-        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2022 13:38:28 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id u6so22530140eda.12
-        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2022 13:38:28 -0700 (PDT)
+        with ESMTP id S244190AbiHYVro (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 17:47:44 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F27DC57B8;
+        Thu, 25 Aug 2022 14:46:00 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id s23so10823617wmj.4;
+        Thu, 25 Aug 2022 14:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=bE5zN8mW2wFaoag3CV1bmUwVW/DH2Tvtq/imB8LMKgk=;
-        b=i1YRORPITMQM/HrasLgyPYcWQ823dLI/Ng45Or/ZygrCULIwqrLECQWZcWFxupsxD2
-         X75GLtf0IT9Axfv/HcEcWRhO9BRu8OhmmgOe99T2VGAaf1UwetmYFKIPN0BDbb+vKuQJ
-         FVqzT9mrDPdT1fuSctzFueULvXWJOs9lXI7qbXTPDJCf/2pc2MEQhhQSYmGsNBjgqXpV
-         SsQ0CEYdXoPMuCCmqGPiK44u8ZIvEJfis8ig+Jf7A9t2zM+Grzi0keHHmTFPAmCb0XNg
-         /XL5bl7pCeO5PrR499vfKh1avb3ZCBTWbxEYFbEgZk4PpEIc+VfYFea2h+3HlN2Ab5x+
-         +7vQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=mE/4YBZh38TyYLhC6G5fQYeRHrAbzB7JvF8agv/vdQg=;
+        b=P6++xFNR1j0FfYdfcet9OwwFkgk8uW+QeGrsGedHWY32iLGlB2WTWHd0wEKUvrLfyw
+         8PIs4gz3vkR9Mxv5wfuXVMTHU5ZYIkrj2GBHeqM27WwzY2tF1tPpbagfTsmfbx5BWVPp
+         DOePwUjptMdp2mN1L2K2lS6WdQXAd6gNyRoxaMAiNlGePB3owtm/aCrRQguMiHKITf/4
+         VuMJC7mvsdos057Hw1T5i8rDb58UF3RBi40wqWBJpnN75SZxCwMjbhaogevZ3kXA+BN8
+         RsJ9P04/SH/PsScmrAk2cxLYQ7MuPMUBB5HUnXSfEKoNqoNx3PVdxp0gvFUiBwB/zH5t
+         Jpjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=bE5zN8mW2wFaoag3CV1bmUwVW/DH2Tvtq/imB8LMKgk=;
-        b=e5elsErry+7Cdii5sUaNvAXnF05bko3Hv1JkDgVKmAwB/LH2jSYF45qicaNRBrMubn
-         f57l0Ko/NpDNtzsFTXyKBVgujpGZLni/6cbSymaXGvFi0unQEVheRNNqy7jsOlJZc/7n
-         824X9lJdY5WaWMPsuV1SkVEvIbNqrJd+qSo94M2hryzFtCJ1jTc/z72gW3aqH2M4PIO6
-         btOHd9XliYLUEJUDGsalTKSKFD3XDUXF4mIrZHTTR3xWmPnU2YGa6E5aXaYmq8Ja3vyb
-         4ajU4woChdxoXENowH+INn5+afWXnbJn+FMs2rnLhpwpqNLsIYMK1EPL6jsVBPWdhEsk
-         GitQ==
-X-Gm-Message-State: ACgBeo01tRTfbDAQxe0osIcx0aEpUsiJI3CvqhLoo+5U+q3XKu/osLgJ
-        SvI4m4ua0l/gB+/1nF6GJAwEKg==
-X-Google-Smtp-Source: AA6agR46vM7ZB5GITiujfB+3Wcr0lm+Jdx1W0UL4jQUUev+eK1iWLAq9R4sWuvGXhdxS92NKg4e9ng==
-X-Received: by 2002:a05:6402:35c:b0:43c:8f51:130 with SMTP id r28-20020a056402035c00b0043c8f510130mr4457209edw.393.1661459906956;
-        Thu, 25 Aug 2022 13:38:26 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id c9-20020a17090618a900b007305d408b3dsm77319ejf.78.2022.08.25.13.38.25
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=mE/4YBZh38TyYLhC6G5fQYeRHrAbzB7JvF8agv/vdQg=;
+        b=2KutgZh1XuQzq9269azltC5iTxWchSx6IervfQGXF/GH12+kJdRO3EdN0yki9cyuYv
+         3iYVr7HPWgMi7jfhdEMalS5vLrj5LSdwNV1yOd/xw+xBOmQokZTparZ6nKqEpWlJ/8hB
+         M6WRb82zsXovtkzZ+ZcvV+bJry6cYxVnyy6MMSxWO9UVS8BnwjQAaoFN3PDTYQbFHg8o
+         RWzaLrePkVOnUF/UiN1tVm5AzhGaVogWC/3di1GB0EskQBeBkxaIqd9mghZai1dfE2kY
+         QvtN2ayM2m3uIoVnFpl34Ytgqnm0u+ioDc0bV1fKadOzhXdtSsUMULkbesfyB+pbojlg
+         ySXA==
+X-Gm-Message-State: ACgBeo2ukbfk6Tv+K/pc32LDVjKpz4ZA75xkIt3/rIpr6bjML8jGtfTd
+        lZAETDacNZCh7e+L+iBkzew=
+X-Google-Smtp-Source: AA6agR7230MGbs821+A8YN82pus383ho1o4vUi1fAFFJ5dzUVRhvyyd967MFX7/eyIwgOmyNIlfCpQ==
+X-Received: by 2002:a05:600c:4ed0:b0:3a6:de8:5e7d with SMTP id g16-20020a05600c4ed000b003a60de85e7dmr9320639wmq.181.1661463957948;
+        Thu, 25 Aug 2022 14:45:57 -0700 (PDT)
+Received: from kista.localnet (82-149-1-172.dynamic.telemach.net. [82.149.1.172])
+        by smtp.gmail.com with ESMTPSA id az41-20020a05600c602900b003a60bc8ae8fsm466499wmb.21.2022.08.25.14.45.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 13:38:26 -0700 (PDT)
-Date:   Thu, 25 Aug 2022 23:38:24 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/12] clk: imx8mm: don't use multiple blank lines
-Message-ID: <YwfdwKVU0pMoxIXe@linaro.org>
-References: <20220722215445.3548530-1-marcel@ziswiler.com>
- <20220722215445.3548530-13-marcel@ziswiler.com>
+        Thu, 25 Aug 2022 14:45:57 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: Re: [PATCH] clk: sunxi-ng: d1: Limit PLL rates to stable ranges
+Date:   Thu, 25 Aug 2022 23:45:56 +0200
+Message-ID: <1870351.taCxCBeP46@kista>
+In-Reply-To: <2839208.e9J7NaK4W3@jernej-laptop>
+References: <20220812080050.59850-1-samuel@sholland.org> <2839208.e9J7NaK4W3@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220722215445.3548530-13-marcel@ziswiler.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-07-22 23:54:45, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Avoid the following checkpatch warning:
-> 
-> include/dt-bindings/clock/imx8mm-clock.h:284: check: Please don't use
->  multiple blank lines
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Dne nedelja, 14. avgust 2022 ob 09:47:42 CEST je Jernej =C5=A0krabec napisa=
+l(a):
+> Dne petek, 12. avgust 2022 ob 10:00:49 CEST je Samuel Holland napisal(a):
+> > Set the min/max rates for audio and video PLLs to keep them from going
+> > outside their documented stable ranges. Use the most restrictive of the
+> > "stable" and "actual" frequencies listed in the manual.
+> >=20
+> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+>=20
+> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Applied, thanks!
 
-> 
-> ---
-> 
-> (no changes since v1)
-> 
->  include/dt-bindings/clock/imx8mm-clock.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-> index 47c6f7f9582c..1f768b2eeb1a 100644
-> --- a/include/dt-bindings/clock/imx8mm-clock.h
-> +++ b/include/dt-bindings/clock/imx8mm-clock.h
-> @@ -281,7 +281,6 @@
->  #define IMX8MM_CLK_CLKOUT2_DIV			256
->  #define IMX8MM_CLK_CLKOUT2			257
->  
-> -
->  #define IMX8MM_CLK_END				258
->  
->  #endif
-> -- 
-> 2.35.1
-> 
+Best regards,
+Jernej
+
+
+
