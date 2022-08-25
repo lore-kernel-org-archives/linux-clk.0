@@ -2,260 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658ECC3F6B0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 11:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6997DC3F6B0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 12:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241715AbiHYLec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Aug 2022 07:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50594 "EHLO
+        id S236708AbiHYMqL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Aug 2022 08:46:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241713AbiHYLeP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 07:34:15 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2262AF4BC
-        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2022 04:33:48 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id l8so10301916lfc.12
-        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2022 04:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=Tq0s9B485yoq3tV5HmxMkObKnV3Mr1APkcEYUXUMsb0=;
-        b=lFelrwdgyU0S7QCGZG4WC4OD1o/tcyBXsjjSh54M9wMD+cwqfLYayIQCN/GqBHbHxZ
-         oLJ4G1d44o0bIJYbyVz5CWA/FevFy7L/b1qtl34SgeGctg7orXBdL5PKecyygfI/2xxt
-         tVAjPszcQXAkc8iaB48dn+ob+iWxr8wpQwR1eUdvngppmoBJugWt3nsMqfGJmVFm5V7d
-         1p4OuhZCQYxqHYTII8q9h+li56i6UW2cdgAPwri77xsWvxNhx7hPFyJtp0TZ/oz85ZFd
-         95+sRXVj0Rxap9qMy+GQz2N9aXsJDQTPP77tlYUWwgSJ7D8MGXKP+Nh3J01EnpYPRZUn
-         98WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=Tq0s9B485yoq3tV5HmxMkObKnV3Mr1APkcEYUXUMsb0=;
-        b=hGOmfTyCVdm1ZNOwT4nFwXcBzywjLcfFTdesu5dTnqoUYj4DObthE3yl0tgUs5Qg9v
-         hOeVrUM73+aVP13itboSpMaY7J4aUSStzZoBQCPcDe4LgXHbDvTsrSDrYgNsgntTvEPI
-         ApOgr5rGYyaXnZkjv+9JNNtTkiqigFVr5rtEoUBuTUFqP73BMFYYDHHNUrgxhNAj19gH
-         Y2DJC8VjILLu4XnS99uZvrrOEhJn5g/kFriqBNsEjuxE85hQDHQdgNUvBeKo9cbysrhM
-         nstjqWq5ug0k5qu2XmgtKYq5XD/Y6qI++PsQstoUcvI3DrOapxzez2IVuFH2Xx4hDuhr
-         gRfQ==
-X-Gm-Message-State: ACgBeo0dbdTUjRMCHT81dNGbu+k8xe2oPbskR2w0GM+HX+4NGG+FyUQ0
-        uELm1d8VJe+hwXMVxUSh9yKddA==
-X-Google-Smtp-Source: AA6agR7uYhTEmWfh0/JQDYwVaRIxA3JmwcnbxkFxOGoCltN/foI9prmdgFxeyJpRr7c/V2eZZ6Nk6w==
-X-Received: by 2002:a05:6512:2611:b0:478:da8f:e2d8 with SMTP id bt17-20020a056512261100b00478da8fe2d8mr990459lfb.460.1661427227697;
-        Thu, 25 Aug 2022 04:33:47 -0700 (PDT)
-Received: from krzk-bin.starman.ee (82.131.98.15.cable.starman.ee. [82.131.98.15])
-        by smtp.gmail.com with ESMTPSA id e18-20020a195012000000b0048b0aa2f87csm446764lfb.181.2022.08.25.04.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 04:33:46 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Marek Vasut <marex@denx.de>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 5/5] dt-bindings: display: drop minItems equal to maxItems
-Date:   Thu, 25 Aug 2022 14:33:34 +0300
-Message-Id: <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
-References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S233885AbiHYMqK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 08:46:10 -0400
+X-Greylist: delayed 387 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 25 Aug 2022 05:46:06 PDT
+Received: from mail.bugwerft.de (mail.bugwerft.de [46.23.86.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 00F694D17B;
+        Thu, 25 Aug 2022 05:46:06 -0700 (PDT)
+Received: from hq-00021.holoplot.net (unknown [176.126.217.202])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id A9A02421360;
+        Thu, 25 Aug 2022 12:39:37 +0000 (UTC)
+From:   Daniel Mack <daniel@zonque.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
+        Daniel Mack <daniel@zonque.org>
+Subject: [PATCH 2/2] clk: cs2000-cp: make PLL lock timeout configurable
+Date:   Thu, 25 Aug 2022 14:39:24 +0200
+Message-Id: <20220825123924.2284276-2-daniel@zonque.org>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220825123924.2284276-1-daniel@zonque.org>
+References: <20220825123924.2284276-1-daniel@zonque.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-minItems, if missing, are implicitly equal to maxItems, so drop
-redundant piece to reduce size of code.
+The driver currently does 256 iterations of reads from the DEVICE_CTRL
+register to wait for the PLL_LOCK to clear, and sleeps one microsecond
+after each attempts.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This isn't ideal because
+
+ a) the total time this allows for the device to settle depends on the I2C
+    bus speed, and
+ b) the device might need more time, depending on the application.
+
+This patch allows users to configure this timeout through a new device-tree
+property "cirrus,pll-lock-timeout-msec".
+
+In order to not break existing applications, a default value of 50 ms is
+assumed: For each read cycle, 8 bits are sent for the register address, and
+8 bits are read with the values. 16 bits take about 160 us on a 100 kHz bus
+and 40 us on a 400 kHz bus. Hence 256 iterations would take a maximum of
+around 44 ms. Round up to be on the safe side.
+
+Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml   | 1 -
- .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 --
- Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 --
- .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 --
- .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 1 -
- .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 1 -
- .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 1 -
- .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml  | 1 -
- .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml   | 2 --
- 9 files changed, 13 deletions(-)
+ drivers/clk/clk-cs2000-cp.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml b/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
-index 2ebaa43eb62e..b19be0804abe 100644
---- a/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
-@@ -25,7 +25,6 @@ properties:
-     const: ldb
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index aa5c72bab83e..6ba36b470a74 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -110,6 +110,8 @@ struct cs2000_priv {
+ 	bool lf_ratio;
+ 	bool clk_skip;
  
-   reg:
--    minItems: 2
-     maxItems: 2
++	unsigned int pll_lock_timeout_ms;
++
+ 	/* suspend/resume */
+ 	unsigned long saved_rate;
+ 	unsigned long saved_parent_rate;
+@@ -171,21 +173,16 @@ static int cs2000_ref_clk_bound_rate(struct cs2000_priv *priv,
+ static int cs2000_wait_pll_lock(struct cs2000_priv *priv)
+ {
+ 	struct device *dev = priv_to_dev(priv);
+-	unsigned int i, val;
++	unsigned int val;
+ 	int ret;
  
-   reg-names:
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-index 880bfe930830..3b609c19e0bc 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-@@ -66,13 +66,11 @@ properties:
-       2 DSI links.
+-	for (i = 0; i < 256; i++) {
+-		ret = regmap_read(priv->regmap, DEVICE_CTRL, &val);
+-		if (ret < 0)
+-			return ret;
+-		if (!(val & PLL_UNLOCK))
+-			return 0;
+-		udelay(1);
+-	}
+-
+-	dev_err(dev, "pll lock failed\n");
++	ret = regmap_read_poll_timeout(priv->regmap, DEVICE_CTRL, val,
++				       !(val & PLL_UNLOCK), USEC_PER_MSEC,
++				       priv->pll_lock_timeout_ms * USEC_PER_MSEC);
++	if (ret < 0)
++		dev_err(dev, "pll lock failed\n");
  
-   assigned-clocks:
--    minItems: 2
-     maxItems: 2
-     description: |
-       Parents of "byte" and "pixel" for the given platform.
+-	return -ETIMEDOUT;
++	return ret;
+ }
  
-   assigned-clock-parents:
--    minItems: 2
-     maxItems: 2
-     description: |
-       The Byte clock and Pixel clock PLL outputs provided by a DSI PHY block.
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-index 716f921e3532..d9ad8b659f58 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-@@ -37,7 +37,6 @@ properties:
+ static int cs2000_clk_out_enable(struct cs2000_priv *priv, bool enable)
+@@ -481,6 +478,10 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
+ 	if (ret < 0)
+ 		return ret;
  
-   qcom,phy-rescode-offset-top:
-     $ref: /schemas/types.yaml#/definitions/int8-array
--    minItems: 5
-     maxItems: 5
-     description:
-       Integer array of offset for pull-up legs rescode for all five lanes.
-@@ -49,7 +48,6 @@ properties:
++	priv->pll_lock_timeout_ms = 50;
++	of_property_read_u32(np, "cirrus,pll-lock-timeout-msec",
++			     &priv->pll_lock_timeout_ms);
++
+ 	priv->clk_skip = of_property_read_bool(np, "cirrus,clock-skip");
  
-   qcom,phy-rescode-offset-bot:
-     $ref: /schemas/types.yaml#/definitions/int8-array
--    minItems: 5
-     maxItems: 5
-     description:
-       Integer array of offset for pull-down legs rescode for all five lanes.
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
-index 921bfe925cd6..6380eeebb073 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
-@@ -24,7 +24,6 @@ properties:
-       - samsung,exynos5433-decon-tv
- 
-   clocks:
--    minItems: 11
-     maxItems: 11
- 
-   clock-names:
-@@ -59,7 +58,6 @@ properties:
-       - const: te
- 
-   iommus:
--    minItems: 2
-     maxItems: 2
- 
-   iommu-names:
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
-index 7d405f2febcd..26e5017737a3 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
-@@ -24,7 +24,6 @@ properties:
-     const: samsung,exynos5433-mic
- 
-   clocks:
--    minItems: 2
-     maxItems: 2
- 
-   clock-names:
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
-index 969bd8c563a5..c06f306e8d14 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
-@@ -22,7 +22,6 @@ properties:
-     const: samsung,exynos7-decon
- 
-   clocks:
--    minItems: 4
-     maxItems: 4
- 
-   clock-names:
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
-index 5d5cc220f78a..210d856b3b57 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
-@@ -27,7 +27,6 @@ properties:
-     const: 1
- 
-   clocks:
--    minItems: 2
-     maxItems: 2
- 
-   clock-names:
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-index dbdf0229d9f6..4755a73473c7 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-@@ -59,7 +59,6 @@ properties:
-     maxItems: 2
- 
-   power-domain-names:
--    minItems: 2
-     maxItems: 2
- 
- allOf:
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-index 4154ae01ad13..5f4f0fb4b692 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-@@ -42,11 +42,9 @@ properties:
-     maxItems: 1
- 
-   interconnects:
--    minItems: 6
-     maxItems: 6
- 
-   interconnect-names:
--    minItems: 6
-     maxItems: 6
- 
-   operating-points-v2:
+ 	ref_clk_rate = clk_get_rate(priv->ref_clk);
 -- 
-2.34.1
+2.37.2
 
