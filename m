@@ -2,114 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44161C64990
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 13:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9814ECAA24
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Aug 2022 16:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234550AbiHYNpK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Aug 2022 09:45:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36100 "EHLO
+        id S243046AbiHYQ1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Aug 2022 12:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233743AbiHYNpJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 09:45:09 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8FB11C2C;
-        Thu, 25 Aug 2022 06:45:07 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id l23so8458579lji.1;
-        Thu, 25 Aug 2022 06:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=LNQ1P5VfR2hkrO1KVSkVyiPofBvt2GF2rWkw17ZqdPc=;
-        b=Uj3kdoKnIficr7T0mxpriXp3Bhpz+uGwLNnfEOqvw4QJBLkF1DPeQBXj12Rx9AMBHl
-         /9GbNFs8SAt20sraYH0vWtihEXigfs1Jz46PtgxQE3fCnhweauy24KnfVUNMHylbAN7q
-         488xIslKivbNcFC3fszq2p6rOXKAPj4tWhBr4T9LkyA7Vcee4QBsYWXl4wfaEruusuy0
-         HThiG1HWcPt9moxHpq1CsIqfQHvtpTKBVSbOdEOWRkVNbvYr5WzgHwriNyqvWlyeXMxP
-         havgWHIFHhQzEi88LyOBZ9EOyCS05e6rQGAVvgIqIjVh8ICOQT27pErGJzvTJxJy3dW4
-         baHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=LNQ1P5VfR2hkrO1KVSkVyiPofBvt2GF2rWkw17ZqdPc=;
-        b=mpzA2x12QaKTXcUcIxAo8ZsuHjpyjV1YhDIuCqBl0/8IengnmckaxpW1LVBjAXZSPF
-         KZSP6KocW6KVqMyePR2uv7mzFjSPdfIzfA80Dh81CQRyq2+NQA1CM+L44Dtf5tuYKmJB
-         VgwQd6f1NfwqDMCSNYcAQeNKiM9nUzGyJeVJAgnvZfOI3bVk2xOQCqKutB3xe5o1CFLC
-         EOcSIjxBR2p1xwuGGK1GWQKKpmP085UjukrXnxUM1kEsLvZs1ehjTXka6FuUspGSXUMq
-         Fvt21+WkJ5P5tWPA/vjqZw5mR0yzmYHFShmtMFmcl4ioxvUdLkAOMWBISAJdtKZo0ENO
-         61nA==
-X-Gm-Message-State: ACgBeo335xD7DC2Ou2rXe6kH3ehRt881SnHQ6hQAwZQ3EuxOIqBRwqj/
-        ep6CzKVAzGUUjI4TLtQSHU+jy7m/7M+8sw==
-X-Google-Smtp-Source: AA6agR6W/G7rOoiqL0vEYBlVB5eoB4lN8B1UfT+c7FAeskxQeqGUO6kguGNrdSz6l9Bzihl67aZmPQ==
-X-Received: by 2002:a05:651c:221e:b0:25f:f069:1c13 with SMTP id y30-20020a05651c221e00b0025ff0691c13mr1200422ljq.390.1661435105696;
-        Thu, 25 Aug 2022 06:45:05 -0700 (PDT)
-Received: from mobilestation ([95.79.140.178])
-        by smtp.gmail.com with ESMTPSA id a12-20020ac25e6c000000b0048af0df1041sm496671lfr.255.2022.08.25.06.45.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 06:45:05 -0700 (PDT)
-Date:   Thu, 25 Aug 2022 16:45:02 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
+        with ESMTP id S233475AbiHYQ1S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2022 12:27:18 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A58FB7EF6;
+        Thu, 25 Aug 2022 09:27:17 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09F8C2B3;
+        Thu, 25 Aug 2022 18:27:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1661444834;
+        bh=Jia0FRh1rO7ns0vJdDk2RVbMJz6ELVXmn8iQUk4lGH0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pmf6ItrEGPVynig39smn1gxFCAdOnqEaKcA3Ne6NFSkl3PYeoB1FHqSFjAWWFAQM9
+         VwY8zxrWIpHtOHTLDc7H1CjMb3FzimbqDZarEKL5EykPPtcOVHODKjPRd3lDTke0Nx
+         rLCwqiCI2Ueu/Yql7ai47z0DW+6bBrMbV8Dk+7CE=
+Date:   Thu, 25 Aug 2022 19:27:07 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND v10 6/7] clk: baikal-t1: Add DDR/PCIe directly
- controlled resets support
-Message-ID: <20220825134502.alxzlikv7ftir2fi@mobilestation>
-References: <20220822182934.23734-1-Sergey.Semin@baikalelectronics.ru>
- <20220822182934.23734-7-Sergey.Semin@baikalelectronics.ru>
- <c3831c5a-7e10-2112-83e0-4ec2d70001c2@linaro.org>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Marek Vasut <marex@denx.de>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: socionext,uniphier-system-cache: drop
+ minItems equal to maxItems
+Message-ID: <Ywei272RbxYZa7lO@pendragon.ideasonboard.com>
+References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c3831c5a-7e10-2112-83e0-4ec2d70001c2@linaro.org>
+In-Reply-To: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 01:23:32PM +0300, Krzysztof Kozlowski wrote:
-> On 22/08/2022 21:29, Serge Semin wrote:
-> > Aside with a set of the trigger-like resets Baikal-T1 CCU provides two
-> > additional blocks with directly controlled reset signals. In particular it
-> > concerns DDR full and initial resets and various PCIe sub-domains resets.
-> > Let's add the direct reset assertion/de-assertion of the corresponding
-> > flags support into the Baikal-T1 CCU driver then. It will be required at
-> > least for the PCIe platform driver. Obviously the DDR controller isn't
-> > supposed to be fully reset in the kernel, so the corresponding controls
-> > are added just for the sake of the interface implementation completeness.
-> > 
-> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > 
-> > ---
-> > 
-> > Changelog v6:
-> > - Refactor the code to support the linear reset IDs only. (@Philipp)
-> > 
-> > Changelog v7:
-> > - Drop empty line from the sys_rst_info structure initialization block.
-> >   (@Philipp)
-> > ---
-> >  drivers/clk/baikal-t1/ccu-rst.c     | 66 +++++++++++++++++++++++++++++
-> >  drivers/clk/baikal-t1/ccu-rst.h     | 10 +++++
-> >  include/dt-bindings/reset/bt1-ccu.h |  9 ++++
+Hi Krzysztof,
+
+Thank you for the patch.
+
+On Thu, Aug 25, 2022 at 02:33:30PM +0300, Krzysztof Kozlowski wrote:
+> minItems, if missing, are implicitly equal to maxItems, so drop
+> redundant piece to reduce size of code.
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> Do not mix drivers and bindings. Bindings always go separately, so this
-> has to be split.
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Ok. Sigh...
-
--Sergey
-
+> ---
+>  .../bindings/arm/socionext/socionext,uniphier-system-cache.yaml  | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> Best regards,
-> Krzysztof
+> diff --git a/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml b/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml
+> index 7ca5375f278f..6096c082d56d 100644
+> --- a/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml
+> +++ b/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml
+> @@ -22,7 +22,6 @@ properties:
+>      description: |
+>        should contain 3 regions: control register, revision register,
+>        operation register, in this order.
+> -    minItems: 3
+>      maxItems: 3
+>  
+>    interrupts:
+
+-- 
+Regards,
+
+Laurent Pinchart
