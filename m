@@ -2,87 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1633EECAAD7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5448ECAAD8
 	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 19:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbiHZTXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Aug 2022 15:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48304 "EHLO
+        id S1344005AbiHZTXZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Aug 2022 15:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238927AbiHZTXX (ORCPT
+        with ESMTP id S240616AbiHZTXX (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 15:23:23 -0400
 Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64702BD4FF;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C19BBD1C4;
         Fri, 26 Aug 2022 12:23:21 -0700 (PDT)
 Received: from toolbox.int.toradex.com ([104.5.61.88]) by mrelay.perfora.net
- (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LgJSE-1pFJ152lGe-00njR1;
- Fri, 26 Aug 2022 21:22:59 +0200
+ (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LuO6D-1pSrpI3FaB-011fPg;
+ Fri, 26 Aug 2022 21:23:03 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Abel Vesa <abelvesa@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
         Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/5] ARM: arm64: dts/clk: imx: indentation permission whitespace cleanup 2
-Date:   Fri, 26 Aug 2022 21:22:47 +0200
-Message-Id: <20220826192252.794651-1-marcel@ziswiler.com>
+Subject: [PATCH v1 4/5] clk: imx6sll: add proper spdx license identifier
+Date:   Fri, 26 Aug 2022 21:22:51 +0200
+Message-Id: <20220826192252.794651-5-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220826192252.794651-1-marcel@ziswiler.com>
+References: <20220826192252.794651-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:VoDgq9lYEHnNho3cG7ChG/Y/OtsKMHJBzk7vlKhhojNj1hPH87L
- lNoZqHashK5LU5KaEFT4CAa717GNqwgDBnn5pM2/22MaEa3l/xhTvjHjL/vifyDhCYUxufl
- jdIfEaOA1xuw9Dii42uug1x+p15lyX+grmR2q7X6WOLihJqbwR+BtIFOWWNkHobq1l9cvm1
- a5LpXVAKWpDa99K7CioAQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VdyUJT2x4YU=:vdggwwCV+rKRn2Ko65Piy7
- yU9zkmkslhTBG5V/zzVGD9215cOwn7D0RuL1yMJm5WfKEQVaIj1co7yuHDZ65UOVT2Jo/T5Qr
- 1VfQO8BtSypDJb0lNQmJAApQCScWvErYBBflPD755o/ktp9dM8hKamoFNW1VO6cjKCwHfpjOr
- FVjsL8JKADaQDfEio9vFvShqx+BnLMGe6jCGDV1OhxfQmpvSCGglGdOUvmDF5TbfogdDZxdf6
- hPuQ/pMsLKSNiyjdoSD/190Ht4W/YTJQUzv7cd+1/Ykj/JDfmEHe0NJRDBsFrtOxGAal+QeCH
- SMO87796ldf8GCchfbhwXfVBhvWRNy5rfWVjtSTcTWUKC+smKsJPXYLAYz+fDp1GWROYOVCZs
- qxcq+g2cQE79YxjGjy2wuBSncla/sDGkH02sHtkbBxFYrMunMIuuyyN8lFTbvglZlwEDz1Ea/
- O4JJZFmOLdIyMFZx+/8E/NyQgG8Vkfaz1x1QhSFQSaFEwzxxxp1E8YxYfMAk1njty6NPZBSs/
- qFbfd4YJEy333pqej1rVrrGO26v1+2kLIPvQNjA7GIPMbzFy7E+N0t/BFNmDxhhwWPKMyyFyZ
- nfd811B5HrV7sHntsewGO++VsXP2JFRIecWDGO4fJUGpwO3k+L2f48Sfx9nM3taSZx22+8GlV
- ShSbconPLWTIwXNpR8Cwb13oelAVrIFp2XyxM92fAsTVBz9tigavU+jGmg2UZAG51vVRKJAHL
- wPx1xHfCvJT881+YgB1K104Buvrb/f6WPNyMiA==
+X-Provags-ID: V03:K1:bBK5+ccOcg9oFHuj71fLYRCm5D4tGKkcLhNY9czGB1ZIYOl1ijT
+ 1Gi5n4SW03McExgteWoyTNYSe6iFb0m7L8wbFi2TFSphKleqalwxiyZHOwekqVaobfM1+em
+ 4C3zmkd4/FffP0I1GPyKI0mJp5TbsHM7s0mofdqllARZr5TfYqUHOt+ZDKOSYjtGVEJBpX/
+ GssUz4AloE94dIjBLY0JQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3AetIU6BX+A=:WWYTYyYyqXfMQ1JtnaT7yx
+ R8Lxd0DlH7tHg4IRdcV5IFaM1OICVckYETHNv0XIugkbBv5FWc8nmaNExJqqJnIP9G+TdyPAt
+ evSY0ebMl0vOlntvU0f3DIau3FykVKeUV6jCmXnr2v34WsVobSOTuqRWSGC5SP4NJTWSFXH2e
+ 7AynmJ9W6naELYwHXd8VAWYsaNMLoBC+ho0q2EnPrl9pTLf2xjsgJHhkofBSyeC4GcL+e8/bd
+ sC9wbJolk7MHRPz37JKoeou4/ZZpdJjV6DwikaF5/YSBI0CUToB8/7ql+QrZkk+l+ON0VnCME
+ CUmC3cha6fekIIqpon/xsf7nDO4URTWgwJMRVyDoib1O58AhHloYjhpmMtGei/xHTU+wmoim+
+ 0RgiCCwx8sg96VhybUBpd7D7wbX6gRbYI1pAYFhutz8swBC/ZZNXL8OwpRIWmP8QMTJITOKP0
+ 21CVqHFoWVSzMEUyknYGL+wg9vltLsm1jv91iWlr/S4fG7yV6ffHUdP6GPg9Nvh8Q7elwef+i
+ LekIjnNQ69KRwzkVsqg4p7Y0N3VFnPkh4hxs8ubT7B6tIM95q5/LFsXqbFpY5DX5rkav2skLE
+ w/ulX4sVar7NqSiMsG0qWNu2riSTA15IjI0E4zb/0qp/n1TksI9y0vj22V+7DW0DCbciuLp6E
+ UjZhbrr00NQnjGL8nioCKRYBQEeSn9RuwhDaU2mXI66tByq7tJrM1H5joyCLz/fT+fZcHODmA
+ K8MIu4dXyTlg39WFbJOULI2zn4yl7agX0ziDhA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
+This fixes the following error:
 
-While further synchronising them imx device trees with U-Boot I stumbled
-over more checkpatch warnings. This series addresses those trivial
-indentation, file permission and/or whitespace cleanups.
+include/dt-bindings/clock/imx6sll-clock.h:1: warning: Improper SPDX
+ comment style for 'include/dt-bindings/clock/imx6sll-clock.h', please
+ use '/*' instead
+include/dt-bindings/clock/imx6sll-clock.h:1: warning: Missing or
+ malformed SPDX-License-Identifier tag in line 1
 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
 
-Marcel Ziswiler (5):
-  ARM: dts: imx6sl: use tabs for code indent
-  ARM: dts: imx6sx-udoo-neo: don't use multiple blank lines
-  arm64: dts: imx8ulp: no executable source file permission
-  clk: imx6sll: add proper spdx license identifier
-  dt-bindings: imx8ulp: clock: no spaces before tabs
+ include/dt-bindings/clock/imx6sll-clock.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/imx6sl.dtsi                 | 20 +++++++++----------
- arch/arm/boot/dts/imx6sx-udoo-neo.dtsi        | 14 ++++++-------
- .../boot/dts/freescale/imx8ulp-pinfunc.h      |  0
- include/dt-bindings/clock/imx6sll-clock.h     |  2 +-
- include/dt-bindings/clock/imx8ulp-clock.h     |  4 ++--
- 5 files changed, 19 insertions(+), 21 deletions(-)
- mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8ulp-pinfunc.h
-
+diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-bindings/clock/imx6sll-clock.h
+index f446710fe63d..494fd0c37fb5 100644
+--- a/include/dt-bindings/clock/imx6sll-clock.h
++++ b/include/dt-bindings/clock/imx6sll-clock.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2016 Freescale Semiconductor, Inc.
+  * Copyright 2017-2018 NXP.
 -- 
 2.36.1
 
