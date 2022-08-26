@@ -2,102 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F5ECAAA3
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 07:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B748BECAAD2
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 08:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233959AbiHZHQf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Aug 2022 03:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45986 "EHLO
+        id S245052AbiHZI0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Aug 2022 04:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244493AbiHZHQd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 03:16:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D80587688;
-        Fri, 26 Aug 2022 00:16:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AD26B61CC3;
-        Fri, 26 Aug 2022 07:16:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F75C433C1;
-        Fri, 26 Aug 2022 07:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661498190;
-        bh=wqk1HzXb2rBovh/rKpl4Yg9KEE+WbiP1hgGfqq5MXss=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eVJrRYxISVuTY3gzomQfPWUtggymAdcCxg6rwKwbVorTkbRqw1o9eeupvktWZ7nff
-         1jPNWAUuQnH2NyN21SeSNDa/gXMvuDUPkHgxubXZzsekGyCz7L6ZBTKTmL83TLaKso
-         JmcUYh9cKrHMx2jJGHTLyL0W6jfErD4zzjlfeamj/n7BuhxgX6QL7IU4rJ8JY0eqPQ
-         CkvBfeLNxDeMaxeMq0xSUQtvMQuzMuvfE4W1lLsG9DEwtzOq1i3ah5QzAubkbpeqbK
-         tFFMBeEIDJu1Zk0E2anNPQRqiIKshhkqP0e2nRSFF/lH89TVa4q9UUhQ7TsrkFT/TZ
-         LFlMB+9TnV46A==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oRTa2-0000qb-31; Fri, 26 Aug 2022 09:16:38 +0200
-Date:   Fri, 26 Aug 2022 09:16:38 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sc7280: Keep the USB GDSCs always
- on
-Message-ID: <YwhzVlTZLMCAbZi7@hovoldconsulting.com>
-References: <20220825182152.v2.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
- <20220825182152.v2.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
+        with ESMTP id S229922AbiHZI0d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 04:26:33 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD448036A;
+        Fri, 26 Aug 2022 01:26:30 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id h22so749118qtu.2;
+        Fri, 26 Aug 2022 01:26:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=/1WQSdLoDwGGyvrmz3+n2uqmIsPY96qMfTE7qRiQCnI=;
+        b=4PXteGd7ivlmZ8Tr6L5agUbkxHZZ7BlNds+9j6glPdMrx2YI/uddX8+vlrTVgS10uQ
+         MEOdNFPXnGDLj2jN0Fno/QXNINjyy2QuQb0dl44paWrg0znyp282T/m9eE6hz7IdfNWS
+         Kh4jno+syDi7z4C+DbtMmEsl/UJtzFIvJT4eZFK60NO9qety/qo6QVxuvMUu2e+2HApS
+         APHp4JAEMqZ55fsb+22sgc8vU1o8F3qMJ072fDF2KUHTVHGkggYqNblpNGGFgHZ8r5TV
+         Wcy7hIQLpWQKLxd//KV0ocC8vvGqZ7pjjDalFhi3KjYI9FVUmw0HhXB/0nFufeNFOnFH
+         SbFA==
+X-Gm-Message-State: ACgBeo1l4NF9WBuJCzJOnq4J2SnnX9VQLsGkzvYR6PTxdQnmNMVG9wQK
+        I+/IPpzIvqRJoHewSARBvltHRi0X1M7Fzw==
+X-Google-Smtp-Source: AA6agR5UuvtAuT2zF6uXkuIsrUhtNJOR8P7e/JchG5aLLa94K/JQNJrjDCLSBbtfYqAQka/lXEbSoQ==
+X-Received: by 2002:ac8:7c46:0:b0:344:91e1:42ed with SMTP id o6-20020ac87c46000000b0034491e142edmr6790408qtv.105.1661502389699;
+        Fri, 26 Aug 2022 01:26:29 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id e12-20020ac8130c000000b003430cbb0006sm874891qtj.1.2022.08.26.01.26.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Aug 2022 01:26:29 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-33da3a391d8so18743067b3.2;
+        Fri, 26 Aug 2022 01:26:29 -0700 (PDT)
+X-Received: by 2002:a25:778d:0:b0:696:4bb6:9aaa with SMTP id
+ s135-20020a25778d000000b006964bb69aaamr4314577ybc.380.1661502389319; Fri, 26
+ Aug 2022 01:26:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220825182152.v2.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
+References: <20220819193944.337599-1-phil.edworthy@renesas.com> <20220819193944.337599-2-phil.edworthy@renesas.com>
+In-Reply-To: <20220819193944.337599-2-phil.edworthy@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 26 Aug 2022 10:26:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXa8bJbM=RhQYOrJiBNWCnhZYHEASRW3oQHAQFy8BDV2w@mail.gmail.com>
+Message-ID: <CAMuHMdXa8bJbM=RhQYOrJiBNWCnhZYHEASRW3oQHAQFy8BDV2w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a09g011: Add IIC clock and reset entries
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 25, 2022 at 06:21:59PM -0700, Matthias Kaehlcke wrote:
-> When the GDSC is disabled during system suspend USB is broken on
-> sc7280 when the system resumes. Mark the GDSC as always on to
-> make sure USB still works after system suspend.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - set the flags of the GDSC not of the GDSC power domain
-> - updated commit message
-> 
->  drivers/clk/qcom/gcc-sc7280.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-> index 7ff64d4d5920..adef68d2cb0b 100644
-> --- a/drivers/clk/qcom/gcc-sc7280.c
-> +++ b/drivers/clk/qcom/gcc-sc7280.c
+On Fri, Aug 19, 2022 at 9:40 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> Add IIC groups clock and reset entries to CPG driver.
+> IIC Group A consists of IIC0 and IIC1. IIC Group B consists of
+> IIC2 and IIC3. To confuse things, IIC_PCLK0 is used by group A
+> and IIC_PCLK1 is used by group B.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-Perhaps you can add a comment here about why this is needed similar to
-what I did for sc8280xp:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.1.
 
-	https://lore.kernel.org/all/20220805121250.10347-3-johan+linaro@kernel.org/
+Gr{oetje,eeting}s,
 
-> @@ -3127,7 +3127,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
->  		.name = "gcc_usb30_prim_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = VOTABLE,
-> +	.flags = VOTABLE | ALWAYS_ON,
->  };
->  
->  static struct gdsc gcc_usb30_sec_gdsc = {
+                        Geert
 
-Look good otherwise. For both patches:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
