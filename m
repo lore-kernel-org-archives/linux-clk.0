@@ -2,144 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B078FECAAA3
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 07:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F5ECAAA3
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 07:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238879AbiHZHMI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Aug 2022 03:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36428 "EHLO
+        id S233959AbiHZHQf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Aug 2022 03:16:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbiHZHMH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 03:12:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8598DC04CA;
-        Fri, 26 Aug 2022 00:12:06 -0700 (PDT)
+        with ESMTP id S244493AbiHZHQd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 03:16:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D80587688;
+        Fri, 26 Aug 2022 00:16:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1C5C8B82F0D;
-        Fri, 26 Aug 2022 07:12:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF99BC433D6;
-        Fri, 26 Aug 2022 07:12:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AD26B61CC3;
+        Fri, 26 Aug 2022 07:16:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F75C433C1;
+        Fri, 26 Aug 2022 07:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661497923;
-        bh=kt9JPLC7CCExSXRZP3B3Wuc6p/ol2wlUIiF6Mx920cY=;
+        s=k20201202; t=1661498190;
+        bh=wqk1HzXb2rBovh/rKpl4Yg9KEE+WbiP1hgGfqq5MXss=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WOIyLxoTBtPfoPkZ1fEpC8lLHH9HEQ45oxTFNAyrOCgvvgM4Pk3sFb4O/DehvstRX
-         NQNc5d9w1thudV4z3KkGq5qz79AYwOv4oF0ubvUZOq2BWmSe4Yrt+WeVZvi6g9e6Yy
-         r6kez22pAFvaQAv5P8Im+vG8fWXCsGBZh+2n1V8j3yakNicCLBzLR+L2PrXNm0PTjm
-         5sAOnlnv7haOjBHnZJFw5T6DhAZAVCxaOmBUVz1riv7VlBNKoo1FlxZPiFDmS4HpYX
-         YkaJ1TZG6jfrlFgLzl7xkMWWC4jci8hXX11ltNvVQAH+XOvsNxWUTvNOiFJLpAuEg+
-         Di2cKANXXGtKw==
+        b=eVJrRYxISVuTY3gzomQfPWUtggymAdcCxg6rwKwbVorTkbRqw1o9eeupvktWZ7nff
+         1jPNWAUuQnH2NyN21SeSNDa/gXMvuDUPkHgxubXZzsekGyCz7L6ZBTKTmL83TLaKso
+         JmcUYh9cKrHMx2jJGHTLyL0W6jfErD4zzjlfeamj/n7BuhxgX6QL7IU4rJ8JY0eqPQ
+         CkvBfeLNxDeMaxeMq0xSUQtvMQuzMuvfE4W1lLsG9DEwtzOq1i3ah5QzAubkbpeqbK
+         tFFMBeEIDJu1Zk0E2anNPQRqiIKshhkqP0e2nRSFF/lH89TVa4q9UUhQ7TsrkFT/TZ
+         LFlMB+9TnV46A==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan@kernel.org>)
-        id 1oRTVj-0000oJ-J0; Fri, 26 Aug 2022 09:12:11 +0200
-Date:   Fri, 26 Aug 2022 09:12:11 +0200
+        id 1oRTa2-0000qb-31; Fri, 26 Aug 2022 09:16:38 +0200
+Date:   Fri, 26 Aug 2022 09:16:38 +0200
 From:   Johan Hovold <johan@kernel.org>
 To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Johan Hovold <johan+linaro@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org,
         Krishna Kurapati <quic_kriskura@quicinc.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc7280: Keep USB GDSC power domains
- on when USB wakeup is enabled
-Message-ID: <YwhyS7a8djIFPSOq@hovoldconsulting.com>
-References: <20220822115246.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
- <20220822115246.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
- <YwS3FCOqIeajMEgz@hovoldconsulting.com>
- <YwUDjaG6n95Ddij2@google.com>
- <YwXlsK3pjK/q1xwO@hovoldconsulting.com>
- <Ywf02oIXEL8G/Heo@google.com>
+Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sc7280: Keep the USB GDSCs always
+ on
+Message-ID: <YwhzVlTZLMCAbZi7@hovoldconsulting.com>
+References: <20220825182152.v2.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
+ <20220825182152.v2.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Ywf02oIXEL8G/Heo@google.com>
+In-Reply-To: <20220825182152.v2.2.If09027f73daa6e1ed95f5eab02326b543c67132e@changeid>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 25, 2022 at 03:16:58PM -0700, Matthias Kaehlcke wrote:
-> On Wed, Aug 24, 2022 at 10:47:44AM +0200, Johan Hovold wrote:
-> > On Tue, Aug 23, 2022 at 09:42:53AM -0700, Matthias Kaehlcke wrote:
-> > > On Tue, Aug 23, 2022 at 01:16:36PM +0200, Johan Hovold wrote:
-> > > > On Mon, Aug 22, 2022 at 11:53:11AM -0700, Matthias Kaehlcke wrote:
-> > > > > Set GENPD_FLAG_ACTIVE_WAKEUP for the USB GDSC power domains of SC7280.
-> > > > > 
-> > > > > Suggested-by: Johan Hovold <johan+linaro@kernel.org>
-> > > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > > > ---
-> > > > > 
-> > > > >  drivers/clk/qcom/gcc-sc7280.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-> > > > > index 7ff64d4d5920..4ff855269467 100644
-> > > > > --- a/drivers/clk/qcom/gcc-sc7280.c
-> > > > > +++ b/drivers/clk/qcom/gcc-sc7280.c
-> > > > > @@ -3125,6 +3125,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
-> > > > >  	.gdscr = 0xf004,
-> > > > >  	.pd = {
-> > > > >  		.name = "gcc_usb30_prim_gdsc",
-> > > > > +		.flags = GENPD_FLAG_ACTIVE_WAKEUP,
-> > > > 
-> > > > Have you verified that the power-domain doesn't need to remain on also
-> > > > when USB isn't used for wakeup?
-> > > 
-> > > So far I haven't observed issues with this on sc7180 and sc7280 when USB
-> > > wakeup is disabled.
-> > 
-> > Ok, good.
-> > 
-> > I would have assumed that it needed to stay always-on before the
-> > s/device_can_wakeup/device_may_wakeup/ change as before that the PHYs
-> > would be left on regardless of the (sysfs) wakeup setting.
+On Thu, Aug 25, 2022 at 06:21:59PM -0700, Matthias Kaehlcke wrote:
+> When the GDSC is disabled during system suspend USB is broken on
+> sc7280 when the system resumes. Mark the GDSC as always on to
+> make sure USB still works after system suspend.
 > 
-> That make sense, not sure why GENPD_FLAG_ACTIVE_WAKEUP works with wakeup
-> disabled.
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
 > 
-> In any case setting the genpd flags directly in the gdsc descriptor doesn't
-> seem to be the right thing to do. With GENPD_FLAG_ALWAYS_ON my sc7280 system
-> stalls at boot. It boots when ALWAYS_ON is set in the gdsc flags, which ends
-> up setting GENPD_FLAG_ALWAYS_ON of the genpd. I'll send a new version of this
-> series which sets the correct flag.
+> Changes in v2:
+> - set the flags of the GDSC not of the GDSC power domain
+> - updated commit message
+> 
+>  drivers/clk/qcom/gcc-sc7280.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> index 7ff64d4d5920..adef68d2cb0b 100644
+> --- a/drivers/clk/qcom/gcc-sc7280.c
+> +++ b/drivers/clk/qcom/gcc-sc7280.c
 
-Yes, GENPD_FLAG_ALWAYS_ON needs to be set via the gdsc ALWAYS_ON flag as
-genpd expects the PD to be on when registered or else it silently errors
-out...
+Perhaps you can add a comment here about why this is needed similar to
+what I did for sc8280xp:
 
 	https://lore.kernel.org/all/20220805121250.10347-3-johan+linaro@kernel.org/
 
-> > > > This is the case for sc8280xp and indicates that there are further
-> > > > missing pieces here (at least for that platform).
-> > > 
-> > > What are you observing on sc8280xp when wakeup is disabled?
-> > 
-> > The wakeup setting doesn't seem to have anything to do with the genpd
-> > issues on sc8280xp and the controller doesn't resume properly regardless
-> > of whether the PHYs have been disabled or not during suspend unless the
-> > PD is left on.
-> 
-> I'm essentially seeing the same. USB is hosed after resume unless the PD
-> is left on.
+> @@ -3127,7 +3127,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
+>  		.name = "gcc_usb30_prim_gdsc",
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> +	.flags = VOTABLE | ALWAYS_ON,
+>  };
+>  
+>  static struct gdsc gcc_usb30_sec_gdsc = {
 
-Thanks for confirming.
- 
-> On Chrome OS we currently work around that with a version of commit
-> d9be8d5c5b03 ("usb: dwc3: qcom: Keep power domain on to retain controller
-> status") which was reverted upstream. I'm not sure whether USB worked after
-> resume before we enabled wakeup support. I would have sworn it did, but we
-> landed an old version of the wakeup patches a long time ago, so my
-> memory might be failing me.
-> 
-> I wonder what the status on other QC platforms is, from a quick grep it
-> seems only msm8953 sets the USB gdsc to ALWAYS_ON.
+Look good otherwise. For both patches:
 
-Yes, this is likely needed on other platforms as well.
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 
 Johan
