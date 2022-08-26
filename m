@@ -2,183 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA0FECAAA6
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 17:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1633EECAAD7
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 19:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344640AbiHZRfL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Aug 2022 13:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37398 "EHLO
+        id S231512AbiHZTXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Aug 2022 15:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232757AbiHZRfI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 13:35:08 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5F63F306;
-        Fri, 26 Aug 2022 10:35:06 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 12so1984713pga.1;
-        Fri, 26 Aug 2022 10:35:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc;
-        bh=Gx0JBq+l4jotXAwLDzMOShME7SK/rLYxvD99gEQvolE=;
-        b=J+wIDMIfypIgTIwK9sZ84ysTX6gYuVJtwrwYEhMZDfiFA8OhCNrDqcOdHPRuauiK7n
-         uHIdVewB1BXyEg+IVw70DHP/08aNHZVKiyj+E5tsY4ZisVTOVhYPbgt0ABzwPCyULlV2
-         SbMmtPv7Wu8vpqDnunVR04WM7hH1AKvD5cE7FzY/3cBK+SBiKg3T9Qw/zDcfjAYQ7BDP
-         P8bDEca0F1ARBQtqmGi5KDJt/V+iiz83woWDpOFZqc21eidLkp2P3vw3q5S1KtdJtPKA
-         1TTbvu7EHY5W6n/HWMlvRJhV0CYVc5iPtm8jSAvIvlsHd48fDKVkWtUfr98bHIft/qs0
-         q36A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=Gx0JBq+l4jotXAwLDzMOShME7SK/rLYxvD99gEQvolE=;
-        b=z7Q42QL5hdqvKZWjEPecJhKPkeYUshxAgHc1Q5y3ghZQkOL+kobIKF1AeYNp+cc8T6
-         DehVV1z6ALnZM1IMpP45NWSnN151j4xX22FntJkzLBx5Amf4gpA8L7fh8mVqNUkMUfP3
-         3LSQktNrYapOFCxaYUNv7Vmktcaf67RTQ/GDkjdecwmFgW73VlOWlHBmpBvYMot/jwdd
-         fMsQ9qsDAP1BcUTfpudn2YMlhLQ46UkOBJIvxCqGKVWBIUduUM4ebawaWGm2MVO6RvEL
-         IKH4Q4lnYQqEzGLUjX7lvWynECPeXarcTCQ1aP4wHBDqCUfnowsVk5IdJ9np0kAOUoHs
-         Y0iQ==
-X-Gm-Message-State: ACgBeo3wypdF4melD+gWVvsfAGj0ghw2Xyu555YTBNQ4auNiecGqPUMR
-        OsVUcNoSHL1dQc5kK1yrnlQ=
-X-Google-Smtp-Source: AA6agR6pzbuZGDq4XpBovCuRLPVl6sKBi94+36RYoLCW71G5pvEYUPDBZxPBwPjhLlHGzm6VwvFt2Q==
-X-Received: by 2002:a05:6a00:14c5:b0:536:7d2f:883e with SMTP id w5-20020a056a0014c500b005367d2f883emr4793299pfu.36.1661535305833;
-        Fri, 26 Aug 2022 10:35:05 -0700 (PDT)
-Received: from Mahakal ([2401:4900:1b28:9ee6:f819:7c30:9d1b:586b])
-        by smtp.gmail.com with ESMTPSA id k1-20020a170902c40100b0016c9e5f291bsm1890070plk.111.2022.08.26.10.35.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Aug 2022 10:35:05 -0700 (PDT)
-Date:   Fri, 26 Aug 2022 23:04:59 +0530
-From:   "<Vishal Badole>" <badolevishal1116@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
-        vimal.kumar32@gmail.com, Mintu Patel <mintupatel89@gmail.com>
-Subject: Re: [PATCH v3] Common clock: To list active consumers of clocks
-Message-ID: <20220826173457.GA3785@Mahakal>
-References: <20220624010550.582BBC341C7@smtp.kernel.org>
- <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
- <20220822235014.86203C433D6@smtp.kernel.org>
+        with ESMTP id S238927AbiHZTXX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 15:23:23 -0400
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64702BD4FF;
+        Fri, 26 Aug 2022 12:23:21 -0700 (PDT)
+Received: from toolbox.int.toradex.com ([104.5.61.88]) by mrelay.perfora.net
+ (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LgJSE-1pFJ152lGe-00njR1;
+ Fri, 26 Aug 2022 21:22:59 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] ARM: arm64: dts/clk: imx: indentation permission whitespace cleanup 2
+Date:   Fri, 26 Aug 2022 21:22:47 +0200
+Message-Id: <20220826192252.794651-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220822235014.86203C433D6@smtp.kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:VoDgq9lYEHnNho3cG7ChG/Y/OtsKMHJBzk7vlKhhojNj1hPH87L
+ lNoZqHashK5LU5KaEFT4CAa717GNqwgDBnn5pM2/22MaEa3l/xhTvjHjL/vifyDhCYUxufl
+ jdIfEaOA1xuw9Dii42uug1x+p15lyX+grmR2q7X6WOLihJqbwR+BtIFOWWNkHobq1l9cvm1
+ a5LpXVAKWpDa99K7CioAQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VdyUJT2x4YU=:vdggwwCV+rKRn2Ko65Piy7
+ yU9zkmkslhTBG5V/zzVGD9215cOwn7D0RuL1yMJm5WfKEQVaIj1co7yuHDZ65UOVT2Jo/T5Qr
+ 1VfQO8BtSypDJb0lNQmJAApQCScWvErYBBflPD755o/ktp9dM8hKamoFNW1VO6cjKCwHfpjOr
+ FVjsL8JKADaQDfEio9vFvShqx+BnLMGe6jCGDV1OhxfQmpvSCGglGdOUvmDF5TbfogdDZxdf6
+ hPuQ/pMsLKSNiyjdoSD/190Ht4W/YTJQUzv7cd+1/Ykj/JDfmEHe0NJRDBsFrtOxGAal+QeCH
+ SMO87796ldf8GCchfbhwXfVBhvWRNy5rfWVjtSTcTWUKC+smKsJPXYLAYz+fDp1GWROYOVCZs
+ qxcq+g2cQE79YxjGjy2wuBSncla/sDGkH02sHtkbBxFYrMunMIuuyyN8lFTbvglZlwEDz1Ea/
+ O4JJZFmOLdIyMFZx+/8E/NyQgG8Vkfaz1x1QhSFQSaFEwzxxxp1E8YxYfMAk1njty6NPZBSs/
+ qFbfd4YJEy333pqej1rVrrGO26v1+2kLIPvQNjA7GIPMbzFy7E+N0t/BFNmDxhhwWPKMyyFyZ
+ nfd811B5HrV7sHntsewGO++VsXP2JFRIecWDGO4fJUGpwO3k+L2f48Sfx9nM3taSZx22+8GlV
+ ShSbconPLWTIwXNpR8Cwb13oelAVrIFp2XyxM92fAsTVBz9tigavU+jGmg2UZAG51vVRKJAHL
+ wPx1xHfCvJT881+YgB1K104Buvrb/f6WPNyMiA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 22, 2022 at 04:50:12PM -0700, Stephen Boyd wrote:
-> Quoting Vishal Badole (2022-08-02 11:09:47)
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index f00d4c1..c96079f 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -102,6 +102,7 @@ struct clk {
-> >         unsigned long min_rate;
-> >         unsigned long max_rate;
-> >         unsigned int exclusive_count;
-> > +       unsigned int enable_count;
-> >         struct hlist_node clks_node;
-> >  };
-> >  
-> > @@ -1008,6 +1009,10 @@ void clk_disable(struct clk *clk)
-> >                 return;
-> >  
-> >         clk_core_disable_lock(clk->core);
-> > +
-> > +       if (clk->enable_count > 0)
-> > +               clk->enable_count--;
-> > +
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_disable);
-> >  
-> > @@ -1169,10 +1174,16 @@ EXPORT_SYMBOL_GPL(clk_restore_context);
-> >   */
-> >  int clk_enable(struct clk *clk)
-> >  {
-> > +       int ret;
-> > +
-> >         if (!clk)
-> >                 return 0;
-> >  
-> > -       return clk_core_enable_lock(clk->core);
-> > +       ret = clk_core_enable_lock(clk->core);
-> > +       if (!ret)
-> > +               clk->enable_count++;
-> > +
-> > +       return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_enable);
-> 
-> We'll want the above three hunks to be a different patch so we can
-> discuss the merits of tracking per user enable counts. 
-Agreed, we will create a separate patch for the same.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-> Do you have a usecase for this or is it "just for fun"? By adding a count we have more
-> code, and we waste more memory to track this stat. I really would rather
-> not bloat just because, so please elaborate on your use case.
-> 
-Use case for per user count: If a consumer acquires the clocks without 
-calling clk_get() or devm_clk_get() and enables without calling clk_enable() 
-or clk_prepare_enable() (by bypassing the common clock framework), then dev_id 
-will not be sufficient to tell about how clk is acquired. Here per user enable 
-count can be used to tell that how clk is acquired and it is enabled by
-that particular device or not in case also where dev_id is NULL.
 
-We referred regualtor framework suggested by you in one of review point
-where they are also using enable count.
-> >  
-> > @@ -2953,28 +2964,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
-> >                                  int level)
-> >  {
-> >         int phase;
-> > +       struct clk *clk_user;
-> > +       int multi_node = 0;
-> >  
-> > -       seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
-> > +       seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
-> >                    level * 3 + 1, "",
-> > -                  30 - level * 3, c->name,
-> > +                  35 - level * 3, c->name,
-> >                    c->enable_count, c->prepare_count, c->protect_count,
-> >                    clk_core_get_rate_recalc(c),
-> >                    clk_core_get_accuracy_recalc(c));
-> >  
-> >         phase = clk_core_get_phase(c);
-> >         if (phase >= 0)
-> > -               seq_printf(s, "%5d", phase);
-> > +               seq_printf(s, "%-5d", phase);
-> >         else
-> >                 seq_puts(s, "-----");
-> >  
-> > -       seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
-> > +       seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
-> >  
-> >         if (c->ops->is_enabled)
-> > -               seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
-> > +               seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
-> >         else if (!c->ops->enable)
-> > -               seq_printf(s, " %9c\n", 'Y');
-> > +               seq_printf(s, " %5c ", 'Y');
-> >         else
-> > -               seq_printf(s, " %9c\n", '?');
-> > +               seq_printf(s, " %5c ", '?');
-> > +
-> > +       hlist_for_each_entry(clk_user, &c->clks, clks_node) {
-> > +               seq_printf(s, "%*s%-*s  %-4d\n",
-> > +                          level * 3 + 2 + 105 * multi_node, "",
-> > +                          30,
-> > +                          clk_user->dev_id ? clk_user->dev_id : "deviceless",
-> > +                          clk_user->enable_count);
-> > +
-> > +               multi_node = 1;
-> 
-> This part that prints the dev_id might be useful and can be the first
-> patch in the series. In that same patch, please print the con_id so we
-> know which clk it is for the device. We should also improve of_clk_get()
-> so that the index is visible to the 'struct clk::con_id' somehow. Maybe
-> we can convert the integer index into a string and assign that to con_id
-> in that case as well.
+While further synchronising them imx device trees with U-Boot I stumbled
+over more checkpatch warnings. This series addresses those trivial
+indentation, file permission and/or whitespace cleanups.
 
-Agreed, We will create a fresh patch where we will print dev_id and
-consumer id in clock summary.
+
+Marcel Ziswiler (5):
+  ARM: dts: imx6sl: use tabs for code indent
+  ARM: dts: imx6sx-udoo-neo: don't use multiple blank lines
+  arm64: dts: imx8ulp: no executable source file permission
+  clk: imx6sll: add proper spdx license identifier
+  dt-bindings: imx8ulp: clock: no spaces before tabs
+
+ arch/arm/boot/dts/imx6sl.dtsi                 | 20 +++++++++----------
+ arch/arm/boot/dts/imx6sx-udoo-neo.dtsi        | 14 ++++++-------
+ .../boot/dts/freescale/imx8ulp-pinfunc.h      |  0
+ include/dt-bindings/clock/imx6sll-clock.h     |  2 +-
+ include/dt-bindings/clock/imx8ulp-clock.h     |  4 ++--
+ 5 files changed, 19 insertions(+), 21 deletions(-)
+ mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8ulp-pinfunc.h
+
+-- 
+2.36.1
+
