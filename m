@@ -2,115 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63F2ECAAD2
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 09:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5585ECAAD2
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Aug 2022 09:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245668AbiHZJMX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Aug 2022 05:12:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59618 "EHLO
+        id S1344047AbiHZJrZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Aug 2022 05:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245675AbiHZJMH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 05:12:07 -0400
-Received: from mail.bugwerft.de (mail.bugwerft.de [46.23.86.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 14F8BD0207;
-        Fri, 26 Aug 2022 02:12:05 -0700 (PDT)
-Received: from hq-00021.fritz.box (p57bc9b74.dip0.t-ipconnect.de [87.188.155.116])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 61DD750525B;
-        Fri, 26 Aug 2022 09:11:34 +0000 (UTC)
-From:   Daniel Mack <daniel@zonque.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-        Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v2 2/2] clk: cs2000-cp: make PLL lock timeout configurable
-Date:   Fri, 26 Aug 2022 11:11:22 +0200
-Message-Id: <20220826091122.2344503-2-daniel@zonque.org>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220826091122.2344503-1-daniel@zonque.org>
-References: <20220826091122.2344503-1-daniel@zonque.org>
+        with ESMTP id S1344046AbiHZJrT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Aug 2022 05:47:19 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B4E3D31E2
+        for <linux-clk@vger.kernel.org>; Fri, 26 Aug 2022 02:47:17 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id s8so1068772ljj.5
+        for <linux-clk@vger.kernel.org>; Fri, 26 Aug 2022 02:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=7/zLm6wYmIJxefFBwnQ6xTIL94BoETjg8bQDFj+L0EQ=;
+        b=HIdAzMqZp+CHMUJvXZDL4kQfbbHEzP9oyvYz1ueQNzPdJuFdzN/xiOWNVvAI5PypY2
+         phc7mMSMvv0CqdAk3VeOaSOG1rVJQhyoTe39lWgf29/RQtOFhD7d+DPbjBkxwJtUIkhy
+         cta3uW2ybEZW+YD8Fw2dkJR4gv7MOtmY6qC+zYXXmj+Z4l5AhOceFVfeylnXwXhn1Qg4
+         ld1fWsPQV5Kf/3HaxA9FJzTVAxTZPdCP38pgrmH64yfQ9etak3X7fthigbG+2fPn57OV
+         wm7dDnDP5PGUOjHBGcdSnq4ZOYoc68PuhJYJy371olT9dw/BL1IEEx4esBwhZD/7bnUm
+         gpNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=7/zLm6wYmIJxefFBwnQ6xTIL94BoETjg8bQDFj+L0EQ=;
+        b=6C/aY+iB1B8/H3WeCQ3gK2q2ZZcJvH0htOHEPU8XXlV/LS/yrnzcLRZTB6LBrKgbLU
+         JRvdRfGDRBRi0qL2+nBcVktncmjMK+2QCqJlcgZAP9tR3j2WGLzL5FxWd/JpXtXmLDHy
+         sn2wqq1nBbayDdw7IhI5a0aKRYV1eTmAyOqu3PCBXICJS15tYSmSuAqvgTdt8KbK6ZK3
+         D5T6BULFfV+wRniUOAJyf/q1YSI/8FK6u0a28u7WViUes8/eSfXH/ft+beSd+kx/uh3h
+         mfKzKz4xsrfLZdhLQw6zY8/2nfIWjGdFGbL4gnEJd5M2aEqmR05lZyfjCq8OQOoDucig
+         cbMg==
+X-Gm-Message-State: ACgBeo0a8kf552tolzGObYb4Qp5NXqVu6j/MjePcZwlZVmgcVg9rMcnW
+        tk8cG2xzWHr37XDN+OAI0Jl+jg==
+X-Google-Smtp-Source: AA6agR4NooJqTIyf/F5iZCsGcw1gdJa0BYVeuEHWvl+KrvNFJZWMb3qoex5YNXUISP81L4uvAWNr2Q==
+X-Received: by 2002:a05:651c:179c:b0:261:8fbe:b729 with SMTP id bn28-20020a05651c179c00b002618fbeb729mr2140443ljb.114.1661507235107;
+        Fri, 26 Aug 2022 02:47:15 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id q22-20020a194316000000b004931817c487sm320823lfa.197.2022.08.26.02.47.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Aug 2022 02:47:14 -0700 (PDT)
+Message-ID: <e4c5a39e-6a47-6814-92f7-c751bd95bdf0@linaro.org>
+Date:   Fri, 26 Aug 2022 12:47:13 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 5/5] dt-bindings: display: drop minItems equal to maxItems
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Marek Vasut <marex@denx.de>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
+ <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver currently does 256 iterations of reads from the DEVICE_CTRL
-register to wait for the PLL_LOCK bit to clear, and sleeps one
-microsecond after each attempt.
+On 25/08/2022 14:33, Krzysztof Kozlowski wrote:
+> minItems, if missing, are implicitly equal to maxItems, so drop
+> redundant piece to reduce size of code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml   | 1 -
+>   .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 --
+>   Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 --
 
-This isn't ideal because
+For msm changes:
 
- a) the total time this allows for the device to settle depends on the I2C
-    bus speed, and
- b) the device might need more time, depending on the application.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This patch allows users to configure this timeout through a new device-tree
-property "cirrus,pll-lock-timeout-ms".
+>   .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 --
+>   .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 1 -
+>   .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 1 -
+>   .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 1 -
+>   .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml  | 1 -
+>   .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml   | 2 --
+>   9 files changed, 13 deletions(-)
+> 
 
-In order to not break existing applications, a default value of 100 ms is
-assumed: For each read cycle, 8 bits are sent for the register address, and
-8 bits are read with the values. 16 bits take about 160 us on a 100 kHz bus
-and 40 us on a 400 kHz bus. Hence 256 iterations would take a maximum of
-around 44 ms. Round up and double that value to be on the safe side.
-
-Signed-off-by: Daniel Mack <daniel@zonque.org>
----
- drivers/clk/clk-cs2000-cp.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index aa5c72bab83e..2b33617727c2 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -110,6 +110,8 @@ struct cs2000_priv {
- 	bool lf_ratio;
- 	bool clk_skip;
- 
-+	unsigned int pll_lock_timeout_ms;
-+
- 	/* suspend/resume */
- 	unsigned long saved_rate;
- 	unsigned long saved_parent_rate;
-@@ -171,21 +173,16 @@ static int cs2000_ref_clk_bound_rate(struct cs2000_priv *priv,
- static int cs2000_wait_pll_lock(struct cs2000_priv *priv)
- {
- 	struct device *dev = priv_to_dev(priv);
--	unsigned int i, val;
-+	unsigned int val;
- 	int ret;
- 
--	for (i = 0; i < 256; i++) {
--		ret = regmap_read(priv->regmap, DEVICE_CTRL, &val);
--		if (ret < 0)
--			return ret;
--		if (!(val & PLL_UNLOCK))
--			return 0;
--		udelay(1);
--	}
--
--	dev_err(dev, "pll lock failed\n");
-+	ret = regmap_read_poll_timeout(priv->regmap, DEVICE_CTRL, val,
-+				       !(val & PLL_UNLOCK), USEC_PER_MSEC,
-+				       priv->pll_lock_timeout_ms * USEC_PER_MSEC);
-+	if (ret < 0)
-+		dev_err(dev, "pll lock failed\n");
- 
--	return -ETIMEDOUT;
-+	return ret;
- }
- 
- static int cs2000_clk_out_enable(struct cs2000_priv *priv, bool enable)
-@@ -481,6 +478,10 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
- 	if (ret < 0)
- 		return ret;
- 
-+	priv->pll_lock_timeout_ms = 100;
-+	of_property_read_u32(np, "cirrus,pll-lock-timeout-ms",
-+			     &priv->pll_lock_timeout_ms);
-+
- 	priv->clk_skip = of_property_read_bool(np, "cirrus,clock-skip");
- 
- 	ref_clk_rate = clk_get_rate(priv->ref_clk);
 -- 
-2.37.2
+With best wishes
+Dmitry
 
