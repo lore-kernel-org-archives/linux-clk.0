@@ -2,92 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072B2ECAAA2
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Aug 2022 20:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC19ECAAA2
+	for <linux-clk@archiver.kernel.org>; Sun, 28 Aug 2022 23:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbiH1UUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 Aug 2022 16:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54150 "EHLO
+        id S229551AbiH1X1m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 28 Aug 2022 19:27:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiH1UUd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Aug 2022 16:20:33 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC641B784;
-        Sun, 28 Aug 2022 13:20:32 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id bg22so6179576pjb.2;
-        Sun, 28 Aug 2022 13:20:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=cdXy/2p9rsMPIOWZ0T02JFAzo0QjAdnfO9SJ8dve+cc=;
-        b=JgNeHCW2GSjwYdA5dGJu4BJGArLGwm+pMLYUUjc+6OlwAbE6fFdvuNLZRZ0Xt39aZ3
-         lMXqRhaYagnluWpa5we1Gt31mw8TCM0nEjhYvwD1TdFD0XbYgdghrpBpGWhiwzcZDWVJ
-         6jm9XwjRQBmA53V65DSSlx0G/p9y+0d4L9mbLB10QmfopkOY+Eozt4pCqTRISRtFku+I
-         4NpXGdG0K+Hh2wdxpolPEZqHzH6vSfMuuvMCVzL6ECWxDNbeEy3lKCzorwMQBmkIiUuM
-         okaLGv44gWiQCP7bRp07cOUGqrB9X8ygaUB2XD9MrxMxQFn3yWR7oAylT+oUdNmmt8HE
-         lPrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=cdXy/2p9rsMPIOWZ0T02JFAzo0QjAdnfO9SJ8dve+cc=;
-        b=z5P1B+tL2zBcY5AsfDc07gSscSk5O8bIo6N3WgMw55FoFLGuXAjA6MSQkYw1dZeIFn
-         JF5rmJjb7C+1aX8WNohBErdkhsSHKp1/PUZcSrAWaHfTXrCn0Eg2aAGsLsVgA7EEGVUM
-         sgR5TbdBwVm3qbU4+4pVyAgGZ5w53bveVw9k8ViCRCFHvENzIrHI7Pa/uGzch+ED1Zwt
-         MH+vHDqbuqWgNXe5RVI6OdoajX42ZjXmLNMNciTc1lLs4wDeWYxBfjtjCDpqpxp5IxZ3
-         ty0pBKZn3Ovsa+7h/tNRTg52Ej42l6OUTYT7DJ0tOFkxznoBhr0ZHRYzCpiDtTDfKoaz
-         DE5g==
-X-Gm-Message-State: ACgBeo03LB82gzLc+0irau8tA1foAFl5XRewLgp4ZHP0cMBYUAoB1aaV
-        V8YsvRQpyKBl1W2WlfPiWCldo55lHU7pGg==
-X-Google-Smtp-Source: AA6agR4u7YKBG/AKP0OmFj31pCo2MKGpy9d/z1b9f4ys4jGXU5e1E8J7AY2b7g5Kv2KrQ84KZQzmeA==
-X-Received: by 2002:a17:902:b090:b0:172:deae:b990 with SMTP id p16-20020a170902b09000b00172deaeb990mr13186031plr.31.1661718031355;
-        Sun, 28 Aug 2022 13:20:31 -0700 (PDT)
-Received: from localhost.localdomain (lily-optiplex-3070.dynamic.ucsd.edu. [2607:f720:1300:3033::1:4dd])
-        by smtp.googlemail.com with ESMTPSA id u71-20020a62794a000000b005368341381fsm5671048pfc.106.2022.08.28.13.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Aug 2022 13:20:30 -0700 (PDT)
-From:   Li Zhong <floridsleeves@gmail.com>
-To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        with ESMTP id S229498AbiH1X1l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Aug 2022 19:27:41 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBE42ED63;
+        Sun, 28 Aug 2022 16:27:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661729260; x=1693265260;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s6M+tz/8Vcsx8DVrjSwhv6Ow+s3cbQupGX0BGWGmVdM=;
+  b=lXMlVYKOX/XOahFcBBaD8djsmSdDMkLv9xtW2PozHDgA7bofbwdeocJc
+   e2t0dGTCJhI5KHhLQOmBETy6A4rtT536RQAZmHOjHYbpeYyjErc4SNHr9
+   Kv+ooM9wh5iqtJFgHPhXLiCG7ZjGDH6XrdXdwLvoSgcV+e62H0DNGhqhD
+   7frieJomiHdDzUh6dyDZri9lqJZRaWUObqctldSSYFaWdBHNg9ePEdbi6
+   yJDiTGL8kQccX2ZhBG4vrS8fpS43hIZ+VwI3KyjZpFf/v38FQhHizm6Mp
+   BzWSGgvmjA1tW/v0RKvbDxVpBowamjISgwCBEp6g6/2ErRNxlQ+NU9kMp
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10453"; a="293519261"
+X-IronPort-AV: E=Sophos;i="5.93,271,1654585200"; 
+   d="scan'208";a="293519261"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2022 16:27:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,271,1654585200"; 
+   d="scan'208";a="587953874"
+Received: from lkp-server01.sh.intel.com (HELO fc16deae1c42) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 28 Aug 2022 16:27:38 -0700
+Received: from kbuild by fc16deae1c42 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oSRgn-0001ih-1R;
+        Sun, 28 Aug 2022 23:27:37 +0000
+Date:   Mon, 29 Aug 2022 07:26:46 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Li Zhong <floridsleeves@gmail.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, mturquette@baylibre.com, sboyd@kernel.org,
         lily <floridsleeves@gmail.com>
-Subject: [PATCH v1] drivers/clk/clk: check return value of clk_pm_runtime_get()
-Date:   Sun, 28 Aug 2022 13:20:25 -0700
-Message-Id: <20220828202025.1948848-1-floridsleeves@gmail.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH v1] drivers/clk/clk: check return value of
+ clk_pm_runtime_get()
+Message-ID: <202208290728.M8AblulP-lkp@intel.com>
+References: <20220828202025.1948848-1-floridsleeves@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220828202025.1948848-1-floridsleeves@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: lily <floridsleeves@gmail.com>
+Hi Li,
 
-clk_pm_runtime_get() could fail. Check the return status.
+Thank you for the patch! Perhaps something to improve:
 
-Signed-off-by: Li Zhong <floridsleeves@gmail.com>
----
- drivers/clk/clk.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.0-rc2 next-20220826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7fc191c15507..f22b86dfe2f2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2981,8 +2981,11 @@ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
- 				     int level)
- {
- 	struct clk_core *child;
--
--	clk_pm_runtime_get(c);
-+	int ret;
-+	
-+	ret = clk_pm_runtime_get(c);
-+    if (ret)
-+        return;
- 	clk_summary_show_one(s, c, level);
- 	clk_pm_runtime_put(c);
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Li-Zhong/drivers-clk-clk-check-return-value-of-clk_pm_runtime_get/20220829-042043
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: riscv-randconfig-r042-20220828 (https://download.01.org/0day-ci/archive/20220829/202208290728.M8AblulP-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/26ebbe49c7b40cb8465ed2bba4e4e62c3a55bb93
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Li-Zhong/drivers-clk-clk-check-return-value-of-clk_pm_runtime_get/20220829-042043
+        git checkout 26ebbe49c7b40cb8465ed2bba4e4e62c3a55bb93
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/clk/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   drivers/clk/clk.c: In function 'clk_summary_show_subtree':
+>> drivers/clk/clk.c:3014:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+    3014 |     if (ret)
+         |     ^~
+   drivers/clk/clk.c:3016:9: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+    3016 |         clk_summary_show_one(s, c, level);
+         |         ^~~~~~~~~~~~~~~~~~~~
+
+
+vim +/if +3014 drivers/clk/clk.c
+
+  3006	
+  3007	static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+  3008					     int level)
+  3009	{
+  3010		struct clk_core *child;
+  3011		int ret;
+  3012		
+  3013		ret = clk_pm_runtime_get(c);
+> 3014	    if (ret)
+  3015	        return;
+  3016		clk_summary_show_one(s, c, level);
+  3017		clk_pm_runtime_put(c);
+  3018	
+  3019		hlist_for_each_entry(child, &c->children, child_node)
+  3020			clk_summary_show_subtree(s, child, level + 1);
+  3021	}
+  3022	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
