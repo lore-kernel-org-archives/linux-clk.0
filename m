@@ -2,155 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C61ECAAD4
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 09:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 226F8ECAAD4
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 09:33:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiH2Jb0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Aug 2022 05:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36362 "EHLO
+        id S229990AbiH2Jd6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Aug 2022 05:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiH2JbZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 05:31:25 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E6425C66;
-        Mon, 29 Aug 2022 02:31:24 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 186426601DB2;
-        Mon, 29 Aug 2022 10:31:21 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1661765482;
-        bh=vj0TZu2ctXuLgzUFUUVacwwsrQ4oDpOKmllM1Y9zDdk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=hgwIRCJXGnE9dl7xULH91Ei9q6Ctojg6u8vx4hspoFV6G0rm+fHoPjMzCNYlPVshN
-         nneu/iBSUYJu+jugutZply26bKo0b4RIZmACogZIKqWB0C3uATjLajmAZhdhv696VJ
-         MkbtFRrvbJNtzoE5SBJWoEpYE89khHwKnVef3QF1aHoLb0Dd6KGLlYQY2CgdtWCCAb
-         KdgsY1Iz3V+cDFVYeiCxO2LGN0hrZ4uBcdfdJPmodmSnvdMRFU2JPO2AmQzEj8CJoj
-         0DSx1IlAigoyWUvXegEnM7TgJgKKRy21yKD1GsGV3VKU1OYushCtuAH45XMbKPRH4+
-         OJBp/UdhT/8Zw==
-Message-ID: <5350956c-fbab-6eee-071a-8b24b74e741c@collabora.com>
-Date:   Mon, 29 Aug 2022 11:31:18 +0200
+        with ESMTP id S229917AbiH2Jd4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 05:33:56 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D295C961
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 02:33:53 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id e13so8487780wrm.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 02:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=OEZrBCxaknFTMFU0NAWFE13w/K2RkxzEBhZ3jp9e+Ls=;
+        b=pIODGRliqHXZnrdnQCZpc577YsSQf1pmtPwDBw2p1RblWUvM89Z+wHH8JKumg6AmQF
+         LDXiE5oW1keWpwNtNpxX+Pzeyti49A3pLMqsn0sjh36QShhkaCeuJETtf05GYkft0Ibt
+         l1ZFIwjuefh+Kgm24w3i1rRSLtzW9mcUOTYZJkPK8L0fJqRvwIRUSI4ia42GBGQON5pp
+         PgbygzZOLbJFVCjoqQ8rBG5LxLyX1XcHbm+QPYC4Gyg+ahhw0rRRgnyeeig4EIPais6C
+         eWbQuS7hwARfTuxJ20JVLrlZJmyUSxBRPRGCeGCBqckC39j7ZfH8TnVBvgD6PKSS71Io
+         y9lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=OEZrBCxaknFTMFU0NAWFE13w/K2RkxzEBhZ3jp9e+Ls=;
+        b=Vyl74qgWCrdd2ouItL/tqHD3IbKqikXwr2d2aAXdWiYGlROHhzQ+KSl0YOeeEeKa49
+         LDTCTaK7txQVSA1+XmKunvMqW4t8NYBIu/UsCu6ntTR4ZuH35eXTLrLQmNnVLjmcqEW2
+         EPQSDZuX4JgmudtvKrjFeQ+x4MHg8BDJXlsAkpYvxAMaFUvoITcvKcbLbv13ImmCNWDC
+         O+1SuQFz37PYFzvsn14ajwmR0Gk3KoxlCyjf2LF7T31PWL0AYj1OPoQbyjQc9XMzXNOU
+         NXQ81rLLHZDmv+HAVYWhB1qwxR948kwKM6CzNeeYYxDgvzJrY5pST4OIESMuj/jefKyN
+         CLMw==
+X-Gm-Message-State: ACgBeo3t5LQidLC70bHwyQyC/HA7gFYJnSyVQFxPDuTZNlhn5iz+e+bX
+        NVLjgSAaYVnPHDBLjTszESBoEY1MmGJ/3A==
+X-Google-Smtp-Source: AA6agR6QclHHYEVnw1P0Cr+37FE6FRGUPU98yhw/yhAKKU3clEvU36m+ceZUyLz0SsDl4UgIVE4pDQ==
+X-Received: by 2002:a5d:47cd:0:b0:220:70a2:5383 with SMTP id o13-20020a5d47cd000000b0022070a25383mr5900505wrc.258.1661765632312;
+        Mon, 29 Aug 2022 02:33:52 -0700 (PDT)
+Received: from blmsp ([2001:4090:a245:8020:2658:1f7c:362:3e99])
+        by smtp.gmail.com with ESMTPSA id l5-20020a1c2505000000b003a5ffec0b91sm8342437wml.30.2022.08.29.02.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Aug 2022 02:33:51 -0700 (PDT)
+Date:   Mon, 29 Aug 2022 11:33:50 +0200
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Fabien Parent <parent.f@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kbuild-all@lists.01.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] clk: mediatek: Provide mtk_devm_alloc_clk_data
+Message-ID: <20220829093350.hu734rofg7luwvkp@blmsp>
+References: <20220822152652.3499972-3-msp@baylibre.com>
+ <202208230714.8DNW6JjZ-lkp@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 4/4] clk: mediatek: Add drivers for MediaTek MT6735
- main clock drivers
-Content-Language: en-US
-To:     Yassine Oudjana <y.oudjana@protonmail.com>
-Cc:     Miles Chen <miles.chen@mediatek.com>, yassine.oudjana@gmail.com,
-        bgolaszewski@baylibre.com, chun-jie.chen@mediatek.com,
-        devicetree@vger.kernel.org, ikjn@chromium.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        matthias.bgg@gmail.com, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org, sam.shih@mediatek.com,
-        sboyd@kernel.org, tinghan.shen@mediatek.com, weiyi.lu@mediatek.com,
-        wenst@chromium.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <NJC6CR.M4CF312LSXXV1@gmail.com>
- <20220520093501.28758-1-miles.chen@mediatek.com>
- <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
- <lAB8fLfWTwUu6FUqPZWoKNEC0ZPYHnvo05u6BGriYQVjanlTzorHaZAflEbzoml-0UVZe-02r6CfzKwGdBCp7E0YeT_hF86P26r-Zeivda4=@protonmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <lAB8fLfWTwUu6FUqPZWoKNEC0ZPYHnvo05u6BGriYQVjanlTzorHaZAflEbzoml-0UVZe-02r6CfzKwGdBCp7E0YeT_hF86P26r-Zeivda4=@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202208230714.8DNW6JjZ-lkp@intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 13/08/22 12:44, Yassine Oudjana ha scritto:
-> On Friday, May 20th, 2022 at 11:26 AM, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+Hi,
+
+On Tue, Aug 23, 2022 at 07:44:26AM +0800, kernel test robot wrote:
+> Hi Markus,
 > 
->> Il 20/05/22 11:35, Miles Chen ha scritto:
->>
->>>>> Thanks for submitting this patch.
->>>>>
->>>>> I compare this with drivers/clk/mediatek/clk-mt7986-apmixed.c,
->>>>> and other clk files are using macros to make the mtk_pll_data array
->>>>> more readable.
->>>>
->>>> I'd actually argue that macros make it less readable. While reading
->>>> other drivers I had a lot of trouble figuring out which argument
->>>> is which field of the struct, and had to constantly go back to the
->>>> macro definitions and count arguments to find it. Having it this
->>>> way, each value is labeled clearly with the field it's in. I think
->>>> the tradeoff between line count and readability here is worth it.
->>>
->>> It is easier for multiple developers to work together if we have a common style.
->>>
->>> How do you think?
->>
->>
->> In my opinion, Yassine is definitely right about this one: unrolling these macros
->> will make the code more readable, even though this has the side effect of making
->> it bigger in the source code form (obviously, when compiled, it's going to be the
->> exact same size).
->>
->> I wouldn't mind getting this clock driver in without the usage of macros, as much
->> as I wouldn't mind converting all of the existing drivers to open-code everything
->> instead of using macros that you have to find in various headers... this practice
->> was done in multiple drivers (clock or elsewhere), so I don't think that it would
->> actually be a bad idea to do it here on MediaTek too, even though I'm not aware of
->> any rule that may want us to do that: if you check across drivers/clk/*, there's
->> a big split in how drivers are made, where some are using macros (davinci, renesas,
->> samsung, sprd, etc), and some are not (bcm, sunxi-ng, qcom, tegra, versatile, etc),
->> so it's really "do it as you wish"...
->>
->> ... but:
->>
->> Apart from that, I also don't think that it is a good idea to convert the other
->> MTK clock drivers right now, as this would make the upstreaming of MediaTek clock
->> drivers harder for some of the community in this moment... especially when we look
->> at how many MTK SoCs are out there in the wild, and how many we have upstream:
->> something like 10% of them, or less.
->>
->> I see the huge benefit of having a bigger community around MediaTek platforms as
->> that's beneficial to get a way better support and solidity for all SoCs as they
->> are sharing the same drivers and same framework, and expanding the support to more
->> of them will only make it better with highly valuable community contributions.
->>
->>
->> That said, Yassine, you should've understood that you have my full support on
->> unrolling these macros - but it's not time to do that yet: you definitely know
->> that MediaTek clock drivers are going through a big cleanup phase which is, at
->> this point, unavoidable... if we are able to get the aid of scripts (cocci and
->> others), that will make our life easier in this cleanup, and will also make us
->> able to perform the entire cleanup with less effort and in less overall time.
->>
->> With that, I'm sad but I have to support Miles' decision on this one, and I also
->> have to ask you to use macros in this driver.
+> Thank you for the patch! Perhaps something to improve:
 > 
-> I'm picking up this series again now after taking a long break to allow for
-> ongoing cleanup and refactoring work to settle down. I was going to make this
-> change but then I couldn't find the PLL macro defined in any common header.
-> It seems that it is defined in every driver that uses it, with slight variations
-> in some of them. Should I just do the same, or would it be better to define it
-> in clk-pll.h? Also, would now be a good time to unroll the macros in all drivers,
-> or is it still too soon?
-
-Hello Yassine,
-I'm sorry for the very late reply to this topic, but I just got back from vacation.
-
-Please follow the current way of defining the PLL macro into the SoC-specific
-driver: MediaTek folks are in the process of implementing Frequency Hopping (FHCTL)
-on supported PLLs so "some things may change"... maybe in your driver too... I'm
-not sure, though, whether MT6735 does support FHCTL and anyway, even if it does,
-I would recommend to just go without it as a first step, as adding FHCTL capability
-will be done on all(?) of the supported SoC clock drivers as soon as it lands.
-
+> [auto build test WARNING on clk/clk-next]
+> [also build test WARNING on robh/for-next linus/master v6.0-rc2 next-20220822]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
-> Another thing: Since I've been out of touch with the cleanup work for a while,
-> it would be great if someone makes me aware of any pending cleanup patches that
-> I should know of so that I base my patches on them and avoid duplicating work.
+> url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: loongarch-randconfig-c004-20220821 (https://download.01.org/0day-ci/archive/20220823/202208230714.8DNW6JjZ-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 12.1.0
 > 
+> If you fix the issue, kindly add following tag where applicable
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> cocci warnings: (new ones prefixed by >>)
+> >> drivers/clk/mediatek/clk-mtk.c:64:1-6: WARNING: invalid free of devm_ allocated data
+> 
+> vim +64 drivers/clk/mediatek/clk-mtk.c
+> 
+> 9741b1a68035b54 James Liao    2015-04-23  61  
+> 609cc5e1a82394e Chen-Yu Tsai  2022-05-19  62  void mtk_free_clk_data(struct clk_hw_onecell_data *clk_data)
+> 300796cad22153f Chun-Jie Chen 2021-09-14  63  {
+> 300796cad22153f Chun-Jie Chen 2021-09-14 @64  	kfree(clk_data);
+> 300796cad22153f Chun-Jie Chen 2021-09-14  65  }
+> 609cc5e1a82394e Chen-Yu Tsai  2022-05-19  66  EXPORT_SYMBOL_GPL(mtk_free_clk_data);
 
-Simply check linux-mediatek, but I don't think that there's anything in the
-pipeline that would be blocking your MT6735 drivers.
+I don't see how this should be called with clk_data being initialized by
+devm_*. Maybe I am bit code blind.
 
-Cheers,
-Angelo
+Do you have an actual call stack how this is supposed to happen? Also I
+wasn't able to get the same warning with coccinelle (different
+compiler).
+
+Best,
+Markus
