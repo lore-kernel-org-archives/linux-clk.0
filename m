@@ -2,203 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D51CECAAD5
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 13:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936F9C0502E
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 15:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbiH2NsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Aug 2022 09:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50030 "EHLO
+        id S229619AbiH2PLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Aug 2022 11:11:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbiH2NsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 09:48:01 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1FE90827;
-        Mon, 29 Aug 2022 06:48:00 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id BE0571F8BA;
-        Mon, 29 Aug 2022 13:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661780878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=z8v8hIBgOnjJ8xhoD9EZ4lTuLGuumwo0j80Jmrs/kH4=;
-        b=EPsfEpnQA/yt9w/uzZ4FSOlGTAlV1iEwXHSgwP2Gnebj+GpayeHwGcxfavOpmhKAYOwiuS
-        dGBf6vLkrCQ1JguiTWnd8SPi+ItCnIyZXLceX7h+/fDW8on84c9nDEFt8m1S0W0Jo75+ur
-        qShPfRDCBna5QtE6En8xANO4bq+ErtU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661780878;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=z8v8hIBgOnjJ8xhoD9EZ4lTuLGuumwo0j80Jmrs/kH4=;
-        b=QTJ+O6zePsWlRUsqsSSb39Cfna5YelOVy6xpC6fcEa4U0kXGcAiLL0tfvkQHnpOmD2Stm7
-        T4jdxCK4wyIUXmDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8857C1352A;
-        Mon, 29 Aug 2022 13:47:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Xne7II7DDGOJWgAAMHmgww
-        (envelope-from <iivanov@suse.de>); Mon, 29 Aug 2022 13:47:58 +0000
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
+        with ESMTP id S229731AbiH2PLx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 11:11:53 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8DCD7FE67;
+        Mon, 29 Aug 2022 08:11:50 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 9217B3200910;
+        Mon, 29 Aug 2022 11:11:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 29 Aug 2022 11:11:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1661785905; x=1661872305; bh=6czT/Mr/tB
+        NII304BwOJWEFTmduamBRB/vYIYcaFWLM=; b=qapDGo5tcLVEKwppV3GTP6EJnZ
+        gHmNPPR7sQ1DR35PRGuSnxkoYc3bv+j1b+ie4fbxwRQmf7IongiXEgf23B9k2q6Y
+        SbvMaSyjOuLwujmuWugu4bZQ7AAHZRkMPm7Zp1GUYwc1FK9fzhcwz8gt18pzSPia
+        IYFweSWcONYHRAZ1vaxHPIWgsbnV20rx89rSt+7vTFMY1lMt13s2nHJVQZ/77AZ4
+        wavzxFURF0C/MgxM5y4ewzgVjKruwf6KYR4o5b+Izc7tmQrNapJt+3cg+Fs9mJFR
+        8vhfuogPeTckHcXRwz+cJtdSN7oPiQlUdGTuLp3MWBD54jG3pY/hmEo18vFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1661785905; x=1661872305; bh=6czT/Mr/tBNII304BwOJWEFTmdua
+        mBRB/vYIYcaFWLM=; b=rvGLYeTjHIwCfhZSdGXvYnzOBJZXciZk0i9i2lc4xLQl
+        OMQxGc1kZrb7PQ7zyvdyRlaRdn/qpS8cZhFuGlSR7SW8FgTyW7gfzjWJsqcGf65v
+        asZmgcxybeKVE1SJ9fqZoxl7BDCIi94NfW2TOz8pNL3jg/OMJ6nCsHIPx+ZAsTEG
+        u0LzdJzuecFinO/cOX5Zau1XravGpjlCNVsKm46XHBvEaAaDcaPOOT6g0AYfTfk0
+        PZF5ZevXkl15rjUFeDFKxEEm9GcuWGc1MXoV12ed4Zm9rhhApbr0O/N9+Sm8s0BE
+        gntFDDxbMbh2ZTXErW5y4Uuo5DfY/XVBIDl5ceFJ9w==
+X-ME-Sender: <xms:MNcMY-oRFbsI2adoHwD29LDYENeXQqfHithXrfilhcnd_nE83tjZgw>
+    <xme:MNcMY8r4vk1gfZit61cCwxkmWeYshRDp5drYvaODatPBAdbO5G_tzg4-ycRT8bImu
+    QwPpgly5xtX9UufdY0>
+X-ME-Received: <xmr:MNcMYzPCbSuPplAsvs9r5M1MNud3sDnXWtOpDC6jGqhKYb13RMX4UyQ6qgH5>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdekuddgkeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpedtleekjeeiudefvdfhieffteelhfeivdeliefgieeugffhvdelieffjeei
+    geetjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:MNcMY97tHKDVtpRPU9oyDXhNuUeIOfh7tsX0P_preM8t3zTTvbO2cg>
+    <xmx:MNcMY95_8jKcnlfyBoBgTZ9Rl_waMmQcJ7L2J6tH2U3lwNiUoRM4dQ>
+    <xmx:MNcMY9iBsHUlxvSd20CfSbC6e0vp2ulQ9PNonVPVvXfQyjZCU1162Q>
+    <xmx:MdcMY8JYAaBKq3ThYEoUTyiL9btvPk3zcJWW88Afsv0EDEVwrZKiPQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Aug 2022 11:11:43 -0400 (EDT)
+Date:   Mon, 29 Aug 2022 17:11:41 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
         Scott Branden <sbranden@broadcom.com>,
+        Emma Anholt <emma@anholt.net>, Ray Jui <rjui@broadcom.com>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        "Ivan T. Ivanov" <iivanov@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Phil Elwell <phil@raspberrypi.com>,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH v4] clk: bcm2835: Round UART input clock up
-Date:   Mon, 29 Aug 2022 16:29:40 +0300
-Message-Id: <20220829132943.144608-1-iivanov@suse.de>
-X-Mailer: git-send-email 2.35.3
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/7] drm/vc4: Fix the core clock behaviour
+Message-ID: <20220829151141.jomryjqvn7i7a3jr@houat>
+References: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dmvoqxtqdjvru6cj"
+Content-Disposition: inline
+In-Reply-To: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It was reported that RPi3[1] and RPi Zero 2W boards have issues with
-the Bluetooth. It turns out that when switching from initial to
-operation speed host and device no longer can talk each other because
-host uses incorrect UART baud rate.
 
-The UART driver used in this case is amba-pl011. Original fix, see
-below Github link[2], was inside pl011 module, but somehow it didn't
-look as the right place to fix. Beside that this original rounding
-function is not exactly perfect for all possible clock values. So I
-deiced to move the hack to the platform which actually need it.
+--dmvoqxtqdjvru6cj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The UART clock is initialised to be as close to the requested
-frequency as possible without exceeding it. Now that there is a
-clock manager that returns the actual frequencies, an expected
-48MHz clock is reported as 47999625. If the requested baud rate
-== requested clock/16, there is no headroom and the slight
-reduction in actual clock rate results in failure.
+Hi Stephen, Mike,
 
-If increasing a clock by less than 0.1% changes it from ..999..
-to ..000.., round it up.
+On Mon, Aug 15, 2022 at 05:31:22PM +0200, Maxime Ripard wrote:
+> Those patches used to be part of a larger clock fixes series:
+> https://lore.kernel.org/linux-clk/20220715160014.2623107-1-maxime@cerno.t=
+ech/
+>=20
+> However, that series doesn't seem to be getting anywhere, so I've split o=
+ut
+> these patches that fix a regression that has been there since 5.18 and th=
+at
+> prevents the 4k output from working on the RaspberryPi4.
+>=20
+> Hopefully, we will be able to merge those patches through the DRM tree to=
+ avoid
+> any further disruption.
 
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
-[2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
+I've ping'd Stephen privately on IRC multiple times, and it's basically
+a resend of the previous clock series linked above that has been around
+since almost a month and a half.
 
-Cc: Phil Elwell <phil@raspberrypi.com>
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
----
+Can you Ack the first three patches so we can merge those patches
+through the DRM tree and close this regression?
 
-Changes since v3
-* Rework 'scaler' calculation to avoid overflow
-* Update Phil Elwell email address
+Maxime
 
-Changes since v2
-* Added more information in commit message
-* Changed hand crafted round function with the one form math.h
+--dmvoqxtqdjvru6cj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Changes since v1
-Make bcm2835_clock_round() static to fix following warning
-when compiling for riscv:
-drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
-Reported-by: kernel test robot <lkp@intel.com>
+-----BEGIN PGP SIGNATURE-----
 
- drivers/clk/bcm/clk-bcm2835.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYwzXLQAKCRDj7w1vZxhR
+xcvRAQC49KThyWL6K2eQpUaeK1sR8DbrsEuq4KorK0kwbmehxQEAtHKGmyKmHqVH
+spWXuwujJHmnrDGzoeUfncXXu6ybtwk=
+=aWzc
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 48a1eb9f2d55..26a5c9a0dd34 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -30,6 +30,7 @@
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -502,6 +503,8 @@ struct bcm2835_clock_data {
- 	bool low_jitter;
- 
- 	u32 tcnt_mux;
-+
-+	bool round_up;
- };
- 
- struct bcm2835_gate_data {
-@@ -993,12 +996,34 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
- 	return temp;
- }
- 
-+static unsigned long bcm2835_clock_round(unsigned long clk)
-+{
-+	unsigned long scaler;
-+	unsigned long limit;;
-+
-+	limit = clk / 100000;
-+
-+	scaler = 1;
-+	while (scaler < limit)
-+		scaler *= 10;
-+
-+	/*
-+	 * If increasing a clock by less than 0.1% changes it
-+	 * from ..999.. to ..000.., round up.
-+	 */
-+	if ((clk + scaler - 1) / scaler % 1000 == 0)
-+		clk = roundup(clk, scaler);
-+
-+	return clk;
-+}
-+
- static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
-+	unsigned long rate;
- 	u32 div;
- 
- 	if (data->int_bits == 0 && data->frac_bits == 0)
-@@ -1006,7 +1031,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 
- 	div = cprman_read(cprman, data->div_reg);
- 
--	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-+	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-+
-+	if (data->round_up)
-+		rate = bcm2835_clock_round(rate);
-+
-+	return rate;
- }
- 
- static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
-@@ -2143,7 +2173,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_UARTDIV,
- 		.int_bits = 10,
- 		.frac_bits = 12,
--		.tcnt_mux = 28),
-+		.tcnt_mux = 28,
-+		.round_up = true),
- 
- 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
- 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
--- 
-2.35.3
-
+--dmvoqxtqdjvru6cj--
