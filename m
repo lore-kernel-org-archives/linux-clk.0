@@ -2,96 +2,217 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC22ECAAD2
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 21:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A583ECAAD4
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 21:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbiH2VEO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Aug 2022 17:04:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35342 "EHLO
+        id S229530AbiH2VYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Aug 2022 17:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiH2VEN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 17:04:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EBD7E31C;
-        Mon, 29 Aug 2022 14:04:12 -0700 (PDT)
+        with ESMTP id S229446AbiH2VYi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 17:24:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D4E86B7A;
+        Mon, 29 Aug 2022 14:24:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 645AF611F8;
-        Mon, 29 Aug 2022 21:04:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F8FCC433D7;
-        Mon, 29 Aug 2022 21:04:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6116561210;
+        Mon, 29 Aug 2022 21:24:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B67B8C433C1;
+        Mon, 29 Aug 2022 21:24:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661807051;
-        bh=BDArk8/2LJG4f0JlM21frot7U4ElFgCGdWkTcw+GNrI=;
+        s=k20201202; t=1661808275;
+        bh=YhHEv7KSm28wyjioyO11RwThDZ/cHhzV+SbcRuiXD30=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hLNBIu9Td+/t9fmiuV63RFNrmX+4JMVfBhrmcGSE96BFapYdzIYYh8RcQphz7k1iz
-         CZ3SuEm/suUhALwjEkfNYk9eCIsLfXy4Z2dWolV85Hdm5M71fCn0NyWZ2iu46Gaygp
-         N+AmdNp/oPGjTH5H4w1n9rLNe5wGuXKrANyj0EOcypNEG33T6SfexYjsbR4iItQjUc
-         mbtefgnDmoBjH0sa46lAl5qiOPupyhdF+SOqlIFBkSg9EiMTWPcJfU3sBcuYHKia/e
-         HN/kvHCZFfXusXi+zMjQ0mOxvlZlXq0gk9kCHX01FYPSnIOb3EA1jYxNTFqUwBwlIb
-         gaiGx0dDJ8f1A==
-Date:   Mon, 29 Aug 2022 16:04:08 -0500
+        b=a1Pp0y7GLcgpoARejTqXecBwJYgsTTnho1MwnzIMCjMYulc3Z2EJxhBICOVZoYhFc
+         Lw8CmTX1gfXpy/NFy7OtU5hR83H1ciRYsIKculDi7GXkuky8EY6yCHNR0rdXF0T8TU
+         8L4tDQ8duZLUyTyeMfya3UcpQ3qu5t09cexv6pkCggAiLqs/DyxSB8ANEGI+00hzZg
+         PBuLxWVEtrMFbqHkQBg8fsfaOXk1OX04tFozEcr6hCW9HGA7Rhf1HKhcMxEwrxqTDK
+         SdZHz5AHlFaCEoXnuJfYMxUGacb57kDRlwV2Mwgk6jout9xHtKxPT0Glk9XO/D0D58
+         Xr+uR3Hxc7IXA==
+Date:   Mon, 29 Aug 2022 16:24:32 -0500
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,rpmcc: Add compatible for
- SM6375
-Message-ID: <20220829210408.gxbv6szxfwiiwrbv@builder.lan>
-References: <20220716192714.454031-1-konrad.dybcio@somainline.org>
- <991f085e-ae79-bf67-d063-51484a0ba344@linaro.org>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add display clock controller driver
+ for SM6115
+Message-ID: <20220829212432.nyxvcw6amypuwhwp@builder.lan>
+References: <20220819201231.23474-1-a39.skl@gmail.com>
+ <20220819201231.23474-3-a39.skl@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <991f085e-ae79-bf67-d063-51484a0ba344@linaro.org>
+In-Reply-To: <20220819201231.23474-3-a39.skl@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 08:30:13AM +0200, Krzysztof Kozlowski wrote:
-> On 16/07/2022 21:27, Konrad Dybcio wrote:
-> > Add a compatible for RPMCC on SM6375.
-> > 
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> > ---
-> >  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-> > index 9d296b89a8d0..f22febdfdce7 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-> > @@ -43,6 +43,7 @@ properties:
-> >            - qcom,rpmcc-sdm660
-> >            - qcom,rpmcc-sm6115
-> >            - qcom,rpmcc-sm6125
-> > +          - qcom,sm6375-rpmcc
+On Fri, Aug 19, 2022 at 10:12:22PM +0200, Adam Skladowski wrote:
+> Add support for the display clock controller found in SM6115/SM4250
+> based devices. This clock controller feeds the Multimedia Display
+> SubSystem (MDSS).
+> This driver is based upon one submitted for QCM2290.
 > 
-> I am fine with it, although this contradicts a bit
-> https://lore.kernel.org/all/20220705161301.493364-1-krzysztof.kozlowski@linaro.org/
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  drivers/clk/qcom/Kconfig         |   9 +
+>  drivers/clk/qcom/Makefile        |   1 +
+>  drivers/clk/qcom/dispcc-sm6115.c | 615 +++++++++++++++++++++++++++++++
+>  3 files changed, 625 insertions(+)
+>  create mode 100644 drivers/clk/qcom/dispcc-sm6115.c
 > 
-> Would be nice to get Bjorn's opinion/preference on this.
-> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 1cf1ef70e347..852888a849ae 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -616,6 +616,15 @@ config SM_CAMCC_8450
+>  	  Support for the camera clock controller on SM8450 devices.
+>  	  Say Y if you want to support camera devices and camera functionality.
+>  
+> +config SM_DISPCC_6115
+> +	tristate "SM6115 Display Clock Controller"
+> +	depends on SM_GCC_6115
+> +	help
+> +	  Support for the display clock controller on Qualcomm Technologies, Inc
+> +	  SM6115/SM4250 devices.
+> +	  Say Y if you want to support display devices and functionality such as
+> +	  splash screen
+> +
+>  config SM_DISPCC_6125
+>  	tristate "SM6125 Display Clock Controller"
+>  	depends on SM_GCC_6125
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index fbcf04073f07..a732ccb3b912 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -90,6 +90,7 @@ obj-$(CONFIG_SDX_GCC_55) += gcc-sdx55.o
+>  obj-$(CONFIG_SDX_GCC_65) += gcc-sdx65.o
+>  obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+>  obj-$(CONFIG_SM_CAMCC_8450) += camcc-sm8450.o
+> +obj-$(CONFIG_SM_DISPCC_6115) += dispcc-sm6115.o
+>  obj-$(CONFIG_SM_DISPCC_6125) += dispcc-sm6125.o
+>  obj-$(CONFIG_SM_DISPCC_6350) += dispcc-sm6350.o
+>  obj-$(CONFIG_SM_DISPCC_8250) += dispcc-sm8250.o
+> diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+> new file mode 100644
+> index 000000000000..6a8994bfe9d0
+> --- /dev/null
+> +++ b/drivers/clk/qcom/dispcc-sm6115.c
+> @@ -0,0 +1,615 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Based on dispcc-qcm2290.c
+> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2021, Linaro Ltd.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,sm6115-dispcc.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "common.h"
+> +#include "gdsc.h"
+> +
+> +enum {
+> +	P_BI_TCXO,
+> +	P_DISP_CC_PLL0_OUT_MAIN,
+> +	P_DSI0_PHY_PLL_OUT_BYTECLK,
+> +	P_DSI0_PHY_PLL_OUT_DSICLK,
+> +	P_DSI1_PHY_PLL_OUT_DSICLK,
+> +	P_GPLL0_OUT_MAIN,
+> +	P_SLEEP_CLK,
+> +};
+> +
+> +static const struct pll_vco spark_vco[] = {
+> +	{ 500000000, 1000000000, 2 },
+> +};
+> +
+> +/* 768MHz configuration */
+> +static const struct alpha_pll_config disp_cc_pll0_config = {
+> +	.l = 0x28,
+> +	.alpha = 0x0,
+> +	.alpha_en_mask = BIT(24),
+> +	.vco_val = 0x2 << 20,
+> +	.vco_mask = GENMASK(21, 20),
+> +	.main_output_mask = BIT(0),
+> +	.config_ctl_val = 0x4001055B,
+> +};
+> +
+> +static struct clk_alpha_pll disp_cc_pll0 = {
+> +	.offset = 0x0,
+> +	.vco_table = spark_vco,
+> +	.num_vco = ARRAY_SIZE(spark_vco),
+> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +	.clkr = {
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_pll0",
+> +			.parent_data = &(const struct clk_parent_data){
+> +				.fw_name = "bi_tcxo",
 
-While global consistency is nice, I think we should just stick with
-qcom,rpmcc-<soc>, to keep this binding nice and tidy.
+It's recently been decided that we would like to avoid using fw_name in
+new Qualcomm clock bindings/drivers. Can you please rework this to use
+.index instead?
+
+As done in e.g.:
+https://lore.kernel.org/all/20220811041211.3825786-3-bjorn.andersson@linaro.org/
+
+
+Also for bi_tcxo, I'd prefer if you break that out to its own definition
+that you can reuse.
+
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_alpha_pll_ops,
+> +		},
+> +	},
+> +};
+[..]
+> +static int __init disp_cc_sm6115_init(void)
+> +{
+> +	return platform_driver_register(&disp_cc_sm6115_driver);
+> +}
+> +subsys_initcall(disp_cc_sm6115_init);
+
+module_platform_driver() should be sufficient, and is slightly cleaner.
+
+> +
+> +static void __exit disp_cc_sm6115_exit(void)
+> +{
+> +	platform_driver_unregister(&disp_cc_sm6115_driver);
+> +}
+> +module_exit(disp_cc_sm6115_exit);
+> +
+> +MODULE_DESCRIPTION("QTI DISP_CC sm6115 Driver");
+
+"Qualcomm SM6115 Display Clock controller"?
+
+> +MODULE_LICENSE("GPL v2");
+
+As reported by checkpatch, this should simply be "GPL".
 
 Regards,
 Bjorn
 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> -- 
+> 2.25.1
 > 
-> 
-> Best regards,
-> Krzysztof
