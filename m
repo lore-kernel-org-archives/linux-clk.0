@@ -2,115 +2,209 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECC2ECAAD4
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 08:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC89ECAAD4
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 09:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbiH2IYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Aug 2022 04:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52408 "EHLO
+        id S229509AbiH2JWc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Aug 2022 05:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbiH2IYs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 04:24:48 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3074B5754A
-        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 01:24:41 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id b16so1559116wru.7
-        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 01:24:41 -0700 (PDT)
+        with ESMTP id S229459AbiH2JWa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 05:22:30 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B2FB58511
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 02:22:29 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id w19so14443225ejc.7
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 02:22:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=uFRiffIvzQ9QFbO1m9r0+ADVKxOh8ctJA6Vb37LR4lM=;
-        b=DShOJXq5b87D/6GDp/67rnM6rxx9a26JTD4M6JJ98xkpuLmxEduKx+iN+vEG0rToOh
-         f1A87IWi5SID7QBCR9Ymnr192zeMv1P/HMm/TVQQbDNz0ZYdhOWObOrF0pO3Jd98OIvE
-         WYheNOU6zbenz7Wo+L4irgajhj+V5piQwtvO43VuNoOHZPVjPE0QxZwC3vXoVzBqQt7e
-         rgzSBO84hyT5YXV4mnIkm6mPMZsd3WZ1fpcFoidfUS+UAw9nhyAxb4dTzL3tP1Ho8Aex
-         9sPejLEeYKjuNBZDk6GxIxvNqtMmUPygZ5a/kOTvtN1bR/kWI+GbTtvqR8NoD/0211Il
-         PlAQ==
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=l9SqLnHlXPzeQYrMBEs42moyjzbzWjc4jKKVIUFPcTo=;
+        b=fOfYBTkFV79tTpaxBFa8ZibSbLO3WAJ0ut5n82kiCi9cZSxYbKGt1tygx2u/yd+hfD
+         KOSXbTNma9erhCy5T5Mt/GQESvDwBUaFIXCltzq6CmgQjLY/rmFAlU6+Rq47QQtAFZ32
+         z8yhnei0KPZd9anIMAExRyyjNkk1+7KSmxbsc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=uFRiffIvzQ9QFbO1m9r0+ADVKxOh8ctJA6Vb37LR4lM=;
-        b=gFXdjnMDLF9T2RcPX8QIxTSOH1kEgqJXUNX3AGliKexDb/11FXyy2pBYxnuUOYkkZX
-         Mp9iqLRqm7eIco2wSadtpNPXWHszgK+1PMHOUilD6lxYdfWCYA4WRz71+lr7VKUt7Xp+
-         XP/3xDyhDTkKxHPjeIwsHR8hwpLBBS/IiCD6kx36BF5YZ0hAVhndZpDFwOFUPhR7mYzJ
-         T7D0V0f+lU9KGT/uAWspRRXYjzMZitCkHzdr+NKEwF1A9Ej1VvYOKv08c1lNwaPJN6Hw
-         ZDr56DOjOJaCJXhqmEHbuINejTQSEA6w6RC+Ywl+PV1qVm7iulM7u5dvFhV3wwUHaZPu
-         P2IQ==
-X-Gm-Message-State: ACgBeo1cpuEhBimsicWoGhNGcNHzgFAR/bKXr8q6fyYTft2WPGB4n3e5
-        FtDYoLwZaMr8PvHeslQ6e9Dzpg==
-X-Google-Smtp-Source: AA6agR6JS+DZb+wFfzIPJ1CsDKrTCDWPQF9AJL39E3gMEVQHkxXNrkWzYJYM1oTdX5JQaMuz8KWgmg==
-X-Received: by 2002:a05:6000:1c14:b0:226:deb1:d7cc with SMTP id ba20-20020a0560001c1400b00226deb1d7ccmr846314wrb.494.1661761479688;
-        Mon, 29 Aug 2022 01:24:39 -0700 (PDT)
-Received: from blmsp ([2001:4090:a245:8020:2658:1f7c:362:3e99])
-        by smtp.gmail.com with ESMTPSA id x18-20020a5d4452000000b00225307f43fbsm6283277wrr.44.2022.08.29.01.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Aug 2022 01:24:39 -0700 (PDT)
-Date:   Mon, 29 Aug 2022 10:24:38 +0200
-From:   Markus Schneider-Pargmann <msp@baylibre.com>
-To:     kernel test robot <lkp@intel.com>
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=l9SqLnHlXPzeQYrMBEs42moyjzbzWjc4jKKVIUFPcTo=;
+        b=zSC+GGXkf+WZOFVSWiDoWKyMLP3p/zZCOKEPOezh5piq6ClaMfMxvoctJV9Dd4GrHY
+         6jrCCNhtOegWEwwwWF+zC4N4YiWsJf03MRqcviW36zEnZoiFM75n8vBekzsLiUe7/lE6
+         wSj3qFFTV0cjaxqOoFvEv4p9k0kUGBr4bUafHKy3nU6UUzDezKQRaTCrK1u1ILB546ZT
+         0d+XTDctyR7f4kS7exdAu6eg4pePJG9XKQvFDWMrw7RNBNR8tpJeb8Hy3FyHl7hZKq6Z
+         BN/8mPgbCoPn4h4E/1weQNofvn8CT/Y4BwhR+S5iKrGSm/4266HrU5+vJaPAhfW9p+/k
+         X2pA==
+X-Gm-Message-State: ACgBeo1En8Vfix1Ja/X2u6X1HGLJ7SFMYkCVpCNT3/cz9RBGhG68OKQs
+        FeyJFgunVhFVaxEraziCOU0cvKnRXd5qrPU/0uAqBA==
+X-Google-Smtp-Source: AA6agR7oNcuhcpmWl7FUDBl51a2rIYfRLUMwk1GMql0boXUCeCL93C2trZgtL6SrrEidHgeoFO7WewPvdeZk8LQ86aE=
+X-Received: by 2002:a17:907:60c7:b0:739:52ba:cbd0 with SMTP id
+ hv7-20020a17090760c700b0073952bacbd0mr13119859ejc.152.1661764948017; Mon, 29
+ Aug 2022 02:22:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220822081424.1310926-1-wenst@chromium.org> <20220822081424.1310926-2-wenst@chromium.org>
+ <12115951.O9o76ZdvQC@steina-w>
+In-Reply-To: <12115951.O9o76ZdvQC@steina-w>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 29 Aug 2022 17:22:16 +0800
+Message-ID: <CAGXv+5E788T01XJF-dYRW6ZB5-TTU_L5=0hT3AQ0g+zA=LzG2w@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2 1/2] clk: core: Honor CLK_OPS_PARENT_ENABLE for
+ clk gate ops
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fabien Parent <parent.f@gmail.com>,
         AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, kbuild-all@lists.01.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] clk: mediatek: add driver for MT8365 SoC
-Message-ID: <20220829082438.ayz2qqav63odn3t6@blmsp>
-References: <20220822152652.3499972-5-msp@baylibre.com>
- <202208241051.Xi9D8DaW-lkp@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202208241051.Xi9D8DaW-lkp@intel.com>
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= 
+        <nfraprado@collabora.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-On Wed, Aug 24, 2022 at 10:57:12AM +0800, kernel test robot wrote:
-> Hi Markus,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on robh/for-next linus/master v6.0-rc2 next-20220823]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220824/202208241051.Xi9D8DaW-lkp@intel.com/config)
-> compiler: m68k-linux-gcc (GCC) 12.1.0
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://github.com/intel-lab-lkp/linux/commit/51c1bac1ab0d284ab6c444966eee437c23095a85
->         git remote add linux-review https://github.com/intel-lab-lkp/linux
->         git fetch --no-tags linux-review Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
->         git checkout 51c1bac1ab0d284ab6c444966eee437c23095a85
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
-> 
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
-> 
-> >> ERROR: modpost: "mtk_clk_register_gates_with_dev" [drivers/clk/mediatek/clk-mt8365-mm.ko] undefined!
+On Fri, Aug 26, 2022 at 8:28 PM Alexander Stein
+<alexander.stein@ew.tq-group.com> wrote:
+>
+> Hi everybody,
+>
+> Am Montag, 22. August 2022, 10:14:23 CEST schrieb Chen-Yu Tsai:
+> > In the previous commits that added CLK_OPS_PARENT_ENABLE, support for
+> > this flag was only added to rate change operations (rate setting and
+> > reparent) and disabling unused subtree. It was not added to the
+> > clock gate related operations. Any hardware driver that needs it for
+> > these operations will either see bogus results, or worse, hang.
+> >
+> > This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
+> > drivers set this, but dumping debugfs clk_summary would cause it
+> > to hang.
+> >
+> > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents
+> > enable (part 2)") Fixes: a4b3518d146f ("clk: core: support clocks which
+> > requires parents enable (part 1)") Signed-off-by: Chen-Yu Tsai
+> > <wenst@chromium.org>
+> > Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > Tested-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > ---
+> >  drivers/clk/clk.c | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 7fc191c15507..9b365cd6d14b 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -196,6 +196,9 @@ static bool clk_core_rate_is_protected(struct clk_c=
+ore
+> > *core) return core->protect_count;
+> >  }
+> >
+> > +static int clk_core_prepare_enable(struct clk_core *core);
+> > +static void clk_core_disable_unprepare(struct clk_core *core);
+> > +
+> >  static bool clk_core_is_prepared(struct clk_core *core)
+> >  {
+> >       bool ret =3D false;
+> > @@ -208,7 +211,11 @@ static bool clk_core_is_prepared(struct clk_core *=
+core)
+> > return core->prepare_count;
+> >
+> >       if (!clk_pm_runtime_get(core)) {
+> > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +                     clk_core_prepare_enable(core->parent);
+> >               ret =3D core->ops->is_prepared(core->hw);
+> > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +                     clk_core_disable_unprepare(core->parent);
+> >               clk_pm_runtime_put(core);
+> >       }
+> >
+> > @@ -244,7 +251,13 @@ static bool clk_core_is_enabled(struct clk_core *c=
+ore)
+> >               }
+> >       }
+> >
+> > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +             clk_core_prepare_enable(core->parent);
+> > +
+> >       ret =3D core->ops->is_enabled(core->hw);
+> > +
+> > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +             clk_core_disable_unprepare(core->parent);
+> >  done:
+> >       if (core->rpm_enabled)
+> >               pm_runtime_put(core->dev);
+> > @@ -812,6 +825,9 @@ int clk_rate_exclusive_get(struct clk *clk)
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
+> >
+> > +static int clk_core_enable_lock(struct clk_core *core);
+> > +static void clk_core_disable_lock(struct clk_core *core);
+> > +
+> >  static void clk_core_unprepare(struct clk_core *core)
+> >  {
+> >       lockdep_assert_held(&prepare_lock);
+> > @@ -835,6 +851,9 @@ static void clk_core_unprepare(struct clk_core *cor=
+e)
+> >
+> >       WARN(core->enable_count > 0, "Unpreparing enabled %s\n", core-
+> >name);
+> >
+> > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +             clk_core_enable_lock(core->parent);
+> > +
+> >       trace_clk_unprepare(core);
+> >
+> >       if (core->ops->unprepare)
+> > @@ -843,6 +862,9 @@ static void clk_core_unprepare(struct clk_core *cor=
+e)
+> >       clk_pm_runtime_put(core);
+> >
+> >       trace_clk_unprepare_complete(core);
+> > +
+> > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +             clk_core_disable_lock(core->parent);
+> >       clk_core_unprepare(core->parent);
+> >  }
+> >
+> > @@ -891,6 +913,9 @@ static int clk_core_prepare(struct clk_core *core)
+> >               if (ret)
+> >                       goto runtime_put;
+> >
+> > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +                     clk_core_enable_lock(core->parent);
+> > +
+> >               trace_clk_prepare(core);
+> >
+> >               if (core->ops->prepare)
+> > @@ -898,6 +923,9 @@ static int clk_core_prepare(struct clk_core *core)
+> >
+> >               trace_clk_prepare_complete(core);
+> >
+> > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +                     clk_core_disable_lock(core->parent);
+> > +
+> >               if (ret)
+> >                       goto unprepare;
+> >       }
+>
+>
+> Unfortunately this completely locks up my i.MX8M Plus based board during =
+early
+> boot.
+> I'm currently running on next-20220826 using arch/arm64/boot/dts/freescal=
+e/
+> imx8mp-tqma8mpql-mba8mpxl.dts
+> Reverting this patch gets my board booting again. dmesg until hard lockup
+> below.
 
-This series is based on this patch
-https://lore.kernel.org/linux-mediatek/20220813083249.45427-1-y.oudjana@protonmail.com/
-which is not yet applied but adds the required EXPORT.
+The standard logs don't have anything to go on. Could you add some printk
+calls to the clk core around the areas this patch touchs? That would help.
 
-Best,
-Markus
+Could you also provide a dump of /sys/kernel/debug/clk/clk_summary? That
+would help to understand the clock tree.
+
+
+Thanks
+ChenYu
