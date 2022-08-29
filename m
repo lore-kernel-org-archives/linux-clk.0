@@ -2,190 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF75ECAAD4
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 08:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECC2ECAAD4
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Aug 2022 08:24:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbiH2IMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Aug 2022 04:12:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60208 "EHLO
+        id S229921AbiH2IYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Aug 2022 04:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiH2IMb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 04:12:31 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6164DB44;
-        Mon, 29 Aug 2022 01:12:29 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27T7Kcb4014864;
-        Mon, 29 Aug 2022 08:12:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=rCGefT0iakgCy9h1CkWjMARQbxfbwXQAnAbhkNyxldY=;
- b=IOQTb9GAnEk2+L/bRdmhnPm8pO+DnccZ929bF4RDQiqLcLtOKdwBRYwcezFiSCs2W/Gk
- uvyowuofZgEmn4pLjBPa3nxcrlidiu+ZYZvSCN5U0oOmOJvOJl7wChgGlapYPeF3jmnk
- 4wFuIbjOcgLCvwNG1UAFhtxka9Tnk/TdcAvpA+/hGoKPJa1hEDkcXCB7hhyib0q/ciHv
- VLhPbAsfbyxE/bJh4Kg6W1dQ1Qhqwck2K9Otr+XjYLuC5Rfxb2yyA5oCNK7Gev3US9Is
- wLXvzoGyJ94EBGnGt4Vsh4vRP35HmCO9LaXqUN3fsw7q4vbC/3VMHfnTEGDUzC+Uu2Fn qw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j7a7ymkuu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 29 Aug 2022 08:12:20 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27T8CJtl018796
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 29 Aug 2022 08:12:19 GMT
-Received: from [10.79.136.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 29 Aug
- 2022 01:12:14 -0700
-Message-ID: <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
-Date:   Mon, 29 Aug 2022 13:42:02 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v2 1/2] clk: qcom: gcc-sc7180: Keep the USB GDSC always on
-Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-CC:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229794AbiH2IYs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2022 04:24:48 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3074B5754A
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 01:24:41 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id b16so1559116wru.7
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 01:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=uFRiffIvzQ9QFbO1m9r0+ADVKxOh8ctJA6Vb37LR4lM=;
+        b=DShOJXq5b87D/6GDp/67rnM6rxx9a26JTD4M6JJ98xkpuLmxEduKx+iN+vEG0rToOh
+         f1A87IWi5SID7QBCR9Ymnr192zeMv1P/HMm/TVQQbDNz0ZYdhOWObOrF0pO3Jd98OIvE
+         WYheNOU6zbenz7Wo+L4irgajhj+V5piQwtvO43VuNoOHZPVjPE0QxZwC3vXoVzBqQt7e
+         rgzSBO84hyT5YXV4mnIkm6mPMZsd3WZ1fpcFoidfUS+UAw9nhyAxb4dTzL3tP1Ho8Aex
+         9sPejLEeYKjuNBZDk6GxIxvNqtMmUPygZ5a/kOTvtN1bR/kWI+GbTtvqR8NoD/0211Il
+         PlAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=uFRiffIvzQ9QFbO1m9r0+ADVKxOh8ctJA6Vb37LR4lM=;
+        b=gFXdjnMDLF9T2RcPX8QIxTSOH1kEgqJXUNX3AGliKexDb/11FXyy2pBYxnuUOYkkZX
+         Mp9iqLRqm7eIco2wSadtpNPXWHszgK+1PMHOUilD6lxYdfWCYA4WRz71+lr7VKUt7Xp+
+         XP/3xDyhDTkKxHPjeIwsHR8hwpLBBS/IiCD6kx36BF5YZ0hAVhndZpDFwOFUPhR7mYzJ
+         T7D0V0f+lU9KGT/uAWspRRXYjzMZitCkHzdr+NKEwF1A9Ej1VvYOKv08c1lNwaPJN6Hw
+         ZDr56DOjOJaCJXhqmEHbuINejTQSEA6w6RC+Ywl+PV1qVm7iulM7u5dvFhV3wwUHaZPu
+         P2IQ==
+X-Gm-Message-State: ACgBeo1cpuEhBimsicWoGhNGcNHzgFAR/bKXr8q6fyYTft2WPGB4n3e5
+        FtDYoLwZaMr8PvHeslQ6e9Dzpg==
+X-Google-Smtp-Source: AA6agR6JS+DZb+wFfzIPJ1CsDKrTCDWPQF9AJL39E3gMEVQHkxXNrkWzYJYM1oTdX5JQaMuz8KWgmg==
+X-Received: by 2002:a05:6000:1c14:b0:226:deb1:d7cc with SMTP id ba20-20020a0560001c1400b00226deb1d7ccmr846314wrb.494.1661761479688;
+        Mon, 29 Aug 2022 01:24:39 -0700 (PDT)
+Received: from blmsp ([2001:4090:a245:8020:2658:1f7c:362:3e99])
+        by smtp.gmail.com with ESMTPSA id x18-20020a5d4452000000b00225307f43fbsm6283277wrr.44.2022.08.29.01.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Aug 2022 01:24:39 -0700 (PDT)
+Date:   Mon, 29 Aug 2022 10:24:38 +0200
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Douglas Anderson" <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20220825182152.v2.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
- <20220826024003.qpqtdmdohdmpcskt@baldur>
-From:   Rajendra Nayak <quic_rjendra@quicinc.com>
-In-Reply-To: <20220826024003.qpqtdmdohdmpcskt@baldur>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v8V2nX2IKlQtRGg1kjfk78fM8O5JEf2f
-X-Proofpoint-GUID: v8V2nX2IKlQtRGg1kjfk78fM8O5JEf2f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-29_03,2022-08-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 clxscore=1011 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208290040
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Fabien Parent <parent.f@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kbuild-all@lists.01.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] clk: mediatek: add driver for MT8365 SoC
+Message-ID: <20220829082438.ayz2qqav63odn3t6@blmsp>
+References: <20220822152652.3499972-5-msp@baylibre.com>
+ <202208241051.Xi9D8DaW-lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202208241051.Xi9D8DaW-lkp@intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-On 8/26/2022 8:10 AM, Bjorn Andersson wrote:
-> On Thu, Aug 25, 2022 at 06:21:58PM -0700, Matthias Kaehlcke wrote:
->> When the GDSC is disabled during system suspend USB is broken on
->> sc7180 when the system resumes. Mark the GDSC as always on to
->> make sure USB still works after system suspend.
->>
->> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+On Wed, Aug 24, 2022 at 10:57:12AM +0800, kernel test robot wrote:
+> Hi Markus,
 > 
-> Rajendra, where you able to find some time to look into take the GDSC
-> into retention state? Do you suggest that I merge these two patches for
-> now?
+> Thank you for the patch! Yet something to improve:
 > 
-
-Hi Bjorn, based on my experiments to support retention on sc7280 these are
-some of my findings
-
-On Platforms which support CX retention (for example sc7180/sc7280) instead of
-CX PowerCollapse (PC), We can leave the GDSC turned ON. When CX transitions to RET state
-the GDSC goes into retention too (some controller state is retained) and USB wakeups work.
-
-On platforms which support CX PC, just leaving the GDSC
-turned ON will not help since the GDSC will also transition to OFF state
-when we enter CX PC, hence wake-ups from USB won't work.
-For such platforms we need to make sure gdsc_force_mem_on() is called
-and cxcs (* @cxcs: offsets of branch registers to toggle mem/periph bits in)
-are populated correctly, while leaving the GDSC turned ON.
-This will make sure usb gdsc transitions from being powered by CX to MX
-when CX hits PC and we still get USB wakeups to work.
-So in short we could do the same thing that this patch does on those
-platforms too with additionally populating the right cxcs entries and it
-should just work fine.
-
-Now the problem that I see with this approach is not with getting USB wakeups
-to work in suspend, but with supporting performance state voting when
-USB is active.
-The last conclusion we had on that [1] was to model usb_gdsc as a subdomain of CX,
-so if we do that and we model usb_gdsc as something that supports ALWAYS_ON,
-we would _never_ drop the CX vote and prevent CX from going down (either to ret
-or pc)
-
-The only way I think we can solve both the USB wakeups and performance state
-needs (with usb_gdsc as a subdomain of CX) is if we can model a RET state for gdsc
-which sets the mem/periph bits while leaving the GDSC ON (Today the RET state sets
-the mem/periph bits but turns the GDSC OFF)
-
-That would mean a change in gdsc.c like this
----
-
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index d3244006c661..0fe017ba901b 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -368,6 +368,10 @@ static int _gdsc_disable(struct gdsc *sc)
-         if (sc->pwrsts & PWRSTS_OFF)
-                 gdsc_clear_mem_on(sc);
-
-+       /* If the GDSC supports RET, do not explicitly power it off */
-+       if (sc->pwrsts & PWRSTS_RET)
-+               return 0;
-+
-         ret = gdsc_toggle_logic(sc, GDSC_OFF);
-         if (ret)
-                 return ret;
-
-
-So with that change, we would then not need the ALWAYS_ON flag set for usb gdsc,
-instead we would update the .pwrsts to PWRSTS_RET_ON instead of PWRSTS_OFF_ON,
-and that should make both usb wake-ups to work and we can still have the usb_gdsc as
-a subdomain of CX for performance state voting.
-Does that sounds like a reasonable solution?
-
-Thanks,
-Rajendra
-
-[1] https://patchwork.kernel.org/project/linux-arm-msm/patch/1630346073-7099-2-git-send-email-sanm@codeaurora.org/
-
-> Thanks,
-> Bjorn
+> [auto build test ERROR on clk/clk-next]
+> [also build test ERROR on robh/for-next linus/master v6.0-rc2 next-20220823]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
->> ---
->> I'm not entirely sure that this is the correct solution. What makes
->> me doubt is that only msm8953 sets ALWAYS_ON for the USB GDSC. Is USB
->> broken after suspend on all the other QC platforms?
->>
->> Changes in v2:
->> - set the flags of the GDSC not of the GDSC power domain
->> - updated commit message
->>
->>   drivers/clk/qcom/gcc-sc7180.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
->> index c2ea09945c47..c0d7509a782e 100644
->> --- a/drivers/clk/qcom/gcc-sc7180.c
->> +++ b/drivers/clk/qcom/gcc-sc7180.c
->> @@ -2225,6 +2225,7 @@ static struct gdsc usb30_prim_gdsc = {
->>   		.name = "usb30_prim_gdsc",
->>   	},
->>   	.pwrsts = PWRSTS_OFF_ON,
->> +	.flags = ALWAYS_ON,
->>   };
->>   
->>   static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
->> -- 
->> 2.37.2.672.g94769d06f0-goog
->>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220824/202208241051.Xi9D8DaW-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 12.1.0
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # https://github.com/intel-lab-lkp/linux/commit/51c1bac1ab0d284ab6c444966eee437c23095a85
+>         git remote add linux-review https://github.com/intel-lab-lkp/linux
+>         git fetch --no-tags linux-review Markus-Schneider-Pargmann/clk-mediatek-Add-mt8365-support/20220822-233030
+>         git checkout 51c1bac1ab0d284ab6c444966eee437c23095a85
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
+> 
+> If you fix the issue, kindly add following tag where applicable
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>, old ones prefixed by <<):
+> 
+> >> ERROR: modpost: "mtk_clk_register_gates_with_dev" [drivers/clk/mediatek/clk-mt8365-mm.ko] undefined!
+
+This series is based on this patch
+https://lore.kernel.org/linux-mediatek/20220813083249.45427-1-y.oudjana@protonmail.com/
+which is not yet applied but adds the required EXPORT.
+
+Best,
+Markus
