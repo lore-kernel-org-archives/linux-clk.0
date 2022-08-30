@@ -2,149 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9A8ECAAD5
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 18:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB21ECAAD5
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 18:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbiH3SfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 14:35:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35382 "EHLO
+        id S231293AbiH3SoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 14:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbiH3SfB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 14:35:01 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB22EDF9E
-        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 11:34:56 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id z25so16730793lfr.2
-        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 11:34:56 -0700 (PDT)
+        with ESMTP id S230350AbiH3SoB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 14:44:01 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B40E74369
+        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 11:44:00 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id 199so12145909pfz.2
+        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 11:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=2qc4z4IniWo5S8Bjp3Lb04VkKR2XhFXi6h1hRVoeddw=;
-        b=qpMHDsaE+ARKwZPkRz6IRLDlJ7VtqId5wp+4T6HGUEbCLJsbF5YP9gHCCdt9inih7s
-         x8l6nXDAC9uWxI0rfem6ZOjMPmaIDBNy1GFefYAJz4QDhBT74NLhoZ0om1hKm08q7VHh
-         +phR+Z/nkhWVZCFxk+/utrxnT2P+5pLMmEj510hC3Pvnqn7Bv1ecUW8ccMR7wnQvVHCm
-         +9LykdEJTVS+39K0q97h0JuywbBdhsqtAgUL37dCHDHkoAnOwEFb4ZlPz5/5ZvJzXdRW
-         ZeXFcYvmCqQW0rFb+cqoxg1K3p/yDdTIL/MyYcDrekEvdSAT31IAuNgSQKHDOKJXMVlk
-         3F6w==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=NZVZkfFYq+g48u9ab87ZWo6dPBjM06Q+lLAU8Yvk5EA=;
+        b=Axzf/shUDMALwg8iHDSJOsle0Qw6yo7nQ4L0Ew2LPymFZnPev4UAjpWJldbz1gztDq
+         jKZJw7kpHpXifWeb417pif3gyrl7IsgOi9WFU3RwiXyuvYeVh5uByAISbNeGVLzQ7MTp
+         gueWsarra0u8xd3OAbrUmHKAixAZjsKVVwK1g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=2qc4z4IniWo5S8Bjp3Lb04VkKR2XhFXi6h1hRVoeddw=;
-        b=SlspeOSm3qncjBI+QlpTH1Jh1Hrk9LSaVtmbQuHUD1DWdFAaVijcOrI3BqyKyioVUK
-         qxRwvaViUZiqVLC6sgTwD7RjnZRlHS476+k3qxt81qm8ypJqe0uYEGB6rtlh7UT/pbqq
-         gBzvHbxc76y/20NjCXLiZv7OxL7D8BstqvCYuu0A9NAd7hsDJ4rxCdr2dVJNpV+bEQAl
-         7eilybvjBaRNTTv3SnT3MlLVLbo37tjA67NJuhBhWmvHl1ebPzt/g2sBiUCtSZ9Qc9Mb
-         81c3COLO37US7B92I7z4d3R6lN8DcuIrwb9y3AaWnJRLzMvDyNOWGeGTvB6sTdD+IBot
-         Ccqg==
-X-Gm-Message-State: ACgBeo0jK6pO6CYByxqQT08z/DuZFrNRGcqI5knbOumT6TvHrXgdQviF
-        0xr7wzIWR1NiwWfg06XRLYzy7GPz5j437oBY
-X-Google-Smtp-Source: AA6agR4/olU/KNlq60S9dpcH9lGfvx1IyF/SOa/kzAEpuENf6xMvHJWfCxVaAYu+ZS8TKwbsWS/wbw==
-X-Received: by 2002:a05:6512:3f14:b0:47d:e011:f19b with SMTP id y20-20020a0565123f1400b0047de011f19bmr7603468lfa.427.1661884494655;
-        Tue, 30 Aug 2022 11:34:54 -0700 (PDT)
-Received: from krzk-bin.. (balticom-73-99-134.balticom.lv. [109.73.99.134])
-        by smtp.gmail.com with ESMTPSA id 11-20020ac25f0b000000b004945f2de7ebsm1224892lfq.262.2022.08.30.11.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Aug 2022 11:34:52 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: for v6.1
-Date:   Tue, 30 Aug 2022 21:34:48 +0300
-Message-Id: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=NZVZkfFYq+g48u9ab87ZWo6dPBjM06Q+lLAU8Yvk5EA=;
+        b=az5GeAjbaTcIP9QSE/erdXOqpUS5GIaMJhfq7FV8v6cpHbpqeh3bGe+aVQrdg5iulB
+         sZk29sZF9HuYu6osUmh4hQVxQEhyWQGNDEJFACUwX//Lgr/lkCb2ZLXIvA8WUKsRjoAM
+         e1MMM9WWS5gZxP+O1HQKvNFRsqKs98gwz2W23mJAICKa6x90hvmVFSChzfGzW7Bf5ymy
+         NKcCoF9DPlIQuHty0bLjPQu83o85CqN4NpqoI8lf+YK6XK9npxKIgzITwjm88gc0aj1z
+         N7cfcG1who3aSJYV3GkIiGsRJ3XrCYCMlFqf1kj0g0DCd9oT42SRtH+bQA8WQiV6D9wz
+         6Uiw==
+X-Gm-Message-State: ACgBeo0twwEnUsSEQ4uhOkEkcbdRLzQlAELFu1j27GVF84XCZgIHYHcA
+        eLdLRD6kjQze9cPrgkn+KPVqew==
+X-Google-Smtp-Source: AA6agR7zpTyvcECkA2jQOB4My7timJiRT9otT5h6XOP4Y4xqijtClzf1Ffy2uOmONrciFnSEmceaNw==
+X-Received: by 2002:a63:1841:0:b0:429:8268:1fc with SMTP id 1-20020a631841000000b00429826801fcmr19102261pgy.78.1661885039627;
+        Tue, 30 Aug 2022 11:43:59 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:f023:bd53:48bf:f508])
+        by smtp.gmail.com with UTF8SMTPSA id b11-20020a170902d50b00b0016dc2366722sm10163636plg.77.2022.08.30.11.43.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Aug 2022 11:43:59 -0700 (PDT)
+Date:   Tue, 30 Aug 2022 11:43:57 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/2] clk: qcom: gcc-sc7180: Keep the USB GDSC always on
+Message-ID: <Yw5abfBHQSl62pB9@google.com>
+References: <20220825182152.v2.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
+ <20220826024003.qpqtdmdohdmpcskt@baldur>
+ <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Mon, Aug 29, 2022 at 01:42:02PM +0530, Rajendra Nayak wrote:
+> 
+> On 8/26/2022 8:10 AM, Bjorn Andersson wrote:
+> > On Thu, Aug 25, 2022 at 06:21:58PM -0700, Matthias Kaehlcke wrote:
+> > > When the GDSC is disabled during system suspend USB is broken on
+> > > sc7180 when the system resumes. Mark the GDSC as always on to
+> > > make sure USB still works after system suspend.
+> > > 
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > 
+> > Rajendra, where you able to find some time to look into take the GDSC
+> > into retention state? Do you suggest that I merge these two patches for
+> > now?
+> > 
+> 
+> Hi Bjorn, based on my experiments to support retention on sc7280 these are
+> some of my findings
+> 
+> On Platforms which support CX retention (for example sc7180/sc7280) instead of
+> CX PowerCollapse (PC), We can leave the GDSC turned ON. When CX transitions to RET state
+> the GDSC goes into retention too (some controller state is retained) and USB wakeups work.
+> 
+> On platforms which support CX PC, just leaving the GDSC
+> turned ON will not help since the GDSC will also transition to OFF state
+> when we enter CX PC, hence wake-ups from USB won't work.
+> For such platforms we need to make sure gdsc_force_mem_on() is called
+> and cxcs (* @cxcs: offsets of branch registers to toggle mem/periph bits in)
+> are populated correctly, while leaving the GDSC turned ON.
+> This will make sure usb gdsc transitions from being powered by CX to MX
+> when CX hits PC and we still get USB wakeups to work.
+> So in short we could do the same thing that this patch does on those
+> platforms too with additionally populating the right cxcs entries and it
+> should just work fine.
+> 
+> Now the problem that I see with this approach is not with getting USB wakeups
+> to work in suspend, but with supporting performance state voting when
+> USB is active.
+> The last conclusion we had on that [1] was to model usb_gdsc as a subdomain of CX,
+> so if we do that and we model usb_gdsc as something that supports ALWAYS_ON,
+> we would _never_ drop the CX vote and prevent CX from going down (either to ret
+> or pc)
+> 
+> The only way I think we can solve both the USB wakeups and performance state
+> needs (with usb_gdsc as a subdomain of CX) is if we can model a RET state for gdsc
+> which sets the mem/periph bits while leaving the GDSC ON (Today the RET state sets
+> the mem/periph bits but turns the GDSC OFF)
+> 
+> That would mean a change in gdsc.c like this
+> ---
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index d3244006c661..0fe017ba901b 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -368,6 +368,10 @@ static int _gdsc_disable(struct gdsc *sc)
+>         if (sc->pwrsts & PWRSTS_OFF)
+>                 gdsc_clear_mem_on(sc);
+> 
+> +       /* If the GDSC supports RET, do not explicitly power it off */
+> +       if (sc->pwrsts & PWRSTS_RET)
+> +               return 0;
+> +
+>         ret = gdsc_toggle_logic(sc, GDSC_OFF);
+>         if (ret)
+>                 return ret;
+> 
+> 
+> So with that change, we would then not need the ALWAYS_ON flag set for usb gdsc,
+> instead we would update the .pwrsts to PWRSTS_RET_ON instead of PWRSTS_OFF_ON,
+> and that should make both usb wake-ups to work and we can still have the usb_gdsc as
+> a subdomain of CX for performance state voting.
 
-Samsung clocks from a new tree. I hope we can meet on some Linux conference for
-a key signing. :)
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
-
-  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.1
-
-for you to fetch changes up to ef96c458888fa2a329b14efc7991530f645fbddb:
-
-  clk: samsung: MAINTAINERS: add Krzysztof Kozlowski (2022-08-24 16:10:22 +0300)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.1
-
-1. Exynos7885: add FSYS, TREX and MFC clock controllers.
-2. Exynos850: add IS and AUD (audio) clock controllers with bindings.
-3. ExynosAutov9: add FSYS clock controllers with bindings.
-4. ExynosAutov9: correct clock IDs in bindings of Peric 0 and 1 clock
-   controllers, due to duplicated entries.  This is an acceptable ABI
-   break: recently developed/added platform so without legacies, acked
-   by known users/developers.
-5. ExynosAutov9: add few missing Peric 0/1 gates.
-6. ExynosAutov9: correct register offsets of few Peric 0/1 clocks.
-7. Minor code improvements (use of_device_get_match_data() helper, code
-   style).
-8. Add Krzysztof Kozlowski as co-maintainer of Samsung SoC clocks, as he
-   already maintainers that architecture/platform.
-
-----------------------------------------------------------------
-Chanho Park (8):
-      dt-bindings: clock: exynosautov9: correct clock numbering of peric0/c1
-      dt-bindings: clock: exynosautov9: add fys0 clock definitions
-      dt-bindings: clock: exynosautov9: add fsys1 clock definitions
-      dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1
-      clk: samsung: exynosautov9: add missing gate clks for peric0/c1
-      clk: samsung: exynosautov9: correct register offsets of peric0/c1
-      clk: samsung: exynosautov9: add fsys0 clock support
-      clk: samsung: exynosautov9: add fsys1 clock support
-
-David Virag (2):
-      clk: samsung: exynos7885: Implement CMU_FSYS domain
-      clk: samsung: exynos7885: Add TREX clocks
-
-Krzysztof Kozlowski (2):
-      Merge branch 'for-v6.0/samsung-clk-dt-bindings' into next/clk
-      clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
-
-Minghao Chi (CGEL ZTE) (1):
-      clk: samsung: exynos-clkout: Use of_device_get_match_data()
-
-Sam Protsenko (7):
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_AUD
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_IS
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_MFCMSCL
-      clk: samsung: exynos850: Style fixes
-      clk: samsung: exynos850: Implement CMU_AUD domain
-      clk: samsung: exynos850: Implement CMU_IS domain
-      clk: samsung: exynos850: Implement CMU_MFCMSCL domain
-
- .../bindings/clock/samsung,exynos850-clock.yaml    |  69 +++
- .../bindings/clock/samsung,exynosautov9-clock.yaml |  44 ++
- MAINTAINERS                                        |   2 +
- drivers/clk/samsung/clk-exynos-clkout.c            |   6 +-
- drivers/clk/samsung/clk-exynos7885.c               | 207 ++++++-
- drivers/clk/samsung/clk-exynos850.c                | 682 ++++++++++++++++++++-
- drivers/clk/samsung/clk-exynosautov9.c             | 401 +++++++++++-
- include/dt-bindings/clock/exynos850.h              | 136 +++-
- include/dt-bindings/clock/samsung,exynosautov9.h   | 128 +++-
- 9 files changed, 1620 insertions(+), 55 deletions(-)
+Krishna and I confirmed that this works from the USB side for sc7180 and sc7280.
