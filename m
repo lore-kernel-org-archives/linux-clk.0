@@ -2,89 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C04ECAAD4
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 22:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DE0ECAAD4
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 22:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231984AbiH3WFF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 18:05:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56162 "EHLO
+        id S230212AbiH3WGd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 18:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232095AbiH3WEq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 18:04:46 -0400
+        with ESMTP id S229808AbiH3WGb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 18:06:31 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECF891D3A;
-        Tue, 30 Aug 2022 15:03:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B53526A48E;
+        Tue, 30 Aug 2022 15:06:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A884460B9A;
-        Tue, 30 Aug 2022 22:03:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDB6DC433D7;
-        Tue, 30 Aug 2022 22:03:25 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A141560ED9;
+        Tue, 30 Aug 2022 22:06:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07440C433B5;
+        Tue, 30 Aug 2022 22:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661897006;
-        bh=W3UvA0KjpIMtP2Uq4fpqJ+KTfnsGHwilKFhq3opz2oA=;
+        s=k20201202; t=1661897187;
+        bh=VVaAyTdAfsCPJoUa2MTvj/q7KQPHl/s8HHj/gCUuUo4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SQ71bbuZHFJiZVNMqSJNo2l8rqvUiehe4U8WJfFvUI5ZK1FSsFoo5s0Q4d2ZLumsH
-         +d5byNIFYEW3N/2j7B84KklkwEvcWPXJgSBBgezHpEVPuB1jFFgQ9F/IyuyHK+nRzN
-         Snai71z/jkPFJJe8asCUHJBWRk037KTf2ThGPU/bhbOeR0qTEQJISOJPu+xm9/sBrn
-         mz8EvNbwC4WLyJ/GXmfRPDE/KPM4Ycf8nLMfxRXsP+KJp9lFo0qPygVPqmjmNB7Xtu
-         FnSR9La8OWSF3zpl/2N2EQHtE2U0lWl6L4j7pLF/JFl7NwnKQTFGXDyFNwYoQanWwU
-         a3XvGf0LBuYHA==
+        b=LTn4IbBMxJEp6Q7V3tyca8rMfjQhb+1sZ9XVw4Heq6M3hFxTPF2Jf8VJuW4BLujGq
+         6EnCmAkoYl7oKR4cZWzhieamjP0PFdXe8u+KuZjqkrMvdi5Ecql9GbbuRY0EwHww3k
+         DsW9peqa5b389Czrd08ZNAcSQ5nhxrgOHVzmkeW75iG9iDTUQFVxLmofwIV3KzWZm1
+         Zww9BFNfLcHwpmy8GlKA0OHCxOwIQicey0IzaNGYyadxq2WJGt1JeuAoHYvHRfdMyh
+         udIxGuajZrdmm6eX2SJDIUz2fj8NhU0VdcQvIIwKAo7GpfFpOcEct730Am3TDKdtHX
+         A/8PrIm1/0vUA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
-References: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: for v6.1
+In-Reply-To: <20220826142030.213805-1-quanyang.wang@windriver.com>
+References: <20220826142030.213805-1-quanyang.wang@windriver.com>
+Subject: Re: [PATCH] clk: zynqmp: pll: rectify rate rounding in zynqmp_pll_round_rate
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 30 Aug 2022 15:03:23 -0700
+Cc:     Michael Tretter <m.tretter@pengutronix.de>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        quanyang.wang@windriver.com
+Date:   Tue, 30 Aug 2022 15:06:25 -0700
 User-Agent: alot/0.10
-Message-Id: <20220830220325.EDB6DC433D7@smtp.kernel.org>
+Message-Id: <20220830220627.07440C433B5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-08-30 11:34:48)
-> Hi Stephen,
+Quoting quanyang.wang@windriver.com (2022-08-26 07:20:30)
+> From: Quanyang Wang <quanyang.wang@windriver.com>
 >=20
-> Samsung clocks from a new tree. I hope we can meet on some Linux conferen=
-ce for
-> a key signing. :)
+> The function zynqmp_pll_round_rate is used to find a most appropriate
+> PLL frequency which the hardware can generate according to the desired
+> frequency. For example, if the desired frequency is 297MHz, considering
+> the limited range from PS_PLL_VCO_MIN (1.5GHz) to PS_PLL_VCO_MAX (3.0GHz)
+> of PLL, zynqmp_pll_round_rate should return 1.872GHz (297MHz * 5).
+>=20
+> There are two problems with the current code of zynqmp_pll_round_rate:
+>=20
+> 1) When the rate is below PS_PLL_VCO_MIN, it can't find a correct rate
+> when the parameter "rate" is an integer multiple of *prate, in other word=
+s,
+> if "f" is zero, zynqmp_pll_round_rate won't return a valid frequency which
+> is from PS_PLL_VCO_MIN to PS_PLL_VCO_MAX. For example, *prate is 33MHz
+> and the rate is 660MHz, zynqmp_pll_round_rate will not boost up rate and
+> just return 660MHz, and this will cause clk_calc_new_rates failure since
+> zynqmp_pll_round_rate returns an invalid rate out of its boundaries.
+>=20
+> 2) Even if the rate is higher than PS_PLL_VCO_MIN, there is still a risk
+> that zynqmp_pll_round_rate returns an invalid rate because the function
+> DIV_ROUND_CLOSEST makes some loss in the fractional part. If the parent
+> clock *prate is 33333333Hz and we want to set the PLL rate to 1.5GHz,
+> this function will return 1499999985Hz by using the formula below:
+>     value =3D *prate * DIV_ROUND_CLOSEST(rate, *prate)).
+> This value is also invalid since it's slightly smaller than PS_PLL_VCO_MI=
+N.
+> because DIV_ROUND_CLOSEST makes some loss in the fractional part.
+>=20
+> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+> ---
 
-I'll be at LPC next month.
-
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b8=
-68:
->=20
->   Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.1
->=20
-> for you to fetch changes up to ef96c458888fa2a329b14efc7991530f645fbddb:
->=20
->   clk: samsung: MAINTAINERS: add Krzysztof Kozlowski (2022-08-24 16:10:22=
- +0300)
->=20
-> ----------------------------------------------------------------
-
-Thanks. Pulled into clk-next
+Applied to clk-next
