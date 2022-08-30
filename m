@@ -2,83 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF13ECAAA1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 20:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A996ECAAD4
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 21:13:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbiH3UZ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 16:25:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57032 "EHLO
+        id S229818AbiH3VNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 17:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbiH3UZ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 16:25:27 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9347E20BD3;
-        Tue, 30 Aug 2022 13:25:25 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id br15-20020a056830390f00b0061c9d73b8bdso8889007otb.6;
-        Tue, 30 Aug 2022 13:25:25 -0700 (PDT)
+        with ESMTP id S229476AbiH3VNc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 17:13:32 -0400
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3157486C09;
+        Tue, 30 Aug 2022 14:13:31 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id t8-20020a9d5908000000b0063b41908168so921117oth.8;
+        Tue, 30 Aug 2022 14:13:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=Tj4CsI96CjSjdfLbbYWWFgXSfTixivMeud5ZwWBQkhA=;
-        b=sV4CcrTFr5TdMFPOaOPMC3uQRH3/2XXJ95A8LSqFrWzvXMWQ3yNWAHPzJaTEHHqSS6
-         fzBRnqi1Q+jWxzDKz0PEwucV07IRrDZfpYJJsp1GQ2iN+kaTv01cY9MWpGMSnt+4WwMy
-         iZaboDIjaZZrIByP9CiKR12bHKDVE58gUt5IaUC1l1dDWnzhqO8Jciojm318Ukq0VTVu
-         oTAaJS6TIhhUsUf9GK3Bs0IwNANjApy56srHllGkjrqXEK1YUGr6NZ7GjO63hEhygBWP
-         OKHKNVOjtyzMu64AiGPhJAeUVjwPcoi7zzNH6NbRC7uxOYroKnlLfgPZp0Abk8Wgw4m2
-         YR5g==
-X-Gm-Message-State: ACgBeo2aHWoxamPpodOTCKzZEGdUCN7d/vrUZaCX8YBglv60mEVioO+s
-        Ni+5twhLWMyAIo/RbxyCYg==
-X-Google-Smtp-Source: AA6agR44QFXaVTLoVdfdBD39OtxZChKA1FfiUuvrEsa0YWZU90ufr34W1rBh380qhYIKvXbaWVzBTg==
-X-Received: by 2002:a9d:bf3:0:b0:638:b4aa:508c with SMTP id 106-20020a9d0bf3000000b00638b4aa508cmr9120044oth.43.1661891124804;
-        Tue, 30 Aug 2022 13:25:24 -0700 (PDT)
+        bh=byDOrU2vKaQRF5W/gJnDjybU7ear3HV0O8mJgPS799M=;
+        b=j8OYXpF33TnlkYaXaJ5nJkn7wqyGk7VZptgBUAv4WDt/kbjrv/gUduj64Dqqjf10lq
+         f+swQSgcriqYhw5kC00mI2k04YuqZkre0M7TYkwh5BcM94cnvPfA2f0fK2UrLIlsnYQo
+         6y8xiKTuVu57ClnRVdUs2eGKeb/8LoXKhrhiUmfYHsLFC9/5rNmrL3zOQiR7Jpq7uzbl
+         paZcNUDZIdXZgKNXHhqtLrC/ae759Ie1To69YZuAFys5Ug7xAZTfadxkLaHEwFDL562t
+         5dpd9RL7JAinMhZp0TJp9rkd5KUgUq51vp1LB7HXpOy1w2PeZC0WGh/EEsW+fyqc6cZt
+         WNhw==
+X-Gm-Message-State: ACgBeo1rsNonU8P8aIKV4B9EEzKKQUmETJwY2WaW/JCYzkIg0gQF+8cK
+        sG49yjmdLMFLerVk3n8P3UbxbqJoFw==
+X-Google-Smtp-Source: AA6agR7/x6mk00s04aDRrxzP2z5QrzMD+nm+UxNGLFXZ0BTEWK0r2I5rTZb8OSgyF4dYcGmD4odGLA==
+X-Received: by 2002:a05:6830:9c6:b0:60c:7352:2c03 with SMTP id y6-20020a05683009c600b0060c73522c03mr8958723ott.138.1661894010457;
+        Tue, 30 Aug 2022 14:13:30 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id e5-20020a9d5605000000b00636e9a0cce5sm7829933oti.60.2022.08.30.13.25.23
+        by smtp.gmail.com with ESMTPSA id b35-20020a056870392300b0011f400edb17sm1757857oap.4.2022.08.30.14.13.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Aug 2022 13:25:24 -0700 (PDT)
-Received: (nullmailer pid 2002663 invoked by uid 1000);
-        Tue, 30 Aug 2022 20:25:23 -0000
-Date:   Tue, 30 Aug 2022 15:25:23 -0500
+        Tue, 30 Aug 2022 14:13:29 -0700 (PDT)
+Received: (nullmailer pid 2080829 invoked by uid 1000);
+        Tue, 30 Aug 2022 21:13:28 -0000
+Date:   Tue, 30 Aug 2022 16:13:28 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Mack <daniel@zonque.org>, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        kuninori.morimoto.gx@renesas.com
-Subject: Re: [PATCH v2 2/2] clk: cs2000-cp: make PLL lock timeout configurable
-Message-ID: <20220830202523.GA1996382-robh@kernel.org>
-References: <20220826091122.2344503-1-daniel@zonque.org>
- <20220826091122.2344503-2-daniel@zonque.org>
- <20220830014909.64D78C433D6@smtp.kernel.org>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 4/5] clk: imx6sll: add proper spdx license identifier
+Message-ID: <20220830211328.GA2080761-robh@kernel.org>
+References: <20220826192252.794651-1-marcel@ziswiler.com>
+ <20220826192252.794651-5-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220830014909.64D78C433D6@smtp.kernel.org>
+In-Reply-To: <20220826192252.794651-5-marcel@ziswiler.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 29, 2022 at 06:49:06PM -0700, Stephen Boyd wrote:
-> Quoting Daniel Mack (2022-08-26 02:11:22)
-> > The driver currently does 256 iterations of reads from the DEVICE_CTRL
-> > register to wait for the PLL_LOCK bit to clear, and sleeps one
-> > microsecond after each attempt.
-> > 
-> > This isn't ideal because
-> > 
-> >  a) the total time this allows for the device to settle depends on the I2C
-> >     bus speed, and
-> >  b) the device might need more time, depending on the application.
-> > 
-> > This patch allows users to configure this timeout through a new device-tree
-> > property "cirrus,pll-lock-timeout-ms".
+On Fri, 26 Aug 2022 21:22:51 +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> It's a timeout, so why not just increase the timeout regardless of
-> everything else? Or can we parse the bus speed (100kHz or 400kHz)
-> instead of adding a new property?
+> This fixes the following error:
+> 
+> include/dt-bindings/clock/imx6sll-clock.h:1: warning: Improper SPDX
+>  comment style for 'include/dt-bindings/clock/imx6sll-clock.h', please
+>  use '/*' instead
+> include/dt-bindings/clock/imx6sll-clock.h:1: warning: Missing or
+>  malformed SPDX-License-Identifier tag in line 1
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> ---
+> 
+>  include/dt-bindings/clock/imx6sll-clock.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-My thought too. Usually PLLs have a spec for max/typ lock times. Given 
-it's a should never happen type of thing, it doesn't seem like we need a 
-super precise time.
-
-Rob
-
+Acked-by: Rob Herring <robh@kernel.org>
