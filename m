@@ -2,156 +2,349 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 757B6ECAAA1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 12:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C88BECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 13:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbiH3My4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 08:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
+        id S229732AbiH3NpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 09:45:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbiH3MyT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 08:54:19 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19DDA1612BF;
-        Tue, 30 Aug 2022 05:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1661864044; x=1693400044;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gKiQrVoPS5U5E0J/ieB622E3Sd8fCWlrmjU5Y54NYxE=;
-  b=qBHoYSDSSfrYYQxKC5zT0SIdjq6vyP34alufhgWJJ0erb0YHmhK1FRu6
-   CYVIeFPsG3qLygIZ0edZnIISMATU0+v5bXoEYMVEziUTw0MWzmRPlOjRD
-   xeSp7QgyR6WBPSlCS5piIzUT09Jbtd4QQCY9dcxLZivIcBQudtqFs+vUf
-   ib05IlEdCYhcYuuF52UThFhzGIlgx+8ExA7vd3N0Zx1Pbj36Jc9hIu5eT
-   +ALV3cQe4WiDZmlT4Add6knBQYpfZy1WqamXWR2dHCdTbApCPEnUnIf/j
-   NX497+s6YbrWwZNePXRFylLzcjcuniru8R7Ek88dl/OZNRJ5T52RhiWzF
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,275,1654585200"; 
-   d="scan'208";a="178301981"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Aug 2022 05:53:47 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Tue, 30 Aug 2022 05:53:44 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
- Transport; Tue, 30 Aug 2022 05:53:42 -0700
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>
-CC:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: [PATCH v4 10/13] clk: microchip: mpfs: delete 2 line mpfs_clk_register_foo()
-Date:   Tue, 30 Aug 2022 13:52:47 +0100
-Message-ID: <20220830125249.2373416-10-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220830125110.2372514-1-conor.dooley@microchip.com>
-References: <20220830125110.2372514-1-conor.dooley@microchip.com>
+        with ESMTP id S229804AbiH3No7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 09:44:59 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37CD1612A1
+        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 06:43:20 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id s11so14220331edd.13
+        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 06:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=zeqCrYbLRqbzzFt4QKomGEJNQndGCiBbRSxMMbNW/MY=;
+        b=iD+jR834O/23Q1+XGpSqyaXld/4kkuf5B9D8H8ohS0Wdymhqe+RRZ9WcD4amHdx77O
+         reCUJoXHQzu409HzizTeEctZKVSH7LOB9XXzESSb7cgYmnjcUfgK5K77a91FRvRtuJDA
+         0+qQ7FqFVUzCL4pdaqo1AmviIaZT3D4mUlSsE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=zeqCrYbLRqbzzFt4QKomGEJNQndGCiBbRSxMMbNW/MY=;
+        b=PX0OE43Dkd3kr4j2iu3yYLJIecNUUd5p6Fxva7uJ0SC33rRirSlb7LIRCuvkbp5vGc
+         PAMSyQLC4bdS5MfdsZS+Gew+RhM+vBkfBuOoYa3+0cQBF0SmYiD73MgE12qm32NdzSU/
+         T1AwJa86Dn9sBr3LVsQn+X7tUaCKcFt9y2eYg43BCu9Rzhr/hjrKPawph3lYIe5WCQdE
+         ZhFnLK6Z4wISBE4AaxesMesIUI1QqQgQqOkX8SQAI0J8aGj+YvQeSuQbc+y6hAo1IEQB
+         F2kkUF9OOldo6wG7fxOPDSB3jpOtDOmRE9t+UToE82PHuapAxTJlrZ8nPU7F33kwULgI
+         5bow==
+X-Gm-Message-State: ACgBeo0z6RRCxq14xGEm1He7a31o6PRb14cE5yfQ4xl/roiR0ryxG1+l
+        PKy37RDgsyAfEhvcFniKiwghKZtZmVz/FcbfkSmMdg==
+X-Google-Smtp-Source: AA6agR7u8cywbHV4Qndx4R3eFD3tb1TBNDA1nKLbYkdYbLwCOrN/QBJqqMMKopj+F5/B11o3QKmyXjxIVKUoCqGy1s4=
+X-Received: by 2002:a05:6402:27d3:b0:43e:5490:27ca with SMTP id
+ c19-20020a05640227d300b0043e549027camr21062997ede.307.1661866864670; Tue, 30
+ Aug 2022 06:41:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20220822081424.1310926-1-wenst@chromium.org> <12115951.O9o76ZdvQC@steina-w>
+ <CAGXv+5E788T01XJF-dYRW6ZB5-TTU_L5=0hT3AQ0g+zA=LzG2w@mail.gmail.com> <2254919.ElGaqSPkdT@steina-w>
+In-Reply-To: <2254919.ElGaqSPkdT@steina-w>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 30 Aug 2022 21:40:53 +0800
+Message-ID: <CAGXv+5Hf0n5jkqwuQmh0PG8ejxDND6BRVG47J9HTQrqz9OhLdQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2 1/2] clk: core: Honor CLK_OPS_PARENT_ENABLE for
+ clk gate ops
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= 
+        <nfraprado@collabora.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The register functions are now comprised of only a single operation
-each and no longer add anything to the driver. Delete them.
+On Tue, Aug 30, 2022 at 8:37 PM Alexander Stein
+<alexander.stein@ew.tq-group.com> wrote:
+>
+> Hi,
+>
+> Am Montag, 29. August 2022, 11:22:16 CEST schrieb Chen-Yu Tsai:
+> > Hi,
+> >
+> > On Fri, Aug 26, 2022 at 8:28 PM Alexander Stein
+> >
+> > <alexander.stein@ew.tq-group.com> wrote:
+> > > Hi everybody,
+> > >
+> > > Am Montag, 22. August 2022, 10:14:23 CEST schrieb Chen-Yu Tsai:
+> > > > In the previous commits that added CLK_OPS_PARENT_ENABLE, support f=
+or
+> > > > this flag was only added to rate change operations (rate setting an=
+d
+> > > > reparent) and disabling unused subtree. It was not added to the
+> > > > clock gate related operations. Any hardware driver that needs it fo=
+r
+> > > > these operations will either see bogus results, or worse, hang.
+> > > >
+> > > > This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
+> > > > drivers set this, but dumping debugfs clk_summary would cause it
+> > > > to hang.
+> > > >
+> > > > Fixes: fc8726a2c021 ("clk: core: support clocks which requires pare=
+nts
+> > > > enable (part 2)") Fixes: a4b3518d146f ("clk: core: support clocks w=
+hich
+> > > > requires parents enable (part 1)") Signed-off-by: Chen-Yu Tsai
+> > > > <wenst@chromium.org>
+> > > > Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > > > Tested-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > > > ---
+> > > >
+> > > >  drivers/clk/clk.c | 28 ++++++++++++++++++++++++++++
+> > > >  1 file changed, 28 insertions(+)
+> > > >
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index 7fc191c15507..9b365cd6d14b 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -196,6 +196,9 @@ static bool clk_core_rate_is_protected(struct
+> > > > clk_core
+> > > > *core) return core->protect_count;
+> > > >
+> > > >  }
+> > > >
+> > > > +static int clk_core_prepare_enable(struct clk_core *core);
+> > > > +static void clk_core_disable_unprepare(struct clk_core *core);
+> > > > +
+> > > >
+> > > >  static bool clk_core_is_prepared(struct clk_core *core)
+> > > >  {
+> > > >
+> > > >       bool ret =3D false;
+> > > >
+> > > > @@ -208,7 +211,11 @@ static bool clk_core_is_prepared(struct clk_co=
+re
+> > > > *core) return core->prepare_count;
+> > > >
+> > > >       if (!clk_pm_runtime_get(core)) {
+> > > >
+> > > > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +                     clk_core_prepare_enable(core->parent);
+> > > >
+> > > >               ret =3D core->ops->is_prepared(core->hw);
+> > > >
+> > > > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +                     clk_core_disable_unprepare(core->parent);
+> > > >
+> > > >               clk_pm_runtime_put(core);
+> > > >
+> > > >       }
+> > > >
+> > > > @@ -244,7 +251,13 @@ static bool clk_core_is_enabled(struct clk_cor=
+e
+> > > > *core)
+> > > >
+> > > >               }
+> > > >
+> > > >       }
+> > > >
+> > > > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +             clk_core_prepare_enable(core->parent);
+> > > > +
+> > > >
+> > > >       ret =3D core->ops->is_enabled(core->hw);
+> > > >
+> > > > +
+> > > > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +             clk_core_disable_unprepare(core->parent);
+> > > >
+> > > >  done:
+> > > >       if (core->rpm_enabled)
+> > > >
+> > > >               pm_runtime_put(core->dev);
+> > > >
+> > > > @@ -812,6 +825,9 @@ int clk_rate_exclusive_get(struct clk *clk)
+> > > >
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
+> > > >
+> > > > +static int clk_core_enable_lock(struct clk_core *core);
+> > > > +static void clk_core_disable_lock(struct clk_core *core);
+> > > > +
+> > > >
+> > > >  static void clk_core_unprepare(struct clk_core *core)
+> > > >  {
+> > > >
+> > > >       lockdep_assert_held(&prepare_lock);
+> > > >
+> > > > @@ -835,6 +851,9 @@ static void clk_core_unprepare(struct clk_core
+> > > > *core)
+> > > >
+> > > >       WARN(core->enable_count > 0, "Unpreparing enabled %s\n", core=
+-
+> > > >
+> > > >name);
+> > > >
+> > > > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +             clk_core_enable_lock(core->parent);
+> > > > +
+> > > >
+> > > >       trace_clk_unprepare(core);
+> > > >
+> > > >       if (core->ops->unprepare)
+> > > >
+> > > > @@ -843,6 +862,9 @@ static void clk_core_unprepare(struct clk_core
+> > > > *core)
+> > > >
+> > > >       clk_pm_runtime_put(core);
+> > > >
+> > > >       trace_clk_unprepare_complete(core);
+> > > >
+> > > > +
+> > > > +     if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +             clk_core_disable_lock(core->parent);
+> > > >
+> > > >       clk_core_unprepare(core->parent);
+> > > >
+> > > >  }
+> > > >
+> > > > @@ -891,6 +913,9 @@ static int clk_core_prepare(struct clk_core *co=
+re)
+> > > >
+> > > >               if (ret)
+> > > >
+> > > >                       goto runtime_put;
+> > > >
+> > > > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +                     clk_core_enable_lock(core->parent);
+> > > > +
+> > > >
+> > > >               trace_clk_prepare(core);
+> > > >
+> > > >               if (core->ops->prepare)
+> > > >
+> > > > @@ -898,6 +923,9 @@ static int clk_core_prepare(struct clk_core *co=
+re)
+> > > >
+> > > >               trace_clk_prepare_complete(core);
+> > > >
+> > > > +             if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > > +                     clk_core_disable_lock(core->parent);
+> > > > +
+> > > >
+> > > >               if (ret)
+> > > >
+> > > >                       goto unprepare;
+> > > >
+> > > >       }
+> > >
+> > > Unfortunately this completely locks up my i.MX8M Plus based board dur=
+ing
+> > > early boot.
+> > > I'm currently running on next-20220826 using
+> > > arch/arm64/boot/dts/freescale/
+> > > imx8mp-tqma8mpql-mba8mpxl.dts
+> > > Reverting this patch gets my board booting again. dmesg until hard lo=
+ckup
+> > > below.
+> >
+> > The standard logs don't have anything to go on. Could you add some prin=
+tk
+> > calls to the clk core around the areas this patch touchs? That would he=
+lp.
+> >
+> > Could you also provide a dump of /sys/kernel/debug/clk/clk_summary? Tha=
+t
+> > would help to understand the clock tree.
+>
+> Sure,
+>
+> These are the last kernel log lines before hard lockup:
+> [    0.686357] io scheduler mq-deadline registered
+> [    0.690907] io scheduler kyber registered
+> [    0.699275] clk_core_prepare: clk: main_axi CLK_OPS_PARENT_ENABLE
+>
+> main_axi is also the only debug output up to this point. This is the used
+> patch for debugging:
+> ---8<---
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -211,8 +211,10 @@ static bool clk_core_is_prepared(struct clk_core *co=
+re)
+>                 return core->prepare_count;
+>
+>         if (!clk_pm_runtime_get(core)) {
+> -               if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +               if (core->flags & CLK_OPS_PARENT_ENABLE) {
+> +                       pr_info("%s: clk: %s CLK_OPS_PARENT_ENABLE\n",
+> __func__, core->name);
+>                         clk_core_prepare_enable(core->parent);
+> +               }
+>                 ret =3D core->ops->is_prepared(core->hw);
+>                 if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                         clk_core_disable_unprepare(core->parent);
+> @@ -251,8 +253,10 @@ static bool clk_core_is_enabled(struct clk_core *cor=
+e)
+>                 }
+>         }
+>
+> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +       if (core->flags & CLK_OPS_PARENT_ENABLE) {
+> +               pr_info("%s: clk: %s CLK_OPS_PARENT_ENABLE\n", __func__, =
+core-
+> >name);
+>                 clk_core_prepare_enable(core->parent);
+> +       }
+>
+>         ret =3D core->ops->is_enabled(core->hw);
+>
+> @@ -851,8 +855,10 @@ static void clk_core_unprepare(struct clk_core *core=
+)
+>
+>         WARN(core->enable_count > 0, "Unpreparing enabled %s\n", core->na=
+me);
+>
+> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +       if (core->flags & CLK_OPS_PARENT_ENABLE) {
+> +               pr_info("%s: clk: %s CLK_OPS_PARENT_ENABLE\n", __func__, =
+core-
+> >name);
+>                 clk_core_enable_lock(core->parent);
+> +       }
+>
+>         trace_clk_unprepare(core);
+>
+> @@ -912,8 +918,10 @@ static int clk_core_prepare(struct clk_core *core)
+>                 if (ret)
+>                         goto runtime_put;
+>
+> -               if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +               if (core->flags & CLK_OPS_PARENT_ENABLE) {
+> +                       pr_info("%s: clk: %s CLK_OPS_PARENT_ENABLE\n",
+> __func__, core->name);
+>                         clk_core_enable_lock(core->parent);
+> +               }
+>
+>                 trace_clk_prepare(core);
+>
+>
+> ---8<---
 
-Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/clk/microchip/clk-mpfs.c | 33 ++++++--------------------------
- 1 file changed, 6 insertions(+), 27 deletions(-)
+Thanks. So the part of the clock tree that's problematic is this:
 
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index 60e1e82912fe..538cb589d232 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -203,14 +203,6 @@ static struct mpfs_msspll_hw_clock mpfs_msspll_clks[] = {
- 		MSSPLL_FBDIV_WIDTH, 0, REG_MSSPLL_SSCG_2_CR),
- };
- 
--static int mpfs_clk_register_msspll(struct device *dev, struct mpfs_msspll_hw_clock *msspll_hw,
--				    void __iomem *base)
--{
--	msspll_hw->base = base;
--
--	return devm_clk_hw_register(dev, &msspll_hw->hw);
--}
--
- static int mpfs_clk_register_mssplls(struct device *dev, struct mpfs_msspll_hw_clock *msspll_hws,
- 				     unsigned int num_clks, struct mpfs_clock_data *data)
- {
-@@ -220,7 +212,8 @@ static int mpfs_clk_register_mssplls(struct device *dev, struct mpfs_msspll_hw_c
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_msspll_hw_clock *msspll_hw = &msspll_hws[i];
- 
--		ret = mpfs_clk_register_msspll(dev, msspll_hw, data->msspll_base);
-+		msspll_hw->base = data->msspll_base;
-+		ret = devm_clk_hw_register(dev, &msspll_hw->hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register msspll id: %d\n",
- 					     CLK_MSSPLL);
-@@ -314,14 +307,6 @@ static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
- 	}
- };
- 
--static int mpfs_clk_register_cfg(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hw,
--				 void __iomem *base)
--{
--	cfg_hw->cfg.reg = base + cfg_hw->reg_offset;
--
--	return devm_clk_hw_register(dev, &cfg_hw->hw);
--}
--
- static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
- 				  unsigned int num_clks, struct mpfs_clock_data *data)
- {
-@@ -331,7 +316,8 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
- 
--		ret = mpfs_clk_register_cfg(dev, cfg_hw, data->base);
-+		cfg_hw->cfg.reg = data->base + cfg_hw->reg_offset;
-+		ret = devm_clk_hw_register(dev, &cfg_hw->hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     cfg_hw->id);
-@@ -454,14 +440,6 @@ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
- 	CLK_PERIPH(CLK_CFM, "clk_periph_cfm", PARENT_CLK(AHB), 29, 0),
- };
- 
--static int mpfs_clk_register_periph(struct device *dev, struct mpfs_periph_hw_clock *periph_hw,
--				    void __iomem *base)
--{
--	periph_hw->periph.reg = base + REG_SUBBLK_CLOCK_CR;
--
--	return devm_clk_hw_register(dev, &periph_hw->hw);
--}
--
- static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_clock *periph_hws,
- 				     int num_clks, struct mpfs_clock_data *data)
- {
-@@ -471,7 +449,8 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
- 
--		ret = mpfs_clk_register_periph(dev, periph_hw, data->base);
-+		periph_hw->periph.reg = data->base + REG_SUBBLK_CLOCK_CR;
-+		ret = devm_clk_hw_register(dev, &periph_hw->hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     periph_hw->id);
--- 
-2.36.1
+ osc_24m (fixed)
+    sys_pll1_ref_sel (mux)
+       sys_pll1 (imx pll14xx)
+          sys_pll1_bypass (mux)
+             sys_pll1_out (gate)
+                sys_pll1_800m (fixed factor)
+                   main_axi (composite CLK_IS_CRITICAL)
 
+Would it be possible for you to produce a stack dump as well? And also
+enable lock debugging? This likely still won't catch anything if it's
+a spinlock deadlock though.
+
+
+Thanks
+ChenYu
