@@ -2,108 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056CDECAAD1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 06:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4D3ECAAD1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 06:39:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbiH3Gdn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 02:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41762 "EHLO
+        id S230189AbiH3GjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 02:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbiH3Gde (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 02:33:34 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E83DBA153
-        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 23:33:33 -0700 (PDT)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Tue, 30 Aug
- 2022 14:33:30 +0800
-Message-ID: <09befaaf-b34a-aeda-5dd6-6bfae4b01163@amlogic.com>
-Date:   Tue, 30 Aug 2022 14:33:30 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH RESEND] clk: meson: pll: copy retry workaround from vendor
- driver
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
+        with ESMTP id S230184AbiH3GjJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 02:39:09 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D5A98D2D
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 23:39:07 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id m16so12794432wru.9
+        for <linux-clk@vger.kernel.org>; Mon, 29 Aug 2022 23:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:to:from:user-agent:references:from:to:cc;
+        bh=mNuvuJblGgM9erVe7VcLK6pPLtsf0LmqJmZgGgV3TEY=;
+        b=4JZcJU5Kk16NjSy/F4gIG+ZROwRDQaEaxk1TBxGeyVmhVZBBuI6MlZntdzUydskp0Y
+         K2QLeLkibCJDa+iqJgONHz3Yp7okPWStEX6X/5KZddbDfK+ogKTKEomSOc//pbZKU23J
+         8uoC5jijvaDy3zUtqNZBca90oR8FwjUXcnJwam1TiKWROB2VKLm5qsQEQQVTfCoyuOSo
+         TB9WV0mEclmgLdHmsxiMyeSjoeoL/4wR2W6Tc4qo5E2oSQ91RoiQc7DSXCFs3KjxTG0O
+         KPNWhSKWgMsvyl+JPG2BdMjDjlwa2ZbqCc4THp+M00xceZQUQOQSNS1b9CbV2R5lgNHH
+         NtoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:to:from:user-agent:references:x-gm-message-state:from:to:cc;
+        bh=mNuvuJblGgM9erVe7VcLK6pPLtsf0LmqJmZgGgV3TEY=;
+        b=TrPKh5QLqhRyKVy2YE7COa124STxO6giHpEEUmwIldVY3VdEJx/EqgxY2NBhTXQBiz
+         pmmiYjaz8qHRCzWl5kxBGkfUIjX5XYWvdvt+Oa/R8CnA8ABbS54NwDs/oBIA/8itFL+V
+         c2MtnCBxn1zdr6ClcZKmEEV6Bv2h+jVtK4advkftQZOkyIsfkIe2TDTC5/cXSiCdclBa
+         BuASDE9spyFYbnfwXgCKeMQty4FM0a0zp4ub8+4BrtOyOEqJEkcWd5VF52Dh4q6DjaYp
+         8rOBxem5HXHt0UYrspAIiX1muUqhIjR7Pd5mEq2c4Jh60CFDsOVjc7R9GcuzMs5j/pIK
+         RHag==
+X-Gm-Message-State: ACgBeo1gtHJE+iRWLpcL/yf2qmpxu0MBpow0Ou2a3Nc1C3Jk6LV+yjNB
+        L1M5WnUeOBtFqIX6D7kFW9vWkA==
+X-Google-Smtp-Source: AA6agR62NkzOlArUrEk7k7uj4nn6Sn+TSr+IpCcQazgLhmOgjmRiJzUtmuBSZR6cyJwtWRmU9owjjw==
+X-Received: by 2002:adf:fa4e:0:b0:225:8616:be3a with SMTP id y14-20020adffa4e000000b002258616be3amr7730934wrr.234.1661841545776;
+        Mon, 29 Aug 2022 23:39:05 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id m13-20020a05600c3b0d00b003a83b066401sm10964211wms.31.2022.08.29.23.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Aug 2022 23:39:05 -0700 (PDT)
+References: <20220805085716.5635-1-yu.tu@amlogic.com>
+ <20220805085716.5635-3-yu.tu@amlogic.com>
+ <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
+ <c223a85a-b76e-0e82-9a8c-6b60588dc03a@amlogic.com>
+ <1jmtccz0f4.fsf@starbuckisacylon.baylibre.com>
+ <edc9b0bd-6c69-0562-05ca-db0496897cf1@amlogic.com>
+ <1j1qszv0wa.fsf@starbuckisacylon.baylibre.com>
+ <72631035-58a6-23b5-1f7e-f1643b120432@amlogic.com>
+User-agent: mu4e 1.8.7; emacs 28.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-CC:     "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <cc80cda0-4dda-2e3e-3fc8-afa97717479b@gmail.com>
- <1jk06rtlrv.fsf@starbuckisacylon.baylibre.com>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <1jk06rtlrv.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH V3 2/6] arm64: dts: meson: add S4 Soc PLL clock
+ controller in DT
+Date:   Tue, 30 Aug 2022 08:36:00 +0200
+In-reply-to: <72631035-58a6-23b5-1f7e-f1643b120432@amlogic.com>
+Message-ID: <1jy1v6z14n.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On Tue 30 Aug 2022 at 14:05, Yu Tu <yu.tu@amlogic.com> wrote:
 
-On 2022/8/29 17:54, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> 
-> On Sun 14 Aug 2022 at 23:25, Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> 
->> On a S905X4-based system this call fails randomly.
->> The vendor driver has a retry mechanism and on my system
->> the second attempt is successful always.
->>
-> 
-> This reason looks a bit weak to me.
-> I'd like AML team to comment on this PLL problem as I suspect it might
-> relate to other PLL we have been seeing
+> On 2022/8/29 17:43, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Mon 15 Aug 2022 at 14:17, Yu Tu <yu.tu@amlogic.com> wrote:
+>>=20
+>>> Hi Jerome=EF=BC=8C
+>>>
+>>> On 2022/8/10 21:32, Jerome Brunet wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>>> On Fri 05 Aug 2022 at 17:39, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>
+>>>>> Hi Krzysztof,
+>>>>>       Thank you for your reply.
+>>>>>
+>>>>> On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
+>>>>>> [ EXTERNAL EMAIL ]
+>>>>>> On 05/08/2022 10:57, Yu Tu wrote:
+>>>>>>> Added information about the S4 SOC PLL Clock controller in DT.
+>>>>>>>
+>>>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>>>>> ---
+>>>>>>>     arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
+>>>>>>>     1 file changed, 8 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64=
+/boot/dts/amlogic/meson-s4.dtsi
+>>>>>>> index ff213618a598..a816b1f7694b 100644
+>>>>>>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>>>>>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>>>>>> @@ -92,6 +92,14 @@ apb4: apb4@fe000000 {
+>>>>>>>     			#size-cells =3D <2>;
+>>>>>>>     			ranges =3D <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
+>>>>>>>     +			clkc_pll: pll-clock-controller@8000 {
+>>>>>> Node names should be generic - clock-controller.
+>>>>>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-d=
+evicetree-basics.html#generic-names-recommendation
+>>>>>>
+>>>>> I will change to clkc_pll: clock-controller@8000, in next version.
+>>>> Same comment applies to the binding doc.
+>>> OKay.
+>>>> Also it would be nice to split this in two series.
+>>>> Bindings and drivers in one, arm64 dt in the other. These changes goes
+>>>> in through different trees.
+>>> At present, Bindings, DTS and drivers are three series. Do you mean to =
+put
+>>> Bindings and drivers together? If so, checkpatch.pl will report a warni=
+ng.
+>> Yes because patches are not in yet so there is a good reason to ignore
+>> the warning. Warning will never show up on the actual tree if the
+>> patches are correctly ordered.
+>
+> I think Binding, DTS and drivers use three series and you said two series
+> is not a big problem. Three series are recommended for checkpatch.pl, I
+> think it should be easy for that to separate and merge=E3=80=82
 
-First of all, we've had this problem before. But the probability is very 
-low, most of the PLL will not lock when the chip is tested at high and 
-low temperature.
+No - There is only 2 series. 1 for the bindings and clock drivers and
+one for the DT once things are in
 
-Our actual code has retry mechanism to solve the above problem.
+>
+> I've sent it to V4. Please look at V4 and give some comments.
+>
 
-> 
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->>   drivers/clk/meson/clk-pll.c | 12 ++++++++----
->>   1 file changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
->> index 9e55617bc..daa025b6d 100644
->> --- a/drivers/clk/meson/clk-pll.c
->> +++ b/drivers/clk/meson/clk-pll.c
->> @@ -320,12 +320,16 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
->>   
->>   static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
->>   {
->> -	meson_clk_pll_init(hw);
->> +	int retries = 10;
->>   
->> -	if (meson_clk_pll_wait_lock(hw))
->> -		return -EIO;
->> +	do {
->> +		meson_clk_pll_init(hw);
->> +		if (!meson_clk_pll_wait_lock(hw))
->> +			return 0;
->> +		pr_info("Retry enabling PCIe PLL clock\n");
->> +	} while (--retries);
->>   
->> -	return 0;
->> +	return -EIO;
->>   }
->>   
->>   static int meson_clk_pll_enable(struct clk_hw *hw)
-> 
-> .
+That's not how it works. You sent that before v3 review was done. There
+are still comments that needed to be addressed
+
+Given the time it takes to make that review I going to completly skip v4
+and I'd like on the comment to addressed before you send another version
+
+
+>>=20
+>>>
+>>>>
+>>>>>> Best regards,
+>>>>>> Krzysztof
+>>>>>> .
+>>>> .
+>> .
+
