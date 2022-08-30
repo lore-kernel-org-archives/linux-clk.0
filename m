@@ -2,151 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8959FC0502A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 07:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D742ECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 07:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbiH3HH0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 03:07:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
+        id S230453AbiH3HRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 03:17:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbiH3HHD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 03:07:03 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A548C5788;
-        Tue, 30 Aug 2022 00:06:42 -0700 (PDT)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Tue, 30 Aug
- 2022 15:06:39 +0800
-Message-ID: <35507213-ea34-70f9-461b-33dc4697cc89@amlogic.com>
-Date:   Tue, 30 Aug 2022 15:06:39 +0800
+        with ESMTP id S230084AbiH3HRg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 03:17:36 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6C0C4836
+        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 00:17:34 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id z25so14294914lfr.2
+        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 00:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=3O0C0ibabQ2kzRRob/kKyfutI+yQz7ByGXq7nhg3wpA=;
+        b=BqOadVrMSHIuZzrHmIfEvLiCtkExRNhBc64IOGtdT5KGjR2WfTfkRzYiyzq+CVenV2
+         kLtM+B3Mg9hhdvpQ03c1wYV4t/LASTo20Yu5YYsYtsMhcAxXYQ1oRSe6IOjPEAl3bk3X
+         8NqLHuKCZx1r02PK9FNNgYi6QRnu9lGTgid/MtcN67KCWo8Nax0AVkj6PHc9C6a+Po5H
+         JzDhUHJsJHVaKC4vhu8N8TFxs2RFyrdU+iVZ3PYtDlq2FM1C6HucTTr5KWH4i4HPEu0h
+         MolkuWFaJpFflbVCDdKHmcEBircjLTa3057dxkL8i9OLsRZiYXKZRBrPnlTPoqnkuslh
+         tA1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=3O0C0ibabQ2kzRRob/kKyfutI+yQz7ByGXq7nhg3wpA=;
+        b=1UhJmSBTkgxO4p6eSj1pl3hfj0eddBHlJaTXoi8ismb2C9OzwlcHJkFutviBNo+p5l
+         /DyuS/iRnNbRZAHhqSE+7O8BzzZNt1dmaRdnKyEGI+qjb/DjasVwl3yXdRJYpmnf5Tgc
+         JhOgwWtlR9YkllZXoNQduniaAjom4rT3v68zOl4tThgKh/nNQH4ZKSOs+Ox18kPgyMPB
+         FJTaSe5CV0XgdW6bRo6CnQOX2Gmf2uJgwbE22CbN8UJzmT1wFe/buhrJmwel+7H6U3Xv
+         Hrs1kDm8irO/Rmei/TPmPlzBJnEAmwjRxjiew9+tG+ZzM++zcfEAjadojNIP3jyNKOm5
+         YCqw==
+X-Gm-Message-State: ACgBeo2Xc1+6SkbGolVIOoKvHK8bX76oXVPzb2tH9jgCGoi6Mps8PVIY
+        k0E256eho3QeZso7SSv8KF0b6w==
+X-Google-Smtp-Source: AA6agR5zbBki4lnt2t/PPoo8jW6J/wS2qXXubnvPEktay27HaFWdk/1m0muXhWDDMZyRf+HuGdfVAw==
+X-Received: by 2002:ac2:4c50:0:b0:492:e648:5bc0 with SMTP id o16-20020ac24c50000000b00492e6485bc0mr5351406lfk.288.1661843853195;
+        Tue, 30 Aug 2022 00:17:33 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id a22-20020a2eb556000000b0025e428ba415sm1661411ljn.38.2022.08.30.00.17.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Aug 2022 00:17:32 -0700 (PDT)
+Message-ID: <993d642a-29aa-1c98-bb2d-ddade46caad6@linaro.org>
+Date:   Tue, 30 Aug 2022 10:17:31 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH V3 2/6] arm64: dts: meson: add S4 Soc PLL clock controller
- in DT
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 02/15] dt-bindings: clocks: qcom,mmcc: define
+ clocks/clock-names for MSM8960
+Content-Language: en-GB
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-3-yu.tu@amlogic.com>
- <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
- <c223a85a-b76e-0e82-9a8c-6b60588dc03a@amlogic.com>
- <1jmtccz0f4.fsf@starbuckisacylon.baylibre.com>
- <edc9b0bd-6c69-0562-05ca-db0496897cf1@amlogic.com>
- <1j1qszv0wa.fsf@starbuckisacylon.baylibre.com>
- <72631035-58a6-23b5-1f7e-f1643b120432@amlogic.com>
- <1jy1v6z14n.fsf@starbuckisacylon.baylibre.com>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <1jy1v6z14n.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20220623120418.250589-1-dmitry.baryshkov@linaro.org>
+ <20220623120418.250589-3-dmitry.baryshkov@linaro.org>
+ <21efbf73-74af-8f80-3577-b82f39e161e6@linaro.org>
+ <CAA8EJpp+pTPjFnGXaWvjUBFc=B9b=OwnHYUP33MNQOsaxwqk4w@mail.gmail.com>
+In-Reply-To: <CAA8EJpp+pTPjFnGXaWvjUBFc=B9b=OwnHYUP33MNQOsaxwqk4w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 2022/8/30 14:36, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> 
-> On Tue 30 Aug 2022 at 14:05, Yu Tu <yu.tu@amlogic.com> wrote:
-> 
->> On 2022/8/29 17:43, Jerome Brunet wrote:
->>> [ EXTERNAL EMAIL ]
->>> On Mon 15 Aug 2022 at 14:17, Yu Tu <yu.tu@amlogic.com> wrote:
+On 25/06/2022 03:00, Dmitry Baryshkov wrote:
+> On Fri, 24 Jun 2022 at 18:57, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 23/06/2022 14:04, Dmitry Baryshkov wrote:
+>>> Define clock/clock-names properties of the MMCC device node to be used
+>>> on MSM8960/APQ8064 platform.
 >>>
->>>> Hi Jerome，
->>>>
->>>> On 2022/8/10 21:32, Jerome Brunet wrote:
->>>>> [ EXTERNAL EMAIL ]
->>>>> On Fri 05 Aug 2022 at 17:39, Yu Tu <yu.tu@amlogic.com> wrote:
->>>>>
->>>>>> Hi Krzysztof,
->>>>>>        Thank you for your reply.
->>>>>>
->>>>>> On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
->>>>>>> [ EXTERNAL EMAIL ]
->>>>>>> On 05/08/2022 10:57, Yu Tu wrote:
->>>>>>>> Added information about the S4 SOC PLL Clock controller in DT.
->>>>>>>>
->>>>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>>>>>> ---
->>>>>>>>      arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
->>>>>>>>      1 file changed, 8 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>>>>>>> index ff213618a598..a816b1f7694b 100644
->>>>>>>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>>>>>>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>>>>>>> @@ -92,6 +92,14 @@ apb4: apb4@fe000000 {
->>>>>>>>      			#size-cells = <2>;
->>>>>>>>      			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
->>>>>>>>      +			clkc_pll: pll-clock-controller@8000 {
->>>>>>> Node names should be generic - clock-controller.
->>>>>>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->>>>>>>
->>>>>> I will change to clkc_pll: clock-controller@8000, in next version.
->>>>> Same comment applies to the binding doc.
->>>> OKay.
->>>>> Also it would be nice to split this in two series.
->>>>> Bindings and drivers in one, arm64 dt in the other. These changes goes
->>>>> in through different trees.
->>>> At present, Bindings, DTS and drivers are three series. Do you mean to put
->>>> Bindings and drivers together? If so, checkpatch.pl will report a warning.
->>> Yes because patches are not in yet so there is a good reason to ignore
->>> the warning. Warning will never show up on the actual tree if the
->>> patches are correctly ordered.
->>
->> I think Binding, DTS and drivers use three series and you said two series
->> is not a big problem. Three series are recommended for checkpatch.pl, I
->> think it should be easy for that to separate and merge。
-> 
-> No - There is only 2 series. 1 for the bindings and clock drivers and
-> one for the DT once things are in
-
-All right, we'll do it your way.
-
-> 
->>
->> I've sent it to V4. Please look at V4 and give some comments.
->>
-> 
-> That's not how it works. You sent that before v3 review was done. There
-> are still comments that needed to be addressed
-
-Yes. But can you reply faster?
-
-> 
-> Given the time it takes to make that review I going to completly skip v4
-> and I'd like on the comment to addressed before you send another version
-> 
-
-What can I say? It's up to you.
-
-> 
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>   .../devicetree/bindings/clock/qcom,mmcc.yaml  | 31 +++++++++++++++++++
+>>>   1 file changed, 31 insertions(+)
 >>>
->>>>
->>>>>
->>>>>>> Best regards,
->>>>>>> Krzysztof
->>>>>>> .
->>>>> .
->>> .
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+>>> index d02fe6dc79b5..c13243682365 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+>>> @@ -82,6 +82,37 @@ then:
+>>>       - clock-names
+>>>
+>>>   allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - qcom,mmcc-apq8064
+>>> +              - qcom,mmcc-msm8960
+>>> +    then:
+>>> +      properties:
+>>> +        clocks:
+>>> +          items:
+>>> +            - description: Board PXO source
+>>> +            - description: PLL 3 clock
+>>> +            - description: PLL 3 Vote clock
+>>> +            - description: DSI phy instance 1 dsi clock
+>>> +            - description: DSI phy instance 1 byte clock
+>>> +            - description: DSI phy instance 2 dsi clock
+>>> +            - description: DSI phy instance 2 byte clock
+>>> +            - description: HDMI phy PLL clock
+>>> +
+>>> +        clock-names:
+>>> +          items:
+>>> +            - const: pxo
+>>> +            - const: pll3
+>>> +            - const: pll8_vote
+>>> +            - const: dsi1pll
+>>> +            - const: dsi1pllbyte
+>>> +            - const: dsi2pll
+>>> +            - const: dsi2pllbyte
+>>> +            - const: hdmipll
+>>
+>> The clocks are listed in properties, so they have min/max constraints
+>> set implicitly. Are you sure this now works fine?
 > 
-> .
+> I mentioned this while listing dependencies in the patchset description (00/15):
+> 
+> Dependencies: [1] (whole series), [2], [3]
+> [...]
+> [2] https://lore.kernel.org/linux-arm-msm/20220617122922.769562-2-dmitry.baryshkov@linaro.org/
+> 
+> This patch moves clocks/clock-names to the conditional clause.
+
+Krzysztof, as now the dependencies have landed into Bjorn's tree, could 
+you please take another glance onto the bindings?
+
+-- 
+With best wishes
+Dmitry
+
