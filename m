@@ -2,145 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB21ECAAD5
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 18:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E52ECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 19:43:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbiH3SoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 14:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51058 "EHLO
+        id S231685AbiH3Tne (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 15:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230350AbiH3SoB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 14:44:01 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B40E74369
-        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 11:44:00 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id 199so12145909pfz.2
-        for <linux-clk@vger.kernel.org>; Tue, 30 Aug 2022 11:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=NZVZkfFYq+g48u9ab87ZWo6dPBjM06Q+lLAU8Yvk5EA=;
-        b=Axzf/shUDMALwg8iHDSJOsle0Qw6yo7nQ4L0Ew2LPymFZnPev4UAjpWJldbz1gztDq
-         jKZJw7kpHpXifWeb417pif3gyrl7IsgOi9WFU3RwiXyuvYeVh5uByAISbNeGVLzQ7MTp
-         gueWsarra0u8xd3OAbrUmHKAixAZjsKVVwK1g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=NZVZkfFYq+g48u9ab87ZWo6dPBjM06Q+lLAU8Yvk5EA=;
-        b=az5GeAjbaTcIP9QSE/erdXOqpUS5GIaMJhfq7FV8v6cpHbpqeh3bGe+aVQrdg5iulB
-         sZk29sZF9HuYu6osUmh4hQVxQEhyWQGNDEJFACUwX//Lgr/lkCb2ZLXIvA8WUKsRjoAM
-         e1MMM9WWS5gZxP+O1HQKvNFRsqKs98gwz2W23mJAICKa6x90hvmVFSChzfGzW7Bf5ymy
-         NKcCoF9DPlIQuHty0bLjPQu83o85CqN4NpqoI8lf+YK6XK9npxKIgzITwjm88gc0aj1z
-         N7cfcG1who3aSJYV3GkIiGsRJ3XrCYCMlFqf1kj0g0DCd9oT42SRtH+bQA8WQiV6D9wz
-         6Uiw==
-X-Gm-Message-State: ACgBeo0twwEnUsSEQ4uhOkEkcbdRLzQlAELFu1j27GVF84XCZgIHYHcA
-        eLdLRD6kjQze9cPrgkn+KPVqew==
-X-Google-Smtp-Source: AA6agR7zpTyvcECkA2jQOB4My7timJiRT9otT5h6XOP4Y4xqijtClzf1Ffy2uOmONrciFnSEmceaNw==
-X-Received: by 2002:a63:1841:0:b0:429:8268:1fc with SMTP id 1-20020a631841000000b00429826801fcmr19102261pgy.78.1661885039627;
-        Tue, 30 Aug 2022 11:43:59 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:f023:bd53:48bf:f508])
-        by smtp.gmail.com with UTF8SMTPSA id b11-20020a170902d50b00b0016dc2366722sm10163636plg.77.2022.08.30.11.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Aug 2022 11:43:59 -0700 (PDT)
-Date:   Tue, 30 Aug 2022 11:43:57 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 1/2] clk: qcom: gcc-sc7180: Keep the USB GDSC always on
-Message-ID: <Yw5abfBHQSl62pB9@google.com>
-References: <20220825182152.v2.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid>
- <20220826024003.qpqtdmdohdmpcskt@baldur>
- <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
+        with ESMTP id S231351AbiH3TnI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 15:43:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8FD773900;
+        Tue, 30 Aug 2022 12:42:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 54AC2B81DB7;
+        Tue, 30 Aug 2022 19:42:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABA4C433D7;
+        Tue, 30 Aug 2022 19:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661888565;
+        bh=+cGXZMI2oEXKgWxb9ZJXDzYjbbc2gJTCUd+EAG1qVPM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=LYpYi+hA+j838eO7PaAlm6hujUBT/ozW55UwaoOz2+nwvC/lvCzYZchAfH2IlWFtx
+         BL/C94gwh7XgqP5VAIgYmNDlAI0asdiWjkKXPxFY6f4AqPGlfEMR4ZL+SXXB4OtGOJ
+         D3oPjR4HANLtqLoltwJZvh1+0UW9ey0vQ+GMDWL3Fn+Zd/Sn9GERIYCjMxXbQ38Z+j
+         Tc1NH80aBwAE/KSjp+yQKJ8uuazJ5JsdnSJwk1PINDKVMjrkizHLfzcwKshkAbp8TA
+         VnuSHSB6lcAQ0YUoHD8HLLF0mYhQ1MtyGV9Csn8H7mCqJih2C0sTv5L9JOT3k5/SRl
+         E8CelWuDuqlTA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YvrDp32/TknqV05t@sirena.org.uk>
+References: <cover.1660292316.git.mazziesaccount@gmail.com> <166057828406.697572.228317501909350108.b4-ty@kernel.org> <YvpsRbguMXn74GhR@pendragon.ideasonboard.com> <Yvp1Qkuh7xfeb/B2@sirena.org.uk> <YvqV9Mq6I3gXQaf2@pendragon.ideasonboard.com> <20220815205857.308B1C433D6@smtp.kernel.org> <YvrDp32/TknqV05t@sirena.org.uk>
+Subject: Re: (subset) [PATCH v2 0/7] Devm helpers for regulator get and enable
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        dri-devel@lists.freedesktop.org,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+        linux-amlogic@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Michael Turq uette <mturquette@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        linux-hwmon@vger.kernel.org, linux-clk@vger.kernel.org,
+        Nuno =?utf-8?q?S=C3=A1?= <nuno.sa@analog.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        David Airlie <airlied@linux.ie>, linux-iio@vger.kernel.org
+To:     Mark Brown <broonie@kernel.org>
+Date:   Tue, 30 Aug 2022 12:42:42 -0700
+User-Agent: alot/0.10
+Message-Id: <20220830194244.DABA4C433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 29, 2022 at 01:42:02PM +0530, Rajendra Nayak wrote:
-> 
-> On 8/26/2022 8:10 AM, Bjorn Andersson wrote:
-> > On Thu, Aug 25, 2022 at 06:21:58PM -0700, Matthias Kaehlcke wrote:
-> > > When the GDSC is disabled during system suspend USB is broken on
-> > > sc7180 when the system resumes. Mark the GDSC as always on to
-> > > make sure USB still works after system suspend.
-> > > 
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > 
-> > Rajendra, where you able to find some time to look into take the GDSC
-> > into retention state? Do you suggest that I merge these two patches for
-> > now?
-> > 
-> 
-> Hi Bjorn, based on my experiments to support retention on sc7280 these are
-> some of my findings
-> 
-> On Platforms which support CX retention (for example sc7180/sc7280) instead of
-> CX PowerCollapse (PC), We can leave the GDSC turned ON. When CX transitions to RET state
-> the GDSC goes into retention too (some controller state is retained) and USB wakeups work.
-> 
-> On platforms which support CX PC, just leaving the GDSC
-> turned ON will not help since the GDSC will also transition to OFF state
-> when we enter CX PC, hence wake-ups from USB won't work.
-> For such platforms we need to make sure gdsc_force_mem_on() is called
-> and cxcs (* @cxcs: offsets of branch registers to toggle mem/periph bits in)
-> are populated correctly, while leaving the GDSC turned ON.
-> This will make sure usb gdsc transitions from being powered by CX to MX
-> when CX hits PC and we still get USB wakeups to work.
-> So in short we could do the same thing that this patch does on those
-> platforms too with additionally populating the right cxcs entries and it
-> should just work fine.
-> 
-> Now the problem that I see with this approach is not with getting USB wakeups
-> to work in suspend, but with supporting performance state voting when
-> USB is active.
-> The last conclusion we had on that [1] was to model usb_gdsc as a subdomain of CX,
-> so if we do that and we model usb_gdsc as something that supports ALWAYS_ON,
-> we would _never_ drop the CX vote and prevent CX from going down (either to ret
-> or pc)
-> 
-> The only way I think we can solve both the USB wakeups and performance state
-> needs (with usb_gdsc as a subdomain of CX) is if we can model a RET state for gdsc
-> which sets the mem/periph bits while leaving the GDSC ON (Today the RET state sets
-> the mem/periph bits but turns the GDSC OFF)
-> 
-> That would mean a change in gdsc.c like this
-> ---
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index d3244006c661..0fe017ba901b 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -368,6 +368,10 @@ static int _gdsc_disable(struct gdsc *sc)
->         if (sc->pwrsts & PWRSTS_OFF)
->                 gdsc_clear_mem_on(sc);
-> 
-> +       /* If the GDSC supports RET, do not explicitly power it off */
-> +       if (sc->pwrsts & PWRSTS_RET)
-> +               return 0;
-> +
->         ret = gdsc_toggle_logic(sc, GDSC_OFF);
->         if (ret)
->                 return ret;
-> 
-> 
-> So with that change, we would then not need the ALWAYS_ON flag set for usb gdsc,
-> instead we would update the .pwrsts to PWRSTS_RET_ON instead of PWRSTS_OFF_ON,
-> and that should make both usb wake-ups to work and we can still have the usb_gdsc as
-> a subdomain of CX for performance state voting.
+Quoting Mark Brown (2022-08-15 15:07:35)
+> On Mon, Aug 15, 2022 at 01:58:55PM -0700, Stephen Boyd wrote:
+>=20
+> > I think the main issue is that platform drivers are being asked to do
+> > too much. We've put the burden on platform driver authors to intimately
+> > understand how their devices are integrated, and as we all know they're
+>=20
+> This is for the regulator API, it's mainly for off SoC devices so it's
+> not a question of understanding the integration of a device into a piece
+> of silicon, it's a question of understanding the integration of a chip
+> into a board which seems reasonably in scope for a chip driver and is
+> certainly the sort of thing that you'd be talking to your customers
+> about as a silicon vendor.
 
-Krishna and I confirmed that this works from the USB side for sc7180 and sc7280.
+Right. I'm coming from the devm_clk_get_*() APIs angle when saying that
+platform drivers don't want to know everything.
+
+>=20
+> > The basic idea is that drivers should be focused on what they're
+> > driving, not navigating the (sometimes) complex integration that's
+> > taking place around them. When a device driver probe function is called
+> > the device should already be powered on. When the driver is
+> > removed/unbound, the power should be removed after the driver's remove
+> > function is called. We're only going to be able to solve the power
+> > sequencing and ordering problem by taking away power control and
+> > sequencing from drivers.
+>=20
+> That is a sensible approach for most on SoC things but for something
+> shipped as a separate driver there's little point in separating the
+> power and clocking domain driver from the device since there's typically
+> a 1:1 mapping.  Usually either it's extremely simple (eg, turn
+> everything on and remove reset) but some devices really need to manage
+> things.  There's obviously some edge cases in SoC integration as well
+> (eg, the need to manage card supplies for SD controllers, or knowing
+> exact clock rates for things like audio controllers) so you need some
+> flex.
+
+I think we're on the same page. The clk API bridges both on SoC and off
+SoC devices, but leans more towards on SoC devices so I'm coming from
+that angle.=20
+
+I agree it doesn't make sense to rip out and move power management logic
+for off SoC devices (your chip driver), because then you get a driver
+that is split to two places. The hardware engineer for those types of
+devices has designed the chip to be more aware of the system integration
+and how their chip is powered, so that it can be easily integrated into
+various designs without their involvement. This allows it to be used on
+numerous boards and that's partly the reason why Linux doesn't have
+board files or board "drivers" because the combinatorial explosion is
+unmanageable, hence DTS and driver subsystems. The boundary of the
+combinations ends at the chip which is 1:1 with the platform driver.
+
+For on SoC devices, the hardware engineer typically isn't involved in
+the system integration at all. Instead they hand that task off to the
+SoC integrator who has to wire everything up (clks, power, resets) and
+layout the SoC. The combinatorial explosion isn't possible here, because
+only so many SoCs are ever created and customers can't rewire the
+internals of the SoC to change which clks go there (although I guess
+with FPGAs this may be possible). The boundary where the combinations
+exist is at the device level, not the SoC level, but we've encoded the
+SoC details into the compatible strings and the drivers to the point
+that the boundary is pushed to the SoC level.
+
+For these on SoC devices, we should extract and consolidate the power
+management logic away from the drivers, because we're spreading the SoC
+integration knowledge all around the drivers/ directory for every device
+class that exists in that SoC. I continue to see drivers that get
+another clk in the next SoC generation because there was some change to
+split a clk domain or they get another regulator because they split a
+power domain. The driver doesn't care, but it has to match a new
+compatible string and then get the proper list of clks or regulators
+even though it just wants to turn the thing on and get it running. This
+gunk needs to go. Runtime PM is a solution to part of the problem, but I
+think RPM ops should be about poking device registers for these on SoC
+devices, not about controlling yet another clk or regulator that got
+wired up this SoC generation.
+
+Probably we need to get away from having platform driver probe for on
+SoC devices get resources like clks, regulators, and interconnects at
+all. Instead, those should be managed by some "SoC" driver that knows
+the integration of the SoC and can make sure the proper power sequencing
+is followed. Hopefully we can do this largely via genpd and RPM, with a
+little bit of help from some SoC driver that registers genpds for
+devices under /soc. Of course there are exact clk frequencies required
+sometimes (audio rates, display link rates, serial baud rates, etc.) but
+those sorts of things could use a higher level of abstraction so that we
+don't get bogged down in the details of which clk needs to be used to
+set the clk frequency when this compatible is present. Maybe
+dev_pm_opp_set_rate() is the answer there, but then we have some drivers
+that call clk APIs like clk_round_rate() that we'll need to figure out
+how to manage.
+
+Long story short, there's a need for both approaches so that we can
+manage the combinatorial complexity at the place where it is. I hope the
+devm APIs are going to help us find that place so we can come up with a
+solution to the "drivers don't want to know" problem when we see that
+XYZ driver can use a genpd that turns on the power along with RPM to
+turn it off during suspend.
