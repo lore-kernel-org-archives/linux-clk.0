@@ -2,33 +2,31 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC974C0502A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 06:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCB9ECAAD1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 06:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbiH3GFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 02:05:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
+        id S229822AbiH3GIH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 02:08:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbiH3GFT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 02:05:19 -0400
+        with ESMTP id S229488AbiH3GIG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 02:08:06 -0400
 Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9DC3C8C9;
-        Mon, 29 Aug 2022 23:05:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78F1B5E7F;
+        Mon, 29 Aug 2022 23:08:04 -0700 (PDT)
 Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Tue, 30 Aug
- 2022 14:05:11 +0800
-Message-ID: <72631035-58a6-23b5-1f7e-f1643b120432@amlogic.com>
-Date:   Tue, 30 Aug 2022 14:05:11 +0800
+ 2022 14:08:02 +0800
+Message-ID: <b98ad038-5f69-204f-fda5-0e55b34144c7@amlogic.com>
+Date:   Tue, 30 Aug 2022 14:08:02 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH V3 2/6] arm64: dts: meson: add S4 Soc PLL clock controller
- in DT
+Subject: Re: [PATCH V3 3/6] clk: meson: S4: add support for Amlogic S4 SoC PLL
+ clock driver
 Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-clk@vger.kernel.org>,
+To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -40,16 +38,14 @@ To:     Jerome Brunet <jbrunet@baylibre.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-3-yu.tu@amlogic.com>
- <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
- <c223a85a-b76e-0e82-9a8c-6b60588dc03a@amlogic.com>
- <1jmtccz0f4.fsf@starbuckisacylon.baylibre.com>
- <edc9b0bd-6c69-0562-05ca-db0496897cf1@amlogic.com>
- <1j1qszv0wa.fsf@starbuckisacylon.baylibre.com>
+ <20220805085716.5635-4-yu.tu@amlogic.com>
+ <1jiln0yzgj.fsf@starbuckisacylon.baylibre.com>
+ <ed4038fb-c230-fc27-800c-c99bd1770a1c@amlogic.com>
+ <1jwnartm78.fsf@starbuckisacylon.baylibre.com>
 From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <1j1qszv0wa.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jwnartm78.fsf@starbuckisacylon.baylibre.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.18.29.47]
 X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
  (10.18.11.5)
@@ -59,67 +55,35 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 2022/8/29 17:43, Jerome Brunet wrote:
+On 2022/8/29 17:46, Jerome Brunet wrote:
 > [ EXTERNAL EMAIL ]
 > 
 > 
-> On Mon 15 Aug 2022 at 14:17, Yu Tu <yu.tu@amlogic.com> wrote:
+> On Mon 15 Aug 2022 at 14:34, Yu Tu <yu.tu@amlogic.com> wrote:
 > 
->> Hi Jerome，
+>> Hi Jerome,
 >>
->> On 2022/8/10 21:32, Jerome Brunet wrote:
+>> On 2022/8/10 21:47, Jerome Brunet wrote:
 >>> [ EXTERNAL EMAIL ]
->>> On Fri 05 Aug 2022 at 17:39, Yu Tu <yu.tu@amlogic.com> wrote:
->>>
->>>> Hi Krzysztof,
->>>>       Thank you for your reply.
->>>>
->>>> On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
->>>>> [ EXTERNAL EMAIL ]
->>>>> On 05/08/2022 10:57, Yu Tu wrote:
->>>>>> Added information about the S4 SOC PLL Clock controller in DT.
->>>>>>
->>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>>>> ---
->>>>>>     arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
->>>>>>     1 file changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>>>>> index ff213618a598..a816b1f7694b 100644
->>>>>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>>>>> @@ -92,6 +92,14 @@ apb4: apb4@fe000000 {
->>>>>>     			#size-cells = <2>;
->>>>>>     			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
->>>>>>     +			clkc_pll: pll-clock-controller@8000 {
->>>>> Node names should be generic - clock-controller.
->>>>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->>>>>
->>>> I will change to clkc_pll: clock-controller@8000, in next version.
->>> Same comment applies to the binding doc.
->> OKay.
->>> Also it would be nice to split this in two series.
->>> Bindings and drivers in one, arm64 dt in the other. These changes goes
->>> in through different trees.
->> At present, Bindings, DTS and drivers are three series. Do you mean to put
->> Bindings and drivers together? If so, checkpatch.pl will report a warning.
+>>> On Fri 05 Aug 2022 at 16:57, Yu Tu <yu.tu@amlogic.com> wrote:
+>>> */
 > 
-> Yes because patches are not in yet so there is a good reason to ignore
-> the warning. Warning will never show up on the actual tree if the
-> patches are correctly ordered.
+> [... ]
+> 
+>>>> +#define ANACTRL_FIXPLL_CTRL0                       (0x0010 << 2)
+>>> I already commented on the "<< 2" . Remove them please.
+>> Sorry, maybe I didn't pay attention to this comment earlier. A little bit
+>> of a question why is this not okay? I understand isn't it better for the
+>> compiler to help with this calculation itself?
+> 
+> Because it is aweful to read
+> 
+> Also please trim your replies.
+> It is a bit annoying to search for your comments in the replies
+> 
 
-I think Binding, DTS and drivers use three series and you said two 
-series is not a big problem. Three series are recommended for 
-checkpatch.pl, I think it should be easy for that to separate and merge。
-
-I've sent it to V4. Please look at V4 and give some comments.
+Okay. Like this?
 
 > 
->>
->>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>> .
->>> .
 > 
 > .
