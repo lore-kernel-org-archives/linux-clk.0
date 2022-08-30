@@ -2,85 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A996ECAAD4
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 21:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E523ECAAD4
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 21:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiH3VNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 17:13:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58176 "EHLO
+        id S229522AbiH3Vfg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 17:35:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiH3VNc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 17:13:32 -0400
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3157486C09;
-        Tue, 30 Aug 2022 14:13:31 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id t8-20020a9d5908000000b0063b41908168so921117oth.8;
-        Tue, 30 Aug 2022 14:13:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=byDOrU2vKaQRF5W/gJnDjybU7ear3HV0O8mJgPS799M=;
-        b=j8OYXpF33TnlkYaXaJ5nJkn7wqyGk7VZptgBUAv4WDt/kbjrv/gUduj64Dqqjf10lq
-         f+swQSgcriqYhw5kC00mI2k04YuqZkre0M7TYkwh5BcM94cnvPfA2f0fK2UrLIlsnYQo
-         6y8xiKTuVu57ClnRVdUs2eGKeb/8LoXKhrhiUmfYHsLFC9/5rNmrL3zOQiR7Jpq7uzbl
-         paZcNUDZIdXZgKNXHhqtLrC/ae759Ie1To69YZuAFys5Ug7xAZTfadxkLaHEwFDL562t
-         5dpd9RL7JAinMhZp0TJp9rkd5KUgUq51vp1LB7HXpOy1w2PeZC0WGh/EEsW+fyqc6cZt
-         WNhw==
-X-Gm-Message-State: ACgBeo1rsNonU8P8aIKV4B9EEzKKQUmETJwY2WaW/JCYzkIg0gQF+8cK
-        sG49yjmdLMFLerVk3n8P3UbxbqJoFw==
-X-Google-Smtp-Source: AA6agR7/x6mk00s04aDRrxzP2z5QrzMD+nm+UxNGLFXZ0BTEWK0r2I5rTZb8OSgyF4dYcGmD4odGLA==
-X-Received: by 2002:a05:6830:9c6:b0:60c:7352:2c03 with SMTP id y6-20020a05683009c600b0060c73522c03mr8958723ott.138.1661894010457;
-        Tue, 30 Aug 2022 14:13:30 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id b35-20020a056870392300b0011f400edb17sm1757857oap.4.2022.08.30.14.13.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Aug 2022 14:13:29 -0700 (PDT)
-Received: (nullmailer pid 2080829 invoked by uid 1000);
-        Tue, 30 Aug 2022 21:13:28 -0000
-Date:   Tue, 30 Aug 2022 16:13:28 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 4/5] clk: imx6sll: add proper spdx license identifier
-Message-ID: <20220830211328.GA2080761-robh@kernel.org>
-References: <20220826192252.794651-1-marcel@ziswiler.com>
- <20220826192252.794651-5-marcel@ziswiler.com>
+        with ESMTP id S229549AbiH3Vff (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 17:35:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF91F51A04;
+        Tue, 30 Aug 2022 14:35:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CF42618D1;
+        Tue, 30 Aug 2022 21:35:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4FCC433C1;
+        Tue, 30 Aug 2022 21:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661895333;
+        bh=x1sCWCTYTgRWZSrAxd+CG69DWl89Qy8FYP1J3jZbV2w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=QW9dkOSDL3LcXJ2CGAGZmb53L5XBaDxaYAFVmLanW0euALps4DYP71DcaZo1qw3yQ
+         KLb9U6BPqHT9OffKATcXHB/kdt6aLWNfnQzJfyFDbBl2EjNMyOj1skn6iQyzW2aNIB
+         pOHal4yvccQfjpuxFY0N/HqIiKrpIir0pcqsUZr3/HpOjOo0oj+jAMIOfUabENkHRQ
+         ZMt/EhuyY8nrY0wh15rXYlpjps+msr2YJ38UosPKSjcgm4vROnLGFSJf9KSqmc9SxB
+         ClQW3xYp1n9ti4JUKWwaLxGubjWK6c87CKnaZh2QugYPyRk7rGSu73AveFfxKkh5+V
+         xq3jFqBhwIN8g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220826192252.794651-5-marcel@ziswiler.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
+References: <20220825182152.v2.1.I45235b7c40997bc2abf813e4722b4dcdd6aecf6b@changeid> <20220826024003.qpqtdmdohdmpcskt@baldur> <5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com>
+Subject: Re: [PATCH v2 1/2] clk: qcom: gcc-sc7180: Keep the USB GDSC always on
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Date:   Tue, 30 Aug 2022 14:35:31 -0700
+User-Agent: alot/0.10
+Message-Id: <20220830213533.7C4FCC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 26 Aug 2022 21:22:51 +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> This fixes the following error:
-> 
-> include/dt-bindings/clock/imx6sll-clock.h:1: warning: Improper SPDX
->  comment style for 'include/dt-bindings/clock/imx6sll-clock.h', please
->  use '/*' instead
-> include/dt-bindings/clock/imx6sll-clock.h:1: warning: Missing or
->  malformed SPDX-License-Identifier tag in line 1
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> ---
-> 
->  include/dt-bindings/clock/imx6sll-clock.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Quoting Rajendra Nayak (2022-08-29 01:12:02)
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index d3244006c661..0fe017ba901b 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -368,6 +368,10 @@ static int _gdsc_disable(struct gdsc *sc)
+>          if (sc->pwrsts & PWRSTS_OFF)
+>                  gdsc_clear_mem_on(sc);
+>=20
+> +       /* If the GDSC supports RET, do not explicitly power it off */
+> +       if (sc->pwrsts & PWRSTS_RET)
+> +               return 0;
+> +
+>          ret =3D gdsc_toggle_logic(sc, GDSC_OFF);
+>          if (ret)
+>                  return ret;
+>=20
+>=20
+> So with that change, we would then not need the ALWAYS_ON flag set for us=
+b gdsc,
+> instead we would update the .pwrsts to PWRSTS_RET_ON instead of PWRSTS_OF=
+F_ON,
+> and that should make both usb wake-ups to work and we can still have the =
+usb_gdsc as
+> a subdomain of CX for performance state voting.
 
-Acked-by: Rob Herring <robh@kernel.org>
+To clarify, usb_gdsc is not setup as a subdomain of CX so far, right?
+Just that eventually we'll make usb_gdsc a subdomain of CX so that
+dev_pm_opp_set_rate() can target the CX domain instead of the usb one?
+
+> Does that sounds like a reasonable solution?
+
+It sounds good to me. What about the existing users of PWRSTS_RET
+though? If I understand correctly this flag means the domain will never
+be turned off, instead it will hit retention during low power modes.
+
+While you're crafting this patch can you also document the PWRSTS_*
+defines so that we know what they mean? I can guess that PWRSTS_RET
+means "retention" but I don't know what it really means. I guess it
+means "Deepest power off state is retention of memory cells".
