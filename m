@@ -2,500 +2,431 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390ADC0502A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 07:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A38BECAAD4
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 08:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229472AbiH3H4y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 03:56:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
+        id S231451AbiH3IUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 04:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231315AbiH3H4w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 03:56:52 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F45D076B;
-        Tue, 30 Aug 2022 00:56:49 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id n17so13059921wrm.4;
-        Tue, 30 Aug 2022 00:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=lu/ZR5+AQVLMMZtQ2GPvpBPZqeDdYDFNiK3/CkVjR1E=;
-        b=KZlsE3I22pW4CV+9iiwRqZycneUmgKM3rHW1+MebcHlNwXfVeKWq11Tr5bh7wzjN/O
-         rGv3WlI3f7M66x6On/MK9VzEf1E39PQz/gEBuxovqXdVLYgNf+2F1w8LCVsel4EvRX+g
-         sWquy2JY5W5ZOPqyqOaOCzvMHMVOyJ4cjh8KrQGRoyxpJa2SSS03CkoN1TdO/anxhYSj
-         rM0wWx/4eh18aTPC+6Y1IhE+vC4eWQnYR3DtIoQha/JO5mKv2vLYM9tOWoXsqIxqGXaH
-         /joB+VJDFbsLfle4t3CGshAvwyH1yS1BtwbZVZ6vQv6im320k8VB7HP+Cw93qM1g6lhi
-         ZlKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=lu/ZR5+AQVLMMZtQ2GPvpBPZqeDdYDFNiK3/CkVjR1E=;
-        b=J4ItjkuAQinwOSROJ44SQHuUW3ejk4aK+uThvEsU/kzBAU3zFHvFS93+RdF64q6t6P
-         WYgdI+l7EHwHPg0VuE9x7m/Npsz9BrClCacvUKu4PcMyIK148DT2aUM/rBcZqF0WbLBG
-         gigejig9h47LGkc2AuJyLcq8Cgvcz1/QvWUxXZorULDUVCgBrCepQ0+LXm1QmeINbAit
-         Jrb3SC0q1rkWN3aSTQoIEqvTy9jXy7qEaiRS0ZcFEAPYINVIEtlGHck317TTt2oPoPyc
-         +C7xVfvXttTGNiLyT/drMvWJPLejVCPO66HAWnaU/RSkjvsl6La0zClKVcNayfRnT/8K
-         zSvw==
-X-Gm-Message-State: ACgBeo1JnWSS+v7Si+guoaEQS66+Fqo1s0a31iZZL85B2R7Y7Igu8BQU
-        4KoKH7uJ7ZWuszJa9tlRv68=
-X-Google-Smtp-Source: AA6agR6VYs00XxT5SxhrnFAVWtvM0vhUg4POQGtQEapDJfPGmN+DkWf0/dVTNSs8tW/HBYNJjXapBA==
-X-Received: by 2002:a05:6000:178a:b0:225:6dff:90b3 with SMTP id e10-20020a056000178a00b002256dff90b3mr8849109wrg.378.1661846207802;
-        Tue, 30 Aug 2022 00:56:47 -0700 (PDT)
-Received: from localhost (87-126-55-15.ip.btc-net.bg. [87.126.55.15])
-        by smtp.gmail.com with ESMTPSA id u6-20020a5d4346000000b0020fff0ea0a3sm8912903wrr.116.2022.08.30.00.56.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Aug 2022 00:56:47 -0700 (PDT)
-From:   Iskren Chernev <iskren.chernev@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Adam Skladowski <a_skl39@protonmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Iskren Chernev <iskren.chernev@gmail.com>
-Subject: [PATCH 3/3] clk: qcom: Merge alt alpha plls for qcm2260, sm6115
-Date:   Tue, 30 Aug 2022 10:56:20 +0300
-Message-Id: <20220830075620.974009-4-iskren.chernev@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220830075620.974009-1-iskren.chernev@gmail.com>
-References: <20220830075620.974009-1-iskren.chernev@gmail.com>
+        with ESMTP id S231449AbiH3IUO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 04:20:14 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14D911A27;
+        Tue, 30 Aug 2022 01:20:08 -0700 (PDT)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Tue, 30 Aug
+ 2022 16:20:05 +0800
+Message-ID: <2b6035f3-8cbe-ab75-bed9-5751b141d3d6@amlogic.com>
+Date:   Tue, 30 Aug 2022 16:20:05 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH V3 6/6] clk: meson: s4: add s4 SoC peripheral clock
+ controller driver
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20220805085716.5635-1-yu.tu@amlogic.com>
+ <20220805085716.5635-7-yu.tu@amlogic.com>
+ <1jedxlzxyz.fsf@starbuckisacylon.baylibre.com>
+ <8f40cb49-fdc5-20cd-343b-8ce50e5d6d97@amlogic.com>
+ <1j7d2rte33.fsf@starbuckisacylon.baylibre.com>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <1j7d2rte33.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The qcom2260 and sm6115 GCC drivers use a common modified DEFAULT and
-BRAMMO alpha pll offsets. Move these common offsets to the shared place
-to avoid duplication. The new layouts have a suffix EVO similar to LUCID
-and RIVIAN.
 
-Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 21 +++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  2 ++
- drivers/clk/qcom/gcc-qcm2290.c   | 56 +++++++++--------------------
- drivers/clk/qcom/gcc-sm6115.c    | 60 ++++++++++----------------------
- 4 files changed, 57 insertions(+), 82 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b42684703fbb..5c368447697d 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -166,6 +166,27 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL] = 0x28,
- 		[PLL_OFF_TEST_CTL_U] = 0x2c,
- 	},
-+	[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO] =  {
-+		[PLL_OFF_L_VAL] = 0x04,
-+		[PLL_OFF_ALPHA_VAL] = 0x08,
-+		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-+		[PLL_OFF_TEST_CTL] = 0x10,
-+		[PLL_OFF_TEST_CTL_U] = 0x14,
-+		[PLL_OFF_USER_CTL] = 0x18,
-+		[PLL_OFF_USER_CTL_U] = 0x1c,
-+		[PLL_OFF_CONFIG_CTL] = 0x20,
-+		[PLL_OFF_STATUS] = 0x24,
-+	},
-+	[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO] =  {
-+		[PLL_OFF_L_VAL] = 0x04,
-+		[PLL_OFF_ALPHA_VAL] = 0x08,
-+		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-+		[PLL_OFF_TEST_CTL] = 0x10,
-+		[PLL_OFF_TEST_CTL_U] = 0x14,
-+		[PLL_OFF_USER_CTL] = 0x18,
-+		[PLL_OFF_CONFIG_CTL] = 0x1C,
-+		[PLL_OFF_STATUS] = 0x20,
-+	},
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
- 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 447efb82fe59..0cbdae7b5b77 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -19,6 +19,8 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_ZONDA,
- 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
- 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
-+	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
-+	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
- 	CLK_ALPHA_PLL_TYPE_MAX,
- };
- 
-diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
-index b6fa7b8e8006..7792b8f23704 100644
---- a/drivers/clk/qcom/gcc-qcm2290.c
-+++ b/drivers/clk/qcom/gcc-qcm2290.c
-@@ -54,33 +54,9 @@ static const struct pll_vco spark_vco[] = {
- 	{ 750000000, 1500000000, 1 },
- };
- 
--static const u8 clk_alpha_pll_regs_offset[][PLL_OFF_MAX_REGS] = {
--	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
--		[PLL_OFF_L_VAL] = 0x04,
--		[PLL_OFF_ALPHA_VAL] = 0x08,
--		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
--		[PLL_OFF_TEST_CTL] = 0x10,
--		[PLL_OFF_TEST_CTL_U] = 0x14,
--		[PLL_OFF_USER_CTL] = 0x18,
--		[PLL_OFF_USER_CTL_U] = 0x1C,
--		[PLL_OFF_CONFIG_CTL] = 0x20,
--		[PLL_OFF_STATUS] = 0x24,
--	},
--	[CLK_ALPHA_PLL_TYPE_BRAMMO] =  {
--		[PLL_OFF_L_VAL] = 0x04,
--		[PLL_OFF_ALPHA_VAL] = 0x08,
--		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
--		[PLL_OFF_TEST_CTL] = 0x10,
--		[PLL_OFF_TEST_CTL_U] = 0x14,
--		[PLL_OFF_USER_CTL] = 0x18,
--		[PLL_OFF_CONFIG_CTL] = 0x1C,
--		[PLL_OFF_STATUS] = 0x20,
--	},
--};
--
- static struct clk_alpha_pll gpll0 = {
- 	.offset = 0x0,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(0),
-@@ -106,7 +82,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_aux2 = {
- 	.post_div_table = post_div_table_gpll0_out_aux2,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll0_out_aux2),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll0_out_aux2",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll0.clkr.hw },
-@@ -117,7 +93,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_aux2 = {
- 
- static struct clk_alpha_pll gpll1 = {
- 	.offset = 0x1000,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(1),
-@@ -147,7 +123,7 @@ static struct clk_alpha_pll gpll10 = {
- 	.offset = 0xa000,
- 	.vco_table = spark_vco,
- 	.num_vco = ARRAY_SIZE(spark_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(10),
-@@ -179,7 +155,7 @@ static struct clk_alpha_pll gpll11 = {
- 	.offset = 0xb000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.flags = SUPPORTS_DYNAMIC_UPDATE,
- 	.clkr = {
- 		.enable_reg = 0x79000,
-@@ -197,7 +173,7 @@ static struct clk_alpha_pll gpll11 = {
- 
- static struct clk_alpha_pll gpll3 = {
- 	.offset = 0x3000,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(3),
-@@ -223,7 +199,7 @@ static struct clk_alpha_pll_postdiv gpll3_out_main = {
- 	.post_div_table = post_div_table_gpll3_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll3_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll3_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll3.clkr.hw },
-@@ -234,7 +210,7 @@ static struct clk_alpha_pll_postdiv gpll3_out_main = {
- 
- static struct clk_alpha_pll gpll4 = {
- 	.offset = 0x4000,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(4),
-@@ -251,7 +227,7 @@ static struct clk_alpha_pll gpll4 = {
- 
- static struct clk_alpha_pll gpll5 = {
- 	.offset = 0x5000,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(5),
-@@ -268,7 +244,7 @@ static struct clk_alpha_pll gpll5 = {
- 
- static struct clk_alpha_pll gpll6 = {
- 	.offset = 0x6000,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(6),
-@@ -294,7 +270,7 @@ static struct clk_alpha_pll_postdiv gpll6_out_main = {
- 	.post_div_table = post_div_table_gpll6_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll6_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll6_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll6.clkr.hw },
-@@ -305,7 +281,7 @@ static struct clk_alpha_pll_postdiv gpll6_out_main = {
- 
- static struct clk_alpha_pll gpll7 = {
- 	.offset = 0x7000,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(7),
-@@ -340,7 +316,7 @@ static struct clk_alpha_pll gpll8 = {
- 	.offset = 0x8000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.flags = SUPPORTS_DYNAMIC_UPDATE,
- 	.clkr = {
- 		.enable_reg = 0x79000,
-@@ -367,7 +343,7 @@ static struct clk_alpha_pll_postdiv gpll8_out_main = {
- 	.post_div_table = post_div_table_gpll8_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll8_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll8_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll8.clkr.hw },
-@@ -393,7 +369,7 @@ static struct clk_alpha_pll gpll9 = {
- 	.offset = 0x9000,
- 	.vco_table = brammo_vco,
- 	.num_vco = ARRAY_SIZE(brammo_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_BRAMMO],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(9),
-@@ -419,7 +395,7 @@ static struct clk_alpha_pll_postdiv gpll9_out_main = {
- 	.post_div_table = post_div_table_gpll9_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll9_out_main),
- 	.width = 2,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_BRAMMO],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll9_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll9.clkr.hw },
-diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
-index dc2a99c3bc06..565f9912039f 100644
---- a/drivers/clk/qcom/gcc-sm6115.c
-+++ b/drivers/clk/qcom/gcc-sm6115.c
-@@ -53,35 +53,11 @@ static struct pll_vco gpll10_vco[] = {
- 	{ 750000000, 1500000000, 1 },
- };
- 
--static const u8 clk_alpha_pll_regs_offset[][PLL_OFF_MAX_REGS] = {
--	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
--		[PLL_OFF_L_VAL] = 0x04,
--		[PLL_OFF_ALPHA_VAL] = 0x08,
--		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
--		[PLL_OFF_TEST_CTL] = 0x10,
--		[PLL_OFF_TEST_CTL_U] = 0x14,
--		[PLL_OFF_USER_CTL] = 0x18,
--		[PLL_OFF_USER_CTL_U] = 0x1c,
--		[PLL_OFF_CONFIG_CTL] = 0x20,
--		[PLL_OFF_STATUS] = 0x24,
--	},
--	[CLK_ALPHA_PLL_TYPE_BRAMMO] =  {
--		[PLL_OFF_L_VAL] = 0x04,
--		[PLL_OFF_ALPHA_VAL] = 0x08,
--		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
--		[PLL_OFF_TEST_CTL] = 0x10,
--		[PLL_OFF_TEST_CTL_U] = 0x14,
--		[PLL_OFF_USER_CTL] = 0x18,
--		[PLL_OFF_CONFIG_CTL] = 0x1C,
--		[PLL_OFF_STATUS] = 0x20,
--	},
--};
--
- static struct clk_alpha_pll gpll0 = {
- 	.offset = 0x0,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(0),
-@@ -107,7 +83,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_aux2 = {
- 	.post_div_table = post_div_table_gpll0_out_aux2,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll0_out_aux2),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll0_out_aux2",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll0.clkr.hw },
-@@ -127,7 +103,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_main = {
- 	.post_div_table = post_div_table_gpll0_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll0_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll0_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll0.clkr.hw },
-@@ -149,7 +125,7 @@ static struct clk_alpha_pll gpll10 = {
- 	.offset = 0xa000,
- 	.vco_table = gpll10_vco,
- 	.num_vco = ARRAY_SIZE(gpll10_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(10),
-@@ -175,7 +151,7 @@ static struct clk_alpha_pll_postdiv gpll10_out_main = {
- 	.post_div_table = post_div_table_gpll10_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll10_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll10_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll10.clkr.hw },
-@@ -201,7 +177,7 @@ static struct clk_alpha_pll gpll11 = {
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
- 	.flags = SUPPORTS_DYNAMIC_UPDATE,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(11),
-@@ -227,7 +203,7 @@ static struct clk_alpha_pll_postdiv gpll11_out_main = {
- 	.post_div_table = post_div_table_gpll11_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll11_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll11_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll11.clkr.hw },
-@@ -241,7 +217,7 @@ static struct clk_alpha_pll gpll3 = {
- 	.offset = 0x3000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(3),
-@@ -260,7 +236,7 @@ static struct clk_alpha_pll gpll4 = {
- 	.offset = 0x4000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(4),
-@@ -286,7 +262,7 @@ static struct clk_alpha_pll_postdiv gpll4_out_main = {
- 	.post_div_table = post_div_table_gpll4_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll4_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll4_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll4.clkr.hw },
-@@ -299,7 +275,7 @@ static struct clk_alpha_pll gpll6 = {
- 	.offset = 0x6000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(6),
-@@ -325,7 +301,7 @@ static struct clk_alpha_pll_postdiv gpll6_out_main = {
- 	.post_div_table = post_div_table_gpll6_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll6_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll6_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll6.clkr.hw },
-@@ -338,7 +314,7 @@ static struct clk_alpha_pll gpll7 = {
- 	.offset = 0x7000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(7),
-@@ -364,7 +340,7 @@ static struct clk_alpha_pll_postdiv gpll7_out_main = {
- 	.post_div_table = post_div_table_gpll7_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll7_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll7_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll7.clkr.hw },
-@@ -392,7 +368,7 @@ static struct clk_alpha_pll gpll8 = {
- 	.offset = 0x8000,
- 	.vco_table = default_vco,
- 	.num_vco = ARRAY_SIZE(default_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.flags = SUPPORTS_DYNAMIC_UPDATE,
- 	.clkr = {
- 		.enable_reg = 0x79000,
-@@ -419,7 +395,7 @@ static struct clk_alpha_pll_postdiv gpll8_out_main = {
- 	.post_div_table = post_div_table_gpll8_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll8_out_main),
- 	.width = 4,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll8_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll8.clkr.hw },
-@@ -443,7 +419,7 @@ static struct clk_alpha_pll gpll9 = {
- 	.offset = 0x9000,
- 	.vco_table = gpll9_vco,
- 	.num_vco = ARRAY_SIZE(gpll9_vco),
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_BRAMMO],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO],
- 	.clkr = {
- 		.enable_reg = 0x79000,
- 		.enable_mask = BIT(9),
-@@ -469,7 +445,7 @@ static struct clk_alpha_pll_postdiv gpll9_out_main = {
- 	.post_div_table = post_div_table_gpll9_out_main,
- 	.num_post_div = ARRAY_SIZE(post_div_table_gpll9_out_main),
- 	.width = 2,
--	.regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_BRAMMO],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll9_out_main",
- 		.parent_hws = (const struct clk_hw *[]){ &gpll9.clkr.hw },
--- 
-2.37.2
+On 2022/8/29 20:19, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> 
+> On Tue 16 Aug 2022 at 20:00, Yu Tu <yu.tu@amlogic.com> wrote:
+> 
+> Please trim your replies
+> 
+>>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>>>> index f4244edc7b28..ec6beb9284d3 100644
+>>>> --- a/drivers/clk/meson/Kconfig
+>>>> +++ b/drivers/clk/meson/Kconfig
+>>>> @@ -127,4 +127,17 @@ config COMMON_CLK_S4_PLL
+>>>>    	  Support for the pll clock controller on Amlogic S805X2 and S905Y4 devices,
+>>>>    	  aka s4. Amlogic S805X2 and S905Y4 devices include AQ222 and AQ229.
+>>>>    	  Say Y if you want peripherals and CPU frequency scaling to work.
+>>>> +
+>>>> +config COMMON_CLK_S4
+>>>> +	tristate "S4 SoC Peripherals clock controllers support"
+>>>> +	depends on ARM64
+>>>> +	default y
+>>>> +	select COMMON_CLK_MESON_REGMAP
+>>>> +	select COMMON_CLK_MESON_DUALDIV
+>>>> +	select COMMON_CLK_MESON_VID_PLL_DIV
+>>>> +	select COMMON_CLK_S4_PLL
+>>> Do you really this ? your driver does not even include the related
+>>> header.
+>> If the PLL driver is not turned on in DTS, will it not cause an error?
+>>>
+> 
+> I don't get the question.
+> Kconfig list compile deps. S4 PLL is not a compile dep of the peripheral
+> controller.
+> 
+> If you really want to, you may use 'imply'.
 
+V4 has been changed as you suggested.
+
+>>>
+>>>> +static const struct clk_parent_data sys_ab_clk_parent_data[] = {
+>>>> +	{ .fw_name = "xtal" },
+>>>> +	{ .fw_name = "fclk_div2" },
+>>>> +	{ .fw_name = "fclk_div3" },
+>>>> +	{ .fw_name = "fclk_div4" },
+>>>> +	{ .fw_name = "fclk_div5" },
+>>>> +	{ .fw_name = "fclk_div7" },
+>>>> +	{ .hw = &s4_rtc_clk.hw }
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap s4_sysclk_b_sel = {
+>>>> +	.data = &(struct clk_regmap_mux_data){
+>>>> +		.offset = CLKCTRL_SYS_CLK_CTRL0,
+>>>> +		.mask = 0x7,
+>>>> +		.shift = 26,
+>>>> +		.table = mux_table_sys_ab_clk_sel,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data){
+>>>> +		.name = "sysclk_b_sel",
+>>>> +		.ops = &clk_regmap_mux_ro_ops,
+>>> Why is this using the RO ops ?
+>> Sys_clk is initialized during the Uboot phase and is fixed at
+>> 166.666MHz. So I'm going to change it to ro.
+> 
+> That really much depends on the bootloader and is a pretty weak design.
+> The bootloader deps should be kept as minimal as possible.
+> 
+> I see no reason for RO.
+> 
+> You may cut rate propagation on the user if you need to and continue to
+> whatever you want in your u-boot
+
+I think I know what you mean. But we let the user be in control and not 
+set the frequency, which can be risky. If you insist, I will change it 
+as you suggest.
+
+> 
+>>>
+>>>> +		.parent_data = sys_ab_clk_parent_data,
+>>>> +		.num_parents = ARRAY_SIZE(sys_ab_clk_parent_data),
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap s4_sysclk_b_div = {
+>>>> +	.data = &(struct clk_regmap_div_data){
+>>>> +		.offset = CLKCTRL_SYS_CLK_CTRL0,
+>>>> +		.shift = 16,
+>>>> +		.width = 10,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data){
+>>>> +		.name = "sysclk_b_div",
+>>>> +		.ops = &clk_regmap_divider_ro_ops,
+>>> Same here and for the rest of the sys part
+>> Same above.
+> 
+> We can play that game for a while
+
+Ah, you're so funny.
+
+> 
+>>>> +
+>>>> +/* Video Clocks */
+>>>> +static struct clk_regmap s4_vid_pll_div = {
+>>>> +	.data = &(struct meson_vid_pll_div_data){
+>>>> +		.val = {
+>>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
+>>>> +			.shift   = 0,
+>>>> +			.width   = 15,
+>>>> +		},
+>>>> +		.sel = {
+>>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
+>>>> +			.shift   = 16,
+>>>> +			.width   = 2,
+>>>> +		},
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data) {
+>>>> +		.name = "vid_pll_div",
+>>>> +		.ops = &meson_vid_pll_div_ro_ops,
+>>> Why RO ? applies to the rest of the video part.
+>> Because vid_pll_div parent is HDMI_PLL, and HDMI_PLL is a fixed
+>> frequency. Flags is CLK_SET_RATE_PARENT. So we use RO.
+> 
+> If the HDMI_PLL is fixed somehow, that is not reason for this clock to
+> be RO
+> 
+>> Can I remove RO and use CLK_SET_RATE_NO_REPARENT instead, which one do you
+>> think is more reasonable?
+> 
+> Neither. CLK_SET_RATE_NO_REPARENT makes no sense, it is not mux
+> 
+
+"drivers/clk/meson/vid-pll-div.c"
+This file only provides ro_ops. Maybe the submission records will give 
+us the answer.
+
+In fact, our hardware design is the same as the G12 series.
+
+>>
+>>>
+>>>> +		.parent_data = (const struct clk_parent_data []) {
+>>>> +			{ .fw_name = "hdmi_pll", }
+>>>> +		},
+>>>> +		.num_parents = 1,
+>>>> +		.flags = CLK_SET_RATE_PARENT,
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap s4_vid_pll_sel = {
+>>>> +	.data = &(struct clk_regmap_mux_data){
+>>>> +		.offset = CLKCTRL_VID_PLL_CLK_DIV,
+>>>> +		.mask = 0x1,
+>>>> +		.shift = 18,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data){
+>>>> +		.name = "vid_pll_sel",
+>>>> +		.ops = &clk_regmap_mux_ops,
+>>>> +		/*
+>>>> +		 * bit 18 selects from 2 possible parents:
+>>>> +		 * vid_pll_div or hdmi_pll
+>>>> +		 */
+>>>> +		.parent_data = (const struct clk_parent_data []) {
+>>>> +			{ .hw = &s4_vid_pll_div.hw },
+>>>> +			{ .fw_name = "hdmi_pll", }
+>>>> +		},
+>>>> +		.num_parents = 2,
+>>>> +		.flags = CLK_SET_RATE_NO_REPARENT,
+>>> Why ? are you planning to DT assigned clocks to statically set this ?
+>> Because vid_pll_sel one parent is HDMI_PLL, and HDMI_PLL is a fixed
+>> frequency. To prevent modification, use CLK_SET_RATE_NO_REPARENT.
+> 
+> Again, this makes no sense.
+
+Unfortunately you don't read V4, in fact I have corrected in V4.
+
+".flags = CLK_SET_RATE_PARENT," in V4. Is that okay with you?
+
+> 
+>>>
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap s4_vid_pll = {
+>>>> +	.data = &(struct clk_regmap_gate_data){
+>>>> +		.offset = CLKCTRL_VID_PLL_CLK_DIV,
+>>>> +		.bit_idx = 19,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data) {
+>>>> +		.name = "vid_pll",
+>>>> +		.ops = &clk_regmap_gate_ops,
+>>>> +		.parent_hws = (const struct clk_hw *[]) {
+>>>> +			&s4_vid_pll_sel.hw
+>>>> +		},
+>>>> +		.num_parents = 1,
+>>>> +		.flags = CLK_SET_RATE_PARENT,
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static const struct clk_parent_data s4_vclk_parent_data[] = {
+>>>> +	{ .hw = &s4_vid_pll.hw },
+>>>> +	{ .fw_name = "gp0_pll", },
+>>>> +	{ .fw_name = "hifi_pll", },
+>>>> +	{ .fw_name = "mpll1", },
+>>>> +	{ .fw_name = "fclk_div3", },
+>>>> +	{ .fw_name = "fclk_div4", },
+>>>> +	{ .fw_name = "fclk_div5", },
+>>>> +	{ .fw_name = "fclk_div7", },
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap s4_vclk_sel = {
+>>>> +	.data = &(struct clk_regmap_mux_data){
+>>>> +		.offset = CLKCTRL_VID_CLK_CTRL,
+>>>> +		.mask = 0x7,
+>>>> +		.shift = 16,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data){
+>>>> +		.name = "vclk_sel",
+>>>> +		.ops = &clk_regmap_mux_ops,
+>>>> +		.parent_data = s4_vclk_parent_data,
+>>>> +		.num_parents = ARRAY_SIZE(s4_vclk_parent_data),
+>>>> +		.flags = CLK_SET_RATE_NO_REPARENT,
+>>> Same
+>> Since fclk_div* is a fixed frequency value, mplL1 and hifi_pll and gp0_pll
+>> are used by other specialized modules, vid_pll has CLK_SET_RATE_PARENT. The
+>> parent of vid_pll is that vid_pll_sel uses CLK_SET_RATE_NO_REPARENT.
+> 
+> Still not good.
+> 
+> You don't have CLK_SET_RATE, propagation is stopped and parent clock
+> will not changed. The best parent will be picked but not changed.
+> 
+> If one parent MUST NOT be picked, just remove it from the list and add a
+> explaining why
+> 
+> [...]
+
+Okay.
+
+> 
+>>>> +
+>>>> +static struct clk_regmap s4_ts_clk_div = {
+>>>> +	.data = &(struct clk_regmap_div_data){
+>>>> +		.offset = CLKCTRL_TS_CLK_CTRL,
+>>>> +		.shift = 0,
+>>>> +		.width = 8,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data){
+>>>> +		.name = "ts_clk_div",
+>>>> +		.ops = &clk_regmap_divider_ops,
+>>>> +		.parent_data = &(const struct clk_parent_data) {
+>>>> +			.fw_name = "xtal",
+>>>> +		},
+>>>> +		.num_parents = 1,
+>>> propagation stopped ?
+>> Its parent is xtal, so I should use CLK_SET_RATE_NO_REPARENT.
+> 
+> Still no. You seem to have problem with the meaning of
+> CLK_SET_RATE_NO_REPARENT.
+> 
+> * CLK_SET_RATE_NO_REPARENT: means the parent will no be changed, even if
+>    selecting another parent would result in a closer rate to the
+>    request. It makes sense only if the clock has several parents
+> 
+> * CLK_SET_RATE_PARENT: means rate change may propagate the parent,
+>    meaning the rate of the parent may change if it help the child achieve
+>    a closer rate to the request
+
+Thank you for explaining.I got it.
+
+> 
+>>>
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap s4_ts_clk_gate = {
+>>>> +	.data = &(struct clk_regmap_gate_data){
+>>>> +		.offset = CLKCTRL_TS_CLK_CTRL,
+>>>> +		.bit_idx = 8,
+>>>> +	},
+>>>> +	.hw.init = &(struct clk_init_data){
+>>>> +		.name = "ts_clk",
+>>>> +		.ops = &clk_regmap_gate_ops,
+>>>> +		.parent_hws = (const struct clk_hw *[]) {
+>>>> +			&s4_ts_clk_div.hw
+>>>> +		},
+>>>> +		.num_parents = 1,
+>>>> +	},
+>>> propagation stopped ?
+>> I will add CLK_SET_RATE_PARENT.
+> 
+> [...]
+> 
+>>>> +/* EMMC/NAND clock */
+>>>> +
+>>>> +static const struct clk_parent_data s4_sd_emmc_clk0_parent_data[] = {
+>>>> +	{ .fw_name = "xtal", },
+>>>> +	{ .fw_name = "fclk_div2", },
+>>>> +	{ .fw_name = "fclk_div3", },
+>>>> +	{ .fw_name = "hifi_pll", },
+>>>> +	{ .fw_name = "fclk_div2p5", },
+>>>> +	/*
+>>>> +	 * Following these parent clocks, we should also have had mpll2, mpll3
+>>>> +	 * and gp0_pll but these clocks are too precious to be used here. All
+>>>> +	 * the necessary rates for MMC and NAND operation can be acheived using
+>>>> +	 * hifi_pll or fclk_div clocks
+>>>> +	 */
+>>> You don't want to list mplls but hifi_pll is fine ? seems dangerous.
+>> hifi pll is for EMMC and NAND on this SoC.
+> 
+> That deserve a better explanation.
+> Why can't it use fdiv2 and xtal like the previous SoCs ?
+> 
+> Which PLLs are you using for Audio then ?
+> Typical operation on these SoCs usually require 3 PLLs to acheive all rates
+> 
+
+I'll list all the clocks and let the driver itself select Parent as needed.
+
+>>>
+> 
+> 
+>>>> +/*
+>>>> + * gen clk is designed for debug/monitor some internal clock quality. Some of the
+>>>> + * corresponding clock sources are not described in the clock tree, so they are skipped.
+>>>> + */
+>>> Still feels a bit light, don't you think ? Among all the clocks, can't
+>>> you add a bit more parents here ? It would certainly help debug down the road
+>> [16:12]	is gen_clk source select.All is:
+>> 0: cts_oscin_clk
+>> 1:cts_rtc_clk
+>> 2:sys_pll_div16 (internal clock)
+>> 3:ddr_pll_div32  (internal clock)
+>> 4: vid_pll
+>> 5: gp0_pll
+>> 7: hifi_pll
+>> 10:adc_dpll_clk_b3 (internal clock for debug)
+>> 11:adc_dpll_intclk (internal clock for debug)
+>> 12:clk_msr_src(select from all internal clock except PLLs);
+>> 16: no used
+>> 17: sys_cpu_clk_div16 (internal clock)
+>> 19: fclk_div2
+>> 20: fclk_div2p5
+>> 21: fclk_div3
+>> 22: fclk_div4
+>> 23: fclk_div5
+>> 24: fclk_div7
+>> 25: mpll0
+>> 26: mpll1
+>> 27: mpll2
+>> 28: mpll3
+>> So i only added the clocks that will actually be used, and some debugging
+>> clock peripherals will not be used.
+> 
+> you may at least add vid_pll
+
+Okay.
+
+> 
+>>>
+>>>> +static u32 s4_gen_clk_mux_table[] = { 0, 5, 7, 19, 21, 22,
+>>>> +				      23, 24, 25, 26, 27, 28 };
+>>>> +static const struct clk_parent_data s4_gen_clk_parent_data[] = {
+>>>> +	{ .fw_name = "xtal", },
+>>>> +	{ .fw_name = "gp0_pll", },
+>>>> +	{ .fw_name = "hifi_pll", },
+>>>> +	{ .fw_name = "fclk_div2", },
+>>>> +	{ .fw_name = "fclk_div3", },
+>>>> +	{ .fw_name = "fclk_div4", },
+>>>> +	{ .fw_name = "fclk_div5", },
+>>>> +	{ .fw_name = "fclk_div7", },
+>>>> +	{ .fw_name = "mpll0", },
+>>>> +	{ .fw_name = "mpll1", },
+>>>> +	{ .fw_name = "mpll2", },
+>>>> +	{ .fw_name = "mpll3", },
+>>>> +};
+> 
+> .
