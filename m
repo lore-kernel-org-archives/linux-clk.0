@@ -2,119 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D778AECAAD5
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 05:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC974C0502A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 06:05:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbiH3FZj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 01:25:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42924 "EHLO
+        id S229891AbiH3GFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Aug 2022 02:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbiH3FZd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 01:25:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB24A248C8;
-        Mon, 29 Aug 2022 22:25:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 70D4A612D6;
-        Tue, 30 Aug 2022 05:25:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B15AC433C1;
-        Tue, 30 Aug 2022 05:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661837130;
-        bh=Hh7bnQCDCSt3C486NoFQsf6r4Qajsoy/eBJ7UtkwRks=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YNjQjEGEtHM2qpGA60LXoviJw2eA21I3I0I3IFRxGEJ+HJjBDIMAyxdNb3ORcHKti
-         IKZzUubUKT5V29hXFm6xVIpsX0fThNaXjtGRXtlRCRKZLaY4eP4c332iyEvL0jd1qu
-         KnAcJJPso3THYXjMzvpvniqLZauuJ3U3NbZ+8yw3ngeA/kjNa/eoqw8O23GBk982Sz
-         AiW+ua20YzlKDT27RW3NshTLut7938c5Jy4ew3Qk72UbzkUqX2gNtvwa6/QEp+AtvH
-         Au/JZ3YmMSKowQJSwV8j2ZTmRnrgt5kPVPNocUHHv+lw+CeI2wGvLMZDsM+0e0I74e
-         f9WPLWbFXe/lw==
-Date:   Tue, 30 Aug 2022 10:55:25 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-phy@lists.infradead.org, Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v3 1/3] clk: asm9260: use new helper for fixed rate clock
- creation
-Message-ID: <Yw2fRVsnkHYhcmSy@matsya>
-References: <20220708135450.2845810-1-dmitry.baryshkov@linaro.org>
- <20220708135450.2845810-2-dmitry.baryshkov@linaro.org>
+        with ESMTP id S229650AbiH3GFT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 02:05:19 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9DC3C8C9;
+        Mon, 29 Aug 2022 23:05:13 -0700 (PDT)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Tue, 30 Aug
+ 2022 14:05:11 +0800
+Message-ID: <72631035-58a6-23b5-1f7e-f1643b120432@amlogic.com>
+Date:   Tue, 30 Aug 2022 14:05:11 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220708135450.2845810-2-dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH V3 2/6] arm64: dts: meson: add S4 Soc PLL clock controller
+ in DT
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20220805085716.5635-1-yu.tu@amlogic.com>
+ <20220805085716.5635-3-yu.tu@amlogic.com>
+ <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
+ <c223a85a-b76e-0e82-9a8c-6b60588dc03a@amlogic.com>
+ <1jmtccz0f4.fsf@starbuckisacylon.baylibre.com>
+ <edc9b0bd-6c69-0562-05ca-db0496897cf1@amlogic.com>
+ <1j1qszv0wa.fsf@starbuckisacylon.baylibre.com>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <1j1qszv0wa.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08-07-22, 16:54, Dmitry Baryshkov wrote:
-> The __clk_hw_register_fixed_rate() is an internal API, which is better
-> not to be called directly. Add new helper to create fixed rate clocks
-> using parent clock accuracy.
+
+
+On 2022/8/29 17:43, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/clk-asm9260.c    |  6 ++----
->  include/linux/clk-provider.h | 14 ++++++++++++++
->  2 files changed, 16 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-> index bacebd457e6f..0609b661ff5a 100644
-> --- a/drivers/clk/clk-asm9260.c
-> +++ b/drivers/clk/clk-asm9260.c
-> @@ -276,10 +276,8 @@ static void __init asm9260_acc_init(struct device_node *np)
->  
->  	/* TODO: Convert to DT parent scheme */
->  	ref_clk = of_clk_get_parent_name(np, 0);
-> -	hw = __clk_hw_register_fixed_rate(NULL, NULL, pll_clk,
-> -			ref_clk, NULL, NULL, 0, rate, 0,
-> -			CLK_FIXED_RATE_PARENT_ACCURACY);
-> -
-> +	hw = clk_hw_register_fixed_rate_parent_accuracy(NULL, pll_clk, ref_clk,
-> +							0, rate);
+> On Mon 15 Aug 2022 at 14:17, Yu Tu <yu.tu@amlogic.com> wrote:
+> 
+>> Hi Jerome，
+>>
+>> On 2022/8/10 21:32, Jerome Brunet wrote:
+>>> [ EXTERNAL EMAIL ]
+>>> On Fri 05 Aug 2022 at 17:39, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>
+>>>> Hi Krzysztof,
+>>>>       Thank you for your reply.
+>>>>
+>>>> On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
+>>>>> [ EXTERNAL EMAIL ]
+>>>>> On 05/08/2022 10:57, Yu Tu wrote:
+>>>>>> Added information about the S4 SOC PLL Clock controller in DT.
+>>>>>>
+>>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>>>> ---
+>>>>>>     arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
+>>>>>>     1 file changed, 8 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>>>>> index ff213618a598..a816b1f7694b 100644
+>>>>>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>>>>> @@ -92,6 +92,14 @@ apb4: apb4@fe000000 {
+>>>>>>     			#size-cells = <2>;
+>>>>>>     			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
+>>>>>>     +			clkc_pll: pll-clock-controller@8000 {
+>>>>> Node names should be generic - clock-controller.
+>>>>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>>>>>
+>>>> I will change to clkc_pll: clock-controller@8000, in next version.
+>>> Same comment applies to the binding doc.
+>> OKay.
+>>> Also it would be nice to split this in two series.
+>>> Bindings and drivers in one, arm64 dt in the other. These changes goes
+>>> in through different trees.
+>> At present, Bindings, DTS and drivers are three series. Do you mean to put
+>> Bindings and drivers together? If so, checkpatch.pl will report a warning.
+> 
+> Yes because patches are not in yet so there is a good reason to ignore
+> the warning. Warning will never show up on the actual tree if the
+> patches are correctly ordered.
 
-Should this not be described in DT instead, resolve the todo :-)
+I think Binding, DTS and drivers use three series and you said two 
+series is not a big problem. Three series are recommended for 
+checkpatch.pl, I think it should be easy for that to separate and merge。
 
->  	if (IS_ERR(hw))
->  		panic("%pOFn: can't register REFCLK. Check DT!", np);
->  
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 72d937c03a3e..659ef5a77246 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -439,6 +439,20 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
->  	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,	      \
->  				     (parent_data), NULL, (flags),	      \
->  				     (fixed_rate), (fixed_accuracy), 0)
-> +/**
-> + * clk_hw_register_fixed_rate_parent_accuracy - register fixed-rate clock with
-> + * the clock framework
-> + * @dev: device that is registering this clock
-> + * @name: name of this clock
-> + * @parent_name: name of clock's parent
-> + * @flags: framework-specific flags
-> + * @fixed_rate: non-adjustable clock rate
-> + */
-> +#define clk_hw_register_fixed_rate_parent_accuracy(dev, name, parent_name,    \
-> +						   flags, fixed_rate)	      \
-> +	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name),      \
-> +				     NULL, NULL, (flags), (fixed_rate), 0,    \
-> +				     CLK_FIXED_RATE_PARENT_ACCURACY)
->  
->  void clk_unregister_fixed_rate(struct clk *clk);
->  void clk_hw_unregister_fixed_rate(struct clk_hw *hw);
-> -- 
-> 2.35.1
+I've sent it to V4. Please look at V4 and give some comments.
 
--- 
-~Vinod
+> 
+>>
+>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>> .
+>>> .
+> 
+> .
