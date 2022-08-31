@@ -2,67 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B486BC0502A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Aug 2022 22:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA9DECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Aug 2022 05:19:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231787AbiH3W0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Aug 2022 18:26:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40046 "EHLO
+        id S231829AbiHaFT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Aug 2022 01:19:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232353AbiH3W0E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Aug 2022 18:26:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D8FE82840;
-        Tue, 30 Aug 2022 15:24:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 725766148F;
-        Tue, 30 Aug 2022 22:23:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4218C433D6;
-        Tue, 30 Aug 2022 22:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661898185;
-        bh=nMbtkeQ9N+G/3qW+szRqP1EagN2/R5jQ5O9x2R0M2fc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kej1EbhpcpLSl+FuH5wkI3kbnlzJNBYm5J7uYzRLS/oZEx4VicJ7jiWm0HH1X0yof
-         I/u241YCYVin6na4Fvf2fEN/w8DnxMTXoobsvKfL9JTY3B6WLnkAGdWRZBJquNjEiq
-         1no/O5D0YpOtchVVFfJYb5UtI8VILDBin6zPHftEUkEC+g76kiFx0Nv07FXv+IA+Yo
-         VOr9mnzoMkeX8SINSTTdZPur63yXuQEFR7pjyARtgK3adeTkV8u9cvYbbHD9AdWe66
-         6mtLfvX6M/hw5hrW4WVm//JmkRWyzbqC5ZfjmUWT4h1GFCmZrULXwt0Tgb96uqMAXW
-         IcoRyXK5Ime2w==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229449AbiHaFT0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 01:19:26 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58517B14D8;
+        Tue, 30 Aug 2022 22:19:25 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27V4DYPX020411;
+        Wed, 31 Aug 2022 05:19:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=NN0hANgOTosS67AZM7qStNdWjz7PM0mNu/rAh+RRKaQ=;
+ b=nof6eVgQdjqi+tUoGHd0jgiqo/B9MR+GTqEdp0PbaKtltafb2AN6UbfW0AtXmctJsPwA
+ StKylhXquPllJwkb5tr7kJ3B5R0dT08Vqx+v6G37mmUt4ftxWPHSR2greKDo/gBY0Sm7
+ uxwje5Uv5arFHRgU4w5eiQ7dfiCfb2KdJ0/bfQqY/+XV+m0OXVs+W9lz94mO46B9wZUm
+ VBUvgwriA88o4d2hUdnSIb3NXTPUB+JscY3wJ0munyVAscoqmMYza7+tCQjaNHP/HVdU
+ 2ctkeLO027iTQgntvs9leTFa9qrPWgx8sZ9llJr3aePL6kQCRcnG14Ozx0pofZ7WhuI3 GA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j9m2t2jnq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 31 Aug 2022 05:19:13 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27V5JCtc013996
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 31 Aug 2022 05:19:12 GMT
+Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 30 Aug 2022 22:19:07 -0700
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+To:     freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Stephen Boyd" <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        <krzysztof.kozlowski@linaro.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 2/6] clk: qcom: Allow custom reset ops
+Date:   Wed, 31 Aug 2022 10:48:23 +0530
+Message-ID: <20220831104741.v6.2.I75baff799a363bbb960376539e3a0f737377c3f1@changeid>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1661923108-789-1-git-send-email-quic_akhilpo@quicinc.com>
+References: <1661923108-789-1-git-send-email-quic_akhilpo@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220817075517.49575-5-sergiu.moga@microchip.com>
-References: <20220817075517.49575-1-sergiu.moga@microchip.com> <20220817075517.49575-5-sergiu.moga@microchip.com>
-Subject: Re: [PATCH 4/5] clk: at91: sama5d2: Add Generic Clocks for UART/USART
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        Sergiu Moga <sergiu.moga@microchip.com>
-To:     Sergiu Moga <sergiu.moga@microchip.com>, admin@hifiphile.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        kavyasree.kotagiri@microchip.com,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, nicolas.ferre@microchip.com,
-        radu_nicolae.pirea@upb.ro, richard.genoud@gmail.com,
-        robh+dt@kernel.org
-Date:   Tue, 30 Aug 2022 15:23:03 -0700
-User-Agent: alot/0.10
-Message-Id: <20220830222305.B4218C433D6@smtp.kernel.org>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: D6OrqctB7GR9Grklm_IuDSXrkz2tB1AB
+X-Proofpoint-ORIG-GUID: D6OrqctB7GR9Grklm_IuDSXrkz2tB1AB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-31_03,2022-08-30_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
+ mlxscore=0 clxscore=1015 spamscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208310025
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergiu Moga (2022-08-17 00:55:17)
-> Add the generic clocks for UART/USART in the sama5d2 driver to allow them
-> to be registered in the Common Clock Framework.
->=20
-> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
-> ---
+Allow soc specific clk drivers to specify a custom reset operation. We
+will use this in an upcoming patch to allow gpucc driver to specify a
+differet reset operation for cx_gdsc.
 
-Should I pick this up to clk-next or did you want to take it via another
-tree?
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+
+(no changes since v3)
+
+Changes in v3:
+- Use pointer to const for "struct qcom_reset_ops" in qcom_reset_map (Krzysztof)
+
+Changes in v2:
+- Return error when a particular custom reset op is not implemented. (Dmitry)
+
+ drivers/clk/qcom/reset.c | 27 +++++++++++++++++++++++++++
+ drivers/clk/qcom/reset.h |  8 ++++++++
+ 2 files changed, 35 insertions(+)
+
+diff --git a/drivers/clk/qcom/reset.c b/drivers/clk/qcom/reset.c
+index 819d194..b7ae4a3 100644
+--- a/drivers/clk/qcom/reset.c
++++ b/drivers/clk/qcom/reset.c
+@@ -13,6 +13,21 @@
+ 
+ static int qcom_reset(struct reset_controller_dev *rcdev, unsigned long id)
+ {
++	struct qcom_reset_controller *rst;
++	const struct qcom_reset_map *map;
++
++	rst = to_qcom_reset_controller(rcdev);
++	map = &rst->reset_map[id];
++
++	if (map->ops && map->ops->reset)
++		return map->ops->reset(map->priv);
++	/*
++	 * If custom ops is implemented but just not this callback, return
++	 * error
++	 */
++	else if (map->ops)
++		return -EOPNOTSUPP;
++
+ 	rcdev->ops->assert(rcdev, id);
+ 	udelay(1);
+ 	rcdev->ops->deassert(rcdev, id);
+@@ -28,6 +43,12 @@ qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ 
+ 	rst = to_qcom_reset_controller(rcdev);
+ 	map = &rst->reset_map[id];
++
++	if (map->ops && map->ops->assert)
++		return map->ops->assert(map->priv);
++	else if (map->ops)
++		return -EOPNOTSUPP;
++
+ 	mask = BIT(map->bit);
+ 
+ 	return regmap_update_bits(rst->regmap, map->reg, mask, mask);
+@@ -42,6 +63,12 @@ qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+ 
+ 	rst = to_qcom_reset_controller(rcdev);
+ 	map = &rst->reset_map[id];
++
++	if (map->ops && map->ops->deassert)
++		return map->ops->deassert(map->priv);
++	else if (map->ops)
++		return -EOPNOTSUPP;
++
+ 	mask = BIT(map->bit);
+ 
+ 	return regmap_update_bits(rst->regmap, map->reg, mask, 0);
+diff --git a/drivers/clk/qcom/reset.h b/drivers/clk/qcom/reset.h
+index 2a08b5e..f3147eb 100644
+--- a/drivers/clk/qcom/reset.h
++++ b/drivers/clk/qcom/reset.h
+@@ -8,9 +8,17 @@
+ 
+ #include <linux/reset-controller.h>
+ 
++struct qcom_reset_ops {
++	int (*reset)(void *priv);
++	int (*assert)(void *priv);
++	int (*deassert)(void *priv);
++};
++
+ struct qcom_reset_map {
+ 	unsigned int reg;
+ 	u8 bit;
++	const struct qcom_reset_ops *ops;
++	void *priv;
+ };
+ 
+ struct regmap;
+-- 
+2.7.4
+
