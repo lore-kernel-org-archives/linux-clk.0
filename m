@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301CEECAAD1
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Aug 2022 13:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03541ECAAD1
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Aug 2022 13:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbiHaNTU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Aug 2022 09:19:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47896 "EHLO
+        id S231544AbiHaNVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Aug 2022 09:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiHaNTT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 09:19:19 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6358B9AFBC
-        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 06:19:17 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id z20so14621947ljq.3
-        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 06:19:17 -0700 (PDT)
+        with ESMTP id S231431AbiHaNU7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 09:20:59 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C0CEE24
+        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 06:20:57 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id bn9so14592220ljb.6
+        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 06:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=VOBNvNEcm28X62PTg/CF9pJa/z/E16cJ/tuYHCwsVHw=;
-        b=pT6AhCh6n6Xasz7vNDLotXEmBAw+oJ1CKmdfgDQm9ZBlGtrqQXx9gLVewYah9Pmxmp
-         tV6T+Ovd6bLnlw1EJpvcbzKptfROsBkreCrkpa3WVblUQQpps0JETL8htw9wLkKUpc7i
-         /Oqh2nm5OmACAeJJw1obIXHz5UYJsqCMAXa+XLNo/fbuO85WxVsoVxzkz6UV2UkSwdpa
-         wPe6VODcoWSxI/jvnzJ6wVImXeQeNhtPUYK1q/g07o0kpX/VclDUnAzc5hatZ0ER1tBi
-         xIu+AQIn1JmBfd3Rwl3AIbYOXRaEV9Xh2+WnMJnJFnAHTa2Ip4eIsaV3KMUwUp75SSKB
-         ZMuA==
+        bh=gXyPGs1xzbqWLyCKCXFzzY2n7w6S19U4Yvty6n2m3xI=;
+        b=BS+iR4ydREy9MZ7gRYr2l+ma3DWnH9f+1BrJTWu2kpJujnIGn4ylhL9yE3RjvSFbs3
+         qJeKzs1i7Lq8Tz2IzKqcT+joLyZ9cnHgdOu+UMz8Lfp3JZqVTg6oc2ha464C7c1nmMld
+         fIrKQy0orkywCqiBh34WVfTq/TsyyiIgzoJhGZOap2Kp6iEtSjbQSSj4S8szXBp4G1gX
+         sfyQBFgzd3aUxXyPuscbnqzTqTLjdBq7uhoPqmJd1Qx76soaiyNL7yaRkM3iBf42g69D
+         HrMoVFeSA1yyEk512f/rdp5TL5v2k35zviPsyAd3ecqgHJyfiwbwE/qE8gNUFYObckMM
+         MV/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=VOBNvNEcm28X62PTg/CF9pJa/z/E16cJ/tuYHCwsVHw=;
-        b=bDW52S/UTHbLlvvEXfmIdNBSotxE7o+F5EDtH10fAQA8UeIJHZaNvCQKaSbrWUBS3K
-         wcJEHOqtSvU2jpjlFU9pXzGk6qq5hr5E4QKyqMprIElZt6vYAmAr55OzZdiT2zTjNNlK
-         fAFbMmIDf5QIIFzxK20Etx6jbuOSzuffaiiDCs67SZxSg6/J9dWh87jZd395tAKJaTf1
-         256+7S4nKNjmxAdsNqi+FzeUHgqBHLaL7gOnzNAx8QE0yEqrz/HV/Kl6sCsv5YwFc/dv
-         XUC0T7EvI9NWLO2mRe/HcpSWtvXXdwcmz6r60U90vhnQuKhC4Wll1KLLfceeFVePfKpB
-         B4ow==
-X-Gm-Message-State: ACgBeo0ZzR1x6DbEOPrZ88a3w9WKw7iWxIRSljcZnUPn/83uhej9FTk/
-        d0Tm+LBcjegJ9OBY6NZBNmmSIw==
-X-Google-Smtp-Source: AA6agR4WYZ7pd70NhqYxjDkiGW0SaDYDy7UCUvcZ3XGyB7sTVm98QlYdsBvghW9mhMi/tJN3OLaYZA==
-X-Received: by 2002:a05:651c:179c:b0:261:8fbe:b729 with SMTP id bn28-20020a05651c179c00b002618fbeb729mr8540389ljb.114.1661951955793;
-        Wed, 31 Aug 2022 06:19:15 -0700 (PDT)
+        bh=gXyPGs1xzbqWLyCKCXFzzY2n7w6S19U4Yvty6n2m3xI=;
+        b=Oxgtq3oIDtu5gj5aZKep7KQCRj0ttxaRtbnz5g7/uASmQ+2al66iMdwFnHwV9EIOw5
+         EHR86qG8sqPxUZ+bizbJbF75VsYk63GH0NbrEZuhzSoUyv9N4e7NGp6VFgDVLLAmnVj7
+         2L7yY8oq5NnBlMzV/28DjhGD4e1eqz1hgOsqbJuZ7aukTf5AHcpP1VeCw7IjUOR5RGH+
+         1UQWIpOwb9Lp8gr2nycZs9BkZhoMU+dGPe0USv60qnqqDWm+Od9d8aWMNyQ4gmksbWAz
+         8ruwHnpeSiqAdsAVe51ZsvzFhXTFluOr61ZfEmypmdMjsb+3JG0e14eHAWuG7om3XLA4
+         cnsw==
+X-Gm-Message-State: ACgBeo01zFJdI2n6ynXKvjxDaLllJeiI29hPNJCp+8KzILhBO8gBtuJG
+        /7k2/n1b/0KAkXWTiM1CththvA==
+X-Google-Smtp-Source: AA6agR68vhI8/CXEZ3hYaem0vpetajctNycqN1PQYVoVf9YCRz4ASjoY0Ha1A8CPSwcomrieT8YKWw==
+X-Received: by 2002:a05:651c:1942:b0:268:9b0d:e15c with SMTP id bs2-20020a05651c194200b002689b0de15cmr582532ljb.479.1661952055897;
+        Wed, 31 Aug 2022 06:20:55 -0700 (PDT)
 Received: from [192.168.28.124] (balticom-73-99-134.balticom.lv. [109.73.99.134])
-        by smtp.gmail.com with ESMTPSA id y9-20020a196409000000b0048af749c060sm1985847lfb.157.2022.08.31.06.19.14
+        by smtp.gmail.com with ESMTPSA id u26-20020ac258da000000b00493050d6bcesm1987686lfo.122.2022.08.31.06.20.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Aug 2022 06:19:15 -0700 (PDT)
-Message-ID: <b1296c37-5283-81f7-1939-7ea20e1f4d0d@linaro.org>
-Date:   Wed, 31 Aug 2022 16:19:14 +0300
+        Wed, 31 Aug 2022 06:20:55 -0700 (PDT)
+Message-ID: <330d1f46-0e3c-f58e-b916-9e8644e7b4a1@linaro.org>
+Date:   Wed, 31 Aug 2022 16:20:54 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH 2/4] dt-bindings: arm: mediatek: Add new bindings of
- MediaTek frequency hopping
+Subject: Re: [PATCH 0/4] Introduce MediaTek frequency hopping driver
 Content-Language: en-US
 To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org,
@@ -63,12 +62,10 @@ To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>
+        Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20220831124850.7748-1-johnson.wang@mediatek.com>
- <20220831124850.7748-3-johnson.wang@mediatek.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220831124850.7748-3-johnson.wang@mediatek.com>
+In-Reply-To: <20220831124850.7748-1-johnson.wang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,67 +73,10 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 31/08/2022 15:48, Johnson Wang wrote:
-> Add the new binding documentation for MediaTek frequency hopping
-> and spread spectrum clocking control.
-> 
-> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,fhctl.yaml | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> new file mode 100644
-> index 000000000000..c5d76410538b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek frequency hopping and spread spectrum clocking control
-> +
-> +maintainers:
-> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
-> +
-> +description: |
-> +  Frequency hopping control (FHCTL) is a piece of hardware that control
-> +  some PLLs to adopt "hopping" mechanism to adjust their frequency.
-> +  Spread spectrum clocking (SSC) is another function provided by this hardware.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,fhctl
+> Introduce MediaTek frequency hopping and spread spectrum clocking control
+> for MT8186.
 
-You need SoC/device specific compatibles. Preferably only SoC specific,
-without generic fallback, unless you can guarantee (while representing
-MediaTek), that generic fallback will cover all of their SoCs?
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  mediatek,hopping-ssc-percents:
-> +    description: |
-> +      Determine the enablement of frequency hopping feature and the percentage
-> +      of spread spectrum clocking for PLLs.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +    items:
-> +      items:
-> +        - description: PLL id that is expected to enable frequency hopping.
-
-So the clocks are indices from some specific, yet unnamed
-clock-controller? This feels hacky. You should rather take here clock
-phandles (1) or integrate it into specific clock controller (2). The
-reason is that either your device does something on top of existing
-clocks (option 1, thus it takes clock as inputs) or it modifies existing
-clocks (option 2, thus it is integral part of clock-controller).
-
+With one line introduction, you do not help us to understand this. :(
 
 Best regards,
 Krzysztof
