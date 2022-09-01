@@ -2,62 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4CFECAAD8
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 07:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C374ECAAD8
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 08:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234053AbiIAHse (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Sep 2022 03:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36088 "EHLO
+        id S233431AbiIAIFD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Sep 2022 04:05:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233677AbiIAHsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 03:48:01 -0400
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9941F1275E5
-        for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 00:46:25 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 0047F22E55; Thu,  1 Sep 2022 07:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1662018384; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=XXDQbxyASw4oOhiJ8vrmKVqXU001Ekphr7r7QNF7hjqHhSo6Tn7vue5Doc90kF7oJ
-         3ax5NxfecWHmM3ZVhWZTkd3nUSd6ArbSoetWQr3GNyTyWizr5TUUECflG9MM/m0b4h
-         a0zCg8AxpDM1XGszQrKCoNaWiUx43+2NlQtGqyMsIzzPrjfwyuClOjvO53TnwvsPqb
-         /3hn+RBk4q53XZx6071V8dPRaGnBIHmoUcmQjXiVwdR7GBBFqv3dEQi3cnkernS4MS
-         WcSlmOSfuTu2vEg86nAjLGnNd1WqKk0in8bI4tNvGIx5+ocFub49ZMImql/ROmnb+K
-         S5xL7KNqK5Jaw==
-Received: by mail.fadrush.pl for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 07:46:04 GMT
-Message-ID: <20220901064500-0.1.1d.bpyx.0.ly225lvj7g@fadrush.pl>
-Date:   Thu,  1 Sep 2022 07:46:04 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        with ESMTP id S231308AbiIAIFC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 04:05:02 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B7FB852;
+        Thu,  1 Sep 2022 01:04:53 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 59EFB6601DF7;
+        Thu,  1 Sep 2022 09:04:50 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1662019491;
+        bh=2zJfFSBZ2omTgok8iG1bcVSOE2x9FAqOQ/YPVZcVIH0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=HU2ppayYG8zOTDbLiqQ2PUZbo4jkTO6B6P1DpNa6HGopM021oZ2sO5jbA/CC9a6bM
+         dEeFx5R42p0JbphAuvPNOBoOwTUo+RZxFyW38fLWzPMZ/0BMSlqIh9CwIF8XoVUZl7
+         aYVOQLxbKej7vzDqqJ2h5cG7JnFaWdz5ny5YZSiOm2bFVDqX7VFtzpLfV//ht+EByf
+         I7oCcJGJa7Zh/AFYCHzlPP3naJCW5SpBCFJTp3hh2OJNaPg+oQEfymh0VWcck/rq8u
+         5dHlSZzNBkVOUFnzQZqa9pR2mTxoU1Ku0PfVBSMkbSndbpXWhvnQNazaht8t2e10DA
+         JLjeRBsGdFghA==
+Message-ID: <1fae0c47-fff9-89e9-c849-536d167d741d@collabora.com>
+Date:   Thu, 1 Sep 2022 10:04:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 2/4] dt-bindings: arm: mediatek: Add new bindings of
+ MediaTek frequency hopping
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>
+References: <20220831124850.7748-1-johnson.wang@mediatek.com>
+ <20220831124850.7748-3-johnson.wang@mediatek.com>
+ <b1296c37-5283-81f7-1939-7ea20e1f4d0d@linaro.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <b1296c37-5283-81f7-1939-7ea20e1f4d0d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Il 31/08/22 15:19, Krzysztof Kozlowski ha scritto:
+> On 31/08/2022 15:48, Johnson Wang wrote:
+>> Add the new binding documentation for MediaTek frequency hopping
+>> and spread spectrum clocking control.
+>>
+>> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+>> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+>> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
+>> ---
+>>   .../bindings/arm/mediatek/mediatek,fhctl.yaml | 49 +++++++++++++++++++
+>>   1 file changed, 49 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+>> new file mode 100644
+>> index 000000000000..c5d76410538b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+>> @@ -0,0 +1,49 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek frequency hopping and spread spectrum clocking control
+>> +
+>> +maintainers:
+>> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
+>> +
+>> +description: |
+>> +  Frequency hopping control (FHCTL) is a piece of hardware that control
+>> +  some PLLs to adopt "hopping" mechanism to adjust their frequency.
+>> +  Spread spectrum clocking (SSC) is another function provided by this hardware.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: mediatek,fhctl
+> 
+> You need SoC/device specific compatibles. Preferably only SoC specific,
+> without generic fallback, unless you can guarantee (while representing
+> MediaTek), that generic fallback will cover all of their SoCs?
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  mediatek,hopping-ssc-percents:
+>> +    description: |
+>> +      Determine the enablement of frequency hopping feature and the percentage
+>> +      of spread spectrum clocking for PLLs.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+>> +    items:
+>> +      items:
+>> +        - description: PLL id that is expected to enable frequency hopping.
+> 
+> So the clocks are indices from some specific, yet unnamed
+> clock-controller? This feels hacky. You should rather take here clock
+> phandles (1) or integrate it into specific clock controller (2). The
+> reason is that either your device does something on top of existing
+> clocks (option 1, thus it takes clock as inputs) or it modifies existing
+> clocks (option 2, thus it is integral part of clock-controller).
+> 
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
+FHCTL is a MCU that handles (some, or all, depending on what's supported on the
+SoC and what's needed by the board) PLL frequency setting, doing it in steps and
+avoiding overshooting and other issues.
 
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
+We had a pretty big conversation about this a while ago and the indices instead
+of phandles is actually my fault, that happened because I initially proposed your
+option 2 but then for a number of reasons we went with this kind of solution.
 
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
+I know it's going to be a long read, but the entire conversation is on the list [1]
 
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
+Cheers,
+Angelo
+
+[1]: 
+https://patchwork.kernel.org/project/linux-mediatek/patch/20220612135414.3003-3-johnson.wang@mediatek.com/
+
+> 
+> Best regards,
+> Krzysztof
 
 
-Pozdrawiam
-Jakub Olejniczak
