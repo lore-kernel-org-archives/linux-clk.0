@@ -2,163 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E32FECAAD1
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 10:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6BFECAAD3
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 10:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233527AbiIAK2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Sep 2022 06:28:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59420 "EHLO
+        id S233925AbiIAKai (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Sep 2022 06:30:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233980AbiIAK2c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 06:28:32 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2174D152
-        for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 03:28:31 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1oThQq-0000YK-87; Thu, 01 Sep 2022 12:28:20 +0200
-Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1oThQn-0000Tb-NO; Thu, 01 Sep 2022 12:28:17 +0200
-Date:   Thu, 1 Sep 2022 12:28:17 +0200
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        krzysztof.kozlowski@linaro.org, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/6] clk: qcom: gdsc: Add a reset op to poll gdsc
- collapse
-Message-ID: <20220901102817.GB32271@pengutronix.de>
-References: <1661923108-789-1-git-send-email-quic_akhilpo@quicinc.com>
- <20220831104741.v6.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
+        with ESMTP id S233998AbiIAKag (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 06:30:36 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D177ED3EE3
+        for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 03:30:34 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id q16so17394063ljp.8
+        for <linux-clk@vger.kernel.org>; Thu, 01 Sep 2022 03:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=Hq/wXphQ4CQCWqFQUckeg7mpeUY2opCgFidU5GlYS/M=;
+        b=wMrHD5kd1sjRAGwDOMxCLd5TmCSprc0l8Nf3sWx1dXuMRw6mfEP63hWBtvHNhJ801W
+         QEkV7vymXEa/aXbYqGX4R5yiFQnl8uzfQEIiMjxXJxpx8itKZweitlkO/FPuZmia0adE
+         M6WddBo1NBOeeg5/1y/DaNd3wmc3E/n8vDRwKSngkHvNCgF5wx2WcPhrlyIoBIJtnDOC
+         DWPdhzxfLoAUMhVxP5tYYJk6X9aNydarTKdgb5IBaD2c6MQAxCPQWDlMkv2YMw6j0jj3
+         N/UvpNU9lhbiLUy9Hr6JHYnM5DzYIpAwh8rG0p8VNvFxLcn+dEak3SolRfU50q23CH6t
+         W37g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=Hq/wXphQ4CQCWqFQUckeg7mpeUY2opCgFidU5GlYS/M=;
+        b=xjbg/JhbuGCb9SpBConPBKPXZTaYujOG4IuZ6pBgWObbNm41+46K2GL7R/8HxaCsPh
+         Phc/kKElMFBATYfklsAXiJi5Kv4wmrWRyjxVDWd0TgcbIA8+fV4Te+BkRVebnIcHsYgn
+         kj2dsfpXvJGrbUTnSBr98SyV7bWlYhlDpYvTUqP9646Tidpej5rvoUMK8AhmNTb86o/c
+         WMKUn1Zf5Fp2s1FD7W3g0Aaafgd9KSupOQ6og76Dth/Z3C1AnyCe7gkNuTQRW8kzfvIV
+         +lXkSbjVkIuB5B9SCl00qMu+caSQFBLRsgfhLe1Ys1b3g2EAPGuaneFmi4mAQT6/2bfe
+         iChw==
+X-Gm-Message-State: ACgBeo0LWGuortYs9ChHSdbxCVYaDTVvg5uQobnASC6ai9r5If79l7v/
+        BTIBMqsmvmdFl1PIsdCsJRcjFQ==
+X-Google-Smtp-Source: AA6agR6rVg//wgHti5p5gLXR9YIZj3y2n/9kU9errMO9J/QeGYwVMsfd2wxCYlqzONqcnaXPvhV2VA==
+X-Received: by 2002:a2e:9018:0:b0:266:6871:cdc1 with SMTP id h24-20020a2e9018000000b002666871cdc1mr4524850ljg.244.1662028232455;
+        Thu, 01 Sep 2022 03:30:32 -0700 (PDT)
+Received: from [192.168.28.124] (balticom-73-99-134.balticom.lv. [109.73.99.134])
+        by smtp.gmail.com with ESMTPSA id 8-20020ac25f48000000b00492f84befffsm1567689lfz.192.2022.09.01.03.30.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Sep 2022 03:30:31 -0700 (PDT)
+Message-ID: <93d5de8e-31b2-4412-3348-7ba1903cde84@linaro.org>
+Date:   Thu, 1 Sep 2022 13:30:30 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220831104741.v6.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: pza@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH 2/4] dt-bindings: arm: mediatek: Add new bindings of
+ MediaTek frequency hopping
+Content-Language: en-US
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>
+References: <20220831124850.7748-1-johnson.wang@mediatek.com>
+ <20220831124850.7748-3-johnson.wang@mediatek.com>
+ <b1296c37-5283-81f7-1939-7ea20e1f4d0d@linaro.org>
+ <1fae0c47-fff9-89e9-c849-536d167d741d@collabora.com>
+ <38910de5-89ad-e7a1-261f-18b51c8e7877@linaro.org>
+ <955f7200-9d08-0d21-2d1a-5ccbd0f3a8af@collabora.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <955f7200-9d08-0d21-2d1a-5ccbd0f3a8af@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 10:48:24AM +0530, Akhil P Oommen wrote:
-> Add a reset op compatible function to poll for gdsc collapse.
+On 01/09/2022 13:22, AngeloGioacchino Del Regno wrote:
+>> That's simply not a proper
+>> hardware description, so again:
+>>
+>> 1. If this is separate device (as you indicated), then it needs
+>> expressing the dependencies and uses of other device resources.
 > 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+> Agreed. In this case, what about...
 > 
-> (no changes since v2)
+> mediatek,hopping-ssc-percents = <&provider CLK_SOMEPLL 3>;
 > 
-> Changes in v2:
-> - Minor update to function prototype
+> or would it be better to specify the clocks in a separated property?
 > 
->  drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++++----
->  drivers/clk/qcom/gdsc.h |  7 +++++++
->  2 files changed, 26 insertions(+), 4 deletions(-)
+> clocks = <&provider CLK_SOMEPLL>, <&provider CLK_SOME_OTHER_PLL>;
+> mediatek,hopping-ssc-percents = <3>, <5>;
 > 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 44520ef..2d0f1d1 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  #include "gdsc.h"
-> +#include "reset.h"
->  
->  #define PWR_ON_MASK		BIT(31)
->  #define EN_REST_WAIT_MASK	GENMASK_ULL(23, 20)
-> @@ -116,7 +117,8 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->  	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
->  }
->  
-> -static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
-> +static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status,
-> +		s64 timeout_us, unsigned int interval_ms)
->  {
->  	ktime_t start;
->  
-> @@ -124,7 +126,9 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
->  	do {
->  		if (gdsc_check_status(sc, status))
->  			return 0;
-> -	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-> +		if (interval_ms)
-> +			msleep(interval_ms);
-> +	} while (ktime_us_delta(ktime_get(), start) < timeout_us);
 
-Could this loop be implemented with read_poll_timeout()?
+I propose the last one - using standard clocks property and a matching
+table.
 
->  	if (gdsc_check_status(sc, status))
->  		return 0;
-> @@ -172,7 +176,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->  		udelay(1);
->  	}
->  
-> -	ret = gdsc_poll_status(sc, status);
-> +	ret = gdsc_poll_status(sc, status, TIMEOUT_US, 0);
->  	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
->  
->  	if (!ret && status == GDSC_OFF && sc->rsupply) {
-> @@ -343,7 +347,7 @@ static int _gdsc_disable(struct gdsc *sc)
->  		 */
->  		udelay(1);
->  
-> -		ret = gdsc_poll_status(sc, GDSC_ON);
-> +		ret = gdsc_poll_status(sc, GDSC_ON, TIMEOUT_US, 0);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -565,3 +569,14 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
-> +
-> +int gdsc_wait_for_collapse(void *priv)
-> +{
-> +	struct gdsc *sc = priv;
-> +	int ret;
-> +
-> +	ret = gdsc_poll_status(sc, GDSC_OFF, 500000, 5);
-> +	WARN(ret, "%s status stuck at 'on'", sc->pd.name);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(gdsc_wait_for_collapse);
-
-Superficially, using this as a reset op seems like abuse of the reset
-controller API. Calling reset_control_reset() on this in the GPU driver
-will not trigger a reset signal on the GPU's "cx_collapse" reset input.
-
-So at the very least, this patchset should contain an explanation why
-this is a good idea regardless, and how this is almost a reset control.
-
-I have read the linked discussion, and I'm not sure I understand all
-of it, so please correct me if I'm wrong: There is some other way to
-force the GDSC into a state that will eventually cause a GPU reset, and
-this is just the remaining part to make sure that the workaround dance
-is finished?
-
-If so, it should be explained that this depends on something else to
-actually indirectly trigger the reset, and where this happens.
-
-regards
-Philipp
+Best regards,
+Krzysztof
