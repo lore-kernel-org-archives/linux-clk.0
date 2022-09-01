@@ -2,142 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87052ECAAD1
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 12:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51968ECAAD3
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 12:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233312AbiIAMDf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Sep 2022 08:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
+        id S233446AbiIAM5X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Sep 2022 08:57:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233313AbiIAMDU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 08:03:20 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060c.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e88::60c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC0BAA354;
-        Thu,  1 Sep 2022 05:03:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V0lnIljc5RGjiDymxocKLkbGjdVjGSk9FcknAgUw/+uu5mV1yP3yNe//kIUj1yxStoPnH3/+Fovyfkt6+TuXjTgP1yuR0gv/FO6qD1ty3mHJfnwAFvSV3kBpeSrTZFETjpmSP26o1nB7jCzzfGfveorBWP/k8+bNPfwLp92jFnxg594LBOa/8k5EZcBafcqtZYmT66ZRsxrMPJgK0FKq5hHmBqefkUjwKXM5A6i0D1pzGDf7364GUUB148CeQpm19LXpI1cg8Yr2WCBlCzodijP5YmHHjGIZU8en4HxZJJRp4ThevUn7JPyTwyRDneUCZDPqFoa9r3cxYRsAWElDzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ngMHQhCgTb5LVJq5OQC2zws+WH2ocjC/+w6it2Gulsk=;
- b=a6mrKeD6FSrlyN0gSgJ16J+AStxnj4+7ltjzXGUm7ahBVk+5qCZ7dm7e4+w+IAtz6DI1ndFO8PwLbXA2FOWVmJpeYaZRqgEcffjx0VJJaHlBnzXDHAJbV0gXPUGAwC+b/06mxQ8sbzhvNp0wnzEp4bQO96/ink9xRnIrIE0971vhxGNPmtanMtFuah7qtlLyA1xUxeBnv33Y1sU2j7KcK3W63PYhIRS4GmRtB3zVxSqTY/6w/Ny5pcbbCcRMyCI2Oatx9JtJDNRHHRx6AlJ+fXBob6Pa7e1yzBZ27zrAfCdNvBm+zqw9Ho9a+1rve/x/9rnWtjP/bORi9stU+HFxMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ngMHQhCgTb5LVJq5OQC2zws+WH2ocjC/+w6it2Gulsk=;
- b=dJmXiS4h0cW+Lb88C+yA4IM5pH7Nsx5izYjQSf6wbiaxoHEmkSobb9NhN4pB1yngP0bV5eJYhlAx6UOPqBXHukHM9MS7s+CcscINQ86i1xuKMi4k+ipkvadiQr0gYT1V/vNJgJefJiQIW7Ifx6Tz1l8RxRay+koRHyvmzMY0zyWYUp0tU3aW1zM9EosAVY+CZ+n7iDhe4ELpKa0izdLpfHf11fs03zjMtbQuYEplKWBrWTSaYaD8+m6WQgCuFd1pkrD3e4Xuibkl2iuI+Isd/P8JV2wdun+nSQlC+kdvRiG26NTdW8b12zDpXp7YyuIjpfXPRQo7wnBu+dLr5RCU6Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB6288.namprd12.prod.outlook.com (2603:10b6:8:93::7) by
- PH8PR12MB6964.namprd12.prod.outlook.com (2603:10b6:510:1bf::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.16; Thu, 1 Sep
- 2022 12:02:45 +0000
-Received: from DS7PR12MB6288.namprd12.prod.outlook.com
- ([fe80::c470:ce6c:1ab6:3e1a]) by DS7PR12MB6288.namprd12.prod.outlook.com
- ([fe80::c470:ce6c:1ab6:3e1a%7]) with mapi id 15.20.5588.010; Thu, 1 Sep 2022
- 12:02:45 +0000
-Message-ID: <ec9c1279-6871-a6b0-acc8-12a29e707543@nvidia.com>
-Date:   Thu, 1 Sep 2022 15:02:36 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
-Content-Language: en-US
-To:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>
-Cc:     Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-        Bar Shapira <bshapira@nvidia.com>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
-From:   Gal Pressman <gal@nvidia.com>
-In-Reply-To: <20220626192444.29321-1-vfedorenko@novek.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM5P194CA0004.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:203:8f::14) To DS7PR12MB6288.namprd12.prod.outlook.com
- (2603:10b6:8:93::7)
+        with ESMTP id S233392AbiIAM5V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 08:57:21 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6110D40548
+        for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 05:57:19 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id m16so22222169wru.9
+        for <linux-clk@vger.kernel.org>; Thu, 01 Sep 2022 05:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=2nwWkT4441Zvq5igIAOKA8C0HAjPPXDmTRADPlAyhok=;
+        b=basRl/C6QptrvQbTpk+LkAHZh/MQJacL+ZAGvkDnh7vGFvFVx3cZ7eoHvSXNXOEMVW
+         A4/IH1a11cZI4vc/n4x/VucSGHK99YV85DWyCtXisj+J/mQ6xmVjDBUuHl/Kco27tSwI
+         nqblv1KDC35mISIbMzGoWcfd96GO8QAzNAwZg0QExhm6WokwnnSBXXpqXkhFPx1ekAfG
+         fcqmxQdL3+pJETQVLfLTg76nse9tFnjPYwwdXKyxU0pZne2j5YF/m22/3GUTt/+uLpBl
+         MyenoYaM3m+G+t6Nkho53sd12AD2vB8eOCRsV0hceISDDgdaEDPogkiYeqSNAODuzdbo
+         aalA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=2nwWkT4441Zvq5igIAOKA8C0HAjPPXDmTRADPlAyhok=;
+        b=p6EvNVJbcimQStnJF+9+VmIVBm47e5PMAF4A7i759cKh0BbeTUpF5EsDW+waSuepv+
+         r+0HVxiY0Yc5EyuJPWZDdQ6rJH3HRBYNbuuO0TYMiOO39Tp/jcrQI+MXDQKzRybNC90O
+         OvNpcdl1uSJYTAxIRQjn5sVHroyqdc7SJv0QoJLXBKo90ZwNxJnEziMKeh/vHB23v5d7
+         PCWTImv2I5F+TfFbo6l0FfIjtq9asnZACb2EPWjQGZ4OqgVNJJexcyl9qqCqL8FenerT
+         qYi+dCxcrPHKWS0pMBMJ0wyWxPklvK4kkgZcuJQ49/4De+ZHOsRITraxSdwrmsI86hXj
+         FyLA==
+X-Gm-Message-State: ACgBeo2HfDnbabOcF3CbQHhDwHvQBFS5sHxXoOe5mRV//+AhKO/SfvQs
+        SzRwEwJCdlqfdD9xfWLLebNpeQ==
+X-Google-Smtp-Source: AA6agR4IYKknEQA+lBEG/42xj8hTQq56MSul1p6lQ4/KRXttWn5L3gn9Kon82s1xc34ZKvNatRXxcQ==
+X-Received: by 2002:a5d:6b09:0:b0:225:37cf:fb8b with SMTP id v9-20020a5d6b09000000b0022537cffb8bmr14603530wrw.179.1662037037975;
+        Thu, 01 Sep 2022 05:57:17 -0700 (PDT)
+Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id v5-20020a5d59c5000000b002257fd37877sm15556709wry.6.2022.09.01.05.57.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Sep 2022 05:57:17 -0700 (PDT)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     heiko@sntech.de, herbert@gondor.apana.org.au, ardb@kernel.org,
+        davem@davemloft.net, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>,
+        John Keeping <john@metanate.com>
+Subject: [PATCH v9 01/33] crypto: rockchip: use dev_err for error message about interrupt
+Date:   Thu,  1 Sep 2022 12:56:38 +0000
+Message-Id: <20220901125710.3733083-2-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220901125710.3733083-1-clabbe@baylibre.com>
+References: <20220901125710.3733083-1-clabbe@baylibre.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9ec795be-c37c-437e-4574-08da8c11e19c
-X-MS-TrafficTypeDiagnostic: PH8PR12MB6964:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7YQG3Jn/ol3t3B9iQJGSh3GAdO5ycBvutS3xFOuLLyQpgCcH7YRIxEmZEbCzH/g+kNv21UKpGAimBLOn2Mj/3MetND3jT+WDCi6K5vhTgsny1ZiVTReIoG15xKO6RHJKr4YZxQtL3zL3nv5gBnmX3afY3f2JltPBU/mOdMNOrtFFb3flaRsNRn4+lh900pSbMcTzVkbddbbhOkprvQywwn5Cu0DwjwiJYnG09Izflfq8CmNPObx6rWPhzR7OW0Oqcl2c5FbsolpdYALeIscIuHYTL3wNJAe6A1j8eGRSSzHYvZIpZJuMoll4uf9dp+Hc+gxQUPyHI+xf4Ebkz5q307QNWaRJsGIjYsHo79dQ6V33QQQszGbNuywgZmZBGBz8FSPW7Qq4NJQXdy32SwftK8FQdbhz2Va/ZJKpQQk0lo3MQxAxLrzURXWlOEwsC8JF0pQmbLJEstKZ/c40z3Z75IRpAy5mDBHqCxhWYarbeOoI45n9HjNqnxCmf/0VlaOXppq14rvqktRHORPwQJ+eE0V/40NSCoERCHEEWmCtPncbC+ZiQamzQtEg2LKel7nRamtYSk099N5tvg05moZ4dYezWkAPaEHVovz0PzGWWb2oxQ1Eja5QAcEnlLUO+V+PEKQFk2NSndK0U67zoepNbj0x8oWUuM/VXXj3T30FQDPLJU6BiuShYigKKrcnIyDPVys8y3Rb0KAqPW3UvF1ofx0AxJQQD2M13e/mpGIOQAHtcRzGKlADeSZbLAl9RrSKkkw+4qDgUbETX2RghM1F+xXndcGDdlahNU5dLAbPikE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6288.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(366004)(346002)(376002)(136003)(396003)(316002)(6486002)(478600001)(54906003)(8676002)(66476007)(66946007)(36756003)(38100700002)(31696002)(31686004)(66556008)(110136005)(86362001)(107886003)(41300700001)(83380400001)(2616005)(26005)(6666004)(6506007)(4326008)(5660300002)(186003)(53546011)(8936002)(2906002)(4744005)(6512007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MURVNm9mdHNobGdrMkZYamlkMHYxNEk4bXA2eFJsZzZaNTRMNzJJeHJ0ZVgx?=
- =?utf-8?B?R3dGWDhsUTl5SzR2TVhURDZOT1g4dDl5R2JnTWZnMW50MjZrNVJkSDJ3cXJt?=
- =?utf-8?B?L3VWV0RueXUzc1VWTWJDeWlBNUVBMjl1bXJua3RwM1A4akRlUEg2MmEwMTVq?=
- =?utf-8?B?VUtQTzV4VnZKUXJQWTgvVGFZcUs2R05Gc3lEeGJUVmZLRjZBbXludkRMWC9m?=
- =?utf-8?B?NFBFTVR3TStIcWRqWXAzRFFWdmNoM3RTbDBtbTlaUTFWVjl0dVR0dmhhbHF2?=
- =?utf-8?B?Nmo5bGlxeDByUU9FYytyN3lLRG96Q0ZtaXBoVndPNFZNRCtUQ01lTXNHRWgw?=
- =?utf-8?B?bS9oY1JYZnRaMlcwazJkekdiNzRaV3dDWWJGaXhsRUcrWkZiTHlONklnMk03?=
- =?utf-8?B?eUhuZXZGZENaYUJsUlNvV0wwcHZCNGN0MUthdEUwcnVBcmdWT1hyMk0zZGZO?=
- =?utf-8?B?ek9vbWhvM0ZXaUI2Um1qbzNLSlNqcjVrR1BwZXFjUTVJeFJiYVFvNUdwNXRZ?=
- =?utf-8?B?OWplWllnSDhEb2hLU1VJNGRWYTFMNUVFRVIrdC9Vc21mYjYyYnJjUDdOTEkr?=
- =?utf-8?B?TWF5TFRkRG0rNm5BOCtyM25MNUlUbTBHZ0w3cjBrU2lsSXFqRjJBSzlzTGRR?=
- =?utf-8?B?Z0JwZVJQSlFybEQxQ0lUNE4yY2w4ZlVnN0xZYzQzN1ZPWnBrR0lwYWN0bVgw?=
- =?utf-8?B?dTVDOVZ0LzlYd0h0RHdNTmtRSnZTc3dkTWtiQzRPODFodlRyVVVQNks2UTVQ?=
- =?utf-8?B?L25DSDA2Y2ZxS0NPY3hQaDhxOVFQNFJzeUhEa2ZIRVhGWE1CUUtLczNreE9L?=
- =?utf-8?B?aldOdk1tYzZSQmVYbG55enRLZlJ0b3REemNlRDdHVW9YQ2RlQ1JYeFJuM003?=
- =?utf-8?B?RkNjVUR1amtGcW05VG9ENXMwdDhnYXl2L1VFT3U2dU41USsvODgrZU96b01Y?=
- =?utf-8?B?NzBub2NBdVVaOVZZSThsQ0sxeWloUHEvNTh3Wjg0LzFXNVJyYWtENFJoaFNp?=
- =?utf-8?B?T3NqUG1BU3B2Z2NHbnpZeW1VVEYyeFpubzJRUXVLZVN0eU4rR3c5RkE1MnBH?=
- =?utf-8?B?ZHdmend1S2JZZ2dCU3p2djh3eldGUFJhRXUvSU0wZ3J2cWV4ZUJjSWRqTkE1?=
- =?utf-8?B?SFovZEJOZGRiZlBFS2hJUTFBaTNucjdUQzJscHFwbHVGUU9MbHJJMmR1cVJF?=
- =?utf-8?B?WFI0K1hUbTA4ZDRFMG1uN0ttUFh4ajdSRkJWc0U3WG5lM3AzZDZHMW5PYTNw?=
- =?utf-8?B?Rm9LSnpTZmdMOVU1bFIreVRRRlRLSSt3a0RsK3VGakNQYUEwT3Q5UHR0aUZF?=
- =?utf-8?B?WXBQUjdjT0E5cytRSUd4OGJMUXBsclQ2QUZTK1gxQmNGZ2FRVGM4ZmtvRXdR?=
- =?utf-8?B?dEhPRkF4WXZ0VjMxOEI5R2dwOUYxTHpYQ0lkdFFqRXduYk1KYWt1Y01kUTZD?=
- =?utf-8?B?WHFhN21mK2FiOEJVL2dRbkduZE5STnhydnJUUzRUY0V4dEMxQkpuazVRc0lD?=
- =?utf-8?B?bG5NekxoeXZEZ3RRalB2Nmt1d3UzSGw0cFhhSnVwb3A5OVh2Tjc1UFl3aCs2?=
- =?utf-8?B?Zlh5NTJ6c05QZDkvQmRFTEtwYXl4Q2hpYm1HNWE2SzV6b1FBVzRvYzR5MEtP?=
- =?utf-8?B?RUk3Z2k3Z2dnaEU2SDM3ZWgvSDhBbW5yNnZHZFc5bWZpMEJmTVhrbVNLejRv?=
- =?utf-8?B?RkhQSVczV2dGUzlIRjVzMGJXeEZxRkdGY09WbmNmU3Z0MGlWMkIvWC9TdzVm?=
- =?utf-8?B?alpFU0tYZGJsWXhvMTF1VmZUMHEwc2JnSzVmaThTVmNDVmN6ZFg4ZFJVT3pi?=
- =?utf-8?B?WXUwb0Y1dERTRGMxdTBDSmVQKzhUVmh2Mi9QV25EWHowK2p4YnhKRTEyUXk4?=
- =?utf-8?B?U25DazU1cEtBVHA4REtPSGREMDh5eGgzVS9HWTdMczJ0Z3pGekY5d1RpS2Jt?=
- =?utf-8?B?Qktjb1VDcVZnWmFlWVdzZmxxOVRXRGNsTUlzeXkwMnZyNm40RzVUTm5mUUtm?=
- =?utf-8?B?aURDa0FjQzY5bU4rV2ZPamR5L0hEb1lJMmhCQjlnWVF6ZEp0OFh1YmkxcWUy?=
- =?utf-8?B?TU96Ym9ob00rNTBhaVp6SXVPWjh3TmZmQTJldVNSbkZNK3ArOFRRdlRlY2xq?=
- =?utf-8?Q?4E8Kdb+lrPMWrO7zzGTEJiiDd?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ec795be-c37c-437e-4574-08da8c11e19c
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6288.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2022 12:02:45.5825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NeWhrQ/f/++6cK0Jt6/8b15GXgm8FiLwke0dbmq6orgvb3iWdbULwbREdx0GRFE9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6964
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/06/2022 22:24, Vadim Fedorenko wrote:
-> From: Vadim Fedorenko <vadfed@fb.com>
->
-> Implement common API for clock/DPLL configuration and status reporting.
-> The API utilises netlink interface as transport for commands and event
-> notifications. This API aim to extend current pin configuration and
-> make it flexible and easy to cover special configurations.
+Interrupt is mandatory so the message should be printed as error.
 
-Hello Vadim,
-I'm trying to understand how we can register our mlx5 hardware with this
-DPLL subsystem, and honestly I don't understand how this is going to be
-used eventually.
+Reviewed-by: John Keeping <john@metanate.com>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ drivers/crypto/rockchip/rk3288_crypto.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Is there anywhere else I can read more about this work? Maybe some
-documentation explaining the use-cases? Is there userspace code I can
-see to get a sense of the full picture?
+diff --git a/drivers/crypto/rockchip/rk3288_crypto.c b/drivers/crypto/rockchip/rk3288_crypto.c
+index 35d73061d156..45cc5f766788 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto.c
++++ b/drivers/crypto/rockchip/rk3288_crypto.c
+@@ -371,8 +371,7 @@ static int rk_crypto_probe(struct platform_device *pdev)
+ 
+ 	crypto_info->irq = platform_get_irq(pdev, 0);
+ 	if (crypto_info->irq < 0) {
+-		dev_warn(crypto_info->dev,
+-			 "control Interrupt is not available.\n");
++		dev_err(&pdev->dev, "control Interrupt is not available.\n");
+ 		err = crypto_info->irq;
+ 		goto err_crypto;
+ 	}
+-- 
+2.35.1
 
-Thanks
