@@ -2,70 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BC0ECAAD4
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 01:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDC0ECAAD4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 01:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232178AbiIABQZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Aug 2022 21:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53490 "EHLO
+        id S232412AbiIABRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Aug 2022 21:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232406AbiIABQW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 21:16:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D7ADFB7A;
-        Wed, 31 Aug 2022 18:16:16 -0700 (PDT)
+        with ESMTP id S231873AbiIABRP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 21:17:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0941107C52;
+        Wed, 31 Aug 2022 18:17:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 11F64B823CD;
-        Thu,  1 Sep 2022 01:16:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E4DC433C1;
-        Thu,  1 Sep 2022 01:16:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A01461CF0;
+        Thu,  1 Sep 2022 01:17:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADB1C433C1;
+        Thu,  1 Sep 2022 01:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661994972;
-        bh=Bp9MG1Ufb7Tzj1XyXFNI9+qa4E+OkXzO9lRH/DnXEkM=;
+        s=k20201202; t=1661995033;
+        bh=aAy4vnKZ4o7EIwTguBOSNqO3XFi1b+036gmfNtJIiAc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Eww2IZWYJK0KQ89Rl0O4KNo0FuXOCDYQNFCTGaxaQiQ1wYDytuOBRMb51k/jbBOsI
-         +nNx8n9sO2bz6btRBxbQQA10qxOSDfv+olBWPVRtO8gK+wdH+rcM5AuyJvKnkNBgXY
-         n9FPXJxHgSdol014iSwZs1r9x83O0HNZlQ1dUsLV1fjyXrKUCbeuHSRON/tN2Kd7Py
-         NEhd6tpNL/YwCazqi66bl05FH4cgPZX4deDYNGVX5bBZx962dRwsgspsWMW13+S4B4
-         qZeFntY1S9N2qy3AMjVsBAFVp71qg+RGo39+WUXJzAUoC3H/DCcNzRPL4LAEvHwfGR
-         rFiT6Yt2gV2cg==
+        b=KhCiXu5JR9rr0qm33lETd8R5q4uyvB1rwktj6Oti980coJO2RrTKnD6Q5kNnFS4u+
+         fDch1+mTWDru4IW96w8DGb+MjmtJZ/Cyg8h4SkyOKEO7NHcJ8LZ+oqrgnYYlOHHPkd
+         E/4EW6FvHSmjd4pe0Juvlu0u7kNEvK4heTHpNY8Uoc2hXnv9MRiLpY4o6WHbya+wGE
+         WxdYFpIqKhhhxMcWqFuEx67/x7Csl2rWQQC+7peq2Hk2608fopFQM7Dvk6ZG5TkRRo
+         /es9ueV+LXLaCk+0Re5JjDDpz9JbwvXquvE+QEyxWeRs2gRXspLTw1wIg1fmvKiYjT
+         +LJNVmi5cw7Lg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220719093316.37253-1-angelogioacchino.delregno@collabora.com>
-References: <20220719093316.37253-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] clk: mediatek: mt8195-infra_ao: Set pwrmcu clocks as critical
+In-Reply-To: <20220720102817.237483-2-angelogioacchino.delregno@collabora.com>
+References: <20220720102817.237483-1-angelogioacchino.delregno@collabora.com> <20220720102817.237483-2-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/2] dt-bindings: reset: mt8195: Add resets for USB/PCIe t-phy port 1
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        wenst@chromium.org, chun-jie.chen@mediatek.com,
-        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+Cc:     matthias.bgg@gmail.com, p.zabel@pengutronix.de, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, wenst@chromium.org,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Date:   Wed, 31 Aug 2022 18:16:10 -0700
+Date:   Wed, 31 Aug 2022 18:17:11 -0700
 User-Agent: alot/0.10
-Message-Id: <20220901011612.C4E4DC433C1@smtp.kernel.org>
+Message-Id: <20220901011713.9ADB1C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2022-07-19 02:33:16)
-> The pwrmcu is responsible for power management and idle states in SSPM:
-> on older SoCs this was managed in Linux drivers like sspm/mcupm/eemgpu
-> but, at least on MT8195, this functionality was transferred to the ATF
-> firmware.
-> For this reason, turning off the pwrmcu related clocks from the kernel
-> will lead to unability to resume the platform after suspend and other
-> currently unknown PM related side-effects.
+Quoting AngeloGioacchino Del Regno (2022-07-20 03:28:16)
+> Add the reset index for USBSIF P1 (T-PHY port 1), used as either USB
+> or PCI-Express PHY reset.
 >=20
-> Set the PWRMCU and PWRMCU_BUS_H clocks as critical to prevent the
-> kernel from turning them off, fixing the aforementioned issue.
->=20
-> Fixes: e2edf59dec0b ("clk: mediatek: Add MT8195 infrastructure clock supp=
-ort")
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
 abora.com>
 > ---
