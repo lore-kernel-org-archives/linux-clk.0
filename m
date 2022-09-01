@@ -2,73 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B68ECAAD1
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 03:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42321ECAAD1
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 04:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbiIADQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Aug 2022 23:16:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
+        id S231359AbiIAERz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Sep 2022 00:17:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbiIADQh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 23:16:37 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B5010F950
-        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 20:16:35 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id z8so12027952edb.6
-        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 20:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=G7ttsCuJ+J4/i3YBhKPz49AMBmOxDd9nfW8xTxQ4h0M=;
-        b=YK/HTOaFeidBrISWkJxAv0RRcjxbKPsrvYdSRlC5iYmTFRM94m8seXKolYNCyWAfry
-         PlRsUbcA6etASqDUHjas214kmY09uDBASTQYG9XmYDEvk6DVFlOUd1Yxa3/Hkii2xeyr
-         TT7zDAdOUTUBmgFXR+oZqizpPkotwljSby1qM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=G7ttsCuJ+J4/i3YBhKPz49AMBmOxDd9nfW8xTxQ4h0M=;
-        b=ty7i94fy1MxLsJWhNbWNSo/QrPS4Kty+vqA6ZWOisBUoMHNlvUUZo175zPMTqQbAwg
-         jtqHgv0l9vTfjj/nSZSJONRTga2r5ek4ZQqF3/MKlBMqND5relZa4odHFSulCxTIqkE8
-         RiqV/eA5B1pxc8Dd5wrqKQBb2kuHU+LfzWBHb/1OIVpLVhUwHKwTOS+0tIcIMj7XgsCt
-         U0rQpMwAYx/HJZ56V8bvznSwzghKjfYNDRIZ/xwEkM34D6P+pNfYvY1UenuqHp48bMto
-         eB4ttsmEbXH9aHOE7DUy40lVNC+BQyHFft+FGT63+arUEttmEPiqTf6uCHiQFwn5VyiL
-         H/Zw==
-X-Gm-Message-State: ACgBeo3DVEhzrwAvXBjCBRknNne0IssN0oNQBA0Msnf1BwRqtm3SL50p
-        eZH7VW8qXO38Y/i+igjSusG6YLe4qIxydIQ+KvZ9OA==
-X-Google-Smtp-Source: AA6agR7vJeE5BNhhen2MLdU5JdOhlrGzZODJxL0PCi4/ZVfXO6wKdzyhUgjU0FnX+CRblsDSypW2pprW7PvKD2IsvwA=
-X-Received: by 2002:a05:6402:292f:b0:448:6241:25de with SMTP id
- ee47-20020a056402292f00b00448624125demr15550195edb.248.1662002194496; Wed, 31
- Aug 2022 20:16:34 -0700 (PDT)
+        with ESMTP id S229746AbiIAERy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 00:17:54 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 785846610A;
+        Wed, 31 Aug 2022 21:17:51 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2813URWQ001037;
+        Thu, 1 Sep 2022 04:17:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=3MJVROO+LBj4KjA+N+tsV1mjxSslj/W7eQfnflkxjC0=;
+ b=k2/PxIeJrIUiOsX5ta7LMOZ+qA6I/SvB6/gUBUQOsWeAhTTeiFc1k3MKB6ex4nnHLYX3
+ q8rE3CRgJc8Yn0oH5dDJyJ95aoSEBmYg9dm23DNjcz9CTvXK/VXk9KdO6iienSd2/c9z
+ 2KlAaV/lnG/TXp6/CrkcyTbNyoNBZbWNi1Gst+I+BuFq3gJNsDK9NiUxr+nPzyTm9YYd
+ FCMbiiRHl2aH+9EaklrJJxn3/sX8UvmhRxhDizvDK6fMDzkAuMpfKruVFN/R6jEpR22x
+ SLQe3XoHVhTNcQI9kVMLIxMSfPpNv2Mz2hURhs5/8Ap+FyWgR+UKhWE73K95KwyPu9v8 OQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jab5gj4cq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Sep 2022 04:17:47 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2814HkT8013711
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 1 Sep 2022 04:17:46 GMT
+Received: from c-skakit-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Wed, 31 Aug 2022 21:17:42 -0700
+From:   Satya Priya <quic_c_skakit@quicinc.com>
+To:     Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andy Gross <agross@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_tdas@quicinc.com>, <quic_c_skakit@quicinc.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH V9 0/5] Add support for audio clock gating resets for SC7280
+Date:   Thu, 1 Sep 2022 09:47:21 +0530
+Message-ID: <1662005846-4838-1-git-send-email-quic_c_skakit@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20220831175326.2523912-1-sboyd@kernel.org>
-In-Reply-To: <20220831175326.2523912-1-sboyd@kernel.org>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 1 Sep 2022 11:16:23 +0800
-Message-ID: <CAGXv+5G1cAdT8S7Ksr=SiHn8-ugMvRXEZkVXd9vru_nuQvVW0Q@mail.gmail.com>
-Subject: Re: [PATCH] Revert "clk: core: Honor CLK_OPS_PARENT_ENABLE for clk
- gate ops"
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Alexander Stein <alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pJ6cV8XpmOBzPWeNhgoUirPsPLoQ07Wj
+X-Proofpoint-GUID: pJ6cV8XpmOBzPWeNhgoUirPsPLoQ07Wj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-09-01_02,2022-08-31_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=763 bulkscore=0 spamscore=0 mlxscore=0
+ suspectscore=0 priorityscore=1501 clxscore=1015 adultscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2209010019
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 1, 2022 at 1:53 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> This reverts commit 35b0fac808b95eea1212f8860baf6ad25b88b087. Alexander
-> reports that it causes boot failures on i.MX8M Plus based boards
-> (specifically imx8mp-tqma8mpql-mba8mpxl.dts).
->
-> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Cc: Chen-Yu Tsai <wenst@chromium.org>
-> Fixes: 35b0fac808b9 ("clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops")
-> Link: https://lore.kernel.org/r/12115951.O9o76ZdvQC@steina-w
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+[v9]
+  * Fix the order of SoB for [/5] and [2/5]
 
-Acked-by: Chen-Yu Tsai <wenst@chromium.org>
+[v8]
+  * Squash [1] into [5/5]
+  [1] https://patchwork.kernel.org/project/linux-arm-msm/patch/1661245527-5596-1-git-send-email-quic_c_skakit@quicinc.com/
+
+[v7]
+  * Fix commit text of [5/5]. Remove '.' from Fixes tag.
+
+[v6]
+  * Add [1], [2] to handle the regmap overlap of lpasscc and lpass_aon 
+
+[v5]
+  * Fix the fail path and add pm_runtime_disable().
+
+[v4]
+  * Fix the "fixes" tag.
+
+[v3]
+  * Remove the maxItems from reg property.
+
+[v2]
+  * Update/fix the YAML for reg property against each compatible.
+
+[v1]
+  * Add support for clock gating resets for lpass audio clock
+    controller & MCLKs.
+
+Taniya Das (5):
+  dt-bindings: clock: Add "qcom,adsp-pil-mode" property
+  clk: qcom: lpass: Handle the regmap overlap of lpasscc and lpass_aon
+  dt-bindings: clock: Add resets for LPASS audio clock controller for
+    SC7280
+  dt-bindings: clock: Add support for external MCLKs for LPASS on SC7280
+  clk: qcom: lpass: Add support for resets & external mclk for SC7280
+
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml        |  6 +-
+ .../bindings/clock/qcom,sc7280-lpasscorecc.yaml    | 26 ++++++++-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c             | 68 +++++++++++++++++++++-
+ drivers/clk/qcom/lpasscc-sc7280.c                  | 44 --------------
+ drivers/clk/qcom/lpasscorecc-sc7280.c              | 33 +++++++++++
+ .../dt-bindings/clock/qcom,lpassaudiocc-sc7280.h   |  5 ++
+ .../dt-bindings/clock/qcom,lpasscorecc-sc7280.h    |  2 +
+ 7 files changed, 131 insertions(+), 53 deletions(-)
+
+-- 
+2.7.4
+
