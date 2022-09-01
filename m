@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C96AC0502C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 12:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A08ECAAD1
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 12:57:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233505AbiIAM5Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Sep 2022 08:57:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51304 "EHLO
+        id S233617AbiIAM5e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Sep 2022 08:57:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232631AbiIAM5U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 08:57:20 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769F82C67D
-        for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 05:57:18 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id i188-20020a1c3bc5000000b003a7b6ae4eb2so1308796wma.4
-        for <linux-clk@vger.kernel.org>; Thu, 01 Sep 2022 05:57:18 -0700 (PDT)
+        with ESMTP id S233479AbiIAM5X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2022 08:57:23 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C4880528
+        for <linux-clk@vger.kernel.org>; Thu,  1 Sep 2022 05:57:20 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id m17-20020a7bce11000000b003a5bedec07bso1339692wmc.0
+        for <linux-clk@vger.kernel.org>; Thu, 01 Sep 2022 05:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=7ZlMqpIh3IyUq1dD/WzYgapnFJuX5D8gbR5mj33rR84=;
-        b=L9kP09nqRH+Z+bWAt0KuRPx2ICiZGYDf0QG4pqMW9mJHKChmL6+bIqrMDYTGkui8FF
-         b4n+l/zK7COuOfIqfV/9DHa/vWYUauG4RmYB/OlGdIJeFQfpkammZDjynZxYZ6SC/anh
-         +eDr7oKp9T4ayau0RAbt6/arHAXVBvaYwb6SKaoArrAq0C5Dx2W1YSLWWXyvaaon3ubA
-         BmnMXTKkuXJ1NxAo35VsPdSl1EGQ3P+sAc/Xt2uA1aYWKkGiDlupiFLCqrIjYeswWyrh
-         LBJz9cTpcU1FrM8UUzEDqqE/o6DsKMKsQ+LetpL0LNkhLmXMaPpTFN+i7omadyWAQjtt
-         aG+Q==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=5oq+K0wpCSsh7jUwt6+vmm/hcvr/21v0i001Dyw+Eww=;
+        b=DdLEChHulzdasOuIWPUlvh6/dx1pv3JVup4WbLGKn8GZsDUWAeHKhRXg8s3zgqoS4D
+         zfCnpWVLLQgQDTgIhJgSaYxq+gtoHzG1yztUdHZk7U1Vb9/PzweyZfmYzy1j7qGMYnp8
+         hFCGKvNcS5LLVeuc54F3KGX0w2Fvuf2SVvVrsx43CmfrvZ2Evu8fU0KYNTCojgdBwW2W
+         hNxd2bhrWhmMpKUWXkZmaHK8C8bnBhnTyQ2tpAXZMXzIXdGgb/jPCxZvPqxoSXN2wKUA
+         UwqbbkRJlL8aUniD+sedCbytuSuM+u96t5FxdGx5lcNS93a0JsxwRVL+Bc8tVYjmaGEJ
+         G4Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=7ZlMqpIh3IyUq1dD/WzYgapnFJuX5D8gbR5mj33rR84=;
-        b=A+y1fbkH3MaSj3ixk2Fh+PkyPVUB3TXUf8nclnEB33VBRkkKr47jFfKR6oRKR37d1U
-         XxQF+rLv4xMDky4V2DxVJvtzkbgKFjtCGgXUomh7OhPO3mwktaxoP+JqaDpFOym09RRj
-         fhQ2hhoumdNrJPuWpHjhk1BR9HHWPSY0lIAiV8DLpyPV+5OaSw+y6VrcLsrZfP9dSZFE
-         qjksMe/m1tp1HuU0iASFtBJzPmeqh+FwuPdiWqxvCRE4Cyzoj37S1SWV3YqocgGbU0r1
-         SV5p8fKe8bS/LALoKk8JAKAk7wXCCyv95nNPQe85qSjfl7EtSXGu0N/I7VBwo/ZOhAPD
-         b64A==
-X-Gm-Message-State: ACgBeo18gz2VVxkQLA/q2o6aYsBoNqzf6kFle/qdFiCPVJjTn4LQsmra
-        6tLbNU5K0Qp3ZOD2pLGryOVlBg==
-X-Google-Smtp-Source: AA6agR4WxFW8MYMrAHnjtjYeK13E0krxBtcRYabXQEB9F9fEoJ3KLT3ciBgiYJKbXPpTmciIet5qbg==
-X-Received: by 2002:a05:600c:3541:b0:3a6:28e4:c458 with SMTP id i1-20020a05600c354100b003a628e4c458mr5162262wmq.188.1662037036916;
-        Thu, 01 Sep 2022 05:57:16 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=5oq+K0wpCSsh7jUwt6+vmm/hcvr/21v0i001Dyw+Eww=;
+        b=ATwE34GxJETuYP1eAa2XPAhDoNtFYDdiUT9+kmBVbLjFcu8QdsN1/qnXl+TP55BNoF
+         yEZGJwoIYIJgLhz9o/NlytrNTmhaDvuVQX359w0FWvvo4hC4GBIlldvefekX31LZZ/2i
+         GzKyAd7iqQmeCGQ1wau7AhQ9Ur5NAhI8n4e9vKhcLZfJvx5qpYP/OQR3ryt65Pge9SFm
+         yFfqH342YJNiPn1+XyZ7QKG5Ub9mxz+++2WrdZPYP9gRlSeiYckRmnv+GbO1T4uW/CoX
+         FLJCHvNJtouILztOyMl3WbHvW6Am7sA8N5V/WZ8zgu1Gh1bkPQeoL1P+B/aRsC4gBh4o
+         r1jg==
+X-Gm-Message-State: ACgBeo3kH+g7xpsPHc63eKA062GbmlfGQPNluySY0DMvFtbapSM3ezD5
+        oo1oy1qmQZv8hoUo05ujXkA3ig==
+X-Google-Smtp-Source: AA6agR7sSVB8GDqHA/SNdpU3efGHrOX2Si3u7vU37Gf21cUjmMfyxBMIMocd/FwxLdJzZOAFR16rnQ==
+X-Received: by 2002:a05:600c:1e88:b0:3a6:2ca3:f7f2 with SMTP id be8-20020a05600c1e8800b003a62ca3f7f2mr5333101wmb.7.1662037038960;
+        Thu, 01 Sep 2022 05:57:18 -0700 (PDT)
 Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id v5-20020a5d59c5000000b002257fd37877sm15556709wry.6.2022.09.01.05.57.15
+        by smtp.googlemail.com with ESMTPSA id v5-20020a5d59c5000000b002257fd37877sm15556709wry.6.2022.09.01.05.57.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 05:57:16 -0700 (PDT)
+        Thu, 01 Sep 2022 05:57:18 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     heiko@sntech.de, herbert@gondor.apana.org.au, ardb@kernel.org,
         davem@davemloft.net, krzysztof.kozlowski+dt@linaro.org,
@@ -54,113 +54,41 @@ To:     heiko@sntech.de, herbert@gondor.apana.org.au, ardb@kernel.org,
 Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v9 00/33] crypto: rockchip: permit to pass self-tests
-Date:   Thu,  1 Sep 2022 12:56:37 +0000
-Message-Id: <20220901125710.3733083-1-clabbe@baylibre.com>
+        Corentin Labbe <clabbe@baylibre.com>,
+        John Keeping <john@metanate.com>
+Subject: [PATCH v9 02/33] crypto: rockchip: do not use uninitialized variable
+Date:   Thu,  1 Sep 2022 12:56:39 +0000
+Message-Id: <20220901125710.3733083-3-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220901125710.3733083-1-clabbe@baylibre.com>
+References: <20220901125710.3733083-1-clabbe@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello
+crypto_info->dev is not yet set, so use pdev->dev instead.
 
-The rockchip crypto driver is broken and do not pass self-tests.
-This serie's goal is to permit to become usable and pass self-tests.
+Reviewed-by: John Keeping <john@metanate.com>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ drivers/crypto/rockchip/rk3288_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This whole serie is tested on a rk3328-rock64, rk3288-miqi and
-rk3399-khadas-edge-v with selftests (with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y)
-
-Regards
-
-Changes since v1:
-- select CRYPTO_ENGINE
-- forgot to free fallbacks TFMs
-- fixed kernel test robots warning
-- add the PM patch
-
-Changes since v2:
-- Added DMA clock back to 3288 since it dont work without it
-- fallback needed to select CBC and ECB configs
-- Added support for rk3399
-- Added more patch (style, read_poll_timeout)
-
-Changes since v3:
-- full rewrite of support for RK3399
-- splited dt-binding patch in two
-
-Changes since v4:
-- Another full rewrite of support for RK3399
-- Fixed dt-binding from Krzysztof Kozlowski's comments
-- Use readl_poll_timeout() instead of read_poll_timeout()
-- Rewrite the fallback SG tests
-
-Changes since v5:
-- fixed errors in DT binding patch
-
-Change since v6:
-- remove quotes around const values in dt-bindings
-
-Changes since v7:
-- added lot of reviewed/tested by
-- In patch 14: keep initial reset pulse.
-
-Changes since v8:
-- Removed some useless min/maxitems from dt-binding as reported by dt_binding_check
-
-Corentin Labbe (33):
-  crypto: rockchip: use dev_err for error message about interrupt
-  crypto: rockchip: do not use uninitialized variable
-  crypto: rockchip: do not do custom power management
-  crypto: rockchip: fix privete/private typo
-  crypto: rockchip: do not store mode globally
-  crypto: rockchip: add fallback for cipher
-  crypto: rockchip: add fallback for ahash
-  crypto: rockchip: better handle cipher key
-  crypto: rockchip: remove non-aligned handling
-  crypto: rockchip: rework by using crypto_engine
-  crypto: rockchip: rewrite type
-  crypto: rockchip: add debugfs
-  crypto: rockchip: introduce PM
-  crypto: rockchip: handle reset also in PM
-  crypto: rockchip: use clk_bulk to simplify clock management
-  crypto: rockchip: add myself as maintainer
-  crypto: rockchip: use read_poll_timeout
-  crypto: rockchip: fix style issue
-  crypto: rockchip: add support for rk3328
-  crypto: rockchip: rename ablk functions to cipher
-  crypto: rockchip: rework rk_handle_req function
-  crypto: rockchip: use a rk_crypto_info variable instead of lot of
-    indirection
-  crypto: rockchip: use the rk_crypto_info given as parameter
-  dt-bindings: crypto: convert rockchip-crypto to YAML
-  dt-bindings: crypto: rockchip: convert to new driver bindings
-  clk: rk3399: use proper crypto0 name
-  arm64: dts: rockchip: add rk3328 crypto node
-  arm64: dts: rockchip: rk3399: add crypto node
-  crypto: rockchip: store crypto_info in request context
-  crypto: rockchip: Check for clocks numbers and their frequencies
-  crypto: rockchip: rk_ahash_reg_init use crypto_info from parameter
-  crypto: rockchip: permit to have more than one reset
-  crypto: rockchip: Add support for RK3399
-
- .../crypto/rockchip,rk3288-crypto.yaml        | 127 ++++
- .../bindings/crypto/rockchip-crypto.txt       |  28 -
- MAINTAINERS                                   |   7 +
- arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  11 +
- arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  20 +
- drivers/crypto/Kconfig                        |  15 +
- drivers/crypto/rockchip/rk3288_crypto.c       | 506 ++++++++--------
- drivers/crypto/rockchip/rk3288_crypto.h       | 107 ++--
- drivers/crypto/rockchip/rk3288_crypto_ahash.c | 267 +++++----
- .../crypto/rockchip/rk3288_crypto_skcipher.c  | 543 ++++++++++--------
- include/dt-bindings/clock/rk3399-cru.h        |   6 +-
- 11 files changed, 949 insertions(+), 688 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
- delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
-
+diff --git a/drivers/crypto/rockchip/rk3288_crypto.c b/drivers/crypto/rockchip/rk3288_crypto.c
+index 45cc5f766788..21d3f1458584 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto.c
++++ b/drivers/crypto/rockchip/rk3288_crypto.c
+@@ -381,7 +381,7 @@ static int rk_crypto_probe(struct platform_device *pdev)
+ 			       "rk-crypto", pdev);
+ 
+ 	if (err) {
+-		dev_err(crypto_info->dev, "irq request failed.\n");
++		dev_err(&pdev->dev, "irq request failed.\n");
+ 		goto err_crypto;
+ 	}
+ 
 -- 
 2.35.1
 
