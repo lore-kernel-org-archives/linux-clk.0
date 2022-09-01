@@ -2,83 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC034ECAAD5
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 01:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B68ECAAD1
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Sep 2022 03:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232609AbiIAB26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Aug 2022 21:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45392 "EHLO
+        id S229746AbiIADQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Aug 2022 23:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232611AbiIAB2o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 21:28:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F71153D33;
-        Wed, 31 Aug 2022 18:28:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E195861D22;
-        Thu,  1 Sep 2022 01:28:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45693C433D6;
-        Thu,  1 Sep 2022 01:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661995718;
-        bh=GdY+/WhNnxMBxT1u2ZfEAT+m15TaeLBnpOQgS872pOY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GZ+xcwtjRhXnVJ+WjYhwldS8y/NR0xSXsD4LgMhJTLXczvv1OpyttXx1d3GD3X4MS
-         OVM1H3zsjsKHwQg6fnXLAIcoYPts527spMxuqe1uaJ/oMLlkzfD/vu5eHoSDLWM3Zw
-         W7EQmddsGuGhYt5QDwHWgF3Iezdu7p6cruVSnj/AR12BbHloFbk6kVegMIkZy+YeCr
-         Lib0CaowsURlzS6qebrd8oviqiBRlQ1/o13Oi6l3E6NNRyocRu5xhVEjBKWNfzHudL
-         Bvs1c90OMswSLmErkFnYyhie7uXuJ+FI/sideAg+C0oL3QYUfsFHqm0WS1NN8mksOV
-         WBpOefcfIGn9Q==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229706AbiIADQh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Aug 2022 23:16:37 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B5010F950
+        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 20:16:35 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id z8so12027952edb.6
+        for <linux-clk@vger.kernel.org>; Wed, 31 Aug 2022 20:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=G7ttsCuJ+J4/i3YBhKPz49AMBmOxDd9nfW8xTxQ4h0M=;
+        b=YK/HTOaFeidBrISWkJxAv0RRcjxbKPsrvYdSRlC5iYmTFRM94m8seXKolYNCyWAfry
+         PlRsUbcA6etASqDUHjas214kmY09uDBASTQYG9XmYDEvk6DVFlOUd1Yxa3/Hkii2xeyr
+         TT7zDAdOUTUBmgFXR+oZqizpPkotwljSby1qM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=G7ttsCuJ+J4/i3YBhKPz49AMBmOxDd9nfW8xTxQ4h0M=;
+        b=ty7i94fy1MxLsJWhNbWNSo/QrPS4Kty+vqA6ZWOisBUoMHNlvUUZo175zPMTqQbAwg
+         jtqHgv0l9vTfjj/nSZSJONRTga2r5ek4ZQqF3/MKlBMqND5relZa4odHFSulCxTIqkE8
+         RiqV/eA5B1pxc8Dd5wrqKQBb2kuHU+LfzWBHb/1OIVpLVhUwHKwTOS+0tIcIMj7XgsCt
+         U0rQpMwAYx/HJZ56V8bvznSwzghKjfYNDRIZ/xwEkM34D6P+pNfYvY1UenuqHp48bMto
+         eB4ttsmEbXH9aHOE7DUy40lVNC+BQyHFft+FGT63+arUEttmEPiqTf6uCHiQFwn5VyiL
+         H/Zw==
+X-Gm-Message-State: ACgBeo3DVEhzrwAvXBjCBRknNne0IssN0oNQBA0Msnf1BwRqtm3SL50p
+        eZH7VW8qXO38Y/i+igjSusG6YLe4qIxydIQ+KvZ9OA==
+X-Google-Smtp-Source: AA6agR7vJeE5BNhhen2MLdU5JdOhlrGzZODJxL0PCi4/ZVfXO6wKdzyhUgjU0FnX+CRblsDSypW2pprW7PvKD2IsvwA=
+X-Received: by 2002:a05:6402:292f:b0:448:6241:25de with SMTP id
+ ee47-20020a056402292f00b00448624125demr15550195edb.248.1662002194496; Wed, 31
+ Aug 2022 20:16:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220617122254.738900-1-aidanmacdonald.0x0@gmail.com>
-References: <20220617122254.738900-1-aidanmacdonald.0x0@gmail.com>
-Subject: Re: [PATCH v2] clk: ingenic-tcu: Properly enable registers before accessing timers
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     paul@crapouillou.net, paulburton@kernel.org,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
-        mturquette@baylibre.com
-Date:   Wed, 31 Aug 2022 18:28:35 -0700
-User-Agent: alot/0.10
-Message-Id: <20220901012838.45693C433D6@smtp.kernel.org>
+References: <20220831175326.2523912-1-sboyd@kernel.org>
+In-Reply-To: <20220831175326.2523912-1-sboyd@kernel.org>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Thu, 1 Sep 2022 11:16:23 +0800
+Message-ID: <CAGXv+5G1cAdT8S7Ksr=SiHn8-ugMvRXEZkVXd9vru_nuQvVW0Q@mail.gmail.com>
+Subject: Re: [PATCH] Revert "clk: core: Honor CLK_OPS_PARENT_ENABLE for clk
+ gate ops"
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Alexander Stein <alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aidan MacDonald (2022-06-17 05:22:54)
-> Access to registers is guarded by ingenic_tcu_{enable,disable}_regs()
-> so the stop bit can be cleared before accessing a timer channel, but
-> those functions did not clear the stop bit on SoCs with a global TCU
-> clock gate.
->=20
-> Testing on the X1000 has revealed that the stop bits must be cleared
-> _and_ the global TCU clock must be ungated to access timer registers.
-> This appears to be the norm on Ingenic SoCs, and is specified in the
-> documentation for the X1000 and numerous JZ47xx SoCs.
->=20
-> If the stop bit isn't cleared, register writes don't take effect and
-> the system can be left in a broken state, eg. the watchdog timer may
-> not run.
->=20
-> The bug probably went unnoticed because stop bits are zeroed when
-> the SoC is reset, and the kernel does not set them unless a timer
-> gets disabled at runtime. However, it is possible that a bootloader
-> or a previous kernel (if using kexec) leaves the stop bits set and
-> we should not rely on them being cleared.
->=20
-> Fixing this is easy: have ingenic_tcu_{enable,disable}_regs() always
-> clear the stop bit, regardless of the presence of a global TCU gate.
->=20
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Paul Cercueil <paul@crapouillou.net>
-> Fixes: 4f89e4b8f121 ("clk: ingenic: Add driver for the TCU clocks")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-> ---
+On Thu, Sep 1, 2022 at 1:53 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> This reverts commit 35b0fac808b95eea1212f8860baf6ad25b88b087. Alexander
+> reports that it causes boot failures on i.MX8M Plus based boards
+> (specifically imx8mp-tqma8mpql-mba8mpxl.dts).
+>
+> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Cc: Chen-Yu Tsai <wenst@chromium.org>
+> Fixes: 35b0fac808b9 ("clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops")
+> Link: https://lore.kernel.org/r/12115951.O9o76ZdvQC@steina-w
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-Applied to clk-fixes
+Acked-by: Chen-Yu Tsai <wenst@chromium.org>
