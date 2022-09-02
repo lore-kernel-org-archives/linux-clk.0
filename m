@@ -2,97 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE919C54EE9
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 09:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B965C38145
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 13:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235835AbiIBJud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Sep 2022 05:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51188 "EHLO
+        id S236743AbiIBNXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Sep 2022 09:23:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235486AbiIBJuY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 05:50:24 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123E727B30
-        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 02:50:20 -0700 (PDT)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id ExqJ2800E4C55Sk06xqJPF; Fri, 02 Sep 2022 11:50:18 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oU3JZ-003hgf-WB; Fri, 02 Sep 2022 11:50:18 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oU3JZ-007ej8-Am; Fri, 02 Sep 2022 11:50:17 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.1
-Date:   Fri,  2 Sep 2022 11:50:16 +0200
-Message-Id: <cover.1662111940.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S236485AbiIBNW5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 09:22:57 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5539474E2;
+        Fri,  2 Sep 2022 06:00:18 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id x5so1339216qtv.9;
+        Fri, 02 Sep 2022 06:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=GaKGM+dpPVOcKQB0I709BWsCafKACGVR73YUNmM0p9M=;
+        b=MzOF0SUMu+LWHqJesHluUKrd/Yms+3BJ4yiX8IZ4kldKwlXIPY6KoRbCzBQ0E9owFd
+         FOSw0LJFW7lY6uNW/5x4vetN/h3aNtuJDktsTt3UxTRjcBEIBqnLW+Hkq5QV7OJWSV4K
+         0ON6XAsbrJLtCVL/5ZilEYsRB7NT3LyKzCjY1RGXUS9kzZmlwR0ZgGBXWCDeyojdnOVs
+         1KUiQMtmLsMbWJ9IE3sCwx6L5p0vlRMSAKSg/Ev1evlOODPx6m+94MdrNxZ8u0qblaQN
+         I/lErX1UA2O/VGKoZLA3AYLgVIFYbMTFI72OWZSTAgWWoJGo07vEfaKmwoGTGCDAGXD0
+         7oUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=GaKGM+dpPVOcKQB0I709BWsCafKACGVR73YUNmM0p9M=;
+        b=z9ld2/Sfz/fn+kvw07RxRqpVlGGTHfpK/s1XNAA3oYybZ5TRflFnMCh43qwa5biHwV
+         QL/6poAGbe9ASOWCKilSFFSnVXiLLmactlI9bM/7CNWNthVNLTKDcvBtK2kcxKcAwueL
+         4VZd9uEDA/yuHDaWm6O8QM9Sy+b8ZbRBjHnW8psyhAXdx+89E1qbC7KT1iroedPp83wR
+         sEXMgMMT7frJTunMh78X2aJPOjeQBfKm+TEN28H3OPrry8TyJnIGGmyuhDZOxfmH8fQu
+         J9kLg1t3dFYgpvzvEn0WyHGfEpG1PPjK2vBFWUrVGFj+nMS/wmiGNdsbCca6I9UuGlvS
+         IL2w==
+X-Gm-Message-State: ACgBeo1hC13jLychm0VHIhMolreLNXNewH2CZIq595+C4KbTRhReI1Za
+        rN1BbK943HSh9X6dUegKjcbrRxWyL0k=
+X-Google-Smtp-Source: AA6agR6ukfEivBRMBVS78MYzMPw2RtR4O1lu1dnKDXXluEBnn1qLr4Sdq/b8RyCi0wQaMU5oUvbymw==
+X-Received: by 2002:ac8:5995:0:b0:343:77a0:7c39 with SMTP id e21-20020ac85995000000b0034377a07c39mr28186140qte.663.1662123450255;
+        Fri, 02 Sep 2022 05:57:30 -0700 (PDT)
+Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id eb2-20020a05620a480200b006b629f86244sm1209868qkb.50.2022.09.02.05.57.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Sep 2022 05:57:28 -0700 (PDT)
+Message-ID: <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
+Date:   Fri, 2 Sep 2022 08:56:53 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0.2
+Subject: Re: [PATCH v6 00/10] Add support for i.MXRT1170-evk
+Content-Language: en-US
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
+ <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
+From:   Jesse Taube <mr.bossman075@gmail.com>
+In-Reply-To: <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
 
-The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
-  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+On 9/2/22 04:06, Linus Walleij wrote:
+> On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+> 
+>> This patch contains:
+>> - Update to imxrt_defconfig
+>> - Devicetree
+>> - Clock driver
+>> - Pinctrl driver
+> 
+> No it does not, I already merged that.
+> 
+> I think you should probably split up your series per-subsystem so the
+> clock bindings and changes can be merged separately etc.
+> 
+> Then the DTS files can be added to the ARM SoC tree as a final step.
+> 
+> When you send everything in one bundle like this subsystem maintainers
+> don't know if they can merge e.g. just the clock patches separately
+> and be done with their part (like what I did with pinctrl).
+Do you think its possible to add Docs for Device tree compatibles that 
+aren't added yet?
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.1-tag1
-
-for you to fetch changes up to e312ae92077f90d6ccdca05fb6d640bd9624c37c:
-
-  dt-bindings: clock: renesas,rzg2l: Document RZ/Five SoC (2022-09-02 10:47:30 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.1
-
-  - Add SDHI, Timer (CMT/TMU), and SPI (MSIOF) clocks on R-Car S4-8,
-  - Add I2C clocks and resets on RZ/V2M,
-  - Document clock support for the RZ/Five SoC,
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (1):
-      clk: renesas: r9a07g044: Add conditional compilation for r9a07g044_cpg_info
-
-Lad Prabhakar (1):
-      dt-bindings: clock: renesas,rzg2l: Document RZ/Five SoC
-
-Phil Edworthy (1):
-      clk: renesas: r9a09g011: Add IIC clock and reset entries
-
-Wolfram Sang (4):
-      clk: renesas: r8a779f0: Add SDH0 clock
-      clk: renesas: r8a779f0: Add CMT clocks
-      clk: renesas: r8a779f0: Add TMU and parent SASYNC clocks
-      clk: renesas: r8a779f0: Add MSIOF clocks
-
- .../bindings/clock/renesas,rzg2l-cpg.yaml           |  2 +-
- drivers/clk/renesas/r8a779f0-cpg-mssr.c             | 21 ++++++++++++++++++++-
- drivers/clk/renesas/r9a07g044-cpg.c                 |  2 ++
- drivers/clk/renesas/r9a09g011-cpg.c                 |  4 ++++
- 4 files changed, 27 insertions(+), 2 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks,
+Jesse Taube
+> 
+> Yours.
+> Linus Walleij
