@@ -2,61 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B965C38145
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 13:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AE1ECAAD5
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 13:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236743AbiIBNXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Sep 2022 09:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56118 "EHLO
+        id S237835AbiIBNwh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Sep 2022 09:52:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236485AbiIBNW5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 09:22:57 -0400
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5539474E2;
-        Fri,  2 Sep 2022 06:00:18 -0700 (PDT)
-Received: by mail-qt1-x830.google.com with SMTP id x5so1339216qtv.9;
-        Fri, 02 Sep 2022 06:00:17 -0700 (PDT)
+        with ESMTP id S238303AbiIBNwH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 09:52:07 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43D91114D8
+        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 06:26:36 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id cu2so3978405ejb.0
+        for <linux-clk@vger.kernel.org>; Fri, 02 Sep 2022 06:26:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=GaKGM+dpPVOcKQB0I709BWsCafKACGVR73YUNmM0p9M=;
-        b=MzOF0SUMu+LWHqJesHluUKrd/Yms+3BJ4yiX8IZ4kldKwlXIPY6KoRbCzBQ0E9owFd
-         FOSw0LJFW7lY6uNW/5x4vetN/h3aNtuJDktsTt3UxTRjcBEIBqnLW+Hkq5QV7OJWSV4K
-         0ON6XAsbrJLtCVL/5ZilEYsRB7NT3LyKzCjY1RGXUS9kzZmlwR0ZgGBXWCDeyojdnOVs
-         1KUiQMtmLsMbWJ9IE3sCwx6L5p0vlRMSAKSg/Ev1evlOODPx6m+94MdrNxZ8u0qblaQN
-         I/lErX1UA2O/VGKoZLA3AYLgVIFYbMTFI72OWZSTAgWWoJGo07vEfaKmwoGTGCDAGXD0
-         7oUg==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=ZF/uMwTcnfyz2qEE7xRsLAhPm27QsIK3fVdRMITh1go=;
+        b=mtCXZWdp9QgmrYW++Cea2CEB1DgoyAJM1tlVGEe5YBBxfrhzbIOh++mMUvheALAnUJ
+         qglEpw7YAZAqrT0t19/ZFVIhClLwiJuoc+Gc2atWP13qPCL2scgmjjlzWm+XD5L5t84b
+         pDE519WHl1qfcZnXOQxXEsiQfqsGdayCi14KO0qLt1ZVPU7SLwI0KPFrWqryauaiJf19
+         BxwZTV44yNf/DLXwCaIiwcaftVf4ADpFA8ky6TvhyLS5z7cT3imLS15KDFLk04iJvh8i
+         hK8dmoA99XTyG2NO5reAVYM8gTNza6KFWvKuN3AKeOZjjUvJGrGduYP6puiDVkMG6CSe
+         MzCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=GaKGM+dpPVOcKQB0I709BWsCafKACGVR73YUNmM0p9M=;
-        b=z9ld2/Sfz/fn+kvw07RxRqpVlGGTHfpK/s1XNAA3oYybZ5TRflFnMCh43qwa5biHwV
-         QL/6poAGbe9ASOWCKilSFFSnVXiLLmactlI9bM/7CNWNthVNLTKDcvBtK2kcxKcAwueL
-         4VZd9uEDA/yuHDaWm6O8QM9Sy+b8ZbRBjHnW8psyhAXdx+89E1qbC7KT1iroedPp83wR
-         sEXMgMMT7frJTunMh78X2aJPOjeQBfKm+TEN28H3OPrry8TyJnIGGmyuhDZOxfmH8fQu
-         J9kLg1t3dFYgpvzvEn0WyHGfEpG1PPjK2vBFWUrVGFj+nMS/wmiGNdsbCca6I9UuGlvS
-         IL2w==
-X-Gm-Message-State: ACgBeo1hC13jLychm0VHIhMolreLNXNewH2CZIq595+C4KbTRhReI1Za
-        rN1BbK943HSh9X6dUegKjcbrRxWyL0k=
-X-Google-Smtp-Source: AA6agR6ukfEivBRMBVS78MYzMPw2RtR4O1lu1dnKDXXluEBnn1qLr4Sdq/b8RyCi0wQaMU5oUvbymw==
-X-Received: by 2002:ac8:5995:0:b0:343:77a0:7c39 with SMTP id e21-20020ac85995000000b0034377a07c39mr28186140qte.663.1662123450255;
-        Fri, 02 Sep 2022 05:57:30 -0700 (PDT)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id eb2-20020a05620a480200b006b629f86244sm1209868qkb.50.2022.09.02.05.57.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 05:57:28 -0700 (PDT)
-Message-ID: <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
-Date:   Fri, 2 Sep 2022 08:56:53 -0400
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=ZF/uMwTcnfyz2qEE7xRsLAhPm27QsIK3fVdRMITh1go=;
+        b=wjc9C0nqGYW/VDwXZW8JczuV74Dz6j76VB015ELP/EvS/Z88NdpRykx1xfAJnY4SK5
+         YhUWOr9+n386qE4I3La0Mg0v+tN+PqS7s46M9LKiP9Bd9FllwppKNm6CRvbzNwzQFPUp
+         3nOEEBpwe9C0K8HDX3J2WsMSrGqt/PoW5IDItQGXjcAZqYiH/6uHoXrK6viNbFDEZ+io
+         BQu/UcnyhvS35t3wSzUnYeoyUXfDYJ65n3iGvPMX94m0bsaHOPSqHwM7VUrBHbNh1CDV
+         CQGBrJzUD2th0CF3C3JPbMVmyFMDUWhBqoSfaNqIkiwmIkugXaG60ySuecKF7iNZnJHV
+         LfoQ==
+X-Gm-Message-State: ACgBeo2si4+7ogqNR2N6Quo8xn1xFIKxNxJw4MLdqZJqeoyH7OXVRUPm
+        bUbX3u2n/eq9m6QU79INh6A4JZB4L/6ESXsiQmuO/w==
+X-Google-Smtp-Source: AA6agR6uVeydIrFZMSXhTDDYS4+Yng+f3hQTQnzA1QcrBi8I6dCnkKtn5QHHr9QNmRCaKQoIFPtEWdFKnqttE3hhFYA=
+X-Received: by 2002:a17:907:1c89:b0:741:4453:75be with SMTP id
+ nb9-20020a1709071c8900b00741445375bemr21506072ejc.208.1662125177323; Fri, 02
+ Sep 2022 06:26:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.0.2
+References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
+ <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com> <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
+In-Reply-To: <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 2 Sep 2022 15:26:06 +0200
+Message-ID: <CACRpkdZwkhvM7JGeisdAyh4Bg2hx5E+dSG89Psb=13hD+wkjoQ@mail.gmail.com>
 Subject: Re: [PATCH v6 00/10] Add support for i.MXRT1170-evk
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
 Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
         sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
         kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
@@ -69,42 +65,45 @@ Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
         giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
- <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Sep 2, 2022 at 2:57 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+> On 9/2/22 04:06, Linus Walleij wrote:
+> > On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+> >
+> >> This patch contains:
+> >> - Update to imxrt_defconfig
+> >> - Devicetree
+> >> - Clock driver
+> >> - Pinctrl driver
+> >
+> > No it does not, I already merged that.
+> >
+> > I think you should probably split up your series per-subsystem so the
+> > clock bindings and changes can be merged separately etc.
+> >
+> > Then the DTS files can be added to the ARM SoC tree as a final step.
+> >
+> > When you send everything in one bundle like this subsystem maintainers
+> > don't know if they can merge e.g. just the clock patches separately
+> > and be done with their part (like what I did with pinctrl).
+>
+> Do you think its possible to add Docs for Device tree compatibles that
+> aren't added yet?
 
+Bindings and drivers are orthogonal, we only submit them together
+to provide context for reviewers.
 
-On 9/2/22 04:06, Linus Walleij wrote:
-> On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> 
->> This patch contains:
->> - Update to imxrt_defconfig
->> - Devicetree
->> - Clock driver
->> - Pinctrl driver
-> 
-> No it does not, I already merged that.
-> 
-> I think you should probably split up your series per-subsystem so the
-> clock bindings and changes can be merged separately etc.
-> 
-> Then the DTS files can be added to the ARM SoC tree as a final step.
-> 
-> When you send everything in one bundle like this subsystem maintainers
-> don't know if they can merge e.g. just the clock patches separately
-> and be done with their part (like what I did with pinctrl).
-Do you think its possible to add Docs for Device tree compatibles that 
-aren't added yet?
+It is also possible to submit device trees with compatibles and entire
+nodes without bindings because there essentially is no real police for
+this. Of course it is not recommended.
 
-Thanks,
-Jesse Taube
-> 
-> Yours.
-> Linus Walleij
+If you are confident that bindings and device trees will come in the
+same merge window it is fine to merge them separately through different
+trees.
+
+Yours,
+Linus Walleij
