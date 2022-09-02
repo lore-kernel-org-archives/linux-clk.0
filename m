@@ -2,108 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52360ECAAA1
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 04:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D4CC54EE9
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 06:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232529AbiIBEOH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Sep 2022 00:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52428 "EHLO
+        id S234162AbiIBGjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Sep 2022 02:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbiIBEOG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 00:14:06 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D99FA9265;
-        Thu,  1 Sep 2022 21:14:05 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id z6so1551460lfu.9;
-        Thu, 01 Sep 2022 21:14:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date;
-        bh=AijBO9nrg7xX2FQ7t5pNNFjzi755cTFDKODqE4YFCPQ=;
-        b=mm2IaPaiZD2YANcxOHf7RTxd/urUt118pLj6ni5f+pIKMaHXNOFjHxopf+AxdheVEP
-         oE3Iwu+BchPlyJ0fTs2FN+KKWCI4ooCXNcsG6BcNokOMyK4Bp07Knk/Yq9+UKDH9cY4M
-         U9A8FGjZVmubakszF9f8+qrQBSkjeo8ftj4rr0uiemHUYI0qD8z+h0rMpNSommvj3bwc
-         LjnpzDRfS+osCXs2D261TmUzUd7Rc5v3omCgOJbDVQ6Yz1aBGKAOCSjub5NpoN/+F77T
-         ft3WcXPmWO6OjTGR5xfeXkQ+D0JCgfMmZn4EopOP5gJaRYhXjRSTS66vPMHFm6WfHfJH
-         Zkmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=AijBO9nrg7xX2FQ7t5pNNFjzi755cTFDKODqE4YFCPQ=;
-        b=bW2qCnbN8NV5RtO3L5/E8b/eTmspkx5kfWnh3wLCA85H8HlbRY3uBM6Os0VM3CCUgr
-         1C9e8uMhlhO8YQ0+59algRnY0SrxVzUfblKNO3aAlTsZ/YRMU4/7sKjKyQsVBFMXechd
-         tphPERIDnlEY0acFjWcppE13cdeeTbgd/L6ndN29s3T+21aRH749KNO1yWCHkYF7KmbU
-         REXd1eMBuCWJoyQG1D5rkbhLZ0PR9vRktwEQTi39/o4aZEZK33/6Pj4PxyDst76skhwC
-         wHSZy+MNgcm7wyFQIDIXMds8u8VLeBvRVIZJMNqg/i9qsGzDN29HyPvIK8ViVg5r1XNe
-         brMg==
-X-Gm-Message-State: ACgBeo29enQSKZmYYzPrAOcysmsgPF5N1OXHaxi8zzLayU5tLzF2DkFN
-        q6G1BJK/am4OLVzNAqTThN0=
-X-Google-Smtp-Source: AA6agR5mOoimDDR08ufDCX8FZ5yVJE5be3+aRioWr9enab2ly9IAyC7eRKTTJTTrAStepJkxsgJAdw==
-X-Received: by 2002:a05:6512:6c8:b0:494:796e:93b6 with SMTP id u8-20020a05651206c800b00494796e93b6mr5119794lff.213.1662092043519;
-        Thu, 01 Sep 2022 21:14:03 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:16f3:4a00::1? (dc75zzyyyyyyyyyyyyyyt-3.rev.dnainternet.fi. [2001:14ba:16f3:4a00::1])
-        by smtp.gmail.com with ESMTPSA id z4-20020a056512370400b00494706193adsm106680lfr.208.2022.09.01.21.14.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Sep 2022 21:14:02 -0700 (PDT)
-Message-ID: <59b6dd0a-7cbb-5dbd-8da0-57baeba3327e@gmail.com>
-Date:   Fri, 2 Sep 2022 07:14:01 +0300
+        with ESMTP id S235357AbiIBGjk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 02:39:40 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44ED6BB690;
+        Thu,  1 Sep 2022 23:39:36 -0700 (PDT)
+X-UUID: 6af7e1f3cd024e96badef242daa60277-20220902
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=m70ifUKfsROMC77D6MINT4jBGjUL1IGdM1yLkcaO2/4=;
+        b=QI6KSHGgVcpa/szzu3UPw3t3rXqjk8Xvn4pzSW+gfja2rAzJnzE+I6UPe30IabX+kTcucV/tCMnajIOWsYchJujDwZ9/da3OF9qR30Qm2AyzdNLpiuKlPFXAs7SCAJoO+dBgyludUuCd5AK8eaQBs4Y3erNcKzEbwL6NllO+Bws=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.10,REQID:38e55a4e-dbd2-4477-8c24-0bbfc925ba99,OB:0,L
+        OB:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_
+        Ham,ACTION:release,TS:0
+X-CID-META: VersionHash:84eae18,CLOUDID:c224eb20-1c20-48a5-82a0-25f9c331906d,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: 6af7e1f3cd024e96badef242daa60277-20220902
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+        (envelope-from <johnson.wang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1070473871; Fri, 02 Sep 2022 14:39:28 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Fri, 2 Sep 2022 14:39:27 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 2 Sep 2022 14:39:27 +0800
+Message-ID: <1773eadbc41a6e4e1dd8a3ace213e51974e2fcbd.camel@mediatek.com>
+Subject: Re: [PATCH 0/4] Introduce MediaTek frequency hopping driver
+From:   Johnson Wang <johnson.wang@mediatek.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <angelogioacchino.delregno@collabora.com>, <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Fri, 2 Sep 2022 14:39:27 +0800
+In-Reply-To: <330d1f46-0e3c-f58e-b916-9e8644e7b4a1@linaro.org>
+References: <20220831124850.7748-1-johnson.wang@mediatek.com>
+         <330d1f46-0e3c-f58e-b916-9e8644e7b4a1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Content-Language: en-US
-To:     Tim Harvey <tharvey@gateworks.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Marek Vasut <marex@denx.de>
-References: <CAJ+vNU1Za2CPGVX3q4HKufsxbL5zRrk1B5CWFpKritetrTs4dA@mail.gmail.com>
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
-In-Reply-To: <CAJ+vNU1Za2CPGVX3q4HKufsxbL5zRrk1B5CWFpKritetrTs4dA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Tim,
-
-On 9/2/22 01:23, Tim Harvey wrote:
-> Greetings,
+On Wed, 2022-08-31 at 16:20 +0300, Krzysztof Kozlowski wrote:
+> On 31/08/2022 15:48, Johnson Wang wrote:
+> > Introduce MediaTek frequency hopping and spread spectrum clocking
+> > control
+> > for MT8186.
 > 
-> I've found that the bd71847 clk driver (CONFIG_COMMON_CLK_BD718XX
-> drivers/clk/clk-bd718x7.c) disables clk-32k-out (the BD71847 C32K_OUT
-> pin) which is connected IMX8MM RTC_XTALI which ends up disabling the
-> IMX RTC as well as the IMX WDOG functionality.
+> With one line introduction, you do not help us to understand this. :(
+> 
+> Best regards,
+> Krzysztof
 
-//snip
+Hi Krzysztof,
 
-> This happens via clk_unprepare_unused() as nothing is flagging the
-> clk-32k-out as being used. What should be added to the device-tree to
-> signify that this clk is indeed necessary and should not be disabled?
+Ok, I will describe more in the next version.
 
-I have seen following proposal from Marek Vasut:
+BRs,
+Johnson Wang
 
-https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
-
-I am not sure if the discussion is completed though. I guess it was 
-agreed this was needed/usefull and maybe the remaining thing to decide 
-was just the property naming.
-
-Best Regards
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
