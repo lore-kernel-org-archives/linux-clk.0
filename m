@@ -2,94 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB845C6FA82
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 18:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B96ECAAD5
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 18:31:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229566AbiIBS3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40446 "EHLO
+        id S229841AbiIBSb3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:31:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbiIBS3V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 14:29:21 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331D910DE5E
-        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 11:22:14 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id s23so1689587wmj.4
-        for <linux-clk@vger.kernel.org>; Fri, 02 Sep 2022 11:22:14 -0700 (PDT)
+        with ESMTP id S229839AbiIBSbR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 14:31:17 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27523F63D4
+        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 11:31:11 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id w5so3313183wrn.12
+        for <linux-clk@vger.kernel.org>; Fri, 02 Sep 2022 11:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=Ojk6sR1enpNZ4A6UZuJ0vO1AZQgVqYffnIr1R5iYzjs=;
-        b=hSgAt7QMHun6u+JdezesHvolMKXWzxe+bCTJE9Q5nVxNU2NTcqsw1Xm0NE7ImFH64X
-         GTD0bfyzJHGXEAFMoAa62yt0Ek+XP+3uTlpZPZ8rwnqM1Y46rLXyqRT3XWOJxFktwJxT
-         JHGZnltvkyLsOsuAcS2YWOBAG9AzYZfzrDeXiptT6ei99+CYUubhGDIxBZ2CgYol6l0/
-         OGz+NrPXMr8rRHFpQHReyhX+E27bqhcjhZXqqL05FN+r1/4RdIvRCBuNvlE8LYqJ/qy6
-         O7tVs7ODtzCSrg3C3h642tluAW+nWIhrd2cQscJGLuY3hGpk7CBX/fOaebHsrm/IgXdH
-         a0EQ==
+        bh=UiGnkmWH9iLnrdhPrU2lDZgR3mZDj/1lVrghpfS4bgc=;
+        b=Nz69+sv63l6vAT/d+MeZEexuMUrgEJ61UWVjbKzAJch/Mt4H6DOUcOmfORfFfGTDVI
+         v5zBB/pJgK0ndGYjp11XbxRVZw1rCbg7xMqYYP87XQ3V/LM4twIPcmT7Xst90Zc+He+8
+         IGDrjE+OuD+G7Bot3CYPEj+cetiAiaQ11nL5OdA2xzvcykzMRqlj78MiGAfsWROYF//R
+         fo6eP/zgQoMR8Nc+WFOJU4cKlT5qR71aB8zYwEK+YVRmfzNd68akIEdeQW/hvvClTb5v
+         mZyLf3vKP1X+NF72hKAacRjfEnn7vrqgCalQNzQigXEElEovQQJpduLQ2rKBVZgEkz6H
+         2qzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=Ojk6sR1enpNZ4A6UZuJ0vO1AZQgVqYffnIr1R5iYzjs=;
-        b=Fvotc4TJU7Oewd1B1rIS+W0N3UKKkSvqcXc4Bohaa7nej7EvVMpykfOdvud0jCJ/m0
-         XZuXCp2ytvmGByvR0Xg5TY//kG0Yycsr9se7yG+A34gdA/uvNzGKtV9OW0D+UYQ30KFQ
-         +Fs6LH6pFMiP7fRasmo0kacPcD/gk6mwdYTvpt8gf7gm2/8geBe4yebjZwHDj5ltwcuY
-         Z6JSsRpLSZjSrukCs9vL7mMR66A2Cy9LDxxxiHUHb7MU1vAOpi0GhKD84bvpZe3u/VHz
-         s4qefXwGdMMB4ZFfs0fx1VDxy9dpAx1G0qNXLoPg6XGEfRiwfv03cAdAQ39Prd9K70yZ
-         9J1w==
-X-Gm-Message-State: ACgBeo1R79ghWzhX90JxX7+7p22rRbVc9kLCfr01a2M4JG45M0F6LtmB
-        OGej+YEfN+XmrXmoBFqC4zVG7g==
-X-Google-Smtp-Source: AA6agR4bECAgBJdNC4rnIclnJIrhx1jPSkwqM//T2yRdLncrat9vR3gP5/Myy3t1VemeWXXVUKPiKQ==
-X-Received: by 2002:a05:600c:1c8d:b0:3a6:9d60:faf0 with SMTP id k13-20020a05600c1c8d00b003a69d60faf0mr3848787wms.82.1662142932774;
-        Fri, 02 Sep 2022 11:22:12 -0700 (PDT)
+        bh=UiGnkmWH9iLnrdhPrU2lDZgR3mZDj/1lVrghpfS4bgc=;
+        b=PKzyIjnrD1xIoIT0sjcY8CgWOTRweQ8jeJK8lmiJJqi7EBr0vYZYN7fJf6D8GxZjnX
+         9iZ1NfFALezbxgX5NFVf7uKKKPq3DxKbE8QuLFTnXtJ4fBZ+LxFrsNzWWP0Gnbxv9dZ7
+         iICfGu2K+xyDtL+ukxMUgVZOJPoRIaUWZr6ijgbFxCQbHvce6I5SnqOpUqIdkRzEDT1l
+         JkgFhrCepHjNmz6bsBgXNi1uezFIv/SIMlXg1VVKgVjQmtMXdPtFGzJcgIUaF/Kwde7S
+         N9gkZY4n0qdQBPJ6/YMUG7YX8+mx0c3LorMu54rFnpdOdOvjGEGNHYm2zVA7A6e9jBRf
+         QWPg==
+X-Gm-Message-State: ACgBeo1PWqjd8lnHfivqiepqQ29CuVD8X0eOgpaASKMRjovjhZtWxJRT
+        j+1HcaLxHY+NUpuso4GuCIRZig==
+X-Google-Smtp-Source: AA6agR6eS6uSXkalS5S5mkAzDMTgTkYyNru/CqV+NIhwqEG+B0Lv2KKm4WvxlXq2+4qR5ux20YX6YQ==
+X-Received: by 2002:a5d:47a6:0:b0:228:473c:b84b with SMTP id 6-20020a5d47a6000000b00228473cb84bmr1957625wrb.556.1662143470250;
+        Fri, 02 Sep 2022 11:31:10 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id v10-20020a05600c15ca00b003a5dadcf1a8sm2701188wmf.19.2022.09.02.11.22.09
+        by smtp.gmail.com with ESMTPSA id w10-20020a05600c014a00b003a4efb794d7sm2787122wmm.36.2022.09.02.11.31.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Sep 2022 11:22:12 -0700 (PDT)
-Date:   Fri, 2 Sep 2022 21:22:08 +0300
+        Fri, 02 Sep 2022 11:31:09 -0700 (PDT)
+Date:   Fri, 2 Sep 2022 21:31:06 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Li Jun <jun.li@nxp.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clocks: imx8mp: Add ID for usb suspend
- clock
-Message-ID: <YxJJ0IQ1Gu1lp02p@linaro.org>
-References: <1661328262-3867-1-git-send-email-jun.li@nxp.com>
+        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH V3 2/8] clk: imx93: drop of_match_ptr
+Message-ID: <YxJL6re6XuCPGlta@linaro.org>
+References: <20220830033137.4149542-1-peng.fan@oss.nxp.com>
+ <20220830033137.4149542-3-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1661328262-3867-1-git-send-email-jun.li@nxp.com>
+In-Reply-To: <20220830033137.4149542-3-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-24 16:04:21, Li Jun wrote:
-> usb suspend clock has a gate shared with usb_root_clk.
+On 22-08-30 11:31:31, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Signed-off-by: Li Jun <jun.li@nxp.com>
-
-Applied both, thanks!
-
+> There is build warning when CONFIG_OF is not selected.
+> >> drivers/clk/imx/clk-imx93.c:324:34: warning: 'imx93_clk_of_match'
+> >> defined but not used [-Wunused-const-variable=]
+>      324 | static const struct of_device_id imx93_clk_of_match[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~
 > 
-> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-> index 9d5cc2ddde89..1417b7b1b7df 100644
-> --- a/include/dt-bindings/clock/imx8mp-clock.h
-> +++ b/include/dt-bindings/clock/imx8mp-clock.h
-> @@ -324,8 +324,9 @@
->  #define IMX8MP_CLK_CLKOUT2_SEL			317
->  #define IMX8MP_CLK_CLKOUT2_DIV			318
->  #define IMX8MP_CLK_CLKOUT2			319
-> +#define IMX8MP_CLK_USB_SUSP			320
->  
-> -#define IMX8MP_CLK_END				320
-> +#define IMX8MP_CLK_END				321
->  
->  #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
->  #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
+> The driver only support DT table, no sense to use of_match_ptr.
+> 
+> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
+Stephen will you pick this patch?
+
+I'll take the rest through my tree.
+
+> ---
+>  drivers/clk/imx/clk-imx93.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index f5c9fa40491c..dcc41d178238 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -332,7 +332,7 @@ static struct platform_driver imx93_clk_driver = {
+>  	.driver = {
+>  		.name = "imx93-ccm",
+>  		.suppress_bind_attrs = true,
+> -		.of_match_table = of_match_ptr(imx93_clk_of_match),
+> +		.of_match_table = imx93_clk_of_match,
+>  	},
+>  };
+>  module_platform_driver(imx93_clk_driver);
 > -- 
-> 2.34.1
+> 2.37.1
 > 
