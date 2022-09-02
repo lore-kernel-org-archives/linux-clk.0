@@ -2,108 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AE1ECAAD5
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 13:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DB9C001B5
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 15:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237835AbiIBNwh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Sep 2022 09:52:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47452 "EHLO
+        id S235741AbiIBPVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Sep 2022 11:21:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238303AbiIBNwH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 09:52:07 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43D91114D8
-        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 06:26:36 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id cu2so3978405ejb.0
-        for <linux-clk@vger.kernel.org>; Fri, 02 Sep 2022 06:26:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=ZF/uMwTcnfyz2qEE7xRsLAhPm27QsIK3fVdRMITh1go=;
-        b=mtCXZWdp9QgmrYW++Cea2CEB1DgoyAJM1tlVGEe5YBBxfrhzbIOh++mMUvheALAnUJ
-         qglEpw7YAZAqrT0t19/ZFVIhClLwiJuoc+Gc2atWP13qPCL2scgmjjlzWm+XD5L5t84b
-         pDE519WHl1qfcZnXOQxXEsiQfqsGdayCi14KO0qLt1ZVPU7SLwI0KPFrWqryauaiJf19
-         BxwZTV44yNf/DLXwCaIiwcaftVf4ADpFA8ky6TvhyLS5z7cT3imLS15KDFLk04iJvh8i
-         hK8dmoA99XTyG2NO5reAVYM8gTNza6KFWvKuN3AKeOZjjUvJGrGduYP6puiDVkMG6CSe
-         MzCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=ZF/uMwTcnfyz2qEE7xRsLAhPm27QsIK3fVdRMITh1go=;
-        b=wjc9C0nqGYW/VDwXZW8JczuV74Dz6j76VB015ELP/EvS/Z88NdpRykx1xfAJnY4SK5
-         YhUWOr9+n386qE4I3La0Mg0v+tN+PqS7s46M9LKiP9Bd9FllwppKNm6CRvbzNwzQFPUp
-         3nOEEBpwe9C0K8HDX3J2WsMSrGqt/PoW5IDItQGXjcAZqYiH/6uHoXrK6viNbFDEZ+io
-         BQu/UcnyhvS35t3wSzUnYeoyUXfDYJ65n3iGvPMX94m0bsaHOPSqHwM7VUrBHbNh1CDV
-         CQGBrJzUD2th0CF3C3JPbMVmyFMDUWhBqoSfaNqIkiwmIkugXaG60ySuecKF7iNZnJHV
-         LfoQ==
-X-Gm-Message-State: ACgBeo2si4+7ogqNR2N6Quo8xn1xFIKxNxJw4MLdqZJqeoyH7OXVRUPm
-        bUbX3u2n/eq9m6QU79INh6A4JZB4L/6ESXsiQmuO/w==
-X-Google-Smtp-Source: AA6agR6uVeydIrFZMSXhTDDYS4+Yng+f3hQTQnzA1QcrBi8I6dCnkKtn5QHHr9QNmRCaKQoIFPtEWdFKnqttE3hhFYA=
-X-Received: by 2002:a17:907:1c89:b0:741:4453:75be with SMTP id
- nb9-20020a1709071c8900b00741445375bemr21506072ejc.208.1662125177323; Fri, 02
- Sep 2022 06:26:17 -0700 (PDT)
+        with ESMTP id S235655AbiIBPVS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 11:21:18 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2783614DCFF
+        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 07:54:02 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id F189F320046F;
+        Fri,  2 Sep 2022 10:53:09 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 02 Sep 2022 10:53:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1662130389; x=1662216789; bh=C5Hb0KB++J
+        dkA8G9UgzJnFav4ytTHjncJi2+Rsn4LaU=; b=DVEPs8cpGiMS4azdOwVTpFKoDC
+        CibHbfJIVujwrJNqwMTmqLQcFesiZpEkpjJEFZf7rx8rY9Ilzlj3Gzyyrwt1uc/d
+        QH3IDwdRNVLG2Mp6IpOOGAh0Px07caXcqhs3wuVACELFyzsjhGgm/26Ty5XPnj1p
+        CGPSuI5It4B34+ESV/M7Xpfs//oKzVa4IC7JuKRNe2hahuheuJwaEBbs8gyZSM3A
+        L1rCddOrkkdSdlezQrBS+3Ekzvl5zGR2EhaPX6gZIS1upAuBZSoNWJU75VnBxnEF
+        v52gXScLCwM4sX+8Z8SK5qbdELKSwaayjcNFD7z6WWoG4m0L76MHQRFEsfYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1662130389; x=1662216789; bh=C5Hb0KB++JdkA8G9UgzJnFav4ytT
+        HjncJi2+Rsn4LaU=; b=KUmCadieg8I6Er0HdxtHBSGy8Nd7iSen9Hv4aWE2Jdh7
+        yVlFeUFjoaH5znHoNvgfhtbfQMO4Rt9jqiw0eGXtwLhkB0x5uhV+ViO2SXEhRWb6
+        teX9Nv/1tLhgS5yQhWKTGtwbpvCAD0PwysmEh/GoLKERf1S4RZOiKgFbZMY5SRo6
+        gbhdyPxnrQIcJ1d/G2ngyh0Q6X2E/XEIqMJg0bJk7Zw5moJc+4/TAt4DovdX4Hkk
+        wv3nqRnMNLYB+rOetMD5dsdW786JJYav5B2OxMZI59N9F2WBF5iji/y+fMFnvvH5
+        kFKmCr06FNwa82ErYWoDWZppyEgTODStVKj9tHb3bg==
+X-ME-Sender: <xms:1BgSY_-AIlRPy8dEnpmwcHgdKaYbn7A5AZ0fylFO8y_OglGA0_qQwA>
+    <xme:1BgSY7sioCcup-UIFJBzIEPB7CoYwT0FcYXfjn3S_ikSVBiGZAEC5-wUGAW2SBuTv
+    6MUs6k1_BT0yKnLl4k>
+X-ME-Received: <xmr:1BgSY9AjJ-SfDgXQMRzddssgkmVbg0ZThRxTClTlnElichP_zLs3u96gUQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdeltddgkeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:1BgSY7eLevfMW0R1CYbxvzwIPG8FLRpGVpMF-tYIuIfiOKs8Ey14hQ>
+    <xmx:1BgSY0OrqzMpRopdk5fLpOWdd3KGQwC6jwhoJG_1F3Ry4aqY08bkSQ>
+    <xmx:1BgSY9m5oLji8hnne3hOPakRiLonOUnlKDxpfpDZWRlhOW264NNM0A>
+    <xmx:1RgSYzoINtcPztOflA8ieuzI87kdY11kzI5e-ZQdY4-GcEa3sWNAGA>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 2 Sep 2022 10:53:07 -0400 (EDT)
+Date:   Fri, 2 Sep 2022 16:53:05 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v9 00/25] clk: More clock rate fixes and tests
+Message-ID: <20220902145305.znvsrcrcjrpr343c@houat>
+References: <20220816112530.1837489-1-maxime@cerno.tech>
 MIME-Version: 1.0
-References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
- <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com> <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
-In-Reply-To: <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 2 Sep 2022 15:26:06 +0200
-Message-ID: <CACRpkdZwkhvM7JGeisdAyh4Bg2hx5E+dSG89Psb=13hD+wkjoQ@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for i.MXRT1170-evk
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="od35xf5etvu65nln"
+Content-Disposition: inline
+In-Reply-To: <20220816112530.1837489-1-maxime@cerno.tech>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 2:57 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> On 9/2/22 04:06, Linus Walleij wrote:
-> > On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> >
-> >> This patch contains:
-> >> - Update to imxrt_defconfig
-> >> - Devicetree
-> >> - Clock driver
-> >> - Pinctrl driver
-> >
-> > No it does not, I already merged that.
-> >
-> > I think you should probably split up your series per-subsystem so the
-> > clock bindings and changes can be merged separately etc.
-> >
-> > Then the DTS files can be added to the ARM SoC tree as a final step.
-> >
-> > When you send everything in one bundle like this subsystem maintainers
-> > don't know if they can merge e.g. just the clock patches separately
-> > and be done with their part (like what I did with pinctrl).
->
-> Do you think its possible to add Docs for Device tree compatibles that
-> aren't added yet?
 
-Bindings and drivers are orthogonal, we only submit them together
-to provide context for reviewers.
+--od35xf5etvu65nln
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It is also possible to submit device trees with compatibles and entire
-nodes without bindings because there essentially is no real police for
-this. Of course it is not recommended.
+Stephen, Mike,
 
-If you are confident that bindings and device trees will come in the
-same merge window it is fine to merge them separately through different
-trees.
+On Tue, Aug 16, 2022 at 01:25:05PM +0200, Maxime Ripard wrote:
+> Thanks to the feedback I got on the previous series, I found and fixed a
+> number of bugs in the clock framework and how it deals with rates,
+> especially when it comes to orphan clocks.
+>=20
+> In order to make sure this doesn't pop up again as a regression, I've
+> extended the number of tests.
+>=20
+> The first patch reintroduces the clk_set_rate_range call on clk_put, but
+> this time will only do so if there was a range set on that clock to
+> begin with. It should be less intrusive, and reduce the number of
+> potential side effects considerably.
+>=20
+> We then have a fix for the qcom rcg2 issue that has been reported
+> recently.
+>=20
+> All the other patches should be probably be flagged as fixes, but
+> they've never seem to have shown any real-world issues until now, and
+> they aren't all really trivial to backport either, so I'm not sure it's
+> worth it.
+>=20
+> There's also some documentation improvements for recalc_rate and
+> clk_get_rate to hopefully make the documentation less ambiguous and
+> acknowledge that recalc_rate() returning 0 on error is fine.
 
-Yours,
-Linus Walleij
+I'm not sure what to do at that point.
+
+Back in July, you felt uncomfortable merging that series so close to the
+merge window. I've sent a new series as soon as -rc1 was out, got a
+kernelci run to test it and on a number of other platforms. And now
+we're close to rc4, which means that you're going to bring the "we're
+too late now for 6.1, let's target 6.2".
+
+I believe this series fixes a number of real bugs in the CCF, in
+addition to extending quite a lot the unit test coverage of the
+framework. But if you just don't care, please just say so. I really
+don't want to waste any more time rebasing and sending that series, and
+pinging you on a regular basis if it's not going anywhere.
+
+Maxime
+
+--od35xf5etvu65nln
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYxIY0AAKCRDj7w1vZxhR
+xa1PAQCA4XF5b+t8c5oOBQDMpUBTTWKIZClg2QJHV9zXnvyLRQEAsnXg69WCFACn
+4pLQkD3qIhj6uUBaIZ0xstifiV2aPQ0=
+=eeHf
+-----END PGP SIGNATURE-----
+
+--od35xf5etvu65nln--
