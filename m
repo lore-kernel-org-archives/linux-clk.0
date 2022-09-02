@@ -2,109 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4655AECAAD5
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 18:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB845C6FA82
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Sep 2022 18:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbiIBS3F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:29:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39870 "EHLO
+        id S229566AbiIBS3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:29:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbiIBS3E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 14:29:04 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6AB6111AD7
-        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 11:29:02 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id w5so3306098wrn.12
-        for <linux-clk@vger.kernel.org>; Fri, 02 Sep 2022 11:29:02 -0700 (PDT)
+        with ESMTP id S229724AbiIBS3V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Sep 2022 14:29:21 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331D910DE5E
+        for <linux-clk@vger.kernel.org>; Fri,  2 Sep 2022 11:22:14 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id s23so1689587wmj.4
+        for <linux-clk@vger.kernel.org>; Fri, 02 Sep 2022 11:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=samYhApSiue4F9SKFyP/nfGqognVFcP2K4kMA9ZsZNc=;
-        b=cHtVgbwMav8eoXd8UPdlWXEdfUgp0HFb1onFgFRetBNBC3C9+Ayj8ySMHLRpC8mpoI
-         uu1xjT+VxLlRd6TAlgKtfPzQIDsn9Bl/Fr3NohMdkBYzLfcePw8T4Y7ZqiJaid5sQv/V
-         kmXNkqstxszBnhdseyBYT8XWxq/Iqx65BizI0xrklkzdcpiVK+UN/z3O3BrSG2tnn1VR
-         xnmGCj/qnVuBa/mYUaArc7ecTaSm7m+Rxih5UIn8wPZYRF6KMiVOSxS8z/t5d4KK4KXG
-         iqHdfjvtkM2i0ByTDq2Ym8nMNJIiR1aaopvaDVUITRteuK8yFb5/84aCPppJ56w+MJp3
-         U5tw==
+        bh=Ojk6sR1enpNZ4A6UZuJ0vO1AZQgVqYffnIr1R5iYzjs=;
+        b=hSgAt7QMHun6u+JdezesHvolMKXWzxe+bCTJE9Q5nVxNU2NTcqsw1Xm0NE7ImFH64X
+         GTD0bfyzJHGXEAFMoAa62yt0Ek+XP+3uTlpZPZ8rwnqM1Y46rLXyqRT3XWOJxFktwJxT
+         JHGZnltvkyLsOsuAcS2YWOBAG9AzYZfzrDeXiptT6ei99+CYUubhGDIxBZ2CgYol6l0/
+         OGz+NrPXMr8rRHFpQHReyhX+E27bqhcjhZXqqL05FN+r1/4RdIvRCBuNvlE8LYqJ/qy6
+         O7tVs7ODtzCSrg3C3h642tluAW+nWIhrd2cQscJGLuY3hGpk7CBX/fOaebHsrm/IgXdH
+         a0EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=samYhApSiue4F9SKFyP/nfGqognVFcP2K4kMA9ZsZNc=;
-        b=YxdOpUvAJP9b2RCotR0AUN4OrpiqpT7OB6qH1bC9nellqbS1VKPIuU1bb+6Pn/VmEZ
-         u0yrnpGc1374JDdlX7ZBgp4nkq/V3H+vvMJdL5pcU27jJzPQNz2CZ9YKysuqmDBKIqat
-         KjRruoBU5Ahpid+BIuV0PhxflkLHhOSkvAqg1gCS2CbPFTSx1dDig90EzIJwVCaBJ/dt
-         GEgLW87JHvthFesVgIwWznmJj8oH3YBtCmQA7MhNiU/8oPmOXC4vnsddszDxQ4CnBA7E
-         CnMkyFMXY3wLpgPRC35wIcJiuOi+joOp6P4FuWArmMxBKD8Be1euLOhXUaidryb2/4kr
-         Y+Fw==
-X-Gm-Message-State: ACgBeo0YlfoENaCZi2eb5f9MX5Sc1uucSQt06jZG3GVAWPuyddhniIF5
-        8rGhiBoh5/Ml5HjtNfFYnQe4Hw==
-X-Google-Smtp-Source: AA6agR7IA2A7tqMFoUgfORv4pB4nIvZ/RLZmG29cSAtFFoXwwnOsHOOgSNSCSkwoozNdNhUZcFtYpA==
-X-Received: by 2002:a05:6000:184c:b0:223:2c8b:c43c with SMTP id c12-20020a056000184c00b002232c8bc43cmr19132392wri.16.1662143341417;
-        Fri, 02 Sep 2022 11:29:01 -0700 (PDT)
+        bh=Ojk6sR1enpNZ4A6UZuJ0vO1AZQgVqYffnIr1R5iYzjs=;
+        b=Fvotc4TJU7Oewd1B1rIS+W0N3UKKkSvqcXc4Bohaa7nej7EvVMpykfOdvud0jCJ/m0
+         XZuXCp2ytvmGByvR0Xg5TY//kG0Yycsr9se7yG+A34gdA/uvNzGKtV9OW0D+UYQ30KFQ
+         +Fs6LH6pFMiP7fRasmo0kacPcD/gk6mwdYTvpt8gf7gm2/8geBe4yebjZwHDj5ltwcuY
+         Z6JSsRpLSZjSrukCs9vL7mMR66A2Cy9LDxxxiHUHb7MU1vAOpi0GhKD84bvpZe3u/VHz
+         s4qefXwGdMMB4ZFfs0fx1VDxy9dpAx1G0qNXLoPg6XGEfRiwfv03cAdAQ39Prd9K70yZ
+         9J1w==
+X-Gm-Message-State: ACgBeo1R79ghWzhX90JxX7+7p22rRbVc9kLCfr01a2M4JG45M0F6LtmB
+        OGej+YEfN+XmrXmoBFqC4zVG7g==
+X-Google-Smtp-Source: AA6agR4bECAgBJdNC4rnIclnJIrhx1jPSkwqM//T2yRdLncrat9vR3gP5/Myy3t1VemeWXXVUKPiKQ==
+X-Received: by 2002:a05:600c:1c8d:b0:3a6:9d60:faf0 with SMTP id k13-20020a05600c1c8d00b003a69d60faf0mr3848787wms.82.1662142932774;
+        Fri, 02 Sep 2022 11:22:12 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id m7-20020a5d6a07000000b0022586045c89sm2115203wru.69.2022.09.02.11.28.58
+        by smtp.gmail.com with ESMTPSA id v10-20020a05600c15ca00b003a5dadcf1a8sm2701188wmf.19.2022.09.02.11.22.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Sep 2022 11:29:00 -0700 (PDT)
-Date:   Fri, 2 Sep 2022 21:28:57 +0300
+        Fri, 02 Sep 2022 11:22:12 -0700 (PDT)
+Date:   Fri, 2 Sep 2022 21:22:08 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/12] clk: imx8mm: don't use multiple blank lines
-Message-ID: <YxJLafhnMVUygQTs@linaro.org>
-References: <20220722215445.3548530-1-marcel@ziswiler.com>
- <20220722215445.3548530-13-marcel@ziswiler.com>
+To:     Li Jun <jun.li@nxp.com>
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clocks: imx8mp: Add ID for usb suspend
+ clock
+Message-ID: <YxJJ0IQ1Gu1lp02p@linaro.org>
+References: <1661328262-3867-1-git-send-email-jun.li@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220722215445.3548530-13-marcel@ziswiler.com>
+In-Reply-To: <1661328262-3867-1-git-send-email-jun.li@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-07-22 23:54:45, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 22-08-24 16:04:21, Li Jun wrote:
+> usb suspend clock has a gate shared with usb_root_clk.
 > 
-> Avoid the following checkpatch warning:
-> 
-> include/dt-bindings/clock/imx8mm-clock.h:284: check: Please don't use
->  multiple blank lines
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Li Jun <jun.li@nxp.com>
 
-Applied this one, thanks!
+Applied both, thanks!
 
 > 
-> ---
-> 
-> (no changes since v1)
-> 
->  include/dt-bindings/clock/imx8mm-clock.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-> index 47c6f7f9582c..1f768b2eeb1a 100644
-> --- a/include/dt-bindings/clock/imx8mm-clock.h
-> +++ b/include/dt-bindings/clock/imx8mm-clock.h
-> @@ -281,7 +281,6 @@
->  #define IMX8MM_CLK_CLKOUT2_DIV			256
->  #define IMX8MM_CLK_CLKOUT2			257
+> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+> index 9d5cc2ddde89..1417b7b1b7df 100644
+> --- a/include/dt-bindings/clock/imx8mp-clock.h
+> +++ b/include/dt-bindings/clock/imx8mp-clock.h
+> @@ -324,8 +324,9 @@
+>  #define IMX8MP_CLK_CLKOUT2_SEL			317
+>  #define IMX8MP_CLK_CLKOUT2_DIV			318
+>  #define IMX8MP_CLK_CLKOUT2			319
+> +#define IMX8MP_CLK_USB_SUSP			320
 >  
-> -
->  #define IMX8MM_CLK_END				258
+> -#define IMX8MP_CLK_END				320
+> +#define IMX8MP_CLK_END				321
 >  
->  #endif
+>  #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
+>  #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
 > -- 
-> 2.35.1
+> 2.34.1
 > 
