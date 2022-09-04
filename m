@@ -2,166 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE9FECAAD4
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Sep 2022 13:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58378ECAAD3
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Sep 2022 14:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbiIDNtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Sep 2022 09:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60006 "EHLO
+        id S234145AbiIDOLQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Sep 2022 10:11:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232793AbiIDNti (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Sep 2022 09:49:38 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260E7EE29;
-        Sun,  4 Sep 2022 06:49:35 -0700 (PDT)
-Received: from [192.168.1.138] ([37.4.248.23]) by mrelayeu.kundenserver.de
+        with ESMTP id S234115AbiIDOLP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Sep 2022 10:11:15 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23A5131EE5;
+        Sun,  4 Sep 2022 07:11:13 -0700 (PDT)
+Received: from stefanw-SCHENKER ([37.4.248.23]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MxV8b-1pJeKH3jY1-00xpCC; Sun, 04 Sep 2022 15:49:13 +0200
-Message-ID: <9afe7000-d4c7-0b67-1dfd-7200efe73c0e@i2se.com>
-Date:   Sun, 4 Sep 2022 15:49:11 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4] clk: bcm2835: Round UART input clock up
-Content-Language: en-US
-To:     "Ivan T. Ivanov" <iivanov@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+ 1M6lUk-1oS5iI2clq-008K9h; Sun, 04 Sep 2022 16:10:56 +0200
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>
-Cc:     Phil Elwell <phil@raspberrypi.com>,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220829132943.144608-1-iivanov@suse.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220829132943.144608-1-iivanov@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:YOR8PzuYn1YtGuD1bVX7oiT3qrgTf+omYyvhdw/ZqL9xDSoCYBE
- duBCBWHQLt4IqsOAASUfFThCrPFeNw09587dL2dmbn57MDbW0/a0dZQkLEgkB0huJL6yz+S
- 1+KAZ/dVlwbSiCZmHL38WVdijHZew1gGX/Qt12rTYnhyX/7JXUNnRCd0LQE6cbHjZ0bc71w
- Tisgjs0VduAyK3loe7fgg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xopYdvfmTH4=:gvtCwvn2iaYlN2XuPpbNiT
- 1WogNH/P9FxWmF+trKS87e0Fs+fHvpyJSu5CRzoFK5HI8Ho038VRqq/atYUVh92GGdlP3wkqw
- 5srDZi+OtEuIWQLm7tO16Jyxs6KzyaSafzaHgKVGGIxG74myCHettadrjhDYPAW6+aW63BwW4
- vBGG25FzehgMFU9ugL5hT7wE45ywORC2wDF5EpByixunDaa1NxaWcO+8r0PGIp2X//Wj0dgJP
- xixsIGyDttQ+Mk+MA9MaPA040tzRI0hxmq5/BYY0EAwfShnnu5KOfvmiHxRHjsWJ6d+L3kgbP
- NZS3R6ycD4Fan/2uw2doL5gkxW9LJom20LZS7cVoQYLv+nq2cTsttd1veJlZVXNsC57q/NCM4
- D4433raH5Oi8qHC4EOSsnKhnaFOdsPdgh4JSZLPLTjOcXnteQ3RJrBh/tmhvlQiQOSQWUig0g
- pnkTtetBVMEU7JLQdIiDvq/txUknq/xMZsKPHbKxqRUx4j+cmymslK9YUvC4nDx4eTkvnxqcB
- A5w5ZpUSckrBevKCBQvX2+fqxOqxGZEjZAc7q1fYZneIuczp/Ebk8d74Z/oiDBRhq9vM7aiMI
- AO9Q+SdwLrmantfZD8V9ma/pmp91fBg6kVhDK1NN2TKJdGlz+nXYCT26I9ypPBInH2oTA4oZY
- lVH+70kgxCAi9YyYpWx3HcHb+TsS3lIQZuNN4YJs7MqZcA212UyVxr0npttSjbqESBU7zY2da
- b3mKGSRqCC0fvyqqejz+Urxj9nym7OY+FyqmCVcL3iQgjGKERb80Ap5jFEXFxBX+iQwKaO4of
- qSylrvI
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH] clk: bcm2835: fix bcm2835_clock_rate_from_divisor declaration
+Date:   Sun,  4 Sep 2022 16:10:37 +0200
+Message-Id: <20220904141037.38816-1-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:6oSaHcTOotAL64NBQsFwW8u0vvbfsKei7LqGC3+lO+x1QPcXby7
+ VT+BeGToJk56f7xT+x0OzbJsJqcKAElsInVqjK6xvy33uMlgFEYplwiCWayB7hHgLfdc8cl
+ 6pbheYHb2iUQkwvibDn3NVMzQYZwBwYU8ubZQJ9kQLcmTyMd7Z5ODDQCs4BWNzVljJY9S3y
+ nKapWwmV0tvAZaVgGdwIw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YNM5B2ppFuI=:YdJ7zX5WteTZAf+raa7NgE
+ JVP0HieizKyN6kB44LkkZ3IfOqyq6PO8t/JOqeAQPxRxHUUnW1+dTptLE8Vbn7iXF2zCHk0qM
+ 7JwLeyLhuE3Tl4Ghna9H6mbTCFS5hvf5LLYwYr90KZ4Ce28PXQb868DI5Tz6tIFxAyh+k/X37
+ 8FIJ3Wzd7e8CWaOMY9bqr7Oebwf53yxa4hpFo26OEzq6aoKN4j2ThmTtdpmIlvaEqvC5NDb4n
+ Gqn8oropAwn6+DjKEpFJ4WxxjcbjTr6RkaKm7Bp+ZNKqjZ9BlWUIBHaBFaVDlppmUYV49qGXN
+ yiAoPtCCunoISJe5pRs8Rk/Dp2M0yFnUiPDW4KAebo0yL+xglRSmytmseQHjNn6wOjY9VyYXU
+ GsArdFvjNwpjrJzyaBqy+Y5YTge001jlsO6rT02a1HCLB31wtP4vHKt2ObsRllB/bxc9BDmUB
+ k4iGeDaZQpt1fZY535eHm37uIIeeckg0eeiU7yL/6qg+vj2YczGDcV0IecM5JcvFOaHMU+nDW
+ qFvO++dFe6NKfIjxAmFPdZTwSr3jLJqenLET5LZOp/lZk8T7SrBCQGUvqn+n8+uf7Uj9QLPMT
+ I8EouWVXiaQ6+a17Ad83FYDgG6jLU2FcpxLwVpaoveZJ0r23lIU3SjeYUifpzKAno1DQZHjcb
+ 8nxaTj1+9fRaDo/UdGwvgBX4bpvJkGeGx8XYu1kl5ATma+/LqvYT5qlXhdSLEvp6w0wNC8v+x
+ 4woTCKC3JTIQoOUmIKeg8usjxE8EtqFJofMP/3BPqIVWMSaWBQ2gk96DKFVoRSZCGTlgpUJh6
+ UU7Jg4WdWSsztgwjiwdieLO8EHM0w==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ivan,
+The return value of bcm2835_clock_rate_from_divisor is always unsigned
+and also all caller expect this. So fix the declaration accordingly.
 
-Am 29.08.22 um 15:29 schrieb Ivan T. Ivanov:
-> It was reported that RPi3[1] and RPi Zero 2W boards have issues with
-> the Bluetooth. It turns out that when switching from initial to
-> operation speed host and device no longer can talk each other because
-> host uses incorrect UART baud rate.
->
-> The UART driver used in this case is amba-pl011. Original fix, see
-> below Github link[2], was inside pl011 module, but somehow it didn't
-> look as the right place to fix. Beside that this original rounding
-> function is not exactly perfect for all possible clock values. So I
-> deiced to move the hack to the platform which actually need it.
->
-> The UART clock is initialised to be as close to the requested
-> frequency as possible without exceeding it. Now that there is a
-> clock manager that returns the actual frequencies, an expected
-> 48MHz clock is reported as 47999625. If the requested baud rate
-> == requested clock/16, there is no headroom and the slight
-> reduction in actual clock rate results in failure.
->
-> If increasing a clock by less than 0.1% changes it from ..999..
-> to ..000.., round it up.
->
-> [1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
-> [2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
->
-> Cc: Phil Elwell <phil@raspberrypi.com>
-> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
-> ---
->
-> Changes since v3
-> * Rework 'scaler' calculation to avoid overflow
-> * Update Phil Elwell email address
->
-> Changes since v2
-> * Added more information in commit message
-> * Changed hand crafted round function with the one form math.h
->
-> Changes since v1
-> Make bcm2835_clock_round() static to fix following warning
-> when compiling for riscv:
-> drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
-> Reported-by: kernel test robot <lkp@intel.com>
->
->   drivers/clk/bcm/clk-bcm2835.c | 35 +++++++++++++++++++++++++++++++++--
->   1 file changed, 33 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 48a1eb9f2d55..26a5c9a0dd34 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -30,6 +30,7 @@
->   #include <linux/debugfs.h>
->   #include <linux/delay.h>
->   #include <linux/io.h>
-> +#include <linux/math.h>
->   #include <linux/module.h>
->   #include <linux/of_device.h>
->   #include <linux/platform_device.h>
-> @@ -502,6 +503,8 @@ struct bcm2835_clock_data {
->   	bool low_jitter;
->   
->   	u32 tcnt_mux;
-> +
-> +	bool round_up;
->   };
->   
->   struct bcm2835_gate_data {
-> @@ -993,12 +996,34 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
->   	return temp;
->   }
->   
-> +static unsigned long bcm2835_clock_round(unsigned long clk)
-sorry, i missed this in my last mail. Please use "rate" instead of "clk" 
-here.
-> +{
-> +	unsigned long scaler;
-> +	unsigned long limit;;
-> +
-> +	limit = clk / 100000;
-> +
-> +	scaler = 1;
-> +	while (scaler < limit)
-> +		scaler *= 10;
-> +
-> +	/*
-> +	 * If increasing a clock by less than 0.1% changes it
-> +	 * from ..999.. to ..000.., round up.
-> +	 */
-> +	if ((clk + scaler - 1) / scaler % 1000 == 0)
-> +		clk = roundup(clk, scaler);
-> +
-> +	return clk;
-> +}
-> +
->   
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 48a1eb9f2d55..9e9f8b242958 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -966,9 +966,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 	return div;
+ }
+ 
+-static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+-					    unsigned long parent_rate,
+-					    u32 div)
++static unsigned long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
++						     unsigned long parent_rate,
++						     u32 div)
+ {
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 	u64 temp;
+-- 
+2.34.1
+
