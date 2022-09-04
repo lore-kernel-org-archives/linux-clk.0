@@ -2,90 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AFCECAAD5
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Sep 2022 22:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F3AECAAD4
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Sep 2022 13:39:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbiICWls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Sep 2022 18:41:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60318 "EHLO
+        id S233580AbiIDNjC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Sep 2022 09:39:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiICWlr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Sep 2022 18:41:47 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7537D474F1;
-        Sat,  3 Sep 2022 15:41:46 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id 9so2001774plj.11;
-        Sat, 03 Sep 2022 15:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=koGSFeL8YK66YnxxoLTJOiqK09bB1eXPLPZIIXte/UA=;
-        b=ZXlItbIUXZJeBZNi4fNoOofx++nkBztOPswlufi7hsJZuOvgl9SqtGtwpAdeFYlYBk
-         Xe10dyBgBbpZJxD27CP9QLpvKwUWTyCj9VUTj9ZL47QtWZULNg54LFBwryD1qjcnHw+j
-         7OIHR3kbmDGdP5rf0TVsEZWWtvkyXvf/i8FOsts0U66noZp6g31LEyl0oVN4k6UDDyn6
-         tjeiFz62s8NnaJg2MzWofok2qg1GITaAFY+wsFSTQehv2ZiYx+Ty5kr6elofC1NNAjNW
-         6mkcFhQUGgmEHwlS8uKX3Ao27jjJR3bnKA3Jwv6QQw+1phsLAM3FdqrG31ZiwZdJrpdr
-         hbcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=koGSFeL8YK66YnxxoLTJOiqK09bB1eXPLPZIIXte/UA=;
-        b=gYEBVp3E1Ap+ssC3zieQWZiOoFyRkmj6HtKAg6PmF2y/Ryv0SNWEdym3tSKeWexAIQ
-         5/BuD/sGsivXbypG9tpHetgaXlO2ucxQJ3AnzxkI4ZfBzH1PArazhe7jtLDtJHDG8QlO
-         NSBovVABsVMTUO+JTylS/Hubh2KryjjZqw+QSn+AFngBc4yylDxLH5CK5i4JWYjOMazA
-         qfNkzV0MBRB3kj8lUMHGDFlxEz1AoP96Olojl5HbfVy5hiIn34R7qTL47+MIknIWaDrZ
-         bGCaswyW3iekV0F440MgaEkcI0UCEeKe1rae1TPzdlvSrdd8WnE/1pFJ9a+m29AdS6ye
-         3rkw==
-X-Gm-Message-State: ACgBeo3mOYO9RP33bHvVn2aLdaxLLYtFF9PnFKEcv7wt3br2fR6b7AWc
-        2m+uPTSWJsnU7XAUT5AjCXdTW+gfIYyExA==
-X-Google-Smtp-Source: AA6agR7xv/T1Al2kzbEb0TtlJsWkZsw68moEA8j2FQ+m61VOwRRMvmO56czT0JY0t3aWBR/opjHQJw==
-X-Received: by 2002:a17:902:8307:b0:172:e611:491f with SMTP id bd7-20020a170902830700b00172e611491fmr41752428plb.111.1662244904427;
-        Sat, 03 Sep 2022 15:41:44 -0700 (PDT)
-Received: from localhost.localdomain (lily-optiplex-3070.dynamic.ucsd.edu. [2607:f720:1300:3033::1:4dd])
-        by smtp.googlemail.com with ESMTPSA id i15-20020a17090a2a0f00b001fddb3a5481sm7502193pjd.49.2022.09.03.15.41.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Sep 2022 15:41:44 -0700 (PDT)
-From:   Li Zhong <floridsleeves@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Li Zhong <floridsleeves@gmail.com>
-Subject: [PATCH v2] drivers/clk/clk: check return value of clk_pm_runtime_get()
-Date:   Sat,  3 Sep 2022 15:41:25 -0700
-Message-Id: <20220903224125.2276690-1-floridsleeves@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229627AbiIDNjB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Sep 2022 09:39:01 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0A533360;
+        Sun,  4 Sep 2022 06:38:59 -0700 (PDT)
+Received: from [192.168.1.138] ([37.4.248.23]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N1x6X-1pWnNZ3lcH-012Gv1; Sun, 04 Sep 2022 15:38:41 +0200
+Message-ID: <5afffbfc-19d8-3e55-f89f-70dfa9cd8a52@i2se.com>
+Date:   Sun, 4 Sep 2022 15:38:39 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v4] clk: bcm2835: Round UART input clock up
+Content-Language: en-US
+To:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>
+Cc:     Phil Elwell <phil@raspberrypi.com>,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220829132943.144608-1-iivanov@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220829132943.144608-1-iivanov@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:OvNBCDqBHOPvZXipEMCMhrozSj4KEMvWn/OTOaxH6D8vjoq30RM
+ 3rCVyQ8E6cKGCfhkoWtIY5N2CjQyErcQ/PBh7+EyKQaQjEmjw3TkvelGnX/JqrRLnwlNshk
+ Sd0atQc4M9RNshccsfDbY/ZFkxufpaWBrQv68y/NrHnzkMl0dsejDsKZPg9OtJtXio+MRGJ
+ cWE3jek6jZQ7UEtriRsAQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dzKqiF6nwdY=:ZRi8sp5gJ3GLRYauFdtgYa
+ WwapqoAdgbJynVQYJuOCGSrnWmMn4UBQ6/39p3WBwVMt5FpA2bfqF1+PCQIH77z2c+r7ufGBG
+ ze+Kw3CLda1rJnq9Otu6wbQDn0ZvOpMCMVGSA6vHnIV2X9FI9AL9NOIP/qYR+9G6fTK6UObJo
+ hlKr8pwnKNrrXxj3OHBvbquwrHf+Nje/fkzOIs6ia6Cupk3U6qEnL+YpwR13QrAhxCsa7XCSX
+ XkBjBV8SSPM0VuQZC45b8dIQX1Q6cOJxiBqPtlzTS7FiFqGXAgKIQn/ojmeZAzQCIi/GLjOqd
+ jw89A6bG0mjifz7vm1gfX/ed78q861xp4z797V54QKIdEHz0CY7VpBIQF6guc6aur6NOhnayu
+ zzvqKT/aZL2MeW/KV3D8+9M5CdNoLme7fVkDnulsU2IOA6+QIG5XNgwDU2h32LUMD7WtZVACN
+ L1UGkpmN/4QriMgGicA10J/V8XgcFw8ug23yoi5tfDakd2G/wXAFHpC3UzuJ0aQQtw14V/ywB
+ uD6fXMB1jUN+C0pUwjyXAWebs6njcsRPfQYoYWp5/XMqYncRYvrH+Z8mlaV1vNbKUZHRJ3vYn
+ T/0awRrU2SG8APpQz5whoTTu0lXnhr03U+dA6EzULaiZuYCKM024qx1eX0EZXSO4IRu0z8yA0
+ CbH3Yo9ArV5nV3gng/vqz9npMKwPkGX2mV2wGFpOTyCx9buhKHDy8JTHgCmjXj9wz6FsfmNYx
+ K4Oge7JhysWkPKhAIhVoU/jD9SDwaucz2XZfBVy86cxibThmoW+EnkNKEzEgCKHgkimfuiUxN
+ hUw+1+Myjv4jiD+MHcQ4nNw/Y3isA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_pm_runtime_get() could fail. Check the return status.
+Hi Ivan,
 
-Signed-off-by: Li Zhong <floridsleeves@gmail.com>
----
- drivers/clk/clk.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Am 29.08.22 um 15:29 schrieb Ivan T. Ivanov:
+> It was reported that RPi3[1] and RPi Zero 2W boards have issues with
+> the Bluetooth. It turns out that when switching from initial to
+> operation speed host and device no longer can talk each other because
+> host uses incorrect UART baud rate.
+> 
+> The UART driver used in this case is amba-pl011. Original fix, see
+> below Github link[2], was inside pl011 module, but somehow it didn't
+> look as the right place to fix. Beside that this original rounding
+> function is not exactly perfect for all possible clock values. So I
+> deiced to move the hack to the platform which actually need it.
+> 
+> The UART clock is initialised to be as close to the requested
+> frequency as possible without exceeding it. Now that there is a
+> clock manager that returns the actual frequencies, an expected
+> 48MHz clock is reported as 47999625. If the requested baud rate
+> == requested clock/16, there is no headroom and the slight
+> reduction in actual clock rate results in failure.
+> 
+> If increasing a clock by less than 0.1% changes it from ..999..
+> to ..000.., round it up.
+> 
+> [1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
+> [2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
+> 
+> Cc: Phil Elwell <phil@raspberrypi.com>
+> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+> ---
+> 
+> Changes since v3
+> * Rework 'scaler' calculation to avoid overflow
+> * Update Phil Elwell email address
+> 
+> Changes since v2
+> * Added more information in commit message
+> * Changed hand crafted round function with the one form math.h
+> 
+> Changes since v1
+> Make bcm2835_clock_round() static to fix following warning
+> when compiling for riscv:
+> drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+>   drivers/clk/bcm/clk-bcm2835.c | 35 +++++++++++++++++++++++++++++++++--
+>   1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 48a1eb9f2d55..26a5c9a0dd34 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -30,6 +30,7 @@
+>   #include <linux/debugfs.h>
+>   #include <linux/delay.h>
+>   #include <linux/io.h>
+> +#include <linux/math.h>
+>   #include <linux/module.h>
+>   #include <linux/of_device.h>
+>   #include <linux/platform_device.h>
+> @@ -502,6 +503,8 @@ struct bcm2835_clock_data {
+>   	bool low_jitter;
+>   
+>   	u32 tcnt_mux;
+> +
+> +	bool round_up;
+>   };
+>   
+>   struct bcm2835_gate_data {
+> @@ -993,12 +996,34 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+>   	return temp;
+>   }
+>   
+> +static unsigned long bcm2835_clock_round(unsigned long clk)
+> +{
+> +	unsigned long scaler;
+> +	unsigned long limit;;
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7fc191c15507..09353f7bf052 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2981,8 +2981,12 @@ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
- 				     int level)
- {
- 	struct clk_core *child;
-+	int ret;
-+    
-+    ret = clk_pm_runtime_get(c);
-+    if (ret)
-+        return;
- 
--	clk_pm_runtime_get(c);
- 	clk_summary_show_one(s, c, level);
- 	clk_pm_runtime_put(c);
- 
--- 
-2.25.1
+please remove the additional ';'
 
+Except if this:
+
+Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
+
+> +
+> +	limit = clk / 100000;
+> +
+> +	scaler = 1;
+> +	while (scaler < limit)
+> +		scaler *= 10;
+> +
+> +	/*
+> +	 * If increasing a clock by less than 0.1% changes it
+> +	 * from ..999.. to ..000.., round up.
+> +	 */
+> +	if ((clk + scaler - 1) / scaler % 1000 == 0)
+> +		clk = roundup(clk, scaler);
+> +
+> +	return clk;
+> +}
+> +
+>   static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+>   					    unsigned long parent_rate)
+>   {
+>   	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+>   	struct bcm2835_cprman *cprman = clock->cprman;
+>   	const struct bcm2835_clock_data *data = clock->data;
+> +	unsigned long rate;
+>   	u32 div;
+>   
+>   	if (data->int_bits == 0 && data->frac_bits == 0)
+> @@ -1006,7 +1031,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+>   
+>   	div = cprman_read(cprman, data->div_reg);
+>   
+> -	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
+> +	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
+> +
+> +	if (data->round_up)
+> +		rate = bcm2835_clock_round(rate);
+> +
+> +	return rate;
+>   }
+>   
+>   static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
+> @@ -2143,7 +2173,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+>   		.div_reg = CM_UARTDIV,
+>   		.int_bits = 10,
+>   		.frac_bits = 12,
+> -		.tcnt_mux = 28),
+> +		.tcnt_mux = 28,
+> +		.round_up = true),
+>   
+>   	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+>   	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
