@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFA2ECAAD3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5A9ECAAD5
 	for <linux-clk@archiver.kernel.org>; Mon,  5 Sep 2022 10:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237308AbiIEKEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S237304AbiIEKEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 5 Sep 2022 06:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33150 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236756AbiIEKEf (ORCPT
+        with ESMTP id S236507AbiIEKEf (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 06:04:35 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B85AE67;
-        Mon,  5 Sep 2022 03:04:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271E4A46C;
+        Mon,  5 Sep 2022 03:04:30 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E31566601EB9;
-        Mon,  5 Sep 2022 11:04:29 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 94FD16601EAD;
+        Mon,  5 Sep 2022 11:04:27 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1662372270;
-        bh=7wZZwX2byJ4bhuDUY3CPvHNsdJ6p7fqNLcyFmuOhg2o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ELergRBx8+RjDDAewBaOrNDUgYy8kTWLlARjWjWu9MXGIfroupTcA6RqUMft7bD6h
-         BKckz5H0mz3pXYY7HNAnupWDCdg6UdBtaKuNYshFbEKtSXf1bVNdP4rngSaKAon/+J
-         Eh4ym355pzWyT6z6U8gVuLs3allJ+HL5Yo12b+B4IkIA9gEXe4o4HomNWxsvSCCCR4
-         KfiAtRbF9HudKuOU8n84hLgqHSJ9aqW0P7WMLvhnlvUFaBXliWfuZe/f2uDOwsn3ic
-         TAhEFV6DNMxt120k1nHysYP+un8rgj6y5L4WWvMAtU33OwsP8+sZ2Fi1EvWVgmE2t+
-         Di/hPXhV+GQBQ==
+        s=mail; t=1662372268;
+        bh=q3ggcdRFxWtvuQH/J4p7gIno75V1s953WThVIwULfWg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nzmA17bEeJPqoBrg4P8jZ97yMVBtqGVAwMYj/po8VQR1JpOm39PDgodEqv2bfulRn
+         ryxH6bsyJucdcBUMYeyHpiLy4fTKt9O/cuXNka/UDheR4dA+v2aDa1702D0KOq8EKZ
+         IJ+sZAotyY5/fWyMRIxGWPK3M+ToRH8z3MlLnTeddgUICnMXs4JRhO3HYpUJctpXd+
+         BaIc6Hy1tUdsjmrzvU4biH4ANrtIiNmIWS0pYvmmu0X19ZAs3l5+k34y7LMj1HvvMB
+         98xWrQ1xHCBITpPZOtBHc/F65Gm0QQ5aOaP7unmPXwWFz2+lxr2OawFZ5tUtihW0gv
+         +G9Fl6fiZGeSQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     matthias.bgg@gmail.com
@@ -44,49 +44,67 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
-Subject: [PATCH 02/10] clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
-Date:   Mon,  5 Sep 2022 12:04:08 +0200
-Message-Id: <20220905100416.42421-3-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH 00/10] MediaTek SoC safe clock muxing and GPU clocks
+Date:   Mon,  5 Sep 2022 12:04:06 +0200
+Message-Id: <20220905100416.42421-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220905100416.42421-1-angelogioacchino.delregno@collabora.com>
-References: <20220905100416.42421-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chen-Yu Tsai <wenst@chromium.org>
+This series adds a clock notifier for MediaTek clock muxes, required
+in order to achieve stability for GPU DVFS.
 
-The only clock in the MT8183 MFGCFG block feeds the GPU. Propagate its
-rate change requests to its parent, so that DVFS for the GPU can work
-properly.
+The GPU frequency scaling mechanism requires us to switch the GPU
+mux clock to a safe parent which frequency is always less or equal
+to the "current" GPU frequency before reprogramming its dedicated
+"MFG" PLL.
+This is needed because the PLL needs time to reconfigure for its
+output to stabilize (so, for the PLL to lock again): failing to do
+so will lead to instabilities such as glitches, GPU lockups and/or
+full system lockups.
 
-Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+While at it, reparenting of some GPU clocks was also performed, as
+the clock tree was slightly incorrect.
 
-diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index d774edaf760b..230299728859 100644
---- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -18,9 +18,9 @@ static const struct mtk_gate_regs mfg_cg_regs = {
- 	.sta_ofs = 0x0,
- };
- 
--#define GATE_MFG(_id, _name, _parent, _shift)			\
--	GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift,	\
--		&mtk_clk_gate_ops_setclr)
-+#define GATE_MFG(_id, _name, _parent, _shift)				\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift,	\
-+		       &mtk_clk_gate_ops_setclr, CLK_SET_RATE_PARENT)
- 
- static const struct mtk_gate mfg_clks[] = {
- 	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_sel", 0)
+This series was tested, along with mtk-regulator-coupler [1], on
+Chromebooks with different SoCs (MT8183, MT8192, MT8195*), resulting
+in fully working GPU DVFS with the Panfrost driver.
+
+[1]: https://patchwork.kernel.org/project/linux-mediatek/patch/20220628120224.81180-1-angelogioacchino.delregno@collabora.com/
+
+* MT8195 does not require mtk-regulator-coupler. This series, along
+  with [1], are required to perform GPU DVFS also on non-Chromebook SoCs.
+
+AngeloGioacchino Del Regno (6):
+  clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d and propagate rate
+    changes
+  clk: mediatek: clk-mt8195-topckgen: Register mfg_ck_fast_ref as
+    generic mux
+  clk: mediatek: clk-mt8195-topckgen: Add GPU clock mux notifier
+  clk: mediatek: clk-mt8195-topckgen: Drop univplls from mfg mux parents
+  clk: mediatek: clk-mt8192-mfg: Propagate rate changes to parent
+  clk: mediatek: clk-mt8192: Add clock mux notifier for mfg_pll_sel
+
+Chen-Yu Tsai (4):
+  arm64: dts: mt8183: Fix Mali GPU clock
+  clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
+  clk: mediatek: mux: add clk notifier functions
+  clk: mediatek: mt8183: Add clk mux notifier for MFG mux
+
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi   |  2 +-
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c   |  6 ++--
+ drivers/clk/mediatek/clk-mt8183.c          | 28 ++++++++++++++++
+ drivers/clk/mediatek/clk-mt8192-mfg.c      |  6 ++--
+ drivers/clk/mediatek/clk-mt8192.c          | 28 ++++++++++++++++
+ drivers/clk/mediatek/clk-mt8195-mfg.c      |  6 ++--
+ drivers/clk/mediatek/clk-mt8195-topckgen.c | 39 ++++++++++++++--------
+ drivers/clk/mediatek/clk-mux.c             | 38 +++++++++++++++++++++
+ drivers/clk/mediatek/clk-mux.h             | 15 +++++++++
+ 9 files changed, 147 insertions(+), 21 deletions(-)
+
 -- 
 2.37.2
 
