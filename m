@@ -2,121 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E007AECAAD5
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Sep 2022 07:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5902DECAAD5
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Sep 2022 07:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236902AbiIEHyT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Sep 2022 03:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54764 "EHLO
+        id S237053AbiIEHzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Sep 2022 03:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237069AbiIEHyR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 03:54:17 -0400
-X-Greylist: delayed 1198 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 05 Sep 2022 00:54:14 PDT
-Received: from 6.mo550.mail-out.ovh.net (6.mo550.mail-out.ovh.net [46.105.43.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A258443E78
-        for <linux-clk@vger.kernel.org>; Mon,  5 Sep 2022 00:54:14 -0700 (PDT)
-Received: from player778.ha.ovh.net (unknown [10.109.156.62])
-        by mo550.mail-out.ovh.net (Postfix) with ESMTP id E4ED723BEB
-        for <linux-clk@vger.kernel.org>; Mon,  5 Sep 2022 07:15:36 +0000 (UTC)
-Received: from RCM-web10.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player778.ha.ovh.net (Postfix) with ESMTPSA id 8380C2E205F4C;
-        Mon,  5 Sep 2022 07:15:28 +0000 (UTC)
+        with ESMTP id S236474AbiIEHzJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 03:55:09 -0400
+Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1CE175BF
+        for <linux-clk@vger.kernel.org>; Mon,  5 Sep 2022 00:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
+        s=selector; t=1662364501;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AdS8+B/O/n4mduTrHxo0RL4fuHx8wGK9eiouBtBzHLE=;
+        b=nq/Sz1Z7EABiXwAHZKYqd+Carge9I9yVZMSrZasFXAw5iMpT+xL9kqBYBTKsCI8emXOaRC
+        5xCEosXDh7yh+gs1cEXpOuWwwHrKFYVAY/VyKrZCrCRA2eLG1YteZC6HSimHW+M8hkzSoT
+        hfnEk80xbK9/LKXf3idMg72/DBI7bOunHmfFZI/80nEZLEEApsMvcIWLzYISLffCKGyhvo
+        3DfhZzTTcIsXS4yYs39KKDk5D1fQ9GzRkypE9APQ5big6pfaA2eSxVsvYB6ckwU6IBBjSm
+        IZzeUfz8NuF28TcUzgFk4FX4zQtHEFz3FUG2SYjl4bc6r56As52GzF5VbngPNw==
+Received: from mail.maxlinear.com (174-47-1-83.static.ctl.one [174.47.1.83])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ us-mta-354-xdhXJq8hOTmBhXYhWCcCPw-1; Mon, 05 Sep 2022 03:44:03 -0400
+X-MC-Unique: xdhXJq8hOTmBhXYhWCcCPw-1
+Received: from sgsxdev001.isng.phoenix.local (10.226.81.111) by
+ mail.maxlinear.com (10.23.38.120) with Microsoft SMTP Server id 15.1.2375.24;
+ Mon, 5 Sep 2022 00:43:59 -0700
+From:   Rahul Tanwar <rtanwar@maxlinear.com>
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-lgm-soc@maxlinear.com>,
+        "Rahul Tanwar" <rtanwar@maxlinear.com>
+Subject: [PATCH v2 3/5] clk: mxl: Avoid disabling gate clocks from clk driver
+Date:   Mon, 5 Sep 2022 15:43:46 +0800
+Message-ID: <496372f326760be1b997ae2aabd1999627f7376d.1662363020.git.rtanwar@maxlinear.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1662363020.git.rtanwar@maxlinear.com>
+References: <cover.1662363020.git.rtanwar@maxlinear.com>
 MIME-Version: 1.0
-Date:   Mon, 05 Sep 2022 09:15:28 +0200
-From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: iproc: Do not rely on node name for correct PLL
- setup
-In-Reply-To: <2cd712a5ae4fc0bf93e5b16ea640f1dc@milecki.pl>
-References: <20220803025836.107886-1-f.fainelli@gmail.com>
- <2cd712a5ae4fc0bf93e5b16ea640f1dc@milecki.pl>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <d2ad5cda0e9786e43d5cd235e5dcec59@milecki.pl>
-X-Sender: rafal@milecki.pl
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 11680085637051165659
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrvdelhedguddukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvfevufgjfhgfkfigihgtgfesthekjhdttderjeenucfhrhhomheptfgrfhgrlhgpofhilhgvtghkihcuoehrrghfrghlsehmihhlvggtkhhirdhplheqnecuggftrfgrthhtvghrnhepgfefuefgleeffefhvefgueeffeeftdeljeevkefhudffheffheegvedukeejlefhnecuffhomhgrihhnpehsphhinhhitghsrdhnvghtnecukfhppedtrddtrddtrddtpdduleegrddukeejrdejgedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhlrgihvghrjeejkedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehrrghfrghlsehmihhlvggtkhhirdhplhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehhedt
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: maxlinear.com
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2022-09-04 17:00, Rafał Miłecki wrote:
-> On 2022-08-03 04:58, Florian Fainelli wrote:
->> After commit 31fd9b79dc58 ("ARM: dts: BCM5301X: update CRU block
->> description") a warning from clk-iproc-pll.c was generated due to a
->> duplicate PLL name as well as the console stopped working. Upon closer
->> inspection it became clear that iproc_pll_clk_setup() used the Device
->> Tree node unit name as an unique identifier as well as a parent name 
->> to
->> parent all clocks under the PLL.
->> 
->> BCM5301X was the first platform on which that got noticed because of 
->> the
->> DT node unit name renaming but the same assumptions hold true for any
->> user of the iproc_pll_clk_setup() function.
->> 
->> The first 'clock-output-names' property is always guaranteed to be
->> unique as well as providing the actual desired PLL clock name, so we
->> utilize that to register the PLL and as a parent name of all children
->> clock.
->> 
->> Fixes: 5fe225c105fd ("clk: iproc: add initial common clock support")
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> 
-> Acked-by: Rafał Miłecki <rafal@milecki.pl>
-> 
-> 
-> Thanks for looking into this!
-> 
-> In the past I debugged this too and even developed a simple fix:
-> clk & clock-controller@ DT nodes: __clk_core_init: clk
-> clock-controller already initialized
-> https://www.spinics.net/lists/linux-clk/msg63855.html
-> 
-> For some reason my old fix didn't work with usbclk clock.
+In MxL's LGM SoC, gate clocks are supposed to be enabled or disabled
+from EPU (power management IP) in certain power saving modes. If gate
+clocks are allowed to be enabled/disabled from CGU clk driver, then
+there arises a conflict where in case clk driver disables a gate clk,
+and then EPU tries to disable the same gate clk, then it will hang
+polling for the clk gated successful status.
 
-I compared your changes with my old attempt and found the missing bit. I
-forgot about updating parent_name.
+To avoid such a conflict, disable gate clocks enabling/disabling from
+CGU clk driver. But add a GATE_CLK_HW flag to control this in order to
+be backward compatible with other SoCs which share the same CGU IP but
+not the same EPU IP.
 
-FWIW something like below would work too.
+Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>
+---
+ drivers/clk/x86/clk-cgu.c | 32 ++++++++++++++++++++++++--------
+ drivers/clk/x86/clk-cgu.h |  1 +
+ 2 files changed, 25 insertions(+), 8 deletions(-)
 
-Thanks again for taking care of this old regression.
+diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
+index 1f7e93de67bc..d24173cfe0b0 100644
+--- a/drivers/clk/x86/clk-cgu.c
++++ b/drivers/clk/x86/clk-cgu.c
+@@ -258,8 +258,12 @@ static int lgm_clk_gate_enable(struct clk_hw *hw)
+ =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
+ =09unsigned int reg;
+=20
+-=09reg =3D GATE_HW_REG_EN(gate->reg);
+-=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
++=09if (gate->flags & GATE_CLK_HW) {
++=09=09reg =3D GATE_HW_REG_EN(gate->reg);
++=09=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
++=09} else {
++=09=09gate->reg =3D 1;
++=09}
+=20
+ =09return 0;
+ }
+@@ -269,8 +273,12 @@ static void lgm_clk_gate_disable(struct clk_hw *hw)
+ =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
+ =09unsigned int reg;
+=20
+-=09reg =3D GATE_HW_REG_DIS(gate->reg);
+-=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
++=09if (gate->flags & GATE_CLK_HW) {
++=09=09reg =3D GATE_HW_REG_DIS(gate->reg);
++=09=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
++=09} else {
++=09=09gate->reg =3D 0;
++=09}
+ }
+=20
+ static int lgm_clk_gate_is_enabled(struct clk_hw *hw)
+@@ -278,8 +286,12 @@ static int lgm_clk_gate_is_enabled(struct clk_hw *hw)
+ =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
+ =09unsigned int reg, ret;
+=20
+-=09reg =3D GATE_HW_REG_STAT(gate->reg);
+-=09ret =3D lgm_get_clk_val(gate->membase, reg, gate->shift, 1);
++=09if (gate->flags & GATE_CLK_HW) {
++=09=09reg =3D GATE_HW_REG_STAT(gate->reg);
++=09=09ret =3D lgm_get_clk_val(gate->membase, reg, gate->shift, 1);
++=09} else {
++=09=09ret =3D gate->reg;
++=09}
+=20
+ =09return ret;
+ }
+@@ -315,7 +327,8 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
+ =09init.num_parents =3D pname ? 1 : 0;
+=20
+ =09gate->membase =3D ctx->membase;
+-=09gate->reg =3D reg;
++=09if (cflags & GATE_CLK_HW)
++=09=09gate->reg =3D reg;
+ =09gate->shift =3D shift;
+ =09gate->flags =3D cflags;
+ =09gate->hw.init =3D &init;
+@@ -326,7 +339,10 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
+ =09=09return ERR_PTR(ret);
+=20
+ =09if (cflags & CLOCK_FLAG_VAL_INIT) {
+-=09=09lgm_set_clk_val(gate->membase, reg, shift, 1, list->gate_val);
++=09=09if (cflags & GATE_CLK_HW)
++=09=09=09lgm_set_clk_val(gate->membase, reg, shift, 1, list->gate_val);
++=09=09else
++=09=09=09gate->reg =3D 1;
+ =09}
+=20
+ =09return hw;
+diff --git a/drivers/clk/x86/clk-cgu.h b/drivers/clk/x86/clk-cgu.h
+index 0aa0f35d63a0..73ce84345f81 100644
+--- a/drivers/clk/x86/clk-cgu.h
++++ b/drivers/clk/x86/clk-cgu.h
+@@ -197,6 +197,7 @@ struct lgm_clk_branch {
+ /* clock flags definition */
+ #define CLOCK_FLAG_VAL_INIT=09BIT(16)
+ #define MUX_CLK_SW=09=09BIT(17)
++#define GATE_CLK_HW=09=09BIT(18)
+=20
+ #define LGM_MUX(_id, _name, _pdata, _f, _reg,=09=09\
+ =09=09_shift, _width, _cf, _v)=09=09\
+--=20
+2.17.1
 
-
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c 
-b/drivers/clk/bcm/clk-iproc-pll.c
-index 33da30f99..af9ca32b8 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -783,7 +783,7 @@ void iproc_pll_clk_setup(struct device_node *node,
-  	iclk = &iclk_array[0];
-  	iclk->pll = pll;
-
--	init.name = node->name;
-+	init.name = node->full_name;
-  	init.ops = &iproc_pll_ops;
-  	init.flags = 0;
-  	parent_name = of_clk_get_parent_name(node, 0);
-@@ -809,7 +809,7 @@ void iproc_pll_clk_setup(struct device_node *node,
-  		const char *clk_name;
-
-  		memset(&init, 0, sizeof(init));
--		parent_name = node->name;
-+		parent_name = node->full_name;
-
-  		ret = of_property_read_string_index(node, "clock-output-names",
-  						    i, &clk_name);
