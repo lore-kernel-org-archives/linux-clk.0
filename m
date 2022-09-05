@@ -2,85 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8612FECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Sep 2022 07:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFA2ECAAD3
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Sep 2022 10:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236474AbiIEHzL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Sep 2022 03:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58012 "EHLO
+        id S237308AbiIEKEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Sep 2022 06:04:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236213AbiIEHzJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 03:55:09 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E70F165AA
-        for <linux-clk@vger.kernel.org>; Mon,  5 Sep 2022 00:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1662364501;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BtUJUYZOy4dsKmtYSOJkIch/jexIUqRsQ+FbLNIyJJQ=;
-        b=HvvjpPNYr6G2Rg53atVCceL0cWusJNbrtwFjF2G5ko0pnAp41yA8up0Vwq9UmtdEzvE4xr
-        pL/xXI8woEf+/m+NhAezPe7W4OW6drCdEsRUZqTI7u4V/dxr4sgFsonuKrrqo66jOgcnG+
-        RpkI3K7XQpvWNToYGjK2vFTN3/pG3t14TywMdWEyf2qrKkxow8f/DpNrf+Pweb9k23zCiQ
-        RNz5K62VAQQs+JgX16i/itTNxe5duBuocCZBmzVt5K4XiXuz5uikpfnd82iJDB4oDSYRf9
-        3EE4R8L2rZubCxT3X7qPbabWxE5HQ2/4QkXMBNdU6GDKrIk1ZbTsS4DOlTaiGQ==
-Received: from mail.maxlinear.com (174-47-1-83.static.ctl.one [174.47.1.83])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- us-mta-78-H49kdtHfNy6Rs7NwcPrkMA-1; Mon, 05 Sep 2022 03:44:08 -0400
-X-MC-Unique: H49kdtHfNy6Rs7NwcPrkMA-1
-Received: from sgsxdev001.isng.phoenix.local (10.226.81.111) by
- mail.maxlinear.com (10.23.38.120) with Microsoft SMTP Server id 15.1.2375.24;
- Mon, 5 Sep 2022 00:44:05 -0700
-From:   Rahul Tanwar <rtanwar@maxlinear.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-lgm-soc@maxlinear.com>,
-        "Rahul Tanwar" <rtanwar@maxlinear.com>
-Subject: [PATCH v2 5/5] clk: mxl: Add a missing flag to allow parent clock rate change
-Date:   Mon, 5 Sep 2022 15:43:48 +0800
-Message-ID: <112a3d6f959fdb14a853897fe4b171d50eab7e55.1662363020.git.rtanwar@maxlinear.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1662363020.git.rtanwar@maxlinear.com>
-References: <cover.1662363020.git.rtanwar@maxlinear.com>
+        with ESMTP id S236756AbiIEKEf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 06:04:35 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B85AE67;
+        Mon,  5 Sep 2022 03:04:32 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E31566601EB9;
+        Mon,  5 Sep 2022 11:04:29 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1662372270;
+        bh=7wZZwX2byJ4bhuDUY3CPvHNsdJ6p7fqNLcyFmuOhg2o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ELergRBx8+RjDDAewBaOrNDUgYy8kTWLlARjWjWu9MXGIfroupTcA6RqUMft7bD6h
+         BKckz5H0mz3pXYY7HNAnupWDCdg6UdBtaKuNYshFbEKtSXf1bVNdP4rngSaKAon/+J
+         Eh4ym355pzWyT6z6U8gVuLs3allJ+HL5Yo12b+B4IkIA9gEXe4o4HomNWxsvSCCCR4
+         KfiAtRbF9HudKuOU8n84hLgqHSJ9aqW0P7WMLvhnlvUFaBXliWfuZe/f2uDOwsn3ic
+         TAhEFV6DNMxt120k1nHysYP+un8rgj6y5L4WWvMAtU33OwsP8+sZ2Fi1EvWVgmE2t+
+         Di/hPXhV+GQBQ==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     matthias.bgg@gmail.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        nfraprado@collabora.com, chun-jie.chen@mediatek.com,
+        jose.exposito89@gmail.com, drinkcat@chromium.org,
+        weiyi.lu@mediatek.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Subject: [PATCH 02/10] clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
+Date:   Mon,  5 Sep 2022 12:04:08 +0200
+Message-Id: <20220905100416.42421-3-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220905100416.42421-1-angelogioacchino.delregno@collabora.com>
+References: <20220905100416.42421-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: maxlinear.com
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-One of the clock entry "dcl" clk's rate can only be changed by
-changing its parent's clock rate. But it was missing to have
-CLK_SET_RATE_PARENT flag as enabled.
+From: Chen-Yu Tsai <wenst@chromium.org>
 
-Add/enable CLK_SET_RATE_PARENT flag for dcl clk in order to
-allow its clk rate to be changed via its parent's clk.
+The only clock in the MT8183 MFGCFG block feeds the GPU. Propagate its
+rate change requests to its parent, so that DVFS for the GPU can work
+properly.
 
-Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>
+Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/x86/clk-lgm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/x86/clk-lgm.c b/drivers/clk/x86/clk-lgm.c
-index e312af42e97a..34e16ea90596 100644
---- a/drivers/clk/x86/clk-lgm.c
-+++ b/drivers/clk/x86/clk-lgm.c
-@@ -255,7 +255,7 @@ static const struct lgm_clk_branch lgm_branch_clks[] =
-=3D {
- =09LGM_FIXED(LGM_CLK_SLIC, "slic", NULL, 0, CGU_IF_CLK1,
- =09=09  8, 2, CLOCK_FLAG_VAL_INIT, 8192000, 2),
- =09LGM_FIXED(LGM_CLK_DOCSIS, "v_docsis", NULL, 0, 0, 0, 0, 0, 16000000, 0)=
-,
--=09LGM_DIV(LGM_CLK_DCL, "dcl", "v_ifclk", 0, CGU_PCMCR,
-+=09LGM_DIV(LGM_CLK_DCL, "dcl", "v_ifclk", CLK_SET_RATE_PARENT, CGU_PCMCR,
- =09=0925, 3, 0, 0, 0, 0, dcl_div),
- =09LGM_MUX(LGM_CLK_PCM, "pcm", pcm_p, 0, CGU_C55_PCMCR,
- =09=090, 1, CLK_MUX_ROUND_CLOSEST, 0),
---=20
-2.17.1
+diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
+index d774edaf760b..230299728859 100644
+--- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
++++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
+@@ -18,9 +18,9 @@ static const struct mtk_gate_regs mfg_cg_regs = {
+ 	.sta_ofs = 0x0,
+ };
+ 
+-#define GATE_MFG(_id, _name, _parent, _shift)			\
+-	GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift,	\
+-		&mtk_clk_gate_ops_setclr)
++#define GATE_MFG(_id, _name, _parent, _shift)				\
++	GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift,	\
++		       &mtk_clk_gate_ops_setclr, CLK_SET_RATE_PARENT)
+ 
+ static const struct mtk_gate mfg_clks[] = {
+ 	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_sel", 0)
+-- 
+2.37.2
 
