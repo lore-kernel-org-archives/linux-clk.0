@@ -2,184 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67411ECAAD5
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Sep 2022 16:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70DAECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 02:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbiIEQzf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Sep 2022 12:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44994 "EHLO
+        id S232662AbiIFCjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Sep 2022 22:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbiIEQze (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 12:55:34 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309F4419A9
-        for <linux-clk@vger.kernel.org>; Mon,  5 Sep 2022 09:55:31 -0700 (PDT)
-Received: from [192.168.0.18] ([62.159.46.162]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MplPf-1pAKkI1H25-00qB1K; Mon, 05 Sep 2022 18:55:23 +0200
-Message-ID: <0f7da2ef-9669-1a11-4093-d0be93daed1f@efe-gmbh.de>
-Date:   Mon, 5 Sep 2022 18:55:22 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH RESEND] clk: si5351: update multisynth limits
-Content-Language: de-DE
-To:     Waseem Arshad <Waseem.Arshad@axis.com>, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        sebastian.hesselbarth@gmail.com
-References: <20211208154238.71727-1-renner@efe-gmbh.de>
- <71a9367c-6565-aaed-0bd2-13bf28658110@axis.com>
-From:   Jens Renner <renner@efe-gmbh.de>
-In-Reply-To: <71a9367c-6565-aaed-0bd2-13bf28658110@axis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        with ESMTP id S232367AbiIFCjQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 22:39:16 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70049.outbound.protection.outlook.com [40.107.7.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC6C642CB;
+        Mon,  5 Sep 2022 19:39:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mBVkL33pxW50kegpV0W9RxA/Edd8/JsbeP/WrAapYxvKxu+gcUIUdEgHhbIClzrCeY2gBB5B0EdNkMx/dVooflZISjbGRrX9LpjgKtBpdYS5wTkjRN2bXX9lRIPXygVXdQ/+AzzOoJ84MqwnjqCtksFWA3G7Xq1fgaDGuzDb5iMpZjW86qJVvR8k3+sYjbnqiVNcIoLRZdGUFjvLlrSKPXaAdBlX60CZy/EP/gE6TDgx7OCTBWCvaFouGpUaxzntFa3KTcD1TtqAkM1ggAne89kk/zls4deNyfJVtjUyKFhbOv2htIQHZtRjE5F6KjHTLwUj9sBFEjzPtW/xRW039A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K+Zcbk8+o6X3W+PDqKMww5Lj8roKSdzHxaPQmM3Hktg=;
+ b=JZh+l/Xh12r3Iowb7oCb6/M5aB4c4Uq/E+XhPBO95gI1Q1tGtt2yOvNhpe/XI9DQpYlHVr3x4vLBfCD2RUpombwn38YTPPeGGcELDgPgRRYkClDRGCMkgNtPaq9BzQM7BAsd03+h/aYTnYs5ZHM7tbEHKw5o0ekLHaQaDjekrLrtN6RA+Dwavo4iorfdx88XUP6nl+wiJ2kKd9y8OCpCm6QKaG4iFUzNxBtjYIsp1c+PKomPM6pT2wQhnbumQtV7BRmj5lKlAxFD+zIeKnjO0vHbU2613nROLHprh5n5E69bUcINmpfQph/nKIbxfVMdoLDL+3hwSEDIIb47sTyI2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K+Zcbk8+o6X3W+PDqKMww5Lj8roKSdzHxaPQmM3Hktg=;
+ b=bTrqFz9iJFIHybz3CJucV8z6dXqVXAyyeTwTBkdcSpAV+vKtiZhX624ZvQmo19W9cgppcnfO2TIjim+JJwulRkHwHXXTK2aJh/TpuNxXWkfBGdQMnOj1o2nxnbEpo8Iz0p8y7tW/+LwlwEqRH2G8gLrd1o6Bl22NwFL7h0RPCxg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AM0PR04MB5185.eurprd04.prod.outlook.com (2603:10a6:208:bf::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.18; Tue, 6 Sep
+ 2022 02:39:11 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::2d22:3315:6f9b:82c7]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::2d22:3315:6f9b:82c7%5]) with mapi id 15.20.5588.017; Tue, 6 Sep 2022
+ 02:39:11 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: clk-gate-93: fix build error with x86_64 allmodconfig
+Date:   Tue,  6 Sep 2022 10:40:47 +0800
+Message-Id: <20220906024047.1840977-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UQVft7Q8I8QIBQyv8OLJi0Oqv9maV2npN7uYpptxfL71yhHh64s
- pw80kCmyPKuk7kR3WxeaEamhl2o7KnvFraYgWMc4RtSNYy7462p3inOijzpqsEG4buiHun6
- erP0HdjJUB3m9koKuW/j17OL/BAZvGwBvN+c1paMwum0T3PjX08ut9Z/wSyUukGfbzrz4BL
- kU7yhC+M/pgx3aUIJIU5w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ES/+Q86T/b8=:7EZzC0fYmvwCHOgXRxsZzx
- Fr6URI8AHxTVB4ovi+WnNMK6x08wJ0liFRxVsNCafu7Tj9vICewuMIMINEjxx/1XJaj4Csfjx
- F9icZRHtyA5bDVJpfplJ2VmLh+t63ylIqTSKoN6CpETpwPnV6abbQBvWB2EXN6FH3HQoBWNYG
- RZTaYBfVASoTEn0NOk86VNPQuFxUuz6WyeeFhkBlzaSb8vgjcd1WoBpTLifpw1emeA3VYjUze
- ojJjHMbm8zKan9MI391Oe4b98QQU9ueFjjqR36RUNTsIAHMguOw720K1ol3r+MfLDIDS0OZg3
- MtRAzBUCYKr5Z6DXg65LVl8iR4dVNBIT67nHcO7bEI9tF62VoCGJgyAdyx8vK34086bJu23Sg
- WuDN5A1c7xbLERn+BqedaRUKIrd+7SDbT3hGcso/2DyqctOBTUFFje8KLkAEop9dwL9G5flYN
- idikvMlASG+rVVjblWSXa3c89TaB7sYxHzPorqL26Ib7R48wU5HWUcF9VoqyIAlG24AE7cOR/
- XAXenFw7n8UsHiD70qKiAMFz5iSP5/kWfcISTE4R4FPQqfcJZezUFzivQs7Ikqach1YjKcq9g
- Wla5bKfP51Zz7nuoES144TZ5jIlgYueGDjSZvMmMlOs371+V1WLqyf6Kvl2j/obnw/ODC9QLV
- dachJehMheBSCfh8ga2D0AQxB63HYeuoN6ntiIQt95MN2Qt82E2/Zi9vwKsY5fak4kvI6DuYT
- MP7lgpipaL0h9TchEoer1w+iNpRcrWN7WLthDWNdF/Jwkjnq/ycEmX7xtnEfgCWs2zychk61O
- yzcHJhn
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0003.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::16) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fdd6cc7c-5875-4924-9613-08da8fb0fad1
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5185:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2YYP2uTrFc4BIhr9aZy79UYkFbgKfoutIQ3W37Pd7eTmLdUz/jQwoINDA4shsxJF66QkVDZ3N49UMBSM+lXmnBKr/kJ9M2L7q6svUmzshcPkQm4xSEffnnobVTH23Ifh+01sX4xXlYjOUB26UXhTj3c+1cwOyhSFkLvPCCQx+jmNtsoOZMbT0vw3a1z9DMGyedWAMTuP1YtQxQY3D6fEQDwJyKf1okV9i0Kjh72x+RlC7dYtHbx5Hi0AUjnLV1dDtenkkb5l6O6Br5zSmoXO28ZAt1QTVZ2mNZUPNimz/wwtzLA3MENDLUp/zywQROMKlLWy7yA0KBddRWna+aVMg42J8NXoPEMW9caiDb7FaIHc74ynR+CH5vMcb0jiaINBxXTUAe4KGSmd8c5rtVKatf/zc3nASzPRMEfKxWTa04I0R7eMoYjC20lI/9czrmCRKOc+gZ7q7fI0716DKTt4tHcw4Z8OgcQWTWpig0D2MB/IJJPhkxHG7kVNhK94hRPogxQpTNWSsEU0y8WM+eNRYxYAjVb4PBw0O7yBWdGN4vMQfAFxlcMhCWhbnBt6nXlew8vkmmSszjU/OyQu6v3UqUYUmxbTpIkFAuJkIh+TGcEVUEKtURgn6IuPuI8EasEU8E6Kmld0oaVCcMH+2qphPWG5QK1xuJDjyYhAkVp4krEbfjcyjDGYf3H5p/KLxy//f8cFZK4i6uZhxWaG3EMyZ2au2wyTv3SpiFFkre5JAPcdAAvT15vTP89yUfrweJbaTcH5w47ttgc3JUb5DoqHIQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(346002)(366004)(136003)(376002)(39860400002)(2906002)(316002)(186003)(1076003)(5660300002)(8936002)(66556008)(66946007)(8676002)(4326008)(66476007)(7416002)(86362001)(6486002)(41300700001)(52116002)(6666004)(478600001)(6512007)(6506007)(26005)(38350700002)(38100700002)(83380400001)(2616005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fieT0GIbYIrp4bLNMnTaEbQfk/ccO8u8F84oqP2moTPjLcvPhPyYMX3auhXN?=
+ =?us-ascii?Q?0US55BpVksA3klM96wKbMAkhEUNtX+6APxEQ4Zz/PJ09RMjjbWv0TLMWsz6U?=
+ =?us-ascii?Q?BwAMpTg1elXrSN21NZPxl9qjPYgX2wv6iODUzBhMgc8wDwSnahStwRWyCIXz?=
+ =?us-ascii?Q?hFEOqz5S9hOEg8NjsqKQH6Qp58eJ72cum9Y1vJjTFSh65fni8HVWtZI6lZbM?=
+ =?us-ascii?Q?1KwUIGYFqIV50cOuhXblqB+ZqUTPXaHW5h2nXLIPOwzgf2EuOu6kJmIYTu14?=
+ =?us-ascii?Q?9dcHW0jyQZ8m8in3bce+TO+8XBKE/sRiUyfyNl9LOoxVFsNCpViy/v69z2ZO?=
+ =?us-ascii?Q?35J6ChbBlpHhhjET6aSi1UiUSmtKHYvz48wWKaqAkIN60gD+VoaD7GXlXtU7?=
+ =?us-ascii?Q?sghOW5UrJD3drCebyMCiCpwC2NWGs+aE32OWvgRsyp5+wPexQk1UdyRcF0Jj?=
+ =?us-ascii?Q?g25ZSyadcmvEsuYCmZAAX/2AD8TynV9gRG7cUqb2EkA1EUPwLDiMajpqu4O2?=
+ =?us-ascii?Q?kit4Cm0LgkfIMqwZsvJbqvIlzObMfqYkmjBXtjNCs4f7cQdpM5vtexzuaTrf?=
+ =?us-ascii?Q?kL8Uao9b/eQi6mMAldRY+0C3KYUVUTSpSy3D+nlNF5yUwlIRbijrgO7rYvm8?=
+ =?us-ascii?Q?N4SU+TVEs9OFUV6+3lmaLCMxGKLZKjWCugBFGHL2zkQjqTw3XZ0BkWbLtn14?=
+ =?us-ascii?Q?XILF3djx0Whp3FNY2JEJyiwEgAogGC6tpivr766KaqYUqVCiiv+uVODDtlYX?=
+ =?us-ascii?Q?xj7Y2Psko1R3I5dcoFkoATS4fYCw/RqKQ5b7N1dj/NhOB4KmNVihWInrF33v?=
+ =?us-ascii?Q?4BI53LLSC5vv5zCBu5H5K1daKtakRoP3WW8ysSofV+S4SJ59oaAfp6n+9Vox?=
+ =?us-ascii?Q?JL331Az79VlwzugDdyJrlRl6yoh+0tUoXSFWGQiKH9U5gpLRQ1hSvy14A0B2?=
+ =?us-ascii?Q?QDnggAM+R/IlOa8YTp7K+/cQ/rxI+WtX2sWk8at7RUYp+xNW3p4kaf8f8DUW?=
+ =?us-ascii?Q?oB2Ure8l+Ix1xXJU8hL7TdY8IW6kBK4Q+JFXdBlrwJLOTLsmhfPGaykhd0o9?=
+ =?us-ascii?Q?HdEBMvPFfBgCfbmOsLYlFOMoRAxLMWzDfWg7z0lOFG7gwhJ6qNZwY2MKDh4Q?=
+ =?us-ascii?Q?BoM4og/9Dyr/NZphASwm53SBaXCUFQ0de93h8SiExqnr7fTuINi0y/B8QwkE?=
+ =?us-ascii?Q?Xl3BD473sttxqU54K6mY5fHcr7USnzZq1rrY3p3tGDeIGkpCSbhx6YHZh8vQ?=
+ =?us-ascii?Q?QJBrfx0+kBMzgQSnOSVmENQjwILmIDxjXr0eC03lD4NtlU6hBDUjbVrf3m+p?=
+ =?us-ascii?Q?LRuriWrxyCtwnpDdi38LH2Wsb/49QTb+MlAmLFHaTG4UTWvU5dv3lom0scsH?=
+ =?us-ascii?Q?gIJTnkGg4Bq2W43kUDMadkni4lilk5hbh0c0kor56R73IbUsZnGkNvSQQ7Bb?=
+ =?us-ascii?Q?76fseKibXfIWELX+WNyA5GgTpBmtIQt7cK9pVPAIi8ruvZDcPYvJSEGNknOb?=
+ =?us-ascii?Q?rh/FKGS+rKOBgTGpjnUU7lXURq7qaoA2yNyF8BNWVByV+PheQuA2vOhVf4CF?=
+ =?us-ascii?Q?/WdZdBUrE+urGbr1mlBEcaaGS5YsF9EhF3hw9kH0?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdd6cc7c-5875-4924-9613-08da8fb0fad1
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2022 02:39:11.5307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eeuMAvRPNNAwkYQWqrcFL/6RDYNgzfV0lnRn6z2HGxs2SeXbsd/R0d6t+51PNfxvJuTprOsVJoejJw6eyj3rAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5185
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Waseem,
+From: Peng Fan <peng.fan@nxp.com>
 
-Thanks for figuring that out.
-It was a misconception on my side as I assumed that the theoretical 
-limit for SI5351_MULTISYNTH_MIN_FREQ is defined by the lowest PLL 
-frequency (SI5351_PLL_VCO_MIN = 600 MHz) divided by the largest 
-Multisynth divider SI5351_MULTISYNTH_A_MAX of 2048 which gives a value 
-of ~ 300 kHz.
+When building with x86_64 allmodconfig:
+ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/imx/clk-gate-93.o
 
-Am 05.09.22 um 16:38 schrieb Waseem Arshad:
-> Hi Jens,
-> 
-> I had problems generating correct frequency values with your patch.
-> 
-> On 12/8/21 16:42, Jens Renner wrote:
-> 
->> The revised datasheet (rev. 1.0 and later) specifies new limits for the
->> multisynth dividers that lead to an extended clock output frequency
->> range of 2.5 kHz - 200 MHz [1].
->>
->> [1] https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public
->> /data-sheets/Si5351-B.pdf
->>
->> Signed-off-by: Jens Renner <renner@efe-gmbh.de>
->> ---
->>   drivers/clk/clk-si5351.c | 15 ++++++++-------
->>   drivers/clk/clk-si5351.h |  8 ++++----
->>   2 files changed, 12 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
->> index 57e4597cdf4c..56bc59f91d20 100644
->> --- a/drivers/clk/clk-si5351.c
->> +++ b/drivers/clk/clk-si5351.c
->> @@ -556,7 +556,7 @@ static const struct clk_ops si5351_pll_ops = {
->>    * MS[6,7] are integer (P1) divide only, P1 = divide value,
->>    * P2 and P3 are not applicable
->>    *
->> - * for 150MHz < fOUT <= 160MHz:
->> + * for 150MHz < fOUT <= 200MHz:
->>    *
->>    * MSx_P1 = 0, MSx_P2 = 0, MSx_P3 = 1, MSx_INT = 1, MSx_DIVBY4 = 11b
->>    */
->> @@ -653,7 +653,7 @@ static long si5351_msynth_round_rate(struct clk_hw 
->> *hw, unsigned long rate,
->>       if (hwdata->num >= 6 && rate > SI5351_MULTISYNTH67_MAX_FREQ)
->>           rate = SI5351_MULTISYNTH67_MAX_FREQ;
->> -    /* multisync frequency is 1MHz .. 160MHz */
->> +    /* multisync frequency is 300kHz .. 200MHz */
->>       if (rate > SI5351_MULTISYNTH_MAX_FREQ)
->>           rate = SI5351_MULTISYNTH_MAX_FREQ;
->>       if (rate < SI5351_MULTISYNTH_MIN_FREQ)
->> @@ -681,8 +681,8 @@ static long si5351_msynth_round_rate(struct clk_hw 
->> *hw, unsigned long rate,
->>           *parent_rate = a * rate;
->>       } else if (hwdata->num >= 6) {
->> -        /* determine the closest integer divider */
->> -        a = DIV_ROUND_CLOSEST(*parent_rate, rate);
->> +        /* determine the closest even integer divider */
->> +        a = DIV_ROUND_CLOSEST(*parent_rate/2, rate) * 2;
->>           if (a < SI5351_MULTISYNTH_A_MIN)
->>               a = SI5351_MULTISYNTH_A_MIN;
->>           if (a > SI5351_MULTISYNTH67_A_MAX)
->> @@ -715,7 +715,8 @@ static long si5351_msynth_round_rate(struct clk_hw 
->> *hw, unsigned long rate,
->>           b = 0;
->>           c = 1;
->> -        if (rfrac)
->> +        /* Smallest divider in fractional mode must be > 8 (AN619)! */
->> +        if (rfrac && (a >= 8))
->>               rational_best_approximation(rfrac, denom,
->>                   SI5351_MULTISYNTH_B_MAX, SI5351_MULTISYNTH_C_MAX,
->>                   &b, &c);
->> @@ -1039,11 +1040,11 @@ static long si5351_clkout_round_rate(struct 
->> clk_hw *hw, unsigned long rate,
->>           container_of(hw, struct si5351_hw_data, hw);
->>       unsigned char rdiv;
->> -    /* clkout6/7 can only handle output freqencies < 150MHz */
->> +    /* clkout6/7 can only handle output frequencies < 150MHz */
->>       if (hwdata->num >= 6 && rate > SI5351_CLKOUT67_MAX_FREQ)
->>           rate = SI5351_CLKOUT67_MAX_FREQ;
->> -    /* clkout freqency is 8kHz - 160MHz */
->> +    /* clkout frequency is 2.5kHz - 200MHz */
->>       if (rate > SI5351_CLKOUT_MAX_FREQ)
->>           rate = SI5351_CLKOUT_MAX_FREQ;
->>       if (rate < SI5351_CLKOUT_MIN_FREQ)
->> diff --git a/drivers/clk/clk-si5351.h b/drivers/clk/clk-si5351.h
->> index 73dc8effc519..f799dc6ea8a1 100644
->> --- a/drivers/clk/clk-si5351.h
->> +++ b/drivers/clk/clk-si5351.h
->> @@ -13,11 +13,11 @@
->>   #define SI5351_PLL_VCO_MIN            600000000
->>   #define SI5351_PLL_VCO_MAX            900000000
->> -#define SI5351_MULTISYNTH_MIN_FREQ        1000000
->> +#define SI5351_MULTISYNTH_MIN_FREQ        300000
-> 
->  > The lower limit should be 500KHz (AN619: 
-> https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/application-notes/AN619.pdf) 
+Fix it with 'mxc-clk-objs += clk-gate-93.o'
 
-The word *about* in the sentence "The R dividers can be used to generate 
-frequencies below about 500 kHz." of AN619 made me believe that 500 kHz 
-is just a rough approximation and 300 kHz would be a more accurate 
-limit. (It used to be 1 MHz in the beginning and they changed it later.)
+Fixes: 4e9331d4e2e0 ("clk: imx: add i.MX93 clk gate")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I am wondering, though, why a SI5351_MULTISYNTH_MIN_FREQ of 300 kHz 
-resulted in a wrong output frequency in your case. Was it a 
-calculational problem (i.e. invalid register values) or did you actually 
-see a wrong output frequency?
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 89fe72327788..e8aacb0ee6ac 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,6 +12,7 @@ mxc-clk-objs += clk-fixup-div.o
+ mxc-clk-objs += clk-fixup-mux.o
+ mxc-clk-objs += clk-frac-pll.o
+ mxc-clk-objs += clk-gate2.o
++mxc-clk-objs += clk-gate-93.o
+ mxc-clk-objs += clk-gate-exclusive.o
+ mxc-clk-objs += clk-pfd.o
+ mxc-clk-objs += clk-pfdv2.o
+@@ -28,7 +29,7 @@ obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
+ obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
+ obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
+ 
+-obj-$(CONFIG_CLK_IMX93) += clk-imx93.o clk-gate-93.o
++obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
+ 
+ obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
+ clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
+-- 
+2.37.1
 
-
-> Changing the lower limit in your patch to 500KHz solved the problem.
-> 
->>   #define SI5351_MULTISYNTH_DIVBY4_FREQ        150000000
->> -#define SI5351_MULTISYNTH_MAX_FREQ        160000000
->> +#define SI5351_MULTISYNTH_MAX_FREQ        200000000
->>   #define SI5351_MULTISYNTH67_MAX_FREQ        
->> SI5351_MULTISYNTH_DIVBY4_FREQ
->> -#define SI5351_CLKOUT_MIN_FREQ            8000
->> +#define SI5351_CLKOUT_MIN_FREQ            2500
->>   #define SI5351_CLKOUT_MAX_FREQ            SI5351_MULTISYNTH_MAX_FREQ
->>   #define SI5351_CLKOUT67_MAX_FREQ        SI5351_MULTISYNTH67_MAX_FREQ
->> @@ -26,7 +26,7 @@
->>   #define SI5351_PLL_B_MAX            (SI5351_PLL_C_MAX-1)
->>   #define SI5351_PLL_C_MAX            1048575
->>   #define SI5351_MULTISYNTH_A_MIN            6
->> -#define SI5351_MULTISYNTH_A_MAX            1800
->> +#define SI5351_MULTISYNTH_A_MAX            2048
->>   #define SI5351_MULTISYNTH67_A_MAX        254
->>   #define SI5351_MULTISYNTH_B_MAX            (SI5351_MULTISYNTH_C_MAX-1)
->>   #define SI5351_MULTISYNTH_C_MAX            1048575
