@@ -2,148 +2,569 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D70DAECAAA1
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 02:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF85C6FA83
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 06:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232662AbiIFCjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Sep 2022 22:39:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49348 "EHLO
+        id S232657AbiIFGOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 02:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232367AbiIFCjQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2022 22:39:16 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70049.outbound.protection.outlook.com [40.107.7.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC6C642CB;
-        Mon,  5 Sep 2022 19:39:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mBVkL33pxW50kegpV0W9RxA/Edd8/JsbeP/WrAapYxvKxu+gcUIUdEgHhbIClzrCeY2gBB5B0EdNkMx/dVooflZISjbGRrX9LpjgKtBpdYS5wTkjRN2bXX9lRIPXygVXdQ/+AzzOoJ84MqwnjqCtksFWA3G7Xq1fgaDGuzDb5iMpZjW86qJVvR8k3+sYjbnqiVNcIoLRZdGUFjvLlrSKPXaAdBlX60CZy/EP/gE6TDgx7OCTBWCvaFouGpUaxzntFa3KTcD1TtqAkM1ggAne89kk/zls4deNyfJVtjUyKFhbOv2htIQHZtRjE5F6KjHTLwUj9sBFEjzPtW/xRW039A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K+Zcbk8+o6X3W+PDqKMww5Lj8roKSdzHxaPQmM3Hktg=;
- b=JZh+l/Xh12r3Iowb7oCb6/M5aB4c4Uq/E+XhPBO95gI1Q1tGtt2yOvNhpe/XI9DQpYlHVr3x4vLBfCD2RUpombwn38YTPPeGGcELDgPgRRYkClDRGCMkgNtPaq9BzQM7BAsd03+h/aYTnYs5ZHM7tbEHKw5o0ekLHaQaDjekrLrtN6RA+Dwavo4iorfdx88XUP6nl+wiJ2kKd9y8OCpCm6QKaG4iFUzNxBtjYIsp1c+PKomPM6pT2wQhnbumQtV7BRmj5lKlAxFD+zIeKnjO0vHbU2613nROLHprh5n5E69bUcINmpfQph/nKIbxfVMdoLDL+3hwSEDIIb47sTyI2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K+Zcbk8+o6X3W+PDqKMww5Lj8roKSdzHxaPQmM3Hktg=;
- b=bTrqFz9iJFIHybz3CJucV8z6dXqVXAyyeTwTBkdcSpAV+vKtiZhX624ZvQmo19W9cgppcnfO2TIjim+JJwulRkHwHXXTK2aJh/TpuNxXWkfBGdQMnOj1o2nxnbEpo8Iz0p8y7tW/+LwlwEqRH2G8gLrd1o6Bl22NwFL7h0RPCxg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AM0PR04MB5185.eurprd04.prod.outlook.com (2603:10a6:208:bf::31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.18; Tue, 6 Sep
- 2022 02:39:11 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::2d22:3315:6f9b:82c7]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::2d22:3315:6f9b:82c7%5]) with mapi id 15.20.5588.017; Tue, 6 Sep 2022
- 02:39:11 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: clk-gate-93: fix build error with x86_64 allmodconfig
-Date:   Tue,  6 Sep 2022 10:40:47 +0800
-Message-Id: <20220906024047.1840977-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0003.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::16) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S232045AbiIFGOB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 02:14:01 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A32C6E880;
+        Mon,  5 Sep 2022 23:13:55 -0700 (PDT)
+X-UUID: 875c70518393477f91fe36cd6560fd02-20220906
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=j4MN08XblrDSbxE0fXBIA+Mpq1rxLZoCqtsuW3ROu2g=;
+        b=X/bYzC/O94/iEhkDrJmoxv7IhFAvHty+zX7CZ89kxfCBBGx7fvpG8tfZw2tDmA2E6SS6kI4TtZff9T6uuuIALZuZAgmCOK8OqnFXQL+wZxW8Ogt3BbPUFWG5MRh016o0QkJIbF/Xfs0nQFbrWI5xF0XNfn4jUaNCWAp7p6DdG/0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.10,REQID:964d8669-31a8-4b72-990d-a8765e3e5031,OB:0,L
+        OB:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_
+        Ham,ACTION:release,TS:0
+X-CID-META: VersionHash:84eae18,CLOUDID:2cf7c856-e800-47dc-8adf-0c936acf4f1b,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:11|1,File:
+        nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: 875c70518393477f91fe36cd6560fd02-20220906
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <edward-jw.yang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 373935793; Tue, 06 Sep 2022 14:13:49 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Tue, 6 Sep 2022 14:13:48 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.792.15 via Frontend
+ Transport; Tue, 6 Sep 2022 14:13:48 +0800
+Message-ID: <dbcbf2f43bdf8dec0273e711066dfead26a59d01.camel@mediatek.com>
+Subject: Re: [PATCH 3/4] clk: mediatek: Add new clock driver to handle FHCTL
+ hardware
+From:   Edward-JW Yang <edward-jw.yang@mediatek.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Johnson Wang =?UTF-8?Q?=28=E7=8E=8B=E8=81=96=E9=91=AB=29?= 
+        <Johnson.Wang@mediatek.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Tue, 6 Sep 2022 14:13:48 +0800
+In-Reply-To: <d2abe2d3-f17c-6c22-ccae-514fe196441e@collabora.com>
+References: <20220831124850.7748-1-johnson.wang@mediatek.com>
+         <20220831124850.7748-4-johnson.wang@mediatek.com>
+         <d2abe2d3-f17c-6c22-ccae-514fe196441e@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fdd6cc7c-5875-4924-9613-08da8fb0fad1
-X-MS-TrafficTypeDiagnostic: AM0PR04MB5185:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2YYP2uTrFc4BIhr9aZy79UYkFbgKfoutIQ3W37Pd7eTmLdUz/jQwoINDA4shsxJF66QkVDZ3N49UMBSM+lXmnBKr/kJ9M2L7q6svUmzshcPkQm4xSEffnnobVTH23Ifh+01sX4xXlYjOUB26UXhTj3c+1cwOyhSFkLvPCCQx+jmNtsoOZMbT0vw3a1z9DMGyedWAMTuP1YtQxQY3D6fEQDwJyKf1okV9i0Kjh72x+RlC7dYtHbx5Hi0AUjnLV1dDtenkkb5l6O6Br5zSmoXO28ZAt1QTVZ2mNZUPNimz/wwtzLA3MENDLUp/zywQROMKlLWy7yA0KBddRWna+aVMg42J8NXoPEMW9caiDb7FaIHc74ynR+CH5vMcb0jiaINBxXTUAe4KGSmd8c5rtVKatf/zc3nASzPRMEfKxWTa04I0R7eMoYjC20lI/9czrmCRKOc+gZ7q7fI0716DKTt4tHcw4Z8OgcQWTWpig0D2MB/IJJPhkxHG7kVNhK94hRPogxQpTNWSsEU0y8WM+eNRYxYAjVb4PBw0O7yBWdGN4vMQfAFxlcMhCWhbnBt6nXlew8vkmmSszjU/OyQu6v3UqUYUmxbTpIkFAuJkIh+TGcEVUEKtURgn6IuPuI8EasEU8E6Kmld0oaVCcMH+2qphPWG5QK1xuJDjyYhAkVp4krEbfjcyjDGYf3H5p/KLxy//f8cFZK4i6uZhxWaG3EMyZ2au2wyTv3SpiFFkre5JAPcdAAvT15vTP89yUfrweJbaTcH5w47ttgc3JUb5DoqHIQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(346002)(366004)(136003)(376002)(39860400002)(2906002)(316002)(186003)(1076003)(5660300002)(8936002)(66556008)(66946007)(8676002)(4326008)(66476007)(7416002)(86362001)(6486002)(41300700001)(52116002)(6666004)(478600001)(6512007)(6506007)(26005)(38350700002)(38100700002)(83380400001)(2616005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fieT0GIbYIrp4bLNMnTaEbQfk/ccO8u8F84oqP2moTPjLcvPhPyYMX3auhXN?=
- =?us-ascii?Q?0US55BpVksA3klM96wKbMAkhEUNtX+6APxEQ4Zz/PJ09RMjjbWv0TLMWsz6U?=
- =?us-ascii?Q?BwAMpTg1elXrSN21NZPxl9qjPYgX2wv6iODUzBhMgc8wDwSnahStwRWyCIXz?=
- =?us-ascii?Q?hFEOqz5S9hOEg8NjsqKQH6Qp58eJ72cum9Y1vJjTFSh65fni8HVWtZI6lZbM?=
- =?us-ascii?Q?1KwUIGYFqIV50cOuhXblqB+ZqUTPXaHW5h2nXLIPOwzgf2EuOu6kJmIYTu14?=
- =?us-ascii?Q?9dcHW0jyQZ8m8in3bce+TO+8XBKE/sRiUyfyNl9LOoxVFsNCpViy/v69z2ZO?=
- =?us-ascii?Q?35J6ChbBlpHhhjET6aSi1UiUSmtKHYvz48wWKaqAkIN60gD+VoaD7GXlXtU7?=
- =?us-ascii?Q?sghOW5UrJD3drCebyMCiCpwC2NWGs+aE32OWvgRsyp5+wPexQk1UdyRcF0Jj?=
- =?us-ascii?Q?g25ZSyadcmvEsuYCmZAAX/2AD8TynV9gRG7cUqb2EkA1EUPwLDiMajpqu4O2?=
- =?us-ascii?Q?kit4Cm0LgkfIMqwZsvJbqvIlzObMfqYkmjBXtjNCs4f7cQdpM5vtexzuaTrf?=
- =?us-ascii?Q?kL8Uao9b/eQi6mMAldRY+0C3KYUVUTSpSy3D+nlNF5yUwlIRbijrgO7rYvm8?=
- =?us-ascii?Q?N4SU+TVEs9OFUV6+3lmaLCMxGKLZKjWCugBFGHL2zkQjqTw3XZ0BkWbLtn14?=
- =?us-ascii?Q?XILF3djx0Whp3FNY2JEJyiwEgAogGC6tpivr766KaqYUqVCiiv+uVODDtlYX?=
- =?us-ascii?Q?xj7Y2Psko1R3I5dcoFkoATS4fYCw/RqKQ5b7N1dj/NhOB4KmNVihWInrF33v?=
- =?us-ascii?Q?4BI53LLSC5vv5zCBu5H5K1daKtakRoP3WW8ysSofV+S4SJ59oaAfp6n+9Vox?=
- =?us-ascii?Q?JL331Az79VlwzugDdyJrlRl6yoh+0tUoXSFWGQiKH9U5gpLRQ1hSvy14A0B2?=
- =?us-ascii?Q?QDnggAM+R/IlOa8YTp7K+/cQ/rxI+WtX2sWk8at7RUYp+xNW3p4kaf8f8DUW?=
- =?us-ascii?Q?oB2Ure8l+Ix1xXJU8hL7TdY8IW6kBK4Q+JFXdBlrwJLOTLsmhfPGaykhd0o9?=
- =?us-ascii?Q?HdEBMvPFfBgCfbmOsLYlFOMoRAxLMWzDfWg7z0lOFG7gwhJ6qNZwY2MKDh4Q?=
- =?us-ascii?Q?BoM4og/9Dyr/NZphASwm53SBaXCUFQ0de93h8SiExqnr7fTuINi0y/B8QwkE?=
- =?us-ascii?Q?Xl3BD473sttxqU54K6mY5fHcr7USnzZq1rrY3p3tGDeIGkpCSbhx6YHZh8vQ?=
- =?us-ascii?Q?QJBrfx0+kBMzgQSnOSVmENQjwILmIDxjXr0eC03lD4NtlU6hBDUjbVrf3m+p?=
- =?us-ascii?Q?LRuriWrxyCtwnpDdi38LH2Wsb/49QTb+MlAmLFHaTG4UTWvU5dv3lom0scsH?=
- =?us-ascii?Q?gIJTnkGg4Bq2W43kUDMadkni4lilk5hbh0c0kor56R73IbUsZnGkNvSQQ7Bb?=
- =?us-ascii?Q?76fseKibXfIWELX+WNyA5GgTpBmtIQt7cK9pVPAIi8ruvZDcPYvJSEGNknOb?=
- =?us-ascii?Q?rh/FKGS+rKOBgTGpjnUU7lXURq7qaoA2yNyF8BNWVByV+PheQuA2vOhVf4CF?=
- =?us-ascii?Q?/WdZdBUrE+urGbr1mlBEcaaGS5YsF9EhF3hw9kH0?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdd6cc7c-5875-4924-9613-08da8fb0fad1
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2022 02:39:11.5307
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eeuMAvRPNNAwkYQWqrcFL/6RDYNgzfV0lnRn6z2HGxs2SeXbsd/R0d6t+51PNfxvJuTprOsVJoejJw6eyj3rAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5185
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Hi Angelo,
 
-When building with x86_64 allmodconfig:
-ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/imx/clk-gate-93.o
+Thanks for suggestions.
 
-Fix it with 'mxc-clk-objs += clk-gate-93.o'
+On Thu, 2022-09-01 at 16:05 +0800, AngeloGioacchino Del Regno wrote:
+> Il 31/08/22 14:48, Johnson Wang ha scritto:
+> > To implement frequency hopping and spread spectrum clocking
+> > function, we introduce new clock type and APIs to handle
+> > FHCTL hardware.
+> > 
+> > Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
+> > ---
+> >   drivers/clk/mediatek/Makefile    |   2 +-
+> >   drivers/clk/mediatek/clk-fhctl.c | 258 +++++++++++++++++++++++++++++
+> >   drivers/clk/mediatek/clk-fhctl.h |  27 +++
+> >   drivers/clk/mediatek/clk-pllfh.c | 271 +++++++++++++++++++++++++++++++
+> >   drivers/clk/mediatek/clk-pllfh.h |  81 +++++++++
+> >   5 files changed, 638 insertions(+), 1 deletion(-)
+> >   create mode 100644 drivers/clk/mediatek/clk-fhctl.c
+> >   create mode 100644 drivers/clk/mediatek/clk-fhctl.h
+> >   create mode 100644 drivers/clk/mediatek/clk-pllfh.c
+> >   create mode 100644 drivers/clk/mediatek/clk-pllfh.h
+> > 
+> > diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> > index caf2ce93d666..0e674a55e51e 100644
+> > --- a/drivers/clk/mediatek/Makefile
+> > +++ b/drivers/clk/mediatek/Makefile
+> > @@ -1,5 +1,5 @@
+> >   # SPDX-License-Identifier: GPL-2.0
+> > -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o
+> > +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o clk-fhctl.o clk-pllfh.o
+> >   
+> >   obj-$(CONFIG_COMMON_CLK_MT6765) += clk-mt6765.o
+> >   obj-$(CONFIG_COMMON_CLK_MT6765_AUDIOSYS) += clk-mt6765-audio.o
+> > diff --git a/drivers/clk/mediatek/clk-fhctl.c b/drivers/clk/mediatek/clk-fhctl.c
+> > new file mode 100644
+> > index 000000000000..69bd4ce2bc72
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-fhctl.c
+> > @@ -0,0 +1,258 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2022 MediaTek Inc.
+> > + * Author: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > + */
+> > +
+> 
+> #include <linux/io.h>
+> 
+> Please don't rely on implicit header inclusion.
 
-Fixes: 4e9331d4e2e0 ("clk: imx: add i.MX93 clk gate")
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+OK, I'll fix it. Thanks.
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 89fe72327788..e8aacb0ee6ac 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,6 +12,7 @@ mxc-clk-objs += clk-fixup-div.o
- mxc-clk-objs += clk-fixup-mux.o
- mxc-clk-objs += clk-frac-pll.o
- mxc-clk-objs += clk-gate2.o
-+mxc-clk-objs += clk-gate-93.o
- mxc-clk-objs += clk-gate-exclusive.o
- mxc-clk-objs += clk-pfd.o
- mxc-clk-objs += clk-pfdv2.o
-@@ -28,7 +29,7 @@ obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
- obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
- obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
- 
--obj-$(CONFIG_CLK_IMX93) += clk-imx93.o clk-gate-93.o
-+obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
- 
- obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
- clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
--- 
-2.37.1
+> 
+> > +#include <linux/iopoll.h>
+> > +
+> > +#include "clk-mtk.h"
+> > +#include "clk-pllfh.h"
+> > +#include "clk-fhctl.h"
+> > +
+> > +#define PERCENT_TO_DDSLMT(dds, percent_m10) \
+> > +	((((dds) * (percent_m10)) >> 5) / 100)
+> > +
+> > +static const struct fhctl_offset fhctl_offset = {
+> > +	.offset_hp_en = 0x0,
+> > +	.offset_clk_con = 0x8,
+> > +	.offset_rst_con = 0xc,
+> > +	.offset_slope0 = 0x10,
+> > +	.offset_slope1 = 0x14,
+> > +	.offset_cfg = 0x0,
+> > +	.offset_updnlmt = 0x4,
+> > +	.offset_dds = 0x8,
+> > +	.offset_dvfs = 0xc,
+> > +	.offset_mon = 0x10,
+> > +};
+> > +
+> > +const struct fhctl_offset *fhctl_get_offset_table(void)
+> > +{
+> > +	return &fhctl_offset;
+> > +}
+> > +
+> > +static void dump_hw(struct mtk_clk_pll *pll, struct fh_pll_regs *regs,
+> > +		    const struct fh_pll_data *data)
+> > +{
+> > +	pr_info("hp_en<%x>,clk_con<%x>,slope0<%x>,slope1<%x>\n",
+> > +		readl(regs->reg_hp_en), readl(regs->reg_clk_con),
+> > +		readl(regs->reg_slope0), readl(regs->reg_slope1));
+> > +	pr_info("cfg<%x>,lmt<%x>,dds<%x>,dvfs<%x>,mon<%x>\n",
+> > +		readl(regs->reg_cfg), readl(regs->reg_updnlmt),
+> > +		readl(regs->reg_dds), readl(regs->reg_dvfs),
+> > +		readl(regs->reg_mon));
+> > +	pr_info("pcw<%x>\n", readl(pll->pcw_addr));
+> > +}
+> > +
+> > +static int fhctl_set_ssc_regs(struct mtk_clk_pll *pll, struct fh_pll_regs *regs,
+> > +			      const struct fh_pll_data *data, u32 rate)
+> > +{
+> > +	u32 updnlmt_val, r;
+> > +
+> > +	writel((readl(regs->reg_cfg) & ~(data->frddsx_en)), regs->reg_cfg);
+> > +	writel((readl(regs->reg_cfg) & ~(data->sfstrx_en)), regs->reg_cfg);
+> > +	writel((readl(regs->reg_cfg) & ~(data->fhctlx_en)), regs->reg_cfg);
+> > +
+> > +	if (rate > 0) {
+> > +		/* Set the relative parameter registers (dt/df/upbnd/downbnd) */
+> > +		r = readl(regs->reg_cfg);
+> > +		r &= ~(data->msk_frddsx_dys);
+> > +		r |= (data->df_val << (ffs(data->msk_frddsx_dys) - 1));
+> > +		writel(r, regs->reg_cfg);
+> > +
+> > +		r = readl(regs->reg_cfg);
+> > +		r &= ~(data->msk_frddsx_dts);
+> > +		r |= (data->dt_val << (ffs(data->msk_frddsx_dts) - 1));
+> > +		writel(r, regs->reg_cfg);
+> > +
+> > +		writel((readl(pll->pcw_addr) & data->dds_mask) | data->tgl_org,
+> > +			regs->reg_dds);
+> > +
+> > +		/* Calculate UPDNLMT */
+> > +		updnlmt_val = PERCENT_TO_DDSLMT((readl(regs->reg_dds) &
+> > +						 data->dds_mask), rate) <<
+> > +						 data->updnlmt_shft;
+> > +
+> > +		writel(updnlmt_val, regs->reg_updnlmt);
+> > +		writel(readl(regs->reg_hp_en) | BIT(data->fh_id),
+> > +		       regs->reg_hp_en);
+> > +		/* Enable SSC */
+> > +		writel(readl(regs->reg_cfg) | data->frddsx_en, regs->reg_cfg);
+> > +		/* Enable Hopping control */
+> > +		writel(readl(regs->reg_cfg) | data->fhctlx_en, regs->reg_cfg);
+> > +
+> > +	} else {
+> > +		/* Switch to APMIXEDSYS control */
+> > +		writel(readl(regs->reg_hp_en) & ~BIT(data->fh_id),
+> > +		       regs->reg_hp_en);
+> > +		/* Wait for DDS to be stable */
+> > +		udelay(30);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int hopping_hw_flow(struct mtk_clk_pll *pll, struct fh_pll_regs *regs,
+> > +			   const struct fh_pll_data *data,
+> > +			   struct fh_pll_state *state, unsigned int new_dds)
+> > +{
+> > +	u32 dds_mask = data->dds_mask;
+> > +	u32 mon_dds = 0;
+> > +	u32 con_pcw_tmp;
+> > +	int ret;
+> > +
+> > +	if (state->ssc_rate)
+> > +		fhctl_set_ssc_regs(pll, regs, data, 0);
+> > +
+> > +	writel((readl(pll->pcw_addr) & dds_mask) | data->tgl_org,
+> > +		regs->reg_dds);
+> > +
+> > +	writel(readl(regs->reg_cfg) | data->sfstrx_en, regs->reg_cfg);
+> > +	writel(readl(regs->reg_cfg) | data->fhctlx_en, regs->reg_cfg);
+> > +	writel(data->slope0_value, regs->reg_slope0);
+> > +	writel(data->slope1_value, regs->reg_slope1);
+> > +
+> > +	writel(readl(regs->reg_hp_en) | BIT(data->fh_id), regs->reg_hp_en);
+> > +	writel((new_dds) | (data->dvfs_tri), regs->reg_dvfs);
+> > +
+> > +	/* Wait 1000 us until DDS stable */
+> > +	ret = readl_poll_timeout_atomic(regs->reg_mon, mon_dds,
+> > +				       (mon_dds & dds_mask) == new_dds,
+> > +					10, 1000);
+> > +	if (ret) {
+> > +		pr_warn("%s: FHCTL hopping timeout\n", pll->data->name);
+> > +		dump_hw(pll, regs, data);
+> > +	}
+> > +
+> > +	con_pcw_tmp = readl(pll->pcw_addr) & (~dds_mask);
+> > +	con_pcw_tmp = (con_pcw_tmp | (readl(regs->reg_mon) & dds_mask) |
+> > +		       data->pcwchg);
+> > +
+> > +	writel(con_pcw_tmp, pll->pcw_addr);
+> > +	writel(readl(regs->reg_hp_en) & ~BIT(data->fh_id), regs->reg_hp_en);
+> > +
+> > +	if (state->ssc_rate)
+> > +		fhctl_set_ssc_regs(pll, regs, data, state->ssc_rate);
+> 
+> Does it really make sense to set the SSC registers if the FH operation times out?
+
+FH opration times out means DDS doesn't reach the target dds value but the de-sense issue
+may still exist. We can still base on current dds_mon value to do SSC.
+
+> 
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static unsigned int __get_postdiv(struct mtk_clk_pll *pll,
+> > +				  struct fh_pll_regs *regs,
+> > +				  const struct fh_pll_data *fh_data)
+> 
+> You don't need regs, nor fh_data, so this can be as simple as
+> 
+> static unsigned int __get_postdiv(struct mtk_clk_pll *pll)
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +{
+> > +	unsigned int regval;
+> > +
+> > +	regval = readl(pll->pd_addr) >> pll->data->pd_shift;
+> > +	regval &= POSTDIV_MASK;
+> > +
+> 
+> 	return BIT(regval);
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +	return (1 << regval);
+> > +}
+> > +
+> > +static void __set_postdiv(struct mtk_clk_pll *pll, struct fh_pll_regs *regs,
+> > +			  const struct fh_pll_data *data, int postdiv)
+> 
+> static void __set_postdiv(struct mtk_clk_pll *pll, unsigned int val)
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +{
+> > +	unsigned int regval;
+> > +
+> > +	regval = readl(pll->pd_addr);
+> > +	regval &= ~(POSTDIV_MASK << pll->data->pd_shift);
+> > +	regval |= (ffs(postdiv) - 1) << pll->data->pd_shift;
+> > +	writel(regval, pll->pd_addr);
+> > +}
+> > +
+> > +static int fhctl_hopping(struct mtk_fh *fh, unsigned int new_dds, int postdiv)
+> 
+> The postdiv cannot ever be negative, so you can change it to an unsigned type...
+> 
+> static int fhctl_hopping(struct mtk_fh *fh, unsigned int new_dds,
+> 			 unsigned int postdiv)
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +{
+> > +	const struct fh_pll_data *data = &fh->pllfh_data->data;
+> > +	struct fh_pll_state *state = &fh->pllfh_data->state;
+> > +	struct fh_pll_regs *regs = &fh->regs;
+> > +	struct mtk_clk_pll *pll = &fh->clk_pll;
+> > +	spinlock_t *lock = fh->lock;
+> > +	unsigned int pll_postdiv;
+> > +	unsigned long flags = 0;
+> > +	int ret;
+> > +
+> 
+> ...so since postdiv is unsigned, we can write this conditional as
+> 
+> 	if (postdiv)
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +	if (postdiv > 0) {
+> > +		pll_postdiv = __get_postdiv(pll, regs, data);
+> > +
+> > +		if (postdiv > pll_postdiv)
+> > +			__set_postdiv(pll, regs, data, postdiv);
+> > +	}
+> > +
+> > +	spin_lock_irqsave(lock, flags);
+> > +
+> > +	ret = hopping_hw_flow(pll, regs, data, state, new_dds);
+> > +
+> > +	spin_unlock_irqrestore(lock, flags);
+> > +
+> > +	if (postdiv > 0) {
+> > +		if (postdiv < pll_postdiv)
+> 
+> ...and this one as
+> 
+> if (postdiv && postdiv < pll_postdiv)
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +			__set_postdiv(pll, regs, data, postdiv);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int __fhctl_ssc_enable(struct mtk_fh *fh, u32 rate)
+> > +{
+> > +	const struct fh_pll_data *data = &fh->pllfh_data->data;
+> > +	struct fh_pll_state *state = &fh->pllfh_data->state;
+> > +	struct fh_pll_regs *regs = &fh->regs;
+> > +	struct mtk_clk_pll *pll = &fh->clk_pll;
+> > +	spinlock_t *lock = fh->lock;
+> > +	unsigned long flags = 0;
+> > +
+> > +	spin_lock_irqsave(lock, flags);
+> > +
+> > +	fhctl_set_ssc_regs(pll, regs, data, rate);
+> > +	state->ssc_rate = rate;
+> > +
+> > +	spin_unlock_irqrestore(lock, flags);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int fhctl_ssc_enable(struct mtk_fh *fh, u32 rate)
+> > +{
+> > +	return __fhctl_ssc_enable(fh, rate);
+> > +}
+> > +
+> > +static int fhctl_ssc_disable(struct mtk_fh *fh)
+> > +{
+> > +	return __fhctl_ssc_enable(fh, 0);
+> > +}
+> > +
+> > +static const struct fh_operation fhctl_ops = {
+> > +	.hopping = fhctl_hopping,
+> > +	.ssc_enable = fhctl_ssc_enable,
+> 
+> Just one callback for ssc_enable is enough, it's fine to keep the logic as
+> ssc_enable(fh, >0) to enable and ssc_enable(fh <=0) to disable.
+
+OK, I'll drop ssc_disable callback.
+
+> 
+> > +	.ssc_disable = fhctl_ssc_disable,
+> > +};
+> > +
+> > +const struct fh_operation *fhctl_get_ops(void)
+> > +{
+> > +	return &fhctl_ops;
+> > +}
+> > +
+> > +void fhctl_hw_init(struct mtk_fh *fh)
+> > +{
+> > +	const struct fh_pll_data data = fh->pllfh_data->data;
+> > +	struct fh_pll_state state = fh->pllfh_data->state;
+> > +	struct fh_pll_regs regs = fh->regs;
+> > +	u32 val;
+> > +
+> > +	/* initial hw register */
+> > +	val = readl(regs.reg_clk_con) | BIT(data.fh_id);
+> > +	writel(val, regs.reg_clk_con);
+> > +
+> > +	val = readl(regs.reg_rst_con) & ~BIT(data.fh_id);
+> > +	writel(val, regs.reg_rst_con);
+> > +	val = readl(regs.reg_rst_con) | BIT(data.fh_id);
+> > +	writel(val, regs.reg_rst_con);
+> > +
+> > +	writel(0x0, regs.reg_cfg);
+> > +	writel(0x0, regs.reg_updnlmt);
+> > +	writel(0x0, regs.reg_dds);
+> > +
+> > +	/* enable ssc if needed */
+> > +	if (state.ssc_rate)
+> > +		fh->ops->ssc_enable(fh, state.ssc_rate);
+> > +}
+> > diff --git a/drivers/clk/mediatek/clk-fhctl.h b/drivers/clk/mediatek/clk-fhctl.h
+> > new file mode 100644
+> > index 000000000000..3cd4921c39e9
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-fhctl.h
+> > @@ -0,0 +1,27 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright (c) 2022 MediaTek Inc.
+> > + * Author: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > + */
+> > +
+> > +#ifndef __CLK_FHCTL_H
+> > +#define __CLK_FHCTL_H
+> > +
+> 
+> One blank line is enough.
+
+OK, I'll fix it. Thanks
+
+> 
+> > +
+> > +struct fhctl_offset {
+> > +	u32 offset_hp_en;
+> > +	u32 offset_clk_con;
+> > +	u32 offset_rst_con;
+> > +	u32 offset_slope0;
+> > +	u32 offset_slope1;
+> > +	u32 offset_cfg;
+> > +	u32 offset_updnlmt;
+> > +	u32 offset_dds;
+> > +	u32 offset_dvfs;
+> > +	u32 offset_mon;
+> > +};
+> > +const struct fhctl_offset *fhctl_get_offset_table(void);
+> > +const struct fh_operation *fhctl_get_ops(void);
+> > +void fhctl_hw_init(struct mtk_fh *fh);
+> > +
+> > +#endif
+> > diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
+> > new file mode 100644
+> > index 000000000000..71b35323b526
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-pllfh.c
+> > @@ -0,0 +1,271 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2022 MediaTek Inc.
+> > + * Author: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > + */
+> > +
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/io.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/clkdev.h>
+> > +#include <linux/delay.h>
+> > +
+> > +#include "clk-mtk.h"
+> > +#include "clk-pllfh.h"
+> > +#include "clk-fhctl.h"
+> > +
+> > +static DEFINE_SPINLOCK(pllfh_lock);
+> > +
+> > +inline struct mtk_fh *to_mtk_fh(struct clk_hw *hw)
+> > +{
+> > +	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+> > +
+> > +	return container_of(pll, struct mtk_fh, clk_pll);
+> > +}
+> > +
+> > +static int mtk_fhctl_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +			      unsigned long parent_rate)
+> > +{
+> > +	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+> > +	struct mtk_fh *fh = to_mtk_fh(hw);
+> > +	u32 pcw = 0;
+> > +	u32 postdiv;
+> > +
+> > +	mtk_pll_calc_values(pll, &pcw, &postdiv, rate, parent_rate);
+> > +	fh->ops->hopping(fh, pcw, postdiv);
+> 
+> return fh->ops->hopping(....);
+
+OK, I'll fix it. Thanks.
+
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> ..snip..
+> 
+> > diff --git a/drivers/clk/mediatek/clk-pllfh.h b/drivers/clk/mediatek/clk-pllfh.h
+> > new file mode 100644
+> > index 000000000000..d9f7c8527548
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-pllfh.h
+> > @@ -0,0 +1,81 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright (c) 2022 MediaTek Inc.
+> > + * Author: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > + */
+> > +
+> > +#ifndef __DRV_CLKFH_H
+> > +#define __DRV_CLKFH_H
+> > +
+> > +#include "clk-pll.h"
+> > +
+> > +struct fh_pll_state {
+> 
+> Please, base as first member.
+
+OK, I'll modify it.
+
+> 
+> > +	u32 fh_enable;
+> > +	u32 ssc_rate;
+> > +	void __iomem *base;
+> > +};
+> > +
+> 
+> Regards,
+> Angelo
+> 
+> 
 
