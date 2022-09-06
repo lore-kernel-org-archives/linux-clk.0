@@ -2,97 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D497C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 21:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561A3ECAAA1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 02:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbiIFVlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 17:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37484 "EHLO
+        id S229703AbiIGCNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 22:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbiIFVlH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 17:41:07 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7AFE85FD5;
-        Tue,  6 Sep 2022 14:41:04 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-1279948d93dso11677550fac.10;
-        Tue, 06 Sep 2022 14:41:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:references:in-reply-to:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=ilmIFpp02DJKfy4hWzLv/HAXaykhKwVnxsnGzhzWDPs=;
-        b=t89n0BoI8jHYYRDj4clcL4l3vIu2y0RD/v6tR54awi44jouFChCkTvPmqykArJ01fg
-         5whFdvdYo7t6MQxkb7H4hjnl6RJ7iqasDf9/+2T8WAq/qJVb+nsCLWjkBvOAVEC3xXsu
-         GRTBFXk3o+dqkbktXpwOBtcbXokGm7TTXFimeYJjfnwwFZthXEB7U3nKT80joU+b1TVF
-         OUM/+gwLvitkWSwbmARl6KAyivYjSXYGvG8hmbG+BL76MZ3F84bbfnS4PvfZVGS953yV
-         pP2k8PW+si1JWwiQloskMiaHSeR0MaN2bbKIE1Qd9YE422RoYpwGVGgyz47b55lNoAkn
-         HoNA==
-X-Gm-Message-State: ACgBeo0s9z31GubTv6jJzlrwfulmp1Exyy37cIYZeyKVG9sLPhfzS9mf
-        m+HeMARwKPlkAxMDcVrTXQ==
-X-Google-Smtp-Source: AA6agR4UWMyFrZbMkGxOO4Lkk8XCHTaOdRfOr3JUxL7bjDehDbVxUjjoDVSMOKm+4qcR7U3b0mAJtQ==
-X-Received: by 2002:a05:6870:461a:b0:127:8ca9:21a7 with SMTP id z26-20020a056870461a00b001278ca921a7mr5043248oao.87.1662500463765;
-        Tue, 06 Sep 2022 14:41:03 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i81-20020acaea54000000b00344aa3f17d9sm5881136oih.10.2022.09.06.14.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 14:41:02 -0700 (PDT)
-Received: (nullmailer pid 1224961 invoked by uid 1000);
-        Tue, 06 Sep 2022 21:41:00 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sergiu Moga <sergiu.moga@microchip.com>
-Cc:     mturquette@baylibre.com, jirislaby@kernel.org,
-        richard.genoud@gmail.com, claudiu.beznea@microchip.com,
-        krzysztof.kozlowski+dt@linaro.org, radu_nicolae.pirea@upb.ro,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        broonie@kernel.org, kavyasree.kotagiri@microchip.com,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        linux-spi@vger.kernel.org, alexandre.belloni@bootlin.com,
-        tudor.ambarus@microchip.com, gregkh@linuxfoundation.org,
-        admin@hifiphile.com, linux-serial@vger.kernel.org, lee@kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        nicolas.ferre@microchip.com
-In-Reply-To: <20220906135511.144725-2-sergiu.moga@microchip.com>
-References: <20220906135511.144725-1-sergiu.moga@microchip.com> <20220906135511.144725-2-sergiu.moga@microchip.com>
-Subject: Re: [PATCH v2 01/13] spi: dt-bindings: atmel,at91rm9200-spi: Add DMA related properties
-Date:   Tue, 06 Sep 2022 16:41:00 -0500
-Message-Id: <1662500460.128889.1224960.nullmailer@robh.at.kernel.org>
+        with ESMTP id S229692AbiIGCNP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 22:13:15 -0400
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E188A6CA;
+        Tue,  6 Sep 2022 19:13:14 -0700 (PDT)
+Received: from ([60.208.111.195])
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id BBU00010;
+        Wed, 07 Sep 2022 10:13:10 +0800
+Received: from localhost.localdomain (10.200.104.82) by
+ jtjnmail201619.home.langchao.com (10.100.2.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Wed, 7 Sep 2022 10:13:11 +0800
+From:   Deming Wang <wangdeming@inspur.com>
+To:     <david@lechnology.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <nsekhar@ti.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Deming Wang <wangdeming@inspur.com>
+Subject: [PATCH] clk: davinci: Fix spelling typo in comment.
+Date:   Tue, 6 Sep 2022 09:27:30 -0400
+Message-ID: <20220906132730.3977-1-wangdeming@inspur.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.200.104.82]
+X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
+ jtjnmail201619.home.langchao.com (10.100.2.19)
+tUid:   2022907101310cd91f230c681606fd029c6306301c4e5
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 06 Sep 2022 16:55:00 +0300, Sergiu Moga wrote:
-> The DT nodes of the SPI IP's may contain DMA related properties so
-> make sure that the binding is able to properly validate those as
-> well by making it aware of these optional properties.
-> 
-> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
-> ---
-> 
-> 
-> v1 -> v2:
-> - Nothing, this patch was not here before
-> 
-> 
->  .../devicetree/bindings/spi/atmel,at91rm9200-spi.yaml  | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+Modify the maxiumum to maximum.
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+Signed-off-by: Deming Wang <wangdeming@inspur.com>
+---
+ drivers/clk/davinci/pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 082206676e73..f862f5e2b3fc 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -98,7 +98,7 @@
+  * @hw: clk_hw for the pll
+  * @base: Base memory address
+  * @pllm_min: The minimum allowable PLLM[PLLM] value
+- * @pllm_max: The maxiumum allowable PLLM[PLLM] value
++ * @pllm_max: The maximum allowable PLLM[PLLM] value
+  * @pllm_mask: Bitmask for PLLM[PLLM] value
+  */
+ struct davinci_pll_clk {
 
-Full log is available here: https://patchwork.ozlabs.org/patch/
-
-
-spi@400: dma-names:0: 'tx' was expected
-	arch/arm/boot/dts/at91-sama7g5ek.dtb
-
-spi@400: dma-names:1: 'rx' was expected
-	arch/arm/boot/dts/at91-sama7g5ek.dtb
-
-spi@400: Unevaluated properties are not allowed ('dma-names' was unexpected)
-	arch/arm/boot/dts/at91-sama7g5ek.dtb
+base-commit: 840126e36e8ff272cb63158646433fa1324533d9
+-- 
+2.27.0
 
