@@ -2,116 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6713BECAAA1
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 12:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F2EC6FA83
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 14:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239955AbiIFMVa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 08:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35296 "EHLO
+        id S239268AbiIFOAS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:00:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239960AbiIFMUL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 08:20:11 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FF570E59
-        for <linux-clk@vger.kernel.org>; Tue,  6 Sep 2022 05:17:37 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id b17so1817474wrq.3
-        for <linux-clk@vger.kernel.org>; Tue, 06 Sep 2022 05:17:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=+UlWrw6k4PbZ0Bp3jwpP3kUtJ+9fIITKXd6zIt0eUZE=;
-        b=XLrVvAkV1DUhzRF3H2dGjkj6ciwhvJFFu1jFBdKGAxtMFaLYrfCe7qzWcUm8n8VXSB
-         zUKFOAgty3NGeEjFaTm3a/z+E6Fzqn1DKITKiEyr8sNBwAHN29vmO/ZPSKTRbtBqoIUZ
-         9fzk4hJPDCwT94j9Z3kvMDkecpI7k8+yr0SVwWbW3fASZ/xIX9okKse44m3aQGHuKMbZ
-         vx094Yv+1ucIdOqA3AgdqWxHz3V0IHwDVO9OpGDcgBn5w+zYd1w+LPIR7LSXEgKaBRaK
-         zsZsBPeCglF9Hd+nd0vO2OhSm9aGAdA5os+gS66l7Sj4/+Lg5ASJdBocrW8Zzosc5OFw
-         lw9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=+UlWrw6k4PbZ0Bp3jwpP3kUtJ+9fIITKXd6zIt0eUZE=;
-        b=jBU3IA6n8RhM/zkhc7HKgmYIBcZX67VFYDA58E+jTglcT0wFxEcxKxW2Nqr8oikF/g
-         9RAnJDQHaSDRexPfX12hqY5dIrsGkSq/ZEnEau5OIcJfcKVj9s8MkVY8DvnpB7PtXdHR
-         caXA5fMZtHPCQZpvKNhb48chql5zpNrZryeszLpwhU/gdt43QFcIHlt2sA86yzFEmk0W
-         bCYVeRg7gsp/HpuIuOXHOlKyLqjM4ucAYvAbXME40Efq0FBDx6qFxsZYItnGx54L7ufq
-         TFn31ScjQP5XLX1jco5oI14CaHQRiUb0KTnhXanJbmB+VwisvtQCVCsJrxZD0z3/BPPE
-         0cfw==
-X-Gm-Message-State: ACgBeo1xuiSzPNdb/4iYzqhigHoal7Fw/F6eZjItKZAfCsx+SFMgbqjs
-        P7ee/9JUkeJS3bPJvNetdtgk7A==
-X-Google-Smtp-Source: AA6agR7E8jBKkN9pv0a+Lqa5ys9tbNW3Q0pnYjeGQumt1nLD34WHTaz0hQcr9khlbW+SrxYzv8KXmg==
-X-Received: by 2002:a05:6000:168e:b0:220:87da:c3e4 with SMTP id y14-20020a056000168e00b0022087dac3e4mr26389881wrd.559.1662466647455;
-        Tue, 06 Sep 2022 05:17:27 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id h6-20020a05600c350600b003a541d893desm15741459wmq.38.2022.09.06.05.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 05:17:26 -0700 (PDT)
-Date:   Tue, 6 Sep 2022 15:17:25 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] clk: imx: clk-gate-93: fix build error with x86_64
- allmodconfig
-Message-ID: <Yxc6VVXs98+HpovI@linaro.org>
-References: <20220906024047.1840977-1-peng.fan@oss.nxp.com>
+        with ESMTP id S240338AbiIFN5h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 09:57:37 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED89882845;
+        Tue,  6 Sep 2022 06:42:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662471749; x=1694007749;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Wcz1W2S6TTPoz9vhPjyd2cS1A1djfa8aNebGbDdSKCI=;
+  b=bU4pLcZFArCbfiVavU6Dc8Xy46DNrSaDOnBD1yfbDXqTu+iWQ4T5210U
+   YV2b/vPGzOAY6dNMVexU605NO+GikshMboyoA1qxc2BnTEiY14BiC7VKF
+   DU3/IQzudJMNDgxizE96/5OALLCa/K1YmZtPoSRD/+bSrrXI+dRRY5VAr
+   RSoMuwlqNWTjOxpKz9XoE13Jv5tjs7XqH/9GGZ+lBkkHoa3pClx4x47q0
+   TeU2QB9/BcjnLdcDSuumhiBibir+S8in/5X1POW/4QRXNnkMV+7Q2InMH
+   3R8wE7BjonmUlzO2a+B3jV0bHFgzSn3baJDFT4W03MkhR0OvaiBcnnuib
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="283588937"
+X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
+   d="scan'208";a="283588937"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:41:26 -0700
+X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
+   d="scan'208";a="682399822"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:41:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oVYpO-0098fa-14;
+        Tue, 06 Sep 2022 16:41:22 +0300
+Date:   Tue, 6 Sep 2022 16:41:22 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v1 1/3] clk: Remove never used devm_of_clk_del_provider()
+Message-ID: <YxdOAj5KLDY6y66p@smile.fi.intel.com>
+References: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220906024047.1840977-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-09-06 10:40:47, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> When building with x86_64 allmodconfig:
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/imx/clk-gate-93.o
-> 
-> Fix it with 'mxc-clk-objs += clk-gate-93.o'
-> 
-> Fixes: 4e9331d4e2e0 ("clk: imx: add i.MX93 clk gate")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On Thu, Jun 23, 2022 at 02:57:17PM +0300, Andy Shevchenko wrote:
+> For the entire history of the devm_of_clk_del_provider) existence
+> (since 2017) it was never used. Remove it for good.
 
-Hi Peng,
+Any comments on this series?
 
-Since the commit this patch fixes is just in my tree for now,
-I squahed in the mentioned commit.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-So, it is applied.
 
-Thanks!
-
-> ---
->  drivers/clk/imx/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index 89fe72327788..e8aacb0ee6ac 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -12,6 +12,7 @@ mxc-clk-objs += clk-fixup-div.o
->  mxc-clk-objs += clk-fixup-mux.o
->  mxc-clk-objs += clk-frac-pll.o
->  mxc-clk-objs += clk-gate2.o
-> +mxc-clk-objs += clk-gate-93.o
->  mxc-clk-objs += clk-gate-exclusive.o
->  mxc-clk-objs += clk-pfd.o
->  mxc-clk-objs += clk-pfdv2.o
-> @@ -28,7 +29,7 @@ obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
->  obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
->  obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
->  
-> -obj-$(CONFIG_CLK_IMX93) += clk-imx93.o clk-gate-93.o
-> +obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
->  
->  obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
->  clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
-> -- 
-> 2.37.1
-> 
