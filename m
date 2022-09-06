@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF85C6FA83
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 06:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595D2ECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 06:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232657AbiIFGOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 02:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54278 "EHLO
+        id S238523AbiIFGQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 02:16:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232045AbiIFGOB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 02:14:01 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A32C6E880;
-        Mon,  5 Sep 2022 23:13:55 -0700 (PDT)
-X-UUID: 875c70518393477f91fe36cd6560fd02-20220906
+        with ESMTP id S238506AbiIFGQj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 02:16:39 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C83C170E44;
+        Mon,  5 Sep 2022 23:15:21 -0700 (PDT)
+X-UUID: b2bb39e2250644ed8ece4dd29a00f116-20220906
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
         h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=j4MN08XblrDSbxE0fXBIA+Mpq1rxLZoCqtsuW3ROu2g=;
-        b=X/bYzC/O94/iEhkDrJmoxv7IhFAvHty+zX7CZ89kxfCBBGx7fvpG8tfZw2tDmA2E6SS6kI4TtZff9T6uuuIALZuZAgmCOK8OqnFXQL+wZxW8Ogt3BbPUFWG5MRh016o0QkJIbF/Xfs0nQFbrWI5xF0XNfn4jUaNCWAp7p6DdG/0=;
+        b=M9sgsEaLyYFa6fW2UoOPDZSWMR3Nv/QJszDorkKgJwfperfUFGAVrHRMw9SU5gnAlNjlMNdUjWVDrw1IrfcuIZfE5GszICxZVotu53vqbFLFtY8x2umw0krQvD0OOYD5XpKuCdAhRePrJZdyd157VXRgJbhud1IkI68CVrYqWlI=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.10,REQID:964d8669-31a8-4b72-990d-a8765e3e5031,OB:0,L
+X-CID-O-INFO: VERSION:1.1.10,REQID:a687a147-6a6e-499a-a663-106e64a7be9e,OB:0,L
         OB:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_
         Ham,ACTION:release,TS:0
-X-CID-META: VersionHash:84eae18,CLOUDID:2cf7c856-e800-47dc-8adf-0c936acf4f1b,C
+X-CID-META: VersionHash:84eae18,CLOUDID:a1015221-1c20-48a5-82a0-25f9c331906d,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:11|1,File:
         nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: 875c70518393477f91fe36cd6560fd02-20220906
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+X-UUID: b2bb39e2250644ed8ece4dd29a00f116-20220906
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <edward-jw.yang@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 373935793; Tue, 06 Sep 2022 14:13:49 +0800
+        with ESMTP id 1589515334; Tue, 06 Sep 2022 14:15:16 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Tue, 6 Sep 2022 14:13:48 +0800
+ 15.2.792.15; Tue, 6 Sep 2022 14:15:15 +0800
 Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.2.792.15 via Frontend
- Transport; Tue, 6 Sep 2022 14:13:48 +0800
-Message-ID: <dbcbf2f43bdf8dec0273e711066dfead26a59d01.camel@mediatek.com>
+ Transport; Tue, 6 Sep 2022 14:15:15 +0800
+Message-ID: <4f12f2b254a5ea795720052cb1c58e59abe9b9ce.camel@mediatek.com>
 Subject: Re: [PATCH 3/4] clk: mediatek: Add new clock driver to handle FHCTL
  hardware
 From:   Edward-JW Yang <edward-jw.yang@mediatek.com>
@@ -58,7 +58,7 @@ CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>,
         Project_Global_Chrome_Upstream_Group 
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 6 Sep 2022 14:13:48 +0800
+Date:   Tue, 6 Sep 2022 14:15:15 +0800
 In-Reply-To: <d2abe2d3-f17c-6c22-ccae-514fe196441e@collabora.com>
 References: <20220831124850.7748-1-johnson.wang@mediatek.com>
          <20220831124850.7748-4-johnson.wang@mediatek.com>
