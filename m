@@ -2,70 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F2EC6FA83
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 14:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E73C6FA89
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 14:34:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239268AbiIFOAS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58444 "EHLO
+        id S232425AbiIFOeU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:34:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240338AbiIFN5h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 09:57:37 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED89882845;
-        Tue,  6 Sep 2022 06:42:28 -0700 (PDT)
+        with ESMTP id S242006AbiIFOd2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 10:33:28 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41F5482D32;
+        Tue,  6 Sep 2022 06:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662471749; x=1694007749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Wcz1W2S6TTPoz9vhPjyd2cS1A1djfa8aNebGbDdSKCI=;
-  b=bU4pLcZFArCbfiVavU6Dc8Xy46DNrSaDOnBD1yfbDXqTu+iWQ4T5210U
-   YV2b/vPGzOAY6dNMVexU605NO+GikshMboyoA1qxc2BnTEiY14BiC7VKF
-   DU3/IQzudJMNDgxizE96/5OALLCa/K1YmZtPoSRD/+bSrrXI+dRRY5VAr
-   RSoMuwlqNWTjOxpKz9XoE13Jv5tjs7XqH/9GGZ+lBkkHoa3pClx4x47q0
-   TeU2QB9/BcjnLdcDSuumhiBibir+S8in/5X1POW/4QRXNnkMV+7Q2InMH
-   3R8wE7BjonmUlzO2a+B3jV0bHFgzSn3baJDFT4W03MkhR0OvaiBcnnuib
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="283588937"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1662472726; x=1694008726;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=UsqJGlEdc6MmAq/temRPHof8NeB6n1P0o0Ib1Kl4G+I=;
+  b=owyFQgnnJCV/p7VdcbqQftU5QJ56KMCOGyNr7zVnbBNWqgMcQGxbmAfv
+   3kySFmhkTgLEi0TlLywsQtVpV7QPKyNHtXF4cJxe+f3Z8qrDzQF+u+iBE
+   E62ImXyhUpEEB1vdkzgkhDcsTQJPEYgffFcS8Yk1Gdde2mA+24srkLs5E
+   UojXeVYBla+rY0Pt/WNNPcqqJls5xDbi4lUnILbtcl2ubeWadDidv1cU2
+   od1vNgGQ5AKRRrqAWHZSWaa6xJvUpkVFNiz6gtVHqB0p4HDo196TIV5Mt
+   tNRW38qWkIMQOysnwFHB4ai2X3xBhHMCzQ72KqIcNFElN8bN7ktsx/aob
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="283588937"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:41:26 -0700
-X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="682399822"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:41:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oVYpO-0098fa-14;
-        Tue, 06 Sep 2022 16:41:22 +0300
-Date:   Tue, 6 Sep 2022 16:41:22 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH v1 1/3] clk: Remove never used devm_of_clk_del_provider()
-Message-ID: <YxdOAj5KLDY6y66p@smile.fi.intel.com>
-References: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="189613821"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Sep 2022 06:56:44 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Tue, 6 Sep 2022 06:56:44 -0700
+Received: from ROB-ULT-M68701.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.12 via Frontend Transport; Tue, 6 Sep 2022 06:56:39 -0700
+From:   Sergiu Moga <sergiu.moga@microchip.com>
+To:     <lee@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
+        <richard.genoud@gmail.com>, <radu_nicolae.pirea@upb.ro>,
+        <gregkh@linuxfoundation.org>, <broonie@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jirislaby@kernel.org>, <admin@hifiphile.com>,
+        <sergiu.moga@microchip.com>, <kavyasree.kotagiri@microchip.com>,
+        <tudor.ambarus@microchip.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 02/13] ARM: dts: at91: sama7g5: Swap rx and tx for spi11
+Date:   Tue, 6 Sep 2022 16:55:01 +0300
+Message-ID: <20220906135511.144725-3-sergiu.moga@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220906135511.144725-1-sergiu.moga@microchip.com>
+References: <20220906135511.144725-1-sergiu.moga@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 02:57:17PM +0300, Andy Shevchenko wrote:
-> For the entire history of the devm_of_clk_del_provider) existence
-> (since 2017) it was never used. Remove it for good.
+Swap the rx and tx of the DMA related DT properties of the spi11 node
+in order to maintain consistency across Microchip/Atmel SoC files.
 
-Any comments on this series?
+Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+---
 
+
+v1 -> v2:
+- Nothing, this patch was not here before
+
+
+ arch/arm/boot/dts/sama7g5.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sama7g5.dtsi b/arch/arm/boot/dts/sama7g5.dtsi
+index bb6d71e6dfeb..249f9c640b6c 100644
+--- a/arch/arm/boot/dts/sama7g5.dtsi
++++ b/arch/arm/boot/dts/sama7g5.dtsi
+@@ -866,9 +866,9 @@ spi11: spi@400 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				atmel,fifo-size = <32>;
+-				dmas = <&dma0 AT91_XDMAC_DT_PERID(27)>,
+-					    <&dma0 AT91_XDMAC_DT_PERID(28)>;
+-				dma-names = "rx", "tx";
++				dmas = <&dma0 AT91_XDMAC_DT_PERID(28)>,
++					    <&dma0 AT91_XDMAC_DT_PERID(27)>;
++				dma-names = "tx", "rx";
+ 				status = "disabled";
+ 			};
+ 		};
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
