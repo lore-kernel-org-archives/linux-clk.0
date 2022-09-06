@@ -2,155 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE75BECAAA1
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 18:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E250CC38145
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 19:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbiIFS30 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 14:29:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51140 "EHLO
+        id S229723AbiIFTLS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 15:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbiIFS3Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 14:29:25 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A55DB4B
-        for <linux-clk@vger.kernel.org>; Tue,  6 Sep 2022 11:29:21 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id u9so25254538ejy.5
-        for <linux-clk@vger.kernel.org>; Tue, 06 Sep 2022 11:29:21 -0700 (PDT)
+        with ESMTP id S229721AbiIFTLR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 15:11:17 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F54A4070;
+        Tue,  6 Sep 2022 12:11:16 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id c2so12232995plo.3;
+        Tue, 06 Sep 2022 12:11:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Xgo8Ax/Gst1OUgdLuCbxkHBNMkaa11aDgNF8ygPNA5E=;
-        b=CN3yfXYgYlCImMTr8X5H/P1E1nFmBBCR1Vw2XGULKBttcwqlHgWmYzlhI2Cx2JvCj5
-         z2zWKyJLRWqEgwZTYIihraNMVrCubWa3ndMM9F6/1U+T7LYSVe9iSDr6Re7fDv8QucF4
-         OOpzPIObx4Iq+qizrsqRQeBPKEgjgr3oNjzK32tHWjEdjmQZinQ7OWW2z9DWrT5c0vtC
-         LnyXzEcK96yGllfk1plG0+3Q5YIq955azgkMPMywlW3CV7oW1oecnuks+tuAk/upI8Jj
-         6QZLbEalRxrm6MMc6YyQlItkr7znyHnFVOjo9NiFEJhOK4F9+YwES2cPRjkDcn8rJBrI
-         smnA==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=Uxyfydq6mAQset0rLjj0lZ4kT2T9DNQSTtQIf3P/WBc=;
+        b=oxJVDLjYXG19wqnH1nnFoB8v1YUHjmBDOpxhsRIcHu18Lp+SuatKIr8BBiqhtCS2zS
+         8FdV2LiA2sf+BltT5uHDrkQomWbRcswYAw9e4LKWCFH0WxWZYyFzBWPig2oThOXgwr06
+         EP9UxK+6dic8lRLj/pt7mK7VlghHDkYFfBb9q4W23L5T838up4tW8Y0yQ+S4+8FnXRUg
+         FWJVXIMLx0GCU31MZH/KI58HZA5v1ebcsU4XE4Yxh4Zo6Ep+dRO4FRufHZakBcO6SAjT
+         XJ7XshjTMqg+L/1nNyfRRifLY5Qq/Ll8Dbj8fAy1AVdV20YF/awcuCEL2zoLtw/KJyhB
+         OnJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Xgo8Ax/Gst1OUgdLuCbxkHBNMkaa11aDgNF8ygPNA5E=;
-        b=TgCWwuGw2LmGZgOiGMGjyUaI8PF+j537UEK0rCR94W6C4vkI3qB5y+QrCuXDOSk2Av
-         4GVLUM71J4mKrj8HRsx0fF+M+IFg5ELWrI0Coxvk1pCdjwF+rrLWsCCgMcP/X9bff0sn
-         CAM42aXHek0W3NfMBsIH11FNVjroECWYRdukisb1xztyhF5kvGY4HigkRduXZgen2CZK
-         DLXwQS9LzwoTEUSLjR3VcWBP5t2tLNp1+LD5sUeDWkn/9f6wAT+CkgMTmItS95+YLdPj
-         8JkM/AV2NghOe5yu3WyyQemx7JJJyEbZQ+MPGID4M/xCqDTj/GRAy/5oWm9JWrBoImfI
-         Jzrw==
-X-Gm-Message-State: ACgBeo0WKOzEJwW2z11R3Ue5KdbSmKd4lOxL1JnUR1LCeFNCN3njyet5
-        ktQEb/jt3TaUc33pfVvTGtjF8preFol/iQ==
-X-Google-Smtp-Source: AA6agR4PSTClixOnEjaouB8rBWzPVCu/vO23XgPXd6Gd6rBC8XiA5rFjZGHCAxQP1huWtlRgUMwa+Q==
-X-Received: by 2002:a17:907:6da6:b0:741:771f:1d0d with SMTP id sb38-20020a1709076da600b00741771f1d0dmr31060577ejc.125.1662488959875;
-        Tue, 06 Sep 2022 11:29:19 -0700 (PDT)
-Received: from ?IPV6:2a01:c23:bd23:a800:187f:c2cb:1804:1a? (dynamic-2a01-0c23-bd23-a800-187f-c2cb-1804-001a.c23.pool.telefonica.de. [2a01:c23:bd23:a800:187f:c2cb:1804:1a])
-        by smtp.googlemail.com with ESMTPSA id gh16-20020a1709073c1000b00711edab7622sm6926593ejc.40.2022.09.06.11.29.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Sep 2022 11:29:19 -0700 (PDT)
-Message-ID: <52b07db2-7edb-0373-c6d2-df67917f4af7@gmail.com>
-Date:   Tue, 6 Sep 2022 20:29:04 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: [PATCH RESEND] clk: meson: pll: copy retry workaround from vendor
- driver
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>, Yu Tu <yu.tu@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <cc80cda0-4dda-2e3e-3fc8-afa97717479b@gmail.com>
- <1jk06rtlrv.fsf@starbuckisacylon.baylibre.com>
- <09befaaf-b34a-aeda-5dd6-6bfae4b01163@amlogic.com>
- <1jo7vswmjw.fsf@starbuckisacylon.baylibre.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-In-Reply-To: <1jo7vswmjw.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=Uxyfydq6mAQset0rLjj0lZ4kT2T9DNQSTtQIf3P/WBc=;
+        b=gGOlq6hvXL9j/Ht7qtnnA8DWqMh1dK1m6OFf4QrY4gT5O6moalThOrX/5nx73q+Huy
+         oPfnuR0GC/39f1ccW8vJIsOmb+qSPUH6NuFTVwSlElW1+1vrO2X9Vlhf2UjY4kTu/ctf
+         YLq31Al10u3MW5d5Gr8pwMUIwA7Wn5wAU8PS8XxvWD8VMSsXhqtPCff1HqfmvAsfXDVn
+         GaloM+SwAFcE4YamxgDZagdNLlt0mWxw8Cs7FRAa4hZiPYZOO65X2SQs3TxTSbcZn1w8
+         6ujJyI3EhhS30U3pf3bakW83N0sqQUecFKC+XMHI3YyVY2HUunv5O8vebfgE++SQebhO
+         rX7Q==
+X-Gm-Message-State: ACgBeo32g7hfp77MJlYqQZviNPkGhbwu9V1XMBbzyPRsheaXfcELgY1a
+        ZoH07XV/ptPmi8sOEfWE7C370/iSgjTRDg==
+X-Google-Smtp-Source: AA6agR6KeD/ronskaUphIe75PRVpn0Gz8ycVJHGWaWdgrnikNAJXC7eBzzsQfBetAAs0ds0Sb0bBtQ==
+X-Received: by 2002:a17:902:aa8c:b0:173:4137:55c4 with SMTP id d12-20020a170902aa8c00b00173413755c4mr56436346plr.108.1662491475771;
+        Tue, 06 Sep 2022 12:11:15 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:1f28:3ecf:7535:6f32:453c:4179])
+        by smtp.googlemail.com with ESMTPSA id h10-20020a170902680a00b0016d4f05eb95sm10213461plk.272.2022.09.06.12.11.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Sep 2022 12:11:15 -0700 (PDT)
+From:   Vishal Badole <badolevishal1116@gmail.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mintupatel89@gmail.com,
+        chinmoyghosh2001@gmail.com, vimal.kumar32@gmail.com,
+        Vishal Badole <badolevishal1116@gmail.com>
+Subject: [PATCH v4] Common clock: To list active consumers of clocks
+Date:   Wed,  7 Sep 2022 00:39:51 +0530
+Message-Id: <1662491391-12111-1-git-send-email-badolevishal1116@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06.09.2022 17:21, Jerome Brunet wrote:
-> 
-> On Tue 30 Aug 2022 at 14:33, Yu Tu <yu.tu@amlogic.com> wrote:
-> 
->> On 2022/8/29 17:54, Jerome Brunet wrote:
->>> [ EXTERNAL EMAIL ]
->>> On Sun 14 Aug 2022 at 23:25, Heiner Kallweit <hkallweit1@gmail.com>
->>> wrote:
->>>
->>>> On a S905X4-based system this call fails randomly.
->>>> The vendor driver has a retry mechanism and on my system
->>>> the second attempt is successful always.
-> 
-> Heiner, ideally commit message should not be about 'your' system
-> but describe what the system actually is. This would be more useful down
-> the road.
-> 
-> Based on Yu Tu feedback I'd propose
-> 
-> '
-> The PCIe PLL locking may be unreliable under some circumstance, such as
-> high or low temperature. If the PLL fails to lock, reset it a try again.
-> 
-> This helps on the S905X4
-> '
-> 
-> If this is OK with you, I can amend the message before applying the
-> patch, or you may resubmit. As you wish.
-> 
+This feature lists the clock consumer's name and respective connection
+id. Using this feature user can easily check that which user has
+acquired and enabled a particular clock.
 
-Yes, please amend the commit message as suggested.
-Thanks for the review and follow-up.
+Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
+Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
+Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
+---
+ drivers/clk/clk.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
->>>>
->>> This reason looks a bit weak to me.
->>> I'd like AML team to comment on this PLL problem as I suspect it might
->>> relate to other PLL we have been seeing
->>
->> First of all, we've had this problem before. But the probability is very
->> low, most of the PLL will not lock when the chip is tested at high and low
->> temperature.
->>
->> Our actual code has retry mechanism to solve the above problem.
->>
->>>
->>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>> ---
->>>>   drivers/clk/meson/clk-pll.c | 12 ++++++++----
->>>>   1 file changed, 8 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
->>>> index 9e55617bc..daa025b6d 100644
->>>> --- a/drivers/clk/meson/clk-pll.c
->>>> +++ b/drivers/clk/meson/clk-pll.c
->>>> @@ -320,12 +320,16 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
->>>>     static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
->>>>   {
->>>> -	meson_clk_pll_init(hw);
->>>> +	int retries = 10;
->>>>   -	if (meson_clk_pll_wait_lock(hw))
->>>> -		return -EIO;
->>>> +	do {
->>>> +		meson_clk_pll_init(hw);
->>>> +		if (!meson_clk_pll_wait_lock(hw))
->>>> +			return 0;
->>>> +		pr_info("Retry enabling PCIe PLL clock\n");
->>>> +	} while (--retries);
->>>>   -	return 0;
->>>> +	return -EIO;
->>>>   }
->>>>     static int meson_clk_pll_enable(struct clk_hw *hw)
->>> .
-> 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f00d4c1..db48f84 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2953,28 +2953,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 				 int level)
+ {
+ 	int phase;
++	struct clk *clk_user;
++	int multi_node = 0;
+ 
+-	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
++	seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
+ 		   level * 3 + 1, "",
+-		   30 - level * 3, c->name,
++		   35 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+ 		   clk_core_get_rate_recalc(c),
+ 		   clk_core_get_accuracy_recalc(c));
+ 
+ 	phase = clk_core_get_phase(c);
+ 	if (phase >= 0)
+-		seq_printf(s, "%5d", phase);
++		seq_printf(s, "%-5d", phase);
+ 	else
+ 		seq_puts(s, "-----");
+ 
+-	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
++	seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
+ 
+ 	if (c->ops->is_enabled)
+-		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
++		seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
+ 	else if (!c->ops->enable)
+-		seq_printf(s, " %9c\n", 'Y');
++		seq_printf(s, " %5c ", 'Y');
+ 	else
+-		seq_printf(s, " %9c\n", '?');
++		seq_printf(s, " %5c ", '?');
++
++	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
++		seq_printf(s, "%*s%-*s  %-25s\n",
++			   level * 3 + 2 + 105 * multi_node, "",
++			   30,
++			   clk_user->dev_id ? clk_user->dev_id : "deviceless",
++			   clk_user->con_id ? clk_user->con_id : "no_connection_id");
++
++		multi_node = 1;
++	}
++
+ }
+ 
+ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+@@ -2995,9 +3008,10 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
+ 
+-	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+-	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+-	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            connection\n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id\n");
++	seq_puts(s, "---------------------------------------------------------------------------------------------------------------------------------------------\n");
++
+ 
+ 	clk_prepare_lock();
+ 
+-- 
+2.7.4
 
