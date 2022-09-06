@@ -2,90 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F5CECAAD5
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 16:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240DCECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Sep 2022 16:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbiIFQJa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 12:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46240 "EHLO
+        id S234966AbiIFQUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 12:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239123AbiIFQIm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 12:08:42 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 247119BB5C
-        for <linux-clk@vger.kernel.org>; Tue,  6 Sep 2022 08:33:21 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id h204-20020a1c21d5000000b003a5b467c3abso9844354wmh.5
-        for <linux-clk@vger.kernel.org>; Tue, 06 Sep 2022 08:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date;
-        bh=8dfsxuLQkwhGof/iBTeTnMKCWk0wegl/kZDWDKnjl0w=;
-        b=5WpliFAJbWGKf4kORR8xbjCcjX54KQMghE3FyyPPlAfwyhFe1u7U4EBBMxgqwSn0wa
-         hkWcPsF/UCAjwXvDfLnwkZaB9uBFnm7NZd4clDdVNd9OMmZnN3ZhTuEI/+WoOdsOKT48
-         XZhtw+P25AIH4dFPTe/9bqS5KMWPCUcoX26f1CunU/w3ysBuD6Ea9k1lIXvfJXqkAcVi
-         Ry5dSgBKv9OdLNeOUF7Jl+ZVi8tDS/BmVapFxQc+Fdhdce3jop/atNiPPRFG7RW/hInu
-         gNrzystqWRYHNfXWNhD4Gu+B2TA4aIf/vGynugDuaPg4+JTChHlJRoykEEVELDh6SHSW
-         baYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date;
-        bh=8dfsxuLQkwhGof/iBTeTnMKCWk0wegl/kZDWDKnjl0w=;
-        b=qg1ZjzC3bf8SXUanM3AVaV/hYlC0XyfNpefnEs+2YQsBHf47LNXd0gJ3RbZRVJlo+l
-         FmIT2rUBpA6kwGdtm/oks7bxZ0Y5rLhwCve/yUtoSWHp4v91cNBk6yFlQvCZbhhfi6RO
-         4KY1EfgBGiEC+54LrTU6Xmcq5CU/dZ73PST/91Ivx2wjRLJC8q+qFjlMMmxPdOZiksUh
-         RCLBLDasxd5HDyybe7iRADyR2u2W9U7qnN0l3vxVitSE5o4a45WQ/j/sjlRt4Hxmhbem
-         iXqR0xtyRT0QvvkQS+XBVrmPFyqIX/5zLHP0L9BcvIuqochGVjIA5swSb8oBxnJIeL9M
-         woZg==
-X-Gm-Message-State: ACgBeo3Z9ROG0b6Lr4vBAqPXDO8h1NMGmnZ07q7n8w1fqgwlwm+0fIdo
-        sfV0ejT8rS0qoE4n0gW3pdI1yw==
-X-Google-Smtp-Source: AA6agR5tEfmioxS2Hie3WY0cth/zuqR4PwJ8gLnBsFEAJ0jXcN8QX0pmR1E7iwT0IL6ZnYqjahILbQ==
-X-Received: by 2002:a1c:7315:0:b0:3a5:ff61:4080 with SMTP id d21-20020a1c7315000000b003a5ff614080mr14079094wmb.196.1662478399600;
-        Tue, 06 Sep 2022 08:33:19 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q11-20020a1cf30b000000b003a8434530bbsm20268437wmq.13.2022.09.06.08.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 08:33:18 -0700 (PDT)
-References: <a801afc0-a8f2-a0a4-0f2b-a7201351d563@gmail.com>
-User-agent: mu4e 1.8.7; emacs 28.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] clk: meson: pll: adjust timeout in
- meson_clk_pll_wait_lock()
-Date:   Tue, 06 Sep 2022 17:29:03 +0200
-In-reply-to: <a801afc0-a8f2-a0a4-0f2b-a7201351d563@gmail.com>
-Message-ID: <1jk06gwm9u.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S232906AbiIFQT6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 12:19:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F3D326DA;
+        Tue,  6 Sep 2022 08:49:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A1F49B818C2;
+        Tue,  6 Sep 2022 15:49:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603B1C433D6;
+        Tue,  6 Sep 2022 15:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662479354;
+        bh=HyOzm5VMGmYJGCUZJSGax0V3uAmkTmNzZyIR1FAA+RQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OB6QEsUCynTHvPxAqfPNLKgNfjrOnGNuCsjcCMghiOVfEjqklmu+JjF1pE6s740tR
+         o73CbEg5qg4GocYd4ffIXKqn2Vn374C0VE8irVivL//j0IM8oXHcQzfyzS4ff7zLTn
+         0SF6aY/qx6kzV0f8dBPG8p9iYJiu272Hw8LCBiPwZWHLjQ4tFH2Ysv6JOROT/tfRi9
+         LsFO2D59VxPZo7JsdEkoJMXCQ82H2gPyFjaiTftXzSBGdw0oL1DIUoIfeoZq7lRk91
+         7Teieml4YBhcnYEPOdflYkLXh+krGUQfR9276k2zwRoLAzAVEYpig0v2XAA/PtLHWV
+         EpC+kNT2h9nNw==
+Date:   Tue, 6 Sep 2022 16:49:03 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Sergiu.Moga@microchip.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, Nicolas.Ferre@microchip.com,
+        alexandre.belloni@bootlin.com, Claudiu.Beznea@microchip.com,
+        radu_nicolae.pirea@upb.ro, richard.genoud@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        admin@hifiphile.com, Kavyasree.Kotagiri@microchip.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: mfd: atmel,at91-usart: convert to
+ json-schema
+Message-ID: <Yxdr76d2KVdUDfpW@google.com>
+References: <20220817075517.49575-1-sergiu.moga@microchip.com>
+ <20220817075517.49575-3-sergiu.moga@microchip.com>
+ <942accc5-70aa-3bb2-63dd-306a39ee5ea4@linaro.org>
+ <d1aad8ea-3852-f36b-366b-7aa67d2dd9d5@microchip.com>
+ <YxYI8/bprIV2wd1c@google.com>
+ <d6a498e7-838b-addf-bc7f-81e6805806d3@microchip.com>
+ <80abf192-0313-aade-7780-604f4c9c6810@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <80abf192-0313-aade-7780-604f4c9c6810@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, 05 Sep 2022, Krzysztof Kozlowski wrote:
 
-On Mon 29 Aug 2022 at 20:52, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> On 05/09/2022 17:22, Sergiu.Moga@microchip.com wrote:
+> > On 05.09.2022 17:37, Lee Jones wrote:
+> >>
+> >> On Fri, 19 Aug 2022, Sergiu.Moga@microchip.com wrote:
+> >>
+> >>> On 18.08.2022 11:39, Krzysztof Kozlowski wrote:
+> >>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> >>>>
+> >>>> On 17/08/2022 10:55, Sergiu Moga wrote:
+> >>>>> Convert at91 USART DT Binding for Atmel/Microchip SoCs to
+> >>>>> json-schema format.
+> >>>>>
+> >>>>> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+> >>>>> ---
+> >>>>>    .../bindings/mfd/atmel,at91-usart.yaml        | 190 ++++++++++++++++++
+> >>>>>    .../devicetree/bindings/mfd/atmel-usart.txt   |  98 ---------
+> >>>>>    2 files changed, 190 insertions(+), 98 deletions(-)
+> >>>>>    create mode 100644 Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
+> >>>>>    delete mode 100644 Documentation/devicetree/bindings/mfd/atmel-usart.txt
+> >>>>>
+> >>>>> diff --git a/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml b/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
+> >>>>> new file mode 100644
+> >>>>> index 000000000000..cf15d73fa1e8
+> >>>>> --- /dev/null
+> >>>>> +++ b/Documentation/devicetree/bindings/mfd/atmel,at91-usart.yaml
+> >>>> One more thing - I think this should be in serial directory, not mfd,
+> >>>> even though it includes SPI. MFD is just a Linux naming/wrapper device.
+> >>>>
+> >>>> Best regards,
+> >>>> Krzysztof
+> >>>
+> >>> I would rather keep it in this directory, since its corresponding driver
+> >>> is also in the mfd directory.
+> >>
+> >> Looks like a UART driver to me.
+> >>
+> >> Which MFD driver does this pertain to?
+> >>
+> > 
+> > Hi,
+> > 
+> > It's this one: drivers/mfd/at91-usart.c[1]
+> > 
+> > 
+> > [1] 
+> > https://elixir.bootlin.com/linux/v6.0-rc4/source/drivers/mfd/at91-usart.c
+> 
+> Which is not a "real MFD driver" because it probes exactly one child
+> (depending on the chosen serial protocol). Aren't MFD supposed to have
+> more then one child?
 
-> Currently we loop over meson_parm_read() up to 24mln times.
-> This results in a unpredictable timeout period. In my case
-> it's over 5s on a S905X4-based system. Make the timeout
-> period predictable and set it to 100ms.
+It's a single piece of silicon which supports multiple functions.
 
-Nitpick: next time please try to make commit not about your system, but
-about the system and the codebase.
+There is no stipulation detailing simultaneous usage.
 
-For example: In my case -> on an S905X4 platform (even better if you
-precise the platform here). Thx.
+Still, happy to receive suggestions on implementing this differently.
 
->
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-
-Applied, Thx
+-- 
+Lee Jones [李琼斯]
