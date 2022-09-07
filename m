@@ -2,197 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD62EC54EE9
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 20:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD9DC6FA89
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 22:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbiIGUi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Sep 2022 16:38:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32806 "EHLO
+        id S229705AbiIGWTJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Sep 2022 18:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiIGUi6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2022 16:38:58 -0400
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D606B2485;
-        Wed,  7 Sep 2022 13:38:55 -0700 (PDT)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-1278624b7c4so20740830fac.5;
-        Wed, 07 Sep 2022 13:38:55 -0700 (PDT)
+        with ESMTP id S229516AbiIGWTI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2022 18:19:08 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C37DA74D1;
+        Wed,  7 Sep 2022 15:19:07 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id j17so11549078qtp.12;
+        Wed, 07 Sep 2022 15:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=g5BXvyyoRCIgsReMPkjX53sa1oRrOY6KLwL7WymMjiA=;
+        b=OpCQdVbI+ZMb4UMDXOG+3jnDJkPyTNTvyI3xz64n3AaAuWFPToZu3P2MwahnImM4x0
+         ImZF0PXvQ+cf3wMyJdGHsFcxnc5xjmgWkElz64/BhPJmrdTscvcwxnx4gIfMd3YZt3+b
+         l9SPOAR8AGU7ss2kPX54slDhKafeoMkNA+wQ1lvMgZn7DVrv8MP7lN9F3T/LDFFFOoS/
+         PXNiH0qL3ZG4wXrxY2gRHPLfxca/4qRMyiB/O5W639uwBGZB/br/S85VNWkV2MQyzHHv
+         VklFDIAzbXepK+GrUIqJCYtbGXA/UUY3hai6PAxwiUVX8SVu0HdopyyupgdWDRrpaAXC
+         n8yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=wj0FlR0iIjBwEoHz1x7C+h5eigEetu70PRRI7k8iZXI=;
-        b=SZ9dXa4aSHjWvKvgvKqvjJOEnCsVWuYEvaxG2aWsvqQHW4yERexjGoKP/t7I2cQ4OS
-         FjAoeY3X4IGJ0y6zkgaTonZF0soSGVKuPaqWV2t9dGVj61bZJlTk9/ArDTusenL0za5J
-         rQ/WopMWlXfnoSqDReuo94X70ue7mMJUWctRXaD77CdN0Nauc+tdvv0PcrawXc4Yvr9X
-         jMbiuaAiBU2PZpE5GGFPZY90HwoZvocuxUhsdwcFqW29u0l3A0FE1OZdlJxFs+b22N32
-         IpHEaIDSvyngc0Y4NsWNYc3Fd++rQNvz4KktArX1lKsFU0LqPTJwGzntVWlCQBteLYNY
-         V8Jg==
-X-Gm-Message-State: ACgBeo3Q1ABsT6LwUY7Vi14hPI26z5O+Nwh2DzdOf90RhbzFWoDXTmNU
-        2Y8yVQb48zNHOG85DSYMy/NVlvI9kA==
-X-Google-Smtp-Source: AA6agR4/Q5cbO4dYciSTsb3yHN0PCRBBmZM4f/2Aw8gY/7KQS5uOU1UdBufXQ5dMUiyzRiI3S/G4dw==
-X-Received: by 2002:a05:6870:7394:b0:126:6f7b:15a2 with SMTP id z20-20020a056870739400b001266f7b15a2mr121415oam.227.1662583134465;
-        Wed, 07 Sep 2022 13:38:54 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bk26-20020a056830369a00b00636c81d4109sm7572324otb.46.2022.09.07.13.38.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 13:38:53 -0700 (PDT)
-Received: (nullmailer pid 299944 invoked by uid 1000);
-        Wed, 07 Sep 2022 20:38:53 -0000
-Date:   Wed, 7 Sep 2022 15:38:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, ardb@kernel.org,
-        davem@davemloft.net, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v9 25/33] dt-bindings: crypto: rockchip: convert to new
- driver bindings
-Message-ID: <20220907203853.GA288174-robh@kernel.org>
-References: <20220901125710.3733083-1-clabbe@baylibre.com>
- <20220901125710.3733083-26-clabbe@baylibre.com>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=g5BXvyyoRCIgsReMPkjX53sa1oRrOY6KLwL7WymMjiA=;
+        b=E7BU+ldjrlpcn10Hvu978/LauPaz1GRM84WV86BNqynwhuBiLm7PQ49c/PrEz62o15
+         FN113k29ogPBRuZMjSU5R1uRpJnuKwuC7n1PkQPcAXduCF+qFR3e7TzCtRDf31YVNpUg
+         crPGZzRMy08KPnKUZJlke8iPMqzyqL+PbOBOLhmIB4tmiNcI8jniomzWC3bY1hcoHDpN
+         3vQAKTSM5CkU/raclFVIK6+6FFWir318eykMG6OlEc1aYLOhlhyZnfZz58mnM/VB2hQq
+         9czUwj186K/DBbQl0YdoX34/IuK4wKgRVbQZ5h7Q1narB468Sia2SZWij9jGsj1xRoQl
+         /yIA==
+X-Gm-Message-State: ACgBeo1nV2tjylAd7bxbx+zOdcE2Ju0UZaxV3iePeKI4RaJZdgRxchQW
+        tX7ijYuENK5JJb1rv00/TTn8MsGk/G4=
+X-Google-Smtp-Source: AA6agR6Qfk0zI+RqDXBOTYdUPL3FaLm85b07XqeNvOJfBGEokYtcCZAGPv222eM6G72hjOQsew2ubw==
+X-Received: by 2002:ac8:7c44:0:b0:344:5653:df43 with SMTP id o4-20020ac87c44000000b003445653df43mr5305055qtv.359.1662589146661;
+        Wed, 07 Sep 2022 15:19:06 -0700 (PDT)
+Received: from localhost ([2607:fea8:a2e2:2d00::4aff])
+        by smtp.gmail.com with UTF8SMTPSA id e5-20020ac80105000000b00342b7e4241fsm13583504qtg.77.2022.09.07.15.19.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Sep 2022 15:19:06 -0700 (PDT)
+From:   Richard Acayan <mailingradian@gmail.com>
+To:     robh@kernel.org
+Cc:     andersson@kernel.org, agross@kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, caleb@connolly.tech,
+        jo@jsfamily.in, Richard Acayan <mailingradian@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: gcc-sdm845: add sdm670 global clocks
+Date:   Wed,  7 Sep 2022 18:18:33 -0400
+Message-Id: <20220907221832.136715-1-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220907175300.GA3779566-robh@kernel.org>
+References: <20220907175300.GA3779566-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220901125710.3733083-26-clabbe@baylibre.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 12:57:02PM +0000, Corentin Labbe wrote:
-> The latest addition to the rockchip crypto driver need to update the
-> driver bindings.
+> You just changed the clocks from 5 to 3. Please test your changes:
 
-This sounds like you changed the driver, so change the binding. That 
-would be an ABI break. But it looks like you are adding support for new 
-h/w, so say that. Bindings aren't about a driver.
+Right. I'll make sure to set up CI locally before my next series.
 
-> 
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  .../crypto/rockchip,rk3288-crypto.yaml        | 79 +++++++++++++++++--
->  1 file changed, 71 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> index 8a219d439d02..b7870a4cbdbe 100644
-> --- a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> +++ b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> @@ -13,6 +13,8 @@ properties:
->    compatible:
->      enum:
->        - rockchip,rk3288-crypto
-> +      - rockchip,rk3328-crypto
-> +      - rockchip,rk3399-crypto
->  
->    reg:
->      maxItems: 1
-> @@ -21,21 +23,82 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> +    minItems: 3
->      maxItems: 4
->  
->    clock-names:
-> -    items:
-> -      - const: aclk
-> -      - const: hclk
-> -      - const: sclk
-> -      - const: apb_pclk
-> +    minItems: 3
-> +    maxItems: 4
->  
->    resets:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 3
->  
->    reset-names:
-> -    items:
-> -      - const: crypto-rst
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3288-crypto
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 4
-> +        clock-names:
-> +          items:
-> +            - const: aclk
-> +            - const: hclk
-> +            - const: sclk
-> +            - const: apb_pclk
-> +        resets:
-> +          maxItems: 1
-> +        reset-names:
-> +          items:
-> +            - const: crypto-rst
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3328-crypto
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: hclk_master
-> +            - const: hclk_slave
-> +            - const: sclk
+> What you want here I think is 'minItems: 3' and then restrict the clocks 
+> to 3 or 5 in the if/then schema.
 
-Do we really need new names? Was 'aclk' not the bus master clock?
-
-If the clocks and resets aren't the same, then maybe these 2 new chips 
-should be their own binding.
-
-> +        resets:
-> +          maxItems: 1
-> +        reset-names:
-> +          items:
-> +            - const: crypto-rst
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3399-crypto
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: hclk_master
-> +            - const: hclk_slave
-> +            - const: sclk
-> +        resets:
-> +          minItems: 3
-> +        reset-names:
-> +          items:
-> +            - const: rst_master
-> +            - const: rst_slave
-
-'rst_' is redundant, drop.
-
-> +            - const: crypto-rst
->  
->  required:
->    - compatible
-> -- 
-> 2.35.1
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> 
+Yes, thanks for directing me. I found what I needed in
+Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml.
