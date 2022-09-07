@@ -2,44 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8713ECAAD3
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 23:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A35ECAAD3
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 23:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbiIGXAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Sep 2022 19:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57006 "EHLO
+        id S229788AbiIGXEw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Sep 2022 19:04:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiIGXAM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2022 19:00:12 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 682129D8ED;
-        Wed,  7 Sep 2022 16:00:04 -0700 (PDT)
-X-UUID: e508533bb1eb470bbfe9013aaeec0aa2-20220908
+        with ESMTP id S229579AbiIGXEv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2022 19:04:51 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C062647BB0;
+        Wed,  7 Sep 2022 16:04:49 -0700 (PDT)
+X-UUID: e35e2d48047f4bb4a56b98aa1c728807-20220908
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=WVN2su0W6cfg/UUYRpHd6lSdOO4U2GGb7/TQBMhg9MY=;
-        b=q3+BhORkSzOMfYpwhwdq/eeCPCIxaLa4AvXvrmYVEHTfaeRUwhFdPwHVzcs5T+6mydDcVJJX8KJEW6f0sMvWorBL5DtE8qkqGg45SnN3VlkvahsnC96WJRkoz9YtB7Dpyd6sJ0X1UMboiPRDn/w2wFr307xlyq0tTHzdlTbmYoQ=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=w3RdqVd1gkkXkZVjFlpJYrbMBbFDmrTcM7nhqoe7Ckc=;
+        b=Fq5PPwrlPdf04Mc7k6Z0nz4g43WDqVRMof6okhajJyWIY9Qj5XhVoJhWKcZjha3I60pY9H7unFKU5G7u/aP/AvSaxLAO0TaoTh3RxnAMxVFucNX/kE+7v7+sOMenjLZKMx0ymfgOdkX6UsDg0HuftB1eQSfLYsH80FiwZ/mRqEg=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.10,REQID:c9a13087-87c7-4326-9ad2-c46e2b4e6d0f,OB:0,L
-        OB:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release
-        _Ham,ACTION:release,TS:45
-X-CID-INFO: VERSION:1.1.10,REQID:c9a13087-87c7-4326-9ad2-c46e2b4e6d0f,OB:0,LOB
-        :0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_H
-        am,ACTION:release,TS:45
-X-CID-META: VersionHash:84eae18,CLOUDID:70f78c21-1c20-48a5-82a0-25f9c331906d,C
-        OID:0c2de187faa6,Recheck:0,SF:28|17|19|48,TC:nil,Content:-5,EDM:-3,IP:nil,
-        URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: e508533bb1eb470bbfe9013aaeec0aa2-20220908
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+X-CID-O-INFO: VERSION:1.1.10,REQID:0a230f38-1199-415c-ace6-9f5ca2e10dc7,OB:0,L
+        OB:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_
+        Ham,ACTION:release,TS:0
+X-CID-META: VersionHash:84eae18,CLOUDID:fb0f8d21-1c20-48a5-82a0-25f9c331906d,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:-5,EDM:-3,IP:nil,URL:0,File:ni
+        l,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: e35e2d48047f4bb4a56b98aa1c728807-20220908
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 674545052; Thu, 08 Sep 2022 06:59:58 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1440695343; Thu, 08 Sep 2022 07:04:44 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
  mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Thu, 8 Sep 2022 06:59:57 +0800
+ 15.2.792.15; Thu, 8 Sep 2022 07:04:42 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Thu, 8 Sep 2022 06:59:57 +0800
+ 15.2.792.15 via Frontend Transport; Thu, 8 Sep 2022 07:04:42 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <angelogioacchino.delregno@collabora.com>
 CC:     <chun-jie.chen@mediatek.com>, <devicetree@vger.kernel.org>,
@@ -52,12 +49,12 @@ CC:     <chun-jie.chen@mediatek.com>, <devicetree@vger.kernel.org>,
         <nfraprado@collabora.com>, <rex-bc.chen@mediatek.com>,
         <robh+dt@kernel.org>, <sboyd@kernel.org>, <weiyi.lu@mediatek.com>,
         <wenst@chromium.org>
-Subject: Re: [PATCH 03/10] clk: mediatek: mux: add clk notifier functions
-Date:   Thu, 8 Sep 2022 06:59:57 +0800
-Message-ID: <20220907225957.10541-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH 04/10] clk: mediatek: mt8183: Add clk mux notifier for MFG mux
+Date:   Thu, 8 Sep 2022 07:04:42 +0800
+Message-ID: <20220907230442.10633-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220905100416.42421-4-angelogioacchino.delregno@collabora.com>
-References: <20220905100416.42421-4-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220905100416.42421-5-angelogioacchino.delregno@collabora.com>
+References: <20220905100416.42421-5-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -65,25 +62,20 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> From: Chen-Yu Tsai <wenst@chromium.org>
+> When the MFG PLL clock, which is upstream of the MFG clock, is changed,
+> the downstream clock and consumers need to be switched away from the PLL
+> over to a stable clock to avoid glitches.
 > 
-> With device frequency scaling, the mux clock that (indirectly) feeds the
-> device selects between a dedicated PLL, and some other stable clocks.
+> This is done through the use of the newly added clk mux notifier. The
+> notifier is set on the mux itself instead of the upstream PLL, but in
+> practice this works, as the rate change notifitcations are propogated
+> throughout the sub-tree hanging off the PLL. Just before rate changes,
+> the MFG mux is temporarily and transparently switched to the 26 MHz
+> main crystal. After the rate change, the mux is switched back.
 > 
-> When a clk rate change is requested, the (normally) upstream PLL is
-> reconfigured. It's possible for the clock output of the PLL to become
-> unstable during this process.
-> 
-> To avoid causing the device to glitch, the mux should temporarily be
-> switched over to another "stable" clock during the PLL rate change.
-> This is done with clk notifiers.
-> 
-> This patch adds common functions for notifiers to temporarily and
-> transparently reparent mux clocks.
-> 
-> This was loosely based on commit 8adfb08605a9 ("clk: sunxi-ng: mux: Add
-> clk notifier functions").
->
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> [Angelo: Rebased to assign clk_ops in mtk_mux_nb]
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
-
+Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
