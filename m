@@ -2,165 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6027C6FA89
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 14:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE632C38145
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 16:04:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbiIGOT3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Sep 2022 10:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48800 "EHLO
+        id S229767AbiIGQEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Sep 2022 12:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiIGOT2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2022 10:19:28 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DABB2B18;
-        Wed,  7 Sep 2022 07:19:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662560364; x=1694096364;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mb8iuybAB+Ow3ntbR/Nt2puuaVdPIstTH2e0zbuav8E=;
-  b=CBNLQ7+wj95L9RjUX/21TY4bobgtI1XIozjPhuAmRTc4UWkoKh94d7OM
-   6Vq9S4kyOAlQh5wh7clX4fgOOMy63h6/NUnr9WcQ4G4G1H56vQNDIogEk
-   XbVUZSmyrFckd/ZpAAEZs9dRoOksp/Bh5JtW8XcjAQl8FI/uWi45CqDKu
-   PFWaPrGPaEWnMMqRY0i6CVyOu5HVHSM9P+EyCy7CyJpnynOXaDN3Paj/c
-   P4J1gVIXpHjaDG/CpjLC9xqg6ruoH4pqPgha6OvbQJFiZp56ZOICzn4VA
-   mfLzVu+AUhCOriAK70n98L9FXtwfRGhNsDN7Z7x7/+L7Dnd3TbI/XJVYG
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="383178126"
-X-IronPort-AV: E=Sophos;i="5.93,297,1654585200"; 
-   d="scan'208";a="383178126"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2022 07:19:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,297,1654585200"; 
-   d="scan'208";a="682822800"
-Received: from lkp-server02.sh.intel.com (HELO 95dfd251caa2) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Sep 2022 07:19:18 -0700
-Received: from kbuild by 95dfd251caa2 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oVvte-0006eH-0A;
-        Wed, 07 Sep 2022 14:19:18 +0000
-Date:   Wed, 7 Sep 2022 22:18:24 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Richard Acayan <mailingradian@gmail.com>,
-        bjorn.andersson@linaro.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, agross@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, tdas@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, caleb@connolly.tech,
-        jo@jsfamily.in, Richard Acayan <mailingradian@gmail.com>
-Subject: Re: [PATCH 3/3] clk: qcom: gcc-sdm845: add sdm670 global clock data
-Message-ID: <202209072255.CLVCZ5HY-lkp@intel.com>
-References: <20220907025035.15609-4-mailingradian@gmail.com>
+        with ESMTP id S229889AbiIGQEL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2022 12:04:11 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B30BBA73
+        for <linux-clk@vger.kernel.org>; Wed,  7 Sep 2022 09:02:50 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id jm11so14987257plb.13
+        for <linux-clk@vger.kernel.org>; Wed, 07 Sep 2022 09:02:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=edgeble-ai.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=/8rl6gokx88Kuf6qcH/eMq1owuxgLHmqVncOwj3PuLg=;
+        b=YSOnNkg3Uj6/xVTKMm8VlwSDo9BWyHe8bNAOm8UjOhfy5K22RhPCT+IK93C7tR8b4C
+         gGipp/JY0hmtmU+jO/UmviIc0F/nl0oF/19dNDIQ0H+Y4hBETh8b04UScMhwRveQPMWr
+         OHuZdryZpsJL9qUkQ3+zBmQY/mp8FZW1rziFWf8MhMH2SobpRgrJS5QSdCeLE8Bgyeza
+         upmjp8YRDsxE87+0SUEWBTY66E9cBOhUM5Pr/S0qK14IAMI6A0m0WZVW1OcyzaRxcvia
+         6chlFvUiV1+HEAi2aOi3soVZiIpjJ9fMwCEoRPC78Rihmf84/VRlzGy1RLZyvy0UzQRN
+         MIrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=/8rl6gokx88Kuf6qcH/eMq1owuxgLHmqVncOwj3PuLg=;
+        b=L+AUKsSyCwT2cccnw6U4lijIbVzoNLrIlLFF+rpOuCaxfdDtZM04ecp1zrUjofq2PP
+         2ofQjpHD5g5vVPKcTWZPEwmHNiv2Ix+isUANTbbGLu38G2nfMO9+B06ToCP01hk/LgpF
+         eQuVspQZdlfahZ0Yu2zhGrAm76Ppc2VT/YgkUJrAkPSoXTjdF1IcJTjuBbhKtfshI9In
+         q63IBr2XuvT7N6yN2v/ansBIVpbJDuTZ1kJQtBLAzxQ1ln1h73+fI3chyd9dA4T3WLu2
+         66PrGPPwWpBbRIw3UuQSYuQIx5mULErkkurWMCti459sIHJH0JPsARaOmhZ4cx2qvIKQ
+         KLxw==
+X-Gm-Message-State: ACgBeo2/298bvr6+IpsazEYzLvRS0HAMC4wwIxZxWx07d7SYKyWjhiqt
+        JN0OJ9kLDpv0DAsjQLdNq2afSg==
+X-Google-Smtp-Source: AA6agR7O4dt+QfLaTyngTlSpQ1y5IWYzNnAmowN62Ei2fgaeYMZ6E5sAlfhPbzYtvB41SjqhvkB7+w==
+X-Received: by 2002:a17:903:516:b0:176:6c04:f15e with SMTP id jn22-20020a170903051600b001766c04f15emr4387178plb.93.1662566563854;
+        Wed, 07 Sep 2022 09:02:43 -0700 (PDT)
+Received: from localhost.localdomain ([23.27.44.184])
+        by smtp.gmail.com with ESMTPSA id x13-20020a17090a1f8d00b001f510175984sm14919719pja.41.2022.09.07.09.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 09:02:43 -0700 (PDT)
+From:   Jagan Teki <jagan@edgeble.ai>
+To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kever Yang <kever.yang@rock-chips.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Jagan Teki <jagan@edgeble.ai>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 04/13] dt-bindings: clock: rockchip: Document RV1126 CRU
+Date:   Wed,  7 Sep 2022 21:31:58 +0530
+Message-Id: <20220907160207.3845791-5-jagan@edgeble.ai>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220907160207.3845791-1-jagan@edgeble.ai>
+References: <20220907160207.3845791-1-jagan@edgeble.ai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220907025035.15609-4-mailingradian@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Richard,
+Document dt-bindings for Rockchip RV1126 clock controller.
 
-Thank you for the patch! Perhaps something to improve:
+Cc: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Jagan Teki <jagan@edgeble.ai>
+---
+Changes for v4:
+- rebase on -next 
+Changes for v3:
+- none
+Changes for v2:
+- fixed title
+- remove '|' in description
+- add one example
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.0-rc4]
-[cannot apply to next-20220906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ .../bindings/clock/rockchip,rv1126-cru.yaml   | 62 +++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126-cru.yaml
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Acayan/SDM670-Global-Clocks/20220907-105158
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: riscv-randconfig-r031-20220906 (https://download.01.org/0day-ci/archive/20220907/202209072255.CLVCZ5HY-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project c55b41d5199d2394dd6cdb8f52180d8b81d809d4)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install riscv cross compiling tool for clang build
-        # apt-get install binutils-riscv64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/bfed597346daad9f2f2a30c553c855fbefc1fe7e
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Richard-Acayan/SDM670-Global-Clocks/20220907-105158
-        git checkout bfed597346daad9f2f2a30c553c855fbefc1fe7e
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/clk/qcom/ net/mptcp/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/clk/qcom/gcc-sdm845.c:14:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from drivers/clk/qcom/gcc-sdm845.c:14:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from drivers/clk/qcom/gcc-sdm845.c:14:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:1134:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-                                                     ~~~~~~~~~~ ^
-   drivers/clk/qcom/gcc-sdm845.c:3619:29: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
-           [GCC_SDCC1_ICE_CORE_CLK] = &gcc_sdcc1_ice_core_clk_src.clkr,
-                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/qcom/gcc-sdm845.c:3618:29: note: previous initialization is here
-           [GCC_SDCC1_ICE_CORE_CLK] = &gcc_sdcc1_ice_core_clk.clkr,
-                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-sdm845.c:268:30: warning: unused variable 'ftbl_gcc_sdm670_cpuss_rbcpr_clk_src' [-Wunused-const-variable]
-   static const struct freq_tbl ftbl_gcc_sdm670_cpuss_rbcpr_clk_src[] = {
-                                ^
-   9 warnings generated.
-
-
-vim +/ftbl_gcc_sdm670_cpuss_rbcpr_clk_src +268 drivers/clk/qcom/gcc-sdm845.c
-
-   267	
- > 268	static const struct freq_tbl ftbl_gcc_sdm670_cpuss_rbcpr_clk_src[] = {
-   269		F(19200000, P_BI_TCXO, 1, 0, 0),
-   270		F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
-   271		{ }
-   272	};
-   273	
-
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1126-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rv1126-cru.yaml
+new file mode 100644
+index 000000000000..0998f8b922bd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rv1126-cru.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,rv1126-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip RV1126 Clock and Reset Unit
++
++maintainers:
++  - Jagan Teki <jagan@edgeble.ai>
++  - Finley Xiao <finley.xiao@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++description:
++  The RV1126 clock controller generates the clock and also implements a
++  reset controller for SoC peripherals.
++
++properties:
++  compatible:
++    enum:
++      - rockchip,rv1126-cru
++      - rockchip,rv1126-pmucru
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: xin24m
++
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to the syscon managing the "general register files" (GRF),
++      if missing pll rates are not changeable, due to the missing pll
++      lock status.
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    cru: clock-controller@ff490000 {
++      compatible = "rockchip,rv1126-cru";
++      reg = <0xff490000 0x1000>;
++      rockchip,grf = <&grf>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.25.1
+
