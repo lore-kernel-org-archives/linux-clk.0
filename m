@@ -2,71 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561A3ECAAA1
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 02:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA84ECAAA1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Sep 2022 02:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229703AbiIGCNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Sep 2022 22:13:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51812 "EHLO
+        id S229634AbiIGCuo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Sep 2022 22:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiIGCNP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 22:13:15 -0400
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E188A6CA;
-        Tue,  6 Sep 2022 19:13:14 -0700 (PDT)
-Received: from ([60.208.111.195])
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id BBU00010;
-        Wed, 07 Sep 2022 10:13:10 +0800
-Received: from localhost.localdomain (10.200.104.82) by
- jtjnmail201619.home.langchao.com (10.100.2.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Wed, 7 Sep 2022 10:13:11 +0800
-From:   Deming Wang <wangdeming@inspur.com>
-To:     <david@lechnology.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <nsekhar@ti.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Deming Wang <wangdeming@inspur.com>
-Subject: [PATCH] clk: davinci: Fix spelling typo in comment.
-Date:   Tue, 6 Sep 2022 09:27:30 -0400
-Message-ID: <20220906132730.3977-1-wangdeming@inspur.com>
-X-Mailer: git-send-email 2.31.1
+        with ESMTP id S229485AbiIGCun (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2022 22:50:43 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEE679620;
+        Tue,  6 Sep 2022 19:50:40 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id d16so6937378ils.8;
+        Tue, 06 Sep 2022 19:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=PTbgBQFoCpsL8V4bWZ9yChUr0r7Xt+cfSz7f0GdYkmA=;
+        b=IXpCcwdJQpo/8agJzZPu7AR2DXJnJSYPLVdBJ6O1AnxNcG29CepqkPjQdexNTYBzaE
+         PSY8f15AI+vkn9jiKVDnW4YXCQxtQ/cM2Ogurq/Sk+uLKbk+HWlL/ixxfsLcxmk70LcQ
+         3BP4WxjRd3aMHX+j/KTi+8IdR5CzGlbVK9ODdCixWWmbs7iRF3eCxctdE3hqThDn/ORz
+         hLi76NWMApFUYzTnJzJ6lGcXJeUmcGVgJlp0NSJWypn4CdexoP+SkqL6+iCBKPxqc3zH
+         kFIF766utGZ+0IhGz+bmR3X7WhPnquwDD0lb1F+8IGePxH5JfFmxCz5GYNqXd+1pZFCJ
+         Q3XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=PTbgBQFoCpsL8V4bWZ9yChUr0r7Xt+cfSz7f0GdYkmA=;
+        b=41mnjjygRxzJFG2+3+k3P2wgLk+Qz2rOnmjlWwXXYcF9yXlhoMwDwvtXqKm91JErDc
+         SDjdp1D0Lq6ks/ja2wHlMkd+NJgHQ/IkfGl9DOglTglgdSXncbdHGHE6kpfVq4V71ig1
+         kPUFnaut9998bXAR/Cz0S6e46XOdgAwEW0iAI80DLdTu534JPweO2n0Y3a7Qh0CJZHTf
+         B9IC8qz1MwIY8TQ8m01RBkEAKJ1WCs0VUjZT/CReb5PxmgHucXa9rAIBGEMtmK2ETxrY
+         AT21iLhsoB3oB6/rKz+9nzr4Jllz84Nm/zihxeqGd6NeR8kS2Iw5HBusSIzc+C91DJep
+         UoFQ==
+X-Gm-Message-State: ACgBeo0TDmsfoB7RV9TbkQSqYTUiK0KuW0xOMuxC7rpsKlH1UoeZX836
+        rf2vNGm0ttZPhQGiBnOn/5XeKMeCJ8w=
+X-Google-Smtp-Source: AA6agR5z8xqo9YfX9eJy1Mm90l/HE8qG9kBwDI2stTzw2/DOYF7Kb6/UGA2Y1ehYoK4QEUXnzjFZMQ==
+X-Received: by 2002:a92:c8c9:0:b0:2e7:1d41:2091 with SMTP id c9-20020a92c8c9000000b002e71d412091mr844241ilq.100.1662519039893;
+        Tue, 06 Sep 2022 19:50:39 -0700 (PDT)
+Received: from localhost ([2607:fea8:a2e2:2d00::4aff])
+        by smtp.gmail.com with UTF8SMTPSA id u63-20020a022342000000b00349fb9b1abesm6490966jau.106.2022.09.06.19.50.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Sep 2022 19:50:39 -0700 (PDT)
+From:   Richard Acayan <mailingradian@gmail.com>
+To:     bjorn.andersson@linaro.org
+Cc:     agross@kernel.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, caleb@connolly.tech,
+        jo@jsfamily.in
+Subject: [PATCH 0/3] SDM670 Global Clocks
+Date:   Tue,  6 Sep 2022 22:50:32 -0400
+Message-Id: <20220907025035.15609-1-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.200.104.82]
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201619.home.langchao.com (10.100.2.19)
-tUid:   2022907101310cd91f230c681606fd029c6306301c4e5
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Modify the maxiumum to maximum.
+This patch series adds global clocks essential for features of the Qualcomm
+Snapdragon 670 (hopefully) cleanly into the SDM845 driver without doing
+runtime fixups like in Google's bonito kernel (see patch 3).
 
-Signed-off-by: Deming Wang <wangdeming@inspur.com>
----
- drivers/clk/davinci/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series (mostly patch 2) affects kernels made for Snapdragon 845 and
+might need some further testing on SDM845 devices. I do not have a
+Snapdragon 845-based device so someone else will have to double check if
+it is necessary.
 
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 082206676e73..f862f5e2b3fc 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -98,7 +98,7 @@
-  * @hw: clk_hw for the pll
-  * @base: Base memory address
-  * @pllm_min: The minimum allowable PLLM[PLLM] value
-- * @pllm_max: The maxiumum allowable PLLM[PLLM] value
-+ * @pllm_max: The maximum allowable PLLM[PLLM] value
-  * @pllm_mask: Bitmask for PLLM[PLLM] value
-  */
- struct davinci_pll_clk {
+ .../devicetree/bindings/clock/qcom,gcc-sdm845.yaml |  24 +-
+ drivers/clk/qcom/Kconfig                           |   4 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 405 ++++++++++++++++++++-
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |   2 +
+ 4 files changed, 426 insertions(+), 9 deletions(-)
 
-base-commit: 840126e36e8ff272cb63158646433fa1324533d9
--- 
-2.27.0
+PS: This is my first contribution to the kernel so I apologize if I do
+something wrong.
+
 
