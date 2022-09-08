@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B079C38145
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 19:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411F5C6FA8A
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 19:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbiIHTKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Sep 2022 15:10:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45086 "EHLO
+        id S230387AbiIHTKy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Sep 2022 15:10:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231725AbiIHTKt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 15:10:49 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84EC0EC74F
-        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 12:10:48 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id q7so29386527lfu.5
-        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 12:10:48 -0700 (PDT)
+        with ESMTP id S232024AbiIHTKw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 15:10:52 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4835EEB2F9
+        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 12:10:50 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id f11so15351977lfa.6
+        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 12:10:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=En/eL17w8Q/uCNcnjjzqqx4odQyBNyedY5XKGx95FUo=;
-        b=dgY1+rC2Ba91GJBjXFw4aHgM/NdbCURU412CbcicGe/szB3Wk6mHzb0QW5LuppPSLz
-         P0GSyDJ4bRl3XbxkViR9oY9xzf7RikKzduNV9DUHXbqeQyJJN+AqiLl1e3rCQV5b7xuy
-         7fdKvOJIjqjJ104FSJ6SzdFhRMyCUa6NaUCaspDIEmgxiR9STrGewCNDsc58nIbVEghD
-         4K5gXwOsBgi9R9z2Bk92VwtzjBhgzKpQHtInehIQIaaEUqRCvIHbx8BzhsMcRtphdss5
-         ZBktExEmFnBerumAzTGlBkKfJmqHFfO+/7CH/jcFHvFQLL0eHetjX6EXQi3VzTbqz/aF
-         J7uQ==
+        bh=ncF6xJEmvKoJZyCXKGKehRon/gM8MA4X4LW/slRHPU8=;
+        b=c6yKqLCBUv9/alBNA59ePgbiHfAodIty5Qw21UloFMLs8zN1Bt2Up9jxKpwW7sB3U9
+         QJ3dVijGFYoSMBNjGYACtu2sG9pZbpbYUjopmkvr6xYZ8rItJD+lBdKEa/FplGf6Z5oC
+         THSNk4nJM27oBi5xlGckEx3Z9pggObbb/nUCFXMOPc8WGxbOLkqea0f+R/VyoGN5LLC1
+         QWQ2ouWoChjBey4rjI9WIFiXoQ6oQtKnpZ/82CU8s8F5Ra9bsmOzgJuyzXeukBGtmE+4
+         rRzflOtnmNGsCNPXK2y7jj/VCDE2rBIHBKGs8kSyDNA8oLXZU4uYwoVI+/SYBbugUU81
+         y63A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=En/eL17w8Q/uCNcnjjzqqx4odQyBNyedY5XKGx95FUo=;
-        b=jShqPQVdwZUTCk3s8gwt3AJdHObNe5j5Cwubqk5krBdwalhdHXJXZs6tMuZIT309E6
-         Uio2AkF8vk+OIn5QkuZL3tBWON197WFfw/z3u5SRWdna9PjbAg8HMY90w5sH6a1g9iGA
-         rlFPYnQxxWA0112rqfx35tl3WUlMvg3c/ilj2gtSRCYju9jVbYqYnUJAIxmE/hIaEjYS
-         c3OYNu5WY1EN9GBzriprMnZxvOEQJMOmFUHWruW4OjuiZa2EIvkeDNr0JBiAgs7gNdiP
-         f3hbaqcFoMRFQIEAUtwrhahZrmnBvgCNqdpC1ovctJqwLlzTG1br5XSSfms6dSBj5Eew
-         rZXQ==
-X-Gm-Message-State: ACgBeo292k90aTwgwTlb5WKQMqHgv/Y3+xMsUknleIPf4jgehe82L0Qo
-        rOqbfUv2IfhCzBG5ikFVoVT+NDYiMsaT9g==
-X-Google-Smtp-Source: AA6agR677TvfgOtRpfAIOZCm+ZDzx9vxFfn1qyeO8sNH3iYEbA+X+bttcmj6+qXELfXsGTNKw4hYXQ==
-X-Received: by 2002:a19:5e4f:0:b0:497:aa47:86b8 with SMTP id z15-20020a195e4f000000b00497aa4786b8mr2483991lfi.261.1662664246888;
-        Thu, 08 Sep 2022 12:10:46 -0700 (PDT)
+        bh=ncF6xJEmvKoJZyCXKGKehRon/gM8MA4X4LW/slRHPU8=;
+        b=uQJT9xM/jBggd3dECIqgbOW0lUqCX5Mr5afVQvXZc6f+sDBNG5c3DzUo8cFpo0OneY
+         BkJe9n0QCx5OsGXH6srbH3uk9EvB02yaQfqS0dHU6dN8S2BdP3G058cAlN5+rEe/wV0U
+         C2CTubS4DKadDzxCU4vO+ayoe28/4xtzYUCQlShdvhR+idGBHyzoghGoWH0iIE5uQDpI
+         00vtpIjdJ5lMH3XPoWOhNEQI7C91go8rv5fvSw0SzHMhtMO93dqDoScWk706xvTENyRn
+         gS7LfhvngOP7Cxf7QdrcUFWZOSlsqTutxo7xFh+/RNuAfgLzL/2JlkPJ8rkg9HsjYr1T
+         tztA==
+X-Gm-Message-State: ACgBeo1L73xnqyq3haYcD38+f8domfVZVB/yWAk8fEcgPfyy/3WvCax5
+        VxC1CAIAYhZsqHDS7xdlNqfiCjzLg0vtSQ==
+X-Google-Smtp-Source: AA6agR5ivfJClo/Au3PvSsUZJ8UQr+XFcQiDEMa/S6a+aGFCzA3iTFe1fjI0mHwNehHFnWpc9eHGgA==
+X-Received: by 2002:a05:6512:1293:b0:48c:e870:b00f with SMTP id u19-20020a056512129300b0048ce870b00fmr2980517lfs.61.1662664248650;
+        Thu, 08 Sep 2022 12:10:48 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id v17-20020a2e4811000000b0026ad316375esm634904lja.38.2022.09.08.12.10.46
+        by smtp.gmail.com with ESMTPSA id v17-20020a2e4811000000b0026ad316375esm634904lja.38.2022.09.08.12.10.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 12:10:46 -0700 (PDT)
+        Thu, 08 Sep 2022 12:10:48 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,9 +59,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 2/4] clk: qcom: alpha-pll: add support for power off mode for lucid evo PLL
-Date:   Thu,  8 Sep 2022 22:10:42 +0300
-Message-Id: <20220908191044.3538823-3-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 4/4] arm64: dts: qcom: sm8450: add display clock controller
+Date:   Thu,  8 Sep 2022 22:10:44 +0300
+Message-Id: <20220908191044.3538823-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220908191044.3538823-1-dmitry.baryshkov@linaro.org>
 References: <20220908191044.3538823-1-dmitry.baryshkov@linaro.org>
@@ -71,106 +71,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PLLs can be kept in standby (default configuration) or in off mode
-when disabled during power collapse. Hence add support for pll
-disable off mode for lucid evo PLL.
+Add device node for display clock controller on Qualcomm SM8450 platform
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 40 +++++++++++++++++++++++++++++---
- drivers/clk/qcom/clk-alpha-pll.h |  1 +
- 2 files changed, 38 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/sm8450.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b42684703fbb..9cc38234d45d 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -2088,7 +2088,7 @@ static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
- 	return ret;
- }
+diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+index 4978c5ba5dd0..9062ac4afbca 100644
+--- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/clock/qcom,gcc-sm8450.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/clock/qcom,sm8450-camcc.h>
++#include <dt-bindings/clock/qcom,sm8450-dispcc.h>
+ #include <dt-bindings/dma/qcom-gpi.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/mailbox/qcom-ipcc.h>
+@@ -2317,6 +2318,33 @@ camcc: clock-controller@ade0000 {
+ 			status = "disabled";
+ 		};
  
--static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
-+static void _alpha_pll_lucid_evo_disable(struct clk_hw *hw, bool reset)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	struct regmap *regmap = pll->clkr.regmap;
-@@ -2117,9 +2117,12 @@ static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
- 
- 	/* Place the PLL mode in STANDBY */
- 	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
++		dispcc: clock-controller@af00000 {
++			compatible = "qcom,sm8450-dispcc";
++			reg = <0 0x0af00000 0 0x20000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK_A>,
++				 <&gcc GCC_DISP_AHB_CLK>,
++				 <&sleep_clk>,
++				 <0>, /* dsi0 */
++				 <0>,
++				 <0>, /* dsi1 */
++				 <0>,
++				 <0>, /* dp0 */
++				 <0>,
++				 <0>, /* dp1 */
++				 <0>,
++				 <0>, /* dp2 */
++				 <0>,
++				 <0>, /* dp3 */
++				 <0>;
++			power-domains = <&rpmhpd SM8450_MMCX>;
++			required-opps = <&rpmhpd_opp_low_svs>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++			status = "disabled";
++		};
 +
-+	if (reset)
-+		regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, 0);
- }
- 
--static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
-+static int _alpha_pll_lucid_evo_prepare(struct clk_hw *hw, bool reset)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	struct clk_hw *p;
-@@ -2139,11 +2142,31 @@ static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
- 	if (ret)
- 		return ret;
- 
--	alpha_pll_lucid_evo_disable(hw);
-+	_alpha_pll_lucid_evo_disable(hw, reset);
- 
- 	return 0;
- }
- 
-+static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
-+{
-+	_alpha_pll_lucid_evo_disable(hw, false);
-+}
-+
-+static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
-+{
-+	return _alpha_pll_lucid_evo_prepare(hw, false);
-+}
-+
-+static void alpha_pll_reset_lucid_evo_disable(struct clk_hw *hw)
-+{
-+	_alpha_pll_lucid_evo_disable(hw, true);
-+}
-+
-+static int alpha_pll_reset_lucid_evo_prepare(struct clk_hw *hw)
-+{
-+	return _alpha_pll_lucid_evo_prepare(hw, true);
-+}
-+
- static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
- 						     unsigned long parent_rate)
- {
-@@ -2191,6 +2214,17 @@ const struct clk_ops clk_alpha_pll_lucid_evo_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_evo_ops);
- 
-+const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops = {
-+	.prepare = alpha_pll_reset_lucid_evo_prepare,
-+	.enable = alpha_pll_lucid_evo_enable,
-+	.disable = alpha_pll_reset_lucid_evo_disable,
-+	.is_enabled = clk_trion_pll_is_enabled,
-+	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
-+	.round_rate = clk_alpha_pll_round_rate,
-+	.set_rate = alpha_pll_lucid_5lpe_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_reset_lucid_evo_ops);
-+
- void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 				  const struct alpha_pll_config *config)
- {
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 447efb82fe59..ea90a61bf774 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -155,6 +155,7 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
- #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
- 
- extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
-+extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
- extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
- 
+ 		pdc: interrupt-controller@b220000 {
+ 			compatible = "qcom,sm8450-pdc", "qcom,pdc";
+ 			reg = <0 0x0b220000 0 0x30000>, <0 0x174000f0 0 0x64>;
 -- 
 2.35.1
 
