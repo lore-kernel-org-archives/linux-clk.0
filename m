@@ -2,153 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7BDC54EE9
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 16:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B9AC38145
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 16:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231751AbiIHQFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Sep 2022 12:05:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48074 "EHLO
+        id S229769AbiIHQiW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Sep 2022 12:38:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbiIHQFx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 12:05:53 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B70B442B
-        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 09:05:52 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id x14so13151015lfu.10
-        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 09:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=jAEzEWGfThUgGqQnHMOL1f5To09yVbEuEWo/Ad2g1YE=;
-        b=c/Ng0z6ssSxi+cpYifD3Vfr1VP3RANTiQEUR6gMXz5q7H52V/1QlW79+sQxsIsnigc
-         ko+17v26gBwHYzcLiMjPH2aeVRBIJDBsQCgekYeDxDc8yQjoMJJnetu0CXNni8QVpQAf
-         aPxxKuLWxU4TG2mZbhutLQV1TAFVwbZDs7ZFnLI2vob89qKTzWOYITOUKDPfhnySnsgA
-         6FxC/bofZVHS8qp3Ae+yiikz+7+OMxW5p2gg7qtot7Xw4JADqKB4J63ijWi8A26ndVVa
-         zIj6435QZQdKw4GcFpwHOYXSaK1Aexsw58IdCoCqwhrYXC0eAhLxkRBsUV4QZnQV8lpU
-         CVVg==
+        with ESMTP id S229505AbiIHQiV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 12:38:21 -0400
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3317114A47;
+        Thu,  8 Sep 2022 09:38:19 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-1279948d93dso26013112fac.10;
+        Thu, 08 Sep 2022 09:38:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=jAEzEWGfThUgGqQnHMOL1f5To09yVbEuEWo/Ad2g1YE=;
-        b=gn65SZbv0M5hSxYYri1Ykhj73x7/jR+jqf28VAb4nhrerswaNM750U/hZGv855t94V
-         qYsijpItMaPhJdE6D3tGhOF3DXZXWb3zX/JLZYux6OqT37A6RzKXQ5lR5cRPbMGJ1RPC
-         jp02GFbGkmJxBYQRiDj/5jEczDTLH85AK628LFny0d+bAtJRzPfKCX3pIYXT+tEELHGm
-         zt6nFfCj5FikEfO3/Yxm+dUVI3JfEnnwGSH+k19mzE91/wCmuoz7IAz3ns94YUUWQ09E
-         k28YHr3aWhejYLkrLwZMVy5kvEUosCIqA9sEVF+0DJ+cZKYbsVxrr3v8BGt3Q8vquhiA
-         VYbQ==
-X-Gm-Message-State: ACgBeo3ce4gCrGjQMVvyk8f9NGySjatmRe+xbeNhQdmK+5VJl4sEGS3f
-        W6+P3f7QtES/9UXIcjeyuVu6Ow==
-X-Google-Smtp-Source: AA6agR6wR8uJbmz0AnOAI2ki1zJ4q03Vfc9sBBd2mOdp+EOPC5CGqg0mWL2FdJ3CzGHLAyt4QEZvEA==
-X-Received: by 2002:a05:6512:3765:b0:492:d076:9f77 with SMTP id z5-20020a056512376500b00492d0769f77mr2761185lft.247.1662653149752;
-        Thu, 08 Sep 2022 09:05:49 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id k14-20020ac257ce000000b00490b5f09973sm241752lfo.92.2022.09.08.09.05.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Sep 2022 09:05:48 -0700 (PDT)
-Message-ID: <17d142eb-80c1-0aa5-c4fa-a8e4ccd97f08@linaro.org>
-Date:   Thu, 8 Sep 2022 18:05:47 +0200
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=lvfP/nhWsY8oBpBNFWb/Dc+zjx1n8PQQil/mT/n7D/U=;
+        b=Ugs0yxE4phL1W6ZpEIO2CGj4z/NOl+eSc8M4QWTgDnRuBiOCRLZi1dFUEpeViR5rSB
+         kJk9P7bp458LGicukOFIoiXU8OdvSaDkxkVApVSEjTXrNiOHf/gkC/0z9VorJ/UtulK6
+         c/jBUw8CCVBi+UKxpRf8mijM6+F2nA6HV0ZgxrhHUTxvUrUhGrtw/qBp5TXDvxpR2HoF
+         JCDCT5tODQrqJtFA7/A3o1Rwrqbv4kWppRo8pElh0rwGPJ/1Se+8ncR0rf2MBvKfQNAf
+         AMqbSqaR4ASzGSWWmso1hk7Ql3xd9WNRPKrYi+nSrv36EfOA5XJWJgBuzfEpwLwcFPqk
+         296g==
+X-Gm-Message-State: ACgBeo3HIwwfDe059vMrqJvSnq6OHNzf01o6As77QRou2R/Tu9yc48XD
+        kzkDCtZ+6MIdyK+n/+oE5A==
+X-Google-Smtp-Source: AA6agR5p1R0sxmWEs10gj8myVJPaGmhmAee+K/QcxXYrhsaI9dj8t3i+ioEBP5ARnjKC7yd8qecEsw==
+X-Received: by 2002:a05:6870:fb87:b0:126:2e4f:cf4d with SMTP id kv7-20020a056870fb8700b001262e4fcf4dmr2567506oab.240.1662655099196;
+        Thu, 08 Sep 2022 09:38:19 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id o186-20020aca5ac3000000b0034564365bf2sm7752757oib.17.2022.09.08.09.38.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Sep 2022 09:38:18 -0700 (PDT)
+Received: (nullmailer pid 2863036 invoked by uid 1000);
+        Thu, 08 Sep 2022 16:38:17 -0000
+Date:   Thu, 8 Sep 2022 11:38:17 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Li Jun <jun.li@nxp.com>
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: imx: imx8mp: add shared clk gate for usb
+ suspend clk
+Message-ID: <20220908163817.GA2828563-robh@kernel.org>
+References: <1662547028-22279-1-git-send-email-jun.li@nxp.com>
+ <1662547028-22279-2-git-send-email-jun.li@nxp.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v2 05/13] dt-bindings: serial: atmel,at91-usart: convert
- to json-schema
-Content-Language: en-US
-To:     Sergiu.Moga@microchip.com, lee@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, Claudiu.Beznea@microchip.com,
-        richard.genoud@gmail.com, radu_nicolae.pirea@upb.ro,
-        gregkh@linuxfoundation.org, broonie@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, jirislaby@kernel.org,
-        admin@hifiphile.com, Kavyasree.Kotagiri@microchip.com,
-        Tudor.Ambarus@microchip.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220906135511.144725-1-sergiu.moga@microchip.com>
- <20220906135511.144725-6-sergiu.moga@microchip.com>
- <e799ca9e-acb0-1bea-1c1a-b2ab79089381@linaro.org>
- <fde16d80-28b4-aae6-363f-ad9dcf87a5e1@microchip.com>
- <1d3904d9-7fec-2e61-f999-61b89c4becb6@linaro.org>
- <753d73d0-44b9-9fba-1ed8-53691ecf2ee7@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <753d73d0-44b9-9fba-1ed8-53691ecf2ee7@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1662547028-22279-2-git-send-email-jun.li@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/09/2022 17:27, Sergiu.Moga@microchip.com wrote:
-> On 08.09.2022 18:10, Krzysztof Kozlowski wrote:
->> On 08/09/2022 17:06, Sergiu.Moga@microchip.com wrote:
->>> On 08.09.2022 15:29, Krzysztof Kozlowski wrote:
->>
->>>>> +required:
->>>>> +  - compatible
->>>>> +  - reg
->>>>> +  - interrupts
->>>>> +  - clock-names
->>>>> +  - clocks
->>>>> +
->>>>> +allOf:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        $nodename:
->>>>> +          pattern: "^serial@[0-9a-f]+$"
->>>>
->>>> You should rather check value of atmel,usart-mode, because now you won't
->>>> properly match device nodes called "foobar". Since usart-mode has only
->>>> two possible values, this will nicely simplify you if-else.
->>>>
->>>>
->>>
->>>
->>> I did think of that but the previous binding specifies that
->>> atmel,usart-mode is required only for the SPI mode and it is optional
->>> for the USART mode. That is why I went for the node's regex since I
->>> thought it is something that both nodes would have.
->>
->> I think it should be explicit - you configure node either to this or
->> that, so the property should be always present.
-> 
-> 
-> 
-> No DT of ours has that property atm, since they are all on USART mode by 
-> default. If I were to make it required. all nodes would fail so I would 
-> have to add it to each of them.
+On Wed, Sep 07, 2022 at 06:37:08PM +0800, Li Jun wrote:
+> 32K usb suspend clock gate is shared with usb_root_clk.
 
-Which is a problem because...?
-
-Have in mind that bindings can be changed. ABI here won't be broken.
+So? What is the impact of not having this change? Why is it stable 
+material? The commit message needs to answer those questions.
 
 > 
+> Fixes: 9c140d9926761 ("clk: imx: Add support for i.MX8MP clock driver")
+> Cc: stable@vger.kernel.org # v5.19+
+> Signed-off-by: Li Jun <jun.li@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index e89db568f5a8..5b66514bdd0c 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -17,6 +17,7 @@
+>  
+>  static u32 share_count_nand;
+>  static u32 share_count_media;
+> +static u32 share_count_usb;
+>  
+>  static const char * const pll_ref_sels[] = { "osc_24m", "dummy", "dummy", "dummy", };
+>  static const char * const audio_pll1_bypass_sels[] = {"audio_pll1", "audio_pll1_ref_sel", };
+> @@ -673,7 +674,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_UART2_ROOT] = imx_clk_hw_gate4("uart2_root_clk", "uart2", ccm_base + 0x44a0, 0);
+>  	hws[IMX8MP_CLK_UART3_ROOT] = imx_clk_hw_gate4("uart3_root_clk", "uart3", ccm_base + 0x44b0, 0);
+>  	hws[IMX8MP_CLK_UART4_ROOT] = imx_clk_hw_gate4("uart4_root_clk", "uart4", ccm_base + 0x44c0, 0);
+> -	hws[IMX8MP_CLK_USB_ROOT] = imx_clk_hw_gate4("usb_root_clk", "hsio_axi", ccm_base + 0x44d0, 0);
+> +	hws[IMX8MP_CLK_USB_ROOT] = imx_clk_hw_gate2_shared2("usb_root_clk", "hsio_axi", ccm_base + 0x44d0, 0, &share_count_usb);
+> +	hws[IMX8MP_CLK_USB_SUSP] = imx_clk_hw_gate2_shared2("usb_suspend_clk", "osc_32k", ccm_base + 0x44d0, 0, &share_count_usb);
+>  	hws[IMX8MP_CLK_USB_PHY_ROOT] = imx_clk_hw_gate4("usb_phy_root_clk", "usb_phy_ref", ccm_base + 0x44f0, 0);
+>  	hws[IMX8MP_CLK_USDHC1_ROOT] = imx_clk_hw_gate4("usdhc1_root_clk", "usdhc1", ccm_base + 0x4510, 0);
+>  	hws[IMX8MP_CLK_USDHC2_ROOT] = imx_clk_hw_gate4("usdhc2_root_clk", "usdhc2", ccm_base + 0x4520, 0);
+> -- 
+> 2.34.1
 > 
 > 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 > 
->> The node name should not
->> be responsible for it, even though we want node names to match certain
->> patterns.
->>
-> 
-> 
-> Does checkig for the node's pattern not make it better then? Since it 
-> imposes an additional check? 
-
-Not really, because if it is "foobar" your schema would not be applied
-correctly.
-
-> If it would not have a conventional 
-> pattern, it would fail through unevaluatedProperies:false at the end, 
-> since it would have properties that were contained inside a branch that 
-> the validation of the node would not have gone through since it contains 
-> a pattern that does not match the conditions of that branch.
-
-Not for properties which are for example missing...
-
-
-Best regards,
-Krzysztof
