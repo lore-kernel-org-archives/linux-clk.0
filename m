@@ -2,105 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E459DC38145
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 16:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7BDC54EE9
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 16:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230407AbiIHQAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Sep 2022 12:00:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37270 "EHLO
+        id S231751AbiIHQFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Sep 2022 12:05:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbiIHQAX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 12:00:23 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CD0A7C189
-        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 09:00:22 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id u9-20020a17090a1f0900b001fde6477464so2763814pja.4
-        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 09:00:22 -0700 (PDT)
+        with ESMTP id S229907AbiIHQFx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 12:05:53 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B70B442B
+        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 09:05:52 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id x14so13151015lfu.10
+        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 09:05:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=uUAptloKXsUhc5RdRAer9UcXRS270T3TKnFTRNXj8IE=;
-        b=VnRpsbSsELxB/oSot/2j6eMfU1heBpPQFSiokJNJsEWZBKYql0eypvaIz7fux1H30h
-         QzFWu7cN+1JV/mlix7z8lnMHYZr/5e/gEPossmBKL0emMirrVmB3bXBvmDL73cPu0z53
-         Pru5E/dNRV/NAi6Tw0yI/PqWmgogcEZPpba0j24fz+iBDcjTGQRR/7eI30j/VKnESigD
-         mmHKtaIvtjUDKqQj+RqJijWLFKyADgguZbtG/MOLRnJRIWdJjz08mUE6eED6pMM/O1Oe
-         yym8lYFktVwoxGdFGVagt1570kxrtVwQZ3non7YVMkoS6+ZXgbBCxGyVpqZ3dmet+HRr
-         tvaA==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=jAEzEWGfThUgGqQnHMOL1f5To09yVbEuEWo/Ad2g1YE=;
+        b=c/Ng0z6ssSxi+cpYifD3Vfr1VP3RANTiQEUR6gMXz5q7H52V/1QlW79+sQxsIsnigc
+         ko+17v26gBwHYzcLiMjPH2aeVRBIJDBsQCgekYeDxDc8yQjoMJJnetu0CXNni8QVpQAf
+         aPxxKuLWxU4TG2mZbhutLQV1TAFVwbZDs7ZFnLI2vob89qKTzWOYITOUKDPfhnySnsgA
+         6FxC/bofZVHS8qp3Ae+yiikz+7+OMxW5p2gg7qtot7Xw4JADqKB4J63ijWi8A26ndVVa
+         zIj6435QZQdKw4GcFpwHOYXSaK1Aexsw58IdCoCqwhrYXC0eAhLxkRBsUV4QZnQV8lpU
+         CVVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=uUAptloKXsUhc5RdRAer9UcXRS270T3TKnFTRNXj8IE=;
-        b=wfy1ucVQ5zmKu/0erLdTwYJ+mH+wTzicXDBgtCQb+g/U/FPwYysWIukUJlw0heqnxX
-         yE5oT3SVIEN6xt0Vsduk1oM+4+ixvVnCTRR3J82ulGbW2DDDR2rKIjopPPk9z8Gw7Nqk
-         Rul2YQDUKJpQx8Q7+OF5+5tYJ0dtBEckN5OmAge65u8FEFFdfRE1540oO1dPpaqaCS8a
-         av/DrGdwOBD4rWUZi7vAy2gbrES8otZhualTgbRPCwSxLKpEURlpxz1+1y4yAC0QdzW1
-         ljnpe/4He31hmQKw9KKJNBdZo2hozyaj4BnzOc5ZUu89rrkmBcl6cQxbhA4uCVqoJZV2
-         nbMg==
-X-Gm-Message-State: ACgBeo0bSkhSAUzaAzmO/fe16/4JLINByFYWxCzVO4OyHcA5lwc/BNUw
-        PqJzgr5f9t1bKqyHMQdyQHpUIh0GvPm7qbTFAdrrTg==
-X-Google-Smtp-Source: AA6agR5madP3qGyz1BQfqw3nC2KML73nEGwhEuS5oVy2zsJA6zOqe6vCk5VeGmvO8XNL96AqFkx91ucSEd3mQ9kQCv4=
-X-Received: by 2002:a17:902:9887:b0:172:7090:6485 with SMTP id
- s7-20020a170902988700b0017270906485mr9826023plp.63.1662652821976; Thu, 08 Sep
- 2022 09:00:21 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=jAEzEWGfThUgGqQnHMOL1f5To09yVbEuEWo/Ad2g1YE=;
+        b=gn65SZbv0M5hSxYYri1Ykhj73x7/jR+jqf28VAb4nhrerswaNM750U/hZGv855t94V
+         qYsijpItMaPhJdE6D3tGhOF3DXZXWb3zX/JLZYux6OqT37A6RzKXQ5lR5cRPbMGJ1RPC
+         jp02GFbGkmJxBYQRiDj/5jEczDTLH85AK628LFny0d+bAtJRzPfKCX3pIYXT+tEELHGm
+         zt6nFfCj5FikEfO3/Yxm+dUVI3JfEnnwGSH+k19mzE91/wCmuoz7IAz3ns94YUUWQ09E
+         k28YHr3aWhejYLkrLwZMVy5kvEUosCIqA9sEVF+0DJ+cZKYbsVxrr3v8BGt3Q8vquhiA
+         VYbQ==
+X-Gm-Message-State: ACgBeo3ce4gCrGjQMVvyk8f9NGySjatmRe+xbeNhQdmK+5VJl4sEGS3f
+        W6+P3f7QtES/9UXIcjeyuVu6Ow==
+X-Google-Smtp-Source: AA6agR6wR8uJbmz0AnOAI2ki1zJ4q03Vfc9sBBd2mOdp+EOPC5CGqg0mWL2FdJ3CzGHLAyt4QEZvEA==
+X-Received: by 2002:a05:6512:3765:b0:492:d076:9f77 with SMTP id z5-20020a056512376500b00492d0769f77mr2761185lft.247.1662653149752;
+        Thu, 08 Sep 2022 09:05:49 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id k14-20020ac257ce000000b00490b5f09973sm241752lfo.92.2022.09.08.09.05.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Sep 2022 09:05:48 -0700 (PDT)
+Message-ID: <17d142eb-80c1-0aa5-c4fa-a8e4ccd97f08@linaro.org>
+Date:   Thu, 8 Sep 2022 18:05:47 +0200
 MIME-Version: 1.0
-References: <CAJ+vNU1Za2CPGVX3q4HKufsxbL5zRrk1B5CWFpKritetrTs4dA@mail.gmail.com>
- <59b6dd0a-7cbb-5dbd-8da0-57baeba3327e@gmail.com>
-In-Reply-To: <59b6dd0a-7cbb-5dbd-8da0-57baeba3327e@gmail.com>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Thu, 8 Sep 2022 09:00:10 -0700
-Message-ID: <CAJ+vNU2FVQRwCa3DnOwkFjaZg-ntFLZmetwDbSggDXDdwOOGTg@mail.gmail.com>
-Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
-To:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH v2 05/13] dt-bindings: serial: atmel,at91-usart: convert
+ to json-schema
+Content-Language: en-US
+To:     Sergiu.Moga@microchip.com, lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, Nicolas.Ferre@microchip.com,
+        alexandre.belloni@bootlin.com, Claudiu.Beznea@microchip.com,
+        richard.genoud@gmail.com, radu_nicolae.pirea@upb.ro,
+        gregkh@linuxfoundation.org, broonie@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, jirislaby@kernel.org,
+        admin@hifiphile.com, Kavyasree.Kotagiri@microchip.com,
+        Tudor.Ambarus@microchip.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220906135511.144725-1-sergiu.moga@microchip.com>
+ <20220906135511.144725-6-sergiu.moga@microchip.com>
+ <e799ca9e-acb0-1bea-1c1a-b2ab79089381@linaro.org>
+ <fde16d80-28b4-aae6-363f-ad9dcf87a5e1@microchip.com>
+ <1d3904d9-7fec-2e61-f999-61b89c4becb6@linaro.org>
+ <753d73d0-44b9-9fba-1ed8-53691ecf2ee7@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <753d73d0-44b9-9fba-1ed8-53691ecf2ee7@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 1, 2022 at 9:14 PM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->
-> Hi Tim,
->
-> On 9/2/22 01:23, Tim Harvey wrote:
-> > Greetings,
-> >
-> > I've found that the bd71847 clk driver (CONFIG_COMMON_CLK_BD718XX
-> > drivers/clk/clk-bd718x7.c) disables clk-32k-out (the BD71847 C32K_OUT
-> > pin) which is connected IMX8MM RTC_XTALI which ends up disabling the
-> > IMX RTC as well as the IMX WDOG functionality.
->
-> //snip
->
-> > This happens via clk_unprepare_unused() as nothing is flagging the
-> > clk-32k-out as being used. What should be added to the device-tree to
-> > signify that this clk is indeed necessary and should not be disabled?
->
-> I have seen following proposal from Marek Vasut:
->
-> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
->
-> I am not sure if the discussion is completed though. I guess it was
-> agreed this was needed/usefull and maybe the remaining thing to decide
-> was just the property naming.
->
-> Best Regards
->         -- Matti
->
+On 08/09/2022 17:27, Sergiu.Moga@microchip.com wrote:
+> On 08.09.2022 18:10, Krzysztof Kozlowski wrote:
+>> On 08/09/2022 17:06, Sergiu.Moga@microchip.com wrote:
+>>> On 08.09.2022 15:29, Krzysztof Kozlowski wrote:
+>>
+>>>>> +required:
+>>>>> +  - compatible
+>>>>> +  - reg
+>>>>> +  - interrupts
+>>>>> +  - clock-names
+>>>>> +  - clocks
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        $nodename:
+>>>>> +          pattern: "^serial@[0-9a-f]+$"
+>>>>
+>>>> You should rather check value of atmel,usart-mode, because now you won't
+>>>> properly match device nodes called "foobar". Since usart-mode has only
+>>>> two possible values, this will nicely simplify you if-else.
+>>>>
+>>>>
+>>>
+>>>
+>>> I did think of that but the previous binding specifies that
+>>> atmel,usart-mode is required only for the SPI mode and it is optional
+>>> for the USART mode. That is why I went for the node's regex since I
+>>> thought it is something that both nodes would have.
+>>
+>> I think it should be explicit - you configure node either to this or
+>> that, so the property should be always present.
+> 
+> 
+> 
+> No DT of ours has that property atm, since they are all on USART mode by 
+> default. If I were to make it required. all nodes would fail so I would 
+> have to add it to each of them.
 
-Thanks Matti,
+Which is a problem because...?
 
-Marek - has there been any progress on determining how best to keep
-certain clocks from being disabled?
+Have in mind that bindings can be changed. ABI here won't be broken.
 
-Best Regards,
+> 
+> 
+> 
+> 
+>> The node name should not
+>> be responsible for it, even though we want node names to match certain
+>> patterns.
+>>
+> 
+> 
+> Does checkig for the node's pattern not make it better then? Since it 
+> imposes an additional check? 
 
-Tim
+Not really, because if it is "foobar" your schema would not be applied
+correctly.
+
+> If it would not have a conventional 
+> pattern, it would fail through unevaluatedProperies:false at the end, 
+> since it would have properties that were contained inside a branch that 
+> the validation of the node would not have gone through since it contains 
+> a pattern that does not match the conditions of that branch.
+
+Not for properties which are for example missing...
+
+
+Best regards,
+Krzysztof
