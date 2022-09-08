@@ -2,105 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DA3C54EE9
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 12:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69231C38145
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 14:37:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231461AbiIHMfW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Sep 2022 08:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44300 "EHLO
+        id S231905AbiIHOh2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Sep 2022 10:37:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbiIHMfP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 08:35:15 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCABF25E89
-        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 05:35:12 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id k10so12867511lfm.4
-        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 05:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=MtvDPwj1xj98pXvIJlBDsjDT7GOeTmv6R4xmR0F7h50=;
-        b=ucFDlTPKrAXCjsKtyiEsczadOihwVme4pmfa92cwDRzdU5ydN1T+oxzE49b1O4MzYQ
-         /SDRABklxJrzY13pXcXVE6T43qjHK1tmp3ffLimBe+BEtPKsFhMhrvHhQFw10wQo4UMY
-         QH2g/KHlt6WK/anxVHDlCmparhH43DRUlHLxNjGTIaSwmh/lippSbERMFm5CY8GaiOMq
-         Yux3EwzYYbR7ml3R1QlCRwWDYc62eon4ZGTRPdHVjVV5eAC1gFLsLIx3pkwmhUsv7y19
-         EBkug2XFehtF7k2SscPy5nqKdkBk6AAIBCgJsLLwflySfa/J4IlNiBKJYMrGV5n3dQO6
-         wb0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=MtvDPwj1xj98pXvIJlBDsjDT7GOeTmv6R4xmR0F7h50=;
-        b=NLzXCDkerNiZTLiJFXcJHc4kO8JCDmy0KqFs+CNbdh2s1oAA8zrmACKB5wbC493Wk4
-         sRF9QoWs5SeFm8tJVCekgdRSrfKg4x6V/oewwYnbkwBHHD2Kqw4f7TtNE9YZnPhoGR8d
-         8+cK/9xB0n3gMVBZmD7oK7/bQE78H0o6Rg639QcSfpSIBeMmQl/fTwYsEpEZZAluKTBP
-         psw6801ljIoj3u9mUoOZmVN/mM3f6ziGCN5kbssM+wv1MI0wFAl9H38iEsmlblJQUbYj
-         F3HNyK4QGvwsFMDh3PheR/p0GO91P9PbY2Vd6GX34DpBia/Qr5/x1eB/5vUDPPqgXD3s
-         VZPw==
-X-Gm-Message-State: ACgBeo3BxmVi5ulLUjmDXcl1DpKQ53+05S5rr9jjWI/RbmfedTuJz86k
-        LMW70JChmqdk+qtAhYl2DKHEZA==
-X-Google-Smtp-Source: AA6agR6mbkVKvTFOT42qF/i7lu1Gz70hK93yc9UJvNcVj5Z6ed6r33DSj5rC/gPINepqjhD/JWdAfA==
-X-Received: by 2002:a05:6512:5c5:b0:497:f192:78ac with SMTP id o5-20020a05651205c500b00497f19278acmr1214013lfo.63.1662640511127;
-        Thu, 08 Sep 2022 05:35:11 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id w9-20020a19c509000000b004947984b385sm635694lfe.87.2022.09.08.05.35.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Sep 2022 05:35:10 -0700 (PDT)
-Message-ID: <e93ef041-89d3-5718-4b1d-55bfd0c72797@linaro.org>
-Date:   Thu, 8 Sep 2022 14:35:09 +0200
+        with ESMTP id S231532AbiIHOh1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 10:37:27 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B939DD021F;
+        Thu,  8 Sep 2022 07:37:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1662647847; x=1694183847;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=T3xJtNPHqr8WdakAV8lZkaxZQYCt2Hw3WcUDKGualCk=;
+  b=p7CNmOJpKK2m1dww2ts1yZE6Y3D5bqXobNnFeJp5XO004gg37oReQpo9
+   GSxMrkhK+iiwJq/1tMYumUq8R57jrNMKkCqJCRjZEPXzh+D/4p4jJmz3m
+   ykf6NgvCQo+rL4m9J+4/7/S9PSwkfcRsjM8tobLdv2E/nnT023CfTQ5JT
+   ozuCnxboXPo8hd2q6hRpQSt8gQLqAHAV2DLztnAn7sYgbXDuG9Nq/Z4vp
+   D3Lb49fR0yrdezGLtqftFGUMSlMbKXRijcY/nb0+UpNlJRpB3Hfgl/iAW
+   yk7Aui9Vt0ZFJ7tWGbYdNkXDyHr+VBXm7eutTK9Wd+Wme91Th6mEEEgCM
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.93,300,1654585200"; 
+   d="scan'208";a="189986843"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Sep 2022 07:37:26 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Thu, 8 Sep 2022 07:37:25 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Thu, 8 Sep 2022 07:37:23 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Hugh Breslin <hugh.breslin@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: [PATCH v5 0/5] Add PolarFire SoC Fabric Clock Conditioning Circuitry Support
+Date:   Thu, 8 Sep 2022 15:36:47 +0100
+Message-ID: <20220908143651.1252601-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v2 13/13] dt-bindings: serial: atmel,at91-usart: Add gclk
- as a possible USART clock
-Content-Language: en-US
-To:     Sergiu Moga <sergiu.moga@microchip.com>, lee@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com, richard.genoud@gmail.com,
-        radu_nicolae.pirea@upb.ro, gregkh@linuxfoundation.org,
-        broonie@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        jirislaby@kernel.org, admin@hifiphile.com,
-        kavyasree.kotagiri@microchip.com, tudor.ambarus@microchip.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220906135511.144725-1-sergiu.moga@microchip.com>
- <20220906135511.144725-14-sergiu.moga@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220906135511.144725-14-sergiu.moga@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/09/2022 15:55, Sergiu Moga wrote:
-> The Devicetree nodes for FLEXCOM's USART can also have an alternative
-> clock source for the baudrate generator (other than the peripheral
-> clock), namely the Generick Clock. Thus make the binding aware of
-> this potential clock that someone may place in the clock related
-> properties of the USART node.
+Hey all,
 
-Last sentence is confusing - what is the potential? Just skip it.
+PolarFire SoC has 4 clock source blocks, each with 2 PLLs and 2 DLLs,
+in the corners of the FPGA fabric. Add bindings, a driver supporting
+the PLLs and the requisite changes to the devicetrees for PolarFire
+SoC based boards. These clocks were already in use, but which clock
+specifically was chosen was decided by the synthesis tool. In our
+end-of-September release of our FPGA reference design, constraints will
+be added to force the synthesis tool to pick the "north west" CCC,
+making it possible to read the configuration from the CCC's registers.
 
-> 
-> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
-> ---
-> 
-> 
-> 
-> v1 -> v2:
-> - Nothing, this patch was not here before
+There are no maintainers changes in this series, but they are required
+due to the binding rename. I am waiting for some changes queued in the
+soc tree before rebasing on a later -rc before including that patch.
 
-You have confusing order of patches. Bindings mixed with DTS mixed with
-drivers. Keep things ordered.
-1. DTS changes needed for aligning to schema.
-2. all bindings
-3. rest
+The dts patch conflicts with some other dts patches I have submitted,
+so I will take the final patch myself once the rest of this is
+applied.
 
-Best regards,
-Krzysztof
+Thanks,
+Conor.
+
+Changes since v4:
+- Fix some alignment issues, per Claudiu
+
+Changes since v3:
+- return devm_of_clk_add_hw_provider() directly in probe
+- add a `hw_data.num = num_clks` that got lost along the way somewhere
+- mark all output clocks as CLK_DIVIDER_ONE_BASED
+
+Changes since v2:
+- Removed the unintentionaly leftover clock-output-names
+- Dropped the riscv/microchip dt-binding update. I am moving it to
+  another series so that another series for the dts, which is likely to
+  be applied first would not depend on this series.
+
+Changes since v1:
+- Stopped using the dt node name to generate the clk name. Rather than
+  use clock-output-names etc, I just opted to call each PLL after it's
+  individual base address:
+  cccrefclk
+    ccc@38100000_pll0
+      ccc@38100000_pll0_out3
+      ccc@38100000_pll0_out2
+      ccc@38100000_pll0_out1
+      ccc@38100000_pll0_out0
+- dt nodes are now all called "clock-controller"
+
+Conor Dooley (5):
+  dt-bindings: clk: rename mpfs-clkcfg binding
+  dt-bindings: clk: document PolarFire SoC fabric clocks
+  dt-bindings: clk: add PolarFire SoC fabric clock ids
+  clk: microchip: add PolarFire SoC fabric clock support
+  riscv: dts: microchip: add the mpfs' fabric clock control
+
+ .../bindings/clock/microchip,mpfs-ccc.yaml    |  80 +++++
+ ...p,mpfs.yaml => microchip,mpfs-clkcfg.yaml} |   2 +-
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  27 +-
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    |   4 +
+ .../dts/microchip/mpfs-polarberry-fabric.dtsi |   5 +
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 +-
+ drivers/clk/microchip/Makefile                |   1 +
+ drivers/clk/microchip/clk-mpfs-ccc.c          | 290 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  23 ++
+ 9 files changed, 453 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
+ rename Documentation/devicetree/bindings/clock/{microchip,mpfs.yaml => microchip,mpfs-clkcfg.yaml} (96%)
+ create mode 100644 drivers/clk/microchip/clk-mpfs-ccc.c
+
+-- 
+2.36.1
+
