@@ -2,105 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B9AC38145
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 16:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD459C54EE9
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 16:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbiIHQiW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Sep 2022 12:38:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53390 "EHLO
+        id S232056AbiIHQ4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Sep 2022 12:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiIHQiV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 12:38:21 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3317114A47;
-        Thu,  8 Sep 2022 09:38:19 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-1279948d93dso26013112fac.10;
-        Thu, 08 Sep 2022 09:38:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=lvfP/nhWsY8oBpBNFWb/Dc+zjx1n8PQQil/mT/n7D/U=;
-        b=Ugs0yxE4phL1W6ZpEIO2CGj4z/NOl+eSc8M4QWTgDnRuBiOCRLZi1dFUEpeViR5rSB
-         kJk9P7bp458LGicukOFIoiXU8OdvSaDkxkVApVSEjTXrNiOHf/gkC/0z9VorJ/UtulK6
-         c/jBUw8CCVBi+UKxpRf8mijM6+F2nA6HV0ZgxrhHUTxvUrUhGrtw/qBp5TXDvxpR2HoF
-         JCDCT5tODQrqJtFA7/A3o1Rwrqbv4kWppRo8pElh0rwGPJ/1Se+8ncR0rf2MBvKfQNAf
-         AMqbSqaR4ASzGSWWmso1hk7Ql3xd9WNRPKrYi+nSrv36EfOA5XJWJgBuzfEpwLwcFPqk
-         296g==
-X-Gm-Message-State: ACgBeo3HIwwfDe059vMrqJvSnq6OHNzf01o6As77QRou2R/Tu9yc48XD
-        kzkDCtZ+6MIdyK+n/+oE5A==
-X-Google-Smtp-Source: AA6agR5p1R0sxmWEs10gj8myVJPaGmhmAee+K/QcxXYrhsaI9dj8t3i+ioEBP5ARnjKC7yd8qecEsw==
-X-Received: by 2002:a05:6870:fb87:b0:126:2e4f:cf4d with SMTP id kv7-20020a056870fb8700b001262e4fcf4dmr2567506oab.240.1662655099196;
-        Thu, 08 Sep 2022 09:38:19 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o186-20020aca5ac3000000b0034564365bf2sm7752757oib.17.2022.09.08.09.38.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 09:38:18 -0700 (PDT)
-Received: (nullmailer pid 2863036 invoked by uid 1000);
-        Thu, 08 Sep 2022 16:38:17 -0000
-Date:   Thu, 8 Sep 2022 11:38:17 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Li Jun <jun.li@nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: imx: imx8mp: add shared clk gate for usb
- suspend clk
-Message-ID: <20220908163817.GA2828563-robh@kernel.org>
-References: <1662547028-22279-1-git-send-email-jun.li@nxp.com>
- <1662547028-22279-2-git-send-email-jun.li@nxp.com>
+        with ESMTP id S230481AbiIHQ4e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 12:56:34 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D75EC6B56;
+        Thu,  8 Sep 2022 09:55:49 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 8984084AEF;
+        Thu,  8 Sep 2022 18:55:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1662656147;
+        bh=u3mZ+tnXgTSDTif48CXWvxQ8FMbV9gA9shuGifEl9po=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=s4KWNiCWW0z83o+7CuSxFfKTJSyKlDk/WX5MhjD228A9ZVIASiVEhdua2j4cPbH1d
+         /0eutYrYlNsgIzcnA4e/5GK1kTGgnjMuhJ6SxfQEBfH262qvc9pKhAdiPvx4YEfhI9
+         obEovGUxPrNtOMnqnnJ9NECSBTfRT3xJJprpm7V/cG+O/UYkVQ2h2sRE4+moGUGNcW
+         r7zR8eiLnhnAh+bYfurDDY+nf5KSkN/S7FtcWSGUUpLmokvhKu0FTcONx7ZUHp04sL
+         imVrVIkbOcvZRtYKhCJK4rIoxIQq7G851lVFOl+NlrdenmwijYsG58PTdeIM68OoKJ
+         TFmfY4ma91W3Q==
+Message-ID: <2ab24cc4-4aa2-d364-9b29-55f5d6b23626@denx.de>
+Date:   Thu, 8 Sep 2022 18:55:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1662547028-22279-2-git-send-email-jun.li@nxp.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
+To:     Tim Harvey <tharvey@gateworks.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+References: <CAJ+vNU1Za2CPGVX3q4HKufsxbL5zRrk1B5CWFpKritetrTs4dA@mail.gmail.com>
+ <59b6dd0a-7cbb-5dbd-8da0-57baeba3327e@gmail.com>
+ <CAJ+vNU2FVQRwCa3DnOwkFjaZg-ntFLZmetwDbSggDXDdwOOGTg@mail.gmail.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAJ+vNU2FVQRwCa3DnOwkFjaZg-ntFLZmetwDbSggDXDdwOOGTg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 07, 2022 at 06:37:08PM +0800, Li Jun wrote:
-> 32K usb suspend clock gate is shared with usb_root_clk.
+On 9/8/22 18:00, Tim Harvey wrote:
+> On Thu, Sep 1, 2022 at 9:14 PM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+>>
+>> Hi Tim,
+>>
+>> On 9/2/22 01:23, Tim Harvey wrote:
+>>> Greetings,
+>>>
+>>> I've found that the bd71847 clk driver (CONFIG_COMMON_CLK_BD718XX
+>>> drivers/clk/clk-bd718x7.c) disables clk-32k-out (the BD71847 C32K_OUT
+>>> pin) which is connected IMX8MM RTC_XTALI which ends up disabling the
+>>> IMX RTC as well as the IMX WDOG functionality.
+>>
+>> //snip
+>>
+>>> This happens via clk_unprepare_unused() as nothing is flagging the
+>>> clk-32k-out as being used. What should be added to the device-tree to
+>>> signify that this clk is indeed necessary and should not be disabled?
+>>
+>> I have seen following proposal from Marek Vasut:
+>>
+>> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
+>>
+>> I am not sure if the discussion is completed though. I guess it was
+>> agreed this was needed/usefull and maybe the remaining thing to decide
+>> was just the property naming.
+>>
+>> Best Regards
+>>          -- Matti
+>>
+> 
+> Thanks Matti,
+> 
+> Marek - has there been any progress on determining how best to keep
+> certain clocks from being disabled?
 
-So? What is the impact of not having this change? Why is it stable 
-material? The commit message needs to answer those questions.
-
-> 
-> Fixes: 9c140d9926761 ("clk: imx: Add support for i.MX8MP clock driver")
-> Cc: stable@vger.kernel.org # v5.19+
-> Signed-off-by: Li Jun <jun.li@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index e89db568f5a8..5b66514bdd0c 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -17,6 +17,7 @@
->  
->  static u32 share_count_nand;
->  static u32 share_count_media;
-> +static u32 share_count_usb;
->  
->  static const char * const pll_ref_sels[] = { "osc_24m", "dummy", "dummy", "dummy", };
->  static const char * const audio_pll1_bypass_sels[] = {"audio_pll1", "audio_pll1_ref_sel", };
-> @@ -673,7 +674,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_UART2_ROOT] = imx_clk_hw_gate4("uart2_root_clk", "uart2", ccm_base + 0x44a0, 0);
->  	hws[IMX8MP_CLK_UART3_ROOT] = imx_clk_hw_gate4("uart3_root_clk", "uart3", ccm_base + 0x44b0, 0);
->  	hws[IMX8MP_CLK_UART4_ROOT] = imx_clk_hw_gate4("uart4_root_clk", "uart4", ccm_base + 0x44c0, 0);
-> -	hws[IMX8MP_CLK_USB_ROOT] = imx_clk_hw_gate4("usb_root_clk", "hsio_axi", ccm_base + 0x44d0, 0);
-> +	hws[IMX8MP_CLK_USB_ROOT] = imx_clk_hw_gate2_shared2("usb_root_clk", "hsio_axi", ccm_base + 0x44d0, 0, &share_count_usb);
-> +	hws[IMX8MP_CLK_USB_SUSP] = imx_clk_hw_gate2_shared2("usb_suspend_clk", "osc_32k", ccm_base + 0x44d0, 0, &share_count_usb);
->  	hws[IMX8MP_CLK_USB_PHY_ROOT] = imx_clk_hw_gate4("usb_phy_root_clk", "usb_phy_ref", ccm_base + 0x44f0, 0);
->  	hws[IMX8MP_CLK_USDHC1_ROOT] = imx_clk_hw_gate4("usdhc1_root_clk", "usdhc1", ccm_base + 0x4510, 0);
->  	hws[IMX8MP_CLK_USDHC2_ROOT] = imx_clk_hw_gate4("usdhc2_root_clk", "usdhc2", ccm_base + 0x4520, 0);
-> -- 
-> 2.34.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+No. You can read the discussion above.
