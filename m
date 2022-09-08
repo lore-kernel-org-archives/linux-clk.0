@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C07F3ECAAD5
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 11:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22949ECAAD5
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Sep 2022 11:10:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbiIHLIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Sep 2022 07:08:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41276 "EHLO
+        id S229695AbiIHLKP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Sep 2022 07:10:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbiIHLII (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 07:08:08 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52DECCD4A
-        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 04:08:05 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id z20so19447836ljq.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 04:08:05 -0700 (PDT)
+        with ESMTP id S229572AbiIHLKN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2022 07:10:13 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 419F29323B
+        for <linux-clk@vger.kernel.org>; Thu,  8 Sep 2022 04:10:12 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id b19so19437064ljf.8
+        for <linux-clk@vger.kernel.org>; Thu, 08 Sep 2022 04:10:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=nl/gX4imOToZho5UFDxzEpyUWNGOIGDYdp1e4bXjgB4=;
-        b=j4lsWoDPctiBxd4wxmRuYGfMFJUNfe6PRsJpgILjez06ENaILpJhI0wLm4tSj63ChR
-         bn8gyjis9Ciho+TYSJQXe2wUPMtVdJfD8Ml1WXBz/oGvhv+A3BE6U9xT23Deze2FeuSM
-         aijopf1+NZPC+3ITBTtV6ovL9q1psr0hV/POn30nqhXjWbnRfnuvXEoxJaiDGoOx5FSp
-         DTKWwvcNO8r95D55qJF++4jWV5OeP8ne/6BQto18dLkiQza9+Ec08uxjjVzhUfgXj9De
-         8sDhZzDvmgQTHxpeK/0mi9VtAazViATWUiPMdDyQYWjlFRUntnuRxmLoqmtgfolfO5uv
-         8/1w==
+        bh=M8TjVGi+dvieD4daFHMvoDToWClMKumVkJMvJ1/RkFQ=;
+        b=JUL+XJHQ4d/04YtpxtDMwFY2Y5MmaF/xiJBFAsvXzhDyQ9lglQuK10Tztc9Em2yx05
+         xFR/XXNay9QrpLUaX2Q8YsOIOAkDSzQN3ZRhAT45zn7fKxeOJrcgB+nUyT1ciE5Jkem5
+         dSqSLOupHgCk1PBOisWvAhsZVC925rJIob4H+Gc1ll5fyFAOZchFaJEH75T4gprtyQTW
+         8zmAelNwh13Xn+3iT+1D8ROFPbGcmCg0ASO9VDp7SpLgQfLmcIDg3NvlUQdh3OY4/lIu
+         8ZqpVFWmReLmEljfMqcDc5ItnKuzJHPdSYvWKhueTK4V3qIOTEDTb3SD69/66JaFWTln
+         Z7OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=nl/gX4imOToZho5UFDxzEpyUWNGOIGDYdp1e4bXjgB4=;
-        b=uhwRzpkZpxxw2QvMSi8+xP76759+NJezM/sWaxijI+qeTfNd7t4kg7AZuzAXliMsa5
-         n9rsu718jrfpQOzBjNs8qvPwXK1CfzhzK5I2NI7UDaA45e1MvcwHzEcOjTI/4M0TdxQ3
-         KfedafWfB3eYmLPH7TQtmRrqreU/EOxRnkgrAnkPckrcWxBfYBLODN1nj90A65FBHnX2
-         Jxn5wVUsaWY+DzVVuTRPXSbqMDCzZPWGIsjSoOMN0fa58Sp5eIdCumb1rMfPKiKFPhAm
-         +ri6op47Mq1eNXIr1UdpMuLpqmY7SM+3bnd60230q/Y3LQdaeA8YBsZE2ke5cFzato3X
-         CCcg==
-X-Gm-Message-State: ACgBeo3Fjzqa8pw9O8h49msYTInr3rdxQjGRm5xWGEb952s7OfVlHi2n
-        dqllHSZ6dekA2udSNtEHmaKNLQ==
-X-Google-Smtp-Source: AA6agR6a67h3FkF7g5VWCRuxJI82Pbb2Odo+CPi7d5MSQ24A3s8wKjqKWAGxCHM/STfol0ZZgMU3wQ==
-X-Received: by 2002:a2e:9b91:0:b0:26a:ce59:c517 with SMTP id z17-20020a2e9b91000000b0026ace59c517mr2037370lji.181.1662635284068;
-        Thu, 08 Sep 2022 04:08:04 -0700 (PDT)
+        bh=M8TjVGi+dvieD4daFHMvoDToWClMKumVkJMvJ1/RkFQ=;
+        b=FXZVEndpDlsVFsNOoZ4qd7E5CdWbpRUhjmn1DbNS6OAgqJeYPaNpYg/NBQOU18CIGn
+         2qTXvnqWjAqaoM9BJjvUaIA/GSSj2oSpQghPj3ypqPLq5un6HKUslH+/zKSs4JTxvj2W
+         px7kjInHAaAs7/hZpGzIJ6l8P0obHwE47P0TFRvV5yS7G75wg59YsvZNP7HQQvWK4s6I
+         A6+BQ/AQZDGGf4YBRe8XLNvUqHHtuJenfyl2VCIlPdmuE2j8VdFQqGWs1Jw5dzBX7WMv
+         P63fr89Xf+xo0lAIVsYYcftH0puNHW/JQpf9NVgucY+az8KVpf9lQV2U2gL3pPxzv99x
+         t+Zg==
+X-Gm-Message-State: ACgBeo0rfKUunYbAOkU31mD+Rrh95w758/X0Y2laAgIQxdZy0zC9m/Av
+        B0v2E8j4YGFrZYfZ4Er2SGLczw==
+X-Google-Smtp-Source: AA6agR6vHmIYNFIFpblQhNC8Ltenxf7xgA/5SHfm848ngZh43E14ZZH2Q+SOU89YcKh8GIjhp+xWCg==
+X-Received: by 2002:a2e:9bd9:0:b0:267:5851:4676 with SMTP id w25-20020a2e9bd9000000b0026758514676mr2226608ljj.10.1662635410616;
+        Thu, 08 Sep 2022 04:10:10 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id n27-20020a05651203fb00b0049488c97d39sm2985477lfq.212.2022.09.08.04.08.02
+        by smtp.gmail.com with ESMTPSA id v25-20020a05651203b900b00497aae401f8sm762134lfp.184.2022.09.08.04.10.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Sep 2022 04:08:03 -0700 (PDT)
-Message-ID: <ba44cf8a-a4d4-3f8e-91ab-43002b73c312@linaro.org>
-Date:   Thu, 8 Sep 2022 13:08:02 +0200
+        Thu, 08 Sep 2022 04:10:09 -0700 (PDT)
+Message-ID: <8233a19a-9b0b-6962-6f36-381c8f380ad3@linaro.org>
+Date:   Thu, 8 Sep 2022 13:10:08 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH v2 2/3] clk: qcom: gcc-sdm845: use device tree match data
+Subject: Re: [PATCH v2 3/3] clk: qcom: gcc-sdm845: add sdm670 global clock
+ data
 Content-Language: en-US
 To:     Richard Acayan <mailingradian@gmail.com>,
         linux-arm-msm@vger.kernel.org
@@ -67,9 +68,9 @@ Cc:     andersson@kernel.org, agross@kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, caleb@connolly.tech,
         jo@jsfamily.in
 References: <20220907223927.139858-1-mailingradian@gmail.com>
- <20220907223927.139858-3-mailingradian@gmail.com>
+ <20220907223927.139858-4-mailingradian@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220907223927.139858-3-mailingradian@gmail.com>
+In-Reply-To: <20220907223927.139858-4-mailingradian@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -77,14 +78,90 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 08/09/2022 00:39, Richard Acayan wrote:
-> This driver will support more than one SoC's set of clocks, and set of
-> GDSCs. This behavior would be unclean with hard-coded static variables.
-> Support it by grabbing clocks, GDSCs, and BCRs in the match data.
+> The Snapdragon 670 adds and removes some clocks, adds new frequencies, and
+> adds a new GPLL (Global Phase-Locked Loop) in reference to SDM845, while
+> also removing some GDSCs. Despite these differences, there are many
+> similarities with SDM670. Add data for SDM670 in the driver for SDM845 to
+> reuse the most of the clock data.
 > 
+> Advantages and disadvantages of this approach:
+>  + maintenance applies to both sdm670 and sdm845 by default
+>  + less duplicate code (clocks) means smaller distro/pre-built kernels
+>    with all drivers enabled
+>  - clocks for both SoC's must be compiled if the user wants clocks for one
+>    specific SoC (both or none)
+>  - additional testing needed for sdm845 devices
+> 
+> Link: https://android.googlesource.com/kernel/msm/+/443bd8d6e2cf54698234c752e6de97b4b8a528bd^!/#F10
 > Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+> ---
+>  drivers/clk/qcom/Kconfig      |   4 +-
+>  drivers/clk/qcom/gcc-sdm845.c | 398 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 400 insertions(+), 2 deletions(-)
+> 
 
+Thank you for your patch. There is something to discuss/improve.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +					&gcc_tsif_inactivity_timers_clk.clkr,
+> +	[GCC_TSIF_REF_CLK] = &gcc_tsif_ref_clk.clkr,
+> +	[GCC_TSIF_REF_CLK_SRC] = &gcc_tsif_ref_clk_src.clkr,
+> +	[GCC_UFS_MEM_CLKREF_CLK] = &gcc_ufs_mem_clkref_clk.clkr,
+> +	[GCC_UFS_PHY_AHB_CLK] = &gcc_ufs_phy_ahb_clk.clkr,
+> +	[GCC_UFS_PHY_AXI_CLK] = &gcc_ufs_phy_axi_clk.clkr,
+> +	[GCC_UFS_PHY_AXI_CLK_SRC] = &gcc_ufs_phy_axi_clk_src.clkr,
+> +	[GCC_UFS_PHY_ICE_CORE_CLK] = &gcc_ufs_phy_ice_core_clk.clkr,
+> +	[GCC_UFS_PHY_ICE_CORE_CLK_SRC] = &gcc_ufs_phy_ice_core_clk_src.clkr,
+> +	[GCC_UFS_PHY_PHY_AUX_CLK] = &gcc_ufs_phy_phy_aux_clk.clkr,
+> +	[GCC_UFS_PHY_PHY_AUX_CLK_SRC] = &gcc_ufs_phy_phy_aux_clk_src.clkr,
+> +	[GCC_UFS_PHY_RX_SYMBOL_0_CLK] = &gcc_ufs_phy_rx_symbol_0_clk.clkr,
+> +	[GCC_UFS_PHY_TX_SYMBOL_0_CLK] = &gcc_ufs_phy_tx_symbol_0_clk.clkr,
+> +	[GCC_UFS_PHY_UNIPRO_CORE_CLK] = &gcc_ufs_phy_unipro_core_clk.clkr,
+> +	[GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC] =
+> +					&gcc_ufs_phy_unipro_core_clk_src.clkr,
+> +	[GCC_USB30_PRIM_MASTER_CLK] = &gcc_usb30_prim_master_clk.clkr,
+> +	[GCC_USB30_PRIM_MASTER_CLK_SRC] = &gcc_usb30_prim_master_clk_src.clkr,
+> +	[GCC_USB30_PRIM_MOCK_UTMI_CLK] = &gcc_usb30_prim_mock_utmi_clk.clkr,
+> +	[GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC] =
+> +					&gcc_usb30_prim_mock_utmi_clk_src.clkr,
+> +	[GCC_USB30_PRIM_SLEEP_CLK] = &gcc_usb30_prim_sleep_clk.clkr,
+> +	[GCC_USB3_PRIM_CLKREF_CLK] = &gcc_usb3_prim_clkref_clk.clkr,
+> +	[GCC_USB3_PRIM_PHY_AUX_CLK] = &gcc_usb3_prim_phy_aux_clk.clkr,
+> +	[GCC_USB3_PRIM_PHY_AUX_CLK_SRC] = &gcc_usb3_prim_phy_aux_clk_src.clkr,
+> +	[GCC_USB3_PRIM_PHY_COM_AUX_CLK] = &gcc_usb3_prim_phy_com_aux_clk.clkr,
+> +	[GCC_USB3_PRIM_PHY_PIPE_CLK] = &gcc_usb3_prim_phy_pipe_clk.clkr,
+> +	[GCC_USB_PHY_CFG_AHB2PHY_CLK] = &gcc_usb_phy_cfg_ahb2phy_clk.clkr,
+> +	[GCC_VDDA_VS_CLK] = &gcc_vdda_vs_clk.clkr,
+> +	[GCC_VDDCX_VS_CLK] = &gcc_vddcx_vs_clk.clkr,
+> +	[GCC_VDDMX_VS_CLK] = &gcc_vddmx_vs_clk.clkr,
+> +	[GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
+> +	[GCC_VIDEO_AXI_CLK] = &gcc_video_axi_clk.clkr,
+> +	[GCC_VIDEO_XO_CLK] = &gcc_video_xo_clk.clkr,
+> +	[GCC_VS_CTRL_AHB_CLK] = &gcc_vs_ctrl_ahb_clk.clkr,
+> +	[GCC_VS_CTRL_CLK] = &gcc_vs_ctrl_clk.clkr,
+> +	[GCC_VS_CTRL_CLK_SRC] = &gcc_vs_ctrl_clk_src.clkr,
+> +	[GCC_VSENSOR_CLK_SRC] = &gcc_vsensor_clk_src.clkr,
+> +	[GPLL0] = &gpll0.clkr,
+> +	[GPLL0_OUT_EVEN] = &gpll0_out_even.clkr,
+> +	[GPLL4] = &gpll4.clkr,
+> +	[GPLL6] = &gpll6.clkr,
+> +	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
+> +	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+> +	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
+> +	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
+> +	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+> +};
+> +
+>  static struct clk_regmap *gcc_sdm845_clocks[] = {
+>  	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
+>  	[GCC_AGGRE_UFS_CARD_AXI_CLK] = &gcc_aggre_ufs_card_axi_clk.clkr,
+> @@ -3515,6 +3881,7 @@ static const struct qcom_reset_map gcc_sdm845_resets[] = {
+>  	[GCC_QUPV3_WRAPPER_1_BCR] = { 0x18000 },
+>  	[GCC_QUSB2PHY_PRIM_BCR] = { 0x12000 },
+>  	[GCC_QUSB2PHY_SEC_BCR] = { 0x12004 },
+> +	[GCC_SDCC1_BCR] = { 0x26000 },
+
+You are changing existing SDM845, so this should be separate patch with
+its own explanation.
 
 
 Best regards,
