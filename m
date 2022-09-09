@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD76DC6FA86
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Sep 2022 12:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAC9C6FA8D
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Sep 2022 12:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231193AbiIIMb4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Sep 2022 08:31:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55830 "EHLO
+        id S231304AbiIIMb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Sep 2022 08:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230360AbiIIMb4 (ORCPT
+        with ESMTP id S230369AbiIIMb4 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Sep 2022 08:31:56 -0400
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442731153BC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57648115CF2;
         Fri,  9 Sep 2022 05:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
   t=1662726715; x=1694262715;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HX/acfokj679TW0p8JjwsB6cH8hSfz79iHSDR58YKNY=;
-  b=xAR6r1ArqAtkeWuIdgLB2nHh6er5g/bJNtXI9M4OlMyr5D/ylghmp7hP
-   /bSqi1oml54G07bLQUjpiVmfjoVZfKHPzv36v21ehXpaUG4ovlpEZaI83
-   /SHY8pJsGAfP1RXvoHGJoOsOsMkoTu3EtMowAY6u7MNR3OFX91W1tOMKn
-   T1eFYHymtdFF22vbXd+X5hEm9ZAw9RsQxhAV3xg+D3A16tbUzmsWPKVvk
-   X+37kPz2sNKhI1MF4Lz+t4oA07eWuZEle0l2PUT4lmvjucPvuzub7F6dx
-   gbCyIunhNMcby4T890EVsHRYVk7sLU/A7lYTLIV38sTJ8BVe1447yXYxR
-   g==;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lXPkkFRkwRKsafp6HGuDBA/9P2HFxXAmTgbrhhm4Y/M=;
+  b=iinYBrm7m1kbds6aBGbfonvwfg7cUMiqR+b/p48OS+nXIEzvY3CXiBDN
+   /H2Q/HsSkE4P1V+z4fWrnjtnRWVlC6vW+AdRcLRpA9JvNIVU/iGXSMnBV
+   MUUZN0cU4uVPyEoCj+zfFBH+QrrXPWvZNX4i/2rhI2bcSzB5/IFijTRq5
+   NTN+JN25HadL4Lj4hrS1A4rGE2Q5fCDBH6AAblUutQEBAF2AAXSN3Mc1n
+   JIKae6BqUYBXg+7QlzL0XDjy9BBUPCZvl4XghdFbKrdLxZye494u4c8PV
+   aD97J5MeKS78yniLmSeLK9MHUEuAk4+vD68Oz6ny4KcAPPe+eXwvVDDOM
+   w==;
 X-IronPort-AV: E=Sophos;i="5.93,303,1654585200"; 
-   d="scan'208";a="176399083"
+   d="scan'208";a="176399131"
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Sep 2022 05:31:51 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Sep 2022 05:31:54 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Fri, 9 Sep 2022 05:31:46 -0700
+ 15.1.2507.12; Fri, 9 Sep 2022 05:31:51 -0700
 Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
  (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
- Transport; Fri, 9 Sep 2022 05:31:43 -0700
+ Transport; Fri, 9 Sep 2022 05:31:49 -0700
 From:   Conor Dooley <conor.dooley@microchip.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -51,10 +51,12 @@ CC:     Paul Walmsley <paul.walmsley@sifive.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: [PATCH v5 00/14] PolarFire SoC reset controller & clock cleanups
-Date:   Fri, 9 Sep 2022 13:31:09 +0100
-Message-ID: <20220909123123.2699583-1-conor.dooley@microchip.com>
+Subject: [PATCH v5 02/14] clk: microchip: mpfs: make the rtc's ahb clock critical
+Date:   Fri, 9 Sep 2022 13:31:11 +0100
+Message-ID: <20220909123123.2699583-3-conor.dooley@microchip.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220909123123.2699583-1-conor.dooley@microchip.com>
+References: <20220909123123.2699583-1-conor.dooley@microchip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -62,83 +64,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-@Stephen, even if you do not take the rest of the series for v6.1, the
-first patch is a bugfix for boot failures that can be trigged with v6.0
-so even if you have reservations about the aux device stuff, I would
-appreciate if you would take the first patch.
+The onboard RTC's AHB bus clock must be kept running as the RTC will
+stop & lose track of time if the AHB interface clock is disabled.
 
-Unfortunately, the rest of the series does have a conflict with/depends
-on the fix - so if you do take it on -fixes could you do it as a commit
-on top of -rc1 so the rest of the series will apply?
+Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/clk-mpfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Conor.
-
-Original Cover:
-Hey all,
-
-Kinda two things happening in this series, but I sent it together to
-ensure the second part would apply correctly.
-
-The first is the reset controller that I promised after discovering the
-issue triggered by CONFIG_PM & the phy not coming up correctly. I have
-now removed all the messing with resets from clock enable/disable
-functions & now use the aux bus to set up a reset controller driver.
-Since I needed something to test it, I hooked up the reset for the
-Cadence MACB on PolarFire SoC. This has been split into a second series
-for v2 (and is now in v6.0-rcN):
-https://lore.kernel.org/all/20220704114511.1892332-1-conor.dooley@microchip.com/
-
-The second part adds rate control for the MSS PLL clock, followed by
-some simplifications to the driver & conversions of some custom structs
-to the corresponding structs in the framework.
-
-I'll take the dts patch myself when the rest of this is okay-ed.
-Thanks,
-Conor.
-
-Changes since v4:
-- use the alternative macro Claudiu suggested for patch 1
-- drop a ~useless intermediate variable in mpfs_deassert()
-
-Changes since v3:
-- return results directly in probe() & reset_controller_register()
-
-Changes since v2:
-- reorder reset Makefile/Kconfig entries
-- fix a pre-existing bug exposed by clang with this series applied
-- add Padmarao who co-authored the original driver to the authors
-
-Conor Dooley (14):
-  clk: microchip: mpfs: fix clk_cfg array bounds violation
-  clk: microchip: mpfs: make the rtc's ahb clock critical
-  dt-bindings: clk: microchip: mpfs: add reset controller support
-  clk: microchip: mpfs: add reset controller
-  reset: add polarfire soc reset support
-  MAINTAINERS: add polarfire soc reset controller
-  riscv: dts: microchip: add mpfs specific macb reset support
-  clk: microchip: mpfs: add MSS pll's set & round rate
-  clk: microchip: mpfs: move id & offset out of clock structs
-  clk: microchip: mpfs: simplify control reg access
-  clk: microchip: mpfs: delete 2 line mpfs_clk_register_foo()
-  clk: microchip: mpfs: convert cfg_clk to clk_divider
-  clk: microchip: mpfs: convert periph_clk to clk_gate
-  clk: microchip: mpfs: update module authorship & licencing
-
- .../bindings/clock/microchip,mpfs.yaml        |  17 +-
- MAINTAINERS                                   |   1 +
- arch/riscv/boot/dts/microchip/mpfs.dtsi       |   7 +-
- drivers/clk/microchip/Kconfig                 |   1 +
- drivers/clk/microchip/clk-mpfs.c              | 384 +++++++++---------
- drivers/reset/Kconfig                         |   7 +
- drivers/reset/Makefile                        |   2 +-
- drivers/reset/reset-mpfs.c                    | 157 +++++++
- include/soc/microchip/mpfs.h                  |   8 +
- 9 files changed, 388 insertions(+), 196 deletions(-)
- create mode 100644 drivers/reset/reset-mpfs.c
-
-
-base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index f0f9c9a1cc48..b6b89413e090 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -375,6 +375,8 @@ static const struct clk_ops mpfs_periph_clk_ops = {
+  *   trap handler
+  * - CLK_MMUART0: reserved by the hss
+  * - CLK_DDRC: provides clock to the ddr subsystem
++ * - CLK_RTC: the onboard RTC's AHB bus clock must be kept running as the rtc will stop
++ *   if the AHB interface clock is disabled
+  * - CLK_FICx: these provide the processor side clocks to the "FIC" (Fabric InterConnect)
+  *   clock domain crossers which provide the interface to the FPGA fabric. Disabling them
+  *   causes the FPGA fabric to go into reset.
+@@ -399,7 +401,7 @@ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
+ 	CLK_PERIPH(CLK_CAN0, "clk_periph_can0", PARENT_CLK(AHB), 14, 0),
+ 	CLK_PERIPH(CLK_CAN1, "clk_periph_can1", PARENT_CLK(AHB), 15, 0),
+ 	CLK_PERIPH(CLK_USB, "clk_periph_usb", PARENT_CLK(AHB), 16, 0),
+-	CLK_PERIPH(CLK_RTC, "clk_periph_rtc", PARENT_CLK(AHB), 18, 0),
++	CLK_PERIPH(CLK_RTC, "clk_periph_rtc", PARENT_CLK(AHB), 18, CLK_IS_CRITICAL),
+ 	CLK_PERIPH(CLK_QSPI, "clk_periph_qspi", PARENT_CLK(AHB), 19, 0),
+ 	CLK_PERIPH(CLK_GPIO0, "clk_periph_gpio0", PARENT_CLK(AHB), 20, 0),
+ 	CLK_PERIPH(CLK_GPIO1, "clk_periph_gpio1", PARENT_CLK(AHB), 21, 0),
 -- 
 2.36.1
 
