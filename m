@@ -2,108 +2,213 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DDDECAAD5
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Sep 2022 08:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC496C6FA86
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Sep 2022 08:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231741AbiIIIpb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Sep 2022 04:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41156 "EHLO
+        id S230098AbiIII6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Sep 2022 04:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231731AbiIIIpZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Sep 2022 04:45:25 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635A9E1AAC;
-        Fri,  9 Sep 2022 01:45:21 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2898Zt76031272;
-        Fri, 9 Sep 2022 08:45:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=qcppdkim1;
- bh=fnQ/9ornMrw6/6G4NznUPOwewgykisuH8AND/MwrJbw=;
- b=nDjmIz6O/cg02rMc7elKKBQfyPvfSrOeQqofhJsC2Z5EWQ4WVSEgGgA2o3TKTjEcQBVi
- I6jvkaWVFgEjLSjgTSlAas99CB+FeY4pcQ9r+rOztk3/NnbChvh9pH/seYRlC55/H7h7
- bBlWTAPqZeHQVnzR67du5EcT0IsThwCRaj6NwAp/iHbbwA5G2Du4GIvvZ2wVYNr41wRp
- vRTtRqDSGGObs7D/nhRp6OiKW7oqtbDRvC7KbouymtOaI3JqSpUAnuZ4Eq9aa6uhT9R6
- ZpjL9ziYxIZarL7PkTINIxAxp5ouuQmN2zKVFNZibQOMaY2fQT7rtC0yghecMSRs9ZzU dQ== 
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jf8514u40-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Sep 2022 08:45:14 +0000
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 2898j5I4014248;
-        Fri, 9 Sep 2022 08:45:05 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3jc00m8vqf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 09 Sep 2022 08:45:05 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2898gNtw009438;
-        Fri, 9 Sep 2022 08:45:05 GMT
-Received: from hu-sgudaval-hyd.qualcomm.com (hu-krichai-hyd.qualcomm.com [10.213.110.37])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 2898j5qZ014239;
-        Fri, 09 Sep 2022 08:45:05 +0000
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 4058933)
-        id 75A3B44AE; Fri,  9 Sep 2022 14:15:04 +0530 (+0530)
-From:   Krishna chaitanya chundru <quic_krichai@quicinc.com>
-To:     helgaas@kernel.org
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org,
-        quic_vbadigan@quicinc.com, quic_hemantk@quicinc.com,
-        quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-        quic_ramkri@quicinc.com, manivannan.sadhasivam@linaro.org,
-        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v6 5/5] clk: qcom: Alwaya on pcie gdsc
-Date:   Fri,  9 Sep 2022 14:14:44 +0530
-Message-Id: <1662713084-8106-6-git-send-email-quic_krichai@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1662713084-8106-1-git-send-email-quic_krichai@quicinc.com>
-References: <1662713084-8106-1-git-send-email-quic_krichai@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rsO-M7HEd2k77_kXSSaEJYqNxUPADPVs
-X-Proofpoint-ORIG-GUID: rsO-M7HEd2k77_kXSSaEJYqNxUPADPVs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-09_04,2022-09-09_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- impostorscore=0 spamscore=0 phishscore=0 clxscore=1011 mlxscore=0
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- mlxlogscore=664 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2209090030
+        with ESMTP id S230314AbiIII50 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Sep 2022 04:57:26 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163F9A2848
+        for <linux-clk@vger.kernel.org>; Fri,  9 Sep 2022 01:57:06 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id d2so1626735wrn.1
+        for <linux-clk@vger.kernel.org>; Fri, 09 Sep 2022 01:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=rHPt+Pbc0bwJycb8g2JrUPaT739qQsbXoj9p9DUlASE=;
+        b=o8/U+pWZQB+BK2sQxVVXYhAtmR4twA2BIVHdD3qEUSTRXfTJet6ivAh/aa0kvfqXEP
+         en7ejU3nOu4bQP6vZpt50O7hMAYuCNjbSyl+Fa89NpV4Uy7Esi4TN4YFK/rH3VWPAH7P
+         9Ei7dmjS3X1tO9Pz5sxHqw8caG2m5uY4X2GGynE9KsZFWpqSIUVZMXz+V8FBPPp8iE/b
+         jKXvos0xjGCtBk/9THaZM1g5m8Dz6skfbkxP1TdHKCHd5Lru3SgjUnu7sqZXzGV6Eb1h
+         VfleTZ5RUJB6ZF7/NKUdrty0fGbKxEfl4I/63IWGo7vRairVqhSMFZFiuWfawbo9FaJr
+         atlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=rHPt+Pbc0bwJycb8g2JrUPaT739qQsbXoj9p9DUlASE=;
+        b=dS+scFwO91LVDIlZMEDAs+RTa41hv2APqJ6K3pXyAOgDnBu9LMI7DX8uqew+NhJksF
+         AHpMhWBLO1k0TRIrgq1yCV+nJB0qsoescInz2l2SssJZzi6lOOvJjigFyhRlOX/tf5Hl
+         OUvWg4zddMTFEoBkBrP+kX5Vt0/7jwScaqwXMs4FwgeH5IMvuqQL3Qosk46qZAPmVZt1
+         3TEOlHotGWsV5E/oLMKeZF+69op4nPWoDFwVHWTQ6Ht/cAXduzga2ekWKeJGZRcHFhmJ
+         WSE714nOm9cJV8tCS3C0OyL3G06t/6jP3O/3J2zt7RsBPCQmtIfXN8ONPGBHbXlikVY9
+         8YTw==
+X-Gm-Message-State: ACgBeo12iczdN8Zx4RGGqtn+9oqFrGjCHr5pD545AgSyMBchvjm1tNUL
+        b0sRRFRaRwzEsUtSnuMDg6JTuw==
+X-Google-Smtp-Source: AA6agR6zK39Nn38XEAPq9Ou9Er2T2ugG1x2dP6ckDfLlUnVh5tdCyv2sC6o38IAapwEnt34CuzxuKA==
+X-Received: by 2002:adf:e904:0:b0:228:e0d5:2c55 with SMTP id f4-20020adfe904000000b00228e0d52c55mr7254035wrm.714.1662713824642;
+        Fri, 09 Sep 2022 01:57:04 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id f25-20020a1c6a19000000b003a5ffec0b91sm1166157wmc.30.2022.09.09.01.57.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Sep 2022 01:57:04 -0700 (PDT)
+Date:   Fri, 9 Sep 2022 10:57:01 +0200
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, ardb@kernel.org,
+        davem@davemloft.net, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v9 25/33] dt-bindings: crypto: rockchip: convert to new
+ driver bindings
+Message-ID: <Yxr/3RjQs9x2KqL7@Red>
+References: <20220901125710.3733083-1-clabbe@baylibre.com>
+ <20220901125710.3733083-26-clabbe@baylibre.com>
+ <20220907203853.GA288174-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220907203853.GA288174-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make GDSC always on to ensure controller and its dependent clocks
-won't go down during system suspend.
+Le Wed, Sep 07, 2022 at 03:38:53PM -0500, Rob Herring a écrit :
+> On Thu, Sep 01, 2022 at 12:57:02PM +0000, Corentin Labbe wrote:
+> > The latest addition to the rockchip crypto driver need to update the
+> > driver bindings.
+> 
+> This sounds like you changed the driver, so change the binding. That 
+> would be an ABI break. But it looks like you are adding support for new 
+> h/w, so say that. Bindings aren't about a driver.
+> 
 
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
----
- drivers/clk/qcom/gcc-sc7280.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello
 
-diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-index 7ff64d4..2f781a2 100644
---- a/drivers/clk/qcom/gcc-sc7280.c
-+++ b/drivers/clk/qcom/gcc-sc7280.c
-@@ -3109,7 +3109,7 @@ static struct gdsc gcc_pcie_1_gdsc = {
- 		.name = "gcc_pcie_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = ALWAYS_ON,
- };
- 
- static struct gdsc gcc_ufs_phy_gdsc = {
--- 
-2.7.4
+Ok, I will change the commit log.
 
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  .../crypto/rockchip,rk3288-crypto.yaml        | 79 +++++++++++++++++--
+> >  1 file changed, 71 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+> > index 8a219d439d02..b7870a4cbdbe 100644
+> > --- a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+> > +++ b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+> > @@ -13,6 +13,8 @@ properties:
+> >    compatible:
+> >      enum:
+> >        - rockchip,rk3288-crypto
+> > +      - rockchip,rk3328-crypto
+> > +      - rockchip,rk3399-crypto
+> >  
+> >    reg:
+> >      maxItems: 1
+> > @@ -21,21 +23,82 @@ properties:
+> >      maxItems: 1
+> >  
+> >    clocks:
+> > +    minItems: 3
+> >      maxItems: 4
+> >  
+> >    clock-names:
+> > -    items:
+> > -      - const: aclk
+> > -      - const: hclk
+> > -      - const: sclk
+> > -      - const: apb_pclk
+> > +    minItems: 3
+> > +    maxItems: 4
+> >  
+> >    resets:
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 3
+> >  
+> >    reset-names:
+> > -    items:
+> > -      - const: crypto-rst
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: rockchip,rk3288-crypto
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 4
+> > +        clock-names:
+> > +          items:
+> > +            - const: aclk
+> > +            - const: hclk
+> > +            - const: sclk
+> > +            - const: apb_pclk
+> > +        resets:
+> > +          maxItems: 1
+> > +        reset-names:
+> > +          items:
+> > +            - const: crypto-rst
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: rockchip,rk3328-crypto
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 3
+> > +        clock-names:
+> > +          items:
+> > +            - const: hclk_master
+> > +            - const: hclk_slave
+> > +            - const: sclk
+> 
+> Do we really need new names? Was 'aclk' not the bus master clock?
+
+I follow name convention from dt-bindings/clock/rk3328-cru.h
+
+> 
+> If the clocks and resets aren't the same, then maybe these 2 new chips 
+> should be their own binding.
+
+I dont understand what you mean ?
+You mean having a rk3288-crypto.yaml and a rk3328-crypto.yaml (which will be related to the same driver) ?
+
+> > +        resets:
+> > +          maxItems: 1
+> > +        reset-names:
+> > +          items:
+> > +            - const: crypto-rst
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: rockchip,rk3399-crypto
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 3
+> > +        clock-names:
+> > +          items:
+> > +            - const: hclk_master
+> > +            - const: hclk_slave
+> > +            - const: sclk
+> > +        resets:
+> > +          minItems: 3
+> > +        reset-names:
+> > +          items:
+> > +            - const: rst_master
+> > +            - const: rst_slave
+> 
+> 'rst_' is redundant, drop.
+> 
+
+I will fix it
+
+Thanks for the review
