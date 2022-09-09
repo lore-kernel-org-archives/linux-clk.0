@@ -2,112 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEFAECAAD3
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Sep 2022 11:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8D4ECAAD3
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Sep 2022 12:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231298AbiIILui (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Sep 2022 07:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43846 "EHLO
+        id S229811AbiIIMbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Sep 2022 08:31:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231342AbiIILug (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Sep 2022 07:50:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CAD6102D6B;
-        Fri,  9 Sep 2022 04:50:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7FA85B824F0;
-        Fri,  9 Sep 2022 11:50:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68D9C433D6;
-        Fri,  9 Sep 2022 11:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662724229;
-        bh=PtQE/YhXm6St5Y9JcAd1LJh87edXn81fJl5QLGWj/kg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F+Iluq77ucNorR29R6YwzNMUt5accogZTJmkvYv17gl/mXvDEMklaE4mbhjOr+mCs
-         ZlEs4BSrHWIdIt+BIUz0+wrZBy08Vw4tG8D/wJgduSvnCmqmmksAal7zT8Y/IlrpmQ
-         Lnjh3UiayP7t1qAoJ9D8wQx1CXmLovb3q49tosHg0Azb465TiLaylb72L6cbqxgaGU
-         95ta8EctiYo7VjlB2mOkjwTD6Ub3HTz2fjAqbNrVj8K36aDfgSqmrpLvlHcfHWQcsw
-         m+u0vHvLmElAPSJz4xazcttJjv4fck1YodoIh8dOCkYzyr78h/524oWGMxTZd1L1eJ
-         wtCpjGmxNR1PA==
-Date:   Fri, 9 Sep 2022 12:50:23 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Cixi Geng <gengcixi@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        baolin.wang@linux.alibaba.com,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229589AbiIIMbz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Sep 2022 08:31:55 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB5C998347;
+        Fri,  9 Sep 2022 05:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1662726713; x=1694262713;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=J/KA5IP1P64+fZAZNeRF2iSfGho/kaCFDpeCMd5oTCw=;
+  b=gWSzOfBEY8cbq6DbLiev1iDui6FQuNsjQr/gApGI7YevLh2+V7+WQDD3
+   y2fXnjO6gIk/TqHc3YVchsaqr/W77rtufCWTS1BKwvyFFzFsc1SRBJMPE
+   AS9jOXzhjEYMlG1wkORdT1792KRE8YT9tdk+TAcBO+Zwxa1UgjuDO+9zs
+   gBI3jLrRNqpX1WdznMqXKF3s9DIFa4Gd2ZWq/l9Iv7deZSTpeeDQ02nb7
+   wnaBNvSkt2FK+LgGZM8XCGMtJ8I6EGeo2ugGJZhnAurjcz4f3B218gPpE
+   x3oR+A2YBfJpeZOs4Tx7GA3+Kd16fvTe1wGtozcjzKN8jvBSw+p846VVd
+   A==;
+X-IronPort-AV: E=Sophos;i="5.93,303,1654585200"; 
+   d="scan'208";a="176399082"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Sep 2022 05:31:51 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Fri, 9 Sep 2022 05:31:49 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Fri, 9 Sep 2022 05:31:46 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH V7 1/2] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-Message-ID: <YxsofwCfTZqqJOiK@google.com>
-References: <20220909073456.239668-1-gengcixi@gmail.com>
- <20220909073456.239668-2-gengcixi@gmail.com>
- <Yxr0+LJWWsF53dr2@google.com>
- <CAF12kFteDZLk-2PBufnuar43bgPzoxWsOjR0-zQ01ZqLyTCxQw@mail.gmail.com>
- <dc63bd52-edbf-d13b-86b3-db83bfd8b7e1@linaro.org>
- <CAF12kFt95PYcK249Zm8r+jZtEm3vGTd3AXn2DB_CG0Xf=3xeFQ@mail.gmail.com>
- <fe1838eb-8ec5-62a9-3d90-bf2fe4070535@linaro.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        "Nathan Chancellor" <nathan@kernel.org>
+Subject: [PATCH v5 01/14] clk: microchip: mpfs: fix clk_cfg array bounds violation
+Date:   Fri, 9 Sep 2022 13:31:10 +0100
+Message-ID: <20220909123123.2699583-2-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220909123123.2699583-1-conor.dooley@microchip.com>
+References: <20220909123123.2699583-1-conor.dooley@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe1838eb-8ec5-62a9-3d90-bf2fe4070535@linaro.org>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 09 Sep 2022, Krzysztof Kozlowski wrote:
+There is an array bounds violation present during clock registration,
+triggered by current code by only specific toolchains. This seems to
+fail gracefully in v6.0-rc1, using a toolchain build from the riscv-
+gnu-toolchain repo and with clang-15, and life carries on. While
+converting the driver to use standard clock structs/ops, kernel panics
+were seen during boot when built with clang-15:
 
-> On 09/09/2022 12:16, Cixi Geng wrote:
-> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 于2022年9月9日周五 17:57写道：
-> >>
-> >> On 09/09/2022 11:50, Cixi Geng wrote:
-> >>> Lee Jones <lee@kernel.org> 于2022年9月9日周五 16:10写道：
-> >>>>
-> >>>> On Fri, 09 Sep 2022, Cixi Geng wrote:
-> >>>>
-> >>>>> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >>>>>
-> >>>>> Add bindings for Unisoc system global register which provide register map
-> >>>>> for clocks.
-> >>>>>
-> >>>>> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >>>>> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
-> >>>>> Reviewed-by: Rob Herring <robh@kernel.org>
-> >>>>> ---
-> >>>>>  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
-> >>>>>  1 file changed, 68 insertions(+)
-> >>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> >>>>
-> >>>> I'll take this when the clk driver changes are merged.
-> >>> this patch is depends on the clk dt-bingdings, which is already merged [1]
-> >>
-> >> which is merged to different tree, so this one here cannot go via MFD
-> >> tree without cross-tree merges.
-> > Hi Krzysztof:
-> > I test on the latest kernel 506357871c18e06565840d71c2ef9f818e19f460
-> > (torvalds/master) version:6.0.0.rc4
-> > what you mean is I must warting your branch upgrade the cross-tree?
-> 
-> Ah, you linked email message so that rather indicated applying to clk
-> tree, but indeed it is already in the mainline.
+[    0.581754] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b1
+[    0.591520] Oops [#1]
+[    0.594045] Modules linked in:
+[    0.597435] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.0.0-rc1-00011-g8e1459cf4eca #1
+[    0.606188] Hardware name: Microchip PolarFire-SoC Icicle Kit (DT)
+[    0.613012] epc : __clk_register+0x4a6/0x85c
+[    0.617759]  ra : __clk_register+0x49e/0x85c
+[    0.622489] epc : ffffffff803faf7c ra : ffffffff803faf74 sp : ffffffc80400b720
+[    0.630466]  gp : ffffffff810e93f8 tp : ffffffe77fe60000 t0 : ffffffe77ffb3800
+[    0.638443]  t1 : 000000000000000a t2 : ffffffffffffffff s0 : ffffffc80400b7c0
+[    0.646420]  s1 : 0000000000000001 a0 : 0000000000000001 a1 : 0000000000000000
+[    0.654396]  a2 : 0000000000000001 a3 : 0000000000000000 a4 : 0000000000000000
+[    0.662373]  a5 : ffffffff803a5810 a6 : 0000000200000022 a7 : 0000000000000006
+[    0.670350]  s2 : ffffffff81099d48 s3 : ffffffff80d6e28e s4 : 0000000000000028
+[    0.678327]  s5 : ffffffff810ed3c8 s6 : ffffffff810ed3d0 s7 : ffffffe77ffbc100
+[    0.686304]  s8 : ffffffe77ffb1540 s9 : ffffffe77ffb1540 s10: 0000000000000008
+[    0.694281]  s11: 0000000000000000 t3 : 00000000000000c6 t4 : 0000000000000007
+[    0.702258]  t5 : ffffffff810c78c0 t6 : ffffffe77ff88cd0
+[    0.708125] status: 0000000200000120 badaddr: 00000000000000b1 cause: 000000000000000d
+[    0.716869] [<ffffffff803fb892>] devm_clk_hw_register+0x62/0xaa
+[    0.723420] [<ffffffff80403412>] mpfs_clk_probe+0x1e0/0x244
 
-... and also, I'm *still* not playing that game with DT bindings.
+In v6.0-rc1 and later, this issue is visible without the follow on
+patches doing the conversion using toolchains provided by our Yocto
+meta layer too.
 
-It's bad enough that we have to sync across subsystems to avoid
-build-breakages.  If documentation comes together in -next and
-subsequently Mainline that should be adequate.
+It fails on "clk_periph_timer" - which uses a different parent, that it
+tries to find using the macro:
+\#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT].cfg.hw)
 
-I doubt Linus is running DT checker(s) on each pull-request he merges,
-nor are there any stipulations for DT bindings to be bisectable
-post-merge.
+If parent is RTCREF, so the macro becomes: &mpfs_cfg_clks[33].cfg.hw
+which is well beyond the end of the array. Amazingly, builds with GCC
+11.1 see no problem here, booting correctly and hooking the parent up
+etc. Builds with clang-15 do not, with the above panic.
 
+Change the macro to use specific offsets depending on the parent rather
+than the dt-binding's clock IDs.
+
+Fixes: 1c6a7ea32b8c ("clk: microchip: mpfs: add RTCREF clock control")
+CC: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/clk-mpfs.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 070c3b896559..f0f9c9a1cc48 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -239,6 +239,11 @@ static const struct clk_ops mpfs_clk_cfg_ops = {
+ 	.hw.init = CLK_HW_INIT(_name, _parent, &mpfs_clk_cfg_ops, 0),			\
+ }
+ 
++#define CLK_CPU_OFFSET		0u
++#define CLK_AXI_OFFSET		1u
++#define CLK_AHB_OFFSET		2u
++#define CLK_RTCREF_OFFSET	3u
++
+ static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
+ 	CLK_CFG(CLK_CPU, "clk_cpu", "clk_msspll", 0, 2, mpfs_div_cpu_axi_table, 0,
+ 		REG_CLOCK_CONFIG_CR),
+@@ -362,7 +367,7 @@ static const struct clk_ops mpfs_periph_clk_ops = {
+ 				  _flags),					\
+ }
+ 
+-#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT].hw)
++#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].hw)
+ 
+ /*
+  * Critical clocks:
 -- 
-Lee Jones [李琼斯]
+2.36.1
+
