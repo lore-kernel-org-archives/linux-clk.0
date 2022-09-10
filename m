@@ -2,77 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5ACECAAD3
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Sep 2022 17:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85750C6FA82
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Sep 2022 23:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbiIJRC2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Sep 2022 13:02:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34452 "EHLO
+        id S229514AbiIJXUi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Sep 2022 19:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiIJRC0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Sep 2022 13:02:26 -0400
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33693F33D;
-        Sat, 10 Sep 2022 10:02:24 -0700 (PDT)
-Received: from fews2.riseup.net (fews2-pn.riseup.net [10.0.1.84])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
-         client-signature RSA-PSS (2048 bits) client-digest SHA256)
-        (Client CN "mail.riseup.net", Issuer "R3" (not verified))
-        by mx1.riseup.net (Postfix) with ESMTPS id 4MPzgM60DhzDqvN;
-        Sat, 10 Sep 2022 17:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-        t=1662829344; bh=40CNOPy3Zf9G7CPKUjgzQ5b0AiIYJrWS6ye7Qa6omZo=;
+        with ESMTP id S229706AbiIJXUi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Sep 2022 19:20:38 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF98C27152
+        for <linux-clk@vger.kernel.org>; Sat, 10 Sep 2022 16:20:36 -0700 (PDT)
+Received: from tr.lan (ip-86-49-12-201.bb.vodafone.cz [86.49.12.201])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 6C9E4845C3;
+        Sun, 11 Sep 2022 01:20:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1662852034;
+        bh=STBFrQ1CVzqFty4EsqIatIRHVyvQMGmOjuH4i21Yfa8=;
         h=From:To:Cc:Subject:Date:From;
-        b=TV4fw4wzJlZjZIr7WONiIIE6dNAsUsTx5ntrqKSg/PaBo0ATN7H5ny0OUxdW06luV
-         jS2gJwMq45AOPCPcWTT5OLiaE0IcQ+6Ir5f2lZxuFaRPkwCR6YfL3AA453C/OQHpl1
-         YBIiXnMzZyDNfDg9X8YGM53O5NrqHWr4+Ihtb4W4=
-X-Riseup-User-ID: 6F74CD9EDEECAE30F2DB5A65239CCBA773B5255B67D994F2842D6A0BD7DB0A28
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-         by fews2.riseup.net (Postfix) with ESMTPSA id 4MPzgJ2gkcz1xwy;
-        Sat, 10 Sep 2022 17:02:20 +0000 (UTC)
-From:   Dang Huynh <danct12@riseup.net>
-To:     Dang Huynh <danct12@riseup.net>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        b=Ox1Jo7gWW2mBp8Gj+URGGEq9miert4h0ap+XSWFyQk8lRsib598M+DdpaCr0BPAAp
+         4Mf3N3sREyWM8sa75DmKdJElIuEPavM0Rr5k/f+Z35jwDn85otEuZODnw4dEuLSYyK
+         d5xHrRw2Dyv13Su3FUjpy6j76K6V8X6bCI73UGO+8TfZoSGKBDkikvPkL0CRU9d6ac
+         vz69A2YGSAiCaRreKMjUhHGBGQQfc7C59D4/86PoFFpzHbkcGuibDKIn2VQW9HcVCT
+         W3oMfbQOJjzhZ0A64j61QuxmatiqYYVsPDIAt4CKNiaDSqbjbwZJubaLRmyWMASoKS
+         Pgd/nsisnAu1A==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: sm6115: Select QCOM_GDSC
-Date:   Sun, 11 Sep 2022 00:02:07 +0700
-Message-Id: <20220910170207.1592220-1-danct12@riseup.net>
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clk: rs9: Fix I2C accessors
+Date:   Sun, 11 Sep 2022 01:20:15 +0200
+Message-Id: <20220910232015.216329-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While working on the Fxtec Pro1X device, this error shows up with
-my own minimal configuration:
+Add custom I2C accessors to this driver, since the regular I2C regmap ones
+do not generate the exact I2C transfers required by the chip. On I2C write,
+it is mandatory to send transfer length first, on read the chip returns the
+transfer length in first byte. Instead of always reading back 8 bytes, which
+is the default and also the size of the entire register file, set BCP register
+to 1 to read out 1 byte which is less wasteful.
 
-gcc-sm6115: probe of 1400000.clock-controller failed with error -38
-
-The clock driver depends on CONFIG_QCOM_GDSC and after enabling
-that, the driver probes successfully.
-
-Signed-off-by: Dang Huynh <danct12@riseup.net>
+Fixes: 892e0ddea1aa6 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
+Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
 ---
- drivers/clk/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-renesas-pcie.c | 53 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 1cf1ef70e347..d566fbdebdf9 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -645,6 +645,7 @@ config SM_DISPCC_6350
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 4f5df1fc74b46..711ba443f33b7 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -90,6 +90,49 @@ static const struct regmap_access_table rs9_writeable_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
+ };
  
- config SM_GCC_6115
- 	tristate "SM6115 and SM4250 Global Clock Controller"
-+	select QCOM_GDSC
- 	help
- 	  Support for the global clock controller on SM6115 and SM4250 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
++static int rs9_regmap_i2c_write(void *context, unsigned int reg, unsigned int val)
++{
++	struct i2c_client *i2c = context;
++	const u8 data[3] = { reg, 1, val };
++	const int count = ARRAY_SIZE(data);
++	int ret;
++
++	ret = i2c_master_send(i2c, data, count);
++	if (ret == count)
++		return 0;
++	else if (ret < 0)
++		return ret;
++	else
++		return -EIO;
++}
++
++static int rs9_regmap_i2c_read(void *context,
++			       unsigned int reg, unsigned int *val)
++{
++	struct i2c_client *i2c = context;
++	struct i2c_msg xfer[2];
++	u8 data[2];
++	int ret;
++
++	xfer[0].addr = i2c->addr;
++	xfer[0].flags = 0;
++	xfer[0].len = 1;
++	xfer[0].buf = (void *)&reg;
++
++	xfer[1].addr = i2c->addr;
++	xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
++	xfer[1].len = 1;
++	xfer[1].buf = (void *)data;
++
++	ret = i2c_transfer(i2c->adapter, xfer, 2);
++	if (ret == 2)
++		return 0;
++	else if (ret < 0)
++		return ret;
++	else
++		return -EIO;
++}
++
+ static const struct regmap_config rs9_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -97,6 +140,8 @@ static const struct regmap_config rs9_regmap_config = {
+ 	.max_register = 0x8,
+ 	.rd_table = &rs9_readable_table,
+ 	.wr_table = &rs9_writeable_table,
++	.reg_write = rs9_regmap_i2c_write,
++	.reg_read = rs9_regmap_i2c_read,
+ };
+ 
+ static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)
+@@ -242,11 +287,17 @@ static int rs9_probe(struct i2c_client *client)
+ 			return ret;
+ 	}
+ 
+-	rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
++	rs9->regmap = devm_regmap_init(&client->dev, NULL,
++				       client, &rs9_regmap_config);
+ 	if (IS_ERR(rs9->regmap))
+ 		return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
+ 				     "Failed to allocate register map\n");
+ 
++	/* Always read back 1 Byte via I2C */
++	ret = regmap_write(rs9->regmap, RS9_REG_BCP, 1);
++	if (ret < 0)
++		return ret;
++
+ 	/* Register clock */
+ 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
+ 		snprintf(name, 5, "DIF%d", i);
 -- 
-2.37.3
+2.35.1
 
