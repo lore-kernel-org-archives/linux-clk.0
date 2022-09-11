@@ -2,88 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A8FC6FA82
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Sep 2022 23:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB156ECAAD3
+	for <linux-clk@archiver.kernel.org>; Sun, 11 Sep 2022 16:47:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbiIJX0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Sep 2022 19:26:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48864 "EHLO
+        id S229535AbiIKQru (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 11 Sep 2022 12:47:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiIJX0Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Sep 2022 19:26:16 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18CF3ECD8
-        for <linux-clk@vger.kernel.org>; Sat, 10 Sep 2022 16:26:15 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 5980F83FD6;
-        Sun, 11 Sep 2022 01:26:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1662852374;
-        bh=EGp9fonDdPvXqTi7HcjzgCkBSXwMIAwJK00Bcxjs6cE=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=H4XmSCpvWVgfAVf2VanjaDUF1MDh9w0pctdtSXRtkjIWwwWniLi3CHDZGoo3oihin
-         eWOl925Q0IRdBzs9N3H+rP6DwePjc6P5Cnasbaf55v5x4OLDgeeNbFDHpjQX9oujAp
-         2zQ1oqPyT1VN/6laKTvAPestR5JYLJgwUMr0X25H2OtfJFi76SW8ssT+wIhqpU0C6A
-         kbXSkOkt5/E4wx3/u8AQ47G//JszTW7o5DgRE3/UofTiEaEWL9/637Tg40AXFUqURR
-         6sVMBIlCU9uw3NPGCLn+vJ2asmFYyOHf9ylbPnup6SFYpYCDRicezbJmBt2mgO87N9
-         y286P1uShBTtg==
-Message-ID: <43939b0a-d105-e403-c7b0-9281fe3ebebe@denx.de>
-Date:   Sun, 11 Sep 2022 01:26:13 +0200
+        with ESMTP id S229512AbiIKQrt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Sep 2022 12:47:49 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DD62250D;
+        Sun, 11 Sep 2022 09:47:48 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id u18so11155286lfo.8;
+        Sun, 11 Sep 2022 09:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=HA8nCOkAXI5pWr8NFRVcvP55LL8wQ30TATKKXBfMRyc=;
+        b=DxbH2ZufBCubLKCARbp0AtY6qiRL3bqH90OBBrqcb+7cKV487M+lN8gndTCeRd8meK
+         UMZ53331umiv8/SxccsV9+wuA5LkqQ7COuQhPuKnWd6gQ8PszLUUurtcYeRR9vw00j9E
+         bUmlSe7rFOl2fCIWIum4A0daapmr4XuKCMeAw1XBRjpP8MgJPw92OOkZ7wDbza/bHI6h
+         EOa2jouzLHuGYONrOLfjvY7EJ3IfKhKlkLkzN8VKYCeEmr/jN7BZdXvjIKmTksrhP1Ti
+         kuUogtc+Bmh59ACeZvHDB97JBJghXwAVDk7zP1+g4eS4kzUQJcvsatbx749NISqmbz/l
+         h/IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=HA8nCOkAXI5pWr8NFRVcvP55LL8wQ30TATKKXBfMRyc=;
+        b=tCRXQj1YWJs+4EXelaBV+JDydqBLP+HOOy3/CB2JlpD6FEC0xSMiziy/7Spj3ETV81
+         icd4sh9C2Mx2QavBnSYxbmw4pmfXucMyxwgRSrd6aXMNqz1W33jcEuscQKERAZcKzlss
+         /VuPzJo8IKwWvxGJRyQH9jLVAzZ09D4z4izTbD2F3Hq5bSTVRmizvyKVrDDx0UsDXdE9
+         9/DZM8vHm99ulX1UdKthbPgZOOo5lkMHLXW5VbOyQQ40msvl4+AO2jPnkzH26uurr3NZ
+         RZOJry0u4rZynNdAEw1eE2dXQOBFdPFFLr/CA4ekcEn3G5coANYuk0xi4xpRiDfNBcKW
+         sjVw==
+X-Gm-Message-State: ACgBeo1mBlZ0FBQu72+GTkaQv35Sp8f7G28Vry8YmHWlA2PS+xppsI1I
+        OGypErEs+Vz65ATY0FpxB/HWHXJRuUUOMA==
+X-Google-Smtp-Source: AA6agR6jPn7ZnXiofy86/eT+/HFxp4+3XPCj9LGowRvuJFpj0MicEk1o403HrgX83+C7lcmEZWf5Rw==
+X-Received: by 2002:ac2:4e10:0:b0:49a:d44b:426 with SMTP id e16-20020ac24e10000000b0049ad44b0426mr144007lfr.234.1662914867090;
+        Sun, 11 Sep 2022 09:47:47 -0700 (PDT)
+Received: from localhost.localdomain (adld177.neoplus.adsl.tpnet.pl. [79.185.7.177])
+        by smtp.gmail.com with ESMTPSA id h1-20020a0565123c8100b004979e231fafsm664501lfv.38.2022.09.11.09.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Sep 2022 09:47:46 -0700 (PDT)
+From:   Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Add DISPCC driver for SM6115
+Date:   Sun, 11 Sep 2022 18:46:17 +0200
+Message-Id: <20220911164635.182973-1-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: clk-renesas-pcie (9FGV0241) does not work
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-clk@vger.kernel.org
-References: <3458883.Lt9SDvczpP@steina-w>
-Content-Language: en-US
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <3458883.Lt9SDvczpP@steina-w>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/26/22 10:50, Alexander Stein wrote:
-> Hi,
+This patch series introduce support for SM6115 display clock controller,
+this driver is based on QCM2290 one.
 
-Hi,
+Changes since v1
+================
+1. Changed bindings file names to Vendor,SoC-IP format.
+2. Changed include in dispcc-sm6115 to reflect name change of bindings.
 
-> CC'ing Marek as original author.
-> 
-> I'm trying to use the clk-renesas-pcie driver for 9FGV0241 on my board.
-> But apparently it doesn't work. After digging into it IMHO the i2c transfer
-> are not correct.
-> The datasheet [1] states that for reading the following sequence applies:
-> 1. Start
-> 2. W slave address
-> 3. W beginning byte
-> 4. Repeated start
-> 5. R slave address
-> 6. data byte count (from slave)
-> 7. beginning byte (from slave)
-> ...
-> x. Stop
-> 
-> So before each read there is an additional byte containing (an apparently
-> configurable) amount of bytes to be transferred. This is also what I see in u-
-> boot:
->> => i2c md 0x6a 0 9
->> 0000: 08 ff 06 ff 5f ff 01 02 08    ...._....
-> 
-> The first ff, here on offset 1, is actually the reset default register/byte 0.
-> 01 02 (offsets 6 & 7) are the ID registers at byte 5 & 6.
-> 
-> The write access is quite similar, the amount of bytes to be written has to be
-> sent first. So the data byte count is completely ignored, IMHO which is why
-> this doesn't work. Am I'm missing something? How can this be fixed?
+Changes since v2
+================
+1. Changed maintainer email.
+2. Converted driver to use .index instead of fw_name.
+3. Removed parents which had no passed clock.
+4. Updated YAML to reflect changes above.
+5. Adjusted driver based on Bjorn's feedback.
 
-Can you please test the following patch?
+Adam Skladowski (2):
+  dt-bindings: clock: add QCOM SM6115 display clock bindings
+  clk: qcom: Add display clock controller driver for SM6115
 
-https://patchwork.kernel.org/project/linux-clk/patch/20220910232015.216329-1-marex@denx.de/
+ .../bindings/clock/qcom,sm6115-dispcc.yaml    |  70 ++
+ drivers/clk/qcom/Kconfig                      |   9 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/dispcc-sm6115.c              | 608 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm6115-dispcc.h    |  36 ++
+ 5 files changed, 724 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm6115-dispcc.h
+
+-- 
+2.25.1
+
