@@ -2,95 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADCAECAAD5
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 13:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4207ECAAD5
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 15:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbiILNmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Sep 2022 09:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60294 "EHLO
+        id S230351AbiILPdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Sep 2022 11:33:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbiILNmp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 09:42:45 -0400
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB40220E7
-        for <linux-clk@vger.kernel.org>; Mon, 12 Sep 2022 06:42:44 -0700 (PDT)
-Date:   Mon, 12 Sep 2022 13:42:34 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=connolly.tech;
-        s=protonmail; t=1662990159; x=1663249359;
-        bh=4VpvV4OBkDK69iCd91VlPdJGjR5kcBrkOVjMljOVhXE=;
-        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
-         References:Feedback-ID:From:To:Cc:Date:Subject:Reply-To:
-         Feedback-ID:Message-ID;
-        b=WREbsSlNT5mV1GEMq+8anEibl/Y3aoJGcDNiivvU6TJqqr52WhxXILaQG4KCIY1xk
-         oW6vlmDLSVZL2XaCc3qchOxkNQ1CowortXBW4wpDGwUodFGHk2wdOiVmWXsjYRj3LJ
-         8IPPNNCeZFjZE+2nmQO0S6MiQm2fzvZqOIBBxTnI=
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-From:   Caleb Connolly <caleb@connolly.tech>
-Cc:     Dang Huynh <danct12@riseup.net>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Reply-To: Caleb Connolly <caleb@connolly.tech>
-Subject: Re: [PATCH] clk: qcom: sm6115: Select QCOM_GDSC
-Message-ID: <6f2ac542-90dc-ec85-d25d-9ba713de8796@connolly.tech>
-In-Reply-To: <CAA8EJpr4_G_uK5oj9Y0j_tE_LsnqDHKaU1D_nhXOiL0sA=aMnQ@mail.gmail.com>
-References: <20220910170207.1592220-1-danct12@riseup.net> <0a2bb48f-c67d-0544-5037-d02f658a3351@connolly.tech> <CAA8EJpr4_G_uK5oj9Y0j_tE_LsnqDHKaU1D_nhXOiL0sA=aMnQ@mail.gmail.com>
-Feedback-ID: 10753939:user:proton
+        with ESMTP id S229503AbiILPdb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 11:33:31 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF0028E23;
+        Mon, 12 Sep 2022 08:33:29 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 63116203C0;
+        Mon, 12 Sep 2022 15:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1662996808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kozuecFuYGcaj4dmvVphhLmDqddAMEHY4So8DzM3m+A=;
+        b=xSGCDg4mGumtpFsXYWWYWKLnjJtrUpYMAN8BK30kG8qvorkziyEYkwXSI4qOjTSXPB93KA
+        3/On2InK0WuPDgrGtY0CSyvnCOTQmvVyTLnhZFVpbYRFRO3yN0H5uGETDfm1NLrUZsD/iN
+        E//Z5DubrCP2AaNfySW6Nvg6kjV780U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1662996808;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kozuecFuYGcaj4dmvVphhLmDqddAMEHY4So8DzM3m+A=;
+        b=3VcY/WHXR6j0C/Jn49QCE3raFVIlSfKXqXJdOF38hAJhljnY11MPODqQoqFtNiA2Zn3o/+
+        FGyqL0e1cxQUC0CA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4C5F5139E0;
+        Mon, 12 Sep 2022 15:33:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id l3UwEUhRH2NuYgAAMHmgww
+        (envelope-from <iivanov@suse.de>); Mon, 12 Sep 2022 15:33:28 +0000
+Date:   Mon, 12 Sep 2022 18:33:27 +0300
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_rate_from_divisor
+ declaration
+Message-ID: <20220912153327.b6yjpqofq52pzdz6@suse>
+References: <20220904141037.38816-1-stefan.wahren@i2se.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220904141037.38816-1-stefan.wahren@i2se.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 09-04 16:10, Stefan Wahren wrote:
+> Date: Sun,  4 Sep 2022 16:10:37 +0200
+> From: Stefan Wahren <stefan.wahren@i2se.com>
+> To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+>  <sboyd@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui
+>  <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Maxime Ripard
+>  <maxime@cerno.tech>
+> Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+>  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan
+>  Wahren <stefan.wahren@i2se.com>
+> Subject: [PATCH] clk: bcm2835: fix bcm2835_clock_rate_from_divisor
+>  declaration
+> Message-Id: <20220904141037.38816-1-stefan.wahren@i2se.com>
+> 
+> The return value of bcm2835_clock_rate_from_divisor is always unsigned
+> and also all caller expect this. So fix the declaration accordingly.
+> 
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-
-On 12/09/2022 14:32, Dmitry Baryshkov wrote:
-> On Mon, 12 Sept 2022 at 16:17, Caleb Connolly <caleb@connolly.tech> wrote=
-:
->>
->>
->>
->> On 10/09/2022 18:02, Dang Huynh wrote:
->>> While working on the Fxtec Pro1X device, this error shows up with
->>> my own minimal configuration:
->>>
->>> gcc-sm6115: probe of 1400000.clock-controller failed with error -38
->>>
->>> The clock driver depends on CONFIG_QCOM_GDSC and after enabling
->>> that, the driver probes successfully.
->>>
->>> Signed-off-by: Dang Huynh <danct12@riseup.net>
->>> ---
->>>    drivers/clk/qcom/Kconfig | 1 +
->>>    1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>> index 1cf1ef70e347..d566fbdebdf9 100644
->>> --- a/drivers/clk/qcom/Kconfig
->>> +++ b/drivers/clk/qcom/Kconfig
->>> @@ -645,6 +645,7 @@ config SM_DISPCC_6350
->>>
->>>    config SM_GCC_6115
->>>        tristate "SM6115 and SM4250 Global Clock Controller"
->>> +     select QCOM_GDSC
->>
->>          depends on QCOM_GDSC
->
-> All other Qualcomm clock drivers select the GDSC if required, so I'd
-> tend to disagree.
-
-Ah, in that case please disregard, sorry for the noise.
->
->
-> --
-> With best wishes
-> Dmitry
-
---
-Kind Regards,
-Caleb
+Reviewed-by: Ivan T. Ivanov <iivanov@suse.de>
 
