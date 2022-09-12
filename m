@@ -2,86 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FF8C6FA89
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 16:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB18ECAAD5
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 17:05:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbiILQXZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Sep 2022 12:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40782 "EHLO
+        id S229498AbiILRFB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Sep 2022 13:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbiILQXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 12:23:23 -0400
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2144B2A72C;
-        Mon, 12 Sep 2022 09:23:22 -0700 (PDT)
-Received: by mail-qv1-xf2f.google.com with SMTP id l5so7095200qvs.13;
-        Mon, 12 Sep 2022 09:23:22 -0700 (PDT)
+        with ESMTP id S229511AbiILRFA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 13:05:00 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146EF1400A
+        for <linux-clk@vger.kernel.org>; Mon, 12 Sep 2022 10:04:59 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id v185-20020a1cacc2000000b003b42e4f278cso8397071wme.5
+        for <linux-clk@vger.kernel.org>; Mon, 12 Sep 2022 10:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=f/s93VerkeISAQKTR/XDUp54w5dbtKqamQRqfdXE/Cw=;
-        b=gYm10M36+sXqa4lG4ctn/pZ5iooVZ5KGRMl3ulTYd8MwV5ncXA+crkpplMhEu9I14b
-         jXeettIN6CX7a3dMDkTHpo54rO3bViXrX5qW0RTivbl7FK4KArH3QiUW2UFBLtFdJeKz
-         EyEYFCSCLEHWUb5VBSNu6Nnf+/rtTUdmSRgZ4DEoGjfM11RxmZmVr9BD/peiQAsRXCBn
-         54tFVN36NVTbC1AP7xfjrxnHkFpo+EzeehvFIEHI3SGrn62ibxX2G0lCHuecvcQJawzb
-         Sh2rpiisThFehORoszthmqU1FIndu9tuT773NhFdWNIdVBOqbFblWgW+g1jkMZEwQz+g
-         YfAQ==
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=WSw0pG/esjCvtsqbCZ9krXSHuD6wI+jRIe9K2h4z8vE=;
+        b=M+3vZ3XYg3plZw4SCpqXxsMCFP0ST9C7W5K7z6MZpYYVMcxT+IUg/e6fUcHFz2osey
+         YF+Gv6HKoY8jTBAe6fewxh+f0iCDgtHVUMf3absPfnYtAAtubjczbpK1X+KfzE2NUjZ0
+         b2Wdo5D6cCJ0w9d6q4GjC36EX2pw7dMtmV3V0jcHdnGpDc9+lsPv/O3sMLY5wjErkFrs
+         nTWgTSLnjENbBX1QJv7RXL3gKZCsIeOt2vShbU3PfPaisCWQdT38SgY27Kt7QV2iGRNe
+         mnm3BEoSmHDK6m1j+EtsG1+4zDdih6yEoj7kwZVKQCo4abwBzVV4puZ1SvBJ85DP7Fdj
+         2/kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=f/s93VerkeISAQKTR/XDUp54w5dbtKqamQRqfdXE/Cw=;
-        b=5aLIyLLID0lfdBxcnXtFvpN/hHp4oJ5MCO1+y8CdoRJZO7S9JcG8Q87xZEfrUoklhj
-         z93QNDUfAU+Pn9KhfxWcBB01MjMX6I1dUd/EUt3+7ykUI7vM44l/bDzSbfp3+lECnXKh
-         i9IEgbqgecc7C0D0MvmBsZUWxmeuM/QfK8QQj2Lj6LQ4/gW7blEGXOE/O9eKdG0NTNei
-         UT0HWb96B0b8C7S5anAxfRNu6rVHP2Lmpyx0WgYJIxgVVpOcsRcZidOkNqmpi+2Idnh/
-         psCMBzMsC2dr1cTwk2bpO7qha8CVDhjzpD9okZP2qTPwsdI+1ThpwwFrVhAwkloxybam
-         KqGw==
-X-Gm-Message-State: ACgBeo25ROSLUXVLBjBIpySeEcaZxwNbKqk5EoIjBTfQaT2Oc68d7Ulf
-        n/Hk3TPmS0H00H2aqNXo+Rk=
-X-Google-Smtp-Source: AA6agR4v25aCDEB48/McOeN5RWIp7Dx4rsivPb3jN2RGL20GWLur7mAnc6iQWtQNNc862heGIGu0Qg==
-X-Received: by 2002:a05:6214:29cd:b0:4ac:bcb7:18c9 with SMTP id gh13-20020a05621429cd00b004acbcb718c9mr2239270qvb.106.1662999801182;
-        Mon, 12 Sep 2022 09:23:21 -0700 (PDT)
-Received: from [10.69.77.229] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id f5-20020a05622a1a0500b003445bb107basm7304904qtb.75.2022.09.12.09.23.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Sep 2022 09:23:20 -0700 (PDT)
-Message-ID: <62fe6831-b14b-7c31-f475-964b6eac4b03@gmail.com>
-Date:   Mon, 12 Sep 2022 09:23:15 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_rate_from_divisor
- declaration
-Content-Language: en-US
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        bh=WSw0pG/esjCvtsqbCZ9krXSHuD6wI+jRIe9K2h4z8vE=;
+        b=ZlAf8AQQFP1JPp2XNjcI1gDc6kBCGMnnFnJ2LEqJi2JayLEN1ZpKeCqah9Hj9VwtqP
+         9a0FJY+6dbP5vPtKMu/CSHGdd7WQdhFKth7jXEsSK/9nfIyFeV8vDVGZhtGJsu9R8Bg+
+         rSGi3Jsz7ly3FDuurthwQuJ83P3aereucnyMt2bmNIO/6DN/X8yzQBU61BwMCjR9Oxe5
+         V3okXnyrxKg3kF6YBSJyRJZ5i6X5mJvHCVSHtkZJIzuPV8pPUWSJHPqouUuBdZZe0AEa
+         Y+DPIbab1nws2Wl9TjZU6yjNfakGY31EhKMVz0+M1y9pameRztwCt9zpN6K+6nJCbd8u
+         lhrg==
+X-Gm-Message-State: ACgBeo3TdeKwK3YmYHfhqIQQ8hUBvw83exaoa4PJPWVhk4le3vKnnhke
+        dOf1HnsL1n7r8P618c4N5D/b
+X-Google-Smtp-Source: AA6agR6+rS18XLjMNWEqzEBtmPWOlkpQZncpaLMjiQ4cZn4b5Bcr1Cs3YLzaJ4GensI/rkTvZup/wQ==
+X-Received: by 2002:a05:600c:22c7:b0:3b4:92ba:ff99 with SMTP id 7-20020a05600c22c700b003b492baff99mr1414325wmg.190.1663002297558;
+        Mon, 12 Sep 2022 10:04:57 -0700 (PDT)
+Received: from thinkpad ([117.202.184.122])
+        by smtp.gmail.com with ESMTPSA id p16-20020a05600c359000b003b486027c8asm5053277wmq.20.2022.09.12.10.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Sep 2022 10:04:56 -0700 (PDT)
+Date:   Mon, 12 Sep 2022 22:34:37 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        quic_rjendra@quicinc.com
+Cc:     helgaas@kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org, quic_vbadigan@quicinc.com,
+        quic_hemantk@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_skananth@quicinc.com, quic_ramkri@quicinc.com,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220904141037.38816-1-stefan.wahren@i2se.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220904141037.38816-1-stefan.wahren@i2se.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v6 5/5] clk: qcom: Alwaya on pcie gdsc
+Message-ID: <20220912170437.GA36223@thinkpad>
+References: <1662713084-8106-1-git-send-email-quic_krichai@quicinc.com>
+ <1662713084-8106-6-git-send-email-quic_krichai@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1662713084-8106-6-git-send-email-quic_krichai@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
++ Rajendra
 
-
-On 9/4/2022 7:10 AM, Stefan Wahren wrote:
-> The return value of bcm2835_clock_rate_from_divisor is always unsigned
-> and also all caller expect this. So fix the declaration accordingly.
+On Fri, Sep 09, 2022 at 02:14:44PM +0530, Krishna chaitanya chundru wrote:
+> Make GDSC always on to ensure controller and its dependent clocks
+> won't go down during system suspend.
 > 
-> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+You need to mention the SoC name in subject, otherwise one cannot know for
+which platform this patch applies to.
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-sc7280.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> index 7ff64d4..2f781a2 100644
+> --- a/drivers/clk/qcom/gcc-sc7280.c
+> +++ b/drivers/clk/qcom/gcc-sc7280.c
+> @@ -3109,7 +3109,7 @@ static struct gdsc gcc_pcie_1_gdsc = {
+>  		.name = "gcc_pcie_1_gdsc",
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = VOTABLE,
+> +	.flags = ALWAYS_ON,
+
+Rajendra, should we also put PCIe GDSC into retention state as you have done for
+USB [1]?
+
+Thanks,
+Mani
+
+[1] https://lore.kernel.org/all/20220901101756.28164-2-quic_rjendra@quicinc.com/
+
+>  };
+>  
+>  static struct gdsc gcc_ufs_phy_gdsc = {
+> -- 
+> 2.7.4
+> 
+
 -- 
-Florian
+மணிவண்ணன் சதாசிவம்
