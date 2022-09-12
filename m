@@ -2,87 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9757C6FA83
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 19:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8AAC6FA82
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 20:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbiILTur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Sep 2022 15:50:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46236 "EHLO
+        id S229869AbiILUks (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Sep 2022 16:40:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbiILTun (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 15:50:43 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E48537191;
-        Mon, 12 Sep 2022 12:50:42 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1278624b7c4so26294987fac.5;
-        Mon, 12 Sep 2022 12:50:42 -0700 (PDT)
+        with ESMTP id S229817AbiILUkq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 16:40:46 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDDB19285;
+        Mon, 12 Sep 2022 13:40:44 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id bj14so17322551wrb.12;
+        Mon, 12 Sep 2022 13:40:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date;
+        bh=wEszEHUyzXdDAbDnhA3UlL1WJ5ZcMn3gra5lLB+dYuQ=;
+        b=fU/j7QgrNqVGu58i0I7YtynmaDz/NzALnT1aKQSQIK7SwUhinPEKa4Lpb4/aS3DgS7
+         0SSVvVbeZUC1O61pXSvy9jedmiptdWfmjKTghs3ptmHUaUiWRSZ8p/z1gYN/FYciYjG+
+         tisxYvbzUZkEuBSNpQCg8+JBtKiEdtrDo6ZkOr1xeRE9qzLmDxSSnXbWGxmo88RQu7Bw
+         wMwAjwKGNqx8Gm1/g4GmP5yxBsG4TfDW/pZUlqLBF++jLE/zv/eUcKZzCRN9f0THUWHy
+         EQ9Tf44z1VNZ1QLSjPZDB2J2Xau5jvKzAras1OfKT4IqY7nEqQ+GnHqkMBVVZMsplD7e
+         ecug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=jjFDAUThbN7vtt9vwux7lJlDSmQyMgvdlrM38fRSRUY=;
-        b=34+6eIrFNVX6jdNYlE/YwC1szXdJDnaf9WypujQp7iX7dLx4gq1/beCxOkO6WUkVdV
-         8pB6X6yz++b+t7UeTvn3D7FOIm8opBx+MCm4OzRuoUfu5Y0gcSOyjpVYL6wCm3E9oPnY
-         xLvDyCtjb9ZYrvtyQr93xW2f/OYpUrwPwCeb/kqkZYJPEiVA7/6ig3BVLaAEk/v7u9mc
-         LPNEIRt2ruoB2Xn4QixzbZLhk3p7hBFuUUdCFu4lat6F2TagxTR23V+zEd+ELS68JL8K
-         p4O+ZAuk3OxUA1e9sdmepRtWOvO9U47jmpctLmt96sE5cIY0FHfYfoXILY1zh0D8DtrI
-         TknQ==
-X-Gm-Message-State: ACgBeo3b897EU7U5GEY/Dy8gHpUu9HhXRMtpFkDgMgYHnkYuhDJ6KJRc
-        N5G+2GU226EKDaW2jyr9eg==
-X-Google-Smtp-Source: AA6agR4nvSs6/oyD1FOnWfMit5/ozmUIVsykwr6OJnIJD+tWOiEEiRnvXwBzhpAsAjFY8W5k4NMK6g==
-X-Received: by 2002:a54:4e97:0:b0:345:4cd0:20fd with SMTP id c23-20020a544e97000000b003454cd020fdmr3037oiy.206.1663012241170;
-        Mon, 12 Sep 2022 12:50:41 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id y11-20020a056830208b00b0061c9f9c54e4sm5058643otq.80.2022.09.12.12.50.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Sep 2022 12:50:40 -0700 (PDT)
-Received: (nullmailer pid 1724704 invoked by uid 1000);
-        Mon, 12 Sep 2022 19:50:38 -0000
-Date:   Mon, 12 Sep 2022 14:50:38 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sean Anderson <sean.anderson@seco.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Rob Herring <robh+dt@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-clk@vger.kernel.org, Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: Re: [PATCH v5 3/8] dt-bindings: clock: Add ids for Lynx 10g PLLs
-Message-ID: <20220912195038.GA1724641-robh@kernel.org>
-References: <20220902213721.946138-1-sean.anderson@seco.com>
- <20220902213721.946138-4-sean.anderson@seco.com>
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=wEszEHUyzXdDAbDnhA3UlL1WJ5ZcMn3gra5lLB+dYuQ=;
+        b=tx/VHS91eLhCm2U1vDRKvGDlgVvrsDMKXfmVQ0vIPhtThNTVr4pzs0t3otZ/gm4Qma
+         B7gx2/OeZ639gF8Q3BTYVKe5EKFQY4IJuWwm91xsT5Bu5cw66he4owGfNvn1LSCYcdD9
+         46tNiwE7KRv3+GTUdmGGMaxzB8BI8Zlpz9/Ng4zaMVBsQ4mZc9NN52AYgRrGPc5Cysz2
+         dZ//GxJ2SVjpcxRLIyTL4pWIfyyOBRcQQ0BPEOXxw3bIRjagw5clO85wJtT1hohW6/gb
+         DibmsfrkTwGR2/LZ2pFVKsBD2YdsKCSuIYrsuJnVOlbhO/zQWaNHuK1nAmF5TpJmBuwD
+         dq5Q==
+X-Gm-Message-State: ACgBeo2GuPstnvnri7s7l8VZrkxMpDuWIszYceihjo1ErFNkP6PJclVy
+        SADxWzm8cBiMZBPjfF8TaTY=
+X-Google-Smtp-Source: AA6agR7FDGVfY9HSA740Ecx6pHJzWPZToFBP2PHNU/S1y6z3QzLqHDkIlU+4tgeIYyCRZWZBCioSAg==
+X-Received: by 2002:adf:ec03:0:b0:228:76bd:76fc with SMTP id x3-20020adfec03000000b0022876bd76fcmr16244105wrn.533.1663015243110;
+        Mon, 12 Sep 2022 13:40:43 -0700 (PDT)
+Received: from [192.168.42.87] ([212.2.175.203])
+        by smtp.gmail.com with ESMTPSA id ch16-20020a5d5d10000000b0022abd7d57b1sm270753wrb.115.2022.09.12.13.40.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Sep 2022 13:40:42 -0700 (PDT)
+Message-ID: <e8279305-6bad-4029-4436-b48a4a8d43e9@gmail.com>
+Date:   Mon, 12 Sep 2022 23:40:41 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220902213721.946138-4-sean.anderson@seco.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Content-Language: en-US
+To:     Tim Harvey <tharvey@gateworks.com>, Peng Fan <peng.fan@oss.nxp.com>
+Cc:     Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>
+References: <CAJ+vNU1Za2CPGVX3q4HKufsxbL5zRrk1B5CWFpKritetrTs4dA@mail.gmail.com>
+ <59b6dd0a-7cbb-5dbd-8da0-57baeba3327e@gmail.com>
+ <CAJ+vNU2FVQRwCa3DnOwkFjaZg-ntFLZmetwDbSggDXDdwOOGTg@mail.gmail.com>
+ <2ab24cc4-4aa2-d364-9b29-55f5d6b23626@denx.de>
+ <CAJ+vNU0voeMW06Je6nyrV1Ud3sT8Us+RACcQtsKUwKVaXF+dQw@mail.gmail.com>
+ <ce0ffc43-bae7-a55b-ebea-985abc765c33@denx.de>
+ <DU0PR04MB9417D8123D40FBC980E9C05388439@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <a03ce7a3-dfa5-6016-afbf-33193a5e2376@denx.de>
+ <8736ba4e-1c61-995a-f090-ef322d84e5f6@gmail.com>
+ <0c924574-d2b4-2a23-0cc2-63f32d521854@oss.nxp.com>
+ <CAJ+vNU1NW9cDDB4sa+uLK3G1Z782pPe=E=GtYLTswR2Xa1YnoQ@mail.gmail.com>
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
+In-Reply-To: <CAJ+vNU1NW9cDDB4sa+uLK3G1Z782pPe=E=GtYLTswR2Xa1YnoQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 02 Sep 2022 17:37:16 -0400, Sean Anderson wrote:
-> This adds ids for the Lynx 10g SerDes's internal PLLs. These may be used
-> with assigned-clock* to specify a particular frequency to use. For
-> example, to set the second PLL (at offset 0x20)'s frequency, use
-> LYNX10G_PLLa(1). These are for use only in the device tree, and are not
-> otherwise used by the driver.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> ---
-> 
-> Changes in v5:
-> - Update commit description
-> - Dual id header
-> 
-> Changes in v4:
-> - New
-> 
->  include/dt-bindings/clock/fsl,lynx-10g.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 include/dt-bindings/clock/fsl,lynx-10g.h
-> 
+On 9/12/22 20:15, Tim Harvey wrote:
+> On Mon, Sep 12, 2022 at 12:40 AM Peng Fan <peng.fan@oss.nxp.com> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+//snip
+
+>>
+>> After a thought, maybe an easier way is to add a optional property
+>> xxx,32k-always-on to the pmic node/driver.
+>>
+
+Yes, that would be easy. Yet, creating a driver specific DT-property 
+feels a tad wrong. I don't think the BD718xx is in any way special so it 
+should not need such a vendor specific property. It might be better to 
+find more generic solution.
+
+> Is there simply a way to add the clk to the snvs_rtc and the wdog dt
+> nodes so they have a use count and don't get disabled?
+
+To me that does sound like the right thing to do. If we have a consumer 
+which requires the clock, then describing this dependency in DT sounds 
+like a correct approach - assuming this keeps the clock enabled without 
+a race between instantiating the PMIC and finding the clock consumers.
+
+Finally, if adding the consumers does not help, and if there will be no 
+consensus regarding the generic property - then I think it's better to 
+have a vendor specific property (as Peng suggested) than it is having 
+the boards broken. Eg, if all else fails and if there is a buy-in for 
+the vendor specific propety from Rob and Stephen - then I can also live 
+with it (even if it sure significantly decreases my happiness level :p)
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
