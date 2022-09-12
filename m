@@ -2,237 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CC9C6FA82
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 17:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7006FC6FA83
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Sep 2022 18:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230082AbiILRP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Sep 2022 13:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47520 "EHLO
+        id S231175AbiILSjE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Sep 2022 14:39:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229801AbiILRP6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 13:15:58 -0400
-Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F7D24080
-        for <linux-clk@vger.kernel.org>; Mon, 12 Sep 2022 10:15:54 -0700 (PDT)
-Received: by mail-oo1-xc2c.google.com with SMTP id a1-20020a4ab101000000b0044acf001f83so1517419ooo.10
-        for <linux-clk@vger.kernel.org>; Mon, 12 Sep 2022 10:15:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=qd0zc7fGhqBh9AbN0Tbs1DG34cl/lreYFTNXxxRPmTs=;
-        b=hck1MJGckV938hOMLfxLlSjnhjEBraOtrc7lREdlBCM5HFTGV3OZmPEvv5+3Sl21Ap
-         Yt8LYSgZqBQtdQ2k0zhHPsnBejGIGzLaSPovYIKxSDC1LaI5amhPapXUvT9FQi9phAAl
-         APnbZ9b4NRtkMh/w6LSKndFaZ46/HAxjxPRS5bkrpByQmpqxoReePPBAfgOJ01jpMoU2
-         /P8CeaHv3o42/byWvGXeghO9CiF8pNre8pq1RtmqAm3KGJONZr/z85bvCZQQJTntwITy
-         45HragL26K0ZDJpXE9Lv78ZpVz7VbzsWHw7w0Jei8o7DQRc7L0mEJke1XLliz+XifV5C
-         +LOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=qd0zc7fGhqBh9AbN0Tbs1DG34cl/lreYFTNXxxRPmTs=;
-        b=a118SwvDwNwNVRiqr5jfIp4N92nuvRey3KVuZo9Y3+ScLVCp2BuYTsyADDikTyixn3
-         DrM3vcdh8bK19uuRDkNbJ4JUWSCpd7bt7B4XP02TKZRrbL6HNNMr29lgI/NbIiaeMHaf
-         izqqnMFU8EK9so/tj6UG4obb1MVNpHtVrRbaY/zAxR/jItq2UbLH3WG+vEFsxtimF7EE
-         SiSQAIE+GH61pRNr9JsKfgJ1UckpYVaptexLIyC+NiAu57gd8U2TWxbis93tCb38TSe5
-         3AwHQ5DxnJ1MyhVtl6gPJLReH6vDYKOn0AN4zs1hkP8XKfba3ZJaU4+/p6gkGHpkUBzA
-         71zg==
-X-Gm-Message-State: ACgBeo0hRk3YkE2fN5EjH7pNL4hlTyH9wV1vBLqp09TB4ehY3pWTw18m
-        IPCot04WfwFn1C8dpv+BtXGwN/p/1Z+tLGDrxRGtEQ==
-X-Google-Smtp-Source: AA6agR43q0bMJeMBvFXtfEf6TWC5gpWwhhZExSPS8FjHBG1FMoG4Nf/q0qjSadXElNF6V3I0rO/tOqbOYvTr3ZQ8qHA=
-X-Received: by 2002:a4a:1b03:0:b0:475:4a4c:e29d with SMTP id
- 3-20020a4a1b03000000b004754a4ce29dmr5041258oop.79.1663002953138; Mon, 12 Sep
- 2022 10:15:53 -0700 (PDT)
+        with ESMTP id S229715AbiILSip (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2022 14:38:45 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2121.outbound.protection.outlook.com [40.107.113.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37714165AC;
+        Mon, 12 Sep 2022 11:36:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RyXotb2XrwD8zqxFCpor4xRjCxIIftOaiWSQEKy+QQKxeTlarVEcvTEz9qNnc18PLqxVOS0e5pXA4LBjWd3Udrf/eOYUffrNOemKFaN8p8ygu36W5X0HKsssbmUOL1dEqz7+qdGgWm6Xytk5yZ9mwkyxivD+Y3hgOW1rkPPTAxGWPVkLfHYVfJ1mUGQ3gJthE+rOj5Te4CUmkk0PUEUWTh3TwbqvLyUouNjSDUd5xCTAXznYhpDKORsHZ/+tX0c+Q9T8NF6/9tt08etKBhQrKmxG/YNVqdaruJBjSKmN+V8OAr4lw4A3ihczoV94i6YbSL2Tbmj+O46CeYfO0ByEqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vCZrYjQnx74F01uRoriT3J7Imwx+plwxG5ScezFgMLg=;
+ b=na/UBVwUOMSvHpp5vg+4dc7knFgGuGrdp/tL0RiEU864g1mkJSH0rBTzrR6Tm/PaDjH1pHfxMy1GG2B2fP/Xzp0b54RU67PMnF9smZY1MaSALPiT+VGrDj4HQyWQGjzhN0MDkxZAsVVPKhZ3EYCfndsGKyOvtTA/8k9e8i2evgju3YFgzr9K/1fZNOjfyrOwiYjL0/Lmd1a6I+l8WHyvAXXDI9ZeB3HIvUJT6JYKKbRqZXEHfGNtMfMUh9aIY5+sdMySOhWDLrI617XIqxYHziH2ZcNvgrKA51A+7YNPxquZNlGeeV6is7FUP3q0lpF1irJRtb209/FENkp/7GPRiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vCZrYjQnx74F01uRoriT3J7Imwx+plwxG5ScezFgMLg=;
+ b=GvmDvrapUDSpaF+8D0EF+zP2fTquoD2KAb71Lz6Ta1NcBdzrmEfd5SAf3xwtWuJfGU8nDTkYICoh7egzP7WE6VjoPN29aoN78k5NshV2XT6T3GrfH3vJZeMkUlQ2HO8/u01irO8sHN68NTMQecLrF/lirqF4uZIyhT3mhizQvIc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from OSAPR01MB3892.jpnprd01.prod.outlook.com (2603:1096:604:5b::23)
+ by TYWPR01MB8379.jpnprd01.prod.outlook.com (2603:1096:400:160::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.14; Mon, 12 Sep
+ 2022 18:36:31 +0000
+Received: from OSAPR01MB3892.jpnprd01.prod.outlook.com
+ ([fe80::7097:ae11:b1c0:94a]) by OSAPR01MB3892.jpnprd01.prod.outlook.com
+ ([fe80::7097:ae11:b1c0:94a%4]) with mapi id 15.20.5612.022; Mon, 12 Sep 2022
+ 18:36:29 +0000
+From:   Alex Helms <alexander.helms.jy@renesas.com>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        alexander.helms.jy@renesas.com, michal.simek@xilinx.com,
+        saeed.nowshadi@amd.com
+Subject: [PATCH v2 0/2] Renesas Versaclock7 Bindings and Clock Driver
+Date:   Mon, 12 Sep 2022 11:36:11 -0700
+Message-Id: <20220912183613.22213-1-alexander.helms.jy@renesas.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR07CA0103.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::44) To OSAPR01MB3892.jpnprd01.prod.outlook.com
+ (2603:1096:604:5b::23)
 MIME-Version: 1.0
-References: <CAJ+vNU1Za2CPGVX3q4HKufsxbL5zRrk1B5CWFpKritetrTs4dA@mail.gmail.com>
- <59b6dd0a-7cbb-5dbd-8da0-57baeba3327e@gmail.com> <CAJ+vNU2FVQRwCa3DnOwkFjaZg-ntFLZmetwDbSggDXDdwOOGTg@mail.gmail.com>
- <2ab24cc4-4aa2-d364-9b29-55f5d6b23626@denx.de> <CAJ+vNU0voeMW06Je6nyrV1Ud3sT8Us+RACcQtsKUwKVaXF+dQw@mail.gmail.com>
- <ce0ffc43-bae7-a55b-ebea-985abc765c33@denx.de> <DU0PR04MB9417D8123D40FBC980E9C05388439@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <a03ce7a3-dfa5-6016-afbf-33193a5e2376@denx.de> <8736ba4e-1c61-995a-f090-ef322d84e5f6@gmail.com>
- <0c924574-d2b4-2a23-0cc2-63f32d521854@oss.nxp.com>
-In-Reply-To: <0c924574-d2b4-2a23-0cc2-63f32d521854@oss.nxp.com>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Mon, 12 Sep 2022 10:15:41 -0700
-Message-ID: <CAJ+vNU1NW9cDDB4sa+uLK3G1Z782pPe=E=GtYLTswR2Xa1YnoQ@mail.gmail.com>
-Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
-To:     Peng Fan <peng.fan@oss.nxp.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSAPR01MB3892:EE_|TYWPR01MB8379:EE_
+X-MS-Office365-Filtering-Correlation-Id: e675c173-53d8-45eb-dd6a-08da94edb551
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Oh6Tbqr538rbSq8eiOlzyd/ZCkRT/kqDc0XXhV91uXdXt2jtOQR2cdA8iV93D5g+amnG3TPXRSSG56RrKV5lypw7cyyY5CngaNy6HtW24CkmrhAvIO9cfNudEL4kLRACkwNDbcBdMkPOEE6kDyLa1+iGG4n+7k+LRQPqXDjqmhl0YVrc9p92TAlTIN+ijo5SNIDv1U1qqzF1dSS0PUGEpdCse+Gi+Bwq76S2ph9IzyKx3XlvSQQXjgieX8FXeMJMHY7Aja0nj1xduSXfVgGmR/J33oTP11x2ThtARSVVGsB9bpIKJ5MGdMBc1SDBnxWnqZbeq7ZKEf8fBOuwTJ4alErxqyyqxDU2jvkC6+tc/zD8ja6799ixCX/3aKYj42dYI8x3qzju3WxuR2onDVN0fOctO+VcqY0Od437MByTkzgIQCad/OiaKAPUm8pxDbzDz+BbHoBFKCI1YNDdIjBqU5+qUFYrUr+m4TrLjwe7uwa93qxyBTG7uBz8gYuVtJGo680RJQC0fZasSxoHwQ3Q+mI5iHGLUzc6VVls/AEcrcq4OaOz8RnvlbgSFXRdqSwTzXPFZx8GKPcks4y+jjUY+WpFYBYpYa98aQjSI0K1YZ0nez4jpqM3WFOpefUFl3RtIYzELmDaSBTIHx7yWif5q3MLA4kMbz3Qq/dWFChlTtC8WZYtNjJXag5Xm4otXYn4gSH0n2xrZ5DM/F7i0WJ49up1xTMGlZD0amP9USE0F147GZHhAI97x8fpu54sw4Wj
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB3892.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(396003)(346002)(136003)(376002)(39860400002)(451199015)(1076003)(6512007)(36756003)(8676002)(38100700002)(52116002)(2906002)(4744005)(83380400001)(38350700002)(186003)(66476007)(4326008)(66556008)(5660300002)(478600001)(316002)(8936002)(86362001)(103116003)(6486002)(6506007)(26005)(6666004)(66946007)(41300700001)(2616005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MWtTRIZeJg6uywoWojGp7Gc9dA7+Q4ew85LE2KfUfO9Jmsy3CDC0s6W8FS/F?=
+ =?us-ascii?Q?VK+vq7QPCnz8KGRl9dC6jOKK/s1dAzVqmimDAmsdd7PGVSxexjVAQi4U+3U5?=
+ =?us-ascii?Q?RYpzvnwxRklaYm1+G7ENN370AsnCZROw9ckUSyqE3hGpS/UqdTl4wceHgYWJ?=
+ =?us-ascii?Q?QDnowlpzxwzsVcL+tU8D50nWsUtDKi+fouXCEPIeuOSVOQfAcQdY7lvGxSL5?=
+ =?us-ascii?Q?dG5JCcZ6mjZFBIp1GvkmVhTZuyuhqnchtMowM2rx93TpIesfhDqxoZk3d3n5?=
+ =?us-ascii?Q?oYKFeWRNvNoBdIBbzDGv5b/lu+ykuL/CxeORKoG2iHyV+8556nz1hydv9Faa?=
+ =?us-ascii?Q?ZVR+tmYjLJUw93WeJFVX0ENfVf7zUg6XmpHZMli8x7LYJjkDaHyolh9QvFOp?=
+ =?us-ascii?Q?+VWhmqWU3xuw2R23BMLghwsXdLRtoTmm12sNb+L+mEhJh3KEv5f5IVjTWG69?=
+ =?us-ascii?Q?wSoLI7M0vyvuFIUF88CFcSyjzBa9CnbS42AIxvOo9wxr+Qa1WKe5cfnME8XO?=
+ =?us-ascii?Q?KNUSXwKnBHtvJ0eB22SwOIqKMOD3D8cac56n4fexuvH0fXJRVIoUZHvYgDLa?=
+ =?us-ascii?Q?4AZ68v1WCjaJ8Xl89kyj4JqxRcAq/2hNqTErHF10uL2TgliSjYosN5c9HfoI?=
+ =?us-ascii?Q?bVUJvWHVYgKVw7uQAQQmydj1IylyE3Ak/9griJMVm5OTPM2V/fOWFnNTgcTz?=
+ =?us-ascii?Q?LxOVfeHGDyq63XEN2HcOKSdRLjz9cDwkn1y5Jl0TTP1B4KQK3QowIAr1kkLK?=
+ =?us-ascii?Q?/4TwN/7mkv+hHpA0/9KTA/IYLkGxT12w99b1Gr1Gp7jWZCLUkh4OJIdy7Mu5?=
+ =?us-ascii?Q?p9bD6A48Ku7IK72ZA6kAR5yoVfvHdfSzAgtTaPL3kMGNUaMmqnJQ/pLZDrip?=
+ =?us-ascii?Q?zw/QnpL+uv3NwLvSXbdxa6yFuNEQO86ClElLdx2aBJ/KvmPyTZLosaH9ebAp?=
+ =?us-ascii?Q?oG5cIa3QcpZscxt+gvzjT86/P9YrDx5xNE7UIFlxam3jo9R0crfzk8gHImVf?=
+ =?us-ascii?Q?IuaRq8wVxK/fb4P1iOFaXLr/EXmsvPRym0ARZhbBj2FOtvRL07FUt5npXcAo?=
+ =?us-ascii?Q?3Ly6rI9EAtyCMClmPLTjf8NV9gpEz/q6Khi6efKEzU1V6w2f2j96YhZOoOHn?=
+ =?us-ascii?Q?/jeIEviedM1M8TfWv3PBXdOb1aaGmE/maO//PC6R2Gfuus0tXkSo5+PO74WH?=
+ =?us-ascii?Q?JNZ36xso9iw3+YcBQO/q5qfI45S9QMP4NFG7qSPrg6T8BAfHHbFjOSZZG8Mb?=
+ =?us-ascii?Q?Z8FgKsS8DknDk3YOi5SrxaGaUkMRYJuK+f1xq0wOUVcwYO2vvq5RLA6CCadm?=
+ =?us-ascii?Q?x04Jm5phSbgfew4bjoPvnnpOFhtoIG+XchLQidK3x88JehVnFXKI/sUbHujr?=
+ =?us-ascii?Q?Oi2saF8qSQ3jBhHwOxu9pEHUIop4w+JaM2I1y7ieiofNR/evRj7KpqRU3Pl2?=
+ =?us-ascii?Q?1idVXNSY6FUuEyxoks5zcrGYBb2UPY0HdTtUkfMAZLx88lQwQNPVgIMe5xsf?=
+ =?us-ascii?Q?iv6erPqoe3AScx+xM/ZgBzR/+dXbDQjS01sCiCMlmo4NfNwWekJLnm5VkvbN?=
+ =?us-ascii?Q?OCtaJ0FY1e58/5etYPyXW/5FcoOW9COjYxFbGlp1Abed/vkheB7Es5SPJj/t?=
+ =?us-ascii?Q?WopYmdoNsUoD/jVIMQQ/Ig8=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e675c173-53d8-45eb-dd6a-08da94edb551
+X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB3892.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2022 18:36:29.9047
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Brt5iUQcFE5I+0zoFqprvjFrM1nSKBEVLyNmUdEss4rzmGt9t3CoRH9hD8/evz9y2VYJNXzSfN9GGZCOdUrWhAmbfd1cGZBkbemPBkKR9UQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8379
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 12, 2022 at 12:40 AM Peng Fan <peng.fan@oss.nxp.com> wrote:
->
->
->
-> On 9/9/2022 1:06 PM, Matti Vaittinen wrote:
-> > Hi dee Ho peeps,
-> >
-> > On 9/9/22 05:35, Marek Vasut wrote:
-> >> On 9/9/22 04:06, Peng Fan wrote:
-> >>>> Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT
-> >>>> failure
-> >>>>
-> >>>> On 9/8/22 21:25, Tim Harvey wrote:
-> >>>>> On Thu, Sep 8, 2022 at 9:55 AM Marek Vasut <marex@denx.de> wrote:
-> >>>>>>
-> >>>>>> On 9/8/22 18:00, Tim Harvey wrote:
-> >>>>>>> On Thu, Sep 1, 2022 at 9:14 PM Matti Vaittinen
-> >>>> <mazziesaccount@gmail.com> wrote:
-> >>>>>>>>
-> >>>>>>>> Hi Tim,
-> >>>>>>>>
-> >>>>>>>> On 9/2/22 01:23, Tim Harvey wrote:
-> >>>>>>>>> Greetings,
-> >>>>>>>>>
-> >>>>>>>>> I've found that the bd71847 clk driver
-> >>>> (CONFIG_COMMON_CLK_BD718XX
-> >>>>>>>>> drivers/clk/clk-bd718x7.c) disables clk-32k-out (the BD71847
-> >>>>>>>>> C32K_OUT
-> >>>>>>>>> pin) which is connected IMX8MM RTC_XTALI which ends up disabling
-> >>>>>>>>> the IMX RTC as well as the IMX WDOG functionality.
-> >>>>>>>>
-> >>>>>>>> //snip
-> >>>>>>>>
-> >>>>>>>>> This happens via clk_unprepare_unused() as nothing is flagging the
-> >>>>>>>>> clk-32k-out as being used. What should be added to the device-tree
-> >>>>>>>>> to signify that this clk is indeed necessary and should not be
-> >>>>>>>>> disabled?
-> >>>>>>>>
-> >>>>>>>> I have seen following proposal from Marek Vasut:
-> >>>>>>>>
-> >>>>>>>>
-> >>>> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fl
-> >>>>>>>> ore.kernel.org%2Fall%2F20220517235919.200375-1-
-> >>>> marex%40denx.de%2FT%
-> >>>>>>>>
-> >>>> 2F%23m52d6d0831bf43d5f293e35cb27f3021f278d0564&amp;data=05%7C0
-> >>>> 1%7Cp
-> >>>>>>>>
-> >>>> eng.fan%40nxp.com%7C07d48edcc47c4694e08208da91da2bf4%7C686ea1d
-> >>>> 3bc2b
-> >>>>>>>>
-> >>>> 4c6fa92cd99c5c301635%7C0%7C0%7C637982664162868785%7CUnknown%
-> >>>> 7CTWFpb
-> >>>>>>>>
-> >>>> GZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI
-> >>>> 6
-> >>>>>>>>
-> >>>> Mn0%3D%7C3000%7C%7C%7C&amp;sdata=uF26u9g4onuqCWzPRAvD%2F%
-> >>>> 2FLByaEhh5
-> >>>>>>>> Dtah9K8CcAOAM%3D&amp;reserved=0
-> >>>>>>>>
-> >>>>>>>> I am not sure if the discussion is completed though. I guess it was
-> >>>>>>>> agreed this was needed/usefull and maybe the remaining thing to
-> >>>>>>>> decide was just the property naming.
-> >>>>>>>>
-> >>>>>>>> Best Regards
-> >>>>>>>>            -- Matti
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Thanks Matti,
-> >>>>>>>
-> >>>>>>> Marek - has there been any progress on determining how best to keep
-> >>>>>>> certain clocks from being disabled?
-> >>>>>>
-> >>>>>> No. You can read the discussion above.
-> >>>>>
-> >>>>> Marek,
-> >>>>>
-> >>>>> I wasn't on the linux-clk list at that time so can't respond to the
-> >>>>> thread but the discussion seems to have died out a couple of months
-> >>>>> ago with no agreement between you or Stephen on how to deal with it.
-> >>>>>
-> >>>>> So where do we take this from here? It looks like there are about 18
-> >>>>> boards with dt's using "rohm,bd718*" which would all have non working
-> >>>>> RTC/WDOG with CONFIG_COMMON_CLK_BD718XX enabled (which it is in
-> >>>>> arch/arm64/configs/defconfig) right?
-> >
-> > Yeah. The ROHM BD71837 and BD71847 (and BD71850 - which is one of the
-> > variants) are used quite a lot. I am pretty sure not fixing this in
-> > upstream is increasing downstream solutions. I don't think that should
-> > be preferred.
-> >
-> >>>
-> >>> Is there any requirement that the bd718xx clk needs to be runtime
-> >>> on/off?
-> >>
-> >> Yes, the 32kHz clock on BD71xxx should behave like any other clock,
-> >> unless specified otherwise, see below.
-> >>
-> >>> I suppose the clk should always be never be off, if yes, why not have
-> >>> something:
-> >>
-> >> What is needed in this specific case of BD718xx is I think clock
-> >> consumer on the MX8M clock driver side which would claim the 32kHz
-> >> input from the PMIC and up the clock enable count to keep the 32 kHz
-> >> clock always on.
-> >
-> > This sounds like a solution that would describe the actual HW setup. I
-> > don't know the CCF of the i.MX8 well enough to tell whether this can
-> > ensure the clk is not disabled before the consumer is found or when the
-> > consumer is going down though. Simplest thing to me would really be to
-> > just mark the clk as "do-not-touch" one on the boards where it must not
-> > be touched.
-> >
-> >   The PMIC is most likely supplying 32 kHz clock to the MX8M,
-> >> which if the 32 kHz clock are turned off would hang (I observed that
-> >> before too).
-> >>
-> >> What I tried to address in this thread is a generic problem which
-> >> commonly appears on various embedded systems, except every time anyone
-> >> tried to solve it in a generic manner, it was rejected or they gave up.
-> >
-> > I agree with Marek - generic solution would be nice. I don't think this
-> > is something specific to this PMIC.
-> >
-> >> The problem is this -- you have an arbitrary clock, and you need to
-> >> keep it running always otherwise the system fails, and you do not have
-> >> a clock consumer in the DT for whatever reason e.g. because the SoC is
-> >> only used as a clock source for some unrelated clock net. There must
-> >> be a way to mark the clock as "never disable these", i.e.
-> >> critical-clock. (I feel like I keep repeating this over and over in
-> >> this thread, so please read the whole thread backlog)
-> >
-> > Thanks for the explanation and effor you did Marek.
-> >
-> > My take on this is that from a (generic) component vendor perspective it
-> > is a bad idea to hard-code the clock status (enable/disable) in the PMIC
-> > driver. A vendor wants to provide a driver which allows use of the
-> > component in wide variety of systems/boards. When the PMIC contains a
-> > clock gate, the PMIC driver should provide the means of controlling it.
-> > Some setups may want it enabled, other disabled and some want runtime
-> > control. This "use-policy" must not be hard coded in the driver - it
-> > needs to come from HW description which explains how the clk line is
-> > wired and potentially also from the consumer drivers. This enables the
-> > same PMIC driver to support all different setups with their own needs,
-> > right?
-> >
-> > I am not sure if some non email discussions have been ongoing around
-> > this topic but just by reading the emails it seemed to me that Marek's
-> > suggestion was acked by the DT folks - and I don't think that Stephen
-> > was (at the end of the day) against that either(?). Maybe I missed
-> > something.
->
-> After a thought, maybe an easier way is to add a optional property
-> xxx,32k-always-on to the pmic node/driver.
->
-> Regards,
-> Peng.
+Device tree bindings and a common clock framework device driver
+for the Renesas VersaClock7 clock generator family.
+---
+Changelog v2:
+- Index to output number varies based on which VC7 chip model is used.
+  Correct bank to output reference requires converting index to output number
+  based on chip model.
+- Differentiate between multiple instance of clock nodes by using
+  the value of 'clock-output-names' property.
 
-Is there simply a way to add the clk to the snvs_rtc and the wdog dt
-nodes so they have a use count and don't get disabled?
+Alex Helms (2):
+  dt-bindings: Renesas versaclock7 device tree bindings
+  clk: Renesas versaclock7 ccf device driver
 
-Best Regards,
+ .../bindings/clock/renesas,versaclock7.yaml   |   64 +
+ MAINTAINERS                                   |    6 +
+ drivers/clk/Kconfig                           |    9 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-versaclock7.c                 | 1292 +++++++++++++++++
+ 5 files changed, 1372 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,versaclock7.yaml
+ create mode 100755 drivers/clk/clk-versaclock7.c
 
-Tim
+
+base-commit: f443e374ae131c168a065ea1748feac6b2e76613
+-- 
+2.30.2
+
