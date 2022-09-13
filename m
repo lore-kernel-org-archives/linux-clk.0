@@ -2,102 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA63FC6FA82
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA85C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 17:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231664AbiIMQzD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 12:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45594 "EHLO
+        id S232799AbiIMRX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 13:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231775AbiIMQyc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:54:32 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E02C0B68;
-        Tue, 13 Sep 2022 08:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1663084045; x=1694620045;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=z/YKByiaIlpU8pE5yj2eqLLdZWkiyu84ffoyl6Fiz44=;
-  b=exGiSpZySfkoQtAtkzzY4CiEVQiBrKqCuFjT80ZR4ZHFit+nAKfZTSV2
-   IsI6MM/IWzzsP8mmE/SWNCu1atpAU7PENP/hM2lc1E7Gv7KXw0Jj9xEBC
-   5/1ToN5sxUtawyR4jEs3z34Th/TDkg95i+QzBxBKKwlEV2Ao3dITM12IH
-   9oGyZK2Kbs7AWeG5k1rC32ZKqfMrBqtwN8mnOpypLmNE63Aav8jyr2pwV
-   wRYU5Zm01qpoTxGDEXcziLYcyz/tuSq4IFHdKhtWUUhTjby1Bguj3o3d9
-   BwJLnsEFhgIeuDQvJ5A6tKhEYqupeJmEYb44JnX+tFSn0yEw+5EbTON4d
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.93,313,1654585200"; 
-   d="scan'208";a="176926450"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Sep 2022 07:25:47 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Tue, 13 Sep 2022 07:25:43 -0700
-Received: from ROB-ULT-M68701.microchip.com (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.12 via Frontend Transport; Tue, 13 Sep 2022 07:25:38 -0700
-From:   Sergiu Moga <sergiu.moga@microchip.com>
-To:     <lee@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
-        <radu_nicolae.pirea@upb.ro>, <richard.genoud@gmail.com>,
-        <gregkh@linuxfoundation.org>, <broonie@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <jirislaby@kernel.org>, <sergiu.moga@microchip.com>,
-        <admin@hifiphile.com>, <kavyasree.kotagiri@microchip.com>,
-        <tudor.ambarus@microchip.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v3 11/14] tty: serial: atmel: Define BRSRCCK bitmask of UART IP's Mode Register
-Date:   Tue, 13 Sep 2022 17:22:03 +0300
-Message-ID: <20220913142205.162399-12-sergiu.moga@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220913142205.162399-1-sergiu.moga@microchip.com>
-References: <20220913142205.162399-1-sergiu.moga@microchip.com>
+        with ESMTP id S232801AbiIMRXD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 13:23:03 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15ABD2A707;
+        Tue, 13 Sep 2022 09:10:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9BD60B80EFD;
+        Tue, 13 Sep 2022 15:04:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC62C43142;
+        Tue, 13 Sep 2022 15:04:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663081492;
+        bh=VxK/Ao0oo5PhdsdjlE6Wp+00HkGHmSbxr14/9GViX38=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OanizUuulcrd15daBYvthHJlgIAPnh6XM/g3pcPOUR5n+60wyn+0a745+WO2MG7b8
+         nYg86MyDT9zkigt+BjvRENI0OauaTwPXR3R05zpoh0+ucu4r41JVHLey3VlLg6A9Ut
+         d+wqGQbKU10OdiHh12O/r3RYUlas+eLdVRNd2SBy+1m9NiLyTz3SBneNImPObciAjA
+         Tcm/5eeSmCmyxyo+ThmCUQMLQ/UnUpa7uDbLbqe6sCjuL565KQsDcWxaviXP2a7l9H
+         3TuIQhfarW+Y2omQJ3WPTFw3GZTxX7Yv1e5Hc9nWobCUyWFqs05Djt2ozoddZrJdvJ
+         1v4iqb71kY9Gg==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     quic_c_skakit@quicinc.com, Bjorn Andersson <andersson@kernel.org>,
+        robh@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, quic_tdas@quicinc.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH V9 0/5] Add support for audio clock gating resets for SC7280
+Date:   Tue, 13 Sep 2022 10:04:44 -0500
+Message-Id: <166308148204.625876.2348780942882389451.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <1662005846-4838-1-git-send-email-quic_c_skakit@quicinc.com>
+References: <1662005846-4838-1-git-send-email-quic_c_skakit@quicinc.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add definitions for the Baud Rate Source Clock bitmask of the
-Mode Register of UART IP's and its bitfields.
+On Thu, 1 Sep 2022 09:47:21 +0530, Satya Priya wrote:
+> [v9]
+>   * Fix the order of SoB for [/5] and [2/5]
+> 
+> [v8]
+>   * Squash [1] into [5/5]
+>   [1] https://patchwork.kernel.org/project/linux-arm-msm/patch/1661245527-5596-1-git-send-email-quic_c_skakit@quicinc.com/
+> 
+> [...]
 
-Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
----
+Applied, thanks!
 
+[2/5] clk: qcom: lpass: Handle the regmap overlap of lpasscc and lpass_aon
+      commit: 0cbcfbe50cbff331c775982a53bc4fa66c875b36
+[5/5] clk: qcom: lpass: Add support for resets & external mclk for SC7280
+      commit: 7c6a6641c24d30ab6f5456d19e15e64bea971b82
 
-v1 -> v2:
-- Nothing, this patch was not here before
-
-
-
-v2 -> v3:
-- Previously this was [PATCH 11]
-
-
- drivers/tty/serial/atmel_serial.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/tty/serial/atmel_serial.h b/drivers/tty/serial/atmel_serial.h
-index 70d0611e56fd..ed64035ba6c3 100644
---- a/drivers/tty/serial/atmel_serial.h
-+++ b/drivers/tty/serial/atmel_serial.h
-@@ -68,6 +68,9 @@
- #define		ATMEL_US_NBSTOP_1		(0 << 12)
- #define		ATMEL_US_NBSTOP_1_5		(1 << 12)
- #define		ATMEL_US_NBSTOP_2		(2 << 12)
-+#define	ATMEL_UA_BRSRCCK	GENMASK(13, 12)	/* Clock Selection for UART */
-+#define		ATMEL_UA_BRSRCCK_PERIPH_CLK	(0 << 12)
-+#define		ATMEL_UA_BRSRCCK_GCLK		(1 << 12)
- #define	ATMEL_US_CHMODE		GENMASK(15, 14)	/* Channel Mode */
- #define		ATMEL_US_CHMODE_NORMAL		(0 << 14)
- #define		ATMEL_US_CHMODE_ECHO		(1 << 14)
+Best regards,
 -- 
-2.34.1
-
+Bjorn Andersson <andersson@kernel.org>
