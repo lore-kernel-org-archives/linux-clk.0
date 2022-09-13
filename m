@@ -2,72 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C26ECAAD8
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02613ECAAD8
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232184AbiIMQnm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 12:43:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55204 "EHLO
+        id S231863AbiIMQrn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 12:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbiIMQnP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:43:15 -0400
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AF16E888;
-        Tue, 13 Sep 2022 08:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=b7AqyEQt7Ikd5F0ub9PENqYPeiQc+yIkHG9oT/22NFQ=; b=fCSbMwYCmmycWYqAFMiM4Y4ZGx
-        u60FmEXaL10Pud6UGOEJhwo+3DtAzypsLdXsnGIMxTuOQo/D5Xgq33Nb8da1kNVxZB2Bet9fWeHHn
-        pwqgIICrucOFLMUa5Vs5usd0civfO/uPk2mJHbf7+NLXXKoOou8l0VboKJAUBWZOEGMsFm3ldSnXT
-        sjIcM6jM/zo0+l2U47kx8kW7ksHCjPbbxFV3sK5VrCMzkEwYHL3oLmB6F1SQqtm5fJ41o1jw2wRXH
-        Hpntb2ywVlOkVpMLiTAo9y0ggcE4gRqWBua3NT1yRAF50ELhjwpq43EPm4VsseVL8fS7dj+PMMAso
-        +8yF+7Mg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:36866 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.95)
-        (envelope-from <david@lechnology.com>)
-        id 1oY7a5-0001B3-92;
-        Tue, 13 Sep 2022 11:12:15 -0400
-Message-ID: <d9f07cf6-dc46-458e-8adf-96e46e85bf60@lechnology.com>
-Date:   Tue, 13 Sep 2022 10:12:13 -0500
+        with ESMTP id S230449AbiIMQrS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:47:18 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FFDBD13F;
+        Tue, 13 Sep 2022 08:41:21 -0700 (PDT)
+Received: from mercury (unknown [185.122.133.20])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2F1876601FFD;
+        Tue, 13 Sep 2022 16:21:47 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1663082507;
+        bh=NUa1OR6r2YL7gqnNpqtAfFahv7FW51v7az7dmzd//2U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=Mmg2KKuQgNfwZM4YmjTZs2YlfG3d64XkYl5FYOkjb8zFnmR/fYrb4lQY37gPz8cy5
+         uwe25u0Jh15EpeNEoOiWdZF3QeeNbbri+AV2m5zUUew85xJIt2pfyWhc60h6RXpUrW
+         LVpMXzEIxkQTTevmotPnYV2inYPafP+Wl055i6loL+Mh1SJIL1ODahKbEGh17ArxrT
+         iQKWNvifQ883mm8eWQjF67vr9ivItdEWa5xFY6pyJ6C3SJBFEJ7QbZgJEzoEkRFsfI
+         kAcTiFXIGkjcO+GwJYaemMX+DiuQpyQpWi9J2103ivv3t5yTNTG9IKh0zPSV45r9OJ
+         fH+r3RkaKTDNg==
+Received: by mercury (Postfix, from userid 1000)
+        id 6E94C106084A; Tue, 13 Sep 2022 17:21:40 +0200 (CEST)
+Date:   Tue, 13 Sep 2022 17:21:40 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     peng.fan@oss.nxp.com
+Cc:     festevam@gmail.com, linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, marex@denx.de,
+        mazziesaccount@gmail.com, mturquette@baylibre.com,
+        peng.fan@nxp.com, sboyd@kernel.org, shawnguo@kernel.org,
+        tharvey@gateworks.com
+Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
+Message-ID: <20220913152140.iikckob5h3ecagfi@mercury.elektranox.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH -next] clk: davinci: cfgchip: Use dev_err_probe() helper
-Content-Language: en-US
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     nsekhar@ti.com, mturquette@baylibre.com, sboyd@kernel.org
-References: <20220913032228.985852-1-yangyingliang@huawei.com>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20220913032228.985852-1-yangyingliang@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d6njs6zsqbehlyas"
+Content-Disposition: inline
+In-Reply-To: <57b89f2e-dc70-9890-143c-f6da5aaba015@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/12/22 10:22 PM, Yang Yingliang wrote:
-> dev_err() can be replace with dev_err_probe() which will check if error
-> code is -EPROBE_DEFER.
-> 
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
 
-Reviewed-by: David Lechner <david@lechnology.com>
+--d6njs6zsqbehlyas
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi,
 
+I had the same trouble before for QMX6 system on module, which feeds
+the i.MX6 32k clock via I2C RTC's 32k output. Here is how it has
+been solved upstream:
+
+https://lore.kernel.org/all/20210428222953.235280-1-sebastian.reichel@collabora.com/
+
+Patch 1 and patch 5 (look for "rtc_sqw") are relevant for this
+specific issue. Discussion history is linked from the cover letter.
+
+-- Sebastian
+
+--d6njs6zsqbehlyas
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmMgn/gACgkQ2O7X88g7
++ppZ3w/8COoF/mtQh0ZKXTMdGaUv4W257a1AiVH61kU8s6d4+ud5HyNXrSBqSVw8
+qbEyCvIIgLHHpTsanm+/k/WA5GQSy505Fa/EvPWQ+pcD6pOqgttDdERSNMPobSXl
+UsJyEw2aUgBdHxrhMg03geb0VptS1QuOhgbqL5qRJ/Kel7EqhMnGF4v95f6BtX46
+EhhdtkeO+tORGrFN0pISTz6IZjmUHg5MEHFKuVSV4ZRGD1dhTobfoEakV+JRJEOU
+4SkhDTCwPaXHAxHTzuPv+vAQPyZhjPZl1gJA8Bi0qfOisydLNvnz4je99J3sx4ki
+n4Twu8Q/r8TekWPUAxMTKTqWE81l33DR2hsF7Sb3EmIj8XN1NOmjQKhggqTwdB0j
+xYSjDyEsmTUqFfvbg7OpZaJyyxwGQEpam6NCbwn5P8HwNiPFV9PrTuCyz2RrbvNT
+voBHYTFj1Pd3eFuzMNWi6eOH20SjWhBvH7larbcr1jgMs+Px3ExxqPeaNnrknteY
+ipTQcPaIIggG57FyeQO2A+O77aT+IfDGdbKwNnNz/YYihcUhoDi6fDUkpuTD6tEm
+4snyhXrkNuu5394w4CKIs3wctQABXXmKY65GVRsVu3aooNtFMfdGsLgVvAss/CyK
+uXlCo4ix8QjpNGFVLg25ECg4Nc1vzkpcrgc/CYuHCCK6MGz6/Qk=
+=Yq+I
+-----END PGP SIGNATURE-----
+
+--d6njs6zsqbehlyas--
