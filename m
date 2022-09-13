@@ -2,92 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02613ECAAD8
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAF4C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231863AbiIMQrn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 12:47:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36972 "EHLO
+        id S230316AbiIMQxx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 12:53:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230449AbiIMQrS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:47:18 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FFDBD13F;
-        Tue, 13 Sep 2022 08:41:21 -0700 (PDT)
-Received: from mercury (unknown [185.122.133.20])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2F1876601FFD;
-        Tue, 13 Sep 2022 16:21:47 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663082507;
-        bh=NUa1OR6r2YL7gqnNpqtAfFahv7FW51v7az7dmzd//2U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Mmg2KKuQgNfwZM4YmjTZs2YlfG3d64XkYl5FYOkjb8zFnmR/fYrb4lQY37gPz8cy5
-         uwe25u0Jh15EpeNEoOiWdZF3QeeNbbri+AV2m5zUUew85xJIt2pfyWhc60h6RXpUrW
-         LVpMXzEIxkQTTevmotPnYV2inYPafP+Wl055i6loL+Mh1SJIL1ODahKbEGh17ArxrT
-         iQKWNvifQ883mm8eWQjF67vr9ivItdEWa5xFY6pyJ6C3SJBFEJ7QbZgJEzoEkRFsfI
-         kAcTiFXIGkjcO+GwJYaemMX+DiuQpyQpWi9J2103ivv3t5yTNTG9IKh0zPSV45r9OJ
-         fH+r3RkaKTDNg==
-Received: by mercury (Postfix, from userid 1000)
-        id 6E94C106084A; Tue, 13 Sep 2022 17:21:40 +0200 (CEST)
-Date:   Tue, 13 Sep 2022 17:21:40 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     peng.fan@oss.nxp.com
-Cc:     festevam@gmail.com, linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, marex@denx.de,
-        mazziesaccount@gmail.com, mturquette@baylibre.com,
-        peng.fan@nxp.com, sboyd@kernel.org, shawnguo@kernel.org,
-        tharvey@gateworks.com
-Subject: Re: BD71847 clk driver disables clk-32k-out causing RTC/WDT failure
-Message-ID: <20220913152140.iikckob5h3ecagfi@mercury.elektranox.org>
+        with ESMTP id S230255AbiIMQxf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:53:35 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C02DE136;
+        Tue, 13 Sep 2022 08:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1663084019; x=1694620019;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SbCjoEiyySf0wEqGD1QoXIt7eMt5aSq3M/gKQ/kWBnk=;
+  b=n1VQD4eb/yYe/T6Ssg/Ftr0nfjW2ndnkpNwF/0vh4MH4boD1qd0Q/37f
+   DtPtZvApVxtaOZvOsJXiuyy+tRbvByR4zqQ8HUZmkzlvbyxbXjTZYOgR5
+   gpgkssU1Hn+h4REJgtKoOzMlFAXXnsmZZvX6Mnv0ASTm3sEDHtAF1B3r8
+   fhTo0hAzBnqrui3a4Ut2KWjiBJPymuUraUqt1cPfrKWq+Qdwwj3QQvYhm
+   cZYe5BeU+aRFLo01/Gu9AJdbpJpTP8J0Ok5stidxBB5w3KZi4HLFjEiBS
+   tpoaJBILf/rOim3suwdlKiBOCaMmUpwE56VG+JL2L/DHmEHkDx52Rlj4E
+   A==;
+X-IronPort-AV: E=Sophos;i="5.93,313,1654585200"; 
+   d="scan'208";a="176926290"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Sep 2022 07:24:53 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Tue, 13 Sep 2022 07:24:49 -0700
+Received: from ROB-ULT-M68701.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.12 via Frontend Transport; Tue, 13 Sep 2022 07:24:45 -0700
+From:   Sergiu Moga <sergiu.moga@microchip.com>
+To:     <lee@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
+        <radu_nicolae.pirea@upb.ro>, <richard.genoud@gmail.com>,
+        <gregkh@linuxfoundation.org>, <broonie@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jirislaby@kernel.org>, <sergiu.moga@microchip.com>,
+        <admin@hifiphile.com>, <kavyasree.kotagiri@microchip.com>,
+        <tudor.ambarus@microchip.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v3 01/14] ARM: dts: at91: sama7g5: Swap rx and tx for spi11
+Date:   Tue, 13 Sep 2022 17:21:53 +0300
+Message-ID: <20220913142205.162399-2-sergiu.moga@microchip.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220913142205.162399-1-sergiu.moga@microchip.com>
+References: <20220913142205.162399-1-sergiu.moga@microchip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d6njs6zsqbehlyas"
-Content-Disposition: inline
-In-Reply-To: <57b89f2e-dc70-9890-143c-f6da5aaba015@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Swap the rx and tx of the DMA related DT properties of the spi11 node
+in order to maintain consistency across Microchip/Atmel SoC files.
 
---d6njs6zsqbehlyas
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+---
 
-Hi,
 
-I had the same trouble before for QMX6 system on module, which feeds
-the i.MX6 32k clock via I2C RTC's 32k output. Here is how it has
-been solved upstream:
+v1 -> v2:
+- Nothing, this patch was not here before
 
-https://lore.kernel.org/all/20210428222953.235280-1-sebastian.reichel@collabora.com/
 
-Patch 1 and patch 5 (look for "rtc_sqw") are relevant for this
-specific issue. Discussion history is linked from the cover letter.
+v2 -> v3:
+- Nothing, this was previously [PATCH 2]
 
--- Sebastian
 
---d6njs6zsqbehlyas
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+ arch/arm/boot/dts/sama7g5.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmMgn/gACgkQ2O7X88g7
-+ppZ3w/8COoF/mtQh0ZKXTMdGaUv4W257a1AiVH61kU8s6d4+ud5HyNXrSBqSVw8
-qbEyCvIIgLHHpTsanm+/k/WA5GQSy505Fa/EvPWQ+pcD6pOqgttDdERSNMPobSXl
-UsJyEw2aUgBdHxrhMg03geb0VptS1QuOhgbqL5qRJ/Kel7EqhMnGF4v95f6BtX46
-EhhdtkeO+tORGrFN0pISTz6IZjmUHg5MEHFKuVSV4ZRGD1dhTobfoEakV+JRJEOU
-4SkhDTCwPaXHAxHTzuPv+vAQPyZhjPZl1gJA8Bi0qfOisydLNvnz4je99J3sx4ki
-n4Twu8Q/r8TekWPUAxMTKTqWE81l33DR2hsF7Sb3EmIj8XN1NOmjQKhggqTwdB0j
-xYSjDyEsmTUqFfvbg7OpZaJyyxwGQEpam6NCbwn5P8HwNiPFV9PrTuCyz2RrbvNT
-voBHYTFj1Pd3eFuzMNWi6eOH20SjWhBvH7larbcr1jgMs+Px3ExxqPeaNnrknteY
-ipTQcPaIIggG57FyeQO2A+O77aT+IfDGdbKwNnNz/YYihcUhoDi6fDUkpuTD6tEm
-4snyhXrkNuu5394w4CKIs3wctQABXXmKY65GVRsVu3aooNtFMfdGsLgVvAss/CyK
-uXlCo4ix8QjpNGFVLg25ECg4Nc1vzkpcrgc/CYuHCCK6MGz6/Qk=
-=Yq+I
------END PGP SIGNATURE-----
+diff --git a/arch/arm/boot/dts/sama7g5.dtsi b/arch/arm/boot/dts/sama7g5.dtsi
+index bb6d71e6dfeb..249f9c640b6c 100644
+--- a/arch/arm/boot/dts/sama7g5.dtsi
++++ b/arch/arm/boot/dts/sama7g5.dtsi
+@@ -866,9 +866,9 @@ spi11: spi@400 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				atmel,fifo-size = <32>;
+-				dmas = <&dma0 AT91_XDMAC_DT_PERID(27)>,
+-					    <&dma0 AT91_XDMAC_DT_PERID(28)>;
+-				dma-names = "rx", "tx";
++				dmas = <&dma0 AT91_XDMAC_DT_PERID(28)>,
++					    <&dma0 AT91_XDMAC_DT_PERID(27)>;
++				dma-names = "tx", "rx";
+ 				status = "disabled";
+ 			};
+ 		};
+-- 
+2.34.1
 
---d6njs6zsqbehlyas--
