@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA07C6FA8A
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 15:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F4CC54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 15:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235227AbiIMPJc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 11:09:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55306 "EHLO
+        id S236151AbiIMP1o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 11:27:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235524AbiIMPIj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 11:08:39 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A17A760FE
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 07:31:08 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id k9so21155725wri.0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 07:31:07 -0700 (PDT)
+        with ESMTP id S236299AbiIMPZ4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 11:25:56 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE5D7D1E1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 07:38:35 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id l12so14636675ljg.9
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 07:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=98b3ViV0sOxY601CxqpC7jH63smaiD0oF4bKw9dMEOU=;
-        b=x63sDMCcfZTy1D748IyJ5aIRfCyPzNArlDP0lV9hvY4+cWUdRbyGcVG6xrdDRre/wu
-         OK58fX8B9uI58ozCYyzfgATB4Rdq2rJik1QNvT01pZlRndkJ7W/smi2v5UEkVJCJJpMa
-         /UjP5jhzzQUt/3TQ1vnKejcSVqf6wAm8KqerKf1MwIz7CIhvIo0h/3JcJeGM09YkqRrM
-         JCz4zmvgYmgkI0MxrpHEOWKJjtiZjZNZQMe0OdoWeKlk3V7WARO0cSXoS+jwgdnjnS/y
-         Hmu7TrqgUjhUSWEwHLc8llAeqrkWMx8Xsa6pAvK076PPomcN0/DoT6ceK/jSnulzUi5Z
-         aqBg==
+        bh=xEmsNDf40gec/YYynqTjtMwBV+qe6g+v810gZnB2/yY=;
+        b=n/VnNf+ICwVhsuuGRhFgokLQJs3XEMncu36QVLE3azT5YhnbnSmpQOE9CTuLNWloDt
+         UotvmVpIm4dXJeAFmeXtTj3VsSifIyT0Dn1ESPl8eunw5TILf3SXiL06KMnG1EStkB6+
+         PiXBXM3pxzv+7/oSbhKqETtoKIHT1My9+FWlEDQIsOfnn1ikv9sCNyPk8kd9jjSiNEDo
+         Qy0Bq3YiCk3UlTtklTb7rpxLjp7qtxssNT7HldVuQZ244KKxCFXMFLmJQPsAhkFTnTrn
+         +reZO90IKa8Gf9nYn6+T2VO1g8mSOWxQBXe0ulkQLvlMPKnmqeJXvGUa2IAHAuZ0AKos
+         gmSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=98b3ViV0sOxY601CxqpC7jH63smaiD0oF4bKw9dMEOU=;
-        b=6kl9LUqRNE4pe+40VnWCmi5b4kgsa93XzmsUxcEIRsFe97LkEl6XbsreLtjfhS+UE8
-         vjOAo7XW6fBhgvwxUMjSVsaC4/I5C+RZaj5ivLtUUD/dgOEVshSJYs63JUWAJn2sMEKg
-         rO1OnopycW8EboQs8PYmUkv8klVIpJiIX2S94Rui/QjEQQb7cSqZ7Vtg+se80sZTrEym
-         EB5AvTt6Iu25tThxRpL6CN7fm5BmGRLgW8y4B/oyHW3TNv7EF9dkDOBm4Cdt4/3nFGZ9
-         DFa9v34HYZ9e+wK8pUxhveh+LhXAFYdjMRcR2let13XODTYVt/P6UlFVxWRT3EctBGIM
-         bNAg==
-X-Gm-Message-State: ACgBeo2iIzViip8qiFFqbW+Eqa703VveRJpyLssZFHiIKBJihCZk6omG
-        sVHLFgVBOFpaL7GvAE4oWPCRaA==
-X-Google-Smtp-Source: AA6agR50vZb8xTosW20EeX8oWSBviovENhMmwWYTaHu44Hk9vz9gqIKhodf+GxHuJX6NHOObWD9U4w==
-X-Received: by 2002:a5d:550e:0:b0:228:da13:952c with SMTP id b14-20020a5d550e000000b00228da13952cmr18908046wrv.694.1663079400099;
-        Tue, 13 Sep 2022 07:30:00 -0700 (PDT)
+        bh=xEmsNDf40gec/YYynqTjtMwBV+qe6g+v810gZnB2/yY=;
+        b=uBG1A6FmZvPtexSCDT/Ra2za6VeYehZmkooy5RpwjAngPwxRZnmDnK5ZD8jtmm4ohg
+         e8oR8oS11m4YrprGXRWSKF2JVyzFEtcnhWilVdIe1Q8rOlD8KjTopmsd8Ei+tgkuvm3N
+         HmyJpjd1FZm/H3odInESZCDp6nOJfV3B0EEBas51lsXpI3NtPATwMOb1n25wfvW8AYcP
+         Xghg/rDTusy/fXLPl4m/EkvXNRm+S62AbxMFmlWet7we8PZgW/WkGbNW0LkfDUsHBK/I
+         SYcSr+AmJ/Q/WmFDmtR2hemW1Ta+TLJPSU2QGcFicuZ6nXAyROdtTp4K1nOsiH8+VAYd
+         l4HQ==
+X-Gm-Message-State: ACgBeo0FAUSTMHo2pvwH55iWcVXy6h2DkTI+pDPvoH/3rWQPA5PjDPSU
+        Zhm2ftaV1q8CNbAupgo+RnDKEo+FUlG5oXOQ
+X-Google-Smtp-Source: AA6agR6Enox1pD56Uvibw4ec6gcVUjGoXNOSfHNSakSnkzP5QwlTMpiCjnemyEW1vyX0Dl/lIAU9ZQ==
+X-Received: by 2002:adf:fc02:0:b0:22a:43e8:d205 with SMTP id i2-20020adffc02000000b0022a43e8d205mr11154078wrr.420.1663079316589;
+        Tue, 13 Sep 2022 07:28:36 -0700 (PDT)
 Received: from [10.119.22.201] ([89.101.193.67])
-        by smtp.gmail.com with ESMTPSA id t3-20020a1c4603000000b003a5c244fc13sm13971234wma.2.2022.09.13.07.29.58
+        by smtp.gmail.com with ESMTPSA id l4-20020a5d4104000000b0022584c82c80sm10849099wrp.19.2022.09.13.07.28.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 07:29:59 -0700 (PDT)
-Message-ID: <fd42b847-0dcb-e116-a1bd-48e68161333f@linaro.org>
-Date:   Tue, 13 Sep 2022 16:29:58 +0200
+        Tue, 13 Sep 2022 07:28:36 -0700 (PDT)
+Message-ID: <3372cb82-22be-a916-372c-292231ab74d9@linaro.org>
+Date:   Tue, 13 Sep 2022 16:28:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH v3 09/14] dt-bindings: serial: atmel,at91-usart: Add gclk
- as a possible USART clock
+Subject: Re: [PATCH v3 07/14] dt-bindings: serial: atmel,at91-usart: Add
+ SAM9260 compatibles to SAM9X60
 Content-Language: en-US
 To:     Sergiu Moga <sergiu.moga@microchip.com>, lee@kernel.org,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -69,23 +69,23 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20220913142205.162399-1-sergiu.moga@microchip.com>
- <20220913142205.162399-10-sergiu.moga@microchip.com>
+ <20220913142205.162399-8-sergiu.moga@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220913142205.162399-10-sergiu.moga@microchip.com>
+In-Reply-To: <20220913142205.162399-8-sergiu.moga@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/09/2022 16:22, Sergiu Moga wrote:
-> The Devicetree nodes for FLEXCOM's USART can also have an alternative
-> clock source for the baudrate generator (other than the peripheral
-> clock), namely the Generick Clock. Thus make the binding aware of
-> this clock that someone may place in the clock related
-> properties of the USART node.
+On 13/09/2022 16:21, Sergiu Moga wrote:
+> Require SAM9260 fallback compatible for SAM9X60, because SAM9X60 is
+> fully compatible with SAM9260 and Linux driver requires the latter.
 > 
 > Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+> ---
+> 
+
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
