@@ -2,46 +2,44 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CC3C6FA82
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 11:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7206FC54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 11:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbiIMLt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 07:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42112 "EHLO
+        id S231596AbiIMLvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 07:51:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231952AbiIMLty (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 07:49:54 -0400
+        with ESMTP id S231827AbiIMLvh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 07:51:37 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC624DF9C
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 04:49:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 761D61FCEB
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 04:51:36 -0700 (PDT)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1oY4Pw-0006hk-LP; Tue, 13 Sep 2022 13:49:28 +0200
+        id 1oY4Rn-00075X-J4; Tue, 13 Sep 2022 13:51:23 +0200
 Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1oY4Pv-00060G-Pj; Tue, 13 Sep 2022 13:49:27 +0200
-Date:   Tue, 13 Sep 2022 13:49:27 +0200
+        id 1oY4Rn-00068G-3k; Tue, 13 Sep 2022 13:51:23 +0200
+Date:   Tue, 13 Sep 2022 13:51:23 +0200
 From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
         abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
         sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
         kernel@pengutronix.de, festevam@gmail.com,
         linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
         linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH V3 0/2] clk: imx: introduce fsl,always-on-clocks
-Message-ID: <20220913114927.an5n5cv5tzd3lypc@pengutronix.de>
-References: <20220913092136.1706263-1-peng.fan@oss.nxp.com>
- <20220913102957.sir37bsdr5sayxal@pengutronix.de>
- <c6d4fb3e-9907-cda2-90d8-cfa21e8ebd41@linaro.org>
+Subject: Re: [RFC PATCH 0/2] Propose critical clocks
+Message-ID: <20220913115123.el3qnnh4l6gfa5jy@pengutronix.de>
+References: <20220913102141.971148-1-m.felsch@pengutronix.de>
+ <893c8446-5c4b-0e16-6979-632a20c8a201@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c6d4fb3e-9907-cda2-90d8-cfa21e8ebd41@linaro.org>
+In-Reply-To: <893c8446-5c4b-0e16-6979-632a20c8a201@linaro.org>
 User-Agent: NeoMutt/20180716
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
 X-SA-Exim-Mail-From: mfe@pengutronix.de
@@ -52,51 +50,24 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 22-09-13, Krzysztof Kozlowski wrote:
-> On 13/09/2022 12:29, Marco Felsch wrote:
-> > Hi Peng,
+> On 13/09/2022 12:21, Marco Felsch wrote:
+> > Hi,
 > > 
-> > On 22-09-13, Peng Fan (OSS) wrote:
-> >> From: Peng Fan <peng.fan@nxp.com>
-> >>
-> >> V3:
-> >>  Rename to fsl,always-on-clocks 
-> >>
-> >> V2:
-> >>  Use protected-clocks
-> >>  https://lore.kernel.org/all/20220816130327.2987710-1-peng.fan@oss.nxp.com/
-> >>
-> >> V1:
-> >>  Use fsl,protected-clocks
-> >>  https://lore.kernel.org/all/20220815033632.1687854-1-peng.fan@oss.nxp.com/
-> >>
-> >> There are two cases that I wanna this property could serve:
-> >> Virtualization: root cell linux run in parallel with inmate cell
-> >> AMP: M7/4 runs in parallel with A53
-> >>
-> >> The major case is:
-> >> Jailhouse hypervisor only support partition, so devices are partitioned.
-> >> But there is only CCM module that provides clock, the CCM is handled by
-> >> root cell linux, need make sure the root cell linux not shutdown the
-> >> clocks using by inmate cell.
-> >>
-> >> I was thinking whether need to provide a rate entry to ask root cell
-> >> configure the clk rate for inmate cell. But NXP downstream not have it,
-> >> see https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/clk/imx/clk-imx8mp.c?h=lf-5.15.y#n690
-> >> So just leave the property as uint32-array.
+> > this proposal is to mark clocks as critical. It is somehow inspired by
+> > the regulator-always-on property. Since sometimes we can end in circular
+> > dependcies if we wanna solve the dependcies for a specific clock
+> > provider.
 > > 
-> > Can you please check my recent proposal? I recently stumbled over such
-> > an issue on the mx8mm-evk as well but with the 32k clock provided by the
-> > pmic. Unfortunately I forgot to add you to the to list, I will change
-> > that. If that proposal will fix your problem, I would like to go the
-> > generic way.
-> > 
-> > https://patchwork.kernel.org/project/linux-clk/list/?series=676522
+> > The property is generic so it can be used by every hw clock provider. So
+> > it can be seen as generic implementation to [1].
 > 
-> Your proposal does not change bindings. You cannot introduce new
-> properties without documenting them in the bindings.
+> Missing devicetree list (so no testing), missing bindings. Please follow
+> Linux process, run checkpatch and CC necessary people an dlists pointed
+> out by get_maintainers.pl.
 
-As said, it is a proposal. Bindings will be added if it would be
-accepted.
+I just pushd the _proposal_ as reaction of adding a NXP specific
+binding. If the clk maintainer(s) would agree to this this proposal I
+would update the patchset with bindings and _all_ mail-addresses.
 
 Regards,
   Marco
