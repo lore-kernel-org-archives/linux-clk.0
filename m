@@ -2,160 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361A0C6FA8A
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 17:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C942FECAAD8
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 17:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbiIMRqW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 13:46:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35536 "EHLO
+        id S233464AbiIMRql (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 13:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233405AbiIMRqA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 13:46:00 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E4D46DAED;
-        Tue, 13 Sep 2022 09:42:01 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id cb8so9110686qtb.0;
-        Tue, 13 Sep 2022 09:42:01 -0700 (PDT)
+        with ESMTP id S233497AbiIMRqM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 13:46:12 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B2080492
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 09:42:41 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id j6-20020a17090a694600b00200bba67dadso11888181pjm.5
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 09:42:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=+D2aa8PettZ+gajRv9WE2n4dG1IRjQbOdCP5/ZsNCXU=;
+        b=yK/acudqmY9tNknsqIBFoKfZN933PY0SUpdMS2BMwePVj/EPc4uGPgmWjbZ6umgl/M
+         OxO5aPJlohPv2HDiUZwakBuQLw+F27SwHExv1jdrIkYl8Hg/NjiueiS6/aqxXQv7Ah19
+         BO5vmdb1HDXcRBbjVYBmdI+rkVueSCdMc5NVAl2N5jNl2Ypll/UD98ARJWBEFJed1Dyi
+         NnIpsriizo1npXfyPrWY4hESt3zrGJYH3KMb2kD9FTxw2xWRpnSt8oI+jMGODiONwGIT
+         c2CcgrOFCHKwU6NhAYjQ+2h833vwlfklKein5oFbyzPy8k/kFeJlGuzo/+62pq8uV78X
+         VpSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=nUbyO9E+1Q6feXAO0oMDhnIFniyfOKjq2mcZJKwUb+k=;
-        b=Qi6MMSo0mwKInls0EPO4Zv0cXqkCG33emESjMo/MQTwOmQPiop09YNd9oYNmesvwNP
-         eAg+gvtmbBcW66vky5YshbIGEg71rYbM0o0FPWI8puNb+QVD9gYy7IwCmzANBzVlgLii
-         ODnwBAG+gea+u+/wsk1P+SL26FwMSFLai5xqMKAYqLQsBVnapucwjxbvaroGUjDRf8Pj
-         nhkPqp50UKpfRxAKY3IHMESjENlUXbUZWGyGcwB/jLioFrDQLZHRD7eIhdLriqkM3YAd
-         Woz+wd/rUgmFqvBp6qsaxAcCsfRVJMK2g8KFvyXvcg0Qqq96jaP3201HvS10Gj9VAhjQ
-         az5g==
-X-Gm-Message-State: ACgBeo2SyHqwBkWRVuKRXHmz5U92pmNuA+aLlSZb/a6L8E9ETiPL041v
-        RK+fLBWkYoNlMh96FYPsJOnkJkgzN/CPBswb
-X-Google-Smtp-Source: AA6agR4LbedjCB4ZnRcFEf8JjHYxFYQo19RUEn7yAhrC3d7e9tI6siarYa5EBDI0W4fOfIo0JYAcoA==
-X-Received: by 2002:a05:622a:3cf:b0:35b:b16d:88e7 with SMTP id k15-20020a05622a03cf00b0035bb16d88e7mr10722638qtx.405.1663087320019;
-        Tue, 13 Sep 2022 09:42:00 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id bp14-20020a05620a458e00b006ce51b541dfsm3713453qkb.36.2022.09.13.09.41.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 09:41:58 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-3450990b0aeso147162197b3.12;
-        Tue, 13 Sep 2022 09:41:58 -0700 (PDT)
-X-Received: by 2002:a81:1691:0:b0:345:17df:4fc6 with SMTP id
- 139-20020a811691000000b0034517df4fc6mr26381933yww.502.1663087318249; Tue, 13
- Sep 2022 09:41:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220913084434.1191619-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdX9PCdTFsY_H6dqPVFs82HGqWzydhBaFNmL3_YR6vvWzQ@mail.gmail.com>
- <OS0PR01MB5922F5F3302A3AF05820229186479@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdXdAt5kfgPbyY-ragOL=abS_GUg4U_E1ovA3Ps0sZqHhg@mail.gmail.com> <OS0PR01MB592232E7F1F06F53463FBCC986479@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB592232E7F1F06F53463FBCC986479@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Sep 2022 17:41:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU5c=S9m+4w7vvkEPsFjuBZKsunRYK3pivxEDvr_1JJYA@mail.gmail.com>
-Message-ID: <CAMuHMdU5c=S9m+4w7vvkEPsFjuBZKsunRYK3pivxEDvr_1JJYA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3 clock
- multiplier and divider values
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=+D2aa8PettZ+gajRv9WE2n4dG1IRjQbOdCP5/ZsNCXU=;
+        b=jjHHjdmBTxIbO2DDtwqRzgEIh/0469Bo/VgX/6/fx5tWtYQGtPPmHzmscwjjEkAnII
+         ghWXhmuNF6XhpC2xVwW45fNgKObnPL/Ey8dcu6bWghahHhIL1NToxEY/0RE5krZqofWW
+         yJtE8kMa78IGZtEAoQdqVwsKcQRzTALDyG9JsiUWbBLPkCjrFgxbBbW9T6zV5lXKHL1y
+         iZn9EGAzIR0Ogvo1Xlr9jhFK9UyJjFqdnLJZ+L5plrVgQn8Uwul5pzK1k6lnrVYxZCY2
+         tdPjpNFRGT45Z8vx9gTdTTY6SWe6kyvnZ8M1cca7XXnnOeGTIpUwfQlgWUa9O3S0wZXn
+         lMIA==
+X-Gm-Message-State: ACrzQf21Z6GW0HyqFrC5XHp+uymVsY6IHEPwzt1SQIEls5mzpegYRU+F
+        x/quW6jnBTIbmVoIkUj1Tpnx
+X-Google-Smtp-Source: AMsMyM6aaQo3KWrpF9B+6HMrJtHoR3KFub3BtX5pu/jTeL4QJFRubmpVcpXcY6zSbX6SHF33y3Kyuw==
+X-Received: by 2002:a17:90a:9f96:b0:1fa:b4fb:6297 with SMTP id o22-20020a17090a9f9600b001fab4fb6297mr186375pjp.80.1663087360938;
+        Tue, 13 Sep 2022 09:42:40 -0700 (PDT)
+Received: from workstation ([117.202.184.122])
+        by smtp.gmail.com with ESMTPSA id y3-20020a17090a1f4300b001f262f6f717sm7538605pjy.3.2022.09.13.09.42.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Sep 2022 09:42:39 -0700 (PDT)
+Date:   Tue, 13 Sep 2022 22:12:33 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc:     Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        helgaas@kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org, quic_vbadigan@quicinc.com,
+        quic_hemantk@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_skananth@quicinc.com, quic_ramkri@quicinc.com,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v6 5/5] clk: qcom: Alwaya on pcie gdsc
+Message-ID: <20220913164233.GF25849@workstation>
+References: <1662713084-8106-1-git-send-email-quic_krichai@quicinc.com>
+ <1662713084-8106-6-git-send-email-quic_krichai@quicinc.com>
+ <20220912170437.GA36223@thinkpad>
+ <49536ca8-ef98-9927-d1be-977ab5244c91@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49536ca8-ef98-9927-d1be-977ab5244c91@quicinc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On Tue, Sep 13, 2022 at 12:12:32PM +0530, Rajendra Nayak wrote:
+> 
+> On 9/12/2022 10:34 PM, Manivannan Sadhasivam wrote:
+> > + Rajendra
+> > 
+> > On Fri, Sep 09, 2022 at 02:14:44PM +0530, Krishna chaitanya chundru wrote:
+> > > Make GDSC always on to ensure controller and its dependent clocks
+> > > won't go down during system suspend.
+> > > 
+> > 
+> > You need to mention the SoC name in subject, otherwise one cannot know for
+> > which platform this patch applies to.
+> > 
+> > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> > > ---
+> > >   drivers/clk/qcom/gcc-sc7280.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> > > index 7ff64d4..2f781a2 100644
+> > > --- a/drivers/clk/qcom/gcc-sc7280.c
+> > > +++ b/drivers/clk/qcom/gcc-sc7280.c
+> > > @@ -3109,7 +3109,7 @@ static struct gdsc gcc_pcie_1_gdsc = {
+> > >   		.name = "gcc_pcie_1_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > -	.flags = VOTABLE,
+> > > +	.flags = ALWAYS_ON,
+> > 
+> > Rajendra, should we also put PCIe GDSC into retention state as you have done for
+> > USB [1]?
+> 
+> Yes, it looks like we should handle this the same way as we did with usb.
 
-On Tue, Sep 13, 2022 at 10:58 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3 clock
-> > multiplier and divider values
-> >
-> > On Tue, Sep 13, 2022 at 10:11 AM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > > > Subject: Re: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3
-> > > > clock multiplier and divider values On Tue, Sep 13, 2022 at 9:44 AM
-> > > > Biju Das <biju.das.jz@bp.renesas.com>
-> > > > wrote:
-> > > > > As per the HW manual (Rev.1.10 Apr, 2022) clock rate for 533MHz
-> > > > > PLL2 and
-> > > > > PLL3 clocks should be 533 MHz, but with current multiplier and
-> > > > > divider values this resulted to 533.333333 MHz.
-> > > > >
-> > > > > This patch updates the multiplier and divider values for 533 MHz
-> > > > > PLL2 and
-> > > > > PLL3 clocks so that we get the exact (533 MHz) values.
-> > > >
-> > > > Does this matter? Is there anything that doesn't work (well) because
-> > > > of this?
-> > >
-> > > Yes, SDHI performance gone bad as it selects 400Mhz clock instead of
-> > 533Mhz.
-> > > Similar case for RZ/G2UL, which I am testing it now.
-> > >
-> > > Previously:-
-> > > 533333333->src clk0
-> > > 400000000->src clk1
-> > > 266666666->src clk2
-> > >
-> > > Now:-
-> > > 533000000->src clk0
-> > > 400000000->src clk1
-> > > 266500000->src clk2
-> > >
-> > > If I am correct, with wrong values, it ended up in 533333332(parent
-> > > rate= 133333333 *4) and requested rate 533333333 and it selected best
-> > > rate as 400000000.
-> >
-> > IC, that is annoying.
-> >
-> > However, I don't think the right fix is to change the dividers to values
-> > that do not match the hardware.
->
-> The new values(for SDHI, SPI mult and M4) are matching with clock list
-> Document RZG2L_clock_list_r1.1.xlsx and HW manual(page 235/236)
-> Figure 7.2/7.3 Clock System Diagram.
+Okay, thanks for the confirmation.
 
-All values are given in MHz, with a limited number of significant
-digits, not in Hz. The most accurate value I found is 66.625 MHz,
-which has 5 significant digits, and thus really means 66625xxx Hz.
-Such an accuracy matches the accuracy of typical clock crystals.
+> Why are we removing the VOTABLE flag anyway?
 
-The figures only mention "1600 MHz" and "533 MHz".  The latter
-has only 3 significant digits, and is probably just 1600 MHz / 3.
-All further dividers are documented to be powers of two.
+Yeah, I don't see a reason for doing that.
 
-> Yes, we need to have some relaxation for clocks as mentioned
-> below.
+Chaitanya, please follow the patch from Rajendra I mentioned above and adapt it
+for PCIe GDSC.
 
-Indeed. But this is IMHO something that should be handled by the
-code that looks for the best clock rate, instead of by fiddling with the
-dividers to get "nicely rounded" numbers.
+Thanks,
+Mani
 
-> > Due to the (in)accuracy of clock crystals, the least significant digits
-> > in the above clock rates are not significant anyway.
-> >
-> > Perhaps the "if (freq > (new_clock << i))" check in
-> > renesas_sdhi_clk_update() can be slightly relaxed, so it allows e.g. a
-> > 0.1% (or 1/1024th?) higher clock rate than requested?
-> >
-> > > > > -               DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 1,
-> > 3),
-> > > > > +               DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2,
-> > > > > + 533, 1600),
-> > > >
-> > > > I highly doubt the actual hardware is not using a by-3 divider....
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > [1] https://lore.kernel.org/all/20220901101756.28164-2-quic_rjendra@quicinc.com/
+> > 
+> > >   };
+> > >   static struct gdsc gcc_ufs_phy_gdsc = {
+> > > -- 
+> > > 2.7.4
+> > > 
+> > 
