@@ -2,111 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC92C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 09:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A07C6FA89
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 09:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbiIMJUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 05:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50104 "EHLO
+        id S230470AbiIMJ1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 05:27:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbiIMJUW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 05:20:22 -0400
-Received: from EUR02-AM5-obe.outbound.protection.outlook.com (mail-eopbgr00086.outbound.protection.outlook.com [40.107.0.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58BDE140ED;
-        Tue, 13 Sep 2022 02:20:17 -0700 (PDT)
+        with ESMTP id S231691AbiIMJ1j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 05:27:39 -0400
+Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-eopbgr150072.outbound.protection.outlook.com [40.107.15.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36013564FC;
+        Tue, 13 Sep 2022 02:27:36 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lcR8qRX9cboFIntIdwSMpMclqcL42ZXF5RkNTmOCmaN3Os9rvX182H12AEJ85aMAr5cm9rmT8B1yLoFygvp1jF/TXJ4HhoJG7xNvQut7qT2DeOPRwWNcFRfcAgFSuxu4C/nt4E2/7XMhxQPrwpzH5ZPrhzvhew8JfibsKx/Wl8ql8S7WnE5uP1PQvZC6kPDgabJ1qdvAP5g/fmNpIDIEexd/ORjaUbp0oSaXzaAuc8iscfAjaXLki0a60mO4fgotDxvwqakqd1g2zOiUnIx7ns+krO8WKj6uapAiaEDLyr/qRcAwHKxTo1c6k1O099boOJ9wb0AkR7iaCZwxsxJQyQ==
+ b=SAJRJR0ZycQVfW3VNQufnhPsN4164L+Zb6EvvNPO2n3V9cefLIJw1ctnaAhhP1nX5A7Y0KHSELziGcSK8Lz+aAfgQJqFD/uqSnFMGZaN9jHDEjAfJXw4xH6JDJDMtMzaJcRCZWM3ADn1BhbNq/I1SBEAMGC04geuQjY0izO9nY7nfxiqpzs7PynTLf5wshgx3OqliI9ci7BrXRb5VknoqBECL67KuFKTdieXqNDZ6SxIH09AKiVIAaC9ICGfpe/qapDVUH4+cy92LCbeMx1HmR5KSAf8AQ49i9FH+Va7DOgnZSGiKa2zYTuHJV4MNZGnM+PRWIB1Ldd75o9RZf9Z6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j4QM7D56dZ4kz0so4FBj4tyzvvOCv48uVsyc/uaZbUI=;
- b=Ewk82fprIB8AdOVFedEveb3nCpeVgvd4grSZjl/PSZTEvXr4+H2mx7Z34XVU1jiPh4R8j8N/kbgHjVZrK4lzvsxmNTkyz9GYnyTaoptWnhbev1UVQLBbKSIrmFqup5H+o+BbLs2Qmj8Mxo3avckj10B2JjT95A9l0OocJ4jAzhmDXUJ2ALJw7wAqmJpwwbO6T7Qay157m5H3ux+WRoqIDUEY7dMvvf9DJGKPiURNcEcqkYwNOsq1K70d2DdGYbyTKoUC63p9DYKD4zPWBJyThCslEQM8sZ4XALgb//4nHr1a/kdMP2UDclHDXGMyxL0AXIRHAU1biZwEG62E6eUQhA==
+ bh=SCdMU7hOc5jim7gx8cEvOCEqNTqfA35WFAkIMUJFVwE=;
+ b=nbkhmL+6ruiB+bnjorj8yvtMMT2QqiUtC6ABm4y3RQYxJP/ODcK09BzFAg+538qnrUKhmFwReTFsXqi88b1UMzdcqy4BSmQlAx1MbHHouflDEExv5+en4fV2xivxde1goMp6oKS2oPfeKOB61P/4R5cAE/v6FojHTDqjnkx+8nXNSeDCDj5OgVIfINa+loaOWqYjEjflIuMoIdL/Hnp46GIb9SsS4O9/7Agnr3hcFZm2mH8jbllzdU+W5XgOWREzXVwn3pH0ypQWJAIp2mg0vz5ZzcA+3qq/zZtpyXv/H9W2bI7cDVd6FlgLg/HToCYAMJxtexAVIvyEXq/RxUq6GA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector2-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j4QM7D56dZ4kz0so4FBj4tyzvvOCv48uVsyc/uaZbUI=;
- b=MlYG6R8JEiF4ImZZadArZgucXgcVR2hBxRhEm461mDz2EVNtlme/zSKrRp6C3L39dGZE960vBsEbgJGP0Xa1X+yhD0wDWsO/AyQ/aioUTo0sOlaCV1GekYutypMa6zV2ZPp6S5dTW6b/aEzAsx/ZVglsUErRIMOz1Reuhcge7f8=
+ bh=SCdMU7hOc5jim7gx8cEvOCEqNTqfA35WFAkIMUJFVwE=;
+ b=Q4KYZX3VdomlxefxZMFSzmmzkcCU2omDss5+h2zuozRwr62bLutDFbCOBfTqHxeNE4ZcKgkyjGg+fJGrFw0HPiNxG/XafeYmiEgF5jPiGK/aY42cob4liuhfaLcTBfAy1jxEFDZWF5Kp9LaF1GlGLh0rnSyfZRsdE8cj3p6TUxI=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
  by AM8PR04MB7234.eurprd04.prod.outlook.com (2603:10a6:20b:1dd::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.22; Tue, 13 Sep
- 2022 09:20:13 +0000
+ 2022 09:27:33 +0000
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::75b7:64ed:bc9e:5354]) by DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::75b7:64ed:bc9e:5354%5]) with mapi id 15.20.5612.022; Tue, 13 Sep 2022
- 09:20:13 +0000
+ 09:27:33 +0000
 From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3 2/2] clk: imx: support fsl,always-on-clocks
-Date:   Tue, 13 Sep 2022 17:21:36 +0800
-Message-Id: <20220913092136.1706263-3-peng.fan@oss.nxp.com>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        abelvesa@kernel.org, abel.vesa@linaro.org, sboyd@kernel.org
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2] dt-bindings: clock: add i.MX8M Anatop
+Date:   Tue, 13 Sep 2022 17:29:08 +0800
+Message-Id: <20220913092908.1708931-1-peng.fan@oss.nxp.com>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220913092136.1706263-1-peng.fan@oss.nxp.com>
-References: <20220913092136.1706263-1-peng.fan@oss.nxp.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SI2P153CA0018.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::9)
- To DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+X-ClientProxiedBy: SG2PR02CA0082.apcprd02.prod.outlook.com
+ (2603:1096:4:90::22) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM8PR04MB7234:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba73bee6-ee28-4cba-a602-08da956929ca
+X-MS-Office365-Filtering-Correlation-Id: 35a1ce82-6d66-4593-e1d6-08da956a2ff0
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pBz4lPnzMCK5eCA5Y+S2DIGN3BUaSZvcn+jjgr8oWv2LpU/tVxYzMZ04cs3IcmNyBGqyY3xk6B+/6jKvDcGGZRwGICdMbQW4ZuHMpX0upT0vAiAi/EjYEs7gPXMi7wLILl8WOSgRTshLgjH4Lna1EyNWP4QDie6XNpmJ/1bUVOFa4Bpm9vszoq7b/F5LLU0gqeJYEmmox/4ziedrKK4pLwylDYgD602hsIL9E2dDusiWqlFXurTru3IsdaaSWJdy7rZBg7LQvfmH73lWRIp5z5ZNn7sj3AKd3p4h8RGK2FNjC7nuZbSD1gNagY3sNOad84UonrOE+yff4xgdTcAruSrbX0UzIo4LfwYjFIdzwzAE0Co2p5jv9sjyzCilJK8c/iLiLgxTRsH6wCmPbGCw7ylLPJPK3fIkqEbc2BY8+s8WQKdcTymAdcckVYjWRyGgqpLjk/jtJwDjjb2YHzmTu7zXH2J3WAkbAc0T20Au/ziocwyYxKOZLU7VawAc9EfleIC0AelCFfiEIrhHbw8Clww2GkYPDVslVodUTCRTVCtpMLuJQ1zSRyRjRJcA8j+b1CtbV7xE8qPElBgkxOM2inOQ38zHrqM4QaI9jB9ecGBx+IznN+omzZmOjsIqdO0Mn71qBVN6REh2tsHmaZpEx+Mq6/mC2Z2Ogo4bu2Px4PmpsN0psPW1+krcnMT68/mDlxf02kLuulKVkABX4POxPPj7z6BibCuOUZrPFrd1zse96S6A2wdObQLK+dP/GjSN/NE+FF4DtHvkba8xxZpHf1cJR46zzdpkgSRCBVPyny4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(136003)(376002)(366004)(346002)(451199015)(8936002)(6512007)(26005)(66476007)(921005)(86362001)(2906002)(41300700001)(38100700002)(2616005)(66946007)(478600001)(6506007)(6666004)(6486002)(66556008)(186003)(8676002)(38350700002)(83380400001)(52116002)(1076003)(5660300002)(316002)(4326008)(7416002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: YrQfAGrv4mhIitbDZrU6czJTTNbsmYFGTdxEpugQOddoS5JfOvUL9YJNjgkSijFxVjwPQ9+2ddR/YrMqEib9+cUUhFi+Cu6l6sr0XFGaDG2yl7/LUBNlCtpoAR0LmYSoJhomfEsEqRu7uFtkqUgIXhxDDmIhYAV2ZkQqpIVEDFzKP66M+KAAykC1yvrZ0dVHJv2sqx6CUS43OkvQcurM5lAr8SFnpDpRMz4lWc5+xftmRcwGppDaja5eabYBiiE1uLuHWigdijQA5NJyAYITb8seBeI+KoemkARZ8825tKmVES9jL9vl/2nZeNt0V48QZo++EJJhlei87zIoTtKBHy2TA5gFX9hb6M8kO1qaziu5kiytHcwuEciAFOv3ZP/O9IpCEnkwirEeNJaNwKhzv6y7VGw6A7MaLKOlZUWmTwMa8i6CpybYcFiQD+MLRtXlM7g6F+Z02ICNltUObArI96TIrk9GfEpPRKwmfqi0dP1kBO3Gktn8klVzxaBR0YMpKuaQv9tG3cqNMO/34aOLG/qQEU/pfW2kXYNgB/ZTLtMplBsnoROBfr+TluX9qcCT6/1nJsAIb4RMeRBUzc3Fth3OhUot4axMJUzYW3BsqIttxRVba65FosZ51UFNbj8F4f8gsSGHtlDC+nLkxcUlM9w08ydAUt8ks1pIi4zCbrtw5utWraHuwzIc12MShs5HPhsmNCoWoPHCsH953stG/rnn+mEiVCGWDQIFpxe3vEQ6vtO4G7G7g5nMgk61h8Dc/45bZScU++bOoCtP3A1TLY8Wa95FxTbgSrgQ+8R7uqZRODq5Ip2v14R9ZAsn9O8YnknpNmeK7XBqHhE37ESyEA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(451199015)(6506007)(6666004)(66946007)(2616005)(38100700002)(41300700001)(86362001)(2906002)(478600001)(966005)(52116002)(1076003)(83380400001)(38350700002)(7416002)(316002)(5660300002)(4326008)(186003)(6486002)(66556008)(8676002)(8936002)(6512007)(26005)(66476007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?sbGIRRgPOnttNUWmO/XzeXOxx7U8rvgy4Zg/N5lIVm1r2jgdZFPrDGPxJRv3?=
- =?us-ascii?Q?w+qcidoXmKPkc/hcenAnsAcMfEx8k4+jrW6zk/PjD+MO8DI7M5eC+RmC4f/3?=
- =?us-ascii?Q?o2w6wcmV1sVC1ogHBK35A9fC3yXEu2K39FuKVxgBQZNDb52iFOYBOb3LJD8T?=
- =?us-ascii?Q?cvJtftlAUSRrfhbgjPvZr52+JjQ3nS59yLv9ggziZpCTNm2BP+eDptU7Pd1V?=
- =?us-ascii?Q?xvPW7Nk6nljiccYr2bNNqAn3Di5Sng5DmuueStiiozTfbc4y1zp70pR5G/Ds?=
- =?us-ascii?Q?/Jsw6mCkFvpXmctwceJke7xtSFpmCDQUruw2TzfY6BPFMkLlH1ny7v1Wll7P?=
- =?us-ascii?Q?EwwN5Z82W5PC/ECS+4Be/ACjgAgeiuf2Ti7KIBheXbROlye1dtlBabsnMh6z?=
- =?us-ascii?Q?HoLNN5JmnKiqsjH6P/w65yyA1Iz5zDOD+m34tmJavB3GJp16R2JdWFt4BEaH?=
- =?us-ascii?Q?p8Rnl1N9zuQlk2oE4sbErR96DzZ6v5WaUcdxmdCQp+affroRbTpl8nSHi8XG?=
- =?us-ascii?Q?d0F/qsxsVtBPvd+ZAWYgK82LVZ6WM1P1r/6nncg/D9ZZbIuuBzJujcZCuHQF?=
- =?us-ascii?Q?OhlUthpSx/pTiFOdoWe6xhxFa78tE1//Ex1CCq33fFDLoJK9OpbIH1BLiw6O?=
- =?us-ascii?Q?P+p6BpdrHbLW1h6H+pGeJpVkuRkUeBUnt6N1GpqWgrqpkKNe2mBu4iVLkrGE?=
- =?us-ascii?Q?SkL3qVjywFe6VncwuEVyHy8psTExGJO4U983yUxoGbYhLVWgCgtbk+6jzIk7?=
- =?us-ascii?Q?WGR9oxdeXYoQY4EisRdONt4zYEHpT6vUPoaY8j5lKRQt0WvvJ+lA8qH6mVFi?=
- =?us-ascii?Q?5HgmGGWA7mbAiPm9iVBNG7K47AbLGHdvh1oI4hSMQ58DrW13/ZZAykTy3/F5?=
- =?us-ascii?Q?tg+7DDN3RuQSLr30G1OS4UxcUXjpIXsSW8lsN4gud6IKdr0qA900kmIMYJE2?=
- =?us-ascii?Q?RduoucWikbDrCyKBRH7DOmfuFh6wITA0xaGbiD5pTJtU1GCtZwugWi15AgYJ?=
- =?us-ascii?Q?gR2ROcLb7U1jKI3O5O0pnVG4f1WGIkdd7AWFhVsfa/7RC1ee0Rq6ISCA1zz+?=
- =?us-ascii?Q?8DliDbsJ9TqYVlIFu7BnQ6Ghn/9Bu3EAqfQMO5BVm3KUglg0bSTavDErJKAN?=
- =?us-ascii?Q?YNWM8DAV+QTP+i5Z3TGvHzTQ1RnCrhwhC6YbihvRkYRqHGWYsImEiCicLHlH?=
- =?us-ascii?Q?4YyFuADf5uonrocLJJcL7M455tD7cIAouyrOwFMHrnUo4qb9l6S6bzDFAPvi?=
- =?us-ascii?Q?wU71sduj9vOkUg7rNe6FDbMG5P7vKtglbT5u1KukmQND33wohFGU9FMiNMyi?=
- =?us-ascii?Q?jEyyBhgQfVXmao4smYur5v10SUwSG5qygeRazXSsNhsjuApHyJhXcnxcHvww?=
- =?us-ascii?Q?pyv4AgkQRKx0D4X2Wo/SkB1hAzbMv7InWyE4HJGl4I/S39Ks9z4jjnaRBmAP?=
- =?us-ascii?Q?gytFQ25lPwdjAwpejP/lL4lyZKUrsMhVk70nAQNPZLwsuY+lidp1bwMyDpEY?=
- =?us-ascii?Q?3Iw5YmtT8/Ripfar3nw1sD7ELWlt1NmkZ0ruZiENV19JoqRh5f+fZysr3nJ9?=
- =?us-ascii?Q?n88UAyCNCcO1dnoGukRjmE32xTlsqR/uyoIq2X1K?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QXtE9gu8t6g8+tiuXJtE5bFDWhrm68UXFKphlYbrUrF1lm9kGNH+TeHZEezZ?=
+ =?us-ascii?Q?rLnHD4TA2mINgudR+Mr2MKE/Pu5nhvBWlEFLAq1cIEcXN7YpW/4AqfLTPfNP?=
+ =?us-ascii?Q?Y4v+zQc9Znti355csSeFizWeqWweoqzoF6loSlbRHr8NuGk8S3mdIGnIHkEq?=
+ =?us-ascii?Q?DVpUCjcR2q1LtcOX1OzLfR7zkmHsC7Pcpeu022a4YONiTKtUfg8llkdGMcK1?=
+ =?us-ascii?Q?eCvNDDlYcoSItatLz9R9ojBTMBD7Cc0hMPOI/xxp6iyJV1woqzFrKftraNFd?=
+ =?us-ascii?Q?vWbc6hqVRHjNw7S+TqgcBsvAud2SE62xhdMfsDObqIEoBpop8GI31l9nLdZh?=
+ =?us-ascii?Q?lXerizAzahOPKbzHb1ag8ZKy9jvbYmOIzC/6oFqCWQ2EkQL2ymyuAtDpthgs?=
+ =?us-ascii?Q?OejvZsV8WTZLLYtzGlN+214gEfR4gWGGT4E8JWxYjKxrGHSN2uZN/qruKRmS?=
+ =?us-ascii?Q?YKLwvhZBItUUlXAS2oIk/TnAylHQy/6ybocHTgsxfE4/DPa017Sk/OR2h7Kw?=
+ =?us-ascii?Q?TGSWpn+/JcPS2D7wGIcvAArLT+AHMH3CZjpO0qT2W4mFfAMzFQo+lvD7XBgp?=
+ =?us-ascii?Q?Tzan5eroD6zqVs67EwJKp8qypSPo9JUAZWxuCLs2Mz/V/rBN4x/eXyqW1+2Z?=
+ =?us-ascii?Q?hsIsFCQLbbmYxPHZY4NgpjmnrUfGBlMtX6X/NCHOSwOklnoqJn5LlkVvbMjk?=
+ =?us-ascii?Q?NPnM4/4KUN7FjNQXYGCcItF+l1Dee35uPfFj094jdY5uQ6exxM04SWybakwi?=
+ =?us-ascii?Q?PCP4ZKBawJxAy1IJMm7fJjz6hnDzklKR0tazZ0xWzVeAOGet52m2pTM6Hm3C?=
+ =?us-ascii?Q?Y09e2DOMWfPXdAsCzy1SWBKbFSl75b1eSIuNTuk2M+8ZK8W/ULa2EKSdVbKc?=
+ =?us-ascii?Q?Wo/L6yZB/WaopPbKAF6T6Jqawccp0834MweqDh4BWUmgqZ9tSK1tw9jVvdPF?=
+ =?us-ascii?Q?u0zvKqqzx2sf8vW1YPtHrb0HTf8fAr3TWS29VJAiNHS7HOPH80Ucx3Xqa1zn?=
+ =?us-ascii?Q?E1Is1fI0QF1VbAKJVQ3nk7QDSCQ2Lui+Bs6kdvditsBeS+BjX8oeIBc5DDKT?=
+ =?us-ascii?Q?NZibTZMYPBdhQFpcY0xUWnoiUHqzdMJdPievLqQzsOTdiHarAnIksG5S0gVN?=
+ =?us-ascii?Q?p3jvZ6j/iXS0kOd2zUthx298/g+9CeKscCrKU1Zj8j5mvK6+aTMyaxcFFdOp?=
+ =?us-ascii?Q?dGGy9mfCJ7t1Frty6w0JSKTfKg8vy/h2npfo3pDT8wIgpENKVg3hMz3FrRao?=
+ =?us-ascii?Q?1ihTyDy/iWWUH12kT3pOVdyobVDHCIiEkqftwnzQx+3CURJPJO6To3QsB4gQ?=
+ =?us-ascii?Q?0tarCoAyhRhefhbq+L9cwphq6rNE5FFgkpqkR5gFTu5u9Zgw6W/4GlsHUB4q?=
+ =?us-ascii?Q?ETiNLN8jz+oKJwVnN7Hx8f4TpVWfm84k/fUiG9eh5xTPhGqH45ayceRKjXlz?=
+ =?us-ascii?Q?ngnDIbTIGNYzSXbwI3dDHem2dEwONMhhaXMhDT73SOOnhYY4Zvx89CWfivY4?=
+ =?us-ascii?Q?juhawCryPW86WsKpBhSeTiylS0ilELzdS+z8cDYzzsVNLqFeTb+x3PMGRovM?=
+ =?us-ascii?Q?hwkI1JVO+henP432RD75Xc4sRQyvqHM3J1gPmM10?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba73bee6-ee28-4cba-a602-08da956929ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35a1ce82-6d66-4593-e1d6-08da956a2ff0
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2022 09:20:13.3316
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2022 09:27:33.1442
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9EjPvFsrbBOs2XxRsqXIi6CCNEap9fy2EJDpn/Mc8hg21nKAr8B9HyYtSGy4xt9bCNf4/u9z8C1N3u4gq15Dzw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: AAymTL0pAyGPbn5Yh4XcVvYzjad1HVeTq9+ZvvNedEEhJiYuZjXy6coHixu83V90kvlIie551ipdulUgm6dxFA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7234
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -114,122 +112,75 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-For the clocks listed in fsl,always-on-clocks, enable them to avoid
-Linux disable them. This will benifit root Linux and inmate cell run
-on top of Jailhouse hypervisor.
+i.MX8M Family features an anatop module the produces PLL to clock
+control module(CCM) root clock. Add the missing yaml file.
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mm.c |  2 ++
- drivers/clk/imx/clk-imx8mn.c |  2 ++
- drivers/clk/imx/clk-imx8mp.c |  2 ++
- drivers/clk/imx/clk-imx8mq.c |  2 ++
- drivers/clk/imx/clk.c        | 21 +++++++++++++++++++++
- drivers/clk/imx/clk.h        |  2 ++
- 6 files changed, 31 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index aa58b2995610..d1e4d0d3c41b 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -611,6 +611,8 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 
- 	imx_register_uart_clocks(4);
- 
-+	imx_clk_always_on(dev, hws);
+V2:
+ Drop syscon, use clock-controller
+ Add fsl vendor prefix
+ Add interrupt property
+
+ dts update not included, so there will be dtbs_check fail.
+
+ .../bindings/clock/fsl,imx8m-anatop.yaml      | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+new file mode 100644
+index 000000000000..2c0efa58d898
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/fsl,imx8m-anatop.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	return 0;
- 
- unregister_hws:
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 79fabc0606b0..422b535013de 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -605,6 +605,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 
- 	imx_register_uart_clocks(4);
- 
-+	imx_clk_always_on(dev, hws);
++title: NXP i.MX8M Family Anatop Module
 +
- 	return 0;
- 
- unregister_hws:
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 4297af85ab09..ff043fa0299d 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -714,6 +714,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 
- 	imx_register_uart_clocks(4);
- 
-+	imx_clk_always_on(dev, hws);
++maintainers:
++  - Peng Fan <peng.fan@nxp.com>
 +
- 	return 0;
- }
- 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 882dcad4817d..6eec3bbcde6f 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -603,6 +603,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 
- 	imx_register_uart_clocks(4);
- 
-+	imx_clk_always_on(dev, hws);
++description: |
++  NXP i.MX8M Family anatop PLL module which generates PLL to CCM root.
 +
- 	return 0;
- 
- unregister_hws:
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 5582f18dd632..75876c81882c 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -2,6 +2,7 @@
- #include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/device.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -214,4 +215,24 @@ static int __init imx_clk_disable_uart(void)
- late_initcall_sync(imx_clk_disable_uart);
- #endif
- 
-+int imx_clk_always_on(struct device *dev, struct clk_hw * const clks[])
-+{
-+	struct device_node *np = dev->of_node;
-+	struct property *prop;
-+	const __be32 *p;
-+	u32 i;
-+	int ret;
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - fsl,imx8mm-anatop
++          - fsl,imx8mq-anatop
++      - items:
++          - enum:
++              - fsl,imx8mn-anatop
++              - fsl,imx8mp-anatop
++          - const: fsl,imx8mm-anatop
 +
-+	of_property_for_each_u32(np, "fsl,always-on-clocks", prop, p, i) {
-+		ret = clk_prepare_enable(clks[i]->clk);
-+		if (ret) {
-+			dev_err(dev, "failed to enable %s\n", clk_hw_get_name(clks[i]));
-+			return ret;
-+		}
-+	}
++  reg:
++    maxItems: 1
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(imx_clk_always_on);
++  interrupts:
++    maxItems: 1
 +
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index dd49f90110e8..591d72ea4d31 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -22,6 +22,8 @@ void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
- void imx_unregister_clocks(struct clk *clks[], unsigned int count);
- void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count);
- 
-+int imx_clk_always_on(struct device *dev, struct clk_hw * const clks[]);
++required:
++  - compatible
++  - reg
 +
- extern void imx_cscmr1_fixup(u32 *val);
- 
- enum imx_pllv1_type {
++additionalProperties: false
++
++examples:
++  - |
++    anatop: clock-controller@30360000 {
++        compatible = "fsl,imx8mn-anatop", "fsl,imx8mm-anatop";
++        reg = <0x30360000 0x10000>;
++    };
++
++...
 -- 
 2.37.1
 
