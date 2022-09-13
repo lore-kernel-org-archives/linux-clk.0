@@ -2,105 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA597C6FA83
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 08:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095C8C6FA8A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 08:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231398AbiIMI6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 04:58:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
+        id S231232AbiIMI6l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 04:58:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbiIMI6L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 04:58:11 -0400
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90914AD5A;
-        Tue, 13 Sep 2022 01:58:07 -0700 (PDT)
-Received: by mail-qv1-f45.google.com with SMTP id q8so8671344qvr.9;
-        Tue, 13 Sep 2022 01:58:07 -0700 (PDT)
+        with ESMTP id S231550AbiIMI6d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 04:58:33 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2AF64B0DA
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 01:58:31 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id cc5so9807590wrb.6
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 01:58:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=u4ofErT5hOMpQGT6cywWVhLXqVmQE7e7Op5vJ0iCaOQ=;
+        b=CUrH1MyfvoQBLVS+1bNqDxagpk8da2WmGc2X1jrklxStrvrUxn++Ywcgqx4VN4roZP
+         3JoWE/S1P5XiPpC1x88uK2gd5f0n8/2AErWwpORKgOYDSO2QX1BLfa/TV+WZ3ETxZqjZ
+         yA9oaHKWEQxh7RsoMinCS3UG31NCTBqZYQhGwrTXRnezldgzViR9B1WBGt3Yo+k45Sc7
+         V6+CA9AfLN/TYasyOOx2E5RtQHlLqaJtRmrJlVBn+rP5yC2Eerbum8v9QWZGx3QEogNa
+         UvTH9AogHf5pSxhoPDcUR45WAChcbzM+/LcF1ed7SQeaShR1U0Bf5VnBC/fNhhcCsQqX
+         T2jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=NqfKDDpfP3wxZcuAPA1SqLUtXilWF/8jLyjHuXOtH7I=;
-        b=huzbk8uUPHlIGw+YDNVkVwwaILWrkaxrxGJWzJSruHQoggJ8vYTcshu/UtgIXX2Srh
-         whUWRdjPxAyTQqC+c4An+DATFD+ui939n6/TaeDNnnVaaU93HKZJ+RdfTYlV99Ai5Kq/
-         KRT62stL2T7b3FGwnbneR4n1mMhH0Dc6RX6Bmm7R7LrFeopd9c8lYh+xS/SjIUSij/Ue
-         gewfnaebEi0gWOY7fbiaPHRv2NC8hwtDnDqoi7FKIjLCr9041VoDsWVLjb885UVaz069
-         nx08+H++ElyJMGCUuKiDFAORm2W/nWGSLpbG9VH4AQJJ1haHUUExmnLhmX+RZsBvd7Cj
-         0bgw==
-X-Gm-Message-State: ACgBeo0KqIrbVAlEd4j8KUPLca8ck1UL9T81paNwf+VPQoOMrahDU0Pk
-        jHmVqy80AaJb4KYy7jkWRWIhrJa31y0mHFIF
-X-Google-Smtp-Source: AA6agR6sm2lKY+JA3k5mlxAVz5J52+i9ijPZkTKPD4Y+WKA4rAAL23NMrA67YEhm1KyMI8npYpW1WA==
-X-Received: by 2002:a05:6214:e88:b0:4ac:baf7:cdb3 with SMTP id hf8-20020a0562140e8800b004acbaf7cdb3mr5457292qvb.101.1663059486822;
-        Tue, 13 Sep 2022 01:58:06 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id p13-20020ac8460d000000b003436103df40sm8030222qtn.8.2022.09.13.01.58.05
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=u4ofErT5hOMpQGT6cywWVhLXqVmQE7e7Op5vJ0iCaOQ=;
+        b=sQRFPyZ6c1jyJek2aH2GGp527FrLzZiFcZnzqruVbQ1hYxvKLZDgJFEp0UGg/dLK82
+         7aBfWan2z+49u7xVgM/25YaMVSiMkpA5lbCLlPKWTdMp0MwWJpeyGXs3CIZwjtNyBakG
+         9w6DaNZEYxruSQKuWfUQc4gAnnpSDVkNBN+uD5FpIHeooVkHBM4JlTBFUhDxqJYmrUOd
+         KQ+m2uBjDM4+I29KzhLMa7V/tIv3cS6Ehxt+OWKH1sQ5XwO9GMSjZZTWHjJrNhIoFysL
+         +kRGkCw9V/mF5C8wiTjsk8Pd1vwS5IhBfrd8nbFHvbjnxKaeOmWd+mwWdBtQD89qK7dp
+         R20w==
+X-Gm-Message-State: ACgBeo0/dtOT9AYmdUNGW2Rpeo2yTFTBrAgIdD3P4cViUQafAVAeJKQX
+        lJlWupWqLnEp16ATXhZSOlqQPQ==
+X-Google-Smtp-Source: AA6agR7NJFeL1td8GL5y3jCMjrfmIttwAxs8dqRjcGTJeYaHGfS5MNlGiXG2PnvftRkB5RfgEcW7rQ==
+X-Received: by 2002:a5d:5c08:0:b0:228:e139:43f3 with SMTP id cc8-20020a5d5c08000000b00228e13943f3mr17794182wrb.396.1663059510234;
+        Tue, 13 Sep 2022 01:58:30 -0700 (PDT)
+Received: from [10.119.22.201] ([89.101.193.70])
+        by smtp.gmail.com with ESMTPSA id c18-20020adffb12000000b00226f0a00348sm9726306wrr.111.2022.09.13.01.58.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 01:58:06 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-3487d84e477so131507767b3.6;
-        Tue, 13 Sep 2022 01:58:05 -0700 (PDT)
-X-Received: by 2002:a81:4983:0:b0:345:20ee:589d with SMTP id
- w125-20020a814983000000b0034520ee589dmr25456140ywa.383.1663059485244; Tue, 13
- Sep 2022 01:58:05 -0700 (PDT)
+        Tue, 13 Sep 2022 01:58:29 -0700 (PDT)
+Message-ID: <5f8ca612-5a89-db3a-42f3-a0613c192a87@linaro.org>
+Date:   Tue, 13 Sep 2022 10:58:28 +0200
 MIME-Version: 1.0
-References: <20220913084434.1191619-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220913084434.1191619-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Sep 2022 09:57:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX9PCdTFsY_H6dqPVFs82HGqWzydhBaFNmL3_YR6vvWzQ@mail.gmail.com>
-Message-ID: <CAMuHMdX9PCdTFsY_H6dqPVFs82HGqWzydhBaFNmL3_YR6vvWzQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3 clock
- multiplier and divider values
-To:     biju.das.jz@bp.renesas.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH v2 06/13] dt-bindings: serial: atmel,at91-usart: Add
+ SAM9260 compatibles to SAM9x60
+Content-Language: en-US
+To:     Sergiu.Moga@microchip.com, robh@kernel.org
+Cc:     lee@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Claudiu.Beznea@microchip.com, richard.genoud@gmail.com,
+        radu_nicolae.pirea@upb.ro, gregkh@linuxfoundation.org,
+        broonie@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        jirislaby@kernel.org, admin@hifiphile.com,
+        Kavyasree.Kotagiri@microchip.com, Tudor.Ambarus@microchip.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220906135511.144725-1-sergiu.moga@microchip.com>
+ <20220906135511.144725-7-sergiu.moga@microchip.com>
+ <9aa29d74-b1fc-d00e-dee4-57f277a366ab@linaro.org>
+ <c30cc112-0fb8-01e6-1bb8-eed7db0b9049@microchip.com>
+ <20220909013644.GA3731620-robh@kernel.org>
+ <b6b044f6-de87-e85b-0b51-e957b90622ab@microchip.com>
+ <aa6d8c7d-1723-7674-2142-a5aafe30e570@linaro.org>
+ <77d38e3f-6d8c-dbb1-2e66-c768d95b5e35@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <77d38e3f-6d8c-dbb1-2e66-c768d95b5e35@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On 12/09/2022 15:09, Sergiu.Moga@microchip.com wrote:
+> On 12.09.2022 13:44, Krzysztof Kozlowski wrote:
+>> On 12/09/2022 09:45, Sergiu.Moga@microchip.com wrote:
+>>> On 09.09.2022 04:36, Rob Herring wrote:
+>>>> On Thu, Sep 08, 2022 at 03:15:44PM +0000, Sergiu.Moga@microchip.com wrote:
+>>>>> On 08.09.2022 15:30, Krzysztof Kozlowski wrote:
+>>>>>> On 06/09/2022 15:55, Sergiu Moga wrote:
+>>>>>>> Add the AT91SAM9260 serial compatibles to the list of SAM9X60 compatibles
+>>>>>>> in order to highlight the incremental characteristics of the SAM9X60
+>>>>>>> serial IP.
+>>>>>>>
+>>>>>>> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+>>>>>>> ---
+>>>>>>>
+>>>>>>>
+>>>>>>> v1 -> v2:
+>>>>>>> - Nothing, this patch was not here before
+>>>>>>>
+>>>>>>>
+>>>>>>>     Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml | 2 ++
+>>>>>>>     1 file changed, 2 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml b/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml
+>>>>>>> index b25535b7a4d2..4d80006963c7 100644
+>>>>>>> --- a/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml
+>>>>>>> +++ b/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml
+>>>>>>> @@ -26,6 +26,8 @@ properties:
+>>>>>>>           - items:
+>>>>>>>               - const: microchip,sam9x60-dbgu
+>>>>>>>               - const: microchip,sam9x60-usart
+>>>>>>> +          - const: atmel,at91sam9260-dbgu
+>>>>>>> +          - const: atmel,at91sam9260-usart
+>>>>>>
+>>>>>> This is weird. You say in commit msg to "highlight the incremental
+>>>>>> characteristics" but you basically change here existing compatibles.
+>>>>>
+>>>>>
+>>>>> Does "show that they are incremental IP's" sound better then?
+>>>>>
+>>>>>
+>>>>>> This is not enum, but a list.
+>>>>>>
+>>>>>
+>>>>>
+>>>>> What do you mean by this? I know it is a list, I specified so in the
+>>>>> commit message.
+>>>>
+>>>> You are saying that compatible must be exactly the 4 strings above in
+>>>> the order listed. You need another entry with another 'items' list.
+>>>>
+>>>> Rob
+>>>
+>>>
+>>> That is what was intended though: a list of the 4 compatibles in that
+>>> exact order. The 4th patch of this series also ensures that all 9x60
+>>> nodes have that exact list of 4 compatibles.
+>>
+>> The commit msg suggest otherwise - two options, because it is
+>> incremental... But this one is not really incremental - you require this
+>> one, only one, configuration. It's in general fine, but commit msg
+>> should reflect what you are really intend to do here and why you are
+>> doing it.
+>>
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> 
+> My apologies, I still do not understand what is wrong with the commit 
+> message. My intention was to ensure that every 9x60 usart compatible is 
+> followed by the 9260 compatibles because the 9x60 serial IP is an 
+> improvement over the 9260 one. Would you prefer it to be just the first 
+> part of the commit message: `Add the AT91SAM9260 serial compatibles to 
+> the list of SAM9X60 compatibles`? That way it would really only be what 
+> the commit does.
 
-Thanks for your patch!
+Let me rephrase it:
 
-On Tue, Sep 13, 2022 at 9:44 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> As per the HW manual (Rev.1.10 Apr, 2022) clock rate for 533MHz PLL2 and
-> PLL3 clocks should be 533 MHz, but with current multiplier and divider
-> values this resulted to 533.333333 MHz.
->
-> This patch updates the multiplier and divider values for 533 MHz PLL2 and
-> PLL3 clocks so that we get the exact (533 MHz) values.
+What your commit is doing is requiring additional fallback compatibles.
+Therefore the commit msg should answer - why do you require additional
+fallback compatibles?
 
-Does this matter? Is there anything that doesn't work (well) because
-of this?
+Incremental characteristics sound to me optional. I can increment
+sam9x60 with something or I can skip it. But you are not doing it...
+sam9x60 was already there and now you require a fallback.
 
-> Fixes: 373bd6f487562e ("clk: renesas: r9a07g044: Add SDHI clock and reset entries")
-> Fixes: f294a0ea9d12a6 ("clk: renesas: r9a07g044: Add clock and reset entries for SPI Multi I/O Bus Controller")
-> Fixes: 31d5ef2f565d23 ("clk: renesas: r9a07g044: Add M4 Clock support")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-> --- a/drivers/clk/renesas/r9a07g044-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-> @@ -113,10 +113,10 @@ static const struct {
->                 DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
->                 DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
->                 DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
-> -               DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 1, 3),
-> +               DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 533, 1600),
-
-I highly doubt the actual hardware is not using a by-3 divider....
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
