@@ -2,149 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC25CC54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 10:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B2AC6FA89
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 10:22:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230108AbiIMKNL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 06:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35994 "EHLO
+        id S231360AbiIMKWB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 06:22:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231314AbiIMKNK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 06:13:10 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC64D5B79C;
-        Tue, 13 Sep 2022 03:13:07 -0700 (PDT)
-Received: from [185.122.133.20] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1oY2ue-00042A-QF; Tue, 13 Sep 2022 12:13:04 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Jagan Teki <jagan@edgeble.ai>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        Jagan Teki <jagan@edgeble.ai>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Finley Xiao <finley.xiao@rock-chips.com>
-Subject: Re: [PATCH v4 05/13] clk: rockchip: Add clock controller support for RV1126 SoC.
-Date:   Tue, 13 Sep 2022 12:13:03 +0200
-Message-ID: <2196383.iZASKD2KPV@phil>
-In-Reply-To: <20220907160207.3845791-6-jagan@edgeble.ai>
-References: <20220907160207.3845791-1-jagan@edgeble.ai> <20220907160207.3845791-6-jagan@edgeble.ai>
+        with ESMTP id S231496AbiIMKWB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 06:22:01 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A149856BB5
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 03:21:59 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1oY332-0002tb-SQ; Tue, 13 Sep 2022 12:21:44 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1oY333-000TmE-EV; Tue, 13 Sep 2022 12:21:44 +0200
+Received: from mfe by dude02.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1oY331-004pJx-DS; Tue, 13 Sep 2022 12:21:43 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com
+Cc:     linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [RFC PATCH 0/2] Propose critical clocks
+Date:   Tue, 13 Sep 2022 12:21:39 +0200
+Message-Id: <20220913102141.971148-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jagan,
+Hi,
 
-Am Mittwoch, 7. September 2022, 18:01:59 CEST schrieb Jagan Teki:
-> Clock & Reset Unit (CRU) in RV1126 support clocks for CRU
-> and CRU_PMU blocks.
-> 
-> This patch is trying to add minimal Clock-Architecture Diagram's
-> inferred from [1] authored by Finley Xiao.
-> 
-> [1] https://github.com/rockchip-linux/kernel/blob/develop-4.19/drivers/clk/rockchip/clk-rv1126.c
-> 
-> Cc: linux-clk@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Jagan Teki <jagan@edgeble.ai>
-> ---
+this proposal is to mark clocks as critical. It is somehow inspired by
+the regulator-always-on property. Since sometimes we can end in circular
+dependcies if we wanna solve the dependcies for a specific clock
+provider.
 
-[...]
+The property is generic so it can be used by every hw clock provider. So
+it can be seen as generic implementation to [1].
 
-> +static void __init rv1126_pmu_clk_init(struct device_node *np)
-> +{
-> +	struct rockchip_clk_provider *ctx;
-> +	void __iomem *reg_base;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("%s: could not map cru pmu region\n", __func__);
-> +		return;
-> +	}
-> +
-> +	ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
-> +	if (IS_ERR(ctx)) {
-> +		pr_err("%s: rockchip pmu clk init failed\n", __func__);
-> +		return;
-> +	}
-> +
-> +	rockchip_clk_register_plls(ctx, rv1126_pmu_pll_clks,
-> +				   ARRAY_SIZE(rv1126_pmu_pll_clks),
-> +				   RV1126_GRF_SOC_STATUS0);
-> +
-> +	rockchip_clk_register_branches(ctx, rv1126_clk_pmu_branches,
-> +				       ARRAY_SIZE(rv1126_clk_pmu_branches));
-> +
-> +	rockchip_register_softrst(np, 2, reg_base + RV1126_PMU_SOFTRST_CON(0),
-> +				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +
-> +	rockchip_clk_of_add_provider(np, ctx);
-> +}
-> +
-> +CLK_OF_DECLARE(rv1126_cru_pmu, "rockchip,rv1126-pmucru", rv1126_pmu_clk_init);
+[1] https://lore.kernel.org/linux-clk/20220913092136.1706263-1-peng.fan@oss.nxp.com/
 
-both of these want to be platform-drivers nowadays.
+Marco Felsch (2):
+  clk: add support for critical always-on clocks
+  arm64: dts: imx8mm-evk: mark 32k pmic clock as always-on
 
-Take a look at rk3399 and rk3568 for reference.
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi |  1 +
+ drivers/clk/clk.c                             | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-Thanks
-Heiko
-
-> +
-> +static void __init rv1126_clk_init(struct device_node *np)
-> +{
-> +	struct rockchip_clk_provider *ctx;
-> +	void __iomem *reg_base;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("%s: could not map cru region\n", __func__);
-> +		return;
-> +	}
-> +
-> +	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	if (IS_ERR(ctx)) {
-> +		pr_err("%s: rockchip clk init failed\n", __func__);
-> +		iounmap(reg_base);
-> +		return;
-> +	}
-> +
-> +	rockchip_clk_register_plls(ctx, rv1126_pll_clks,
-> +				   ARRAY_SIZE(rv1126_pll_clks),
-> +				   RV1126_GRF_SOC_STATUS0);
-> +
-> +	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
-> +				     mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
-> +				     &rv1126_cpuclk_data, rv1126_cpuclk_rates,
-> +				     ARRAY_SIZE(rv1126_cpuclk_rates));
-> +
-> +	rockchip_clk_register_branches(ctx, rv1126_clk_branches,
-> +				       ARRAY_SIZE(rv1126_clk_branches));
-> +
-> +	rockchip_register_softrst(np, 15, reg_base + RV1126_SOFTRST_CON(0),
-> +				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +
-> +	rockchip_register_restart_notifier(ctx, RV1126_GLB_SRST_FST, NULL);
-> +
-> +	rockchip_clk_protect_critical(rv1126_cru_critical_clocks,
-> +				      ARRAY_SIZE(rv1126_cru_critical_clocks));
-> +
-> +	rockchip_clk_of_add_provider(np, ctx);
-> +}
-> +
-> +CLK_OF_DECLARE(rv1126_cru, "rockchip,rv1126-cru", rv1126_clk_init);
-
-
-
+-- 
+2.30.2
 
