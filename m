@@ -2,115 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 258DDC6FA82
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 08:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF262C6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 08:44:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbiIMImS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 04:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46192 "EHLO
+        id S229625AbiIMIox (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 04:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbiIMImR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 04:42:17 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00934BC98
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 01:42:15 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id r66-20020a1c4445000000b003b494ffc00bso401098wma.0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 01:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date;
-        bh=uHI+VOCSCW3ZSm7NbyJIsIOScib0Mbu91hSQOT5LSy0=;
-        b=eSoqJr59xHFMg2AJgVk4/HbOsxFWh/jZ/SJ45WAQwM8jwVBs34X3kBdtRzqWjx8Bwj
-         Nt19UhRQWlv/a24OhIbAUhRLhvfCF7OnE+eFRRag7CJnmgljdYN2rs0G9yAvzNfoSpBi
-         upLYcF2uSTm68WRBhmo27+El3PT4KIVimNltE3qgLw+pyRj9XwFFFZnuDFYt3rPa0IBk
-         rmvKdXzhucSd1JxFVBl0qQNqt7OYrKmZfs2rVylmSL8rel+D7X3iBqep/t++g3c3ZqbZ
-         WHZ9hW7uViUVY1pIm88fbiJ0EC/Fo3DPlVQbzv4HNYKjNoqPXkOWG9A8n3D1Mm2zHMP4
-         9tHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date;
-        bh=uHI+VOCSCW3ZSm7NbyJIsIOScib0Mbu91hSQOT5LSy0=;
-        b=WI+pOw/Bxlj96pRAiutbsLly/lDWs7UXcSzEyRouTDQQEYVjaB8c3N2Y116y8k8K/0
-         D5UGiTZ291/vIBTZO2LfAkoBPRbsuvnjtbK+VIwg4bSKLaXw6ZEelTi8n2LJiz0yUNtk
-         Cjkq/WJbjMD7l/y5+tQRnxBknHQSmR69Am25L9+rhaAxhJxvXKafa7AqDFxwYLOJZ3Jv
-         2YljZHgYDop33UySmk9CNP4hxi2CkAzuOoiNjWiP13jGrf5purvMxyq2KubRIz57NA9I
-         SK6CtzlqmQ1QLfIYS4zLfNtAHEeoBm9bSCzP3CDyIGNAoDYuY+J4nGLS9PNVXQ6+81TW
-         4Kzw==
-X-Gm-Message-State: ACgBeo0Kg4P5wKlLz2Omk53Jr9jBxW692y1ekMnGmDSuqeQP/2puLCuM
-        Rxes92fc43VHs4fc0IEsQS3D3miT2gUHrg==
-X-Google-Smtp-Source: AA6agR5eeVrU4xs/t3Q0Lg2UG9Xin+2EdtdiWEL1NX1uRclOgWPZz0YnCK8lU4TbOhwQfAarcizn3A==
-X-Received: by 2002:a1c:6a09:0:b0:3b4:92fa:8b27 with SMTP id f9-20020a1c6a09000000b003b492fa8b27mr1510521wmc.115.1663058534486;
-        Tue, 13 Sep 2022 01:42:14 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id bw2-20020a0560001f8200b00228c483128dsm7085049wrb.90.2022.09.13.01.42.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Sep 2022 01:42:13 -0700 (PDT)
-References: <cc80cda0-4dda-2e3e-3fc8-afa97717479b@gmail.com>
- <1jk06rtlrv.fsf@starbuckisacylon.baylibre.com>
- <09befaaf-b34a-aeda-5dd6-6bfae4b01163@amlogic.com>
- <1jo7vswmjw.fsf@starbuckisacylon.baylibre.com>
- <52b07db2-7edb-0373-c6d2-df67917f4af7@gmail.com>
-User-agent: mu4e 1.8.7; emacs 28.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>, Yu Tu <yu.tu@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH RESEND] clk: meson: pll: copy retry workaround from
- vendor driver
-Date:   Tue, 13 Sep 2022 10:42:00 +0200
-In-reply-to: <52b07db2-7edb-0373-c6d2-df67917f4af7@gmail.com>
-Message-ID: <1jleqn3btm.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S231202AbiIMIon (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 04:44:43 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E68C610FCB;
+        Tue, 13 Sep 2022 01:44:41 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.93,312,1654527600"; 
+   d="scan'208";a="134733866"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 13 Sep 2022 17:44:41 +0900
+Received: from localhost.localdomain (unknown [10.226.93.88])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5FCAC424B0EA;
+        Tue, 13 Sep 2022 17:44:38 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3 clock multiplier and divider values
+Date:   Tue, 13 Sep 2022 09:44:34 +0100
+Message-Id: <20220913084434.1191619-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+As per the HW manual (Rev.1.10 Apr, 2022) clock rate for 533MHz PLL2 and
+PLL3 clocks should be 533 MHz, but with current multiplier and divider
+values this resulted to 533.333333 MHz.
 
-On Tue 06 Sep 2022 at 20:29, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+This patch updates the multiplier and divider values for 533 MHz PLL2 and
+PLL3 clocks so that we get the exact (533 MHz) values.
 
-> On 06.09.2022 17:21, Jerome Brunet wrote:
->> 
->> On Tue 30 Aug 2022 at 14:33, Yu Tu <yu.tu@amlogic.com> wrote:
->> 
->>> On 2022/8/29 17:54, Jerome Brunet wrote:
->>>> [ EXTERNAL EMAIL ]
->>>> On Sun 14 Aug 2022 at 23:25, Heiner Kallweit <hkallweit1@gmail.com>
->>>> wrote:
->>>>
->>>>> On a S905X4-based system this call fails randomly.
->>>>> The vendor driver has a retry mechanism and on my system
->>>>> the second attempt is successful always.
->> 
->> Heiner, ideally commit message should not be about 'your' system
->> but describe what the system actually is. This would be more useful down
->> the road.
->> 
->> Based on Yu Tu feedback I'd propose
->> 
->> '
->> The PCIe PLL locking may be unreliable under some circumstance, such as
->> high or low temperature. If the PLL fails to lock, reset it a try again.
->> 
->> This helps on the S905X4
->> '
->> 
->> If this is OK with you, I can amend the message before applying the
->> patch, or you may resubmit. As you wish.
->> 
->
-> Yes, please amend the commit message as suggested.
-> Thanks for the review and follow-up.
->
+Fixes: 373bd6f487562e ("clk: renesas: r9a07g044: Add SDHI clock and reset entries")
+Fixes: f294a0ea9d12a6 ("clk: renesas: r9a07g044: Add clock and reset entries for SPI Multi I/O Bus Controller")
+Fixes: 31d5ef2f565d23 ("clk: renesas: r9a07g044: Add M4 Clock support")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Applied, Thx
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 02a4fc41bb6e..bed41ed2c9ee 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -113,10 +113,10 @@ static const struct {
+ 		DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
+ 		DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
+ 		DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
+-		DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 1, 3),
++		DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 533, 1600),
+ 		DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
+ 		DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
+-		DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
++		DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 533, 1600),
+ 
+ 		DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
+ 		DEF_FIXED(".pll5_fout3", CLK_PLL5_FOUT3, CLK_PLL5, 1, 6),
+@@ -125,7 +125,7 @@ static const struct {
+ 
+ 		DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
+ 		DEF_FIXED(".clk_800", CLK_PLL2_800, CLK_PLL2, 1, 2),
+-		DEF_FIXED(".clk_533", CLK_PLL2_SDHI_533, CLK_PLL2, 1, 3),
++		DEF_FIXED(".clk_533", CLK_PLL2_SDHI_533, CLK_PLL2, 533, 1600),
+ 		DEF_FIXED(".clk_400", CLK_PLL2_SDHI_400, CLK_PLL2_800, 1, 2),
+ 		DEF_FIXED(".clk_266", CLK_PLL2_SDHI_266, CLK_PLL2_SDHI_533, 1, 2),
+ 
+-- 
+2.25.1
+
