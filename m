@@ -2,73 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA85C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 17:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69937C6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 17:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232799AbiIMRX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 13:23:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46994 "EHLO
+        id S233251AbiIMRly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 13:41:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232801AbiIMRXD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 13:23:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15ABD2A707;
-        Tue, 13 Sep 2022 09:10:19 -0700 (PDT)
+        with ESMTP id S233362AbiIMRko (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 13:40:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37F5D4A;
+        Tue, 13 Sep 2022 09:34:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9BD60B80EFD;
-        Tue, 13 Sep 2022 15:04:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC62C43142;
-        Tue, 13 Sep 2022 15:04:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A1C18B80EF6;
+        Tue, 13 Sep 2022 16:34:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10255C433C1;
+        Tue, 13 Sep 2022 16:34:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663081492;
-        bh=VxK/Ao0oo5PhdsdjlE6Wp+00HkGHmSbxr14/9GViX38=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OanizUuulcrd15daBYvthHJlgIAPnh6XM/g3pcPOUR5n+60wyn+0a745+WO2MG7b8
-         nYg86MyDT9zkigt+BjvRENI0OauaTwPXR3R05zpoh0+ucu4r41JVHLey3VlLg6A9Ut
-         d+wqGQbKU10OdiHh12O/r3RYUlas+eLdVRNd2SBy+1m9NiLyTz3SBneNImPObciAjA
-         Tcm/5eeSmCmyxyo+ThmCUQMLQ/UnUpa7uDbLbqe6sCjuL565KQsDcWxaviXP2a7l9H
-         3TuIQhfarW+Y2omQJ3WPTFw3GZTxX7Yv1e5Hc9nWobCUyWFqs05Djt2ozoddZrJdvJ
-         1v4iqb71kY9Gg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     quic_c_skakit@quicinc.com, Bjorn Andersson <andersson@kernel.org>,
-        robh@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>, quic_tdas@quicinc.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH V9 0/5] Add support for audio clock gating resets for SC7280
-Date:   Tue, 13 Sep 2022 10:04:44 -0500
-Message-Id: <166308148204.625876.2348780942882389451.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <1662005846-4838-1-git-send-email-quic_c_skakit@quicinc.com>
-References: <1662005846-4838-1-git-send-email-quic_c_skakit@quicinc.com>
+        s=k20201202; t=1663086866;
+        bh=4yJETbBECttQFo+n2AKxq36MbZwpbmzoK/+wm/PtUoQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=ToR+bgp2XhdybgWJOjGlIjjN1yZyXIFCXXbV1copC4mQWjRjM8IxiiR3cbldoDz0U
+         kkdAenU37q4bjV4zvV4As44zG1hW+gGFyf2Kj1BkBYjtY6/8XCG8bu3ZfB4eTJcJ9d
+         eQYz6AvsFyuNhyZAnzsOATFbCYbCTs1q6Rtfe73ruLnAEsNAP1cWVRvXEkuSxpFVuM
+         K/JKclINt+4fIA9JYNZK1pSAAug+GpFM0o8hXKJsNe+74PpUGxLNxuqCNQabeH4Zx9
+         sadSMDhixF8O9JMNwg8QDTOYtjhEz1iduaM2T571UjSJSWJfbqUtz1/xGo2znAYCjR
+         oNUmfjiYmeUBA==
+Date:   Tue, 13 Sep 2022 11:34:24 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        quic_rjendra@quicinc.com, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org, quic_vbadigan@quicinc.com,
+        quic_hemantk@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_skananth@quicinc.com, quic_ramkri@quicinc.com,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v6 5/5] clk: qcom: Alwaya on pcie gdsc
+Message-ID: <20220913163424.GA602259@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220912170437.GA36223@thinkpad>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Sep 2022 09:47:21 +0530, Satya Priya wrote:
-> [v9]
->   * Fix the order of SoB for [/5] and [2/5]
+On Mon, Sep 12, 2022 at 10:34:37PM +0530, Manivannan Sadhasivam wrote:
+> + Rajendra
 > 
-> [v8]
->   * Squash [1] into [5/5]
->   [1] https://patchwork.kernel.org/project/linux-arm-msm/patch/1661245527-5596-1-git-send-email-quic_c_skakit@quicinc.com/
+> On Fri, Sep 09, 2022 at 02:14:44PM +0530, Krishna chaitanya chundru wrote:
+> > Make GDSC always on to ensure controller and its dependent clocks
+> > won't go down during system suspend.
 > 
-> [...]
+> You need to mention the SoC name in subject, otherwise one cannot know for
+> which platform this patch applies to.
 
-Applied, thanks!
+Also:
 
-[2/5] clk: qcom: lpass: Handle the regmap overlap of lpasscc and lpass_aon
-      commit: 0cbcfbe50cbff331c775982a53bc4fa66c875b36
-[5/5] clk: qcom: lpass: Add support for resets & external mclk for SC7280
-      commit: 7c6a6641c24d30ab6f5456d19e15e64bea971b82
+s/Alwaya/Always/
+s/pcie/PCIe/
+s/gdsc/GDSC/ as you did in commit log
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I might use "ALWAYS_ON" in the subject to make clear this refers to a
+specific flag, not a change in the code logic, e.g.,
+
+  clk: qcom: gcc-sc7280: Mark PCIe GDSC clock ALWAYS_ON
