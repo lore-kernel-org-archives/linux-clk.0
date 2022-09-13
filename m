@@ -2,131 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5254BC6FA82
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 14:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761E0C6FA89
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 14:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232398AbiIMOF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 10:05:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48620 "EHLO
+        id S234796AbiIMO7w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 10:59:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232409AbiIMOFZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 10:05:25 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE59923BE0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 07:05:21 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id e16so20981840wrx.7
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 07:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=j9AE7+MGh6BY4KWPPr0cYlAvnl+eZtdW7kdT8YeWHs4=;
-        b=t7zXByxfhkphBgJbdx3n8AKs4Gz+pxXzSTFS5wBaNmr+qOv7Sr4XhjrvTVxIhkh0Ta
-         8L75sQ/srTNdlt0SQfgnmHvUfxDGE6fJ8Au2UWZQO8Z8ZRfdjc78TCFNuEc+nN27fwh+
-         Te4qdHZP09jJzN5Ry8mPXvWZZ+AOdbctnHFk50Qh5ITXsL/+jQadBoon96xZh+7IYJ9D
-         +ws4w5IJuKdcfoHimVRKpfIv0eIuNPrbQFMQ5h2dtVW4RZ/Lk8S6bOjtH8vCKGMmDndV
-         kPHLeVQMU1y8WZGAcKjK5Y3Wx+bALc6FahO41KIhhnhUDX7Xei0L8BPDsT6ggJFAzTLC
-         Mn+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=j9AE7+MGh6BY4KWPPr0cYlAvnl+eZtdW7kdT8YeWHs4=;
-        b=6ypfV4qz6xSwj7V7n4bqL6jArVJfZlzWielXLsqPFE78+uKhVErmqhob2jV+ixS+S4
-         NEtsqjmUIbNMHCn9aDLN3+l+CqOM/PGhnVq1H1picDmDqJl9fCYJ1hcvUOXNh7M5NTY5
-         0xqkTUNzoTIim0mbqaXSd0iqfFKbgRZuDTxzV5oSRvc91MCKqHHu1j+9zk+YCcsrdZNb
-         F+AFyqJCrNIgEjqqXWL893aVLwGaayiqHSm8bk2NRURR8gLql49dvFPInJSB0Rfg6Cm9
-         uwv6Ry4SWu9aKtdJX+0eeg5BoJMjsUcrpdsfsNhVcx+3pI9AWYdJ8GBxSljZozJudh5q
-         g+qg==
-X-Gm-Message-State: ACgBeo0KCiHw5O1/Q2mfZZcgp+6cuxUCTtVFhYPivchd5PvtHSF31fEI
-        Y86ioGemyhpNjErwZD505DhrhQ==
-X-Google-Smtp-Source: AA6agR6O1+8Y82XcsDX3f13kxIP4XvI+yu4ytmhCNVBE5REp8reHPbHcE+gUKAFUNjCG8wSqIsMnaw==
-X-Received: by 2002:a5d:648c:0:b0:22a:2c04:97a5 with SMTP id o12-20020a5d648c000000b0022a2c0497a5mr16033680wri.326.1663077919967;
-        Tue, 13 Sep 2022 07:05:19 -0700 (PDT)
-Received: from [10.119.22.201] ([89.101.193.67])
-        by smtp.gmail.com with ESMTPSA id l17-20020a5d6751000000b0021efc75914esm10468603wrw.79.2022.09.13.07.05.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 07:05:19 -0700 (PDT)
-Message-ID: <638002c3-f402-96d3-7eb8-991f7f05f703@linaro.org>
-Date:   Tue, 13 Sep 2022 16:05:18 +0200
+        with ESMTP id S235119AbiIMO7Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 10:59:16 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263457434D;
+        Tue, 13 Sep 2022 07:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1663079318; x=1694615318;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=IAvz+EPRVJUa2sWHwWF/4LgxqmMeTJl/Cd8xvZqLdzA=;
+  b=DuTbcKJYCsBH6ALs5uDL8+qarqKM5HvWdZNN6iI/25wCqslpsH2tLj+E
+   6nKlsuqMLNus1lEWxuMR4n2eOyUEyz+tFookFS+x81/ihjSZnzhfwkfP8
+   J2Loona3UkR70WkyqrxcCgZ24G3W0Erm5ek5h3KdRri79GklhgsDy1MxA
+   gUAVAIyT+YW16Y/pVU4aIvtR/1Ce/sIlemfReBsZMyvDvgzTunLFAiHt3
+   pYqZ5iCqckpHAUorNmkEvoYmogQtD23WycXwafSlWp+u7EDzDsCue+/JR
+   O99jzO4Wti0ii61nRu7IxDIFzQa4Ab3bghg9fzT7ARm3z5GpzhipD/ilk
+   A==;
+X-IronPort-AV: E=Sophos;i="5.93,313,1654585200"; 
+   d="scan'208";a="180313680"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Sep 2022 07:25:57 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Tue, 13 Sep 2022 07:25:48 -0700
+Received: from ROB-ULT-M68701.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.12 via Frontend Transport; Tue, 13 Sep 2022 07:25:43 -0700
+From:   Sergiu Moga <sergiu.moga@microchip.com>
+To:     <lee@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
+        <radu_nicolae.pirea@upb.ro>, <richard.genoud@gmail.com>,
+        <gregkh@linuxfoundation.org>, <broonie@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jirislaby@kernel.org>, <sergiu.moga@microchip.com>,
+        <admin@hifiphile.com>, <kavyasree.kotagiri@microchip.com>,
+        <tudor.ambarus@microchip.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v3 12/14] tty: serial: atmel: Only divide Clock Divisor if the IP is USART
+Date:   Tue, 13 Sep 2022 17:22:04 +0300
+Message-ID: <20220913142205.162399-13-sergiu.moga@microchip.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220913142205.162399-1-sergiu.moga@microchip.com>
+References: <20220913142205.162399-1-sergiu.moga@microchip.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH V2] dt-bindings: clock: add i.MX8M Anatop
-Content-Language: en-US
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, abelvesa@kernel.org,
-        abel.vesa@linaro.org, sboyd@kernel.org
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-References: <20220913092908.1708931-1-peng.fan@oss.nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220913092908.1708931-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/09/2022 11:29, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX8M Family features an anatop module the produces PLL to clock
-> control module(CCM) root clock. Add the missing yaml file.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V2:
->  Drop syscon, use clock-controller
->  Add fsl vendor prefix
->  Add interrupt property
-> 
->  dts update not included, so there will be dtbs_check fail.
-> 
->  .../bindings/clock/fsl,imx8m-anatop.yaml      | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> new file mode 100644
-> index 000000000000..2c0efa58d898
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/fsl,imx8m-anatop.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX8M Family Anatop Module
-> +
-> +maintainers:
-> +  - Peng Fan <peng.fan@nxp.com>
-> +
-> +description: |
-> +  NXP i.MX8M Family anatop PLL module which generates PLL to CCM root.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - fsl,imx8mm-anatop
-> +          - fsl,imx8mq-anatop
-> +      - items:
-> +          - enum:
-> +              - fsl,imx8mn-anatop
-> +              - fsl,imx8mp-anatop
-> +          - const: fsl,imx8mm-anatop
+Make sure that the driver only divides the clock divisor if the
+IP handled at that point is USART, since UART IP's do not support
+implicit peripheral clock division. Instead, in the case of UART,
+go with the highest possible clock divisor.
 
-You dropped syscon which solves part of my previous comment. I suggested
-to make it proper clock provider, so you would need clock-cells. Any
-reason it is no a real clock provider?
+Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+---
 
-Best regards,
-Krzysztof
+
+v1 -> v2:
+- Nothing, this patch was not here before and is mainly meant as both cleanup
+and as a way to introduce a new field into struct atmel_uart_port that will be
+used by the last patch to diferentiate between USART and UART regarding the
+location of the Baudrate Clock Source bitmask.
+
+
+
+v2 -> v3:
+- Use ATMEL_US_CD instead of 65535
+- Previously [PATCH 10]
+
+
+
+
+ drivers/tty/serial/atmel_serial.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index ab4a9dfae07d..ad7483230090 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -150,6 +150,7 @@ struct atmel_uart_port {
+ 	u32			rts_low;
+ 	bool			ms_irq_enabled;
+ 	u32			rtor;	/* address of receiver timeout register if it exists */
++	bool			is_usart;
+ 	bool			has_frac_baudrate;
+ 	bool			has_hw_timer;
+ 	struct timer_list	uart_timer;
+@@ -1825,6 +1826,7 @@ static void atmel_get_ip_name(struct uart_port *port)
+ 	 */
+ 	atmel_port->has_frac_baudrate = false;
+ 	atmel_port->has_hw_timer = false;
++	atmel_port->is_usart = false;
+ 
+ 	if (name == new_uart) {
+ 		dev_dbg(port->dev, "Uart with hw timer");
+@@ -1834,6 +1836,7 @@ static void atmel_get_ip_name(struct uart_port *port)
+ 		dev_dbg(port->dev, "Usart\n");
+ 		atmel_port->has_frac_baudrate = true;
+ 		atmel_port->has_hw_timer = true;
++		atmel_port->is_usart = true;
+ 		atmel_port->rtor = ATMEL_US_RTOR;
+ 		version = atmel_uart_readl(port, ATMEL_US_VERSION);
+ 		switch (version) {
+@@ -1863,6 +1866,7 @@ static void atmel_get_ip_name(struct uart_port *port)
+ 			dev_dbg(port->dev, "This version is usart\n");
+ 			atmel_port->has_frac_baudrate = true;
+ 			atmel_port->has_hw_timer = true;
++			atmel_port->is_usart = true;
+ 			atmel_port->rtor = ATMEL_US_RTOR;
+ 			break;
+ 		case 0x203:
+@@ -2283,10 +2287,21 @@ static void atmel_set_termios(struct uart_port *port,
+ 		cd = uart_get_divisor(port, baud);
+ 	}
+ 
+-	if (cd > 65535) {	/* BRGR is 16-bit, so switch to slower clock */
++	/*
++	 * If the current value of the Clock Divisor surpasses the 16 bit
++	 * ATMEL_US_CD mask and the IP is USART, switch to the Peripheral
++	 * Clock implicitly divided by 8.
++	 * If the IP is UART however, keep the highest possible value for
++	 * the CD and avoid needless division of CD, since UART IP's do not
++	 * support implicit division of the Peripheral Clock.
++	 */
++	if (atmel_port->is_usart && cd > ATMEL_US_CD) {
+ 		cd /= 8;
+ 		mode |= ATMEL_US_USCLKS_MCK_DIV8;
++	} else {
++		cd &= ATMEL_US_CD;
+ 	}
++
+ 	quot = cd | fp << ATMEL_US_FP_OFFSET;
+ 
+ 	if (!(port->iso7816.flags & SER_ISO7816_ENABLED))
+-- 
+2.34.1
+
