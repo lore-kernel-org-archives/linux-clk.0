@@ -2,94 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7037CECAAD8
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B426C6FA8A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 16:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232495AbiIMQQl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 12:16:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
+        id S231818AbiIMQdK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 12:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232481AbiIMQQY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:16:24 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD2EA2620
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 08:11:33 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id c2-20020a1c3502000000b003b2973dafb7so13617451wma.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 08:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=OhF6oMN0Vft4kYUQAEz3NIZteHA5CSketL8WhjAlGZo=;
-        b=mgZkp0qtG887ldB/nYlLfTsC8bvE7Lbjsbc1ppx1ap75vdzVux7ueu+wcbyyHG1MWm
-         esr0PcvJI+8SxAWq5LALLfR8mnLMmt5muQCa9uz6dJ/gkacyARAVg8zeGYkFgM8Nbk7m
-         F/Snv/9W43ggFYy4/czyzlhpJeI9jZIYgv60dBJUWhaiPckbXVpuGNZw3gjCQjXZ5aFB
-         8vPL7FPc8ALnGM6GDgnh/zCCmaZdngZg6AiZysat/D+kLu287RCkJMTCtYf2JrPIRSUm
-         Bq/eIIYxqhWrwuOeT5jQA9xUFNDqoWkJ42O3EIxNK9a1/S1PiaNYJrM7JrxRNw3S1gaA
-         heRA==
+        with ESMTP id S231709AbiIMQcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 12:32:52 -0400
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB238B1B9A;
+        Tue, 13 Sep 2022 08:27:50 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-127f5411b9cso33055144fac.4;
+        Tue, 13 Sep 2022 08:27:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=OhF6oMN0Vft4kYUQAEz3NIZteHA5CSketL8WhjAlGZo=;
-        b=a1LiCmL0scZbGxAI3xTDcf7zsm9WtTIDohcgfov1TnS6fegRM4b/UPFbufIdRiRBf2
-         MKVgTP7tAmij7jMJVBU5UembJeqN79JaYlKaevdnhcEifOyU1q0yC2p8pCtlScJxlpST
-         ceAOLWJKo8zM+vopmS3agmFBtbgrNU4gtFLEUmXGU9a3nLz+QtMBpDk17p4qA6phX1rK
-         Rl2Ot7lRw5ykANRmQKXXMQZVz/EZoBjxV+ED159Z7JashHvPvffBDgYxELuv2mWcsHho
-         9dJIPiG8xssU0xJ3FXhZtT8F55c9ZcaQ6ALfyKpkH9veHJ8fcZpA06xSIOjpAYRPJS8S
-         PJHA==
-X-Gm-Message-State: ACgBeo0+lf2UcGNMxIj85BJrcL/wzaMhsej60SwoIU4BQcaiuZfjTPTU
-        INMd908nHhaSBIsEBOEjeI/+P0ZgZE0xhNg2
-X-Google-Smtp-Source: AA6agR5y3YuJuE0WW8Gg+GnmXi2r7cCvaATmA0bTNzNx9FS7VSHFHfbQ1KFa0M0vZrsfnXgdc4PHnA==
-X-Received: by 2002:a05:600c:3ac9:b0:3a5:f114:1f8 with SMTP id d9-20020a05600c3ac900b003a5f11401f8mr2595338wms.204.1663079384919;
-        Tue, 13 Sep 2022 07:29:44 -0700 (PDT)
-Received: from [10.119.22.201] ([89.101.193.67])
-        by smtp.gmail.com with ESMTPSA id c1-20020a7bc001000000b003a5ffec0b91sm13200404wmb.30.2022.09.13.07.29.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 07:29:44 -0700 (PDT)
-Message-ID: <dad37ca0-a44b-59ec-0be9-fb121de12244@linaro.org>
-Date:   Tue, 13 Sep 2022 16:29:43 +0200
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=VVZjlnn+THkJqyJoRk9RBQPIt/3qGui9L2xBWv1no4A=;
+        b=DYXOx2epFovfGFJTyFufOREnqZSd/pnX/KWK7PnZ3qLZURRyDlndYPqJl/ADpBT900
+         mX0Fa0EIkc92ZJbud+WnwTiICsiTfN89X5NDDGDDpXTpXWCLtCJI3hHa1ZiEqdr5L1jX
+         zAtG895Q3mXXM8Lhq4ZAB1cB9001BqqkCGfGzVaRlNlWBiij8Gb3tfGS+U0gwWITIfBe
+         pmEbnzj7i1g1oT4+R+2vcJBkJgl7U36Ui88oyHE+Q7ilMKiZDq4rWKXQ4sfXHOQ+b6ri
+         +kJlbZO2c5CiF1PwstzVIa4iiLuXKZa13AI31x3Qobk1BZIXxEsyjzTiBFjxtoIrCubP
+         G9bw==
+X-Gm-Message-State: ACgBeo32xxELQbZK/Mwz/SXs2D6hf9n9jBYgXu8c5STJPKQ/U3MH2Sfb
+        mGXd6Nf8peegEYc6nDjB1w==
+X-Google-Smtp-Source: AA6agR6Xeph40B/AphNQeHOSVdWolS1Sqe/wRlZeFUjKP/k/ZntbKo+PcwJJyVFs2nGsVh70g3Qr4w==
+X-Received: by 2002:a05:6870:4727:b0:126:e6:3848 with SMTP id b39-20020a056870472700b0012600e63848mr2027523oaq.60.1663082781782;
+        Tue, 13 Sep 2022 08:26:21 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id x88-20020a9d20e1000000b00637032a39a3sm5977109ota.6.2022.09.13.08.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Sep 2022 08:26:21 -0700 (PDT)
+Received: (nullmailer pid 3767287 invoked by uid 1000);
+        Tue, 13 Sep 2022 15:26:20 -0000
+Date:   Tue, 13 Sep 2022 10:26:20 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: add QCOM SM6115 display clock
+ bindings
+Message-ID: <20220913152620.GA3762864-robh@kernel.org>
+References: <20220911164635.182973-1-a39.skl@gmail.com>
+ <20220911164635.182973-2-a39.skl@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v3 08/14] dt-bindings: mfd: atmel,sama5d2-flexcom: Add
- USART child node ref binding
-Content-Language: en-US
-To:     Sergiu Moga <sergiu.moga@microchip.com>, lee@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com, radu_nicolae.pirea@upb.ro,
-        richard.genoud@gmail.com, gregkh@linuxfoundation.org,
-        broonie@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        jirislaby@kernel.org, admin@hifiphile.com,
-        kavyasree.kotagiri@microchip.com, tudor.ambarus@microchip.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220913142205.162399-1-sergiu.moga@microchip.com>
- <20220913142205.162399-9-sergiu.moga@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220913142205.162399-9-sergiu.moga@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220911164635.182973-2-a39.skl@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/09/2022 16:22, Sergiu Moga wrote:
-> FLEXCOM, among other functionalities, has the ability to offer the USART
-> serial communication protocol. To have the FLEXCOM binding properly
-> validate its USART children nodes, we must reference the correct binding.
-> To differentiate between the SPI of FLEXCOM and the SPI of USART in SPI
-> mode, use the compatible string.
+On Sun, Sep 11, 2022 at 06:46:18PM +0200, Adam Skladowski wrote:
+> Add device tree bindings for display clock controller for
+> Qualcomm Technology Inc's SM6115 SoC.
 > 
-> Signed-off-by: Sergiu Moga <sergiu.moga@microchip.com>
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  .../bindings/clock/qcom,sm6115-dispcc.yaml    | 70 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,sm6115-dispcc.h    | 36 ++++++++++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm6115-dispcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+> new file mode 100644
+> index 000000000000..a6bf363b5015
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-dispcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Display Clock Controller Binding for SM6115
 
+s/Binding //
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +
+> +description: |
 
+Don't need '|' when no formatting to preserve.
 
-Best regards,
-Krzysztof
+With those fixes,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
