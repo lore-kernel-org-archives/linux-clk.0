@@ -2,183 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16900C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 09:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A573EC6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 09:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbiIMJ3X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 05:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
+        id S231500AbiIMJao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 05:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230391AbiIMJ3V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 05:29:21 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2046.outbound.protection.outlook.com [40.107.21.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90A395D138;
-        Tue, 13 Sep 2022 02:29:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Lv6AYtnaJQ4xlk+XK8YAkPleOWQZ3Jqut9YoS9W3mid09Q+I8ELAxsNKmE0xTlZMiYBI+uTxZ7Y5rPwiT0WcUdG8QztoRyifENvQSTXMGmk5RQMmM+FX1z+eH+q8GJ0vMJIOeFMUS+bjNaemnCqIKN3BgS8vV2HIxLGXJsJH/HELGIZahGWeA1WV5kO/amshgfPNGcPJpo4rG8aVLLN1Njlx+X842V6Nd0cxvoZ8TgiGWmmDkFVurkacyaAWx6eyMh2f0c1rdl6jzoKQdeopouaMnf8hlaSevpKfC7WDLINIjnglbiOdF5UeW8SpSFnz7hPVs7VEYMRzEc4rczWbFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nHebwR6qjr8IWbWSnMwJOTaF6zkAx0MmKE7inwd/SpY=;
- b=TgrkS+fayP2g66Pj+YA4rlqO8RzUzG1ohnjWAdAUfLmujCYq6cDHvb99qSnGuwA5n24Brx7EWv0UQR07ehpG2JnVqQOPz/P2D72LXFzn0Bb5sg+grsGlN9vhzaXi8JwOWeLv8a2O1S53QSu9c3zuk8/nzxw9E95ZPrAg1kpP25GSeY1w3ZKqftv+tohmv83EXUlm0JA2dIwAgE1UcdnXt9DHUUKKgIS1NlfIeU/ywdzZf3i82+wGFlWG5iwiPsiD4h6qWmJ0vV+pB1Utw26Z1tcFhVNaKiDQ4+dv4VeM7nwwIP3INGRdBf/vFlkJHeHPBu3OYeEcrTQJgqU9BnJCVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nHebwR6qjr8IWbWSnMwJOTaF6zkAx0MmKE7inwd/SpY=;
- b=dTrCMRg+Fo9/Z+Pb+M6zq2hh6Gg6QsSziEdcTmMlQWAkfqknyprFgvvlTDX0rmxJN59JGXfeiVs/4kEmR9CKuk/jcR9NDhXRmqFXJGIV85tj5NEJ/u2hUzw48OIldLKJemZLugZnk+ci7/u9T6MzSQ4o2QG/5HjTyipqApMxKMI=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AM9PR04MB8398.eurprd04.prod.outlook.com (2603:10a6:20b:3b7::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.22; Tue, 13 Sep
- 2022 09:29:18 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::75b7:64ed:bc9e:5354]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::75b7:64ed:bc9e:5354%5]) with mapi id 15.20.5612.022; Tue, 13 Sep 2022
- 09:29:17 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        "abel.vesa@linaro.org" <abel.vesa@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH V3 1/2] dt-bindings: clock: imx8m/imx93: introduce
- fsl,always-on-clocks property
-Thread-Topic: [PATCH V3 1/2] dt-bindings: clock: imx8m/imx93: introduce
- fsl,always-on-clocks property
-Thread-Index: AQHYx1IEc6GyPo7n/U2e0q7HAGhwja3dF+/w
-Date:   Tue, 13 Sep 2022 09:29:17 +0000
-Message-ID: <DU0PR04MB94170E9F1324C345A66C750688479@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20220913092136.1706263-1-peng.fan@oss.nxp.com>
- <20220913092136.1706263-2-peng.fan@oss.nxp.com>
-In-Reply-To: <20220913092136.1706263-2-peng.fan@oss.nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|AM9PR04MB8398:EE_
-x-ms-office365-filtering-correlation-id: d41d79c7-b706-4434-55d0-08da956a6e76
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: POVdU+OlX7NYh/xo9rPy9m+R9O+nDN83RoKb3TEV8tlkAZz1a3anutdan9OMqWTbN5O4NQDjntglbEKr1bjJTH4rgpJ9x4vlY/zAu9pglAnoCo3A+m9H7TGahyFVfMPLef9c3/NqxYSHdiXjsfVo5YRPqLGE2Nt7UbIUbSSBqAyI7ugoWNfSrcz7kIyZuzNMehvDnLSRPJOW91uGFsdFnNJWGj5OG0wSxY3uaqTmy1ql6HubVh+O5AhtXlvTRbWzLQsK/p2VMH7d10XanV/SotCrN8vftHlMIxBBLaRukt+IuIKpCIPenYQ5dWNZTg9NAOQ+xc6XOgtWi47ykXOeR7vBVqv2mzTmHUn6aLouH4yQK2/YYL1OsYYatEQ5aLzCfQUv4I+dkbMXiY2htCM4guNeXj3TsXM4CIEGUGUh7C1FwXTGxMs8ZYpwxTzN4ctS07Dt2jK1g1x3vm1sbFDQOdTzgZQT7D7Rnev17WXzu+l8qjBN9MI/R5ijymCAlmW1wt0mm2k2LWxEJWDiI5Kt+ZeyX5DN68BwoUp0/30Su5ayNVExcP1MemCQnR+2Ti6cT4753nJ6M3HiOApojYtF+TKFVLfDMspfbEV7RrU6CK7lnxufp+vANQKWlFnIyc3wMkhMzKQ6yXxGnErljtrRaPjCgOV+r3S/YW2oKJ6fohYHAjmGTAh0xo/sfUz7gngDf/UfvYFrfJfAL4QV1UE7rYk6AR+5laFEYk+JINveLuhHGIdkAnebBqVmXYP4uT/cVoqbQfVq2AbKJWyvW1ROYLscB+rKcMpS12wceYsSsbSmcjcxvX/0FfJmxlqnbywR
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(376002)(39860400002)(396003)(366004)(451199015)(41300700001)(86362001)(44832011)(5660300002)(52536014)(71200400001)(33656002)(7416002)(38070700005)(921005)(8936002)(478600001)(66946007)(66556008)(122000001)(8676002)(76116006)(66476007)(4326008)(316002)(55016003)(110136005)(38100700002)(54906003)(64756008)(6506007)(2906002)(83380400001)(186003)(7696005)(26005)(9686003)(66446008)(32563001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wOVS8PrmHWfoVFGh/tRi13ykBOZLvA6Wz71mIWfXDlA8PCjciP1uYM+Pr8+6?=
- =?us-ascii?Q?bcAKnob2Dj7/fAuYGg1AybxfazS+ZPc3opX43S6oLLbGEDVaP23EbiIqx5o2?=
- =?us-ascii?Q?wzwYdn6HfyyUr9wYoXaEWlHnJO9SmKE9Yp/PJ/InK4dUbGYSiX1dHnYXNQtI?=
- =?us-ascii?Q?vyNs1zHh4CuC0nA2rokSi67u8ex3qDHzYqGHCUMrnyLTM0onXgJw4bg3Mw3t?=
- =?us-ascii?Q?/XLZzhU/YBEldBiMgBYYaA/FcvZ4Q4SC51tQ/817NsNUFQEvLPk6KKVmL9Ho?=
- =?us-ascii?Q?KbySL2aySPyrRZ7d2pU54yP4+y87hgAGi+KXvHeaA/IEc0EhAKF6ZtKtcO+R?=
- =?us-ascii?Q?R0UrCBQBe1ZPnOkDPMdYQJM5z3YqW2C88OLfYFQFHhpgtN4ildWrLq3ovJxq?=
- =?us-ascii?Q?P2qd+3hBUITZKkGKXGuNXTpvYfSqt3uozdhQeFfeUJb9hHRI2lqQPE4zyFhq?=
- =?us-ascii?Q?kdmXHxxiwFT0yB0SSDHENozTy+hXmf+0vht0zA3O7nD6wsxCTemtSv2PRzfo?=
- =?us-ascii?Q?2l+Whz1+qbh1IvVjLUg5MhG9btlOSgDoMASk8PN0qI+NGSRjB13licYvLW+I?=
- =?us-ascii?Q?T7ISkNIz8u6FNf//NQW7MtG6zNTr8AqIlDgzFswruI19ubUkVWyDVjLHqFAj?=
- =?us-ascii?Q?2g8gLcl4W34zrGjhNcr66jgLWdyummxaf4/It69f5T1F8UW20Tj8m6PY4NM1?=
- =?us-ascii?Q?BlXUcHQksdBlOT1M4eqhaJyJqAPe4G1edo+8mQAlBLYrmwvN61J+qNrMfcLi?=
- =?us-ascii?Q?UdDnTqL8+zI8erelemMSCvIl60/mTACn0FXhKnVl+5/aLh97vjNKqdx2m+k2?=
- =?us-ascii?Q?RKDk/QjKMMyEoIrTLXcI/iaxv74cxnZLDstFE6/7giwGaCobxi1UFnn4DIFA?=
- =?us-ascii?Q?Ot6DQ1ZRqpJ8V+GLSay+5TrN4xboZsqCqsxPoqDdktakY4zedy+o8+1Itfoa?=
- =?us-ascii?Q?p0aNmNXXMvLjNf++yrlbIdew3VEZfg9tmm1TFXn5PCAPNBRKUFFffRp/DV7X?=
- =?us-ascii?Q?dcsbOGDLvlvzoINvkv/K6hB4ioyJCzLan6qX+NjOPrdCi6U/hGv8/W99O7Jd?=
- =?us-ascii?Q?TFrRVQu6RZnkkl9RjP69589shXZbsx2UEq/ozXCrivIk5uEdHjXXkaH4iuVd?=
- =?us-ascii?Q?0INgNj5BRzTdOSdR/KbiObiLJk1Ga/kNpURRRbfHFMPbXv+CDsOjhcradZpl?=
- =?us-ascii?Q?662VyMHb8B51cbnfzisJdLcGhLU3u+3EX/b1gryuXrZ7ksCOfLyDtI8BrJXU?=
- =?us-ascii?Q?nt9o6UW2LS2sAjPvQ4BE/1vLI4lF8bDD6KXtP4dncSqbepFLI6COzsE9FnCP?=
- =?us-ascii?Q?baisNB8t2ET2UvNCfdGH1aeA5BxXZCMgC5HjyYuGmdAfn2aFu2cz7hil1nai?=
- =?us-ascii?Q?cRC9NX6qFaNrrEngdwCsuTiXSN/vGisCs/z9T3QJDQiY4vJ73ySLLmImSDUM?=
- =?us-ascii?Q?R5CSxR2/whWpfttZu9KUj2iDFK9KjMuti8n9hK+N+ISLeyGhHeGUhjaehc2i?=
- =?us-ascii?Q?OX98IxKAqFva9KnyuLUp3J6TrgoyT4NvcregkSaDkJJsQQ7COJiuLGUp1bTk?=
- =?us-ascii?Q?pRiylDT/PgBSotYEkvfeC3txRowGQS8R6cDs3IEs?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S231318AbiIMJam (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 05:30:42 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497C75B040
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 02:30:39 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id l8so3671725wmi.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Sep 2022 02:30:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=+N+ujER/9JIZn1JwaBf+A/u+Qd6nR459uhJiQp3pSiY=;
+        b=LbGj1Sh4O3nW3xlqqLV1aGWl3y1uh/wNp/zfbXvAVph+Lt7FYiipo8a8Y4KiFCuL78
+         J1PV+v54JPkpq91+5hRbvJlPRFHOf7T7oLJxpCV8Cvgk21C/3lPVsmyl1j63yrl+G6kU
+         HCYT5psy/c7TCgQhjDk6pnhd8jkej0YNaBZU5anSGN3j7SlOaCaFXAw6oBp8/LBmRIsJ
+         IPXDMQRv2dC7cs0S/R3JXMT00c1TgTu2ktbaEq/W63UlIcHCgIvy2itCdYfk+d5u6uAc
+         KJ4gcyJcRy+QxMhIexv+9mq1rkim/71KVuBkhhmy/+VpC947qHLkV8QmWNWPiQoODPEw
+         xeHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=+N+ujER/9JIZn1JwaBf+A/u+Qd6nR459uhJiQp3pSiY=;
+        b=kHiPYGv/e4OkAzAEnMUuJLQeene1R4/JS2n6xjfCJflbXBGFfJrcpdyJ8/OZiOlDCN
+         KyLfUsHx3Dz0cQlvHnouhrzJnsEc1zA1zP3fH92mwJmDCRcIqFjh0fh8+5fT5rz7F0zn
+         Y4qXkBIfVSNxT1nXNxuazaVJMEuVarvFi3k1CD2g4W2couoquCP10+qeKdcgvzIMlraf
+         NwndvCKZziuxstdBiPW2IH262WfxO790yN/Xypvnoum8vtFeZuBqjiONlkAW+SJqE5jb
+         3XCE/DcK4smjFUDU9qk6+zMmUnKmaDILeq6AzYro7folo8FqoqM4n229yIj6m1IjC+Vv
+         Pl/A==
+X-Gm-Message-State: ACgBeo2+tApxP7cfnYXuZhUIbej5UNU2o7v7VI8O1oCchilRruTEQhyj
+        O4sLy5pQ53o3ZFVQhn7vdDmUrg==
+X-Google-Smtp-Source: AA6agR6tMZYMePH2bDBrW9HnCXYv1LS4Q6LJWPEY4WvD7F+T3PP8mN06GXtMIEfH3JWwrQ3ncYwvNg==
+X-Received: by 2002:a05:600c:4606:b0:3b4:62b3:150b with SMTP id m6-20020a05600c460600b003b462b3150bmr1714539wmo.3.1663061437795;
+        Tue, 13 Sep 2022 02:30:37 -0700 (PDT)
+Received: from [10.119.22.201] ([89.101.193.70])
+        by smtp.gmail.com with ESMTPSA id e19-20020a05600c4e5300b003a62bc1735asm13221868wmq.9.2022.09.13.02.30.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Sep 2022 02:30:37 -0700 (PDT)
+Message-ID: <f9e03913-b3dd-c82e-8c63-d912c0bbf443@linaro.org>
+Date:   Tue, 13 Sep 2022 11:30:36 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d41d79c7-b706-4434-55d0-08da956a6e76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2022 09:29:17.8042
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CqdR5dvN95eoCA8ecLKfU+8zS7LHSmFl8wZWWH4+vW8Ala1XDJ+tING+3gwJ0LtUrHDxKxEp0iueg6wg6dJN9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8398
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH v2 06/13] dt-bindings: serial: atmel,at91-usart: Add
+ SAM9260 compatibles to SAM9x60
+Content-Language: en-US
+To:     Sergiu.Moga@microchip.com, robh@kernel.org
+Cc:     lee@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Claudiu.Beznea@microchip.com, richard.genoud@gmail.com,
+        radu_nicolae.pirea@upb.ro, gregkh@linuxfoundation.org,
+        broonie@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        jirislaby@kernel.org, admin@hifiphile.com,
+        Kavyasree.Kotagiri@microchip.com, Tudor.Ambarus@microchip.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220906135511.144725-1-sergiu.moga@microchip.com>
+ <20220906135511.144725-7-sergiu.moga@microchip.com>
+ <9aa29d74-b1fc-d00e-dee4-57f277a366ab@linaro.org>
+ <c30cc112-0fb8-01e6-1bb8-eed7db0b9049@microchip.com>
+ <20220909013644.GA3731620-robh@kernel.org>
+ <b6b044f6-de87-e85b-0b51-e957b90622ab@microchip.com>
+ <aa6d8c7d-1723-7674-2142-a5aafe30e570@linaro.org>
+ <77d38e3f-6d8c-dbb1-2e66-c768d95b5e35@microchip.com>
+ <5f8ca612-5a89-db3a-42f3-a0613c192a87@linaro.org>
+ <888b8ab9-f8cb-2e1f-465c-3cb97187fce0@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <888b8ab9-f8cb-2e1f-465c-3cb97187fce0@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Missed to cc: devicetree@vger.kernel.org
+On 13/09/2022 11:19, Sergiu.Moga@microchip.com wrote:
+>>
+>> Let me rephrase it:
+>>
+>> What your commit is doing is requiring additional fallback compatibles.
+>> Therefore the commit msg should answer - why do you require additional
+>> fallback compatibles?
+>>
+> 
+> 
+> The additional fallback compatibles are required because the driver in 
+> question only knows about the atmel,at91sam9260-usart compatible. 
+> Furthermore, it is also a better representation of the fact that the 
+> serial IP of 9x60 is an improvement over the serial IP of 9260 (it 
+> contains more hardware features not yet implemented in the driver).
+> 
+> 
+>> Incremental characteristics sound to me optional. I can increment
+>> sam9x60 with something or I can skip it. But you are not doing it...
+>> sam9x60 was already there and now you require a fallback.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> So, what is your opinion on the following commit message:
+> 
+> "Fix sam9x60 compatible list by adding the sam9260 compatibles as 
+> fallback, since the atmel_serial driver only knows of the latter's 
+> compatible. The atmel_serial driver only has knowledge of the sam9260 
+> compatible because it does not have the sam9x60's serial IP specific 
+> features implemented yet and adding an empty compatible without adding 
+> support specific to that compatible would be misleading. Thus prefer the 
+> fallback mechanism in the detriment of adding an empty compatible in the 
+> driver."
 
-> Subject: [PATCH V3 1/2] dt-bindings: clock: imx8m/imx93: introduce
-> fsl,always-on-clocks property
->=20
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> i.MX8M Linux run on top of Jailhouse hypervisor, the root cell Linux shou=
-ld
-> not disable clocks used by inmate.
->=20
-> So introduce fsl,always-on-clocks for above case.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 4 ++++
-> Documentation/devicetree/bindings/clock/imx93-clock.yaml | 4 ++++
->  2 files changed, 8 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> index 458c7645ee68..4b481737895d 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> @@ -39,6 +39,10 @@ properties:
->        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx=
-8m-
-> clock.h
->        for the full list of i.MX8M clock IDs.
->=20
-> +  fsl,always-on-clocks:
-> +    description: List of the always-on-clocks.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
->  required:
->    - compatible
->    - reg
-> diff --git a/Documentation/devicetree/bindings/clock/imx93-clock.yaml
-> b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
-> index 21a06194e4a3..2b35e8af1438 100644
-> --- a/Documentation/devicetree/bindings/clock/imx93-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
-> @@ -43,6 +43,10 @@ properties:
->        See include/dt-bindings/clock/imx93-clock.h for the full list of
->        i.MX93 clock IDs.
->=20
-> +  fsl,always-on-clocks:
-> +    description: List of the always-on-clocks.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
->  required:
->    - compatible
->    - reg
-> --
-> 2.37.1
+It's fine. Also could work:
 
+"Require sam9260 fallback compatible for sam9x60, because sam9x60 is
+fully compatible with sam9260 and Linux driver requires the latter."
+
+If it fixes any observable issue like lack of driver binding to DTS, you
+can also mention that.
+
+Best regards,
+Krzysztof
