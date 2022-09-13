@@ -2,117 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C349C6FA89
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 12:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 213CEC6FA8A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Sep 2022 14:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231728AbiIMM0P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 08:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
+        id S232333AbiIMOFK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 10:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232022AbiIMM0O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 08:26:14 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0AA15833;
-        Tue, 13 Sep 2022 05:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1663071973; x=1694607973;
-  h=subject:from:to:cc:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SqOTgOuLTP/XHZhzLnF39DanQPgzEKUqFF/A9kYsZPY=;
-  b=NcXHtTmDHfGzN42eNNEIK2xpXZ04kfB4fh48O+hQpC7QTKdBKfiKyC6r
-   GQSTieZJU2vZEdw9cG0KACCzJ8PXAITb6wOJ+nIldmjj+2zsdrDOrTp4W
-   BDD82QXHkuLn0KOBLJrxJ4pCCRb5VfAnrQEZTQmIKZN/kaw5/TB0I+FpU
-   QHqMNSs9EIqAXY1YqJaDYkuN3O5Aj7z0HnkUfvvglS0NiPppHvsU6T01K
-   foQLbo4PC8mBjQXNGYzRiSiotJcv1dwmdoJISrxlQPxJkZ7l1e5v7+Zn+
-   V8Sk+9pIHZ34zujzA5BhVQBUpD0bYXaL/JJxtxbF0BuOhxeen1/U1JMNK
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,312,1654552800"; 
-   d="scan'208";a="26150113"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 13 Sep 2022 14:26:11 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 13 Sep 2022 14:26:10 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 13 Sep 2022 14:26:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1663071971; x=1694607971;
-  h=from:to:cc:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding:subject;
-  bh=SqOTgOuLTP/XHZhzLnF39DanQPgzEKUqFF/A9kYsZPY=;
-  b=LlmzZEEZLW9yctPd0crmQjRdHfkMPBZW64DBdjIU9j9SJQtyW8zPUrsW
-   mwvmughC+jJAmwSBelzViF6JJoovbD19QBokOgrBcxgkfFymUP4h2oANl
-   zVqFdsxZsWgOmH2S5jjkblxRNATI9qgTnnwnWa67wMqzDTAl83iXMi6WZ
-   99GCffUtXE03abuCb5spC0RXuOeuNZTt/xR3kL+E59R0+BaEDg1K9YewD
-   HBcxRKWe7pwmf+CGxDUwvKXxC2cAqQ4BF8rFCPIU2LMZCY+awTEuoYd5p
-   c5JeM79z3cWJhv+CFC6dTBWpzPJ7+LAkWU5n0TWaN2JJeUG/Cz3u/e5Jo
-   A==;
-X-IronPort-AV: E=Sophos;i="5.93,312,1654552800"; 
-   d="scan'208";a="26150112"
-Subject: Re: [PATCH v2 1/2] dt-bindings: clocks: imx8mp: Add ID for usb suspend clock
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 13 Sep 2022 14:26:11 +0200
-Received: from steina-w.localnet (unknown [10.123.49.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 83845280056;
-        Tue, 13 Sep 2022 14:26:10 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Li Jun <jun.li@nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Date:   Tue, 13 Sep 2022 14:26:07 +0200
-Message-ID: <8400769.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <1662547028-22279-1-git-send-email-jun.li@nxp.com>
-References: <1662547028-22279-1-git-send-email-jun.li@nxp.com>
+        with ESMTP id S231781AbiIMOFK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 10:05:10 -0400
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C1B217AB5;
+        Tue, 13 Sep 2022 07:05:09 -0700 (PDT)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-1280590722dso32422347fac.1;
+        Tue, 13 Sep 2022 07:05:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=xaesEF6Lfa7W1zJ6vFq2YbimoamHUz/4xsPADg2pI8U=;
+        b=RwUD0q3JC+YmmFu5pL2OrGMDcPn/E2pVWwX0jNlBkd5Y29iohNZWJcgS+LM8GAW6Tu
+         wiTYmgRK7F9K8Edp8rCQ4602xjIQAY25bQHmBftPUXppAIhfYwVFtJmkhSjTw8ugBSFt
+         uEMjiWxmHWVvkd57VatGuJIqqjITGF6TIQRaCs15MMp6qkJ3+I+//zEmxm777zIUwRSu
+         HgKahI4FgJ8Q4mPolNv0IvlGcyQtu4B3Hjg4wKFHyGF6A3GEgvDZdYuIuTlyWSAoUii9
+         Ap3G+UySAmoXvZXp4kX1bTA+OImCjLBlZLGPm1r7O1rHYGAdq3gzxtiFpqaYte3L8P5v
+         yIag==
+X-Gm-Message-State: ACgBeo16qvksH6PBcM7XQBaCJuCx7SUwiY5bSLsUegkstgNtDh+KWYyL
+        3LaUUz9TPouz1cxK8JBCaw==
+X-Google-Smtp-Source: AA6agR5MZRUSO5U2/vJRsvdSOp4dyqOHS68xLdRjVDmKQUFF5s/TuXl3QUxdaeD4NpNEuWbsXwlnmw==
+X-Received: by 2002:a05:6808:21a2:b0:345:d23e:d2e2 with SMTP id be34-20020a05680821a200b00345d23ed2e2mr1526157oib.273.1663077908262;
+        Tue, 13 Sep 2022 07:05:08 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q6-20020acaf206000000b003451c927e0dsm5119169oih.38.2022.09.13.07.05.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Sep 2022 07:05:07 -0700 (PDT)
+Received: (nullmailer pid 3590506 invoked by uid 1000);
+        Tue, 13 Sep 2022 14:05:07 -0000
+Date:   Tue, 13 Sep 2022 09:05:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH RESEND v11 6/8] dt-bindings: clk: baikal-t1: Add DDR/PCIe
+ reset IDs
+Message-ID: <20220913140507.GA3590451-robh@kernel.org>
+References: <20220909192616.16542-1-Sergey.Semin@baikalelectronics.ru>
+ <20220909192616.16542-7-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220909192616.16542-7-Sergey.Semin@baikalelectronics.ru>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Mittwoch, 7. September 2022, 12:37:07 CEST schrieb Li Jun:
-> usb suspend clock has a gate shared with usb_root_clk.
+On Fri, 09 Sep 2022 22:26:14 +0300, Serge Semin wrote:
+> Aside with a set of the trigger-like resets Baikal-T1 CCU provides
+> additional directly controlled reset signals for the DDR and PCIe
+> controllers. As a preparation before adding these resets support to the
+> kernel let's extent the Baikal-T1 CCU IDs list with the new IDs, which
+> will be used to access the corresponding reset controls.
 > 
-> Fixes: 9c140d9926761 ("clk: imx: Add support for i.MX8MP clock driver")
-> Cc: stable@vger.kernel.org # v5.19+
-> Signed-off-by: Li Jun <jun.li@nxp.com>
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
 > ---
->  include/dt-bindings/clock/imx8mp-clock.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/dt-bindings/clock/imx8mp-clock.h
-> b/include/dt-bindings/clock/imx8mp-clock.h index 9d5cc2ddde89..1417b7b1b7df
-> 100644
-> --- a/include/dt-bindings/clock/imx8mp-clock.h
-> +++ b/include/dt-bindings/clock/imx8mp-clock.h
-> @@ -324,8 +324,9 @@
->  #define IMX8MP_CLK_CLKOUT2_SEL			317
->  #define IMX8MP_CLK_CLKOUT2_DIV			318
->  #define IMX8MP_CLK_CLKOUT2			319
-> +#define IMX8MP_CLK_USB_SUSP			320
+> Changelog v11:
+> - This is a new patch created by detaching the DT-part from:
+> [PATCH v10 6/7] clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+>   (@Krzysztof)
+> ---
+>  include/dt-bindings/reset/bt1-ccu.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> -#define IMX8MP_CLK_END				320
-> +#define IMX8MP_CLK_END				321
-> 
->  #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
->  #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
 
-Together with the series [1] & [2] this fixes devices detection when the 
-onboard hub is in runtime suspend. For both patches:
-
-Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-[1] https://lore.kernel.org/all/1663067426-29534-1-git-send-email-jun.li@nxp.com/
-[2] https://lore.kernel.org/all/20220907144624.2810117-1-alexander.stein@ew.tq-group.com/
-
-
-
+Acked-by: Rob Herring <robh@kernel.org>
