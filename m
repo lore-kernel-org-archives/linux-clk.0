@@ -2,167 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7526ECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 04:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D21ECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 07:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbiINEHu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 00:07:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54556 "EHLO
+        id S229690AbiINHJY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 03:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiINEHt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 00:07:49 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC7B551A0C;
-        Tue, 13 Sep 2022 21:07:47 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E472eT028147;
-        Wed, 14 Sep 2022 04:07:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=cg5hk0sMZbzTKba6Tn/22wSERoQIy9AMI7eBhSapFRw=;
- b=h+rrwWEw3pFVPrmouDQliC8tjQ1WplNytVMappcNEY8x9i75Yt6OKsj5ZZXkVLdVWlD8
- sFCppdssRNltDkQtwvo0w9BrgjBiqARUpfUOucL/pnfJdfmx11oTKCFh6iaoQnyim7XW
- LVx74IqEn/wwtOLP13OvlprUS/aE1BRQ5L63WZl30TSMqfPZcRR/FImRFTQBk9RabW81
- 4qPd/70OpzxbTHF6F/8wp1b/VvWGDSeDWFjNscdIy6n3iAKWxxi6bfP9s3Cg9m97L0Ep
- pSL4BN1H5EH5ow2GhriXlwnDhWHbXZZkDCJQr4cYl3WsJex4kfvqObKYLGSFobKSgFQW 2w== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjxymh5ag-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 04:07:38 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E47b56008932
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 04:07:37 GMT
-Received: from [10.216.15.227] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 13 Sep
- 2022 21:07:32 -0700
-Message-ID: <273d4d8d-8ffd-8d7f-ef82-4287d6256fcc@quicinc.com>
-Date:   Wed, 14 Sep 2022 09:37:29 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
- support
-Content-Language: en-US
-To:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <mka@chromium.org>
-CC:     <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
-        <dianders@chromium.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "Krishna chaitanya chundru" <quic_krichai@quicinc.com>
+        with ESMTP id S229484AbiINHJY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 03:09:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E37C5A8A7;
+        Wed, 14 Sep 2022 00:09:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E655617C2;
+        Wed, 14 Sep 2022 07:09:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F179FC433D6;
+        Wed, 14 Sep 2022 07:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663139362;
+        bh=4qaiOzRX06Dcp86Qw4AyJXoFbpAVDJ6myGvrqmUKEVM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G9WzKer3Fcmv9pO/0wa7orIhM29sqOtc5CKviBsgf8TZ6WMDjGK7YybhHooprjrDQ
+         CKqyXLvhL2EqsEosAFSk9v1+9ohcxB6uC2ZhpCE8c8MiR8IhJnsWcYZtJR8ELn+oaG
+         J8kNucIEkvZk+JGmZ8uRKbOx49w7gEyhvZX4SAiLmGXHJVyOq4DsJLJpRT80j8vtKy
+         EUtAd1n/MNVtQUlpXlmdHwT3Th/if1G/cHRacpi+ekzzuXbfQFXms8FN2FajNCkxhq
+         I/gTvEDFpTBalSIygYF6vzX03gbFGbZWIjujZNYFAeOlrNnDC6hglY4B0u21mWMGuw
+         8NjTOcju0bz2w==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oYMWQ-0003Go-2T; Wed, 14 Sep 2022 09:09:22 +0200
+Date:   Wed, 14 Sep 2022 09:09:22 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc:     andersson@kernel.org, agross@kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, mka@chromium.org, johan+linaro@kernel.org,
+        quic_kriskura@quicinc.com, dianders@chromium.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: qcom: gcc-sc7280: Update the .pwrsts for usb
+ gdsc
+Message-ID: <YyF+IuoDjBZzEQxO@hovoldconsulting.com>
 References: <20220901101756.28164-1-quic_rjendra@quicinc.com>
-From:   Rajendra Nayak <quic_rjendra@quicinc.com>
-In-Reply-To: <20220901101756.28164-1-quic_rjendra@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qjEILI_Ma_qUFtxfHSk9ir22duknpOkv
-X-Proofpoint-GUID: qjEILI_Ma_qUFtxfHSk9ir22duknpOkv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-13_12,2022-09-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 malwarescore=0 bulkscore=0 adultscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2208220000 definitions=main-2209140018
+ <20220901101756.28164-3-quic_rjendra@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220901101756.28164-3-quic_rjendra@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Sep 01, 2022 at 03:47:56PM +0530, Rajendra Nayak wrote:
+> USB on sc7280 cannot support wakeups from low power states
+> if the GDSC is turned OFF. Update the .pwrsts for usb GDSC so it
+> only transitions to RET in low power.
 
-On 9/1/2022 3:47 PM, Rajendra Nayak wrote:
-> GDSCs cannot be transitioned into a Retention state in SW.
-> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
-> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
-> takes care of retaining the memory/logic for the domain when
-> the parent domain transitions to low power state.
-> The existing logic handling the PWRSTS_RET seems to set the
-> RETAIN_MEM/RETAIN_PERIPH bits but then explicitly turns the
-> GDSC OFF as part of _gdsc_disable(). Fix that by leaving the
-> GDSC in ON state.
+It seems this isn't just needed for wakeup to work. On both sc7280 and
+sc8280xp the controller doesn't resume properly if the domain has been
+powered off (i.e. regardless of whether wakeup is enabled or not).
 
-Any thoughts on this patch? We now have at-least one more user,
-PCIe [1] that wants to follow in the footsteps of USB and use RET
-state to support wake-ups from low power state.
+Are you sure there's no state that needs to be retained regardless of
+the wakeup setting?
 
-[1] https://lore.kernel.org/lkml/20220913164233.GF25849@workstation/
-
-> 
 > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 > ---
-> There are a few existing users of PWRSTS_RET and I am not
-> sure if they would be impacted with this change
+>  drivers/clk/qcom/gcc-sc7280.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
-> gdsc is actually transitioning to OFF and might be left
-> ON as part of this change, atleast till we hit system wide
-> low power state.
-> If we really leak more power because of this
-> change, the right thing to do would be to update .pwrsts for
-> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
-> I dont have a msm8974 hardware, so if anyone who has can report
-> any issues I can take a look further on how to fix it.
-> 
-> 2. gpu_gx_gdsc in gpucc-msm8998.c and
->     gpu_gx_gdsc in gpucc-sdm660.c
-> Both of these seem to add support for 3 power state
-> OFF, RET and ON, however I dont see any logic in gdsc
-> driver to handle 3 different power states.
-> So I am expecting that these are infact just transitioning
-> between ON and OFF and RET state is never really used.
-> The ideal fix for them would be to just update their resp.
-> .pwrsts to PWRSTS_OFF_ON only.
-> 
->   drivers/clk/qcom/gdsc.c | 10 ++++++++++
->   drivers/clk/qcom/gdsc.h |  5 +++++
->   2 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index d3244006c661..ccf63771e852 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -368,6 +368,16 @@ static int _gdsc_disable(struct gdsc *sc)
->   	if (sc->pwrsts & PWRSTS_OFF)
->   		gdsc_clear_mem_on(sc);
->   
-> +	/*
-> +	 * If the GDSC supports only a Retention state, apart from ON,
-> +	 * leave it in ON state.
-> +	 * There is no SW control to transition the GDSC into
-> +	 * Retention state. This happens in HW when the parent
-> +	 * domain goes down to a Low power state
-> +	 */
-> +	if (sc->pwrsts == PWRSTS_RET_ON)
-> +		return 0;
-> +
->   	ret = gdsc_toggle_logic(sc, GDSC_OFF);
->   	if (ret)
->   		return ret;
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index 5de48c9439b2..981a12c8502d 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -49,6 +49,11 @@ struct gdsc {
->   	const u8			pwrsts;
->   /* Powerdomain allowable state bitfields */
->   #define PWRSTS_OFF		BIT(0)
-> +/*
-> + * There is no SW control to transition a GDSC into
-> + * PWRSTS_RET. This happens in HW when the parent
-> + * domain goes down to a low power state
-> + */
->   #define PWRSTS_RET		BIT(1)
->   #define PWRSTS_ON		BIT(2)
->   #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> index 7ff64d4d5920..de29a034e725 100644
+> --- a/drivers/clk/qcom/gcc-sc7280.c
+> +++ b/drivers/clk/qcom/gcc-sc7280.c
+> @@ -3126,7 +3126,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
+>  	.pd = {
+>  		.name = "gcc_usb30_prim_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  	.flags = VOTABLE,
+>  };
+
+And what about gcc_usb30_sec_gdsc?
+
+Johan
