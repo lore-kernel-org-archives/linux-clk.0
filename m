@@ -2,148 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9EBC6FA82
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 13:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7F6C6FA82
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 14:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiINNqu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 09:46:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34286 "EHLO
+        id S230000AbiINOX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 10:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiINNqu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 09:46:50 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E523173909;
-        Wed, 14 Sep 2022 06:46:45 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 05F6D6601F88;
-        Wed, 14 Sep 2022 14:46:43 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663163204;
-        bh=0e5JsYnyFEHqEe70UH7Ck+yOSRtWTcD8JNxi1AtWZcE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JQ00q7ZR/U7+dNuQmv5gJo6aaitTeYqkzYTCsRXrsi8LZamLZ2elKsQbDYm/+eRC0
-         c3Tare/R6nFXlVNCdN/l07OpRjx7+7gtWjh2LF8/Nxg6QqJ4HJHHpBVkSRwXNuE0Cl
-         ifSl57dpOMADZymwbKKwTCyqpjCcuduAdxs7sQ79SDPofDbOPvNxKUHnvladZxjJHT
-         JU9rgiorLB/OGuxAcec1Td81NuhKpwdfa0OsiZxMcZi88Go5FRp9cLENSkxmTYH3WK
-         DGHo+z/dqyhV3zVqWm35h1AiSvJwLUEr2LO2FiHAxLMkt5WEIF1Rp1HZSAXiAgDNNk
-         bSlp3RL/QYBOw==
-Message-ID: <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
-Date:   Wed, 14 Sep 2022 15:46:41 +0200
+        with ESMTP id S230021AbiINOXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 10:23:18 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17E94DF33;
+        Wed, 14 Sep 2022 07:23:13 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id f20so18026186edf.6;
+        Wed, 14 Sep 2022 07:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date;
+        bh=YPvsRlxDXDggxUZEYNyLFWt8bhYF3sK51JF3gp5tKs4=;
+        b=DfG79Bxo9Mk220BFJ9GudyUmnYtx9ujPjDfk4CPL+eXGyLToURmJygHbRPzzhoDNR3
+         8LomaJpMLDvQJRGUR3oDoqNcci+/AgMCErdSECbIyUc+5VY9lV31R1bIKwnPsSJQQjfy
+         EnkuRZ+d5tje59EU/+Dg7e8FvcQLpY6Ae8qx0h5HwiVboV78l+QvJ4sb/h8gW1U5MH64
+         WPAqSvS+wU1ajlVNrxyrDUAsIfAzxV/9ePZREFKfeVlUAL6faXvGzJfWu2ZBuLv2r//G
+         VSp+IbwiAocSKQUVXQpN13LMvcYDpbTo+h5HvJ7R6wil/AnRgUWdE3CUHoTJR5/1oc/m
+         iOUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date;
+        bh=YPvsRlxDXDggxUZEYNyLFWt8bhYF3sK51JF3gp5tKs4=;
+        b=3C+A5yvQ235m+ws5TS0NlZGjEAi7alTKY18Uvie0p1Pp6NW/4n0OVhtP9BaFhjl+TR
+         luo0l57qeEeeCg4L7gJzk4pe9YP6YVXFwaUfTF6wXkpi2YTw3R//7nb1mIMkjSd9m6Ak
+         ZtnpFF3DCGVQ6JRogwUaMBPr3jKjj5y+Z/ngsQmlbcZXvzHJYjDIfjoL0uqD1wxbXt7l
+         g8ffp5yNUtRBnN02thsVOJZBic0j73+s+W+maitlpY7S3yphP78iSDU5UJngFe2pW8AH
+         AbVCf9GqUBFdTlMxRyCI5BQa8nQRh7WJzmLuPET7zNsBaSjjDyVKNcMICTZw3PKRz++8
+         aApw==
+X-Gm-Message-State: ACgBeo3WY2i6ucCEvEitgDYliMhML4Y8er1g2jMRN6T/8XuMytPPJjvl
+        8F65Luu8E6eHGudlzBMoGBs=
+X-Google-Smtp-Source: AA6agR6Adtbwg0XngCJQUdCrR1RyjdAlF3r7kqv3d0tBhYlFZhnOKN2HDiBoeS7c7nURjfuAdXlX9Q==
+X-Received: by 2002:a05:6402:ca9:b0:44e:d8f3:3d0e with SMTP id cn9-20020a0564020ca900b0044ed8f33d0emr30442006edb.397.1663165391456;
+        Wed, 14 Sep 2022 07:23:11 -0700 (PDT)
+Received: from localhost.localdomain (93-42-70-134.ip85.fastwebnet.it. [93.42.70.134])
+        by smtp.googlemail.com with ESMTPSA id 9-20020a170906310900b00779cde476e4sm7614773ejx.62.2022.09.14.07.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Sep 2022 07:23:10 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Marc Herbert <marc.herbert@intel.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Justin Tee <justin.tee@broadcom.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 0/5] Krait Documentation conversion
+Date:   Wed, 14 Sep 2022 16:22:51 +0200
+Message-Id: <20220914142256.28775-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add new bindings of
- MediaTek frequency hopping
-Content-Language: en-US
-To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>
-References: <20220914124552.16964-1-johnson.wang@mediatek.com>
- <20220914124552.16964-3-johnson.wang@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220914124552.16964-3-johnson.wang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 14/09/22 14:45, Johnson Wang ha scritto:
-> Add the new binding documentation for MediaTek frequency hopping
-> and spread spectrum clocking control.
-> 
-> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
-> ---
->   .../bindings/arm/mediatek/mediatek,fhctl.yaml | 47 +++++++++++++++++++
->   1 file changed, 47 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> new file mode 100644
-> index 000000000000..7b0fd0889bb6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek frequency hopping and spread spectrum clocking control
-> +
-> +maintainers:
-> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
-> +
-> +description: |
-> +  Frequency hopping control (FHCTL) is a piece of hardware that control
-> +  some PLLs to adopt "hopping" mechanism to adjust their frequency.
-> +  Spread spectrum clocking (SSC) is another function provided by this hardware.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8186-fhctl
-> +
-> +  reg:
-> +    maxItems: 1
+This series convert the krait-cc and the kpps-acc/gcc Documentation to
+yaml.
 
-There are still a few issues in this binding that I can immediately see...
+This series comes form a split of a bigger series that got too big and
+now hard to review.
 
-> +
-> +  clocks:
-MT8195 has 23 PLLs, MT8186 has 14, but perhaps in the future we may see
-something more than that on some newer SoC, so...
+While they are still more or less wrong and doesn't really reflect real
+driver implementation, they are converted to prepare for a fixup later
+when dts and driver are finally fixed.
 
-   clocks:
-     maxItems: 30
+Minor changes are done to the kpss-gcc driver and minor fixes are done to
+the various affected dts to fix dtbs_check warning with the new introduced
+schema.
 
-> +    description: Phandles of the PLL with FHCTL hardware capability.
-> +
-> +  mediatek,hopping-ssc-percents:
-> +    description: The percentage of spread spectrum clocking for one PLL.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
+Also fix kpss-acc dtbs_check warning.
 
-This is an array, so...
-$ref: /schemas/types.yaml#/definitions/uint32-array
+v5:
+- rebase on top of linux-next/master
+v4:
+- Fix error from kpss-acc schema
+- Fix dtbs_check warning from kpss-acc
+- Improve kpss-gcc for apq8064
+v3:
+- Update all Sob
+- Rework kpss-gcc Documentation with the new finding
+- Fix dtbs_check warning
+v2:
+- Fix bot error by adding missing #clock-cells
 
-...also, maxItems?
+Changelog for previous series "Modernize rest of the krait drivers"
+that was split to smaller series (only Documentation changes):
+v7:
+- Rework kpss-gcc Documentation (split patch for pure conversion and
+  tweaks)
+v6:
+- Address comments from Rob
+- Fix warning from make dtbs_check
+v5:
+- Address comments from Krzysztof
+v4:
+- Fix more dt-bindings bug errors
+v3:
+- Split Documentation files for kpss and krait-cc
+v2:
+- fix missing new line on patch 16 (krait-cc patch)
 
-and you should also specify:
+Christian Marangi (5):
+  dt-bindings: clock: Convert qcom,krait-cc to yaml
+  dt-bindings: arm: msm: Convert kpss-acc driver Documentation to yaml
+  dt-bindings: arm: msm: Rework kpss-gcc driver Documentation to yaml
+  ARM: dts: qcom: fix various wrong definition for kpss-gcc node
+  ARM: dts: qcom: fix various wrong definition for kpss-acc
 
-default: 0   <- because, by default, SSC is disabled
-minimum: 0   <- because this is the minimum accepted value
+ .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 ----------
+ .../bindings/arm/msm/qcom,kpss-acc.yaml       | 93 +++++++++++++++++++
+ .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ---------
+ .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 90 ++++++++++++++++++
+ .../bindings/clock/qcom,krait-cc.txt          | 34 -------
+ .../bindings/clock/qcom,krait-cc.yaml         | 59 ++++++++++++
+ arch/arm/boot/dts/qcom-apq8064.dtsi           | 21 ++++-
+ arch/arm/boot/dts/qcom-ipq8064.dtsi           | 12 ++-
+ arch/arm/boot/dts/qcom-mdm9615.dtsi           |  2 +-
+ arch/arm/boot/dts/qcom-msm8660.dtsi           |  2 +-
+ arch/arm/boot/dts/qcom-msm8960.dtsi           | 15 ++-
+ 11 files changed, 287 insertions(+), 134 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
 
-
-Regards,
-Angelo
-
-> +    maximum: 8
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8186-clk.h>
-> +    fhctl: fhctl@1000ce00 {
-> +        compatible = "mediatek,mt8186-fhctl";
-> +        reg = <0x1000c000 0xe00>;
-> +        clocks = <&apmixedsys CLK_APMIXED_MSDCPLL>;
-> +        mediatek,hopping-ssc-percents = <3>;
-> +    };
+-- 
+2.37.2
 
