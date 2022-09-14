@@ -2,158 +2,199 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17CEECAAD3
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 11:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5C1ECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 12:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbiINLnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 07:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56262 "EHLO
+        id S230148AbiINMRp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 08:17:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbiINLnA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 07:43:00 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C8B5A2E2;
-        Wed, 14 Sep 2022 04:42:55 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28EBSxeD020543;
-        Wed, 14 Sep 2022 11:42:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=XikydJb6L4KpQ5cTZXh1weE6/Yjs8UUhmLflXXlDdlY=;
- b=BwLta5X+tw0JUz4jxvNGbG77FaliJ2/FNRhBsG0DRTgiB9u42HgfSWTfiF2sXBkFMlYW
- FxW+jPfBzIuyZipsc2KqjvaUxSCtb0GhQmnAI9N3vUaHOqOSH6TF3bRdE26uU1C/Gb27
- D8ivDihSI3R8E7/JuiDHWhKIbyQCivH8yyIqPmhUr6EDwwVlAQwm/OaLJ95oscBSRVAv
- jklEKkBG3xk7CpgESFDjIDhGsLCFF8+B5H/8uMQozGed8eXXo54FPoNGbCq2Aw8jmYwN
- wpf56V3V2n+2OhbGZhy9pl3viZRZGvH0ciH0u5TWxgEj7DocQPUHMtwnP3Uv3c1GBwWb sw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjxyuact4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 11:42:47 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28EBgkFl013987
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 11:42:46 GMT
-Received: from [10.216.31.23] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 14 Sep
- 2022 04:42:42 -0700
-Message-ID: <1b0ffb68-d437-1148-4ee9-47b6dd51db7f@quicinc.com>
-Date:   Wed, 14 Sep 2022 17:12:39 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 3/3] clk: qcom: gcc-sc7280: Update the .pwrsts for usb
- gdsc
+        with ESMTP id S230139AbiINMRn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 08:17:43 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9174A80024;
+        Wed, 14 Sep 2022 05:17:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1663157860; x=1694693860;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=UsE+4OSOyWX5r2v0/Ar7HNnfrnCDRyeKAkfLtRerkzA=;
+  b=12ERWHf2nBMh551CsORR3vd7UH5dCKfp+EJB5h8SPtgM2r0sacuAfJBR
+   zH3JjMB+eRTcPqjC8hm5PCRzunG37zvpXIrfDxuwmFnTruQRVXVqhJj/B
+   iMJB7YRjpiuxwYYIwbq3V/wBOFGQ7O501XPSMnGa0dfQzqcAIqoKVOzvw
+   oWBoYiG3IRMLLmHanZj2/V/+8r1OAxX14sEtLJfXqDlcdu83rrnVWW57U
+   Hk5tystLpWmWxPHbJ25zIWddUanNtJq4+AbHo47ZUoJJ13A0cGMlS0wo9
+   t3sjKpL4wbJseHn+GOjtLvqVvd8fKLxsZNGM1Nl7EXjGiTgVxVWI47kdG
+   g==;
+X-IronPort-AV: E=Sophos;i="5.93,315,1654585200"; 
+   d="scan'208";a="180347216"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Sep 2022 05:17:39 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Wed, 14 Sep 2022 05:17:31 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12 via Frontend
+ Transport; Wed, 14 Sep 2022 05:17:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d2zmwUrub4q7/YHdeRE1E7Ku4Z/ORhxG0vcXkPU7VFiryTGVKREAFCRBtJJrPEt3lKSDiIWnow7HWgizvN4niNu4lTy0tFAA+lJ6LLYUywDo4dCpRaWTW3rUN4BDJQtCufIJlvmmqNv+ZbjuhEhl49iZhW7pZolb/AyjtQdpOeI1kEwL9QCo6kQ3fQQsj6XuTys96My/fkLWcOHAcOWPuWJq4GbBg18vep6zAIkP+OCiJ656G1Tbjo1yg6HXD/v67kxljUt0NvLAyjMf57i3iMOnhHPJ3Fy2+DElc+KeBvshteB/POKlHwwzs3pA/LrLVOacdDO+rC735ZJ4fEf/qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UsE+4OSOyWX5r2v0/Ar7HNnfrnCDRyeKAkfLtRerkzA=;
+ b=ZIfRBXnL+uM9gn/NbTKdHhBslB4IW8goQa5Qw4FLpIbpvsNrjs9pA9a9UAc5TsgmS3tvm2WjBHCUXVyUDxp20yF3wNENyet22t2nlJITsOdt1drXRI3s4NQrEAIzq0PjmKrvEJOg2zhG6RCRbTzU10MLui5nFiBjLlclTSG85ihuP2HgKhR13ijXQqZgHSvcLufM0GLp1sQ4gYN3rM9nOa/tFjH5J0dGlJ+ZdmydhGwNJdbTU1vjGMiCYeaREPXps339Ucgsh7i1cK6joH1YPwvm9i+x5wyhIjPVup9/+S9MCkGSxMMYEnZ5FwK6swsq6qqyaDkRaHzQL3O+B+QODg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UsE+4OSOyWX5r2v0/Ar7HNnfrnCDRyeKAkfLtRerkzA=;
+ b=k69xx3ikKv6R6Zkb5VRiR8aIpttD285Cpgx8orVnduMRkRy0K3vcrrdf9zlSUozQggn17LZTcbzyMmv5eoCvAYSWzFAoD/oWdxpXChAw1ljAm5QVqIWQIkp8Udm9+KIHY5uuEiMqRrcNqr0XpT6/i9f/D5bQlPf7tTYy4C/N/5U=
+Received: from BYAPR11MB2758.namprd11.prod.outlook.com (2603:10b6:a02:c9::11)
+ by SJ0PR11MB4880.namprd11.prod.outlook.com (2603:10b6:a03:2af::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.20; Wed, 14 Sep
+ 2022 12:17:26 +0000
+Received: from BYAPR11MB2758.namprd11.prod.outlook.com
+ ([fe80::e8ff:82ac:b76d:c61c]) by BYAPR11MB2758.namprd11.prod.outlook.com
+ ([fe80::e8ff:82ac:b76d:c61c%4]) with mapi id 15.20.5612.022; Wed, 14 Sep 2022
+ 12:17:26 +0000
+From:   <Sergiu.Moga@microchip.com>
+To:     <ilpo.jarvinen@linux.intel.com>
+CC:     <lee@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Claudiu.Beznea@microchip.com>,
+        <radu_nicolae.pirea@upb.ro>, <richard.genoud@gmail.com>,
+        <gregkh@linuxfoundation.org>, <broonie@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jirislaby@kernel.org>, <admin@hifiphile.com>,
+        <Kavyasree.Kotagiri@microchip.com>, <Tudor.Ambarus@microchip.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 12/14] tty: serial: atmel: Only divide Clock Divisor if
+ the IP is USART
+Thread-Topic: [PATCH v3 12/14] tty: serial: atmel: Only divide Clock Divisor
+ if the IP is USART
+Thread-Index: AQHYx3zzMhzVjPNTcEWjX8niX8lETq3ew78AgAAVLQA=
+Date:   Wed, 14 Sep 2022 12:17:26 +0000
+Message-ID: <701a3931-6718-48cf-5e85-03e94c8f2671@microchip.com>
+References: <20220913142205.162399-1-sergiu.moga@microchip.com>
+ <20220913142205.162399-13-sergiu.moga@microchip.com>
+ <13397da3-274f-7180-d185-a4377d251978@linux.intel.com>
+In-Reply-To: <13397da3-274f-7180-d185-a4377d251978@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Johan Hovold <johan@kernel.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-CC:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <mka@chromium.org>, <johan+linaro@kernel.org>,
-        <dianders@chromium.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220901101756.28164-1-quic_rjendra@quicinc.com>
- <20220901101756.28164-3-quic_rjendra@quicinc.com>
- <YyF+IuoDjBZzEQxO@hovoldconsulting.com>
- <33af27a0-85b9-4301-62d9-24132989e26e@quicinc.com>
- <32211aef-6b87-ab5b-637b-7cf9610f6926@quicinc.com>
- <YyGZ2D9LYYyF31Ug@hovoldconsulting.com>
-From:   Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-In-Reply-To: <YyGZ2D9LYYyF31Ug@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7NQOtdRxCcxZ81V_PNN-PVwA1rjQb4FI
-X-Proofpoint-ORIG-GUID: 7NQOtdRxCcxZ81V_PNN-PVwA1rjQb4FI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-14_05,2022-09-14_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- clxscore=1015 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2208220000 definitions=main-2209140057
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR11MB2758:EE_|SJ0PR11MB4880:EE_
+x-ms-office365-filtering-correlation-id: 3485532b-fa1e-424c-67f0-08da964b160c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 1V1aEG7vQ/EkUvJ1A5b5ZO4RPysieCMKp2fQNmNR1sGDUYXqyCKtF43Q5e2z8Z1JoBGO11fzEV9B6hxjAKSNnJm1QHXojtavUhLyk6clTpyq74IR6WYMje7C9dmJ/bkGA9Tx/+4iD9CyWfNICuu4nVU+vFWXwr+XvN1mZpeaNgiJveb2ae58FmUYwNxQm34tlRSZyoqz3NcdN8F7lUDP2zImkuA5lmxDY7MAmNAeGPZSMrWWCXQS9u9O7HXxHX2tkvNTE1/iz2yael4iCLoDze/u51EH/kZ6KqA6dhwFbU1tahNK8GnwqSKpN3R44RIBRkH8DaV8SIwQdkUHcoCWFc4zK5TV07gM5/0GbImvBYFr5AmicOWVmAy5PWznDfbmwv9ExHD8aBMnVIYFJ/aEmJfXP78q8eFnnZVZ+BuhO7u2n0A33uOFBf8FGcf1YmTBb9ESigywg+UbsmIoWYLTsV2fP40HdYqCuWbTV6CXbws0rMeJ943rMq+85V2akFC1GCBbRU0F3AFBmqITN0OeHxp9OnGhd2qjO+FPsmzgy58PAHcVndqMDCJscMTPg7EBACzyhmg+ekfcgXGMNfxq9HoQzwaEKDNiwbl8FsHvwOMpmDoqBap9lSbAFD6hJdfGRK7DlSnDqR8rjsBvzpBcQSAq/ZhU2fmhAZHznKmc7uzrs4FyhaQELP33je0/wosbruKTSdolVuxKZTaBICWFTxz0nmiErEmT7uc/2kk86TS8PgbRD3PHEiTjeg/x0PHG08TxBJsWxhD9gvzdxNDGhUs8P70Oyj88idl+bwgPpcU=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2758.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(346002)(39860400002)(396003)(136003)(366004)(451199015)(2906002)(316002)(66446008)(31696002)(6512007)(91956017)(41300700001)(4326008)(64756008)(8936002)(38070700005)(6486002)(2616005)(7416002)(5660300002)(71200400001)(186003)(38100700002)(8676002)(54906003)(6506007)(76116006)(83380400001)(31686004)(122000001)(86362001)(36756003)(66556008)(66946007)(66476007)(26005)(6916009)(478600001)(53546011)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Y0o4b01vRHlYUytKM3V2R25PajR1WUVNVFkyZDFJajZGY2tsaUN6MnIzQ0RI?=
+ =?utf-8?B?bWpnbnMwWERWa3FPRDhuYUVaVjN3eFBZWS83Q2ZPd2ZmOEs2cmVHRnVLd011?=
+ =?utf-8?B?WkxOTkE2d3FNbzZoQzBjTHY2cC96dTlVRi9IcUo3RjRQZU91THFVdjFtL1Bp?=
+ =?utf-8?B?VVgzK2FkMC83Y3JSMW5yVkhpNjkzNklQaVM4WGhIeWNzM0QxQXJaMXJvcjV6?=
+ =?utf-8?B?SytaMUJqdldCeTNmV25MYlNheGxwSjdPRDVMb2p0RVhmRkRuYjJHdEdDdjZx?=
+ =?utf-8?B?OXRMNjlDbXZLZmd4a01sVEhRUHZhd0d4SzhFR0ZwK1E5Ym1JWjkzZ0xpbWNV?=
+ =?utf-8?B?VE1yYUgvTmdBbU44R0JtKzBVZTdOTnBCNzNhY2RjOGNoUjg1d1B4QTJNa1hv?=
+ =?utf-8?B?NkNqWjZVOHF3ZUJEVGRGaXA4bHM3U0dxVk5jaU9zVk5PT2Z1dWx1RW9GMnFn?=
+ =?utf-8?B?Q1FieGdNaVQ1ODM0cU5OVFJBNFFLa3N1VUVIVjFqK2xLVHM5M2RWZm1NNDkz?=
+ =?utf-8?B?WW5nNGFQRkpHTXZrMjA2RlhpME1wWHJySC9xOC9aZVROLzBoVzdIVmtHVENM?=
+ =?utf-8?B?TERoMHlMN000dGgyWnZHaDltdXJQYnBzbFNpQXhOKzFzbzVYVTFBSXhkMTNl?=
+ =?utf-8?B?clJxMkhlQkRhVlQ5TWRrdjEzVE5VenU3RzI2WEtRM1JMdnU2dHl1d2tNK2F2?=
+ =?utf-8?B?RVdkSVNPMUNqMkFQWGM3bjI2TFVCUlVCVDJLUzE1UjNPc1pFeU9FVWhqeE1J?=
+ =?utf-8?B?YkNxUVBZbnhPZiszUkNQdy9GRXRvOXEyWUlFQlRndFpRZEVBckFDa1BwVnJ2?=
+ =?utf-8?B?RCtDRWlTbzZSQXU3K3NXOGc2UE1RLzQxby9JbXFETy83U1lmbU94UFhocnpF?=
+ =?utf-8?B?MGpCWjk0Sm92ZXhlMFl4aE9TWHRhNExRU1dUeHQ3aS9ncnhGNzB2VFlpejR1?=
+ =?utf-8?B?NzN3Z2tjZlEzR1NnQW9HU3VRVU43ZTBBZE9TWTh6bWE0RENYSGYySGJmT2dj?=
+ =?utf-8?B?MC95TXo0dHlaQ2JaTVRpNkp1Tkhpb1lzcVBFc1hQNTgzalI2dG9Od0xlQXNy?=
+ =?utf-8?B?YkRPZzRwalVXSHl6MTBJK0R4dVA0LzY3dG10QllQdnFxZ3B6bUhwTWlCOFRv?=
+ =?utf-8?B?U3hUdGVuN09NVURmcXhPeWlab2gzVHJtNVo4WnJMUmZqSTBMOEFkSGRKUlBw?=
+ =?utf-8?B?TnozaWVoSWtadkNjTE4xZFV2OWJNeitrRUNkbldkVW9rM3lQMm1KeGpRcEl0?=
+ =?utf-8?B?S0VaYkhzQnY3U21DWUpkSWM0Y0ZYa0ptcjZJTUxHbkI2SGRocTEvNHpBcFUw?=
+ =?utf-8?B?ZDRoUlBHOWUxbTU0NEh1UzhSU1N6S1N4YTFUTG9seDZobDFidWFnK3ZOdnA4?=
+ =?utf-8?B?UDl2dUJJZUJZSDhuWXYwbzJiLzNQcGlqclVCcmUrUUZ2WTY2UENGV2RwY2FK?=
+ =?utf-8?B?TmtMTHVwVVNIT1dBU2ZmYVhmY0cvVDNHRHduWndRT3gwMytLRk9YeVFpYXFs?=
+ =?utf-8?B?MFk3N1RNWEZZalowY1orYlh2QjFkdHlIQlp5bS9DWXRyTnM5WVBhSk9EWnVX?=
+ =?utf-8?B?N21vUk8vdk9TbVhmRkR5M2ZwTEFhMXJ1b3YwQmZ0SU5iWWowYkU2bTczRVBt?=
+ =?utf-8?B?eEJyamI3VHVvbTczd1M5K09DYmNWWWFnYWZJUmp2L0pGRkx6Q3JsSFJqTlJH?=
+ =?utf-8?B?a3hlcWVhT1dXa2NaOUpodGM5cFBRQWJDemdTdHFnNjJJeHBGdWxRdWU5RWNJ?=
+ =?utf-8?B?MUhsdFVLSGF6dTlMcnFYSmROZU1NY1QzRVkrYktjU0JsaXdJYkdWR1Q4YkhP?=
+ =?utf-8?B?eGZYRDJDSEduVzgrSU5rWmJJYjVxRzRmeEpadVVlTDRSb2dTazFINzI0L2di?=
+ =?utf-8?B?d1BzRitFeGtZa1RsSHhMYmFXdGVzUWw3c0VMTEwyZndiejVDWURkWDlTODZN?=
+ =?utf-8?B?eklQYXNNUFNoQnEzWTcrc3oxcTJqdmtydjlTZjVyQmhuNitRYlhCVmFBelhx?=
+ =?utf-8?B?WngvTHNwZGYveGVBdEsxQlJDZDR1SjZjcXk3RnJHVzl6VlhPWmRld2lDTUNC?=
+ =?utf-8?B?ZHNGUWZIVE1LRFY4QWtyK2I0dUNBU3JCVEYraUJHNlNFaldOZHRDVlZNaFFq?=
+ =?utf-8?Q?yr3WcP5HIQkQV6lc6H/+BlAg7?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1CAF8A31D179DF4CAC33BE95960872C8@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2758.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3485532b-fa1e-424c-67f0-08da964b160c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2022 12:17:26.2659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xNBjsgYmcI1vAyWmEC3fvHxpn8FUFIWEZdW9qgKYQMHbJAv1LKgBy/+RnXZJyC/EPqeDb9AKqyF8MyMir5UojPZtbw9B2Jv5sZFQuIWsdLg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4880
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 9/14/2022 2:37 PM, Johan Hovold wrote:
-> [ Please try to wrap your replies at 72 columns or so. ]
-> 
-> On Wed, Sep 14, 2022 at 02:28:31PM +0530, Rajendra Nayak wrote:
->>
->> On 9/14/2022 2:07 PM, Krishna Kurapati PSSNV wrote:
->>>
->>>
->>> On 9/14/2022 12:39 PM, Johan Hovold wrote:
->>>> On Thu, Sep 01, 2022 at 03:47:56PM +0530, Rajendra Nayak wrote:
->>>>> USB on sc7280 cannot support wakeups from low power states
->>>>> if the GDSC is turned OFF. Update the .pwrsts for usb GDSC so it
->>>>> only transitions to RET in low power.
->>>>
->>>> It seems this isn't just needed for wakeup to work. On both sc7280 and
->>>> sc8280xp the controller doesn't resume properly if the domain has been
->>>> powered off (i.e. regardless of whether wakeup is enabled or not).
->>>>
->>> Hi Johan,
->>>
->>>     I believe you are referring to the reinit that happens in xhci resume path after wakeup happens:
->>>
->>> [   48.675839] xhci-hcd xhci-hcd.14.auto: xHC error in resume, USBSTS 0x411, Reinit
->>>
->>> I see that when USB GDSC is not in retention, we don't retain controller state and go for reinit and re-enum of connected devices. We are seeing an additional delay of around ~0.7 sec (in chromebooks running on SC7280) in the wakeup path for re-enumeration of connected USB devices. To avoid this, we wanted to put GDSC in retention during PM suspend.
->>
->> ok, so perhaps the commit msg should be updated to something like
->>
->> 'USB on sc7280 needs to prevent the GDSC from being turned OFF for a couple of reasons
->> 1. To prevent re-init and re-enumeration of all connected devices resulting in additional delay coming out of low power states
->> 2. To support wakeups from connected devices from low power states'
-> 
-> The fundamental issue here is that state is lost during suspend which
-> the driver doesn't currently (or can not) restore. Doesn't hurt to
-> mention the specific consequences you list above as well.
-> 
->>>> Are you sure there's no state that needs to be retained regardless of
->>>> the wakeup setting?
->>>>
->>>>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
->>>>> ---
->>>>>    drivers/clk/qcom/gcc-sc7280.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
->>>>> index 7ff64d4d5920..de29a034e725 100644
->>>>> --- a/drivers/clk/qcom/gcc-sc7280.c
->>>>> +++ b/drivers/clk/qcom/gcc-sc7280.c
->>>>> @@ -3126,7 +3126,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
->>>>>        .pd = {
->>>>>            .name = "gcc_usb30_prim_gdsc",
->>>>>        },
->>>>> -    .pwrsts = PWRSTS_OFF_ON,
->>>>> +    .pwrsts = PWRSTS_RET_ON,
->>>>>        .flags = VOTABLE,
->>>>>    };
->>>>
->>>> And what about gcc_usb30_sec_gdsc?
->>>
->>> Currently wakeup is not enabled on secondary controller as its not required for end product platform (herobrine variant). So leaving the usb30_sec_gdsc as it is for now.
->>
->> It perhaps makes sense to update that as well, and given this is a compute specific chipset and we dont have to worry about
->> USB in device mode, its safe to assume if and when that controller is used (in future designs) it would only support host mode?
-> 
-> What would be the problem when using the controller in peripheral mode?
-> Don't you want to retain the controller state when suspended also in
-> that case?
-> 
-Hi Johan. You're right. When peripheral bus suspend lands in, we might 
-need to keep GDSC ON in device mode as well.
-
-Regards,
-Krishna,
+T24gMTQuMDkuMjAyMiAxNDowMSwgSWxwbyBKw6RydmluZW4gd3JvdGU6DQo+IE9uIFR1ZSwgMTMg
+U2VwIDIwMjIsIFNlcmdpdSBNb2dhIHdyb3RlOg0KPiANCj4+IE1ha2Ugc3VyZSB0aGF0IHRoZSBk
+cml2ZXIgb25seSBkaXZpZGVzIHRoZSBjbG9jayBkaXZpc29yIGlmIHRoZQ0KPj4gSVAgaGFuZGxl
+ZCBhdCB0aGF0IHBvaW50IGlzIFVTQVJULCBzaW5jZSBVQVJUIElQJ3MgZG8gbm90IHN1cHBvcnQN
+Cj4+IGltcGxpY2l0IHBlcmlwaGVyYWwgY2xvY2sgZGl2aXNpb24uIEluc3RlYWQsIGluIHRoZSBj
+YXNlIG9mIFVBUlQsDQo+PiBnbyB3aXRoIHRoZSBoaWdoZXN0IHBvc3NpYmxlIGNsb2NrIGRpdmlz
+b3IuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogU2VyZ2l1IE1vZ2EgPHNlcmdpdS5tb2dhQG1pY3Jv
+Y2hpcC5jb20+DQo+PiAtLS0NCj4+DQo+Pg0KPj4gdjEgLT4gdjI6DQo+PiAtIE5vdGhpbmcsIHRo
+aXMgcGF0Y2ggd2FzIG5vdCBoZXJlIGJlZm9yZSBhbmQgaXMgbWFpbmx5IG1lYW50IGFzIGJvdGgg
+Y2xlYW51cA0KPj4gYW5kIGFzIGEgd2F5IHRvIGludHJvZHVjZSBhIG5ldyBmaWVsZCBpbnRvIHN0
+cnVjdCBhdG1lbF91YXJ0X3BvcnQgdGhhdCB3aWxsIGJlDQo+PiB1c2VkIGJ5IHRoZSBsYXN0IHBh
+dGNoIHRvIGRpZmVyZW50aWF0ZSBiZXR3ZWVuIFVTQVJUIGFuZCBVQVJUIHJlZ2FyZGluZyB0aGUN
+Cj4+IGxvY2F0aW9uIG9mIHRoZSBCYXVkcmF0ZSBDbG9jayBTb3VyY2UgYml0bWFzay4NCj4+DQo+
+Pg0KPj4NCj4+IHYyIC0+IHYzOg0KPj4gLSBVc2UgQVRNRUxfVVNfQ0QgaW5zdGVhZCBvZiA2NTUz
+NQ0KPj4gLSBQcmV2aW91c2x5IFtQQVRDSCAxMF0NCj4gDQo+IA0KPj4gQEAgLTIyODMsMTAgKzIy
+ODcsMjEgQEAgc3RhdGljIHZvaWQgYXRtZWxfc2V0X3Rlcm1pb3Moc3RydWN0IHVhcnRfcG9ydCAq
+cG9ydCwNCj4+ICAgICAgICAgICAgICAgIGNkID0gdWFydF9nZXRfZGl2aXNvcihwb3J0LCBiYXVk
+KTsNCj4+ICAgICAgICB9DQo+Pg0KPj4gLSAgICAgaWYgKGNkID4gNjU1MzUpIHsgICAgICAgLyog
+QlJHUiBpcyAxNi1iaXQsIHNvIHN3aXRjaCB0byBzbG93ZXIgY2xvY2sgKi8NCj4+ICsgICAgIC8q
+DQo+PiArICAgICAgKiBJZiB0aGUgY3VycmVudCB2YWx1ZSBvZiB0aGUgQ2xvY2sgRGl2aXNvciBz
+dXJwYXNzZXMgdGhlIDE2IGJpdA0KPj4gKyAgICAgICogQVRNRUxfVVNfQ0QgbWFzayBhbmQgdGhl
+IElQIGlzIFVTQVJULCBzd2l0Y2ggdG8gdGhlIFBlcmlwaGVyYWwNCj4+ICsgICAgICAqIENsb2Nr
+IGltcGxpY2l0bHkgZGl2aWRlZCBieSA4Lg0KPj4gKyAgICAgICogSWYgdGhlIElQIGlzIFVBUlQg
+aG93ZXZlciwga2VlcCB0aGUgaGlnaGVzdCBwb3NzaWJsZSB2YWx1ZSBmb3INCj4+ICsgICAgICAq
+IHRoZSBDRCBhbmQgYXZvaWQgbmVlZGxlc3MgZGl2aXNpb24gb2YgQ0QsIHNpbmNlIFVBUlQgSVAn
+cyBkbyBub3QNCj4+ICsgICAgICAqIHN1cHBvcnQgaW1wbGljaXQgZGl2aXNpb24gb2YgdGhlIFBl
+cmlwaGVyYWwgQ2xvY2suDQo+PiArICAgICAgKi8NCj4+ICsgICAgIGlmIChhdG1lbF9wb3J0LT5p
+c191c2FydCAmJiBjZCA+IEFUTUVMX1VTX0NEKSB7DQo+PiAgICAgICAgICAgICAgICBjZCAvPSA4
+Ow0KPj4gICAgICAgICAgICAgICAgbW9kZSB8PSBBVE1FTF9VU19VU0NMS1NfTUNLX0RJVjg7DQo+
+PiArICAgICB9IGVsc2Ugew0KPj4gKyAgICAgICAgICAgICBjZCAmPSBBVE1FTF9VU19DRDsNCj4g
+DQo+IE5vdyB0aGF0IEkgcmVhZCB0aGUgYWJvdmUgY29tbWVudCB3aXRoIG1vcmUgdGhvdWdodCwg
+d291bGQ6DQo+ICAgICAgICAgICAgICAgICAgY2QgPSBtaW4oY2QsIEFUTUVMX1VTX0NEKTsNCj4g
+YmUgbW9yZSBhcHByb3ByaWF0ZSBoZXJlIGlmICJ0aGUgaGlnaGVzdCBwb3NzaWJsZSB2YWx1ZSIg
+aXMgc291Z2h0IGZvcj8NCj4gDQo+IA0KPiAtLQ0KPiAgIGkuDQo+IA0KDQoNCg0KWWVzLCB5b3Ug
+YXJlIHJpZ2h0LCB0aGF0IHdvdWxkIGFjdHVhbGx5IGJlIHRoZSBjb3JyZWN0IG9wZXJhdGlvbi4g
+SSANCnNvbWVob3cgb25seSB0aG91Z2h0IG9mIGZyZXF1ZW5jaWVzIGxvd2VyIHRoYW4gQVRNRUxf
+VVNfQ0Qgd2hlbiB3cml0aW5nIA0KdGhhdCBvcGVyYXRpb24sIGFsdGhvdWdoIHRoZSBjb21tZW50
+YXJ5IGRvZXMgc2F5IG15IGludGVudGlvbi4gVGhhbmtzIDopLg0KDQoNClJlZ2FyZHMsDQoJU2Vy
+Z2l1DQo=
