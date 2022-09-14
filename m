@@ -2,110 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A540DC6FA8A
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 13:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9EBC6FA82
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 13:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbiINNSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 09:18:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53918 "EHLO
+        id S229678AbiINNqu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 09:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbiINNSK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 09:18:10 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93265F7C5;
-        Wed, 14 Sep 2022 06:18:09 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id dv25so34584572ejb.12;
-        Wed, 14 Sep 2022 06:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date;
-        bh=kfvXVqNudd9zQNwj3Mp5VEuCU5yPNKUN+snJhZsLeSQ=;
-        b=j94l6scxrToyKCIM6uPXoTKDQ6I4H8d7FiqIj9zUF6jHLHhH0Ion/AzPU7Ey8zpfmn
-         hEMxeqZlCOuXR7iKC5mTZgwYe4hscjC0QRP2fwhqH2qcUlWVqysSgSCNltZ2Ahtu2uqz
-         ifxe6VGB0QN1jSZJNvOADRFNuGx4FcdRReEMSCgzAX9RNeyop70A8wkYWI5qdi8X/1ev
-         A773F19gEAQUpENXY5ajU9g8BKBqywjwmlLXSVbzBc0Q5RykTJCn31gXZXixajCx60Iz
-         /5veokORb4acRXBSoHXoH7mjKADms40V2R10OjPfk0b62wxmU8Qkzic/S7pGunderW5q
-         xJlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date;
-        bh=kfvXVqNudd9zQNwj3Mp5VEuCU5yPNKUN+snJhZsLeSQ=;
-        b=IX9YJjW7uWgpkvtSh/9ndrkWvcOq7NXH5RaOVN+qdV1VyuJgNQLauViopIJJ1xFC/A
-         OWYypS3UlVTFxaQUuZTRoxVWMgCgD3Rt1k/MNnqwBqkezWL7wYUkmjVcYzI1xYOQtZfX
-         TEN+fDrTLUVrYFT220qgSPcqJtfXuxxH+/QqgX11CKwI/h01zuwO4I89AOTikG7ejlB/
-         FyFlFro8qBO0tQf/FYNBE22Wv4xj3557l7EPe16Mmm+T/DkDhnzAts2tiBNJ4J9XdhRg
-         CgoH9gs/1QRkL7imS8PtC5vzDAXPxt5408wG9YKo6OzuCFDZRuol67nqJl7v3wMyOnAd
-         r/KQ==
-X-Gm-Message-State: ACgBeo2P5FJ7sx+gAo+wwahwga51XlLDiBSzXQ/IgOdLPI/cqlH1gaKt
-        gphNQootWm/2fe8laRHi7U0=
-X-Google-Smtp-Source: AA6agR4c2MGPtrs7DkzAaXLU4BBWOq7igq5HDD1YDWc7U8OxUkMZfpGVdNcZYVgQumw0KlYG5ZEzZQ==
-X-Received: by 2002:a17:906:a219:b0:6e4:86a3:44ea with SMTP id r25-20020a170906a21900b006e486a344eamr26380836ejy.385.1663161487898;
-        Wed, 14 Sep 2022 06:18:07 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-134.ip85.fastwebnet.it. [93.42.70.134])
-        by smtp.gmail.com with ESMTPSA id 1-20020a170906200100b00774f2fbfcbbsm7718964ejo.38.2022.09.14.06.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Sep 2022 06:18:07 -0700 (PDT)
-Message-ID: <6321d48f.170a0220.cae01.31e6@mx.google.com>
-X-Google-Original-Message-ID: <YyHUjb80SRyFN3cY@Ansuel-xps.>
-Date:   Wed, 14 Sep 2022 15:18:05 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v7 1/4] dt-bindings: clock: add pcm reset for ipq806x lcc
-References: <20220724182329.9891-1-ansuelsmth@gmail.com>
+        with ESMTP id S229479AbiINNqu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 09:46:50 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E523173909;
+        Wed, 14 Sep 2022 06:46:45 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 05F6D6601F88;
+        Wed, 14 Sep 2022 14:46:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1663163204;
+        bh=0e5JsYnyFEHqEe70UH7Ck+yOSRtWTcD8JNxi1AtWZcE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=JQ00q7ZR/U7+dNuQmv5gJo6aaitTeYqkzYTCsRXrsi8LZamLZ2elKsQbDYm/+eRC0
+         c3Tare/R6nFXlVNCdN/l07OpRjx7+7gtWjh2LF8/Nxg6QqJ4HJHHpBVkSRwXNuE0Cl
+         ifSl57dpOMADZymwbKKwTCyqpjCcuduAdxs7sQ79SDPofDbOPvNxKUHnvladZxjJHT
+         JU9rgiorLB/OGuxAcec1Td81NuhKpwdfa0OsiZxMcZi88Go5FRp9cLENSkxmTYH3WK
+         DGHo+z/dqyhV3zVqWm35h1AiSvJwLUEr2LO2FiHAxLMkt5WEIF1Rp1HZSAXiAgDNNk
+         bSlp3RL/QYBOw==
+Message-ID: <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
+Date:   Wed, 14 Sep 2022 15:46:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220724182329.9891-1-ansuelsmth@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add new bindings of
+ MediaTek frequency hopping
+Content-Language: en-US
+To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>
+References: <20220914124552.16964-1-johnson.wang@mediatek.com>
+ <20220914124552.16964-3-johnson.wang@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220914124552.16964-3-johnson.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jul 24, 2022 at 08:23:26PM +0200, Christian Marangi wrote:
-> Add pcm reset define for ipq806x lcc.
+Il 14/09/22 14:45, Johnson Wang ha scritto:
+> Add the new binding documentation for MediaTek frequency hopping
+> and spread spectrum clocking control.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-
-Any news for this? All the series have review tag. Can we make progress
-on this?
-
+> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
 > ---
-> v3:
->  - Added review tag
->  - Added ack tag
-> v2:
->  - Fix Sob tag
+>   .../bindings/arm/mediatek/mediatek,fhctl.yaml | 47 +++++++++++++++++++
+>   1 file changed, 47 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
 > 
->  include/dt-bindings/clock/qcom,lcc-ipq806x.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/qcom,lcc-ipq806x.h b/include/dt-bindings/clock/qcom,lcc-ipq806x.h
-> index 25b92bbf0ab4..e0fb4acf4ba8 100644
-> --- a/include/dt-bindings/clock/qcom,lcc-ipq806x.h
-> +++ b/include/dt-bindings/clock/qcom,lcc-ipq806x.h
-> @@ -19,4 +19,6 @@
->  #define SPDIF_CLK			10
->  #define AHBIX_CLK			11
->  
-> +#define LCC_PCM_RESET			0
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+> new file mode 100644
+> index 000000000000..7b0fd0889bb6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  #endif
-> -- 
-> 2.36.1
-> 
+> +title: MediaTek frequency hopping and spread spectrum clocking control
+> +
+> +maintainers:
+> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
+> +
+> +description: |
+> +  Frequency hopping control (FHCTL) is a piece of hardware that control
+> +  some PLLs to adopt "hopping" mechanism to adjust their frequency.
+> +  Spread spectrum clocking (SSC) is another function provided by this hardware.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8186-fhctl
+> +
+> +  reg:
+> +    maxItems: 1
 
--- 
-	Ansuel
+There are still a few issues in this binding that I can immediately see...
+
+> +
+> +  clocks:
+MT8195 has 23 PLLs, MT8186 has 14, but perhaps in the future we may see
+something more than that on some newer SoC, so...
+
+   clocks:
+     maxItems: 30
+
+> +    description: Phandles of the PLL with FHCTL hardware capability.
+> +
+> +  mediatek,hopping-ssc-percents:
+> +    description: The percentage of spread spectrum clocking for one PLL.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+This is an array, so...
+$ref: /schemas/types.yaml#/definitions/uint32-array
+
+...also, maxItems?
+
+and you should also specify:
+
+default: 0   <- because, by default, SSC is disabled
+minimum: 0   <- because this is the minimum accepted value
+
+
+Regards,
+Angelo
+
+> +    maximum: 8
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8186-clk.h>
+> +    fhctl: fhctl@1000ce00 {
+> +        compatible = "mediatek,mt8186-fhctl";
+> +        reg = <0x1000c000 0xe00>;
+> +        clocks = <&apmixedsys CLK_APMIXED_MSDCPLL>;
+> +        mediatek,hopping-ssc-percents = <3>;
+> +    };
+
