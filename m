@@ -2,90 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D21ECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 07:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D24ECAAD3
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 07:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbiINHJY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 03:09:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58102 "EHLO
+        id S229989AbiINHMl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 03:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiINHJY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 03:09:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E37C5A8A7;
-        Wed, 14 Sep 2022 00:09:23 -0700 (PDT)
+        with ESMTP id S229949AbiINHMk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 03:12:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CF261B16;
+        Wed, 14 Sep 2022 00:12:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E655617C2;
-        Wed, 14 Sep 2022 07:09:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F179FC433D6;
-        Wed, 14 Sep 2022 07:09:21 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B8113B815C6;
+        Wed, 14 Sep 2022 07:12:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69900C433C1;
+        Wed, 14 Sep 2022 07:12:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663139362;
-        bh=4qaiOzRX06Dcp86Qw4AyJXoFbpAVDJ6myGvrqmUKEVM=;
+        s=k20201202; t=1663139556;
+        bh=oW1ddkzDyIEE8sB0njHBP/xb7iH2+2UCc497E5sslUo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G9WzKer3Fcmv9pO/0wa7orIhM29sqOtc5CKviBsgf8TZ6WMDjGK7YybhHooprjrDQ
-         CKqyXLvhL2EqsEosAFSk9v1+9ohcxB6uC2ZhpCE8c8MiR8IhJnsWcYZtJR8ELn+oaG
-         J8kNucIEkvZk+JGmZ8uRKbOx49w7gEyhvZX4SAiLmGXHJVyOq4DsJLJpRT80j8vtKy
-         EUtAd1n/MNVtQUlpXlmdHwT3Th/if1G/cHRacpi+ekzzuXbfQFXms8FN2FajNCkxhq
-         I/gTvEDFpTBalSIygYF6vzX03gbFGbZWIjujZNYFAeOlrNnDC6hglY4B0u21mWMGuw
-         8NjTOcju0bz2w==
+        b=DQ+U2T9wazLoo/Q2zuJscQzs+RATnyte4Jb5ndgWGC6CAa51zUS3PTJzL9lWWmzBA
+         xr1lfPRmmhdS061DASACSUk0jdZ2HFD1Gf+s4HrqBnKlCdLS6HRBDg2kOUEg32m7Vc
+         0GVwUpoY3gsFqqBrv+MXqXa9i4NKQqQaOSTkx8SbzU4y8T5x8nwj4+CCBUzT4/HWBl
+         ZVDTa7EjCUAifImGThcdwnTpgvCTnz11itf+O6cUO5n7GaLNe2L4WGbEcYwnY9lckJ
+         7fdOCIxljk9IMZCssP8bsNeoPWLKbB5uIcjsyenpHJL7ygDRIh76lSXS6+WvBrE79V
+         XNq1eVHwGFsZA==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan@kernel.org>)
-        id 1oYMWQ-0003Go-2T; Wed, 14 Sep 2022 09:09:22 +0200
-Date:   Wed, 14 Sep 2022 09:09:22 +0200
+        id 1oYMZY-0003I6-Sj; Wed, 14 Sep 2022 09:12:36 +0200
+Date:   Wed, 14 Sep 2022 09:12:36 +0200
 From:   Johan Hovold <johan@kernel.org>
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc:     andersson@kernel.org, agross@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, mka@chromium.org, johan+linaro@kernel.org,
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rajendra Nayak <quic_rjendra@quicinc.com>, andersson@kernel.org,
+        agross@kernel.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org, johan+linaro@kernel.org,
         quic_kriskura@quicinc.com, dianders@chromium.org,
         linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 3/3] clk: qcom: gcc-sc7280: Update the .pwrsts for usb
  gdsc
-Message-ID: <YyF+IuoDjBZzEQxO@hovoldconsulting.com>
+Message-ID: <YyF+5CQqcLQlXvzV@hovoldconsulting.com>
 References: <20220901101756.28164-1-quic_rjendra@quicinc.com>
  <20220901101756.28164-3-quic_rjendra@quicinc.com>
+ <YxDYJ+ONryLROBhL@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220901101756.28164-3-quic_rjendra@quicinc.com>
+In-Reply-To: <YxDYJ+ONryLROBhL@google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 03:47:56PM +0530, Rajendra Nayak wrote:
-> USB on sc7280 cannot support wakeups from low power states
-> if the GDSC is turned OFF. Update the .pwrsts for usb GDSC so it
-> only transitions to RET in low power.
-
-It seems this isn't just needed for wakeup to work. On both sc7280 and
-sc8280xp the controller doesn't resume properly if the domain has been
-powered off (i.e. regardless of whether wakeup is enabled or not).
-
-Are you sure there's no state that needs to be retained regardless of
-the wakeup setting?
-
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-sc7280.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Sep 01, 2022 at 09:04:55AM -0700, Matthias Kaehlcke wrote:
+> On Thu, Sep 01, 2022 at 03:47:56PM +0530, Rajendra Nayak wrote:
+> > USB on sc7280 cannot support wakeups from low power states
+> > if the GDSC is turned OFF. Update the .pwrsts for usb GDSC so it
+> > only transitions to RET in low power.
+> > 
+> > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
 > 
-> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-> index 7ff64d4d5920..de29a034e725 100644
-> --- a/drivers/clk/qcom/gcc-sc7280.c
-> +++ b/drivers/clk/qcom/gcc-sc7280.c
-> @@ -3126,7 +3126,7 @@ static struct gdsc gcc_usb30_prim_gdsc = {
->  	.pd = {
->  		.name = "gcc_usb30_prim_gdsc",
->  	},
-> -	.pwrsts = PWRSTS_OFF_ON,
-> +	.pwrsts = PWRSTS_RET_ON,
->  	.flags = VOTABLE,
->  };
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
 
-And what about gcc_usb30_sec_gdsc?
+Did you confirm that you actually hit the retention state?
+
+IIUC, this series is equivalent to using ALWAYS_ON unless CX is actually
+powered off during suspend.
 
 Johan
