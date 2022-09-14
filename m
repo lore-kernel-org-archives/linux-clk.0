@@ -2,142 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22AEC6FA8A
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 14:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1CFC6FA8A
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 15:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbiINOrz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 10:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
+        id S230202AbiINPum (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 11:50:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbiINOrx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 10:47:53 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3122272FD8;
-        Wed, 14 Sep 2022 07:47:53 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id gh9so35317695ejc.8;
-        Wed, 14 Sep 2022 07:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=ezcKyjQey00m/zcYeoKkPoL5W+jceK+n2B8j+yODyx4=;
-        b=fhgMK4z6YDV157dbHHvzgw0yHO9rCqHI00yDfXWp5AMlD8/vlQb+FGd7zqdtRq3Ur2
-         YusYiVFuGOVWOEZk3fsOhw6OyLCu731CwvOav21Eb89J6z80AuvCZeX2Z+cxj/rCt7Ve
-         sTT8YapEyokfpnJwS3dsp0lbI8ga2Up6V99raRBVe4M3dWnBT2fE8yRV+e366CLPN06k
-         regN9BD0XKOBq7TlrzJtRGA0v52cko+eDla2AMtpRnKuU0Zi5rDz+Qk9IfYmaw24e/g/
-         /b1k6ZnCRCmUSylEr1/V7vpdAJBUqntbGO+Xn91a74HhiS1eTAl97kG4ko1jwtjiqzs+
-         HMug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=ezcKyjQey00m/zcYeoKkPoL5W+jceK+n2B8j+yODyx4=;
-        b=BmLI7Zsu3OeUw+C4H3RJzEmzW8RoRqnwL0o9YAhUrmsgIv4i4FPZz8dpIALc4+Kkcp
-         2K/xd8bWiuWPFqzWN6AlrlccqoEe3mLk2Gpqmc39TFhdaFukRa6lF5qXhWjDCG/ZFGNL
-         HYMzd2KM9Mm713GkYDSEH7TdiGa8EihPtEpZp6mal6G8aKju5JdI+Dhnu0H5mp9XJfcH
-         3BtMpZkcAFfQqhs6LeRxVT5vmj5yo5VyFctWIMp8fWOOPINTJZ3cNh9uH/PkCrVGKxUF
-         IzYCXqsMsJH7fbjRaSAHP65WJns//fjunC4nvfVJojlYlAAoAT5kRPQQIMPxKJf/IAiB
-         tRsQ==
-X-Gm-Message-State: ACgBeo3y1Fs/m6Clm3qEIn5M0VDhvHGg+clxyibpYmuN8RjKfaj0PBX5
-        RONYmE4K0yDpKv8LfNSRVfE=
-X-Google-Smtp-Source: AA6agR64/vR14k8oAfXTsKMrgGKHvakepBr2paxUYWJNmMYJQAnBQPs9MTGKVy7lpX/mG94AVOMgjQ==
-X-Received: by 2002:a17:907:2c4b:b0:77e:2c09:4111 with SMTP id hf11-20020a1709072c4b00b0077e2c094111mr10172304ejc.21.1663166871651;
-        Wed, 14 Sep 2022 07:47:51 -0700 (PDT)
-Received: from localhost.localdomain (93-42-70-134.ip85.fastwebnet.it. [93.42.70.134])
-        by smtp.googlemail.com with ESMTPSA id 6-20020a170906300600b0073ae9ba9ba8sm7601484ejz.3.2022.09.14.07.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Sep 2022 07:47:51 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v2 2/2] clk: qcom: kpss-xcc: convert to parent data API
-Date:   Wed, 14 Sep 2022 16:47:43 +0200
-Message-Id: <20220914144743.17369-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220914144743.17369-1-ansuelsmth@gmail.com>
-References: <20220914144743.17369-1-ansuelsmth@gmail.com>
+        with ESMTP id S230267AbiINPuh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 11:50:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C813B5720F;
+        Wed, 14 Sep 2022 08:50:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A44261782;
+        Wed, 14 Sep 2022 15:50:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E45C433C1;
+        Wed, 14 Sep 2022 15:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663170635;
+        bh=S28EkrNLwS69diRhkX+rhYqUGi8w409B1c6Xk4uXdA4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=C1M6MQGrR9MJB1trIJC+waXGVZ4KZTTS+JTEOpiEsWCK7+PWOVMNeHPvSp5Zl4s8J
+         hHMEIylwNYQu3JpzME1k3+hI7h8ay3mg8Fyq4l/C+ahofwmf0Rn3jdPCSzhKqsnDrx
+         kysQUItpAD3rBHGQLray2SjAX1d2+eCxXKLh3tDQHNB9cyN3oCMEsDVHIY4mDkxNH6
+         anaFqGtVu5W6ZNvtaBld6rImlbyjnnJ9hJP5j/LOhvlg2dlMMqaT5gS/zFChRTCGrh
+         1ShOEbmH3O+HVdVPwSmLqlIKfrr+nNcBJclbNQrjDOz8WoD/FudG4ZvVFX0Tv2SM7J
+         CrNyxNvTJ96EQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220815-rpi-fix-4k-60-v1-2-c52bd642f7c6@cerno.tech>
+References: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech> <20220815-rpi-fix-4k-60-v1-2-c52bd642f7c6@cerno.tech>
+Subject: Re: [PATCH v1 2/7] clk: bcm: rpi: Add a function to retrieve the maximum
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, Emma Anholt <emma@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Date:   Wed, 14 Sep 2022 08:50:33 -0700
+User-Agent: alot/0.10
+Message-Id: <20220914155035.88E45C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the driver to parent data API. From the Documentation pll8_vote
-and pxo should be declared in the DTS so fw_name can be used instead of
-parent_names. .name is changed to the legacy pxo_board following how
-it's declared in other drivers.
+Quoting Maxime Ripard (2022-08-15 08:31:24)
+> @@ -254,6 +255,33 @@ static int raspberrypi_fw_dumb_determine_rate(struct=
+ clk_hw *hw,
+>         return 0;
+>  }
+> =20
+> +unsigned long rpi_firmware_clk_get_max_rate(struct clk *clk)
+> +{
+> +       const struct raspberrypi_clk_data *data;
+> +       struct raspberrypi_clk *rpi;
+> +       struct clk_hw *hw;
+> +       u32 max_rate;
+> +       int ret;
+> +
+> +       if (!clk)
+> +               return 0;
+> +
+> +       hw =3D  __clk_get_hw(clk);
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-v2:
-- Change .name from pxo to pxo_board following other driver
+Ideally we don't add more users of this API. I should document that :/
 
- drivers/clk/qcom/kpss-xcc.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+It begs the question though, why do we need this API to take a 'struct
+clk'?  Can it simply hardcode the data->id value for the clk you care
+about and call rpi_firmware_property() directly (or some wrapper of it)?
 
-diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
-index 88d4b33ac0cc..b1b370274ec4 100644
---- a/drivers/clk/qcom/kpss-xcc.c
-+++ b/drivers/clk/qcom/kpss-xcc.c
-@@ -12,9 +12,9 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- 
--static const char *aux_parents[] = {
--	"pll8_vote",
--	"pxo",
-+static const struct clk_parent_data aux_parents[] = {
-+	{ .fw_name = "pll8_vote", .name = "pll8_vote" },
-+	{ .fw_name = "pxo", .name = "pxo_board" },
- };
- 
- static const u32 aux_parent_map[] = {
-@@ -32,8 +32,8 @@ MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
- static int kpss_xcc_driver_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *id;
--	struct clk *clk;
- 	void __iomem *base;
-+	struct clk_hw *hw;
- 	const char *name;
- 
- 	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
-@@ -55,24 +55,16 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
- 		base += 0x28;
- 	}
- 
--	clk = clk_register_mux_table(&pdev->dev, name, aux_parents,
--				     ARRAY_SIZE(aux_parents), 0, base, 0, 0x3,
--				     0, aux_parent_map, NULL);
-+	hw = devm_clk_hw_register_mux_parent_data_table(&pdev->dev, name, aux_parents,
-+							ARRAY_SIZE(aux_parents), 0,
-+							base, 0, 0x3,
-+							0, aux_parent_map, NULL);
- 
--	platform_set_drvdata(pdev, clk);
--
--	return PTR_ERR_OR_ZERO(clk);
--}
--
--static int kpss_xcc_driver_remove(struct platform_device *pdev)
--{
--	clk_unregister_mux(platform_get_drvdata(pdev));
--	return 0;
-+	return PTR_ERR_OR_ZERO(hw);
- }
- 
- static struct platform_driver kpss_xcc_driver = {
- 	.probe = kpss_xcc_driver_probe,
--	.remove = kpss_xcc_driver_remove,
- 	.driver = {
- 		.name = "kpss-xcc",
- 		.of_match_table = kpss_xcc_match_table,
--- 
-2.37.2
+Furthermore, I wonder if even that part needs to be implemented.  Why
+not make a direct call to rpi_firmware_property() and get the max rate?
+All of that can live in the drm driver. Making it a generic API that
+takes a 'struct clk' means that it looks like any clk can be passed,
+when that isn't true. It would be better to restrict it to the one use
+case so that the scope of the problem doesn't grow. I understand that it
+duplicates a few lines of code, but that looks like a fair tradeoff vs.
+exposing an API that can be used for other clks in the future.
 
+> +       if (!hw)
+> +               return 0;
+> +
+> +       data =3D clk_hw_to_data(hw);
+> +       rpi =3D data->rpi;
+> +       ret =3D raspberrypi_clock_property(rpi->firmware, data,
+> +                                        RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
+> +                                        &max_rate);
