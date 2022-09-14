@@ -2,105 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3845FECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 01:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44C3ECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Sep 2022 03:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbiINBsx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Sep 2022 21:48:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37158 "EHLO
+        id S229523AbiINDTi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Sep 2022 23:19:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiINBsv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 21:48:51 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999E86DFB5;
-        Tue, 13 Sep 2022 18:48:50 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E0vYIB004764;
-        Wed, 14 Sep 2022 01:48:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AnD8zG5EexPMoRYMrIEs798ifwPJnxwt5mBmLeK1BDk=;
- b=lsFznRVWyfIbHhNmIWTVXbHbnTp59oI0+vIKba3W88Aq7I0We8NQz+Cx4y0ZSDZ+ppQ/
- L66S8mLuUGjIE1foxGAKwOqPXwFOH71Juga9XXd6/D/JNzjZEGB2Wdpq9k7sY4mAnXsm
- AUkpx21zJw1Qovjw3f1L9IQxg1d3iX+Zhwox5M08E6JwYj21KjyD3q7fSIg0kf6IuE4U
- 5CoG4vXZy/JnxcGVBRzEhSYxvC8forZvNX1m8F5JhbkBGqp9mu/jZThzDw9ylnJHh5Gx
- R0ocMgJAXCrCMC+1bahWu9s0s2f8zLXbitE1mB8QXYmry2xXoBpw4U/8mhCjosuNevEF OQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy06gnsc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 01:48:44 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E1mhmF011512
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 01:48:43 GMT
-Received: from [10.216.1.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 13 Sep
- 2022 18:48:35 -0700
-Message-ID: <847a3838-90b4-7368-9632-223bbd2468cc@quicinc.com>
-Date:   Wed, 14 Sep 2022 07:18:32 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v6 5/5] clk: qcom: Alwaya on pcie gdsc
-Content-Language: en-US
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC:     <quic_rjendra@quicinc.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mka@chromium.org>, <quic_vbadigan@quicinc.com>,
-        <quic_hemantk@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
-        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Andy Gross" <agross@kernel.org>,
+        with ESMTP id S229437AbiINDTg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Sep 2022 23:19:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1EDF113B;
+        Tue, 13 Sep 2022 20:19:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E5FF61764;
+        Wed, 14 Sep 2022 03:19:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA931C433D6;
+        Wed, 14 Sep 2022 03:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663125571;
+        bh=9y3+3IOaXGKW43Ul90HWFINdLCD43Jpd6InoIzGi9Es=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cx/LNHahoJNoGX3sVhUBPvKIXdMXkpHpzCgGDUB++QXtZrdQmQst0q3ZH43Tp6RSF
+         DGVYXv+T3FF4J7dJB339C0jI3m/csVSYWOgzEIoyDra64HOPKJNGZl5+jGMB49Vapw
+         HoOOvBOLEZfxivt0vtsUoEmRAAeRPEnW/yGhBqsa5EqBYY0tII+IQfsbI1VO9tVQPC
+         xySZ75eRuA/rB5EnmzrshuhhSgUrIDe6P/KeUZEZ6rEa2fIBDh4EHfX9mXZI6hjvrB
+         dQ+/1bZGfQAhah1b3rm0sTpbL3p6AjOQFgx5I+q+PFXTvy3EdCL2Z43I38NDLvM7ja
+         ZxskiGqwb4oRw==
+Date:   Tue, 13 Sep 2022 22:19:28 -0500
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <20220913163424.GA602259@bhelgaas>
-From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20220913163424.GA602259@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SGsqD8RfEsjDjXsE12JNmUG-xY_FQ856
-X-Proofpoint-ORIG-GUID: SGsqD8RfEsjDjXsE12JNmUG-xY_FQ856
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-13_12,2022-09-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- spamscore=0 mlxlogscore=958 clxscore=1015 suspectscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2208220000 definitions=main-2209140006
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH 0/6] clk: qcom: cpu-8996: additional cleanup for the
+ driver
+Message-ID: <20220914031928.i6x6gumzcvdilgh3@builder.lan>
+References: <20220714100351.1834711-1-dmitry.baryshkov@linaro.org>
+ <013f2dd7-c15f-5b0e-c98a-595dd4d5a2c5@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <013f2dd7-c15f-5b0e-c98a-595dd4d5a2c5@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Sep 09, 2022 at 01:22:40PM +0300, Dmitry Baryshkov wrote:
+> On 14/07/2022 13:03, Dmitry Baryshkov wrote:
+> > This patch series depends on patches 1-5 from [1].
+> > 
+> > Path 1 is slightly fixed version of patch 6 from the mentioned
+> > patch series (fixed to use parent_hws where applicable). The rest is
+> > minor cleanup of the driver.
+> > 
+> > [1] https://lore.kernel.org/linux-arm-msm/20220621160621.24415-1-y.oudjana@protonmail.com/
+> > 
+> 
+> Gracious ping. Yassing, Bjorn, Konrad?
+> 
 
-On 9/13/2022 10:04 PM, Bjorn Helgaas wrote:
-> On Mon, Sep 12, 2022 at 10:34:37PM +0530, Manivannan Sadhasivam wrote:
->> + Rajendra
->>
->> On Fri, Sep 09, 2022 at 02:14:44PM +0530, Krishna chaitanya chundru wrote:
->>> Make GDSC always on to ensure controller and its dependent clocks
->>> won't go down during system suspend.
->> You need to mention the SoC name in subject, otherwise one cannot know for
->> which platform this patch applies to.
-> Also:
->
-> s/Alwaya/Always/
-> s/pcie/PCIe/
-> s/gdsc/GDSC/ as you did in commit log
->
-> I might use "ALWAYS_ON" in the subject to make clear this refers to a
-> specific flag, not a change in the code logic, e.g.,
->
->    clk: qcom: gcc-sc7280: Mark PCIe GDSC clock ALWAYS_ON
-ok I will update the subject in next patch.
+As I haven't heard anything from Yassine or Konrad I went ahead and
+tried to pick this, unfortunately [1] doesn't apply.
+
+Could you please rebase the patches from [1] that you want applied and
+resubmit that?
+
+Thanks,
+Bjorn
+
+> > 
+> > Dmitry Baryshkov (5):
+> >    clk: qcom: cpu-8996: switch to devm_clk_notifier_register
+> >    clk: qcom: cpu-8996: declare ACD clocks
+> >    clk: qcom: cpu-8996: move ACD logic to
+> >      clk_cpu_8996_pmux_determine_rate
+> >    clk: qcom: cpu-8996: don't store parents in clk_cpu_8996_pmux
+> >    clk: qcom: cpu-8996: use constant mask for pmux
+> > 
+> > Yassine Oudjana (1):
+> >    clk: qcom: msm8996-cpu: Use parent_data/_hws for all clocks
+> > 
+> >   drivers/clk/qcom/clk-cpu-8996.c | 191 +++++++++++++++++---------------
+> >   1 file changed, 100 insertions(+), 91 deletions(-)
+> > 
+> > 
+> > base-commit: ca48adcc40b09d7f26a7754d4d54cfc4bd611f38
+> > prerequisite-patch-id: ff67ff7bea1aef8e367a2589c46cf2c9ebb48664
+> > prerequisite-patch-id: 1fdf02d8161689f3e571816d73ec94b115f51c34
+> > prerequisite-patch-id: 837945fbb40427dac2e95a58b7660a3cf26d7d53
+> > prerequisite-patch-id: df10945929f6f558c1363a23e2993d748a40236f
+> > prerequisite-patch-id: a657a27256ef4be0cb932cb0ca7b3e4768e466f9
+> 
+> -- 
+> With best wishes
+> Dmitry
+> 
