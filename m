@@ -2,82 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C86CC6FA8A
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B41ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbiIODh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 23:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
+        id S229918AbiIODmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 23:42:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbiIODhp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 23:37:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1096C9322B;
-        Wed, 14 Sep 2022 20:37:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 96E1E6206E;
-        Thu, 15 Sep 2022 03:37:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFB3C43142;
-        Thu, 15 Sep 2022 03:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663213042;
-        bh=oZK4TmRjdWUzhH8K3J+wY8ciuZJRIg5qg2U1p3zyxus=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFw0cXZTS889EJdJXf8zO8IruuBSdCmNK/aMORosutG98bJ6FFhHl3nmMNULwz+Um
-         futDfJnYk0Yq+JTBf89DiD6YYt3jfvovqlxwvaG3fU4kLVJY1x4Q5nod8dTe0EMQpY
-         S685Qs1F9cvyL8DyI0YPnmRGcWFgefFtlndCFxYI/cZbz4qahySJlcwZndLtrV4fTv
-         JQA8OF8s5HnY+iXppn+m5T7TJowuMgBE0KOygMRO2QDAzLNVwwPU/35uFKQ+JJIO56
-         TRw69Usp4vX+2fWV05t7NzpSlababks3LmKQIkFp/+vS5armtpgULwiPdlD/jd2QfB
-         u9PDjjKd/lRVA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        stephan.gerhold@kernkonzept.com
-Cc:     agross@kernel.org, mturquette@baylibre.com,
-        dominikkobinski314@gmail.com, sboyd@kernel.org,
-        konrad.dybcio@somainline.org, p.zabel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        stephan@gerhold.net, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] clk: qcom: Add clocks for MSM8909
-Date:   Wed, 14 Sep 2022 22:37:03 -0500
-Message-Id: <166321302055.788007.16496767011703935092.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
-References: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
+        with ESMTP id S229837AbiIODmG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 23:42:06 -0400
+X-Greylist: delayed 1822 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 14 Sep 2022 20:42:02 PDT
+Received: from mail-m964.mail.126.com (mail-m964.mail.126.com [123.126.96.4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 13DC426C;
+        Wed, 14 Sep 2022 20:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8klXX
+        5ncOj/JqdaK9P3vyLs+eSbA7W/UiVirrasLRHE=; b=kTlkcv30PEvq1fQVSoSba
+        bQwHFuQkuaWCXggJdtIVIBNSOizkI1Tm8KDZ9PpV4ZpEpJeE1RROLYXZBMEmGqbK
+        I2I+fxZAVH/s633rGWlpvgNwMQiDsmuMCxzJSIVT6AoknpLLxRuxVIpi7uF8UD1Y
+        XSgClB9B4++wntBvD9aUJI=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp9 (Coremail) with SMTP id NeRpCgC3nqrclyJjlCu8Bw--.29768S2;
+        Thu, 15 Sep 2022 11:11:27 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, kristo@kernel.org,
+        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+        windhl@126.com
+Subject: [PATCH] clk: ti: Call of_node_get() before of_find_xxx() API
+Date:   Thu, 15 Sep 2022 11:11:21 +0800
+Message-Id: <20220915031121.4003589-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: NeRpCgC3nqrclyJjlCu8Bw--.29768S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWUtr17Aw4xCF18Ww13XFb_yoW3CrgEkr
+        1fX3s2v3WUCwn3tFnFvFs3Xa4Yyry8uF18ZF1Sva43J345Ar42qr45X395X3sxGFW2yF98
+        ur17G3yjkryUXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_lApDUUUUU==
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3AB9F1pEEQiXwgAAsk
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 6 Jul 2022 15:41:26 +0200, Stephan Gerhold wrote:
-> Add a driver for the Global Clock Controller (GCC) that provides clocks,
-> resets and power domains for the various hardware blocks in the MSM8909
-> SoC. Make it possible to have longer delay between assertion/deassertion
-> of particular reset signals (this is needed for the USB PHY on MSM8909).
-> Finally, add the necessary definitions for the clocks controlled by the
-> RPM firmware on MSM8909.
-> 
-> [...]
+In ti_find_clock_provider(), we need to call of_node_get() for
+of_find_node_by_name() which will automatically call of_node_put()
+for the 'from' argument.
 
-Applied, thanks!
+Fixes: 51f661ef9a10 ("clk: ti: Add ti_find_clock_provider() to use clock-output-names")
+Signed-off-by: Liang He <windhl@126.com>
+---
+ drivers/clk/ti/clk.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1/6] dt-bindings: clock: Add schema for MSM8909 GCC
-      commit: c40668048f236da6f7725998f93f0d6180003da3
-[2/6] clk: qcom: Add driver for MSM8909 GCC
-      commit: bf37a05744ebc6a488e3cfd3ec6d502d626740cc
-[3/6] clk: qcom: reset: Allow specifying custom reset delay
-      commit: 2cb8a39b6781ea23accd1fa93b3ad000d0948aec
-[4/6] clk: qcom: gcc-msm8909: Increase delay for USB PHY reset
-      commit: dcc6c9fb712875bf1897eaeb0c9d4e4237861723
-[5/6] dt-bindings: clock: qcom,rpmcc: Add MSM8909
-      commit: 1727a402c1fcf2594923be47ed03fab2db0eacfb
-[6/6] clk: qcom: smd-rpm: Add clocks for MSM8909
-      commit: 94a70c873d56e8bb7bce52cfb68d004be174dfff
-
-Best regards,
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 373e9438b57a..7c390cd67e1a 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -147,6 +147,7 @@ static struct device_node *ti_find_clock_provider(struct device_node *from,
+ 		return np;
+ 
+ 	/* Fall back to using old node name base provider name */
++	of_node_get(from);
+ 	return of_find_node_by_name(from, name);
+ }
+ 
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.25.1
+
