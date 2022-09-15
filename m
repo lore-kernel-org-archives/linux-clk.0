@@ -2,163 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BF9C6FA8A
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 09:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7E5ECAAD3
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 09:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229748AbiIOJeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Sep 2022 05:34:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52892 "EHLO
+        id S229457AbiIOJgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 05:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbiIOJeM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 05:34:12 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F284979C4
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:34:10 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id bo13so13394970wrb.1
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:34:10 -0700 (PDT)
+        with ESMTP id S229473AbiIOJgy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 05:36:54 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9486753AF
+        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:36:52 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id e18so7308981wmq.3
+        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=nx/BhNRVvudK8AcmKzKEeABUr5hW6bgb4H8HtATz2WQ=;
-        b=anPZy6RR5haz9Hh899sAj1/aToTK2d8Fu7rSqVKSWtwJ1R40ymJpj00ARQHKEjDaBX
-         P2TBldrxNF3yZTpsA14Lu0bosAM04VyKBblBBV6VppGzZdV5MOFzqrMx/3+0vhahlfTs
-         jEEGe3D8sM/Pa0z7OcRoLr74jLfcKbwv6XjAVRXcU/6qHcZf9SIAZm3mNgwoDvkmgnrU
-         Zx6mGUbEnAG7iSjnm6T69Ma0jszGLBUEWO38F7NsdZdAJiEYOkBrwVyQs9hdAW8Hl4Ze
-         4dQVZGo+yKfO9lvKI09cWKdahSCKn8GChwgdNK/dfk3Bi5TsUO001xU7zvzBskeM+rvF
-         Dp2A==
+        bh=Q5oC9faImt9D0zslczuwTCnYe/Fu0rELKtEkE9Enw9k=;
+        b=f4LkzKRBrsqWOrsiFynIlNRNEQmtjOegH1rGBO+J54GGi14tmZ4vkp5YWia1ONm9XQ
+         gglhzp0BPaXj7TKFENEnKH+gdfBYtpJfsVAIYYq12crzhi5Ze4CfcNVH+W27xf4XbM2u
+         RAtYzlKtplUiso71VruUWkBsbAWqFRHtXe7VpandjNf9xGkQ2yV3kOKxVcFpOXxYTZIz
+         wPgyVT1xaaVqBD60PGeh+V9a1FT16BGuZHnXdAmohTN7Bt3HzB/VrxwCF17u79iDIEL5
+         WOx9T/JumWYeL3z6RzxZ2IrJsiu3GAwASrAA73e1YIZX5JBWmNqUcaGL8qXwBOWLb8os
+         rW5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=nx/BhNRVvudK8AcmKzKEeABUr5hW6bgb4H8HtATz2WQ=;
-        b=l9hT3CZ971e/ZfZzxWQOwb4IrdJ5rgxRdUkBQvE8k0cQZs0+W5avOMMyDcaglRlcMC
-         T0UMD/5F4CWz6roqWlZf3iGuINEY/fyt/ZWYF7rOwzBVrdwwMHRa6Cue4frVNAsbhHn4
-         TQ5mV7eajTwqnPgpHHS5lg5fcY8NoE/w9Q3RoDp6XgH+ZOYZnn1zo1zDjsYoGtwYpQgB
-         6PS/+rGkgd7OelSTv93bFnu0KiWSmao2mkgNgSjkQnTFjY9TNjzeBiIwHprTrRikJZug
-         x2IhhgVbtmveqJ7sadf62aCMOgMItuQZlwmoCwmmn961BDWizKibRnshXOkES2ZgDZw0
-         gY2A==
-X-Gm-Message-State: ACgBeo1ufrvVFPzuLcWH/8zUh381634HDEyWIFwzm9rltiCuFJKyVNme
-        mjrx1Ut6bhzHAHV4Mf2/x67CJQ==
-X-Google-Smtp-Source: AA6agR5klBkZDS5PPlrsrMthFDbg2IRjfgTscq/lu3jeVteIuoFZcP2H2deWMucrrK89u9SZcvzzNQ==
-X-Received: by 2002:a5d:6190:0:b0:228:6972:fd14 with SMTP id j16-20020a5d6190000000b002286972fd14mr24575588wru.114.1663234448802;
-        Thu, 15 Sep 2022 02:34:08 -0700 (PDT)
+        bh=Q5oC9faImt9D0zslczuwTCnYe/Fu0rELKtEkE9Enw9k=;
+        b=ay+WwNEguOcUk7wP1TuEdUmX9KQ3SPzx8ebZoP64zr1GShW7ACypl5Iw6ytYYz269c
+         ar0hodOJ6GLbEksi5A90UYQsCe3Ip34Y2RbliGadfIZgZuL0Xp5mAqZnqxQQkx5x1CXy
+         YIYJkpKyDwFVgTVnK+xrjSZUz4rzCdOCvqagQc3bSNCIqmT+gniAcVMP1q+UBw/CIokc
+         FwsKZxy3Glx8PADSlU6U7fyomX7rWWClcrJ15nRk0VNME94ykoXLcI16q70zrGunTSJu
+         4IckUbbAypLnPaxRcP8HtRJUTEeSkdH8/tGDlihLVdsu8rHJt5L/CaCxZchF53u6ptAv
+         j05A==
+X-Gm-Message-State: ACgBeo38Gfmy4lkmU5jmmAG7xOtr2qtycOMJMtcOzGJ2LZuaGRG/7UFM
+        0RyX59Ut27X27/eqe+YKbXk0AA==
+X-Google-Smtp-Source: AA6agR65hP5LHu32uKJVvqgNLMb2zEp4ZAqaMy8dZpFTmm+m6vtEIK3zg73WcW0k9xNVMlLa6+0nVA==
+X-Received: by 2002:a7b:c844:0:b0:3a9:70d2:bf23 with SMTP id c4-20020a7bc844000000b003a970d2bf23mr5929370wml.165.1663234611305;
+        Thu, 15 Sep 2022 02:36:51 -0700 (PDT)
 Received: from krzk-bin ([89.101.193.73])
-        by smtp.gmail.com with ESMTPSA id d13-20020adff2cd000000b00228dcf471e8sm2080450wrp.56.2022.09.15.02.34.07
+        by smtp.gmail.com with ESMTPSA id f7-20020a05600c4e8700b003a60bc8ae8fsm2544406wmq.21.2022.09.15.02.36.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 02:34:08 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 10:34:06 +0100
+        Thu, 15 Sep 2022 02:36:50 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 10:36:49 +0100
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        James Smart <jsmart2021@gmail.com>,
-        Andy Gross <agross@kernel.org>, Takashi Iwai <tiwai@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Justin Tee <justin.tee@broadcom.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Marc Herbert <marc.herbert@intel.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] dt-bindings: arm: msm: Rework kpss-gcc driver
- Documentation to yaml
-Message-ID: <20220915093406.lwss7frqqidor357@krzk-bin>
-References: <20220914142256.28775-1-ansuelsmth@gmail.com>
- <20220914142256.28775-4-ansuelsmth@gmail.com>
+To:     Alex Helms <alexander.helms.jy@renesas.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, geert+renesas@glider.be,
+        robh+dt@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
+Message-ID: <20220915093649.djdipsrq4homkmaz@krzk-bin>
+References: <20220914211809.22500-1-alexander.helms.jy@renesas.com>
+ <20220914211809.22500-2-alexander.helms.jy@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220914142256.28775-4-ansuelsmth@gmail.com>
+In-Reply-To: <20220914211809.22500-2-alexander.helms.jy@renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Sep 2022 16:22:54 +0200, Christian Marangi wrote:
-> Rework kpss-gcc driver Documentation to yaml Documentation.
-> The current kpss-gcc Documentation have major problems and can't be
-> converted directly. Introduce various changes to the original
-> Documentation.
+On Wed, 14 Sep 2022 14:18:08 -0700, Alex Helms wrote:
+> Add dt bindings for the Renesas ProXO oscillator.
 > 
-> Add #clock-cells additional binding as this clock outputs a static clk
-> named acpu_l2_aux with supported compatible.
-> Only some compatible require and outputs a clock, for the others, set
-> only the reg as a required binding to correctly export the kpss-gcc
-> registers. As the reg is shared also add the required syscon compatible.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
 > ---
->  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ---------
->  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 90 +++++++++++++++++++
->  2 files changed, 90 insertions(+), 44 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+>  .../bindings/clock/renesas,proxo.yaml         | 50 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 ++
+>  2 files changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,proxo.yaml
 > 
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+yamllint warnings/errors:
 
-Full log is available here: https://patchwork.ozlabs.org/patch/
+dtschema/dtc warnings/errors:
+./Documentation/devicetree/bindings/clock/renesas,proxo.yaml: $id: relative path/filename doesn't match actual path or filename
+	expected: http://devicetree.org/schemas/clock/renesas,proxo.yaml#
 
+doc reference errors (make refcheckdocs):
 
-clock-controller@2011000: clock-names: False schema does not allow ['pll8_vote', 'pxo']
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+See https://patchwork.ozlabs.org/patch/
 
-clock-controller@2011000: 'clock-output-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-clock-controller@2011000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960', 'qcom,kpss-gcc-msm8660', 'qcom,kpss-gcc-mdm9615']
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
-	arch/arm/boot/dts/qcom-apq8064-sony-xperia-lagan-yuga.dtb
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
-	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-clock-controller@2011000: compatible:1: 'qcom,kpss-gcc' was expected
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
-	arch/arm/boot/dts/qcom-apq8064-sony-xperia-lagan-yuga.dtb
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
-	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+pip3 install dtschema --upgrade
 
-clock-controller@2011000: compatible: ['qcom,kpss-gcc', 'syscon'] is too short
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
-	arch/arm/boot/dts/qcom-apq8064-sony-xperia-lagan-yuga.dtb
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
-	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
-
-clock-controller@2082000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960', 'qcom,kpss-gcc-msm8660', 'qcom,kpss-gcc-mdm9615']
-	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
-	arch/arm/boot/dts/qcom-msm8660-surf.dtb
-
-clock-controller@2082000: compatible:1: 'qcom,kpss-gcc' was expected
-	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
-	arch/arm/boot/dts/qcom-msm8660-surf.dtb
-
-clock-controller@2082000: compatible: ['qcom,kpss-gcc', 'syscon'] is too short
-	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
-	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+Please check and re-submit.
