@@ -2,101 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7E5ECAAD3
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 09:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3AFECAAD3
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 11:30:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbiIOJgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Sep 2022 05:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
+        id S229528AbiIOLab (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 07:30:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiIOJgy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 05:36:54 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9486753AF
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:36:52 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id e18so7308981wmq.3
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=Q5oC9faImt9D0zslczuwTCnYe/Fu0rELKtEkE9Enw9k=;
-        b=f4LkzKRBrsqWOrsiFynIlNRNEQmtjOegH1rGBO+J54GGi14tmZ4vkp5YWia1ONm9XQ
-         gglhzp0BPaXj7TKFENEnKH+gdfBYtpJfsVAIYYq12crzhi5Ze4CfcNVH+W27xf4XbM2u
-         RAtYzlKtplUiso71VruUWkBsbAWqFRHtXe7VpandjNf9xGkQ2yV3kOKxVcFpOXxYTZIz
-         wPgyVT1xaaVqBD60PGeh+V9a1FT16BGuZHnXdAmohTN7Bt3HzB/VrxwCF17u79iDIEL5
-         WOx9T/JumWYeL3z6RzxZ2IrJsiu3GAwASrAA73e1YIZX5JBWmNqUcaGL8qXwBOWLb8os
-         rW5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=Q5oC9faImt9D0zslczuwTCnYe/Fu0rELKtEkE9Enw9k=;
-        b=ay+WwNEguOcUk7wP1TuEdUmX9KQ3SPzx8ebZoP64zr1GShW7ACypl5Iw6ytYYz269c
-         ar0hodOJ6GLbEksi5A90UYQsCe3Ip34Y2RbliGadfIZgZuL0Xp5mAqZnqxQQkx5x1CXy
-         YIYJkpKyDwFVgTVnK+xrjSZUz4rzCdOCvqagQc3bSNCIqmT+gniAcVMP1q+UBw/CIokc
-         FwsKZxy3Glx8PADSlU6U7fyomX7rWWClcrJ15nRk0VNME94ykoXLcI16q70zrGunTSJu
-         4IckUbbAypLnPaxRcP8HtRJUTEeSkdH8/tGDlihLVdsu8rHJt5L/CaCxZchF53u6ptAv
-         j05A==
-X-Gm-Message-State: ACgBeo38Gfmy4lkmU5jmmAG7xOtr2qtycOMJMtcOzGJ2LZuaGRG/7UFM
-        0RyX59Ut27X27/eqe+YKbXk0AA==
-X-Google-Smtp-Source: AA6agR65hP5LHu32uKJVvqgNLMb2zEp4ZAqaMy8dZpFTmm+m6vtEIK3zg73WcW0k9xNVMlLa6+0nVA==
-X-Received: by 2002:a7b:c844:0:b0:3a9:70d2:bf23 with SMTP id c4-20020a7bc844000000b003a970d2bf23mr5929370wml.165.1663234611305;
-        Thu, 15 Sep 2022 02:36:51 -0700 (PDT)
-Received: from krzk-bin ([89.101.193.73])
-        by smtp.gmail.com with ESMTPSA id f7-20020a05600c4e8700b003a60bc8ae8fsm2544406wmq.21.2022.09.15.02.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 02:36:50 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 10:36:49 +0100
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Alex Helms <alexander.helms.jy@renesas.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, geert+renesas@glider.be,
-        robh+dt@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
-Message-ID: <20220915093649.djdipsrq4homkmaz@krzk-bin>
-References: <20220914211809.22500-1-alexander.helms.jy@renesas.com>
- <20220914211809.22500-2-alexander.helms.jy@renesas.com>
+        with ESMTP id S229712AbiIOLa2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 07:30:28 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5379A29828;
+        Thu, 15 Sep 2022 04:30:27 -0700 (PDT)
+Received: from [192.168.1.138] ([37.4.248.23]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MybbH-1pXDsH1aov-00z1Yd; Thu, 15 Sep 2022 13:30:04 +0200
+Message-ID: <ebb86dfa-2f89-dddc-0864-42fc4d2e9386@i2se.com>
+Date:   Thu, 15 Sep 2022 13:30:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220914211809.22500-2-alexander.helms.jy@renesas.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v1 2/7] clk: bcm: rpi: Add a function to retrieve the
+ maximum
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, Emma Anholt <emma@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech>
+ <20220815-rpi-fix-4k-60-v1-2-c52bd642f7c6@cerno.tech>
+ <20220914155035.88E45C433C1@smtp.kernel.org>
+ <50e8f1e8-806a-3599-7cbe-0c7d4bec1c51@i2se.com>
+ <20220914180508.0EDD9C433D6@smtp.kernel.org>
+ <c221873f-f230-0cce-e120-7e3cc732cf00@i2se.com>
+ <20220914181458.C6FCCC433C1@smtp.kernel.org>
+ <ecfe17be-5d81-3456-9a86-77acc848f95f@i2se.com>
+ <20220915075459.d2snlbwkingwnbh3@penduick>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220915075459.d2snlbwkingwnbh3@penduick>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:zlHowfxGiySVfzpiYYs6x9gC/xpTLorrvFqCMJk6TXlgJZcBk8J
+ 7X1L4o/wo/VMgbEbInTkJmCCsmnUpqEJwk4Ecy4NxSg0eK5NU3MowOJoRsbrZxGz1fUAT41
+ Xkqw628RsEcm2U5ZszgTQbuThgoiB2gH3Csf+VQ/VpCFCVZ94QcjO2rb7rBSqemwEXQycRI
+ xVuzYLoQSPVBC+DJP7fiA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PW7kU/WbNdk=:Kvmxj0vUvx4PxV/Qub80P7
+ Y3lR0erxRPjRx06o7bucHjVHgIs+ymWq1+FvpQ9Y30c8bRgZEZ4CEtBbT0waj94uQfkltKRYW
+ snFd0eH7iELC5KmHX+5H2CGxvMk796Suy7Ak7ckKwlOHYPSmnvdNH+X3DKiHVrBU52MiIE8LA
+ CdF+EXErwXObmuHRrLwX6kd43Frr9AisXs2KWNlr+jotDfd68C/lzKKMZJhsrq0zPFfdGy3Qj
+ WvNJndDahfxgcrSy3rjh0T2Oq8WkO8vS3U5XLIVGf9GbTOgiDmWwHXflwBS17lT0DP8HMduWV
+ Tw+OzBEkvsG0wH+UthdHq6WiRa9Rbq1UP/JJNmiYIdCgme0Ihxq8FxunsjNzlPkO/j9coxvlj
+ G+5LwODKCDX9uWamDXmA4bYWcejPxrIW2mUXJAFZHB23pGzb7NizUocz2WzFM5mERCgUwFaW6
+ 17O1ba8HmEByQwdm8QKbmZ/pTD4DOKdfD2kFEEsR+0wNd0M5yVogNmtZbf0wfJi50zMAULLhY
+ KZw9wffA7c8mnwjfQ4el9bk2VbfPowORZFepZ2HtbKHrOCpxx8A8i7FQ2iZMuGmBpf/fL6vUY
+ Z9T4zZAzV+CIaHlPrQIJmECm2FZ9jMfXF9FRtjCdmmhatyqSHaLQkEE05ZuHW0g9wXg+FZj9N
+ +6jmt+lWLe2ZjRvqxxEup2N9gEWJawRw50jivqVixtxLR9YFs3XzIIXQZDssKtpYV/Xg/2maa
+ AD/k7HoxmBg/mrgSph9E49+elHwxQ+jgzNlWsFZbPEevmaydBxSGkPr9K5x78zikcTYdlSZa2
+ tguDrG0GkmOIrbGOK6F5P4czQHsUw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Sep 2022 14:18:08 -0700, Alex Helms wrote:
-> Add dt bindings for the Renesas ProXO oscillator.
-> 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> ---
->  .../bindings/clock/renesas,proxo.yaml         | 50 +++++++++++++++++++
->  MAINTAINERS                                   |  5 ++
->  2 files changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> 
+Hi Maxime,
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/clock/renesas,proxo.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/renesas,proxo.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+Am 15.09.22 um 09:54 schrieb Maxime Ripard:
+> On Wed, Sep 14, 2022 at 08:26:55PM +0200, Stefan Wahren wrote:
+>> Am 14.09.22 um 20:14 schrieb Stephen Boyd:
+>>> Quoting Stefan Wahren (2022-09-14 11:09:04)
+>>>> Am 14.09.22 um 20:05 schrieb Stephen Boyd:
+>>>>> Quoting Stefan Wahren (2022-09-14 10:45:48)
+>>>>>> Am 14.09.22 um 17:50 schrieb Stephen Boyd:
+>>>>>>> Furthermore, I wonder if even that part needs to be implemented.  Why
+>>>>>>> not make a direct call to rpi_firmware_property() and get the max rate?
+>>>>>>> All of that can live in the drm driver. Making it a generic API that
+>>>>>>> takes a 'struct clk' means that it looks like any clk can be passed,
+>>>>>>> when that isn't true. It would be better to restrict it to the one use
+>>>>>>> case so that the scope of the problem doesn't grow. I understand that it
+>>>>>>> duplicates a few lines of code, but that looks like a fair tradeoff vs.
+>>>>>>> exposing an API that can be used for other clks in the future.
+>>>>>> it would be nice to keep all the Rpi specific stuff out of the DRM
+>>>>>> driver, since there more users of it.
+>>>>> Instead of 'all' did you mean 'any'?
+>>>> yes
+>>> Why?
+>> This firmware is written specific for the Raspberry Pi and not stable from
+>> interface point of view. So i'm afraid that the DRM driver is only usable
+>> for the Raspberry Pi at the end with all these board specific dependencies.
+> I'm open for suggestions there, but is there any other bcm2711 device
+> that we support upstream?
+I meant the driver as a whole. According to the vc4 binding there are 
+three compatibles bcm2835-vc4, cygnus-vc4 and bcm2711-vc5. Unfortunately 
+i don't have access to any of these Cygnus boards, so i cannot do any 
+regression tests or provide more information to your question.
+> If not, I'm not sure what the big deal is at this point. Chances are the
+> DRM driver won't work as is on a different board.
+>
+> Plus, such a board wouldn't be using config.txt at all, so this whole
+> dance to find what was enabled or not wouldn't be used at all.
+My concern is that we reach some point that we need to say this kernel 
+version requires this firmware version. In the Raspberry Pi OS world 
+this is not a problem, but not all distributions has this specific 
+knowledge.
+>
+>> Emma invested a lot of time to make this open source and now it looks that
+>> like that more and more functionality moves back to firmware.
+> What functionality has been moved back to firmware?
+This wasn't a offense against your great work. Just a slight warning 
+that some functions of clock or power management moved back into 
+firmware. We should watch out, but maybe i emote here.
+>
+> Maxime
