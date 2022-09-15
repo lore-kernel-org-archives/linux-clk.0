@@ -2,71 +2,201 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B41ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C07ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 04:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbiIODmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 23:42:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
+        id S229458AbiIOEAt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 00:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229837AbiIODmG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 23:42:06 -0400
-X-Greylist: delayed 1822 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 14 Sep 2022 20:42:02 PDT
-Received: from mail-m964.mail.126.com (mail-m964.mail.126.com [123.126.96.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 13DC426C;
-        Wed, 14 Sep 2022 20:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8klXX
-        5ncOj/JqdaK9P3vyLs+eSbA7W/UiVirrasLRHE=; b=kTlkcv30PEvq1fQVSoSba
-        bQwHFuQkuaWCXggJdtIVIBNSOizkI1Tm8KDZ9PpV4ZpEpJeE1RROLYXZBMEmGqbK
-        I2I+fxZAVH/s633rGWlpvgNwMQiDsmuMCxzJSIVT6AoknpLLxRuxVIpi7uF8UD1Y
-        XSgClB9B4++wntBvD9aUJI=
-Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp9 (Coremail) with SMTP id NeRpCgC3nqrclyJjlCu8Bw--.29768S2;
-        Thu, 15 Sep 2022 11:11:27 +0800 (CST)
-From:   Liang He <windhl@126.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, kristo@kernel.org,
-        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-        windhl@126.com
-Subject: [PATCH] clk: ti: Call of_node_get() before of_find_xxx() API
-Date:   Thu, 15 Sep 2022 11:11:21 +0800
-Message-Id: <20220915031121.4003589-1-windhl@126.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229448AbiIOEAs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 00:00:48 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6CA7FE46;
+        Wed, 14 Sep 2022 21:00:46 -0700 (PDT)
+X-UUID: 00915933d2e14e81b4d06fabd70aef1f-20220915
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=QyzP8AuS/Yj0m/junatFACxq+Em7ckmn0zUUcXx/+6Y=;
+        b=jNUOM6Aa7TMxJMOdy654GIdhBC/Oc19rbw9iyarUcTXy8t2X49Svo/F7pMC0Gp9muKzAiYNKUC/hV5ssILbODkJF+JCwa8Szo52PDeu8+hcWbCtwWfPGDQYt2VohlVbUA1efBRZW9doJv/VeuzTNb5GqYK76fjAibpGIapiozvs=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.11,REQID:16e903de-09ca-4471-b54e-783b31bc17a6,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:39a5ff1,CLOUDID:3e3bb65d-5ed4-4e28-8b00-66ed9f042fbd,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:11|1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: 00915933d2e14e81b4d06fabd70aef1f-20220915
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <johnson.wang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 48536846; Thu, 15 Sep 2022 12:00:42 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Thu, 15 Sep 2022 12:00:40 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.792.15 via Frontend
+ Transport; Thu, 15 Sep 2022 12:00:40 +0800
+Message-ID: <47ad92dfc593681508fcf09df1303cdfe86c4202.camel@mediatek.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add new bindings of
+ MediaTek frequency hopping
+From:   Johnson Wang <johnson.wang@mediatek.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>
+Date:   Thu, 15 Sep 2022 12:00:40 +0800
+In-Reply-To: <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
+References: <20220914124552.16964-1-johnson.wang@mediatek.com>
+         <20220914124552.16964-3-johnson.wang@mediatek.com>
+         <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: NeRpCgC3nqrclyJjlCu8Bw--.29768S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWUtr17Aw4xCF18Ww13XFb_yoW3CrgEkr
-        1fX3s2v3WUCwn3tFnFvFs3Xa4Yyry8uF18ZF1Sva43J345Ar42qr45X395X3sxGFW2yF98
-        ur17G3yjkryUXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_lApDUUUUU==
-X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3AB9F1pEEQiXwgAAsk
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In ti_find_clock_provider(), we need to call of_node_get() for
-of_find_node_by_name() which will automatically call of_node_put()
-for the 'from' argument.
+Hi Angelo,
 
-Fixes: 51f661ef9a10 ("clk: ti: Add ti_find_clock_provider() to use clock-output-names")
-Signed-off-by: Liang He <windhl@126.com>
----
- drivers/clk/ti/clk.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for your review.
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 373e9438b57a..7c390cd67e1a 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -147,6 +147,7 @@ static struct device_node *ti_find_clock_provider(struct device_node *from,
- 		return np;
- 
- 	/* Fall back to using old node name base provider name */
-+	of_node_get(from);
- 	return of_find_node_by_name(from, name);
- }
- 
--- 
-2.25.1
+On Wed, 2022-09-14 at 15:46 +0200, AngeloGioacchino Del Regno wrote:
+> Il 14/09/22 14:45, Johnson Wang ha scritto:
+> > Add the new binding documentation for MediaTek frequency hopping
+> > and spread spectrum clocking control.
+> > 
+> > Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
+> > ---
+> >   .../bindings/arm/mediatek/mediatek,fhctl.yaml | 47
+> > +++++++++++++++++++
+> >   1 file changed, 47 insertions(+)
+> >   create mode 100644
+> > Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
+> > l
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
+> > l
+> > new file mode 100644
+> > index 000000000000..7b0fd0889bb6
+> > --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
+> > l
+> > @@ -0,0 +1,47 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: 
+> > https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml*__;Iw!!CTRNKA9wMg0ARbw!3sumdhtrK5Ah5_rfIilgm4UUmnwkkqMpc3r_ZfkLfsXsLn-_AKm9ZokhJGD1Fl-gJpckAKHZh-jNVW64KRU8Duv1kg$
+> >  
+> > +$schema: 
+> > https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!3sumdhtrK5Ah5_rfIilgm4UUmnwkkqMpc3r_ZfkLfsXsLn-_AKm9ZokhJGD1Fl-gJpckAKHZh-jNVW64KRWMb8jIsw$
+> >  
+> > +
+> > +title: MediaTek frequency hopping and spread spectrum clocking
+> > control
+> > +
+> > +maintainers:
+> > +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
+> > +
+> > +description: |
+> > +  Frequency hopping control (FHCTL) is a piece of hardware that
+> > control
+> > +  some PLLs to adopt "hopping" mechanism to adjust their
+> > frequency.
+> > +  Spread spectrum clocking (SSC) is another function provided by
+> > this hardware.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: mediatek,mt8186-fhctl
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> 
+> There are still a few issues in this binding that I can immediately
+> see...
+> 
+> > +
+> > +  clocks:
+> 
+> MT8195 has 23 PLLs, MT8186 has 14, but perhaps in the future we may
+> see
+> something more than that on some newer SoC, so...
+> 
+>    clocks:
+>      maxItems: 30
+
+May I add "minItems: 1" to clocks property?
+
+Without this, dt_binding_check will fail because we don't have enough
+clocks in the example. (Both MT8195 and MT8186 don't have 30 PLLs)
+
+> 
+> > +    description: Phandles of the PLL with FHCTL hardware
+> > capability.
+> > +
+> > +  mediatek,hopping-ssc-percents:
+> > +    description: The percentage of spread spectrum clocking for
+> > one PLL.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> This is an array, so...
+> $ref: /schemas/types.yaml#/definitions/uint32-array
+> 
+> ...also, maxItems?
+
+As you know, mediatek,hopping-ssc-percents property is used to specify
+ssc rate for matching clocks.
+
+If we have to add maxItems, I think we should specify the same value
+as clocks property. Is my understanding wrong?
+
+
+Thanks!
+
+BRs,
+Johnson Wang
+> 
+> and you should also specify:
+> 
+> default: 0   <- because, by default, SSC is disabled
+> minimum: 0   <- because this is the minimum accepted value
+> 
+> 
+> Regards,
+> Angelo
+> 
+> > +    maximum: 8
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/mt8186-clk.h>
+> > +    fhctl: fhctl@1000ce00 {
+> > +        compatible = "mediatek,mt8186-fhctl";
+> > +        reg = <0x1000c000 0xe00>;
+> > +        clocks = <&apmixedsys CLK_APMIXED_MSDCPLL>;
+> > +        mediatek,hopping-ssc-percents = <3>;
+> > +    };
+> 
+> 
 
