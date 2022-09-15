@@ -2,69 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEF3ECAAD3
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 08:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CFEECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 08:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229565AbiIOIek (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Sep 2022 04:34:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
+        id S229682AbiIOI5g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 04:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbiIOIeX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 04:34:23 -0400
+        with ESMTP id S229570AbiIOI5f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 04:57:35 -0400
 Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7980C96744;
-        Thu, 15 Sep 2022 01:34:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3582C85F81;
+        Thu, 15 Sep 2022 01:57:33 -0700 (PDT)
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 9A51C3200B0A;
-        Thu, 15 Sep 2022 04:34:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 15 Sep 2022 04:34:21 -0400
+        by mailout.west.internal (Postfix) with ESMTP id 55E153200ACE;
+        Thu, 15 Sep 2022 04:57:31 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 15 Sep 2022 04:57:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1663230859; x=1663317259; bh=vUqGwLgGnv
-        jdJN3EeYf2AxkvIZhOPYtabrS2PcOns6o=; b=le+JZ+5CDlwi9EXQabwtuvDK+e
-        e87H/rMyJt3a6KbeNM3dXWouovQYQFDWIT04BCRL+c2BSIsxpwxRHrgpEiUMx3jW
-        ybljVlZUbuXr8R4dwM52sZlhRH/s27nPhnuW3hJHLsEwr9EAfhOB781H5iXDu9fW
-        QE7oIvkoHBdKCE87Uo+0iR9J3fzzyiAJJzCwVB5gu6PWQ0xmfAxJYnz5GE4nXt8w
-        FZjROLHhwIFViLlRxIS3N4Ydjeoa/65xtgbgUFMMGtsqcNEoZ017DJRv/fDIQ7iN
-        lhXv2PAW/8xy2Fq3JryOHoflLiRAWga8kEctgpVyhjS5z7TTOcwe50EoxVqA==
+        :subject:to:to; s=fm2; t=1663232250; x=1663318650; bh=9glwTz4c50
+        AzANN1a3FHpJHFXzJY1B25m9AFHGViGC8=; b=xDypjv7zdS9e2gHQZws3GTTEnH
+        2rq3YLmq1KfhDpOF8KFKbLsMrUXWfNkF7yIlIZz/IcyYDguh99CZv48rg9ZYLcyj
+        e0P7q/RIrzNkPF0SBy/f03gRUUR9mlD+q7HPrcVl2NaCr50Uyqyo7rsXV3shO8f4
+        ssgwEWRt8rls+h/7jXWqB50EKc3beJAgCmkkbcIIIwn8Tje5jucDKRlja0DYmYVQ
+        rvSIF3ZA9ODAXEcCusvj74sSRrSyhhA4U3PRkt8v4/QWosj3cQ8wzkC2pm1/rkvy
+        SUXxINygqxuDhNX7MkX2M12UFdHnMSvstI9+DA3/NBzrOvjK6LyWCVJJ+mKg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
         :feedback-id:from:from:in-reply-to:in-reply-to:message-id
         :mime-version:references:reply-to:sender:subject:subject:to:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1663230859; x=1663317259; bh=vUqGwLgGnvjdJN3EeYf2AxkvIZhO
-        PYtabrS2PcOns6o=; b=l/0D1SxBe0pTzrYfJ8BgnHFf91ySUsC/VIa7YceXkWX0
-        qw2TGaiAJDRLs2maPY/4809U78Gj1RTq6/ojfZPAbchEyp3kg2RPuHz1Vh20igm7
-        ks7uKjcn69KAM/pQ7UTHc1McDlDWrE5xEnYgGNhW6XBM7Uqy7DE6gmwBvCaenLCJ
-        MLGysr012dMpp+FLEQqGySzV+8ZkjVqo0HMTPrDImzHDwHslscTlXxuACcJb9cF9
-        3oBPXHgvwBvzEajpsqaMe+OpXrCwj6iH5lU5r/uV4LBBs1qdT3LI3Jkgh6HsJavz
-        uooAlBDDbTa91cLN4fwLQUIJlnL2xe9fD6rWNNL1qA==
-X-ME-Sender: <xms:iuMiYxLPxTEiUPDOaQStd7AVPFmjc7Q1NkTFVDUYM6pe3uZgi9_2Ig>
-    <xme:iuMiY9Jy0bGvEpOBcIXjgnIA8qPV3u2T1ydiqK1BtaxpT-Zk-SthEj54LUOlK_rXo
-    BdhzNm1JKOkgkWwJk4>
-X-ME-Received: <xmr:iuMiY5vnTtC8exCYKvmzHdXDpOcjLTesl8dmxkjiY-vz0Y_Fjl0pQHeTTfk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedukedgtdeiucetufdoteggodetrfdotf
+        fm2; t=1663232250; x=1663318650; bh=9glwTz4c50AzANN1a3FHpJHFXzJY
+        1B25m9AFHGViGC8=; b=uET4lJ106HjGjY2CJhWmgaIacb6UeR3ReLITT/XOPNjs
+        bswVZ3Mxb/NtwY8EBW8ly8IKzZaH/ymyOfa15U28mTHP8ZcwjmFwj7lnFJMB56xH
+        sY+slAkWtbP/S1IzMVTFBZ58Ge/zN7DlqJR22uwlh9jl8xymnzzFqNuqX8c9jLb6
+        CL556v3nyMdTu/AK2DWPIuMN6F1adcTXL4ZQMfHnkb3kaZwzi9g0t+Jy3Qu/lv1K
+        bDVlMxlbegvDa2R8HhVSSt85xSsI/OLIPmbN6b0RYnmC8tC3L9RPta8dvRww/eId
+        Q4m7lYT1iPoz3q6THSaOMkqHTSo5p5cXi8LLcop/Wg==
+X-ME-Sender: <xms:-ugiY9BtIfUcaNAoq8yHMt9s7o3fJB4Ns_2LamrbYNBrlKEBlJ6wQQ>
+    <xme:-ugiY7i9mkvIRH2nsCqHFANDMRSks9kEr5yYVZ1lTiGww0ddjx7bGVdGrtK_OvaWO
+    B2slXr7-9cAkfULsXY>
+X-ME-Received: <xmr:-ugiY4lvVqTYBX_L4Cp_Scnn9odK-YwK9D3gvdOVI-Hn3XZJwEcbpXT8oHE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedukedguddtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
-    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:iuMiYyZLdcfd0yePK5bEe3AS1AnvzYzcVFNYVsbsGFuNQ4k5tBfXFA>
-    <xmx:iuMiY4bnwMWnulBNX4mruedb7YjgK9YJsU9W25BDFYbCS_nxr9WpYg>
-    <xmx:iuMiY2CUk6fxSvEk2DOn59AIwV2Pc9E2r-JvunQTAK2vKlEVRTQyJQ>
-    <xmx:i-MiY-yraWZtP3k3T-lqqHDcOHTUMhtsFyWZSlT0qMEHzlTDSb62eA>
+    htthgvrhhnpedtleekjeeiudefvdfhieffteelhfeivdeliefgieeugffhvdelieffjeei
+    geetjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:-ugiY3z_MYYYtmYcOtdowe5h3pfS7IBNFasUqN_XJX0pyZH73eYO7g>
+    <xmx:-ugiYyT0Zlks3YllblspSTA5S7jOb0WL_7CeD7hljOB1jHo050vBKg>
+    <xmx:-ugiY6bnRFoZHHAjZCEWwdAm4lQ2Jqj3lG1CwOiUxPE6PkA-l7CAYQ>
+    <xmx:-ugiY-o_rnudp4f_lkcQQTcYEHOSrzEnsBxUi-zW8rPOpim_9IvAaA>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Sep 2022 04:34:18 -0400 (EDT)
-Date:   Thu, 15 Sep 2022 08:54:59 +0100
+ 15 Sep 2022 04:57:29 -0400 (EDT)
+Date:   Thu, 15 Sep 2022 10:55:20 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Broadcom internal kernel review list 
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         David Airlie <airlied@linux.ie>, Emma Anholt <emma@anholt.net>,
@@ -72,83 +72,94 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v1 2/7] clk: bcm: rpi: Add a function to retrieve the
  maximum
-Message-ID: <20220915075459.d2snlbwkingwnbh3@penduick>
+Message-ID: <20220915095520.ib7pixhteuahno3p@penduick>
 References: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech>
  <20220815-rpi-fix-4k-60-v1-2-c52bd642f7c6@cerno.tech>
  <20220914155035.88E45C433C1@smtp.kernel.org>
  <50e8f1e8-806a-3599-7cbe-0c7d4bec1c51@i2se.com>
  <20220914180508.0EDD9C433D6@smtp.kernel.org>
  <c221873f-f230-0cce-e120-7e3cc732cf00@i2se.com>
- <20220914181458.C6FCCC433C1@smtp.kernel.org>
- <ecfe17be-5d81-3456-9a86-77acc848f95f@i2se.com>
+ <20220914182101.92286C433D6@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hrirgpyhbd54p5r5"
+        protocol="application/pgp-signature"; boundary="cohslk2tp5ouqtkq"
 Content-Disposition: inline
-In-Reply-To: <ecfe17be-5d81-3456-9a86-77acc848f95f@i2se.com>
+In-Reply-To: <20220914182101.92286C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---hrirgpyhbd54p5r5
+--cohslk2tp5ouqtkq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 14, 2022 at 08:26:55PM +0200, Stefan Wahren wrote:
-> Am 14.09.22 um 20:14 schrieb Stephen Boyd:
-> > Quoting Stefan Wahren (2022-09-14 11:09:04)
-> > > Am 14.09.22 um 20:05 schrieb Stephen Boyd:
-> > > > Quoting Stefan Wahren (2022-09-14 10:45:48)
-> > > > > Am 14.09.22 um 17:50 schrieb Stephen Boyd:
-> > > > > > Furthermore, I wonder if even that part needs to be implemented.  Why
-> > > > > > not make a direct call to rpi_firmware_property() and get the max rate?
-> > > > > > All of that can live in the drm driver. Making it a generic API that
-> > > > > > takes a 'struct clk' means that it looks like any clk can be passed,
-> > > > > > when that isn't true. It would be better to restrict it to the one use
-> > > > > > case so that the scope of the problem doesn't grow. I understand that it
-> > > > > > duplicates a few lines of code, but that looks like a fair tradeoff vs.
-> > > > > > exposing an API that can be used for other clks in the future.
-> > > > > it would be nice to keep all the Rpi specific stuff out of the DRM
-> > > > > driver, since there more users of it.
-> > > > Instead of 'all' did you mean 'any'?
-> > > yes
-> > Why?
-> This firmware is written specific for the Raspberry Pi and not stable from
-> interface point of view. So i'm afraid that the DRM driver is only usable
-> for the Raspberry Pi at the end with all these board specific dependencies.
+Hi,
 
-I'm open for suggestions there, but is there any other bcm2711 device
-that we support upstream?
+On Wed, Sep 14, 2022 at 11:20:59AM -0700, Stephen Boyd wrote:
+> Quoting Stefan Wahren (2022-09-14 11:09:04)
+> > Am 14.09.22 um 20:05 schrieb Stephen Boyd:
+> > > Quoting Stefan Wahren (2022-09-14 10:45:48)
+> > >> Am 14.09.22 um 17:50 schrieb Stephen Boyd:
+> > >>> Furthermore, I wonder if even that part needs to be implemented.  W=
+hy
+> > >>> not make a direct call to rpi_firmware_property() and get the max r=
+ate?
+> > >>> All of that can live in the drm driver. Making it a generic API that
+> > >>> takes a 'struct clk' means that it looks like any clk can be passed,
+> > >>> when that isn't true. It would be better to restrict it to the one =
+use
+> > >>> case so that the scope of the problem doesn't grow. I understand th=
+at it
+> > >>> duplicates a few lines of code, but that looks like a fair tradeoff=
+ vs.
+> > >>> exposing an API that can be used for other clks in the future.
+> > >> it would be nice to keep all the Rpi specific stuff out of the DRM
+> > >> driver, since there more users of it.
+> > > Instead of 'all' did you mean 'any'?
+> > yes
+>=20
+> Another idea is to populate an OPP table in the rpi firmware driver for
+> this platform device with the adjusted max frequency. That would be an
+> SoC/firmware agnostic interface that expresses the constraints. I'm
+> almost certain we talked about this before.
 
-If not, I'm not sure what the big deal is at this point. Chances are the
-DRM driver won't work as is on a different board.
+Yeah, that rings a bell too.
 
-Plus, such a board wouldn't be using config.txt at all, so this whole
-dance to find what was enabled or not wouldn't be used at all.
+I found the thread:
+https://lore.kernel.org/linux-clk/20220629092900.inpjgl7st33dwcak@houat/
 
-> Emma invested a lot of time to make this open source and now it looks that
-> like that more and more functionality moves back to firmware.
+Admittedly, I don't know the OPP stuff that well, but I was always under
+the impression that it was to express the operating range of a device.
+We're not quite in this case here, since we want to get the range of one
+of the clock that feeds the device but might or might not affect the
+frequency of the device itself.
 
-What functionality has been moved back to firmware?
+I'm ok with your proposal to create a custom function in the firmware
+driver though, and I don't believe it would be an obstacle to any board
+we might upstream in the future that wouldn't have use the RPi firmware,
+so I'll work on that.
 
+Thanks!
 Maxime
 
---hrirgpyhbd54p5r5
+--cohslk2tp5ouqtkq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABMIAB0WIQTXEe0+DlZaRlgM8LOIQ8rmN6G3ywUCYyLaUwAKCRCIQ8rmN6G3
-y9OpAP4piBbM6aPirswtJbaB00rQd11MuWbOXRUllFGsa+tQTAEAp0zgBVW200Xw
-HsAzlYqWG/1RsqziBcl/XungkVnV4Ck=
-=Rad4
+iHUEABMIAB0WIQTXEe0+DlZaRlgM8LOIQ8rmN6G3ywUCYyL2iAAKCRCIQ8rmN6G3
+y5uhAP9aDhPjrMOhLevmYWWSADNr2THfUSCVC8ereIs5u7/VtgD+MOROIPNhAcP7
+6CWkpUKG+RJncxWL1BzgCyU4dC87I6M=
+=vFIC
 -----END PGP SIGNATURE-----
 
---hrirgpyhbd54p5r5--
+--cohslk2tp5ouqtkq--
