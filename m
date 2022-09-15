@@ -2,128 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1D9ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 09:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BF9C6FA8A
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 09:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbiIOJ1L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Sep 2022 05:27:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44592 "EHLO
+        id S229748AbiIOJeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 05:34:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbiIOJ1K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 05:27:10 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C058036D
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1663234030; x=1694770030;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Rs7cDElhZGBQj71SmgtFEEpCFfRiNED774xMnF1+kJU=;
-  b=RVEG3ipF9lmwqIdVcADwr1zlieDjEETD87E2ApPPC9WPlMn+L7D7TjW+
-   j54rKbbbOts1fheiiUjBT/+T7+6yq/VmUUj3IucfS7AtfOw1VbI+hz0nx
-   qRYj2mD8+5193wbKFI/BkW/E+vwmMVRohNPEHDS5lYst8hZncw1q4R7lg
-   v6aX4RdiMucABwIRMbk0X/CjmHfZnVdzGwUxyjCP2CFdMec7e3j1uBydF
-   3obF/Gv0BwGuG4o5gqThl2odBAC3yisIbyn/93X9N2ydRSGPlojb/up2v
-   3BSgbC42rOz7JGMYSkc02VL0YfEweQvmZlv/ySSDLWZ95j7HPukXgdihs
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,317,1654585200"; 
-   d="scan'208";a="180490717"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Sep 2022 02:27:09 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Thu, 15 Sep 2022 02:27:08 -0700
-Received: from localhost.localdomain (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.12 via Frontend Transport; Thu, 15 Sep 2022 02:27:06 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>
-CC:     <linux-clk@vger.kernel.org>
-Subject: [GIT PULL] Microchip clock updates for 6.1
-Date:   Thu, 15 Sep 2022 12:29:27 +0300
-Message-ID: <20220915092927.4158755-1-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.33.0
+        with ESMTP id S229528AbiIOJeM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 05:34:12 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F284979C4
+        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:34:10 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id bo13so13394970wrb.1
+        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 02:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=nx/BhNRVvudK8AcmKzKEeABUr5hW6bgb4H8HtATz2WQ=;
+        b=anPZy6RR5haz9Hh899sAj1/aToTK2d8Fu7rSqVKSWtwJ1R40ymJpj00ARQHKEjDaBX
+         P2TBldrxNF3yZTpsA14Lu0bosAM04VyKBblBBV6VppGzZdV5MOFzqrMx/3+0vhahlfTs
+         jEEGe3D8sM/Pa0z7OcRoLr74jLfcKbwv6XjAVRXcU/6qHcZf9SIAZm3mNgwoDvkmgnrU
+         Zx6mGUbEnAG7iSjnm6T69Ma0jszGLBUEWO38F7NsdZdAJiEYOkBrwVyQs9hdAW8Hl4Ze
+         4dQVZGo+yKfO9lvKI09cWKdahSCKn8GChwgdNK/dfk3Bi5TsUO001xU7zvzBskeM+rvF
+         Dp2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=nx/BhNRVvudK8AcmKzKEeABUr5hW6bgb4H8HtATz2WQ=;
+        b=l9hT3CZ971e/ZfZzxWQOwb4IrdJ5rgxRdUkBQvE8k0cQZs0+W5avOMMyDcaglRlcMC
+         T0UMD/5F4CWz6roqWlZf3iGuINEY/fyt/ZWYF7rOwzBVrdwwMHRa6Cue4frVNAsbhHn4
+         TQ5mV7eajTwqnPgpHHS5lg5fcY8NoE/w9Q3RoDp6XgH+ZOYZnn1zo1zDjsYoGtwYpQgB
+         6PS/+rGkgd7OelSTv93bFnu0KiWSmao2mkgNgSjkQnTFjY9TNjzeBiIwHprTrRikJZug
+         x2IhhgVbtmveqJ7sadf62aCMOgMItuQZlwmoCwmmn961BDWizKibRnshXOkES2ZgDZw0
+         gY2A==
+X-Gm-Message-State: ACgBeo1ufrvVFPzuLcWH/8zUh381634HDEyWIFwzm9rltiCuFJKyVNme
+        mjrx1Ut6bhzHAHV4Mf2/x67CJQ==
+X-Google-Smtp-Source: AA6agR5klBkZDS5PPlrsrMthFDbg2IRjfgTscq/lu3jeVteIuoFZcP2H2deWMucrrK89u9SZcvzzNQ==
+X-Received: by 2002:a5d:6190:0:b0:228:6972:fd14 with SMTP id j16-20020a5d6190000000b002286972fd14mr24575588wru.114.1663234448802;
+        Thu, 15 Sep 2022 02:34:08 -0700 (PDT)
+Received: from krzk-bin ([89.101.193.73])
+        by smtp.gmail.com with ESMTPSA id d13-20020adff2cd000000b00228dcf471e8sm2080450wrp.56.2022.09.15.02.34.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Sep 2022 02:34:08 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 10:34:06 +0100
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        James Smart <jsmart2021@gmail.com>,
+        Andy Gross <agross@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Justin Tee <justin.tee@broadcom.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Marc Herbert <marc.herbert@intel.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] dt-bindings: arm: msm: Rework kpss-gcc driver
+ Documentation to yaml
+Message-ID: <20220915093406.lwss7frqqidor357@krzk-bin>
+References: <20220914142256.28775-1-ansuelsmth@gmail.com>
+ <20220914142256.28775-4-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220914142256.28775-4-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Stephen, Michael,
+On Wed, 14 Sep 2022 16:22:54 +0200, Christian Marangi wrote:
+> Rework kpss-gcc driver Documentation to yaml Documentation.
+> The current kpss-gcc Documentation have major problems and can't be
+> converted directly. Introduce various changes to the original
+> Documentation.
+> 
+> Add #clock-cells additional binding as this clock outputs a static clk
+> named acpu_l2_aux with supported compatible.
+> Only some compatible require and outputs a clock, for the others, set
+> only the reg as a required binding to correctly export the kpss-gcc
+> registers. As the reg is shared also add the required syscon compatible.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ---------
+>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 90 +++++++++++++++++++
+>  2 files changed, 90 insertions(+), 44 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+> 
 
-On Microchip we decided to send a single clock pull request for both
-AT91 and Polarfire architectures. Let us know if you would prefer otherwise.
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-Please note that this PR is based on Microchip clock fixes PR.
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
 
-Thank you,
-Claudiu Beznea
+Full log is available here: https://patchwork.ozlabs.org/patch/
 
-The following changes since commit 05d27090b6dc88bce71a608d1271536e582b73d1:
 
-  clk: microchip: mpfs: make the rtc's ahb clock critical (2022-09-14 10:45:52 +0300)
+clock-controller@2011000: clock-names: False schema does not allow ['pll8_vote', 'pxo']
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
 
-are available in the Git repository at:
+clock-controller@2011000: 'clock-output-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.1
+clock-controller@2011000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960', 'qcom,kpss-gcc-msm8660', 'qcom,kpss-gcc-mdm9615']
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-lagan-yuga.dtb
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
 
-for you to fetch changes up to 935edf0c145596c26e7c6825918acde27ff94ff6:
+clock-controller@2011000: compatible:1: 'qcom,kpss-gcc' was expected
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-lagan-yuga.dtb
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
 
-  clk: at91: sama5d2: Add Generic Clocks for UART/USART (2022-09-15 11:01:37 +0300)
+clock-controller@2011000: compatible: ['qcom,kpss-gcc', 'syscon'] is too short
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-lagan-yuga.dtb
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
 
-----------------------------------------------------------------
-Microchip clock update for 6.1
+clock-controller@2082000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960', 'qcom,kpss-gcc-msm8660', 'qcom,kpss-gcc-mdm9615']
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
 
-Microchip AT91:
-- add generic clocks for U(S)ART available on SAMA5D2 SoCs
+clock-controller@2082000: compatible:1: 'qcom,kpss-gcc' was expected
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
 
-Microchip Polarfire:
-- reset controller support for Polarfire clocks
-- .round_rate and .set rate support for clk-mpfs
-- code cleanup for clk-mpfs
-- PLL support for PolarFire SoC's Clock Conditioning Circuitry
-
-----------------------------------------------------------------
-Conor Dooley (15):
-      dt-bindings: clk: microchip: mpfs: add reset controller support
-      clk: microchip: mpfs: add reset controller
-      reset: add polarfire soc reset support
-      MAINTAINERS: add polarfire soc reset controller
-      clk: microchip: mpfs: add MSS pll's set & round rate
-      clk: microchip: mpfs: move id & offset out of clock structs
-      clk: microchip: mpfs: simplify control reg access
-      clk: microchip: mpfs: delete 2 line mpfs_clk_register_foo()
-      clk: microchip: mpfs: convert cfg_clk to clk_divider
-      clk: microchip: mpfs: convert periph_clk to clk_gate
-      clk: microchip: mpfs: update module authorship & licencing
-      dt-bindings: clk: rename mpfs-clkcfg binding
-      dt-bindings: clk: document PolarFire SoC fabric clocks
-      dt-bindings: clk: add PolarFire SoC fabric clock ids
-      clk: microchip: add PolarFire SoC fabric clock support
-
-Sergiu Moga (1):
-      clk: at91: sama5d2: Add Generic Clocks for UART/USART
-
- .../bindings/clock/microchip,mpfs-ccc.yaml         |  80 +++++
- ...rochip,mpfs.yaml => microchip,mpfs-clkcfg.yaml} |  19 +-
- MAINTAINERS                                        |   1 +
- drivers/clk/at91/sama5d2.c                         |  10 +
- drivers/clk/microchip/Kconfig                      |   1 +
- drivers/clk/microchip/Makefile                     |   1 +
- drivers/clk/microchip/clk-mpfs-ccc.c               | 290 ++++++++++++++++
- drivers/clk/microchip/clk-mpfs.c                   | 375 ++++++++++-----------
- drivers/reset/Kconfig                              |   7 +
- drivers/reset/Makefile                             |   2 +-
- drivers/reset/reset-mpfs.c                         | 157 +++++++++
- include/dt-bindings/clock/microchip,mpfs-clock.h   |  23 ++
- include/soc/microchip/mpfs.h                       |   8 +
- 13 files changed, 780 insertions(+), 194 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
- rename Documentation/devicetree/bindings/clock/{microchip,mpfs.yaml => microchip,mpfs-clkcfg.yaml} (73%)
- create mode 100644 drivers/clk/microchip/clk-mpfs-ccc.c
- create mode 100644 drivers/reset/reset-mpfs.c
+clock-controller@2082000: compatible: ['qcom,kpss-gcc', 'syscon'] is too short
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
