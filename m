@@ -2,201 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C07ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 04:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 219EEECAAD3
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 06:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbiIOEAt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Sep 2022 00:00:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
+        id S229613AbiIOGQT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 02:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiIOEAs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 00:00:48 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6CA7FE46;
-        Wed, 14 Sep 2022 21:00:46 -0700 (PDT)
-X-UUID: 00915933d2e14e81b4d06fabd70aef1f-20220915
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=QyzP8AuS/Yj0m/junatFACxq+Em7ckmn0zUUcXx/+6Y=;
-        b=jNUOM6Aa7TMxJMOdy654GIdhBC/Oc19rbw9iyarUcTXy8t2X49Svo/F7pMC0Gp9muKzAiYNKUC/hV5ssILbODkJF+JCwa8Szo52PDeu8+hcWbCtwWfPGDQYt2VohlVbUA1efBRZW9doJv/VeuzTNb5GqYK76fjAibpGIapiozvs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.11,REQID:16e903de-09ca-4471-b54e-783b31bc17a6,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:39a5ff1,CLOUDID:3e3bb65d-5ed4-4e28-8b00-66ed9f042fbd,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:11|1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: 00915933d2e14e81b4d06fabd70aef1f-20220915
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <johnson.wang@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 48536846; Thu, 15 Sep 2022 12:00:42 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Thu, 15 Sep 2022 12:00:40 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.792.15 via Frontend
- Transport; Thu, 15 Sep 2022 12:00:40 +0800
-Message-ID: <47ad92dfc593681508fcf09df1303cdfe86c4202.camel@mediatek.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add new bindings of
- MediaTek frequency hopping
-From:   Johnson Wang <johnson.wang@mediatek.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>
-Date:   Thu, 15 Sep 2022 12:00:40 +0800
-In-Reply-To: <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
-References: <20220914124552.16964-1-johnson.wang@mediatek.com>
-         <20220914124552.16964-3-johnson.wang@mediatek.com>
-         <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S229564AbiIOGQR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 02:16:17 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E5C923D1;
+        Wed, 14 Sep 2022 23:16:16 -0700 (PDT)
+Received: from [192.168.1.138] ([37.4.248.23]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MKc0o-1otYR01EL6-00Kxco; Thu, 15 Sep 2022 08:15:50 +0200
+Message-ID: <5b64f4ef-a62e-80df-80a6-3ab52589588b@i2se.com>
+Date:   Thu, 15 Sep 2022 08:15:48 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v1 2/7] clk: bcm: rpi: Add a function to retrieve the
+ maximum
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, Emma Anholt <emma@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech>
+ <20220815-rpi-fix-4k-60-v1-2-c52bd642f7c6@cerno.tech>
+ <20220914155035.88E45C433C1@smtp.kernel.org>
+ <50e8f1e8-806a-3599-7cbe-0c7d4bec1c51@i2se.com>
+ <20220914180508.0EDD9C433D6@smtp.kernel.org>
+ <c221873f-f230-0cce-e120-7e3cc732cf00@i2se.com>
+ <20220914182101.92286C433D6@smtp.kernel.org>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220914182101.92286C433D6@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+X-Provags-ID: V03:K1:73zk18NJSgeRmQb2Le65uElTFxV3rTYUitHoBJvve+UbuXV4Lq/
+ 85iX824f09JsP5yFcmk4/RIlNWFowhB/BncseVNTc6qrcF8txSpdtPq8u5IZ7sCxMfBxpN6
+ z0dLdnnRVvhA/8kB41r59RcxfVXw6/fGOAbNnGJw/IZ/o+uELNlnhR6DZZgaOu/RLBvfDUW
+ 8AOLcw+RuwLR7iUjhmH9g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WMDYiwxPIpk=:xpy+5yMq1PfEjq9b17sO70
+ q7hFz/LlwEwfONudWfiLk/MW8KhokFIf+78te2ULq+n3phlE6U5SHyACBF2ABwWNd8ZAQ2Yx+
+ cK8QxpBeYM65D0bSJvAtibGdbWB1vQMEsbDcOo/YRRMOLibpdUaWJOv4FoZ3DuEag1C2TnJtQ
+ d8bVQRCor/lCyISpxl/+GKDdVUeGdSOig6YKkZ5QDq+5pbqP1c5uWXKM3vjhjU9Fbec0WKXib
+ gK4kJi/avNqHK/Mvd+vTZ+Lm/lLykciLtydrkKoUeF+/Ap37BSB1e7Be9+unCpbXtVNJTAVx+
+ JBdcpCJ8yB3d401FJpYKRBva4gKlTAr+KNSq59+rgvigiUHKWvpmdGyxPqfkSGQmJhIFhgsam
+ SNV9gYv2kySJkBk89jeN41NB6Zw8VYuUc3WrRLJHuXyTARFK5RyhA6ZjzlvoeALAEIas7AQiu
+ tKVJEjyVbdHjhu4RJ14tkyhuOLDJ/oKngCV0U2QnDSnOi4hnJmKnePBF2MBifGlXfJcR2HPXG
+ Q7tY41DwYj0OLlrLp5CvnokoM0yP1Tvyp9vL6rfGb8Iwul/K7efzKMEg0auMAXWrJxeXoIVeq
+ ngJBi5FG5ZZ3Lrp0CtQ5h5yUc9QH0StRMiPYA35jiBhqZap/wjfd/drzl+VuDoD5IUsx6d6Li
+ zOBzj5zbya2mJdjpxHg4RV+S9rdoadp7w3WZFuocPeVfWUXDg5Cyb1zSJblhH1V+nk3KVTAo2
+ 8/e1GxDdwZLxHT7BMuV4FrF6AuJKFU2JoH6DWP4GVWGRxVRYQR8RdY2zNeFA/a34Scn58gY8M
+ +vS0GCVJETNnb4HXnOK3fpeQF8ANg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Angelo,
+Hi Stephen,
 
-Thanks for your review.
-
-On Wed, 2022-09-14 at 15:46 +0200, AngeloGioacchino Del Regno wrote:
-> Il 14/09/22 14:45, Johnson Wang ha scritto:
-> > Add the new binding documentation for MediaTek frequency hopping
-> > and spread spectrum clocking control.
-> > 
-> > Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> > Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> > Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
-> > ---
-> >   .../bindings/arm/mediatek/mediatek,fhctl.yaml | 47
-> > +++++++++++++++++++
-> >   1 file changed, 47 insertions(+)
-> >   create mode 100644
-> > Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
-> > l
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
-> > l
-> > new file mode 100644
-> > index 000000000000..7b0fd0889bb6
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
-> > l
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: 
-> > https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml*__;Iw!!CTRNKA9wMg0ARbw!3sumdhtrK5Ah5_rfIilgm4UUmnwkkqMpc3r_ZfkLfsXsLn-_AKm9ZokhJGD1Fl-gJpckAKHZh-jNVW64KRU8Duv1kg$
-> >  
-> > +$schema: 
-> > https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!3sumdhtrK5Ah5_rfIilgm4UUmnwkkqMpc3r_ZfkLfsXsLn-_AKm9ZokhJGD1Fl-gJpckAKHZh-jNVW64KRWMb8jIsw$
-> >  
-> > +
-> > +title: MediaTek frequency hopping and spread spectrum clocking
-> > control
-> > +
-> > +maintainers:
-> > +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
-> > +
-> > +description: |
-> > +  Frequency hopping control (FHCTL) is a piece of hardware that
-> > control
-> > +  some PLLs to adopt "hopping" mechanism to adjust their
-> > frequency.
-> > +  Spread spectrum clocking (SSC) is another function provided by
-> > this hardware.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: mediatek,mt8186-fhctl
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> 
-> There are still a few issues in this binding that I can immediately
-> see...
-> 
-> > +
-> > +  clocks:
-> 
-> MT8195 has 23 PLLs, MT8186 has 14, but perhaps in the future we may
-> see
-> something more than that on some newer SoC, so...
-> 
->    clocks:
->      maxItems: 30
-
-May I add "minItems: 1" to clocks property?
-
-Without this, dt_binding_check will fail because we don't have enough
-clocks in the example. (Both MT8195 and MT8186 don't have 30 PLLs)
-
-> 
-> > +    description: Phandles of the PLL with FHCTL hardware
-> > capability.
-> > +
-> > +  mediatek,hopping-ssc-percents:
-> > +    description: The percentage of spread spectrum clocking for
-> > one PLL.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> 
-> This is an array, so...
-> $ref: /schemas/types.yaml#/definitions/uint32-array
-> 
-> ...also, maxItems?
-
-As you know, mediatek,hopping-ssc-percents property is used to specify
-ssc rate for matching clocks.
-
-If we have to add maxItems, I think we should specify the same value
-as clocks property. Is my understanding wrong?
-
-
-Thanks!
-
-BRs,
-Johnson Wang
-> 
-> and you should also specify:
-> 
-> default: 0   <- because, by default, SSC is disabled
-> minimum: 0   <- because this is the minimum accepted value
-> 
-> 
-> Regards,
-> Angelo
-> 
-> > +    maximum: 8
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/mt8186-clk.h>
-> > +    fhctl: fhctl@1000ce00 {
-> > +        compatible = "mediatek,mt8186-fhctl";
-> > +        reg = <0x1000c000 0xe00>;
-> > +        clocks = <&apmixedsys CLK_APMIXED_MSDCPLL>;
-> > +        mediatek,hopping-ssc-percents = <3>;
-> > +    };
-> 
-> 
+Am 14.09.22 um 20:20 schrieb Stephen Boyd:
+> Quoting Stefan Wahren (2022-09-14 11:09:04)
+>> Am 14.09.22 um 20:05 schrieb Stephen Boyd:
+>>> Quoting Stefan Wahren (2022-09-14 10:45:48)
+>>>> Am 14.09.22 um 17:50 schrieb Stephen Boyd:
+>>>>> Furthermore, I wonder if even that part needs to be implemented.  Why
+>>>>> not make a direct call to rpi_firmware_property() and get the max rate?
+>>>>> All of that can live in the drm driver. Making it a generic API that
+>>>>> takes a 'struct clk' means that it looks like any clk can be passed,
+>>>>> when that isn't true. It would be better to restrict it to the one use
+>>>>> case so that the scope of the problem doesn't grow. I understand that it
+>>>>> duplicates a few lines of code, but that looks like a fair tradeoff vs.
+>>>>> exposing an API that can be used for other clks in the future.
+>>>> it would be nice to keep all the Rpi specific stuff out of the DRM
+>>>> driver, since there more users of it.
+>>> Instead of 'all' did you mean 'any'?
+>> yes
+> Another idea is to populate an OPP table in the rpi firmware driver for
+> this platform device with the adjusted max frequency. That would be an
+> SoC/firmware agnostic interface that expresses the constraints.
+Do you mean in the source code of this driver or in the DT?
+> I'm
+> almost certain we talked about this before.
+I'm not sure about the context. Do you mean the CPU frequency handling? 
+I remember it was a hard decision. In the end it was little benefit but 
+a lot of disadvantages (hard to maintain all theses OPP tables for all 
+Raspberry Pi boards, doesn't work with already deployed DT). So yes, i'm 
+part of the problem i mentioned before ;-)
 
