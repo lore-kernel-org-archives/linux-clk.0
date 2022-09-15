@@ -2,48 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29035ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28444C6FA82
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230268AbiIODhN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 23:37:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53018 "EHLO
+        id S230321AbiIODh1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 23:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbiIODhM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 23:37:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA50C90188;
-        Wed, 14 Sep 2022 20:37:10 -0700 (PDT)
+        with ESMTP id S230303AbiIODhV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 23:37:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E042793214;
+        Wed, 14 Sep 2022 20:37:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 91CB9B81D75;
-        Thu, 15 Sep 2022 03:37:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DA7C43140;
-        Thu, 15 Sep 2022 03:37:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3213A62082;
+        Thu, 15 Sep 2022 03:37:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99AFAC43470;
+        Thu, 15 Sep 2022 03:37:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663213028;
-        bh=Gvyk/SWdp3y76yHv4Si3MDoRW3QEYPbCruPd8bBJkkA=;
+        s=k20201202; t=1663213037;
+        bh=hXo8PbklUD4P7mwRU94L4ijc/+r0ea3knn93F9DL5NU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o1zxrBI266Ktw+9MqdykBQZ7Tdx5QiCDK8cUwW/JBBYGqu5lEFacP6exwyh2drYID
-         wgYnfhiQHhQqfQJRQ0uO2xLUm/J5CLQilP7SB2+I+986AbuWuHWrmp+cgBXsPSH97k
-         BHC3svEDhN3pKYnq96mrxVtvloIOvIfB2mygr5MJFdACNKQgYmAQQgaJ6gWR0Cg4pc
-         29G0OVyooYkbJCDfwJW5+CUtLyUZAdAGxebe5ovb0h/PKSWLcKb7aoWS2nPYMhFgE8
-         yfJuZ5rD7eSoJGQivGhaJE7gXdM/13QPH18dIDPhR2odYqzrBtQ0E2rm02p3xXUYMB
-         E6TOZuk8wBFog==
+        b=fN5OnTN27Qym2fGhL8dkz8BCao1+NYI3gARhELO5AuHPtBdzPlvBv0Nz3Jm31AHAr
+         eF34y7xDTLIG+TGxQ8dS8AMclzvY5rQUJJiP+f91wVQKDKUPvZIjEVPPCTenizncnP
+         O6Mbo4sAdM9W6iz/elTttBXT4KefdIm0f92HRWy308W4mbI1+U/w3A0WyvUHml+Jdc
+         Ng4o7sKuYtl3gJt7TCwY/CtUx33lchZ9qnLSx7sSlV7EVD8HNq2iEzvNQgCveyWdsc
+         oZQOZc9SmMG5XTI+m/zE6X/5RpR7UdeTnBOPJqwe91J+znfBc2lthLlofaD874/nWt
+         0BMvpNyu5edXw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     mturquette@baylibre.com, agross@kernel.org, quic_tdas@quicinc.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
-        swboyd@chromium.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH 00/15] clk: qcom: use parent_hws/_data for APQ8064 clocks
-Date:   Wed, 14 Sep 2022 22:36:51 -0500
-Message-Id: <166321302052.788007.14469840237160862340.b4-ty@kernel.org>
+To:     mailingradian@gmail.com, linux-arm-msm@vger.kernel.org
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        jo@jsfamily.in, konrad.dybcio@somainline.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, caleb@connolly.tech,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        krzysztof.kozlowski+dt@linaro.org
+Subject: Re: [PATCH v4 0/3] SDM670 Global Clocks
+Date:   Wed, 14 Sep 2022 22:36:59 -0500
+Message-Id: <166321302049.788007.6905629348240646404.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220623120418.250589-1-dmitry.baryshkov@linaro.org>
-References: <20220623120418.250589-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220914013922.198778-1-mailingradian@gmail.com>
+References: <20220914013922.198778-1-mailingradian@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,32 +52,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 23 Jun 2022 15:04:03 +0300, Dmitry Baryshkov wrote:
-> This series converts the APQ8064/MSM8960 clock drivers, bindings and DTs
-> to use parent_hws/_data and excplicit clock binding in DT.
+On Tue, 13 Sep 2022 21:39:19 -0400, Richard Acayan wrote:
+> Changes since v3:
+>  - rebase onto next-20220913
+>  - accumulate review tags
 > 
-> Dependencies: [1] (whole series), [2], [3]
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20220521151437.1489111-1-dmitry.baryshkov@linaro.org/
-> [2] https://lore.kernel.org/linux-arm-msm/20220617122922.769562-2-dmitry.baryshkov@linaro.org/
-> [3] https://lore.kernel.org/linux-arm-msm/20220617122922.769562-3-dmitry.baryshkov@linaro.org/
+> Changes since v2:
+>  - drop GCC_SDCC1_BCR reset
+>  - reorder gcc-sdm845 and gcc-sdm670 if statements in bindings
+>  - add space
+>  - accumulate review tags
 > 
 > [...]
 
 Applied, thanks!
 
-[10/15] ARM: dts: qcom: apq8064: add clocks to the LCC device node
-        commit: 30f17249c171c9ac50e9f6d51c0bb5db1f5b2403
-[11/15] ARM: dts: qcom: msm8960: add clocks to the LCC device node
-        commit: 6e9b4595609adf4ee97970a84a6eaeb1610aacb3
-[12/15] ARM: dts: qcom: apq8064: add clocks to the GCC device node
-        commit: 85ddc865219b04ea7930a8107943fe3c2e3af886
-[13/15] ARM: dts: qcom: msm8960: add clocks to the GCC device node
-        commit: 80787e417f3058c6ea59af726e803ca307b67867
-[14/15] ARM: dts: qcom: apq8064: add clocks to the MMCC device node
-        commit: f79742da254e47d38ea934813fb44a91aa834ee9
-[15/15] ARM: dts: qcom: msm8960: add clocks to the MMCC device node
-        commit: 2e312b3429244eae1b105cb942550f2e5282f887
+[1/3] dt-bindings: clock: gcc-sdm845: add sdm670 global clocks
+      commit: 657e9326658c1c570eb1e8fd122a4a7936433673
+[2/3] clk: qcom: gcc-sdm845: use device tree match data
+      commit: 8e90216d2db99f0b883be3b40d5b581437dc4a5d
+[3/3] clk: qcom: gcc-sdm845: add sdm670 global clock data
+      commit: ae66b1fe48e2dd91229f2b8f25295bce629382d0
 
 Best regards,
 -- 
