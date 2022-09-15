@@ -2,216 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0DAC6FA8B
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 06:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F57ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 07:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229448AbiIOG4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Sep 2022 02:56:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39614 "EHLO
+        id S229536AbiIOHZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Sep 2022 03:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbiIOG4b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 02:56:31 -0400
+        with ESMTP id S229511AbiIOHZR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Sep 2022 03:25:17 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6699B6DAF6;
-        Wed, 14 Sep 2022 23:56:30 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6AD924BE2;
+        Thu, 15 Sep 2022 00:25:07 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7D34A6601AAA;
-        Thu, 15 Sep 2022 07:56:28 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3CF156601DF0;
+        Thu, 15 Sep 2022 08:25:05 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663224989;
-        bh=o2s8o3bUZ35Fc8myVBKxsKVtl6T6Tf2rP2KJHIQ3WnE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=EZ7fUllGYbaK06F+/t1t7bN5ZjDYkfIh0XgUonCJqCJS9Qy917AVNdgfF4Mzq5kQY
-         lyL9yd0fwqfnMyRuKppUKJJwZT8hN08NlmwacpnkIeyvilIzHBBZP60AAY2or1gk5s
-         PzlvltTNiyuI7w2cvedSJL0vrnmUZIQPuLNfeNjTaohSNWIqmA6blt+Y8C69q9smAw
-         pJFQZ5zyU4n/dLohmPsDz3Y4J6/u37SDuVsoljJvaKkTkG4M75jUaziwgwozDbMIyn
-         yvigBObuCQ/zvUg3aKLJDagtACgllvRjWALNUQ9tYAQgsEx8Yd1CLYNOdGrbTemg3W
-         cDwsXoieJorjQ==
-Message-ID: <551a0a6d-107e-d521-57cd-90c428576d69@collabora.com>
-Date:   Thu, 15 Sep 2022 08:56:25 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add new bindings of
- MediaTek frequency hopping
-Content-Language: en-US
-To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>
-References: <20220914124552.16964-1-johnson.wang@mediatek.com>
- <20220914124552.16964-3-johnson.wang@mediatek.com>
- <06eb15ea-56b3-4f18-be18-3fc710cef779@collabora.com>
- <47ad92dfc593681508fcf09df1303cdfe86c4202.camel@mediatek.com>
+        s=mail; t=1663226706;
+        bh=a+lCOJ/80w6m9TrGmjBOngO6PqvgZD5vkbSZRABzuHs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m92GeU9AJ0IIef3fA/hpdN3AO8FwC683FHWJGrPzEfD7OmlydHQ4hqnCks25LqfmY
+         EcjqhNfbojc28VKIc+P16+j8hChbITg/+hyKTLh5teMrOgUjL+Gg6zPQMBC/PtFdTP
+         +biVR4X/fBNWHOl00rP2qgjrfW927Hkq3suf0Tm0qD7bwc+dAtQ455T9Mn2G0PaopD
+         JC2a8ZvmS3Z4Lj6VFbEdZFNC++ShEcRKEvtlTvfAZxkrYQKbE+bR++Ojeu4g/tbXYt
+         F3+DKBxQdvXBWSWlw94Tspnjl3HwK4rJSo+p5fWJSBelZXVujREIVE3khz1thUowv2
+         tAFRurVuXk/GA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <47ad92dfc593681508fcf09df1303cdfe86c4202.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     matthias.bgg@gmail.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        nfraprado@collabora.com, chun-jie.chen@mediatek.com,
+        jose.exposito89@gmail.com, drinkcat@chromium.org,
+        weiyi.lu@mediatek.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Subject: [PATCH v2 00/10] MediaTek SoC safe clock muxing and GPU clocks
+Date:   Thu, 15 Sep 2022 09:24:48 +0200
+Message-Id: <20220915072458.18232-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.37.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 15/09/22 06:00, Johnson Wang ha scritto:
-> Hi Angelo,
-> 
-> Thanks for your review.
-> 
-> On Wed, 2022-09-14 at 15:46 +0200, AngeloGioacchino Del Regno wrote:
->> Il 14/09/22 14:45, Johnson Wang ha scritto:
->>> Add the new binding documentation for MediaTek frequency hopping
->>> and spread spectrum clocking control.
->>>
->>> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
->>> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
->>> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
->>> ---
->>>    .../bindings/arm/mediatek/mediatek,fhctl.yaml | 47
->>> +++++++++++++++++++
->>>    1 file changed, 47 insertions(+)
->>>    create mode 100644
->>> Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
->>> l
->>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
->>> l
->>> new file mode 100644
->>> index 000000000000..7b0fd0889bb6
->>> --- /dev/null
->>> +++
->>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yam
->>> l
->>> @@ -0,0 +1,47 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id:
->>> https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml*__;Iw!!CTRNKA9wMg0ARbw!3sumdhtrK5Ah5_rfIilgm4UUmnwkkqMpc3r_ZfkLfsXsLn-_AKm9ZokhJGD1Fl-gJpckAKHZh-jNVW64KRU8Duv1kg$
->>>   
->>> +$schema:
->>> https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!3sumdhtrK5Ah5_rfIilgm4UUmnwkkqMpc3r_ZfkLfsXsLn-_AKm9ZokhJGD1Fl-gJpckAKHZh-jNVW64KRWMb8jIsw$
->>>   
->>> +
->>> +title: MediaTek frequency hopping and spread spectrum clocking
->>> control
->>> +
->>> +maintainers:
->>> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
->>> +
->>> +description: |
->>> +  Frequency hopping control (FHCTL) is a piece of hardware that
->>> control
->>> +  some PLLs to adopt "hopping" mechanism to adjust their
->>> frequency.
->>> +  Spread spectrum clocking (SSC) is another function provided by
->>> this hardware.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: mediatek,mt8186-fhctl
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>
->> There are still a few issues in this binding that I can immediately
->> see...
->>
->>> +
->>> +  clocks:
->>
->> MT8195 has 23 PLLs, MT8186 has 14, but perhaps in the future we may
->> see
->> something more than that on some newer SoC, so...
->>
->>     clocks:
->>       maxItems: 30
-> 
-> May I add "minItems: 1" to clocks property?
-> 
+This series adds a clock notifier for MediaTek clock muxes, required
+in order to achieve stability for GPU DVFS.
 
-Of course you can! Sorry for the incomplete advice here :-)
+The GPU frequency scaling mechanism requires us to switch the GPU
+mux clock to a safe parent which frequency is always less or equal
+to the "current" GPU frequency before reprogramming its dedicated
+"MFG" PLL.
+This is needed because the PLL needs time to reconfigure for its
+output to stabilize (so, for the PLL to lock again): failing to do
+so will lead to instabilities such as glitches, GPU lockups and/or
+full system lockups.
 
-> Without this, dt_binding_check will fail because we don't have enough
-> clocks in the example. (Both MT8195 and MT8186 don't have 30 PLLs)
-> 
->>
->>> +    description: Phandles of the PLL with FHCTL hardware
->>> capability.
->>> +
->>> +  mediatek,hopping-ssc-percents:
->>> +    description: The percentage of spread spectrum clocking for
->>> one PLL.
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>
->> This is an array, so...
->> $ref: /schemas/types.yaml#/definitions/uint32-array
->>
->> ...also, maxItems?
-> 
-> As you know, mediatek,hopping-ssc-percents property is used to specify
-> ssc rate for matching clocks.
-> 
-> If we have to add maxItems, I think we should specify the same value
-> as clocks property. Is my understanding wrong?
-> 
+While at it, reparenting of some GPU clocks was also performed, as
+the clock tree was slightly incorrect.
 
-Your understanding is right. The number of min/max items on the ssc
-percents will be the same as clocks.
+This series was tested, along with mtk-regulator-coupler [1], on
+Chromebooks with different SoCs (MT8183, MT8192, MT8195*), resulting
+in fully working GPU DVFS with the Panfrost driver.
 
-Regards,
-Angelo
+[1]: https://patchwork.kernel.org/project/linux-mediatek/patch/20220628120224.81180-1-angelogioacchino.delregno@collabora.com/
 
-> 
-> Thanks!
-> 
-> BRs,
-> Johnson Wang
->>
->> and you should also specify:
->>
->> default: 0   <- because, by default, SSC is disabled
->> minimum: 0   <- because this is the minimum accepted value
->>
->>
->> Regards,
->> Angelo
->>
->>> +    maximum: 8
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - clocks
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/clock/mt8186-clk.h>
->>> +    fhctl: fhctl@1000ce00 {
->>> +        compatible = "mediatek,mt8186-fhctl";
->>> +        reg = <0x1000c000 0xe00>;
->>> +        clocks = <&apmixedsys CLK_APMIXED_MSDCPLL>;
->>> +        mediatek,hopping-ssc-percents = <3>;
->>> +    };
->>
->>
-> 
+* MT8195 does not require mtk-regulator-coupler. This series, along
+  with [1], are required to perform GPU DVFS also on non-Chromebook SoCs.
+
+Changes in v2:
+ - Added comment in clk-mt8195-topckgen to keep the mfg parents
+   documented after removal, as suggested by Chen-Yu
+
+AngeloGioacchino Del Regno (6):
+  clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d and propagate rate
+    changes
+  clk: mediatek: clk-mt8195-topckgen: Register mfg_ck_fast_ref as
+    generic mux
+  clk: mediatek: clk-mt8195-topckgen: Add GPU clock mux notifier
+  clk: mediatek: clk-mt8195-topckgen: Drop univplls from mfg mux parents
+  clk: mediatek: clk-mt8192-mfg: Propagate rate changes to parent
+  clk: mediatek: clk-mt8192: Add clock mux notifier for mfg_pll_sel
+
+Chen-Yu Tsai (4):
+  arm64: dts: mt8183: Fix Mali GPU clock
+  clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
+  clk: mediatek: mux: add clk notifier functions
+  clk: mediatek: mt8183: Add clk mux notifier for MFG mux
+
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi   |  2 +-
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c   |  6 +--
+ drivers/clk/mediatek/clk-mt8183.c          | 28 +++++++++++++
+ drivers/clk/mediatek/clk-mt8192-mfg.c      |  6 ++-
+ drivers/clk/mediatek/clk-mt8192.c          | 28 +++++++++++++
+ drivers/clk/mediatek/clk-mt8195-mfg.c      |  6 ++-
+ drivers/clk/mediatek/clk-mt8195-topckgen.c | 46 +++++++++++++++-------
+ drivers/clk/mediatek/clk-mux.c             | 38 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mux.h             | 15 +++++++
+ 9 files changed, 153 insertions(+), 22 deletions(-)
 
 -- 
-AngeloGioacchino Del Regno
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-Registered in England & Wales, no. 5513718
+2.37.2
 
