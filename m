@@ -2,49 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB14C6FA8E
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C86CC6FA8A
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Sep 2022 03:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230337AbiIODhz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Sep 2022 23:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54180 "EHLO
+        id S230313AbiIODh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Sep 2022 23:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbiIODhp (ORCPT
+        with ESMTP id S230342AbiIODhp (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2022 23:37:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CCE39321A;
-        Wed, 14 Sep 2022 20:37:19 -0700 (PDT)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1096C9322B;
+        Wed, 14 Sep 2022 20:37:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AB528B81D09;
-        Thu, 15 Sep 2022 03:37:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550A3C43152;
-        Thu, 15 Sep 2022 03:37:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 96E1E6206E;
+        Thu, 15 Sep 2022 03:37:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFB3C43142;
+        Thu, 15 Sep 2022 03:37:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663213036;
-        bh=HRk4TI/jrSBRyB95U3j2n9f8xwzK0CzqkaoD0MH3gjw=;
+        s=k20201202; t=1663213042;
+        bh=oZK4TmRjdWUzhH8K3J+wY8ciuZJRIg5qg2U1p3zyxus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m9xwAtsfEwJ9R5xsuGnP0xsyhE+MOObYZagyyQcd5e96vRUmgsaiU7y4ftOTLbUqV
-         bFWXPBoTBG7j9ng3SWgki7h18m9+fAaKxoP6+AUNq/Gl/pyCsskhSIQ2ar34IpFTJL
-         y4i24ZlvY1meSYlgJRfyJHaLbPdQEjEh4+J94G7NPCaofdo+wvo1b1pMl+ToZsdcfH
-         cpl1JaOdvOpW/Gbh2wGJ2pIbQX9f3x3eE185V7fF+8FTDZqpSp+r8WfEBwP2TByadQ
-         l2oS1JqsiaBvEHZeRVv0vbe3stipwJB1UruzoWee2Boxh2y8rfFEeRx9ShCgA6+9Du
-         XKvYc0eB32xfg==
+        b=FFw0cXZTS889EJdJXf8zO8IruuBSdCmNK/aMORosutG98bJ6FFhHl3nmMNULwz+Um
+         futDfJnYk0Yq+JTBf89DiD6YYt3jfvovqlxwvaG3fU4kLVJY1x4Q5nod8dTe0EMQpY
+         S685Qs1F9cvyL8DyI0YPnmRGcWFgefFtlndCFxYI/cZbz4qahySJlcwZndLtrV4fTv
+         JQA8OF8s5HnY+iXppn+m5T7TJowuMgBE0KOygMRO2QDAzLNVwwPU/35uFKQ+JJIO56
+         TRw69Usp4vX+2fWV05t7NzpSlababks3LmKQIkFp/+vS5armtpgULwiPdlD/jd2QfB
+         u9PDjjKd/lRVA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     mailingradian@gmail.com, linux-arm-msm@vger.kernel.org
-Cc:     mturquette@baylibre.com, agross@kernel.org, sboyd@kernel.org,
-        konrad.dybcio@somainline.org, jo@jsfamily.in,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org, caleb@connolly.tech,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        krzysztof.kozlowski+dt@linaro.org, tdas@codeaurora.org
-Subject: Re: [PATCH v3 0/3] SDM670 Global Clocks
-Date:   Wed, 14 Sep 2022 22:36:58 -0500
-Message-Id: <166321302049.788007.6695561688193069480.b4-ty@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        stephan.gerhold@kernkonzept.com
+Cc:     agross@kernel.org, mturquette@baylibre.com,
+        dominikkobinski314@gmail.com, sboyd@kernel.org,
+        konrad.dybcio@somainline.org, p.zabel@pengutronix.de,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        stephan@gerhold.net, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] clk: qcom: Add clocks for MSM8909
+Date:   Wed, 14 Sep 2022 22:37:03 -0500
+Message-Id: <166321302055.788007.16496767011703935092.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220908231224.209020-1-mailingradian@gmail.com>
-References: <20220908231224.209020-1-mailingradian@gmail.com>
+In-Reply-To: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
+References: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,30 +53,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 8 Sep 2022 19:12:21 -0400, Richard Acayan wrote:
-> Changes since v2:
->  - drop GCC_SDCC1_BCR reset
->  - reorder gcc-sdm845 and gcc-sdm670 if statements in bindings
->  - add space
->  - accumulate review tags
-> 
-> Changes since v1:
->  - regenerate patches to fixed malformed patch
->  - fix schema so that the parent clocks are specified correctly
->  - remove core_bi_test_pll_se from new parent_data to match array sizes
->  - reference correct frequency table for gcc_sdm670_cpuss_rbcpr_clk_src
->  - set correct index for sdcc1_ice_core_clk_src
+On Wed, 6 Jul 2022 15:41:26 +0200, Stephan Gerhold wrote:
+> Add a driver for the Global Clock Controller (GCC) that provides clocks,
+> resets and power domains for the various hardware blocks in the MSM8909
+> SoC. Make it possible to have longer delay between assertion/deassertion
+> of particular reset signals (this is needed for the USB PHY on MSM8909).
+> Finally, add the necessary definitions for the clocks controlled by the
+> RPM firmware on MSM8909.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: gcc-sdm845: add sdm670 global clocks
-      commit: 657e9326658c1c570eb1e8fd122a4a7936433673
-[2/3] clk: qcom: gcc-sdm845: use device tree match data
-      commit: 8e90216d2db99f0b883be3b40d5b581437dc4a5d
-[3/3] clk: qcom: gcc-sdm845: add sdm670 global clock data
-      commit: ae66b1fe48e2dd91229f2b8f25295bce629382d0
+[1/6] dt-bindings: clock: Add schema for MSM8909 GCC
+      commit: c40668048f236da6f7725998f93f0d6180003da3
+[2/6] clk: qcom: Add driver for MSM8909 GCC
+      commit: bf37a05744ebc6a488e3cfd3ec6d502d626740cc
+[3/6] clk: qcom: reset: Allow specifying custom reset delay
+      commit: 2cb8a39b6781ea23accd1fa93b3ad000d0948aec
+[4/6] clk: qcom: gcc-msm8909: Increase delay for USB PHY reset
+      commit: dcc6c9fb712875bf1897eaeb0c9d4e4237861723
+[5/6] dt-bindings: clock: qcom,rpmcc: Add MSM8909
+      commit: 1727a402c1fcf2594923be47ed03fab2db0eacfb
+[6/6] clk: qcom: smd-rpm: Add clocks for MSM8909
+      commit: 94a70c873d56e8bb7bce52cfb68d004be174dfff
 
 Best regards,
 -- 
