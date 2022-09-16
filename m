@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468DEC6FA92
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 06:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62398C6FA93
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 06:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbiIPGRr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Sep 2022 02:17:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52320 "EHLO
+        id S229503AbiIPGRs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Sep 2022 02:17:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiIPGRq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 02:17:46 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04DF54F18C
+        with ESMTP id S229735AbiIPGRr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 02:17:47 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1B54CA34
         for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 23:17:45 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id w8so33929702lft.12
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 23:17:44 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id bn9so24788933ljb.6
+        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 23:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=h15zYoPtFmkL9+pfwNW1mzpCDw+nxzJf4vGWrFpg24A=;
-        b=kl9bLyNLLoMh3S6BCsesGgV0rfpcA0mbvlc12P/l1o2U8CSklGwnOOaG8xzX7gsMFz
-         wla3Ad4K+vd14dMlog5GRIjRsSSB34K32/bWaEafBJS0aKLv20l0To59Efd8oOjgcNjJ
-         21Dajd7KYMM/qI448oBEx9vdnf/hEXUMCmR65gE8wdd3x1/PEqbG+hiYP3pwz9La1uAl
-         aJU/21Ucjpqat4LHzo53g2TPa+uonk6cVZbVdDrqosHr65l0Xc9VcDsJT+QPsWSpn0VR
-         uUyPIkygFgQqOFOeWL6mcnJtUgJ8uGGOf8/XC1senuyNzE/UqW3f0mnFQCleanE021Yo
-         OAiA==
+        bh=X090fBwR71n+Uf8mgcr+/g0ucFo6d8AXFrDt6zSz6Ec=;
+        b=TXyDE1vIX/pUmargdORd3xFpvmwOh46CsjZ+1nHtoJMk3KdloYSY0X2O4AoRKy0bAL
+         njmW4CdQmwFUako/i/5/2+x03bAQkbW/NX8YF7GREWZ+qrAwDtd++Ac6NHcFwM6U/coL
+         YFjLs0FakQAOwKwjK3NiCT+dseTzHUzJmSkCZjhxbWvNDRG6BpEL/2TKuS7Z8Osh5ej6
+         TtNghr81JT+Um9v8d56nFLgeXIrH0L5iFPJriyMCV89D86TLpr2LJROJN7Wja36tpoGz
+         +A4yM0YHiicsuu+nVq/7DvNxmpuQ7EDlK/FldZEbNtl57/potVOFfXVJMakCpwJifLit
+         LQjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=h15zYoPtFmkL9+pfwNW1mzpCDw+nxzJf4vGWrFpg24A=;
-        b=w3mEsDOC/ULZuTkmD1wqsnICygejAjGfQi89yJbWmYX64vxPVHUE6wG6HKYM2wfUsR
-         59V8n/0yl7E1OREKkEsLuXuXyFF9MqehpF6jkLAyotZD84LgHl9eGdIyQ8odoU9GrI27
-         XXtdHq8WPRy8gjxagTIGYvSzfqUO+CxZNlawM5pidny+SPWE0SDwyfqmVqSvGtAIJ7TN
-         pMGx56nvnqH666GPQ/4SvgrWWrl286ThsSXFLUidoZ+c5ikbCcUJ2DjFKlRbyczT932W
-         w9nrG05fvxc3sxiDHizkENNYplyW3H3+B6PJ0e5a5DcL/Zv+oOBA/rC4NmNR5oJieX6F
-         GsIA==
-X-Gm-Message-State: ACrzQf3ImVFWvvlThRH0CcET1c+BGSY3d7InMfXVMf2nLymz70sO+Aw0
-        xbCVcB3yplUIN0TYn14EnAya4A==
-X-Google-Smtp-Source: AMsMyM7Mca/LB0c/d4FbfBSjoIrm5mNDwjETSBwP5MtR+hsRhk//bUrR1me2tEHZ91ra8XKOOT8XpA==
-X-Received: by 2002:a05:6512:3128:b0:499:3c1d:f9e with SMTP id p8-20020a056512312800b004993c1d0f9emr1116152lfd.634.1663309063290;
-        Thu, 15 Sep 2022 23:17:43 -0700 (PDT)
+        bh=X090fBwR71n+Uf8mgcr+/g0ucFo6d8AXFrDt6zSz6Ec=;
+        b=7cHNGZ1ixSNqfS1M3/GWWiaQvpx/S0oyLEqvhse2+O4R+tetQH9qOTOdYzqNkaEP/l
+         dFr6nEsj2RU006foqx6v2XCii4kolVXB8gtHOXAH8lWEEq+N1uiaQR90fQP40gvaCnUe
+         VsysnUcordyv+iCLKPmCeVg4KdTLSp4/Nyl8IdU38etuqULoO0zFrl5TGZf6e44/4Cgv
+         fMHa2R9cOz9gFRc53LXrqsKzTf5cBO1BtvQG4zJ5iC35lc5nNhb/2NeqXbYNMB7Wdkjx
+         MJaFjytEHo6miJ5P/PjNNB9FGB/sHM6CsVr6DoY1c96FEpMUL7KB7h2E2ZffTUJf5X9B
+         fQAw==
+X-Gm-Message-State: ACrzQf13Y7AA8ThgSTpDt5FSRFd5+3FUZLufPQ0siu+yxv60ukZfVPwx
+        8ErMPQ55pc+rbPDU403LnbwYBQ==
+X-Google-Smtp-Source: AMsMyM7Tt8LC4oE3XmHM67TMsKEHVv7c00y2QbLczgwlX8yhXwUi6EBG90H2zEOh7ijcxoDf4Vk8SQ==
+X-Received: by 2002:a2e:8881:0:b0:255:7790:25e6 with SMTP id k1-20020a2e8881000000b00255779025e6mr963720lji.525.1663309064195;
+        Thu, 15 Sep 2022 23:17:44 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b15-20020a2eb90f000000b00261eaa819b7sm3529383ljb.30.2022.09.15.23.17.42
+        by smtp.gmail.com with ESMTPSA id b15-20020a2eb90f000000b00261eaa819b7sm3529383ljb.30.2022.09.15.23.17.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 23:17:42 -0700 (PDT)
+        Thu, 15 Sep 2022 23:17:43 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-phy@lists.infradead.org
-Subject: [PATCH v4 2/3] clk: fixed-rate: add devm_clk_hw_register_fixed_rate
-Date:   Fri, 16 Sep 2022 09:17:39 +0300
-Message-Id: <20220916061740.87167-3-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 3/3] phy: qcom-qmp-ufs: provide symbol clocks
+Date:   Fri, 16 Sep 2022 09:17:40 +0300
+Message-Id: <20220916061740.87167-4-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220916061740.87167-1-dmitry.baryshkov@linaro.org>
 References: <20220916061740.87167-1-dmitry.baryshkov@linaro.org>
@@ -72,163 +72,92 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add devm_clk_hw_register_fixed_rate(), devres-managed helper to register
-fixed-rate clock.
+Register three UFS symbol clocks (ufs_rx_symbol_0_clk_src,
+ufs_rx_symbol_1_clk_src ufs_tx_symbol_0_clk_src). Register OF clock
+provider to let other devices link these clocks through the DT.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/clk-fixed-rate.c | 28 ++++++++++++++++++++++++----
- include/linux/clk-provider.h | 29 +++++++++++++++++++++--------
- 2 files changed, 45 insertions(+), 12 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 59 +++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index ac68a6b40f0e..7d775954e26d 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -49,12 +49,24 @@ const struct clk_ops clk_fixed_rate_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_fixed_rate_ops);
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+index 01a99a06fd4f..f6171645642d 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+@@ -1159,6 +1159,58 @@ static int qcom_qmp_phy_ufs_clk_init(struct device *dev, const struct qmp_phy_cf
+ 	return devm_clk_bulk_get(dev, num, qmp->clks);
+ }
  
-+static void devm_clk_hw_register_fixed_rate_release(struct device *dev, void *res)
++static void phy_clk_release_provider(void *res)
 +{
-+	struct clk_fixed_rate *fix = res;
-+
-+	/*
-+	 * We can not use clk_hw_unregister_fixed_rate, since it will kfree()
-+	 * the hw, resulting in double free. Just unregister the hw and let
-+	 * devres code kfree() it.
-+	 */
-+	clk_hw_unregister(&fix->hw);
++	of_clk_del_provider(res);
 +}
 +
- struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
- 		struct device_node *np, const char *name,
- 		const char *parent_name, const struct clk_hw *parent_hw,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy,
--		unsigned long clk_fixed_flags)
-+		unsigned long clk_fixed_flags, bool devm)
- {
- 	struct clk_fixed_rate *fixed;
- 	struct clk_hw *hw;
-@@ -62,7 +74,11 @@ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
- 	int ret = -EINVAL;
- 
- 	/* allocate fixed-rate clock */
--	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
-+	if (devm)
-+		fixed = devres_alloc(devm_clk_hw_register_fixed_rate_release,
-+				     sizeof(*fixed), GFP_KERNEL);
-+	else
-+		fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
- 	if (!fixed)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -90,9 +106,13 @@ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
- 	else
- 		ret = of_clk_hw_register(np, hw);
- 	if (ret) {
--		kfree(fixed);
-+		if (devm)
-+			devres_free(fixed);
-+		else
-+			kfree(fixed);
- 		hw = ERR_PTR(ret);
--	}
-+	} else if (devm)
-+		devres_add(dev, fixed);
- 
- 	return hw;
- }
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 86140ac2f9a5..49405b336cad 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -350,7 +350,7 @@ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
- 		const char *parent_name, const struct clk_hw *parent_hw,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy,
--		unsigned long clk_fixed_flags);
-+		unsigned long clk_fixed_flags, bool devm);
- struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate);
-@@ -365,7 +365,20 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
-  */
- #define clk_hw_register_fixed_rate(dev, name, parent_name, flags, fixed_rate)  \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name), NULL, \
--				     NULL, (flags), (fixed_rate), 0, 0)
-+				     NULL, (flags), (fixed_rate), 0, 0, false)
++#define UFS_SYMBOL_CLOCKS 3
 +
-+/**
-+ * devm_clk_hw_register_fixed_rate - register fixed-rate clock with the clock
-+ * framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_name: name of clock's parent
-+ * @flags: framework-specific flags
-+ * @fixed_rate: non-adjustable clock rate
-+ */
-+#define devm_clk_hw_register_fixed_rate(dev, name, parent_name, flags, fixed_rate)  \
-+	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name), NULL, \
-+				     NULL, (flags), (fixed_rate), 0, 0, true)
- /**
-  * clk_hw_register_fixed_rate_parent_hw - register fixed-rate clock with
-  * the clock framework
-@@ -378,7 +391,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- #define clk_hw_register_fixed_rate_parent_hw(dev, name, parent_hw, flags,     \
- 					     fixed_rate)		      \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, (parent_hw),  \
--				     NULL, (flags), (fixed_rate), 0, 0)
-+				     NULL, (flags), (fixed_rate), 0, 0, false)
- /**
-  * clk_hw_register_fixed_rate_parent_data - register fixed-rate clock with
-  * the clock framework
-@@ -392,7 +405,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 					     fixed_rate)		      \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,	      \
- 				     (parent_data), (flags), (fixed_rate), 0, \
--				     0)
-+				     0, false)
- /**
-  * clk_hw_register_fixed_rate_with_accuracy - register fixed-rate clock with
-  * the clock framework
-@@ -408,7 +421,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 						 fixed_accuracy)	      \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name),      \
- 				     NULL, NULL, (flags), (fixed_rate),       \
--				     (fixed_accuracy), 0)
-+				     (fixed_accuracy), 0, false)
- /**
-  * clk_hw_register_fixed_rate_with_accuracy_parent_hw - register fixed-rate
-  * clock with the clock framework
-@@ -423,7 +436,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 		parent_hw, flags, fixed_rate, fixed_accuracy)		      \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, (parent_hw)   \
- 				     NULL, NULL, (flags), (fixed_rate),	      \
--				     (fixed_accuracy), 0)
-+				     (fixed_accuracy), 0, false)
- /**
-  * clk_hw_register_fixed_rate_with_accuracy_parent_data - register fixed-rate
-  * clock with the clock framework
-@@ -438,7 +451,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 		parent_data, flags, fixed_rate, fixed_accuracy)		      \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,	      \
- 				     (parent_data), NULL, (flags),	      \
--				     (fixed_rate), (fixed_accuracy), 0)
-+				     (fixed_rate), (fixed_accuracy), 0, false)
- /**
-  * clk_hw_register_fixed_rate_parent_accuracy - register fixed-rate clock with
-  * the clock framework
-@@ -452,7 +465,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 						   flags, fixed_rate)	      \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,      \
- 				     (parent_data), (flags), (fixed_rate), 0,    \
--				     CLK_FIXED_RATE_PARENT_ACCURACY)
-+				     CLK_FIXED_RATE_PARENT_ACCURACY, false)
++static int phy_symbols_clk_register(struct qcom_qmp *qmp, struct device_node *np)
++{
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw *hw;
++	char name[64];
++	int ret;
++
++	clk_data = devm_kzalloc(qmp->dev, struct_size(clk_data, hws, UFS_SYMBOL_CLOCKS), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = UFS_SYMBOL_CLOCKS;
++
++	snprintf(name, sizeof(name), "%s::rx_symbol_0", dev_name(qmp->dev));
++	hw = devm_clk_hw_register_fixed_rate(qmp->dev, name, NULL, 0, 0);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	clk_data->hws[0] = hw;
++
++	snprintf(name, sizeof(name), "%s::rx_symbol_1", dev_name(qmp->dev));
++	hw = devm_clk_hw_register_fixed_rate(qmp->dev, name, NULL, 0, 0);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	clk_data->hws[1] = hw;
++
++	snprintf(name, sizeof(name), "%s::tx_symbol_0", dev_name(qmp->dev));
++	hw = devm_clk_hw_register_fixed_rate(qmp->dev, name, NULL, 0, 0);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	clk_data->hws[2] = hw;
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++	if (ret)
++		return ret;
++
++        /*
++         * Roll a devm action because the clock provider is the child node, but
++         * the child node is not actually a device.
++         */
++        return devm_add_action_or_reset(qmp->dev, phy_clk_release_provider, np);
++}
++
+ static const struct phy_ops qcom_qmp_ufs_ops = {
+ 	.power_on	= qcom_qmp_phy_ufs_enable,
+ 	.power_off	= qcom_qmp_phy_ufs_disable,
+@@ -1350,6 +1402,13 @@ static int qcom_qmp_phy_ufs_probe(struct platform_device *pdev)
+ 			goto err_node_put;
+ 		}
  
- void clk_unregister_fixed_rate(struct clk *clk);
- void clk_hw_unregister_fixed_rate(struct clk_hw *hw);
++		ret = phy_symbols_clk_register(qmp, child);
++		if (ret) {
++			dev_err(dev, "failed to create symbol clocks, %d\n",
++				ret);
++			goto err_node_put;
++		}
++
+ 		id++;
+ 	}
+ 
 -- 
 2.35.1
 
