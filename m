@@ -2,162 +2,518 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62398C6FA93
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 06:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AE0C54EE9
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 06:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbiIPGRs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Sep 2022 02:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52340 "EHLO
+        id S229907AbiIPGa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Sep 2022 02:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbiIPGRr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 02:17:47 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1B54CA34
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 23:17:45 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id bn9so24788933ljb.6
-        for <linux-clk@vger.kernel.org>; Thu, 15 Sep 2022 23:17:45 -0700 (PDT)
+        with ESMTP id S229703AbiIPGax (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 02:30:53 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCBD754678;
+        Thu, 15 Sep 2022 23:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=X090fBwR71n+Uf8mgcr+/g0ucFo6d8AXFrDt6zSz6Ec=;
-        b=TXyDE1vIX/pUmargdORd3xFpvmwOh46CsjZ+1nHtoJMk3KdloYSY0X2O4AoRKy0bAL
-         njmW4CdQmwFUako/i/5/2+x03bAQkbW/NX8YF7GREWZ+qrAwDtd++Ac6NHcFwM6U/coL
-         YFjLs0FakQAOwKwjK3NiCT+dseTzHUzJmSkCZjhxbWvNDRG6BpEL/2TKuS7Z8Osh5ej6
-         TtNghr81JT+Um9v8d56nFLgeXIrH0L5iFPJriyMCV89D86TLpr2LJROJN7Wja36tpoGz
-         +A4yM0YHiicsuu+nVq/7DvNxmpuQ7EDlK/FldZEbNtl57/potVOFfXVJMakCpwJifLit
-         LQjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=X090fBwR71n+Uf8mgcr+/g0ucFo6d8AXFrDt6zSz6Ec=;
-        b=7cHNGZ1ixSNqfS1M3/GWWiaQvpx/S0oyLEqvhse2+O4R+tetQH9qOTOdYzqNkaEP/l
-         dFr6nEsj2RU006foqx6v2XCii4kolVXB8gtHOXAH8lWEEq+N1uiaQR90fQP40gvaCnUe
-         VsysnUcordyv+iCLKPmCeVg4KdTLSp4/Nyl8IdU38etuqULoO0zFrl5TGZf6e44/4Cgv
-         fMHa2R9cOz9gFRc53LXrqsKzTf5cBO1BtvQG4zJ5iC35lc5nNhb/2NeqXbYNMB7Wdkjx
-         MJaFjytEHo6miJ5P/PjNNB9FGB/sHM6CsVr6DoY1c96FEpMUL7KB7h2E2ZffTUJf5X9B
-         fQAw==
-X-Gm-Message-State: ACrzQf13Y7AA8ThgSTpDt5FSRFd5+3FUZLufPQ0siu+yxv60ukZfVPwx
-        8ErMPQ55pc+rbPDU403LnbwYBQ==
-X-Google-Smtp-Source: AMsMyM7Tt8LC4oE3XmHM67TMsKEHVv7c00y2QbLczgwlX8yhXwUi6EBG90H2zEOh7ijcxoDf4Vk8SQ==
-X-Received: by 2002:a2e:8881:0:b0:255:7790:25e6 with SMTP id k1-20020a2e8881000000b00255779025e6mr963720lji.525.1663309064195;
-        Thu, 15 Sep 2022 23:17:44 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b15-20020a2eb90f000000b00261eaa819b7sm3529383ljb.30.2022.09.15.23.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 23:17:43 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1663309851; x=1694845851;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yopAva8T8QQ41gSFKVSGm//Eo37aBkjqDuxfFrR95iY=;
+  b=Hc+PKKEe8aLexmZs1mDnr+FXuIPICXR8neXXYIk2d6yw9azb+QLUfRoZ
+   QQMEon7ceXZ05BN+m/0REURkVu3uQ3MSYrXFogdRj5YFy8zfShI+fLzoO
+   f3xQFEOKRGVJ7DkGQA/sGb58EtcPn8vuJLR0QlEd1O4TuURYKeVLn/LVb
+   qfhGUl7hLg5VSS87gdebL8dfT/UflH9M4YeULsc/7dPHxYNOIjaQJXey+
+   oh2Pd8HB2ppTeT8i2sJ5ggFD2mik+aO+F6T5toP8z+3ps1PkJjhCL0yOb
+   rQOZIwGUoQZ1FhHzvYh1lFk5kjOSw0CjOenQeakCOsQbFMBBQbSWkxs5W
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.93,320,1654552800"; 
+   d="scan'208";a="26215682"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 16 Sep 2022 08:30:49 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Fri, 16 Sep 2022 08:30:49 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Fri, 16 Sep 2022 08:30:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1663309849; x=1694845849;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yopAva8T8QQ41gSFKVSGm//Eo37aBkjqDuxfFrR95iY=;
+  b=RnLtcVVVqSu3AtUF868wj60Z1QjsJxY2WZCY2o6YRvSkPQXtD/dW9j66
+   zg/sHY9PrXFP+YNBKVgyIOby+kFr9QHuTrR8tzVTaNQXTUjPy+L+Z/3Kd
+   HYIkbzhyU+rIcSYfXcSXV41R8xmoxYC4hM1Z47w6IDwH6bzHmKIBQn9nE
+   WcsE7UQqz79mBPJzdwaeGBll7oRWkWorJmhz3pMoHJ2sToW4D7OrDJAPU
+   K4xWlBKeeWr/uOrlIVRqPYhmXslecb/NS+OtiBUsMTOHrC8uAD6xcGJZ3
+   VSeKVnNAoItCk+JVBnBz2z1YQF1cBQ1CgCSr3GlsSqoJ+ldwa+VNpqBd+
+   g==;
+X-IronPort-AV: E=Sophos;i="5.93,320,1654552800"; 
+   d="scan'208";a="26215681"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 16 Sep 2022 08:30:49 +0200
+Received: from steina-w.localnet (unknown [10.123.49.11])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 7FE76280056;
+        Fri, 16 Sep 2022 08:30:48 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-phy@lists.infradead.org
-Subject: [PATCH v4 3/3] phy: qcom-qmp-ufs: provide symbol clocks
-Date:   Fri, 16 Sep 2022 09:17:40 +0300
-Message-Id: <20220916061740.87167-4-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220916061740.87167-1-dmitry.baryshkov@linaro.org>
-References: <20220916061740.87167-1-dmitry.baryshkov@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viorel Suman <viorel.suman@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: imx: sync with SCFW kit v1.13.0
+Date:   Fri, 16 Sep 2022 08:30:46 +0200
+Message-ID: <5993734.44csPzL39Z@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20220915181805.424670-2-viorel.suman@oss.nxp.com>
+References: <20220915181805.424670-1-viorel.suman@oss.nxp.com> <20220915181805.424670-2-viorel.suman@oss.nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Register three UFS symbol clocks (ufs_rx_symbol_0_clk_src,
-ufs_rx_symbol_1_clk_src ufs_tx_symbol_0_clk_src). Register OF clock
-provider to let other devices link these clocks through the DT.
+Am Donnerstag, 15. September 2022, 20:18:04 CEST schrieb Viorel Suman (OSS):
+> From: Viorel Suman <viorel.suman@nxp.com>
+> 
+> Sync defines with the latest available SCFW kit version 1.13.0,
+> may be found at the address below:
+> 
+> https://www.nxp.com/webapp/Download?colCode=L5.15.32_2.0.0_SCFWKIT-1.13.0&ap
+> pType=license
+> 
+> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> ---
+>  include/dt-bindings/firmware/imx/rsrc.h | 299 ++++++++++++++++--------
+>  1 file changed, 203 insertions(+), 96 deletions(-)
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 59 +++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+This is not bisectable and breaks compilation, as this patch removes symbols 
+which are still used in drivers/clk/imx/clk-imx8qm-rsrc.c (addressed in 2nd 
+patch). IMHO this series should be squashed into one patch.
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-index 01a99a06fd4f..f6171645642d 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-@@ -1159,6 +1159,58 @@ static int qcom_qmp_phy_ufs_clk_init(struct device *dev, const struct qmp_phy_cf
- 	return devm_clk_bulk_get(dev, num, qmp->clks);
- }
- 
-+static void phy_clk_release_provider(void *res)
-+{
-+	of_clk_del_provider(res);
-+}
-+
-+#define UFS_SYMBOL_CLOCKS 3
-+
-+static int phy_symbols_clk_register(struct qcom_qmp *qmp, struct device_node *np)
-+{
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw *hw;
-+	char name[64];
-+	int ret;
-+
-+	clk_data = devm_kzalloc(qmp->dev, struct_size(clk_data, hws, UFS_SYMBOL_CLOCKS), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = UFS_SYMBOL_CLOCKS;
-+
-+	snprintf(name, sizeof(name), "%s::rx_symbol_0", dev_name(qmp->dev));
-+	hw = devm_clk_hw_register_fixed_rate(qmp->dev, name, NULL, 0, 0);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
-+	clk_data->hws[0] = hw;
-+
-+	snprintf(name, sizeof(name), "%s::rx_symbol_1", dev_name(qmp->dev));
-+	hw = devm_clk_hw_register_fixed_rate(qmp->dev, name, NULL, 0, 0);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
-+	clk_data->hws[1] = hw;
-+
-+	snprintf(name, sizeof(name), "%s::tx_symbol_0", dev_name(qmp->dev));
-+	hw = devm_clk_hw_register_fixed_rate(qmp->dev, name, NULL, 0, 0);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
-+	clk_data->hws[2] = hw;
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+	if (ret)
-+		return ret;
-+
-+        /*
-+         * Roll a devm action because the clock provider is the child node, but
-+         * the child node is not actually a device.
-+         */
-+        return devm_add_action_or_reset(qmp->dev, phy_clk_release_provider, np);
-+}
-+
- static const struct phy_ops qcom_qmp_ufs_ops = {
- 	.power_on	= qcom_qmp_phy_ufs_enable,
- 	.power_off	= qcom_qmp_phy_ufs_disable,
-@@ -1350,6 +1402,13 @@ static int qcom_qmp_phy_ufs_probe(struct platform_device *pdev)
- 			goto err_node_put;
- 		}
- 
-+		ret = phy_symbols_clk_register(qmp, child);
-+		if (ret) {
-+			dev_err(dev, "failed to create symbol clocks, %d\n",
-+				ret);
-+			goto err_node_put;
-+		}
-+
- 		id++;
- 	}
- 
--- 
-2.35.1
+Best regards,
+Alexander
+
+> diff --git a/include/dt-bindings/firmware/imx/rsrc.h
+> b/include/dt-bindings/firmware/imx/rsrc.h index 43885056557c..a4c68f394986
+> 100644
+> --- a/include/dt-bindings/firmware/imx/rsrc.h
+> +++ b/include/dt-bindings/firmware/imx/rsrc.h
+> @@ -13,34 +13,38 @@
+>   * never be changed or removed (only added to at the end of the list).
+>   */
+> 
+> -#define IMX_SC_R_A53			0
+> -#define IMX_SC_R_A53_0			1
+> -#define IMX_SC_R_A53_1			2
+> -#define IMX_SC_R_A53_2			3
+> -#define IMX_SC_R_A53_3			4
+> -#define IMX_SC_R_A72			5
+> -#define IMX_SC_R_A72_0			6
+> -#define IMX_SC_R_A72_1			7
+> -#define IMX_SC_R_A72_2			8
+> -#define IMX_SC_R_A72_3			9
+> +#define IMX_SC_R_AP_0			0
+> +#define IMX_SC_R_AP_0_0			1
+> +#define IMX_SC_R_AP_0_1			2
+> +#define IMX_SC_R_AP_0_2			3
+> +#define IMX_SC_R_AP_0_3			4
+> +#define IMX_SC_R_AP_1			5
+> +#define IMX_SC_R_AP_1_0			6
+> +#define IMX_SC_R_AP_1_1			7
+> +#define IMX_SC_R_AP_1_2			8
+> +#define IMX_SC_R_AP_1_3			9
+>  #define IMX_SC_R_CCI			10
+>  #define IMX_SC_R_DB			11
+>  #define IMX_SC_R_DRC_0			12
+>  #define IMX_SC_R_DRC_1			13
+>  #define IMX_SC_R_GIC_SMMU		14
+> -#define IMX_SC_R_IRQSTR_M4_0		15
+> -#define IMX_SC_R_IRQSTR_M4_1		16
+> -#define IMX_SC_R_SMMU			17
+> -#define IMX_SC_R_GIC			18
+> +#define IMX_SC_R_IRQSTR_MCU_0		15
+> +#define IMX_SC_R_IRQSTR_MCU_1		16
+> +#define IMX_SC_R_SMMU_0			17
+> +#define IMX_SC_R_GIC_0			18
+>  #define IMX_SC_R_DC_0_BLIT0		19
+>  #define IMX_SC_R_DC_0_BLIT1		20
+>  #define IMX_SC_R_DC_0_BLIT2		21
+>  #define IMX_SC_R_DC_0_BLIT_OUT		22
+> -#define IMX_SC_R_PERF			23
+> +#define IMX_SC_R_PERF_0			23
+> +#define IMX_SC_R_USB_1_PHY		24
+>  #define IMX_SC_R_DC_0_WARP		25
+> +#define IMX_SC_R_V2X_MU_0		26
+> +#define IMX_SC_R_V2X_MU_1		27
+>  #define IMX_SC_R_DC_0_VIDEO0		28
+>  #define IMX_SC_R_DC_0_VIDEO1		29
+>  #define IMX_SC_R_DC_0_FRAC0		30
+> +#define IMX_SC_R_V2X_MU_2		31
+>  #define IMX_SC_R_DC_0			32
+>  #define IMX_SC_R_GPU_2_PID0		33
+>  #define IMX_SC_R_DC_0_PLL_0		34
+> @@ -49,11 +53,17 @@
+>  #define IMX_SC_R_DC_1_BLIT1		37
+>  #define IMX_SC_R_DC_1_BLIT2		38
+>  #define IMX_SC_R_DC_1_BLIT_OUT		39
+> +#define IMX_SC_R_V2X_MU_3		40
+> +#define IMX_SC_R_V2X_MU_4		41
+>  #define IMX_SC_R_DC_1_WARP		42
+> +#define IMX_SC_R_STM			43
+> +#define IMX_SC_R_SECVIO			44
+>  #define IMX_SC_R_DC_1_VIDEO0		45
+>  #define IMX_SC_R_DC_1_VIDEO1		46
+>  #define IMX_SC_R_DC_1_FRAC0		47
+> +#define IMX_SC_R_V2X			48
+>  #define IMX_SC_R_DC_1			49
+> +#define IMX_SC_R_UNUSED14		50
+>  #define IMX_SC_R_DC_1_PLL_0		51
+>  #define IMX_SC_R_DC_1_PLL_1		52
+>  #define IMX_SC_R_SPI_0			53
+> @@ -144,10 +154,10 @@
+>  #define IMX_SC_R_DMA_1_CH29		137
+>  #define IMX_SC_R_DMA_1_CH30		138
+>  #define IMX_SC_R_DMA_1_CH31		139
+> -#define IMX_SC_R_UNUSED1		140
+> -#define IMX_SC_R_UNUSED2		141
+> -#define IMX_SC_R_UNUSED3		142
+> -#define IMX_SC_R_UNUSED4		143
+> +#define IMX_SC_R_V2X_PID0		140
+> +#define IMX_SC_R_V2X_PID1		141
+> +#define IMX_SC_R_V2X_PID2		142
+> +#define IMX_SC_R_V2X_PID3		143
+>  #define IMX_SC_R_GPU_0_PID0		144
+>  #define IMX_SC_R_GPU_0_PID1		145
+>  #define IMX_SC_R_GPU_0_PID2		146
+> @@ -176,7 +186,7 @@
+>  #define IMX_SC_R_PCIE_B			169
+>  #define IMX_SC_R_SATA_0			170
+>  #define IMX_SC_R_SERDES_1		171
+> -#define IMX_SC_R_HSIO_GPIO		172
+> +#define IMX_SC_R_HSIO_GPIO_0		172
+>  #define IMX_SC_R_MATCH_15		173
+>  #define IMX_SC_R_MATCH_16		174
+>  #define IMX_SC_R_MATCH_17		175
+> @@ -243,15 +253,15 @@
+>  #define IMX_SC_R_ROM_0			236
+>  #define IMX_SC_R_FSPI_0			237
+>  #define IMX_SC_R_FSPI_1			238
+> -#define IMX_SC_R_IEE			239
+> -#define IMX_SC_R_IEE_R0			240
+> -#define IMX_SC_R_IEE_R1			241
+> -#define IMX_SC_R_IEE_R2			242
+> -#define IMX_SC_R_IEE_R3			243
+> -#define IMX_SC_R_IEE_R4			244
+> -#define IMX_SC_R_IEE_R5			245
+> -#define IMX_SC_R_IEE_R6			246
+> -#define IMX_SC_R_IEE_R7			247
+> +#define IMX_SC_R_IEE_0			239
+> +#define IMX_SC_R_IEE_0_R0		240
+> +#define IMX_SC_R_IEE_0_R1		241
+> +#define IMX_SC_R_IEE_0_R2		242
+> +#define IMX_SC_R_IEE_0_R3		243
+> +#define IMX_SC_R_IEE_0_R4		244
+> +#define IMX_SC_R_IEE_0_R5		245
+> +#define IMX_SC_R_IEE_0_R6		246
+> +#define IMX_SC_R_IEE_0_R7		247
+>  #define IMX_SC_R_SDHC_0			248
+>  #define IMX_SC_R_SDHC_1			249
+>  #define IMX_SC_R_SDHC_2			250
+> @@ -282,46 +292,50 @@
+>  #define IMX_SC_R_LVDS_2_PWM_0		275
+>  #define IMX_SC_R_LVDS_2_I2C_0		276
+>  #define IMX_SC_R_LVDS_2_I2C_1		277
+> -#define IMX_SC_R_M4_0_PID0		278
+> -#define IMX_SC_R_M4_0_PID1		279
+> -#define IMX_SC_R_M4_0_PID2		280
+> -#define IMX_SC_R_M4_0_PID3		281
+> -#define IMX_SC_R_M4_0_PID4		282
+> -#define IMX_SC_R_M4_0_RGPIO		283
+> -#define IMX_SC_R_M4_0_SEMA42		284
+> -#define IMX_SC_R_M4_0_TPM		285
+> -#define IMX_SC_R_M4_0_PIT		286
+> -#define IMX_SC_R_M4_0_UART		287
+> -#define IMX_SC_R_M4_0_I2C		288
+> -#define IMX_SC_R_M4_0_INTMUX		289
+> -#define IMX_SC_R_M4_0_MU_0B		292
+> -#define IMX_SC_R_M4_0_MU_0A0		293
+> -#define IMX_SC_R_M4_0_MU_0A1		294
+> -#define IMX_SC_R_M4_0_MU_0A2		295
+> -#define IMX_SC_R_M4_0_MU_0A3		296
+> -#define IMX_SC_R_M4_0_MU_1A		297
+> -#define IMX_SC_R_M4_1_PID0		298
+> -#define IMX_SC_R_M4_1_PID1		299
+> -#define IMX_SC_R_M4_1_PID2		300
+> -#define IMX_SC_R_M4_1_PID3		301
+> -#define IMX_SC_R_M4_1_PID4		302
+> -#define IMX_SC_R_M4_1_RGPIO		303
+> -#define IMX_SC_R_M4_1_SEMA42		304
+> -#define IMX_SC_R_M4_1_TPM		305
+> -#define IMX_SC_R_M4_1_PIT		306
+> -#define IMX_SC_R_M4_1_UART		307
+> -#define IMX_SC_R_M4_1_I2C		308
+> -#define IMX_SC_R_M4_1_INTMUX		309
+> -#define IMX_SC_R_M4_1_MU_0B		312
+> -#define IMX_SC_R_M4_1_MU_0A0		313
+> -#define IMX_SC_R_M4_1_MU_0A1		314
+> -#define IMX_SC_R_M4_1_MU_0A2		315
+> -#define IMX_SC_R_M4_1_MU_0A3		316
+> -#define IMX_SC_R_M4_1_MU_1A		317
+> +#define IMX_SC_R_MCU_0_PID0		278
+> +#define IMX_SC_R_MCU_0_PID1		279
+> +#define IMX_SC_R_MCU_0_PID2		280
+> +#define IMX_SC_R_MCU_0_PID3		281
+> +#define IMX_SC_R_MCU_0_PID4		282
+> +#define IMX_SC_R_MCU_0_RGPIO		283
+> +#define IMX_SC_R_MCU_0_SEMA42		284
+> +#define IMX_SC_R_MCU_0_TPM		285
+> +#define IMX_SC_R_MCU_0_PIT		286
+> +#define IMX_SC_R_MCU_0_UART		287
+> +#define IMX_SC_R_MCU_0_I2C		288
+> +#define IMX_SC_R_MCU_0_INTMUX		289
+> +#define IMX_SC_R_ENET_0_A0		290
+> +#define IMX_SC_R_ENET_0_A1		291
+> +#define IMX_SC_R_MCU_0_MU_0B		292
+> +#define IMX_SC_R_MCU_0_MU_0A0		293
+> +#define IMX_SC_R_MCU_0_MU_0A1		294
+> +#define IMX_SC_R_MCU_0_MU_0A2		295
+> +#define IMX_SC_R_MCU_0_MU_0A3		296
+> +#define IMX_SC_R_MCU_0_MU_1A		297
+> +#define IMX_SC_R_MCU_1_PID0		298
+> +#define IMX_SC_R_MCU_1_PID1		299
+> +#define IMX_SC_R_MCU_1_PID2		300
+> +#define IMX_SC_R_MCU_1_PID3		301
+> +#define IMX_SC_R_MCU_1_PID4		302
+> +#define IMX_SC_R_MCU_1_RGPIO		303
+> +#define IMX_SC_R_MCU_1_SEMA42		304
+> +#define IMX_SC_R_MCU_1_TPM		305
+> +#define IMX_SC_R_MCU_1_PIT		306
+> +#define IMX_SC_R_MCU_1_UART		307
+> +#define IMX_SC_R_MCU_1_I2C		308
+> +#define IMX_SC_R_MCU_1_INTMUX		309
+> +#define IMX_SC_R_UNUSED17		310
+> +#define IMX_SC_R_UNUSED18		311
+> +#define IMX_SC_R_MCU_1_MU_0B		312
+> +#define IMX_SC_R_MCU_1_MU_0A0		313
+> +#define IMX_SC_R_MCU_1_MU_0A1		314
+> +#define IMX_SC_R_MCU_1_MU_0A2		315
+> +#define IMX_SC_R_MCU_1_MU_0A3		316
+> +#define IMX_SC_R_MCU_1_MU_1A		317
+>  #define IMX_SC_R_SAI_0			318
+>  #define IMX_SC_R_SAI_1			319
+>  #define IMX_SC_R_SAI_2			320
+> -#define IMX_SC_R_IRQSTR_SCU2		321
+> +#define IMX_SC_R_IRQSTR_AP_0		321
+>  #define IMX_SC_R_IRQSTR_DSP		322
+>  #define IMX_SC_R_ELCDIF_PLL		323
+>  #define IMX_SC_R_OCRAM			324
+> @@ -366,33 +380,33 @@
+>  #define IMX_SC_R_VPU_PID5		363
+>  #define IMX_SC_R_VPU_PID6		364
+>  #define IMX_SC_R_VPU_PID7		365
+> -#define IMX_SC_R_VPU_UART		366
+> -#define IMX_SC_R_VPUCORE		367
+> -#define IMX_SC_R_VPUCORE_0		368
+> -#define IMX_SC_R_VPUCORE_1		369
+> -#define IMX_SC_R_VPUCORE_2		370
+> -#define IMX_SC_R_VPUCORE_3		371
+> +#define IMX_SC_R_ENET_0_A2		366
+> +#define IMX_SC_R_ENET_1_A0		367
+> +#define IMX_SC_R_ENET_1_A1		368
+> +#define IMX_SC_R_ENET_1_A2		369
+> +#define IMX_SC_R_ENET_1_A3		370
+> +#define IMX_SC_R_ENET_1_A4		371
+>  #define IMX_SC_R_DMA_4_CH0		372
+>  #define IMX_SC_R_DMA_4_CH1		373
+>  #define IMX_SC_R_DMA_4_CH2		374
+>  #define IMX_SC_R_DMA_4_CH3		375
+>  #define IMX_SC_R_DMA_4_CH4		376
+> -#define IMX_SC_R_ISI_CH0		377
+> -#define IMX_SC_R_ISI_CH1		378
+> -#define IMX_SC_R_ISI_CH2		379
+> -#define IMX_SC_R_ISI_CH3		380
+> -#define IMX_SC_R_ISI_CH4		381
+> -#define IMX_SC_R_ISI_CH5		382
+> -#define IMX_SC_R_ISI_CH6		383
+> -#define IMX_SC_R_ISI_CH7		384
+> -#define IMX_SC_R_MJPEG_DEC_S0		385
+> -#define IMX_SC_R_MJPEG_DEC_S1		386
+> -#define IMX_SC_R_MJPEG_DEC_S2		387
+> -#define IMX_SC_R_MJPEG_DEC_S3		388
+> -#define IMX_SC_R_MJPEG_ENC_S0		389
+> -#define IMX_SC_R_MJPEG_ENC_S1		390
+> -#define IMX_SC_R_MJPEG_ENC_S2		391
+> -#define IMX_SC_R_MJPEG_ENC_S3		392
+> +#define IMX_SC_R_ISI_0_CH0		377
+> +#define IMX_SC_R_ISI_0_CH1		378
+> +#define IMX_SC_R_ISI_0_CH2		379
+> +#define IMX_SC_R_ISI_0_CH3		380
+> +#define IMX_SC_R_ISI_0_CH4		381
+> +#define IMX_SC_R_ISI_0_CH5		382
+> +#define IMX_SC_R_ISI_0_CH6		383
+> +#define IMX_SC_R_ISI_0_CH7		384
+> +#define IMX_SC_R_MJPEG_0_DEC_S0		385
+> +#define IMX_SC_R_MJPEG_0_DEC_S1		386
+> +#define IMX_SC_R_MJPEG_0_DEC_S2		387
+> +#define IMX_SC_R_MJPEG_0_DEC_S3		388
+> +#define IMX_SC_R_MJPEG_0_ENC_S0		389
+> +#define IMX_SC_R_MJPEG_0_ENC_S1		390
+> +#define IMX_SC_R_MJPEG_0_ENC_S2		391
+> +#define IMX_SC_R_MJPEG_0_ENC_S3		392
+>  #define IMX_SC_R_MIPI_0			393
+>  #define IMX_SC_R_MIPI_0_PWM_0		394
+>  #define IMX_SC_R_MIPI_0_I2C_0		395
+> @@ -507,11 +521,11 @@
+>  #define IMX_SC_R_SECO_MU_3		504
+>  #define IMX_SC_R_SECO_MU_4		505
+>  #define IMX_SC_R_HDMI_RX_PWM_0		506
+> -#define IMX_SC_R_A35			507
+> -#define IMX_SC_R_A35_0			508
+> -#define IMX_SC_R_A35_1			509
+> -#define IMX_SC_R_A35_2			510
+> -#define IMX_SC_R_A35_3			511
+> +#define IMX_SC_R_AP_2			507
+> +#define IMX_SC_R_AP_2_0			508
+> +#define IMX_SC_R_AP_2_1			509
+> +#define IMX_SC_R_AP_2_2			510
+> +#define IMX_SC_R_AP_2_3			511
+>  #define IMX_SC_R_DSP			512
+>  #define IMX_SC_R_DSP_RAM		513
+>  #define IMX_SC_R_CAAM_JR1_OUT		514
+> @@ -532,8 +546,8 @@
+>  #define IMX_SC_R_BOARD_R5		529
+>  #define IMX_SC_R_BOARD_R6		530
+>  #define IMX_SC_R_BOARD_R7		531
+> -#define IMX_SC_R_MJPEG_DEC_MP		532
+> -#define IMX_SC_R_MJPEG_ENC_MP		533
+> +#define IMX_SC_R_MJPEG_0_DEC_MP		532
+> +#define IMX_SC_R_MJPEG_0_ENC_MP		533
+>  #define IMX_SC_R_VPU_TS_0		534
+>  #define IMX_SC_R_VPU_MU_0		535
+>  #define IMX_SC_R_VPU_MU_1		536
+> @@ -565,6 +579,95 @@
+>  #define IMX_SC_PM_CLK_PLL		4	/* PLL */
+>  #define IMX_SC_PM_CLK_BYPASS		4	/* Bypass clock */
+> 
+> +/*
+> + * Compatibility defines for sc_rsrc_t
+> + */
+> +#define IMX_SC_R_A35			IMX_SC_R_AP_2
+> +#define IMX_SC_R_A35_0			IMX_SC_R_AP_2_0
+> +#define IMX_SC_R_A35_1			IMX_SC_R_AP_2_1
+> +#define IMX_SC_R_A35_2			IMX_SC_R_AP_2_2
+> +#define IMX_SC_R_A35_3			IMX_SC_R_AP_2_3
+> +#define IMX_SC_R_A53			IMX_SC_R_AP_0
+> +#define IMX_SC_R_A53_0			IMX_SC_R_AP_0_0
+> +#define IMX_SC_R_A53_1			IMX_SC_R_AP_0_1
+> +#define IMX_SC_R_A53_2			IMX_SC_R_AP_0_2
+> +#define IMX_SC_R_A53_3			IMX_SC_R_AP_0_3
+> +#define IMX_SC_R_A72			IMX_SC_R_AP_1
+> +#define IMX_SC_R_A72_0			IMX_SC_R_AP_1_0
+> +#define IMX_SC_R_A72_1			IMX_SC_R_AP_1_1
+> +#define IMX_SC_R_A72_2			IMX_SC_R_AP_1_2
+> +#define IMX_SC_R_A72_3			IMX_SC_R_AP_1_3
+> +#define IMX_SC_R_GIC			IMX_SC_R_GIC_0
+> +#define IMX_SC_R_HSIO_GPIO		IMX_SC_R_HSIO_GPIO_0
+> +#define IMX_SC_R_IEE			IMX_SC_R_IEE_0
+> +#define IMX_SC_R_IEE_R0			IMX_SC_R_IEE_0_R0
+> +#define IMX_SC_R_IEE_R1			IMX_SC_R_IEE_0_R1
+> +#define IMX_SC_R_IEE_R2			IMX_SC_R_IEE_0_R2
+> +#define IMX_SC_R_IEE_R3			IMX_SC_R_IEE_0_R3
+> +#define IMX_SC_R_IEE_R4			IMX_SC_R_IEE_0_R4
+> +#define IMX_SC_R_IEE_R5			IMX_SC_R_IEE_0_R5
+> +#define IMX_SC_R_IEE_R6			IMX_SC_R_IEE_0_R6
+> +#define IMX_SC_R_IEE_R7			IMX_SC_R_IEE_0_R7
+> +#define IMX_SC_R_IRQSTR_M4_0		IMX_SC_R_IRQSTR_MCU_0
+> +#define IMX_SC_R_IRQSTR_M4_1		IMX_SC_R_IRQSTR_MCU_1
+> +#define IMX_SC_R_IRQSTR_SCU2		IMX_SC_R_IRQSTR_AP_0
+> +#define IMX_SC_R_ISI_CH0		IMX_SC_R_ISI_0_CH0
+> +#define IMX_SC_R_ISI_CH1		IMX_SC_R_ISI_0_CH1
+> +#define IMX_SC_R_ISI_CH2		IMX_SC_R_ISI_0_CH2
+> +#define IMX_SC_R_ISI_CH3		IMX_SC_R_ISI_0_CH3
+> +#define IMX_SC_R_ISI_CH4		IMX_SC_R_ISI_0_CH4
+> +#define IMX_SC_R_ISI_CH5		IMX_SC_R_ISI_0_CH5
+> +#define IMX_SC_R_ISI_CH6		IMX_SC_R_ISI_0_CH6
+> +#define IMX_SC_R_ISI_CH7		IMX_SC_R_ISI_0_CH7
+> +#define IMX_SC_R_M4_0_I2C		IMX_SC_R_MCU_0_I2C
+> +#define IMX_SC_R_M4_0_INTMUX		IMX_SC_R_MCU_0_INTMUX
+> +#define IMX_SC_R_M4_0_MU_0A0		IMX_SC_R_MCU_0_MU_0A0
+> +#define IMX_SC_R_M4_0_MU_0A1		IMX_SC_R_MCU_0_MU_0A1
+> +#define IMX_SC_R_M4_0_MU_0A2		IMX_SC_R_MCU_0_MU_0A2
+> +#define IMX_SC_R_M4_0_MU_0A3		IMX_SC_R_MCU_0_MU_0A3
+> +#define IMX_SC_R_M4_0_MU_0B		IMX_SC_R_MCU_0_MU_0B
+> +#define IMX_SC_R_M4_0_MU_1A		IMX_SC_R_MCU_0_MU_1A
+> +#define IMX_SC_R_M4_0_PID0		IMX_SC_R_MCU_0_PID0
+> +#define IMX_SC_R_M4_0_PID1		IMX_SC_R_MCU_0_PID1
+> +#define IMX_SC_R_M4_0_PID2		IMX_SC_R_MCU_0_PID2
+> +#define IMX_SC_R_M4_0_PID3		IMX_SC_R_MCU_0_PID3
+> +#define IMX_SC_R_M4_0_PID4		IMX_SC_R_MCU_0_PID4
+> +#define IMX_SC_R_M4_0_PIT		IMX_SC_R_MCU_0_PIT
+> +#define IMX_SC_R_M4_0_RGPIO		IMX_SC_R_MCU_0_RGPIO
+> +#define IMX_SC_R_M4_0_SEMA42		IMX_SC_R_MCU_0_SEMA42
+> +#define IMX_SC_R_M4_0_TPM		IMX_SC_R_MCU_0_TPM
+> +#define IMX_SC_R_M4_0_UART		IMX_SC_R_MCU_0_UART
+> +#define IMX_SC_R_M4_1_I2C		IMX_SC_R_MCU_1_I2C
+> +#define IMX_SC_R_M4_1_INTMUX		IMX_SC_R_MCU_1_INTMUX
+> +#define IMX_SC_R_M4_1_MU_0A0		IMX_SC_R_MCU_1_MU_0A0
+> +#define IMX_SC_R_M4_1_MU_0A1		IMX_SC_R_MCU_1_MU_0A1
+> +#define IMX_SC_R_M4_1_MU_0A2		IMX_SC_R_MCU_1_MU_0A2
+> +#define IMX_SC_R_M4_1_MU_0A3		IMX_SC_R_MCU_1_MU_0A3
+> +#define IMX_SC_R_M4_1_MU_0B		IMX_SC_R_MCU_1_MU_0B
+> +#define IMX_SC_R_M4_1_MU_1A		IMX_SC_R_MCU_1_MU_1A
+> +#define IMX_SC_R_M4_1_PID0		IMX_SC_R_MCU_1_PID0
+> +#define IMX_SC_R_M4_1_PID1		IMX_SC_R_MCU_1_PID1
+> +#define IMX_SC_R_M4_1_PID2		IMX_SC_R_MCU_1_PID2
+> +#define IMX_SC_R_M4_1_PID3		IMX_SC_R_MCU_1_PID3
+> +#define IMX_SC_R_M4_1_PID4		IMX_SC_R_MCU_1_PID4
+> +#define IMX_SC_R_M4_1_PIT		IMX_SC_R_MCU_1_PIT
+> +#define IMX_SC_R_M4_1_RGPIO		IMX_SC_R_MCU_1_RGPIO
+> +#define IMX_SC_R_M4_1_SEMA42		IMX_SC_R_MCU_1_SEMA42
+> +#define IMX_SC_R_M4_1_TPM		IMX_SC_R_MCU_1_TPM
+> +#define IMX_SC_R_M4_1_UART		IMX_SC_R_MCU_1_UART
+> +#define IMX_SC_R_MJPEG_DEC_MP		IMX_SC_R_MJPEG_0_DEC_MP
+> +#define IMX_SC_R_MJPEG_DEC_S0		IMX_SC_R_MJPEG_0_DEC_S0
+> +#define IMX_SC_R_MJPEG_DEC_S1		IMX_SC_R_MJPEG_0_DEC_S1
+> +#define IMX_SC_R_MJPEG_DEC_S2		IMX_SC_R_MJPEG_0_DEC_S2
+> +#define IMX_SC_R_MJPEG_DEC_S3		IMX_SC_R_MJPEG_0_DEC_S3
+> +#define IMX_SC_R_MJPEG_ENC_MP		IMX_SC_R_MJPEG_0_ENC_MP
+> +#define IMX_SC_R_MJPEG_ENC_S0		IMX_SC_R_MJPEG_0_ENC_S0
+> +#define IMX_SC_R_MJPEG_ENC_S1		IMX_SC_R_MJPEG_0_ENC_S1
+> +#define IMX_SC_R_MJPEG_ENC_S2		IMX_SC_R_MJPEG_0_ENC_S2
+> +#define IMX_SC_R_MJPEG_ENC_S3		IMX_SC_R_MJPEG_0_ENC_S3
+> +#define IMX_SC_R_PERF			IMX_SC_R_PERF_0
+> +#define IMX_SC_R_SMMU			IMX_SC_R_SMMU_0
+> +
+>  /*
+>   * Defines for SC CONTROL
+>   */
+> @@ -630,6 +733,10 @@
+>  #define IMX_SC_C_INTF_SEL			59
+>  #define IMX_SC_C_RXC_DLY			60
+>  #define IMX_SC_C_TIMER_SEL			61
+> -#define IMX_SC_C_LAST				62
+> +#define IMX_SC_C_MISC0				62
+> +#define IMX_SC_C_MISC1				63
+> +#define IMX_SC_C_MISC2				64
+> +#define IMX_SC_C_MISC3				65
+> +#define IMX_SC_C_LAST				66
+> 
+>  #endif /* __DT_BINDINGS_RSCRC_IMX_H */
+
+
+
 
