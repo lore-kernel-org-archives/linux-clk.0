@@ -2,94 +2,206 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A0DECAAA1
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 19:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63858ECAAD8
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 19:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229706AbiIPTHG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Sep 2022 15:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45766 "EHLO
+        id S229566AbiIPTRU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Sep 2022 15:17:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbiIPTHF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 15:07:05 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4997FA6C0B;
-        Fri, 16 Sep 2022 12:07:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E8CB5B828FF;
-        Fri, 16 Sep 2022 19:07:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44EEC433D6;
-        Fri, 16 Sep 2022 19:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663355221;
-        bh=uVb/OpxkjxZvGpMjJCBUfOYKFcSN1A5P5jgb3RoZdEk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QRpf35OSJJIk1lN/3zpnesC5MPYXphUvNSRJecsPVUHfKokyS3NRtamGLjdokI63F
-         AMDSYmprvNrPbT9YpPCUHLdf6HYr4UCIr3zm1iydITRAd/pJZGnWxFtCv3V+j+QbPR
-         2gDx3XZIQ5gomf9KP5VNtbC2+Q4T4UlAeg39QIlUe2g49wxfccBh+zdmFsoga5VzuF
-         xVs4uFetUhSTpU58/aEWjhuopsELN22Mkwz2PFGKBOEPSzlqYosdACTfGzZgm5o/XE
-         P4uQGaHsBPVxTdT9gWq6Zo/ONXDCkT48df0DKdmQbWZ3sHhijtFW8OqxYtwpnop+1o
-         wk/6tzw/9bXsA==
-Date:   Fri, 16 Sep 2022 14:06:58 -0500
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc:     agross@kernel.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mka@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
-        dianders@chromium.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: qcom: gcc-sc7180: Update the .pwrsts for usb
- gdsc
-Message-ID: <20220916190658.2g7hegdkl6efda6r@builder.lan>
-References: <20220916102417.24549-1-quic_rjendra@quicinc.com>
- <20220916102417.24549-2-quic_rjendra@quicinc.com>
+        with ESMTP id S229471AbiIPTRT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 15:17:19 -0400
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B8FEB6D1F;
+        Fri, 16 Sep 2022 12:17:18 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id o204so7286770oia.12;
+        Fri, 16 Sep 2022 12:17:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=zCLPn/HwN1TiefL3Aqe+h98I2D++Or1my8mtlgETcOo=;
+        b=7fLH8Eyh3AtcSPgce5RYt638GFsluBzTOMtwCxN4rkBifPed6l6pdNJ5xlh9hSDTlS
+         lVW3mQ9Ozh2EjBKhpzj5MG2R4C4XnvJoBH1pc8MbHD5qapC84w3mbJB97M3lo7mCYoe7
+         FD9vX0H/flNKLTWyTlRlJdPmswgFCwtbUC3eNiPeniHR0x3Z54E6cR9hh39Ttp1/Z+Ts
+         UhLD1tOcjXIUVQYNNB8v2j0STN+5zKxU1kiGEMwQIrhgX83nYzuju/q7B/yYMHLKBYu5
+         htPvCToIudbhX5nwA9at1bgvZtFTASGsIoahCAR1hGQ10s6kj/QaNOTVkNcJ8QwL3iNO
+         xodA==
+X-Gm-Message-State: ACgBeo0SkBLcUvNCcuwq11jrl9g5EyCCm5T/hxO54R62ETwvSSinOqCA
+        AV4FGMk/N8/ruiImAIWxsg==
+X-Google-Smtp-Source: AA6agR6eqlyPtQkJJrob+G2quqPI7sfi/F3WkYcp9vGnrwH1R0gDagteP5k5KoZaheCaltHQNzyJbg==
+X-Received: by 2002:a05:6808:1987:b0:34f:c567:8592 with SMTP id bj7-20020a056808198700b0034fc5678592mr7079773oib.229.1663355836930;
+        Fri, 16 Sep 2022 12:17:16 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id be36-20020a05687058a400b000f5e89a9c60sm3696268oab.3.2022.09.16.12.17.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Sep 2022 12:17:16 -0700 (PDT)
+Received: (nullmailer pid 1109013 invoked by uid 1000);
+        Fri, 16 Sep 2022 19:17:15 -0000
+Date:   Fri, 16 Sep 2022 14:17:15 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Marc Herbert <marc.herbert@intel.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Justin Tee <justin.tee@broadcom.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+Message-ID: <20220916191715.GA1079300-robh@kernel.org>
+References: <20220914142256.28775-1-ansuelsmth@gmail.com>
+ <20220914142256.28775-3-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220916102417.24549-2-quic_rjendra@quicinc.com>
+In-Reply-To: <20220914142256.28775-3-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 03:54:16PM +0530, Rajendra Nayak wrote:
-> The USB controller on sc7180 does not retain the state when
-> the system goes into low power state and the GDSC is
-> turned off. This results in the controller reinitializing and
-> re-enumerating all the connected devices (resulting in additional
-> delay while coming out of suspend)
-> Fix this by updating the .pwrsts for the USB GDSC so it only
-> transitions to retention state in low power.
+On Wed, Sep 14, 2022 at 04:22:53PM +0200, Christian Marangi wrote:
+> Convert kpss-acc driver Documentation to yaml.
+> The original Documentation was wrong all along. Fix it while we are
+> converting it.
+> The example was wrong as kpss-acc-v2 should only expose the regs but we
+> don't have any driver that expose additional clocks. The kpss-acc driver
+> is only specific to v1. For this exact reason, limit all the additional
+> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> v1 and also flag that these bindings should NOT be used for v2.
+
+Odd that a clock controller has no clocks, but okay.
+
 > 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
-> v2:
-> Updated the changelog
-> 
->  drivers/clk/qcom/gcc-sc7180.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index c2ea09945c47..2d3980251e78 100644
-> --- a/drivers/clk/qcom/gcc-sc7180.c
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -2224,7 +2224,7 @@ static struct gdsc usb30_prim_gdsc = {
->  	.pd = {
->  		.name = "usb30_prim_gdsc",
->  	},
-> -	.pwrsts = PWRSTS_OFF_ON,
-> +	.pwrsts = PWRSTS_RET_ON,
+>  .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 ----------
+>  .../bindings/arm/msm/qcom,kpss-acc.yaml       | 93 +++++++++++++++++++
 
-I presume the same should be applied to gcc_usb30_sec_gdsc?
+As this is a clock controller, please move to bindings/clock/
 
-Regards,
-Bjorn
+>  2 files changed, 93 insertions(+), 49 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
 
->  };
->  
->  static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+> new file mode 100644
+> index 000000000000..5e16121d9f0d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+> @@ -0,0 +1,93 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-acc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: |
+
+Don't need '|' if no formatting to preserve.
+
+> +  The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
+> +  There is one ACC register region per CPU within the KPSS remapped region as
+> +  well as an alias register region that remaps accesses to the ACC associated
+> +  with the CPU accessing the region.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,kpss-acc-v1
+> +      - qcom,kpss-acc-v2
+> +
+> +  reg:
+> +    items:
+> +      - description: Base address and size of the register region
+> +      - description: Optional base address and size of the alias register region
+> +
+> +  clocks:
+> +    items:
+> +      - description: phandle to pll8_vote
+
+Always a phandle (and arg), so that's redundant. Really, if there's not 
+more to add that what clock-names says, then just 'maxItems: 2' is fine.
+
+> +      - description: phandle to pxo_board
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pll8_vote
+> +      - const: pxo
+> +
+> +  clock-output-names:
+> +    description: Name of the aux clock. Krait can have at most 4 cpu.
+> +    enum:
+> +      - acpu0_aux
+> +      - acpu1_aux
+> +      - acpu2_aux
+> +      - acpu3_aux
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: qcom,kpss-acc-v1
+> +then:
+> +  required:
+> +    - clocks
+> +    - clock-names
+> +    - clock-output-names
+> +    - '#clock-cells'
+> +else:
+> +  properties:
+> +    clocks: false
+> +    clock-names: false
+> +    clock-output-names: false
+> +    '#clock-cells': false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+> +
+> +    clock-controller@2088000 {
+> +      compatible = "qcom,kpss-acc-v1";
+> +      reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
+> +      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
+> +      clock-names = "pll8_vote", "pxo";
+> +      clock-output-names = "acpu0_aux";
+> +      #clock-cells = <0>;
+> +    };
+> +
+> +  - |
+> +    clock-controller@f9088000 {
+> +      compatible = "qcom,kpss-acc-v2";
+> +      reg = <0xf9088000 0x1000>,
+> +            <0xf9008000 0x1000>;
+> +    };
+> +...
 > -- 
-> 2.17.1
+> 2.37.2
+> 
 > 
