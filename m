@@ -2,65 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AE0C54EE9
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 06:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FE0ECAAD8
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 07:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiIPGa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Sep 2022 02:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
+        id S229825AbiIPHoO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Sep 2022 03:44:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbiIPGax (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 02:30:53 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCBD754678;
-        Thu, 15 Sep 2022 23:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1663309851; x=1694845851;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yopAva8T8QQ41gSFKVSGm//Eo37aBkjqDuxfFrR95iY=;
-  b=Hc+PKKEe8aLexmZs1mDnr+FXuIPICXR8neXXYIk2d6yw9azb+QLUfRoZ
-   QQMEon7ceXZ05BN+m/0REURkVu3uQ3MSYrXFogdRj5YFy8zfShI+fLzoO
-   f3xQFEOKRGVJ7DkGQA/sGb58EtcPn8vuJLR0QlEd1O4TuURYKeVLn/LVb
-   qfhGUl7hLg5VSS87gdebL8dfT/UflH9M4YeULsc/7dPHxYNOIjaQJXey+
-   oh2Pd8HB2ppTeT8i2sJ5ggFD2mik+aO+F6T5toP8z+3ps1PkJjhCL0yOb
-   rQOZIwGUoQZ1FhHzvYh1lFk5kjOSw0CjOenQeakCOsQbFMBBQbSWkxs5W
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.93,320,1654552800"; 
-   d="scan'208";a="26215682"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 16 Sep 2022 08:30:49 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 16 Sep 2022 08:30:49 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 16 Sep 2022 08:30:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1663309849; x=1694845849;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yopAva8T8QQ41gSFKVSGm//Eo37aBkjqDuxfFrR95iY=;
-  b=RnLtcVVVqSu3AtUF868wj60Z1QjsJxY2WZCY2o6YRvSkPQXtD/dW9j66
-   zg/sHY9PrXFP+YNBKVgyIOby+kFr9QHuTrR8tzVTaNQXTUjPy+L+Z/3Kd
-   HYIkbzhyU+rIcSYfXcSXV41R8xmoxYC4hM1Z47w6IDwH6bzHmKIBQn9nE
-   WcsE7UQqz79mBPJzdwaeGBll7oRWkWorJmhz3pMoHJ2sToW4D7OrDJAPU
-   K4xWlBKeeWr/uOrlIVRqPYhmXslecb/NS+OtiBUsMTOHrC8uAD6xcGJZ3
-   VSeKVnNAoItCk+JVBnBz2z1YQF1cBQ1CgCSr3GlsSqoJ+ldwa+VNpqBd+
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,320,1654552800"; 
-   d="scan'208";a="26215681"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 16 Sep 2022 08:30:49 +0200
-Received: from steina-w.localnet (unknown [10.123.49.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 7FE76280056;
-        Fri, 16 Sep 2022 08:30:48 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
+        with ESMTP id S229601AbiIPHoN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 03:44:13 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22C07A2237
+        for <linux-clk@vger.kernel.org>; Fri, 16 Sep 2022 00:44:11 -0700 (PDT)
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1oZ60x-0005N2-AZ; Fri, 16 Sep 2022 09:43:55 +0200
+Message-ID: <58e7eada-ce18-0135-210a-3bc27e849fd7@pengutronix.de>
+Date:   Fri, 16 Sep 2022 09:43:51 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: imx: sync with SCFW kit
+ v1.13.0
+Content-Language: en-US
+To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -73,49 +40,51 @@ Cc:     Abel Vesa <abelvesa@kernel.org>,
         Viorel Suman <viorel.suman@nxp.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: firmware: imx: sync with SCFW kit v1.13.0
-Date:   Fri, 16 Sep 2022 08:30:46 +0200
-Message-ID: <5993734.44csPzL39Z@steina-w>
-Organization: TQ-Systems GmbH
+References: <20220915181805.424670-1-viorel.suman@oss.nxp.com>
+ <20220915181805.424670-2-viorel.suman@oss.nxp.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
 In-Reply-To: <20220915181805.424670-2-viorel.suman@oss.nxp.com>
-References: <20220915181805.424670-1-viorel.suman@oss.nxp.com> <20220915181805.424670-2-viorel.suman@oss.nxp.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Donnerstag, 15. September 2022, 20:18:04 CEST schrieb Viorel Suman (OSS):
+Hello,
+
+On 15.09.22 20:18, Viorel Suman (OSS) wrote:
 > From: Viorel Suman <viorel.suman@nxp.com>
 > 
 > Sync defines with the latest available SCFW kit version 1.13.0,
 > may be found at the address below:
 > 
-> https://www.nxp.com/webapp/Download?colCode=L5.15.32_2.0.0_SCFWKIT-1.13.0&ap
-> pType=license
+> https://www.nxp.com/webapp/Download?colCode=L5.15.32_2.0.0_SCFWKIT-1.13.0&appType=license
 > 
 > Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
 > ---
 >  include/dt-bindings/firmware/imx/rsrc.h | 299 ++++++++++++++++--------
 >  1 file changed, 203 insertions(+), 96 deletions(-)
-
-This is not bisectable and breaks compilation, as this patch removes symbols 
-which are still used in drivers/clk/imx/clk-imx8qm-rsrc.c (addressed in 2nd 
-patch). IMHO this series should be squashed into one patch.
-
-Best regards,
-Alexander
-
-> diff --git a/include/dt-bindings/firmware/imx/rsrc.h
-> b/include/dt-bindings/firmware/imx/rsrc.h index 43885056557c..a4c68f394986
-> 100644
+> 
+> diff --git a/include/dt-bindings/firmware/imx/rsrc.h b/include/dt-bindings/firmware/imx/rsrc.h
+> index 43885056557c..a4c68f394986 100644
 > --- a/include/dt-bindings/firmware/imx/rsrc.h
 > +++ b/include/dt-bindings/firmware/imx/rsrc.h
 > @@ -13,34 +13,38 @@
 >   * never be changed or removed (only added to at the end of the list).
+
+Above comment literally says that you should never remove defines below.
+Please provide a better justification why you deem breaking DT backward
+compatibility acceptable.
+
+Thanks,
+Ahmad
+
 >   */
-> 
+>  
 > -#define IMX_SC_R_A53			0
 > -#define IMX_SC_R_A53_0			1
 > -#define IMX_SC_R_A53_1			2
@@ -408,7 +377,7 @@ Alexander
 > @@ -565,6 +579,95 @@
 >  #define IMX_SC_PM_CLK_PLL		4	/* PLL */
 >  #define IMX_SC_PM_CLK_BYPASS		4	/* Bypass clock */
-> 
+>  
 > +/*
 > + * Compatibility defines for sc_rsrc_t
 > + */
@@ -511,9 +480,12 @@ Alexander
 > +#define IMX_SC_C_MISC2				64
 > +#define IMX_SC_C_MISC3				65
 > +#define IMX_SC_C_LAST				66
-> 
+>  
 >  #endif /* __DT_BINDINGS_RSCRC_IMX_H */
 
 
-
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
