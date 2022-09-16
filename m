@@ -2,129 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD12ECAAD8
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 13:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88822ECAAA1
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Sep 2022 19:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbiIPND5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Sep 2022 09:03:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54608 "EHLO
+        id S229889AbiIPTFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Sep 2022 15:05:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbiIPND4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 09:03:56 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF6C9E89F;
-        Fri, 16 Sep 2022 06:03:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1663333434; x=1694869434;
-  h=subject:from:to:cc:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=X+f+brxdhEtU2bA0SXyEx650isaGDTLs/vUcZ2C9k2A=;
-  b=iPaLDcb7M1linfQ/QzFBKkR/VukHJm8uTr7qLmm/BbrS/pz6DUzTE6XH
-   VnOOdkncdt0LGZhucUZGp+u1dUax00UGhINUS6Z5hfeb0XZ1HAsx9ucbI
-   IBtI/ba1GOlXZ8gcPo4Jr9flSQ7siINy27XSqIx0SyqA5Oc7fPLMae2ur
-   X3JHTEJmdNg1qCXQguEu0ybhRIaw9aQnlpxkJDXX5phaRl5i3M49V29Na
-   TB1ILezZmDMjMaD9AISZmnO4lR43chemJxxE83Ih6TlT+411wOZ2c4hOf
-   hcHgQu2RotsX9vOfYXVoE2PA84JGfGlGSM4TSWxQKIVchure3olpuC2nE
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,320,1654552800"; 
-   d="scan'208";a="26227510"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 16 Sep 2022 15:03:51 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 16 Sep 2022 15:03:50 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 16 Sep 2022 15:03:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1663333431; x=1694869431;
-  h=from:to:cc:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding:subject;
-  bh=X+f+brxdhEtU2bA0SXyEx650isaGDTLs/vUcZ2C9k2A=;
-  b=EEsDRvbVrLlH+CVoDdjDiKxZBlEuJFxK5SRUzRBXHVzSxkfCZk7x+WPR
-   e0E73IO/GdKyNun9nMjHaMhcexcOU+qg1NyLT58EXjSWOERdaYzgTA7cE
-   d3D5si7nv3ljp7Q/U/9W+wtmgyyH4f4hqh4rQlBSgppz+2HkUk7i+OOHe
-   1M88eZMGUVWEosbgOJFk2oy71/ZVuM0/iE2tK7JzDIfFmr/yEReM+oVz5
-   YI4IhyXhSC3xe3YCuM7aTxe3Hx+zdNuUkDGfm1UAgTHu/QMc3q+QSRIVe
-   KZNLNYfVtLEyQeISrmeQxPeoBwLnFHUXAq3KBB1rHhFxW2EXDwmukGjyH
-   A==;
-X-IronPort-AV: E=Sophos;i="5.93,320,1654552800"; 
-   d="scan'208";a="26227509"
-Subject: Re: Re: [PATCH 1/2] dt-bindings: firmware: imx: sync with SCFW kit v1.13.0
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 16 Sep 2022 15:03:51 +0200
-Received: from steina-w.localnet (unknown [10.123.49.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        with ESMTP id S229455AbiIPTFw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2022 15:05:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3C0A59B1;
+        Fri, 16 Sep 2022 12:05:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 4A07A280056;
-        Fri, 16 Sep 2022 15:03:50 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Viorel Suman <viorel.suman@oss.nxp.com>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viorel Suman <viorel.suman@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date:   Fri, 16 Sep 2022 15:03:47 +0200
-Message-ID: <24402933.EfDdHjke4D@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20220916110936.jmxgjps5zrcndjxn@fsr-ub1664-116>
-References: <20220915181805.424670-1-viorel.suman@oss.nxp.com> <5993734.44csPzL39Z@steina-w> <20220916110936.jmxgjps5zrcndjxn@fsr-ub1664-116>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 24D68B82743;
+        Fri, 16 Sep 2022 19:05:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E108AC433D7;
+        Fri, 16 Sep 2022 19:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663355148;
+        bh=1Z3c+DrbRBcE+n2RlslO48Lc5eYsY1eHVvVDRXZsivI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DOTgeoop2h3tQUyP5Qo8T+GBANRLzjMcohpSFMynxGp/1y9p2p+7fkzf+xCJ2neu1
+         F+GyLvTR3tgB8DTyxKPJA5FpbAdB09MIZYUAfM/5T00xRkObW2NdOJXQ8c1RqgDTQB
+         zI64c2gAMsiMYhgQzq0cwVa4qQ8tKicHBtUaqTiXtbVEUcM12013+dumFtxk4fN1qI
+         W00M0Z9CUOGg2lJ9iXcgS9VVEjId0FWklRRZyVZG4S/BVQzcMKGdq+AvTyTxTEGKRM
+         y5ps5NxVLgl6sRxnIWYo25h/0t1FRU9SJEcY1SOxLZxeTZk9DAj2LMFaP42cjhHq5t
+         xKCycWzw1/Bkw==
+Date:   Fri, 16 Sep 2022 14:05:45 -0500
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc:     agross@kernel.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mka@chromium.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
+        dianders@chromium.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Subject: Re: [PATCH v2 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+ support
+Message-ID: <20220916190545.4yadf4effjeipawu@builder.lan>
+References: <20220916102417.24549-1-quic_rjendra@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220916102417.24549-1-quic_rjendra@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Viorel,
-
-added missing CC.
-
-Am Freitag, 16. September 2022, 13:09:36 CEST schrieb Viorel Suman:
-> On 22-09-16 08:30:46, Alexander Stein wrote:
-> > Am Donnerstag, 15. September 2022, 20:18:04 CEST schrieb Viorel Suman 
-(OSS):
-> > > From: Viorel Suman <viorel.suman@nxp.com>
-> > > 
-> > > Sync defines with the latest available SCFW kit version 1.13.0,
-> > > may be found at the address below:
-> > > 
-> > > https://www.nxp.com/webapp/Download?colCode=L5.15.32_2.0.0_SCFWKIT-1.13.
-> > > 0&ap pType=license
-> > > 
-> > > Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> > > ---
-> > > 
-> > >  include/dt-bindings/firmware/imx/rsrc.h | 299 ++++++++++++++++--------
-> > >  1 file changed, 203 insertions(+), 96 deletions(-)
-> > 
-> > This is not bisectable and breaks compilation, as this patch removes
-> > symbols which are still used in drivers/clk/imx/clk-imx8qm-rsrc.c
-> > (addressed in 2nd patch). IMHO this series should be squashed into one
-> > patch.
+On Fri, Sep 16, 2022 at 03:54:15PM +0530, Rajendra Nayak wrote:
+> GDSCs cannot be transitioned into a Retention state in SW.
+> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+> takes care of retaining the memory/logic for the domain when
+> the parent domain transitions to low power state.
+> The existing logic handling the PWRSTS_RET seems to set the
+> RETAIN_MEM/RETAIN_PERIPH bits but then explicitly turns the
+> GDSC OFF as part of _gdsc_disable(). Fix that by leaving the
+> GDSC in ON state.
 > 
-> Hi Alexander,
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+> ---
+> No changes in v2: 
 > 
-> Thank you for review, you are right. Is sending a squashed v2 the usual
-> approach in such case or shall I hope that the maintainer will squash them
-> before push ? Just want to avoid unnecessary noise.
-
-AFAIK maintainers will not squash patches. This is something you will need to 
-do yourself. So sending a v2 seems right.
-Also please keep all the other recipients on CC.
-
-Best regards,
-Alexander
-
-
-
+> There are a few existing users of PWRSTS_RET and I am not
+> sure if they would be impacted with this change
+> 
+> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+> gdsc is actually transitioning to OFF and might be left
+> ON as part of this change, atleast till we hit system wide
+> low power state.
+> If we really leak more power because of this
+> change, the right thing to do would be to update .pwrsts for
+> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+> I dont have a msm8974 hardware, so if anyone who has can report
+> any issues I can take a look further on how to fix it.
+> 
+> 2. gpu_gx_gdsc in gpucc-msm8998.c and
+>    gpu_gx_gdsc in gpucc-sdm660.c
+> Both of these seem to add support for 3 power state
+> OFF, RET and ON, however I dont see any logic in gdsc
+> driver to handle 3 different power states.
+> So I am expecting that these are infact just transitioning
+> between ON and OFF and RET state is never really used.
+> The ideal fix for them would be to just update their resp.
+> .pwrsts to PWRSTS_OFF_ON only.
+> 
+>  drivers/clk/qcom/gdsc.c | 10 ++++++++++
+>  drivers/clk/qcom/gdsc.h |  5 +++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index d3244006c661..ccf63771e852 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -368,6 +368,16 @@ static int _gdsc_disable(struct gdsc *sc)
+>  	if (sc->pwrsts & PWRSTS_OFF)
+>  		gdsc_clear_mem_on(sc);
+>  
+> +	/*
+> +	 * If the GDSC supports only a Retention state, apart from ON,
+> +	 * leave it in ON state.
+> +	 * There is no SW control to transition the GDSC into
+> +	 * Retention state. This happens in HW when the parent
+> +	 * domain goes down to a Low power state
+> +	 */
+> +	if (sc->pwrsts == PWRSTS_RET_ON)
+> +		return 0;
+> +
+>  	ret = gdsc_toggle_logic(sc, GDSC_OFF);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 5de48c9439b2..981a12c8502d 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -49,6 +49,11 @@ struct gdsc {
+>  	const u8			pwrsts;
+>  /* Powerdomain allowable state bitfields */
+>  #define PWRSTS_OFF		BIT(0)
+> +/*
+> + * There is no SW control to transition a GDSC into
+> + * PWRSTS_RET. This happens in HW when the parent
+> + * domain goes down to a low power state
+> + */
+>  #define PWRSTS_RET		BIT(1)
+>  #define PWRSTS_ON		BIT(2)
+>  #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+> -- 
+> 2.17.1
+> 
