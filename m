@@ -2,179 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BDBC6FA86
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 06:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64502C6FA86
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 08:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbiIQG7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Sep 2022 02:59:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55482 "EHLO
+        id S229595AbiIQIbm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Sep 2022 04:31:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiIQG7Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 02:59:24 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C35ED5B7B1;
-        Fri, 16 Sep 2022 23:59:22 -0700 (PDT)
-Received: from [167.98.135.4] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1oZRnI-0007Iz-4p; Sat, 17 Sep 2022 08:59:16 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     zhangqing@rock-chips.com, finley.xiao@rock-chips.com,
-        shawn.lin@rock-chips.com, zhengxing@rock-chips.com,
-        jeffy.chen@rock-chips.com, jay.xu@rock-chips.com,
-        Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: clock: rockchip: change SPDX-License-Identifier
-Date:   Sat, 17 Sep 2022 08:59:14 +0200
-Message-ID: <2999300.CbtlEUcBR6@phil>
-In-Reply-To: <d70fa056-608d-0c19-7948-c67b15a4246e@gmail.com>
-References: <d70fa056-608d-0c19-7948-c67b15a4246e@gmail.com>
+        with ESMTP id S229511AbiIQIbl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 04:31:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C7F40E28
+        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 01:31:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3E113B80AFE
+        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 08:31:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB5CC433C1;
+        Sat, 17 Sep 2022 08:31:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663403497;
+        bh=ZbqEAsuZi8sGd4fPpHgkh2fYeHY28QZcC55dcrtx/4w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BPwbaMi8JP/Ll5ib+XVmgA23Hfne7M2PEJ258j+FfHnwZO47mj1H9Ph7s1huCb1XQ
+         hJfvY8coUfrNgMWyYMvaGmB7VByXy6Iqm33NMEh0onINW/l/dpKvF3NAScH73TTRRp
+         JgF+VI4bbEBpwU+9Dx5bX0RJyCUUDs3C98wGAivOG+OgikmvLyPA+emXU+DGqnMCaL
+         ySkoCy0c+Fh3AZbnpnmRVIA19Ng8iSjiZcCGIsTCcPq4KnaDD+mqo4BY9foRP5utdY
+         jesr5aiStyMhRrIkO7H6Xe+qaKyWKkIH07Uh3LqVBr/szpUriHjPKvhcsBSCMU3D9X
+         eUynloqvk68KQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220902145305.znvsrcrcjrpr343c@houat>
+References: <20220816112530.1837489-1-maxime@cerno.tech> <20220902145305.znvsrcrcjrpr343c@houat>
+Subject: Re: [PATCH v9 00/25] clk: More clock rate fixes and tests
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Sat, 17 Sep 2022 01:31:35 -0700
+User-Agent: alot/0.10
+Message-Id: <20220917083137.DBB5CC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Mittwoch, 14. September 2022, 12:50:45 CEST schrieb Johan Jonker:
-> Change SPDX-License-Identifier to (GPL-2.0-only OR BSD-2-Clause)
-> for Rockchip clock bindings.
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
-> 
-> Request for copyright holder approval.
+Quoting Maxime Ripard (2022-09-02 07:53:05)
+>=20
+> I believe this series fixes a number of real bugs in the CCF, in
+> addition to extending quite a lot the unit test coverage of the
+> framework. But if you just don't care, please just say so. I really
+> don't want to waste any more time rebasing and sending that series, and
+> pinging you on a regular basis if it's not going anywhere.
+>=20
 
-For me that is always ok, to follow in-kernel policies more closely.
-Rockchip recently also suggested changing the license [0], although
-they requested "GPL-2.0+ OR MIT", which should be pretty much
-the same though.
-
-
-Heiko
-
-[0] https://lore.kernel.org/all/510d1180-bc8e-7820-c772-ed7f35447087@rock-chips.com/
-
-> ---
->  Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml  | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3036-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3188-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3228-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3288-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3308-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3368-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3399-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rk3568-cru.yaml          | 2 +-
->  .../devicetree/bindings/clock/rockchip,rv1108-cru.yaml          | 2 +-
->  10 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml
-> index 3eec381c7..cb20a632c 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,px30-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml
-> index 1376230fe..ffac332b9 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3036-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> index ddd7e46af..6979ed1c4 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
-> index cf7dc01d9..ca34345e1 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3228-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
-> index 96bc05749..b952b0eab 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3288-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.yaml
-> index 523ee578a..e1b314ed3 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3308-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.yaml
-> index adb678777..3e8225357 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3368-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-> index 54da1e31e..b06eef33b 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0-only
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3399-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
-> index fc7546f52..5b49adcac 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rk3568-cru.yaml#
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
-> index 20421c22f..95bfeb8fc 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/rockchip,rv1108-cru.yaml#
-> 
-
-
-
-
+I've merged the patch series to clk-next. If things go sideways in the
+next week we can figure out what to do. Thanks for sticking with it!
