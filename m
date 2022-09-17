@@ -2,166 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBB3C54EE9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 13:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9200BECAAD3
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 14:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbiIQNpm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Sep 2022 09:45:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44656 "EHLO
+        id S229471AbiIQOZm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Sep 2022 10:25:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiIQNpl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 09:45:41 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534992B630
-        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 06:45:39 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-3452214cec6so290998387b3.1
-        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 06:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=2VOqydgYRC5eaj8WgdTpQExGI/aDqr2CC/HH18bzDLw=;
-        b=S/nsbUgh86JWr9yY1QEAkc7rxwLoJQt3qY3k4mWx44ib6nxA+mjP30Ag7i8lcOWOyM
-         +aanCRBq6ea6x6bpYpxEpK9/UlJgSgGcdkOAp+BabzXD1usOYlbWeVpC+CMUyfUKoKVE
-         tTVrpUkWac5qUP7jGz+6L8Fpp8zSlqZz+CEWDvpPqFk7ppTVGJQX+zjI20FWYYDmOoQD
-         p0VmUdWo4UJyOoR0OMLj7ah6FbLdrV/jaeuaR1xmM9UloQw4XLd/IxG9hrIfcHzbtUp2
-         9mzr+3jip/WG693yWuP9AZhZ9piCGNROZyKTSmNLeden380wNQayrc7gxyOqtfXXl50i
-         B2SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=2VOqydgYRC5eaj8WgdTpQExGI/aDqr2CC/HH18bzDLw=;
-        b=mTkrSaMeS8k31Zt/RJasI49WNEbxk6+Z1D+eex9GCByOZaITlFiIHRIfyI9ZEqyd0R
-         iEdVRhdzNW7lEXJYc81J6vpdvFrTukrcy0y0WH7UR+3jeLCBnftbxdveO0nRB4fezkSm
-         44DA5mrgKAj2T7I6WJ9c2qxh5f/PoJQwPhxLbt0lKuekH3ng0Su2Nx83X1dtDapESZxV
-         1dENYvFwMzCtag+u158aVdVwDAETe5lNGpOk91IqkZsGQcwT1cw4Oi2k2RVOHLqV3o2b
-         XCgDmnBMUAcv7dh/gjan/Gglx85MNTyrL7Ot0xtRfduHts1NC3jOamg3HRHchAvdgpdZ
-         WRqQ==
-X-Gm-Message-State: ACrzQf36Mko+3lavzFQSql9nsYWzAOuHZaIwMCh/tTseRbloSS0wdsjT
-        52dQQEgELQJadl3+q1AEHkTPB+6VQUXxDOz3xNVc/w==
-X-Google-Smtp-Source: AMsMyM75fdk+RhC6nzYi3fbxlktbP6QoMv9zyjM625EL72sm6ZuMy15HLHrP0qMkSYXUzoGwdBcL/b1m+fqTRK1TDHk=
-X-Received: by 2002:a81:1988:0:b0:345:11a6:fa56 with SMTP id
- 130-20020a811988000000b0034511a6fa56mr8608811ywz.138.1663422338492; Sat, 17
- Sep 2022 06:45:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220914142256.28775-1-ansuelsmth@gmail.com> <20220914142256.28775-3-ansuelsmth@gmail.com>
- <20220916191715.GA1079300-robh@kernel.org> <6324d1be.050a0220.9d842.7b47@mx.google.com>
- <CAA8EJprEQOsm4TxGWJYZo04D1PagT3QmhDdYQkEid-KSP-tpTw@mail.gmail.com>
- <6324d8e1.170a0220.aba35.ba4f@mx.google.com> <CAA8EJpowLvkuiYupqS0WEhnMR8q=R1YUUFgdFVCAx1PXyoo1xw@mail.gmail.com>
- <6324dc1b.df0a0220.97787.083c@mx.google.com> <CAA8EJpo08WoQ_LYOtg5C2BB=Q6GR_cftLjaWHWjYD6BjfDZcsg@mail.gmail.com>
- <6324f087.1c0a0220.7123d.8665@mx.google.com>
-In-Reply-To: <6324f087.1c0a0220.7123d.8665@mx.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 17 Sep 2022 16:45:21 +0300
-Message-ID: <CAA8EJprhLUybqmPhFmit6LGaNOxz=-9+8xADXowJuzU5BtjjtA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] dt-bindings: arm: msm: Convert kpss-acc driver
- Documentation to yaml
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
+        with ESMTP id S229681AbiIQOZj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 10:25:39 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEE73335F;
+        Sat, 17 Sep 2022 07:25:29 -0700 (PDT)
+Received: from [88.128.88.164] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1oZYkz-0001LQ-HZ; Sat, 17 Sep 2022 16:25:21 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Jagan Teki <jagan@edgeble.ai>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Christian Brauner <brauner@kernel.org>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Marc Herbert <marc.herbert@intel.com>,
-        James Smart <jsmart2021@gmail.com>,
-        Justin Tee <justin.tee@broadcom.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Finley Xiao <finley.xiao@rock-chips.com>
+Subject: Re: [PATCH v5 4/6] clk: rockchip: Add clock controller support for RV1126 SoC.
+Date:   Sat, 17 Sep 2022 16:25:20 +0200
+Message-ID: <1760564.3VsfAaAtOV@phil>
+In-Reply-To: <CA+VMnFxy5QsoQ=0=qDxhPE=9KxDr_OKSWi9_7tONk0EA12NLFQ@mail.gmail.com>
+References: <20220915163947.1922183-1-jagan@edgeble.ai> <2597191.BddDVKsqQX@phil> <CA+VMnFxy5QsoQ=0=qDxhPE=9KxDr_OKSWi9_7tONk0EA12NLFQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 17 Sept 2022 at 00:54, Christian Marangi <ansuelsmth@gmail.com> wrote:
->
-> On Fri, Sep 16, 2022 at 11:31:49PM +0300, Dmitry Baryshkov wrote:
-> > On Fri, 16 Sept 2022 at 23:27, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> > >
-> > > On Fri, Sep 16, 2022 at 11:22:17PM +0300, Dmitry Baryshkov wrote:
-> > > > On Fri, 16 Sept 2022 at 23:13, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> > > > >
-> > > > > On Fri, Sep 16, 2022 at 11:06:35PM +0300, Dmitry Baryshkov wrote:
-> > > > > > On Fri, 16 Sept 2022 at 22:43, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Fri, Sep 16, 2022 at 02:17:15PM -0500, Rob Herring wrote:
-> > > > > > > > On Wed, Sep 14, 2022 at 04:22:53PM +0200, Christian Marangi wrote:
-> > > > > > > > > Convert kpss-acc driver Documentation to yaml.
-> > > > > > > > > The original Documentation was wrong all along. Fix it while we are
-> > > > > > > > > converting it.
-> > > > > > > > > The example was wrong as kpss-acc-v2 should only expose the regs but we
-> > > > > > > > > don't have any driver that expose additional clocks. The kpss-acc driver
-> > > > > > > > > is only specific to v1. For this exact reason, limit all the additional
-> > > > > > > > > bindings (clocks, clock-names, clock-output-names and #clock-cells) to
-> > > > > > > > > v1 and also flag that these bindings should NOT be used for v2.
-> > > > > > > >
-> > > > > > > > Odd that a clock controller has no clocks, but okay.
-> > > > > > > >
-> > > > > > >
-> > > > > > > As said in the commit v2 is only used for regs. v2 it's only used in
-> > > > > > > arch/arm/mach-qcom/platsmp.c to setup stuff cpu hotplug and bringup.
-> > > > > > >
-> > > > > > > Should we split the 2 driver? To me the acc naming seems to be just
-> > > > > > > recycled for v2 and it's not really a clk controller.
-> > > > > > >
-> > > > > > > So keeping v2 in arm/msm/qcom,kpss-acc-v2.yaml and v1 moved to clock?
-> > > > > >
-> > > > > > I suspect that qcom,kpss-acc-v2 is misnamed as the "clock-controller".
-> > > > > > According to msm-3.10, these regions are used by the Krait core
-> > > > > > regulators.
-> > > > > >
-> > > > >
-> > > > > Well we need to understand how to handle this... change the compatible
-> > > > > it's a nono for sure. In platsmp.c they are used for cpu power control
-> > > > > so could be that they are actually used to regulators. I would honestly
-> > > > > move v1 to clock and leave v2 to arm/msm but I'm not cetain on what name
-> > > > > to assign to the 2 yaml.
-> > > > >
-> > > > > What do you think?
-> > > >
-> > > > This is fine for me. If somebody gets better understanding of
-> > > > underlying hardware and works on actually using these blocks, he will
-> > > > update the bindings.
-> > > >
-> > > > My only suggestion would be to rename kpss-acc-v2 nodes to
-> > > > 'power-controller@address' and document them so.
-> > > >
-> > >
-> > > Ok so something like this?
-> > >
-> > >     power-controller@f9088000 {
-> > >       compatible = "qcom,kpss-acc-v2";
-> > >       reg = <0xf9088000 0x1000>,
-> > >             <0xf9008000 0x1000>;
-> > >     };
-> > >
-> > > (and I will have to fix dtbs warning as they will be unmatched I think.)
-> > > Yaml naming:
-> > > qcom,kpss-acc-v1.yaml
-> > > qcom,kpss-acc-v2.yaml
-> > > Right?
-> >
-> > Sounds good to me.
-> >
-> > I'd even say clock/qcom,kpss-acc-v1.yaml and
-> > arm/msm/qcom,kpss-acc-v2.yaml or maybe power/qcom,kpss-acc-v2.yaml
-> >
->
-> Wonder if the gcc driver should have the same tretement? It's also a
-> clock-controller driver that doesn't use clock at all... Do you have
-> some info about it?
+Hi Jagan,
 
-As far as I understand, the kpss-gcc is a normal clock controller,
-isn't it? It provides clocks to other devices.
+Am Samstag, 17. September 2022, 13:58:43 CEST schrieben Sie:
+> On Sat, 17 Sept 2022 at 12:25, Heiko Stuebner <heiko@sntech.de> wrote:
+> >
+> > Am Donnerstag, 15. September 2022, 18:39:45 CEST schrieb Jagan Teki:
+> > > Clock & Reset Unit (CRU) in RV1126 support clocks for CRU
+> > > and CRU_PMU blocks.
+> > >
+> > > This patch is trying to add minimal Clock-Architecture Diagram's
+> > > inferred from [1] authored by Finley Xiao.
+> > >
+> > > [1] https://github.com/rockchip-linux/kernel/blob/develop-4.19/drivers/clk/rockchip/clk-rv1126.c
+> > >
+> > > Cc: linux-clk@vger.kernel.org
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> > > Signed-off-by: Jagan Teki <jagan@edgeble.ai>
+> > > ---
+> > > Changes for v5:
+> > > - add platform-drivers
+> >
+> > [...]
+> >
+> > > +static void __init rv1126_pmu_clk_init(struct device_node *np)
+> > > +{
+> > > +     struct rockchip_clk_provider *ctx;
+> > > +     void __iomem *reg_base;
+> > > +
+> > > +     reg_base = of_iomap(np, 0);
+> > > +     if (!reg_base) {
+> > > +             pr_err("%s: could not map cru pmu region\n", __func__);
+> > > +             return;
+> > > +     }
+> > > +
+> > > +     ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
+> > > +     if (IS_ERR(ctx)) {
+> > > +             pr_err("%s: rockchip pmu clk init failed\n", __func__);
+> > > +             return;
+> > > +     }
+> > > +
+> > > +     rockchip_clk_register_plls(ctx, rv1126_pmu_pll_clks,
+> > > +                                ARRAY_SIZE(rv1126_pmu_pll_clks),
+> > > +                                RV1126_GRF_SOC_STATUS0);
+> > > +
+> > > +     rockchip_clk_register_branches(ctx, rv1126_clk_pmu_branches,
+> > > +                                    ARRAY_SIZE(rv1126_clk_pmu_branches));
+> > > +
+> > > +     rockchip_register_softrst(np, 2, reg_base + RV1126_PMU_SOFTRST_CON(0),
+> > > +                               ROCKCHIP_SOFTRST_HIWORD_MASK);
+> > > +
+> > > +     rockchip_clk_of_add_provider(np, ctx);
+> > > +}
+> > > +
+> > > +CLK_OF_DECLARE(rv1126_cru_pmu, "rockchip,rv1126-pmucru", rv1126_pmu_clk_init);
+> >
+> > this one and the one below should go away I think.
+> >
+> > Can you check if that is the case, then I can just drop the two
+> > CLK_OF_DECLARE lines.
+> 
+> I think these are unneeded, it worked w/o these when I built a static.
 
--- 
-With best wishes
-Dmitry
+great to hear that, then I'll drop those 
+
+
+> but others are still included.
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/rockchip/clk-rk3568.c#n1636
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/rockchip/clk-rk3568.c#n1679
+
+very likely. As I want to test such changes on hardware, I'm not
+removing them just now but will try to look at that once I'm back
+home from LPC/ELCE.
+
+Heiko
+
+
