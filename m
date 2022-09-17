@@ -2,121 +2,192 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9200BECAAD3
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 14:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC144ECAAA1
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 18:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbiIQOZm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Sep 2022 10:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
+        id S229647AbiIQS6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Sep 2022 14:58:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiIQOZj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 10:25:39 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEE73335F;
-        Sat, 17 Sep 2022 07:25:29 -0700 (PDT)
-Received: from [88.128.88.164] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1oZYkz-0001LQ-HZ; Sat, 17 Sep 2022 16:25:21 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Jagan Teki <jagan@edgeble.ai>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229673AbiIQS5y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 14:57:54 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4435024BDE;
+        Sat, 17 Sep 2022 11:57:51 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id c11so40968419wrp.11;
+        Sat, 17 Sep 2022 11:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date;
+        bh=SPZMqobD9fw5tzmDxboNL8OzW6a3xWpEgbxCQr5TdTM=;
+        b=W29ohG9AtGj1WSrLLTmSoXL9aZ62Q2oe91kjb7hDhC5vzx+FmVqpoII5Ktsw9ielRI
+         /aKBcli5yFTD9qHo3Y6YDrcsry6yPhf7mQQThpbcYWQlDwP88P+Gr00gszEzJCDUFbHP
+         ecHtxywZxDQyfPVk8Mf5JxlkgY5DO2jQYVozlkaJjhhghaCl2pQFgo/0bsEWmd/cho7H
+         zO2LM01kRR7RD76+NEpWRrvaGIr0vVBD4uywXubaPswqbEFL1v952C7M2O9lyjxScm1r
+         0cnh4LlFKSCl3SZP6qvkn4pwJho/5/T/+6Vm1LFk+b6xIQNow2gWviGPYWV1trHdk2Jw
+         g94A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date;
+        bh=SPZMqobD9fw5tzmDxboNL8OzW6a3xWpEgbxCQr5TdTM=;
+        b=jjqp6AGjzE80xb32rhM5WaBpQ+uCZPCcX9wLAnHqPArHmoECh6WJ9NfWmDg9vOQkDh
+         VqTUIXeQtQXAq23GL4LR2S1Xm3nb1EQFvdwSj9cgU2J7PZsDnGrPJN1F/tEeWh391yq3
+         s84kZZDiwlgxoY4j463TzxcEfwsJLnXwFqcGYgoERggO6IxUL1RrDVwJ/tswBmm076Ak
+         Emj5KCKR1faTct10xWsu6+MFZl5x+kyP21H7BFfOQO0RLNmg96enSxJCrQ+mCFau94QY
+         d2QaMCJPF/necV58mZkMQdegTcDtd9MLNCOF+KLouy+ArcD+0A7SA/SDUvtLUYqCu3Nz
+         qLEA==
+X-Gm-Message-State: ACrzQf2T1k+JVjymPxIkDe8nuHKJ6UcBhkpYsgKCo/SVoIU6WWMIXjYw
+        MEEk+gMOQPN0IxUQfmFMu+w=
+X-Google-Smtp-Source: AMsMyM58V8FLw3xUrZFuIyrtsIG5Vax20MIycOQYhiqyPNM6yfmefak1N59i4mvl9A0aBXkmj1vz8g==
+X-Received: by 2002:adf:f5d0:0:b0:228:6ca8:21f2 with SMTP id k16-20020adff5d0000000b002286ca821f2mr6696624wrp.271.1663441069119;
+        Sat, 17 Sep 2022 11:57:49 -0700 (PDT)
+Received: from Ansuel-xps. (93-42-70-134.ip85.fastwebnet.it. [93.42.70.134])
+        by smtp.gmail.com with ESMTPSA id o2-20020a05600c510200b003a5b6086381sm7129223wms.48.2022.09.17.11.57.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Sep 2022 11:57:48 -0700 (PDT)
+Message-ID: <632618ac.050a0220.bda86.d7a8@mx.google.com>
+X-Google-Original-Message-ID: <YyYYqO1R2/bXfTIO@Ansuel-xps.>
+Date:   Sat, 17 Sep 2022 20:57:44 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Finley Xiao <finley.xiao@rock-chips.com>
-Subject: Re: [PATCH v5 4/6] clk: rockchip: Add clock controller support for RV1126 SoC.
-Date:   Sat, 17 Sep 2022 16:25:20 +0200
-Message-ID: <1760564.3VsfAaAtOV@phil>
-In-Reply-To: <CA+VMnFxy5QsoQ=0=qDxhPE=9KxDr_OKSWi9_7tONk0EA12NLFQ@mail.gmail.com>
-References: <20220915163947.1922183-1-jagan@edgeble.ai> <2597191.BddDVKsqQX@phil> <CA+VMnFxy5QsoQ=0=qDxhPE=9KxDr_OKSWi9_7tONk0EA12NLFQ@mail.gmail.com>
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Marc Herbert <marc.herbert@intel.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Justin Tee <justin.tee@broadcom.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+References: <20220914142256.28775-3-ansuelsmth@gmail.com>
+ <20220916191715.GA1079300-robh@kernel.org>
+ <6324d1be.050a0220.9d842.7b47@mx.google.com>
+ <CAA8EJprEQOsm4TxGWJYZo04D1PagT3QmhDdYQkEid-KSP-tpTw@mail.gmail.com>
+ <6324d8e1.170a0220.aba35.ba4f@mx.google.com>
+ <CAA8EJpowLvkuiYupqS0WEhnMR8q=R1YUUFgdFVCAx1PXyoo1xw@mail.gmail.com>
+ <6324dc1b.df0a0220.97787.083c@mx.google.com>
+ <CAA8EJpo08WoQ_LYOtg5C2BB=Q6GR_cftLjaWHWjYD6BjfDZcsg@mail.gmail.com>
+ <6324f087.1c0a0220.7123d.8665@mx.google.com>
+ <CAA8EJprhLUybqmPhFmit6LGaNOxz=-9+8xADXowJuzU5BtjjtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJprhLUybqmPhFmit6LGaNOxz=-9+8xADXowJuzU5BtjjtA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jagan,
-
-Am Samstag, 17. September 2022, 13:58:43 CEST schrieben Sie:
-> On Sat, 17 Sept 2022 at 12:25, Heiko Stuebner <heiko@sntech.de> wrote:
+On Sat, Sep 17, 2022 at 04:45:21PM +0300, Dmitry Baryshkov wrote:
+> On Sat, 17 Sept 2022 at 00:54, Christian Marangi <ansuelsmth@gmail.com> wrote:
 > >
-> > Am Donnerstag, 15. September 2022, 18:39:45 CEST schrieb Jagan Teki:
-> > > Clock & Reset Unit (CRU) in RV1126 support clocks for CRU
-> > > and CRU_PMU blocks.
+> > On Fri, Sep 16, 2022 at 11:31:49PM +0300, Dmitry Baryshkov wrote:
+> > > On Fri, 16 Sept 2022 at 23:27, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > >
+> > > > On Fri, Sep 16, 2022 at 11:22:17PM +0300, Dmitry Baryshkov wrote:
+> > > > > On Fri, 16 Sept 2022 at 23:13, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > > > >
+> > > > > > On Fri, Sep 16, 2022 at 11:06:35PM +0300, Dmitry Baryshkov wrote:
+> > > > > > > On Fri, 16 Sept 2022 at 22:43, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > On Fri, Sep 16, 2022 at 02:17:15PM -0500, Rob Herring wrote:
+> > > > > > > > > On Wed, Sep 14, 2022 at 04:22:53PM +0200, Christian Marangi wrote:
+> > > > > > > > > > Convert kpss-acc driver Documentation to yaml.
+> > > > > > > > > > The original Documentation was wrong all along. Fix it while we are
+> > > > > > > > > > converting it.
+> > > > > > > > > > The example was wrong as kpss-acc-v2 should only expose the regs but we
+> > > > > > > > > > don't have any driver that expose additional clocks. The kpss-acc driver
+> > > > > > > > > > is only specific to v1. For this exact reason, limit all the additional
+> > > > > > > > > > bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> > > > > > > > > > v1 and also flag that these bindings should NOT be used for v2.
+> > > > > > > > >
+> > > > > > > > > Odd that a clock controller has no clocks, but okay.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > As said in the commit v2 is only used for regs. v2 it's only used in
+> > > > > > > > arch/arm/mach-qcom/platsmp.c to setup stuff cpu hotplug and bringup.
+> > > > > > > >
+> > > > > > > > Should we split the 2 driver? To me the acc naming seems to be just
+> > > > > > > > recycled for v2 and it's not really a clk controller.
+> > > > > > > >
+> > > > > > > > So keeping v2 in arm/msm/qcom,kpss-acc-v2.yaml and v1 moved to clock?
+> > > > > > >
+> > > > > > > I suspect that qcom,kpss-acc-v2 is misnamed as the "clock-controller".
+> > > > > > > According to msm-3.10, these regions are used by the Krait core
+> > > > > > > regulators.
+> > > > > > >
+> > > > > >
+> > > > > > Well we need to understand how to handle this... change the compatible
+> > > > > > it's a nono for sure. In platsmp.c they are used for cpu power control
+> > > > > > so could be that they are actually used to regulators. I would honestly
+> > > > > > move v1 to clock and leave v2 to arm/msm but I'm not cetain on what name
+> > > > > > to assign to the 2 yaml.
+> > > > > >
+> > > > > > What do you think?
+> > > > >
+> > > > > This is fine for me. If somebody gets better understanding of
+> > > > > underlying hardware and works on actually using these blocks, he will
+> > > > > update the bindings.
+> > > > >
+> > > > > My only suggestion would be to rename kpss-acc-v2 nodes to
+> > > > > 'power-controller@address' and document them so.
+> > > > >
+> > > >
+> > > > Ok so something like this?
+> > > >
+> > > >     power-controller@f9088000 {
+> > > >       compatible = "qcom,kpss-acc-v2";
+> > > >       reg = <0xf9088000 0x1000>,
+> > > >             <0xf9008000 0x1000>;
+> > > >     };
+> > > >
+> > > > (and I will have to fix dtbs warning as they will be unmatched I think.)
+> > > > Yaml naming:
+> > > > qcom,kpss-acc-v1.yaml
+> > > > qcom,kpss-acc-v2.yaml
+> > > > Right?
 > > >
-> > > This patch is trying to add minimal Clock-Architecture Diagram's
-> > > inferred from [1] authored by Finley Xiao.
+> > > Sounds good to me.
 > > >
-> > > [1] https://github.com/rockchip-linux/kernel/blob/develop-4.19/drivers/clk/rockchip/clk-rv1126.c
+> > > I'd even say clock/qcom,kpss-acc-v1.yaml and
+> > > arm/msm/qcom,kpss-acc-v2.yaml or maybe power/qcom,kpss-acc-v2.yaml
 > > >
-> > > Cc: linux-clk@vger.kernel.org
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> > > Signed-off-by: Jagan Teki <jagan@edgeble.ai>
-> > > ---
-> > > Changes for v5:
-> > > - add platform-drivers
 > >
-> > [...]
-> >
-> > > +static void __init rv1126_pmu_clk_init(struct device_node *np)
-> > > +{
-> > > +     struct rockchip_clk_provider *ctx;
-> > > +     void __iomem *reg_base;
-> > > +
-> > > +     reg_base = of_iomap(np, 0);
-> > > +     if (!reg_base) {
-> > > +             pr_err("%s: could not map cru pmu region\n", __func__);
-> > > +             return;
-> > > +     }
-> > > +
-> > > +     ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
-> > > +     if (IS_ERR(ctx)) {
-> > > +             pr_err("%s: rockchip pmu clk init failed\n", __func__);
-> > > +             return;
-> > > +     }
-> > > +
-> > > +     rockchip_clk_register_plls(ctx, rv1126_pmu_pll_clks,
-> > > +                                ARRAY_SIZE(rv1126_pmu_pll_clks),
-> > > +                                RV1126_GRF_SOC_STATUS0);
-> > > +
-> > > +     rockchip_clk_register_branches(ctx, rv1126_clk_pmu_branches,
-> > > +                                    ARRAY_SIZE(rv1126_clk_pmu_branches));
-> > > +
-> > > +     rockchip_register_softrst(np, 2, reg_base + RV1126_PMU_SOFTRST_CON(0),
-> > > +                               ROCKCHIP_SOFTRST_HIWORD_MASK);
-> > > +
-> > > +     rockchip_clk_of_add_provider(np, ctx);
-> > > +}
-> > > +
-> > > +CLK_OF_DECLARE(rv1126_cru_pmu, "rockchip,rv1126-pmucru", rv1126_pmu_clk_init);
-> >
-> > this one and the one below should go away I think.
-> >
-> > Can you check if that is the case, then I can just drop the two
-> > CLK_OF_DECLARE lines.
+> > Wonder if the gcc driver should have the same tretement? It's also a
+> > clock-controller driver that doesn't use clock at all... Do you have
+> > some info about it?
 > 
-> I think these are unneeded, it worked w/o these when I built a static.
+> As far as I understand, the kpss-gcc is a normal clock controller,
+> isn't it? It provides clocks to other devices.
+> 
 
-great to hear that, then I'll drop those 
+Hi again... Having acc-v2 as power-controller would require to set
+#power-domain-cells = <0>;
 
+Would that be acceptable? Considering it wouldn't expose any PM domain?
 
-> but others are still included.
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/rockchip/clk-rk3568.c#n1636
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/rockchip/clk-rk3568.c#n1679
+About kpss-gcc we have some device that for some reason doesn't have the
+required clocks defined in the dts. I checked the related gcc and no PXO
+defined and no pll8_vote clock defined. (the affected dts are all listed
+in the related Documentation)
 
-very likely. As I want to test such changes on hardware, I'm not
-removing them just now but will try to look at that once I'm back
-home from LPC/ELCE.
+No idea how they currently work with the kpss-gcc driver as these
+parents are missing. Guess the driver just fails to probe?
+So this was the question if you had more info about it... since to me it
+seems just another gcc v2 that doesn't expose clocks but it's just a
+power-controller just like acc-v2. 
 
-Heiko
-
-
+-- 
+	Ansuel
