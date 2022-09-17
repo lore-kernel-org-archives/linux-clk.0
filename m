@@ -2,39 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6994EC6FA8B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 06:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C37ECAAD3
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 06:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbiIQGzQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Sep 2022 02:55:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52508 "EHLO
+        id S229457AbiIQG47 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Sep 2022 02:56:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiIQGzP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 02:55:15 -0400
+        with ESMTP id S229436AbiIQG45 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 02:56:57 -0400
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A66F37FB1;
-        Fri, 16 Sep 2022 23:55:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 490C15AA30;
+        Fri, 16 Sep 2022 23:56:56 -0700 (PDT)
 Received: from [167.98.135.4] (helo=phil.localnet)
         by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <heiko@sntech.de>)
-        id 1oZRjF-0007GC-Ap; Sat, 17 Sep 2022 08:55:05 +0200
+        id 1oZRkw-0007Hc-Il; Sat, 17 Sep 2022 08:56:50 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Jagan Teki <jagan@edgeble.ai>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        Jagan Teki <jagan@edgeble.ai>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Finley Xiao <finley.xiao@rock-chips.com>
-Subject: Re: [PATCH v5 4/6] clk: rockchip: Add clock controller support for RV1126 SoC.
-Date:   Sat, 17 Sep 2022 08:55:03 +0200
-Message-ID: <2597191.BddDVKsqQX@phil>
-In-Reply-To: <20220915163947.1922183-5-jagan@edgeble.ai>
-References: <20220915163947.1922183-1-jagan@edgeble.ai> <20220915163947.1922183-5-jagan@edgeble.ai>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Johan Jonker <jbx6244@gmail.com>
+Cc:     zhangqing@rock-chips.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: clock: convert rockchip,rk3128-cru.txt to YAML
+Date:   Sat, 17 Sep 2022 08:56:48 +0200
+Message-ID: <1754977.TLkxdtWsSY@phil>
+In-Reply-To: <aa1fc003-eef9-13bb-b21b-ebccb12dc257@gmail.com>
+References: <76d87f49-6a44-0a05-c9dc-af870fade924@gmail.com> <14d7bbb5-51c4-8fc0-2303-f5164c6da903@linaro.org> <aa1fc003-eef9-13bb-b21b-ebccb12dc257@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -42,155 +39,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Donnerstag, 15. September 2022, 18:39:45 CEST schrieb Jagan Teki:
-> Clock & Reset Unit (CRU) in RV1126 support clocks for CRU
-> and CRU_PMU blocks.
+Am Mittwoch, 14. September 2022, 11:25:48 CEST schrieb Johan Jonker:
 > 
-> This patch is trying to add minimal Clock-Architecture Diagram's
-> inferred from [1] authored by Finley Xiao.
+> On 9/12/22 12:51, Krzysztof Kozlowski wrote:
+> > On 11/09/2022 23:20, Johan Jonker wrote:
+> >> Convert rockchip,rk3128-cru.txt to YAML.
+> >>
+> >> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> > 
+> > Thank you for your patch. There is something to discuss/improve.
+> > 
+> >> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml
+> >> new file mode 100644
+> >> index 000000000..03e5d7f0e
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml
+> >> @@ -0,0 +1,73 @@
+> >> +# SPDX-License-Identifier: GPL-2.0
+> > 
 > 
-> [1] https://github.com/rockchip-linux/kernel/blob/develop-4.19/drivers/clk/rockchip/clk-rv1126.c
+> > Can't it be Dual licensed?
 > 
-> Cc: linux-clk@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Jagan Teki <jagan@edgeble.ai>
-> ---
-> Changes for v5:
-> - add platform-drivers
+> That depends on Heiko and Rockchip.
+> I can produce the patch for it, but I'm not in control whether they reply or not. 
 
-[...]
+Rockchip recently replied on other clock-patches to dual-license the
+binding, so this will be ok [0] .
 
-> +static void __init rv1126_pmu_clk_init(struct device_node *np)
-> +{
-> +	struct rockchip_clk_provider *ctx;
-> +	void __iomem *reg_base;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("%s: could not map cru pmu region\n", __func__);
-> +		return;
-> +	}
-> +
-> +	ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
-> +	if (IS_ERR(ctx)) {
-> +		pr_err("%s: rockchip pmu clk init failed\n", __func__);
-> +		return;
-> +	}
-> +
-> +	rockchip_clk_register_plls(ctx, rv1126_pmu_pll_clks,
-> +				   ARRAY_SIZE(rv1126_pmu_pll_clks),
-> +				   RV1126_GRF_SOC_STATUS0);
-> +
-> +	rockchip_clk_register_branches(ctx, rv1126_clk_pmu_branches,
-> +				       ARRAY_SIZE(rv1126_clk_pmu_branches));
-> +
-> +	rockchip_register_softrst(np, 2, reg_base + RV1126_PMU_SOFTRST_CON(0),
-> +				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +
-> +	rockchip_clk_of_add_provider(np, ctx);
-> +}
-> +
-> +CLK_OF_DECLARE(rv1126_cru_pmu, "rockchip,rv1126-pmucru", rv1126_pmu_clk_init);
-
-this one and the one below should go away I think.
-
-Can you check if that is the case, then I can just drop the two
-CLK_OF_DECLARE lines.
+And for me, following in-kernel policies more, is always acceptable :-)
 
 Heiko
 
-> +
-> +static void __init rv1126_clk_init(struct device_node *np)
-> +{
-> +	struct rockchip_clk_provider *ctx;
-> +	void __iomem *reg_base;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("%s: could not map cru region\n", __func__);
-> +		return;
-> +	}
-> +
-> +	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	if (IS_ERR(ctx)) {
-> +		pr_err("%s: rockchip clk init failed\n", __func__);
-> +		iounmap(reg_base);
-> +		return;
-> +	}
-> +
-> +	rockchip_clk_register_plls(ctx, rv1126_pll_clks,
-> +				   ARRAY_SIZE(rv1126_pll_clks),
-> +				   RV1126_GRF_SOC_STATUS0);
-> +
-> +	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
-> +				     mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
-> +				     &rv1126_cpuclk_data, rv1126_cpuclk_rates,
-> +				     ARRAY_SIZE(rv1126_cpuclk_rates));
-> +
-> +	rockchip_clk_register_branches(ctx, rv1126_clk_branches,
-> +				       ARRAY_SIZE(rv1126_clk_branches));
-> +
-> +	rockchip_register_softrst(np, 15, reg_base + RV1126_SOFTRST_CON(0),
-> +				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +
-> +	rockchip_register_restart_notifier(ctx, RV1126_GLB_SRST_FST, NULL);
-> +
-> +	rockchip_clk_protect_critical(rv1126_cru_critical_clocks,
-> +				      ARRAY_SIZE(rv1126_cru_critical_clocks));
-> +
-> +	rockchip_clk_of_add_provider(np, ctx);
-> +}
-> +
-> +CLK_OF_DECLARE(rv1126_cru, "rockchip,rv1126-cru", rv1126_clk_init);
-> +
-> +struct clk_rv1126_inits {
-> +	void (*inits)(struct device_node *np);
-> +};
-> +
-> +static const struct clk_rv1126_inits clk_rv1126_pmucru_init = {
-> +	.inits = rv1126_pmu_clk_init,
-> +};
-> +
-> +static const struct clk_rv1126_inits clk_rv1126_cru_init = {
-> +	.inits = rv1126_clk_init,
-> +};
-> +
-> +static const struct of_device_id clk_rv1126_match_table[] = {
-> +	{
-> +		.compatible = "rockchip,rv1126-cru",
-> +		.data = &clk_rv1126_cru_init,
-> +	},  {
-> +		.compatible = "rockchip,rv1126-pmucru",
-> +		.data = &clk_rv1126_pmucru_init,
-> +	},
-> +	{ }
-> +};
-> +
-> +static int __init clk_rv1126_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	const struct clk_rv1126_inits *init_data;
-> +
-> +	init_data = (struct clk_rv1126_inits *)of_device_get_match_data(&pdev->dev);
-> +	if (!init_data)
-> +		return -EINVAL;
-> +
-> +	if (init_data->inits)
-> +		init_data->inits(np);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver clk_rv1126_driver = {
-> +	.driver		= {
-> +		.name	= "clk-rv1126",
-> +		.of_match_table = clk_rv1126_match_table,
-> +		.suppress_bind_attrs = true,
-> +	},
-> +};
-> +builtin_platform_driver_probe(clk_rv1126_driver, clk_rv1126_probe);
-
+[0] https://lore.kernel.org/all/510d1180-bc8e-7820-c772-ed7f35447087@rock-chips.com/
+From Finley with an  @rock-chips.com address, so this should be ok
 
 
