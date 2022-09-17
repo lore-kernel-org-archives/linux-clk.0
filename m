@@ -2,136 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E81ECAAD3
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 12:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBB3C54EE9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Sep 2022 13:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbiIQMrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Sep 2022 08:47:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46350 "EHLO
+        id S229595AbiIQNpm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Sep 2022 09:45:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiIQMrW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 08:47:22 -0400
-X-Greylist: delayed 522 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 17 Sep 2022 05:47:20 PDT
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C54F732DAD
-        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 05:47:20 -0700 (PDT)
-Received: from [192.168.1.101] (95.49.30.72.neoplus.adsl.tpnet.pl [95.49.30.72])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 85E0F3F654;
-        Sat, 17 Sep 2022 14:38:30 +0200 (CEST)
-Message-ID: <6b32824f-5334-9866-57d0-5fd2b9de9237@somainline.org>
-Date:   Sat, 17 Sep 2022 14:38:29 +0200
+        with ESMTP id S229578AbiIQNpl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2022 09:45:41 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534992B630
+        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 06:45:39 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-3452214cec6so290998387b3.1
+        for <linux-clk@vger.kernel.org>; Sat, 17 Sep 2022 06:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=2VOqydgYRC5eaj8WgdTpQExGI/aDqr2CC/HH18bzDLw=;
+        b=S/nsbUgh86JWr9yY1QEAkc7rxwLoJQt3qY3k4mWx44ib6nxA+mjP30Ag7i8lcOWOyM
+         +aanCRBq6ea6x6bpYpxEpK9/UlJgSgGcdkOAp+BabzXD1usOYlbWeVpC+CMUyfUKoKVE
+         tTVrpUkWac5qUP7jGz+6L8Fpp8zSlqZz+CEWDvpPqFk7ppTVGJQX+zjI20FWYYDmOoQD
+         p0VmUdWo4UJyOoR0OMLj7ah6FbLdrV/jaeuaR1xmM9UloQw4XLd/IxG9hrIfcHzbtUp2
+         9mzr+3jip/WG693yWuP9AZhZ9piCGNROZyKTSmNLeden380wNQayrc7gxyOqtfXXl50i
+         B2SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=2VOqydgYRC5eaj8WgdTpQExGI/aDqr2CC/HH18bzDLw=;
+        b=mTkrSaMeS8k31Zt/RJasI49WNEbxk6+Z1D+eex9GCByOZaITlFiIHRIfyI9ZEqyd0R
+         iEdVRhdzNW7lEXJYc81J6vpdvFrTukrcy0y0WH7UR+3jeLCBnftbxdveO0nRB4fezkSm
+         44DA5mrgKAj2T7I6WJ9c2qxh5f/PoJQwPhxLbt0lKuekH3ng0Su2Nx83X1dtDapESZxV
+         1dENYvFwMzCtag+u158aVdVwDAETe5lNGpOk91IqkZsGQcwT1cw4Oi2k2RVOHLqV3o2b
+         XCgDmnBMUAcv7dh/gjan/Gglx85MNTyrL7Ot0xtRfduHts1NC3jOamg3HRHchAvdgpdZ
+         WRqQ==
+X-Gm-Message-State: ACrzQf36Mko+3lavzFQSql9nsYWzAOuHZaIwMCh/tTseRbloSS0wdsjT
+        52dQQEgELQJadl3+q1AEHkTPB+6VQUXxDOz3xNVc/w==
+X-Google-Smtp-Source: AMsMyM75fdk+RhC6nzYi3fbxlktbP6QoMv9zyjM625EL72sm6ZuMy15HLHrP0qMkSYXUzoGwdBcL/b1m+fqTRK1TDHk=
+X-Received: by 2002:a81:1988:0:b0:345:11a6:fa56 with SMTP id
+ 130-20020a811988000000b0034511a6fa56mr8608811ywz.138.1663422338492; Sat, 17
+ Sep 2022 06:45:38 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
- support
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        mka@chromium.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
-        dianders@chromium.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-References: <20220916102417.24549-1-quic_rjendra@quicinc.com>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220916102417.24549-1-quic_rjendra@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220914142256.28775-1-ansuelsmth@gmail.com> <20220914142256.28775-3-ansuelsmth@gmail.com>
+ <20220916191715.GA1079300-robh@kernel.org> <6324d1be.050a0220.9d842.7b47@mx.google.com>
+ <CAA8EJprEQOsm4TxGWJYZo04D1PagT3QmhDdYQkEid-KSP-tpTw@mail.gmail.com>
+ <6324d8e1.170a0220.aba35.ba4f@mx.google.com> <CAA8EJpowLvkuiYupqS0WEhnMR8q=R1YUUFgdFVCAx1PXyoo1xw@mail.gmail.com>
+ <6324dc1b.df0a0220.97787.083c@mx.google.com> <CAA8EJpo08WoQ_LYOtg5C2BB=Q6GR_cftLjaWHWjYD6BjfDZcsg@mail.gmail.com>
+ <6324f087.1c0a0220.7123d.8665@mx.google.com>
+In-Reply-To: <6324f087.1c0a0220.7123d.8665@mx.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Sat, 17 Sep 2022 16:45:21 +0300
+Message-ID: <CAA8EJprhLUybqmPhFmit6LGaNOxz=-9+8xADXowJuzU5BtjjtA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Marc Herbert <marc.herbert@intel.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Justin Tee <justin.tee@broadcom.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, 17 Sept 2022 at 00:54, Christian Marangi <ansuelsmth@gmail.com> wrote:
+>
+> On Fri, Sep 16, 2022 at 11:31:49PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, 16 Sept 2022 at 23:27, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > >
+> > > On Fri, Sep 16, 2022 at 11:22:17PM +0300, Dmitry Baryshkov wrote:
+> > > > On Fri, 16 Sept 2022 at 23:13, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > > >
+> > > > > On Fri, Sep 16, 2022 at 11:06:35PM +0300, Dmitry Baryshkov wrote:
+> > > > > > On Fri, 16 Sept 2022 at 22:43, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > > > > >
+> > > > > > > On Fri, Sep 16, 2022 at 02:17:15PM -0500, Rob Herring wrote:
+> > > > > > > > On Wed, Sep 14, 2022 at 04:22:53PM +0200, Christian Marangi wrote:
+> > > > > > > > > Convert kpss-acc driver Documentation to yaml.
+> > > > > > > > > The original Documentation was wrong all along. Fix it while we are
+> > > > > > > > > converting it.
+> > > > > > > > > The example was wrong as kpss-acc-v2 should only expose the regs but we
+> > > > > > > > > don't have any driver that expose additional clocks. The kpss-acc driver
+> > > > > > > > > is only specific to v1. For this exact reason, limit all the additional
+> > > > > > > > > bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> > > > > > > > > v1 and also flag that these bindings should NOT be used for v2.
+> > > > > > > >
+> > > > > > > > Odd that a clock controller has no clocks, but okay.
+> > > > > > > >
+> > > > > > >
+> > > > > > > As said in the commit v2 is only used for regs. v2 it's only used in
+> > > > > > > arch/arm/mach-qcom/platsmp.c to setup stuff cpu hotplug and bringup.
+> > > > > > >
+> > > > > > > Should we split the 2 driver? To me the acc naming seems to be just
+> > > > > > > recycled for v2 and it's not really a clk controller.
+> > > > > > >
+> > > > > > > So keeping v2 in arm/msm/qcom,kpss-acc-v2.yaml and v1 moved to clock?
+> > > > > >
+> > > > > > I suspect that qcom,kpss-acc-v2 is misnamed as the "clock-controller".
+> > > > > > According to msm-3.10, these regions are used by the Krait core
+> > > > > > regulators.
+> > > > > >
+> > > > >
+> > > > > Well we need to understand how to handle this... change the compatible
+> > > > > it's a nono for sure. In platsmp.c they are used for cpu power control
+> > > > > so could be that they are actually used to regulators. I would honestly
+> > > > > move v1 to clock and leave v2 to arm/msm but I'm not cetain on what name
+> > > > > to assign to the 2 yaml.
+> > > > >
+> > > > > What do you think?
+> > > >
+> > > > This is fine for me. If somebody gets better understanding of
+> > > > underlying hardware and works on actually using these blocks, he will
+> > > > update the bindings.
+> > > >
+> > > > My only suggestion would be to rename kpss-acc-v2 nodes to
+> > > > 'power-controller@address' and document them so.
+> > > >
+> > >
+> > > Ok so something like this?
+> > >
+> > >     power-controller@f9088000 {
+> > >       compatible = "qcom,kpss-acc-v2";
+> > >       reg = <0xf9088000 0x1000>,
+> > >             <0xf9008000 0x1000>;
+> > >     };
+> > >
+> > > (and I will have to fix dtbs warning as they will be unmatched I think.)
+> > > Yaml naming:
+> > > qcom,kpss-acc-v1.yaml
+> > > qcom,kpss-acc-v2.yaml
+> > > Right?
+> >
+> > Sounds good to me.
+> >
+> > I'd even say clock/qcom,kpss-acc-v1.yaml and
+> > arm/msm/qcom,kpss-acc-v2.yaml or maybe power/qcom,kpss-acc-v2.yaml
+> >
+>
+> Wonder if the gcc driver should have the same tretement? It's also a
+> clock-controller driver that doesn't use clock at all... Do you have
+> some info about it?
 
+As far as I understand, the kpss-gcc is a normal clock controller,
+isn't it? It provides clocks to other devices.
 
-On 16.09.2022 12:24, Rajendra Nayak wrote:
-> GDSCs cannot be transitioned into a Retention state in SW.
-> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
-> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
-> takes care of retaining the memory/logic for the domain when
-> the parent domain transitions to low power state.
-> The existing logic handling the PWRSTS_RET seems to set the
-> RETAIN_MEM/RETAIN_PERIPH bits but then explicitly turns the
-> GDSC OFF as part of _gdsc_disable(). Fix that by leaving the
-> GDSC in ON state.
-> 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-> ---
-> No changes in v2: 
-> 
-> There are a few existing users of PWRSTS_RET and I am not
-> sure if they would be impacted with this change
-> 
-> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
-> gdsc is actually transitioning to OFF and might be left
-> ON as part of this change, atleast till we hit system wide
-> low power state.
-> If we really leak more power because of this
-> change, the right thing to do would be to update .pwrsts for
-> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
-> I dont have a msm8974 hardware, so if anyone who has can report
-> any issues I can take a look further on how to fix it.
-> 
-> 2. gpu_gx_gdsc in gpucc-msm8998.c and
->    gpu_gx_gdsc in gpucc-sdm660.c
-> Both of these seem to add support for 3 power state
-> OFF, RET and ON, however I dont see any logic in gdsc
-> driver to handle 3 different power states.
-> So I am expecting that these are infact just transitioning
-> between ON and OFF and RET state is never really used.
-> The ideal fix for them would be to just update their resp.
-> .pwrsts to PWRSTS_OFF_ON only.
-> 
->  drivers/clk/qcom/gdsc.c | 10 ++++++++++
->  drivers/clk/qcom/gdsc.h |  5 +++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index d3244006c661..ccf63771e852 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -368,6 +368,16 @@ static int _gdsc_disable(struct gdsc *sc)
->  	if (sc->pwrsts & PWRSTS_OFF)
->  		gdsc_clear_mem_on(sc);
->  
-> +	/*
-> +	 * If the GDSC supports only a Retention state, apart from ON,
-> +	 * leave it in ON state.
-> +	 * There is no SW control to transition the GDSC into
-> +	 * Retention state. This happens in HW when the parent
-> +	 * domain goes down to a Low power state
-> +	 */
-> +	if (sc->pwrsts == PWRSTS_RET_ON)
-> +		return 0;
-> +
->  	ret = gdsc_toggle_logic(sc, GDSC_OFF);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index 5de48c9439b2..981a12c8502d 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -49,6 +49,11 @@ struct gdsc {
->  	const u8			pwrsts;
->  /* Powerdomain allowable state bitfields */
->  #define PWRSTS_OFF		BIT(0)
-> +/*
-> + * There is no SW control to transition a GDSC into
-> + * PWRSTS_RET. This happens in HW when the parent
-> + * domain goes down to a low power state
-> + */
->  #define PWRSTS_RET		BIT(1)
->  #define PWRSTS_ON		BIT(2)
->  #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
-
-Adding AGDR's new email to CC.
-
-
-Konrad
+-- 
+With best wishes
+Dmitry
