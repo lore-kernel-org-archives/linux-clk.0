@@ -2,232 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FF9C54EE9
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Sep 2022 09:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15ECC6FA86
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Sep 2022 09:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbiIRJLD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Sep 2022 05:11:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39930 "EHLO
+        id S229495AbiIRJi4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Sep 2022 05:38:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiIRJLC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Sep 2022 05:11:02 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C0F24F3E
-        for <linux-clk@vger.kernel.org>; Sun, 18 Sep 2022 02:10:59 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id x27so8990779lfu.0
-        for <linux-clk@vger.kernel.org>; Sun, 18 Sep 2022 02:10:59 -0700 (PDT)
+        with ESMTP id S229519AbiIRJiz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Sep 2022 05:38:55 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D0C237E7
+        for <linux-clk@vger.kernel.org>; Sun, 18 Sep 2022 02:38:54 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id r20so18402205ljj.0
+        for <linux-clk@vger.kernel.org>; Sun, 18 Sep 2022 02:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=srNlg2LiyeE4H+1yt0j96mFfFz31FD86zqxk5YdbAkw=;
-        b=rT6QoF4WsmWTDVatIXzmMrts+Rov3EOaEP1JUZNJOZhnKq38aKwlS+iFQ9mo+fUH89
-         Py7Mmkr/r4JPXbPp4y5Iy+VpxWm/Qg6blWoY1lyRauibjQv4mTD5Bh7PlzifirowofDY
-         0+RPLB47Yu5uS5N5XXX42WZbcymNUjB5ZSZvwlepXeM0pNUVXnvqUBCJZCd2gZPkm/hS
-         MYXM8MGR5egMaqExzTcbq/BOSPMbLbgD6+KVUwzhhg+ksXeDupYAadS95+F/oPppBaNE
-         JcjgYcOg2sp/Hs5PqRdrQP/v9FJqZCiCUuoig9cPJaLekmMWufwtRYxeDeMhTu1Exs+i
-         fGcw==
+        bh=HEB1dZFh6VkoKbzfje7Er0GM6QVtyW+eiZmJagi107g=;
+        b=CzWhBYgYvdFJIunEEBf+SPmuuK9hsQ016YhNMThGUC1fP7UuRwT0WUerzIK+bGwtWn
+         rx0EoU3vzqdAk0F6dwu/7wFhmkiL/r/lq5wLOqqhJ+WFgHCrECPjZsZJsQ5DlcWCEsoE
+         Mgk4G8KiJVXrrnpDPXSwsa56ydIVmtscGEZrh8cIZS/Aw38jOc8rPyuBZWF7/5nRKMM2
+         hfhJTEzy+H2u03ypmvbKay5BzZ8ps3mal6V2TCzMe0up67YNraNZGxMl0j5fW45nEZac
+         ESt5v/NVCbSgMmy7UEkfI8BkyWlvPvEFp3iacwh1U8pMzuuzCLZkyNGRWqQldaRSjFfs
+         URKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=srNlg2LiyeE4H+1yt0j96mFfFz31FD86zqxk5YdbAkw=;
-        b=8NpTLre1ywzjjIwD8jFpy8UK9wf66mC91ZLvGTalsI8d7S3VV1HZ/oa0oyVLrCZ+pQ
-         fOvnT44me4N01N7jsUxxHbPYNq33/GCNoruvN2YgWqUwU2w87lRxHFHjI388kaudnVPC
-         JSFM0JiMfr4QTp58NAF4RtNZagEBHtQ/g/VTdBwfnBx0mcIOyZa6/AetgwOU4j6vsOyf
-         6yBU10lupP+8Gosvvl2J3hqwW4GvcL5GwF3fqk9L5ATArLRk6GzS0or2WoBoqtjJFyGB
-         3SypzMKOMtWD0a8mGR15XUypcoSfhM8RoSdWOvbQJ69pVM2gV8y+7eI44PtEdzxFbjUn
-         fsvw==
-X-Gm-Message-State: ACrzQf1/1EGG8QfEf7g8JrpLLN/JmLvP2CJGv7qumH6319GVm76qZTL0
-        186GxFnNlT6qYM4rKzXiyLDCYQ==
-X-Google-Smtp-Source: AMsMyM4NWRLio7xqS2Dut3Cj32Y1HGLfzcmoYn1BRmMJ/fvmHMUhydjcmX1+TRnmG8gKcVi/krytwQ==
-X-Received: by 2002:ac2:568a:0:b0:49a:1fe:64e2 with SMTP id 10-20020ac2568a000000b0049a01fe64e2mr4657723lfr.156.1663492258078;
-        Sun, 18 Sep 2022 02:10:58 -0700 (PDT)
+        bh=HEB1dZFh6VkoKbzfje7Er0GM6QVtyW+eiZmJagi107g=;
+        b=nYta5k0eE4N0HSYjiX5wSJOGQz+Zad4JI5IG1grYoIr8cEpJjqxgGsDXq2Y6at+SUK
+         v/1uvTaJ84gGiIfLo9eFhvupAGkvrcXRorP13+AuNKAUsbPW75WH7vOfHQINZYXPvTQW
+         d7bac3msXmtCOdxsCvWVQ6+4soRgngxUvKWlmhlwJlgk81X8qPcJmIo/MuCEJyEx+nNQ
+         /LUSeH9PmABwG+oVVetMIWDpmnj1oOrnbXCvc5Y3Wba+jebmdJ5f70Kq9OtiVSYJaKaL
+         CrRb3m4OOn3SYOFsRDlEN7JmXh3yGfNN2nrkPvtnYCdq1xY61qP4F9S9oN+12z4WSTf6
+         qbXw==
+X-Gm-Message-State: ACrzQf1VSXMAzp8KJNUQ+vicsYDqi0dtAYm3aj6rPoTd3OukeQKS2z5C
+        vvECxM52ichDvV9n9T6LklP+tw==
+X-Google-Smtp-Source: AMsMyM59+gIAACAOz0Pj09IsVP4jC7D3hEx4CoPctx8Y09MgJhm0bBnlHW0nHkX1c/5BtZ5lHJLm3Q==
+X-Received: by 2002:a2e:a4b1:0:b0:26c:521:76b5 with SMTP id g17-20020a2ea4b1000000b0026c052176b5mr3629219ljm.258.1663493932400;
+        Sun, 18 Sep 2022 02:38:52 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id 11-20020a2eb94b000000b00268cfcf841asm414348ljs.56.2022.09.18.02.10.56
+        by smtp.gmail.com with ESMTPSA id p14-20020a2e93ce000000b0026c446918acsm537430ljh.134.2022.09.18.02.38.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Sep 2022 02:10:57 -0700 (PDT)
-Message-ID: <11a7c912-5eb9-d2f9-c85c-a98772b39d80@linaro.org>
-Date:   Sun, 18 Sep 2022 10:10:53 +0100
+        Sun, 18 Sep 2022 02:38:51 -0700 (PDT)
+Message-ID: <78a0e713-2691-677b-e749-fde609944a7e@linaro.org>
+Date:   Sun, 18 Sep 2022 10:38:50 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH v2] dt-bindings: clock: convert rockchip,rk3128-cru.txt to
- YAML
+Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add new bindings of
+ MediaTek frequency hopping
 Content-Language: en-US
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de,
-        zhangqing@rock-chips.com
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <614ccc3b-eb65-450e-d015-9c615a09a701@gmail.com>
+To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        angelogioacchino.delregno@collabora.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>
+References: <20220914124552.16964-1-johnson.wang@mediatek.com>
+ <20220914124552.16964-3-johnson.wang@mediatek.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <614ccc3b-eb65-450e-d015-9c615a09a701@gmail.com>
+In-Reply-To: <20220914124552.16964-3-johnson.wang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/09/2022 20:42, Johan Jonker wrote:
-> Convert rockchip,rk3128-cru.txt to YAML.
+On 14/09/2022 13:45, Johnson Wang wrote:
+> Add the new binding documentation for MediaTek frequency hopping
+> and spread spectrum clocking control.
 > 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
 > ---
+>  .../bindings/arm/mediatek/mediatek,fhctl.yaml | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
 > 
-> Changed V2:
->   Use SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->   Add more clocks
-> 
-> ---
-> 
-> Rockchip recently replied on other clock-patches to dual-license the
-> binding.
-> 
-> https://lore.kernel.org/all/510d1180-bc8e-7820-c772-ed7f35447087@rock-chips.com/
-> From Finley with an  @rock-chips.com address, so this should be ok.
-> 
-> Document history:
-> 
-> git log Documentation/devicetree/bindings/clock/*rk312*.txt
-> 
-> Author: Elaine Zhang <zhangqing@rock-chips.com>
->     dt-bindings: add documentation for rk3126 clock
-> Author: Elaine Zhang <zhangqing@rock-chips.com>
->     dt-bindings: add bindings for rk3128 clock controller
-> ---
->  .../bindings/clock/rockchip,rk3128-cru.txt    | 58 ---------------
->  .../bindings/clock/rockchip,rk3128-cru.yaml   | 74 +++++++++++++++++++
->  2 files changed, 74 insertions(+), 58 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> deleted file mode 100644
-> index 6f8744fd301b..000000000000
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> +++ /dev/null
-> @@ -1,58 +0,0 @@
-> -* Rockchip RK3126/RK3128 Clock and Reset Unit
-> -
-> -The RK3126/RK3128 clock controller generates and supplies clock to various
-> -controllers within the SoC and also implements a reset controller for SoC
-> -peripherals.
-> -
-> -Required Properties:
-> -
-> -- compatible: should be "rockchip,rk3126-cru" or "rockchip,rk3128-cru"
-> -  "rockchip,rk3126-cru" - controller compatible with RK3126 SoC.
-> -  "rockchip,rk3128-cru" - controller compatible with RK3128 SoC.
-> -- reg: physical base address of the controller and length of memory mapped
-> -  region.
-> -- #clock-cells: should be 1.
-> -- #reset-cells: should be 1.
-> -
-> -Optional Properties:
-> -
-> -- rockchip,grf: phandle to the syscon managing the "general register files"
-> -  If missing pll rates are not changeable, due to the missing pll lock status.
-> -
-> -Each clock is assigned an identifier and client nodes can use this identifier
-> -to specify the clock which they consume. All available clocks are defined as
-> -preprocessor macros in the dt-bindings/clock/rk3128-cru.h headers and can be
-> -used in device tree sources. Similar macros exist for the reset sources in
-> -these files.
-> -
-> -External clocks:
-> -
-> -There are several clocks that are generated outside the SoC. It is expected
-> -that they are defined using standard clock bindings with following
-> -clock-output-names:
-> - - "xin24m" - crystal input - required,
-> - - "ext_i2s" - external I2S clock - optional,
-> - - "gmac_clkin" - external GMAC clock - optional
-> -
-> -Example: Clock controller node:
-> -
-> -	cru: cru@20000000 {
-> -		compatible = "rockchip,rk3128-cru";
-> -		reg = <0x20000000 0x1000>;
-> -		rockchip,grf = <&grf>;
-> -
-> -		#clock-cells = <1>;
-> -		#reset-cells = <1>;
-> -	};
-> -
-> -Example: UART controller node that consumes the clock generated by the clock
-> -  controller:
-> -
-> -	uart2: serial@20068000 {
-> -		compatible = "rockchip,serial";
-> -		reg = <0x20068000 0x100>;
-> -		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-> -		clock-frequency = <24000000>;
-> -		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
-> -		clock-names = "sclk_uart", "pclk_uart";
-> -	};
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
 > new file mode 100644
-> index 000000000000..b77aec3a6f8d
+> index 000000000000..7b0fd0889bb6
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+
+Name of file matching compatible.
+
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rk3128-cru.yaml#
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,fhctl.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Rockchip RK3126/RK3128 Clock and Reset Unit (CRU)
+> +title: MediaTek frequency hopping and spread spectrum clocking control
 > +
 > +maintainers:
-> +  - Elaine Zhang <zhangqing@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
+> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
 > +
 > +description: |
-> +  The RK3126/RK3128 clock controller generates and supplies clock to various
-> +  controllers within the SoC and also implements a reset controller for SoC
-> +  peripherals.
-> +  Each clock is assigned an identifier and client nodes can use this identifier
-> +  to specify the clock which they consume. All available clocks are defined as
-> +  preprocessor macros in the dt-bindings/clock/rk3128-cru.h headers and can be
-> +  used in device tree sources. Similar macros exist for the reset sources in
-> +  these files.
+> +  Frequency hopping control (FHCTL) is a piece of hardware that control
+> +  some PLLs to adopt "hopping" mechanism to adjust their frequency.
+> +  Spread spectrum clocking (SSC) is another function provided by this hardware.
 > +
 > +properties:
 > +  compatible:
-> +    enum:
-> +      - rockchip,rk3126-cru
-> +      - rockchip,rk3128-cru
+> +    const: mediatek,mt8186-fhctl
 > +
 > +  reg:
 > +    maxItems: 1
 > +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
 > +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
+> +    description: Phandles of the PLL with FHCTL hardware capability.
+
+You need constraints here.
+
 > +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 3
-> +    items:
-> +      enum:
-> +        - xin24m
+> +  mediatek,hopping-ssc-percents:
 
-xin24m is required thus it should be first and in fixed position. enum
-is applicable only for next two items.
+That's not the correct unit suffix name.
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
 
 
+> +    description: The percentage of spread spectrum clocking for one PLL.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
 
 Best regards,
 Krzysztof
