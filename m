@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DE3ECAA49
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 10:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A65C6FA82
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 10:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbiISKSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Sep 2022 06:18:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49822 "EHLO
+        id S229774AbiISKSS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Sep 2022 06:18:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230416AbiISKRp (ORCPT
+        with ESMTP id S230421AbiISKRp (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 06:17:45 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D4E22B1E;
-        Mon, 19 Sep 2022 03:17:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F1922B20;
+        Mon, 19 Sep 2022 03:17:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=mpoCVwwSlcWMSbFc2ASY4TLxAbRobKK8wUXUoaGZ7qA=; b=cj1X0QBCj4rEPJK9GObBzWTx35
-        yUxQlVQ1TOAuoawyKARtVWxn7IU/9qHBrZZPqIQpdqT7KHlDJUgKdBkboSYzBMzTbI3lIpsteALlu
-        P/tCS8I0VezPGN+bHLt32BmoUT0HZ9HHzPOeun7K1jgNagz2NRCyXl20/ck4xfe89fjeBwNIZteLX
-        t9cNRIWeyPuRTK5EoMeWNlVQq93og/uw4o+pCSmSt/c5NbzawPhYZvlo7QgJjtVvrpgpwuKMQovs3
-        k49FYWWzFhzHBF/vhCzCmkL817YNPt2Xk/S3dx+QQaVTOFYHx+/OQbDydKkFwE0tEXzU+yiQ0uC1h
-        U9nUJLZA==;
+        bh=DdEsMVUZF4If17doP56YIzy8DGEaYRA+HGcY5bau4R0=; b=jqHZgeFh3oCBgwT003zG9s2gjC
+        NezJyvyixinM4ERqxFhZtUISrOXW8i6MLLnuICKomLr7AbtR8v72zY+8bw/cWPW2/QvND6Rwx4Q2d
+        qjrqewLEupnsgcJ14d1u/q+BvBv5v8kX/h8JBR56A5BEetgbXcPWarCexJ78cxzK5gZJYUDUAEoOT
+        vM8X10xsA7/NNWmxGL3307kKYqIC1woYOcW8+VSoI+sRpSxqk/Ew8xBvTA93sr8w9fFjmdHB/anNI
+        DljTLjNK/qwU3GgRskIhPhKOq40gbXaYpXRYIxmcmMo7792McGRuHm+laihmXnhk0bIFOHTEjtfMi
+        BBIavKFA==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oaDq6-004b8X-JF; Mon, 19 Sep 2022 10:17:22 +0000
+        id 1oaDq5-004b7h-H1; Mon, 19 Sep 2022 10:17:21 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 411DF302F2D;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 122E8302EF6;
         Mon, 19 Sep 2022 12:16:25 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 55BCB2BAC75A1; Mon, 19 Sep 2022 12:16:22 +0200 (CEST)
-Message-ID: <20220919101522.089180678@infradead.org>
+        id 251012BA7B0F1; Mon, 19 Sep 2022 12:16:22 +0200 (CEST)
+Message-ID: <20220919101521.543128460@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 19 Sep 2022 12:00:05 +0200
+Date:   Mon, 19 Sep 2022 11:59:57 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org
 Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
@@ -99,7 +99,7 @@ Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: [PATCH v2 26/44] time/tick-broadcast: Remove RCU_NONIDLE usage
+Subject: [PATCH v2 18/44] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE *again*
 References: <20220919095939.761690562@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -107,53 +107,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-No callers left that have already disabled RCU.
+  vmlinux.o: warning: objtool: intel_idle_irq+0x10c: call to trace_hardirqs_off() leaves .noinstr.text section
 
+As per commit 32d4fd5751ea ("cpuidle,intel_idle: Fix
+CPUIDLE_FLAG_IRQ_ENABLE"):
+
+  "must not have tracing in idle functions"
+
+Clearly people can't read and tinker along until splat dissapears.
+This straight up reverts commit d295ad34f236 ("intel_idle: Fix false
+positive RCU splats due to incorrect hardirqs state").
+
+It doesn't re-introduce the problem because preceding patches fixed it
+properly.
+
+Fixes: d295ad34f236 ("intel_idle: Fix false positive RCU splats due to incorrect hardirqs state")
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
 ---
- kernel/time/tick-broadcast-hrtimer.c |   29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+ drivers/idle/intel_idle.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/kernel/time/tick-broadcast-hrtimer.c
-+++ b/kernel/time/tick-broadcast-hrtimer.c
-@@ -56,25 +56,20 @@ static int bc_set_next(ktime_t expires,
- 	 * hrtimer callback function is currently running, then
- 	 * hrtimer_start() cannot move it and the timer stays on the CPU on
- 	 * which it is assigned at the moment.
-+	 */
-+	hrtimer_start(&bctimer, expires, HRTIMER_MODE_ABS_PINNED_HARD);
-+	/*
-+	 * The core tick broadcast mode expects bc->bound_on to be set
-+	 * correctly to prevent a CPU which has the broadcast hrtimer
-+	 * armed from going deep idle.
- 	 *
--	 * As this can be called from idle code, the hrtimer_start()
--	 * invocation has to be wrapped with RCU_NONIDLE() as
--	 * hrtimer_start() can call into tracing.
-+	 * As tick_broadcast_lock is held, nothing can change the cpu
-+	 * base which was just established in hrtimer_start() above. So
-+	 * the below access is safe even without holding the hrtimer
-+	 * base lock.
- 	 */
--	RCU_NONIDLE( {
--		hrtimer_start(&bctimer, expires, HRTIMER_MODE_ABS_PINNED_HARD);
--		/*
--		 * The core tick broadcast mode expects bc->bound_on to be set
--		 * correctly to prevent a CPU which has the broadcast hrtimer
--		 * armed from going deep idle.
--		 *
--		 * As tick_broadcast_lock is held, nothing can change the cpu
--		 * base which was just established in hrtimer_start() above. So
--		 * the below access is safe even without holding the hrtimer
--		 * base lock.
--		 */
--		bc->bound_on = bctimer.base->cpu_base->cpu;
--	} );
-+	bc->bound_on = bctimer.base->cpu_base->cpu;
-+
- 	return 0;
- }
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -168,13 +168,7 @@ static __cpuidle int intel_idle_irq(stru
  
+ 	raw_local_irq_enable();
+ 	ret = __intel_idle(dev, drv, index);
+-
+-	/*
+-	 * The lockdep hardirqs state may be changed to 'on' with timer
+-	 * tick interrupt followed by __do_softirq(). Use local_irq_disable()
+-	 * to keep the hardirqs state correct.
+-	 */
+-	local_irq_disable();
++	raw_local_irq_disable();
+ 
+ 	return ret;
+ }
 
 
