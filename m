@@ -2,275 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1038C6FD1F
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 10:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6C0ECAAD3
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 10:43:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230374AbiISKXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Sep 2022 06:23:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
+        id S229604AbiISKn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Sep 2022 06:43:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230492AbiISKSY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 06:18:24 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA552315E;
-        Mon, 19 Sep 2022 03:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=E91useHlyUUQoMsCvOSeJGEyanvxTuAtV3Y/d5ylPRM=; b=hGt/xJ2SQRXoXSrBCbxX3cFd8f
-        52HmfdiOntPDCU+hb1dkcsUWs1PzLBY2j/KzLbtzGuUNUOlYNPVcRxNjCMNI5Mq4XICjpVk9r4hpE
-        sSIsz45MXZm83EbAluQ7KjR828woKYnLyNCOZvsU8Vqgt6rfl5vlkY1XkGM+Vz/KtViumtIMSbGTI
-        WF2th3sTSJxy+Nfah7YTGb1Gn9ajQ3fJuoC6fJvhSqopNBK+/+yMX9y2koHhYw0/wu0pWx9jslbcL
-        8Z90brg5YcoQiGBXmwoEPvStLEQX1f852nePfFmBYgNhfOMc2MSitQxznYyWh9kw2qJjIetYbDajg
-        r/+okNeA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oaDqA-004bEF-S9; Mon, 19 Sep 2022 10:17:26 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A0CC2302F81;
-        Mon, 19 Sep 2022 12:16:25 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id A6ECA2BAC75A5; Mon, 19 Sep 2022 12:16:22 +0200 (CEST)
-Message-ID: <20220919101523.177759249@infradead.org>
-User-Agent: quilt/0.66
-Date:   Mon, 19 Sep 2022 12:00:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     peterz@infradead.org
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
-        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-        dvyukov@google.com, vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: [PATCH v2 42/44] entry,kasan,x86: Disallow overriding mem*() functions
-References: <20220919095939.761690562@infradead.org>
+        with ESMTP id S229602AbiISKnC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 06:43:02 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069D527CF0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 03:25:12 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id ay36so10972646wmb.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 03:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=i8qtV1ORsa+HHhmlmkZQpKs+M06Hxfc+YDUSBHs+KQM=;
+        b=BHxpezMJV9I0Vrn7MPNMzqigHCUPwbZ39msFNMcvODM9382mD4va5jMzdzyw3DTxfW
+         EGgCmu9TZolJhYwHrK7uroVPcwjG9Ufy8hJ2clV4aZ32qm1RRJWG/2zFQAL8Ikew6SNJ
+         iVLSn2TnHszk7aOLhVN80vsGKi6KVjb095upN+PYgaqtHpKdupzeQ//7nQpwGL19MyKI
+         rVBLWTGFCMdqikEfmiTbdYcd7MbCNtRXv6VNVRwLAl4LFyN1rwAVHH5jYjcnq6NHWPVf
+         VkjXKgvt8/2Z4Q3fi+OK7fp4fbsHujU2BhZbR+V5Hdkz8qGfTIStOBf+9psy85h70yNQ
+         svjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=i8qtV1ORsa+HHhmlmkZQpKs+M06Hxfc+YDUSBHs+KQM=;
+        b=Gs9fUWu4d6KjA/eUrswTLAlHGA+v0HwiHB7Mlm6f8nzEan99jMV6eRQaa94MzSbGVG
+         /QBuPYt1HM77z+W6oMfVZFpoGUrcu3D1JS0jrLSLtN7ByCDVLM74ofm2SI3lm7MqjV27
+         8ldT3FpdV+KmrEHGV3chq8ZFhthYIvZjkoqqSxm0dDIFaHQhgsoyn3tBGgL0WgHLVkMH
+         R4bGYXfEkEzK55UlEdvopiA5qHXubQ2bwXgT93azGqQVX82z+lRgN3U4/Z0LYVKhHFQC
+         PAYZeqwb93AYOZzOzBGi8WVvZ4vNDEoOHd3GNGhtiQlGjelQnsYUvW7WPdB+KbELGP9B
+         jVDA==
+X-Gm-Message-State: ACrzQf1REkRoqnUnUA8rjSDhInyfbHN6qhT/YNNaYGmBMlPZ/zbPi5s6
+        rCRaTfUMTckBr/+n64GLVI1E1Q==
+X-Google-Smtp-Source: AMsMyM563dXLnPjqspSBvSJ7Y7IQXbM52WpnK9RK2H3xJlFfsqc5fj7ojkYgZ/JHTb3Mu/bcQaa3Fw==
+X-Received: by 2002:a05:600c:3591:b0:3b4:bf48:9f10 with SMTP id p17-20020a05600c359100b003b4bf489f10mr10204952wmq.76.1663583055840;
+        Mon, 19 Sep 2022 03:24:15 -0700 (PDT)
+Received: from hackbox.lan ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id b11-20020adfd1cb000000b00225239d9265sm7939153wrd.74.2022.09.19.03.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Sep 2022 03:24:15 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.1
+Date:   Mon, 19 Sep 2022 13:22:44 +0300
+Message-Id: <20220919102244.3537437-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-KASAN cannot just hijack the mem*() functions, it needs to emit
-__asan_mem*() variants if it wants instrumentation (other sanitizers
-already do this).
+The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
-vmlinux.o: warning: objtool: sync_regs+0x24: call to memcpy() leaves .noinstr.text section
-vmlinux.o: warning: objtool: vc_switch_off_ist+0xbe: call to memcpy() leaves .noinstr.text section
-vmlinux.o: warning: objtool: fixup_bad_iret+0x36: call to memset() leaves .noinstr.text section
-vmlinux.o: warning: objtool: __sev_get_ghcb+0xa0: call to memcpy() leaves .noinstr.text section
-vmlinux.o: warning: objtool: __sev_put_ghcb+0x35: call to memcpy() leaves .noinstr.text section
+  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
 
-Remove the weak aliases to ensure nobody hijacks these functions and
-add them to the noinstr section.
+are available in the Git repository at:
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/lib/memcpy_64.S  |    5 ++---
- arch/x86/lib/memmove_64.S |    4 +++-
- arch/x86/lib/memset_64.S  |    4 +++-
- mm/kasan/kasan.h          |    4 ++++
- mm/kasan/shadow.c         |   38 ++++++++++++++++++++++++++++++++++++++
- tools/objtool/check.c     |    3 +++
- 6 files changed, 53 insertions(+), 5 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.1
 
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -7,7 +7,7 @@
- #include <asm/alternative.h>
- #include <asm/export.h>
- 
--.pushsection .noinstr.text, "ax"
-+.section .noinstr.text, "ax"
- 
- /*
-  * We build a jump to memcpy_orig by default which gets NOPped out on
-@@ -42,7 +42,7 @@ SYM_FUNC_START(__memcpy)
- SYM_FUNC_END(__memcpy)
- EXPORT_SYMBOL(__memcpy)
- 
--SYM_FUNC_ALIAS_WEAK(memcpy, __memcpy)
-+SYM_FUNC_ALIAS(memcpy, __memcpy)
- EXPORT_SYMBOL(memcpy)
- 
- /*
-@@ -183,4 +183,3 @@ SYM_FUNC_START_LOCAL(memcpy_orig)
- 	RET
- SYM_FUNC_END(memcpy_orig)
- 
--.popsection
---- a/arch/x86/lib/memmove_64.S
-+++ b/arch/x86/lib/memmove_64.S
-@@ -13,6 +13,8 @@
- 
- #undef memmove
- 
-+.section .noinstr.text, "ax"
-+
- /*
-  * Implement memmove(). This can handle overlap between src and dst.
-  *
-@@ -213,5 +215,5 @@ SYM_FUNC_START(__memmove)
- SYM_FUNC_END(__memmove)
- EXPORT_SYMBOL(__memmove)
- 
--SYM_FUNC_ALIAS_WEAK(memmove, __memmove)
-+SYM_FUNC_ALIAS(memmove, __memmove)
- EXPORT_SYMBOL(memmove)
---- a/arch/x86/lib/memset_64.S
-+++ b/arch/x86/lib/memset_64.S
-@@ -6,6 +6,8 @@
- #include <asm/alternative.h>
- #include <asm/export.h>
- 
-+.section .noinstr.text, "ax"
-+
- /*
-  * ISO C memset - set a memory block to a byte value. This function uses fast
-  * string to get better performance than the original function. The code is
-@@ -43,7 +45,7 @@ SYM_FUNC_START(__memset)
- SYM_FUNC_END(__memset)
- EXPORT_SYMBOL(__memset)
- 
--SYM_FUNC_ALIAS_WEAK(memset, __memset)
-+SYM_FUNC_ALIAS(memset, __memset)
- EXPORT_SYMBOL(memset)
- 
- /*
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -551,6 +551,10 @@ void __asan_set_shadow_f3(const void *ad
- void __asan_set_shadow_f5(const void *addr, size_t size);
- void __asan_set_shadow_f8(const void *addr, size_t size);
- 
-+void *__asan_memset(void *addr, int c, size_t len);
-+void *__asan_memmove(void *dest, const void *src, size_t len);
-+void *__asan_memcpy(void *dest, const void *src, size_t len);
-+
- void __hwasan_load1_noabort(unsigned long addr);
- void __hwasan_store1_noabort(unsigned long addr);
- void __hwasan_load2_noabort(unsigned long addr);
---- a/mm/kasan/shadow.c
-+++ b/mm/kasan/shadow.c
-@@ -38,6 +38,12 @@ bool __kasan_check_write(const volatile
- }
- EXPORT_SYMBOL(__kasan_check_write);
- 
-+#ifndef CONFIG_GENERIC_ENTRY
-+/*
-+ * CONFIG_GENERIC_ENTRY relies on compiler emitted mem*() calls to not be
-+ * instrumented. KASAN enabled toolchains should emit __asan_mem*() functions
-+ * for the sites they want to instrument.
-+ */
- #undef memset
- void *memset(void *addr, int c, size_t len)
- {
-@@ -68,6 +74,38 @@ void *memcpy(void *dest, const void *src
- 
- 	return __memcpy(dest, src, len);
- }
-+#endif
-+
-+void *__asan_memset(void *addr, int c, size_t len)
-+{
-+	if (!kasan_check_range((unsigned long)addr, len, true, _RET_IP_))
-+		return NULL;
-+
-+	return __memset(addr, c, len);
-+}
-+EXPORT_SYMBOL(__asan_memset);
-+
-+#ifdef __HAVE_ARCH_MEMMOVE
-+void *__asan_memmove(void *dest, const void *src, size_t len)
-+{
-+	if (!kasan_check_range((unsigned long)src, len, false, _RET_IP_) ||
-+	    !kasan_check_range((unsigned long)dest, len, true, _RET_IP_))
-+		return NULL;
-+
-+	return __memmove(dest, src, len);
-+}
-+EXPORT_SYMBOL(__asan_memmove);
-+#endif
-+
-+void *__asan_memcpy(void *dest, const void *src, size_t len)
-+{
-+	if (!kasan_check_range((unsigned long)src, len, false, _RET_IP_) ||
-+	    !kasan_check_range((unsigned long)dest, len, true, _RET_IP_))
-+		return NULL;
-+
-+	return __memcpy(dest, src, len);
-+}
-+EXPORT_SYMBOL(__asan_memcpy);
- 
- void kasan_poison(const void *addr, size_t size, u8 value, bool init)
- {
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -956,6 +956,9 @@ static const char *uaccess_safe_builtin[
- 	"__asan_store16_noabort",
- 	"__kasan_check_read",
- 	"__kasan_check_write",
-+	"__asan_memset",
-+	"__asan_memmove",
-+	"__asan_memcpy",
- 	/* KASAN in-line */
- 	"__asan_report_load_n_noabort",
- 	"__asan_report_load1_noabort",
+for you to fetch changes up to 67e16ac1fec475e64dcb8238f471c6fd154ef806:
 
+  clk: imx93: add SAI IPG clk (2022-09-19 13:06:45 +0300)
 
+----------------------------------------------------------------
+i.MX clocks changes for 6.1
+
+- Change order between 'sim_enet_root_clk' and 'enet_qos_root_clk'
+  clocks for i.MX8MP
+- Drop unnecessary newline in i.MX8MM dt-bindings
+- Add more MU1 and SAI clocks dt-bindings Ids
+- Introduce slice busy bit check for i.MX93 composite clock
+- Introduce white list bit check for i.MX93 composite clock
+- Add new i.MX93 clock gate
+- Add MU1 and MU2 clocks to i.MX93 clock provider
+- Add SAI IPG clocks to i.MX93 clock provider
+
+----------------------------------------------------------------
+Marcel Ziswiler (1):
+      dt-bindings: clock: imx8mm: don't use multiple blank lines
+
+Peng Fan (8):
+      clk: imx8mp: tune the order of enet_qos_root_clk
+      dt-bindings: clock: imx93-clock: add more MU/SAI clocks
+      clk: imx: clk-composite-93: check slice busy
+      clk: imx: clk-composite-93: check white_list
+      clk: imx: add i.MX93 clk gate
+      clk: imx93: switch to use new clk gate API
+      clk: imx93: add MU1/2 clock
+      clk: imx93: add SAI IPG clk
+
+ drivers/clk/imx/Makefile                 |   1 +
+ drivers/clk/imx/clk-composite-93.c       | 171 +++++++++++++++++++++++++-
+ drivers/clk/imx/clk-gate-93.c            | 199 +++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk-imx8mp.c             |   2 +-
+ drivers/clk/imx/clk-imx93.c              |  30 +++--
+ drivers/clk/imx/clk.h                    |   9 +-
+ include/dt-bindings/clock/imx8mm-clock.h |   1 -
+ include/dt-bindings/clock/imx93-clock.h  |   9 +-
+ 8 files changed, 402 insertions(+), 20 deletions(-)
+ create mode 100644 drivers/clk/imx/clk-gate-93.c
