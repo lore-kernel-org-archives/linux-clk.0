@@ -2,98 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B77AECAAD3
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 15:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5047ECAAA1
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 16:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbiISPpN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Sep 2022 11:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60780 "EHLO
+        id S230138AbiISQ7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Sep 2022 12:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiISPpL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 11:45:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6649B868;
-        Mon, 19 Sep 2022 08:45:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 61CFF61E19;
-        Mon, 19 Sep 2022 15:45:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B14B0C433D6;
-        Mon, 19 Sep 2022 15:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663602309;
-        bh=cxxsbz/kD42NUOGTrCrQ7/POmnTB4Lz8V/hj+LYf154=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uDXWuBKL1qeJDKUTH5/vTdRc52mNC1AjYMFh8PAFDdjnX4bERc7i5orlr46m4tAHP
-         MrVKsJaGanEBk+AAgcqYIAcqqkKvMUBm9n3vAqaNa3Ok51CEtDKnVXDoCJQQs66RdT
-         i5ekxSf/s/8IT4wVtfvhHd4qrxKYBeDS0dln6kdtzVV6pExhQh7fbTXa4VtDMnEPlS
-         1BqnGwASMdnaqXpn0UYy98FJcvZLvx3ClSeB3RvRbUfhOhdTaY9DguF2dh1AmAin2B
-         owo3kjp9FqMsvzuJmnXG6/+vXmAYatSNZE9TvxwCKtWoz30RAFbJrLNNbTiWpOM3Cw
-         T+nFCcoMnI/SQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oaIxO-0005fh-B2; Mon, 19 Sep 2022 17:45:14 +0200
-Date:   Mon, 19 Sep 2022 17:45:14 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, mka@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
-        quic_kriskura@quicinc.com, dianders@chromium.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: qcom: gcc-sc7180: Update the .pwrsts for usb
- gdsc
-Message-ID: <YyiOiudZuMDXOvGr@hovoldconsulting.com>
-References: <20220916102417.24549-1-quic_rjendra@quicinc.com>
- <20220916102417.24549-2-quic_rjendra@quicinc.com>
+        with ESMTP id S229760AbiISQ7q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 12:59:46 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0817F11456
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 09:59:44 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 29so159511edv.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 09:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
+         :subject:from:to:cc:subject:date;
+        bh=9tro2oCAbN+mbj/HKR3A46hDRnbE6tXzNt27JGPID68=;
+        b=3+jXsVMUL/Ek+ltKfy4Qawu/Pw7TG6cilfl66vkc4y+DYBPaYgtZv1p4BbwPzksphk
+         JrvJcC2YSX1q79FG93ETJekmw3tJYHSmTkJzTSb9haW1ufGrB6/zpIKUw2WjPXDUqkty
+         mytztxw4ljT+7oFObNfw355aMnszO8HFBpZ06YiwMdxjiDP9KYGIJo+btpD+n24uVcMk
+         654kSXHO0di8SuPyIdU5b6g6AIBFMvuWA6WGjnZovZIIxTWOcDIRY2tP9+ZCvUX6Drj5
+         kun5QOWjkofHQj2/Ac6bkvQF3GxuIg8j9PewpKjOsGLg2CFIL7eItD4m+dvfX5hVs93D
+         uP9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
+         :subject:x-gm-message-state:from:to:cc:subject:date;
+        bh=9tro2oCAbN+mbj/HKR3A46hDRnbE6tXzNt27JGPID68=;
+        b=UuZcaVq1EMREFb1kymw/dd8WGSICS+3K+Etf7DV9U/RIRRiHBt/AH9cURnIB1q5UmV
+         +G2llChna5l9dHPDyKNIixako5kt0Kt+tYAAs/0JVuSmFanHeg388CNrZyFNKbAnK3yd
+         GwqiwKexKM6pjvPLpejmv011znZ5A3c+mM95DrYkKaZBO2fd3TBTICT0TMFb0DA9Cpqm
+         OhcDx9hdrCfONATXDgpFc2AaUMSbwSg1MNpG8gvIbmjFN6dFgLoimJxrUuRptbyc+gRb
+         P7NLlOd9Rf/qGvuY/3WmxeteI+E0XW7nqcDbyoB+Yfj7nxnrYEZ6Z6zyEMwGWV7JGR3t
+         MYnA==
+X-Gm-Message-State: ACrzQf0OQXLL4ZEbP4kMgSA/kmqWdq/yr3oZHyeWvNTycRgCpssMrJtZ
+        mS+e3V6Elrh97a5dh5EdHEGz+A==
+X-Google-Smtp-Source: AMsMyM6iRL5JBprCZvHk9dT8PMtpt98i7hlA72vdPks7s4qBaJDnnZvv+4dOv8WBquTaxJ2hX5EXvQ==
+X-Received: by 2002:aa7:c448:0:b0:44f:c01:2fdb with SMTP id n8-20020aa7c448000000b0044f0c012fdbmr15838234edr.88.1663606782531;
+        Mon, 19 Sep 2022 09:59:42 -0700 (PDT)
+Received: from [127.0.0.1] (2a02-8440-6340-f287-3074-96af-9642-0003.rev.sfr.net. [2a02:8440:6340:f287:3074:96af:9642:3])
+        by smtp.gmail.com with ESMTPSA id cf16-20020a0564020b9000b0044fc3c0930csm20424246edb.16.2022.09.19.09.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Sep 2022 09:59:42 -0700 (PDT)
+Subject: [PATCH v1 00/17] Add MT8195 HDMI support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220916102417.24549-2-quic_rjendra@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-b4-tracking: H4sIAB6fKGMC/w3KSwqAIBAA0KvIrBPUnV0m/Aw5pAZOtRHv3iwfvAmMg5BhVxMGfsR0d4HdFKQS+o
+ mashiccc5463XJjY72XCAjBkYdR+ipyOlvrWv9dLIU6FIAAAA=
+From:   Guillaume Ranquet <granquet@baylibre.com>
+Date:   Mon, 19 Sep 2022 18:55:58 +0200
+Message-Id: <20220919-v1-0-4844816c9808@baylibre.com>
+To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org,
+        Guillaume Ranquet <granquet@baylibre.com>,
+        devicetree@vger.kernel.org
+X-Mailer: b4 0.10.0-dev
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 03:54:16PM +0530, Rajendra Nayak wrote:
-> The USB controller on sc7180 does not retain the state when
-> the system goes into low power state and the GDSC is
-> turned off. This results in the controller reinitializing and
-> re-enumerating all the connected devices (resulting in additional
-> delay while coming out of suspend)
-> Fix this by updating the .pwrsts for the USB GDSC so it only
-> transitions to retention state in low power.
-> 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> v2:
-> Updated the changelog
-> 
->  drivers/clk/qcom/gcc-sc7180.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index c2ea09945c47..2d3980251e78 100644
-> --- a/drivers/clk/qcom/gcc-sc7180.c
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -2224,7 +2224,7 @@ static struct gdsc usb30_prim_gdsc = {
->  	.pd = {
->  		.name = "usb30_prim_gdsc",
->  	},
-> -	.pwrsts = PWRSTS_OFF_ON,
-> +	.pwrsts = PWRSTS_RET_ON,
->  };
->  
->  static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+Add support for HDMI Tx on MT8195.
 
-It seems like the above will not work unless you also provide the
-registers offsets that gdsc_force_mem_on() expects.
+This includes a split of the current "legacy" hdmi driver into a common
+library of functions and a two dedicated compilation units with specific
+code for mt8167 and another for the "new" mt8195 SoC.
 
-Specifically, unless you set cxc_count for the GDSC, the above call is a
-no-op and the retention setting (i.e. the RETAIN_MEM and RETAIN_PERIPH
-bits) will not be updated when registering the GDSC.
+Support for the new mt8195 hdmi phy and the dpi/drm_drv adjustements to
+support hdmi.
 
-Johan
+Based on next-20220919
+
+Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+
+---
+Guillaume Ranquet (15):
+      dt-bindings: phy: mediatek: hdmi-phy: Add mt8195 compatible
+      dt-bindings: display: mediatek: add MT8195 hdmi bindings
+      drm/mediatek: hdmi: use a syscon/regmap instead of iomem
+      dt-bindings: mediatek: set the hdmi to be compatible with syscon
+      drm/mediatek: extract common functions from the mtk hdmi driver
+      drm/mediatek: hdmi: add cec flag
+      drm/mediatek: hdmi: add connector flag
+      drm/mediatek: hdmi: add frame_colorimetry flag
+      drm/mediatek: hdmi: add mt8195 support
+      drm/mediatek: hdmi: mt8195: add audio support
+      phy: phy-mtk-hdmi: Add generic phy configure callback
+      phy: mediatek: add support for phy-mtk-hdmi-mt8195
+      dt-bindings: display: mediatek: dpi: Add compatible for MediaTek MT8195
+      drm/mediatek: dpi: Add mt8195 hdmi to DPI driver
+      drm/mediatek: Add mt8195-dpi support to drm_drv
+
+Pablo Sun (2):
+      dt-bindings: clk: mediatek: Add MT8195 DPI clocks
+      clk: mediatek: add VDOSYS1 clock
+
+ .../bindings/display/mediatek/mediatek,dpi.yaml    |    1 +
+ .../bindings/display/mediatek/mediatek,hdmi.yaml   |   91 +-
+ .../display/mediatek/mediatek,mt8195-hdmi-ddc.yaml |   45 +
+ .../devicetree/bindings/phy/mediatek,hdmi-phy.yaml |    1 +
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi           |    2 +-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c             |   11 +
+ drivers/gpu/drm/mediatek/Makefile                  |    5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |  143 +-
+ drivers/gpu/drm/mediatek/mtk_dpi_regs.h            |    5 +
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |    2 +
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  647 +-------
+ drivers/gpu/drm/mediatek/mtk_hdmi.h                |   16 +
+ drivers/gpu/drm/mediatek/mtk_hdmi_common.c         |  477 ++++++
+ drivers/gpu/drm/mediatek/mtk_hdmi_common.h         |  225 +++
+ drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c         | 1602 ++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.h         |   31 +
+ drivers/gpu/drm/mediatek/mtk_mt8195_hdmi_ddc.c     |  539 +++++++
+ drivers/gpu/drm/mediatek/mtk_mt8195_hdmi_regs.h    |  329 ++++
+ drivers/phy/mediatek/Makefile                      |    1 +
+ drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c         |  673 ++++++++
+ drivers/phy/mediatek/phy-mtk-hdmi-mt8195.h         |  204 +++
+ drivers/phy/mediatek/phy-mtk-hdmi.c                |   15 +
+ drivers/phy/mediatek/phy-mtk-hdmi.h                |    2 +
+ include/dt-bindings/clock/mt8195-clk.h             |    4 +-
+ 24 files changed, 4429 insertions(+), 642 deletions(-)
+---
+base-commit: ec65813678c97a05766d29f1ec40bdf1b30bc3d6
+change-id: 20220919-hdmi_mtk
+
+Best regards,
+-- 
+Guillaume Ranquet <granquet@baylibre.com>
