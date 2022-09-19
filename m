@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A4EECAAD3
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 16:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A60C54EE9
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 17:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbiISQ7x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Sep 2022 12:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43228 "EHLO
+        id S230338AbiISRAJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Sep 2022 13:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230218AbiISQ7v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 12:59:51 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97C412D1D
-        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 09:59:49 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id y8so98312edc.10
-        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 09:59:49 -0700 (PDT)
+        with ESMTP id S230293AbiISRAC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 13:00:02 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF4D81B78F
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 09:59:52 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id sb3so77260ejb.9
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 09:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date;
-        bh=7xDk5BrXibXgfT99ckwNvMekh76xOPeNv/4FsaCfh58=;
-        b=CEZJ9TEVferg0ulxXwdUEbWib2zYhw9Tir5LaamEXUe9UQabtpHUZ7t39RbS4S85HC
-         x9PFzpX7wALrVEGjd5qyae6tIH2bK+BZxA3AsOGG5SLe8GtLeXrWR5PdxeYfhkGL8zz6
-         4aQbHNr7a6hYGMtek5NqaK1fsiK/TphfUjeSfIXBdpM51CKKKEWyLmeQpmyv0FJfOOKB
-         18XYmYWBK0IEwGn7H7CTG9n/4b/wl9y9Ex4FAUHaHxrhTxfMVImS7y1QRGtXw5/va7SX
-         FYVEq7OHlcwL2JOG2/A0K17XMaMH2dmNtlQw3PM5ptekzTUaKbzqovvSlmYzThYg57/r
-         AsXA==
+        bh=69nrv/BKayymEj9f70cbXjRoS8M413ZGsp2FP8B+6Cc=;
+        b=2ZDgXmtX7kBtwoUAyxz8rI/gnLo1usAqRIcFp//WkgUEpHJhCUTPn56LV4nSD4vc96
+         4ADNXslH3B5Shd0LcD3JYJ/7M2ZPxpmYvmlBYDwnciQmIb+dd8rT5emdFWvOx80yejKt
+         MMM8QfLsaPoNoAkDCdmmVoQB2LnGEf+DCqPv8SpIhTDkZiFUJpu0OAbbaTMsM6wKYWVG
+         lg3lGETEKJf+8OgeAlqZ+L88vbRecsFHARHMiEUM2ZXJKQC9sUEXHYWN4IGWITGu4Cvj
+         f6wMQhd6qOjwNEIuq/p2LxdNHcLGhBDZkGkNOuxddNG8AASoFiH/teUXDgyW9sEztL18
+         s+mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=7xDk5BrXibXgfT99ckwNvMekh76xOPeNv/4FsaCfh58=;
-        b=wjR9kjmd8kadeyyz17Rh5DsJ2PS1GtO6micTJenFqfjyEJNg4M6i8hEKHa8SzqP2Il
-         NPYLpeapIrBU/EAwEip/jhPzkSX7kj/dqjZZrtg2U3Sx9VHNxUFHY6OfRvMprMW3ca3e
-         TFN/5s/tNAwxF+LHVfE4w+yptje9Tdyi3nDbvajQ1J158G62nWnXWHqkw/MguzmhU50u
-         HqE898ryLSRWK/02P9Ekd4+1EeCwgRcXiLrJbCXhOhbclg4Ns/dXr27q9JOesJQ3cmxc
-         Q2oDDuUkjh5H+waYhQg29CNjBjdJ1EUp6qN6cAwJGWzkiC8HHpgbBdHlEG3dB87vv7V5
-         K/fQ==
-X-Gm-Message-State: ACrzQf13zeHNWWpbzgVPV+nMp2Dyl39l8vE0WXxFVOXPPehNzhrwuk+r
-        2s2p+yI17QTn99xHyN8/0kO1dg==
-X-Google-Smtp-Source: AMsMyM5gxGj7vc60+sBilG3OlczkPRO2uGjBc+la49BQKMmf9aIyceQBVlL/fz7uc0yOaSZjotbdPQ==
-X-Received: by 2002:a05:6402:493:b0:445:b5f0:7a0f with SMTP id k19-20020a056402049300b00445b5f07a0fmr16348159edv.120.1663606789339;
-        Mon, 19 Sep 2022 09:59:49 -0700 (PDT)
+        bh=69nrv/BKayymEj9f70cbXjRoS8M413ZGsp2FP8B+6Cc=;
+        b=dnnRWQ59ch0jJuHk0/b+cGeeHF5aBxhfE0jGGNguGbrlviDhQSY30poK/uadUGnjIV
+         kTRXh7XiCuNVvboJ77WVcUWokIaFn3UCMkzYbteI42aTlRB5uqv9XXXWBE49iajcerGG
+         z7rF9aBBbctFV7cDcQpC24VjSKYrIlppAiu931vVGRMQNuX5p6lHlVjT/7wNBP5dHAti
+         zFnT3KW8WNYOkKoav4c+h+gaiMIjb4E9UtJTSv0uheTlWFVIe/X7Ft4T/KH58b6kc31m
+         QmSi3zmT0qfXI7u1iPiAMJ/FoJVGJcHT9SprSDddClawXw1EB/J0L5kolUnISbK9l1lv
+         2U8g==
+X-Gm-Message-State: ACrzQf2WToeg2hZlGT5r3ZeE3Y/fs6J86Ubve/PYr10iQDTs1bj29eZc
+        BistSBlya0y4R89yVX02qjB8Og==
+X-Google-Smtp-Source: AMsMyM6XlPFlhgC04B9QuW2zwPNOCYiGRhmcbXp9t18fVx3nugtxHUNV8fsXdbf/C+/TYrDgfmHhoA==
+X-Received: by 2002:a17:907:7b9a:b0:778:adc1:1b0b with SMTP id ne26-20020a1709077b9a00b00778adc11b0bmr13092811ejc.569.1663606791165;
+        Mon, 19 Sep 2022 09:59:51 -0700 (PDT)
 Received: from [127.0.0.1] (2a02-8440-6340-f287-3074-96af-9642-0003.rev.sfr.net. [2a02:8440:6340:f287:3074:96af:9642:3])
-        by smtp.gmail.com with ESMTPSA id cf16-20020a0564020b9000b0044fc3c0930csm20424246edb.16.2022.09.19.09.59.47
+        by smtp.gmail.com with ESMTPSA id cf16-20020a0564020b9000b0044fc3c0930csm20424246edb.16.2022.09.19.09.59.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 09:59:49 -0700 (PDT)
+        Mon, 19 Sep 2022 09:59:50 -0700 (PDT)
 From:   Guillaume Ranquet <granquet@baylibre.com>
-Date:   Mon, 19 Sep 2022 18:56:01 +0200
-Subject: [PATCH v1 03/17] dt-bindings: phy: mediatek: hdmi-phy: Add mt8195 compatible
+Date:   Mon, 19 Sep 2022 18:56:02 +0200
+Subject: [PATCH v1 04/17] dt-bindings: display: mediatek: add MT8195 hdmi bindings
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20220919-v1-3-4844816c9808@baylibre.com>
+Message-Id: <20220919-v1-4-4844816c9808@baylibre.com>
 References: <20220919-v1-0-4844816c9808@baylibre.com>
 In-Reply-To: <20220919-v1-0-4844816c9808@baylibre.com>
 To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -83,22 +83,183 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a compatible for the HDMI PHY on MT8195
+Add mt8195 SoC bindings for hdmi and hdmi-ddc
+
+Make port1 optional for mt8195 as it only supports HDMI tx for now.
+Requires a ddc-i2c-bus phandle.
+Requires a power-domains phandle.
 
 Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
 
-diff --git a/Documentation/devicetree/bindings/phy/mediatek,hdmi-phy.yaml b/Documentation/devicetree/bindings/phy/mediatek,hdmi-phy.yaml
-index 0d94950b84ca..71c75a11e189 100644
---- a/Documentation/devicetree/bindings/phy/mediatek,hdmi-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/mediatek,hdmi-phy.yaml
-@@ -28,6 +28,7 @@ properties:
-           - const: mediatek,mt2701-hdmi-phy
-       - const: mediatek,mt2701-hdmi-phy
-       - const: mediatek,mt8173-hdmi-phy
-+      - const: mediatek,mt8195-hdmi-phy
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+index bdaf0b51e68c..abb231a0694b 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+@@ -21,6 +21,10 @@ properties:
+       - mediatek,mt7623-hdmi
+       - mediatek,mt8167-hdmi
+       - mediatek,mt8173-hdmi
++      - mediatek,mt8195-hdmi
++
++  clocks: true
++  clock-names: true
  
    reg:
      maxItems: 1
+@@ -28,20 +32,6 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
+-  clocks:
+-    items:
+-      - description: Pixel Clock
+-      - description: HDMI PLL
+-      - description: Bit Clock
+-      - description: S/PDIF Clock
+-
+-  clock-names:
+-    items:
+-      - const: pixel
+-      - const: pll
+-      - const: bclk
+-      - const: spdif
+-
+   phys:
+     maxItems: 1
+ 
+@@ -58,6 +48,16 @@ properties:
+     description: |
+       phandle link and register offset to the system configuration registers.
+ 
++  ddc-i2c-bus:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description: Phandle to the ddc-i2c device
++
++  power-domains:
++    description:
++      A phandle and PM domain specifier as defined by bindings
++      of the power controller specified by phandle. See
++      Documentation/devicetree/bindings/power/power-domain.yaml for details.
++
+   ports:
+     $ref: /schemas/graph.yaml#/properties/ports
+ 
+@@ -76,7 +76,6 @@ properties:
+ 
+     required:
+       - port@0
+-      - port@1
+ 
+ required:
+   - compatible
+@@ -86,9 +85,55 @@ required:
+   - clock-names
+   - phys
+   - phy-names
+-  - mediatek,syscon-hdmi
+   - ports
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mediatek,mt8195-hdmi
++    then:
++      properties:
++        clocks:
++          items:
++            - description: APB
++            - description: HDCP
++            - description: HDCP 24M
++            - description: Split HDMI
++        clock-names:
++          items:
++            - const: hdmi_apb_sel
++            - const: hdcp_sel
++            - const: hdcp24_sel
++            - const: split_hdmi
++
++      required:
++        - power-domains
++        - ddc-i2c-bus
++    else:
++      properties:
++        clocks:
++          items:
++            - description: Pixel Clock
++            - description: HDMI PLL
++            - description: Bit Clock
++            - description: S/PDIF Clock
++
++        clock-names:
++          items:
++            - const: pixel
++            - const: pll
++            - const: bclk
++            - const: spdif
++
++        ports:
++          required:
++            - port@1
++
++      required:
++        - mediatek,syscon-hdmi
++
+ additionalProperties: false
+ 
+ examples:
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+new file mode 100644
+index 000000000000..3c80bcebe6d3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mediatek HDMI DDC Device Tree Bindings for mt8195
++
++maintainers:
++  - CK Hu <ck.hu@mediatek.com>
++  - Jitao shi <jitao.shi@mediatek.com>
++
++description: |
++  The HDMI DDC i2c controller is used to interface with the HDMI DDC pins.
++
++properties:
++  compatible:
++    enum:
++      - mediatek,mt8195-hdmi-ddc
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: ddc-i2c
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    hdmiddc0: ddc_i2c {
++      compatible = "mediatek,mt8195-hdmi-ddc";
++      clocks = <&clk26m>;
++      clock-names = "ddc-i2c";
++    };
++
++...
 
 -- 
 b4 0.10.0-dev
