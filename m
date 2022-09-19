@@ -2,110 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A07AECAAD3
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 11:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80B9C6FA90
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Sep 2022 11:56:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbiISLkY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Sep 2022 07:40:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33206 "EHLO
+        id S230062AbiISL4D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Sep 2022 07:56:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229836AbiISLkX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 07:40:23 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C95B114E
-        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 04:40:21 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id a10so654613ljq.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 04:40:21 -0700 (PDT)
+        with ESMTP id S230070AbiISLzj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Sep 2022 07:55:39 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3332D6350
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 04:54:34 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id s11so14638554ilt.7
+        for <linux-clk@vger.kernel.org>; Mon, 19 Sep 2022 04:54:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=LOhOQBZzBFQxvVFlg60w9WSNTSMawzLUJ3lhh9nsRd8=;
-        b=oMDrNnn7PEzlmS/TtiTBujBv+2cvR52V5cwZqrcQvn0yEXxAHFP9XUBasumZsWhL/s
-         xXfnxFXa/ujRDAgOMothex/hDTOMFz3I9GxhCV0RPMsdnvWvu1MrFHUmAVJJRRkwX1CV
-         btra/q/r/DHfmEg8PuB/kadmHGMfEeddYYU0l9rn8hUSoJugQCQa8CclEI+xUWjokXUe
-         076SDXyM+lq0DsOTjgT7DKR2CGfViMFhNpD76L5hFosFOhFu8J1HArLo5J97u3XcqzVW
-         7wVys14ir3kTRRAL8BEGpyt4HchglXmWjwYXH0li3WnE79lRj1P91SlfzTmCAU1Ol59k
-         HHBQ==
+        d=brainfault-org.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=gUsv6szv6dsUeM9asVJnwaGmSGG17UchvxqwxLA3h8g=;
+        b=6l84clV/ev4Ho0Nth4fVfA2YCUlnkvOSgxbqusFUXjXpfQuFFf0cscM9H6JstjQMUy
+         xw7M8POcVaD8G3v3xGng54KrmjSgvwQL7sqhL179TVnFSdqvL9DEfhAXmZU08DpaVB+z
+         zSiunmo3VbmTof1vxAp/v47yQ2WgOGXeXG6GB3Gf7pE1ScGjC0bqV7TAtd/m+fpfq3CI
+         YOLPMuA/GgjNIfHOrOGhD0cM6H3P5LBBOn3aCDWtNVZfJPWoGE1cWKKtEz9Dpfs/6i2d
+         YxcNqnYUQtbiNuONYqqIai1SFElgvUv464Vcz0iTXK3yncl0+rss3soTmcg3IhW6Gf/K
+         H/3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=LOhOQBZzBFQxvVFlg60w9WSNTSMawzLUJ3lhh9nsRd8=;
-        b=7Z8lAnQtv9vpZA62UR7ZHGZS2GiLYtOT5pcQAugrJVxsCu4iyOsOoRNmi5lzf+v+cU
-         1qcuuTZMTgz0MsnjTNxhP0EDmUG9WuOzTtgigJl/QngCQ0z/+dT0oGz6uCq05PDrKhUR
-         DqCeujsjAeThrFioiNBHtv1aDdmXdZn1OosbiOclcOwefJV6o/+SK/rdBjkQk6x8NZB4
-         rkvVaRxvzXjGQitljLkdKbqssza+GFrgflBpCLZhU5HDUFjzC/QjJZduHc4W9fYu17Q1
-         emMkd+HvfXeOCI3D8gWo+Xyb10+EBdhdbvtYMLLndd96z2kn63vY/gx29YkTg1w1z0Rt
-         q7WA==
-X-Gm-Message-State: ACrzQf0ae7/nY5uWevvms7uMd2Z6LBZEI209Swayyj3GtSD1bwmRVWK8
-        aT9Ov7PPmQ4XO53N5CgOKItlww==
-X-Google-Smtp-Source: AMsMyM5yplmebqCLGegjUI9kshg0AL7BDvu6dLs+pjcv0D8b3BXK/yLoY6F6mjlxgpoY47vxzvCTEg==
-X-Received: by 2002:a2e:9d98:0:b0:26c:565f:6cda with SMTP id c24-20020a2e9d98000000b0026c565f6cdamr111304ljj.514.1663587619638;
-        Mon, 19 Sep 2022 04:40:19 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id f3-20020a05651c02c300b00268335eaa8asm4887241ljo.51.2022.09.19.04.40.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Sep 2022 04:40:19 -0700 (PDT)
-Message-ID: <ab9154fd-26e9-2d8e-c638-860e716ca8e8@linaro.org>
-Date:   Mon, 19 Sep 2022 13:40:18 +0200
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=gUsv6szv6dsUeM9asVJnwaGmSGG17UchvxqwxLA3h8g=;
+        b=htvdhmFA/UxigwJ+0rfkpOUz6n4y2z+9g2owtnE+3AQCfpOK7rduAYa3IuGIU07cc2
+         B+olga2o9bxkxQF4bGqJDi7M3xXkpkGc15MmPoxCCuH42utJHSmVb6JIaqzkShFNnl2K
+         NHmKSTeMF/UvVtkGvMqHHxbx+mCgdj0/vDxMgilmXMA0h61K9llg+mnbBzZF8CLT58Ve
+         eCjdW819KamuP1T1CzJPgy3FUTXBmtGUQOGv7HYEp94CGnm5m7y1ucOnKQaCiKUmSC9I
+         n3fNy8+/JgbjKGfDcoZboL3fRkZJP0E97kP9Gd7RoQFNMSSpCfKXskWAzq+kyVgSdo4x
+         5DUA==
+X-Gm-Message-State: ACrzQf1SorgS+YBhKfuN8UPz6C3RgGu2C3q6PDOXKlkjfbI8dD5IabYR
+        6OCLTLfapexN/mY+Dw0PjgrmPvA3mt9N4CFmM8xNPA==
+X-Google-Smtp-Source: AMsMyM5SaQPoV1xlIMZRfmPqKRzR7kAhfhGoUGwZ5KM3JobcN8dh6yNRCyMvHHbKVsfAJAruxygcE1W13IXNCB18i9o=
+X-Received: by 2002:a92:c04d:0:b0:2f5:1175:c7a3 with SMTP id
+ o13-20020a92c04d000000b002f51175c7a3mr5681407ilf.165.1663588472670; Mon, 19
+ Sep 2022 04:54:32 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v2] dt-bindings: firmware: imx: sync with SCFW kit v1.13.0
-Content-Language: en-US
-To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220919113715.243910-1-viorel.suman@oss.nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220919113715.243910-1-viorel.suman@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220919095939.761690562@infradead.org> <20220919101520.669962810@infradead.org>
+In-Reply-To: <20220919101520.669962810@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 19 Sep 2022 17:24:19 +0530
+Message-ID: <CAAhSdy004HaNUNYRD8tcn24LZWdTmOVkF1QN14uLmSw1UXuXqA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/44] cpuidle,riscv: Push RCU-idle into driver
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com,
+        rostedt@goodmis.org, pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, fweisbec@gmail.com, ryabinin.a.a@gmail.com,
+        glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/09/2022 13:37, Viorel Suman (OSS) wrote:
-> From: Viorel Suman <viorel.suman@nxp.com>
-> 
-> Sync defines with the latest available SCFW kit version 1.13.0,
-> may be found at the URL below:
-> 
-> https://www.nxp.com/webapp/Download?colCode=L5.15.32_2.0.0_SCFWKIT-1.13.0&appType=license
-> 
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+On Mon, Sep 19, 2022 at 3:47 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Doing RCU-idle outside the driver, only to then temporarily enable it
+> again, at least twice, before going idle is daft.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+Looks good to me.
+
+For RISC-V cpuidle:
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Regards,
+Anup
+
+
 > ---
->  drivers/clk/imx/clk-imx8qm-rsrc.c       |   4 +-
->  include/dt-bindings/firmware/imx/rsrc.h | 292 ++++++++++++++++--------
-
-Bindings cannot be squashed with driver change.
-
->  2 files changed, 198 insertions(+), 98 deletions(-)
-> 
-> Changes since v1:
-> 	Two patches squashed into one in order to keep changes bissectable
-> 	and compilable as suggested by Alexander Stein.
-
-That's not the solution. Solution is to make driver behaving correctly,
-not squash patches which must not be together.
-
-This is proof of an ABI break, so NAK unless described why it is OK to
-break the ABI/users/boards.
-
-Best regards,
-Krzysztof
+>  drivers/cpuidle/cpuidle-riscv-sbi.c |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -116,12 +116,12 @@ static int __sbi_enter_domain_idle_state
+>                 return -1;
+>
+>         /* Do runtime PM to manage a hierarchical CPU toplogy. */
+> -       ct_irq_enter_irqson();
+>         if (s2idle)
+>                 dev_pm_genpd_suspend(pd_dev);
+>         else
+>                 pm_runtime_put_sync_suspend(pd_dev);
+> -       ct_irq_exit_irqson();
+> +
+> +       ct_idle_enter();
+>
+>         if (sbi_is_domain_state_available())
+>                 state = sbi_get_domain_state();
+> @@ -130,12 +130,12 @@ static int __sbi_enter_domain_idle_state
+>
+>         ret = sbi_suspend(state) ? -1 : idx;
+>
+> -       ct_irq_enter_irqson();
+> +       ct_idle_exit();
+> +
+>         if (s2idle)
+>                 dev_pm_genpd_resume(pd_dev);
+>         else
+>                 pm_runtime_get_sync(pd_dev);
+> -       ct_irq_exit_irqson();
+>
+>         cpu_pm_exit();
+>
+> @@ -246,6 +246,7 @@ static int sbi_dt_cpu_init_topology(stru
+>          * of a shared state for the domain, assumes the domain states are all
+>          * deeper states.
+>          */
+> +       drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
+>         drv->states[state_count - 1].enter = sbi_enter_domain_idle_state;
+>         drv->states[state_count - 1].enter_s2idle =
+>                                         sbi_enter_s2idle_domain_idle_state;
+>
+>
