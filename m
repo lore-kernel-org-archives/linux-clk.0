@@ -2,167 +2,423 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F06ECAAD8
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 13:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE20DC6FA90
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 14:05:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbiITNkW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 09:40:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55244 "EHLO
+        id S231463AbiITOFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 10:05:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbiITNkV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 09:40:21 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240ABA44C;
-        Tue, 20 Sep 2022 06:40:18 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28K7xowN027936;
-        Tue, 20 Sep 2022 13:40:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=b1e3AHVC/0qp/VyT6Kx+8h82x7dGKfCvUhxUV/Y/EOE=;
- b=KDgzzngk6WbDknh/pq/FupkNn2VGr22gzu1UVubtoAW+TZEAscWPklHaSUv57iWL39Sw
- VnxpJSIyBBgH2HnDG0kdKx+cGkT43qmUhDF2DWiLaMnf3hbrzkc0s+Hp5INkvHYzt4fr
- XPUfUKWVfA8W9COhx3hO/eKQPzYf9UcKOG+65gS3EThObvezbQjFT6vFTaSv6saBycvx
- p1ThXULOheVi7XthoeeJWSKU1ijzpGEkP9Qau9vkZCFV8B03gVLW4QJR47dzgavBUlS2
- xX4ocGFNvKc7aOH44pVqaxl8XYQAvTI9O1USYOTv4H7jZ93uvJZP8+fyQbwaT2wPkWzI 2A== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jpx50b3a0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Sep 2022 13:40:06 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28KDe5Y8014533
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Sep 2022 13:40:05 GMT
-Received: from [10.216.12.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 20 Sep
- 2022 06:40:00 -0700
-Message-ID: <096205ee-2c8a-facf-87ce-2309c63d2400@quicinc.com>
-Date:   Tue, 20 Sep 2022 19:09:56 +0530
+        with ESMTP id S231321AbiITOFZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 10:05:25 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E004D1834F;
+        Tue, 20 Sep 2022 07:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pUyjVDld9zFCUTkkA07ck30DRQCGaey9CaHvnqryoew=; b=aY4juj0Ef3v9izwEsAMEEieRfp
+        NMdP3rgNCaxPxwf9MCfOcuUPPKilQ87miVM0OzwH6AO3xMKjR3i2NTjX5MPPxByQDV78mFrie96AA
+        1i3vlSh03EHH5ZSMZ8mgvIz97DJzd02zNI1wJcm6cIFHWLin1dBpIssJtESTULKhTRt7qhGVokQb+
+        WhJfF4mXi+Z8iFV9PlgcpeykLKel6B9E3SHcpVkVcDGkVHSSC98L5smGUEcAznbwJ78JXEHK4hfZ2
+        MYxy2clMkeegtNf4Sxkvi/iJIv85qSED9vgIGziZD8Tn0pLikoKMSoM5W6/bfl+h4aydKP+htQGRT
+        uKdSECRA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oadrn-00EMJA-II; Tue, 20 Sep 2022 14:04:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DF5783006B9;
+        Tue, 20 Sep 2022 16:04:47 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A0C2020161C88; Tue, 20 Sep 2022 16:04:47 +0200 (CEST)
+Date:   Tue, 20 Sep 2022 16:04:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
+        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v2 00/44] cpuidle,rcu: Clean up the mess
+Message-ID: <YynIf5WiWbNdiWsq@hirez.programming.kicks-ass.net>
+References: <20220919095939.761690562@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
- support
-Content-Language: en-US
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <mka@chromium.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
-        <dianders@chromium.org>, <linux-clk@vger.kernel.org>
-References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
- <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
-From:   Rajendra Nayak <quic_rjendra@quicinc.com>
-In-Reply-To: <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: oXxF8KOKMmDWv1zlFj3L9Hbgv8UgGvK-
-X-Proofpoint-GUID: oXxF8KOKMmDWv1zlFj3L9Hbgv8UgGvK-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-20_05,2022-09-20_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- adultscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209200080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220919095939.761690562@infradead.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 9/20/2022 6:09 PM, AngeloGioacchino Del Regno wrote:
-> Il 20/09/22 13:15, Rajendra Nayak ha scritto:
->> GDSCs cannot be transitioned into a Retention state in SW.
->> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
->> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
->> takes care of retaining the memory/logic for the domain when
->> the parent domain transitions to power collapse/power off state.
->>
->> On some platforms where the parent domains lowest power state
->> itself is Retention, just leaving the GDSC in ON (without any
->> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
->> it to Retention.
->>
->> The existing logic handling the PWRSTS_RET seems to set the
->> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
->> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
->> Fix that by leaving the GDSC in ON state.
->>
->> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
->> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->> v3:
->> Updated changelog
->>
->> There are a few existing users of PWRSTS_RET and I am not
->> sure if they would be impacted with this change
->>
->> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
->> gdsc is actually transitioning to OFF and might be left
->> ON as part of this change, atleast till we hit system wide
->> low power state.
->> If we really leak more power because of this
->> change, the right thing to do would be to update .pwrsts for
->> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
->> I dont have a msm8974 hardware, so if anyone who has can report
->> any issues I can take a look further on how to fix it.
-> 
-> I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
-> used for the specific cases of SC7180 and SC7280 (and possibly others) where the
-> GDSC is automatically transitioned to a Retention state by HW control, with no
-> required software (kernel driver) intervention.
+Because Nadav asked about tracing/kprobing idle, I had another go around
+and noticed not all functions calling ct_cpuidle_enter are __cpuidle.
 
-Having a PWRSTS_RET_HW_CTRL flag would make sense if there was also a
-PWRSTS_RET_SW_CTRL way of achieving Retention state, but FWIK there isn't.
-I am sure that's the way it is on 8974 as well, I just don't have hardware to
-confirm.
+Basically all cpuidle_driver::enter functions should be __cpuidle; i'll
+do that audit shortly.
 
-> 
->>
->> 2. gpu_gx_gdsc in gpucc-msm8998.c and
->>     gpu_gx_gdsc in gpucc-sdm660.c
->> Both of these seem to add support for 3 power state
->> OFF, RET and ON, however I dont see any logic in gdsc
->> driver to handle 3 different power states.
->> So I am expecting that these are infact just transitioning
->> between ON and OFF and RET state is never really used.
->> The ideal fix for them would be to just update their resp.
->> .pwrsts to PWRSTS_OFF_ON only.
-> 
-> static int gdsc_init(struct gdsc *sc)
-> {
-> 
->      ...
-> 
->      if (on || (sc->pwrsts & PWRSTS_RET))
->          gdsc_force_mem_on(sc);
->      else
->          gdsc_clear_mem_on(sc);
-> 
->      ...
-> }
-> 
-> On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
-> left OFF from the bootloader, but we want (at least for 630/660) memretain
-> without periph-retain: this is required to make the hypervisor happy.
+For now this is ct_cpuidle_enter / CPU_IDLE_ENTER users.
 
-Ideally setting the memretain bits while the GDSC is OFF should have no affect
-at all. Is this for the gpu_gx_gdsc on 630/660? Is this needed only at the init
-time (when the bootloader has left it OFF) or is it needed everytime the kernel
-turns it OFF too?
-How did we come up with this trick to keep the hypervisor happy, was it picked
-up from some downstream reference code?
+---
+--- a/arch/arm/mach-imx/cpuidle-imx6q.c
++++ b/arch/arm/mach-imx/cpuidle-imx6q.c
+@@ -17,8 +17,8 @@
+ static int num_idle_cpus = 0;
+ static DEFINE_RAW_SPINLOCK(cpuidle_lock);
+ 
+-static int imx6q_enter_wait(struct cpuidle_device *dev,
+-			    struct cpuidle_driver *drv, int index)
++static __cpuidle int imx6q_enter_wait(struct cpuidle_device *dev,
++				      struct cpuidle_driver *drv, int index)
+ {
+ 	raw_spin_lock(&cpuidle_lock);
+ 	if (++num_idle_cpus == num_online_cpus())
+--- a/arch/arm/mach-imx/cpuidle-imx6sx.c
++++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
+@@ -30,8 +30,8 @@ static int imx6sx_idle_finish(unsigned l
+ 	return 0;
+ }
+ 
+-static int imx6sx_enter_wait(struct cpuidle_device *dev,
+-			    struct cpuidle_driver *drv, int index)
++static __cpuidle int imx6sx_enter_wait(struct cpuidle_device *dev,
++				       struct cpuidle_driver *drv, int index)
+ {
+ 	imx6_set_lpm(WAIT_UNCLOCKED);
+ 
+--- a/arch/arm/mach-omap2/omap-mpuss-lowpower.c
++++ b/arch/arm/mach-omap2/omap-mpuss-lowpower.c
+@@ -224,8 +224,8 @@ static void __init save_l2x0_context(voi
+  *	2 - CPUx L1 and logic lost + GIC lost: MPUSS OSWR
+  *	3 - CPUx L1 and logic lost + GIC + L2 lost: DEVICE OFF
+  */
+-int omap4_enter_lowpower(unsigned int cpu, unsigned int power_state,
+-			 bool rcuidle)
++__cpuidle int omap4_enter_lowpower(unsigned int cpu, unsigned int power_state,
++				   bool rcuidle)
+ {
+ 	struct omap4_cpu_pm_info *pm_info = &per_cpu(omap4_pm_info, cpu);
+ 	unsigned int save_state = 0, cpu_logic_state = PWRDM_POWER_RET;
+--- a/arch/arm/mach-omap2/pm34xx.c
++++ b/arch/arm/mach-omap2/pm34xx.c
+@@ -175,7 +175,7 @@ static int omap34xx_do_sram_idle(unsigne
+ 	return 0;
+ }
+ 
+-void omap_sram_idle(bool rcuidle)
++__cpuidle void omap_sram_idle(bool rcuidle)
+ {
+ 	/* Variable to tell what needs to be saved and restored
+ 	 * in omap_sram_idle*/
+--- a/arch/arm64/kernel/cpuidle.c
++++ b/arch/arm64/kernel/cpuidle.c
+@@ -62,7 +62,7 @@ int acpi_processor_ffh_lpi_probe(unsigne
+ 	return psci_acpi_cpu_init_idle(cpu);
+ }
+ 
+-int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)
++__cpuidle int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)
+ {
+ 	u32 state = lpi->address;
+ 
+--- a/drivers/cpuidle/cpuidle-arm.c
++++ b/drivers/cpuidle/cpuidle-arm.c
+@@ -31,8 +31,8 @@
+  * Called from the CPUidle framework to program the device to the
+  * specified target state selected by the governor.
+  */
+-static int arm_enter_idle_state(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int arm_enter_idle_state(struct cpuidle_device *dev,
++					  struct cpuidle_driver *drv, int idx)
+ {
+ 	/*
+ 	 * Pass idle state index to arm_cpuidle_suspend which in turn
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -122,8 +122,8 @@ static int notrace bl_powerdown_finisher
+  * Called from the CPUidle framework to program the device to the
+  * specified target state selected by the governor.
+  */
+-static int bl_enter_powerdown(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int bl_enter_powerdown(struct cpuidle_device *dev,
++					struct cpuidle_driver *drv, int idx)
+ {
+ 	cpu_pm_enter();
+ 	ct_cpuidle_enter();
+--- a/drivers/cpuidle/cpuidle-mvebu-v7.c
++++ b/drivers/cpuidle/cpuidle-mvebu-v7.c
+@@ -25,9 +25,9 @@
+ 
+ static int (*mvebu_v7_cpu_suspend)(int);
+ 
+-static int mvebu_v7_enter_idle(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv,
+-				int index)
++static __cpuidle int mvebu_v7_enter_idle(struct cpuidle_device *dev,
++					 struct cpuidle_driver *drv,
++					 int index)
+ {
+ 	int ret;
+ 	bool deepidle = false;
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -49,14 +49,9 @@ static inline u32 psci_get_domain_state(
+ 	return __this_cpu_read(domain_state);
+ }
+ 
+-static inline int psci_enter_state(int idx, u32 state)
+-{
+-	return CPU_PM_CPU_IDLE_ENTER_PARAM(psci_cpu_suspend_enter, idx, state);
+-}
+-
+-static int __psci_enter_domain_idle_state(struct cpuidle_device *dev,
+-					  struct cpuidle_driver *drv, int idx,
+-					  bool s2idle)
++static __cpuidle int __psci_enter_domain_idle_state(struct cpuidle_device *dev,
++						    struct cpuidle_driver *drv, int idx,
++						    bool s2idle)
+ {
+ 	struct psci_cpuidle_data *data = this_cpu_ptr(&psci_cpuidle_data);
+ 	u32 *states = data->psci_states;
+@@ -192,12 +187,12 @@ static void psci_idle_init_cpuhp(void)
+ 		pr_warn("Failed %d while setup cpuhp state\n", err);
+ }
+ 
+-static int psci_enter_idle_state(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int psci_enter_idle_state(struct cpuidle_device *dev,
++					   struct cpuidle_driver *drv, int idx)
+ {
+ 	u32 *state = __this_cpu_read(psci_cpuidle_data.psci_states);
+ 
+-	return psci_enter_state(idx, state[idx]);
++	return CPU_PM_CPU_IDLE_ENTER_PARAM(psci_cpu_suspend_enter, idx, state[idx]);
+ }
+ 
+ static const struct of_device_id psci_idle_state_match[] = {
+--- a/drivers/cpuidle/cpuidle-qcom-spm.c
++++ b/drivers/cpuidle/cpuidle-qcom-spm.c
+@@ -58,8 +58,8 @@ static int qcom_cpu_spc(struct spm_drive
+ 	return ret;
+ }
+ 
+-static int spm_enter_idle_state(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int spm_enter_idle_state(struct cpuidle_device *dev,
++					  struct cpuidle_driver *drv, int idx)
+ {
+ 	struct cpuidle_qcom_spm_data *data = container_of(drv, struct cpuidle_qcom_spm_data,
+ 							  cpuidle_driver);
+--- a/drivers/cpuidle/cpuidle-riscv-sbi.c
++++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+@@ -93,17 +93,17 @@ static int sbi_suspend(u32 state)
+ 		return sbi_suspend_finisher(state, 0, 0);
+ }
+ 
+-static int sbi_cpuidle_enter_state(struct cpuidle_device *dev,
+-				   struct cpuidle_driver *drv, int idx)
++static __cpuidle int sbi_cpuidle_enter_state(struct cpuidle_device *dev,
++					     struct cpuidle_driver *drv, int idx)
+ {
+ 	u32 *states = __this_cpu_read(sbi_cpuidle_data.states);
+ 
+ 	return CPU_PM_CPU_IDLE_ENTER_PARAM(sbi_suspend, idx, states[idx]);
+ }
+ 
+-static int __sbi_enter_domain_idle_state(struct cpuidle_device *dev,
+-					  struct cpuidle_driver *drv, int idx,
+-					  bool s2idle)
++static __cpuidle int __sbi_enter_domain_idle_state(struct cpuidle_device *dev,
++						   struct cpuidle_driver *drv, int idx,
++						   bool s2idle)
+ {
+ 	struct sbi_cpuidle_data *data = this_cpu_ptr(&sbi_cpuidle_data);
+ 	u32 *states = data->states;
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -160,8 +160,8 @@ static int tegra_cpuidle_coupled_barrier
+ 	return 0;
+ }
+ 
+-static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+-				     int index, unsigned int cpu)
++static __cpuidle int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
++					       int index, unsigned int cpu)
+ {
+ 	int err;
+ 
+@@ -226,9 +226,9 @@ static int tegra_cpuidle_adjust_state_in
+ 	return index;
+ }
+ 
+-static int tegra_cpuidle_enter(struct cpuidle_device *dev,
+-			       struct cpuidle_driver *drv,
+-			       int index)
++static __cpuidle int tegra_cpuidle_enter(struct cpuidle_device *dev,
++					 struct cpuidle_driver *drv,
++					 int index)
+ {
+ 	bool do_rcu = drv->states[index].flags & CPUIDLE_FLAG_RCU_IDLE;
+ 	unsigned int cpu = cpu_logical_map(dev->cpu);
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -137,11 +137,13 @@ int cpuidle_find_deepest_state(struct cp
+ }
+ 
+ #ifdef CONFIG_SUSPEND
+-static void enter_s2idle_proper(struct cpuidle_driver *drv,
+-				struct cpuidle_device *dev, int index)
++static __cpuidle void enter_s2idle_proper(struct cpuidle_driver *drv,
++					  struct cpuidle_device *dev, int index)
+ {
+-	ktime_t time_start, time_end;
+ 	struct cpuidle_state *target_state = &drv->states[index];
++	ktime_t time_start, time_end;
++
++	instrumentation_begin();
+ 
+ 	time_start = ns_to_ktime(local_clock());
+ 
+@@ -152,13 +154,18 @@ static void enter_s2idle_proper(struct c
+ 	 * suspended is generally unsafe.
+ 	 */
+ 	stop_critical_timings();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
+ 		ct_cpuidle_enter();
++		/* Annotate away the indirect call */
++		instrumentation_begin();
++	}
+ 	target_state->enter_s2idle(dev, drv, index);
+ 	if (WARN_ON_ONCE(!irqs_disabled()))
+ 		raw_local_irq_disable();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
++		instrumentation_end();
+ 		ct_cpuidle_exit();
++	}
+ 	tick_unfreeze();
+ 	start_critical_timings();
+ 
+@@ -166,6 +173,7 @@ static void enter_s2idle_proper(struct c
+ 
+ 	dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
+ 	dev->states_usage[index].s2idle_usage++;
++	instrumentation_end();
+ }
+ 
+ /**
+@@ -200,8 +208,9 @@ int cpuidle_enter_s2idle(struct cpuidle_
+  * @drv: cpuidle driver for this cpu
+  * @index: index into the states table in @drv of the state to enter
+  */
+-int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+-			int index)
++__cpuidle int cpuidle_enter_state(struct cpuidle_device *dev,
++				  struct cpuidle_driver *drv,
++				  int index)
+ {
+ 	int entered_state;
+ 
+@@ -209,6 +218,8 @@ int cpuidle_enter_state(struct cpuidle_d
+ 	bool broadcast = !!(target_state->flags & CPUIDLE_FLAG_TIMER_STOP);
+ 	ktime_t time_start, time_end;
+ 
++	instrumentation_begin();
++
+ 	/*
+ 	 * Tell the time framework to switch to a broadcast timer because our
+ 	 * local timer will be shut down.  If a local timer is used from another
+@@ -235,15 +246,21 @@ int cpuidle_enter_state(struct cpuidle_d
+ 	time_start = ns_to_ktime(local_clock());
+ 
+ 	stop_critical_timings();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
+ 		ct_cpuidle_enter();
++		/* Annotate away the indirect call */
++		instrumentation_begin();
++	}
+ 
+ 	entered_state = target_state->enter(dev, drv, index);
++
+ 	if (WARN_ONCE(!irqs_disabled(), "%ps leaked IRQ state", target_state->enter))
+ 		raw_local_irq_disable();
+ 
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
++		instrumentation_end();
+ 		ct_cpuidle_exit();
++	}
+ 	start_critical_timings();
+ 
+ 	sched_clock_idle_wakeup_event();
+@@ -306,6 +323,8 @@ int cpuidle_enter_state(struct cpuidle_d
+ 		dev->states_usage[index].rejected++;
+ 	}
+ 
++	instrumentation_end();
++
+ 	return entered_state;
+ }
+ 
 
-> 
-> Regards,
-> Angelo
-> 
