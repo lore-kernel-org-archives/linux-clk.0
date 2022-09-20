@@ -2,198 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EEEC6FA94
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 10:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41FCECAAD8
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 10:25:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbiITKXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 06:23:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
+        id S229557AbiITKZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 06:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbiITKW4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 06:22:56 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4AE6AA0B;
-        Tue, 20 Sep 2022 03:22:54 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28K7xs7Y009306;
-        Tue, 20 Sep 2022 10:22:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=qcppdkim1;
- bh=9L8/3hza+gG/c24PjetIgp7Z0fytSeM8c90I6dU3fx0=;
- b=WAa110Vde0vp7VN+xTols9xp2EXEPqCZiKgKBNM4zVECylEcYzlaCIllbqG5tgxltlLB
- kvpEztI2DwKTod+jKJ0V1QidlRiRsk0iyPjaHbh3OAhNJu/FtSDO79poAfFlOTajvI+1
- 3VmLsM8wYidrj8qlFn/Zz+ikmcAjlm0Qp9b+DL1YGCtU3nzvaLnYsiYK5+LdaiegXHXI
- VfzA7tV0n9mKGOXZLvkvQct/5EXcmpwvaRvzVf94ldkjZvwYKS7BVUCHCCvG1rDbsq5G
- m5O0mAGi4WAfSbp2YqwUCAVYsQik+CW31bcZrnklayJR3r/QFGIXdwa+V/4hnl5JYx1Y Kw== 
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jptw33445-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Sep 2022 10:22:34 +0000
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-        by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 28KAMU4g016194;
-        Tue, 20 Sep 2022 10:22:30 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 3jnqrbnbqv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 20 Sep 2022 10:22:30 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28KAMUYx016171;
-        Tue, 20 Sep 2022 10:22:30 GMT
-Received: from hu-sgudaval-hyd.qualcomm.com (hu-krichai-hyd.qualcomm.com [10.213.110.37])
-        by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 28KAMUNg016162;
-        Tue, 20 Sep 2022 10:22:30 +0000
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 4058933)
-        id 9CFAA19FB; Tue, 20 Sep 2022 15:52:29 +0530 (+0530)
-From:   Krishna chaitanya chundru <quic_krichai@quicinc.com>
-To:     helgaas@kernel.org
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org,
-        quic_vbadigan@quicinc.com, quic_hemantk@quicinc.com,
-        quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-        quic_ramkri@quicinc.com, manivannan.sadhasivam@linaro.org,
-        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
-        svarbanov@mm-sol.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@somainline.org, lpieralisi@kernel.org,
-        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
-        linux-phy@lists.infradead.org, vkoul@kernel.org, kishon@ti.com,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: [PATCH v7 3/5] phy: core: Add support for phy suspend & resume
-Date:   Tue, 20 Sep 2022 15:52:25 +0530
-Message-Id: <1663669347-29308-4-git-send-email-quic_krichai@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1663669347-29308-1-git-send-email-quic_krichai@quicinc.com>
-References: <1663669347-29308-1-git-send-email-quic_krichai@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: iG49z6pzG43hKAh5IJjwaeck3CKweXNZ
-X-Proofpoint-GUID: iG49z6pzG43hKAh5IJjwaeck3CKweXNZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-20_02,2022-09-16_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 malwarescore=0 priorityscore=1501 suspectscore=0 spamscore=0
- mlxlogscore=779 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209200062
+        with ESMTP id S229505AbiITKZv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 06:25:51 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4335E674;
+        Tue, 20 Sep 2022 03:25:50 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F07716600368;
+        Tue, 20 Sep 2022 11:25:47 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1663669549;
+        bh=pJFt8yhuO+61RNQoKu/PstmWS0PBWMsonGq/dnFhPCY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=R2oc5TOvtqehwVdIVv4+ZI4lKyrDIUceJdbxMi/4V4X4XDvk3e3SdGay/LYNOYzrC
+         DXxdJO5MyIrCLEkMrhjlY1u96S1/affuMfe8RaXDP7nFTXFnZ4MWC3M1xOzBDeK5m8
+         lEuvNw5Aggj73VIO/CLscBO+EUrcp+7eCblSGS1sIssmA6ELNjdJebtJWOjsFVDR/j
+         uyJbu45SEV9y71RXViboId+7Z/hCjzmzlJV1enTIUR5hQfvCVBwLXemvji4sqsnqRl
+         11BEWGHHH9GsllzQ/+5YTNdKLeZ4jQHIN3tTk5EKUrTsggQa9wzRKM5YpE1h9seXu4
+         qpub0SjqOUUWg==
+Message-ID: <153dcb4f-4583-427e-83c7-bdd33e3b11aa@collabora.com>
+Date:   Tue, 20 Sep 2022 12:25:45 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v1 07/17] drm/mediatek: extract common functions from the
+ mtk hdmi driver
+Content-Language: en-US
+To:     Guillaume Ranquet <granquet@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+References: <20220919-v1-0-4844816c9808@baylibre.com>
+ <20220919-v1-7-4844816c9808@baylibre.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220919-v1-7-4844816c9808@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Introducing phy power suspend and resume callbacks for allowing to
-park the link-state in L1ss without holding any PCIe resources during
-system suspend.
+Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
+> Create a common "framework" that can be used to add support for
+> different hdmi IPs within the mediatek range of products.
+> 
+> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> 
+> diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
+> index d4d193f60271..008ec69da67b 100644
+> --- a/drivers/gpu/drm/mediatek/Makefile
+> +++ b/drivers/gpu/drm/mediatek/Makefile
+> @@ -22,7 +22,8 @@ obj-$(CONFIG_DRM_MEDIATEK) += mediatek-drm.o
+>   
+>   mediatek-drm-hdmi-objs := mtk_cec.o \
+>   			  mtk_hdmi.o \
 
-If we use  phy_suspend & phy_resume API's we are getting compilation
-issue as same function is present in drivers/net/phy/phy_device.c.
+abcd ... mtk_hdmi_common.o goes here :-)
 
-So creating phy_pm_suspend & phy_pm_resume API's.
+> -			  mtk_hdmi_ddc.o
+> +			  mtk_hdmi_ddc.o \
+> +			  mtk_hdmi_common.o \
+>   
+>   obj-$(CONFIG_DRM_MEDIATEK_HDMI) += mediatek-drm-hdmi.o
+>   
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> index 5cd05d4fe1a9..837d36ec4d64 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> @@ -32,187 +32,18 @@
+>   #include <drm/drm_probe_helper.h>
+>   
+>   #include "mtk_cec.h"
+> -#include "mtk_hdmi.h"
+>   #include "mtk_hdmi_regs.h"
+> +#include "mtk_hdmi_common.h"
+>   
+>   #define NCTS_BYTES	7
+>   
+> -enum mtk_hdmi_clk_id {
+> -	MTK_HDMI_CLK_HDMI_PIXEL,
+> -	MTK_HDMI_CLK_HDMI_PLL,
+> -	MTK_HDMI_CLK_AUD_BCLK,
+> -	MTK_HDMI_CLK_AUD_SPDIF,
+> -	MTK_HDMI_CLK_COUNT
+> +const char * const mtk_hdmi_clk_names_mt8183[MTK_MT8183_HDMI_CLK_COUNT] = {
 
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
----
-changes since v6:
-	- change names from power_down, power_up to suspend & resume
-	  respectively.
----
- drivers/phy/phy-core.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/phy/phy.h | 20 ++++++++++++++++++++
- 2 files changed, 50 insertions(+)
+Why MT8183? This can be either MT8167 or MT2701... or, IMO more appropriately, you
+should name the IP version.
+Example: MTK_HDMIV123_CLK_COUNT (I don't know what IP version would that be!).
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index d93ddf1..ca3e423 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -441,6 +441,36 @@ int phy_set_speed(struct phy *phy, int speed)
- }
- EXPORT_SYMBOL_GPL(phy_set_speed);
- 
-+int phy_pm_suspend(struct phy *phy)
-+{
-+	int ret;
-+
-+	if (!phy || !phy->ops->suspend)
-+		return 0;
-+
-+	mutex_lock(&phy->mutex);
-+	ret = phy->ops->suspend(phy);
-+	mutex_unlock(&phy->mutex);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(phy_pm_suspend);
-+
-+int phy_pm_resume(struct phy *phy)
-+{
-+	int ret;
-+
-+	if (!phy || !phy->ops->resume)
-+		return 0;
-+
-+	mutex_lock(&phy->mutex);
-+	ret = phy->ops->resume(phy);
-+	mutex_unlock(&phy->mutex);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(phy_pm_resume);
-+
- int phy_reset(struct phy *phy)
- {
- 	int ret;
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index b141375..e312028 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -76,6 +76,8 @@ union phy_configure_opts {
-  * @set_mode: set the mode of the phy
-  * @set_media: set the media type of the phy (optional)
-  * @set_speed: set the speed of the phy (optional)
-+ * @suspend: suspending the phy
-+ * @resume: resuming the phy
-  * @reset: resetting the phy
-  * @calibrate: calibrate the phy
-  * @release: ops to be performed while the consumer relinquishes the PHY
-@@ -89,6 +91,8 @@ struct phy_ops {
- 	int	(*set_mode)(struct phy *phy, enum phy_mode mode, int submode);
- 	int	(*set_media)(struct phy *phy, enum phy_media media);
- 	int	(*set_speed)(struct phy *phy, int speed);
-+	int	(*suspend)(struct phy *phy);
-+	int	(*resume)(struct phy *phy);
- 
- 	/**
- 	 * @configure:
-@@ -226,6 +230,8 @@ int phy_init(struct phy *phy);
- int phy_exit(struct phy *phy);
- int phy_power_on(struct phy *phy);
- int phy_power_off(struct phy *phy);
-+int phy_pm_suspend(struct phy *phy);
-+int phy_pm_resume(struct phy *phy);
- int phy_set_mode_ext(struct phy *phy, enum phy_mode mode, int submode);
- #define phy_set_mode(phy, mode) \
- 	phy_set_mode_ext(phy, mode, 0)
-@@ -349,6 +355,20 @@ static inline int phy_power_off(struct phy *phy)
- 	return -ENOSYS;
- }
- 
-+static inline int phy_pm_suspend(struct phy *phy)
-+{
-+	if (!phy)
-+		return 0;
-+	return -ENOSYS;
-+}
-+
-+static inline int phy_pm_resume(struct phy *phy)
-+{
-+	if (!phy)
-+		return 0;
-+	return -ENOSYS;
-+}
-+
- static inline int phy_set_mode_ext(struct phy *phy, enum phy_mode mode,
- 				   int submode)
- {
--- 
-2.7.4
+> +	[MTK_MT8183_HDMI_CLK_HDMI_PIXEL] = "pixel",
+> +	[MTK_MT8183_HDMI_CLK_HDMI_PLL] = "pll",
+> +	[MTK_MT8183_HDMI_CLK_AUD_BCLK] = "bclk",
+> +	[MTK_MT8183_HDMI_CLK_AUD_SPDIF] = "spdif",
+>   };
+>   
+
+Regards,
+Angelo
+
 
