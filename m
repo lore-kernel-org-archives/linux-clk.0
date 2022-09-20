@@ -2,78 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEEFC6FA8B
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 11:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED5DC54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 11:48:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbiITLnF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 07:43:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34216 "EHLO
+        id S230006AbiITLs6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 07:48:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230335AbiITLmW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 07:42:22 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC6374361;
-        Tue, 20 Sep 2022 04:41:58 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 139D06601F88;
-        Tue, 20 Sep 2022 12:41:54 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663674116;
-        bh=A2riqMDL+e6uXEzLF8Z0oYqGsIpSvXIapKZhlgz+MLE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=D1JPK3PB/rETwddxkJo+ir808mHSZkg1lQAK95Xn08P8K4jDZWkQ6+LJNYMLJmBgG
-         cwxZUkGgM2dTL4OHRfY31FWcYMWq9MpEO5kkgwCoQMjY5NJaCxuwNO4QMahHdVn9MY
-         6PJcJDRAutMYp+pLUhdp/gfHIgCWHytfIPfarSWnliBchAcyBJiTiNZlp4ITxk4OV+
-         jWlmgmKgRSOTBw7La8G87wJibOJyInxdy5Rdww0e/HAowGr7ojq2gCCPtckQ0YfHJ5
-         jbauLmui0LDUiy3c8heWBA4dGdh/36TvQhQDedU0UAaITF19fNe278Slsp/D2y7Xiv
-         2M0Vo4ij7ontA==
-Message-ID: <ef56a05e-c575-2515-0e00-a22a854b52a0@collabora.com>
-Date:   Tue, 20 Sep 2022 13:41:52 +0200
+        with ESMTP id S229767AbiITLs5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 07:48:57 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B7D167E3;
+        Tue, 20 Sep 2022 04:48:56 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28KB1TBs030624;
+        Tue, 20 Sep 2022 11:48:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=kTbqXAABmhsBU64oFTSy25edsGfHV13V706e0e6We5M=;
+ b=LYcAHgJzBV9P6GjnHVeMhwxDNC1kunlb05fM9+rw/8/bCLOuaaPaXpkqdsOTfxumTqsa
+ yWkZr9zGyijubK+8TssFSUEqI9tZdRVfS7DJYTfY12evJFISZ756c48B8+GEC7xKqCGM
+ IoFxe7JCKWgrITR/o2OovMt/qd1x3ohNpJqFSgo9pSNyVBkos4kuMj+0OB+2kOVmxvwk
+ /s/pDcpGjm29SthmSvEDdhST6RGwol2C8cbsd/DZ96o+XWKpmU2eX3/JZlUeCpnkCuh4
+ Mx/XTZDOdXGeEarPBLPH+Qgd1TDRZxsaFMWNFcDyVgBI/u/+Ap6vslpOIEovH2Hsc8Qi qA== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jq8fw119d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Sep 2022 11:48:52 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28KBmpW7012811
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Sep 2022 11:48:51 GMT
+Received: from c-skakit-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 20 Sep 2022 04:48:47 -0700
+From:   Satya Priya <quic_c_skakit@quicinc.com>
+To:     Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@kernel.org>
+CC:     <mka@chromium.org>, Stephen Boyd <swboyd@chromium.org>,
+        Andy Gross <agross@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_tdas@quicinc.com>, <quic_c_skakit@quicinc.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH] arm64: dts: qcom: sc7280: Add the reset reg for lpass audiocc on SC7280
+Date:   Tue, 20 Sep 2022 17:18:15 +0530
+Message-ID: <1663674495-25748-1-git-send-email-quic_c_skakit@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v1 13/17] phy: phy-mtk-hdmi: Add generic phy configure
- callback
-Content-Language: en-US
-To:     Guillaume Ranquet <granquet@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-13-4844816c9808@baylibre.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220919-v1-13-4844816c9808@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Mn4KcJq4rSM-psqLIrH0jSPR-6-m_n-1
+X-Proofpoint-ORIG-GUID: Mn4KcJq4rSM-psqLIrH0jSPR-6-m_n-1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-20_04,2022-09-16_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ adultscore=0 malwarescore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=652 suspectscore=0 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
+ definitions=main-2209200070
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
-> Some phys, such as mt8195, needs to have a configure callback defined.
-> 
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+Add the reset register offset for clock gating.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fixes: 9499240d15f2 ("arm64: dts: qcom: sc7280: Add lpasscore & lpassaudio clock controllers")
+Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index 8d807b7..353c137 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -2295,7 +2295,8 @@
+ 
+ 		lpass_audiocc: clock-controller@3300000 {
+ 			compatible = "qcom,sc7280-lpassaudiocc";
+-			reg = <0 0x03300000 0 0x30000>;
++			reg = <0 0x03300000 0 0x30000>,
++			      <0 0x032a9000 0 0x1000>;
+ 			clocks = <&rpmhcc RPMH_CXO_CLK>,
+ 			       <&lpass_aon LPASS_AON_CC_MAIN_RCG_CLK_SRC>;
+ 			clock-names = "bi_tcxo", "lpass_aon_cc_main_rcg_clk_src";
+-- 
+2.7.4
 
