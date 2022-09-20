@@ -2,179 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCC9C6FA8E
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 22:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C90C6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 22:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbiITWBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 18:01:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59282 "EHLO
+        id S229751AbiITWhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 18:37:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiITWBH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 18:01:07 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1DB140A9;
-        Tue, 20 Sep 2022 15:01:03 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28KLUtS0003059;
-        Tue, 20 Sep 2022 22:00:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=sCPHhdMCA5UHEzDVmKfQItxqhOkn0UhphqOy3bvLSlY=;
- b=aP2K6xMOecVRnkDipxYmDQMCvYle551nW8K6wcM7lWsbm8Dk0/VpFrXFNcTNhXjLHZo4
- n+YkhIAAJ0B2KXDMMzcPJ8EaeaASktpzOoU62nXPny7gmMMiBoAdgqUnzIghQPaRNCQR
- RM8umCuw9Yw+Mh8J2t9r1sXzb2wY8+T8SRKQO2Vg10bvtuTMOmBIGqsd4BJTE2f5kRSy
- sqjU0SQdU7Aqw4iioDWlhq5PpZBL5Fym+hXyWWoNwpbZ6KL3hNFMYQF0YxETC4famiXj
- My5FvekJmFi9nysEp3pLBUoVIW67Jr9nP6PVNvlJoOiR2NBl56gQW0qtjRRrBYJzPFE3 cQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jpxaemhu6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Sep 2022 22:00:44 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28KM0iTd018361
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Sep 2022 22:00:44 GMT
-Received: from [10.110.44.78] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 20 Sep
- 2022 15:00:39 -0700
-Message-ID: <86909e66-32a9-8f61-3d17-8356b5552597@quicinc.com>
-Date:   Tue, 20 Sep 2022 15:00:38 -0700
+        with ESMTP id S229471AbiITWhx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 18:37:53 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B789661D72;
+        Tue, 20 Sep 2022 15:37:52 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id h194so3626570iof.4;
+        Tue, 20 Sep 2022 15:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=XEUmriEa05j5XUrTdorZ1T8HSWvZNuwunsKCBkusk9U=;
+        b=Ddt2cJFHLfzeCScpabblZYPTZnrpMPbsfnaH9GSZmOwQfpX9AUcz8s34CJSa10qUSI
+         KeYHNq3ntncZhfzp+UqgsVK69GUTOMbfQ5R+WfiF5rbowv/v2m9D4zcIpaCUDInQayLG
+         Wl8sFC5zPnIr/TXtY2bjkLALsFcMfonepmr/hW9iJTc8NkdORSXuykJliL2Yjc6g4MIA
+         3oxDP0OOG+IIOWVoDPlEPjMglU5YNpnMILVQ+OLNVPH/HGpF3j1lvsS0VQ8nzx8Xd6Fe
+         Y4jMlfeNVXWFzt3I3nNR0/X7C1ChU9Te55m3QpPHnggrAMeUB/DrJN8fY1gDRyMQE8zi
+         BOpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=XEUmriEa05j5XUrTdorZ1T8HSWvZNuwunsKCBkusk9U=;
+        b=xK/y63GRrpCq6zruAU3IXlfKpuCUh1mdA78OQ9X+AjVSp8NTq16HviSQqYs223j18Q
+         4AWWUoeWG17bA2DB3wZg2YHzCaIi4qiSkg6kBYFnJPiJkn+yD1GWOfkDa3nKkPJhewUG
+         1/OWn6Eapbc0miMyNZQ73fZSpGuVDjvI4ajU/7sSIez8pHwTmHHv2QUSSBB4kUxkSk5S
+         Y6Jua8haSpG+ElfWH/AGW4tSMGqCSplwH/p3l6nZSr1J1MIR1x1EYzDoXCETzwW64sAe
+         c8Ej475NeLe2nFuXteevp/CCaOwF4eDMS/q96YyHTbZmQImUnF12QvYJHn/EPeQYipDR
+         ZvFw==
+X-Gm-Message-State: ACgBeo01rx6rIZJjEORoQa7wt5FiKVFLTvDFiQlwqeRFBiWVxWh8D9G/
+        du15ewlxFz6RvWtukzduBpbmOkX5u/A=
+X-Google-Smtp-Source: AA6agR6iq1v/0PmkfapKfHrZpfQ4BzuMWiHGX8NFFWCW/kNAWbomk8QG5YZ9Ytjr7doxDoZ1m23qjg==
+X-Received: by 2002:a02:cb42:0:b0:359:766e:fc8c with SMTP id k2-20020a02cb42000000b00359766efc8cmr11850763jap.108.1663713470329;
+        Tue, 20 Sep 2022 15:37:50 -0700 (PDT)
+Received: from localhost ([2607:fea8:a2e2:2d00::a533])
+        by smtp.gmail.com with UTF8SMTPSA id v15-20020a92ab0f000000b002f6460e4d90sm334913ilh.85.2022.09.20.15.37.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Sep 2022 15:37:49 -0700 (PDT)
+From:   Richard Acayan <mailingradian@gmail.com>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Richard Acayan <mailingradian@gmail.com>
+Subject: [PATCH v2 0/2] SDM670 RPMh Clocks
+Date:   Tue, 20 Sep 2022 18:37:32 -0400
+Message-Id: <20220920223734.151135-1-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v7 2/5] PCI: qcom: Add retry logic for link to be stable
- in either L1.1 or L1.2
-Content-Language: en-US
-To:     Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        <helgaas@kernel.org>
-CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
-        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
-        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
-        <svarbanov@mm-sol.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
-        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
-        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1663669347-29308-1-git-send-email-quic_krichai@quicinc.com>
- <1663669347-29308-3-git-send-email-quic_krichai@quicinc.com>
-From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <1663669347-29308-3-git-send-email-quic_krichai@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cIyxl9UDLqs_YPhZA0JINvBJ5dxUAQ1G
-X-Proofpoint-ORIG-GUID: cIyxl9UDLqs_YPhZA0JINvBJ5dxUAQ1G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-20_10,2022-09-20_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 mlxlogscore=999
- adultscore=0 clxscore=1015 malwarescore=0 phishscore=0 impostorscore=0
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209200134
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/20/2022 3:22 AM, Krishna chaitanya chundru wrote:
-> When link is in L1ss(L1.1 or L1.2), all the clocks will gate off and there
-> will be no activity on the link. At that point clocks and phy
-> can be turned off. If clocks got disabled before link enters
-> L1ss the PCIe link goes down.
-> 
-> Few endpoints are taking time more time to settle the link in L1 substates.
+Changes since v1:
+ - fix broken link
+ - accumulate ack tag
 
-"time more time" does not parse
+This patch series adds clocks controlled by RPMh for Snapdragon 670.
 
-> When we check the traffic in protocol analyzer, we see some DLLP packets
-> going on still. So Wait for max time of 200ms for the link to be stable in
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml      |  1 +
+ drivers/clk/qcom/clk-rpmh.c                         | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-s/Wait/wait/
-
-> L1 substates.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
-> changes since v6:
-> 	- updated comments.
-> ---
->   drivers/pci/controller/dwc/pcie-qcom.c | 46 ++++++++++++++++++++++++++--------
->   1 file changed, 35 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 3f5424a..7a6f69e 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1809,23 +1809,47 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->   static int __maybe_unused qcom_pcie_pm_suspend(struct qcom_pcie *pcie)
->   {
->   	u32 val;
-> +	ktime_t timeout, start;
->   	struct dw_pcie *pci = pcie->pci;
->   	struct device *dev = pci->dev;
->   
-> -	/* if the link is not active turn off clocks */
-> -	if (!dw_pcie_link_up(pci)) {
-> -		dev_dbg(dev, "Link is not active\n");
-> -		goto suspend;
-> -	}
-> +	/*
-> +	 * When link is in L1ss, all the clocks will gate off and
-> +	 * there will be no activity on the link. At that point clocks
-> +	 * and phy can be turned off. If clocks got disabled before
-> +	 * link enters L1ss the PCIe link goes down.
-> +	 *
-> +	 * Few endpoints are taking time more time to settle the link
-
-"time more time" does not parse
-
-> +	 * in L1ss. Wait for max of 200ms for the link to be stable in
-> +	 * L1ss.
-> +	 */
-> +	start = ktime_get();
-> +	/* Wait max 200 ms */
-> +	timeout = ktime_add_ms(start, 200);
-> +
-> +	while (1) {
-> +		/* if the liink is not active turn off clocks */
-> +		if (!dw_pcie_link_up(pci)) {
-> +			dev_dbg(dev, "Link is not active\n");
-> +			break;
-> +		}
->   
-> -	/* if the link is not in l1ss don't turn off clocks */
-> -	val = readl(pcie->parf + PCIE20_PARF_PM_STTS);
-> -	if (!(val & PCIE20_PARF_PM_STTS_LINKST_IN_L1SUB)) {
-> -		dev_warn(dev, "Link is not in L1ss\n");
-> -		return 0;
-> +		/* if the link is not in l1ss don't turn off clocks */
-> +		val = readl(pcie->parf + PCIE20_PARF_PM_STTS);
-> +		if ((val & PCIE20_PARF_PM_STTS_LINKST_IN_L1SUB)) {
-> +			dev_dbg(dev, "Link enters L1ss after %lld  ms\n",
-> +					ktime_to_ms(ktime_get() - start));
-> +			break;
-> +		}
-> +
-> +		if (ktime_after(ktime_get(), timeout)) {
-> +			dev_warn(dev, "Link is not in L1ss\n");
-> +			return 0;
-> +		}
-> +
-> +		udelay(1000);
->   	}
->   
-> -suspend:
->   	if (pcie->cfg->ops->suspend)
->   		pcie->cfg->ops->suspend(pcie);
->   
 
