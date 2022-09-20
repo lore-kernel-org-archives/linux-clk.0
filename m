@@ -2,98 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8BEC6FA8B
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 10:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1122BECAAD8
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 10:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231320AbiITKha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 06:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46966 "EHLO
+        id S229755AbiITKjF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 06:39:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbiITKgH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 06:36:07 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A6F7F0E;
-        Tue, 20 Sep 2022 03:34:33 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 640596601F3B;
-        Tue, 20 Sep 2022 11:34:30 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663670071;
-        bh=Ly/Gd/BN8cZIA8HYYtUp7eyC8GP8ws7pSAuEwyx/X5o=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=XUSr6mTZd0KrAR17T81pA/3sXiF88jPHisabDNPtgK3vjBm3IG4jNbju3JvH2nZ1P
-         vkjCshGNakNla1CP5FeOMLER2lO0EdPtfRbeeSz0m3uuA0H9MF7x+cF668zOxeur3g
-         PcYf0wAG6mA/uVRZ9WLVy1aK+cop7Auxnv7zaV9k5znPLe/5wKf60oDe4b62eBspxM
-         +gh5SAN6aq7CYRHpff/mvhCcNF4ORhPVxJ1/AbSYaNx066mGNdqXuGC+nMLRqi+Z9G
-         6FwhjDGNmmvMgSZ0AjrScXDd+7tP+yWpAeEQCOPBpUdv24dBszOkTV0H/462MD0Jpd
-         WHNRBP8jig7xA==
-Message-ID: <b2ab259b-404d-a267-6fef-913c4514b078@collabora.com>
-Date:   Tue, 20 Sep 2022 12:34:28 +0200
+        with ESMTP id S230461AbiITKiY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 06:38:24 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE9A72EE7;
+        Tue, 20 Sep 2022 03:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663670212; x=1695206212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ESeT68QBp14fZse7on7nqGxb5SnUIDEmkBvolLY55Fo=;
+  b=j8nABKC8JEeI8yE58udQZGCNWm/32kxyW8vENwYH7V9pu274EsMsPWNS
+   zsZXVfNiWNlaRyNO0WKj5ORHiLULkFmMOVY0z2x9+BTgNJrBTTzjmUOC1
+   Mm9Ik0lLSUPSy6vKrxo3jh+RVdD+epmXAayl2F9SGzjC8lU5ZTAFd0QeB
+   7xRXRiPWZblsMIFAgS9Uc/8LXBlLLhLBmvLf2snvharCsMzsQXfCrPPu3
+   oWTS5+71aNqEmXPCp0/SarJQITFUQW1DPbgEzlFx57McKDhmsNgbs7gMh
+   z3AF0YKWSS46d1OFsSk8JA8j/Dh6/WEK8cz7W8DwYSyuVvrIrIxIZ4ajS
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10475"; a="361398152"
+X-IronPort-AV: E=Sophos;i="5.93,330,1654585200"; 
+   d="scan'208";a="361398152"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2022 03:36:51 -0700
+X-IronPort-AV: E=Sophos;i="5.93,330,1654585200"; 
+   d="scan'208";a="618865967"
+Received: from punajuuri.fi.intel.com (HELO paasikivi.fi.intel.com) ([10.237.72.43])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2022 03:36:48 -0700
+Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
+        by paasikivi.fi.intel.com (Postfix) with SMTP id 3F528200DA;
+        Tue, 20 Sep 2022 13:36:46 +0300 (EEST)
+Date:   Tue, 20 Sep 2022 10:36:46 +0000
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        mchehab@kernel.org, laurent.pinchart+renesas@ideasonboard.com,
+        akinobu.mita@gmail.com, jacopo+renesas@jmondi.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] media: mt9m111: add V4L2_CID_LINK_FREQ support
+Message-ID: <YymXviWNg/bi/HVr@paasikivi.fi.intel.com>
+References: <20220916135713.143890-1-m.felsch@pengutronix.de>
+ <YyhjpxHHFR4u+k+X@paasikivi.fi.intel.com>
+ <20220919130829.ddoe2ajnrarkywgy@pengutronix.de>
+ <YyhsQ+l1Sls00F0M@paasikivi.fi.intel.com>
+ <20220920085617.7cfflloegh7en4mj@pengutronix.de>
+ <20220920091933.kokk4le3cxpw4hvp@lati>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v1 08/17] drm/mediatek: hdmi: add cec flag
-Content-Language: en-US
-To:     Guillaume Ranquet <granquet@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-8-4844816c9808@baylibre.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220919-v1-8-4844816c9808@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220920091933.kokk4le3cxpw4hvp@lati>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
-> Add a flag to indicate support for cec.
+Hi Jacopo,
+
+On Tue, Sep 20, 2022 at 11:19:33AM +0200, Jacopo Mondi wrote:
+> Hello
 > 
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> On Tue, Sep 20, 2022 at 10:56:17AM +0200, Marco Felsch wrote:
+> > Hi Sakari,
+> >
+> > On 22-09-19, Sakari Ailus wrote:
+> >
+> > ...
+> >
+> > > > > > +	ret = clk_prepare_enable(mt9m111->clk);
+> > > > > > +	if (ret < 0)
+> > > > > > +		return ret;
+> > > > > > +
+> > > > > > +	extclk_rate = clk_get_rate(mt9m111->clk);
+> > > > > > +	clk_disable_unprepare(mt9m111->clk);
+> > > > >
+> > > > > I don't think you'll need to enable a clock to just get its frequency.
+> > > >
+> > > > The official API states that you need to turn on the clk before
+> > > > requesting it and it makes sense. Also there is a new helper
+> > > > devm_clk_get_enabled() which addresses simple clk usage since most of
+> > > > drivers don't enable it before requesting the rate.
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-> index bfcca6f8b839..86653ebaacfd 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-> @@ -154,35 +154,38 @@ int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi, struct platform_device *pdev,
->   		return ret;
->   	}
->   
-> -	/* The CEC module handles HDMI hotplug detection */
-> -	cec_np = of_get_compatible_child(np->parent, "mediatek,mt8173-cec");
-> -	if (!cec_np) {
-> -		dev_err(dev, "Failed to find CEC node\n");
-> -		return -EINVAL;
-> -	}
-> +	if (hdmi->conf->has_cec) {
+> Had the same question on v1 and Marco pointed me to the clk_get_rate()
+> documentation
+> https://elixir.bootlin.com/linux/v6.0-rc1/source/include/linux/clk.h#L682
+> 
+> which indeed specifies
+> "This is only valid once the clock source has been enabled."
+> 
+> However none (or very few) of the linux-media i2c drivers actually do
+> that.
 
-I think that's a pointless overcomplication: I know why you're doing this but I'm
-not sure that this is a good solution.
+I'm not aware of any. That's indeed what the documentation says. Also
+clk_enable() documentation says that "If the clock can not be
+enabled/disabled, this should return success". So I wonder how much can
+you trust it. ;-)
 
-I would simply disable CEC support if there is no CEC child node and that's it...
+> 
+> I have added in cc the clk framework maintainer to see if he can help
+> shed some light on this
 
+Thanks.
+
+But yes, to make this work in general case, one would need a way to ensure
+the frequency is the one assigned in DT and that it won't change.
+
+Getting the frequency (in an unreliable way?) isn't perfect but better than
+nothing. So far I haven't heard of issues in practice though.
+
+-- 
 Regards,
-Angelo
+
+Sakari Ailus
