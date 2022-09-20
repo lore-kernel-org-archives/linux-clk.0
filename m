@@ -2,149 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94103C6FA92
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D07C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:36:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbiITMbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 08:31:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47960 "EHLO
+        id S231268AbiITMgE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 08:36:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiITMbw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:31:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2626E564CE;
-        Tue, 20 Sep 2022 05:31:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C4963B80BEC;
-        Tue, 20 Sep 2022 12:31:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CCCC433D6;
-        Tue, 20 Sep 2022 12:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663677108;
-        bh=i2971qM7wlevODiVHlQWVkeQKCoULSDtCivyYa6BY3w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q359WuuE7X8iHPUglRgZ6umBriKE4r+Hq60s0D7bZenVvQZ4nI53Q/0IHEDWUvL08
-         uO1lUj+/+gsUuHABZ0IUgFE9VpucvwIQJdQ0+o+qLceGFQWOjTx274Wv0QgoQwQqDB
-         Bq6B/yj6zX6+ne9r87JfQG1DqPPHAUwk/5wBhBEUUm5zmwQcKDqLTClYTCw1gL+EWj
-         y+co7RjqxrjwqgzVQOyvkrVOgNfaKYqf/Dnk/7RydhOFfw29XBhF+VqBugULRYy6nW
-         kGdHmx4EM6/oydyvS6EAGcuvFJCcs2df/Ji6kGzIJMqPXxrjzmWTkMGZJXBpD98pEC
-         ZvljhnwREUPvw==
-Date:   Tue, 20 Sep 2022 14:31:45 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
-        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-        dvyukov@google.com, vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 00/44] cpuidle,rcu: Clean up the mess
-Message-ID: <20220920123145.GC72346@lothringen>
-References: <20220919095939.761690562@infradead.org>
+        with ESMTP id S231266AbiITMfo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:35:44 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9F3754A3
+        for <linux-clk@vger.kernel.org>; Tue, 20 Sep 2022 05:35:41 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id DF2283200A07;
+        Tue, 20 Sep 2022 08:35:37 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 20 Sep 2022 08:35:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1663677337; x=1663763737; bh=X8Tn9L6l3u
+        YAQL0VchxRl1Blatny/U4vljuAmQh0HD8=; b=s6vjSTeqk+Y8mKMI1Ppr7HKP2y
+        q/fxwm+FUOt4y+FZmjIOF7Koa7HFsdIb951BRRKiub8XJBKuYYPdiEHRPEjqd3FH
+        CsUPXbq6nIXWDHq3AXxNG0fc547QE6mXW6LAiAESaT7ThCv4s9IyA/QJvYc4FGvj
+        6K+TKwcNCNnZXHOiiuNETGnDzK2LW9uc7/jJDoX8UXrpNXydr5xWcmCPXsJ5+hks
+        ugijEM84bZZ68akyrnT2pKbTbuILInHWG+isJ6UNxqMy5h5/Z4No5Bm7BhRqXM8p
+        FPS4E0aYU2MaxCK+5Yj9nxcnjiaFCoC6UdQ5USjyyotbbDFzD+29RDedWW8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1663677337; x=1663763737; bh=X8Tn9L6l3uYAQL0VchxRl1Blatny
+        /U4vljuAmQh0HD8=; b=iwMXu6Yi/fhSOK1M+uALWfjQFH224pgtMeXG8ai1oqE/
+        bLtyqlqFo/uR4iibOBM6rIYPbzihnuNjUoJ1uuF8C8kQ4nY7Wtt8s1fxIKLbwksQ
+        BiDbYom/9U3KgKsVI/EotOAQxXB0fZkqqKzJpI/U8muoFxCJCalZd324rlZxQQQK
+        7Vcdayqw+D1d54S8Z4HQjTWT91L5lItMfYuPPSU1TI2uTCbqGpmUxEQZgPtd+AgP
+        7KHURe+Y6a+zEEEtwmuGGeYRKFvzCGpC5HHM3841oqK/AS623D6rfXWQ+C+7j8tD
+        ZXrshVvTtTVVfZ/sndMZlVnMin8+Z1Uyz0B0QCoorQ==
+X-ME-Sender: <xms:mLMpY1Qf2QtMew3clY3m3vsQk0f2QmWFUrYxC42XFzk6dLnScTzeWw>
+    <xme:mLMpY-zq_R6spgbf6Phe-z9rhQFkeS_3gXDHrv7sZ5S4q_LnjFNzZjXw9FslRMuyq
+    8ZkDsjNZDhnIin9FW0>
+X-ME-Received: <xmr:mLMpY61mHYQf1AEHvhwrag6_pHEMqgIRJUaBsC5iEmSD9mxXh8DTsHJVqLCg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvledgheegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:mLMpY9CRI52UJoRTpnyk_INBiYBeiQvEdOowNlFsSsj5Zq1FfIJKwQ>
+    <xmx:mLMpY-i5KeVHUZw58gtKsKy7_GHt5LxbAyHaMlTKQ21A4DfmcLjAMw>
+    <xmx:mLMpYxo0kSKFkPBtr7Axy3Fq6XB-noMyjvx_VUhrej9LIIwQwlICRw>
+    <xmx:mbMpY5PGgFydEt6fnM084J17xCa8-E7D0qrL8OTypRrjxjvK0DzpVg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 20 Sep 2022 08:35:35 -0400 (EDT)
+Date:   Tue, 20 Sep 2022 14:35:33 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v9 00/25] clk: More clock rate fixes and tests
+Message-ID: <20220920123533.pr7vsfbugppuusrk@houat>
+References: <20220816112530.1837489-1-maxime@cerno.tech>
+ <20220902145305.znvsrcrcjrpr343c@houat>
+ <20220917083137.DBB5CC433C1@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="t7qtwrwrycq26mkn"
 Content-Disposition: inline
-In-Reply-To: <20220919095939.761690562@infradead.org>
+In-Reply-To: <20220917083137.DBB5CC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 11:59:39AM +0200, Peter Zijlstra wrote:
-> Hi All!
-> 
-> At long last, a respin of the cpuidle vs rcu cleanup patches.
-> 
-> v1: https://lkml.kernel.org/r/20220608142723.103523089@infradead.org
-> 
-> These here patches clean up the mess that is cpuidle vs rcuidle.
-> 
-> At the end of the ride there's only on RCU_NONIDLE user left:
-> 
->   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
-> 
-> and 'one' trace_*_rcuidle() user:
-> 
->   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
->   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
->   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
->   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
->   kernel/trace/trace_preemptirq.c:                trace_preempt_enable_rcuidle(a0, a1);
->   kernel/trace/trace_preemptirq.c:                trace_preempt_disable_rcuidle(a0, a1);
-> 
-> However this last is all in deprecated code that should be unused for GENERIC_ENTRY.
-> 
-> I've touched a lot of code that I can't test and I might've broken something by
-> accident. In particular the whole ARM cpuidle stuff was quite involved.
-> 
-> Please all; have a look where you haven't already.
-> 
-> 
-> New since v1:
-> 
->  - rebase on top of Frederic's rcu-context-tracking rename fest
->  - more omap goodness as per the last discusion (thanks Tony!)
->  - removed one more RCU_NONIDLE() from arm64/risc-v perf code
->  - ubsan/kasan fixes
->  - intel_idle module-param for testing
->  - a bunch of extra __always_inline, because compilers are silly.
 
-Except for those I have already tagged as Reviewed:
+--t7qtwrwrycq26mkn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Hi Stephen,
 
-Thanks for the hard work!
+On Sat, Sep 17, 2022 at 01:31:35AM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-09-02 07:53:05)
+> >=20
+> > I believe this series fixes a number of real bugs in the CCF, in
+> > addition to extending quite a lot the unit test coverage of the
+> > framework. But if you just don't care, please just say so. I really
+> > don't want to waste any more time rebasing and sending that series, and
+> > pinging you on a regular basis if it's not going anywhere.
+> >=20
+>=20
+> I've merged the patch series to clk-next. If things go sideways in the
+> next week we can figure out what to do. Thanks for sticking with it!
+
+It looks like you picked it up in a separate branch, but didnt't
+merge/push the merge into clk-next?
+
+Maxime
+
+--t7qtwrwrycq26mkn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYymzlQAKCRDj7w1vZxhR
+xT89AQDkmczRHXK2m6Yl3O6e8YICHbEjqCxajyKYaz4dfSIzugEArd2c5hquVu1x
+eP/+s76HZMpycBsHZ3Bfds+sDKIhiAE=
+=milo
+-----END PGP SIGNATURE-----
+
+--t7qtwrwrycq26mkn--
