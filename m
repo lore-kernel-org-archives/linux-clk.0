@@ -2,128 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21DCC6FA8B
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD35CC54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbiITMji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 08:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        id S231309AbiITMw7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 08:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231190AbiITMja (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:39:30 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2437539A;
-        Tue, 20 Sep 2022 05:39:26 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id A69536601F6E;
-        Tue, 20 Sep 2022 13:39:24 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663677565;
-        bh=M8V14kKBz9Y4qj+qdqKf+M0F+261VAS+silgfIoh22c=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=KQrXjJj+1mIerapret9wmIZjsyR2pudGcqvjn3bagbc6CHFmWQcA0+n79FaYD9pr2
-         QBZK6F/UpzO2so9gVSTYES4XcISQVHKoif+Oe6F2fbdOdUNJIeK7lojGFQt3cpgZpD
-         ZIFHP5bv4bq24c9SQMs3xQkv+cUiOlBqGr73/HyBjOEXayYltoiwq5AEXJNAMrZ6nW
-         VsZG+RTilXzl1JN98y3RFUSV5sruzH9nFqMliQScAuiCfVwXmLq1AONd29D7sDl1oO
-         mHycLJWXk7aFifUf7AHjuiV2qxWJl/B7WckQtcaZSm1bF0MF3cBuaqGfBkhVLGBsTd
-         hiKGTI2BOmoTQ==
-Message-ID: <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
-Date:   Tue, 20 Sep 2022 14:39:21 +0200
+        with ESMTP id S230373AbiITMw5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:52:57 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EC76C130;
+        Tue, 20 Sep 2022 05:52:56 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id D0D723200A08;
+        Tue, 20 Sep 2022 08:52:54 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 20 Sep 2022 08:52:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1663678374; x=1663764774; bh=yTlflAyOUF
+        EqTJEaTdC+96VGs2mVc7ugO0+0lZWQg2U=; b=H6M/gJpSlbKCZd/GdDoOoo1Qjc
+        XyEKmSV3x9jatUq1YyLH0TQTkc17SPVxw2NQ6G4b3Z1gZ+4AsmpaAJ+Bn3L1aXFn
+        2pLPC/Ff+hr8esFrYWvOXC9MbkoAYhjGQmNjXKkVPtI+NPJ1HGQxwLs5fytRlUF5
+        vkIlUth54gv7IWn4X9a0GEjX5V2607FoEkFrvAXAXpLcmJzmVSPzb5GHZwCsoNYG
+        YKfsO6ZoQU7JSKb0EGu06eq23TTQrNYQg+zjbQ3MSGOIBNROvimJo5lhF69PQ506
+        oF66VGiur5Y9QhnLZdoVyomIr7BdhAW9zXE7ANg2XCohuUVJI67Wht+rmBVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1663678374; x=1663764774; bh=yTlflAyOUFEqT
+        JEaTdC+96VGs2mVc7ugO0+0lZWQg2U=; b=toIdzmZ0aH158pNAkNigqiSNmS4tN
+        x1kN7uA9KnLhEaEiI20Nmw30730yC+5Kq3SfgsGhcF8PbvXdQ1yuMaoj8SbRf43t
+        HnT0621dgVsK8ZhcIr1bZkwTKLTd5LALjdfgRYxvroem9xwZw/3y3aSikXK6cH17
+        P9NDm9E6rESOO+y4iJ8mFqZb0QeZ80wvGixFw5SX7UCIBLdm0HL5xFcoXRnYnMAM
+        QJQZ8J2g8m376WWvuWfpphKQ9ts/WvMMLmeu9JkPfdkIN5JUFYlycj2BJnyRFApq
+        XGqse/9JXNDZbHviz/baVvOBUOeTv7+fP9tGvR/ojkF+gcldpgIF7q4DQ==
+X-ME-Sender: <xms:pbcpY3juFeVJ3fb8xAsHzK544zSjhTLN2_nJVvNZ4GLbsPts3MUofg>
+    <xme:pbcpY0B1LG01L_7tUNZBVKNQrore1uDRx02J0wSgRtmc4MnK2mjPzlJiJdQrjqe4t
+    EkshVFcsq_lfhk5sT4>
+X-ME-Received: <xmr:pbcpY3HEpfsZSNLjpfVl2LDAsFNjTUWeS1fa0K1GumvYQbsduKjAf7yvSB6h>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvledgheekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepufggtgfghfffkffvvefosehtkeertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleeuveetteffvdevlefgffelgeduueefleevfedvudegheekfeekheejieek
+    gedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:pbcpY0SWIW8i9uIykmatpvIvuk1Q-47KILBQqj6d2Je91uhUBF9hWg>
+    <xmx:pbcpY0zXQTk8fug1yO-6lsRe3qtoqpT6c4aKf9jNItOqd47Uv6iCaw>
+    <xmx:pbcpY66PbWsVKF40k46l2NSc5AL0EWqxQcTxROlXpBsyRbjfqPgqMA>
+    <xmx:prcpYwDP_8T5BkHA7O4q-PEK5yxcdUHxqkOz8oUvloNe3YWRBUMLlQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 20 Sep 2022 08:52:53 -0400 (EDT)
+Subject: [PATCH v2 0/7] drm/vc4: Fix the core clock behaviour
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
- support
-Content-Language: en-US
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mka@chromium.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
-        dianders@chromium.org, linux-clk@vger.kernel.org
-References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220920111517.10407-1-quic_rjendra@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-b4-tracking: H4sIAAu3KWMC/xXLQQ5FQAwA0KtI1ypVDP5txigayZBOIj8RdzeWb/FuSGIqCX7FDSaXJj1iBpcFhM
+ 3HVVDnbGBipqHu0E7FRf/Y7ugI6577xnXU8jhDPpNPgpP5GLZvXa4itODgeV6uj6ouagAAAA==
+From:   Maxime Ripard <maxime@cerno.tech>
+Date:   Tue, 20 Sep 2022 14:50:19 +0200
+Message-Id: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech>
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stephen Boyd <sboyd@kernel.org>, Emma Anholt <emma@anholt.net>,
+        Ray Jui <rjui@broadcom.com>, Maxime Ripard <mripard@kernel.org>
+Cc:     linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
+        dri-devel@lists.freedesktop.org, Maxime Ripard <maxime@cerno.tech>,
+        linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.10.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2654; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=Usxpco6HT+dQTlqIqrK9EZazz1b2NzHvAwZ5ALguFI8=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMma2/lKci8obSraqdT4JPT8aaZrb0WW/Tjan3kw3uaXbN3+
+ /gMhHaUsDGJcDLJiiiwxwuZL4k7Net3JxjcPZg4rE8gQBi5OAZjIN2WG/+HiPR+jXzcu0ZlmGbpzcU
+ Xc3JSSX91d3Q9eV2a5Bi71k2RkONl/605SfMe/TyIzA+R3X/A913Eigi9ySsEzxxsLLjAd5wMA
+X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/09/22 13:15, Rajendra Nayak ha scritto:
-> GDSCs cannot be transitioned into a Retention state in SW.
-> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
-> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
-> takes care of retaining the memory/logic for the domain when
-> the parent domain transitions to power collapse/power off state.
-> 
-> On some platforms where the parent domains lowest power state
-> itself is Retention, just leaving the GDSC in ON (without any
-> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
-> it to Retention.
-> 
-> The existing logic handling the PWRSTS_RET seems to set the
-> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
-> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
-> Fix that by leaving the GDSC in ON state.
-> 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
-> v3:
-> Updated changelog
-> 
-> There are a few existing users of PWRSTS_RET and I am not
-> sure if they would be impacted with this change
-> 
-> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
-> gdsc is actually transitioning to OFF and might be left
-> ON as part of this change, atleast till we hit system wide
-> low power state.
-> If we really leak more power because of this
-> change, the right thing to do would be to update .pwrsts for
-> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
-> I dont have a msm8974 hardware, so if anyone who has can report
-> any issues I can take a look further on how to fix it.
+Hi,
 
-I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
-used for the specific cases of SC7180 and SC7280 (and possibly others) where the
-GDSC is automatically transitioned to a Retention state by HW control, with no
-required software (kernel driver) intervention.
+Those patches used to be part of a larger clock fixes series:
+https://lore.kernel.org/linux-clk/20220715160014.2623107-1-maxime@cerno.tech/
 
-> 
-> 2. gpu_gx_gdsc in gpucc-msm8998.c and
->     gpu_gx_gdsc in gpucc-sdm660.c
-> Both of these seem to add support for 3 power state
-> OFF, RET and ON, however I dont see any logic in gdsc
-> driver to handle 3 different power states.
-> So I am expecting that these are infact just transitioning
-> between ON and OFF and RET state is never really used.
-> The ideal fix for them would be to just update their resp.
-> .pwrsts to PWRSTS_OFF_ON only.
+However, that series doesn't seem to be getting anywhere, so I've split out
+these patches that fix a regression that has been there since 5.18 and that
+prevents the 4k output from working on the RaspberryPi4.
 
-static int gdsc_init(struct gdsc *sc)
-{
+Hopefully, we will be able to merge those patches through the DRM tree to avoid
+any further disruption.
 
-	...
+Let me know what you think,
+Maxime
 
-	if (on || (sc->pwrsts & PWRSTS_RET))
-		gdsc_force_mem_on(sc);
-	else
-		gdsc_clear_mem_on(sc);
+To: Florian Fainelli <f.fainelli@gmail.com>
+To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+To: Ray Jui <rjui@broadcom.com>
+To: Scott Branden <sbranden@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Emma Anholt <emma@anholt.net>
+To: Maxime Ripard <mripard@kernel.org>
+To: David Airlie <airlied@linux.ie>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: Dom Cobley <popcornmix@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-	...
-}
+---
 
-On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
-left OFF from the bootloader, but we want (at least for 630/660) memretain
-without periph-retain: this is required to make the hypervisor happy.
+Changes in v2:
+- Dropped the clock patches, made an ad-hoc function in the firmware driver
+- Link to v1: https://lore.kernel.org/r/20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech
 
-Regards,
-Angelo
+---
+Dom Cobley (1):
+      drm/vc4: hdmi: Add more checks for 4k resolutions
 
+Maxime Ripard (6):
+      firmware: raspberrypi: Introduce rpi_firmware_find_node()
+      firmware: raspberrypi: Move the clock IDs to the firmware header
+      firmware: raspberrypi: Provide a helper to query a clock max rate
+      drm/vc4: hdmi: Fix hdmi_enable_4kp60 detection
+      drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection code
+      drm/vc4: Make sure we don't end up with a core clock too high
+
+ drivers/clk/bcm/clk-raspberrypi.c          | 18 -----------
+ drivers/firmware/raspberrypi.c             | 22 +++++++++++++
+ drivers/gpu/drm/vc4/vc4_drv.h              | 16 ++++++++++
+ drivers/gpu/drm/vc4/vc4_hdmi.c             | 25 ++++++++-------
+ drivers/gpu/drm/vc4/vc4_hdmi.h             |  8 -----
+ drivers/gpu/drm/vc4/vc4_hvs.c              | 26 +++++++++++++++
+ drivers/gpu/drm/vc4/vc4_kms.c              | 13 +++++---
+ include/soc/bcm2835/raspberrypi-firmware.h | 51 ++++++++++++++++++++++++++++++
+ 8 files changed, 136 insertions(+), 43 deletions(-)
+---
+base-commit: 521a547ced6477c54b4b0cc206000406c221b4d6
+change-id: 20220815-rpi-fix-4k-60-17273650429d
+
+Best regards,
+-- 
+Maxime Ripard <maxime@cerno.tech>
