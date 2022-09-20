@@ -2,125 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D07C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21DCC6FA8B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231268AbiITMgE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 08:36:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
+        id S229489AbiITMji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 08:39:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231266AbiITMfo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:35:44 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9F3754A3
-        for <linux-clk@vger.kernel.org>; Tue, 20 Sep 2022 05:35:41 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id DF2283200A07;
-        Tue, 20 Sep 2022 08:35:37 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 20 Sep 2022 08:35:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1663677337; x=1663763737; bh=X8Tn9L6l3u
-        YAQL0VchxRl1Blatny/U4vljuAmQh0HD8=; b=s6vjSTeqk+Y8mKMI1Ppr7HKP2y
-        q/fxwm+FUOt4y+FZmjIOF7Koa7HFsdIb951BRRKiub8XJBKuYYPdiEHRPEjqd3FH
-        CsUPXbq6nIXWDHq3AXxNG0fc547QE6mXW6LAiAESaT7ThCv4s9IyA/QJvYc4FGvj
-        6K+TKwcNCNnZXHOiiuNETGnDzK2LW9uc7/jJDoX8UXrpNXydr5xWcmCPXsJ5+hks
-        ugijEM84bZZ68akyrnT2pKbTbuILInHWG+isJ6UNxqMy5h5/Z4No5Bm7BhRqXM8p
-        FPS4E0aYU2MaxCK+5Yj9nxcnjiaFCoC6UdQ5USjyyotbbDFzD+29RDedWW8w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1663677337; x=1663763737; bh=X8Tn9L6l3uYAQL0VchxRl1Blatny
-        /U4vljuAmQh0HD8=; b=iwMXu6Yi/fhSOK1M+uALWfjQFH224pgtMeXG8ai1oqE/
-        bLtyqlqFo/uR4iibOBM6rIYPbzihnuNjUoJ1uuF8C8kQ4nY7Wtt8s1fxIKLbwksQ
-        BiDbYom/9U3KgKsVI/EotOAQxXB0fZkqqKzJpI/U8muoFxCJCalZd324rlZxQQQK
-        7Vcdayqw+D1d54S8Z4HQjTWT91L5lItMfYuPPSU1TI2uTCbqGpmUxEQZgPtd+AgP
-        7KHURe+Y6a+zEEEtwmuGGeYRKFvzCGpC5HHM3841oqK/AS623D6rfXWQ+C+7j8tD
-        ZXrshVvTtTVVfZ/sndMZlVnMin8+Z1Uyz0B0QCoorQ==
-X-ME-Sender: <xms:mLMpY1Qf2QtMew3clY3m3vsQk0f2QmWFUrYxC42XFzk6dLnScTzeWw>
-    <xme:mLMpY-zq_R6spgbf6Phe-z9rhQFkeS_3gXDHrv7sZ5S4q_LnjFNzZjXw9FslRMuyq
-    8ZkDsjNZDhnIin9FW0>
-X-ME-Received: <xmr:mLMpY61mHYQf1AEHvhwrag6_pHEMqgIRJUaBsC5iEmSD9mxXh8DTsHJVqLCg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvledgheegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
-    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:mLMpY9CRI52UJoRTpnyk_INBiYBeiQvEdOowNlFsSsj5Zq1FfIJKwQ>
-    <xmx:mLMpY-i5KeVHUZw58gtKsKy7_GHt5LxbAyHaMlTKQ21A4DfmcLjAMw>
-    <xmx:mLMpYxo0kSKFkPBtr7Axy3Fq6XB-noMyjvx_VUhrej9LIIwQwlICRw>
-    <xmx:mbMpY5PGgFydEt6fnM084J17xCa8-E7D0qrL8OTypRrjxjvK0DzpVg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Sep 2022 08:35:35 -0400 (EDT)
-Date:   Tue, 20 Sep 2022 14:35:33 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v9 00/25] clk: More clock rate fixes and tests
-Message-ID: <20220920123533.pr7vsfbugppuusrk@houat>
-References: <20220816112530.1837489-1-maxime@cerno.tech>
- <20220902145305.znvsrcrcjrpr343c@houat>
- <20220917083137.DBB5CC433C1@smtp.kernel.org>
+        with ESMTP id S231190AbiITMja (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:39:30 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2437539A;
+        Tue, 20 Sep 2022 05:39:26 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A69536601F6E;
+        Tue, 20 Sep 2022 13:39:24 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1663677565;
+        bh=M8V14kKBz9Y4qj+qdqKf+M0F+261VAS+silgfIoh22c=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KQrXjJj+1mIerapret9wmIZjsyR2pudGcqvjn3bagbc6CHFmWQcA0+n79FaYD9pr2
+         QBZK6F/UpzO2so9gVSTYES4XcISQVHKoif+Oe6F2fbdOdUNJIeK7lojGFQt3cpgZpD
+         ZIFHP5bv4bq24c9SQMs3xQkv+cUiOlBqGr73/HyBjOEXayYltoiwq5AEXJNAMrZ6nW
+         VsZG+RTilXzl1JN98y3RFUSV5sruzH9nFqMliQScAuiCfVwXmLq1AONd29D7sDl1oO
+         mHycLJWXk7aFifUf7AHjuiV2qxWJl/B7WckQtcaZSm1bF0MF3cBuaqGfBkhVLGBsTd
+         hiKGTI2BOmoTQ==
+Message-ID: <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
+Date:   Tue, 20 Sep 2022 14:39:21 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t7qtwrwrycq26mkn"
-Content-Disposition: inline
-In-Reply-To: <20220917083137.DBB5CC433C1@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+ support
+Content-Language: en-US
+To:     Rajendra Nayak <quic_rjendra@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mka@chromium.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
+        dianders@chromium.org, linux-clk@vger.kernel.org
+References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Il 20/09/22 13:15, Rajendra Nayak ha scritto:
+> GDSCs cannot be transitioned into a Retention state in SW.
+> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+> takes care of retaining the memory/logic for the domain when
+> the parent domain transitions to power collapse/power off state.
+> 
+> On some platforms where the parent domains lowest power state
+> itself is Retention, just leaving the GDSC in ON (without any
+> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
+> it to Retention.
+> 
+> The existing logic handling the PWRSTS_RET seems to set the
+> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
+> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
+> Fix that by leaving the GDSC in ON state.
+> 
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+> v3:
+> Updated changelog
+> 
+> There are a few existing users of PWRSTS_RET and I am not
+> sure if they would be impacted with this change
+> 
+> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+> gdsc is actually transitioning to OFF and might be left
+> ON as part of this change, atleast till we hit system wide
+> low power state.
+> If we really leak more power because of this
+> change, the right thing to do would be to update .pwrsts for
+> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+> I dont have a msm8974 hardware, so if anyone who has can report
+> any issues I can take a look further on how to fix it.
 
---t7qtwrwrycq26mkn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
+used for the specific cases of SC7180 and SC7280 (and possibly others) where the
+GDSC is automatically transitioned to a Retention state by HW control, with no
+required software (kernel driver) intervention.
 
-Hi Stephen,
+> 
+> 2. gpu_gx_gdsc in gpucc-msm8998.c and
+>     gpu_gx_gdsc in gpucc-sdm660.c
+> Both of these seem to add support for 3 power state
+> OFF, RET and ON, however I dont see any logic in gdsc
+> driver to handle 3 different power states.
+> So I am expecting that these are infact just transitioning
+> between ON and OFF and RET state is never really used.
+> The ideal fix for them would be to just update their resp.
+> .pwrsts to PWRSTS_OFF_ON only.
 
-On Sat, Sep 17, 2022 at 01:31:35AM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-09-02 07:53:05)
-> >=20
-> > I believe this series fixes a number of real bugs in the CCF, in
-> > addition to extending quite a lot the unit test coverage of the
-> > framework. But if you just don't care, please just say so. I really
-> > don't want to waste any more time rebasing and sending that series, and
-> > pinging you on a regular basis if it's not going anywhere.
-> >=20
->=20
-> I've merged the patch series to clk-next. If things go sideways in the
-> next week we can figure out what to do. Thanks for sticking with it!
+static int gdsc_init(struct gdsc *sc)
+{
 
-It looks like you picked it up in a separate branch, but didnt't
-merge/push the merge into clk-next?
+	...
 
-Maxime
+	if (on || (sc->pwrsts & PWRSTS_RET))
+		gdsc_force_mem_on(sc);
+	else
+		gdsc_clear_mem_on(sc);
 
---t7qtwrwrycq26mkn
-Content-Type: application/pgp-signature; name="signature.asc"
+	...
+}
 
------BEGIN PGP SIGNATURE-----
+On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
+left OFF from the bootloader, but we want (at least for 630/660) memretain
+without periph-retain: this is required to make the hypervisor happy.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYymzlQAKCRDj7w1vZxhR
-xT89AQDkmczRHXK2m6Yl3O6e8YICHbEjqCxajyKYaz4dfSIzugEArd2c5hquVu1x
-eP/+s76HZMpycBsHZ3Bfds+sDKIhiAE=
-=milo
------END PGP SIGNATURE-----
+Regards,
+Angelo
 
---t7qtwrwrycq26mkn--
