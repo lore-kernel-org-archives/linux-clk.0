@@ -2,110 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF197C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 11:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 770B4C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 11:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbiITLLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 07:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54402 "EHLO
+        id S229727AbiITLQC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 07:16:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230086AbiITLLn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 07:11:43 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193A912746;
-        Tue, 20 Sep 2022 04:11:42 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 119786601F41;
-        Tue, 20 Sep 2022 12:11:39 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663672300;
-        bh=QSpSDTgYCpqgFq+O5bVL9KBXyxjvk1qUR8EKvHpwW60=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=e/u8yuCL8pOpihKA+yEqSrBZAFKnJt1+3WV3WVVHWqL9sjeK0w/HabOuNuQjM5ZdG
-         a7yx0xVV0Ri3EbQUDUJB79KC+2BgDdTCFZAcP8hle6RbibPIhM2QkLe+1XSuPxbDv+
-         eApEkDjpEhr94a7oaqtQCp7ku5aaeR+33SmmLe5+f3Uqvs4sd4jjVjwLJf7/KxhqvU
-         m8ppQ/8kheumqjbVTxvLrw6/gPYzE2IW9m1aJcIOaaZ3pz5lqRcU+U4+kf5pSDc54s
-         pbIyF+h/9Cp2jLgufGA9GvqonCUrfDWqbvYM/TlXEuRZFJdSCpjzy+VtKTGAWYHBpO
-         Fk/H+Wtug4PTg==
-Message-ID: <b05f8687-8f34-c425-ed8e-56c8aeccdaf9@collabora.com>
-Date:   Tue, 20 Sep 2022 13:11:36 +0200
+        with ESMTP id S229590AbiITLQB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 07:16:01 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0494E6FA0D;
+        Tue, 20 Sep 2022 04:16:00 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28KB0HWW007387;
+        Tue, 20 Sep 2022 11:15:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=PoTT7rLq6kWSImDHRaFEIjlxRKHBE/QY5rFUGCmFcJE=;
+ b=iK6mbhJC6B8azSydtKZrC+pjNnSbANnvEhHSqk+Kt2+FKMnMZwp2s1TZRCKh06y+5WcT
+ G3B6+wiHycTAzMLPa2+1JUVjW85oQ/4jAlyN5X3BPm+vcqvFuQlnVazKbeXAx/mdX5e7
+ zoc+gEe/Gf3kONVdtxL5raLralihPL/HBYsrmEbuYZo3+WYiv0Pe7yPIeO0+0Agx4U+o
+ xJW4ie/0Ups7MuK/NyNo+GI6NJELY2FKMon4pUMtlh8XNgpGRFQ7vRPUdPFOKS7Xaaax
+ Wxvvu5I/wjVLw9m7Mo5lPAda221jQsAiTcup23mq03oingOQop6fQIue5HNSKMmMiL3C sQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jq4r09gu8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Sep 2022 11:15:52 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28KBFoGa008280
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Sep 2022 11:15:51 GMT
+Received: from blr-ubuntu-173.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 20 Sep 2022 04:15:46 -0700
+From:   Rajendra Nayak <quic_rjendra@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <mka@chromium.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
+        <dianders@chromium.org>, <linux-clk@vger.kernel.org>,
+        <angelogioacchino.delregno@collabora.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Subject: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET support
+Date:   Tue, 20 Sep 2022 16:45:15 +0530
+Message-ID: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v1 12/17] drm/mediatek: hdmi: mt8195: add audio support
-Content-Language: en-US
-To:     Guillaume Ranquet <granquet@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-12-4844816c9808@baylibre.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220919-v1-12-4844816c9808@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: y3Z4wARIr89kpMBMlGB9IJ1aZcXN44b0
+X-Proofpoint-GUID: y3Z4wARIr89kpMBMlGB9IJ1aZcXN44b0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-20_03,2022-09-16_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
+ definitions=main-2209200068
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
-> Add HDMI audio support for mt8195
-> 
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
-> index 39e07a6dd490..bb7593ea4c86 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
-> @@ -215,6 +215,26 @@ static void mtk_hdmi_hw_vid_black(struct mtk_hdmi *hdmi, bool black)
->   		mtk_hdmi_mask(hdmi, TOP_VMUTE_CFG1, 0, REG_VMUTE_EN);
->   }
->   
-> +static void mtk_hdmi_hw_aud_mute(struct mtk_hdmi *hdmi)
-> +{
-> +	u32 val;
-> +
-> +	val = mtk_hdmi_read(hdmi, AIP_CTRL, &val);
-> +
+GDSCs cannot be transitioned into a Retention state in SW.
+When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+takes care of retaining the memory/logic for the domain when
+the parent domain transitions to power collapse/power off state.
 
-val_tx = AUD_MUTE_FIFO_EN;
-if (val & DSD_EN)
-	val_tx |= DSD_MUTE_DATA;
+On some platforms where the parent domains lowest power state
+itself is Retention, just leaving the GDSC in ON (without any
+RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
+it to Retention.
 
-regmap_set_bits(regmap, AIP_TXCTRL, val_tx);
+The existing logic handling the PWRSTS_RET seems to set the
+RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
+but then explicitly turns the GDSC OFF as part of _gdsc_disable().
+Fix that by leaving the GDSC in ON state.
 
-Easier, shorter.
+Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+v3:
+Updated changelog
 
-> +	if (val & DSD_EN)
-> +		mtk_hdmi_mask(hdmi, AIP_TXCTRL,
-> +			      DSD_MUTE_DATA | AUD_MUTE_FIFO_EN,
-> +			      DSD_MUTE_DATA | AUD_MUTE_FIFO_EN);
-> +	else
-> +		mtk_hdmi_mask(hdmi, AIP_TXCTRL, AUD_MUTE_FIFO_EN,
-> +			      AUD_MUTE_FIFO_EN);
-> +}
+There are a few existing users of PWRSTS_RET and I am not
+sure if they would be impacted with this change
 
-Regards,
-Angelo
+1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+gdsc is actually transitioning to OFF and might be left
+ON as part of this change, atleast till we hit system wide
+low power state.
+If we really leak more power because of this
+change, the right thing to do would be to update .pwrsts for
+mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+I dont have a msm8974 hardware, so if anyone who has can report
+any issues I can take a look further on how to fix it.
+
+2. gpu_gx_gdsc in gpucc-msm8998.c and
+   gpu_gx_gdsc in gpucc-sdm660.c
+Both of these seem to add support for 3 power state
+OFF, RET and ON, however I dont see any logic in gdsc
+driver to handle 3 different power states.
+So I am expecting that these are infact just transitioning
+between ON and OFF and RET state is never really used.
+The ideal fix for them would be to just update their resp.
+.pwrsts to PWRSTS_OFF_ON only.
+
+ drivers/clk/qcom/gdsc.c | 10 ++++++++++
+ drivers/clk/qcom/gdsc.h |  5 +++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index d3244006c661..ccf63771e852 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -368,6 +368,16 @@ static int _gdsc_disable(struct gdsc *sc)
+ 	if (sc->pwrsts & PWRSTS_OFF)
+ 		gdsc_clear_mem_on(sc);
+ 
++	/*
++	 * If the GDSC supports only a Retention state, apart from ON,
++	 * leave it in ON state.
++	 * There is no SW control to transition the GDSC into
++	 * Retention state. This happens in HW when the parent
++	 * domain goes down to a Low power state
++	 */
++	if (sc->pwrsts == PWRSTS_RET_ON)
++		return 0;
++
+ 	ret = gdsc_toggle_logic(sc, GDSC_OFF);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 5de48c9439b2..981a12c8502d 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -49,6 +49,11 @@ struct gdsc {
+ 	const u8			pwrsts;
+ /* Powerdomain allowable state bitfields */
+ #define PWRSTS_OFF		BIT(0)
++/*
++ * There is no SW control to transition a GDSC into
++ * PWRSTS_RET. This happens in HW when the parent
++ * domain goes down to a low power state
++ */
+ #define PWRSTS_RET		BIT(1)
+ #define PWRSTS_ON		BIT(2)
+ #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+-- 
+2.17.1
 
