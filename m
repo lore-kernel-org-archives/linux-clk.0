@@ -2,95 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B355DC54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 09:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261F7C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 10:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231559AbiITJT5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 05:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41946 "EHLO
+        id S230331AbiITKSx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 06:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231613AbiITJTr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 05:19:47 -0400
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B492668;
-        Tue, 20 Sep 2022 02:19:39 -0700 (PDT)
-Received: (Authenticated sender: jacopo@jmondi.org)
-        by mail.gandi.net (Postfix) with ESMTPSA id 59911200014;
-        Tue, 20 Sep 2022 09:19:35 +0000 (UTC)
-Date:   Tue, 20 Sep 2022 11:19:33 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>, mchehab@kernel.org,
-        laurent.pinchart+renesas@ideasonboard.com, akinobu.mita@gmail.com,
-        jacopo+renesas@jmondi.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] media: mt9m111: add V4L2_CID_LINK_FREQ support
-Message-ID: <20220920091933.kokk4le3cxpw4hvp@lati>
-References: <20220916135713.143890-1-m.felsch@pengutronix.de>
- <YyhjpxHHFR4u+k+X@paasikivi.fi.intel.com>
- <20220919130829.ddoe2ajnrarkywgy@pengutronix.de>
- <YyhsQ+l1Sls00F0M@paasikivi.fi.intel.com>
- <20220920085617.7cfflloegh7en4mj@pengutronix.de>
+        with ESMTP id S230143AbiITKSw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 06:18:52 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36CFE6D9CA;
+        Tue, 20 Sep 2022 03:18:50 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1FA956600368;
+        Tue, 20 Sep 2022 11:18:47 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1663669128;
+        bh=B7xp7LNcnfbdR5oIkfuWVwdzNL7IbuXIGjam7V0vK40=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=SaWh1AMtnitMfo9coVDZcsdbltKYBYXw1LJst710ha2g5XKkVzVvVVl3mkwpxxGgm
+         FthnwnKgggKvZyl2L4nVuOYLOoub08A7CWFtDfYuO0n39YHGmR+N89bIZ9WBXTkFfh
+         /z+1CbJhG5nCl6CQS318lSxAGSRxzRwG8pTE8k5bw0LHZhqk3cFrB59Skd3+l7bnlS
+         Nmg6BNozuvtjwsD94fpJMY90oSG3pr5dVxXqS3/fzpUoNpBsct05N4mWFKrVqR51ab
+         xaS5ot7qE+WxpH0LABFAaBp0eYFgvd3dJUPoITu1R6pvxN3hLVfvgDL+LXTZwwaZ4K
+         ewVvTrcPWH7vw==
+Message-ID: <32c4822a-a094-5fa3-c2af-e515bf897937@collabora.com>
+Date:   Tue, 20 Sep 2022 12:18:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220920085617.7cfflloegh7en4mj@pengutronix.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v1 05/17] drm/mediatek: hdmi: use a syscon/regmap instead
+ of iomem
+Content-Language: en-US
+To:     Guillaume Ranquet <granquet@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+References: <20220919-v1-0-4844816c9808@baylibre.com>
+ <20220919-v1-5-4844816c9808@baylibre.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220919-v1-5-4844816c9808@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello
+Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
+> To prepare support for newer chips that need to share their address
+> range with a dedicated ddc driver, move to a syscon.
+> 
+> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> index 3196189429bc..5cd05d4fe1a9 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
 
-On Tue, Sep 20, 2022 at 10:56:17AM +0200, Marco Felsch wrote:
-> Hi Sakari,
->
-> On 22-09-19, Sakari Ailus wrote:
->
-> ...
->
-> > > > > +	ret = clk_prepare_enable(mt9m111->clk);
-> > > > > +	if (ret < 0)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	extclk_rate = clk_get_rate(mt9m111->clk);
-> > > > > +	clk_disable_unprepare(mt9m111->clk);
-> > > >
-> > > > I don't think you'll need to enable a clock to just get its frequency.
-> > >
-> > > The official API states that you need to turn on the clk before
-> > > requesting it and it makes sense. Also there is a new helper
-> > > devm_clk_get_enabled() which addresses simple clk usage since most of
-> > > drivers don't enable it before requesting the rate.
+..snip..
 
-Had the same question on v1 and Marco pointed me to the clk_get_rate()
-documentation
-https://elixir.bootlin.com/linux/v6.0-rc1/source/include/linux/clk.h#L682
+> @@ -1428,7 +1413,6 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+>   	struct device_node *cec_np, *remote, *i2c_np;
+>   	struct platform_device *cec_pdev;
+>   	struct regmap *regmap;
+> -	struct resource *mem;
+>   	int ret;
+>   
+>   	ret = mtk_hdmi_get_all_clk(hdmi, np);
+> @@ -1474,8 +1458,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+>   	}
+>   	hdmi->sys_regmap = regmap;
+>   
+> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	hdmi->regs = devm_ioremap_resource(dev, mem);
+> +	hdmi->regs = syscon_node_to_regmap(dev->of_node);
 
-which indeed specifies
-"This is only valid once the clock source has been enabled."
+Nack. You're breaking ABI, this will force everyone to add syscon to devicetree,
+hence this breaks retrocompatibility with old devicetrees.
 
-However none (or very few) of the linux-media i2c drivers actually do
-that.
+Hint: not here, device_node_to_regmap()
 
-I have added in cc the clk framework maintainer to see if he can help
-shed some light on this
+Regards,
+Angelo
+
+>   	if (IS_ERR(hdmi->regs)) {
+>   		ret = PTR_ERR(hdmi->regs);
+>   		goto put_device;
 
 
-> >
-> > I guess the rate could change in the meantime, unless exclusive access is
-> > requested.
->
-> Not only that, there are a bunch of clk provider hw around which may
-> need to turned on first. Anyway, I really don't care on this topic. As
-> I said I wanted to fullfil the API and if drop clk_prepare_enable() I
-> don't. So if this okay for you I will go that way.
->
-> > The clock framework currently doesn't offer a way to set the assigned
-> > rate and prevent changing it. But above, couldn't the clock frequency
-> > be changed again once the clock has been disabled?
->
-> Yes it could.
->
-> Regards,
->   Marco
