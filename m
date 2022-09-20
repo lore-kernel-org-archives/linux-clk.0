@@ -2,151 +2,167 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8523ECAAD8
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 12:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F06ECAAD8
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Sep 2022 13:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231407AbiITMy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 08:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50012 "EHLO
+        id S230492AbiITNkW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Sep 2022 09:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231392AbiITMxy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 08:53:54 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6EB76465;
-        Tue, 20 Sep 2022 05:53:31 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 42659320096D;
-        Tue, 20 Sep 2022 08:53:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 20 Sep 2022 08:53:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; t=1663678407; x=
-        1663764807; bh=bznVlAm7CcwW9vUQI8XUe6+ILjJSwqZMClSNEtYWnA0=; b=A
-        sKMnczh+2BDL5xM7Pns5gd6SDZYEktsEDc/vVkS4rEjfxNoDnlh54KLAqZoj+RUC
-        5e0LP628Bcs6VyT54Kry52Ve8eIA3Bf4KE4PrsrnDHBzWm3cnORgNIVHr2bT2PO6
-        4EmG4R3iqwawCgeyJOyYhJuz1B3r0Y3eOfwJHBkuO73t+Ja7KYJD7TNJzwOYpLVS
-        xpmIGyixS3vjMzevFdRQWST1uci5Ct/exPmw6MgHQK/qLXa/YYqdCYK3Q7iiAN3a
-        fqgfB8YqkFh4yJmzHL6SFjPnvwIUgpiOsU4owhRrqbjsYrU9xs28w6D6KWBGyodd
-        po53ovDXB6sJmwrMg0qqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1663678407; x=
-        1663764807; bh=bznVlAm7CcwW9vUQI8XUe6+ILjJSwqZMClSNEtYWnA0=; b=X
-        sOjUiFRSJbBFqt7qfe9eyPPr/XCQIHIOAKYEMuQi2fdOPzzz8aafL6iJ0csi85EU
-        NeLlCVajKAFgCsKioZt19cgvn+0i3SmuUkPYJUaUxYhFJ4oXUFshnUO4he09djAJ
-        85q8mM3oEjJo/hbTlsMNmRELyVHCtzPpKT56yahoJ+h3w63DyldkbVTaRSX1RMhE
-        T+sTCJ56+uJAMhlC0+5s5/6qLDEzXdiJDCYqblMhK9wFIQqaOv1t4XpVWt9odgOS
-        ZZi1IGFxKvk6loq0bXG1CUb21QyPxgW2BwWrNG1GNQpUYMLtntgD6ptlBnI1rO1e
-        /ZqoJIR+oVd1B3RSRmXuA==
-X-ME-Sender: <xms:x7cpYw1zvq7HoFqX6KleUDWqkxUedlt6ycTABqWgyRA3E5kL1X8a_w>
-    <xme:x7cpY7HGZiCCgk4MEhTh3LfsnkPFOJC2Ft6UF0Ly0gAdKV73t0MccRyhLbqWH0w_K
-    _MH6y5Le2D68iuDptU>
-X-ME-Received: <xmr:x7cpY4730cJZ7jElNSEVuc_PtfOfugaVaA1of_nRMrEh727PdvsQWOJpc_xr>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvledgheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepudduudfhveejteefgedvffdvvedvjedugedukeejhedtlefhffevtefh
-    jeeltdevnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:x7cpY51nmzdsj5QbGRT8xUC5jW3gyIOpZfJj_gr3LBWuy3fJ_WfDMA>
-    <xmx:x7cpYzHwQTP1RyydUlFbYPn3V4IXD6-An9QTYoanL053LvCeF6v9JA>
-    <xmx:x7cpYy_n8Xze-9LjO2BPP0ms3PXjnv4G3Rz58Z_602f1MTVD20ZnXw>
-    <xmx:x7cpY9FDKz-3kHbfhiScGdgD9ntDhBL96C9m0UUbvRl-omB3uFmQDw>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Sep 2022 08:53:27 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 20 Sep 2022 14:50:20 +0200
-Subject: [PATCH v2 1/7] firmware: raspberrypi: Introduce rpi_firmware_find_node()
+        with ESMTP id S230352AbiITNkV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 09:40:21 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240ABA44C;
+        Tue, 20 Sep 2022 06:40:18 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28K7xowN027936;
+        Tue, 20 Sep 2022 13:40:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=b1e3AHVC/0qp/VyT6Kx+8h82x7dGKfCvUhxUV/Y/EOE=;
+ b=KDgzzngk6WbDknh/pq/FupkNn2VGr22gzu1UVubtoAW+TZEAscWPklHaSUv57iWL39Sw
+ VnxpJSIyBBgH2HnDG0kdKx+cGkT43qmUhDF2DWiLaMnf3hbrzkc0s+Hp5INkvHYzt4fr
+ XPUfUKWVfA8W9COhx3hO/eKQPzYf9UcKOG+65gS3EThObvezbQjFT6vFTaSv6saBycvx
+ p1ThXULOheVi7XthoeeJWSKU1ijzpGEkP9Qau9vkZCFV8B03gVLW4QJR47dzgavBUlS2
+ xX4ocGFNvKc7aOH44pVqaxl8XYQAvTI9O1USYOTv4H7jZ93uvJZP8+fyQbwaT2wPkWzI 2A== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jpx50b3a0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Sep 2022 13:40:06 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28KDe5Y8014533
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Sep 2022 13:40:05 GMT
+Received: from [10.216.12.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 20 Sep
+ 2022 06:40:00 -0700
+Message-ID: <096205ee-2c8a-facf-87ce-2309c63d2400@quicinc.com>
+Date:   Tue, 20 Sep 2022 19:09:56 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+ support
+Content-Language: en-US
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <mka@chromium.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
+        <dianders@chromium.org>, <linux-clk@vger.kernel.org>
+References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+ <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
+From:   Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20220815-rpi-fix-4k-60-v2-1-983276b83f62@cerno.tech>
-References: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech>
-In-Reply-To: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech>
-To:     Daniel Vetter <daniel@ffwll.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Boyd <sboyd@kernel.org>, Emma Anholt <emma@anholt.net>,
-        Ray Jui <rjui@broadcom.com>, Maxime Ripard <mripard@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
-        dri-devel@lists.freedesktop.org, Maxime Ripard <maxime@cerno.tech>,
-        linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.10.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2058; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=sPYmav9OfSnKW2AKxDc1YspDgs/8ZuYriYV4H73zKeE=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMma2/nUStbW2dvqKh7+InZYRUJb3HGb4tu1zj1sN6e/jttj
- aZreUcrCIMbFICumyBIjbL4k7tSs151sfPNg5rAygQxh4OIUgIlk3mBkmFAcxfuX74pIYrZNyaWkn4
- VhvfInT0/x0D20Zu6Zm/MFBBj+B+7pM/pjtPlmbfz90J/bzUrmn15gNf+5XLnHlzutVVuYWAE=
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oXxF8KOKMmDWv1zlFj3L9Hbgv8UgGvK-
+X-Proofpoint-GUID: oXxF8KOKMmDWv1zlFj3L9Hbgv8UgGvK-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-20_05,2022-09-20_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ adultscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209200080
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A significant number of RaspberryPi drivers using the firmware don't
-have a phandle to it, so end up scanning the device tree to find a node
-with the firmware compatible.
 
-That code is duplicated everywhere, so let's introduce a helper instead.
+On 9/20/2022 6:09 PM, AngeloGioacchino Del Regno wrote:
+> Il 20/09/22 13:15, Rajendra Nayak ha scritto:
+>> GDSCs cannot be transitioned into a Retention state in SW.
+>> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+>> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+>> takes care of retaining the memory/logic for the domain when
+>> the parent domain transitions to power collapse/power off state.
+>>
+>> On some platforms where the parent domains lowest power state
+>> itself is Retention, just leaving the GDSC in ON (without any
+>> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
+>> it to Retention.
+>>
+>> The existing logic handling the PWRSTS_RET seems to set the
+>> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
+>> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
+>> Fix that by leaving the GDSC in ON state.
+>>
+>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+>> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>> v3:
+>> Updated changelog
+>>
+>> There are a few existing users of PWRSTS_RET and I am not
+>> sure if they would be impacted with this change
+>>
+>> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+>> gdsc is actually transitioning to OFF and might be left
+>> ON as part of this change, atleast till we hit system wide
+>> low power state.
+>> If we really leak more power because of this
+>> change, the right thing to do would be to update .pwrsts for
+>> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+>> I dont have a msm8974 hardware, so if anyone who has can report
+>> any issues I can take a look further on how to fix it.
+> 
+> I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
+> used for the specific cases of SC7180 and SC7280 (and possibly others) where the
+> GDSC is automatically transitioned to a Retention state by HW control, with no
+> required software (kernel driver) intervention.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Having a PWRSTS_RET_HW_CTRL flag would make sense if there was also a
+PWRSTS_RET_SW_CTRL way of achieving Retention state, but FWIK there isn't.
+I am sure that's the way it is on 8974 as well, I just don't have hardware to
+confirm.
 
-diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-index 4b8978b254f9..b916e1e171f8 100644
---- a/drivers/firmware/raspberrypi.c
-+++ b/drivers/firmware/raspberrypi.c
-@@ -311,6 +311,13 @@ static int rpi_firmware_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct of_device_id rpi_firmware_of_match[];
-+struct device_node *rpi_firmware_find_node(void)
-+{
-+	return of_find_matching_node(NULL, rpi_firmware_of_match);
-+}
-+EXPORT_SYMBOL_GPL(rpi_firmware_find_node);
-+
- /**
-  * rpi_firmware_get - Get pointer to rpi_firmware structure.
-  * @firmware_node:    Pointer to the firmware Device Tree node.
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index 811ea668c4a1..63426082bcb9 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -142,6 +142,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
- int rpi_firmware_property_list(struct rpi_firmware *fw,
- 			       void *data, size_t tag_size);
- void rpi_firmware_put(struct rpi_firmware *fw);
-+struct device_node *rpi_firmware_find_node(void);
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
- struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
- 					   struct device_node *firmware_node);
-@@ -159,6 +160,12 @@ static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
- }
- 
- static inline void rpi_firmware_put(struct rpi_firmware *fw) { }
-+
-+static inline struct device_node *rpi_firmware_find_node(void)
-+{
-+	return NULL;
-+}
-+
- static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
- {
- 	return NULL;
+> 
+>>
+>> 2. gpu_gx_gdsc in gpucc-msm8998.c and
+>>     gpu_gx_gdsc in gpucc-sdm660.c
+>> Both of these seem to add support for 3 power state
+>> OFF, RET and ON, however I dont see any logic in gdsc
+>> driver to handle 3 different power states.
+>> So I am expecting that these are infact just transitioning
+>> between ON and OFF and RET state is never really used.
+>> The ideal fix for them would be to just update their resp.
+>> .pwrsts to PWRSTS_OFF_ON only.
+> 
+> static int gdsc_init(struct gdsc *sc)
+> {
+> 
+>      ...
+> 
+>      if (on || (sc->pwrsts & PWRSTS_RET))
+>          gdsc_force_mem_on(sc);
+>      else
+>          gdsc_clear_mem_on(sc);
+> 
+>      ...
+> }
+> 
+> On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
+> left OFF from the bootloader, but we want (at least for 630/660) memretain
+> without periph-retain: this is required to make the hypervisor happy.
 
--- 
-b4 0.10.0
+Ideally setting the memretain bits while the GDSC is OFF should have no affect
+at all. Is this for the gpu_gx_gdsc on 630/660? Is this needed only at the init
+time (when the bootloader has left it OFF) or is it needed everytime the kernel
+turns it OFF too?
+How did we come up with this trick to keep the hypervisor happy, was it picked
+up from some downstream reference code?
+
+> 
+> Regards,
+> Angelo
+> 
