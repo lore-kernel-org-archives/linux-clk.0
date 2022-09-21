@@ -2,159 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2260AC6FA82
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 07:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4C7ECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 08:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiIUHv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 03:51:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53608 "EHLO
+        id S231346AbiIUIBd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 04:01:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231128AbiIUHvT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 03:51:19 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E6BF85F99;
-        Wed, 21 Sep 2022 00:51:10 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id EE2A86601FFC;
-        Wed, 21 Sep 2022 08:51:07 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663746668;
-        bh=BNV50hEdKXctIBRcQ+PptlssxFpSxId9klX7ELMc9cg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=fqBbICgEmlslGqp+WPNr9vxlOrn61Ws1p1ZaC7NvtoTORIu4Lm+L9LzDRNti66UYM
-         ao0YF+I8tHNRjFZzZmbA9PH5B2c8dm5l97gINKjjYgY3yBs/kQndbLxaG9jmnbFqCO
-         ZLZ33It1SYQmu3TOJCujlWvXCpGXTPZXlnCm7VXSdbrJvm8FWOIPcTyhS1hrsbJ2f1
-         ElUUmpKCl3Tqe3hF6Gie3fPKj7ygyCYTpJTJvhVzp7o5xoxauuiFF6L4SY67/8WDyl
-         3sDYINIDWolIr4o9rYUvsXHWG2KV4FBNG4/yr2MvMeUrfu1sdd5ZboEEIeZ7gysgjK
-         aNtfM9ccVeBqw==
-Message-ID: <1a845259-fce2-d239-588b-a70ea5b19680@collabora.com>
-Date:   Wed, 21 Sep 2022 09:51:04 +0200
+        with ESMTP id S230116AbiIUIBU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 04:01:20 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581028688F;
+        Wed, 21 Sep 2022 01:01:08 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id l8so3852215wmi.2;
+        Wed, 21 Sep 2022 01:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=P1brdYL05ONOqQ4UPTBlIuUKc3UGGvzkcC42vcfAOXE=;
+        b=Tp4x8+lc/Y0D2Kel7La5a943urpZ+ieIGWh3yhiz3eDUFYePzoFJAP+2ndSSKxnJc5
+         m0ZqC1mtwCT6x+pe9R3oHcQzEfozq5zeFVC34kNQr4FG6FiBOYlf9ypDV4QWUduETurm
+         lShJkM84+xebPK4MDDXeqH4re1appi8FSIbj4Ee9v3gWWGJFj9Z8bl4dKMMeytNT7f07
+         kWITGFlBX8XBTWO0wKsbXcpZWiofRHjNOd+jg3WK9bfCGPfVbCIIw94BeC6KX7579CZ5
+         YId80/1v43hxBsyfMtCpvZaDEsCh5vHEUBCJO/JVo/wgrXV31E304zh5RvEY3wTTNK75
+         X69w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=P1brdYL05ONOqQ4UPTBlIuUKc3UGGvzkcC42vcfAOXE=;
+        b=TuwxoGCB/cOLWmv6/Z8EiqJDSIOsa5OZ2gHxBjHZ2RmIdLMRiMwXlRVSGuujtKcoFD
+         fjoEx7deOsPTYaLa5zBi4hwoqbxpj5q9yGbgdvc8q1IzuVTT4oH7rZlhnDvZtQnIWiMc
+         Q/3RB7R2p2hGB7s+UbW017/UdY4mvVK01lUj2Mb54oK1l4jWK0tPMI3Gr8SqniklNDOi
+         yfLUeJyOxl1RAfq757itj9/ZNpt3EjOr3mNs1ut/6ydVU26Dtde9m2tEtG1gn5Oejjd7
+         1Pves7OsBuZFcvdQ/X5LNDiAK/plR56mi16LrpyjQD3MrhS4CxdxDav0Zvf9hBvBKDRB
+         fGGQ==
+X-Gm-Message-State: ACrzQf0hiLyj6eA8bZlKdGmYzHd000MCLM/o49SW4lWHowOik917VQpt
+        sPQ4IqGzNlOBkKFEpKpNFFE=
+X-Google-Smtp-Source: AMsMyM7T6I+upU/Mrkb86ceE1LroMuK/me1ZMw8e9uVVDpvwEa3joBeBaHLI5M5hUMpecZQvqzhOhA==
+X-Received: by 2002:a05:600c:4e89:b0:3b4:8648:c4e1 with SMTP id f9-20020a05600c4e8900b003b48648c4e1mr4993677wmq.26.1663747266639;
+        Wed, 21 Sep 2022 01:01:06 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:a137:83be:d4a3:8e44])
+        by smtp.gmail.com with ESMTPSA id n24-20020a1c7218000000b003a8434530bbsm1968410wmc.13.2022.09.21.01.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Sep 2022 01:01:06 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: rzg2l: Fix typo in function name
+Date:   Wed, 21 Sep 2022 09:00:51 +0100
+Message-Id: <20220921080051.5604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
- support
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mka@chromium.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
-        dianders@chromium.org, linux-clk@vger.kernel.org
-References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
- <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
- <096205ee-2c8a-facf-87ce-2309c63d2400@quicinc.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <096205ee-2c8a-facf-87ce-2309c63d2400@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/09/22 15:39, Rajendra Nayak ha scritto:
-> 
-> On 9/20/2022 6:09 PM, AngeloGioacchino Del Regno wrote:
->> Il 20/09/22 13:15, Rajendra Nayak ha scritto:
->>> GDSCs cannot be transitioned into a Retention state in SW.
->>> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
->>> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
->>> takes care of retaining the memory/logic for the domain when
->>> the parent domain transitions to power collapse/power off state.
->>>
->>> On some platforms where the parent domains lowest power state
->>> itself is Retention, just leaving the GDSC in ON (without any
->>> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
->>> it to Retention.
->>>
->>> The existing logic handling the PWRSTS_RET seems to set the
->>> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
->>> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
->>> Fix that by leaving the GDSC in ON state.
->>>
->>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
->>> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>> ---
->>> v3:
->>> Updated changelog
->>>
->>> There are a few existing users of PWRSTS_RET and I am not
->>> sure if they would be impacted with this change
->>>
->>> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
->>> gdsc is actually transitioning to OFF and might be left
->>> ON as part of this change, atleast till we hit system wide
->>> low power state.
->>> If we really leak more power because of this
->>> change, the right thing to do would be to update .pwrsts for
->>> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
->>> I dont have a msm8974 hardware, so if anyone who has can report
->>> any issues I can take a look further on how to fix it.
->>
->> I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
->> used for the specific cases of SC7180 and SC7280 (and possibly others) where the
->> GDSC is automatically transitioned to a Retention state by HW control, with no
->> required software (kernel driver) intervention.
-> 
-> Having a PWRSTS_RET_HW_CTRL flag would make sense if there was also a
-> PWRSTS_RET_SW_CTRL way of achieving Retention state, but FWIK there isn't.
-> I am sure that's the way it is on 8974 as well, I just don't have hardware to
-> confirm.
-> 
->>
->>>
->>> 2. gpu_gx_gdsc in gpucc-msm8998.c and
->>>     gpu_gx_gdsc in gpucc-sdm660.c
->>> Both of these seem to add support for 3 power state
->>> OFF, RET and ON, however I dont see any logic in gdsc
->>> driver to handle 3 different power states.
->>> So I am expecting that these are infact just transitioning
->>> between ON and OFF and RET state is never really used.
->>> The ideal fix for them would be to just update their resp.
->>> .pwrsts to PWRSTS_OFF_ON only.
->>
->> static int gdsc_init(struct gdsc *sc)
->> {
->>
->>      ...
->>
->>      if (on || (sc->pwrsts & PWRSTS_RET))
->>          gdsc_force_mem_on(sc);
->>      else
->>          gdsc_clear_mem_on(sc);
->>
->>      ...
->> }
->>
->> On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
->> left OFF from the bootloader, but we want (at least for 630/660) memretain
->> without periph-retain: this is required to make the hypervisor happy.
-> 
-> Ideally setting the memretain bits while the GDSC is OFF should have no affect
-> at all. Is this for the gpu_gx_gdsc on 630/660? Is this needed only at the init
-> time (when the bootloader has left it OFF) or is it needed everytime the kernel
-> turns it OFF too?
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Even though I don't remember the flow in a clear way (this entire thing was done
-years ago), I'm sure that for PWRSTS_OFF memretain can be cleared, so, the current
-flow that we have in gdsc.c does work correctly.
+Fix typo, rzg2l_mod_clock__get_sibling -> rzg2l_mod_clock_get_sibling
 
-Ideally, I agree with you that the memretain bits should have no effect at all
-while the GDSC is OFF, but that's the situation on these platforms.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> How did we come up with this trick to keep the hypervisor happy, was it picked
-> up from some downstream reference code?
-
-Yes, it was found in various releases of the downstream kernel for 8998/630/660.
-
-> 
->>
->> Regards,
->> Angelo
->>
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 3ff6ecd61756..16beec2e3061 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1014,8 +1014,8 @@ static const struct clk_ops rzg2l_mod_clock_ops = {
+ };
+ 
+ static struct mstp_clock
+-*rzg2l_mod_clock__get_sibling(struct mstp_clock *clock,
+-			      struct rzg2l_cpg_priv *priv)
++*rzg2l_mod_clock_get_sibling(struct mstp_clock *clock,
++			     struct rzg2l_cpg_priv *priv)
+ {
+ 	struct clk_hw *hw;
+ 	unsigned int i;
+@@ -1101,7 +1101,7 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 		struct mstp_clock *sibling;
+ 
+ 		clock->enabled = rzg2l_mod_clock_is_enabled(&clock->hw);
+-		sibling = rzg2l_mod_clock__get_sibling(clock, priv);
++		sibling = rzg2l_mod_clock_get_sibling(clock, priv);
+ 		if (sibling) {
+ 			clock->sibling = sibling;
+ 			sibling->sibling = clock;
+-- 
+2.25.1
 
