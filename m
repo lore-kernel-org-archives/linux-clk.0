@@ -2,146 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA1FECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 09:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 569A3C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 09:58:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbiIUJy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 05:54:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39988 "EHLO
+        id S229689AbiIUJ6V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 05:58:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232130AbiIUJyP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 05:54:15 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04DC2D5E;
-        Wed, 21 Sep 2022 02:54:14 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28L8dIP6003301;
-        Wed, 21 Sep 2022 09:53:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=uJlL+knB2fMw5vo335fNPEXeuy4SlqC7wRoCMhp2kHw=;
- b=kdvvH7r++bwXUrf+HYA3l8YNKXjaX4ub/1PsBSNR8OIvb//r9Swfn2YEUBPoJbEfXYfb
- MRZb1IecLvDvfdbKWa6CgUyJyf+RPb64eQeVgLE5ohHgfucjXWKdqcfVNml65EHJXlie
- FFj9BUNNSNQtEgIiGeMU4vpTxN1yzmdgRihLOLE1GmvNkj0HPLw8amSAdpA5A2gwrjn4
- 1HBKgIrdmEsaQCLRIqdDaH5BreDdT4dBQmBxWRXIuRsedsrAuyUV2/p+xj9NmeeFXrqY
- lh86fsUkiK+3AJfw37Yllg5Xb3kUG04TxqpJFye3CEc0L+j0GyPraCNV/t6aWnwQOYyP 3w== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jqtd6j2mu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Sep 2022 09:53:47 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28L9rksu004685
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Sep 2022 09:53:46 GMT
-Received: from [10.216.24.214] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 21 Sep
- 2022 02:53:38 -0700
-Message-ID: <ed1a1260-0ef4-203a-f073-f5232bfc8466@quicinc.com>
-Date:   Wed, 21 Sep 2022 15:23:35 +0530
+        with ESMTP id S229530AbiIUJ6U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 05:58:20 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC603ECE2;
+        Wed, 21 Sep 2022 02:58:19 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 4BC6A3200997;
+        Wed, 21 Sep 2022 05:58:17 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 21 Sep 2022 05:58:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=engestrom.ch; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1663754296; x=
+        1663840696; bh=eCra/b1EXsGAdvlyVpCtjB/oMgMMioXcrA1hoFjnEOk=; b=M
+        0aUWi+vFc6y7/RGkB95PXAlrOeEWJ6PWHOIhNttqp3rbysLc2ao+d4H3a2oRrSRg
+        qlr4hKw+m3Ugc4Ubj5mWTCZ5EFjsZZCKqYToWWQelDw4HHoY1HnJviL/URql10ip
+        IP30t72kdTvJvExTTvnB4MMIvmU/NFHQufyHHo0DHFDihVwxGm6v5YL7JD1gZYMO
+        mwej7mJpgZyZGSwQmSGRAfIgtsZ86C8ZTTA7regwHqakrZZxpZzEkEMXFODbPrsw
+        GyeOM54UXMCH4BeH5u1C88UGFigWkwOcPxHa8kpXEteCLhwH8LznYxAIxHQSQ7T0
+        ostC4oiFwX1AXHmgefwYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1663754296; x=
+        1663840696; bh=eCra/b1EXsGAdvlyVpCtjB/oMgMMioXcrA1hoFjnEOk=; b=x
+        vEiM+dV9ObU/xEUmL9uWg+e/JWBeKglTCzFxWdjqOXhNXmzDG1bDGNc3FzDjsncf
+        NXWo9QD2EYyAQfi3NgIvcEaHhFIAhiLaeil9H24NL/Batgmg+Co2uFWQdiW28qak
+        EHxV4+kY/NwYFQL3THOB6KGjge9FskcnZZpoeGdGgDDW9EF/1iZ9zl0V0+vsaTOp
+        Gr+GMYUzxh7zoB9bZVwKA5/VwVHo++IH5lOMzQhPEyFO+c4ace3dWTCBUUzkVB9E
+        dOozWmytOHpNzpDCJFJg5JPMbh1Ziei4BWm8e4EYs4CSb3C6XP4/WtznmFYAZlet
+        bxg3KZ2afk2T0QbsqQBtg==
+X-ME-Sender: <xms:N-AqY7nY1U0eL0eseG3QZ6rH2LOIIO47eDbtWXuy_rNxguCzcuL-Vg>
+    <xme:N-AqY-2YRcWY8yWw6ESkAg53j2KJ51sMZWDxgDz7csbllXXClA6nNan9wgc89RHx_
+    biAMAdBlJ8XshfZDxU>
+X-ME-Received: <xmr:N-AqYxpj4_3BFRWjPiftQ3aaYc5fSovQ_hcdnk6jBosSAyL93DJL1vZoS34dzdNh9o7MbMtHmcpkNA0C1omi6GmBeUZwvg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeefuddgvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtugfgjgesth
+    ekredttddtjeenucfhrhhomhepgfhrihgtucfgnhhgvghsthhrohhmuceovghrihgtsegv
+    nhhgvghsthhrohhmrdgthheqnecuggftrfgrthhtvghrnhepfeegleegudefkeeuvdefhf
+    eigefhkeelteeuvdfhvedtueetfefgfeffjedvleffnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepvghrihgtsegvnhhgvghsthhrohhmrdgthh
+X-ME-Proxy: <xmx:N-AqYzn6tZGSPgwSVpaSVw_dwleW40gvPw3wfbUhu8j7KNclW_Xzow>
+    <xmx:N-AqY52EGuDAWop-WJvl_qVmxqf9fFcIhSUlXT2fBMZ0B_VbjdmRtA>
+    <xmx:N-AqYyshEiZTGUfKMd0RL6MGe3NhBX0hRksONyqI0YmI8CjveIUs-Q>
+    <xmx:OOAqY14i_hrhuZ5uxNJoWkyBla1LvEYNhV9XRoNEuxMC_mfXUhtBQQ>
+Feedback-ID: ieaa94438:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 Sep 2022 05:58:12 -0400 (EDT)
+Date:   Wed, 21 Sep 2022 11:58:09 +0200
+From:   Eric Engestrom <eric@engestrom.ch>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     heiko@sntech.de, zhangqing@rock-chips.com,
+        finley.xiao@rock-chips.com, shawn.lin@rock-chips.com,
+        zhengxing@rock-chips.com, jeffy.chen@rock-chips.com,
+        andy.yan@rock-chips.com, mylene.josserand@collabora.com,
+        nfraprado@collabora.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: clock: rockchip: change
+ SPDX-License-Identifier
+Message-ID: <20220921095809.cr4kpqqcu7b5u76j@engestrom.ch>
+References: <20c6a502-2ff5-bdb1-fb4f-0741f3a2c19c@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
-Content-Language: en-US
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
-        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
-        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
-        <svarbanov@mm-sol.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
-        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
-        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20220920181637.GA1121154@bhelgaas>
-From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20220920181637.GA1121154@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yoLzCr68NDAXE4Ox9--c6_X5lW-4ZsSS
-X-Proofpoint-GUID: yoLzCr68NDAXE4Ox9--c6_X5lW-4ZsSS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-21_05,2022-09-20_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 adultscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209210066
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20c6a502-2ff5-bdb1-fb4f-0741f3a2c19c@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tuesday, 2022-09-20 00:25:07 +0200, Johan Jonker wrote:
+> Change SPDX-License-Identifier to (GPL-2.0+ OR MIT)
+> for Rockchip clock bindings.
+> 
+> Cc: Heiko Stübner <heiko@sntech.de>
+> Cc: Elaine Zhang <zhangqing@rock-chips.com>
+> Cc: Xing Zheng <zhengxing@rock-chips.com>
+> Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
+> Cc: Finley Xiao <finley.xiao@rock-chips.com>
+> Cc: Andy Yan <andy.yan@rock-chips.com>
+> Cc: Shawn Lin <shawn.lin@rock-chips.com>
+> Cc: Eric Engestrom <eric@engestrom.ch>
+> Cc: Mylène Josserand <mylene.josserand@collabora.com>
+> Cc: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+> 
+> Request for copyright holder approval.
+> Rockchip recently replied on other clock-patches to dual-license the
+> binding.
 
-On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
-> On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
->> Add suspend and resume syscore ops.
->>
->> Few PCIe endpoints like NVMe and WLANs are always expecting the device
->> to be in D0 state and the link to be active (or in l1ss) all the time
->> (including in S3 state).
-> What does this have to do with the patch?  I don't see any NVMe or
-> WLAN patches here.
-Existing NVMe driver expecting NVMe device to be in D0 during S3 also. 
-If we turn off the link in
-suspend, the NVMe resume path is broken as the state machine is getting 
-reset in the NVMe device.
-Due to this, the host driver state machine and the device state machine 
-are going out of sync, and all NVMe commands
-after resumes are getting timed out.
-
-IIRC, Tegra is also facing this issue with NVMe.
-
-This issue has been discussed below threads:
-
-https://lore.kernel.org/all/Yl+6V3pWuyRYuVV8@infradead.org/T/
-
-https://lore.kernel.org/linux-nvme/20220201165006.3074615-1-kbusch@kernel.org/
-
->> In qcom platform PCIe resources( clocks, phy etc..) can released
->> when the link is in L1ss to reduce the power consumption. So if the link
->> is in L1ss, release the PCIe resources. And when the system resumes,
->> enable the PCIe resources if they released in the suspend path.
-> What's the connection with L1.x?  Links enter L1.x based on activity
-> and timing.  That doesn't seem like a reliable indicator to turn PHYs
-> off and disable clocks.
-This is a Qcom PHY-specific feature (retaining the link state in L1.x 
-with clocks turned off).
-It is possible only with the link being in l1.x. PHY can't retain the 
-link state in L0 with the
-clocks turned off and we need to re-train the link if it's in L2 or L3. 
-So we can support this feature only with L1.x.
-That is the reason we are taking l1.x as the trigger to turn off clocks 
-(in only suspend path).
->> is_suspended flag indicates if the PCIe resources are released or not
->> in the suspend path.
-> Why is "is_suspended" important for the commit log?  It looks like
-> just a standard implementation detail.
-Someone in one of the previous patch asked to include this in the commit 
-text.
->> Its observed that access to Ep PCIe space to mask MSI/MSIX is happening
->> at the very late stage of suspend path (access by affinity changes while
->> making CPUs offline during suspend, this will happen after devices are
->> suspended (after all phases of suspend ops)). If we turn off clocks in
->> any PM callback, afterwards running into crashes due to un-clocked access
->> due to above mentioned MSI/MSIx access.
->> So, we are making use of syscore framework to turn off the PCIe clocks
->> which will be called after making CPUs offline.
-> Add blank lines between paragraphs.  Or rewrap into a single paragraph.
->
-> s/Its observed/It's observed/
-> s/MSIX/MSI-X/ throughout
-> s/MSIx/MSI-X/ throughout
->
-> Bjorn
+Acked-by: Eric Engestrom <eric@engestrom.ch>
