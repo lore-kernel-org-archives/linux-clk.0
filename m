@@ -2,83 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3841BC6FA82
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 15:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 340EEC6FA82
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 16:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231570AbiIUPv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 11:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51126 "EHLO
+        id S229820AbiIUQ50 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 12:57:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231668AbiIUPuw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 11:50:52 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D8C923D3
-        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 08:48:46 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id a2so9930197lfb.6
-        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 08:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=dfNfQ/WHHv5bx3D+RgTnUZ4fVKImMkLUwy9dSYsV4ZI=;
-        b=CDmDV9J3qN4i9riPSH+wIb8RFI/McE/mLSFmgYfB/gE5F7kdrl1NmF42wf9DSBeRwd
-         Ct19uqUuy2FLnAbCNp1CNMh4/330+XcctKS0V+I6PI+WFIOsKZvo5lCamy74KsczQFZS
-         3uKuIr/48msm5QHiZgpYrcT5MTXmmsjkYB6oaTVlrafKzHaWJ+uv8QFBGhPIYiRonj9w
-         8A7Rzs09sLCakpZTS6WRyB2bxIgExnCPqs6DkxUIwoEQSAn4C///Mygs7lqMZdHS3J8a
-         ds+no9LudlHEJMErjZyqkQk19Omjo8V4qRakUidEcKo2qvMYJbfnxGwbd4PB/n/eRlFr
-         wpbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=dfNfQ/WHHv5bx3D+RgTnUZ4fVKImMkLUwy9dSYsV4ZI=;
-        b=KCWO/zhWc5ob3zzBlAyZgVo54R6yll7bD1bKWCjnsnQHR9lYo9MkOgzX+PRqVTU2nO
-         jzVXSnIteQR02o1QEmPCgxfrphCpaTZ8sJVn9A41ebJK65CEUxUY0iKkpGltCbPKyitY
-         IXlIUa4qDNg7LSipIImHDk8Amg9XJ+iZIPQ9Nnq433G+q0cz2c8s53BNnUKzSnn51onu
-         Ys7z71YZqBqAKoKlqM90ga1LV5VsMmxlDVRFz0LHdhY+CtwHNvlHymDFubQ62shc8LiS
-         uPUa7Ci75VWjGNJBu2dGNkERQgtrfXZFc4WIE2q/fy4/YRDTi23DPHWbD/Nu9/noM9St
-         aJ1g==
-X-Gm-Message-State: ACrzQf3VUdOTe9u4NFxKtU6miOw7SVPWoik6ZGMYzbFbWv5EYq9T2gtN
-        w/XGZlo3z/xw26JxbJ85E7QuPA==
-X-Google-Smtp-Source: AMsMyM52aQHhQGHg1+wR1Bdadj9kbl+E7s+T7WEcsWzkxcaODyaGUchTnGQ0q6iJgm1jXk7j1PT/UA==
-X-Received: by 2002:a05:6512:3503:b0:496:55d:a186 with SMTP id h3-20020a056512350300b00496055da186mr9957884lfs.340.1663775318470;
-        Wed, 21 Sep 2022 08:48:38 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id be36-20020a05651c172400b0026bca725cd0sm496321ljb.39.2022.09.21.08.48.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Sep 2022 08:48:37 -0700 (PDT)
-Message-ID: <6ef8b2d9-2ffa-ff18-eb9a-9d7b9f293ced@linaro.org>
-Date:   Wed, 21 Sep 2022 17:48:36 +0200
+        with ESMTP id S231145AbiIUQ5H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 12:57:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFE5A6;
+        Wed, 21 Sep 2022 09:56:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AE2A763235;
+        Wed, 21 Sep 2022 16:56:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D85C433D6;
+        Wed, 21 Sep 2022 16:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663779363;
+        bh=yFjh0wT5HsRYP3bLSZYhZ7J9X1Rof+k/TwTLudEJkQc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=r/8WQihAogvVfN/oTI14lVFCr4f8o2Lcy3IB8ZQ1nQkVjlOfsfQiIa2LcgN4zkF9+
+         FQOxulbdWKVy1dIJSo57YVMfEv91RN4I9mzNMftDqFmiBwKue1698z2sOcrUiweMLa
+         kDfl3HMOQH6gcNXSJe5NX3WOgVWASaM6O3/yy5XR+vNjII/VzL1LtAlCSQnkH/0k0e
+         mRQJAd7E7+snXscz2MumUfENdmjpGWO43Eb+wHOZw3QLti+CM4tvBb8Jj62uk+/bp/
+         qbqHoaWPHK0sSovao42QmXyIMVkhIK6lgMj11/XSnfOcOYlRinja7xhKNTBqGG9dJI
+         79BwUc+AdN04w==
+Date:   Wed, 21 Sep 2022 11:56:01 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        quic_vbadigan@quicinc.com, quic_hemantk@quicinc.com,
+        quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+        quic_ramkri@quicinc.com, manivannan.sadhasivam@linaro.org,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        svarbanov@mm-sol.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@somainline.org, lpieralisi@kernel.org,
+        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
+        linux-phy@lists.infradead.org, vkoul@kernel.org, kishon@ti.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+Message-ID: <20220921165601.GA1215223@bhelgaas>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] dt-bindings: clocks: qcom,gcc-sc8280xp: Fix typos
-Content-Language: en-US
-To:     Andrew Halaney <ahalaney@redhat.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220921153155.279182-1-ahalaney@redhat.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220921153155.279182-1-ahalaney@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed1a1260-0ef4-203a-f073-f5232bfc8466@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/09/2022 17:31, Andrew Halaney wrote:
-> pipegmux and SuperSpeed are the proper spelling for those terms.
+[+cc Rafael, linux-pm since this is real power management magic,
+beginning of thread:
+https://lore.kernel.org/all/1663669347-29308-1-git-send-email-quic_krichai@quicinc.com/
+full patch since I trimmed too much of it:
+https://lore.kernel.org/all/1663669347-29308-2-git-send-email-quic_krichai@quicinc.com/]
+
+On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
+> On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
+> > On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
+> > > Add suspend and resume syscore ops.
+> > > 
+> > > Few PCIe endpoints like NVMe and WLANs are always expecting the device
+> > > to be in D0 state and the link to be active (or in l1ss) all the time
+> > > (including in S3 state).
+> >
+> > What does this have to do with the patch?  I don't see any NVMe or
+> > WLAN patches here.
+>
+> Existing NVMe driver expecting NVMe device to be in D0 during S3 also. If we
+> turn off the link in
+> suspend, the NVMe resume path is broken as the state machine is getting
+> reset in the NVMe device.
+> Due to this, the host driver state machine and the device state machine are
+> going out of sync, and all NVMe commands
+> after resumes are getting timed out.
 > 
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> IIRC, Tegra is also facing this issue with NVMe.
+> 
+> This issue has been discussed below threads:
+> 
+> https://lore.kernel.org/all/Yl+6V3pWuyRYuVV8@infradead.org/T/
+> 
+> https://lore.kernel.org/linux-nvme/20220201165006.3074615-1-kbusch@kernel.org/
 
+The problem is that this commit log doesn't explain the problem and
+doesn't give us anything to connect the NVMe and WLAN assumptions with
+this special driver behavior.  There needs to be some explicit
+property of NVMe and WLAN that the PM core or drivers like qcom can
+use to tell whether the clocks can be turned off.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > In qcom platform PCIe resources( clocks, phy etc..) can released
+> > > when the link is in L1ss to reduce the power consumption. So if the link
+> > > is in L1ss, release the PCIe resources. And when the system resumes,
+> > > enable the PCIe resources if they released in the suspend path.
+> >
+> > What's the connection with L1.x?  Links enter L1.x based on activity
+> > and timing.  That doesn't seem like a reliable indicator to turn PHYs
+> > off and disable clocks.
+>
+> This is a Qcom PHY-specific feature (retaining the link state in L1.x with
+> clocks turned off).
+> It is possible only with the link being in l1.x. PHY can't retain the link
+> state in L0 with the
+> clocks turned off and we need to re-train the link if it's in L2 or L3. So
+> we can support this feature only with L1.x.
+> That is the reason we are taking l1.x as the trigger to turn off clocks (in
+> only suspend path).
 
-Best regards,
-Krzysztof
+This doesn't address my question.  L1.x is an ASPM feature, which
+means hardware may enter or leave L1.x autonomously at any time
+without software intervention.  Therefore, I don't think reading the
+current state is a reliable way to decide anything.
 
+> ...
+> > > Its observed that access to Ep PCIe space to mask MSI/MSIX is happening
+> > > at the very late stage of suspend path (access by affinity changes while
+> > > making CPUs offline during suspend, this will happen after devices are
+> > > suspended (after all phases of suspend ops)). If we turn off clocks in
+> > > any PM callback, afterwards running into crashes due to un-clocked access
+> > > due to above mentioned MSI/MSIx access.
+> > > So, we are making use of syscore framework to turn off the PCIe clocks
+> > > which will be called after making CPUs offline.
