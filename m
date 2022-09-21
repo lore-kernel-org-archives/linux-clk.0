@@ -2,105 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EAAECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 15:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3841BC6FA82
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 15:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231503AbiIUPlC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 11:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33936 "EHLO
+        id S231570AbiIUPv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 11:51:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231528AbiIUPkn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 11:40:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FC9226C8
-        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 08:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1663774743;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=7+IfXo3QneUTvZNphDXYsfYPPsR08u+bVDwtrNeIpao=;
-        b=ETuq8bGKqbkiMH+XXQKPeUt2oUUbOhSww6uJSoD+kr7lRZ0yzUc9tCfePM2M3vw3alT56q
-        AUTe5wIAxrRYHreUgQC1Bq0xf20LsCx7oiiLKP7rTkr+/3tujwJJNAVQksNDJQbbyqOy+Q
-        5NdQSiweq86iWfTrFo3axic7S9/2AaA=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-643-YH1kpIuONU6ARnUMBsp6pA-1; Wed, 21 Sep 2022 11:33:00 -0400
-X-MC-Unique: YH1kpIuONU6ARnUMBsp6pA-1
-Received: by mail-qv1-f71.google.com with SMTP id nm17-20020a0562143b1100b004a5a3002d87so4495756qvb.8
-        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 08:33:00 -0700 (PDT)
+        with ESMTP id S231668AbiIUPuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 11:50:52 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D8C923D3
+        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 08:48:46 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id a2so9930197lfb.6
+        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 08:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=dfNfQ/WHHv5bx3D+RgTnUZ4fVKImMkLUwy9dSYsV4ZI=;
+        b=CDmDV9J3qN4i9riPSH+wIb8RFI/McE/mLSFmgYfB/gE5F7kdrl1NmF42wf9DSBeRwd
+         Ct19uqUuy2FLnAbCNp1CNMh4/330+XcctKS0V+I6PI+WFIOsKZvo5lCamy74KsczQFZS
+         3uKuIr/48msm5QHiZgpYrcT5MTXmmsjkYB6oaTVlrafKzHaWJ+uv8QFBGhPIYiRonj9w
+         8A7Rzs09sLCakpZTS6WRyB2bxIgExnCPqs6DkxUIwoEQSAn4C///Mygs7lqMZdHS3J8a
+         ds+no9LudlHEJMErjZyqkQk19Omjo8V4qRakUidEcKo2qvMYJbfnxGwbd4PB/n/eRlFr
+         wpbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=7+IfXo3QneUTvZNphDXYsfYPPsR08u+bVDwtrNeIpao=;
-        b=Sb5pkU4GIWViDtWuW6BormFjCLRdcOBTFt5exOiVKeCZywBp91dVzfkBmUHwpidati
-         Mx539+7LLYd70wJIMqc0S7AgR7ac/LHGgIUcXW5x3t9ZrNXyxpPBU7z0Okue1xnMHst9
-         MVg+pOjPyqI3xTAn4k28NfjuWHnYInn7wTtL6OEM9jirk+NS/FcfXsGR19tMpeSi8RSP
-         4OhqPVd/9zuCr+YZMhXJhPze5ldTxudMZc+BEjllkzu4Fck7VUNZoxXYs4KUH1TOyQ4g
-         VRIvWMIiVX/3550rwsZ6yovuYzBUsGbVOmScXvURxH9wvv7WPcRNap7RCYB+2V8+I+qs
-         NHLQ==
-X-Gm-Message-State: ACrzQf3Srhl4YsoRFtmUGWCKdbIdmFdIJOU3+ksIMe09r9x9DP0NOttf
-        39U8K5NK08XAOPdBaKI1UsHjp+95kjQdQ6l0UVYAR6BHSKFW8+z4FEiBVHAkE3s3JBa3rNVLKCJ
-        HuC8k/XzU5Q6NcF8wZKaB
-X-Received: by 2002:ac8:5895:0:b0:35c:bd1e:aed2 with SMTP id t21-20020ac85895000000b0035cbd1eaed2mr24073973qta.618.1663774380015;
-        Wed, 21 Sep 2022 08:33:00 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM5x+IR5tky7En11b9XPJIO6r4GWLMl+xjgqJY4mIPE+hIi/vN1wx8EqtfecainIssiPt2yGDw==
-X-Received: by 2002:ac8:5895:0:b0:35c:bd1e:aed2 with SMTP id t21-20020ac85895000000b0035cbd1eaed2mr24073961qta.618.1663774379812;
-        Wed, 21 Sep 2022 08:32:59 -0700 (PDT)
-Received: from halaneylaptop.redhat.com ([2600:1700:1ff0:d0e0::46])
-        by smtp.gmail.com with ESMTPSA id u15-20020a05620a0c4f00b006cf19068261sm2100324qki.116.2022.09.21.08.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 08:32:59 -0700 (PDT)
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=dfNfQ/WHHv5bx3D+RgTnUZ4fVKImMkLUwy9dSYsV4ZI=;
+        b=KCWO/zhWc5ob3zzBlAyZgVo54R6yll7bD1bKWCjnsnQHR9lYo9MkOgzX+PRqVTU2nO
+         jzVXSnIteQR02o1QEmPCgxfrphCpaTZ8sJVn9A41ebJK65CEUxUY0iKkpGltCbPKyitY
+         IXlIUa4qDNg7LSipIImHDk8Amg9XJ+iZIPQ9Nnq433G+q0cz2c8s53BNnUKzSnn51onu
+         Ys7z71YZqBqAKoKlqM90ga1LV5VsMmxlDVRFz0LHdhY+CtwHNvlHymDFubQ62shc8LiS
+         uPUa7Ci75VWjGNJBu2dGNkERQgtrfXZFc4WIE2q/fy4/YRDTi23DPHWbD/Nu9/noM9St
+         aJ1g==
+X-Gm-Message-State: ACrzQf3VUdOTe9u4NFxKtU6miOw7SVPWoik6ZGMYzbFbWv5EYq9T2gtN
+        w/XGZlo3z/xw26JxbJ85E7QuPA==
+X-Google-Smtp-Source: AMsMyM52aQHhQGHg1+wR1Bdadj9kbl+E7s+T7WEcsWzkxcaODyaGUchTnGQ0q6iJgm1jXk7j1PT/UA==
+X-Received: by 2002:a05:6512:3503:b0:496:55d:a186 with SMTP id h3-20020a056512350300b00496055da186mr9957884lfs.340.1663775318470;
+        Wed, 21 Sep 2022 08:48:38 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id be36-20020a05651c172400b0026bca725cd0sm496321ljb.39.2022.09.21.08.48.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Sep 2022 08:48:37 -0700 (PDT)
+Message-ID: <6ef8b2d9-2ffa-ff18-eb9a-9d7b9f293ced@linaro.org>
+Date:   Wed, 21 Sep 2022 17:48:36 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] dt-bindings: clocks: qcom,gcc-sc8280xp: Fix typos
+Content-Language: en-US
+To:     Andrew Halaney <ahalaney@redhat.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Halaney <ahalaney@redhat.com>
-Subject: [PATCH] dt-bindings: clocks: qcom,gcc-sc8280xp: Fix typos
-Date:   Wed, 21 Sep 2022 10:31:56 -0500
-Message-Id: <20220921153155.279182-1-ahalaney@redhat.com>
-X-Mailer: git-send-email 2.37.3
-MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220921153155.279182-1-ahalaney@redhat.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220921153155.279182-1-ahalaney@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-pipegmux and SuperSpeed are the proper spelling for those terms.
+On 21/09/2022 17:31, Andrew Halaney wrote:
+> pipegmux and SuperSpeed are the proper spelling for those terms.
+> 
+> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
 
-Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
----
- .../devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml          | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-index e33dea86fb9e..b1bf768530a3 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-@@ -33,7 +33,7 @@ properties:
-       - description: Primary USB SuperSpeed pipe clock
-       - description: USB4 PHY pipegmux clock source
-       - description: USB4 PHY DP gmux clock source
--      - description: USB4 PHY sys piegmux clock source
-+      - description: USB4 PHY sys pipegmux clock source
-       - description: USB4 PHY PCIe pipe clock
-       - description: USB4 PHY router max pipe clock
-       - description: Primary USB4 RX0 clock
-@@ -46,7 +46,7 @@ properties:
-       - description: Second USB4 PHY router max pipe clock
-       - description: Secondary USB4 RX0 clock
-       - description: Secondary USB4 RX1 clock
--      - description: Multiport USB first SupserSpeed pipe clock
-+      - description: Multiport USB first SuperSpeed pipe clock
-       - description: Multiport USB second SuperSpeed pipe clock
-       - description: PCIe 2a pipe clock
-       - description: PCIe 2b pipe clock
--- 
-2.37.3
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
