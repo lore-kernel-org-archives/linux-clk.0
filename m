@@ -2,474 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456D8C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 09:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0D7ECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 09:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbiIUJBJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 05:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50244 "EHLO
+        id S230016AbiIUJGF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 05:06:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbiIUJBI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 05:01:08 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F07C83F2A;
-        Wed, 21 Sep 2022 02:01:06 -0700 (PDT)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Wed, 21 Sep
- 2022 17:01:03 +0800
-Message-ID: <0b621dfa-4ecd-a9a6-8681-8ab8b00d7841@amlogic.com>
-Date:   Wed, 21 Sep 2022 17:01:03 +0800
+        with ESMTP id S229911AbiIUJGA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 05:06:00 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D25BE52FF5;
+        Wed, 21 Sep 2022 02:05:59 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28L8dpBx030723;
+        Wed, 21 Sep 2022 09:05:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=jiKQKRTHilc+sqjPrmvm2cyR4cPqWK1fimB0Jyspfso=;
+ b=I4orHwJEvwnT6UDirvNmCNrJja+gi30EfxzxSYenGAcZnEDyuBBE1BmFSoof0l2BmF45
+ XQj00cUBLX3ZtAG95k3UYj5Cbj6z2oAjeKE2q/t0gD17rDlf9Y7RBcTlirJcQPJnxTLF
+ MpOoL3brQvzvQeqwnwgrZEtx49aBT/55uXLynwyi66ZssnENczUGhGK4WB3d1qhUPLR3
+ 3mwaIW3e0FehYWZJNg17XsKsh7lUS1XbC0TKFGJH2cztVsUDvDAwgovnBh3vJF2RDATY
+ 1IJLtDPLlYjEWdtmJ47zFdqOOAM1RM8RPjQrVWSJZ13vf9s58TQE2GlYP5gO0qvJg6DP Tg== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jqgvsbg4b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Sep 2022 09:05:48 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28L95lBm013433
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Sep 2022 09:05:47 GMT
+Received: from [10.216.12.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 21 Sep
+ 2022 02:05:42 -0700
+Message-ID: <4aa3c16e-fb5a-980c-feb6-883fcbff077c@quicinc.com>
+Date:   Wed, 21 Sep 2022 14:35:38 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH V3 6/6] clk: meson: s4: add s4 SoC peripheral clock
- controller driver
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+ support
 Content-Language: en-US
-From:   Yu Tu <yu.tu@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-7-yu.tu@amlogic.com>
- <1jedxlzxyz.fsf@starbuckisacylon.baylibre.com>
- <8f40cb49-fdc5-20cd-343b-8ce50e5d6d97@amlogic.com>
- <1j7d2rte33.fsf@starbuckisacylon.baylibre.com>
- <2b6035f3-8cbe-ab75-bed9-5751b141d3d6@amlogic.com>
-In-Reply-To: <2b6035f3-8cbe-ab75-bed9-5751b141d3d6@amlogic.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <mka@chromium.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
+        <dianders@chromium.org>, <linux-clk@vger.kernel.org>
+References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+ <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
+ <096205ee-2c8a-facf-87ce-2309c63d2400@quicinc.com>
+ <1a845259-fce2-d239-588b-a70ea5b19680@collabora.com>
+From:   Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <1a845259-fce2-d239-588b-a70ea5b19680@collabora.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IdDtZjYO1mFX1jU_jovXSaZsPUB5xqB9
+X-Proofpoint-ORIG-GUID: IdDtZjYO1mFX1jU_jovXSaZsPUB5xqB9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-21_04,2022-09-20_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209210061
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
 
-On 2022/8/30 16:20, Yu Tu wrote:
-> 
-> 
-> On 2022/8/29 20:19, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
+On 9/21/2022 1:21 PM, AngeloGioacchino Del Regno wrote:
+> Il 20/09/22 15:39, Rajendra Nayak ha scritto:
 >>
->>
->> On Tue 16 Aug 2022 at 20:00, Yu Tu <yu.tu@amlogic.com> wrote:
->>
->> Please trim your replies
->>
->>>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->>>>> index f4244edc7b28..ec6beb9284d3 100644
->>>>> --- a/drivers/clk/meson/Kconfig
->>>>> +++ b/drivers/clk/meson/Kconfig
->>>>> @@ -127,4 +127,17 @@ config COMMON_CLK_S4_PLL
->>>>>          Support for the pll clock controller on Amlogic S805X2 and 
->>>>> S905Y4 devices,
->>>>>          aka s4. Amlogic S805X2 and S905Y4 devices include AQ222 
->>>>> and AQ229.
->>>>>          Say Y if you want peripherals and CPU frequency scaling to 
->>>>> work.
->>>>> +
->>>>> +config COMMON_CLK_S4
->>>>> +    tristate "S4 SoC Peripherals clock controllers support"
->>>>> +    depends on ARM64
->>>>> +    default y
->>>>> +    select COMMON_CLK_MESON_REGMAP
->>>>> +    select COMMON_CLK_MESON_DUALDIV
->>>>> +    select COMMON_CLK_MESON_VID_PLL_DIV
->>>>> +    select COMMON_CLK_S4_PLL
->>>> Do you really this ? your driver does not even include the related
->>>> header.
->>> If the PLL driver is not turned on in DTS, will it not cause an error?
+>> On 9/20/2022 6:09 PM, AngeloGioacchino Del Regno wrote:
+>>> Il 20/09/22 13:15, Rajendra Nayak ha scritto:
+>>>> GDSCs cannot be transitioned into a Retention state in SW.
+>>>> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+>>>> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+>>>> takes care of retaining the memory/logic for the domain when
+>>>> the parent domain transitions to power collapse/power off state.
 >>>>
->>
->> I don't get the question.
->> Kconfig list compile deps. S4 PLL is not a compile dep of the peripheral
->> controller.
->>
->> If you really want to, you may use 'imply'.
-> 
-> V4 has been changed as you suggested.
-
-The next edition is being changed according to your requirements. Please 
-give us your valuable opinions.
-
-> 
+>>>> On some platforms where the parent domains lowest power state
+>>>> itself is Retention, just leaving the GDSC in ON (without any
+>>>> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
+>>>> it to Retention.
 >>>>
->>>>> +static const struct clk_parent_data sys_ab_clk_parent_data[] = {
->>>>> +    { .fw_name = "xtal" },
->>>>> +    { .fw_name = "fclk_div2" },
->>>>> +    { .fw_name = "fclk_div3" },
->>>>> +    { .fw_name = "fclk_div4" },
->>>>> +    { .fw_name = "fclk_div5" },
->>>>> +    { .fw_name = "fclk_div7" },
->>>>> +    { .hw = &s4_rtc_clk.hw }
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap s4_sysclk_b_sel = {
->>>>> +    .data = &(struct clk_regmap_mux_data){
->>>>> +        .offset = CLKCTRL_SYS_CLK_CTRL0,
->>>>> +        .mask = 0x7,
->>>>> +        .shift = 26,
->>>>> +        .table = mux_table_sys_ab_clk_sel,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data){
->>>>> +        .name = "sysclk_b_sel",
->>>>> +        .ops = &clk_regmap_mux_ro_ops,
->>>> Why is this using the RO ops ?
->>> Sys_clk is initialized during the Uboot phase and is fixed at
->>> 166.666MHz. So I'm going to change it to ro.
->>
->> That really much depends on the bootloader and is a pretty weak design.
->> The bootloader deps should be kept as minimal as possible.
->>
->> I see no reason for RO.
->>
->> You may cut rate propagation on the user if you need to and continue to
->> whatever you want in your u-boot
-> 
-> I think I know what you mean. But we let the user be in control and not 
-> set the frequency, which can be risky. If you insist, I will change it 
-> as you suggest.
-
-It has been changed as you requested.
-
-> 
->>
+>>>> The existing logic handling the PWRSTS_RET seems to set the
+>>>> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
+>>>> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
+>>>> Fix that by leaving the GDSC in ON state.
 >>>>
->>>>> +        .parent_data = sys_ab_clk_parent_data,
->>>>> +        .num_parents = ARRAY_SIZE(sys_ab_clk_parent_data),
->>>>> +    },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap s4_sysclk_b_div = {
->>>>> +    .data = &(struct clk_regmap_div_data){
->>>>> +        .offset = CLKCTRL_SYS_CLK_CTRL0,
->>>>> +        .shift = 16,
->>>>> +        .width = 10,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data){
->>>>> +        .name = "sysclk_b_div",
->>>>> +        .ops = &clk_regmap_divider_ro_ops,
->>>> Same here and for the rest of the sys part
->>> Same above.
+>>>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+>>>> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>> v3:
+>>>> Updated changelog
+>>>>
+>>>> There are a few existing users of PWRSTS_RET and I am not
+>>>> sure if they would be impacted with this change
+>>>>
+>>>> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+>>>> gdsc is actually transitioning to OFF and might be left
+>>>> ON as part of this change, atleast till we hit system wide
+>>>> low power state.
+>>>> If we really leak more power because of this
+>>>> change, the right thing to do would be to update .pwrsts for
+>>>> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+>>>> I dont have a msm8974 hardware, so if anyone who has can report
+>>>> any issues I can take a look further on how to fix it.
+>>>
+>>> I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
+>>> used for the specific cases of SC7180 and SC7280 (and possibly others) where the
+>>> GDSC is automatically transitioned to a Retention state by HW control, with no
+>>> required software (kernel driver) intervention.
 >>
->> We can play that game for a while
-> 
-> Ah, you're so funny.
-> 
+>> Having a PWRSTS_RET_HW_CTRL flag would make sense if there was also a
+>> PWRSTS_RET_SW_CTRL way of achieving Retention state, but FWIK there isn't.
+>> I am sure that's the way it is on 8974 as well, I just don't have hardware to
+>> confirm.
 >>
->>>>> +
->>>>> +/* Video Clocks */
->>>>> +static struct clk_regmap s4_vid_pll_div = {
->>>>> +    .data = &(struct meson_vid_pll_div_data){
->>>>> +        .val = {
->>>>> +            .reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>>>> +            .shift   = 0,
->>>>> +            .width   = 15,
->>>>> +        },
->>>>> +        .sel = {
->>>>> +            .reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>>>> +            .shift   = 16,
->>>>> +            .width   = 2,
->>>>> +        },
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data) {
->>>>> +        .name = "vid_pll_div",
->>>>> +        .ops = &meson_vid_pll_div_ro_ops,
->>>> Why RO ? applies to the rest of the video part.
->>> Because vid_pll_div parent is HDMI_PLL, and HDMI_PLL is a fixed
->>> frequency. Flags is CLK_SET_RATE_PARENT. So we use RO.
->>
->> If the HDMI_PLL is fixed somehow, that is not reason for this clock to
->> be RO
->>
->>> Can I remove RO and use CLK_SET_RATE_NO_REPARENT instead, which one 
->>> do you
->>> think is more reasonable?
->>
->> Neither. CLK_SET_RATE_NO_REPARENT makes no sense, it is not mux
->>
-> 
-> "drivers/clk/meson/vid-pll-div.c"
-> This file only provides ro_ops. Maybe the submission records will give 
-> us the answer.
-> 
-> In fact, our hardware design is the same as the G12 series.
-
-I don't know if you checked this commit, but there is only one 
-"ro_ops"in this place right now.
-
-The S4 SoC is consistent with the G12A/B and GX series.
-
-> 
 >>>
 >>>>
->>>>> +        .parent_data = (const struct clk_parent_data []) {
->>>>> +            { .fw_name = "hdmi_pll", }
->>>>> +        },
->>>>> +        .num_parents = 1,
->>>>> +        .flags = CLK_SET_RATE_PARENT,
->>>>> +    },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap s4_vid_pll_sel = {
->>>>> +    .data = &(struct clk_regmap_mux_data){
->>>>> +        .offset = CLKCTRL_VID_PLL_CLK_DIV,
->>>>> +        .mask = 0x1,
->>>>> +        .shift = 18,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data){
->>>>> +        .name = "vid_pll_sel",
->>>>> +        .ops = &clk_regmap_mux_ops,
->>>>> +        /*
->>>>> +         * bit 18 selects from 2 possible parents:
->>>>> +         * vid_pll_div or hdmi_pll
->>>>> +         */
->>>>> +        .parent_data = (const struct clk_parent_data []) {
->>>>> +            { .hw = &s4_vid_pll_div.hw },
->>>>> +            { .fw_name = "hdmi_pll", }
->>>>> +        },
->>>>> +        .num_parents = 2,
->>>>> +        .flags = CLK_SET_RATE_NO_REPARENT,
->>>> Why ? are you planning to DT assigned clocks to statically set this ?
->>> Because vid_pll_sel one parent is HDMI_PLL, and HDMI_PLL is a fixed
->>> frequency. To prevent modification, use CLK_SET_RATE_NO_REPARENT.
+>>>> 2. gpu_gx_gdsc in gpucc-msm8998.c and
+>>>>     gpu_gx_gdsc in gpucc-sdm660.c
+>>>> Both of these seem to add support for 3 power state
+>>>> OFF, RET and ON, however I dont see any logic in gdsc
+>>>> driver to handle 3 different power states.
+>>>> So I am expecting that these are infact just transitioning
+>>>> between ON and OFF and RET state is never really used.
+>>>> The ideal fix for them would be to just update their resp.
+>>>> .pwrsts to PWRSTS_OFF_ON only.
+>>>
+>>> static int gdsc_init(struct gdsc *sc)
+>>> {
+>>>
+>>>      ...
+>>>
+>>>      if (on || (sc->pwrsts & PWRSTS_RET))
+>>>          gdsc_force_mem_on(sc);
+>>>      else
+>>>          gdsc_clear_mem_on(sc);
+>>>
+>>>      ...
+>>> }
+>>>
+>>> On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
+>>> left OFF from the bootloader, but we want (at least for 630/660) memretain
+>>> without periph-retain: this is required to make the hypervisor happy.
 >>
->> Again, this makes no sense.
+>> Ideally setting the memretain bits while the GDSC is OFF should have no affect
+>> at all. Is this for the gpu_gx_gdsc on 630/660? Is this needed only at the init
+>> time (when the bootloader has left it OFF) or is it needed everytime the kernel
+>> turns it OFF too?
 > 
-> Unfortunately you don't read V4, in fact I have corrected in V4.
+> Even though I don't remember the flow in a clear way (this entire thing was done
+> years ago), I'm sure that for PWRSTS_OFF memretain can be cleared, so, the current
+> flow that we have in gdsc.c does work correctly.
 > 
-> ".flags = CLK_SET_RATE_PARENT," in V4. Is that okay with you?
+> Ideally, I agree with you that the memretain bits should have no effect at all
+> while the GDSC is OFF, but that's the situation on these platforms.
 
-I don't know what you think?
-
-> 
->>
->>>>
->>>>> +    },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap s4_vid_pll = {
->>>>> +    .data = &(struct clk_regmap_gate_data){
->>>>> +        .offset = CLKCTRL_VID_PLL_CLK_DIV,
->>>>> +        .bit_idx = 19,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data) {
->>>>> +        .name = "vid_pll",
->>>>> +        .ops = &clk_regmap_gate_ops,
->>>>> +        .parent_hws = (const struct clk_hw *[]) {
->>>>> +            &s4_vid_pll_sel.hw
->>>>> +        },
->>>>> +        .num_parents = 1,
->>>>> +        .flags = CLK_SET_RATE_PARENT,
->>>>> +    },
->>>>> +};
->>>>> +
->>>>> +static const struct clk_parent_data s4_vclk_parent_data[] = {
->>>>> +    { .hw = &s4_vid_pll.hw },
->>>>> +    { .fw_name = "gp0_pll", },
->>>>> +    { .fw_name = "hifi_pll", },
->>>>> +    { .fw_name = "mpll1", },
->>>>> +    { .fw_name = "fclk_div3", },
->>>>> +    { .fw_name = "fclk_div4", },
->>>>> +    { .fw_name = "fclk_div5", },
->>>>> +    { .fw_name = "fclk_div7", },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap s4_vclk_sel = {
->>>>> +    .data = &(struct clk_regmap_mux_data){
->>>>> +        .offset = CLKCTRL_VID_CLK_CTRL,
->>>>> +        .mask = 0x7,
->>>>> +        .shift = 16,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data){
->>>>> +        .name = "vclk_sel",
->>>>> +        .ops = &clk_regmap_mux_ops,
->>>>> +        .parent_data = s4_vclk_parent_data,
->>>>> +        .num_parents = ARRAY_SIZE(s4_vclk_parent_data),
->>>>> +        .flags = CLK_SET_RATE_NO_REPARENT,
->>>> Same
->>> Since fclk_div* is a fixed frequency value, mplL1 and hifi_pll and 
->>> gp0_pll
->>> are used by other specialized modules, vid_pll has 
->>> CLK_SET_RATE_PARENT. The
->>> parent of vid_pll is that vid_pll_sel uses CLK_SET_RATE_NO_REPARENT.
->>
->> Still not good.
->>
->> You don't have CLK_SET_RATE, propagation is stopped and parent clock
->> will not changed. The best parent will be picked but not changed.
->>
->> If one parent MUST NOT be picked, just remove it from the list and add a
->> explaining why
->>
->> [...]
-> 
-> Okay.
-
-In the next edition I will change it to ".flags = CLK_SET_RATE_PARENT".
+Would you be able to test this patch on these platforms to see if we end up
+with regressions?
 
 > 
->>
->>>>> +
->>>>> +static struct clk_regmap s4_ts_clk_div = {
->>>>> +    .data = &(struct clk_regmap_div_data){
->>>>> +        .offset = CLKCTRL_TS_CLK_CTRL,
->>>>> +        .shift = 0,
->>>>> +        .width = 8,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data){
->>>>> +        .name = "ts_clk_div",
->>>>> +        .ops = &clk_regmap_divider_ops,
->>>>> +        .parent_data = &(const struct clk_parent_data) {
->>>>> +            .fw_name = "xtal",
->>>>> +        },
->>>>> +        .num_parents = 1,
->>>> propagation stopped ?
->>> Its parent is xtal, so I should use CLK_SET_RATE_NO_REPARENT.
->>
->> Still no. You seem to have problem with the meaning of
->> CLK_SET_RATE_NO_REPARENT.
->>
->> * CLK_SET_RATE_NO_REPARENT: means the parent will no be changed, even if
->>    selecting another parent would result in a closer rate to the
->>    request. It makes sense only if the clock has several parents
->>
->> * CLK_SET_RATE_PARENT: means rate change may propagate the parent,
->>    meaning the rate of the parent may change if it help the child achieve
->>    a closer rate to the request
+>> How did we come up with this trick to keep the hypervisor happy, was it picked
+>> up from some downstream reference code?
 > 
-> Thank you for explaining.I got it.
+> Yes, it was found in various releases of the downstream kernel for 8998/630/660.
 > 
 >>
->>>>
->>>>> +    },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap s4_ts_clk_gate = {
->>>>> +    .data = &(struct clk_regmap_gate_data){
->>>>> +        .offset = CLKCTRL_TS_CLK_CTRL,
->>>>> +        .bit_idx = 8,
->>>>> +    },
->>>>> +    .hw.init = &(struct clk_init_data){
->>>>> +        .name = "ts_clk",
->>>>> +        .ops = &clk_regmap_gate_ops,
->>>>> +        .parent_hws = (const struct clk_hw *[]) {
->>>>> +            &s4_ts_clk_div.hw
->>>>> +        },
->>>>> +        .num_parents = 1,
->>>>> +    },
->>>> propagation stopped ?
->>> I will add CLK_SET_RATE_PARENT.
->>
->> [...]
->>
->>>>> +/* EMMC/NAND clock */
->>>>> +
->>>>> +static const struct clk_parent_data s4_sd_emmc_clk0_parent_data[] = {
->>>>> +    { .fw_name = "xtal", },
->>>>> +    { .fw_name = "fclk_div2", },
->>>>> +    { .fw_name = "fclk_div3", },
->>>>> +    { .fw_name = "hifi_pll", },
->>>>> +    { .fw_name = "fclk_div2p5", },
->>>>> +    /*
->>>>> +     * Following these parent clocks, we should also have had 
->>>>> mpll2, mpll3
->>>>> +     * and gp0_pll but these clocks are too precious to be used 
->>>>> here. All
->>>>> +     * the necessary rates for MMC and NAND operation can be 
->>>>> acheived using
->>>>> +     * hifi_pll or fclk_div clocks
->>>>> +     */
->>>> You don't want to list mplls but hifi_pll is fine ? seems dangerous.
->>> hifi pll is for EMMC and NAND on this SoC.
->>
->> That deserve a better explanation.
->> Why can't it use fdiv2 and xtal like the previous SoCs ?
->>
->> Which PLLs are you using for Audio then ?
->> Typical operation on these SoCs usually require 3 PLLs to acheive all 
->> rates
->>
+>>>
+>>> Regards,
+>>> Angelo
+>>>
 > 
-> I'll list all the clocks and let the driver itself select Parent as needed.
-
-I don't know what you think?
-
-> 
->>>>
->>
->>
->>>>> +/*
->>>>> + * gen clk is designed for debug/monitor some internal clock 
->>>>> quality. Some of the
->>>>> + * corresponding clock sources are not described in the clock 
->>>>> tree, so they are skipped.
->>>>> + */
->>>> Still feels a bit light, don't you think ? Among all the clocks, can't
->>>> you add a bit more parents here ? It would certainly help debug down 
->>>> the road
->>> [16:12]    is gen_clk source select.All is:
->>> 0: cts_oscin_clk
->>> 1:cts_rtc_clk
->>> 2:sys_pll_div16 (internal clock)
->>> 3:ddr_pll_div32  (internal clock)
->>> 4: vid_pll
->>> 5: gp0_pll
->>> 7: hifi_pll
->>> 10:adc_dpll_clk_b3 (internal clock for debug)
->>> 11:adc_dpll_intclk (internal clock for debug)
->>> 12:clk_msr_src(select from all internal clock except PLLs);
->>> 16: no used
->>> 17: sys_cpu_clk_div16 (internal clock)
->>> 19: fclk_div2
->>> 20: fclk_div2p5
->>> 21: fclk_div3
->>> 22: fclk_div4
->>> 23: fclk_div5
->>> 24: fclk_div7
->>> 25: mpll0
->>> 26: mpll1
->>> 27: mpll2
->>> 28: mpll3
->>> So i only added the clocks that will actually be used, and some 
->>> debugging
->>> clock peripherals will not be used.
->>
->> you may at least add vid_pll
-> 
-> Okay.
-
-It has been changed as you suggested.
-
-> 
->>
->>>>
->>>>> +static u32 s4_gen_clk_mux_table[] = { 0, 5, 7, 19, 21, 22,
->>>>> +                      23, 24, 25, 26, 27, 28 };
->>>>> +static const struct clk_parent_data s4_gen_clk_parent_data[] = {
->>>>> +    { .fw_name = "xtal", },
->>>>> +    { .fw_name = "gp0_pll", },
->>>>> +    { .fw_name = "hifi_pll", },
->>>>> +    { .fw_name = "fclk_div2", },
->>>>> +    { .fw_name = "fclk_div3", },
->>>>> +    { .fw_name = "fclk_div4", },
->>>>> +    { .fw_name = "fclk_div5", },
->>>>> +    { .fw_name = "fclk_div7", },
->>>>> +    { .fw_name = "mpll0", },
->>>>> +    { .fw_name = "mpll1", },
->>>>> +    { .fw_name = "mpll2", },
->>>>> +    { .fw_name = "mpll3", },
->>>>> +};
->>
->> .
