@@ -2,104 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4C7ECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 08:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD08ECAAD8
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 08:28:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231346AbiIUIBd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 04:01:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40046 "EHLO
+        id S230197AbiIUI2Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 04:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbiIUIBU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 04:01:20 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581028688F;
-        Wed, 21 Sep 2022 01:01:08 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id l8so3852215wmi.2;
-        Wed, 21 Sep 2022 01:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=P1brdYL05ONOqQ4UPTBlIuUKc3UGGvzkcC42vcfAOXE=;
-        b=Tp4x8+lc/Y0D2Kel7La5a943urpZ+ieIGWh3yhiz3eDUFYePzoFJAP+2ndSSKxnJc5
-         m0ZqC1mtwCT6x+pe9R3oHcQzEfozq5zeFVC34kNQr4FG6FiBOYlf9ypDV4QWUduETurm
-         lShJkM84+xebPK4MDDXeqH4re1appi8FSIbj4Ee9v3gWWGJFj9Z8bl4dKMMeytNT7f07
-         kWITGFlBX8XBTWO0wKsbXcpZWiofRHjNOd+jg3WK9bfCGPfVbCIIw94BeC6KX7579CZ5
-         YId80/1v43hxBsyfMtCpvZaDEsCh5vHEUBCJO/JVo/wgrXV31E304zh5RvEY3wTTNK75
-         X69w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=P1brdYL05ONOqQ4UPTBlIuUKc3UGGvzkcC42vcfAOXE=;
-        b=TuwxoGCB/cOLWmv6/Z8EiqJDSIOsa5OZ2gHxBjHZ2RmIdLMRiMwXlRVSGuujtKcoFD
-         fjoEx7deOsPTYaLa5zBi4hwoqbxpj5q9yGbgdvc8q1IzuVTT4oH7rZlhnDvZtQnIWiMc
-         Q/3RB7R2p2hGB7s+UbW017/UdY4mvVK01lUj2Mb54oK1l4jWK0tPMI3Gr8SqniklNDOi
-         yfLUeJyOxl1RAfq757itj9/ZNpt3EjOr3mNs1ut/6ydVU26Dtde9m2tEtG1gn5Oejjd7
-         1Pves7OsBuZFcvdQ/X5LNDiAK/plR56mi16LrpyjQD3MrhS4CxdxDav0Zvf9hBvBKDRB
-         fGGQ==
-X-Gm-Message-State: ACrzQf0hiLyj6eA8bZlKdGmYzHd000MCLM/o49SW4lWHowOik917VQpt
-        sPQ4IqGzNlOBkKFEpKpNFFE=
-X-Google-Smtp-Source: AMsMyM7T6I+upU/Mrkb86ceE1LroMuK/me1ZMw8e9uVVDpvwEa3joBeBaHLI5M5hUMpecZQvqzhOhA==
-X-Received: by 2002:a05:600c:4e89:b0:3b4:8648:c4e1 with SMTP id f9-20020a05600c4e8900b003b48648c4e1mr4993677wmq.26.1663747266639;
-        Wed, 21 Sep 2022 01:01:06 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:a137:83be:d4a3:8e44])
-        by smtp.gmail.com with ESMTPSA id n24-20020a1c7218000000b003a8434530bbsm1968410wmc.13.2022.09.21.01.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 01:01:06 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: rzg2l: Fix typo in function name
-Date:   Wed, 21 Sep 2022 09:00:51 +0100
-Message-Id: <20220921080051.5604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S230316AbiIUI2C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 04:28:02 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8B46D32AAF;
+        Wed, 21 Sep 2022 01:27:54 -0700 (PDT)
+Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 430C71C80E70;
+        Wed, 21 Sep 2022 16:27:53 +0800 (CST)
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Wed, 21 Sep
+ 2022 16:27:52 +0800
+Received: from taln60.nuvoton.co.il (10.191.1.180) by NTHCCAS01.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
+ Transport; Wed, 21 Sep 2022 16:27:52 +0800
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 825E262EFD; Wed, 21 Sep 2022 11:27:51 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
+        <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>
+CC:     <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v11 0/1] Introduce Nuvoton Arbel NPCM8XX BMC SoC
+Date:   Wed, 21 Sep 2022 11:27:47 +0300
+Message-ID: <20220921082749.80813-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This patchset adds clock support for the Nuvoton 
+Arbel NPCM8XX Board Management controller (BMC) SoC family.
+ 
+This patchset cover letter is based from the initial support for NPCM8xx BMC to
+keep tracking the version history.
+ 
+all the other initial support patches had been applied to Linux kernel 6.0.
 
-Fix typo, rzg2l_mod_clock__get_sibling -> rzg2l_mod_clock_get_sibling
+This patchset was tested on the Arbel NPCM8XX evaluation board.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/rzg2l-cpg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Addressed comments from:
+ - kernel test robot: https://lore.kernel.org/lkml/202209201539.wghiUnB8-lkp@intel.com/
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 3ff6ecd61756..16beec2e3061 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1014,8 +1014,8 @@ static const struct clk_ops rzg2l_mod_clock_ops = {
- };
- 
- static struct mstp_clock
--*rzg2l_mod_clock__get_sibling(struct mstp_clock *clock,
--			      struct rzg2l_cpg_priv *priv)
-+*rzg2l_mod_clock_get_sibling(struct mstp_clock *clock,
-+			     struct rzg2l_cpg_priv *priv)
- {
- 	struct clk_hw *hw;
- 	unsigned int i;
-@@ -1101,7 +1101,7 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
- 		struct mstp_clock *sibling;
- 
- 		clock->enabled = rzg2l_mod_clock_is_enabled(&clock->hw);
--		sibling = rzg2l_mod_clock__get_sibling(clock, priv);
-+		sibling = rzg2l_mod_clock_get_sibling(clock, priv);
- 		if (sibling) {
- 			clock->sibling = sibling;
- 			sibling->sibling = clock;
+Changes since version 10:
+ - NPCM8XX clock driver
+	- Fix const warning.
+
+Changes since version 9:
+ - NPCM8XX clock driver
+	- Move configuration place.
+	- Using clk_parent_data instead of parent_name
+	- using devm_ioremap instead of ioremap. deeply sorry, I know we had
+	 a long discussion on what should the driver use, from other examples 
+	 (also in other clock drivers) I see the combination of 
+	 platform_get_resource and devm_ioremap are commonly used and it answer
+	 the reset and clock needs.
+
+Changes since version 8:
+ - NPCM8XX clock driver
+	- Move configuration place.
+	- Add space before and aftre '{' '}'.
+	- Handle devm_of_clk_add_hw_provider function error.
+
+Changes since version 7:
+ - NPCM8XX clock driver
+	- The clock and reset registers using the same memory region, 
+	  due to it the clock driver should claim the ioremap directly 
+	  without checking the memory region.
+
+Changes since version 6:
+ - NPCM reset driver
+	- Modify warning message.
+ - dt-bindings: serial: 8250: Add npcm845 compatible string patch accepted, due
+   to it the patch removed from the patchset.
+
+Changes since version 5:
+ - NPCM8XX clock driver
+	- Remove refclk if devm_of_clk_add_hw_provider function failed.
+ - NPCM8XX clock source driver
+	- Remove NPCM8XX TIMER_OF_DECLARE support, using the same as NPCM7XX.
+
+Changes since version 4:
+ - NPCM8XX clock driver
+	- Use the same quote in the dt-binding file.
+
+Changes since version 3:
+ - NPCM8XX clock driver
+	- Rename NPCM8xx clock dt-binding header file.
+	- Remove unused structures.
+	- Improve Handling the clocks registration.
+ - NPCM reset driver
+	- Add ref phandle to dt-binding.
+
+Changes since version 2:
+ - Remove NPCM8xx WDT compatible patch.
+ - Remove NPCM8xx UART compatible patch.
+ - NPCM8XX clock driver
+	- Add debug new line.
+	- Add 25M fixed rate clock.
+	- Remove unused clocks and clock name from dt-binding.
+ - NPCM reset driver
+	- Revert to npcm7xx dt-binding.
+	- Skip dt binding quotes.
+	- Adding DTS backward compatibility.
+	- Remove NPCM8xx binding include file.
+	- Warp commit message.
+- NPCM8XX device tree:
+	- Remove unused clock nodes (used in the clock driver)
+	- Modify gcr and rst node names.
+
+Changes since version 1:
+ - NPCM8XX clock driver
+	- Modify dt-binding.
+	- Remove unsed definition and include.
+	- Include alphabetically.
+	- Use clock devm.
+ - NPCM reset driver
+	- Modify dt-binding.
+	- Modify syscon name.
+	- Add syscon support to NPCM7XX dts reset node.
+	- use data structure.
+ - NPCM8XX device tree:
+	- Modify evb compatible name.
+	- Add NPCM7xx compatible.
+	- Remove disable nodes from the EVB DTS.
+
+Tomer Maimon (1):
+  clk: npcm8xx: add clock controller
+
+ drivers/clk/Kconfig       |   6 +
+ drivers/clk/Makefile      |   1 +
+ drivers/clk/clk-npcm8xx.c | 589 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 596 insertions(+)
+ create mode 100644 drivers/clk/clk-npcm8xx.c
+
 -- 
-2.25.1
+2.33.0
 
