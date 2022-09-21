@@ -2,104 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A980FECAAD8
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 21:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD20C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 23:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229827AbiIUVwQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Sep 2022 17:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58764 "EHLO
+        id S230137AbiIUXEu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 19:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230484AbiIUVwA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 17:52:00 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 91597A7203;
-        Wed, 21 Sep 2022 14:51:48 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE5D51684;
-        Wed, 21 Sep 2022 14:51:53 -0700 (PDT)
-Received: from e126311.manchester.arm.com (unknown [10.57.76.246])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F35F3F73B;
-        Wed, 21 Sep 2022 14:51:19 -0700 (PDT)
-Date:   Wed, 21 Sep 2022 22:51:10 +0100
-From:   Kajetan Puchalski <kajetan.puchalski@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
-        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-        dvyukov@google.com, vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 07/44] cpuidle,psci: Push RCU-idle into driver
-Message-ID: <YyuHTgRh7t6vYjHw@e126311.manchester.arm.com>
-References: <20220919095939.761690562@infradead.org>
- <20220919101520.802976773@infradead.org>
+        with ESMTP id S229762AbiIUXEt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 19:04:49 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44BCD5303E;
+        Wed, 21 Sep 2022 16:04:48 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id d12-20020a05600c3acc00b003b4c12e47f3so233663wms.4;
+        Wed, 21 Sep 2022 16:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=MO0iuegYftZgMTaVkMEpJ8NOG2X2uWjfilYBXSOUTbA=;
+        b=EQYmWrAimRrjiHOhePo7fKml5BXN+oRbq6LHfu+R/T5YKkAuXSbYi9ujo6RIAZ6yoD
+         bwlT3RPh/G1GwSELeUaIP+BCsomeTlXTwU92A1nNGCDtBo5b+ioEnnsA9leU0lBLgVFP
+         Lgb59gMRAzH2vqHKuie1f1VEalW9rAZ73zTexGZ9K57DKwxgpf4mmpv+9vOWJ/ZRRGKM
+         6Nd2juPWHJEW19+AQrS4+vDa0Ih0rrBLONjiay2RhH7Vh6+xE1ZE+Ru4M3brkWcHO4UA
+         8m00sy4XpxYMKbpgQVjyFb39j9wZ6VJYJHnvJg4YOTyRUkgaEXgasMUiaSHD5MPxMQtL
+         tXyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=MO0iuegYftZgMTaVkMEpJ8NOG2X2uWjfilYBXSOUTbA=;
+        b=n0/I3vOP3maYjYuNMAbEIq2w6mSugkETN7/W5KR+i5PgE4EG7XQ5O6aNVlhWloL22t
+         x9GYMolPpU02nY39T/9fOPKTTkrfBLlK7w4B6oJ9UzlwzhPoDlM9nyaB2WMw2Cofx7J4
+         /4HhTVlvX2JcnEldG5RqgkYV+b0gwtstsxTkkCBoQKx2OvD0SWpsnpg1RUBc5RpazxJ6
+         AOFyCs2DoAX9pJ/aZZFTaL7cum7vOuPl6jqPxWfKnN1U1SrwibsdbLe8NJY69zRWHVR7
+         cv4XY1VAJBomBiPlzI8B9NSGgXnbvuEiG5hXZfG2HargRhPBmQb9OoRrcYUZIItbf0ky
+         lS5g==
+X-Gm-Message-State: ACrzQf35UYTcgETCgjhAGCLMLrDdANkMtTeMQxfB05myqSWVo4RxfQNW
+        peQQIoXnN4X4RqiDNCMsgHgHHGIGF44=
+X-Google-Smtp-Source: AMsMyM5UQ5aNlt3LD4kmMRgKwwqsCA93V+LO5pL+S7XErvnEEglfgtwFltmgdKR1idEpXGblJtsJCA==
+X-Received: by 2002:a1c:f406:0:b0:3a5:d667:10 with SMTP id z6-20020a1cf406000000b003a5d6670010mr339287wma.70.1663801486706;
+        Wed, 21 Sep 2022 16:04:46 -0700 (PDT)
+Received: from localhost.localdomain (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
+        by smtp.gmail.com with ESMTPSA id x12-20020adfffcc000000b0022ac672654dsm3519252wrs.58.2022.09.21.16.04.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Sep 2022 16:04:46 -0700 (PDT)
+From:   Daniel Scally <djrscally@gmail.com>
+To:     linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, hdegoede@redhat.com, markgross@kernel.org,
+        robert.moore@intel.com
+Subject: [PATCH v3 0/5] Add multiple-consumer support to int3472-tps68470 driver
+Date:   Thu, 22 Sep 2022 00:04:34 +0100
+Message-Id: <20220921230439.768185-1-djrscally@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220919101520.802976773@infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 11:59:46AM +0200, Peter Zijlstra wrote:
-> Doing RCU-idle outside the driver, only to then temporarily enable it
-> again, at least twice, before going idle is daft.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Hello all
 
-Tried it on Pixel 6 running psci_idle, looks good with no apparent issues.
+At the moment there are a few places in the int3472-tps68470 driver that are
+limited to just working with a single consuming device dependent on the PMIC.
+There are systems where multiple camera sensors share a single TPS68470, so
+we need to extend the driver to support them. This requires a couple of tweaks
+to the ACPI functions to fetch dependent devices, which also assumes that only
+a single dependent will be found.
 
-Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
+The v2 for this series was some time ago...it's kept falling to the back of my
+to-do list so I've only just gotten round to it; sorry about that. v2 here:
+
+https://lore.kernel.org/linux-acpi/20220327161344.50477-1-djrscally@gmail.com/
+
+Thanks
+Dan
+
+Daniel Scally (5):
+  ACPI: scan: Add acpi_dev_get_next_consumer_dev()
+  ACPI: bus: Add iterator for dependent devices
+  platform/x86: int3472: Support multiple clock consumers
+  platform/x86: int3472: Support multiple gpio lookups in board data
+  platform/x86: int3472: Add board data for Surface Go2 IR camera
+
+ drivers/acpi/scan.c                           | 40 +++++++---
+ drivers/clk/clk-tps68470.c                    | 13 +++-
+ drivers/platform/x86/intel/int3472/common.c   |  2 +-
+ drivers/platform/x86/intel/int3472/tps68470.c | 76 ++++++++++++++++---
+ drivers/platform/x86/intel/int3472/tps68470.h |  3 +-
+ .../x86/intel/int3472/tps68470_board_data.c   | 54 ++++++++++++-
+ include/acpi/acpi_bus.h                       | 15 +++-
+ include/linux/platform_data/tps68470.h        |  7 +-
+ 8 files changed, 177 insertions(+), 33 deletions(-)
+
+-- 
+2.25.1
+
