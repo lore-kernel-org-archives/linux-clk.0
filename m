@@ -2,114 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B755BC54EE9
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 02:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1F0C6FA82
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Sep 2022 06:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiIUCtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Sep 2022 22:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43290 "EHLO
+        id S229729AbiIUG51 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Sep 2022 02:57:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbiIUCs7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Sep 2022 22:48:59 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44734BD21;
-        Tue, 20 Sep 2022 19:48:51 -0700 (PDT)
-X-UUID: bb899c095730417f8550dbb20c369c24-20220921
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=LZ8TKW4921hpmzu6cbHG4qSi1zO+4c+6IQ2eX6a4QM4=;
-        b=CmDrPdM/jhHPPWeKlLGjCQBSTtFlSwi1cyd2vsnDYHoT99pZ0pCs0t2CRnwIvj63ELpMM/L11PrE8rQHXtKy+IvHgcT7/XWcKYCmDAQJsJB3PqDDDD4YguAardt4J0h8vwR+l/rtBP8JiHyB5a1Gga5kdN2dc/dqEzKrde5gO/4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.11,REQID:cc08c40f-088e-4c65-82e5-910d3d0df1aa,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:39a5ff1,CLOUDID:d3ed595e-5ed4-4e28-8b00-66ed9f042fbd,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: bb899c095730417f8550dbb20c369c24-20220921
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1279531616; Wed, 21 Sep 2022 10:48:46 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Wed, 21 Sep 2022 10:48:44 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.792.15 via Frontend
- Transport; Wed, 21 Sep 2022 10:48:44 +0800
-Message-ID: <ca635a06d36a7815ae16013fd916cda682c3ab7c.camel@mediatek.com>
-Subject: Re: [PATCH v1 01/17] dt-bindings: clk: mediatek: Add MT8195 DPI
- clocks
-From:   Bo-Chen Chen <rex-bc.chen@mediatek.com>
-To:     Guillaume Ranquet <granquet@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230075AbiIUG5Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Sep 2022 02:57:24 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059987C187
+        for <linux-clk@vger.kernel.org>; Tue, 20 Sep 2022 23:57:23 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id j24so5310786lja.4
+        for <linux-clk@vger.kernel.org>; Tue, 20 Sep 2022 23:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=NK2N/b/QQywGXjYSUF1DR4DFgFeCcv8ay3tmMR7yQe4=;
+        b=zd9VKku7G1ak2cVyYOpEVge/UKl5/MrmOGUtOuV36rnH2moft2SkAC/9tMMOJjqevW
+         iij9gy5AkWzLqLBhcQtg1LjWDm4G7jMk8WimQOrNfN9u3qVCSv4AvFMcBkGlB/Z+DkrM
+         44pP9yln+ruBWW3bjLElOcV+dH5W1qdMRKI9bGT5lqT/8i3qKkxJAdDmOLkLgCbIHLdQ
+         yXDMxXv2Kyp4S00TH8ryrjxRPvWLMtROado73s+RWJl4EyKQFnQDrVSrFJ1qNp7NWebr
+         brEd1UtiG4Qv3mueTQn9TpQaUJVc7FuasEN6YvoZj72MynPHRGdqSqPndsNjRBMnNICy
+         zACg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=NK2N/b/QQywGXjYSUF1DR4DFgFeCcv8ay3tmMR7yQe4=;
+        b=K0fXpsjyfmSNkFlFwy/X9jQ+O15irGagFUW25FPF6uKnMFYWHgbMDfrY3dXdo9HEye
+         mOBo2Jd5HUFYxUjxw0LS6eCzYGhXNZ37QuRp6oWjwhjgQGtCRCBL0QCMgyh4ij721Wrs
+         AW5c4DA0AGzoxaOdVN+uH/Lz5oofe5qfnkJ/wgyzhDYi7vN13hn9qt2pqkD04ET5oMdG
+         T5yVKX6DGGBGM+sGc07pK7mAFFg6SKwr22Y1e3myR4sHSbX2V8YGRMwsStpkCJFo7rzZ
+         jx3At0oElY43CO7JfUFfkoaN/FYObToDkdY/s5rWt9gFvQlnq298XL3SZKuaWYTVV9Ax
+         96qg==
+X-Gm-Message-State: ACrzQf1NaLSfhX5lDkKuxgHd9RCikevwzi0INEyDu/WWcGWmqhrZDOXa
+        P/69mVa4RHxlxsynS7iR1itcsA==
+X-Google-Smtp-Source: AMsMyM4EcQa7KqdhM3o6+dyVA7n/gHX0GrxOqzZR52bpaVcu/jIZW6WrDc7SJVRTnVlFdh3dYeQywA==
+X-Received: by 2002:a2e:944a:0:b0:24f:10bd:b7e8 with SMTP id o10-20020a2e944a000000b0024f10bdb7e8mr8835541ljh.238.1663743441318;
+        Tue, 20 Sep 2022 23:57:21 -0700 (PDT)
+Received: from krzk-bin (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id p15-20020ac24ecf000000b00499cf3e3ebesm307999lfr.121.2022.09.20.23.57.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Sep 2022 23:57:20 -0700 (PDT)
+Date:   Wed, 21 Sep 2022 08:57:18 +0200
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, Vinod Koul <vkoul@kernel.org>,
+        devicetree@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>,
-        Pablo Sun <pablo.sun@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>
-Date:   Wed, 21 Sep 2022 10:48:44 +0800
-In-Reply-To: <20220919-v1-1-4844816c9808@baylibre.com>
-References: <20220919-v1-0-4844816c9808@baylibre.com>
-         <20220919-v1-1-4844816c9808@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v6 2/8] dt-bindings: phy: Add Lynx 10G phy binding
+Message-ID: <20220921065718.lafutkkgiium5ycu@krzk-bin>
+References: <20220920202356.1451033-1-sean.anderson@seco.com>
+ <20220920202356.1451033-3-sean.anderson@seco.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220920202356.1451033-3-sean.anderson@seco.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2022-09-19 at 18:55 +0200, Guillaume Ranquet wrote:
-> From: Pablo Sun <pablo.sun@mediatek.com>
+On Tue, 20 Sep 2022 16:23:50 -0400, Sean Anderson wrote:
+> This adds a binding for the SerDes module found on QorIQ processors.
+> Each phy is a subnode of the top-level device, possibly supporting
+> multiple lanes and protocols. This "thick" #phy-cells is used due to
+> allow for better organization of parameters. Note that the particular
+> parameters necessary to select a protocol-controller/lane combination
+> vary across different SoCs, and even within different SerDes on the same
+> SoC.
 > 
-> Expand dt-bindings slot for VDOSYS1 of MT8195.
-> This clock is required by the DPI1 hardware
-> and is a downstream of the HDMI pixel clock.
+> The driver is designed to be able to completely reconfigure lanes at
+> runtime. Generally, the phy consumer can select the appropriate
+> protocol using set_mode.
 > 
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
-> Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+> There are two PLLs, each of which can be used as the master clock for
+> each lane. Each PLL has its own reference. For the moment they are
+> required, because it simplifies the driver implementation. Absent
+> reference clocks can be modeled by a fixed-clock with a rate of 0.
 > 
-> diff --git a/include/dt-bindings/clock/mt8195-clk.h b/include/dt-
-> bindings/clock/mt8195-clk.h
-> index 95cf812a0b37..d70d017ad69c 100644
-> --- a/include/dt-bindings/clock/mt8195-clk.h
-> +++ b/include/dt-bindings/clock/mt8195-clk.h
-> @@ -859,6 +859,8 @@
->  #define CLK_VDO1_DPINTF				47
->  #define CLK_VDO1_DISP_MONITOR_DPINTF		48
->  #define CLK_VDO1_26M_SLOW			49
-> -#define CLK_VDO1_NR_CLK				50
-> +#define CLK_VDO1_DPI1_HDMI			50
-> +#define CLK_VDO1_NR_CLK				51
-> +
->  
->  #endif /* _DT_BINDINGS_CLK_MT8195_H */
+> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> 
+> Changes in v6:
+> - fsl,type -> phy-type
+> 
+> Changes in v4:
+> - Use subnodes to describe lane configuration, instead of describing
+>   PCCRs. This is the same style used by phy-cadence-sierra et al.
+> 
+> Changes in v3:
+> - Manually expand yaml references
+> - Add mode configuration to device tree
+> 
+> Changes in v2:
+> - Rename to fsl,lynx-10g.yaml
+> - Refer to the device in the documentation, rather than the binding
+> - Move compatible first
+> - Document phy cells in the description
+> - Allow a value of 1 for phy-cells. This allows for compatibility with
+>   the similar (but according to Ioana Ciornei different enough) lynx-28g
+>   binding.
+> - Remove minItems
+> - Use list for clock-names
+> - Fix example binding having too many cells in regs
+> - Add #clock-cells. This will allow using assigned-clocks* to configure
+>   the PLLs.
+> - Document the structure of the compatible strings
+> 
+>  .../devicetree/bindings/phy/fsl,lynx-10g.yaml | 236 ++++++++++++++++++
+>  1 file changed, 236 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
+> 
 
-Hello Guillaume,
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-I am not sure the reason, but it seems patches in this series lack of
-something like this for whole series:
+yamllint warnings/errors:
 
----
- Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 1 +
- 1 file changed, 1 insertion(+)
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/phy/fsl,lynx-10g.example.dts:51.27-28 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:384: Documentation/devicetree/bindings/phy/fsl,lynx-10g.example.dtb] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1420: dt_binding_check] Error 2
 
-BRs,
-Bo-Chen
+doc reference errors (make refcheckdocs):
 
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
