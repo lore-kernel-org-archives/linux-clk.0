@@ -2,148 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B531ECAAD8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 18:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C93F1ECAAD8
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 19:31:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232285AbiIVSms (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 14:42:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
+        id S231197AbiIVTbP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 15:31:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbiIVSmr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 14:42:47 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFDE6E5F84;
-        Thu, 22 Sep 2022 11:42:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7B8E2B839EA;
-        Thu, 22 Sep 2022 18:42:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C40C433C1;
-        Thu, 22 Sep 2022 18:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663872162;
-        bh=/h8vcD/VKlMfsilM0pkuVJ3xlR/VnjMHKVy8yWgVg3g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=DmVinFlzBg9GsiUso69Bkk+/qHgPMQ2PgkuO4jWk25WN3iEbJx1lE2EPNnp+UpZnd
-         hu5TxP9txk4iW6UcAN8LLLgpNHGZzGGn+4EzxfTVDvIXQoiUgJtylxpnQ+3iFjCgVu
-         nDiO8mlp2Bh4pFYJrzemIOLrxrvY1zxfDlvg0hIuGDNz81AxsGF9CmSDzj2YGxtOzr
-         6aA+HTqnfXy8X/FQaqynQCNkeGqZmbI67yE0Ba44vb1jgHEm4td29W588UgyBiSoKZ
-         efOtVj8fB9632l2+UQfoZPOMLabf9FRBZp4Tml0Ipz9iTG5vhN842RM6k5pL5kD3Pz
-         fH9Ppb9LPh2JQ==
-Date:   Thu, 22 Sep 2022 13:42:40 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org,
-        quic_vbadigan@quicinc.com, quic_hemantk@quicinc.com,
-        quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-        quic_ramkri@quicinc.com, manivannan.sadhasivam@linaro.org,
-        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
-        svarbanov@mm-sol.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@somainline.org, lpieralisi@kernel.org,
-        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
-        linux-phy@lists.infradead.org, vkoul@kernel.org, kishon@ti.com,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
-Message-ID: <20220922184240.GA1326211@bhelgaas>
+        with ESMTP id S230356AbiIVTbL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 15:31:11 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C0EEB122
+        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 12:31:08 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id j10so7051601qtv.4
+        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 12:31:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=NWcgMuOu/DRb30hVDSf+gjGKztVe28VznYCH2jRwr2w=;
+        b=Uv1U0RJbEpqFZrbA9uyr91kswnGSB3cjK6Aj9EXiOeZ7e0XWQub4bxwG+sbRw5QAA4
+         44JMp1BuOrUDUJ0uP0C6KSA8VHC/IuXF6Kqv6lVLWrpR8Nw200fkrYzWK0LLM3GfbgbA
+         NCqH1+i21BykwSS/x2OqgxCdNhFdsFfsXRuCs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=NWcgMuOu/DRb30hVDSf+gjGKztVe28VznYCH2jRwr2w=;
+        b=NmLvMm98ZAgDymWyqH7NDRsGNoBPO6n1XIZMYSeqxkeoXMVQ+SziZzN/FU1JMbuaXK
+         QMXJ676bghOEPukbyA+C8w9dy1gXWH7l4OugEIzrEvv7OKbElonGm+HvRV9T+cKIDBLI
+         exqhKxs32DjcEgErYuGZ+9hV5Rrfq2P/Wd5xKIuGAjQHlXHugb/ztDSQJyfz6KHW5Jag
+         S5qMxFRS8Hkj1pFp/W+1xgsyFO14VrWAxgag9qLdGlmyzgXdv7G0RixVVxo+2xjX0tlz
+         2TgTQzvlMERKpoaFxJ3tCT9CYCMpnP3n8nTHQzOSSVstAtZDwZyjFwNBkvO/QUc1GqZB
+         eihQ==
+X-Gm-Message-State: ACrzQf0AztJ6DYm9I7GfwgNquRqm0RB1rXizOiv6J9Sl+EVyv1g+kF/d
+        3KV5BYT1stwyPNY4ukYvO9RKaDLdCnfG2p9Z
+X-Google-Smtp-Source: AMsMyM5X3spJySOGhlhXn9TKeJ1vUC4PQaWa4xgYswhH4zjD3fT+v5idDUvkA6X33EHtGeHu/7U0ag==
+X-Received: by 2002:ac8:5c0b:0:b0:35c:e066:998d with SMTP id i11-20020ac85c0b000000b0035ce066998dmr4195776qti.336.1663875067117;
+        Thu, 22 Sep 2022 12:31:07 -0700 (PDT)
+Received: from meerkat.local (bras-base-mtrlpq5031w-grc-33-142-113-79-147.dsl.bell.ca. [142.113.79.147])
+        by smtp.gmail.com with ESMTPSA id i12-20020a05620a404c00b006b8d1914504sm5393430qko.22.2022.09.22.12.31.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Sep 2022 12:31:06 -0700 (PDT)
+Date:   Thu, 22 Sep 2022 15:31:04 -0400
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Guillaume Ranquet <granquet@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Bo-Chen Chen <rex-bc.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 01/17] dt-bindings: clk: mediatek: Add MT8195 DPI
+ clocks
+Message-ID: <20220922193104.4qminv6adrajkhw2@meerkat.local>
+References: <20220919-v1-0-4844816c9808@baylibre.com>
+ <20220919-v1-1-4844816c9808@baylibre.com>
+ <d01e4a03-1d6d-9616-45ca-1c927f2d8237@linaro.org>
+ <CABnWg9uZ=FrumgUzyUoUiS6T51nZTEf5JZ-1KF0-Ra9Ood5ufA@mail.gmail.com>
+ <6b24be8f-94d7-6973-6f35-18cb15fc8cd4@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <807730f9-0220-d297-dffd-929dde30d513@quicinc.com>
+In-Reply-To: <6b24be8f-94d7-6973-6f35-18cb15fc8cd4@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 09:09:28PM +0530, Krishna Chaitanya Chundru wrote:
-> On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
-> > [+cc Rafael, linux-pm since this is real power management magic,
-> > beginning of thread:
-> > https://lore.kernel.org/all/1663669347-29308-1-git-send-email-quic_krichai@quicinc.com/
-> > full patch since I trimmed too much of it:
-> > https://lore.kernel.org/all/1663669347-29308-2-git-send-email-quic_krichai@quicinc.com/]
-> > 
-> > On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
-> > > On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
-> > > > On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
-> > > > > Add suspend and resume syscore ops.
-> > > > > 
-> > > > > Few PCIe endpoints like NVMe and WLANs are always expecting the device
-> > > > > to be in D0 state and the link to be active (or in l1ss) all the time
-> > > > > (including in S3 state).
-> > > > What does this have to do with the patch?  I don't see any NVMe or
-> > > > WLAN patches here.
-> > > Existing NVMe driver expecting NVMe device to be in D0 during S3 also. If we
-> > > turn off the link in
-> > > suspend, the NVMe resume path is broken as the state machine is getting
-> > > reset in the NVMe device.
-> > > Due to this, the host driver state machine and the device state machine are
-> > > going out of sync, and all NVMe commands
-> > > after resumes are getting timed out.
-> > > 
-> > > IIRC, Tegra is also facing this issue with NVMe.
-> > > 
-> > > This issue has been discussed below threads:
-> > > 
-> > > https://lore.kernel.org/all/Yl+6V3pWuyRYuVV8@infradead.org/T/
-> > > 
-> > > https://lore.kernel.org/linux-nvme/20220201165006.3074615-1-kbusch@kernel.org/
-> > The problem is that this commit log doesn't explain the problem and
-> > doesn't give us anything to connect the NVMe and WLAN assumptions with
-> > this special driver behavior.  There needs to be some explicit
-> > property of NVMe and WLAN that the PM core or drivers like qcom can
-> > use to tell whether the clocks can be turned off.
->
-> Not only that NVMe is expecting the device state to be always in D0.
-> So any PCIe drivers should not turn off the link in suspend and do
-> link retraining in the resume.  As this is considered a power cycle
-> by the NVMe device and eventually increases the wear of the NVMe
-> flash.
+On Thu, Sep 22, 2022 at 02:51:00PM +0200, Krzysztof Kozlowski wrote:
+> Thanks for explanation! Probably your patches are perfectly fine and
+> should apply, although I must admit diffstat is often useful.
 
-I can't quite parse this.  Are you saying that all PCI devices should
-stay in D0 when the system is in S3?
+Krzysztof:
 
-> We are trying to keep the device in D0 and also reduce the power
-> consumption when the system is in S3 by turning off clocks and phy
-> with this patch series.
+The patches should indeed apply without problems and there's a fix for the
+missing diffstat already in place.
 
-The decision to keep a device in D0 is not up to qcom or any other PCI
-controller driver.
-
-> > > > > In qcom platform PCIe resources( clocks, phy etc..) can
-> > > > > released when the link is in L1ss to reduce the power
-> > > > > consumption. So if the link is in L1ss, release the PCIe
-> > > > > resources. And when the system resumes, enable the PCIe
-> > > > > resources if they released in the suspend path.
-> > > >
-> > > > What's the connection with L1.x?  Links enter L1.x based on
-> > > > activity and timing.  That doesn't seem like a reliable
-> > > > indicator to turn PHYs off and disable clocks.
-> > >
-> > > This is a Qcom PHY-specific feature (retaining the link state in
-> > > L1.x with clocks turned off).  It is possible only with the link
-> > > being in l1.x. PHY can't retain the link state in L0 with the
-> > > clocks turned off and we need to re-train the link if it's in L2
-> > > or L3. So we can support this feature only with L1.x.  That is
-> > > the reason we are taking l1.x as the trigger to turn off clocks
-> > > (in only suspend path).
-> >
-> > This doesn't address my question.  L1.x is an ASPM feature, which
-> > means hardware may enter or leave L1.x autonomously at any time
-> > without software intervention.  Therefore, I don't think reading the
-> > current state is a reliable way to decide anything.
->
-> After the link enters the L1.x it will come out only if there is
-> some activity on the link.  AS system is suspended and NVMe driver
-> is also suspended( queues will  freeze in suspend) who else can
-> initiate any data.
-
-I don't think we can assume that nothing will happen to cause exit
-from L1.x.  For instance, PCIe Messages for INTx signaling, LTR, OBFF,
-PTM, etc., may be sent even though we think the device is idle and
-there should be no link activity.
-
-Bjorn
+Best regards,
+Konstantin
