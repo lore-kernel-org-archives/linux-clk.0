@@ -2,62 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C90ECAAD8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 05:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05788C6FA8B
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 06:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230079AbiIVFOJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 01:14:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56752 "EHLO
+        id S230045AbiIVGYr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 02:24:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbiIVFOG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 01:14:06 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6B1779CCC3;
-        Wed, 21 Sep 2022 22:14:05 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.93,335,1654527600"; 
-   d="scan'208";a="135787710"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Sep 2022 14:14:04 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 21A1E400CF15;
-        Thu, 22 Sep 2022 14:14:04 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     geert+renesas@glider.be
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] clk: renesas: r8a779f0: Add Ethernet Switch clocks
-Date:   Thu, 22 Sep 2022 14:13:58 +0900
-Message-Id: <20220922051358.3442191-1-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S230029AbiIVGYq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 02:24:46 -0400
+Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F4971710
+        for <linux-clk@vger.kernel.org>; Wed, 21 Sep 2022 23:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
+        s=selector; t=1663827881;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=mD96AnXUKxYpT4Ph/26bbpXc79T1z2l442gHWiW5cxs=;
+        b=BjH0RAf9/2DDAhfe/pudX1UUk+/j2Yyop1KzVNbMCZPI2cRPoH6EhqBU6RxcimfoEcodLW
+        E08mOm9Muy2kitE2oGvOIMB6QdNwqzh+CNlwvyBTnllRG1JBtznHBeYkZDi+aiVHn0CD1f
+        EYRWYLM2B6WGZFqrKElqFkEPQZnJL1qEnP7qRA59zpszZen6zocEdaMPxZT+BtaXx2JCgu
+        9fmd0VW0VWYG4h18P1RBOuvKVw0TPtEg1i8vlMMLoG7VvykZpbkzJUjerq4O+QIYMY8Mm2
+        +FVMdgxrCdOWB7VyajQIMlUGts64FmlN+GQXPyX5DpXvjcCZEdMMtIUs03NvrA==
+Received: from mail.maxlinear.com (174-47-1-83.static.ctl.one [174.47.1.83])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ us-mta-114-gh-cS0hiM1amzwT5hCndqg-1; Thu, 22 Sep 2022 02:24:40 -0400
+X-MC-Unique: gh-cS0hiM1amzwT5hCndqg-1
+Received: from sgsxdev001.isng.phoenix.local (10.226.81.111) by
+ mail.maxlinear.com (10.23.38.120) with Microsoft SMTP Server id 15.1.2375.24;
+ Wed, 21 Sep 2022 23:24:36 -0700
+From:   Rahul Tanwar <rtanwar@maxlinear.com>
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-lgm-soc@maxlinear.com>,
+        "Rahul Tanwar" <rtanwar@maxlinear.com>
+Subject: [PATCH RESEND v2 0/5] Modify MxL's CGU clk driver to make it secure boot compatible
+Date:   Thu, 22 Sep 2022 14:24:23 +0800
+Message-ID: <cover.1663827071.git.rtanwar@maxlinear.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: maxlinear.com
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-Changes from v2:
- https://lore.kernel.org/all/20220921084745.3355107-2-yoshihiro.shimoda.uh@renesas.com/
- - Separate patcheas into each subsystem.
-   (No change actual code from v2.)
+* Rebase on latest 6.0 clk linux tree and resend patch series because of
+  no response from anyone so far. Please let me know if anyone has any
+  concerns about these changes. Thanks.
 
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+MxL's CGU driver was found to be lacking below required features. Add these
+required lacking features:
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 4baf355e26d8..304435613723 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -161,6 +161,8 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("cmt3",		913,	R8A779F0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
- 	DEF_MOD("tsc",		919,	R8A779F0_CLK_CL16M),
-+	DEF_MOD("tsn",		1505,	R8A779F0_CLK_S0D2_HSC),
-+	DEF_MOD("rsw",		1506,	R8A779F0_CLK_RSW2),
- 	DEF_MOD("ufs",		1514,	R8A779F0_CLK_S0D4_HSC),
- };
- 
--- 
-2.25.1
+1. Since it is a core driver, it has to conform to secure boot & secure
+   access architecture. In order for the register accesses to be secure
+   access compliant, it needs regmap support as per our security architectu=
+re.
+   Hence, replace direct read/writel with regmap based IO. Also remove spin=
+locks
+   because they are no longer necessary because regmap uses its own lock.
+
+2. There are some gate clocks which are used by the power mgmt IP to gate w=
+hen
+   a certain power saving mode is activated. These gate clocks can also be=
+=20
+   gated from CGU clk driver. This creates a conflict. To avoid the conflic=
+t,
+   by default disable gating such gate registers from CGU clk driver. But k=
+eep
+   a flag to do so for other older IP's which uses same CGU clk IP but does=
+ not
+   use same power mgmt IP.
+
+3. Fix two functional bugs found during testing.
+
+This patch series is based on below git tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+
+Rahul Tanwar (5):
+  clk: mxl: Switch from direct readl/writel based IO to regmap based IO
+  clk: mxl: Remove unnecessary spinlocks
+  clk: mxl: Avoid disabling gate clocks from clk driver
+  clk: mxl: Add validation for register reads/writes
+  clk: mxl: Add a missing flag to allow parent clock rate change
+
+ drivers/clk/x86/Kconfig       |   5 +-
+ drivers/clk/x86/clk-cgu-pll.c |  23 ++-----
+ drivers/clk/x86/clk-cgu.c     | 117 +++++++++++-----------------------
+ drivers/clk/x86/clk-cgu.h     |  71 +++++++++++++--------
+ drivers/clk/x86/clk-lgm.c     |  16 +++--
+ 5 files changed, 101 insertions(+), 131 deletions(-)
+
+--=20
+2.17.1
 
