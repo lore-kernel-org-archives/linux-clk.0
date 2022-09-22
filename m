@@ -2,227 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB372C6FA86
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 15:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F16C6FA82
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 15:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231753AbiIVPu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 11:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
+        id S231652AbiIVPyW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 11:54:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231779AbiIVPuT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 11:50:19 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FECE9750B
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 08:50:10 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id fs14so10184584pjb.5
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 08:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=+K8j+06amGtBzqeg3LNqPUQmrr7rn1eOJcYvflTHpZU=;
-        b=lOHQ8lKwbjZvnvS3yQLZcUqXmMeEsdLz6FNSdk+7PMZ7YY/m+r2qhSSiySViGuXDpS
-         cIX5pBPGnOBnVHl2Tor8dhRbEHujEh3n5/qotF3PiI4uiApxJQQuQ43eP64gPDGTDhej
-         2lqiXVbf0UDSzN+d/1zaVyg5z3hsrKD44qJHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=+K8j+06amGtBzqeg3LNqPUQmrr7rn1eOJcYvflTHpZU=;
-        b=eI5YYHtulLU6VCgpGfyjidSpVxAYFiR4i+KrIrcA5pdtOAJ9RF7ha/V/NbK0cp6BPt
-         6H6nsQXibWyh5JxMn3/OqRhNeGXVreNm5MKc/wLNRXKifUUU30p7iFvOyhDGwgJVt5Cq
-         AH7hjtV12uJYTMkhx8OKLA70l50FHs3OzyHP/ZnQR9CzHM1fHDo25eSxHI4uMEuu0okI
-         E2d8fzc4uSVM+ElmBtqAUucwiIheiFx+3aPSEWtm/uxdg1G3NZjXUGuSeXDvnvGli+3l
-         CzyurIxnLZn14Iext4DTxHBePB1e4EtNPutP8oza23lBDsWzql22Gp5NBqW7dGVq3vdd
-         q28Q==
-X-Gm-Message-State: ACrzQf2MRsY7Q1PBarsWprdjTXFEmn45JMX8sXaSSYUY51MBcNg0ZU4y
-        6rB+E7nleFwq72bySb2/FmisQA==
-X-Google-Smtp-Source: AMsMyM5+8V2TbVOIhMKjrSqfuProxMDRnSuL6sl56sCUeKf7dIX/0qlV5tFaFwUmF1ejQN105A0zzQ==
-X-Received: by 2002:a17:902:8307:b0:172:e611:491f with SMTP id bd7-20020a170902830700b00172e611491fmr3831261plb.111.1663861810112;
-        Thu, 22 Sep 2022 08:50:10 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:201:5321:6ad9:3932:13d8])
-        by smtp.gmail.com with ESMTPSA id 145-20020a630097000000b00439c1e13112sm4049425pga.22.2022.09.22.08.50.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 08:50:09 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     rafael@kernel.org, sboyd@kernel.org
-Cc:     linux-pm@vger.kernel.org, len.brown@intel.com,
-        gregkh@linuxfoundation.org, pavel@ucw.cz,
-        linux-clk@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] PM: clk: Avoid lockdep warning between prepare lock and &psd->lock
-Date:   Thu, 22 Sep 2022 08:49:58 -0700
-Message-Id: <20220922084941.RFC.1.I206ec946a190e3de9fd13be806498821e9a6612d@changeid>
-X-Mailer: git-send-email 2.37.3.968.ga6b4b080e4-goog
+        with ESMTP id S229794AbiIVPyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 11:54:20 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE250F8C04;
+        Thu, 22 Sep 2022 08:54:19 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28MDUWSf021785;
+        Thu, 22 Sep 2022 15:53:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=US13UxSFNQuHhq+dXkWL+HohYUtp82gPRRe3BJERysc=;
+ b=bW9R+CkuNVB1UiU5dGGV+QIz0uWebcQlh1VDjZWXJBHXrem21bKtzbkrOalUGn+C2Mv7
+ Z5eLrziimecoCYpopS/mqyqxqJVKjl337Ck4KH+Jp0DRT+p7smmiPfBceer+J/T5JDd8
+ hMKWvM9lXKA081F0OwFYQo7HFnRQGn+ibBHtTsRM/HqSVlyR2Mz5ATPq6oWN3C4g0rgs
+ 761mz/XCkTalhFAtDjJBIQvnlCY7ANbvHIU16RxwTUgqDHeKMpJ5PJ8IB7wjE4H/nH0I
+ 4nSXKqaLTGqX95pERQchzVpend5D62mPn2YYPJrIVAPAcJOxOZfs6tVzReQIV0xefFZX xQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jrq4r8kn6-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 15:53:56 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28MFdfXI025772
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 15:39:41 GMT
+Received: from [10.216.47.110] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 22 Sep
+ 2022 08:39:31 -0700
+Message-ID: <807730f9-0220-d297-dffd-929dde30d513@quicinc.com>
+Date:   Thu, 22 Sep 2022 21:09:28 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+Content-Language: en-US
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
+        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
+        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
+        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
+        <svarbanov@mm-sol.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
+        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
+        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>
+References: <20220921165601.GA1215223@bhelgaas>
+From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20220921165601.GA1215223@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qy6KnT5DFSRzCuruOAI_w_U-p6xqbqlO
+X-Proofpoint-ORIG-GUID: qy6KnT5DFSRzCuruOAI_w_U-p6xqbqlO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-22_08,2022-09-22_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209220106
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If you get the exact right boot sequence / timing / hardware setup,
-lockdep can complain at bootup about an unsafe locking scenario:
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&psd->clock_mutex);
-                               lock(prepare_lock);
-                               lock(&psd->clock_mutex);
-  lock(prepare_lock);
+On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
+> [+cc Rafael, linux-pm since this is real power management magic,
+> beginning of thread:
+> https://lore.kernel.org/all/1663669347-29308-1-git-send-email-quic_krichai@quicinc.com/
+> full patch since I trimmed too much of it:
+> https://lore.kernel.org/all/1663669347-29308-2-git-send-email-quic_krichai@quicinc.com/]
+>
+> On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
+>> On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
+>>> On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
+>>>> Add suspend and resume syscore ops.
+>>>>
+>>>> Few PCIe endpoints like NVMe and WLANs are always expecting the device
+>>>> to be in D0 state and the link to be active (or in l1ss) all the time
+>>>> (including in S3 state).
+>>> What does this have to do with the patch?  I don't see any NVMe or
+>>> WLAN patches here.
+>> Existing NVMe driver expecting NVMe device to be in D0 during S3 also. If we
+>> turn off the link in
+>> suspend, the NVMe resume path is broken as the state machine is getting
+>> reset in the NVMe device.
+>> Due to this, the host driver state machine and the device state machine are
+>> going out of sync, and all NVMe commands
+>> after resumes are getting timed out.
+>>
+>> IIRC, Tegra is also facing this issue with NVMe.
+>>
+>> This issue has been discussed below threads:
+>>
+>> https://lore.kernel.org/all/Yl+6V3pWuyRYuVV8@infradead.org/T/
+>>
+>> https://lore.kernel.org/linux-nvme/20220201165006.3074615-1-kbusch@kernel.org/
+> The problem is that this commit log doesn't explain the problem and
+> doesn't give us anything to connect the NVMe and WLAN assumptions with
+> this special driver behavior.  There needs to be some explicit
+> property of NVMe and WLAN that the PM core or drivers like qcom can
+> use to tell whether the clocks can be turned off.
+Not only that NVMe is expecting the device state to be always in D0. So 
+any PCIe
+drivers should not turn off the link in suspend and do link retraining 
+in the resume.
+As this is considered a power cycle by the NVMe device and eventually 
+increases the
+wear of the NVMe flash.
 
-The case of &psd->clock_mutex being grabbed before the prepare lock is
-illustrated by this stack crawl:
-
-  clk_prepare_lock()
-  clk_unprepare()
-  clk_disable_unprepare()
-  pm_clk_suspend()
-  pm_clk_runtime_suspend()
-
-The critical things to note are:
-- pm_clk_suspend(), in some cases, will grab and hold
-  "&psd->clock_mutex" first before calling the clock prepare/unprepare
-  functions.
-- pm_clk_suspend() can be called in cases where the clock prepare
-  mutex isn't already held.
-
-The reverse case, where the prepare lock is held first and then the
-&psd->clock_mutex is illustrated by:
-
-  pm_clk_op_lock()
-  pm_clk_resume()
-  pm_generic_runtime_resume()
-  ...
-  pm_runtime_resume_and_get()
-  clk_pm_runtime_get()
-  __clk_core_init()
-  __clk_register()
-  clk_hw_register()
-
-In the above:
-- __clk_core_init() grabs the prepare lock and holds it while calling
-  clk_pm_runtime_get().
-- pm_clk_op_lock() grabs &psd->clock_mutex.
-
-Presumably nobody noticed this before because it only happens in one
-specific case of the pm_clk code. It's also possible that it was
-unnoticed before because the clock prepare lock is a funny little
-animal and allows the lock to be acquired more than once in a given
-callchain but lockdep doesn't really track this.
-
-Let's fix this lockdep error by just consistently grabbing the clock
-prepare lock before &psd->clock_mutex. This means adding a private
-interface since the clock's prepare lock isn't exposed. We'll add it
-in a way to discourage anyone else from using it. We're special since
-"pm_clk" is core code and already quite intertwined with the clock
-core anyway.
-
-NOTE: I haven't done any analysis about whether what lockdep complains
-about is really a feasible lockup. I merely confirmed that, indeed, we
-have an ABBA situation and it seems like we should fix it.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-As you can tell at just a glance, this is a terrible hack. I'm mostly
-throwing it out into the world to try to start a conversation. I'd be
-very happy for someone else to send a better patch or to tell me of a
-better way to solve this. I've still tried to at least make it a
-landable patch, however, in case nobody has any better ideas and we
-want to land this.
-
-I'll note that this lockdep warning showed up on my system at the same
-time as a deadlock. Unfortunately, to the best of my ability to debug
-the two are unrelated. Fixing this lockdep warning doesn't fix the
-deadlock and fixing the deadlock doesn't make lockdep happy. If you
-want to see my fix for the deadlock, feel free to peruse:
-
-https://lore.kernel.org/r/20220922154354.2486595-1-dianders@chromium.org
-
-NOTE: problem was found and debugging was done on a downstream kernel
-(chromeos-5.15), not pure upstream. I see no reason why this won't
-apply to upstream, but if you have some belief that this problem is
-already solved or can't happen upstream then please yell and tell me
-that I should abandon this patch.
-
-If need be, I can also split this into two patches. I figured I'd do
-that on-demand if someone actually told me that would be useful to
-them and that they were considering landing this patch.
-
- drivers/base/power/clock_ops.c | 14 ++++++++++++++
- drivers/clk/clk.c              | 12 ++++++++++++
- 2 files changed, 26 insertions(+)
-
-diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-index 4110c19c08dc..86066d5a00d9 100644
---- a/drivers/base/power/clock_ops.c
-+++ b/drivers/base/power/clock_ops.c
-@@ -18,6 +18,13 @@
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
- 
-+/*
-+ * These are purposely not in any headers since we don't want anyone to use
-+ * them except us.
-+ */
-+void __clk_prepare_lock(void);
-+void __clk_prepare_unlock(void);
-+
- #ifdef CONFIG_PM_CLK
- 
- enum pce_status {
-@@ -108,6 +115,10 @@ static int pm_clk_op_lock(struct pm_subsys_data *psd, unsigned long *flags,
- 
- 	/* we must switch to the mutex */
- 	spin_unlock_irqrestore(&psd->lock, *flags);
-+
-+	/* Manually grab the prepare lock to avoid ABBA w/ psd->clock_mutex */
-+	__clk_prepare_lock();
-+
- 	mutex_lock(&psd->clock_mutex);
- 
- 	/*
-@@ -118,6 +129,8 @@ static int pm_clk_op_lock(struct pm_subsys_data *psd, unsigned long *flags,
- 		return 0;
- 
- 	mutex_unlock(&psd->clock_mutex);
-+	__clk_prepare_unlock();
-+
- 	goto try_again;
- }
- 
-@@ -132,6 +145,7 @@ static void pm_clk_op_unlock(struct pm_subsys_data *psd, unsigned long *flags)
- {
- 	if (psd->clock_op_might_sleep) {
- 		mutex_unlock(&psd->clock_mutex);
-+		__clk_prepare_unlock();
- 	} else {
- 		/* the __acquire is there to work around sparse limitations */
- 		__acquire(&psd->lock);
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index bd0b35cac83e..bf563b3fa5f4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -149,6 +149,18 @@ static void clk_prepare_unlock(void)
- 	mutex_unlock(&prepare_lock);
- }
- 
-+/* Non-static wrapper of lock function for drivers/base/power/clock_ops.c */
-+void __clk_prepare_lock(void)
-+{
-+	clk_prepare_lock();
-+}
-+
-+/* Non-static wrapper of unlock function for drivers/base/power/clock_ops.c */
-+void __clk_prepare_unlock(void)
-+{
-+	clk_prepare_unlock();
-+}
-+
- static unsigned long clk_enable_lock(void)
- 	__acquires(enable_lock)
- {
--- 
-2.37.3.968.ga6b4b080e4-goog
-
+We are trying to keep the device in D0 and also reduce the power 
+consumption when the system
+is in S3 by turning off clocks and phy with this patch series.
+>
+>>>> In qcom platform PCIe resources( clocks, phy etc..) can released
+>>>> when the link is in L1ss to reduce the power consumption. So if the link
+>>>> is in L1ss, release the PCIe resources. And when the system resumes,
+>>>> enable the PCIe resources if they released in the suspend path.
+>>> What's the connection with L1.x?  Links enter L1.x based on activity
+>>> and timing.  That doesn't seem like a reliable indicator to turn PHYs
+>>> off and disable clocks.
+>> This is a Qcom PHY-specific feature (retaining the link state in L1.x with
+>> clocks turned off).
+>> It is possible only with the link being in l1.x. PHY can't retain the link
+>> state in L0 with the
+>> clocks turned off and we need to re-train the link if it's in L2 or L3. So
+>> we can support this feature only with L1.x.
+>> That is the reason we are taking l1.x as the trigger to turn off clocks (in
+>> only suspend path).
+> This doesn't address my question.  L1.x is an ASPM feature, which
+> means hardware may enter or leave L1.x autonomously at any time
+> without software intervention.  Therefore, I don't think reading the
+> current state is a reliable way to decide anything.
+After the link enters the L1.x it will come out only if there is some 
+activity on the link.
+AS system is suspended and NVMe driver is also suspended( queues will  
+freeze in suspend)
+who else can initiate any data. As long the link stays in L1ss we can 
+turn off clocks and phy.
+When the system resumes we turn off clocks and phy before resuming the 
+NVMe, this makes sure
+the clocks and phy are up before there is any activity to bring up the 
+link back to L0 state from L1.x.
+>
+>> ...
+>>>> Its observed that access to Ep PCIe space to mask MSI/MSIX is happening
+>>>> at the very late stage of suspend path (access by affinity changes while
+>>>> making CPUs offline during suspend, this will happen after devices are
+>>>> suspended (after all phases of suspend ops)). If we turn off clocks in
+>>>> any PM callback, afterwards running into crashes due to un-clocked access
+>>>> due to above mentioned MSI/MSIx access.
+>>>> So, we are making use of syscore framework to turn off the PCIe clocks
+>>>> which will be called after making CPUs offline.
