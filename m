@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94008C6FA90
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 07:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C0CC6FA8B
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 07:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbiIVHTz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 03:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41538 "EHLO
+        id S231148AbiIVHUj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 03:20:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbiIVHTv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 03:19:51 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB47518E3B
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 00:19:46 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id f9so13194950lfr.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 00:19:46 -0700 (PDT)
+        with ESMTP id S230488AbiIVHUZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 03:20:25 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF01AA3CB
+        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 00:20:23 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id z20so9902810ljq.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 00:20:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=L0CcexYvr50ry0k5LCLuUVWFoXYl8KApJv3vLCHXZiI=;
-        b=b4OPSMZB6A6D9dbVJDjiKqN/SOqiPbLIKzOQK3629IC/ZBvZuPkd9QczfXkA0JnkWU
-         zzJIGX/7zmeF5SFpWKqdQpqqnoExVWZwXAVE64zz8A1GRanmjz/aESunHQ1HzOPB/Gw3
-         8fVd9+1Ao3KwZ2P9EbUcYA6/KV4EbKk2szlEDbf0lbcc3W9PTSkSWpSw8FtpSrAKHlel
-         YoPdkZFHGs6iD18Dm0SSbHIZ6dDOcDd0g40OoocVuQZm5KO73C43Wmaiz7fwpNC03qyj
-         MBXysfSJBOqJw3VH5bYZ5urmfkOip6gjcBqWVLqJTA9bi+M3qaMT/IkGPWcEJXngzIkR
-         GS1g==
+        bh=l75230f4/Tc4m+TS6iA4e2H4Q+VpG770+Je6OFiVsyM=;
+        b=hQ/UL/kN7XbzEXqfO+tmv964OK2GMoUE38JlkbYLqDPJ3sX9aZ7YaBiMAegrLKbyFm
+         0lZTvlLYhE4eq+ExfRYlG4w+IguonGImEXN1v7MA9wWCrKgtVqE6SlrQ5VX0NG5E9Y38
+         /4BtzZAHXkNvDllPnvs5t7kQv4zT0w0CgLdr2XvTwVocykNzokmm0+yttQvK5fx3Huhi
+         zNfdsrW1u+Dk3rWZfo4H2Ndvrr5eoKn1l2tfcmE+E+seNPLEYCzpsjlgaKMuf7tWEqls
+         XHvG3Ou2t6CdsQ7XwS5mMARAd0yru57ioABcS+6+ct3Mv211ahTfWMz9T8lmsbob5+7B
+         DFWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=L0CcexYvr50ry0k5LCLuUVWFoXYl8KApJv3vLCHXZiI=;
-        b=bqLdzGmfPWrCt0COiAq/GzKgptzgZEEwMx28U5DIzW9cN2HN6sl1O4tUgdWQ4Uwt11
-         jc3BMzadFIsDYSe/e/CMmXYtmHc31GYDzEORki9dwdyo+8wF09Rjb79qEi6fwjSvo6dC
-         2I056rIQdiYKgigpT5GDWTTJ+FeEIiSL+fwp8TYe++vCKtWFaWw2v3Tpe0WUuqtRUX/j
-         g5FgChE/rJJrB6RpzpbfqX/OjmJDmWsJCrkV1pg/Ubpd1Kk3xw1ME5Iy/jdoaJboUBqu
-         nNVNEvyP0BURQ5a0G2OXwwCOfqm9cE6Cr3M6dEA23LW4leEgBCfmLuAeJuhwlFSmONGR
-         AvYA==
-X-Gm-Message-State: ACrzQf0wUq7FkQLdwNrgC2bVzxxB5Mj6N87yhnvNwFJWx8/sNDx0C7xP
-        7ss6K/ZYxowYSuq8/+gnCqYE4w==
-X-Google-Smtp-Source: AMsMyM4gLReXsZlISFiuSW1XgfW0GpMeZQMBFVw9foI7xJCo01KU0HcjadDByu18kEXVa3VsgiXg9g==
-X-Received: by 2002:a05:6512:1055:b0:49a:de51:5458 with SMTP id c21-20020a056512105500b0049ade515458mr671284lfb.585.1663831184180;
-        Thu, 22 Sep 2022 00:19:44 -0700 (PDT)
+        bh=l75230f4/Tc4m+TS6iA4e2H4Q+VpG770+Je6OFiVsyM=;
+        b=yDDixtWgPwpROvJ39BsXwX5xMmAYgUyZ5PjyAo4faHFOmKFdg7qhrK+eQQWBfdaZSw
+         74+4HC3ZNn5eA/oGVWvzuURLOOtUJXn2reuBS59l9lsLaYK5QnAQeQ7WAYDEKk4oMynj
+         csXn4wJ6Pu1H1fGIZO9/S2JvsVx/QFjM7wwS3GucSOWLwJR7FA1qUHEQfJnQULX3Ndcg
+         V+2EQh1J0Qr1XyPEUOPPYjchY6BUh82JJ6xQ9QZIsoOOCOw5GVBIOpTmmui6fgtlPqyd
+         fYTsspLQfXd4CxSYEMuUlvi3pCLQC5LK7weDG5tWAw4dF08AMaanSo8wpnwKeBQSEFeO
+         +dUg==
+X-Gm-Message-State: ACrzQf1p4ZDv9zdLnFB8pejnYJP2mDH/kNpmaMHnf9Ccz6/ubBTcXPs0
+        sLzJo9Pnwbir/74yLVhQ1PngGQ==
+X-Google-Smtp-Source: AMsMyM5wVw1kKJjWwk0eAv9vC8nvZTseIqkjOoLB/YN16eVtCyQpO11pitWkmTSeOsIupJQ3U8Qndg==
+X-Received: by 2002:a2e:9b17:0:b0:26c:4ede:512c with SMTP id u23-20020a2e9b17000000b0026c4ede512cmr577476lji.529.1663831221961;
+        Thu, 22 Sep 2022 00:20:21 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id t2-20020a05651c204200b00261e8e4e381sm775206ljo.2.2022.09.22.00.19.42
+        by smtp.gmail.com with ESMTPSA id a14-20020a195f4e000000b0048ae316caf0sm805348lfj.18.2022.09.22.00.20.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Sep 2022 00:19:43 -0700 (PDT)
-Message-ID: <5a857097-30c2-3b37-6134-57cb942113ca@linaro.org>
-Date:   Thu, 22 Sep 2022 09:19:42 +0200
+        Thu, 22 Sep 2022 00:20:21 -0700 (PDT)
+Message-ID: <e993c25e-f334-e1ca-73f8-58cf141c521e@linaro.org>
+Date:   Thu, 22 Sep 2022 09:20:20 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: [PATCH v1 06/17] dt-bindings: mediatek: set the hdmi to be
- compatible with syscon
+Subject: Re: [PATCH v1 15/17] dt-bindings: display: mediatek: dpi: Add
+ compatible for MediaTek MT8195
 Content-Language: en-US
 To:     Guillaume Ranquet <granquet@baylibre.com>,
         Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -78,9 +78,9 @@ Cc:     linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-phy@lists.infradead.org, devicetree@vger.kernel.org
 References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-6-4844816c9808@baylibre.com>
+ <20220919-v1-15-4844816c9808@baylibre.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220919-v1-6-4844816c9808@baylibre.com>
+In-Reply-To: <20220919-v1-15-4844816c9808@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -88,34 +88,22 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 19/09/2022 18:56, Guillaume Ranquet wrote:
-> In order to share register with a dedicated ddc driver, set the hdmi
-> compatible to syscon.
+> Add dt-binding documentation of dpi for MediaTek MT8195 SoC.
 > 
 > Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
 > 
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
-> index abb231a0694b..86297b7eb7f7 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
-> @@ -16,12 +16,14 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - mediatek,mt2701-hdmi
-> -      - mediatek,mt7623-hdmi
-> -      - mediatek,mt8167-hdmi
-> -      - mediatek,mt8173-hdmi
-> -      - mediatek,mt8195-hdmi
-> +    items:
-> +      - enum:
-> +          - mediatek,mt2701-hdmi
-> +          - mediatek,mt7623-hdmi
-> +          - mediatek,mt8167-hdmi
-> +          - mediatek,mt8173-hdmi
-> +      - const: syscon
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> index 5bb23e97cf33..2c7ecef54986 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> @@ -24,6 +24,7 @@ properties:
+>        - mediatek,mt8183-dpi
+>        - mediatek,mt8186-dpi
+>        - mediatek,mt8192-dpi
+> +      - mediatek,mt8195-dpi
+>        - mediatek,mt8195-dp-intf
 
-So you just broke all DTS and I do not see patches fixing them...
+Aren't these the same?
 
 Best regards,
 Krzysztof
