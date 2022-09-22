@@ -2,156 +2,235 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D6FC6FA8B
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 09:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4E2C6FA8B
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 09:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229499AbiIVJHy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 05:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45188 "EHLO
+        id S230103AbiIVJS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 05:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiIVJHx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 05:07:53 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1B32B2D84;
-        Thu, 22 Sep 2022 02:07:51 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id n15so7519288wrq.5;
-        Thu, 22 Sep 2022 02:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Lc01pxS7q+WM84eQOKwpZ8GVMsKlTCdoSl+t7XzNmmA=;
-        b=RbCTv5XR3WIp8uuxZy8X0WTBJElmTPLj5L5QJmxOCHDabvdrlXs0sZa26Y+2OCB/wM
-         bkOg32k2FZj2N/k2Wg8w0r0vDoiYaEmrJvRBVNpxLhg13qmf3FWQnMbMhhcPfj5+G7Nx
-         TWRKcxJg/IwCBlGplgpuv1oB/8q51BDLxFs78dz2i0Y1W1DSh5Xbj9vSnIXGUJnDRNh5
-         ojEl2iUweK26IpBbxSWMKz5BPW7nqBCPCyium3x2l38nPNhuDqgIGlHtYA1I4hcEdcr8
-         WZh22qz6qJI+delKO/1XGK7VL1s1FcnV9qdF2Qaorh1JfRpERBJLrKrD9NdFZwP2a89e
-         nWzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Lc01pxS7q+WM84eQOKwpZ8GVMsKlTCdoSl+t7XzNmmA=;
-        b=Z/9WJOarNO7UPfKhMXd/oGgGdEGrVCF0QgvEnevfRDSk8yuYRAEqPQql+yJ3tPdoW7
-         BX7GqNzlOt8u1W14HqihY0o8QGGz2lF64kXjwzY4BiU9zQtSN+ygTsfpCK1W1OIbSznn
-         ajmAze9fHSKOSyOfARiroTHY3FMHN0J83CDHyNLbbPv7GuOUoHqwoI45JoL7G06LfOot
-         Xx3ZEnZclJniG3TtH2L4BwSiNEnXLepp389UDEIOKP+++3KCUiC9VPtzzWdADkt32r3c
-         lhPaj9frQzp02iFlCfu1ZeyxerKFpsPHzEve+fLeZufByb1BU6y7DODTRLgntOboHh7D
-         8Szw==
-X-Gm-Message-State: ACrzQf2SpR0uVmjSnw6tDZecDp69Leie3j89hdOhTnGKWlGWFQ2hvQ4Y
-        o3XELy/962DGzzfUFxktE90=
-X-Google-Smtp-Source: AMsMyM6OhNsqdus/6gIXZZ90j8IUVPI+vlRImvqXvVN8jLCpqVhqHuHGufAEh6OUdXIKk4kuSzYqKw==
-X-Received: by 2002:a05:6000:178e:b0:22b:451:9f63 with SMTP id e14-20020a056000178e00b0022b04519f63mr1265576wrg.521.1663837670107;
-        Thu, 22 Sep 2022 02:07:50 -0700 (PDT)
-Received: from [192.168.0.14] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
-        by smtp.gmail.com with ESMTPSA id v6-20020a5d6106000000b002286231f479sm4582265wrt.50.2022.09.22.02.07.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Sep 2022 02:07:49 -0700 (PDT)
-Message-ID: <fda85ff3-8b52-288b-bb37-630decd51d4e@gmail.com>
-Date:   Thu, 22 Sep 2022 10:07:48 +0100
+        with ESMTP id S229492AbiIVJS7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 05:18:59 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81F3D01F2;
+        Thu, 22 Sep 2022 02:18:57 -0700 (PDT)
+X-UUID: cb9f9983939f46e4b6b1e727fbb1b345-20220922
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=TfqhOqAraOYl4pp9RKfs7slY2GB+uduanHzBsKQ5+dQ=;
+        b=K1aHmLjJG0SslGFO1rJcOsBJAqx4FpMPJqy7+rWlatfH7X3oxQVbsaQk7aF0dlNNhBZdUShfuYkxzxuPHe7gp7dlfrSx75oGfpBmLbDfO0sEI/EcHMDMGvx+7QTjBCVCImBJZk2iJdzA/ZagnziiL4Wk+GHPQIW1WYGDqyvdf+8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.11,REQID:738db8d4-35ff-48c4-bdb7-5f8244b928a2,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-25
+X-CID-META: VersionHash:39a5ff1,CLOUDID:9fbdab06-1cee-4c38-b21b-a45f9682fdc0,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: cb9f9983939f46e4b6b1e727fbb1b345-20220922
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 304467776; Thu, 22 Sep 2022 17:18:55 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Thu, 22 Sep 2022 17:18:53 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Thu, 22 Sep 2022 17:18:53 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 1/7] clk: mediatek: mt2701: use mtk_clk_simple_probe to simplify driver
+Date:   Thu, 22 Sep 2022 17:18:29 +0800
+Message-ID: <20220922091841.4099-2-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220922091841.4099-1-miles.chen@mediatek.com>
+References: <20220922091841.4099-1-miles.chen@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3 0/5] Add multiple-consumer support to int3472-tps68470
- driver
-Content-Language: en-US
-To:     Hans de Goede <hdegoede@redhat.com>, linux-acpi@vger.kernel.org,
-        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, markgross@kernel.org, robert.moore@intel.com
-References: <20220921230439.768185-1-djrscally@gmail.com>
- <b3855fe0-4b85-a442-1835-3e62456b3206@redhat.com>
-From:   Daniel Scally <djrscally@gmail.com>
-In-Reply-To: <b3855fe0-4b85-a442-1835-3e62456b3206@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hans
+mtk_clk_simple_probe was added by Chun-Jie to simply common flow
+of MediaTek clock drivers and ChenYu enhanced the error path of
+mtk_clk_simple_probe and added mtk_clk_simple_remove.
 
-On 22/09/2022 09:55, Hans de Goede wrote:
-> Hi All,
->
-> On 9/22/22 01:04, Daniel Scally wrote:
->> Hello all
->>
->> At the moment there are a few places in the int3472-tps68470 driver that are
->> limited to just working with a single consuming device dependent on the PMIC.
->> There are systems where multiple camera sensors share a single TPS68470, so
->> we need to extend the driver to support them. This requires a couple of tweaks
->> to the ACPI functions to fetch dependent devices, which also assumes that only
->> a single dependent will be found.
->>
->> The v2 for this series was some time ago...it's kept falling to the back of my
->> to-do list so I've only just gotten round to it; sorry about that. v2 here:
->>
->> https://lore.kernel.org/linux-acpi/20220327161344.50477-1-djrscally@gmail.com/
-> Rafael, I would like to merge this through the pdx86 tree may I have your
-> ack for patches 1 + 2 for this. As a reminder (since it has been a while)
-> here are your review remarks to v2 of patch 1:
->
-> https://lore.kernel.org/platform-driver-x86/CAJZ5v0i2ciLHP-=8eQcZc0v0xCzhKHKpxLC=Kgv6W5E_5=HQJA@mail.gmail.com/
->
-> (which both seem to have been addressed)
->
-> AFAICT you did not have any remarks for v2 of patch 2.
->
-> Regards,
->
-> Hans
->
-> p.s.
->
-> Dan, if I want to give the IR cam a test run on my own Surface Go (version 1)
-> I guess I may need a sensor driver? Where can I find that sensor driver and
-> what do I need in userspace to test this ?
+Let's use mtk_clk_simple_probe and mtk_clk_simple_probe in other
+MediaTek clock drivers as well.
 
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/clk-mt2701-bdp.c  | 36 ++++++++++----------------
+ drivers/clk/mediatek/clk-mt2701-img.c  | 36 ++++++++++----------------
+ drivers/clk/mediatek/clk-mt2701-vdec.c | 36 ++++++++++----------------
+ 3 files changed, 39 insertions(+), 69 deletions(-)
 
-It's the ov7251 sensor driver - the required changes are in mainline now
-actually so you should be good there. The format of the data is a bit
-unconventional; it's Y10 but passed through Intel's CIO2 CSI receiver
-which packs it into a different format [1]. I'm probably just going to
-add support for that format to Howdy [2] which is what people want to
-use this camera for, but for now you can just test by using the
-ipu3-unpack utility in libcamera [3] to convert back to proper Y10 and
-then raw2rgbpnm [4] to turn it into a ppm. I use this script for now:
-https://paste.debian.net/1254629. Be warned that unless you are in
-sunlight the image is basically just grey - the IR LED on the front of
-the surface needs driving to give a clear image otherwise. I have an led
-driver for the tps68470 which can do that, I'm just working on getting
-it all tied in so it triggers when streaming starts.
+diff --git a/drivers/clk/mediatek/clk-mt2701-bdp.c b/drivers/clk/mediatek/clk-mt2701-bdp.c
+index 662a8ab3fbb1..435ed4819d56 100644
+--- a/drivers/clk/mediatek/clk-mt2701-bdp.c
++++ b/drivers/clk/mediatek/clk-mt2701-bdp.c
+@@ -94,33 +94,23 @@ static const struct mtk_gate bdp_clks[] = {
+ 	GATE_BDP1(CLK_BDP_HDMI_MON, "hdmi_mon", "hdmi_0_pll340m", 16),
+ };
+ 
+-static const struct of_device_id of_match_clk_mt2701_bdp[] = {
+-	{ .compatible = "mediatek,mt2701-bdpsys", },
+-	{}
++static const struct mtk_clk_desc bdp_desc = {
++	.clks = bdp_clks,
++	.num_clks = ARRAY_SIZE(bdp_clks),
+ };
+ 
+-static int clk_mt2701_bdp_probe(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	struct device_node *node = pdev->dev.of_node;
+-
+-	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
+-
+-	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
+-						clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		dev_err(&pdev->dev,
+-			"could not register clock provider: %s: %d\n",
+-			pdev->name, r);
+-
+-	return r;
+-}
++static const struct of_device_id of_match_clk_mt2701_bdp[] = {
++	{
++		.compatible = "mediatek,mt2701-bdpsys",
++		.data = &bdp_desc,
++	}, {
++		/* sentinel */
++	}
++};
+ 
+ static struct platform_driver clk_mt2701_bdp_drv = {
+-	.probe = clk_mt2701_bdp_probe,
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
+ 	.driver = {
+ 		.name = "clk-mt2701-bdp",
+ 		.of_match_table = of_match_clk_mt2701_bdp,
+diff --git a/drivers/clk/mediatek/clk-mt2701-img.c b/drivers/clk/mediatek/clk-mt2701-img.c
+index c4f3cd26df60..7e53deb7f990 100644
+--- a/drivers/clk/mediatek/clk-mt2701-img.c
++++ b/drivers/clk/mediatek/clk-mt2701-img.c
+@@ -36,33 +36,23 @@ static const struct mtk_gate img_clks[] = {
+ 	GATE_IMG(CLK_IMG_VENC, "img_venc", "mm_sel", 9),
+ };
+ 
+-static const struct of_device_id of_match_clk_mt2701_img[] = {
+-	{ .compatible = "mediatek,mt2701-imgsys", },
+-	{}
++static const struct mtk_clk_desc img_desc = {
++	.clks = img_clks,
++	.num_clks = ARRAY_SIZE(img_clks),
+ };
+ 
+-static int clk_mt2701_img_probe(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	struct device_node *node = pdev->dev.of_node;
+-
+-	clk_data = mtk_alloc_clk_data(CLK_IMG_NR);
+-
+-	mtk_clk_register_gates(node, img_clks, ARRAY_SIZE(img_clks),
+-						clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		dev_err(&pdev->dev,
+-			"could not register clock provider: %s: %d\n",
+-			pdev->name, r);
+-
+-	return r;
+-}
++static const struct of_device_id of_match_clk_mt2701_img[] = {
++	{
++		.compatible = "mediatek,mt2701-imgsys",
++		.data = &img_desc,
++	}, {
++		/* sentinel */
++	}
++};
+ 
+ static struct platform_driver clk_mt2701_img_drv = {
+-	.probe = clk_mt2701_img_probe,
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
+ 	.driver = {
+ 		.name = "clk-mt2701-img",
+ 		.of_match_table = of_match_clk_mt2701_img,
+diff --git a/drivers/clk/mediatek/clk-mt2701-vdec.c b/drivers/clk/mediatek/clk-mt2701-vdec.c
+index a2f18117f27a..d3089da0ab62 100644
+--- a/drivers/clk/mediatek/clk-mt2701-vdec.c
++++ b/drivers/clk/mediatek/clk-mt2701-vdec.c
+@@ -47,33 +47,23 @@ static const struct mtk_gate vdec_clks[] = {
+ 	GATE_VDEC1(CLK_VDEC_LARB, "vdec_larb_cken", "mm_sel", 0),
+ };
+ 
+-static const struct of_device_id of_match_clk_mt2701_vdec[] = {
+-	{ .compatible = "mediatek,mt2701-vdecsys", },
+-	{}
++static const struct mtk_clk_desc vdec_desc = {
++	.clks = vdec_clks,
++	.num_clks = ARRAY_SIZE(vdec_clks),
+ };
+ 
+-static int clk_mt2701_vdec_probe(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	struct device_node *node = pdev->dev.of_node;
+-
+-	clk_data = mtk_alloc_clk_data(CLK_VDEC_NR);
+-
+-	mtk_clk_register_gates(node, vdec_clks, ARRAY_SIZE(vdec_clks),
+-						clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		dev_err(&pdev->dev,
+-			"could not register clock provider: %s: %d\n",
+-			pdev->name, r);
+-
+-	return r;
+-}
++static const struct of_device_id of_match_clk_mt2701_vdec[] = {
++	{
++		.compatible = "mediatek,mt2701-vdecsys",
++		.data = &vdec_desc,
++	}, {
++		/* sentinel */
++	}
++};
+ 
+ static struct platform_driver clk_mt2701_vdec_drv = {
+-	.probe = clk_mt2701_vdec_probe,
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
+ 	.driver = {
+ 		.name = "clk-mt2701-vdec",
+ 		.of_match_table = of_match_clk_mt2701_vdec,
+-- 
+2.18.0
 
-
-
-[1]
-https://www.linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/pixfmt-yuv-luma.html
-
-[2] https://github.com/boltgolt/howdy
-
-[3] https://git.libcamera.org/libcamera/libcamera.git/tree/utils/ipu3
-
-[4] https://paste.debian.net/1254629
-
->
->
->> Daniel Scally (5):
->>   ACPI: scan: Add acpi_dev_get_next_consumer_dev()
->>   ACPI: bus: Add iterator for dependent devices
->>   platform/x86: int3472: Support multiple clock consumers
->>   platform/x86: int3472: Support multiple gpio lookups in board data
->>   platform/x86: int3472: Add board data for Surface Go2 IR camera
->>
->>  drivers/acpi/scan.c                           | 40 +++++++---
->>  drivers/clk/clk-tps68470.c                    | 13 +++-
->>  drivers/platform/x86/intel/int3472/common.c   |  2 +-
->>  drivers/platform/x86/intel/int3472/tps68470.c | 76 ++++++++++++++++---
->>  drivers/platform/x86/intel/int3472/tps68470.h |  3 +-
->>  .../x86/intel/int3472/tps68470_board_data.c   | 54 ++++++++++++-
->>  include/acpi/acpi_bus.h                       | 15 +++-
->>  include/linux/platform_data/tps68470.h        |  7 +-
->>  8 files changed, 177 insertions(+), 33 deletions(-)
->>
