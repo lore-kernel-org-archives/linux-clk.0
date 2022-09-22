@@ -2,178 +2,172 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B847AC6FA82
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 16:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDF7C6FA82
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 17:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbiIVQBD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 12:01:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56826 "EHLO
+        id S231621AbiIVRh7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 13:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230304AbiIVQBB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 12:01:01 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2DE2FFA72
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 09:00:58 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id f9so15442066lfr.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 09:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=81pL7DGs9HD5w7I37cpuZ7MXwqHOECwJdeVMBgzAlQw=;
-        b=p9HhITvAiTLIOA9Xo9RkPoH1sLpf0YyHjNBG9YCwwqIrBHvl401CFBSWoEt1sVFO+7
-         ymzYQY5i35KlA6q+G6SBXoLHML5N4MtO0DVQwt7qDLviEtR6HVss78HJK7NOGHBgLNI/
-         Mpj3KN9khXDzOMP9REWxPpa7QusEkgXmTa/9tzQxHHNpnEVPKZsyAlH4c2TgBZfZNsTi
-         yiBjg56FL4PsxXbBeNYwljk2EDScJqL3zkEJuOia1Pb2YRxvsCUYuh1us9eMIFEXvswP
-         z/0zWWf5V0DhlkgA18+c1dK9JZ5cxblbt7d/a0ljJNov97Bp6PUEm7hrR7NYkDqUcsFJ
-         hy8g==
+        with ESMTP id S229641AbiIVRh6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 13:37:58 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60EB4EFA6B;
+        Thu, 22 Sep 2022 10:37:57 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id y2so6806265qtv.5;
+        Thu, 22 Sep 2022 10:37:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=81pL7DGs9HD5w7I37cpuZ7MXwqHOECwJdeVMBgzAlQw=;
-        b=14rsg0UrD2HHntrRnPNK1eR+abQBn5Ncjr2i4xqJ5IhXyP5/aG7wEUSnlxeR74cKk2
-         gXHRSz45F2wWhtuZdSiP1GXSq2vxhoG0glGRq/ReyEfW+JuiYv44+m11olay6IHjibRq
-         iCvQbJTcYLoHboNYy+OFbo/VkYJR0uVwHbJ9q3bLdORFrQZGwCgBv5ylS4N5YL5DdBO9
-         OH2Tag5nzWWVXzMLltrkkC6qSzq7a5A32lOTuaZU+nJl2TTFvqn0VjyoPV5mwTtyUcWf
-         U+TCs10K1lr9tGQvGdHyqEZQq+rlIXI3prV74NyYbFTO3r/eLYjs3hjSH3C4+5a3vDhJ
-         EVzw==
-X-Gm-Message-State: ACrzQf2UFgVPM8TRsjR6WJ3e22O0loCAYd6QwWy2v7EIaJ9qUpr+N9XB
-        jlr7ato2jNp9MSVBZJbSPKdDCA==
-X-Google-Smtp-Source: AMsMyM7zp82NHkC7Tv6Mqv+9LGkxDK/DsUhOCxklWQbvOP7x7UlHQe656cZRo7e1NfMasN7HH9hIng==
-X-Received: by 2002:a05:6512:2621:b0:491:10ba:321a with SMTP id bt33-20020a056512262100b0049110ba321amr1407331lfb.187.1663862456786;
-        Thu, 22 Sep 2022 09:00:56 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id k3-20020a2eb743000000b0026c5bc6ed1asm952108ljo.69.2022.09.22.09.00.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Sep 2022 09:00:56 -0700 (PDT)
-Message-ID: <c66e2bbe-4758-4d8e-f8aa-5b7bd1b7c2e3@linaro.org>
-Date:   Thu, 22 Sep 2022 18:00:55 +0200
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=6pAvVwOh4ZfT/Ucve1wlzLE+jEzpV7GwW5c9s60CJWs=;
+        b=kXK0A6cYEwOO+exNlZ8/rhUEnao+cVpxAwytmXszf59qJ/aPLpOIpZnlSG/3kjCCPD
+         CYZtX2J8uocflMK/DGNgI0nuAsXOsfEeOVpsTlWy1/5NzKAHtwxE/xX5xfCGL5qVhLyb
+         l3M9gD4k1fi4l2A52rVsdsozdnLvDALtsSHzxWSjeEBnZpdCScylYqWiMFw0IyQyuO/8
+         i+O/1jNnZGW3hHkRwHB2b0kB5LNFmwphvxd6M/t1hvGBZnngI5Hw7C8M6kGjq6woAdCQ
+         ZdheNC3wRW0K7rKu7aenXKKYUf1P4KZs+FQh7KXXeUOj/w/l0OBbg0ey1YpGi+KL6arS
+         VH/Q==
+X-Gm-Message-State: ACrzQf33jJnOcLhJEjRhRAEVQUQy1z7COPb4/MCP8IA1B4TXFf7J0ZTU
+        WACtIZAxXInqtrKzMiBN7TI3cPJrSdXafVKB/9k=
+X-Google-Smtp-Source: AMsMyM7oJUv/e5eLNmYRYH9UIAPBgONumGMf9ftsxHabwEuRhRQxJkefuSMppjDfDY8cdMwfaNo5SX/iiTJaraJFhKw=
+X-Received: by 2002:a05:622a:620a:b0:35c:bf9e:8748 with SMTP id
+ hj10-20020a05622a620a00b0035cbf9e8748mr3892292qtb.494.1663868276478; Thu, 22
+ Sep 2022 10:37:56 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v6 2/8] dt-bindings: phy: Add Lynx 10G phy binding
-Content-Language: en-US
-To:     Sean Anderson <sean.anderson@seco.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-phy@lists.infradead.org
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20220920202356.1451033-1-sean.anderson@seco.com>
- <20220920202356.1451033-3-sean.anderson@seco.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220920202356.1451033-3-sean.anderson@seco.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220922154354.2486595-1-dianders@chromium.org> <20220922084322.RFC.1.Iaa18b24fef0c8e88f0b82502f7fa0a70565b64d2@changeid>
+In-Reply-To: <20220922084322.RFC.1.Iaa18b24fef0c8e88f0b82502f7fa0a70565b64d2@changeid>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 22 Sep 2022 19:37:45 +0200
+Message-ID: <CAJZ5v0j+5ZJ3Za5pTiPe9NCRa3CV_KpaBX833vL=WH0tsTBF1g@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] PM: runtime: Add pm_runtime_try_put_sync() and pm_runtime_try_get_sync()
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/09/2022 22:23, Sean Anderson wrote:
-> This adds a binding for the SerDes module found on QorIQ processors.
-> Each phy is a subnode of the top-level device, possibly supporting
-> multiple lanes and protocols. This "thick" #phy-cells is used due to
-> allow for better organization of parameters. Note that the particular
-> parameters necessary to select a protocol-controller/lane combination
-> vary across different SoCs, and even within different SerDes on the same
-> SoC.
-> 
-> The driver is designed to be able to completely reconfigure lanes at
-> runtime. Generally, the phy consumer can select the appropriate
-> protocol using set_mode.
-> 
-> There are two PLLs, each of which can be used as the master clock for
-> each lane. Each PLL has its own reference. For the moment they are
-> required, because it simplifies the driver implementation. Absent
-> reference clocks can be modeled by a fixed-clock with a rate of 0.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On Thu, Sep 22, 2022 at 5:44 PM Douglas Anderson <dianders@chromium.org> wrote:
+>
+> In some cases, a caller may wish to synchronously get or put the PM
+> Runtime state of a device but the caller may also be holding a
+> resource that the runtime suspend or runtime resume of the device
+> needs. Obviously this can lead to deadlock.
+>
+> A case in point is the clock framework. While running
+> clk_disable_unused() the clock framework holds the global clock
+> "prepare" lock. The clock framework then goes through and does PM
+> Runtime actions. It should be no surprise to anyone that some devices
+> need to prepare or unprepare clocks are part of their PM Runtime
+> actions. Things generally work OK because of the "recursive" nature of
+> the global clock "prepare" lock, but if we get unlucky and the PM
+> Runtime action is happening in another task then we can end up
+> deadlocking.
+>
+> Let's add a "try" version of the synchronous PM Runtime routines.
+> This version will return -EINPROGRESS rather than waiting. To
+> implement this we'll add a new flag: RPM_TRY.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-> 
-> Changes in v6:
-> - fsl,type -> phy-type
-> 
-> Changes in v4:
-> - Use subnodes to describe lane configuration, instead of describing
->   PCCRs. This is the same style used by phy-cadence-sierra et al.
-> 
-> Changes in v3:
-> - Manually expand yaml references
-> - Add mode configuration to device tree
-> 
-> Changes in v2:
-> - Rename to fsl,lynx-10g.yaml
-> - Refer to the device in the documentation, rather than the binding
-> - Move compatible first
-> - Document phy cells in the description
-> - Allow a value of 1 for phy-cells. This allows for compatibility with
->   the similar (but according to Ioana Ciornei different enough) lynx-28g
->   binding.
-> - Remove minItems
-> - Use list for clock-names
-> - Fix example binding having too many cells in regs
-> - Add #clock-cells. This will allow using assigned-clocks* to configure
->   the PLLs.
-> - Document the structure of the compatible strings
-> 
->  .../devicetree/bindings/phy/fsl,lynx-10g.yaml | 236 ++++++++++++++++++
->  1 file changed, 236 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml b/Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
-> new file mode 100644
-> index 000000000000..ce9afdbf33f4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
-> @@ -0,0 +1,236 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/fsl,lynx-10g.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP Lynx 10G SerDes
-> +
-> +maintainers:
-> +  - Sean Anderson <sean.anderson@seco.com>
-> +
-> +description: |
-> +  These Lynx "SerDes" devices are found in NXP's QorIQ line of processors. The
-> +  SerDes provides up to eight lanes. Each lane may be configured individually,
-> +  or may be combined with adjacent lanes for a multi-lane protocol. The SerDes
-> +  supports a variety of protocols, including up to 10G Ethernet, PCIe, SATA, and
-> +  others. The specific protocols supported for each lane depend on the
-> +  particular SoC.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,ls1046a-serdes
-> +          - fsl,ls1088a-serdes
-> +      - const: fsl,lynx-10g
-> +
-> +  "#address-cells":
+>
+>  drivers/base/power/runtime.c |  7 +++++--
+>  include/linux/pm_runtime.h   | 28 ++++++++++++++++++++++++++++
+>  2 files changed, 33 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index 997be3ac20a7..67cc6a620b12 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -609,7 +609,7 @@ static int rpm_suspend(struct device *dev, int rpmflags)
+>         if (dev->power.runtime_status == RPM_SUSPENDING) {
+>                 DEFINE_WAIT(wait);
+>
+> -               if (rpmflags & (RPM_ASYNC | RPM_NOWAIT)) {
+> +               if (rpmflags & (RPM_ASYNC | RPM_NOWAIT | RPM_TRY)) {
+>                         retval = -EINPROGRESS;
+>                         goto out;
+>                 }
+> @@ -791,7 +791,10 @@ static int rpm_resume(struct device *dev, int rpmflags)
+>             || dev->power.runtime_status == RPM_SUSPENDING) {
+>                 DEFINE_WAIT(wait);
+>
+> -               if (rpmflags & (RPM_ASYNC | RPM_NOWAIT)) {
+> +               if (rpmflags & RPM_TRY) {
+> +                       retval = -EINPROGRESS;
 
-If there is going to be resend, use only one type of quotes: ' or ".
+Returning -EINPROGRESS from here may be misleading, because the device
+may not be resuming.
 
-FWIW (Rob's reviewed it):
+Besides, I'm not sure why a new flag is needed.  What about using
+RPM_NOWAIT instead?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
 
+> +                       goto out;
+> +               } else if (rpmflags & (RPM_ASYNC | RPM_NOWAIT)) {
+>                         if (dev->power.runtime_status == RPM_SUSPENDING)
+>                                 dev->power.deferred_resume = true;
+>                         else
+> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> index 0a41b2dcccad..c68baa63f0e7 100644
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -21,6 +21,8 @@
+>  #define RPM_GET_PUT            0x04    /* Increment/decrement the
+>                                             usage_count */
+>  #define RPM_AUTO               0x08    /* Use autosuspend_delay */
+> +#define RPM_TRY                        0x10    /* Try to be synchronous but fail
+> +                                           with an error if we can't. */
+>
+>  /*
+>   * Use this for defining a set of PM operations to be used in all situations
+> @@ -425,6 +427,19 @@ static inline int pm_runtime_get_sync(struct device *dev)
+>         return __pm_runtime_resume(dev, RPM_GET_PUT);
+>  }
+>
+> +/**
+> + * pm_runtime_try_get_sync - Like pm_runtime_get_sync() but err if blocking
+> + * @dev: Target device.
+> + *
+> + * This function works just like pm_runtime_get_sync() except that if the
+> + * device in question is currently in the process of suspending or resuming
+> + * that it will return with -EINPROGRESS instead of blocking.
+> + */
+> +static inline int pm_runtime_try_get_sync(struct device *dev)
+> +{
+> +       return __pm_runtime_resume(dev, RPM_GET_PUT | RPM_TRY);
+> +}
+> +
+>  /**
+>   * pm_runtime_resume_and_get - Bump up usage counter of a device and resume it.
+>   * @dev: Target device.
+> @@ -489,6 +504,19 @@ static inline int pm_runtime_put_sync(struct device *dev)
+>         return __pm_runtime_idle(dev, RPM_GET_PUT);
+>  }
+>
+> +/**
+> + * pm_runtime_try_put_sync - Like pm_runtime_put_sync() but err if blocking
+> + * @dev: Target device.
+> + *
+> + * This function works just like pm_runtime_put_sync() except that if the
+> + * device in question is currently in the process of suspending that it will
+> + * return with -EINPROGRESS instead of blocking.
+> + */
+> +static inline int pm_runtime_try_put_sync(struct device *dev)
+> +{
+> +       return __pm_runtime_idle(dev, RPM_GET_PUT | RPM_TRY);
+> +}
+> +
+>  /**
+>   * pm_runtime_put_sync_suspend - Drop device usage counter and suspend if 0.
+>   * @dev: Target device.
+> --
+> 2.37.3.968.ga6b4b080e4-goog
+>
