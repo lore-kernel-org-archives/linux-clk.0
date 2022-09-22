@@ -2,112 +2,264 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D062EC6FA90
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 07:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24164C6FA82
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 08:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230467AbiIVHYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 03:24:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49020 "EHLO
+        id S229766AbiIVItX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 04:49:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230024AbiIVHYe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 03:24:34 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6BDC01
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 00:24:29 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id x27so13309961lfu.0
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 00:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=fVcE2reQEfaEop4WRxdK1mO72Ip3uJjJkJGgaluoDsM=;
-        b=MSlRGljboTuGCdg3YEgOuKZBwTHCYcmzhnbgNphcxRdZyyfnwC664T8n53L+7Kb5A1
-         cBjGVu/xWbq4oUq8SLl+K3rsUKIyb/pAPtYAe6Ak01fZY6SfyZEnTaLs/z3BMKPjkSgv
-         vjmGQIgs1lLjxNx/uTL+ut/giC8XhZcsQwMrTBvzpBex0lB1/0LvbylWJluy/Ic3INLQ
-         SjlutBZR81gnaEMn5Jc0oha2px1AkGagITF9BddZQkinMio1PuFwtZLaGSUmLItkLHzB
-         1LEDnf+uCMw/DTWJNW0akGZdDtngxnSDEMs68J10o1m+HzEjBBsp1pp6Xc4Uce8MuQ5O
-         YqVw==
+        with ESMTP id S229523AbiIVItW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 04:49:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055123883
+        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 01:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1663836559;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RPdA7w9nalhVXxot1oY+v+I3XEFa4g11czVtLBfespg=;
+        b=b2VoKTcRgCptMuks7bF3zYK5hFKea23HsnNGVoZy7qzZ+3B0h3E5Bxn/jsZXyGsdOjGYZI
+        kwnVyj7yJZUyck61aLGJDJDmmxKWg0S41P2wo5umvNYmbJzp1U7Py70ERiZh5pxTcv3d1g
+        hVX0ba70kRROoG/bTn+wt6ca6XDlaac=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-332-vmOy4FLzP1G9affa6zu3YA-1; Thu, 22 Sep 2022 04:49:17 -0400
+X-MC-Unique: vmOy4FLzP1G9affa6zu3YA-1
+Received: by mail-ed1-f70.google.com with SMTP id dz21-20020a0564021d5500b0045217702048so6132603edb.5
+        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 01:49:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=fVcE2reQEfaEop4WRxdK1mO72Ip3uJjJkJGgaluoDsM=;
-        b=CVkb7mr/bt/ME8pgHkpYZ+H3BIlb0y8gWJJJ6FHfLTXKcUV79DJdTBWx72cuWN8mHR
-         NjLS99EL2tOoHJHR9PHjlegPj7k4izc6CC+DRIyoTx9+5PyseBKcJTnIDC5PRzmpRihM
-         AghEKZNQoC4V01vrFV3klzGaHMacpTDHHeVL/Iq1ApM55AQYwdCbgD58DJrSPH+ulpaS
-         Q65ilAxNXU2JMvv7vORuX16D0xw1QpazWXP4d/TBujP4FaThVh+GUB2OIZ1+brqt04mH
-         ueLvU/b/rjzkGtn8Xnnr3cSzjOC4yQCeDv9FjFuQBNAojVsej2LTMnu0EC8t4rJrzNsF
-         2iGw==
-X-Gm-Message-State: ACrzQf3IeV8PTa5jgegu4zrDWuloMlQ6M0YUCnkq5OX4Hd0YNwO1tCok
-        u1QCGe04l2MDslYe9XqdbNKELA==
-X-Google-Smtp-Source: AMsMyM5zA8VBFZmHafhekY2Y0dpCwQNF2kNCm9Hgz6tvQd/1QC+mRy8x/sO+uaHu1Mn31n8rO9wtGA==
-X-Received: by 2002:a05:6512:370c:b0:49f:c4fb:8706 with SMTP id z12-20020a056512370c00b0049fc4fb8706mr723544lfr.635.1663831468306;
-        Thu, 22 Sep 2022 00:24:28 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id j5-20020a2e6e05000000b0026c59d3f557sm769428ljc.33.2022.09.22.00.24.27
+        bh=RPdA7w9nalhVXxot1oY+v+I3XEFa4g11czVtLBfespg=;
+        b=X7oFdXY4dfL6ZHNxTxJfw3mArkufOgniAsoJL9TJPevxUOyvPV+HynqS3CQPYkjMSw
+         9lDg68PP5Ol83ldWcbtVVIbuHvn4DNC8qv/S/WnT+Lmr5Q3/MbPXa7C0Xb5CsdZYop4i
+         jR8NpFF7CHamFmPgchB8TMxBnB8dPIXKjJDZiRZqIRhif4j/kY5iwOcJTGfFZS2Ybk/M
+         oNLhaJ/88pqhxMbnKlPi5KkppVWDMq/uATlmoebEXFs+EdjtHRuUnOtHPXoi07g2zRZN
+         y3EKSFXinGu+imLojaMEkRN/TxLrxgR2qd0yFtjQFn7QC+BPEeeFbKYWj4tz0m5iDCKZ
+         3zog==
+X-Gm-Message-State: ACrzQf0/HPkVaRIPDjrWgkqibGolbSubR3BVdxtZGQpZhQsz663UenSo
+        kzT2GCuRLGTxmtE3hPXkS38dBFqKEccTprJPeL1isK/37ZpB6F0ZUgjqbZY2002M70ZGRV8aGaR
+        fqoywoUFbLIaJerfc6iTe
+X-Received: by 2002:a17:906:9b89:b0:780:62a5:462c with SMTP id dd9-20020a1709069b8900b0078062a5462cmr1854878ejc.119.1663836556717;
+        Thu, 22 Sep 2022 01:49:16 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4ZILcK7tzV0QZQ0C0dHQCZ3h9+66RMaTT4SI0bpAwupZb5fJ1j7htX6OBeC6hMuTylF6oHzA==
+X-Received: by 2002:a17:906:9b89:b0:780:62a5:462c with SMTP id dd9-20020a1709069b8900b0078062a5462cmr1854869ejc.119.1663836556515;
+        Thu, 22 Sep 2022 01:49:16 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id u17-20020a50c2d1000000b0044e8d0682b2sm3360949edf.71.2022.09.22.01.49.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Sep 2022 00:24:27 -0700 (PDT)
-Message-ID: <c74b4ab7-e307-482b-c4fc-0a7a1e39d6d1@linaro.org>
-Date:   Thu, 22 Sep 2022 09:24:26 +0200
+        Thu, 22 Sep 2022 01:49:16 -0700 (PDT)
+Message-ID: <47119a2a-323c-89ca-21c8-5bfcbb796bf5@redhat.com>
+Date:   Thu, 22 Sep 2022 10:49:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v1 11/17] drm/mediatek: hdmi: add mt8195 support
+ Thunderbird/102.2.1
+Subject: Re: [PATCH v3 3/5] platform/x86: int3472: Support multiple clock
+ consumers
 Content-Language: en-US
-To:     Guillaume Ranquet <granquet@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-11-4844816c9808@baylibre.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220919-v1-11-4844816c9808@baylibre.com>
+To:     Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
+        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, markgross@kernel.org, robert.moore@intel.com
+References: <20220921230439.768185-1-djrscally@gmail.com>
+ <20220921230439.768185-4-djrscally@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220921230439.768185-4-djrscally@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/09/2022 18:56, Guillaume Ranquet wrote:
-> Adds hdmi and hdmi-ddc support for mt8195.
+Hi,
+
+On 9/22/22 01:04, Daniel Scally wrote:
+> At present, the tps68470.c only supports a single clock consumer when
+> passing platform data to the clock driver. In some devices multiple
+> sensors depend on the clock provided by a single TPS68470 and so all
+> need to be able to acquire the clock. Support passing multiple
+> consumers as platform data.
 > 
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Daniel Scally <djrscally@gmail.com>
+
+Note this one already has a review + ack from Stephen Boyd for
+merging this through the pdx86 tree (from v1 of the series):
+
+https://lore.kernel.org/platform-driver-x86/20220225004943.AA8EDC340EF@smtp.kernel.org/
 
 
-> +static int mtk_hdmi_ddc_probe(struct platform_device *pdev)
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+
+Regards,
+
+Hans
+
+
+
+
+
+> ---
+> Changes since v2:
+> 
+> 	- None
+> 
+>  drivers/clk/clk-tps68470.c                    | 13 ++--
+>  drivers/platform/x86/intel/int3472/tps68470.c | 59 ++++++++++++++++---
+>  include/linux/platform_data/tps68470.h        |  7 ++-
+>  3 files changed, 67 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-tps68470.c b/drivers/clk/clk-tps68470.c
+> index e5fbefd6ac2d..38f44b5b9b1b 100644
+> --- a/drivers/clk/clk-tps68470.c
+> +++ b/drivers/clk/clk-tps68470.c
+> @@ -200,7 +200,9 @@ static int tps68470_clk_probe(struct platform_device *pdev)
+>  		.flags = CLK_SET_RATE_GATE,
+>  	};
+>  	struct tps68470_clkdata *tps68470_clkdata;
+> +	struct tps68470_clk_consumer *consumer;
+>  	int ret;
+> +	int i;
+>  
+>  	tps68470_clkdata = devm_kzalloc(&pdev->dev, sizeof(*tps68470_clkdata),
+>  					GFP_KERNEL);
+> @@ -223,10 +225,13 @@ static int tps68470_clk_probe(struct platform_device *pdev)
+>  		return ret;
+>  
+>  	if (pdata) {
+> -		ret = devm_clk_hw_register_clkdev(&pdev->dev,
+> -						  &tps68470_clkdata->clkout_hw,
+> -						  pdata->consumer_con_id,
+> -						  pdata->consumer_dev_name);
+> +		for (i = 0; i < pdata->n_consumers; i++) {
+> +			consumer = &pdata->consumers[i];
+> +			ret = devm_clk_hw_register_clkdev(&pdev->dev,
+> +							  &tps68470_clkdata->clkout_hw,
+> +							  consumer->consumer_con_id,
+> +							  consumer->consumer_dev_name);
+> +		}
+>  	}
+>  
+>  	return ret;
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.c b/drivers/platform/x86/intel/int3472/tps68470.c
+> index 22f61b47f9e5..8a684030933d 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /* Author: Dan Scally <djrscally@gmail.com> */
+>  
+> +#include <linux/acpi.h>
+>  #include <linux/i2c.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mfd/core.h>
+> @@ -95,20 +96,64 @@ static int skl_int3472_tps68470_calc_type(struct acpi_device *adev)
+>  	return DESIGNED_FOR_WINDOWS;
+>  }
+>  
+> +/*
+> + * Return the size of the flexible array member, because we'll need that later
+> + * on to pass .pdata_size to cells.
+> + */
+> +static int
+> +skl_int3472_fill_clk_pdata(struct device *dev, struct tps68470_clk_platform_data **clk_pdata)
 > +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mtk_hdmi_ddc *ddc;
-> +	int ret;
+> +	struct acpi_device *adev = ACPI_COMPANION(dev);
+> +	struct acpi_device *consumer;
+> +	unsigned int n_consumers = 0;
+> +	const char *sensor_name;
+> +	unsigned int i = 0;
 > +
-> +	ddc = devm_kzalloc(dev, sizeof(struct mtk_hdmi_ddc), GFP_KERNEL);
-> +	if (!ddc)
+> +	for_each_acpi_consumer_dev(adev, consumer)
+> +		n_consumers++;
+> +
+> +	if (!n_consumers) {
+> +		dev_err(dev, "INT3472 seems to have no dependents\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	*clk_pdata = devm_kzalloc(dev, struct_size(*clk_pdata, consumers, n_consumers),
+> +				  GFP_KERNEL);
+> +	if (!*clk_pdata)
 > +		return -ENOMEM;
 > +
-> +	ddc->regs = syscon_regmap_lookup_by_compatible("mediatek,mt8195-hdmi");
-
-That's not how you get regmaps. If you the driver grows, are you going
-to grow the list to e.g. 10 syscon_regmap_lookup_by_compatible() calls?
-This has to be by phandle.
-
-Best regards,
-Krzysztof
+> +	(*clk_pdata)->n_consumers = n_consumers;
+> +	i = 0;
+> +
+> +	for_each_acpi_consumer_dev(adev, consumer) {
+> +		sensor_name = devm_kasprintf(dev, GFP_KERNEL, I2C_DEV_NAME_FORMAT,
+> +					     acpi_dev_name(consumer));
+> +		if (!sensor_name)
+> +			return -ENOMEM;
+> +
+> +		(*clk_pdata)->consumers[i].consumer_dev_name = sensor_name;
+> +		i++;
+> +	}
+> +
+> +	acpi_dev_put(consumer);
+> +
+> +	return n_consumers;
+> +}
+> +
+>  static int skl_int3472_tps68470_probe(struct i2c_client *client)
+>  {
+>  	struct acpi_device *adev = ACPI_COMPANION(&client->dev);
+>  	const struct int3472_tps68470_board_data *board_data;
+> -	struct tps68470_clk_platform_data clk_pdata = {};
+> +	struct tps68470_clk_platform_data *clk_pdata;
+>  	struct mfd_cell *cells;
+>  	struct regmap *regmap;
+> +	int n_consumers;
+>  	int device_type;
+>  	int ret;
+>  
+> -	ret = skl_int3472_get_sensor_adev_and_name(&client->dev, NULL,
+> -						   &clk_pdata.consumer_dev_name);
+> -	if (ret)
+> -		return ret;
+> +	n_consumers = skl_int3472_fill_clk_pdata(&client->dev, &clk_pdata);
+> +	if (n_consumers < 0)
+> +		return n_consumers;
+>  
+>  	regmap = devm_regmap_init_i2c(client, &tps68470_regmap_config);
+>  	if (IS_ERR(regmap)) {
+> @@ -142,8 +187,8 @@ static int skl_int3472_tps68470_probe(struct i2c_client *client)
+>  		 * the clk + regulators must be ready when this happens.
+>  		 */
+>  		cells[0].name = "tps68470-clk";
+> -		cells[0].platform_data = &clk_pdata;
+> -		cells[0].pdata_size = sizeof(clk_pdata);
+> +		cells[0].platform_data = clk_pdata;
+> +		cells[0].pdata_size = struct_size(clk_pdata, consumers, n_consumers);
+>  		cells[1].name = "tps68470-regulator";
+>  		cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
+>  		cells[1].pdata_size = sizeof(struct tps68470_regulator_platform_data);
+> diff --git a/include/linux/platform_data/tps68470.h b/include/linux/platform_data/tps68470.h
+> index 126d082c3f2e..e605a2cab07f 100644
+> --- a/include/linux/platform_data/tps68470.h
+> +++ b/include/linux/platform_data/tps68470.h
+> @@ -27,9 +27,14 @@ struct tps68470_regulator_platform_data {
+>  	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
+>  };
+>  
+> -struct tps68470_clk_platform_data {
+> +struct tps68470_clk_consumer {
+>  	const char *consumer_dev_name;
+>  	const char *consumer_con_id;
+>  };
+>  
+> +struct tps68470_clk_platform_data {
+> +	unsigned int n_consumers;
+> +	struct tps68470_clk_consumer consumers[];
+> +};
+> +
+>  #endif
 
