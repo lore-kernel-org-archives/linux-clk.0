@@ -2,215 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA710C6FA91
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Sep 2022 09:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33311C6FA86
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Sep 2022 10:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbiIWJ3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Sep 2022 05:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41636 "EHLO
+        id S229928AbiIWKeM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Sep 2022 06:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232049AbiIWJ2q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Sep 2022 05:28:46 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE24F596D
-        for <linux-clk@vger.kernel.org>; Fri, 23 Sep 2022 02:28:16 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id u18so18841209lfo.8
-        for <linux-clk@vger.kernel.org>; Fri, 23 Sep 2022 02:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=UXZe9qidB6QjMOYDYyNvmsgnZtxjqHpsCv42HK+gV+4=;
-        b=SNvglzKNotS5d8U+JyQVc8CSMaK2iCyK3Diwp5qMUvNvEJCufJiYKfaNaR1OULC/pU
-         M5MkCXfztCrigweIRspquXn/kNTqSeseP9nljmvflijm+ilIh0jq/33Sn55W1yHkXxDx
-         9WnVcNak/a4DHSEnF1mAG4OiRv7iJ4TGCPk4AWubYN7LjW5f8PmrYLnw/wNrUybk1ssd
-         xFkjwLdEjddNL7yih8FSpOx5xq6xBRnwDD7jcyJoWeTQAKF2X6qjZRkI2vgFUB8YuqIR
-         6vuyA+Qph3Q70qAntUTHgjongujRYvLh8kFMHcI9zr6FgrgAEZfzVc0nnyKTc3dO/hYU
-         /ZcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=UXZe9qidB6QjMOYDYyNvmsgnZtxjqHpsCv42HK+gV+4=;
-        b=yhnU4wqwiX9svIxIHHqyDpdI0JK+JfVp+8zJjxk86pvbESJRxU3VviSKSqhCpfAMOs
-         gjOoPFqnWGCamKupSvvLWm69s0Isf8b+wTPSE7Dg2a8bvzRacfGyYBiY3v9nZjpPFHI8
-         AWJpq9Eq3EZ0iBF96UjErCD4N/Apcz3cTsVFdiTb70feArav5H3wgN6ReDHPeMMQ68ha
-         Pu9aHkw0FsmuJhss/E447Mj411szCLZiywEYqREuEl+F0KlWZH/Yazv1ftdwuC9tzCRX
-         nU7389vWv3Z+7Gm4GYl5HHSz1S7rh3SKQ92ouYAWVY93mmhVCm7onHQnGrWLaV1XMeEx
-         cU4w==
-X-Gm-Message-State: ACrzQf0oNUNnqfmVUbBs4JyOHRz/b4TG5i/eU1WQDvs6+6Q/SxE+BzzW
-        3OnO70eJFoa/2aB4zonl4eLL/A==
-X-Google-Smtp-Source: AMsMyM4WB84S0weyKCKOPxSxxoBRE/phclKJoUlGnSMgcm1tSh3VKVKchsa9VWXDVVJDEDWUykt0oQ==
-X-Received: by 2002:a05:6512:3e18:b0:498:fd18:8e12 with SMTP id i24-20020a0565123e1800b00498fd188e12mr2632918lfv.249.1663925282124;
-        Fri, 23 Sep 2022 02:28:02 -0700 (PDT)
-Received: from krzk-bin (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id f13-20020a2eb5ad000000b0026ab83298d6sm1290722ljn.77.2022.09.23.02.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 02:28:01 -0700 (PDT)
-Date:   Fri, 23 Sep 2022 11:27:58 +0200
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, festevam@gmail.com, s.hauer@pengutronix.de,
-        linux-imx@nxp.com, kernel@pengutronix.de, sboyd@kernel.org,
-        abel.vesa@linaro.org, abelvesa@kernel.org,
-        linux-arm-kernel@lists.infradead.org, shawnguo@kernel.org,
+        with ESMTP id S230055AbiIWKeK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Sep 2022 06:34:10 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED86417892;
+        Fri, 23 Sep 2022 03:34:09 -0700 (PDT)
+Received: from p508fdb48.dip0.t-ipconnect.de ([80.143.219.72] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1obg0S-0005sI-Pr; Fri, 23 Sep 2022 12:34:04 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, zhangqing@rock-chips.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        robh+dt@kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
-Subject: Re: [PATCH V4 1/2] dt-bindings: clock: add i.MX8M Anatop
-Message-ID: <20220923092758.krr64sqhn7zyjges@krzk-bin>
-References: <20220923074943.981127-1-peng.fan@oss.nxp.com>
- <20220923074943.981127-2-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH v3] dt-bindings: clock: convert rockchip,rk3128-cru.txt to YAML
+Date:   Fri, 23 Sep 2022 12:34:00 +0200
+Message-Id: <166392923326.537565.17809786432219638710.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <4e69a06d-7b53-ab48-1e50-2b29ff3a54e6@gmail.com>
+References: <4e69a06d-7b53-ab48-1e50-2b29ff3a54e6@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220923074943.981127-2-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 23 Sep 2022 15:49:42 +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX8M Family features an anatop module the produces PLL to clock
-> control module(CCM) root clock. Add the missing yaml file.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/clock/fsl,imx8m-anatop.yaml      | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> 
+On Sun, 18 Sep 2022 16:29:41 +0200, Johan Jonker wrote:
+> Convert rockchip,rk3128-cru.txt to YAML.
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+Applied, thanks!
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+[1/1] dt-bindings: clock: convert rockchip,rk3128-cru.txt to YAML
+      commit: f878a26a2a61abae9cb4d01a04a49dfac209b37c
 
-Full log is available here: https://patchwork.ozlabs.org/patch/1681462
-
-
-anatop@30360000: '#clock-cells' is a required property
-	arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-data-modul-edm-sbc.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-ddr4-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-emcon-avari.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-icore-mx8mm-ctouch2.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-icore-mx8mm-edimm2.2.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-mx8menlo.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-nitrogen-r2.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw71xx-0x.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi-dev.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi-dev.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-beacon-kit.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2pro.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-ddr3l-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-var-som-symphony.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-icore-mx8mp-edimm2.2.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dev.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dev.dtb
-
-anatop@30360000: compatible: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-data-modul-edm-sbc.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-ddr4-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-emcon-avari.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-icore-mx8mm-ctouch2.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-icore-mx8mm-edimm2.2.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-mx8menlo.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-nitrogen-r2.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw71xx-0x.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi-dev.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi-dev.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-beacon-kit.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2pro.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-ddr3l-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-var-som-symphony.dtb
-	arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-icore-mx8mp-edimm2.2.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dev.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dahlia.dtb
-	arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dev.dtb
-
-syscon@30360000: '#clock-cells' is a required property
-	arch/arm64/boot/dts/freescale/imx8mq-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-hummingboard-pulse.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-kontron-pitx-imx8m.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-r3.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-r4.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-mnt-reform2.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-phanbell.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-thor96.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb
-
-syscon@30360000: compatible: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/freescale/imx8mq-evk.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-hummingboard-pulse.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-kontron-pitx-imx8m.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-r3.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-librem5-r4.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-mnt-reform2.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-phanbell.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-thor96.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb
-	arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
