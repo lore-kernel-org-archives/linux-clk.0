@@ -2,138 +2,287 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AA5ECAAD8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Sep 2022 19:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B53B2ECAAD8
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Sep 2022 01:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbiIVTq0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 15:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
+        id S231153AbiIWBP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 21:15:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232035AbiIVTqZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 15:46:25 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CBBAF491
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 12:46:24 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id 13so23405207ejn.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 12:46:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=S/aQFIprMwOPTZ98QXTAGe3OrWBJeoAbdeTJ2dIQ9XM=;
-        b=Rxk4zRd0J/PCW77JtuQHXHqyqup9EnBemXl3cWIA5l7VqVq2dvJw5VQogX2o1iQFp4
-         XrFEZbgoQw+dXwnTXvGbSHBlTcm52w/Jgg6fh5x0VTIGasZ+iAJh6d+MHmwojRlGmU2e
-         jGSyomSpTN4+/WsgSlXiUvH2zMtSf4FBzzhVg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=S/aQFIprMwOPTZ98QXTAGe3OrWBJeoAbdeTJ2dIQ9XM=;
-        b=J/AVu+ACjLOkZtxtaoimAw8isSn5L0xxT57wAM6hDAJ92heYj27unkBUJBx4/Dj4TT
-         p3+Gdp8PLULsVcYzD7a/cA3ju27UYnnbjaexpHxkmCWhngQeQgWal3UnCibXUHkxH0us
-         99rsmhnQQBxvPf5rOHcbu2WsWPJmkYkH8XgX9VF6KYGR/EA4WOM8e4eYIyfpX+G6TVSq
-         9PF8KLupAKI2Nj68JeHHeSVGlXiHQCOEgAncr1ZNvw+BoSHnp+C80UxWelzPaJ01FHA1
-         kfLwnNCwlG+4Vv5V9sSXLOcZnxHFRZR66hJg7IX8fQgYHGDwB84kx4S8THK/JvmDY9Bb
-         vBrA==
-X-Gm-Message-State: ACrzQf11lBA+dSFD4KLE1jxZuJdzCbzsZWE/hEJ1O91mQrK0zEdglZWz
-        KAjdZ7rkClu4WfbyQfGuZ8B1+wr7hFaIzlZt
-X-Google-Smtp-Source: AMsMyM69781bdRDWapTFa98fmmRlyn3Lj5YkIyH2M9BcDD0QOGnN+2m0MwPfYZZIJgvqdh3zWhIFpA==
-X-Received: by 2002:a17:907:3f12:b0:77b:8d8:f353 with SMTP id hq18-20020a1709073f1200b0077b08d8f353mr4068273ejc.349.1663875982434;
-        Thu, 22 Sep 2022 12:46:22 -0700 (PDT)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id u17-20020a1709061db100b0077d6f628e14sm2991791ejh.83.2022.09.22.12.46.20
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Sep 2022 12:46:21 -0700 (PDT)
-Received: by mail-wm1-f51.google.com with SMTP id r3-20020a05600c35c300b003b4b5f6c6bdso2010464wmq.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Sep 2022 12:46:20 -0700 (PDT)
-X-Received: by 2002:a05:600c:500d:b0:3b5:234:d7e9 with SMTP id
- n13-20020a05600c500d00b003b50234d7e9mr3338993wmr.57.1663875980646; Thu, 22
- Sep 2022 12:46:20 -0700 (PDT)
+        with ESMTP id S230443AbiIWBPz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 21:15:55 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9462E985AB;
+        Thu, 22 Sep 2022 18:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663895754; x=1695431754;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CvKvMtolEyCI8+WxsUgfsfdHD6KxACdHivq41STFQOA=;
+  b=X/9EKO0Y7WA7omXNacsHLCKSg2gpQPZqwgux3NAE/8Y0Ecc8AEChaQoV
+   9M86jWh2Rc9dAijssaliNnT/8pZaNbjLd0zMUhtffEiKMVjpfFnRFJjzs
+   EGfibYuCis9i+MyAFPtiWBw5e2mS4U/tCY/kGBVC2Dilv2HL1XHJxQVeu
+   IGb254B5jkxdyBm+N77eEW7DCXuKUA1zEOvRB+uMYCZgdF6tfXbWYvuTB
+   MjPAQ6M3iZIU6o1Cnyxy5MjGwKN4gckoWFeLGncG3v4VVVjmd+hD8a2ez
+   LsF4CFhFz+UGWo7SKX26HA80tOKuTboBG0aof+jlYdN5uHWe331bZwVwc
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="300465244"
+X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
+   d="scan'208";a="300465244"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 18:15:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
+   d="scan'208";a="709121640"
+Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Sep 2022 18:15:50 -0700
+Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1obXID-00059I-1X;
+        Fri, 23 Sep 2022 01:15:49 +0000
+Date:   Fri, 23 Sep 2022 09:15:45 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Bo-Chen Chen <rex-bc.chen@mediatek.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, matthias.bgg@gmail.com,
+        p.zabel@pengutronix.de
+Cc:     kbuild-all@lists.01.org, runyang.chen@mediatek.com,
+        miles.chen@mediatek.com, wenst@chromium.org,
+        angelogioacchino.delregno@collabora.com, nfraprado@collabora.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Bo-Chen Chen <rex-bc.chen@mediatek.com>
+Subject: Re: [PATCH] reset: mediatek: Move mediatek system clock reset to
+ reset folder
+Message-ID: <202209230958.2rV4kEVM-lkp@intel.com>
+References: <20220922141107.10203-1-rex-bc.chen@mediatek.com>
 MIME-Version: 1.0
-References: <20220922154354.2486595-1-dianders@chromium.org>
- <20220922084322.RFC.1.Iaa18b24fef0c8e88f0b82502f7fa0a70565b64d2@changeid> <CAJZ5v0j+5ZJ3Za5pTiPe9NCRa3CV_KpaBX833vL=WH0tsTBF1g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0j+5ZJ3Za5pTiPe9NCRa3CV_KpaBX833vL=WH0tsTBF1g@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 22 Sep 2022 12:46:08 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UfuPu8nz5=DciusvGGko6we5s2VFf30BbEbONQNgwQoA@mail.gmail.com>
-Message-ID: <CAD=FV=UfuPu8nz5=DciusvGGko6we5s2VFf30BbEbONQNgwQoA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] PM: runtime: Add pm_runtime_try_put_sync() and pm_runtime_try_get_sync()
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220922141107.10203-1-rex-bc.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Bo-Chen,
 
-On Thu, Sep 22, 2022 at 10:38 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Sep 22, 2022 at 5:44 PM Douglas Anderson <dianders@chromium.org> wrote:
-> >
-> > In some cases, a caller may wish to synchronously get or put the PM
-> > Runtime state of a device but the caller may also be holding a
-> > resource that the runtime suspend or runtime resume of the device
-> > needs. Obviously this can lead to deadlock.
-> >
-> > A case in point is the clock framework. While running
-> > clk_disable_unused() the clock framework holds the global clock
-> > "prepare" lock. The clock framework then goes through and does PM
-> > Runtime actions. It should be no surprise to anyone that some devices
-> > need to prepare or unprepare clocks are part of their PM Runtime
-> > actions. Things generally work OK because of the "recursive" nature of
-> > the global clock "prepare" lock, but if we get unlucky and the PM
-> > Runtime action is happening in another task then we can end up
-> > deadlocking.
-> >
-> > Let's add a "try" version of the synchronous PM Runtime routines.
-> > This version will return -EINPROGRESS rather than waiting. To
-> > implement this we'll add a new flag: RPM_TRY.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> >  drivers/base/power/runtime.c |  7 +++++--
-> >  include/linux/pm_runtime.h   | 28 ++++++++++++++++++++++++++++
-> >  2 files changed, 33 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index 997be3ac20a7..67cc6a620b12 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -609,7 +609,7 @@ static int rpm_suspend(struct device *dev, int rpmflags)
-> >         if (dev->power.runtime_status == RPM_SUSPENDING) {
-> >                 DEFINE_WAIT(wait);
-> >
-> > -               if (rpmflags & (RPM_ASYNC | RPM_NOWAIT)) {
-> > +               if (rpmflags & (RPM_ASYNC | RPM_NOWAIT | RPM_TRY)) {
-> >                         retval = -EINPROGRESS;
-> >                         goto out;
-> >                 }
-> > @@ -791,7 +791,10 @@ static int rpm_resume(struct device *dev, int rpmflags)
-> >             || dev->power.runtime_status == RPM_SUSPENDING) {
-> >                 DEFINE_WAIT(wait);
-> >
-> > -               if (rpmflags & (RPM_ASYNC | RPM_NOWAIT)) {
-> > +               if (rpmflags & RPM_TRY) {
-> > +                       retval = -EINPROGRESS;
->
-> Returning -EINPROGRESS from here may be misleading, because the device
-> may not be resuming.
->
-> Besides, I'm not sure why a new flag is needed.  What about using
-> RPM_NOWAIT instead?
+Thank you for the patch! Yet something to improve:
 
-Yeah, we can use RPM_NOWAIT if we land your patch [1]. I'll spin with
-that if folks agree that the overall approach taken in this series
-makes sense.
+[auto build test ERROR on v6.0-rc6]
+[also build test ERROR on linus/master]
+[cannot apply to clk/clk-next pza/reset/next mbgg-mediatek/for-next next-20220921]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1] https://lore.kernel.org/r/12079576.O9o76ZdvQC@kreacher
+url:    https://github.com/intel-lab-lkp/linux/commits/Bo-Chen-Chen/reset-mediatek-Move-mediatek-system-clock-reset-to-reset-folder/20220922-221303
+base:    521a547ced6477c54b4b0cc206000406c221b4d6
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20220923/202209230958.2rV4kEVM-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/69ce72445492a02115b1e7c7527a8a107f48aab8
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Bo-Chen-Chen/reset-mediatek-Move-mediatek-system-clock-reset-to-reset-folder/20220922-221303
+        git checkout 69ce72445492a02115b1e7c7527a8a107f48aab8
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sh SHELL=/bin/bash drivers/
 
--Doug
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/device/driver.h:21,
+                    from include/linux/device.h:32,
+                    from include/linux/auxiliary_bus.h:11,
+                    from drivers/reset/reset-mediatek-sysclk.c:6:
+>> drivers/reset/reset-mediatek-sysclk.c:499:32: error: 'mtk_reset_ids' undeclared here (not in a function); did you mean 'mtk_reset_ops'?
+     499 | MODULE_DEVICE_TABLE(auxiliary, mtk_reset_ids);
+         |                                ^~~~~~~~~~~~~
+   include/linux/module.h:244:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
+     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
+         |               ^~~~
+>> drivers/reset/reset-mediatek-sysclk.c:539:5: warning: no previous prototype for 'mtk_reset_init_with_node' [-Wmissing-prototypes]
+     539 | int mtk_reset_init_with_node(struct device_node *np, const char *name)
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/reset/reset-mediatek-sysclk.c:550:6: warning: no previous prototype for 'mtk_rst_remove_with_node' [-Wmissing-prototypes]
+     550 | void mtk_rst_remove_with_node(struct device_node *np, const char *name)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~
+>> include/linux/module.h:244:21: error: '__mod_auxiliary__mtk_reset_ids_device_table' aliased to undefined symbol 'mtk_reset_ids'
+     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
+         |                     ^~~~~~
+   drivers/reset/reset-mediatek-sysclk.c:499:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+     499 | MODULE_DEVICE_TABLE(auxiliary, mtk_reset_ids);
+         | ^~~~~~~~~~~~~~~~~~~
+
+
+vim +499 drivers/reset/reset-mediatek-sysclk.c
+
+   402	
+   403	static struct auxiliary_device_id mtk_sysclk_reset_ids[] = {
+   404		{
+   405			.name = "clk_mt2701_eth.mt2701-eth-rst",
+   406			.driver_data = MTK_RST_ID_MT2701_ETH,
+   407		},
+   408		{
+   409			.name = "clk_mt2701_g3d.mt2701-g3d-rst",
+   410			.driver_data = MTK_RST_ID_MT2701_G3D,
+   411		},
+   412		{
+   413			.name = "clk_mt2701_hif.mt2701-hif-rst",
+   414			.driver_data = MTK_RST_ID_MT2701_HIF,
+   415		},
+   416		{
+   417			.name = "clk_mt2701.mt2701-infrasys-rst",
+   418			.driver_data = MTK_RST_ID_MT2701_INFRASYS,
+   419		},
+   420		{
+   421			.name = "clk_mt2701.mt2701-pericfg-rst",
+   422			.driver_data = MTK_RST_ID_MT2701_PERICFG,
+   423		},
+   424		{
+   425			.name = "clk_mt2712.mt2712-infra-rst",
+   426			.driver_data = MTK_RST_ID_MT2712_INFRA,
+   427		},
+   428		{
+   429			.name = "clk_mt2712.mt2712-peri-rst",
+   430			.driver_data = MTK_RST_ID_MT2712_PERI,
+   431		},
+   432		{
+   433			.name = "clk_mt7622_eth.mt7622-eth-rst",
+   434			.driver_data = MTK_RST_ID_MT7622_ETH,
+   435		},
+   436		{
+   437			.name = "clk_mt7622_hif.mt7622-usb-rst",
+   438			.driver_data = MTK_RST_ID_MT7622_SSUSBSYS,
+   439		},
+   440		{
+   441			.name = "clk_mt7622_hif.mt7622-pcie-rst",
+   442			.driver_data = MTK_RST_ID_MT7622_PCIESYS,
+   443		},
+   444		{
+   445			.name = "clk_mt7622.mt7622-infrasys-rst",
+   446			.driver_data = MTK_RST_ID_MT7622_INFRASYS,
+   447		},
+   448		{
+   449			.name = "clk_mt7622.mt7622-pericfg-rst",
+   450			.driver_data = MTK_RST_ID_MT7622_PERICFG,
+   451		},
+   452		{
+   453			.name = "clk_mt7629_eth.mt7629-ethsys-rst",
+   454			.driver_data = MTK_RST_ID_MT7629_ETHSYS,
+   455		},
+   456		{
+   457			.name = "clk_mt7629_hif.mt7629-usb-rst",
+   458			.driver_data = MTK_RST_ID_MT7629_SSUSBSYS,
+   459		},
+   460		{
+   461			.name = "clk_mt7629_hif.mt7629-pcie-rst",
+   462			.driver_data = MTK_RST_ID_MT7629_PCIESYS,
+   463		},
+   464		{
+   465			.name = "clk_mt8135.mt8135-infrasys-rst",
+   466			.driver_data = MTK_RST_ID_MT8135_INFRASYS,
+   467		},
+   468		{
+   469			.name = "clk_mt8135.mt8135-pericfg-rst",
+   470			.driver_data = MTK_RST_ID_MT8135_PERICFG,
+   471		},
+   472		{
+   473			.name = "clk_mt8173.mt8173-infracfg-rst",
+   474			.driver_data = MTK_RST_ID_MT8173_INFRACFG,
+   475		},
+   476		{
+   477			.name = "clk_mt8173.mt8173-pericfg-rst",
+   478			.driver_data = MTK_RST_ID_MT8173_PERICFG,
+   479		},
+   480		{
+   481			.name = "clk_mt8183.mt8183-infra-rst",
+   482			.driver_data = MTK_RST_ID_MT8183_INFRA,
+   483		},
+   484		{
+   485			.name = "clk_mtk.mt8186-infra-ao-rst",
+   486			.driver_data = MTK_RST_ID_MT8186_INFRA_AO,
+   487		},
+   488		{
+   489			.name = "clk_mt8192.mt8192-infra-rst",
+   490			.driver_data = MTK_RST_ID_MT8192_INFRA,
+   491		},
+   492		{
+   493			.name = "clk_mtk.mt8195-infra-ao-rst",
+   494			.driver_data = MTK_RST_ID_MT8195_INFRA_AO,
+   495		},
+   496		{
+   497		},
+   498	};
+ > 499	MODULE_DEVICE_TABLE(auxiliary, mtk_reset_ids);
+   500	
+   501	/* reset data */
+   502	static struct mtk_clk_rst_data clk_rst_data[] = {
+   503		[MTK_RST_ID_MT2701_ETH]		= { .desc = &mt2701_eth_rst_desc, },
+   504		[MTK_RST_ID_MT2701_G3D]		= { .desc = &mt2701_g3d_clk_rst_desc, },
+   505		[MTK_RST_ID_MT2701_HIF]		= { .desc = &mt2701_eth_rst_desc, },
+   506		[MTK_RST_ID_MT2701_INFRASYS]	= { .desc = &mt2701_infrasys_clk_rst_desc, },
+   507		[MTK_RST_ID_MT2701_PERICFG]	= { .desc = &mt2701_pericfg_clk_rst_desc, },
+   508		[MTK_RST_ID_MT2712_INFRA]	= { .desc = &mt2701_infrasys_clk_rst_desc, },
+   509		[MTK_RST_ID_MT2712_PERI]	= { .desc = &mt2701_pericfg_clk_rst_desc, },
+   510		[MTK_RST_ID_MT7622_ETH]		= { .desc = &mt2701_eth_rst_desc, },
+   511		[MTK_RST_ID_MT7622_SSUSBSYS]	= { .desc = &mt2701_eth_rst_desc, },
+   512		[MTK_RST_ID_MT7622_PCIESYS]	= { .desc = &mt2701_eth_rst_desc, },
+   513		[MTK_RST_ID_MT7622_INFRASYS]	= { .desc = &mt7622_infrasys_clk_rst_desc, },
+   514		[MTK_RST_ID_MT7622_PERICFG]	= { .desc = &mt2701_pericfg_clk_rst_desc, },
+   515		[MTK_RST_ID_MT7629_ETHSYS]	= { .desc = &mt2701_eth_rst_desc, },
+   516		[MTK_RST_ID_MT7629_SSUSBSYS]	= { .desc = &mt2701_eth_rst_desc, },
+   517		[MTK_RST_ID_MT7629_PCIESYS]	= { .desc = &mt2701_eth_rst_desc, },
+   518		[MTK_RST_ID_MT8135_INFRASYS]	= { .desc = &mt2701_infrasys_clk_rst_desc, },
+   519		[MTK_RST_ID_MT8135_PERICFG]	= { .desc = &mt2701_pericfg_clk_rst_desc, },
+   520		[MTK_RST_ID_MT8173_INFRACFG]	= { .desc = &mt2701_infrasys_clk_rst_desc, },
+   521		[MTK_RST_ID_MT8173_PERICFG]	= { .desc = &mt2701_pericfg_clk_rst_desc, },
+   522		[MTK_RST_ID_MT8183_INFRA]	= { .desc = &mt8183_rst_desc, },
+   523		[MTK_RST_ID_MT8186_INFRA_AO]	= { .desc = &mt8186_rst_desc, },
+   524		[MTK_RST_ID_MT8192_INFRA]	= { .desc = &mt8192_rst_desc, },
+   525		[MTK_RST_ID_MT8195_INFRA_AO]	= { .desc = &mt8195_rst_desc, },
+   526		{},
+   527	};
+   528	
+   529	static struct mtk_clk_rst_data *find_rst_data(const char *name)
+   530	{
+   531		int i;
+   532	
+   533		for (i = 0; i < ARRAY_SIZE(mtk_sysclk_reset_ids); i++)
+   534			if (mtk_sysclk_reset_ids[i].name == name)
+   535				return &clk_rst_data[mtk_sysclk_reset_ids[i].driver_data];
+   536		return NULL;
+   537	}
+   538	
+ > 539	int mtk_reset_init_with_node(struct device_node *np, const char *name)
+   540	{
+   541		struct mtk_clk_rst_data *data = find_rst_data(name);
+   542	
+   543		if (!np || !data)
+   544			return -EINVAL;
+   545	
+   546		return register_rst_ctrl_with_node(np, data);
+   547	}
+   548	EXPORT_SYMBOL_GPL(mtk_reset_init_with_node);
+   549	
+ > 550	void mtk_rst_remove_with_node(struct device_node *np, const char *name)
+   551	{
+   552		struct mtk_clk_rst_data *data = find_rst_data(name);
+   553	
+   554		if (!np || !data)
+   555			return;
+   556	
+   557		reset_controller_unregister(&data->rcdev);
+   558	}
+   559	EXPORT_SYMBOL_GPL(mtk_rst_remove_with_node);
+   560	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
