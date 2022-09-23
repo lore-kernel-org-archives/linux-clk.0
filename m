@@ -2,209 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201E7C54EE9
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Sep 2022 01:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E5EECAAD8
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Sep 2022 02:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbiIWBg5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Sep 2022 21:36:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        id S232137AbiIWCAP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Sep 2022 22:00:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiIWBg4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 21:36:56 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C9EED5F4;
-        Thu, 22 Sep 2022 18:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663897015; x=1695433015;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WZdTk9T1PthgIdg0kjCHkHEqJf2vaI7cgaqZMy5Jl2E=;
-  b=gAXMpo1eKRZ623vwlpbYf+IoV+W4lExb3iMgw2PUpZWJokoMTcX+O+6k
-   TnFAj6tjM9SGAtNtnQcDk65/Wzydm4yTMuJIpVffMsdmx2XMnadf52xYT
-   D0Xkrfwqh3+HsxKmGlJsda6NqlAxyZBUcdBemx0bdVNvH9ZxrIRwxew/S
-   HDDtPGdZMRcGXdL5UzwZb/c7w1EqdpqfS8NUNEmQyUUiNQybQeCDRK9Li
-   x6Lk+k6U3VTcXNHSe0SMazyjT21WPTWYuAvWDoFqbWUeWeaQ7O3WeUiId
-   W0bFx5OYQjo4QYlNlLOdL8pz/3uoY4h7YNDqF8dxUa3nJnYXBFq0wm78f
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="280850946"
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="280850946"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 18:36:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="688545613"
-Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 22 Sep 2022 18:36:51 -0700
-Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1obXcY-00059w-2U;
-        Fri, 23 Sep 2022 01:36:50 +0000
-Date:   Fri, 23 Sep 2022 09:36:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bo-Chen Chen <rex-bc.chen@mediatek.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, matthias.bgg@gmail.com,
-        p.zabel@pengutronix.de
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        runyang.chen@mediatek.com, miles.chen@mediatek.com,
-        wenst@chromium.org, angelogioacchino.delregno@collabora.com,
-        nfraprado@collabora.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Bo-Chen Chen <rex-bc.chen@mediatek.com>
-Subject: Re: [PATCH] reset: mediatek: Move mediatek system clock reset to
- reset folder
-Message-ID: <202209230910.DSbTCgBL-lkp@intel.com>
-References: <20220922141107.10203-1-rex-bc.chen@mediatek.com>
+        with ESMTP id S231177AbiIWCAO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Sep 2022 22:00:14 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34D9DDDB6;
+        Thu, 22 Sep 2022 19:00:10 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28N1cIVJ029694;
+        Fri, 23 Sep 2022 01:59:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=fIilf/Rdf+6cocDi7rtmOOlCg2Um91x3yLyfyYicYSY=;
+ b=IxJXlYElg+LOlhzG4iYqzlY6srE1u3FXL7Sf/z+uQ3E9cI05gOYriaKgiPy7tiq6ghnE
+ duskBrqQcPtSqkYwuQWbAutEA2ql7WZ36SSLxT7tOteuf6x3jBN0ymhYZSVoVd4K4qWY
+ Q8oRLxDTrmxp7M0B3dNYzXnJsMyuP0qo81GywR9/CzqsHWETEk46UTYKEIZXMlP++5OB
+ O/eDoj3/VC4G14kMsLoRHDKfEN5zYSBlq7AFmXoOhtL/nvuZHqdQAfwBdsGsk/whkSzc
+ AXFcl4rVK72VNW/WV4th2q1CwXfMMiefHSmcqgiLjml9/KfbubfhBVxjA+oyztUqGe5z FQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jrmnf2gjn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 01:59:48 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28N1xlfA019261
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 01:59:47 GMT
+Received: from [10.216.47.110] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 22 Sep
+ 2022 18:59:36 -0700
+Message-ID: <95e4e9d9-3f39-6cf4-0739-967c7e568697@quicinc.com>
+Date:   Fri, 23 Sep 2022 07:29:31 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220922141107.10203-1-rex-bc.chen@mediatek.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+Content-Language: en-US
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
+        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
+        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
+        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
+        <svarbanov@mm-sol.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
+        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
+        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>
+References: <20220922184240.GA1326211@bhelgaas>
+From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20220922184240.GA1326211@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WwJCSZEJnh-0vScMQvg7cP251S8Gru8D
+X-Proofpoint-ORIG-GUID: WwJCSZEJnh-0vScMQvg7cP251S8Gru8D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-22_16,2022-09-22_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209230011
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bo-Chen,
 
-Thank you for the patch! Perhaps something to improve:
+On 9/23/2022 12:12 AM, Bjorn Helgaas wrote:
+> On Thu, Sep 22, 2022 at 09:09:28PM +0530, Krishna Chaitanya Chundru wrote:
+>> On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
+>>> [+cc Rafael, linux-pm since this is real power management magic,
+>>> beginning of thread:
+>>> https://lore.kernel.org/all/1663669347-29308-1-git-send-email-quic_krichai@quicinc.com/
+>>> full patch since I trimmed too much of it:
+>>> https://lore.kernel.org/all/1663669347-29308-2-git-send-email-quic_krichai@quicinc.com/]
+>>>
+>>> On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
+>>>> On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
+>>>>> On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
+>>>>>> Add suspend and resume syscore ops.
+>>>>>>
+>>>>>> Few PCIe endpoints like NVMe and WLANs are always expecting the device
+>>>>>> to be in D0 state and the link to be active (or in l1ss) all the time
+>>>>>> (including in S3 state).
+>>>>> What does this have to do with the patch?  I don't see any NVMe or
+>>>>> WLAN patches here.
+>>>> Existing NVMe driver expecting NVMe device to be in D0 during S3 also. If we
+>>>> turn off the link in
+>>>> suspend, the NVMe resume path is broken as the state machine is getting
+>>>> reset in the NVMe device.
+>>>> Due to this, the host driver state machine and the device state machine are
+>>>> going out of sync, and all NVMe commands
+>>>> after resumes are getting timed out.
+>>>>
+>>>> IIRC, Tegra is also facing this issue with NVMe.
+>>>>
+>>>> This issue has been discussed below threads:
+>>>>
+>>>> https://lore.kernel.org/all/Yl+6V3pWuyRYuVV8@infradead.org/T/
+>>>>
+>>>> https://lore.kernel.org/linux-nvme/20220201165006.3074615-1-kbusch@kernel.org/
+>>> The problem is that this commit log doesn't explain the problem and
+>>> doesn't give us anything to connect the NVMe and WLAN assumptions with
+>>> this special driver behavior.  There needs to be some explicit
+>>> property of NVMe and WLAN that the PM core or drivers like qcom can
+>>> use to tell whether the clocks can be turned off.
+>> Not only that NVMe is expecting the device state to be always in D0.
+>> So any PCIe drivers should not turn off the link in suspend and do
+>> link retraining in the resume.  As this is considered a power cycle
+>> by the NVMe device and eventually increases the wear of the NVMe
+>> flash.
+> I can't quite parse this.  Are you saying that all PCI devices should
+> stay in D0 when the system is in S3?
+Not all PCI devices  some PCI devices like NVMe. The NVMe driver is 
+expecting the device to stay in D0 only.
+>
+>> We are trying to keep the device in D0 and also reduce the power
+>> consumption when the system is in S3 by turning off clocks and phy
+>> with this patch series.
+> The decision to keep a device in D0 is not up to qcom or any other PCI
+> controller driver.
+Yes, it is the NVMe driver who is deciding to keep the device in D0. Our 
+QCOM
+PCI Controller driver is trying to keep the device in the same state as 
+the client driver is
+expecting and also trying to reduce power consumption.
+>
+>>>>>> In qcom platform PCIe resources( clocks, phy etc..) can
+>>>>>> released when the link is in L1ss to reduce the power
+>>>>>> consumption. So if the link is in L1ss, release the PCIe
+>>>>>> resources. And when the system resumes, enable the PCIe
+>>>>>> resources if they released in the suspend path.
+>>>>> What's the connection with L1.x?  Links enter L1.x based on
+>>>>> activity and timing.  That doesn't seem like a reliable
+>>>>> indicator to turn PHYs off and disable clocks.
+>>>> This is a Qcom PHY-specific feature (retaining the link state in
+>>>> L1.x with clocks turned off).  It is possible only with the link
+>>>> being in l1.x. PHY can't retain the link state in L0 with the
+>>>> clocks turned off and we need to re-train the link if it's in L2
+>>>> or L3. So we can support this feature only with L1.x.  That is
+>>>> the reason we are taking l1.x as the trigger to turn off clocks
+>>>> (in only suspend path).
+>>> This doesn't address my question.  L1.x is an ASPM feature, which
+>>> means hardware may enter or leave L1.x autonomously at any time
+>>> without software intervention.  Therefore, I don't think reading the
+>>> current state is a reliable way to decide anything.
+>> After the link enters the L1.x it will come out only if there is
+>> some activity on the link.  AS system is suspended and NVMe driver
+>> is also suspended( queues will  freeze in suspend) who else can
+>> initiate any data.
+> I don't think we can assume that nothing will happen to cause exit
+> from L1.x.  For instance, PCIe Messages for INTx signaling, LTR, OBFF,
+> PTM, etc., may be sent even though we think the device is idle and
+> there should be no link activity.
+>
+> Bjorn
+I don't think after the link enters into L1.x there will some activity 
+on the link as you mentioned,
+except for PCIe messages like INTx/MSI/MSIX. These messages also will 
+not come because the
+client drivers like NVMe will keep their device in the lowest power mode.
 
-[auto build test WARNING on v6.0-rc6]
-[also build test WARNING on linus/master]
-[cannot apply to clk/clk-next pza/reset/next mbgg-mediatek/for-next next-20220921]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bo-Chen-Chen/reset-mediatek-Move-mediatek-system-clock-reset-to-reset-folder/20220922-221303
-base:    521a547ced6477c54b4b0cc206000406c221b4d6
-config: s390-randconfig-r044-20220922 (https://download.01.org/0day-ci/archive/20220923/202209230910.DSbTCgBL-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 791a7ae1ba3efd6bca96338e10ffde557ba83920)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install s390 cross compiling tool for clang build
-        # apt-get install binutils-s390x-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/69ce72445492a02115b1e7c7527a8a107f48aab8
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Bo-Chen-Chen/reset-mediatek-Move-mediatek-system-clock-reset-to-reset-folder/20220922-221303
-        git checkout 69ce72445492a02115b1e7c7527a8a107f48aab8
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=s390 SHELL=/bin/bash drivers/reset/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/reset/reset-mediatek-sysclk.c:11:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:75:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-                                                             ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-                                                        ^
-   In file included from drivers/reset/reset-mediatek-sysclk.c:11:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:75:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-                                                             ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-                                                        ^
-   In file included from drivers/reset/reset-mediatek-sysclk.c:11:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:75:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsb(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsw(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsl(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesb(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesw(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesl(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
->> drivers/reset/reset-mediatek-sysclk.c:539:5: warning: no previous prototype for function 'mtk_reset_init_with_node' [-Wmissing-prototypes]
-   int mtk_reset_init_with_node(struct device_node *np, const char *name)
-       ^
-   drivers/reset/reset-mediatek-sysclk.c:539:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   int mtk_reset_init_with_node(struct device_node *np, const char *name)
-   ^
-   static 
->> drivers/reset/reset-mediatek-sysclk.c:550:6: warning: no previous prototype for function 'mtk_rst_remove_with_node' [-Wmissing-prototypes]
-   void mtk_rst_remove_with_node(struct device_node *np, const char *name)
-        ^
-   drivers/reset/reset-mediatek-sysclk.c:550:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   void mtk_rst_remove_with_node(struct device_node *np, const char *name)
-   ^
-   static 
-   14 warnings generated.
-
-
-vim +/mtk_reset_init_with_node +539 drivers/reset/reset-mediatek-sysclk.c
-
-   538	
- > 539	int mtk_reset_init_with_node(struct device_node *np, const char *name)
-   540	{
-   541		struct mtk_clk_rst_data *data = find_rst_data(name);
-   542	
-   543		if (!np || !data)
-   544			return -EINVAL;
-   545	
-   546		return register_rst_ctrl_with_node(np, data);
-   547	}
-   548	EXPORT_SYMBOL_GPL(mtk_reset_init_with_node);
-   549	
- > 550	void mtk_rst_remove_with_node(struct device_node *np, const char *name)
-   551	{
-   552		struct mtk_clk_rst_data *data = find_rst_data(name);
-   553	
-   554		if (!np || !data)
-   555			return;
-   556	
-   557		reset_controller_unregister(&data->rcdev);
-   558	}
-   559	EXPORT_SYMBOL_GPL(mtk_rst_remove_with_node);
-   560	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+The link will come out of L1.x only when there is config or memory 
+access or some messages
+to trigger the interrupts from the devices. We are already making sure 
+this access will not be there in S3.
+If the link is in L0 or L0s what you said is expected but not in L1.x
