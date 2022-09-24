@@ -2,157 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF632C07E9D
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Sep 2022 16:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C96C6FA86
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Sep 2022 17:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233783AbiIXQtw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Sep 2022 12:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53982 "EHLO
+        id S233930AbiIXRQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Sep 2022 13:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233782AbiIXQtv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Sep 2022 12:49:51 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A9F81EAD8
-        for <linux-clk@vger.kernel.org>; Sat, 24 Sep 2022 09:49:50 -0700 (PDT)
-Received: from tr.lan (ip-86-49-12-201.bb.vodafone.cz [86.49.12.201])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id AC828845C3;
-        Sat, 24 Sep 2022 18:49:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1664038188;
-        bh=PvlKRIgH8rkUTAxRj1+/sUcpy3xzLstXWOrIuTWCmIY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pWXbKQ1Ji7iUn6AZf9nM0yNoSSUfkowBwOvBDTMADXkSPpRSoBkAn3zoJR9jgP44r
-         drbpa+OPFVXPYU8ohGg9t7v3WaNwuPsSB3LOjSTYXHTSjAPlGzqD//mlT/RQYHRe/e
-         u14PhIKpime1vYnK5kZU/V7aj0rmZXWxGpKi3vJyKxyCLA2DdpVIPIBNIehegT3Fv9
-         7fUrgenwdUWMNN2znbSfxlhS5oxYSYbXXQXZVGbSIeR8NkkkZsMuOwWYk64jJqWFu5
-         2i2/X/uwBoMS1/Yo9q7vbbd8BZ1q2L2Q4RpYCN6fIu4ymLbgb/B/GnHcVtMhbIEOef
-         9B94Ls67TQHaQ==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v2] clk: rs9: Fix I2C accessors
-Date:   Sat, 24 Sep 2022 18:49:33 +0200
-Message-Id: <20220924164933.393649-1-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S229735AbiIXRQC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Sep 2022 13:16:02 -0400
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C10383AE54;
+        Sat, 24 Sep 2022 10:16:01 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id u28so1915328qku.2;
+        Sat, 24 Sep 2022 10:16:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=LOKoEroXBklDUC/nOoRK6LpTu77sehbETLRxe7PMdyU=;
+        b=OcZBGcDTk1Lr7EnqVFQuRcsxNMRl+/WWhid/NTzEc6eK72NNrkupuuV3XyndiZP7uF
+         p22o+YzfEUCpP++e1lzh2g6nDVJI+0evrgPZesBB/DFdwy3zl4UzB6d+ehYEQVJkoHqG
+         nQtg3wpf3Chbouua4+tuvZHpzR4bspjmgC30Fkfk3srVCSN6riCiLQODugBu0A5fk230
+         OYR76tk2qtkTmYUfJIjvuVTT/dLlZV4Rum7MMn2SljXh+EL6DLykE3vwe7T8jKM940e4
+         WINr3Qr659HPxyH/P0RP4XM/XT/SN96y0uLBOrEryVZupyahZrLOAiFgcY917eQRDOEg
+         bZKA==
+X-Gm-Message-State: ACrzQf2PENK551zisTtlKPyc/jq2cgfbjaU2YJEMEe9v1muk8WMEAL1i
+        u213nm+AJfL4iuhQAqMVEYsgJ4/KCG5bxj0Bz0s=
+X-Google-Smtp-Source: AMsMyM4Dojtc+cy+QHDOB+k3YM2olfuIdpg/XIF0cetw71mCZ458M5cva4XdVH3mlb8l861IWagzdsttSg1YED6+/H4=
+X-Received: by 2002:a05:620a:4008:b0:6ce:8725:cb7 with SMTP id
+ h8-20020a05620a400800b006ce87250cb7mr9704726qko.480.1664039760942; Sat, 24
+ Sep 2022 10:16:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20220921230439.768185-1-djrscally@gmail.com> <b3855fe0-4b85-a442-1835-3e62456b3206@redhat.com>
+In-Reply-To: <b3855fe0-4b85-a442-1835-3e62456b3206@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sat, 24 Sep 2022 19:15:49 +0200
+Message-ID: <CAJZ5v0gB=jztBtmcfmuXNiNd2s+ftQRF1fqYHQApFsX_yEvkMQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Add multiple-consumer support to int3472-tps68470 driver
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Daniel Scally <djrscally@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Gross <markgross@kernel.org>,
+        Robert Moore <robert.moore@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add custom I2C accessors to this driver, since the regular I2C regmap ones
-do not generate the exact I2C transfers required by the chip. On I2C write,
-it is mandatory to send transfer length first, on read the chip returns the
-transfer length in first byte. Instead of always reading back 8 bytes, which
-is the default and also the size of the entire register file, set BCP register
-to 1 to read out 1 byte which is less wasteful.
+On Thu, Sep 22, 2022 at 10:55 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi All,
+>
+> On 9/22/22 01:04, Daniel Scally wrote:
+> > Hello all
+> >
+> > At the moment there are a few places in the int3472-tps68470 driver that are
+> > limited to just working with a single consuming device dependent on the PMIC.
+> > There are systems where multiple camera sensors share a single TPS68470, so
+> > we need to extend the driver to support them. This requires a couple of tweaks
+> > to the ACPI functions to fetch dependent devices, which also assumes that only
+> > a single dependent will be found.
+> >
+> > The v2 for this series was some time ago...it's kept falling to the back of my
+> > to-do list so I've only just gotten round to it; sorry about that. v2 here:
+> >
+> > https://lore.kernel.org/linux-acpi/20220327161344.50477-1-djrscally@gmail.com/
+>
+> Rafael, I would like to merge this through the pdx86 tree may I have your
+> ack for patches 1 + 2 for this. As a reminder (since it has been a while)
+> here are your review remarks to v2 of patch 1:
+>
+> https://lore.kernel.org/platform-driver-x86/CAJZ5v0i2ciLHP-=8eQcZc0v0xCzhKHKpxLC=Kgv6W5E_5=HQJA@mail.gmail.com/
+>
+> (which both seem to have been addressed)
+>
+> AFAICT you did not have any remarks for v2 of patch 2.
 
-Fixes: 892e0ddea1aa6 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
-Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-V2: Fix endianness handling in rs9_regmap_i2c_read() i2c_transfer
----
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk-renesas-pcie.c | 56 +++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+No, I didn't.
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 4f5df1fc74b46..c320ce25c11b6 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -90,6 +90,52 @@ static const struct regmap_access_table rs9_writeable_table = {
- 	.n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
- };
- 
-+static int rs9_regmap_i2c_write(void *context,
-+				unsigned int reg, unsigned int val)
-+{
-+	struct i2c_client *i2c = context;
-+	const u8 data[3] = { reg, 1, val };
-+	const int count = ARRAY_SIZE(data);
-+	int ret;
-+
-+	ret = i2c_master_send(i2c, data, count);
-+	if (ret == count)
-+		return 0;
-+	else if (ret < 0)
-+		return ret;
-+	else
-+		return -EIO;
-+}
-+
-+static int rs9_regmap_i2c_read(void *context,
-+			       unsigned int reg, unsigned int *val)
-+{
-+	struct i2c_client *i2c = context;
-+	struct i2c_msg xfer[2];
-+	u8 txdata = reg;
-+	u8 rxdata[2];
-+	int ret;
-+
-+	xfer[0].addr = i2c->addr;
-+	xfer[0].flags = 0;
-+	xfer[0].len = 1;
-+	xfer[0].buf = (void *)&txdata;
-+
-+	xfer[1].addr = i2c->addr;
-+	xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
-+	xfer[1].len = 1;
-+	xfer[1].buf = (void *)rxdata;
-+
-+	ret = i2c_transfer(i2c->adapter, xfer, 2);
-+	if (ret < 0)
-+		return ret;
-+	if (ret != 2)
-+		return -EIO;
-+
-+	*val = rxdata[1];
-+	return 0;
-+}
-+
- static const struct regmap_config rs9_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -97,6 +143,8 @@ static const struct regmap_config rs9_regmap_config = {
- 	.max_register = 0x8,
- 	.rd_table = &rs9_readable_table,
- 	.wr_table = &rs9_writeable_table,
-+	.reg_write = rs9_regmap_i2c_write,
-+	.reg_read = rs9_regmap_i2c_read,
- };
- 
- static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)
-@@ -242,11 +290,17 @@ static int rs9_probe(struct i2c_client *client)
- 			return ret;
- 	}
- 
--	rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
-+	rs9->regmap = devm_regmap_init(&client->dev, NULL,
-+				       client, &rs9_regmap_config);
- 	if (IS_ERR(rs9->regmap))
- 		return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
- 				     "Failed to allocate register map\n");
- 
-+	/* Always read back 1 Byte via I2C */
-+	ret = regmap_write(rs9->regmap, RS9_REG_BCP, 1);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Register clock */
- 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
- 		snprintf(name, 5, "DIF%d", i);
--- 
-2.35.1
+However, because acpi_bus_get_acpi_device() becomes
+acpi_get_acpi_dev() in my tree, I think it's better to route this
+material through it, if that's not a problem.
 
+I've tentatively queued it up for 6.1.
+
+Thanks!
+
+> p.s.
+>
+> Dan, if I want to give the IR cam a test run on my own Surface Go (version 1)
+> I guess I may need a sensor driver? Where can I find that sensor driver and
+> what do I need in userspace to test this ?
+>
+>
+>
+> > Daniel Scally (5):
+> >   ACPI: scan: Add acpi_dev_get_next_consumer_dev()
+> >   ACPI: bus: Add iterator for dependent devices
+> >   platform/x86: int3472: Support multiple clock consumers
+> >   platform/x86: int3472: Support multiple gpio lookups in board data
+> >   platform/x86: int3472: Add board data for Surface Go2 IR camera
+> >
+> >  drivers/acpi/scan.c                           | 40 +++++++---
+> >  drivers/clk/clk-tps68470.c                    | 13 +++-
+> >  drivers/platform/x86/intel/int3472/common.c   |  2 +-
+> >  drivers/platform/x86/intel/int3472/tps68470.c | 76 ++++++++++++++++---
+> >  drivers/platform/x86/intel/int3472/tps68470.h |  3 +-
+> >  .../x86/intel/int3472/tps68470_board_data.c   | 54 ++++++++++++-
+> >  include/acpi/acpi_bus.h                       | 15 +++-
+> >  include/linux/platform_data/tps68470.h        |  7 +-
+> >  8 files changed, 177 insertions(+), 33 deletions(-)
+> >
+>
