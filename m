@@ -2,163 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF2C6FA82
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Sep 2022 09:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D02C54EE9
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Sep 2022 17:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbiIYJXI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Sep 2022 05:23:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
+        id S232707AbiIYRA7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Sep 2022 13:00:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiIYJXH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Sep 2022 05:23:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E86F2870F
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 02:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1664097785;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ONaR+TCccbPpPu/c7+KO08GDygkFAs/H7dNqppcGxT4=;
-        b=IgllKdYjBWoQvMwcS6ZuuAQb4EN5cLU9GLsBG3tgBkTgvCNCReRCCxlMkIqe7so2PrLZ9O
-        G3MlmcogOlNWHr/5kOw9vrvU+MXbORYWtJZtvLMNB2ajYwg8HmJA8BjEw8grwaZ4qJ6I1E
-        P3GLnd0FkLmbUPTmWuPN2zCd/mQqH+0=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-75-jaxDtbmMOxqdNlYGiIGVrA-1; Sun, 25 Sep 2022 05:23:03 -0400
-X-MC-Unique: jaxDtbmMOxqdNlYGiIGVrA-1
-Received: by mail-ed1-f71.google.com with SMTP id s17-20020a056402521100b004511c8d59e3so3184234edd.11
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 02:23:03 -0700 (PDT)
+        with ESMTP id S229824AbiIYRA7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Sep 2022 13:00:59 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83DF62B1A9;
+        Sun, 25 Sep 2022 10:00:57 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id v4so4608321pgi.10;
+        Sun, 25 Sep 2022 10:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date;
+        bh=mQCpHD3b/oNCevN1QdhnwOd9ghkLwiR4HAI/Op4UuAA=;
+        b=bf8hrf7c6j8YQs+sOdKjxNXSefn9xJG6UauB5PFVUdvSCMOO06soFxo6uSM5d7CdTu
+         Lq8zhjPSjKXyQq/x4t+UHwoeEZJP3A2o2wAP+1EwbE8PLnmcJ4/Uq0SHXE4kJN1LgZlh
+         KyusDiO+XksJkRFbDE1UtOHZ3THL9uS9I5h3pVP1TQzDoQ3oWYOV8uWe2wQ4DLhzO6xM
+         BTngVtZnw+6VKOH3hVXK/w5hifpw43RzmpqAiWxK5qJo07ryAthcV5UNgb9BTdV4L32l
+         gVB4YacWjbp3ZFKmy6/NDzbWf+7wMrwl+EfXYp2z5+DdT23dnJdvEhkiWRvN5Mimgnz3
+         AFpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=ONaR+TCccbPpPu/c7+KO08GDygkFAs/H7dNqppcGxT4=;
-        b=fGt6PftVKUVFKBze1u+jh1d9geo2810hQLIG9J6RbJdKzdRiC8ChhyT89Zo3eqpOo2
-         KBL/YBncbgDnMr2TnH1gVj88AKU6c+xwCQSKZf+flG/Og6eF3mC2gLGNI9dVTN/4Qz2t
-         juLX8bJB0P84rlwafFujHkRPiZmFDI8sntik2iQIX1D2ZoM7gUsyGY+9P8LTM5mRYh/S
-         G4goYvS3cuw/9L7omTVw+KsoyHfvOHJQZdoO4Q0+PJZi7IOASSAKKMHPRbNOhTsf2uML
-         5ZUhBxdXz/WLRpyNeGYg0qAFjBtmsxL2SOCrhxSjgL4E5snSyG6JxMxEwlxTNhDjUJGu
-         VGrQ==
-X-Gm-Message-State: ACrzQf2zcdtNca/2J4nGg2USB/c22JY8tt75r/+GySiHfpf4iRSpEXcv
-        511eraeX/subItOUGN/oCtO82b50jZITO2xod+e1KnvjeF5e9FZvEHmZTXtIn+5tWCPF2VoHmiq
-        dN2PDq2OQDxvk/SY1fulV
-X-Received: by 2002:a05:6402:2926:b0:457:3c2c:4ab with SMTP id ee38-20020a056402292600b004573c2c04abmr752875edb.388.1664097782795;
-        Sun, 25 Sep 2022 02:23:02 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6ow9sBjVEZHPPBMjM/K0ms0gNeKRGh76tlI/Y3a8SR/nTJM+4Fla1ynEJ6zxk8BhRfU1zswQ==
-X-Received: by 2002:a05:6402:2926:b0:457:3c2c:4ab with SMTP id ee38-20020a056402292600b004573c2c04abmr752862edb.388.1664097782611;
-        Sun, 25 Sep 2022 02:23:02 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
-        by smtp.gmail.com with ESMTPSA id g5-20020a056402320500b00456ddead51asm3778836eda.16.2022.09.25.02.23.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Sep 2022 02:23:02 -0700 (PDT)
-Message-ID: <6c6654c7-bdca-27d9-ad80-a50d4df27426@redhat.com>
-Date:   Sun, 25 Sep 2022 11:23:01 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: [PATCH v3 0/5] Add multiple-consumer support to int3472-tps68470
- driver
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Daniel Scally <djrscally@gmail.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
+        bh=mQCpHD3b/oNCevN1QdhnwOd9ghkLwiR4HAI/Op4UuAA=;
+        b=cTYhVYlGh6lTFF8qKyfj+4IyL269BJozQsMLIt/UJD6UbdaQkc0w1Hqow2I/RS9JUm
+         mOVNaWLs+HA4JRhPiISsmXQiVOLoUeeYtpJTuvAczW+Pdh+QCHbVfWp1cPvZ+AVELz2w
+         ao6Tl8b5I25yhdHro6j+Ic9wZDDhNaZBhvNVEAdT2BnHf1vOAaZMp8I/QUUZZKTkO5ds
+         B5H4K1RA0qxVHCokyTmH29O6mbF6ua4aSfuoIp2ojwy8ALIbuFlScdXWX+LcCqIXLn9J
+         P+FqtG28eW+VbVxihDewwIt009JneQ2BhUZhZs4OgLP0RCLVx6PgM4CV8FHelso0b8eH
+         SX9g==
+X-Gm-Message-State: ACrzQf0mL/hssyz11uYMZJS6YjbREgAtoARd2qSjDv1vgGhR0XPeT6W3
+        n085Gf5c+YQxVp0kQtGN0mxnnp5u3Zrjjw==
+X-Google-Smtp-Source: AMsMyM6jgUS4ubKgESzfz+N9IM1J19XaOtd5m/aHe9WxopcH66fZ8/ZlVBJuzJsUTY/l33Io5pHCoQ==
+X-Received: by 2002:a63:86c8:0:b0:43b:63ae:dc8a with SMTP id x191-20020a6386c8000000b0043b63aedc8amr16647335pgd.578.1664125256819;
+        Sun, 25 Sep 2022 10:00:56 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e2-20020a631e02000000b0042b5b036da4sm8998400pge.68.2022.09.25.10.00.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Sep 2022 10:00:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Sun, 25 Sep 2022 10:00:53 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Gross <markgross@kernel.org>,
-        Robert Moore <robert.moore@intel.com>
-References: <20220921230439.768185-1-djrscally@gmail.com>
- <b3855fe0-4b85-a442-1835-3e62456b3206@redhat.com>
- <CAJZ5v0gB=jztBtmcfmuXNiNd2s+ftQRF1fqYHQApFsX_yEvkMQ@mail.gmail.com>
-Content-Language: en-US
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAJZ5v0gB=jztBtmcfmuXNiNd2s+ftQRF1fqYHQApFsX_yEvkMQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: [PATCH v4 2/6] watchdog: npcm: Enable clock if provided
+Message-ID: <20220925170053.GA1761191@roeck-us.net>
+References: <20220610072141.347795-1-j.neuschaefer@gmx.net>
+ <20220610072141.347795-3-j.neuschaefer@gmx.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220610072141.347795-3-j.neuschaefer@gmx.net>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 9/24/22 19:15, Rafael J. Wysocki wrote:
-> On Thu, Sep 22, 2022 at 10:55 AM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi All,
->>
->> On 9/22/22 01:04, Daniel Scally wrote:
->>> Hello all
->>>
->>> At the moment there are a few places in the int3472-tps68470 driver that are
->>> limited to just working with a single consuming device dependent on the PMIC.
->>> There are systems where multiple camera sensors share a single TPS68470, so
->>> we need to extend the driver to support them. This requires a couple of tweaks
->>> to the ACPI functions to fetch dependent devices, which also assumes that only
->>> a single dependent will be found.
->>>
->>> The v2 for this series was some time ago...it's kept falling to the back of my
->>> to-do list so I've only just gotten round to it; sorry about that. v2 here:
->>>
->>> https://lore.kernel.org/linux-acpi/20220327161344.50477-1-djrscally@gmail.com/
->>
->> Rafael, I would like to merge this through the pdx86 tree may I have your
->> ack for patches 1 + 2 for this. As a reminder (since it has been a while)
->> here are your review remarks to v2 of patch 1:
->>
->> https://lore.kernel.org/platform-driver-x86/CAJZ5v0i2ciLHP-=8eQcZc0v0xCzhKHKpxLC=Kgv6W5E_5=HQJA@mail.gmail.com/
->>
->> (which both seem to have been addressed)
->>
->> AFAICT you did not have any remarks for v2 of patch 2.
+On Fri, Jun 10, 2022 at 09:21:37AM +0200, Jonathan Neuschäfer wrote:
+> On the Nuvoton WPCM450 SoC, with its upcoming clock driver, peripheral
+> clocks are individually gated and ungated. Therefore, the watchdog
+> driver must be able to ungate the watchdog clock.
 > 
-> No, I didn't.
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
 > 
-> However, because acpi_bus_get_acpi_device() becomes
-> acpi_get_acpi_dev() in my tree, I think it's better to route this
-> material through it, if that's not a problem.
-
-Routing it to your tree is fine.
-
-> I've tentatively queued it up for 6.1.
-
-Great, thank you!
-
-Regards,
-
-Hans
-
-
-
->> p.s.
->>
->> Dan, if I want to give the IR cam a test run on my own Surface Go (version 1)
->> I guess I may need a sensor driver? Where can I find that sensor driver and
->> what do I need in userspace to test this ?
->>
->>
->>
->>> Daniel Scally (5):
->>>   ACPI: scan: Add acpi_dev_get_next_consumer_dev()
->>>   ACPI: bus: Add iterator for dependent devices
->>>   platform/x86: int3472: Support multiple clock consumers
->>>   platform/x86: int3472: Support multiple gpio lookups in board data
->>>   platform/x86: int3472: Add board data for Surface Go2 IR camera
->>>
->>>  drivers/acpi/scan.c                           | 40 +++++++---
->>>  drivers/clk/clk-tps68470.c                    | 13 +++-
->>>  drivers/platform/x86/intel/int3472/common.c   |  2 +-
->>>  drivers/platform/x86/intel/int3472/tps68470.c | 76 ++++++++++++++++---
->>>  drivers/platform/x86/intel/int3472/tps68470.h |  3 +-
->>>  .../x86/intel/int3472/tps68470_board_data.c   | 54 ++++++++++++-
->>>  include/acpi/acpi_bus.h                       | 15 +++-
->>>  include/linux/platform_data/tps68470.h        |  7 +-
->>>  8 files changed, 177 insertions(+), 33 deletions(-)
->>>
->>
+> v4:
+> - Don't disable clock in npcm_wdt_restart function
 > 
-
+> v3:
+> - https://lore.kernel.org/lkml/20220508194333.2170161-4-j.neuschaefer@gmx.net/
+> - Add enable/disable calls to npcm_wdt_restart handler
+> - Not applied due to the above change:  Acked-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> v2:
+> - https://lore.kernel.org/lkml/20220429172030.398011-4-j.neuschaefer@gmx.net/
+> - Add clk_disable_unprepare call, suggested by Guenter Roeck
+> 
+> v1:
+> - https://lore.kernel.org/lkml/20220422183012.444674-4-j.neuschaefer@gmx.net/
+> ---
+>  drivers/watchdog/npcm_wdt.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> --
+> 2.35.1
+> 
+> diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
+> index 28a24caa2627c..a5dd1c2301374 100644
+> --- a/drivers/watchdog/npcm_wdt.c
+> +++ b/drivers/watchdog/npcm_wdt.c
+> @@ -3,6 +3,7 @@
+>  // Copyright (c) 2018 IBM Corp.
+> 
+>  #include <linux/bitops.h>
+> +#include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+> @@ -43,6 +44,7 @@
+>  struct npcm_wdt {
+>  	struct watchdog_device  wdd;
+>  	void __iomem		*reg;
+> +	struct clk		*clk;
+>  };
+> 
+>  static inline struct npcm_wdt *to_npcm_wdt(struct watchdog_device *wdd)
+> @@ -66,6 +68,9 @@ static int npcm_wdt_start(struct watchdog_device *wdd)
+>  	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+>  	u32 val;
+> 
+> +	if (wdt->clk)
+> +		clk_prepare_enable(wdt->clk);
+> +
+>  	if (wdd->timeout < 2)
+>  		val = 0x800;
+>  	else if (wdd->timeout < 3)
+> @@ -100,6 +105,9 @@ static int npcm_wdt_stop(struct watchdog_device *wdd)
+> 
+>  	writel(0, wdt->reg);
+> 
+> +	if (wdt->clk)
+> +		clk_disable_unprepare(wdt->clk);
+> +
+>  	return 0;
+>  }
+> 
+> @@ -147,6 +155,10 @@ static int npcm_wdt_restart(struct watchdog_device *wdd,
+>  {
+>  	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+> 
+> +	/* For reset, we start the WDT clock and leave it running. */
+> +	if (wdt->clk)
+> +		clk_prepare_enable(wdt->clk);
+> +
+>  	writel(NPCM_WTR | NPCM_WTRE | NPCM_WTE, wdt->reg);
+>  	udelay(1000);
+> 
+> @@ -191,6 +203,10 @@ static int npcm_wdt_probe(struct platform_device *pdev)
+>  	if (IS_ERR(wdt->reg))
+>  		return PTR_ERR(wdt->reg);
+> 
+> +	wdt->clk = devm_clk_get_optional(&pdev->dev, NULL);
+> +	if (IS_ERR(wdt->clk))
+> +		return PTR_ERR(wdt->clk);
+> +
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (irq < 0)
+>  		return irq;
