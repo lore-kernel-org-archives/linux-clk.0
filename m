@@ -2,142 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F82C6FA83
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Sep 2022 02:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF2C6FA82
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Sep 2022 09:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbiIYCEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Sep 2022 22:04:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55706 "EHLO
+        id S229800AbiIYJXI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Sep 2022 05:23:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbiIYCEJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Sep 2022 22:04:09 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 575D539B82;
-        Sat, 24 Sep 2022 19:04:08 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28P1x5w5025421;
-        Sun, 25 Sep 2022 02:03:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=4qNIQNJDT3BC1ChGqDDFi63vJh3CZoWYWwE2XxEN9oE=;
- b=U0mc2Q6vtcxSrVzjyDrI0S7sUmS2K7NnD4r8UbRTRiBYp6DVoxTfln0QD8OxB+pIM/mn
- Ca+7ZSRRRLiDnDIgpSU4I3sBg1iTXBOWrnn2g+FE16zhFO/BLzKZu+OHTRwiUpgV2tpt
- ShEXO0KNKs/hJnatQ6usNKPrNFoBcNN9Wmcz4DwAl8FV6aE42YA5mL+KoYC/QzAxQW0h
- PlqxZrvbXJu6d9dtlO5KXU+YChu4Rh0TYYkxMKPh/Q8yEiAmyuRA5BqLxqKx6mA6h+D9
- VRW+HnpzN3NQ9aK5oyOMevPKCgnoz0Ff38R5CCij3kj+PSavxvQZzOK3rg8wlt10PiP0 yw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jsrwfhax6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 25 Sep 2022 02:03:52 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28P1rFNm018159
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 25 Sep 2022 01:53:15 GMT
-Received: from [10.216.45.20] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Sat, 24 Sep
- 2022 18:53:05 -0700
-Message-ID: <5fb1e6d9-00c0-33f2-753e-2338010da352@quicinc.com>
-Date:   Sun, 25 Sep 2022 07:23:02 +0530
+        with ESMTP id S229525AbiIYJXH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Sep 2022 05:23:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E86F2870F
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 02:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664097785;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ONaR+TCccbPpPu/c7+KO08GDygkFAs/H7dNqppcGxT4=;
+        b=IgllKdYjBWoQvMwcS6ZuuAQb4EN5cLU9GLsBG3tgBkTgvCNCReRCCxlMkIqe7so2PrLZ9O
+        G3MlmcogOlNWHr/5kOw9vrvU+MXbORYWtJZtvLMNB2ajYwg8HmJA8BjEw8grwaZ4qJ6I1E
+        P3GLnd0FkLmbUPTmWuPN2zCd/mQqH+0=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-75-jaxDtbmMOxqdNlYGiIGVrA-1; Sun, 25 Sep 2022 05:23:03 -0400
+X-MC-Unique: jaxDtbmMOxqdNlYGiIGVrA-1
+Received: by mail-ed1-f71.google.com with SMTP id s17-20020a056402521100b004511c8d59e3so3184234edd.11
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 02:23:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=ONaR+TCccbPpPu/c7+KO08GDygkFAs/H7dNqppcGxT4=;
+        b=fGt6PftVKUVFKBze1u+jh1d9geo2810hQLIG9J6RbJdKzdRiC8ChhyT89Zo3eqpOo2
+         KBL/YBncbgDnMr2TnH1gVj88AKU6c+xwCQSKZf+flG/Og6eF3mC2gLGNI9dVTN/4Qz2t
+         juLX8bJB0P84rlwafFujHkRPiZmFDI8sntik2iQIX1D2ZoM7gUsyGY+9P8LTM5mRYh/S
+         G4goYvS3cuw/9L7omTVw+KsoyHfvOHJQZdoO4Q0+PJZi7IOASSAKKMHPRbNOhTsf2uML
+         5ZUhBxdXz/WLRpyNeGYg0qAFjBtmsxL2SOCrhxSjgL4E5snSyG6JxMxEwlxTNhDjUJGu
+         VGrQ==
+X-Gm-Message-State: ACrzQf2zcdtNca/2J4nGg2USB/c22JY8tt75r/+GySiHfpf4iRSpEXcv
+        511eraeX/subItOUGN/oCtO82b50jZITO2xod+e1KnvjeF5e9FZvEHmZTXtIn+5tWCPF2VoHmiq
+        dN2PDq2OQDxvk/SY1fulV
+X-Received: by 2002:a05:6402:2926:b0:457:3c2c:4ab with SMTP id ee38-20020a056402292600b004573c2c04abmr752875edb.388.1664097782795;
+        Sun, 25 Sep 2022 02:23:02 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6ow9sBjVEZHPPBMjM/K0ms0gNeKRGh76tlI/Y3a8SR/nTJM+4Fla1ynEJ6zxk8BhRfU1zswQ==
+X-Received: by 2002:a05:6402:2926:b0:457:3c2c:4ab with SMTP id ee38-20020a056402292600b004573c2c04abmr752862edb.388.1664097782611;
+        Sun, 25 Sep 2022 02:23:02 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id g5-20020a056402320500b00456ddead51asm3778836eda.16.2022.09.25.02.23.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Sep 2022 02:23:02 -0700 (PDT)
+Message-ID: <6c6654c7-bdca-27d9-ad80-a50d4df27426@redhat.com>
+Date:   Sun, 25 Sep 2022 11:23:01 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: [PATCH v3 0/5] Add multiple-consumer support to int3472-tps68470
+ driver
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Daniel Scally <djrscally@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Gross <markgross@kernel.org>,
+        Robert Moore <robert.moore@intel.com>
+References: <20220921230439.768185-1-djrscally@gmail.com>
+ <b3855fe0-4b85-a442-1835-3e62456b3206@redhat.com>
+ <CAJZ5v0gB=jztBtmcfmuXNiNd2s+ftQRF1fqYHQApFsX_yEvkMQ@mail.gmail.com>
 Content-Language: en-US
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
-        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
-        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
-        <svarbanov@mm-sol.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
-        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
-        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>
-References: <20220923142611.GA1389970@bhelgaas>
-From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20220923142611.GA1389970@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wNRUY6-S0f7H4Cr64pfLU67F4GMDBPwJ
-X-Proofpoint-GUID: wNRUY6-S0f7H4Cr64pfLU67F4GMDBPwJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-24_14,2022-09-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxlogscore=650
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209250012
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CAJZ5v0gB=jztBtmcfmuXNiNd2s+ftQRF1fqYHQApFsX_yEvkMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-On 9/23/2022 7:56 PM, Bjorn Helgaas wrote:
-> On Fri, Sep 23, 2022 at 07:29:31AM +0530, Krishna Chaitanya Chundru wrote:
->> On 9/23/2022 12:12 AM, Bjorn Helgaas wrote:
->>> On Thu, Sep 22, 2022 at 09:09:28PM +0530, Krishna Chaitanya Chundru wrote:
->>>> On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
->>>>> On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
->>>>>> On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
->>>>>>> On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
->>>>>>>> In qcom platform PCIe resources( clocks, phy etc..) can
->>>>>>>> released when the link is in L1ss to reduce the power
->>>>>>>> consumption. So if the link is in L1ss, release the PCIe
->>>>>>>> resources. And when the system resumes, enable the PCIe
->>>>>>>> resources if they released in the suspend path.
->>>>>>> What's the connection with L1.x?  Links enter L1.x based on
->>>>>>> activity and timing.  That doesn't seem like a reliable
->>>>>>> indicator to turn PHYs off and disable clocks.
->>>>>> This is a Qcom PHY-specific feature (retaining the link state in
->>>>>> L1.x with clocks turned off).  It is possible only with the link
->>>>>> being in l1.x. PHY can't retain the link state in L0 with the
->>>>>> clocks turned off and we need to re-train the link if it's in L2
->>>>>> or L3. So we can support this feature only with L1.x.  That is
->>>>>> the reason we are taking l1.x as the trigger to turn off clocks
->>>>>> (in only suspend path).
->>>>> This doesn't address my question.  L1.x is an ASPM feature, which
->>>>> means hardware may enter or leave L1.x autonomously at any time
->>>>> without software intervention.  Therefore, I don't think reading the
->>>>> current state is a reliable way to decide anything.
->>>> After the link enters the L1.x it will come out only if there is
->>>> some activity on the link.  AS system is suspended and NVMe driver
->>>> is also suspended( queues will  freeze in suspend) who else can
->>>> initiate any data.
->>> I don't think we can assume that nothing will happen to cause exit
->>> from L1.x.  For instance, PCIe Messages for INTx signaling, LTR, OBFF,
->>> PTM, etc., may be sent even though we think the device is idle and
->>> there should be no link activity.
->> I don't think after the link enters into L1.x there will some
->> activity on the link as you mentioned, except for PCIe messages like
->> INTx/MSI/MSIX. These messages also will not come because the client
->> drivers like NVMe will keep their device in the lowest power mode.
+On 9/24/22 19:15, Rafael J. Wysocki wrote:
+> On Thu, Sep 22, 2022 at 10:55 AM Hans de Goede <hdegoede@redhat.com> wrote:
 >>
->> The link will come out of L1.x only when there is config or memory
->> access or some messages to trigger the interrupts from the devices.
->> We are already making sure this access will not be there in S3.  If
->> the link is in L0 or L0s what you said is expected but not in L1.x
-> Forgive me for being skeptical, but we just spent a few months
-> untangling the fact that some switches send PTM request messages even
-> when they're in a non-D0 state.  We expected that devices in D3hot
-> would not send such messages because "why would they?"  But it turns
-> out the spec allows that, and they actually *do*.
->
-> I don't think it's robust interoperable design for a PCI controller
-> driver like qcom to assume anything about PCI devices unless it's
-> required by the spec.
->
-> Bjorn
-We will check the spec once and will come back to you,
+>> Hi All,
+>>
+>> On 9/22/22 01:04, Daniel Scally wrote:
+>>> Hello all
+>>>
+>>> At the moment there are a few places in the int3472-tps68470 driver that are
+>>> limited to just working with a single consuming device dependent on the PMIC.
+>>> There are systems where multiple camera sensors share a single TPS68470, so
+>>> we need to extend the driver to support them. This requires a couple of tweaks
+>>> to the ACPI functions to fetch dependent devices, which also assumes that only
+>>> a single dependent will be found.
+>>>
+>>> The v2 for this series was some time ago...it's kept falling to the back of my
+>>> to-do list so I've only just gotten round to it; sorry about that. v2 here:
+>>>
+>>> https://lore.kernel.org/linux-acpi/20220327161344.50477-1-djrscally@gmail.com/
+>>
+>> Rafael, I would like to merge this through the pdx86 tree may I have your
+>> ack for patches 1 + 2 for this. As a reminder (since it has been a while)
+>> here are your review remarks to v2 of patch 1:
+>>
+>> https://lore.kernel.org/platform-driver-x86/CAJZ5v0i2ciLHP-=8eQcZc0v0xCzhKHKpxLC=Kgv6W5E_5=HQJA@mail.gmail.com/
+>>
+>> (which both seem to have been addressed)
+>>
+>> AFAICT you did not have any remarks for v2 of patch 2.
+> 
+> No, I didn't.
+> 
+> However, because acpi_bus_get_acpi_device() becomes
+> acpi_get_acpi_dev() in my tree, I think it's better to route this
+> material through it, if that's not a problem.
+
+Routing it to your tree is fine.
+
+> I've tentatively queued it up for 6.1.
+
+Great, thank you!
+
+Regards,
+
+Hans
+
+
+
+>> p.s.
+>>
+>> Dan, if I want to give the IR cam a test run on my own Surface Go (version 1)
+>> I guess I may need a sensor driver? Where can I find that sensor driver and
+>> what do I need in userspace to test this ?
+>>
+>>
+>>
+>>> Daniel Scally (5):
+>>>   ACPI: scan: Add acpi_dev_get_next_consumer_dev()
+>>>   ACPI: bus: Add iterator for dependent devices
+>>>   platform/x86: int3472: Support multiple clock consumers
+>>>   platform/x86: int3472: Support multiple gpio lookups in board data
+>>>   platform/x86: int3472: Add board data for Surface Go2 IR camera
+>>>
+>>>  drivers/acpi/scan.c                           | 40 +++++++---
+>>>  drivers/clk/clk-tps68470.c                    | 13 +++-
+>>>  drivers/platform/x86/intel/int3472/common.c   |  2 +-
+>>>  drivers/platform/x86/intel/int3472/tps68470.c | 76 ++++++++++++++++---
+>>>  drivers/platform/x86/intel/int3472/tps68470.h |  3 +-
+>>>  .../x86/intel/int3472/tps68470_board_data.c   | 54 ++++++++++++-
+>>>  include/acpi/acpi_bus.h                       | 15 +++-
+>>>  include/linux/platform_data/tps68470.h        |  7 +-
+>>>  8 files changed, 177 insertions(+), 33 deletions(-)
+>>>
+>>
+> 
+
