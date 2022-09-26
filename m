@@ -2,178 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D02C54EE9
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Sep 2022 17:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5274C04A95
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 03:02:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232707AbiIYRA7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Sep 2022 13:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51626 "EHLO
+        id S232664AbiIZDCB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Sep 2022 23:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbiIYRA7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Sep 2022 13:00:59 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83DF62B1A9;
-        Sun, 25 Sep 2022 10:00:57 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id v4so4608321pgi.10;
-        Sun, 25 Sep 2022 10:00:57 -0700 (PDT)
+        with ESMTP id S233099AbiIZDB7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Sep 2022 23:01:59 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125032BE21
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 20:01:57 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id hy2so11233643ejc.8
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 20:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date;
-        bh=mQCpHD3b/oNCevN1QdhnwOd9ghkLwiR4HAI/Op4UuAA=;
-        b=bf8hrf7c6j8YQs+sOdKjxNXSefn9xJG6UauB5PFVUdvSCMOO06soFxo6uSM5d7CdTu
-         Lq8zhjPSjKXyQq/x4t+UHwoeEZJP3A2o2wAP+1EwbE8PLnmcJ4/Uq0SHXE4kJN1LgZlh
-         KyusDiO+XksJkRFbDE1UtOHZ3THL9uS9I5h3pVP1TQzDoQ3oWYOV8uWe2wQ4DLhzO6xM
-         BTngVtZnw+6VKOH3hVXK/w5hifpw43RzmpqAiWxK5qJo07ryAthcV5UNgb9BTdV4L32l
-         gVB4YacWjbp3ZFKmy6/NDzbWf+7wMrwl+EfXYp2z5+DdT23dnJdvEhkiWRvN5Mimgnz3
-         AFpA==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=Skd+l8JquKxTkT+d04SuRhlV1yn9RBCkYSqV8apRUX8=;
+        b=fMDjGMFeZ+MEZfjBLeXyZXO+5QURbDxXo1FUsSS2j688UXbghiFGIb5sDWVtiLfaTu
+         HifASisiYD84FYcN4xahhmp+HSp/Fjyzm68aXl8cTDtA67mLClwfSSukEs6aYvvKicqJ
+         DUEZqyaPDMlZkZcP8+NrKcf+0HixlqbnoQch0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=mQCpHD3b/oNCevN1QdhnwOd9ghkLwiR4HAI/Op4UuAA=;
-        b=cTYhVYlGh6lTFF8qKyfj+4IyL269BJozQsMLIt/UJD6UbdaQkc0w1Hqow2I/RS9JUm
-         mOVNaWLs+HA4JRhPiISsmXQiVOLoUeeYtpJTuvAczW+Pdh+QCHbVfWp1cPvZ+AVELz2w
-         ao6Tl8b5I25yhdHro6j+Ic9wZDDhNaZBhvNVEAdT2BnHf1vOAaZMp8I/QUUZZKTkO5ds
-         B5H4K1RA0qxVHCokyTmH29O6mbF6ua4aSfuoIp2ojwy8ALIbuFlScdXWX+LcCqIXLn9J
-         P+FqtG28eW+VbVxihDewwIt009JneQ2BhUZhZs4OgLP0RCLVx6PgM4CV8FHelso0b8eH
-         SX9g==
-X-Gm-Message-State: ACrzQf0mL/hssyz11uYMZJS6YjbREgAtoARd2qSjDv1vgGhR0XPeT6W3
-        n085Gf5c+YQxVp0kQtGN0mxnnp5u3Zrjjw==
-X-Google-Smtp-Source: AMsMyM6jgUS4ubKgESzfz+N9IM1J19XaOtd5m/aHe9WxopcH66fZ8/ZlVBJuzJsUTY/l33Io5pHCoQ==
-X-Received: by 2002:a63:86c8:0:b0:43b:63ae:dc8a with SMTP id x191-20020a6386c8000000b0043b63aedc8amr16647335pgd.578.1664125256819;
-        Sun, 25 Sep 2022 10:00:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e2-20020a631e02000000b0042b5b036da4sm8998400pge.68.2022.09.25.10.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Sep 2022 10:00:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 25 Sep 2022 10:00:53 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH v4 2/6] watchdog: npcm: Enable clock if provided
-Message-ID: <20220925170053.GA1761191@roeck-us.net>
-References: <20220610072141.347795-1-j.neuschaefer@gmx.net>
- <20220610072141.347795-3-j.neuschaefer@gmx.net>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=Skd+l8JquKxTkT+d04SuRhlV1yn9RBCkYSqV8apRUX8=;
+        b=cmi/b2G9QfYqL6LrX1qCE86eTJKE8mQE8fj9XnEzLMSTzTZihR/5wdyxmFJv1txBxf
+         /DCHUmmCDetWxCDzFxG0A9ADrZBhvdVoTsxm9sCYkq6JkZzTXyhPYig5qETIPY8QESke
+         k98caAg7sjxMci/8w1RG5rG7ZTDdthqfmxo+791BgO/CNwtDbf1PpT9s50W58QsyOzY7
+         ektMhfIC2xq6afqtqv7E7tc7S4njDLX4+GYbL4iYj4PIx3qL9LBHjN48hXxZV4zSLXnp
+         Bf37PL8TA2GS4T4d41c4pEXjPxd21G1Z4kShetyXRmcxIRGfsxLUVfA3PY/mxc3+KKEy
+         2XTg==
+X-Gm-Message-State: ACrzQf1hGPOYxt7sxrBvSy/JIrY72fp0MMPll6tAsmdIbTyvyi4VJ9CU
+        c+4G3GyQG9z7q2LnOeWgYxEyI9qpF0ANCHNkopeQ9A==
+X-Google-Smtp-Source: AMsMyM7o8MwQQBDwguXkozM6n/umhwviFw/Nfd+rhMxsOtT2UejSuJCqg8qOL0/MW/9zxPZApsONr4Gwd23XXRSuZkU=
+X-Received: by 2002:a17:907:7f93:b0:781:dbee:dece with SMTP id
+ qk19-20020a1709077f9300b00781dbeedecemr16459188ejc.323.1664161315561; Sun, 25
+ Sep 2022 20:01:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220610072141.347795-3-j.neuschaefer@gmx.net>
+References: <20220921091455.41327-1-angelogioacchino.delregno@collabora.com> <20220921091455.41327-8-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220921091455.41327-8-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 26 Sep 2022 11:01:44 +0800
+Message-ID: <CAGXv+5Hr6LYEZ8_3Z07XAVPbbSHZiwjR2QTrv9LdhwpYn35TFw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v6 7/8] clk: mediatek: clk-apmixed: Add helper
+ function to unregister ref2usb_tx
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        p.zabel@pengutronix.de, y.oudjana@protonmail.com,
+        jason-jh.lin@mediatek.com, ck.hu@mediatek.com,
+        fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, ikjn@chromium.org,
+        miles.chen@mediatek.com, sam.shih@mediatek.com,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 09:21:37AM +0200, Jonathan Neuschäfer wrote:
-> On the Nuvoton WPCM450 SoC, with its upcoming clock driver, peripheral
-> clocks are individually gated and ungated. Therefore, the watchdog
-> driver must be able to ungate the watchdog clock.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+On Wed, Sep 21, 2022 at 5:15 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> The ref2usb_tx clock was introduced a long time ago and, at that time,
+> the MediaTek clock drivers were using CLK_OF_DECLARE, so they would
+> never unregister.
+>
+> Nowadays, unregistering clock drivers is a thing, as we're registering
+> them as platform_driver and allowing them to be kernel modules: add a
+> helper function to cleanup the ref2usb_tx clock during error handling
+> and upon module removal.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
-> 
-> v4:
-> - Don't disable clock in npcm_wdt_restart function
-> 
-> v3:
-> - https://lore.kernel.org/lkml/20220508194333.2170161-4-j.neuschaefer@gmx.net/
-> - Add enable/disable calls to npcm_wdt_restart handler
-> - Not applied due to the above change:  Acked-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> v2:
-> - https://lore.kernel.org/lkml/20220429172030.398011-4-j.neuschaefer@gmx.net/
-> - Add clk_disable_unprepare call, suggested by Guenter Roeck
-> 
-> v1:
-> - https://lore.kernel.org/lkml/20220422183012.444674-4-j.neuschaefer@gmx.net/
-> ---
->  drivers/watchdog/npcm_wdt.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> --
-> 2.35.1
-> 
-> diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
-> index 28a24caa2627c..a5dd1c2301374 100644
-> --- a/drivers/watchdog/npcm_wdt.c
-> +++ b/drivers/watchdog/npcm_wdt.c
-> @@ -3,6 +3,7 @@
->  // Copyright (c) 2018 IBM Corp.
-> 
->  #include <linux/bitops.h>
-> +#include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/interrupt.h>
->  #include <linux/kernel.h>
-> @@ -43,6 +44,7 @@
->  struct npcm_wdt {
->  	struct watchdog_device  wdd;
->  	void __iomem		*reg;
-> +	struct clk		*clk;
->  };
-> 
->  static inline struct npcm_wdt *to_npcm_wdt(struct watchdog_device *wdd)
-> @@ -66,6 +68,9 @@ static int npcm_wdt_start(struct watchdog_device *wdd)
->  	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
->  	u32 val;
-> 
-> +	if (wdt->clk)
-> +		clk_prepare_enable(wdt->clk);
-> +
->  	if (wdd->timeout < 2)
->  		val = 0x800;
->  	else if (wdd->timeout < 3)
-> @@ -100,6 +105,9 @@ static int npcm_wdt_stop(struct watchdog_device *wdd)
-> 
->  	writel(0, wdt->reg);
-> 
-> +	if (wdt->clk)
-> +		clk_disable_unprepare(wdt->clk);
-> +
->  	return 0;
->  }
-> 
-> @@ -147,6 +155,10 @@ static int npcm_wdt_restart(struct watchdog_device *wdd,
->  {
->  	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
-> 
-> +	/* For reset, we start the WDT clock and leave it running. */
-> +	if (wdt->clk)
-> +		clk_prepare_enable(wdt->clk);
-> +
->  	writel(NPCM_WTR | NPCM_WTRE | NPCM_WTE, wdt->reg);
->  	udelay(1000);
-> 
-> @@ -191,6 +203,10 @@ static int npcm_wdt_probe(struct platform_device *pdev)
->  	if (IS_ERR(wdt->reg))
->  		return PTR_ERR(wdt->reg);
-> 
-> +	wdt->clk = devm_clk_get_optional(&pdev->dev, NULL);
-> +	if (IS_ERR(wdt->clk))
-> +		return PTR_ERR(wdt->clk);
-> +
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq < 0)
->  		return irq;
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
