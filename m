@@ -2,75 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF844C07E9D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 12:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14BC6FA86
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 13:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237004AbiIZMUv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 08:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59334 "EHLO
+        id S234295AbiIZNah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 09:30:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237013AbiIZMUe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 08:20:34 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8D07923CC
-        for <linux-clk@vger.kernel.org>; Mon, 26 Sep 2022 04:03:00 -0700 (PDT)
-Received: from [192.168.1.138] ([37.4.248.18]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M6ltQ-1ocF8p3ZF8-008IcR; Mon, 26 Sep 2022 12:55:45 +0200
-Message-ID: <f36b3ca0-68c2-7c4a-d914-cf2179cb71e4@i2se.com>
-Date:   Mon, 26 Sep 2022 12:55:44 +0200
+        with ESMTP id S234061AbiIZNaL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 09:30:11 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB821DB566;
+        Mon, 26 Sep 2022 04:53:51 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id i3so3888769qkl.3;
+        Mon, 26 Sep 2022 04:53:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=mVuGJPGJe2H+3+FixPWiruk+UJOFvQNy8mtyw4ti/gs=;
+        b=lfIaCJtsilZce/5dgOUpHw7EzBToAwvGukuki8q/l3F9WFkG/FmtBB/sDKim1KHNLq
+         9GZSgdN++YfOiTp86wzJm3bH/R4SukeQfun8hMRcQ6U5nYweIYTpZcHK+VnWaR2oGNBN
+         zNzIlyIjTS22RaX129cRIMcsZaFlF8hfEj3uolZWViXMmwkiCMcgLW32wtEwzUgOFceO
+         Z3HTZffPsfAqen1OM+1n5I65doNYAIMvGbD1wPum/gQD/DzR9OL66cUfbds4Td/8PqM7
+         YEBiYCfD6YoG5ZkTBERLdz7PUwOYbEm9YAm6WukN6pXI12nkG6YbCM2yDnm0CYXACQp7
+         hERg==
+X-Gm-Message-State: ACrzQf3YOZ3eg0vfvX5kS0VV/Sz6sYP7hUzr4cmw+k25f5aEvJp8JQF+
+        4sWjLJ+Lg/d4kPUBbM6iL9QM4ScYsUS4+Q==
+X-Google-Smtp-Source: AMsMyM6201Ll1guJSciLRUZqAwkQ/Q7CDaM6WPu3mXZ5b0UozLIJDadSyILgnzI75/0feM52MTnInA==
+X-Received: by 2002:a05:620a:1103:b0:6ce:a0f6:90da with SMTP id o3-20020a05620a110300b006cea0f690damr14037502qkk.101.1664193102779;
+        Mon, 26 Sep 2022 04:51:42 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id o24-20020a05620a229800b006ce515196a7sm11381825qkh.8.2022.09.26.04.51.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Sep 2022 04:51:42 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-3511e80f908so2601127b3.2;
+        Mon, 26 Sep 2022 04:51:42 -0700 (PDT)
+X-Received: by 2002:a81:758a:0:b0:345:450b:6668 with SMTP id
+ q132-20020a81758a000000b00345450b6668mr19418082ywc.316.1664193101855; Mon, 26
+ Sep 2022 04:51:41 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] clk: bcm2835: Make peripheral PLLC critical
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
+References: <20220921080051.5604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20220921080051.5604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 26 Sep 2022 13:51:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdULe59ZDysdLzyYTwXa0SXvLm7sGVOVjZ40r05h0sXmRA@mail.gmail.com>
+Message-ID: <CAMuHMdULe59ZDysdLzyYTwXa0SXvLm7sGVOVjZ40r05h0sXmRA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l: Fix typo in function name
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-References: <20220926084509.12233-1-maxime@cerno.tech>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220926084509.12233-1-maxime@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:jtof0q6uYfQMUVDWT/1YXPL6u1GZHu+k8Rf4m6DXbdp1CuVqXxZ
- g9T2brBIZpvRe4EJqS+BKmFvJPv+BvibVnmaX0ujpw1V19VStZyqipPTZJqdwLCUU4EQBkd
- 15mDghkvOwjVMx7u2KAgQ9Ffv6Ab5P5rDfmBtvjhIQLNC9tf8aNM73d4p9aEu3gr0R0/lHV
- 0Bs7Dur9vxZMfX4eqh2DQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:onioXO3RR9g=:Gf2IFzazbwA7TjeHXTJHv2
- 2CCJCgK4xsJKyGbw2Nj/hMnUQlcHbmG1ALDNK7Ox9eUXUdcjRTQrnMsbDxCZ/LpCbtQT+3hya
- SuDIMoKlmLcC4af2ZzfGKRwTLeKyLC7MFlKCoRAW3V0Q2FyDn2vCTRY4lEZiazZ6kaIGK8H4F
- 2UkLDCHn5u8MOZxiJqz2Fgz5cib6tDZd8+pg/Xkt+okejzieB7Dkf4r/Fj0U5hYJ0ib2zUAtw
- rzVYcVuI25EnV255eiI+nXYSl8e0AU+AbVNuhmsLiMDF7drN2eZ8hkDiM4KSWlVRRekRCHAsf
- Bf0KReOQ8vC+lgevkAlbge2jC8YOZgdlrtoFpwiCLVwkvvQqBg6iXul4egfl/UwxCsP4nMqY+
- 3d+qHd1Ob9HPOK7QVSPDDhWRV86JHomX+P3LmZrd4odD+UaTiEBRPOTQt0fye2un2ndDXGrYi
- pGnfnonmHYRy6jAZU5MyPQCWyZv3lhka7sS89wBkQenMOm0GZ4nAk4DSzPOiAquHnXAkS1tzm
- CRQpyB9XTZExj3ZLHbtrI27xkuQpyzthfXTY26sXAed1eh5148lQuKpXc9XGxY3WJfO14kZQy
- 7twitK6vQwaxIIbLLM/FAz0G7kpTivIWM+IC6UWSRzrCTk00auTIUMDHHGdxmOG4joANeyohk
- U3Is/1M3OvkVtxzzshx0jfy8BmIEVuvagsimTIo5x8kNWb+d6nbw8ZNAP9t8KWUsFKZIHlL1C
- McnLqyfQXy4mwCnTfrAV52UcQQ9J9eOe8ROxcA40eetThfut3Ad+QbKl3vMEx4aXauKJxHi2w
- SJZAipX
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 26.09.22 um 10:45 schrieb Maxime Ripard:
-> When testing for a series affecting the VEC, it was discovered that
-> turning off and on the VEC clock is crashing the system.
+On Wed, Sep 21, 2022 at 10:01 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> It turns out that, when disabling the VEC clock, it's the only child of
-> the PLLC-per clock which will also get disabled. The source of the crash
-> is PLLC-per being disabled.
+> Fix typo, rzg2l_mod_clock__get_sibling -> rzg2l_mod_clock_get_sibling
 >
-> It's likely that some other device might not take a clock reference that
-> it actually needs, but it's unclear which at this point. Let's make
-> PLLC-per critical so that we don't have that crash.
->
-> Reported-by: Noralf Trønnes <noralf@tronnes.org>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.2.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
