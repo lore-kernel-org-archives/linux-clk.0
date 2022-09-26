@@ -2,71 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14BC6FA86
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 13:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7B3C32771
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 13:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234295AbiIZNah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 09:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50832 "EHLO
+        id S234398AbiIZNvV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 09:51:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234061AbiIZNaL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 09:30:11 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB821DB566;
-        Mon, 26 Sep 2022 04:53:51 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id i3so3888769qkl.3;
-        Mon, 26 Sep 2022 04:53:50 -0700 (PDT)
+        with ESMTP id S235885AbiIZNu5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 09:50:57 -0400
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706071F4956;
+        Mon, 26 Sep 2022 05:07:09 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id a20so3887058qtw.10;
+        Mon, 26 Sep 2022 05:07:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=mVuGJPGJe2H+3+FixPWiruk+UJOFvQNy8mtyw4ti/gs=;
-        b=lfIaCJtsilZce/5dgOUpHw7EzBToAwvGukuki8q/l3F9WFkG/FmtBB/sDKim1KHNLq
-         9GZSgdN++YfOiTp86wzJm3bH/R4SukeQfun8hMRcQ6U5nYweIYTpZcHK+VnWaR2oGNBN
-         zNzIlyIjTS22RaX129cRIMcsZaFlF8hfEj3uolZWViXMmwkiCMcgLW32wtEwzUgOFceO
-         Z3HTZffPsfAqen1OM+1n5I65doNYAIMvGbD1wPum/gQD/DzR9OL66cUfbds4Td/8PqM7
-         YEBiYCfD6YoG5ZkTBERLdz7PUwOYbEm9YAm6WukN6pXI12nkG6YbCM2yDnm0CYXACQp7
-         hERg==
-X-Gm-Message-State: ACrzQf3YOZ3eg0vfvX5kS0VV/Sz6sYP7hUzr4cmw+k25f5aEvJp8JQF+
-        4sWjLJ+Lg/d4kPUBbM6iL9QM4ScYsUS4+Q==
-X-Google-Smtp-Source: AMsMyM6201Ll1guJSciLRUZqAwkQ/Q7CDaM6WPu3mXZ5b0UozLIJDadSyILgnzI75/0feM52MTnInA==
-X-Received: by 2002:a05:620a:1103:b0:6ce:a0f6:90da with SMTP id o3-20020a05620a110300b006cea0f690damr14037502qkk.101.1664193102779;
-        Mon, 26 Sep 2022 04:51:42 -0700 (PDT)
+        bh=9Znqpk/5E3d9qeZ4ziCaHeFp2PyF0ymTe8Mru6sAKdI=;
+        b=nXcwTaStpAuNfcdtlc/qrzrx5yohRSTnMFGO6ucJ95E2XEVMeTyu1ouJqRiWsSD1up
+         xHJBH0j8muJMFKYePVkSXJ/upv4x33xJM2uHcSEY/y2HjozI+EvnEHW28gW8WFULXh/9
+         3rCL910MpYLo+U/sRo0eyhrHk2v3eSSAwCQwE97nNDU/DleUALPWy3AGKQpV1rX38VZN
+         r+Q57DKvq23rHIaOV8eKMFD5HBoF90UYne8sfKNBU7TMj8JAzZYl+tIsLN8dq7lbpUxR
+         2GR1E3Fy+BvmOyry+3n8bPRhaOio+jHgFbsj7ipT0Ldj1TMM0FDAqz8wEB1YwpiGiQxd
+         Nbeg==
+X-Gm-Message-State: ACrzQf0wGunNCbbNuEbW9MU6+HGXBAic4TD7evgfiIGnm+t9Q6bzu7A7
+        X9aBudsUD/ATDH5HPJpZpEOgveDjsqR+uA==
+X-Google-Smtp-Source: AMsMyM7WdsnBGd8AojgTyL/hdnjqYds1sc5FRKve4aC2lVo3YSguYQmngKB0UJGhz8J1Qbg+nJQP2Q==
+X-Received: by 2002:ac8:5909:0:b0:35b:ce5c:ed73 with SMTP id 9-20020ac85909000000b0035bce5ced73mr17076773qty.635.1664193917144;
+        Mon, 26 Sep 2022 05:05:17 -0700 (PDT)
 Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id o24-20020a05620a229800b006ce515196a7sm11381825qkh.8.2022.09.26.04.51.42
+        by smtp.gmail.com with ESMTPSA id o1-20020a05622a008100b003431446588fsm11499143qtw.5.2022.09.26.05.05.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 04:51:42 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-3511e80f908so2601127b3.2;
-        Mon, 26 Sep 2022 04:51:42 -0700 (PDT)
-X-Received: by 2002:a81:758a:0:b0:345:450b:6668 with SMTP id
- q132-20020a81758a000000b00345450b6668mr19418082ywc.316.1664193101855; Mon, 26
- Sep 2022 04:51:41 -0700 (PDT)
+        Mon, 26 Sep 2022 05:05:17 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-346cd4c3d7aso66085087b3.8;
+        Mon, 26 Sep 2022 05:05:16 -0700 (PDT)
+X-Received: by 2002:a0d:de43:0:b0:349:31bd:e8d5 with SMTP id
+ h64-20020a0dde43000000b0034931bde8d5mr19441266ywe.283.1664193916570; Mon, 26
+ Sep 2022 05:05:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220921080051.5604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220921080051.5604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220922051358.3442191-1-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20220922051358.3442191-1-yoshihiro.shimoda.uh@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 26 Sep 2022 13:51:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdULe59ZDysdLzyYTwXa0SXvLm7sGVOVjZ40r05h0sXmRA@mail.gmail.com>
-Message-ID: <CAMuHMdULe59ZDysdLzyYTwXa0SXvLm7sGVOVjZ40r05h0sXmRA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzg2l: Fix typo in function name
-To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date:   Mon, 26 Sep 2022 14:05:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVQLAV5xTmZTosvb_thPigMAmLommi0EL1v-dG5PWXFsg@mail.gmail.com>
+Message-ID: <CAMuHMdVQLAV5xTmZTosvb_thPigMAmLommi0EL1v-dG5PWXFsg@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: renesas: r8a779f0: Add Ethernet Switch clocks
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 10:01 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Fix typo, rzg2l_mod_clock__get_sibling -> rzg2l_mod_clock_get_sibling
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Sep 22, 2022 at 7:14 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+> Changes from v2:
+>  https://lore.kernel.org/all/20220921084745.3355107-2-yoshihiro.shimoda.uh@renesas.com/
+>  - Separate patcheas into each subsystem.
+>    (No change actual code from v2.)
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-clk-for-v6.2.
