@@ -2,171 +2,308 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1366DC32771
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 18:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800DAC6FA82
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 20:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbiIZSmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 14:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47838 "EHLO
+        id S230002AbiIZUim (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 16:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbiIZSlx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 14:41:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11AC41982;
-        Mon, 26 Sep 2022 11:41:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B2D516120E;
-        Mon, 26 Sep 2022 18:41:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8346C433D7;
-        Mon, 26 Sep 2022 18:40:49 +0000 (UTC)
-Date:   Mon, 26 Sep 2022 14:41:57 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, fweisbec@gmail.com, ryabinin.a.a@gmail.com,
-        glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 33/44] ftrace: WARN on rcuidle
-Message-ID: <20220926144157.0406dfbb@gandalf.local.home>
-In-Reply-To: <20220919101522.573936213@infradead.org>
-References: <20220919095939.761690562@infradead.org>
-        <20220919101522.573936213@infradead.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S230513AbiIZUi3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 16:38:29 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 248F3A8CDD;
+        Mon, 26 Sep 2022 13:38:16 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28QKc9Af005657;
+        Mon, 26 Sep 2022 20:38:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=FZixfa402jGxcpjinXpTQ42aFEDeiWFGk7a44Ga1Lzw=;
+ b=IOYkt7lG0DxdOX9TSR3KiK4XOb2wFHbAVxTMJW6PLCU5OROyxDL4tfdRJy1a6fod4Tgw
+ xKkG5IeNOW/s+T0O1ioZK3DSQwCLHPQdxIobUtCRVJsKCj5l7nqLBRx7+Rs1S6/Q29Mh
+ +ilfameHnILUtHtR6a/hP+2s/JZZoQlQYoBFeLzISYZPr0qC7Z3F6d3qNJ37T8pt+V/Q
+ nZpglF2dPlJXmxw63TbCESoZ33QyU29mYv/RKELS4gXqDIYUPTyZj57OJwJrZsvQGq6v
+ wjtwL/fY25SoM3Bpij4sxMAWI9aP4G1AW0rjI58CJbphsTAuWr3BHpTnZYguSZGe/ZVM mA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jsrwfmm1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Sep 2022 20:38:09 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28QKc6mS011761
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Sep 2022 20:38:07 GMT
+Received: from core-thresher1.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 26 Sep 2022 13:38:06 -0700
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP display clock bindings
+Date:   Mon, 26 Sep 2022 13:37:59 -0700
+Message-ID: <20220926203800.16771-2-quic_bjorande@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220926203800.16771-1-quic_bjorande@quicinc.com>
+References: <20220926203800.16771-1-quic_bjorande@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VQH5bLtJrPS16Tm9GjdHcWzo8njzknCq
+X-Proofpoint-GUID: VQH5bLtJrPS16Tm9GjdHcWzo8njzknCq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-26_09,2022-09-22_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209260126
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Nit, the subject should have "tracing:" an not "ftrace:" as the former
-encompasses the tracing infrastructure and the latter is for the function
-hook part of that.
+The Qualcomm SC8280XP platform has two display clock controllers, add a
+binding for these.
 
-On Mon, 19 Sep 2022 12:00:12 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
 
-> CONFIG_GENERIC_ENTRY disallows any and all tracing when RCU isn't
-> enabled.
-> 
-> XXX if s390 (the only other GENERIC_ENTRY user as of this writing)
-> isn't comfortable with this, we could switch to
-> HAVE_NOINSTR_VALIDATION which is x86_64 only atm.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  include/linux/tracepoint.h |   13 ++++++++++++-
->  kernel/trace/trace.c       |    3 +++
->  2 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -178,6 +178,16 @@ static inline struct tracepoint *tracepo
->  #endif /* CONFIG_HAVE_STATIC_CALL */
->  
->  /*
-> + * CONFIG_GENERIC_ENTRY archs are expected to have sanitized entry and idle
-> + * code that disallow any/all tracing/instrumentation when RCU isn't watching.
-> + */
-> +#ifdef CONFIG_GENERIC_ENTRY
-> +#define RCUIDLE_COND(rcuidle)	(rcuidle)
-> +#else
+Changes since v1:
+- Add missing 'p' in compatibles.
+- Reworked power-domains definition
 
-Should probably move the below comment to here:
+ .../bindings/clock/qcom,dispcc-sc8280xp.yaml  |  97 +++++++++++++++++
+ .../dt-bindings/clock/qcom,dispcc-sc8280xp.h  | 100 ++++++++++++++++++
+ 2 files changed, 197 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
 
- /* srcu can't be used from NMI */
-
-> +#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
-> +#endif
-> +
-> +/*
->   * it_func[0] is never NULL because there is at least one element in the array
->   * when the array itself is non NULL.
->   */
-> @@ -189,7 +199,8 @@ static inline struct tracepoint *tracepo
->  			return;						\
->  									\
->  		/* srcu can't be used from NMI */			\
-
-And remove the above.
-
--- Steve
-
-> -		WARN_ON_ONCE(rcuidle && in_nmi());			\
-> +		if (WARN_ON_ONCE(RCUIDLE_COND(rcuidle)))		\
-> +			return;						\
->  									\
->  		/* keep srcu and sched-rcu usage consistent */		\
->  		preempt_disable_notrace();				\
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -3104,6 +3104,9 @@ void __trace_stack(struct trace_array *t
->  		return;
->  	}
->  
-> +	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_GENERIC_ENTRY)))
-> +		return;
-> +
->  	/*
->  	 * When an NMI triggers, RCU is enabled via ct_nmi_enter(),
->  	 * but if the above rcu_is_watching() failed, then the NMI
-> 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
+new file mode 100644
+index 000000000000..28c13237059f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
+@@ -0,0 +1,97 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,dispcc-sc8280xp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Display Clock & Reset Controller Binding for SC8280XP
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++description: |
++  Qualcomm display clock control module which supports the clocks, resets and
++  power domains for the two MDSS instances on SC8280XP.
++
++  See also:
++    include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,sc8280xp-dispcc0
++      - qcom,sc8280xp-dispcc1
++
++  clocks:
++    items:
++      - description: AHB interface clock,
++      - description: SoC CXO clock
++      - description: SoC sleep clock
++      - description: DisplayPort 0 link clock
++      - description: DisplayPort 0 VCO div clock
++      - description: DisplayPort 1 link clock
++      - description: DisplayPort 1 VCO div clock
++      - description: DisplayPort 2 link clock
++      - description: DisplayPort 2 VCO div clock
++      - description: DisplayPort 3 link clock
++      - description: DisplayPort 3 VCO div clock
++      - description: DSI 0 PLL byte clock
++      - description: DSI 0 PLL DSI clock
++      - description: DSI 1 PLL byte clock
++      - description: DSI 1 PLL DSI clock
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  power-domains:
++    items:
++      - description: MMCX power domain
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/power/qcom-rpmpd.h>
++    clock-controller@af00000 {
++      compatible = "qcom,sc8280xp-dispcc0";
++      reg = <0x0af00000 0x20000>;
++      clocks = <&gcc GCC_DISP_AHB_CLK>,
++               <&rpmhcc RPMH_CXO_CLK>,
++               <&sleep_clk>,
++               <&mdss0_dp_phy0 0>,
++               <&mdss0_dp_phy0 1>,
++               <&mdss0_dp_phy1 0>,
++               <&mdss0_dp_phy1 1>,
++               <&mdss0_dp_phy2 0>,
++               <&mdss0_dp_phy2 1>,
++               <&mdss0_dp_phy3 0>,
++               <&mdss0_dp_phy3 1>,
++               <&mdss0_dsi0_phy 0>,
++               <&mdss0_dsi0_phy 1>,
++               <&mdss0_dsi1_phy 0>,
++               <&mdss0_dsi1_phy 1>;
++      power-domains = <&rpmhpd SC8280XP_MMCX>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sc8280xp.h b/include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
+new file mode 100644
+index 000000000000..2831c61fa979
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
+@@ -0,0 +1,100 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SC8280XP_H
++#define _DT_BINDINGS_CLK_QCOM_DISP_CC_SC8280XP_H
++
++/* DISPCC clocks */
++#define DISP_CC_PLL0					0
++#define DISP_CC_PLL1					1
++#define DISP_CC_PLL1_OUT_EVEN				2
++#define DISP_CC_PLL2					3
++#define DISP_CC_MDSS_AHB1_CLK				4
++#define DISP_CC_MDSS_AHB_CLK				5
++#define DISP_CC_MDSS_AHB_CLK_SRC			6
++#define DISP_CC_MDSS_BYTE0_CLK				7
++#define DISP_CC_MDSS_BYTE0_CLK_SRC			8
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC			9
++#define DISP_CC_MDSS_BYTE0_INTF_CLK			10
++#define DISP_CC_MDSS_BYTE1_CLK				11
++#define DISP_CC_MDSS_BYTE1_CLK_SRC			12
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC			13
++#define DISP_CC_MDSS_BYTE1_INTF_CLK			14
++#define DISP_CC_MDSS_DPTX0_AUX_CLK			15
++#define DISP_CC_MDSS_DPTX0_AUX_CLK_SRC			16
++#define DISP_CC_MDSS_DPTX0_LINK_CLK			17
++#define DISP_CC_MDSS_DPTX0_LINK_CLK_SRC			18
++#define DISP_CC_MDSS_DPTX0_LINK_DIV_CLK_SRC		19
++#define DISP_CC_MDSS_DPTX0_LINK_INTF_CLK		20
++#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK			21
++#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC		22
++#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK			23
++#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC		24
++#define DISP_CC_MDSS_DPTX0_USB_ROUTER_LINK_INTF_CLK	25
++#define DISP_CC_MDSS_DPTX1_AUX_CLK			26
++#define DISP_CC_MDSS_DPTX1_AUX_CLK_SRC			27
++#define DISP_CC_MDSS_DPTX1_LINK_CLK			28
++#define DISP_CC_MDSS_DPTX1_LINK_CLK_SRC			29
++#define DISP_CC_MDSS_DPTX1_LINK_DIV_CLK_SRC		30
++#define DISP_CC_MDSS_DPTX1_LINK_INTF_CLK		31
++#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK			32
++#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC		33
++#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK			34
++#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC		35
++#define DISP_CC_MDSS_DPTX1_USB_ROUTER_LINK_INTF_CLK	36
++#define DISP_CC_MDSS_DPTX2_AUX_CLK			37
++#define DISP_CC_MDSS_DPTX2_AUX_CLK_SRC			38
++#define DISP_CC_MDSS_DPTX2_LINK_CLK			39
++#define DISP_CC_MDSS_DPTX2_LINK_CLK_SRC			40
++#define DISP_CC_MDSS_DPTX2_LINK_DIV_CLK_SRC		41
++#define DISP_CC_MDSS_DPTX2_LINK_INTF_CLK		42
++#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK			43
++#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC		44
++#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK			45
++#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC		46
++#define DISP_CC_MDSS_DPTX3_AUX_CLK			47
++#define DISP_CC_MDSS_DPTX3_AUX_CLK_SRC			48
++#define DISP_CC_MDSS_DPTX3_LINK_CLK			49
++#define DISP_CC_MDSS_DPTX3_LINK_CLK_SRC			50
++#define DISP_CC_MDSS_DPTX3_LINK_DIV_CLK_SRC		51
++#define DISP_CC_MDSS_DPTX3_LINK_INTF_CLK		52
++#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK			53
++#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK_SRC		54
++#define DISP_CC_MDSS_ESC0_CLK				55
++#define DISP_CC_MDSS_ESC0_CLK_SRC			56
++#define DISP_CC_MDSS_ESC1_CLK				57
++#define DISP_CC_MDSS_ESC1_CLK_SRC			58
++#define DISP_CC_MDSS_MDP1_CLK				59
++#define DISP_CC_MDSS_MDP_CLK				60
++#define DISP_CC_MDSS_MDP_CLK_SRC			61
++#define DISP_CC_MDSS_MDP_LUT1_CLK			62
++#define DISP_CC_MDSS_MDP_LUT_CLK			63
++#define DISP_CC_MDSS_NON_GDSC_AHB_CLK			64
++#define DISP_CC_MDSS_PCLK0_CLK				65
++#define DISP_CC_MDSS_PCLK0_CLK_SRC			66
++#define DISP_CC_MDSS_PCLK1_CLK				67
++#define DISP_CC_MDSS_PCLK1_CLK_SRC			68
++#define DISP_CC_MDSS_ROT1_CLK				69
++#define DISP_CC_MDSS_ROT_CLK				70
++#define DISP_CC_MDSS_ROT_CLK_SRC			71
++#define DISP_CC_MDSS_RSCC_AHB_CLK			72
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK			73
++#define DISP_CC_MDSS_VSYNC1_CLK				74
++#define DISP_CC_MDSS_VSYNC_CLK				75
++#define DISP_CC_MDSS_VSYNC_CLK_SRC			76
++#define DISP_CC_SLEEP_CLK				77
++#define DISP_CC_SLEEP_CLK_SRC				78
++#define DISP_CC_XO_CLK					79
++#define DISP_CC_XO_CLK_SRC				80
++
++/* DISPCC resets */
++#define DISP_CC_MDSS_CORE_BCR				0
++#define DISP_CC_MDSS_RSCC_BCR				1
++
++/* DISPCC GDSCs */
++#define MDSS_GDSC					0
++#define MDSS_INT2_GDSC					1
++
++#endif
+-- 
+2.17.1
 
