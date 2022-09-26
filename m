@@ -2,119 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66895C07E9D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 03:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721A2C07E9D
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 04:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbiIZD1t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Sep 2022 23:27:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42550 "EHLO
+        id S233151AbiIZEIn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 00:08:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbiIZD1r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Sep 2022 23:27:47 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A2A24BE7
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 20:27:46 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id m3so7208150eda.12
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 20:27:46 -0700 (PDT)
+        with ESMTP id S232918AbiIZEIm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 00:08:42 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF5CF2A97D
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 21:08:41 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id dv25so11375723ejb.12
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 21:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=1z+K3iZ5edH9Wvs3sWpMytE5kCGm2zb+7oEAH+Nf3iQ=;
-        b=eJhq7Fc27wKeinfDqhvMNOiJ/Gb1/og0KmVp3G+UnwXEDuClmgZJTTtEdniYEEOZTu
-         PkHeKnkfj5Nz22Ox5Hm6qKfgc47pn/rMMFS/mdiS+DoqM4BTAKvibBmdiJ5XQLJZrvMQ
-         qyrnEu2NdvfYAGMs7Cl67PsiuzyzFdl8K592U=
+        bh=sOR1HCqCWdSbaMEzOVaKKzwSu7f5OFySFkSjJn8FZ2A=;
+        b=jaTx8wpigkGkl6A5tkPzCkLvUK2IHWtK9xhaqrVZA41hzheFEIRPLj2QcrcPOPefHc
+         JSstJMgcFxyWDwexkjIT0qyJuCEdOETqE4iQkc26xhSFcMCmWIYnIpI/zLswMWrNbh3R
+         XFETvnNFiuhUF8Mo16DRTZGw3gOXuEEWS4r5U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=1z+K3iZ5edH9Wvs3sWpMytE5kCGm2zb+7oEAH+Nf3iQ=;
-        b=AsmrxTAZpq3PGdxT3SEEY23xkmAmCbpDSUKYLXq74aZVuu6It2Ros5E68y+ysp9D8z
-         yMog+8FvNDtrFFxjWLIvmtJHEoIHrGU/keJVtJMSY45d+6t1YTlfMIpS/n42/H1mrXIJ
-         NYrZZVBsIbEiykuhPsbQkno04R4uwJ7rJJ/UZq61l0MiMTmzULW3DCo5MiPZtqYja3Zx
-         c9K63VtlZQFgnD4A18R56rWOCTHneTpQ0EA6nWWO6J0zB0FbxRAtulpg1DwIHzPfI12O
-         Vor8h0V07w3YDPUVbnFSv328Ojc4WPe0jfuwgQFs+JwSQ9my8tdp1NTXGbwFSIYdrAXF
-         sjcg==
-X-Gm-Message-State: ACrzQf1uaXAnT6MrLPkmXKYkEu2GiLn/IqpIImcTD3SyMBUm7ow11JKq
-        2xulEo8JE6xZFHM1MgdEJH4A4IgPoK22Qv82gHO9ag==
-X-Google-Smtp-Source: AMsMyM5D3keac5HMYAnwObUUepcFX4Nc0uJR6fxSr+8PfMtKkHus/shERelQElMbLNntt0PEAz4+xxwiFElIWC2rDqQ=
-X-Received: by 2002:a05:6402:3549:b0:454:414e:a7fd with SMTP id
- f9-20020a056402354900b00454414ea7fdmr21116157edd.69.1664162864997; Sun, 25
- Sep 2022 20:27:44 -0700 (PDT)
+        bh=sOR1HCqCWdSbaMEzOVaKKzwSu7f5OFySFkSjJn8FZ2A=;
+        b=GevRPCgZDLIqWRBvXNBaWWgXrzoietBtxHAdEO8Ev7LjBQ/RpFyjm+YarIT1oYVtPE
+         qIX07fhdMddnxW56HGxlif6bTjaS8fQkcx/6Q/HIKo8LRiMQVI6CtZJ7KV7zEzVUYixh
+         Aywl8jGl5aAmJHNm5x2WPPdoWnG7Jztbm4W5Zgwp64qdTp2x9CHMhUxXrq2+mveh7vKj
+         iBXbejJLvx8x9k7CRFt+j+fB5xH7tdH1TVWnlnAgEo86z13HPUflS7quRNabRpSIyee2
+         8HEzwCPSqMpMDa4/DBpIb90C8RsDxS8idvuARTZaP4iLvsgPugSBi8g9mrKm+8vO9Xw5
+         84AA==
+X-Gm-Message-State: ACrzQf1jx0rYWPG/QUGtZD4KmvKu8PDcrPA0zNlkKO8I4OdCna0S2Yv6
+        cOCpW/cuSO6rT8xePkT5Gvec5p0U/TD2SMNHdc4+Nw==
+X-Google-Smtp-Source: AMsMyM6AbSZNeSyPM3bn5XK6eCiXpj0PURzOGegzp8trgtGVJOL93SxM/MGKL4DedKUbISaYwJlDjKgnCzZ8mSWa/xg=
+X-Received: by 2002:a17:907:80d:b0:73d:1e3f:3d83 with SMTP id
+ wv13-20020a170907080d00b0073d1e3f3d83mr15972482ejb.372.1664165320144; Sun, 25
+ Sep 2022 21:08:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220915072458.18232-1-angelogioacchino.delregno@collabora.com> <20220915072458.18232-6-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220915072458.18232-6-angelogioacchino.delregno@collabora.com>
+References: <20220922091841.4099-1-miles.chen@mediatek.com> <20220922091841.4099-2-miles.chen@mediatek.com>
+In-Reply-To: <20220922091841.4099-2-miles.chen@mediatek.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 26 Sep 2022 11:27:33 +0800
-Message-ID: <CAGXv+5HxEWPmLLi0zRrJ+T7bVcpoQoFt81+_ciXNDXRrGmfU6w@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d
- and propagate rate changes
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     matthias.bgg@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
-        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        nfraprado@collabora.com, chun-jie.chen@mediatek.com,
-        jose.exposito89@gmail.com, drinkcat@chromium.org,
-        weiyi.lu@mediatek.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
+Date:   Mon, 26 Sep 2022 12:08:28 +0800
+Message-ID: <CAGXv+5GitZopbd2FOC=9QxEG7SDYK7zy6JvsBoCXgeiM_j9E9g@mail.gmail.com>
+Subject: Re: [PATCH 1/7] clk: mediatek: mt2701: use mtk_clk_simple_probe to
+ simplify driver
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 15, 2022 at 3:25 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Thu, Sep 22, 2022 at 5:18 PM Miles Chen <miles.chen@mediatek.com> wrote:
 >
-> The MFG_BG3D is a gate to enable/disable clock output to the GPU,
-> but the actual output is decided by multiple muxes; in particular:
-> mfg_ck_fast_ref muxes between "slow" (top_mfg_core_tmp) and
-> "fast" (MFGPLL) clock, while top_mfg_core_tmp muxes between the
-> 26MHz clock and various system PLLs.
+> mtk_clk_simple_probe was added by Chun-Jie to simply common flow
+> of MediaTek clock drivers and ChenYu enhanced the error path of
+> mtk_clk_simple_probe and added mtk_clk_simple_remove.
 >
-> This also implies that "top_mfg_core_tmp" is a parent of the
-> "mfg_ck_fast_ref" mux (and not vice-versa), so reparent the
+> Let's use mtk_clk_simple_probe and mtk_clk_simple_probe in other
+> MediaTek clock drivers as well.
+>
+> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I don't see where this was the case though? I think what you meant
-was that the direct parent for "mfg_bg3d" is "mfg_ck_fast_ref, not
-"top_mfg_core_tmp"?
+Just FYI, but you should have your patch subject contain the proper version
+tag, and not just on the cover letter. Patchwork gets confused otherwise.
 
-> MFG_BG3D gate to the latter and add the CLK_SET_RATE_PARENT
-> flag to it: this way we ensure propagating rate changes that
-> are requested on MFG_BG3D along its entire clock tree.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Otherwise,
-
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-
-
-> ---
->  drivers/clk/mediatek/clk-mt8195-mfg.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mt8195-mfg.c b/drivers/clk/mediatek/clk-mt8195-mfg.c
-> index 9411c556a5a9..c94cb71bd9b9 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-mfg.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-mfg.c
-> @@ -17,10 +17,12 @@ static const struct mtk_gate_regs mfg_cg_regs = {
->  };
->
->  #define GATE_MFG(_id, _name, _parent, _shift)                  \
-> -       GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +       GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs,       \
-> +                      _shift, &mtk_clk_gate_ops_setclr,        \
-> +                      CLK_SET_RATE_PARENT)
->
->  static const struct mtk_gate mfg_clks[] = {
-> -       GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "top_mfg_core_tmp", 0),
-> +       GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_ck_fast_ref", 0),
->  };
->
->  static const struct mtk_clk_desc mfg_desc = {
-> --
-> 2.37.2
->
+ChenYu
