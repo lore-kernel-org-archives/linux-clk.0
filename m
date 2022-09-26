@@ -2,116 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5C1C6FA82
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 08:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E434C32771
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 08:57:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234497AbiIZIph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 04:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54552 "EHLO
+        id S234525AbiIZI5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 04:57:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234517AbiIZIpZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 04:45:25 -0400
-Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A76B140B3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Sep 2022 01:45:18 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 61A482B069A7;
-        Mon, 26 Sep 2022 04:45:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 26 Sep 2022 04:45:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1664181912; x=1664189112; bh=T4c5eVxgK3
-        BG8uSr94/t3a0B5fa3XyluaqBQA1l+ORI=; b=sfH10vQHLfc4+hg8w1JIuhzfwd
-        rB09WPG91gXxM69eZkgVQ86J4avVECcYD475YoJKf1TK9dPAlxsv4riYRnxR952U
-        hJUE4hscg/dE3sUNzBkS1NLdVMsClmjy+zEL8Oorili1TKSK6h43kMqQaGv4LdCi
-        UvOdFf3csVmCcKMAJcf5D9LO0zKQovQ0CALz5qbivTgLksX5RJS7tOijIDVu9fK6
-        Osi93J3arNr4RMVDjKgn2WTWgWtH/XxR153bpCYhSlQ1h0NhYZKLk9+o/Zh5+tUo
-        rWFW6t4lH/aS4qrbQTHuIQl84YmQjxnY+4sMyoWnficoswnMT3DYyxCaz1kg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1664181912; x=1664189112; bh=T4c5eVxgK3BG8
-        uSr94/t3a0B5fa3XyluaqBQA1l+ORI=; b=g5VLQEqcBxrrScjzpYcbrMaAPQ93K
-        cjzt/16sFUmcFzMSHc13vDUWEjQfZ3OOOeLuVvW4pU2R6YpjZe7ZMgfAK3uAl65i
-        WmeqzagMrcZzV9Z25+hYQmydgKtFZ4Mmo7ehbCA6ZKhDfyzss8QMIGEln4xGUQWh
-        LiotyycbvfCtQbjw7argpNf7OfIH6JqQTu3qqUfFePovBj6tMBgqboXE1BV35vZC
-        +4QAQFeOcNrVtMOms/hJSsOj9Z+09C7BKLjZ8TLN7EG25An9MxF0xGPO7E+obOy5
-        81AW6JVVu9LAcoIEUpuNOz5+zk+isM7ofAEDD73MwMXSxwVtDVTqUUAkA==
-X-ME-Sender: <xms:mGYxY1dhWVBt6tpjxo7WkOmIWkp27KfnSyKqjb_qQpn20sFfm9lJNg>
-    <xme:mGYxYzO4rPkN3T7xdbWivvo6xCZB4P7EDHbyyGuOBU9mUXRmKKsnnxsB4j_3VI5AW
-    _kimrY1wQlypoTjGKk>
-X-ME-Received: <xmr:mGYxY-iXbHxXAw613OIl56ifBVXQmYpGJ7cRSJvU4St6sRexiCARDZCSI0Mg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeegvddgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepgffgteeihfeiudetleeuleetffdvffdugfevkeduueelgfetjeehjefffedt
-    vddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:mGYxY--JegnX1irK2aZgpUuRgki-YW20eaotmE3iR4Bu_6Vm-fGLFQ>
-    <xmx:mGYxYxs5scctSoQcRxsHlhEeGTSm45iSafAIpo3P9HzQD9wBBuI7Bw>
-    <xmx:mGYxY9Eujs-Rid0oqD9lz8scFxERClfK5zoU7v9gOmCVLi1yEfYhdw>
-    <xmx:mGYxY6MznFPKxvGT705Y1W4_oBdHO1VmvRlt8lZNxHhEPVzxoYVkFLe5jVM>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 Sep 2022 04:45:11 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Maxime Ripard <maxime@cerno.tech>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>
-Subject: [PATCH] clk: bcm2835: Make peripheral PLLC critical
-Date:   Mon, 26 Sep 2022 10:45:09 +0200
-Message-Id: <20220926084509.12233-1-maxime@cerno.tech>
-X-Mailer: git-send-email 2.37.3
+        with ESMTP id S233756AbiIZI5c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 04:57:32 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C775B3CBFB
+        for <linux-clk@vger.kernel.org>; Mon, 26 Sep 2022 01:57:30 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id a41so8039489edf.4
+        for <linux-clk@vger.kernel.org>; Mon, 26 Sep 2022 01:57:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=q89NyQ9b1PpoKXEkGp2ns+Ib3Shkz3cUPYaSufAXKUc=;
+        b=n/ZXnZb952U5lWurVM94tkGD6ar7Ax0UfVipCAlGLuHtleFEQEIN8GHQ1RxzVtONhj
+         In6/yRm/tdgCGv8hilqP8gcd7Oqi2ZwL3QVpyvlv8kYKqjGjKzLXsy+X0BGAE38HpLbD
+         H/LXzx8uHjOrCBpNJnaINnVOmlDy+OhaZAJgY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=q89NyQ9b1PpoKXEkGp2ns+Ib3Shkz3cUPYaSufAXKUc=;
+        b=lTjtXPd+P4rrdKmzn0W3wWVK8dgpFw9ubjh8ICoF1aegEhd3pHtA9n3y6e1bKt/nuV
+         obaCBsH1tQkzqKJ5ooQEbAJBxJNtlCemXkRX53NE4/4w0T79oKS4MbzuB8n3e8+atEQt
+         YKzL4ks2CwWDyvk3kqiJJPPQis/+N9V6Y5hR7YMJVTTfVleaOr6FkKHD7/zA2LxZPQel
+         0wobMJJHxvha8x+QbkTzTxu2qD6Rb2+6oJeofk38gILwBRa7Y9a5ZWtddcUWynyntzJw
+         cufIhDngz5Mvs+7n5cwytvVa2Ll37iDy8sQwoun8KotLLMs1PKXn+6PadksZAICi516b
+         a/jg==
+X-Gm-Message-State: ACrzQf2NbwItqU8o769D0e2nkr9Rs4W1XEUdQdpWyjuIULzXNKz3e1Nz
+        TzcIBDhZo7N7W6QaiA1hvX9x9QTbOxfwu782BqOjGA==
+X-Google-Smtp-Source: AMsMyM7HZwvp/a4tFxiTN7T+gF7HA3kkCdtKrxuJAFXrT6ZiR+YlsGYzpYjFqob4runlnShPtvtGPHUPzlbsMnmQ86Y=
+X-Received: by 2002:a05:6402:90e:b0:443:ec4b:2b03 with SMTP id
+ g14-20020a056402090e00b00443ec4b2b03mr20918608edz.71.1664182648982; Mon, 26
+ Sep 2022 01:57:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220915072458.18232-1-angelogioacchino.delregno@collabora.com>
+ <20220915072458.18232-6-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5HxEWPmLLi0zRrJ+T7bVcpoQoFt81+_ciXNDXRrGmfU6w@mail.gmail.com> <9f7d1eda-cdf3-5108-7e9d-a10937fe224e@collabora.com>
+In-Reply-To: <9f7d1eda-cdf3-5108-7e9d-a10937fe224e@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 26 Sep 2022 16:57:17 +0800
+Message-ID: <CAGXv+5HYKjDJALa6MAAE4XzRTMfE_vdEWg6XaWekUq7w8ko3BQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d
+ and propagate rate changes
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     matthias.bgg@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        nfraprado@collabora.com, chun-jie.chen@mediatek.com,
+        jose.exposito89@gmail.com, drinkcat@chromium.org,
+        weiyi.lu@mediatek.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When testing for a series affecting the VEC, it was discovered that
-turning off and on the VEC clock is crashing the system.
+On Mon, Sep 26, 2022 at 4:36 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 26/09/22 05:27, Chen-Yu Tsai ha scritto:
+> > On Thu, Sep 15, 2022 at 3:25 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> The MFG_BG3D is a gate to enable/disable clock output to the GPU,
+> >> but the actual output is decided by multiple muxes; in particular:
+> >> mfg_ck_fast_ref muxes between "slow" (top_mfg_core_tmp) and
+> >> "fast" (MFGPLL) clock, while top_mfg_core_tmp muxes between the
+> >> 26MHz clock and various system PLLs.
+> >>
+> >> This also implies that "top_mfg_core_tmp" is a parent of the
+> >> "mfg_ck_fast_ref" mux (and not vice-versa), so reparent the
+> >
+> > I don't see where this was the case though? I think what you meant
+> > was that the direct parent for "mfg_bg3d" is "mfg_ck_fast_ref, not
+> > "top_mfg_core_tmp"?
+> >
+>
+> MFG_BG3D's direct parent is mfg_ck_fast_ref - yes - but in the commit message
+> I am explaining how the clock tree for MFG_BG3D really is and, in particular,
+> I'm then explaining that:
+> * parenting MFG_BG3D to "top_mfg_core_tmp" is wrong; because
+> * "top_mfg_core_tmp" is a parent of "mfg_ck_fast_ref" (not the other way around).
+>
+> So, the question in your comment is addressed just a little later....
+>
+> >> MFG_BG3D gate to the latter and add the CLK_SET_RATE_PARENT
+>
+> ...here, where I say "reparent MFG_BG3D to the latter", where "the latter" is,
+> exactly "mfg_ck_fast_ref".
+>
+> I hope you now understand what I am trying to communicate :-)
+>
+> However, if even after that you still think that the commit description should
+> be rewritten in some less tangled and/or more understandable way, I definitely
+> can do that.
+>
+> Please confirm :-)
 
-It turns out that, when disabling the VEC clock, it's the only child of
-the PLLC-per clock which will also get disabled. The source of the crash
-is PLLC-per being disabled.
+I think
 
-It's likely that some other device might not take a clock reference that
-it actually needs, but it's unclear which at this point. Let's make
-PLLC-per critical so that we don't have that crash.
+    This also implies that "top_mfg_core_tmp" is a parent of the
+    "mfg_ck_fast_ref" mux (and not vice-versa)
 
-Reported-by: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/bcm/clk-bcm2835.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+actually confused me.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 48a1eb9f2d55..19de0e83b65d 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1784,7 +1784,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLC_LOADPER,
- 		.hold_mask = CM_PLLC_HOLDPER,
- 		.fixed_divider = 1,
--		.flags = CLK_SET_RATE_PARENT),
-+		.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
- 
- 	/*
- 	 * PLLD is the display PLL, used to drive DSI display panels.
--- 
-2.37.3
+Maybe just say
 
+    The clock gate comes after all the muxes, so its parent is
+    mfg_ck_fast_ref, not top_mfg_core_tmp. Reparent mfg_bg3d to
+    the latter to match the hardware ...
+
+Since you are fixing the topology, could you also add a fixes tag?
+
+
+Thanks
+ChenYu
+
+
+> >> flag to it: this way we ensure propagating rate changes that
+> >> are requested on MFG_BG3D along its entire clock tree.
+> >>
+> >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> >
+> > Otherwise,
+> >
+> > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> >
+> >
+> >> ---
+> >>   drivers/clk/mediatek/clk-mt8195-mfg.c | 6 ++++--
+> >>   1 file changed, 4 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/mediatek/clk-mt8195-mfg.c b/drivers/clk/mediatek/clk-mt8195-mfg.c
+> >> index 9411c556a5a9..c94cb71bd9b9 100644
+> >> --- a/drivers/clk/mediatek/clk-mt8195-mfg.c
+> >> +++ b/drivers/clk/mediatek/clk-mt8195-mfg.c
+> >> @@ -17,10 +17,12 @@ static const struct mtk_gate_regs mfg_cg_regs = {
+> >>   };
+> >>
+> >>   #define GATE_MFG(_id, _name, _parent, _shift)                  \
+> >> -       GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+> >> +       GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs,       \
+> >> +                      _shift, &mtk_clk_gate_ops_setclr,        \
+> >> +                      CLK_SET_RATE_PARENT)
+> >>
+> >>   static const struct mtk_gate mfg_clks[] = {
+> >> -       GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "top_mfg_core_tmp", 0),
+> >> +       GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_ck_fast_ref", 0),
+> >>   };
+> >>
+> >>   static const struct mtk_clk_desc mfg_desc = {
+> >> --
+> >> 2.37.2
+> >>
+>
+>
