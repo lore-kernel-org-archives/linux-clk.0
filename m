@@ -2,98 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3415C07E9D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 04:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 715D2C32771
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 05:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231345AbiIZEpw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 00:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39412 "EHLO
+        id S232860AbiIZFJm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 01:09:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230173AbiIZEpv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 00:45:51 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D08A24BE7
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 21:45:44 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id y3so11569928ejc.1
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 21:45:44 -0700 (PDT)
+        with ESMTP id S232677AbiIZFJk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 01:09:40 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1064A65BC
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 22:09:38 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id z13so11589149ejp.6
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 22:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=inQx/B+myoBQVAF3vsFN8D/0R7rZQjwNrUieRpG8clU=;
-        b=j/uFU1KOCRqduTJlrlEoIn6ttforECuEoaRHf2Jkb1/p00FI72BhA+ja0+iw0yrlSt
-         PyWtg1GZTi4rAHzt4bV8b93gt95RdcPppHsOHk7Sj0JJB63rSc1AZSvmj5mmHrUTV55b
-         9Srf43HDAj1z8qqOrmCkboDh9b2nghcIx73IA=
+        bh=vrb/QOBCOlwnil4xOu2RseRmD1KSKb1sCTEzWBoOr7A=;
+        b=CjyMr8K5Wev1LqZH4hcWNR4hCa7hpv03fz6sO4CQoigIqQfzbByI+PeL62qb6OS5f6
+         B6/UPRBG20hOIgzFCctOTxKGY7MWWmlbPU/fK1U2S6LaPHoAmR3Xm7v0Rx0GkuSc2vyE
+         VrIRqSRv6Ih1HnvvylK+fBM5Zj+XYDUmwevzo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=inQx/B+myoBQVAF3vsFN8D/0R7rZQjwNrUieRpG8clU=;
-        b=C8BoK/i1SDdtY1pCfNCJH58jzdwTpo2dKCW8nCDqXFlHdpCQ1wt9mnw3YQZ4O/BLNB
-         WRxfLYRHabICKBETtG2BwZU0rr4MvefBzib+5PppctxsYmfTn1B4aB41c2NoRT56JRzc
-         L5pX3VJS0AUy53Zvrf/wm7dGV6i4/p37yIlcb4Z2vvs8Yiku8b+s1Q96+ggy79643X5s
-         dm7rJKVnhx1gOrM5LGXFnHh9VAoZtMowRudGDfjkBAXF8L5B5xBxxDEtDdZGPKIjS9Jq
-         MM0WM0NYo4JXdgpMr/NlCiNXMfKeimYPFVJgJk5ZnRq6zFSoSrXlR+oHA85k2oxk7o1c
-         OOzQ==
-X-Gm-Message-State: ACrzQf3MFt/3SQ5crx9bsi9j3uMm+FrSHWRe3rUjgrHnIN7NeKJCqrHq
-        PgN+OiUsi/ZugPuwL+Cxm3R2lfAIqW5/fNxTyBZ6YA==
-X-Google-Smtp-Source: AMsMyM50baM0xEgY1j/hLICZS6Ro1n/Ox33rLV2Rl1Yb22kNPgKw8xFU3i402SgQ5Dfectw+su70alxJjafTx80ETlM=
+        bh=vrb/QOBCOlwnil4xOu2RseRmD1KSKb1sCTEzWBoOr7A=;
+        b=MEeGCtYzAe4b6CKfWgi6e7X2X68/g6IvfPl0tEDDN0lQj25jM+xS7pMJgJP7YWHhlc
+         BWzRzvxQz2fysTdaGE8PefgGMumBT0Zxj9riZYAK9BkKsTWtiR7YzDwesVZz34Vv/Wop
+         IycoPTX7eg5pWUO/vemkZKU4mBZGsbn4PN+t/K9KbdzS9y6wc3LML12W6/U+ytGTb5pH
+         P6DBfW3mP4sYRaPD3lC80b4fiw1y+u3W0rGM13FrV93hDzW+aJHWQ62aZf27QL31/7Lo
+         9kyL+njFUFgMCPZgan9f92pSTWw0gn3aFBQAkQL6rPfUEYYIihB11cF7QfJ6Q0tmub8I
+         4K6Q==
+X-Gm-Message-State: ACrzQf1wYiNT4Tw/oLZBmGLwjoB2DA4Mv46wClpj+FIOaCwdf0H8NI7a
+        LRvgY3SoWVzS0I/8218kFvVkmAwjhp7CtxGWIg59jQ==
+X-Google-Smtp-Source: AMsMyM7cfU1/JdOhkGvuQyhuRRKePnKXOOE9bin+YefFjefQP/PV7uR2GeazW9Tvxl2PgbNtWjbFZGX0+Elzhi37gGQ=
 X-Received: by 2002:a17:906:8455:b0:773:c45b:d970 with SMTP id
- e21-20020a170906845500b00773c45bd970mr16452870ejy.46.1664167542843; Sun, 25
- Sep 2022 21:45:42 -0700 (PDT)
+ e21-20020a170906845500b00773c45bd970mr16504544ejy.46.1664168976587; Sun, 25
+ Sep 2022 22:09:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220921091455.41327-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220921091455.41327-1-angelogioacchino.delregno@collabora.com>
+References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-2-4844816c9808@baylibre.com>
+In-Reply-To: <20220919-v1-2-4844816c9808@baylibre.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 26 Sep 2022 12:45:31 +0800
-Message-ID: <CAGXv+5HayW7XFcPJyV4xWvndmLau5T068nc_XYEbyiFX=pMzVQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v6 0/8] MediaTek Helio X10 MT6795 - Clock drivers
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        p.zabel@pengutronix.de, y.oudjana@protonmail.com,
-        jason-jh.lin@mediatek.com, ck.hu@mediatek.com,
-        fparent@baylibre.com, rex-bc.chen@mediatek.com,
-        tinghan.shen@mediatek.com, ikjn@chromium.org,
-        miles.chen@mediatek.com, sam.shih@mediatek.com,
-        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
-        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, kernel@collabora.com
+Date:   Mon, 26 Sep 2022 13:09:24 +0800
+Message-ID: <CAGXv+5GJrjxG0pEGqseEacz_KFCRhWJSiLoiwuwwUTaSeO0RBg@mail.gmail.com>
+Subject: Re: [PATCH v1 02/17] clk: mediatek: add VDOSYS1 clock
+To:     Guillaume Ranquet <granquet@baylibre.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 5:15 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Tue, Sep 20, 2022 at 12:59 AM Guillaume Ranquet
+<granquet@baylibre.com> wrote:
 >
-> In an effort to give some love to the apparently forgotten MT6795 SoC,
-> I am upstreaming more components that are necessary to support platforms
-> powered by this one apart from a simple boot to serial console.
+> From: Pablo Sun <pablo.sun@mediatek.com>
 >
-> This (very big) series introduces system clock, multimedia clock drivers
-> (including resets) for this SoC.
+> Add the clock gate definition for the DPI1 hardware
+> in VDOSYS1.
 >
-> Tested on a MT6795 Sony Xperia M5 (codename "Holly") smartphone.
+> The parent clock "hdmi_txpll" is already defined in
+> `mt8195.dtsi`.
 >
-> AngeloGioacchino Del Regno (8):
->   dt-bindings: mediatek: Document MT6795 system controllers bindings
->   dt-bindings: clock: Add MediaTek Helio X10 MT6795 clock bindings
->   dt-bindings: reset: Add bindings for MT6795 Helio X10 reset
->     controllers
->   dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
->   clk: mediatek: clk-apmixed: Remove unneeded __init annotation
->   clk: mediatek: Export required symbols to compile clk drivers as
->     module
->   clk: mediatek: clk-apmixed: Add helper function to unregister
->     ref2usb_tx
->   clk: mediatek: Add MediaTek Helio X10 MT6795 clock drivers
+> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
 
-I've queued this series up here [1] and will send a pull request to
-the clock maintainer later this week.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/wens/linux.git/log/?h=clk-mtk-for-6.1
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
