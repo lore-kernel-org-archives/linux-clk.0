@@ -2,71 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7B3C32771
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 13:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7063BC07E9D
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 14:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234398AbiIZNvV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 09:51:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59480 "EHLO
+        id S234164AbiIZOOF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 10:14:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235885AbiIZNu5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 09:50:57 -0400
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706071F4956;
-        Mon, 26 Sep 2022 05:07:09 -0700 (PDT)
-Received: by mail-qt1-f176.google.com with SMTP id a20so3887058qtw.10;
-        Mon, 26 Sep 2022 05:07:09 -0700 (PDT)
+        with ESMTP id S234635AbiIZONc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 10:13:32 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB1DA181CEE;
+        Mon, 26 Sep 2022 05:24:11 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id g12so3952274qts.1;
+        Mon, 26 Sep 2022 05:24:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=9Znqpk/5E3d9qeZ4ziCaHeFp2PyF0ymTe8Mru6sAKdI=;
-        b=nXcwTaStpAuNfcdtlc/qrzrx5yohRSTnMFGO6ucJ95E2XEVMeTyu1ouJqRiWsSD1up
-         xHJBH0j8muJMFKYePVkSXJ/upv4x33xJM2uHcSEY/y2HjozI+EvnEHW28gW8WFULXh/9
-         3rCL910MpYLo+U/sRo0eyhrHk2v3eSSAwCQwE97nNDU/DleUALPWy3AGKQpV1rX38VZN
-         r+Q57DKvq23rHIaOV8eKMFD5HBoF90UYne8sfKNBU7TMj8JAzZYl+tIsLN8dq7lbpUxR
-         2GR1E3Fy+BvmOyry+3n8bPRhaOio+jHgFbsj7ipT0Ldj1TMM0FDAqz8wEB1YwpiGiQxd
-         Nbeg==
-X-Gm-Message-State: ACrzQf0wGunNCbbNuEbW9MU6+HGXBAic4TD7evgfiIGnm+t9Q6bzu7A7
-        X9aBudsUD/ATDH5HPJpZpEOgveDjsqR+uA==
-X-Google-Smtp-Source: AMsMyM7WdsnBGd8AojgTyL/hdnjqYds1sc5FRKve4aC2lVo3YSguYQmngKB0UJGhz8J1Qbg+nJQP2Q==
-X-Received: by 2002:ac8:5909:0:b0:35b:ce5c:ed73 with SMTP id 9-20020ac85909000000b0035bce5ced73mr17076773qty.635.1664193917144;
-        Mon, 26 Sep 2022 05:05:17 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id o1-20020a05622a008100b003431446588fsm11499143qtw.5.2022.09.26.05.05.16
+        bh=jYPkJ4iF6JhjqcodfY82xzxpTsL+ak9+Yo7XYg3OT1k=;
+        b=Xpe5hArihewP7hnxf2z03OsA5iTzcZk72slCoeFnL1s4Po7HAD/2RQU4/bOVQYpKq+
+         A4ofcyO83N0y3gaN3NYYWqYNMkdsiVUkiizc54N3wLzSJRc1rqtuTMYVjNWEWLRkebgH
+         YMs5wFmRUZ+omRo1XQKkfx0BX8d2mR1tkdbzSSg42zS+M42cX5Mc7WN/rPu9qLtV1H+F
+         n63SZzORqaQkuMW3ycyLr5PdAvzsz2mtjiFka27lXmPOaESShc0ZwJDcPPzSD2W2HGjx
+         kDwbjRlzx8sqbeoy41JFmYvoMGAPajIcLjTfUQMfv5iSpDeL2qQg8gV+FnmBRsXiNd2S
+         hPgA==
+X-Gm-Message-State: ACrzQf0aFtKELrWOAm0YjIxCgcppQ5BBmVH8Q+oV9XdKNdTx3Nopp9tm
+        hDvqdG2ggnYjDGQ7GPGzkBUR37REhcBtOg==
+X-Google-Smtp-Source: AMsMyM44/3L4lyhZa6NJe7jD5yXx0QT8acT1mveMijlZOVDyjdtQ7cjh+3YCztFitmHdURMmLR8UHw==
+X-Received: by 2002:a05:622a:50:b0:35d:4967:d761 with SMTP id y16-20020a05622a005000b0035d4967d761mr69161qtw.155.1664195049483;
+        Mon, 26 Sep 2022 05:24:09 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id r1-20020ae9d601000000b006cbbc3daaacsm11503552qkk.113.2022.09.26.05.24.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 05:05:17 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-346cd4c3d7aso66085087b3.8;
-        Mon, 26 Sep 2022 05:05:16 -0700 (PDT)
-X-Received: by 2002:a0d:de43:0:b0:349:31bd:e8d5 with SMTP id
- h64-20020a0dde43000000b0034931bde8d5mr19441266ywe.283.1664193916570; Mon, 26
- Sep 2022 05:05:16 -0700 (PDT)
+        Mon, 26 Sep 2022 05:24:09 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id e187so8094984ybh.10;
+        Mon, 26 Sep 2022 05:24:08 -0700 (PDT)
+X-Received: by 2002:a5b:104:0:b0:6b0:429:3fe9 with SMTP id 4-20020a5b0104000000b006b004293fe9mr20333528ybx.543.1664195048750;
+ Mon, 26 Sep 2022 05:24:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220922051358.3442191-1-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20220922051358.3442191-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220919084110.3065156-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220919084110.3065156-1-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 26 Sep 2022 14:05:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVQLAV5xTmZTosvb_thPigMAmLommi0EL1v-dG5PWXFsg@mail.gmail.com>
-Message-ID: <CAMuHMdVQLAV5xTmZTosvb_thPigMAmLommi0EL1v-dG5PWXFsg@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: renesas: r8a779f0: Add Ethernet Switch clocks
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date:   Mon, 26 Sep 2022 14:23:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXaMxAT12b2XLnM_uiJ++rsVHiRBr+9utRP3oWNUJE1ug@mail.gmail.com>
+Message-ID: <CAMuHMdXaMxAT12b2XLnM_uiJ++rsVHiRBr+9utRP3oWNUJE1ug@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l: Support sd clk mux round operation
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 7:14 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
-> Changes from v2:
->  https://lore.kernel.org/all/20220921084745.3355107-2-yoshihiro.shimoda.uh@renesas.com/
->  - Separate patcheas into each subsystem.
->    (No change actual code from v2.)
+CC wsa
+
+On Mon, Sep 19, 2022 at 10:41 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Currently, determine_rate() is not doing any round operation
+> and due to this it always selects a lower clock source compared
+> to the closest higher one.
+>
+> Support sd clk mux round operation by passing
+> CLK_MUX_ROUND_CLOSEST flag to clk_mux_determine_rate_flags().
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-clk-for-v6.2.
+
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -182,7 +182,7 @@ rzg2l_cpg_mux_clk_register(const struct cpg_core_clk *core,
+>  static int rzg2l_cpg_sd_clk_mux_determine_rate(struct clk_hw *hw,
+>                                                struct clk_rate_request *req)
+>  {
+> -       return clk_mux_determine_rate_flags(hw, req, 0);
+> +       return clk_mux_determine_rate_flags(hw, req, CLK_MUX_ROUND_CLOSEST);
+>  }
+>
+>  static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
 
 Gr{oetje,eeting}s,
 
