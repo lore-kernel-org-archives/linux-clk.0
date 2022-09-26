@@ -2,54 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715D2C32771
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 05:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD61AC32771
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 05:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232860AbiIZFJm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 01:09:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54040 "EHLO
+        id S233079AbiIZFYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 01:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232677AbiIZFJk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 01:09:40 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1064A65BC
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 22:09:38 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id z13so11589149ejp.6
-        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 22:09:37 -0700 (PDT)
+        with ESMTP id S232664AbiIZFYg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 01:24:36 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5455DB86
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 22:24:33 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id y141so4349693iof.5
+        for <linux-clk@vger.kernel.org>; Sun, 25 Sep 2022 22:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=vrb/QOBCOlwnil4xOu2RseRmD1KSKb1sCTEzWBoOr7A=;
-        b=CjyMr8K5Wev1LqZH4hcWNR4hCa7hpv03fz6sO4CQoigIqQfzbByI+PeL62qb6OS5f6
-         B6/UPRBG20hOIgzFCctOTxKGY7MWWmlbPU/fK1U2S6LaPHoAmR3Xm7v0Rx0GkuSc2vyE
-         VrIRqSRv6Ih1HnvvylK+fBM5Zj+XYDUmwevzo=
+        bh=jEvurfgQn31+MuQ9PuCNa1QSbNB9nuSrakYO01iDa0I=;
+        b=PBDYoF0ic9Mb/1mI1YKRHy9Z0n5FU2etf3En+x15fDRZoG29HSFX6c/LhtSQ2gawAx
+         HUQ/P7WZ/S2t8ezXnuwLGzOntikDVgIRixZEGHOeG4xWJ1+hllfLvuURJO4X71TgFlKA
+         4nCik36ImKTv6m/gJcOmL5NIpO/qmKGTCTeds=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=vrb/QOBCOlwnil4xOu2RseRmD1KSKb1sCTEzWBoOr7A=;
-        b=MEeGCtYzAe4b6CKfWgi6e7X2X68/g6IvfPl0tEDDN0lQj25jM+xS7pMJgJP7YWHhlc
-         BWzRzvxQz2fysTdaGE8PefgGMumBT0Zxj9riZYAK9BkKsTWtiR7YzDwesVZz34Vv/Wop
-         IycoPTX7eg5pWUO/vemkZKU4mBZGsbn4PN+t/K9KbdzS9y6wc3LML12W6/U+ytGTb5pH
-         P6DBfW3mP4sYRaPD3lC80b4fiw1y+u3W0rGM13FrV93hDzW+aJHWQ62aZf27QL31/7Lo
-         9kyL+njFUFgMCPZgan9f92pSTWw0gn3aFBQAkQL6rPfUEYYIihB11cF7QfJ6Q0tmub8I
-         4K6Q==
-X-Gm-Message-State: ACrzQf1wYiNT4Tw/oLZBmGLwjoB2DA4Mv46wClpj+FIOaCwdf0H8NI7a
-        LRvgY3SoWVzS0I/8218kFvVkmAwjhp7CtxGWIg59jQ==
-X-Google-Smtp-Source: AMsMyM7cfU1/JdOhkGvuQyhuRRKePnKXOOE9bin+YefFjefQP/PV7uR2GeazW9Tvxl2PgbNtWjbFZGX0+Elzhi37gGQ=
-X-Received: by 2002:a17:906:8455:b0:773:c45b:d970 with SMTP id
- e21-20020a170906845500b00773c45bd970mr16504544ejy.46.1664168976587; Sun, 25
- Sep 2022 22:09:36 -0700 (PDT)
+        bh=jEvurfgQn31+MuQ9PuCNa1QSbNB9nuSrakYO01iDa0I=;
+        b=gwPHge8LOk35WWcY+qimYt9jsmYwtKPc7KX0duFgLu/6j2hNst+mm2QebbN19B7zT9
+         GHk9Jo5mZREXsnSKiYzRu6OUybahnd8v4MbjOmxhCd/U0WGVpGAn7NFOjJFXhdNSlijO
+         wL+FNptdpC4DRfe1vd0CSJU8Z6mOmaYeqPLbzneaQj5X6tJZQ4oxkITmoH3GOWL+p+DH
+         vVM5GjF1m9BjS+Q82cVTFysW4qoGYE546AINEChsMZs08rDfaPlVDmgJ3q2f9LjPwCVY
+         hT50bseHt4dzXeboJ5NFLzo2TwY6WDSg2rrTs2L27jhOPlSP8YKiLoCP7bRb5rqz806l
+         ynpA==
+X-Gm-Message-State: ACrzQf2u594gX0Bcmxge/gOl9hvMXrqVpsMP/L3X9Xmcz81KVwmA9ZoJ
+        ito/IA2RcrpzO1PoyekU+1+BbJ3UGwOMSx3CO4souw==
+X-Google-Smtp-Source: AMsMyM7De/9dx5rvLkUXiEMENOXrcabNaS46duo0p3ODzyDJhzzbtcEstux2UW5Xef0qQZaCHX+iifRVf5LNG1hnmFw=
+X-Received: by 2002:a05:6638:12c2:b0:35a:6dc2:891 with SMTP id
+ v2-20020a05663812c200b0035a6dc20891mr10221862jas.316.1664169872766; Sun, 25
+ Sep 2022 22:24:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-2-4844816c9808@baylibre.com>
-In-Reply-To: <20220919-v1-2-4844816c9808@baylibre.com>
+References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-15-4844816c9808@baylibre.com>
+ <e993c25e-f334-e1ca-73f8-58cf141c521e@linaro.org>
+In-Reply-To: <e993c25e-f334-e1ca-73f8-58cf141c521e@linaro.org>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 26 Sep 2022 13:09:24 +0800
-Message-ID: <CAGXv+5GJrjxG0pEGqseEacz_KFCRhWJSiLoiwuwwUTaSeO0RBg@mail.gmail.com>
-Subject: Re: [PATCH v1 02/17] clk: mediatek: add VDOSYS1 clock
-To:     Guillaume Ranquet <granquet@baylibre.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+Date:   Mon, 26 Sep 2022 13:24:20 +0800
+Message-ID: <CAGXv+5FYjj6=WHWBvNRDmpw2Ux8RJ4a2fT1gXk3+eXSqt9poeQ@mail.gmail.com>
+Subject: Re: [PATCH v1 15/17] dt-bindings: display: mediatek: dpi: Add
+ compatible for MediaTek MT8195
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Guillaume Ranquet <granquet@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -61,30 +64,50 @@ Cc:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, Pablo Sun <pablo.sun@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 12:59 AM Guillaume Ranquet
-<granquet@baylibre.com> wrote:
+On Thu, Sep 22, 2022 at 3:20 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> From: Pablo Sun <pablo.sun@mediatek.com>
+> On 19/09/2022 18:56, Guillaume Ranquet wrote:
+> > Add dt-binding documentation of dpi for MediaTek MT8195 SoC.
+> >
+> > Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> > index 5bb23e97cf33..2c7ecef54986 100644
+> > --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> > +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> > @@ -24,6 +24,7 @@ properties:
+> >        - mediatek,mt8183-dpi
+> >        - mediatek,mt8186-dpi
+> >        - mediatek,mt8192-dpi
+> > +      - mediatek,mt8195-dpi
+> >        - mediatek,mt8195-dp-intf
 >
-> Add the clock gate definition for the DPI1 hardware
-> in VDOSYS1.
->
-> The parent clock "hdmi_txpll" is already defined in
-> `mt8195.dtsi`.
->
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> Aren't these the same?
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+*-dpi are MIPI DPI (as in parallel data with DDR modes) encoders.
+*-dp-intf are Display Port encoder.
+
+Totally distinguishable. :)
+
+The hardware blocks seem similar upon cursory comparison of the register
+tables, with the base layout being the same, and sharing registers for
+basic settings such as the display timings.
+
+The DPI ones have some extra registers, presumably to control the signals
+or output width. The DP one has some registers of its own that only make
+sense for Display Port.
+
+
+ChenYu
