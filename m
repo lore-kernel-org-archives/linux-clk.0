@@ -2,76 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C42C07E9D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 16:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E90C32771
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Sep 2022 16:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236033AbiIZQMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 12:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39360 "EHLO
+        id S233208AbiIZQOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 12:14:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235601AbiIZQMW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 12:12:22 -0400
-X-Greylist: delayed 489 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 26 Sep 2022 08:00:11 PDT
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [IPv6:2a01:5b40:0:3005::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6803167E4
-        for <linux-clk@vger.kernel.org>; Mon, 26 Sep 2022 08:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org
-        ; s=ds202112; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eps/qtVKZZiETKIoPGE0JYH5ImQxLrY9fkg2zrYU1/k=; b=JzxnJJxgwG5XmfiI0bDH6sJMOj
-        pjwygxysLWGESDr6G6K/Ug7FUoMtIUwkoShEeh2pNvv7MSj0zJtmlrhaBWnvQmhkzSO12MWgM9mp2
-        v2ejH26UC/eu0n8UzuLQWiofrsLtJo3Fz5IuCWnTKF5jPwG95OVa3dbuDoMik87oTC/al5nYHLq86
-        xAdq5jucEblUqfK37/VQQvIcyBU66zRvXmy17iYUVA7ZV0w2BwbgZ0vFXEr4AuPvyfFSth3M185X2
-        alWNqtQK+CRoYxe4cNNaL13pC34hyVE2ml+fX9we8j1Snqug7vvXI/MmruRhe6HkFeBrr3N5LPGZN
-        P+cEl5gg==;
-Received: from [2a01:799:961:d200:3946:6b45:3eef:d112] (port=58956)
-        by smtp.domeneshop.no with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <noralf@tronnes.org>)
-        id 1ocpSh-0002Kn-8C; Mon, 26 Sep 2022 16:51:59 +0200
-Message-ID: <61777940-b892-1e39-d9f1-4af9d3b31e4b@tronnes.org>
-Date:   Mon, 26 Sep 2022 16:51:54 +0200
+        with ESMTP id S235955AbiIZQNQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 12:13:16 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A778F6110C
+        for <linux-clk@vger.kernel.org>; Mon, 26 Sep 2022 08:01:53 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:d95b:5c9b:4085:7c0d])
+        by albert.telenet-ops.be with bizsmtp
+        id Qf1r280013Qogd106f1rzH; Mon, 26 Sep 2022 17:01:51 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ocpcE-006Jcn-Ia; Mon, 26 Sep 2022 17:01:50 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ocpcE-00DO3L-5Q; Mon, 26 Sep 2022 17:01:50 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: r8a779g0: Add MSIOF clocks
+Date:   Mon, 26 Sep 2022 17:01:49 +0200
+Message-Id: <3cb2f1798145099a46134862c6bcbdcc29ca7410.1664204336.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1664204336.git.geert+renesas@glider.be>
+References: <cover.1664204336.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH] clk: bcm2835: Make peripheral PLLC critical
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-rpi-kernel@lists.infradead.org
-References: <20220926084509.12233-1-maxime@cerno.tech>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-In-Reply-To: <20220926084509.12233-1-maxime@cerno.tech>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add the module clocks used by the Clock-Synchronized Serial Interfaces
+with FIFO (MSIOF) on the Renesas R-Car V4H (R8A779G0) SoC.
 
+Extracted from a larger patch in the BSP by Kazuya Mizuguchi.
 
-Den 26.09.2022 10.45, skrev Maxime Ripard:
-> When testing for a series affecting the VEC, it was discovered that
-> turning off and on the VEC clock is crashing the system.
-> 
-> It turns out that, when disabling the VEC clock, it's the only child of
-> the PLLC-per clock which will also get disabled. The source of the crash
-> is PLLC-per being disabled.
-> 
-> It's likely that some other device might not take a clock reference that
-> it actually needs, but it's unclear which at this point. Let's make
-> PLLC-per critical so that we don't have that crash.
-> 
-> Reported-by: Noralf Trønnes <noralf@tronnes.org>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 4265340a8fce5388..8f43a63de6cf27ea 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -163,6 +163,12 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
+ 	DEF_MOD("i2c3",		521,	R8A779G0_CLK_S0D6_PER),
+ 	DEF_MOD("i2c4",		522,	R8A779G0_CLK_S0D6_PER),
+ 	DEF_MOD("i2c5",		523,	R8A779G0_CLK_S0D6_PER),
++	DEF_MOD("msi0",		618,	R8A779G0_CLK_MSO),
++	DEF_MOD("msi1",		619,	R8A779G0_CLK_MSO),
++	DEF_MOD("msi2",		620,	R8A779G0_CLK_MSO),
++	DEF_MOD("msi3",		621,	R8A779G0_CLK_MSO),
++	DEF_MOD("msi4",		622,	R8A779G0_CLK_MSO),
++	DEF_MOD("msi5",		623,	R8A779G0_CLK_MSO),
+ 	DEF_MOD("sydm0",	709,	R8A779G0_CLK_S0D6_PER),
+ 	DEF_MOD("sydm1",	710,	R8A779G0_CLK_S0D6_PER),
+ 	DEF_MOD("wdt1:wdt0",	907,	R8A779G0_CLK_R),
+-- 
+2.25.1
+
