@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192AFC6FA83
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 10:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 479CCC6FA94
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 10:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231805AbiI0KLk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 06:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42532 "EHLO
+        id S231795AbiI0KLm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 06:11:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231786AbiI0KLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 06:11:38 -0400
+        with ESMTP id S231689AbiI0KLk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 06:11:40 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 197EF9E0F6;
-        Tue, 27 Sep 2022 03:11:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FE1E13DE5;
+        Tue, 27 Sep 2022 03:11:39 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BBEEA6602265;
-        Tue, 27 Sep 2022 11:11:33 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4AB536602269;
+        Tue, 27 Sep 2022 11:11:37 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664273494;
-        bh=0o/8cVorzOsad5b/Haf5ctcd6DYaAoupPjEfo3dU2RU=;
+        s=mail; t=1664273498;
+        bh=78egXpcwYI0LobAOtW6zrOMH4zDX0mRd/unB/BTkHWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eJZnYEZfTW2546Q2EMvR2zOhotutnmTNfvUp5QmaRpkiW1g4Wt14O3+WNGym1Amm5
-         8smEJPUErM/974lSgBmHLaFNa4oG5vZP63vrbr9CvjBye9eJXgESWlqjw1X+dAut0F
-         XLBduncdVcXKfxWJ3RMpyLVnShssV42OD+omYQWkdJPaahFEKKuZsmUV80Guk8zQGZ
-         YuvNqD9q/zgf9gwogttzCxa4gbtU8F7/nCVcFHTx8tsUQ70JCp31E6E+a22Lj94DRf
-         c9PoYLK467JFbItzlAxjNe27VpsAzup5DbNljauDEAY0VATAvPkPw9n5Gn31yEWubg
-         fq5Gmn2dVtRnw==
+        b=BhEqnumSFViyf5+cjS0GMrD/MgtgV6aeQH1xllvstM3+/qh/sEDnC5RjuhrV/xVPQ
+         kv04fP391YSavgrc1thW4xCK4qp4OdkOYsduoJ92N6KwLNfdmjssHjNUlqEKGmZJc8
+         jvibIJHBrXGOLV5SrYuGcr1hhuENgUOfAAWqjywd1vli+2OMZl3JC8waD7F0cLNC/y
+         9M16cvNMeAk54j1yOjmuELA4bej5T1mx/flhH/DzQDXRUaY0PGQQp2UuZ7G26ILBn6
+         HWxH23Yn8zOKtcvdxL2Ayl96UJaOQ2z/B/6Vx0qHMGePKskFRh4/uUSaIcCu6EqPFv
+         lG6gG5VgZNePw==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     matthias.bgg@gmail.com
@@ -44,9 +44,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
-Subject: [PATCH v3 01/10] arm64: dts: mt8183: Fix Mali GPU clock
-Date:   Tue, 27 Sep 2022 12:11:19 +0200
-Message-Id: <20220927101128.44758-2-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 04/10] clk: mediatek: mt8183: Add clk mux notifier for MFG mux
+Date:   Tue, 27 Sep 2022 12:11:22 +0200
+Message-Id: <20220927101128.44758-5-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
 References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
@@ -58,34 +58,76 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chen-Yu Tsai <wenst@chromium.org>
 
-The actual clock feeding into the Mali GPU on the MT8183 is from the
-clock gate in the MFGCFG block, not CLK_TOP_MFGPLL_CK from the TOPCKGEN
-block, which itself is simply a pass-through placeholder for the MFGPLL
-in the APMIXEDSYS block.
+When the MFG PLL clock, which is upstream of the MFG clock, is changed,
+the downstream clock and consumers need to be switched away from the PLL
+over to a stable clock to avoid glitches.
 
-Fix the hardware description with the correct clock reference.
+This is done through the use of the newly added clk mux notifier. The
+notifier is set on the mux itself instead of the upstream PLL, but in
+practice this works, as the rate change notifitcations are propogated
+throughout the sub-tree hanging off the PLL. Just before rate changes,
+the MFG mux is temporarily and transparently switched to the 26 MHz
+main crystal. After the rate change, the mux is switched back.
 
-Fixes: a8168cebf1bc ("arm64: dts: mt8183: Add node for the Mali GPU")
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+[Angelo: Rebased to assign clk_ops in mtk_mux_nb]
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt8183.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index a70b669c49ba..402136bfd535 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -1678,7 +1678,7 @@ gpu: gpu@13040000 {
- 				<GIC_SPI 278 IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-names = "job", "mmu", "gpu";
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 8512101e1189..1860a35a723a 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -1198,10 +1198,33 @@ static void clk_mt8183_top_init_early(struct device_node *node)
+ CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
+ 			clk_mt8183_top_init_early);
  
--			clocks = <&topckgen CLK_TOP_MFGPLL_CK>;
-+			clocks = <&mfgcfg CLK_MFG_BG3D>;
++/* Register mux notifier for MFG mux */
++static int clk_mt8183_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
++{
++	struct mtk_mux_nb *mfg_mux_nb;
++	int i;
++
++	mfg_mux_nb = devm_kzalloc(dev, sizeof(*mfg_mux_nb), GFP_KERNEL);
++	if (!mfg_mux_nb)
++		return -ENOMEM;
++
++	for (i = 0; i < ARRAY_SIZE(top_muxes); i++)
++		if (top_muxes[i].id == CLK_TOP_MUX_MFG)
++			break;
++	if (i == ARRAY_SIZE(top_muxes))
++		return -EINVAL;
++
++	mfg_mux_nb->ops = top_muxes[i].ops;
++	mfg_mux_nb->bypass_index = 0; /* Bypass to 26M crystal */
++
++	return devm_mtk_clk_mux_notifier_register(dev, clk, mfg_mux_nb);
++}
++
+ static int clk_mt8183_top_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base;
+ 	struct device_node *node = pdev->dev.of_node;
++	int ret;
  
- 			power-domains =
- 				<&spm MT8183_POWER_DOMAIN_MFG_CORE0>,
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+@@ -1227,6 +1250,11 @@ static int clk_mt8183_top_probe(struct platform_device *pdev)
+ 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
+ 		top_clk_data);
+ 
++	ret = clk_mt8183_reg_mfg_mux_notifier(&pdev->dev,
++					      top_clk_data->hws[CLK_TOP_MUX_MFG]->clk);
++	if (ret)
++		return ret;
++
+ 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+ 				      top_clk_data);
+ }
 -- 
 2.37.2
 
