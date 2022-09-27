@@ -2,193 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B9AC6FA83
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 17:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9487C07E9D
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 19:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231425AbiI0R0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 13:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54356 "EHLO
+        id S231882AbiI0TnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 15:43:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232072AbiI0R0e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 13:26:34 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE42B0898;
-        Tue, 27 Sep 2022 10:26:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S231706AbiI0TnP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 15:43:15 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D1C3160E40
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 12:43:14 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E2451CE13B1;
-        Tue, 27 Sep 2022 17:26:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1964AC433C1;
-        Tue, 27 Sep 2022 17:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664299589;
-        bh=7qW4NoYfDpzCVbAcPMno7UyKuLi2bhHCAlraw+xf0DU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ah9kXG5WXTnm4IQfxw0kTiNqLFGQtpPXAwE/8mRaytERIGpRPJA7plDtS0pKtRKQK
-         6FVQKT9fsZgjjiGIxz3V7bRd3ogBSVIQKHZRArlodpWDmnspRE/E6cmuLdCh2OVruj
-         9gfSy0wfh45qDbDNyPpKRzpGoKF/PT4N6NotqFYw/kLfhdjSSMLWDdL5kHj77ALdAq
-         m86sTM6PztdqZtdNnqPccZn/Ftgv3KucRwPi4i6Vaf54J7HY6BGorcUF6zelf3BAs7
-         VUFM7Xoq7LprWEIjmaHp2wg6mBJjkfy6XAupj2HDUZDSTH8XgERJZoeOcKualjUDva
-         2exQjN63qeGCw==
-Date:   Tue, 27 Sep 2022 12:26:26 -0500
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        krzysztof.kozlowski@linaro.org, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] clk: qcom: gdsc: Add a reset op to poll gdsc
- collapse
-Message-ID: <20220927172626.cwxpmrqkb7zsuolx@builder.lan>
-References: <1660853919-987-1-git-send-email-quic_akhilpo@quicinc.com>
- <20220819014758.v3.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 92B9F80759;
+        Tue, 27 Sep 2022 21:43:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1664307792;
+        bh=O0n/bujq3J/WZzFhxUw7U6jl1sUKsnEwE6RJGlhn7Tk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=W57nXGHAKPIWkfksdTM63MiTpw9z5t8ZO/rslJnZaCHlDQIAppy5BQhJ3jaF70WrH
+         BgEOm2zT5nO1KwTkKEuNlAsGKQkdi6WnC7h01kJb/F+lT8shCRU3Ak11xmSdMBCY8m
+         firGyJNAFjxPLJRfjR+7cXtakTXZZDZkOPi+7qwvoBkoS+yOaVhjNA6heDFnvVHlUh
+         /uTpsS59z7K1wb8m/9aCTD43wsgYat6j0D5D4oVxMtkftAjS5uY8Eg8EBMRggVnvHN
+         zDtuxaVvLJDN1o0BT0cw2e6+ryZspQmt1nqSTevtdsF2ZcZnK0UjhCZkyavvDkcUWt
+         eTy/EApnQyjVg==
+Message-ID: <9a13e3ab-6541-7a24-e231-64faeac129c6@denx.de>
+Date:   Tue, 27 Sep 2022 21:43:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220819014758.v3.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH v2] clk: rs9: Fix I2C accessors
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20220924164933.393649-1-marex@denx.de>
+ <4745081.GXAFRqVoOG@steina-w>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <4745081.GXAFRqVoOG@steina-w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 19, 2022 at 01:48:37AM +0530, Akhil P Oommen wrote:
-> Add a reset op compatible function to poll for gdsc collapse.
+On 9/26/22 08:36, Alexander Stein wrote:
+> Hi Marek,
+
+Hi,
+
+> thanks for the update.
+> To answer your question regarding the cache: With this patch I get the
+> following:
+> $ cat /sys/kernel/debug/regmap/1-0068/registers
+> 0: 00
+> 1: 00
+> 2: 00
+> 3: 00
+> 4: 00
+> 5: 00
+> 6: 00
+> 7: 01
+> 8: 00
+
+Ah, clear. Thanks for the detailed explanation.
+
+> Which is obviously wrong. Reason is that the cache is not allocated without a
+> known size. This can be fixed using this patch:
+> ---8<---
+> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+> index 5b37d6a2e908..f1c185980466 100644
+> --- a/drivers/clk/clk-renesas-pcie.c
+> +++ b/drivers/clk/clk-renesas-pcie.c
+> @@ -140,7 +140,8 @@ static const struct regmap_config rs9_regmap_config = {
+>          .reg_bits = 8,
+>          .val_bits = 8,
+>          .cache_type = REGCACHE_FLAT,
+> -       .max_register = 0x8,
+> +       .max_register = 0x7,
+> +       .num_reg_defaults_raw = 0x8,
+>          .rd_table = &rs9_readable_table,
+>          .wr_table = &rs9_writeable_table,
+>          .reg_write = rs9_regmap_i2c_write,
+> ---8<---
 > 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
+> Unfortunately now the cache is initialized before RS9_REG_BCP is set to 1,
+> resulting in the following panic:
+> [   17.221637] Kernel panic - not syncing: stack-protector: Kernel stack is
+> corrupted in: rs9_regmap_i2c_read+0xb4/0xb4 [clk_renesas_pcie]
+> [   16.862107] CPU: 3 PID: 277 Comm: systemd-udevd Not tainted 6.0.0-rc6-
+> next-20220923+ #764 d22d7e904fab3397adb372dbcb36af4e5b1f49bd
+> [   16.862118] Hardware name: TQ-Systems GmbH i.MX8MM TQMa8MxML on MBa8Mx (DT)
+> [   16.862123] Call trace:
+> [   16.862125]  dump_backtrace+0xd8/0x130
+> [   16.862136]  show_stack+0x14/0x40
+> [   16.862141]  dump_stack_lvl+0x88/0xb0
+> [   16.862147]  dump_stack+0x14/0x2c
+> [   16.862152]  panic+0x19c/0x394
+> [   16.862160]  __stack_chk_fail+0x24/0x30
+> [   16.862167]  rs9_get_common_config+0x0/0x19c [clk_renesas_pcie]
+> [   16.862179]  _regmap_read+0x74/0x164
+> [   16.862188]  regmap_read+0x48/0x70
+> [   16.862193]  regcache_hw_init+0x184/0x2d0
+> [   16.862200]  regcache_init+0x1d4/0x2c0
+> [   16.862206]  __regmap_init+0x864/0x1000
+> [   16.862211]  __devm_regmap_init+0x74/0xc0
+> [   16.862217]  rs9_probe+0x118/0x240 [clk_renesas_pcie]
 > 
-> (no changes since v2)
+> This is caused by I2C_M_RECV_LEN for the rx i2c transfer. Upon cache
+> initialization the 1st byte received is still set to 8 in hardware. So 8 data
+> bytes + len are copied into rx buffer (which is actually only 2 bytes).
+> There is 2 ways to fix it: Set the rx buffer to the maximum receivable bytes
+> (8) or only read a fixed size of 2. As reg_read only supports reading 1
+> register, the latter one is enough.
+> Reading is fixed by the following patch.
+> ---8<---
+> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+> index c320ce25c11b..5b37d6a2e908 100644
+> --- a/drivers/clk/clk-renesas-pcie.c
+> +++ b/drivers/clk/clk-renesas-pcie.c
+> @@ -122,8 +122,8 @@ static int rs9_regmap_i2c_read(void *context,
+>          xfer[0].buf = (void *)&txdata;
+>   
+>          xfer[1].addr = i2c->addr;
+> -       xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
+> -       xfer[1].len = 1;
+> +       xfer[1].flags = I2C_M_RD;
+> +       xfer[1].len = 2;
+>          xfer[1].buf = (void *)rxdata;
+>   
+>          ret = i2c_transfer(i2c->adapter, xfer, 2);
+> ---8<---
 > 
-> Changes in v2:
-> - Minor update to function prototype
-> 
->  drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++++----
->  drivers/clk/qcom/gdsc.h |  7 +++++++
->  2 files changed, 26 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 44520ef..2d0f1d1 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  #include "gdsc.h"
-> +#include "reset.h"
->  
->  #define PWR_ON_MASK		BIT(31)
->  #define EN_REST_WAIT_MASK	GENMASK_ULL(23, 20)
-> @@ -116,7 +117,8 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->  	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
->  }
->  
-> -static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
-> +static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status,
-> +		s64 timeout_us, unsigned int interval_ms)
->  {
->  	ktime_t start;
->  
-> @@ -124,7 +126,9 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
->  	do {
->  		if (gdsc_check_status(sc, status))
->  			return 0;
-> -	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-> +		if (interval_ms)
-> +			msleep(interval_ms);
+> Putting all together the regmap debug output is like this:
+> $ cat /sys/kernel/debug/regmap/1-0068/registers
+> 0: ff
+> 1: 06
+> 2: ff
+> 3: 5f
+> 4: 00
+> 5: 01
+> 6: 04
+> 7: 01
 
-You effectively msleep(5) here, for which you shouldn't use msleep() -
-or more likely, this only happens in exceptional circumstances, so a
-longer interval_ms seems reasonable.
+What about option 3 -- disable the cache altogether ?
 
-> +	} while (ktime_us_delta(ktime_get(), start) < timeout_us);
->  
->  	if (gdsc_check_status(sc, status))
->  		return 0;
-> @@ -172,7 +176,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->  		udelay(1);
->  	}
->  
-> -	ret = gdsc_poll_status(sc, status);
-> +	ret = gdsc_poll_status(sc, status, TIMEOUT_US, 0);
->  	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
->  
->  	if (!ret && status == GDSC_OFF && sc->rsupply) {
-> @@ -343,7 +347,7 @@ static int _gdsc_disable(struct gdsc *sc)
->  		 */
->  		udelay(1);
->  
-> -		ret = gdsc_poll_status(sc, GDSC_ON);
-> +		ret = gdsc_poll_status(sc, GDSC_ON, TIMEOUT_US, 0);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -565,3 +569,14 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
-> +
-> +int gdsc_wait_for_collapse(void *priv)
-> +{
-> +	struct gdsc *sc = priv;
-> +	int ret;
-> +
-> +	ret = gdsc_poll_status(sc, GDSC_OFF, 500000, 5);
+I can imagine since the chip is configured with like 2-3 I2C writes on 
+boot and then never again written to, that might be the simplest approach.
 
-So I presume the GPU driver will put() the GDSC and then issue a reset,
-which will wait up to 5 seconds for the GDSC to be turned off.
+> This is actually a 9FGV0441 using some queued patches on my side.
 
-So essentially, this logic is needed because we don't wait for VOTABLE
-GDSCs to be turned off? And we have no way to do the put-with-wait for
-this specific case.
-
-I would like the commit message to capture this reasoning.
-
-Thanks,
-Bjorn
-
-> +	WARN(ret, "%s status stuck at 'on'", sc->pd.name);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(gdsc_wait_for_collapse);
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index ad313d7..d484bdb 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -12,6 +12,7 @@
->  struct regmap;
->  struct regulator;
->  struct reset_controller_dev;
-> +struct qcom_reset_map;
->  
->  /**
->   * struct gdsc - Globally Distributed Switch Controller
-> @@ -79,6 +80,7 @@ int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
->  		  struct regmap *);
->  void gdsc_unregister(struct gdsc_desc *desc);
->  int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
-> +int gdsc_wait_for_collapse(void *priv);
->  #else
->  static inline int gdsc_register(struct gdsc_desc *desc,
->  				struct reset_controller_dev *rcdev,
-> @@ -88,5 +90,10 @@ static inline int gdsc_register(struct gdsc_desc *desc,
->  }
->  
->  static inline void gdsc_unregister(struct gdsc_desc *desc) {};
-> +
-> +static int gdsc_wait_for_collapse(void *priv)
-> +{
-> +	return  -ENOSYS;
-> +}
->  #endif /* CONFIG_QCOM_GDSC */
->  #endif /* __QCOM_GDSC_H__ */
-> -- 
-> 2.7.4
-> 
+Nice, do you plan to send a binding update for this one ?
