@@ -2,102 +2,314 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F056C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAA3C6FA83
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230374AbiI0NmO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 09:42:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49768 "EHLO
+        id S231852AbiI0Nyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 09:54:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232861AbiI0NmM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:42:12 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92D5E3EC2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:42:10 -0700 (PDT)
-Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4McLJy0LKczHtgR;
-        Tue, 27 Sep 2022 21:37:22 +0800 (CST)
-Received: from huawei.com (10.175.112.208) by dggpeml500024.china.huawei.com
- (7.185.36.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Tue, 27 Sep
- 2022 21:42:08 +0800
-From:   Yuan Can <yuancan@huawei.com>
-To:     <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <openbmc@lists.ozlabs.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <yuancan@huawei.com>
-Subject: [PATCH] clk: clk-npcm7xx: Remove unused struct npcm7xx_clk_gate_data and npcm7xx_clk_div_fixed_data
-Date:   Tue, 27 Sep 2022 13:39:31 +0000
-Message-ID: <20220927133931.104060-1-yuancan@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S231714AbiI0Nyk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:54:40 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 682DA1180A
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:54:34 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id h8-20020a17090a054800b00205ccbae31eso3100352pjf.5
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:from:to:cc:subject:date;
+        bh=5qwETXszsJHRG+KNZAfDuGy2+IIkJBoKDnABLfH60tQ=;
+        b=f6CmSv0OlzXmED5tWFMSEinGTJEbhs3apO2o1WVlHEn+fFfXX/l+1/NWVY0KujLper
+         X/2WcJl9nH8Xw5kR9mL+LHRjOMu43tSGWSUwpvW9zKPDPXKjDOCRlWV7xlNA4fU9O3uO
+         EMLs8HS8JsxOPDDfvIp20W1TauC+8dKOsL0XnOUFHRZiSa+Zbjqid1dyRpVlomKM4otZ
+         zh6z3rpfTqgJ1FKaCaI+uRceIOXR7ELINnOEvNzy5OSpCn6dwVULSLU4AeDcDUINb9b0
+         wiTFGntz5cRLbyKXTdNoLvrKQdmT7WT5bwZGjE1l5eZ42VfsffuzvLg2MDN0nikd2ZHZ
+         OhNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=5qwETXszsJHRG+KNZAfDuGy2+IIkJBoKDnABLfH60tQ=;
+        b=OyqqfJhP0HNE6S96IcshfLdnKkhQl4U4+bJ8Kep42he90hjXnPM8apRhrEw5F4wM8/
+         OQxFpDgqAgm9k1jYcoqfLOPZNWOPJR8VDOwBoSqc9Oswn9sy25Tu0yeEO7iMmb306dGM
+         KfbRO96gjw6BBdQs8SAlVdHtziEDvhEDqDuXg2DsvRoDPi9QUNIvVOzWdGQjH3nsmYnq
+         I6WD+AoQaNWHPr2ctD2Mzygzo7malIloQ363RU1PTd+Lf3CM6/c7GOMpRIZZS0Uv41nt
+         FOI+i/JOcMd0xJluGjgCyJxMSg8wreDl1Pik0yXeBEVyjvCT7GaPAc7oFQHXl2lTVw/d
+         c7pQ==
+X-Gm-Message-State: ACrzQf2/Z+GaGJgBNdKT8ifhmfJWv24V7gBItDWr7HAUGiovq07W524z
+        4PrwwLWEzLlYsZaLHEn9NsmyyuDUzl8w+IjWGUGyWA==
+X-Google-Smtp-Source: AMsMyM4+x7J4OZ7W3bVeH4hHPFvWPmyfihQv01BR+E1ukDBABSgNNIPaY8dNmMrk3y51NserN90WcMrsVcQRB6ZIwYk=
+X-Received: by 2002:a17:90b:3807:b0:205:d746:93a0 with SMTP id
+ mq7-20020a17090b380700b00205d74693a0mr3837620pjb.188.1664286873871; Tue, 27
+ Sep 2022 06:54:33 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 27 Sep 2022 06:54:33 -0700
+From:   Guillaume Ranquet <granquet@baylibre.com>
+User-Agent: meli 0.7.2
+References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-4-4844816c9808@baylibre.com>
+ <260bb17f-efc8-1287-3e03-f9b8e79a6e31@linaro.org>
+In-Reply-To: <260bb17f-efc8-1287-3e03-f9b8e79a6e31@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.112.208]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500024.china.huawei.com (7.185.36.10)
-X-CFilter-Loop: Reflected
+Date:   Tue, 27 Sep 2022 06:54:33 -0700
+Message-ID: <CABnWg9vifOaAgwr7tkELUqbQA_1f-FfMFZ9o7sjZCaneo_FUmw@mail.gmail.com>
+Subject: Re: [PATCH v1 04/17] dt-bindings: display: mediatek: add MT8195 hdmi bindings
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After commit 6a5898411159("clk: clk-npcm7xx: Remove unused static const tables
-'npcm7xx_gates' and 'npcm7xx_divs_fx'"), no one use struct
-npcm7xx_clk_gate_data and struct npcm7xx_clk_div_fixed_data, so remove them.
+On Thu, 22 Sep 2022 09:18, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>On 19/09/2022 18:56, Guillaume Ranquet wrote:
+>> Add mt8195 SoC bindings for hdmi and hdmi-ddc
+>>
+>> Make port1 optional for mt8195 as it only supports HDMI tx for now.
+>> Requires a ddc-i2c-bus phandle.
+>> Requires a power-domains phandle.
+>>
+>> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+>> index bdaf0b51e68c..abb231a0694b 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+>> @@ -21,6 +21,10 @@ properties:
+>>        - mediatek,mt7623-hdmi
+>>        - mediatek,mt8167-hdmi
+>>        - mediatek,mt8173-hdmi
+>> +      - mediatek,mt8195-hdmi
+>> +
+>> +  clocks: true
+>> +  clock-names: true
+>
+>????
+>Why is this moved?
+>
+>>
+>>    reg:
+>>      maxItems: 1
+>> @@ -28,20 +32,6 @@ properties:
+>>    interrupts:
+>>      maxItems: 1
+>>
+>> -  clocks:
+>> -    items:
+>> -      - description: Pixel Clock
+>> -      - description: HDMI PLL
+>> -      - description: Bit Clock
+>> -      - description: S/PDIF Clock
+>> -
+>> -  clock-names:
+>> -    items:
+>> -      - const: pixel
+>> -      - const: pll
+>> -      - const: bclk
+>> -      - const: spdif
+>
+>Clock definition with constraints should stay here. You just customize
+>it per variant.
+>
+Clocks are different between the two hardwares, so I've tried moving everything
+inside the if/else block.
 
-Signed-off-by: Yuan Can <yuancan@huawei.com>
----
- drivers/clk/clk-npcm7xx.c | 29 -----------------------------
- 1 file changed, 29 deletions(-)
+Is there a better way to express this?
 
-diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-index e677bb5a784b..e319cfa51a8a 100644
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -129,20 +129,6 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
- #define NPCM7XX_SECCNT          (0x68)
- #define NPCM7XX_CNTR25M         (0x6C)
- 
--struct npcm7xx_clk_gate_data {
--	u32 reg;
--	u8 bit_idx;
--	const char *name;
--	const char *parent_name;
--	unsigned long flags;
--	/*
--	 * If this clock is exported via DT, set onecell_idx to constant
--	 * defined in include/dt-bindings/clock/nuvoton, NPCM7XX-clock.h for
--	 * this specific clock.  Otherwise, set to -1.
--	 */
--	int onecell_idx;
--};
--
- struct npcm7xx_clk_mux_data {
- 	u8 shift;
- 	u8 mask;
-@@ -160,21 +146,6 @@ struct npcm7xx_clk_mux_data {
- 
- };
- 
--struct npcm7xx_clk_div_fixed_data {
--	u8 mult;
--	u8 div;
--	const char *name;
--	const char *parent_name;
--	u8 clk_divider_flags;
--	/*
--	 * If this clock is exported via DT, set onecell_idx to constant
--	 * defined in include/dt-bindings/clock/nuvoton, NPCM7XX-clock.h for
--	 * this specific clock.  Otherwise, set to -1.
--	 */
--	int onecell_idx;
--};
--
--
- struct npcm7xx_clk_div_data {
- 	u32 reg;
- 	u8 shift;
--- 
-2.17.1
+>> -
+>>    phys:
+>>      maxItems: 1
+>>
+>> @@ -58,6 +48,16 @@ properties:
+>>      description: |
+>>        phandle link and register offset to the system configuration registers.
+>>
+>> +  ddc-i2c-bus:
+>> +    $ref: '/schemas/types.yaml#/definitions/phandle'
+>
+>Drop quotes
+>
+>> +    description: Phandle to the ddc-i2c device
+>
+>Isn't this property of panel?
+>
+It's a property used in panels and connectors.
+But since this IP doesn't use a connector per say, I've added the property here.
 
+Which doesn't sound reasonnable when I'm explaining it like this...
+I'll see what I can do to fit a connector and have things look a bit
+more standard.
+
+>> +
+>> +  power-domains:
+>> +    description:
+>> +      A phandle and PM domain specifier as defined by bindings
+>> +      of the power controller specified by phandle. See
+>> +      Documentation/devicetree/bindings/power/power-domain.yaml for details.
+>
+>No need for this text. This is standard property. You miss maxItems.
+>
+>
+>> +
+>>    ports:
+>>      $ref: /schemas/graph.yaml#/properties/ports
+>>
+>> @@ -76,7 +76,6 @@ properties:
+>>
+>>      required:
+>>        - port@0
+>> -      - port@1
+>>
+>>  required:
+>>    - compatible
+>> @@ -86,9 +85,55 @@ required:
+>>    - clock-names
+>>    - phys
+>>    - phy-names
+>> -  - mediatek,syscon-hdmi
+>>    - ports
+>>
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: mediatek,mt8195-hdmi
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: APB
+>> +            - description: HDCP
+>> +            - description: HDCP 24M
+>> +            - description: Split HDMI
+>> +        clock-names:
+>> +          items:
+>> +            - const: hdmi_apb_sel
+>> +            - const: hdcp_sel
+>> +            - const: hdcp24_sel
+>> +            - const: split_hdmi
+>
+>Clocks are entirely different. I am not sure there is benefit in keeping
+>these devices in one bindings.
+>
+
+I agree with that, but it was requested by CK that the driver and bindings be
+as common as possible.
+
+>> +
+>> +      required:
+>> +        - power-domains
+>> +        - ddc-i2c-bus
+>
+>Blank line,
+>
+>> +    else:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: Pixel Clock
+>> +            - description: HDMI PLL
+>> +            - description: Bit Clock
+>> +            - description: S/PDIF Clock
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: pixel
+>> +            - const: pll
+>> +            - const: bclk
+>> +            - const: spdif
+>> +
+>> +        ports:
+>> +          required:
+>> +            - port@1
+>> +
+>> +      required:
+>> +        - mediatek,syscon-hdmi
+>> +
+>>  additionalProperties: false
+>>
+>>  examples:
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+>> new file mode 100644
+>> index 000000000000..3c80bcebe6d3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+>> @@ -0,0 +1,45 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Mediatek HDMI DDC Device Tree Bindings for mt8195
+>
+>Drop Device Tree Bindings
+>
+>> +
+>> +maintainers:
+>> +  - CK Hu <ck.hu@mediatek.com>
+>> +  - Jitao shi <jitao.shi@mediatek.com>
+>> +
+>> +description: |
+>> +  The HDMI DDC i2c controller is used to interface with the HDMI DDC pins.
+>
+>Why is this different than existing ddc bindings?
+>
+This ddc is actually part of the MT8195 hdmi IP.
+
+So it is a bit simpler than the mediatek,hdmi-ddc.yaml
+As it has only one clock, no reg, no interrupts.
+
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - mediatek,mt8195-hdmi-ddc
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: ddc-i2c
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    hdmiddc0: ddc_i2c {
+>
+>No underscores in node names. Generic node names.
+>
+>
+>Best regards,
+>Krzysztof
+>
