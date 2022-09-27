@@ -2,152 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01680C6FA83
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 14:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65899C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 14:54:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbiI0Och (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 10:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55910 "EHLO
+        id S231848AbiI0OyC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 10:54:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbiI0OcJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 10:32:09 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F68F61D56
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 07:31:49 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id z25so16039652lfr.2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 07:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=NUfI4SCRisddpR+Mrk1Ab5N6zdnsa7HpNGyqDE8S3Ak=;
-        b=N5H3PvxU0f/K1m+Ie5ZB11BDUfHM5/7rmKTWERCI16RPnFP93poTMnQCJcmimNQyb+
-         iM26D7OsLJcsmOZU/xMHANBiDKZIn9q2gs+chOxXtKyJdRoM3jcDS5xdhCqh3NMrfRvl
-         d4IWDb/pXsaeTkuCa9br1kfnKDF0YN9oUcBRFQWU75t855LH3pbtJP9ynWm4chBxGG+z
-         6dailbrZEc3YIZTVHATQ5QYGCP/Jr9uNtyCEmGyO7YdW7A+jIrhldXH2mH7IJvdPcHDI
-         n9XprOk48xR/fUdkCmm9j3V13OUbMExg0fBRQ2uf4Tl6H1UI5g9KWgvQc3JkKwQP3qBL
-         L0Vg==
+        with ESMTP id S232693AbiI0Oxf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 10:53:35 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19356B2879;
+        Tue, 27 Sep 2022 07:51:43 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id d17so6129572qko.13;
+        Tue, 27 Sep 2022 07:51:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=NUfI4SCRisddpR+Mrk1Ab5N6zdnsa7HpNGyqDE8S3Ak=;
-        b=VzYmzMO89XPE9sk6zWwh8JEHBrRUM89bYlTBDrZA+LDqL3jM6T9hVls+EQZdQ54il/
-         50cwchEX9h1nYAvITKiZ/FZ8cwAQK9Q7YceepUIt63Mq/clXb/UdRZWjkizWjis8Sc5O
-         glsio+3mJbP3kd+6yNY0nKX4fha2Fm6pWhjzkmrDLDtWfeOmpuL0yoiQTkyMr2KjC47C
-         5A4BkIAUb1j6o+5c8Q67jHnpRXeauwXtppepnMefPlTohZtDiMMA81KsaAcCDvMyNOgz
-         Tn2eiTlN3WYA9mmh0OyFVDBmaqn+89+c/AMLBs9slwNRntB1TbA1WFqCmZdYOuk0IAL6
-         435g==
-X-Gm-Message-State: ACrzQf1BcN79qUZE7Gdm4adqi6NewHSTyQXyX8C6p5pMdDAlLInCamiZ
-        ZLPBl7B2oMJR31YsARF659qrjg==
-X-Google-Smtp-Source: AMsMyM45aqxVkdxZ0HAqRVzU94fLrEHMjS4h00CZmLSIcK6DvgMURloYNRLEY0p/VovPPWPqX6uRGg==
-X-Received: by 2002:a05:6512:39ca:b0:497:a0b6:449c with SMTP id k10-20020a05651239ca00b00497a0b6449cmr10908608lfu.308.1664289107724;
-        Tue, 27 Sep 2022 07:31:47 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id z40-20020a2ebe28000000b0026c2fec2f8esm176975ljq.84.2022.09.27.07.31.37
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=mcmbFJNhtLAll3ZUzfvL0JQzBR7USTKl9MyorTFZA2I=;
+        b=hhFfg7bOv3JPslW1Lywu+O8oTyDgVOQCY5qVPXRsS9VpvlPjp/iTwXpKvD6Ikcmaow
+         qcLxhuBfgeWQkkl2foGPoc+KCENuRkl6x2F4Q5f+FxQbN4Fu83jlcMSQL2jl8p/1yZEy
+         YZpNSo18W3geSPaKa5dcrWLuAN3xF03yb0f5HiD/Yli4hvC4X/mykSr5eR9IR3KveeQR
+         CIUmCcBFP4hAaURdtX5c4dTDQAvxWKYrZ+jEIODDBrM7LJDbJpKMZBv9qxNS3WxWnss6
+         XCSUGpq5kLF1geN05dHwgyGOS9E3jtZ9An7Xjb/oAz7/oJSmqRXIf5Sb4p1Dawwye9oC
+         coyQ==
+X-Gm-Message-State: ACrzQf22z9TCeUcKaZmRbHgX16/fDQX/B4YW+2gJoU0EqPT5IsN9gQ0s
+        wkdVqEHBMMj2cQnyhzIxrvwiWZOKGIdPKg==
+X-Google-Smtp-Source: AMsMyM6/pxbBc1bUGqW3NPrX+YQPSp8U9WLoUPyw1jXSb0XeV2JDLwmCz7a4ZiHoljcQ1NIphTp+Pg==
+X-Received: by 2002:a05:620a:158d:b0:6cd:efb1:8eb6 with SMTP id d13-20020a05620a158d00b006cdefb18eb6mr17736313qkk.185.1664290302541;
+        Tue, 27 Sep 2022 07:51:42 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id d22-20020ac81196000000b0035d453b8c57sm963061qtj.11.2022.09.27.07.51.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Sep 2022 07:31:39 -0700 (PDT)
-Message-ID: <db8ec605-7038-4cd1-9e70-bbe40404fa06@linaro.org>
-Date:   Tue, 27 Sep 2022 16:31:36 +0200
+        Tue, 27 Sep 2022 07:51:42 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id c9so12527266ybf.5;
+        Tue, 27 Sep 2022 07:51:41 -0700 (PDT)
+X-Received: by 2002:a5b:506:0:b0:6af:ffac:4459 with SMTP id
+ o6-20020a5b0506000000b006afffac4459mr23972953ybp.365.1664290301712; Tue, 27
+ Sep 2022 07:51:41 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v1 04/17] dt-bindings: display: mediatek: add MT8195 hdmi
- bindings
-Content-Language: en-US
-To:     Guillaume Ranquet <granquet@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-4-4844816c9808@baylibre.com>
- <260bb17f-efc8-1287-3e03-f9b8e79a6e31@linaro.org>
- <CABnWg9vifOaAgwr7tkELUqbQA_1f-FfMFZ9o7sjZCaneo_FUmw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CABnWg9vifOaAgwr7tkELUqbQA_1f-FfMFZ9o7sjZCaneo_FUmw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220923205251.1387-1-alexander.helms.jy@renesas.com>
+ <20220923205251.1387-2-alexander.helms.jy@renesas.com> <20220926230438.GA3128861-robh@kernel.org>
+ <cbe89899-7f56-c43a-f8c9-887825fbe4a6@amd.com>
+In-Reply-To: <cbe89899-7f56-c43a-f8c9-887825fbe4a6@amd.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 27 Sep 2022 16:51:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUuzrdf4rmD3n_-S9ujrfmY5Y6VOsNapiLRR5MG9bKAjw@mail.gmail.com>
+Message-ID: <CAMuHMdUuzrdf4rmD3n_-S9ujrfmY5Y6VOsNapiLRR5MG9bKAjw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
+To:     Michal Simek <michal.simek@amd.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, geert+renesas@glider.be
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/09/2022 15:54, Guillaume Ranquet wrote:
-> On Thu, 22 Sep 2022 09:18, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> On 19/09/2022 18:56, Guillaume Ranquet wrote:
->>> Add mt8195 SoC bindings for hdmi and hdmi-ddc
->>>
->>> Make port1 optional for mt8195 as it only supports HDMI tx for now.
->>> Requires a ddc-i2c-bus phandle.
->>> Requires a power-domains phandle.
->>>
->>> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
->>> index bdaf0b51e68c..abb231a0694b 100644
->>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
->>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
->>> @@ -21,6 +21,10 @@ properties:
->>>        - mediatek,mt7623-hdmi
->>>        - mediatek,mt8167-hdmi
->>>        - mediatek,mt8173-hdmi
->>> +      - mediatek,mt8195-hdmi
->>> +
->>> +  clocks: true
->>> +  clock-names: true
->>
->> ????
->> Why is this moved?
->>
->>>
->>>    reg:
->>>      maxItems: 1
->>> @@ -28,20 +32,6 @@ properties:
->>>    interrupts:
->>>      maxItems: 1
->>>
->>> -  clocks:
->>> -    items:
->>> -      - description: Pixel Clock
->>> -      - description: HDMI PLL
->>> -      - description: Bit Clock
->>> -      - description: S/PDIF Clock
->>> -
->>> -  clock-names:
->>> -    items:
->>> -      - const: pixel
->>> -      - const: pll
->>> -      - const: bclk
->>> -      - const: spdif
->>
->> Clock definition with constraints should stay here. You just customize
->> it per variant.
->>
-> Clocks are different between the two hardwares, so I've tried moving everything
-> inside the if/else block.
-> 
-> Is there a better way to express this?
+Hi Michal,
 
-https://elixir.bootlin.com/linux/v5.19-rc6/source/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml#L38
+On Tue, Sep 27, 2022 at 4:10 PM Michal Simek <michal.simek@amd.com> wrote:
+> On 9/27/22 01:04, Rob Herring wrote:
+> > On Fri, Sep 23, 2022 at 01:52:50PM -0700, Alex Helms wrote:
+> >> Add dt bindings for the Renesas ProXO oscillator.
+> >>
+> >> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
 
-Best regards,
-Krzysztof
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
 
+> Driver is also using clock-output-names which is not listed here.
+
+... which is deprecated, and thus should not be used by the driver
+at all.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
