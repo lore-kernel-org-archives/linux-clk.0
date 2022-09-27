@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73E2C07E9D
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A660C6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232435AbiI0NJg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 09:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44360 "EHLO
+        id S232466AbiI0NN7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 09:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232321AbiI0NJe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:09:34 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E53F18578F
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:08:48 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id z20so2147957plb.10
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:08:48 -0700 (PDT)
+        with ESMTP id S232599AbiI0NNm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:13:42 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8033717ACA1
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:13:39 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id u92so151536pjh.3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
          :user-agent:from:from:to:cc:subject:date;
-        bh=YoaKPGbtL0W6yKop2Q5GqUbFMulbchm58vJX4E+Hvss=;
-        b=Y3O5T8rz166uc6HJ4FhMI44NIUgz7yP8NiLJa38oQ3iQqcCvEf1JKUSMRRQjUmvMTd
-         4ctpIh9zL2BGVRzkWihc/0+zJA0vvqQaNIcdLVBGBjlJgpCdtH9UA6CaIZ8fAsMB7Qa5
-         MAmXOYJLBFGb76dyw/0GYl4Ud9bQLwonphTsObGEXWQEk9eA57oxtDSmPKQJHfic3A3j
-         HkZqwW/hayyIYLR1Y0kHnLheguF50xHZLRtrPOgrjZtl0trmUGTA+HLEUWgduM2GBkWu
-         ThZ/NjoYcg+Qh9SrbLP+UhAR4BHGL1ZL/OyBADAi8nYVZqFUBSIRwmAXmM7f9rMGutH+
-         2GAg==
+        bh=uw1gvMh/1zxeYeQnV6wZiimhJI0pYdqIU/T7gR133DU=;
+        b=KGZxffdgEWrc+nIKZQdWmZ3shdGF0hcnG/eimwyIfxhrmALI1rYCYrjvI7h/XUgVGA
+         AC6SvAtl53+/uRBU3anLk1UvpVRaNBemAR7Oyh2pHvX7bjmJNbSDXufs8hRYtyXsG5vQ
+         jd3iWOu4rVRR/EnzQp9aaeBmal/AfKg+NmoFOYFIDeJe+wLcey51NCuMUbD1u2T1V94U
+         R0nuad1PG+imVaMqobj/rIzM1PIjkWlf6o0msI+SnoIU3CpMuPKph0lfdyOcWwBg0vLZ
+         dTGoMaNPB1H8WboG58vSq5A7eIOFKcqFwcw4AAp8tg8XHTSKsuUNf6zQOBzI1wa4MP6X
+         qvxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
          :user-agent:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=YoaKPGbtL0W6yKop2Q5GqUbFMulbchm58vJX4E+Hvss=;
-        b=6TYDPxtxQxgNJprsia3QBRcCVx7yp3/WEbFbmZln6NpDAmeKbXC3xd6l4V8/ycPo+r
-         ZzXYtKkUjuDSnp/GgTQWFpS/K8lSnUahr6MOCT+bK0Qj4TqiuFPXe+vFNTyODNWQwB50
-         P/Y/mepM6ntIdftlY2Rdebq1G2OXwL6+SN2kloNiRtukuBEsbP9lnXgUeOwGalhDnDsw
-         lT4y0FmWXrM40LDgLW6JjgXzGM/1RG/lflR3/3/AkNdFBR1ut4GhyliamAKC8VILfdTi
-         NHODfPJt+rQg3gVuO9OJ9mK4c6TDrGMzkYFBK0f6WvvRG4qbr5/x5LyxA0pW4ZSSW5vZ
-         jdfw==
-X-Gm-Message-State: ACrzQf2KfBD+1HmanT0xkKKwbJyi4b41HUjrXYWvkJBTxfJmQqjVa9le
-        micZvqO6aKNLgm9SeGDC/ESF0jQuJYdYpyBBpzyXpQ==
-X-Google-Smtp-Source: AMsMyM6X8Fa6ezRZqL7m/lEJjF3Bh5CG2glAPpLeLqQI0M9YdLpt4yB4B9sD/oFbG2+k4WA70xAHEax+sQbaSKsrxhc=
-X-Received: by 2002:a17:90b:3807:b0:205:d746:93a0 with SMTP id
- mq7-20020a17090b380700b00205d74693a0mr3635933pjb.188.1664284124030; Tue, 27
- Sep 2022 06:08:44 -0700 (PDT)
+        bh=uw1gvMh/1zxeYeQnV6wZiimhJI0pYdqIU/T7gR133DU=;
+        b=m4+OE9UYaPpZhH5pCn8rD3Ono+vKZreUBYzy3hA/yWxmR/hz3jm3DZucvKAyMZ1GvP
+         OKjN/VjAKjJ0fZSXjmbFn8BJm7azoJRKGSRObVvuQragDGedJiK8N2ICZhdz4XpQQ5o2
+         IClV13Wbfuy4ADI+nE13oTiRSvuhYcG/DCQRB/J4Zwvb+KaMFBaVuLXHRcl5O/s8/Ak8
+         dt4e35il7scAAunx4PrcCNKYg56IksDt7jykI3nzCqLBpouYeN3qb1gVxGvML9UJv6JX
+         iYLrq6W6uKDZf2ZM5yVl1D4fBLdUXL0JF4VvqDGJQ2YrwK+ZCdGzCX/teO4NKlw5sCSD
+         cXnA==
+X-Gm-Message-State: ACrzQf2ldwbwskeCujUlCCuGTI9AnVHiqJjAGNJF3f/p6Zs2BahfjXPT
+        DcUROvCM+6Gj0tj2E/ry8ujcPn4iY1HQxGo1DA0dIw==
+X-Google-Smtp-Source: AMsMyM5foO9hRFfJNeJsExDA4MlTDjL11pmea0BPzSUwTLsGAoVk8kBgQmDpzSWwATR1ZA70FE3cdWBnn6SlAjNkjO4=
+X-Received: by 2002:a17:902:f710:b0:178:a692:b1f7 with SMTP id
+ h16-20020a170902f71000b00178a692b1f7mr27434461plo.112.1664284411364; Tue, 27
+ Sep 2022 06:13:31 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 27 Sep 2022 06:08:43 -0700
+ HTTPREST; Tue, 27 Sep 2022 06:13:30 -0700
 From:   Guillaume Ranquet <granquet@baylibre.com>
 User-Agent: meli 0.7.2
-References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-7-4844816c9808@baylibre.com>
- <153dcb4f-4583-427e-83c7-bdd33e3b11aa@collabora.com>
-In-Reply-To: <153dcb4f-4583-427e-83c7-bdd33e3b11aa@collabora.com>
+References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-12-4844816c9808@baylibre.com>
+ <b05f8687-8f34-c425-ed8e-56c8aeccdaf9@collabora.com>
+In-Reply-To: <b05f8687-8f34-c425-ed8e-56c8aeccdaf9@collabora.com>
 MIME-Version: 1.0
-Date:   Tue, 27 Sep 2022 06:08:43 -0700
-Message-ID: <CABnWg9uDo_P7FKzL7zjsZbfrhjT7MtWinhy5pKvDbNp_R5oJPg@mail.gmail.com>
-Subject: Re: [PATCH v1 07/17] drm/mediatek: extract common functions from the
- mtk hdmi driver
+Date:   Tue, 27 Sep 2022 06:13:30 -0700
+Message-ID: <CABnWg9tidG-HHhJ-nbE0UD2=EUCqF4WkdQ__j+2sarmSm=MsAQ@mail.gmail.com>
+Subject: Re: [PATCH v1 12/17] drm/mediatek: hdmi: mt8195: add audio support
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -82,73 +81,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 20 Sep 2022 12:25, AngeloGioacchino Del Regno
+On Tue, 20 Sep 2022 13:11, AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
->> Create a common "framework" that can be used to add support for
->> different hdmi IPs within the mediatek range of products.
+>> Add HDMI audio support for mt8195
 >>
 >> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
 >>
->> diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
->> index d4d193f60271..008ec69da67b 100644
->> --- a/drivers/gpu/drm/mediatek/Makefile
->> +++ b/drivers/gpu/drm/mediatek/Makefile
->> @@ -22,7 +22,8 @@ obj-$(CONFIG_DRM_MEDIATEK) += mediatek-drm.o
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> index 39e07a6dd490..bb7593ea4c86 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> @@ -215,6 +215,26 @@ static void mtk_hdmi_hw_vid_black(struct mtk_hdmi *hdmi, bool black)
+>>   		mtk_hdmi_mask(hdmi, TOP_VMUTE_CFG1, 0, REG_VMUTE_EN);
+>>   }
 >>
->>   mediatek-drm-hdmi-objs := mtk_cec.o \
->>   			  mtk_hdmi.o \
+>> +static void mtk_hdmi_hw_aud_mute(struct mtk_hdmi *hdmi)
+>> +{
+>> +	u32 val;
+>> +
+>> +	val = mtk_hdmi_read(hdmi, AIP_CTRL, &val);
+>> +
 >
->abcd ... mtk_hdmi_common.o goes here :-)
+>val_tx = AUD_MUTE_FIFO_EN;
+>if (val & DSD_EN)
+>	val_tx |= DSD_MUTE_DATA;
 >
->> -			  mtk_hdmi_ddc.o
->> +			  mtk_hdmi_ddc.o \
->> +			  mtk_hdmi_common.o \
->>
->>   obj-$(CONFIG_DRM_MEDIATEK_HDMI) += mediatek-drm-hdmi.o
->>
->> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
->> index 5cd05d4fe1a9..837d36ec4d64 100644
->> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
->> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
->> @@ -32,187 +32,18 @@
->>   #include <drm/drm_probe_helper.h>
->>
->>   #include "mtk_cec.h"
->> -#include "mtk_hdmi.h"
->>   #include "mtk_hdmi_regs.h"
->> +#include "mtk_hdmi_common.h"
->>
->>   #define NCTS_BYTES	7
->>
->> -enum mtk_hdmi_clk_id {
->> -	MTK_HDMI_CLK_HDMI_PIXEL,
->> -	MTK_HDMI_CLK_HDMI_PLL,
->> -	MTK_HDMI_CLK_AUD_BCLK,
->> -	MTK_HDMI_CLK_AUD_SPDIF,
->> -	MTK_HDMI_CLK_COUNT
->> +const char * const mtk_hdmi_clk_names_mt8183[MTK_MT8183_HDMI_CLK_COUNT] = {
+>regmap_set_bits(regmap, AIP_TXCTRL, val_tx);
 >
->Why MT8183? This can be either MT8167 or MT2701... or, IMO more appropriately, you
->should name the IP version.
->Example: MTK_HDMIV123_CLK_COUNT (I don't know what IP version would that be!).
+>Easier, shorter.
 
-You're right, the naming isn't great.
-I'll ask mediatek if they have a good name that would regroup the "legacy"
-HDMI IP and the new IP in mt8195.
-
-Thx,
-Guillaume.
+Thx for the tip.
 
 >
->> +	[MTK_MT8183_HDMI_CLK_HDMI_PIXEL] = "pixel",
->> +	[MTK_MT8183_HDMI_CLK_HDMI_PLL] = "pll",
->> +	[MTK_MT8183_HDMI_CLK_AUD_BCLK] = "bclk",
->> +	[MTK_MT8183_HDMI_CLK_AUD_SPDIF] = "spdif",
->>   };
->>
+>> +	if (val & DSD_EN)
+>> +		mtk_hdmi_mask(hdmi, AIP_TXCTRL,
+>> +			      DSD_MUTE_DATA | AUD_MUTE_FIFO_EN,
+>> +			      DSD_MUTE_DATA | AUD_MUTE_FIFO_EN);
+>> +	else
+>> +		mtk_hdmi_mask(hdmi, AIP_TXCTRL, AUD_MUTE_FIFO_EN,
+>> +			      AUD_MUTE_FIFO_EN);
+>> +}
 >
 >Regards,
 >Angelo
->
 >
