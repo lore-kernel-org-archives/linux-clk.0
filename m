@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C868C6FA82
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 14:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01680C6FA83
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 14:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232369AbiI0O3O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 10:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49806 "EHLO
+        id S232045AbiI0Och (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 10:32:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232521AbiI0O3B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 10:29:01 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9251893AE
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 07:28:59 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id d42so16085244lfv.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 07:28:58 -0700 (PDT)
+        with ESMTP id S231796AbiI0OcJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 10:32:09 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F68F61D56
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 07:31:49 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id z25so16039652lfr.2
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 07:31:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=92yZ7qnRQqA49V70vN00C9HGqUmmV5lex66grIlTbSc=;
-        b=t/zPAMSAQWX7Jp2Kkrznx3pd8BaYj/V4IovrZOP0p7CA9dHLcTpMosv+TEf82eIdQN
-         ZzPiXw9rKlWK7dgrb/2R9JIb8zq9h17dOUBhdV7CLo6ItGSkQYBffOF2Ou5wtqP2NA3T
-         N9rEoP+h50jfo80xq4j1r3mCJzXfyYlWLZNzw2x5BGe+XyxiWRwC+2x4+yiqv6IzriEM
-         fuXrcHsauWPdkNwTqAUt31tFVgYpbwvnD8NThfc3Z4YxzLdIRb1JExpoeuZAlbZVjurb
-         kbFPPAxHbGw01+RTl5nssKqglXejrUk6qW39J2Eas+i02imuJL8VJjhw11y61M81MWAG
-         3WYw==
+        bh=NUfI4SCRisddpR+Mrk1Ab5N6zdnsa7HpNGyqDE8S3Ak=;
+        b=N5H3PvxU0f/K1m+Ie5ZB11BDUfHM5/7rmKTWERCI16RPnFP93poTMnQCJcmimNQyb+
+         iM26D7OsLJcsmOZU/xMHANBiDKZIn9q2gs+chOxXtKyJdRoM3jcDS5xdhCqh3NMrfRvl
+         d4IWDb/pXsaeTkuCa9br1kfnKDF0YN9oUcBRFQWU75t855LH3pbtJP9ynWm4chBxGG+z
+         6dailbrZEc3YIZTVHATQ5QYGCP/Jr9uNtyCEmGyO7YdW7A+jIrhldXH2mH7IJvdPcHDI
+         n9XprOk48xR/fUdkCmm9j3V13OUbMExg0fBRQ2uf4Tl6H1UI5g9KWgvQc3JkKwQP3qBL
+         L0Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=92yZ7qnRQqA49V70vN00C9HGqUmmV5lex66grIlTbSc=;
-        b=YBXx8prbPK/hGs+Ev7Q67ILJnlqhvecAOqQiB263fIfYN8Yy+W5PaF6F6ZjlVC6ujo
-         69Svdfzqf0Bgpln70Qz+MkMg5yk+0Km7tFDDBTYeTrOA8zm2Bx1hDaD6dBD7Vg+Li+cS
-         EPCjL+Ly+fipY/yvRjLODVpW6ZgaPR/2HT12SoCA4L+9N70GQvvbtbW1mpYrlMsDq1mi
-         FFeMGanXMFeUC54NqGd/Jnu1g7mTkI0bVHV3K8raTXYxwG/Y6FKIuBPU4dMQxdT2Xr+M
-         hCtHqhNR62Fp/qIbVI0kepxsi6YzO16Dv+EiYlFCMeyr+8f3VqlT6IRMWxjZ44B607Oj
-         eQiA==
-X-Gm-Message-State: ACrzQf2bOOMdiXm0JI68PYjfklI36XxHUL5fcbzmX2VQNEQyFvd1P5vE
-        m5OTEATN7nK7Tez4iAYg/k2ocA==
-X-Google-Smtp-Source: AMsMyM53dC3y7erBKfzBQ+Nze0zZtnLF71JT4J25PfiX1YCvYNVOBA7+2R4vFWpiZCxVk3PBax4BpA==
-X-Received: by 2002:a05:6512:308f:b0:49a:5a59:aa25 with SMTP id z15-20020a056512308f00b0049a5a59aa25mr10629204lfd.44.1664288937219;
-        Tue, 27 Sep 2022 07:28:57 -0700 (PDT)
+        bh=NUfI4SCRisddpR+Mrk1Ab5N6zdnsa7HpNGyqDE8S3Ak=;
+        b=VzYmzMO89XPE9sk6zWwh8JEHBrRUM89bYlTBDrZA+LDqL3jM6T9hVls+EQZdQ54il/
+         50cwchEX9h1nYAvITKiZ/FZ8cwAQK9Q7YceepUIt63Mq/clXb/UdRZWjkizWjis8Sc5O
+         glsio+3mJbP3kd+6yNY0nKX4fha2Fm6pWhjzkmrDLDtWfeOmpuL0yoiQTkyMr2KjC47C
+         5A4BkIAUb1j6o+5c8Q67jHnpRXeauwXtppepnMefPlTohZtDiMMA81KsaAcCDvMyNOgz
+         Tn2eiTlN3WYA9mmh0OyFVDBmaqn+89+c/AMLBs9slwNRntB1TbA1WFqCmZdYOuk0IAL6
+         435g==
+X-Gm-Message-State: ACrzQf1BcN79qUZE7Gdm4adqi6NewHSTyQXyX8C6p5pMdDAlLInCamiZ
+        ZLPBl7B2oMJR31YsARF659qrjg==
+X-Google-Smtp-Source: AMsMyM45aqxVkdxZ0HAqRVzU94fLrEHMjS4h00CZmLSIcK6DvgMURloYNRLEY0p/VovPPWPqX6uRGg==
+X-Received: by 2002:a05:6512:39ca:b0:497:a0b6:449c with SMTP id k10-20020a05651239ca00b00497a0b6449cmr10908608lfu.308.1664289107724;
+        Tue, 27 Sep 2022 07:31:47 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q12-20020ac25a0c000000b00494a1b242dasm182416lfn.14.2022.09.27.07.28.53
+        by smtp.gmail.com with ESMTPSA id z40-20020a2ebe28000000b0026c2fec2f8esm176975ljq.84.2022.09.27.07.31.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Sep 2022 07:28:55 -0700 (PDT)
-Message-ID: <bc64b69d-3d65-f5ca-a688-2ad1a055ba4b@linaro.org>
-Date:   Tue, 27 Sep 2022 16:28:52 +0200
+        Tue, 27 Sep 2022 07:31:39 -0700 (PDT)
+Message-ID: <db8ec605-7038-4cd1-9e70-bbe40404fa06@linaro.org>
+Date:   Tue, 27 Sep 2022 16:31:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
-Subject: Re: [PATCH v1 17/17] drm/mediatek: Add mt8195-dpi support to drm_drv
+Subject: Re: [PATCH v1 04/17] dt-bindings: display: mediatek: add MT8195 hdmi
+ bindings
 Content-Language: en-US
 To:     Guillaume Ranquet <granquet@baylibre.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -77,49 +78,75 @@ Cc:     linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-phy@lists.infradead.org, devicetree@vger.kernel.org
 References: <20220919-v1-0-4844816c9808@baylibre.com>
- <20220919-v1-17-4844816c9808@baylibre.com>
- <a0a3c427-c851-ae5d-4010-e94740bf9f6e@linaro.org>
- <CABnWg9s3N_Ua9g0S3x0uj8PN4FtOX6DO+zQcBzGFqoLTL1J24A@mail.gmail.com>
+ <20220919-v1-4-4844816c9808@baylibre.com>
+ <260bb17f-efc8-1287-3e03-f9b8e79a6e31@linaro.org>
+ <CABnWg9vifOaAgwr7tkELUqbQA_1f-FfMFZ9o7sjZCaneo_FUmw@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CABnWg9s3N_Ua9g0S3x0uj8PN4FtOX6DO+zQcBzGFqoLTL1J24A@mail.gmail.com>
+In-Reply-To: <CABnWg9vifOaAgwr7tkELUqbQA_1f-FfMFZ9o7sjZCaneo_FUmw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/09/2022 15:04, Guillaume Ranquet wrote:
-> On Thu, 22 Sep 2022 09:20, Krzysztof Kozlowski
+On 27/09/2022 15:54, Guillaume Ranquet wrote:
+> On Thu, 22 Sep 2022 09:18, Krzysztof Kozlowski
 > <krzysztof.kozlowski@linaro.org> wrote:
 >> On 19/09/2022 18:56, Guillaume Ranquet wrote:
->>> Add dpi support to enable the HDMI path.
+>>> Add mt8195 SoC bindings for hdmi and hdmi-ddc
+>>>
+>>> Make port1 optional for mt8195 as it only supports HDMI tx for now.
+>>> Requires a ddc-i2c-bus phandle.
+>>> Requires a power-domains phandle.
 >>>
 >>> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
 >>>
->>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->>> index 72049a530ae1..27f029ca760b 100644
->>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->>> @@ -820,6 +820,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
->>>  	  .data = (void *)MTK_DPI },
->>>  	{ .compatible = "mediatek,mt8192-dpi",
->>>  	  .data = (void *)MTK_DPI },
->>> +	{ .compatible = "mediatek,mt8195-dpi",
->>> +	  .data = (void *)MTK_DPI },
+>>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+>>> index bdaf0b51e68c..abb231a0694b 100644
+>>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+>>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+>>> @@ -21,6 +21,10 @@ properties:
+>>>        - mediatek,mt7623-hdmi
+>>>        - mediatek,mt8167-hdmi
+>>>        - mediatek,mt8173-hdmi
+>>> +      - mediatek,mt8195-hdmi
+>>> +
+>>> +  clocks: true
+>>> +  clock-names: true
 >>
->> It's compatible with the others. You don't need more compatibles.
+>> ????
+>> Why is this moved?
+>>
+>>>
+>>>    reg:
+>>>      maxItems: 1
+>>> @@ -28,20 +32,6 @@ properties:
+>>>    interrupts:
+>>>      maxItems: 1
+>>>
+>>> -  clocks:
+>>> -    items:
+>>> -      - description: Pixel Clock
+>>> -      - description: HDMI PLL
+>>> -      - description: Bit Clock
+>>> -      - description: S/PDIF Clock
+>>> -
+>>> -  clock-names:
+>>> -    items:
+>>> -      - const: pixel
+>>> -      - const: pll
+>>> -      - const: bclk
+>>> -      - const: spdif
+>>
+>> Clock definition with constraints should stay here. You just customize
+>> it per variant.
+>>
+> Clocks are different between the two hardwares, so I've tried moving everything
+> inside the if/else block.
 > 
-> Hi Krzysztof,
-> 
-> It's a bit confusing, because this compatible is used in both
-> mtk_drm_drv.c and in mtk_dpi.c
-> 
-> Albeit it's entirely the same thing regarding the mtk_drm_drv module,
-> it's pretty different
-> regarding the mtk_dpi module.
+> Is there a better way to express this?
 
-Sure, but this does not explain why do you need these entries here in
-mtk_drm_drv.
+https://elixir.bootlin.com/linux/v5.19-rc6/source/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml#L38
 
 Best regards,
 Krzysztof
