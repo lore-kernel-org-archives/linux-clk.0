@@ -2,48 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64048C32771
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 03:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D82FC6FA92
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 03:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbiI0DYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 23:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52920 "EHLO
+        id S230249AbiI0DYl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 23:24:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbiI0DX4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 23:23:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE0746225;
-        Mon, 26 Sep 2022 20:23:11 -0700 (PDT)
+        with ESMTP id S230489AbiI0DX5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 23:23:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E00C57BE3;
+        Mon, 26 Sep 2022 20:23:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2534061595;
-        Tue, 27 Sep 2022 03:23:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5273C4347C;
-        Tue, 27 Sep 2022 03:23:08 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DABD1B81910;
+        Tue, 27 Sep 2022 03:23:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA21BC4347C;
+        Tue, 27 Sep 2022 03:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664248989;
-        bh=7Jou6n5y0mKpBXvA3sndzVkCRVrnapOjPsW5ZL+vmmQ=;
+        s=k20201202; t=1664248993;
+        bh=WPTi/MLtEp6ejiLdeHDqeJBbCy8zfALjPLNAZfwnaTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pGONiHh8/FgmUxq/70cvzR2OxKfuAdCCkdcW3quM8HyvQSguG7rSFZvX5puor+oFy
-         3VNjuX4Lso1I2VWecEIx92FAd8mnKfO+iU8mTQqIZBqCUQfL0AXhOGBt1+4bz+oebB
-         Lbebkz7kyjva7h/zJIdFoA66IW9wF48t3iPoYidWC8yBBquAixqp6iy7NFBfW8ycr0
-         LpgSIERpnJW2osiYHK65fLVT97OBMYwKeYXmWhuAeg/iqHX8/wco6k40Gj//t6V5wW
-         iGogEzejflt9zKUWD1ARV/yUBtd/Xr3zejaPu9ws0ROim//wkQ4aEAswEcco7icDB8
-         t06Exybmb3c0A==
+        b=cVbpZHibYUbFbbCo3awQ65Obu32RYX70+lwY7amHfgd5tCoizCCYWCKhPz/uyN3fX
+         1kkaQ4egx2PuDxGlFplUrjYE5x9HTNO46UzzpNDmDqbS2WKez/tYWOvoYkypp9jKMT
+         /tpEOm16jAMmatm0coenAEb6y2Q6xwexwOYy8FwWZRoh+Wzb70/t7WQcKsDovHGLZ/
+         y+AUTedsTONS8qoEVOexxvWYZrdoCl884zpNmyNU3VS9GpiSR4e56wm5gyjqr4WeU+
+         NFY8YOLj+Q6hOUjt2RlJlPjcSU5F0k92KQaS/oqD0UWu5OqY1Y7fqocrgIlYuhPQju
+         jz52H4FPe5NIw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     konrad.dybcio@somainline.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, dmitry.baryshkov@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org, quic_tdas@quicinc.com,
-        agross@kernel.org, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: qcom: add SM8450 Display clock controller support
-Date:   Mon, 26 Sep 2022 22:23:00 -0500
-Message-Id: <166424897976.1766486.7928034838653422228.b4-ty@kernel.org>
+To:     quic_krichai@quicinc.com, helgaas@kernel.org
+Cc:     quic_vbadigan@quicinc.com, vkoul@kernel.org,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-kernel@vger.kernel.org, quic_ramkri@quicinc.com,
+        konrad.dybcio@somainline.org, bhelgaas@google.com,
+        dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
+        swboyd@chromium.org, quic_nitegupt@quicinc.com,
+        svarbanov@mm-sol.com, lpieralisi@kernel.org, kishon@ti.com,
+        quic_skananth@quicinc.com, mturquette@baylibre.com,
+        robh@kernel.org, mka@chromium.org, linux-phy@lists.infradead.org,
+        agross@kernel.org, quic_hemantk@quicinc.com, kw@linux.com,
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v7 0/5] PCI: qcom: Add system suspend & resume support
+Date:   Mon, 26 Sep 2022 22:23:03 -0500
+Message-Id: <166424897975.1766486.8316270705903909845.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220908222850.3552050-1-dmitry.baryshkov@linaro.org>
-References: <20220908222850.3552050-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <1663669347-29308-1-git-send-email-quic_krichai@quicinc.com>
+References: <1663669347-29308-1-git-send-email-quic_krichai@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,32 +57,21 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 9 Sep 2022 01:28:46 +0300, Dmitry Baryshkov wrote:
-> Add support for the Display clock controller found on SM8450 platform.
+On Tue, 20 Sep 2022 15:52:22 +0530, Krishna chaitanya chundru wrote:
+> Few PCIe endpoints like NVMe and WLANs are always expecting the device
+> to be in D0 state and the link to be active (or in l1ss) all the
+> time (including in S3 state).
 > 
-> Changes since v2:
->  - bindings: added missing gcc-sm8450.h include
-> 
-> Changes since v1:
->  - Rebased on top of 6.0-rc
->  - Dropped clk-names in favour of using parent indices (Bjorn)
->  - Added GCC_DISP_AHB_CLK to dispcc node (Bjorn)
->  - Changed bindings licence to dual GPL+BSD (Bjorn)
->  - Removed zero clocks in dt bindings
->  - Fixed syntax issues
+> This patch series adds this support for allowing the system to enter
+> S3 state (and further low power states) with PCIe Device being in D0
+> state and with link being in l1ss on qcom platforms.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: qcom: add bindings for dispcc on SM8450
-      commit: a7edd291636ac0bddf6c5a5aef6a94c2a9794830
-[2/4] clk: qcom: alpha-pll: add support for power off mode for lucid evo PLL
-      commit: 9d062edd561f594b71130c4846c9032bfec8d97f
-[3/4] clk: qcom: Add support for Display Clock Controller on SM8450
-      commit: 16fb89f92ec4412ac49ddca64944d5f72e063f69
-[4/4] arm64: dts: qcom: sm8450: add display clock controller
-      (no commit info)
+[5/5] clk: qcom: gcc-sc7280: Update the .pwrsts for PCIe GDSC
+      commit: 1a58ee1330b2cb6d71feb0aaf827cc10030f78b4
 
 Best regards,
 -- 
