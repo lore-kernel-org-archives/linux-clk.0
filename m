@@ -2,61 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D15C6C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8BDC07E9D
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231897AbiI0Nf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 09:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52352 "EHLO
+        id S231269AbiI0Nis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 09:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232836AbiI0NfG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:35:06 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B97B7C7
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:34:35 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id 78so9395589pgb.13
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:34:35 -0700 (PDT)
+        with ESMTP id S231659AbiI0Nir (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:38:47 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD4BD98F3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:38:45 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id x1-20020a17090ab00100b001fda21bbc90so15586707pjq.3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
          :user-agent:from:from:to:cc:subject:date;
-        bh=5KO5UAD2T7DgoYPQgFD91UfqIRE232yyISaSFCJ9s3Q=;
-        b=SoU+eGuksQQhlnS7N57Z73aJoRcn1Yf2NhRhsCodkYOiV7LO9opJ5E2VCYREe5jIix
-         Oek/U1yUHENSgLff5LPnC8g96rDkpkyHkyN8K4ng0t6VFbZFhaiBdfyEbni+0RGn8Bvq
-         Xr0f0Eoqt6tUwJZdRxqQtkBIbO01YSyEzs/YfPOplLElabdw79du1/QP496W/K521tAO
-         KKfJLi1VzArX+CrDYSiZD5o0f3yZ/lI0HMD3tk0S9NVt07KumdMGtpOn2kdj3DfJ9Blo
-         P1h+q5XNmMceyQpXed0kBCLxxC8hoyH9lz/GILiJzcJK3VEBQWlBG8Gm4O571ponUsdt
-         IIhw==
+        bh=kcqezBbHJffozFbEyx9wjhl1YSdIHaVumsP0lVEuZtQ=;
+        b=zu0LDMWaZ2IiyJWen0shu8EVhyMeZSD0OIiKtU1o5V962A7jwSkPn4CMMQ0vz96Vth
+         tmuzCaRlrru7doTeuXHFqIBlelgapdbTo80FoYEtNoYoaEZL+RORowAW5TQG758voXAB
+         /qK4nyJaMel2BpXPOS+vQr8yEpETmpuh9xmFJL3bbdiLCPx3mFskJioDlySfvlYLDiz+
+         5l4LD9rzPtofDwJzV7W1kwC3nRoiXAq20n8O9pp9eXpfcWtVB3QDe/+q+6K/KnMeAnfw
+         i0uPy9j1+kZk4vpNwuHSzu0wEoCWjqtwlybaZfNOtus5P9tVWa7xP7C9GRMIprbloz4T
+         aSVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
          :user-agent:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=5KO5UAD2T7DgoYPQgFD91UfqIRE232yyISaSFCJ9s3Q=;
-        b=We14ShIZ2SlENuE/P8D+NauhKmC8UxkCVJ9PkiF2v48WgjcsnyytsNQi2pCocI0vGs
-         Z/1GuEdnUIEInh4FDumrM81bjzIwLC7At3e976J3ePnvlAsn0cYgCIiGeVq1pUeuNqvY
-         48lQzis9dbZPjnp9mBU3NAluR8uThyqSelUpp8HSamNHY9gMcqh6e3nCWsq3A1O/3yq6
-         E/gfdePUJ6nSHdV3Wi8pyAAPBJs0ZBrr9T/oAzX2x3RyOL5SpA2Vx0pWGmjnNQII2rPo
-         0Ghpy09pusaG0dAOA5U7maFwjhZTD2/ebJ9ZBHhqV3J1Z5P9clZsvfu1+aCpLkhHIC3+
-         MfcQ==
-X-Gm-Message-State: ACrzQf1xxmwg0xab47f7FKKRt6ajqTjro0ZdWKPPERJLk7GRoAPOj+ER
-        2WEBOBC97UT6qx8y4lofGW8Rraz7hvaB2cLFIfnp1A==
-X-Google-Smtp-Source: AMsMyM4YIhFYJqfTMqQFxzcbSAJDenFpMeYijY6ikC/aRvNNUlM8pp9LqLPwxTZew8CdZonFZQtK3Mf4GpGS1w183Kg=
-X-Received: by 2002:a63:b55d:0:b0:439:7a97:b89 with SMTP id
- u29-20020a63b55d000000b004397a970b89mr24899166pgo.70.1664285675305; Tue, 27
- Sep 2022 06:34:35 -0700 (PDT)
+        bh=kcqezBbHJffozFbEyx9wjhl1YSdIHaVumsP0lVEuZtQ=;
+        b=ol0vSX3nT/66OA9ydaQ0iL88nG1ALJvSsV3Vg268qHZ+BoMJ7ZsoXukdnIgiF6Ep8Y
+         dIvM5+A/eLs8aAvGjIgpG62WNYhjyH7snorP8MewDb1ZlIn2rhN8q0nw8AVpsC9Q/HTQ
+         yEV+Bh2qrTWPw5FKLXdPyNEOrOO7ktYBYkjst2DU6yDOemNLyd1EfTOSY99CHLPljqxt
+         DUfI0eq4G36TPVZthykrOafk47NbneveJYQjPTXXlJ5Q1ehmEkU+vVjQWTeeUS/Wwh8b
+         IpnQPxcUmLlvnLe8QLK2haru1fRcENk75rbTVFpctwg6jTnW6dFN12P9WFOpQ4zyLBTT
+         vxNg==
+X-Gm-Message-State: ACrzQf3PZY3A06axFu/y7SKE4ZWkVSmUpK6vJq7j3Uoy/66qOMRv07xn
+        THWd/34MTLBfFVB3WFFoXc1cBueatVmp3UNmVnnGBw==
+X-Google-Smtp-Source: AMsMyM5rGXrkhuQrQe7LgcjEDdTHK+6y7t6lOaHNCTQ9hNJXjzQRFavvC9zWHs1/i1ytYfodZBY430bKtOUYXAKndGU=
+X-Received: by 2002:a17:90b:2643:b0:205:bd0d:bdff with SMTP id
+ pa3-20020a17090b264300b00205bd0dbdffmr4550660pjb.99.1664285925438; Tue, 27
+ Sep 2022 06:38:45 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 27 Sep 2022 06:34:34 -0700
+ HTTPREST; Tue, 27 Sep 2022 06:38:44 -0700
 From:   Guillaume Ranquet <granquet@baylibre.com>
 User-Agent: meli 0.7.2
 References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-16-4844816c9808@baylibre.com>
- <812a5de2-dbe3-2f0d-492c-16ea004c996a@collabora.com>
-In-Reply-To: <812a5de2-dbe3-2f0d-492c-16ea004c996a@collabora.com>
+ <11592bcd-eec7-7cc0-86c6-8f440b6af447@linaro.org>
+In-Reply-To: <11592bcd-eec7-7cc0-86c6-8f440b6af447@linaro.org>
 MIME-Version: 1.0
-Date:   Tue, 27 Sep 2022 06:34:34 -0700
-Message-ID: <CABnWg9sSbtXYLpcCoEts73CAsciKMEeMMRwfcfGng8H-rGYvkA@mail.gmail.com>
+Date:   Tue, 27 Sep 2022 06:38:44 -0700
+Message-ID: <CABnWg9twi6inBOeLY=BOQ+o_CwbSW=L49_A+9VMy0L6vbokhXg@mail.gmail.com>
 Subject: Re: [PATCH v1 16/17] drm/mediatek: dpi: Add mt8195 hdmi to DPI driver
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         David Airlie <airlied@linux.ie>,
@@ -81,9 +80,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 20 Sep 2022 14:22, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
+On Thu, 22 Sep 2022 09:22, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>On 19/09/2022 18:56, Guillaume Ranquet wrote:
 >> Add the DPI1 hdmi path support in mtk dpi driver
 >>
 >> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
@@ -93,52 +92,23 @@ On Tue, 20 Sep 2022 14:22, AngeloGioacchino Del Regno
 >> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
 >> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
 >> @@ -15,7 +15,10 @@
->>   #include <linux/of_graph.h>
->>   #include <linux/pinctrl/consumer.h>
->>   #include <linux/platform_device.h>
+>>  #include <linux/of_graph.h>
+>>  #include <linux/pinctrl/consumer.h>
+>>  #include <linux/platform_device.h>
 >> +#include <linux/reset.h>
->>   #include <linux/types.h>
+>>  #include <linux/types.h>
 >> +#include <linux/regmap.h>
 >> +#include <linux/mfd/syscon.h>
->>
->>   #include <video/videomode.h>
->>
->> @@ -66,10 +69,14 @@ struct mtk_dpi {
->>   	struct drm_bridge *next_bridge;
->>   	struct drm_connector *connector;
->>   	void __iomem *regs;
->> +	struct reset_control *reset_ctl;
->>   	struct device *dev;
->>   	struct clk *engine_clk;
->> +	struct clk *dpi_ck_cg;
->>   	struct clk *pixel_clk;
->> +	struct clk *dpi_sel_clk;
->>   	struct clk *tvd_clk;
->> +	struct clk *hdmi_cg;
 >
+>Why do you need these headers in this patch?
 >
->You're adding new clocks and then you're making *all clocks*, including the
->already existing ones... optional.
->
->That looks seriously odd.... can you please give a devicetree example for
->MT8195 in the next version, perhaps in the cover letter?
->
->Would also make it easier to test this entire big series.
->
->Regards,
->Angelo
+>Best regards,
+>Krzysztof
 >
 
-The clock names are different for MT8195 HDMI than for the legacy DP.
-Making everything optional might not have been a smart move.
-I'll try to think of something else to make it look less odd.
-
-The device tree I'm using to test things is rather "hackish" and has a bunch of
-changes from what is found on linux-next.
-I think Jason and Nancy are due to upstream those patches.
-
-I'll try to include something minimal for you to test.
-Otherwise would a public branch containing everything work for you?
+reset is used for reset_control but regmap and syscon are not used.
+Those are leftover from a previous iteration of the patch, will drop
+these in V2.
 
 Thx,
 Guillaume.
