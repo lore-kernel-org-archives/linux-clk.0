@@ -2,161 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9487C07E9D
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 19:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDEFC07E9D
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 20:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231882AbiI0TnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 15:43:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53664 "EHLO
+        id S230384AbiI0UbH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 16:31:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231706AbiI0TnP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 15:43:15 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D1C3160E40
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 12:43:14 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 92B9F80759;
-        Tue, 27 Sep 2022 21:43:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1664307792;
-        bh=O0n/bujq3J/WZzFhxUw7U6jl1sUKsnEwE6RJGlhn7Tk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=W57nXGHAKPIWkfksdTM63MiTpw9z5t8ZO/rslJnZaCHlDQIAppy5BQhJ3jaF70WrH
-         BgEOm2zT5nO1KwTkKEuNlAsGKQkdi6WnC7h01kJb/F+lT8shCRU3Ak11xmSdMBCY8m
-         firGyJNAFjxPLJRfjR+7cXtakTXZZDZkOPi+7qwvoBkoS+yOaVhjNA6heDFnvVHlUh
-         /uTpsS59z7K1wb8m/9aCTD43wsgYat6j0D5D4oVxMtkftAjS5uY8Eg8EBMRggVnvHN
-         zDtuxaVvLJDN1o0BT0cw2e6+ryZspQmt1nqSTevtdsF2ZcZnK0UjhCZkyavvDkcUWt
-         eTy/EApnQyjVg==
-Message-ID: <9a13e3ab-6541-7a24-e231-64faeac129c6@denx.de>
-Date:   Tue, 27 Sep 2022 21:43:12 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2] clk: rs9: Fix I2C accessors
-Content-Language: en-US
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-clk@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230305AbiI0UbG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 16:31:06 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829935BC33;
+        Tue, 27 Sep 2022 13:31:05 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id ay36so7322229wmb.0;
+        Tue, 27 Sep 2022 13:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=mmU6MAWQYLRop8W7eGjFsHnqBAwkExerJB26p3rO/nM=;
+        b=IFd0Z5XafJhQnpRCaXG9dL/2hJUEt/ekzRRkHAhOMfHKKgPiC1M2Gorrnlls0gim8B
+         t/b4W+nRMN0tXRFnws0mL3nbtq8ft4zq7bTy3uDPsyVovFx0SMN6vvOie1P/tuHMuLJ4
+         ZdBYFHm+BVYFKGN+xn8u4O2Tp71T4+ICS7pkxaYOpG+WZdcAPfJJyDzsqMeKydmB8XIS
+         kdkh0Ysryo9i8MqWXh+d4WlqHe+jyj214dDr4KkTX/AFqrHlJ3xFPiXjbkZKcZthlf9K
+         PxTcnqFhmbvAZ3rxvvWzLlxHBgXZyrIJZWSgsaGbnzAfVRKgecuvV4ftbn1lOBkMt0Qn
+         sdrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=mmU6MAWQYLRop8W7eGjFsHnqBAwkExerJB26p3rO/nM=;
+        b=G/fPIhUN/XBubtydn/IoPaA5b83inNdhaElOq/aGeSvZG7BZPLXZYIyyC32F0fHfRy
+         XVcJsWrUFpPV9mEtFoE9IbAiocya/Sz1DNVDgyFB+D/W5F1NPi5ZGPvDlGsahraHQTah
+         XPvEavUGQq4CLFPCz9IGFS0T626/yqKL6CWMAEDuPDUwiT4eC1uS29ael+a+2PyiEPtL
+         QMyAWljmtdaijGw5oPGOD1guBSLnt4sBAygZU/N40V4rMpOEaVvEMyf53kaHF7Dl5YcE
+         KYDL6wKZW4Hn3ZyXfVZbnZQY/XOr9iTbPsjMOQePRWM/kND4MTwqa0zbRPr4mZVH3x6C
+         yCzA==
+X-Gm-Message-State: ACrzQf383l6Xl/fy0Gd9BkgmeHdxE9fevycru/yy7lGOi5M3T4kUmnXH
+        V6fT4hdDWjZpyP3jGYn43CY=
+X-Google-Smtp-Source: AMsMyM6d/pIdTNHAA0SmQgWPkY8NM5X1TWT4zFJ+rw7dZPZRdFK4K51FEwkMnm3LWaJutOf2k2dKtA==
+X-Received: by 2002:a05:600c:1ca8:b0:3b4:a5d1:2033 with SMTP id k40-20020a05600c1ca800b003b4a5d12033mr4015703wms.23.1664310663866;
+        Tue, 27 Sep 2022 13:31:03 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:c6a:3c62:baf6:511c])
+        by smtp.gmail.com with ESMTPSA id ck16-20020a5d5e90000000b0022cc4b7861fsm754830wrb.97.2022.09.27.13.31.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Sep 2022 13:31:03 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-References: <20220924164933.393649-1-marex@denx.de>
- <4745081.GXAFRqVoOG@steina-w>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <4745081.GXAFRqVoOG@steina-w>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 0/2] clk: renesas: RZ/G2L: Add support for no PM clocks
+Date:   Tue, 27 Sep 2022 21:30:42 +0100
+Message-Id: <20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/26/22 08:36, Alexander Stein wrote:
-> Hi Marek,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi,
+Hi All,
 
-> thanks for the update.
-> To answer your question regarding the cache: With this patch I get the
-> following:
-> $ cat /sys/kernel/debug/regmap/1-0068/registers
-> 0: 00
-> 1: 00
-> 2: 00
-> 3: 00
-> 4: 00
-> 5: 00
-> 6: 00
-> 7: 01
-> 8: 00
+This patch series adds support for indicating MOD clocks as no PM (if any). 
+Patch#1 adds DEF_NO_PM() macro to flagup no PM clock and patch #2 switches
+sysclk and vclk clocks to no PM.
 
-Ah, clear. Thanks for the detailed explanation.
+Sending it as an RFC as there wasn't any way we could obtain the priv data
+due to which I had to create a static global var for rzg2l_cpg_priv.
 
-> Which is obviously wrong. Reason is that the cache is not allocated without a
-> known size. This can be fixed using this patch:
-> ---8<---
-> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-> index 5b37d6a2e908..f1c185980466 100644
-> --- a/drivers/clk/clk-renesas-pcie.c
-> +++ b/drivers/clk/clk-renesas-pcie.c
-> @@ -140,7 +140,8 @@ static const struct regmap_config rs9_regmap_config = {
->          .reg_bits = 8,
->          .val_bits = 8,
->          .cache_type = REGCACHE_FLAT,
-> -       .max_register = 0x8,
-> +       .max_register = 0x7,
-> +       .num_reg_defaults_raw = 0x8,
->          .rd_table = &rs9_readable_table,
->          .wr_table = &rs9_writeable_table,
->          .reg_write = rs9_regmap_i2c_write,
-> ---8<---
-> 
-> Unfortunately now the cache is initialized before RS9_REG_BCP is set to 1,
-> resulting in the following panic:
-> [   17.221637] Kernel panic - not syncing: stack-protector: Kernel stack is
-> corrupted in: rs9_regmap_i2c_read+0xb4/0xb4 [clk_renesas_pcie]
-> [   16.862107] CPU: 3 PID: 277 Comm: systemd-udevd Not tainted 6.0.0-rc6-
-> next-20220923+ #764 d22d7e904fab3397adb372dbcb36af4e5b1f49bd
-> [   16.862118] Hardware name: TQ-Systems GmbH i.MX8MM TQMa8MxML on MBa8Mx (DT)
-> [   16.862123] Call trace:
-> [   16.862125]  dump_backtrace+0xd8/0x130
-> [   16.862136]  show_stack+0x14/0x40
-> [   16.862141]  dump_stack_lvl+0x88/0xb0
-> [   16.862147]  dump_stack+0x14/0x2c
-> [   16.862152]  panic+0x19c/0x394
-> [   16.862160]  __stack_chk_fail+0x24/0x30
-> [   16.862167]  rs9_get_common_config+0x0/0x19c [clk_renesas_pcie]
-> [   16.862179]  _regmap_read+0x74/0x164
-> [   16.862188]  regmap_read+0x48/0x70
-> [   16.862193]  regcache_hw_init+0x184/0x2d0
-> [   16.862200]  regcache_init+0x1d4/0x2c0
-> [   16.862206]  __regmap_init+0x864/0x1000
-> [   16.862211]  __devm_regmap_init+0x74/0xc0
-> [   16.862217]  rs9_probe+0x118/0x240 [clk_renesas_pcie]
-> 
-> This is caused by I2C_M_RECV_LEN for the rx i2c transfer. Upon cache
-> initialization the 1st byte received is still set to 8 in hardware. So 8 data
-> bytes + len are copied into rx buffer (which is actually only 2 bytes).
-> There is 2 ways to fix it: Set the rx buffer to the maximum receivable bytes
-> (8) or only read a fixed size of 2. As reg_read only supports reading 1
-> register, the latter one is enough.
-> Reading is fixed by the following patch.
-> ---8<---
-> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-> index c320ce25c11b..5b37d6a2e908 100644
-> --- a/drivers/clk/clk-renesas-pcie.c
-> +++ b/drivers/clk/clk-renesas-pcie.c
-> @@ -122,8 +122,8 @@ static int rs9_regmap_i2c_read(void *context,
->          xfer[0].buf = (void *)&txdata;
->   
->          xfer[1].addr = i2c->addr;
-> -       xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
-> -       xfer[1].len = 1;
-> +       xfer[1].flags = I2C_M_RD;
-> +       xfer[1].len = 2;
->          xfer[1].buf = (void *)rxdata;
->   
->          ret = i2c_transfer(i2c->adapter, xfer, 2);
-> ---8<---
-> 
-> Putting all together the regmap debug output is like this:
-> $ cat /sys/kernel/debug/regmap/1-0068/registers
-> 0: ff
-> 1: 06
-> 2: ff
-> 3: 5f
-> 4: 00
-> 5: 01
-> 6: 04
-> 7: 01
+Cheers,
+Prabhakar
 
-What about option 3 -- disable the cache altogether ?
+Lad Prabhakar (2):
+  clk: renesas: rzg2l: Don't assume all CPG_MOD clocks support PM
+  clk: renesas: r9a07g044: Mark CRU_SYSCLK and CRU_VCLK as no PM
 
-I can imagine since the chip is configured with like 2-3 I2C writes on 
-boot and then never again written to, that might be the simplest approach.
+ drivers/clk/renesas/r9a07g044-cpg.c |  4 ++--
+ drivers/clk/renesas/rzg2l-cpg.c     | 35 +++++++++++++++++++++++++----
+ drivers/clk/renesas/rzg2l-cpg.h     | 12 +++++++---
+ 3 files changed, 42 insertions(+), 9 deletions(-)
 
-> This is actually a 9FGV0441 using some queued patches on my side.
+-- 
+2.25.1
 
-Nice, do you plan to send a binding update for this one ?
