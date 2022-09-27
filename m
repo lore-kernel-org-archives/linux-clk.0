@@ -2,132 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7003C6FA92
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 12:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1611C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 13:04:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232067AbiI0Mss (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 08:48:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
+        id S231739AbiI0NEQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 09:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbiI0Msc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 08:48:32 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066E6E21EC;
-        Tue, 27 Sep 2022 05:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1664282912; x=1695818912;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AAIdI0RNB57IskifMX7lahsJLiiDGkz4H28pXt6CjgM=;
-  b=FVgD6fkdrdA39D5oIjvIfhAWBH33EjdwnpkGYmvVdauyex82MhwGPqCx
-   RN4eusoy1aFQ7E1FutH65nOcFlhYzkeXX4PfbNjcpySdppk6LwrDz/BTB
-   hXYcBnPA6SOnz5Gp8huvTsinEO4IlNQv02c7nUQQvURyKNKEswhRjWen6
-   7+C8Xh6oRZRrs2RjjtG4lT0dIsWkL6lgynsRn+/Qx//6/MPo9kqdmBk26
-   pjxngE7BYpA9OeX4F6qDG9GqLIEb1sIaKQvVb0hZLr54+4D5VFXv+YDsr
-   A/ymA1H56TYiHyX/w+IShF8kSsRutz21nr6W53aHg4LlaQ55dNG/eZobw
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10483"; a="302786803"
-X-IronPort-AV: E=Sophos;i="5.93,349,1654585200"; 
-   d="scan'208";a="302786803"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2022 05:48:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10483"; a="652266364"
-X-IronPort-AV: E=Sophos;i="5.93,349,1654585200"; 
-   d="scan'208";a="652266364"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga008.jf.intel.com with ESMTP; 27 Sep 2022 05:48:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1odA0g-008S3J-31;
-        Tue, 27 Sep 2022 15:48:26 +0300
-Date:   Tue, 27 Sep 2022 15:48:26 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Daniel Scally <djrscally@gmail.com>
-Cc:     linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, rafael@kernel.org,
-        lenb@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        hdegoede@redhat.com, markgross@kernel.org, robert.moore@intel.com
-Subject: Re: [PATCH v3 3/5] platform/x86: int3472: Support multiple clock
- consumers
-Message-ID: <YzLxGmesitf6G0Ve@smile.fi.intel.com>
-References: <20220921230439.768185-1-djrscally@gmail.com>
- <20220921230439.768185-4-djrscally@gmail.com>
- <YzLw1VVWDGF1YVu5@smile.fi.intel.com>
+        with ESMTP id S231855AbiI0NEO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 09:04:14 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685D417CA09
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:04:13 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id b21so9015376plz.7
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 06:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:from:to:cc:subject:date;
+        bh=5A9tE5XjShKgk0dp4mGM6QaE+oB3gw3GtO9g42ZRvK8=;
+        b=K6t+GiDMxCE5PqXx9M7wnOxrmVe8RhMGvnDnBYG8NOKa2YssCusIkZAF4W4yvOQESA
+         grgJhoRBvxxax0+eCuPKh8p2W5rWUX6HXDrfWlnt3QOGcvz2Z0pKWEx5bc2keTzCKDPA
+         EFNonbeyTfJxCD6F40ovXsaSvZaA6ciUzimvjumUgzudbGcVF+jQjdL0HxEI5YO8kDxR
+         uaL+FNOyGJVlqjEpMvpc2MXt9w63j7o81b3Y3ky55r6MbLY0d+jh1dOdyFrtP5/68Jsh
+         ZON8Od6QdsueW9v6KQ7nfWtM/RdVCng56yDGIVeLLVpq3zbI72tvF/vuGVGpBIBmWRps
+         bqHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=5A9tE5XjShKgk0dp4mGM6QaE+oB3gw3GtO9g42ZRvK8=;
+        b=0ZzP6d7P0ymKZiJfxHcAgcj2SqAjYQHpDJmmLyU/b/pqgPwgBVbsvOZEv3sXEO7AMx
+         GU9BVP7Pq9mns8K74R+PL10I9QVTEG+pe18Q668EiE1FeHVhR7HZfSZXOYE74DjW43JO
+         5uQzRZ5Odv8zS1L5cf34aBAk9/PxR+3/6vb3jnjIgKBzn9FYOs6jLKCvCsLGyx8YNY1+
+         3Ogg/2Efayqv8Q6WqoPaVMeHC2F7ts9OaVVyxVzubAD5fmip304zxOopYp42umZHBkw9
+         5U4onhuEjz7Zm4SPNjbxh3j3L5VBsAW25TXe+oV9D212Gcttc/QrbPA/Q0pLQPh2fE43
+         4eog==
+X-Gm-Message-State: ACrzQf04+I75MXkCiaKUMCG76+QDtprZq5JVWlYIvzzKboFP7CtqlPOv
+        EgoL31SyHQy67UFZH4TxwLs5hj7lo9envQKj0TF/tg==
+X-Google-Smtp-Source: AMsMyM5gawCoKKBTAHhXh48htU73+kqaFhoDJNb7qglhir+j3HxUZ0tCej0iXrKwzR9+MRTcHiP7gPgmwpcjXrYibm8=
+X-Received: by 2002:a17:90b:33c9:b0:200:a0ca:e6c8 with SMTP id
+ lk9-20020a17090b33c900b00200a0cae6c8mr4481943pjb.147.1664283852916; Tue, 27
+ Sep 2022 06:04:12 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 27 Sep 2022 06:04:12 -0700
+From:   Guillaume Ranquet <granquet@baylibre.com>
+User-Agent: meli 0.7.2
+References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-17-4844816c9808@baylibre.com>
+ <a0a3c427-c851-ae5d-4010-e94740bf9f6e@linaro.org>
+In-Reply-To: <a0a3c427-c851-ae5d-4010-e94740bf9f6e@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YzLw1VVWDGF1YVu5@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Date:   Tue, 27 Sep 2022 06:04:11 -0700
+Message-ID: <CABnWg9s3N_Ua9g0S3x0uj8PN4FtOX6DO+zQcBzGFqoLTL1J24A@mail.gmail.com>
+Subject: Re: [PATCH v1 17/17] drm/mediatek: Add mt8195-dpi support to drm_drv
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 03:47:17PM +0300, Andy Shevchenko wrote:
-> On Thu, Sep 22, 2022 at 12:04:37AM +0100, Daniel Scally wrote:
-> > At present, the tps68470.c only supports a single clock consumer when
-> > passing platform data to the clock driver. In some devices multiple
-> > sensors depend on the clock provided by a single TPS68470 and so all
-> > need to be able to acquire the clock. Support passing multiple
-> > consumers as platform data.
+On Thu, 22 Sep 2022 09:20, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>On 19/09/2022 18:56, Guillaume Ranquet wrote:
+>> Add dpi support to enable the HDMI path.
+>>
+>> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index 72049a530ae1..27f029ca760b 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -820,6 +820,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+>>  	  .data = (void *)MTK_DPI },
+>>  	{ .compatible = "mediatek,mt8192-dpi",
+>>  	  .data = (void *)MTK_DPI },
+>> +	{ .compatible = "mediatek,mt8195-dpi",
+>> +	  .data = (void *)MTK_DPI },
+>
+>It's compatible with the others. You don't need more compatibles.
 
-...
+Hi Krzysztof,
 
-> > +static int
-> > +skl_int3472_fill_clk_pdata(struct device *dev, struct tps68470_clk_platform_data **clk_pdata)
-> > +{
-> > +	struct acpi_device *adev = ACPI_COMPANION(dev);
-> > +	struct acpi_device *consumer;
-> > +	unsigned int n_consumers = 0;
-> > +	const char *sensor_name;
-> > +	unsigned int i = 0;
-> > +
-> > +	for_each_acpi_consumer_dev(adev, consumer)
-> > +		n_consumers++;
-> 
-> Here no put for consumer (and IIUC it's correct).
-> 
-> > +
-> 
-> (Also no need to have a blank line here, the condition is tighten to
->  the for-loop.)
-> 
-> > +	if (!n_consumers) {
-> > +		dev_err(dev, "INT3472 seems to have no dependents\n");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	*clk_pdata = devm_kzalloc(dev, struct_size(*clk_pdata, consumers, n_consumers),
-> > +				  GFP_KERNEL);
-> > +	if (!*clk_pdata)
-> > +		return -ENOMEM;
-> > +
-> > +	(*clk_pdata)->n_consumers = n_consumers;
-> > +	i = 0;
-> > +
-> > +	for_each_acpi_consumer_dev(adev, consumer) {
-> > +		sensor_name = devm_kasprintf(dev, GFP_KERNEL, I2C_DEV_NAME_FORMAT,
-> > +					     acpi_dev_name(consumer));
-> > +		if (!sensor_name)
-> > +			return -ENOMEM;
-> > +
-> > +		(*clk_pdata)->consumers[i].consumer_dev_name = sensor_name;
-> > +		i++;
-> > +	}
-> 
-> > +	acpi_dev_put(consumer);
+It's a bit confusing, because this compatible is used in both
+mtk_drm_drv.c and in mtk_dpi.c
 
-> Why is it here?
+Albeit it's entirely the same thing regarding the mtk_drm_drv module,
+it's pretty different
+regarding the mtk_dpi module.
 
-Now I got it, you need to move it to the error path before returning from
-inside the for-loop.
-
-> > +	return n_consumers;
-> > +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thx,
+Guillaume.
+>
+>Best regards,
+>Krzysztof
+>
