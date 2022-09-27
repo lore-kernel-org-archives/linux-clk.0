@@ -2,122 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0DFC6FA83
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 14:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA0CC6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 14:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232237AbiI0OGt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 10:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
+        id S231537AbiI0OKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 10:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230428AbiI0OGs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 10:06:48 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83730844CD;
-        Tue, 27 Sep 2022 07:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1664287607; x=1695823607;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EJD2YZgUmAt335tKHDPSaO3745w3AHIoRQ6NPXdMp0o=;
-  b=L56DAlwMVPt/thbQT0xMk8aiXFYQ/oq+0kcT6rAZ1il6Hz9B+rixwwr1
-   psFthvL8CqHmBO6jlLhIgyap2zGjeX5WqYK7sqjFWjS8kfhr4kulzA545
-   HPWDqA05c01oN3nCCn5BQvVbtN5JsSoXuOcdd6uGUafJONYHHZyOPFs43
-   P8pvHCsDS8/AGjjSaUq8JcGtbVkX1o3DmS6wotNUGHoPQDLlwNOKOXHCS
-   nfcdU2bth/1g0/kRpEq/mWMqgZqHBQZNfc0YIprTL/rA4744SUSO8+wL0
-   jXYJYRfZ3b7Kvo+lfLxod1/EikkXDih+7ViIniMnICkjyqMAkI94K1Hq0
-   A==;
-X-IronPort-AV: E=Sophos;i="5.93,349,1654552800"; 
-   d="scan'208";a="26429607"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 27 Sep 2022 16:06:43 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 27 Sep 2022 16:06:43 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 27 Sep 2022 16:06:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1664287603; x=1695823603;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EJD2YZgUmAt335tKHDPSaO3745w3AHIoRQ6NPXdMp0o=;
-  b=CJdyLca1j4fD28N9Y3hVN0EqMZryymNJG4KUXa2OZH9jhD+S014Iov5X
-   qu2eh36AfbzTupIjAkPCCXzdDoYOxPtvJRaMTTp0kGk7E7k20KBTmOBjc
-   xhDBRY5hlrVPB5OkjnhFpe0Yq6bsweiprAHMiQm4Yf8oJF7ziddRLJCdq
-   Oi3HiWjYR6dlxLD9PBHIZmh4/cXibAKY3SV22ffdvtPK582XofE9onPZd
-   I1+x+/SZp9iif8vPNsfZYOIaCd9v32skeSCrSDREETSGFw3n7jwEgZZQ0
-   z/gP4fpfzKgvoxUCnsvFX1yU0ca2q2J2qkd3LrG8FMPcQ7j/jUhNkDDwh
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,349,1654552800"; 
-   d="scan'208";a="26429606"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 27 Sep 2022 16:06:43 +0200
-Received: from steina-w.tq-net.de (unknown [10.123.49.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 51E61280072;
-        Tue, 27 Sep 2022 16:06:43 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: imx: imx8mq: Add hdmi phy 27m as proper hw clock
-Date:   Tue, 27 Sep 2022 16:06:38 +0200
-Message-Id: <20220927140638.2759111-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220927140638.2759111-1-alexander.stein@ew.tq-group.com>
-References: <20220927140638.2759111-1-alexander.stein@ew.tq-group.com>
+        with ESMTP id S232428AbiI0OKa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 10:10:30 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 367F838B0;
+        Tue, 27 Sep 2022 07:10:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HQM8023HqkDedeY7a96ClJJEHCqY8vygeF8COICNTlgQFdGYapBjCJi+5h7NONxPjBQch15txUIB2SnORuVX2c1zX/oilNCo7wDzlKOthxJDEGBPw1KnqPWhDAxySgpmUiH/evr4Z5DpBPmF6Gl3s45vbsYaJTEKiZxlLhP42ckeFOEeJL+J6ppBeLRq2lQ9IRLJAwmKbhGavaiCqR2pyx/2r+fOJRyadtixhxHqDYf91m32GRJQQQ9yoTIcmluSfh3AzjFoUQGO07DLiwb6StfzAe7wHZp7uzBIcu56tKIl9dQJ1PE1A4fgbX4kQ8Mo4UZ9Ld6fh7YX8jUjagOMvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=whwClgSa8QJbiaW5rkopTnR6kSH4Qvu0UYiMagqQ4Y8=;
+ b=fpXDBU72FAi1W+ZTfExR0aYcGqu24ia3TF4KpaY8EbNlLpxpJ0aebFFvcu9/20pTdylp613CtxSZRQN1veCnWcitR3EnoTIqhJRZ5KnTlaUkmiKbALj0L+cnBXHEvX0Uug3mFcYYd2xxbKN6LBXZ2MiCH1g3CFqVoNJv/byOwjUgqRLQ8mZlSNeIvDqqeI+TIkXFsXFH5fTRG9hyxNNFuo/XM4Q+kcrqTiW4c83y5zWeWFxpZJfeZ51dV/WB6CQ4MaNFq/G7dZPeSoZsQ8SA+N1uu1xoumavvYuu1wz3raskcs3mFwAld/JSVrLkS4oJuzw59lFaQXlKp8zypx5D/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=whwClgSa8QJbiaW5rkopTnR6kSH4Qvu0UYiMagqQ4Y8=;
+ b=xXvB2YZyWLvgKwKNqApYvmc0e9FoOgqp5/96jDji+VoAwydB1mt4R1EXiReNqKFrDdtWb898Drad3varDXfNj4yYioE02EZ2YhEsd+HkDwq8Lwurwm/nvwJMVebS0gpbXRnKmZFZ5X4GYKeoU48QWcvaIWXTG5oPYDbOrs+IRTs=
+Received: from BN0PR03CA0022.namprd03.prod.outlook.com (2603:10b6:408:e6::27)
+ by SA1PR12MB6702.namprd12.prod.outlook.com (2603:10b6:806:252::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.26; Tue, 27 Sep
+ 2022 14:10:25 +0000
+Received: from BN8NAM11FT044.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:e6:cafe::19) by BN0PR03CA0022.outlook.office365.com
+ (2603:10b6:408:e6::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.15 via Frontend
+ Transport; Tue, 27 Sep 2022 14:10:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN8NAM11FT044.mail.protection.outlook.com (10.13.177.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5654.14 via Frontend Transport; Tue, 27 Sep 2022 14:10:24 +0000
+Received: from [10.254.241.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Tue, 27 Sep
+ 2022 09:10:21 -0500
+Message-ID: <cbe89899-7f56-c43a-f8c9-887825fbe4a6@amd.com>
+Date:   Tue, 27 Sep 2022 16:10:18 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Alex Helms <alexander.helms.jy@renesas.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>, <geert+renesas@glider.be>
+References: <20220923205251.1387-1-alexander.helms.jy@renesas.com>
+ <20220923205251.1387-2-alexander.helms.jy@renesas.com>
+ <20220926230438.GA3128861-robh@kernel.org>
+From:   Michal Simek <michal.simek@amd.com>
+In-Reply-To: <20220926230438.GA3128861-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT044:EE_|SA1PR12MB6702:EE_
+X-MS-Office365-Filtering-Correlation-Id: 481dfd42-6b20-43cc-e678-08daa09205ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ez8swxI9xtHPDv0e0fcqA2vlg0W5rLVYNX0jku/F95jDhHR47zxwHHf1BPYURWnlFRbSCYr/EZJPB2uITPNtNqB/XrX1FReEtGWFgQab9280OJ7Bl/NTaoIOJYpShmClttKfVpLrlVteU+L0TjAQvo2RKy4ohoW4LkZTrGiMhixHVOq7M6mJgMdutPG9fBYAn2swTohwzYMSZNYpcU1km6pPiqWeuLi1WBoDkPLEcQcnNpIxehOs+Nxq5dR89Wqw6DcjUC48Zn9vyXDYfPiMs29cbLAJ1cm5q5VqwVhfQeFwcFCDkP7K9xUxbzyYdqn+pG660ELOtK9pKORlURCeU3z9Ip0DdJe9FaTiYZiKkDY6H0Ju7xmqF3+uS9gZ02vyjs07pxem/hpX/WkbBA711/SIAZWued61px6Y6H+NlGvTF83S7WPaYZC28zCB7CEYJUv6XXc3prd7Jn3G/FRNyhgz2VDQ6mKHFP6nmfoo9NsWUAEt3wO3j8tr4ZltPyuCLnghyvChoY2rZIiMVAbtJU+NrLj2DdQwtIP8INJIy5Mq6xZUllNaNyOst78OmZ2vWvXmgPWoCg4OU4+fk7T58ZmWZhEl3IRBZ5jl2+Y0TZkmAX+8zHluVy5lnoNpZw0vanOQsLDSX0m1c5vDNxPFx+BAgoALmFoXsoSC2SNCf8Vg/eJ3CM4BUrUVW2AEKxWBzNtCHrxoaLyOkS5GU2tApkR4jJQOCrNaFaa+dZPQ3uMKGYRAzTL2SnrTB1LGGpK8J2KcZnv7+X2lvtQIiUQyZmwm8s7+nzFGE2A6xBZlI5ywknIT1I+39no0RJOWefKHOBXREcR3p3tmnxT1Yq3w3cm8dm/2RD4K3axViDpaOq7sn4n2hAVyECUrP3JsbTg8uPLnsa50XTwq/yYJl8XX3A==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(346002)(39860400002)(376002)(451199015)(40470700004)(46966006)(36840700001)(83380400001)(186003)(2616005)(86362001)(426003)(336012)(31696002)(82740400003)(356005)(36860700001)(40460700003)(44832011)(47076005)(8936002)(966005)(8676002)(40480700001)(4326008)(70586007)(70206006)(81166007)(82310400005)(5660300002)(2906002)(41300700001)(26005)(478600001)(53546011)(6666004)(16576012)(316002)(54906003)(36756003)(16526019)(110136005)(31686004)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2022 14:10:24.5580
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 481dfd42-6b20-43cc-e678-08daa09205ad
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT044.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6702
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-So it can be referenced by IMX8MQ_CLK_HDMI_PHY_27MHZ in device tree files.
+Hi Alex,
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/clk/imx/clk-imx8mq.c             | 1 +
- include/dt-bindings/clock/imx8mq-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+On 9/27/22 01:04, Rob Herring wrote:
+> On Fri, Sep 23, 2022 at 01:52:50PM -0700, Alex Helms wrote:
+>> Add dt bindings for the Renesas ProXO oscillator.
+>>
+>> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+>> ---
+>>   .../bindings/clock/renesas,proxo.yaml         | 49 +++++++++++++++++++
+>>   MAINTAINERS                                   |  5 ++
+>>   2 files changed, 54 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/renesas,proxo.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/renesas,proxo.yaml b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
+>> new file mode 100644
+>> index 000000000..79d62f399
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
+>> @@ -0,0 +1,49 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/renesas,proxo.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Renesas ProXO Oscillator Device Tree Bindings
+>> +
+>> +maintainers:
+>> +  - Alex Helms <alexander.helms.jy@renesas.com>
+>> +
+>> +description:
+>> +  Renesas ProXO is a family of programmable ultra-low phase noise
+>> +  quartz-based oscillators.
+>> +
+>> +properties:
+>> +  '#clock-cells':
+>> +    const: 0
+>> +
+>> +  compatible:
+>> +    enum:
+>> +      - renesas,proxo-xp
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  renesas,crystal-frequency:
+>> +    description: Internal crystal frequency, default is 50000000 (50MHz)
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> 'clock-frequency' doesn't work here?
+> 
+> Anything else needs '-hz' suffix.
+> 
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 783f98b05441..7cecb964cf1f 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -305,6 +305,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MQ_CLK_EXT2] = imx_obtain_fixed_clk_hw(np, "clk_ext2");
- 	hws[IMX8MQ_CLK_EXT3] = imx_obtain_fixed_clk_hw(np, "clk_ext3");
- 	hws[IMX8MQ_CLK_EXT4] = imx_obtain_fixed_clk_hw(np, "clk_ext4");
-+	hws[IMX8MQ_CLK_HDMI_PHY_27MHZ] = imx_obtain_fixed_clk_hw(np, "hdmi_phy_27m");
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
- 	base = of_iomap(np, 0);
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
-index afa74d7ba100..6401cc836c31 100644
---- a/include/dt-bindings/clock/imx8mq-clock.h
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -425,7 +425,8 @@
- #define IMX8MQ_CLK_MON_VIDEO_PLL2_DIV		300
- #define IMX8MQ_CLK_MON_SEL			301
- #define IMX8MQ_CLK_MON_CLK2_OUT			302
-+#define IMX8MQ_CLK_HDMI_PHY_27MHZ		303
- 
--#define IMX8MQ_CLK_END				303
-+#define IMX8MQ_CLK_END				304
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
--- 
-2.25.1
 
+Driver is also using clock-output-names which is not listed here.
+
+Thanks,
+Michal
