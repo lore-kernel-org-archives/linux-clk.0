@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68267C6FA93
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 10:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01993C6FA99
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 10:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbiI0KLl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 06:11:41 -0400
+        id S231869AbiI0KLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 06:11:43 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231761AbiI0KLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 06:11:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192F893534;
-        Tue, 27 Sep 2022 03:11:35 -0700 (PDT)
+        with ESMTP id S231802AbiI0KLj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 06:11:39 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B716A3D49;
+        Tue, 27 Sep 2022 03:11:38 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 88253660205F;
-        Tue, 27 Sep 2022 11:11:32 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1D18D6602266;
+        Tue, 27 Sep 2022 11:11:36 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664273493;
-        bh=wLKQ8bajA+e/ikXm5x/+8XAGljaSNHIIE+LrYJVbQc0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EeFVMdR4WBe/VIn37ShwE0RyPEHETCwPy3691cH8Sh6TEvpLUP85UwlgT9lJQJus/
-         viowz+lpEtj1NBVRv0Lk17WENx3phYNALtsM4+cigz8925QNTYvmmXJEpa5vATATIG
-         wWJKceuN26tBkagsBUDYp7Vxdk15M3C9tCJSY/TGwTfl7qXsH2rcRvcmOUsKfPe2Ol
-         QPxaHF5njo1RrI5H9xw5Rt3CuzzVFTMXRCX1/uE0c/wu2TqxzE9aY2kDeZqUsNuyy5
-         4QtYg+8YudzHdC3QHaV0GTMbYklup86dr+2aih0NLzJk2bxIlus1NK+L1fQpBmCB/x
-         fHAM4JCqZEGXA==
+        s=mail; t=1664273497;
+        bh=BE0zMqDnpD97J3kq9y5nwtB15tR6atriJmbEfAuXnXs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LZ5i2naiUWywWhYOMDxN+ma45e4ePKly0Q4q5qdMaHq0V5mduvF+1zD2xCcV15SzI
+         rY68bKCejWU+ZGw8Bicbz5xIMxmQVLIpwjdwwQF48a2D8Od3hxtBizAnPJpUy/qG2K
+         NQaC4mLO8UbLL/ZLlDP3b2J+ARuN3UkCIxhMllonrd6MbdQa0s+yADIX81EdG6xThU
+         TI9ZLvZtx2g4GX4wof5sYE2FMFTvPe8oNB5R5sKpfX142WyDNMVPNwBqbe6rnhxBt6
+         9M+lympMPmnX+Uzd5kW5+fsVmpp4cnI5xcbpF+QyYeWXYN5ld28QBXGs9QJ/qkhMFk
+         amuB74pHvTxaA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     matthias.bgg@gmail.com
@@ -44,74 +44,138 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
-Subject: [PATCH v3 00/10] MediaTek SoC safe clock muxing and GPU clocks
-Date:   Tue, 27 Sep 2022 12:11:18 +0200
-Message-Id: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 03/10] clk: mediatek: mux: add clk notifier functions
+Date:   Tue, 27 Sep 2022 12:11:21 +0200
+Message-Id: <20220927101128.44758-4-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
+References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds a clock notifier for MediaTek clock muxes, required
-in order to achieve stability for GPU DVFS.
+From: Chen-Yu Tsai <wenst@chromium.org>
 
-The GPU frequency scaling mechanism requires us to switch the GPU
-mux clock to a safe parent which frequency is always less or equal
-to the "current" GPU frequency before reprogramming its dedicated
-"MFG" PLL.
-This is needed because the PLL needs time to reconfigure for its
-output to stabilize (so, for the PLL to lock again): failing to do
-so will lead to instabilities such as glitches, GPU lockups and/or
-full system lockups.
+With device frequency scaling, the mux clock that (indirectly) feeds the
+device selects between a dedicated PLL, and some other stable clocks.
 
-While at it, reparenting of some GPU clocks was also performed, as
-the clock tree was slightly incorrect.
+When a clk rate change is requested, the (normally) upstream PLL is
+reconfigured. It's possible for the clock output of the PLL to become
+unstable during this process.
 
-This series was tested, along with mtk-regulator-coupler [1], on
-Chromebooks with different SoCs (MT8183, MT8192, MT8195*), resulting
-in fully working GPU DVFS with the Panfrost driver.
+To avoid causing the device to glitch, the mux should temporarily be
+switched over to another "stable" clock during the PLL rate change.
+This is done with clk notifiers.
 
-[1]: https://patchwork.kernel.org/project/linux-mediatek/patch/20220628120224.81180-1-angelogioacchino.delregno@collabora.com/
+This patch adds common functions for notifiers to temporarily and
+transparently reparent mux clocks.
 
-* MT8195 does not require mtk-regulator-coupler. This series, along
-  with [1], are required to perform GPU DVFS also on non-Chromebook SoCs.
+This was loosely based on commit 8adfb08605a9 ("clk: sunxi-ng: mux: Add
+clk notifier functions").
 
-Changes in v3:
- - Clarified commit description in patch [05/10]
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+[Angelo: Changed mtk_mux_nb to hold a pointer to clk_ops instead of mtk_mux]
+Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mux.c | 38 ++++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mux.h | 15 ++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-Changes in v2:
- - Added comment in clk-mt8195-topckgen to keep the mfg parents
-   documented after removal, as suggested by Chen-Yu
-
-AngeloGioacchino Del Regno (6):
-  clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d and propagate rate
-    changes
-  clk: mediatek: clk-mt8195-topckgen: Register mfg_ck_fast_ref as
-    generic mux
-  clk: mediatek: clk-mt8195-topckgen: Add GPU clock mux notifier
-  clk: mediatek: clk-mt8195-topckgen: Drop univplls from mfg mux parents
-  clk: mediatek: clk-mt8192-mfg: Propagate rate changes to parent
-  clk: mediatek: clk-mt8192: Add clock mux notifier for mfg_pll_sel
-
-Chen-Yu Tsai (4):
-  arm64: dts: mt8183: Fix Mali GPU clock
-  clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
-  clk: mediatek: mux: add clk notifier functions
-  clk: mediatek: mt8183: Add clk mux notifier for MFG mux
-
- arch/arm64/boot/dts/mediatek/mt8183.dtsi   |  2 +-
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c   |  6 +--
- drivers/clk/mediatek/clk-mt8183.c          | 28 +++++++++++++
- drivers/clk/mediatek/clk-mt8192-mfg.c      |  6 ++-
- drivers/clk/mediatek/clk-mt8192.c          | 28 +++++++++++++
- drivers/clk/mediatek/clk-mt8195-mfg.c      |  6 ++-
- drivers/clk/mediatek/clk-mt8195-topckgen.c | 46 +++++++++++++++-------
- drivers/clk/mediatek/clk-mux.c             | 38 ++++++++++++++++++
- drivers/clk/mediatek/clk-mux.h             | 15 +++++++
- 9 files changed, 153 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+index cd5f9fd8cb98..4421e4859257 100644
+--- a/drivers/clk/mediatek/clk-mux.c
++++ b/drivers/clk/mediatek/clk-mux.c
+@@ -4,6 +4,7 @@
+  * Author: Owen Chen <owen.chen@mediatek.com>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/compiler_types.h>
+ #include <linux/container_of.h>
+@@ -259,4 +260,41 @@ void mtk_clk_unregister_muxes(const struct mtk_mux *muxes, int num,
+ }
+ EXPORT_SYMBOL_GPL(mtk_clk_unregister_muxes);
+ 
++/*
++ * This clock notifier is called when the frequency of the parent
++ * PLL clock is to be changed. The idea is to switch the parent to a
++ * stable clock, such as the main oscillator, while the PLL frequency
++ * stabilizes.
++ */
++static int mtk_clk_mux_notifier_cb(struct notifier_block *nb,
++				   unsigned long event, void *_data)
++{
++	struct clk_notifier_data *data = _data;
++	struct clk_hw *hw = __clk_get_hw(data->clk);
++	struct mtk_mux_nb *mux_nb = to_mtk_mux_nb(nb);
++	int ret = 0;
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		mux_nb->original_index = mux_nb->ops->get_parent(hw);
++		ret = mux_nb->ops->set_parent(hw, mux_nb->bypass_index);
++		break;
++	case POST_RATE_CHANGE:
++	case ABORT_RATE_CHANGE:
++		ret = mux_nb->ops->set_parent(hw, mux_nb->original_index);
++		break;
++	}
++
++	return notifier_from_errno(ret);
++}
++
++int devm_mtk_clk_mux_notifier_register(struct device *dev, struct clk *clk,
++				       struct mtk_mux_nb *mux_nb)
++{
++	mux_nb->nb.notifier_call = mtk_clk_mux_notifier_cb;
++
++	return devm_clk_notifier_register(dev, clk, &mux_nb->nb);
++}
++EXPORT_SYMBOL_GPL(devm_mtk_clk_mux_notifier_register);
++
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+index 6539c58f5d7d..83ff420f4ebe 100644
+--- a/drivers/clk/mediatek/clk-mux.h
++++ b/drivers/clk/mediatek/clk-mux.h
+@@ -7,12 +7,14 @@
+ #ifndef __DRV_CLK_MTK_MUX_H
+ #define __DRV_CLK_MTK_MUX_H
+ 
++#include <linux/notifier.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+ 
+ struct clk;
+ struct clk_hw_onecell_data;
+ struct clk_ops;
++struct device;
+ struct device_node;
+ 
+ struct mtk_mux {
+@@ -89,4 +91,17 @@ int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+ void mtk_clk_unregister_muxes(const struct mtk_mux *muxes, int num,
+ 			      struct clk_hw_onecell_data *clk_data);
+ 
++struct mtk_mux_nb {
++	struct notifier_block	nb;
++	const struct clk_ops	*ops;
++
++	u8	bypass_index;	/* Which parent to temporarily use */
++	u8	original_index;	/* Set by notifier callback */
++};
++
++#define to_mtk_mux_nb(_nb)	container_of(_nb, struct mtk_mux_nb, nb)
++
++int devm_mtk_clk_mux_notifier_register(struct device *dev, struct clk *clk,
++				       struct mtk_mux_nb *mux_nb);
++
+ #endif /* __DRV_CLK_MTK_MUX_H */
 -- 
 2.37.2
 
