@@ -2,110 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73FDC07E9D
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 03:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49151C32771
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 03:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbiI0DNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 23:13:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49468 "EHLO
+        id S231312AbiI0DYb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 23:24:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230469AbiI0DMK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 23:12:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4E421E1E;
-        Mon, 26 Sep 2022 20:09:52 -0700 (PDT)
+        with ESMTP id S230190AbiI0DXx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 23:23:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737C5633C;
+        Mon, 26 Sep 2022 20:23:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9495CB80DAB;
-        Tue, 27 Sep 2022 03:09:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641CFC433C1;
-        Tue, 27 Sep 2022 03:09:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F10FA6156E;
+        Tue, 27 Sep 2022 03:23:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539E9C4347C;
+        Tue, 27 Sep 2022 03:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664248189;
-        bh=5alXme/iG0Q2Mzk003ElCEPHonmuGvo4KYhWd730jdo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jr+IfCGayJhZN8Z1h6NUhmMgQmfHRkh5g+DrWrQlpiCCbIH8QIA7JEA47F/W6H+1O
-         FbeQ2/0FFmYP521UZkMjia47O2zA5fWd+rD8vrgGl+GH9lffjFj5HOITfhrlv5KWEn
-         vvKbpVev42H8RmuGATB2JOmSIoB+deFWHSkrx20wuIcYawRVDksgusCN996VNA2nPa
-         pNAVnMWvW8/UFgurZkolLIEL9XG7vVhH4g3jUJhhATh87QuX7qEITo00cNyHq4PeMW
-         kIVsTDj5/sCdmb0aBRy0qPSdEauJuUl10zuGh7MNVEhiqIPXb6dzOzEabo+9xqdOZs
-         J8QJ4m8P1iwvw==
-Date:   Mon, 26 Sep 2022 22:09:46 -0500
+        s=k20201202; t=1664248987;
+        bh=jwIr1AadyxPP096EKZl/ojVnW7WbucoDnGDfFm6rVl8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Kj9U86gNK9dhB4FuRpUt46aYQuyP5ty1/X3HHrtXu6JaubyYzIQEPhxQLRY450ywX
+         CZmw0M9UOPlA8r/NOMa4bfSYWZMqUaI1fEoREwy87Q1JALGp5E3Gvtbtj4F7M9b8GA
+         wnvfsPzjI6PFAVKYD/sSdZMXO+RHayZXQq4cP2MzTKU4tVrCtK8gprkz5/tTe0NOa4
+         9MF8Ghbw9VuXUQHz+DOr4Sb3V6pD8Ya0NHzef0YUUcd8j/wpLRiQm7Y1KgS6UoIdJx
+         iaRM7u8BbYJpsb5OHW71+ao74QDasU1caEIUoCqmDZvqIFtaKmpGF8RMvkwawZ9clS
+         otjTYbOFHJsbw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Adam Skladowski <a39.skl@gmail.com>, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: add QCOM SM6115 display clock
- bindings
-Message-ID: <20220927030946.5acxedwvut6ifdmx@builder.lan>
-References: <20220911164635.182973-1-a39.skl@gmail.com>
- <20220911164635.182973-2-a39.skl@gmail.com>
- <20220913152620.GA3762864-robh@kernel.org>
+To:     robh+dt@kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, konrad.dybcio@somainline.org, agross@kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     robh@kernel.org, dmitry.baryshkov@linaro.org
+Subject: Re: (subset) [PATCH v7 1/4] dt-bindings: clock: add pcm reset for ipq806x lcc
+Date:   Mon, 26 Sep 2022 22:22:58 -0500
+Message-Id: <166424897969.1766486.9923540291851498310.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220724182329.9891-1-ansuelsmth@gmail.com>
+References: <20220724182329.9891-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220913152620.GA3762864-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 10:26:20AM -0500, Rob Herring wrote:
-> On Sun, Sep 11, 2022 at 06:46:18PM +0200, Adam Skladowski wrote:
-> > Add device tree bindings for display clock controller for
-> > Qualcomm Technology Inc's SM6115 SoC.
-> > 
-> > Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> > ---
-> >  .../bindings/clock/qcom,sm6115-dispcc.yaml    | 70 +++++++++++++++++++
-> >  .../dt-bindings/clock/qcom,sm6115-dispcc.h    | 36 ++++++++++
-> >  2 files changed, 106 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
-> >  create mode 100644 include/dt-bindings/clock/qcom,sm6115-dispcc.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
-> > new file mode 100644
-> > index 000000000000..a6bf363b5015
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-dispcc.yaml
-> > @@ -0,0 +1,70 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,sm6115-dispcc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Display Clock Controller Binding for SM6115
+On Sun, 24 Jul 2022 20:23:26 +0200, Christian Marangi wrote:
+> Add pcm reset define for ipq806x lcc.
 > 
-> s/Binding //
-> 
-> > +
-> > +maintainers:
-> > +  - Bjorn Andersson <andersson@kernel.org>
-> > +
-> > +description: |
-> 
-> Don't need '|' when no formatting to preserve.
 > 
 
-This follows the other dispcc bindings, where I think the intention is
-to keep the formatting over "See also". In contrast to the other dispcc
-bindings the "See also" has a ':' at the end in this proposal...
+Applied, thanks!
 
-> With those fixes,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+[1/4] dt-bindings: clock: add pcm reset for ipq806x lcc
+      commit: d7081998cca9df11727d77bf9a34f6499a13862b
+[2/4] clk: qcom: lcc-ipq806x: add reset definition
+      commit: ce6bb04cad2632baa6ec27852f417b0baeaa58da
+[3/4] clk: qcom: lcc-ipq806x: convert to parent data
+      commit: 7458b82fa563468843a35fce946b9893d0445fd3
+[4/4] clk: qcom: lcc-ipq806x: use ARRAY_SIZE for num_parents
+      commit: 18f6e9cd7fa3ef6a6dcb10d3fe357afaa52bd216
 
-I took the liberty of fixing up the description to align with the others
-and applied this, with your R-b.
-
-Regards,
-Bjorn
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
