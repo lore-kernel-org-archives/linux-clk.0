@@ -2,86 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF30C6FA90
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 10:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD81AC6FA90
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 10:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbiI0KLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 06:11:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43038 "EHLO
+        id S229889AbiI0Kjq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 06:39:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231912AbiI0KLs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 06:11:48 -0400
+        with ESMTP id S229472AbiI0Kjp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 06:39:45 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA16ADCC1;
-        Tue, 27 Sep 2022 03:11:45 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB0C65657;
+        Tue, 27 Sep 2022 03:39:43 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 27975660205F;
-        Tue, 27 Sep 2022 11:11:43 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 36E09660225F;
+        Tue, 27 Sep 2022 11:39:42 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664273504;
-        bh=KE1rvd7pVyQ89w9ShKCyfwsXiehfSxAVE51synX8ntA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gIFvB+w5twIwR4uESBQCFdTX2BBLvXi5nHYsoe7SVbyXF14SxYrzJXo7furDl5hTy
-         lVJYAmWzUHX1Ev7skpHS9NFcioNXznGQHmkVn7X8Bn0vRa3YA6z//TjPoDfRUEnzUm
-         wr/ctyMNn94JLZ5WTTilrC6x6s+VXJPS5ci2j2AfIvClRu8mlWuYFQFHrOiOxi1clA
-         xc7u49ykY74yz2hsrqtxIQ/bnA9k9ujYtkCxSjkIziRO9tt19zTO3QADy0FeJ3Ro0x
-         qP05bwCDlVqGFZyx5qJFqW4x3vv5onQh90BmkXYoVbarSh1CfwJXmxh73g38LWgSKK
-         GFldapsSpbp/Q==
+        s=mail; t=1664275182;
+        bh=AMgtIGTha2E70GrYjihLiNaIG3QRYRtKKBHoiKsZNjc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=L/0uEDggcWvhuV/c3BtHlYYGr0kpKy2WLah/QOfc1/HqQZlmdWM2W7x+Z9IPUOIEM
+         AnZVGclmmYDXp7MNGGtEedys50vhtPUAkePCt3BDSLlKLigRE56vChVqHYaLxvz4/x
+         6fEZB3yn9M3hWQ+JK2cAhXXuiA5B8+fbar8YYZiQODpkIPh+l2AWL8kEfXrelmqCxJ
+         2gS8TS6h1w5uBYjNy+XzeuimPgHxzUr5w7GSfl0sUTJRkwNRvUgOH3BOpuQJVQFKOs
+         ZkKgetUFPuZUR+bI8XMvxCC77jJHjU+EE0EyL7gxre/i+916dxmv/J0i9uubnLIGam
+         GfSlTlrZfWN5Q==
+Message-ID: <70c9375e-52f8-40a6-3fea-ba95fae16c99@collabora.com>
+Date:   Tue, 27 Sep 2022 12:39:39 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 6/6] clk: mediatek: mt8192: Implement error handling in
+ probe functions
+Content-Language: en-US
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220926102523.2367530-1-wenst@chromium.org>
+ <20220926102523.2367530-7-wenst@chromium.org>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-To:     matthias.bgg@gmail.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        nfraprado@collabora.com, chun-jie.chen@mediatek.com,
-        jose.exposito89@gmail.com, drinkcat@chromium.org,
-        weiyi.lu@mediatek.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Subject: [PATCH v3 09/10] clk: mediatek: clk-mt8192-mfg: Propagate rate changes to parent
-Date:   Tue, 27 Sep 2022 12:11:27 +0200
-Message-Id: <20220927101128.44758-10-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
-References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220926102523.2367530-7-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following what was done on MT8183 and MT8195, also propagate the rate
-changes to MFG_BG3D's parent on MT8192 to allow for proper GPU DVFS.
+Il 26/09/22 12:25, Chen-Yu Tsai ha scritto:
+> This is similar to commit f3e690b00b86 ("clk: mediatek: mt8195:
+> Implement error handling in probe functions").
+> 
+> Until now the mediatek clk driver library did not have any way to
+> unregister clks, and so all drivers did not do proper cleanup in
+> their error paths.
+> 
+> Now that the library does have APIs to unregister clks, use them
+> in the error path of the probe functions for the mt8192 clk drivers
+> to do proper cleanup.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
----
- drivers/clk/mediatek/clk-mt8192-mfg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I can't give you my Reviewed-by on this patch only because of the comment
+in patch [3/6] - anyway, LGTM.
 
-diff --git a/drivers/clk/mediatek/clk-mt8192-mfg.c b/drivers/clk/mediatek/clk-mt8192-mfg.c
-index 3bbc7469f0e4..8ea5acdf832c 100644
---- a/drivers/clk/mediatek/clk-mt8192-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8192-mfg.c
-@@ -18,8 +18,10 @@ static const struct mtk_gate_regs mfg_cg_regs = {
- 	.sta_ofs = 0x0,
- };
- 
--#define GATE_MFG(_id, _name, _parent, _shift)	\
--	GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+#define GATE_MFG(_id, _name, _parent, _shift)			\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs,	\
-+		       _shift, &mtk_clk_gate_ops_setclr,	\
-+		       CLK_SET_RATE_PARENT)
- 
- static const struct mtk_gate mfg_clks[] = {
- 	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_pll_sel", 0),
--- 
-2.37.2
+Regards,
+Angelo
 
