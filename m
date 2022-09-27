@@ -2,210 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAF8C54EE9
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 20:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB559C07E9D
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 21:44:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230296AbiI0UbJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 16:31:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54186 "EHLO
+        id S229584AbiI0Voc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 17:44:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbiI0UbI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 16:31:08 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B965C9D8;
-        Tue, 27 Sep 2022 13:31:06 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id z6so16753410wrq.1;
-        Tue, 27 Sep 2022 13:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=JwWeSyqh6XDkvRuae2xCSGuiu1TcGjy5DWuLUo0Mul8=;
-        b=YihYpIiRooMtvNhcmNwW9CmgZQfD/YEQyvhs4mbMngF1+rQKGW/x1J7/pmlLwv3iQh
-         iybsutX7JCkP9MLIlkf5+DwSJ8roFhfh9c5HpbkHozclVgRiYmjZ4DknjdcQcTYqMrYH
-         6cLmn8FooeoXH/7fQITyduO8FdNtIQRQmN3aNPILlNq5dMwNSEavCFtFhaaezi6b4Q2M
-         9S9ZPHr0dN4VaZrSY7FKPPmg5pm5r6zR/SZ+d2hLy/1T+v0p/e3cuSy+BUuwSMtJuJWh
-         BvIdIohnz9N4dsV6aLsZXXhJ5450K9/NrINftbWY5B4/k4ggdrmUiWXehhZTYtKdoN1C
-         tE0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=JwWeSyqh6XDkvRuae2xCSGuiu1TcGjy5DWuLUo0Mul8=;
-        b=G8dTkJu6VSOLcBZS6sdbbI212MnxnschmorGsCaRi3vDjz80jS0TFT+7EDbZzt2QQy
-         McWykP7uf2OLoo3Kd+fVmWv4ilG95bxNnfI8h3y2pRCJjygOlTgCLjcqjYDFo4vdnzo/
-         +IAAQcEr+qx4DbvMPDC2ggTGsgXmtV29nwfWgAEFgAKnCg179mMA1oT6K9RimTG3MhWH
-         6GAeRQDtbBy6utLpVagJdGeQjwr2t3arid8AO+MFlOahMjm4N7EeuvpfJW3J7CbabXDf
-         9jktqKNeBm6RSR88+cQHsnhWh+XBuVZb8PE6WK7PiKJ5dXeQob4kZOEU+xCjqgFlwx4h
-         8WPA==
-X-Gm-Message-State: ACrzQf0CfwC7w89myJXm3SX39q/Y0v+kbdO7qYgovk6W03Ctxbkh65rB
-        zMQ2yB65lcOWF+be6kN7ktg=
-X-Google-Smtp-Source: AMsMyM5J2IMXO54ovE1z7OIYL3Vj8ny58vvaeQUfEvlKnpu6/2YbTPdpIb9DpI3dnSXKuRUj4oKaAA==
-X-Received: by 2002:a5d:6b0e:0:b0:22a:2cb1:6605 with SMTP id v14-20020a5d6b0e000000b0022a2cb16605mr17811499wrw.552.1664310664849;
-        Tue, 27 Sep 2022 13:31:04 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:c6a:3c62:baf6:511c])
-        by smtp.gmail.com with ESMTPSA id ck16-20020a5d5e90000000b0022cc4b7861fsm754830wrb.97.2022.09.27.13.31.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 13:31:04 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S230203AbiI0Vob (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 17:44:31 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2DC10B59F
+        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 14:44:28 -0700 (PDT)
+Received: from tr.lan (ip-86-49-12-201.bb.vodafone.cz [86.49.12.201])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id B676784C60;
+        Tue, 27 Sep 2022 23:44:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1664315065;
+        bh=QIdqS8zKQL1YbNi3m8izj2npUth1cDHCqpNZn9i8PVU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Xs5vht3ASDSk5mAHxWNKutC5KYkUqeEOqdpUwvNsRif1OUAKIjWIOla9qjCdL34k5
+         08gI8C01ngB5WUsE7BGeNGi6YnFm+VUZSf4hhcCqKJXPFJT36GY08vtVLKcVCzqVAh
+         kK4y0EJNrO26T+EcXpZjTBiBzoacNROdkx7kConF8565VL/zSZuW606x/JSAJKMcox
+         Np5NxyWnLfbkp7nB4g5cQ5gGOjVJ7MH/vCpEatPq2laYrUkedEKjY2tJBQBsBQyw00
+         sD1v/JVRc86Ji8MeZbCFbgz230fj+NDC5E0UQR00jN7UeWf92O0Xj2S6CGUF4tvwPt
+         xTf7fcaauSp7Q==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD clocks support PM
-Date:   Tue, 27 Sep 2022 21:30:43 +0100
-Message-Id: <20220927203044.751611-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3] clk: rs9: Fix I2C accessors
+Date:   Tue, 27 Sep 2022 23:44:14 +0200
+Message-Id: <20220927214415.418140-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Add custom I2C accessors to this driver, since the regular I2C regmap ones
+do not generate the exact I2C transfers required by the chip. On I2C write,
+it is mandatory to send transfer length first, on read the chip returns the
+transfer length in first byte. Instead of always reading back 8 bytes, which
+is the default and also the size of the entire register file, set BCP register
+to 1 to read out 1 byte which is less wasteful.
 
-There are cases where not all CPG_MOD clocks should be assumed to support
-PM. For example on the CRU block there is a particular sequence that needs
-to be followed to initialize the CSI-2 D-PHY in which individual clocks
-need to be turned ON/OFF, due to which Runtime PM support wasn't used by
-the CRU CSI-2 driver.
-
-This patch adds support to allow indicating if PM is supported by the
-CPG_MOD clocks. A new macro is DEF_NO_PM() is added which sets the no_pm
-flag in struct rzg2l_mod_clk and when the driver uses Runtime PM support
-no_pm flag is checked to see if the clk needs to included as part of
-Runtime PM.
-
-CPG_MOD clocks with no_pm flag set need to be individually turned ON/OFF
-depending on the requirement of the driver.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Fixes: 892e0ddea1aa6 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
+Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 35 +++++++++++++++++++++++++++++----
- drivers/clk/renesas/rzg2l-cpg.h | 12 ++++++++---
- 2 files changed, 40 insertions(+), 7 deletions(-)
+V2: Fix endianness handling in rs9_regmap_i2c_read() i2c_transfer
+V3: - Disable regcache, the driver does a couple of I2C writes on boot
+      and that is all, so it only adds complexity
+    - Set regmap max_register to RS9_REG_BCP which is the correct one
+---
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-renesas-pcie.c | 60 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 57 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 3ff6ecd61756..d275324909e7 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -114,6 +114,8 @@ struct rzg2l_cpg_priv {
- 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 4f5df1fc74b46..138aaab05fc8a 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -90,13 +90,61 @@ static const struct regmap_access_table rs9_writeable_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
  };
  
-+static struct rzg2l_cpg_priv *rzg2l_cpg_priv;
-+
- static void rzg2l_cpg_del_clk_provider(void *data)
- {
- 	of_clk_del_provider(data);
-@@ -1223,18 +1225,42 @@ static int rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
- 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
- }
- 
-+static inline const struct rzg2l_mod_clk
-+*rzg2l_get_mod_clk(const struct rzg2l_cpg_info *info, int id)
++static int rs9_regmap_i2c_write(void *context,
++				unsigned int reg, unsigned int val)
 +{
-+	unsigned int i;
++	struct i2c_client *i2c = context;
++	const u8 data[3] = { reg, 1, val };
++	const int count = ARRAY_SIZE(data);
++	int ret;
 +
-+	id += info->num_total_core_clks;
-+	for (i = 0; i < info->num_mod_clks; i++) {
-+		if (info->mod_clks[i].id == id)
-+			return &info->mod_clks[i];
-+	}
-+
-+	return NULL;
++	ret = i2c_master_send(i2c, data, count);
++	if (ret == count)
++		return 0;
++	else if (ret < 0)
++		return ret;
++	else
++		return -EIO;
 +}
 +
- static bool rzg2l_cpg_is_pm_clk(const struct of_phandle_args *clkspec)
- {
-+	struct rzg2l_cpg_priv *priv = rzg2l_cpg_priv;
-+	const struct rzg2l_cpg_info *info = priv->info;
-+	const struct rzg2l_mod_clk *mod_clk;
++static int rs9_regmap_i2c_read(void *context,
++			       unsigned int reg, unsigned int *val)
++{
++	struct i2c_client *i2c = context;
++	struct i2c_msg xfer[2];
++	u8 txdata = reg;
++	u8 rxdata[2];
++	int ret;
 +
- 	if (clkspec->args_count != 2)
- 		return false;
- 
--	switch (clkspec->args[0]) {
--	case CPG_MOD:
--		return true;
-+	if (clkspec->args[0] != CPG_MOD)
-+		return false;
- 
--	default:
-+	if (clkspec->args[1] >= info->num_hw_mod_clks) {
-+		dev_err(priv->dev, "Invalid clk index\n");
- 		return false;
- 	}
++	xfer[0].addr = i2c->addr;
++	xfer[0].flags = 0;
++	xfer[0].len = 1;
++	xfer[0].buf = (void *)&txdata;
 +
-+	mod_clk = rzg2l_get_mod_clk(info, clkspec->args[1]);
-+	if (mod_clk && mod_clk->no_pm)
-+		return false;
++	xfer[1].addr = i2c->addr;
++	xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
++	xfer[1].len = 1;
++	xfer[1].buf = (void *)rxdata;
 +
-+	return true;
- }
- 
- static int rzg2l_cpg_attach_dev(struct generic_pm_domain *unused, struct device *dev)
-@@ -1348,6 +1374,7 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
-+	rzg2l_cpg_priv = priv;
- 	nclks = info->num_total_core_clks + info->num_hw_mod_clks;
- 	clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index cecbdf5e4f93..1d68d3838392 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -176,6 +176,7 @@ enum clk_types {
-  * @off: register offset
-  * @bit: ON/MON bit
-  * @is_coupled: flag to indicate coupled clock
-+ * @no_pm: flag to indicate if clock doesn't support PM
-  */
- struct rzg2l_mod_clk {
- 	const char *name;
-@@ -184,9 +185,10 @@ struct rzg2l_mod_clk {
- 	u16 off;
- 	u8 bit;
- 	bool is_coupled;
-+	bool no_pm;
++	ret = i2c_transfer(i2c->adapter, xfer, 2);
++	if (ret < 0)
++		return ret;
++	if (ret != 2)
++		return -EIO;
++
++	*val = rxdata[1];
++	return 0;
++}
++
+ static const struct regmap_config rs9_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+-	.cache_type = REGCACHE_FLAT,
+-	.max_register = 0x8,
++	.cache_type = REGCACHE_NONE,
++	.max_register = RS9_REG_BCP,
+ 	.rd_table = &rs9_readable_table,
+ 	.wr_table = &rs9_writeable_table,
++	.reg_write = rs9_regmap_i2c_write,
++	.reg_read = rs9_regmap_i2c_read,
  };
  
--#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _is_coupled)	\
-+#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _is_coupled, _no_pm)	\
- 	{ \
- 		.name = _name, \
- 		.id = MOD_CLK_BASE + (_id), \
-@@ -194,13 +196,17 @@ struct rzg2l_mod_clk {
- 		.off = (_off), \
- 		.bit = (_bit), \
- 		.is_coupled = (_is_coupled), \
-+		.no_pm = (_no_pm), \
+ static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)
+@@ -242,11 +290,17 @@ static int rs9_probe(struct i2c_client *client)
+ 			return ret;
  	}
  
- #define DEF_MOD(_name, _id, _parent, _off, _bit)	\
--	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, false)
-+	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, false, false)
+-	rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
++	rs9->regmap = devm_regmap_init(&client->dev, NULL,
++				       client, &rs9_regmap_config);
+ 	if (IS_ERR(rs9->regmap))
+ 		return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
+ 				     "Failed to allocate register map\n");
  
- #define DEF_COUPLED(_name, _id, _parent, _off, _bit)	\
--	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, true)
-+	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, true, false)
++	/* Always read back 1 Byte via I2C */
++	ret = regmap_write(rs9->regmap, RS9_REG_BCP, 1);
++	if (ret < 0)
++		return ret;
 +
-+#define DEF_NO_PM(_name, _id, _parent, _off, _bit)	\
-+	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, false, true)
- 
- /**
-  * struct rzg2l_reset - Reset definitions
+ 	/* Register clock */
+ 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
+ 		snprintf(name, 5, "DIF%d", i);
 -- 
-2.25.1
+2.35.1
 
