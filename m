@@ -2,88 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D88C07E9D
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 11:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B079C54EE9
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 11:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232068AbiI0Liq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 07:38:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42868 "EHLO
+        id S231899AbiI0L6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 07:58:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232048AbiI0Lie (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 07:38:34 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A7514A799
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 04:38:28 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id a3so15238666lfk.9
-        for <linux-clk@vger.kernel.org>; Tue, 27 Sep 2022 04:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=63e0MRQZtWlFWWMGomzrJx4HGydgEEo5osHWTKB+1bs=;
-        b=z5QnAZRCAzWWL9uzsHUHH9BTwPmvDX8r404hOA3iZIizwBqUEIWMAT7tZLd3ozb0uP
-         /PRk9NaR9XNMXV0I5x2KY9smE6NoIu3VZmBZcJU861fAvzJPRS9LeGR+UejEed6Mdx3S
-         eQUx6h+GAguRYoDlBLN5wWXSf/xHnL2WfGNe7+Z17dKD0N+xm5bsKOKh1YT31W+YomcW
-         49HDUr02jl8+1y9IPjGUSU9FfLDh/cotMB/BYoFAF6XP0f1j/0tkKpTuhO8F5vQPSeFy
-         fj3ZkPTZmn+MZIKEJZXKeanPn5P7uuh63jHNVBawnbbop5D/fX+c3LeRn3SbRlFC6Q8O
-         zmEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=63e0MRQZtWlFWWMGomzrJx4HGydgEEo5osHWTKB+1bs=;
-        b=KcQ39M1Wmk8J2sUQdfBWEu+rGcYZ+wS8PuSxYdgSroaPO4S4OLqKGMyhW4x6qpFkJd
-         ORVl+n1BhbgBQV/wrxAyJ7y9j4Rt6XXGAYSBfBBL6I9oKLYai24Gt2m0Hh+/GsvGOXiJ
-         MUgkd+QX5ZBhCUuYSIMMWtqzmGdBJOjOPnsC0/kY5w3nmfXAAsQC5Cvx2xs+4ukXkgMT
-         SROXJUUYM0tYBQcOjhH2AHNHGBD3wonRlqIMRASu2YRw3z7UrxkEMI6jc85eY/oY7jRT
-         wjhNK7LnFBElHwcYGFu+IDYq/Jx74B7tcIWY0vcGqv1B62T2ZDRYmvUGCLhbu2SY0Ib/
-         GYZw==
-X-Gm-Message-State: ACrzQf0i3WSP/cnghmFl7k36zPogQ+1zeYJXO+/ToD3TGcEg1Dmdv13K
-        CpI4fynofOZ/28KllI1DjhFHQQ==
-X-Google-Smtp-Source: AMsMyM6YIrelcc/09mBstD5jOKlHiZ/CdBADsQqHO29KKvmvIC3UHXZcm8C4MN3l1b7VNLFTEmXZxQ==
-X-Received: by 2002:a05:6512:3c8c:b0:498:f7ba:9a69 with SMTP id h12-20020a0565123c8c00b00498f7ba9a69mr11257484lfv.8.1664278708053;
-        Tue, 27 Sep 2022 04:38:28 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id t12-20020a056512208c00b00492dfcc0e58sm142165lfr.53.2022.09.27.04.38.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 04:38:27 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v2 0/3] clk: qcom: gcc-ipq806x: use parent_data for the last remaining entry
-Date:   Tue, 27 Sep 2022 14:38:23 +0300
-Message-Id: <20220927113826.246241-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S231386AbiI0L6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 07:58:05 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6D31559C5;
+        Tue, 27 Sep 2022 04:58:03 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B78146602044;
+        Tue, 27 Sep 2022 12:58:01 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1664279882;
+        bh=88MjLq3P5M5em0fyg1W+TBbaIVw/bbrjIrf0FzdYW10=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=anjWCq3gsuhqzIwbem6fwg2t895U3mwEeu19uM0je7cpyV6W03Gngw50uZQgKS87F
+         9WPXdJeMWy2TB5SH4cGXa/DqC2+bLALIwnWSPblmwLFEbGaDq5KLW7GPdqc4pU0kH3
+         u/we186mEpRvXtrLVESMUrbA7mkHasazrvM7km3iR05ZTxwbEVxMzIfipVNjzQJECE
+         buXqVkxdEiS4yvA5UbdPxN/soFv1P1rQ0qXtkIZ6lFFXuMZdK3HZlVz+CIcXIylFqR
+         vS13stFCoLtAUEZG11/5wRpcoHXISCXO+TsNvKDKmnNAlozsIjSif7iHK/FB8J9vtJ
+         XBVuNVOCrqx1A==
+Message-ID: <657820a2-f945-ac6a-8a99-47ee511181d8@collabora.com>
+Date:   Tue, 27 Sep 2022 13:57:59 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+ support
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Rajendra Nayak <quic_rjendra@quicinc.com>, agross@kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, mka@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
+        quic_kriskura@quicinc.com, dianders@chromium.org,
+        linux-clk@vger.kernel.org
+References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+ <d813e8a5-9eba-b3f7-2eee-cd721d120a30@collabora.com>
+ <20220927030203.tz4j5vuhvrnhti6i@builder.lan>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220927030203.tz4j5vuhvrnhti6i@builder.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the reference to the pll4 clock to the DT.
+Il 27/09/22 05:02, Bjorn Andersson ha scritto:
+> On Tue, Sep 20, 2022 at 02:39:21PM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 20/09/22 13:15, Rajendra Nayak ha scritto:
+>>> GDSCs cannot be transitioned into a Retention state in SW.
+>>> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+>>> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+>>> takes care of retaining the memory/logic for the domain when
+>>> the parent domain transitions to power collapse/power off state.
+>>>
+>>> On some platforms where the parent domains lowest power state
+>>> itself is Retention, just leaving the GDSC in ON (without any
+>>> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
+>>> it to Retention.
+>>>
+>>> The existing logic handling the PWRSTS_RET seems to set the
+>>> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
+>>> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
+>>> Fix that by leaving the GDSC in ON state.
+>>>
+>>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+>>> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> ---
+>>> v3:
+>>> Updated changelog
+>>>
+>>> There are a few existing users of PWRSTS_RET and I am not
+>>> sure if they would be impacted with this change
+>>>
+>>> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+>>> gdsc is actually transitioning to OFF and might be left
+>>> ON as part of this change, atleast till we hit system wide
+>>> low power state.
+>>> If we really leak more power because of this
+>>> change, the right thing to do would be to update .pwrsts for
+>>> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+>>> I dont have a msm8974 hardware, so if anyone who has can report
+>>> any issues I can take a look further on how to fix it.
+>>
+>> I think that the safest option is to add a PWRSTS_RET_HW_CTRL flag (or similar),
+>> used for the specific cases of SC7180 and SC7280 (and possibly others) where the
+>> GDSC is automatically transitioned to a Retention state by HW control, with no
+>> required software (kernel driver) intervention.
+>>
+>>>
+>>> 2. gpu_gx_gdsc in gpucc-msm8998.c and
+>>>      gpu_gx_gdsc in gpucc-sdm660.c
+>>> Both of these seem to add support for 3 power state
+>>> OFF, RET and ON, however I dont see any logic in gdsc
+>>> driver to handle 3 different power states.
+>>> So I am expecting that these are infact just transitioning
+>>> between ON and OFF and RET state is never really used.
+>>> The ideal fix for them would be to just update their resp.
+>>> .pwrsts to PWRSTS_OFF_ON only.
+>>
+>> static int gdsc_init(struct gdsc *sc)
+>> {
+>>
+>> 	...
+>>
+>> 	if (on || (sc->pwrsts & PWRSTS_RET))
+>> 		gdsc_force_mem_on(sc);
+>> 	else
+>> 		gdsc_clear_mem_on(sc);
+>>
+>> 	...
+>> }
+>>
+>> On MSM8998 and SDM630/636/660, we're reaching that point with a GDSC that is
+>> left OFF from the bootloader, but we want (at least for 630/660) memretain
+>> without periph-retain: this is required to make the hypervisor happy.
+>>
+> 
+> Forgive me Angelo, but can you please help me understand your concern
+> here?
+> 
+> Are yous saying that the valid states for 8998/660 are PWRSTS_OFF_ON,
+> but you also want gdsc_force_mem_on() - with NO_RET_PERIPH?
+> 
+> 
+> It seems to me that as Rajendra's patch is written, the gpu_gx_gdsc
+> won't be affected, because pwrsts != PWRSTS_RET. So this is a question
+> about the validity of fixing the pwrsts in gpucc-msm8998, rather than
+> about this patch in itself?
+> 
 
-Changes since v1:
- - Add dt-bindings and DTS changes
+Hello Bjorn,
 
-Dmitry Baryshkov (3):
-  dt-bindings: clock: qcom,gcc-ipq8064: add pll4 to used clocks
-  clk: qcom: gcc-ipq806x: use parent_data for the last remaining entry
-  ARM: dts: qcom-ipq8064: use pll4 clock for the gcc device
+my replies were related to this part of the commit description:
 
- .../devicetree/bindings/clock/qcom,gcc-ipq8064.yaml      | 9 +++++++--
- arch/arm/boot/dts/qcom-ipq8064.dtsi                      | 4 ++--
- drivers/clk/qcom/gcc-ipq806x.c                           | 4 +++-
- 3 files changed, 12 insertions(+), 5 deletions(-)
+ >>> The ideal fix for them would be to just update their resp.
+ >>> .pwrsts to PWRSTS_OFF_ON only.
 
--- 
-2.35.1
+By updating MSM8998 and SDM660's gpu_gx_gdsc to remove PWRSTS_RET, the gdsc_init()
+flow will change, as in the aforementioned branch, `on` will be false, hence,
+we will clear RETAIN_MEM during the gpu_gx_gdsc initialization, producing side
+effects.
+I agree on the fact that PWRSTS_RET was *not* handled correctly before this commit
+and this alone will not produce any side effects on MSM8998, nor SDM660.
 
+So yes, this is a discussion about the validity of fixing the pwrsts in
+gpucc-msm8998 and in gpucc-sdm660.c.
+
+Cheers,
+Angelo
