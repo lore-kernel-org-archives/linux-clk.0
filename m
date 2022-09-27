@@ -2,53 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01781C32771
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 03:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DA3C6FA82
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Sep 2022 03:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231486AbiI0DYo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Sep 2022 23:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
+        id S229994AbiI0DYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Sep 2022 23:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbiI0DX6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 23:23:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E7F5C37A;
-        Mon, 26 Sep 2022 20:23:16 -0700 (PDT)
+        with ESMTP id S230455AbiI0DX4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Sep 2022 23:23:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B404DB29;
+        Mon, 26 Sep 2022 20:23:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A31F061585;
-        Tue, 27 Sep 2022 03:23:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD677C43143;
-        Tue, 27 Sep 2022 03:23:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E5F361585;
+        Tue, 27 Sep 2022 03:23:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD61DC43141;
+        Tue, 27 Sep 2022 03:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664248995;
-        bh=MbHislodbHWamvfQ72iARjTJC113lxMjN7t13HcDaCQ=;
+        s=k20201202; t=1664248991;
+        bh=bZonAAcYzPjbxgWAIwzer8elBdCorKx05VbGTfWGEiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aApuCfnscjtUP2X01tAoaY7Z3EPOKYw0faY5GFVVDcrcGFIvI16MkQ5aeGM/Vgbyd
-         hMFfghzbzr3Fy4LCq1KZ0LKJHqpS5Lbgd5lY88Qk2VytxWM8wLvFKS8KYEz/6WBqkO
-         QvNp5/cFvdXETXUdw99tay5DRtwic5CxvEWKtIYZf0oc4Rq0HpEf+TkP60us85GGoy
-         6FqXrvRGCgnyibz1s8ms4H4CSex1zCn9F+WiW+LkfU3mfo8VWCi7vKiutlK5b46WpM
-         mA1Busa6JAsdLJ6A9ZQKhBt5cbliFdzpJdinP561ei7T4OamZ7eHAj3PSs+mozDi6/
-         F3lgtF/WAoewA==
+        b=ChUgWNdCfEUYKElTZbeOm+uQxPAkp+iu0mYTMM2rQA9dElyAZGyHsmPnP7880UnFq
+         3NxaYGA3ykRuyU6deClPPt6FkpGSIwJbXSWimNTX2lP/6X3J9JmLNCV+fpEXy4Cmd9
+         KOSodwZ9Y8bZY9a0HonC8HmDjKkkE/vnzxwDxUxMCzmkCgSx6TdvVkvN+PwZpwsKUn
+         T8CcUHM3iY0f5iRPdyVfQ54bDh5s1a10PHu3OOLG/7jDnkxqW01WfepuRYDZjsyAQE
+         zpUtTnok2m7Dk7w7Zaa6AhqDKJ3i5WDY4cDiIx6LFi1kTRTec+42gm6odEndUk2P4Q
+         4bxX+pVr7wJfQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     loic.poulain@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, Bjorn Andersson <andersson@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
-        sboyd@kernel.org, yassine.oudjana@gmail.com
-Cc:     y.oudjana@protonmail.com, konrad.dybcio@somainline.org,
-        marijn.suijten@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        jami.kettunen@somainline.org, linux-clk@vger.kernel.org,
-        martin.botka@somainline.org, dmitry.baryshkov@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/6] clk: qcom: msm8996-cpu: Cleanup and migrate to parent_data
-Date:   Mon, 26 Sep 2022 22:23:04 -0500
-Message-Id: <166424897968.1766486.11324579765862390238.b4-ty@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>, quic_c_skakit@quicinc.com
+Cc:     swboyd@chromium.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org
+Subject: Re: [PATCH] clk: qcom: lpass: Fix lpass audiocc probe
+Date:   Mon, 26 Sep 2022 22:23:02 -0500
+Message-Id: <166424897970.1766486.10035457157175258141.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220621160621.24415-1-y.oudjana@protonmail.com>
-References: <20220621160621.24415-1-y.oudjana@protonmail.com>
+In-Reply-To: <1663673683-7018-1-git-send-email-quic_c_skakit@quicinc.com>
+References: <1663673683-7018-1-git-send-email-quic_c_skakit@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -56,34 +50,17 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jun 2022 20:06:15 +0400, Yassine Oudjana wrote:
-> This series includes some cleanup of the MSM8996 CPU clock driver, as well as
-> migration from parent_names to parent_data for all of its clocks. The DT schema
-> is also fixed in this series to show the actual clocks consumed by the clock
-> controller and pass checks.
+On Tue, 20 Sep 2022 17:04:43 +0530, Satya Priya wrote:
+> Change the qcom_cc_probe_by_index() call to qcom_cc_really_probe()
+> to avoid remapping of memory region for index 0, which is already
+> being done through qcom_cc_map().
 > 
-> Yassine Oudjana (6):
->   clk: qcom: msm8996-cpu: Rename DIV_2_INDEX to SMUX_INDEX
->   clk: qcom: msm8996-cpu: Statically define PLL dividers
->   clk: qcom: msm8996-cpu: Unify cluster order
->   clk: qcom: msm8996-cpu: Convert secondary muxes to clk_regmap_mux
->   dt-bindings: clock: qcom,msm8996-apcc: Fix clocks
->   clk: qcom: msm8996-cpu: Use parent_data for all clocks
 > 
-> [...]
 
 Applied, thanks!
 
-[1/6] clk: qcom: msm8996-cpu: Rename DIV_2_INDEX to SMUX_INDEX
-      commit: 1ba0a3bbd5ed5a1bb8d0165912d9904b812af74b
-[2/6] clk: qcom: msm8996-cpu: Statically define PLL dividers
-      commit: de37e0214c28330cf0dbf4fe51db1d9d38c13c93
-[3/6] clk: qcom: msm8996-cpu: Unify cluster order
-      commit: 382139bfd68fe6cc9dc94ffe3b9d783b85be3b1c
-[4/6] clk: qcom: msm8996-cpu: Convert secondary muxes to clk_regmap_mux
-      commit: 9a9f5f9a5a0ca3f463eb28ba5920a6fd18dc9956
-[5/6] dt-bindings: clock: qcom,msm8996-apcc: Fix clocks
-      commit: b4feed4a3d0a6b8cef4a574a9df707c556928ec2
+[1/1] clk: qcom: lpass: Fix lpass audiocc probe
+      commit: 31e4fcf9713096c187f84bf3cb249637b8b681e1
 
 Best regards,
 -- 
