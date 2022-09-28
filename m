@@ -2,68 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 923B1C04A95
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 23:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D74CC04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 23:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbiI1Xcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 19:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56588 "EHLO
+        id S234148AbiI1Xll (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 19:41:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233186AbiI1Xcw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 19:32:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF46EEE84;
-        Wed, 28 Sep 2022 16:32:51 -0700 (PDT)
+        with ESMTP id S233963AbiI1Xlk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 19:41:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F264D8E4C7;
+        Wed, 28 Sep 2022 16:41:39 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 10B2560C24;
-        Wed, 28 Sep 2022 23:32:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C096C433C1;
-        Wed, 28 Sep 2022 23:32:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B14BBB82236;
+        Wed, 28 Sep 2022 23:41:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71ACEC433D6;
+        Wed, 28 Sep 2022 23:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664407970;
-        bh=MWoiXhLhJFZVdiOeuHhNkkStzztFn98ggkae+lCgZjU=;
+        s=k20201202; t=1664408497;
+        bh=pj5nMrrdP/CRvouu8xZ7JSZ+bE3JyQ8euMvOq+SIUpw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=l90/atfpJvrCbDjwGl3lXKhuh48AyX+7XJR06wBQeKoHurWepRx1wYK+JM6nols01
-         SMTDu35qUAo8AJxpLMWV1dHoUN3HU63Vxpm4T+gk/b+NocDFjZGxsv3Xz5Gm4bMo7o
-         EnllFqP+eP2sXSJcDMmowChcTcU2jI9XXHaOX/2IQuNJAuPr0wzLJAp36NhCNYMhCy
-         xZltDy31WDbMuRp8QsElJbbVKQOkQx6b5Akl717gPt46UllsG4lsBaTeese7TdMeWa
-         +o0s/H8gcbuQJ+DtDxbFEzHNGHrQyKLOlXwNU5AOSUNaTolO/3E4w3agBu3D/NoLKI
-         aj7HP3KxoFd2A==
+        b=odpcpGuDxTWmIJsaqNucsIg/IQB1LyehnFP1iQ2FAME3oxULTMA5TuBOGc8YAG3Cw
+         KzHtLbBWidzofr4rw7gLBGFtmqa4St5H3tvBvieQXpEBLZQgSOgWynm8rWHqJiKJ4I
+         USmlaJlCw+mQgXp1c9z1xQGf4egMrAWC31Gi62bGlnyFlHHHHkFSyHV2nqq+iFu8MA
+         /vTZNeBEITW9gNSI3kEEqz7Uzk8N77XDvelWG3CwThq3X5Vx8xvm7L7TxKrZ2bTBvr
+         yPttoiG0SwE7x3GIrkewyzEU4aCbTHkbcdKt8QP/AHAxbM310ImmXnviFp3/573Upy
+         wQwnUGqb8aM/Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220919102244.3537437-1-abel.vesa@linaro.org>
-References: <20220919102244.3537437-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.1
+In-Reply-To: <5a037955-4832-e42a-eb58-719ed4672395@renesas.com>
+References: <20220923205251.1387-1-alexander.helms.jy@renesas.com> <20220923205251.1387-2-alexander.helms.jy@renesas.com> <20220926230438.GA3128861-robh@kernel.org> <cbe89899-7f56-c43a-f8c9-887825fbe4a6@amd.com> <CAMuHMdUuzrdf4rmD3n_-S9ujrfmY5Y6VOsNapiLRR5MG9bKAjw@mail.gmail.com> <5a037955-4832-e42a-eb58-719ed4672395@renesas.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Date:   Wed, 28 Sep 2022 16:32:48 -0700
+Cc:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, geert+renesas@glider.be
+To:     Alex Helms <alexander.helms.jy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <michal.simek@amd.com>
+Date:   Wed, 28 Sep 2022 16:41:34 -0700
 User-Agent: alot/0.10
-Message-Id: <20220928233250.5C096C433C1@smtp.kernel.org>
+Message-Id: <20220928234137.71ACEC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2022-09-19 03:22:44)
-> The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b8=
-68:
+Quoting Alex Helms (2022-09-28 16:16:04)
+> On 9/27/2022 7:51 AM, Geert Uytterhoeven wrote:
+> > Hi Michal,
+> >=20
+> > On Tue, Sep 27, 2022 at 4:10 PM Michal Simek <michal.simek@amd.com> wro=
+te:
+> >> On 9/27/22 01:04, Rob Herring wrote:
+> >>> On Fri, Sep 23, 2022 at 01:52:50PM -0700, Alex Helms wrote:
+> >>>> Add dt bindings for the Renesas ProXO oscillator.
+> >>>>
+> >>>> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> >=20
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
+> >=20
+> >> Driver is also using clock-output-names which is not listed here.
+> >=20
+> > ... which is deprecated, and thus should not be used by the driver
+> > at all.
 >=20
->   Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+> Can you point me to somewhere showing it is deprecated? It is in the
+> current dt clock documentation.
 >=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.1
->=20
-> for you to fetch changes up to 67e16ac1fec475e64dcb8238f471c6fd154ef806:
->=20
->   clk: imx93: add SAI IPG clk (2022-09-19 13:06:45 +0300)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+I wouldn't say it is deprecated. Instead, it isn't useful if you're able
+to use struct clk_parent_data and auto-generated clk names.
