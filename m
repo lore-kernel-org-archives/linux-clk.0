@@ -2,51 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E995AC6FA8E
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 14:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE943C54EE9
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 15:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234487AbiI1O61 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 10:58:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
+        id S234681AbiI1PAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 11:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234522AbiI1O6Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 10:58:24 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFAA9C7C4
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 07:58:21 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id g20so14625712ljg.7
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 07:58:21 -0700 (PDT)
+        with ESMTP id S234542AbiI1PAG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 11:00:06 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 061F12ED69
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:00:02 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id c7so14595024ljm.12
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=znEaxKi9Hq+9I4axphJS3UE1HcHocTZ4nn1PUPffflc=;
-        b=Sn2kvlZu4A7zYhw8ZfgSjbaqrOFB9s6i2cUocqQAQebbF0npqwdJHRE7Z07QVc9aCY
-         m/r8hGcp3bf6Qk8Pmn2QWcwmvrultt8DBdRdJAJV1strqzOHJdKg1Hju5sIdK1Su4wFv
-         8LN6P5gUfLZrLj8qeJzwvsKLwiJhQZBjITtLKSqsxeEtKaI92W0eIpVGIApe0MzRWidF
-         xUZfad80ZnHe7rrx8VXabqOAQsQWO7fbWsn/lQXh9RrEBe4rcweL1rMJAm+oGj/ZUNp8
-         DH5WYvAOVjSz5RIvkichXMTulm72mPg0O1QdrRzMz2Ua3Q2R/KA+tsLX1iAWh62tEcV9
-         tuFA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=qzCxOTmp+gxnMgVdAJunjjkZh8T2GclSG/MzKsGIiUY=;
+        b=NIQb8EfBe92SnYRtXYZjYgO8aXOfamVx2hYlMg6azG7W5+C8LsZJNRbxSmyrhF47w9
+         kgpf+KO+5Jp7Ve6+VMgVYkGNCjYDfFqpSyTt/8R5a4O7f0jcFI0IMvEQvtrKLZjSUvL+
+         ziqRbFHB4++sG6ybw2a8pQY4EWEEyTHCaxJ4MZAQkOHfzEmytscTV//Flh8zc5RCWvb0
+         C2wYnuGzyFRaC5Xg4MLQa67fOfmxUzKr+9SA+/FdeVWN3pph5Khsq1fCYeqC0AinsgP2
+         cstQFHZfiaaeBIa9uIOeUGUQJjcyxnpihAyP1HeFuVet2cquF4dLFShI4r74MEB9HiEy
+         ZRbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=znEaxKi9Hq+9I4axphJS3UE1HcHocTZ4nn1PUPffflc=;
-        b=LGmGUvwtEjY7/1918IomXWx7A+ggdxaAgl1rroYI1tIlgKMb6ESgJND6ZysPZQtcmV
-         P14Ls8B2fvbUFcFLM0SbUqKb+nBlcbWCgXFyzXv8rjSlq5hemzM2Dh7b+PlZLNt5MoEb
-         LPU3TpJLf4Pl2tIW3T33sgmn3lai972cB5qu1mY/wa4o8wxfPnoIzqf9CrCZ8MDtqwPJ
-         fv5j2wa7C7VnGgT0Vvav2gRH2NDWv2uqxteMH+f11teK5VbSZPBunXqhKe7IxqbyHrtz
-         7tO7LZTqN0ub6YTRBbO7aMY2C8vXcK7QyRmAnSPRXlhXsAtARZiQ31zIJTFk3Gr/AkvE
-         HfLg==
-X-Gm-Message-State: ACrzQf1sZpmLXyxXDqwK+cJz8ysgfpBNEBfAUR43XgdKh3SmCjvkwNpB
-        IuGHqO02R1iuXbcNhxGH4yZgWQ==
-X-Google-Smtp-Source: AMsMyM70L8CrpU4FQfCZ2v1yNKDfFY2pXHAHgriczG3PWzjnZvNhEYRPR4b6ZflZyViiw//kTc98mQ==
-X-Received: by 2002:a2e:8643:0:b0:26c:40b7:a89a with SMTP id i3-20020a2e8643000000b0026c40b7a89amr11586380ljj.504.1664377099322;
-        Wed, 28 Sep 2022 07:58:19 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=qzCxOTmp+gxnMgVdAJunjjkZh8T2GclSG/MzKsGIiUY=;
+        b=8FY+QuJsljm043NnzowWhr97wHZwr1z/BCU3ns01NgRf5iLOI7t9yQoLq5HbqpH306
+         VJNpP3LR4t+PEs2A+kvHCDDZzofSDN8qPzmI+UAZlECOhWVY67h+Nn1Ttd1EDrjfhjBY
+         USTe0JTvOIiVbQS2xy0ZIiztkCNc53zt/JGralARU8YaH7MTSR3bGpUGcEFfwcJ/yu3w
+         rEB8rFovP0IgQG3CRgEfht8SkhsrnThzZhOF2q8tyXg0tlq0k5uEiGbe6RfAn4oXrA1w
+         SvpSkBpeXquXeK0AVEwfz8ge1eOE7WGyWuYJnXU4YsvdGk1HXpXk3ZE+Pv77LZeHTTur
+         axRw==
+X-Gm-Message-State: ACrzQf2Xq0W0DOlEW4SPxpqAfFbNDpzvRvuT1za/bH7lxCuKi9s2f1+Q
+        ERNm5tPUGU37JPSOtfsLo/vfFg==
+X-Google-Smtp-Source: AMsMyM5ruvrENEeGdlBxYOCN0yHTNa3cSP7FoEJE2ODTWDxMM7xcWr29/rJcssZ5L8edv984J8KOZw==
+X-Received: by 2002:a2e:a4db:0:b0:26c:784f:e513 with SMTP id p27-20020a2ea4db000000b0026c784fe513mr10896154ljm.310.1664377200547;
+        Wed, 28 Sep 2022 08:00:00 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id a5-20020ac25e65000000b00499b57032c1sm493300lfr.144.2022.09.28.07.58.18
+        by smtp.gmail.com with ESMTPSA id be36-20020a056512252400b00492c017de43sm494996lfb.127.2022.09.28.07.59.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 07:58:18 -0700 (PDT)
+        Wed, 28 Sep 2022 08:00:00 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,60 +59,42 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: split qcom,gcc-sdm660 to the separate file
-Date:   Wed, 28 Sep 2022 17:58:18 +0300
-Message-Id: <20220928145818.376250-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 01/11] dt-bindings: clock: split qcom,gcc-msm8974,-msm8226 to the separate file
+Date:   Wed, 28 Sep 2022 17:59:48 +0300
+Message-Id: <20220928145958.376288-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220928145958.376288-1-dmitry.baryshkov@linaro.org>
+References: <20220928145958.376288-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Move schema for the GCC on SDM630/SDM636/SDM660 to a separate file to be
-able to define device-specific clock properties.
+Move schema for the GCC on MSM8974 and MSM8226 platforms to a separate
+file to be able to define device-specific clock properties.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/clock/qcom,gcc-other.yaml        |  3 -
- .../bindings/clock/qcom,gcc-sdm660.yaml       | 61 +++++++++++++++++++
- 2 files changed, 61 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml
+ .../bindings/clock/qcom,gcc-msm8974.yaml      | 65 +++++++++++++++++++
+ .../bindings/clock/qcom,gcc-other.yaml        |  9 +--
+ 2 files changed, 66 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-index 76988e04c7db..35fc22a19000 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-@@ -24,7 +24,6 @@ description: |
-   - dt-bindings/clock/qcom,gcc-mdm9607.h
-   - dt-bindings/clock/qcom,gcc-mdm9615.h
-   - dt-bindings/reset/qcom,gcc-mdm9615.h
--  - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
- 
- allOf:
-   - $ref: "qcom,gcc.yaml#"
-@@ -41,8 +40,6 @@ properties:
-       - qcom,gcc-msm8974pro
-       - qcom,gcc-msm8974pro-ac
-       - qcom,gcc-mdm9615
--      - qcom,gcc-sdm630
--      - qcom,gcc-sdm660
- 
- required:
-   - compatible
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
 new file mode 100644
-index 000000000000..a39f28d37387
+index 000000000000..72e8f54d0e0e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml
-@@ -0,0 +1,61 @@
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
+@@ -0,0 +1,65 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/qcom,gcc-sdm660.yaml#
++$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8974.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Qualcomm Global Clock & Reset Controller Binding for SDM660/SDM630/SDM636
++title: Qualcomm Global Clock & Reset Controller Binding for MSM8226 and
++  MSM8974, including Pro variants
 +
 +maintainers:
 +  - Stephen Boyd <sboyd@kernel.org>
@@ -122,15 +105,18 @@ index 000000000000..a39f28d37387
 +  power domains on SDM630, SDM636 and SDM660
 +
 +  See also:
-+  - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
++  - dt-bindings/clock/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
++  - dt-bindings/reset/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
 +
 +$ref: qcom,gcc.yaml#
 +
 +properties:
 +  compatible:
 +    enum:
-+      - qcom,gcc-sdm630
-+      - qcom,gcc-sdm660
++      - qcom,gcc-msm8226
++      - qcom,gcc-msm8974
++      - qcom,gcc-msm8974pro
++      - qcom,gcc-msm8974pro-ac
 +
 +  clocks:
 +    items:
@@ -154,8 +140,8 @@ index 000000000000..a39f28d37387
 +  # Example for GCC for SDM660:
 +  - |
 +    #include <dt-bindings/clock/qcom,rpmh.h>
-+    clock-controller@100000 {
-+        compatible = "qcom,gcc-sdm660";
++    clock-controller@fc400000 {
++        compatible = "qcom,gcc-msm8974";
 +        #clock-cells = <1>;
 +        #reset-cells = <1>;
 +        #power-domain-cells = <1>;
@@ -166,6 +152,43 @@ index 000000000000..a39f28d37387
 +                 <&sleep_clk>;
 +    };
 +...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index 35fc22a19000..0ec8ff215007 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -19,8 +19,6 @@ description: |
+   - dt-bindings/clock/qcom,gcc-ipq6018.h
+   - dt-bindings/reset/qcom,gcc-ipq6018.h
+   - dt-bindings/clock/qcom,gcc-msm8953.h
+-  - dt-bindings/clock/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+-  - dt-bindings/reset/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+   - dt-bindings/clock/qcom,gcc-mdm9607.h
+   - dt-bindings/clock/qcom,gcc-mdm9615.h
+   - dt-bindings/reset/qcom,gcc-mdm9615.h
+@@ -34,11 +32,7 @@ properties:
+       - qcom,gcc-ipq4019
+       - qcom,gcc-ipq6018
+       - qcom,gcc-mdm9607
+-      - qcom,gcc-msm8226
+       - qcom,gcc-msm8953
+-      - qcom,gcc-msm8974
+-      - qcom,gcc-msm8974pro
+-      - qcom,gcc-msm8974pro-ac
+       - qcom,gcc-mdm9615
+ 
+ required:
+@@ -47,10 +41,9 @@ required:
+ unevaluatedProperties: false
+ 
+ examples:
+-  # Example for GCC for MSM8974:
+   - |
+     clock-controller@900000 {
+-      compatible = "qcom,gcc-msm8974";
++      compatible = "qcom,gcc-mdm9607";
+       reg = <0x900000 0x4000>;
+       #clock-cells = <1>;
+       #reset-cells = <1>;
 -- 
 2.35.1
 
