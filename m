@@ -2,208 +2,235 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BA1C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 07:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC603C6FA82
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 07:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233729AbiI1Hgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 03:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48998 "EHLO
+        id S233597AbiI1Hjy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 03:39:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbiI1HgS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 03:36:18 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5D1107599
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 00:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1664350548; x=1695886548;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=otKn7OwoFsXCrEvhetC8t9/G3EV2BY7tBF6g9XjRrOU=;
-  b=Lo2XDpPGfUDMHlE+TweUeKSVV6swk/EFmTRkqSkvNwZW2fohPp+SENWB
-   cZ54bleI4+2gXLMPq4a+8LuWGA/SpM0R1A9O2Hig+NW0oxalxv21Bd72S
-   ZQVCynUS5yFvu+ALxDnBY6dsobkYh2MPxYbYnjS6cEF22RvmeT4XI8GT5
-   y6HNDiW3cVORNeyR+gtNncIAt7X0pIJeOfxfOlHZ85PSuSuYjysEVhUjd
-   p4bDMS1OKADLsY3+vlKGnm5hRYizWteOInhOOrvyXVxDwzEf6m2KTGp9E
-   1+o1zFwarNMRDNpdP2877BY7xun2dFE908QAyIpLiivGcmCYxcg5u8PTb
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,351,1654552800"; 
-   d="scan'208";a="26445561"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 28 Sep 2022 09:35:05 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 28 Sep 2022 09:35:05 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 28 Sep 2022 09:35:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1664350505; x=1695886505;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=otKn7OwoFsXCrEvhetC8t9/G3EV2BY7tBF6g9XjRrOU=;
-  b=TJ14XV8oSWw10pbMVbjF4y2PAdfqNMbMlDd01QB/N2I2oAqpJwfbSiK8
-   Zp6jRHHwtzmr1R3uVaqqaCIvR+zVkQjLlOpnKw1q7BP9JyU7r2c08d4cZ
-   XSyedpD/mLq90UnD5vCsr0RWdwaHw9lppQ2L5SCWaIp50JLMHSCBCKjMc
-   ET9BeY/uAyWfu/JwgoqbiD1gPyO4808iWT+jKvV9m8Eho7rrc6f+TKCcA
-   YQPN2Y2RmWYHVLre98xcx/hOKIjPMV9Dy0TIu0PpyO260QUPpzmSsMPEN
-   UKXQap7HhF1lgVzvyv421/YJsGYZz7CtsAkuaEJbSwiAehCQ9pTbSH2VU
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,351,1654552800"; 
-   d="scan'208";a="26445560"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 28 Sep 2022 09:35:05 +0200
-Received: from steina-w.localnet (unknown [10.123.49.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id F1CDE280056;
-        Wed, 28 Sep 2022 09:35:04 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-clk@vger.kernel.org, Marek Vasut <marex@denx.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: rs9: Fix I2C accessors
-Date:   Wed, 28 Sep 2022 09:35:02 +0200
-Message-ID: <3198374.44csPzL39Z@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20220927214415.418140-1-marex@denx.de>
-References: <20220927214415.418140-1-marex@denx.de>
+        with ESMTP id S233604AbiI1HjY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 03:39:24 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2893474FD;
+        Wed, 28 Sep 2022 00:37:44 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28S5tXa8017510;
+        Wed, 28 Sep 2022 07:37:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=bQwSbPWV9aAjDmT4q4/mNCIIU53Tgr6fPJA432P0lyw=;
+ b=OEhgxZYQx9YO+fnXyZAWMPl2Ig0ip4bcHULQ9iplT6hsEXN6Ab1KHdg2r3Adgr+2xHqL
+ OFKbT/WzmnP/dcZ5hD9EbK0RYS3ImRaeXZ7XjTjwoGd23XcE/fs22Kto5LBM79LqUKcE
+ vDWFR3clmj6Gv2SyPJeK1vuMs6cuvkMDPlk/KludvvMrliz0RbTutBBtpinXzLjaUD6j
+ TGdJBut8qVZGZ57SsgQrvGr4qRxt6dr1VsNp3sSx73DCMMFl+XKtvQrp5s6NliGeVRtw
+ zW2yNif1cSGGo3EEO4fjripduQO2NI8e7PS2csG/FOkpNTEFnS8Y8BNPUTt8DKMh9s3b jA== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jvbf0gtfm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 07:37:23 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28S7bM0L015786
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 07:37:22 GMT
+Received: from [10.204.67.102] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 28 Sep
+ 2022 00:37:17 -0700
+Message-ID: <e4794dcb-8450-a1b5-244d-abff800d60f1@quicinc.com>
+Date:   Wed, 28 Sep 2022 13:07:14 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v3 3/5] clk: qcom: gdsc: Add a reset op to poll gdsc
+ collapse
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        <krzysztof.kozlowski@linaro.org>, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1660853919-987-1-git-send-email-quic_akhilpo@quicinc.com>
+ <20220819014758.v3.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
+ <20220927172626.cwxpmrqkb7zsuolx@builder.lan>
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20220927172626.cwxpmrqkb7zsuolx@builder.lan>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YTqevWIvWo1srfz329B86bAwax0Drikb
+X-Proofpoint-ORIG-GUID: YTqevWIvWo1srfz329B86bAwax0Drikb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-28_02,2022-09-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 clxscore=1011 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209280045
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marek,
+On 9/27/2022 10:56 PM, Bjorn Andersson wrote:
+> On Fri, Aug 19, 2022 at 01:48:37AM +0530, Akhil P Oommen wrote:
+>> Add a reset op compatible function to poll for gdsc collapse.
+>>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>
+>> (no changes since v2)
+>>
+>> Changes in v2:
+>> - Minor update to function prototype
+>>
+>>   drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++++----
+>>   drivers/clk/qcom/gdsc.h |  7 +++++++
+>>   2 files changed, 26 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>> index 44520ef..2d0f1d1 100644
+>> --- a/drivers/clk/qcom/gdsc.c
+>> +++ b/drivers/clk/qcom/gdsc.c
+>> @@ -17,6 +17,7 @@
+>>   #include <linux/reset-controller.h>
+>>   #include <linux/slab.h>
+>>   #include "gdsc.h"
+>> +#include "reset.h"
+>>   
+>>   #define PWR_ON_MASK		BIT(31)
+>>   #define EN_REST_WAIT_MASK	GENMASK_ULL(23, 20)
+>> @@ -116,7 +117,8 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+>>   	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+>>   }
+>>   
+>> -static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+>> +static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status,
+>> +		s64 timeout_us, unsigned int interval_ms)
+>>   {
+>>   	ktime_t start;
+>>   
+>> @@ -124,7 +126,9 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+>>   	do {
+>>   		if (gdsc_check_status(sc, status))
+>>   			return 0;
+>> -	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+>> +		if (interval_ms)
+>> +			msleep(interval_ms);
+> You effectively msleep(5) here, for which you shouldn't use msleep() -
+> or more likely, this only happens in exceptional circumstances, so a
+> longer interval_ms seems reasonable.
+By reducing the overall polling time here, we can reduce any user 
+visible impact like missing frame/janks due to gpu hang/recovery. I kept 
+5ms here because in my local testing on sc7280 device I didn't see any 
+benefit beyond decreasing below 5ms. Msleep() here also helps to quickly 
+schedule other threads which holds pm_runtime refcount on cx_gdsc, which 
+indirectly helps to reduce overall polling time here significantly in my 
+testing.
 
-thanks for the update.
+>
+>> +	} while (ktime_us_delta(ktime_get(), start) < timeout_us);
+>>   
+>>   	if (gdsc_check_status(sc, status))
+>>   		return 0;
+>> @@ -172,7 +176,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>>   		udelay(1);
+>>   	}
+>>   
+>> -	ret = gdsc_poll_status(sc, status);
+>> +	ret = gdsc_poll_status(sc, status, TIMEOUT_US, 0);
+>>   	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+>>   
+>>   	if (!ret && status == GDSC_OFF && sc->rsupply) {
+>> @@ -343,7 +347,7 @@ static int _gdsc_disable(struct gdsc *sc)
+>>   		 */
+>>   		udelay(1);
+>>   
+>> -		ret = gdsc_poll_status(sc, GDSC_ON);
+>> +		ret = gdsc_poll_status(sc, GDSC_ON, TIMEOUT_US, 0);
+>>   		if (ret)
+>>   			return ret;
+>>   	}
+>> @@ -565,3 +569,14 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
+>>   	return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
+>> +
+>> +int gdsc_wait_for_collapse(void *priv)
+>> +{
+>> +	struct gdsc *sc = priv;
+>> +	int ret;
+>> +
+>> +	ret = gdsc_poll_status(sc, GDSC_OFF, 500000, 5);
+> So I presume the GPU driver will put() the GDSC and then issue a reset,
+> which will wait up to 5 seconds for the GDSC to be turned off.
+Not exactly. GPU driver will put() its GDSC vote and will wait for 500ms 
+to allow other clients to drop their vote and the cx_gdsc to finally 
+collapse at hw. There is no hw interface to 'reset' entire GPU 
+subsystem. We have to pull the plug on gdsc to reset it.
+>
+> So essentially, this logic is needed because we don't wait for VOTABLE
+> GDSCs to be turned off? And we have no way to do the put-with-wait for
+> this specific case.
+>
+> I would like the commit message to capture this reasoning.
+Agree. Will post a new patchset once we have consensus on the rest of 
+the things here.
 
-Am Dienstag, 27. September 2022, 23:44:14 CEST schrieb Marek Vasut:
-> Add custom I2C accessors to this driver, since the regular I2C regmap ones
-> do not generate the exact I2C transfers required by the chip. On I2C write,
-> it is mandatory to send transfer length first, on read the chip returns the
-> transfer length in first byte. Instead of always reading back 8 bytes, which
-> is the default and also the size of the entire register file, set BCP
-> register to 1 to read out 1 byte which is less wasteful.
-> 
-> Fixes: 892e0ddea1aa6 ("clk: rs9: Add Renesas 9-series PCIe clock generator
-> driver") Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
-> V2: Fix endianness handling in rs9_regmap_i2c_read() i2c_transfer
-> V3: - Disable regcache, the driver does a couple of I2C writes on boot
->       and that is all, so it only adds complexity
->     - Set regmap max_register to RS9_REG_BCP which is the correct one
-> ---
-> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk-renesas-pcie.c | 60 ++++++++++++++++++++++++++++++++--
->  1 file changed, 57 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-> index 4f5df1fc74b46..138aaab05fc8a 100644
-> --- a/drivers/clk/clk-renesas-pcie.c
-> +++ b/drivers/clk/clk-renesas-pcie.c
-> @@ -90,13 +90,61 @@ static const struct regmap_access_table
-> rs9_writeable_table = { .n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
->  };
-> 
-> +static int rs9_regmap_i2c_write(void *context,
-> +				unsigned int reg, unsigned int 
-val)
-> +{
-> +	struct i2c_client *i2c = context;
-> +	const u8 data[3] = { reg, 1, val };
-> +	const int count = ARRAY_SIZE(data);
-> +	int ret;
-> +
-> +	ret = i2c_master_send(i2c, data, count);
-> +	if (ret == count)
-> +		return 0;
-> +	else if (ret < 0)
-> +		return ret;
-> +	else
-> +		return -EIO;
-> +}
-> +
-> +static int rs9_regmap_i2c_read(void *context,
-> +			       unsigned int reg, unsigned int *val)
-> +{
-> +	struct i2c_client *i2c = context;
-> +	struct i2c_msg xfer[2];
-> +	u8 txdata = reg;
-> +	u8 rxdata[2];
-> +	int ret;
-> +
-> +	xfer[0].addr = i2c->addr;
-> +	xfer[0].flags = 0;
-> +	xfer[0].len = 1;
-> +	xfer[0].buf = (void *)&txdata;
-> +
-> +	xfer[1].addr = i2c->addr;
-> +	xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
-> +	xfer[1].len = 1;
-
-I'm still in favor of removing I2C_M_RECV_LEN and setting len=2. This 
-currently works only, because there is no read access between 
-devm_regmap_init() call and regmap_write() to RS9_REG_BCP.
-Enabling cache later on again this will corrupt the stack.
-
-Best regards,
-Alexander
-
-> +	xfer[1].buf = (void *)rxdata;
-> +
-> +	ret = i2c_transfer(i2c->adapter, xfer, 2);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret != 2)
-> +		return -EIO;
-> +
-> +	*val = rxdata[1];
-> +	return 0;
-> +}
-> +
->  static const struct regmap_config rs9_regmap_config = {
->  	.reg_bits = 8,
->  	.val_bits = 8,
-> -	.cache_type = REGCACHE_FLAT,
-> -	.max_register = 0x8,
-> +	.cache_type = REGCACHE_NONE,
-> +	.max_register = RS9_REG_BCP,
->  	.rd_table = &rs9_readable_table,
->  	.wr_table = &rs9_writeable_table,
-> +	.reg_write = rs9_regmap_i2c_write,
-> +	.reg_read = rs9_regmap_i2c_read,
->  };
-> 
->  static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)
-> @@ -242,11 +290,17 @@ static int rs9_probe(struct i2c_client *client)
->  			return ret;
->  	}
-> 
-> -	rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
-> +	rs9->regmap = devm_regmap_init(&client->dev, NULL,
-> +				       client, 
-&rs9_regmap_config);
->  	if (IS_ERR(rs9->regmap))
->  		return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
->  				     "Failed to allocate register 
-map\n");
-> 
-> +	/* Always read back 1 Byte via I2C */
-> +	ret = regmap_write(rs9->regmap, RS9_REG_BCP, 1);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	/* Register clock */
->  	for (i = 0; i < rs9->chip_info->num_clks; i++) {
->  		snprintf(name, 5, "DIF%d", i);
-
-
-
+-Akhil.
+>
+> Thanks,
+> Bjorn
+>
+>> +	WARN(ret, "%s status stuck at 'on'", sc->pd.name);
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(gdsc_wait_for_collapse);
+>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+>> index ad313d7..d484bdb 100644
+>> --- a/drivers/clk/qcom/gdsc.h
+>> +++ b/drivers/clk/qcom/gdsc.h
+>> @@ -12,6 +12,7 @@
+>>   struct regmap;
+>>   struct regulator;
+>>   struct reset_controller_dev;
+>> +struct qcom_reset_map;
+>>   
+>>   /**
+>>    * struct gdsc - Globally Distributed Switch Controller
+>> @@ -79,6 +80,7 @@ int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
+>>   		  struct regmap *);
+>>   void gdsc_unregister(struct gdsc_desc *desc);
+>>   int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
+>> +int gdsc_wait_for_collapse(void *priv);
+>>   #else
+>>   static inline int gdsc_register(struct gdsc_desc *desc,
+>>   				struct reset_controller_dev *rcdev,
+>> @@ -88,5 +90,10 @@ static inline int gdsc_register(struct gdsc_desc *desc,
+>>   }
+>>   
+>>   static inline void gdsc_unregister(struct gdsc_desc *desc) {};
+>> +
+>> +static int gdsc_wait_for_collapse(void *priv)
+>> +{
+>> +	return  -ENOSYS;
+>> +}
+>>   #endif /* CONFIG_QCOM_GDSC */
+>>   #endif /* __QCOM_GDSC_H__ */
+>> -- 
+>> 2.7.4
+>>
 
