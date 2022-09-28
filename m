@@ -2,98 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBBAC04A95
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 20:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E9EC04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 20:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233245AbiI1URB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 16:17:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57084 "EHLO
+        id S232896AbiI1Uxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 16:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231301AbiI1URA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 16:17:00 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEEC6C115
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 13:16:59 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4A47B47C;
-        Wed, 28 Sep 2022 22:16:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1664396218;
-        bh=Uxg50pIgYpOI9PE8XMmtiinzktazEO173WVuv/3uCzA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fd9VPIWSPV6QVLNl9K7a883IdRAHM31tFf+BhYAvQQoLz/w+XeHf/nOqJDUIHr6gN
-         mP91UT3TyvowaXnLdPaIh5FzCsYbmaqYPEgKvnUttlxZel3NNvxGuh3b7uMj9OvO8m
-         b8IxSGPzk4I8MaxgQzitbzb/ViLRQouHxp7HVeM4=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Quanyang Wang <quanyang.wang@windriver.com>
-Subject: [PATCH] clk: zynqmp: pll: Fix divider calculation to avoid out-of-range rate
-Date:   Wed, 28 Sep 2022 23:16:56 +0300
-Message-Id: <20220928201656.30318-1-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S232788AbiI1Uxo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 16:53:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2592714E;
+        Wed, 28 Sep 2022 13:53:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 602CCB82205;
+        Wed, 28 Sep 2022 20:53:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0740CC433B5;
+        Wed, 28 Sep 2022 20:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664398421;
+        bh=ocFBmEiwZMRP7w+7fMfISRMoKTm7UBOQU5qR7s5Rmuo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=k54kgPcXtivmQY4T31/OWA57l84e+fyBWESkWISW1rwRdAGp7C38bnZNgThTBCunQ
+         Pl1N0QYUWSKXTuWoDmxeR8Te7/gwapDrvoZ7mZk8/mW1VcHlctX2uE28mZQUl0Ft0P
+         CWpn2IkbRp5uPEmRwhtIyx3lI/Tko4KgVeyJ26Vg4rLdXD3+YTkKUy/92ECXszn4hU
+         9Jf7Se7yS0Ul7YOlJ2BMzBdgnin6uJ4tVj9h6uQaxaHUa/ZBzQo3HsXIZ8x0QPsDQ8
+         DAs1aSbLtL0mH8H/mYoyXHI04y+PBzLuVX7OIfJ4e0B6Z58ExTlLLDbTE8zbABiqrR
+         H88GDad92KG7A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <50374fb8-563f-6433-12c9-8ff77fa38e83@linaro.org>
+References: <20220928145958.376288-1-dmitry.baryshkov@linaro.org> <20220928145958.376288-4-dmitry.baryshkov@linaro.org> <50374fb8-563f-6433-12c9-8ff77fa38e83@linaro.org>
+Subject: Re: [PATCH 03/11] clk: qcom: gcc-msm8974: use ARRAY_SIZE instead of specifying num_parents
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Date:   Wed, 28 Sep 2022 13:53:39 -0700
+User-Agent: alot/0.10
+Message-Id: <20220928205341.0740CC433B5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When calculating the divider in zynqmp_pll_round_rate() and
-zynqmp_pll_set_rate(), the division rounding error may result in an
-output frequency that is slightly outside of the PLL output range if the
-requested range is close to the low or high limit. As a result, the
-limits check in clk_calc_new_rates() would fail, and clk_set_rate()
-would return an error, as seen in the zynqmp-dpsub driver:
+Quoting Neil Armstrong (2022-09-28 08:23:14)
+> On 28/09/2022 16:59, Dmitry Baryshkov wrote:
+> > Use ARRAY_SIZE() instead of manually specifying num_parents. This makes
+> > adding/removing entries to/from parent_data easy and errorproof.
+> >=20
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>=20
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-[   13.672309] zynqmp-dpsub fd4a0000.display: failed to set pixel clock rate to 297000000 (-22)
-
-Fix this by adjusting the divider. The rate calculation then succeeds
-for zynqmp-dpsub:
-
-[   13.554849] zynqmp-dpsub fd4a0000.display: requested pixel rate: 297000000 actual rate: 255555553
-
-The resulting PLL configuration, however, is not optimal, as the rate
-error is 14%. The hardware can do much better, but CCF doesn't attempt
-to find the best overall configuration for cascaded clocks. That's a
-candidate for a separate fix.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/clk/zynqmp/pll.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 91a6b4cc910e..be6fa44a21e0 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -120,6 +120,10 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	fbdiv = DIV_ROUND_CLOSEST(rate, *prate);
-+	if (*prate * fbdiv < PS_PLL_VCO_MIN)
-+		fbdiv++;
-+	if (*prate * fbdiv > PS_PLL_VCO_MAX)
-+		fbdiv--;
- 	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
- 	return *prate * fbdiv;
- }
-@@ -208,6 +212,10 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	fbdiv = DIV_ROUND_CLOSEST(rate, parent_rate);
-+	if (parent_rate * fbdiv < PS_PLL_VCO_MIN)
-+		fbdiv++;
-+	else if (parent_rate * fbdiv > PS_PLL_VCO_MAX)
-+		fbdiv--;
- 	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
- 	ret = zynqmp_pm_clock_setdivider(clk_id, fbdiv);
- 	if (ret)
-
-base-commit: 1c23f9e627a7b412978b4e852793c5e3c3efc555
--- 
-Regards,
-
-Laurent Pinchart
-
+Please trim replies so I don't have to scroll down to the bottom to find
+out a single tag was added.
