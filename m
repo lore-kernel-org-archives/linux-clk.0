@@ -2,162 +2,190 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DB2C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 09:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC052C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 12:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233553AbiI1Jji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 05:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36658 "EHLO
+        id S233366AbiI1MXv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 08:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233724AbiI1JjH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 05:39:07 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F4D7BE0C;
-        Wed, 28 Sep 2022 02:38:10 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id lh5so25902537ejb.10;
-        Wed, 28 Sep 2022 02:38:10 -0700 (PDT)
+        with ESMTP id S229818AbiI1MXu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 08:23:50 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A640386FF8
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 05:23:48 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id k10so20108192lfm.4
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 05:23:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=OT0UcdOVZ704hYlagMhzUyfbs4FTvkhpxGQx0JqAZVg=;
-        b=Amo0nva+2NirO5XNM7Mh8M1C0lByyvs3TLnlTE6m8unl9MZXLg8LAAePUQ/mq0njZf
-         v27aULO9LTMmjbnG5+6UdudTNeqLV2yn5zx62MQBga0IfwRCy+kMygguzMfRyYpki4DA
-         iaCO+V13upRTIzzut+bHeWMV/twmw7m2pJEp3TGj1t1mrAAWy/uF/jVDzNuqsgQCpiJY
-         EiQHoKWaQmaA02tW707mar54U9LqfsXp0S8CijQvZMom4mgwvXJrp66GAHGCKqXgEHhu
-         8zPfOQMnDXiJ+rUjVy1w7eFAidHYGD0h6dfRLODEnAdYLPHXl7TxTA20WdHpu1Wgo8Pt
-         RbBg==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:from:to:cc:subject:date;
+        bh=Swb7XVMS5l4jVs+taUaFHDZniMnQe0LrNo5JVaq+smE=;
+        b=c7CWUAsfmp+EUrBbsuVwHuXZYgfW2HVC0Li9FEyeBNVz54UBKlH/LwX+eoHjrw/RhN
+         HgS0dnWmAJwxifOaPqgR6tmTb84kzSWbrL9exeYtUY0fduYToLJfXsgj6MPghccx5j+M
+         455J5Z9jH0S3XuLMki862MI98Ona3zIEpM/bACfbyA19QAIoYxKwCSLRj+rD8+kAIr3o
+         7HxESQA5LojmCE8FnZPaLunR8pN4t1Txi2JgQDvgZFhWprO8gHUPQ4datyPbLQ9eBa35
+         gbCYiQHE5tolljp0ZvNeexs29IETA3U2U2YvnLz27nJDLCzvEV87zs2Bq8knrfW2sb7q
+         tZBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=OT0UcdOVZ704hYlagMhzUyfbs4FTvkhpxGQx0JqAZVg=;
-        b=6D0//1awDyo3Mn5R6+cwAQKkUUSLy59B6N3brJ6T6/J5VYN77ychW4kgf67f/ZQJSw
-         pNOYMoxs9pWNstWnaVpSLRe0wcdBhuYqw7JijrCBxYKlf52EsgEXCT5h1tJu0sfMzQGg
-         +rJuBSr2dmlI8cSprkvvIJzAkb1PpF54e7wUQGaJhuxnDW6MHs8HQPAY+ewBV1jTshPY
-         u3PMBUxFL9/fjVPuUROzd6uPKHblnAbJDtMH+0+lZ+8hG4cgz2xq1zB6t5a/MVcdtTW7
-         TVKh0UdyUew9S2WVlV5kGeWIfKzXI0TRTsrQlklxRMi4sr2lVZdHmfHY7DCzqoyfqxq/
-         kZgQ==
-X-Gm-Message-State: ACrzQf2keUopb3iuURaAJwpBqDSAYGB9prIs7MorYblguQdbJN5nDbAF
-        Q3Ox21gLCzegyr2ZZ9vei0j9/7z46CVmMyf63YM=
-X-Google-Smtp-Source: AMsMyM5ZFzPjaekB01bh45DERBxAag+jwxS3Hff6nq9M7pi6wfq9zYdBVZ8bpfsy3yrqyCQ6xOU3MKiTaKlA1cV9Qdc=
-X-Received: by 2002:a17:907:60c7:b0:783:4fe0:dad0 with SMTP id
- hv7-20020a17090760c700b007834fe0dad0mr14511726ejc.342.1664357888173; Wed, 28
- Sep 2022 02:38:08 -0700 (PDT)
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=Swb7XVMS5l4jVs+taUaFHDZniMnQe0LrNo5JVaq+smE=;
+        b=QT6cG+GFqGuolDaM5TSMafI3Hsqw2gmW4fg9JDpC/ehtVG24DIGB3zT0Q7Yv0yM5QA
+         81RqWRblW6N3bd383wdRTvEEA/vGrz8Ou4gO3/oKYBsHoqOAzvT98thCgtrNUAMkvcC3
+         o8K6JCSZpBBKAmn4Vfe6jfh4SYC2fGyJ2zPmkVMpF85xYQaGSNOpR2LQgOtQltWVxUTq
+         6G2vZSe44WMBXqmTVV5KdC83vilbba8t0YVc/Vlkqv3iIYJj5FhG8qWMop7Izt60WOdA
+         roWogmtAHvD5YR3WpHtvLCT3hbdq8H6mgcie8eSKdRdlQhQwj9wHotDHU8bamFfsBnfV
+         Bkqg==
+X-Gm-Message-State: ACrzQf2qcFOue7P1maMdzbQpDqBtLztB1+jwk1n4EAcPXWOkr3vf3Oy0
+        d43J9xBCA/KRFKtGeywgusgsgduuTX5kIhBpX54aZg==
+X-Google-Smtp-Source: AMsMyM6y/zW9NWpjwXIpFeG7jR5sdtiQjNZFUTI8LJaS28E+8UxFW/BjROXWV6E4XvWqIlDYLzeduXvGYy1dfVvHhHk=
+X-Received: by 2002:a05:6512:5d7:b0:498:f521:e143 with SMTP id
+ o23-20020a05651205d700b00498f521e143mr12968086lfo.617.1664367826958; Wed, 28
+ Sep 2022 05:23:46 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Sep 2022 05:23:43 -0700
+From:   Guillaume Ranquet <granquet@baylibre.com>
+User-Agent: meli 0.7.2
+References: <20220919-v1-0-4844816c9808@baylibre.com> <20220919-v1-14-4844816c9808@baylibre.com>
+ <d1346dcf6b6906d153c13c086bf963dc89c5549b.camel@mediatek.com>
+ <CABnWg9v4OuAU0x7n1q09gO7u3faOsmeq_4PFpw=_wAn1+erF8A@mail.gmail.com> <da5c39fb351a7ca5a9dfa1c938d2e3d914ecb0d2.camel@mediatek.com>
+In-Reply-To: <da5c39fb351a7ca5a9dfa1c938d2e3d914ecb0d2.camel@mediatek.com>
 MIME-Version: 1.0
-References: <20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220927203044.751611-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <OS0PR01MB5922BE73295E3562DC3FBA6E86549@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CA+V-a8s=wqGpfWBv7+=tG1pu6fZCL7EtRoTEmo-wjK5CGZyLnQ@mail.gmail.com> <OS0PR01MB5922D5A259A77D22ED91E87286549@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922D5A259A77D22ED91E87286549@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Wed, 28 Sep 2022 10:37:41 +0100
-Message-ID: <CA+V-a8sPQn4eNQ_RhPgxnbJ1L7S-v5SORDMsRrPOmPu93evLaQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD
- clocks support PM
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date:   Wed, 28 Sep 2022 05:23:43 -0700
+Message-ID: <CABnWg9u5bJgfRqug3wFUOnFb3c7Fv_9YN2p8CXmhcnBrqa+pQA@mail.gmail.com>
+Subject: Re: [PATCH v1 14/17] phy: mediatek: add support for phy-mtk-hdmi-mt8195
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>, CK Hu <ck.hu@mediatek.com>,
+        Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On Wed, 28 Sep 2022 04:40, Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+>On Tue, 2022-09-27 at 06:23 -0700, Guillaume Ranquet wrote:
+>> On Tue, 20 Sep 2022 09:46, Chunfeng Yun <chunfeng.yun@mediatek.com>
+>> wrote:
+>> > On Mon, 2022-09-19 at 18:56 +0200, Guillaume Ranquet wrote:
+>> > > Add basic support for the mediatek hdmi phy on MT8195 SoC
+>> > >
+>> > > Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+>> > >
+>> > > diff --git a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> > > b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> > > index bb7593ea4c86..0157acdce56c 100644
+>> > > --- a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> > > +++ b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+>> > > @@ -1344,6 +1344,8 @@ static void mtk_hdmi_bridge_disable(struct
+>> > > drm_bridge *bridge,
+>> > >  	mtk_hdmi_disable_hdcp_encrypt(hdmi);
+>> > >  	usleep_range(50000, 50050);
+>> > >
+>> > > +	phy_power_off(hdmi->phy);
+>> > > +
+>> > >  	hdmi->enabled = false;
+>> > >  }
+>> > >
+>> > > diff --git a/drivers/phy/mediatek/Makefile
+>> > > b/drivers/phy/mediatek/Makefile
+>> > > index fb1f8edaffa7..c9a50395533e 100644
+>> > > --- a/drivers/phy/mediatek/Makefile
+>> > > +++ b/drivers/phy/mediatek/Makefile
+>> > > @@ -12,6 +12,7 @@ obj-$(CONFIG_PHY_MTK_XSPHY)		+= phy-
+>> > > mtk-
+>> > > xsphy.o
+>> > >  phy-mtk-hdmi-drv-y			:= phy-mtk-hdmi.o
+>> > >  phy-mtk-hdmi-drv-y			+= phy-mtk-hdmi-
+>> > > mt2701.o
+>> > >  phy-mtk-hdmi-drv-y			+= phy-mtk-hdmi-
+>> > > mt8173.o
+>> > > +phy-mtk-hdmi-drv-y			+= phy-mtk-hdmi-
+>> > > mt8195.o
+>> > >  obj-$(CONFIG_PHY_MTK_HDMI)		+= phy-mtk-hdmi-drv.o
+>> > >
+>> > >  phy-mtk-mipi-dsi-drv-y			:= phy-mtk-mipi-dsi.o
+>> > > diff --git a/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
+>> > > b/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
+>> > > new file mode 100644
+>> > > index 000000000000..149015b64c02
+>> > > --- /dev/null
+>> > > +++ b/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
+>> > > @@ -0,0 +1,673 @@
+>> > > +// SPDX-License-Identifier: GPL-2.0
+>> > > +/*
+>> > > + * Copyright (c) 2021 MediaTek Inc.
+>> > > + * Copyright (c) 2021 BayLibre, SAS
+>> > > + */
+>> > > +#include <linux/delay.h>
+>> > > +#include <linux/io.h>
+>> > > +#include <linux/mfd/syscon.h>
+>> > > +#include <linux/module.h>
+>> > > +#include <linux/phy/phy.h>
+>> > > +#include <linux/platform_device.h>
+>> > > +#include <linux/types.h>
+>> > > +#include <linux/nvmem-consumer.h>
+>> > > +
+>> > > +#include "phy-mtk-hdmi.h"
+>> > > +#include "phy-mtk-hdmi-mt8195.h"
+>> > > +
+>> > > +static void mtk_hdmi_ana_fifo_en(struct mtk_hdmi_phy *hdmi_phy)
+>> > > +{
+>> > > +	/* make data fifo writable for hdmi2.0 */
+>> > > +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_ANA_CTL,
+>> > > REG_ANA_HDMI20_FIFO_EN,
+>> > > +			  REG_ANA_HDMI20_FIFO_EN);
+>> > > +}
+>> > > +
+>> > > +static void
+>> > > +mtk_mt8195_phy_tmds_high_bit_clk_ratio(struct mtk_hdmi_phy
+>> > > *hdmi_phy,
+>> > > +				       bool enable)
+>> > > +{
+>> > > +	mtk_hdmi_ana_fifo_en(hdmi_phy);
+>> > > +
+>> > > +	/* HDMI 2.0 specification, 3.4Gbps <= TMDS Bit Rate <= 6G,
+>> > > +	 * clock bit ratio 1:40, under 3.4Gbps, clock bit ratio 1:10
+>> > > +	 */
+>> > > +	if (enable)
+>> > > +		mtk_hdmi_phy_mask(hdmi_phy, HDMI20_CLK_CFG,
+>> > > +				  0x2 << REG_TXC_DIV_SHIFT,
+>> >
+>> > Use FIELD_PREP() macro, then no need define REG_TXC_DIV_SHIFT
+>> > anymore.
+>> >
+>>
+>> Didn't know about FIELD_* macros, will use them for V2.
+>>
+>> Thx for the suggestion.
+>Please use helpers defined in phy-mtk-io.h, the register access helpers
+>of mtk_hdmi_phy_* are already removed in phy next branch.
+>
+>Thanks a lot
+>
+>
+Hi,
 
-On Wed, Sep 28, 2022 at 9:42 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
->
-> > Subject: Re: [RFC PATCH 1/2] clk: renesas: rzg2l: Don't assume all
-> > CPG_MOD clocks support PM
-> >
-> > Hi Biju,
-> >
-> > Thank you for the review.
-> >
-> > On Wed, Sep 28, 2022 at 8:02 AM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > >
-> > > Hi Prabhakar,
-> > >
-> > > > Subject: [RFC PATCH 1/2] clk: renesas: rzg2l: Don't assume all
-> > > > CPG_MOD clocks support PM
-> > > >
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > There are cases where not all CPG_MOD clocks should be assumed to
-> > > > support PM. For example on the CRU block there is a particular
-> > > > sequence that needs to be followed to initialize the CSI-2 D-PHY
-> > in
-> > > > which individual clocks need to be turned ON/OFF, due to which
-> > > > Runtime PM support wasn't used by the CRU CSI-2 driver.
-> > > >
-> > > > This patch adds support to allow indicating if PM is supported by
-> > > > the CPG_MOD clocks. A new macro is DEF_NO_PM() is added which sets
-> > > > the no_pm flag in struct rzg2l_mod_clk and when the driver uses
-> > > > Runtime PM support no_pm flag is checked to see if the clk needs
-> > to
-> > > > included as part of Runtime PM.
-> > > >
-> > > > CPG_MOD clocks with no_pm flag set need to be individually turned
-> > > > ON/OFF depending on the requirement of the driver.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar
-> > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > ---
-> > > >  drivers/clk/renesas/rzg2l-cpg.c | 35
-> > > > +++++++++++++++++++++++++++++---
-> > > > -  drivers/clk/renesas/rzg2l-cpg.h | 12 ++++++++---
-> > > >  2 files changed, 40 insertions(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/drivers/clk/renesas/rzg2l-cpg.c
-> > > > b/drivers/clk/renesas/rzg2l-cpg.c index 3ff6ecd61756..d275324909e7
-> > > > 100644
-> > > > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > > > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > > > @@ -114,6 +114,8 @@ struct rzg2l_cpg_priv {
-> > > >       struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;  };
-> > > >
-> > > > +static struct rzg2l_cpg_priv *rzg2l_cpg_priv;
-> > > > +
-> > > >  static void rzg2l_cpg_del_clk_provider(void *data)  {
-> > > >       of_clk_del_provider(data);
-> > > > @@ -1223,18 +1225,42 @@ static int
-> > > > rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
-> > > >       return devm_reset_controller_register(priv->dev,
-> > > > &priv->rcdev); }
-> > > >
-> > > > +static inline const struct rzg2l_mod_clk *rzg2l_get_mod_clk(const
-> > > > +struct rzg2l_cpg_info *info, int id) {
-> > > > +     unsigned int i;
-> > > > +
-> > > > +     id += info->num_total_core_clks;
-> > > > +     for (i = 0; i < info->num_mod_clks; i++) {
-> > > > +             if (info->mod_clks[i].id == id)
-> > > > +                     return &info->mod_clks[i];
-> > > > +     }
-> > >
-> > > May be as an optimization add ID and clk to a separate list and
-> > > traverse that smaller list for DEF_NO_PM case.
-> > >
-> > > case CPG_MOD:
-> > >         return rzg2l_cpg_is_pm_mod(clkspec->args[1]);
-> > >
-> > Are you suggesting adding no_pm_mod_clks and no_pm_mod_clks or
-> > building an internal structure in struct rzg2l_cpg_priv while calling
-> > rzg2l_cpg_register_mod_clk() for each mod clock?
->
-> Later one. To have a smaller list of no_pm_mod_clks while registering as MOD
-> Clocks and later add PM clocks will check for the matching clock ID and
-> excludes it.
->
-Agreed.
+Thank you for the headsup, I've seen the change landed in
+next-20220927 on which I'm currently rebasing.
 
-Cheers,
-Prabhakar
+
+Thx,
+Guillaume.
