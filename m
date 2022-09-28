@@ -2,111 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED271C04A95
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 13:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C83FC32771
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 14:33:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233378AbiI1NbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 09:31:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33310 "EHLO
+        id S234316AbiI1OdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 10:33:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233039AbiI1NbV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 09:31:21 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4DE1A1D70
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 06:31:19 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a26so27191693ejc.4
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 06:31:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=n3qQR+aqK3MBkpPhhE7yG0JzICbbOFyRcGevTT/H8DY=;
-        b=MVeVzTtAnaZhe+EoVGaEnkpifnw/hFsnyVLN58MUI492PeZ58ECotTixHYDryoIQys
-         22MSjzFXpNbc1k11Kg2gvhhGDfJTw09+oD5vaM+h2mlpSm1vvGTKIKlid4s5jqhKWGQp
-         v3miQP7Cbf5oXutuuQBo27dxTIL7HWjlw5KvBMeyt+qsEoS9hICqhvxxR/RBc7VPIFlA
-         Igo27gSvRFshssr2bdp0DMbJ1hS8V3R7XLYGvSusgCyH6EVoWi5A+nF8mavYal9YT3SB
-         VjlSj/P8u7x45vl4S3k659wLSvFqYg2bSMEW5ne6pT7LHP+wH+RB1aQWh91EsH92B7Oc
-         N4lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=n3qQR+aqK3MBkpPhhE7yG0JzICbbOFyRcGevTT/H8DY=;
-        b=jUWUZWdE6vZHt3Y0uNm+LfP8NdXPBPWNUwMGSGwE2UMjNNV5CyV/bEu9uTRW6iRnRJ
-         GKBptcDFf5GBy/7fcK64jq71bvm2AwVetKLuBT7v3lmhaKbD5N89Lc5kOdRvw78/bPfM
-         0WoiMbbAcgWP3BLvWT5TE04ztzTVU71bK2M0myMdAgt8R43oly07loOnoUmbhgaCdMwu
-         P4c8ki+6f4mZzNKq0TskVEYt81HjEKcmLWV7b2pXdyCWi8y82o+CSfCXH8D6GOTQa+Uv
-         5UBvzsgJ6ArR4q4OLPryfqm2ZqvzdsEenFeb5+u8zeriq5FqClgn/nGGNDW19IR6g3f/
-         RRwg==
-X-Gm-Message-State: ACrzQf3AQfn4IV18VlA0tOr9CV6ufxgAcX0VA7nnsPB5m+P8S62krAPE
-        C+ZiTcwjlbohUkxv5GhOae2OeQ==
-X-Google-Smtp-Source: AMsMyM6cihZ44FvcUe0BRre7FY4VoB3qwNPZoBjybGrc2Xnj5NprI+bSfV7OA1i9lnIJidtBUAxA9Q==
-X-Received: by 2002:a17:907:72c4:b0:783:4fe0:daca with SMTP id du4-20020a17090772c400b007834fe0dacamr14835994ejc.455.1664371878293;
-        Wed, 28 Sep 2022 06:31:18 -0700 (PDT)
-Received: from otso.. (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id q1-20020a50cc81000000b00457618d3409sm3366096edi.68.2022.09.28.06.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 06:31:17 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-sm6350: Update the .pwrsts for usb gdscs
-Date:   Wed, 28 Sep 2022 15:28:54 +0200
-Message-Id: <20220928132853.179425-1-luca.weiss@fairphone.com>
-X-Mailer: git-send-email 2.37.3
+        with ESMTP id S229940AbiI1OdP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 10:33:15 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0BAACA2B;
+        Wed, 28 Sep 2022 07:33:14 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SCvNcj010676;
+        Wed, 28 Sep 2022 14:32:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=+7FsEsmSzmHPrpkQKjyZG1T0NwZSFVJVfMS6Ktray90=;
+ b=g5727hPnuJs6+VZIk7PC03ipq3r7aJXPWXiz4cYyxTy2TD72TrRTioJLUshP8eb5S3jp
+ T/e0fZoTLEzHT5M7GUKckHSY5ee44pZUXUNNeP7oDqVSfjHIxGiG3XzZefJ7i66qLI3U
+ s2EBfRfyATRcknRkTmdhxeZNSaPnn3YW7dBgPT9IhvPK8qbxZHH47hL0xTo18F9W7hBS
+ MMBx83dYnOiX4XqzRwN7rDwrf5OLq0/WNsFehkfKv0rzSWHdfbGDdpZ0Z8CfRJFKrn4i
+ mfY447+fcki8BQ5o5SzXxZKErWjDJjI/Xs9gczGhxH9y7BRmqFdQcl/gOxLTkNVLSusG CA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jvm758g4d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 14:32:46 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28SEWj0V029305
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 14:32:45 GMT
+Received: from [10.216.15.146] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 28 Sep
+ 2022 07:32:35 -0700
+Message-ID: <35e82a1b-7a36-d460-5a98-1378175836f1@quicinc.com>
+Date:   Wed, 28 Sep 2022 20:02:32 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+Content-Language: en-US
+From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
+        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
+        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
+        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
+        <svarbanov@mm-sol.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
+        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
+        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>
+References: <20220923142611.GA1389970@bhelgaas>
+ <5fb1e6d9-00c0-33f2-753e-2338010da352@quicinc.com>
+In-Reply-To: <5fb1e6d9-00c0-33f2-753e-2338010da352@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: LAKEQkVTk4y8zDCqOoNMJY_kDv9VaNpk
+X-Proofpoint-GUID: LAKEQkVTk4y8zDCqOoNMJY_kDv9VaNpk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-28_06,2022-09-28_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ mlxlogscore=474 adultscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209280086
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The USB controllers on sm6350 do not retain the state when
-the system goes into low power state and the GDSCs are
-turned off.
 
-This can be observed by the USB connection not coming back alive after
-putting the device into suspend, essentially breaking USB.
+On 9/25/2022 7:23 AM, Krishna Chaitanya Chundru wrote:
+>
+> On 9/23/2022 7:56 PM, Bjorn Helgaas wrote:
+>> On Fri, Sep 23, 2022 at 07:29:31AM +0530, Krishna Chaitanya Chundru 
+>> wrote:
+>>> On 9/23/2022 12:12 AM, Bjorn Helgaas wrote:
+>>>> On Thu, Sep 22, 2022 at 09:09:28PM +0530, Krishna Chaitanya Chundru 
+>>>> wrote:
+>>>>> On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
+>>>>>> On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya 
+>>>>>> Chundru wrote:
+>>>>>>> On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
+>>>>>>>> On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya 
+>>>>>>>> chundru wrote:
+>>>>>>>>> In qcom platform PCIe resources( clocks, phy etc..) can
+>>>>>>>>> released when the link is in L1ss to reduce the power
+>>>>>>>>> consumption. So if the link is in L1ss, release the PCIe
+>>>>>>>>> resources. And when the system resumes, enable the PCIe
+>>>>>>>>> resources if they released in the suspend path.
+>>>>>>>> What's the connection with L1.x?  Links enter L1.x based on
+>>>>>>>> activity and timing.  That doesn't seem like a reliable
+>>>>>>>> indicator to turn PHYs off and disable clocks.
+>>>>>>> This is a Qcom PHY-specific feature (retaining the link state in
+>>>>>>> L1.x with clocks turned off).  It is possible only with the link
+>>>>>>> being in l1.x. PHY can't retain the link state in L0 with the
+>>>>>>> clocks turned off and we need to re-train the link if it's in L2
+>>>>>>> or L3. So we can support this feature only with L1.x. That is
+>>>>>>> the reason we are taking l1.x as the trigger to turn off clocks
+>>>>>>> (in only suspend path).
+>>>>>> This doesn't address my question.  L1.x is an ASPM feature, which
+>>>>>> means hardware may enter or leave L1.x autonomously at any time
+>>>>>> without software intervention.  Therefore, I don't think reading the
+>>>>>> current state is a reliable way to decide anything.
+>>>>> After the link enters the L1.x it will come out only if there is
+>>>>> some activity on the link.  AS system is suspended and NVMe driver
+>>>>> is also suspended( queues will  freeze in suspend) who else can
+>>>>> initiate any data.
+>>>> I don't think we can assume that nothing will happen to cause exit
+>>>> from L1.x.  For instance, PCIe Messages for INTx signaling, LTR, OBFF,
+>>>> PTM, etc., may be sent even though we think the device is idle and
+>>>> there should be no link activity.
+>>> I don't think after the link enters into L1.x there will some
+>>> activity on the link as you mentioned, except for PCIe messages like
+>>> INTx/MSI/MSIX. These messages also will not come because the client
+>>> drivers like NVMe will keep their device in the lowest power mode.
+>>>
+>>> The link will come out of L1.x only when there is config or memory
+>>> access or some messages to trigger the interrupts from the devices.
+>>> We are already making sure this access will not be there in S3.  If
+>>> the link is in L0 or L0s what you said is expected but not in L1.x
+>> Forgive me for being skeptical, but we just spent a few months
+>> untangling the fact that some switches send PTM request messages even
+>> when they're in a non-D0 state.  We expected that devices in D3hot
+>> would not send such messages because "why would they?"  But it turns
+>> out the spec allows that, and they actually *do*.
+>>
+>> I don't think it's robust interoperable design for a PCI controller
+>> driver like qcom to assume anything about PCI devices unless it's
+>> required by the spec.
+>>
+>> Bjorn
+> We will check the spec once and will come back to you,
+ From pci spec 4, in sec 5.5
+"Ports that support L1 PM Substates must not require a reference clock 
+while in L1 PM Substates
+other than L1.0".
+If there is no reference clk we can say there is no activity on the link.
+If anything needs to be sent (such as LTR, or some messages ), the link 
+needs to be back in L0 before it
+sends the packet to the link partner.
 
-Fix this by updating the .pwrsts for the USB GDSCs so they only
-transition to retention state in low power.
+To exit from L1.x clkreq pin should be asserted.
 
-Cc: Rajendra Nayak <quic_rjendra@quicinc.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
-Similar to sc7180 & sc7280 patches that have been applied recently:
-https://lore.kernel.org/linux-arm-msm/20220927170516.zrkzn3xl7oedzi4l@builder.lan/T/
+In suspend after turning off clocks and phy we can enable to trigger an 
+interrupt whenever the clk req pin asserts.
+In that interrupt handler, we can enable the pcie resources back.
 
-@Rajendra Nayak: Maybe you know a bit more about the internals of
-sm6350&sm7225. As described in the commit message USB just stops working
-after suspend, with this it comes back after wakeup from suspend and
-continues working. If any details in the commit message are somehow
-wrong or I can add something, please let me know!
-Thanks for fixing this on sc7180&sc7280!
-
- drivers/clk/qcom/gcc-sm6350.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
-index 69412400efa4..9b4e4bb05963 100644
---- a/drivers/clk/qcom/gcc-sm6350.c
-+++ b/drivers/clk/qcom/gcc-sm6350.c
-@@ -2316,7 +2316,7 @@ static struct gdsc usb30_prim_gdsc = {
- 	.pd = {
- 		.name = "usb30_prim_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
-+	.pwrsts = PWRSTS_RET_ON,
- };
- 
- static struct gdsc ufs_phy_gdsc = {
--- 
-2.37.3
-
+What are your thoughts on this?
