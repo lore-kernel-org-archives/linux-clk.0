@@ -2,128 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CD0C6FA8E
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 15:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B83B5C54EE9
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 15:24:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234542AbiI1PIj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 11:08:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56260 "EHLO
+        id S234186AbiI1PY3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 11:24:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234590AbiI1PIW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 11:08:22 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4A8A61C3;
-        Wed, 28 Sep 2022 08:07:57 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SD7VxB025413;
-        Wed, 28 Sep 2022 15:07:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=/47Ht7//mhgwSWimy2C3slpI0VY99tiss+qSnQf+Sfw=;
- b=RB+nyOF5BKH9l9x72j6mwe6cTjqK8+V+snuF0a7Y9cfhSJ7XKA/6khGfVu3+uOccMGWG
- hr8LBR4/omYzcI2k5PjdLwFSFztf1GzNNstdVPSybKMLCODSTrqkcnyJeBhkMVi15A+J
- IgV41I21qQkUkgN2zPpH6hLVn7kgcwuZXa/+mMgvfGBuwZNwGrPdCcyspUs4tH0xtQ4o
- L5k8rjYynPnNzb/aCL/WCxxG6OYTPyqeDuVVSepsFqTB61czt+b9sRiQV+tedtG2SisJ
- H+bJZaC1Sx1c10pi5khNGoetHnNVyGOwXZbnwhhKL5VkuVGg3PHEoH25d8SCRgD4YMTa Aw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jvpuv8dv9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 15:07:46 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28SF7jGa022777
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 15:07:45 GMT
-Received: from [10.216.28.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 28 Sep
- 2022 08:07:41 -0700
-Message-ID: <fef52129-a2be-58a9-3725-a4fd345661c4@quicinc.com>
-Date:   Wed, 28 Sep 2022 20:37:37 +0530
+        with ESMTP id S234016AbiI1PYD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 11:24:03 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53EAFB5E7E
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:22:48 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 130-20020a1c0288000000b003b494ffc00bso946639wmc.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:organization:from:reply-to
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date;
+        bh=lWeGi0gBGrGKUrvIMJh2ce84Y/XoNjjWvMsSIb73vv0=;
+        b=F3QqFGhiuBtanG4NhqX19aMF8z8mUPtzQixe48RgjnTcpwS6bv5sjLGjWqxfELD1FP
+         gQ+rXEm3uA7tFMDN2HTOUluMJ/1voMiCNgUoZ2p6qBMHMEyAiopDLBMm8BTvz14CzJ1M
+         3bqPi78NyRvEodgXb3YmGIR45fHjlCu3zywETU84PQ+ihDAZ2rL4aFGLHqSQe82fe1+A
+         eQo/5+sj4zRKKDU2RA9PSmg45Rpvrs+WtVVnQcB14NR/AsydJygNNs0rLOF9Ki0HawD3
+         y50rmDFvKTmp2gSCoqsQaAAn/1SHiXhnfzGkXRd5Q/s/R3Q0yucSaLTKu+d9F8LtjEEo
+         syIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from:reply-to
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date;
+        bh=lWeGi0gBGrGKUrvIMJh2ce84Y/XoNjjWvMsSIb73vv0=;
+        b=WdCiz1bTZRRLTQof1mN32DC4KRHUZzTc87Hfv1y5lS0arggSelMvcpngyKyu8xtGTn
+         M+1TilILcDNDXBn+Fnc86qmRKI5mB/Okk/K4EtDFrkpw2lykxaInELgnWC9w3ur/29kh
+         DUgXjUeTs3dtRd0LYXyb5IgnqyCz1+peppN3R2SqsqfIpabe4sWwyBA6sKdgxh/va7T+
+         qP2QcQ7MyZnKTtTQPl4uZqWW+rk0BqACz/SQ49QX9PlE1oYO4epXvN2L8vC7edSwtWjy
+         ATWCHSYSrktZSzI9L/x7/+aDgmp6JB9xqgbyA9GvBCO9U8t30D2Guz5sJBMU+wqP04qC
+         r3MA==
+X-Gm-Message-State: ACrzQf14IP5SGYjIgn/a295p0UW7THzVHNtyZryi0vYo9BzUoVy3tNps
+        cIwazi5qkFz5i1BTzMV//8w3Hw==
+X-Google-Smtp-Source: AMsMyM7eApu/zDXm34C5IhYJCj/BGmPCbLgryIq2I36PR8WzGV4eGAS4hQK/Na1Zn5JOm9ZE0HdLsA==
+X-Received: by 2002:a05:600c:4211:b0:3b4:6334:9940 with SMTP id x17-20020a05600c421100b003b463349940mr7464641wmh.166.1664378566363;
+        Wed, 28 Sep 2022 08:22:46 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:11d4:7c71:accf:6521? ([2a01:e0a:982:cbb0:11d4:7c71:accf:6521])
+        by smtp.gmail.com with ESMTPSA id c3-20020a05600c0a4300b003b4fdbb6319sm2529820wmq.21.2022.09.28.08.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Sep 2022 08:22:45 -0700 (PDT)
+Message-ID: <909dacda-c44f-638e-77e2-6f1bb3adda56@linaro.org>
+Date:   Wed, 28 Sep 2022 17:22:45 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] clk: qcom: gcc-sm6350: Update the .pwrsts for usb gdscs
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 04/11] clk: qcom: gcc-msm8974: move clock parent tables
+ down
 Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        <linux-arm-msm@vger.kernel.org>
-CC:     <~postmarketos/upstreaming@lists.sr.ht>,
-        <phone-devel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20220928132853.179425-1-luca.weiss@fairphone.com>
-From:   Rajendra Nayak <quic_rjendra@quicinc.com>
-In-Reply-To: <20220928132853.179425-1-luca.weiss@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20220928145958.376288-1-dmitry.baryshkov@linaro.org>
+ <20220928145958.376288-5-dmitry.baryshkov@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Organization: Linaro Developer Services
+In-Reply-To: <20220928145958.376288-5-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 49Yj00eN_HOGd0TL_YvxXg39YnWeUfAf
-X-Proofpoint-ORIG-GUID: 49Yj00eN_HOGd0TL_YvxXg39YnWeUfAf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-28_06,2022-09-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 phishscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- malwarescore=0 clxscore=1011 priorityscore=1501 mlxscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209280089
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 9/28/2022 6:58 PM, Luca Weiss wrote:
-> The USB controllers on sm6350 do not retain the state when
-> the system goes into low power state and the GDSCs are
-> turned off.
+On 28/09/2022 16:59, Dmitry Baryshkov wrote:
+> Move clock parent tables down, after the PLL declrataions, so that we
+typo:                                        s/declrataions/declarations/
+> can use pll hw clock fields in the next commit.
 > 
-> This can be observed by the USB connection not coming back alive after
-> putting the device into suspend, essentially breaking USB.
-> 
-> Fix this by updating the .pwrsts for the USB GDSCs so they only
-> transition to retention state in low power.
-> 
-> Cc: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-> Similar to sc7180 & sc7280 patches that have been applied recently:
-> https://lore.kernel.org/linux-arm-msm/20220927170516.zrkzn3xl7oedzi4l@builder.lan/T/
-> 
-> @Rajendra Nayak: Maybe you know a bit more about the internals of
-> sm6350&sm7225. As described in the commit message USB just stops working
-> after suspend, with this it comes back after wakeup from suspend and
-> continues working. If any details in the commit message are somehow
-> wrong or I can add something, please let me know!
+>   drivers/clk/qcom/gcc-msm8974.c | 98 +++++++++++++++++-----------------
+>   1 file changed, 49 insertions(+), 49 deletions(-)
 
-ah right, this seems like the exact same case as sc7180 and sc7280,
-the only additional thing to mention perhaps is that these SoCs
-only support CX RET (I don't know but I am guessing they don't support
-CX PowerCollapse since you said your change worked) and hence there are
-no cxcs entries populated.
+<snip
 
-> Thanks for fixing this on sc7180&sc7280!
-> 
->   drivers/clk/qcom/gcc-sm6350.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
-> index 69412400efa4..9b4e4bb05963 100644
-> --- a/drivers/clk/qcom/gcc-sm6350.c
-> +++ b/drivers/clk/qcom/gcc-sm6350.c
-> @@ -2316,7 +2316,7 @@ static struct gdsc usb30_prim_gdsc = {
->   	.pd = {
->   		.name = "usb30_prim_gdsc",
->   	},
-> -	.pwrsts = PWRSTS_OFF_ON,
-> +	.pwrsts = PWRSTS_RET_ON,
->   };
+
+> +static struct clk_pll gpll4 = {
+> +	.l_reg = 0x1dc4,
+> +	.m_reg = 0x1dc8,
+> +	.n_reg = 0x1dcc,
+> +	.config_reg = 0x1dd4,
+> +	.mode_reg = 0x1dc0,
+> +	.status_reg = 0x1ddc,
+> +	.status_bit = 17,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "gpll4",
+> +		.parent_names = (const char *[]){ "xo" },
+> +		.num_parents = 1,
+> +		.ops = &clk_pll_ops,
+> +	},
+> +};
+> +
+> +static struct clk_regmap gpll4_vote = {
+> +	.enable_reg = 0x1480,
+> +	.enable_mask = BIT(4),
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "gpll4_vote",
+> +		.parent_names = (const char *[]){ "gpll4" },
+> +		.num_parents = 1,
+> +		.ops = &clk_pll_vote_ops,
+> +	},
+> +};
+> +
+
+<snip>
+
 >   
->   static struct gdsc ufs_phy_gdsc = {
+> -static struct clk_pll gpll4 = {
+> -	.l_reg = 0x1dc4,
+> -	.m_reg = 0x1dc8,
+> -	.n_reg = 0x1dcc,
+> -	.config_reg = 0x1dd4,
+> -	.mode_reg = 0x1dc0,
+> -	.status_reg = 0x1ddc,
+> -	.status_bit = 17,
+> -	.clkr.hw.init = &(struct clk_init_data){
+> -		.name = "gpll4",
+> -		.parent_names = (const char *[]){ "xo" },
+> -		.num_parents = 1,
+> -		.ops = &clk_pll_ops,
+> -	},
+> -};
+> -
+> -static struct clk_regmap gpll4_vote = {
+> -	.enable_reg = 0x1480,
+> -	.enable_mask = BIT(4),
+> -	.hw.init = &(struct clk_init_data){
+> -		.name = "gpll4_vote",
+> -		.parent_names = (const char *[]){ "gpll4" },
+> -		.num_parents = 1,
+> -		.ops = &clk_pll_vote_ops,
+> -	},
+> -};
+
+<snip>
+
+nitpick: you're also moving pll4 up, it's worth adding it to commit message
+
+Neil
