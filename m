@@ -2,84 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F982C04A95
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 07:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1B9C04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 08:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbiI1HwD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 03:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46318 "EHLO
+        id S233530AbiI1I3c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 04:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233524AbiI1Hvf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 03:51:35 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CADFF3EC
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 00:50:20 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id z13so16100500edb.13
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 00:50:20 -0700 (PDT)
+        with ESMTP id S229567AbiI1I32 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 04:29:28 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6867374CD5;
+        Wed, 28 Sep 2022 01:29:27 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id c30so15130828edn.2;
+        Wed, 28 Sep 2022 01:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=QiNIg/zYZ38dNte35yIrwLt22pv5Z8LWSBq+qCcfUtU=;
-        b=NtzNSjvY4vyAUbLC8Ii0LP3f102njHedYSBGeDzF/hkB810Z7nZG7cmefrAHtpFxhe
-         Zp9te2hkWiDhTDlHfjC2QXAsRum0CWIfAidozvY7YrY5zd9bMeLp3BBUkbc21Pm4fwYD
-         bKKKOWtXTMb7XcHcBJO0GQJ2gYygtC4R68NE4=
+        bh=w0oCFVbsIR+JjV/gDmNe5Qcxa+IyfAvzzy/EcJvtCNY=;
+        b=Q/SsPmY7B+fAJUl+Spw8ngVH+HuKsYlaXXQTdegB+igN/r94LsiM/6mQE32R40FIct
+         JfqDSrAT2I2alnLfwF4qM3Y+5HawHPeRGtlK0TOmJR+P63nFjws5yvrrnkxGcd24/iDM
+         SlrfOpYcNE2kGttZnpI1pyslhFWlaZqMfYY63kSpZc7s3wop9F/g8teD8rYq4iYUDS/l
+         LseP+Dh7v/DCOeRdptNvvXChaE+PI5y27se663CNTYVBUa9p2YER5FgJGa5FbNSuFmNJ
+         TiuHDYKSUDCoaBw2Jp/E+cI9qzoGPv8ZzOXx92KWwnhdkeBezQ0ObZAW6vYyTwksaR37
+         t86Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=QiNIg/zYZ38dNte35yIrwLt22pv5Z8LWSBq+qCcfUtU=;
-        b=E4F8GZAYlxep52oZIDnE9w3e2qG8FfZue+of2kc6mZw0YquII4xtyPwI+gkyJkBwj0
-         1tcUkc+0AgPGSGnW9X5328aIXNRzCJ63jGc6TYM/b4wif9lfva/qjzsbI4TAS3bRebxS
-         d6RqWdppngnL+4un8PG8fEeJL1Ev9bSR+R/ap6KhFR/D3PslQoOJfgdix2ALrj1nQE2I
-         8GqnxyBGX7czs5RN7FJn95v8ZsDAwGoeVqpr5HwweGtyyN21c9LDFy887eSJldalK072
-         etZch7bclnzop+5etOOOIMFJ0giVEhitcoczik/K5LU4badrMQ6n3zunbmKOQpNg2nMn
-         9MoA==
-X-Gm-Message-State: ACrzQf2h1aTheRCDlyilg0P1AJfXBR6P6lqgO49fsljH1JZA4TxLYwr7
-        XHKBNECMK/IC4qhGgLDQNjoPU5pG/hJId5DituOYMA==
-X-Google-Smtp-Source: AMsMyM6tdHhfxNIYTWCDrGO48E5DQKirqL+MmjRR/T8+Ih7026PNLiu8XfmJTZnxopqbAP43SYNBrqxzsdSO9XaLHp4=
-X-Received: by 2002:a05:6402:1298:b0:457:c38a:2f10 with SMTP id
- w24-20020a056402129800b00457c38a2f10mr6387160edv.264.1664351418958; Wed, 28
- Sep 2022 00:50:18 -0700 (PDT)
+        bh=w0oCFVbsIR+JjV/gDmNe5Qcxa+IyfAvzzy/EcJvtCNY=;
+        b=JwNs3uIUh7g5FvX4Aj8gDIBaBB7vdZa4CEUbmyRwuBAIQJLSa/nGQgwRao6ywMVd/U
+         4I4G0mXl8/PLQTVsNUzdhOrcVUpXscTLHJzMjj1yXvQbFO6LsLJmJcna8hVXEL5/lf6M
+         9zjSa5FyCkG86OLTun0Z8zIQ5Z0hroQ2YsWd9PxKnWdUr3IsikN+HqQy2W4WeB+NINT1
+         6J4XQ5KtKkUHJzOFKJ7XcWl6fCOkypXDBOnQZ/XmP4uNZHxc1T7yh5WUrW4B59eQaZcN
+         lW6yg6hRFotUIPr3yjVPevYA0IwaemXcHa5TmqMjRwkODwbdtSwnX/fkzuV4RPBMwDpG
+         32zg==
+X-Gm-Message-State: ACrzQf11XVEbjRo2aZjL6HWuIe+XpO9dm+TCfxgYgYw41vbNUJaR+6xu
+        6Jmd9mywVjIg5lHN04OFw+phU4QIMmlgqZK3lQw=
+X-Google-Smtp-Source: AMsMyM50ywTBWlF6n2lFkeDW3bZoGqCI0vlDBC8k5yxSEE6k8OR+XTIPbCbhj953UkRHKUvxG7OzMO25Qu9Xg1MZjZc=
+X-Received: by 2002:a05:6402:50d1:b0:452:899e:77c with SMTP id
+ h17-20020a05640250d100b00452899e077cmr32098451edb.0.1664353765894; Wed, 28
+ Sep 2022 01:29:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <0a1618c4-b808-56bd-e89f-560b0423191d@collabora.com> <20220928015507.17206-1-miles.chen@mediatek.com>
-In-Reply-To: <20220928015507.17206-1-miles.chen@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 28 Sep 2022 15:50:07 +0800
-Message-ID: <CAGXv+5FLwrE-kiZ_opjB3NA=e2_tDoNUs6hKE-o9m_DXcQmcGA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] clk: mediatek: mt8192: Do not re-register
- top_early_divs in probe function
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     angelogioacchino.delregno@collabora.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        matthias.bgg@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
+References: <20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220927203044.751611-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <OS0PR01MB5922BE73295E3562DC3FBA6E86549@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB5922BE73295E3562DC3FBA6E86549@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 28 Sep 2022 09:28:58 +0100
+Message-ID: <CA+V-a8s=wqGpfWBv7+=tG1pu6fZCL7EtRoTEmo-wjK5CGZyLnQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD
+ clocks support PM
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 28, 2022 at 9:55 AM Miles Chen <miles.chen@mediatek.com> wrote:
+Hi Biju,
+
+Thank you for the review.
+
+On Wed, Sep 28, 2022 at 8:02 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
 >
-> >> top_early_divs are registered in the CLK_OF_DECLARE_DRIVER() half of the
-> >> topckgen clk driver. Don't try to register it again in the actual probe
-> >> function. This gets rid of the "Trying to register duplicate clock ..."
-> >> warning.
-> >>
-> >> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Hi Prabhakar,
+>
+> > Subject: [RFC PATCH 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD
+> > clocks support PM
 > >
-> >Can't we simply remove the CLK_OF_DECLARE_DRIVER() and top_init_early entirely,
-> >and transfer TOP_CSW_F26M_D2 to top_divs[] instead?
-> >I get that systimer concern and we have something similar in MT8195, where the
-> >TOP_CLK26M_D2 is registered "late".
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > There are cases where not all CPG_MOD clocks should be assumed to
+> > support PM. For example on the CRU block there is a particular
+> > sequence that needs to be followed to initialize the CSI-2 D-PHY in
+> > which individual clocks need to be turned ON/OFF, due to which Runtime
+> > PM support wasn't used by the CRU CSI-2 driver.
+> >
+> > This patch adds support to allow indicating if PM is supported by the
+> > CPG_MOD clocks. A new macro is DEF_NO_PM() is added which sets the
+> > no_pm flag in struct rzg2l_mod_clk and when the driver uses Runtime PM
+> > support no_pm flag is checked to see if the clk needs to included as
+> > part of Runtime PM.
+> >
+> > CPG_MOD clocks with no_pm flag set need to be individually turned
+> > ON/OFF depending on the requirement of the driver.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/clk/renesas/rzg2l-cpg.c | 35 +++++++++++++++++++++++++++++---
+> > -  drivers/clk/renesas/rzg2l-cpg.h | 12 ++++++++---
+> >  2 files changed, 40 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/clk/renesas/rzg2l-cpg.c
+> > b/drivers/clk/renesas/rzg2l-cpg.c index 3ff6ecd61756..d275324909e7
+> > 100644
+> > --- a/drivers/clk/renesas/rzg2l-cpg.c
+> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> > @@ -114,6 +114,8 @@ struct rzg2l_cpg_priv {
+> >       struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;  };
+> >
+> > +static struct rzg2l_cpg_priv *rzg2l_cpg_priv;
+> > +
+> >  static void rzg2l_cpg_del_clk_provider(void *data)  {
+> >       of_clk_del_provider(data);
+> > @@ -1223,18 +1225,42 @@ static int
+> > rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
+> >       return devm_reset_controller_register(priv->dev, &priv->rcdev);
+> > }
+> >
+> > +static inline const struct rzg2l_mod_clk *rzg2l_get_mod_clk(const
+> > +struct rzg2l_cpg_info *info, int id) {
+> > +     unsigned int i;
+> > +
+> > +     id += info->num_total_core_clks;
+> > +     for (i = 0; i < info->num_mod_clks; i++) {
+> > +             if (info->mod_clks[i].id == id)
+> > +                     return &info->mod_clks[i];
+> > +     }
 >
-> Another reason for this:
-> Removing the CLK_OF_DECLARE_DRIVER() is good when we want to build our driver as
-> kernel modules because it does not work with kernel modules.
+> May be as an optimization add ID and clk to a separate list
+> and traverse that smaller list for DEF_NO_PM case.
+>
+> case CPG_MOD:
+>         return rzg2l_cpg_is_pm_mod(clkspec->args[1]);
+>
+Are you suggesting adding no_pm_mod_clks and no_pm_mod_clks or
+building an internal structure in struct rzg2l_cpg_priv while calling
+rzg2l_cpg_register_mod_clk() for each mod clock?
 
-I agree. But as I mentioned in my other reply, we need to fix the clock
-user first before dropping that clock. And there's also the matter of
-DT backward compatibility. So we need to do it incrementally.
-
-
-ChenYu
+Cheers,
+Prabhakar
