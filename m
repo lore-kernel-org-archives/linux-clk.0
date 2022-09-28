@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02366C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 17:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAB5C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 17:37:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234631AbiI1RN4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 13:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33484 "EHLO
+        id S234550AbiI1Rhu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 13:37:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234651AbiI1RNa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 13:13:30 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A861F08A3
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 10:13:02 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 10so21364294lfy.5
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 10:13:02 -0700 (PDT)
+        with ESMTP id S234506AbiI1Rhs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 13:37:48 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F875F3720
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 10:37:47 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id bu25so19559805lfb.3
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 10:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=M7Ue80YEuoCIOWAQgLo+SUfvh7l5ryKbVSWPKQvrAK8=;
-        b=enrbMhtk9diLQuM0JIaOskWc0RZbLWujXPbpp8llfK1JzNHr/Ao5mHKJgX5cRyxJl+
-         UxcaKHCLtKXdNJ8ffRnyk9bu3nDO8RQ9N7+YFcb7rnhcpDvyklU8oFqZRLjLrPtEmGAX
-         DXBCiEv75cKbVwm7HDq6WrbELs3yzDvbNWicuv0DWPd0ppLi7MjfcPetH+Xx/oqo+7eE
-         MooRxoHtCJSsmsJr5EBzfb/lmehuQjTOe9pjgzGp/tw9oS50oxJ7nD7mVigH8We5a1oU
-         zcdzxm1J864V3A2ltTHosFPf51vgisyNWJvRDVUqINWAsHbwP5C+wlfzrc6RLeAu9JSk
-         Jfxg==
+        bh=0aztqcNn6LykQdwp4m1RypEaxXnCq8fh7JDHFifhgfc=;
+        b=J0xXcMdkx8qNPncfLfjbp0HUbAzXfrf+XjDuMJFwgKXV61vJxqMAgFpoh0uhvAmDc+
+         6EzGFRnBnBnwxma7ril5YJq+rnPsIbdrBNQnTEVz3hMiFbBzSRY356eag73OQ7vg0EpL
+         v6eeLXyDq8jQn+8aDXySuPN+1yValwFU3eCSQZydOysC7hG6j+LPLa8mYP1Lc7+Xv7kM
+         4HHdsocXkJLeOfmBsE2PKh53Qo5AAU0N87+pCoLp1O3nnO269qK1gQqgNoFIB3NQDI3P
+         jWXq2R4X1iN+7JJUJiitEFwgpJ5yB4Z3ngtcQzhTQmMjYRyrmk3JC84KJtmEgYXFB8EG
+         hG2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=M7Ue80YEuoCIOWAQgLo+SUfvh7l5ryKbVSWPKQvrAK8=;
-        b=1ss3bYuB+6IUlnpCGHy9i2Es/09FqBN576EqCNBeJe7203w6OiD5hfHvc4IaqOov2P
-         JUlnBxG2uQE/qg1CXZP2S4CYUNiXM3CK1Ex1MJAryvOFUXkcUWfLMer17oP8wynQoYGl
-         Yn/uBEuy7DgFZ3J1uGFUekGS3kP7iPth65TGNU7KKxHv3ADHDEPt/9KyoSD9ncHj7nww
-         wY2Xu+j9M3YdmlBhQfspOlG97DHUDt/yhDak59Omq7kqDvVMf40PHzOy8LMhqhUISid6
-         tZxkWDTEq49RBiP58XPW5XGzZTVl+sg1RVF0u3uAYqg24HbXrZTBNkYnLkLGNB+qQ8p1
-         o3VA==
-X-Gm-Message-State: ACrzQf3tzveZiCmCi2W3HmXOn/qjIbz+ePyjxH6m4e9j7EY7gYG4NZYZ
-        iK4FFQTrwbc4keasL/xh6AJFFQ==
-X-Google-Smtp-Source: AMsMyM40BhxbF90DTbMrHArQq6jsjUGS9GskBzU5zFLkvrYuTSg8rAT4p0UOIgA/KNm/I1giiYdt7w==
-X-Received: by 2002:ac2:4c48:0:b0:4a0:606f:3e85 with SMTP id o8-20020ac24c48000000b004a0606f3e85mr10878909lfk.675.1664385180613;
-        Wed, 28 Sep 2022 10:13:00 -0700 (PDT)
+        bh=0aztqcNn6LykQdwp4m1RypEaxXnCq8fh7JDHFifhgfc=;
+        b=CN8TGnA994TAmutfPxMWZZ6ZP52HOMqXb7GeQgq7pbOfr6YFEi0sLNW+EQq4ekvlqN
+         Bn6WErsi5vgKy5mC6ZGgcMn9QWxc9UU1AP/jotETWzU7Os4/GXTUVi5VjQBmK+UyY13F
+         L5xafu2B7ec1ne8VxmchmY3qZBDk29/RK7SIGQ6iaD0+6qrwtUNkMLQXJOM1y6XbApR/
+         IPH8POjXPBiGmyAc9b0Zpc9YYOrdddbxhAEQ/VySdohZODqgqsilacBORh58k+LFUCYs
+         7OK139LIEsNCPlW6RnKW6n67f6sXMOV88JOAa7f69VG7Ds8G2amcXvYmmOk8uNMa4GbD
+         vFlw==
+X-Gm-Message-State: ACrzQf2h2KxZsf3aaDlj25q/KdukLbxV6u/j0kq49ZsFRowmWhZhHXpv
+        73rQdsUICqgZVT/KAypem4sg9A==
+X-Google-Smtp-Source: AMsMyM7YsQDUPkO6r21a9nJydaJNbpzuIJVa9lJwU5R/Q1qeWKdseUnCwVPoGfsdsFQkoibE9Rx+ng==
+X-Received: by 2002:a05:6512:2354:b0:49f:585c:a796 with SMTP id p20-20020a056512235400b0049f585ca796mr13070770lfu.680.1664386666008;
+        Wed, 28 Sep 2022 10:37:46 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q5-20020a2eb4a5000000b0026c2d2a9b92sm476056ljm.101.2022.09.28.10.12.59
+        by smtp.gmail.com with ESMTPSA id j14-20020a05651231ce00b0047f7722b73csm528697lfe.142.2022.09.28.10.37.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Sep 2022 10:13:00 -0700 (PDT)
-Message-ID: <06c01215-1423-9834-10fa-234394d13381@linaro.org>
-Date:   Wed, 28 Sep 2022 19:12:59 +0200
+        Wed, 28 Sep 2022 10:37:45 -0700 (PDT)
+Message-ID: <fff9d3e8-a9cf-ddb4-f568-3a58622715af@linaro.org>
+Date:   Wed, 28 Sep 2022 19:37:44 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
-Subject: Re: [PATCH 09/11] ARM: dts: qcom: msm8974: add second DSI host and
- PHY
+Subject: Re: [PATCH 1/3] dt-bindings: clock: move qcom,gcc-msm8939 to
+ qcom,gcc-msm8916.yaml
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -67,108 +67,31 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220928145958.376288-1-dmitry.baryshkov@linaro.org>
- <20220928145958.376288-10-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20220928145609.375860-1-dmitry.baryshkov@linaro.org>
+ <20220928145609.375860-2-dmitry.baryshkov@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220928145958.376288-10-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220928145609.375860-2-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/09/2022 16:59, Dmitry Baryshkov wrote:
-> Add second DSI host and PHY available on the msm8974 platform.
+On 28/09/2022 16:56, Dmitry Baryshkov wrote:
+> The MSM8939 GCC bindings are fully comptible with MSM8916, the clock
+> controller requires the same parent clocks, move MSM8939 GCC compatible
+> to qcom,msm8916.yaml
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  arch/arm/boot/dts/qcom-msm8974.dtsi | 78 +++++++++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> index 7a9be0acf3f5..810a163ca14f 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> @@ -1541,6 +1541,13 @@ mdp5_intf1_out: endpoint {
->  							remote-endpoint = <&dsi0_in>;
->  						};
->  					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +						mdp5_intf2_out: endpoint {
-> +							remote-endpoint = <&dsi1_in>;
-> +						};
-> +					};
->  				};
->  			};
->  
-> @@ -1614,6 +1621,77 @@ dsi0_phy: dsi-phy@fd922a00 {
->  
->  				status = "disabled";
->  			};
-> +
-> +			dsi1: dsi@fd922e00 {
-> +				compatible = "qcom,mdss-dsi-ctrl";
-> +				reg = <0xfd922e00 0x1f8>;
-> +				reg-names = "dsi_ctrl";
-> +
-> +				interrupt-parent = <&mdss>;
-> +				interrupts = <4>;
-> +
-> +				assigned-clocks = <&mmcc BYTE1_CLK_SRC>, <&mmcc PCLK1_CLK_SRC>;
-> +				assigned-clock-parents = <&dsi1_phy 0>, <&dsi1_phy 1>;
-> +
-> +				clocks = <&mmcc MDSS_MDP_CLK>,
-> +					 <&mmcc MDSS_AHB_CLK>,
-> +					 <&mmcc MDSS_AXI_CLK>,
-> +					 <&mmcc MDSS_BYTE1_CLK>,
-> +					 <&mmcc MDSS_PCLK1_CLK>,
-> +					 <&mmcc MDSS_ESC1_CLK>,
-> +					 <&mmcc MMSS_MISC_AHB_CLK>;
-> +				clock-names = "mdp_core",
-> +					      "iface",
-> +					      "bus",
-> +					      "byte",
-> +					      "pixel",
-> +					      "core",
-> +					      "core_mmss";
-> +
-> +				phys = <&dsi1_phy>;
-> +				phy-names = "dsi-phy";
+>  .../devicetree/bindings/clock/qcom,gcc-msm8916.yaml   | 11 ++++++++---
+>  .../devicetree/bindings/clock/qcom,gcc-other.yaml     |  3 ---
+>  2 files changed, 8 insertions(+), 6 deletions(-)
 
-I think this is being removed, isn't it?
 
-> +
-> +				status = "disabled";
-> +
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						dsi1_in: endpoint {
-> +							remote-endpoint = <&mdp5_intf2_out>;
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +						dsi1_out: endpoint {
-> +						};
-> +					};
-> +				};
-> +			};
-> +
-> +			dsi1_phy: dsi-phy@fd923000 {
-
-And this you change into "phy"?
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
