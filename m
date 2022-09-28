@@ -2,66 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEE0C04A95
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 18:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8F3C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 20:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233683AbiI1S6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 14:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51436 "EHLO
+        id S234824AbiI1UCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 16:02:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233675AbiI1S6g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 14:58:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C303F3F97;
-        Wed, 28 Sep 2022 11:58:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CE599B821C3;
-        Wed, 28 Sep 2022 18:58:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F7DC433D7;
-        Wed, 28 Sep 2022 18:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664391512;
-        bh=73cqCtnNsDvfXsy6P+CF5Gnpa0oRjpEWOATabkd0y9k=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=U1sH8DCduJBFVtNE7yAlXn+ak+MjNp86ZbDmHrcjAysL2CoJnUObFmS9WNGjF8SaU
-         lgeXbWR/3OJLLg8wlRs+xo69pUEwgVSTtBpJRdiKsiA/pSXsXGhOWTqDtzSTYhCvlX
-         NMHvN23fb+IA+pu6jw7hn+pcz/xe1A82Xe+wKRlRtUPpg5YySPJK/HNbotjrwsFuwd
-         6YPscxERooUYDYQu7LD6SXQ8brpzaXj+vtecP3pNaAB2t9EUy0iEhZHi/GUOIF+g86
-         CzTAkiLNISzTaJyaCQVkaCMBR2DxeXtMfFC38dtYPYc+V1DPyTGDJdfaXe4xdk4kvQ
-         AjoGrX4XAUfjA==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S234783AbiI1UCV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 16:02:21 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3AB84E7A;
+        Wed, 28 Sep 2022 13:01:39 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id b2so6482676eja.6;
+        Wed, 28 Sep 2022 13:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=FQdphxTZ66QYAOnofKNGBcQ+Caq9QNc6A+A5EnAfs9Y=;
+        b=SM+pQmHMUu1Vdwr3vzMUhNyVQ9jB8MnLgDbQ/hRsO7FdT4yxGbemcSVjmdYT2u/ZGE
+         lNbO88owrJ2OnaThIlKlUxYJfAU9fA64pGyCEKoM288TgzJeWwHqEMedl2T6EncQ2S/m
+         7v/kFCOJrN6Guw4DRF3G26IaXbA5dae8ufGFE01fGWOZqnxDgmfQ3Xkt/CKpcyokB5WK
+         zjRoMku6hV9fYptQD318/1iiKewLG4MK8yDAmwNIU2Pxu/Q4k5GwHCUpOGv9eVc6cJXZ
+         k5koN4qVNzWhiYUI4vAHYxpyAUFNdYqxOly19A7ygtdhUeeAKLnXVM4qr+Dg0C5Wtg9W
+         1XXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=FQdphxTZ66QYAOnofKNGBcQ+Caq9QNc6A+A5EnAfs9Y=;
+        b=s8AEcA1Ob5QhXTFU2xpfAD+we4V4++pNhYJ6vv4/hxHdpiIDBdALI4TFAfoys9Jain
+         8PH1THpqd7RuEKBxqZlWDUXad1ulpcc0HuPs9J1il0byUh/5IMZE0j+CMfN8/xTW9X84
+         BGZgndHmIFP2pw6LhBFwQ8UCKmE/r6KR0JQSIHrrSwZzA/KNHPIBkLyUpRUgiSp/f2fO
+         ZPXwYRpGy+fBW/v+ieCbineUZquF6grxdkfwsj5TUHV50KuZkGOV1hnHR4UIetCkx6Rs
+         BoaNHhONxLGhueywVhL1E98T+U1e/XBPYQkfnbdR6J4HZV3XrDwO0ku3dyoYC4IMomu+
+         qAAQ==
+X-Gm-Message-State: ACrzQf3ARyLNsV1MhunfsKBVUZAiEQzaAf1R2QfhqC3uQdqsdILylRjq
+        wrDV7Kqif72fmp9kruhpyM8=
+X-Google-Smtp-Source: AMsMyM7/ltV50qoXxcf2RzeCPuJDZ5lLR05PmqL0JITzHOT79EBbmXSaWJFFFNsWKyP31DkaBFZ7Eg==
+X-Received: by 2002:a17:907:74e:b0:74f:83d4:cf58 with SMTP id xc14-20020a170907074e00b0074f83d4cf58mr29389544ejb.178.1664395297439;
+        Wed, 28 Sep 2022 13:01:37 -0700 (PDT)
+Received: from kista.localdomain (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
+        by smtp.gmail.com with ESMTPSA id n25-20020a05640204d900b00457cdb5cf76sm3015769edw.50.2022.09.28.13.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 13:01:36 -0700 (PDT)
+From:   Jernej Skrabec <jernej.skrabec@gmail.com>
+To:     wens@csie.org, samuel@sholland.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, r.stratiienko@gmail.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: h6: Fix default PLL GPU rate
+Date:   Wed, 28 Sep 2022 22:01:22 +0200
+Message-Id: <20220928200122.3963509-1-jernej.skrabec@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220927075511.3147847-27-clabbe@baylibre.com>
-References: <20220927075511.3147847-1-clabbe@baylibre.com> <20220927075511.3147847-27-clabbe@baylibre.com>
-Subject: Re: [PATCH v10 26/33] clk: rk3399: use proper crypto0 name
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>, ardb@kernel.org,
-        davem@davemloft.net, heiko@sntech.de, herbert@gondor.apana.org.au,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Wed, 28 Sep 2022 11:58:30 -0700
-User-Agent: alot/0.10
-Message-Id: <20220928185832.59F7DC433D7@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Corentin Labbe (2022-09-27 00:55:04)
-> RK3399 has 2 crypto instance, named crypto0 and crypto1 in the TRM.
-> Only reset for crypto1 is correctly named, but crypto0 is not.
-> Since nobody use them , add a 0 to be consistent with the TRM and crypto1=
- entries.
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
+In commit 4167ac8a657e ("clk: sunxi-ng: sun50i: h6: Modify GPU clock
+configuration to support DFS") divider M0 was forced to be 1 in order to
+support DFS. However, that left N as it is, at high value of 36. On
+boards without devfreq enabled (all of them in kernel 6.0), this
+effectively sets GPU frequency to 864 MHz. This is about 100 MHz above
+maximum supported frequency.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+In order to fix this, let's set N to 18 (register value 17). That way
+default frequency of 432 MHz is preserved.
+
+Fixes: 4167ac8a657e ("clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration to support DFS")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index 30056da3e0af..42568c616181 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -1191,9 +1191,13 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+-	/* Force PLL_GPU output divider bits to 0 */
++	/*
++	 * Force PLL_GPU output divider bits to 0 and adjust
++	 * multiplier to sensible default value of 432 MHz.
++	 */
+ 	val = readl(reg + SUN50I_H6_PLL_GPU_REG);
+-	val &= ~BIT(0);
++	val &= ~(GENMASK(15, 8) | BIT(0));
++	val |= 17 << 8;
+ 	writel(val, reg + SUN50I_H6_PLL_GPU_REG);
+ 
+ 	/* Force GPU_CLK divider bits to 0 */
+-- 
+2.37.3
+
