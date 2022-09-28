@@ -2,62 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E07C04A95
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 15:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2CAC04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 15:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234763AbiI1PdF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 11:33:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
+        id S233776AbiI1Pk3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 11:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234777AbiI1Pcv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 11:32:51 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E6305F117
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:31:27 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id ay7-20020a05600c1e0700b003b49861bf48so2634626wmb.0
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:31:27 -0700 (PDT)
+        with ESMTP id S233793AbiI1Pk1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 11:40:27 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DC337754A
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:40:22 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id d12-20020a05600c3acc00b003b4c12e47f3so1228757wms.4
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 08:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
          :subject:to:from:user-agent:references:from:to:cc:subject:date;
-        bh=kriaUEf4JEywb4Ib5jbgNEOAcF/BvPck0+JYhHyPu6g=;
-        b=J5+w5EspMByoHZe03InWfai3nhk/OV+j39WSMUjmATdmIpwH7qM6CKFo9BtoHSklD2
-         ejr5q69GRapkU+P/2M4khoigP7vN7vj9m0AlCh7gD3doBtkJv5jrCfqbnWsN4zhwr4PB
-         Eu+C/UDh1UkI3Hg0eA1UBk6gKI+IUO0eMCg5vFeMM8BdSGju5cZzV19vOwV8ur98XQgE
-         +uzEEYYchvXNgGOB9de2qMGAFP738L2YQJSlpHFZ2ECkVLI64j7lFFjMFC2jGsHDX3sS
-         BeW4tIXVqQAdq+xJDCfVkLyYSMz5qVWCo88ystnlZwWQADl9phDXaINO3FyNRZotcNqj
-         Q5IQ==
+        bh=RlCJgVI6Z1kRKUu162lI1Q0Miy/QkoL2EOMUCru7JOg=;
+        b=nFYwD4inLbXHI2KI3mcZJFiCAmWWRnRLfk6INy0ajOoLv+9id23hJ709fq2nsT1ARY
+         JXTql75OGeEPIL2Bb1jdZsYCd2AVaXx7S7kPd/2Yc8pz2Yc/BZI4vthG2ASm0LGq/Ib6
+         BSi9hJcXlNuxxXKfd8iRtO7c4Ajq1lwgdffnBTkUY8FZ4up9BZR2PvlVAtp7bY7Pjg3H
+         ZqKEmZxKtFXXY/xdgK77zCiLh8DQz1/pL0F/rWsGsiLlxXAdpz51bQYfRspdG/UCL9zu
+         FHHsPSZX0dZeegJoC1SyEKjmpK0eQ4I1ZSVldL60QwJMhmPsNKCTs5Gm0oZS8pwMkCh1
+         9phg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
          :subject:to:from:user-agent:references:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=kriaUEf4JEywb4Ib5jbgNEOAcF/BvPck0+JYhHyPu6g=;
-        b=58o+mJjzWozrU91ABwoLTCmto5vYNO+yzXfsQt6xEpCtZ142TFb/QxjVd4gwQwxeZH
-         5qyxo6RKQ6fqIGduznoFpu9I2SZXvg4RG7s6gCn4rHpEbfC0EbYfyk7K5RWypqvKFwa6
-         Vilrd5202/1irdym1WM3QGnKZ7BHg8yO0PQaBk88+FPAScqAK0szBd4lpdRLgvn+WBXE
-         2CB1q71S1n0Hvxgs9Ca7KSTljy7rJjbqs1bwU3OK/xzN7qkkmCRqsW7FyfZmBqS9pYX8
-         BhtD9v7TEBJQB+nPEFnxOgHw6xbN/MsBx5ZC19VutsspQIHCZvqYoPtRFiSJ/Fov6IKU
-         asGQ==
-X-Gm-Message-State: ACrzQf1DjDw3ZrkTynTZcY0wpmTyicrxzxb7yyD36wrtIhq0//F8sFN1
-        fY78Gtl9NBEE06s/UjUyzMtOeg==
-X-Google-Smtp-Source: AMsMyM6UWDHYzfevSWZAOtA0vGyXDTwzRqc9tWhXsli4qp+wX94hkGdnUsaVdDb4E68WBlb6MhR1WA==
-X-Received: by 2002:a05:600c:114f:b0:3b4:9a0a:6204 with SMTP id z15-20020a05600c114f00b003b49a0a6204mr7322303wmz.132.1664379085731;
-        Wed, 28 Sep 2022 08:31:25 -0700 (PDT)
+        bh=RlCJgVI6Z1kRKUu162lI1Q0Miy/QkoL2EOMUCru7JOg=;
+        b=HDcCybV1GziBckY4/uuApZ1HCFlHE6LkeVOyexN/FX7i4TQaKA4yPqLO8zOyGkcfGn
+         JkWwOu6cT7vreu3pUdWT2oqsruKwlZ3Lq4dTj9EUHt/DdX2DrQ6K8us2Z7YNldvExb9q
+         XVwbCdjxT3yzYthRGE03fy3pm+tjlRgWc82qWCah8fD0avdX/I7X9+LlExu3VXzR996f
+         SlZTY1ChyobT4iz1ZLm2Hbh6uxzTz2N5EywsnXneG2YL0U5B6sO9Awch7xJri4EBxRsJ
+         nxMnwhhfgSy0/68L4wg8gCV/sOladBCwXlCzjp7552elyo3bfrOuErW4j75bMjrR5Dt5
+         08+w==
+X-Gm-Message-State: ACrzQf14UdDEHTThu/38BGbptvUOWNW9hjtiOeljjQgL5w8ktMWaVTLg
+        2eWDHTJFSBgLAz7D1sXbryKa0Q==
+X-Google-Smtp-Source: AMsMyM77Xhhmn8GlOIfa6q5vVJalkBkY4ZS5/PYh6pUA6az+X2B6Y4rCsG6DO5E1t5DCYgZ8KQjH4Q==
+X-Received: by 2002:a05:600c:2191:b0:3b4:868a:aad3 with SMTP id e17-20020a05600c219100b003b4868aaad3mr7433148wme.112.1664379621319;
+        Wed, 28 Sep 2022 08:40:21 -0700 (PDT)
 Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n3-20020a5d4203000000b0022acb7195aesm4514561wrq.33.2022.09.28.08.31.24
+        by smtp.gmail.com with ESMTPSA id u16-20020a5d5150000000b0021f131de6aesm4254590wrt.34.2022.09.28.08.40.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 08:31:24 -0700 (PDT)
+        Wed, 28 Sep 2022 08:40:20 -0700 (PDT)
 References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-4-yu.tu@amlogic.com>
- <1jiln0yzgj.fsf@starbuckisacylon.baylibre.com>
- <ed4038fb-c230-fc27-800c-c99bd1770a1c@amlogic.com>
- <4e3cdd6b-5861-8a4f-1df7-af763f77bad5@amlogic.com>
- <1jsflftm1y.fsf@starbuckisacylon.baylibre.com>
- <0c7e6d90-2ce3-25ab-84b6-026ce8a238a8@amlogic.com>
- <1jtu5uz0ry.fsf@starbuckisacylon.baylibre.com>
- <9f9cf980-c0c6-d5c3-ced8-8ab50e392470@amlogic.com>
- <21e14cc1-6b34-e6b0-8da2-ad4b34dac149@amlogic.com>
+ <20220805085716.5635-7-yu.tu@amlogic.com>
+ <1jedxlzxyz.fsf@starbuckisacylon.baylibre.com>
+ <8f40cb49-fdc5-20cd-343b-8ce50e5d6d97@amlogic.com>
+ <1j7d2rte33.fsf@starbuckisacylon.baylibre.com>
+ <2b6035f3-8cbe-ab75-bed9-5751b141d3d6@amlogic.com>
+ <0b621dfa-4ecd-a9a6-8681-8ab8b00d7841@amlogic.com>
 User-agent: mu4e 1.8.7; emacs 28.1
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
@@ -70,103 +67,494 @@ To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH V3 3/6] clk: meson: S4: add support for Amlogic S4 SoC
- PLL clock driver
-Date:   Wed, 28 Sep 2022 17:27:07 +0200
-In-reply-to: <21e14cc1-6b34-e6b0-8da2-ad4b34dac149@amlogic.com>
-Message-ID: <1jy1u3zfas.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH V3 6/6] clk: meson: s4: add s4 SoC peripheral clock
+ controller driver
+Date:   Wed, 28 Sep 2022 17:35:00 +0200
+In-reply-to: <0b621dfa-4ecd-a9a6-8681-8ab8b00d7841@amlogic.com>
+Message-ID: <1jtu4rzevv.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpPbiBXZWQgMjEgU2VwIDIwMjIgYXQgMTY6NDAsIFl1IFR1IDx5dS50dUBhbWxvZ2ljLmNvbT4g
-d3JvdGU6DQoNCj4gSGkgSmVyb21l77yMDQo+DQo+IE9uIDIwMjIvOC8zMCAxNTozNywgWXUgVHUg
-d3JvdGU6DQo+PiBPbiAyMDIyLzgvMzAgMTQ6NDQsIEplcm9tZSBCcnVuZXQgd3JvdGU6DQo+Pj4g
-WyBFWFRFUk5BTCBFTUFJTCBdDQo+Pj4NCj4+Pg0KPj4+IE9uIFR1ZSAzMCBBdWcgMjAyMiBhdCAx
-NDoxMywgWXUgVHUgPHl1LnR1QGFtbG9naWMuY29tPiB3cm90ZToNCj4+Pg0KPj4+PiBPbiAyMDIy
-LzgvMjkgMTc6NDgsIEplcm9tZSBCcnVuZXQgd3JvdGU6DQo+Pj4+PiBbIEVYVEVSTkFMIEVNQUlM
-IF0NCj4+Pj4+IE9uIE1vbiAxNSBBdWcgMjAyMiBhdCAyMToyMCwgWXUgVHUgPHl1LnR1QGFtbG9n
-aWMuY29tPiB3cm90ZToNCj4+Pj4+DQo+Pj4+Pj4+Pj4gKw0KPj4+Pj4+Pj4+ICtzdGF0aWMgc3Ry
-dWN0IGNsa19yZWdtYXAgczRfaGRtaV9wbGxfZGNvID0gew0KPj4+Pj4+Pj4+ICvCoMKgwqAgLmRh
-dGEgPSAmKHN0cnVjdCBtZXNvbl9jbGtfcGxsX2RhdGEpew0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKg
-wqDCoCAuZW4gPSB7DQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLnJlZ19vZmYg
-PSBBTkFDVFJMX0hETUlQTExfQ1RSTDAsDQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgLnNoaWZ0wqDCoCA9IDI4LA0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC53
-aWR0aMKgwqAgPSAxLA0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCB9LA0KPj4+Pj4+Pj4+ICvC
-oMKgwqDCoMKgwqDCoCAubSA9IHsNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAu
-cmVnX29mZiA9IEFOQUNUUkxfSERNSVBMTF9DVFJMMCwNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAuc2hpZnTCoMKgID0gMCwNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCAud2lkdGjCoMKgID0gOCwNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgfSwNCj4+Pj4+
-Pj4+PiArwqDCoMKgwqDCoMKgwqAgLm4gPSB7DQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgLnJlZ19vZmYgPSBBTkFDVFJMX0hETUlQTExfQ1RSTDAsDQo+Pj4+Pj4+Pj4gK8KgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgLnNoaWZ0wqDCoCA9IDEwLA0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIC53aWR0aMKgwqAgPSA1LA0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCB9
-LA0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCAuZnJhYyA9IHsNCj4+Pj4+Pj4+PiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCAucmVnX29mZiA9IEFOQUNUUkxfSERNSVBMTF9DVFJMMSwNCj4+Pj4+
-Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAuc2hpZnTCoMKgID0gMCwNCj4+Pj4+Pj4+PiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAud2lkdGjCoMKgID0gMTcsDQo+Pj4+Pj4+Pj4gK8KgwqDC
-oMKgwqDCoMKgIH0sDQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIC5sID0gew0KPj4+Pj4+Pj4+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC5yZWdfb2ZmID0gQU5BQ1RSTF9IRE1JUExMX0NUUkww
-LA0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC5zaGlmdMKgwqAgPSAzMSwNCj4+
-Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAud2lkdGjCoMKgID0gMSwNCj4+Pj4+Pj4+
-PiArwqDCoMKgwqDCoMKgwqAgfSwNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgLnJzdCA9IHsN
-Cj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAucmVnX29mZiA9IEFOQUNUUkxfSERN
-SVBMTF9DVFJMMCwNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAuc2hpZnTCoMKg
-ID0gMjksDQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLndpZHRowqDCoCA9IDEs
-DQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIH0sDQo+Pj4+Pj4+Pj4gK8KgwqDCoCB9LA0KPj4+
-Pj4+Pj4+ICvCoMKgwqAgLmh3LmluaXQgPSAmKHN0cnVjdCBjbGtfaW5pdF9kYXRhKXsNCj4+Pj4+
-Pj4+PiArwqDCoMKgwqDCoMKgwqAgLm5hbWUgPSAiaGRtaV9wbGxfZGNvIiwNCj4+Pj4+Pj4+PiAr
-wqDCoMKgwqDCoMKgwqAgLm9wcyA9ICZtZXNvbl9jbGtfcGxsX3JvX29wcywNCj4+Pj4+Pj4+PiAr
-wqDCoMKgwqDCoMKgwqAgLnBhcmVudF9kYXRhID0gKGNvbnN0IHN0cnVjdCBjbGtfcGFyZW50X2Rh
-dGEgW10pIHsNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB7IC5md19uYW1lID0g
-Inh0YWwiLCB9DQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIH0sDQo+Pj4+Pj4+Pj4gK8KgwqDC
-oMKgwqDCoMKgIC5udW1fcGFyZW50cyA9IDEsDQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIC8q
-DQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqAgKiBEaXNwbGF5IGRpcmVjdGx5IGhhbmRsZSBo
-ZG1pIHBsbCByZWdpc3RlcnMgQVRNLCB3ZSBuZWVkDQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKg
-wqAgKiBOT0NBQ0hFIHRvIGtlZXAgb3VyIHZpZXcgb2YgdGhlIGNsb2NrIGFzIGFjY3VyYXRlIGFz
-DQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqAgKiBwb3NzaWJsZQ0KPj4+Pj4+Pj4+ICvCoMKg
-wqDCoMKgwqDCoMKgICovDQo+Pj4+Pj4+Pg0KPj4+Pj4+Pj4gSXMgaXQgcmVhbGx5ID8NCj4+Pj4+
-Pj4+DQo+Pj4+Pj4+PiBHaXZlbiB0aGF0IEhETUkgc3VwcG9ydCBmb3IgdGhlIHM0IGlzIHRoZXJl
-IHlldCwgdGhlDQo+Pj4+Pj4+PiBhZGRyZXNzZXMgaGF2ZSBjaGFuZ2VzIGFuZCB0aGUgcmVnaW9u
-IGlzIG5vIGxvbmdlciBhIHN5c2NvbiwgaXQgaXMNCj4+Pj4+Pj4+IHRpbWUNCj4+Pj4+Pj4+IGZv
-ciB0aGUgSERNSSBkcml2ZXIgdG8gZ2V0IGZpeGVkLg0KPj4+Pj4+IFRoZSBIRE1JIFBMTCBpcyBj
-b25maWd1cmVkIGluIHRoZSBVYm9vdCBwaGFzZSBhbmQgZG9lcyBub3QgY2hhbmdlIHRoZQ0KPj4+
-Pj4+IGZyZXF1ZW5jeSBpbiB0aGUga2VybmVsIHBoYXNlLiBTbyB3ZSB1c2UgdGhlIE5PQ0FDSEUg
-ZmxhZyBhbmQNCj4+Pj4+PiAicm9fb3BzIi4NCj4+Pj4+IFRoYXQncyBubyByZWFzb24gdG8gcHV0
-IE5PQ0FDSEUgb3Igcm8tb3BzDQo+Pj4+PiBJZiB5b3Ugd2FudCB0aGUgZnJlcXVlbmNpZXMgdG8g
-YmUgc3RhdGljYWxseSBhc3NpbmdlZCwgdGhlIGNvcnJlY3Qgd2F5DQo+Pj4+PiB3b3VsZCBiZSB0
-aHJvdWdoIGFzc2lnbmVkLXJhdGUgaW4gRFQgSSBndWVzcy4NCj4+Pj4NCj4+Pj4gT2theS4gWW91
-J3JlIHJpZ2h0LiBIb3dldmVyLCB3aGVuIHJlZ2lzdGVyaW5nIHdpdGggT1BTLCBIRE1JIFBMTCB3
-aWxsIGJlDQo+Pj4+IHJlc2V0LiBJdCB0YWtlcyB0aW1lIGZvciBQTEwgdG8gc3RhYmlsaXplIHRo
-ZSBvdXRwdXQgZnJlcXVlbmN5LCB3aGljaA0KPj4+PiB3aWxsDQo+Pj4+IGxlYWQgdG8gdGhlIHN0
-YXJ0dXAgc2NyZWVuIGZsYXNoaW5nLg0KPj4+Pg0KPj4+PiBJIHdvdWxkIGxpa2UgdG8ga25vdyBo
-b3cgdG8gc29sdmUgdGhpcyBwcm9ibGVtIGlmIG5vdCB1c2luZyByb19vcHMuDQo+Pj4+DQo+Pj4+
-Pg0KPj4+DQo+Pj4gWW91IGNhbiBhZGQgbmV3IG9wcyBvciB0d2VhayB0aGUgY3VycmVudCBpbml0
-IGZ1bmN0aW9uLg0KPj4gSERNSSBQTEwgaXMgbm90IGRpZmZlcmVudCBmcm9tIG90aGVyIFBMTFMs
-IHNvIEkgdGhpbmsgYWRkaW5nIE9QUyBpcw0KPj4gd2VpcmQuDQo+PiANCj4+Pg0KPj4+IFNhZmVz
-dCB3b3VsZCBiZSB0byBkbyB0aGUgZm9sbG93aW5nIDoNCj4+PiDCoCAqIENoZWNrIGlmIHRoZSBQ
-TExzIGlzIGFscmVhZHkgb24uDQo+Pj4gwqAgKiBDaGVjayBpZiB0aGUgJ3BsbC0+aW5pdF9yZWdz
-JyBtYXRjaGVzIHdoYXQgaXMgYWxyZWFkeSBzZXQNCj4+PiDCoMKgwqAgLSBpZiBzbywgeW91IGNh
-biBza2lwIHRoZSByZXNldA0KPj4+IMKgwqDCoCAtIGlmIG5vdCwgeW91IG5lZWQgdG8gcmVzZXQg
-YXMgdXN1YWwNCj4+IHN0YXRpYyBpbnQgbWVzb25fY2xrX3BsbF9pbml0KHN0cnVjdCBjbGtfaHcg
-Kmh3KQ0KPj4gew0KPj4gIMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBjbGtfcmVnbWFwICpjbGsgPSB0
-b19jbGtfcmVnbWFwKGh3KTsNCj4+ICDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgbWVzb25fY2xrX3Bs
-bF9kYXRhICpwbGwgPSBtZXNvbl9jbGtfcGxsX2RhdGEoY2xrKTsNCj4+ICDCoMKgwqDCoMKgwqDC
-oCBpZiAocGxsLT5pbml0X2NvdW50KSB7DQo+PiAgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIG1lc29uX3Bhcm1fd3JpdGUoY2xrLT5tYXAsICZwbGwtPnJzdCwgMSk7DQo+PiAgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZ21hcF9tdWx0aV9yZWdfd3JpdGUoY2xrLT5tYXAs
-IHBsbC0+aW5pdF9yZWdzLA0KPj4gIMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgIHBsbC0+aW5pdF9jb3VudCk7
-DQo+PiAgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1lc29uX3Bhcm1fd3JpdGUoY2xr
-LT5tYXAsICZwbGwtPnJzdCwgMCk7DQo+PiAgwqDCoMKgwqDCoMKgwqAgfQ0KPj4gIMKgwqDCoMKg
-wqDCoMKgIHJldHVybiAwOw0KPj4gfQ0KPj4gQmVjYXVzZSB0aGUgaW5pdCBmdW5jdGlvbiBsb29r
-cyBsaWtlIHRoaXMuIFRoZXJlZm9yZSwgSERNSSBQTEwgaW5pdF9jb3VudA0KPj4gaXMgbm90IGdp
-dmVuLg0KDQpJIGRvbid0IGdldCB0aGUgcmVtYXJrLiBZb3UndmUgZ290IHBsbC0+aW5pdF9jb3Vu
-dCByaWdodCB0aGVyZS4NCg0KPj4gQ2FuIEkgY2hhbmdlIGl0IGxpa2UgdGhpcz8NCg0KV2hhdCBj
-aGFuZ2UgPyBUaGUgZnVuY3Rpb24gYWJvdmUgbG9va3MgYSBsb3QgbGlrZSAgbWVzb25fY2xrX3Bs
-bF9pbml0KCkNCmluIHRoZSBhY3R1YWwgc291cmNlDQoNCj4NCj4gSSBkb24ndCBrbm93IGlmIHRo
-aXMgY2hhbmdlIG1lZXRzIHlvdXIgcmVxdWlyZW1lbnRzPyBQbGVhc2UgZ2l2ZSB1cyB5b3VyDQo+
-IHZhbHVhYmxlIGFkdmljZS4NCg0KV2hhdCBjaGFuZ2UgPw0K
+
+On Wed 21 Sep 2022 at 17:01, Yu Tu <yu.tu@amlogic.com> wrote:
+
+> Hi Jerome,
+>
+> On 2022/8/30 16:20, Yu Tu wrote:
+>> On 2022/8/29 20:19, Jerome Brunet wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>>
+>>> On Tue 16 Aug 2022 at 20:00, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>
+>>> Please trim your replies
+>>>
+>>>>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>>>>>> index f4244edc7b28..ec6beb9284d3 100644
+>>>>>> --- a/drivers/clk/meson/Kconfig
+>>>>>> +++ b/drivers/clk/meson/Kconfig
+>>>>>> @@ -127,4 +127,17 @@ config COMMON_CLK_S4_PLL
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Support for the pll=
+ clock controller on Amlogic S805X2 and
+>>>>>> S905Y4 devices,
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 aka s4. Amlogic S80=
+5X2 and S905Y4 devices include AQ222 and
+>>>>>> AQ229.
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Say Y if you want p=
+eripherals and CPU frequency scaling to
+>>>>>> work.
+>>>>>> +
+>>>>>> +config COMMON_CLK_S4
+>>>>>> +=C2=A0=C2=A0=C2=A0 tristate "S4 SoC Peripherals clock controllers s=
+upport"
+>>>>>> +=C2=A0=C2=A0=C2=A0 depends on ARM64
+>>>>>> +=C2=A0=C2=A0=C2=A0 default y
+>>>>>> +=C2=A0=C2=A0=C2=A0 select COMMON_CLK_MESON_REGMAP
+>>>>>> +=C2=A0=C2=A0=C2=A0 select COMMON_CLK_MESON_DUALDIV
+>>>>>> +=C2=A0=C2=A0=C2=A0 select COMMON_CLK_MESON_VID_PLL_DIV
+>>>>>> +=C2=A0=C2=A0=C2=A0 select COMMON_CLK_S4_PLL
+>>>>> Do you really this ? your driver does not even include the related
+>>>>> header.
+>>>> If the PLL driver is not turned on in DTS, will it not cause an error?
+>>>>>
+>>>
+>>> I don't get the question.
+>>> Kconfig list compile deps. S4 PLL is not a compile dep of the peripheral
+>>> controller.
+>>>
+>>> If you really want to, you may use 'imply'.
+>> V4 has been changed as you suggested.
+>
+> The next edition is being changed according to your requirements. Please
+> give us your valuable opinions.
+>
+>>=20
+>>>>>
+>>>>>> +static const struct clk_parent_data sys_ab_clk_parent_data[] =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "xtal" },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div2" },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div3" },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div4" },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div5" },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div7" },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .hw =3D &s4_rtc_clk.hw }
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_sysclk_b_sel =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_mux_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_SYS_=
+CLK_CTRL0,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mask =3D 0x7,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .shift =3D 26,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .table =3D mux_table_sys=
+_ab_clk_sel,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "sysclk_b_sel",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_mux=
+_ro_ops,
+>>>>> Why is this using the RO ops ?
+>>>> Sys_clk is initialized during the Uboot phase and is fixed at
+>>>> 166.666MHz. So I'm going to change it to ro.
+>>>
+>>> That really much depends on the bootloader and is a pretty weak design.
+>>> The bootloader deps should be kept as minimal as possible.
+>>>
+>>> I see no reason for RO.
+>>>
+>>> You may cut rate propagation on the user if you need to and continue to
+>>> whatever you want in your u-boot
+>> I think I know what you mean. But we let the user be in control and not
+>> set the frequency, which can be risky. If you insist, I will change it as
+>> you suggest.
+>
+> It has been changed as you requested.
+>
+>>=20
+>>>
+>>>>>
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_data =3D sys_ab_=
+clk_parent_data,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRAY_S=
+IZE(sys_ab_clk_parent_data),
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_sysclk_b_div =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_div_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_SYS_=
+CLK_CTRL0,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .shift =3D 16,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .width =3D 10,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "sysclk_b_div",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_div=
+ider_ro_ops,
+>>>>> Same here and for the rest of the sys part
+>>>> Same above.
+>>>
+>>> We can play that game for a while
+>> Ah, you're so funny.
+>>=20
+>>>
+>>>>>> +
+>>>>>> +/* Video Clocks */
+>>>>>> +static struct clk_regmap s4_vid_pll_div =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct meson_vid_pll_div_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .val =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.reg_off =3D CLKCTRL_VID_PLL_CLK_DIV,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.shift=C2=A0=C2=A0 =3D 0,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.width=C2=A0=C2=A0 =3D 15,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .sel =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.reg_off =3D CLKCTRL_VID_PLL_CLK_DIV,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.shift=C2=A0=C2=A0 =3D 16,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.width=C2=A0=C2=A0 =3D 2,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "vid_pll_div",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &meson_vid_pll_=
+div_ro_ops,
+>>>>> Why RO ? applies to the rest of the video part.
+>>>> Because vid_pll_div parent is HDMI_PLL, and HDMI_PLL is a fixed
+>>>> frequency. Flags is CLK_SET_RATE_PARENT. So we use RO.
+>>>
+>>> If the HDMI_PLL is fixed somehow, that is not reason for this clock to
+>>> be RO
+>>>
+>>>> Can I remove RO and use CLK_SET_RATE_NO_REPARENT instead, which one do
+>>>> you
+>>>> think is more reasonable?
+>>>
+>>> Neither. CLK_SET_RATE_NO_REPARENT makes no sense, it is not mux
+>>>
+>> "drivers/clk/meson/vid-pll-div.c"
+>> This file only provides ro_ops. Maybe the submission records will give us
+>> the answer.
+>> In fact, our hardware design is the same as the G12 series.
+>
+> I don't know if you checked this commit, but there is only one "ro_ops"in
+> this place right now.
+>
+> The S4 SoC is consistent with the G12A/B and GX series.
+>
+
+I missed the vid_pll type, Ok then.
+
+>>=20
+>>>>
+>>>>>
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_data =3D (const =
+struct clk_parent_data []) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+{ .fw_name =3D "hdmi_pll", }
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D 1,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_SET_RATE_=
+PARENT,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_vid_pll_sel =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_mux_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_VID_=
+PLL_CLK_DIV,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mask =3D 0x1,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .shift =3D 18,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "vid_pll_sel",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_mux=
+_ops,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * bit 18 selects f=
+rom 2 possible parents:
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * vid_pll_div or h=
+dmi_pll
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_data =3D (const =
+struct clk_parent_data []) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+{ .hw =3D &s4_vid_pll_div.hw },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+{ .fw_name =3D "hdmi_pll", }
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D 2,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_SET_RATE_=
+NO_REPARENT,
+>>>>> Why ? are you planning to DT assigned clocks to statically set this ?
+>>>> Because vid_pll_sel one parent is HDMI_PLL, and HDMI_PLL is a fixed
+>>>> frequency. To prevent modification, use CLK_SET_RATE_NO_REPARENT.
+>>>
+>>> Again, this makes no sense.
+>> Unfortunately you don't read V4, in fact I have corrected in V4.
+>> ".flags =3D CLK_SET_RATE_PARENT," in V4. Is that okay with you?
+>
+> I don't know what you think?
+>
+
+ok
+
+>>=20
+>>>
+>>>>>
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_vid_pll =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_gate_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_VID_=
+PLL_CLK_DIV,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .bit_idx =3D 19,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "vid_pll",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_gat=
+e_ops,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_hws =3D (const s=
+truct clk_hw *[]) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+&s4_vid_pll_sel.hw
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D 1,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_SET_RATE_=
+PARENT,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +};
+>>>>>> +
+>>>>>> +static const struct clk_parent_data s4_vclk_parent_data[] =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .hw =3D &s4_vid_pll.hw },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "gp0_pll", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "hifi_pll", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "mpll1", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div3", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div4", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div5", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div7", },
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_vclk_sel =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_mux_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_VID_=
+CLK_CTRL,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mask =3D 0x7,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .shift =3D 16,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "vclk_sel",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_mux=
+_ops,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_data =3D s4_vclk=
+_parent_data,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRAY_S=
+IZE(s4_vclk_parent_data),
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_SET_RATE_=
+NO_REPARENT,
+>>>>> Same
+>>>> Since fclk_div* is a fixed frequency value, mplL1 and hifi_pll and
+>>>> gp0_pll
+>>>> are used by other specialized modules, vid_pll has
+>>>> CLK_SET_RATE_PARENT. The
+>>>> parent of vid_pll is that vid_pll_sel uses CLK_SET_RATE_NO_REPARENT.
+>>>
+>>> Still not good.
+>>>
+>>> You don't have CLK_SET_RATE, propagation is stopped and parent clock
+>>> will not changed. The best parent will be picked but not changed.
+>>>
+>>> If one parent MUST NOT be picked, just remove it from the list and add a
+>>> explaining why
+>>>
+>>> [...]
+>> Okay.
+>
+> In the next edition I will change it to ".flags =3D CLK_SET_RATE_PARENT".
+>
+
+If you clock rate propagation is ok, then OK
+
+>>=20
+>>>
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_ts_clk_div =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_div_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_TS_C=
+LK_CTRL,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .shift =3D 0,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .width =3D 8,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "ts_clk_div",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_div=
+ider_ops,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_data =3D &(const=
+ struct clk_parent_data) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+.fw_name =3D "xtal",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D 1,
+>>>>> propagation stopped ?
+>>>> Its parent is xtal, so I should use CLK_SET_RATE_NO_REPARENT.
+>>>
+>>> Still no. You seem to have problem with the meaning of
+>>> CLK_SET_RATE_NO_REPARENT.
+>>>
+>>> * CLK_SET_RATE_NO_REPARENT: means the parent will no be changed, even if
+>>> =C2=A0=C2=A0 selecting another parent would result in a closer rate to =
+the
+>>> =C2=A0=C2=A0 request. It makes sense only if the clock has several pare=
+nts
+>>>
+>>> * CLK_SET_RATE_PARENT: means rate change may propagate the parent,
+>>> =C2=A0=C2=A0 meaning the rate of the parent may change if it help the c=
+hild achieve
+>>> =C2=A0=C2=A0 a closer rate to the request
+>> Thank you for explaining.I got it.
+>>=20
+>>>
+>>>>>
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct clk_regmap s4_ts_clk_gate =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 .data =3D &(struct clk_regmap_gate_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .offset =3D CLKCTRL_TS_C=
+LK_CTRL,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .bit_idx =3D 8,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0 .hw.init =3D &(struct clk_init_data){
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "ts_clk",
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ops =3D &clk_regmap_gat=
+e_ops,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parent_hws =3D (const s=
+truct clk_hw *[]) {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+&s4_ts_clk_div.hw
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D 1,
+>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>> propagation stopped ?
+>>>> I will add CLK_SET_RATE_PARENT.
+>>>
+>>> [...]
+>>>
+>>>>>> +/* EMMC/NAND clock */
+>>>>>> +
+>>>>>> +static const struct clk_parent_data s4_sd_emmc_clk0_parent_data[] =
+=3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "xtal", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div2", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div3", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "hifi_pll", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div2p5", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 /*
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Following these parent clocks, we should=
+ also have had mpll2,
+>>>>>> mpll3
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * and gp0_pll but these clocks are too pre=
+cious to be used
+>>>>>> here. All
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * the necessary rates for MMC and NAND ope=
+ration can be
+>>>>>> acheived using
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * hifi_pll or fclk_div clocks
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>> You don't want to list mplls but hifi_pll is fine ? seems dangerous.
+>>>> hifi pll is for EMMC and NAND on this SoC.
+>>>
+>>> That deserve a better explanation.
+>>> Why can't it use fdiv2 and xtal like the previous SoCs ?
+>>>
+>>> Which PLLs are you using for Audio then ?
+>>> Typical operation on these SoCs usually require 3 PLLs to acheive all
+>>> rates
+>>>
+>> I'll list all the clocks and let the driver itself select Parent as
+>> needed.
+>
+> I don't know what you think?
+>
+
+ok
+
+>>=20
+>>>>>
+>>>
+>>>
+>>>>>> +/*
+>>>>>> + * gen clk is designed for debug/monitor some internal clock
+>>>>>> quality. Some of the
+>>>>>> + * corresponding clock sources are not described in the clock tree,
+>>>>>> so they are skipped.
+>>>>>> + */
+>>>>> Still feels a bit light, don't you think ? Among all the clocks, can't
+>>>>> you add a bit more parents here ? It would certainly help debug down
+>>>>> the road
+>>>> [16:12]=C2=A0=C2=A0=C2=A0 is gen_clk source select.All is:
+>>>> 0: cts_oscin_clk
+>>>> 1:cts_rtc_clk
+>>>> 2:sys_pll_div16 (internal clock)
+>>>> 3:ddr_pll_div32=C2=A0 (internal clock)
+>>>> 4: vid_pll
+>>>> 5: gp0_pll
+>>>> 7: hifi_pll
+>>>> 10:adc_dpll_clk_b3 (internal clock for debug)
+>>>> 11:adc_dpll_intclk (internal clock for debug)
+>>>> 12:clk_msr_src(select from all internal clock except PLLs);
+>>>> 16: no used
+>>>> 17: sys_cpu_clk_div16 (internal clock)
+>>>> 19: fclk_div2
+>>>> 20: fclk_div2p5
+>>>> 21: fclk_div3
+>>>> 22: fclk_div4
+>>>> 23: fclk_div5
+>>>> 24: fclk_div7
+>>>> 25: mpll0
+>>>> 26: mpll1
+>>>> 27: mpll2
+>>>> 28: mpll3
+>>>> So i only added the clocks that will actually be used, and some
+>>>> debugging
+>>>> clock peripherals will not be used.
+>>>
+>>> you may at least add vid_pll
+>> Okay.
+>
+> It has been changed as you suggested.
+>
+>>=20
+>>>
+>>>>>
+>>>>>> +static u32 s4_gen_clk_mux_table[] =3D { 0, 5, 7, 19, 21, 22,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 23, 24, 25, 26=
+, 27, 28 };
+>>>>>> +static const struct clk_parent_data s4_gen_clk_parent_data[] =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "xtal", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "gp0_pll", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "hifi_pll", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div2", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div3", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div4", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div5", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "fclk_div7", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "mpll0", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "mpll1", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "mpll2", },
+>>>>>> +=C2=A0=C2=A0=C2=A0 { .fw_name =3D "mpll3", },
+>>>>>> +};
+>>>
+>>> .
+
