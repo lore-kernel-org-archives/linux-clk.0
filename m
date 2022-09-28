@@ -2,103 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8F3C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 20:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBBAC04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 20:17:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234824AbiI1UCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 16:02:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50924 "EHLO
+        id S233245AbiI1URB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 16:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234783AbiI1UCV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 16:02:21 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3AB84E7A;
-        Wed, 28 Sep 2022 13:01:39 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id b2so6482676eja.6;
-        Wed, 28 Sep 2022 13:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=FQdphxTZ66QYAOnofKNGBcQ+Caq9QNc6A+A5EnAfs9Y=;
-        b=SM+pQmHMUu1Vdwr3vzMUhNyVQ9jB8MnLgDbQ/hRsO7FdT4yxGbemcSVjmdYT2u/ZGE
-         lNbO88owrJ2OnaThIlKlUxYJfAU9fA64pGyCEKoM288TgzJeWwHqEMedl2T6EncQ2S/m
-         7v/kFCOJrN6Guw4DRF3G26IaXbA5dae8ufGFE01fGWOZqnxDgmfQ3Xkt/CKpcyokB5WK
-         zjRoMku6hV9fYptQD318/1iiKewLG4MK8yDAmwNIU2Pxu/Q4k5GwHCUpOGv9eVc6cJXZ
-         k5koN4qVNzWhiYUI4vAHYxpyAUFNdYqxOly19A7ygtdhUeeAKLnXVM4qr+Dg0C5Wtg9W
-         1XXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=FQdphxTZ66QYAOnofKNGBcQ+Caq9QNc6A+A5EnAfs9Y=;
-        b=s8AEcA1Ob5QhXTFU2xpfAD+we4V4++pNhYJ6vv4/hxHdpiIDBdALI4TFAfoys9Jain
-         8PH1THpqd7RuEKBxqZlWDUXad1ulpcc0HuPs9J1il0byUh/5IMZE0j+CMfN8/xTW9X84
-         BGZgndHmIFP2pw6LhBFwQ8UCKmE/r6KR0JQSIHrrSwZzA/KNHPIBkLyUpRUgiSp/f2fO
-         ZPXwYRpGy+fBW/v+ieCbineUZquF6grxdkfwsj5TUHV50KuZkGOV1hnHR4UIetCkx6Rs
-         BoaNHhONxLGhueywVhL1E98T+U1e/XBPYQkfnbdR6J4HZV3XrDwO0ku3dyoYC4IMomu+
-         qAAQ==
-X-Gm-Message-State: ACrzQf3ARyLNsV1MhunfsKBVUZAiEQzaAf1R2QfhqC3uQdqsdILylRjq
-        wrDV7Kqif72fmp9kruhpyM8=
-X-Google-Smtp-Source: AMsMyM7/ltV50qoXxcf2RzeCPuJDZ5lLR05PmqL0JITzHOT79EBbmXSaWJFFFNsWKyP31DkaBFZ7Eg==
-X-Received: by 2002:a17:907:74e:b0:74f:83d4:cf58 with SMTP id xc14-20020a170907074e00b0074f83d4cf58mr29389544ejb.178.1664395297439;
-        Wed, 28 Sep 2022 13:01:37 -0700 (PDT)
-Received: from kista.localdomain (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id n25-20020a05640204d900b00457cdb5cf76sm3015769edw.50.2022.09.28.13.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 13:01:36 -0700 (PDT)
-From:   Jernej Skrabec <jernej.skrabec@gmail.com>
-To:     wens@csie.org, samuel@sholland.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, r.stratiienko@gmail.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH] clk: sunxi-ng: h6: Fix default PLL GPU rate
-Date:   Wed, 28 Sep 2022 22:01:22 +0200
-Message-Id: <20220928200122.3963509-1-jernej.skrabec@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        with ESMTP id S231301AbiI1URA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 16:17:00 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEEC6C115
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 13:16:59 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4A47B47C;
+        Wed, 28 Sep 2022 22:16:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1664396218;
+        bh=Uxg50pIgYpOI9PE8XMmtiinzktazEO173WVuv/3uCzA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fd9VPIWSPV6QVLNl9K7a883IdRAHM31tFf+BhYAvQQoLz/w+XeHf/nOqJDUIHr6gN
+         mP91UT3TyvowaXnLdPaIh5FzCsYbmaqYPEgKvnUttlxZel3NNvxGuh3b7uMj9OvO8m
+         b8IxSGPzk4I8MaxgQzitbzb/ViLRQouHxp7HVeM4=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>
+Subject: [PATCH] clk: zynqmp: pll: Fix divider calculation to avoid out-of-range rate
+Date:   Wed, 28 Sep 2022 23:16:56 +0300
+Message-Id: <20220928201656.30318-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In commit 4167ac8a657e ("clk: sunxi-ng: sun50i: h6: Modify GPU clock
-configuration to support DFS") divider M0 was forced to be 1 in order to
-support DFS. However, that left N as it is, at high value of 36. On
-boards without devfreq enabled (all of them in kernel 6.0), this
-effectively sets GPU frequency to 864 MHz. This is about 100 MHz above
-maximum supported frequency.
+When calculating the divider in zynqmp_pll_round_rate() and
+zynqmp_pll_set_rate(), the division rounding error may result in an
+output frequency that is slightly outside of the PLL output range if the
+requested range is close to the low or high limit. As a result, the
+limits check in clk_calc_new_rates() would fail, and clk_set_rate()
+would return an error, as seen in the zynqmp-dpsub driver:
 
-In order to fix this, let's set N to 18 (register value 17). That way
-default frequency of 432 MHz is preserved.
+[   13.672309] zynqmp-dpsub fd4a0000.display: failed to set pixel clock rate to 297000000 (-22)
 
-Fixes: 4167ac8a657e ("clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration to support DFS")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Fix this by adjusting the divider. The rate calculation then succeeds
+for zynqmp-dpsub:
+
+[   13.554849] zynqmp-dpsub fd4a0000.display: requested pixel rate: 297000000 actual rate: 255555553
+
+The resulting PLL configuration, however, is not optimal, as the rate
+error is 14%. The hardware can do much better, but CCF doesn't attempt
+to find the best overall configuration for cascaded clocks. That's a
+candidate for a separate fix.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/zynqmp/pll.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 30056da3e0af..42568c616181 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -1191,9 +1191,13 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
- 	if (IS_ERR(reg))
- 		return PTR_ERR(reg);
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 91a6b4cc910e..be6fa44a21e0 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -120,6 +120,10 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
  
--	/* Force PLL_GPU output divider bits to 0 */
-+	/*
-+	 * Force PLL_GPU output divider bits to 0 and adjust
-+	 * multiplier to sensible default value of 432 MHz.
-+	 */
- 	val = readl(reg + SUN50I_H6_PLL_GPU_REG);
--	val &= ~BIT(0);
-+	val &= ~(GENMASK(15, 8) | BIT(0));
-+	val |= 17 << 8;
- 	writel(val, reg + SUN50I_H6_PLL_GPU_REG);
+ 	fbdiv = DIV_ROUND_CLOSEST(rate, *prate);
++	if (*prate * fbdiv < PS_PLL_VCO_MIN)
++		fbdiv++;
++	if (*prate * fbdiv > PS_PLL_VCO_MAX)
++		fbdiv--;
+ 	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
+ 	return *prate * fbdiv;
+ }
+@@ -208,6 +212,10 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
  
- 	/* Force GPU_CLK divider bits to 0 */
+ 	fbdiv = DIV_ROUND_CLOSEST(rate, parent_rate);
++	if (parent_rate * fbdiv < PS_PLL_VCO_MIN)
++		fbdiv++;
++	else if (parent_rate * fbdiv > PS_PLL_VCO_MAX)
++		fbdiv--;
+ 	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
+ 	ret = zynqmp_pm_clock_setdivider(clk_id, fbdiv);
+ 	if (ret)
+
+base-commit: 1c23f9e627a7b412978b4e852793c5e3c3efc555
 -- 
-2.37.3
+Regards,
+
+Laurent Pinchart
 
