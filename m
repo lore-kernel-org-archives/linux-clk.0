@@ -2,60 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAEAC32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 23:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 923B1C04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 23:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232666AbiI1XVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 19:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40724 "EHLO
+        id S229901AbiI1Xcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 19:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230431AbiI1XVt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 19:21:49 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD1D22AC5E
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 16:21:48 -0700 (PDT)
+        with ESMTP id S233186AbiI1Xcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 19:32:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF46EEE84;
+        Wed, 28 Sep 2022 16:32:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6F1B4B820F5
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 23:21:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B2CC433D7;
-        Wed, 28 Sep 2022 23:21:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 10B2560C24;
+        Wed, 28 Sep 2022 23:32:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C096C433C1;
+        Wed, 28 Sep 2022 23:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664407306;
-        bh=Wju8vNTjiTNwQ87StIzFJEpsx4u6F5+fKymrF8oDKSA=;
+        s=k20201202; t=1664407970;
+        bh=MWoiXhLhJFZVdiOeuHhNkkStzztFn98ggkae+lCgZjU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=EWn/Az/XfXzKZvfLlnennqt8YREmylrTRY5UuYn+9M/mbyFDeSwKCpJYMjR8ykYSi
-         3nIrIqw7Ewc+e/nc1DGTMby3gOqGjGVO+ioj3eBFDQ54rOF1p4YTZ9HSOyHjsGC6t+
-         2GThVEH4gaA//a2UioqsbyRehqHqyzmwglSjviZYLU5XCo4+kNbHcT9zJGW/lbWGLz
-         9nPr6d/gy39F7+YIAHusjHzFHria/UVWNk5JazP7vECHv3NMDq3whcMmS8ehfz5o5E
-         8KzXGpobdkLslR9nG00iBKg4QtgIupmp4Hyb45s3C174dxMh6PJ6ApWyXwTrHLrGFa
-         h+52YvZoxLY/g==
+        b=l90/atfpJvrCbDjwGl3lXKhuh48AyX+7XJR06wBQeKoHurWepRx1wYK+JM6nols01
+         SMTDu35qUAo8AJxpLMWV1dHoUN3HU63Vxpm4T+gk/b+NocDFjZGxsv3Xz5Gm4bMo7o
+         EnllFqP+eP2sXSJcDMmowChcTcU2jI9XXHaOX/2IQuNJAuPr0wzLJAp36NhCNYMhCy
+         xZltDy31WDbMuRp8QsElJbbVKQOkQx6b5Akl717gPt46UllsG4lsBaTeese7TdMeWa
+         +o0s/H8gcbuQJ+DtDxbFEzHNGHrQyKLOlXwNU5AOSUNaTolO/3E4w3agBu3D/NoLKI
+         aj7HP3KxoFd2A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YyePpKhg42LfjGQn@kista.localdomain>
-References: <YyePpKhg42LfjGQn@kista.localdomain>
-Subject: Re: [GIT PULL] Allwinner clock changes for 6.1
+In-Reply-To: <20220919102244.3537437-1-abel.vesa@linaro.org>
+References: <20220919102244.3537437-1-abel.vesa@linaro.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.1
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev
-To:     Jernej Skrabec <jernej@kernel.org>, mturquette@baylibre.com
-Date:   Wed, 28 Sep 2022 16:21:44 -0700
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Date:   Wed, 28 Sep 2022 16:32:48 -0700
 User-Agent: alot/0.10
-Message-Id: <20220928232146.28B2CC433D7@smtp.kernel.org>
+Message-Id: <20220928233250.5C096C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2022-09-18 14:37:40)
-> Hi!
->=20
-> Please pull following clock changes for 6.1.
->=20
-> Best regards,
-> Jernej
->=20
+Quoting Abel Vesa (2022-09-19 03:22:44)
 > The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b8=
 68:
 >=20
@@ -63,13 +57,12 @@ Quoting Jernej Skrabec (2022-09-18 14:37:40)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-6.1-1
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-6.1
 >=20
-> for you to fetch changes up to 6a6434482fc6184e8fc73092aea755253205ec5b:
+> for you to fetch changes up to 67e16ac1fec475e64dcb8238f471c6fd154ef806:
 >=20
->   clk: sunxi-ng: ccu-sun9i-a80-usb: Use dev_err_probe() helper (2022-09-0=
-8 21:59:01 +0200)
+>   clk: imx93: add SAI IPG clk (2022-09-19 13:06:45 +0300)
 >=20
 > ----------------------------------------------------------------
 
