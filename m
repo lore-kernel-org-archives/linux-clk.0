@@ -2,50 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB86AC6FA83
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 03:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1013CC6FA90
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 03:07:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232351AbiI1DG5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Sep 2022 23:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52976 "EHLO
+        id S232438AbiI1DHA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Sep 2022 23:07:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiI1DGw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 23:06:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483521CE914;
-        Tue, 27 Sep 2022 20:06:51 -0700 (PDT)
+        with ESMTP id S232171AbiI1DGz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Sep 2022 23:06:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08EA51CE924;
+        Tue, 27 Sep 2022 20:06:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CF5CC61CFD;
-        Wed, 28 Sep 2022 03:06:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121D0C433C1;
-        Wed, 28 Sep 2022 03:06:48 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ACCE8B81EE6;
+        Wed, 28 Sep 2022 03:06:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765C4C433B5;
+        Wed, 28 Sep 2022 03:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664334410;
-        bh=3j7lUQIdsrYc+2eX2IWCd5WxozwgI6aTea19eKPxzvU=;
+        s=k20201202; t=1664334412;
+        bh=R9JmZjDUJYbaR0xBm7pFZL+wx904hJna0PxJ2oGNRd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bTp2dMKIU62NKZzR4WBN0UtxZTi3QxOAmhfp1eXtYrc/oU2apkEel6XqbVATUlQPA
-         NwZPV7pumHl62El5uKmip3TIRWkPFAi4ShYBTQLHxdG2HznRSyOzUGX+2WlURYYNeg
-         EgksWQJDDUnxNQHhcw9/lXhMW8Md66aG4kOwDaqHZUdJdAqW2hHKwUADzl+0NuPcKK
-         YEOmdXJZlqspPIY31cQwYXEvG6pD2i4sDRmEnlguXopKS47PLDb5VAxxCQgvz4Qdy3
-         Vb6b3rERIAEUyjKOxNQ5yvDZVtMrCe87/Q7oeYkgO6DL2MaBmTkuCL+bA7tYB0vgCG
-         TyoW5D4hglu5g==
+        b=ePm4kTuHVFHwZmWriD+tZk1/4nVcT9HAzurqfQB4ul15tb8Mk8o8LYMeoEX8nWYya
+         zGq3HCTDb3TFFwEnexJQ+JvI6Rbbh/+GTSOBMxj6GwcDpcH65eDApvKZqqF9frQ5+i
+         st4qVi9hIRP7lxMu4sD9Ze38VGf/5BZADNLvrJN2+uyodICD1C+xXuZcyEUgQDjDB/
+         h1yfJO7WFifq7g8Rcgebjno3oUzPhrwWi2vLvXHRXjnJOJGlV0JdeGznRZYbXkFMKE
+         6mMYGAUkMJsb85WTtE45n6W8QCB18gebHOvM6YgFp6fM6ii1Ujfxnht79ZZUyK50P8
+         oTGKp/OaC9AAQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     konrad.dybcio@somainline.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     jamipkettunen@somainline.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, marijn.suijten@somainline.org,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        mturquette@baylibre.com, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
+To:     linux-arm-msm@vger.kernel.org, mailingradian@gmail.com
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        tdas@codeaurora.org, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
         krzysztof.kozlowski+dt@linaro.org, agross@kernel.org
-Subject: Re: (subset) [PATCH v2 1/3] dt-bindings: clock: qcom,rpmcc: Add compatible for SM6375
-Date:   Tue, 27 Sep 2022 22:06:44 -0500
-Message-Id: <166433439996.1849007.15361302726140615662.b4-ty@kernel.org>
+Subject: Re: [PATCH v2 0/2] SDM670 RPMh Clocks
+Date:   Tue, 27 Sep 2022 22:06:46 -0500
+Message-Id: <166433439999.1849007.2964764834700967853.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220921004458.151842-1-konrad.dybcio@somainline.org>
-References: <20220921004458.151842-1-konrad.dybcio@somainline.org>
+In-Reply-To: <20220920223734.151135-1-mailingradian@gmail.com>
+References: <20220920223734.151135-1-mailingradian@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -53,19 +50,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 21 Sep 2022 02:44:56 +0200, Konrad Dybcio wrote:
-> Add a compatible for RPMCC on SM6375.
+On Tue, 20 Sep 2022 18:37:32 -0400, Richard Acayan wrote:
+> Changes since v1:
+>  - fix broken link
+>  - accumulate ack tag
 > 
+> This patch series adds clocks controlled by RPMh for Snapdragon 670.
 > 
+> .../devicetree/bindings/clock/qcom,rpmhcc.yaml      |  1 +
+>  drivers/clk/qcom/clk-rpmh.c                         | 21 +++++++++++++++++++++
+>  2 files changed, 22 insertions(+)
+> 
+> [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: qcom,rpmcc: Add compatible for SM6375
-      commit: de55ec3b3af0db790948906b0e41f468fcfa9f98
-[2/3] dt-bindings: clock: qcom: rpmcc: Add BIMC_FREQ_LOG
-      commit: 65cfaf4eface0a347f62187b52eeb84f635b6be0
-[3/3] clk: qcom: smd: Add SM6375 clocks
-      commit: 644c4229559257cadc4267fc36c2dc22ee9c040f
+[1/2] dt-bindings: clock: add rpmhcc bindings for sdm670
+      commit: c6648a402ced29ef826055583a96dcc85d9d3f55
+[2/2] clk: qcom: rpmhcc: add sdm670 clocks
+      commit: 2ded040cedf830c698c04ee79d436bd23014811a
 
 Best regards,
 -- 
