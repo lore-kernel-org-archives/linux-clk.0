@@ -2,73 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC9CC32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 07:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BA1C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 07:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232201AbiI1Hen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 03:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
+        id S233729AbiI1Hgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 03:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233575AbiI1Hee (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 03:34:34 -0400
+        with ESMTP id S233466AbiI1HgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 03:36:18 -0400
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E780F276A
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 00:34:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5D1107599
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 00:35:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1664350456; x=1695886456;
+  t=1664350548; x=1695886548;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=bjmU5cXxtLNyr/Mv+6E8M8XXv9rX7mjfcBUbuf4TMTs=;
-  b=gTIkLhJ7TNtN8iRi9ok9LIBukMxvwI/vWx8muB24RN4MXtaTunlayqo8
-   ycrAq5X7M5fct6/IQKwqZJNwwlzWd/2rwhQI+RCtJgG9AXQv0/jrZl3w1
-   UphJLu7Y4PtY+qhmiXrHuTtXl2MpnRUQE+/EF3VHyT4HAmensuepELjGJ
-   ASEjF0jrUHZ3C825bCdgdugeOwd8Lolt7fQ9GTP9TeCu0zGHH1Z6H+h4j
-   YbAv9XFnmCKuXjgZAK4NthC5V1jyfdzalITIqDIKn9pL3iTgaGLoHBguo
-   U401uupXowl+1Y5dGmrJRmlWvhgvsRRxK9W9soAZKoiVb/HDj154gNiJR
-   A==;
+  bh=otKn7OwoFsXCrEvhetC8t9/G3EV2BY7tBF6g9XjRrOU=;
+  b=Lo2XDpPGfUDMHlE+TweUeKSVV6swk/EFmTRkqSkvNwZW2fohPp+SENWB
+   cZ54bleI4+2gXLMPq4a+8LuWGA/SpM0R1A9O2Hig+NW0oxalxv21Bd72S
+   ZQVCynUS5yFvu+ALxDnBY6dsobkYh2MPxYbYnjS6cEF22RvmeT4XI8GT5
+   y6HNDiW3cVORNeyR+gtNncIAt7X0pIJeOfxfOlHZ85PSuSuYjysEVhUjd
+   p4bDMS1OKADLsY3+vlKGnm5hRYizWteOInhOOrvyXVxDwzEf6m2KTGp9E
+   1+o1zFwarNMRDNpdP2877BY7xun2dFE908QAyIpLiivGcmCYxcg5u8PTb
+   w==;
 X-IronPort-AV: E=Sophos;i="5.93,351,1654552800"; 
-   d="scan'208";a="26445433"
+   d="scan'208";a="26445561"
 Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 28 Sep 2022 09:32:42 +0200
+  by mx1-pgp.tq-group.com with ESMTP; 28 Sep 2022 09:35:05 +0200
 Received: from mx1.tq-group.com ([192.168.6.7])
   by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 28 Sep 2022 09:32:42 +0200
+  Wed, 28 Sep 2022 09:35:05 +0200
 X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 28 Sep 2022 09:32:42 +0200
+        by tq-pgp-pr1.tq-net.de on Wed, 28 Sep 2022 09:35:05 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1664350362; x=1695886362;
+  t=1664350505; x=1695886505;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=bjmU5cXxtLNyr/Mv+6E8M8XXv9rX7mjfcBUbuf4TMTs=;
-  b=Yhs2dTsQ53SRCRaULdIHhGX1yT8l1aluXNbt3djiLmGqgEL5/4TlNoSd
-   fnJ5Nk90nBND16eWIN+4OIc4eU9nPat+Thdv9AKCvIIzXDgTnSbqbsMxf
-   4QCoyR4Mhw0cWrusEtJDPXquVl5OVPPRFqa6Ek3HDHA/iuUJwAShWeHAh
-   Ij9Gg2U/Hta3TE3ZcnQ7OeuxGZtCkuHjI5AHC57oLTiNi6QyK59LHPtGU
-   dABAPPtOkUJrrtNWW/o3V3Lgjg/kW/jDNWsbYmkc0JwtB04djIRKn3tl9
-   XQOAUqBjGXJFskkd+qZJjLH8oklLgEb0KQxeN+J/w0djQUT2X1HWJdorQ
-   Q==;
+  bh=otKn7OwoFsXCrEvhetC8t9/G3EV2BY7tBF6g9XjRrOU=;
+  b=TJ14XV8oSWw10pbMVbjF4y2PAdfqNMbMlDd01QB/N2I2oAqpJwfbSiK8
+   Zp6jRHHwtzmr1R3uVaqqaCIvR+zVkQjLlOpnKw1q7BP9JyU7r2c08d4cZ
+   XSyedpD/mLq90UnD5vCsr0RWdwaHw9lppQ2L5SCWaIp50JLMHSCBCKjMc
+   ET9BeY/uAyWfu/JwgoqbiD1gPyO4808iWT+jKvV9m8Eho7rrc6f+TKCcA
+   YQPN2Y2RmWYHVLre98xcx/hOKIjPMV9Dy0TIu0PpyO260QUPpzmSsMPEN
+   UKXQap7HhF1lgVzvyv421/YJsGYZz7CtsAkuaEJbSwiAehCQ9pTbSH2VU
+   g==;
 X-IronPort-AV: E=Sophos;i="5.93,351,1654552800"; 
-   d="scan'208";a="26445432"
+   d="scan'208";a="26445560"
 Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 28 Sep 2022 09:32:42 +0200
+  by mx1.tq-group.com with ESMTP; 28 Sep 2022 09:35:05 +0200
 Received: from steina-w.localnet (unknown [10.123.49.11])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 1278D280056;
-        Wed, 28 Sep 2022 09:32:42 +0200 (CEST)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id F1CDE280056;
+        Wed, 28 Sep 2022 09:35:04 +0200 (CEST)
 From:   Alexander Stein <alexander.stein@ew.tq-group.com>
 To:     Marek Vasut <marex@denx.de>
-Cc:     linux-clk@vger.kernel.org,
+Cc:     linux-clk@vger.kernel.org, Marek Vasut <marex@denx.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: rs9: Fix I2C accessors
-Date:   Wed, 28 Sep 2022 09:32:39 +0200
-Message-ID: <13108964.uLZWGnKmhe@steina-w>
+Subject: Re: [PATCH v3] clk: rs9: Fix I2C accessors
+Date:   Wed, 28 Sep 2022 09:35:02 +0200
+Message-ID: <3198374.44csPzL39Z@steina-w>
 Organization: TQ-Systems GmbH
-In-Reply-To: <9a13e3ab-6541-7a24-e231-64faeac129c6@denx.de>
-References: <20220924164933.393649-1-marex@denx.de> <4745081.GXAFRqVoOG@steina-w> <9a13e3ab-6541-7a24-e231-64faeac129c6@denx.de>
+In-Reply-To: <20220927214415.418140-1-marex@denx.de>
+References: <20220927214415.418140-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -78,136 +78,132 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Marek,
 
-Am Dienstag, 27. September 2022, 21:43:12 CEST schrieb Marek Vasut:
-> On 9/26/22 08:36, Alexander Stein wrote:
-> > Hi Marek,
-> 
-> Hi,
-> 
-> > thanks for the update.
-> > To answer your question regarding the cache: With this patch I get the
-> > following:
-> > $ cat /sys/kernel/debug/regmap/1-0068/registers
-> > 0: 00
-> > 1: 00
-> > 2: 00
-> > 3: 00
-> > 4: 00
-> > 5: 00
-> > 6: 00
-> > 7: 01
-> > 8: 00
-> 
-> Ah, clear. Thanks for the detailed explanation.
-> 
-> > Which is obviously wrong. Reason is that the cache is not allocated
-> > without a known size. This can be fixed using this patch:
-> > ---8<---
-> > diff --git a/drivers/clk/clk-renesas-pcie.c
-> > b/drivers/clk/clk-renesas-pcie.c index 5b37d6a2e908..f1c185980466 100644
-> > --- a/drivers/clk/clk-renesas-pcie.c
-> > +++ b/drivers/clk/clk-renesas-pcie.c
-> > @@ -140,7 +140,8 @@ static const struct regmap_config rs9_regmap_config =
-> > {
-> > 
-> >          .reg_bits = 8,
-> >          .val_bits = 8,
-> >          .cache_type = REGCACHE_FLAT,
-> > 
-> > -       .max_register = 0x8,
-> > +       .max_register = 0x7,
-> > +       .num_reg_defaults_raw = 0x8,
-> > 
-> >          .rd_table = &rs9_readable_table,
-> >          .wr_table = &rs9_writeable_table,
-> >          .reg_write = rs9_regmap_i2c_write,
-> > 
-> > ---8<---
-> > 
-> > Unfortunately now the cache is initialized before RS9_REG_BCP is set to 1,
-> > resulting in the following panic:
-> > [   17.221637] Kernel panic - not syncing: stack-protector: Kernel stack
-> > is
-> > corrupted in: rs9_regmap_i2c_read+0xb4/0xb4 [clk_renesas_pcie]
-> > [   16.862107] CPU: 3 PID: 277 Comm: systemd-udevd Not tainted 6.0.0-rc6-
-> > next-20220923+ #764 d22d7e904fab3397adb372dbcb36af4e5b1f49bd
-> > [   16.862118] Hardware name: TQ-Systems GmbH i.MX8MM TQMa8MxML on MBa8Mx
-> > (DT) [   16.862123] Call trace:
-> > [   16.862125]  dump_backtrace+0xd8/0x130
-> > [   16.862136]  show_stack+0x14/0x40
-> > [   16.862141]  dump_stack_lvl+0x88/0xb0
-> > [   16.862147]  dump_stack+0x14/0x2c
-> > [   16.862152]  panic+0x19c/0x394
-> > [   16.862160]  __stack_chk_fail+0x24/0x30
-> > [   16.862167]  rs9_get_common_config+0x0/0x19c [clk_renesas_pcie]
-> > [   16.862179]  _regmap_read+0x74/0x164
-> > [   16.862188]  regmap_read+0x48/0x70
-> > [   16.862193]  regcache_hw_init+0x184/0x2d0
-> > [   16.862200]  regcache_init+0x1d4/0x2c0
-> > [   16.862206]  __regmap_init+0x864/0x1000
-> > [   16.862211]  __devm_regmap_init+0x74/0xc0
-> > [   16.862217]  rs9_probe+0x118/0x240 [clk_renesas_pcie]
-> > 
-> > This is caused by I2C_M_RECV_LEN for the rx i2c transfer. Upon cache
-> > initialization the 1st byte received is still set to 8 in hardware. So 8
-> > data bytes + len are copied into rx buffer (which is actually only 2
-> > bytes). There is 2 ways to fix it: Set the rx buffer to the maximum
-> > receivable bytes (8) or only read a fixed size of 2. As reg_read only
-> > supports reading 1 register, the latter one is enough.
-> > Reading is fixed by the following patch.
-> > ---8<---
-> > diff --git a/drivers/clk/clk-renesas-pcie.c
-> > b/drivers/clk/clk-renesas-pcie.c index c320ce25c11b..5b37d6a2e908 100644
-> > --- a/drivers/clk/clk-renesas-pcie.c
-> > +++ b/drivers/clk/clk-renesas-pcie.c
-> > @@ -122,8 +122,8 @@ static int rs9_regmap_i2c_read(void *context,
-> > 
-> >          xfer[0].buf = (void *)&txdata;
-> >          
-> >          xfer[1].addr = i2c->addr;
-> > 
-> > -       xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
-> > -       xfer[1].len = 1;
-> > +       xfer[1].flags = I2C_M_RD;
-> > +       xfer[1].len = 2;
-> > 
-> >          xfer[1].buf = (void *)rxdata;
-> >          
-> >          ret = i2c_transfer(i2c->adapter, xfer, 2);
-> > 
-> > ---8<---
-> > 
-> > Putting all together the regmap debug output is like this:
-> > $ cat /sys/kernel/debug/regmap/1-0068/registers
-> > 0: ff
-> > 1: 06
-> > 2: ff
-> > 3: 5f
-> > 4: 00
-> > 5: 01
-> > 6: 04
-> > 7: 01
-> 
-> What about option 3 -- disable the cache altogether ?
+thanks for the update.
 
-Sure this works as well.
-
-> I can imagine since the chip is configured with like 2-3 I2C writes on
-> boot and then never again written to, that might be the simplest approach.
-
-I'm thinking about disabling unused clock outputs later on, so dynamic bit 
-flipping at runtime would be required. For this case cache usage seems 
-reasonable. For now disabling is ok, IMHO.
-
-> > This is actually a 9FGV0441 using some queued patches on my side.
+Am Dienstag, 27. September 2022, 23:44:14 CEST schrieb Marek Vasut:
+> Add custom I2C accessors to this driver, since the regular I2C regmap ones
+> do not generate the exact I2C transfers required by the chip. On I2C write,
+> it is mandatory to send transfer length first, on read the chip returns the
+> transfer length in first byte. Instead of always reading back 8 bytes, which
+> is the default and also the size of the entire register file, set BCP
+> register to 1 to read out 1 byte which is less wasteful.
 > 
-> Nice, do you plan to send a binding update for this one ?
+> Fixes: 892e0ddea1aa6 ("clk: rs9: Add Renesas 9-series PCIe clock generator
+> driver") Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+> V2: Fix endianness handling in rs9_regmap_i2c_read() i2c_transfer
+> V3: - Disable regcache, the driver does a couple of I2C writes on boot
+>       and that is all, so it only adds complexity
+>     - Set regmap max_register to RS9_REG_BCP which is the correct one
+> ---
+> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-renesas-pcie.c | 60 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 57 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+> index 4f5df1fc74b46..138aaab05fc8a 100644
+> --- a/drivers/clk/clk-renesas-pcie.c
+> +++ b/drivers/clk/clk-renesas-pcie.c
+> @@ -90,13 +90,61 @@ static const struct regmap_access_table
+> rs9_writeable_table = { .n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
+>  };
+> 
+> +static int rs9_regmap_i2c_write(void *context,
+> +				unsigned int reg, unsigned int 
+val)
+> +{
+> +	struct i2c_client *i2c = context;
+> +	const u8 data[3] = { reg, 1, val };
+> +	const int count = ARRAY_SIZE(data);
+> +	int ret;
+> +
+> +	ret = i2c_master_send(i2c, data, count);
+> +	if (ret == count)
+> +		return 0;
+> +	else if (ret < 0)
+> +		return ret;
+> +	else
+> +		return -EIO;
+> +}
+> +
+> +static int rs9_regmap_i2c_read(void *context,
+> +			       unsigned int reg, unsigned int *val)
+> +{
+> +	struct i2c_client *i2c = context;
+> +	struct i2c_msg xfer[2];
+> +	u8 txdata = reg;
+> +	u8 rxdata[2];
+> +	int ret;
+> +
+> +	xfer[0].addr = i2c->addr;
+> +	xfer[0].flags = 0;
+> +	xfer[0].len = 1;
+> +	xfer[0].buf = (void *)&txdata;
+> +
+> +	xfer[1].addr = i2c->addr;
+> +	xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
+> +	xfer[1].len = 1;
 
-Sure, but as the DIF bit definition is device specific, I want to settle on 
-general access first.
+I'm still in favor of removing I2C_M_RECV_LEN and setting len=2. This 
+currently works only, because there is no read access between 
+devm_regmap_init() call and regmap_write() to RS9_REG_BCP.
+Enabling cache later on again this will corrupt the stack.
 
 Best regards,
 Alexander
+
+> +	xfer[1].buf = (void *)rxdata;
+> +
+> +	ret = i2c_transfer(i2c->adapter, xfer, 2);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret != 2)
+> +		return -EIO;
+> +
+> +	*val = rxdata[1];
+> +	return 0;
+> +}
+> +
+>  static const struct regmap_config rs9_regmap_config = {
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> -	.cache_type = REGCACHE_FLAT,
+> -	.max_register = 0x8,
+> +	.cache_type = REGCACHE_NONE,
+> +	.max_register = RS9_REG_BCP,
+>  	.rd_table = &rs9_readable_table,
+>  	.wr_table = &rs9_writeable_table,
+> +	.reg_write = rs9_regmap_i2c_write,
+> +	.reg_read = rs9_regmap_i2c_read,
+>  };
+> 
+>  static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)
+> @@ -242,11 +290,17 @@ static int rs9_probe(struct i2c_client *client)
+>  			return ret;
+>  	}
+> 
+> -	rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
+> +	rs9->regmap = devm_regmap_init(&client->dev, NULL,
+> +				       client, 
+&rs9_regmap_config);
+>  	if (IS_ERR(rs9->regmap))
+>  		return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
+>  				     "Failed to allocate register 
+map\n");
+> 
+> +	/* Always read back 1 Byte via I2C */
+> +	ret = regmap_write(rs9->regmap, RS9_REG_BCP, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	/* Register clock */
+>  	for (i = 0; i < rs9->chip_info->num_clks; i++) {
+>  		snprintf(name, 5, "DIF%d", i);
+
 
 
 
