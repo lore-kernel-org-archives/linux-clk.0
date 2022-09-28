@@ -2,70 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9C3C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 18:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEE0C04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 18:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbiI1SUj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 14:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
+        id S233683AbiI1S6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 14:58:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232518AbiI1SUj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 14:20:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B41CB07D4;
-        Wed, 28 Sep 2022 11:20:38 -0700 (PDT)
+        with ESMTP id S233675AbiI1S6g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 14:58:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C303F3F97;
+        Wed, 28 Sep 2022 11:58:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E614461F78;
-        Wed, 28 Sep 2022 18:20:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41880C433D6;
-        Wed, 28 Sep 2022 18:20:37 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CE599B821C3;
+        Wed, 28 Sep 2022 18:58:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F7DC433D7;
+        Wed, 28 Sep 2022 18:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664389237;
-        bh=tsUzsDLvNMrNl/WX8swyUROVgGbJNAP/UA66NR2AIis=;
+        s=k20201202; t=1664391512;
+        bh=73cqCtnNsDvfXsy6P+CF5Gnpa0oRjpEWOATabkd0y9k=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JwMM6+/J4W+Yp4SjAIqo11CnhzBuYiAK6rdqc682IYFSA2lX8oNlh7Cb+QKRVGJ2G
-         cDcsh8RFmqczZp+ARE3sUbnsw2/lORF/e5ZnyUaDxqJri9n65Lc5Rd8wc3e3kru034
-         eaHHmAkWBlbJ8Lo6i+9RUt78dCJ59RIJq/o1yrJJrfjfvfuNNuLfoxVRdBSda5h2xe
-         CW5ptePlYsTC52ieKS40CNp9lU7o2iDwkUVv8n+p0ZsWWhMXD86E/kz41C6De+v1+S
-         bz5x1uyvUZkGjbG0qHIW5EZn9KKQjq+PDLumji2/xT6/IAsp7Z5KY02wN1XAADaoqr
-         MwlE4joexgKTg==
+        b=U1sH8DCduJBFVtNE7yAlXn+ak+MjNp86ZbDmHrcjAysL2CoJnUObFmS9WNGjF8SaU
+         lgeXbWR/3OJLLg8wlRs+xo69pUEwgVSTtBpJRdiKsiA/pSXsXGhOWTqDtzSTYhCvlX
+         NMHvN23fb+IA+pu6jw7hn+pcz/xe1A82Xe+wKRlRtUPpg5YySPJK/HNbotjrwsFuwd
+         6YPscxERooUYDYQu7LD6SXQ8brpzaXj+vtecP3pNaAB2t9EUy0iEhZHi/GUOIF+g86
+         CzTAkiLNISzTaJyaCQVkaCMBR2DxeXtMfFC38dtYPYc+V1DPyTGDJdfaXe4xdk4kvQ
+         AjoGrX4XAUfjA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220915150959.3646702-1-han.xu@nxp.com>
-References: <20220915150959.3646702-1-han.xu@nxp.com>
-Subject: Re: [PATCH v2] clk: imx: imx6sx: remove the SET_RATE_PARENT flag for QSPI clocks
+In-Reply-To: <20220927075511.3147847-27-clabbe@baylibre.com>
+References: <20220927075511.3147847-1-clabbe@baylibre.com> <20220927075511.3147847-27-clabbe@baylibre.com>
+Subject: Re: [PATCH v10 26/33] clk: rk3399: use proper crypto0 name
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     miquel.raynal@bootlin.com, linux-mtd@lists.infradead.org,
-        han.xu@nxp.com
-To:     Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 28 Sep 2022 11:20:35 -0700
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Rob Herring <robh@kernel.org>
+To:     Corentin Labbe <clabbe@baylibre.com>, ardb@kernel.org,
+        davem@davemloft.net, heiko@sntech.de, herbert@gondor.apana.org.au,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Date:   Wed, 28 Sep 2022 11:58:30 -0700
 User-Agent: alot/0.10
-Message-Id: <20220928182037.41880C433D6@smtp.kernel.org>
+Message-Id: <20220928185832.59F7DC433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Han Xu (2022-09-15 08:09:59)
-> There is no dedicate parent clock for QSPI so SET_RATE_PARENT flag
-> should not be used. For instance, the default parent clock for QSPI is
-> pll2_bus, which is also the parent clock for quite a few modules, such
-> as MMDC, once GPMI NAND set clock rate for EDO5 mode can cause system
-> hang due to pll2_bus rate changed.
+Quoting Corentin Labbe (2022-09-27 00:55:04)
+> RK3399 has 2 crypto instance, named crypto0 and crypto1 in the TRM.
+> Only reset for crypto1 is correctly named, but crypto0 is not.
+> Since nobody use them , add a 0 to be consistent with the TRM and crypto1=
+ entries.
 >=20
-> Fixes: f1541e15e38e ("clk: imx6sx: Switch to clk_hw based API")
-> Signed-off-by: Han Xu <han.xu@nxp.com>
->=20
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 > ---
 
-Applied to clk-fixes
+Acked-by: Stephen Boyd <sboyd@kernel.org>
