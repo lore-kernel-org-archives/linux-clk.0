@@ -2,145 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D98C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 12:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7181AC04A95
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 13:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232196AbiI1M7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 08:59:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
+        id S232599AbiI1NJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 09:09:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233252AbiI1M7L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 08:59:11 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A3C9E8BB
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 05:59:09 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        with ESMTP id S231587AbiI1NJG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 09:09:06 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D81C9C222;
+        Wed, 28 Sep 2022 06:09:05 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id F400284A20;
-        Wed, 28 Sep 2022 14:59:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1664369948;
-        bh=KraFiIK61vIp7P0/srM/pwO0PGMcXc7fDi85Ar1H3qw=;
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F250C6602292;
+        Wed, 28 Sep 2022 14:09:02 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1664370544;
+        bh=Vf5x3tIxF1eH3jjuAIiQnki4BcokgilYkSxBESVxK/U=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=lvf59BRqtuRlUwliAch2Xmhu3ZKCKdad01Q9s/ixYA/+CjaD0JfmMb1q2J1vs+Vj9
-         LviwbtD4fyB2Slg8k8aCuozWn15Z7zXfHI8P+bgqeg38arv1nguGkYDv1dLwAqeHqm
-         b1jvCyJGwAlt37ESjd8dY1i1d/JKzZIF3YAcoA7GCfEFwK3VugJZNj/VZyWVDQVyWK
-         0jrzB3Z197KBaA357ObPXmSUzZGZCAjcWj3Oy/NzUVM3cXIIjkHZhtCOnhB1rpV9CE
-         OhEBuHOl2FKhjc4UOqNJRAb5rLpdU3foxg0Cx+TXhreADhl8B/af+Vz8O477UrmuHa
-         Lz0hYypvnUBjw==
-Message-ID: <bb942700-af09-e510-8b56-236a6ec8e43c@denx.de>
-Date:   Wed, 28 Sep 2022 14:59:07 +0200
+        b=kT6WY2mznangZxCUy/BmfaTldXwdJgzvbVFsk9ylrGn9e4Gh96hhrrvCnbqvU5rVs
+         oEMJsW7WhWyeNogyyqSpMaX1czDdmmLimDgmnPThszm8rXEpGKBYEUQdH5QdO6E/6G
+         Y1xUk4/tDYpPxShkVQH0jVShB2O6j08d42mkpPazOCaDCe23grG2q5XTv+znFBpq7p
+         M2YNsc04BZePUE4ywDfhEGH6WZEiGfYEhlvtNjh2rXz3hNdUWdJCnc8K0WdJpeBDK5
+         4IY4lWnmzpaVgpBQ16mYqDFJQy5l8H5XqetGhEIY30PcLNAqPScTgojv4eAfQvStKd
+         d25y2Gl2ezH8Q==
+Message-ID: <eae3cb46-d665-a8c9-f0f6-505680470e50@collabora.com>
+Date:   Wed, 28 Sep 2022 15:09:00 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v3] clk: rs9: Fix I2C accessors
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v1 16/17] drm/mediatek: dpi: Add mt8195 hdmi to DPI driver
 Content-Language: en-US
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     linux-clk@vger.kernel.org,
+To:     Guillaume Ranquet <granquet@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20220927214415.418140-1-marex@denx.de>
- <3198374.44csPzL39Z@steina-w>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <3198374.44csPzL39Z@steina-w>
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Pablo Sun <pablo.sun@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+References: <20220919-v1-0-4844816c9808@baylibre.com>
+ <20220919-v1-16-4844816c9808@baylibre.com>
+ <812a5de2-dbe3-2f0d-492c-16ea004c996a@collabora.com>
+ <CABnWg9sSbtXYLpcCoEts73CAsciKMEeMMRwfcfGng8H-rGYvkA@mail.gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CABnWg9sSbtXYLpcCoEts73CAsciKMEeMMRwfcfGng8H-rGYvkA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/28/22 09:35, Alexander Stein wrote:
-> Hi Marek,
-
-Hi,
-
-> thanks for the update.
-
-Thanks for the reviews.
-
-> Am Dienstag, 27. September 2022, 23:44:14 CEST schrieb Marek Vasut:
->> Add custom I2C accessors to this driver, since the regular I2C regmap ones
->> do not generate the exact I2C transfers required by the chip. On I2C write,
->> it is mandatory to send transfer length first, on read the chip returns the
->> transfer length in first byte. Instead of always reading back 8 bytes, which
->> is the default and also the size of the entire register file, set BCP
->> register to 1 to read out 1 byte which is less wasteful.
+Il 27/09/22 15:34, Guillaume Ranquet ha scritto:
+> On Tue, 20 Sep 2022 14:22, AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>> Il 19/09/22 18:56, Guillaume Ranquet ha scritto:
+>>> Add the DPI1 hdmi path support in mtk dpi driver
+>>>
+>>> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+>>>
+>>> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+>>> index 630a4e301ef6..91212b7610e8 100644
+>>> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+>>> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+>>> @@ -15,7 +15,10 @@
+>>>    #include <linux/of_graph.h>
+>>>    #include <linux/pinctrl/consumer.h>
+>>>    #include <linux/platform_device.h>
+>>> +#include <linux/reset.h>
+>>>    #include <linux/types.h>
+>>> +#include <linux/regmap.h>
+>>> +#include <linux/mfd/syscon.h>
+>>>
+>>>    #include <video/videomode.h>
+>>>
+>>> @@ -66,10 +69,14 @@ struct mtk_dpi {
+>>>    	struct drm_bridge *next_bridge;
+>>>    	struct drm_connector *connector;
+>>>    	void __iomem *regs;
+>>> +	struct reset_control *reset_ctl;
+>>>    	struct device *dev;
+>>>    	struct clk *engine_clk;
+>>> +	struct clk *dpi_ck_cg;
+>>>    	struct clk *pixel_clk;
+>>> +	struct clk *dpi_sel_clk;
+>>>    	struct clk *tvd_clk;
+>>> +	struct clk *hdmi_cg;
 >>
->> Fixes: 892e0ddea1aa6 ("clk: rs9: Add Renesas 9-series PCIe clock generator
->> driver") Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> ---
->> V2: Fix endianness handling in rs9_regmap_i2c_read() i2c_transfer
->> V3: - Disable regcache, the driver does a couple of I2C writes on boot
->>        and that is all, so it only adds complexity
->>      - Set regmap max_register to RS9_REG_BCP which is the correct one
->> ---
->> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@kernel.org>
->> ---
->>   drivers/clk/clk-renesas-pcie.c | 60 ++++++++++++++++++++++++++++++++--
->>   1 file changed, 57 insertions(+), 3 deletions(-)
 >>
->> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
->> index 4f5df1fc74b46..138aaab05fc8a 100644
->> --- a/drivers/clk/clk-renesas-pcie.c
->> +++ b/drivers/clk/clk-renesas-pcie.c
->> @@ -90,13 +90,61 @@ static const struct regmap_access_table
->> rs9_writeable_table = { .n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
->>   };
+>> You're adding new clocks and then you're making *all clocks*, including the
+>> already existing ones... optional.
 >>
->> +static int rs9_regmap_i2c_write(void *context,
->> +				unsigned int reg, unsigned int
-> val)
->> +{
->> +	struct i2c_client *i2c = context;
->> +	const u8 data[3] = { reg, 1, val };
->> +	const int count = ARRAY_SIZE(data);
->> +	int ret;
->> +
->> +	ret = i2c_master_send(i2c, data, count);
->> +	if (ret == count)
->> +		return 0;
->> +	else if (ret < 0)
->> +		return ret;
->> +	else
->> +		return -EIO;
->> +}
->> +
->> +static int rs9_regmap_i2c_read(void *context,
->> +			       unsigned int reg, unsigned int *val)
->> +{
->> +	struct i2c_client *i2c = context;
->> +	struct i2c_msg xfer[2];
->> +	u8 txdata = reg;
->> +	u8 rxdata[2];
->> +	int ret;
->> +
->> +	xfer[0].addr = i2c->addr;
->> +	xfer[0].flags = 0;
->> +	xfer[0].len = 1;
->> +	xfer[0].buf = (void *)&txdata;
->> +
->> +	xfer[1].addr = i2c->addr;
->> +	xfer[1].flags = I2C_M_RD | I2C_M_RECV_LEN;
->> +	xfer[1].len = 1;
+>> That looks seriously odd.... can you please give a devicetree example for
+>> MT8195 in the next version, perhaps in the cover letter?
+>>
+>> Would also make it easier to test this entire big series.
+>>
+>> Regards,
+>> Angelo
+>>
 > 
-> I'm still in favor of removing I2C_M_RECV_LEN and setting len=2. This
-> currently works only, because there is no read access between
-> devm_regmap_init() call and regmap_write() to RS9_REG_BCP.
-> Enabling cache later on again this will corrupt the stack.
+> The clock names are different for MT8195 HDMI than for the legacy DP.
+> Making everything optional might not have been a smart move.
+> I'll try to think of something else to make it look less odd.
+> 
+> The device tree I'm using to test things is rather "hackish" and has a bunch of
+> changes from what is found on linux-next.
+> I think Jason and Nancy are due to upstream those patches.
+> 
+> I'll try to include something minimal for you to test.
+> Otherwise would a public branch containing everything work for you?
+> 
 
-The device does send you the amount of data in first byte of I2C READ, 
-so I think I2C_M_RECV_LEN is the right flag here.
+Any reference would work for me, "something minimal" or a public branch, it
+doesn't really matter.
 
-I had a look into the above topic too before sending V3, and I think you 
-can use regcache_cache_bypass(..., true) right after devm_regmap_init() 
-and then again regcache_cache_bypass(..., false) close to the end of 
-probe() callback to deal with the problem you're describing.
+Thanks!
+Angelo
 
-Would that work ?
+
