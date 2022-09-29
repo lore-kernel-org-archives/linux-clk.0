@@ -2,112 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6050C07E9D
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 05:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BDCC07E9D
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 06:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234569AbiI2FrF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 01:47:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38794 "EHLO
+        id S234890AbiI2GK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 02:10:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233992AbiI2FrD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 01:47:03 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.129.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C07212889D
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 22:47:02 -0700 (PDT)
+        with ESMTP id S234889AbiI2GKT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 02:10:19 -0400
+Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89CA4D243
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 23:10:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1664430422;
+        s=selector; t=1664431814;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=KzKmbycffM+3EFojRt7wDQwTm+r1a3K4lVt2tTJkC6c=;
-        b=T7RTJEjjAT7XojtsEak0QomehO3Xfd5YAyrXWCrQVdsD8dRFQgJfL2RH1jBISE07ypAqwg
-        b+5+KyCadMTi/CyXvwscIf/HQezFfeZy0xUEqpxM+yOvmeOwfauOkQqcjCR9NElv4uhQgS
-        lzbshuQO8AfSDxD5jQli8h2cDVknr5Gh4q1N/mnqw9T1ZnhB8k5pkIBumx6ywAyoQW4zYp
-        96T3iik/12oXQVe6o5Hu6YXcW8eCKlBHMPIGqtZ3QMC9cSlRn1UJvfb1MSIkCHWBRmGEGS
-        8kdZlm9D630iCOYoV5UcHbyDkyn9H94+kbc1CgVEuyTQ52NGLTQ6+d1guyQpCw==
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com
- (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168]) by
+        bh=PTtWzRgW3VqZaOhXccFFDFwzCsNI/rmpwNeNH2P3fwc=;
+        b=VaFnPgapIYz7UxpYFM2GFN1OozwXkBHnaftPwn+In7MGB9VB8mhC0YHGHX+/P3GM2oOirG
+        nCOnqmRIryDnVFd3XJel4LuT2/nTXiCtWVKv7zBsVXV951gUWadjpZjYUOiDGh7TtkEjfH
+        bSqOKeFnlTQMFzWx+Bs0hLA/g41s2i9OCkM80dYziI135JXzTuMNNH8SEGmU41d1cHdmK1
+        K6gvRL7RRY6r8M/Yew4g0GJw/RbLULV2x0fo+drx8HusgMPhX7Puq4juvMaftPmOikuVhe
+        Ou9dR6ZkJM+fJS9BVN5oP9XcP/9udSDSQsWRksLuqMI3CQdFQBaUmH0qCv6yKw==
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-391-18PeHrGpNpee3uMiPvc4XA-2; Thu, 29 Sep 2022 01:46:59 -0400
-X-MC-Unique: 18PeHrGpNpee3uMiPvc4XA-2
+ us-mta-510-WxNgkFgwN32dxXwxLM9O9g-1; Thu, 29 Sep 2022 02:10:12 -0400
+X-MC-Unique: WxNgkFgwN32dxXwxLM9O9g-1
 Received: from MN2PR19MB3693.namprd19.prod.outlook.com (2603:10b6:208:18a::19)
- by DM4PR19MB6173.namprd19.prod.outlook.com (2603:10b6:8:b3::17) with
+ by DM6PR19MB4279.namprd19.prod.outlook.com (2603:10b6:5:2bc::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.17; Thu, 29 Sep
- 2022 05:46:57 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.20; Thu, 29 Sep
+ 2022 06:10:10 +0000
 Received: from MN2PR19MB3693.namprd19.prod.outlook.com
  ([fe80::f362:51bb:74a3:fe2c]) by MN2PR19MB3693.namprd19.prod.outlook.com
  ([fe80::f362:51bb:74a3:fe2c%7]) with mapi id 15.20.5676.015; Thu, 29 Sep 2022
- 05:46:57 +0000
+ 06:10:10 +0000
 From:   Rahul Tanwar <rtanwar@maxlinear.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-lgm-soc <linux-lgm-soc@maxlinear.com>
-Subject: Re: [PATCH RESEND v2 5/5] clk: mxl: Add a missing flag to allow
- parent clock rate change
-Thread-Topic: [PATCH RESEND v2 5/5] clk: mxl: Add a missing flag to allow
- parent clock rate change
-Thread-Index: AQHYzkwIRUsGmIhXX0msbxfxInDDFw==
-Date:   Thu, 29 Sep 2022 05:46:57 +0000
-Message-ID: <MN2PR19MB36934441D5D78B03E03DD81AB1579@MN2PR19MB3693.namprd19.prod.outlook.com>
+        linux-lgm-soc <linux-lgm-soc@maxlinear.com>,
+        Yi xin Zhu <yzhu@maxlinear.com>
+Subject: Re: [PATCH RESEND v2 4/5] clk: mxl: Add validation for register
+ reads/writes
+Thread-Topic: [PATCH RESEND v2 4/5] clk: mxl: Add validation for register
+ reads/writes
+Thread-Index: AQHYzkwHcZxL62Wq60mV6jLfqKCvSQ==
+Date:   Thu, 29 Sep 2022 06:10:10 +0000
+Message-ID: <MN2PR19MB36932AE7D8804943B14CE74BB1579@MN2PR19MB3693.namprd19.prod.outlook.com>
 References: <cover.1663827071.git.rtanwar@maxlinear.com>
- <73cdb7cb3919b29a41a52da4904b1273bd81c7fe.1663827071.git.rtanwar@maxlinear.com>
- <20220929001815.D2F72C433B5@smtp.kernel.org>
+ <3bcdfdf0f66dd2fdcffbdeabb5e3ab0bfb2e3489.1663827071.git.rtanwar@maxlinear.com>
+ <20220929002032.7061EC433D7@smtp.kernel.org>
 Accept-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR19MB3693:EE_|DM4PR19MB6173:EE_
-x-ms-office365-filtering-correlation-id: 10c371e8-d921-47e1-d2e2-08daa1de0589
+x-ms-traffictypediagnostic: MN2PR19MB3693:EE_|DM6PR19MB4279:EE_
+x-ms-office365-filtering-correlation-id: 8bb2ba66-49d9-414e-61f6-08daa1e143b2
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0
-x-microsoft-antispam-message-info: q3fxVMy7lp+08QSXC225BlWT8QxpyubyQ9ai6c1NeyGtTXjx7IVHYRMTHRSHVlA0MpwXGpcrmjR4eGY6S3EANPkhCyqcBf5Y3JlSTNAMp8Nh+7Bb3W7upTpDAovhk8inQvhibT2ArOEONVBQYaqF8AteOmwjI9zZr4sXFShUM50SVVvGzu87QTjZjDBXL4wkPYSDz1gQYacQoqNd1254mjeG7hq1bv8S0VD3U9+JZqq12yrLer7UQfUZQ6BmVPcqobEG3uNhrpPAhDRcBgl3QhvDO2q/nHPN8qKdA2n8c1CHh+/qrx5Emiwp/Gsgwyj9+lPKQp+JjWQi5n3y0kNGjm9AFX7roeAL3UhsBsimScn/kATxW3BbQGKY7ViXHBU5IVxA+gJbFVvtkUEBZ/YVfh8aUdBDfKPtiKtPFuBAsUsuhERAn4I6iKsCzr0w06iQLlGhhZX1Yr5B6ulEMmDDMK6faPwfKcHKsr0FG4q1hpXjjbmYsBznl3ZsaYzpbLchc8DdqSlyfKKs3mHbdIHdv3Myn4H4E0xVckhTGRUq1EvehkWXB9V47cR6r7BXznH9936vgBIFH5Ops2tyQbNllgJrdzRwZ2gMfYUpmezzueKBKEBUah+gRNqDLLWYbU9FacrxGLf9t0XPDJpuzdFWcwqeE+K5WEh3gnK2ZYVaOYvifb/OeekvixXgybwtXDqkM+Vtbc0E8av0tXWH5AAd1V1Fv3VzW+Z3KUO8JoaEXrpoLYKfYmh5yT+Igjxb0uSvqtuQCx09Bunf/0SYV209dA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3693.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(366004)(346002)(376002)(39850400004)(451199015)(83380400001)(71200400001)(54906003)(316002)(66446008)(66556008)(2906002)(55016003)(66476007)(41300700001)(64756008)(186003)(38070700005)(86362001)(110136005)(76116006)(52536014)(66946007)(107886003)(6506007)(4326008)(33656002)(26005)(7696005)(53546011)(5660300002)(38100700002)(4744005)(122000001)(478600001)(91956017)(8676002)(8936002)(9686003);DIR:OUT;SFP:1102
+x-microsoft-antispam-message-info: EbSzpwxpxKimb8/KB9YCyPmghfrOCgsEFoA+thK4byG5jUAr8njREJphNhZX6UQJxg1qOPxIdAZ9gkOUvSLvmkP+F3p5Rl5jPM94oF1iDXJukNqVsqTWnaorQbkL8b0y1imdFL9k91cHQlGdPRSn/xGn7njFCXXirggBe1qNL4KpGHPElNy4hkPG2UPLUoj71fBwL2N7vtT7ygJiaYE5yQwxYjeNgcPe7yZhNRRzncJEmQBIcckAMU0KazQXh0SgkrUM3HJPS+6uhbuAslrf++SLCLArga7NSMpG3xgdEiU4Jf7t+MZDC8Ol94RBjhrEMZIawtUGGC8od2iutXVWuWGUURjWWCQ3761jD8XKe6Wu0nCoZDWB0r0Ser6Ah87JcP3HGbRVxeKj/b1OIM3bP/mFK9rFj2VS3alwEoj54Om02BgtHx/v2VEYaqZ2Dr+BuYz0Afpnjh1nenZ9+nCQ/OOZIUcup0Rol/cE3IB57sZn7RVRV3fPIvJiyGobWVotWCYYEgSsfWfykbNx236nzg6nVb3b5TfMzMadgR/T/SRATROZV1jDq+fOFSJ/iuocyvs8hQ2vhuMd7FH+GWph1+cDodVoVFqYzglaYFR4aLthr854antnhyHaID1toSpLZr4wlxxrnXHS6YEYAkKyrcrdLTwplA8ZIQA66wmQGPk+14YBrbZ0fpITGlObcEf/b53gBebudWsWfEjDqb3XKt1Dx3hZh2pZYjMY/PIlWoICiNIW774tL50hubD6Vvrmid9mjvkx1mRkBroBHKsxjg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3693.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39850400004)(376002)(136003)(346002)(366004)(451199015)(316002)(54906003)(110136005)(107886003)(86362001)(7696005)(8936002)(52536014)(41300700001)(33656002)(186003)(5660300002)(66946007)(66476007)(66556008)(64756008)(4326008)(91956017)(76116006)(8676002)(53546011)(66446008)(6506007)(2906002)(83380400001)(26005)(9686003)(55016003)(38070700005)(478600001)(71200400001)(122000001)(38100700002);DIR:OUT;SFP:1102
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?487L3vE6iPUitgfDpIjvv27Mdn9JyyPrDpHQLHdEIMHjfpa/Hkh4Y/nuja+y?=
- =?us-ascii?Q?l/+V7xDuoKSDdIGYegkBPOu+D5fPYdBQsBRXiSJckZDpK9mLxy5l5oSBN7gJ?=
- =?us-ascii?Q?UZrDvIeVAqZ1JXm5fqGKZGH6t4CwKRemTrHluPOYU18bI5dJxza3CVaTJJKs?=
- =?us-ascii?Q?xDqaMv0T4BJ9FqTVXdx1tYXk5M2H8k2cfMF7/EyUst9l9HWFNPj8c8NfOa5N?=
- =?us-ascii?Q?7EqcM4j3XXXfpGjBrQvnjAOI+Xal41fxwKrSv1eECa21l0AlVreVheM+NMg0?=
- =?us-ascii?Q?IlIGlKc43lHeBhNCbhWX6ZaR867waU53WXZFIPmYPoQjJ3AHCwhClpo26TqH?=
- =?us-ascii?Q?x3bnZZ5ho/9frwnGUgKGXP7a7e+kDPAZ5rHO1uwdmN9CZ7fo4PnLOxV4bg57?=
- =?us-ascii?Q?Mhj30Vu0LV/Fw1Rq5/DT2b2KHSR1MdeglfgbJGyDdSZxLjKw4m+6OGx8c+A5?=
- =?us-ascii?Q?CE99hRmF2du4pKZk1SDTuC1mmntdfszpYija6gi1wmTgL1teoejtxBdGQoAv?=
- =?us-ascii?Q?AE4QxWEElFO69scLEItGRaiutjTfdXgu7FbVHNiYG5BqfxI2RIJgBxYEnJ0T?=
- =?us-ascii?Q?iSZGgyJdr83AY18x1Sx/4Zs/gcwN00h4zvqjlZPRHGmWJQDx6sYnGUa2Is9e?=
- =?us-ascii?Q?hAFh+Y3BipYmuLjQkPAPdI/8q6sOcVXqpNniqnbZy3fKo20igxoZv2FdnYQQ?=
- =?us-ascii?Q?EgwDOyuVWqk/862H9ZodczEmOvF3L9699r8A8J2R/oN0aqIQiRjuFLk/n//Y?=
- =?us-ascii?Q?xRr9M8VIDa4EQWwFMdgN7VIAQD6/dMKG0wfEexaKuAd0+5FxF4CenZ0hZPVR?=
- =?us-ascii?Q?d5E6BoMYySePZjVRSW/KsJRw/s6tnskt3VGOv256Kksm+ARDFEnv9Z5JbhWf?=
- =?us-ascii?Q?dZGGgL46859m3EK4cELmadC5allTW4Lr4KmjBoPurpuUE8bE8IlzJxFtKS2u?=
- =?us-ascii?Q?ZRct4pvzAsQTagePaKEt+ZAlD6fetmiVkeC1RF9Xc85V0e15WpbI/3wGj3wh?=
- =?us-ascii?Q?0/vIjgR21j+0FSOwjgNfPxtNh6LhMlQWnv+ptUBmZlqjdIgQD/oExdkPBFQq?=
- =?us-ascii?Q?QSK8n5b2EPrRvxIhrvGLS4SC0OFfnzUoKvsSgQbdp64EoLYk4S9vk9FWkCuO?=
- =?us-ascii?Q?XI8be8GhMomPXTekjofVLPWQzkUFmQD6hEYDXoq7lso5D8JtLtswX7Owf6ji?=
- =?us-ascii?Q?6EyhBMKkvBsv1iuje94E+B9vae5pwyEc1WWYtWim3HXmwCpteurmev6+6wXj?=
- =?us-ascii?Q?kOQvs300i7vrjo6zUSqT8cIdULPNwI5oyhvv0HC5mrGEh0eARRc/H3BT8oji?=
- =?us-ascii?Q?d3Etg9wOKgHBnpdy27KFwahN//OHiA1B8SolvL6y1VVY6v925cCgPCI05ZrZ?=
- =?us-ascii?Q?X1FHuar1/Oql2LKhxOPdDSvAIOzUrAQDnjjG6k4lVnv1I/uSZ8Uyat9ZwOif?=
- =?us-ascii?Q?LFkGfPyIhLbCbA++Tvv1pKIzX8HBqcVKGHkjH098gWDpiEDBbthDaoGmELYq?=
- =?us-ascii?Q?SW/ZKlua8zoVPFmWi8a+/UOsTN4I+0YBLBN9uMxiUiPn3MEU/QLSeZPxRo0f?=
- =?us-ascii?Q?KQu/+327oxIOPrrM7YhkvtdxGXhZxxnENNJxDp8Ri9v2WAi/oqAYxh2E8xkB?=
- =?us-ascii?Q?0A=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?8uvdGihD+sUvLZPFBbZGg2NtLJv9ZF6bP1dFszjOsR20KsJXaQuABx5YQjfA?=
+ =?us-ascii?Q?yNnUynnhxwIdrxl2mohsJ633p6IYKiIpSBXWlQe8p0PNOPqzHGgHLyfFi87A?=
+ =?us-ascii?Q?UDnPh96Wc2kWXmzqaTiAHGGKLcC6esUaRZU1TdX6zpU9bOSwMo4716e/ulkj?=
+ =?us-ascii?Q?qBE2UwS5AwCMlBW/31N2vt6EsXbM4wQXlfIvQmOsT3w6b80wJrsSUjt/IAFr?=
+ =?us-ascii?Q?TeHt2MhO752jO6pALPmrzNUxUtUiKkQeS78Eo2ET9Am7vOa/uOZ9rfhkkB0K?=
+ =?us-ascii?Q?uZXWuDcygIYswdNNsDrWorYkD+fMtQjr+55JDJqfLAEhjVJ9VTYbHD9DewU5?=
+ =?us-ascii?Q?ytLiDp7uY6AfG+z/YfUF6aaoKjrMR2K/pjcZnsZ2IBVGH0TkZU6aquNF2gDZ?=
+ =?us-ascii?Q?nNWY3slKwHD+JUmrgfLO9rLEokBiEOQnqs0zShTmqRCmwOUvbL65VhytmCF7?=
+ =?us-ascii?Q?XqE/xBGg3O6mp6asKfi3Ps0ZGqZLHRXjO7poPy1CWAe3vVcFzG3Qn/97B6Np?=
+ =?us-ascii?Q?ae5l/DkMZkI3oVpmrTF7qrwk5eFInlntKCvh2E8pTJ2XtwuXu2m3BFVeVgvp?=
+ =?us-ascii?Q?ey1Uugjtm1kLHpGiCVBHHZhAqx1gZKfM0mvR0tSKtT9pSvjWNRycienBjlfW?=
+ =?us-ascii?Q?Ia5ltaJerhiAGNdCpLDZlQB7s1GL4YRzSnEatgOkdc3kPplZneMe5VZ31HKy?=
+ =?us-ascii?Q?BleteQpfDkDFjtq5cprZ3yFytjB4JomJJdroPENAlry316fwdXgaVnHir9Z8?=
+ =?us-ascii?Q?q30JUGF9jBuJehppBmbiZrJ4WpRUXfTWBgiJfZMLzMSVgWX78RGBpQLDIPt6?=
+ =?us-ascii?Q?n/g+p0xpeuX7hvREbv7M+bAp0SQwVxfWKE8b9HbsQBdwW5mujZpvOWaTS165?=
+ =?us-ascii?Q?Au4Yj4TKJlZ/Duwzh6RAisTrW70H+F4rx8liXujnzn4XvLvnIx2jK1qmz9RJ?=
+ =?us-ascii?Q?YGOGGE9uicFcuA02bxUpoolRoCDaJtzs6DdUa2/pIDf1OechiO43QEdcPgUj?=
+ =?us-ascii?Q?bYh7LxLgtfUIkN0DDaFPVL/cgi4u139B+IW3vLl7TaADrqsHU89c+ayjuJyy?=
+ =?us-ascii?Q?8jVWZOlCCIwv3n6gRCdpmLbQ305D83KdMVI7R87UHfPS7aPKNj7OgZY8//+1?=
+ =?us-ascii?Q?vDQ17p5FXO8zzNA52Gaq0CuW4XHtcKof4Dkc01ImWkjVJw37S3AqsTk4QMyH?=
+ =?us-ascii?Q?SzIrt2qZSagQAv3x0PWq4gchdfYi9WUHBU8r538X93MPJDXS0S4mV5TsWjRe?=
+ =?us-ascii?Q?P0vr2yFBDovc7q8qz5TX5SzOZddXCxWmDvzl18PskyQ1WB1BhfScHL5FxGKf?=
+ =?us-ascii?Q?NVKbOFoMwnc25qA1+KgzV6LH7sE2BSH3068mCaq4mqhxO+uRURosMhjFqbC+?=
+ =?us-ascii?Q?CJQB5eYBV5wUSUCG7VBk6HojyxUOwf8YCdffavunDfskqQBepOMOr4Qh+uyS?=
+ =?us-ascii?Q?HFmt6X9leTQEdWwRnSFCUkKxvk7CYbB/e6hRFMgJKKTtynznex4tlu/3Jk9z?=
+ =?us-ascii?Q?m3AfKkYZLUtFcaFedvX0+65AUDw33Y84yuua8g3JHsxeiyrKgl6gepPaER7G?=
+ =?us-ascii?Q?H9jd8uhuqLpTlPUImrnH1zVC3qIB8/MD2nkEmERoREG4AuO3geT0nzouT3r3?=
+ =?us-ascii?Q?oA=3D=3D?=
 MIME-Version: 1.0
 X-OriginatorOrg: maxlinear.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR19MB3693.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10c371e8-d921-47e1-d2e2-08daa1de0589
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2022 05:46:57.3764
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bb2ba66-49d9-414e-61f6-08daa1e143b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2022 06:10:10.1667
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SuPcyJrNcpBZ2xmjBe//CeZ75iwhLRk/B6loCxo+idWnQ3g6bYiKCY9bLoOE8DMH17TRh0JNxqi6ZslHNXYxfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB6173
+X-MS-Exchange-CrossTenant-userprincipalname: MG2ZlNRjjR8I9hqk/WprdricDCh4cQwhiyEkcN3ZniMvEeuULRLrjRqGFk+qR7bHgElVl2KH7Rd96O7cF2WhxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4279
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: maxlinear.com
 Content-Language: en-US
@@ -117,13 +118,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/9/2022 8:18 am, Stephen Boyd wrote:=0A> This email was sent from outs=
+On 29/9/2022 8:20 am, Stephen Boyd wrote:=0A> This email was sent from outs=
 ide of MaxLinear.=0A>=20=0A>=20=0A> Quoting Rahul Tanwar (2022-09-21 23:24:=
-28)=0A>> One of the clock entry "dcl" clk's rate can only be changed by=0A>=
-> changing its parent's clock rate. But it was missing to have=0A>> CLK_SET=
-_RATE_PARENT flag as enabled.=0A>>=0A>> Add/enable CLK_SET_RATE_PARENT flag=
- for dcl clk in order to=0A>> allow its clk rate to be changed via its pare=
-nt's clk.=0A>>=0A>> Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>=0A>=
-> ---=0A>=20=0A> Any Fixes tag?=0A>=20=0A=0A=0AMissed it, will add in v3.=
-=0A=0AThanks,=0ARahul=0A=0A=0A>=20=0A=0A
+27)=0A>> Some clocks support parent clock dividers but they do not=0A>> sup=
+port clock gating (clk enable/disable). Such types of=0A>> clocks might cal=
+l API's for get/set_reg_val routines with=0A>> width as 0 during clk_prepar=
+e_enable() call. Handle such=0A>> cases by first validating width during cl=
+k_prepare_enable()=0A>> while still supporting clk_set_rate() correctly.=0A=
+>>=0A>> Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>=0A>> ---=0A>>  =
+ drivers/clk/x86/clk-cgu.h | 30 ++++++++++++++++++++++++++----=0A>>   1 fil=
+e changed, 26 insertions(+), 4 deletions(-)=0A>>=0A>> diff --git a/drivers/=
+clk/x86/clk-cgu.h b/drivers/clk/x86/clk-cgu.h=0A>> index 73ce84345f81..46da=
+f9ebd6c9 100644=0A>> --- a/drivers/clk/x86/clk-cgu.h=0A>> +++ b/drivers/clk=
+/x86/clk-cgu.h=0A>> @@ -299,29 +299,51 @@ struct lgm_clk_branch {=0A>>   st=
+atic inline void lgm_set_clk_val(struct regmap *membase, u32 reg,=0A>>     =
+                                u8 shift, u8 width, u32 set_val)=0A>>   {=
+=0A>> -       u32 mask =3D (GENMASK(width - 1, 0) << shift);=0A>> +       u=
+32 mask;=0A>>=0A>> +       /*=0A>> +        * Some clocks support parent cl=
+ock dividers but they do not=0A>> +        * support clock gating (clk enab=
+le/disable). Such types of=0A>> +        * clocks might call this function =
+with width as 0 during=0A>> +        * clk_prepare_enable() call. Handle su=
+ch cases by not doing=0A>> +        * anything during clk_prepare_enable() =
+but handle clk_set_rate()=0A>> +        * correctly=0A>> +        */=0A>> +=
+       if (!width)=0A>> +               return;=0A>=20=0A> Why are the clk_=
+ops assigned in a way that makes the code get here? Why=0A> can't we have d=
+ifferent clk_ops, or not register the clks at all, when=0A> the hardware ca=
+n't be written?=0A=0A=0AThe hardware can actually be written for such clks =
+but only for=20=0Aclk_set_rate() op for setting the clk rate. Just that har=
+dware does not=20=0Aprovide any way to enable/disable such clks.=0A=0AAlter=
+native way to handle such clks could be that the clk consumer does=0Anot in=
+voke clk_prepare_enable() before invoking clk_set_rate(). But we=0Awant to =
+avoid making changes in the clk consumer code to keep it=20=0Astandard. And=
+ handle it here by just validating the width parameter.=0A=0AThanks,=0ARahu=
+l=0A=0A=0A>=20=0A>> +=0A>> +       mask =3D (GENMASK(width - 1, 0) << shift=
+);=0A>>          regmap_update_bits(membase, reg, mask, set_val << shift);=
+=0A>=20=0A>=20=0A=0A
 
