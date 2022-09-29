@@ -2,170 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C4AC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 19:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78C4C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 22:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbiI2Tzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 15:55:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
+        id S229800AbiI2WPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 18:15:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiI2Tzc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 15:55:32 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5A710C78C
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 12:55:31 -0700 (PDT)
-Received: from tr.lan (ip-86-49-12-201.bb.vodafone.cz [86.49.12.201])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 8B79E84C81;
-        Thu, 29 Sep 2022 21:55:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1664481329;
-        bh=Jbxtjl+BDgabVTiJePxER3bBrbC5VfzT1Gafv7NaaDs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=C9aNLPCtXeMigtsvm4fnc7I+MZDMfj9cDNWpP5NdL3c6VHcmuNFxZfuML0zme4qqX
-         D5pogJKDNrH12UrGkU7WWj63RFQmvuQbBvkWCC/tks8Zga5wUY/49E8Yq48dX4i47E
-         hhTPEjOCGw682Hdbrfp74YE5Q0XmtgkjMctv5X5Rjao3bHACsvTbolYeYoMO0GEPb2
-         Pj+8hZiQmrJzw3eGEOvqNBeVLUqTWrHRTHvQUmKnI179XpVVTE+7RGnkPknAIQujye
-         1nH+Tg7xuskDrY50NK8Eto5h673enD8kD6nlAU7oSuGaU3AcnY6BL/mJ9IjDzrMcmV
-         +nLNTR6NqlgGA==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v4] clk: rs9: Fix I2C accessors
-Date:   Thu, 29 Sep 2022 21:55:21 +0200
-Message-Id: <20220929195521.284497-1-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S229759AbiI2WPA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 18:15:00 -0400
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29654D4D7;
+        Thu, 29 Sep 2022 15:14:59 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id t4-20020a4aa3c4000000b00475624f2369so1064329ool.3;
+        Thu, 29 Sep 2022 15:14:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=G3ixGfgN7BtiMl2GIJrXgjiRG+Ja3k65KHc2UeJTU2Y=;
+        b=3Jy9NYvuo6n5zW/SIcC7pJw4ycEoWa/XAmrcfGAa8BZ3Q+FBQzh7oN30mHLnVxKOz5
+         GY440sl+r72Vi0oJ3R+Q1GmirwEjgRVIfBClc50+2N1hMNzqakTHrwj/aAgapFjYTm2G
+         iYRyBKMCeRzX5xFuAHid1QO4LJJhe7scjHGVEwhwc83bJQ9124qcFWPrRiQShcIwNDE1
+         P51TVtEr0AZ6p1xak5bexumL6IBmOL0ExKzuQZ87avfRD879MP6Il+F5kuwnjDNPvvyf
+         6bL52CdB1iTGgjuQRwsyaCZxl9Y/jpUDJhwdCuX5VJmjpI3CI62iZ/mf4y2p0oRuWL9E
+         2qNQ==
+X-Gm-Message-State: ACrzQf1YWJKbAQYHJqfT1R27bq3aI0MpQ2OZAxaduJYMF9Klp2haPYxm
+        hME6e/aZve5lHFI3wUrKaQ==
+X-Google-Smtp-Source: AMsMyM6X8fuxncInKY1HHajfMs3xBeGsJpxqmoGci0kg/caJyZtFTBc6uzl+qdSsE6tynspmpVwZHw==
+X-Received: by 2002:a9d:666:0:b0:655:d979:8a6 with SMTP id 93-20020a9d0666000000b00655d97908a6mr2406280otn.200.1664489699187;
+        Thu, 29 Sep 2022 15:14:59 -0700 (PDT)
+Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id c6-20020a9d7846000000b0065892f42157sm199147otm.75.2022.09.29.15.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 15:14:58 -0700 (PDT)
+Received: (nullmailer pid 2862895 invoked by uid 1000);
+        Thu, 29 Sep 2022 22:14:57 -0000
+Date:   Thu, 29 Sep 2022 17:14:57 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     heiko@sntech.de, devicetree@vger.kernel.org,
+        herbert@gondor.apana.org.au, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-rockchip@lists.infradead.org, davem@davemloft.net,
+        linux-clk@vger.kernel.org, ardb@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linux-crypto@vger.kernel.org, sboyd@kernel.org
+Subject: Re: [PATCH v10 25/33] dt-bindings: crypto: rockchip: add new
+ compatible
+Message-ID: <166448969734.2862850.15734713971995985090.robh@kernel.org>
+References: <20220927075511.3147847-1-clabbe@baylibre.com>
+ <20220927075511.3147847-26-clabbe@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220927075511.3147847-26-clabbe@baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add custom I2C accessors to this driver, since the regular I2C regmap ones
-do not generate the exact I2C transfers required by the chip. On I2C write,
-it is mandatory to send transfer length first, on read the chip returns the
-transfer length in first byte. Instead of always reading back 8 bytes, which
-is the default and also the size of the entire register file, set BCP register
-to 1 to read out 1 byte which is less wasteful.
+On Tue, 27 Sep 2022 07:55:03 +0000, Corentin Labbe wrote:
+> Since driver support new compatible, we need to update the driver bindings.
+> 
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  .../crypto/rockchip,rk3288-crypto.yaml        | 79 +++++++++++++++++--
+>  1 file changed, 71 insertions(+), 8 deletions(-)
+> 
 
-Fixes: 892e0ddea1aa ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
-Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-V2: Fix endianness handling in rs9_regmap_i2c_read() i2c_transfer
-V3: - Disable regcache, the driver does a couple of I2C writes on boot
-      and that is all, so it only adds complexity
-    - Set regmap max_register to RS9_REG_BCP which is the correct one
-V4: - Do not use I2C_M_RECV_LEN due to overhead, it requires buffer 4
-      times the size of this devices' register file, just read two bytes
-      via I2C
----
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk-renesas-pcie.c | 65 ++++++++++++++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 4f5df1fc74b46..e6247141d0c05 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -90,13 +90,66 @@ static const struct regmap_access_table rs9_writeable_table = {
- 	.n_yes_ranges = ARRAY_SIZE(rs9_writeable_ranges),
- };
- 
-+static int rs9_regmap_i2c_write(void *context,
-+				unsigned int reg, unsigned int val)
-+{
-+	struct i2c_client *i2c = context;
-+	const u8 data[3] = { reg, 1, val };
-+	const int count = ARRAY_SIZE(data);
-+	int ret;
-+
-+	ret = i2c_master_send(i2c, data, count);
-+	if (ret == count)
-+		return 0;
-+	else if (ret < 0)
-+		return ret;
-+	else
-+		return -EIO;
-+}
-+
-+static int rs9_regmap_i2c_read(void *context,
-+			       unsigned int reg, unsigned int *val)
-+{
-+	struct i2c_client *i2c = context;
-+	struct i2c_msg xfer[2];
-+	u8 txdata = reg;
-+	u8 rxdata[2];
-+	int ret;
-+
-+	xfer[0].addr = i2c->addr;
-+	xfer[0].flags = 0;
-+	xfer[0].len = 1;
-+	xfer[0].buf = (void *)&txdata;
-+
-+	xfer[1].addr = i2c->addr;
-+	xfer[1].flags = I2C_M_RD;
-+	xfer[1].len = 2;
-+	xfer[1].buf = (void *)rxdata;
-+
-+	ret = i2c_transfer(i2c->adapter, xfer, 2);
-+	if (ret < 0)
-+		return ret;
-+	if (ret != 2)
-+		return -EIO;
-+
-+	/*
-+	 * Byte 0 is transfer length, which is always 1 due
-+	 * to BCP register programming to 1 in rs9_probe(),
-+	 * ignore it and use data from Byte 1.
-+	 */
-+	*val = rxdata[1];
-+	return 0;
-+}
-+
- static const struct regmap_config rs9_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
--	.cache_type = REGCACHE_FLAT,
--	.max_register = 0x8,
-+	.cache_type = REGCACHE_NONE,
-+	.max_register = RS9_REG_BCP,
- 	.rd_table = &rs9_readable_table,
- 	.wr_table = &rs9_writeable_table,
-+	.reg_write = rs9_regmap_i2c_write,
-+	.reg_read = rs9_regmap_i2c_read,
- };
- 
- static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)
-@@ -242,11 +295,17 @@ static int rs9_probe(struct i2c_client *client)
- 			return ret;
- 	}
- 
--	rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
-+	rs9->regmap = devm_regmap_init(&client->dev, NULL,
-+				       client, &rs9_regmap_config);
- 	if (IS_ERR(rs9->regmap))
- 		return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
- 				     "Failed to allocate register map\n");
- 
-+	/* Always read back 1 Byte via I2C */
-+	ret = regmap_write(rs9->regmap, RS9_REG_BCP, 1);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Register clock */
- 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
- 		snprintf(name, 5, "DIF%d", i);
--- 
-2.35.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
