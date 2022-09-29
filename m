@@ -2,271 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9088EC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 16:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBED3C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 16:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235995AbiI2QJO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 12:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36058 "EHLO
+        id S235911AbiI2QMN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 12:12:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236018AbiI2QJL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 12:09:11 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11761D1E24;
-        Thu, 29 Sep 2022 09:09:08 -0700 (PDT)
-X-QQ-Spam: true
-X-QQ-mid: bizesmtp84t1664461988tobq0a5b
-Received: from localhost.localdomain ( [113.72.145.157])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Thu, 29 Sep 2022 22:33:07 +0800 (CST)
-X-QQ-SSF: 01000000002000201000B00A0000000
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S234934AbiI2QMD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 12:12:03 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80DC1D66DB;
+        Thu, 29 Sep 2022 09:12:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 58625B824FA;
+        Thu, 29 Sep 2022 16:12:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2FFC433C1;
+        Thu, 29 Sep 2022 16:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664467920;
+        bh=Qb6H1MTM1LXEg8sMPvRyCuIO5X98/kvPIu0bqQ8zjw4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JavQV1Egnc8IhrvvsS8nMYbDTT6HGrmnOMmZ6td2f7mM36YZa9LCLFxwZc7UkJ/fF
+         NHXhlK+91sd2qpHiu4Ra7w9bH3ySS7wnP4XWFvseTyFyaB2M9i09H49539Nw7AuJgL
+         AvbfNZ8dIDewQY8otd3c4HHqHQGGqE4aH1Lx/C5tFpcRmhedBZLSdVAjQWtscWRd4E
+         5rhq8/D/iQTlcM2MKTrS+x9HTNlRyl6CPaptsYuZh1B77WzRw0R5B8T10HRQKluuax
+         egwBy3WT4d5PbEKuyAdsaH89ivb8NCFWLUu293nkaAjnpYKbLjJwLz+sf+J81XRxYF
+         MC/RKOOeaQ+uw==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan+linaro@kernel.org>)
+        id 1odw8s-0004j3-2g; Thu, 29 Sep 2022 18:12:06 +0200
+From:   Johan Hovold <johan+linaro@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 10/30] reset: starfive: Rename 'reset-starfive-jh7100.c' to 'reset-starfive.c'
-Date:   Thu, 29 Sep 2022 22:32:05 +0800
-Message-Id: <20220929143225.17907-11-hal.feng@linux.starfivetech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] clk: gcc-sc8280xp: use retention for USB power domains
+Date:   Thu, 29 Sep 2022 18:11:24 +0200
+Message-Id: <20220929161124.18138-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-So this reset driver can be compatible with other StarFive SoCs.
-No functional change.
+Since commit d399723950c4 ("clk: qcom: gdsc: Fix the handling of
+PWRSTS_RET support) retention mode can be used on sc8280xp to maintain
+state during suspend instead of leaving the domain always on.
 
-Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+This is needed to eventually allow the parent CX domain to be powered
+down during suspend.
+
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- MAINTAINERS                                   |  9 +--
- drivers/reset/Kconfig                         |  6 +-
- drivers/reset/Makefile                        |  2 +-
- ...set-starfive-jh7100.c => reset-starfive.c} | 68 +++++++++----------
- 4 files changed, 43 insertions(+), 42 deletions(-)
- rename drivers/reset/{reset-starfive-jh7100.c => reset-starfive.c} (70%)
+ drivers/clk/qcom/gcc-sc8280xp.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f5ca4aefd184..f2319a3b708b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19411,12 +19411,13 @@ F:	Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
- F:	drivers/pinctrl/pinctrl-starfive.c
- F:	include/dt-bindings/pinctrl/pinctrl-starfive.h
- 
--STARFIVE JH7100 RESET CONTROLLER DRIVER
-+STARFIVE RESET CONTROLLER DRIVER
- M:	Emil Renner Berthing <kernel@esmil.dk>
-+M:	Hal Feng <hal.feng@linux.starfivetech.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
--F:	drivers/reset/reset-starfive-jh7100.c
--F:	include/dt-bindings/reset/starfive-jh7100.h
-+F:	Documentation/devicetree/bindings/reset/starfive*
-+F:	drivers/reset/reset-starfive.c
-+F:	include/dt-bindings/reset/starfive*
- 
- STATIC BRANCH/CALL
- M:	Peter Zijlstra <peterz@infradead.org>
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 806773e88832..8121de5ecc3c 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -225,12 +225,12 @@ config RESET_SOCFPGA
- 	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
- 	  driver gets initialized early during platform init calls.
- 
--config RESET_STARFIVE_JH7100
--	bool "StarFive JH7100 Reset Driver"
-+config RESET_STARFIVE
-+	bool "StarFive SoC Reset Driver"
- 	depends on SOC_STARFIVE || COMPILE_TEST
- 	default SOC_STARFIVE
- 	help
--	  This enables the reset controller driver for the StarFive JH7100 SoC.
-+	  This enables the reset controller driver for the StarFive SoCs.
- 
- config RESET_SUNPLUS
- 	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index cd5cf8e7c6a7..269268a48f56 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -29,7 +29,7 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
--obj-$(CONFIG_RESET_STARFIVE_JH7100) += reset-starfive-jh7100.o
-+obj-$(CONFIG_RESET_STARFIVE) += reset-starfive.o
- obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
-diff --git a/drivers/reset/reset-starfive-jh7100.c b/drivers/reset/reset-starfive.c
-similarity index 70%
-rename from drivers/reset/reset-starfive-jh7100.c
-rename to drivers/reset/reset-starfive.c
-index d3656e99ae0e..56d07bafadd7 100644
---- a/drivers/reset/reset-starfive-jh7100.c
-+++ b/drivers/reset/reset-starfive.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * Reset driver for the StarFive JH7100 SoC
-+ * Reset driver for the StarFive SoC
-  *
-  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
-  * Copyright (C) 2021-2022 StarFive Technology Co., Ltd.
-@@ -36,7 +36,7 @@ static const u32 jh7100_reset_asserted[4] = {
- 	0,
+While we're not yet able to fully test this (since we're not hitting CX
+power down) this can still go in as we'll need it in some form
+eventually.
+
+Note that the PCIe domains should remain always-on until we have driver
+support for suspend in place.
+
+Johan
+
+
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index 7768e6901dcc..a18ed88f3b82 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -6843,17 +6843,12 @@ static struct gdsc ufs_phy_gdsc = {
+ 	.pwrsts = PWRSTS_OFF_ON,
  };
  
--struct jh7100_reset {
-+struct starfive_reset {
- 	struct reset_controller_dev rcdev;
- 	struct regmap *regmap;
- 	u32 assert_offset;
-@@ -45,16 +45,16 @@ struct jh7100_reset {
- 	const u32 *asserted;
- };
- 
--static inline struct jh7100_reset *
--jh7100_reset_from(struct reset_controller_dev *rcdev)
-+static inline struct starfive_reset *
-+starfive_reset_from(struct reset_controller_dev *rcdev)
- {
--	return container_of(rcdev, struct jh7100_reset, rcdev);
-+	return container_of(rcdev, struct starfive_reset, rcdev);
- }
- 
--static int jh7100_reset_update(struct reset_controller_dev *rcdev,
--			       unsigned long id, bool assert)
-+static int starfive_reset_update(struct reset_controller_dev *rcdev,
-+				 unsigned long id, bool assert)
- {
--	struct jh7100_reset *data = jh7100_reset_from(rcdev);
-+	struct starfive_reset *data = starfive_reset_from(rcdev);
- 	u32 offset = id / 32;
- 	u32 mask = BIT(id % 32);
- 	u32 reg_assert = data->assert_offset + offset * sizeof(u32);
-@@ -86,34 +86,34 @@ static int jh7100_reset_update(struct reset_controller_dev *rcdev,
- 	return ret;
- }
- 
--static int jh7100_reset_assert(struct reset_controller_dev *rcdev,
--			       unsigned long id)
-+static int starfive_reset_assert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
- {
--	return jh7100_reset_update(rcdev, id, true);
-+	return starfive_reset_update(rcdev, id, true);
- }
- 
--static int jh7100_reset_deassert(struct reset_controller_dev *rcdev,
--				 unsigned long id)
-+static int starfive_reset_deassert(struct reset_controller_dev *rcdev,
-+				   unsigned long id)
- {
--	return jh7100_reset_update(rcdev, id, false);
-+	return starfive_reset_update(rcdev, id, false);
- }
- 
--static int jh7100_reset_reset(struct reset_controller_dev *rcdev,
--			      unsigned long id)
-+static int starfive_reset_reset(struct reset_controller_dev *rcdev,
-+				unsigned long id)
- {
- 	int ret;
- 
--	ret = jh7100_reset_assert(rcdev, id);
-+	ret = starfive_reset_assert(rcdev, id);
- 	if (ret)
- 		return ret;
- 
--	return jh7100_reset_deassert(rcdev, id);
-+	return starfive_reset_deassert(rcdev, id);
- }
- 
--static int jh7100_reset_status(struct reset_controller_dev *rcdev,
--			       unsigned long id)
-+static int starfive_reset_status(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
- {
--	struct jh7100_reset *data = jh7100_reset_from(rcdev);
-+	struct starfive_reset *data = starfive_reset_from(rcdev);
- 	u32 offset = id / 32;
- 	u32 mask = BIT(id % 32);
- 	u32 reg_status = data->status_offset + offset * sizeof(u32);
-@@ -127,16 +127,16 @@ static int jh7100_reset_status(struct reset_controller_dev *rcdev,
- 	return !((value ^ data->asserted[offset]) & mask);
- }
- 
--static const struct reset_control_ops jh7100_reset_ops = {
--	.assert		= jh7100_reset_assert,
--	.deassert	= jh7100_reset_deassert,
--	.reset		= jh7100_reset_reset,
--	.status		= jh7100_reset_status,
-+static const struct reset_control_ops starfive_reset_ops = {
-+	.assert		= starfive_reset_assert,
-+	.deassert	= starfive_reset_deassert,
-+	.reset		= starfive_reset_reset,
-+	.status		= starfive_reset_status,
- };
- 
--static int __init jh7100_reset_probe(struct platform_device *pdev)
-+static int __init starfive_reset_probe(struct platform_device *pdev)
- {
--	struct jh7100_reset *data;
-+	struct starfive_reset *data;
- 	int ret;
- 
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-@@ -171,7 +171,7 @@ static int __init jh7100_reset_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	data->rcdev.ops = &jh7100_reset_ops;
-+	data->rcdev.ops = &starfive_reset_ops;
- 	data->rcdev.owner = THIS_MODULE;
- 	data->rcdev.nr_resets = data->nr_resets;
- 	data->rcdev.dev = &pdev->dev;
-@@ -182,16 +182,16 @@ static int __init jh7100_reset_probe(struct platform_device *pdev)
- 	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
- }
- 
--static const struct of_device_id jh7100_reset_dt_ids[] = {
-+static const struct of_device_id starfive_reset_dt_ids[] = {
- 	{ .compatible = "starfive,jh7100-reset" },
- 	{ /* sentinel */ }
- };
- 
--static struct platform_driver jh7100_reset_driver = {
-+static struct platform_driver starfive_reset_driver = {
- 	.driver = {
--		.name = "jh7100-reset",
--		.of_match_table = jh7100_reset_dt_ids,
-+		.name = "starfive-reset",
-+		.of_match_table = starfive_reset_dt_ids,
- 		.suppress_bind_attrs = true,
+-/*
+- * The Qualcomm DWC3 driver suspend implementation appears to be incomplete
+- * for sc8280xp so keep the USB power domains always-on for now.
+- */
+ static struct gdsc usb30_mp_gdsc = {
+ 	.gdscr = 0xab004,
+ 	.pd = {
+ 		.name = "usb30_mp_gdsc",
  	},
+-	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = ALWAYS_ON,
++	.pwrsts = PWRSTS_RET_ON,
  };
--builtin_platform_driver_probe(jh7100_reset_driver, jh7100_reset_probe);
-+builtin_platform_driver_probe(starfive_reset_driver, starfive_reset_probe);
+ 
+ static struct gdsc usb30_prim_gdsc = {
+@@ -6861,8 +6856,7 @@ static struct gdsc usb30_prim_gdsc = {
+ 	.pd = {
+ 		.name = "usb30_prim_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = ALWAYS_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ };
+ 
+ static struct gdsc usb30_sec_gdsc = {
+@@ -6870,8 +6864,7 @@ static struct gdsc usb30_sec_gdsc = {
+ 	.pd = {
+ 		.name = "usb30_sec_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = ALWAYS_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ };
+ 
+ static struct clk_regmap *gcc_sc8280xp_clocks[] = {
 -- 
-2.17.1
+2.35.1
 
