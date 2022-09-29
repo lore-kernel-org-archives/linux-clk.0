@@ -2,155 +2,285 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BDCC07E9D
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 06:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0737FC04A95
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 07:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234890AbiI2GK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 02:10:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60738 "EHLO
+        id S235034AbiI2HIF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 03:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234889AbiI2GKT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 02:10:19 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89CA4D243
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 23:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1664431814;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=PTtWzRgW3VqZaOhXccFFDFwzCsNI/rmpwNeNH2P3fwc=;
-        b=VaFnPgapIYz7UxpYFM2GFN1OozwXkBHnaftPwn+In7MGB9VB8mhC0YHGHX+/P3GM2oOirG
-        nCOnqmRIryDnVFd3XJel4LuT2/nTXiCtWVKv7zBsVXV951gUWadjpZjYUOiDGh7TtkEjfH
-        bSqOKeFnlTQMFzWx+Bs0hLA/g41s2i9OCkM80dYziI135JXzTuMNNH8SEGmU41d1cHdmK1
-        K6gvRL7RRY6r8M/Yew4g0GJw/RbLULV2x0fo+drx8HusgMPhX7Puq4juvMaftPmOikuVhe
-        Ou9dR6ZkJM+fJS9BVN5oP9XcP/9udSDSQsWRksLuqMI3CQdFQBaUmH0qCv6yKw==
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-510-WxNgkFgwN32dxXwxLM9O9g-1; Thu, 29 Sep 2022 02:10:12 -0400
-X-MC-Unique: WxNgkFgwN32dxXwxLM9O9g-1
-Received: from MN2PR19MB3693.namprd19.prod.outlook.com (2603:10b6:208:18a::19)
- by DM6PR19MB4279.namprd19.prod.outlook.com (2603:10b6:5:2bc::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.20; Thu, 29 Sep
- 2022 06:10:10 +0000
-Received: from MN2PR19MB3693.namprd19.prod.outlook.com
- ([fe80::f362:51bb:74a3:fe2c]) by MN2PR19MB3693.namprd19.prod.outlook.com
- ([fe80::f362:51bb:74a3:fe2c%7]) with mapi id 15.20.5676.015; Thu, 29 Sep 2022
- 06:10:10 +0000
-From:   Rahul Tanwar <rtanwar@maxlinear.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-lgm-soc <linux-lgm-soc@maxlinear.com>,
-        Yi xin Zhu <yzhu@maxlinear.com>
-Subject: Re: [PATCH RESEND v2 4/5] clk: mxl: Add validation for register
- reads/writes
-Thread-Topic: [PATCH RESEND v2 4/5] clk: mxl: Add validation for register
- reads/writes
-Thread-Index: AQHYzkwHcZxL62Wq60mV6jLfqKCvSQ==
-Date:   Thu, 29 Sep 2022 06:10:10 +0000
-Message-ID: <MN2PR19MB36932AE7D8804943B14CE74BB1579@MN2PR19MB3693.namprd19.prod.outlook.com>
-References: <cover.1663827071.git.rtanwar@maxlinear.com>
- <3bcdfdf0f66dd2fdcffbdeabb5e3ab0bfb2e3489.1663827071.git.rtanwar@maxlinear.com>
- <20220929002032.7061EC433D7@smtp.kernel.org>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR19MB3693:EE_|DM6PR19MB4279:EE_
-x-ms-office365-filtering-correlation-id: 8bb2ba66-49d9-414e-61f6-08daa1e143b2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0
-x-microsoft-antispam-message-info: EbSzpwxpxKimb8/KB9YCyPmghfrOCgsEFoA+thK4byG5jUAr8njREJphNhZX6UQJxg1qOPxIdAZ9gkOUvSLvmkP+F3p5Rl5jPM94oF1iDXJukNqVsqTWnaorQbkL8b0y1imdFL9k91cHQlGdPRSn/xGn7njFCXXirggBe1qNL4KpGHPElNy4hkPG2UPLUoj71fBwL2N7vtT7ygJiaYE5yQwxYjeNgcPe7yZhNRRzncJEmQBIcckAMU0KazQXh0SgkrUM3HJPS+6uhbuAslrf++SLCLArga7NSMpG3xgdEiU4Jf7t+MZDC8Ol94RBjhrEMZIawtUGGC8od2iutXVWuWGUURjWWCQ3761jD8XKe6Wu0nCoZDWB0r0Ser6Ah87JcP3HGbRVxeKj/b1OIM3bP/mFK9rFj2VS3alwEoj54Om02BgtHx/v2VEYaqZ2Dr+BuYz0Afpnjh1nenZ9+nCQ/OOZIUcup0Rol/cE3IB57sZn7RVRV3fPIvJiyGobWVotWCYYEgSsfWfykbNx236nzg6nVb3b5TfMzMadgR/T/SRATROZV1jDq+fOFSJ/iuocyvs8hQ2vhuMd7FH+GWph1+cDodVoVFqYzglaYFR4aLthr854antnhyHaID1toSpLZr4wlxxrnXHS6YEYAkKyrcrdLTwplA8ZIQA66wmQGPk+14YBrbZ0fpITGlObcEf/b53gBebudWsWfEjDqb3XKt1Dx3hZh2pZYjMY/PIlWoICiNIW774tL50hubD6Vvrmid9mjvkx1mRkBroBHKsxjg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3693.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39850400004)(376002)(136003)(346002)(366004)(451199015)(316002)(54906003)(110136005)(107886003)(86362001)(7696005)(8936002)(52536014)(41300700001)(33656002)(186003)(5660300002)(66946007)(66476007)(66556008)(64756008)(4326008)(91956017)(76116006)(8676002)(53546011)(66446008)(6506007)(2906002)(83380400001)(26005)(9686003)(55016003)(38070700005)(478600001)(71200400001)(122000001)(38100700002);DIR:OUT;SFP:1102
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?8uvdGihD+sUvLZPFBbZGg2NtLJv9ZF6bP1dFszjOsR20KsJXaQuABx5YQjfA?=
- =?us-ascii?Q?yNnUynnhxwIdrxl2mohsJ633p6IYKiIpSBXWlQe8p0PNOPqzHGgHLyfFi87A?=
- =?us-ascii?Q?UDnPh96Wc2kWXmzqaTiAHGGKLcC6esUaRZU1TdX6zpU9bOSwMo4716e/ulkj?=
- =?us-ascii?Q?qBE2UwS5AwCMlBW/31N2vt6EsXbM4wQXlfIvQmOsT3w6b80wJrsSUjt/IAFr?=
- =?us-ascii?Q?TeHt2MhO752jO6pALPmrzNUxUtUiKkQeS78Eo2ET9Am7vOa/uOZ9rfhkkB0K?=
- =?us-ascii?Q?uZXWuDcygIYswdNNsDrWorYkD+fMtQjr+55JDJqfLAEhjVJ9VTYbHD9DewU5?=
- =?us-ascii?Q?ytLiDp7uY6AfG+z/YfUF6aaoKjrMR2K/pjcZnsZ2IBVGH0TkZU6aquNF2gDZ?=
- =?us-ascii?Q?nNWY3slKwHD+JUmrgfLO9rLEokBiEOQnqs0zShTmqRCmwOUvbL65VhytmCF7?=
- =?us-ascii?Q?XqE/xBGg3O6mp6asKfi3Ps0ZGqZLHRXjO7poPy1CWAe3vVcFzG3Qn/97B6Np?=
- =?us-ascii?Q?ae5l/DkMZkI3oVpmrTF7qrwk5eFInlntKCvh2E8pTJ2XtwuXu2m3BFVeVgvp?=
- =?us-ascii?Q?ey1Uugjtm1kLHpGiCVBHHZhAqx1gZKfM0mvR0tSKtT9pSvjWNRycienBjlfW?=
- =?us-ascii?Q?Ia5ltaJerhiAGNdCpLDZlQB7s1GL4YRzSnEatgOkdc3kPplZneMe5VZ31HKy?=
- =?us-ascii?Q?BleteQpfDkDFjtq5cprZ3yFytjB4JomJJdroPENAlry316fwdXgaVnHir9Z8?=
- =?us-ascii?Q?q30JUGF9jBuJehppBmbiZrJ4WpRUXfTWBgiJfZMLzMSVgWX78RGBpQLDIPt6?=
- =?us-ascii?Q?n/g+p0xpeuX7hvREbv7M+bAp0SQwVxfWKE8b9HbsQBdwW5mujZpvOWaTS165?=
- =?us-ascii?Q?Au4Yj4TKJlZ/Duwzh6RAisTrW70H+F4rx8liXujnzn4XvLvnIx2jK1qmz9RJ?=
- =?us-ascii?Q?YGOGGE9uicFcuA02bxUpoolRoCDaJtzs6DdUa2/pIDf1OechiO43QEdcPgUj?=
- =?us-ascii?Q?bYh7LxLgtfUIkN0DDaFPVL/cgi4u139B+IW3vLl7TaADrqsHU89c+ayjuJyy?=
- =?us-ascii?Q?8jVWZOlCCIwv3n6gRCdpmLbQ305D83KdMVI7R87UHfPS7aPKNj7OgZY8//+1?=
- =?us-ascii?Q?vDQ17p5FXO8zzNA52Gaq0CuW4XHtcKof4Dkc01ImWkjVJw37S3AqsTk4QMyH?=
- =?us-ascii?Q?SzIrt2qZSagQAv3x0PWq4gchdfYi9WUHBU8r538X93MPJDXS0S4mV5TsWjRe?=
- =?us-ascii?Q?P0vr2yFBDovc7q8qz5TX5SzOZddXCxWmDvzl18PskyQ1WB1BhfScHL5FxGKf?=
- =?us-ascii?Q?NVKbOFoMwnc25qA1+KgzV6LH7sE2BSH3068mCaq4mqhxO+uRURosMhjFqbC+?=
- =?us-ascii?Q?CJQB5eYBV5wUSUCG7VBk6HojyxUOwf8YCdffavunDfskqQBepOMOr4Qh+uyS?=
- =?us-ascii?Q?HFmt6X9leTQEdWwRnSFCUkKxvk7CYbB/e6hRFMgJKKTtynznex4tlu/3Jk9z?=
- =?us-ascii?Q?m3AfKkYZLUtFcaFedvX0+65AUDw33Y84yuua8g3JHsxeiyrKgl6gepPaER7G?=
- =?us-ascii?Q?H9jd8uhuqLpTlPUImrnH1zVC3qIB8/MD2nkEmERoREG4AuO3geT0nzouT3r3?=
- =?us-ascii?Q?oA=3D=3D?=
+        with ESMTP id S235037AbiI2HH4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 03:07:56 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E8C53123A;
+        Thu, 29 Sep 2022 00:07:53 -0700 (PDT)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Thu, 29 Sep
+ 2022 15:07:50 +0800
+Message-ID: <095f1bd9-c390-196f-cccc-700d75c70cb0@amlogic.com>
+Date:   Thu, 29 Sep 2022 15:07:49 +0800
 MIME-Version: 1.0
-X-OriginatorOrg: maxlinear.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR19MB3693.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bb2ba66-49d9-414e-61f6-08daa1e143b2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2022 06:10:10.1667
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MG2ZlNRjjR8I9hqk/WprdricDCh4cQwhiyEkcN3ZniMvEeuULRLrjRqGFk+qR7bHgElVl2KH7Rd96O7cF2WhxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4279
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: maxlinear.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH V3 3/6] clk: meson: S4: add support for Amlogic S4 SoC PLL
+ clock driver
 Content-Language: en-US
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20220805085716.5635-1-yu.tu@amlogic.com>
+ <20220805085716.5635-4-yu.tu@amlogic.com>
+ <1jiln0yzgj.fsf@starbuckisacylon.baylibre.com>
+ <ed4038fb-c230-fc27-800c-c99bd1770a1c@amlogic.com>
+ <4e3cdd6b-5861-8a4f-1df7-af763f77bad5@amlogic.com>
+ <1jsflftm1y.fsf@starbuckisacylon.baylibre.com>
+ <0c7e6d90-2ce3-25ab-84b6-026ce8a238a8@amlogic.com>
+ <1jtu5uz0ry.fsf@starbuckisacylon.baylibre.com>
+ <9f9cf980-c0c6-d5c3-ced8-8ab50e392470@amlogic.com>
+ <21e14cc1-6b34-e6b0-8da2-ad4b34dac149@amlogic.com>
+ <1jy1u3zfas.fsf@starbuckisacylon.baylibre.com>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <1jy1u3zfas.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/9/2022 8:20 am, Stephen Boyd wrote:=0A> This email was sent from outs=
-ide of MaxLinear.=0A>=20=0A>=20=0A> Quoting Rahul Tanwar (2022-09-21 23:24:=
-27)=0A>> Some clocks support parent clock dividers but they do not=0A>> sup=
-port clock gating (clk enable/disable). Such types of=0A>> clocks might cal=
-l API's for get/set_reg_val routines with=0A>> width as 0 during clk_prepar=
-e_enable() call. Handle such=0A>> cases by first validating width during cl=
-k_prepare_enable()=0A>> while still supporting clk_set_rate() correctly.=0A=
->>=0A>> Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>=0A>> ---=0A>>  =
- drivers/clk/x86/clk-cgu.h | 30 ++++++++++++++++++++++++++----=0A>>   1 fil=
-e changed, 26 insertions(+), 4 deletions(-)=0A>>=0A>> diff --git a/drivers/=
-clk/x86/clk-cgu.h b/drivers/clk/x86/clk-cgu.h=0A>> index 73ce84345f81..46da=
-f9ebd6c9 100644=0A>> --- a/drivers/clk/x86/clk-cgu.h=0A>> +++ b/drivers/clk=
-/x86/clk-cgu.h=0A>> @@ -299,29 +299,51 @@ struct lgm_clk_branch {=0A>>   st=
-atic inline void lgm_set_clk_val(struct regmap *membase, u32 reg,=0A>>     =
-                                u8 shift, u8 width, u32 set_val)=0A>>   {=
-=0A>> -       u32 mask =3D (GENMASK(width - 1, 0) << shift);=0A>> +       u=
-32 mask;=0A>>=0A>> +       /*=0A>> +        * Some clocks support parent cl=
-ock dividers but they do not=0A>> +        * support clock gating (clk enab=
-le/disable). Such types of=0A>> +        * clocks might call this function =
-with width as 0 during=0A>> +        * clk_prepare_enable() call. Handle su=
-ch cases by not doing=0A>> +        * anything during clk_prepare_enable() =
-but handle clk_set_rate()=0A>> +        * correctly=0A>> +        */=0A>> +=
-       if (!width)=0A>> +               return;=0A>=20=0A> Why are the clk_=
-ops assigned in a way that makes the code get here? Why=0A> can't we have d=
-ifferent clk_ops, or not register the clks at all, when=0A> the hardware ca=
-n't be written?=0A=0A=0AThe hardware can actually be written for such clks =
-but only for=20=0Aclk_set_rate() op for setting the clk rate. Just that har=
-dware does not=20=0Aprovide any way to enable/disable such clks.=0A=0AAlter=
-native way to handle such clks could be that the clk consumer does=0Anot in=
-voke clk_prepare_enable() before invoking clk_set_rate(). But we=0Awant to =
-avoid making changes in the clk consumer code to keep it=20=0Astandard. And=
- handle it here by just validating the width parameter.=0A=0AThanks,=0ARahu=
-l=0A=0A=0A>=20=0A>> +=0A>> +       mask =3D (GENMASK(width - 1, 0) << shift=
-);=0A>>          regmap_update_bits(membase, reg, mask, set_val << shift);=
-=0A>=20=0A>=20=0A=0A
+Hi Jerome,
+	Thank you for your reply.
+
+On 2022/9/28 23:27, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> 
+> On Wed 21 Sep 2022 at 16:40, Yu Tu <yu.tu@amlogic.com> wrote:
+> 
+>> Hi Jerome，
+>>
+>> On 2022/8/30 15:37, Yu Tu wrote:
+>>> On 2022/8/30 14:44, Jerome Brunet wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>>>
+>>>>
+>>>> On Tue 30 Aug 2022 at 14:13, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>
+>>>>> On 2022/8/29 17:48, Jerome Brunet wrote:
+>>>>>> [ EXTERNAL EMAIL ]
+>>>>>> On Mon 15 Aug 2022 at 21:20, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>>>
+>>>>>>>>>> +
+>>>>>>>>>> +static struct clk_regmap s4_hdmi_pll_dco = {
+>>>>>>>>>> +    .data = &(struct meson_clk_pll_data){
+>>>>>>>>>> +        .en = {
+>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>> +            .shift   = 28,
+>>>>>>>>>> +            .width   = 1,
+>>>>>>>>>> +        },
+>>>>>>>>>> +        .m = {
+>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>> +            .shift   = 0,
+>>>>>>>>>> +            .width   = 8,
+>>>>>>>>>> +        },
+>>>>>>>>>> +        .n = {
+>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>> +            .shift   = 10,
+>>>>>>>>>> +            .width   = 5,
+>>>>>>>>>> +        },
+>>>>>>>>>> +        .frac = {
+>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL1,
+>>>>>>>>>> +            .shift   = 0,
+>>>>>>>>>> +            .width   = 17,
+>>>>>>>>>> +        },
+>>>>>>>>>> +        .l = {
+>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>> +            .shift   = 31,
+>>>>>>>>>> +            .width   = 1,
+>>>>>>>>>> +        },
+>>>>>>>>>> +        .rst = {
+>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>> +            .shift   = 29,
+>>>>>>>>>> +            .width   = 1,
+>>>>>>>>>> +        },
+>>>>>>>>>> +    },
+>>>>>>>>>> +    .hw.init = &(struct clk_init_data){
+>>>>>>>>>> +        .name = "hdmi_pll_dco",
+>>>>>>>>>> +        .ops = &meson_clk_pll_ro_ops,
+>>>>>>>>>> +        .parent_data = (const struct clk_parent_data []) {
+>>>>>>>>>> +            { .fw_name = "xtal", }
+>>>>>>>>>> +        },
+>>>>>>>>>> +        .num_parents = 1,
+>>>>>>>>>> +        /*
+>>>>>>>>>> +         * Display directly handle hdmi pll registers ATM, we need
+>>>>>>>>>> +         * NOCACHE to keep our view of the clock as accurate as
+>>>>>>>>>> +         * possible
+>>>>>>>>>> +         */
+>>>>>>>>>
+>>>>>>>>> Is it really ?
+>>>>>>>>>
+>>>>>>>>> Given that HDMI support for the s4 is there yet, the
+>>>>>>>>> addresses have changes and the region is no longer a syscon, it is
+>>>>>>>>> time
+>>>>>>>>> for the HDMI driver to get fixed.
+>>>>>>> The HDMI PLL is configured in the Uboot phase and does not change the
+>>>>>>> frequency in the kernel phase. So we use the NOCACHE flag and
+>>>>>>> "ro_ops".
+>>>>>> That's no reason to put NOCACHE or ro-ops
+>>>>>> If you want the frequencies to be statically assinged, the correct way
+>>>>>> would be through assigned-rate in DT I guess.
+>>>>>
+>>>>> Okay. You're right. However, when registering with OPS, HDMI PLL will be
+>>>>> reset. It takes time for PLL to stabilize the output frequency, which
+>>>>> will
+>>>>> lead to the startup screen flashing.
+>>>>>
+>>>>> I would like to know how to solve this problem if not using ro_ops.
+>>>>>
+>>>>>>
+>>>>
+>>>> You can add new ops or tweak the current init function.
+>>> HDMI PLL is not different from other PLLS, so I think adding OPS is
+>>> weird.
+>>>
+>>>>
+>>>> Safest would be to do the following :
+>>>>    * Check if the PLLs is already on.
+>>>>    * Check if the 'pll->init_regs' matches what is already set
+>>>>      - if so, you can skip the reset
+>>>>      - if not, you need to reset as usual
+>>> static int meson_clk_pll_init(struct clk_hw *hw)
+>>> {
+>>>           struct clk_regmap *clk = to_clk_regmap(hw);
+>>>           struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>>>           if (pll->init_count) {
+>>>                   meson_parm_write(clk->map, &pll->rst, 1);
+>>>                   regmap_multi_reg_write(clk->map, pll->init_regs,
+>>>                                   |      pll->init_count);
+>>>                   meson_parm_write(clk->map, &pll->rst, 0);
+>>>           }
+>>>           return 0;
+>>> }
+>>> Because the init function looks like this. Therefore, HDMI PLL init_count
+>>> is not given.
+> 
+> I don't get the remark. You've got pll->init_count right there.
+> 
+>>> Can I change it like this?
+> 
+> What change ? The function above looks a lot like  meson_clk_pll_init()
+> in the actual source
+> 
+>>
+>> I don't know if this change meets your requirements? Please give us your
+>> valuable advice.
+> 
+> What change ?
+
+static struct clk_regmap s4_hdmi_pll_dco = { 
+
+         .data = &(struct meson_clk_pll_data){ 
+
+                 .en = { 
+
+                         .reg_off = ANACTRL_HDMIPLL_CTRL0, 
+
+                         .shift   = 28, 
+
+                         .width   = 1, 
+
+                 }, 
+
+                 .m = { 
+
+                         .reg_off = ANACTRL_HDMIPLL_CTRL0, 
+
+                         .shift   = 0, 
+
+                         .width   = 8, 
+
+                 }, 
+
+                 .n = { 
+
+                         .reg_off = ANACTRL_HDMIPLL_CTRL0, 
+
+                         .shift   = 10, 
+
+                         .width   = 5, 
+
+                 }, 
+
+                 .frac = { 
+
+                         .reg_off = ANACTRL_HDMIPLL_CTRL1, 
+
+                         .shift   = 0, 
+
+                         .width   = 17, 
+
+                 }, 
+
+                 .l = { 
+
+                         .reg_off = ANACTRL_HDMIPLL_CTRL0, 
+
+                         .shift   = 31, 
+
+                         .width   = 1, 
+
+                 }, 
+
+                 .rst = { 
+
+                         .reg_off = ANACTRL_HDMIPLL_CTRL0, 
+
+                         .shift   = 29, 
+
+                         .width   = 1, 
+
+                 }, 
+
+                 .range = &s4_gp0_pll_mult_range, 
+
+         }, 
+
+         .hw.init = &(struct clk_init_data){ 
+
+                 .name = "hdmi_pll_dco", 
+
+                 .ops = &meson_clk_pll_ops, 
+
+                 .parent_data = (const struct clk_parent_data []) { 
+
+                         { .fw_name = "xtal", } 
+
+                 }, 
+
+                 .num_parents = 1, 
+
+         }, 
+
+};
+
+This is my code right now. Because init_count and init_regs are not 
+defined, HDMI PLL is not reset. In this way, the kernel will not blink 
+when the Uboot starts. Then in the kernel stage, if we want to change 
+the HDMI PLL frequency value, we can directly change M, N and OD. In 
+fact, we will not change the HDMI PLL frequency value later.
+
+I wonder if you accept this change?
+
+
 
