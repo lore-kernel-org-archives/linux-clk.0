@@ -2,130 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC4FC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 11:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BA6C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 11:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235029AbiI2LlH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 07:41:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
+        id S235129AbiI2Lqm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 07:46:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233190AbiI2LlG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 07:41:06 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A4C130725
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 04:41:05 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id l22so108108edj.5
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 04:41:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=Dw83wxyiv8d9x5gzkn+1kB/8arfTKV9yvRNBKmJCj1w=;
-        b=HYhIixFmCMcXWuK0s+gqC/gCRpGPJvlcnCY0+n5kIOvBMxShrjzttWLHNjaFgQbehG
-         mU9l+hsqyFarc1jW/xT3lTrQiPEdHr/hrvYoIKvN5DS2cZq5IY3mi0FWT17CO191utFO
-         H86TI/w8jonw+bEnTxU5yB5wy+8W++oe6BFaGBESddWmETX2UjFQHdFSurvwLlvfD1y/
-         A3ggxGJ65FoD0Kim9IqtCeT5GvltP5mMY53nuqvA6iGp1JMmjxpCe/wtbQGThVo+NcBw
-         oEhhXd8eFdXXt36bijLPz3+eElPV3m7Pv+PpaH5R/fcUZc3fx1iMbNNnkMYEgT10Z5jG
-         o3YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=Dw83wxyiv8d9x5gzkn+1kB/8arfTKV9yvRNBKmJCj1w=;
-        b=aZ9JMPHjzUjl4I5cObL9r6lhQabA3fWcSHzT7WbPUUz7zVlzqOO+wpmiosYXtGiWw+
-         4SJx1//+jPqtMRVi6r02/woaCsVzh8TTUmoCV1hxvYeI7SDP/NnQunU6NjZdKSGOXiGB
-         Z2SwGR6dNLLX+I/OvVNTb3KD41IFOalmKvexX1ZpAj/lUGFrsFeQw9tAJcNOHlY/nZzc
-         Y2OUGWmTsR0wYkhZtfalQZkENKGJIr3ORg84ljSbfqfqW8001kJumeMAPPALGRF1PjWH
-         a3rqTHZSA/EIzJBhv1wUe50nGbiHPqE9lgclm0/JN/jBDOuB4zs7cjmDcnicmj2vucwz
-         iUmQ==
-X-Gm-Message-State: ACrzQf0b5IQtUVwvK481rQhWj8dMXWerHVtyTgj+Iv2w+Mp2FKr4kyoI
-        yGZnw3tU+taDlbX41z4iY/nlQg==
-X-Google-Smtp-Source: AMsMyM7PI78XuR+onhPJYVzNFqVptvRezUc+DvwBLhZWgOXy6OHV4kaokvdBly8hqNswcRHqhAckJg==
-X-Received: by 2002:a05:6402:50cc:b0:451:bf26:8c51 with SMTP id h12-20020a05640250cc00b00451bf268c51mr3041588edb.336.1664451664374;
-        Thu, 29 Sep 2022 04:41:04 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id g15-20020aa7d1cf000000b0044e937ddcabsm5265346edp.77.2022.09.29.04.41.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 04:41:03 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 13:40:57 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vfedorenko@novek.ru>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
-Message-ID: <YzWESUXPwcCo67LP@nanopsycho>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
+        with ESMTP id S234434AbiI2Lql (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 07:46:41 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D74E7112666;
+        Thu, 29 Sep 2022 04:46:35 -0700 (PDT)
+X-UUID: 9a6424274c814cd4bc489c8d6aad0c69-20220929
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=rLy55ox0mqF8121Buqk4aymTEF8+D74q/C0Yb4uXas8=;
+        b=QyKqGegNKOigxlq2xTRnReS4xVo1ghgKtxTBiu1x8oEhJkGyDj/9+s/ifjmH1rx0T6aWV+dGps4P5TbDAUzBwzmJKWskzvHwudHE/y/vDnrUy3NzfH7oC3Y88rV+JuFetdSEQsQFNboB6yPjddifzbh9GTJLsRlfDSKF4LG+OkA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.11,REQID:2d663e78-22f6-4992-879c-fdde8247ef9d,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-25
+X-CID-META: VersionHash:39a5ff1,CLOUDID:abd080a3-dc04-435c-b19b-71e131a5fc35,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: 9a6424274c814cd4bc489c8d6aad0c69-20220929
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <johnson.wang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 722265442; Thu, 29 Sep 2022 19:46:31 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Thu, 29 Sep 2022 19:46:29 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Thu, 29 Sep 2022 19:46:29 +0800
+From:   Johnson Wang <johnson.wang@mediatek.com>
+To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <angelogioacchino.delregno@collabora.com>, <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <kuan-hsin.lee@mediatek.com>, <yu-chang.wang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>
+Subject: [PATCH v3 0/4] Introduce MediaTek frequency hopping driver
+Date:   Thu, 29 Sep 2022 19:46:20 +0800
+Message-ID: <20220929114624.16809-1-johnson.wang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220626192444.29321-1-vfedorenko@novek.ru>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Jun 26, 2022 at 09:24:41PM CEST, vfedorenko@novek.ru wrote:
->From: Vadim Fedorenko <vadfed@fb.com>
->
->Implement common API for clock/DPLL configuration and status reporting.
->The API utilises netlink interface as transport for commands and event
->notifications. This API aim to extend current pin configuration and
->make it flexible and easy to cover special configurations.
+The purpose of this serie is to enhance frequency hopping and spread spectrum
+clocking feature for MT8186.
+We introduce new PLL register APIs and some helpers for FHCTL hardware control.
+For MT8186 PLL driver, we replace mtk_clk_register_plls() with newly added API
+to support frequency hopping and SSC function for specific PLLs.
 
-Do you have the userspace part somewhere?
-It is very nice to add example outputs of user cmdline of such tool to
-the patch description/cover letter.
+Changes in v3:
+- Change binding file name.
+- Add some constraints for properties.
+- Rename "mediatek,hopping-ssc-percents" to "mediatek,hopping-ssc-percent".
+- Add new config symbol.
 
-Also, did you consider usage of sysfs? Why it isn't a better fit than
-netlink?
+Changes in v2:
+- Use SoC-specific compatible instead of generic one.
+- Use standard clocks property and vendor-specific property in dt-binding.
+- Remove some unused arguments and fix some coding style.
 
-Regarding the naming, is "dpll" the correct one. Forgive me for being a
-syncE greenie, but isn't dpll just one algo to achieve syntonous
-clocks? Perhaps "dco" as for "Digitally Controlled Oscillator" would be
-somewhat better fit?
+Johnson Wang (4):
+  clk: mediatek: Export PLL operations symbols
+  dt-bindings: arm: mediatek: Add new bindings of MediaTek frequency
+    hopping
+  clk: mediatek: Add new clock driver to handle FHCTL hardware
+  clk: mediatek: Change PLL register API for MT8186
 
+ .../arm/mediatek/mediatek,mt8186-fhctl.yaml   |  53 ++++
+ drivers/clk/mediatek/Kconfig                  |   8 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-fhctl.c              | 244 ++++++++++++++++
+ drivers/clk/mediatek/clk-fhctl.h              |  26 ++
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c  |  66 ++++-
+ drivers/clk/mediatek/clk-pll.c                |  84 +++---
+ drivers/clk/mediatek/clk-pll.h                |  56 ++++
+ drivers/clk/mediatek/clk-pllfh.c              | 268 ++++++++++++++++++
+ drivers/clk/mediatek/clk-pllfh.h              |  82 ++++++
+ 10 files changed, 835 insertions(+), 53 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-fhctl.yaml
+ create mode 100644 drivers/clk/mediatek/clk-fhctl.c
+ create mode 100644 drivers/clk/mediatek/clk-fhctl.h
+ create mode 100644 drivers/clk/mediatek/clk-pllfh.c
+ create mode 100644 drivers/clk/mediatek/clk-pllfh.h
 
->
->v1 -> v2:
-> * implement returning supported input/output types
-> * ptp_ocp: follow suggestions from Jonathan
-> * add linux-clk mailing list
->v0 -> v1:
-> * fix code style and errors
-> * add linux-arm mailing list
->
->
->Vadim Fedorenko (3):
->  dpll: Add DPLL framework base functions
->  dpll: add netlink events
->  ptp_ocp: implement DPLL ops
->
-> MAINTAINERS                 |   8 +
-> drivers/Kconfig             |   2 +
-> drivers/Makefile            |   1 +
-> drivers/dpll/Kconfig        |   7 +
-> drivers/dpll/Makefile       |   7 +
-> drivers/dpll/dpll_core.c    | 161 ++++++++++
-> drivers/dpll/dpll_core.h    |  40 +++
-> drivers/dpll/dpll_netlink.c | 595 ++++++++++++++++++++++++++++++++++++
-> drivers/dpll/dpll_netlink.h |  14 +
-> drivers/ptp/Kconfig         |   1 +
-> drivers/ptp/ptp_ocp.c       | 169 +++++++---
-> include/linux/dpll.h        |  29 ++
-> include/uapi/linux/dpll.h   |  81 +++++
-> 13 files changed, 1079 insertions(+), 36 deletions(-)
-> create mode 100644 drivers/dpll/Kconfig
-> create mode 100644 drivers/dpll/Makefile
-> create mode 100644 drivers/dpll/dpll_core.c
-> create mode 100644 drivers/dpll/dpll_core.h
-> create mode 100644 drivers/dpll/dpll_netlink.c
-> create mode 100644 drivers/dpll/dpll_netlink.h
-> create mode 100644 include/linux/dpll.h
-> create mode 100644 include/uapi/linux/dpll.h
->
->-- 
->2.27.0
->
+-- 
+2.18.0
+
