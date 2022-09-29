@@ -2,122 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FAFC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 12:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F89C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 12:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234960AbiI2MUa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 08:20:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48416 "EHLO
+        id S234861AbiI2Muo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 08:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233488AbiI2MU3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 08:20:29 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E19E8992B;
-        Thu, 29 Sep 2022 05:20:27 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id f26so609855qto.11;
-        Thu, 29 Sep 2022 05:20:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=0JbOCdOKk6WwUbn/XvGSZm441jy6P94HZMbRF7zv7gk=;
-        b=kxxPejVwKEc2XnhVNyVjyQWkS3qgHlW4IMDjsGSAtFp0BP2b3Js4xsJ0Qa1opR3dmB
-         BAc4cAipXgsbVbNlfmVQEjtXV+E7UyzcVsqzAS8bmYQdghTvgk3lyP2bfBjdYiFlj4Fg
-         c1gWheJ/NQQgnUrMhvOBMEFXZ59fHPDKxMiC+od6Ch7cACTcSRJ7h6gwK8sKSYqiPTy2
-         FYo0n2mHXC/2TdWdR9SxizwI0y4jrVicvuBdLiVWYNPXcqX+NH1x7oVSWrWobWO8lg8r
-         zFIA+DbHF5ZuPsCKwUMqDYe6mtRcWIVCB6+nM8ITihu8sFuBkHCcVwsNk51ih+JsUNVL
-         f+jA==
-X-Gm-Message-State: ACrzQf1MIXmTnrGX4KQlXM4nPIUURwmAg7xAGrH4F7PgktHZPOAIdSu0
-        HvrOSe0dmbuQ6WzB3z0CdifVUOvGCrVRVA==
-X-Google-Smtp-Source: AMsMyM5sEfkxWRi5K7J/t8SGo6qDH9ceaJd3Fz4VRWNa6dcdampFmAVTh/ZCYQbZNXGrmQz6azUGCg==
-X-Received: by 2002:a05:622a:1307:b0:35c:aacf:20 with SMTP id v7-20020a05622a130700b0035caacf0020mr2001075qtk.444.1664454026515;
-        Thu, 29 Sep 2022 05:20:26 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id c22-20020ac81116000000b0035d43eb67bcsm5114833qtj.91.2022.09.29.05.20.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 05:20:26 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-3321c2a8d4cso12524357b3.5;
-        Thu, 29 Sep 2022 05:20:25 -0700 (PDT)
-X-Received: by 2002:a81:5a57:0:b0:353:6de6:3263 with SMTP id
- o84-20020a815a57000000b003536de63263mr2925782ywb.358.1664454025727; Thu, 29
- Sep 2022 05:20:25 -0700 (PDT)
+        with ESMTP id S232080AbiI2Mun (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 08:50:43 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E432E12207D;
+        Thu, 29 Sep 2022 05:50:42 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0419566022AF;
+        Thu, 29 Sep 2022 13:50:40 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1664455841;
+        bh=W4hvA7XiCHkweWKtVQQQDwgKeQSoZdrUIBJphAwsUv4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Pkv1TP36XZwPEoSz/b4qGlcU78aN0fXyPvtAVCymrUncaArQ+2gPdy+HXRj7Rb/Mv
+         TVTqMXNfnNmbInTi3/xUUPQ24Y1XA6vLBDOeLGQSL6Skyom66NDfJxGvbC6qZJzacp
+         mCjAnTX0ot417sHgpNzDh4WuGGTroDI3+SXtNrg5RVNv9g2oKKogLbYoBlixWnzIPO
+         gAfZBTY5uRdkH4NfXb2NYXXI9g80PBdDqocT0JWZdEo8YIsVwA+Z5U0PxMeY6YwXBD
+         AMXu8mRxdiiWQgZt6eDBmX+/9Si/3Dalu6+VICb8Kb90d1QXJ/nJOPxA99okSbv8vQ
+         uuqx1rR25kzMw==
+Message-ID: <17c5cc9c-50ea-aeac-04e0-20b6c093c7ec@collabora.com>
+Date:   Thu, 29 Sep 2022 14:50:38 +0200
 MIME-Version: 1.0
-References: <20220923205251.1387-1-alexander.helms.jy@renesas.com>
- <20220923205251.1387-2-alexander.helms.jy@renesas.com> <20220926230438.GA3128861-robh@kernel.org>
- <cbe89899-7f56-c43a-f8c9-887825fbe4a6@amd.com> <CAMuHMdUuzrdf4rmD3n_-S9ujrfmY5Y6VOsNapiLRR5MG9bKAjw@mail.gmail.com>
- <5a037955-4832-e42a-eb58-719ed4672395@renesas.com> <20220928234137.71ACEC433D6@smtp.kernel.org>
- <a89b8124-78e2-f9a9-c3bf-1e30687127ca@amd.com>
-In-Reply-To: <a89b8124-78e2-f9a9-c3bf-1e30687127ca@amd.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 29 Sep 2022 14:20:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVrQJaBmrWoMp7EFNFhEpamp7qZ-eKqyChVNvr5=BPCUg@mail.gmail.com>
-Message-ID: <CAMuHMdVrQJaBmrWoMp7EFNFhEpamp7qZ-eKqyChVNvr5=BPCUg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
-To:     Michal Simek <michal.simek@amd.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, geert+renesas@glider.be
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3] reset: mediatek: Move mediatek system clock reset to
+ reset folder
+Content-Language: en-US
+To:     Bo-Chen Chen <rex-bc.chen@mediatek.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, matthias.bgg@gmail.com,
+        p.zabel@pengutronix.de
+Cc:     runyang.chen@mediatek.com, miles.chen@mediatek.com,
+        wenst@chromium.org, nfraprado@collabora.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20220929121031.17523-1-rex-bc.chen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220929121031.17523-1-rex-bc.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Michal,
+Il 29/09/22 14:10, Bo-Chen Chen ha scritto:
+> To manager mediatek system clock reset easier, we move the driver to
+> drivers/reset.
+> 
+> The modifications in this series:
+> - Move clk/mediatek/reset.c to reset/reset-mediatek-sysclk.c
+> - Move reset data which are scattered around the mediatek drivers to
+>    reset-mediatek-sysclk.c
+> - For mtk clk drivers which support device, we can ues
+>    mtk_reset_controller_register() to register reset controller using
+>    auxiliary bus.
+> - For mtk clk drivers which do not support device (only support
+>    device_node), we use mtk_reset_{init/remove}_with_node to register
+>    reset controller.
+> 
+> Signed-off-by: Bo-Chen Chen <rex-bc.chen@mediatek.com>
 
-On Thu, Sep 29, 2022 at 2:01 PM Michal Simek <michal.simek@amd.com> wrote:
-> On 9/29/22 01:41, Stephen Boyd wrote:
-> > Quoting Alex Helms (2022-09-28 16:16:04)
-> >> On 9/27/2022 7:51 AM, Geert Uytterhoeven wrote:
-> >>> On Tue, Sep 27, 2022 at 4:10 PM Michal Simek <michal.simek@amd.com> wrote:
-> >>>> On 9/27/22 01:04, Rob Herring wrote:
-> >>>>> On Fri, Sep 23, 2022 at 01:52:50PM -0700, Alex Helms wrote:
-> >>>>>> Add dt bindings for the Renesas ProXO oscillator.
-> >>>>>>
-> >>>>>> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> >>>
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> >>>
-> >>>> Driver is also using clock-output-names which is not listed here.
-> >>>
-> >>> ... which is deprecated, and thus should not be used by the driver
-> >>> at all.
-> >>
-> >> Can you point me to somewhere showing it is deprecated? It is in the
-> >> current dt clock documentation.
-> >
-> > I wouldn't say it is deprecated. Instead, it isn't useful if you're able
-> > to use struct clk_parent_data and auto-generated clk names.
->
-> I am not closely doing clk subsystem but these chips are clock provider without
-> any parent. If you mean calling function like this
-> of_clk_get_parent_name(client->dev.of_node, 0) then it should return null.
-> But maybe there is something else what you are referring to.
->
-> I see that fixed clock driver is using node->name which is also problematic
-> because node name for these devices on i2c will look like clock-controller@XX
-> where XX could be the same when i2c muxes are used.
+I've just analyzed this idea a bit more, and there's the outcome.
 
-Indeed, drivers typically use the node name or the driver name instead,
-but that may cause conflicts in case of multiple instances.
-So you best append ".%u" obtained from e.g. <linux/idr.h>.
+This driver would be fine, if some MediaTek SoCs weren't shipped with
+a bootloader that supports only very small kernels... because then, if
+the reset controller is not available at boot time, it's unlikely that
+you can probe the eMMC or the uSD, so it won't be possible to actually
+compile this driver as a module and load it afterwards.
 
-> And in connection to deprecation. I see only one file which is saying that it is
-> deprecated.
-> Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-> and it was deprecated before yaml conversion already.
+Please don't misunderstand me: I like the idea of having the MediaTek
+SoC sysclk reset controller as a ... reset controller driver but, to
+make that work, one fundamental issue must be solved...
 
-It was deprecated long before the introduction of json-schema (2015?).
+If the kernel is configured for, let's say, MT2701 and MT2712, we're
+always building in reset controller support for MT7622, 7629, 8135, 8173,
+8183, 8186, 8192, 8195 - and this list will grow with MT8188, and others.
 
-Gr{oetje,eeting}s,
+Obviously, it's useless to have support for, say, MT7622, if the MT7622
+system clock controllers aren't built-in, nor modules.
 
-                        Geert
+So, to make this idea to work, we have to find a way to:
+1. Build in support only for the required SoC(s)
+2. Put the reset index mapping arrays in SoC-specific files, or this
+    single file driver will see an exponential growth.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Wrapping it up - as the driver is right now - we're losing flexibility:
+we need to maintain the current flexibility while keeping the improvements
+that are made with this proposal.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Ideas?
+
+Regards,
+Angelo
+
+> ---
+> Changes for v3:
+> 1. Add reset bit of PCIE and USB for MT8195.
+> 2. Rebased oo linux-next-0928.
+> 
+> Version for this series:
+> v2 : https://lore.kernel.org/all/20220923045738.2027-1-rex-bc.chen@mediatek.com/
+> v1 : https://lore.kernel.org/all/20220922141107.10203-1-rex-bc.chen@mediatek.com/
+> RFC: https://lore.kernel.org/all/20220527090355.7354-1-rex-bc.chen@mediatek.com/
+
