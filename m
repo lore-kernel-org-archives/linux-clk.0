@@ -2,113 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EFCC433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 01:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828C8C433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 01:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233065AbiJABV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 21:21:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34364 "EHLO
+        id S232255AbiJABWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 21:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232422AbiJABVE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 21:21:04 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E313A2BE3E;
-        Fri, 30 Sep 2022 18:17:48 -0700 (PDT)
-X-QQ-mid: bizesmtp91t1664586871tcwf5ude
-Received: from CSD1051 ( [113.72.146.201])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Sat, 01 Oct 2022 09:14:29 +0800 (CST)
-X-QQ-SSF: 01000000000000308000000A0000000
-X-QQ-FEAT: PXtIlpCZyqdoUCaznDtdk1gVxdQFhDYD3xz//q16G0AgZvwIO2tuR6R0JunZn
-        uxvR+gjF7QCJd/Vn6HBzqgWAfDT0XURA9RI5t+BFQetFrVz9CFQnuU6VO6Nk+L8kIEZ4Gna
-        0WhRHPrxLqR4kbt8kzIozEzYDeg3FOe0/VFf2mzwKPM86sf0cNpmmSciBtnnKl7La4P6iXy
-        TbFieBvcljfVC5YsGyJQLSk9IlT4ZzCYCI4cgAGwC7/5EUBU0IU0djPo6pZ86BTHKhhja9o
-        k6XXlhPiWxO2Ox6oyTAjEOR0f4nTM2SoXpUxD02jtmKFRMMk28OQILWco8LehWnqTB9xrv0
-        zucVUFcdqPvSqxvf88=
-X-QQ-GoodBg: 0
-From:   <hal.feng@linux.starfivetech.com>
-To:     "'Conor Dooley'" <conor@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>
-Cc:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        "'Paul Walmsley'" <paul.walmsley@sifive.com>,
-        "'Palmer Dabbelt'" <palmer@dabbelt.com>,
-        "'Albert Ou'" <aou@eecs.berkeley.edu>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Marc Zyngier'" <maz@kernel.org>,
-        "'Philipp Zabel'" <p.zabel@pengutronix.de>,
-        "'Stephen Boyd'" <sboyd@kernel.org>,
-        "'Michael Turquette'" <mturquette@baylibre.com>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        "'Emil Renner Berthing'" <kernel@esmil.dk>,
+        with ESMTP id S232268AbiJABVt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 21:21:49 -0400
+Received: from post.baikalelectronics.com (post.baikalelectronics.com [213.79.110.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F15D0155167;
+        Fri, 30 Sep 2022 18:19:12 -0700 (PDT)
+Received: from post.baikalelectronics.com (localhost.localdomain [127.0.0.1])
+        by post.baikalelectronics.com (Proxmox) with ESMTP id 41EAAE0EB8;
+        Fri, 30 Sep 2022 01:54:10 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        baikalelectronics.ru; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:from:from:in-reply-to:message-id
+        :mime-version:references:reply-to:subject:subject:to:to; s=post;
+         bh=hO2V5nBRDZ70UPDSWUoFIOzIX8LARNPujX6wRFEur0g=; b=dZloiYP2pzYT
+        kgFzeY6JxNRdNU2yJqkx+wLbWHvfkTkHVEw5ry8IEf+W8ouxYId3MlSGDA/NxO/j
+        m20bX4Jt97VCbU+ZrVJjp/rGldtkgTpx8bkDoPuy63qBOJP4kSyqfbcCTEp72rta
+        TlMRZVh/DM7KPgkBl41HvomWgYmQz3A=
+Received: from mail.baikal.int (mail.baikal.int [192.168.51.25])
+        by post.baikalelectronics.com (Proxmox) with ESMTP id 302E5E0E6B;
+        Fri, 30 Sep 2022 01:54:10 +0300 (MSK)
+Received: from localhost (192.168.168.10) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Sep 2022 01:54:10 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com> <4ddabe3a-9f55-2a6a-c1c1-ccc3fc74e98a@linaro.org> <YzXc/FSbDpkElK0O@spud>
-In-Reply-To: <YzXc/FSbDpkElK0O@spud>
-Subject: Re: [PATCH v1 00/30] Basic StarFive JH7110 RISC-V SoC support
-Date:   Sat, 1 Oct 2022 09:13:01 +0800
-Message-ID: <617C2EE03810F071+013401d8d532$f4548310$dcfd8930$@linux.starfivetech.com>
+Subject: [PATCH RESEND v12 2/8] clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+Date:   Fri, 30 Sep 2022 01:53:56 +0300
+Message-ID: <20220929225402.9696-3-Sergey.Semin@baikalelectronics.ru>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220929225402.9696-1-Sergey.Semin@baikalelectronics.ru>
+References: <20220929225402.9696-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQLyOrMrqu8us6tOmdilaJnshXDZwAImr5qgAixKxMCro1Q8gA==
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [192.168.168.10]
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 18:59:24 +0100, Conor Dooley wrote:
-> On Thu, Sep 29, 2022 at 04:45:26PM +0200, Krzysztof Kozlowski wrote:
-> > On 29/09/2022 16:31, Hal Feng wrote:
-> >
-> > > This series is also available at
-> > > https://github.com/hal-feng/linux/commits/visionfive2-minimal
-> > >
-> > > [1]
-> > > https://www.cnx-software.com/2022/08/23/starfive-visionfive-2-quad-c
-> > > ore-risc-v-sbc-linux/
-> > > [2] https://wiki.rvspace.org/
-> > >
-> > > Emil Renner Berthing (17):
-> > >   dt-bindings: riscv: Add StarFive JH7110 bindings
-> > >   dt-bindings: timer: Add StarFive JH7110 clint
-> > >   dt-bindings: interrupt-controller: Add StarFive JH7110 plic
-> > >   dt-bindings: sifive-l2-cache: Support StarFive JH71x0 SoCs
-> > >   soc: sifive: l2 cache: Convert to platform driver
-> > >   soc: sifive: l2 cache: Add StarFive JH71x0 support
-> > >   reset: starfive: jh7100: Use 32bit I/O on 32bit registers
-> > >   dt-bindings: reset: Add StarFive JH7110 reset definitions
-> > >   clk: starfive: Factor out common clock driver code
-> > >   dt-bindings: clock: Add StarFive JH7110 system clock definitions
-> > >   dt-bindings: clock: Add starfive,jh7110-clkgen-sys bindings
-> > >   clk: starfive: Add StarFive JH7110 system clock driver
-> > >   dt-bindings: clock: Add StarFive JH7110 always-on definitions
-> > >   dt-bindings: clock: Add starfive,jh7110-clkgen-aon bindings
-> > >   clk: starfive: Add StarFive JH7110 always-on clock driver
-> > >   RISC-V: Add initial StarFive JH7110 device tree
-> > >   RISC-V: Add StarFive JH7110 VisionFive2 board device tree
-> >
-> > Where is the rest of patches? Lists got only 5 of them. Anyway this is
-> > a bit too big patchset. Split per subsystem.
-> 
-> They seem to be coming in over time in dribs and drabs. I assume it is not
-a
-> mailing list problem given how many lists are CCed on the mail and the
-fact
-> that they have different providers.
-> 
-> For v2 (or multiple v2s) please fix up your process so that this gets sent
-> normally and not a couple of patches every hour.
+Most likely due to copy-paste mistake the divider has been set to 10 while
+according to the SoC reference manual it's supposed to be 8 thus having
+PTP clock frequency of 156.25 MHz.
 
-Our email server has technical issue and we are aware of this.
-Will fix in next revision. Sorry for the inconvenience caused.
+Fixes: 353afa3a8d2e ("clk: Add Baikal-T1 CCU Dividers driver")
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+---
+ drivers/clk/baikal-t1/clk-ccu-div.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best Regards,
-Hal
+diff --git a/drivers/clk/baikal-t1/clk-ccu-div.c b/drivers/clk/baikal-t1/clk-ccu-div.c
+index f141fda12b09..ea77eec40ddd 100644
+--- a/drivers/clk/baikal-t1/clk-ccu-div.c
++++ b/drivers/clk/baikal-t1/clk-ccu-div.c
+@@ -207,7 +207,7 @@ static const struct ccu_div_info sys_info[] = {
+ 	CCU_DIV_GATE_INFO(CCU_SYS_XGMAC_REF_CLK, "sys_xgmac_ref_clk",
+ 			  "eth_clk", CCU_SYS_XGMAC_BASE, 8),
+ 	CCU_DIV_FIXED_INFO(CCU_SYS_XGMAC_PTP_CLK, "sys_xgmac_ptp_clk",
+-			   "eth_clk", 10),
++			   "eth_clk", 8),
+ 	CCU_DIV_GATE_INFO(CCU_SYS_USB_CLK, "sys_usb_clk",
+ 			  "eth_clk", CCU_SYS_USB_BASE, 10),
+ 	CCU_DIV_VAR_INFO(CCU_SYS_PVT_CLK, "sys_pvt_clk",
+-- 
+2.37.3
+
 
