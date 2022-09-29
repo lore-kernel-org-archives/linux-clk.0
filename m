@@ -2,104 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6D9C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 18:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2454AC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 18:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbiI2Sve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 14:51:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44818 "EHLO
+        id S229462AbiI2SxK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 14:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbiI2Svb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 14:51:31 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AD3F13D850;
-        Thu, 29 Sep 2022 11:51:30 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id ay36so1570921wmb.0;
-        Thu, 29 Sep 2022 11:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=5mnSpNIFACpxpGOfOqdDk93rUyldB4P9QmLL2da/TPo=;
-        b=oGc3wjTZu6wmTA+cw8D+q0x34E0YHhLhGKzuvtMi7oi2Bp2Wh84WEoOI7BT7EuH/3g
-         NoZZpDTj6ZFP2DU9petRudB83qoI7cwxVC+VvAJUKCaST/wJcZWMNYh3DpzrSE5FrxcD
-         sZ5Ba2rHJfRGk65L012XY4EWX5EvvvIeoAiUPKzfPSCX66Spy58dNSQmh7dfD40VLmbu
-         1lmRVyYkf8RpvUOv7ma+gO+2pRNnP86sgPxgh1bp+ooylgBfd/xznqoMdcUciuFV7f4u
-         i/3BDUfFbBMC3RU/txuiDdvxklmCOzuEsHfH3YqjG5Nj+A4wG99LwxQyExAdDuH2HF67
-         Lc4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=5mnSpNIFACpxpGOfOqdDk93rUyldB4P9QmLL2da/TPo=;
-        b=NEdyfydnAZyPV5Mk4B5qt68bAtq+3HNXKusgTlqOZNlggEH4jXVmeh2zEpJtruxfh1
-         GfrwvUr8nsdbOUahgwlL6yWLhJ/ckHitjsiJRWsLJPHxuQewOSQoFg6DdbXo7AT6q+CQ
-         pD0zIc2GGfEg8NpEkgAYx/cWRWEZu+g8jJHepCDtrsgTPd+gwGAysEwUF/IUmmLJt3Yc
-         EhYGbuAEuux3b9PoO+JLc/Ux+hiQoFG7Qr9+dlJs4VedT3KtrOAuguylceONHeIrLciq
-         uvDGvPKklsXmmoiOQ2GBJZ3niW5JMhYWDQtGN93UXI1dPikDNmRz/VQ0f9/ysTTXICAI
-         YE4g==
-X-Gm-Message-State: ACrzQf39MrJPr3Fb7yhEy42RQlXY+bgdHIhduwTnruhnX95E24ltvHZG
-        T3zFJ5OdpvU/J4+PV9lF3LE=
-X-Google-Smtp-Source: AMsMyM72mwMadxTBk3RTkmN1xiaiFRnrdjH221pc62cKh9RDauFV11wBW6Uxvvm5BIWD+hdTkdFO4g==
-X-Received: by 2002:a7b:c450:0:b0:3b4:fb1a:325d with SMTP id l16-20020a7bc450000000b003b4fb1a325dmr3512527wmi.138.1664477489154;
-        Thu, 29 Sep 2022 11:51:29 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:9174:aca4:83d8:90fd])
-        by smtp.gmail.com with ESMTPSA id v10-20020a5d43ca000000b00228aea99efcsm167301wrr.14.2022.09.29.11.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 11:51:28 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] clk: renesas: r9a07g044: Mark CRU_SYSCLK and CRU_VCLK as no PM
-Date:   Thu, 29 Sep 2022 19:51:19 +0100
-Message-Id: <20220929185119.335273-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220929185119.335273-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220929185119.335273-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        with ESMTP id S229448AbiI2SxK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 14:53:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E6713D868;
+        Thu, 29 Sep 2022 11:53:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AE5D7620E0;
+        Thu, 29 Sep 2022 18:53:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEDD8C433C1;
+        Thu, 29 Sep 2022 18:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664477587;
+        bh=SJ/0ZKRCjXlv2aH2CHUmKWWkgmNd1ziKt9xrxglAf6o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=D9Pngc/N/7ClWd6VcuwyqWsy1h/uBoGBXwX5BAH0UyXG3R47oVK8li1oS8fE3EmtI
+         imd6/cJjgcSW7spJH/HPmfbuMSrJ9K650FOEDHA+VyxVcKP5HuIhAzkszvi13BylaR
+         +TlXDe++kMpM5rqAXArpxgJCUuU+Q3SdGdyQEEpBQCYbL0Tn2MTzvbJxWryW2QFENl
+         GNKIHbtt1eK9YB+y7eWQjev/LWcCbdEagFKOrnLNRsowZZ3QO9WsRlJ7CX8g7MY/Xj
+         LgwWvmB88LHdEsajLpHVvQ0J8qGPUUnw236V5bvvF7muplxLehAJzofZDc11uJNXPo
+         gJ7YZpwcCZn6g==
+Date:   Thu, 29 Sep 2022 13:53:05 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        quic_vbadigan@quicinc.com, quic_hemantk@quicinc.com,
+        quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+        quic_ramkri@quicinc.com, manivannan.sadhasivam@linaro.org,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        svarbanov@mm-sol.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@somainline.org, lpieralisi@kernel.org,
+        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
+        linux-phy@lists.infradead.org, vkoul@kernel.org, kishon@ti.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+Message-ID: <20220929185305.GA1912842@bhelgaas>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5d2f7167-818a-a655-9885-b71a3e91733e@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Sep 26, 2022 at 09:00:11PM +0530, Krishna Chaitanya Chundru wrote:
+> On 9/23/2022 7:56 PM, Bjorn Helgaas wrote:
+> > On Fri, Sep 23, 2022 at 07:29:31AM +0530, Krishna Chaitanya Chundru wrote:
+> > > On 9/23/2022 12:12 AM, Bjorn Helgaas wrote:
+> > > > On Thu, Sep 22, 2022 at 09:09:28PM +0530, Krishna Chaitanya Chundru wrote:
+> > > > > On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
+> > > > > > On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
+> > > > > > > On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
+> > > > > > > > On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
+> > > > > > > > > In qcom platform PCIe resources( clocks, phy etc..) can
+> > > > > > > > > released when the link is in L1ss to reduce the power
+> > > > > > > > > consumption. So if the link is in L1ss, release the PCIe
+> > > > > > > > > resources. And when the system resumes, enable the PCIe
+> > > > > > > > > resources if they released in the suspend path.
+> > > > > > > > What's the connection with L1.x?  Links enter L1.x based on
+> > > > > > > > activity and timing.  That doesn't seem like a reliable
+> > > > > > > > indicator to turn PHYs off and disable clocks.
+> > > > > > > This is a Qcom PHY-specific feature (retaining the link state in
+> > > > > > > L1.x with clocks turned off).  It is possible only with the link
+> > > > > > > being in l1.x. PHY can't retain the link state in L0 with the
+> > > > > > > clocks turned off and we need to re-train the link if it's in L2
+> > > > > > > or L3. So we can support this feature only with L1.x.  That is
+> > > > > > > the reason we are taking l1.x as the trigger to turn off clocks
+> > > > > > > (in only suspend path).
+> > > > > > This doesn't address my question.  L1.x is an ASPM feature, which
+> > > > > > means hardware may enter or leave L1.x autonomously at any time
+> > > > > > without software intervention.  Therefore, I don't think reading the
+> > > > > > current state is a reliable way to decide anything.
+> > > > > After the link enters the L1.x it will come out only if there is
+> > > > > some activity on the link.  AS system is suspended and NVMe driver
+> > > > > is also suspended( queues will  freeze in suspend) who else can
+> > > > > initiate any data.
+> > > > I don't think we can assume that nothing will happen to cause exit
+> > > > from L1.x.  For instance, PCIe Messages for INTx signaling, LTR, OBFF,
+> > > > PTM, etc., may be sent even though we think the device is idle and
+> > > > there should be no link activity.
+> > > I don't think after the link enters into L1.x there will some
+> > > activity on the link as you mentioned, except for PCIe messages like
+> > > INTx/MSI/MSIX. These messages also will not come because the client
+> > > drivers like NVMe will keep their device in the lowest power mode.
+> > > 
+> > > The link will come out of L1.x only when there is config or memory
+> > > access or some messages to trigger the interrupts from the devices.
+> > > We are already making sure this access will not be there in S3.  If
+> > > the link is in L0 or L0s what you said is expected but not in L1.x
+> > Forgive me for being skeptical, but we just spent a few months
+> > untangling the fact that some switches send PTM request messages even
+> > when they're in a non-D0 state.  We expected that devices in D3hot
+> > would not send such messages because "why would they?"  But it turns
+> > out the spec allows that, and they actually *do*.
+> > 
+> > I don't think it's robust interoperable design for a PCI controller
+> > driver like qcom to assume anything about PCI devices unless it's
+> > required by the spec.
+>
+> From pci spec 4, in sec 5.5
+> "Ports that support L1 PM Substates must not require a reference clock while
+> in L1 PM Substates
+> other than L1.0".
+> If there is no reference clk we can say there is no activity on the link.
+> If anything needs to be sent (such as LTR, or some messages ), the link
+> needs to be back in L0 before it
+> sends the packet to the link partner.
+> 
+> To exit from L1.x clkreq pin should be asserted.
+> 
+> In suspend after turning off clocks and phy we can enable to trigger an
+> interrupt whenever the clk req pin asserts.
+> In that interrupt handler, we can enable the pcie resources back.
 
-CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
-sequence for the CRU block hence use DEF_NO_PM() to set the no_pm flag.
+From the point of view of the endpoint driver, ASPM should be
+invisible -- no software intervention required.  I think you're
+suggesting that the PCIe controller driver could help exit L1.x by
+handling a clk req interrupt and enabling clock and PHY then.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-RFC->v1
-* No change
----
- drivers/clk/renesas/r9a07g044-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 6935441f7504..31b1437c57e4 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -252,9 +252,9 @@ static const struct {
- 					0x558, 1),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2),
--		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
-+		DEF_NO_PM("cru_sysclk",	R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
- 					0x564, 0),
--		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
-+		DEF_NO_PM("cru_vclk",	R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
- 					0x564, 1),
- 		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
- 					0x564, 2),
--- 
-2.25.1
-
+But doesn't L1.x exit also have to happen within the time the endpoint
+can tolerate?  E.g., I think L1.2 exit has to happen within the LTR
+time advertised by the endpoint (PCIe r6.0, sec 5.5.5).  How can we
+guarantee that if software is involved?
