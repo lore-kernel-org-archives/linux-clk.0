@@ -2,223 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A27DEC04A95
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 07:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04D6C6FA82
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 09:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234708AbiI2Hq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 03:46:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
+        id S235693AbiI2JNF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 05:13:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235239AbiI2Hqx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 03:46:53 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E251712113A
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 00:46:51 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id cv6so568347pjb.5
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 00:46:51 -0700 (PDT)
+        with ESMTP id S235705AbiI2JMl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 05:12:41 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47EE6142E3A
+        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 02:12:21 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id t16so855626ljh.3
+        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 02:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date;
-        bh=TNaR/+pz7Hg0YfceN1LSKGgvcAeNNA3RzZ4ATYe1Ozg=;
-        b=cktwDTaa5g3oaNOGR/nLpIpNTgybXYwMT/BIF8F9RBN7xBYniG+zkLkajmmn1HCC+J
-         M7vlGWeQ1+sqGp5kVs5MPMWfYCmgQAYrEgdTwv4aHvT2v6D4vEFEbsYH75vt/YvAcnw4
-         la03fyCdjgfsHK6/Et/e23zknbkR9Z7CCNgz8=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=If8WOilQ9PzmMBmCqzzeUtE56VOBe3wtjVI48jlzs/U=;
+        b=nWVITn6MkSynkIPZNerlsTMujNQYa8/JraQutVhVjiY8LzbTFTSD8NfyrFH75yMqhk
+         ThIRmlZTnsUxTUqcdrvsj1VPw9p0bK/82X5zchEr0Mms264hC/326I5d64nuPm/e5Ros
+         EDKngR5zzdhtZwPo2kqzvLf+gsoe8AQuVoJkOR6ackTyRD+ONS1qS0uTKzxKqHqRvBtU
+         kN2gYH8IVsiFBtgJfWaZpfwY4xBHtFDSScMTDD3RSeBV43rxmMHBfSgODAIkvTVC8evu
+         at7noYgsclEqzh6JXqMD5m07swrmI5VkegpACxkmlJe5pLo0FJJoSZyYygTMtf9xfuZb
+         udpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=TNaR/+pz7Hg0YfceN1LSKGgvcAeNNA3RzZ4ATYe1Ozg=;
-        b=Eav2kzSwqE+rrxPCwjSN/JNws0uWfKWFbm1iqv1VmOWWsHyUE940IJE6Owptnsy2up
-         G6t61/T/DveI3FkExNWh0RGzYCoI5MlUycB4uqt9XD4PsgF3t1zrllXHXpSysfbQXnSG
-         UDUDhcQa3qLkY4gerVP891PYXJQBn+5nb3/LocPNYAQyIlcvVt0h6w0VqRJ7m9C4ZuNd
-         3jm0rTdQA2L1LCi0NkflOfw0Uc5YokQeOGx3JM+LCiS/8DXAzX/6YwfmlU7Ox8O480sq
-         visrRWrtqr5nUsJMHUFTmVh0c020EE7kuokqGoPAGdidbJQA5PenqDgtgb/FDwhnmfEv
-         57pw==
-X-Gm-Message-State: ACrzQf0yJITsGNv/JqhL8BPEWiMrJh2Bz3OHHnPL34FEBbTieV/odYL4
-        1fTZBoOxIMXSqqBrQuOeOxbwKA==
-X-Google-Smtp-Source: AMsMyM7sKhjEa98Ymh0uWoFFOv/jllvMlkdfLEAffc4nUBHzT8N5D0LGfhDRNCxIobBHr/t4Kp1JCA==
-X-Received: by 2002:a17:902:6b41:b0:178:a475:6641 with SMTP id g1-20020a1709026b4100b00178a4756641mr2205346plt.120.1664437611030;
-        Thu, 29 Sep 2022 00:46:51 -0700 (PDT)
-Received: from google.com ([2401:fa00:1:10:13a9:39f3:3979:b1d6])
-        by smtp.gmail.com with ESMTPSA id a18-20020a634d12000000b0043c7996f7f0sm4923659pgb.58.2022.09.29.00.46.49
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=If8WOilQ9PzmMBmCqzzeUtE56VOBe3wtjVI48jlzs/U=;
+        b=1r4/mtfbcQUZXUeMBcaVhrlE8OYxZNTP/ZoCnm0Adg2GbtBwbmSFoTQ3wxjzMY8ufg
+         z1fYb9A1fBuY94boRDW6MJNPPiwr6Dp65gXYLrWDT9hkvyh+D3HtIFR29B4733gbujou
+         bMRtBH2M/m87Rs0f8y7rvVMgcOJosEfGHL8OCxNnwgLPrTUPUo+EfByMF2mP49Yjqfur
+         CNIAmIeCVqcjwVdYFYFJEGvkgdt4GojlmxntzFXKbTvo39rihTUlqclkHUXQwfnRCw1L
+         qwF89CkAUX3Ksf4Tgp/GOW6i/vDv7CxvrrLOLE9kHRNUuN9qc2kbTgCkDT9QJAjShskq
+         JmKg==
+X-Gm-Message-State: ACrzQf28440r0Qk9gSQ4W1vxvwSaw61j1VutJPbHk/HAAWIJCa6fjVkl
+        +T00s/zBJMYhl16BoxEdnPqUZQ==
+X-Google-Smtp-Source: AMsMyM5T8mjrHe0bl5/PGa1YKRjs5ZRA7sfUC3ddKYz2Wz1+BysRQoX8eim+Qe9RjdABamkS62DdBg==
+X-Received: by 2002:a2e:a601:0:b0:26c:4149:251a with SMTP id v1-20020a2ea601000000b0026c4149251amr749232ljp.348.1664442737761;
+        Thu, 29 Sep 2022 02:12:17 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id k4-20020a05651239c400b0048b143c09c2sm725091lfu.259.2022.09.29.02.12.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 00:46:50 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 15:46:47 +0800
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [GIT PULL] MediaTek Clock Changes for 6.1
-Message-ID: <YzVNZzp6+S7ePIRr@google.com>
+        Thu, 29 Sep 2022 02:12:17 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2] dt-bindings: clock: split qcom,gcc-sdm660 to the separate file
+Date:   Thu, 29 Sep 2022 12:12:16 +0300
+Message-Id: <20220929091216.471136-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 3cc53c57d0d54b7fc307879443d555c95b466510:
+Move schema for the GCC on SDM630/SDM636/SDM660 to a separate file to be
+able to define device-specific clock properties.
 
-  clk: mediatek: mt8195: Add reset idx for USB/PCIe T-PHY (2022-08-31 18:16:45 -0700)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes since v1:
+- Change license to GPL-2.0 & BSD-2-Clause
+- Fix Taniya's email
+- Reword the bindings title as suggested by Krzysztof
+---
+ .../bindings/clock/qcom,gcc-other.yaml        |  3 -
+ .../bindings/clock/qcom,gcc-sdm660.yaml       | 61 +++++++++++++++++++
+ 2 files changed, 61 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml
 
-are available in the Git repository at:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index 76988e04c7db..35fc22a19000 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -24,7 +24,6 @@ description: |
+   - dt-bindings/clock/qcom,gcc-mdm9607.h
+   - dt-bindings/clock/qcom,gcc-mdm9615.h
+   - dt-bindings/reset/qcom,gcc-mdm9615.h
+-  - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
+ 
+ allOf:
+   - $ref: "qcom,gcc.yaml#"
+@@ -41,8 +40,6 @@ properties:
+       - qcom,gcc-msm8974pro
+       - qcom,gcc-msm8974pro-ac
+       - qcom,gcc-mdm9615
+-      - qcom,gcc-sdm630
+-      - qcom,gcc-sdm660
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml
+new file mode 100644
+index 000000000000..68f47174b1b7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm660.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-sdm660.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm SDM660/SDM630/SDM636 Global Clock & Reset Controller
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <quic_tdas@quicinc.com>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on SDM630, SDM636 and SDM660
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
++
++$ref: qcom,gcc.yaml#
++
++properties:
++  compatible:
++    enum:
++      - qcom,gcc-sdm630
++      - qcom,gcc-sdm660
++
++  clocks:
++    items:
++      - description: XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: xo
++      - const: sleep_clk
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++
++unevaluatedProperties: false
++
++examples:
++  # Example for GCC for SDM660:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++        compatible = "qcom,gcc-sdm660";
++        reg = <0x00100000 0x94000>;
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++        #power-domain-cells = <1>;
++
++        clock-names = "xo", "sleep_clk";
++        clocks = <&xo_board>,
++                 <&sleep_clk>;
++    };
++...
+-- 
+2.35.1
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/wens/linux.git tags/mtk-clk-for-6.1
-
-for you to fetch changes up to 99f3a5e851e9a1d82d73c4f396c6dbf123413c16:
-
-  clk: mediatek: mt8192: deduplicate parent clock lists (2022-09-29 12:27:33 +0800)
-
-----------------------------------------------------------------
-MediaTek clk driver changes for 6.1
-
-A lot of clean up work, as well as new drivers and new functions
-
-- New clock drivers for MediaTek Helio X10 MT6795
-- Add missing DPI1_HDMI clock in MT8195 VDOSYS1
-- Clock driver changes to support GPU DVFS on MT8183, MT8192, MT8195
-  - Fix GPU clock topology on MT8195
-  - Propogate rate changes from GPU clock gate up the tree
-  - Clock mux notifiers for GPU-related PLLs
-- Conversion of more "simple" drivers to mtk_clk_simple_probe()
-- Hook up mtk_clk_simple_remove() for "simple" MT8192 clock drivers
-- Fixes to previous |struct clk| to |struct clk_hw| conversion
-- Shrink MT8192 clock driver by deduplicating clock parent lists
-
-----------------------------------------------------------------
-AngeloGioacchino Del Regno (14):
-      dt-bindings: mediatek: Document MT6795 system controllers bindings
-      dt-bindings: clock: Add MediaTek Helio X10 MT6795 clock bindings
-      dt-bindings: reset: Add bindings for MT6795 Helio X10 reset controllers
-      dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
-      clk: mediatek: clk-apmixed: Remove unneeded __init annotation
-      clk: mediatek: Export required symbols to compile clk drivers as module
-      clk: mediatek: clk-apmixed: Add helper function to unregister ref2usb_tx
-      clk: mediatek: Add MediaTek Helio X10 MT6795 clock drivers
-      clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d and propagate rate changes
-      clk: mediatek: clk-mt8195-topckgen: Register mfg_ck_fast_ref as generic mux
-      clk: mediatek: clk-mt8195-topckgen: Add GPU clock mux notifier
-      clk: mediatek: clk-mt8195-topckgen: Drop univplls from mfg mux parents
-      clk: mediatek: clk-mt8192-mfg: Propagate rate changes to parent
-      clk: mediatek: clk-mt8192: Add clock mux notifier for mfg_pll_sel
-
-Chen-Yu Tsai (6):
-      clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
-      clk: mediatek: mux: add clk notifier functions
-      clk: mediatek: mt8183: Add clk mux notifier for MFG mux
-      clk: mediatek: fix unregister function in mtk_clk_register_dividers cleanup
-      clk: mediatek: Migrate remaining clk_unregister_*() to clk_hw_unregister_*()
-      clk: mediatek: mt8192: deduplicate parent clock lists
-
-Miles Chen (7):
-      clk: mediatek: mt2701: use mtk_clk_simple_probe to simplify driver
-      clk: mediatek: mt2712: use mtk_clk_simple_probe to simplify driver
-      clk: mediatek: mt6765: use mtk_clk_simple_probe to simplify driver
-      clk: mediatek: mt6779: use mtk_clk_simple_probe to simplify driver
-      clk: mediatek: mt6797: use mtk_clk_simple_probe to simplify driver
-      clk: mediatek: mt8183: use mtk_clk_simple_probe to simplify driver
-      clk: mediatek: mt8192: add mtk_clk_simple_remove
-
-Pablo Sun (2):
-      dt-bindings: clk: mediatek: Add MT8195 DPI clocks
-      clk: mediatek: add VDOSYS1 clock
-
-Yassine Oudjana (2):
-      clk: mediatek: gate: Export mtk_clk_register_gates_with_dev
-      clk: mediatek: Use mtk_clk_register_gates_with_dev in simple probe
-
- .../bindings/arm/mediatek/mediatek,infracfg.yaml   |   2 +
- .../bindings/arm/mediatek/mediatek,mmsys.yaml      |   1 +
- .../bindings/arm/mediatek/mediatek,pericfg.yaml    |   1 +
- .../bindings/clock/mediatek,apmixedsys.yaml        |   1 +
- .../bindings/clock/mediatek,mt6795-clock.yaml      |  66 +++
- .../bindings/clock/mediatek,mt6795-sys-clock.yaml  |  54 ++
- .../bindings/clock/mediatek,topckgen.yaml          |   1 +
- drivers/clk/mediatek/Kconfig                       |  37 ++
- drivers/clk/mediatek/Makefile                      |   6 +
- drivers/clk/mediatek/clk-apmixed.c                 |  12 +-
- drivers/clk/mediatek/clk-cpumux.c                  |   2 +
- drivers/clk/mediatek/clk-gate.c                    |   1 +
- drivers/clk/mediatek/clk-mt2701-bdp.c              |  36 +-
- drivers/clk/mediatek/clk-mt2701-img.c              |  36 +-
- drivers/clk/mediatek/clk-mt2701-vdec.c             |  36 +-
- drivers/clk/mediatek/clk-mt2712-bdp.c              |  34 +-
- drivers/clk/mediatek/clk-mt2712-img.c              |  34 +-
- drivers/clk/mediatek/clk-mt2712-jpgdec.c           |  34 +-
- drivers/clk/mediatek/clk-mt2712-mfg.c              |  34 +-
- drivers/clk/mediatek/clk-mt2712-vdec.c             |  34 +-
- drivers/clk/mediatek/clk-mt2712-venc.c             |  34 +-
- drivers/clk/mediatek/clk-mt6765-audio.c            |  34 +-
- drivers/clk/mediatek/clk-mt6765-cam.c              |  33 +-
- drivers/clk/mediatek/clk-mt6765-img.c              |  33 +-
- drivers/clk/mediatek/clk-mt6765-mipi0a.c           |  34 +-
- drivers/clk/mediatek/clk-mt6765-mm.c               |  33 +-
- drivers/clk/mediatek/clk-mt6765-vcodec.c           |  34 +-
- drivers/clk/mediatek/clk-mt6779-aud.c              |  29 +-
- drivers/clk/mediatek/clk-mt6779-cam.c              |  29 +-
- drivers/clk/mediatek/clk-mt6779-img.c              |  29 +-
- drivers/clk/mediatek/clk-mt6779-ipe.c              |  29 +-
- drivers/clk/mediatek/clk-mt6779-mfg.c              |  27 +-
- drivers/clk/mediatek/clk-mt6779-vdec.c             |  29 +-
- drivers/clk/mediatek/clk-mt6779-venc.c             |  29 +-
- drivers/clk/mediatek/clk-mt6795-apmixedsys.c       | 157 ++++++
- drivers/clk/mediatek/clk-mt6795-infracfg.c         | 151 +++++
- drivers/clk/mediatek/clk-mt6795-mfg.c              |  50 ++
- drivers/clk/mediatek/clk-mt6795-mm.c               | 132 +++++
- drivers/clk/mediatek/clk-mt6795-pericfg.c          | 160 ++++++
- drivers/clk/mediatek/clk-mt6795-topckgen.c         | 610 +++++++++++++++++++++
- drivers/clk/mediatek/clk-mt6795-vdecsys.c          |  55 ++
- drivers/clk/mediatek/clk-mt6795-vencsys.c          |  50 ++
- drivers/clk/mediatek/clk-mt6797-img.c              |  36 +-
- drivers/clk/mediatek/clk-mt6797-vdec.c             |  36 +-
- drivers/clk/mediatek/clk-mt6797-venc.c             |  36 +-
- drivers/clk/mediatek/clk-mt8183-cam.c              |  27 +-
- drivers/clk/mediatek/clk-mt8183-img.c              |  27 +-
- drivers/clk/mediatek/clk-mt8183-ipu0.c             |  27 +-
- drivers/clk/mediatek/clk-mt8183-ipu1.c             |  27 +-
- drivers/clk/mediatek/clk-mt8183-ipu_adl.c          |  27 +-
- drivers/clk/mediatek/clk-mt8183-ipu_conn.c         |  27 +-
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c           |  35 +-
- drivers/clk/mediatek/clk-mt8183-vdec.c             |  27 +-
- drivers/clk/mediatek/clk-mt8183-venc.c             |  27 +-
- drivers/clk/mediatek/clk-mt8183.c                  |  28 +
- drivers/clk/mediatek/clk-mt8192-cam.c              |   1 +
- drivers/clk/mediatek/clk-mt8192-img.c              |   1 +
- drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c     |   1 +
- drivers/clk/mediatek/clk-mt8192-ipe.c              |   1 +
- drivers/clk/mediatek/clk-mt8192-mdp.c              |   1 +
- drivers/clk/mediatek/clk-mt8192-mfg.c              |   7 +-
- drivers/clk/mediatek/clk-mt8192-msdc.c             |   1 +
- drivers/clk/mediatek/clk-mt8192-scp_adsp.c         |   1 +
- drivers/clk/mediatek/clk-mt8192-vdec.c             |   1 +
- drivers/clk/mediatek/clk-mt8192-venc.c             |   1 +
- drivers/clk/mediatek/clk-mt8192.c                  | 234 ++------
- drivers/clk/mediatek/clk-mt8195-mfg.c              |   6 +-
- drivers/clk/mediatek/clk-mt8195-topckgen.c         |  46 +-
- drivers/clk/mediatek/clk-mt8195-vdo1.c             |  11 +
- drivers/clk/mediatek/clk-mtk.c                     |  17 +-
- drivers/clk/mediatek/clk-mtk.h                     |   1 +
- drivers/clk/mediatek/clk-mux.c                     |  38 ++
- drivers/clk/mediatek/clk-mux.h                     |  15 +
- drivers/clk/mediatek/reset.c                       |   1 +
- include/dt-bindings/clock/mediatek,mt6795-clk.h    | 275 ++++++++++
- include/dt-bindings/clock/mt8195-clk.h             |   4 +-
- include/dt-bindings/reset/mediatek,mt6795-resets.h |  53 ++
- 77 files changed, 2509 insertions(+), 858 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
- create mode 100644 drivers/clk/mediatek/clk-mt6795-apmixedsys.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-infracfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-mfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-pericfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-topckgen.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-vdecsys.c
- create mode 100644 drivers/clk/mediatek/clk-mt6795-vencsys.c
- create mode 100644 include/dt-bindings/clock/mediatek,mt6795-clk.h
- create mode 100644 include/dt-bindings/reset/mediatek,mt6795-resets.h
