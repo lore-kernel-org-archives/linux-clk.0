@@ -2,148 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2313C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 22:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F52FC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 23:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbiI2W1K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 18:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45390 "EHLO
+        id S229505AbiI2Xid (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 19:38:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229991AbiI2W1I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 18:27:08 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EA2A15E479;
-        Thu, 29 Sep 2022 15:27:04 -0700 (PDT)
-X-QQ-mid: bizesmtp88t1664490413t16ssqjp
-Received: from localhost.localdomain ( [113.72.146.201])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 30 Sep 2022 06:26:52 +0800 (CST)
-X-QQ-SSF: 01000000002000305000B00A0000000
-X-QQ-FEAT: YHTLUubWl26ZkpaLq7zsbw4d8O56YD7LwT0wcBWFjGJFdn4RvGt4in89BcWGS
-        U6clL3z7tkZIWNwlFhVpyr0KfLiD+6L4Z0fsnaOfFw/ykvRIRzdXo9a4m3v4nLGj8OJ+6ro
-        wYOvz1LQ7AuWSC/crvH5NIKCF1oDmolC74QTQNe7YX2te+tAYPeHVxX0X6boWdm+YILDCy5
-        EGNDuwpkZufDYaJs308Z7yglt9m7hA1eOjXvVK4FqZBTPpaQbNJT9c1oSCt8c+h6GCZyVrs
-        TC0oRjlfZonYAs86W/lahhg+ftUX496LzCyngeyGzZAyomv583Kz7NO4o/43WjLEUz53IWj
-        W2nzW0C27gumiS9wusps+Y5af8OuauMG/u9rWp6ZGlkcSJoaLzFc94tbXu0W93b73GIXw4G
-        n9xRBLJPbl/z4Lah4K4BeQ==
-X-QQ-GoodBg: 0
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229746AbiI2Xia (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 19:38:30 -0400
+Received: from m-r1.th.seeweb.it (m-r1.th.seeweb.it [5.144.164.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC5516B259
+        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 16:38:28 -0700 (PDT)
+Received: from [192.168.1.101] (95.49.29.188.neoplus.adsl.tpnet.pl [95.49.29.188])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id BC2EF1F5E1;
+        Fri, 30 Sep 2022 01:38:23 +0200 (CEST)
+Message-ID: <48af9193-452f-ffb8-39c7-0d17068af658@somainline.org>
+Date:   Fri, 30 Sep 2022 01:38:21 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH] clk: gcc-sc8280xp: use retention for USB power domains
+To:     Johan Hovold <johan+linaro@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 17/30] dt-bindings: clock: Add starfive,jh7110-clkgen-sys bindings
-Date:   Fri, 30 Sep 2022 06:26:47 +0800
-Message-Id: <20220929222647.23816-1-hal.feng@linux.starfivetech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+References: <20220929161124.18138-1-johan+linaro@kernel.org>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20220929161124.18138-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Emil Renner Berthing <kernel@esmil.dk>
 
-Add bindings for the system clock generator on the JH7110
-RISC-V SoC by StarFive Technology Ltd.
 
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
----
- .../clock/starfive,jh7110-clkgen-sys.yaml     | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-clkgen-sys.yaml
+On 29.09.2022 18:11, Johan Hovold wrote:
+> Since commit d399723950c4 ("clk: qcom: gdsc: Fix the handling of
+> PWRSTS_RET support) retention mode can be used on sc8280xp to maintain
+> state during suspend instead of leaving the domain always on.
+> 
+> This is needed to eventually allow the parent CX domain to be powered
+> down during suspend.
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 
-diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-clkgen-sys.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-clkgen-sys.yaml
-new file mode 100644
-index 000000000000..290b730145ab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-clkgen-sys.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/starfive,jh7110-clkgen-sys.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive JH7110 System Clock Generator
-+
-+maintainers:
-+  - Emil Renner Berthing <kernel@esmil.dk>
-+  - Xingyu Wu <xingyu.wu@linux.starfivetech.com>
-+
-+properties:
-+  compatible:
-+    const: starfive,jh7110-clkgen-sys
-+
-+  clocks:
-+    items:
-+      - description: Main Oscillator (24 MHz)
-+      - description: RMII reference clock
-+      - description: RGMII RX clock
-+      - description: I2S TX bit clock
-+      - description: I2S TX left/right clock
-+      - description: I2S RX bit clock
-+      - description: I2S RX left/right clock
-+      - description: TDM
-+      - description: mclk
-+
-+  clock-names:
-+    items:
-+      - const: osc
-+      - const: gmac1_rmii_refin
-+      - const: gmac1_rgmii_rxin
-+      - const: i2stx_bclk_ext
-+      - const: i2stx_lrck_ext
-+      - const: i2srx_bclk_ext
-+      - const: i2srx_lrck_ext
-+      - const: tdm_ext
-+      - const: mclk_ext
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/clock/starfive-jh7110-sys.h> for valid indices.
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscrg_clk: clock-controller@13020000 {
-+        compatible = "starfive,jh7110-clkgen-sys";
-+        clocks = <&osc>, <&gmac1_rmii_refin>,
-+                 <&gmac1_rgmii_rxin>,
-+                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
-+                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
-+                 <&tdm_ext>, <&mclk_ext>;
-+        clock-names = "osc", "gmac1_rmii_refin",
-+                      "gmac1_rgmii_rxin",
-+                      "i2stx_bclk_ext", "i2stx_lrck_ext",
-+                      "i2srx_bclk_ext", "i2srx_lrck_ext",
-+                      "tdm_ext", "mclk_ext";
-+        #clock-cells = <1>;
-+    };
--- 
-2.17.1
-
+Konrad
+>  drivers/clk/qcom/gcc-sc8280xp.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
+> 
+> While we're not yet able to fully test this (since we're not hitting CX
+> power down) this can still go in as we'll need it in some form
+> eventually.
+> 
+> Note that the PCIe domains should remain always-on until we have driver
+> support for suspend in place.
+> 
+> Johan
+> 
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+> index 7768e6901dcc..a18ed88f3b82 100644
+> --- a/drivers/clk/qcom/gcc-sc8280xp.c
+> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
+> @@ -6843,17 +6843,12 @@ static struct gdsc ufs_phy_gdsc = {
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> -/*
+> - * The Qualcomm DWC3 driver suspend implementation appears to be incomplete
+> - * for sc8280xp so keep the USB power domains always-on for now.
+> - */
+>  static struct gdsc usb30_mp_gdsc = {
+>  	.gdscr = 0xab004,
+>  	.pd = {
+>  		.name = "usb30_mp_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = ALWAYS_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  };
+>  
+>  static struct gdsc usb30_prim_gdsc = {
+> @@ -6861,8 +6856,7 @@ static struct gdsc usb30_prim_gdsc = {
+>  	.pd = {
+>  		.name = "usb30_prim_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = ALWAYS_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  };
+>  
+>  static struct gdsc usb30_sec_gdsc = {
+> @@ -6870,8 +6864,7 @@ static struct gdsc usb30_sec_gdsc = {
+>  	.pd = {
+>  		.name = "usb30_sec_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = ALWAYS_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  };
+>  
+>  static struct clk_regmap *gcc_sc8280xp_clocks[] = {
