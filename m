@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBB8C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 09:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3BBC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 09:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235595AbiI2JVy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 05:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36798 "EHLO
+        id S235663AbiI2JV4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 05:21:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235539AbiI2JVw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 05:21:52 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D534512FF0A
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 02:21:50 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id bu25so1349258lfb.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 02:21:50 -0700 (PDT)
+        with ESMTP id S235445AbiI2JVy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 05:21:54 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8464012FF0E
+        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 02:21:52 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id q17so851946lji.11
+        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 02:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=X8d8auaUbYkg/6BCuQEexEp/WA8mtD7KzcUJSiwcBSs=;
-        b=l0pp2hyfH02PtSu/WYyH1qOFOXB5qovpcMT+klxNroKvH90NrQkCumkDXO5VrEaqrG
-         MRTm6SPgNxciQsR9tiFUCyKQIUX0n8hvtl+BDukkX7jf0xksMvORNZBEV0VxMfTE7u+m
-         UIMM3x17h+3DE+Mr4Hpo+3ekA+k57jYCqIBvu+dvEqFDkSXSIMqsP6yXch7346WbUqNM
-         NqqpNhD2EFxO6crbiDQ0/PBYQHSPRJSjE4iJ16bXKcHfkkxLxVnFAjslMLaLnGRFDD8F
-         zSvxlp8UNzDGAyRSqovLJ/sIbwg2SeYgCmDamaB8vdvvS2Yjy1HJLsl6fjZUIFFvMNqO
-         /VYQ==
+        bh=jy9I1RmWLCIXyxNAlBzicSymGyv+GCd9JdUHlMf9IGI=;
+        b=mJgrDDFdY/qgASSXCmUH8ovgIk2cRaAW/j9prIe0flUNa6IyGgF/z+M9jtBugmC/wI
+         HIc3YldV7ucwDXXN9Ck1u+x2OzdEy5NwiAt4P1R2WY1M6/J9uQPXt5k8F7pJts2axzw5
+         TTTNuudLYHRApJEG+woI7FOjI/9yiP6Y5Bo9heH4AUh7bOyw16ykT+SVKyW0AGhASgeT
+         uLusTcePmH3x23AJj567unkj1V7pLu9xvxenedbJAibypYXPlb294p7SYvVSxpXHBTKs
+         c+JjBYw3AgXfxV8ZYRMPCpckzjrO2QEk4fk5EJz95D4Nswpw+dglG7wGKVMmrnNeLoq6
+         jeIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=X8d8auaUbYkg/6BCuQEexEp/WA8mtD7KzcUJSiwcBSs=;
-        b=gQeUgXRTF2o1XMkxSfQkPaG7Tlw1QypcdD68ZiOc6Z4JLRDbw9tBa+05APzydS5AbV
-         87tgQSEyNuKvxY9d5tOxF9x5Hx73ecRCb4Yop5SNfN2h2c9Dha+1x2iY7v/ZVq8dzvrn
-         SfH3867sn1EE4p4zmHDsnWyA2km2y1oLc8bh6Vet4yL4RUTfOSPeijXnUNDPXG8QxdA9
-         Fl+wRW+bfjE9+qyhh3q3/UXtTrVzFALudDygZ3O0khkLk33+j/JvmdGEWTSQ7/VwLJ0A
-         ogtjGxE/0AdTy/isyCbMaIb06jfoo8DXjm7ha5rA55iWcw4okfM99oztgxXmIIZsDHpj
-         EpdA==
-X-Gm-Message-State: ACrzQf3gPrWjSFSwNj/VSU4M/kUKXr+BvcjR/DqGurKEj5ZUNK8Fzzhc
-        OOdtpTqnJdtajnOZvm5TtV/Ijg==
-X-Google-Smtp-Source: AMsMyM49uL6aV44QorE9emBvRjxyurUdJVM4yV97JxLheIP3GkBMZwQ6quhLzD2JbNYMWE+/WSl88w==
-X-Received: by 2002:ac2:58ec:0:b0:49f:ba48:4e23 with SMTP id v12-20020ac258ec000000b0049fba484e23mr1058893lfo.218.1664443309105;
-        Thu, 29 Sep 2022 02:21:49 -0700 (PDT)
+        bh=jy9I1RmWLCIXyxNAlBzicSymGyv+GCd9JdUHlMf9IGI=;
+        b=IhSEP+XrLKoLXA1v/o8JpF1rMqqlGXIoJiX3aMg6uqLwrJWdi4XFW5R+ljvSfxqzXa
+         almQ2nlzyZT2q5AvhjcE7IBoJewU7BqvjARoFxscnyUYOSwawT8d+ZncI9+l+wZDYclZ
+         JtJrtahIYHNmT7QW4w++xqhgts9w5o4y32WeBuG0Rh6I66yKhA46wJxFxJo1AXyRXyLT
+         bYyuf1sGX52b0WfCjci0jXDXbwhagVU9ewE5C0/Vp4uSw+BbBnYIv64DlnMUpff0wkFR
+         4MYHO7LsctMrkTpQDPhwRrRxMkc3zWnVhNJdp4s7bJQm2pvv61R/KPy7t4ZyjI7VGaay
+         pbTw==
+X-Gm-Message-State: ACrzQf23+Fiqp7CuPqOWK7II1Oxnyy0TsWn/WJWLgvQFv48rhP3b+FJ1
+        mGgvuIjC/ZZvbgyeG0BMHkTu2A==
+X-Google-Smtp-Source: AMsMyM58MhuVlorVZJo/VRX+x7XBc3mpuNSArV+v6dZyJ9Yc+VnfnHjDc7zrFJgvZxEWuHXWmt7lmw==
+X-Received: by 2002:a05:651c:c2:b0:26c:5d6b:f83e with SMTP id 2-20020a05651c00c200b0026c5d6bf83emr855648ljr.230.1664443310534;
+        Thu, 29 Sep 2022 02:21:50 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id c22-20020a2e9496000000b0026c687f9f7bsm633271ljh.107.2022.09.29.02.21.48
+        by smtp.gmail.com with ESMTPSA id c22-20020a2e9496000000b0026c687f9f7bsm633271ljh.107.2022.09.29.02.21.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 02:21:48 -0700 (PDT)
+        Thu, 29 Sep 2022 02:21:50 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,10 +58,11 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 04/11] clk: qcom: gcc-msm8974: move clock parent tables down
-Date:   Thu, 29 Sep 2022 12:21:38 +0300
-Message-Id: <20220929092145.473009-5-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 06/11] clk: qcom: mmcc-msm8974: use ARRAY_SIZE instead of specifying num_parents
+Date:   Thu, 29 Sep 2022 12:21:40 +0300
+Message-Id: <20220929092145.473009-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220929092145.473009-1-dmitry.baryshkov@linaro.org>
 References: <20220929092145.473009-1-dmitry.baryshkov@linaro.org>
@@ -71,138 +72,352 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rearrage clock parent tables and PLL declarataions (pull parents down
-and gpll4 up), so that we can use pll hw clock fields in the next
-commit.
+Use ARRAY_SIZE() instead of manually specifying num_parents. This makes
+adding/removing entries to/from parent_data easy and errorproof.
 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/gcc-msm8974.c | 98 +++++++++++++++++-----------------
- 1 file changed, 49 insertions(+), 49 deletions(-)
+ drivers/clk/qcom/mmcc-msm8974.c | 74 ++++++++++++++++-----------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index b847ce852ef8..77f3497265a0 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -32,28 +32,6 @@ enum {
- 	P_GPLL4,
- };
- 
--static const struct parent_map gcc_xo_gpll0_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 }
--};
--
--static const char * const gcc_xo_gpll0[] = {
--	"xo",
--	"gpll0_vote",
--};
--
--static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL4, 5 }
--};
--
--static const char * const gcc_xo_gpll0_gpll4[] = {
--	"xo",
--	"gpll0_vote",
--	"gpll4_vote",
--};
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-@@ -81,6 +59,55 @@ static struct clk_regmap gpll0_vote = {
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index f74662925a58..9008df2305df 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -252,7 +252,7 @@ static struct clk_rcg2 mmss_ahb_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mmss_ahb_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
  	},
  };
- 
-+static struct clk_pll gpll4 = {
-+	.l_reg = 0x1dc4,
-+	.m_reg = 0x1dc8,
-+	.n_reg = 0x1dcc,
-+	.config_reg = 0x1dd4,
-+	.mode_reg = 0x1dc0,
-+	.status_reg = 0x1ddc,
-+	.status_bit = 17,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gpll4",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
-+static struct clk_regmap gpll4_vote = {
-+	.enable_reg = 0x1480,
-+	.enable_mask = BIT(4),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "gpll4_vote",
-+		.parent_names = (const char *[]){ "gpll4" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 }
-+};
-+
-+static const char * const gcc_xo_gpll0[] = {
-+	"xo",
-+	"gpll0_vote",
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_GPLL4, 5 }
-+};
-+
-+static const char * const gcc_xo_gpll0_gpll4[] = {
-+	"xo",
-+	"gpll0_vote",
-+	"gpll4_vote",
-+};
-+
- static struct clk_rcg2 config_noc_clk_src = {
- 	.cmd_rcgr = 0x0150,
- 	.hid_width = 5,
-@@ -144,33 +171,6 @@ static struct clk_regmap gpll1_vote = {
+@@ -289,7 +289,7 @@ static struct clk_rcg2 mmss_axi_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mmss_axi_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
  	},
  };
- 
--static struct clk_pll gpll4 = {
--	.l_reg = 0x1dc4,
--	.m_reg = 0x1dc8,
--	.n_reg = 0x1dcc,
--	.config_reg = 0x1dd4,
--	.mode_reg = 0x1dc0,
--	.status_reg = 0x1ddc,
--	.status_bit = 17,
--	.clkr.hw.init = &(struct clk_init_data){
--		.name = "gpll4",
--		.parent_names = (const char *[]){ "xo" },
--		.num_parents = 1,
--		.ops = &clk_pll_ops,
--	},
--};
--
--static struct clk_regmap gpll4_vote = {
--	.enable_reg = 0x1480,
--	.enable_mask = BIT(4),
--	.hw.init = &(struct clk_init_data){
--		.name = "gpll4_vote",
--		.parent_names = (const char *[]){ "gpll4" },
--		.num_parents = 1,
--		.ops = &clk_pll_vote_ops,
--	},
--};
--
- static const struct freq_tbl ftbl_gcc_usb30_master_clk[] = {
- 	F(125000000, P_GPLL0, 1, 5, 24),
- 	{ }
+@@ -313,7 +313,7 @@ static struct clk_rcg2 ocmemnoc_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "ocmemnoc_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -332,7 +332,7 @@ static struct clk_rcg2 csi0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi0_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -345,7 +345,7 @@ static struct clk_rcg2 csi1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi1_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -358,7 +358,7 @@ static struct clk_rcg2 csi2_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi2_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -371,7 +371,7 @@ static struct clk_rcg2 csi3_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi3_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -418,7 +418,7 @@ static struct clk_rcg2 vfe0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "vfe0_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -431,7 +431,7 @@ static struct clk_rcg2 vfe1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "vfe1_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -472,7 +472,7 @@ static struct clk_rcg2 mdp_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mdp_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_dsi_hdmi_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_dsi_hdmi_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -495,7 +495,7 @@ static struct clk_rcg2 jpeg0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "jpeg0_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -508,7 +508,7 @@ static struct clk_rcg2 jpeg1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "jpeg1_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -521,7 +521,7 @@ static struct clk_rcg2 jpeg2_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "jpeg2_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -534,7 +534,7 @@ static struct clk_rcg2 pclk0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "pclk0_clk_src",
+ 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsi_hdmi_edp_gpll0),
+ 		.ops = &clk_pixel_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -548,7 +548,7 @@ static struct clk_rcg2 pclk1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "pclk1_clk_src",
+ 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsi_hdmi_edp_gpll0),
+ 		.ops = &clk_pixel_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -581,7 +581,7 @@ static struct clk_rcg2 vcodec0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "vcodec0_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_1_3_gpll0,
+-		.num_parents = 5,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_1_3_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -599,7 +599,7 @@ static struct clk_rcg2 cci_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "cci_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -623,7 +623,7 @@ static struct clk_rcg2 camss_gp0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "camss_gp0_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_1_gpll1_0,
+-		.num_parents = 5,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_1_gpll1_0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -637,7 +637,7 @@ static struct clk_rcg2 camss_gp1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "camss_gp1_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_1_gpll1_0,
+-		.num_parents = 5,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_1_gpll1_0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -672,7 +672,7 @@ static struct clk_rcg2 mclk0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mclk0_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -685,7 +685,7 @@ static struct clk_rcg2 mclk1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mclk1_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -698,7 +698,7 @@ static struct clk_rcg2 mclk2_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mclk2_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -711,7 +711,7 @@ static struct clk_rcg2 mclk3_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mclk3_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -730,7 +730,7 @@ static struct clk_rcg2 csi0phytimer_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi0phytimer_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -743,7 +743,7 @@ static struct clk_rcg2 csi1phytimer_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi1phytimer_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -756,7 +756,7 @@ static struct clk_rcg2 csi2phytimer_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "csi2phytimer_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -787,7 +787,7 @@ static struct clk_rcg2 cpp_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "cpp_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -805,7 +805,7 @@ static struct clk_rcg2 byte0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "byte0_clk_src",
+ 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsibyte_hdmi_edp_gpll0),
+ 		.ops = &clk_byte2_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -819,7 +819,7 @@ static struct clk_rcg2 byte1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "byte1_clk_src",
+ 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsibyte_hdmi_edp_gpll0),
+ 		.ops = &clk_byte2_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -838,7 +838,7 @@ static struct clk_rcg2 edpaux_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "edpaux_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -857,7 +857,7 @@ static struct clk_rcg2 edplink_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "edplink_clk_src",
+ 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsi_hdmi_edp_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -877,7 +877,7 @@ static struct clk_rcg2 edppixel_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "edppixel_clk_src",
+ 		.parent_names = mmcc_xo_dsi_hdmi_edp,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsi_hdmi_edp),
+ 		.ops = &clk_edp_pixel_ops,
+ 	},
+ };
+@@ -895,7 +895,7 @@ static struct clk_rcg2 esc0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "esc0_clk_src",
+ 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsibyte_hdmi_edp_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -908,7 +908,7 @@ static struct clk_rcg2 esc1_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "esc1_clk_src",
+ 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsibyte_hdmi_edp_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -926,7 +926,7 @@ static struct clk_rcg2 extpclk_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "extpclk_clk_src",
+ 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
+-		.num_parents = 6,
++		.num_parents = ARRAY_SIZE(mmcc_xo_dsi_hdmi_edp_gpll0),
+ 		.ops = &clk_byte_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -945,7 +945,7 @@ static struct clk_rcg2 hdmi_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "hdmi_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -963,7 +963,7 @@ static struct clk_rcg2 vsync_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "vsync_clk_src",
+ 		.parent_names = mmcc_xo_mmpll0_mmpll1_gpll0,
+-		.num_parents = 4,
++		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_mmpll1_gpll0),
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
 -- 
 2.35.1
 
