@@ -2,122 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109C1C04A95
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 04:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F98C07E9D
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 04:37:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232166AbiI2EYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 00:24:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57114 "EHLO
+        id S234515AbiI2EhN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 00:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233945AbiI2EYm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 00:24:42 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73BC52642
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 21:24:36 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id l14so290654eja.7
-        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 21:24:36 -0700 (PDT)
+        with ESMTP id S234607AbiI2EhM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 00:37:12 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F8D61280FA
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 21:37:10 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id rk17so364215ejb.1
+        for <linux-clk@vger.kernel.org>; Wed, 28 Sep 2022 21:37:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=oRUKiGGp9HtYjOe4fyj+Bgjh8QBWVByT3GW/OPGOEZo=;
-        b=Bw1JDcGREbj17+/4/sFd+PMZLK8ZiDfPeKoHmvDF2GaNMMdXJbhvNsy9e1H9I4FsqD
-         j5ZgLciRrvE801bdE6lwdlE7mynvwEHe1hejvDWZnzJSrzhPJoJHfcOoSuAa4+Xdm6fI
-         XAsdKg884QdAoTERymBE0zqVpmYhYEb/hdQ7g=
+        bh=hCIr6ggWP7k5r3nMA/IQLk+9jq0v0zrFpIbWh0QT22o=;
+        b=TR9E4YYcWtROuWGCseBJ1Nn/qTofn8Gd6wa7GsL307BVMqtJP7MrZqakH3Ev6A1VuQ
+         6B8V4rsybpf7FKF9lu2f1fSGvfkjsIQJTRydxE4CA1gkhLx5AD+5w+GfffJ36QKRxDGU
+         lETxu5SOf2snTa+ovV89JdmA+sHU4titFehnY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=oRUKiGGp9HtYjOe4fyj+Bgjh8QBWVByT3GW/OPGOEZo=;
-        b=om0AbEAdH7XfUNs2F0bMQrgD6/QubpUEphK/W0EZNy73KdOc/v4fWGI19X9V3PtctV
-         5N0UbRhyr2eKpuLh+7C5PvGLcNBfvAMS9GG0CT0LBNDktSCRClC+B0ADFfhNzodWtPK5
-         H0e3K2EFQMJpAnS2ywj/LJa5U+dLovsCOpQtqIReI3zHnxbnXQulI3X8Isn4wMa2Z17K
-         97ixgIl9zddBu1/jTkE05oNSeLYUZen0L/feyaQwNeFSqgmhkzyYu+AG8DdNh/2AhoRq
-         RU/F6oh5jAmMBGNJ/Lkaxf19n90GhDfdDKDa7qHM+qdAUcgAIzu31UetIcjuUuDbIBGk
-         eaIQ==
-X-Gm-Message-State: ACrzQf0+zafVq7iZ8/w8Gz52ocPoovMWhadPltX381FM+pvlYGJ4cUxh
-        RLrfPOwVvMthY5SgwfXGeveKbzvcJZNhBDwO51IT4w==
-X-Google-Smtp-Source: AMsMyM6sJ8kAe/ae+WP7oeH7EoX6gvjCULwT3auEOOBJwoosQADkdiNj98RPfn1cGz3sRpqDYTIWOq8vAE3QtzCNzVQ=
-X-Received: by 2002:a17:907:7f93:b0:781:dbee:dece with SMTP id
- qk19-20020a1709077f9300b00781dbeedecemr1006728ejc.323.1664425474991; Wed, 28
- Sep 2022 21:24:34 -0700 (PDT)
+        bh=hCIr6ggWP7k5r3nMA/IQLk+9jq0v0zrFpIbWh0QT22o=;
+        b=rOWsEpSQ3hKxR0wSCmvbebN0R44K8sl5h01ei2DeFy5H3vJGSQd/nQdNDk0x4XKaYf
+         sSTYy/9FacI5kxfA0h3t1k/3kbZae5atcdFwI+z22Hg4aKuFA90Lvq+n7SWdn7YJ5Xnb
+         +r2pnpq96rKwiXfY7oQxuohFuENVlB84N+EvZtEk8hVarjxWcSnmeEq+7XmOvjiFYYYV
+         RBEKjCIP+HT5FCThrQ5udwhE16PB4PBOMtwECIemQefRFmgIb/lRsRB/59kM1FlwFL3L
+         HDuyZB/CWAVZmIfl+dmNRGVhIodEoeH2gq1LCKED1xe1cYAA7lda8OSqpn8MUVjLauA3
+         rpNg==
+X-Gm-Message-State: ACrzQf02QgiF6OjltHOKjx9AH2zIEYcT9M6vHxZpUiu40Qlo17iy8LNa
+        JOKpO/IBYC6eKTwLhAVZXw0p2abTMeJvIDCF+4VADA==
+X-Google-Smtp-Source: AMsMyM42xVrO9Sdosyvdwfr6CiAqqADoCZ5aeLBLftNjRzyuLAYvUGMUJADYo2U+hcbm0qWMjh4oR+ebBSwFXSkk/9k=
+X-Received: by 2002:a17:906:8455:b0:773:c45b:d970 with SMTP id
+ e21-20020a170906845500b00773c45bd970mr1070628ejy.46.1664426229162; Wed, 28
+ Sep 2022 21:37:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
+References: <20220926102523.2367530-1-wenst@chromium.org>
+In-Reply-To: <20220926102523.2367530-1-wenst@chromium.org>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 29 Sep 2022 12:24:23 +0800
-Message-ID: <CAGXv+5Gwy-FTUTsE0HwzUvfHPJ4XOfiZrBcK9ToZ2S0PHHnHAA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] MediaTek SoC safe clock muxing and GPU clocks
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, matthias.bgg@gmail.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, miles.chen@mediatek.com,
-        rex-bc.chen@mediatek.com, nfraprado@collabora.com,
-        chun-jie.chen@mediatek.com, jose.exposito89@gmail.com,
-        drinkcat@chromium.org, weiyi.lu@mediatek.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
+Date:   Thu, 29 Sep 2022 12:36:57 +0800
+Message-ID: <CAGXv+5GC28RHAj=PQyUFyZGwEOuoa3TnT3RxUEmP3SMvYCVEuw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] clk: mediatek: More cleanups
+To:     Stephen Boyd <sboyd@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 6:11 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Mon, Sep 26, 2022 at 6:25 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
 >
-> This series adds a clock notifier for MediaTek clock muxes, required
-> in order to achieve stability for GPU DVFS.
+> Here's some more cleanups for the MedaiTek clk drivers.
 >
-> The GPU frequency scaling mechanism requires us to switch the GPU
-> mux clock to a safe parent which frequency is always less or equal
-> to the "current" GPU frequency before reprogramming its dedicated
-> "MFG" PLL.
-> This is needed because the PLL needs time to reconfigure for its
-> output to stabilize (so, for the PLL to lock again): failing to do
-> so will lead to instabilities such as glitches, GPU lockups and/or
-> full system lockups.
+> Patches 1 and 2 fixes and cleans up some parts that were missed in the
+> previous clk_hw conversion series.
 >
-> While at it, reparenting of some GPU clocks was also performed, as
-> the clock tree was slightly incorrect.
+> Patch 3 drops the duplicate registration of the top_early_divs clks for
+> MT8192. Currently this only contains a fixed divider.
 >
-> This series was tested, along with mtk-regulator-coupler [1], on
-> Chromebooks with different SoCs (MT8183, MT8192, MT8195*), resulting
-> in fully working GPU DVFS with the Panfrost driver.
+> Patch 4 prevents having a duplicate OF clk provider for the topckgen
+> controller, but removing the previously registered instance.
 >
-> [1]: https://patchwork.kernel.org/project/linux-mediatek/patch/20220628120224.81180-1-angelogioacchino.delregno@collabora.com/
+> Patch 5 deduplicates the parent clock lists for MT8192.
 >
-> * MT8195 does not require mtk-regulator-coupler. This series, along
->   with [1], are required to perform GPU DVFS also on non-Chromebook SoCs.
+> Patch 6 adds proper error handling to the clock probe functions for
+> MT8192.
 >
-> Changes in v3:
->  - Clarified commit description in patch [05/10]
 >
-> Changes in v2:
->  - Added comment in clk-mt8195-topckgen to keep the mfg parents
->    documented after removal, as suggested by Chen-Yu
+> Please have a look.
 >
-> AngeloGioacchino Del Regno (6):
->   clk: mediatek: clk-mt8195-mfg: Reparent mfg_bg3d and propagate rate
->     changes
->   clk: mediatek: clk-mt8195-topckgen: Register mfg_ck_fast_ref as
->     generic mux
->   clk: mediatek: clk-mt8195-topckgen: Add GPU clock mux notifier
->   clk: mediatek: clk-mt8195-topckgen: Drop univplls from mfg mux parents
->   clk: mediatek: clk-mt8192-mfg: Propagate rate changes to parent
->   clk: mediatek: clk-mt8192: Add clock mux notifier for mfg_pll_sel
 >
-> Chen-Yu Tsai (4):
->   arm64: dts: mt8183: Fix Mali GPU clock
->   clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
->   clk: mediatek: mux: add clk notifier functions
->   clk: mediatek: mt8183: Add clk mux notifier for MFG mux
+> Thanks
+> ChenYu
+>
+>
+> Chen-Yu Tsai (6):
+>   clk: mediatek: fix unregister function in mtk_clk_register_dividers
+>     cleanup
+>   clk: mediatek: Migrate remaining clk_unregister_*() to
+>     clk_hw_unregister_*()
+>   clk: mediatek: mt8192: Do not re-register top_early_divs in probe
+>     function
+>   clk: mediatek: mt8192: Avoid duplicate OF clk provider for topckgen
+>   clk: mediatek: mt8192: deduplicate parent clock lists
+>   clk: mediatek: mt8192: Implement error handling in probe functions
 
-
-I've queued all the clk patches up here [1] and will send a pull request
+I've queued patches 1, 2 and 5 up here [1] and will send a pull request
 to the clock maintainer later this week.
 
-The dts patch needs to go through the soc tree.
+The remaining three are related and still under discussion.
+
 
 ChenYu
 
