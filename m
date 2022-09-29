@@ -2,129 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEC8C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 15:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102A3C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 16:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235055AbiI2P6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40980 "EHLO
+        id S235965AbiI2QHG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 12:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbiI2P6a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 11:58:30 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D10139423;
-        Thu, 29 Sep 2022 08:58:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8D957B8250E;
-        Thu, 29 Sep 2022 15:58:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32561C433D6;
-        Thu, 29 Sep 2022 15:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664467106;
-        bh=1KeBrPMAdY0TAzdkP1uOhFXdbWsiCILN55Jv9DVWFgE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LGP6ZGb5EIX8fBHRBIPBWLEbKy2YHlAt2q86plNbIK6vXQstJb0+eCKFRThsbOQ5O
-         yLpQ+XS7Op8B8pDItQfn9Yo6SmzmuGlGZ/jhyWUfFshw/tMLn6NXxezoPepj/ebX9G
-         vAfxJgB+tZ3sghHvbeL60cf2NF0ceRQhFa8xrCzUqeFujOAER6DO6nXzX2Np+npThI
-         iXr9S076ZPk8lKGt5CZL4LGxVKCYyR6bYsoeJ/vc6riBRNvOVGYDfK6O63sxsIJUmx
-         ONnmVxEuY7zhahOBmH32P+QLxutpphrtJyIhWkjjrPVKTshHw23nJ/Iqacn0p/Eq7X
-         DAACENzoMg8Iw==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan+linaro@kernel.org>)
-        id 1odvvk-0004XF-Rw; Thu, 29 Sep 2022 17:58:32 +0200
-From:   Johan Hovold <johan+linaro@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        with ESMTP id S235954AbiI2QHC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 12:07:02 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65CF613E21;
+        Thu, 29 Sep 2022 09:06:59 -0700 (PDT)
+X-QQ-Spam: true
+X-QQ-mid: bizesmtp84t1664461977tq1saah5
+Received: from localhost.localdomain ( [113.72.145.157])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Thu, 29 Sep 2022 22:32:56 +0800 (CST)
+X-QQ-SSF: 01000000002000201000B00A0000000
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] clk: qcom: gdsc: add missing error handling
-Date:   Thu, 29 Sep 2022 17:58:16 +0200
-Message-Id: <20220929155816.17425-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@linux.starfivetech.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 07/30] reset: starfive: jh7100: Use 32bit I/O on 32bit registers
+Date:   Thu, 29 Sep 2022 22:32:02 +0800
+Message-Id: <20220929143225.17907-8-hal.feng@linux.starfivetech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since commit 7eb231c337e0 ("PM / Domains: Convert pm_genpd_init() to
-return an error code") pm_genpd_init() can return an error which the
-caller must handle.
+From: Emil Renner Berthing <kernel@esmil.dk>
 
-The current error handling was also incomplete as the runtime PM and
-regulator use counts were not balanced in all error paths.
+We currently use 64bit I/O on the 32bit registers. This works because
+there are an even number of assert and status registers, so they're only
+ever accessed in pairs on 64bit boundaries.
 
-Add the missing error handling to the GDSC initialisation to avoid
-continuing as if nothing happened on errors.
+There are however other reset controllers for audio and video on the
+JH7100 SoC with only one status register that isn't 64bit aligned so
+64bit I/O results in an unaligned access exception.
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+Switch to 32bit I/O in preparation for supporting these resets too.
+
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
 ---
- drivers/clk/qcom/gdsc.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/reset/reset-starfive-jh7100.c | 41 +++++++++++++--------------
+ 1 file changed, 20 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index e1d6574d2797..0b67bd72e217 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -451,11 +451,8 @@ static int gdsc_init(struct gdsc *sc)
+diff --git a/drivers/reset/reset-starfive-jh7100.c b/drivers/reset/reset-starfive-jh7100.c
+index fc44b2fb3e03..a6e0945071e9 100644
+--- a/drivers/reset/reset-starfive-jh7100.c
++++ b/drivers/reset/reset-starfive-jh7100.c
+@@ -7,7 +7,6 @@
  
- 		/* ...and the power-domain */
- 		ret = gdsc_pm_runtime_get(sc);
--		if (ret) {
--			if (sc->rsupply)
--				regulator_disable(sc->rsupply);
--			return ret;
--		}
-+		if (ret)
-+			goto err_disable_supply;
+ #include <linux/bitmap.h>
+ #include <linux/io.h>
+-#include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/iopoll.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+@@ -34,16 +33,16 @@
+  * lines don't though, so store the expected value of the status registers when
+  * all lines are asserted.
+  */
+-static const u64 jh7100_reset_asserted[2] = {
++static const u32 jh7100_reset_asserted[4] = {
+ 	/* STATUS0 */
+-	BIT_ULL_MASK(JH7100_RST_U74) |
+-	BIT_ULL_MASK(JH7100_RST_VP6_DRESET) |
+-	BIT_ULL_MASK(JH7100_RST_VP6_BRESET) |
++	BIT(JH7100_RST_U74 % 32) |
++	BIT(JH7100_RST_VP6_DRESET % 32) |
++	BIT(JH7100_RST_VP6_BRESET % 32),
+ 	/* STATUS1 */
+-	BIT_ULL_MASK(JH7100_RST_HIFI4_DRESET) |
+-	BIT_ULL_MASK(JH7100_RST_HIFI4_BRESET),
++	BIT(JH7100_RST_HIFI4_DRESET % 32) |
++	BIT(JH7100_RST_HIFI4_BRESET % 32),
+ 	/* STATUS2 */
+-	BIT_ULL_MASK(JH7100_RST_E24) |
++	BIT(JH7100_RST_E24 % 32),
+ 	/* STATUS3 */
+ 	0,
+ };
+@@ -65,12 +64,12 @@ static int jh7100_reset_update(struct reset_controller_dev *rcdev,
+ 			       unsigned long id, bool assert)
+ {
+ 	struct jh7100_reset *data = jh7100_reset_from(rcdev);
+-	unsigned long offset = BIT_ULL_WORD(id);
+-	u64 mask = BIT_ULL_MASK(id);
+-	void __iomem *reg_assert = data->base + JH7100_RESET_ASSERT0 + offset * sizeof(u64);
+-	void __iomem *reg_status = data->base + JH7100_RESET_STATUS0 + offset * sizeof(u64);
+-	u64 done = jh7100_reset_asserted[offset] & mask;
+-	u64 value;
++	unsigned long offset = id / 32;
++	u32 mask = BIT(id % 32);
++	void __iomem *reg_assert = data->base + JH7100_RESET_ASSERT0 + offset * sizeof(u32);
++	void __iomem *reg_status = data->base + JH7100_RESET_STATUS0 + offset * sizeof(u32);
++	u32 done = jh7100_reset_asserted[offset] & mask;
++	u32 value;
+ 	unsigned long flags;
+ 	int ret;
  
- 		/*
- 		 * Votable GDSCs can be ON due to Vote from other masters.
-@@ -464,14 +461,14 @@ static int gdsc_init(struct gdsc *sc)
- 		if (sc->flags & VOTABLE) {
- 			ret = gdsc_update_collapse_bit(sc, false);
- 			if (ret)
--				return ret;
-+				goto err_put_rpm;
- 		}
+@@ -79,15 +78,15 @@ static int jh7100_reset_update(struct reset_controller_dev *rcdev,
  
- 		/* Turn on HW trigger mode if supported */
- 		if (sc->flags & HW_CTRL) {
- 			ret = gdsc_hwctrl(sc, true);
- 			if (ret < 0)
--				return ret;
-+				goto err_put_rpm;
- 		}
+ 	spin_lock_irqsave(&data->lock, flags);
  
- 		/*
-@@ -498,9 +495,21 @@ static int gdsc_init(struct gdsc *sc)
- 		sc->pd.power_off = gdsc_disable;
- 	if (!sc->pd.power_on)
- 		sc->pd.power_on = gdsc_enable;
--	pm_genpd_init(&sc->pd, NULL, !on);
-+
-+	ret = pm_genpd_init(&sc->pd, NULL, !on);
-+	if (ret)
-+		goto err_put_rpm;
+-	value = readq(reg_assert);
++	value = readl(reg_assert);
+ 	if (assert)
+ 		value |= mask;
+ 	else
+ 		value &= ~mask;
+-	writeq(value, reg_assert);
++	writel(value, reg_assert);
  
- 	return 0;
-+
-+err_put_rpm:
-+	if (on)
-+		gdsc_pm_runtime_put(sc);
-+err_disable_supply:
-+	if (on && sc->rsupply)
-+		regulator_disable(sc->rsupply);
-+
-+	return ret;
+ 	/* if the associated clock is gated, deasserting might otherwise hang forever */
+-	ret = readq_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
++	ret = readl_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
+ 
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ 	return ret;
+@@ -121,10 +120,10 @@ static int jh7100_reset_status(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+ 	struct jh7100_reset *data = jh7100_reset_from(rcdev);
+-	unsigned long offset = BIT_ULL_WORD(id);
+-	u64 mask = BIT_ULL_MASK(id);
+-	void __iomem *reg_status = data->base + JH7100_RESET_STATUS0 + offset * sizeof(u64);
+-	u64 value = readq(reg_status);
++	unsigned long offset = id / 32;
++	u32 mask = BIT(id % 32);
++	void __iomem *reg_status = data->base + JH7100_RESET_STATUS0 + offset * sizeof(u32);
++	u32 value = readl(reg_status);
+ 
+ 	return !((value ^ jh7100_reset_asserted[offset]) & mask);
  }
- 
- int gdsc_register(struct gdsc_desc *desc,
 -- 
-2.35.1
+2.17.1
 
