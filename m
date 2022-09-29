@@ -2,155 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48149C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 18:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E705C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 18:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235965AbiI2Soq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 14:44:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53818 "EHLO
+        id S229606AbiI2Sva (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 14:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235912AbiI2SoS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 14:44:18 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9C11E05CB;
-        Thu, 29 Sep 2022 11:43:51 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-12803ac8113so2851224fac.8;
-        Thu, 29 Sep 2022 11:43:51 -0700 (PDT)
+        with ESMTP id S229514AbiI2Sv3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 14:51:29 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C57213D850;
+        Thu, 29 Sep 2022 11:51:28 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id bq9so3553624wrb.4;
+        Thu, 29 Sep 2022 11:51:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=oF8quAZt/UGI/XaB3QdYWqoNI2fEzHCMZrTFMKPpS00=;
+        b=hHPE3Vrqa5zd3aovFYAl7iTjau1sdZPNAMDXX0C8eoZJvQ4pXlmqJv/iBERl818oNk
+         PEJ8wBo0etQRl/DQ6N0QziiBfymzs9KWYSJH5aIrnSB2OPuUVsmUz+qKCzFZ9s7n8FCJ
+         k3EGnR3IWsKbGTjDEAwMzG1Vlivy3Usyv028LhcUHjjcJ0hAfwSBDprJqOWXijPxXBmY
+         A2Jn7kOb/IB2ymF26ncKaAQXRseTj7zQWAUvvL8EvRKbqDlJu20cTJ9/9zcQ1/uONdZ9
+         MiGxvpGhcd+4OQJ6vD+0catOD7vYaR+ME4LRKV3fNpmdbaJjvDM5UdaMIQ8cR+ZDHHmB
+         nt8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=Q4kEonMB6d7v5hHIJWkTHsGtsa94Xy9dbaqRdwzR/jk=;
-        b=Yqx8cFhwaktXXI7UXVnilucgH0yF3+nzesFdvoeZI7Ohe6PAIyjVDXx/OcD8dBUTrd
-         M/86HWaZ071o1DKPzFJhOPb5dP03yIgQ+9JEtKgAYpXayJLJSHT/Wu6OUZfpLLo9+7KG
-         6wx/DmoX5FGd0lHnC59+KPc4KPvHRk8ZRCRS53NEsj7PKKmFVSDCouOT5T9VhAzgACUB
-         2Fq3mEno/m5xWq2R1vL08z50QkGGIINHn2ftMAGRUUnoTAjX6rpwCRwVa1G5up41qF0B
-         i9Ui3HDz5S0at3hT6LYgBB8mOIdtEKBzwIx4OQL6cz8TOWpVYkr2DBuMqDbTae/cD/dK
-         85zA==
-X-Gm-Message-State: ACrzQf2TQ1BVakWOaTGdKcteAa753G5Qdhpm7mjn8zeO6ivex12ytIrr
-        5Q9gJhaeKfr7JJyMGkue+Q==
-X-Google-Smtp-Source: AMsMyM5S3sep/kgC/lRMc+k20QdnFLy7atFiQAWFIW3HBrS8fou5vE8LlVATDpsRqUmmHdmf37CKvg==
-X-Received: by 2002:a05:6870:3389:b0:131:94ab:fb63 with SMTP id w9-20020a056870338900b0013194abfb63mr2623611oae.41.1664477030662;
-        Thu, 29 Sep 2022 11:43:50 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id t16-20020a0568301e3000b00655bc7c4522sm95402otr.81.2022.09.29.11.43.49
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=oF8quAZt/UGI/XaB3QdYWqoNI2fEzHCMZrTFMKPpS00=;
+        b=nYWmL+8eeX+00s9EMT5UcjTqONQs7cap10L4qOiZC8W+2dsmdId4QQO0Tl788aSYq8
+         0EdsXs6J33ao2WQhAHics8nyH+vMrZ4zFSBTfExWYCoHEpO9RQWKkfSvGL4T06jmi9iO
+         wHplU+3aikdop7loA8JLLdr8wmGBDO6L9HtaDcIKGtzh3dFTZz7o4tLKWDu9am9E5gb4
+         uI8o9qZv04oDo3OvTsKkjZb/Pm9jbWFUJObtEU22TDbPD0kPAg17X7FU5o8IewRVeMpz
+         e5J74wtbO8ZMPHyIOTb1Jx16s7f5WARbJFlhOys94VdCR2BJBVCGV6ptXZWQQVlzRp7V
+         7LEQ==
+X-Gm-Message-State: ACrzQf0aXaj45EO5MD3NePK51L9jgNmwnQf2NnVd4Vx6Vl+MNAuSI2Je
+        AgO6vCaOkOgaX/Z13jyzu/MT0SCXKkdtPQ==
+X-Google-Smtp-Source: AMsMyM5u3MU7IkUl/3giiBY9aAYbeujw/w0boefz8Epp0nDuIGd7zm4BVXnBQ3Xn/nty1moxYelbYA==
+X-Received: by 2002:adf:e187:0:b0:22c:981d:5528 with SMTP id az7-20020adfe187000000b0022c981d5528mr3457960wrb.407.1664477486790;
+        Thu, 29 Sep 2022 11:51:26 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:9174:aca4:83d8:90fd])
+        by smtp.gmail.com with ESMTPSA id v10-20020a5d43ca000000b00228aea99efcsm167301wrr.14.2022.09.29.11.51.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 11:43:50 -0700 (PDT)
-Received: (nullmailer pid 2554700 invoked by uid 1000);
-        Thu, 29 Sep 2022 18:43:49 -0000
-Date:   Thu, 29 Sep 2022 13:43:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Hal Feng <hal.feng@linux.starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Thu, 29 Sep 2022 11:51:26 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
- bindings
-Message-ID: <20220929184349.GA2551443-robh@kernel.org>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] clk: renesas: RZ/G2L: Add support for no PM clocks
+Date:   Thu, 29 Sep 2022 19:51:17 +0100
+Message-Id: <20220929185119.335273-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 01:51:47AM +0800, Hal Feng wrote:
-> Add bindings for the reset controller on the JH7110 RISC-V
-> SoC by StarFive Technology Ltd.
-> 
-> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> ---
->  .../bindings/reset/starfive,jh7110-reset.yaml | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml b/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
-> new file mode 100644
-> index 000000000000..bb0010c200f9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reset/starfive,jh7110-reset.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 SoC Reset Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Emil Renner Berthing <kernel@esmil.dk>
-> +  - Hal Feng <hal.feng@linux.starfivetech.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - starfive,jh7110-reset
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-'reg' needed? Is this a sub-block of something else?
+Hi All,
 
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  starfive,assert-offset:
-> +    description: Offset of the first ASSERT register
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  starfive,status-offset:
-> +    description: Offset of the first STATUS register
-> +    $ref: /schemas/types.yaml#/definitions/uint32
+This patch series adds support for indicating MOD clocks as no PM (if any). 
+Patch#1 adds DEF_NO_PM() macro to flagup no PM clock and patch #2 switches
+sysclk and vclk clocks to no PM.
 
-These can't be implied from the compatible string?
+Sending it as an RFC as there wasn't any way we could obtain the priv data
+due to which I had to create a static global var for rzg2l_cpg_priv.
 
-> +
-> +  starfive,nr-resets:
-> +    description: Number of reset signals
-> +    $ref: /schemas/types.yaml#/definitions/uint32
+RFC->v1
+* Added no_pm_mod_clks and num_no_pm_mod_clks members as part of
+  struct rzg2l_cpg_priv so that we dont loop the entire mod clocks
+  array for each device probe.
+* Patch#2 unchanged
 
-Why do you need this? Most bindings don't. If just to validate 'resets' 
-args, then don't.
+RFC: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
+Cheers,
+Prabhakar
 
-> +
-> +required:
-> +  - compatible
-> +  - "#reset-cells"
-> +  - starfive,assert-offset
-> +  - starfive,status-offset
-> +  - starfive,nr-resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/reset/starfive-jh7110.h>
-> +
-> +    syscrg_rst: reset-controller@13020000 {
-> +        compatible = "starfive,jh7110-reset";
-> +        #reset-cells = <1>;
-> +        starfive,assert-offset = <0x2F8>;
-> +        starfive,status-offset= <0x308>;
-> +        starfive,nr-resets = <JH7110_SYSRST_END>;
-> +    };
-> +
-> +...
-> -- 
-> 2.17.1
-> 
-> 
+Lad Prabhakar (2):
+  clk: renesas: rzg2l: Don't assume all CPG_MOD clocks support PM
+  clk: renesas: r9a07g044: Mark CRU_SYSCLK and CRU_VCLK as no PM
+
+ drivers/clk/renesas/r9a07g044-cpg.c |  4 +--
+ drivers/clk/renesas/rzg2l-cpg.c     | 45 ++++++++++++++++++++++++-----
+ drivers/clk/renesas/rzg2l-cpg.h     | 12 ++++++--
+ 3 files changed, 49 insertions(+), 12 deletions(-)
+
+-- 
+2.25.1
+
