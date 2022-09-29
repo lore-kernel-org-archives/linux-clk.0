@@ -2,69 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C74C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Sep 2022 23:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F01DC04A95
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 00:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbiI1XnC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 19:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
+        id S229496AbiI2AOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 20:14:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234259AbiI1XnB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 19:43:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF91F08AA;
-        Wed, 28 Sep 2022 16:43:00 -0700 (PDT)
+        with ESMTP id S229949AbiI2AOT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 20:14:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8010118B32;
+        Wed, 28 Sep 2022 17:14:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 48FB5601B5;
-        Wed, 28 Sep 2022 23:43:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E92FC433C1;
-        Wed, 28 Sep 2022 23:42:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C62B61378;
+        Thu, 29 Sep 2022 00:14:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F090C433D6;
+        Thu, 29 Sep 2022 00:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664408579;
-        bh=NaykREuRBBPpeJBtk+CLEf+97EYWNNqVH6121J8EZRU=;
+        s=k20201202; t=1664410456;
+        bh=pFrDc82PUcu6ZPY8HSHIRNq0ZZmlZK5rdqcHF9KCIRs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=icHtNeOeVcY5Yyr5KbjX9VLE0HNZ2i7DK6Dy+oxCiJ2djz0wE5TpZcuIY7aOjQ7Vi
-         pMB8yuEn76VpWmpoLW7YVtZ7N0QW2GDGC4+cOCDRzn18/ndV4dSGPTHZhm+EggPPG/
-         LYVjJVADbPIeoYq7MIhLaxMt0td+aiH2D/Wj61x05bdE8RMedtDf4cjVZiGNBSUrK7
-         nEcmb9blSuNfrUsaX9lK07fzijbgvihR981s9uVPC9UfLQBb4ZKAWRWpVnqC0LIN8E
-         Yns159I2ZDPy2qQrLrQcYI4kMFOJemittcoD7SmoPQVEGCDvHXR2siVjwDwvywypDa
-         QWqmgZJDL9YFw==
+        b=HXUQwLN6HSTkS2OPDf2SSMwcH0BG9EdoLN3Qje470oR3ZIqWh9uyQo5a3pB6M8+A+
+         XyAZB3qu/5dpNDciATDM40sFmETyKRGOJvIePmZKrGaBEMJAn/h/ydELUjqY7SDSgH
+         64yp2Iw0eTiFCB97RIR6v++d1gmCLh3eFCESgP4r25Pr3RdxhWQ28hSbRa3dts2Mij
+         LG/70fQ+d6LJqVeGDYEsXzA/0Jrotl3nhOnm77yIkOS+s4iIZ+qCnFb0p4/Zo7Hc9F
+         AjNgB3wGTtwsvlECbKM2Ro9bQ9TlBVRCCkUqg9leQiEL+ZYoHiqpa9nV6EfXBeD7Nr
+         GBEg191PsdhqA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220928200122.3963509-1-jernej.skrabec@gmail.com>
-References: <20220928200122.3963509-1-jernej.skrabec@gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: h6: Fix default PLL GPU rate
+In-Reply-To: <4c56443ecd9041f102681ebf36b6854090ab82e3.1663827071.git.rtanwar@maxlinear.com>
+References: <cover.1663827071.git.rtanwar@maxlinear.com> <4c56443ecd9041f102681ebf36b6854090ab82e3.1663827071.git.rtanwar@maxlinear.com>
+Subject: Re: [PATCH RESEND v2 1/5] clk: mxl: Switch from direct readl/writel based IO to regmap based IO
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, r.stratiienko@gmail.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-To:     Jernej Skrabec <jernej.skrabec@gmail.com>, samuel@sholland.org,
-        wens@csie.org
-Date:   Wed, 28 Sep 2022 16:42:56 -0700
+Cc:     linux-kernel@vger.kernel.org, linux-lgm-soc@maxlinear.com,
+        Rahul Tanwar <rtanwar@maxlinear.com>
+To:     Rahul Tanwar <rtanwar@maxlinear.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+Date:   Wed, 28 Sep 2022 17:14:13 -0700
 User-Agent: alot/0.10
-Message-Id: <20220928234259.9E92FC433C1@smtp.kernel.org>
+Message-Id: <20220929001416.6F090C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2022-09-28 13:01:22)
-> In commit 4167ac8a657e ("clk: sunxi-ng: sun50i: h6: Modify GPU clock
-> configuration to support DFS") divider M0 was forced to be 1 in order to
-> support DFS. However, that left N as it is, at high value of 36. On
-> boards without devfreq enabled (all of them in kernel 6.0), this
-> effectively sets GPU frequency to 864 MHz. This is about 100 MHz above
-> maximum supported frequency.
->=20
-> In order to fix this, let's set N to 18 (register value 17). That way
-> default frequency of 432 MHz is preserved.
->=20
-> Fixes: 4167ac8a657e ("clk: sunxi-ng: sun50i: h6: Modify GPU clock configu=
-ration to support DFS")
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> ---
+Quoting Rahul Tanwar (2022-09-21 23:24:24)
+> diff --git a/drivers/clk/x86/clk-cgu-pll.c b/drivers/clk/x86/clk-cgu-pll.c
+> index 3179557b5f78..c83083affe88 100644
+> --- a/drivers/clk/x86/clk-cgu-pll.c
+> +++ b/drivers/clk/x86/clk-cgu-pll.c
+> @@ -1,8 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> + * Copyright (C) 2020-2022 MaxLinear, Inc.
+>   * Copyright (C) 2020 Intel Corporation.
+> - * Zhu YiXin <yixin.zhu@intel.com>
+> - * Rahul Tanwar <rahul.tanwar@intel.com>
+> + * Zhu Yixin <yzhu@maxlinear.com>
 
-Applied to clk-fixes
+Does Zhu Yixin approve? They're not Cced on this patch.
+
+> + * Rahul Tanwar <rtanwar@maxlinear.com>
+>   */
+> =20
+>  #include <linux/clk-provider.h>
