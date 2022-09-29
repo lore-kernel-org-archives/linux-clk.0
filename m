@@ -2,69 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 299AEC04A95
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 00:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B6EC04A95
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Sep 2022 00:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbiI2AXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Sep 2022 20:23:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
+        id S233335AbiI2Aaf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Sep 2022 20:30:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiI2AXq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 20:23:46 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5071D11ADD5;
-        Wed, 28 Sep 2022 17:23:45 -0700 (PDT)
+        with ESMTP id S231650AbiI2Aae (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Sep 2022 20:30:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D74264BC;
+        Wed, 28 Sep 2022 17:30:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EFB09B8221E;
-        Thu, 29 Sep 2022 00:23:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD5CC433D6;
-        Thu, 29 Sep 2022 00:23:42 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8D11DB80D8E;
+        Thu, 29 Sep 2022 00:30:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A61AC433D6;
+        Thu, 29 Sep 2022 00:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664411022;
-        bh=L85UmdSjhG3JVcpSLPn/ZMDE+UMdrUzT3VbSiE8dFGM=;
+        s=k20201202; t=1664411430;
+        bh=eUy48D9x0nlhjh0pYpVDrtBH/wuQAKXXf/796K5eIlo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=N2lp/0VQNRfEu/GVTFx3/zAL8wSjTiQpplphMETeylaZ+mpLiiGNbTJs2D0Ca3m52
-         7RgQsfuhyWeSfGRS5+4/+AdiZsVln36xVE6yIZiBh0wk9XooVjhfLcGT9+Eu8kbtSC
-         MtYd7grSVZVDhyF3yWd0qHYhE6tNYokveCsyPWS7KLT4Bw9VqS0Yc7tb23mPU42q+j
-         Xzbq7wsqRILrLzj/j4mJTsfQRY7mLeQvHJ6FFXd7KloQ/T/4/20Yw0Sf7krNe4zDeh
-         gnH2hqb11Uh4/b84j2o/mjsqZp+wHmhFP89lnFx1eGOyp2LXpqUol7QY5QFlKg3rJ5
-         acdn63wGuaTrg==
+        b=gV8D/rXoETDpYx4KplcHKwUCcpisrEiEhucasBC0Ud5gY7J/Ur9szwI6bqVnyqOAZ
+         VoOltze3ZHCRcJmGtAwGvG/nudYSBtu0FmXIZ46WQznDSQNzDPQ8doPWTT25LBsShG
+         QTkpoeZDiV+oCB0kVI+DjOve+k/45SlvYQu+qAjPH6uq3LvOMi9o++bX4eYySeeCt+
+         N7RYj/gUB10IKcpORHKSYuFbTOUY6RjTHeerPLVKNKWST+yhSXsbWvNRhSpWxIbwM0
+         lTw8RXM+4xl8q+qsSKnHtnlDGXhIsFVNOy4d/pmNO/GwQBgrufOETKy8MW8aLuSDYW
+         UI+9aTHUVAKmg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220815-rpi-fix-4k-60-v2-3-983276b83f62@cerno.tech>
-References: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech> <20220815-rpi-fix-4k-60-v2-3-983276b83f62@cerno.tech>
-Subject: Re: [PATCH v2 3/7] firmware: raspberrypi: Provide a helper to query a clock max rate
+In-Reply-To: <20220909123123.2699583-2-conor.dooley@microchip.com>
+References: <20220909123123.2699583-1-conor.dooley@microchip.com> <20220909123123.2699583-2-conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 01/14] clk: microchip: mpfs: fix clk_cfg array bounds violation
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
-        dri-devel@lists.freedesktop.org, Maxime Ripard <maxime@cerno.tech>,
-        linux-arm-kernel@lists.infradead.org
-To:     Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>, Emma Anholt <emma@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Maxime Ripard <mripard@kernel.org>,
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Nathan Chancellor <nathan@kernel.org>
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Date:   Wed, 28 Sep 2022 17:23:39 -0700
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 28 Sep 2022 17:30:28 -0700
 User-Agent: alot/0.10
-Message-Id: <20220929002342.9DD5CC433D6@smtp.kernel.org>
+Message-Id: <20220929003030.0A61AC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-09-20 05:50:22)
-> The firmware allows to query for its clocks the operating range of a
-> given clock. We'll need this for some drivers (KMS, in particular) to
-> infer the state of some configuration options, so let's create a
-> function to do so.
+Quoting Conor Dooley (2022-09-09 05:31:10)
+> There is an array bounds violation present during clock registration,
+> triggered by current code by only specific toolchains. This seems to
+> fail gracefully in v6.0-rc1, using a toolchain build from the riscv-
+> gnu-toolchain repo and with clang-15, and life carries on. While
+> converting the driver to use standard clock structs/ops, kernel panics
+> were seen during boot when built with clang-15:
 >=20
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+[...]
 >=20
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+> If parent is RTCREF, so the macro becomes: &mpfs_cfg_clks[33].cfg.hw
+> which is well beyond the end of the array. Amazingly, builds with GCC
+> 11.1 see no problem here, booting correctly and hooking the parent up
+> etc. Builds with clang-15 do not, with the above panic.
+>=20
+> Change the macro to use specific offsets depending on the parent rather
+> than the dt-binding's clock IDs.
+>=20
+> Fixes: 1c6a7ea32b8c ("clk: microchip: mpfs: add RTCREF clock control")
+> CC: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+
+I'll merge this patch over to clk-fixes as well.
