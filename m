@@ -2,47 +2,45 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD76AC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 22:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC65C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 22:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232627AbiI3WLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 18:11:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42574 "EHLO
+        id S231867AbiI3WLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 18:11:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232631AbiI3WLs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 18:11:48 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC902F2768;
-        Fri, 30 Sep 2022 15:11:44 -0700 (PDT)
+        with ESMTP id S232658AbiI3WLy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 18:11:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA01F2768;
+        Fri, 30 Sep 2022 15:11:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id DB499CE26BE;
-        Fri, 30 Sep 2022 22:11:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74E6C433D6;
-        Fri, 30 Sep 2022 22:11:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4B112B82995;
+        Fri, 30 Sep 2022 22:11:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7412C433C1;
+        Fri, 30 Sep 2022 22:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664575901;
-        bh=jWEB/rLB4YuBED/9tszyVWJroTsFU3+z5EIjhz2gcPM=;
+        s=k20201202; t=1664575910;
+        bh=TJjukHsbHrPXxnAGkKBJL1+F80pFk9u9WxONVeM09Rw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=HnYwT9bjmJ7KKe1kNE30DKjtaqP/oXYtkzYva1LOArVN3YvMC7/GD68i/sxbMxNTP
-         7KmlnErLQHN0p9ONKqM9XzBXxVMpWJxxa5l91UE3g+F6pAGCz1nakEjApj7Cc7qIGZ
-         hRYYC+5XvF17a2pIwP9uEFjZOPUJlpm2Y7xraptoXMCiK5UXaPduvSvJyyr3lug/pM
-         8ga0OPv6HrOTmwPzQTQ6setSxsGezc+loy2bdS6ofbCW04RR+bMkNW0tOvAYcfpAh2
-         fqIKyOrq9wUR6SGSFMe1GzqovpGFIiVHgpkwKYRpvd8CrpEphso6SgYpwp03rFTtTZ
-         ABIX2UiZ7Uj0Q==
+        b=nhz13Zh4QN4rt+fH+/KrCI0MKNofWTz9ij7GT/CTRzHHUdXcZcHfoiJmcVn6dA/yf
+         w+OEwQr95DvSu0ltRcv9PJYH54PBS5MkdAn4bBscb4uOAmNNt05U4zth1aBqZJTxe6
+         k1XiRT1B0I9FOPqflJHFwJFLOIqwkJt6FVNfnzVImQE5JHT8IFi69CRkRrWaJtbqVx
+         HcAxfyY9abQE9gqAkQp6sHRIUr9PqRnWYb4rYAAuMda+eqVBHCRAkp9DODtsziUlx2
+         cc1rF6XaJUYv66+wAioe2Liri1tMLF9+k3Dkmjjajr2U+0nN1TFLUg2LUXQPGaB2lB
+         Mfebbh9IG4OMQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220822152652.3499972-2-msp@baylibre.com>
-References: <20220822152652.3499972-1-msp@baylibre.com> <20220822152652.3499972-2-msp@baylibre.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: mediatek: add bindings for MT8365 SoC
+In-Reply-To: <20220822152652.3499972-3-msp@baylibre.com>
+References: <20220822152652.3499972-1-msp@baylibre.com> <20220822152652.3499972-3-msp@baylibre.com>
+Subject: Re: [PATCH v4 2/4] clk: mediatek: Provide mtk_devm_alloc_clk_data
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabien Parent <fparent@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Markus Schneider-Pargmann <msp@baylibre.com>
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
@@ -52,20 +50,17 @@ To:     AngeloGioacchino Del Regno
         Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 30 Sep 2022 15:11:38 -0700
+Date:   Fri, 30 Sep 2022 15:11:49 -0700
 User-Agent: alot/0.10
-Message-Id: <20220930221140.D74E6C433D6@smtp.kernel.org>
+Message-Id: <20220930221150.D7412C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Markus Schneider-Pargmann (2022-08-22 08:26:49)
-> From: Fabien Parent <fparent@baylibre.com>
+Quoting Markus Schneider-Pargmann (2022-08-22 08:26:50)
+> Provide a helper that replaces the kzalloc with devm_kzalloc so error
+> handling gets easier.
 >=20
-> Add the clock bindings for the MediaTek MT8365 SoC.
->=20
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 > ---
 
