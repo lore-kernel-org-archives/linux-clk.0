@@ -2,137 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF87C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 08:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38342C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 08:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbiI3I3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 04:29:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55892 "EHLO
+        id S229530AbiI3IeE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 04:34:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbiI3I3o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 04:29:44 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D450A2E0;
-        Fri, 30 Sep 2022 01:29:41 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id DBDDF66022BC;
-        Fri, 30 Sep 2022 09:29:38 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664526579;
-        bh=y6RFqj7OJORRXrnb91N0f5NRhH96ycPGBPqgs9CRszM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=FZ9bIHSz/43QdUTsGvBEzHW6mnFUtEEz0KO/qxizXK9d5tF4HJItP32twNajrsf59
-         Q9/v9IyNIamQnKAvzOJU1gOMl4e3yDoPZSRBQ9INzaIqpFpPQRGvj3iGmAz+Nb5A6F
-         Jds+2BOcDcOVyt8bPUGx48pg1tauP6enYCmCSOKmIq8SapvcsjHcSBxCZev2igycWh
-         VJD/AdLG1vgd9gkIRyHzhLYJIVN8c+k4xcY6W2vBOotY09eO+ARBXAc5HyYY13bBYW
-         DkhBdIz2ntt43qz3KzyCeNwU+DgWGzX0M9s0xEUDh1MAgLxX0Dtc21EM+rFBfxz8wf
-         Hceb3VQhotWrg==
-Message-ID: <5d8af9a1-3afc-bd69-8f34-164284a452c2@collabora.com>
-Date:   Fri, 30 Sep 2022 10:29:36 +0200
+        with ESMTP id S229735AbiI3IeD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 04:34:03 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB4FB184817
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 01:34:00 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id hy2so7532763ejc.8
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 01:34:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=zpubVR36akS3Npv0MEhp+71/irYCuHEE1UMxNS0pFeQ=;
+        b=AXmy0ECatIW7X7saqCouPx5jCS/k+FxsqM1Oabkp5bdFgr4MLqKU12l9BGy8m3EGSG
+         SOYRbC4Jyjr23fdAmM3KxKvteauoz5bIBjHnKxk7qzLAz7mQVi+EpZKR6Rtw8/r6JQn0
+         Xk/Ut9ZwCnEbDDNY+j2FrvTAtmd8cTIDqzpycvfqrovhbDJOVQvL/q65pHz8iFhVN1vf
+         zhyR2Y/75ZNRkViCbWexNrYitDZk8yn657+JgsI9MWGpn9aElrauytccW1lOta8ORgeV
+         9HfZy91QRr/tV3/cgTCWyTuKkErJQQcX2jpGccpxHF2i9yypUKlC4iRjP2fIvIO7UVCG
+         T44Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=zpubVR36akS3Npv0MEhp+71/irYCuHEE1UMxNS0pFeQ=;
+        b=L+riwxFIhlHWaxOR34YqHRPQdhJdMlPMhYqSoi8R8UE+qA+DMgzm53R9uED7Gb8k8f
+         1pPCwS9cxnM6j2NmKm2dcneRep89+nVQik3Wnh1Tx8iwiuUBoqOsRo/gXdyh5w8/pEN8
+         lL0U/F28HaW3a4eM7pOvH7mw0nCyBjjzvRpwt5a1CVYfqGRiCJztkugA45ghUdOJoRxF
+         jWhaxZkAUBuOJ/fxfo4TRCo8Jm/8DzhYqRkBwS3BBiiL9qPtc2vysVuDo+CiDg6mOzIV
+         4GXlRXbC8NwrI1i1ACKBJsz4iZpAi9i1o8DeFYvUtrYEe+E1khdAhNmpxkDj3CtJVv+j
+         qLDg==
+X-Gm-Message-State: ACrzQf3o0LDGpl7VkRO9YS+X4Wbll+QXlekUUAsFBEkaepMdzsYzvU29
+        8m7pK5QZmew3nxgIVNd11WjqPQ==
+X-Google-Smtp-Source: AMsMyM5i2deVFFXg/iT90BwccmJSsM6RxySs3C51OSMncVveyqyywH19GoCOiWgNOSIdRX8qb3BPvA==
+X-Received: by 2002:a17:907:2bd8:b0:770:77f2:b7af with SMTP id gv24-20020a1709072bd800b0077077f2b7afmr5660781ejc.545.1664526839278;
+        Fri, 30 Sep 2022 01:33:59 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id 6-20020a170906318600b0078116c361d9sm874085ejy.10.2022.09.30.01.33.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 01:33:58 -0700 (PDT)
+Date:   Fri, 30 Sep 2022 10:33:57 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vfedorenko@novek.ru>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
+Message-ID: <Yzap9cfSXvSLA+5y@nanopsycho>
+References: <20220626192444.29321-1-vfedorenko@novek.ru>
+ <YzWESUXPwcCo67LP@nanopsycho>
+ <6b80b6c8-29fd-4c2a-e963-1f273d866f12@novek.ru>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 08/10] clk: mediatek: clk-mt8195-topckgen: Drop
- univplls from mfg mux parents
-To:     =?UTF-8?B?TWFuZHlKSCBMaXUgKOWKieS6uuWDlik=?= 
-        <MandyJH.Liu@mediatek.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-Cc:     "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        "jose.exposito89@gmail.com" <jose.exposito89@gmail.com>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        =?UTF-8?B?Q2h1bi1KaWUgQ2hlbiAo6Zmz5rWa5qGAKQ==?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
-        <Miles.Chen@mediatek.com>,
-        =?UTF-8?B?V2VpeWkgTHUgKOWRguWogeWEgCk=?= <Weiyi.Lu@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        =?UTF-8?B?UmV4LUJDIENoZW4gKOmZs+afj+i+sCk=?= 
-        <Rex-BC.Chen@mediatek.com>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "nfraprado@collabora.com" <nfraprado@collabora.com>
-References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
- <20220927101128.44758-9-angelogioacchino.delregno@collabora.com>
- <79490e834466628a1b92e51f65aeb9e9ce82ddce.camel@mediatek.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <79490e834466628a1b92e51f65aeb9e9ce82ddce.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b80b6c8-29fd-4c2a-e963-1f273d866f12@novek.ru>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 30/09/22 07:59, MandyJH Liu (劉人僖) ha scritto:
-> On Tue, 2022-09-27 at 12:11 +0200, AngeloGioacchino Del Regno wrote:
->> These PLLs are conflicting with GPU rates that can be generated by
->> the GPU-dedicated MFGPLL and would require a special clock handler
->> to be used, for very little and ignorable power consumption benefits.
->> Also, we're in any case unable to set the rate of these PLLs to
->> something else that is sensible for this task, so simply drop them:
->> this will make the GPU to be clocked exclusively from MFGPLL for
->> "fast" rates, while still achieving the right "safe" rate during
->> PLL frequency locking.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <
->> angelogioacchino.delregno@collabora.com>
->> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
->> ---
->>   drivers/clk/mediatek/clk-mt8195-topckgen.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> b/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> index 4dde23bece66..8cbab5ca2e58 100644
->> --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> @@ -298,11 +298,14 @@ static const char * const ipu_if_parents[] = {
->>   	"mmpll_d4"
->>   };
->>   
->> +/*
->> + * MFG can be also parented to "univpll_d6" and "univpll_d7":
->> + * these have been removed from the parents list to let us
->> + * achieve GPU DVFS without any special clock handlers.
->> + */
->>   static const char * const mfg_parents[] = {
->>   	"clk26m",
->> -	"mainpll_d5_d2",
->> -	"univpll_d6",
->> -	"univpll_d7"
->> +	"mainpll_d5_d2"
->>   };
->>   
->>   static const char * const camtg_parents[] = {
-> There might be a problem here. Since the univpll_d6 and univpll_d7 are
-> available parents in hardware design and they can be selected other
-> than kernel stage, like bootloader, the clk tree listed in clk_summary
-> cannot show the real parent-child relationship in such case.
+Fri, Sep 30, 2022 at 02:44:25AM CEST, vfedorenko@novek.ru wrote:
+>On 29.09.2022 12:40, Jiri Pirko wrote:
+>> Sun, Jun 26, 2022 at 09:24:41PM CEST, vfedorenko@novek.ru wrote:
+>> > From: Vadim Fedorenko <vadfed@fb.com>
+>> > 
+>> > Implement common API for clock/DPLL configuration and status reporting.
+>> > The API utilises netlink interface as transport for commands and event
+>> > notifications. This API aim to extend current pin configuration and
+>> > make it flexible and easy to cover special configurations.
+>> 
+>> Do you have the userspace part somewhere?
+>> It is very nice to add example outputs of user cmdline of such tool to
+>> the patch description/cover letter.
+>
+>Sorry, but we don't have any user-space part for now. It's still WIP and
+>there are too many changes in the protocol to implement anything useful on
 
-I agree about that, but the clock framework will change the parent to
-the "best parent" in that case... this was done to avoid writing complicated
-custom clock ops just for that one.
+What protocol?
 
-This issue is present only on MT8195, so it can be safely solved this way,
-at least for now.
 
-Should this become a thing on another couple SoCs, it'll then make sense
-to write custom clock ops just for the MFG.
+>top of it. Once we will get to a kind of "stable" proto, I will implement a
+>library to use it.
+>
+>> 
+>> Also, did you consider usage of sysfs? Why it isn't a better fit than
+>> netlink?
+>
+>We already have sysfs implemented in the ptp_ocp driver. But it looks like
+>more hardware is going to be available soon with almost the same functions,
+>so it would be great to have common protocol to configure such devices.
 
-Regards,
-Angelo
+Sure, but more hw does not mean you can't use sysfs. Take netdev as an
+example. The sysfs exposed for it is implemented net/core/net-sysfs.c
+and is exposed for all netdev instances, no matter what the
+driver/hardware is.
 
+
+>> 
+>> Regarding the naming, is "dpll" the correct one. Forgive me for being a
+>> syncE greenie, but isn't dpll just one algo to achieve syntonous
+>> clocks? Perhaps "dco" as for "Digitally Controlled Oscillator" would be
+>> somewhat better fit?
+>> 
+>
+>We will discuss the naming too, thanks!
+>
+>> 
+>> > 
+>> > v1 -> v2:
+>> > * implement returning supported input/output types
+>> > * ptp_ocp: follow suggestions from Jonathan
+>> > * add linux-clk mailing list
+>> > v0 -> v1:
+>> > * fix code style and errors
+>> > * add linux-arm mailing list
+>> > 
+>> > 
+>> > Vadim Fedorenko (3):
+>> >   dpll: Add DPLL framework base functions
+>> >   dpll: add netlink events
+>> >   ptp_ocp: implement DPLL ops
+>> > 
+>> > MAINTAINERS                 |   8 +
+>> > drivers/Kconfig             |   2 +
+>> > drivers/Makefile            |   1 +
+>> > drivers/dpll/Kconfig        |   7 +
+>> > drivers/dpll/Makefile       |   7 +
+>> > drivers/dpll/dpll_core.c    | 161 ++++++++++
+>> > drivers/dpll/dpll_core.h    |  40 +++
+>> > drivers/dpll/dpll_netlink.c | 595 ++++++++++++++++++++++++++++++++++++
+>> > drivers/dpll/dpll_netlink.h |  14 +
+>> > drivers/ptp/Kconfig         |   1 +
+>> > drivers/ptp/ptp_ocp.c       | 169 +++++++---
+>> > include/linux/dpll.h        |  29 ++
+>> > include/uapi/linux/dpll.h   |  81 +++++
+>> > 13 files changed, 1079 insertions(+), 36 deletions(-)
+>> > create mode 100644 drivers/dpll/Kconfig
+>> > create mode 100644 drivers/dpll/Makefile
+>> > create mode 100644 drivers/dpll/dpll_core.c
+>> > create mode 100644 drivers/dpll/dpll_core.h
+>> > create mode 100644 drivers/dpll/dpll_netlink.c
+>> > create mode 100644 drivers/dpll/dpll_netlink.h
+>> > create mode 100644 include/linux/dpll.h
+>> > create mode 100644 include/uapi/linux/dpll.h
+>> > 
+>> > -- 
+>> > 2.27.0
+>> > 
+>
