@@ -2,116 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CC1C43217
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 20:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BFDC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbiI3Uti (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 16:49:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41562 "EHLO
+        id S229646AbiI3VNx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232097AbiI3UtJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 16:49:09 -0400
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1313063FDA;
-        Fri, 30 Sep 2022 13:49:09 -0700 (PDT)
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-13207a86076so2536875fac.3;
-        Fri, 30 Sep 2022 13:49:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=YN8qEL8DJBJUXwLGIJhhXCICK2Erz7u2/C6FcnHwxvw=;
-        b=LLG1civW5Bz3dtCZAQ1pYC9yqFnPjnDVjDU0EniOcBWi/GVdN//JE+ISzvor587YTt
-         7q/D2ToiNp3jPOxPwzbk4r5eD108F0FFl3I4sfztr+lJcOcga9JAYs9k6OOMxw6D7/GH
-         jnMUB/Avxxfv8eBUUu3N5j/4VQ651AZT+VgAxmd1A8ffxTUPMZ1C5OCo2KQk1aSrBm39
-         bC8FiL06wq6zLywVRu3nEJIyUqV1VQR6rE3XvfasIF8O8QUrKT32uFT0pFuktygRybEd
-         YUy6Y78/smbRNYcEkUI957xMClMgBeNx8k4sZiqOBZ8z11B4N3WNh91PVRhx4/b/ltYT
-         uAXQ==
-X-Gm-Message-State: ACrzQf0uW6qRd6zXC/fPtDhFm5Ae+C+l4YttudduaCKlifFargpCo1b8
-        ygh9dfBByIuP2/R52Wca6Q==
-X-Google-Smtp-Source: AMsMyM7cQo+Xdc1zu4Ia/015WNtr0fkOMyA0Z7nPSaR5qXioETaX7bCFr8c6/ztbX7UjQ65MKT544Q==
-X-Received: by 2002:a05:6870:3451:b0:131:82bb:22e3 with SMTP id i17-20020a056870345100b0013182bb22e3mr28626oah.233.1664570948264;
-        Fri, 30 Sep 2022 13:49:08 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id b42-20020a056870392a00b0013187edfde2sm971842oap.12.2022.09.30.13.49.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 13:49:06 -0700 (PDT)
-Received: (nullmailer pid 908078 invoked by uid 1000);
-        Fri, 30 Sep 2022 20:49:05 -0000
-Date:   Fri, 30 Sep 2022 15:49:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Hal Feng <hal.feng@linux.starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 09/30] reset: starfive: jh7100: Move necessary
- properties to device tree
-Message-ID: <20220930204905.GA903203-robh@kernel.org>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929143225.17907-10-hal.feng@linux.starfivetech.com>
+        with ESMTP id S231817AbiI3VNq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:13:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949B6BE2EA;
+        Fri, 30 Sep 2022 14:13:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 56A75B82A30;
+        Fri, 30 Sep 2022 21:13:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3A9C433D6;
+        Fri, 30 Sep 2022 21:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664572420;
+        bh=27fx3NXWYi+Dk8Zgc8alfuEsNewmiw7SI2h6CwlCEI4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TQJPzIROm44NMg/32z81jq5fnKG/TZXKw3h0JKM/n364cd9f7WdtoM5IIn1bhVbIV
+         WXlYNWAdoUkNE8wdh3K1zdHMUsUqEbNPi0fLxrEdJfa3cn+arFy7XQuesqTtfSNRSm
+         RtDD41NnC7iC6InG+ri9gapM/2KvuE8SD33K9eYCmH+YibsZVRFukzYaBMp+gulT/o
+         sUYd2M3PzXrNAjmKt6gTVdhPluk4wATJxohDMKlBFoB0vOoVIoBfEwRIOh5HBOwosX
+         NpIgl8f0zfoT1mSy1zafQKa4zDlIdil8OfWSElv8U6OVjkF23T/eqZ1/9lEt7KN2JH
+         fHLvThYrRWmCg==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.0-rc7
+Date:   Fri, 30 Sep 2022 14:13:39 -0700
+Message-Id: <20220930211339.2945387-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929143225.17907-10-hal.feng@linux.starfivetech.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 10:32:04PM +0800, Hal Feng wrote:
-> Store the necessary properties in device tree instead of .c file,
-> in order to apply this reset driver to other StarFive SoCs.
-> 
-> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> ---
->  .../bindings/reset/starfive,jh7100-reset.yaml | 20 ++++++++
->  arch/riscv/boot/dts/starfive/jh7100.dtsi      |  3 ++
->  drivers/reset/reset-starfive-jh7100.c         | 50 +++++++++++++------
->  3 files changed, 57 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml b/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
-> index 300359a5e14b..3eff3f72a1ed 100644
-> --- a/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
-> +++ b/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
-> @@ -20,19 +20,39 @@ properties:
->    "#reset-cells":
->      const: 1
->  
-> +  starfive,assert-offset:
-> +    description: Offset of the first ASSERT register
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  starfive,status-offset:
-> +    description: Offset of the first STATUS register
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  starfive,nr-resets:
-> +    description: Number of reset signals
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
->  required:
->    - compatible
->    - reg
->    - "#reset-cells"
-> +  - starfive,assert-offset
-> +  - starfive,status-offset
-> +  - starfive,nr-resets
+The following changes since commit abb5f3f4b1f5f0ad50eb067a00051d3587dec9fb:
 
-Adding required properties is a red flag. You can't add required 
-properties to an existing binding. That breaks the ABI unless the OS 
-deals with the properties being absent. If the OS has to do that, then 
-why add them in the first place? All this should be implied by the 
-compatible string.
+  Revert "clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops" (2022-08-31 12:06:46 -0700)
 
-Rob
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to daaa2fbe678efdaced53d1c635f4d326751addf8:
+
+  clk: imx93: drop of_match_ptr (2022-09-28 18:37:36 -0700)
+
+----------------------------------------------------------------
+Here's the last batch of clk driver fixes for this release. These
+patches fix serious problems, for example, i.MX has an issue where
+changing the NAND clk frequency hangs the system. On Allwinner H6 the
+GPU is being overclocked which could lead to long term hardware damage.
+And finally on some Broadcom SoCs the serial console stopped working
+because the clk tree hierarchy description got broken by an inadvertant
+DT node name change. That's fixed by using 'clock-output-names' to
+generate a stable and unique name for clks so the framework can properly
+link things up.
+
+There's also a couple build fixes in here. One to fix CONFIG_OF=n builds
+and one to avoid an array out of bounds bug that happens during clk
+registration on microchip. I hope that KASAN would have found that OOB
+problem, but probably KASAN wasn't attempted. Instead LLVM/clang
+compilation caused an oops, while GCC didn't.
+
+----------------------------------------------------------------
+Aidan MacDonald (1):
+      clk: ingenic-tcu: Properly enable registers before accessing timers
+
+Conor Dooley (2):
+      clk: microchip: mpfs: fix clk_cfg array bounds violation
+      clk: microchip: mpfs: make the rtc's ahb clock critical
+
+Florian Fainelli (1):
+      clk: iproc: Do not rely on node name for correct PLL setup
+
+Han Xu (1):
+      clk: imx: imx6sx: remove the SET_RATE_PARENT flag for QSPI clocks
+
+Jernej Skrabec (1):
+      clk: sunxi-ng: h6: Fix default PLL GPU rate
+
+Peng Fan (1):
+      clk: imx93: drop of_match_ptr
+
+Stephen Boyd (1):
+      Merge tag 'clk-microchip-fixes-6.0' of https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into clk-fixes
+
+ drivers/clk/bcm/clk-iproc-pll.c      | 12 ++++++++----
+ drivers/clk/imx/clk-imx6sx.c         |  4 ++--
+ drivers/clk/imx/clk-imx93.c          |  2 +-
+ drivers/clk/ingenic/tcu.c            | 15 +++++----------
+ drivers/clk/microchip/clk-mpfs.c     | 11 +++++++++--
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c |  8 ++++++--
+ 6 files changed, 31 insertions(+), 21 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
