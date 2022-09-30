@@ -2,86 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95099C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17660C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232165AbiI3VcQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 17:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
+        id S231759AbiI3ViV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:38:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232169AbiI3VcN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:32:13 -0400
-X-Greylist: delayed 2250 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 30 Sep 2022 14:32:12 PDT
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE3701C9E3C;
-        Fri, 30 Sep 2022 14:32:11 -0700 (PDT)
-Received: from [216.9.110.4] (helo=[172.31.242.38])
-        by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-        id 1oeN1g-001NRG-OY; Fri, 30 Sep 2022 21:54:28 +0100
-Message-ID: <01c658ad-7f73-20fc-03c0-c82dcd820aa4@codethink.co.uk>
-Date:   Fri, 30 Sep 2022 21:54:14 +0100
+        with ESMTP id S230211AbiI3ViU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:38:20 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9136311E5F3
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 14:38:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4E321B82A21
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 21:38:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04366C433D6;
+        Fri, 30 Sep 2022 21:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664573897;
+        bh=PgzVp/AEGCCM0mW4ivhwsnkXi4/mlfJHRwO4x5L3HeQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=bqfA1EFXeMpaU30sDAF9wOCevNIBhAlLNIqm4sm0vxrnlncE+RWQhwWN78AywHGrw
+         I3nrDpOIApyUMo9lbh59EHY2y1TDUA4wdasU6WUVmGBMpC0uxW5KnzJb3cRqKUqe9S
+         AM/5qX8nLvdAUl2Naaoznxo7x1MID7WUOcU7I8o+R4CsierA56VfR06aHCN8xxWM2P
+         HtcJuWITgAkcF3HeXdrin8KL7ODiZC1wG7kUZgEqZ7sc0siFFGAyL2+FEH47Sa+OBw
+         FbuYpkFlXuozQrIWwILZdbMr9Eq0V8tz7lAXU5zdSRSOM07x4/csTtUsjIV7Xk/Q8h
+         Ts6zIOjtljxAQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v1 29/30] RISC-V: defconfig: Enable CONFIG_SERIAL_8250_DW
-Content-Language: en-GB
-To:     Hal Feng <hal.feng@linux.starfivetech.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1664517759-19807-1-git-send-email-haibo.chen@nxp.com>
+References: <1664517759-19807-1-git-send-email-haibo.chen@nxp.com>
+Subject: Re: [PATCH] clk: imx93: correct the flexspi1 clock setting
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     festevam@gmail.com, linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        haibo.chen@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com
+To:     abelvesa@kernel.org, haibo.chen@nxp.com, kernel@pengutronix.de,
+        mturquette@baylibre.com, s.hauer@pengutronix.de,
+        shawnguo@kernel.org
+Date:   Fri, 30 Sep 2022 14:38:13 -0700
+User-Agent: alot/0.10
+Message-Id: <20220930213817.04366C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/09/2022 10:06, Hal Feng wrote:
-> Add CONFIG_SERIAL_8250_DW=y, which is a necessary option for
-> StarFive JH7110 and JH7100 SoCs to boot with serial ports.
-> 
-> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-
-That might be useful for other users at some point an I don't
-think it adds much code.
-
+Quoting haibo.chen@nxp.com (2022-09-29 23:02:39)
+> From: Haibo Chen <haibo.chen@nxp.com>
+>=20
+> Correct IMX93_CLK_FLEXSPI1_GATE CCGR setting. Otherwise the flexspi
+> always can't be assigned to a parent clock when dump the clock tree.
+>=20
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 > ---
->   arch/riscv/configs/defconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index aed332a9d4ea..0c44484cd3a4 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -122,6 +122,7 @@ CONFIG_MICROSEMI_PHY=y
->   CONFIG_INPUT_MOUSEDEV=y
->   CONFIG_SERIAL_8250=y
->   CONFIG_SERIAL_8250_CONSOLE=y
-> +CONFIG_SERIAL_8250_DW=y
->   CONFIG_SERIAL_OF_PLATFORM=y
->   CONFIG_VIRTIO_CONSOLE=y
->   CONFIG_HW_RANDOM=y
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
-
+Any Fixes tag?
