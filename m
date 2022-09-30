@@ -2,98 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA11C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59428C43217
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232233AbiI3Vj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 17:39:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40580 "EHLO
+        id S232318AbiI3Vle (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbiI3Vj1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:39:27 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8790A11E5F3;
-        Fri, 30 Sep 2022 14:39:26 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id d64so6028790oia.9;
-        Fri, 30 Sep 2022 14:39:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=K26/QFGf4pwGTou2jHMmJ9oX8eBQkxm9aSZ752Zfxgk=;
-        b=McTMuFnkeqtqr0HlRusYQByg1KSKX9XIrJydLp+8tAMHfIMcCbLXE3eDP76htGl/RA
-         svky8ZErLoF+/ISsi746x6YIQGPZGc20N7J4dWLHZ+OvUJlvSCaICLzBGPVxt/txF8+p
-         EBK8QgwWYCRVYq3ysm8poqTZ8M+R18Pwda4L+O1R8XnbN5oWR/eX8U2gB/p4xuvEZm+X
-         1L9lsE7btUEpJpk5Hce05ZNR34ZJN3pPXHSRwFSBk2bBW/Njg9cK1i12xaLrms1rMj72
-         rA1S5/w33AWcbA9jWtRGq3tuC+5cu6YvuMjpVJbeAMfKUjo4BBt/N3i6b3OQEYCNmo11
-         lHkA==
-X-Gm-Message-State: ACrzQf2Ysr+WsaRjFZMoA1lrvN/rNr7rs8V+PthTFlaFopMaH/iehCO4
-        s4gmyp+OxiV+zmE9VZWa3g==
-X-Google-Smtp-Source: AMsMyM4ZY5mvDttJtbB8jpp+V4tZWeSDkayu20AaSI15+URuXm5zY83yipxKfoOugvZI/S2wmu6fCg==
-X-Received: by 2002:a05:6808:1a24:b0:350:78b0:9c2c with SMTP id bk36-20020a0568081a2400b0035078b09c2cmr82667oib.143.1664573965759;
-        Fri, 30 Sep 2022 14:39:25 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n188-20020aca59c5000000b003450abf4404sm773061oib.21.2022.09.30.14.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 14:39:24 -0700 (PDT)
-Received: (nullmailer pid 1088687 invoked by uid 1000);
-        Fri, 30 Sep 2022 21:39:24 -0000
-Date:   Fri, 30 Sep 2022 16:39:24 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Michal Simek <michal.simek@amd.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        linux-clk@vger.kernel.org, git@amd.com, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
-        mturquette@baylibre.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clk: Add binding for versal clocking
- wizard
-Message-ID: <20220930213924.GA1079711-robh@kernel.org>
-References: <20220930080400.15619-1-shubhrajyoti.datta@amd.com>
- <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
- <CAL_JsqLaqjZeZd3c-fd9f5m-4OCXgOZcOu+paik9FV_eno5sLg@mail.gmail.com>
- <afb3f19f-eb40-5453-a82b-295e06861f86@amd.com>
+        with ESMTP id S232344AbiI3Vlc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:41:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A505F1A6E8F;
+        Fri, 30 Sep 2022 14:41:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3D2D162516;
+        Fri, 30 Sep 2022 21:41:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD021C433C1;
+        Fri, 30 Sep 2022 21:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664574090;
+        bh=EWwElnoQ3zIq+7TaGrma83diIit5m496+HZGkaC/q44=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aoNAyXvQ6XZUKlvHJdQTgOYhYGSHuu/exBYucbS88m47QiHG6E0E0z2THsu2YvMb2
+         Ya/kB5pgAeZpJtOsAdSsn6JWCV0Qhw/unu3XJMp/GpfxNi3EneQcZ9gcf8vLFak67w
+         NMa072xAK0FZVg6MvUsWXAcwrGkNa0Bdgvm5kyeY7Ag7jmKMzIlw1EFiqZq5qQ+ZT1
+         ibzZa3Ex+6bYE6LwxtNDofRa3aS8Ma49ouf3WVS7qJbU+adqHmrYWgVLMT0M8CXn26
+         Hd69niFIk3XXUhyTQUPaFsNNnBYgy6SJTSYbKJ62F16xFXHaAqRJ4imrNpA/HpYT/W
+         //xEpCHEwTJlA==
+Date:   Fri, 30 Sep 2022 22:41:23 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 29/30] RISC-V: defconfig: Enable CONFIG_SERIAL_8250_DW
+Message-ID: <Yzdig6GepDx34u1j@spud>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
+ <01c658ad-7f73-20fc-03c0-c82dcd820aa4@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <afb3f19f-eb40-5453-a82b-295e06861f86@amd.com>
+In-Reply-To: <01c658ad-7f73-20fc-03c0-c82dcd820aa4@codethink.co.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 03:00:28PM +0200, Michal Simek wrote:
-> Hi Rob,
+On Fri, Sep 30, 2022 at 09:54:14PM +0100, Ben Dooks wrote:
+> On 30/09/2022 10:06, Hal Feng wrote:
+> > Add CONFIG_SERIAL_8250_DW=y, which is a necessary option for
+> > StarFive JH7110 and JH7100 SoCs to boot with serial ports.
+> > 
+> > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
 > 
-> On 9/30/22 14:25, Rob Herring wrote:
-> > On Fri, Sep 30, 2022 at 3:04 AM Shubhrajyoti Datta
-> > <shubhrajyoti.datta@amd.com> wrote:
-> > > 
-> > > The Clocking Wizard for Versal adaptive compute acceleration platforms
-> > > generates multiple configurable number of clock outputs.
-> > > Add device tree binding for Versal clocking wizard support.
+> That might be useful for other users at some point an I don't
+> think it adds much code.
+
+Honestly I think this should be applied for 6.1, for parity with the
+other SoCs that have their serial console enabled by default.
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+> 
+> > ---
+> >   arch/riscv/configs/defconfig | 1 +
+> >   1 file changed, 1 insertion(+)
 > > 
-> > Really v1? I'm sure I heard of this wizard before.
-> > 
-> > What about this?:
-> > 
-> > drivers/staging/clocking-wizard/dt-binding.txt
-> > 
-> > That needs to be moved out of staging rather than adding a 2nd one.
+> > diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> > index aed332a9d4ea..0c44484cd3a4 100644
+> > --- a/arch/riscv/configs/defconfig
+> > +++ b/arch/riscv/configs/defconfig
+> > @@ -122,6 +122,7 @@ CONFIG_MICROSEMI_PHY=y
+> >   CONFIG_INPUT_MOUSEDEV=y
+> >   CONFIG_SERIAL_8250=y
+> >   CONFIG_SERIAL_8250_CONSOLE=y
+> > +CONFIG_SERIAL_8250_DW=y
+> >   CONFIG_SERIAL_OF_PLATFORM=y
+> >   CONFIG_VIRTIO_CONSOLE=y
+> >   CONFIG_HW_RANDOM=y
+> 
+> -- 
+> Ben Dooks				http://www.codethink.co.uk/
+> Senior Engineer				Codethink - Providing Genius
+> 
+> https://www.codethink.co.uk/privacy.html
 > 
 > 
-> Let me clarify this. This is IP which is already moved out of staging.
-> Linux-next has these changes and waiting for MW to happen (already in clock
-> tree).
-
-Where does this series explain that? If the dependency is not the latest 
-rc1, then state that.
-
-> And this is new IP. Not sure who has chosen similar name but this targets
-> Xilinx Versal SOCs. Origin one was targeting previous families.
-
-Do we need a whole new schema doc?
-
-It is not ideal to define the same property, xlnx,nr-outputs, more than 
-once. And it's only a new compatible string.
-
-Rob
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
