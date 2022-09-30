@@ -2,95 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C72BC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543AAC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232020AbiI3V1o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 17:27:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37336 "EHLO
+        id S231643AbiI3V2a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231871AbiI3V1l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:27:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CC3142E22;
-        Fri, 30 Sep 2022 14:27:40 -0700 (PDT)
+        with ESMTP id S230088AbiI3V22 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:28:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 819F91497BB
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 14:28:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B7A95B82A30;
-        Fri, 30 Sep 2022 21:27:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628D2C433C1;
-        Fri, 30 Sep 2022 21:27:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A86E624E5
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 21:28:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC82C433D6;
+        Fri, 30 Sep 2022 21:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664573257;
-        bh=qMvmm8i8soEiwwWmYGUfp26xau2BuSrpG99vQ9WlVl8=;
+        s=k20201202; t=1664573306;
+        bh=w+upoy39VhWN2Ls5//Nx+yAfOki/I/SDOFq449OV9Wg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Q3lQCOwvc3hWU0g/onrUcSCxW3RLnXJYq/80OTzWfJgrAYlMv7SWamZ48QlylwOzg
-         eBg08AlXx33GQkjqPD7LfcRceIqJHFZ3QCqvPNGZ1Qo37IP4aLqI0HxWngNUPAeyTN
-         lotuRHlAGluDVpykOanOf7gISX4Rn9uLF0VhZbiEmxYC3lYujlOiS5pDbcJidJxFCr
-         gsUI2ftrU8rmfQwY3fRXh8nkPL3K9zvrsPexYGVgd/XDxAjbBtgZJBUfhgiQI4IWUT
-         VdgU4yQbhdV2jwxn4O+FHF73wKUuqz7mv1OKWoLEkV5WlwJ2Wc38raChTKeTtdxXTo
-         dRyW1agQmQWUQ==
+        b=EB9XBZXa9wpwhgGNyRbAD1aLU0/msAMMIBuBI5F7D+5tk+fQHJ0ySITp5D/UeLtsH
+         5EnTq0EtOenDt5fidmVRI/JQgDzjNIE+4Q+h7R3002pimoH1THVkcEiYgBoaGwsokz
+         62+IBnYwqvYLhhx/mTnOIZjRz1LcXgtog3t3jQqUDUaeF/65G2XP2AEryg+BXIFwDw
+         EWpdwGlDYHx0DpoFdimeVAZUU1FTsLdZHlZXbXy5E/9ubXBft7uyGkUgg0QTyDTXw9
+         x/YnMa16P0niCdSUIegPM1VB/egzkYYiFvVptbkBNUv2+4JsIQd4n4eHtgFYWlkdyt
+         xZ0ifQCX8Y/9w==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220929225402.9696-9-Sergey.Semin@baikalelectronics.ru>
-References: <20220929225402.9696-1-Sergey.Semin@baikalelectronics.ru> <20220929225402.9696-9-Sergey.Semin@baikalelectronics.ru>
-Subject: Re: [PATCH RESEND v12 8/8] clk: baikal-t1: Convert to platform device driver
+In-Reply-To: <20220926084509.12233-1-maxime@cerno.tech>
+References: <20220926084509.12233-1-maxime@cerno.tech>
+Subject: Re: [PATCH] clk: bcm2835: Make peripheral PLLC critical
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Date:   Fri, 30 Sep 2022 14:27:34 -0700
+Cc:     linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Maxime Ripard <maxime@cerno.tech>,
+        Noralf =?utf-8?q?Tr=C3=B8nnes?= <noralf@tronnes.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Date:   Fri, 30 Sep 2022 14:28:23 -0700
 User-Agent: alot/0.10
-Message-Id: <20220930212737.628D2C433C1@smtp.kernel.org>
+Message-Id: <20220930212826.5CC82C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Serge Semin (2022-09-29 15:54:02)
-> In accordance with the way the MIPS platform is normally design there are
-> only six clock sources which need to be available on the kernel start in
-> order to one end up booting correctly:
-> + CPU PLL: needed by the r4k and MIPS GIC timer drivers. The former one is
->   initialized by the arch code, while the later one is implemented in the
->   mips-gic-timer.c driver as the OF-declared timer.
-> + PCIe PLL: required as a parental clock source for the APB/timer domains.
-> + APB clock: needed in order to access all the SoC CSRs at least for the
->   timer OF-declared drivers.
-> + APB Timer{0-2} clocks: these are the DW APB timers which drivers
->   dw_apb_timer_of.c are implemented as the OF-declared timers.
+Quoting Maxime Ripard (2022-09-26 01:45:09)
+> When testing for a series affecting the VEC, it was discovered that
+> turning off and on the VEC clock is crashing the system.
 >=20
-> So as long as the clocks above are available early the kernel will
-> normally work. Let's convert the Baikal-T1 CCU drivers to the platform
-> device drivers keeping that in mind.
+> It turns out that, when disabling the VEC clock, it's the only child of
+> the PLLC-per clock which will also get disabled. The source of the crash
+> is PLLC-per being disabled.
 >=20
-> Generally speaking the conversion isn't that complicated since the driver
-> infrastructure has been designed as flexible enough for that. First we
-> need to add a new PLL/Divider clock features flag which indicates the
-> corresponding clock source as a basic one and that clock sources will be
-> available on the kernel early boot stages. Second the internal PLL/Divider
-> descriptors need to be initialized with -EPROBE_DEFER value as the
-> corresponding clock source is unavailable at the early stages. They will
-> be allocated and initialized on the Baikal-T1 clock platform driver probe
-> procedure. Finally the already available PLL/Divider init functions need
-> to be split up into two ones: init procedure performed in the framework of
-> the OF-declared clock initialization (of_clk_init()), and the probe
-> procedure called by the platform devices bus driver. Note the later method
-> will just continue the system clocks initialization started in the former
-> one.
+> It's likely that some other device might not take a clock reference that
+> it actually needs, but it's unclear which at this point. Let's make
+> PLLC-per critical so that we don't have that crash.
 >=20
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
->=20
+> Reported-by: Noralf Tr=C3=B8nnes <noralf@tronnes.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
 
 Applied to clk-next
