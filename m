@@ -2,128 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B2DC32771
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 15:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF2EC433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 17:45:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231530AbiI3PjK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 11:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        id S231204AbiI3RpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 13:45:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231318AbiI3PjH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 11:39:07 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CA21A0D2A;
-        Fri, 30 Sep 2022 08:39:05 -0700 (PDT)
-Received: from jupiter.universe (dyndsl-091-096-057-200.ewe-ip-backbone.de [91.96.57.200])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 487A966022F5;
-        Fri, 30 Sep 2022 16:39:04 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664552344;
-        bh=TeTqZRe946LnzMhhkMsk3vs7AoSkghH96CaHVKDKCpM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AUsVwByxZ3ah/mys9gjyZrZR3vUTzlMNqSzc26Q+3yrAvVTE+n+wjZnFvN4E2xyxy
-         nfyX4vliP6gl922/ZqrFi+fMRbhwjFbGV1H15HQ58uhOYlnFVWHBMXp6eG5LacKJ7m
-         Syeiwv4B+79s07mEk4pyxPPhXnXGHTc4rCfeYQQRqisGOl6/U0pPInO3qKminhWWp4
-         +b/lPMrkEyw7OG+vZZ92dBOZKxTCWgeGWOotWt/7e+qLqaOCSKkgDHHkh6SkvVzb7Z
-         DXBkf3QK/PMfXQGrbgFWemZKSMaw80BWMWI8ycTMMgVp38rbJkIh2Qwmy4obFlDxcO
-         pu1UpTT0WJaUA==
-Received: by jupiter.universe (Postfix, from userid 1000)
-        id 0F22348015E; Fri, 30 Sep 2022 17:38:59 +0200 (CEST)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        with ESMTP id S229971AbiI3RpV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 13:45:21 -0400
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0993FA5C0;
+        Fri, 30 Sep 2022 10:45:19 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id m130so5428668oif.6;
+        Fri, 30 Sep 2022 10:45:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=oA8vjf+oEK7/6CmiiKkGDsr2L2BO0kznifjtJdNNi7M=;
+        b=GlXOByoDUbYgXHA2FXPJcK0zhAZklfhtv7tH/NwHL7q45P4tqxXP1FQuaba5udB7Vm
+         bODU814FkZxosqih9KU+WRP35GaE/kolqf5mgeQ8kZqr4hU8RnKm8FkXJbql2J1+ajqJ
+         bu8rQf9ltYRbtcx2Z79mWE0szNXu5RIXvyBFD46FajJOG3Js//KjjQf/GjJcVvR7s3Gr
+         Z7Vv4ZyRafLx0aHuftwxE+bfcg3rHoCqdMKNB6vWTsa4LxbyV6SCaC3lgQOM0UGThe6J
+         AX5pAz3VpEHOgfj46fGtlwJcw1lFtokx2cndGT61Hf7o+bpo/mlzfwPErgCO6pqe2CWS
+         BFUw==
+X-Gm-Message-State: ACrzQf0xqMxuLISgVz+vRySS+gHoa2ZA4QqGH6hKlESKqmVZxL5TD3JJ
+        5bUthGhJUqwLXNKGLbl+G+KcFjDhJg==
+X-Google-Smtp-Source: AMsMyM6TAbFxGS4TndhN4N8aHuZF+Iz3Y4Rwch27qWsHMv3QuZnmkGXEOvRqNM7LcI6Ty/xZz7igdg==
+X-Received: by 2002:a05:6808:6cd:b0:34b:73b3:416b with SMTP id m13-20020a05680806cd00b0034b73b3416bmr4263255oih.196.1664559919167;
+        Fri, 30 Sep 2022 10:45:19 -0700 (PDT)
+Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q19-20020a9d6313000000b0065c3bb3c72esm695038otk.14.2022.09.30.10.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 10:45:18 -0700 (PDT)
+Received: (nullmailer pid 567099 invoked by uid 1000);
+        Fri, 30 Sep 2022 17:45:17 -0000
+Date:   Fri, 30 Sep 2022 12:45:17 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCHv2 7/9] clk: rockchip: simplify rockchip_clk_add_lookup
-Date:   Fri, 30 Sep 2022 17:38:55 +0200
-Message-Id: <20220930153857.299396-8-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220930153857.299396-1-sebastian.reichel@collabora.com>
-References: <20220930153857.299396-1-sebastian.reichel@collabora.com>
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v2 01/11] dt-bindings: clock: split
+ qcom,gcc-msm8974,-msm8226 to the separate file
+Message-ID: <166455991729.567045.15845722857981778415.robh@kernel.org>
+References: <20220929092145.473009-1-dmitry.baryshkov@linaro.org>
+ <20220929092145.473009-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929092145.473009-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-rockchip_clk_add_lookup is only called from within the file,
-so it can be made static. The additional checks are removed
-with the following reasoning:
+On Thu, 29 Sep 2022 12:21:35 +0300, Dmitry Baryshkov wrote:
+> Move schema for the GCC on MSM8974 and MSM8226 platforms to a separate
+> file to be able to define device-specific clock properties.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/clock/qcom,gcc-msm8974.yaml      | 64 +++++++++++++++++++
+>  .../bindings/clock/qcom,gcc-other.yaml        |  9 +--
+>  2 files changed, 65 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
+> 
 
-1. The data structure is initialized by rockchip_clk_init(),
-   which is called by all rockchip platforms before the clocks
-   are registered. Not doing so would result in an incomplete
-   clock tree at the moment, which is a fatal error. In other
-   parts of the kernel these kind of checks are usually
-   omitted, so this was done here. The alternative is adding
-   a pr_err to inform the kernel programmer adding a new platform
-   about his incorrect code. Apart from that we are also not
-   checking if the clock id is within the array boundings.
-
-2. While not used so far by any rockchip platform, 0 is a valid
-   clock identifier. To align rockchip closer to other ARM
-   platforms we will start using it with rk3588.
-
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/clk/rockchip/clk.c | 14 ++++++--------
- drivers/clk/rockchip/clk.h |  2 --
- 2 files changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index bb8a844309bf..cb3ab749ddc7 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -196,6 +196,12 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
- 	clk_fractional_divider_general_approximation(hw, rate, parent_rate, m, n);
- }
- 
-+static void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
-+				    struct clk *clk, unsigned int id)
-+{
-+	ctx->clk_data.clks[id] = clk;
-+}
-+
- static struct clk *rockchip_clk_register_frac_branch(
- 		struct rockchip_clk_provider *ctx, const char *name,
- 		const char *const *parent_names, u8 num_parents,
-@@ -397,14 +403,6 @@ void rockchip_clk_of_add_provider(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(rockchip_clk_of_add_provider);
- 
--void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
--			     struct clk *clk, unsigned int id)
--{
--	if (ctx->clk_data.clks && id)
--		ctx->clk_data.clks[id] = clk;
--}
--EXPORT_SYMBOL_GPL(rockchip_clk_add_lookup);
--
- void rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
- 				struct rockchip_pll_clock *list,
- 				unsigned int nr_pll, int grf_lock_offset)
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 2bd1863a7418..4a84491faf39 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -892,8 +892,6 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 			void __iomem *base, unsigned long nr_clks);
- void rockchip_clk_of_add_provider(struct device_node *np,
- 				struct rockchip_clk_provider *ctx);
--void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
--			     struct clk *clk, unsigned int id);
- void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
- 				    struct rockchip_clk_branch *list,
- 				    unsigned int nr_clk);
--- 
-2.35.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
