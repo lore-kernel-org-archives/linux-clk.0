@@ -2,62 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2286C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 00:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F73CC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 00:55:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbiI3AyF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Sep 2022 20:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33846 "EHLO
+        id S229498AbiI3AzJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Sep 2022 20:55:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbiI3AyB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 20:54:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DE041533;
-        Thu, 29 Sep 2022 17:53:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229492AbiI3AzI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Sep 2022 20:55:08 -0400
+Received: from novek.ru (unknown [213.148.174.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D1A4E879
+        for <linux-clk@vger.kernel.org>; Thu, 29 Sep 2022 17:55:05 -0700 (PDT)
+Received: from [192.168.0.18] (unknown [37.228.234.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0872C61729;
-        Fri, 30 Sep 2022 00:53:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A25C433D6;
-        Fri, 30 Sep 2022 00:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664499236;
-        bh=I9QA23vfoNrD0AkuqNaEj2pXmfChCoIPU6a0UA3lmb0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ITLjs3ktxk8Dy1aohKTJK1cntg9yqkyb42kzgS+VmEeHOA9aiWahT5Se8TnKZOxGv
-         5NoEbEPJWSpkLAblBR9f2f9y4Araw6r3JReQSLd5yQyojzXgq5z/n1oIU3UE55WVfH
-         fm6Sgq910FuFN2rITKwGBut01LlnVGGg/CJVHdSfrAgrjZDMvf2z6Z0vHGW+RWNlvu
-         HUvgqAoA6jVib8REpVU1MkJ0wya0CxgbBObLuOyOS1ZrXx3ShkmK6U5q7Vw3N4vvZ+
-         AEzFVKtstRI1hGebCLIwFUEZHTfcreE7jV+AR4ps05cMQwqeQjZtu56OwT0lXFIcbk
-         TM4tRZpEpHgpw==
-Content-Type: text/plain; charset="utf-8"
+        by novek.ru (Postfix) with ESMTPSA id 802D650063A;
+        Fri, 30 Sep 2022 03:41:11 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 802D650063A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
+        t=1664498473; bh=IKmY21h5OrvguuYYLz96dTUw8xn1QX0VYUyl0XW/lzA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=hMg9F1nncGC/ck+wiHEfKeongMcIeVadHLe8h0SRsasMGLmf4+1a7SHMEy0cbh5Kb
+         ago09fJcpOYVTtrNA+1EYYT3fUAosnUdtf6O1P2SoWi3I1ZefdE7jd3t7om48jzovL
+         AphWGEjpAJkzS8MvHJF9y0kpAEVtd/ppZkDqbfgg=
+Message-ID: <6b80b6c8-29fd-4c2a-e963-1f273d866f12@novek.ru>
+Date:   Fri, 30 Sep 2022 01:44:25 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1663929905-10492-2-git-send-email-jun.li@nxp.com>
-References: <1663929905-10492-1-git-send-email-jun.li@nxp.com> <1663929905-10492-2-git-send-email-jun.li@nxp.com>
-Subject: Re: [PATCH RESEND v3 2/3] clk: imx: imx8mp: add shared clk gate for usb suspend clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, mturquette@baylibre.com,
-        l.stach@pengutronix.de, peng.fan@nxp.com,
-        alexander.stein@ew.tq-group.com, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
+Content-Language: en-US
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
-To:     Li Jun <jun.li@nxp.com>, abelvesa@kernel.org
-Date:   Thu, 29 Sep 2022 17:53:54 -0700
-User-Agent: alot/0.10
-Message-Id: <20220930005356.66A25C433D6@smtp.kernel.org>
+References: <20220626192444.29321-1-vfedorenko@novek.ru>
+ <YzWESUXPwcCo67LP@nanopsycho>
+From:   Vadim Fedorenko <vfedorenko@novek.ru>
+In-Reply-To: <YzWESUXPwcCo67LP@nanopsycho>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Li Jun (2022-09-23 03:45:04)
-> 32K usb suspend clock gate is shared with usb_root_clk.
->=20
-> Fixes: 9c140d9926761 ("clk: imx: Add support for i.MX8MP clock driver")
-> Cc: stable@vger.kernel.org # v5.19+
+On 29.09.2022 12:40, Jiri Pirko wrote:
+> Sun, Jun 26, 2022 at 09:24:41PM CEST, vfedorenko@novek.ru wrote:
+>> From: Vadim Fedorenko <vadfed@fb.com>
+>>
+>> Implement common API for clock/DPLL configuration and status reporting.
+>> The API utilises netlink interface as transport for commands and event
+>> notifications. This API aim to extend current pin configuration and
+>> make it flexible and easy to cover special configurations.
+> 
+> Do you have the userspace part somewhere?
+> It is very nice to add example outputs of user cmdline of such tool to
+> the patch description/cover letter.
 
-Why is stable Cced? The commit text doesn't tell me what sort of
-regression is being fixed. Please help!
+Sorry, but we don't have any user-space part for now. It's still WIP and there 
+are too many changes in the protocol to implement anything useful on top of it. 
+Once we will get to a kind of "stable" proto, I will implement a library to use it.
+
+> 
+> Also, did you consider usage of sysfs? Why it isn't a better fit than
+> netlink?
+
+We already have sysfs implemented in the ptp_ocp driver. But it looks like more 
+hardware is going to be available soon with almost the same functions, so it 
+would be great to have common protocol to configure such devices.
+> 
+> Regarding the naming, is "dpll" the correct one. Forgive me for being a
+> syncE greenie, but isn't dpll just one algo to achieve syntonous
+> clocks? Perhaps "dco" as for "Digitally Controlled Oscillator" would be
+> somewhat better fit?
+> 
+
+We will discuss the naming too, thanks!
+
+> 
+>>
+>> v1 -> v2:
+>> * implement returning supported input/output types
+>> * ptp_ocp: follow suggestions from Jonathan
+>> * add linux-clk mailing list
+>> v0 -> v1:
+>> * fix code style and errors
+>> * add linux-arm mailing list
+>>
+>>
+>> Vadim Fedorenko (3):
+>>   dpll: Add DPLL framework base functions
+>>   dpll: add netlink events
+>>   ptp_ocp: implement DPLL ops
+>>
+>> MAINTAINERS                 |   8 +
+>> drivers/Kconfig             |   2 +
+>> drivers/Makefile            |   1 +
+>> drivers/dpll/Kconfig        |   7 +
+>> drivers/dpll/Makefile       |   7 +
+>> drivers/dpll/dpll_core.c    | 161 ++++++++++
+>> drivers/dpll/dpll_core.h    |  40 +++
+>> drivers/dpll/dpll_netlink.c | 595 ++++++++++++++++++++++++++++++++++++
+>> drivers/dpll/dpll_netlink.h |  14 +
+>> drivers/ptp/Kconfig         |   1 +
+>> drivers/ptp/ptp_ocp.c       | 169 +++++++---
+>> include/linux/dpll.h        |  29 ++
+>> include/uapi/linux/dpll.h   |  81 +++++
+>> 13 files changed, 1079 insertions(+), 36 deletions(-)
+>> create mode 100644 drivers/dpll/Kconfig
+>> create mode 100644 drivers/dpll/Makefile
+>> create mode 100644 drivers/dpll/dpll_core.c
+>> create mode 100644 drivers/dpll/dpll_core.h
+>> create mode 100644 drivers/dpll/dpll_netlink.c
+>> create mode 100644 drivers/dpll/dpll_netlink.h
+>> create mode 100644 include/linux/dpll.h
+>> create mode 100644 include/uapi/linux/dpll.h
+>>
+>> -- 
+>> 2.27.0
+>>
+
