@@ -2,111 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C85C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A87C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232461AbiI3Vsa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 17:48:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36326 "EHLO
+        id S232321AbiI3VvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:51:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232454AbiI3Vs2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:48:28 -0400
+        with ESMTP id S232196AbiI3VvD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:51:03 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B6B16F9D6;
-        Fri, 30 Sep 2022 14:48:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1901E3186;
+        Fri, 30 Sep 2022 14:51:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0E377B82A41;
-        Fri, 30 Sep 2022 21:48:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14ACC433D6;
-        Fri, 30 Sep 2022 21:48:24 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 978B3B82A3C;
+        Fri, 30 Sep 2022 21:51:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447E8C433D6;
+        Fri, 30 Sep 2022 21:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664574504;
-        bh=izJxWplvzIJrIzy3GFzhPnsHaw/msyKEzMvL2GdfOdk=;
+        s=k20201202; t=1664574660;
+        bh=fvyFnmHKELqxHSrmR8MjQ68WiziwCTvAMOoEJvu6BZg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ulfKvln9/9OiPB0Yt7T+U2aiGnYSLYbQGreKUjNApStfnfj0mljm4baPsKq4Kjf2P
-         c8A9dAyvDuw/obUE4EhrVGxNosN0Kp30uST7roL0ZPVma1b7Hl4k3YiXJw3U6iu6mk
-         gWdXJhUwM6l+Yaz+2jmk7UsYaXj7VEtXdsJGSZUuRmoiKwWBY2RR9vOimsSZ39kcyl
-         KPlp5d4y1Us24706Fpojqn//wRfrVlq+lMPbhManGWzl0fZP0dZiRkT4JE4+I8g2y3
-         oWrC8avhCZAvXK/tfaVivy4Ddup6vU3AKqKmEbsOoPK6DsLAbpyDZlydpYHMaTB5Ox
-         I2elxjYH6qiog==
+        b=RLvrw7JQn0xk9T1JE7Vqp0Ci8p/bkk7veggaxJwduuaai7hN3/i0RFWQGizndAPd4
+         2Oal6O5JwbglDheb/tkPFOBXgwrtnAu9K8Jc/eEHnfiGLSpbcA6taoh8z0M/qcMmDD
+         MOFICPWOh5rI5tDwMzuMWo4VtO5yrWzmm45FlprwPvub7XyZjrc+7fiLuILWJqwxrc
+         VPPBcQisaXTioIlJ6BOVZSjymUTJEnTMnNQpPSEiI8xXyWCIBUPqJljuhEg/jlADeB
+         SsUMb6Wl2p5WrvfbpDs1uNyavL93PUiyLBhgakNQvU1Knc5w5b/bwc5iZ7Bgaaa+nu
+         rPc4sTmGQ2nbQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220929175602.19946-1-hal.feng@linux.starfivetech.com>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com> <20220929175602.19946-1-hal.feng@linux.starfivetech.com>
-Subject: Re: [PATCH v1 15/30] clk: starfive: Use regmap APIs to operate registers
+In-Reply-To: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
+References: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/3] clk: Remove never used devm_of_clk_del_provider()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-To:     Hal Feng <hal.feng@linux.starfivetech.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org
-Date:   Fri, 30 Sep 2022 14:48:21 -0700
+Date:   Fri, 30 Sep 2022 14:50:58 -0700
 User-Agent: alot/0.10
-Message-Id: <20220930214824.A14ACC433D6@smtp.kernel.org>
+Message-Id: <20220930215100.447E8C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hal Feng (2022-09-29 10:56:02)
-> Clock registers address region is shared with reset controller
-> on the new StarFive JH7110 SoC. Change to use regmap framework
-> to allow base address sharing and preparation for JH7110 clock
-> support.
-
-Do the reset and clk parts share actual registers, where we would need
-to lock between rmw? Or is regmap just nice to have because it wraps up
-the register APIs with some extra features?
-
+Quoting Andy Shevchenko (2022-06-23 04:57:17)
+> For the entire history of the devm_of_clk_del_provider) existence
+> (since 2017) it was never used. Remove it for good.
 >=20
-> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
-[...]
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/sta=
-rfive/clk-starfive-jh7100.c
-> index 014e36f17595..410aa6e06842 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7100.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-> @@ -10,6 +10,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/init.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
-> =20
-> @@ -295,11 +296,13 @@ static int __init clk_starfive_jh7100_probe(struct =
-platform_device *pdev)
->         if (!priv)
->                 return -ENOMEM;
-> =20
-> -       spin_lock_init(&priv->rmw_lock);
->         priv->dev =3D &pdev->dev;
-> -       priv->base =3D devm_platform_ioremap_resource(pdev, 0);
-> -       if (IS_ERR(priv->base))
-> -               return PTR_ERR(priv->base);
-> +       priv->regmap =3D device_node_to_regmap(priv->dev->of_node);
 
-This is sad. Why do we need to make a syscon? Can we instead use the
-auxiliary bus to make a reset device that either gets a regmap made here
-in this driver or uses a void __iomem * mapped with ioremap
-(priv->base)?
-
-> +       if (IS_ERR(priv->regmap)) {
-> +               dev_err(priv->dev, "failed to get regmap (error %ld)\n",
-> +                       PTR_ERR(priv->regmap));
-> +               return PTR_ERR(priv->regmap);
+Applied to clk-next
