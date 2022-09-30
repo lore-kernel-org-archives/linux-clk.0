@@ -2,62 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E49FC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 20:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEA6C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 20:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230246AbiI3Uql (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 16:46:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38114 "EHLO
+        id S231670AbiI3Ure (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 16:47:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiI3Uqj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 16:46:39 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1406C6976;
-        Fri, 30 Sep 2022 13:46:30 -0700 (PDT)
+        with ESMTP id S231891AbiI3Ura (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 16:47:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9941F8C32;
+        Fri, 30 Sep 2022 13:47:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8B25EB82A01;
-        Fri, 30 Sep 2022 20:46:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F670C43146;
-        Fri, 30 Sep 2022 20:46:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F38BB624E1;
+        Fri, 30 Sep 2022 20:47:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F7FC433D7;
+        Fri, 30 Sep 2022 20:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664570788;
-        bh=61jsI8MOLGuKJ4Lu67pBRBhMgw36zql/e2pSmjbkWy4=;
+        s=k20201202; t=1664570846;
+        bh=1kBogdkDwdfzOTT9JxvRdfBm3gXj78ET9quOYxLRvKE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bnZ3z7XrYvzJ9+B5ZNvmUZyhEyVOFqsb6uWP5OUsmRod2VXgHDjQmcUm2EEI+VFv8
-         WR488+UtwJtHVGVl9nNOU9l3NNM9XJ5sdGqSe59IoXOwVsUKrPZPMEJI5rjNoeY5Et
-         TnB7dwqtGe2GuH1TMyE35hzj4L9v3f/No+QH6/ayzlNov13KEuqtwFdENQeVFbFvT4
-         iEh0hB5trjCB9AiLKxsJ3LxHBT69ifjc16i+W61ZnW9KrbPOR8wN8auzVGNBIcDESP
-         vBIizweLF5UDpGvHpAu99p56l6k6dpcSn2XjYeQmadcoY2OarvrHmd2mhD9c3O5YNj
-         ZWBVwnwiPBdhQ==
+        b=KRzdyt/o1YuEH170y8VW5ye7V6ZK13Z/hZZuZhmBHzyBIuvgJufIwR/FhRnoeX2dq
+         OZGMneXa43Bv9XHwg3Eg4El/0kz0obG2XlhZbHUJQom2MBdMNlff0/Wk8J2rH/Bgtd
+         9jajOaJtCPpUdUIFVCMtldir6p/PzWTTL+ynYSN/xfkoN0y/KtD4nEuwjry/D0uP23
+         MLs2HZAMgxPn3PCsj+D6n9BUyF7L9l4hqqzGDDAUH/02wyGtf/+omQ239AdXjSyOL6
+         rZBWghdBFPz2nvIudmoQ5E7ZLRlo4PG+9yxVJUtgV+nd9wIalbRiXCR/oEIFhWL5QL
+         GmluJ1LAmmKQw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220905065833.1831473-1-13667453960@163.com>
-References: <20220905065833.1831473-1-13667453960@163.com>
-Subject: Re: [PATCH] clk: davinci: pll: fix spelling typo in comment
+In-Reply-To: <20220913032228.985852-1-yangyingliang@huawei.com>
+References: <20220913032228.985852-1-yangyingliang@huawei.com>
+Subject: Re: [PATCH -next] clk: davinci: cfgchip: Use dev_err_probe() helper
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     nsekhar@ti.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiangshan Yi <yijiangshan@kylinos.cn>,
-        k2ci <kernel-bot@kylinos.cn>
-To:     Jiangshan Yi <13667453960@163.com>, david@lechnology.com,
-        mturquette@baylibre.com
-Date:   Fri, 30 Sep 2022 13:46:26 -0700
+Cc:     david@lechnology.com, nsekhar@ti.com, mturquette@baylibre.com
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 30 Sep 2022 13:47:24 -0700
 User-Agent: alot/0.10
-Message-Id: <20220930204628.2F670C43146@smtp.kernel.org>
+Message-Id: <20220930204726.53F7FC433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jiangshan Yi (2022-09-04 23:58:33)
-> From: Jiangshan Yi <yijiangshan@kylinos.cn>
+Quoting Yang Yingliang (2022-09-12 20:22:28)
+> dev_err() can be replace with dev_err_probe() which will check if error
+> code is -EPROBE_DEFER.
 >=20
-> Fix spelling typo in comment.
->=20
-> Reported-by: k2ci <kernel-bot@kylinos.cn>
-> Signed-off-by: Jiangshan Yi <yijiangshan@kylinos.cn>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 > ---
 
 Applied to clk-next
