@@ -2,57 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEA6C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 20:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CC1C43217
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 20:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231670AbiI3Ure (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 16:47:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40446 "EHLO
+        id S231299AbiI3Uti (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 16:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231891AbiI3Ura (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 16:47:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9941F8C32;
-        Fri, 30 Sep 2022 13:47:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F38BB624E1;
-        Fri, 30 Sep 2022 20:47:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F7FC433D7;
-        Fri, 30 Sep 2022 20:47:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664570846;
-        bh=1kBogdkDwdfzOTT9JxvRdfBm3gXj78ET9quOYxLRvKE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KRzdyt/o1YuEH170y8VW5ye7V6ZK13Z/hZZuZhmBHzyBIuvgJufIwR/FhRnoeX2dq
-         OZGMneXa43Bv9XHwg3Eg4El/0kz0obG2XlhZbHUJQom2MBdMNlff0/Wk8J2rH/Bgtd
-         9jajOaJtCPpUdUIFVCMtldir6p/PzWTTL+ynYSN/xfkoN0y/KtD4nEuwjry/D0uP23
-         MLs2HZAMgxPn3PCsj+D6n9BUyF7L9l4hqqzGDDAUH/02wyGtf/+omQ239AdXjSyOL6
-         rZBWghdBFPz2nvIudmoQ5E7ZLRlo4PG+9yxVJUtgV+nd9wIalbRiXCR/oEIFhWL5QL
-         GmluJ1LAmmKQw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232097AbiI3UtJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 16:49:09 -0400
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1313063FDA;
+        Fri, 30 Sep 2022 13:49:09 -0700 (PDT)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-13207a86076so2536875fac.3;
+        Fri, 30 Sep 2022 13:49:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=YN8qEL8DJBJUXwLGIJhhXCICK2Erz7u2/C6FcnHwxvw=;
+        b=LLG1civW5Bz3dtCZAQ1pYC9yqFnPjnDVjDU0EniOcBWi/GVdN//JE+ISzvor587YTt
+         7q/D2ToiNp3jPOxPwzbk4r5eD108F0FFl3I4sfztr+lJcOcga9JAYs9k6OOMxw6D7/GH
+         jnMUB/Avxxfv8eBUUu3N5j/4VQ651AZT+VgAxmd1A8ffxTUPMZ1C5OCo2KQk1aSrBm39
+         bC8FiL06wq6zLywVRu3nEJIyUqV1VQR6rE3XvfasIF8O8QUrKT32uFT0pFuktygRybEd
+         YUy6Y78/smbRNYcEkUI957xMClMgBeNx8k4sZiqOBZ8z11B4N3WNh91PVRhx4/b/ltYT
+         uAXQ==
+X-Gm-Message-State: ACrzQf0uW6qRd6zXC/fPtDhFm5Ae+C+l4YttudduaCKlifFargpCo1b8
+        ygh9dfBByIuP2/R52Wca6Q==
+X-Google-Smtp-Source: AMsMyM7cQo+Xdc1zu4Ia/015WNtr0fkOMyA0Z7nPSaR5qXioETaX7bCFr8c6/ztbX7UjQ65MKT544Q==
+X-Received: by 2002:a05:6870:3451:b0:131:82bb:22e3 with SMTP id i17-20020a056870345100b0013182bb22e3mr28626oah.233.1664570948264;
+        Fri, 30 Sep 2022 13:49:08 -0700 (PDT)
+Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id b42-20020a056870392a00b0013187edfde2sm971842oap.12.2022.09.30.13.49.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 13:49:06 -0700 (PDT)
+Received: (nullmailer pid 908078 invoked by uid 1000);
+        Fri, 30 Sep 2022 20:49:05 -0000
+Date:   Fri, 30 Sep 2022 15:49:05 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Hal Feng <hal.feng@linux.starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 09/30] reset: starfive: jh7100: Move necessary
+ properties to device tree
+Message-ID: <20220930204905.GA903203-robh@kernel.org>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929143225.17907-10-hal.feng@linux.starfivetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220913032228.985852-1-yangyingliang@huawei.com>
-References: <20220913032228.985852-1-yangyingliang@huawei.com>
-Subject: Re: [PATCH -next] clk: davinci: cfgchip: Use dev_err_probe() helper
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     david@lechnology.com, nsekhar@ti.com, mturquette@baylibre.com
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 30 Sep 2022 13:47:24 -0700
-User-Agent: alot/0.10
-Message-Id: <20220930204726.53F7FC433D7@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929143225.17907-10-hal.feng@linux.starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yang Yingliang (2022-09-12 20:22:28)
-> dev_err() can be replace with dev_err_probe() which will check if error
-> code is -EPROBE_DEFER.
->=20
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+On Thu, Sep 29, 2022 at 10:32:04PM +0800, Hal Feng wrote:
+> Store the necessary properties in device tree instead of .c file,
+> in order to apply this reset driver to other StarFive SoCs.
+> 
+> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
 > ---
+>  .../bindings/reset/starfive,jh7100-reset.yaml | 20 ++++++++
+>  arch/riscv/boot/dts/starfive/jh7100.dtsi      |  3 ++
+>  drivers/reset/reset-starfive-jh7100.c         | 50 +++++++++++++------
+>  3 files changed, 57 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml b/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+> index 300359a5e14b..3eff3f72a1ed 100644
+> --- a/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+> +++ b/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+> @@ -20,19 +20,39 @@ properties:
+>    "#reset-cells":
+>      const: 1
+>  
+> +  starfive,assert-offset:
+> +    description: Offset of the first ASSERT register
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  starfive,status-offset:
+> +    description: Offset of the first STATUS register
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  starfive,nr-resets:
+> +    description: Number of reset signals
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+>  required:
+>    - compatible
+>    - reg
+>    - "#reset-cells"
+> +  - starfive,assert-offset
+> +  - starfive,status-offset
+> +  - starfive,nr-resets
 
-Applied to clk-next
+Adding required properties is a red flag. You can't add required 
+properties to an existing binding. That breaks the ABI unless the OS 
+deals with the properties being absent. If the OS has to do that, then 
+why add them in the first place? All this should be implied by the 
+compatible string.
+
+Rob
