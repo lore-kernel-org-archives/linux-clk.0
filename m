@@ -2,216 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21E8C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 12:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257D4C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 12:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbiI3MZz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 08:25:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37838 "EHLO
+        id S230282AbiI3M0A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 08:26:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231680AbiI3MZn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 08:25:43 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD36773317;
-        Fri, 30 Sep 2022 05:25:34 -0700 (PDT)
-X-QQ-mid: bizesmtp71t1664540601timrcnbn
-Received: from ubuntu.localdomain ( [113.72.146.201])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 30 Sep 2022 20:23:20 +0800 (CST)
-X-QQ-SSF: 01000000000000305000000A0000000
-X-QQ-FEAT: dS+JUNSIibdYmLj5t1I9ugN+S0ksnIEycmIIAPYyEFfZJVg9V/kdWfTdMQPEk
-        fjiuX7Oae/U06nm1p3ELka+dZsKdTvpPxceFNxZs2W5d9q7tN+Mlh/tTsnCLp+g6MD8EPCS
-        /Omd+8wurSlmyVZfI2W/RsS4n2SttiwKTr4ZAKOIT9PVufqV9TzIFqghUyiauNZC9Ivg2gS
-        eYUqfNTfp36XhmArpqvagc+H+BPz+pO2/qJ/vSyY+mlbNx2FTcSMVqpeA7+yi8QJ5ISZxqT
-        wVnKrNoH4hnS19Rz8hErC91RmQbG1g+8wjDRa2yNP2JEJ6cXnZdrQjOle67cSq7QT7C55Mw
-        60KgXmT3qTPNobR9taWYEIhn5WBP7AMaxciOBVayF+QGM0k/4WYweBP1+XhVPm20wpK3aHZ
-        eXD32uXPZCs=
-X-QQ-GoodBg: 0
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 30/30] RISC-V: Add StarFive JH7100 and JH7110 SoC Kconfig options
-Date:   Fri, 30 Sep 2022 20:23:18 +0800
-Message-Id: <20220930122318.9244-1-hal.feng@linux.starfivetech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+        with ESMTP id S231727AbiI3MZq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 08:25:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D70A3D37;
+        Fri, 30 Sep 2022 05:25:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A4F316231C;
+        Fri, 30 Sep 2022 12:25:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CD2C433B5;
+        Fri, 30 Sep 2022 12:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664540740;
+        bh=jaFHJbthRg/7oVUoCPCdosVEyKRFA6i68ZVYRNWMh9w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=AA/1o6j5eYke9lQxbL9Rt795Y2Axw9/4HAcvsXZHMCrDINHq5CZqh7NwAyjauAI9B
+         3Jx6Kh5+bCbbdepYuFs9C5zvAAKxiFrGOYy+9Kw1gUjVAYTlShv24Thnzec97ndnCT
+         bG6YRy7pqWaxO2HOFVxwNSYgEYNFmZsfLZhfLQTaPtPIgt7Qbv2mCjJaIdibROk4fR
+         H0mQTnMdXoIi2mK5Y5mjpaxdbR7IUCk9YTRgBFmleI0UBmC7IT9b+nakJ33Qt/bONA
+         5EC6lAhw8qd7MrYBfm4OuLNzrWj6hkAkLTHKMQ+dIIY6hLPN98GJdKttM6aoH4fT7M
+         0jmgy2ijHd/Rg==
+Received: by mail-vk1-f174.google.com with SMTP id b15so2162063vkp.2;
+        Fri, 30 Sep 2022 05:25:40 -0700 (PDT)
+X-Gm-Message-State: ACrzQf30f3VUpuVnL4gRgmFB+5qWXeyj/92g3mU2cGSZc3TGNmZNPAxk
+        +iQvjLhby1D7TkyVMnfVdXODgI3NX855YTQveQ==
+X-Google-Smtp-Source: AMsMyM6UwFdDAXEcaxuQqwtp701//96NO2bvEUBg9jYqHqvCmJRamGq/9WU3ZvCLI0jfm/n5QlNlUEXbwMpeysC8vvk=
+X-Received: by 2002:a1f:240f:0:b0:3a3:7b48:81cd with SMTP id
+ k15-20020a1f240f000000b003a37b4881cdmr4060522vkk.19.1664540739015; Fri, 30
+ Sep 2022 05:25:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220930080400.15619-1-shubhrajyoti.datta@amd.com> <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
+In-Reply-To: <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 30 Sep 2022 07:25:27 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLaqjZeZd3c-fd9f5m-4OCXgOZcOu+paik9FV_eno5sLg@mail.gmail.com>
+Message-ID: <CAL_JsqLaqjZeZd3c-fd9f5m-4OCXgOZcOu+paik9FV_eno5sLg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clk: Add binding for versal clocking wizard
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc:     linux-clk@vger.kernel.org, git@amd.com, devicetree@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
+        mturquette@baylibre.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Kconfig options to select the specified StarFive SoC. Select
-necessary Kconfig options required by the specified SoC for booting.
+On Fri, Sep 30, 2022 at 3:04 AM Shubhrajyoti Datta
+<shubhrajyoti.datta@amd.com> wrote:
+>
+> The Clocking Wizard for Versal adaptive compute acceleration platforms
+> generates multiple configurable number of clock outputs.
+> Add device tree binding for Versal clocking wizard support.
 
-Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
----
- arch/riscv/Kconfig.socs               | 27 ++++++++++++++++++++++++++-
- arch/riscv/boot/dts/starfive/Makefile |  4 ++--
- drivers/clk/starfive/Kconfig          | 14 ++++++--------
- drivers/pinctrl/starfive/Kconfig      |  6 ++----
- drivers/reset/Kconfig                 |  1 -
- 5 files changed, 36 insertions(+), 16 deletions(-)
+Really v1? I'm sure I heard of this wizard before.
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 10f68a4359f9..321c448e7b6f 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -22,10 +22,35 @@ config SOC_STARFIVE
- 	bool "StarFive SoCs"
- 	select PINCTRL
- 	select RESET_CONTROLLER
-+	select RESET_STARFIVE
-+	help
-+	  This enables support for StarFive SoC platform hardware.
-+
-+if SOC_STARFIVE
-+
-+config SOC_JH7100
-+	bool "StarFive JH7100 SoC support"
-+	depends on SOC_STARFIVE
- 	select SIFIVE_L2
- 	select SIFIVE_PLIC
-+	select CLK_STARFIVE_JH7100
-+	select PINCTRL_STARFIVE_JH7100
-+	default SOC_STARFIVE
- 	help
--	  This enables support for StarFive SoC platform hardware.
-+	  This enables support for StarFive JH7100 SoC.
-+
-+config SOC_JH7110
-+	bool "StarFive JH7110 SoC support"
-+	depends on SOC_STARFIVE
-+	select SIFIVE_L2
-+	select SIFIVE_PLIC
-+	select CLK_STARFIVE_JH7110_SYS
-+	select PINCTRL_STARFIVE_JH7110
-+	default SOC_STARFIVE
-+	help
-+	  This enables support for StarFive JH7110 SoC.
-+
-+endif
- 
- config SOC_VIRT
- 	bool "QEMU Virt Machine"
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index e1237dbc6aac..a6ecd3c2ec7d 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -1,3 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
--dtb-$(CONFIG_SOC_STARFIVE) += jh7100-beaglev-starlight.dtb
--dtb-$(CONFIG_SOC_STARFIVE) += jh7110-starfive-visionfive-v2.dtb
-+dtb-$(CONFIG_SOC_JH7100) += jh7100-beaglev-starlight.dtb
-+dtb-$(CONFIG_SOC_JH7110) += jh7110-starfive-visionfive-v2.dtb
-diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-index 42aad3b553cb..d0490e9f42db 100644
---- a/drivers/clk/starfive/Kconfig
-+++ b/drivers/clk/starfive/Kconfig
-@@ -5,36 +5,34 @@ config CLK_STARFIVE
- 
- config CLK_STARFIVE_JH7100
- 	bool "StarFive JH7100 clock support"
--	depends on SOC_STARFIVE || COMPILE_TEST
-+	depends on SOC_JH7100 || COMPILE_TEST
- 	select CLK_STARFIVE
--	default SOC_STARFIVE
- 	help
- 	  Say yes here to support the clock controller on the StarFive JH7100
- 	  SoC.
- 
- config CLK_STARFIVE_JH7100_AUDIO
- 	tristate "StarFive JH7100 audio clock support"
--	depends on SOC_STARFIVE || COMPILE_TEST
-+	depends on SOC_JH7100 || COMPILE_TEST
- 	select CLK_STARFIVE
--	default m if SOC_STARFIVE
-+	default m if SOC_JH7100
- 	help
- 	  Say Y or M here to support the audio clocks on the StarFive JH7100
- 	  SoC.
- 
- config CLK_STARFIVE_JH7110_SYS
- 	bool "StarFive JH7110 system clock support"
--	depends on SOC_STARFIVE || COMPILE_TEST
-+	depends on SOC_JH7110 || COMPILE_TEST
- 	select CLK_STARFIVE
--	default SOC_STARFIVE
- 	help
- 	  Say yes here to support the system clock controller on the
- 	  StarFive JH7110 SoC.
- 
- config CLK_STARFIVE_JH7110_AON
- 	tristate "StarFive JH7110 always-on clock support"
--	depends on SOC_STARFIVE || COMPILE_TEST
-+	depends on SOC_JH7110 || COMPILE_TEST
- 	select CLK_STARFIVE
--	default m if SOC_STARFIVE
-+	default m if SOC_JH7110
- 	help
- 	  Say yes here to support the always-on clock controller on the
- 	  StarFive JH7110 SoC.
-diff --git a/drivers/pinctrl/starfive/Kconfig b/drivers/pinctrl/starfive/Kconfig
-index fde39f4a7922..d09bdf6d3029 100644
---- a/drivers/pinctrl/starfive/Kconfig
-+++ b/drivers/pinctrl/starfive/Kconfig
-@@ -2,7 +2,7 @@
- 
- config PINCTRL_STARFIVE_JH7100
- 	tristate "Pinctrl and GPIO driver for the StarFive JH7100 SoC"
--	depends on SOC_STARFIVE || COMPILE_TEST
-+	depends on SOC_JH7100 || COMPILE_TEST
- 	depends on OF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
-@@ -10,7 +10,6 @@ config PINCTRL_STARFIVE_JH7100
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
- 	select OF_GPIO
--	default SOC_STARFIVE
- 	help
- 	  Say yes here to support pin control on the StarFive JH7100 SoC.
- 	  This also provides an interface to the GPIO pins not used by other
-@@ -28,10 +27,9 @@ config PINCTRL_STARFIVE
- 
- config PINCTRL_STARFIVE_JH7110
- 	bool "Pinctrl and GPIO driver for the StarFive JH7110 SoC"
--	depends on SOC_STARFIVE || COMPILE_TEST
-+	depends on SOC_JH7110 || COMPILE_TEST
- 	depends on OF
- 	select PINCTRL_STARFIVE
--	default SOC_STARFIVE
- 	help
- 	  Say yes here to support pin control on the StarFive JH7110 SoC.
- 	  This also provides an interface to the GPIO pins not used by other
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 8121de5ecc3c..c001879bd890 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -228,7 +228,6 @@ config RESET_SOCFPGA
- config RESET_STARFIVE
- 	bool "StarFive SoC Reset Driver"
- 	depends on SOC_STARFIVE || COMPILE_TEST
--	default SOC_STARFIVE
- 	help
- 	  This enables the reset controller driver for the StarFive SoCs.
- 
--- 
-2.17.1
+What about this?:
 
+drivers/staging/clocking-wizard/dt-binding.txt
+
+That needs to be moved out of staging rather than adding a 2nd one.
+
+>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
+>
+>  .../bindings/clock/xlnx,clk-wizard.yaml       | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml
+> new file mode 100644
+> index 000000000000..41a6f4bcaccd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/xlnx,clk-wizard.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx Versal clocking wizard
+> +
+> +maintainers:
+> +  - Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> +
+> +description:
+> +  The clocking wizard is a soft ip clocking block of Xilinx versal. The IP
+> +  uses the input clock frequencies and generates the requested
+> +  clock output.
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,clk-wizard-1.0
+
+Where does 1.0 come from? A 1.0 always feels made up. This should be
+based on some IP versioning that's documented somewhere.
+
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    description: List of clock specifiers which are external input
+> +      clocks to the given clock controller.
+> +    items:
+> +      - description: functional clock input
+> +      - description: axi clock or the interface clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: clk_in1
+> +      - const: s_axi_aclk
+> +
+> +  xlnx,nr-outputs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 8
+> +    description:
+> +      Number of outputs.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - xlnx,nr-outputs
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-generator@40040000 {
+> +        compatible = "xlnx,clk-wizard-1.0";
+> +        reg = <0x40040000 0x1000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clkc 15>, <&clkc 15>;
+> +        clock-names = "clk_in1", "s_axi_aclk";
+> +        xlnx,nr-outputs = <6>;
+> +    };
+> +...
+> --
+> 2.17.1
+>
