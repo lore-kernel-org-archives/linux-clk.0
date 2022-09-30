@@ -2,171 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC49C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 11:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2E4C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 11:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbiI3L3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 07:29:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33174 "EHLO
+        id S231237AbiI3L5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 07:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbiI3L2g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 07:28:36 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0895A20BE8
-        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 04:19:53 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id l12so4446566ljg.9
-        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 04:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=98VxkYtHYss6Fdvz6v89xHzqYeKh8t8Kg7Pm4jF/ymA=;
-        b=jjH5Nrqm6I6cs88/zD2jA6k9ogcvrJme5pmFAlXbFzIBAeS7c+h6bAXqv/ZH4qPV6n
-         SadyHQ47lZr39dIjTPCfWWk8yD/n0OuF5pQWprk+z2XFiEBPGNvKyXsTisxm4X/Iqb8J
-         D3c/Rl42pBYtAgsRCMjze6pSr2PlO/uxYiT9MqDQAHWkHmdcLMQ8Ql8KT8gGk1q+e2Qi
-         ZRn/dvelf8flC+B0VCLjw2DGl5RYynRwP4Pf8e+kEsky+q3Ddj0KjxNm7nhB2H37YFKF
-         fTB+8NxE0/31uByMiXRHDXppm/HKsnMxsVivVDOhBHrftgS+arZoSasDmP7o4nGTgVtr
-         5OHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=98VxkYtHYss6Fdvz6v89xHzqYeKh8t8Kg7Pm4jF/ymA=;
-        b=B5zxqc3loV2u8ooFdHoFBtUqoZ5lHNlfDH2ze/cwDATtS3U75qil3R58ATi0jyAKWb
-         bIWJ9+utzgGUKHl4fymd2Tr1NttrqcMId1y+oDDZxXdSwDKQo5f1p1rgEe+0oy6CiKEh
-         kOg0si3O6W6Jxu6yd7Zc0hUt3f5dTeDLcLT2ZKyOM0HmZkFMcLPuKhszADGFmuQFlQeD
-         IBkj0/H1YNTGe4otCwPD9KTxJ2t9CxF1oiQtuftIav1Xsr/xeNShw9fnRiW/HZKYW+bN
-         ereUOeGceee+8bONy/YUQITIemNhTjalHEZeU6q65oiM8sm/Ni+jEV7Xqo/4256dQ1+1
-         0P0g==
-X-Gm-Message-State: ACrzQf3g/qYv4SAxOaGE87q6PgiOhGWJpTCiblCYomWk8my/1Of5BOrK
-        QFDDBUWzokeoHgGIDcFWuD8lnA==
-X-Google-Smtp-Source: AMsMyM60G1skfhndb58kLzZ6p+5lhSdzFr5E+sk9r6L9+t4iV1giJlEs3tho4HKtcVuxsoe9V2c4nQ==
-X-Received: by 2002:a2e:8511:0:b0:26c:968:a068 with SMTP id j17-20020a2e8511000000b0026c0968a068mr2870172lji.206.1664536791940;
-        Fri, 30 Sep 2022 04:19:51 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id h4-20020a05651c124400b0026be1de1500sm135360ljh.79.2022.09.30.04.19.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Sep 2022 04:19:51 -0700 (PDT)
-Message-ID: <8fb538bc-534b-0e7e-280d-754afa8e3cd9@linaro.org>
-Date:   Fri, 30 Sep 2022 13:19:50 +0200
+        with ESMTP id S229870AbiI3L5y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 07:57:54 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A884163B67;
+        Fri, 30 Sep 2022 04:57:51 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28UAcTxO004250;
+        Fri, 30 Sep 2022 11:57:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=6r3IHl38uTfFy9rn6v0/eEMi3/2iLaVdrH1J1BCBHN8=;
+ b=E1tthoWDAL8+R5uP/rXiLykkT/WDtID69h/mhV2cpx9Lswf0qdu0Grig4A5ha4kvkKvE
+ 33EwQSJSAw8pTC4pL19u4VcDSoxEMQ6EAjMW/zxLObBihEx3Oqf6LnUfP2l2joBmW3p6
+ RHKLgYtysUE0uzriSq1ql+GwSBnVRXjLenMvZgGqstAaKD7MkAjsh/fBPvuyiaLCQsqA
+ FXIKsALLXJLVDS/UP2UNcBk60B7NHsrY/uvla6OkBhKjytsC8P/98YDoiQXdyVw9xLVZ
+ M4BumJn/GLFTyGExfCrknMKkvzIyl+gYiC5abrPzg85vErhI2Dn1cBrvol5sQMnNjxzR Kg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jwr49hh08-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Sep 2022 11:57:43 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28UBvhmJ006966
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Sep 2022 11:57:43 GMT
+Received: from [10.216.29.114] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 30 Sep
+ 2022 04:57:39 -0700
+Message-ID: <30c95220-f3fd-3105-18a7-a9588af69b7d@quicinc.com>
+Date:   Fri, 30 Sep 2022 17:27:28 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH 1/2] dt-bindings: clk: Add binding for versal clocking
- wizard
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] clk: gcc-sc8280xp: use retention for USB power domains
 Content-Language: en-US
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        linux-clk@vger.kernel.org
-Cc:     git@amd.com, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com
-References: <20220930080400.15619-1-shubhrajyoti.datta@amd.com>
- <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Johan Hovold <johan+linaro@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220929161124.18138-1-johan+linaro@kernel.org>
+From:   Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <20220929161124.18138-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: L6xfAgwQ05Xoyj1MyaDsMay5mYL3DJgS
+X-Proofpoint-ORIG-GUID: L6xfAgwQ05Xoyj1MyaDsMay5mYL3DJgS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-30_04,2022-09-29_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 adultscore=0
+ mlxlogscore=999 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209300075
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/09/2022 10:03, Shubhrajyoti Datta wrote:
-> The Clocking Wizard for Versal adaptive compute acceleration platforms
-> generates multiple configurable number of clock outputs.
-> Add device tree binding for Versal clocking wizard support.
 
-Drop second "binding" from subject. Redundant.
-
+On 9/29/2022 9:41 PM, Johan Hovold wrote:
+> Since commit d399723950c4 ("clk: qcom: gdsc: Fix the handling of
+> PWRSTS_RET support) retention mode can be used on sc8280xp to maintain
+> state during suspend instead of leaving the domain always on.
 > 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> This is needed to eventually allow the parent CX domain to be powered
+> down during suspend.
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
+>   drivers/clk/qcom/gcc-sc8280xp.c | 13 +++----------
+>   1 file changed, 3 insertions(+), 10 deletions(-)
 > 
->  .../bindings/clock/xlnx,clk-wizard.yaml       | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml
+> While we're not yet able to fully test this (since we're not hitting CX
+> power down) this can still go in as we'll need it in some form
+> eventually.
+
+If sc8280xp supports CX power down, it would be good to also put in the
+cxcs offsets so USB RET still works even when you do hit CX power down some
+time in the future.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml
-> new file mode 100644
-> index 000000000000..41a6f4bcaccd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/xlnx,clk-wizard.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx Versal clocking wizard
-> +
-> +maintainers:
-> +  - Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> +
-> +description:
-> +  The clocking wizard is a soft ip clocking block of Xilinx versal. The IP
-
-Isn't versal a proper noun? Some product? If so, it starts with a
-capital letter.
-
-> +  uses the input clock frequencies and generates the requested
-> +  clock output.
-> +
-> +properties:
-> +  compatible:
-> +    const: xlnx,clk-wizard-1.0
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    description: List of clock specifiers which are external input
-> +      clocks to the given clock controller.
-
-Drop "List of clock specifiers which are "
-
-> +    items:
-> +      - description: functional clock input
-> +      - description: axi clock or the interface clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: clk_in1
-
-Just "in1"
-
-> +      - const: s_axi_aclk
-
-Just "s_axi"
-
-> +
-> +  xlnx,nr-outputs:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 8
-> +    description:
-> +      Number of outputs.
-
-Nope, you just copied the name of property. That's like documenting a
-function with the name of that function.
-
-Not useful at all.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - xlnx,nr-outputs
-> +
-> +...
-
-Best regards,
-Krzysztof
-
+> Note that the PCIe domains should remain always-on until we have driver
+> support for suspend in place.
+> 
+> Johan
+> 
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+> index 7768e6901dcc..a18ed88f3b82 100644
+> --- a/drivers/clk/qcom/gcc-sc8280xp.c
+> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
+> @@ -6843,17 +6843,12 @@ static struct gdsc ufs_phy_gdsc = {
+>   	.pwrsts = PWRSTS_OFF_ON,
+>   };
+>   
+> -/*
+> - * The Qualcomm DWC3 driver suspend implementation appears to be incomplete
+> - * for sc8280xp so keep the USB power domains always-on for now.
+> - */
+>   static struct gdsc usb30_mp_gdsc = {
+>   	.gdscr = 0xab004,
+>   	.pd = {
+>   		.name = "usb30_mp_gdsc",
+>   	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = ALWAYS_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>   };
+>   
+>   static struct gdsc usb30_prim_gdsc = {
+> @@ -6861,8 +6856,7 @@ static struct gdsc usb30_prim_gdsc = {
+>   	.pd = {
+>   		.name = "usb30_prim_gdsc",
+>   	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = ALWAYS_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>   };
+>   
+>   static struct gdsc usb30_sec_gdsc = {
+> @@ -6870,8 +6864,7 @@ static struct gdsc usb30_sec_gdsc = {
+>   	.pd = {
+>   		.name = "usb30_sec_gdsc",
+>   	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = ALWAYS_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>   };
+>   
+>   static struct clk_regmap *gcc_sc8280xp_clocks[] = {
