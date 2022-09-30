@@ -2,65 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC05C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95099C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbiI3VbO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 17:31:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49326 "EHLO
+        id S232165AbiI3VcQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232079AbiI3VbG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:31:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FAF12936D;
-        Fri, 30 Sep 2022 14:31:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C89B624F4;
-        Fri, 30 Sep 2022 21:31:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DB7C433C1;
-        Fri, 30 Sep 2022 21:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664573463;
-        bh=8ngmKzeml8m0R0g4rXI8BPfKYpVbq7Y5xNMXyRhTE8c=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WRGmagP2FEI04rKREfs9yeCTGovcqoBIz0d5iNsZ8VQTilwbe7J0oHu0GbjFp2yXe
-         FR9KJHvAl+lDYqP0Pjij8FAGFSilGxB592RG84yFSl7AM+XonvGuVBPBzWb+6eiAOM
-         TRznfycXnyg/g1hvKNZ91jhnuF6Tr0Nju0ycEGHOjCGW8v7pGadt4F7h99XIt9OWTo
-         SGgJhLaKNBnipryyp5bPrCwK+zVy+L6bFQQHENzmNdsc3FpFZ1s780p0gOcoU7kqKV
-         vmMdU5bFFbkim5SF2KfwO9FDIkXydXRkKRkKyARdGxWCcsiNX1xjt37JaJDmxf3MTc
-         gWHmc2/lV3LeQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232169AbiI3VcN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:32:13 -0400
+X-Greylist: delayed 2250 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 30 Sep 2022 14:32:12 PDT
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE3701C9E3C;
+        Fri, 30 Sep 2022 14:32:11 -0700 (PDT)
+Received: from [216.9.110.4] (helo=[172.31.242.38])
+        by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+        id 1oeN1g-001NRG-OY; Fri, 30 Sep 2022 21:54:28 +0100
+Message-ID: <01c658ad-7f73-20fc-03c0-c82dcd820aa4@codethink.co.uk>
+Date:   Fri, 30 Sep 2022 21:54:14 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220904141037.38816-1-stefan.wahren@i2se.com>
-References: <20220904141037.38816-1-stefan.wahren@i2se.com>
-Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_rate_from_divisor declaration
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v1 29/30] RISC-V: defconfig: Enable CONFIG_SERIAL_8250_DW
+Content-Language: en-GB
+To:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Date:   Fri, 30 Sep 2022 14:31:00 -0700
-User-Agent: alot/0.10
-Message-Id: <20220930213103.60DB7C433C1@smtp.kernel.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stefan Wahren (2022-09-04 07:10:37)
-> The return value of bcm2835_clock_rate_from_divisor is always unsigned
-> and also all caller expect this. So fix the declaration accordingly.
->=20
-> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
- domain clocks")
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> ---
+On 30/09/2022 10:06, Hal Feng wrote:
+> Add CONFIG_SERIAL_8250_DW=y, which is a necessary option for
+> StarFive JH7110 and JH7100 SoCs to boot with serial ports.
+> 
+> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
 
-Applied to clk-next
+That might be useful for other users at some point an I don't
+think it adds much code.
+
+> ---
+>   arch/riscv/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index aed332a9d4ea..0c44484cd3a4 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -122,6 +122,7 @@ CONFIG_MICROSEMI_PHY=y
+>   CONFIG_INPUT_MOUSEDEV=y
+>   CONFIG_SERIAL_8250=y
+>   CONFIG_SERIAL_8250_CONSOLE=y
+> +CONFIG_SERIAL_8250_DW=y
+>   CONFIG_SERIAL_OF_PLATFORM=y
+>   CONFIG_VIRTIO_CONSOLE=y
+>   CONFIG_HW_RANDOM=y
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
+
