@@ -2,96 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C4CC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC05C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 21:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231772AbiI3V2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 17:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38848 "EHLO
+        id S231473AbiI3VbO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 17:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbiI3V2l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:28:41 -0400
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD62910B20C;
-        Fri, 30 Sep 2022 14:28:40 -0700 (PDT)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-13207a86076so2635473fac.3;
-        Fri, 30 Sep 2022 14:28:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=S7CiI3WwjpNrhXvdHD1dIIAHLPRZYnaexnei+ztfM3I=;
-        b=hsZOOLsH1HRuTe7gYB1pMBoe14QpOLsOu1uvy5ecUR8Wmen7qJ40sC0gbm4rE9CCzU
-         QMdOzDPoFaJX2gcYPHUCECahulVSL1uJQTfo9R5fuH+rW0gZBJMxbHriWu6i4/C1JVaw
-         owsF+aKmEoHpE+PAaxxTvtTyI+n4m2pQdMH4Tv0WM4cckxjvoMWpceUE79f+Oe4tvADn
-         iouONup8tfmHDxd9fSXTSVde3E8T1+GuqkOuQTvlvHtcZe8A6ORis1rVvJBXmIjEXJsf
-         ftZQNNAvmMdIBsRiMb6I/HyR80fxApLLjbp4l7uXOekCKTflS5iTN9BaKBMDdogn9w5r
-         0d2w==
-X-Gm-Message-State: ACrzQf26rSOAUodcqdQ58+RDdy/6Y6FdHld4KuXh/VzoBzl3SkFTwGcu
-        JLfVih+JcBQf3vq7eQQfiw==
-X-Google-Smtp-Source: AMsMyM5bcRhjaYikR+Xk6ykHgQ5zOQndbLZNNrB7CLNt2bq/KWaPcLT0xLBWvFaWjME3DkVdHURUeg==
-X-Received: by 2002:a05:6871:689:b0:12c:52be:94f6 with SMTP id l9-20020a056871068900b0012c52be94f6mr93380oao.214.1664573319960;
-        Fri, 30 Sep 2022 14:28:39 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id u43-20020a056808152b00b0034f937c50fasm748202oiw.49.2022.09.30.14.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 14:28:39 -0700 (PDT)
-Received: (nullmailer pid 1076968 invoked by uid 1000);
-        Fri, 30 Sep 2022 21:28:37 -0000
-Date:   Fri, 30 Sep 2022 16:28:37 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Hal Feng <hal.feng@linux.starfivetech.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v1 23/30] pinctrl: starfive: Rename "pinctrl-starfive" to
- "pinctrl-starfive-jh7100"
-Message-ID: <166457324093.1075476.18009315584754055366.robh@kernel.org>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220930061404.5418-1-hal.feng@linux.starfivetech.com>
+        with ESMTP id S232079AbiI3VbG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 17:31:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FAF12936D;
+        Fri, 30 Sep 2022 14:31:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C89B624F4;
+        Fri, 30 Sep 2022 21:31:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DB7C433C1;
+        Fri, 30 Sep 2022 21:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664573463;
+        bh=8ngmKzeml8m0R0g4rXI8BPfKYpVbq7Y5xNMXyRhTE8c=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=WRGmagP2FEI04rKREfs9yeCTGovcqoBIz0d5iNsZ8VQTilwbe7J0oHu0GbjFp2yXe
+         FR9KJHvAl+lDYqP0Pjij8FAGFSilGxB592RG84yFSl7AM+XonvGuVBPBzWb+6eiAOM
+         TRznfycXnyg/g1hvKNZ91jhnuF6Tr0Nju0ycEGHOjCGW8v7pGadt4F7h99XIt9OWTo
+         SGgJhLaKNBnipryyp5bPrCwK+zVy+L6bFQQHENzmNdsc3FpFZ1s780p0gOcoU7kqKV
+         vmMdU5bFFbkim5SF2KfwO9FDIkXydXRkKRkKyARdGxWCcsiNX1xjt37JaJDmxf3MTc
+         gWHmc2/lV3LeQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220930061404.5418-1-hal.feng@linux.starfivetech.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220904141037.38816-1-stefan.wahren@i2se.com>
+References: <20220904141037.38816-1-stefan.wahren@i2se.com>
+Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_rate_from_divisor declaration
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Date:   Fri, 30 Sep 2022 14:31:00 -0700
+User-Agent: alot/0.10
+Message-Id: <20220930213103.60DB7C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 30 Sep 2022 14:14:04 +0800, Hal Feng wrote:
-> From: Jianlong Huang <jianlong.huang@starfivetech.com>
-> 
-> Add the SoC name to make it more clear. Also the next generation StarFive
-> SoCs will use "pinctrl-starfive" as the core of StarFive pinctrl driver.
-> No functional change.
-> 
-> Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+Quoting Stefan Wahren (2022-09-04 07:10:37)
+> The return value of bcm2835_clock_rate_from_divisor is always unsigned
+> and also all caller expect this. So fix the declaration accordingly.
+>=20
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
+ domain clocks")
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 > ---
->  .../bindings/pinctrl/starfive,jh7100-pinctrl.yaml           | 2 +-
->  arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts   | 2 +-
->  drivers/pinctrl/starfive/Kconfig                            | 2 +-
->  drivers/pinctrl/starfive/Makefile                           | 2 +-
->  .../{pinctrl-starfive.c => pinctrl-starfive-jh7100.c}       | 2 +-
->  .../{pinctrl-starfive.h => pinctrl-starfive-jh7100.h}       | 6 +++---
->  6 files changed, 8 insertions(+), 8 deletions(-)
->  rename drivers/pinctrl/starfive/{pinctrl-starfive.c => pinctrl-starfive-jh7100.c} (99%)
->  rename include/dt-bindings/pinctrl/{pinctrl-starfive.h => pinctrl-starfive-jh7100.h} (98%)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-Would be good to pull this out separately and apply for 6.1. It's kind 
-of messy with cross tree dependencies.
-
+Applied to clk-next
