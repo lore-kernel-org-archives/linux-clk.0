@@ -2,76 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF2EC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 17:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47951C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 18:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbiI3RpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 13:45:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
+        id S230450AbiI3S75 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 14:59:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbiI3RpV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 13:45:21 -0400
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0993FA5C0;
-        Fri, 30 Sep 2022 10:45:19 -0700 (PDT)
-Received: by mail-oi1-f180.google.com with SMTP id m130so5428668oif.6;
-        Fri, 30 Sep 2022 10:45:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=oA8vjf+oEK7/6CmiiKkGDsr2L2BO0kznifjtJdNNi7M=;
-        b=GlXOByoDUbYgXHA2FXPJcK0zhAZklfhtv7tH/NwHL7q45P4tqxXP1FQuaba5udB7Vm
-         bODU814FkZxosqih9KU+WRP35GaE/kolqf5mgeQ8kZqr4hU8RnKm8FkXJbql2J1+ajqJ
-         bu8rQf9ltYRbtcx2Z79mWE0szNXu5RIXvyBFD46FajJOG3Js//KjjQf/GjJcVvR7s3Gr
-         Z7Vv4ZyRafLx0aHuftwxE+bfcg3rHoCqdMKNB6vWTsa4LxbyV6SCaC3lgQOM0UGThe6J
-         AX5pAz3VpEHOgfj46fGtlwJcw1lFtokx2cndGT61Hf7o+bpo/mlzfwPErgCO6pqe2CWS
-         BFUw==
-X-Gm-Message-State: ACrzQf0xqMxuLISgVz+vRySS+gHoa2ZA4QqGH6hKlESKqmVZxL5TD3JJ
-        5bUthGhJUqwLXNKGLbl+G+KcFjDhJg==
-X-Google-Smtp-Source: AMsMyM6TAbFxGS4TndhN4N8aHuZF+Iz3Y4Rwch27qWsHMv3QuZnmkGXEOvRqNM7LcI6Ty/xZz7igdg==
-X-Received: by 2002:a05:6808:6cd:b0:34b:73b3:416b with SMTP id m13-20020a05680806cd00b0034b73b3416bmr4263255oih.196.1664559919167;
-        Fri, 30 Sep 2022 10:45:19 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id q19-20020a9d6313000000b0065c3bb3c72esm695038otk.14.2022.09.30.10.45.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 10:45:18 -0700 (PDT)
-Received: (nullmailer pid 567099 invoked by uid 1000);
-        Fri, 30 Sep 2022 17:45:17 -0000
-Date:   Fri, 30 Sep 2022 12:45:17 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v2 01/11] dt-bindings: clock: split
- qcom,gcc-msm8974,-msm8226 to the separate file
-Message-ID: <166455991729.567045.15845722857981778415.robh@kernel.org>
-References: <20220929092145.473009-1-dmitry.baryshkov@linaro.org>
- <20220929092145.473009-2-dmitry.baryshkov@linaro.org>
+        with ESMTP id S229730AbiI3S74 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 14:59:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497AE49B44;
+        Fri, 30 Sep 2022 11:59:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DB0A3623D3;
+        Fri, 30 Sep 2022 18:59:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41810C433C1;
+        Fri, 30 Sep 2022 18:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664564393;
+        bh=3QNA3zbxcf7C4eGHXviUTx4Mw2lLcI48VnpwYP8Y8s4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=aZSaxoh2EQHcxbPxcxRfp25X3CBDogGpi/oGVPkj8agbdJ9P96s1jidhYhAqXmWEy
+         TcykmDM6A+4IG1bMzW2DyIZ5eeBpaw1Aab0BLIodRJUWZMzrQWXIRrYvekX0P4wU16
+         6FMiMv2Xhv+f+4mwQEDvLyPrpMi74Cdce3dsWVdJSQHi2loO9vNcd15Y3ywbuQRxeq
+         ambIAp0HAGBnCAzsAzPra/gRV8VYhsfeLiOPZWNb/evVLAOg9WqZw9xksARRYH1Va9
+         MBPcgUspxQh8oPEtdvbE9+Tv5gOPgK+rETIKKMifAPVIqWqiXiXWYz1+Q6gcR4P/hJ
+         2FHcjYw24WZYg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929092145.473009-2-dmitry.baryshkov@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <17c5cc9c-50ea-aeac-04e0-20b6c093c7ec@collabora.com>
+References: <20220929121031.17523-1-rex-bc.chen@mediatek.com> <17c5cc9c-50ea-aeac-04e0-20b6c093c7ec@collabora.com>
+Subject: Re: [PATCH v3] reset: mediatek: Move mediatek system clock reset to reset folder
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     runyang.chen@mediatek.com, miles.chen@mediatek.com,
+        wenst@chromium.org, nfraprado@collabora.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Bo-Chen Chen <rex-bc.chen@mediatek.com>,
+        matthias.bgg@gmail.com, mturquette@baylibre.com,
+        p.zabel@pengutronix.de
+Date:   Fri, 30 Sep 2022 11:59:51 -0700
+User-Agent: alot/0.10
+Message-Id: <20220930185953.41810C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 29 Sep 2022 12:21:35 +0300, Dmitry Baryshkov wrote:
-> Move schema for the GCC on MSM8974 and MSM8226 platforms to a separate
-> file to be able to define device-specific clock properties.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../bindings/clock/qcom,gcc-msm8974.yaml      | 64 +++++++++++++++++++
->  .../bindings/clock/qcom,gcc-other.yaml        |  9 +--
->  2 files changed, 65 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
-> 
+Quoting AngeloGioacchino Del Regno (2022-09-29 05:50:38)
+> I've just analyzed this idea a bit more, and there's the outcome.
+>=20
+> This driver would be fine, if some MediaTek SoCs weren't shipped with
+> a bootloader that supports only very small kernels... because then, if
+> the reset controller is not available at boot time, it's unlikely that
+> you can probe the eMMC or the uSD, so it won't be possible to actually
+> compile this driver as a module and load it afterwards.
+>=20
+> Please don't misunderstand me: I like the idea of having the MediaTek
+> SoC sysclk reset controller as a ... reset controller driver but, to
+> make that work, one fundamental issue must be solved...
+>=20
+> If the kernel is configured for, let's say, MT2701 and MT2712, we're
+> always building in reset controller support for MT7622, 7629, 8135, 8173,
+> 8183, 8186, 8192, 8195 - and this list will grow with MT8188, and others.
+>=20
+> Obviously, it's useless to have support for, say, MT7622, if the MT7622
+> system clock controllers aren't built-in, nor modules.
+>=20
+> So, to make this idea to work, we have to find a way to:
+> 1. Build in support only for the required SoC(s)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Use Kconfig
+
+> 2. Put the reset index mapping arrays in SoC-specific files, or this
+>     single file driver will see an exponential growth.
+
+Split the reset driver into different files compiled for different SoCs
+based on the SoC Kconfig made in step 1.
+
+>=20
+> Wrapping it up - as the driver is right now - we're losing flexibility:
+> we need to maintain the current flexibility while keeping the improvements
+> that are made with this proposal.
+>=20
+> Ideas?
+>=20
+
+It should work and your concerns are alleviated?
