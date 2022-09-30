@@ -2,33 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66420C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 09:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41683C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 11:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230282AbiI3JJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 05:09:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47866 "EHLO
+        id S231454AbiI3LQW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 07:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiI3JJL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 05:09:11 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB9D2ED4A;
-        Fri, 30 Sep 2022 02:09:08 -0700 (PDT)
-X-QQ-mid: bizesmtp78t1664528816tuqcmaei
-Received: from ubuntu.localdomain ( [113.72.146.201])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 30 Sep 2022 17:06:54 +0800 (CST)
-X-QQ-SSF: 01000000000000305000000A0000000
-X-QQ-FEAT: dcYQFNbI8vHgGBegdo4q9m3MYLIYCHcw61t0e3fQ/Hq7EkLkmrCEJbkHKfFlG
-        J4zmi7grr3n/OnwCkitlLiu4qcHnTOsYdPqejqBFnT0LtYo71L1edvOVk8EqtBU/4NITA1v
-        PtvMIi33G6+geE5Dd7Xac7PKFO83VGfrb9v3HUE71s36L+Ak4KHisHaZkXU39WXe8TV7AUX
-        q+V7+WA4YGqKpmQTORK9G3XgM1C5YwLvoydQ6vz8XQ8mL/G9PJW987+tEw4XK5Hu7XQzgcN
-        KjPitbWT1T8TMnUvEQDlipeEru32FxvLp89vTIwWeP2uI+17rxGu3MROCL82u0OFZBPCrY+
-        J8aBzuhMWa2Us40P8GNsprTnvf4zhQfu4pLTNgpXugz2pvHj18+EXRpgSYrCSlqRLsMhXA8
-        O7fk+0n7ykI=
-X-QQ-GoodBg: 0
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        with ESMTP id S230420AbiI3LPw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 07:15:52 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5226751A3C
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 03:58:15 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id p5so4374131ljc.13
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 03:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=5VAtT045HhMngkmwARoPHUum6+7Xd5AahGP1N35/lRw=;
+        b=fawDO9CiFlwFpbC+3YyovBO32HiOGqZ+TrjsTr2Q6YcCJCeFCfaJEiuP3XHibreYfx
+         wmTrXtWKvlU1ywiJ18MNHJj+RSbhfYPzYo/ZQnDGj5GgluDuZ7okPUozoUJ9Bly33yV+
+         99Z1HqEmfxSxaOxu2hRBQLI/YMe6RRvV6/zPLAw5oIi08PrbCiJd9EDxTCh2vkUZ1DeE
+         gB5wvphZ3bsi5lkQQFRQrzVf4UF488cob5ENfxZInr0/UCv9a9gGzuoOW55ZT5WQtV8W
+         HTLuyjBNlC+clvHUjLjUY1yo60g20jhmRl9loUR9iM1zQH9LB+mXFS8ZnTfLUrKTAqZU
+         AXDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=5VAtT045HhMngkmwARoPHUum6+7Xd5AahGP1N35/lRw=;
+        b=m7A0RMusZyeP5K3ca2mSN87yTlE+q98xuLLarxDgUCNZDs9maWqWOh8zzevuTZmyeN
+         eAs6Bva3NRu54B+F0g8kSpmuFWS9sP+f2t6R8dL8QBrObIsHvV+WCAhrgmsk/NaQIFkT
+         aEHJodjD4QkQaP4no5bDP+WTAr3qjIhjEmKE3wAkDb6yu/QiCOpaHCfNX7HCC6GayiV+
+         jq+A+Am9tdtrOXQOkKIA39Vi1qTcNqhHX+W9G4PnnjBjMZ8jFQIgnKzYVQxV2VV+mJOo
+         1bAbF2hi6qLUuVhQnsOeaRDRDvdqE3HEk/m0/NKCHUEhVURXNcdGdrs89ctcu68qYjWl
+         bnxw==
+X-Gm-Message-State: ACrzQf3JEoJhLokdGELWHwZe4+Nh2K+TaOoy2GMrEbRyDQb4t9Cqd5LX
+        vZhwYcZ7mqq7EHGuAC6Sn4Zo1A==
+X-Google-Smtp-Source: AMsMyM7TKpBGxyi1XbG3exK/6MQW1oPEOmmR7/XdLTYi4sSeeYzQ9S++Asikue7qCrHD8G5zL9+8Lw==
+X-Received: by 2002:a2e:7201:0:b0:26b:dd49:721b with SMTP id n1-20020a2e7201000000b0026bdd49721bmr2574829ljc.509.1664535493744;
+        Fri, 30 Sep 2022 03:58:13 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id h19-20020a056512221300b00498f3ebffb2sm265007lfu.25.2022.09.30.03.58.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Sep 2022 03:58:13 -0700 (PDT)
+Message-ID: <c99f6552-db04-fe30-ed69-4a08b0af5276@linaro.org>
+Date:   Fri, 30 Sep 2022 12:58:12 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v1 17/30] dt-bindings: clock: Add
+ starfive,jh7110-clkgen-sys bindings
+Content-Language: en-US
+To:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -43,40 +73,63 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 29/30] RISC-V: defconfig: Enable CONFIG_SERIAL_8250_DW
-Date:   Fri, 30 Sep 2022 17:06:53 +0800
-Message-Id: <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
 References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+ <20220929222647.23816-1-hal.feng@linux.starfivetech.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220929222647.23816-1-hal.feng@linux.starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CONFIG_SERIAL_8250_DW=y, which is a necessary option for
-StarFive JH7110 and JH7100 SoCs to boot with serial ports.
+On 30/09/2022 00:26, Hal Feng wrote:
+> From: Emil Renner Berthing <kernel@esmil.dk>
+> 
+> Add bindings for the system clock generator on the JH7110
+> RISC-V SoC by StarFive Technology Ltd.
+> 
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
 
-Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
----
- arch/riscv/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+(...)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index aed332a9d4ea..0c44484cd3a4 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -122,6 +122,7 @@ CONFIG_MICROSEMI_PHY=y
- CONFIG_INPUT_MOUSEDEV=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_VIRTIO_CONSOLE=y
- CONFIG_HW_RANDOM=y
--- 
-2.17.1
+> +  '#clock-cells':
+> +    const: 1
+> +    description:
+> +      See <dt-bindings/clock/starfive-jh7110-sys.h> for valid indices.
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    syscrg_clk: clock-controller@13020000 {
+
+Does not look like you tested the bindings. Please run `make
+dt_binding_check` (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+
+> +        compatible = "starfive,jh7110-clkgen-sys";
+> +        clocks = <&osc>, <&gmac1_rmii_refin>,
+> +                 <&gmac1_rgmii_rxin>,
+> +                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+> +                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+> +                 <&tdm_ext>, <&mclk_ext>;
+> +        clock-names = "osc", "gmac1_rmii_refin",
+> +                      "gmac1_rgmii_rxin",
+> +                      "i2stx_bclk_ext", "i2stx_lrck_ext",
+> +                      "i2srx_bclk_ext", "i2srx_lrck_ext",
+> +                      "tdm_ext", "mclk_ext";
+> +        #clock-cells = <1>;
+> +    };
+
+Best regards,
+Krzysztof
 
