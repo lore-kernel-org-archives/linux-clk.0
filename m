@@ -2,61 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1AAC433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 00:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EFCC433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 01:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232602AbiJAAqj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 20:46:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41382 "EHLO
+        id S233065AbiJABV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 21:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231186AbiJAAqi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 20:46:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B0A9199C8F;
-        Fri, 30 Sep 2022 17:46:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 27BA860BA4;
-        Sat,  1 Oct 2022 00:46:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA8BC433D6;
-        Sat,  1 Oct 2022 00:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664585196;
-        bh=Y+8tvv4q6Tk1Y0GWY8k1zYo9uxL6+vKGn1elhVnztAU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=FrGTUy8ZgNhi+4ps6vmkTTBJiXn2GMhCMlJVBQYfTap1MlBWSnP0LsSD1T9BgROVL
-         ENOU1KzQEMGncfcmCY3t4SmYUQzl/EChZToAVpd2PXLUjkNIIr+DsyG7Bx5QE7igWl
-         2Lw7zQKEswxa1Nd4rnE9jGjor2Zm3Kcr61V1Kuem7Jc5MjGcC95TDFrAC6PGdwSufQ
-         jgpfpxr9yLgsrAdKE2A7tLdUiYIs+kwLThe0bqk4Sm0R/sB0RJPp+gbG2wM20jKTzf
-         iqkPHXG17to/EyHGIWWuVtxzPVXd2TLAt5c2jMgUhnWPH2qoL+u0lezdp3l81/40qg
-         eP9B/u31QnfjQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232422AbiJABVE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 21:21:04 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E313A2BE3E;
+        Fri, 30 Sep 2022 18:17:48 -0700 (PDT)
+X-QQ-mid: bizesmtp91t1664586871tcwf5ude
+Received: from CSD1051 ( [113.72.146.201])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sat, 01 Oct 2022 09:14:29 +0800 (CST)
+X-QQ-SSF: 01000000000000308000000A0000000
+X-QQ-FEAT: PXtIlpCZyqdoUCaznDtdk1gVxdQFhDYD3xz//q16G0AgZvwIO2tuR6R0JunZn
+        uxvR+gjF7QCJd/Vn6HBzqgWAfDT0XURA9RI5t+BFQetFrVz9CFQnuU6VO6Nk+L8kIEZ4Gna
+        0WhRHPrxLqR4kbt8kzIozEzYDeg3FOe0/VFf2mzwKPM86sf0cNpmmSciBtnnKl7La4P6iXy
+        TbFieBvcljfVC5YsGyJQLSk9IlT4ZzCYCI4cgAGwC7/5EUBU0IU0djPo6pZ86BTHKhhja9o
+        k6XXlhPiWxO2Ox6oyTAjEOR0f4nTM2SoXpUxD02jtmKFRMMk28OQILWco8LehWnqTB9xrv0
+        zucVUFcdqPvSqxvf88=
+X-QQ-GoodBg: 0
+From:   <hal.feng@linux.starfivetech.com>
+To:     "'Conor Dooley'" <conor@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>
+Cc:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
+        "'Paul Walmsley'" <paul.walmsley@sifive.com>,
+        "'Palmer Dabbelt'" <palmer@dabbelt.com>,
+        "'Albert Ou'" <aou@eecs.berkeley.edu>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Marc Zyngier'" <maz@kernel.org>,
+        "'Philipp Zabel'" <p.zabel@pengutronix.de>,
+        "'Stephen Boyd'" <sboyd@kernel.org>,
+        "'Michael Turquette'" <mturquette@baylibre.com>,
+        "'Linus Walleij'" <linus.walleij@linaro.org>,
+        "'Emil Renner Berthing'" <kernel@esmil.dk>,
+        <linux-kernel@vger.kernel.org>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com> <4ddabe3a-9f55-2a6a-c1c1-ccc3fc74e98a@linaro.org> <YzXc/FSbDpkElK0O@spud>
+In-Reply-To: <YzXc/FSbDpkElK0O@spud>
+Subject: Re: [PATCH v1 00/30] Basic StarFive JH7110 RISC-V SoC support
+Date:   Sat, 1 Oct 2022 09:13:01 +0800
+Message-ID: <617C2EE03810F071+013401d8d532$f4548310$dcfd8930$@linux.starfivetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220906072322.337253-1-ye.xingchen@zte.com.cn>
-References: <20220906072322.337253-1-ye.xingchen@zte.com.cn>
-Subject: Re: [PATCH linux-next] clk: mvebu: armada-37xx-tbg: Remove the unneeded result variable
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ye xingchen <ye.xingchen@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-To:     cgel.zte@gmail.com
-Date:   Fri, 30 Sep 2022 17:46:34 -0700
-User-Agent: alot/0.10
-Message-Id: <20221001004636.7AA8BC433D6@smtp.kernel.org>
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: zh-cn
+Thread-Index: AQLyOrMrqu8us6tOmdilaJnshXDZwAImr5qgAixKxMCro1Q8gA==
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting cgel.zte@gmail.com (2022-09-06 00:23:22)
-> From: ye xingchen <ye.xingchen@zte.com.cn>
->=20
-> Return the value of_clk_add_hw_provider() directly instead of storing it
-> in another redundant variable.
->=20
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
-> ---
+On Thu, Sep 29, 2022 at 18:59:24 +0100, Conor Dooley wrote:
+> On Thu, Sep 29, 2022 at 04:45:26PM +0200, Krzysztof Kozlowski wrote:
+> > On 29/09/2022 16:31, Hal Feng wrote:
+> >
+> > > This series is also available at
+> > > https://github.com/hal-feng/linux/commits/visionfive2-minimal
+> > >
+> > > [1]
+> > > https://www.cnx-software.com/2022/08/23/starfive-visionfive-2-quad-c
+> > > ore-risc-v-sbc-linux/
+> > > [2] https://wiki.rvspace.org/
+> > >
+> > > Emil Renner Berthing (17):
+> > >   dt-bindings: riscv: Add StarFive JH7110 bindings
+> > >   dt-bindings: timer: Add StarFive JH7110 clint
+> > >   dt-bindings: interrupt-controller: Add StarFive JH7110 plic
+> > >   dt-bindings: sifive-l2-cache: Support StarFive JH71x0 SoCs
+> > >   soc: sifive: l2 cache: Convert to platform driver
+> > >   soc: sifive: l2 cache: Add StarFive JH71x0 support
+> > >   reset: starfive: jh7100: Use 32bit I/O on 32bit registers
+> > >   dt-bindings: reset: Add StarFive JH7110 reset definitions
+> > >   clk: starfive: Factor out common clock driver code
+> > >   dt-bindings: clock: Add StarFive JH7110 system clock definitions
+> > >   dt-bindings: clock: Add starfive,jh7110-clkgen-sys bindings
+> > >   clk: starfive: Add StarFive JH7110 system clock driver
+> > >   dt-bindings: clock: Add StarFive JH7110 always-on definitions
+> > >   dt-bindings: clock: Add starfive,jh7110-clkgen-aon bindings
+> > >   clk: starfive: Add StarFive JH7110 always-on clock driver
+> > >   RISC-V: Add initial StarFive JH7110 device tree
+> > >   RISC-V: Add StarFive JH7110 VisionFive2 board device tree
+> >
+> > Where is the rest of patches? Lists got only 5 of them. Anyway this is
+> > a bit too big patchset. Split per subsystem.
+> 
+> They seem to be coming in over time in dribs and drabs. I assume it is not
+a
+> mailing list problem given how many lists are CCed on the mail and the
+fact
+> that they have different providers.
+> 
+> For v2 (or multiple v2s) please fix up your process so that this gets sent
+> normally and not a couple of patches every hour.
 
-Applied to clk-next
+Our email server has technical issue and we are aware of this.
+Will fix in next revision. Sorry for the inconvenience caused.
+
+Best Regards,
+Hal
+
