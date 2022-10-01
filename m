@@ -2,96 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5FBC4332F
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 05:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB1BC433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 06:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbiJAFrb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Oct 2022 01:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60772 "EHLO
+        id S229459AbiJAG7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Oct 2022 02:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiJAFra (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 01:47:30 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392F91A4096
-        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 22:47:27 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id e18so4070365wmq.3
-        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 22:47:27 -0700 (PDT)
+        with ESMTP id S229445AbiJAG7G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 02:59:06 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595221A0D25
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 23:59:05 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id l76so4739807ybl.2
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 23:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=Kyb2X4uCHXKuVg8roYPGr870rePi13E6LThzOWMSSjQ=;
-        b=rx3qPq58caH+zXlyP5pHnDpMACOhHNsptQruEtJ6FyUlt7uxQ1aOUQHZCldHspYrE/
-         CghI3aqF5hu1zsOBtfxOrNhVYnq0PMXVZplT7f6a5nIxHYL7g8PWTQ/mKOc3Ma9QSgaU
-         gEIIrA5MeDB9Q5Dr1VR1s1KMnEmqP34tnNfuee27SIDDH3i/xDLv9/XxNmkSroblTy6s
-         jwMdyFQfEi8GhJBtPJKdxBC/5zHYmbw3/tVq84CCwpISiwOpwY4WeNXUTeOCr02TMzo1
-         KPT5n4MmJYUBN2H+hj8bPD5jfr1vs13AfQ4Wu4GW4mHAEeNb41XtJKFGpWq+N16CtH64
-         t/bQ==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=/17Sp9BcM/K21ZegnhdQ4++78L7Xj9RZxBq1LvHMm0s=;
+        b=LL/ZnwIU+6rPgEcoBpLtalknoiI5HIXEFBp31J/zCF5e1oXQMYTYgiV+Ud4WP8XxLS
+         pCkR3Fhcb7z8S089SvvAeort1q/IWu32XkRFeomqordIV9LFqHHZqmq0w8B0vdatdm2U
+         uAjUs4v78BFpnfl/X06k/LTT4KolLm1H0E6EJbRznF0/TE5frJaL9GAAxE1tnraplvuc
+         mjkFPZvNHt90ilVLbXomWsx6vFUQU6t9iR0R+xY8lublmkAim70EddHfxnoDH2hEcLh7
+         g8tOTxOYCi1pKtiXK6K+Csqpo20byu2lZeb7cbcifgXlVJCqA3dsCAacNRUpwhcHcHnB
+         NF3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=Kyb2X4uCHXKuVg8roYPGr870rePi13E6LThzOWMSSjQ=;
-        b=Vtoro8YPqW9odPZdzkkGHv+l7eK4eIC0twOnZ1gGBpbIQQbPNnwnzTl7J8vAaZTnfo
-         1tt5Ug11KWhGnyRgLFO8Nc3ET5wm2OrhVcd7RTJpF1HV+nw5N0BNlXBGBHpt/LooTPdk
-         PydPAzW4aaXW2J1MqGoIcyEI0mD+jzTvmCwA2SJh+1wgaMbPFzb6tdILBJZNG5xOr69H
-         WnsNAMuw5DQhmrfofWHfn8YuRuqdJDV80MJYxHfYKv0fvaEJkMIprzJkAn+GmEfJh66/
-         f8JTBGO0egYPuLySwvJyXm26VCiQzmSkMh7GsfdIIvGz44+zoHrXVUrxJW1hxY4mkOyQ
-         qb3Q==
-X-Gm-Message-State: ACrzQf1PD58tLLtaS/lzMykGqrnZe3Yo/DeGB3by1UzbPBdXm5OTAe8P
-        O2sugTARHOoQqnSyVAFFmzMEIQ==
-X-Google-Smtp-Source: AMsMyM6KigH+LzH4Pix/cjcYO4sdy1TowdY2XSLO+trnCOI0ryHEARAOuTHYrw2xlEgzFxDGrtMihQ==
-X-Received: by 2002:a05:600c:444b:b0:3b4:cb9e:bd93 with SMTP id v11-20020a05600c444b00b003b4cb9ebd93mr774148wmn.39.1664603246203;
-        Fri, 30 Sep 2022 22:47:26 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id r18-20020a05600c35d200b003a84375d0d1sm9405920wmq.44.2022.09.30.22.47.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 22:47:25 -0700 (PDT)
-Date:   Sat, 1 Oct 2022 07:47:24 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
-Message-ID: <YzfUbKtWlxuq+FzI@nanopsycho>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
- <YzWESUXPwcCo67LP@nanopsycho>
- <6b80b6c8-29fd-4c2a-e963-1f273d866f12@novek.ru>
- <Yzap9cfSXvSLA+5y@nanopsycho>
- <20220930073312.23685d5d@kernel.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=/17Sp9BcM/K21ZegnhdQ4++78L7Xj9RZxBq1LvHMm0s=;
+        b=n2jLaD54C6jZSrDHLqqWo9Lr2uO/JgGmiE2Oy13hkw8hd1pG3gqsxaKiuq+mPRZzjy
+         IZGFNP9N8F5GukerBoWswIovfGJuRTYE8hiDJR7UlSWzoKL8Ppa58op+CP+0HR5CvuiE
+         F82CsdCOrhq3D+Byw840JYw07XQWLXelblwcgcg/aG/tYEqBhmzlXZv5TYygWX43anBh
+         Pn/V+EiKWY2Tf/Is1zM4Ty91fm4EqNsr5v5GMLltmmwOBs2EZgmR1CNcZ/HyAVqrs4hs
+         AEXeBZeFKCCFJsOVpiInW9R64LPfwMTn7kHrqWTcDO+nhV0YBBRI0XRANvLCWWxxbn/Q
+         VWdw==
+X-Gm-Message-State: ACrzQf3uCiyQ5vF0RAMqGVpqAYktBOADEnluj2l3peW85sV4qKC1zeip
+        F71d9KjwMi/tpll1OfSh/Uvqs7fdi5jBaqIniRjn8Q==
+X-Google-Smtp-Source: AMsMyM4KvrH0ZWXXGRicwrHKndSMkvbisTW6ycJvZzbQe17GicrRUb8kp0Je4DojuLPvtEZuyfZvph552bkPGEz1OKs=
+X-Received: by 2002:a25:af13:0:b0:6ae:3166:1aee with SMTP id
+ a19-20020a25af13000000b006ae31661aeemr11281737ybh.288.1664607544566; Fri, 30
+ Sep 2022 23:59:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220930073312.23685d5d@kernel.org>
+References: <20221001030403.27659-1-quic_molvera@quicinc.com> <20221001030403.27659-6-quic_molvera@quicinc.com>
+In-Reply-To: <20221001030403.27659-6-quic_molvera@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Sat, 1 Oct 2022 09:58:51 +0300
+Message-ID: <CAA8EJpof5JFDN978t98JxJgd2e+8VVDkXbexvNegA+2jY+tN=Q@mail.gmail.com>
+Subject: Re: [PATCH 5/5] dt-bindings: clock: Introduce pdc bindings for
+ QDU1000 and QRU1000
+To:     Melody Olvera <quic_molvera@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Sep 30, 2022 at 04:33:12PM CEST, kuba@kernel.org wrote:
->On Fri, 30 Sep 2022 10:33:57 +0200 Jiri Pirko wrote:
->> >> Also, did you consider usage of sysfs? Why it isn't a better fit than
->> >> netlink?  
->> >
->> >We already have sysfs implemented in the ptp_ocp driver. But it looks like
->> >more hardware is going to be available soon with almost the same functions,
->> >so it would be great to have common protocol to configure such devices.  
->> 
->> Sure, but more hw does not mean you can't use sysfs. Take netdev as an
->> example. The sysfs exposed for it is implemented net/core/net-sysfs.c
->> and is exposed for all netdev instances, no matter what the
->> driver/hardware is.
+On Sat, 1 Oct 2022 at 06:04, Melody Olvera <quic_molvera@quicinc.com> wrote:
 >
->Wait, *you* are suggesting someone uses sysfs instead of netlink?
+> Add compatible fields for QDU1000 and QRU1000 pdcs.
 >
->Could you say more because I feel like that's kicking the absolute.
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  .../devicetree/bindings/interrupt-controller/qcom,pdc.yaml      | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> index b6f56cf5fbe3..5c7b790db7e0 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> @@ -33,6 +33,8 @@ properties:
+>            - qcom,sm8150-pdc
+>            - qcom,sm8250-pdc
+>            - qcom,sm8350-pdc
+> +          - qcom,qdu1000-pdc
+> +          - qcom,qru1000-pdc
 
-I don't understand why that would be a problem. What I'm trying to say
-is, perhaps sysfs is a better API for this purpose. The API looks very
-neat and there is no probabilito of huge grow. Also, with sysfs, you
-don't need userspace app to do basic work with the api. In this case, I
-don't see why the app is needed. These are 2 biggest arguments for sysfs
-in this case as I see it.
+Alphabetic sorting please. q comes before s.
+
+>        - const: qcom,pdc
+>
+>    reg:
+> --
+> 2.37.3
+>
+
+
+-- 
+With best wishes
+Dmitry
