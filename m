@@ -2,197 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F29C433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 09:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DCAC433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 10:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbiJAJYS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Oct 2022 05:24:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52776 "EHLO
+        id S229590AbiJAKkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Oct 2022 06:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbiJAJYQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 05:24:16 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D70616F846
-        for <linux-clk@vger.kernel.org>; Sat,  1 Oct 2022 02:24:14 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id k10so10204368lfm.4
-        for <linux-clk@vger.kernel.org>; Sat, 01 Oct 2022 02:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Fc50t9UKzxVvL8PTyGxChRwbStVHfCHE+ON7VUqmF48=;
-        b=mwEtMS1SisCiOhK4RErZSzrbX+Gc4yWIxR7F0fE4iiiX5R76eIU3a6ISIuqTjK2R28
-         xvLJ7B+qkhDGoGBonxQ+NQ8n8/8uUrXcuLtm+rmTRojoMdhvG7qpDsOb33ByTudn4OGx
-         srZ17+E+GWsPvfcdxh3bFmRAJkNrl655918R8l6+xnR9H/xMRQxRQkIJdfJP02r/8KfW
-         rksFHe5OUZCVCQurs2vNcf5xuMJN6geRVfiC8fjQUZPWnigYyviTb3VVG2/e55jsSt0e
-         TqdZ1zuh4laI7TgJERHtwFXm5RIEClxuOCIrnLZG/CxNwxFWe/OCoy/g3/gtNuxXxIyi
-         B/qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Fc50t9UKzxVvL8PTyGxChRwbStVHfCHE+ON7VUqmF48=;
-        b=aRFxoUz5pI+DMn67x01mT6hD2+gfobP+L7yngLGPvpwdMzXCqiD7fO6VoVdem8IrGB
-         KD+7WZkGreSTIic1+wZTlcvHJiGgKQYHoriuxWP8ucg8LnwFaVDy8WMPvk9XA/nY+jzS
-         U41UtR6W318QQ0TKFnovcfaJvbCyKrlCuHc+ESjfZ9PJuM9TbVkUNI2+uMgIqIRcs5Aj
-         /gmbfiW5lGoiExus+WfVrp2PDTOpd63ml/GwzeVlIzmW2pLeqQmctn8a/Aa1fIPfuP1+
-         vZj3jrbTe+Z4Tdd48L8duaW5VSX0C0hds6+oSqHUVnHrK1qV0+6eayvKN5F6Bxj80YSJ
-         aCVA==
-X-Gm-Message-State: ACrzQf0sjEO2RpDZfvHr2KGEtUvVfBj3DqIIWhlYVCrkfB8RLByepDt3
-        fyucSF0JnJYPgoiB0Uw4V9dWlg==
-X-Google-Smtp-Source: AMsMyM5fLHf7HBsFLnNmQZqpkbQDjqKfKtJE8Duk8BHTPlMZL17v6lNpkm1rlicTGecHpI/zN5iwqw==
-X-Received: by 2002:ac2:5928:0:b0:4a2:2819:4fb2 with SMTP id v8-20020ac25928000000b004a228194fb2mr403326lfi.183.1664616252442;
-        Sat, 01 Oct 2022 02:24:12 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id f5-20020a056512228500b00492dfcc0e58sm703180lfu.53.2022.10.01.02.24.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Oct 2022 02:24:11 -0700 (PDT)
-Message-ID: <37926f0f-e176-929e-939a-cd43a031e224@linaro.org>
-Date:   Sat, 1 Oct 2022 11:24:10 +0200
+        with ESMTP id S229597AbiJAKkL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 06:40:11 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08CE19031
+        for <linux-clk@vger.kernel.org>; Sat,  1 Oct 2022 03:40:06 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id A489F5C0189;
+        Sat,  1 Oct 2022 06:40:03 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Sat, 01 Oct 2022 06:40:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1664620803; x=
+        1664707203; bh=b/+Ttgoaang+cJhHV5IX3sd+XwgOFB5wO7nsllJd+kQ=; b=b
+        vfSxuhVzgjkSf4TqamudQc+iFtYwFoyYLs3ZbIGaq4O9PnsbowGKM72cyYGnwqAp
+        NYhxxdGi/XY8XQEXlvT8auTuycJ1E7JbvOzFX+brmSZb5M9Gq7e30QgixWQbOchJ
+        FeEeKjBxit8P5Ul9E0miak/mEBAlMpHP27FMCrsx3H4vLFXU1GDQMtTetcXjGdVN
+        ZrsinqnZtnCnmR6Eqi0+2SZ3vsK33wpXGlXRIdmeX6suBGGq9e8DNsxxBri8UWKG
+        Qh+ou+mNrX0c8YlCTcQWvOJ7DdB7NkRw+PqFsRGe4pYPviYTDKaB0OiI2oMCmPs2
+        NeDn+PE93zvKd1v6dkuLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1664620803; x=
+        1664707203; bh=b/+Ttgoaang+cJhHV5IX3sd+XwgOFB5wO7nsllJd+kQ=; b=G
+        gOmEqYmC2hfiDfCuRCAFyR1ni6Y9BMmlsvvWQ74CJRyOWh4qbeYSGRWAoJOMR2x/
+        1R1N/3psvIaOFoXwyKB3bI2lfo6NtL463K4/V0SOalwzelFBRxEMIRry33yhA43c
+        jGtlgGSeVnRMdSqaXZ+ZT4tj1+y7MaKI3T9g2+LyJyctXbypJsei2snr3CB2UHcl
+        VKeeLZy5lxMl449VktUDovRja9+zk5NPbArO/ve3bKjKUz1AgFdY0j/Nh2pc2zQL
+        yUPWnUQYFcQnw2F0cBnyLt5j4cKfd++aKbevheFisbxTzCtvXazA7N2nTcSImuIk
+        iRfYgB2XrAy8Y4L1tx/zQ==
+X-ME-Sender: <xms:Axk4Y6U97VMFgCpl7SPF3YSZxJ28kQFAfZ7sOWZc79X0-DTU31pQ4A>
+    <xme:Axk4Y2mZdxMg3K1zYy-IL8LqoTyWpZROa7iDUAjy1IY-38THWajfxFgbCXJvlZHDI
+    E4jgDel-G2h8UfDGXA>
+X-ME-Received: <xmr:Axk4Y-b_7C83jgEbIOh5EgwCwPqGxPQpvtGs7ukYNU1X2wRGdMqRKYQuAi-j>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeehgedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddunecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepjeevffdtheevvdefveffffejkedtgfekvdeigfefhfefgfethfejjeei
+    geeiueegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgv
+    tghh
+X-ME-Proxy: <xmx:Axk4YxUFvfbExITT6x3Qa0iiwpOun7WzJnx23fv8hBbDx7avgjjo6g>
+    <xmx:Axk4Y0nMqwJ_6O-qxp7KzwSwVIvhMCzuVuc8JSZI3ZxyVXc9rWwO-g>
+    <xmx:Axk4Y2ct4p5pIIkQHm-L5IEvZxyRon51huiUqIgzACK0Fn4UYMlaJg>
+    <xmx:Axk4Y_9KhmqMQapnXJrxLNLwVeCLj91b9Aw8uYDquGQZ00m2CmF1Gw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 1 Oct 2022 06:40:02 -0400 (EDT)
+Date:   Sat, 1 Oct 2022 12:40:01 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>
+Subject: Re: [PATCH] clk: zynqmp: pll: Fix divider calculation to avoid
+ out-of-range rate
+Message-ID: <20221001104001.r7r2utwymm32tv53@houat>
+References: <20220928201656.30318-1-laurent.pinchart@ideasonboard.com>
+ <11481209-7c8f-7543-1e04-5723ffc2ccd4@windriver.com>
+ <20221001000503.23268C433D6@smtp.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock
- bindings
-Content-Language: en-US
-To:     Melody Olvera <quic_molvera@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221001030403.27659-1-quic_molvera@quicinc.com>
- <20221001030403.27659-2-quic_molvera@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221001030403.27659-2-quic_molvera@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221001000503.23268C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/10/2022 05:03, Melody Olvera wrote:
-> Add device tree bindings for global clock controller on QDU1000 and
-> QRU1000 SoCs.
-> 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  .../bindings/clock/qcom,gcc-qdru1000.yaml     |  74 ++++++++
->  include/dt-bindings/clock/qcom,gcc-qdru1000.h | 170 ++++++++++++++++++
->  2 files changed, 244 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-qdru1000.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
-> new file mode 100644
-> index 000000000000..d92f558d547c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc-qdru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller Binding for QDU1000 and QRU1000
+Hi
 
-Drop "Binding"
+On Fri, Sep 30, 2022 at 05:05:01PM -0700, Stephen Boyd wrote:
+> +Maxime
+>=20
+> Quoting Quanyang Wang (2022-09-28 18:05:10)
+> > Hi Laurent,
+> >=20
+> > I have sent a patch as below to fix this issue which set rate failed an=
+d=20
+> > it's in linux-next repo now.
+> >=20
+> > https://lore.kernel.org/linux-arm-kernel/20220826142030.213805-1-quanya=
+ng.wang@windriver.com/T/
+> >=20
 
-> +
-> +maintainers:
-> +  - Melody Olvera <quic_molvera@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets and
-> +  power domains on QDU1000 and QRU1000
-> +
-> +  See also:
-> +  - dt-bindings/clock/qcom,gcc-qdru1000.h
+It looks to me that the fundamental issue is that, in some situations,
+the round_rate implementation can return a rate outside of the
+boundaries enforced on a clock.
 
-Full path
+I think that's the current behaviour (that was there prior to my
+patches) to reject any rate outside of the boundaries in
+clk_calc_new_rates() makes it clear that it's not something we should
+allow.
 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,gcc-qdu1000
-> +      - qcom,gcc-qru1000
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Sleep clock source
-> +      - description: PCIE 0 Pipe clock source (Optional clock)
+I'm a bit two-minded on this though. All the failures of that test I've
+seen actually turned out to be bugs, so I guess it's useful, but it's
+also true that for rounding errors it's a bit overkill. We could also
+relax that check and warn instead of failing.
 
-Skip "Optional clock"
+> > As for the frequency gap between the requested rate and the actual, it'=
+s=20
+> > because of the commit:
+> >=20
+> > commit 948fb0969eae8
+> > Author: Maxime Ripard <maxime@cerno.tech>
+> > Date:=A0=A0 Fri Feb 25 15:35:26 2022 +0100
+> >=20
+> >  =A0=A0=A0 clk: Always clamp the rounded rate
+> >=20
+> > And I haven't figured out how to fix it.
 
-> +      - description: PCIE 0 Phy Auxiliary clock source (Optional clock)
-> +      - description: USB3 Phy wrapper pipe clock source (Optional clock)
-> +    minItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: sleep_clk
-> +      - const: pcie_0_pipe_clk # Optional clock
+Again, it boils down on whether or not we should allow a rate outside of
+boundaries. If we don't and if the clock can't do better, then yeah, the
+rate difference is fairly big but we can't do better.
 
-Skip "Optional clock"
+> Maxime has some more patches to fix this and they're in linux-next.
+> Maybe those fix this problem?
 
-> +      - const: pcie_0_phy_aux_clk # Optional clock
-> +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk # Optional clock
-> +    minItems: 2
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clock-controller@100000 {
-> +      compatible = "qcom,gcc-qdu1000";
-> +      reg = <0x00100000 0x001f4200>;
-> +      clocks = <&rpmhcc RPMH_CXO_CLK>, <&sleep_clk>;
-> +      clock-names = "bi_tcxo", "sleep_clk";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,gcc-qdru1000.h b/include/dt-bindings/clock/qcom,gcc-qdru1000.h
-> new file mode 100644
-> index 000000000000..cdc5d1a6a007
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,gcc-qdru1000.h
-> @@ -0,0 +1,170 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+I don't think they will fix it. However, depending on the outcome of
+that discussion I can send more fixes your way :)
 
-Dual license.
-
-
-Best regards,
-Krzysztof
-
+Maxime
