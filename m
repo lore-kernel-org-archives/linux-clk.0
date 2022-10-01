@@ -2,56 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB1BC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 06:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D354C433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 07:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229459AbiJAG7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Oct 2022 02:59:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
+        id S229525AbiJAHAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Oct 2022 03:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbiJAG7G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 02:59:06 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595221A0D25
-        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 23:59:05 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id l76so4739807ybl.2
-        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 23:59:05 -0700 (PDT)
+        with ESMTP id S229449AbiJAHAQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 03:00:16 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972BDEE3B
+        for <linux-clk@vger.kernel.org>; Sat,  1 Oct 2022 00:00:05 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id c9so7616446ybf.5
+        for <linux-clk@vger.kernel.org>; Sat, 01 Oct 2022 00:00:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=/17Sp9BcM/K21ZegnhdQ4++78L7Xj9RZxBq1LvHMm0s=;
-        b=LL/ZnwIU+6rPgEcoBpLtalknoiI5HIXEFBp31J/zCF5e1oXQMYTYgiV+Ud4WP8XxLS
-         pCkR3Fhcb7z8S089SvvAeort1q/IWu32XkRFeomqordIV9LFqHHZqmq0w8B0vdatdm2U
-         uAjUs4v78BFpnfl/X06k/LTT4KolLm1H0E6EJbRznF0/TE5frJaL9GAAxE1tnraplvuc
-         mjkFPZvNHt90ilVLbXomWsx6vFUQU6t9iR0R+xY8lublmkAim70EddHfxnoDH2hEcLh7
-         g8tOTxOYCi1pKtiXK6K+Csqpo20byu2lZeb7cbcifgXlVJCqA3dsCAacNRUpwhcHcHnB
-         NF3Q==
+        bh=PJKsBdmry9pp/p4qjkmtTRbPY3WNcZCpKNJJCK49xuc=;
+        b=l33IBhwzFr8JMiWB6aVikVWjK/TOsxDzaHohFGJCq62lfESb6uWgORm5Nx1+Bplids
+         4pKokXzPrVyJm+gL2Rronk7oBJjfiwEo30yo6rYl+njXmSVggA4hqcGLSe8D1hcejipQ
+         TByJsrkkzCv78q16bhSgyTRYQI3xsmpbLmZqhb5xlmKVSiZmLv5gjy5Yk43wcIaUPQlQ
+         7yLxJGis5H/eMH5opHarreBzyDZCXoNVN4Hj7YMSYao3au3cTNSu41LWwTDkzu56/X83
+         nLB4sC4IivKOaLwiRFznZCv7xN/CumrjQnVvEYx2BpD3zEfWfoawwHlY5BaVkCxFl/uH
+         OiIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=/17Sp9BcM/K21ZegnhdQ4++78L7Xj9RZxBq1LvHMm0s=;
-        b=n2jLaD54C6jZSrDHLqqWo9Lr2uO/JgGmiE2Oy13hkw8hd1pG3gqsxaKiuq+mPRZzjy
-         IZGFNP9N8F5GukerBoWswIovfGJuRTYE8hiDJR7UlSWzoKL8Ppa58op+CP+0HR5CvuiE
-         F82CsdCOrhq3D+Byw840JYw07XQWLXelblwcgcg/aG/tYEqBhmzlXZv5TYygWX43anBh
-         Pn/V+EiKWY2Tf/Is1zM4Ty91fm4EqNsr5v5GMLltmmwOBs2EZgmR1CNcZ/HyAVqrs4hs
-         AEXeBZeFKCCFJsOVpiInW9R64LPfwMTn7kHrqWTcDO+nhV0YBBRI0XRANvLCWWxxbn/Q
-         VWdw==
-X-Gm-Message-State: ACrzQf3uCiyQ5vF0RAMqGVpqAYktBOADEnluj2l3peW85sV4qKC1zeip
-        F71d9KjwMi/tpll1OfSh/Uvqs7fdi5jBaqIniRjn8Q==
-X-Google-Smtp-Source: AMsMyM4KvrH0ZWXXGRicwrHKndSMkvbisTW6ycJvZzbQe17GicrRUb8kp0Je4DojuLPvtEZuyfZvph552bkPGEz1OKs=
-X-Received: by 2002:a25:af13:0:b0:6ae:3166:1aee with SMTP id
- a19-20020a25af13000000b006ae31661aeemr11281737ybh.288.1664607544566; Fri, 30
- Sep 2022 23:59:04 -0700 (PDT)
+        bh=PJKsBdmry9pp/p4qjkmtTRbPY3WNcZCpKNJJCK49xuc=;
+        b=jmhjP2G/eEsUbfQ2uS+qG0dr+IGq/5T4mvIuFi6AvW2NJl2Qx07WxiDfgWpF7G2uRh
+         hHo4z4jyY3CVUb2dSCZerIhamE/Xbs9rl46FZVHjExjmhCrO4ATziSrH3+0fgzdUDqtv
+         9LWbmkL9WJOmTvIqasythYXEOb0lOzxEHoAUgCwsA9pWadnvS5oaOVkAe3FLkUF75tQD
+         MCYrMGyWgJOtwIYKV2OYoPnzTr7zDED1XSAUmWeP4fjs1EUy2Fo+VroQss1z1fhSm+1Z
+         4AtD/kL3e0McMhNSMpB32HOhxHYAQ/56AE8egnyBBKdMiOsmCHh8vDPYCflpWrvo99fi
+         mxNQ==
+X-Gm-Message-State: ACrzQf15FEb/pesfhxn5PbKSTV++GOKxcCwlDtZiBobyvFack9v+elyV
+        El2NH6Ow2g0+Ev+wFGKpekNy1eZxR2z+QZA3xT7DQQ==
+X-Google-Smtp-Source: AMsMyM5OzN8oBMlFfj9MHDQboYmmjpF5OxhNHqvlAZcsHyutiAbNkTzvP4NCKy0Mi4D0mrNTDILZrjjl2MWl2AJhDiA=
+X-Received: by 2002:a25:a502:0:b0:6bc:2835:a88a with SMTP id
+ h2-20020a25a502000000b006bc2835a88amr11254803ybi.15.1664607604880; Sat, 01
+ Oct 2022 00:00:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221001030403.27659-1-quic_molvera@quicinc.com> <20221001030403.27659-6-quic_molvera@quicinc.com>
-In-Reply-To: <20221001030403.27659-6-quic_molvera@quicinc.com>
+References: <20221001030403.27659-1-quic_molvera@quicinc.com> <20221001030403.27659-3-quic_molvera@quicinc.com>
+In-Reply-To: <20221001030403.27659-3-quic_molvera@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 1 Oct 2022 09:58:51 +0300
-Message-ID: <CAA8EJpof5JFDN978t98JxJgd2e+8VVDkXbexvNegA+2jY+tN=Q@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: clock: Introduce pdc bindings for
- QDU1000 and QRU1000
+Date:   Sat, 1 Oct 2022 09:59:34 +0300
+Message-ID: <CAA8EJpr2ZnEC3=WMns8AGNY1DwARM9xnadtaBkzctOyNLv3=Zg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] dt-bindings: clock: Add RPMHCC bindings for QDU1000
+ and QRU1000
 To:     Melody Olvera <quic_molvera@quicinc.com>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -68,31 +68,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 1 Oct 2022 at 06:04, Melody Olvera <quic_molvera@quicinc.com> wrote:
+On Sat, 1 Oct 2022 at 06:05, Melody Olvera <quic_molvera@quicinc.com> wrote:
 >
-> Add compatible fields for QDU1000 and QRU1000 pdcs.
+> Add compatible strings for RPMHCC for QDU1000 and QRU1000.
 >
 > Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
->  .../devicetree/bindings/interrupt-controller/qcom,pdc.yaml      | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 2 ++
 >  1 file changed, 2 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-> index b6f56cf5fbe3..5c7b790db7e0 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-> @@ -33,6 +33,8 @@ properties:
->            - qcom,sm8150-pdc
->            - qcom,sm8250-pdc
->            - qcom,sm8350-pdc
-> +          - qcom,qdu1000-pdc
-> +          - qcom,qru1000-pdc
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> index 8fcaf418f84a..d613156eadb0 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> @@ -29,6 +29,8 @@ properties:
+>        - qcom,sm8250-rpmh-clk
+>        - qcom,sm8350-rpmh-clk
+>        - qcom,sm8450-rpmh-clk
+> +      - qcom,qdu1000-rpmh-clk
+> +      - qcom,qru1000-rpmh-clk
 
-Alphabetic sorting please. q comes before s.
+Alphabetic sorting please. Q comes before s.
 
->        - const: qcom,pdc
 >
->    reg:
+>    clocks:
+>      maxItems: 1
 > --
 > 2.37.3
 >
