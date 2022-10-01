@@ -2,62 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2051FC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 00:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6EAC433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 00:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232091AbiJAAHM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 20:07:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        id S232130AbiJAALt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 20:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231592AbiJAAHL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 20:07:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12BFECAFB0;
-        Fri, 30 Sep 2022 17:07:11 -0700 (PDT)
+        with ESMTP id S231233AbiJAALt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 20:11:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ADFD1BC638;
+        Fri, 30 Sep 2022 17:11:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A619F61CB4;
-        Sat,  1 Oct 2022 00:07:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2603C433C1;
-        Sat,  1 Oct 2022 00:07:09 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D2AFFB82AB8;
+        Sat,  1 Oct 2022 00:11:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E746C433D6;
+        Sat,  1 Oct 2022 00:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664582830;
-        bh=Z2+zNHYiiIkWCAkYKhNJGpAi25tc19KhEHaBUIEP4to=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WlPT43bZju4hny7sxxb4UV5mSV4+U2/ZYcFdaDxDI+SsZPpyMpznsktbXFGtcdal+
-         PUcS+T64XQVdP2oARoNC6hyNHK91hyOw/YAQVPVCNufDpyZ0j1vb7RFFGW4ECyUUEm
-         Uzhe5tQlqHC95b6OmBSso3DUJtF4vizW3TD8WlP46nE8rFX/uQYceK/Ds0jWAb9gnv
-         Lkh9izIXTegMI2NnvUaDP3bmQ8xf2yTlzGpvdgEqFzvHGDvaF4K94MK+BL7GslN2MN
-         GiWFNh8FIzwPaFEq3mtY+N7sD94vjRgkxfsrCf36rXOOiM8lr1H3q6p4SyhZsBUO34
-         ZP+oCPleaGemA==
+        s=k20201202; t=1664583105;
+        bh=dHuJfhswjk9HDEFJFlVB0y8DZKNvo57KKJVoSnjXf8E=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=iWveKIVieFlyf3OFC6pWZK+Dwr9l90MCC1Sk6PrRQKqap+PxstDgx5/Z92pYYTX9t
+         GRx3+NvXefToBDPyWotZUqP7/RAlr98bVLE31OWuh00FjoYZWcWwfOBtAZ15ZUG/Ub
+         0DWMkAGQsh56NCosX1Ecx258eaOXr92DjhQaCLmdXb92xKec6ldf/O5ncBqQFAu3yW
+         tsMcZGdSKIZeCkbHmmeXPwKr6qh73fljywVN02SVb2FcxVH8GdvxhenEAgQw9tYZvW
+         fA2tZXQN2x0I+5btXiyrHWbX2hT7ZKW/tu3s1Wzh9H9SafkXZDKClRqDeoeiq1Zcrb
+         ITqzlahWTMZpg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220914033206.98046-1-linyujun809@huawei.com>
-References: <20220914033206.98046-1-linyujun809@huawei.com>
-Subject: Re: [PATCH -next] clk: imx: scu: fix memleak on platform_device_add() fails
+In-Reply-To: <20220915031121.4003589-1-windhl@126.com>
+References: <20220915031121.4003589-1-windhl@126.com>
+Subject: Re: [PATCH] clk: ti: Call of_node_get() before of_find_xxx() API
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     Lin Yujun <linyujun809@huawei.com>, abelvesa@kernel.org,
-        aisheng.dong@nxp.com, festevam@gmail.com, kernel@pengutronix.de,
-        linux-imx@nxp.com, mturquette@baylibre.com, s.hauer@pengutronix.de,
-        shawnguo@kernel.org
-Date:   Fri, 30 Sep 2022 17:07:08 -0700
+To:     kristo@kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com, windhl@126.com
+Date:   Fri, 30 Sep 2022 17:11:43 -0700
 User-Agent: alot/0.10
-Message-Id: <20221001000709.F2603C433C1@smtp.kernel.org>
+Message-Id: <20221001001145.7E746C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lin Yujun (2022-09-13 20:32:06)
-> No error handling is performed when platform_device_add()
-> fails. Add error processing before return, and modified
-> the return value.
+Quoting Liang He (2022-09-14 20:11:21)
+> In ti_find_clock_provider(), we need to call of_node_get() for
+> of_find_node_by_name() which will automatically call of_node_put()
+> for the 'from' argument.
 >=20
-> Fixes: 77d8f3068c63 ("clk: imx: scu: add two cells binding support")
-> Signed-off-by: Lin Yujun <linyujun809@huawei.com>
+> Fixes: 51f661ef9a10 ("clk: ti: Add ti_find_clock_provider() to use clock-=
+output-names")
+> Signed-off-by: Liang He <windhl@126.com>
 > ---
+>  drivers/clk/ti/clk.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+> index 373e9438b57a..7c390cd67e1a 100644
+> --- a/drivers/clk/ti/clk.c
+> +++ b/drivers/clk/ti/clk.c
+> @@ -147,6 +147,7 @@ static struct device_node *ti_find_clock_provider(str=
+uct device_node *from,
+>                 return np;
+> =20
+>         /* Fall back to using old node name base provider name */
+> +       of_node_get(from);
 
-Applied to clk-next
+It seems better to hold the reference from the earlier search.
+
+>         return of_find_node_by_name(from, name);
+>  }
+
+How about this?
+
+----8<----
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index ef2a445c63a3..a99279265e40 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -139,11 +139,12 @@ static struct device_node *ti_find_clock_provider(str=
+uct device_node *from,
+ 			break;
+ 		}
+ 	}
+-	of_node_put(from);
+ 	kfree(tmp);
+=20
+-	if (found)
++	if (found) {
++		of_node_put(from);
+ 		return np;
++	}
+=20
+ 	/* Fall back to using old node name base provider name */
+ 	return of_find_node_by_name(from, name);
