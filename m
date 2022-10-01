@@ -2,221 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD77BC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Sep 2022 23:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FF4C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 00:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231841AbiI3XoX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 19:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
+        id S231666AbiJAAFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 20:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbiI3XoW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 19:44:22 -0400
-Received: from post.baikalelectronics.com (post.baikalelectronics.com [213.79.110.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78F7315C1CE;
-        Fri, 30 Sep 2022 16:44:11 -0700 (PDT)
-Received: from post.baikalelectronics.com (localhost.localdomain [127.0.0.1])
-        by post.baikalelectronics.com (Proxmox) with ESMTP id C317CE0EBE;
-        Fri, 30 Sep 2022 01:54:14 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        baikalelectronics.ru; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:from:from:in-reply-to:message-id
-        :mime-version:references:reply-to:subject:subject:to:to; s=post;
-         bh=0JdYDi05csUuLieFd6cS5KHfkLGdIc860jjEW4zLpM0=; b=bRhi+Xe8Ts48
-        OVOYQaugA6FIMn+S2PiYuB+7Gk1KaPgEyzzICSWrFd9cgtUbLv1SMK4MfkeDg1u6
-        b7F4Hri/YEOWD6KYOGVS6bSnfp8a0myPuES4Sef2So/Mgut6Ng3+3lun4UwBrsT+
-        u7+c81+T6o6wNuGIDWySh0lLFQgBySU=
-Received: from mail.baikal.int (mail.baikal.int [192.168.51.25])
-        by post.baikalelectronics.com (Proxmox) with ESMTP id B6D23E0EBB;
-        Fri, 30 Sep 2022 01:54:14 +0300 (MSK)
-Received: from localhost (192.168.168.10) by mail (192.168.51.25) with
- Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Sep 2022 01:54:15 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND v12 7/8] clk: baikal-t1: Add DDR/PCIe directly controlled resets support
-Date:   Fri, 30 Sep 2022 01:54:01 +0300
-Message-ID: <20220929225402.9696-8-Sergey.Semin@baikalelectronics.ru>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220929225402.9696-1-Sergey.Semin@baikalelectronics.ru>
-References: <20220929225402.9696-1-Sergey.Semin@baikalelectronics.ru>
+        with ESMTP id S231759AbiJAAFG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 20:05:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8686F2CC83
+        for <linux-clk@vger.kernel.org>; Fri, 30 Sep 2022 17:05:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C919561CB4
+        for <linux-clk@vger.kernel.org>; Sat,  1 Oct 2022 00:05:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23268C433D6;
+        Sat,  1 Oct 2022 00:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664582703;
+        bh=RoJNLUp38GFc1nuFRzD/OOXEm6iNua2g/dUtuRk6+iU=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=lsHUniJ6R9o2mNfUnz2Jz+Bd++NTdtFnSBxhrelqMSmNagjjnQePwLIBWwZswT0/K
+         66eKGfsC5qwVcZdjgyIv+7WGwre/Lh4evzEzfoH/8nvNY6s00I3MevVwEDKHFUMeBe
+         beavkEz7oXCAVA1nEC/+2amml+uNQdzO3d4SOiBGuOkSVTdPVt2i3k1ylhitKN4Dzz
+         vr2rkGbAiYlTds8C7q29Wm+BiTr8ib9AUNGxd9+mZ6O9tSIFZqVCKbF7/2cADK9jbb
+         PAzQJpUNI4w0fhMueRPa461ME1jSHxAn+1MlG1j5kmjJ3C1Bwaj/+i3Xg18uihaGWN
+         wWCH2dn4Whp/g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [192.168.168.10]
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <11481209-7c8f-7543-1e04-5723ffc2ccd4@windriver.com>
+References: <20220928201656.30318-1-laurent.pinchart@ideasonboard.com> <11481209-7c8f-7543-1e04-5723ffc2ccd4@windriver.com>
+Subject: Re: [PATCH] clk: zynqmp: pll: Fix divider calculation to avoid out-of-range rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Maxime Ripard <maxime@cerno.tech>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        linux-clk@vger.kernel.org
+Date:   Fri, 30 Sep 2022 17:05:01 -0700
+User-Agent: alot/0.10
+Message-Id: <20221001000503.23268C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Aside with a set of the trigger-like resets Baikal-T1 CCU provides two
-additional blocks with directly controlled reset signals. In particular it
-concerns DDR full and initial resets and various PCIe sub-domains resets.
-Let's add the direct reset assertion/de-assertion of the corresponding
-flags support into the Baikal-T1 CCU driver then. It will be required at
-least for the PCIe platform driver. Obviously the DDR controller isn't
-supposed to be fully reset in the kernel, so the corresponding controls
-are added just for the sake of the interface implementation completeness.
++Maxime
 
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Quoting Quanyang Wang (2022-09-28 18:05:10)
+> Hi Laurent,
+>=20
+> I have sent a patch as below to fix this issue which set rate failed and =
 
----
+> it's in linux-next repo now.
+>=20
+> https://lore.kernel.org/linux-arm-kernel/20220826142030.213805-1-quanyang=
+.wang@windriver.com/T/
+>=20
+>=20
+> As for the frequency gap between the requested rate and the actual, it's =
 
-Changelog v6:
-- Refactor the code to support the linear reset IDs only. (@Philipp)
+> because of the commit:
+>=20
+> commit 948fb0969eae8
+> Author: Maxime Ripard <maxime@cerno.tech>
+> Date:=C2=A0=C2=A0 Fri Feb 25 15:35:26 2022 +0100
+>=20
+>  =C2=A0=C2=A0=C2=A0 clk: Always clamp the rounded rate
+>=20
+> And I haven't figured out how to fix it.
+>=20
 
-Changelog v7:
-- Drop empty line from the sys_rst_info structure initialization block.
-  (@Philipp)
----
- drivers/clk/baikal-t1/ccu-rst.c | 66 +++++++++++++++++++++++++++++++++
- drivers/clk/baikal-t1/ccu-rst.h | 10 +++++
- 2 files changed, 76 insertions(+)
-
-diff --git a/drivers/clk/baikal-t1/ccu-rst.c b/drivers/clk/baikal-t1/ccu-rst.c
-index 7db52633270f..40023ea67463 100644
---- a/drivers/clk/baikal-t1/ccu-rst.c
-+++ b/drivers/clk/baikal-t1/ccu-rst.c
-@@ -35,18 +35,29 @@
- #define CCU_AXI_HWA_BASE		0x054
- #define CCU_AXI_SRAM_BASE		0x058
- 
-+#define CCU_SYS_DDR_BASE		0x02c
- #define CCU_SYS_SATA_REF_BASE		0x060
- #define CCU_SYS_APB_BASE		0x064
-+#define CCU_SYS_PCIE_BASE		0x144
- 
- #define CCU_RST_DELAY_US		1
- 
- #define CCU_RST_TRIG(_base, _ofs)		\
- 	{					\
-+		.type = CCU_RST_TRIG,		\
-+		.base = _base,			\
-+		.mask = BIT(_ofs),		\
-+	}
-+
-+#define CCU_RST_DIR(_base, _ofs)		\
-+	{					\
-+		.type = CCU_RST_DIR,		\
- 		.base = _base,			\
- 		.mask = BIT(_ofs),		\
- 	}
- 
- struct ccu_rst_info {
-+	enum ccu_rst_type type;
- 	unsigned int base;
- 	unsigned int mask;
- };
-@@ -79,6 +90,15 @@ static const struct ccu_rst_info axi_rst_info[] = {
- static const struct ccu_rst_info sys_rst_info[] = {
- 	[CCU_SYS_SATA_REF_RST] = CCU_RST_TRIG(CCU_SYS_SATA_REF_BASE, 1),
- 	[CCU_SYS_APB_RST] = CCU_RST_TRIG(CCU_SYS_APB_BASE, 1),
-+	[CCU_SYS_DDR_FULL_RST] = CCU_RST_DIR(CCU_SYS_DDR_BASE, 1),
-+	[CCU_SYS_DDR_INIT_RST] = CCU_RST_DIR(CCU_SYS_DDR_BASE, 2),
-+	[CCU_SYS_PCIE_PCS_PHY_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 0),
-+	[CCU_SYS_PCIE_PIPE0_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 4),
-+	[CCU_SYS_PCIE_CORE_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 8),
-+	[CCU_SYS_PCIE_PWR_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 9),
-+	[CCU_SYS_PCIE_STICKY_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 10),
-+	[CCU_SYS_PCIE_NSTICKY_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 11),
-+	[CCU_SYS_PCIE_HOT_RST] = CCU_RST_DIR(CCU_SYS_PCIE_BASE, 12),
- };
- 
- static int ccu_rst_reset(struct reset_controller_dev *rcdev, unsigned long idx)
-@@ -86,6 +106,9 @@ static int ccu_rst_reset(struct reset_controller_dev *rcdev, unsigned long idx)
- 	struct ccu_rst *rst = to_ccu_rst(rcdev);
- 	const struct ccu_rst_info *info = &rst->rsts_info[idx];
- 
-+	if (info->type != CCU_RST_TRIG)
-+		return -EOPNOTSUPP;
-+
- 	regmap_update_bits(rst->sys_regs, info->base, info->mask, info->mask);
- 
- 	/* The next delay must be enough to cover all the resets. */
-@@ -94,8 +117,51 @@ static int ccu_rst_reset(struct reset_controller_dev *rcdev, unsigned long idx)
- 	return 0;
- }
- 
-+static int ccu_rst_set(struct reset_controller_dev *rcdev,
-+		       unsigned long idx, bool high)
-+{
-+	struct ccu_rst *rst = to_ccu_rst(rcdev);
-+	const struct ccu_rst_info *info = &rst->rsts_info[idx];
-+
-+	if (info->type != CCU_RST_DIR)
-+		return high ? -EOPNOTSUPP : 0;
-+
-+	return regmap_update_bits(rst->sys_regs, info->base,
-+				  info->mask, high ? info->mask : 0);
-+}
-+
-+static int ccu_rst_assert(struct reset_controller_dev *rcdev,
-+			  unsigned long idx)
-+{
-+	return ccu_rst_set(rcdev, idx, true);
-+}
-+
-+static int ccu_rst_deassert(struct reset_controller_dev *rcdev,
-+			    unsigned long idx)
-+{
-+	return ccu_rst_set(rcdev, idx, false);
-+}
-+
-+static int ccu_rst_status(struct reset_controller_dev *rcdev,
-+			  unsigned long idx)
-+{
-+	struct ccu_rst *rst = to_ccu_rst(rcdev);
-+	const struct ccu_rst_info *info = &rst->rsts_info[idx];
-+	u32 val;
-+
-+	if (info->type != CCU_RST_DIR)
-+		return -EOPNOTSUPP;
-+
-+	regmap_read(rst->sys_regs, info->base, &val);
-+
-+	return !!(val & info->mask);
-+}
-+
- static const struct reset_control_ops ccu_rst_ops = {
- 	.reset = ccu_rst_reset,
-+	.assert = ccu_rst_assert,
-+	.deassert = ccu_rst_deassert,
-+	.status = ccu_rst_status,
- };
- 
- struct ccu_rst *ccu_rst_hw_register(const struct ccu_rst_init_data *rst_init)
-diff --git a/drivers/clk/baikal-t1/ccu-rst.h b/drivers/clk/baikal-t1/ccu-rst.h
-index 68214d777465..d6e8b2f671f4 100644
---- a/drivers/clk/baikal-t1/ccu-rst.h
-+++ b/drivers/clk/baikal-t1/ccu-rst.h
-@@ -13,6 +13,16 @@
- 
- struct ccu_rst_info;
- 
-+/*
-+ * enum ccu_rst_type - CCU Reset types
-+ * @CCU_RST_TRIG: Self-deasserted reset signal.
-+ * @CCU_RST_DIR: Directly controlled reset signal.
-+ */
-+enum ccu_rst_type {
-+	CCU_RST_TRIG,
-+	CCU_RST_DIR,
-+};
-+
- /*
-  * struct ccu_rst_init_data - CCU Resets initialization data
-  * @sys_regs: Baikal-T1 System Controller registers map.
--- 
-2.37.3
-
-
+Maxime has some more patches to fix this and they're in linux-next.
+Maybe those fix this problem?
