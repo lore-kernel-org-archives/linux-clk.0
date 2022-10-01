@@ -2,37 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA74C4332F
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 03:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F18C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 03:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231484AbiJADEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 23:04:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42686 "EHLO
+        id S232260AbiJADFR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 23:05:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230471AbiJADEl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 23:04:41 -0400
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF802BD9;
-        Fri, 30 Sep 2022 20:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1664593475; x=1696129475;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DlGpB134YCMmqRI+P3CaqbP/fa2nwdPZ7X1G7oBHBH4=;
-  b=Zw06UIiXVeGFdUv+r6oTRJTOXpTIps6RKPcnpRuQJhyPSzSD0xetGhcu
-   TpXN1dKx6TTheNHcDmApvFtGqQYBk8TseSjJmClHRYj/vLzvRgvx4DoHc
-   99LOfmEl1XEQKn7jM99HbyZoAAt8Ev18cFjXccPHOAMKvdb9XaR1DZBNW
-   A=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 30 Sep 2022 20:04:35 -0700
-X-QCInternal: smtphost
-Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2022 20:04:34 -0700
+        with ESMTP id S231938AbiJADFM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 23:05:12 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D76241D03;
+        Fri, 30 Sep 2022 20:04:54 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 291306gA013513;
+        Sat, 1 Oct 2022 03:04:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=35yIu6DxqF+aVwizq1XKq0EukLBmHJ1Drw6PhVhDYEU=;
+ b=Qor5IrP0za4lmJ3pG7+0u98fu40mFYXpYoDqeUs6JGnoLJBMvmhGczT+zeFhdI/F7Wk3
+ yTwpSL5WOA4BEX6GmbqBSb00kg/hP0fiMwhNFv8L/zJBasYuUfOmu2ejo/rJeeGrjVI0
+ O81ktTAn5zRxazYwl6FQ5sV+my4gk0ZmNofnawfmbUVz5RETIenfPeNd1HxtJf6KE61M
+ YCYVFGH0i9+hCMK7I+XH0wbCywxtJ6qXz+wmeVmXmqk/EHJEhnBQjZwNe6YvSzp7xsvu
+ QZuVJBS1o2TtnFCItswmbf8ea3PhgEuz+jZPyECqAsfHsYonIR7h+Byj+GTPgHnlZrAT Bg== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jx6by8ttc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 01 Oct 2022 03:04:33 +0000
+Received: from nasanex01b.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29134XVl029611
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 1 Oct 2022 03:04:33 GMT
 Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 30 Sep 2022 20:04:33 -0700
+ 15.2.986.29; Fri, 30 Sep 2022 20:04:32 -0700
 From:   Melody Olvera <quic_molvera@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -45,9 +50,9 @@ To:     Andy Gross <agross@kernel.org>,
 CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Melody Olvera <quic_molvera@quicinc.com>
-Subject: [PATCH 5/5] dt-bindings: clock: Introduce pdc bindings for QDU1000 and QRU1000
-Date:   Fri, 30 Sep 2022 20:04:03 -0700
-Message-ID: <20221001030403.27659-6-quic_molvera@quicinc.com>
+Subject: [PATCH 2/5] dt-bindings: clock: Add RPMHCC bindings for QDU1000 and QRU1000
+Date:   Fri, 30 Sep 2022 20:04:00 -0700
+Message-ID: <20221001030403.27659-3-quic_molvera@quicinc.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221001030403.27659-1-quic_molvera@quicinc.com>
 References: <20221001030403.27659-1-quic_molvera@quicinc.com>
@@ -57,30 +62,42 @@ Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iKTOYOPhFlvgL3jVAJXl_M832kkVxUzN
+X-Proofpoint-ORIG-GUID: iKTOYOPhFlvgL3jVAJXl_M832kkVxUzN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-10-01_02,2022-09-29_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=910 bulkscore=0
+ spamscore=0 phishscore=0 mlxscore=0 suspectscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2210010016
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add compatible fields for QDU1000 and QRU1000 pdcs.
+Add compatible strings for RPMHCC for QDU1000 and QRU1000.
 
 Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 ---
- .../devicetree/bindings/interrupt-controller/qcom,pdc.yaml      | 2 ++
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-index b6f56cf5fbe3..5c7b790db7e0 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-@@ -33,6 +33,8 @@ properties:
-           - qcom,sm8150-pdc
-           - qcom,sm8250-pdc
-           - qcom,sm8350-pdc
-+          - qcom,qdu1000-pdc
-+          - qcom,qru1000-pdc
-       - const: qcom,pdc
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 8fcaf418f84a..d613156eadb0 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -29,6 +29,8 @@ properties:
+       - qcom,sm8250-rpmh-clk
+       - qcom,sm8350-rpmh-clk
+       - qcom,sm8450-rpmh-clk
++      - qcom,qdu1000-rpmh-clk
++      - qcom,qru1000-rpmh-clk
  
-   reg:
+   clocks:
+     maxItems: 1
 -- 
 2.37.3
 
