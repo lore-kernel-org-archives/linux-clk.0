@@ -2,292 +2,238 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5FFC4332F
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 16:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E46C43217
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 16:46:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbiJAQPp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Oct 2022 12:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53906 "EHLO
+        id S229626AbiJAQqt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Oct 2022 12:46:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiJAQPn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 12:15:43 -0400
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF5A901BA;
-        Sat,  1 Oct 2022 09:15:42 -0700 (PDT)
-Received: by mail-qt1-x835.google.com with SMTP id w2so4327838qtv.9;
-        Sat, 01 Oct 2022 09:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Ha6B3XmIQavZcAX8rwS3D2xw7x1dMSuhKPQxayTs/z0=;
-        b=l8nmniL8Twky1uQgMGJf0eBv026RjD2l9MpLG7M1Dvw073Q9WV4cCYFcdGK/D9A0kr
-         HAb4j4IVLmO+u7BgUdotltZlrxeOfm+7lTNbL6fz+ezMHc2gSdo1VeiyGtCoeJSuVrZw
-         FvB/UmId/Sc+uICpzLRYCdTHwKJ1pTc3ZnG7JqD1I+QhNkxzwq9ktQj5gFELG4r1JSx/
-         DvQosNIsIxUFBIQ53emEW87boejSInuoSm3m084vbIeniu+1Z/IJOiVRIc5Em6mpz70E
-         RSNFy8cka4/oA3rkzKPMl6iovwGPWYeBPm6jMUoTdy2aRaBCfpyBGx8JqkW6NkiY3SV/
-         36hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Ha6B3XmIQavZcAX8rwS3D2xw7x1dMSuhKPQxayTs/z0=;
-        b=jqzDl26Nr4O0ccnBwUm1X77G0CregnWJP/4kCdV//kFUfFtazv8G+NUSjMjNIE0wXb
-         gZCv29dHK8PrXSM6JN1DUVVBTC0lV+aUkQTrRtN/z9j4eHjyv2+n/k7r9coE3YtQIBin
-         YLQdem7jkj6WzyBTEhvFCXKM62l1QqXbODTK2IZuyh2RGu/fPs/g2Fsgm4ndz4g6XgqE
-         r+pSsoW5Nnj9PlZDy58gL8wFR5JeIqd13RCOHUOne7mQUvrni/UDmialoe6BqUEl8AD5
-         sHTrmYp4eu1WZEfFRXIUyjLcCzUqkvfiL+fYs++O2kv65e1tjeavFYFHIuNvaBUM6lx0
-         D90A==
-X-Gm-Message-State: ACrzQf2YhRJmXu3vEAN4k92AMGl+o7oR2hoCcKdQA2v75LSMzKmZfuRX
-        T3ktABqiDQU4k8bONKRrgas=
-X-Google-Smtp-Source: AMsMyM4mTsU2g9OQJZcy+BZdtO+tVtsLGnUG3upRe7XaVzNLzop7f7aoqzNmcPITGmoZqmOpZhBWnA==
-X-Received: by 2002:a05:622a:48c:b0:35d:489c:1ef6 with SMTP id p12-20020a05622a048c00b0035d489c1ef6mr11026074qtx.150.1664640941875;
-        Sat, 01 Oct 2022 09:15:41 -0700 (PDT)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id bm34-20020a05620a19a200b006cbd92ca141sm6000900qkb.133.2022.10.01.09.15.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Oct 2022 09:15:41 -0700 (PDT)
-Message-ID: <663cdebe-755f-3a93-07f4-da662ccb5a43@gmail.com>
-Date:   Sat, 1 Oct 2022 12:15:38 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v6 08/10] clk: imx: Add initial support for i.MXRT1170
- clock driver
+        with ESMTP id S229834AbiJAQqY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Oct 2022 12:46:24 -0400
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2130.outbound.protection.outlook.com [40.107.114.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FA92F002;
+        Sat,  1 Oct 2022 09:45:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kfzElTcYZKmib7o/c8pWmb5yTpuic8trKat/IiciUWH2NlFcHYhravnJy0AUWbEw/nZkTqGFDKGKHql7da9+peDsC8BoCn4rWNErYu8S8KwIWygCcu5VL90MxItZsduoYLLvNrwe882LigzNmnH2828/nP2v0MkICz4CnOKd2rcz8p4wGcHz4CIXDYtF1l9SoslgxHGj1ZZnTa/QlM1GApmLEp92kaYOY6Vt5ljeCb7oBWo+kD6PafIprSPsQFNqqyhtoyWIUXtQLVSwkb3v+4iMHUAdfPJAOkdL1jUoX/SAh6ElD5/0a2/uxlltysC1Ryd+13tOpPB5hotLoibTZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N7UtZ00YMyZvWnrEMicowNLLp+emcUIjhsZ/wRMJOHI=;
+ b=iohQHzRzYX6u0w/cZeDc93RUou5LZFfqObXzDlOViE5MxSjI0hDgHwJT1Ukqv82T8QM4zICrhzaOSNKw/EL+lkt/B4vslMfSUWuMcGYgiPb8eBZ/GNKGR/9XW6vaTCThPsCh62ewliGpnJuhw23Yf8C/shnZLSGti8DgifU6DftInR2IvcV+ivDkfIEWlgA5hW0/jfpAAOcp+/kJM1cBj/gsJudBT1Db63z5MvteKbzV4/4dcd8k5ENBMC0kLEPVduasjHBpz+j5UyOTPhGQPSgemllhDwV8d4QkzFMhY/q7BRMZMTofaDws6065h3c1+2vY+6dXzNbSi6DZqhD08Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N7UtZ00YMyZvWnrEMicowNLLp+emcUIjhsZ/wRMJOHI=;
+ b=noY3usekDzszIXrXwV9FOoPD1tiF4AY7MWU7pcuQO4EysXDJM3Cz6Orr16azsXmKQ8C7IykyJynSDs/9fjnodfHYkFOQ1kiwwzptUMS1JLNXw/4SCBeuLKQGguGbCZ5u5SokNw4c6VTfh7l8hcR+hpxQlvmkB4bDJJ80QAI2BxI=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by TY1PR01MB10642.jpnprd01.prod.outlook.com (2603:1096:400:325::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Sat, 1 Oct
+ 2022 16:45:55 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::73a6:588d:1198:7262]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::73a6:588d:1198:7262%7]) with mapi id 15.20.5676.026; Sat, 1 Oct 2022
+ 16:45:55 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     William Breathitt Gray <wbg@kernel.org>
+CC:     William Breathitt Gray <william.gray@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee@kernel.org>,
+        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH RFC 0/8] Add RZ/G2L MTU3a MFD and Counter driver
+Thread-Topic: [PATCH RFC 0/8] Add RZ/G2L MTU3a MFD and Counter driver
+Thread-Index: AQHY0arfC6iQwXKfcEeqoNkH1bZYIq3z1zkAgACGWoCABD8nAIABKKwQ
+Date:   Sat, 1 Oct 2022 16:45:55 +0000
+Message-ID: <OS0PR01MB59225B1CA8935C958BBA8AA186599@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20220926132114.60396-1-biju.das.jz@bp.renesas.com>
+ <YzNztKSYQPQrnV7k@fedora>
+ <OS0PR01MB59228FA93ED4D6DB8D9B799D86549@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <Yzd0YAWG/W9RNLQA@ishi>
+In-Reply-To: <Yzd0YAWG/W9RNLQA@ishi>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, linux-imx@nxp.com
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, stefan@agner.ch, linus.walleij@linaro.org,
-        daniel.lezcano@linaro.org, tglx@linutronix.de, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
-        abel.vesa@nxp.com, dev@lynxeye.de, marcel.ziswiler@toradex.com,
-        tharvey@gateworks.com, leoyang.li@nxp.com,
-        sebastian.reichel@collabora.com, cniedermaier@dh-electronics.com,
-        clin@suse.com, giulio.benetti@benettiengineering.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org
-References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
- <20220901183343.3188903-9-Mr.Bossman075@gmail.com>
- <20220930202819.C4952C433D6@smtp.kernel.org>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20220930202819.C4952C433D6@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TY1PR01MB10642:EE_
+x-ms-office365-filtering-correlation-id: 88ceaf2a-f2d1-4a15-2772-08daa3cc68fa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: AdpzImMkol1jqJdgBW2aOPcsOn1lXQK8Lomjdrrvb4/A1JtyIe/g6h0C+j/ehtgB3OqUX95aEPPvtUVlw4tLjWLD1TBNemQ46RjxNlGBcM+JrOnvdmEkISEq3aQr3j106CVWG3uuIVA6RZDS1DdOSsq3j69ssZMEBJeAox3xWy31UZNQJAe3IrRWmg3D/ItqytTa8XrwksBg9+ZpdmSDjtCeRv6v0EZ/DpiCxo7XiTw+OQtF9tzWFfkP9MJ9XMSl+dHkfOMFVTEU1xqXeomRcV9+3ghUapc1wuW2zbnbz/SwNicdp2m4uRLt9lHTXLKJPueyRDPj63/j/DFcfYCaza5qjgvwLAxrulGeLMemwOOYtwVH0w5dp0CzwNWHRQKf3cJNDmI2fnSKXGqkgx9fkbO/ChjCxADvV4vKTlOL7s57WjuCohgyB5fNGtoez2FFyQsN2lavKX0Fs5oBxdfBJBoQ0X3u7IZFEAfqQ4n31pe+bw1xhF0SEjXZEaAH1N2mtVuAQD7nPHMLVx898rnTdQCGs3GtCtqiGhkGOZ+jKXQXrNfp1og7vUy9pxPT6svCSE+AeCLfaOkCxHnpAH8pAsVsebn4XUWMCnGS7QqSlYEZZLYC8v8bxslH/NJOX0Wl8+JKo97bfJ+HvZfFeUan1JqyGzdaDbYFCg8lXpehvBTw+h8twF3JjpMK8F5nmqqdujGbqb3trXjoB4wGATlCSYyUnsRFkYFFrxfsmN1AnmntdvWbd8mMpPf/Y3mgCI4olmIYCnXSC3dq9eZlVtFhI1fNPR576f1ZS1akG3vist8=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(396003)(366004)(136003)(39860400002)(451199015)(7416002)(26005)(8936002)(55016003)(5660300002)(6506007)(52536014)(7696005)(9686003)(186003)(2906002)(122000001)(83380400001)(316002)(54906003)(6916009)(71200400001)(41300700001)(66556008)(38070700005)(478600001)(86362001)(66446008)(66476007)(64756008)(8676002)(4326008)(33656002)(66946007)(76116006)(38100700002)(32563001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?rfw6ptAUpIIGuuzlE3uk7zTt1MrIKQu3hk/JzoYLCeQ6zVm/n0Ryrw2JNW?=
+ =?iso-8859-1?Q?I06fnHPKc++Eoe44WCFDGf9oUGhqHbSwX7w2Os8Gofwo3D7wsjvIoMtt1j?=
+ =?iso-8859-1?Q?qfkpuCKT/7shGewds5F37s/fq34Rl7Yy4HsFRZSxUyQpHmJLCxnHh0pPMs?=
+ =?iso-8859-1?Q?Rd7bTNK4lrQ+ZeIM0Tq882lk4nO5YY629XG9puy4XirYuR/ce1EtR4f/v2?=
+ =?iso-8859-1?Q?7LhCetyN623YAMFGlZx2PUf62LFRO+nqRO8IlWN/q8wmBQ/yBQgIDzLQuJ?=
+ =?iso-8859-1?Q?Pdo9mZrdc/c1y3JLc7gdOgSZKo6SEoWT0iewQIfaQuVeR3exZyGtsKHAQ1?=
+ =?iso-8859-1?Q?2EyP2/hl1FsqqOIOeY1AYV1VI407/CZVw/WIVAsJAg+bcS6/3NyzKhDrio?=
+ =?iso-8859-1?Q?LuD9cSYuUpR9mbXULWgGRO+ibHsnJwycm0bZMZbWghO7ML5XLHvXW69b/N?=
+ =?iso-8859-1?Q?MsAkqEYnAqRyzfCFuXUA6J+UafjStFVCzk4XJwIHI0MLTn5jWt3WvAaFMZ?=
+ =?iso-8859-1?Q?O7gxQtLzoqmkhYGmMEsAdICIIJXuGXm+sSCc5XGxfb2rw0KBe1alFlmx77?=
+ =?iso-8859-1?Q?0DDX8QAJgxDXwevJxrCHUSiF9mEBLoGgWPI9tH5ahtE8kOJL021dk0GbKm?=
+ =?iso-8859-1?Q?1lQV94Jlyx5fBP0rOZorYh8BWP1OnoZKT3oWp33JwHEipcicRYoCfs0ruA?=
+ =?iso-8859-1?Q?3igs5k5AUona4P42E196dACe8+F0KbS1yHuw+Dmt4to1Odoh+5WyvYxQH3?=
+ =?iso-8859-1?Q?CWLwqItofW+inkdxTwO65/n839KgfeiUjQI4Cnd/KG6y+g3f1LxqSv0lfX?=
+ =?iso-8859-1?Q?gFjFtZ+ehP06ZByZZhDFYB1KcYs4TEE7HfAgUukyo2yjk/6kmfV5k5oE0U?=
+ =?iso-8859-1?Q?PfA1fWN25PQ8EwbF+Y8wSrgreO7Y/8nhSaUbtdi9DQDwOC+b033f7VFwmm?=
+ =?iso-8859-1?Q?3dYGEAT8mQh7Z+cVOvjbst5WuRjvOzZV3uMkmnlK+ijc6MdkMlEvXWhP7S?=
+ =?iso-8859-1?Q?AUum2fMPdwYy8RV13WuP2qX3KIT4TKy3zq3KariNs11oWN3qqD19MulnP2?=
+ =?iso-8859-1?Q?jzSd9aR1mypDxt2DwQCah2NXkjPn8fmFoXwu48G4MwAWc5kq5bripN3ky6?=
+ =?iso-8859-1?Q?HMKm1jHTNJu+0iEVeE4DtL1SqWL5Pa7tn3LYWERICWQN2XGa0xr+ef5loY?=
+ =?iso-8859-1?Q?T/GRUVRMi4Nczar7L0CInX5skvCECVhZDsNMsWY+A9mdp75H2L4Q/IDgmg?=
+ =?iso-8859-1?Q?Eybp4pTaObewpwZzpWvCS6Hfpjf++rQ9Zvwq0r3qdeRkDRgSKjGTdvVQkd?=
+ =?iso-8859-1?Q?QMiXEI98ch97GQ3fmCRsrT4K5vp0o4TZ1XA0FibziN+RgIoPTw1F7+8/ex?=
+ =?iso-8859-1?Q?mx0VsakdD1OGiPJpr35ySr/jYQaDBbudSF24meLr/7A2BhmbhWo+G+3ZWD?=
+ =?iso-8859-1?Q?8EPxC0mqqPq3uA3rirjhIFmTCsd1RXiuhUQ5SusZwUkTdWVJ8X4tVBHDcl?=
+ =?iso-8859-1?Q?9z08/dYKaZlhDJUoVe+XmSvmXJIJ4m+ElOn5C1JcMC+h9X1tbZE+ERCdju?=
+ =?iso-8859-1?Q?mXoMf1IHolk1OTnRTAwvhAii/3+QqV5oXBv+dKTxTbyiLo/kAzP4q8ZbqH?=
+ =?iso-8859-1?Q?BzoyEsg0RaqxvWwEX+NiZnEY4bVIsbILmF?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88ceaf2a-f2d1-4a15-2772-08daa3cc68fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2022 16:45:55.6070
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JAAU0zuPzoHLIbzQ2h5YIyKAIwZW+66AdYrOKrAfkMvrErgYxLFwtWuV3VfTaezfzhQTXt1Vy0l1VJDfjhWsljlUZNcfTirIAIUvK9KngSk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB10642
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi William Breathitt Gray,
 
+Thanks for the feedback.
 
-On 9/30/22 16:28, Stephen Boyd wrote:
-> Quoting Jesse Taube (2022-09-01 11:33:41)
->> Add clock driver support for i.MXRT1170.
->>
->> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
->> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
->> ---
->> V1 -> V2:
->>   - Add slab.h and clock-provider.h
->>   - Add spaces in `root_clocks`
->>   - Expand and sort macro
->>   - Move `clk_hw` structs to `clocks_probe`
->>   - Remove of_irq.h
->>   - Remove unused code/comments
->> V2 -> V3:
->>   - Expand root_clocks names array
->>   - Remove root_clock_names enum
->> V3 -> V4:
->>   - Nothing done
->> V4 -> V5:
->>   - Use __imx_clk_hw_pllv3 to change power bit
->> V5 -> V6:
->>   - Nothing done
->> ---
->>   drivers/clk/imx/Kconfig         |   7 +
->>   drivers/clk/imx/Makefile        |   1 +
->>   drivers/clk/imx/clk-imxrt1170.c | 749 ++++++++++++++++++++++++++++++++
->>   3 files changed, 757 insertions(+)
->>   create mode 100644 drivers/clk/imx/clk-imxrt1170.c
->>
->> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
->> index 25785ec9c276..704a7777af4f 100644
->> --- a/drivers/clk/imx/Kconfig
->> +++ b/drivers/clk/imx/Kconfig
->> @@ -119,3 +119,10 @@ config CLK_IMXRT1050
->>          select MXC_CLK
->>          help
->>              Build the driver for i.MXRT1050 CCM Clock Driver
->> +
->> +config CLK_IMXRT1170
->> +       tristate "IMXRT1170 CCM Clock Driver"
->> +       depends on SOC_IMXRT
->> +       select MXC_CLK
->> +       help
->> +           Build the driver for i.MXRT1170 CCM Clock Driver
->> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
->> index 88b9b9285d22..d607a6d8138a 100644
->> --- a/drivers/clk/imx/Makefile
->> +++ b/drivers/clk/imx/Makefile
->> @@ -52,4 +52,5 @@ obj-$(CONFIG_CLK_IMX6UL) += clk-imx6ul.o
->>   obj-$(CONFIG_CLK_IMX7D)  += clk-imx7d.o
->>   obj-$(CONFIG_CLK_IMX7ULP) += clk-imx7ulp.o
->>   obj-$(CONFIG_CLK_IMXRT1050)  += clk-imxrt1050.o
->> +obj-$(CONFIG_CLK_IMXRT1170)  += clk-imxrt1170.o
->>   obj-$(CONFIG_CLK_VF610)  += clk-vf610.o
->> diff --git a/drivers/clk/imx/clk-imxrt1170.c b/drivers/clk/imx/clk-imxrt1170.c
->> new file mode 100644
->> index 000000000000..71d9aacf9751
->> --- /dev/null
->> +++ b/drivers/clk/imx/clk-imxrt1170.c
->> @@ -0,0 +1,749 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
->> +/*
->> + * Copyright (C) 2022
->> + * Author(s):
->> + * Jesse Taube <Mr.Bossman075@gmail.com>
->> + */
->> +#include <linux/clk.h>
-> 
-> Please don't include clk.h unless you use consumer clk APIs. Doesn't
-> look like it is used here?
-> 
->> +#include <linux/of_address.h>
->> +#include <linux/slab.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_device.h>
-> 
-> Sorting alphabetically is nice.
-Oh my bad, will fix.
+> Subject: Re: [PATCH RFC 0/8] Add RZ/G2L MTU3a MFD and Counter driver
+>=20
+> On Wed, Sep 28, 2022 at 06:14:57AM +0000, Biju Das wrote:
+> > Hi William Breathitt Gray,
+> >
+> > Thanks for the feedback.
+> >
+> > > Subject: Re: [PATCH RFC 0/8] Add RZ/G2L MTU3a MFD and Counter
+> driver
+> > >
+> > > On Mon, Sep 26, 2022 at 02:21:06PM +0100, Biju Das wrote:
+> > > > The RZ/G2L multi-function timer pulse unit 3 (MTU3a) is embedded
+> > > > in the Renesas RZ/G2L family SoC's. It consists of eight 16-bit
+> > > > timer channels and one 32-bit timer channel. It supports the
+> > > > following functions
+> > > >  - Counter
+> > > >  - Timer
+> > > >  - PWM
+> > > >
+> > > > This patch series aim to add MFD and counter driver for MTU3a.
+> > > > Subsequent patch seies will add TImer and PWM driver support
+> also
+> > > > enhancements to counter driver.
+> > >
+> > > Hello Biju,
+> > >
+> > > I see this device consists of several channels, but only one Count
+> > > is defined in the counter patch ("Channel 1 Count"). Do all
+> channels
+> > > support counting, or is it limited to just one channel?
+> >
+> > It is like this
+> > MTU1 channel :- 1 16-bit phase counter MTU2-Channel :- 1 16-bit
+> phase
+> > counter
+> > MTU1 + MTU2 channel combined:- 1 32-bit phase counter Other channels
+> > are not supporting phase counting.
+> >
+> > Each counter device will have 1 channel. Currently it supports 16-
+> bit
+> > phase counting.
+> >
+> > Please see my test program. Am I missing something here?
+> >
+> > My test program:-
+> >
+> > echo 1 > /sys/bus/counter/devices/counter0/count0/enable
+> > echo 50 > /sys/bus/counter/devices/counter0/count0/ceiling
+> > devmem2 0x10001391 b 0x00 # Enable phase clock selection A for MTU2.
+> > echo 1 > /sys/bus/counter/devices/counter1/count0/enable
+> > echo 50 > /sys/bus/counter/devices/counter1/count0/ceiling
+> >
+> > for i in {1..5};
+> > do cat /sys/bus/counter/devices/counter0/count0/count ; cat
+> > /sys/bus/counter/devices/counter0/count0/direction;
+> > cat /sys/bus/counter/devices/counter1/count0/count;
+> > cat /sys/bus/counter/devices/counter1/count0/direction;
+> > done
+> >
+> > Cheers,
+> > Biju
+>=20
+> I'm not familiar with this hardware, but it looks like MTU1 and MTU2
+> are on the same device. I think a more natural way to expose this
+> functionality in the Counter subsystem would be to define a Count for
+> each count value you can support; so something like this (all under
+> /sys/bus/counter/devices/counter0):
+>=20
+> * count0 :- MTU1
+> * count1 :- MTU2
+> * count3 :- MTU1 + MTU2
 
->> +#include <dt-bindings/clock/imxrt1170-clock.h>
->> +
->> +#include "clk.h"
->> +
->> +#define CLOCK_MUX_DEFAULT "rcosc48M_div2", "osc", "rcosc400M", "rcosc16M"
-> [...]
->> +
->> +static int imxrt1170_clocks_probe(struct platform_device *pdev)
->> +{
->> +       void __iomem *ccm_base;
->> +       void __iomem *pll_base;
->> +       struct clk_hw **hws;
->> +       struct clk_hw_onecell_data *clk_hw_data;
->> +       struct device *dev = &pdev->dev;
->> +       struct device_node *np = dev->of_node;
->> +       struct device_node *anp;
->> +       int ret;
->> +
->> +       clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
->> +                                         IMXRT1170_CLK_END), GFP_KERNEL);
->> +       if (WARN_ON(!clk_hw_data))
->> +               return -ENOMEM;
->> +
->> +       clk_hw_data->num = IMXRT1170_CLK_END;
->> +       hws = clk_hw_data->hws;
->> +
->> +       hws[IMXRT1170_CLK_OSC] = imx_obtain_fixed_clk_hw(np, "osc");
->> +       hws[IMXRT1170_CLK_RCOSC_16M] = imx_obtain_fixed_clk_hw(np, "rcosc16M");
->> +       hws[IMXRT1170_CLK_OSC_32K] = imx_obtain_fixed_clk_hw(np, "osc32k");
->> +
->> +       hws[IMXRT1170_CLK_RCOSC_48M] = imx_clk_hw_fixed_factor("rcosc48M",  "rcosc16M", 3, 1);
->> +       hws[IMXRT1170_CLK_RCOSC_400M] = imx_clk_hw_fixed_factor("rcosc400M",  "rcosc16M", 25, 1);
->> +       hws[IMXRT1170_CLK_RCOSC_48M_DIV2] = imx_clk_hw_fixed_factor("rcosc48M_div2",  "rcosc48M", 1, 2);
->> +
->> +       anp = of_find_compatible_node(NULL, NULL, "fsl,imxrt-anatop");
->> +       pll_base = of_iomap(anp, 0);
->> +       of_node_put(anp);
->> +       if (WARN_ON(!pll_base))
->> +               return -ENOMEM;
-> 
-> The kzalloc() leaked.
-LOL `grep -r of_find_compatible_node drivers/clk/imx`...
-Shall I send patches for the rest of IMX.
+OK, sounds good. so count3 :- 32 bit phase counting
+count 0 or count1 or both then 16 bit phase counting
 
-> 
->> +
->> +       /* Anatop clocks */
->> +       hws[IMXRT1170_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0UL);
->> +
->> +       hws[IMXRT1170_CLK_PLL_ARM_PRE] = __imx_clk_hw_pllv3(IMX_PLLV3_SYSV2, "pll_arm_pre", "osc",
->> +                                                           pll_base + 0x200, 0xff, 13);
->> +       hws[IMXRT1170_CLK_PLL_ARM_BYPASS] = imx_clk_hw_mux("pll_arm_bypass", pll_base + 0x200, 17,
->> +                                                          1, pll_arm_mux, 2);
->> +       hws[IMXRT1170_CLK_PLL_ARM_DIV] = clk_hw_register_divider_table(NULL, "pll_arm_div",
->> +               "pll_arm_bypass", CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
->> +               pll_base + 0x200, 15, 2, 0, post_div_table, &imx_ccm_lock);
->> +       hws[IMXRT1170_CLK_PLL_ARM] = imx_clk_hw_gate("pll_arm", "pll_arm_div", pll_base + 0x200, 14);
->> +
->> +       hws[IMXRT1170_CLK_PLL3_PRE] = __imx_clk_hw_pllv3(IMX_PLLV3_GENERICV2, "pll3_pre", "osc",
->> +                                                        pll_base + 0x210, 0x1, 21);
->> +       hws[IMXRT1170_CLK_PLL3_BYPASS] = imx_clk_hw_mux("pll3_bypass",
->> +                                                       pll_base + 0x210, 16, 1, pll3_mux, 2);
->> +       hws[IMXRT1170_CLK_PLL3] = imx_clk_hw_gate("pll3_sys", "pll3_bypass", pll_base + 0x210, 13);
->> +
->> +       hws[IMXRT1170_CLK_PLL2_PRE] = __imx_clk_hw_pllv3(IMX_PLLV3_GENERICV2, "pll2_pre", "osc",
->> +                                                        pll_base + 0x240, 0x1, 23);
->> +       hws[IMXRT1170_CLK_PLL2_BYPASS] = imx_clk_hw_mux("pll2_bypass",
->> +                                                       pll_base + 0x240, 16, 1, pll2_mux, 2);
->> +       hws[IMXRT1170_CLK_PLL2] = imx_clk_hw_gate("pll2_sys", "pll2_bypass", pll_base + 0x240, 13);
->> +
->> +       hws[IMXRT1170_CLK_PLL3_PFD0] = imx_clk_hw_pfd("pll3_pfd0", "pll3_sys", pll_base + 0x230, 0);
->> +       hws[IMXRT1170_CLK_PLL3_PFD1] = imx_clk_hw_pfd("pll3_pfd1", "pll3_sys", pll_base + 0x230, 1);
->> +       hws[IMXRT1170_CLK_PLL3_PFD2] = imx_clk_hw_pfd("pll3_pfd2", "pll3_sys", pll_base + 0x230, 2);
->> +       hws[IMXRT1170_CLK_PLL3_PFD3] = imx_clk_hw_pfd("pll3_pfd3", "pll3_sys", pll_base + 0x230, 3);
->> +       hws[IMXRT1170_CLK_PLL3_DIV2_GATE] = imx_clk_hw_fixed_factor("pll3_div2_gate", "pll3_sys", 1, 2);
->> +       hws[IMXRT1170_CLK_PLL3_DIV2] = imx_clk_hw_gate("pll3_div2", "pll3_sys", pll_base + 0x210, 3);
->> +
->> +       hws[IMXRT1170_CLK_PLL2_PFD0] = imx_clk_hw_pfd("pll2_pfd0", "pll2_sys", pll_base + 0x270, 0);
->> +       hws[IMXRT1170_CLK_PLL2_PFD1] = imx_clk_hw_pfd("pll2_pfd1", "pll2_sys", pll_base + 0x270, 1);
->> +       hws[IMXRT1170_CLK_PLL2_PFD2] = imx_clk_hw_pfd("pll2_pfd2", "pll2_sys", pll_base + 0x270, 2);
->> +       hws[IMXRT1170_CLK_PLL2_PFD3] = imx_clk_hw_pfd("pll2_pfd3", "pll2_sys", pll_base + 0x270, 3);
->> +
->> +       /* CCM clocks */
->> +       ccm_base = devm_platform_ioremap_resource(pdev, 0);
->> +       if (WARN_ON(IS_ERR(ccm_base)))
->> +               return PTR_ERR(ccm_base);
->> +
->> +       hws[IMXRT1170_CLK_M7_SEL] = imx_clk_hw_mux("m7_sel", ccm_base + (1 * 0x80),
-> [....]
->> +       hws[IMXRT1170_CLK_CSI2_UI] = imx_clk_hw_divider("csi2_ui", "csi2_ui_gate", ccm_base +
->> +                                                       (76 * 0x80), 0, 8);
->> +       hws[IMXRT1170_CLK_CSI] = imx_clk_hw_divider("csi", "csi_gate", ccm_base + (77 * 0x80), 0, 8);
->> +       hws[IMXRT1170_CLK_CKO1] = imx_clk_hw_divider("cko1", "cko1_gate", ccm_base + (78 * 0x80), 0, 8);
->> +       hws[IMXRT1170_CLK_CKO2] = imx_clk_hw_divider("cko2", "cko2_gate", ccm_base + (79 * 0x80), 0, 8);
->> +
->> +       hws[IMXRT1170_CLK_USB] = imx_clk_hw_gate("usb", "bus", ccm_base + LPCG_GATE(115), 0);
->> +
->> +       imx_check_clk_hws(hws, IMXRT1170_CLK_END);
->> +
->> +       ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-> 
-> Use devm? Or implement a driver remove function?
-Uh this is the same in the rest of imx could you explain a bit more?
+>=20
+> You can then control the phase selection using a top-level Counter
+> device extension (e.g. /sys/bus/counter/devices/counter0/phase) that
+> configures whether you're in 16-bit phase or 32-phase counting mode.
 
-Very sorry for the low quality code :(
+So I need to introduce a new sysfs called phase. Use that one for
+Selecting the external clock pin for phase counting mode.
+Please correct me if I am wrong??
 
-Thanks,
-Jesse Taube
+Hardware supports 4 pins for phase counting mode,
 
->> +       if (ret < 0) {
->> +               dev_err(dev, "Failed to register clks for i.MXRT1170.\n");
->> +               imx_unregister_hw_clocks(hws, IMXRT1170_CLK_END);
->> +       }
->> +       return ret;
->> +}
->> +
->> +static const struct of_device_id imxrt1170_clk_of_match[] = {
->> +       { .compatible = "fsl,imxrt1170-ccm" },
->> +       { /* Sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, imxrt1170_clk_of_match);
->> +
->> +static struct platform_driver imxrt1170_clk_driver = {
->> +       .probe = imxrt1170_clocks_probe,
->> +       .driver = {
->> +               .name = "imxrt1170-ccm",
->> +               .of_match_table = imxrt1170_clk_of_match,
->> +       },
+MTCLKA Input External clock A input pin (MTU1/MTU2 phase counting mode A ph=
+ase input)
+MTCLKB Input External clock B input pin (MTU1/MTU2 phase counting mode B ph=
+ase input)
+MTCLKC Input External clock C input pin (MTU2 phase counting mode A phase i=
+nput)
+MTCLKD Input External clock D input pin (MTU2 phase counting mode B phase i=
+nput)
+
+For MTU1, it is fixed MTCLKA and MTCLKB.
+But for MTU2, it can be either 0-{ MTCLKA, MTCLKB} or 1 - { MTCLKC , MTCLKD=
+}
+On reset it is set to { MTCLKC , MTCLKD}.
+
+Cheers,
+Biju
+
