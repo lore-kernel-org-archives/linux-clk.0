@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2F6C433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 00:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E09D5C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 00:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231804AbiJAAe7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 20:34:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36796 "EHLO
+        id S232365AbiJAAkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 20:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231186AbiJAAe7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 20:34:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E35140ED;
-        Fri, 30 Sep 2022 17:34:51 -0700 (PDT)
+        with ESMTP id S231254AbiJAAkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 20:40:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D636E6C762;
+        Fri, 30 Sep 2022 17:40:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3134160EF4;
-        Sat,  1 Oct 2022 00:34:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EFD4C433D6;
-        Sat,  1 Oct 2022 00:34:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B3DE60EBD;
+        Sat,  1 Oct 2022 00:40:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE720C433C1;
+        Sat,  1 Oct 2022 00:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664584490;
-        bh=N/IdnHz2Hyc3nD6UlHPYfrl/UpX2qbEo2kjTMQ2GIjs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Em2Z93ymKqMkio2+67mSaiAEAG3/3BekAn0iTF6sSV/MVn/+WfOYvHha3j+8PsccB
-         VBFJDf3uFvc6721erFFSlgPPoTTwryHEl+DM+ix9RrSZo/vEC5yBxx2C4rO+clg3eK
-         KPJ/4CjcEZciA9e1NcEv00ppYu1W6dslZxVUYCiw9iZFOXehHzWlMXhwc9GwAF40Fz
-         lDvrW2STjjz2T8BNAKXrKfFgKc3phoVb5+aFs2FxYfJFI/qSieK+X5bsx6Bv6D+8TX
-         VgJDE/YGFgNmoVupk0okBFgZQaN+FGsqWpmEBW+VTAYr9GA+WtFGR/XkCXz2z9YzOR
-         zyvD/rXoRGKog==
+        s=k20201202; t=1664584809;
+        bh=HifGW6qGZv0PfXLRVe7/PypMC0m6829NgR01RsFRuME=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=MybcmEmJp3tnM/rZVZ3rVUCtp6bvQLbRSrxmk2AV0BcqTyIB6oQZLvZgxvCuOte75
+         PvB5R5b9ltrgAyUimv1Ou3HjwzQtstsWqbB4AD4T2DX3GQU93Sflsp+TTf95q0QS7m
+         QNqclO7cntwKRstCeYmv7M1UbvVTm9uv6B7VmbXF13uu7vwAhb0b2YG1dqjb5c96R4
+         ubdc8YQy0B41WWAdY11nX9OSSg+ZYEgtCElUbT61Xzm5lvy+56qsgGWgfbf74UaAJi
+         8UjaT/6ArsoIdXJBMANjl9jOmSCuXOGjsgQ3gVvKqYVdXQX03z70Pbq5qXJdQTs93b
+         9OUEbYN2HeGZA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220912183613.22213-3-alexander.helms.jy@renesas.com>
-References: <20220912183613.22213-1-alexander.helms.jy@renesas.com> <20220912183613.22213-3-alexander.helms.jy@renesas.com>
-Subject: Re: [PATCH 2/2] clk: Renesas versaclock7 ccf device driver
+In-Reply-To: <20220602030838.52057-1-linmq006@gmail.com>
+References: <20220602030838.52057-1-linmq006@gmail.com>
+Subject: Re: [PATCH] clk: ti: dra7-atl: Fix reference leak in of_dra7_atl_clk_probe
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com,
-        alexander.helms.jy@renesas.com, michal.simek@xilinx.com,
-        saeed.nowshadi@amd.com
-To:     Alex Helms <alexander.helms.jy@renesas.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 30 Sep 2022 17:34:48 -0700
+To:     Miaoqian Lin <linmq006@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Date:   Fri, 30 Sep 2022 17:40:07 -0700
 User-Agent: alot/0.10
-Message-Id: <20221001003450.7EFD4C433D6@smtp.kernel.org>
+Message-Id: <20221001004009.BE720C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alex Helms (2022-09-12 11:36:13)
-> Renesas Versaclock7 is a family of configurable clock generator ICs
-> with fractional and integer dividers. This driver has basic support
-> for the RC21008A device, a clock synthesizer with a crystal input and
-> 8 outputs. The supports changing the FOD and IOD rates, and each
-> output can be gated.
+Quoting Miaoqian Lin (2022-06-01 20:08:36)
+> pm_runtime_get_sync() will increment pm usage counter.
+> Forgetting to putting operation will result in reference leak.
+> Add missing pm_runtime_put_sync in some error paths.
 >=20
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)=
+")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 > ---
 
 Applied to clk-next
