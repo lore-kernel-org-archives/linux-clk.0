@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28108C43219
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 03:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA86CC4332F
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Oct 2022 03:05:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231995AbiJADFS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Sep 2022 23:05:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44926 "EHLO
+        id S232341AbiJADFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Sep 2022 23:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231955AbiJADFM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 23:05:12 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF533844A;
+        with ESMTP id S231854AbiJADFO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Sep 2022 23:05:14 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D89441D06;
         Fri, 30 Sep 2022 20:04:54 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2912oaNN003721;
-        Sat, 1 Oct 2022 03:04:33 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2912uTIL002355;
+        Sat, 1 Oct 2022 03:04:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=qcppdkim1;
- bh=igv6niMS2DbBmnf0TO0/yZyVq6ba24oDDUVUV0BoS0o=;
- b=DScxxCg3U0hDSS8q3E7dpQxTWia1w/n/G0SJI5yhdtewD6mug2CVgc5LgBFugQd/C31s
- YvJUWfBfBymvwTpFXmVfeGZcxaBV118zJrl4jk1HDMsf1wUNtICkqanAOGYCzOk1SLta
- jIDwWJhLNRssNomviwEunpWYvDBnGKZ7lCkj/BsN9Adv2Btk/XzQo8cA+JtPUjzIhmjS
- Eqiqeqr+AyavkSubRL/BhC4dBOTtS39ylqsCdXNM7bFx2C18iWUB+FyEDAOe5vCugsYD
- DgZe1HgGUVFQGuu7vhDOxeFazie9IKlJXyre3ubHoq7IIDDtnMt0uFE2BEkueU6N04um rA== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jx70grpfe-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=KlcFz2ME0Xi6BduntJ50BfO5vBpfh/8IzLZSNaaw0hw=;
+ b=mgeqXQDVGGyht7xPsuqyYx1WvohqAMY+FwMUzLE4ntbHPvcq17pgkOR5mRvvGXJ6tAtI
+ te+ng7I3gqAlZ2yccNEVAvdlgLwGefemPODNx/ZxIK2HapPEVvYEilxQmBWUe7JBjx4q
+ vfujXrlezbXVKJpvPxyEUVj3pi7BNk+13F3f/9QI94GoZSAcpECp5VqtlSo7KVjq00BL
+ UhHQCxi8WWESgEL/g/3mSEzjCUuaKeifCaUhchtfTesv0tRqlgchNLOvojdCD0kfVJWr
+ HpP92rWpbDyT8kS3Yszf6OPIx+eiowZXouicbWAtMpUXu0cKS3pYFMeaEYzmqB9OI7pF TQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jxawu05bk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 01 Oct 2022 03:04:33 +0000
-Received: from nasanex01b.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29134W2W029604
+        Sat, 01 Oct 2022 03:04:35 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29134Xo0003169
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 1 Oct 2022 03:04:32 GMT
+        Sat, 1 Oct 2022 03:04:33 GMT
 Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 30 Sep 2022 20:04:32 -0700
+ 15.2.986.29; Fri, 30 Sep 2022 20:04:33 -0700
 From:   Melody Olvera <quic_molvera@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -50,10 +50,12 @@ To:     Andy Gross <agross@kernel.org>,
 CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Melody Olvera <quic_molvera@quicinc.com>
-Subject: [PATCH 0/5] clk: qcom: Add clocks for the QDU1000 and QRU1000 SoCs
-Date:   Fri, 30 Sep 2022 20:03:58 -0700
-Message-ID: <20221001030403.27659-1-quic_molvera@quicinc.com>
+Subject: [PATCH 4/5] clk: qcom: Add support for QDU1000 and QRU1000 RPMh clocks
+Date:   Fri, 30 Sep 2022 20:04:02 -0700
+Message-ID: <20221001030403.27659-5-quic_molvera@quicinc.com>
 X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20221001030403.27659-1-quic_molvera@quicinc.com>
+References: <20221001030403.27659-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -62,58 +64,59 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hMmyXbbYZiuXI_tEk7tPidP7-7iks5rJ
-X-Proofpoint-ORIG-GUID: hMmyXbbYZiuXI_tEk7tPidP7-7iks5rJ
+X-Proofpoint-GUID: Spqw-iIqV5UsQl_7RuNUTuxqv8EztE6F
+X-Proofpoint-ORIG-GUID: Spqw-iIqV5UsQl_7RuNUTuxqv8EztE6F
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-10-01_02,2022-09-29_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1011 malwarescore=0 mlxlogscore=873 adultscore=0 impostorscore=0
- bulkscore=0 phishscore=0 spamscore=0 suspectscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2210010016
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=994 phishscore=0
+ clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
+ definitions=main-2210010015
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds the GCC, RPMh, and PDC clock support required for the
-QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
+Add support for RMPh clocks for QDU1000 and QRU1000 SoCs.
 
-The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
-1000 are new SoCs meant for enabling Open RAN solutions. See more at
-https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ drivers/clk/qcom/clk-rpmh.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-This patchset is based on the YAML conversion patch [1] submitted already.
-
-[1] https://lore.kernel.org/r/20220103074348.6039-1-luca.weiss@fairphone.com
-
-Melody Olvera (4):
-  dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock bindings
-  dt-bindings: clock: Add RPMHCC bindings for QDU1000 and QRU1000
-  clk: qcom: Add support for QDU1000 and QRU1000 RPMh clocks
-  dt-bindings: clock: Introduce pdc bindings for QDU1000 and QRU1000
-
-Taniya Das (1):
-  clk: qcom: Add QDU1000 and QRU1000 GCC support
-
- .../bindings/clock/qcom,gcc-qdru1000.yaml     |   74 +
- .../bindings/clock/qcom,rpmhcc.yaml           |    2 +
- .../interrupt-controller/qcom,pdc.yaml        |    2 +
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-branch.c                 |    5 +
- drivers/clk/qcom/clk-branch.h                 |    2 +
- drivers/clk/qcom/clk-rpmh.c                   |   14 +
- drivers/clk/qcom/gcc-qdru1000.c               | 2649 +++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-qdru1000.h |  170 ++
- 10 files changed, 2927 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
- create mode 100644 drivers/clk/qcom/gcc-qdru1000.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-qdru1000.h
-
-
-base-commit: 987a926c1d8a40e4256953b04771fbdb63bc7938
-prerequisite-patch-id: d3a56569439f223ee220dee951400e18983fee3e
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index c07cab6905cb..27d11ffac71e 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -628,6 +628,18 @@ static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+ 	.num_clks = ARRAY_SIZE(sdx65_rpmh_clocks),
+ };
+ 
++DEFINE_CLK_RPMH_ARC(qdru1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
++
++static struct clk_hw *qdru1000_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]      = &qdru1000_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]    = &qdru1000_bi_tcxo_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_qdru1000 = {
++	.clks = qdru1000_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(qdru1000_rpmh_clocks),
++};
++
+ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+ 					 void *data)
+ {
+@@ -723,6 +735,8 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+ 	{ .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
+ 	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
+ 	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
++	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdru1000},
++	{ .compatible = "qcom,qru1000-rpmh-clk", .data = &clk_rpmh_qdru1000},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
 -- 
 2.37.3
 
