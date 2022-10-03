@@ -2,190 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E08BC433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 09:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05170C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 10:16:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbiJCJ7k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Oct 2022 05:59:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51510 "EHLO
+        id S229729AbiJCKQQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Oct 2022 06:16:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiJCJ7i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 05:59:38 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2045.outbound.protection.outlook.com [40.107.220.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD63D326CD;
-        Mon,  3 Oct 2022 02:59:32 -0700 (PDT)
+        with ESMTP id S229480AbiJCKQP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 06:16:15 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCCE2D746;
+        Mon,  3 Oct 2022 03:16:14 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HqpFl/fdmJIXJ4e9Ajjp4PL/qUawnSmYBLKNuM2sAN/yDFlPtN7mBJtF4HnDNf2o4LeUQ8dJEJbV7immMS3xLKuZPBwlqp4QQLkRmxdq3M/NvlZyXx2+UIhFXHsB1Os6o8OXRb03p2trt+D8DuylgFLyc8z7/TAWCZtqLTfh6duAaKMPkwVe439TlhPYAEYXG6RCVWrqAARQI1/4Ndtj52i32Ruy0Exe1ElAeIVne7WW7c56HDoZmvK2TCzeHzVVZ3KTDkQmaDlQPzZMawTuSjDRGxHn6UOQf7aDtdL1ngB3PixRY43xGhmSCk58teijlnbmHzcdwzXnzK0WWdo3PQ==
+ b=SqII3bAlAJRNgZkKdW3mX4xzJExG2hiakTMQtLlEXWnDd+pQ45IG132c4YEpmwNSMG8JjVGdiIhx88mHSuoGE5pMoKL6j2XJf3V9EB+u+MV77l6yinWt3daw+f48N8eRSjTpbGysTFspJ22kSySsNy4HzUcWVFH+k+YTvSfhgk05BlVZbwqSfolzpCHQrcH9Ln7l8rVmKbm9JJ0y5aEIvrROAiqtYDQYQVCCMpKbOqHGkl3HB8ZVI9J9CRVmNX/VEH8AwhXDuxY1Urcs9HFrVVb9pjBv8xUnfvPNjds5Afe5zijvw8PwJxMYXYVlYXQC8os338pZCwH8asWp8+IfKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L6RkPMLrpyILbwU1WD/eUQjrpcvhtlTSrHAg/ktvV2Y=;
- b=NnUhJkTPRyeLAxHidoi5C6NG1Sur2nzu3EpFzz1/tSVbzgyQmXjVao9Xm24LFdkD+VTvcW3QPwvL+x2HQfrJks9UKhM6ggIm+5iHMI9euFQS+44Xkbn8vL0V0GU/WI4aymylW3aAtN7gd9/igtgtv4ldBFTw64ekvbh5lc6F5XM1SOh9gCsziRopZYwtxCxgckqo6CDdHQ+QUvBGL1FoEkt3JuWYL197GibCSgb3qwT24CCExAyCU2eLK4nb9h6Wb0IDw9J14sHN6JyqPVl9vjgxiSL7MOfPNbz15P/cILfUx6hxGiXvETwpfYEyxSInDM7yyJoizAtjXSUKrKyOew==
+ bh=hRIZYlK27Jo02n996oEcTePRcdNiYiwTlNusJbm5MKs=;
+ b=Eu9cQ/P6mIBeZPNWxfBIE3DeUyZvHcyuBt34k5OeaLEsMKclj8lV3NntyuXHpa0KdqyEK0YgYsvGc9CxKQ4m5sRLq7rQclhF3UrdlBgqvjhbAXYcIw4kA37FOPkhWfwBoqU8b0mmYmxH/UNhHhtZzsbYJgvnG3jEloe1I/g8GF828PMdmqo2LZVWa/sceCLd5rBb0wQT+N+Ip/YpEcN0tqB+EnB57qoRpwGyvA1aJd5Ybu/3XIy5Fb9I+POEHxHIGWitWrbRjFcbYhLCXnPvp+jdUJb3ePcT6VdCVR7OKIo+WC8g1hmtjEdplgcrhyLG+6OnDoTcVQl3rcEwLfjewQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ 216.228.117.160) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L6RkPMLrpyILbwU1WD/eUQjrpcvhtlTSrHAg/ktvV2Y=;
- b=Gug5uRiCTvTqJuIp6Aiz2nqwDYL+sALjKQJaD+h+encwP4WSVHaEX3yg57vgnI7KbsWQnZ8vaGZdwa3JBKHJbqWllWNARujVZtWKjDqXGCxTcov9HaopCIkGztfLtorGqCinecxKd2lcALszOcN2d7MhYp93atEmlA+YHUZiT9A=
-Received: from DM6PR03CA0020.namprd03.prod.outlook.com (2603:10b6:5:40::33) by
- DM4PR12MB6397.namprd12.prod.outlook.com (2603:10b6:8:b4::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5676.17; Mon, 3 Oct 2022 09:59:30 +0000
-Received: from DM6NAM11FT111.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:40:cafe::c0) by DM6PR03CA0020.outlook.office365.com
- (2603:10b6:5:40::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23 via Frontend
- Transport; Mon, 3 Oct 2022 09:59:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DM6NAM11FT111.mail.protection.outlook.com (10.13.173.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5676.17 via Frontend Transport; Mon, 3 Oct 2022 09:59:30 +0000
-Received: from [10.254.241.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Mon, 3 Oct
- 2022 04:59:25 -0500
-Message-ID: <a8576f0e-b5ab-33d1-40d4-5f25c66616c7@amd.com>
-Date:   Mon, 3 Oct 2022 11:59:19 +0200
+ bh=hRIZYlK27Jo02n996oEcTePRcdNiYiwTlNusJbm5MKs=;
+ b=dppiZoFMxjWbBWkoe/tERwKfsTR84kwIPQ6r6e6o5n1SU5WAL1/mPFqwGY9XOnROdhOUoGSWFL4xXxqHy+YY/FZLxwijFxvdgAh0puhIHjqbJjMrP2wWnttnA4FcShELnuuumViDOxwv0uTCFQRmMTW8W0y1bIjTFoGvcmUrwBlenAwvThgHc+EKDjvpbn/06/skdwQ6aC1A208kQ5lylXDcaJb8y3UaYO3HdRGLslfcPM4gldcGwDsKhOPMCX2aXFRvCu4d52N786rda872QFwBCSB5n1RSTVmrNQTWJX6LeeQfMBRZMrsTLEgBRwPFGdcMNnTCFYepKqusNk47tA==
+Received: from MW4PR03CA0153.namprd03.prod.outlook.com (2603:10b6:303:8d::8)
+ by SA1PR12MB6703.namprd12.prod.outlook.com (2603:10b6:806:253::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.20; Mon, 3 Oct
+ 2022 10:16:13 +0000
+Received: from CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8d:cafe::f5) by MW4PR03CA0153.outlook.office365.com
+ (2603:10b6:303:8d::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.26 via Frontend
+ Transport; Mon, 3 Oct 2022 10:16:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT048.mail.protection.outlook.com (10.13.175.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5676.17 via Frontend Transport; Mon, 3 Oct 2022 10:16:12 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 3 Oct 2022
+ 03:16:03 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 3 Oct 2022
+ 03:16:02 -0700
+Received: from moonraker.home (10.127.8.14) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server id 15.2.986.29 via Frontend Transport; Mon, 3 Oct
+ 2022 03:16:01 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra: Fix Tegra210 PWM parent clock
+Date:   Mon, 3 Oct 2022 11:15:55 +0100
+Message-ID: <20221003101555.25458-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH 1/2] dt-bindings: clk: Add binding for versal clocking
- wizard
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Rob Herring <robh@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        <linux-clk@vger.kernel.org>, <git@amd.com>,
-        <devicetree@vger.kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>
-References: <20220930080400.15619-1-shubhrajyoti.datta@amd.com>
- <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
- <CAL_JsqLaqjZeZd3c-fd9f5m-4OCXgOZcOu+paik9FV_eno5sLg@mail.gmail.com>
- <afb3f19f-eb40-5453-a82b-295e06861f86@amd.com>
- <20220930213924.GA1079711-robh@kernel.org>
- <6e58837e-896c-7069-7913-2afb90af5e95@amd.com>
- <b495804c-cf04-4512-ac05-424eded46468@linaro.org>
- <57989d3e-a186-1d67-cff9-6a059f94ebd3@amd.com>
- <f611237f-0401-9e3c-3a21-79b33141bb51@linaro.org>
- <YzqaXthSLBbwU+5V@kroah.com>
-From:   Michal Simek <michal.simek@amd.com>
-In-Reply-To: <YzqaXthSLBbwU+5V@kroah.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT111:EE_|DM4PR12MB6397:EE_
-X-MS-Office365-Filtering-Correlation-Id: 173c1661-0cfe-47f1-bc3d-08daa525f6f8
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT048:EE_|SA1PR12MB6703:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ee31a4a-8780-41dc-ac72-08daa5284c8a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /hgm4wWmbxMBnQMWLqwVI3nnRpAzcSE4YM0yL25cBremCUtdL9ZKYcjki0MQR7B66DQkoEGSI9z0+NmTcRij6mkNBDMvhISeaecNlM0pL+Xh0znAPg/sCugzS4y+2kXMoybdKRG9xtUCM/k/2XBdFRUHdvcy3dPWL080RSmS3I16TjKDFst6Q8zvJl9s8BiWEmA2EH9gdf5ZRV6Z0EsTQ5KNW2AmzrbeVeNDg0YmqMBuMAU7e0iUVEDeG2wxqOHWu3DAT9wgGa/mLUFsstcOQJlC39eETfCvlCcAAnykQiyiVbBHCuC+bgoGyQyhsZpmJWKG+lRZYAKmVlE3eGRe6/5U/qdkvgls8OCzpvjlsdN3pdpXp4WInbjs4Q/sE8IxFqj5SbsCQaS+Y6SIbfTmJVuNP0wVbcjS1p2mVdDM04Aa/wVYTdjeXwsJS3HGsQS7dGG7BRblwEuiz0D88UkKZQ+3l4JLAEe/bdorCcDCrTmIvR/Zx4dx0D475wLoCCCSsxjXPP0ZHARKfNzSc5l8ftWd4VGZ74pQBjtQQkcsWV1RgUUfZ2sITDWfNwOHQX+WrGT2Axob8H3ieULw4cHNJEPIAlGr0aoCBj/TbxDSqSKG0AH5ivvOrZuoX+1n1iW3SEvMAbHdBgTROk6dpt/gEKwVOP4I3wtF4uc+iBqMigpfe9vvGC70fXb1TIwbss//3xyNRnKbFtOGzMEci2KY8ziEfFeFXPWuY/9wFCPaX4EuSqk/WprhgV5n/7Qq1E2exnCFmCgrBGE7/kw0q+BrN19DtZMzJ59RTEexZ1J3PiYObvGpiHkZOG1e7VKVaami38XdSRyeRVo8i6CDvz+92OYDE89Gz9AuASOqCciQKuY=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(39860400002)(396003)(376002)(451199015)(40470700004)(36840700001)(46966006)(5660300002)(478600001)(8936002)(36860700001)(2906002)(81166007)(53546011)(82740400003)(36756003)(70206006)(966005)(54906003)(16576012)(86362001)(31696002)(41300700001)(356005)(4326008)(316002)(82310400005)(8676002)(44832011)(110136005)(83380400001)(40460700003)(40480700001)(16526019)(31686004)(336012)(426003)(66899015)(6666004)(2616005)(186003)(70586007)(47076005)(26005)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2022 09:59:30.1278
+X-Microsoft-Antispam-Message-Info: LfWga/t3caAe0lMVTWE7vZFIpHnz8lbgmp+DB5RpC57LinwXkT6YeEh5dVZe3k9qyuljfZ2N2MnXjqWI0PE/K2YRpJzKpbjDr8VVA9tlgT6VPLAufQcp5lNX5pekQ+CF8sj3og2tEZULYyy0B07JU2enbipz6dnDyLBWzP3cBFEMZZsKXyutVDs/ln+K3SMsaqf8/pvy9GpE26QjYyv7hAEOv4epQLR7zK4Rz44ENZ7RxiBCsVAL6vMXsAVFQxI7yRjjNlnhvCt1Y9z0PakNmWUmJq2r1QU8NysNgUJ4rK2JYRsplcn+FJwherWr8F/+W7/GTY4VN9bgExNqhJsBnYLLdtMdaEOuvGJ4IAGEk41ziR3WVmKbJMFSZjchP1Jbd+Oi1vkkHPBPTzoQNS2C2ei72l6psdab/T2e4W1QXbRgMjz04TV0Kcju7uPtE6B/JK5e/AQQGqcszUfK39OL/DR7W1M/QcHqIEhDJ5u+bQh4lDsF3UkK+nSeCQtuqhVIZ0d2ZkuwTpoJL+Ui1mMkhKURhrhkwzIfqm2yo5oMp1d2nWkGkwHrU1UJKoR/+puhUmzdv6BgCY+sMVaHTZTbLXnfIrQkP76HsB3/SLC/X8XKgBIsuJt40IJQgHtCulngiAGNJU1jDMJToNqZZkoOKeu6/b1uFc7v05ppDG83hHjegNbTkRgGr1bsLvVAHjLZdXqK7pdPKhN5PGxB0vN+CbQYEm7rkachEawbHyDXhGymDbNCICxFYane5kp9T4Elbc3HfJXkztX8WU/ZcQTGig==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(396003)(39860400002)(376002)(451199015)(40470700004)(46966006)(36840700001)(86362001)(36860700001)(356005)(7636003)(82740400003)(4326008)(8676002)(70586007)(70206006)(40460700003)(110136005)(316002)(54906003)(2906002)(5660300002)(41300700001)(336012)(8936002)(1076003)(186003)(82310400005)(83380400001)(2616005)(47076005)(426003)(107886003)(478600001)(26005)(6666004)(40480700001)(36756003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2022 10:16:12.6684
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 173c1661-0cfe-47f1-bc3d-08daa525f6f8
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT111.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ee31a4a-8780-41dc-ac72-08daa5284c8a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6397
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6703
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Greg,
+Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
+the period calculation in the Tegra PWM driver and now returns an error
+if the period requested is less than minimum period supported. This is
+breaking PWM fan support on the Tegra210 Jetson Nano platform and
+probing the PWM fan driver now fails ...
 
-On 10/3/22 10:16, Greg Kroah-Hartman wrote:
-> On Mon, Oct 03, 2022 at 10:10:38AM +0200, Krzysztof Kozlowski wrote:
->> On 03/10/2022 09:58, Michal Simek wrote:
->>>
->>>
->>> On 10/3/22 09:23, Krzysztof Kozlowski wrote:
->>>> On 03/10/2022 09:15, Michal Simek wrote:
->>>>>>> And this is new IP. Not sure who has chosen similar name but this targets
->>>>>>> Xilinx Versal SOCs. Origin one was targeting previous families.
->>>>>>
->>>>>> Do we need a whole new schema doc?
->>>>>
->>>>> It is completely new IP with different logic compare to origin one.
->>>>>
->>>>>>
->>>>>> It is not ideal to define the same property, xlnx,nr-outputs, more than
->>>>>> once. And it's only a new compatible string.
->>>>>
->>>>> I can't see any issue with using dt binding for xlnx,clocking-wizard.yaml
->>>>>
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
->>>>
->>>> So we already have out of staging document:
->>>> devicetree/bindings/clock/xlnx,clocking-wizard.yaml
->>>
->>> in 6.1 yes.
->>>
->>>>
->>>> and author wants to add one more:
->>>> devicetree/bindings/clock/xlnx,clk-wizard.yaml
->>>
->>> as I said it is completely different IP which requires complete different driver
->>> but IP designers choose similar name which is out of developer control.
->>>
->>>>
->>>> Shall we expect in two years, a third document like:
->>>> devicetree/bindings/clock/xlnx,clk-wzrd.yaml
->>>> ?
->>>
->>> Developer definitely doesn't know. If new SoC requires for the same purpose
->>> different IP with completely different driver is something out of developer
->>> control. As of today I am not aware about such a requirement and need and
->>> personally I can just hope that if they need to do such a change they will be
->>> able to keep current SW driver compatible with new HW IP.
->>
->> Then please start naming them reasonable, not two (and in future
->> x-times) the same names for entirely different blocks. And by name I
->> mean compatible, filename and device name.
->>
->>>>> also for this IP if that's fine with you.
->>>>> Only xlnx,speed-grade can be defined for previous IP which is easy to mark.
->>>>
->>>> That old binding also explained nr-outputs as "Number of outputs".
->>>> Perfect... :(
->>>
->>> Anyway if description should be improved let's just do it. I just want to get
->>> guidance if we should update current dt binding for similar IP or just create
->>> new one as this one is trying to do.
->>
->> IMHO, new binding is extremely confusing. We already have support for
->> devices named "xlnx,clocking-wizard" and now you add exactly the same
->> (clk=clocking) with almost the same properties, named
->> "xlnx,clk-wizard-1.0". For a different IP?
->>
->> How anyone (even Xilinx' customer) can understand which block is for
->> what if they have exactly the same name and (almost) the same
->> properties, but as you said - these are entirely different IP?
-> 
-> Maybe we should just delete the staging one (and the staging driver),
-> and start over?  No one has taken the time to get the staging driver out
-> of there, so I have no objection to dropping it for 6.1.
+ pwm-fan pwm-fan: Failed to configure PWM: -22
+ pwm-fan: probe of pwm-fan failed with error -22
 
-As I said it is be out of staging in linux-next. When CLK tree is merged in 
-these 2 weeks we are done at least with this driver.
+The problem is that the default parent clock for the PWM on Tegra210 is
+a 32kHz clock and is unable to support the requested PWM period. Fix
+this by updating the parent clock for the PWM to be the PLL_P which
+operates at 48MHz.
 
-Thanks,
-Michal
+Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 499f999e91e1..a3488aaac3f7 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3597,6 +3597,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
++	{ TEGRA210_CLK_PWM, TEGRA210_CLK_PLL_P, 48000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+ };
+-- 
+2.7.4
 
