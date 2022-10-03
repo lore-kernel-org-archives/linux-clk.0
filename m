@@ -2,58 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACE2C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 20:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C21C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 20:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbiJCUZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Oct 2022 16:25:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36804 "EHLO
+        id S229748AbiJCU02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Oct 2022 16:26:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbiJCUZM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 16:25:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6010327CFE;
-        Mon,  3 Oct 2022 13:25:09 -0700 (PDT)
+        with ESMTP id S229597AbiJCU0N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 16:26:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493661E705;
+        Mon,  3 Oct 2022 13:26:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 61F59B815E5;
-        Mon,  3 Oct 2022 20:25:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA711C433D6;
-        Mon,  3 Oct 2022 20:25:06 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E4BDCB815E0;
+        Mon,  3 Oct 2022 20:26:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67134C433D7;
+        Mon,  3 Oct 2022 20:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664828706;
-        bh=4NLuDT/H+WxNDNlwsUz7xFPTxFbdPHBFa7xzgcGjtJk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NqNFD2YybHTQpC9f2ZUO15+hRR7OyjWSF7zbNIR07i26yo2dBKHonJLzfPuwox2fX
-         t2cCcooKrFKe/G3cIeSgeML8qMW9saGE3ehoxOmtHbuwc1fpn8759cyfhKzy7ouFzG
-         wGBddaj7pTQVSn7juK7xRUxf265iVaGRMVWS4aSqqTaRsyVI4dbrmlURl9hdZvHdB+
-         43N9qluIF38MoKuXkR2AfHF0szvI4ospzSN18Bn93IreSEhlVwx9zLyuvL2PmIz5XR
-         H/5QiXpj5jXvHKlv0uLNN3D8Ok60xAsTHvn61IxzX9edUKHKuSnIx7akrc57FxSpjr
-         2IZRFq8F48SXw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220913031442.980720-1-yangyingliang@huawei.com>
-References: <20220913031442.980720-1-yangyingliang@huawei.com>
-Subject: Re: [PATCH -next] clk: clocking-wizard: Use dev_err_probe() helper
+        s=k20201202; t=1664828769;
+        bh=jnFPsoANaGbvm2KNkdpVXHUu0c4//sg68i+LcNYUka4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SzwqX9dYDN1yuNr2CepyEotD88akT2aFRTYwMR+1Z9LMxMu2gAS62dJMmvkSx1lJG
+         CGIuV7uxz6jWisV4ldlBqVEs1vAm0x84pFG2Py2/24Pbc3ZPrARFOeAZyZYp93gvwV
+         SqVaC/dmdgFqq2gSQTG3GrmyCHGFX15RDC/xZtuv6z1wtJtNKr3yyPiLqWTtDKj14J
+         hat4sHoBoTCzqYr1R2YLTBvpMYv8l77fPvZqCFKu3t7FWZ5bbiKf2QxoUhJeXpySEt
+         DnyNk9OmkQMCD3wwQrNWs0nAaOMOZlOSIO+hxzlM+E6rt6AbUGL0Ndx4DWJLk0jSYP
+         1MK4PG/5bSzSw==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 03 Oct 2022 13:25:05 -0700
-User-Agent: alot/0.10
-Message-Id: <20221003202506.DA711C433D6@smtp.kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev, kernel test robot <lkp@intel.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH] clk: clocking-wizard: Depend on HAS_IOMEM
+Date:   Mon,  3 Oct 2022 13:26:08 -0700
+Message-Id: <20221003202608.2611295-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yang Yingliang (2022-09-12 20:14:42)
-> dev_err() can be replace with dev_err_probe() which will check if error
-> code is -EPROBE_DEFER.
->=20
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
+This driver uses devm_platform_ioremap_resource() and thus depends on
+HAS_IOMEM. Add the Kconfig dependency to avoid build issues.
 
-Applied to clk-next
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Fixes: c822490f52da ("clk: clocking-wizard: Move clocking-wizard out")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/xilinx/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/xilinx/Kconfig b/drivers/clk/xilinx/Kconfig
+index 5b99ecfd2f06..f205522c40ff 100644
+--- a/drivers/clk/xilinx/Kconfig
++++ b/drivers/clk/xilinx/Kconfig
+@@ -20,6 +20,7 @@ config XILINX_VCU
+ config COMMON_CLK_XLNX_CLKWZRD
+ 	tristate "Xilinx Clocking Wizard"
+ 	depends on COMMON_CLK && OF
++	depends on HAS_IOMEM
+ 	help
+ 	  Support for the Xilinx Clocking Wizard IP core clock generator.
+ 	  Adds support for clocking wizard and compatible.
+
+base-commit: e8db788d686a2a2e5318364a1942d01c3cc83d87
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
