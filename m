@@ -2,148 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC9BC433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 00:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82635C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 07:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229479AbiJCAG0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Oct 2022 20:06:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41170 "EHLO
+        id S230286AbiJCHXZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Oct 2022 03:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiJCAGZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Oct 2022 20:06:25 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 624A536DF3
-        for <linux-clk@vger.kernel.org>; Sun,  2 Oct 2022 17:06:24 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 304FA8B8;
-        Mon,  3 Oct 2022 02:06:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1664755582;
-        bh=Q2OLvRxaTex/nZYjssOAlRaKsw2guN6fKXvLB/8YKj0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k4aHTiJKvC53u9A5JoQVPLD8t0agwJlMdcM35fivnB3WcxVRri3p4JWILxCN6//zB
-         d98PuNhEaT07gOpeNSP4im9bS4rlAlcyJptiih/jmNyfm3X2fp6bUOfhdHoRl+Xyfd
-         YZSaZl5ZfXEsgmSRG9YaGqG8T2RLRxqGd/7r16EY=
-Date:   Mon, 3 Oct 2022 03:06:20 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Quanyang Wang <quanyang.wang@windriver.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>
-Subject: Re: [PATCH] clk: zynqmp: pll: Fix divider calculation to avoid
- out-of-range rate
-Message-ID: <YzonfAbGsymi9ZeA@pendragon.ideasonboard.com>
-References: <20220928201656.30318-1-laurent.pinchart@ideasonboard.com>
- <11481209-7c8f-7543-1e04-5723ffc2ccd4@windriver.com>
- <20221001000503.23268C433D6@smtp.kernel.org>
- <20221001104001.r7r2utwymm32tv53@houat>
- <ba5bb9dd-8a4c-3f24-c7e2-c8469ef693be@windriver.com>
+        with ESMTP id S230308AbiJCHWY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 03:22:24 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2069.outbound.protection.outlook.com [40.107.100.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B52F4A836;
+        Mon,  3 Oct 2022 00:16:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TMmp3AxuD3DNlLkA3aTdVAQp4iVibX1n8vgXOnwg9yy01b7jUZejdHjSSdoiAsqLED3ym9NkFl1TP6kp4HpAP40gnteDx2G65WOdVSlmH0YjoWH+t4BOeLxkfDYTvYYZoi4jbqV8VXB9cSGJYXlFkIBWUrmTzNc8WBT0ZNjyNK4EHypQVO0GP4IJ/4bLHHHNJXFg3fR1+9n3lq9OoaDCzVxQS1sKdu18JFOMYYU42pz8T0QgV0GvTbj01E4uPTGUhUEkUeKzoI1DO8cc3DDPh8HShdb0x0HLd4eF4qAvG14AEpL0U9kSNMeqigMx1uM1nw9JT9j4rs+CikVKzbOmxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y7UiQGXgV5UxpKxa7sRG/38zrGrk75jQvTpCBRzrqPc=;
+ b=dCqa5BYnl9dIsYhZjdeGREwephveVqfiN/kI96V50fZ0Xz5JUdJtlAYxNL675cu2ivC9QZvW9gY9USUuwKunHYsDPdJ0wCkz7FUWksOBnYWNKuTp+3KQv3YoCbJ789j/BSb0DwaggmTiG31f8KNUZE+v2YZ2gUzU6gUV6EEBmEwm7Y3IovkvdLRiQQHu/se14AUC2e8hB0HMEIbgw8OqhB8s+uUZA+q+ayt7/m6QlJykC1gEmE2yyheCvYoVqNAEEhwAg59E7mFue+mpMpRwXlofkBdOog4SrvPaX1xR/anudp09pBrdgsgskUGvK5gtnDNClSnPWIKJfl8uLqt5dA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y7UiQGXgV5UxpKxa7sRG/38zrGrk75jQvTpCBRzrqPc=;
+ b=wrwIpEh0Xyf1w1EoHnYqgNCgOD1k72W3IpOgfF/9ilY+zNKHDd57JF5w281I0ZQ2dUKXHcL+xroB3bx0C1giaIdfgGwtplQLgkh3EHs8UWZSJnghwL93A3hXHTH/gH0Xc9eSYtHlH8RPfOfGu5AYUNOSQJWCH6NMKa6JyO/yPQA=
+Received: from DM5PR07CA0111.namprd07.prod.outlook.com (2603:10b6:4:ae::40) by
+ SA0PR12MB4367.namprd12.prod.outlook.com (2603:10b6:806:94::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5676.24; Mon, 3 Oct 2022 07:15:20 +0000
+Received: from DM6NAM11FT050.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:4:ae:cafe::65) by DM5PR07CA0111.outlook.office365.com
+ (2603:10b6:4:ae::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.26 via Frontend
+ Transport; Mon, 3 Oct 2022 07:15:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT050.mail.protection.outlook.com (10.13.173.111) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5676.17 via Frontend Transport; Mon, 3 Oct 2022 07:15:20 +0000
+Received: from [10.254.241.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Mon, 3 Oct
+ 2022 02:15:14 -0500
+Message-ID: <6e58837e-896c-7069-7913-2afb90af5e95@amd.com>
+Date:   Mon, 3 Oct 2022 09:15:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba5bb9dd-8a4c-3f24-c7e2-c8469ef693be@windriver.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH 1/2] dt-bindings: clk: Add binding for versal clocking
+ wizard
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+CC:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        <linux-clk@vger.kernel.org>, <git@amd.com>,
+        <devicetree@vger.kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20220930080400.15619-1-shubhrajyoti.datta@amd.com>
+ <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
+ <CAL_JsqLaqjZeZd3c-fd9f5m-4OCXgOZcOu+paik9FV_eno5sLg@mail.gmail.com>
+ <afb3f19f-eb40-5453-a82b-295e06861f86@amd.com>
+ <20220930213924.GA1079711-robh@kernel.org>
+From:   Michal Simek <michal.simek@amd.com>
+In-Reply-To: <20220930213924.GA1079711-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT050:EE_|SA0PR12MB4367:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e96555b-ce0a-419c-a352-08daa50f07e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HknH88+rMq7CnFnxFBCNy7q8Y0QDHKITbmuazXmwAsFfe3AW6p+PR7rhZYP1eSivahd3lgLqquTDd0j5THtHJ63HcsEi0/2jxfZQOwQxycfOzqo2ISGTGLlAHsofbbxUF2iU+Fk1vRQYUZ4t3uE3Waoi22v5l/aQMP7LOZo4a5OxECDbI2Qte5ZS31ALoPBc+oMCEf9mJHvDAt6MX1e0blxqWYc437gLvK1DCHX0un786EjPrtMWcAkvC63Nm3X1gQC2H7EwG2yoKhxJ8+nuBhhjR75ctBCOElvIO4zq9IgBZZYLEXNnHHHRjUqf4bzTq6hn51IZ2DsYNYYQrE5JUID8MXBpUlM+EyFrYKndB9WMm8kOD14pb23yV/Hk07JFN7G4X4oFFbNTofHEkkNrm8KFXMc709zvsxmtJ4w8LuE4Po2545duQx+5p0fiv1GG7zyitFre2QM9XyPC0Z9oJckx42Jpqvsv+s8N2t9MqepTWGj+OTl0js/ZOMj2qQjl1w7D7LiS2PM9KtXVCtPchoCGlGqvBDk57qLA7fiLQLUedduX4RggnL7frSKnHHiD8EvLTW7fsNoM6BcijlQxZomhXWzObCbK6woGwHnsqhZ/ijjITiZNizH4IxxSyCgPY6BfZD1vHYoB6WBPNgfOEtKHMhTSMTpOQAgVXyWqXO1ic1xO+uqTT7uPD1Yn5y9qyMH0fwIbnkV/M/ijjdMyK1mYEKZxJtGZWu4yvrvCwt5yKfjcIORXY3L4kl/ex4BWQbeoIUAUhfVlk8nfT88zTNPfOQISgoOYE9umlDkjQHhOnv5yrkdKFY8WQkBsjNoguPYNKDBBRC5yZoFODxqVwHyLZ+Np98Y/r9dJFaBtDoY=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(376002)(39860400002)(346002)(451199015)(46966006)(36840700001)(40470700004)(66899015)(31686004)(82310400005)(81166007)(356005)(966005)(316002)(82740400003)(478600001)(6916009)(54906003)(16576012)(70206006)(70586007)(8676002)(4326008)(186003)(41300700001)(6666004)(44832011)(53546011)(31696002)(2616005)(26005)(86362001)(5660300002)(8936002)(40480700001)(36756003)(426003)(47076005)(336012)(2906002)(40460700003)(36860700001)(16526019)(83380400001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2022 07:15:20.1253
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e96555b-ce0a-419c-a352-08daa50f07e9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT050.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4367
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
 
-On Sun, Oct 02, 2022 at 10:17:24AM +0800, Quanyang Wang wrote:
-> On 10/1/22 18:40, Maxime Ripard wrote:
-> > On Fri, Sep 30, 2022 at 05:05:01PM -0700, Stephen Boyd wrote:
-> >> +Maxime
-> >>
-> >> Quoting Quanyang Wang (2022-09-28 18:05:10)
-> >>> Hi Laurent,
-> >>>
-> >>> I have sent a patch as below to fix this issue which set rate failed and
-> >>> it's in linux-next repo now.
-> >>>
-> >>> https://lore.kernel.org/linux-arm-kernel/20220826142030.213805-1-quanyang.wang@windriver.com/T/
-> >>>
-> > 
-> > It looks to me that the fundamental issue is that, in some situations,
-> > the round_rate implementation can return a rate outside of the
-> > boundaries enforced on a clock.
->
-> In my limited view, the round_rate callbacks should return a rate within 
-> boundaries as output, but can take a rate outside of boundaries as input.
-> 
-> Take Xilinx Zynqmp for instance, VPLL's rate range is 1.5GHz~3GHz. A 
-> consumer dp_video_ref wants a 200MHz rate, its request walks upward 
-> through multiplexers and dividers then reaches to VPLL, VPLL receives 
-> this 200MHz request and call  zynqmp_pll_round_rate to "round" this 
-> out-of-range rate 200MHz to 1600MHz via multiplying by 8. 
 
-I don't think that's the right way to look at it. Making the VPLL driver
-multiply the requested 200MHz rate by 8 assumes that it knows that the
-next block in the clock tree is a divider capable of dividing by 8.
-That's not something the VPLL driver should know about. The next block
-may be able to divide by 10 and up only, which means that the VPLL
-should then be configured to output 2000 MHz.
+On 9/30/22 23:39, Rob Herring wrote:
+> On Fri, Sep 30, 2022 at 03:00:28PM +0200, Michal Simek wrote:
+>> Hi Rob,
+>>
+>> On 9/30/22 14:25, Rob Herring wrote:
+>>> On Fri, Sep 30, 2022 at 3:04 AM Shubhrajyoti Datta
+>>> <shubhrajyoti.datta@amd.com> wrote:
+>>>>
+>>>> The Clocking Wizard for Versal adaptive compute acceleration platforms
+>>>> generates multiple configurable number of clock outputs.
+>>>> Add device tree binding for Versal clocking wizard support.
+>>>
+>>> Really v1? I'm sure I heard of this wizard before.
+>>>
+>>> What about this?:
+>>>
+>>> drivers/staging/clocking-wizard/dt-binding.txt
+>>>
+>>> That needs to be moved out of staging rather than adding a 2nd one.
+>>
+>>
+>> Let me clarify this. This is IP which is already moved out of staging.
+>> Linux-next has these changes and waiting for MW to happen (already in clock
+>> tree).
+> 
+> Where does this series explain that? If the dependency is not the latest
+> rc1, then state that.
 
-The problem that needs to be solved is to find a global optimal
-configuration for cascaded PLLs and dividers. 
+Please take a look below.
 
-> zynqmp_pll_round_rate returns 1600MHz and clk subsystem will call 
-> determine callbacks to configure dividers correctly to make sure that 
-> dp_video_ref can get an exact rate 200MHz.
-> 
-> But the commit 948fb0969eae8 ("clk: Always clamp the rounded rate") adds
-> 
-> req->rate = clamp(req->rate, req->min_rate, req->max_rate);
-> 
-> before
-> 
-> rate = core->ops->round_rate(core->hw, req->rate,&req->best_parent_rate);
-> 
-> This results that .round_rate callbacks lose functionality since they 
-> have no chance to pick up a precise rate but only a boundary rate.
-> Still for Xilinx Zynqmp, the 200MHz rate request to PLL will be set to 
-> 1500MHz by clamp function and then zynqmp_pll_round_rate does nothing, 
-> dp_video_ref will finally receive a rate which is 1500MHz/8 = 187.5MHz.
-> The rate gap (200MHz-187.5MHz) happens.
-> 
-> There is no doubt that round_rate should return a valid rate as output. 
-> But is it necessary that forces the input of round_rate callbacks to be 
-> within boundaries?
-> 
-> > I think that's the current behaviour (that was there prior to my
-> > patches) to reject any rate outside of the boundaries in
-> > clk_calc_new_rates() makes it clear that it's not something we should
-> > allow.
-> > 
-> > I'm a bit two-minded on this though. All the failures of that test I've
-> > seen actually turned out to be bugs, so I guess it's useful, but it's
-> > also true that for rounding errors it's a bit overkill. We could also
-> > relax that check and warn instead of failing.
-> > 
-> >>> As for the frequency gap between the requested rate and the actual, it's
-> >>> because of the commit:
-> >>>
-> >>> commit 948fb0969eae8
-> >>> Author: Maxime Ripard <maxime@cerno.tech>
-> >>> Date:   Fri Feb 25 15:35:26 2022 +0100
-> >>>
-> >>>       clk: Always clamp the rounded rate
-> >>>
-> >>> And I haven't figured out how to fix it.
-> > 
-> > Again, it boils down on whether or not we should allow a rate outside of
-> > boundaries. If we don't and if the clock can't do better, then yeah, the
-> > rate difference is fairly big but we can't do better.
-> > 
-> >> Maxime has some more patches to fix this and they're in linux-next.
-> >> Maybe those fix this problem?
-> > 
-> > I don't think they will fix it. However, depending on the outcome of
-> > that discussion I can send more fixes your way :)
-> > 
-> > Maxime
 
--- 
-Regards,
+>> And this is new IP. Not sure who has chosen similar name but this targets
+>> Xilinx Versal SOCs. Origin one was targeting previous families.
+> 
+> Do we need a whole new schema doc?
 
-Laurent Pinchart
+It is completely new IP with different logic compare to origin one.
+
+> 
+> It is not ideal to define the same property, xlnx,nr-outputs, more than
+> once. And it's only a new compatible string.
+
+I can't see any issue with using dt binding for xlnx,clocking-wizard.yaml
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+
+also for this IP if that's fine with you.
+Only xlnx,speed-grade can be defined for previous IP which is easy to mark.
+
+But as I said, driver is different and integrating to current driver is not a 
+good idea. But if two separate drivers can use the same DT binding document with 
+adding new compatible string (and small tweak around one dt property) then it 
+shouldn't be a problem to do it in v2.
+
+Thanks,
+Michal
