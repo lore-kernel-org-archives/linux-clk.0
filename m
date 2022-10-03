@@ -2,97 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26410C43219
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 13:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4224C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Oct 2022 14:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbiJCNY7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Oct 2022 09:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55386 "EHLO
+        id S229994AbiJCO2j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Oct 2022 10:28:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbiJCNY4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 09:24:56 -0400
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E471EC62;
-        Mon,  3 Oct 2022 06:24:54 -0700 (PDT)
-Received: by mail-oo1-f49.google.com with SMTP id c13-20020a4ac30d000000b0047663e3e16bso6719432ooq.6;
-        Mon, 03 Oct 2022 06:24:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=VwdzdygdgLbBp3fkNJZh/HpOAPaqnsjBDUAQiUXbsnM=;
-        b=RiON6VCY/yjCtzZyJrfSKXIONjWnUkCgaU1yponUNrmy1L8y4TI6fZ1FbiTTHymQMK
-         EGa4YI2LAbTD9CAZBSFhWRSlBtdmqG34nAziPENaRIhTWiswrumiuJCIm7GMHM2wFG+N
-         E6hGVlZY9nNIWp6dGy9Jxgt0WAYcLul35Qt7yf17+wP+yIsBV8HdjjMXpGbcCqkY5/zh
-         k6aRYrRfF5fBEfD9vvZaPZe4Srq/OQlnHOR36GGctJUsoN9uZK7u6/hxXmHhclLHjKRj
-         E0UeSQiaauZz6JVS1GfO09XU2673DSeXbR1PmHYZaX+Eu+XbO+iYrIK5ANJfW8t++/cM
-         PuOQ==
-X-Gm-Message-State: ACrzQf04NpOjbdQ3C9ktccaf52tki+C2npTogth1j8Ofo3lGRT8euj/5
-        U7/Zw9GhaChgReEBWsvstA==
-X-Google-Smtp-Source: AMsMyM5krAxnwLBESkhLxGhsgU/Om3aFEpygfNyJsCkFlsCXefPQKFGdud5gg0scUr0lAuj8ba4w3A==
-X-Received: by 2002:a05:6830:2706:b0:659:de15:2cae with SMTP id j6-20020a056830270600b00659de152caemr8411454otu.4.1664803493818;
-        Mon, 03 Oct 2022 06:24:53 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o1-20020a056808124100b00350c5d946casm2428151oiv.4.2022.10.03.06.24.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 06:24:53 -0700 (PDT)
-Received: (nullmailer pid 1863799 invoked by uid 1000);
-        Mon, 03 Oct 2022 13:24:47 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Melody Olvera <quic_molvera@quicinc.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Marc Zyngier <maz@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20221001030403.27659-2-quic_molvera@quicinc.com>
-References: <20221001030403.27659-1-quic_molvera@quicinc.com> <20221001030403.27659-2-quic_molvera@quicinc.com>
-Message-Id: <166479587193.1658910.3198016342793087638.robh@kernel.org>
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock bindings
-Date:   Mon, 03 Oct 2022 08:24:47 -0500
+        with ESMTP id S229996AbiJCO2h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Oct 2022 10:28:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C4652820;
+        Mon,  3 Oct 2022 07:28:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1DF68B8111E;
+        Mon,  3 Oct 2022 14:28:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7321AC433D7;
+        Mon,  3 Oct 2022 14:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664807312;
+        bh=KiWuybmiF7uvPLLFgNL60QPrAM2Z2mtgDKNIzJdnU/0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=er90k8ag8Q5ROjVrSvYnSnPVhtC2sq/FRmTxxQL0Db/KsTmbDgVvro4wuljid6469
+         eibKDZAGNZuxZjjAlTQGjpYPkyO4sXbN8AHomC7W1/n0G3KUsdQ2Ixk38ufPFb7BAW
+         9n7bwR6G0WZg43iulWMSZaNjJgVmlkFYRwMpsqNBiCePBjL57NLRUBQTSVuevimt6s
+         w6zwwg+V0xAHmWZEzmUajYyjpfylMAgF8ESPhT/tnRwcwBGUF4+tMKftKmiGOT5dzW
+         CwrGYU/VzSlGzGKgvYt1LsRrBoLT4QTduXCK9TB8anTPcaBXx8xkqjs7giqMUESdSo
+         +UF+Hik5Br1ZQ==
+Date:   Mon, 3 Oct 2022 07:28:31 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@fb.com>
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Aya Levin <ayal@nvidia.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Gal Pressman <gal@nvidia.com>
+Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
+Message-ID: <20221003072831.3b6fb150@kernel.org>
+In-Reply-To: <Yzmhm4jSn/5EtG2l@nanopsycho>
+References: <20220626192444.29321-1-vfedorenko@novek.ru>
+        <YzWESUXPwcCo67LP@nanopsycho>
+        <6b80b6c8-29fd-4c2a-e963-1f273d866f12@novek.ru>
+        <Yzap9cfSXvSLA+5y@nanopsycho>
+        <20220930073312.23685d5d@kernel.org>
+        <YzfUbKtWlxuq+FzI@nanopsycho>
+        <20221001071827.202fe4c1@kernel.org>
+        <Yzmhm4jSn/5EtG2l@nanopsycho>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 30 Sep 2022 20:03:59 -0700, Melody Olvera wrote:
-> Add device tree bindings for global clock controller on QDU1000 and
-> QRU1000 SoCs.
+On Sun, 2 Oct 2022 16:35:07 +0200 Jiri Pirko wrote:
+>>> What I'm trying to say
+>>> is, perhaps sysfs is a better API for this purpose. The API looks very
+>>> neat and there is no probabilito of huge grow.  
+>>
+>> "this API is nice and small" said everyone about every new API ever,
+>> APIs grow.  
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  .../bindings/clock/qcom,gcc-qdru1000.yaml     |  74 ++++++++
->  include/dt-bindings/clock/qcom,gcc-qdru1000.h | 170 ++++++++++++++++++
->  2 files changed, 244 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-qdru1000.h
-> 
+> Sure, what what are the odds.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The pins were made into full objects now, and we also model muxes.
 
-yamllint warnings/errors:
+Vadim, could you share the link to the GH repo? 
 
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/qcom,gcc-qdru1000.yaml#
+What's your feeling on posting the latest patches upstream as RFC,
+whatever state things are in right now?
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+My preference would be to move the development to the list at this
+stage, FWIW.
