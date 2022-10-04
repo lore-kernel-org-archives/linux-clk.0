@@ -2,99 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A4BC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Oct 2022 06:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D64AC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Oct 2022 06:55:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiJDGd1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Oct 2022 02:33:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34182 "EHLO
+        id S229668AbiJDGzb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Oct 2022 02:55:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229711AbiJDGdZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Oct 2022 02:33:25 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE868476E0
-        for <linux-clk@vger.kernel.org>; Mon,  3 Oct 2022 23:33:21 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id 13so26711465ejn.3
-        for <linux-clk@vger.kernel.org>; Mon, 03 Oct 2022 23:33:21 -0700 (PDT)
+        with ESMTP id S229534AbiJDGza (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Oct 2022 02:55:30 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 039002D742
+        for <linux-clk@vger.kernel.org>; Mon,  3 Oct 2022 23:55:29 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id x40so3593732ljq.9
+        for <linux-clk@vger.kernel.org>; Mon, 03 Oct 2022 23:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=UNNn+aJyKI7I3QUSuIMb8vSXj6mDccgMNFpRl4lXEZo=;
-        b=qbzOi5HQQpg2bpB7VFrL6MOFvNBzUpBIFU0Jkug447grp9HeZAH2n6sy8rA5RIC6fz
-         D8n3wfg+ocxPaaE3RS4ChENpq3hWVsLDgjrRoJ/2fpcca/lyYxZT0V/wragvfyqJDlcB
-         X0J1x1UnAxcbjc0nbBMH0I3fHNw3Bx2vgihvUxpxp0iSLrVP+kodALGPHYcBG49/FSpF
-         L6xEt84ML6OLZl6lfAlgF0iHsutBY2jOCKeQD7nZ0GooqspZ1LqBmdmOtPgEhqj+9Uru
-         +VCJ5Np8yz7F0laVp5RfSpvYhPk8qgZ9gFX8WXIgNqGTU9w3uwsJxIinykmTcHrhG/s4
-         WJyg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=zhHds6t7Vj2FDDurokeQYOjyq3ixp4u5MQEpu4pX2fo=;
+        b=jqU8ttcDaBtmie0K269Urd3CH8YJ7NXFekdMHkTc2TeN75GnwJt5MmzKPlO9WLL47H
+         I7NSu3iT54Qym5w7mY3O9HXPmv1d0QooYq6/itirOiGpqZVaX4jyigKaYDVMdLwpwpnT
+         3ng9QbG0UoWbis1inKt5gej06nJZJHdn+zkC44X+bhHTuCZWvmuOVjQsgBvgUHgCKFaK
+         fdZeBYW8grP6awCdmGIn/Ox4rG8SfxPfM5OEAi8yVCBlFCTOfnxnms5wBETyeB9vCx0w
+         c7QePxmaK9bKMt5FmrSCrgsPX1TBCPZZyFaQj4QfvAGCCnKOKY3sFmqDsJPS7FiZR3Dy
+         TkTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=UNNn+aJyKI7I3QUSuIMb8vSXj6mDccgMNFpRl4lXEZo=;
-        b=XZkwWcRqc3IE7Z3JakhdHHXazMJFrvBy4KphLiP1p9/KkE4da9ZT0PEdcuywPX+j3R
-         ddueObqp+aJm7mcUzhjpnslMXRqnANrc5OgF3quOBBXavUWq5fh72QaLnF9Q/RQ3coSI
-         suWEkoq/skEu4Z/Dp8JLBYxPZCXpvC9O6ZkYhc8/9Ch434n6F+v0f01/vE+a3Nm86cTC
-         peU9nHFpPbaVZa6xCcAXJz59KTUWTfD01Z7HoDY/CD8el0Fi7EKhysbzhIt6yE+45HXe
-         YNbLxRHgkXDgSgHL/dgazyvg4c2WQxFldo8TVjdThItWq43Vx1Iix7uoXnGqOjWrq08U
-         81ZQ==
-X-Gm-Message-State: ACrzQf14pydHIu6WzWzRdimM/wbiXm67c2MyIEUtr6CP+DEdXc/2OhHu
-        dueUfLA83qqvpMx5adxxFOeE9g==
-X-Google-Smtp-Source: AMsMyM4YNNSdZ3jELO3jJlClXSpsmKpVP+uzmbFBv3c3rAY2Qn0ESKGXEg2j9wNmf/k0HLhSJK89mA==
-X-Received: by 2002:a17:907:1b0e:b0:72f:9b43:b98c with SMTP id mp14-20020a1709071b0e00b0072f9b43b98cmr18063878ejc.710.1664865200276;
-        Mon, 03 Oct 2022 23:33:20 -0700 (PDT)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id sh39-20020a1709076ea700b0073cd7cc2c81sm6526138ejc.181.2022.10.03.23.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 23:33:19 -0700 (PDT)
-Date:   Tue, 4 Oct 2022 08:33:18 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Vadim Fedorenko <vadfed@fb.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Aya Levin <ayal@nvidia.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Gal Pressman <gal@nvidia.com>
-Subject: Re: [RFC PATCH v2 0/3] Create common DPLL/clock configuration API
-Message-ID: <YzvTrvE9HPHmtoQ7@nanopsycho>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
- <YzWESUXPwcCo67LP@nanopsycho>
- <6b80b6c8-29fd-4c2a-e963-1f273d866f12@novek.ru>
- <Yzap9cfSXvSLA+5y@nanopsycho>
- <20220930073312.23685d5d@kernel.org>
- <YzfUbKtWlxuq+FzI@nanopsycho>
- <20221001071827.202fe4c1@kernel.org>
- <Yzmhm4jSn/5EtG2l@nanopsycho>
- <20221003072831.3b6fb150@kernel.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=zhHds6t7Vj2FDDurokeQYOjyq3ixp4u5MQEpu4pX2fo=;
+        b=zGib3EFmtwFz2MgF47M9xJhPjqf/Ij0GCuQjjR6zV4/DOBIM46ne4ipIXI5fEsgFkL
+         UCKoGlEBwFf7hC3Z7PdsEMYwUDXpEWA9++J6BPnU3BlEm3WCYKq/gIAMFyd9Yd3phw57
+         a/wuhUdtogQdFmRl2uUwMl4YkzkCR4f5+Vqnib+DNjBk9q5cbX4j4yS96498t1gidxHF
+         Nl7tXE5ykC+MOREMGDi7r6EWJKmUNH1VczZWmsirLfsb9m0a4vEJohqqOloPlYHgzlte
+         LEYcygU2P3p5ez4ZHjgu1B7+aWYvU2Ee8kbJMeNrWjDkzCKtUN5k3TNSDKMgLySCH4Q+
+         maOw==
+X-Gm-Message-State: ACrzQf3DAOX0X7QdQ7D9eBnaVKhskpDdBsHpMm6YgUSNxou0bPJjwL8u
+        Apqxs/XOQXjmdvOjJwtEvnKdtA==
+X-Google-Smtp-Source: AMsMyM5UcCi5dSdpAFBr/Bo/JWakaU2nYEVHh4ZqL6y4akCm2leA7Ow6PmtEqp5ck2DJA+3U5upVww==
+X-Received: by 2002:a05:651c:232:b0:26d:b4b3:a78e with SMTP id z18-20020a05651c023200b0026db4b3a78emr8120186ljn.38.1664866526886;
+        Mon, 03 Oct 2022 23:55:26 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id y9-20020a05651c106900b00261df847ab0sm1142746ljm.21.2022.10.03.23.55.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Oct 2022 23:55:26 -0700 (PDT)
+Message-ID: <f612098f-e7e1-b3b3-a738-cabccec43bf2@linaro.org>
+Date:   Tue, 4 Oct 2022 08:55:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221003072831.3b6fb150@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock
+ bindings
+Content-Language: en-US
+To:     Melody Olvera <quic_molvera@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221001030403.27659-1-quic_molvera@quicinc.com>
+ <20221001030403.27659-2-quic_molvera@quicinc.com>
+ <37926f0f-e176-929e-939a-cd43a031e224@linaro.org>
+ <bb241d46-6f90-8604-e79d-30a1f3527ce4@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <bb241d46-6f90-8604-e79d-30a1f3527ce4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mon, Oct 03, 2022 at 04:28:31PM CEST, kuba@kernel.org wrote:
->On Sun, 2 Oct 2022 16:35:07 +0200 Jiri Pirko wrote:
->>>> What I'm trying to say
->>>> is, perhaps sysfs is a better API for this purpose. The API looks very
->>>> neat and there is no probabilito of huge grow.  
->>>
->>> "this API is nice and small" said everyone about every new API ever,
->>> APIs grow.  
->> 
->> Sure, what what are the odds.
->
->The pins were made into full objects now, and we also model muxes.
->
->Vadim, could you share the link to the GH repo? 
->
->What's your feeling on posting the latest patches upstream as RFC,
->whatever state things are in right now?
->
->My preference would be to move the development to the list at this
->stage, FWIW.
+On 03/10/2022 20:47, Melody Olvera wrote:
 
-I agree, that would be great.
+>>> +    items:
+>>> +      - description: Board XO source
+>>> +      - description: Sleep clock source
+>>> +      - description: PCIE 0 Pipe clock source (Optional clock)
+>> Skip "Optional clock"
+>>
+>>> +      - description: PCIE 0 Phy Auxiliary clock source (Optional clock)
+>>> +      - description: USB3 Phy wrapper pipe clock source (Optional clock)
+>>> +    minItems: 2
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: bi_tcxo
+>>> +      - const: sleep_clk
+>>> +      - const: pcie_0_pipe_clk # Optional clock
+>> Skip "Optional clock"
+> 
+> Will remove all optional clock instances.
+
+Not the instances of clocks, just the wording, comment. Whether clock is
+optional is quite visible from minItems: 2.
+
+Best regards,
+Krzysztof
+
