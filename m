@@ -2,107 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D64AC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Oct 2022 06:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F06B7C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Oct 2022 08:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiJDGzb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Oct 2022 02:55:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36314 "EHLO
+        id S230242AbiJDIn1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Oct 2022 04:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiJDGza (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Oct 2022 02:55:30 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 039002D742
-        for <linux-clk@vger.kernel.org>; Mon,  3 Oct 2022 23:55:29 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id x40so3593732ljq.9
-        for <linux-clk@vger.kernel.org>; Mon, 03 Oct 2022 23:55:28 -0700 (PDT)
+        with ESMTP id S230247AbiJDInZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Oct 2022 04:43:25 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F021B27CC4
+        for <linux-clk@vger.kernel.org>; Tue,  4 Oct 2022 01:43:23 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id kg6so11984380ejc.9
+        for <linux-clk@vger.kernel.org>; Tue, 04 Oct 2022 01:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=zhHds6t7Vj2FDDurokeQYOjyq3ixp4u5MQEpu4pX2fo=;
-        b=jqU8ttcDaBtmie0K269Urd3CH8YJ7NXFekdMHkTc2TeN75GnwJt5MmzKPlO9WLL47H
-         I7NSu3iT54Qym5w7mY3O9HXPmv1d0QooYq6/itirOiGpqZVaX4jyigKaYDVMdLwpwpnT
-         3ng9QbG0UoWbis1inKt5gej06nJZJHdn+zkC44X+bhHTuCZWvmuOVjQsgBvgUHgCKFaK
-         fdZeBYW8grP6awCdmGIn/Ox4rG8SfxPfM5OEAi8yVCBlFCTOfnxnms5wBETyeB9vCx0w
-         c7QePxmaK9bKMt5FmrSCrgsPX1TBCPZZyFaQj4QfvAGCCnKOKY3sFmqDsJPS7FiZR3Dy
-         TkTA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=9y6mckp6QwqVlkCMwSWHyLCrVK+e0UEzLE8ZnwJRiY8=;
+        b=ktTkCfG+LGxaPC1FxhwkFYJUP/uVyiOL59RxCdYRtkujLdjXw8gvt2wUv+3x36ZqEK
+         gr+uKk6uEhNT17sQPZ+KjFSX97a/KZpXepfHXgmhrDb/3eL9AHcIu+haa3EHsmJlJnzs
+         R+SN9ofuPDXQjzLSQb4X72bpgfANjBE8P6Ib46jOf8xbgd6EArUjlzdayYBgqbKSLnRb
+         yA9oWfoFVPykqzj7yWWyR9cV4XJmxmMBtiBzim10xNw0tIseI7tW35fyhQC0NGXVzhMy
+         VlAoApKSJ0FnZlTgOKRnAPpO6m++30KnTUXBS3hDU/FaSdixESMfE5c4EeyFBh4KwinZ
+         wxtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=zhHds6t7Vj2FDDurokeQYOjyq3ixp4u5MQEpu4pX2fo=;
-        b=zGib3EFmtwFz2MgF47M9xJhPjqf/Ij0GCuQjjR6zV4/DOBIM46ne4ipIXI5fEsgFkL
-         UCKoGlEBwFf7hC3Z7PdsEMYwUDXpEWA9++J6BPnU3BlEm3WCYKq/gIAMFyd9Yd3phw57
-         a/wuhUdtogQdFmRl2uUwMl4YkzkCR4f5+Vqnib+DNjBk9q5cbX4j4yS96498t1gidxHF
-         Nl7tXE5ykC+MOREMGDi7r6EWJKmUNH1VczZWmsirLfsb9m0a4vEJohqqOloPlYHgzlte
-         LEYcygU2P3p5ez4ZHjgu1B7+aWYvU2Ee8kbJMeNrWjDkzCKtUN5k3TNSDKMgLySCH4Q+
-         maOw==
-X-Gm-Message-State: ACrzQf3DAOX0X7QdQ7D9eBnaVKhskpDdBsHpMm6YgUSNxou0bPJjwL8u
-        Apqxs/XOQXjmdvOjJwtEvnKdtA==
-X-Google-Smtp-Source: AMsMyM5UcCi5dSdpAFBr/Bo/JWakaU2nYEVHh4ZqL6y4akCm2leA7Ow6PmtEqp5ck2DJA+3U5upVww==
-X-Received: by 2002:a05:651c:232:b0:26d:b4b3:a78e with SMTP id z18-20020a05651c023200b0026db4b3a78emr8120186ljn.38.1664866526886;
-        Mon, 03 Oct 2022 23:55:26 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id y9-20020a05651c106900b00261df847ab0sm1142746ljm.21.2022.10.03.23.55.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Oct 2022 23:55:26 -0700 (PDT)
-Message-ID: <f612098f-e7e1-b3b3-a738-cabccec43bf2@linaro.org>
-Date:   Tue, 4 Oct 2022 08:55:25 +0200
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=9y6mckp6QwqVlkCMwSWHyLCrVK+e0UEzLE8ZnwJRiY8=;
+        b=K4mQmyRPZEDrvHSRT8DixeUf4zTPX0n2ohNZwMfxz4zHO1VwP7uWZ/XA0WJxN4ylC3
+         EsBkJtEmpBD4fH1q+85mrpS92psWNhHRbsem3XMyMogrUYCuqBVAQuhvVgwLmbPhpjtl
+         rSCSr+LxXpoJYLmzH0mg+o7LnIpNmEUpIk16otwNF9HxV+oXOUjcA7MAgr6FVsHtVWwF
+         FQ3fEesOnnkpnjax8SamTaHyxIszem4EAGdruK5TdaC2tQZ32jn7JWMrcw+wKKsvkbpr
+         dQ2G+8YikD+beqhBFAAEmCmDKDlj/+sGYz049qzAWX4eY/Ao/YNhqXb+qSW6NAZjJIcG
+         M2yQ==
+X-Gm-Message-State: ACrzQf3hHw0+JJRowg7UNlBkUqDLT95Jeag0oL4rWk3SM70+02kOl7xB
+        ELm8qeGCkScBqVd01770YOz+u0rdyC9qI7IomuoGLg==
+X-Google-Smtp-Source: AMsMyM7smwSso6PfOzdvyNfHYtM5xmnUQGdDRlyqmuW7idFRUM5gJbnvbj0OLrfrEFIn9hTirM/sNLEnKZ34nmjZXfM=
+X-Received: by 2002:a17:906:8a46:b0:781:71fc:d23f with SMTP id
+ gx6-20020a1709068a4600b0078171fcd23fmr18624979ejc.500.1664873002520; Tue, 04
+ Oct 2022 01:43:22 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock
- bindings
-Content-Language: en-US
-To:     Melody Olvera <quic_molvera@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com> <20220930060819.5320-1-hal.feng@linux.starfivetech.com>
+In-Reply-To: <20220930060819.5320-1-hal.feng@linux.starfivetech.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 4 Oct 2022 10:43:11 +0200
+Message-ID: <CACRpkdb-7YxfJB5YpYf4t1rT+u=mctLyVbCwm4+TtEHm1k2ANA@mail.gmail.com>
+Subject: Re: [PATCH v1 22/30] pinctrl: Create subdirectory for StarFive drivers
+To:     Hal Feng <hal.feng@linux.starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221001030403.27659-1-quic_molvera@quicinc.com>
- <20221001030403.27659-2-quic_molvera@quicinc.com>
- <37926f0f-e176-929e-939a-cd43a031e224@linaro.org>
- <bb241d46-6f90-8604-e79d-30a1f3527ce4@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <bb241d46-6f90-8604-e79d-30a1f3527ce4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/10/2022 20:47, Melody Olvera wrote:
+On Fri, Sep 30, 2022 at 8:08 AM Hal Feng
+<hal.feng@linux.starfivetech.com> wrote:
 
->>> +    items:
->>> +      - description: Board XO source
->>> +      - description: Sleep clock source
->>> +      - description: PCIE 0 Pipe clock source (Optional clock)
->> Skip "Optional clock"
->>
->>> +      - description: PCIE 0 Phy Auxiliary clock source (Optional clock)
->>> +      - description: USB3 Phy wrapper pipe clock source (Optional clock)
->>> +    minItems: 2
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: bi_tcxo
->>> +      - const: sleep_clk
->>> +      - const: pcie_0_pipe_clk # Optional clock
->> Skip "Optional clock"
-> 
-> Will remove all optional clock instances.
+> From: Jianlong Huang <jianlong.huang@starfivetech.com>
+>
+> Move the StarFive JH7100 pinctrl driver to a new subdirectory
+> in preparation for adding more StarFive pinctrl drivers. No
+> functional change.
+>
+> Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
 
-Not the instances of clocks, just the wording, comment. Whether clock is
-optional is quite visible from minItems: 2.
+I applied this patch for v6.1 so you don't have to reiterate it, it's clearly
+just infrastructure that you'll need going forward.
 
-Best regards,
-Krzysztof
-
+Yours,
+Linus Walleij
