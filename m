@@ -2,189 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972F7C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Oct 2022 11:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C3EC43217
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Oct 2022 11:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbiJDLFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Oct 2022 07:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55282 "EHLO
+        id S229942AbiJDLFx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Oct 2022 07:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbiJDLFP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Oct 2022 07:05:15 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE53A15FC2;
-        Tue,  4 Oct 2022 04:05:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T1NiQk7+6virCanqcIInnVUO1AMaNEiUheATaauR6hbnMr5dOSVgy9fd6zOHZZQYNgRRC4n2pxzd2aAPSSlTG/J7NozFFu2H/Tq/xCsIyVTs6I2AHmiGYM0+PXchIAMr8O+xrgrs7FYQS23N3dM1mqKnZRx2O3e8DCEFV3FMZKY2v9XfMlGRKx59aer3c2vknV609xUbgsrOh9zFDLqiU8nC2Pcbc80nw2xtDU8UcwDddlyENYxyfPgy8FCtckMVvJsnF9X7z3r+sXdkOdqevDoFZIIxkTbXX4HqCF+TfsOsKKoiHVjw2W/X92e+HrgnQjGhjNvwbG4k+kmKAZShDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ce2elyVrNaygebWwjV0uG+g2jU0X/bjtu9qLGmIXhNk=;
- b=AasyjWKpfhkq6y7dpq+ggYkgRmijAeACQPiahJuqx21tgg/VtzD7fjNfbE8jchTnTXugl89LVS0HuFzJXUA9C+N3y8eQ1oLUUJn2OPzMP7l1L/lxe4g4yhc6gU/sLwxF9MJfVgvCrQSxU9oumtVqv+knV0HCBFfGJNvtBw68PLQNUCBnFI8nExCThKA4oy4KdNkWhgGwHS8tqlYfxHdJI6R21Zv7ak+01Fkpog7q5XZIC9nCK9w9qKjaFTrCbLWrzEDsmV7SMl1Z6rqwU4FdcR9s55PeX4Moh2iZtKR2kcf9i0MQSbtKo9Eihahtd7M8glyVYFirtH8lBBeBQPFgMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ce2elyVrNaygebWwjV0uG+g2jU0X/bjtu9qLGmIXhNk=;
- b=YfbAxGSfkT5q4Abp+eDFBYSM1IUxPMjvDx8ZJhRmzOXdwMVhpYYODSgHZWL9akwXz3qw5qm2rXiVQ9l6DdWVsn+pnVfZBdh/VvkjQxWhqAxEaa3yZxiY63sorcIaIjO6Wz28sYYCtlWTKoGfnOhwU5a9+oE8yJDyZdIWkDA8jeE=
-Received: from BN1PR14CA0008.namprd14.prod.outlook.com (2603:10b6:408:e3::13)
- by PH7PR12MB5781.namprd12.prod.outlook.com (2603:10b6:510:1d0::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Tue, 4 Oct
- 2022 11:05:00 +0000
-Received: from BN8NAM11FT116.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e3:cafe::bc) by BN1PR14CA0008.outlook.office365.com
- (2603:10b6:408:e3::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23 via Frontend
- Transport; Tue, 4 Oct 2022 11:05:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN8NAM11FT116.mail.protection.outlook.com (10.13.176.67) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5676.17 via Frontend Transport; Tue, 4 Oct 2022 11:05:00 +0000
-Received: from [10.254.241.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Tue, 4 Oct
- 2022 06:04:56 -0500
-Message-ID: <e0615e11-3b89-9717-7e07-657cac1d429e@amd.com>
-Date:   Tue, 4 Oct 2022 13:04:54 +0200
+        with ESMTP id S229887AbiJDLFi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Oct 2022 07:05:38 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E854715FD7
+        for <linux-clk@vger.kernel.org>; Tue,  4 Oct 2022 04:05:34 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id h8-20020a17090a054800b00205ccbae31eso18250927pjf.5
+        for <linux-clk@vger.kernel.org>; Tue, 04 Oct 2022 04:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=8dOAtcXqtbDTbOtGHdeMRx2lSxGZ/p81xoeulWg88O8=;
+        b=ALPYtY9NECpkdz09jpHMZbs0aH+hKiq7zCwXfK1hWKvM2elz9mNR/JJb0byGfir59h
+         CWc9izoQX0glvUd9bdjzB+GxZIKg7cZ1wWKnb5xSlDD9fDdUtUduD7qTiOAX8rgJzNMY
+         16i4fnybYgh61uFsRfFa0jFHaMm217pAorBQUItONSq5D0pjQfmpgEbFEG0ovD83XmiY
+         JRBnUwctQs5MU4QsxdCrYJ2mV5ubOvxFCDZOs+xf+eBgsrQVN1CIV6SHGqFX6RFQbzq7
+         D2ARCpgG/orA8SpRSFPIMnoc2IRLOYljdFwc8QX3tXFa2vpA/P7Kkd/ZsaWnXMh+ArFb
+         1Asw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=8dOAtcXqtbDTbOtGHdeMRx2lSxGZ/p81xoeulWg88O8=;
+        b=YPuNunFcKYU5wWp5TZXdD9bWvEhvohoEswYE3quCSZ0NNEWP1RZMCS7tpUfzkYuFiQ
+         f2G4K314+uJhqEf0JnwpUylVoMNYLKjqA7AhMS+zxvmCEa6Xw+y/QWs7ouTwhyaL5e0x
+         55cBlQBYUgHhG5GfIp0g65x8yZ6uG+gbTLcCAGx6pU0O/iXpwhPRHsZPDiFNUvJm4FtO
+         09haMMG00DP9X3ORjTKa2w4Y2rLgSV9LJhhqzAsoGnn/bqc5DNmAU6rex4h0E04qaZ5Q
+         ZTS96gy9XoiX43ZHYbEA+woSeDD86GYLKP2W0k2+AmqGHzAkvtQTVmNgFt8UgBd0rxde
+         u1kA==
+X-Gm-Message-State: ACrzQf0PD/Nq6ZR/+yiAqrssmW6yVoMAb6qe5MSAoqxO28RmGdfAffH5
+        bFaM1J4M3xJcsNxy/eDX394gqpAC8Uqnue2Ot+k+2A==
+X-Google-Smtp-Source: AMsMyM4crcx6LouSmUkordoRMp2FZSPTtuc3An5Wuzy+BH6M/IICg47GwaPPyycgbJ/QSQxkTeG6xy+CkgFRgaEAD/g=
+X-Received: by 2002:a17:90b:4d07:b0:1ef:521c:f051 with SMTP id
+ mw7-20020a17090b4d0700b001ef521cf051mr17203785pjb.164.1664881533975; Tue, 04
+ Oct 2022 04:05:33 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH 1/2] dt-bindings: clk: Add binding for versal clocking
- wizard
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-CC:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        <linux-clk@vger.kernel.org>, <git@amd.com>,
-        <devicetree@vger.kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20220930080400.15619-1-shubhrajyoti.datta@amd.com>
- <20220930080400.15619-2-shubhrajyoti.datta@amd.com>
- <CAL_JsqLaqjZeZd3c-fd9f5m-4OCXgOZcOu+paik9FV_eno5sLg@mail.gmail.com>
- <afb3f19f-eb40-5453-a82b-295e06861f86@amd.com>
- <20220930213924.GA1079711-robh@kernel.org>
- <6e58837e-896c-7069-7913-2afb90af5e95@amd.com>
- <b495804c-cf04-4512-ac05-424eded46468@linaro.org>
- <57989d3e-a186-1d67-cff9-6a059f94ebd3@amd.com>
- <f611237f-0401-9e3c-3a21-79b33141bb51@linaro.org>
- <e8507b3c-3dd5-9a65-8058-200b5a410da3@amd.com>
- <19bbea63-41d4-1b35-591e-1776eee1b2aa@linaro.org>
- <54652831-cdcc-7735-2b1b-66475ffce476@amd.com>
- <fcafff07-b526-bd3d-469f-0aebbb13c86c@linaro.org>
-From:   Michal Simek <michal.simek@amd.com>
-In-Reply-To: <fcafff07-b526-bd3d-469f-0aebbb13c86c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT116:EE_|PH7PR12MB5781:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5f594f4-c846-49a1-7a8b-08daa5f84809
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: KLvNs3YUzxvMTlmPozwnna9Kw8el7ZiTETVxkW9VAiQ1UKdI9IJghjXvYvAmtb6BYLU7u9a/xqt1abLg/42yHj9WeJRo0cRv3F0R3vNV7acjlwVVspJ3Owf9vskgt3h6Dx3A+MRkmGTK/cgm9vsSRYpJkbyW7GykQxEKVA40YwEcAiKm90d99KDfEvszihgkkyj2JCqs8IEo05yWjnxB8UgvhQG3fuoS7IaLA4EKkiOv98nW8fIzb9u8D/0+yN7ETQI3z8EEO0WszeW75H86RvW77AqG5JFH2b9YZniFzj53br/bEHAK9UCqSXBe8yR9DLwUfK1ZRJ276IFSIoIhT3w3qvRZRwlOSTU1xzKrDcuu4NgO5ugu4Z0oPDwAL4TJIatEPPuA1hteH1n4Rv9XBlNIGEOMUoh0LqWXJFsJWA2c8uXDKfwMN9HPf8uPoTFhMDAAaEL+TJwQn0d4rz2Bh80Q/t8zD5AK/wA7lDIcxFlBXNbHSiViCw3aG9A/8RVfTdre58IABgsb9v3rFSStEF2VR3Stqm3iMVmvJdlj6fqGEAsXUorh+Gkwv1sKTYAPWMEou3S7bBc4UrrtHOh20kmDmmdW+DUNWeLw+tor1NadRF2M6ScJCy9FzqBU4GlhbwOZqsQtRSGJ27MAQifyZmRdBfDCeMHXic5JXO5l7hk7vw7WLxhbneZaeLuBumHVr4eM393pq5jNLAcxCWCLvMkKlPXh9kZIlURFocO2OaR1yoFqScXsQ6E/p+/jGPOPwhYRWk8rVoxqnzWk9y0GDBCTV5Tqh8OUVeUcA/dTZPQmce5iQEeO+WsJaOoStQRMPkR2pf3+OUWl6P0UsDsJn5Xbpy/FEDf7VXrPbQImFjHBCPEY2RKr0hu5aYWmfN4osTgJ7uDPnfWVzuwV/vZDyA==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(396003)(136003)(346002)(376002)(451199015)(46966006)(36840700001)(40470700004)(966005)(31696002)(40480700001)(36860700001)(36756003)(356005)(81166007)(86362001)(82740400003)(40460700003)(478600001)(70586007)(70206006)(82310400005)(54906003)(4326008)(16526019)(110136005)(336012)(316002)(2906002)(41300700001)(8936002)(44832011)(426003)(5660300002)(2616005)(83380400001)(47076005)(186003)(8676002)(26005)(16576012)(31686004)(53546011)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2022 11:05:00.4774
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5f594f4-c846-49a1-7a8b-08daa5f84809
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT116.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5781
+References: <20220919095939.761690562@infradead.org> <20220919101521.274051658@infradead.org>
+In-Reply-To: <20220919101521.274051658@infradead.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 4 Oct 2022 13:04:57 +0200
+Message-ID: <CAPDyKFquBVkYmKsriPD+BfVrrz62ih7oCxb7HwOML+Zzs-5U_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 14/44] cpuidle,cpu_pm: Remove RCU fiddling from cpu_pm_{enter,exit}()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
+        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, 19 Sept 2022 at 12:17, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> All callers should still have RCU enabled.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On 10/4/22 13:00, Krzysztof Kozlowski wrote:
-> On 03/10/2022 17:27, Michal Simek wrote:
->>>
->>> Exactly. The names xlnx,clocking-wizard and xlnx,clk-wizard-1.0 are
->>> therefore not specific enough and mixing different devices.
->>
->> And just to be clear these IPs can be combined with systems where the main cpu
->> can be Microblaze. I have also seen some vendors mixing RISC-V with Xilinx IPs.
->>
->> Please look below.
->>>
->>>> And because this is fpga world none is really describing programmable logic by
->>>> hand because it would take a look a lot of time. That's why I created long time
->>>> ago device-tree generator (DTG) which gets design data and based on it generate
->>>> device tree description. Newest version is available for example here.
->>>> https://github.com/Xilinx/device-tree-xlnx
->>>> There is also newer version called system device tree generato
->>>> https://github.com/Xilinx/system-device-tree-xlnx
->>>>
->>>> Because of this infrastructure user will all the time get proper compatible
->>>> string which is aligned with IP catalog.
->>>
->>> I don't think so. Let's skip for now "clk" and "clocking" differences
->>> and assume both are "clocking". You have then compatibles:
->>>
->>> xlnx,clocking-wizard and xlnx,clocking-wizard-1.0
->>>
->>> and you said these are entirely different blocks.
->>>
->>> There is no way this creates readable DTS.
->>
->> And I really thank you for this discussion to do it properly and have proper
->> compatible string and description for this block.
->>
->> Shubhrajyoti: please correct me if I am wrong.
->>
->> All Xilinx SOCs have programmable logic aligned with FPGAs. Zynq is based 28nm,
->> ZynqMP (Ultrascale MPSOC) is based on 16nm and Versal is based on 7nm.
->>
->> I think these clocking IPs are using low level primitives available in PL logic.
->> Which means there is connection to fpga/pl technology instead of SOC family and
->> main cpu.
-> 
-> Then maybe the compatibles (and device names) should have that fpga/pl
-> technology used to differentiate between them?
+Kind regards
+Uffe
 
-I am already trying to find out better generic description without mentioning 
-sizes.
-
-
->> It can be of course said that if this is ZynqMP SOC that IP A is used. The same
->> for Versal SOC. But for soft cores this can't be said.
->>
->> Would it be better to reflect PL technology in compatible string?
-> 
-> Yes, although we might misunderstand what PL technology is. 28/16/7 nm
-> is the size of transistor or the process. Even two different processes
-> can use same type of technology, e.g. FinFET:
-> https://en.wikipedia.org/wiki/14_nm_process
-> https://en.wikipedia.org/wiki/10_nm_process
-> 
-> You could have very similar (or even the same) designs done in 28 nm and
-> 16 nm. Does it mean these are entirely different devices? Not
-> necessarily... Maybe they are, maybe not, but is the size of process
-> differentiating? I actually don't know what's there in 28/16/7, I am
-> just saying that number alone might not mean different technology.
-> Programming API could be the same, inputs/outputs could be the same.
-> Just the size of transistor is different...
-
-I agree. Will try to come up with better name without nm inside to uniquely 
-identify PL logic type.
-
-Thanks,
-Michal
-
+> ---
+>  kernel/cpu_pm.c |    9 ---------
+>  1 file changed, 9 deletions(-)
+>
+> --- a/kernel/cpu_pm.c
+> +++ b/kernel/cpu_pm.c
+> @@ -30,16 +30,9 @@ static int cpu_pm_notify(enum cpu_pm_eve
+>  {
+>         int ret;
+>
+> -       /*
+> -        * This introduces a RCU read critical section, which could be
+> -        * disfunctional in cpu idle. Copy RCU_NONIDLE code to let RCU know
+> -        * this.
+> -        */
+> -       ct_irq_enter_irqson();
+>         rcu_read_lock();
+>         ret = raw_notifier_call_chain(&cpu_pm_notifier.chain, event, NULL);
+>         rcu_read_unlock();
+> -       ct_irq_exit_irqson();
+>
+>         return notifier_to_errno(ret);
+>  }
+> @@ -49,11 +42,9 @@ static int cpu_pm_notify_robust(enum cpu
+>         unsigned long flags;
+>         int ret;
+>
+> -       ct_irq_enter_irqson();
+>         raw_spin_lock_irqsave(&cpu_pm_notifier.lock, flags);
+>         ret = raw_notifier_call_chain_robust(&cpu_pm_notifier.chain, event_up, event_down, NULL);
+>         raw_spin_unlock_irqrestore(&cpu_pm_notifier.lock, flags);
+> -       ct_irq_exit_irqson();
+>
+>         return notifier_to_errno(ret);
+>  }
+>
+>
