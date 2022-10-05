@@ -2,69 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF61C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Oct 2022 23:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2B7C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Oct 2022 23:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229529AbiJEXCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Oct 2022 19:02:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53258 "EHLO
+        id S229597AbiJEXGN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Oct 2022 19:06:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbiJEXCQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2022 19:02:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4062B85599;
-        Wed,  5 Oct 2022 16:02:15 -0700 (PDT)
+        with ESMTP id S229534AbiJEXGM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2022 19:06:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAD58559B;
+        Wed,  5 Oct 2022 16:06:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BCC2B617E6;
-        Wed,  5 Oct 2022 23:02:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A24CC433C1;
-        Wed,  5 Oct 2022 23:02:14 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C49B0B81F7E;
+        Wed,  5 Oct 2022 23:06:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA04C433D6;
+        Wed,  5 Oct 2022 23:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665010934;
-        bh=zAhxaN/puxBBRzAqxbPmu5dfVHwdi+dZAefdvkKN7EI=;
+        s=k20201202; t=1665011169;
+        bh=sId7vCZ/BscO4odCRyqbx9YmALMG5hZdxlSUO6EQ//k=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZRVK958HBYz3PlbIuewp5kZqsw9ZAd0FiWzvErQEroEGmw8IDCuvbOj5QCyWYsLmn
-         LfPbroyjDV0IYRhKwu/5OufzqLKnV9uaNhVrnxJKXPf6tuKzex8qhK388a1hB9SeX5
-         IK9m77XiZmnNkx6/yuB0IhxSKbm2Cg5eEKKxLCD/3I0TvLrqhVVisY6QvsuKc8Z1t/
-         AFulzW2coShpbYD/M/S30dOup0HZHIcEUzX5gGZmFzuTTXyK71rUvD0SL4rtLN3EGL
-         k5ZoElPNqllKRufZ0Y/bBAkZ2R8l0l6SH7fwR/8hDaIVldcFWITrRoRLXBsSmHDt2/
-         F29IOGtX7W9Jw==
+        b=g0SA5pkg14SPD2N4jgjqhXZIKasfHYgz2p6Jivm4cuDWdSsvZbwtySQtbDTvgmkFk
+         V5b3vcoaT+9b53lICzCBJhsASgNwGkFt1hTB7kyqDVOsaGtlI8mfBpj+bBIyptBFO0
+         lKSiUnQQDJzLiLpKAvmUBvXEbB2CeKx3Eo+jEib1rn6eoxZYItSWBYSPp7y9HPvWgP
+         uY19coLL0VAnTB6zu+Ft9/81o+baIY4Wkt4+yHOlBC+wiDH71df43M4qRt0F5WK5pX
+         sMsjDMwQ898nucgBzM2GZaR5KQV9GhZtJOFm010ZYJ8g2zphx6ZkgMOEK7vM/InsD1
+         Hgvi4olUjv7zQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221005085305.42075-2-romain.perier@gmail.com>
-References: <20221005085305.42075-1-romain.perier@gmail.com> <20221005085305.42075-2-romain.perier@gmail.com>
-Subject: Re: [PATCH RESEND v6 1/1] clk: mstar: msc313 cpupll clk driver
+In-Reply-To: <20221005082348.v43xbjrhbdlbaohv@pengutronix.de>
+References: <20220913102141.971148-1-m.felsch@pengutronix.de> <20221005082348.v43xbjrhbdlbaohv@pengutronix.de>
+Subject: Re: [RFC PATCH 0/2] Propose critical clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Willy Tarreau <w@1wt.eu>
-To:     Daniel Palmer <daniel@0x0f.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Romain Perier <romain.perier@gmail.com>,
-        linux-clk@vger.kernel.org
-Date:   Wed, 05 Oct 2022 16:02:12 -0700
+Cc:     Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com, Marek Vasut <marex@denx.de>
+To:     Marco Felsch <m.felsch@pengutronix.de>, abel.vesa@linaro.org,
+        abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Wed, 05 Oct 2022 16:06:07 -0700
 User-Agent: alot/0.10
-Message-Id: <20221005230214.1A24CC433C1@smtp.kernel.org>
+Message-Id: <20221005230609.5BA04C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Romain Perier (2022-10-05 01:53:05)
-> From: Daniel Palmer <daniel@0x0f.com>
+Quoting Marco Felsch (2022-10-05 01:23:48)
+> Hi Stephen, Michael,
 >=20
-> Add a driver for the CPU pll/ARM pll/MIPS pll that is present
-> in MStar SoCs.
+> I know it is a busy time right now, but maybe you have a few minutes for
+> this RFC. I know it is incomplete, but the interessting part is there
+> and it would fix a real issue we encountered on the imx8mm-evk's.
 >=20
-> Currently there is no documentation for this block so it's possible
-> this driver isn't entirely correct.
->=20
-> Only tested on the version of this IP in the MStar/SigmaStar
-> ARMv7 SoCs.
->=20
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> Co-developed-by: Willy Tarreau <w@1wt.eu>
-> Signed-off-by: Willy Tarreau <w@1wt.eu>
 
-Missing Signed-off-by Romain.
+There's another approach by Marek[1]. Can you work together on a
+solution? I think we should step away from trying to make the critical
+flag work during clk registration, and turn on the clk during provider
+registration instead. That hopefully makes it simpler. We can keep the
+clk flag of course, so that the clk can't be turned off, but otherwise
+we shouldn't need to make registration path check for the property.
+
+[1] https://lore.kernel.org/all/20220924174517.458657-1-marex@denx.de/
