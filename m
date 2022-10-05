@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDABDC4167B
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Oct 2022 09:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DF7C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Oct 2022 09:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbiJEJH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Oct 2022 05:07:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60078 "EHLO
+        id S229925AbiJEJIA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Oct 2022 05:08:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiJEJHw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2022 05:07:52 -0400
+        with ESMTP id S229979AbiJEJH5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2022 05:07:57 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0F9F760DC;
-        Wed,  5 Oct 2022 02:07:51 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2958vh8N013875;
-        Wed, 5 Oct 2022 09:07:35 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31F576470;
+        Wed,  5 Oct 2022 02:07:56 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2958utO6018604;
+        Wed, 5 Oct 2022 09:07:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=y5Wja1p/9P93G5DwYgWzDk04yKR4AAF3vxxCF5pAYHk=;
- b=aW1nFi86sTNiRUTo+dLOTh00AtXy8oZOLLDFe7RFgzL6cpCCd/HrJsF2SCmUdOyRu2sY
- lRi6Blvm3cW8ZXEMPsLGREJS4irhLVIJ8JJVCck1exyT7DnIjLhU1/aIjjtlt3HKOqFC
- 72MB619O4+mWqfP/GfKmDL9vrKMW5hTalBaygCizKI4Jfg0EKj6Vyub64JJ5de2nYe/B
- aVpgfxIG5WjPDNOEYoDVz3ZFFBtFPIoxIlRIsRBNzoDBtnJQlkWGiHtFxxU7hFYmoeBn
- Jb8luUAId9ii3zff00pccJi8tjQcFcoDjHZUphpQq2PR+ifjOO9ZtY2Xl/4kX3ZVubVs qw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3k0jtdjfpc-1
+ bh=W8u9tnQA1mw68k4uf7jskmgEvULBCNvvvouNBcP0KiU=;
+ b=YDflREScp6o3Tz7OsZcKUlRq+SOKmjtZxYHGQPo3m/Zs9UtIM0BPcGudzXzK5IPTa9FI
+ xcnETmZT/yt0pTk2EfCmUbm3W8MUTVkYSsZH0OuvwMLi3BcVKb4ue4u178gRWPmAO0fY
+ 027zK7LBgqJPbkdfu0VdwimogqM1seewBKL+ZRwNmGnVaA2C/K/QPMZs6kzqy2r3DckE
+ QM1z1znjGwWTHiAdWf6YKkS0d53mx9eeNhh/qUV3aH6IjbcsidoUucCMrzuPDtw6mmpY
+ 10aoIyFrtSj2SANZZbe84KuszJmMR8uwr0Aj11JBnPaMKeT1DXTFW4y36Y4Sk2VL+zYO ow== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3k0esctw9p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Oct 2022 09:07:35 +0000
+        Wed, 05 Oct 2022 09:07:46 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29597YaL021343
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29597jke000915
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 5 Oct 2022 09:07:34 GMT
+        Wed, 5 Oct 2022 09:07:45 GMT
 Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 5 Oct 2022 02:07:28 -0700
+ 15.2.986.29; Wed, 5 Oct 2022 02:07:40 -0700
 From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
 To:     freedreno <freedreno@lists.freedesktop.org>,
         <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
@@ -51,14 +51,12 @@ CC:     Douglas Anderson <dianders@chromium.org>,
         Akhil P Oommen <quic_akhilpo@quicinc.com>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 1/6] dt-bindings: clk: qcom: Support gpu cx gdsc reset
-Date:   Wed, 5 Oct 2022 14:36:59 +0530
-Message-ID: <20221005143618.v7.1.I68b749219741db01356a42d782f74265d29a2ac3@changeid>
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 3/6] clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+Date:   Wed, 5 Oct 2022 14:37:01 +0530
+Message-ID: <20221005143618.v7.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
 References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
@@ -69,44 +67,138 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Qp5z7f0LSDOnr_19LVap__WJocwp0Ljr
-X-Proofpoint-ORIG-GUID: Qp5z7f0LSDOnr_19LVap__WJocwp0Ljr
+X-Proofpoint-GUID: aou67NIQS7VoPsrnE1ynqyOLpjiMSD0h
+X-Proofpoint-ORIG-GUID: aou67NIQS7VoPsrnE1ynqyOLpjiMSD0h
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-10-04_09,2022-09-29_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
  spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2209130000 definitions=main-2210050057
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add necessary definitions in gpucc bindings to ensure gpu cx gdsc collapse
-through 'reset' framework for SC7280.
+Add a reset op compatible function to poll for gdsc collapse. This is
+required because:
+  1. We don't wait for it to turn OFF at hardware for VOTABLE GDSCs.
+  2. There is no way for client drivers (eg. gpu driver) to do
+  put-with-wait for these gdscs which is required in some scenarios
+  (eg. GPU recovery).
 
 Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
 
-(no changes since v1)
+Changes in v7:
+- Update commit message (Bjorn)
 
- include/dt-bindings/clock/qcom,gpucc-sc7280.h | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v2:
+- Minor update to function prototype
 
-diff --git a/include/dt-bindings/clock/qcom,gpucc-sc7280.h b/include/dt-bindings/clock/qcom,gpucc-sc7280.h
-index 669b23b..843a31b 100644
---- a/include/dt-bindings/clock/qcom,gpucc-sc7280.h
-+++ b/include/dt-bindings/clock/qcom,gpucc-sc7280.h
-@@ -32,4 +32,7 @@
- #define GPU_CC_CX_GDSC				0
- #define GPU_CC_GX_GDSC				1
+ drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++++----
+ drivers/clk/qcom/gdsc.h |  7 +++++++
+ 2 files changed, 26 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 7cf5e13..ccef742 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -17,6 +17,7 @@
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include "gdsc.h"
++#include "reset.h"
  
-+/* GPU_CC reset IDs */
-+#define GPU_CX_COLLAPSE				0
+ #define PWR_ON_MASK		BIT(31)
+ #define EN_REST_WAIT_MASK	GENMASK_ULL(23, 20)
+@@ -116,7 +117,8 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+ 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+ }
+ 
+-static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
++static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status,
++		s64 timeout_us, unsigned int interval_ms)
+ {
+ 	ktime_t start;
+ 
+@@ -124,7 +126,9 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+ 	do {
+ 		if (gdsc_check_status(sc, status))
+ 			return 0;
+-	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
++		if (interval_ms)
++			msleep(interval_ms);
++	} while (ktime_us_delta(ktime_get(), start) < timeout_us);
+ 
+ 	if (gdsc_check_status(sc, status))
+ 		return 0;
+@@ -189,7 +193,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+ 		udelay(1);
+ 	}
+ 
+-	ret = gdsc_poll_status(sc, status);
++	ret = gdsc_poll_status(sc, status, TIMEOUT_US, 0);
+ 	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+ 
+ 	if (!ret && status == GDSC_OFF && sc->rsupply) {
+@@ -360,7 +364,7 @@ static int _gdsc_disable(struct gdsc *sc)
+ 		 */
+ 		udelay(1);
+ 
+-		ret = gdsc_poll_status(sc, GDSC_ON);
++		ret = gdsc_poll_status(sc, GDSC_ON, TIMEOUT_US, 0);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -608,3 +612,14 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
 +
- #endif
++int gdsc_wait_for_collapse(void *priv)
++{
++	struct gdsc *sc = priv;
++	int ret;
++
++	ret = gdsc_poll_status(sc, GDSC_OFF, 500000, 5);
++	WARN(ret, "%s status stuck at 'on'", sc->pd.name);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(gdsc_wait_for_collapse);
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 981a12c..5395f69 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -12,6 +12,7 @@
+ struct regmap;
+ struct regulator;
+ struct reset_controller_dev;
++struct qcom_reset_map;
+ 
+ /**
+  * struct gdsc - Globally Distributed Switch Controller
+@@ -88,6 +89,7 @@ int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
+ 		  struct regmap *);
+ void gdsc_unregister(struct gdsc_desc *desc);
+ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
++int gdsc_wait_for_collapse(void *priv);
+ #else
+ static inline int gdsc_register(struct gdsc_desc *desc,
+ 				struct reset_controller_dev *rcdev,
+@@ -97,5 +99,10 @@ static inline int gdsc_register(struct gdsc_desc *desc,
+ }
+ 
+ static inline void gdsc_unregister(struct gdsc_desc *desc) {};
++
++static int gdsc_wait_for_collapse(void *priv)
++{
++	return  -ENOSYS;
++}
+ #endif /* CONFIG_QCOM_GDSC */
+ #endif /* __QCOM_GDSC_H__ */
 -- 
 2.7.4
 
