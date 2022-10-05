@@ -2,83 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF53C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Oct 2022 08:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CF2C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Oct 2022 08:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbiJEIYE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Oct 2022 04:24:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49692 "EHLO
+        id S229994AbiJEIxM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Oct 2022 04:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbiJEIYC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2022 04:24:02 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9385EDE3
-        for <linux-clk@vger.kernel.org>; Wed,  5 Oct 2022 01:24:01 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ofzh0-0001Di-0Z; Wed, 05 Oct 2022 10:23:50 +0200
-Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ofzgy-0003id-U8; Wed, 05 Oct 2022 10:23:48 +0200
-Date:   Wed, 5 Oct 2022 10:23:48 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com
-Cc:     Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com
-Subject: Re: [RFC PATCH 0/2] Propose critical clocks
-Message-ID: <20221005082348.v43xbjrhbdlbaohv@pengutronix.de>
-References: <20220913102141.971148-1-m.felsch@pengutronix.de>
+        with ESMTP id S229551AbiJEIxL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2022 04:53:11 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A005B05F;
+        Wed,  5 Oct 2022 01:53:10 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id j7so19535622wrr.3;
+        Wed, 05 Oct 2022 01:53:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=8BqRTIfWSS9jf0LKTH+g0B1dFdrxfzLef727HSnDg5E=;
+        b=PKxmtwuMywF2lVOXQI8Ca6UEoonhS751LjVm3KrBx8VHrRfyLKiUqcZciFCSo/CtOy
+         s1lIs1HIDzL6ahr/ODtsZQSTe+KZvRQJtG3iXKzUHJIdn6PwYNR8v6Z33xDrn/8YishX
+         TX0mMe2pE8EgFciVv7M9tdz+ZN83q38kRceEZcbX5dVbg60M2urHf5NVqcm2bDwUMdP/
+         s/2qMvdyhGYNeVlwB5N04sZrMFNp4wBPKRlhRh1eL6nVDsbE8T/HEnmQ7OY4cJNSbf+0
+         ei/mtpIpIFufC+npusVvxmGIwvqmmVIkglsH+fofPMj7B3YwAUgAn8S6blJxbp1hirh8
+         TR7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=8BqRTIfWSS9jf0LKTH+g0B1dFdrxfzLef727HSnDg5E=;
+        b=tO/kSUKU1GkDRNwX4toMg/t98qUS9prQZNoZ9E+XXXP0PL+wEafTkSnfIRbivUtjKf
+         x2G+Kw6KNYOVaGXHPzuNKgb5DRo8e7Sgdn3JVpy4zP5q2276+fcUEHs+2MX/Hio5py3j
+         6CSkBgoyx77e6JXNfAaSUFOFLhfnnTR7yIULVqL2ZzcjIaLuRUM09bd9Cl7RPHPTtcgY
+         36PuyZ/Em7YscSyukTwRBqTDOAq1vmJd4hwmBqqEb7tWbxMwp35tIzBjiHg5YgbHuTdZ
+         HuWulb9b4TBFx7lj97oxgj2BYgxbKymdQitY8GQg7lIhy6KyZQR/gupPDmSKOtNsr66L
+         Lypg==
+X-Gm-Message-State: ACrzQf0OWM+ofXMc6V00RGarMWPQanbf6cga0i9cSMQkoFDOaNkcA27d
+        EnCEduoDthRVV0lP67Q1niQXmPN6/Tg=
+X-Google-Smtp-Source: AMsMyM4bBNLaqXf7/qpCF+O7XFAWN6Rt2ddxzdLH3ac1+JugGkSavY+KGJhd2skUyERYhn7PowfJcA==
+X-Received: by 2002:a05:6000:1881:b0:22c:bee7:96e with SMTP id a1-20020a056000188100b0022cbee7096emr18495846wri.418.1664959988511;
+        Wed, 05 Oct 2022 01:53:08 -0700 (PDT)
+Received: from debby ([2a01:e0a:a6d:a8d0:7ff4:8f61:5574:9f95])
+        by smtp.gmail.com with ESMTPSA id n19-20020a05600c4f9300b003b4cba4ef71sm1333769wmq.41.2022.10.05.01.53.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Oct 2022 01:53:07 -0700 (PDT)
+From:   Romain Perier <romain.perier@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Daniel Palmer <daniel@0x0f.com>,
+        Romain Perier <romain.perier@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v6 0/1] ARM: mstar: cpupll
+Date:   Wed,  5 Oct 2022 10:53:04 +0200
+Message-Id: <20221005085305.42075-1-romain.perier@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220913102141.971148-1-m.felsch@pengutronix.de>
-User-Agent: NeoMutt/20180716
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Michael,
+This is a resend of the remaining patches of this series. I have kept
+the cover letter in order to do not loose context of the previous series.
 
-I know it is a busy time right now, but maybe you have a few minutes for
-this RFC. I know it is incomplete, but the interessting part is there
-and it would fix a real issue we encountered on the imx8mm-evk's.
+This series adds a basic driver for the PLL that generates
+the cpu clock on MStar/SigmaStar ARMv7 SoCs.
 
-Regards,
-  Marco
+Unfortunately there isn't much documentation for this thing
+so there are few magic values and guesses.
 
-On 22-09-13, Marco Felsch wrote:
-> Hi,
-> 
-> this proposal is to mark clocks as critical. It is somehow inspired by
-> the regulator-always-on property. Since sometimes we can end in circular
-> dependcies if we wanna solve the dependcies for a specific clock
-> provider.
-> 
-> The property is generic so it can be used by every hw clock provider. So
-> it can be seen as generic implementation to [1].
-> 
-> [1] https://lore.kernel.org/linux-clk/20220913092136.1706263-1-peng.fan@oss.nxp.com/
-> 
-> Marco Felsch (2):
->   clk: add support for critical always-on clocks
->   arm64: dts: imx8mm-evk: mark 32k pmic clock as always-on
-> 
->  arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi |  1 +
->  drivers/clk/clk.c                             | 18 ++++++++++++++++++
->  2 files changed, 19 insertions(+)
-> 
-> -- 
-> 2.30.2
-> 
-> 
-> 
+This needs to come after the MPLL DT changes.
+
+Changes since v5:
+- Fixed tags for Willy
+- Add missing kernel.h and device.h
+- Use devm_of_clk_add_hw_provider
+- Move "cpupll_parent" on the stack as it is only used by
+  devm_clk_hw_register (it seems safe).
+
+Changes since v4:
+- Removed merged patches (dt-bindings documentation and dt-bindings)
+- Rebased onto 5.19
+
+Changes since v3:
+- Added Reviewed-by on Daniel's patches
+- Removed "[PATCH v3 8/9] ARM: mstar: Add OPP table for mercury5"
+
+Changes since v2:
+- Re-ordered Kconfig by name
+- Re-ordered includes alphabetically and removed useless ones
+- Used timeout for cpu_relax
+- Returned DIV_ROUND_DOWN_ULL() directly in
+  msc313_cpupll_frequencyforreg()
+- Returned DIV_ROUND_DOWN_ULL() directly in
+  msc313_cpupll_regforfrequecy()
+- Reduced the number of lines for msc313_cpupll_of_match
+- Removed CLK_IS_CRITICAL
+
+Changes since v1:
+- Re-worked the series and ensure that 'make dt_binding_check' passes.
+  The required commit is merged now, so it is okay.
+- Fixed coding style issues in the driver and makes check_patch.pl happy
+- Added one more commit for extending the opp_table for infinity2m.
+
+Daniel Palmer (1):
+  clk: mstar: msc313 cpupll clk driver
+
+ drivers/clk/mstar/Kconfig             |   7 +
+ drivers/clk/mstar/Makefile            |   1 +
+ drivers/clk/mstar/clk-msc313-cpupll.c | 220 ++++++++++++++++++++++++++
+ 3 files changed, 228 insertions(+)
+ create mode 100644 drivers/clk/mstar/clk-msc313-cpupll.c
+
+-- 
+2.35.1
+
