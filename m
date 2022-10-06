@@ -2,121 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1491C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Oct 2022 09:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AB3C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Oct 2022 11:05:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231317AbiJFJIC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Oct 2022 05:08:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49302 "EHLO
+        id S231390AbiJFLFW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Oct 2022 07:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbiJFJIB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Oct 2022 05:08:01 -0400
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDB897ED4;
-        Thu,  6 Oct 2022 02:08:00 -0700 (PDT)
-Received: by mail-qv1-f44.google.com with SMTP id i9so812408qvu.1;
-        Thu, 06 Oct 2022 02:08:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=L7WdsxThKx8DLY3HEg/N0eYOYTLtN7B9Ka7mZhp0NQU=;
-        b=NqtUswe4HGsoycpMrf6/wsEGNt22ya3P2Lh7Z+CA1hnnT4T+YNwShbFOWakQqEoVhp
-         yhYBNn57RuHd1D8nKgXQiEmwDApJ33wf+EuiqP2SnOzeh2C3RcOfcPVVw0NRXa2aJ2P6
-         BdMnESYjIlHdmEg6c4hqT3Gu4j9zymXMmqB+xdDvD50pPN0UCBqHNDUEMD/E/xJCNbhK
-         RmL6fKYxeU67xZccQ86DJE19sjKrXD1sjYxs1jxfSol2MkIIUA6P/RzONXDjv+xY0ZJ1
-         jsb3CVcbk5yKMJGXbyUXSXlXb1Wqe5if2zxUxLvMZAEyiwGiEpRWBgrHugSXMIdqWESo
-         3jhA==
-X-Gm-Message-State: ACrzQf0J5REU9z2p4nyg8miPYF7XuTjcRnanrRuSqe4QJU02ebk4Y3pX
-        jGi5M5htrssPZnHy7vPMnZr4Xp4MCm0tbg==
-X-Google-Smtp-Source: AMsMyM5yhSUztWo2SZJX22LCh2nXmw4fPZhLzHAHdTDOZ5k4uGiUUXlcLm84ZafS013zmrU9oyuTkg==
-X-Received: by 2002:a05:6214:2387:b0:497:15b3:f792 with SMTP id fw7-20020a056214238700b0049715b3f792mr2985316qvb.118.1665047279143;
-        Thu, 06 Oct 2022 02:07:59 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id y15-20020a05620a25cf00b006bbf85cad0fsm19798641qko.20.2022.10.06.02.07.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Oct 2022 02:07:58 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-35ad0584879so11875627b3.7;
-        Thu, 06 Oct 2022 02:07:57 -0700 (PDT)
-X-Received: by 2002:a81:98d:0:b0:357:2422:13b4 with SMTP id
- 135-20020a81098d000000b00357242213b4mr3519086ywj.316.1665047277420; Thu, 06
- Oct 2022 02:07:57 -0700 (PDT)
+        with ESMTP id S231318AbiJFLFN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Oct 2022 07:05:13 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333673FD65;
+        Thu,  6 Oct 2022 04:05:12 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 13B9284940;
+        Thu,  6 Oct 2022 13:05:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1665054310;
+        bh=uB3llXnK0KYLYYhpTualwjpRdRLy8b7Ts3GeCKJRb+E=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=JwS15yadaMbolc4mFfxB7s2jNP+Lhr5urPPF+CnPRGcfEmnCpmG2NDf4vUN5FeKij
+         l5CvODJ8va4xbM75MvHU6R2KYGnJ81J+7AqGDmgRiEmyh/DUsy+qUxgEKJ7nmA0Ecf
+         XeXQ6SbcVQTAWEJ7jlkA3kyjfqdKDqncGkVyEmunAbFIuKaCDbrNIZ8ygEJt6rOa/d
+         4td8/gMzafgxfpe+vFyajFDMOpRip14h5OwGwv6XRnB0MvxwpiuuJSPsYBeTrUzQo5
+         LnNij59bho/H57Ky82T13yzLjJbkT+F5bOO/JDifyjyS8q9Vk3hHaRqd8s+Php9ayv
+         d/hxmljzpPF2w==
+Message-ID: <f85808f9-979d-1dc5-ac9a-9519c62e2737@denx.de>
+Date:   Thu, 6 Oct 2022 13:05:08 +0200
 MIME-Version: 1.0
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220930061404.5418-1-hal.feng@linux.starfivetech.com> <166457324093.1075476.18009315584754055366.robh@kernel.org>
- <CACRpkdZmmMjVwpHxkJP+Ui0XJgrdZx8kpVybifbwkRB1_uMhAg@mail.gmail.com>
-In-Reply-To: <CACRpkdZmmMjVwpHxkJP+Ui0XJgrdZx8kpVybifbwkRB1_uMhAg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 6 Oct 2022 11:07:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUx9FCDAW4maJytd5H0=Mur9K4Teg99EOp6cVXF8ann8w@mail.gmail.com>
-Message-ID: <CAMuHMdUx9FCDAW4maJytd5H0=Mur9K4Teg99EOp6cVXF8ann8w@mail.gmail.com>
-Subject: Re: [PATCH v1 23/30] pinctrl: starfive: Rename "pinctrl-starfive" to "pinctrl-starfive-jh7100"
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [RFC PATCH 0/2] Propose critical clocks
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Marco Felsch <m.felsch@pengutronix.de>, abel.vesa@linaro.org,
+        abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+Cc:     Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com
+References: <20220913102141.971148-1-m.felsch@pengutronix.de>
+ <20221005082348.v43xbjrhbdlbaohv@pengutronix.de>
+ <20221005230609.5BA04C433D6@smtp.kernel.org>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20221005230609.5BA04C433D6@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Linus,
+On 10/6/22 01:06, Stephen Boyd wrote:
+> Quoting Marco Felsch (2022-10-05 01:23:48)
+>> Hi Stephen, Michael,
+>>
+>> I know it is a busy time right now, but maybe you have a few minutes for
+>> this RFC. I know it is incomplete, but the interessting part is there
+>> and it would fix a real issue we encountered on the imx8mm-evk's.
 
-On Tue, Oct 4, 2022 at 10:50 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Sep 30, 2022 at 11:28 PM Rob Herring <robh@kernel.org> wrote:
-> > On Fri, 30 Sep 2022 14:14:04 +0800, Hal Feng wrote:
-> > > From: Jianlong Huang <jianlong.huang@starfivetech.com>
-> > >
-> > > Add the SoC name to make it more clear. Also the next generation StarFive
-> > > SoCs will use "pinctrl-starfive" as the core of StarFive pinctrl driver.
-> > > No functional change.
-> > >
-> > > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> > > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> > > ---
-> > >  .../bindings/pinctrl/starfive,jh7100-pinctrl.yaml           | 2 +-
-> > >  arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts   | 2 +-
-> > >  drivers/pinctrl/starfive/Kconfig                            | 2 +-
-> > >  drivers/pinctrl/starfive/Makefile                           | 2 +-
-> > >  .../{pinctrl-starfive.c => pinctrl-starfive-jh7100.c}       | 2 +-
-> > >  .../{pinctrl-starfive.h => pinctrl-starfive-jh7100.h}       | 6 +++---
-> > >  6 files changed, 8 insertions(+), 8 deletions(-)
-> > >  rename drivers/pinctrl/starfive/{pinctrl-starfive.c => pinctrl-starfive-jh7100.c} (99%)
-> > >  rename include/dt-bindings/pinctrl/{pinctrl-starfive.h => pinctrl-starfive-jh7100.h} (98%)
-> > >
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
-> > Would be good to pull this out separately and apply for 6.1. It's kind
-> > of messy with cross tree dependencies.
->
-> OK I applied this for V6.1.
+The i.MX8M hang when using 32kHz supplied by PMIC is solved by modeling 
+the clock in DT correctly, see:
 
-Isn't the name of the DT bindings header file part of the DT bindings,
-i.e. it cannot be changed afterwards?
-As of v5.17, it is in active use by
-arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts.
+https://lore.kernel.org/all/20220924174603.458956-1-marex@denx.de/
 
-Gr{oetje,eeting}s,
+> There's another approach by Marek[1]. Can you work together on a
+> solution? I think we should step away from trying to make the critical
+> flag work during clk registration, and turn on the clk during provider
+> registration instead.
 
-                        Geert
+So that would work like the qualcomm-specific 'protected-clock' property?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I really want to avoid such clock-driver specific hacks which are poorly 
+or inconsistently supported. This critical-clock should be a generic 
+solution and that should be in clock core.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> That hopefully makes it simpler. We can keep the
+> clk flag of course, so that the clk can't be turned off, but otherwise
+> we shouldn't need to make registration path check for the property.
+> 
+> [1] https://lore.kernel.org/all/20220924174517.458657-1-marex@denx.de/
+
