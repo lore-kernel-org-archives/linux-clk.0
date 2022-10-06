@@ -2,93 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B42C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Oct 2022 06:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1491C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Oct 2022 09:08:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbiJFG6q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Oct 2022 02:58:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60220 "EHLO
+        id S231317AbiJFJIC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Oct 2022 05:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiJFG6p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Oct 2022 02:58:45 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C94F474D6;
-        Wed,  5 Oct 2022 23:58:44 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id n186so1110544vsc.9;
-        Wed, 05 Oct 2022 23:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=TJqlP80Odus2D0JVNeZG0GyW2KovItTk2V4asNZineM=;
-        b=JzukLpQzk/5NkTTS3tT90HIOPDFNdQ481hvyL8cOoL2jLwbZKig/fWrd66WVqNyaDr
-         diEKy3Qqh62ArECH6cBfodk4eUGkip68jjat7WmX81O4Ws8vpk+acP7eN8DqBffGMHL3
-         Q19Qvgal+nWLwZPTPPg327m38+k7oiY5RudrZ1z7OzvY8n+niPzLulGY4lUMn75Sb21b
-         LkRJ/Up8442dp1VamFO/jfMvXyK/RO+slFdb13c7WXjGPmmruBj7KBEL6upbx/YmK2iT
-         +LWsNdBlgXNa4SQey9mLr0TY1dBRt5zEt07BX8VCCSMaFe4nR9ETXME1BZFiRvHubnz6
-         wWtQ==
+        with ESMTP id S230466AbiJFJIB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Oct 2022 05:08:01 -0400
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDB897ED4;
+        Thu,  6 Oct 2022 02:08:00 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id i9so812408qvu.1;
+        Thu, 06 Oct 2022 02:08:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=TJqlP80Odus2D0JVNeZG0GyW2KovItTk2V4asNZineM=;
-        b=JWyC969kBVBtqWiTpTnMG2kO+sji8pW9VmAiV+qnsObyKjbAdSZ7vvBbQXFG4Ujs3Y
-         jDXJFIbzfZUe9K37XrLX84PFT9Sr7WBn52hz8X5VcARvZA0RTfVoat3tV+Ks1Gdagdv2
-         g3XPQ8h32YaApP+h1B03musia7o3sZ/9BxcCvEgDi00ka3pJ0lw4BHiR4NwGjF7Mp2RZ
-         vdfsUaGft8kw0K9gSQli2MXgmO+9GYHi1MmQ8eG9uQW9cyFq9ycePeXUSIcv6tBSCyIz
-         ET7zHFlEu9au8a9LqHQaWp5kdXXd5mtDl1mIP5KLTIAsJrToCONL8C+BA4IA86Gh4pYT
-         IqGw==
-X-Gm-Message-State: ACrzQf1bDreWvIkd/4yy/+ec9qLiCU15wuaEY3njdxFafSI3CTs15+7D
-        a/GgjJXirg5nKJH2PWlw3Lvp3blwZoevsmLbczI=
-X-Google-Smtp-Source: AMsMyM4onYZAMxhs6EoLcrmsenTeXbLk2iEct1qKwKXx/sTDhTwMSrB2/g8Z5gfGSY34TwOlBc6/xKUgHgQACniRNoE=
-X-Received: by 2002:a67:c48b:0:b0:3a6:7c10:7422 with SMTP id
- d11-20020a67c48b000000b003a67c107422mr1722542vsk.4.1665039523521; Wed, 05 Oct
- 2022 23:58:43 -0700 (PDT)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=L7WdsxThKx8DLY3HEg/N0eYOYTLtN7B9Ka7mZhp0NQU=;
+        b=NqtUswe4HGsoycpMrf6/wsEGNt22ya3P2Lh7Z+CA1hnnT4T+YNwShbFOWakQqEoVhp
+         yhYBNn57RuHd1D8nKgXQiEmwDApJ33wf+EuiqP2SnOzeh2C3RcOfcPVVw0NRXa2aJ2P6
+         BdMnESYjIlHdmEg6c4hqT3Gu4j9zymXMmqB+xdDvD50pPN0UCBqHNDUEMD/E/xJCNbhK
+         RmL6fKYxeU67xZccQ86DJE19sjKrXD1sjYxs1jxfSol2MkIIUA6P/RzONXDjv+xY0ZJ1
+         jsb3CVcbk5yKMJGXbyUXSXlXb1Wqe5if2zxUxLvMZAEyiwGiEpRWBgrHugSXMIdqWESo
+         3jhA==
+X-Gm-Message-State: ACrzQf0J5REU9z2p4nyg8miPYF7XuTjcRnanrRuSqe4QJU02ebk4Y3pX
+        jGi5M5htrssPZnHy7vPMnZr4Xp4MCm0tbg==
+X-Google-Smtp-Source: AMsMyM5yhSUztWo2SZJX22LCh2nXmw4fPZhLzHAHdTDOZ5k4uGiUUXlcLm84ZafS013zmrU9oyuTkg==
+X-Received: by 2002:a05:6214:2387:b0:497:15b3:f792 with SMTP id fw7-20020a056214238700b0049715b3f792mr2985316qvb.118.1665047279143;
+        Thu, 06 Oct 2022 02:07:59 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id y15-20020a05620a25cf00b006bbf85cad0fsm19798641qko.20.2022.10.06.02.07.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Oct 2022 02:07:58 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-35ad0584879so11875627b3.7;
+        Thu, 06 Oct 2022 02:07:57 -0700 (PDT)
+X-Received: by 2002:a81:98d:0:b0:357:2422:13b4 with SMTP id
+ 135-20020a81098d000000b00357242213b4mr3519086ywj.316.1665047277420; Thu, 06
+ Oct 2022 02:07:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221005085305.42075-1-romain.perier@gmail.com>
- <20221005085305.42075-2-romain.perier@gmail.com> <20221005230214.1A24CC433C1@smtp.kernel.org>
-In-Reply-To: <20221005230214.1A24CC433C1@smtp.kernel.org>
-From:   Romain Perier <romain.perier@gmail.com>
-Date:   Thu, 6 Oct 2022 08:58:32 +0200
-Message-ID: <CABgxDo+v1PHbgFwyyTFkT2WtxBUBO+Ygi9ncS0oNQzzxHAO7Ew@mail.gmail.com>
-Subject: Re: [PATCH RESEND v6 1/1] clk: mstar: msc313 cpupll clk driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Palmer <daniel@0x0f.com>,
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220930061404.5418-1-hal.feng@linux.starfivetech.com> <166457324093.1075476.18009315584754055366.robh@kernel.org>
+ <CACRpkdZmmMjVwpHxkJP+Ui0XJgrdZx8kpVybifbwkRB1_uMhAg@mail.gmail.com>
+In-Reply-To: <CACRpkdZmmMjVwpHxkJP+Ui0XJgrdZx8kpVybifbwkRB1_uMhAg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 6 Oct 2022 11:07:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUx9FCDAW4maJytd5H0=Mur9K4Teg99EOp6cVXF8ann8w@mail.gmail.com>
+Message-ID: <CAMuHMdUx9FCDAW4maJytd5H0=Mur9K4Teg99EOp6cVXF8ann8w@mail.gmail.com>
+Subject: Re: [PATCH v1 23/30] pinctrl: starfive: Rename "pinctrl-starfive" to "pinctrl-starfive-jh7100"
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Hal Feng <hal.feng@linux.starfivetech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Willy Tarreau <w@1wt.eu>
+        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marc Zyngier <maz@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le jeu. 6 oct. 2022 =C3=A0 01:02, Stephen Boyd <sboyd@kernel.org> a =C3=A9c=
-rit :
+Hi Linus,
+
+On Tue, Oct 4, 2022 at 10:50 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Sep 30, 2022 at 11:28 PM Rob Herring <robh@kernel.org> wrote:
+> > On Fri, 30 Sep 2022 14:14:04 +0800, Hal Feng wrote:
+> > > From: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > >
+> > > Add the SoC name to make it more clear. Also the next generation StarFive
+> > > SoCs will use "pinctrl-starfive" as the core of StarFive pinctrl driver.
+> > > No functional change.
+> > >
+> > > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> > > ---
+> > >  .../bindings/pinctrl/starfive,jh7100-pinctrl.yaml           | 2 +-
+> > >  arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts   | 2 +-
+> > >  drivers/pinctrl/starfive/Kconfig                            | 2 +-
+> > >  drivers/pinctrl/starfive/Makefile                           | 2 +-
+> > >  .../{pinctrl-starfive.c => pinctrl-starfive-jh7100.c}       | 2 +-
+> > >  .../{pinctrl-starfive.h => pinctrl-starfive-jh7100.h}       | 6 +++---
+> > >  6 files changed, 8 insertions(+), 8 deletions(-)
+> > >  rename drivers/pinctrl/starfive/{pinctrl-starfive.c => pinctrl-starfive-jh7100.c} (99%)
+> > >  rename include/dt-bindings/pinctrl/{pinctrl-starfive.h => pinctrl-starfive-jh7100.h} (98%)
+> > >
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > Would be good to pull this out separately and apply for 6.1. It's kind
+> > of messy with cross tree dependencies.
 >
-> Quoting Romain Perier (2022-10-05 01:53:05)
-> > From: Daniel Palmer <daniel@0x0f.com>
-> >
-> > Add a driver for the CPU pll/ARM pll/MIPS pll that is present
-> > in MStar SoCs.
-> >
-> > Currently there is no documentation for this block so it's possible
-> > this driver isn't entirely correct.
-> >
-> > Only tested on the version of this IP in the MStar/SigmaStar
-> > ARMv7 SoCs.
-> >
-> > Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> > Co-developed-by: Willy Tarreau <w@1wt.eu>
-> > Signed-off-by: Willy Tarreau <w@1wt.eu>
->
-> Missing Signed-off-by Romain.
+> OK I applied this for V6.1.
 
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
+Isn't the name of the DT bindings header file part of the DT bindings,
+i.e. it cannot be changed afterwards?
+As of v5.17, it is in active use by
+arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts.
 
+Gr{oetje,eeting}s,
 
-It is okay, like this ?
+                        Geert
 
-Cheers,
-Romain
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
