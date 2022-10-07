@@ -2,79 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C976C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Oct 2022 13:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B70CC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Oct 2022 20:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbiJGNKW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Oct 2022 09:10:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50878 "EHLO
+        id S229517AbiJGUrK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Oct 2022 16:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbiJGNKR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Oct 2022 09:10:17 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52D73EA6D
-        for <linux-clk@vger.kernel.org>; Fri,  7 Oct 2022 06:10:09 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:a4a4:fd15:fba:df3b])
-        by laurent.telenet-ops.be with bizsmtp
-        id V1A6280035Lh0ZK011A6AC; Fri, 07 Oct 2022 15:10:06 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ogn77-000uNc-JS; Fri, 07 Oct 2022 15:10:05 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ogn77-00CPMS-6D; Fri, 07 Oct 2022 15:10:05 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        with ESMTP id S229563AbiJGUrJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Oct 2022 16:47:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C065C14B2;
+        Fri,  7 Oct 2022 13:47:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A090761B83;
+        Fri,  7 Oct 2022 20:47:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB279C433D6;
+        Fri,  7 Oct 2022 20:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665175628;
+        bh=xXQ4oJCtGKo+xuBrs0No0Tqqpe4Asxxn3fci8GFrg0Y=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=CZPlhgAjPPZuffi54rBT3VpMpwh9YfXyZaWO2sA0Ec4WSPUlryh8WS6ICLeKX9UiR
+         ZaFf3xhaxVHiWtLkOX2XMzex/C+7/nO0TaDwNy26gqiAWrM86VA2YD1+NjCgSTSZuc
+         wsyRj20PJws7lqZfo2IscW6mdMy1ESLrGdPeabnm7lOkXh7zwCryw+nabSDw1+zvF3
+         smjN0Fyu0ts6vDndgCxV9BL5efRummtuJNddOdrsPdBuBa92TMEMoN9ZxzOeIU5lSm
+         8QMlMdWE3vlEJchbc/LSRe1Irm5Cqc278aSch97t6aUZQjD1GU66+gGygLE+evNNZc
+         LxCk0L5QTvS5A==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1665147497.git.geert+renesas@glider.be>
+References: <cover.1665147497.git.geert+renesas@glider.be>
+Subject: Re: [PATCH 0/5] clk: renesas: r8a779g0: Add SASYNCPER and derived clocks
+From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] clk: renesas: r8a779g0: Add SASYNCPER and derived clocks
-Date:   Fri,  7 Oct 2022 15:09:59 +0200
-Message-Id: <cover.1665147497.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Fri, 07 Oct 2022 13:47:06 -0700
+User-Agent: alot/0.10
+Message-Id: <20221007204707.EB279C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Quoting Geert Uytterhoeven (2022-10-07 06:09:59)
+>         Hi Mike, Stephen,
+>=20
+> This patch series adds the various SASYNCPER clocks (used by modules
+> that must not be affected by Spread Spectrum and/or Fractional
+> Multiplication), and most of its derived module clocks (serial and PWM)
+> on the R-Car V4H (R8A7799G0) SoC.
+>=20
+> As the second patch is a fix, and the first patch is a dependency (also
+> for a related DT fix), I plan to queue the first two patches in
+> renesas-clk-fixes for v6.1.
+> I plan to queue the last three patches in renesas-clk for v6.2.
+>=20
+> Thanks for your comments!
+>=20
+> Geert Uytterhoeven (5):
+>   clk: renesas: r8a779g0: Add SASYNCPER clocks
+>   clk: renesas: r8a779g0: Fix HSCIF parent clocks
+>   clk: renesas: r8a779g0: Add SCIF clocks
+>   clk: renesas: r8a779g0: Add PWM clock
+>   clk: renesas: r8a779g0: Add TPU clock
+>=20
 
-This patch series adds the various SASYNCPER clocks (used by modules
-that must not be affected by Spread Spectrum and/or Fractional
-Multiplication), and most of its derived module clocks (serial and PWM)
-on the R-Car V4H (R8A7799G0) SoC.
+Thanks for the heads up
 
-As the second patch is a fix, and the first patch is a dependency (also
-for a related DT fix), I plan to queue the first two patches in
-renesas-clk-fixes for v6.1.
-I plan to queue the last three patches in renesas-clk for v6.2.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (5):
-  clk: renesas: r8a779g0: Add SASYNCPER clocks
-  clk: renesas: r8a779g0: Fix HSCIF parent clocks
-  clk: renesas: r8a779g0: Add SCIF clocks
-  clk: renesas: r8a779g0: Add PWM clock
-  clk: renesas: r8a779g0: Add TPU clock
-
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
--- 
-2.25.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Acked-by: Stephen Boyd <sboyd@kernel.org>
