@@ -2,83 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACF8C433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 17:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CB6C4321E
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 17:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229481AbiJHRII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Oct 2022 13:08:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45748 "EHLO
+        id S229914AbiJHRgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Oct 2022 13:36:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbiJHRIG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 13:08:06 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64BDF3BC56;
-        Sat,  8 Oct 2022 10:08:05 -0700 (PDT)
-Received: from [192.168.1.138] ([37.4.248.18]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MgNpJ-1pOFgQ41uh-00hucE; Sat, 08 Oct 2022 19:07:26 +0200
-Message-ID: <bce9efac-15a8-75e5-6f3f-bc62e33d0184@i2se.com>
-Date:   Sat, 8 Oct 2022 19:07:24 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] clk: bcm: rpi: Fix an out-of-bound access to
- raspberrypi_clk_variants
-To:     Xu Kuohai <xukuohai@huaweicloud.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Xu Kuohai <xukuohai@huawei.com>
-References: <20221008144544.283945-1-xukuohai@huaweicloud.com>
-Content-Language: en-US
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20221008144544.283945-1-xukuohai@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:AZmXji+Ie9jYHOzIlgRs0gDX/oNVksZ7yKBebF95ZMrkMz8LTTw
- Hy9D2+qykIRrldaHtJy4bV990ESxz3bpUi36so0Fh8jzYGAtQnqKQZu8W62Of3j4ZaKBieV
- DJ4fVy1baJLERCQTxXL5lYi8pry+dUUywkbPjDrs/q7SPYMK2mIEuTSRCFqBerKWC1/jyR+
- ECGHfxuEsXwRKi3wXPq+w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:19cskiiydFc=:6tsc4x3Utxa7k8gtI3IAd6
- wNgLrQIpDTY5nr2vfR7PrggjpagVpdjqcpTUzLL81bdhB9HjqZsxxeSoi5dIe42fOWWyRVIbM
- UwehcSqpngKNRAaP9dAWzzStkw3TouTK2dOw08nfwHX2EiQ/nLt0hTVTguKssPhT1dY+qjp9F
- PFfcmz0cwOcvJa2+doA6rO2X7/Oz8lE9wol04DdydEw++QRLh+DQJqYyhQCtdGF3sEvKNGsrh
- tS/tJJoy+uWT6e9D7hf4wvcuqlryelRI9mOANsj5XLXHqK2M1XdMu6XeE7wL2XsrK+6gjmc9q
- FA+rD5xA2RGVW+PhInygZYWKmq11LG3Q3X+fKHIM510PfX3A9ZkiLD3zy9KAf2ji4SnN43OaX
- Q9pzjfqCOibGLvSg4Aj7eq1LZatvztu5i70u9jA6hvoVykPPi7+k9iZlnZzXMcjb0GPBwYPiD
- 4DLZF7mGkmiRqTd8ehLPrjNI2e7wqwDKM02bvwUAOGhYu1d6P4mVXFtDHETO4PzNT+MKT6A9M
- 4XPhEE/QDFNLUZty/m4hqo1gj0VAjxZUc3yxawx5N3skARebYJuwBdaM3Fh9GLLwqb36pJ5Nx
- fHhAYjPLqGYstTJfcglSRhJjVx7l0ShHfQ2LPXtmNuNjzJPVuWhfjDM7AjaHTGuRcmsl/LPqU
- V+Sq/Xo4DuSXk+G5LQUAUHOQbNK5GhhDAfTd9GpuDa8Z9Ca0I2xrgVA5DItx0KTH+Mhd1UUNb
- upFU2MzxRlKChR9a3h6uywEm+3UJwpp20bp4tEkNYCZ0Y9m6wxRR3GVDHgWZMKyazNK9jyoac
- Y2Xqw7MPvs4ATNDES0N2meqhj8VBg==
+        with ESMTP id S230424AbiJHRgF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 13:36:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7956641994;
+        Sat,  8 Oct 2022 10:35:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1448560A3D;
+        Sat,  8 Oct 2022 17:35:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6C436C43140;
+        Sat,  8 Oct 2022 17:35:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665250557;
+        bh=+HYIOfKT949yRsziiAzrqMf0Hmty6D5TRjoV/164bQ8=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=UbP8UndH9V07iX2gZ9FL8X2NiMMh4k31zXSb/u0fpmjmd1nYv32MCjEzV83FvW09R
+         IPu23qG/X+ms8EPbMQfO17aKAnSeeE/txQiuCAMav0uoKvl3joOcJCExRXHZb/dMwa
+         27tu9PTTTt0xl+nmSG81uO0lv+gwoXNIkKYnGOsfYo9PmiPIbuemoUP88kmHLuxDy6
+         ktA8r1GO2osFeMUHvnp4nUXCZ2BjpwgrT/umfnPkWUKkuGwhM12+M7xNIo8UqYC0KP
+         a1sakUiEn1gDok2AbIr9AU5TzUq3QrjQvZxNHYyJh6eKNnXX5nQXBdlT/jBEMbeUvm
+         lIZD1T2WIYzFA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 59742E2A05D;
+        Sat,  8 Oct 2022 17:35:57 +0000 (UTC)
+Subject: Re: [GIT PULL] clk changes for the merge window
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20221007205838.744794-1-sboyd@kernel.org>
+References: <20221007205838.744794-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20221007205838.744794-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: f9efefdba95a5110a1346bb03acdd8ff3cdf557f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: bdc753c7fcb4eb009ae246a188ea7ac6dac98ce1
+Message-Id: <166525055736.22843.659561760244146360.pr-tracker-bot@kernel.org>
+Date:   Sat, 08 Oct 2022 17:35:57 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Xu,
+The pull request you sent on Fri,  7 Oct 2022 13:58:38 -0700:
 
-Am 08.10.22 um 16:45 schrieb Xu Kuohai:
-> From: Xu Kuohai <xukuohai@huawei.com>
->
-> KASAN reports an out-of-bound access to raspberrypi_clk_variants[]:
->
-> ==================================================================
-> BUG: KASAN: global-out-of-bounds in raspberrypi_clk_probe+0x1dc/0x690
-> Read of size 1 at addr ffffcc7116d615a0 by task kworker/u8:0/8
->
-> CPU: 1 PID: 8 Comm: kworker/u8:0 Not tainted 6.0.0-rc3-00900-g08f4df4a3c53 raspberrypi#10
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-this kernel is a little bit older and doesn't contain bc163555603e 
-("clk: bcm: rpi: Prevent out-of-bounds access").
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/bdc753c7fcb4eb009ae246a188ea7ac6dac98ce1
 
-Can you please check Linux 6.0?
+Thank you!
 
-Best regards
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
