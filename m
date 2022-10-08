@@ -2,89 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A44DC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 04:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB47C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 07:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229379AbiJHEzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Oct 2022 00:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
+        id S229623AbiJHHvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Oct 2022 03:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiJHEzo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 00:55:44 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5022F9C7D4;
-        Fri,  7 Oct 2022 21:55:41 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Mkt936ccczkXvT;
-        Sat,  8 Oct 2022 12:53:11 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 8 Oct 2022 12:55:39 +0800
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 8 Oct 2022 12:55:38 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <linux-clk@vger.kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH] clk: at91: fix the build with binutils 2.27
-Date:   Sat, 8 Oct 2022 13:15:34 +0800
-Message-ID: <20221008051534.151392-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.35.3
+        with ESMTP id S229454AbiJHHvL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 03:51:11 -0400
+X-Greylist: delayed 449 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 08 Oct 2022 00:51:08 PDT
+Received: from cstnet.cn (smtp85.cstnet.cn [159.226.251.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DD534183BB;
+        Sat,  8 Oct 2022 00:51:08 -0700 (PDT)
+Received: from sunying$nj.iscas.ac.cn ( [96.47.239.249] ) by
+ ajax-webmail-APP-13 (Coremail) ; Sat, 8 Oct 2022 15:43:36 +0800 (GMT+08:00)
+X-Originating-IP: [96.47.239.249]
+Date:   Sat, 8 Oct 2022 15:43:36 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   =?UTF-8?B?5a2Z5rui?= <sunying@nj.iscas.ac.cn>
+To:     platform-driver-x86@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Should the "CONFIG_COMMON_CLK" configuration item be turned on by
+ default in Linux/x86 6.0.0?
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20220622(41e5976f)
+ Copyright (c) 2002-2022 www.mailtech.cn cnic.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
+Message-ID: <2b6514ef.3a9bc.183b68caf53.Coremail.sunying@nj.iscas.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: twCowAD3MZspKkFjzJgFAA--.56863W
+X-CM-SenderInfo: 5vxq5xdqj60y4olvutnvoduhdfq/1tbiAw8NAWNA4wCx6gAAsb
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is an issue when build with older versions of binutils 2.27.0,
-
-arch/arm/mach-at91/pm_suspend.S: Assembler messages:
-arch/arm/mach-at91/pm_suspend.S:1086: Error: garbage following instruction -- `ldr tmp1,=0x00020010UL'
-
-Use UL() macro to fix the issue in assembly file.
-
-Fixes: 4fd36e458392 ("ARM: at91: pm: add plla disable/enable support for sam9x60")
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- include/linux/clk/at91_pmc.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 3484309b59bf..4fc387d0335d 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -12,6 +12,8 @@
- #ifndef AT91_PMC_H
- #define AT91_PMC_H
- 
-+#include <vdso/bits.h>
-+
- #define AT91_PMC_V1		(1)			/* PMC version 1 */
- #define AT91_PMC_V2		(2)			/* PMC version 2 [SAM9X60] */
- 
-@@ -45,8 +47,8 @@
- #define	AT91_PMC_PCSR		0x18			/* Peripheral Clock Status Register */
- 
- #define AT91_PMC_PLL_ACR	0x18			/* PLL Analog Control Register [for SAM9X60] */
--#define		AT91_PMC_PLL_ACR_DEFAULT_UPLL	0x12020010UL	/* Default PLL ACR value for UPLL */
--#define		AT91_PMC_PLL_ACR_DEFAULT_PLLA	0x00020010UL	/* Default PLL ACR value for PLLA */
-+#define		AT91_PMC_PLL_ACR_DEFAULT_UPLL	UL(0x12020010)	/* Default PLL ACR value for UPLL */
-+#define		AT91_PMC_PLL_ACR_DEFAULT_PLLA	UL(0x00020010)	/* Default PLL ACR value for PLLA */
- #define		AT91_PMC_PLL_ACR_UTMIVR		(1 << 12)	/* UPLL Voltage regulator Control */
- #define		AT91_PMC_PLL_ACR_UTMIBG		(1 << 13)	/* UPLL Bandgap Control */
- 
--- 
-2.35.3
-
+SGksCkkgbm90aWNlZCB0aGF0IGluIHRoZSByZWNlbnQgbmV3IHZlcnNpb24gb2YgTGludXgveDg2
+IDYuMCwgdGhlIGNvbmZpZ3VyYXRpb24gaXRlbSAiQ09ORklHX0NPTU1PTl9DTEsiIGlzIHR1cm5l
+ZCBvZmYgYnkgZGVmYXVsdCwgd2hpbGUgaXQgd2FzIHVzdWFsbHkgdHVybmVkIG9uIGluIHByZXZp
+b3VzIHZlcnNpb25zLCBpcyB0aGVyZSBhbnkgcGFydGljdWxhciByZWFzb24gZm9yIHRoaXM/IE9y
+IGhhcyBpdCBiZWVuIGZvcmdvdHRlbj8KClRoYW5rcyEKCg==
