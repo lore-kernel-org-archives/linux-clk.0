@@ -2,99 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E017C433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 03:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A44DC433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 04:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbiJHDp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Oct 2022 23:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
+        id S229379AbiJHEzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Oct 2022 00:55:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiJHDpS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Oct 2022 23:45:18 -0400
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570883385D;
-        Fri,  7 Oct 2022 20:45:10 -0700 (PDT)
-X-QQ-mid: bizesmtp83t1665200686tzpdo9vx
-Received: from [192.168.0.179] ( [113.85.219.225])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Sat, 08 Oct 2022 11:44:44 +0800 (CST)
-X-QQ-SSF: 0100000000000070B000000A0000000
-X-QQ-FEAT: 5q30pvLz2icsEuufAGCipRcNEAph5F1NreXxmwTiOB81pjLvIeHTUCJHoejvj
-        xszPS/H7HnRPCCwPI76Wy6OgloCXqv3WBfz+JCNR6CvwHY8jIiK7OaSs4BSz3FHgyDWm18M
-        oaRfvlN9I9TAJ/2luWIMMslqd4pAJ145pQsI/sT7o95rfvr4YXDu0luZFoV6fOraDZRqXO0
-        L26Ewd0+jc8P1Z3CUfFEnzxgZ9lx63QvxRxuB6Dz+LQUh7b5oTbz6pQNde69BTIYZ8u+HBX
-        Ci8t6uuccQ+2QZ4hm7IqzvkW5164wMP8NVGAMap/WQup2FhDKWi5GRwuHDBVd1GVM0KjYIT
-        s3RB1I3QAnJPYSb7Io2o/DVdiLtoOjnthc396jbELnR/+r20Y1tyoa9xl8g70IipdeIRQDt
-X-QQ-GoodBg: 0
-Message-ID: <394AB2D3535D9461+093b7754-53cb-87c7-8f0e-68326a1ab3c5@linux.starfivetech.com>
-Date:   Sat, 8 Oct 2022 11:44:43 +0800
+        with ESMTP id S229472AbiJHEzo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 00:55:44 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5022F9C7D4;
+        Fri,  7 Oct 2022 21:55:41 -0700 (PDT)
+Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Mkt936ccczkXvT;
+        Sat,  8 Oct 2022 12:53:11 +0800 (CST)
+Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
+ dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 8 Oct 2022 12:55:39 +0800
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 8 Oct 2022 12:55:38 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <linux-clk@vger.kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH] clk: at91: fix the build with binutils 2.27
+Date:   Sat, 8 Oct 2022 13:15:34 +0800
+Message-ID: <20221008051534.151392-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 01/30] dt-bindings: riscv: Add StarFive JH7110 bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929143225.17907-2-hal.feng@linux.starfivetech.com>
- <5cd77839-d75b-9290-5d34-90d6464938d6@linaro.org>
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <5cd77839-d75b-9290-5d34-90d6464938d6@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 29 Sep 2022 16:34:22 +0200, Krzysztof Kozlowski wrote:
-> On 29/09/2022 16:31, Hal Feng wrote:
-> > From: Emil Renner Berthing <kernel@esmil.dk>
-> 
-> Drop last "bindings" from subject, it's redundant.
+There is an issue when build with older versions of binutils 2.27.0,
 
-Will fix. Thanks.
+arch/arm/mach-at91/pm_suspend.S: Assembler messages:
+arch/arm/mach-at91/pm_suspend.S:1086: Error: garbage following instruction -- `ldr tmp1,=0x00020010UL'
 
-> 
-> > 
-> > Add device tree bindings for the StarFive JH7110 RISC-V SoC and the
-> > VisionFive2 board for it.
-> > 
-> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> > ---
-> >  Documentation/devicetree/bindings/riscv/starfive.yaml | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml b/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > index 5b36243fd674..543be573921d 100644
-> > --- a/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > +++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
-> > @@ -21,6 +21,9 @@ properties:
-> >        - items:
-> >            - const: beagle,beaglev-starlight-jh7100-r0
-> >            - const: starfive,jh7100
-> 
-> Blank line.
+Use UL() macro to fix the issue in assembly file.
 
-Will fix. Thanks.
+Fixes: 4fd36e458392 ("ARM: at91: pm: add plla disable/enable support for sam9x60")
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ include/linux/clk/at91_pmc.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Best Regards,
-Hal
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 3484309b59bf..4fc387d0335d 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -12,6 +12,8 @@
+ #ifndef AT91_PMC_H
+ #define AT91_PMC_H
+ 
++#include <vdso/bits.h>
++
+ #define AT91_PMC_V1		(1)			/* PMC version 1 */
+ #define AT91_PMC_V2		(2)			/* PMC version 2 [SAM9X60] */
+ 
+@@ -45,8 +47,8 @@
+ #define	AT91_PMC_PCSR		0x18			/* Peripheral Clock Status Register */
+ 
+ #define AT91_PMC_PLL_ACR	0x18			/* PLL Analog Control Register [for SAM9X60] */
+-#define		AT91_PMC_PLL_ACR_DEFAULT_UPLL	0x12020010UL	/* Default PLL ACR value for UPLL */
+-#define		AT91_PMC_PLL_ACR_DEFAULT_PLLA	0x00020010UL	/* Default PLL ACR value for PLLA */
++#define		AT91_PMC_PLL_ACR_DEFAULT_UPLL	UL(0x12020010)	/* Default PLL ACR value for UPLL */
++#define		AT91_PMC_PLL_ACR_DEFAULT_PLLA	UL(0x00020010)	/* Default PLL ACR value for PLLA */
+ #define		AT91_PMC_PLL_ACR_UTMIVR		(1 << 12)	/* UPLL Voltage regulator Control */
+ #define		AT91_PMC_PLL_ACR_UTMIBG		(1 << 13)	/* UPLL Bandgap Control */
+ 
+-- 
+2.35.3
 
