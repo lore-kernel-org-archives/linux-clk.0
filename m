@@ -2,68 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CB6C4321E
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 17:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3ACFC433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 18:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbiJHRgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Oct 2022 13:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55398 "EHLO
+        id S230499AbiJHSIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Oct 2022 14:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbiJHRgF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 13:36:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7956641994;
-        Sat,  8 Oct 2022 10:35:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1448560A3D;
-        Sat,  8 Oct 2022 17:35:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6C436C43140;
-        Sat,  8 Oct 2022 17:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665250557;
-        bh=+HYIOfKT949yRsziiAzrqMf0Hmty6D5TRjoV/164bQ8=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=UbP8UndH9V07iX2gZ9FL8X2NiMMh4k31zXSb/u0fpmjmd1nYv32MCjEzV83FvW09R
-         IPu23qG/X+ms8EPbMQfO17aKAnSeeE/txQiuCAMav0uoKvl3joOcJCExRXHZb/dMwa
-         27tu9PTTTt0xl+nmSG81uO0lv+gwoXNIkKYnGOsfYo9PmiPIbuemoUP88kmHLuxDy6
-         ktA8r1GO2osFeMUHvnp4nUXCZ2BjpwgrT/umfnPkWUKkuGwhM12+M7xNIo8UqYC0KP
-         a1sakUiEn1gDok2AbIr9AU5TzUq3QrjQvZxNHYyJh6eKNnXX5nQXBdlT/jBEMbeUvm
-         lIZD1T2WIYzFA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 59742E2A05D;
-        Sat,  8 Oct 2022 17:35:57 +0000 (UTC)
-Subject: Re: [GIT PULL] clk changes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221007205838.744794-1-sboyd@kernel.org>
-References: <20221007205838.744794-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221007205838.744794-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: f9efefdba95a5110a1346bb03acdd8ff3cdf557f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bdc753c7fcb4eb009ae246a188ea7ac6dac98ce1
-Message-Id: <166525055736.22843.659561760244146360.pr-tracker-bot@kernel.org>
-Date:   Sat, 08 Oct 2022 17:35:57 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        with ESMTP id S230498AbiJHSIe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 14:08:34 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D7D3FEF3;
+        Sat,  8 Oct 2022 11:08:32 -0700 (PDT)
+X-QQ-mid: bizesmtp80t1665252455teb5lj67
+Received: from [192.168.0.179] ( [113.85.219.225])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sun, 09 Oct 2022 02:07:32 +0800 (CST)
+X-QQ-SSF: 0100000000000070B000B00A0000000
+X-QQ-FEAT: jbaoaN/hLKIC5Yj0V619849HMTLVRPFKWybSzNavB7OliimAOyl1ZwZtGg9e8
+        qwWewiQWj4ugjzP4iZ12K1krk/nn6bbb+Ux+60fHDpHJM/NUhqM+kKexBclIBdU89f1f3OE
+        73escGs/FVIiTvhkD34943Am9PYMQz3B6NZViXJ4ZhpmLBLK6tOUXEtKoTIHQnfE/cKuZZS
+        r38BoyBxUZeLJ3PtCiJTg718u3cK0WWXtfO6zmuj/OCuzK8BaSuD3IFd4znibi33aAM7tzz
+        uEb7iiBfn6JzoYVED9oKy4CqhzNzlsFDdF84vKrNmOlDX8CyCz70DLtbLIYfZ02W355lSGY
+        v9s88bVWo1NYpOWs8N/yQAA+I+C6SXNGXBsIdx/
+X-QQ-GoodBg: 0
+Message-ID: <D431E7AF8892354C+5445265a-92e0-59eb-b0ab-98c053543015@linux.starfivetech.com>
+Date:   Sun, 9 Oct 2022 02:07:31 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 05/30] soc: sifive: l2 cache: Convert to platform
+ driver
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org, Zong Li <zong.li@sifive.com>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929143225.17907-6-hal.feng@linux.starfivetech.com>
+ <40d0abb6-88dc-d315-f768-27a623f60986@sifive.com>
+ <CAJM55Z-PzvM_-_6jTWX+Jyy2FQ3TJdh4uYj0evpktnEENHL6WA@mail.gmail.com>
+ <4d8a199b-f22a-a421-aae4-64e538cb97f4@codethink.co.uk>
+ <CAJM55Z8QN1CeknrP9nyh9ei4EFQT_VKfTTi6uH5ssE3rqW5OdA@mail.gmail.com>
+ <Yz2PDy9dkuwqyrR4@spud>
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <Yz2PDy9dkuwqyrR4@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri,  7 Oct 2022 13:58:38 -0700:
+On Wed, 5 Oct 2022 15:05:03 +0100, Conor Dooley wrote:
+> On Wed, Oct 05, 2022 at 03:55:17PM +0200, Emil Renner Berthing wrote:
+> > On Wed, 5 Oct 2022 at 15:48, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> > >
+> > > On 05/10/2022 14:44, Emil Renner Berthing wrote:
+> > > > On Thu, 29 Sept 2022 at 19:59, Ben Dooks <ben.dooks@sifive.com> wrote:
+> > > >>
+> > > >> On 29/09/2022 15:32, Hal Feng wrote:
+> > > >>> From: Emil Renner Berthing <kernel@esmil.dk>
+> > > >>>
+> > > >>> This converts the driver to use the builtin_platform_driver_probe macro
+> > > >>> to initialize the driver. This macro ends up calling device_initcall as
+> > > >>> was used previously, but also allocates a platform device which gives us
+> > > >>> access to much nicer APIs such as platform_ioremap_resource,
+> > > >>> platform_get_irq and dev_err_probe.
+> > > >>
+> > > >> This is useful, but also there are other changes currently being sorted
+> > > >> out by Zong Li (cc'd into this message) which have already been reviewed
+> > > >> and are hopefully queued for the next kernel release.
+> > > >>
+> > > >>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > > >>> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> > > >
+> > > > I'm ok with something like this being merged, but please note that if
+> > > > we ever want to support the JH7100 which uses registers in this
+> > > > peripheral to flush the cache for its non-coherent DMAs then this
+> > > > driver needs to be loaded before other peripherals or we will trigger
+> > > > the 2nd warning in arch/riscv/mm/dma-noncoherent.c. I'm not sure we
+> > > > can do that when it's a platform driver. See this patch for an
+> > > > alternative to support the JH71x0s:
+> > > > https://github.com/esmil/linux/commit/9c5b29da56ae29159c9572c5bb195fe3a1b535c5
+> > > >
+> > > > /Emil
+> > >
+> > > Are you replying to your own patch that does the conversion to
+> > > platform driver and then saying that it could actually cause
+> > > issues?
+> > 
+> > Yes, I can see it seems odd, but this patch lived for a while in the
+> > kernel repo for the JH7100 until I rebased on 6.0-rc1 and realized the
+> > above.
+> > Hal Feng must have based his patches on a version of the code before
+> > that when preparing this series.
+> > 
+> > > I'm all for dropping this for the moment and keeping the old
+> > > early init for the ccache.
+> > 
+> > Cool.
+> 
+> FWIW, if converting to a platform driver will inhibit using the driver
+> for doing non-coherent stuff I would like to NAK the patch :)
+> 
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+Yeah, I agree, and this patch will be dropped on the next version.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bdc753c7fcb4eb009ae246a188ea7ac6dac98ce1
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
