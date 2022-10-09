@@ -2,94 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A3DC433FE
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 03:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDF1C4332F
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 06:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbiJIDe2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Oct 2022 23:34:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58902 "EHLO
+        id S229876AbiJIGu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Oct 2022 02:50:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiJIDe2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 23:34:28 -0400
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEA462FFF5;
-        Sat,  8 Oct 2022 20:34:25 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.153])
-        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MlSK65KPzz6PFm6;
-        Sun,  9 Oct 2022 11:32:10 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-        by APP4 (Coremail) with SMTP id gCh0CgAn6ok+QUJj8HL8Bw--.16153S2;
-        Sun, 09 Oct 2022 11:34:23 +0800 (CST)
-Message-ID: <64aedb51-b0b4-d412-b5ad-67d50f12ad8b@huaweicloud.com>
-Date:   Sun, 9 Oct 2022 11:34:22 +0800
+        with ESMTP id S229761AbiJIGu4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 02:50:56 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2206018B28;
+        Sat,  8 Oct 2022 23:50:55 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id b2so19117792eja.6;
+        Sat, 08 Oct 2022 23:50:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bh4NpXCRtCPTFCCfEYg95xQBrtPC7IO1mZ2P42HJVfA=;
+        b=GZ6/3TP/0YTkbqfbZ5rcwb7ow+Bfvj8xAPmwCA0qiK+SbH5/QvqG7IGtedNtwzyIp7
+         YWS96XLptPaF/Cnf16DJHvnbnOpstzuyrfJchrdTGfyyzlqjTtAxkyRnZUhS+c83aVtT
+         QRkS5gOHeftM1qpbp9raNFiY2nCfzu8rcFhLoMwvLQ9End/9fc/5h38Quer23uIFZVfk
+         Bm+nOrCzsK5uMHTGiPOwbRuCi6/9L0GOUR6MS8JukMvtG/TTr/pCw97BXoOi1mPdSIbX
+         oqnv2nPRJHpOOSPBv6jwEr1V6lg4ljG7Yyi+w6SL0mQggPAd47j9q3M8kRfiGHzzwzLJ
+         HvsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bh4NpXCRtCPTFCCfEYg95xQBrtPC7IO1mZ2P42HJVfA=;
+        b=GFQ7dPgOiuN0zZxTpSLxhqyITYnoYkkSGoA6kMp2t5IXdmOugk7LPoyOhH7Jj1omBI
+         aWQj4/fkpXsHIC8niNCmqTCP1UJWbYlOY90ul6yctLe+GVwV6w5X0EBhkeJABlpl/eLm
+         QjZ6KwzDIodAMPWfH5QQbM1J2UIOyPyP2mEIL1JbEgNzdSNrQXgyaG36PYUkVTLwxD+t
+         rdLsMlI0YVHMxsyhBPDzs6xlsV5ZPo4WtHq5+sgyaLz7SkyR7jhTIAcxI2BbGGY3hL05
+         Q1IMldCDrBqsija5ivamkTA/A15PtMDog2H1C6UnKIl4oEEjmwcdVFHrV08y3lZpJnKx
+         2g+w==
+X-Gm-Message-State: ACrzQf0nl7OPTomfRhqYD7eeUapkDtVmaHuWi7HjgXDfdnGCp+McUdWH
+        xLQwAHUs6mV+hEzFa5+izvf0hgfIIWpgv5NYLZ8=
+X-Google-Smtp-Source: AMsMyM6Ra8JdRHgIpw/VcybC7lfZZVTD0cayKcHNWs+sta2G6ZPOnxkApw2rqVadP8ZV+QG+SvtE5Bb15JyMTtBpNXw=
+X-Received: by 2002:a17:906:ef8c:b0:78d:96b9:a0ad with SMTP id
+ ze12-20020a170906ef8c00b0078d96b9a0admr4638412ejb.529.1665298253581; Sat, 08
+ Oct 2022 23:50:53 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] clk: bcm: rpi: Fix an out-of-bound access to
- raspberrypi_clk_variants
-Content-Language: en-US
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Xu Kuohai <xukuohai@huawei.com>
-References: <20221008144544.283945-1-xukuohai@huaweicloud.com>
- <bce9efac-15a8-75e5-6f3f-bc62e33d0184@i2se.com>
-From:   Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <bce9efac-15a8-75e5-6f3f-bc62e33d0184@i2se.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: gCh0CgAn6ok+QUJj8HL8Bw--.16153S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruryUtw18uw13Xw48ur13twb_yoW3KrX_u3
-        Z0vFZrWrnrXw15trnrAFnxWr1DXr93AFy5t3yUAr43Crn7Xw1kArykG3WrGFyrGrsrJw1U
-        Jr1jka17J3ZIqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-        07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-        7IU1zuWJUUUUU==
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
-X-CFilter-Loop: Reflected
+References: <20221007084524.10712-1-jonathanh@nvidia.com> <Yz/9wrmdRQTAhIgS@orome>
+In-Reply-To: <Yz/9wrmdRQTAhIgS@orome>
+From:   Thomas Graichen <thomas.graichen@googlemail.com>
+Date:   Sun, 9 Oct 2022 08:50:41 +0200
+Message-ID: <CAOUEw12uicu=PDb9N7vCumKbePguHkLO=MBkcPmGnxHNtMN0tA@mail.gmail.com>
+Subject: Re: [PATCH V2] clk: tegra: Fix Tegra PWM parent clock
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/9/2022 1:07 AM, Stefan Wahren wrote:
-> Hi Xu,
-> 
-> Am 08.10.22 um 16:45 schrieb Xu Kuohai:
->> From: Xu Kuohai <xukuohai@huawei.com>
->>
->> KASAN reports an out-of-bound access to raspberrypi_clk_variants[]:
->>
->> ==================================================================
->> BUG: KASAN: global-out-of-bounds in raspberrypi_clk_probe+0x1dc/0x690
->> Read of size 1 at addr ffffcc7116d615a0 by task kworker/u8:0/8
->>
->> CPU: 1 PID: 8 Comm: kworker/u8:0 Not tainted 6.0.0-rc3-00900-g08f4df4a3c53 raspberrypi#10
-> 
-> this kernel is a little bit older and doesn't contain bc163555603e ("clk: bcm: rpi: Prevent out-of-bounds access").
-> 
-> Can you please check Linux 6.0?
-> 
+On Fri, Oct 7, 2022 at 12:21 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Fri, Oct 07, 2022 at 09:45:24AM +0100, Jon Hunter wrote:
+> > Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
+> > the period calculation in the Tegra PWM driver and now returns an error
+> > if the period requested is less than minimum period supported. This is
+> > breaking PWM support on various Tegra platforms. For example, on the
+> > Tegra210 Jetson Nano platform this is breaking the PWM fan support and
+> > probing the PWM fan driver now fails ...
+> >
+> >  pwm-fan pwm-fan: Failed to configure PWM: -22
+> >  pwm-fan: probe of pwm-fan failed with error -22
+> >
+> > The problem is that the default parent clock for the PWM on Tegra210 is
+> > a 32kHz clock and is unable to support the requested PWM period.
+> >
+> > Fix PWM support on Tegra20, Tegra30, Tegra124 and Tegra210 by updating
+> > the parent clock for the PWM to be the PLL_P.
+> >
+> > Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > ---
+> >
+> > I have tested this on Tegra210 and boot tested on the Tegra20/30/124
+> > platforms but please confirm if this fixes all the issues seen on these
+> > platforms.
+> >
+> >  drivers/clk/tegra/clk-tegra124.c | 1 +
+> >  drivers/clk/tegra/clk-tegra20.c  | 1 +
+> >  drivers/clk/tegra/clk-tegra210.c | 1 +
+> >  drivers/clk/tegra/clk-tegra30.c  | 1 +
+> >  4 files changed, 4 insertions(+)
+>
+> Thomas, can you check this on Nyan where you were observing display to
+> be completely broken? In case you don't have this in your mailbox, see
+> here:
+>
+>         http://patchwork.ozlabs.org/project/linux-tegra/patch/20221007084524.10712-1-jonathanh@nvidia.com/
+>
+> Thierry
 
-Yes, the kernel branch I used was not updated, and the KASAN warning was gone after switching to 6.0 kernel, thanks.
+hi thierry,
 
-> Best regards
-> 
+i can confirm that this also fixes the problem on the tegra124 nyan chromebook.
+backlight is working fine and can also be adjusted properly with this
+patch applied
+(and my revert of the breaking pwm optimization commit removed beforehand)
 
+thanks a lot ... thus
+
+Tested-by: Thomas Graichen <thomas.graichen@gmail.com>
+
+best wishes - thomas
+
+> > diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+> > index a9d4efcef2d4..6c46592d794e 100644
+> > --- a/drivers/clk/tegra/clk-tegra124.c
+> > +++ b/drivers/clk/tegra/clk-tegra124.c
+> > @@ -1330,6 +1330,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
+> >       { TEGRA124_CLK_I2S3_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
+> >       { TEGRA124_CLK_I2S4_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
+> >       { TEGRA124_CLK_VIMCLK_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
+> > +     { TEGRA124_CLK_PWM, TEGRA124_CLK_PLL_P, 408000000, 0 },
+> >       /* must be the last entry */
+> >       { TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0 },
+> >  };
+> > diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> > index 8a4514f6d503..422d78247553 100644
+> > --- a/drivers/clk/tegra/clk-tegra20.c
+> > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > @@ -1044,6 +1044,7 @@ static struct tegra_clk_init_table init_table[] = {
+> >       { TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >       { TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >       { TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > +     { TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
+> >       /* must be the last entry */
+> >       { TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> >  };
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 499f999e91e1..a3488aaac3f7 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -3597,6 +3597,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+> >       { TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+> >       { TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
+> >       { TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
+> > +     { TEGRA210_CLK_PWM, TEGRA210_CLK_PLL_P, 48000000, 0 },
+> >       /* This MUST be the last entry. */
+> >       { TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+> >  };
+> > diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+> > index 168c07d5a5f2..60f1534711f1 100644
+> > --- a/drivers/clk/tegra/clk-tegra30.c
+> > +++ b/drivers/clk/tegra/clk-tegra30.c
+> > @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_table[] = {
+> >       { TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+> >       { TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
+> >       { TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
+> > +     { TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
+> >       /* must be the last entry */
+> >       { TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
+> >  };
+> > --
+> > 2.25.1
+> >
