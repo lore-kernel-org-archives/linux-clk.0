@@ -2,91 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5A2C43217
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Oct 2022 18:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7A9C433FE
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 02:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbiJHS7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Oct 2022 14:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43098 "EHLO
+        id S229527AbiJICvf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Oct 2022 22:51:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229926AbiJHS5w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 14:57:52 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D736042E7A;
-        Sat,  8 Oct 2022 11:55:58 -0700 (PDT)
-X-QQ-mid: bizesmtp88t1665255258tpzq9y8b
-Received: from [192.168.0.179] ( [113.85.219.225])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Sun, 09 Oct 2022 02:54:17 +0800 (CST)
-X-QQ-SSF: 0100000000200090B000B00A0000000
-X-QQ-FEAT: 2aB7Y8UOkmPkPMNeCU9D3ga5YoRbEIqL1KC8KFDdIkY5MNJpOgc3ZKG/gxh+q
-        tIyW3rJ0wzkKyCuqCwoV2xIymEMWMJR/4HtKSUyu9CcbfHPW2xl6doxSioe1Aq4sNtqB7Sl
-        BrSm/RhQbI7TXLjPpS7BHqE519HdiFmr0p5w2bcojiCUgvNJUJVkXdVypW3hsrfcjtXMFLR
-        VGSCOGgc2XZitLhR9u+wbmZTKeHiUSt9IoO86ERYSRJ9Q54pVg27NKhvLjjQsysXCkNiTRY
-        dQcuk2HrH6f2vaB154XQi22zeSyIutnuoqgtSBv/VrT0luU4VeVcZV2v1WkWCPMr2mpC8tT
-        xBNm/NlHq30bjtNhU3Mr6Ov5UNtMVhFiFrSG0nMyypZH2m2dlCTK6G1ilkXcA==
-X-QQ-GoodBg: 0
-Message-ID: <F3EFC1097B3F50DD+9675984c-d18b-f70e-1e07-715c7ce23836@linux.starfivetech.com>
-Date:   Sun, 9 Oct 2022 02:54:15 +0800
+        with ESMTP id S229459AbiJICve (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2022 22:51:34 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 870A113CFB
+        for <linux-clk@vger.kernel.org>; Sat,  8 Oct 2022 19:51:32 -0700 (PDT)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MlRML1FYpzrS9Y;
+        Sun,  9 Oct 2022 10:49:02 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sun, 9 Oct 2022 10:51:30 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Sun, 9 Oct
+ 2022 10:51:29 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+CC:     <angelogioacchino.delregno@collabora.com>, <wenst@chromium.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <yangyingliang@huawei.com>
+Subject: [PATCH] clk: mediatek: clk-mt8195-topckgen: Fix error return code in clk_mt8195_topck_probe()
+Date:   Sun, 9 Oct 2022 10:50:56 +0800
+Message-ID: <20221009025056.35311-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 04/30] dt-bindings: sifive-l2-cache: Support StarFive
- JH71x0 SoCs
-Content-Language: en-US
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929143225.17907-5-hal.feng@linux.starfivetech.com>
- <YzW60PDwnJ7GeLYK@spud>
- <b2880b7b-c50d-9161-4278-615cf66c2094@codethink.co.uk>
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <b2880b7b-c50d-9161-4278-615cf66c2094@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 3 Oct 2022 10:26:44 +0100, Ben Dooks wrote:
-> On 29/09/2022 16:33, Conor Dooley wrote:
-> > On Thu, Sep 29, 2022 at 10:31:59PM +0800, Hal Feng wrote:
-> >> From: Emil Renner Berthing <kernel@esmil.dk>
-> >>
-> >> This cache controller is also used on the StarFive JH7100 and JH7110
-> >> SoCs.
-> >
-> > Ditto this patch, hopefully [0] will have landed as 6.1 material
-> > before you get around to an actual v2.
-> >
-> > Thanks,
-> > Conor
-> >
-> > 0 - https://lore.kernel.org/linux-riscv/20220913061817.22564-1-zong.li@sifive.com/
-> 
-> Also, the l2 cache is being proprely named the ccache (composable cache)
-> as it is not necessarily an L2 cache.
-> 
+If devm_clk_hw_register_mux() fails in clk_mt8195_topck_probe(), it should return
+error code.
 
-Thanks for reminding. I will modify the code, based on the patches from Zong Li.
-I hope his patch series will be merged as soon as possible.
+Fixes: deeb2af77cf6 ("clk: mediatek: clk-mt8195-topckgen: Register mfg_ck_fast_ref as generic mux")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/clk/mediatek/clk-mt8195-topckgen.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Best regards,
-Hal
+diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+index 8cbab5ca2e58..1e016329c1d2 100644
+--- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
++++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+@@ -1270,8 +1270,10 @@ static int clk_mt8195_topck_probe(struct platform_device *pdev)
+ 	hw = devm_clk_hw_register_mux(&pdev->dev, "mfg_ck_fast_ref", mfg_fast_parents,
+ 				      ARRAY_SIZE(mfg_fast_parents), CLK_SET_RATE_PARENT,
+ 				      (base + 0x250), 8, 1, 0, &mt8195_clk_lock);
+-	if (IS_ERR(hw))
++	if (IS_ERR(hw)) {
++		r = PTR_ERR(hw);
+ 		goto unregister_muxes;
++	}
+ 	top_clk_data->hws[CLK_TOP_MFG_CK_FAST_REF] = hw;
+ 
+ 	r = clk_mt8195_reg_mfg_mux_notifier(&pdev->dev,
+-- 
+2.25.1
+
