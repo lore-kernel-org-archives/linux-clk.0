@@ -2,110 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B22C4332F
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 21:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EA5C433FE
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 23:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230198AbiJIVVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Oct 2022 17:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34928 "EHLO
+        id S231747AbiJIXjg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Oct 2022 19:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231834AbiJIVUo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 17:20:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0B01057E;
-        Sun,  9 Oct 2022 14:20:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3B14DB80DC3;
-        Sun,  9 Oct 2022 21:20:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 426AFC433C1;
-        Sun,  9 Oct 2022 21:20:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665350440;
-        bh=5SBLnG/2JbsEn6gA0IetOD5ieNSX8nb8zt7W8D8p3tA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kSMfViCr/ZxMMoF/vVbns7y/c5BIXwC96c1QdHUX+TaJtsvWzvPgMRlV/21Ctjnib
-         9OyE95iqlKy45b6s1QCnpW1lVI0FrrHdddaMQnguVuo1Q8gkRrYNSO139o/ERPKezl
-         JE0vAje5afI/vwHdCON/mx80MVg1uMbxNmD5rD0YNtety1MOSDxzZRpYS9lWRkXKPj
-         Z/0Dt2BbfRD29uOa4x2GUSjMD/KIb8gZN0J/w3+ofjyQaG+TY2y0WZTMCwkBy2cLxJ
-         9ZGxflzqJI9eiCHYBi9NFzwPQc6Yuz/wWc/TIYKp/sfBmSqCYQW0NCvSArGAllOveX
-         YAYX73LJeVn0w==
-Date:   Sun, 9 Oct 2022 23:20:37 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: renesas: r8a779g0: Add SASYNCPER clocks
-Message-ID: <Y0M7JVPVmrudEvZI@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S231956AbiJIXjP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 19:39:15 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34DEB54664;
+        Sun,  9 Oct 2022 16:11:49 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id j7so14685761wrr.3;
+        Sun, 09 Oct 2022 16:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U1bkhRQ7/jPIkaHRJ7girtIbPjIJaxx203KJgdRDChc=;
+        b=JNtxh0hYDoXW9ou4JWj/vFYaQ2ZTm9aGvty4VGskjC2HVJj8/C9P1J5Pl8FS3Jbbi+
+         P2OmQ5SmPmLK7d0En3WUqJuURHJWEDxVYxVVrWn1CjM2wTYLgADMXJBwTvW1dIqScf8r
+         FqT6JZl/lgomWNY8z8y0ew9PLiXhBkmu7BBCDiOczXsYX33wJDIN/1nJ4A3y1suRlNfQ
+         d39WW+AoKKlqePLbHrbnCD2myYmdkpo+CB2nGWXSw+3plnfHkA9EezQMXp8qVc8G7k2p
+         Yp7BU2Vr5jD+xbMfFGFdgHT94Po/LtX0pXvKjAyuho4Fj4sjydwFoheM/vqNpXpzQY9d
+         X5WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U1bkhRQ7/jPIkaHRJ7girtIbPjIJaxx203KJgdRDChc=;
+        b=INHFutOK9EkZS/AKgF3UFMTSegoAHmfAHSCJ8/kwUtFQLvY2gYeCE6IcXJ6kWy3nS4
+         q++97EncOaegpwUB7dcQxMqO0ontdJdm6WO1tdbwzO14cDrw4x+CA9JGhWi+CektqgR0
+         fhvYTd1GFbyJwZMwFTGgeRG5cmMX4W2dE2vlR9c99XtKOEjIaYDYnnLbuEGVof9R1PRi
+         XFocVE4kTJB5pslbzyEwtqY9y5yN3gJnj0/7bFGeDoWbjZ6kGHV+v3zWqA3n54WreD8E
+         dqMlfp75o121IPMgLa1DBORMC9pijRPmo+sUjv6AldWMBwJ72SUaVM6lxKL39F+91bvG
+         JLNQ==
+X-Gm-Message-State: ACrzQf0QZ5enfDYECrl1BThzZRhc/M2YaYzM84EJ9FWjvFwXIeBPtpE5
+        sfN0VgFF6/SqbqnAhr/act4qm8+NDK4AAQ==
+X-Google-Smtp-Source: AMsMyM49TiJ/0uOIBJj61lS8T0GjTx7ud6k+Iik8Bw+tOdmOVw8Ap/0Z5Ncfo3GxnmvvLAEcwRG69g==
+X-Received: by 2002:a5d:5744:0:b0:22d:9b90:a8fe with SMTP id q4-20020a5d5744000000b0022d9b90a8femr9619872wrw.144.1665357032502;
+        Sun, 09 Oct 2022 16:10:32 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:e4:5cde:80ab:dfd4])
+        by smtp.gmail.com with ESMTPSA id w9-20020a1cf609000000b003b332a7b898sm8458981wmc.45.2022.10.09.16.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Oct 2022 16:10:31 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cover.1665147497.git.geert+renesas@glider.be>
- <d0f35c35e1f96c5a649ab477e7ba5d8025957cd0.1665147497.git.geert+renesas@glider.be>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a07g044: Drop WDT2 clock and reset entry
+Date:   Mon, 10 Oct 2022 00:10:13 +0100
+Message-Id: <20221009231013.14791-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y5AJyrcNjBbPAWBA"
-Content-Disposition: inline
-In-Reply-To: <d0f35c35e1f96c5a649ab477e7ba5d8025957cd0.1665147497.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---y5AJyrcNjBbPAWBA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+WDT CH2 is specifically to check the operation of Cortex-M33 CPU and if
+used from CA55 CPU would result in an unexpected behaviour. Hence drop
+WDT2 clock and reset entries.
 
-Hi Geert,
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Note, this patch applies on top of [0].
 
-> +	DEF_FIXED("sasyncperd1",R8A779G0_CLK_SASYNCPERD1, CLK_SASYNCPER,1, 1),
-> +	DEF_FIXED("sasyncperd2",R8A779G0_CLK_SASYNCPERD2, CLK_SASYNCPER,2, 1),
-> +	DEF_FIXED("sasyncperd4",R8A779G0_CLK_SASYNCPERD4, CLK_SASYNCPER,4, 1),
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221005111855.553436-1-biju.das.jz@bp.renesas.com/
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Some spaces missing after the commas.
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 12b1a83625cb..f5550fccb029 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -182,7 +182,7 @@ static const struct {
+ };
+ 
+ static const struct {
+-	struct rzg2l_mod_clk common[77];
++	struct rzg2l_mod_clk common[75];
+ #ifdef CONFIG_CLK_R9A07G054
+ 	struct rzg2l_mod_clk drp[0];
+ #endif
+@@ -224,10 +224,6 @@ static const struct {
+ 					0x548, 2),
+ 		DEF_MOD("wdt1_clk",	R9A07G044_WDT1_CLK, R9A07G044_OSCCLK,
+ 					0x548, 3),
+-		DEF_MOD("wdt2_pclk",	R9A07G044_WDT2_PCLK, R9A07G044_CLK_P0,
+-					0x548, 4),
+-		DEF_MOD("wdt2_clk",	R9A07G044_WDT2_CLK, R9A07G044_OSCCLK,
+-					0x548, 5),
+ 		DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
+ 					0x550, 0),
+ 		DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
+@@ -366,7 +362,6 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_POEG_D_RST, 0x844, 3),
+ 	DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
+ 	DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
+-	DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
+ 	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
+ 	DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
+-- 
+2.25.1
 
-But my main issue is that we have it a little different for S4-8:
-
-112         DEF_FIXED("sasyncperd1", R8A779F0_CLK_SASYNCPERD1, CLK_PLL5_DIV4, 3, 1),
-113         DEF_FIXED("sasyncperd2", R8A779F0_CLK_SASYNCPERD2, R8A779F0_CLK_SASYNCPERD1, 2, 1),
-114         DEF_FIXED("sasyncperd4", R8A779F0_CLK_SASYNCPERD4, R8A779F0_CLK_SASYNCPERD1, 4, 1),
-
-So, no CLK_SASYNCPER at all because R8A779G0_CLK_SASYNCPERD1 divides
-PLL5 directly. I don't mind which version we use but I think it should
-be consistent because the diagram looks the same in the specs. What do
-you think?
-
-I'll have a look at your other patches tomorrow.
-
-Thanks and happy hacking,
-
-   Wolfram
-
-
---y5AJyrcNjBbPAWBA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNDOyUACgkQFA3kzBSg
-KbZLlw/+Ix2Lk4UhEVnvR6VgDGKscyMeEfUDYwmdSz+Y21xDSniqyLye89yMvOc0
-DHNu2P6D8zv5y5EBt2+ZjrbUxusUNNhxj2hmN5l9GSYaUIUfI8zIOWX92BV1GNUO
-9g4VHymlHGDF0xm87i92bCYC2zfn4X3mQEKnjPqEnSI8r0UmYv+zKDwqmes16KeP
-zV+fVsnOI5te/KHbCXy5K5OAQrSCF2NUBydYsn2+OOSP9EZtzYtLMBV8n701/7FP
-/jgpZRxlN9xHDUve/rnKyLlRHnHqbVXlXvttHLSdcIVcxl24CcrBhck+pfH3cHYr
-C/a1KiJ+V9qg9qN6/KPMkliXsxVSMHf+TxPPbml0hHjfQLyLko2BcI+yhMs3IqmZ
-gm+at0L5sICBKDWjj4o9APmMrEYk5tevWjN+FDP+owj7BprxzlBrtX0hryYEafHK
-tiOZMncbGaPyoCNVtm3r/HJ+EctILxQ1dFymIoUjmxvyr75jdCZdb9Og9JEPf3AX
-fDQMi/7qZm7k1jAyCqiKx55YftFwX+TmNJukXoYC2mNoIv3pJhdiJO6CleBt9ve/
-HHDNIdB8uneNBgYURJjbFHwX6TifxRnmo/Tk2YokLL/14mldSStTC6mbnrzEe6++
-6YgNbE5Jrb0PLhsyQO+F54si4UkAHzPzGAjpwCLzCS669XYacGw=
-=kxY2
------END PGP SIGNATURE-----
-
---y5AJyrcNjBbPAWBA--
