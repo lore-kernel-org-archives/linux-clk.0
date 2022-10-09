@@ -2,111 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266C9C433FE
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 08:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9112C433F5
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Oct 2022 18:14:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbiJIITF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Oct 2022 04:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48092 "EHLO
+        id S229570AbiJISOO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Oct 2022 14:14:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbiJIITE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 04:19:04 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 553732D77D
-        for <linux-clk@vger.kernel.org>; Sun,  9 Oct 2022 01:19:03 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohRWV-0007rM-5y; Sun, 09 Oct 2022 10:18:59 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohRWT-000SSj-Hu; Sun, 09 Oct 2022 10:18:57 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohRWS-006bmL-RI; Sun, 09 Oct 2022 10:18:56 +0200
-Date:   Sun, 9 Oct 2022 10:18:53 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>,
+        with ESMTP id S230192AbiJISOM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 14:14:12 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE4723BFB;
+        Sun,  9 Oct 2022 11:14:11 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id f11so14122635wrm.6;
+        Sun, 09 Oct 2022 11:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyv46wHrohyjxRVTV7juENiF484l/IXY21r1YB8awFg=;
+        b=YmytiBVwOi3FoMguaG4m9bJ7ZA80YdsK6YtZshsLAVGOLTRJolaSxiVxSRL6XaqC5G
+         B+VThplxbizoDcfjcmntD+vV/4yBmnYRdi/pmXBlr1MCGv0jKhscJGkDORZuJcVVo8Ke
+         xQu3NZoEzl3oi86vuXGpy2mS2AyVWEG0wJYSb4FUQ4ilYJ9przoAiKNEMYaqhrPaDJeX
+         eX23268NSV1k+AJxs9s4dlCxLMJKcnfs+DcIJA/dx0S3GBt6RxLU+U7d5n0ZFTe67ZKh
+         z/g3+1CkfoVXz5XLJyHgDhdsZVF/3PmI6xWChdRkB2o8sbZBnye57M6rQg+W8aGgP3C5
+         XHWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jyv46wHrohyjxRVTV7juENiF484l/IXY21r1YB8awFg=;
+        b=dYTWqzlC3HuU6jXPAticz1F/xrJ4yEyb1q8YhuCiTJAlDZiH7DlqBtigJgXm3lr1c4
+         QKTbT0IyRjZ3zmjS6q+kGu/hLBBKXfAvnUIkzdn7qmQft+zy8URT6Q8k1M6iOu6dwSwD
+         7Y2qgqf5NGblnX0v6iAUFys/uGsaXFDkJ7Nh7lfhphxFvrGnpeQEyVn6gBA0rfmUC3Y8
+         Rl5Il+HKHNJJlOOKgiR82WTxbECab2aloBAwgI5oPkctpH47ByU6M4S8YnHGLVsDjFo8
+         DkvHD5XwKMDrx8sNXSyYq1+L+xSHe7w322nXkH65PkjxTpCpxlmaBe6ofVrnvHKdxo2l
+         hsow==
+X-Gm-Message-State: ACrzQf1Ly2RKT5/UkKqvnZtVj/5auMoHDD565jopCPOuJ64yvHZeQOFA
+        F91jdytRHyMH0uG8/JMGoMLVVTDCXqB5KtVu
+X-Google-Smtp-Source: AMsMyM6AiHWX3jidTTduy8Y68gPr/X8AJcI3OEMlSI4PocegufSlOCg35/H6UrIUxYEjkCBSjy2F9Q==
+X-Received: by 2002:a5d:58d3:0:b0:22c:e8e4:1461 with SMTP id o19-20020a5d58d3000000b0022ce8e41461mr9203920wrf.227.1665339250549;
+        Sun, 09 Oct 2022 11:14:10 -0700 (PDT)
+Received: from hp-power-15.localdomain (mm-190-37-212-37.vitebsk.dynamic.pppoe.byfly.by. [37.212.37.190])
+        by smtp.gmail.com with ESMTPSA id k16-20020adfe8d0000000b0022cd0c8c696sm6860581wrn.103.2022.10.09.11.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Oct 2022 11:14:10 -0700 (PDT)
+From:   Siarhei Volkau <lis8215@gmail.com>
+Cc:     Siarhei Volkau <lis8215@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Subject: Re: [PATCH V2] clk: tegra: Fix Tegra PWM parent clock
-Message-ID: <20221009081853.6ipyu7u3ghcp6dfo@pengutronix.de>
-References: <20221007084524.10712-1-jonathanh@nvidia.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 0/8] MIPS: ingenic: Add support for the JZ4755 SoC
+Date:   Sun,  9 Oct 2022 21:13:29 +0300
+Message-Id: <20221009181338.2896660-1-lis8215@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t4ajb5urhxiezmny"
-Content-Disposition: inline
-In-Reply-To: <20221007084524.10712-1-jonathanh@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add preliminary support for boards based on the JZ4755 SoC from
+Ingenic.
 
---t4ajb5urhxiezmny
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is a low-power SoC with a MIPS32r1 core running at ~432 MHz,
+and has no FPU.
 
-Hello,
+The JZ4755 SoC is supposed to be newer than the JZ4725B SoC, but its
+internals are very close to each other. Also the Ingenic's kernel
+source tree calls JZ4755 as JZ4750D and JZ4725B as JZ4750L, this might
+mean that JZ4725B is a pin to pin compatible replacement for older
+JZ4725 (both are LQFP128) but belongs to newer generation JZ475x. Who
+knows?
 
-On Fri, Oct 07, 2022 at 09:45:24AM +0100, Jon Hunter wrote:
-> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-> the period calculation in the Tegra PWM driver and now returns an error
-> if the period requested is less than minimum period supported. This is
-> breaking PWM support on various Tegra platforms. For example, on the
-> Tegra210 Jetson Nano platform this is breaking the PWM fan support and
-> probing the PWM fan driver now fails ...
->=20
->  pwm-fan pwm-fan: Failed to configure PWM: -22
->  pwm-fan: probe of pwm-fan failed with error -22
->=20
-> The problem is that the default parent clock for the PWM on Tegra210 is
-> a 32kHz clock and is unable to support the requested PWM period.
->=20
-> Fix PWM support on Tegra20, Tegra30, Tegra124 and Tegra210 by updating
-> the parent clock for the PWM to be the PLL_P.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+I guess Ingenic released their SoCs in the following order:
+ JZ4720  (MXU ?)
+ JZ4725  (MXU ?)
+ JZ4730  (MXU ?)
+ JZ4740  (MXU1 r1)
+ JZ4750  (MXU1 r2)
+ JZ4755  (MXU1 r2)
+ JZ4725b (MXU1 r2)
+ JZ4760  ...
 
-First of all, thanks for your fix. Very appreciated.
+So JZ4755 DT is reusing many JZ4725B drivers because their support
+in mainline kernel appears earlier.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Siarhei Volkau (8):
+  dt-bindings: ingenic: Add support for the JZ4755 SoC
+  MIPS: ingenic: add new machine type MACH_JZ4755
+  dt-bindings: clock: Add Ingenic JZ4755 CGU header
+  clk: Add Ingenic JZ4755 CGU driver
+  pinctrl: ingenic: JZ4755 minor bug fixes
+  dmaengine: JZ4780: Add support for the JZ4755.
+  serial: 8250/ingenic: Add support for the JZ4750/JZ4755 SoCs
+  MIPS: ingenic: Add support for the JZ4755 SoC
 
-Who will take care for this patch? I assume it will be Stephen and
-Michael (i.e. the clk maintainers)? Do you consider this patch fine for
-application before the next merge window, or do you expect that it might
-break other use cases and so should cook in next for some time?
+ .../bindings/clock/ingenic,cgu.yaml           |   2 +
+ .../devicetree/bindings/dma/ingenic,dma.yaml  |   1 +
+ .../bindings/serial/ingenic,uart.yaml         |   4 +
+ arch/mips/boot/dts/ingenic/jz4755.dtsi        | 439 ++++++++++++++++++
+ arch/mips/ingenic/Kconfig                     |   5 +
+ drivers/clk/ingenic/Kconfig                   |  10 +
+ drivers/clk/ingenic/Makefile                  |   1 +
+ drivers/clk/ingenic/jz4755-cgu.c              | 350 ++++++++++++++
+ drivers/dma/dma-jz4780.c                      |   8 +
+ drivers/pinctrl/pinctrl-ingenic.c             |   4 +-
+ drivers/tty/serial/8250/8250_ingenic.c        |  39 +-
+ .../dt-bindings/clock/ingenic,jz4755-cgu.h    |  49 ++
+ 12 files changed, 905 insertions(+), 7 deletions(-)
+ create mode 100644 arch/mips/boot/dts/ingenic/jz4755.dtsi
+ create mode 100644 drivers/clk/ingenic/jz4755-cgu.c
+ create mode 100644 include/dt-bindings/clock/ingenic,jz4755-cgu.h
 
-Best regards
-Uwe
+-- 
+2.36.1
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---t4ajb5urhxiezmny
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNCg+oACgkQwfwUeK3K
-7AnK7Af+IUWQbHvwVB7qQUkTcEHygOppJwAidslsZyCayakJcj4WXigoAh5la6cK
-Ml1L+6ooajSOR8Qbi6K+arQwHp7H0W3EPIPkK24QC5Zkn8UGKUax2RNrocgx8akB
-Q0qjrEHEKhzOP6Rd+8Xa0qiTWlvntgOZFxnLBJhvXuKHJTHXWxSxWVqAyw8bgZjv
-qo/Llga9DbHWUdmd4ZQF3ug2Aqju05zsByw5EBZ0VojfgAtOcJXyKTRXDqiDQRO6
-BqhyEPbImD29EQXDZX6eVUYoyWGdl7JNi9KpT1IlazGDHSWixVEkr72kNi9xIc/J
-xafBcjmS52rMweDsxqjqAvt+jgo2oA==
-=ndcB
------END PGP SIGNATURE-----
-
---t4ajb5urhxiezmny--
