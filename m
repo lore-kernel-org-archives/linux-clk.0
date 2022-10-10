@@ -2,78 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5643C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 15:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842B7C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 16:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbiJJP4C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 11:56:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33554 "EHLO
+        id S229811AbiJJQGC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 12:06:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbiJJPz6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 11:55:58 -0400
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BBA5BC33
-        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 08:55:55 -0700 (PDT)
-Received: from localhost.localdomain (unknown [IPv6:2a00:f41:18ef:67d6:3828:6030:7841:ce27])
-        (using TLSv1.3 with cipher TLS_CHACHA20_POLY1305_SHA256 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA512)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 60E0A1F560;
-        Mon, 10 Oct 2022 17:55:49 +0200 (CEST)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     ~postmarketos/upstreaming@lists.sr.ht
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Pavel Dubrova <pashadubrova@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: dispcc-sm6350: Add CLK_OPS_PARENT_ENABLE to pixel&byte src
-Date:   Mon, 10 Oct 2022 17:55:46 +0200
-Message-Id: <20221010155546.73884-1-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.32.0 (Apple Git-132)
+        with ESMTP id S229959AbiJJQFs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 12:05:48 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5C71AF37
+        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 09:05:03 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ohvGu-0004Pk-GE; Mon, 10 Oct 2022 18:04:52 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ohvGs-000iow-Uc; Mon, 10 Oct 2022 18:04:50 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ohvGs-006uaf-45; Mon, 10 Oct 2022 18:04:50 +0200
+Date:   Mon, 10 Oct 2022 18:04:49 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Robert Eckelmann <longnoserob@gmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>
+Subject: Re: [PATCH V3] clk: tegra: Fix Tegra PWM parent clock
+Message-ID: <20221010160449.un6gdrxu3hqbvd3i@pengutronix.de>
+References: <20221010100046.6477-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="igprdqe3agturd5e"
+Content-Disposition: inline
+In-Reply-To: <20221010100046.6477-1-jonathanh@nvidia.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the CLK_OPS_PARENT_ENABLE flag to pixel and byte clk srcs to
-ensure set_rate can succeed.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- drivers/clk/qcom/dispcc-sm6350.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--igprdqe3agturd5e
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/qcom/dispcc-sm6350.c b/drivers/clk/qcom/dispcc-sm6350.c
-index 0c3c2e26ede9..ea6f54ed846e 100644
---- a/drivers/clk/qcom/dispcc-sm6350.c
-+++ b/drivers/clk/qcom/dispcc-sm6350.c
-@@ -306,7 +306,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
- 		.name = "disp_cc_mdss_pclk0_clk_src",
- 		.parent_data = disp_cc_parent_data_5,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
--		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE | CLK_OPS_PARENT_ENABLE,
- 		.ops = &clk_pixel_ops,
- 	},
- };
-@@ -385,7 +385,7 @@ static struct clk_branch disp_cc_mdss_byte0_clk = {
- 				&disp_cc_mdss_byte0_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE | CLK_OPS_PARENT_ENABLE,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
--- 
-2.30.2
+On Mon, Oct 10, 2022 at 11:00:46AM +0100, Jon Hunter wrote:
+> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
+> the period calculation in the Tegra PWM driver and now returns an error
+> if the period requested is less than minimum period supported. This is
+> breaking PWM support on various Tegra platforms. For example, on the
+> Tegra210 Jetson Nano platform this is breaking the PWM fan support and
+> probing the PWM fan driver now fails ...
+>=20
+>  pwm-fan pwm-fan: Failed to configure PWM: -22
+>  pwm-fan: probe of pwm-fan failed with error -22
+>=20
+> The problem is that the default parent clock for the PWM on Tegra210 is
+> a 32kHz clock and is unable to support the requested PWM period.
+>=20
+> Fix PWM support on Tegra20, Tegra30, Tegra114, Tegra124 and Tegra210 by
+> updating the parent clock for the PWM to be the PLL_P.
+>=20
+> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
+> Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com> # TF101 T20
+> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
+> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # TF700T T3
 
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Thanks for your work on this!
+
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--igprdqe3agturd5e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNEQp8ACgkQwfwUeK3K
+7AmPLwf8C0lY9kL1/ubNj9hd4hrNrZ0IhspuLTX14xCRaa+U0pR0xtAD7HAoeu0v
+aYz7Kiy77diuaFIyt1Rb1uNAV3okUNC1dQXOpp4cXVwa/LXwDIwXxOw0EYwyR26Z
+kd1viLZ4Q6eMoao2arEOiiisZh78OaOx1Mhncue8nv5No9xMNE8kOv07wW7Lr1je
+Fel+Ll98SoZU+tHU2eUIp2rwR0K1ZN3L+tglVldKXbCERy7+tKuxoSfivPwohEp1
+mt7MZOhonrPM4zdQcs8bnPVvQMOW8HSMiydbFmpe++tcdByZTpEZ+Ah9Li9i9krl
+ss6g+zm7fvGT+UWJ1B+EhnDpUDQvTw==
+=y2EG
+-----END PGP SIGNATURE-----
+
+--igprdqe3agturd5e--
