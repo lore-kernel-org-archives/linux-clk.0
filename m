@@ -2,173 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F92C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 19:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC47C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 20:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbiJJT4D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 15:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41714 "EHLO
+        id S229573AbiJJUAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 16:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbiJJT4C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 15:56:02 -0400
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C33557BCC;
-        Mon, 10 Oct 2022 12:56:01 -0700 (PDT)
-Received: from [192.168.0.18] (unknown [37.228.234.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id D18FC504E68;
-        Mon, 10 Oct 2022 22:52:31 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru D18FC504E68
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665431553; bh=LiznkmJ8jKobM6DyZ5Cz+PlEaN8jmGNTRMZ8UxRmSE0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ChjCFxWU/tAG5qzcMkiMjgBeOBgJZioI4WOdvLD3vAVUuqeLN+sztBD0OwoPFu7Fj
-         Ews+IuVsNZdVp3Th7V7/a0gVbkIIJ0alRJTmgnRSzCD+AskCU9DUoPK3Zz0Hfkyetr
-         CPwja4eIHxceRObmcS4U10g207+kZTJEkwF48xVo=
-Message-ID: <3a6330df-4fe0-d103-8663-80f3698d66f3@novek.ru>
-Date:   Mon, 10 Oct 2022 20:55:57 +0100
+        with ESMTP id S229560AbiJJUAf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 16:00:35 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D0065802;
+        Mon, 10 Oct 2022 13:00:31 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id q11so6151266ilj.10;
+        Mon, 10 Oct 2022 13:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEFmiFJ7Dw1gVqlSeptMmfCFB7n+NWN+0z+4deZp3HU=;
+        b=NLddd3v+0tKtp6cmtm2QqhHh1h2elNdUINa2PSf7HuXdoxWcN5g9mdAiQ0u8E6eslT
+         /dNnyFilX3We6S7g1+yw9XlSqlKKQkSTx4TQHAKHQAaDTfG74ZqvBjY9XRnwwrMSCYUV
+         Rj84pKkSB2ph6kUlrYBGpkwFGhB3qzaXqw/+guUMUOvl9po5tAMX0Z5RTBhieOo9/Xx0
+         OnoKSV2S+hLhG912NLjqfe95ZvnCOn4OBINluIcQuWmQT31lt5rn8p7vgEkbiXeg8ZVH
+         JLwdFEquBeZgd8pvVMMOticXlsgeKc2a38qyXOeisyCKeb0SR7dVZTQotJUpYxmd7yPv
+         PM6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EEFmiFJ7Dw1gVqlSeptMmfCFB7n+NWN+0z+4deZp3HU=;
+        b=69XfmiIu/k7SZ8i28R+KlyVAgiWHUj/mVDf1uY52YvcWp83s6IfcKAZIeodXnaiiPp
+         yvkWHgd6rJs/elP25TU98tApUVD1n+TFhWH+Q3oI4+6R6gyyuQFVdPmKEdDmt7UBMMm0
+         9Fr6tlEwndElYtBestDXahHtc0Alfk/pCOUNRIUdx2O1GuOO7zPxZlLVDIvb+8WEmW2G
+         Fp8GOZfanRwN7+PcI3k9gHFvCCRfBp4TtsYG63TLmvyISgE8w11EuseJ6sR06k6AI3/f
+         nxtMiynLzBcHocYj7da8eUDSFkzFkXbTCOZDbCh5Q4qQuaxjBAWlMYAiEhFbJfJOP4rX
+         immQ==
+X-Gm-Message-State: ACrzQf21IwM0+a5WxidY8ZP7CD98jEuoF/9K6ghSw7SIcHehoaXqPVo2
+        2SO3iKuiHs9LvBJfwvNXHREfiKSKwlv/yT962oDTJkwm6QLivhnp
+X-Google-Smtp-Source: AMsMyM4IOC+JUIyA9Rgli9LM7FUiqfPhAbQIr549hOWE+uF2Y0x1wXn+Hc2yPwnDnz9Ies/eixMujgupBC0XjftOofs=
+X-Received: by 2002:a05:6e02:20ea:b0:2fc:318b:a952 with SMTP id
+ q10-20020a056e0220ea00b002fc318ba952mr3875846ilv.236.1665432029905; Mon, 10
+ Oct 2022 13:00:29 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC PATCH v3 4/6] dpll: get source/output name
-Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
- <20221010011804.23716-5-vfedorenko@novek.ru> <Y0Pp019euDMHOjJu@nanopsycho>
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-In-Reply-To: <Y0Pp019euDMHOjJu@nanopsycho>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221009181338.2896660-1-lis8215@gmail.com> <20221009181338.2896660-9-lis8215@gmail.com>
+ <2e89fc3a-bc54-17e7-d352-25db877172ff@linaro.org>
+In-Reply-To: <2e89fc3a-bc54-17e7-d352-25db877172ff@linaro.org>
+From:   Siarhei Volkau <lis8215@gmail.com>
+Date:   Mon, 10 Oct 2022 23:00:18 +0300
+Message-ID: <CAKNVLfZ4zPdhv=zJOcDk_hnVVoU51L8uAsoXEmzJpecsyc5KmQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] MIPS: DTS: Ingenic: Add support for the JZ4755 SoC
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10.10.2022 10:45, Jiri Pirko wrote:
-> Mon, Oct 10, 2022 at 03:18:02AM CEST, vfedorenko@novek.ru wrote:
->> From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->>
->> Dump names of sources and outputs in response to DPLL_CMD_DEVICE_GET dump
->> request.
->>
->> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->> ---
->> drivers/dpll/dpll_netlink.c | 24 ++++++++++++++++++++++++
->> include/linux/dpll.h        |  2 ++
->> include/uapi/linux/dpll.h   |  2 ++
->> 3 files changed, 28 insertions(+)
->>
->> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
->> index a5779871537a..e3604c10b59e 100644
->> --- a/drivers/dpll/dpll_netlink.c
->> +++ b/drivers/dpll/dpll_netlink.c
->> @@ -31,12 +31,16 @@ static const struct nla_policy dpll_genl_set_source_policy[] = {
->> 	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
->> 	[DPLLA_SOURCE_ID]	= { .type = NLA_U32 },
->> 	[DPLLA_SOURCE_TYPE]	= { .type = NLA_U32 },
->> +	[DPLLA_SOURCE_NAME]	= { .type = NLA_STRING,
->> +				    .len = DPLL_NAME_LENGTH },
->> };
->>
->> static const struct nla_policy dpll_genl_set_output_policy[] = {
->> 	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
->> 	[DPLLA_OUTPUT_ID]	= { .type = NLA_U32 },
->> 	[DPLLA_OUTPUT_TYPE]	= { .type = NLA_U32 },
->> +	[DPLLA_OUTPUT_NAME]	= { .type = NLA_STRING,
->> +				    .len = DPLL_NAME_LENGTH },
->> };
->>
->> static const struct nla_policy dpll_genl_set_src_select_mode_policy[] = {
->> @@ -100,6 +104,7 @@ static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
->> {
->> 	int i, ret = 0, type, prio;
->> 	struct nlattr *src_attr;
->> +	const char *name;
->>
->> 	for (i = 0; i < dpll->sources_count; i++) {
->> 		src_attr = nla_nest_start(msg, DPLLA_SOURCE);
->> @@ -132,6 +137,15 @@ static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
->> 				break;
->> 			}
->> 		}
->> +		if (dpll->ops->get_source_name) {
->> +			name = dpll->ops->get_source_name(dpll, i);
->> +			if (name && nla_put_string(msg, DPLLA_SOURCE_NAME,
->> +						   name)) {
->> +				nla_nest_cancel(msg, src_attr);
->> +				ret = -EMSGSIZE;
->> +				break;
->> +			}
->> +		}
->> 		nla_nest_end(msg, src_attr);
->> 	}
->>
->> @@ -143,6 +157,7 @@ static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
->> {
->> 	struct nlattr *out_attr;
->> 	int i, ret = 0, type;
->> +	const char *name;
->>
->> 	for (i = 0; i < dpll->outputs_count; i++) {
->> 		out_attr = nla_nest_start(msg, DPLLA_OUTPUT);
->> @@ -167,6 +182,15 @@ static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
->> 			}
->> 			ret = 0;
->> 		}
->> +		if (dpll->ops->get_output_name) {
->> +			name = dpll->ops->get_output_name(dpll, i);
->> +			if (name && nla_put_string(msg, DPLLA_OUTPUT_NAME,
->> +						   name)) {
->> +				nla_nest_cancel(msg, out_attr);
->> +				ret = -EMSGSIZE;
->> +				break;
->> +			}
->> +		}
->> 		nla_nest_end(msg, out_attr);
->> 	}
->>
->> diff --git a/include/linux/dpll.h b/include/linux/dpll.h
->> index 3fe957a06b90..2f4964dc28f0 100644
->> --- a/include/linux/dpll.h
->> +++ b/include/linux/dpll.h
->> @@ -23,6 +23,8 @@ struct dpll_device_ops {
->> 	int (*set_output_type)(struct dpll_device *dpll, int id, int val);
->> 	int (*set_source_select_mode)(struct dpll_device *dpll, int mode);
->> 	int (*set_source_prio)(struct dpll_device *dpll, int id, int prio);
->> +	const char *(*get_source_name)(struct dpll_device *dpll, int id);
->> +	const char *(*get_output_name)(struct dpll_device *dpll, int id);
-> 
-> Hmm, why you exactly need the name for?
-> 
-As with device name, user-space app can use source/output name to easily select 
-one using configuration value, for example.
-> 
->> };
->>
->> struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, const char *name,
->> diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
->> index f6b674e5cf01..8782d3425aae 100644
->> --- a/include/uapi/linux/dpll.h
->> +++ b/include/uapi/linux/dpll.h
->> @@ -26,11 +26,13 @@ enum dpll_genl_attr {
->> 	DPLLA_SOURCE,
->> 	DPLLA_SOURCE_ID,
->> 	DPLLA_SOURCE_TYPE,
->> +	DPLLA_SOURCE_NAME,
->> 	DPLLA_SOURCE_SUPPORTED,
->> 	DPLLA_SOURCE_PRIO,
->> 	DPLLA_OUTPUT,
->> 	DPLLA_OUTPUT_ID,
->> 	DPLLA_OUTPUT_TYPE,
->> +	DPLLA_OUTPUT_NAME,
->> 	DPLLA_OUTPUT_SUPPORTED,
->> 	DPLLA_STATUS,
->> 	DPLLA_TEMP,
->> -- 
->> 2.27.0
->>
+> How do you build it? How do you test it? It's basically non-compillable,
+> dead code. You need a board.
 
+I tested it on a Ritmix RZX-50 handheld, although this patchset doesn't
+include it as it requires many other changes to be fully functional.
+I decided to do this in two steps: add platform first (this patchset) then
+specific drivers and quirks, in the next patchset, when this one passes.
+
+Of course I can add machine's dts with working parts. What's the usual way?
