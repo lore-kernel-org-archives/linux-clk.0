@@ -2,156 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C01C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 16:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C7BC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 17:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbiJJQxM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 12:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
+        id S229537AbiJJRwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 13:52:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbiJJQxL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 12:53:11 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1994A4C61B;
-        Mon, 10 Oct 2022 09:53:09 -0700 (PDT)
-Received: from [192.168.1.138] ([37.4.248.18]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MWiUg-1ofi0u2rqS-00X4lf; Mon, 10 Oct 2022 18:52:40 +0200
-Message-ID: <dad7dc1b-c94a-4547-260f-5efe50d959e8@i2se.com>
-Date:   Mon, 10 Oct 2022 18:52:34 +0200
+        with ESMTP id S229456AbiJJRwU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 13:52:20 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2B0515800
+        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 10:52:18 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20221010175216euoutp01b84bb3101e5954fd75f02ff89e1c95ea~cxpwecXyy1746417464euoutp01N
+        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 17:52:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20221010175216euoutp01b84bb3101e5954fd75f02ff89e1c95ea~cxpwecXyy1746417464euoutp01N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1665424336;
+        bh=MdQD08xXlpdoBtRP1gu2WmQT1UySLplZCdNoBPfuxYk=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=ZnZX1wu0aWymXbCQT0pPjrhS19lEs9hY49STGD6uSmv9RWWJW2XmhSey383vp4+N5
+         Rd5N3M0hHnFmEfAMUagrmBke0tSGf0+fJbZNTxkwcKirnavqj03b5zXthBA2X1k5Lf
+         KUaxj/YzmHYt4daiFp8wFqdVTgdoBHuilBnvI0LM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20221010175215eucas1p225eb073b7ce20426c7a7e66eb622e86c~cxpwZLitl1498714987eucas1p2i;
+        Mon, 10 Oct 2022 17:52:15 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C2.83.19378.FCB54436; Mon, 10
+        Oct 2022 18:52:15 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221010175215eucas1p181c1a56d7d040b42d88e9fdb67f88403~cxpv-rzW_2630726307eucas1p1e;
+        Mon, 10 Oct 2022 17:52:15 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221010175215eusmtrp21fc8045c52754b1d8924b9ca7fa50804~cxpv-Bg0Q1895818958eusmtrp2p;
+        Mon, 10 Oct 2022 17:52:15 +0000 (GMT)
+X-AuditID: cbfec7f5-a4dff70000014bb2-b3-63445bcf7b77
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 68.DB.10862.FCB54436; Mon, 10
+        Oct 2022 18:52:15 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221010175215eusmtip14a4519e4b1744d309d3e54eceedcfa46~cxpvpNBcv0405704057eusmtip1e;
+        Mon, 10 Oct 2022 17:52:15 +0000 (GMT)
+Message-ID: <0481695f-a1b6-1814-06ea-b6bb75a5487b@samsung.com>
+Date:   Mon, 10 Oct 2022 19:52:15 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 3/7] firmware: raspberrypi: Provide a helper to query a
- clock max rate
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.3.2
+Subject: Re: [PATCH 0/2] clk: More Range Fixes
 Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>, Daniel Vetter <daniel@ffwll.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Boyd <sboyd@kernel.org>, Emma Anholt <emma@anholt.net>,
-        Ray Jui <rjui@broadcom.com>, Maxime Ripard <mripard@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech>
- <20220815-rpi-fix-4k-60-v2-3-983276b83f62@cerno.tech>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220815-rpi-fix-4k-60-v2-3-983276b83f62@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20221010-rpi-clk-fixes-again-v1-0-d87ba82ac404@cerno.tech>
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:xVuX/w3ngCM1Xs7bP8l36ga2yBUkRfiC5SZVOLDFVuhbEbaUOi8
- Ht7lb7ZE0v89ORFIUFBR3EcZ9hByi6Wj9zTVx7WihMoqFLggY4vIEi3SRcUo5lzctKBWVDl
- L8Gov+ZguoxDyaPpHg1BGnNdtyuV4Hhzy7JnX503K6i9Kqtpfv8Rh3VcY1VLf7i3vxUW7kD
- FfUhE94nGdfGvl/vyyTZg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5jfDTjv99BA=:IqmBkuyekdtld/M89dBtQF
- Re7hifvYF4SBrKs+GlGnEcCgnpAL27uhTcZxU6FwVTA1Atb1kKb3c6KYguBswF3V+LHTMFIE8
- iKC/Z25dkIn6jUSZcg+W8T5FLEat5RkJbiUpFM/YyWHDc1hG4ujgoLK9LuurOH7uiFdwIw2bw
- HizfQ8BBCHTJlpBNxhLDv9igdI3GKH3En7g6MXgd0q0Dtb+xFFS8luEGgozvqQXgIa1Yxufpr
- 3RV8WkouAR7J1uqEDaJrPGHPxFIsmvn3PYzaL0DZQr04PCKdFHq9nZWDWv+atNLguhDzPY4Ox
- Q8/P4OhVfdSuAVD2dKtPVB+RHOK3PbeQX5PXUTnd5c8oZueCeG9AFZeblw/9S6xX0yecvr1Zn
- NsfpxZTGks4bNSTtS49ngIgIVvCa8VBTVG7N/QRNNVmJof5lLPQoxzpPneg8zr+1cPql7B/Xe
- 3pBjaefrK4IfV+omLR/Y5WM7u0AtLKTjsKPFcR5J/CtBQGnoQ1NOjIXdWLVrHZ2lhdCaSFUzD
- a0eWFkkh5fsYlNdY3em51JWS0ZpllGLqZlFCiBHsonj53esckRkG/xtXWrSoCRPBJwrpYjO/Q
- 6QW3BLaXZNvNd7eXY7+jMAOwxF+sh5qEJo8xdixvnvwki7jZqmXfTJASGhjVi7NrQg85mDKge
- Dj7HStZnsIgmNFYivHIjF5zCbnNkwk2qoEO7AmJ5EuoAd7ti9p3t6TuFcwr8B4aupReULQszC
- yp/oR6C1WX6AzW6Lco3hq4duehQwPdrVXCIntIJALv9JkZs3IfSXbeDD5mYKnC9z5eDzf4t9d
- 0Z/ASLcbS5dnvytm4o+eTp6AuRPqw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7djP87rno12SDa78N7SY+vAJm8XHnnus
+        Fpd3zWGzmPHjH6PFxVOuFv+ubWRxYPN4f6OV3ePOufNsHptWdbJ5fN4kF8ASxWWTkpqTWZZa
+        pG+XwJVxd9N35oLlvBWvN39ka2Cczt3FyMEhIWAisXOeQBcjF4eQwApGiY0LprBDOF8YJSZO
+        +80K4XxmlFjZcJERpqP7EFCcEyi+nFFi3wJ+iJqPjBJHmlYygiR4Bewkdt3YyQ5iswioSsxr
+        mc0GEReUODnzCQuILSqQInH05WF2kJnCAnoSey5ng4SZBcQlbj2ZzwRiiwiUSqw694IJIh4n
+        8eRoI5jNJmAo0fW2C2wkp4CHxLlrqxghauQltr+dwwxyj4TACQ6JSX+fgd0gIeAi8aHjCCOE
+        LSzx6vgWqLiMxP+dIMtAGtoZJRb8vg/lTGCUaHh+C6rDWuLOuV9sIJcyC2hKrN+lDxF2lJg8
+        7R40UPgkbrwVhDiCT2LStunMEGFeiY42IYhqNYlZx9fBrT144RLzBEalWUihMgvJ+7OQvDML
+        Ye8CRpZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgYnm9L/jX3cwrnj1Ue8QIxMH4yFG
+        CQ5mJRFexvlOyUK8KYmVValF+fFFpTmpxYcYpTlYlMR52WZoJQsJpCeWpGanphakFsFkmTg4
+        pRqYZm3XKtbW15morbyJ+71agvOsitrTukd8exK31HG/Yqx7otcpJhLKwvTte3p5lL9r2g0W
+        nW9C26q/5Ci83qey/MX9sJSdOhl5MpefGy25dsqB6ZFrzOw+JyYnlY0/NiSxXUm3UHFXdHnU
+        Y/XfikWo79btn30v/qg8KFoY/fprrNcZXnmWkw8mGYt92jC/XUTs5lzm8ms5LRyZBZpHVb6t
+        c7D5NCXi9BoL6Zrv4myszN7VZoH+PG8eB8mkNdm8Sz+ssfv+xPynYX7hSUdFD5jdOq2zLT24
+        IiGv5Gbi8skqW9cULO7tsV9dckTY4MnzCZMK09convjhM+FeC8Nf+/ntmX1tzhH+H6/YuK9T
+        yVBiKc5INNRiLipOBAB1up1nowMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsVy+t/xu7rno12SDb7ekbWY+vAJm8XHnnus
+        Fpd3zWGzmPHjH6PFxVOuFv+ubWRxYPN4f6OV3ePOufNsHptWdbJ5fN4kF8ASpWdTlF9akqqQ
+        kV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJdxd9N35oLlvBWvN39k
+        a2Cczt3FyMEhIWAi0X2ItYuRi0NIYCmjxP23r4AcTqC4jMTJaQ1QtrDEn2tdbBBF7xklbh1p
+        AkvwCthJ7Lqxkx3EZhFQlZjXMpsNIi4ocXLmExaQBaICKRJnrwiCmMICehJ7LmeDVDALiEvc
+        ejKfCcQWESiVOP19DStEPE7i251r7BCrZjNKfPv9EGwkm4ChRNfbLjCbU8BD4ty1VYwQDWYS
+        XVu7oGx5ie1v5zBPYBSaheSKWUj2zULSMgtJywJGllWMIqmlxbnpucVGesWJucWleel6yfm5
+        mxiBsbXt2M8tOxhXvvqod4iRiYPxEKMEB7OSCC/jfKdkId6UxMqq1KL8+KLSnNTiQ4ymwKCY
+        yCwlmpwPjO68knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS1OzU1ILUIpg+Jg5OqQam/DyB
+        ANcYh3q9b4eapsT2HOBJOne/Ku+ATcidZ5/ONP3V/cHpuno6H/eKzxfDDeeflLznKiHYWdNk
+        /21Lx9Pdp7b0NrzW946+9CPF40zelCKJk0qLay7IMNruPzE9/OzhPg/dmckJD21Xyh670v99
+        YXFywulP0+Z275t+oO7rvmNZaU7vZ1Y6NK997zb7Sc+eaR9mKVssfaS9Xits9r+DqqfqVR+c
+        /1H//kb155eWAYpe3BUrhESmJ76b+nyipdm8TAPhAn+1i5/VjzSqi0q01FhOlNkbWHBeSZTr
+        lMLm406nm4+cS573YGIkXzabusb9/JhfzaXSvDvZ1tz0LJj95G9Cfd3q85U7O9W149ZLK7EU
+        ZyQaajEXFScCAHvl5jo2AwAA
+X-CMS-MailID: 20221010175215eucas1p181c1a56d7d040b42d88e9fdb67f88403
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20221010144751eucas1p2edac1b98fa130f6664ece3465f8bd5fb
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221010144751eucas1p2edac1b98fa130f6664ece3465f8bd5fb
+References: <CGME20221010144751eucas1p2edac1b98fa130f6664ece3465f8bd5fb@eucas1p2.samsung.com>
+        <20221010-rpi-clk-fixes-again-v1-0-d87ba82ac404@cerno.tech>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Maxime,
 
-Am 20.09.22 um 14:50 schrieb Maxime Ripard:
-> The firmware allows to query for its clocks the operating range of a
-> given clock. We'll need this for some drivers (KMS, in particular) to
-> infer the state of some configuration options, so let's create a
-> function to do so.
+On 10.10.2022 16:47, Maxime Ripard wrote:
+> Here are patches that might address the issues reported by Marek and Mark,
+> according to Stephen's intuition :)
 >
+> Either way, it's still fixing and adding test coverage for a regression
+> introduced by my recent work.
+>
+> If it's easier for you to test, this series is also pushed here:
+> https://protect2.fireeye.com/v1/url?k=e4440f7a-bbdf3663-e4458435-000babff3793-bdf960866cc2289b&q=1&e=179d765b-8652-488e-977d-8f404e45f6c8&u=https%3A%2F%2Fgithub.com%2Fmripard%2Flinux%2Ftree%2Frpi%2Fclk-fixes-again
+>
+> Maxime
+>
+> To: Michael Turquette <mturquette@baylibre.com>
+> To: Stephen Boyd <sboyd@kernel.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+
+It looks it fixes the issue I've reported here: 
+https://lore.kernel.org/all/8cdd1927-da38-c23e-fa75-384694724b1c@samsung.com/
+
+All my Amlogic Meson G12A/B based boards work fine after applying those 
+fixes.
+
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> ---
+> Maxime Ripard (2):
+>        clk: Update req_rate on __clk_recalc_rates()
+>        clk: tests: Add tests for notifiers
 >
-> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-> index b916e1e171f8..c4b9ea70f5a7 100644
-> --- a/drivers/firmware/raspberrypi.c
-> +++ b/drivers/firmware/raspberrypi.c
-> @@ -228,6 +228,21 @@ static void rpi_register_clk_driver(struct device *dev)
->   						-1, NULL, 0);
->   }
->   
-> +unsigned int rpi_firmware_clk_get_max_rate(struct rpi_firmware *fw, unsigned int id)
-> +{
-> +	struct rpi_firmware_clk_rate_request msg =
-> +		RPI_FIRMWARE_CLK_RATE_REQUEST(id);
-> +	int ret;
-> +
-> +	ret = rpi_firmware_property(fw, RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
-> +				    &msg, sizeof(msg));
-> +	if (ret)
-> +		return 0;
-> +
-> +	return le32_to_cpu(msg.rate);
-> +}
-> +EXPORT_SYMBOL_GPL(rpi_firmware_clk_get_max_rate);
-> +
->   static void rpi_firmware_delete(struct kref *kref)
->   {
->   	struct rpi_firmware *fw = container_of(kref, struct rpi_firmware,
-> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-> index 74c7bcc1ac2a..10248c370229 100644
-> --- a/include/soc/bcm2835/raspberrypi-firmware.h
-> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
-> @@ -154,12 +154,32 @@ enum rpi_firmware_clk_id {
->   	RPI_FIRMWARE_NUM_CLK_ID,
->   };
->   
-> +/**
-> + * struct rpi_firmware_clk_rate_request - Firmware Request for a rate
-> + * @id:	ID of the clock being queried
-> + * @rate: Rate in Hertz. Set by the firmware.
-> + *
-> + * Used by @RPI_FIRMWARE_GET_CLOCK_RATE, @RPI_FIRMWARE_GET_CLOCK_MEASURED,
-> + * @RPI_FIRMWARE_GET_MAX_CLOCK_RATE and @RPI_FIRMWARE_GET_MIN_CLOCK_RATE.
-> + */
-> +struct rpi_firmware_clk_rate_request {
-> +	__le32 id;
-> +	__le32 rate;
-> +} __packed;
-> +
-> +#define RPI_FIRMWARE_CLK_RATE_REQUEST(_id)	\
-> +	{					\
-> +		.id = _id,			\
-> +	}
-> +
->   #if IS_ENABLED(CONFIG_RASPBERRYPI_FIRMWARE)
->   int rpi_firmware_property(struct rpi_firmware *fw,
->   			  u32 tag, void *data, size_t len);
->   int rpi_firmware_property_list(struct rpi_firmware *fw,
->   			       void *data, size_t tag_size);
->   void rpi_firmware_put(struct rpi_firmware *fw);
-> +unsigned int rpi_firmware_clk_get_max_rate(struct rpi_firmware *fw,
-> +					   unsigned int id);
->   struct device_node *rpi_firmware_find_node(void);
->   struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
->   struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
-> @@ -179,6 +199,12 @@ static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
->   
->   static inline void rpi_firmware_put(struct rpi_firmware *fw) { }
->   
-> +static inline unsigned int rpi_firmware_clk_get_max_rate(struct rpi_firmware *fw,
-> +							 unsigned int id)
-> +{
-> +	return UINT_MAX;
-In case the driver is disabled the function return UINT_MAX, but in case 
-the firmware doesn't support RPI_FIRMWARE_GET_MAX_CLOCK_RATE it returns 
-0. This looks a little bit inconsistent to me.
-> +}
-> +
->   static inline struct device_node *rpi_firmware_find_node(void)
->   {
->   	return NULL;
+>   drivers/clk/clk.c      |  39 ++++---------
+>   drivers/clk/clk_test.c | 156 +++++++++++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 167 insertions(+), 28 deletions(-)
+> ---
+> base-commit: cd9fd78f5c11b5e165d9317ef11e613f4aef4dd1
+> change-id: 20221010-rpi-clk-fixes-again-a95180ef0108
 >
+> Best regards,
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
