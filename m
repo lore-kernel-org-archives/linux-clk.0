@@ -2,38 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EEAC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFD0C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbiJJBSh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Oct 2022 21:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
+        id S230344AbiJJBSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Oct 2022 21:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230370AbiJJBSd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:18:33 -0400
+        with ESMTP id S230357AbiJJBSk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:18:40 -0400
 Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B5E2F3AE;
-        Sun,  9 Oct 2022 18:18:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98D392E9D8;
+        Sun,  9 Oct 2022 18:18:34 -0700 (PDT)
 Received: from nat1.ooonet.ru (gw.zelenaya.net [91.207.137.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id C53AB504DEE;
-        Mon, 10 Oct 2022 04:14:51 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru C53AB504DEE
+        by novek.ru (Postfix) with ESMTPSA id E495B504E55;
+        Mon, 10 Oct 2022 04:14:56 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru E495B504E55
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665364493; bh=yyAnr5alMdz0gJxmpa4bCIpZ4JyGR+qBnxDUsvKCa1o=;
+        t=1665364498; bh=XLHIvhz9omIEbrPi1AG5YDmm+bbkVnYbVuLRgaKLvoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zfJ1hvA4Em3njJ+ZS30qRiu7WgldU6rMvFMSucfkBiDFDvxonJbi1sZDoOunumu3K
-         idCk0arSvws7TUNz+FQDLuAZVG19nsNhQ4oxog6hCFZ1QTZGLngYAqvlAx7+tGrZ5K
-         h9W0fpsod38QYGavzOvieOztE9CRnswGZlMPRt+o=
+        b=sE9K+oJV6ORuVdu3MsM15fleM8DZrdYjLf15jUo22ykf3XGVemNTIhK6pZ3sWDeNR
+         DM+dnAuR8AmsFgQKTMm5gnAncLOd0KrHt2U6yc7aO9iqYMQjQGXldz606wgCuecJoB
+         WFDyzIsm+hbhA6tib3QiCE2/NWSAp9Bm2qk+faT8=
 From:   Vadim Fedorenko <vfedorenko@novek.ru>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-Subject: [RFC PATCH v3 2/6] dpll: add netlink events
-Date:   Mon, 10 Oct 2022 04:18:00 +0300
-Message-Id: <20221010011804.23716-3-vfedorenko@novek.ru>
+Subject: [RFC PATCH v3 5/6] dpll: documentation on DPLL subsystem interface
+Date:   Mon, 10 Oct 2022 04:18:03 +0300
+Message-Id: <20221010011804.23716-6-vfedorenko@novek.ru>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20221010011804.23716-1-vfedorenko@novek.ru>
 References: <20221010011804.23716-1-vfedorenko@novek.ru>
@@ -45,249 +45,192 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Vadim Fedorenko <vadfed@fb.com>
 
-Add netlink interface to enable notification of users about
-events in DPLL framework. Part of this interface should be
-used by drivers directly, i.e. lock status changes.
+Add documentation explaining common netlink interface to configure DPLL
+devices and monitoring events. Common way to implement DPLL device in
+a driver is also covered.
 
 Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
 ---
- drivers/dpll/dpll_core.c    |   3 +
- drivers/dpll/dpll_netlink.c | 151 ++++++++++++++++++++++++++++++++++++
- drivers/dpll/dpll_netlink.h |   3 +
- include/linux/dpll.h        |   5 ++
- 4 files changed, 162 insertions(+)
+ Documentation/networking/dpll.rst  | 157 +++++++++++++++++++++++++++++
+ Documentation/networking/index.rst |   1 +
+ 2 files changed, 158 insertions(+)
+ create mode 100644 Documentation/networking/dpll.rst
 
-diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
-index 7fdee145e82c..732165b77e38 100644
---- a/drivers/dpll/dpll_core.c
-+++ b/drivers/dpll/dpll_core.c
-@@ -115,6 +115,8 @@ struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, const char *n
- 	mutex_unlock(&dpll_device_xa_lock);
- 	dpll->priv = priv;
- 
-+	dpll_notify_device_create(dpll->id, dev_name(&dpll->dev));
+diff --git a/Documentation/networking/dpll.rst b/Documentation/networking/dpll.rst
+new file mode 100644
+index 000000000000..00c15b19aefb
+--- /dev/null
++++ b/Documentation/networking/dpll.rst
+@@ -0,0 +1,157 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- 	return dpll;
- 
- error:
-@@ -150,6 +152,7 @@ void dpll_device_unregister(struct dpll_device *dpll)
- 
- 	mutex_lock(&dpll_device_xa_lock);
- 	xa_erase(&dpll_device_xa, dpll->id);
-+	dpll_notify_device_delete(dpll->id);
- 	mutex_unlock(&dpll_device_xa_lock);
- }
- EXPORT_SYMBOL_GPL(dpll_device_unregister);
-diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
-index 31966e0eec3a..6dc92b5b712e 100644
---- a/drivers/dpll/dpll_netlink.c
-+++ b/drivers/dpll/dpll_netlink.c
-@@ -47,6 +47,9 @@ struct param {
- 	int dpll_source_type;
- 	int dpll_output_id;
- 	int dpll_output_type;
-+	int dpll_status;
-+	int dpll_event_group;
-+	const char *dpll_name;
- };
- 
- struct dpll_dump_ctx {
-@@ -240,6 +243,9 @@ static int dpll_genl_cmd_set_source(struct sk_buff *skb, struct genl_info *info)
- 	ret = dpll->ops->set_source_type(dpll, src_id, type);
- 	mutex_unlock(&dpll->lock);
- 
-+	if (!ret)
-+		dpll_notify_source_change(dpll->id, src_id, type);
++===============================
++The Linux kernel DPLL subsystem
++===============================
 +
- 	return ret;
- }
- 
-@@ -263,6 +269,9 @@ static int dpll_genl_cmd_set_output(struct sk_buff *skb, struct genl_info *info)
- 	ret = dpll->ops->set_output_type(dpll, out_id, type);
- 	mutex_unlock(&dpll->lock);
- 
-+	if (!ret)
-+		dpll_notify_output_change(dpll->id, out_id, type);
 +
- 	return ret;
- }
- 
-@@ -401,6 +410,148 @@ static struct genl_family dpll_gnl_family __ro_after_init = {
- 	.pre_doit	= dpll_pre_doit,
- };
- 
-+static int dpll_event_device_create(struct param *p)
-+{
-+	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
-+	    nla_put_string(p->msg, DPLLA_DEVICE_NAME, p->dpll_name))
-+		return -EMSGSIZE;
++The main purpose of DPLL subsystem is to provide general interface
++to configure devices that use any kind of Digital PLL and could use
++different sources of signal to synchronize to as well as different
++types of outputs. The inputs and outputs could be internal components
++of the device as well as external connections. The main interface is
++NETLINK_GENERIC based protocol with config and monitoring groups of
++commands defined.
 +
-+	return 0;
-+}
++Configuration commands group
++============================
 +
-+static int dpll_event_device_delete(struct param *p)
-+{
-+	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id))
-+		return -EMSGSIZE;
++Configuration commands are used to get information about registered
++DPLL devices as well as get or set configuration of each used input
++or output. As DPLL device could not be abstract and reflects real
++hardware, there is no way to add new DPLL device via netlink from
++user space and each device should be registered by it's driver.
 +
-+	return 0;
-+}
++List of command with possible attributes
++========================================
 +
-+static int dpll_event_status(struct param *p)
-+{
-+	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
-+		nla_put_u32(p->msg, DPLLA_LOCK_STATUS, p->dpll_status))
-+		return -EMSGSIZE;
++All constants identifying command types use ``DPLL_CMD_`` prefix and
++suffix according to command purpose. All attributes use ``DPLLA_``
++prefix and suffix according to attribute purpose:
 +
-+	return 0;
-+}
++  =====================================  =============================
++  ``DEVICE_GET``                         userspace to get device info
++    ``DEVICE_ID``                        attr internal device index
++    ``DEVICE_NAME``                      attr DPLL device name
++    ``STATUS``                           attr DPLL device status info
++    ``DEVICE_SRC_SELECT_MODE``           attr DPLL source selection
++                                         mode
++    ``DEVICE_SRC_SELECT_MODE_SUPPORTED`` attr supported source
++                                         selection modes
++    ``LOCK_STATUS``                      attr internal frequency-lock
++                                         status
++    ``TEMP``                             attr device temperature
++                                         information
++  ``SET_SOURCE``                         userspace to set
++                                         sources/inputs configuration
++    ``DEVICE_ID``                        attr internal device index
++                                         to configure source pin
++    ``SOURCE_ID``                        attr index of source pin to
++                                         configure
++    ``SOURCE_NAME``                      attr name of source pin to
++                                         configure
++    ``SOURCE_TYPE``                      attr configuration value for
++                                         selected source pin
++  ``SET_OUTPUT``                         userspace to set outputs
++                                         configuration
++    ``DEVICE_ID``                        attr internal device index to
++                                         configure output pin
++    ``OUTPUT_ID``                        attr index of output pin to
++                                         configure
++    ``OUTPUT_NAME``                      attr name of output pin to
++                                         configure
++    ``OUTPUT_TYPE``                      attr configuration value for
++                                         selected output pin
++  ``SET_SRC_SELECT_MODE``                userspace to set source pin
++                                         selection mode
++    ``DEVICE_ID``                        attr internal device index
++    ``DEVICE_SRC_SELECT_MODE``           attr source selection mode
++  ``SET_SOURCE_PRIO``                    userspace to set priority of
++                                         a source pin for automatic
++                                         source selection mode
++    ``DEVICE_ID``                        attr internal device index
++                                         for source pin
++    ``SOURCE_ID``                        attr index of source pin to
++                                         configure
++    ``SOURCE_PRIO``                      attr priority of a source pin
 +
-+static int dpll_event_source_change(struct param *p)
-+{
-+	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
-+	    nla_put_u32(p->msg, DPLLA_SOURCE_ID, p->dpll_source_id) ||
-+		nla_put_u32(p->msg, DPLLA_SOURCE_TYPE, p->dpll_source_type))
-+		return -EMSGSIZE;
 +
-+	return 0;
-+}
++The pre-defined enums
++=====================
 +
-+static int dpll_event_output_change(struct param *p)
-+{
-+	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
-+	    nla_put_u32(p->msg, DPLLA_OUTPUT_ID, p->dpll_output_id) ||
-+		nla_put_u32(p->msg, DPLLA_OUTPUT_TYPE, p->dpll_output_type))
-+		return -EMSGSIZE;
++These enums are used to select type values for source/input and
++output pins:
 +
-+	return 0;
-+}
++  ============================= ======================================
++  ``DPLL_TYPE_EXT_1PPS``        External 1PPS source
++  ``DPLL_TYPE_EXT_10MHZ``       External 10MHz source
++  ``DPLL_TYPE_SYNCE_ETH_PORT``  SyncE on Ethernet port
++  ``DPLL_TYPE_INT_OSCILLATOR``  Internal Oscillator (i.e. Holdover
++                                with Atomic Clock as a Source)
++  ``DPLL_TYPE_GNSS``            GNSS 1PPS source
++  ``DPLL_TYPE_CUSTOM``          Custom frequency
 +
-+static const cb_t event_cb[] = {
-+	[DPLL_EVENT_DEVICE_CREATE]	= dpll_event_device_create,
-+	[DPLL_EVENT_DEVICE_DELETE]	= dpll_event_device_delete,
-+	[DPLL_EVENT_STATUS_LOCKED]	= dpll_event_status,
-+	[DPLL_EVENT_STATUS_UNLOCKED]	= dpll_event_status,
-+	[DPLL_EVENT_SOURCE_CHANGE]	= dpll_event_source_change,
-+	[DPLL_EVENT_OUTPUT_CHANGE]	= dpll_event_output_change,
-+};
-+/*
-+ * Generic netlink DPLL event encoding
-+ */
-+static int dpll_send_event(enum dpll_genl_event event,
-+				   struct param *p)
-+{
-+	struct sk_buff *msg;
-+	int ret = -EMSGSIZE;
-+	void *hdr;
++Values for monitoring attributes STATUS:
 +
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+	p->msg = msg;
++  ============================= ======================================
++  ``DPLL_STATUS_NONE``          No information provided
++  ``DPLL_STATUS_CALIBRATING``   DPLL device is not locked to the
++                                source frequency
++  ``DPLL_STATUS_LOCKED``        DPLL device is locked to the source
++                                frequency
 +
-+	hdr = genlmsg_put(msg, 0, 0, &dpll_gnl_family, 0, event);
-+	if (!hdr)
-+		goto out_free_msg;
 +
-+	ret = event_cb[event](p);
-+	if (ret)
-+		goto out_cancel_msg;
++Possible DPLL source selection mode values:
 +
-+	genlmsg_end(msg, hdr);
++  ============================= ======================================
++  ``DPLL_SRC_SELECT_FORCED``    source pin is force-selected by
++                                DPLL_CMD_SET_SOURCE_TYPE
++  ``DPLL_SRC_SELECT_AUTOMATIC`` source pin ise auto selected according
++                                to configured priorities and source
++                                signal validity
++  ``DPLL_SRC_SELECT_HOLDOVER``  force holdover mode of DPLL
++  ``DPLL_SRC_SELECT_FREERUN``   DPLL is driven by supplied system
++                                clock without holdover capabilities
++  ``DPLL_SRC_SELECT_NCO``       similar to FREERUN, with possibility
++                                to numerically control frequency offset
 +
-+	genlmsg_multicast(&dpll_gnl_family, msg, 0, p->dpll_event_group, GFP_KERNEL);
++Notifications
++================
 +
-+	return 0;
++DPLL device can provide notifications regarding status changes of the
++device, i.e. lock status changes, source/output type changes or alarms.
++This is the multicast group that is used to notify user-space apps via
++netlink socket:
 +
-+out_cancel_msg:
-+	genlmsg_cancel(msg, hdr);
-+out_free_msg:
-+	nlmsg_free(msg);
++  ============================== ====================================
++  ``DPLL_EVENT_DEVICE_CREATE``   New DPLL device was created
++  ``DPLL_EVENT_DEVICE_DELETE``   DPLL device was deleted
++  ``DPLL_EVENT_STATUS_LOCKED``   DPLL device has locked to source
++  ``DPLL_EVENT_STATUS_UNLOCKED`` DPLL device is in freerun or
++                                 in calibration mode
++  ``DPLL_EVENT_SOURCE_CHANGE``   DPLL device source changed
++  ``DPLL_EVENT_OUTPUT_CHANGE``   DPLL device output changed
++  ``DPLL_EVENT_SOURCE_PRIO``     DPLL device source priority changed
++  ``DPLL_EVENT_SELECT_MODE``     DPLL device source selection mode
++                                 changed
 +
-+	return ret;
-+}
++Device driver implementation
++============================
 +
-+int dpll_notify_device_create(int dpll_id, const char *name)
-+{
-+	struct param p = { .dpll_id = dpll_id, .dpll_name = name,
-+			   .dpll_event_group = 0 };
++For device to operate as DPLL subsystem device, it should implement
++set of operations and register device via ``dpll_device_alloc`` and
++``dpll_device_register`` providing desired device name and set of
++supported operations as well as the amount of sources/input pins and
++output pins. If there is no specific name supplied, dpll subsystem
++will use ``dpll%d`` template to create device name. Notifications of
++adding or removing DPLL devices are created within subsystem itself,
++but notifications about configurations changes or alarms should be
++implemented within driver as different ways of confirmation could be
++used. All the interfaces for notification messages could be found in
++``<dpll.h>``, constats and enums are placed in ``<uapi/linux/dpll.h>``
++to be consistent with user-space.
 +
-+	return dpll_send_event(DPLL_EVENT_DEVICE_CREATE, &p);
-+}
++There is no strict requeriment to implement all the operations for
++each device, every operation handler is checked for existence and
++ENOTSUPP is returned in case of absence of specific handler.
 +
-+int dpll_notify_device_delete(int dpll_id)
-+{
-+	struct param p = { .dpll_id = dpll_id, .dpll_event_group = 0 };
-+
-+	return dpll_send_event(DPLL_EVENT_DEVICE_DELETE, &p);
-+}
-+
-+int dpll_notify_status_locked(int dpll_id)
-+{
-+	struct param p = { .dpll_id = dpll_id, .dpll_status = 1,
-+			   .dpll_event_group = 3 };
-+
-+	return dpll_send_event(DPLL_EVENT_STATUS_LOCKED, &p);
-+}
-+EXPORT_SYMBOL_GPL(dpll_notify_status_locked);
-+
-+int dpll_notify_status_unlocked(int dpll_id)
-+{
-+	struct param p = { .dpll_id = dpll_id, .dpll_status = 0,
-+			   .dpll_event_group = 3 };
-+
-+	return dpll_send_event(DPLL_EVENT_STATUS_UNLOCKED, &p);
-+}
-+EXPORT_SYMBOL_GPL(dpll_notify_status_unlocked);
-+
-+int dpll_notify_source_change(int dpll_id, int source_id, int source_type)
-+{
-+	struct param p =  { .dpll_id = dpll_id, .dpll_source_id = source_id,
-+			    .dpll_source_type = source_type, .dpll_event_group = 1 };
-+
-+	return dpll_send_event(DPLL_EVENT_SOURCE_CHANGE, &p);
-+}
-+EXPORT_SYMBOL_GPL(dpll_notify_source_change);
-+
-+int dpll_notify_output_change(int dpll_id, int output_id, int output_type)
-+{
-+	struct param p =  { .dpll_id = dpll_id, .dpll_output_id = output_id,
-+			    .dpll_output_type = output_type, .dpll_event_group = 2 };
-+
-+	return dpll_send_event(DPLL_EVENT_OUTPUT_CHANGE, &p);
-+}
-+EXPORT_SYMBOL_GPL(dpll_notify_output_change);
-+
- int __init dpll_netlink_init(void)
- {
- 	return genl_register_family(&dpll_gnl_family);
-diff --git a/drivers/dpll/dpll_netlink.h b/drivers/dpll/dpll_netlink.h
-index e2d100f59dd6..5c1d1072e818 100644
---- a/drivers/dpll/dpll_netlink.h
-+++ b/drivers/dpll/dpll_netlink.h
-@@ -3,5 +3,8 @@
-  *  Copyright (c) 2021 Meta Platforms, Inc. and affiliates
-  */
- 
-+int dpll_notify_device_create(int dpll_id, const char *name);
-+int dpll_notify_device_delete(int dpll_id);
-+
- int __init dpll_netlink_init(void);
- void dpll_netlink_finish(void);
-diff --git a/include/linux/dpll.h b/include/linux/dpll.h
-index 9d49b19d03d9..32558965cd41 100644
---- a/include/linux/dpll.h
-+++ b/include/linux/dpll.h
-@@ -26,4 +26,9 @@ void dpll_device_register(struct dpll_device *dpll);
- void dpll_device_unregister(struct dpll_device *dpll);
- void dpll_device_free(struct dpll_device *dpll);
- void *dpll_priv(struct dpll_device *dpll);
-+
-+int dpll_notify_status_locked(int dpll_id);
-+int dpll_notify_status_unlocked(int dpll_id);
-+int dpll_notify_source_change(int dpll_id, int source_id, int source_type);
-+int dpll_notify_output_change(int dpll_id, int output_id, int output_type);
- #endif
+diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
+index 16a153bcc5fe..612d322a3380 100644
+--- a/Documentation/networking/index.rst
++++ b/Documentation/networking/index.rst
+@@ -16,6 +16,7 @@ Contents:
+    device_drivers/index
+    dsa/index
+    devlink/index
++   dpll
+    caif/index
+    ethtool-netlink
+    ieee802154
 -- 
 2.27.0
 
