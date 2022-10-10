@@ -2,84 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925EEC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97A7C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230443AbiJJBS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Oct 2022 21:18:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
+        id S230356AbiJJBTB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Oct 2022 21:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbiJJBSt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:18:49 -0400
+        with ESMTP id S230390AbiJJBSz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:18:55 -0400
 Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F012D303CD;
-        Sun,  9 Oct 2022 18:18:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11EAF30F46;
+        Sun,  9 Oct 2022 18:18:53 -0700 (PDT)
 Received: from nat1.ooonet.ru (gw.zelenaya.net [91.207.137.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id DAF2D504AE0;
-        Mon, 10 Oct 2022 04:14:46 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru DAF2D504AE0
+        by novek.ru (Postfix) with ESMTPSA id 65E0F504E54;
+        Mon, 10 Oct 2022 04:14:55 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 65E0F504E54
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665364488; bh=eIx0GJ/f4awLP5PFW0SIJ0eabOt5oi27kRTYl48YUHU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xslZqpfvdk4K/9NvP3Z3xNR/oDBMNNETbH/VfNa0VGafScg2SplIA3SXNB+jULq4t
-         wWiUrPwwgsQ3Ilhx7cCYmmFranMP0YG3RdX31PnxENEgGiVezJv4qFXizW6q84EQGo
-         ucfn9RU5pnyw1b3vIju//zQWD8qgOrvliwJ9hRiM=
+        t=1665364496; bh=FsVkCsqxnKVxj6zdLWSSwLUhMTznP9XeXVsfc6pdzqU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VU91bOV+Cycf3B79zE4xI89AxaQTnM06LqpSrtX5ZQn/6PHvBRYMCZqa4xy3XmbCj
+         nA0tEXQXn+igdDKp0qzJAhFmJomBfyW6j99voqdE3An970R/DNhThXVWQU7Cis1GXi
+         dYFGW2cFgzZs9BrI7YBNNJp6WFyrBoTHrcqEbAHg=
 From:   Vadim Fedorenko <vfedorenko@novek.ru>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>
-Subject: [RFC PATCH v3 0/5] Create common DPLL/clock configuration API
-Date:   Mon, 10 Oct 2022 04:17:58 +0300
-Message-Id: <20221010011804.23716-1-vfedorenko@novek.ru>
+        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
+Subject: [RFC PATCH v3 4/6] dpll: get source/output name
+Date:   Mon, 10 Oct 2022 04:18:02 +0300
+Message-Id: <20221010011804.23716-5-vfedorenko@novek.ru>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20221010011804.23716-1-vfedorenko@novek.ru>
+References: <20221010011804.23716-1-vfedorenko@novek.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Implement common API for clock/DPLL configuration and status reporting.
-The API utilises netlink interface as transport for commands and event
-notifications. This API aim to extend current pin configuration and
-make it flexible and easy to cover special configurations.
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-v2 -> v3:
- * implement source select mode (Arkadiusz)
- * add documentation
- * implementation improvements (Jakub)
-v1 -> v2:
- * implement returning supported input/output types
- * ptp_ocp: follow suggestions from Jonathan
- * add linux-clk mailing list
-v0 -> v1:
- * fix code style and errors
- * add linux-arm mailing list
+Dump names of sources and outputs in response to DPLL_CMD_DEVICE_GET dump
+request.
 
-Arkadiusz Kubalewski (2):
-  dpll: add support for source selection modes
-  dpll: get source/output name
+Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+---
+ drivers/dpll/dpll_netlink.c | 24 ++++++++++++++++++++++++
+ include/linux/dpll.h        |  2 ++
+ include/uapi/linux/dpll.h   |  2 ++
+ 3 files changed, 28 insertions(+)
 
-Vadim Fedorenko (3):
-  dpll: add netlink events
-  dpll: documentation on DPLL subsystem interface
-  ptp_ocp: implement DPLL ops
-
- Documentation/networking/dpll.rst  | 157 +++++++++++++
- Documentation/networking/index.rst |   1 +
- drivers/dpll/dpll_core.c           |   3 +
- drivers/dpll/dpll_netlink.c        | 346 ++++++++++++++++++++++++++++-
- drivers/dpll/dpll_netlink.h        |   5 +
- drivers/ptp/Kconfig                |   1 +
- drivers/ptp/ptp_ocp.c              | 170 +++++++++++---
- include/linux/dpll.h               |  14 ++
- include/uapi/linux/dpll.h          |  26 ++-
- 9 files changed, 678 insertions(+), 45 deletions(-)
- create mode 100644 Documentation/networking/dpll.rst
-
+diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+index a5779871537a..e3604c10b59e 100644
+--- a/drivers/dpll/dpll_netlink.c
++++ b/drivers/dpll/dpll_netlink.c
+@@ -31,12 +31,16 @@ static const struct nla_policy dpll_genl_set_source_policy[] = {
+ 	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
+ 	[DPLLA_SOURCE_ID]	= { .type = NLA_U32 },
+ 	[DPLLA_SOURCE_TYPE]	= { .type = NLA_U32 },
++	[DPLLA_SOURCE_NAME]	= { .type = NLA_STRING,
++				    .len = DPLL_NAME_LENGTH },
+ };
+ 
+ static const struct nla_policy dpll_genl_set_output_policy[] = {
+ 	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
+ 	[DPLLA_OUTPUT_ID]	= { .type = NLA_U32 },
+ 	[DPLLA_OUTPUT_TYPE]	= { .type = NLA_U32 },
++	[DPLLA_OUTPUT_NAME]	= { .type = NLA_STRING,
++				    .len = DPLL_NAME_LENGTH },
+ };
+ 
+ static const struct nla_policy dpll_genl_set_src_select_mode_policy[] = {
+@@ -100,6 +104,7 @@ static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
+ {
+ 	int i, ret = 0, type, prio;
+ 	struct nlattr *src_attr;
++	const char *name;
+ 
+ 	for (i = 0; i < dpll->sources_count; i++) {
+ 		src_attr = nla_nest_start(msg, DPLLA_SOURCE);
+@@ -132,6 +137,15 @@ static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
+ 				break;
+ 			}
+ 		}
++		if (dpll->ops->get_source_name) {
++			name = dpll->ops->get_source_name(dpll, i);
++			if (name && nla_put_string(msg, DPLLA_SOURCE_NAME,
++						   name)) {
++				nla_nest_cancel(msg, src_attr);
++				ret = -EMSGSIZE;
++				break;
++			}
++		}
+ 		nla_nest_end(msg, src_attr);
+ 	}
+ 
+@@ -143,6 +157,7 @@ static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
+ {
+ 	struct nlattr *out_attr;
+ 	int i, ret = 0, type;
++	const char *name;
+ 
+ 	for (i = 0; i < dpll->outputs_count; i++) {
+ 		out_attr = nla_nest_start(msg, DPLLA_OUTPUT);
+@@ -167,6 +182,15 @@ static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
+ 			}
+ 			ret = 0;
+ 		}
++		if (dpll->ops->get_output_name) {
++			name = dpll->ops->get_output_name(dpll, i);
++			if (name && nla_put_string(msg, DPLLA_OUTPUT_NAME,
++						   name)) {
++				nla_nest_cancel(msg, out_attr);
++				ret = -EMSGSIZE;
++				break;
++			}
++		}
+ 		nla_nest_end(msg, out_attr);
+ 	}
+ 
+diff --git a/include/linux/dpll.h b/include/linux/dpll.h
+index 3fe957a06b90..2f4964dc28f0 100644
+--- a/include/linux/dpll.h
++++ b/include/linux/dpll.h
+@@ -23,6 +23,8 @@ struct dpll_device_ops {
+ 	int (*set_output_type)(struct dpll_device *dpll, int id, int val);
+ 	int (*set_source_select_mode)(struct dpll_device *dpll, int mode);
+ 	int (*set_source_prio)(struct dpll_device *dpll, int id, int prio);
++	const char *(*get_source_name)(struct dpll_device *dpll, int id);
++	const char *(*get_output_name)(struct dpll_device *dpll, int id);
+ };
+ 
+ struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, const char *name,
+diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
+index f6b674e5cf01..8782d3425aae 100644
+--- a/include/uapi/linux/dpll.h
++++ b/include/uapi/linux/dpll.h
+@@ -26,11 +26,13 @@ enum dpll_genl_attr {
+ 	DPLLA_SOURCE,
+ 	DPLLA_SOURCE_ID,
+ 	DPLLA_SOURCE_TYPE,
++	DPLLA_SOURCE_NAME,
+ 	DPLLA_SOURCE_SUPPORTED,
+ 	DPLLA_SOURCE_PRIO,
+ 	DPLLA_OUTPUT,
+ 	DPLLA_OUTPUT_ID,
+ 	DPLLA_OUTPUT_TYPE,
++	DPLLA_OUTPUT_NAME,
+ 	DPLLA_OUTPUT_SUPPORTED,
+ 	DPLLA_STATUS,
+ 	DPLLA_TEMP,
 -- 
 2.27.0
 
