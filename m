@@ -2,318 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3EBC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B6FC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 04:23:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230482AbiJJBTP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Oct 2022 21:19:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36620 "EHLO
+        id S229475AbiJJEXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 00:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbiJJBTJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:19:09 -0400
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE46231DD3;
-        Sun,  9 Oct 2022 18:19:04 -0700 (PDT)
-Received: from nat1.ooonet.ru (gw.zelenaya.net [91.207.137.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id B3C1F504E56;
-        Mon, 10 Oct 2022 04:14:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru B3C1F504E56
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665364500; bh=1gkc8mZdjRaJkgi2fCTpH3SfdmFXxYsZvsHDJD5oReI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vS5C/b61z6zt/Oe0MktMuCpJI3AbBQKiKnaKTfsfFE2UlghQkNs5WrPKW6srSatZk
-         PJUx4qdjxm/Hd3FYd0mOSyA/T10WabYBWPJhRiDCA7A2uT1lw5z7bPXcFLZq7q/2Mn
-         lMakwBM9pahlCsh/7zLqedZDTdIwmVZOJWU6Rkyg=
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-Subject: [RFC PATCH v3 6/6] ptp_ocp: implement DPLL ops
-Date:   Mon, 10 Oct 2022 04:18:04 +0300
-Message-Id: <20221010011804.23716-7-vfedorenko@novek.ru>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20221010011804.23716-1-vfedorenko@novek.ru>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
+        with ESMTP id S230464AbiJJEXA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 00:23:00 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0A75142E
+        for <linux-clk@vger.kernel.org>; Sun,  9 Oct 2022 21:22:59 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id i6so4282138pli.12
+        for <linux-clk@vger.kernel.org>; Sun, 09 Oct 2022 21:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/Vb8/Qi3Qrtb7eH308lY42+cFyKVOa2Ko/edp/2v7Y=;
+        b=PJl4mFGBWUCrLZreJMEzvfznQiOC/tpsDg/+08v3ix0Ud5tt6PNBq0nBlTSiO0YJ46
+         JIwhPdjl/rx0SzoBQInc1iFxLsQa3LjyqKwsKZn1AX/cpigZt2o9wiTiP2aAMoMM17Qu
+         k1l51KLHhqi23QtBMEnCupiffWk+ZNsy6EOuvND53Q8oA8sUJOqOdZAcCv06dbPu2IAR
+         ONFOJuKdmhrqwzYQzWknXB6cbjTGZ5as5vAkQTj8M8Ap6Uxi6H49ISUR2JHKPWGCYU99
+         mFAtScgGKoHmfqlTB4X6ts6LdKWTY1U8xDw5zwXR83OBRUnF0T4lTd5VhUgjnVe4YrLw
+         Hu8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y/Vb8/Qi3Qrtb7eH308lY42+cFyKVOa2Ko/edp/2v7Y=;
+        b=ylxnRX2/2GusSyfOCLmmgLbncVNgJIlPDECZ0YamxDquCVcpmKTw/1NqlqEneIr+ia
+         p3RXcZmZIHSA6JCWx7xQl/dgHg5mQhqi4PWM7I+5YB9nzxyxzEyAjdNKC2e5ONK4d1G6
+         6BK4y3xvCFi49GrQGcRxz5RtLee6oq3C3eB+wk7acwfaZbzOrOSRPlW2QIrMEgEr3uff
+         MG7K3c35ttm4E5SqdyMufAuSTkU4X19YiQzetC0pdUi3gZz3BcnLx5U3CIBR44GcajhR
+         N3Z5ZVMUU0lZHasNSBS9GAKQCuhk9x8eqh/nzsRmtA7p32oQTpuut1XiBwnqEavP6Zin
+         jLNQ==
+X-Gm-Message-State: ACrzQf1PvUc9FYN52ZBmu1Dv1KEQyA3qVx6XkxVQ6yslG0dx3DCB0Y7A
+        m5ACAMm96V9KQuGbNlIUSNQX/g==
+X-Google-Smtp-Source: AMsMyM7O83K9ENPPV2OKiyYBCXVe0Mh4UCFtMVcfhPOrNfnvPDeTZxJHkz7WbVWxnaJIu64/6k8SXQ==
+X-Received: by 2002:a17:90b:4f4d:b0:20d:2225:4275 with SMTP id pj13-20020a17090b4f4d00b0020d22254275mr9141922pjb.191.1665375778778;
+        Sun, 09 Oct 2022 21:22:58 -0700 (PDT)
+Received: from localhost ([122.172.86.128])
+        by smtp.gmail.com with ESMTPSA id c8-20020a17090a020800b0020a1f091a0asm7019607pjc.55.2022.10.09.21.22.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Oct 2022 21:22:58 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        kernel test robot <lkp@intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk: spear: Move prototype to accessible header
+Date:   Mon, 10 Oct 2022 09:52:37 +0530
+Message-Id: <f334e8bcc22fde795de9c8067898d4c0522d44ae.1665375739.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vadim Fedorenko <vadfed@fb.com>
+Fixes the following W=1 kernel build warning(s):
 
-Implement DPLL operations in ptp_ocp driver.
+ drivers/clk/spear/spear6xx_clock.c:116:13: warning: no previous prototype for function 'spear6xx_clk_init' [-Wmissing-prototypes]
 
-Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/ptp/Kconfig       |   1 +
- drivers/ptp/ptp_ocp.c     | 170 ++++++++++++++++++++++++++++++--------
- include/uapi/linux/dpll.h |   2 +
- 3 files changed, 137 insertions(+), 36 deletions(-)
+ arch/arm/mach-spear/generic.h      |  3 ---
+ arch/arm/mach-spear/spear3xx.c     |  1 +
+ arch/arm/mach-spear/spear6xx.c     |  1 +
+ drivers/clk/spear/spear3xx_clock.c |  1 +
+ drivers/clk/spear/spear6xx_clock.c |  1 +
+ include/linux/clk/spear.h          | 14 ++++++++++++++
+ 6 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
-index fe4971b65c64..8c4cfabc1bfa 100644
---- a/drivers/ptp/Kconfig
-+++ b/drivers/ptp/Kconfig
-@@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
- 	depends on COMMON_CLK
- 	select NET_DEVLINK
- 	select CRC16
-+	select DPLL
- 	help
- 	  This driver adds support for an OpenCompute time card.
+diff --git a/arch/arm/mach-spear/generic.h b/arch/arm/mach-spear/generic.h
+index 43b7996ab754..9e36920d4cfd 100644
+--- a/arch/arm/mach-spear/generic.h
++++ b/arch/arm/mach-spear/generic.h
+@@ -25,11 +25,8 @@ extern struct pl022_ssp_controller pl022_plat_data;
+ extern struct pl08x_platform_data pl080_plat_data;
  
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index d36c3f597f77..a01c0c721802 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -21,6 +21,8 @@
- #include <linux/mtd/mtd.h>
- #include <linux/nvmem-consumer.h>
- #include <linux/crc16.h>
-+#include <linux/dpll.h>
-+#include <uapi/linux/dpll.h>
+ void __init spear_setup_of_timer(void);
+-void __init spear3xx_clk_init(void __iomem *misc_base,
+-			      void __iomem *soc_config_base);
+ void __init spear3xx_map_io(void);
+ void __init spear3xx_dt_init_irq(void);
+-void __init spear6xx_clk_init(void __iomem *misc_base);
+ void __init spear13xx_map_io(void);
+ void __init spear13xx_l2x0_init(void);
  
- #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
- #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
-@@ -336,6 +338,7 @@ struct ptp_ocp {
- 	struct ptp_ocp_signal	signal[4];
- 	struct ptp_ocp_sma_connector sma[4];
- 	const struct ocp_sma_op *sma_op;
-+	struct dpll_device *dpll;
- };
+diff --git a/arch/arm/mach-spear/spear3xx.c b/arch/arm/mach-spear/spear3xx.c
+index 2ba406e92c41..7ef9670d3029 100644
+--- a/arch/arm/mach-spear/spear3xx.c
++++ b/arch/arm/mach-spear/spear3xx.c
+@@ -13,6 +13,7 @@
+ #include <linux/amba/pl022.h>
+ #include <linux/amba/pl080.h>
+ #include <linux/clk.h>
++#include <linux/clk/spear.h>
+ #include <linux/io.h>
+ #include <asm/mach/map.h>
+ #include "pl080.h"
+diff --git a/arch/arm/mach-spear/spear6xx.c b/arch/arm/mach-spear/spear6xx.c
+index 7a5fff134872..f0a1e704cceb 100644
+--- a/arch/arm/mach-spear/spear6xx.c
++++ b/arch/arm/mach-spear/spear6xx.c
+@@ -12,6 +12,7 @@
  
- #define OCP_REQ_TIMESTAMP	BIT(0)
-@@ -660,18 +663,19 @@ static DEFINE_IDR(ptp_ocp_idr);
- struct ocp_selector {
- 	const char *name;
- 	int value;
-+	int dpll_type;
- };
+ #include <linux/amba/pl08x.h>
+ #include <linux/clk.h>
++#include <linux/clk/spear.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+diff --git a/drivers/clk/spear/spear3xx_clock.c b/drivers/clk/spear/spear3xx_clock.c
+index 41717ff707f6..ba8791303156 100644
+--- a/drivers/clk/spear/spear3xx_clock.c
++++ b/drivers/clk/spear/spear3xx_clock.c
+@@ -8,6 +8,7 @@
  
- static const struct ocp_selector ptp_ocp_clock[] = {
--	{ .name = "NONE",	.value = 0 },
--	{ .name = "TOD",	.value = 1 },
--	{ .name = "IRIG",	.value = 2 },
--	{ .name = "PPS",	.value = 3 },
--	{ .name = "PTP",	.value = 4 },
--	{ .name = "RTC",	.value = 5 },
--	{ .name = "DCF",	.value = 6 },
--	{ .name = "REGS",	.value = 0xfe },
--	{ .name = "EXT",	.value = 0xff },
-+	{ .name = "NONE",	.value = 0,		.dpll_type = 0 },
-+	{ .name = "TOD",	.value = 1,		.dpll_type = 0 },
-+	{ .name = "IRIG",	.value = 2,		.dpll_type = 0 },
-+	{ .name = "PPS",	.value = 3,		.dpll_type = 0 },
-+	{ .name = "PTP",	.value = 4,		.dpll_type = 0 },
-+	{ .name = "RTC",	.value = 5,		.dpll_type = 0 },
-+	{ .name = "DCF",	.value = 6,		.dpll_type = 0 },
-+	{ .name = "REGS",	.value = 0xfe,		.dpll_type = 0 },
-+	{ .name = "EXT",	.value = 0xff,		.dpll_type = 0 },
- 	{ }
- };
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/clk/spear.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/of_platform.h>
+diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
+index 490701ac9e93..c192a9141b86 100644
+--- a/drivers/clk/spear/spear6xx_clock.c
++++ b/drivers/clk/spear/spear6xx_clock.c
+@@ -7,6 +7,7 @@
+  */
  
-@@ -680,37 +684,37 @@ static const struct ocp_selector ptp_ocp_clock[] = {
- #define SMA_SELECT_MASK		GENMASK(14, 0)
+ #include <linux/clkdev.h>
++#include <linux/clk/spear.h>
+ #include <linux/io.h>
+ #include <linux/spinlock_types.h>
+ #include "clk.h"
+diff --git a/include/linux/clk/spear.h b/include/linux/clk/spear.h
+index a64d034ceddd..eaf95ca656f8 100644
+--- a/include/linux/clk/spear.h
++++ b/include/linux/clk/spear.h
+@@ -8,6 +8,20 @@
+ #ifndef __LINUX_CLK_SPEAR_H
+ #define __LINUX_CLK_SPEAR_H
  
- static const struct ocp_selector ptp_ocp_sma_in[] = {
--	{ .name = "10Mhz",	.value = 0x0000 },
--	{ .name = "PPS1",	.value = 0x0001 },
--	{ .name = "PPS2",	.value = 0x0002 },
--	{ .name = "TS1",	.value = 0x0004 },
--	{ .name = "TS2",	.value = 0x0008 },
--	{ .name = "IRIG",	.value = 0x0010 },
--	{ .name = "DCF",	.value = 0x0020 },
--	{ .name = "TS3",	.value = 0x0040 },
--	{ .name = "TS4",	.value = 0x0080 },
--	{ .name = "FREQ1",	.value = 0x0100 },
--	{ .name = "FREQ2",	.value = 0x0200 },
--	{ .name = "FREQ3",	.value = 0x0400 },
--	{ .name = "FREQ4",	.value = 0x0800 },
--	{ .name = "None",	.value = SMA_DISABLE },
-+	{ .name = "10Mhz",	.value = 0x0000,	.dpll_type = DPLL_TYPE_EXT_10MHZ },
-+	{ .name = "PPS1",	.value = 0x0001,	.dpll_type = DPLL_TYPE_EXT_1PPS },
-+	{ .name = "PPS2",	.value = 0x0002,	.dpll_type = DPLL_TYPE_EXT_1PPS },
-+	{ .name = "TS1",	.value = 0x0004,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "TS2",	.value = 0x0008,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "IRIG",	.value = 0x0010,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "DCF",	.value = 0x0020,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "TS3",	.value = 0x0040,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "TS4",	.value = 0x0080,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ1",	.value = 0x0100,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ2",	.value = 0x0200,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ3",	.value = 0x0400,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ4",	.value = 0x0800,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "None",	.value = SMA_DISABLE,	.dpll_type = DPLL_TYPE_NONE },
- 	{ }
- };
- 
- static const struct ocp_selector ptp_ocp_sma_out[] = {
--	{ .name = "10Mhz",	.value = 0x0000 },
--	{ .name = "PHC",	.value = 0x0001 },
--	{ .name = "MAC",	.value = 0x0002 },
--	{ .name = "GNSS1",	.value = 0x0004 },
--	{ .name = "GNSS2",	.value = 0x0008 },
--	{ .name = "IRIG",	.value = 0x0010 },
--	{ .name = "DCF",	.value = 0x0020 },
--	{ .name = "GEN1",	.value = 0x0040 },
--	{ .name = "GEN2",	.value = 0x0080 },
--	{ .name = "GEN3",	.value = 0x0100 },
--	{ .name = "GEN4",	.value = 0x0200 },
--	{ .name = "GND",	.value = 0x2000 },
--	{ .name = "VCC",	.value = 0x4000 },
-+	{ .name = "10Mhz",	.value = 0x0000,	.dpll_type = DPLL_TYPE_EXT_10MHZ },
-+	{ .name = "PHC",	.value = 0x0001,	.dpll_type = DPLL_TYPE_INT_OSCILLATOR },
-+	{ .name = "MAC",	.value = 0x0002,	.dpll_type = DPLL_TYPE_INT_OSCILLATOR },
-+	{ .name = "GNSS1",	.value = 0x0004,	.dpll_type = DPLL_TYPE_GNSS },
-+	{ .name = "GNSS2",	.value = 0x0008,	.dpll_type = DPLL_TYPE_GNSS },
-+	{ .name = "IRIG",	.value = 0x0010,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "DCF",	.value = 0x0020,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN1",	.value = 0x0040,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN2",	.value = 0x0080,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN3",	.value = 0x0100,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN4",	.value = 0x0200,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GND",	.value = 0x2000,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "VCC",	.value = 0x4000,	.dpll_type = DPLL_TYPE_CUSTOM },
- 	{ }
- };
- 
-@@ -3707,6 +3711,90 @@ ptp_ocp_detach(struct ptp_ocp *bp)
- 	device_unregister(&bp->dev);
- }
- 
-+static int ptp_ocp_dpll_get_status(struct dpll_device *dpll)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+	int sync;
++#ifdef CONFIG_ARCH_SPEAR3XX
++void __init spear3xx_clk_init(void __iomem *misc_base,
++			      void __iomem *soc_config_base);
++#else
++static inline void __init spear3xx_clk_init(void __iomem *misc_base,
++					    void __iomem *soc_config_base) {}
++#endif
 +
-+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
-+	return sync;
-+}
++#ifdef CONFIG_ARCH_SPEAR6XX
++void __init spear6xx_clk_init(void __iomem *misc_base);
++#else
++static inline void __init spear6xx_clk_init(void __iomem *misc_base) {}
++#endif
 +
-+static int ptp_ocp_dpll_get_lock_status(struct dpll_device *dpll)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+	int sync;
-+
-+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
-+	return sync;
-+}
-+
-+static int ptp_ocp_sma_get_dpll_type(struct ptp_ocp *bp, int sma_nr)
-+{
-+	const struct ocp_selector *tbl;
-+	u32 val;
-+
-+	if (bp->sma[sma_nr].mode == SMA_MODE_IN)
-+		tbl = bp->sma_op->tbl[0];
-+	else
-+		tbl = bp->sma_op->tbl[1];
-+
-+	val = ptp_ocp_sma_get(bp, sma_nr);
-+	return tbl[val].dpll_type;
-+}
-+
-+static int ptp_ocp_dpll_type_supported(struct dpll_device *dpll, int sma, int type, int dir)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+	const struct ocp_selector *tbl = bp->sma_op->tbl[dir];
-+	int i;
-+
-+	for (i = 0; i < sizeof(*tbl); i++) {
-+		if (tbl[i].dpll_type == type)
-+			return 1;
-+	}
-+	return 0;
-+}
-+
-+static int ptp_ocp_dpll_get_source_type(struct dpll_device *dpll, int sma)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+
-+	if (bp->sma[sma].mode != SMA_MODE_IN)
-+		return -1;
-+
-+	return ptp_ocp_sma_get_dpll_type(bp, sma);
-+}
-+
-+static int ptp_ocp_dpll_get_source_supported(struct dpll_device *dpll, int sma, int type)
-+{
-+	return ptp_ocp_dpll_type_supported(dpll, sma, type, 0);
-+}
-+
-+static int ptp_ocp_dpll_get_output_type(struct dpll_device *dpll, int sma)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+
-+	if (bp->sma[sma].mode != SMA_MODE_OUT)
-+		return -1;
-+
-+	return ptp_ocp_sma_get_dpll_type(bp, sma);
-+}
-+
-+static int ptp_ocp_dpll_get_output_supported(struct dpll_device *dpll, int sma, int type)
-+{
-+	return ptp_ocp_dpll_type_supported(dpll, sma, type, 1);
-+}
-+
-+static struct dpll_device_ops dpll_ops = {
-+	.get_status		= ptp_ocp_dpll_get_status,
-+	.get_lock_status	= ptp_ocp_dpll_get_lock_status,
-+	.get_source_type	= ptp_ocp_dpll_get_source_type,
-+	.get_source_supported	= ptp_ocp_dpll_get_source_supported,
-+	.get_output_type	= ptp_ocp_dpll_get_output_type,
-+	.get_output_supported	= ptp_ocp_dpll_get_output_supported,
-+};
-+
- static int
- ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
-@@ -3762,6 +3850,14 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	ptp_ocp_info(bp);
- 	devlink_register(devlink);
-+
-+	bp->dpll = dpll_device_alloc(&dpll_ops, "ocp", ARRAY_SIZE(bp->sma), ARRAY_SIZE(bp->sma), bp);
-+	if (!bp->dpll) {
-+		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
-+		return 0;
-+	}
-+	dpll_device_register(bp->dpll);
-+
- 	return 0;
- 
- out:
-@@ -3779,6 +3875,8 @@ ptp_ocp_remove(struct pci_dev *pdev)
- 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
- 	struct devlink *devlink = priv_to_devlink(bp);
- 
-+	dpll_device_unregister(bp->dpll);
-+	dpll_device_free(bp->dpll);
- 	devlink_unregister(devlink);
- 	ptp_ocp_detach(bp);
- 	pci_disable_device(pdev);
-diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
-index 8782d3425aae..59fc6ef81b40 100644
---- a/include/uapi/linux/dpll.h
-+++ b/include/uapi/linux/dpll.h
-@@ -55,11 +55,13 @@ enum dpll_genl_status {
- 
- /* DPLL signal types used as source or as output */
- enum dpll_genl_signal_type {
-+	DPLL_TYPE_NONE,
- 	DPLL_TYPE_EXT_1PPS,
- 	DPLL_TYPE_EXT_10MHZ,
- 	DPLL_TYPE_SYNCE_ETH_PORT,
- 	DPLL_TYPE_INT_OSCILLATOR,
- 	DPLL_TYPE_GNSS,
-+	DPLL_TYPE_CUSTOM,
- 
- 	__DPLL_TYPE_MAX,
- };
+ #ifdef CONFIG_MACH_SPEAR1310
+ void __init spear1310_clk_init(void __iomem *misc_base, void __iomem *ras_base);
+ #else
 -- 
-2.27.0
+2.31.1.272.g89b43f80a514
 
