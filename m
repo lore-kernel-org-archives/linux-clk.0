@@ -2,188 +2,255 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B921CC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 09:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BD5C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 09:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbiJJJqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 05:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39034 "EHLO
+        id S229865AbiJJJ4U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 05:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbiJJJqA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 05:46:00 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBAD565665
-        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 02:45:58 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a26so23677737ejc.4
-        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 02:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=89t0fmxpfi+MN7XN16LJF3/w509j7KVWzr+Dzj8Jcuc=;
-        b=AcjFjUydLE2BB5dua8a+501YZkeQSpKUZz++OFFWcHGewQ7pFTF4rikBqwFDn6burL
-         6WS4avnhXNkBmOKRYXAi84tzP4wtslXV2nyd0l7xVnVb/oKzSlWgYrMpDGx/tizwND3V
-         5zyB8bFOASZreloGFW3PVFlwEWUGP4+U+o+RQNMjidw8+1tBHLgywdVoK6aWA9zzUZgs
-         Drgf9O52g4eQX2MuyvPb5O3t5K5kM1JB68O5USyHE9Ni0B52hc6e7sw0a+wMUA0jyDeK
-         xiY1KX0lqN0WAZqqn0XCmUQzlzPOb74vVMoTZChmajZcJStKpqf/gYSXL3+gdR91HC4B
-         1a6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=89t0fmxpfi+MN7XN16LJF3/w509j7KVWzr+Dzj8Jcuc=;
-        b=B1ZjIxalaxfFQjKBEuVC3KYCOcCIS2pK1kWJlf9CXTJ7Ti21+Ww+elBr2oNkx+zXfk
-         ga4kTsOh1aTL8nCY8lEidbGLS75hmq5uF2ETtxVCv4qiUFiRcl4SxxUv/OslUc/+8UGV
-         oxieEgiQfx1qvnYFUP8SXQvxcrTfHk1Xw5vLl3UyZM4cIzdARjstdwNRlNqrWjOFD94J
-         Z4XSB33NrCcapidRwGDFDyuyrrTtIGrvXJUeU09YDhVGIIIqj6c2Tjd0jQn1JXS3wCt6
-         pfYIROo1LzKWK3ScT/dEUKP0prvbNEBwibdhG0aTnjzPskwamLUIW7KUvYmmV67hzbLk
-         oMvA==
-X-Gm-Message-State: ACrzQf219ldgGaB7Cz+qobo0QTQP0i4t/Prh6B4PNU0ZFf6vb14igNKn
-        4wZKbSRlWA/fIiQynOzfZM5Gaw==
-X-Google-Smtp-Source: AMsMyM4Frup54P7KdL89txKbMCsbWlnlbp00icN0GyXCiI33uNDIo6cnLF5Wg5jt6sUthwz1GmX0pQ==
-X-Received: by 2002:a17:907:2723:b0:78d:95d3:47aa with SMTP id d3-20020a170907272300b0078d95d347aamr8440690ejl.367.1665395157487;
-        Mon, 10 Oct 2022 02:45:57 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id j24-20020a17090643d800b0078d2a2ca930sm5047966ejn.85.2022.10.10.02.45.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Oct 2022 02:45:56 -0700 (PDT)
-Date:   Mon, 10 Oct 2022 11:45:55 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vfedorenko@novek.ru>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-Subject: Re: [RFC PATCH v3 4/6] dpll: get source/output name
-Message-ID: <Y0Pp019euDMHOjJu@nanopsycho>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
- <20221010011804.23716-5-vfedorenko@novek.ru>
+        with ESMTP id S229462AbiJJJ4T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 05:56:19 -0400
+Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8282C46229
+        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 02:56:16 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id C448F2B06733;
+        Mon, 10 Oct 2022 05:56:11 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 10 Oct 2022 05:56:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1665395771; x=
+        1665402971; bh=674jS2EHveDQx+shE6Z/Clg32TTv5M/rq5hx46ULRuA=; b=k
+        v7cBi6wgejBnM5ldbIszmFecT7Xi8XicjTnS6FVssaDu/oWxVzZnXFCFsih5qYQf
+        JzLLG7ahsMkm+lBXCIspZzy8SXWCeCi9JQUlAKdneHRR8A+/+x1yARfU2micqXFM
+        Vww8uVUGRL3IpaqgiejG5yTi7H153ptWacPoAFDIHNYQ+6nA9cIWlGAyE/uwP0g/
+        coO36In3Cr1Xdsp4Uk18KsazF2+6JLySf8Ns5Gm+vdhaDrnJojGn9dCV2ci4wbNk
+        rC6iEgb0CuC5nlwUMnaqfdvr9kP/zugYpiWrqAWoOURx9Ki+oxjP5LDch2DWOm/B
+        YUQQHmv6Vm72krDrZeSxw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1665395771; x=
+        1665402971; bh=674jS2EHveDQx+shE6Z/Clg32TTv5M/rq5hx46ULRuA=; b=k
+        B6eJqvgxI5fllyJrO1E2jd3prtMQ3bZe4o7mQ536F9xQPC/kMnK28JQN8CcDEdZG
+        n58o/le6u1tRWyAPJFSpwA6CKWWxRQfa7CYPDoBt2VUCyCBJKEj9zYoU7QPdL8rK
+        TjW/sCrDF5CA2XaxVOrx5jRwBz1HYqtRFr2rDV8NqGMskX9VTXpGDVZKafsFjeE6
+        vJAsOP4nT6xZ+iVQoZFy2bkbKdWXQeFZSw2OLD1muiw5eu1UN3YDJeWJHU5Okwtf
+        wWJdfTYqprXOcJ7nv6JUNoA0E49B15PkEts7TAVNEus4S0+7r/pBrhHZyVl4Syw6
+        ivmox93Ppb/g52Y5A1H0A==
+X-ME-Sender: <xms:OuxDY74TDeJ47DC2rVdvbxxlr9FjLwxeixFXQeoBVA4Xc_QLBGUz_A>
+    <xme:OuxDYw44bD5PRkc9lz40HknY6SuZU05OX5QidAOqbaMt3lfaeBO-ptskifPyO0dCG
+    GkWRNIvB6o-H1Ft3cA>
+X-ME-Received: <xmr:OuxDYyfKuJZ0xU4SfN1OVMyrPvuhjUBbUMUg6bLUlUAonYfKiaZHH14-halD>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeejgedgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnheptefgleeggfegkeekgffgleduieduffejffegveevkeejudektdduueet
+    feetfefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:OuxDY8KIJKXACKV9QIlv9Bz3zLe2xXIO_ZLstDhC8WNlo8ySLPU0AA>
+    <xmx:OuxDY_JKiK533RTQpfjjaiIP4EUQsVDzhmnRewPSPPgyVnXbQPyO6A>
+    <xmx:OuxDY1zxWzcV3Utez0cEmi4epTFqz2cK8nWt6vFZSSN0GsvFCZvIVw>
+    <xmx:O-xDY3KjaDfksv4KqsPwKpxl0u9IhPwRdYSj4QfRymlk6kiWmyAISaUgcng>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Oct 2022 05:56:09 -0400 (EDT)
+Date:   Mon, 10 Oct 2022 11:56:08 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v9 13/25] clk: Set req_rate on reparenting
+Message-ID: <20221010095608.ak6pnxslmvzhayce@houat>
+References: <20220816112530.1837489-1-maxime@cerno.tech>
+ <CGME20220816112640eucas1p271d97cbe81481a8083fa6540c26fb324@eucas1p2.samsung.com>
+ <20220816112530.1837489-14-maxime@cerno.tech>
+ <0acc7217-762c-7c0d-45a0-55c384824ce4@samsung.com>
+ <20221004205952.C7287C433C1@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221010011804.23716-5-vfedorenko@novek.ru>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221004205952.C7287C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mon, Oct 10, 2022 at 03:18:02AM CEST, vfedorenko@novek.ru wrote:
->From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->
->Dump names of sources and outputs in response to DPLL_CMD_DEVICE_GET dump
->request.
->
->Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->---
-> drivers/dpll/dpll_netlink.c | 24 ++++++++++++++++++++++++
-> include/linux/dpll.h        |  2 ++
-> include/uapi/linux/dpll.h   |  2 ++
-> 3 files changed, 28 insertions(+)
->
->diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
->index a5779871537a..e3604c10b59e 100644
->--- a/drivers/dpll/dpll_netlink.c
->+++ b/drivers/dpll/dpll_netlink.c
->@@ -31,12 +31,16 @@ static const struct nla_policy dpll_genl_set_source_policy[] = {
-> 	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
-> 	[DPLLA_SOURCE_ID]	= { .type = NLA_U32 },
-> 	[DPLLA_SOURCE_TYPE]	= { .type = NLA_U32 },
->+	[DPLLA_SOURCE_NAME]	= { .type = NLA_STRING,
->+				    .len = DPLL_NAME_LENGTH },
-> };
-> 
-> static const struct nla_policy dpll_genl_set_output_policy[] = {
-> 	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
-> 	[DPLLA_OUTPUT_ID]	= { .type = NLA_U32 },
-> 	[DPLLA_OUTPUT_TYPE]	= { .type = NLA_U32 },
->+	[DPLLA_OUTPUT_NAME]	= { .type = NLA_STRING,
->+				    .len = DPLL_NAME_LENGTH },
-> };
-> 
-> static const struct nla_policy dpll_genl_set_src_select_mode_policy[] = {
->@@ -100,6 +104,7 @@ static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
-> {
-> 	int i, ret = 0, type, prio;
-> 	struct nlattr *src_attr;
->+	const char *name;
-> 
-> 	for (i = 0; i < dpll->sources_count; i++) {
-> 		src_attr = nla_nest_start(msg, DPLLA_SOURCE);
->@@ -132,6 +137,15 @@ static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
-> 				break;
-> 			}
-> 		}
->+		if (dpll->ops->get_source_name) {
->+			name = dpll->ops->get_source_name(dpll, i);
->+			if (name && nla_put_string(msg, DPLLA_SOURCE_NAME,
->+						   name)) {
->+				nla_nest_cancel(msg, src_attr);
->+				ret = -EMSGSIZE;
->+				break;
->+			}
->+		}
-> 		nla_nest_end(msg, src_attr);
-> 	}
-> 
->@@ -143,6 +157,7 @@ static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
-> {
-> 	struct nlattr *out_attr;
-> 	int i, ret = 0, type;
->+	const char *name;
-> 
-> 	for (i = 0; i < dpll->outputs_count; i++) {
-> 		out_attr = nla_nest_start(msg, DPLLA_OUTPUT);
->@@ -167,6 +182,15 @@ static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
-> 			}
-> 			ret = 0;
-> 		}
->+		if (dpll->ops->get_output_name) {
->+			name = dpll->ops->get_output_name(dpll, i);
->+			if (name && nla_put_string(msg, DPLLA_OUTPUT_NAME,
->+						   name)) {
->+				nla_nest_cancel(msg, out_attr);
->+				ret = -EMSGSIZE;
->+				break;
->+			}
->+		}
-> 		nla_nest_end(msg, out_attr);
-> 	}
-> 
->diff --git a/include/linux/dpll.h b/include/linux/dpll.h
->index 3fe957a06b90..2f4964dc28f0 100644
->--- a/include/linux/dpll.h
->+++ b/include/linux/dpll.h
->@@ -23,6 +23,8 @@ struct dpll_device_ops {
-> 	int (*set_output_type)(struct dpll_device *dpll, int id, int val);
-> 	int (*set_source_select_mode)(struct dpll_device *dpll, int mode);
-> 	int (*set_source_prio)(struct dpll_device *dpll, int id, int prio);
->+	const char *(*get_source_name)(struct dpll_device *dpll, int id);
->+	const char *(*get_output_name)(struct dpll_device *dpll, int id);
+On Tue, Oct 04, 2022 at 01:59:50PM -0700, Stephen Boyd wrote:
+> Quoting Marek Szyprowski (2022-10-03 02:59:07)
+> > On 16.08.2022 13:25, Maxime Ripard wrote:
+> > > If a non-rate clock started by default with a parent that never
+> > > registered, core->req_rate will be 0. The expectation is that whenever
+> > > the parent will be registered, req_rate will be updated with the new
+> > > value that has just been computed.
+> > >
+> > > However, if that clock is a mux, clk_set_parent() can also make that
+> > > clock no longer orphan. In this case however, we never update req_rat=
+e.
+> > >
+> > > The natural solution to this would be to update core->rate and
+> > > core->req_rate in clk_reparent() by calling clk_recalc().
+> > >
+> > > However, this doesn't work in all cases. Indeed, clk_recalc() is call=
+ed
+> > > by __clk_set_parent_before(), __clk_set_parent() and
+> > > clk_core_reparent(). Both __clk_set_parent_before() and __clk_set_par=
+ent
+> > > will call clk_recalc() with the enable_lock taken through a call to
+> > > clk_enable_lock(), the underlying locking primitive being a spinlock.
+> > >
+> > > clk_recalc() calls the backing driver .recalc_rate hook, and that
+> > > implementation might sleep if the underlying device uses a bus with
+> > > accesses that might sleep, such as i2c.
+> > >
+> > > In such a situation, we would end up sleeping while holding a spinloc=
+k,
+> > > and thus in an atomic section.
+> > >
+> > > In order to work around this, we can move the core->rate and
+> > > core->req_rate update to the clk_recalc() calling sites, after the
+> > > enable_lock has been released if it was taken.
+> > >
+> > > The only situation that could still be problematic is the
+> > > clk_core_reparent() -> clk_reparent() case that doesn't have any
+> > > locking. clk_core_reparent() is itself called by clk_hw_reparent(),
+> > > which is then called by 4 drivers:
+> > >
+> > >    * clk-stm32mp1.c, stm32/clk-stm32-core.c and tegra/clk-tegra210-em=
+c.c
+> > >      use it in their set_parent implementation. The set_parent hook is
+> > >      only called by __clk_set_parent() and clk_change_rate(), both of
+> > >      them calling it without the enable_lock taken.
+> > >
+> > >    * clk/tegra/clk-tegra124-emc.c calls it as part of its set_rate
+> > >      implementation. set_rate is only called by clk_change_rate(), ag=
+ain
+> > >      without the enable_lock taken.
+> > >
+> > > In both cases we can't end up in a situation where the clk_hw_reparen=
+t()
+> > > caller would hold a spinlock, so it seems like this is a good
+> > > workaround.
+> > >
+> > > Let's also add some unit tests to make sure we cover the original bug.
+> > >
+> > > Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
+> > > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, =
+meson g12b
+> >=20
+> > Well, I don't have good news. This patch has my 'tested-by', but this=
+=20
+> > version again doesn't work properly on Meson G12B.
+> >=20
+> > Linux next-20220929, which contains this patch as commit cb1b1dd96241=
+=20
+> > ("clk: Set req_rate on reparenting") fails to boot on Odroid-N2. I only=
+=20
+> > see a freeze once the modules (I see some messages from meson drm and=
+=20
+> > cpu_freq) are loaded. Could you remind me how to help debugging this=20
+> > issue? I will try to identify which clock causes the issue. Reverting=
+=20
+> > $subject on top of linux-next fixes/hides the problem.
+> >=20
+> >=20
+> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > > ---
+> > >   drivers/clk/clk.c      |  22 ++++
+> > >   drivers/clk/clk_test.c | 239 ++++++++++++++++++++++++++++++++++++++=
++++
+> > >   2 files changed, 261 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 53b28e63deae..91bb1ea0e147 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -1765,6 +1765,23 @@ static void clk_core_update_orphan_status(stru=
+ct clk_core *core, bool is_orphan)
+> > >               clk_core_update_orphan_status(child, is_orphan);
+> > >   }
+> > >  =20
+> > > +/*
+> > > + * Update the orphan rate and req_rate of @core and all its children.
+> > > + */
+> > > +static void clk_core_update_orphan_child_rates(struct clk_core *core)
+> > > +{
+> > > +     struct clk_core *child;
+> > > +     unsigned long parent_rate =3D 0;
+> > > +
+> > > +     if (core->parent)
+> > > +             parent_rate =3D core->parent->rate;
+> > > +
+> > > +     core->rate =3D core->req_rate =3D clk_recalc(core, parent_rate);
+> > > +
+> > > +     hlist_for_each_entry(child, &core->children, child_node)
+> > > +             clk_core_update_orphan_child_rates(child);
+> > > +}
+> > > +
+> > >   static void clk_reparent(struct clk_core *core, struct clk_core *ne=
+w_parent)
+> > >   {
+> > >       bool was_orphan =3D core->orphan;
+> > > @@ -2506,6 +2527,7 @@ static void clk_core_reparent(struct clk_core *=
+core,
+> > >                                 struct clk_core *new_parent)
+> > >   {
+> > >       clk_reparent(core, new_parent);
+> > > +     clk_core_update_orphan_child_rates(core);
+> > >       __clk_recalc_accuracies(core);
+> > >       __clk_recalc_rates(core, POST_RATE_CHANGE);
+>=20
+> I see a problem. __clk_recalc_rates() uses 'core->rate' as "old rate"
+> but we'll have already destroyed that by calling
+> clk_core_update_orphan_child_rates() and assigning 'core->rate' to the
+> recalc_rate. Are clk notifiers being used? If so, it will probably be
+> confused because the notifier will see the same rate as what was set
+> instead of the old rate. cpufreq is probably the biggest user of clk
+> notifiers.
 
-Hmm, why you exactly need the name for?
+That's a very good point... Which raises another one. Would it be ok to
+notify users on a reparenting? It would make sense to me, since the rate
+could be affected, but it's not been done so far so I'm not sure what
+the implications might be
 
+> We should add a test for that so when a clk is reparented the old rate
+> is still what we expected it to be when the notifier is called.
 
-> };
-> 
-> struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, const char *name,
->diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
->index f6b674e5cf01..8782d3425aae 100644
->--- a/include/uapi/linux/dpll.h
->+++ b/include/uapi/linux/dpll.h
->@@ -26,11 +26,13 @@ enum dpll_genl_attr {
-> 	DPLLA_SOURCE,
-> 	DPLLA_SOURCE_ID,
-> 	DPLLA_SOURCE_TYPE,
->+	DPLLA_SOURCE_NAME,
-> 	DPLLA_SOURCE_SUPPORTED,
-> 	DPLLA_SOURCE_PRIO,
-> 	DPLLA_OUTPUT,
-> 	DPLLA_OUTPUT_ID,
-> 	DPLLA_OUTPUT_TYPE,
->+	DPLLA_OUTPUT_NAME,
-> 	DPLLA_OUTPUT_SUPPORTED,
-> 	DPLLA_STATUS,
-> 	DPLLA_TEMP,
->-- 
->2.27.0
->
+I can do it, but I'm not sure what you want to test exactly. Let's
+assume we have a mux with a given rate, we change the parent of that
+mux, the rate is likely to be changed as well and we should put in the
+notifier that the old_rate is the first parent's, and the new rate the
+one of the new parent?
+
+> Also, clk_core_update_orphan_child_rates() is poorly named. It doesn't
+> care at all that the clk is an orphan. It seems like another
+> __clk_recalc_rates() without the notifier. I have no idea why we need
+> another recalc rates.
+
+You're right, the only difference between the two (aside from the
+notifiers) is that req_rate is also updated in
+clk_core_update_orphan_child_rates().
+
+> Possibly setting the req_rate in __clk_recalc_rates() is sufficient.
+> Or maybe we should bail out if the clk doesn't have the orphan bit
+> set.
+
+Either way makes sense to me, the latter is probably less intrusive, but
+the former allows to consolidate __clk_recalc_rates() and
+clk_core_update_orphan_child_rates(). Which one would you prefer?
+
+Maxime
