@@ -2,176 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B6FC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 04:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23AAC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 06:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229475AbiJJEXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 00:23:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
+        id S230127AbiJJG4N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 02:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230464AbiJJEXA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 00:23:00 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0A75142E
-        for <linux-clk@vger.kernel.org>; Sun,  9 Oct 2022 21:22:59 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id i6so4282138pli.12
-        for <linux-clk@vger.kernel.org>; Sun, 09 Oct 2022 21:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/Vb8/Qi3Qrtb7eH308lY42+cFyKVOa2Ko/edp/2v7Y=;
-        b=PJl4mFGBWUCrLZreJMEzvfznQiOC/tpsDg/+08v3ix0Ud5tt6PNBq0nBlTSiO0YJ46
-         JIwhPdjl/rx0SzoBQInc1iFxLsQa3LjyqKwsKZn1AX/cpigZt2o9wiTiP2aAMoMM17Qu
-         k1l51KLHhqi23QtBMEnCupiffWk+ZNsy6EOuvND53Q8oA8sUJOqOdZAcCv06dbPu2IAR
-         ONFOJuKdmhrqwzYQzWknXB6cbjTGZ5as5vAkQTj8M8Ap6Uxi6H49ISUR2JHKPWGCYU99
-         mFAtScgGKoHmfqlTB4X6ts6LdKWTY1U8xDw5zwXR83OBRUnF0T4lTd5VhUgjnVe4YrLw
-         Hu8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y/Vb8/Qi3Qrtb7eH308lY42+cFyKVOa2Ko/edp/2v7Y=;
-        b=ylxnRX2/2GusSyfOCLmmgLbncVNgJIlPDECZ0YamxDquCVcpmKTw/1NqlqEneIr+ia
-         p3RXcZmZIHSA6JCWx7xQl/dgHg5mQhqi4PWM7I+5YB9nzxyxzEyAjdNKC2e5ONK4d1G6
-         6BK4y3xvCFi49GrQGcRxz5RtLee6oq3C3eB+wk7acwfaZbzOrOSRPlW2QIrMEgEr3uff
-         MG7K3c35ttm4E5SqdyMufAuSTkU4X19YiQzetC0pdUi3gZz3BcnLx5U3CIBR44GcajhR
-         N3Z5ZVMUU0lZHasNSBS9GAKQCuhk9x8eqh/nzsRmtA7p32oQTpuut1XiBwnqEavP6Zin
-         jLNQ==
-X-Gm-Message-State: ACrzQf1PvUc9FYN52ZBmu1Dv1KEQyA3qVx6XkxVQ6yslG0dx3DCB0Y7A
-        m5ACAMm96V9KQuGbNlIUSNQX/g==
-X-Google-Smtp-Source: AMsMyM7O83K9ENPPV2OKiyYBCXVe0Mh4UCFtMVcfhPOrNfnvPDeTZxJHkz7WbVWxnaJIu64/6k8SXQ==
-X-Received: by 2002:a17:90b:4f4d:b0:20d:2225:4275 with SMTP id pj13-20020a17090b4f4d00b0020d22254275mr9141922pjb.191.1665375778778;
-        Sun, 09 Oct 2022 21:22:58 -0700 (PDT)
-Received: from localhost ([122.172.86.128])
-        by smtp.gmail.com with ESMTPSA id c8-20020a17090a020800b0020a1f091a0asm7019607pjc.55.2022.10.09.21.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Oct 2022 21:22:58 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
+        with ESMTP id S229560AbiJJG4N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 02:56:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5FE631EFE;
+        Sun,  9 Oct 2022 23:56:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EB8B8B80E4A;
+        Mon, 10 Oct 2022 06:56:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0C6C433C1;
+        Mon, 10 Oct 2022 06:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665384966;
+        bh=WNtvqkW4/8yEfg7rBtuWxdx0EP/TSxOJxN2UJno+J3c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KDeRvW+zxXs7FdtnZ730nm98lWyasDiqfDHtBXEK8VHiHmJxCnugxAHCkCrNb0efx
+         +NE9XuYs3Wv3CZnOEVbh05gtfJQWPRXu6ec5rtPTm3RR644F06SvUX7s1koTE7LRwE
+         //H70izUNhOtanTNvyA658XvHX8dJP3TmL2+cxXa+D8YZU0wXcnewmosNRy3r+BbML
+         OvmtwE4wH/xzkVzlFjZgKmzjBq7EIRYfNzsfzPkO6nQfAJ6EmyudlUA5+NPInsbe+x
+         e2ekLR5+bxXbyU7wNzIaa48aTQtNrvHl/tkphrKMRlAKEyQXdgyNZM0lKfG2B701DX
+         L8Diy3r9CYCGg==
+Date:   Mon, 10 Oct 2022 08:56:03 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        kernel test robot <lkp@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk: spear: Move prototype to accessible header
-Date:   Mon, 10 Oct 2022 09:52:37 +0530
-Message-Id: <f334e8bcc22fde795de9c8067898d4c0522d44ae.1665375739.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g044: Drop WDT2 clock and reset entry
+Message-ID: <Y0PCAycTLsGuPmFF@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221009231013.14791-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lE1zZbkiwZu2Rchj"
+Content-Disposition: inline
+In-Reply-To: <20221009231013.14791-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/spear/spear6xx_clock.c:116:13: warning: no previous prototype for function 'spear6xx_clk_init' [-Wmissing-prototypes]
+--lE1zZbkiwZu2Rchj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/mach-spear/generic.h      |  3 ---
- arch/arm/mach-spear/spear3xx.c     |  1 +
- arch/arm/mach-spear/spear6xx.c     |  1 +
- drivers/clk/spear/spear3xx_clock.c |  1 +
- drivers/clk/spear/spear6xx_clock.c |  1 +
- include/linux/clk/spear.h          | 14 ++++++++++++++
- 6 files changed, 18 insertions(+), 3 deletions(-)
+On Mon, Oct 10, 2022 at 12:10:13AM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> WDT CH2 is specifically to check the operation of Cortex-M33 CPU and if
+> used from CA55 CPU would result in an unexpected behaviour. Hence drop
+> WDT2 clock and reset entries.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-diff --git a/arch/arm/mach-spear/generic.h b/arch/arm/mach-spear/generic.h
-index 43b7996ab754..9e36920d4cfd 100644
---- a/arch/arm/mach-spear/generic.h
-+++ b/arch/arm/mach-spear/generic.h
-@@ -25,11 +25,8 @@ extern struct pl022_ssp_controller pl022_plat_data;
- extern struct pl08x_platform_data pl080_plat_data;
- 
- void __init spear_setup_of_timer(void);
--void __init spear3xx_clk_init(void __iomem *misc_base,
--			      void __iomem *soc_config_base);
- void __init spear3xx_map_io(void);
- void __init spear3xx_dt_init_irq(void);
--void __init spear6xx_clk_init(void __iomem *misc_base);
- void __init spear13xx_map_io(void);
- void __init spear13xx_l2x0_init(void);
- 
-diff --git a/arch/arm/mach-spear/spear3xx.c b/arch/arm/mach-spear/spear3xx.c
-index 2ba406e92c41..7ef9670d3029 100644
---- a/arch/arm/mach-spear/spear3xx.c
-+++ b/arch/arm/mach-spear/spear3xx.c
-@@ -13,6 +13,7 @@
- #include <linux/amba/pl022.h>
- #include <linux/amba/pl080.h>
- #include <linux/clk.h>
-+#include <linux/clk/spear.h>
- #include <linux/io.h>
- #include <asm/mach/map.h>
- #include "pl080.h"
-diff --git a/arch/arm/mach-spear/spear6xx.c b/arch/arm/mach-spear/spear6xx.c
-index 7a5fff134872..f0a1e704cceb 100644
---- a/arch/arm/mach-spear/spear6xx.c
-+++ b/arch/arm/mach-spear/spear6xx.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/amba/pl08x.h>
- #include <linux/clk.h>
-+#include <linux/clk/spear.h>
- #include <linux/err.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-diff --git a/drivers/clk/spear/spear3xx_clock.c b/drivers/clk/spear/spear3xx_clock.c
-index 41717ff707f6..ba8791303156 100644
---- a/drivers/clk/spear/spear3xx_clock.c
-+++ b/drivers/clk/spear/spear3xx_clock.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/clk.h>
- #include <linux/clkdev.h>
-+#include <linux/clk/spear.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of_platform.h>
-diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-index 490701ac9e93..c192a9141b86 100644
---- a/drivers/clk/spear/spear6xx_clock.c
-+++ b/drivers/clk/spear/spear6xx_clock.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/clkdev.h>
-+#include <linux/clk/spear.h>
- #include <linux/io.h>
- #include <linux/spinlock_types.h>
- #include "clk.h"
-diff --git a/include/linux/clk/spear.h b/include/linux/clk/spear.h
-index a64d034ceddd..eaf95ca656f8 100644
---- a/include/linux/clk/spear.h
-+++ b/include/linux/clk/spear.h
-@@ -8,6 +8,20 @@
- #ifndef __LINUX_CLK_SPEAR_H
- #define __LINUX_CLK_SPEAR_H
- 
-+#ifdef CONFIG_ARCH_SPEAR3XX
-+void __init spear3xx_clk_init(void __iomem *misc_base,
-+			      void __iomem *soc_config_base);
-+#else
-+static inline void __init spear3xx_clk_init(void __iomem *misc_base,
-+					    void __iomem *soc_config_base) {}
-+#endif
-+
-+#ifdef CONFIG_ARCH_SPEAR6XX
-+void __init spear6xx_clk_init(void __iomem *misc_base);
-+#else
-+static inline void __init spear6xx_clk_init(void __iomem *misc_base) {}
-+#endif
-+
- #ifdef CONFIG_MACH_SPEAR1310
- void __init spear1310_clk_init(void __iomem *misc_base, void __iomem *ras_base);
- #else
--- 
-2.31.1.272.g89b43f80a514
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+
+--lE1zZbkiwZu2Rchj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNDwgIACgkQFA3kzBSg
+KbZC5w//Qgn3NDSQ2sF5vIel+hJz+8H8tl+zWkGe88NCjssNkyCNJEVuroKcgcD7
+Tz5c9aYfLU4rWXM6kx4RUNXD7ShH6nsIjCrZ5wZ5uk9+KzQX43/vWzsEVainhtNY
+FKX25jM2tHKBbJz9Y9L75amx/RhuXOl+Znzh4A+tso+K7P/ByJQ6nPqWIpHg5x2k
+r0K4XbqNPp4leaYV7xyRYn4Ib61eyd7PWDXeCnTnB0/TGHFa3zpY2J9iBiwQNgru
+wR0rOg69DIiV9G/aZ9Uwg9/2OWlafThPI8H3Gi6J7gbCxoY3/9keKGcvU/5jCV71
+54PDP+dzMvXVxEk9JiC15KXnUOoCVquFNIU8O2Hh8tA+HtLgBh9q50+4haCQ2Xue
+d4AJcqJkK2cOSH/egEn7IS1ip4gpS23ID/e7ZJQl5Ts0m8AAIWyvYJfUM1pm0wNp
+xQEmERN5aLMCzQtFOMRab+NrcOdYFsUWPp09Ta+HEjNv5sZmHSxJk9fKk9qd8KgV
+WwOwMG1+qqBUiEAB0ixZbVxgwahsbXkF/LPdlZpFj3JAB5j1wrjpy5dTCic7cnIQ
+zMogVw5DIs6/X8G3ajBbDn6Ol7UBc0gCgs+6Z+K7AjtczqHSkScAzjBhRNXw/MfX
+q3vNLP/NnNncI/8E96RIZ4Q0BNOe3WX/vMESXX2CHb805TuzZ84=
+=iHAn
+-----END PGP SIGNATURE-----
+
+--lE1zZbkiwZu2Rchj--
