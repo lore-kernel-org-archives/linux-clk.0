@@ -2,101 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C93CC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 06:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C3CC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 07:49:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbiJJG4a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 02:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58992 "EHLO
+        id S231232AbiJJHtP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 03:49:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230249AbiJJG4Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 02:56:25 -0400
+        with ESMTP id S232743AbiJJHs5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 03:48:57 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D4C402F2;
-        Sun,  9 Oct 2022 23:56:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B822B4;
+        Mon, 10 Oct 2022 00:46:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E809AB80E28;
-        Mon, 10 Oct 2022 06:56:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34325C433D6;
-        Mon, 10 Oct 2022 06:56:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 95169B80DE0;
+        Mon, 10 Oct 2022 07:46:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64B1C433D6;
+        Mon, 10 Oct 2022 07:46:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665384978;
-        bh=VdleptVGuv3PW/ghHSzmcLYdC8vBkvJlLRU0XfCTzGA=;
+        s=k20201202; t=1665387973;
+        bh=HUWDx9968WJHkiBKpvgdEDBwKpGc3JYinZy8nio1DUE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AZAOPs4KnoCG6ZCPx5drtWFkKt0AHJrxtjhGvX4Vj0MPeePUk+6a7WlVr97Blvyrj
-         FNFrMbO8eRY2e0BkMn2vvgspxVhc23Z1z9pxitwpa5PZZGXA8DYvu9PE18zDzqDyxL
-         gOuRylL2A9zSdZxdQsYTsMUjkvzYaeS9JQfDF/hWDvWPX666oFBKVDtFZU/FFfvSM7
-         HJ1AoI7y8/cLtqf0YzCKBj+qIePuvl/WB0nlEIhzA798Hada2I7Sqxe89FpQxjHyWN
-         t72w7cDAmK2SwMjAvnXyBd5txm2bK15faT+pLqt61Cm6J48g7tEoPZb38mW2uFY42Q
-         toApLbM52n8uA==
-Date:   Mon, 10 Oct 2022 08:56:15 +0200
+        b=c/YWP24E7EhTgCHhm/tIMfrujbrpbbNWwzXXconkDHAYMMsbnirG9J3yqUFWcqMSn
+         3AUNFNmlhQU1hUm7MDj/yvAurS8+jgpS0zUoRh7/rUuZ8JB4/vrjfzXdOOkAV1Rzhi
+         naFR7dh+fYkx5yAkQGVVkK3Yl7wjZcFv/KspXWH9aq00MDpj7lx2egRL2vGueruPP6
+         Ae+/nF2ptrkpQmAn7Z8cLpEu8u8zGZooHzIIAVV+CaFCLSLnSAsvm877ve4ahMiLjL
+         9T1z+wdq7iG7SJYHUvU2O9fSW5skcFldAtDm3bQ0BbnbGfq88PqIFQ+S6sePm10QJn
+         v4IDHtusNvVTg==
+Date:   Mon, 10 Oct 2022 09:46:09 +0200
 From:   Wolfram Sang <wsa@kernel.org>
-To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g043: Drop WDT2 clock and reset entry
-Message-ID: <Y0PCD3/nTTZ15m6V@shikoro>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 4/5] clk: renesas: r8a779g0: Add PWM clock
+Message-ID: <Y0PNwToHAqQCRvsB@shikoro>
 Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20221009231253.15592-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <cover.1665147497.git.geert+renesas@glider.be>
+ <a33d0e51c2fe8a0e6c89f3fd92db7c4bf5c33074.1665147497.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qD3/D4ZOaXrpcOIe"
+        protocol="application/pgp-signature"; boundary="uw/2SOH6B02h0n/n"
 Content-Disposition: inline
-In-Reply-To: <20221009231253.15592-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <a33d0e51c2fe8a0e6c89f3fd92db7c4bf5c33074.1665147497.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---qD3/D4ZOaXrpcOIe
+--uw/2SOH6B02h0n/n
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 10, 2022 at 12:12:53AM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Oct 07, 2022 at 03:10:03PM +0200, Geert Uytterhoeven wrote:
+> Add the module clock used by the PWM timers on the Renesas R-Car V4H
+> (R8A779G0) SoC.
 >=20
-> WDT CH2 is specifically to check the operation of Cortex-M33 CPU and if
-> used from CA55 CPU would result in an unexpected behaviour. Hence drop
-> WDT2 clock and reset entries.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---qD3/D4ZOaXrpcOIe
+--uw/2SOH6B02h0n/n
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNDwg8ACgkQFA3kzBSg
-KbYgIBAAsfQ+dz9htNx5HMXKuHQQsSO7MnjWuGgIt45LbiUsN6XKQbvw0hsSRx/Y
-cbT/0aKKg3qGZOSLkEeKbIV3MywPDefK3cHJXtsqFxAxcgIWIlN8v3JK7WxgRMS7
-Ue+rE2sIIE2JpPiE2MMk2oSHqy5n+C4VAhsomrQBWW3UiMf+DqTp+T7V+zCiuwwS
-g2wTOXkjd08ssl8n+WR7BLfvF93POieNa6zjgHFaILkTmF9A7D9/37JukD57c5wK
-UloBpwSygklbCfJE318vkTO7xDY7ixLqWhvnmRfY0+3+eG4QAcM2R4a9w05dCCyB
-VV0uPLpFAyKCbvL9+u3gwZG6XDQxzKD/m2Kdh+6dDbH6qsWyiA4j+5ee12/OG1ZG
-iMSAgsdqsTkyrIOzVXcXNdH4B5T2ntPfc9UkDedr46IC+wU1OW0Q8S4jLhMRAr+t
-7QBzX1xbV9ZRTVCH4Vl8GSPesEfxjW2QIxSE52eLTB6ihyYixBoOoeZk2WQbunsy
-wtwwjVsqPpb+wEyZYeI2XvP03SzfT1bOg4C5Up5SJOQ6vMz4cVJOxJ/6wbbM9FFI
-vUGEp/tEKQ7Sx1KiboxW0EegXwscI7HgxjKSIk/xTwODexbFZ1T5gL1Zt4N3i+4I
-x20u4LH4NsCxelRs/eINELBjtEwwS323NuWYaeIyABWqs8xHnv8=
-=ICiQ
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNDzcEACgkQFA3kzBSg
+Kbb3xA/+JRDzFDPsMs8SzM5sqzgK2v2ClApCYc1PVcXiCY6Jku93Y1QIuGuNW7+1
+FGlRQO0XNF+CHe5jx859cSht77Tl9wluVPJq9NE7Y/FmSyP7dN8XcQTcPO3CCNqP
+fycZKRmBOC/rzbFLeXGGKgLlVowUP+8AbCmsQmC3qBYvaflXQIVp2hh0VxMXEVfh
+flm0rbixgpMPTra9OAFhzTUMEgw7vurZ/JybibObyYQNjdw5ibWNL3JCOqp5UX5E
+FS7rBvNYcCZA7aqkQm3DeS+H5VT7//KjtlsbkjijUxW4r/fiNNaxFpmNWFTmy7me
+jJJrTJI2jo6vJinAFWRK8zakVJ/gXMl5T7nRxVSeyRgiEh1SjAPiRqCAexPDdyxK
+r4fuGT7dDrTbwSs4but6ssPZbr/mrXRDuwY74Q5Z6R3REa5nyvekGDyK9ODkV8jO
+hYJb2V4WND/ZBFfKBYvf/bqqv80k0qHQ9l7FdRaGh2P+dZZ8aSFCANBxHeXMbPcM
+aPIjJSaNyw5mSBHAsAxXR5J9k7IO0v96ppCFSkObYupSoSl8dUmbhYVxMhcdPClw
+Y52UYgnXEFLJiuoh+uNpqfsGhu8zEYFk+nuR1hzl+0wngJIOQBWlCB8JY7hMrY5q
+CN0N/X3IP+DLckSWI9aiaKQjLkobUOD5GVX7ds11A6457tCK5gM=
+=ukAl
 -----END PGP SIGNATURE-----
 
---qD3/D4ZOaXrpcOIe--
+--uw/2SOH6B02h0n/n--
