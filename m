@@ -2,110 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842B7C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 16:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C01C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 16:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiJJQGC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 12:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50798 "EHLO
+        id S229607AbiJJQxM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 12:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbiJJQFs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 12:05:48 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5C71AF37
-        for <linux-clk@vger.kernel.org>; Mon, 10 Oct 2022 09:05:03 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohvGu-0004Pk-GE; Mon, 10 Oct 2022 18:04:52 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohvGs-000iow-Uc; Mon, 10 Oct 2022 18:04:50 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohvGs-006uaf-45; Mon, 10 Oct 2022 18:04:50 +0200
-Date:   Mon, 10 Oct 2022 18:04:49 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Robert Eckelmann <longnoserob@gmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>
-Subject: Re: [PATCH V3] clk: tegra: Fix Tegra PWM parent clock
-Message-ID: <20221010160449.un6gdrxu3hqbvd3i@pengutronix.de>
-References: <20221010100046.6477-1-jonathanh@nvidia.com>
+        with ESMTP id S229731AbiJJQxL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 12:53:11 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1994A4C61B;
+        Mon, 10 Oct 2022 09:53:09 -0700 (PDT)
+Received: from [192.168.1.138] ([37.4.248.18]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MWiUg-1ofi0u2rqS-00X4lf; Mon, 10 Oct 2022 18:52:40 +0200
+Message-ID: <dad7dc1b-c94a-4547-260f-5efe50d959e8@i2se.com>
+Date:   Mon, 10 Oct 2022 18:52:34 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="igprdqe3agturd5e"
-Content-Disposition: inline
-In-Reply-To: <20221010100046.6477-1-jonathanh@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH v2 3/7] firmware: raspberrypi: Provide a helper to query a
+ clock max rate
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>, Daniel Vetter <daniel@ffwll.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stephen Boyd <sboyd@kernel.org>, Emma Anholt <emma@anholt.net>,
+        Ray Jui <rjui@broadcom.com>, Maxime Ripard <mripard@kernel.org>
+Cc:     linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech>
+ <20220815-rpi-fix-4k-60-v2-3-983276b83f62@cerno.tech>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220815-rpi-fix-4k-60-v2-3-983276b83f62@cerno.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:xVuX/w3ngCM1Xs7bP8l36ga2yBUkRfiC5SZVOLDFVuhbEbaUOi8
+ Ht7lb7ZE0v89ORFIUFBR3EcZ9hByi6Wj9zTVx7WihMoqFLggY4vIEi3SRcUo5lzctKBWVDl
+ L8Gov+ZguoxDyaPpHg1BGnNdtyuV4Hhzy7JnX503K6i9Kqtpfv8Rh3VcY1VLf7i3vxUW7kD
+ FfUhE94nGdfGvl/vyyTZg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5jfDTjv99BA=:IqmBkuyekdtld/M89dBtQF
+ Re7hifvYF4SBrKs+GlGnEcCgnpAL27uhTcZxU6FwVTA1Atb1kKb3c6KYguBswF3V+LHTMFIE8
+ iKC/Z25dkIn6jUSZcg+W8T5FLEat5RkJbiUpFM/YyWHDc1hG4ujgoLK9LuurOH7uiFdwIw2bw
+ HizfQ8BBCHTJlpBNxhLDv9igdI3GKH3En7g6MXgd0q0Dtb+xFFS8luEGgozvqQXgIa1Yxufpr
+ 3RV8WkouAR7J1uqEDaJrPGHPxFIsmvn3PYzaL0DZQr04PCKdFHq9nZWDWv+atNLguhDzPY4Ox
+ Q8/P4OhVfdSuAVD2dKtPVB+RHOK3PbeQX5PXUTnd5c8oZueCeG9AFZeblw/9S6xX0yecvr1Zn
+ NsfpxZTGks4bNSTtS49ngIgIVvCa8VBTVG7N/QRNNVmJof5lLPQoxzpPneg8zr+1cPql7B/Xe
+ 3pBjaefrK4IfV+omLR/Y5WM7u0AtLKTjsKPFcR5J/CtBQGnoQ1NOjIXdWLVrHZ2lhdCaSFUzD
+ a0eWFkkh5fsYlNdY3em51JWS0ZpllGLqZlFCiBHsonj53esckRkG/xtXWrSoCRPBJwrpYjO/Q
+ 6QW3BLaXZNvNd7eXY7+jMAOwxF+sh5qEJo8xdixvnvwki7jZqmXfTJASGhjVi7NrQg85mDKge
+ Dj7HStZnsIgmNFYivHIjF5zCbnNkwk2qoEO7AmJ5EuoAd7ti9p3t6TuFcwr8B4aupReULQszC
+ yp/oR6C1WX6AzW6Lco3hq4duehQwPdrVXCIntIJALv9JkZs3IfSXbeDD5mYKnC9z5eDzf4t9d
+ 0Z/ASLcbS5dnvytm4o+eTp6AuRPqw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Maxime,
 
---igprdqe3agturd5e
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 10, 2022 at 11:00:46AM +0100, Jon Hunter wrote:
-> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-> the period calculation in the Tegra PWM driver and now returns an error
-> if the period requested is less than minimum period supported. This is
-> breaking PWM support on various Tegra platforms. For example, on the
-> Tegra210 Jetson Nano platform this is breaking the PWM fan support and
-> probing the PWM fan driver now fails ...
->=20
->  pwm-fan pwm-fan: Failed to configure PWM: -22
->  pwm-fan: probe of pwm-fan failed with error -22
->=20
-> The problem is that the default parent clock for the PWM on Tegra210 is
-> a 32kHz clock and is unable to support the requested PWM period.
->=20
-> Fix PWM support on Tegra20, Tegra30, Tegra114, Tegra124 and Tegra210 by
-> updating the parent clock for the PWM to be the PLL_P.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
-> Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com> # TF101 T20
-> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
-> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # TF700T T3
-
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Thanks for your work on this!
-
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---igprdqe3agturd5e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNEQp8ACgkQwfwUeK3K
-7AmPLwf8C0lY9kL1/ubNj9hd4hrNrZ0IhspuLTX14xCRaa+U0pR0xtAD7HAoeu0v
-aYz7Kiy77diuaFIyt1Rb1uNAV3okUNC1dQXOpp4cXVwa/LXwDIwXxOw0EYwyR26Z
-kd1viLZ4Q6eMoao2arEOiiisZh78OaOx1Mhncue8nv5No9xMNE8kOv07wW7Lr1je
-Fel+Ll98SoZU+tHU2eUIp2rwR0K1ZN3L+tglVldKXbCERy7+tKuxoSfivPwohEp1
-mt7MZOhonrPM4zdQcs8bnPVvQMOW8HSMiydbFmpe++tcdByZTpEZ+Ah9Li9i9krl
-ss6g+zm7fvGT+UWJ1B+EhnDpUDQvTw==
-=y2EG
------END PGP SIGNATURE-----
-
---igprdqe3agturd5e--
+Am 20.09.22 um 14:50 schrieb Maxime Ripard:
+> The firmware allows to query for its clocks the operating range of a
+> given clock. We'll need this for some drivers (KMS, in particular) to
+> infer the state of some configuration options, so let's create a
+> function to do so.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>
+> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+> index b916e1e171f8..c4b9ea70f5a7 100644
+> --- a/drivers/firmware/raspberrypi.c
+> +++ b/drivers/firmware/raspberrypi.c
+> @@ -228,6 +228,21 @@ static void rpi_register_clk_driver(struct device *dev)
+>   						-1, NULL, 0);
+>   }
+>   
+> +unsigned int rpi_firmware_clk_get_max_rate(struct rpi_firmware *fw, unsigned int id)
+> +{
+> +	struct rpi_firmware_clk_rate_request msg =
+> +		RPI_FIRMWARE_CLK_RATE_REQUEST(id);
+> +	int ret;
+> +
+> +	ret = rpi_firmware_property(fw, RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
+> +				    &msg, sizeof(msg));
+> +	if (ret)
+> +		return 0;
+> +
+> +	return le32_to_cpu(msg.rate);
+> +}
+> +EXPORT_SYMBOL_GPL(rpi_firmware_clk_get_max_rate);
+> +
+>   static void rpi_firmware_delete(struct kref *kref)
+>   {
+>   	struct rpi_firmware *fw = container_of(kref, struct rpi_firmware,
+> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
+> index 74c7bcc1ac2a..10248c370229 100644
+> --- a/include/soc/bcm2835/raspberrypi-firmware.h
+> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
+> @@ -154,12 +154,32 @@ enum rpi_firmware_clk_id {
+>   	RPI_FIRMWARE_NUM_CLK_ID,
+>   };
+>   
+> +/**
+> + * struct rpi_firmware_clk_rate_request - Firmware Request for a rate
+> + * @id:	ID of the clock being queried
+> + * @rate: Rate in Hertz. Set by the firmware.
+> + *
+> + * Used by @RPI_FIRMWARE_GET_CLOCK_RATE, @RPI_FIRMWARE_GET_CLOCK_MEASURED,
+> + * @RPI_FIRMWARE_GET_MAX_CLOCK_RATE and @RPI_FIRMWARE_GET_MIN_CLOCK_RATE.
+> + */
+> +struct rpi_firmware_clk_rate_request {
+> +	__le32 id;
+> +	__le32 rate;
+> +} __packed;
+> +
+> +#define RPI_FIRMWARE_CLK_RATE_REQUEST(_id)	\
+> +	{					\
+> +		.id = _id,			\
+> +	}
+> +
+>   #if IS_ENABLED(CONFIG_RASPBERRYPI_FIRMWARE)
+>   int rpi_firmware_property(struct rpi_firmware *fw,
+>   			  u32 tag, void *data, size_t len);
+>   int rpi_firmware_property_list(struct rpi_firmware *fw,
+>   			       void *data, size_t tag_size);
+>   void rpi_firmware_put(struct rpi_firmware *fw);
+> +unsigned int rpi_firmware_clk_get_max_rate(struct rpi_firmware *fw,
+> +					   unsigned int id);
+>   struct device_node *rpi_firmware_find_node(void);
+>   struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
+>   struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
+> @@ -179,6 +199,12 @@ static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
+>   
+>   static inline void rpi_firmware_put(struct rpi_firmware *fw) { }
+>   
+> +static inline unsigned int rpi_firmware_clk_get_max_rate(struct rpi_firmware *fw,
+> +							 unsigned int id)
+> +{
+> +	return UINT_MAX;
+In case the driver is disabled the function return UINT_MAX, but in case 
+the firmware doesn't support RPI_FIRMWARE_GET_MAX_CLOCK_RATE it returns 
+0. This looks a little bit inconsistent to me.
+> +}
+> +
+>   static inline struct device_node *rpi_firmware_find_node(void)
+>   {
+>   	return NULL;
+>
