@@ -2,105 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16ABDC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 18:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A141C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 19:07:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbiJJSen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 14:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
+        id S229623AbiJJTHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 15:07:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiJJSej (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 14:34:39 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33F377EB9;
-        Mon, 10 Oct 2022 11:34:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AFE64B810B2;
-        Mon, 10 Oct 2022 18:34:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C17D9C433D6;
-        Mon, 10 Oct 2022 18:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665426871;
-        bh=q1D/o8hjFri5M7pdAX0qRaQ3GjvwpewPGyi6/8o58nc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N8rx9+wgy+mxK7aHi92womRfUs/zAZXsByhEjtDB1n8oArNy68Gptx5jvyXd8vKlv
-         BiF+lbzk/gWCxJyDFBLr7iFFFxnif1hU63kw5ajlJQN4JYDjic5o7YrqK1Z/pwng2E
-         IJHVI3ADGZHDh8Ro45WriJiCKZZFoGtDbMwiqetZmKSbIYZzjM5ILMFsxgFGwz1bhM
-         N2hobmUKOOMy/aYsJM6ZKrV+lTXBksPgpFoL9pYsNZwxcT5qqUTb6urFKThKPW2w8m
-         Snj53vpgJo17TlyrYQQEyn9tebhlraavSrKRzt1n2Cfw0pu9Xp8b+QqU2xAuWfHkKC
-         PsbN06LlJ/vOA==
-Date:   Mon, 10 Oct 2022 20:34:27 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: renesas: r8a779g0: Add SASYNCPER clocks
-Message-ID: <Y0Rls4SgBIaUtzcT@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cover.1665147497.git.geert+renesas@glider.be>
- <d0f35c35e1f96c5a649ab477e7ba5d8025957cd0.1665147497.git.geert+renesas@glider.be>
- <Y0M7JVPVmrudEvZI@shikoro>
- <CAMuHMdXK1Bh=6p_8LL54gJL0nKZ27wQb_wxM0ve0svBDG5X-6w@mail.gmail.com>
+        with ESMTP id S229848AbiJJTHa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 15:07:30 -0400
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C300641525;
+        Mon, 10 Oct 2022 12:07:28 -0700 (PDT)
+Received: by mail-qt1-x82a.google.com with SMTP id l28so1512459qtv.4;
+        Mon, 10 Oct 2022 12:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tHbgSss03L35eJoiPvd6E+bOo+CK2kE8ZZuMTI5hMok=;
+        b=ZLiCbmc+aLvVY6yK7PQS9yEjBx9W8tYKi8fpjZ1vBWhLhIJ8nQiLl2qIXAXSb+zai3
+         dwLfe9FHOQHDeHis8L2jVeKaMteFBh3cz1qYG0aHxFlMbISl9PjSLsDmt8G5ARIIEPxC
+         rLJP2JkpDijQTOgJmSBOp6wzr93kPscCY46zXKhjFbvTpQ+Bbj4C0kG9GQReLPuBFN68
+         4ulyP9iMo7aKSCdiIITiCkRFXwo8WmqmbolIUecGab3+QFvFQ7G3jsYeG+N6I+HRjIhl
+         tf8pCA3jjUo5VfnctePnGP4UziYpV7vcFtNPQK0HBkj+ltjPvhPZ1XC8sPM+fm9FNQEt
+         jESA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHbgSss03L35eJoiPvd6E+bOo+CK2kE8ZZuMTI5hMok=;
+        b=IuuBhIqrUlMFQdNjMgp1LhCOpoBsDutBlRkIQX2zztO0VrSiHHICSPSHKgFdRKmJcJ
+         ArBl5S6zRmIuYCOUd3EnZk7pZsLu6PCHSGMkUOgMH5JOffKy8lk21tmXHy5/Ih6MBe4h
+         RXzK1gvW5cuL7yyIF7a41XrOmnWj7NpaZ1y/rGH1swH/H0m9P0z7zk0PYOjWcAdh3kxj
+         gN3rba7BNPJ8DRwXEsXaDmTGYuKsTFPp6mhnrD4AEtrJLcaq47lBlbR8INOktW5h/JSp
+         f9lRZAoEKaeMJcTn2KmkUiKtvHeCLK4zVAcs9JcZVnIxjxMxrJX4GaKFYzaC9Aj+BiNm
+         wr1w==
+X-Gm-Message-State: ACrzQf3FgOXlfbE4YLUMQAYmMDtbyDWXntbEm3/9+/9YpuBX+v6X9F51
+        XqWJmZ4YeG4aj8CmmWCQCuw=
+X-Google-Smtp-Source: AMsMyM4sqjylyecSB8SpRQyKOlV52WBMIcnfpUmsjSNs6YgKEywOKanh7L6jExlWXlG/AzcbJCI/uQ==
+X-Received: by 2002:a05:622a:10e:b0:398:d464:eefa with SMTP id u14-20020a05622a010e00b00398d464eefamr8672655qtw.172.1665428847849;
+        Mon, 10 Oct 2022 12:07:27 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id bm38-20020a05620a19a600b006cebfea5c55sm11505848qkb.2.2022.10.10.12.07.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Oct 2022 12:07:27 -0700 (PDT)
+Message-ID: <395633de-193f-609e-abc6-9dddb2cae3c0@gmail.com>
+Date:   Mon, 10 Oct 2022 12:07:22 -0700
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tmzC9/e4IYft99h0"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXK1Bh=6p_8LL54gJL0nKZ27wQb_wxM0ve0svBDG5X-6w@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 0/7] drm/vc4: Fix the core clock behaviour
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stephen Boyd <sboyd@kernel.org>, Emma Anholt <emma@anholt.net>,
+        Ray Jui <rjui@broadcom.com>
+Cc:     linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech>
+ <20221010114420.beytjynzshjgiy6y@houat>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20221010114420.beytjynzshjgiy6y@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 10/10/22 04:44, Maxime Ripard wrote:
+> Hi Florian,
+> 
+> On Tue, Sep 20, 2022 at 02:50:19PM +0200, Maxime Ripard wrote:
+>> Those patches used to be part of a larger clock fixes series:
+>> https://lore.kernel.org/linux-clk/20220715160014.2623107-1-maxime@cerno.tech/
+>>
+>> However, that series doesn't seem to be getting anywhere, so I've split out
+>> these patches that fix a regression that has been there since 5.18 and that
+>> prevents the 4k output from working on the RaspberryPi4.
+>>
+>> Hopefully, we will be able to merge those patches through the DRM tree to avoid
+>> any further disruption.
+> 
+> Could you review this? Ideally this would be merged through drm-misc due
+> to the dependencies between the new firmware functions and the DRM
+> patches.
 
---tmzC9/e4IYft99h0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > Some spaces missing after the commas.
->=20
-> I did it this way to keep the columns a little bit more aligned.
-> The alternative is to widen the columns, and adds TABs in all rows...
-
-I see.
-
-> > So, no CLK_SASYNCPER at all because R8A779G0_CLK_SASYNCPERD1 divides
-> > PLL5 directly. I don't mind which version we use but I think it should
-> > be consistent because the diagram looks the same in the specs. What do
-> > you think?
->=20
-> I can add an internal SASYNCPER clock on R-Car S4-8, too.
-
-That would be great!
-
-
---tmzC9/e4IYft99h0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNEZbAACgkQFA3kzBSg
-KbY/QBAAnstfFEOwWc7t2q/lQmII25gOSnGhoaL4e/Lh/O2ihz5au3CH6eQxZM1O
-btBcUMS+i13FHEREVKjz4L8fBEVG5ry2pIbj1qjQHJGyTMOnal1xyR+TD0Op5R+L
-C4Sbe8iaL8yMyKgFN6PMZ5i/ydnInQ85L+8P1TM5PIjjxMpemfwJHeh2Q2T3boRY
-jebkfkzt7WizouVNfeTITFjhVRHvCm3SLj3SjKGAk6yaY0kYn+vSvi0HgQEYv4fL
-TiFfIAnSBOC7AAC9+Jjwpyf3XuwsXz2XCpJkEZOeOrHRJMoePaXR2v/vsHIwe67m
-uS8P8FtJ/glUfWD2nhBq0F5kw35KU7sj85X+uh2ZXN4DUrH5uWuCYDo48dWtNwRM
-AHU1wB/YpMGZn88rZprgkGu31IOiePRD1MoRVBhrBm1xeMHB57oLXcGic5ybkklR
-N/fWczTaU7kumnDB9TRyhregupix2p+7ROJRfVd9F9lCELlsEDVhWt+/bOidl6Tu
-mRjUP+Wx/8BQ4dPUW8KvI6bFPaIL0gH3Hpz29RdqNeZWzzFv8e/q4ak7EHKaeu2P
-1VBtYTvX+9Xm2GSIXo9psvQv+qLyydQ6w4dqAzMXsawyFqOMem3xy3reR/Rk/N3/
-TJZ0jHTYo7Snrs77LIzQTQD3p978fdZK64qv6OyfoA/Zs+d/5Js=
-=c7y9
------END PGP SIGNATURE-----
-
---tmzC9/e4IYft99h0--
+I suppose I can review the firmware parts if you would like me to, for 
+vc4 I am pretty much clueless, and despite efforts from Emma to get the 
+vc4 driver to be usable on platforms other than Pi, that never happened 
+unfortunately. It would be better to keep the firmware and vc4 drivers 
+decoupled, just so "wrong" assumptions are not made, but for all 
+practical purposes this is the only combination that exists.
+-- 
+Florian
