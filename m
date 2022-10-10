@@ -2,366 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C43CC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 20:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BE2C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 20:22:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbiJJUO7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 16:14:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47430 "EHLO
+        id S230000AbiJJUWT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 16:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiJJUO6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 16:14:58 -0400
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE93D2339E;
-        Mon, 10 Oct 2022 13:14:55 -0700 (PDT)
-Received: from [192.168.0.18] (unknown [37.228.234.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id 1AAF2504E6A;
-        Mon, 10 Oct 2022 23:10:55 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 1AAF2504E6A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665432657; bh=lhmO4SRBUXBDS0KyK3GB76AZTA40bt/flw2jTlMvjyI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=f0H2lhu6uQjHGeW0hlkfcDbs+VN/8tIGrFyViftjQCSFxEBs7omBD3RpFrQ4h3mZA
-         UK0WsQZ54kRWwrPmItAG16uRqFXH6blsNvHhh4AUWmKwLap70A6nPKEvTmAQkfvG1i
-         CkvsIOfBotQRbuBEYNm7Hln5GwTUnZmqy7TIfseU=
-Message-ID: <a8631728-a76a-41b3-0f88-413c3d7a1b2e@novek.ru>
-Date:   Mon, 10 Oct 2022 21:14:20 +0100
+        with ESMTP id S230121AbiJJUWA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 16:22:00 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F269561B21;
+        Mon, 10 Oct 2022 13:20:59 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id 8so6193563ilj.4;
+        Mon, 10 Oct 2022 13:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H6qQlkkQO5iVjIU1+H3cRSHc4fGnIENPMJr/c+nO5fc=;
+        b=btaQTSQilsWlBEJLA9I+ngMKgerioIsD/4qCTCBczEA9G/nsDYLkrxOpiffgOItntR
+         NtpBLv/Bvm5nH407QaKKhVrLANNg+79wDnu8N9rGa675Cj4bJh6MJGbP9NeYMW2KQCE5
+         o0gvdde/3k+XeN/iF4vVrclEZq+h2asM7087sXH6OQQq0befz/8bKXox36ocFWlYlNSd
+         2OKr5p6SDaXeLKGytH8BCALAVNLVSpVsG9zsAlu72HFBxquq98QIlbWw6aTXn93xvQt3
+         3/VgdBtIbFenM7Urkuhyd0Laf5r7mQEdGbUF8FzWqp/Keq5t+fZG8jekEtDxhhMncV5F
+         yWFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H6qQlkkQO5iVjIU1+H3cRSHc4fGnIENPMJr/c+nO5fc=;
+        b=ILZ5dHTVmb8+XKqqEzW2D4GbVjwfyr74BUT/gyWSC9BqGW8AcyBADyX01syq3jPgnD
+         U1Zeho1sIktJgFtiquRn7vvTm9lO2+VGeNyeJYZZjGBmS/XQJzR445qtkXlcRQJRpEw2
+         MqWRYpHPTcFHbnHliJq39fgYNFusOjatYEvl7DRKvaLZAg+vZW5UuDaZMQb8VCpmygHq
+         DAm3iH1aRUGEdiRob+2n6XVC1rY02ZMgHKng+05wT74l7iu0lLaygiz3MV6aO5Q4ASq5
+         52/GoCcx/GmKky4gCTIIlVIFXX1XQtEr8V1rEywu8Ont5iBLo4jZ/w6pMmU6+d9oxDbZ
+         KCiA==
+X-Gm-Message-State: ACrzQf3MMj3T1db40dcUwO2PFcFuFdzmAFE00puyvF07ifCh3BKymupY
+        3bA0zMIZeRUxgTBK0179Y5REPvJcD+mUoNuflWw=
+X-Google-Smtp-Source: AMsMyM7MJ/3iL8pr1i3T89t2QytCmLtbwlxjx7s4hT0TAkKvpXTdZ+4IQcbktPmd6FrCxzEsj2CqgETBeJTctp/OmTY=
+X-Received: by 2002:a05:6e02:b22:b0:2f9:b864:f1ad with SMTP id
+ e2-20020a056e020b2200b002f9b864f1admr9899410ilu.298.1665433096249; Mon, 10
+ Oct 2022 13:18:16 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC PATCH v3 6/6] ptp_ocp: implement DPLL ops
-Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
- <20221010011804.23716-7-vfedorenko@novek.ru> <Y0Q9Xcf92OpWPJGW@nanopsycho>
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-In-Reply-To: <Y0Q9Xcf92OpWPJGW@nanopsycho>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221009181338.2896660-1-lis8215@gmail.com> <20221009181338.2896660-2-lis8215@gmail.com>
+ <84b6dae0-d503-bbd2-d483-80462917afa4@linaro.org>
+In-Reply-To: <84b6dae0-d503-bbd2-d483-80462917afa4@linaro.org>
+From:   Siarhei Volkau <lis8215@gmail.com>
+Date:   Mon, 10 Oct 2022 23:18:05 +0300
+Message-ID: <CAKNVLfZmjfmKb5ybY8NDhV-bQCQn7o_bSVK=aM4byftasW6dLg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: ingenic: Add support for the JZ4755 SoC
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10.10.2022 16:42, Jiri Pirko wrote:
-> Mon, Oct 10, 2022 at 03:18:04AM CEST, vfedorenko@novek.ru wrote:
->> From: Vadim Fedorenko <vadfed@fb.com>
->>
->> Implement DPLL operations in ptp_ocp driver.
->>
->> Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
->> ---
->> drivers/ptp/Kconfig       |   1 +
->> drivers/ptp/ptp_ocp.c     | 170 ++++++++++++++++++++++++++++++--------
->> include/uapi/linux/dpll.h |   2 +
->> 3 files changed, 137 insertions(+), 36 deletions(-)
->>
->> diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
->> index fe4971b65c64..8c4cfabc1bfa 100644
->> --- a/drivers/ptp/Kconfig
->> +++ b/drivers/ptp/Kconfig
->> @@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
->> 	depends on COMMON_CLK
->> 	select NET_DEVLINK
->> 	select CRC16
->> +	select DPLL
->> 	help
->> 	  This driver adds support for an OpenCompute time card.
->>
->> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
->> index d36c3f597f77..a01c0c721802 100644
->> --- a/drivers/ptp/ptp_ocp.c
->> +++ b/drivers/ptp/ptp_ocp.c
->> @@ -21,6 +21,8 @@
->> #include <linux/mtd/mtd.h>
->> #include <linux/nvmem-consumer.h>
->> #include <linux/crc16.h>
->> +#include <linux/dpll.h>
->> +#include <uapi/linux/dpll.h>
-> 
-> This should not be needed to include directly. linux/dpll.h should
-> include uapi/linux/dpll.h
-> 
+=D0=BF=D0=BD, 10 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 17:55, Krzysztof K=
+ozlowski
+<krzysztof.kozlowski@linaro.org>:
 
-Got it, will change
+> How do you plan to merge it? Usually these go via subsystem trees...
 
-> 
->>
->> #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
->> #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
->> @@ -336,6 +338,7 @@ struct ptp_ocp {
->> 	struct ptp_ocp_signal	signal[4];
->> 	struct ptp_ocp_sma_connector sma[4];
->> 	const struct ocp_sma_op *sma_op;
->> +	struct dpll_device *dpll;
->> };
->>
->> #define OCP_REQ_TIMESTAMP	BIT(0)
->> @@ -660,18 +663,19 @@ static DEFINE_IDR(ptp_ocp_idr);
->> struct ocp_selector {
->> 	const char *name;
->> 	int value;
->> +	int dpll_type;
-> 
-> Enum?
-
-Yes, I got it, will convert enums to actual enums in the series.
-
-> 
-> 
->> };
->>
->> static const struct ocp_selector ptp_ocp_clock[] = {
->> -	{ .name = "NONE",	.value = 0 },
->> -	{ .name = "TOD",	.value = 1 },
->> -	{ .name = "IRIG",	.value = 2 },
->> -	{ .name = "PPS",	.value = 3 },
->> -	{ .name = "PTP",	.value = 4 },
->> -	{ .name = "RTC",	.value = 5 },
->> -	{ .name = "DCF",	.value = 6 },
->> -	{ .name = "REGS",	.value = 0xfe },
->> -	{ .name = "EXT",	.value = 0xff },
->> +	{ .name = "NONE",	.value = 0,		.dpll_type = 0 },
->> +	{ .name = "TOD",	.value = 1,		.dpll_type = 0 },
->> +	{ .name = "IRIG",	.value = 2,		.dpll_type = 0 },
->> +	{ .name = "PPS",	.value = 3,		.dpll_type = 0 },
->> +	{ .name = "PTP",	.value = 4,		.dpll_type = 0 },
->> +	{ .name = "RTC",	.value = 5,		.dpll_type = 0 },
->> +	{ .name = "DCF",	.value = 6,		.dpll_type = 0 },
->> +	{ .name = "REGS",	.value = 0xfe,		.dpll_type = 0 },
->> +	{ .name = "EXT",	.value = 0xff,		.dpll_type = 0 },
->> 	{ }
->> };
->>
->> @@ -680,37 +684,37 @@ static const struct ocp_selector ptp_ocp_clock[] = {
->> #define SMA_SELECT_MASK		GENMASK(14, 0)
->>
->> static const struct ocp_selector ptp_ocp_sma_in[] = {
->> -	{ .name = "10Mhz",	.value = 0x0000 },
->> -	{ .name = "PPS1",	.value = 0x0001 },
->> -	{ .name = "PPS2",	.value = 0x0002 },
->> -	{ .name = "TS1",	.value = 0x0004 },
->> -	{ .name = "TS2",	.value = 0x0008 },
->> -	{ .name = "IRIG",	.value = 0x0010 },
->> -	{ .name = "DCF",	.value = 0x0020 },
->> -	{ .name = "TS3",	.value = 0x0040 },
->> -	{ .name = "TS4",	.value = 0x0080 },
->> -	{ .name = "FREQ1",	.value = 0x0100 },
->> -	{ .name = "FREQ2",	.value = 0x0200 },
->> -	{ .name = "FREQ3",	.value = 0x0400 },
->> -	{ .name = "FREQ4",	.value = 0x0800 },
->> -	{ .name = "None",	.value = SMA_DISABLE },
->> +	{ .name = "10Mhz",	.value = 0x0000,	.dpll_type = DPLL_TYPE_EXT_10MHZ },
->> +	{ .name = "PPS1",	.value = 0x0001,	.dpll_type = DPLL_TYPE_EXT_1PPS },
->> +	{ .name = "PPS2",	.value = 0x0002,	.dpll_type = DPLL_TYPE_EXT_1PPS },
->> +	{ .name = "TS1",	.value = 0x0004,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "TS2",	.value = 0x0008,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "IRIG",	.value = 0x0010,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "DCF",	.value = 0x0020,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "TS3",	.value = 0x0040,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "TS4",	.value = 0x0080,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "FREQ1",	.value = 0x0100,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "FREQ2",	.value = 0x0200,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "FREQ3",	.value = 0x0400,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "FREQ4",	.value = 0x0800,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "None",	.value = SMA_DISABLE,	.dpll_type = DPLL_TYPE_NONE },
->> 	{ }
->> };
->>
->> static const struct ocp_selector ptp_ocp_sma_out[] = {
->> -	{ .name = "10Mhz",	.value = 0x0000 },
->> -	{ .name = "PHC",	.value = 0x0001 },
->> -	{ .name = "MAC",	.value = 0x0002 },
->> -	{ .name = "GNSS1",	.value = 0x0004 },
->> -	{ .name = "GNSS2",	.value = 0x0008 },
->> -	{ .name = "IRIG",	.value = 0x0010 },
->> -	{ .name = "DCF",	.value = 0x0020 },
->> -	{ .name = "GEN1",	.value = 0x0040 },
->> -	{ .name = "GEN2",	.value = 0x0080 },
->> -	{ .name = "GEN3",	.value = 0x0100 },
->> -	{ .name = "GEN4",	.value = 0x0200 },
->> -	{ .name = "GND",	.value = 0x2000 },
->> -	{ .name = "VCC",	.value = 0x4000 },
->> +	{ .name = "10Mhz",	.value = 0x0000,	.dpll_type = DPLL_TYPE_EXT_10MHZ },
->> +	{ .name = "PHC",	.value = 0x0001,	.dpll_type = DPLL_TYPE_INT_OSCILLATOR },
->> +	{ .name = "MAC",	.value = 0x0002,	.dpll_type = DPLL_TYPE_INT_OSCILLATOR },
->> +	{ .name = "GNSS1",	.value = 0x0004,	.dpll_type = DPLL_TYPE_GNSS },
->> +	{ .name = "GNSS2",	.value = 0x0008,	.dpll_type = DPLL_TYPE_GNSS },
->> +	{ .name = "IRIG",	.value = 0x0010,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "DCF",	.value = 0x0020,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "GEN1",	.value = 0x0040,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "GEN2",	.value = 0x0080,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "GEN3",	.value = 0x0100,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "GEN4",	.value = 0x0200,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "GND",	.value = 0x2000,	.dpll_type = DPLL_TYPE_CUSTOM },
->> +	{ .name = "VCC",	.value = 0x4000,	.dpll_type = DPLL_TYPE_CUSTOM },
->> 	{ }
->> };
->>
->> @@ -3707,6 +3711,90 @@ ptp_ocp_detach(struct ptp_ocp *bp)
->> 	device_unregister(&bp->dev);
->> }
->>
->> +static int ptp_ocp_dpll_get_status(struct dpll_device *dpll)
->> +{
->> +	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->> +	int sync;
->> +
->> +	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
->> +	return sync;
->> +}
->> +
->> +static int ptp_ocp_dpll_get_lock_status(struct dpll_device *dpll)
->> +{
->> +	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->> +	int sync;
->> +
->> +	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
->> +	return sync;
->> +}
->> +
->> +static int ptp_ocp_sma_get_dpll_type(struct ptp_ocp *bp, int sma_nr)
->> +{
->> +	const struct ocp_selector *tbl;
->> +	u32 val;
->> +
->> +	if (bp->sma[sma_nr].mode == SMA_MODE_IN)
->> +		tbl = bp->sma_op->tbl[0];
->> +	else
->> +		tbl = bp->sma_op->tbl[1];
->> +
->> +	val = ptp_ocp_sma_get(bp, sma_nr);
->> +	return tbl[val].dpll_type;
->> +}
->> +
->> +static int ptp_ocp_dpll_type_supported(struct dpll_device *dpll, int sma, int type, int dir)
->> +{
->> +	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->> +	const struct ocp_selector *tbl = bp->sma_op->tbl[dir];
->> +	int i;
->> +
->> +	for (i = 0; i < sizeof(*tbl); i++) {
->> +		if (tbl[i].dpll_type == type)
->> +			return 1;
->> +	}
->> +	return 0;
->> +}
->> +
->> +static int ptp_ocp_dpll_get_source_type(struct dpll_device *dpll, int sma)
->> +{
->> +	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->> +
->> +	if (bp->sma[sma].mode != SMA_MODE_IN)
->> +		return -1;
->> +
->> +	return ptp_ocp_sma_get_dpll_type(bp, sma);
->> +}
->> +
->> +static int ptp_ocp_dpll_get_source_supported(struct dpll_device *dpll, int sma, int type)
->> +{
->> +	return ptp_ocp_dpll_type_supported(dpll, sma, type, 0);
->> +}
->> +
->> +static int ptp_ocp_dpll_get_output_type(struct dpll_device *dpll, int sma)
->> +{
->> +	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->> +
->> +	if (bp->sma[sma].mode != SMA_MODE_OUT)
->> +		return -1;
->> +
->> +	return ptp_ocp_sma_get_dpll_type(bp, sma);
->> +}
->> +
->> +static int ptp_ocp_dpll_get_output_supported(struct dpll_device *dpll, int sma, int type)
->> +{
->> +	return ptp_ocp_dpll_type_supported(dpll, sma, type, 1);
->> +}
->> +
->> +static struct dpll_device_ops dpll_ops = {
-> 
-> Namespace prefix?
-
-Sure, will add ptp_ocp for consistency.
-
-> 
-> 
->> +	.get_status		= ptp_ocp_dpll_get_status,
->> +	.get_lock_status	= ptp_ocp_dpll_get_lock_status,
->> +	.get_source_type	= ptp_ocp_dpll_get_source_type,
->> +	.get_source_supported	= ptp_ocp_dpll_get_source_supported,
->> +	.get_output_type	= ptp_ocp_dpll_get_output_type,
->> +	.get_output_supported	= ptp_ocp_dpll_get_output_supported,
->> +};
->> +
->> static int
->> ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->> {
->> @@ -3762,6 +3850,14 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>
->> 	ptp_ocp_info(bp);
->> 	devlink_register(devlink);
->> +
->> +	bp->dpll = dpll_device_alloc(&dpll_ops, "ocp", ARRAY_SIZE(bp->sma), ARRAY_SIZE(bp->sma), bp);
->> +	if (!bp->dpll) {
-> 
-> You have to use IS_ERR() macro here.
-> 
-Thanks, will change.
-> 
->> +		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
->> +		return 0;
->> +	}
->> +	dpll_device_register(bp->dpll);
->> +
->> 	return 0;
->>
->> out:
->> @@ -3779,6 +3875,8 @@ ptp_ocp_remove(struct pci_dev *pdev)
->> 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
->> 	struct devlink *devlink = priv_to_devlink(bp);
->>
->> +	dpll_device_unregister(bp->dpll);
->> +	dpll_device_free(bp->dpll);
->> 	devlink_unregister(devlink);
->> 	ptp_ocp_detach(bp);
->> 	pci_disable_device(pdev);
->> diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
->> index 8782d3425aae..59fc6ef81b40 100644
->> --- a/include/uapi/linux/dpll.h
->> +++ b/include/uapi/linux/dpll.h
->> @@ -55,11 +55,13 @@ enum dpll_genl_status {
->>
->> /* DPLL signal types used as source or as output */
->> enum dpll_genl_signal_type {
->> +	DPLL_TYPE_NONE,
->> 	DPLL_TYPE_EXT_1PPS,
->> 	DPLL_TYPE_EXT_10MHZ,
->> 	DPLL_TYPE_SYNCE_ETH_PORT,
->> 	DPLL_TYPE_INT_OSCILLATOR,
->> 	DPLL_TYPE_GNSS,
->> +	DPLL_TYPE_CUSTOM,
-> 
-> This hunk should not be here.
-> I commented this on the previous version. Btw, this is not the only
-> thing that I previously commented and you ignored. It is annoying to be
-> honest. Could you please include the requested changes in next patchset
-> version or comment why you are not do including them. Ignoring is never
-> good :/
-> 
-Sorry for that. This version of patchset was issued to add visibility to the 
-work done by Arkadiusz and to provide documentation (or at least part of it).
-I will definitely address the comments in the next spin.
-
-> 
->>
->> 	__DPLL_TYPE_MAX,
->> };
->> -- 
->> 2.27.0
->>
-
+It's a new case for me, could you explain the problem a bit more?
+What things should I bother with in the next patchset version?
+Thanks in advance.
