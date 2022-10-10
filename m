@@ -2,235 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFD0C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925EEC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 01:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230344AbiJJBSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Oct 2022 21:18:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35944 "EHLO
+        id S230443AbiJJBS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Oct 2022 21:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbiJJBSk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:18:40 -0400
+        with ESMTP id S230479AbiJJBSt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Oct 2022 21:18:49 -0400
 Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98D392E9D8;
-        Sun,  9 Oct 2022 18:18:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F012D303CD;
+        Sun,  9 Oct 2022 18:18:45 -0700 (PDT)
 Received: from nat1.ooonet.ru (gw.zelenaya.net [91.207.137.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id E495B504E55;
-        Mon, 10 Oct 2022 04:14:56 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru E495B504E55
+        by novek.ru (Postfix) with ESMTPSA id DAF2D504AE0;
+        Mon, 10 Oct 2022 04:14:46 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru DAF2D504AE0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665364498; bh=XLHIvhz9omIEbrPi1AG5YDmm+bbkVnYbVuLRgaKLvoE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sE9K+oJV6ORuVdu3MsM15fleM8DZrdYjLf15jUo22ykf3XGVemNTIhK6pZ3sWDeNR
-         DM+dnAuR8AmsFgQKTMm5gnAncLOd0KrHt2U6yc7aO9iqYMQjQGXldz606wgCuecJoB
-         WFDyzIsm+hbhA6tib3QiCE2/NWSAp9Bm2qk+faT8=
+        t=1665364488; bh=eIx0GJ/f4awLP5PFW0SIJ0eabOt5oi27kRTYl48YUHU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xslZqpfvdk4K/9NvP3Z3xNR/oDBMNNETbH/VfNa0VGafScg2SplIA3SXNB+jULq4t
+         wWiUrPwwgsQ3Ilhx7cCYmmFranMP0YG3RdX31PnxENEgGiVezJv4qFXizW6q84EQGo
+         ucfn9RU5pnyw1b3vIju//zQWD8qgOrvliwJ9hRiM=
 From:   Vadim Fedorenko <vfedorenko@novek.ru>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-Subject: [RFC PATCH v3 5/6] dpll: documentation on DPLL subsystem interface
-Date:   Mon, 10 Oct 2022 04:18:03 +0300
-Message-Id: <20221010011804.23716-6-vfedorenko@novek.ru>
+        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>
+Subject: [RFC PATCH v3 0/5] Create common DPLL/clock configuration API
+Date:   Mon, 10 Oct 2022 04:17:58 +0300
+Message-Id: <20221010011804.23716-1-vfedorenko@novek.ru>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20221010011804.23716-1-vfedorenko@novek.ru>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vadim Fedorenko <vadfed@fb.com>
+Implement common API for clock/DPLL configuration and status reporting.
+The API utilises netlink interface as transport for commands and event
+notifications. This API aim to extend current pin configuration and
+make it flexible and easy to cover special configurations.
 
-Add documentation explaining common netlink interface to configure DPLL
-devices and monitoring events. Common way to implement DPLL device in
-a driver is also covered.
+v2 -> v3:
+ * implement source select mode (Arkadiusz)
+ * add documentation
+ * implementation improvements (Jakub)
+v1 -> v2:
+ * implement returning supported input/output types
+ * ptp_ocp: follow suggestions from Jonathan
+ * add linux-clk mailing list
+v0 -> v1:
+ * fix code style and errors
+ * add linux-arm mailing list
 
-Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
----
- Documentation/networking/dpll.rst  | 157 +++++++++++++++++++++++++++++
+Arkadiusz Kubalewski (2):
+  dpll: add support for source selection modes
+  dpll: get source/output name
+
+Vadim Fedorenko (3):
+  dpll: add netlink events
+  dpll: documentation on DPLL subsystem interface
+  ptp_ocp: implement DPLL ops
+
+ Documentation/networking/dpll.rst  | 157 +++++++++++++
  Documentation/networking/index.rst |   1 +
- 2 files changed, 158 insertions(+)
+ drivers/dpll/dpll_core.c           |   3 +
+ drivers/dpll/dpll_netlink.c        | 346 ++++++++++++++++++++++++++++-
+ drivers/dpll/dpll_netlink.h        |   5 +
+ drivers/ptp/Kconfig                |   1 +
+ drivers/ptp/ptp_ocp.c              | 170 +++++++++++---
+ include/linux/dpll.h               |  14 ++
+ include/uapi/linux/dpll.h          |  26 ++-
+ 9 files changed, 678 insertions(+), 45 deletions(-)
  create mode 100644 Documentation/networking/dpll.rst
 
-diff --git a/Documentation/networking/dpll.rst b/Documentation/networking/dpll.rst
-new file mode 100644
-index 000000000000..00c15b19aefb
---- /dev/null
-+++ b/Documentation/networking/dpll.rst
-@@ -0,0 +1,157 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============================
-+The Linux kernel DPLL subsystem
-+===============================
-+
-+
-+The main purpose of DPLL subsystem is to provide general interface
-+to configure devices that use any kind of Digital PLL and could use
-+different sources of signal to synchronize to as well as different
-+types of outputs. The inputs and outputs could be internal components
-+of the device as well as external connections. The main interface is
-+NETLINK_GENERIC based protocol with config and monitoring groups of
-+commands defined.
-+
-+Configuration commands group
-+============================
-+
-+Configuration commands are used to get information about registered
-+DPLL devices as well as get or set configuration of each used input
-+or output. As DPLL device could not be abstract and reflects real
-+hardware, there is no way to add new DPLL device via netlink from
-+user space and each device should be registered by it's driver.
-+
-+List of command with possible attributes
-+========================================
-+
-+All constants identifying command types use ``DPLL_CMD_`` prefix and
-+suffix according to command purpose. All attributes use ``DPLLA_``
-+prefix and suffix according to attribute purpose:
-+
-+  =====================================  =============================
-+  ``DEVICE_GET``                         userspace to get device info
-+    ``DEVICE_ID``                        attr internal device index
-+    ``DEVICE_NAME``                      attr DPLL device name
-+    ``STATUS``                           attr DPLL device status info
-+    ``DEVICE_SRC_SELECT_MODE``           attr DPLL source selection
-+                                         mode
-+    ``DEVICE_SRC_SELECT_MODE_SUPPORTED`` attr supported source
-+                                         selection modes
-+    ``LOCK_STATUS``                      attr internal frequency-lock
-+                                         status
-+    ``TEMP``                             attr device temperature
-+                                         information
-+  ``SET_SOURCE``                         userspace to set
-+                                         sources/inputs configuration
-+    ``DEVICE_ID``                        attr internal device index
-+                                         to configure source pin
-+    ``SOURCE_ID``                        attr index of source pin to
-+                                         configure
-+    ``SOURCE_NAME``                      attr name of source pin to
-+                                         configure
-+    ``SOURCE_TYPE``                      attr configuration value for
-+                                         selected source pin
-+  ``SET_OUTPUT``                         userspace to set outputs
-+                                         configuration
-+    ``DEVICE_ID``                        attr internal device index to
-+                                         configure output pin
-+    ``OUTPUT_ID``                        attr index of output pin to
-+                                         configure
-+    ``OUTPUT_NAME``                      attr name of output pin to
-+                                         configure
-+    ``OUTPUT_TYPE``                      attr configuration value for
-+                                         selected output pin
-+  ``SET_SRC_SELECT_MODE``                userspace to set source pin
-+                                         selection mode
-+    ``DEVICE_ID``                        attr internal device index
-+    ``DEVICE_SRC_SELECT_MODE``           attr source selection mode
-+  ``SET_SOURCE_PRIO``                    userspace to set priority of
-+                                         a source pin for automatic
-+                                         source selection mode
-+    ``DEVICE_ID``                        attr internal device index
-+                                         for source pin
-+    ``SOURCE_ID``                        attr index of source pin to
-+                                         configure
-+    ``SOURCE_PRIO``                      attr priority of a source pin
-+
-+
-+The pre-defined enums
-+=====================
-+
-+These enums are used to select type values for source/input and
-+output pins:
-+
-+  ============================= ======================================
-+  ``DPLL_TYPE_EXT_1PPS``        External 1PPS source
-+  ``DPLL_TYPE_EXT_10MHZ``       External 10MHz source
-+  ``DPLL_TYPE_SYNCE_ETH_PORT``  SyncE on Ethernet port
-+  ``DPLL_TYPE_INT_OSCILLATOR``  Internal Oscillator (i.e. Holdover
-+                                with Atomic Clock as a Source)
-+  ``DPLL_TYPE_GNSS``            GNSS 1PPS source
-+  ``DPLL_TYPE_CUSTOM``          Custom frequency
-+
-+Values for monitoring attributes STATUS:
-+
-+  ============================= ======================================
-+  ``DPLL_STATUS_NONE``          No information provided
-+  ``DPLL_STATUS_CALIBRATING``   DPLL device is not locked to the
-+                                source frequency
-+  ``DPLL_STATUS_LOCKED``        DPLL device is locked to the source
-+                                frequency
-+
-+
-+Possible DPLL source selection mode values:
-+
-+  ============================= ======================================
-+  ``DPLL_SRC_SELECT_FORCED``    source pin is force-selected by
-+                                DPLL_CMD_SET_SOURCE_TYPE
-+  ``DPLL_SRC_SELECT_AUTOMATIC`` source pin ise auto selected according
-+                                to configured priorities and source
-+                                signal validity
-+  ``DPLL_SRC_SELECT_HOLDOVER``  force holdover mode of DPLL
-+  ``DPLL_SRC_SELECT_FREERUN``   DPLL is driven by supplied system
-+                                clock without holdover capabilities
-+  ``DPLL_SRC_SELECT_NCO``       similar to FREERUN, with possibility
-+                                to numerically control frequency offset
-+
-+Notifications
-+================
-+
-+DPLL device can provide notifications regarding status changes of the
-+device, i.e. lock status changes, source/output type changes or alarms.
-+This is the multicast group that is used to notify user-space apps via
-+netlink socket:
-+
-+  ============================== ====================================
-+  ``DPLL_EVENT_DEVICE_CREATE``   New DPLL device was created
-+  ``DPLL_EVENT_DEVICE_DELETE``   DPLL device was deleted
-+  ``DPLL_EVENT_STATUS_LOCKED``   DPLL device has locked to source
-+  ``DPLL_EVENT_STATUS_UNLOCKED`` DPLL device is in freerun or
-+                                 in calibration mode
-+  ``DPLL_EVENT_SOURCE_CHANGE``   DPLL device source changed
-+  ``DPLL_EVENT_OUTPUT_CHANGE``   DPLL device output changed
-+  ``DPLL_EVENT_SOURCE_PRIO``     DPLL device source priority changed
-+  ``DPLL_EVENT_SELECT_MODE``     DPLL device source selection mode
-+                                 changed
-+
-+Device driver implementation
-+============================
-+
-+For device to operate as DPLL subsystem device, it should implement
-+set of operations and register device via ``dpll_device_alloc`` and
-+``dpll_device_register`` providing desired device name and set of
-+supported operations as well as the amount of sources/input pins and
-+output pins. If there is no specific name supplied, dpll subsystem
-+will use ``dpll%d`` template to create device name. Notifications of
-+adding or removing DPLL devices are created within subsystem itself,
-+but notifications about configurations changes or alarms should be
-+implemented within driver as different ways of confirmation could be
-+used. All the interfaces for notification messages could be found in
-+``<dpll.h>``, constats and enums are placed in ``<uapi/linux/dpll.h>``
-+to be consistent with user-space.
-+
-+There is no strict requeriment to implement all the operations for
-+each device, every operation handler is checked for existence and
-+ENOTSUPP is returned in case of absence of specific handler.
-+
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index 16a153bcc5fe..612d322a3380 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -16,6 +16,7 @@ Contents:
-    device_drivers/index
-    dsa/index
-    devlink/index
-+   dpll
-    caif/index
-    ethtool-netlink
-    ieee802154
 -- 
 2.27.0
 
