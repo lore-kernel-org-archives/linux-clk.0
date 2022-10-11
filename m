@@ -2,60 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BFAC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 17:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC55C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 17:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiJKRi3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Oct 2022 13:38:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
+        id S229925AbiJKRwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Oct 2022 13:52:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230286AbiJKRiL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 13:38:11 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CD891181F;
-        Tue, 11 Oct 2022 10:37:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1BD8EB81636;
-        Tue, 11 Oct 2022 17:37:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7966C433D6;
-        Tue, 11 Oct 2022 17:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665509864;
-        bh=QM63ZDQNXsf5+hqV7DXo+MBY7rPucxb/MYLvPbMHN90=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ys8ilSF5/7FIO2415Z9A7arjNTk5lkH1gFW4V3UY8mM64pXhoBkwRPjePNgR5QHGX
-         vvnxioXNks72Ew8ZLcCh5esSbFxoYgeCZBcml+81kZ0PJjIqszgIvFUOruwnhIY6db
-         O2I33MkGlzmdFnNVbO953DwywggwoBEfy6QQjmOShRPMh3Q/d/cG01riAlRqiSMIUD
-         SnKDMLg58MI44uO3Su/ztag0PgmDBlNReJSiZ/0zmIuKqIYiNee486IrPf9UA6Z7GN
-         orD6wd2NsacS0JcIfmVIPgMTAsikQ4/ne0s2jGyS9Ljn4KTHS7/6pq6vs6H1DMo3Zl
-         x3LEMY+7ta6qQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229825AbiJKRwf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 13:52:35 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D79940037;
+        Tue, 11 Oct 2022 10:52:31 -0700 (PDT)
+X-QQ-mid: bizesmtp67t1665510739tbwjqr9m
+Received: from [192.168.1.231] ( [113.72.146.141])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Wed, 12 Oct 2022 01:52:18 +0800 (CST)
+X-QQ-SSF: 0100000000200090B000B00A0000000
+X-QQ-FEAT: eSZ1CZgv+JDpbz+8SZtFjGpBaoHZNJKphrrKecDmH7nFw9yOYamWc6tnUXtiK
+        5hqBaXLrf5CuIHQTdb0xFyaOht6w2j/pHl/eluwYwBsXw/EYe1upcfnk8v/ClL+IhgLqg1D
+        NQWyxjYe2HsuXrYs0WZNLcSpZYVdZC7iJCx0Pruqa/KnemRMSq9WYz9/OtaPqOrh8r+eFrn
+        77a4bV7aFLfWOzNgU3oekYrgRNUegBHk8OhXbHqYfwIPeC6kkc1nuw7f+NPrXtWJIpCEjy+
+        W+lDWWcd1xXRXOz8KqzeDSadVBRMPFcB3o8T9bdwfcYhDvuaEE8pihJHU/taIhOdmcCRC/r
+        CpfCAVlKq4JPAfRbyNoY0rHYmdeAA==
+X-QQ-GoodBg: 0
+Message-ID: <6BB36B91BD2046FD+e637d229-f656-a548-c45a-8d62a0c7928d@linux.starfivetech.com>
+Date:   Wed, 12 Oct 2022 01:52:18 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221011162919.3025038-1-robh@kernel.org>
-References: <20221011162919.3025038-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: Convert pwm-clock to DT schema
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 17/30] dt-bindings: clock: Add
+ starfive,jh7110-clkgen-sys bindings
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Oct 2022 10:37:42 -0700
-User-Agent: alot/0.10
-Message-Id: <20221011173744.A7966C433D6@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929222647.23816-1-hal.feng@linux.starfivetech.com>
+ <c99f6552-db04-fe30-ed69-4a08b0af5276@linaro.org>
+Content-Language: en-US
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <c99f6552-db04-fe30-ed69-4a08b0af5276@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2022-10-11 09:29:18)
-> Convert the pwm-clock binding to DT schema format. A straight-forward
-> conversion.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+On Fri, 30 Sep 2022 12:58:12 +0200, Krzysztof Kozlowski wrote:
+> On 30/09/2022 00:26, Hal Feng wrote:
+> > From: Emil Renner Berthing <kernel@esmil.dk>
+> > 
+> > Add bindings for the system clock generator on the JH7110
+> > RISC-V SoC by StarFive Technology Ltd.
+> > 
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> 
+> (...)
+> 
+> > +  '#clock-cells':
+> > +    const: 1
+> > +    description:
+> > +      See <dt-bindings/clock/starfive-jh7110-sys.h> for valid indices.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - clocks
+> > +  - clock-names
+> > +  - '#clock-cells'
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    syscrg_clk: clock-controller@13020000 {
+> 
+> Does not look like you tested the bindings. Please run `make
+> dt_binding_check` (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Will rewrite the bindings and test them. Thanks.
+
+Best regards,
+Hal
