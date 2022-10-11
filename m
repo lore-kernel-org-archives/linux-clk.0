@@ -2,216 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC21C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 21:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584C3C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 22:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229594AbiJKVbb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Oct 2022 17:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58116 "EHLO
+        id S229529AbiJKWMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Oct 2022 18:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbiJKVbb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 17:31:31 -0400
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A752192594;
-        Tue, 11 Oct 2022 14:31:29 -0700 (PDT)
-Received: from [192.168.0.18] (unknown [37.228.234.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id 99A78504E80;
-        Wed, 12 Oct 2022 00:27:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 99A78504E80
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665523680; bh=Snqz/eTDzxw25Q39oAWKZOmTxeAOD5iOEPrqAgO67Eg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=IZqHkfh3Ozakx9ncf5mATON2e5fdD0U8UUpLxUMUCl3Yne5hdbT6IZObiWAqXpzu7
-         Hhk8x2vhJ7h1v6dXhzZ69+Jc+R9MSH8GRw+Ph7VW53tu6volQsi0PU5rayuCZdRyvI
-         xmHw0yWtEkmnBB+b3Pu+0F3IjNduzuulKUFdLpnM=
-Message-ID: <ecf59dda-2d6a-2c56-668b-5377ae107439@novek.ru>
-Date:   Tue, 11 Oct 2022 22:31:25 +0100
+        with ESMTP id S229446AbiJKWL7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 18:11:59 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECB119411F;
+        Tue, 11 Oct 2022 15:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1665526319; x=1697062319;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aNynsuIV0rHuoqeRVnCVfLglarBP1m5Y0PIq4JPDuPI=;
+  b=vd6KliiuXmEixVMuPBUuU2haYHFT1TOVQpDg2ID0xHNjOPAy4/iyAATC
+   15qu7Q3emke2DEf/vaC2xr3Q0bY2WKoFJJOy9Mb/Zo/CUXayhm0FalFGd
+   mhPAsgm1YH1nADGexgDZjxouSLqYQY6umNsEFhTo5um2xrIjuJy/roAlI
+   4=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 11 Oct 2022 15:11:58 -0700
+X-QCInternal: smtphost
+Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2022 15:11:57 -0700
+Received: from [10.110.3.66] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 11 Oct
+ 2022 15:11:58 -0700
+Message-ID: <d57d500b-a322-4aaa-42ed-5638363b787d@quicinc.com>
+Date:   Tue, 11 Oct 2022 15:11:57 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC PATCH v3 1/6] dpll: Add DPLL framework base functions
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock
+ bindings
 Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
- <20221010011804.23716-2-vfedorenko@novek.ru> <Y0PjULbYQf1WbI9w@nanopsycho>
- <24d1d750-7fd0-44e2-318c-62f6a4a23ea5@novek.ru> <Y0UqFml6tEdFt0rj@nanopsycho>
- <Y0UtiBRcc8aBS4tD@nanopsycho>
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-In-Reply-To: <Y0UtiBRcc8aBS4tD@nanopsycho>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20221001030403.27659-1-quic_molvera@quicinc.com>
+ <20221001030403.27659-2-quic_molvera@quicinc.com>
+ <37926f0f-e176-929e-939a-cd43a031e224@linaro.org>
+ <bb241d46-6f90-8604-e79d-30a1f3527ce4@quicinc.com>
+ <CAA8EJpqqLRJK3GaXt3Uf=+TAupYFkG4Ey_wG2si2WePp5gAaQA@mail.gmail.com>
+From:   Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <CAA8EJpqqLRJK3GaXt3Uf=+TAupYFkG4Ey_wG2si2WePp5gAaQA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11.10.2022 09:47, Jiri Pirko wrote:
-> Tue, Oct 11, 2022 at 10:32:22AM CEST, jiri@resnulli.us wrote:
->> Mon, Oct 10, 2022 at 09:54:26PM CEST, vfedorenko@novek.ru wrote:
->>> On 10.10.2022 10:18, Jiri Pirko wrote:
->>>> Mon, Oct 10, 2022 at 03:17:59AM CEST, vfedorenko@novek.ru wrote:
->>>>> From: Vadim Fedorenko <vadfed@fb.com>
-> 
-> [...]
-> 
-> 
->>> I see your point. We do have hardware which allows changing type of SMA
->>> connector, and even the direction, each SMA could be used as input/source or
->>> output of different signals. But there are limitation, like not all SMAs can
->>> produce IRIG-B signal or only some of them can be used to get GNSS 1PPS. The
->>
->> Okay, so that is not the *type* of source, but rather attribute of it.
->> Example:
->>
->> $ dpll X show
->> index 0
->>   type EXT
->>   signal 1PPS
->>   supported_signals
->>      1PPS 10MHz
->>
->> $ dpll X set source index 1 signal_type 10MHz
->> $ dpll X show
->> index 0
->>   type EXT
->>   signal 10MHz
->>   supported_signals
->>      1PPS 10MHz
->>
->> So one source with index 0 of type "EXT" (could be "SMA", does not
->> matter) supports 1 signal types.
->>
->>
->> Thinking about this more and to cover the case when one SMA could be
->> potencially used for input and output. It already occured to me that
->> source/output are quite similar, have similar/same attributes. What if
->> they are merged together to say a "pin" object only with extra
->> PERSONALITY attribute?
->>
->> Example:
->>
->> -> DPLL_CMD_PIN_GET - dump
->>       ATTR_DEVICE_ID X
->>
->> <- DPLL_CMD_PIN_GET
->>
->>        ATTR_DEVICE_ID X
->>        ATTR_PIN_INDEX 0
->>        ATTR_PIN_TYPE EXT
->>        ATTR_PIN_SIGNAL 1PPS   (selected signal)
->>        ATTR_PIN_SUPPORTED_SIGNALS (nest)
->>          ATTR_PIN_SIGNAL 1PPS
->>          ATTR_PIN_SIGNAL 10MHZ
->>        ATTR_PIN_PERSONALITY OUTPUT   (selected personality)
->>        ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
->>          ATTR_PIN_PERSONALITY DISCONNECTED
->>          ATTR_PIN_PERSONALITY INPUT
->>          ATTR_PIN_PERSONALITY OUTPUT     (note this supports both input and
->> 					  output)
->>
->>        ATTR_DEVICE_ID X
->>        ATTR_PIN_INDEX 1
->>        ATTR_PIN_TYPE EXT
->>        ATTR_PIN_SIGNAL 10MHz   (selected signal)
->>        ATTR_PIN_SUPPORTED_SIGNALS (nest)
->>          ATTR_PIN_SIGNAL 1PPS
->>          ATTR_PIN_SIGNAL 10MHZ
->>        ATTR_PIN_PERSONALITY DISCONNECTED   (selected personality - not
->> 					    connected currently)
->>        ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
->>          ATTR_PIN_PERSONALITY DISCONNECTED
->>          ATTR_PIN_PERSONALITY INPUT      (note this supports only input)
->>
->>        ATTR_DEVICE_ID X
->>        ATTR_PIN_INDEX 2
->>        ATTR_PIN_TYPE GNSS
->>        ATTR_PIN_SIGNAL 1PPS   (selected signal)
->>        ATTR_PIN_SUPPORTED_SIGNALS (nest)
->>          ATTR_PIN_SIGNAL 1PPS
->>        ATTR_PIN_PERSONALITY INPUT   (selected personality - note this is
->> 				     now he selected source, being only
->> 				     pin with INPUT personality)
->>        ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
->>          ATTR_PIN_PERSONALITY DISCONNECTED
->>          ATTR_PIN_PERSONALITY INPUT      (note this supports only input)
->>
->>        ATTR_DEVICE_ID X
->>        ATTR_PIN_INDEX 3
->>        ATTR_PIN_TYPE SYNCE_ETH_PORT
->>        ATTR_PIN_NETDEV_IFINDEX 20
->>        ATTR_PIN_PERSONALITY OUTPUT   (selected personality)
->>        ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
->>          ATTR_PIN_PERSONALITY DISCONNECTED
->>          ATTR_PIN_PERSONALITY INPUT
->>          ATTR_PIN_PERSONALITY OUTPUT     (note this supports both input and
->> 					  output)
->>
->>        ATTR_DEVICE_ID X
->>        ATTR_PIN_INDEX 4
->>        ATTR_PIN_TYPE SYNCE_ETH_PORT
->>        ATTR_PIN_NETDEV_IFINDEX 30
->>        ATTR_PIN_PERSONALITY OUTPUT   (selected personality)
->>        ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
->>          ATTR_PIN_PERSONALITY DISCONNECTED
->>          ATTR_PIN_PERSONALITY INPUT
->>          ATTR_PIN_PERSONALITY OUTPUT     (note this supports both input and
->> 					  output)
->>
->>
->> This allows the user to actually see the full picture:
->> 1) all input/output pins in a single list, no duplicates
->> 2) each pin if of certain type (ATTR_PIN_TYPE) EXT/GNSS/SYNCE_ETH_PORT
->> 3) the pins that can change signal type contain the selected and list of
->>    supported signal types (ATTR_PIN_SIGNAL, ATTR_PIN_SUPPORTED_SIGNALS)
->> 4) direction/connection of the pin to the DPLL is exposed over
->>    ATTR_PIN_PERSONALITY. For each pin, the driver would expose it can
->>    act as INPUT/OUTPUT and even more, it can indicate the pin can
->>    disconnect from DPLL entirely (if possible).
->> 5) user can select the source by setting ATTR_PIN_PERSONALITY of certain
->>    pin to INPUT. Only one pin could be set to INPUT and that is the
->>    souce of DPLL.
->>    In case no pin have personality set to INPUT, the DPLL is
->>    free-running.
-> 
-> Okay, thinking about it some more, I would leave the source select
-> indepentent from the ATTR_PIN_PERSONALITY and selectable using device
-> set cmd and separate attribute. It works better even more when consider
-> autoselect mode.
-> 
-> Well of course only pins with ATTR_PIN_PERSONALITY INPUT could be
-> selected as source.
-> 
 
-Overall, I agree with this proposal, and as I've already said, the work is going 
-exactly the same way - to introduce pin object with separate set of attributes.
-I don't really like 'PERSONALITY' naming, I think we have to find a better name. 
-It looks like DIRECTION is slightly better. And the CONNECTED/DISCONNECTED 
-should be different attribute. And we also need attribute PRIORITY to be able to 
-configure (or hint) auto-select mode. There are also special objects called 
-muxes, which consist of several inputs and one output, but they cannot 
-synthonise signal, only pass one of the inputs to output. We are still in kind 
-of discussion whether to have them as separate objects, or extend the amount of 
-pins of DPLL device in this case. The problem again in the auto-select mode and 
-priorities. It would be great to hear your thoughts about such objects.
 
+On 10/3/2022 2:32 PM, Dmitry Baryshkov wrote:
+> On Mon, 3 Oct 2022 at 21:47, Melody Olvera <quic_molvera@quicinc.com> wrote:
 >>
->> This would introduce quite nice flexibility, exposes source/output
->> capabilities and provides good visilibity of current configuration.
+>> On 10/1/2022 4:24 AM, Krzysztof Kozlowski wrote:
+>>> On 01/10/2022 05:03, Melody Olvera wrote:
+>>>> Add device tree bindings for global clock controller on QDU1000 and
+>>>> QRU1000 SoCs.
+>>>>
+>>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>>> ---
+>>>>  .../bindings/clock/qcom,gcc-qdru1000.yaml     |  74 ++++++++
+>>>>  include/dt-bindings/clock/qcom,gcc-qdru1000.h | 170 ++++++++++++++++++
+>>>>  2 files changed, 244 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
+>>>>  create mode 100644 include/dt-bindings/clock/qcom,gcc-qdru1000.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..d92f558d547c
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qdru1000.yaml
+>>>> @@ -0,0 +1,74 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-qdru.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Qualcomm Global Clock & Reset Controller Binding for QDU1000 and QRU1000
+>>> Drop "Binding"
+>> Will do in v2.
 >>
->>
->>> interface was created to cover such case. I believe we have to improve it to
->>> cover SyncE configuration better, but I personally don't have SyncE hardware
->>> ready to test and that's why I have to rely on suggestions from yours or
->>> Arkadiusz's experience. From what I can see now there is need for special
->>> attribute to link source to net device, and I'm happy to add it. In case of
->>> fixed configuration of sources, the device should provide only one type as
->>> supported and that's it.
+>>>> +
+>>>> +maintainers:
+>>>> +  - Melody Olvera <quic_molvera@quicinc.com>
+>>>> +
+>>>> +description: |
+>>>> +  Qualcomm global clock control module which supports the clocks, resets and
+>>>> +  power domains on QDU1000 and QRU1000
+>>>> +
+>>>> +  See also:
+>>>> +  - dt-bindings/clock/qcom,gcc-qdru1000.h
+>>> Full path
+>> Understood.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - qcom,gcc-qdu1000
+>>>> +      - qcom,gcc-qru1000
+>>>> +
+>>>> +  clocks:
+>>>> +    items:
+>>>> +      - description: Board XO source
+>>>> +      - description: Sleep clock source
+>>>> +      - description: PCIE 0 Pipe clock source (Optional clock)
+>>> Skip "Optional clock"
 >>>
-> 
-> [...]
+>>>> +      - description: PCIE 0 Phy Auxiliary clock source (Optional clock)
+>>>> +      - description: USB3 Phy wrapper pipe clock source (Optional clock)
+>>>> +    minItems: 2
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: bi_tcxo
+>>>> +      - const: sleep_clk
+>>>> +      - const: pcie_0_pipe_clk # Optional clock
+>>> Skip "Optional clock"
+>> Will remove all optional clock instances.
+> Drop the 'optional clock' words, not the clocks themselves. See
+> existing examples, which have optional clocks.
+>
+Ah apologies; I misunderstood.
 
+Thanks,
+Melody
