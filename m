@@ -2,106 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36396C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 12:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09556C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 12:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbiJKMJK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Oct 2022 08:09:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51538 "EHLO
+        id S229436AbiJKMNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Oct 2022 08:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbiJKMJI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 08:09:08 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF7F8D0C7
-        for <linux-clk@vger.kernel.org>; Tue, 11 Oct 2022 05:09:05 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id 8so832203qka.1
-        for <linux-clk@vger.kernel.org>; Tue, 11 Oct 2022 05:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wA2PG1QV5nKHw4b8l0hoDe51fcPxcPalio0IbUmeyTM=;
-        b=FXrqF8s7XtbX/Ycq5jUsbxK5DGdGYyeznM+Y/KtKVTpxB1WEgtBvfXGtmS/mY3Z6QP
-         xTZJNxIlqUEMrPqMRIQg2lU/J2UfnvzpakaYep0KVD439+H4JvQBNEdDUfDC2Z5sJWjd
-         RY2zgbnUiGWHR8vWDuwUHpcUjv2BW7E78N5wbmLogOeltArOPTXSWzoXD5QbJSInup6Y
-         qr8x5sh/Ue5Hr+qbjR0soe72IxM2R1XjMVWfMMrOUFB/UCNqsmEvppyH6bwz0n9MwXzs
-         76IUxf+rLZBn49IgdPDPhnUq4s/TCfJtG4++2/wj2vkldnNK9BLMjX37rBHO2FjAuhbt
-         3+kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wA2PG1QV5nKHw4b8l0hoDe51fcPxcPalio0IbUmeyTM=;
-        b=gEjTGhyBP4PAVAVSwkqIwpsagHWhoTR9UXj68CB87Cq9dyvVQKZyhHQucA4QKAfLtf
-         HPuYxK//NraEHvhd8L26ENaI4JNHPEgFkbPpnbVilOFHiQ418y9JyAXrA4WXNXoNugAT
-         Nfw/gT3mzLl6pzVT1P7Rh3CWRsImFr0QzjsX71wohKGEzObzDH+pjr0H7Ppj++YzThdc
-         C0vw4Z1shLdT4QzFeR9KMJGjYO5jTaRb9l/SgwlT+7lh1v8jYfKZYBjAEXOpR2Qsmqb7
-         pTOlIYP/7TrUB3kS3kaHbmqU7OvhWUv4VFPTkk9e7IL44dwmgJBe+V2vBX59GNU94FQJ
-         +JQg==
-X-Gm-Message-State: ACrzQf0MLhuvJOWu9hu10EZaEoImts5FhioyT5/l6NDHnuTFVbfXwnTs
-        ZwhGnOqvu29h20jom33pCyibmg==
-X-Google-Smtp-Source: AMsMyM6EDJdIKnBSo3ZfKOacjcSSHQnz7CckztC9dG1sbPnETMw/m0XvV2QlBBo1fJbyvmgZOQSIIg==
-X-Received: by 2002:a05:620a:2909:b0:6ee:6c83:9769 with SMTP id m9-20020a05620a290900b006ee6c839769mr3710909qkp.732.1665490145001;
-        Tue, 11 Oct 2022 05:09:05 -0700 (PDT)
-Received: from [192.168.1.57] (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id bm4-20020a05620a198400b006cfc7f9eea0sm12917572qkb.122.2022.10.11.05.09.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Oct 2022 05:09:03 -0700 (PDT)
-Message-ID: <3c516469-8f89-9c4a-e558-5281d07510c7@linaro.org>
-Date:   Tue, 11 Oct 2022 08:09:01 -0400
+        with ESMTP id S229446AbiJKMNY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 08:13:24 -0400
+Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB6A77555
+        for <linux-clk@vger.kernel.org>; Tue, 11 Oct 2022 05:13:22 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id D99A15801CF;
+        Tue, 11 Oct 2022 08:13:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 11 Oct 2022 08:13:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1665490399; x=
+        1665497599; bh=h+bKeu1mBzloAMDzTZ+e4Zc1Xy8rHYQ5MYO+4qVykqU=; b=C
+        hmFZjLc0kdpx2Fxg7RUZmaosmON9dg4LeZlM4ejt29Kf4+vJeATQqJKup8g1Dqop
+        rm/dtU7gQ/h1/g51LK7ZRhgF0np+8fUFXU4zkw7dfeyucHLwxD6jM64yMEcq5i9d
+        5rV5ljzm4+9SVYf13wfBhzEOkLsPmfjuFc9p8UdpHjabU7qy/uXs9Wct9PMRfC7Z
+        29BmXtd6DoCXIcCVtgMjRqflrIFsfEuE6wVINFRjWWfxciHv+NF32geD0GxG5RiW
+        ZVupRYdyDcgeBjMCmZaLg6OTmn3oUq5ITZVawA3sXmAfVsf3cKb6lXNM18kcuCbg
+        0s2//4uM9iuNarUjmSMjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1665490399; x=
+        1665497599; bh=h+bKeu1mBzloAMDzTZ+e4Zc1Xy8rHYQ5MYO+4qVykqU=; b=B
+        6b4HYO6KdSMoLv8So+hOQJJ/wDMa3AheBJ3jjmhOjGbGPCH8i5Ap3wF8dmKcowpo
+        YFiR/jmcwW2OvWKE5BkAGAInvqevGP5DeWqYUI/bm0c7MVWJyPP35XW3baEh4L/M
+        sxiVMrMgKuKEs/WfUu1PtCtZ10KgUKAsy38FfDjmahHb/sSC4N8Jp+yrIILvBtU8
+        UoBtRWuLqlB+GKCJr96Jzel1luXLilc92BWUGy2ZIrFa3eoujZNslZVBoxlSRSPg
+        9et7zdH19vwPRwpca1xgXZ4ggBXRY6pMtzWc8syWVdrgmghrQFzjba4M51uGcOpW
+        G2cDW0aRKDK8g6kGg6ThQ==
+X-ME-Sender: <xms:3l1FY9hLGkcNGvwu-soOD5Sf3RrQQhnF6VKAnzq2bvNmLfnCUT_L1w>
+    <xme:3l1FYyB3bGnKQMzfTnQFyn4JPVmlkMtjKvyZlKt2zc_H8r7WByfPv9NuYRKOD-Ede
+    WPJ8IhoazJ_bCc_Xe0>
+X-ME-Received: <xmr:3l1FY9HQFd8nnCQDhLsCf0V2Q2E9o8qQBWBAuybXPhxlLdKYayEkE4w96nwW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeejiedggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepiedtueffveeiueeftdduvdffffffgeffgfekiefhleelkedtlefhvefh
+    udduhffgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgv
+    tghh
+X-ME-Proxy: <xmx:311FYyQbdZm_oCNeO7hfsEd1Xnah5-vgc6fM2kU8kCGW15qR76MhrQ>
+    <xmx:311FY6yqsgYw0xpF_OhkrL9r_fcQPplJ__hljQ1tyLWSniUVgIs3kA>
+    <xmx:311FY47P3150M-CDPQq-D49-8PEk-3hbaY5T2LuRC0SUHt7HDDSYyw>
+    <xmx:311FY3hvsqHFMgnaqb28HSoXFL5WEwf-b3A5WMHzV7gqWvY_p-32tg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Oct 2022 08:13:18 -0400 (EDT)
+Date:   Tue, 11 Oct 2022 14:13:16 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        kernelci-results@groups.io, bot@kernelci.org,
+        gtucker@collabora.com,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Linux Kernel Functional Testing <lkft@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: next/master bisection: baseline.login on rk3328-rock64
+Message-ID: <20221011121316.auoi4rs5werw6won@houat>
+References: <634095b3.a70a0220.ad568.42a8@mx.google.com>
+ <Y0QNSx+ZgqKSvPOC@sirena.org.uk>
+ <20221010145010.ibodo56smlokfouu@houat>
+ <Y0Q87tddypPtzZB3@sirena.org.uk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH 8/8] MIPS: DTS: Ingenic: Add support for the JZ4755 SoC
-Content-Language: en-US
-To:     Siarhei Volkau <lis8215@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20221009181338.2896660-1-lis8215@gmail.com>
- <20221009181338.2896660-9-lis8215@gmail.com>
- <2e89fc3a-bc54-17e7-d352-25db877172ff@linaro.org>
- <CAKNVLfZ4zPdhv=zJOcDk_hnVVoU51L8uAsoXEmzJpecsyc5KmQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAKNVLfZ4zPdhv=zJOcDk_hnVVoU51L8uAsoXEmzJpecsyc5KmQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Y0Q87tddypPtzZB3@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/10/2022 16:00, Siarhei Volkau wrote:
->> How do you build it? How do you test it? It's basically non-compillable,
->> dead code. You need a board.
-> 
-> I tested it on a Ritmix RZX-50 handheld, 
+On Mon, Oct 10, 2022 at 04:40:30PM +0100, Mark Brown wrote:
+> On Mon, Oct 10, 2022 at 04:50:10PM +0200, Maxime Ripard wrote:
+> > On Mon, Oct 10, 2022 at 01:17:15PM +0100, Mark Brown wrote:
+> > > On Fri, Oct 07, 2022 at 02:10:11PM -0700, KernelCI bot wrote:
+>=20
+> > > The KernelCI bisection bot found a boot problem on today's -next=20
+> > > on rk3328-rock64 with a defconfig plus debug fragments triggered by
+> > > cb1b1dd96241f ("clk: Set req_rate on reparenting").  The log doesn't
+>=20
+> > Thanks for the report
+>=20
+> > It might be related to https://lore.kernel.org/linux-clk/0acc7217-762c-=
+7c0d-45a0-55c384824ce4@samsung.com/
+>=20
+> > I've sent a series that might address this issue:
+>=20
+> > https://lore.kernel.org/linux-clk/20221010-rpi-clk-fixes-again-v1-0-d87=
+ba82ac404@cerno.tech/
+>=20
+> > Let me know if it fixes things for you
+>=20
+> Unfortunately I can't schedule tests directly, the board is in the
+> Baylibre lab so I've CCed Corentan and Kevin who might be able to help.
+> You should be able to see results via KernelCI for any tree that's
+> included and runs the debug builds (including -next).
 
-You cannot, there is no such DTS.
+Stephen merged them yesterday in clk-next, but it looks like they didn't
+make it into next-20221011. We should see the results soon enough.
 
-> although this patchset doesn't
-> include it as it requires many other changes to be fully functional.
-
-Exactly.
-
-> I decided to do this in two steps: add platform first (this patchset) then
-> specific drivers and quirks, in the next patchset, when this one passes.
-> 
-> Of course I can add machine's dts with working parts. What's the usual way?
-
-Don't add dead code to the kernel, so DTSI comes with DTS.
-
-Best regards,
-Krzysztof
-
+Maxime
