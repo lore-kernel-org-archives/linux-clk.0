@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D058C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 13:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78ECDC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 13:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbiJKNbg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Oct 2022 09:31:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52878 "EHLO
+        id S229614AbiJKNz7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Oct 2022 09:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbiJKNbf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 09:31:35 -0400
+        with ESMTP id S229468AbiJKNz6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 09:55:58 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B7F26FA;
-        Tue, 11 Oct 2022 06:31:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5719A7C1E3;
+        Tue, 11 Oct 2022 06:55:56 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3C31F6602343;
-        Tue, 11 Oct 2022 14:31:31 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6D8866601A43;
+        Tue, 11 Oct 2022 14:55:54 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1665495091;
-        bh=YIDLbypIschps2IdMEivbgC0X3XT1Np+1ZTSQYgwLaA=;
+        s=mail; t=1665496555;
+        bh=gITz5oEiVH+xz+695kfnNG3WumCJbobjiIQticIikwU=;
         h=From:To:Cc:Subject:Date:From;
-        b=fnH6+oLoqHSIBSxTtNxFzgzdknpvd7fIeN+GuoOBkBt+iV2PZw4S16FqQLLG3AayR
-         xQtK48qvM1T/NQhw8ETVnh6qC8nF3qkZhYRSTTU8329UcnOw70pnRrj6hlfriHeyjY
-         QaY4g/H2rMfIMQK9xreLd7kGVtDFsZHtQYdHRhswVER2raw9c3yQ2iXlfeFzQuNwJL
-         P7bpw4HV4Ex+3IzDTY9K0ytnmARHru2kCUFW30UBhZfxp3RYJ2Kf7sWAL1dQm721sI
-         Yt4WBXbiRZjTd97LJpMTB24y8oEeyCORa+vB0nmcfVH93NSKiBqj3blAUQ90sboMbn
-         kraPfSlNNLXMA==
+        b=Pmz1OqPRb9CydwWha7oK9LIJxTJBzuRL+owUWohDxXYU7FvdWoo41QiN15epsxvMr
+         6A7nvVO9do79m1C1T2SLLcG1powbwqQZGDhLm1ebY39Ril73kVUPc+gIxWmwucjUD6
+         w1NZOoMImOv8tzn0H6/Z0W/wQ9SaTbc+a+E9i7tmnhvYprbVGVrJNbHvsmgLFfO9gL
+         me2hgv2X0q2qdf4gzhax/67/I1u6VEFf0qH1iBRDrk6c4hmZu095k+QPvy//pZFQAX
+         8GhUw8BvxSX1BE/F+4B3e59vt9VcjvaM/9r0cqLeyQeJ6m0JmKiqYT37a72+UngfJ1
+         Ja36uePFxPk4Q==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     sboyd@kernel.org
@@ -40,9 +40,9 @@ Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
         wenst@chromium.org, maxime@cerno.tech, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mediatek: clk-mux: Add .determine_rate() callback
-Date:   Tue, 11 Oct 2022 15:31:25 +0200
-Message-Id: <20221011133125.311763-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2] clk: mediatek: clk-mux: Add .determine_rate() callback
+Date:   Tue, 11 Oct 2022 15:55:48 +0200
+Message-Id: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -129,72 +129,13 @@ trace of it:
 Fixes: 262ca38f4b6e ("clk: Stop forwarding clk_rate_requests to the parent")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt8186-mfg.c      |  5 ++--
- drivers/clk/mediatek/clk-mt8186-topckgen.c | 27 ++++++++++++++++++++++
- drivers/clk/mediatek/clk-mux.c             | 10 ++++++++
- 3 files changed, 40 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8186-mfg.c b/drivers/clk/mediatek/clk-mt8186-mfg.c
-index f1f92216f894..0142d741053a 100644
---- a/drivers/clk/mediatek/clk-mt8186-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8186-mfg.c
-@@ -16,8 +16,9 @@ static const struct mtk_gate_regs mfg_cg_regs = {
- 	.sta_ofs = 0x0,
- };
- 
--#define GATE_MFG(_id, _name, _parent, _shift)			\
--	GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+#define GATE_MFG(_id, _name, _parent, _shift)				\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift,	\
-+		       &mtk_clk_gate_ops_setclr, CLK_SET_RATE_PARENT)
- 
- static const struct mtk_gate mfg_clks[] = {
- 	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "top_mfg", 0),
-diff --git a/drivers/clk/mediatek/clk-mt8186-topckgen.c b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-index d7f2c4663c85..f6387c2eb5cf 100644
---- a/drivers/clk/mediatek/clk-mt8186-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-@@ -689,6 +689,28 @@ static const struct of_device_id of_match_clk_mt8186_topck[] = {
- 	{}
- };
- 
-+/* Register mux notifier for MFG mux */
-+static int clk_mt8186_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
-+{
-+	struct mtk_mux_nb *mfg_mux_nb;
-+	int i;
-+
-+	mfg_mux_nb = devm_kzalloc(dev, sizeof(*mfg_mux_nb), GFP_KERNEL);
-+	if (!mfg_mux_nb)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(top_mtk_muxes); i++)
-+		if (top_mtk_muxes[i].id == CLK_TOP_MFG)
-+			break;
-+	if (i == ARRAY_SIZE(top_mtk_muxes))
-+		return -EINVAL;
-+
-+	mfg_mux_nb->ops = top_mtk_muxes[i].ops;
-+	mfg_mux_nb->bypass_index = 0; /* Bypass to 26M crystal */
-+
-+	return devm_mtk_clk_mux_notifier_register(dev, clk, mfg_mux_nb);
-+}
-+
- static int clk_mt8186_topck_probe(struct platform_device *pdev)
- {
- 	struct clk_hw_onecell_data *clk_data;
-@@ -730,6 +752,11 @@ static int clk_mt8186_topck_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_composite_muxes;
- 
-+	r = clk_mt8186_reg_mfg_mux_notifier(&pdev->dev,
-+					    clk_data->hws[CLK_TOP_MFG]->clk);
-+	if (r)
-+		goto unregister_composite_divs;
-+
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (r)
- 		goto unregister_composite_divs;
+Changes in v2:
+ - Removed changes not relevant to this commit (ugh, sorry!)
+
+ drivers/clk/mediatek/clk-mux.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
 diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
 index 4421e4859257..ba1720b9e231 100644
 --- a/drivers/clk/mediatek/clk-mux.c
