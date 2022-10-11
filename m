@@ -2,94 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A94C43219
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Oct 2022 20:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73482C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 00:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbiJJUZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Oct 2022 16:25:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
+        id S229599AbiJKAzz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Oct 2022 20:55:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230238AbiJJUXn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 16:23:43 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC924B0DD;
-        Mon, 10 Oct 2022 13:22:40 -0700 (PDT)
+        with ESMTP id S229595AbiJKAzy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2022 20:55:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7420D3CBC1;
+        Mon, 10 Oct 2022 17:55:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 661D6B810B5;
-        Mon, 10 Oct 2022 20:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF38C433D7;
-        Mon, 10 Oct 2022 20:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1665433216;
-        bh=DMGjMyu5C0L96dKcCyOonQyj8xCaUAQ7WEcc6TEXH5U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qiu6R90bakIk/iJ69oJSphwso4hq3oylnE8JPy4FzBMLuPLVxDjMzbolb73W4P0Th
-         75g30LacqQg7PWYK6RqRqrTxFWW5Vz953YRzSlxZAv0pmWhUldY8xX79qCLpWJg1gg
-         pzGMGMbuR0de/qwxZ3kGhC8SZrDFIy75K6/L1rtw=
-Date:   Mon, 10 Oct 2022 22:20:59 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Siarhei Volkau <lis8215@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 7/8] serial: 8250/ingenic: Add support for the
- JZ4750/JZ4755 SoCs
-Message-ID: <Y0R+q7BdxtFqeiT1@kroah.com>
-References: <20221009181338.2896660-1-lis8215@gmail.com>
- <20221009181338.2896660-8-lis8215@gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0EDEE61058;
+        Tue, 11 Oct 2022 00:55:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D85C433D6;
+        Tue, 11 Oct 2022 00:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665449752;
+        bh=5f6V6CKsr2XoEaA7bspk2kMXZ9atRoFGUx2n3DSngN8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=kwwA6ucBgQvHTTg1vCtiVJZY38+ZKv5iHwF7PLs1ugM6ixWv7tznO8nX9nVsfWXHF
+         4Lptgf8zQLkWbNqbaYo6s7DfTASU12wrmFTlNLxV+RM/sSf7Zz5r+Qtem94ibjL+hc
+         pfuj/gOUJyj1EoGhBVevpMisejyZ8lfUJ3iSWCvf2x2h7l8N8vwvI/75egO3Oaxw6o
+         vw25/yNul+mR+/Md6XVsPq6ep+zDQ1yjGtpZpLVd4kUjMKwniVNYm27yH8RFvuJktY
+         M9UItjofxaIF7j1EmNBBDi8WvdznzLtiEcwiGmIC9MChtZ8B9eE0v1Kp+kAOF/m4MZ
+         ohaZt8ydl7UPQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221009181338.2896660-8-lis8215@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Y0QB/9dmTwd1tx11@sirena.org.uk>
+References: <6341c30d.170a0220.2bfa7.6117@mx.google.com> <Y0QB/9dmTwd1tx11@sirena.org.uk>
+Subject: Re: stable-rc/linux-5.10.y bisection: baseline.login on panda
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernelci-results@groups.io, bot@kernelci.org,
+        gtucker@collabora.com, stable@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Tero Kristo <kristo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Date:   Mon, 10 Oct 2022 17:55:50 -0700
+User-Agent: alot/0.10
+Message-Id: <20221011005552.62D85C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 09, 2022 at 09:13:36PM +0300, Siarhei Volkau wrote:
-> These SoCs are close to others but they have a clock divisor /2 for low
-> clock peripherals, thus to set up a proper baud rate we need to take
-> this into account.
-> 
-> The divisor bit is located in CGU area, unfortunately the clk framework
-> can't be used at early boot steps, so it's checked by direct readl()
-> call.
-> 
-> Signed-off-by: Siarhei Volkau <lis8215@gmail.com>
-> ---
->  drivers/tty/serial/8250/8250_ingenic.c | 39 ++++++++++++++++++++++----
->  1 file changed, 34 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-> index 2b2f5d8d2..f2662720d 100644
-> --- a/drivers/tty/serial/8250/8250_ingenic.c
-> +++ b/drivers/tty/serial/8250/8250_ingenic.c
-> @@ -70,7 +70,8 @@ static void ingenic_early_console_write(struct console *console,
->  			   ingenic_early_console_putc);
->  }
->  
-> -static void __init ingenic_early_console_setup_clock(struct earlycon_device *dev)
-> +static void __init ingenic_early_console_setup_clock(struct earlycon_device *dev,
-> +						     int clkdiv)
+Quoting Mark Brown (2022-10-10 04:29:03)
+> The KernelCI bisection bot bisected a boot failure on the 5.10-rc stable
+> tree on Panda to d86c6447ee250 ("clk: ti: Stop using legacy clkctrl names
+> for omap4") in the v5.10 stable tree.  There's a lot of clock related
+> warnings/errors including:
+>=20
+> <4>[    0.000000] WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:3778 __clk_=
+register+0x464/0x868
+> <4>[    0.000000] ti_dt_clocks_register: failed to lookup clock node abe-=
+clkctrl:0008:24, ret=3D-517
+> <4>[    0.416076] omap_hwmod: debugss: cannot _init_clocks
+> <4>[    0.421447] ------------[ cut here ]------------
+> <4>[    0.426513] WARNING: CPU: 0 PID: 1 at arch/arm/mach-omap2/omap_hwmo=
+d.c:2371 _init+0x428/0x488
+>=20
+> (there's a *lot* of probe deferrals and hwmods that fail to init). The
+> last output from the kernel is:
+>=20
+> <3>[   10.523590] twl6030_uv_to_vsel:OUT OF RANGE! non mapped vsel for 14=
+10000 Vs max 1316660
+> <6>[   10.531890] Power Management for TI OMAP4+ devices.
+> <4>[   10.537048] OMAP4 PM: u-boot >=3D v2012.07 is required for full PM =
+support
+> <5>[   10.544555] Loading compiled-in X.509 certificates
+>=20
+> I've left the full report from the bot with more information including
+> full logs and a reported-by tag below:
 
-What does "clkdiv" mean here?
-
-And this function is rough, adding a random integer to a function
-requires you to look it up every time you see this call.
-
-If you only have 1 or 2 as an option, just have 2 functions instead
-please.
-
-thanks,
-
-greg k-h
+I don't think we want that commit on stable. It depends on a DT change
+that may not be present. Tony?
