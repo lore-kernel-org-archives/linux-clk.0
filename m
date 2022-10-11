@@ -2,117 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2841BC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 07:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6067C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Oct 2022 08:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229958AbiJKHeI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Oct 2022 03:34:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
+        id S229864AbiJKILR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Oct 2022 04:11:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbiJKHeE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 03:34:04 -0400
+        with ESMTP id S229665AbiJKILM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Oct 2022 04:11:12 -0400
+X-Greylist: delayed 305 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 11 Oct 2022 01:11:07 PDT
 Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.129.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E588589CE3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Oct 2022 00:34:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D93857C0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Oct 2022 01:11:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1665473639;
+        s=selector; t=1665475866;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=z/mwqS1MoxoBP3x8iPrtpxDYB/qR+eamgCZm0YWR5FE=;
-        b=dcsL0mon03YgJkmTZs/+xyH4Y95brBLYSViGZbn1GF+nlk6jfe1bdq0la7sOR08rCqTDjE
-        raD4YNU55WKaxfpPbCBZuRVTfKLS30xXzeqzsjxgdGMv0KacDqYbLrBGvr96UpSod5Lc5P
-        8Qcrmg4/gisrsaTzRs440LoOwby0YmKWdvuayD57YnriJvCZiOTpEHirJ3nd7opv8moHSC
-        IztFL0pKJuvzGwcO+KkmZDMH8D6cwE/1GUgRAVBzez38cUZDeyiEFBcR2AH3/m7gnCFi8Y
-        wLIAiKWb+ASW+4DkBpvoaEF37Qfj/ftb2ztfz4cIa/036+hWBCJFRrfWR1JQFA==
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam04lp2049.outbound.protection.outlook.com [104.47.74.49]) by
+        bh=TEVqN7LH5UNHe+CL3lJ7h6goGAQTlF7P4mM/r9FqHy8=;
+        b=K45jJeuB7gYd6SgRdRhUoIrPktyE1WojCeZSmv4CDNZoroiagCdWUclz8eUrjhF9eLTJTW
+        t3b3w1r0CHnQnaqIIxjvQZx4GW/mnOXt6YfDY6u777S7G6vFxf7h9/CL20qHBHQAyzOkGS
+        nsIrqbV99trd/J9fOhx4yunMWUouoIIQ4TXzpTDiLs7v12WXyleLFZGVtY1G2Fng3XyHv6
+        OugWVOVXGt1u99K9oOaUN8YXDPkYgISzYLbT3Piq1PZBV7EFv8NqQJj3q/f2FIKN6bkVpA
+        m/z6mMw8qkhDHjNCEg3i2RttzvU67MuoxXw3JK6Hfj3euTC6rhgzq5bz0Ll5eg==
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-399-bd3nhTolOdCmM8T0XJ2KYg-2; Tue, 11 Oct 2022 03:33:58 -0400
-X-MC-Unique: bd3nhTolOdCmM8T0XJ2KYg-2
-Received: from MN2PR19MB3693.namprd19.prod.outlook.com (2603:10b6:208:18a::19)
- by DM4PR19MB6176.namprd19.prod.outlook.com (2603:10b6:8:b0::13) with
+ us-mta-508-0RkaduPiN-OaT9ZSNzJ_DA-1; Tue, 11 Oct 2022 04:04:20 -0400
+X-MC-Unique: 0RkaduPiN-OaT9ZSNzJ_DA-1
+Received: from SA1PR19MB4909.namprd19.prod.outlook.com (2603:10b6:806:1a7::17)
+ by SJ0PR19MB4810.namprd19.prod.outlook.com (2603:10b6:a03:2ed::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.40; Tue, 11 Oct
- 2022 07:33:57 +0000
-Received: from MN2PR19MB3693.namprd19.prod.outlook.com
- ([fe80::4d61:1edd:74f5:342c]) by MN2PR19MB3693.namprd19.prod.outlook.com
- ([fe80::4d61:1edd:74f5:342c%6]) with mapi id 15.20.5709.015; Tue, 11 Oct 2022
- 07:33:57 +0000
-From:   Rahul Tanwar <rtanwar@maxlinear.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     linux-lgm-soc <linux-lgm-soc@maxlinear.com>,
-        Yi xin Zhu <yzhu@maxlinear.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND v2 3/5] clk: mxl: Avoid disabling gate clocks from
- clk driver
-Thread-Topic: [PATCH RESEND v2 3/5] clk: mxl: Avoid disabling gate clocks from
- clk driver
-Thread-Index: AQHYzkwFrQSJjUImDUOzXbBrfYxegA==
-Date:   Tue, 11 Oct 2022 07:33:56 +0000
-Message-ID: <MN2PR19MB369398DE5E919BBFB38D7EAEB1239@MN2PR19MB3693.namprd19.prod.outlook.com>
-References: <cover.1663827071.git.rtanwar@maxlinear.com>
- <5a88bd5a9e93cc6e794080e5cac821ae0c27ec56.1663827071.git.rtanwar@maxlinear.com>
- <20220929001745.A4F9FC433B5@smtp.kernel.org>
- <MN2PR19MB3693EEC08EAC5370F1D195FBB1579@MN2PR19MB3693.namprd19.prod.outlook.com>
- <20220930010123.38984C4347C@smtp.kernel.org>
- <MN2PR19MB369301BFE8DFB56C348CD6C0B15D9@MN2PR19MB3693.namprd19.prod.outlook.com>
- <20221005202037.E7B43C433C1@smtp.kernel.org>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.15; Tue, 11 Oct
+ 2022 08:04:17 +0000
+Received: from SA1PR19MB4909.namprd19.prod.outlook.com
+ ([fe80::9e9f:b560:8eab:cb1]) by SA1PR19MB4909.namprd19.prod.outlook.com
+ ([fe80::9e9f:b560:8eab:cb1%6]) with mapi id 15.20.5709.021; Tue, 11 Oct 2022
+ 08:04:17 +0000
+From:   Yi xin Zhu <yzhu@maxlinear.com>
+To:     Rahul Tanwar <rtanwar@maxlinear.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-lgm-soc <linux-lgm-soc@maxlinear.com>
+Subject: Re: [PATCH v3 0/4] Modify MxL's CGU clk driver to make it secure boot
+ compatible
+Thread-Topic: [PATCH v3 0/4] Modify MxL's CGU clk driver to make it secure
+ boot compatible
+Thread-Index: AQHY2J37XmJGGcOb7UuL1GQdLj72uQ==
+Date:   Tue, 11 Oct 2022 08:04:17 +0000
+Message-ID: <SA1PR19MB4909F6711D45ADCCA6360A4FC2239@SA1PR19MB4909.namprd19.prod.outlook.com>
+References: <cover.1664958833.git.rtanwar@maxlinear.com>
 Accept-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR19MB3693:EE_|DM4PR19MB6176:EE_
-x-ms-office365-filtering-correlation-id: 8fcda426-b700-4ae3-fd8e-08daab5af4dd
+x-ms-traffictypediagnostic: SA1PR19MB4909:EE_|SJ0PR19MB4810:EE_
+x-ms-office365-filtering-correlation-id: 43838cda-c651-4895-8eb1-08daab5f31e5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0
-x-microsoft-antispam-message-info: ULGFG7xjkib1EvXm7H9OFr5ngIke8r4chkk6S6zdF7bdaad4nfcwLkpk5FZw+yZituI9kthtCBIOpeo81hXwALUwn0j+3Culg/iL9Vt7DyL3UCDlaCCJ3gR6XA8mq/Td29P+IebR7naS8s+eprY4AWFRQEburdMSsW8zwmMOp/nuQ1ybCwXir1IRl6C49FsWqkLcuAcy93OtylOMUENHBWFhISFToE1GBkPJb7L7g1u8cOkG8cLS3+W5tah/5Rh0DBwudjL087/BivhERf+H7lno8Jw5JHGFga0RaYB2QVBOBdLl3otGiZoDUIJ2CIHOKFj/RMRW3Hvy2dX70dokiSCgg51ElRTWRuJEhqeiqyZdXLUSbGW4HBmnlFPkZWQU3oZCVsAuqkAqovA5CRmhqn/67GHDlWeNOT515l5smBtSJydXuQFYbSbdXK4Qi+GizuykCAa4xN9AUl7ihQjIXomMb7QWGfEtZYhk/es80Gr71iOePMQ39UcgqDChruGS1Dcb2I5qVVHy2qt0wVek61ondwMjvof/gTJDr8G4KcqDL/l6aRDwqylgCGhrI2W2bRaRHejwcluE/3bLGLcyVU+9v+1bAqKjIcfaWzBJNgQT6/HgG3P8bAdpPxs1pzaMRNOUpzp2ZXhGL1ibS6eRnXEsMHjKXTx6pSEr/bUp2tiSegD7fAqNQLZxDKQYHAqjcLNQxrzO6+8sphTPOPD08jzIOfkIbIZYtvYSnF3gRAOuiNvehooLVMum0sqcKOBapMKLdly2KHoXVHaaEE74Qw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3693.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(376002)(366004)(136003)(39850400004)(451199015)(66946007)(66476007)(9686003)(66556008)(7696005)(54906003)(55016003)(110136005)(64756008)(8676002)(2906002)(478600001)(52536014)(8936002)(38100700002)(4326008)(5660300002)(66446008)(71200400001)(53546011)(6506007)(33656002)(26005)(122000001)(86362001)(41300700001)(38070700005)(83380400001)(91956017)(66899015)(316002)(186003)(76116006);DIR:OUT;SFP:1102
+x-microsoft-antispam-message-info: BK6Q5jWcXHe/GVFIzyafAQjbgO03gGlNN7dHNjroaUH/5DsoGHS5HuabprW2Rsfu6iSTK2uxZGJxvVvIAEsEJcPQENCf5sCwa4OqMQxavuynennN3MVleT8Bg+5MDnetXsiYqJVxiz0EbFOPim3yDSLSmIoQ7PIiA6eQoBkDDM7dUWTZggIPXMBOMR1Mae2+3F1zoaIzTVk9comVFRLKXOyodrDmhuYuKh4zla7KOtNqCkt74CWxxsCIE6afSE/9X7kwG0CxJlCLSDokSRMvgqqAaM8S2S6X3bCmLmggo7UgayLCRZ6Y5nIE78WQUAzMBH+Wdo/BZ2I+pDJOAp3vsy5A1fEF2Wx8TcMYDmbq8egiXQBkqNmAmNovWMad9abFn/xu3Y3GnI6PhqI9BE8jBd9LU1lpWZ41XesX/26G7wpasSUmK5/wjyxMu6QjFgU5v8ifEeCyJwYT0l4jERxwEZvBt1tnJoyBjC+zgbMh21bVIgweeiQQ0EIGE28TPFDKUt/+XcKBQObDpGl0xAKUt9yyDLERvF4IWtrQ+0JD+8YYHyvALyIDqQdlw3oSqQO2+HkI6H0gkwHKONuTJztn4Bh04wrHlsDZHHqY2LTffXWP1ve61VkgatTyboRyNo6SabGlQkLN73Roiu9DvvnSeqT4f6exSacMSe86/5LnGHGRw1pJPC9Ds8I8uUkYSK0lHaXhBwP6AjC940S4QGHpINecyTopAuHwpEy6zkJwHJF22lgNdr1o10jc5NycH9W11TDvAgGZRH14tipxHEgIrg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR19MB4909.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(366004)(346002)(396003)(39850400004)(376002)(451199015)(86362001)(38070700005)(33656002)(122000001)(38100700002)(26005)(9686003)(2906002)(83380400001)(52536014)(5660300002)(7696005)(107886003)(186003)(6506007)(53546011)(66556008)(110136005)(64756008)(4326008)(91956017)(76116006)(66946007)(55016003)(316002)(41300700001)(66476007)(8676002)(66446008)(54906003)(8936002)(478600001)(71200400001);DIR:OUT;SFP:1102
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?mxiZqd7sLe5Uvk4JRSv4lnlGp/EJUWpp5nXONLwohUTGz6t5sQF1LWYKfhUO?=
- =?us-ascii?Q?bFgqY+tG8nHa3yTFHqXqm3cEWbZ+hUSA+Ze6avuzgTEEW2iEGvSM2jLDmhVI?=
- =?us-ascii?Q?d+qo2zg+wqfOiZpQsZ3cfbIMn+zE/UQWm0wfFb3PpwTZt+uvwokH5bEoTVbg?=
- =?us-ascii?Q?8ZUhavvTJQO/9wcLcygg5ae9cTsIaFDaLX2kKrWPob8Zvp608TrTfqr8WPiv?=
- =?us-ascii?Q?RQYoz95Px4Pif4JMPUTgTlTematZOliq2Aph4nyoKZ4qQUWo5MWOMMBGA91h?=
- =?us-ascii?Q?ik/+MBusQh9XXwsM+6Hkc94RBS1B2t3QL0hncWhOONp4RI/43cNdTYUBc0Rz?=
- =?us-ascii?Q?qJJ1lpfExBqycofoG0FWlAUD9nqpL/5toc/G/LVd+SEmcPgtKAMxvsbLap6f?=
- =?us-ascii?Q?MXxNYYV62bOZFKB3ZRzOFcV/GbPF+d8PUUO366eJjtHhxhPXYlwBi6+4NgBD?=
- =?us-ascii?Q?dMjYoHDi9etQ40nH0FmM8yq5I1jb2L85szZ8Gia9xm1NQ7reivxZ93/k8OS/?=
- =?us-ascii?Q?4u0a7fGb89Chn3zC6DdZ6gwvd8UBKReHiWwOakJWJ6sZRWF1ew+3UEZd/VLt?=
- =?us-ascii?Q?hA3+OxR8caSbc3u9LHIDX7P0P8muIRHzDrXUl6dzXXbC+T/lv+pHkPIV42+L?=
- =?us-ascii?Q?uAxZ+Au3ZFAHz3oecQTTGDrU5VM6sXzRB9VlnIriF0K+CCU1exPRdm9hEsKl?=
- =?us-ascii?Q?C8rtz+Qvgeqcg3YknHVV9vBSpifaWijri19uLgOiXsHdcDopFRL0lZnl/k2E?=
- =?us-ascii?Q?ob2DZ0t41/mGYhk+GkDhrf0Wpk4o0GAIeLvSN5OVktzfOlAFOQOqv03DxLxV?=
- =?us-ascii?Q?xZIlyo0/vQMU/CJEKwxR80f6Q2CT6Q1bna5tOGuZKScRUG9Rh3ht6GI0eEfY?=
- =?us-ascii?Q?IDkWZQUh5mP8aygqtnwo5TqE8IkBfoXpO0wkMS9jAHmqY5RFHAg4AwDoPJUt?=
- =?us-ascii?Q?nA+qGo9DAogNucyvOoDlmPtq8erlWS2o54CcdnLHuFxEwm9Xo5cN4V7efoA1?=
- =?us-ascii?Q?AsKJWf5YBwOACtDNPWT/zFvszO8u3EJbsHZPOQ1vH2vn66peRu0kHdvHY3HP?=
- =?us-ascii?Q?YD0Sby4oZsJk4CvhY/Q9albcqQHnS7F1zzgTSc6kD2rgyIsYiwzFVbdNkakB?=
- =?us-ascii?Q?wjNhpIcGhyzbTSu59IZPXoZHvFAfpSQCOXvSUdCk+Ebq+t/s5oSixxqiegLq?=
- =?us-ascii?Q?fMe4n23fIfiIQhTX5VzAvvrQHdMFmvumqmcJ0qSHVbxxbT8e3nB4uNSPUbRS?=
- =?us-ascii?Q?46CG5xWwUqSM6NL4gaGScqidXlQHQGMx2YfZ87E1mwpopC2bPjl3Flr3nOyg?=
- =?us-ascii?Q?Kxk30RYSjFhdpK8QW+rwP3I36j2HIKF8PBa68M4KVdTDwvOTAJLyx8zreTvC?=
- =?us-ascii?Q?5TXB5whemfPth6Cx4cn5NJJ01jhx8ATp84Ha1KiUZ4qw6Ox2X0vormaiBnxH?=
- =?us-ascii?Q?NlM6FqisOGltHP0hIe4w/FoGsckD6NUrGy7HhzDwvX8I9JeSAONWCqH4wZe2?=
- =?us-ascii?Q?1kJezMwKGon4SXHBd6hioy24MSIzUieC/xX71P8Ex3ZlnFjDMiHMe4GPpe37?=
- =?us-ascii?Q?trTxn7YHR9aWxBIwCwl92SCQUGoLBjmbgxhR2d6jpBueShtl87H3FkQDTRq2?=
- =?us-ascii?Q?0Q=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?dTICZ1mr8QALAGUNwluuymfmTtNk0Quq2xLej6cN7KN8lcydY8PatOoObMq7?=
+ =?us-ascii?Q?jknD/PcHEOJ3aWy2iZvwYQhQI2FMNhPKfW5D6DUvB6vNEK3hEJ9mCHN5CLOK?=
+ =?us-ascii?Q?TGa2tMkCqzjgosMhTAIk1YLWhffXL123HReKyxsWshOnPyZ0dt3K1N2oSyte?=
+ =?us-ascii?Q?2Mwjqxw1r6k+AOIFJJo9sGup9HWyqP/i1TnCGVnCUFYaRtSk/7zxvW+3Z6NW?=
+ =?us-ascii?Q?S2NcKF0a3BdlvSqM1/LdaweAXjpso3X4b5Nij7MxBiVe95N2nWrZNPSrV6fL?=
+ =?us-ascii?Q?bPo8hdNGmCqUlg9TJMj+e/GpVteKDKbYOUeuq+fU2bH38MNN+N33VSTz7liC?=
+ =?us-ascii?Q?WyU7msD803jjIP2qd4dQCvcusVOFsses2Bc5yx7AZyTrFAEECS2wXtR7gCzw?=
+ =?us-ascii?Q?J7g/LPAG0oSAZuzdrLmAEAit/xPjPWxZG2GjDyWI0A/7PkceFQvxq3zyfKYV?=
+ =?us-ascii?Q?WhfVP19YtWNW9s9xi3TC4fNFUK41b+ZWBaq4fj8+cNS/gjrRwEWF2ArovNyz?=
+ =?us-ascii?Q?KNSeMUlsTTS8XXPaIjxndniUqmsfT5pzMxQplq1oooj9+JmJZ0rcNRuio8n7?=
+ =?us-ascii?Q?OJIK3H0k2mDvJAFfV2vvuZCsUKy6dI1juDiKt4yNY7+7Y25Hz3HVt+yPz8/C?=
+ =?us-ascii?Q?R3N1pMRDMIwI+AA83U6u5khsDIPgFEXF9oNgey4jjd9bKCTMF22bPyeyp/sZ?=
+ =?us-ascii?Q?Pp8mdsSCaWSLQ49lB7qwFo3pZTmk/jR5XS/Z/b/zK6pRy1dUQ2iwtlvXBz33?=
+ =?us-ascii?Q?W5bzLng8Sx5hF6/G+akiBIsCMAkzhxGrzH2As1vlO4OwmfMQId2m8YzrMpFO?=
+ =?us-ascii?Q?KWR7ajpg4IrYWsd/ohU15vkk8nUy5o8Kgo1pYjevIRMLhY+b33hdVQEQoRGI?=
+ =?us-ascii?Q?X3z2fmfe6MimpLE7Uso7OLni6LnowaZrUajQJGenDX/lGkqG8wkZFG8Giknj?=
+ =?us-ascii?Q?GqU+gUA0892i3CXduZHX9YspWFX4a4PC5TerubJlt54t/S7CDaNh7Z0IRb2i?=
+ =?us-ascii?Q?jzKMoAyaOvmVp0KDYqCCqrMSTzlGP71YkJPF7x3M+bbv8qQrLcGWUslY1tk/?=
+ =?us-ascii?Q?V4VuedSFM2VuBIc+5ZNWDg/pKjc7VmWMD65t1AgfKVQTfqWNcWBXUYDzFxE3?=
+ =?us-ascii?Q?Rl+HFUTW7xZ6szgFVrCrahXLf5ImVvTR9z5hMAJkRBZgXe8OI5lqw2hsuGRg?=
+ =?us-ascii?Q?3JEwBOf5rmvftWO10zpa8fkCO+3tk3FYBYdu7VlDY1qN9qcXAw/8+qKlZCNq?=
+ =?us-ascii?Q?lBQO+gTgIvthI3eYVMPtNy1n3jucfCb7Q7wWKRFAenC7TYQga4FouWqQurCa?=
+ =?us-ascii?Q?DaPNhTC4v/4mszwo9S7/jqoSy2fyNu6Bt8ooJfnNnUVbfcExGoJcNUre7qL+?=
+ =?us-ascii?Q?kr9zsrfaxTAi+nIo3SLv0cdq1J6Zm2K1htHihs0JWqH/zGUgrQwdKudyj4so?=
+ =?us-ascii?Q?0+FoE2fTKr0e4gu8u+QS/X6UdSRrsHBor4SGnsV7Qv+Sam8LoZpgPgvv1uLS?=
+ =?us-ascii?Q?VpwcQ2+kahyai4aXteVbX92KziKtJkYSfv+U5WpRsyjz+utPgPMpUsQ1kZUr?=
+ =?us-ascii?Q?UNS//0mrNJG3pdWE6GYQHv/XfPVLsCAZVUc1Ob/f0BthWScIW9EAy0HpaQPV?=
+ =?us-ascii?Q?4g=3D=3D?=
 MIME-Version: 1.0
 X-OriginatorOrg: maxlinear.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR19MB3693.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcda426-b700-4ae3-fd8e-08daab5af4dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2022 07:33:56.9473
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR19MB4909.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43838cda-c651-4895-8eb1-08daab5f31e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2022 08:04:17.3093
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: E0i93SnVyYzG0nFcJxddPCaw8iMiJ5KrIgCSeRUShHjjxbGrMVUS5SNxeO0EIeFJ3pE2pwz+CCnfTBq7BjiBEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB6176
+X-MS-Exchange-CrossTenant-userprincipalname: W6GOXZoht4FFkq/1X+A4IqxTJBR/MmaISY3TW6b12VI64H61JV+Cbo7rdy+3uv9fVzt7hj+aW6ky1AWdyd+Xog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR19MB4810
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: maxlinear.com
 Content-Language: en-US
@@ -122,47 +117,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,=0A=0AOn 6/10/2022 4:20 am, Stephen Boyd wrote:=0A> This email w=
-as sent from outside of MaxLinear.=0A>=20=0A>=20=0A> Quoting Rahul Tanwar (=
-2022-10-05 02:36:00)=0A>>>>=0A>>>=0A>>> Why is the clk driver probing on th=
-e new SoCs? Is it providing=0A>>> something? Can we detect that the power m=
-anagement IP exists and not=0A>>> register these clks?=0A>>>=0A>>=0A>> We d=
-iscussed in the team about not registering gate clks at all as you=0A>> men=
-tioned. But if we do that, all peripheral drivers that use these clks=0A>> =
-would need modifications so their probe does not fail due to failure=0A>> r=
-eturns of clk related standard calls for e.g devm_clk_get(),=0A>> clk_prepa=
-re_enable(). These are standard calls in probe for all the=0A>> drivers and=
- a lot of them use gate clks. So this would need a lot of=0A>> changes with=
- possibility of breaking working functionalities.=0A>=20=0A> Why? We can ha=
-ve clk_get() return NULL when these clks can't be used.=0A> This is how we =
-implement "dummy" clks on systems where the clk provider=0A> can provide th=
-e clk but there's nothing to do for the clk operations.=0A> The clk API tre=
-ats NULL as a valid clk but bails out early when calling=0A> any consumer A=
-PIs.=0A>=20=0A=0A=0AI agree that what you are suggesting is the ideal way t=
-o handle such=0Aclks. If i understand you correctly, you are suggesting bel=
-ow (please=0Acorrect me if i am mistaken):=0A=0A1. Disable/remove such cloc=
-ks from corresponding driver's devicetree=0Anodes. This will make devm_clk_=
-get() or clk_get() return failure.=0A=0A2. Modify all drivers which use suc=
-h clks=0A=0Afrom:=0A=0A     clk =3D devm_clk_get(...);=0A     if (IS_ERR(cl=
-k))=0A         return -ERROR;=0A     clk_prepare_enable(clk);=0A     clk_ge=
-t/set_rate();=0A     ...=0A=0Ato:=0A     clk =3D devm_clk_get(...);=0A     =
-if (!(IS_ERR(clk)) {=0A         clk_prepare_enable(clk);=0A         clk_get=
-/set_rate();=0A         ...=0A     } else {=0A        // print error info -=
- do nothing, no clk_ops calls=0A     }=0A=0ABut the problem that we have is=
- that 80% of the clks that we use fall=0Aunder this category (around 65 clk=
-s). And if we follow this approach,=0Athen we will have to make above chang=
-es in all of the drivers which use=0Athese clks & retest them again. That s=
-eems like a overhaul. We already=0Akeep a internal driver flag in each clk =
-entry data structure and we=0Aalready use it in the driver for other types =
-of clks for e.g MUX_CLKs.=0ASo using the internal flag to handle this becom=
-es a preferable &=0Aexisting driver design aligned approach for us.=0A=0ATh=
-anks,=0ARahul=0A=0A=0A>>=0A>> Also, i incorrectly mentioned about the reaso=
-n being backward=0A>> compatibility with older SoCs. Main reason is to supp=
-ort different power=0A>> profiles use cases as per end product requirements=
- some of which might=0A>> control it from clk framework i.e. this driver. W=
-e keep a internal=0A>> driver flag just for this purpose to provide this fl=
-exibility depending=0A>> on the use case which is what we have used here.=
-=0A>>=0A>> I am sending v3 with more clear & correct description about it t=
-o=0A>> justify the need for these changes.=0A>>=0A>=20=0A> Ok=0A>=20=0A>=20=
-=0A=0A
+On 5/10/2022 5:36 pm, Rahul Tanwar wrote:=0A> MxL's CGU driver was found to=
+ be lacking below required features. Add these=0A> required lacking feature=
+s:=0A>=0A> 1. Since it is a core driver, it has to conform to secure boot &=
+ secure=0A>    access architecture. In order for the register accesses to b=
+e secure=0A>    access compliant, it needs regmap support as per our securi=
+ty architecture.=0A>    Hence, replace direct read/writel with regmap based=
+ IO. Also remove=0A>    redundant spinlocks from the driver as they are no =
+longer necessary=0A>    because regmap uses its own lock.=0A>=0A> 2. In MxL=
+'s LGM SoC, gate clocks can be controlled either from CGU clk driver=0A>   =
+ i.e. this driver or directly from power management driver/daemon. It is=0A=
+>    dependent on the power policy/profile requirements of the end product.=
+=0A>=0A>    To support such use cases, provide option to override gate clks=
+ enable/disable=0A>    by adding a flag GATE_CLK_HW which controls if these=
+ gate clks are controlled=0A>    by HW i.e. this driver or overridden in or=
+der to allow it to be controlled=0A>    by power profiles instead.=0A>=0A> =
+3. Fix a bug related to missing flags in one 'dcl' clk entry.=0A>=0A> This =
+patch series is based on below git tree (linux-v6.0-rc1):=0A> git://git.ker=
+nel.org/pub/scm/linux/kernel/git/clk/linux.git=0A>=0A>=0A> Rahul Tanwar (4)=
+:=0A>   clk: mxl: Switch from direct readl/writel based IO to regmap based =
+IO=0A>   clk: mxl: Remove redundant spinlocks=0A>   clk: mxl: Add option to=
+ override gate clks enable/disable=0A>   clk: mxl: Fix a clk entry by addin=
+g relevant flags=0A>=0A>  drivers/clk/x86/Kconfig       |   5 +-=0A>  drive=
+rs/clk/x86/clk-cgu-pll.c |  23 ++-----=0A>  drivers/clk/x86/clk-cgu.c     |=
+ 122 +++++++++++-----------------------=0A>  drivers/clk/x86/clk-cgu.h     =
+|  46 ++++++-------=0A>  drivers/clk/x86/clk-lgm.c     |  18 +++--=0A>  5 f=
+iles changed, 82 insertions(+), 132 deletions(-)=0A>=0AReviewed-by: Yi xin =
+Zhu <yzhu@maxlinear.com> for entire series.=0A=0A
 
