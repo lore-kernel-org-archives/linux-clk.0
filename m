@@ -2,255 +2,323 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF295C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 12:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8018DC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 13:17:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbiJLMOs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 08:14:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48174 "EHLO
+        id S229741AbiJLNRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 09:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbiJLMOr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 08:14:47 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CDDD132;
-        Wed, 12 Oct 2022 05:14:44 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 971A86602318;
-        Wed, 12 Oct 2022 13:14:41 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1665576882;
-        bh=ORz6LKtHOFgBlfkQn7E4OVTbLSsBDmu5xIhezMASNTg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=bEXlQr+dyyCRHhVFoeNOZpAFu/i5VK5OWa2eXGtcd+UAIS7DoWfcQgwNYy9L447cR
-         elf2hHThImqZ8I0XH2gOi3WrA8/ncQUEtBlWf+bLryGBkAFUFbCTq9kUSZvQBFuUkL
-         B0CCyoaDiLlcZEfXxWEy/fdk9998MTN3vVV8Y2RaHF7jtPzTT78U3c2FSlZDlm36y+
-         FtrbmdJVkhR42fbO1Qvm1nTPMk9Jsdz5vYHeiRherd/YLfaTrRiMjo8gV6tmEoWlP5
-         3P1E6atdbEObAr1VCtu51QJ0XQoVKw4M7wr7NZzW5Dq6YSj2TIWCJWaBnCwbB/0CIS
-         FqR39l1nVHW6g==
-Message-ID: <decfd5e5-a48b-b2d1-f21b-1a4d52e05538@collabora.com>
-Date:   Wed, 12 Oct 2022 14:14:39 +0200
+        with ESMTP id S229613AbiJLNRD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 09:17:03 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D04FCE980;
+        Wed, 12 Oct 2022 06:17:00 -0700 (PDT)
+X-QQ-mid: bizesmtp68t1665580609te3ildxc
+Received: from [192.168.50.235] ( [113.72.147.11])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Wed, 12 Oct 2022 21:16:48 +0800 (CST)
+X-QQ-SSF: 01000000002000B09000B00A0000000
+X-QQ-FEAT: DQ0OCu3gog3rE8xw6j7Rk2p48ngJp/0LijQoGV4LH0QojjfF4o4ZASfem9Y0t
+        97G5CD3OTqWO+XOLkxERsTJV8d2IdYsp2kM9pX5fmgZXlBZSzR+0jdM0VofduY8zFBdacI8
+        mey1YLnP7aJJdNgRqLZzbuYjhg3o8+aIBdO6iK22IMlAl0SimfzjNa+U7HTGBIblW8C+nVD
+        4NHP4RI0e9I2r2Wv5goooGgBeOyaTZWY7BHnYQCiVJ7JMk50j8JRvD2bYxmGLut+rhGiUC6
+        0y9KUvA5jiRW60GEBEHKvamQ/8Ls174w97JS7i0ZmFOiKkY7qY2VGmuLZWH5bq8VJVgsB8h
+        ENgdEWeBCZSO7SAENWnnPhCrU2l/S2TD6W6BGHfGpfI104nuctgszgCTYj1/03uqlTVuAiQ
+X-QQ-GoodBg: 0
+Message-ID: <4769BE3503398017+b1699221-ccc9-a0c1-0b11-141ce9644d74@linux.starfivetech.com>
+Date:   Wed, 12 Oct 2022 21:16:37 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] clk: mediatek: clk-mux: Add .determine_rate() callback
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
+ bindings
 Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
-        wenst@chromium.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com>
- <20221012085555.3nls7ja56vlnaz2w@houat>
- <c4a1eb9f-016d-c184-e494-c869038b87ff@collabora.com>
- <20221012094004.jgiyvmbgomiyedik@houat>
- <6e76f90f-3b6a-330d-6902-b31bf3d33ad4@collabora.com>
- <20221012114813.6d6adro746w5bd7c@houat>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221012114813.6d6adro746w5bd7c@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
+ <20220929184349.GA2551443-robh@kernel.org>
+ <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
+ <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 12/10/22 13:48, Maxime Ripard ha scritto:
-> On Wed, Oct 12, 2022 at 11:57:15AM +0200, AngeloGioacchino Del Regno wrote:
->> Il 12/10/22 11:40, Maxime Ripard ha scritto:
->>> On Wed, Oct 12, 2022 at 11:09:59AM +0200, AngeloGioacchino Del Regno wrote:
->>>> Il 12/10/22 10:55, Maxime Ripard ha scritto:
->>>>> Hi,
->>>>>
->>>>> On Tue, Oct 11, 2022 at 03:55:48PM +0200, AngeloGioacchino Del Regno wrote:
->>>>>> Since commit 262ca38f4b6e ("clk: Stop forwarding clk_rate_requests
->>>>>> to the parent"), the clk_rate_request is .. as the title says, not
->>>>>> forwarded anymore to the parent:
->>>>>
->>>>> It's not entirely true, the rate request should still be forwarded, but
->>>>> we don't pass the same instance of clk_rate_request anymore.
->>>>>
->>>>>> this produces an issue with the MediaTek clock MUX driver during GPU
->>>>>> DVFS on MT8195, but not on MT8192 or others.
->>>>>>
->>>>>> This is because, differently from others, like MT8192 where all of
->>>>>> the clocks in the MFG parents tree are of mtk_mux type, but in the
->>>>>> parent tree of MT8195's MFG clock, we have one mtk_mux clock and
->>>>>> one (clk framework generic) mux clock, like so:
->>>>>>
->>>>>> names: mfg_bg3d -> mfg_ck_fast_ref -> top_mfg_core_tmp (or) mfgpll
->>>>>> types: mtk_gate ->      mux        ->     mtk_mux      (or) mtk_pll
->>>>>>
->>>>>> To solve this issue and also keep the GPU DVFS clocks code working
->>>>>> as expected, wire up a .determine_rate() callback for the mtk_mux
->>>>>> ops; for that, the standard clk_mux_determine_rate_flags() was used
->>>>>> as it was possible to.
->>>>>
->>>>> It probably fixes things indeed, but I'm a bit worried that it just
->>>>> works around the actual issue instead of fixing the actual bug...
->>>>>
->>>>>> This commit was successfully tested on MT6795 Xperia M5, MT8173 Elm,
->>>>>> MT8192 Spherion and MT8195 Tomato; no regressions were seen.
->>>>>>
->>>>>> For the sake of some more documentation about this issue here's the
->>>>>> trace of it:
->>>>>>
->>>>>> [   12.211587] ------------[ cut here ]------------
->>>>>> [   12.211589] WARNING: CPU: 6 PID: 78 at drivers/clk/clk.c:1462 clk_core_init_rate_req+0x84/0x90
->>>>>> [   12.211593] Modules linked in: stp crct10dif_ce mtk_adsp_common llc rfkill snd_sof_xtensa_dsp
->>>>>>                   panfrost(+) sbs_battery cros_ec_lid_angle cros_ec_sensors snd_sof_of
->>>>>>                   cros_ec_sensors_core hid_multitouch cros_usbpd_logger snd_sof gpu_sched
->>>>>>                   snd_sof_utils fuse ipv6
->>>>>> [   12.211614] CPU: 6 PID: 78 Comm: kworker/u16:2 Tainted: G        W          6.0.0-next-20221011+ #58
->>>>>> [   12.211616] Hardware name: Acer Tomato (rev2) board (DT)
->>>>>> [   12.211617] Workqueue: devfreq_wq devfreq_monitor
->>>>>> [   12.211620] pstate: 40400009 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>>>> [   12.211622] pc : clk_core_init_rate_req+0x84/0x90
->>>>>> [   12.211625] lr : clk_core_forward_rate_req+0xa4/0xe4
->>>>>> [   12.211627] sp : ffff80000893b8e0
->>>>>> [   12.211628] x29: ffff80000893b8e0 x28: ffffdddf92f9b000 x27: ffff46a2c0e8bc05
->>>>>> [   12.211632] x26: ffff46a2c1041200 x25: 0000000000000000 x24: 00000000173eed80
->>>>>> [   12.211636] x23: ffff80000893b9c0 x22: ffff80000893b940 x21: 0000000000000000
->>>>>> [   12.211641] x20: ffff46a2c1039f00 x19: ffff46a2c1039f00 x18: 0000000000000000
->>>>>> [   12.211645] x17: 0000000000000038 x16: 000000000000d904 x15: 0000000000000003
->>>>>> [   12.211649] x14: ffffdddf9357ce48 x13: ffffdddf935e71c8 x12: 000000000004803c
->>>>>> [   12.211653] x11: 00000000a867d7ad x10: 00000000a867d7ad x9 : ffffdddf90c28df4
->>>>>> [   12.211657] x8 : ffffdddf9357a980 x7 : 0000000000000000 x6 : 0000000000000004
->>>>>> [   12.211661] x5 : ffffffffffffffc8 x4 : 00000000173eed80 x3 : ffff80000893b940
->>>>>> [   12.211665] x2 : 00000000173eed80 x1 : ffff80000893b940 x0 : 0000000000000000
->>>>>> [   12.211669] Call trace:
->>>>>> [   12.211670]  clk_core_init_rate_req+0x84/0x90
->>>>>> [   12.211673]  clk_core_round_rate_nolock+0xe8/0x10c
->>>>>> [   12.211675]  clk_mux_determine_rate_flags+0x174/0x1f0
->>>>>> [   12.211677]  clk_mux_determine_rate+0x1c/0x30
->>>>>> [   12.211680]  clk_core_determine_round_nolock+0x74/0x130
->>>>>> [   12.211682]  clk_core_round_rate_nolock+0x58/0x10c
->>>>>> [   12.211684]  clk_core_round_rate_nolock+0xf4/0x10c
->>>>>> [   12.211686]  clk_core_set_rate_nolock+0x194/0x2ac
->>>>>> [   12.211688]  clk_set_rate+0x40/0x94
->>>>>> [   12.211691]  _opp_config_clk_single+0x38/0xa0
->>>>>> [   12.211693]  _set_opp+0x1b0/0x500
->>>>>> [   12.211695]  dev_pm_opp_set_rate+0x120/0x290
->>>>>> [   12.211697]  panfrost_devfreq_target+0x3c/0x50 [panfrost]
->>>>>> [   12.211705]  devfreq_set_target+0x8c/0x2d0
->>>>>> [   12.211707]  devfreq_update_target+0xcc/0xf4
->>>>>> [   12.211708]  devfreq_monitor+0x40/0x1d0
->>>>>> [   12.211710]  process_one_work+0x294/0x664
->>>>>> [   12.211712]  worker_thread+0x7c/0x45c
->>>>>> [   12.211713]  kthread+0x104/0x110
->>>>>> [   12.211716]  ret_from_fork+0x10/0x20
->>>>>> [   12.211718] irq event stamp: 7102
->>>>>> [   12.211719] hardirqs last  enabled at (7101): [<ffffdddf904ea5a0>] finish_task_switch.isra.0+0xec/0x2f0
->>>>>> [   12.211723] hardirqs last disabled at (7102): [<ffffdddf91794b74>] el1_dbg+0x24/0x90
->>>>>> [   12.211726] softirqs last  enabled at (6716): [<ffffdddf90410be4>] __do_softirq+0x414/0x588
->>>>>> [   12.211728] softirqs last disabled at (6507): [<ffffdddf904171d8>] ____do_softirq+0x18/0x24
->>>>>> [   12.211730] ---[ end trace 0000000000000000 ]---
->>>>>
->>>>> ... Indeed, you shouldn't hit that warning at all. It happens in
->>>>> clk_core_round_rate_nolock, which takes (before your patch) the
->>>>> CLK_SET_RATE_PARENT branch. This indeed has been changed by the patch
->>>>> you mentioned, and will call clk_core_forward_rate_req() now, that in
->>>>> turn calls clk_core_init_rate_nolock().
->>>>>
->>>>> I think the warning you hit is because core->parent is NULL, which is
->>>>> passed to clk_core_forward_rate_req() as the parent argument, and we'll
->>>>> call clk_core_init_rate_req() with parent set as the core argument.
->>>>>
->>>>> In clk_core_init_rate_req(), the first thing we do is a WARN_ON(!core),
->>>>> which is what you hit here I think.
->>>>>
->>>>> This is different to the previous behavior that was calling
->>>>> clk_core_round_rate_nolock() with core->parent directly, and
->>>>> clk_core_round_rate_nolock() if its core argument is NULL will set
->>>>> req->rate to 0 and bail out without returning an error.
->>>>>
->>>>> Now, your patch probably works because now that you provide a
->>>>> determine_rate implementation, clk_core_can_round() returns true and
->>>>> you'll take a different branch in clk_core_round_rate_nolock(), avoiding
->>>>> that issue entirely.
->>>>>
->>>>> Does that patch work better (on top of next-20221012)?
+On Tue, 11 Oct 2022 12:36:08 -0400, Krzysztof Kozlowski wrote:
+> On 11/10/2022 11:30, Hal Feng wrote:
+>> On Thu, 29 Sep 2022 13:43:49 -0500, Rob Herring wrote:
+>>> On Fri, Sep 30, 2022 at 01:51:47AM +0800, Hal Feng wrote:
+>>>> Add bindings for the reset controller on the JH7110 RISC-V
+>>>> SoC by StarFive Technology Ltd.
 >>>>
->>>> I admit I didn't go too deep in the research, as my brain processed that as
->>>> "this is a mux clock, not really different from a standard mux, this callback
->>>> is missing, that's not optimal"... then that fixed it and called it a day.
+>>>> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+>>>> ---
+>>>>  .../bindings/reset/starfive,jh7110-reset.yaml | 54 +++++++++++++++++++
+>>>>  1 file changed, 54 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
 >>>>
->>>> I should've prolonged my research for a better understanding of what was
->>>> actually going on.
+>>>> diff --git a/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml b/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..bb0010c200f9
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
+>>>> @@ -0,0 +1,54 @@
+>>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/reset/starfive,jh7110-reset.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: StarFive JH7110 SoC Reset Controller Device Tree Bindings
+>>>> +
+>>>> +maintainers:
+>>>> +  - Emil Renner Berthing <kernel@esmil.dk>
+>>>> +  - Hal Feng <hal.feng@linux.starfivetech.com>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - starfive,jh7110-reset
 >>>
->>> No worries :)
->>>
->>>> What you said actually opened my mind and, with little surprise, your patch
->>>> works as good as mine - no warnings and the clock scales as expected!
->>>
->>> I'm actually wondering if you didn't encounter two issues. What kernel
->>> were you testing before? If it's older than today's next
->>> (next-20221012), you're likely missing
->>>
->>
->> I was testing next-20221011.
->>
->>> https://lore.kernel.org/linux-clk/20221010-rpi-clk-fixes-again-v1-0-d87ba82ac404@cerno.tech/
->>>
->>> Which is likely to be what fixed the clock scaling. And my patch only
->>> fixed the warning. Could you test next-20221012? If I'm right, you
->>> should only get the warning.
->>>
->>
->> No, I am getting the same situation even after rebasing over next-20221012, without
->> any of the two patches (determine_rate() for mtk mux, nor the one you shared for
->> clk.c), when the warning happens, I get very slow GPU operation and the same "nice"
->> timeout:
->>
->> [   27.785514] panfrost 13000000.gpu: gpu sched timeout, js=1,
->> config=0x7b00, status=0x0, head=0xa1cb180, tail=0xa1cb180,
->> sched_job=00000000f07d39e3
->>
->> ...so I'm not encountering the same issue that you've fixed with the patches that
->> got merged in next-20221012.
->>
->> Of course, as you were expecting, the warning is also still there and still
->> the same:
->>
->> [   27.750504] WARNING: CPU: 4 PID: 164 at drivers/clk/clk.c:1462
->> clk_core_init_rate_req+0x84/0x90
+>>> 'reg' needed? Is this a sub-block of something else?
+>> 
+>> Yes, the reset node is a child node of the syscon node, see patch 27 for detail.
+>> You might not see the complete patches at that time due to technical issue of
+>> our smtp email server. Again, I feel so sorry about that.
+>> 
+>> 	syscrg: syscrg@13020000 {
+>> 		compatible = "syscon", "simple-mfd";
+>> 		reg = <0x0 0x13020000 0x0 0x10000>;
+>> 
+>> 		syscrg_clk: clock-controller@13020000 {
+>> 			compatible = "starfive,jh7110-clkgen-sys";
+>> 			clocks = <&osc>, <&gmac1_rmii_refin>,
+>> 				 <&gmac1_rgmii_rxin>,
+>> 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+>> 				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+>> 				 <&tdm_ext>, <&mclk_ext>;
+>> 			clock-names = "osc", "gmac1_rmii_refin",
+>> 				"gmac1_rgmii_rxin",
+>> 				"i2stx_bclk_ext", "i2stx_lrck_ext",
+>> 				"i2srx_bclk_ext", "i2srx_lrck_ext",
+>> 				"tdm_ext", "mclk_ext";
+>> 			#clock-cells = <1>;
+>> 		};
+>> 
+>> 		syscrg_rst: reset-controller@13020000 {
+>> 			compatible = "starfive,jh7110-reset";
+>> 			#reset-cells = <1>;
 > 
-> Ok. I'm still a bit unsure why it actually fixes anything.
-> 
-> In the current next, clk_core_init_rate_req (through
-> clk_core_forward_rate_req) will bail out right away, but the patch will
-> clear the request and set the requested rate.
-> 
-> I don't think the req->rate assignment changes anything because our next
-> call will be to clk_core_round_rate_nolock that will clear it in the
-> !core path, but it might just be that we don't initialize the request
-> and end up with some garbage data in it?
-> 
-> Could you test, on top of next-20221012,
+> So the answer to the "reg needed?" is what? You have unit address but no
+> reg, so this is not correct.
 
-No that's not the case, this patch has no effect at all (yes I've tested it).
+Not needed in the reset-controller node, but needed in its parent node. I am sorry
+for missing description to point it out in the bindings. I will rewrite all bindings
+for the next version. Unit address here should be deleted.
 
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c3c3f8c07258..ffbee00bd7cf 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1545,6 +1545,8 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
->   	if (core->flags & CLK_SET_RATE_PARENT) {
->   		struct clk_rate_request parent_req;
+>> 			starfive,assert-offset = <0x2F8>;
+>> 			starfive,status-offset= <0x308>;
+>> 			starfive,nr-resets = <JH7110_SYSRST_END>;
+>> 		};
+>> 	};
+>> 
+>> In this case, we get the memory mapped space through the parent node with syscon
+>> APIs. You can see patch 13 for detail.
+>> 
+>> static int reset_starfive_register(struct platform_device *pdev, const u32 *asserted)
+>> {
 > 
-> +		memset(&parent_req, 0, sizeof(parent_req));
-> +
->   		clk_core_forward_rate_req(core, req, core->parent, &parent_req, req->rate);
->   		ret = clk_core_round_rate_nolock(core->parent, &parent_req);
->   		if (ret)
 > 
-> Thanks!
-> Maxime
+> (...)
+> 
+>> 
+>>>
+>>>> +
+>>>> +  "#reset-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +  starfive,assert-offset:
+>>>> +    description: Offset of the first ASSERT register
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +
+>>>> +  starfive,status-offset:
+>>>> +    description: Offset of the first STATUS register
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>
+>>> These can't be implied from the compatible string?
 
+Definitely can. We do this is for simplifying the reset driver.
+Otherwise, we may need to define more compatibles because there
+are multiple reset blocks in JH7110. Another case can be found at
+https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/reset/altr,rst-mgr.yaml
+
+>> 
+>> These two properties are the key differences among different reset controllers.
+> 
+> Different as in different compatibles? Please answer the questions..> 
+>> There are five memory regions for clock and reset in StarFive JH7110 SoC. They
+>> are "syscrg", "aoncrg", "stgcrg", "ispcrg" and "voutcrg". Each memory region
+>> has different reset ASSERT/STATUS register offset and different number of reset
+>> signals. 
+> 
+> Then these are not exactly the same devices, so using one compatible for
+> them does not look correct.
+
+One compatible can just be matched by one device? I think this is what
+confuses me.
+
+Best regards,
+Hal
+
+> 
+>> After storing them in dt, the reset driver can register all reset
+>> controllers with the same compatible string. 
+> 
+> Which is not how the compatible should be used...
+> 
+>> All we expect is that all reset
+>> controllers in a single SoC use the same compatible string for matching and the
+>> reset driver can be applied to all StarFive SoCs using different compatible strings.
+> 
+> Keep driver out of the talks.
+> 
+>> Just like
+> 
+> Existing bad pattern is not an argument to keep it going. Fix bad
+> patterns instead.
+> 
+>> 
+>> arch/riscv/boot/dts/starfive/jh7100.dtsi:
+>> 
+>> 	rstgen: reset-controller@11840000 {
+>> 		compatible = "starfive,jh7100-reset";
+>> 		reg = <0x0 0x11840000 0x0 0x10000>;
+>> 		#reset-cells = <1>;
+>> 		starfive,assert-offset = <0x0>;
+>> 		starfive,status-offset= <0x10>;
+>> 		starfive,nr-resets = <JH7100_RSTN_END>;
+>> 	};
+>> 
+>> arch/riscv/boot/dts/starfive/jh7110.dtsi:
+>> 
+>> 	syscrg: syscrg@13020000 {
+>> 		compatible = "syscon", "simple-mfd";
+>> 		reg = <0x0 0x13020000 0x0 0x10000>;
+>> 
+>> 		syscrg_clk: clock-controller@13020000 {
+>> 			compatible = "starfive,jh7110-clkgen-sys";
+>> 			...
+>> 		};
+>> 
+>> 		syscrg_rst: reset-controller@13020000 {
+>> 			compatible = "starfive,jh7110-reset";
+>> 			#reset-cells = <1>;
+>> 			starfive,assert-offset = <0x2F8>;
+>> 			starfive,status-offset= <0x308>;
+>> 			starfive,nr-resets = <JH7110_SYSRST_END>;
+>> 		};
+>> 	};
+>> 
+>> 	aoncrg: aoncrg@17000000 {
+>> 		compatible = "syscon", "simple-mfd";
+>> 		reg = <0x0 0x17000000 0x0 0x10000>;
+>> 
+>> 		aoncrg_clk: clock-controller@17000000 {
+>> 			compatible = "starfive,jh7110-clkgen-aon";
+>> 			...
+>> 		};
+>> 
+>> 		aoncrg_rst: reset-controller@17000000 {
+>> 			compatible = "starfive,jh7110-reset";
+>> 			#reset-cells = <1>;
+>> 			starfive,assert-offset = <0x38>;
+>> 			starfive,status-offset= <0x3C>;
+>> 			starfive,nr-resets = <JH7110_AONRST_END>;
+>> 		};
+>> 	};
+>> 
+>> 	stgcrg: stgcrg@10230000 {	//Not submmited yet
+>> 		compatible = "syscon", "simple-mfd";
+>> 		reg = <0x0 0x10230000 0x0 0x10000>;
+>> 
+>> 		stgcrg_clk: clock-controller@10230000 {
+>> 			compatible = "starfive,jh7110-clkgen-stg";
+>> 			...
+>> 		};
+>> 
+>> 		stgcrg_rst: reset-controller@10230000 {
+>> 			compatible = "starfive,jh7110-reset";
+>> 			#reset-cells = <1>;
+>> 			starfive,assert-offset = <0x74>;
+>> 			starfive,status-offset= <0x78>;
+>> 			starfive,nr-resets = <JH7110_STGRST_END>;
+>> 		};
+>> 	};
+>> 	...
+>> 
+>>>
+>>>> +
+>>>> +  starfive,nr-resets:
+>>>> +    description: Number of reset signals
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>
+>>> Why do you need this? Most bindings don't. If just to validate 'resets' 
+>>> args, then don't.
+>> 
+>> Can be removed. Instead, the reset driver should includes some related
+>> binding headers or defines some macros for pointing out the number of
+>> reset signals of each reset controller.
+>> 
+>> Best regards,
+>> Hal
+>> 
+>>>
+>>>
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - "#reset-cells"
+>>>> +  - starfive,assert-offset
+>>>> +  - starfive,status-offset
+>>>> +  - starfive,nr-resets
+>>>> +
+>>>> +additionalProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    #include <dt-bindings/reset/starfive-jh7110.h>
+>>>> +
+>>>> +    syscrg_rst: reset-controller@13020000 {
+> 
+> Please test your patches.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
 
