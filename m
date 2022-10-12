@@ -2,83 +2,258 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A77FC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 18:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2EBC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 20:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiJLSyb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 14:54:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60826 "EHLO
+        id S229552AbiJLUMy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 16:12:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbiJLSyE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 14:54:04 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC8F9FFFA5
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 11:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=mdli+5W0iMbEZZhNFqXBEVX7jQsu
-        Qak8nhRWi+5MI+s=; b=kIcAA0sCBzE4ZBnul/iLZz8NdWlg3CdD+2IHgvlCGRDs
-        l0GCLlvGTUMP5ng8TkhwDTZ0Hh5RQMjA7Dbr6Uf3IWjegG0XAWiOlPl8pivzldWo
-        GKUDItsDAoWWH78H+1E+4v4eX4DQ6TmzgbVR6EXU2NjLxtuHALX/h8W/e1GG/xs=
-Received: (qmail 813859 invoked from network); 12 Oct 2022 20:53:55 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Oct 2022 20:53:55 +0200
-X-UD-Smtp-Session: l3s3148p1@essc6trqYrYgAwDtxxN7ABspc7EPVowl
-Date:   Wed, 12 Oct 2022 20:53:54 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a779g0: Add SDHI clocks
-Message-ID: <Y0cNQlvGaMSN4gRv@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <e9b05d102160cc3f7395ac53a533e81c07307d5e.1665558175.git.geert+renesas@glider.be>
+        with ESMTP id S229468AbiJLUMx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 16:12:53 -0400
+Received: from novek.ru (unknown [213.148.174.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 569A689CC0;
+        Wed, 12 Oct 2022 13:12:51 -0700 (PDT)
+Received: from [192.168.0.18] (unknown [37.228.234.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by novek.ru (Postfix) with ESMTPSA id 1057F504E89;
+        Wed, 12 Oct 2022 23:09:16 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 1057F504E89
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
+        t=1665605360; bh=HJ+8iOQStAGjWXjANLde/CWpSgBqP7tjx783RIERUxc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Ei4CEcPaNG/bfHpFhhJWbuJAj6Lt15YpnG7UZf+80SQXMmyxFV1ISOtgej3AwtZyY
+         KgVORHuYI1YcpC1M9FBUXQ0UoUkaKE7h4MJB27bZk/rpkgMrnxHOUU5thj7wDGS4Qj
+         A3iAJTEb80YIksmiuoWF7l4LphfB+YV4zZs1rzkM=
+Message-ID: <9a3608cf-21bb-18b1-796a-7325a613b641@novek.ru>
+Date:   Wed, 12 Oct 2022 21:12:43 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jc23R8y0S3a3AVbY"
-Content-Disposition: inline
-In-Reply-To: <e9b05d102160cc3f7395ac53a533e81c07307d5e.1665558175.git.geert+renesas@glider.be>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [RFC PATCH v3 1/6] dpll: Add DPLL framework base functions
+Content-Language: en-US
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
+References: <20221010011804.23716-1-vfedorenko@novek.ru>
+ <20221010011804.23716-2-vfedorenko@novek.ru> <Y0PjULbYQf1WbI9w@nanopsycho>
+ <24d1d750-7fd0-44e2-318c-62f6a4a23ea5@novek.ru> <Y0UqFml6tEdFt0rj@nanopsycho>
+ <Y0UtiBRcc8aBS4tD@nanopsycho> <ecf59dda-2d6a-2c56-668b-5377ae107439@novek.ru>
+ <Y0ZiQbqQ+DsHinOf@nanopsycho>
+From:   Vadim Fedorenko <vfedorenko@novek.ru>
+In-Reply-To: <Y0ZiQbqQ+DsHinOf@nanopsycho>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 12.10.2022 07:44, Jiri Pirko wrote:
+> Tue, Oct 11, 2022 at 11:31:25PM CEST, vfedorenko@novek.ru wrote:
+>> On 11.10.2022 09:47, Jiri Pirko wrote:
+>>> Tue, Oct 11, 2022 at 10:32:22AM CEST, jiri@resnulli.us wrote:
+>>>> Mon, Oct 10, 2022 at 09:54:26PM CEST, vfedorenko@novek.ru wrote:
+>>>>> On 10.10.2022 10:18, Jiri Pirko wrote:
+>>>>>> Mon, Oct 10, 2022 at 03:17:59AM CEST, vfedorenko@novek.ru wrote:
+>>>>>>> From: Vadim Fedorenko <vadfed@fb.com>
+>>>
+>>> [...]
+>>>
+>>>
+>>>>> I see your point. We do have hardware which allows changing type of SMA
+>>>>> connector, and even the direction, each SMA could be used as input/source or
+>>>>> output of different signals. But there are limitation, like not all SMAs can
+>>>>> produce IRIG-B signal or only some of them can be used to get GNSS 1PPS. The
+>>>>
+>>>> Okay, so that is not the *type* of source, but rather attribute of it.
+>>>> Example:
+>>>>
+>>>> $ dpll X show
+>>>> index 0
+>>>>    type EXT
+>>>>    signal 1PPS
+>>>>    supported_signals
+>>>>       1PPS 10MHz
+>>>>
+>>>> $ dpll X set source index 1 signal_type 10MHz
+>>>> $ dpll X show
+>>>> index 0
+>>>>    type EXT
+>>>>    signal 10MHz
+>>>>    supported_signals
+>>>>       1PPS 10MHz
+>>>>
+>>>> So one source with index 0 of type "EXT" (could be "SMA", does not
+>>>> matter) supports 1 signal types.
+>>>>
+>>>>
+>>>> Thinking about this more and to cover the case when one SMA could be
+>>>> potencially used for input and output. It already occured to me that
+>>>> source/output are quite similar, have similar/same attributes. What if
+>>>> they are merged together to say a "pin" object only with extra
+>>>> PERSONALITY attribute?
+>>>>
+>>>> Example:
+>>>>
+>>>> -> DPLL_CMD_PIN_GET - dump
+>>>>        ATTR_DEVICE_ID X
+>>>>
+>>>> <- DPLL_CMD_PIN_GET
+>>>>
+>>>>         ATTR_DEVICE_ID X
+>>>>         ATTR_PIN_INDEX 0
+>>>>         ATTR_PIN_TYPE EXT
+>>>>         ATTR_PIN_SIGNAL 1PPS   (selected signal)
+>>>>         ATTR_PIN_SUPPORTED_SIGNALS (nest)
+>>>>           ATTR_PIN_SIGNAL 1PPS
+>>>>           ATTR_PIN_SIGNAL 10MHZ
+>>>>         ATTR_PIN_PERSONALITY OUTPUT   (selected personality)
+>>>>         ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
+>>>>           ATTR_PIN_PERSONALITY DISCONNECTED
+>>>>           ATTR_PIN_PERSONALITY INPUT
+>>>>           ATTR_PIN_PERSONALITY OUTPUT     (note this supports both input and
+>>>> 					  output)
+>>>>
+>>>>         ATTR_DEVICE_ID X
+>>>>         ATTR_PIN_INDEX 1
+>>>>         ATTR_PIN_TYPE EXT
+>>>>         ATTR_PIN_SIGNAL 10MHz   (selected signal)
+>>>>         ATTR_PIN_SUPPORTED_SIGNALS (nest)
+>>>>           ATTR_PIN_SIGNAL 1PPS
+>>>>           ATTR_PIN_SIGNAL 10MHZ
+>>>>         ATTR_PIN_PERSONALITY DISCONNECTED   (selected personality - not
+>>>> 					    connected currently)
+>>>>         ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
+>>>>           ATTR_PIN_PERSONALITY DISCONNECTED
+>>>>           ATTR_PIN_PERSONALITY INPUT      (note this supports only input)
+>>>>
+>>>>         ATTR_DEVICE_ID X
+>>>>         ATTR_PIN_INDEX 2
+>>>>         ATTR_PIN_TYPE GNSS
+>>>>         ATTR_PIN_SIGNAL 1PPS   (selected signal)
+>>>>         ATTR_PIN_SUPPORTED_SIGNALS (nest)
+>>>>           ATTR_PIN_SIGNAL 1PPS
+>>>>         ATTR_PIN_PERSONALITY INPUT   (selected personality - note this is
+>>>> 				     now he selected source, being only
+>>>> 				     pin with INPUT personality)
+>>>>         ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
+>>>>           ATTR_PIN_PERSONALITY DISCONNECTED
+>>>>           ATTR_PIN_PERSONALITY INPUT      (note this supports only input)
+>>>>
+>>>>         ATTR_DEVICE_ID X
+>>>>         ATTR_PIN_INDEX 3
+>>>>         ATTR_PIN_TYPE SYNCE_ETH_PORT
+>>>>         ATTR_PIN_NETDEV_IFINDEX 20
+>>>>         ATTR_PIN_PERSONALITY OUTPUT   (selected personality)
+>>>>         ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
+>>>>           ATTR_PIN_PERSONALITY DISCONNECTED
+>>>>           ATTR_PIN_PERSONALITY INPUT
+>>>>           ATTR_PIN_PERSONALITY OUTPUT     (note this supports both input and
+>>>> 					  output)
+>>>>
+>>>>         ATTR_DEVICE_ID X
+>>>>         ATTR_PIN_INDEX 4
+>>>>         ATTR_PIN_TYPE SYNCE_ETH_PORT
+>>>>         ATTR_PIN_NETDEV_IFINDEX 30
+>>>>         ATTR_PIN_PERSONALITY OUTPUT   (selected personality)
+>>>>         ATTR_PIN_SUPPORTED_PERSONALITIES (nest)
+>>>>           ATTR_PIN_PERSONALITY DISCONNECTED
+>>>>           ATTR_PIN_PERSONALITY INPUT
+>>>>           ATTR_PIN_PERSONALITY OUTPUT     (note this supports both input and
+>>>> 					  output)
+>>>>
+>>>>
+>>>> This allows the user to actually see the full picture:
+>>>> 1) all input/output pins in a single list, no duplicates
+>>>> 2) each pin if of certain type (ATTR_PIN_TYPE) EXT/GNSS/SYNCE_ETH_PORT
+>>>> 3) the pins that can change signal type contain the selected and list of
+>>>>     supported signal types (ATTR_PIN_SIGNAL, ATTR_PIN_SUPPORTED_SIGNALS)
+>>>> 4) direction/connection of the pin to the DPLL is exposed over
+>>>>     ATTR_PIN_PERSONALITY. For each pin, the driver would expose it can
+>>>>     act as INPUT/OUTPUT and even more, it can indicate the pin can
+>>>>     disconnect from DPLL entirely (if possible).
+>>>> 5) user can select the source by setting ATTR_PIN_PERSONALITY of certain
+>>>>     pin to INPUT. Only one pin could be set to INPUT and that is the
+>>>>     souce of DPLL.
+>>>>     In case no pin have personality set to INPUT, the DPLL is
+>>>>     free-running.
+>>>
+>>> Okay, thinking about it some more, I would leave the source select
+>>> indepentent from the ATTR_PIN_PERSONALITY and selectable using device
+>>> set cmd and separate attribute. It works better even more when consider
+>>> autoselect mode.
+>>>
+>>> Well of course only pins with ATTR_PIN_PERSONALITY INPUT could be
+>>> selected as source.
+>>>
+>>
+>> Overall, I agree with this proposal, and as I've already said, the work is
+>> going exactly the same way - to introduce pin object with separate set of
+>> attributes.
+>> I don't really like 'PERSONALITY' naming, I think we have to find a better
+>> name. It looks like DIRECTION is slightly better. And the
+>> CONNECTED/DISCONNECTED should be different attribute. And we also need
+> 
+> Yeah, it is a matter of implementation. I just thought that this is
+> possible to be done in a single attribute, because when the pin is
+> disconnected, the direction has no meaning.
+> 
+> 
+>> attribute PRIORITY to be able to configure (or hint) auto-select mode. There
+> 
+> Sure, I didn't put the PRIORITY attribute to the example, but I believe
+> it is very straightforward extension to add it.
+> 
+> 
+>> are also special objects called muxes, which consist of several inputs and
+>> one output, but they cannot synthonise signal, only pass one of the inputs to
+>> output. We are still in kind of discussion whether to have them as separate
+>> objects, or extend the amount of pins of DPLL device in this case. The
+>> problem again in the auto-select mode and priorities. It would be great to
+>> hear your thoughts about such objects.
+> 
+> Does the mux have any attribute/configuration valuable for the user.
+> If yes, it might make sense to have it as a separate object. Then we
+> can have it as a tree of object of type MUX with leaves of PIN.
 
---jc23R8y0S3a3AVbY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, that was the first thought, but implementation details are not great for now.
 
-On Wed, Oct 12, 2022 at 09:05:05AM +0200, Geert Uytterhoeven wrote:
-> Add the SD0H core clock and the SDHI module clock, which are used by the
-> SD Card/MMC Interface on the Renesas R-Car V4H (R8A779G0) SoC.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The question really is, if the user needs to know about muxes and work
+> with them, or they can be abstracted out by the driver.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Both ways will work I believe. It's more like our will to give users full 
+picture or hide it somehow with the implementation.
+> 
+> Could you elaborate a bit more why auto-select mode and priorities are
+> problematic with muxes in picture?
 
+AFAIU, some mux devices are not smart enough to make a decision suitable for 
+autoselect for the pins they have. In this case the autoselect process is done 
+in the DPLL device, which selects mux and not the pin directly. At the same time 
+there could be muxes that are smart enough to make a decision, and it will be 
+autoselect on top of autoselect (and several more layers) and it doesn't sound 
+great to me. I believe Arkadiusz will explain the mux a bit better.
 
---jc23R8y0S3a3AVbY
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> 
+>>
+>>>>
+>>>> This would introduce quite nice flexibility, exposes source/output
+>>>> capabilities and provides good visilibity of current configuration.
+>>>>
+>>>>
+>>>>> interface was created to cover such case. I believe we have to improve it to
+>>>>> cover SyncE configuration better, but I personally don't have SyncE hardware
+>>>>> ready to test and that's why I have to rely on suggestions from yours or
+>>>>> Arkadiusz's experience. From what I can see now there is need for special
+>>>>> attribute to link source to net device, and I'm happy to add it. In case of
+>>>>> fixed configuration of sources, the device should provide only one type as
+>>>>> supported and that's it.
+>>>>>
+>>>
+>>> [...]
+>>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNHDUIACgkQFA3kzBSg
-KbbYxRAAngzAsdjISMP4yJc98pCgkiTJKXx2L0PUjZyLeATf1GWD9/7nRzwZb8zz
-ToPJo1UiO0GdVhlM99KNiAaKHn5+znWitmNNHYhq++2pGEy8nXpqudQUEAsdgd7j
-kiKCFxLQ3kjtpd2yP7lGNGAmFRBP4lhJk0HpZ0Xlf43Reh2sUyUw5pSRHpTKrzi+
-hUtR/NhsdVrSSU8nIC5RrNV5h1lJ4d17N6ARpvNClxIgr4xZfDl7dnRS5+DduH/M
-IZ/HZ7vsXS45a8W1w37y8g/LsevytlCrLdFDz0lYQE9WIs8vK6mFWte4uG65ggKR
-+EjkGkA5K2rQEYxVyM0+igZm1RUTWEmm3w1ERpvZtRytFEj9xFOwXr4hYFFQJL+A
-6a0wsZ4RiR+ev3XuD/2TUCFUH38ePl1utaSLlzz7WbVjsgw+pvmACwR4O8xs3Fp4
-kZgSzPRotF4c6gr3933MMCp2QXLt+1lk2u9rKWxZmOhGAmbqXeDs7cH3PWqmIpul
-+wXlB6bozZnw+lTpg8aPPanWkNGaLt1w4K9z1IQs+k54hwTdJOzyLaNLwOQ6IYDV
-xcMS8TJQYB+Jct8XcGWM7RHDrJjIMA3i0b2RFXTAEngyw+NZAywKDwbvxPSfaysE
-N+66DlDyPx8OXHrl5H4XsrQLfz5RUWstc3KnCMfLU4TDhsSTpO8=
-=TM38
------END PGP SIGNATURE-----
-
---jc23R8y0S3a3AVbY--
