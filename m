@@ -2,80 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3953BC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 14:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8B8C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 14:05:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbiJLODy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 10:03:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41732 "EHLO
+        id S229502AbiJLOFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 10:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbiJLODv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 10:03:51 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 197C0D18C9
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 07:03:48 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:3da6:62e6:8ab0:ff90])
-        by albert.telenet-ops.be with bizsmtp
-        id X23m2800C32x5mf0623mpG; Wed, 12 Oct 2022 16:03:46 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oicKn-001OYk-OY; Wed, 12 Oct 2022 16:03:45 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oicKn-00C34q-9o; Wed, 12 Oct 2022 16:03:45 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779g0: Add RPC-IF clock
-Date:   Wed, 12 Oct 2022 16:03:44 +0200
-Message-Id: <f0609c82e742865be753b67a0a6080f193f405ad.1665583328.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229569AbiJLOFe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 10:05:34 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00AA25C358;
+        Wed, 12 Oct 2022 07:05:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1665583531; x=1697119531;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YqIauvraatao1KA8yPWOhmJyrNRczVNaBMKcZve1xvY=;
+  b=rLmO+DY7voSQrTTm4p1gN6rZyTFvTtAlJudbpLKAl/MXgfyJyY9HBIs0
+   xy7ARH2+grR5cDYSMRoLsBiMstYxB/SQtm2NIPEBa24rPqZntKMeohEHm
+   YTj8MU6sL3BWFfzcZxL/OzHt2P+wAJR0TJqlNoLa0EtZsfNJhnA6rjibc
+   uC6Sd6//9ygAk/AYWmXIZzNmLVl9ZiSFEuZo0CAMx68bcv2ZMvW/V0CLV
+   kYJiaVeQW6Mb5oE9Y2Z/XFBM8cXveL3Xfrys39hQAwG1clWIghpifHzMH
+   J04QifrfGT4fDgSEd/0knTRXx1+dVBqFzlOsV+9ez5luO03niJGhNHiGh
+   A==;
+X-IronPort-AV: E=Sophos;i="5.95,179,1661842800"; 
+   d="scan'208";a="195051104"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Oct 2022 07:05:30 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Wed, 12 Oct 2022 07:05:30 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12 via Frontend
+ Transport; Wed, 12 Oct 2022 07:05:26 -0700
+Date:   Wed, 12 Oct 2022 15:05:04 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Hal Feng <hal.feng@linux.starfivetech.com>
+CC:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        Rob Herring <robh@kernel.org>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
+ bindings
+Message-ID: <Y0bJkGQklX+eOGyW@wendy>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
+ <20220929184349.GA2551443-robh@kernel.org>
+ <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
+ <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
+ <4769BE3503398017+b1699221-ccc9-a0c1-0b11-141ce9644d74@linux.starfivetech.com>
+ <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the module clock used by the SPI Multi I/O Bus Controller (RPC-IF)
-on the Renesas R-Car V4H (R8A779G0) SoC.
+Hey Hal Feng,
 
-While at it, fix table alignment in the definition of the related
-RPCSRC internal clock.
+On Wed, Oct 12, 2022 at 09:33:42AM -0400, Krzysztof Kozlowski wrote:
+> >>> These two properties are the key differences among different reset controllers.
+> >>
+> >> Different as in different compatibles? Please answer the questions..> 
+> >>> There are five memory regions for clock and reset in StarFive JH7110 SoC. They
+> >>> are "syscrg", "aoncrg", "stgcrg", "ispcrg" and "voutcrg". Each memory region
+> >>> has different reset ASSERT/STATUS register offset and different number of reset
+> >>> signals. 
+> >>
+> >> Then these are not exactly the same devices, so using one compatible for
+> >> them does not look correct.
+> > 
+> > One compatible can just be matched by one device? I think this is what
+> > confuses me.
+> 
+> I don't understand the question.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v6.2.
+If two SoCs have exactly the same device/peripheral then they _can_ use
+the same compatible. If they share some common, viable feature-set then
+one can "fall back" to the other depending on what your Venn diagram of
+common features looks like. I've not been following this too closely,
+but I think what Krzysztof is suggesting is that you have a jh7100 and
+a jh7110 compatible. Then in your driver you just "know" that if you
+match against jh7110 which values to use for register offsets & vice
+versa for a match against the jh7100. There's many examples over the
+tree for how to handle this sort of thing rather than including it in
+the devicetree.
 
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Maybe Rob and Krzysztof will scream at me for this description, but
+devicetree is about how periperhals etc are connected together in the
+system not about the internals of a given peripheral.
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 390162a07595a681..5cc0dc9149bcb7d5 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -91,7 +91,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_BASE(".sdsrc",	CLK_SDSRC,	CLK_TYPE_GEN4_SDSRC, CLK_PLL5),
- 	DEF_RATE(".oco",	CLK_OCO,	32768),
- 
--	DEF_BASE(".rpcsrc",	CLK_RPCSRC,		CLK_TYPE_GEN4_RPCSRC, CLK_PLL5),
-+	DEF_BASE(".rpcsrc",	CLK_RPCSRC,	CLK_TYPE_GEN4_RPCSRC, CLK_PLL5),
- 	DEF_FIXED(".vio",	CLK_VIO,	CLK_PLL5_DIV2,	3, 1),
- 	DEF_FIXED(".vc",	CLK_VC,		CLK_PLL5_DIV2,	3, 1),
- 
-@@ -177,6 +177,7 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("msi4",		622,	R8A779G0_CLK_MSO),
- 	DEF_MOD("msi5",		623,	R8A779G0_CLK_MSO),
- 	DEF_MOD("pwm",		628,	R8A779G0_CLK_SASYNCPERD4),
-+	DEF_MOD("rpc-if",	629,	R8A779G0_CLK_RPCD2),
- 	DEF_MOD("scif0",	702,	R8A779G0_CLK_SASYNCPERD4),
- 	DEF_MOD("scif1",	703,	R8A779G0_CLK_SASYNCPERD4),
- 	DEF_MOD("scif3",	704,	R8A779G0_CLK_SASYNCPERD4),
--- 
-2.25.1
+Following that logic, the devicetree should not contain register offsets
+etc that are a known quanitity once you've determined that you are running
+on vendor,soc-foo.
+
+Hopefully that helps with your confusion somewhat?
+Conor.
 
