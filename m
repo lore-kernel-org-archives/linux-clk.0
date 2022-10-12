@@ -2,97 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDCAC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 20:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85757C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 23:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbiJLURd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 16:17:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43972 "EHLO
+        id S229569AbiJLXFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 19:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiJLURc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 16:17:32 -0400
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5846E38472;
-        Wed, 12 Oct 2022 13:17:31 -0700 (PDT)
-Received: from [192.168.0.18] (unknown [37.228.234.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        with ESMTP id S229537AbiJLXF3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 19:05:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C9D957256;
+        Wed, 12 Oct 2022 16:05:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id CF9F9504E89;
-        Wed, 12 Oct 2022 23:13:59 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru CF9F9504E89
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1665605641; bh=nwzq51eDgmJENhKn30MWEpwK+URO+XaouJTOroLnKpo=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=aEOcl8NzA8myWw1KGoWK7TEcIVPw/I1U70di2u4itsIu5EWBo5Jcz7AMPCdZD7xLr
-         btbWz7r1hI7sSrcjALGAZkh3jRCG+44CIhK7y0qbGnACWAyne+VBHed0URgYq4lbKl
-         5SupY1+1h+VJbExRdEukhICiOPggYzsnfqUc3EJs=
-Message-ID: <ad45a05b-be0d-6d9d-c1a9-4af0c956b88c@novek.ru>
-Date:   Wed, 12 Oct 2022 21:17:26 +0100
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3887AB81BE1;
+        Wed, 12 Oct 2022 23:05:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E58C433D7;
+        Wed, 12 Oct 2022 23:05:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665615925;
+        bh=RKsj6eaHS0Dlw6VvnuAF/Tpwhbi5fwGsQ2fzFSv0svI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=QZHwE+fLiMLo4PpvLTomPm8Ro5c5NMVrF8ZoCdlQQd5wWk6Ohfth8VQBz7+rF9Jdv
+         +E0mhSK3p271mheOinlAZmc6ucgmdHYDQAbHf8akVVVoS0oqDY9/OVyh9190/tUuVo
+         jZe9OUvEFpXGufIEn8ntGJwp0DDPW65/M9r89CEWWCuhdHtE7ouGygKMkmBRIOakCi
+         UNwiEE7F1eZwVy4xoUCtog9qSYlnpapphrMio5xezduhDkuSk4l7n9MaAYjJBTM3Ha
+         dVtvTTjgck6LkLhjF9ssfqgRxnynfvkYN6vlsO5ICfgeA/ZrZCk6qQhWvZk7yh0ek6
+         1sQVgAiWPGmkA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC PATCH v3 1/6] dpll: Add DPLL framework base functions
-Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
- <20221010011804.23716-2-vfedorenko@novek.ru> <Y0bwq4YyeWsODPjv@nanopsycho>
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-In-Reply-To: <Y0bwq4YyeWsODPjv@nanopsycho>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAJM55Z8xxrKqaN64KAP9miTis4wFbL2S9uhV5h-SOiYjbYng+g@mail.gmail.com>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com> <20220929175602.19946-1-hal.feng@linux.starfivetech.com> <20220930214824.A14ACC433D6@smtp.kernel.org> <CAJM55Z8xxrKqaN64KAP9miTis4wFbL2S9uhV5h-SOiYjbYng+g@mail.gmail.com>
+Subject: Re: [PATCH v1 15/30] clk: starfive: Use regmap APIs to operate registers
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Wed, 12 Oct 2022 16:05:23 -0700
+User-Agent: alot/0.10
+Message-Id: <20221012230525.C6E58C433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12.10.2022 17:51, Jiri Pirko wrote:
-> Mon, Oct 10, 2022 at 03:17:59AM CEST, vfedorenko@novek.ru wrote:
->> From: Vadim Fedorenko <vadfed@fb.com>
->>
->> DPLL framework is used to represent and configure DPLL devices
->> in systems. Each device that has DPLL and can configure sources
->> and outputs can use this framework.
->>
->> Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
->> Co-developed-by: Jakub Kicinski <kuba@kernel.org>
->> Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->> ---
-> 
-> [..]
-> 
->> +enum dpll_genl_status {
->> +	DPLL_STATUS_NONE,
->> +	DPLL_STATUS_CALIBRATING,
->> +	DPLL_STATUS_LOCKED,
->> +
->> +	__DPLL_STATUS_MAX,
->> +};
->> +#define DPLL_STATUS_MAX (__DPLL_STATUS_MAX - 1)
->> +
-> 
-> [..]
-> 
->> +
->> +/* DPLL lock status provides information of source used to lock the device */
->> +enum dpll_genl_lock_status {
->> +	DPLL_LOCK_STATUS_UNLOCKED,
->> +	DPLL_LOCK_STATUS_EXT_1PPS,
->> +	DPLL_LOCK_STATUS_EXT_10MHZ,
->> +	DPLL_LOCK_STATUS_SYNCE,
->> +	DPLL_LOCK_STATUS_INT_OSCILLATOR,
->> +	DPLL_LOCK_STATUS_GNSS,
->> +
->> +	__DPLL_LOCK_STATUS_MAX,
->> +};
->> +#define DPLL_LOCK_STATUS_MAX (__DPLL_LOCK_STATUS_MAX - 1)
-> 
-> In addition to what I wrote in the previous reply where I suggested to
-> have lock status independent on type or source, I think we should merge
-> "status" and "lock status" to one attr/enum. Or any reason to have these
-> separate?
-> 
-Yep, agree. No reason to have it separate anymore.
+Quoting Emil Renner Berthing (2022-10-05 06:14:44)
+> > > @@ -295,11 +296,13 @@ static int __init clk_starfive_jh7100_probe(str=
+uct platform_device *pdev)
+> > >         if (!priv)
+> > >                 return -ENOMEM;
+> > >
+> > > -       spin_lock_init(&priv->rmw_lock);
+> > >         priv->dev =3D &pdev->dev;
+> > > -       priv->base =3D devm_platform_ioremap_resource(pdev, 0);
+> > > -       if (IS_ERR(priv->base))
+> > > -               return PTR_ERR(priv->base);
+> > > +       priv->regmap =3D device_node_to_regmap(priv->dev->of_node);
+> >
+> > This is sad. Why do we need to make a syscon? Can we instead use the
+> > auxiliary bus to make a reset device that either gets a regmap made here
+> > in this driver or uses a void __iomem * mapped with ioremap
+> > (priv->base)?
+>=20
+> In my original code the clock driver just registers the resets too
+> similar to other combined clock and reset drivers. I wonder what you
+> think about that approach:
+> https://github.com/esmil/linux/commit/36f15e1b827b02d7f493dc5fce31060b219=
+76e68
+> and
+> https://github.com/esmil/linux/commit/4ccafadb72968480aa3dd28c227fcccae41=
+1c13b#diff-ffec81f902f810cb210012c25e8d88217ea5b4021419a4206d1fd4dd19edfce8=
+R471
 
+I think we should use auxiliary bus and split the driver logically into
+a reset driver in drivers/reset and a clk driver in drivers/clk. That
+way the appropriate maintainers can review the code. There is only one
+platform device with a single reg property and node in DT, but there are
+two drivers.
