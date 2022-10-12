@@ -2,77 +2,371 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C38CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 07:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEADC43217
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 08:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbiJLHFO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 03:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
+        id S229826AbiJLIB4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 04:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbiJLHFL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 03:05:11 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83EA13F9E
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 00:05:09 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:3da6:62e6:8ab0:ff90])
-        by andre.telenet-ops.be with bizsmtp
-        id Wv572800P32x5mf01v572X; Wed, 12 Oct 2022 09:05:08 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oiVnf-001Lqg-GR; Wed, 12 Oct 2022 09:05:07 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oiVne-006b7M-Hg; Wed, 12 Oct 2022 09:05:06 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779g0: Add SDHI clocks
-Date:   Wed, 12 Oct 2022 09:05:05 +0200
-Message-Id: <e9b05d102160cc3f7395ac53a533e81c07307d5e.1665558175.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229537AbiJLIBz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 04:01:55 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B09B03F3
+        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 01:01:52 -0700 (PDT)
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 206E73F483
+        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 08:01:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1665561710;
+        bh=pPu9MmXkeNI2LOd8j8J0zuYhlY1BtgVw8LblJb0SHAk=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=F1mbsIVAKIMQU6KGVDzXmSyy+3BAXNl2VXmZ38UhmBNDt+NbYirACDPfS1PMWXSYh
+         A3MwxtMT9v32nWCx6wwzC+YaBDsdU/x4imJ0qw4/CHCVljQ92jOsM+GENZkwEx7vHu
+         V/ihaM1jw7wsQ/3jD8zsp0I8JLGVMl431QSHsB3OsOmNGF9E8pbKj2kpSNW4xvb7k6
+         pustVKmzvO8kEKSy+oROIXetlY93S975XA1Es9oHxupQDI/Yrkdh7gA//i9DG/6YsW
+         LVQ+hSPPDFUMsVZytiVCWCmjV1S5/KZZhtQnxIokVhx8HgnYlCFV7KQ8NWD4gIci+6
+         cmPrERBpiCmzA==
+Received: by mail-qk1-f200.google.com with SMTP id az32-20020a05620a172000b006ee8ae138a7so2542969qkb.4
+        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 01:01:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pPu9MmXkeNI2LOd8j8J0zuYhlY1BtgVw8LblJb0SHAk=;
+        b=vw7wq2CqQTWakSodZ1lB9KXfl3MJHrG1vSCXiz0U8yuRq6ZIoUh8H8ql5rizH+NbUL
+         NE7ZKDxvEzamrr89EN91yvU2Bp8wYSu2e9glMFH2Kf2ZLv3bF45ZYxDWH8yr25pcytpY
+         mjtozUAMgJPHqUQ2zIvvFSkoQjlNQfB7jD8oDnhCvkTdJy4lNJ5UTztNQyVWhuH+YM3V
+         jJJxu7DXTLaN3UhYrZkZyMUMDbf1gtWsEZf2jcZOOXMwXZ+gpGYpIT+mgOsNCd9s//Uo
+         tGZlOaPS+8K4tdljejdWOROfYXV9hbR8Rby0MA5P+JrbIJRMmXI1hMtgzLR6Dt2IimsB
+         GyhQ==
+X-Gm-Message-State: ACrzQf3xRN6xa7WalJ+K0aR2rYIgeR7hf09bAKQ4ltYVH49lz00aYhF7
+        8NKllv89HnxLmbqXMusEkCzpiEPRCJiJAnw24hO1TouT9DtoBi09sAqxN4IEwiifmyfEGqgnwRy
+        ByysQe5xX2jDG34Om05XT1yhM2QVFx5GrJmS6Fk+4S1q3X6r5DO/XlQ==
+X-Received: by 2002:a05:6214:2301:b0:498:9f6f:28d with SMTP id gc1-20020a056214230100b004989f6f028dmr22305187qvb.5.1665561708945;
+        Wed, 12 Oct 2022 01:01:48 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4BjVdcXzAwhXOcUXbaOEBSXPtiNTrEjbg/sZEuK9myUumUG1dG5KFTbU9zJywZ/QJNO+Cw30ztSSVCjbByWhU=
+X-Received: by 2002:a05:6214:2301:b0:498:9f6f:28d with SMTP id
+ gc1-20020a056214230100b004989f6f028dmr22305160qvb.5.1665561708558; Wed, 12
+ Oct 2022 01:01:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929175147.19749-1-hal.feng@linux.starfivetech.com> <20220929184349.GA2551443-robh@kernel.org>
+ <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
+In-Reply-To: <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Wed, 12 Oct 2022 10:01:32 +0200
+Message-ID: <CAJM55Z9HwxTmgnPGvFpM_CtaghP0d_kc55bZcrFs3Q0fAEXPng@mail.gmail.com>
+Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset bindings
+To:     Hal Feng <hal.feng@linux.starfivetech.com>
+Cc:     Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the SD0H core clock and the SDHI module clock, which are used by the
-SD Card/MMC Interface on the Renesas R-Car V4H (R8A779G0) SoC.
+On Tue, 11 Oct 2022 at 18:21, Hal Feng <hal.feng@linux.starfivetech.com> wrote:
+>
+> On Thu, 29 Sep 2022 13:43:49 -0500, Rob Herring wrote:
+> > On Fri, Sep 30, 2022 at 01:51:47AM +0800, Hal Feng wrote:
+> > > Add bindings for the reset controller on the JH7110 RISC-V
+> > > SoC by StarFive Technology Ltd.
+> > >
+> > > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> > > ---
+> > >  .../bindings/reset/starfive,jh7110-reset.yaml | 54 +++++++++++++++++++
+> > >  1 file changed, 54 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml b/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
+> > > new file mode 100644
+> > > index 000000000000..bb0010c200f9
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/reset/starfive,jh7110-reset.yaml
+> > > @@ -0,0 +1,54 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/reset/starfive,jh7110-reset.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: StarFive JH7110 SoC Reset Controller Device Tree Bindings
+> > > +
+> > > +maintainers:
+> > > +  - Emil Renner Berthing <kernel@esmil.dk>
+> > > +  - Hal Feng <hal.feng@linux.starfivetech.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - starfive,jh7110-reset
+> >
+> > 'reg' needed? Is this a sub-block of something else?
+>
+> Yes, the reset node is a child node of the syscon node, see patch 27 for detail.
+> You might not see the complete patches at that time due to technical issue of
+> our smtp email server. Again, I feel so sorry about that.
+>
+>         syscrg: syscrg@13020000 {
+>                 compatible = "syscon", "simple-mfd";
+>                 reg = <0x0 0x13020000 0x0 0x10000>;
+>
+>                 syscrg_clk: clock-controller@13020000 {
+>                         compatible = "starfive,jh7110-clkgen-sys";
+>                         clocks = <&osc>, <&gmac1_rmii_refin>,
+>                                  <&gmac1_rgmii_rxin>,
+>                                  <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+>                                  <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+>                                  <&tdm_ext>, <&mclk_ext>;
+>                         clock-names = "osc", "gmac1_rmii_refin",
+>                                 "gmac1_rgmii_rxin",
+>                                 "i2stx_bclk_ext", "i2stx_lrck_ext",
+>                                 "i2srx_bclk_ext", "i2srx_lrck_ext",
+>                                 "tdm_ext", "mclk_ext";
+>                         #clock-cells = <1>;
+>                 };
+>
+>                 syscrg_rst: reset-controller@13020000 {
+>                         compatible = "starfive,jh7110-reset";
+>                         #reset-cells = <1>;
+>                         starfive,assert-offset = <0x2F8>;
+>                         starfive,status-offset= <0x308>;
+>                         starfive,nr-resets = <JH7110_SYSRST_END>;
+>                 };
+>         };
+>
+> In this case, we get the memory mapped space through the parent node with syscon
+> APIs. You can see patch 13 for detail.
+>
+> static int reset_starfive_register(struct platform_device *pdev, const u32 *asserted)
+> {
+>         struct starfive_reset *data;
+>         int ret;
+>
+>         data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+>         if (!data)
+>                 return -ENOMEM;
+>
+>         data->regmap = device_node_to_regmap(pdev->dev.of_node);                  //for JH7100
+>         if (IS_ERR(data->regmap)) {
+>                 data->regmap = syscon_node_to_regmap(pdev->dev.of_node->parent);  //for JH7110
+>                 if (IS_ERR(data->regmap)) {
+>                         dev_err(&pdev->dev, "failed to get regmap (error %ld)\n",
+>                                 PTR_ERR(data->regmap));
+>                         return PTR_ERR(data->regmap);
+>                 }
+>         }
+>         ...
+> }
+>
+> We use this method to avoid errors when remapping the same address in two
+> different drivers, because clock and reset of StarFive JH7110 share a common
+> register address region. For similar implementation, refer to file [1] and [2].
+>
+> [1] arch/riscv/boot/dts/canaan/k210.dtsi
+>
+>         sysctl: syscon@50440000 {
+>                 compatible = "canaan,k210-sysctl",
+>                              "syscon", "simple-mfd";
+>                 reg = <0x50440000 0x100>;
+>                 clocks = <&sysclk K210_CLK_APB1>;
+>                 clock-names = "pclk";
+>
+>                 sysclk: clock-controller {
+>                         #clock-cells = <1>;
+>                         compatible = "canaan,k210-clk";
+>                         clocks = <&in0>;
+>                 };
+>
+>                 sysrst: reset-controller {
+>                         compatible = "canaan,k210-rst";
+>                         #reset-cells = <1>;
+>                 };
+>
+>                 reboot: syscon-reboot {
+>                         compatible = "syscon-reboot";
+>                         regmap = <&sysctl>;
+>                         offset = <48>;
+>                         mask = <1>;
+>                         value = <1>;
+>                 };
+>         };
+>
+> [2] drivers/reset/reset-k210.c
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v6.2.
+Here the syscon makes a little more sense since the same memory area
+does at least 3 different things, but on the JH7110 it is a dedicated
+"clock and reset generator", CRG. So this is much better modelled with
+a single driver taking care of both the clock and resets like the
+original driver did. If you do
 
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+git grep reset_controller_register drivers/clk
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 5cc5ee1295d9fe68..390162a07595a681 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -144,7 +144,8 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED("vcbus",	R8A779G0_CLK_VCBUS,	CLK_VC,		1, 1),
- 	DEF_FIXED("vcbusd2",	R8A779G0_CLK_VCBUSD2,	CLK_VC,		2, 1),
- 
--	DEF_GEN4_SD("sd0",	R8A779G0_CLK_SD0,	CLK_SDSRC,	0x870),
-+	DEF_GEN4_SDH("sd0h",	R8A779G0_CLK_SD0H,	CLK_SDSRC,	   0x870),
-+	DEF_GEN4_SD("sd0",	R8A779G0_CLK_SD0,	R8A779G0_CLK_SD0H, 0x870),
- 	DEF_DIV6P1("mso",	R8A779G0_CLK_MSO,	CLK_PLL5_DIV4,	0x87c),
- 
- 	DEF_BASE("rpc",		R8A779G0_CLK_RPC,	CLK_TYPE_GEN4_RPC, CLK_RPCSRC),
-@@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("scif1",	703,	R8A779G0_CLK_SASYNCPERD4),
- 	DEF_MOD("scif3",	704,	R8A779G0_CLK_SASYNCPERD4),
- 	DEF_MOD("scif4",	705,	R8A779G0_CLK_SASYNCPERD4),
-+	DEF_MOD("sdhi",		706,	R8A779G0_CLK_SD0),
- 	DEF_MOD("sydm0",	709,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("sydm1",	710,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("tpu0",		718,	R8A779G0_CLK_SASYNCPERD4),
--- 
-2.25.1
+..you can see that there are lots of other drivers for such
+peripherals that combine clock and reset.
 
+> >
+> > > +
+> > > +  "#reset-cells":
+> > > +    const: 1
+> > > +
+> > > +  starfive,assert-offset:
+> > > +    description: Offset of the first ASSERT register
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +  starfive,status-offset:
+> > > +    description: Offset of the first STATUS register
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> >
+> > These can't be implied from the compatible string?
+>
+> These two properties are the key differences among different reset controllers.
+> There are five memory regions for clock and reset in StarFive JH7110 SoC. They
+> are "syscrg", "aoncrg", "stgcrg", "ispcrg" and "voutcrg". Each memory region
+> has different reset ASSERT/STATUS register offset and different number of reset
+> signals. After storing them in dt, the reset driver can register all reset
+> controllers with the same compatible string. All we expect is that all reset
+> controllers in a single SoC use the same compatible string for matching and the
+> reset driver can be applied to all StarFive SoCs using different compatible strings.
+> Just like
+>
+> arch/riscv/boot/dts/starfive/jh7100.dtsi:
+>
+>         rstgen: reset-controller@11840000 {
+>                 compatible = "starfive,jh7100-reset";
+>                 reg = <0x0 0x11840000 0x0 0x10000>;
+>                 #reset-cells = <1>;
+>                 starfive,assert-offset = <0x0>;
+>                 starfive,status-offset= <0x10>;
+>                 starfive,nr-resets = <JH7100_RSTN_END>;
+>         };
+>
+> arch/riscv/boot/dts/starfive/jh7110.dtsi:
+>
+>         syscrg: syscrg@13020000 {
+>                 compatible = "syscon", "simple-mfd";
+>                 reg = <0x0 0x13020000 0x0 0x10000>;
+>
+>                 syscrg_clk: clock-controller@13020000 {
+>                         compatible = "starfive,jh7110-clkgen-sys";
+>                         ...
+>                 };
+>
+>                 syscrg_rst: reset-controller@13020000 {
+>                         compatible = "starfive,jh7110-reset";
+>                         #reset-cells = <1>;
+>                         starfive,assert-offset = <0x2F8>;
+>                         starfive,status-offset= <0x308>;
+>                         starfive,nr-resets = <JH7110_SYSRST_END>;
+>                 };
+>         };
+>
+>         aoncrg: aoncrg@17000000 {
+>                 compatible = "syscon", "simple-mfd";
+>                 reg = <0x0 0x17000000 0x0 0x10000>;
+>
+>                 aoncrg_clk: clock-controller@17000000 {
+>                         compatible = "starfive,jh7110-clkgen-aon";
+>                         ...
+>                 };
+>
+>                 aoncrg_rst: reset-controller@17000000 {
+>                         compatible = "starfive,jh7110-reset";
+>                         #reset-cells = <1>;
+>                         starfive,assert-offset = <0x38>;
+>                         starfive,status-offset= <0x3C>;
+>                         starfive,nr-resets = <JH7110_AONRST_END>;
+>                 };
+>         };
+>
+>         stgcrg: stgcrg@10230000 {       //Not submmited yet
+>                 compatible = "syscon", "simple-mfd";
+>                 reg = <0x0 0x10230000 0x0 0x10000>;
+>
+>                 stgcrg_clk: clock-controller@10230000 {
+>                         compatible = "starfive,jh7110-clkgen-stg";
+>                         ...
+>                 };
+>
+>                 stgcrg_rst: reset-controller@10230000 {
+>                         compatible = "starfive,jh7110-reset";
+>                         #reset-cells = <1>;
+>                         starfive,assert-offset = <0x74>;
+>                         starfive,status-offset= <0x78>;
+>                         starfive,nr-resets = <JH7110_STGRST_END>;
+>                 };
+>         };
+>         ...
+>
+> >
+> > > +
+> > > +  starfive,nr-resets:
+> > > +    description: Number of reset signals
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> >
+> > Why do you need this? Most bindings don't. If just to validate 'resets'
+> > args, then don't.
+>
+> Can be removed. Instead, the reset driver should includes some related
+> binding headers or defines some macros for pointing out the number of
+> reset signals of each reset controller.
+>
+> Best regards,
+> Hal
+>
+> >
+> >
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - "#reset-cells"
+> > > +  - starfive,assert-offset
+> > > +  - starfive,status-offset
+> > > +  - starfive,nr-resets
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/reset/starfive-jh7110.h>
+> > > +
+> > > +    syscrg_rst: reset-controller@13020000 {
+> > > +        compatible = "starfive,jh7110-reset";
+> > > +        #reset-cells = <1>;
+> > > +        starfive,assert-offset = <0x2F8>;
+> > > +        starfive,status-offset= <0x308>;
+> > > +        starfive,nr-resets = <JH7110_SYSRST_END>;
+> > > +    };
+> > > +
+> > > +...
+> > > --
+> > > 2.17.1
+> > >
+> > >
+> >
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
