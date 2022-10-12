@@ -2,88 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63925C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 15:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6500C4321E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 15:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbiJLPPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 11:15:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33192 "EHLO
+        id S229771AbiJLPVc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 11:21:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbiJLPO5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 11:14:57 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F02DFAE
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 08:14:50 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id z97so24905702ede.8
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 08:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJ++cbZT1GQzcKkN54BOhV7muiCQDnF4CoMQA5s9ysQ=;
-        b=S1UtZnd2tdB+a5PXbVodnKXWsutQqYUr5VBM58AjcjhbjfTgtIhmVALjjqCw1fqRc1
-         vE81XHq3/VTvpp1kr+K/JeJjHETVGzX7sK+Ht8+713sxQljFksxFxFKq7vJw6ROZ4uls
-         hfAlMmOJjcLCSWcBnH33LssWpjWaP0nyLj5ISq9Gwih8CxR8K2z2Wn0MlofDxBKTYHok
-         +zhzoOoF0bpQqPKPmD7sbkvUvH5Nvq31BTHapAIq39ViPOd//EjxYDH90n+yiKIg8n1O
-         qZz8GPCcCrI66Ca8cjezsgpsyAIbu0TCNCn0hpZAeIo8guIlJZqPeD0YNL94kcN8BIcj
-         BkqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BJ++cbZT1GQzcKkN54BOhV7muiCQDnF4CoMQA5s9ysQ=;
-        b=4CZgWE+XioDayqaQ6cTf2d78bvNJ6DrjjCK5M2+YsR6V0m1NRN/4c88kL8+fWoUI57
-         lZubnP5OMFVBRDc1Jfsckv8Q8kOLrMZDv5KCMijxnUhaNvybPaSshNOwIr+BtSeGe0H3
-         HqKnOsPEPxOLb19yieTPXba24cAsBZKeF9U2kJUpU+sfTRi9I6T2D3CqowhYS4Dn1Ag1
-         EIf6kppaOtobOP6r6bc6AU7Aw8mfqtQTkZXTkeY8ogIla+kPnCZ+veR8R1ucvcx+4Muv
-         EYbRBzz1kYKanCVDz7zcVQ0boC96IqY6EI+wWtzG+gCGJjAlXvErjF6tYA17/olU5Len
-         pK9w==
-X-Gm-Message-State: ACrzQf33mvhUyURUkR4YrxpgfMSaxVhMgtjmUhpYuxzivJsnqf8TL2FK
-        3ZpjO+Po/sYX34+phBEtz7A/6IwLfJPkBzTvsTE=
-X-Google-Smtp-Source: AMsMyM6274U9CSV9jS9j4sSiJo7SJDRlLjGDU/QLOYECQpB4iP3Nz6Ppvc0kLlWdLIaO1R7n8GYAww==
-X-Received: by 2002:a05:6402:28ca:b0:43b:5235:f325 with SMTP id ef10-20020a05640228ca00b0043b5235f325mr27711161edb.320.1665587688434;
-        Wed, 12 Oct 2022 08:14:48 -0700 (PDT)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id 10-20020a170906058a00b0073ddd36ba8csm1378221ejn.145.2022.10.12.08.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Oct 2022 08:14:47 -0700 (PDT)
-Date:   Wed, 12 Oct 2022 17:14:46 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vfedorenko@novek.ru>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-Subject: Re: [RFC PATCH v3 6/6] ptp_ocp: implement DPLL ops
-Message-ID: <Y0bZ5nUGC09tX443@nanopsycho>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
- <20221010011804.23716-7-vfedorenko@novek.ru>
+        with ESMTP id S229681AbiJLPVb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 11:21:31 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 222B9DD8B8;
+        Wed, 12 Oct 2022 08:21:28 -0700 (PDT)
+X-QQ-mid: bizesmtp67t1665588064t60qpwjk
+Received: from [192.168.1.231] ( [113.72.146.141])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Wed, 12 Oct 2022 23:21:03 +0800 (CST)
+X-QQ-SSF: 01000000002000B09000B00A0000000
+X-QQ-FEAT: KIY2vMteGsnGVHU+ba51y7vPyCbSJaIaZ6gxnecS9ihrQQ367JLoPxBIpdNbj
+        wlbEPxPu/5ajoHlIXg6QhPtejOg4CZ7gCycgNWfh5YL1hPaCldCSGwcN6tzEdQwtt0Pr9Ni
+        EHf5nhCGXvAqQZwRBK6+j/D0a1NzK+cx+/yMLFVXaJtCvhCAA9EAfVSX0aXACTP7JCIWGEi
+        zLa/M2SnrL+l3WF4guJJCAFD34U02adfqy1bp+/cmQ7HopUnq286iLGRUvjhJ4FHPw9qgZM
+        xd3wdNV8fJd5Yj7u3UohYqwngziPBVBtQySkNPR5BDl9THlQ6wlemfyQN6hWSQfR8nSE1Hs
+        GDKWyWS5XvLtuegT39Q/5HzwV9YEC2RplY1tsVI9ueMMcOt9sqmZrMeQiBFbQ==
+X-QQ-GoodBg: 0
+Message-ID: <3BC97E98404F6FB8+c46d2e75-a2ce-96a2-04bd-f37a7f63ff31@linux.starfivetech.com>
+Date:   Wed, 12 Oct 2022 23:21:02 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221010011804.23716-7-vfedorenko@novek.ru>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
+ bindings
+Content-Language: en-US
+To:     Conor Dooley <conor.dooley@microchip.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
+ <20220929184349.GA2551443-robh@kernel.org>
+ <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
+ <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
+ <4769BE3503398017+b1699221-ccc9-a0c1-0b11-141ce9644d74@linux.starfivetech.com>
+ <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org> <Y0bJkGQklX+eOGyW@wendy>
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <Y0bJkGQklX+eOGyW@wendy>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mon, Oct 10, 2022 at 03:18:04AM CEST, vfedorenko@novek.ru wrote:
->From: Vadim Fedorenko <vadfed@fb.com>
+On Wed, 12 Oct 2022 15:05:04 +0100, Conor Dooley wrote:
+> Hey Hal Feng,
+> 
+> On Wed, Oct 12, 2022 at 09:33:42AM -0400, Krzysztof Kozlowski wrote:
+> > >>> These two properties are the key differences among different reset controllers.
+> > >>
+> > >> Different as in different compatibles? Please answer the questions..> 
+> > >>> There are five memory regions for clock and reset in StarFive JH7110 SoC. They
+> > >>> are "syscrg", "aoncrg", "stgcrg", "ispcrg" and "voutcrg". Each memory region
+> > >>> has different reset ASSERT/STATUS register offset and different number of reset
+> > >>> signals. 
+> > >>
+> > >> Then these are not exactly the same devices, so using one compatible for
+> > >> them does not look correct.
+> > > 
+> > > One compatible can just be matched by one device? I think this is what
+> > > confuses me.
+> > 
+> > I don't understand the question.
+> 
+> If two SoCs have exactly the same device/peripheral then they _can_ use
+> the same compatible. If they share some common, viable feature-set then
+> one can "fall back" to the other depending on what your Venn diagram of
+> common features looks like. I've not been following this too closely,
+> but I think what Krzysztof is suggesting is that you have a jh7100 and
+> a jh7110 compatible. Then in your driver you just "know" that if you
+> match against jh7110 which values to use for register offsets & vice
+> versa for a match against the jh7100. There's many examples over the
+> tree for how to handle this sort of thing rather than including it in
+> the devicetree.
+> 
+> Maybe Rob and Krzysztof will scream at me for this description, but
+> devicetree is about how periperhals etc are connected together in the
+> system not about the internals of a given peripheral.
+> 
+> Following that logic, the devicetree should not contain register offsets
+> etc that are a known quanitity once you've determined that you are running
+> on vendor,soc-foo.
+> 
+> Hopefully that helps with your confusion somewhat?
+> Conor.
 
-[...]
+Yes, anyway, thank you for the detailed reply.
 
->+static int ptp_ocp_dpll_get_status(struct dpll_device *dpll)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-
-Avoid cast from (void *), not needed. (I also mentioned this in RFCv2).
-
-
->+	int sync;
->+
->+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
->+	return sync;
->+}
->+
-
-[...]
+Best regards,
+Hal
