@@ -2,170 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904D0C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 14:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63925C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 15:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbiJLOxf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 10:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52788 "EHLO
+        id S229864AbiJLPPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 11:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbiJLOxd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 10:53:33 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFDCDFB58;
-        Wed, 12 Oct 2022 07:53:28 -0700 (PDT)
-X-QQ-mid: bizesmtp71t1665586398tra1mkxv
-Received: from [192.168.1.231] ( [113.72.146.141])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Wed, 12 Oct 2022 22:53:16 +0800 (CST)
-X-QQ-SSF: 01000000002000B09000B00A0000000
-X-QQ-FEAT: Q5/H4pNog203Q26Mis4ciWl055ow0ajIHrfB0/XOCwC8VcIHMdhaaI4V2fyX5
-        38PXgbepu+GYSoJRIEnLYHasPwO576mbxLyyxYxDkIO3Qw9oRGRQdZuJ2loRlBNAlLYa4GC
-        Fe+8gZoqavoauj1vW0xHE78oo2iqq2+cw8NXHLUdXPwnZJHwjI3NCU9uTyyd9q8Syv/it57
-        YDbbiYP6xv4roDawpnlNaUae9FRYYd5YYPOVF0DdNLTzxh1E1Xu5Pe4Xc86a0ZsqFHpzRFq
-        zm5FoEZ/4ykbN4upH9ePaGwcaLB7QSWpTvLuzL7jdF4iI6D4JyI+hX7L+LsV15tDF8xW20K
-        JP4yr4EUXaQ0kGaX7P3G/xDArMOjMLvRBV0UxClxJyD8bd/Gx17YK1V0B2ZeWUXM8fTgJcS
-        9yyANqHDAGk=
-X-QQ-GoodBg: 0
-Message-ID: <14D22B831DDCFAED+14879d26-5d3a-3487-07ef-3b64e775e43f@linux.starfivetech.com>
-Date:   Wed, 12 Oct 2022 22:53:15 +0800
+        with ESMTP id S229866AbiJLPO5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 11:14:57 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F02DFAE
+        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 08:14:50 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id z97so24905702ede.8
+        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 08:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BJ++cbZT1GQzcKkN54BOhV7muiCQDnF4CoMQA5s9ysQ=;
+        b=S1UtZnd2tdB+a5PXbVodnKXWsutQqYUr5VBM58AjcjhbjfTgtIhmVALjjqCw1fqRc1
+         vE81XHq3/VTvpp1kr+K/JeJjHETVGzX7sK+Ht8+713sxQljFksxFxFKq7vJw6ROZ4uls
+         hfAlMmOJjcLCSWcBnH33LssWpjWaP0nyLj5ISq9Gwih8CxR8K2z2Wn0MlofDxBKTYHok
+         +zhzoOoF0bpQqPKPmD7sbkvUvH5Nvq31BTHapAIq39ViPOd//EjxYDH90n+yiKIg8n1O
+         qZz8GPCcCrI66Ca8cjezsgpsyAIbu0TCNCn0hpZAeIo8guIlJZqPeD0YNL94kcN8BIcj
+         BkqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BJ++cbZT1GQzcKkN54BOhV7muiCQDnF4CoMQA5s9ysQ=;
+        b=4CZgWE+XioDayqaQ6cTf2d78bvNJ6DrjjCK5M2+YsR6V0m1NRN/4c88kL8+fWoUI57
+         lZubnP5OMFVBRDc1Jfsckv8Q8kOLrMZDv5KCMijxnUhaNvybPaSshNOwIr+BtSeGe0H3
+         HqKnOsPEPxOLb19yieTPXba24cAsBZKeF9U2kJUpU+sfTRi9I6T2D3CqowhYS4Dn1Ag1
+         EIf6kppaOtobOP6r6bc6AU7Aw8mfqtQTkZXTkeY8ogIla+kPnCZ+veR8R1ucvcx+4Muv
+         EYbRBzz1kYKanCVDz7zcVQ0boC96IqY6EI+wWtzG+gCGJjAlXvErjF6tYA17/olU5Len
+         pK9w==
+X-Gm-Message-State: ACrzQf33mvhUyURUkR4YrxpgfMSaxVhMgtjmUhpYuxzivJsnqf8TL2FK
+        3ZpjO+Po/sYX34+phBEtz7A/6IwLfJPkBzTvsTE=
+X-Google-Smtp-Source: AMsMyM6274U9CSV9jS9j4sSiJo7SJDRlLjGDU/QLOYECQpB4iP3Nz6Ppvc0kLlWdLIaO1R7n8GYAww==
+X-Received: by 2002:a05:6402:28ca:b0:43b:5235:f325 with SMTP id ef10-20020a05640228ca00b0043b5235f325mr27711161edb.320.1665587688434;
+        Wed, 12 Oct 2022 08:14:48 -0700 (PDT)
+Received: from localhost ([86.61.181.4])
+        by smtp.gmail.com with ESMTPSA id 10-20020a170906058a00b0073ddd36ba8csm1378221ejn.145.2022.10.12.08.14.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Oct 2022 08:14:47 -0700 (PDT)
+Date:   Wed, 12 Oct 2022 17:14:46 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vfedorenko@novek.ru>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
+Subject: Re: [RFC PATCH v3 6/6] ptp_ocp: implement DPLL ops
+Message-ID: <Y0bZ5nUGC09tX443@nanopsycho>
+References: <20221010011804.23716-1-vfedorenko@novek.ru>
+ <20221010011804.23716-7-vfedorenko@novek.ru>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
- bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
- <20220929184349.GA2551443-robh@kernel.org>
- <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
- <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
- <4769BE3503398017+b1699221-ccc9-a0c1-0b11-141ce9644d74@linux.starfivetech.com>
- <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221010011804.23716-7-vfedorenko@novek.ru>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 12 Oct 2022 09:33:42 -0400, Krzysztof Kozlowski wrote:
-> On 12/10/2022 09:16, Hal Feng wrote:
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    enum:
->>>>>> +      - starfive,jh7110-reset
->>>>>
->>>>> 'reg' needed? Is this a sub-block of something else?
->>>>
->>>> Yes, the reset node is a child node of the syscon node, see patch 27 for detail.
->>>> You might not see the complete patches at that time due to technical issue of
->>>> our smtp email server. Again, I feel so sorry about that.
->>>>
->>>> 	syscrg: syscrg@13020000 {
->>>> 		compatible = "syscon", "simple-mfd";
->>>> 		reg = <0x0 0x13020000 0x0 0x10000>;
->>>>
->>>> 		syscrg_clk: clock-controller@13020000 {
->>>> 			compatible = "starfive,jh7110-clkgen-sys";
->>>> 			clocks = <&osc>, <&gmac1_rmii_refin>,
->>>> 				 <&gmac1_rgmii_rxin>,
->>>> 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
->>>> 				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
->>>> 				 <&tdm_ext>, <&mclk_ext>;
->>>> 			clock-names = "osc", "gmac1_rmii_refin",
->>>> 				"gmac1_rgmii_rxin",
->>>> 				"i2stx_bclk_ext", "i2stx_lrck_ext",
->>>> 				"i2srx_bclk_ext", "i2srx_lrck_ext",
->>>> 				"tdm_ext", "mclk_ext";
->>>> 			#clock-cells = <1>;
->>>> 		};
->>>>
->>>> 		syscrg_rst: reset-controller@13020000 {
->>>> 			compatible = "starfive,jh7110-reset";
->>>> 			#reset-cells = <1>;
->>>
->>> So the answer to the "reg needed?" is what? You have unit address but no
->>> reg, so this is not correct.
->> 
->> Not needed in the reset-controller node, but needed in its parent node. 
-> 
-> We do not talk about parent node. Rob's question was in this bindings.
-> Is this document a binding for the parent node or for this node?
+Mon, Oct 10, 2022 at 03:18:04AM CEST, vfedorenko@novek.ru wrote:
+>From: Vadim Fedorenko <vadfed@fb.com>
 
-This node. So not needed.
+[...]
 
-> 
->> I am sorry
->> for missing description to point it out in the bindings. I will rewrite all bindings
->> for the next version. Unit address here should be deleted.
->> 
->>>
->>>> 			starfive,assert-offset = <0x2F8>;
->>>> 			starfive,status-offset= <0x308>;
->>>> 			starfive,nr-resets = <JH7110_SYSRST_END>;
->>>> 		};
->>>> 	};
->>>>
->>>> In this case, we get the memory mapped space through the parent node with syscon
->>>> APIs. You can see patch 13 for detail.
->>>>
->>>> static int reset_starfive_register(struct platform_device *pdev, const u32 *asserted)
->>>> {
->>>
->>>
->>> (...)
->>>
->>>>
->>>>>
->>>>>> +
->>>>>> +  "#reset-cells":
->>>>>> +    const: 1
->>>>>> +
->>>>>> +  starfive,assert-offset:
->>>>>> +    description: Offset of the first ASSERT register
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>> +
->>>>>> +  starfive,status-offset:
->>>>>> +    description: Offset of the first STATUS register
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>
->>>>> These can't be implied from the compatible string?
->> 
->> Definitely can. We do this is for simplifying the reset driver.
-> 
-> The role of the bindings is not to simplify some specific driver in some
-> specific OS...
-> 
->> Otherwise, we may need to define more compatibles because there
->> are multiple reset blocks in JH7110. Another case can be found at
->> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/reset/altr,rst-mgr.yaml
-> 
-> And why is this a problem? You have different hardware, so should have
-> different compatibles. Otherwise we would have a compatible
-> "all,everything" and use it in all possible devices.
+>+static int ptp_ocp_dpll_get_status(struct dpll_device *dpll)
+>+{
+>+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
 
-Okay, I get it. Thanks a lot.
+Avoid cast from (void *), not needed. (I also mentioned this in RFCv2).
 
-Best regards,
-Hal
+
+>+	int sync;
+>+
+>+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
+>+	return sync;
+>+}
+>+
+
+[...]
