@@ -2,159 +2,260 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5351DC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 09:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB34C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 09:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229459AbiJLJev (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 05:34:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45412 "EHLO
+        id S229489AbiJLJkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 05:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbiJLJeu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 05:34:50 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.129.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C578912ABC
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 02:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1665567287;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=jBzK4ypyTyHQCNsT9nCK4l5oSXyU6JxsUtx75WhdJEc=;
-        b=OMKlKQ1AZSpx0sRAdiwHtGhLgcPklIT346oCIfPUsH5PX2opgLnvTUitMwbZzZUobsZ7mJ
-        IVOGKq1dhAKD9/dl4SXv0l1RdfZbdej+TivVRa/PSOAtyvdxZsektJ6C66koUeuifLgs0v
-        jUaC41DIr8pDb3kiCh4dAuLVPrku68uXAPPdaANYci5nM6gQwhuLGb+dQL/2P8DJqRUSNl
-        nOHD8G5F2Hcaj+jmIcGNBuTN2mX7VrXa0ZouGCsDK8wJhb3TbmgkXjuXcsd+rbbDsFUetl
-        6IDX51TrRmiVc4bnYJvyQCflWo/uSfQF0EjwbtDqlkJXPG14tdz2vNihg9h+mQ==
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com
- (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-157-wcHC7N6QNyu98OiJV2Nl3w-1; Wed, 12 Oct 2022 05:34:46 -0400
-X-MC-Unique: wcHC7N6QNyu98OiJV2Nl3w-1
-Received: from MN2PR19MB3693.namprd19.prod.outlook.com (2603:10b6:208:18a::19)
- by DS7PR19MB4616.namprd19.prod.outlook.com (2603:10b6:5:2c7::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.15; Wed, 12 Oct
- 2022 09:34:43 +0000
-Received: from MN2PR19MB3693.namprd19.prod.outlook.com
- ([fe80::4d61:1edd:74f5:342c]) by MN2PR19MB3693.namprd19.prod.outlook.com
- ([fe80::4d61:1edd:74f5:342c%6]) with mapi id 15.20.5709.022; Wed, 12 Oct 2022
- 09:34:43 +0000
-From:   Rahul Tanwar <rtanwar@maxlinear.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "linux-kernel@" <"vger.kernel.org linux-kernel"@vger.kernel.org>,
-        linux-lgm-soc <linux-lgm-soc@maxlinear.com>,
-        Yi xin Zhu <yzhu@maxlinear.com>
-Subject: Re: [PATCH RESEND v2 3/5] clk: mxl: Avoid disabling gate clocks from
- clk driver
-Thread-Topic: [PATCH RESEND v2 3/5] clk: mxl: Avoid disabling gate clocks from
- clk driver
-Thread-Index: AQHYzkwFrQSJjUImDUOzXbBrfYxegA==
-Date:   Wed, 12 Oct 2022 09:34:42 +0000
-Message-ID: <MN2PR19MB369399EDEB4E73307F94E41AB1229@MN2PR19MB3693.namprd19.prod.outlook.com>
-References: <cover.1663827071.git.rtanwar@maxlinear.com>
- <5a88bd5a9e93cc6e794080e5cac821ae0c27ec56.1663827071.git.rtanwar@maxlinear.com>
- <20220929001745.A4F9FC433B5@smtp.kernel.org>
- <MN2PR19MB3693EEC08EAC5370F1D195FBB1579@MN2PR19MB3693.namprd19.prod.outlook.com>
- <20220930010123.38984C4347C@smtp.kernel.org>
- <MN2PR19MB369301BFE8DFB56C348CD6C0B15D9@MN2PR19MB3693.namprd19.prod.outlook.com>
- <20221005202037.E7B43C433C1@smtp.kernel.org>
- <MN2PR19MB3693031CD60B09AE87885F5BB1239@MN2PR19MB3693.namprd19.prod.outlook.com>
- <20221011174345.906BAC433D7@smtp.kernel.org>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR19MB3693:EE_|DS7PR19MB4616:EE_
-x-ms-office365-filtering-correlation-id: b2850c54-5c25-4c96-e1ed-08daac34fe45
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0
-x-microsoft-antispam-message-info: 8JbL5z5JIcFr+PpWQFNEJCbfOGNxpTxs9CspZvDxtJ5MNpObxhs0PyuqLb2P+6O3JwaH+Rb7c84lELIIIFrjpukZvgv4Bgi5DJif/Fmcrbe2pIeqc93UELTkVrfyRvMRZmHcDu6ZhREVSt7AsxFifbvCtFhZjhT9NNt2nZa1c6klZdKm/pP5V9QbWpQhISjfgzmj/SLtgdteAGqmtOheR90Bqd1Gd6NX0L+grdhUbXfdaAr8QONQFr5tWpzK+8ETvXBeUdN6BydkimYtwXAJhoBdAbJzSH4Jyb9mXEvwRiJCrP2BnZ5kbyxgsNnhGtkNlLv+qzPx8D8nXIlbPoh/L458YwbTTvquN6l6uA0clNa5da3+ORyArk2u/lQIAyc8tNmQlS65Bz8KMNxFsPVL1q3V9KQiBJc5RBgWiqQ/XCs3WVAqRqUx+qeipjGnxucxz+eyxA7kgGPUH/02c+4oYQIu3KMsJ4eg2cv/gusNVDa37bf2ckCvU2xOK1FL0AacUYYBm4agLCwMsGMfey+U0SR+32rwcXCGbhhQtb88vbYIGGIyDsVEuYsWWnjFcrRKnopQ5Fi8DWasrpldQFEzd6YlIpa40RE1wzUTNmxgiuw1o44208hEmhuz3F4BTpqtuVNBTtumI7EqfbNZgw/CyMmuS2TH18Bro7A35q8G6LAVzB3XZ0k7AW0iID5ZyE9rTXCvcU0TtSzWPbTdiKWk1z4gP5rx2OmW0YVhF63/Gxx1FmvIXnwwxMVrbQBvRxZEWAN7CKAscZLP/2w+mD3foA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3693.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(136003)(39860400002)(396003)(366004)(451199015)(33656002)(86362001)(66899015)(5660300002)(38100700002)(122000001)(186003)(83380400001)(38070700005)(8676002)(53546011)(478600001)(7696005)(6506007)(71200400001)(26005)(107886003)(9686003)(4001150100001)(316002)(76116006)(91956017)(66556008)(54906003)(66946007)(66476007)(66446008)(64756008)(8936002)(55016003)(4326008)(41300700001)(52536014)(2906002)(110136005);DIR:OUT;SFP:1102
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?92hMtiTjzvs/YOLae4bTpdKD1UqIFl3jEsQtNjdtAKrigBmXJPatKpQKoZx+?=
- =?us-ascii?Q?FDXGvgveIFRxPQ2kHlvI1Lgm9w1sQ+wsg5+B6jL2puuNaGxkz+ecqJnyNB8q?=
- =?us-ascii?Q?4pE/RH62wfINSu096lMq9/IRRDr+rpj0lJ7x31p4HQsSU/sl+b4fl26UpImn?=
- =?us-ascii?Q?/9BpxkVGdsUIrZMPt8/d8Y7s2KGxkxdh/Qqc642GUFleiNu8ZpfxjlkmwCTP?=
- =?us-ascii?Q?HZueS8qsGzatd+Mv3wUz7YSWr5Byuj0Wd92zJ1gr4QoPOM6ZZoq8YqTk3m7c?=
- =?us-ascii?Q?n/xcwX+2pdF1AH5hmLk0H9c+BNwNzCJiIjVCVqVv3OSGMOjczEYk+LyVqiM/?=
- =?us-ascii?Q?o/80XCS2NGxvXZ/IJVuWstYkcW4NIzqHxGd+QkbN9C0wIddO++0JeRAyDQOG?=
- =?us-ascii?Q?UwrkiNrK9V9ng/QsbzPmiiHMl2Coh82i5spoVPpSCYjAlJ64o55RZ1lJ0N1c?=
- =?us-ascii?Q?/zmw/31RVn/WhAryjaDvhxtyABU2oWh+g2G/QrvBxyu92aQxu83DbNlA3E2v?=
- =?us-ascii?Q?AtEs6k//J0nMTiaQ0HGAFAbZNE6iQN1CEY49KJXRpLHUE0qHNiVKZr41hCyi?=
- =?us-ascii?Q?UxYNVflmF++nB0BJS5eT5Q80dzf1sb/ZwfRLJxBTnm20cw/EZqciKIs2lSP4?=
- =?us-ascii?Q?4f4o6FNJFGRs2Vvu9DcFbtcQYKv7evkwlJrlKwaJrENmjO9RbdF83TFWfocf?=
- =?us-ascii?Q?DEd5tdzW2Oz6fUTl8RVF2nnrzgY7rQRcD9W1EMf0XoTOIaGlsXsWJlOv5fC2?=
- =?us-ascii?Q?7Ho48bq/kAeOjvqAImicpsh4RDlXTcRUQ+ABUWbpRhjHlIY3BD3vOlBKCMfX?=
- =?us-ascii?Q?MfNLtfdA6hACH2iOk7ITILWONTWLD82Qf49yyAH3JjBQxBdytk7TKRSmNnpI?=
- =?us-ascii?Q?DnUXV3uc1Gc7EESLkYYYNXW98eEmqA2RLmks++kePrXkbCS7IQtOnmfu1fpK?=
- =?us-ascii?Q?L8v+e0V8tqv8BGDBl07gL2XimM13CqPHHBAIWk+ud6o9R8vQn7RU5bI9YgOm?=
- =?us-ascii?Q?wG5nPAQai6LhpnUY2ksnST4p/gtMU5/3Nj5m3sYA7Cd/amW5E5X+pnBsIiMK?=
- =?us-ascii?Q?N3B9lHfhPi07le51xIsnTK2yXNRxhnRprIViBsii5JptKIONqBxULyVD8xJP?=
- =?us-ascii?Q?jYGjcSuXV3G5pJagNf3ff9qKPcbwK6oCx5DdubyLo9mPq9sD/8bNv+aV62gs?=
- =?us-ascii?Q?eFoJJ8nKfw8ONQBD3DJBahrZ5HElR2SYB08kb2kR0DCnv0wfcbkjGvZe5xAN?=
- =?us-ascii?Q?FPFyo7uJRg1yetfMrJwBYu5t0NEelkQHsVvjEeOWA4GzoK6o8b0OJe6OFM6L?=
- =?us-ascii?Q?l4GAar9JhQi2ly7kGG5atVaK38jVC8EXAigNOObHDitjtZ/gRjhOOYYppMwF?=
- =?us-ascii?Q?isddLV9IG2JW2hLkibsLUUtFqC/Un703QB6+MCl0ZEwJ1VVTH0dbItGpzqqb?=
- =?us-ascii?Q?FByQIWO4A7ZZEFO4W0iuwQxnKTxeu117Qa9niB1IevPiBgAGKSrz4+M+U2Tb?=
- =?us-ascii?Q?NvobmaqvF+VAwARjARtQVdjHN/kc8bqFjjGBebGA/q+cy4jtBqFtwW1dFqr/?=
- =?us-ascii?Q?AymY06nKQj8ffywLDQSy1MEd/zoUUuqv6xnbEt0vgRPqvXVnPWwG0DpjSdUU?=
- =?us-ascii?Q?lw=3D=3D?=
+        with ESMTP id S229470AbiJLJkL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 05:40:11 -0400
+Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25E5357C9;
+        Wed, 12 Oct 2022 02:40:09 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 70CB7580320;
+        Wed, 12 Oct 2022 05:40:07 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 12 Oct 2022 05:40:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1665567607; x=
+        1665574807; bh=jIw1X1OWq80oU2H2+NRiXoIfwbXHEKKKboIcZC9PvE0=; b=F
+        gE06xXtIGl/CXdZ/hYvqQ3ivFNxdzi1khTxMRZfc43pIXIdYIhyKtMOrHh4B80ss
+        NnjqxmaiTBwL5IFtp2Re7QI+gTp2R+1WjAxdrYHzfWX4wJVd0UTwdcvQnPvyWyKA
+        h48aT27TDws2hy1lh8LkiLSkdIQNEccILZCb5To97hCDvTp2A0idUZdAEjM40vu0
+        ecgKzFxp1Px5LLQm+MD3xvuK7Qmcf8LRHJkmDOrgAAcMz/4arKqAasIHoAoQNm91
+        M9AHHJhmWRjL6ShjyKc1BfpzOdHRd/4Y1H/48hcIqigeWUAfnIpPpYcM+PF3Hwsj
+        ufPeM5ebRVtSqQjiY7nRA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1665567607; x=
+        1665574807; bh=jIw1X1OWq80oU2H2+NRiXoIfwbXHEKKKboIcZC9PvE0=; b=V
+        WiGVFXdVd0Dd/zto8rpPDKrniT+oGSjiT5TToUmPb3s2yCwiJUONhsWaRrCtLExZ
+        tOXR/LKwbj2TVeBrTEh3LJoClem2AVdH7q1Dak48wynGv8fJxi0gjmlTN8mDpK2O
+        eVAvWlJNE7xESEoC+Mb0vtI3jJgA6+I1oM3hlGbgIfCRK6LpVeReUI3bZEYbY9q2
+        vJrLcpqsNRaC5aLsVRaVKD4PqeRvBHmypNwfbeZjlwjlNJRdYm5Up+7lg0QqKODQ
+        +GngeDgTuv8QQJe1VNs6Q3fa2gMd+1P2dKikB7aX4wi7KgIC3HllrV/yNWwr0H1e
+        qhOT5oJxULVaBPutwnL6A==
+X-ME-Sender: <xms:dotGY-GvlhZotYDF22OxWd1rynwv8cqBYUlp3tPAfopsnLrcie_pNw>
+    <xme:dotGY_Ukj4mVbm_h2N844-w7OlP5qJcWAXvIslfm4KXiIt0U2I5lJKr2oQUcRXvel
+    FXIS-zHcI0q8vaWxoE>
+X-ME-Received: <xmr:dotGY4IyY6w4YgGrbxn7KYZLydtDgjrxzzsLLjFFOEc_aBkWv98tp7J1W8S4EMUlot1N7MNFyZFXKko0AAGe_eUHHJUkb_i0yCx4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeejkedgudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepiedtueffveeiueeftdduvdffffffgeffgfekiefhleelkedtlefhvefh
+    udduhffgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgv
+    tghh
+X-ME-Proxy: <xmx:d4tGY4G5WBa42tjim1N_Mt_R5-O0VdB8TjSZ6s8Cvp8QaCVMXgd17g>
+    <xmx:d4tGY0WmoFfYn876J-XBkqpyPMn36acN3EbyU9oOrKXM_o6J80MLvg>
+    <xmx:d4tGY7NlS0PAFPfno4vmrdKGtkVmpYDB-mLLgW34lk_8u9N8jXWRAA>
+    <xmx:d4tGY529AaZHmTLWqHb1-eqoPQhNNFR1SsyDAbE0EDFWIfv3SlQrsw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Oct 2022 05:40:06 -0400 (EDT)
+Date:   Wed, 12 Oct 2022 11:40:04 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
+        wenst@chromium.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: mediatek: clk-mux: Add .determine_rate() callback
+Message-ID: <20221012094004.jgiyvmbgomiyedik@houat>
+References: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com>
+ <20221012085555.3nls7ja56vlnaz2w@houat>
+ <c4a1eb9f-016d-c184-e494-c869038b87ff@collabora.com>
 MIME-Version: 1.0
-X-OriginatorOrg: maxlinear.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR19MB3693.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2850c54-5c25-4c96-e1ed-08daac34fe45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2022 09:34:42.9991
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7jNRdihmr0LQiR7vGgEDcyMBYeJm9Ul8TlNb31NuqB78gGD5flg5bnNVeb/BsMDKRS7MBF/c0xuMlWxDyKvikA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB4616
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: maxlinear.com
-Content-Language: en-US
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c4a1eb9f-016d-c184-e494-c869038b87ff@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,=0A=0AOn 12/10/2022 1:43 am, Stephen Boyd wrote:=0A> This email =
-was sent from outside of MaxLinear.=0A>=20=0A>=20=0A> Quoting Rahul Tanwar =
-(2022-10-11 00:28:56)=0A>>=0A>> I agree that what you are suggesting is the=
- ideal way to handle such=0A>> clks. If i understand you correctly, you are=
- suggesting below (please=0A>> correct me if i am mistaken):=0A>>=0A>> 1. D=
-isable/remove such clocks from corresponding driver's devicetree=0A>> nodes=
-. This will make devm_clk_get() or clk_get() return failure.=0A>=20=0A> No.=
- Don't remove anything from devicetree, simply make the clk provider=0A> re=
-turn NULL when the clk_src_get() function pointer is asked for the clk=0A> =
-index that represents the clks that have no abilities to do anything.=0A>=
-=20=0A>>=0A>> 2. Modify all drivers which use such clks=0A>>=0A>> from:=0A>=
->=0A>>      clk =3D devm_clk_get(...);=0A>>      if (IS_ERR(clk))=0A>>     =
-     return -ERROR;=0A>>      clk_prepare_enable(clk);=0A>>      clk_get/se=
-t_rate();=0A>>      ...=0A>>=0A>> to:=0A>>      clk =3D devm_clk_get(...);=
-=0A>>      if (!(IS_ERR(clk)) {=0A>>          clk_prepare_enable(clk);=0A>>=
-          clk_get/set_rate();=0A>>          ...=0A>>      } else {=0A>>    =
-     // print error info - do nothing, no clk_ops calls=0A>>      }=0A>=20=
-=0A> No. Nothing in the drivers changes. The 'clk' pointer will be NULL, th=
-at=0A> will not make the 'if (IS_ERR(clk))' condition be true, so return -E=
-RROR=0A> won't happen. Similarly, clk_prepare_enable() will return 0 when c=
-alled=0A> with a NULL pointer. Please try it out.=0A>=20=0A>>=0A>> But the =
-problem that we have is that 80% of the clks that we use fall=0A>> under th=
-is category (around 65 clks). And if we follow this approach,=0A>> then we =
-will have to make above changes in all of the drivers which use=0A>> these =
-clks & retest them again. That seems like a overhaul. We already=0A>> keep =
-a internal driver flag in each clk entry data structure and we=0A>> already=
- use it in the driver for other types of clks for e.g MUX_CLKs.=0A>> So usi=
-ng the internal flag to handle this becomes a preferable &=0A>> existing dr=
-iver design aligned approach for us.=0A>>=0A>=20=0A> There isn't an overhau=
-l.=0A>=20=0A=0A=0AAfter going through the code again together with your com=
-ments, now i=20=0Aunderstand exactly what you are suggesting. I will make t=
-he changes=20=0Aaccordingly in v4. Thanks for your valuable inputs.=0A=0ARa=
-hul=0A=0A>=20=0A=0A
+On Wed, Oct 12, 2022 at 11:09:59AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 12/10/22 10:55, Maxime Ripard ha scritto:
+> > Hi,
+> >=20
+> > On Tue, Oct 11, 2022 at 03:55:48PM +0200, AngeloGioacchino Del Regno wr=
+ote:
+> > > Since commit 262ca38f4b6e ("clk: Stop forwarding clk_rate_requests
+> > > to the parent"), the clk_rate_request is .. as the title says, not
+> > > forwarded anymore to the parent:
+> >=20
+> > It's not entirely true, the rate request should still be forwarded, but
+> > we don't pass the same instance of clk_rate_request anymore.
+> >=20
+> > > this produces an issue with the MediaTek clock MUX driver during GPU
+> > > DVFS on MT8195, but not on MT8192 or others.
+> > >=20
+> > > This is because, differently from others, like MT8192 where all of
+> > > the clocks in the MFG parents tree are of mtk_mux type, but in the
+> > > parent tree of MT8195's MFG clock, we have one mtk_mux clock and
+> > > one (clk framework generic) mux clock, like so:
+> > >=20
+> > > names: mfg_bg3d -> mfg_ck_fast_ref -> top_mfg_core_tmp (or) mfgpll
+> > > types: mtk_gate ->      mux        ->     mtk_mux      (or) mtk_pll
+> > >=20
+> > > To solve this issue and also keep the GPU DVFS clocks code working
+> > > as expected, wire up a .determine_rate() callback for the mtk_mux
+> > > ops; for that, the standard clk_mux_determine_rate_flags() was used
+> > > as it was possible to.
+> >=20
+> > It probably fixes things indeed, but I'm a bit worried that it just
+> > works around the actual issue instead of fixing the actual bug...
+> >=20
+> > > This commit was successfully tested on MT6795 Xperia M5, MT8173 Elm,
+> > > MT8192 Spherion and MT8195 Tomato; no regressions were seen.
+> > >=20
+> > > For the sake of some more documentation about this issue here's the
+> > > trace of it:
+> > >=20
+> > > [   12.211587] ------------[ cut here ]------------
+> > > [   12.211589] WARNING: CPU: 6 PID: 78 at drivers/clk/clk.c:1462 clk_=
+core_init_rate_req+0x84/0x90
+> > > [   12.211593] Modules linked in: stp crct10dif_ce mtk_adsp_common ll=
+c rfkill snd_sof_xtensa_dsp
+> > >                 panfrost(+) sbs_battery cros_ec_lid_angle cros_ec_sen=
+sors snd_sof_of
+> > >                 cros_ec_sensors_core hid_multitouch cros_usbpd_logger=
+ snd_sof gpu_sched
+> > >                 snd_sof_utils fuse ipv6
+> > > [   12.211614] CPU: 6 PID: 78 Comm: kworker/u16:2 Tainted: G        W=
+          6.0.0-next-20221011+ #58
+> > > [   12.211616] Hardware name: Acer Tomato (rev2) board (DT)
+> > > [   12.211617] Workqueue: devfreq_wq devfreq_monitor
+> > > [   12.211620] pstate: 40400009 (nZcv daif +PAN -UAO -TCO -DIT -SSBS =
+BTYPE=3D--)
+> > > [   12.211622] pc : clk_core_init_rate_req+0x84/0x90
+> > > [   12.211625] lr : clk_core_forward_rate_req+0xa4/0xe4
+> > > [   12.211627] sp : ffff80000893b8e0
+> > > [   12.211628] x29: ffff80000893b8e0 x28: ffffdddf92f9b000 x27: ffff4=
+6a2c0e8bc05
+> > > [   12.211632] x26: ffff46a2c1041200 x25: 0000000000000000 x24: 00000=
+000173eed80
+> > > [   12.211636] x23: ffff80000893b9c0 x22: ffff80000893b940 x21: 00000=
+00000000000
+> > > [   12.211641] x20: ffff46a2c1039f00 x19: ffff46a2c1039f00 x18: 00000=
+00000000000
+> > > [   12.211645] x17: 0000000000000038 x16: 000000000000d904 x15: 00000=
+00000000003
+> > > [   12.211649] x14: ffffdddf9357ce48 x13: ffffdddf935e71c8 x12: 00000=
+0000004803c
+> > > [   12.211653] x11: 00000000a867d7ad x10: 00000000a867d7ad x9 : ffffd=
+ddf90c28df4
+> > > [   12.211657] x8 : ffffdddf9357a980 x7 : 0000000000000000 x6 : 00000=
+00000000004
+> > > [   12.211661] x5 : ffffffffffffffc8 x4 : 00000000173eed80 x3 : ffff8=
+0000893b940
+> > > [   12.211665] x2 : 00000000173eed80 x1 : ffff80000893b940 x0 : 00000=
+00000000000
+> > > [   12.211669] Call trace:
+> > > [   12.211670]  clk_core_init_rate_req+0x84/0x90
+> > > [   12.211673]  clk_core_round_rate_nolock+0xe8/0x10c
+> > > [   12.211675]  clk_mux_determine_rate_flags+0x174/0x1f0
+> > > [   12.211677]  clk_mux_determine_rate+0x1c/0x30
+> > > [   12.211680]  clk_core_determine_round_nolock+0x74/0x130
+> > > [   12.211682]  clk_core_round_rate_nolock+0x58/0x10c
+> > > [   12.211684]  clk_core_round_rate_nolock+0xf4/0x10c
+> > > [   12.211686]  clk_core_set_rate_nolock+0x194/0x2ac
+> > > [   12.211688]  clk_set_rate+0x40/0x94
+> > > [   12.211691]  _opp_config_clk_single+0x38/0xa0
+> > > [   12.211693]  _set_opp+0x1b0/0x500
+> > > [   12.211695]  dev_pm_opp_set_rate+0x120/0x290
+> > > [   12.211697]  panfrost_devfreq_target+0x3c/0x50 [panfrost]
+> > > [   12.211705]  devfreq_set_target+0x8c/0x2d0
+> > > [   12.211707]  devfreq_update_target+0xcc/0xf4
+> > > [   12.211708]  devfreq_monitor+0x40/0x1d0
+> > > [   12.211710]  process_one_work+0x294/0x664
+> > > [   12.211712]  worker_thread+0x7c/0x45c
+> > > [   12.211713]  kthread+0x104/0x110
+> > > [   12.211716]  ret_from_fork+0x10/0x20
+> > > [   12.211718] irq event stamp: 7102
+> > > [   12.211719] hardirqs last  enabled at (7101): [<ffffdddf904ea5a0>]=
+ finish_task_switch.isra.0+0xec/0x2f0
+> > > [   12.211723] hardirqs last disabled at (7102): [<ffffdddf91794b74>]=
+ el1_dbg+0x24/0x90
+> > > [   12.211726] softirqs last  enabled at (6716): [<ffffdddf90410be4>]=
+ __do_softirq+0x414/0x588
+> > > [   12.211728] softirqs last disabled at (6507): [<ffffdddf904171d8>]=
+ ____do_softirq+0x18/0x24
+> > > [   12.211730] ---[ end trace 0000000000000000 ]---
+> >=20
+> > ... Indeed, you shouldn't hit that warning at all. It happens in
+> > clk_core_round_rate_nolock, which takes (before your patch) the
+> > CLK_SET_RATE_PARENT branch. This indeed has been changed by the patch
+> > you mentioned, and will call clk_core_forward_rate_req() now, that in
+> > turn calls clk_core_init_rate_nolock().
+> >=20
+> > I think the warning you hit is because core->parent is NULL, which is
+> > passed to clk_core_forward_rate_req() as the parent argument, and we'll
+> > call clk_core_init_rate_req() with parent set as the core argument.
+> >=20
+> > In clk_core_init_rate_req(), the first thing we do is a WARN_ON(!core),
+> > which is what you hit here I think.
+> >=20
+> > This is different to the previous behavior that was calling
+> > clk_core_round_rate_nolock() with core->parent directly, and
+> > clk_core_round_rate_nolock() if its core argument is NULL will set
+> > req->rate to 0 and bail out without returning an error.
+> >=20
+> > Now, your patch probably works because now that you provide a
+> > determine_rate implementation, clk_core_can_round() returns true and
+> > you'll take a different branch in clk_core_round_rate_nolock(), avoiding
+> > that issue entirely.
+> >=20
+> > Does that patch work better (on top of next-20221012)?
+>
+> I admit I didn't go too deep in the research, as my brain processed that =
+as
+> "this is a mux clock, not really different from a standard mux, this call=
+back
+> is missing, that's not optimal"... then that fixed it and called it a day.
+>=20
+> I should've prolonged my research for a better understanding of what was
+> actually going on.
 
+No worries :)
+
+> What you said actually opened my mind and, with little surprise, your pat=
+ch
+> works as good as mine - no warnings and the clock scales as expected!
+
+I'm actually wondering if you didn't encounter two issues. What kernel
+were you testing before? If it's older than today's next
+(next-20221012), you're likely missing
+
+https://lore.kernel.org/linux-clk/20221010-rpi-clk-fixes-again-v1-0-d87ba82=
+ac404@cerno.tech/
+
+Which is likely to be what fixed the clock scaling. And my patch only
+fixed the warning. Could you test next-20221012? If I'm right, you
+should only get the warning.
+
+> I still think that the mtk-mux driver should get a determine_rate callbac=
+k but,
+> at this point, that's going to have an entirely different commit descript=
+ion...
+
+Yeah, it might, but as you said it's a separate discussion
+
+> Please go on and send your patch: if you want, please remember to add me =
+to
+> the Cc's, so that I can give you my R-b tag in a timely manner.
+
+Thanks!
+Maxime
