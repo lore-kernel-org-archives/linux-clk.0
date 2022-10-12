@@ -2,235 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D85CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 14:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904D0C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Oct 2022 14:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229994AbiJLOLA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 10:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59446 "EHLO
+        id S229744AbiJLOxf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 10:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229882AbiJLOK4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 10:10:56 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D57AC382;
-        Wed, 12 Oct 2022 07:10:51 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29C9jlge004563;
-        Wed, 12 Oct 2022 14:10:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=X56T0Y4BdSLVT4DObSFyKor0Immxx7awcwH20gDFW3A=;
- b=VSIUaIYH9BfAwE+KxU6/vwSmrLRfJRxC18QVIV4+nWqRjJGnuJNZgKAdPXYhbtFsOary
- KWcrQbPFWw7HzoqxkZheiv08AxpM1g1qb2Ua68yqOVYrK9K3jnc7pCGkoitvyt7fZayC
- fcOFvIkci55mRsLDbMEK3U0ywlmI7sbV71wz25SM57nzJkHAyy9x1aBJ3Z/d6Yz3k5wm
- laH67oEVj3JjCDXmSvdJ2mva00oJDMhKGMrrETZTX2u9ckh1rLNDjQsRQ9HRwhttdTDI
- CEQTXsAU//sULjVkYtZls3H1h5TbxpGdLUKQq99lrcJkItTM5TsDMr7pcmNabSsRA0um /A== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3k5j7b244p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 12 Oct 2022 14:10:28 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29CEARlm024769
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 12 Oct 2022 14:10:27 GMT
-Received: from [10.216.32.191] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 12 Oct
- 2022 07:10:18 -0700
-Message-ID: <04ace1ae-26d0-4157-b7eb-8dff29895180@quicinc.com>
-Date:   Wed, 12 Oct 2022 19:36:52 +0530
+        with ESMTP id S229541AbiJLOxd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 10:53:33 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFDCDFB58;
+        Wed, 12 Oct 2022 07:53:28 -0700 (PDT)
+X-QQ-mid: bizesmtp71t1665586398tra1mkxv
+Received: from [192.168.1.231] ( [113.72.146.141])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Wed, 12 Oct 2022 22:53:16 +0800 (CST)
+X-QQ-SSF: 01000000002000B09000B00A0000000
+X-QQ-FEAT: Q5/H4pNog203Q26Mis4ciWl055ow0ajIHrfB0/XOCwC8VcIHMdhaaI4V2fyX5
+        38PXgbepu+GYSoJRIEnLYHasPwO576mbxLyyxYxDkIO3Qw9oRGRQdZuJ2loRlBNAlLYa4GC
+        Fe+8gZoqavoauj1vW0xHE78oo2iqq2+cw8NXHLUdXPwnZJHwjI3NCU9uTyyd9q8Syv/it57
+        YDbbiYP6xv4roDawpnlNaUae9FRYYd5YYPOVF0DdNLTzxh1E1Xu5Pe4Xc86a0ZsqFHpzRFq
+        zm5FoEZ/4ykbN4upH9ePaGwcaLB7QSWpTvLuzL7jdF4iI6D4JyI+hX7L+LsV15tDF8xW20K
+        JP4yr4EUXaQ0kGaX7P3G/xDArMOjMLvRBV0UxClxJyD8bd/Gx17YK1V0B2ZeWUXM8fTgJcS
+        9yyANqHDAGk=
+X-QQ-GoodBg: 0
+Message-ID: <14D22B831DDCFAED+14879d26-5d3a-3487-07ef-3b64e775e43f@linux.starfivetech.com>
+Date:   Wed, 12 Oct 2022 22:53:15 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v7 1/5] PCI: qcom: Add system suspend and resume support
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
+ bindings
 Content-Language: en-US
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
-        <quic_vbadigan@quicinc.com>, <quic_hemantk@quicinc.com>,
-        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <swboyd@chromium.org>, <dmitry.baryshkov@linaro.org>,
-        <svarbanov@mm-sol.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
-        <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <linux-phy@lists.infradead.org>,
-        <vkoul@kernel.org>, <kishon@ti.com>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>
-References: <20221005211323.GA2390992@bhelgaas>
-From:   Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20221005211323.GA2390992@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
+ <20220929184349.GA2551443-robh@kernel.org>
+ <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
+ <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
+ <4769BE3503398017+b1699221-ccc9-a0c1-0b11-141ce9644d74@linux.starfivetech.com>
+ <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6dfLb38IxSjGoasAJ9pMdvLlzZF_6S-6
-X-Proofpoint-ORIG-GUID: 6dfLb38IxSjGoasAJ9pMdvLlzZF_6S-6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-12_06,2022-10-12_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 suspectscore=0 clxscore=1015 impostorscore=0 adultscore=0
- mlxlogscore=951 malwarescore=0 priorityscore=1501 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2210120093
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 10/6/2022 2:43 AM, Bjorn Helgaas wrote:
-> On Mon, Oct 03, 2022 at 05:40:21PM +0530, Krishna Chaitanya Chundru wrote:
->> On 9/30/2022 12:23 AM, Bjorn Helgaas wrote:
->>> On Mon, Sep 26, 2022 at 09:00:11PM +0530, Krishna Chaitanya Chundru wrote:
->>>> On 9/23/2022 7:56 PM, Bjorn Helgaas wrote:
->>>>> On Fri, Sep 23, 2022 at 07:29:31AM +0530, Krishna Chaitanya Chundru wrote:
->>>>>> On 9/23/2022 12:12 AM, Bjorn Helgaas wrote:
->>>>>>> On Thu, Sep 22, 2022 at 09:09:28PM +0530, Krishna Chaitanya Chundru wrote:
->>>>>>>> On 9/21/2022 10:26 PM, Bjorn Helgaas wrote:
->>>>>>>>> On Wed, Sep 21, 2022 at 03:23:35PM +0530, Krishna Chaitanya Chundru wrote:
->>>>>>>>>> On 9/20/2022 11:46 PM, Bjorn Helgaas wrote:
->>>>>>>>>>> On Tue, Sep 20, 2022 at 03:52:23PM +0530, Krishna chaitanya chundru wrote:
->>>>>>>>>>>> In qcom platform PCIe resources( clocks, phy
->>>>>>>>>>>> etc..) can released when the link is in L1ss to
->>>>>>>>>>>> reduce the power consumption. So if the link is
->>>>>>>>>>>> in L1ss, release the PCIe resources. And when
->>>>>>>>>>>> the system resumes, enable the PCIe resources if
->>>>>>>>>>>> they released in the suspend path.
->>>>>>>>>>> What's the connection with L1.x?  Links enter L1.x
->>>>>>>>>>> based on activity and timing.  That doesn't seem
->>>>>>>>>>> like a reliable indicator to turn PHYs off and
->>>>>>>>>>> disable clocks.
->>>>>>>>>> This is a Qcom PHY-specific feature (retaining the
->>>>>>>>>> link state in L1.x with clocks turned off).  It is
->>>>>>>>>> possible only with the link being in l1.x. PHY can't
->>>>>>>>>> retain the link state in L0 with the clocks turned
->>>>>>>>>> off and we need to re-train the link if it's in L2
->>>>>>>>>> or L3. So we can support this feature only with
->>>>>>>>>> L1.x.  That is the reason we are taking l1.x as the
->>>>>>>>>> trigger to turn off clocks (in only suspend path).
->>>>>>>>> This doesn't address my question.  L1.x is an ASPM
->>>>>>>>> feature, which means hardware may enter or leave L1.x
->>>>>>>>> autonomously at any time without software
->>>>>>>>> intervention.  Therefore, I don't think reading the
->>>>>>>>> current state is a reliable way to decide anything.
->>>>>>>> After the link enters the L1.x it will come out only if
->>>>>>>> there is some activity on the link.  As system is
->>>>>>>> suspended and NVMe driver is also suspended (queues
->>>>>>>> will freeze in suspend) who else can initiate any data.
->>>>>>> I don't think we can assume that nothing will happen to
->>>>>>> cause exit from L1.x.  For instance, PCIe Messages for
->>>>>>> INTx signaling, LTR, OBFF, PTM, etc., may be sent even
->>>>>>> though we think the device is idle and there should be no
->>>>>>> link activity.
->>>>>> I don't think after the link enters into L1.x there will
->>>>>> some activity on the link as you mentioned, except for PCIe
->>>>>> messages like INTx/MSI/MSIX. These messages also will not
->>>>>> come because the client drivers like NVMe will keep their
->>>>>> device in the lowest power mode.
->>>>>>
->>>>>> The link will come out of L1.x only when there is config or
->>>>>> memory access or some messages to trigger the interrupts
->>>>>> from the devices.  We are already making sure this access
->>>>>> will not be there in S3.  If the link is in L0 or L0s what
->>>>>> you said is expected but not in L1.x
->>>>> Forgive me for being skeptical, but we just spent a few months
->>>>> untangling the fact that some switches send PTM request
->>>>> messages even when they're in a non-D0 state.  We expected
->>>>> that devices in D3hot would not send such messages because
->>>>> "why would they?"  But it turns out the spec allows that, and
->>>>> they actually *do*.
+On Wed, 12 Oct 2022 09:33:42 -0400, Krzysztof Kozlowski wrote:
+> On 12/10/2022 09:16, Hal Feng wrote:
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    enum:
+>>>>>> +      - starfive,jh7110-reset
 >>>>>
->>>>> I don't think it's robust interoperable design for a PCI
->>>>> controller driver like qcom to assume anything about PCI
->>>>> devices unless it's required by the spec.
->>>>   From pci spec 4, in sec 5.5 "Ports that support L1 PM Substates
->>>>   must not require a reference clock while in L1 PM Substates
->>>>   other than L1.0".  If there is no reference clk we can say
->>>>   there is no activity on the link.  If anything needs to be sent
->>>>   (such as LTR, or some messages ), the link needs to be back in
->>>>   L0 before it sends the packet to the link partner.
+>>>>> 'reg' needed? Is this a sub-block of something else?
 >>>>
->>>> To exit from L1.x clkreq pin should be asserted.
+>>>> Yes, the reset node is a child node of the syscon node, see patch 27 for detail.
+>>>> You might not see the complete patches at that time due to technical issue of
+>>>> our smtp email server. Again, I feel so sorry about that.
 >>>>
->>>> In suspend after turning off clocks and phy we can enable to
->>>> trigger an interrupt whenever the clk req pin asserts.  In that
->>>> interrupt handler, we can enable the pcie resources back.
->>>  From the point of view of the endpoint driver, ASPM should be
->>> invisible -- no software intervention required.  I think you're
->>> suggesting that the PCIe controller driver could help exit L1.x by
->>> handling a clk req interrupt and enabling clock and PHY then.
+>>>> 	syscrg: syscrg@13020000 {
+>>>> 		compatible = "syscon", "simple-mfd";
+>>>> 		reg = <0x0 0x13020000 0x0 0x10000>;
+>>>>
+>>>> 		syscrg_clk: clock-controller@13020000 {
+>>>> 			compatible = "starfive,jh7110-clkgen-sys";
+>>>> 			clocks = <&osc>, <&gmac1_rmii_refin>,
+>>>> 				 <&gmac1_rgmii_rxin>,
+>>>> 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+>>>> 				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+>>>> 				 <&tdm_ext>, <&mclk_ext>;
+>>>> 			clock-names = "osc", "gmac1_rmii_refin",
+>>>> 				"gmac1_rgmii_rxin",
+>>>> 				"i2stx_bclk_ext", "i2stx_lrck_ext",
+>>>> 				"i2srx_bclk_ext", "i2srx_lrck_ext",
+>>>> 				"tdm_ext", "mclk_ext";
+>>>> 			#clock-cells = <1>;
+>>>> 		};
+>>>>
+>>>> 		syscrg_rst: reset-controller@13020000 {
+>>>> 			compatible = "starfive,jh7110-reset";
+>>>> 			#reset-cells = <1>;
 >>>
->>> But doesn't L1.x exit also have to happen within the time the
->>> endpoint can tolerate?  E.g., I think L1.2 exit has to happen
->>> within the LTR time advertised by the endpoint (PCIe r6.0, sec
->>> 5.5.5).  How can we guarantee that if software is involved?
->> It is true that it is difficult to guarantee those delays. On our
->> internal boards, we are able to achieve this but that is not with
->> linux kernel.
->>
->> With NVMe attach we have connected the protocol analyzer and tried
->> to see if there are any transactions over the link. We found there
->> are no transactions on the link once the link enters L1.x till we
->> resume the system. As the NVMe is a passive system it is not
->> initiating any transactions.
->>
->> This whole requirement came from the NVMe driver, it requires
->> keeping the link active state when the system is suspended.
->>
->> There are only two things we can in do in PCIe suspend as we have to
->> turn off PCIe clocks to allow the system to the lowest possible
->> power state.
->>
->> 1) Keep the device in D3 cold and turn off all the clocks and phy
->> etc. (It is not an ideal one as this decreases the NVMe lifetime
->> because link-down and link-up is treated as a power cycle by a few
->> NVMe devices).
->>
->> 2) This is the one we are proposing where we turn off the clocks,
->> phy once the link enters L1ss.
-> It sounds like both options turn off the clocks and PHY.  But
-> apparently they do not look the same to the NVMe endpoint?  I guess
-> NVMe is in D3cold for 1), but it's in D0 for 2), right?
->
->> Can you please suggest us any other possible solutions to meet NVMe
->> requirement (That is to keep the link active during suspend) and the
->> Qcom platform requirement (that is to turn off all the clocks to
->> allow a lower possible power state)? Qcom PCIe controller is
->> compatible with v3.1 specification only.
-> The PCIe spec clearly envisions Refclk being turned off
-> (sec 5.5.3.3.1) and PHYs being powered off (sec 5.5.3.2) while in
-> L1.2.
->
-> I've been assuming L1.2 exit (which includes Refclk being turned on
-> and PHYs being powered up) is completely handled by hardware, but it
-> sounds like the Qcom controller needs software assistance which fields
-> an interrupt when CLKREQ# is asserted and turns on Refclk and the
-> PHYs?
->
-> 5.5.3 does say "All Link and PHY state must be maintained during L1.2,
-> or must be restored upon exit using implementation specific means",
-> and maybe Qcom counts as using implementation specific means.
->
-> I *am* concerned about whether software can do the L1.2 exit fast
-> enough, but the biggest reason I'm struggling with this is because
-> using the syscore framework to work around IRQ affinity changes that
-> happen late in suspend just seems kind of kludgy and it doesn't seem
-> like it fits cleanly in the power management model.
->
-> Bjorn
+>>> So the answer to the "reg needed?" is what? You have unit address but no
+>>> reg, so this is not correct.
+>> 
+>> Not needed in the reset-controller node, but needed in its parent node. 
+> 
+> We do not talk about parent node. Rob's question was in this bindings.
+> Is this document a binding for the parent node or for this node?
 
-Bjorn,
+This node. So not needed.
 
-Can you please suggest any another way to work around IRQ affinity changes.
+> 
+>> I am sorry
+>> for missing description to point it out in the bindings. I will rewrite all bindings
+>> for the next version. Unit address here should be deleted.
+>> 
+>>>
+>>>> 			starfive,assert-offset = <0x2F8>;
+>>>> 			starfive,status-offset= <0x308>;
+>>>> 			starfive,nr-resets = <JH7110_SYSRST_END>;
+>>>> 		};
+>>>> 	};
+>>>>
+>>>> In this case, we get the memory mapped space through the parent node with syscon
+>>>> APIs. You can see patch 13 for detail.
+>>>>
+>>>> static int reset_starfive_register(struct platform_device *pdev, const u32 *asserted)
+>>>> {
+>>>
+>>>
+>>> (...)
+>>>
+>>>>
+>>>>>
+>>>>>> +
+>>>>>> +  "#reset-cells":
+>>>>>> +    const: 1
+>>>>>> +
+>>>>>> +  starfive,assert-offset:
+>>>>>> +    description: Offset of the first ASSERT register
+>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>> +
+>>>>>> +  starfive,status-offset:
+>>>>>> +    description: Offset of the first STATUS register
+>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>
+>>>>> These can't be implied from the compatible string?
+>> 
+>> Definitely can. We do this is for simplifying the reset driver.
+> 
+> The role of the bindings is not to simplify some specific driver in some
+> specific OS...
+> 
+>> Otherwise, we may need to define more compatibles because there
+>> are multiple reset blocks in JH7110. Another case can be found at
+>> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/reset/altr,rst-mgr.yaml
+> 
+> And why is this a problem? You have different hardware, so should have
+> different compatibles. Otherwise we would have a compatible
+> "all,everything" and use it in all possible devices.
 
-Thanks & Regards,
+Okay, I get it. Thanks a lot.
 
-Krishna Chaitanya.
-
+Best regards,
+Hal
