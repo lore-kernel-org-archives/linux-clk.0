@@ -2,88 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1502EC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 12:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4516FC43217
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 13:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbiJMMM7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 08:12:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
+        id S229874AbiJMNOh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Oct 2022 09:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiJMMM6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 08:12:58 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54434F53DC
-        for <linux-clk@vger.kernel.org>; Thu, 13 Oct 2022 05:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=V3ttPE0OWRpiM7P8jLqcMA3oC3ic
-        nW/le1crg3SvzN4=; b=ZLvHdjykFpJhYQxeAANbZ504VP9SXqFNeWgAO7zo4OAn
-        Mlr/6G17SwhKvUN6Wq9zUo/Ul4SABK79W7pHWXtbula/IfTZwmvtc3xb+VPGu30G
-        4h+WZANchVtDy+2TWxwKcK/tU0ZmTjaJEJpqXMwAwcunEj7rQV5LH6pBl6z5jos=
-Received: (qmail 1098858 invoked from network); 13 Oct 2022 14:12:55 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Oct 2022 14:12:55 +0200
-X-UD-Smtp-Session: l3s3148p1@mJ3XbenqXYIucrUX
-Date:   Thu, 13 Oct 2022 14:12:54 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a779g0: Add RPC-IF clock
-Message-ID: <Y0gAxsDGvuGkcD5h@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S229742AbiJMNOf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 09:14:35 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE6714D8D8;
+        Thu, 13 Oct 2022 06:14:34 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id sc25so3772145ejc.12;
+        Thu, 13 Oct 2022 06:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGUo79V8IknEK9RaV+1rr5dfMkYi9KkvLOC/DC9705Q=;
+        b=AVen059q46QGaA+8FXo1xeVtCkArAxsMnZBK5w7Ry+FszVgIdYDCyXZkSlXU0yY5bw
+         hN8oOJWkxYwbb4NkjupmcmuddUwq683rib3T/pzH3Fl/c+KwaxKCLolw+MOaHSlr06SR
+         ZGLVYXYxr+cfvB7t2Xk22h5wHVYorLFm6n6Gkq2qlS9cno7Ufe1zXdImwp3qao74//+x
+         o21OK2caMqf6E3DGYfe2b/nR5I7WfTfxLNrNswQQB815OBuIyKoQ48rWNnbq70H4slrc
+         SRVG1YFyeuD0wt8g64Q/3j31qhk6+wnmfFL1NvYxsxHTE45hrql5/OaW68YYRqvM4gb0
+         +Onw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sGUo79V8IknEK9RaV+1rr5dfMkYi9KkvLOC/DC9705Q=;
+        b=wSS+PtL8+WaMmqoHglzILAai4HwoCDxibnDR7gstxpxSslm1Qwmla6WLDzQ2JxPIU0
+         +UPHemiiJUBhYQuuIYRmVYVoPNHm+w6WbcvsmaXjLVyCUWEAjt/jG72NoOvtb+hcRK1d
+         JP7KJTi0ucaASjIhbNsvqC08gj/mFd2p5Hv2mZMm59gsRg7zcHElelJMkInY+XDPMDWj
+         WROZy5k4CRMKw6YNGZx7gGHSJKl2c4M6pCyuXttlMXkcfaaTGXzUIqvqggRDzvkLvImx
+         T0svmjWkOhGpC/bwKAawCdNraHQYp+z3n0D+o3Yce3/1n3Iwnm8bJUcgGOvtgIFXnIFX
+         ToZQ==
+X-Gm-Message-State: ACrzQf2jF//oSmb/PZ3UMALgI6LIPcSuCU1Q/Ev9eGd/8JtT//WWaX5x
+        d+M8JT1CFxODMkyF2jvUvls=
+X-Google-Smtp-Source: AMsMyM6LOGJYoYQIpmmtN2CdUldLXR3AacaXVeUiEDZltHjmtGeGxJJ8+SKyLWJ9CpR56YDPfAgWWw==
+X-Received: by 2002:a17:907:75dc:b0:78b:339:63c7 with SMTP id jl28-20020a17090775dc00b0078b033963c7mr26357963ejc.480.1665666872691;
+        Thu, 13 Oct 2022 06:14:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
+        by smtp.googlemail.com with ESMTPSA id kv11-20020a17090778cb00b0078d4e39d87esm2926083ejc.225.2022.10.13.06.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 06:14:32 -0700 (PDT)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     David Virag <virag.david003@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-References: <f0609c82e742865be753b67a0a6080f193f405ad.1665583328.git.geert+renesas@glider.be>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] clk: samsung: exynos7885: Correct "div4" clock parents
+Date:   Thu, 13 Oct 2022 17:13:40 +0200
+Message-Id: <20221013151341.151208-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.38.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="avvEzddlTE9n6nSi"
-Content-Disposition: inline
-In-Reply-To: <f0609c82e742865be753b67a0a6080f193f405ad.1665583328.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+"div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
+2 to achieve a by 4 division, thus their parents are the respective
+"div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
+This leads to the kernel thinking "div4"s and everything under them run
+at 2x the clock speed. Fix this.
 
---avvEzddlTE9n6nSi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
+Signed-off-by: David Virag <virag.david003@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos7885.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed, Oct 12, 2022 at 04:03:44PM +0200, Geert Uytterhoeven wrote:
-> Add the module clock used by the SPI Multi I/O Bus Controller (RPC-IF)
-> on the Renesas R-Car V4H (R8A779G0) SoC.
->=20
-> While at it, fix table alignment in the definition of the related
-> RPCSRC internal clock.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
+index a7b106302706..368c50badd15 100644
+--- a/drivers/clk/samsung/clk-exynos7885.c
++++ b/drivers/clk/samsung/clk-exynos7885.c
+@@ -182,7 +182,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+ 	DIV(CLK_DOUT_SHARED0_DIV3, "dout_shared0_div3", "fout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+-	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "fout_shared0_pll",
++	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "dout_shared0_div2",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+ 	DIV(CLK_DOUT_SHARED0_DIV5, "dout_shared0_div5", "fout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV5, 0, 3),
+@@ -190,7 +190,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+ 	DIV(CLK_DOUT_SHARED1_DIV3, "dout_shared1_div3", "fout_shared1_pll",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+-	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "fout_shared1_pll",
++	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "dout_shared1_div2",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
+ 
+ 	/* CORE */
+-- 
+2.35.1
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---avvEzddlTE9n6nSi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNIAMYACgkQFA3kzBSg
-KbZ4BhAAl/tlJvPwC92SAYFBB56lJm+JyyvOB+zZ3Upi3u14k0T9Qrs9pBQW86jE
-U/aOks0a8TB4IqOdtBsxlYbtRypvXowhbCBDa96rQGAEsneLGyS2YS9XILrAieCu
-Lmwma3rUqzFy+dzxYRD0K9kfJjlEyZohG3lrBgUTQBCh65IekrAXcw35sMlZxKt7
-7phgJfEV7Q3BMTDn0CbekXs4qMznell1EE0eguDGFGIqxOcdkpZKweechyLTeyAj
-Zo7+JACOXPSg2fLQaZZBb1bQCMxg7byoj5aBo8OStjPbqY5AS8op2AD4rNhdMRii
-zsFJl6eKUQSWQLNPj5DcXXiKHQcLH+RVMmRWZ0BlT3eAVn1LXG3XCRwoT8Ci8DAn
-XV/f+QdqwBqzmHjLO9rn0cDImMrnC4NLGWpSa1ck47N9PLkwfzBQ+sZIVDzDoVrs
-7sNxMXA6uT8NhrKKaNaC2FyvTanYcDNzp3CkIVUo3cooktL9R1Fxy6OuaJ91Sscx
-XkHn9Lw0GT5KVIxqCpDnGnsLyyKLGfljWHUzpohmamFlzUvuD9H4Dqg/mtXTCfeC
-FErTEkHhiccTT4lLs/vqoT4rOuydfhQ7vgbDtdS3roLK02cylj+LpMOoVlAQOjIj
-jTc2+WtBWWMX7HQ4frpjiux4/WbOp1xh2rzhVnrKQ/3dO9I0NqY=
-=tazu
------END PGP SIGNATURE-----
-
---avvEzddlTE9n6nSi--
