@@ -2,53 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0DBC4167D
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D8AC4321E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbiJMAYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58586 "EHLO
+        id S230122AbiJMA3x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231322AbiJMAYR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:24:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E055104534;
-        Wed, 12 Oct 2022 17:23:37 -0700 (PDT)
+        with ESMTP id S231200AbiJMA1d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:27:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F69EDCAE6;
+        Wed, 12 Oct 2022 17:25:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D75A7616F8;
-        Thu, 13 Oct 2022 00:23:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC678C433D6;
-        Thu, 13 Oct 2022 00:23:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 58701B81CEA;
+        Thu, 13 Oct 2022 00:25:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79288C433D6;
+        Thu, 13 Oct 2022 00:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620612;
-        bh=osX7mwTVn8RkbfXg8lO8nWwFXf2vqdKXKViykfEay54=;
+        s=k20201202; t=1665620699;
+        bh=gXnngsA66M7S05m7QK1AIEjykKSHGcIRBKoj9aJYtgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FpixK/JbFeR448NDyqrngey7tl1IQ5IBvye3/uLbMFxf9/Qc661xlRei+JreanoM4
-         JJ+A+TOX+GXIHEON6OLu/P/Pe01HyB92ZFq4yKDzhC3wwyXRt7NUvtC/EUteq00Ccm
-         pHLN0wcHpKgAMAQuB3naJEpcNB/k6+yVm2JKwUvEWNw/IGS+mXD4vBGmTYEJdNlJEY
-         Ax+fwEdBxtMQUmxGLCK6WFM32y14ARTXvqGqT4Wdw9/PA/yK1k3NCRTERHF4Yb7/Wg
-         wWL5Mr2JdXhc2OyyniS23MEAfYUub1oaW+qfhNGunkUcYZLBrMHzD2BtWHOj+b+JGS
-         7XWE06E7I7SKQ==
+        b=gCUnyWce7iBGGkV+ZyhZICwLzSap9ldVlaA/ADusnhSf28A2yAP1hbHu0l/Qg1JIM
+         OjDt3fUWmjxF0mii1DE74YI7Nlc+xioq19+Xw7QNsF0Hv56ZZwEIaHABLrX/iAnp4v
+         3kzOzXjmuWRLgCGGE+2IxDwGgJ1J7W5AoAGdz4Q0CVmfWR56HfKq6YOhGlor5CZfVy
+         hSzOiubwD3SiSf86xuHCEK96mQGrJd9adzTLYlv6/ixZLZT6KeYxQ92oK7I5slyxEM
+         HnLc4tTm8vBnQj4+hz9aqEwGY1+iFphBjG+S2hRH/lRCZprEe+UjX/L57QJ8UkzcEV
+         XWxnjPTFM+BzQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
-        Phil Elwell <phil@raspberrypi.com>,
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
         f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        maxime@cerno.tech, linux-clk@vger.kernel.org,
+        nsaenz@kernel.org, iivanov@suse.de, linux-clk@vger.kernel.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 47/47] clk: bcm2835: Round UART input clock up
-Date:   Wed, 12 Oct 2022 20:21:22 -0400
-Message-Id: <20221013002124.1894077-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 33/33] clk: bcm2835: Make peripheral PLLC critical
+Date:   Wed, 12 Oct 2022 20:23:32 -0400
+Message-Id: <20221013002334.1894749-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013002124.1894077-1-sashal@kernel.org>
-References: <20221013002124.1894077-1-sashal@kernel.org>
+In-Reply-To: <20221013002334.1894749-1-sashal@kernel.org>
+References: <20221013002334.1894749-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -56,124 +57,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: "Ivan T. Ivanov" <iivanov@suse.de>
+From: Maxime Ripard <maxime@cerno.tech>
 
-[ Upstream commit f690a4d7a8f66430662975511c86819dc9965bcc ]
+[ Upstream commit 6c5422851d8be8c7451e968fd2e6da41b6109e17 ]
 
-It was reported that RPi3[1] and RPi Zero 2W boards have issues with
-the Bluetooth. It turns out that when switching from initial to
-operation speed host and device no longer can talk each other because
-host uses incorrect UART baud rate.
+When testing for a series affecting the VEC, it was discovered that
+turning off and on the VEC clock is crashing the system.
 
-The UART driver used in this case is amba-pl011. Original fix, see
-below Github link[2], was inside pl011 module, but somehow it didn't
-look as the right place to fix. Beside that this original rounding
-function is not exactly perfect for all possible clock values. So I
-deiced to move the hack to the platform which actually need it.
+It turns out that, when disabling the VEC clock, it's the only child of
+the PLLC-per clock which will also get disabled. The source of the crash
+is PLLC-per being disabled.
 
-The UART clock is initialised to be as close to the requested
-frequency as possible without exceeding it. Now that there is a
-clock manager that returns the actual frequencies, an expected
-48MHz clock is reported as 47999625. If the requested baud rate
-== requested clock/16, there is no headroom and the slight
-reduction in actual clock rate results in failure.
+It's likely that some other device might not take a clock reference that
+it actually needs, but it's unclear which at this point. Let's make
+PLLC-per critical so that we don't have that crash.
 
-If increasing a clock by less than 0.1% changes it from ..999..
-to ..000.., round it up.
-
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
-[2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
-
-Cc: Phil Elwell <phil@raspberrypi.com>
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+Reported-by: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://lore.kernel.org/r/20220926084509.12233-1-maxime@cerno.tech
 Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
-Link: https://lore.kernel.org/r/20220912081306.24662-1-iivanov@suse.de
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 298763e78263..4eaece5cb3ae 100644
+index 178886823b90..20381b1c2695 100644
 --- a/drivers/clk/bcm/clk-bcm2835.c
 +++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -30,6 +30,7 @@
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -502,6 +503,8 @@ struct bcm2835_clock_data {
- 	bool low_jitter;
+@@ -1786,7 +1786,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.load_mask = CM_PLLC_LOADPER,
+ 		.hold_mask = CM_PLLC_HOLDPER,
+ 		.fixed_divider = 1,
+-		.flags = CLK_SET_RATE_PARENT),
++		.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
  
- 	u32 tcnt_mux;
-+
-+	bool round_up;
- };
- 
- struct bcm2835_gate_data {
-@@ -994,12 +997,34 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
- 	return temp;
- }
- 
-+static unsigned long bcm2835_round_rate(unsigned long rate)
-+{
-+	unsigned long scaler;
-+	unsigned long limit;
-+
-+	limit = rate / 100000;
-+
-+	scaler = 1;
-+	while (scaler < limit)
-+		scaler *= 10;
-+
-+	/*
-+	 * If increasing a clock by less than 0.1% changes it
-+	 * from ..999.. to ..000.., round up.
-+	 */
-+	if ((rate + scaler - 1) / scaler % 1000 == 0)
-+		rate = roundup(rate, scaler);
-+
-+	return rate;
-+}
-+
- static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
-+	unsigned long rate;
- 	u32 div;
- 
- 	if (data->int_bits == 0 && data->frac_bits == 0)
-@@ -1007,7 +1032,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 
- 	div = cprman_read(cprman, data->div_reg);
- 
--	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-+	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-+
-+	if (data->round_up)
-+		rate = bcm2835_round_rate(rate);
-+
-+	return rate;
- }
- 
- static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
-@@ -2144,7 +2174,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_UARTDIV,
- 		.int_bits = 10,
- 		.frac_bits = 12,
--		.tcnt_mux = 28),
-+		.tcnt_mux = 28,
-+		.round_up = true),
- 
- 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
- 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
+ 	/*
+ 	 * PLLD is the display PLL, used to drive DSI display panels.
 -- 
 2.35.1
 
