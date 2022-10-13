@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CB1C47089
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C2AC4167D
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbiJMAYd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:24:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56222 "EHLO
+        id S230452AbiJMAYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231149AbiJMAXw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:23:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 946F0123466;
-        Wed, 12 Oct 2022 17:22:08 -0700 (PDT)
+        with ESMTP id S231226AbiJMAYE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:24:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401C9123456;
+        Wed, 12 Oct 2022 17:22:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FE61616B6;
-        Thu, 13 Oct 2022 00:21:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED25FC433D6;
-        Thu, 13 Oct 2022 00:21:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CAF90616BC;
+        Thu, 13 Oct 2022 00:19:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1692BC433C1;
+        Thu, 13 Oct 2022 00:19:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620506;
-        bh=C7El9trPxMiStklp7uiGfwL+maeAvCDhRvisZCZ/KXU=;
+        s=k20201202; t=1665620342;
+        bh=GvZod3RFAjidyXSUoKZ273KLjuujQzygOSc6mBdthnY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=inKHqsyVolBi6vIEN+Gft3iD947TbAaSZuWQKCiB/JQkp345/yPGDMRMAPsGp4LSH
-         8QaeXPKY3QKgk9YLZ5obRN1NlyLP7mClXrXVkb1EkN4zsfA+bF+hcRTX4xZ6ELGds3
-         k/ITaMcr1jEPu7g37go0zPfkuhJyVSfZ6QiwsvpkraCCATLJFzaxrhiNhZn/ulrjec
-         gGT1zHbfmQzRkc5vLmIUkF6dpbVhI+YFfvvDhc2ui1NcypBUVVKrjhxC1Z3WG6528a
-         4nOFUyx5dJhmXkeazuEgDJLTZy2zEhbvWV5KiIeNC2CYHZho7lXDtROTYMJVgu2Qfk
-         4gnDRvhjNmVYw==
+        b=S+oTOP0viQ+5ZFwjjNr4bY0xIq+nf3lqiKh6UOOFV3Kzmdsr9d3zl/9xyJZ2dlSTa
+         eJ+mM7pas6+eGFxl443NEZ6mJoI4UCMoSs1WQKE2BZDXTf6PR8QQfSeO0/ENk6bo4/
+         izB5g+JCYj8OW+wQdaXqfxjXxKZULOaaCugAQ0O+90h1X56DDQbmj5iGwgy/3jO417
+         7emCRWVSI2syWZbwaYwKK4RktChpmwK2zPpHYa2GnFC7LJpUiK4T67XxnKemH5W9kH
+         +/FNLJq2TFIBZnxattLhT2cQm89PritEjH+GSRgTExi9I3aZWmrxEAqQuNJ54StJ0z
+         +qlhEJYz7FAUA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
@@ -39,12 +39,12 @@ Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
         michal.simek@xilinx.com, m.tretter@pengutronix.de,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 04/47] clk: zynqmp: pll: rectify rate rounding in zynqmp_pll_round_rate
-Date:   Wed, 12 Oct 2022 20:20:39 -0400
-Message-Id: <20221013002124.1894077-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.19 05/63] clk: zynqmp: pll: rectify rate rounding in zynqmp_pll_round_rate
+Date:   Wed, 12 Oct 2022 20:17:39 -0400
+Message-Id: <20221013001842.1893243-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013002124.1894077-1-sashal@kernel.org>
-References: <20221013002124.1894077-1-sashal@kernel.org>
+In-Reply-To: <20221013001842.1893243-1-sashal@kernel.org>
+References: <20221013001842.1893243-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -92,7 +92,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 15 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 036e4ff64a2f..bc066f300345 100644
+index 91a6b4cc910e..0d3e1377b092 100644
 --- a/drivers/clk/zynqmp/pll.c
 +++ b/drivers/clk/zynqmp/pll.c
 @@ -102,26 +102,25 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
