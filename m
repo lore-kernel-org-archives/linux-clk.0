@@ -2,108 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4516FC43217
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 13:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F832C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 13:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbiJMNOh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 09:14:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50248 "EHLO
+        id S229977AbiJMNTB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Oct 2022 09:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiJMNOf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 09:14:35 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE6714D8D8;
-        Thu, 13 Oct 2022 06:14:34 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id sc25so3772145ejc.12;
-        Thu, 13 Oct 2022 06:14:34 -0700 (PDT)
+        with ESMTP id S229972AbiJMNS5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 09:18:57 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAEF4E18A;
+        Thu, 13 Oct 2022 06:18:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sGUo79V8IknEK9RaV+1rr5dfMkYi9KkvLOC/DC9705Q=;
-        b=AVen059q46QGaA+8FXo1xeVtCkArAxsMnZBK5w7Ry+FszVgIdYDCyXZkSlXU0yY5bw
-         hN8oOJWkxYwbb4NkjupmcmuddUwq683rib3T/pzH3Fl/c+KwaxKCLolw+MOaHSlr06SR
-         ZGLVYXYxr+cfvB7t2Xk22h5wHVYorLFm6n6Gkq2qlS9cno7Ufe1zXdImwp3qao74//+x
-         o21OK2caMqf6E3DGYfe2b/nR5I7WfTfxLNrNswQQB815OBuIyKoQ48rWNnbq70H4slrc
-         SRVG1YFyeuD0wt8g64Q/3j31qhk6+wnmfFL1NvYxsxHTE45hrql5/OaW68YYRqvM4gb0
-         +Onw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sGUo79V8IknEK9RaV+1rr5dfMkYi9KkvLOC/DC9705Q=;
-        b=wSS+PtL8+WaMmqoHglzILAai4HwoCDxibnDR7gstxpxSslm1Qwmla6WLDzQ2JxPIU0
-         +UPHemiiJUBhYQuuIYRmVYVoPNHm+w6WbcvsmaXjLVyCUWEAjt/jG72NoOvtb+hcRK1d
-         JP7KJTi0ucaASjIhbNsvqC08gj/mFd2p5Hv2mZMm59gsRg7zcHElelJMkInY+XDPMDWj
-         WROZy5k4CRMKw6YNGZx7gGHSJKl2c4M6pCyuXttlMXkcfaaTGXzUIqvqggRDzvkLvImx
-         T0svmjWkOhGpC/bwKAawCdNraHQYp+z3n0D+o3Yce3/1n3Iwnm8bJUcgGOvtgIFXnIFX
-         ToZQ==
-X-Gm-Message-State: ACrzQf2jF//oSmb/PZ3UMALgI6LIPcSuCU1Q/Ev9eGd/8JtT//WWaX5x
-        d+M8JT1CFxODMkyF2jvUvls=
-X-Google-Smtp-Source: AMsMyM6LOGJYoYQIpmmtN2CdUldLXR3AacaXVeUiEDZltHjmtGeGxJJ8+SKyLWJ9CpR56YDPfAgWWw==
-X-Received: by 2002:a17:907:75dc:b0:78b:339:63c7 with SMTP id jl28-20020a17090775dc00b0078b033963c7mr26357963ejc.480.1665666872691;
-        Thu, 13 Oct 2022 06:14:32 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
-        by smtp.googlemail.com with ESMTPSA id kv11-20020a17090778cb00b0078d4e39d87esm2926083ejc.225.2022.10.13.06.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 06:14:32 -0700 (PDT)
-From:   David Virag <virag.david003@gmail.com>
-Cc:     David Virag <virag.david003@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1665667129; x=1697203129;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Hy4RTQp6FBT2qM7enTnKF2hQg8bH2wkse5/kreZcno8=;
+  b=fJk8U9306rDzCczxk/Y5PDorAd8FKkTitH8r2qvLwpQrFj6jzaItKJxa
+   Qq5icWZQ0gKbjhEBl9jHDm29uUl6O5hr61P5Wl7PaygMuLypj/79wmCOc
+   AQcKbKvZRuXxS5V/gPwBmpgFTrtOhZtRNxdDHOFq97eAAUSAxWUkAjpUi
+   i7+wqSSXKfrUnFOmEbTH088dnjMlgShcMoKmPmCKRBQeIhUtny/5t08xP
+   DnE6lASknp8S7kSQ87Mz5N61rZsEnedfXLUPz1eqqiWljc/WZGoir54Ai
+   rJXx8V9xTrAya6dfSt/yd09QYcLKBP4v7uXPiNfrEqciWTzaChDdvjFLR
+   A==;
+X-IronPort-AV: E=Sophos;i="5.95,180,1661810400"; 
+   d="scan'208";a="26736834"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 13 Oct 2022 15:18:46 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Thu, 13 Oct 2022 15:18:46 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Thu, 13 Oct 2022 15:18:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1665667126; x=1697203126;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Hy4RTQp6FBT2qM7enTnKF2hQg8bH2wkse5/kreZcno8=;
+  b=Eufre5KRO0OK/kJPQIBQZPdEqC7ZaG8P7Z5E5d+RbVPM9nB6lhn2IFi0
+   6kLwkSF9huTy8ADkOE5BafxArfs26mkSX6YTFiPfVPoKlAeYtscnEP32U
+   JFjitp4ycE2LPT1eHupmTg5amM0P8AFP+oWrTOS0iLH1MayI0fK4QuxhF
+   Aa6q/+5Lo9CWnDtq3RIJJQL9jEE5R5yK8H9I/GrhzGjVyVOjxm5feMiha
+   1IMOQe2JBM3jvHgJTWlIwv0J8IQ2cLu88gyHeka9fQyj/Cul2vnyP1MT0
+   f7tV3r8qgMxOls+nyp+k0G4iibMHLLpkk2dt4gsxRqw333AKsAzvJnElw
+   w==;
+X-IronPort-AV: E=Sophos;i="5.95,180,1661810400"; 
+   d="scan'208";a="26736833"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 13 Oct 2022 15:18:46 +0200
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id DF9D8280056;
+        Thu, 13 Oct 2022 15:18:45 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] clk: samsung: exynos7885: Correct "div4" clock parents
-Date:   Thu, 13 Oct 2022 17:13:40 +0200
-Message-Id: <20221013151341.151208-1-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.38.0
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/5] i.MX6Q IPP DI support
+Date:   Thu, 13 Oct 2022 15:18:34 +0200
+Message-Id: <20221013131839.1365394-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-"div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
-2 to achieve a by 4 division, thus their parents are the respective
-"div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
-This leads to the kernel thinking "div4"s and everything under them run
-at 2x the clock speed. Fix this.
+Hi,
 
-Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
- drivers/clk/samsung/clk-exynos7885.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+this series add support for IPP_DI[01] clock input.
+1st patch is just preparation to handle anaclk1/anaclk2 similar to osc &
+friends.
+2nd & 3rd patch adds the clock to bindings and device tree.
+4th patch adds the clock to the clk tree and also adds support for IPU
+clock source.
+5th patch adds the pinctrl defines for imx6q (only). I was only able to test
+this on pad DA14 on imx6q, but not on imx6dl.
 
-diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
-index a7b106302706..368c50badd15 100644
---- a/drivers/clk/samsung/clk-exynos7885.c
-+++ b/drivers/clk/samsung/clk-exynos7885.c
-@@ -182,7 +182,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
- 	DIV(CLK_DOUT_SHARED0_DIV3, "dout_shared0_div3", "fout_shared0_pll",
- 	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
--	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "fout_shared0_pll",
-+	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "dout_shared0_div2",
- 	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
- 	DIV(CLK_DOUT_SHARED0_DIV5, "dout_shared0_div5", "fout_shared0_pll",
- 	    CLK_CON_DIV_PLL_SHARED0_DIV5, 0, 3),
-@@ -190,7 +190,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
- 	DIV(CLK_DOUT_SHARED1_DIV3, "dout_shared1_div3", "fout_shared1_pll",
- 	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
--	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "fout_shared1_pll",
-+	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "dout_shared1_div2",
- 	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
- 
- 	/* CORE */
+Putting all together it is possible to use those IPP DI0/1 clocks as input
+for IPU pixel clock.
+
+Best regards,
+Alexander
+
+Alexander Stein (5):
+  ARM: dts: imx6qdl: add clocks to clock controller node
+  dt-bindings: clock: Add ipp_di0 and ipp_di1 clocks to i.MX6Q bindings
+  ARM: dts: imx6qdl: add missing ipp_di clocks to clock controller node
+  clk: imx6q: Add ipp-di0 and ipp-di1 clocks
+  ARM: dts: imx6q: add ipp_di0 and ipp_di1 pad configuration
+
+ .../bindings/clock/imx6q-clock.yaml           |  4 ++
+ arch/arm/boot/dts/imx6dl-pinfunc.h            |  3 ++
+ arch/arm/boot/dts/imx6q-pinfunc.h             |  3 ++
+ arch/arm/boot/dts/imx6qdl.dtsi                | 38 +++++++++++++++++--
+ drivers/clk/imx/clk-imx6q.c                   | 20 ++++++----
+ include/dt-bindings/clock/imx6qdl-clock.h     |  4 +-
+ 6 files changed, 60 insertions(+), 12 deletions(-)
+
 -- 
-2.35.1
+2.25.1
 
