@@ -2,85 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6531DC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 15:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66378C41535
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 18:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229475AbiJMPR3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 11:17:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
+        id S230447AbiJMSEp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Oct 2022 14:04:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiJMPR2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 11:17:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1BCC149F;
-        Thu, 13 Oct 2022 08:17:27 -0700 (PDT)
+        with ESMTP id S231209AbiJMSDo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 14:03:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD91160EDC;
+        Thu, 13 Oct 2022 11:02:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C9CA6183C;
-        Thu, 13 Oct 2022 15:17:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E8B7C433C1;
-        Thu, 13 Oct 2022 15:17:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F248BB82022;
+        Thu, 13 Oct 2022 17:55:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97446C433D6;
+        Thu, 13 Oct 2022 17:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665674246;
-        bh=yatlLHSqxUtoD/+/RComVTMF7cyfCFtUK70jh+/Y9Uo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RB8lMH2hYP38YlLrXrCjPDqpjWmw50pNmZ/FDXhc0H1/QrFnAd7uUwk6xYhvF7Kq0
-         ncH7WKj7vDvdXHbMDiwA/KRvN8M2J8jESXLB85tVkBXKoYwi/v1W0eqTMbEr7IK+jA
-         VWiCsg2DCDyC5muKC2bmNJc5adbmKARJv+0E7KLfTSt2V3j5HGd7Ldxtm+K0vy/lOl
-         mPyxpyHuUNkH/nDRsh30fIhllowV505ra9GYb0h9MKjBkF3nAIYDbUbuB+kqbyRUxc
-         FFju9UcX3ke8DiOVxri/grlyjMKpV1MCXZRT4n+plYDrlBX6FswdKRMKsHTFSEFk3d
-         SToMZnvLpr0Cw==
-Date:   Thu, 13 Oct 2022 08:17:25 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>
-Subject: Re: [RFC PATCH v3 1/6] dpll: Add DPLL framework base functions
-Message-ID: <20221013081725.501b0f58@kernel.org>
-In-Reply-To: <Y0e2Zn4pbhPnKGQJ@nanopsycho>
-References: <20221010011804.23716-1-vfedorenko@novek.ru>
-        <20221010011804.23716-2-vfedorenko@novek.ru>
-        <Y0PjULbYQf1WbI9w@nanopsycho>
-        <24d1d750-7fd0-44e2-318c-62f6a4a23ea5@novek.ru>
-        <Y0UqFml6tEdFt0rj@nanopsycho>
-        <Y0UtiBRcc8aBS4tD@nanopsycho>
-        <ecf59dda-2d6a-2c56-668b-5377ae107439@novek.ru>
-        <Y0ZiQbqQ+DsHinOf@nanopsycho>
-        <9a3608cf-21bb-18b1-796a-7325a613b641@novek.ru>
-        <Y0e2Zn4pbhPnKGQJ@nanopsycho>
+        s=k20201202; t=1665683717;
+        bh=nxgfWbmszJW/pcNngF+ADL4BRBz+QPL7HdS6m/seybw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lAn3wQCTC5ZT0cF/8KoWCEfjdzLn+JUQ/CwYKkEDGUA+PfFV3uiswKXpQzXonn2z3
+         5DR37REMXazF507SZLlH/Mc2P3QEOeObMwekWxBPPoFOw2ZF7QrvwMuGRK4ygKUeeX
+         PEWqPVa6rdWnvfmSbnkvvKc6c8UxQBJQMcV+b5dzIf0hRwYNJ1D7TMTxx3/5g7G+5x
+         vm5VpL5SLOYVFSlON/zpefA9E6XWhvyZk0kMjgQCeYi63mR5syokW3krL1faOZB76U
+         s3qHr6OAVMEI6Y8xG5QuxTT0dOz+htKq+PqzBAXOiRh2DjpdbsL5pvlFIYcyyaiHEm
+         2/3nOD4c2vKEQ==
+Date:   Thu, 13 Oct 2022 13:55:16 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Conor Dooley <conor@kernel.org>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.0 20/67] clk: microchip: mpfs: add MSS pll's
+ set & round rate
+Message-ID: <Y0hRBNz4opKb09Ei@sashalap>
+References: <20221013001554.1892206-1-sashal@kernel.org>
+ <20221013001554.1892206-20-sashal@kernel.org>
+ <93982EAD-5EE5-4096-9AD6-BFA76905F1BB@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <93982EAD-5EE5-4096-9AD6-BFA76905F1BB@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 13 Oct 2022 08:55:34 +0200 Jiri Pirko wrote:
->> AFAIU, some mux devices are not smart enough to make a decision suitable for
->> autoselect for the pins they have. In this case the autoselect process is
->> done in the DPLL device, which selects mux and not the pin directly. At the
->> same time there could be muxes that are smart enough to make a decision, and
->> it will be autoselect on top of autoselect (and several more layers) and it
->> doesn't sound great to me. I believe Arkadiusz will explain the mux a bit
->> better.  
-> 
-> From what you write in this reply, I have a feeling that these details
-> are not really interesting for user to see. So I tend to lean forward to
-> abstract this out and leave the details to HW/FW/driver.
+On Thu, Oct 13, 2022 at 06:29:03AM +0100, Conor Dooley wrote:
+>Not a fix, NAK. Same for 5.19.
 
-Are you saying we don't need to model MUXes?  Topology of the signals
-imposes restrictions on the supported configuration, it's not something
-you can "abstract out in the FW".
+Ack
 
-My thinking was we can let the user ignore it and have the core figure
-out the configuration of the muxes if users asks for a pin behind a mux.
-But it's better if the mux is visible so that it's clear which signals
-can't be selected simultaneously. (IIRC Arkadiusz may have even had
-muxes shared between DPLLs :S)
-
-Anyway, I may just be confused about the state of the series because
-most of the points you brought up were already discussed. I guess you
-were right that off-list reviews are a bad idea :(
+-- 
+Thanks,
+Sasha
