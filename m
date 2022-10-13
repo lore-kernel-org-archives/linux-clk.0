@@ -2,153 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE13C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 09:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D72C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 09:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbiJMJNt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 05:13:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
+        id S229629AbiJMJRX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Oct 2022 05:17:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbiJMJNg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 05:13:36 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E6F171CD5;
-        Thu, 13 Oct 2022 02:13:25 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9AB5E5C0088;
-        Thu, 13 Oct 2022 05:13:24 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 13 Oct 2022 05:13:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1665652404; x=
-        1665738804; bh=VNQ+rzhIH5hRx9r2piVwTWvHL+idSBOUdFscI6rLzxE=; b=J
-        CA5Tta1qADmnwMO1RYaiaSS2ehgaXa7BsEORpl1pfzmZJLTokz8L92qW+AeWqt5E
-        HY7IzdfYmVnoSDrr8smGWFOHJMcUtm7QRVdCEyDmR96IS/kuVy5fWGNISI3bCnQA
-        Um2obI0kd/rJEzYDxVgPnvBokcbRCVXW3FFq8Xlu6ILAoj5fl9aexyTCUn9R2+v7
-        sncBr1xe+L5Zor1QFn4ixeWTnPPcKSVkkZKKfrK0TLsw+UaqbeooVuv8Rp7G9R8u
-        vtOsbf3l8eAJC7E1KCaPelWisDRzUk+7ZlHw+DIGyBFf1PjfASsbsSDrzeAsHayT
-        l6djrAxq0vo2r3gf/mKyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1665652404; x=
-        1665738804; bh=VNQ+rzhIH5hRx9r2piVwTWvHL+idSBOUdFscI6rLzxE=; b=i
-        WWqbhiB0MM6zxO5lHeriMLEd4LsvsxL0XAAhd1eKb1wJ4ia+tFEdMTceGn5G532V
-        +kFhXvlyzgIQFMoHkWArUSHw6mZRFTHUJ8ZLxBPQEb5QHOxJOt5k9X5o7QN8b7Vj
-        egVmLwu4k57qQOEOPF3vzCuecTALE8IgWvdW75lwMRP2DhffnXLD4OiCngIHn6Me
-        BfWoKKc4Wqsp2PlIQVGOF8KIxxJs/tmV7/+J56Y5oh269ALQSONwEvo9qqAMkHS2
-        YNujalNYD6cPIjbeFPOvsVuTaGq2y9baNyJfNnCT2e57nRw4YveFnkc3wWAhg3DJ
-        0WFjNdV/qXndfolhb3ZnQ==
-X-ME-Sender: <xms:tNZHY5q3jWfMwIGBGd1k5daD_KcxlYwbJNxGidsbLRdUtbFnMilFlA>
-    <xme:tNZHY7qkOYDfqKUg0oOnSqHNnuDyBzzJ3eaB4rEUl9GdFl7bGXcJcbAibxVxyTuDm
-    QEt2k0vYBLwHZdECZ0>
-X-ME-Received: <xmr:tNZHY2OXYoE014XclLRhc7BIzTiHTchSXpryQyxQniSPfYK5p0AlpSCnLiQfdKf2R97pmiIwNXAklFjG4wrGIR4duQV8TADdjEM5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeektddgudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepudduudfhveejteefgedvffdvvedvjedugedukeejhedtlefhffevtefh
-    jeeltdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:tNZHY07TJFnGdQ2GYLE_A4tnA_yXJXfroNAk2Mwl9PtpABz_oX0BMw>
-    <xmx:tNZHY47QsbbLWVvPNDm6s8Vkzo0MtC76Wjb8Ym39hEH2dGnyOSMHMw>
-    <xmx:tNZHY8j843JiquTWKHWkgdT_LpxSAaYrfVs3YyxoMoDZzUH1yisgig>
-    <xmx:tNZHY0qTbx4yVWt88oibjSm7646HdzT-VBe2uf0z8PelnJ992dh6pg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Oct 2022 05:13:24 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Thu, 13 Oct 2022 11:13:14 +0200
-Subject: [PATCH v3 7/7] drm/vc4: Make sure we don't end up with a core clock too high
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20220815-rpi-fix-4k-60-v3-7-fc56729d11fe@cerno.tech>
-References: <20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech>
-In-Reply-To: <20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
+        with ESMTP id S229513AbiJMJRW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 05:17:22 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E925FBC;
+        Thu, 13 Oct 2022 02:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1665652637; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QfKF6P//aPtt3yXkddZGb8gQhNXBSYeBQmboxbZCJlU=;
+        b=Ip0NSVDD1AM8ZgtvW/VD87fTHoRfAC5ZKR4g5vCDTryKzaGimlZJoh+FC5CRuxEyrYuyOV
+        zFio5aFohd39Q+mWiqCJyJxM7qdFhkFObmPHLG9/o7LYmzxzlFG4La4/m47ImlJB8FwZ5u
+        kKRpu9SSwogossEIyH7SeLGOjn8wS2U=
+Date:   Thu, 13 Oct 2022 10:17:04 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 7/8] serial: 8250/ingenic: Add support for the
+ JZ4750/JZ4755 SoCs
+To:     Siarhei Volkau <lis8215@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+        kbuild-all@lists.01.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Emma Anholt <emma@anholt.net>, Stephen Boyd <sboyd@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime@cerno.tech>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        Dom Cobley <popcornmix@gmail.com>,
-        dri-devel@lists.freedesktop.org
-X-Mailer: b4 0.11.0-dev-7da52
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1996; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=ld8ipA25nQnVtvJwO2QQQ+Hw9FjcRy6PgrDDJON91qg=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMnu15awBd7JOJN9WGGF/I1fsz+veZC6vuVV87XUim39X5P+
- FUws6ihlYRDjYpAVU2SJETZfEndq1utONr55MHNYmUCGMHBxCsBEbPgZ/if9c0o5cjY0bNOJWbaHGK
- 9unPOG7f3CKt/EQ4G/lF3M7woyMjy/He4seO3P07o7nRvy/9bNEWrpPrv292Gro99U7ziWPWcEAA==
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>
+Message-Id: <GSPOJR.M4XZ4D03G60F@crapouillou.net>
+In-Reply-To: <bb9f79d4-82a9-4790-b849-d517333ea2d4@app.fastmail.com>
+References: <20221009181338.2896660-8-lis8215@gmail.com>
+        <202210100607.YdxoR0tD-lkp@intel.com>
+        <CAKNVLfaFvge4A8-QUzeq-JManpuYMGvyHXCJi-ew==CWN8-M=A@mail.gmail.com>
+        <bb9f79d4-82a9-4790-b849-d517333ea2d4@app.fastmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following the clock rate range improvements to the clock framework,
-trying to set a disjoint range on a clock will now result in an error.
+Hi,
 
-Thus, we can't set a minimum rate higher than the maximum reported by
-the firmware, or clk_set_min_rate() will fail.
+Le jeu., oct. 13 2022 at 08:46:39 +0200, Arnd Bergmann <arnd@arndb.de>=20
+a =C3=A9crit :
+> On Thu, Oct 13, 2022, at 8:37 AM, Siarhei Volkau wrote:
+>>  =D0=BF=D0=BD, 10 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 01:29, kernel =
+test robot=20
+>> <lkp@intel.com>:
+>>>  config: ia64-allyesconfig
+>>>  config: arm64-randconfig-r035-20221010
+>>=20
+>>>   > 142  #define CGU_REG_CPCCR   ((void *)CKSEG1ADDR(0x10000000))
+>>=20
+>>>  0-DAY CI Kernel Test Service
+>>=20
+>>  I know CKSEG1ADDR is MIPS specific, might be it needed to disable=20
+>> COMPILE_TEST
+>>  on the driver?
+>>  Since early syscon isn't mainlined yet I don't see any other way at=20
+>> the moment.
+>>=20
+>>  Any suggestions on that, folks?
+>=20
+> This looks like some setup that belongs into the bootloader. If you=20
+> are
+> handing over the console from bootloader to kernel, the hardware=20
+> should
+> already be in a working state, with no need to touch it during early
+> boot.
+>=20
+> If you are dealing with broken bootloaders that are not under your=20
+> control,
+> having this code in the architecture specific early boot as a fixup
+> would be better than putting it into the driver.
 
-Thus we need to clamp the rate we are about to ask for to the maximum
-rate possible on that clock.
+Agreed. I am not fond of having a driver poking into an unrelated=20
+subsystem's memory area.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_kms.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Just disable the divider in ingenic_fixup_fdt() in=20
+arch/mips/generic/board-ingenic.c.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index b45dcdfd7306..d241620fd5a7 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -397,8 +397,8 @@ static void vc4_atomic_commit_tail(struct drm_atomic_state *state)
- 	if (vc4->is_vc5) {
- 		unsigned long state_rate = max(old_hvs_state->core_clock_rate,
- 					       new_hvs_state->core_clock_rate);
--		unsigned long core_rate = max_t(unsigned long,
--						500000000, state_rate);
-+		unsigned long core_rate = clamp_t(unsigned long, state_rate,
-+						  500000000, hvs->max_core_rate);
- 
- 		drm_dbg(dev, "Raising the core clock at %lu Hz\n", core_rate);
- 
-@@ -432,14 +432,17 @@ static void vc4_atomic_commit_tail(struct drm_atomic_state *state)
- 	drm_atomic_helper_cleanup_planes(dev, state);
- 
- 	if (vc4->is_vc5) {
--		drm_dbg(dev, "Running the core clock at %lu Hz\n",
--			new_hvs_state->core_clock_rate);
-+		unsigned long core_rate = min_t(unsigned long,
-+						hvs->max_core_rate,
-+						new_hvs_state->core_clock_rate);
-+
-+		drm_dbg(dev, "Running the core clock at %lu Hz\n", core_rate);
- 
- 		/*
- 		 * Request a clock rate based on the current HVS
- 		 * requirements.
- 		 */
--		WARN_ON(clk_set_min_rate(hvs->core_clk, new_hvs_state->core_clock_rate));
-+		WARN_ON(clk_set_min_rate(hvs->core_clk, core_rate));
- 
- 		drm_dbg(dev, "Core clock actual rate: %lu Hz\n",
- 			clk_get_rate(hvs->core_clk));
+Cheers,
+-Paul
 
--- 
-b4 0.11.0-dev-7da52
+
