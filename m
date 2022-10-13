@@ -2,116 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E990CC43219
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 06:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A4DC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 06:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiJMGtU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 02:49:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45588 "EHLO
+        id S229529AbiJMGxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Oct 2022 02:53:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbiJMGtD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 02:49:03 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96112146384
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2022 23:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1665643737;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yW/6V1qRcDmA37h7BKc8WxQSHaHKLLO2foHGntzZ9N4=;
-        b=oqts3gZXDybtQLXgKB3l3e/izVkY53vCSb16Vi9jFmp6S6YqCHXc4Yj8uYtJZ2luRF2fY4
-        Q91UhyVZKM/HBrI/iLUM2GzmVfIOPIeBBseKgIdRzYUqN9I7fDGLaHr9O7KA2Utdny1EmI
-        HcYhQYF4CY7Ww0toRkYYCzklNVRuXZhGDOBhqBu+ECr/XfoOJrKCDKposl9UuJYAXOuCLX
-        mMj/ekCc/0t0Xe1XfPM4O/w8bvA4QOVtrLtNCrd+Q6B/Bf1DwpUhKyo7yu88Gkzp9J8/VH
-        bQU7SVwFUnob2H8UxLSXih2lNbtppHqjlaZ+QsWOLZokPUZtiEHcpKeC/5v/Cw==
-Received: from mail.maxlinear.com (174-47-1-84.static.ctl.one [174.47.1.84])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- us-mta-562-APN1wHB2N8KLM2CyH0UUIw-1; Thu, 13 Oct 2022 02:48:48 -0400
-X-MC-Unique: APN1wHB2N8KLM2CyH0UUIw-1
-Received: from sgsxdev001.isng.phoenix.local (10.226.81.111) by
- mail.maxlinear.com (10.23.38.119) with Microsoft SMTP Server id 15.1.2375.24;
- Wed, 12 Oct 2022 23:48:45 -0700
-From:   Rahul Tanwar <rtanwar@maxlinear.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>, <yzhu@maxlinear.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-lgm-soc@maxlinear.com>,
-        "Rahul Tanwar" <rtanwar@maxlinear.com>
-Subject: [PATCH v4 3/4] clk: mxl: Add option to override gate clks
-Date:   Thu, 13 Oct 2022 14:48:32 +0800
-Message-ID: <bdc9c89317b5d338a6c4f1d49386b696e947a672.1665642720.git.rtanwar@maxlinear.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1665642720.git.rtanwar@maxlinear.com>
-References: <cover.1665642720.git.rtanwar@maxlinear.com>
+        with ESMTP id S229460AbiJMGxj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 02:53:39 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49314326D5;
+        Wed, 12 Oct 2022 23:53:38 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id z8so484949qtv.5;
+        Wed, 12 Oct 2022 23:53:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NqhIn7a8GZxoIOZ2jLL7IXtV3541/fwKqELCVRadkpg=;
+        b=0pdsgcoUPyaXuJ2KVz0nImCXBH4kAsuvRZk+2+lHRNZHS9WND9XtT0H9HtCN234YBX
+         KT8yjxtD6cyGGS6g+RzznJFlyE+wP8aAj1ZDNMK6CF/EGtRJgyl3RuCB+mawZar0W4xc
+         /pUEfTxkSQyx6nEiUHCfVIm7dfgdQhphmqZBUlSwfGpP1LsKxTjwEnt1tgQQvdCpINH7
+         OPToW1Uq8rCsYU1dlXUjPEBozzmRtxgYVkTjLRrrhifNfXYlIXG6UOrVK/FCXr6kIkZ7
+         s3cgVU24pclRUWMb2H4EvzjEJ61RKJJ/Is/1EiQ3fPBi4DOvyAaa1wpotrUqKXbumm4s
+         XIUg==
+X-Gm-Message-State: ACrzQf1oMFsfDgSfyDQsBNwaSBNswbLhgLjnMW1BsIoe/YMjhCHqPWQo
+        XnmvhyWGT3OB8nEvGfvlV7gL3O+4DQNtiA==
+X-Google-Smtp-Source: AMsMyM5nSJYhc3pFDply2YBgLnlb9r6ioC7l1SY6e/YkUPkUCUbTZ2mg3u6gJltJSvHt1tub4oO4cg==
+X-Received: by 2002:ac8:4892:0:b0:398:9975:52a6 with SMTP id i18-20020ac84892000000b00398997552a6mr19661708qtq.580.1665644017247;
+        Wed, 12 Oct 2022 23:53:37 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id c7-20020ac85a87000000b00304fe5247bfsm15064970qtc.36.2022.10.12.23.53.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Oct 2022 23:53:37 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-358bf076f1fso9158787b3.9;
+        Wed, 12 Oct 2022 23:53:36 -0700 (PDT)
+X-Received: by 2002:a0d:de43:0:b0:349:31bd:e8d5 with SMTP id
+ h64-20020a0dde43000000b0034931bde8d5mr29044497ywe.283.1665644016653; Wed, 12
+ Oct 2022 23:53:36 -0700 (PDT)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: maxlinear.com
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+References: <20221012184830.3199-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20221012184830.3199-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 13 Oct 2022 08:53:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWkp_jMLZxCW6atKMy8XPsrhnjX5L6Nm3uZqM+77pvaVw@mail.gmail.com>
+Message-ID: <CAMuHMdWkp_jMLZxCW6atKMy8XPsrhnjX5L6Nm3uZqM+77pvaVw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a779a0: Fix SD0H clock name
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In MxL's LGM SoC, gate clocks can be controlled either from CGU clk driver
-i.e. this driver or directly from power management driver/daemon. It is
-dependent on the power policy/profile requirements of the end product.
+Hi Wolfram,
 
-To support such use cases, provide option to override gate clks enable/disa=
-ble
-by adding a flag GATE_CLK_HW which controls if these gate clks are controll=
-ed
-by HW i.e. this driver or overridden in order to allow it to be controlled
-by power profiles instead.
+On Wed, Oct 12, 2022 at 8:48 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Correct the misspelled textual name of the SD0H clock.
+>
+> Fixes: 470e3f0d0b15 ("clk: renesas: rcar-gen4: Introduce R-Car Gen4 CPG driver")
 
-Reviewed-by: Yi xin Zhu <yzhu@maxlinear.com>
-Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>
----
- drivers/clk/x86/clk-cgu.c | 15 ++++++++++++++-
- drivers/clk/x86/clk-cgu.h |  1 +
- 2 files changed, 15 insertions(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
-index 1f7e93de67bc..5eafd7e0d945 100644
---- a/drivers/clk/x86/clk-cgu.c
-+++ b/drivers/clk/x86/clk-cgu.c
-@@ -354,8 +354,21 @@ int lgm_clk_register_branches(struct lgm_clk_provider =
-*ctx,
- =09=09=09hw =3D lgm_clk_register_fixed_factor(ctx, list);
- =09=09=09break;
- =09=09case CLK_TYPE_GATE:
--=09=09=09hw =3D lgm_clk_register_gate(ctx, list);
-+=09=09=09if (list->gate_flags & GATE_CLK_HW)
-+=09=09=09=09hw =3D lgm_clk_register_gate(ctx, list);
-+=09=09=09else
-+=09=09=09=09/*
-+=09=09=09=09 * GATE_CLKs can be controlled either from
-+=09=09=09=09 * CGU clk driver i.e. this driver or directly
-+=09=09=09=09 * from power management driver/daemon. It is
-+=09=09=09=09 * dependent on the power policy/profile requirements
-+=09=09=09=09 * of the end product. To override control of gate
-+=09=09=09=09 * clks from this driver, provide NULL for this index
-+=09=09=09=09 * of gate clk provider.
-+=09=09=09=09 */
-+=09=09=09=09hw =3D NULL;
- =09=09=09break;
-+
- =09=09default:
- =09=09=09dev_err(ctx->dev, "invalid clk type\n");
- =09=09=09return -EINVAL;
-diff --git a/drivers/clk/x86/clk-cgu.h b/drivers/clk/x86/clk-cgu.h
-index 0aa0f35d63a0..73ce84345f81 100644
---- a/drivers/clk/x86/clk-cgu.h
-+++ b/drivers/clk/x86/clk-cgu.h
-@@ -197,6 +197,7 @@ struct lgm_clk_branch {
- /* clock flags definition */
- #define CLOCK_FLAG_VAL_INIT=09BIT(16)
- #define MUX_CLK_SW=09=09BIT(17)
-+#define GATE_CLK_HW=09=09BIT(18)
-=20
- #define LGM_MUX(_id, _name, _pdata, _f, _reg,=09=09\
- =09=09_shift, _width, _cf, _v)=09=09\
---=20
-2.17.1
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+I hadn't even noticed the R-Car S4-8 misspelling was copied from V3U ;-)
+
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
