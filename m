@@ -2,180 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B4CC4167B
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 12:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1502EC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 12:13:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbiJMMAO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 08:00:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37574 "EHLO
+        id S229437AbiJMMM7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Oct 2022 08:12:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbiJMMAM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 08:00:12 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4683471A;
-        Thu, 13 Oct 2022 05:00:11 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C7B256602367;
-        Thu, 13 Oct 2022 13:00:09 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1665662410;
-        bh=VNVQipGNrbjuBtIH2RudWcorn7bEswqp62N/Tc0FIFA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=dCO6LKtKGVYvpS7M0VYa3gC8WdkUuFuDbJImUaqCGK+OYlQsP4LSUsZQCYlv6xTxg
-         IlAnmgsHkOskbIRX4NTq9Dc64xLi+L5eY5WnIw4NahpBt2VEGJ6hAnlpPcuaaxP2Jj
-         6fqYf7Z8KoX5RMOWaK9UUzkP5ivb1Hv4QpHX9KlpXShikV23YhWUCYuAfPYJdHK0Xv
-         OHYtckEZbt5p3GdoOeTYEy8sFWW5gImeCYlumhlS3DTJGte6ZRxhTt1JmxbGcdFIeT
-         KdXyNHX/h04fkYrMn5R1MEYDOtlZfcPQx45W35pncUfaYEzmMvI3JG0Akq8nr9DyTx
-         FQRTurq9X7zYQ==
-Message-ID: <2e35a219-22a5-00bb-cc82-0cfdc523094d@collabora.com>
-Date:   Thu, 13 Oct 2022 14:00:07 +0200
+        with ESMTP id S229471AbiJMMM6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 08:12:58 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54434F53DC
+        for <linux-clk@vger.kernel.org>; Thu, 13 Oct 2022 05:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=V3ttPE0OWRpiM7P8jLqcMA3oC3ic
+        nW/le1crg3SvzN4=; b=ZLvHdjykFpJhYQxeAANbZ504VP9SXqFNeWgAO7zo4OAn
+        Mlr/6G17SwhKvUN6Wq9zUo/Ul4SABK79W7pHWXtbula/IfTZwmvtc3xb+VPGu30G
+        4h+WZANchVtDy+2TWxwKcK/tU0ZmTjaJEJpqXMwAwcunEj7rQV5LH6pBl6z5jos=
+Received: (qmail 1098858 invoked from network); 13 Oct 2022 14:12:55 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Oct 2022 14:12:55 +0200
+X-UD-Smtp-Session: l3s3148p1@mJ3XbenqXYIucrUX
+Date:   Thu, 13 Oct 2022 14:12:54 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a779g0: Add RPC-IF clock
+Message-ID: <Y0gAxsDGvuGkcD5h@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <f0609c82e742865be753b67a0a6080f193f405ad.1665583328.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/4] clk: mediatek: Add new clock driver to handle
- FHCTL hardware
-Content-Language: en-US
-To:     Johnson Wang <johnson.wang@mediatek.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        kuan-hsin.lee@mediatek.com, yu-chang.wang@mediatek.com,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>
-References: <20221013112336.15438-1-johnson.wang@mediatek.com>
- <20221013112336.15438-4-johnson.wang@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221013112336.15438-4-johnson.wang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="avvEzddlTE9n6nSi"
+Content-Disposition: inline
+In-Reply-To: <f0609c82e742865be753b67a0a6080f193f405ad.1665583328.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 13/10/22 13:23, Johnson Wang ha scritto:
-> To implement frequency hopping and spread spectrum clocking
-> function, we introduce new clock type and APIs to handle
-> FHCTL hardware.
-> 
-> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
-> ---
->   drivers/clk/mediatek/Kconfig     |   7 +
->   drivers/clk/mediatek/Makefile    |   1 +
->   drivers/clk/mediatek/clk-fhctl.c | 244 ++++++++++++++++++++++++++++
->   drivers/clk/mediatek/clk-fhctl.h |  26 +++
->   drivers/clk/mediatek/clk-pllfh.c | 268 +++++++++++++++++++++++++++++++
->   drivers/clk/mediatek/clk-pllfh.h |  82 ++++++++++
->   6 files changed, 628 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-fhctl.c
->   create mode 100644 drivers/clk/mediatek/clk-fhctl.h
->   create mode 100644 drivers/clk/mediatek/clk-pllfh.c
->   create mode 100644 drivers/clk/mediatek/clk-pllfh.h
-> 
 
-..snip..
+--avvEzddlTE9n6nSi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
-> new file mode 100644
-> index 000000000000..a728ff749db1
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-pllfh.c
-> @@ -0,0 +1,268 @@
+On Wed, Oct 12, 2022 at 04:03:44PM +0200, Geert Uytterhoeven wrote:
+> Add the module clock used by the SPI Multi I/O Bus Controller (RPC-IF)
+> on the Renesas R-Car V4H (R8A779G0) SoC.
+>=20
+> While at it, fix table alignment in the definition of the related
+> RPCSRC internal clock.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-..snip..
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> +
-> +int mtk_clk_register_pllfhs(struct device_node *node,
-> +			    const struct mtk_pll_data *plls, int num_plls,
-> +			    struct mtk_pllfh_data *pllfhs, int num_fhs,
-> +			    struct clk_hw_onecell_data *clk_data)
-> +{
-> +	void __iomem *base;
-> +	int i;
-> +	struct clk_hw *hw;
-> +
-> +	base = of_iomap(node, 0);
-> +	if (!base) {
-> +		pr_err("%s(): ioremap failed\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i = 0; i < num_plls; i++) {
-> +		const struct mtk_pll_data *pll = &plls[i];
-> +		struct mtk_pllfh_data *pllfh;
 
-		bool use_fhctl;
+--avvEzddlTE9n6nSi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
-		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
+-----BEGIN PGP SIGNATURE-----
 
-		if (use_fhctl)
-			hw = mtk_clk_register_pllfh(pll, pllfh, base);
-		else
-			hw = mtk_clk_register_pll(pll, base);
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNIAMYACgkQFA3kzBSg
+KbZ4BhAAl/tlJvPwC92SAYFBB56lJm+JyyvOB+zZ3Upi3u14k0T9Qrs9pBQW86jE
+U/aOks0a8TB4IqOdtBsxlYbtRypvXowhbCBDa96rQGAEsneLGyS2YS9XILrAieCu
+Lmwma3rUqzFy+dzxYRD0K9kfJjlEyZohG3lrBgUTQBCh65IekrAXcw35sMlZxKt7
+7phgJfEV7Q3BMTDn0CbekXs4qMznell1EE0eguDGFGIqxOcdkpZKweechyLTeyAj
+Zo7+JACOXPSg2fLQaZZBb1bQCMxg7byoj5aBo8OStjPbqY5AS8op2AD4rNhdMRii
+zsFJl6eKUQSWQLNPj5DcXXiKHQcLH+RVMmRWZ0BlT3eAVn1LXG3XCRwoT8Ci8DAn
+XV/f+QdqwBqzmHjLO9rn0cDImMrnC4NLGWpSa1ck47N9PLkwfzBQ+sZIVDzDoVrs
+7sNxMXA6uT8NhrKKaNaC2FyvTanYcDNzp3CkIVUo3cooktL9R1Fxy6OuaJ91Sscx
+XkHn9Lw0GT5KVIxqCpDnGnsLyyKLGfljWHUzpohmamFlzUvuD9H4Dqg/mtXTCfeC
+FErTEkHhiccTT4lLs/vqoT4rOuydfhQ7vgbDtdS3roLK02cylj+LpMOoVlAQOjIj
+jTc2+WtBWWMX7HQ4frpjiux4/WbOp1xh2rzhVnrKQ/3dO9I0NqY=
+=tazu
+-----END PGP SIGNATURE-----
 
-		if (IS_ERR(hw) {
-			pr_err("Failed to register %s clk %s: %d\n",
-			       use_fhctl ? "fhpll" : "pll", pll->name,
-			       PTR_ERR(hw));
-			goto err;
-		}
-
-.... that's better.
-			
-> +
-> +		clk_data->hws[pll->id] = hw;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	while (--i >= 0) {
-> +		const struct mtk_pll_data *pll = &plls[i];
-> +		struct mtk_pllfh_data *pllfh;
-> +
-> +		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
-> +
-> +		if (fhctl_is_supported_and_enabled(pllfh))
-> +			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
-> +		else
-> +			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
-> +
-> +		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
-> +	}
-> +
-> +	iounmap(base);
-> +
-> +	return PTR_ERR(hw);
-> +}
-> +
-
-..snip..
-
-> diff --git a/drivers/clk/mediatek/clk-pllfh.h b/drivers/clk/mediatek/clk-pllfh.h
-> new file mode 100644
-> index 000000000000..effc7976c496
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-pllfh.h
-> @@ -0,0 +1,82 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2022 MediaTek Inc.
-> + * Author: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> + */
-> +
-> +#ifndef __DRV_CLKFH_H
-> +#define __DRV_CLKFH_H
-
-This should be __CLK_PLLFH_H.
-
-...after which:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+--avvEzddlTE9n6nSi--
