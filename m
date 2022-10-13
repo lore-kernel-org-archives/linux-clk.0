@@ -2,46 +2,46 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA365C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36964C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:18:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbiJMAQS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:16:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37344 "EHLO
+        id S229947AbiJMASI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:18:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbiJMAQO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:16:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3480DFBCD0;
-        Wed, 12 Oct 2022 17:16:12 -0700 (PDT)
+        with ESMTP id S229978AbiJMARe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:17:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE1971504A9;
+        Wed, 12 Oct 2022 17:16:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D3DA616B3;
-        Thu, 13 Oct 2022 00:16:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F92C433D7;
-        Thu, 13 Oct 2022 00:16:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6EAE8B81C48;
+        Thu, 13 Oct 2022 00:16:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CFD0C433C1;
+        Thu, 13 Oct 2022 00:16:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620171;
-        bh=GvZod3RFAjidyXSUoKZ273KLjuujQzygOSc6mBdthnY=;
+        s=k20201202; t=1665620207;
+        bh=Cs778EV16yW6rgUzQmQbbcwO76N19BWUWRroMVbo2DU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cj/2JSt6FLoSzHqztKPtdWX1zNT3zBuMK6K/lbnNOZbmxHMR3z9dq4afzkxmHBxsv
-         VEynonPLoePKOb+cRiQugMZgucVXzY6ceLC2llLG3SUlXODoh+AXCBDJMf8AQFsBzg
-         7aQKbnwZbFYEPvQRshsFptUZuZoGknUG5dtf4ddjBkW6EQF1xfikiP8lyLAZ3wQYe/
-         AzjDOeBgc2tK3f8WOiM689cz40OY4/EAK07F2I+HTSUmLYTHbyaxuKPsAnpm695RHX
-         snrVOwQVswbUEjFg5Gvvp4Hkrny/jFpOeF9ytHbGjUydq6ReE/Y/yrD7i6lOC+5PGb
-         j42cC/0w2DxeA==
+        b=JXifm+q6OJQcS2d4qPiNIXGxwuuoMtFIR/FYb1xPLMTyBygwk3rNl875BEkZfi9xe
+         kmMzeXT+k6BIHJJRXyxZS0hWTk+vWKYzO7gpsP/Tr7gOwXiuItZGMUwiRfsX6PrA4f
+         aNH21mNEr9WZLHLhDA/obd/yWPjqDhtUSdHbbAkykAIKvUyJcJPJ50cCPrAKkAKElV
+         xXenH4OgSwtjf70EncfuDqK9ubUnvSdb3Qr9NIkFb+TH5GpG2cqOdoobmDR291PxJW
+         Sjgj1WLMkml/rJFLI/gzENSkn1wJzwAR3NlrHZJ/WjK/GIzTXryPFh2Memh2xW0w4z
+         +1pMTGrrdUEiw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
-        michal.simek@xilinx.com, m.tretter@pengutronix.de,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.0 05/67] clk: zynqmp: pll: rectify rate rounding in zynqmp_pll_round_rate
-Date:   Wed, 12 Oct 2022 20:14:46 -0400
-Message-Id: <20221013001554.1892206-5-sashal@kernel.org>
+        sboyd@kernel.org, linux-riscv@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.0 20/67] clk: microchip: mpfs: add MSS pll's set & round rate
+Date:   Wed, 12 Oct 2022 20:15:01 -0400
+Message-Id: <20221013001554.1892206-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221013001554.1892206-1-sashal@kernel.org>
 References: <20221013001554.1892206-1-sashal@kernel.org>
@@ -53,90 +53,93 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Quanyang Wang <quanyang.wang@windriver.com>
+From: Conor Dooley <conor.dooley@microchip.com>
 
-[ Upstream commit 30eaf02149ecc3c5815e45d27187bf09e925071d ]
+[ Upstream commit 14016e4aafc5f157c10fb1a386fa3b3bd9c30e9a ]
 
-The function zynqmp_pll_round_rate is used to find a most appropriate
-PLL frequency which the hardware can generate according to the desired
-frequency. For example, if the desired frequency is 297MHz, considering
-the limited range from PS_PLL_VCO_MIN (1.5GHz) to PS_PLL_VCO_MAX (3.0GHz)
-of PLL, zynqmp_pll_round_rate should return 1.872GHz (297MHz * 5).
+The MSS pll is not a fixed frequency clock, so add set() & round_rate()
+support.
+Control is limited to a 7 bit output divider as other devices on the
+FPGA occupy the other three outputs of the PLL & prevent changing
+the multiplier.
 
-There are two problems with the current code of zynqmp_pll_round_rate:
-
-1) When the rate is below PS_PLL_VCO_MIN, it can't find a correct rate
-when the parameter "rate" is an integer multiple of *prate, in other words,
-if "f" is zero, zynqmp_pll_round_rate won't return a valid frequency which
-is from PS_PLL_VCO_MIN to PS_PLL_VCO_MAX. For example, *prate is 33MHz
-and the rate is 660MHz, zynqmp_pll_round_rate will not boost up rate and
-just return 660MHz, and this will cause clk_calc_new_rates failure since
-zynqmp_pll_round_rate returns an invalid rate out of its boundaries.
-
-2) Even if the rate is higher than PS_PLL_VCO_MIN, there is still a risk
-that zynqmp_pll_round_rate returns an invalid rate because the function
-DIV_ROUND_CLOSEST makes some loss in the fractional part. If the parent
-clock *prate is 33333333Hz and we want to set the PLL rate to 1.5GHz,
-this function will return 1499999985Hz by using the formula below:
-    value = *prate * DIV_ROUND_CLOSEST(rate, *prate)).
-This value is also invalid since it's slightly smaller than PS_PLL_VCO_MIN.
-because DIV_ROUND_CLOSEST makes some loss in the fractional part.
-
-Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
-Link: https://lore.kernel.org/r/20220826142030.213805-1-quanyang.wang@windriver.com
-Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Link: https://lore.kernel.org/r/20220909123123.2699583-9-conor.dooley@microchip.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/zynqmp/pll.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ drivers/clk/microchip/clk-mpfs.c | 54 ++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 91a6b4cc910e..0d3e1377b092 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -102,26 +102,25 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long *prate)
- {
- 	u32 fbdiv;
--	long rate_div, f;
-+	u32 mult, div;
- 
--	/* Enable the fractional mode if needed */
--	rate_div = (rate * FRAC_DIV) / *prate;
--	f = rate_div % FRAC_DIV;
--	if (f) {
--		if (rate > PS_PLL_VCO_MAX) {
--			fbdiv = rate / PS_PLL_VCO_MAX;
--			rate = rate / (fbdiv + 1);
--		}
--		if (rate < PS_PLL_VCO_MIN) {
--			fbdiv = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
--			rate = rate * fbdiv;
--		}
--		return rate;
-+	/* Let rate fall inside the range PS_PLL_VCO_MIN ~ PS_PLL_VCO_MAX */
-+	if (rate > PS_PLL_VCO_MAX) {
-+		div = DIV_ROUND_UP(rate, PS_PLL_VCO_MAX);
-+		rate = rate / div;
-+	}
-+	if (rate < PS_PLL_VCO_MIN) {
-+		mult = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
-+		rate = rate * mult;
- 	}
- 
- 	fbdiv = DIV_ROUND_CLOSEST(rate, *prate);
--	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
--	return *prate * fbdiv;
-+	if (fbdiv < PLL_FBDIV_MIN || fbdiv > PLL_FBDIV_MAX) {
-+		fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
-+		rate = *prate * fbdiv;
-+	}
-+
-+	return rate;
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index b6b89413e090..cb4ec4749279 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -126,8 +126,62 @@ static unsigned long mpfs_clk_msspll_recalc_rate(struct clk_hw *hw, unsigned lon
+ 	return prate * mult / (ref_div * MSSPLL_FIXED_DIV * postdiv);
  }
  
- /**
++static long mpfs_clk_msspll_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *prate)
++{
++	struct mpfs_msspll_hw_clock *msspll_hw = to_mpfs_msspll_clk(hw);
++	void __iomem *mult_addr = msspll_hw->base + msspll_hw->reg_offset;
++	void __iomem *ref_div_addr = msspll_hw->base + REG_MSSPLL_REF_CR;
++	u32 mult, ref_div;
++	unsigned long rate_before_ctrl;
++
++	mult = readl_relaxed(mult_addr) >> MSSPLL_FBDIV_SHIFT;
++	mult &= clk_div_mask(MSSPLL_FBDIV_WIDTH);
++	ref_div = readl_relaxed(ref_div_addr) >> MSSPLL_REFDIV_SHIFT;
++	ref_div &= clk_div_mask(MSSPLL_REFDIV_WIDTH);
++
++	rate_before_ctrl = rate * (ref_div * MSSPLL_FIXED_DIV) / mult;
++
++	return divider_round_rate(hw, rate_before_ctrl, prate, NULL, MSSPLL_POSTDIV_WIDTH,
++				  msspll_hw->flags);
++}
++
++static int mpfs_clk_msspll_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long prate)
++{
++	struct mpfs_msspll_hw_clock *msspll_hw = to_mpfs_msspll_clk(hw);
++	void __iomem *mult_addr = msspll_hw->base + msspll_hw->reg_offset;
++	void __iomem *ref_div_addr = msspll_hw->base + REG_MSSPLL_REF_CR;
++	void __iomem *postdiv_addr = msspll_hw->base + REG_MSSPLL_POSTDIV_CR;
++	u32 mult, ref_div, postdiv;
++	int divider_setting;
++	unsigned long rate_before_ctrl, flags;
++
++	mult = readl_relaxed(mult_addr) >> MSSPLL_FBDIV_SHIFT;
++	mult &= clk_div_mask(MSSPLL_FBDIV_WIDTH);
++	ref_div = readl_relaxed(ref_div_addr) >> MSSPLL_REFDIV_SHIFT;
++	ref_div &= clk_div_mask(MSSPLL_REFDIV_WIDTH);
++
++	rate_before_ctrl = rate * (ref_div * MSSPLL_FIXED_DIV) / mult;
++	divider_setting = divider_get_val(rate_before_ctrl, prate, NULL, MSSPLL_POSTDIV_WIDTH,
++					  msspll_hw->flags);
++
++	if (divider_setting < 0)
++		return divider_setting;
++
++	spin_lock_irqsave(&mpfs_clk_lock, flags);
++
++	postdiv = readl_relaxed(postdiv_addr);
++	postdiv &= ~(clk_div_mask(MSSPLL_POSTDIV_WIDTH) << MSSPLL_POSTDIV_SHIFT);
++	writel_relaxed(postdiv, postdiv_addr);
++
++	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
++
++	return 0;
++}
++
+ static const struct clk_ops mpfs_clk_msspll_ops = {
+ 	.recalc_rate = mpfs_clk_msspll_recalc_rate,
++	.round_rate = mpfs_clk_msspll_round_rate,
++	.set_rate = mpfs_clk_msspll_set_rate,
+ };
+ 
+ #define CLK_PLL(_id, _name, _parent, _shift, _width, _flags, _offset) {			\
 -- 
 2.35.1
 
