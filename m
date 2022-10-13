@@ -2,54 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D8AC4321E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FBDCC4167E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:29:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbiJMA3x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47134 "EHLO
+        id S230479AbiJMA3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231200AbiJMA1d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:27:33 -0400
+        with ESMTP id S231217AbiJMA1m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:27:42 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F69EDCAE6;
-        Wed, 12 Oct 2022 17:25:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597D212C8A4;
+        Wed, 12 Oct 2022 17:25:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 58701B81CEA;
-        Thu, 13 Oct 2022 00:25:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79288C433D6;
-        Thu, 13 Oct 2022 00:24:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0A9E2B81CE7;
+        Thu, 13 Oct 2022 00:25:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F42C433D6;
+        Thu, 13 Oct 2022 00:25:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620699;
-        bh=gXnngsA66M7S05m7QK1AIEjykKSHGcIRBKoj9aJYtgg=;
+        s=k20201202; t=1665620713;
+        bh=Ku+s+zE2JUi5LkzFKWab//xnKW+xerFGSit2jWXOfwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gCUnyWce7iBGGkV+ZyhZICwLzSap9ldVlaA/ADusnhSf28A2yAP1hbHu0l/Qg1JIM
-         OjDt3fUWmjxF0mii1DE74YI7Nlc+xioq19+Xw7QNsF0Hv56ZZwEIaHABLrX/iAnp4v
-         3kzOzXjmuWRLgCGGE+2IxDwGgJ1J7W5AoAGdz4Q0CVmfWR56HfKq6YOhGlor5CZfVy
-         hSzOiubwD3SiSf86xuHCEK96mQGrJd9adzTLYlv6/ixZLZT6KeYxQ92oK7I5slyxEM
-         HnLc4tTm8vBnQj4+hz9aqEwGY1+iFphBjG+S2hRH/lRCZprEe+UjX/L57QJ8UkzcEV
-         XWxnjPTFM+BzQ==
+        b=K9pdZykj7IZ2o/ZfvsPZnxfsTxhhbFqARZrN58O2f/X1qAwAiXjlLbhvlyTj93652
+         2chnt+9OcPFdZXhzUnEYoTbPk0pcDdxo2255radAN+TFa0/R0uomULfieHU3CkTGAc
+         o2evYEqAJDnE94ZJ8evJvaio/wAYdGHOTbi1jchkVZFROgefFR1w8V5TYsVHlng+gu
+         LRKVlKvyuHn6D3nvX+PKFS2TMcpg8zb4VVYRn/eh9b9S8ZPLP0uNrmzw1QMkReghCA
+         aI9Rxzutdl+ZKuUim1fw5JYVYvZVPRECnP2Age6qMZ8s84Kx0AxEB6DlbwxLwF0Det
+         3n06Z4gPngNfw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
+Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        nsaenz@kernel.org, iivanov@suse.de, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 33/33] clk: bcm2835: Make peripheral PLLC critical
-Date:   Wed, 12 Oct 2022 20:23:32 -0400
-Message-Id: <20221013002334.1894749-33-sashal@kernel.org>
+        michal.simek@xilinx.com, m.tretter@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 03/27] clk: zynqmp: pll: rectify rate rounding in zynqmp_pll_round_rate
+Date:   Wed, 12 Oct 2022 20:24:35 -0400
+Message-Id: <20221013002501.1895204-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013002334.1894749-1-sashal@kernel.org>
-References: <20221013002334.1894749-1-sashal@kernel.org>
+In-Reply-To: <20221013002501.1895204-1-sashal@kernel.org>
+References: <20221013002501.1895204-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,45 +53,90 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Maxime Ripard <maxime@cerno.tech>
+From: Quanyang Wang <quanyang.wang@windriver.com>
 
-[ Upstream commit 6c5422851d8be8c7451e968fd2e6da41b6109e17 ]
+[ Upstream commit 30eaf02149ecc3c5815e45d27187bf09e925071d ]
 
-When testing for a series affecting the VEC, it was discovered that
-turning off and on the VEC clock is crashing the system.
+The function zynqmp_pll_round_rate is used to find a most appropriate
+PLL frequency which the hardware can generate according to the desired
+frequency. For example, if the desired frequency is 297MHz, considering
+the limited range from PS_PLL_VCO_MIN (1.5GHz) to PS_PLL_VCO_MAX (3.0GHz)
+of PLL, zynqmp_pll_round_rate should return 1.872GHz (297MHz * 5).
 
-It turns out that, when disabling the VEC clock, it's the only child of
-the PLLC-per clock which will also get disabled. The source of the crash
-is PLLC-per being disabled.
+There are two problems with the current code of zynqmp_pll_round_rate:
 
-It's likely that some other device might not take a clock reference that
-it actually needs, but it's unclear which at this point. Let's make
-PLLC-per critical so that we don't have that crash.
+1) When the rate is below PS_PLL_VCO_MIN, it can't find a correct rate
+when the parameter "rate" is an integer multiple of *prate, in other words,
+if "f" is zero, zynqmp_pll_round_rate won't return a valid frequency which
+is from PS_PLL_VCO_MIN to PS_PLL_VCO_MAX. For example, *prate is 33MHz
+and the rate is 660MHz, zynqmp_pll_round_rate will not boost up rate and
+just return 660MHz, and this will cause clk_calc_new_rates failure since
+zynqmp_pll_round_rate returns an invalid rate out of its boundaries.
 
-Reported-by: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Link: https://lore.kernel.org/r/20220926084509.12233-1-maxime@cerno.tech
-Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
+2) Even if the rate is higher than PS_PLL_VCO_MIN, there is still a risk
+that zynqmp_pll_round_rate returns an invalid rate because the function
+DIV_ROUND_CLOSEST makes some loss in the fractional part. If the parent
+clock *prate is 33333333Hz and we want to set the PLL rate to 1.5GHz,
+this function will return 1499999985Hz by using the formula below:
+    value = *prate * DIV_ROUND_CLOSEST(rate, *prate)).
+This value is also invalid since it's slightly smaller than PS_PLL_VCO_MIN.
+because DIV_ROUND_CLOSEST makes some loss in the fractional part.
+
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+Link: https://lore.kernel.org/r/20220826142030.213805-1-quanyang.wang@windriver.com
+Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/zynqmp/pll.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 178886823b90..20381b1c2695 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1786,7 +1786,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLC_LOADPER,
- 		.hold_mask = CM_PLLC_HOLDPER,
- 		.fixed_divider = 1,
--		.flags = CLK_SET_RATE_PARENT),
-+		.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 18fee827602a..3a2a694e5bf3 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -98,26 +98,25 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long *prate)
+ {
+ 	u32 fbdiv;
+-	long rate_div, f;
++	u32 mult, div;
  
- 	/*
- 	 * PLLD is the display PLL, used to drive DSI display panels.
+-	/* Enable the fractional mode if needed */
+-	rate_div = (rate * FRAC_DIV) / *prate;
+-	f = rate_div % FRAC_DIV;
+-	if (f) {
+-		if (rate > PS_PLL_VCO_MAX) {
+-			fbdiv = rate / PS_PLL_VCO_MAX;
+-			rate = rate / (fbdiv + 1);
+-		}
+-		if (rate < PS_PLL_VCO_MIN) {
+-			fbdiv = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
+-			rate = rate * fbdiv;
+-		}
+-		return rate;
++	/* Let rate fall inside the range PS_PLL_VCO_MIN ~ PS_PLL_VCO_MAX */
++	if (rate > PS_PLL_VCO_MAX) {
++		div = DIV_ROUND_UP(rate, PS_PLL_VCO_MAX);
++		rate = rate / div;
++	}
++	if (rate < PS_PLL_VCO_MIN) {
++		mult = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
++		rate = rate * mult;
+ 	}
+ 
+ 	fbdiv = DIV_ROUND_CLOSEST(rate, *prate);
+-	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
+-	return *prate * fbdiv;
++	if (fbdiv < PLL_FBDIV_MIN || fbdiv > PLL_FBDIV_MAX) {
++		fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
++		rate = *prate * fbdiv;
++	}
++
++	return rate;
+ }
+ 
+ /**
 -- 
 2.35.1
 
