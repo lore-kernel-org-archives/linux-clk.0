@@ -2,49 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78749C4321E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0DBC4167D
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbiJMAYp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:24:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
+        id S230379AbiJMAYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbiJMAYS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:24:18 -0400
+        with ESMTP id S231322AbiJMAYR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:24:17 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DAFF2CDF1;
-        Wed, 12 Oct 2022 17:23:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E055104534;
+        Wed, 12 Oct 2022 17:23:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 47A1B61646;
-        Thu, 13 Oct 2022 00:23:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FDA3C433C1;
-        Thu, 13 Oct 2022 00:23:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D75A7616F8;
+        Thu, 13 Oct 2022 00:23:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC678C433D6;
+        Thu, 13 Oct 2022 00:23:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620626;
-        bh=4yEgmnwTZHctMTUP9k2Sgbjd3eyxLywPyXolyPXXje0=;
+        s=k20201202; t=1665620612;
+        bh=osX7mwTVn8RkbfXg8lO8nWwFXf2vqdKXKViykfEay54=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nPkJLtl9GNzSJWmMEYeFFWSM3j28g86DAGbL/rL6WknVC2wv2vRg05sgSzhJc1H3f
-         /4ZLaQFFsZk5xePQAWwWYIqPadxpxAfqgoXPLzU28pkDFW4dK2Drvgr1sfMn/ulxsm
-         EgssHTlsxarjb3pYA4M/zwREN6luH50xe0S0TisNftXA9Rr82JoZjfU16ls4FbH20Y
-         jwJpRd24scam6bCFy6e3EDbhBuXM+1xNeXCqo23Jl2C7puqwfbVISh0GLzUJ3FRKxX
-         VKcHVbB0n1hDwozxHRWDemSwZ4aG3TI+7JJLbhD+kRHZn6PTiU9YVRzvryZK3/967R
-         RfinmoADxE2Pw==
+        b=FpixK/JbFeR448NDyqrngey7tl1IQ5IBvye3/uLbMFxf9/Qc661xlRei+JreanoM4
+         JJ+A+TOX+GXIHEON6OLu/P/Pe01HyB92ZFq4yKDzhC3wwyXRt7NUvtC/EUteq00Ccm
+         pHLN0wcHpKgAMAQuB3naJEpcNB/k6+yVm2JKwUvEWNw/IGS+mXD4vBGmTYEJdNlJEY
+         Ax+fwEdBxtMQUmxGLCK6WFM32y14ARTXvqGqT4Wdw9/PA/yK1k3NCRTERHF4Yb7/Wg
+         wWL5Mr2JdXhc2OyyniS23MEAfYUub1oaW+qfhNGunkUcYZLBrMHzD2BtWHOj+b+JGS
+         7XWE06E7I7SKQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
-        michal.simek@xilinx.com, m.tretter@pengutronix.de,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 03/33] clk: zynqmp: pll: rectify rate rounding in zynqmp_pll_round_rate
-Date:   Wed, 12 Oct 2022 20:23:02 -0400
-Message-Id: <20221013002334.1894749-3-sashal@kernel.org>
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        maxime@cerno.tech, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.15 47/47] clk: bcm2835: Round UART input clock up
+Date:   Wed, 12 Oct 2022 20:21:22 -0400
+Message-Id: <20221013002124.1894077-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013002334.1894749-1-sashal@kernel.org>
-References: <20221013002334.1894749-1-sashal@kernel.org>
+In-Reply-To: <20221013002124.1894077-1-sashal@kernel.org>
+References: <20221013002124.1894077-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -53,90 +56,124 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Quanyang Wang <quanyang.wang@windriver.com>
+From: "Ivan T. Ivanov" <iivanov@suse.de>
 
-[ Upstream commit 30eaf02149ecc3c5815e45d27187bf09e925071d ]
+[ Upstream commit f690a4d7a8f66430662975511c86819dc9965bcc ]
 
-The function zynqmp_pll_round_rate is used to find a most appropriate
-PLL frequency which the hardware can generate according to the desired
-frequency. For example, if the desired frequency is 297MHz, considering
-the limited range from PS_PLL_VCO_MIN (1.5GHz) to PS_PLL_VCO_MAX (3.0GHz)
-of PLL, zynqmp_pll_round_rate should return 1.872GHz (297MHz * 5).
+It was reported that RPi3[1] and RPi Zero 2W boards have issues with
+the Bluetooth. It turns out that when switching from initial to
+operation speed host and device no longer can talk each other because
+host uses incorrect UART baud rate.
 
-There are two problems with the current code of zynqmp_pll_round_rate:
+The UART driver used in this case is amba-pl011. Original fix, see
+below Github link[2], was inside pl011 module, but somehow it didn't
+look as the right place to fix. Beside that this original rounding
+function is not exactly perfect for all possible clock values. So I
+deiced to move the hack to the platform which actually need it.
 
-1) When the rate is below PS_PLL_VCO_MIN, it can't find a correct rate
-when the parameter "rate" is an integer multiple of *prate, in other words,
-if "f" is zero, zynqmp_pll_round_rate won't return a valid frequency which
-is from PS_PLL_VCO_MIN to PS_PLL_VCO_MAX. For example, *prate is 33MHz
-and the rate is 660MHz, zynqmp_pll_round_rate will not boost up rate and
-just return 660MHz, and this will cause clk_calc_new_rates failure since
-zynqmp_pll_round_rate returns an invalid rate out of its boundaries.
+The UART clock is initialised to be as close to the requested
+frequency as possible without exceeding it. Now that there is a
+clock manager that returns the actual frequencies, an expected
+48MHz clock is reported as 47999625. If the requested baud rate
+== requested clock/16, there is no headroom and the slight
+reduction in actual clock rate results in failure.
 
-2) Even if the rate is higher than PS_PLL_VCO_MIN, there is still a risk
-that zynqmp_pll_round_rate returns an invalid rate because the function
-DIV_ROUND_CLOSEST makes some loss in the fractional part. If the parent
-clock *prate is 33333333Hz and we want to set the PLL rate to 1.5GHz,
-this function will return 1499999985Hz by using the formula below:
-    value = *prate * DIV_ROUND_CLOSEST(rate, *prate)).
-This value is also invalid since it's slightly smaller than PS_PLL_VCO_MIN.
-because DIV_ROUND_CLOSEST makes some loss in the fractional part.
+If increasing a clock by less than 0.1% changes it from ..999..
+to ..000.., round it up.
 
-Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
-Link: https://lore.kernel.org/r/20220826142030.213805-1-quanyang.wang@windriver.com
-Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+[1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
+[2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
+
+Cc: Phil Elwell <phil@raspberrypi.com>
+Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
+Link: https://lore.kernel.org/r/20220912081306.24662-1-iivanov@suse.de
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/zynqmp/pll.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 35 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index abe6afbf3407..2ae7f9129b07 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -99,26 +99,25 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long *prate)
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 298763e78263..4eaece5cb3ae 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -30,6 +30,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/math.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+@@ -502,6 +503,8 @@ struct bcm2835_clock_data {
+ 	bool low_jitter;
+ 
+ 	u32 tcnt_mux;
++
++	bool round_up;
+ };
+ 
+ struct bcm2835_gate_data {
+@@ -994,12 +997,34 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+ 	return temp;
+ }
+ 
++static unsigned long bcm2835_round_rate(unsigned long rate)
++{
++	unsigned long scaler;
++	unsigned long limit;
++
++	limit = rate / 100000;
++
++	scaler = 1;
++	while (scaler < limit)
++		scaler *= 10;
++
++	/*
++	 * If increasing a clock by less than 0.1% changes it
++	 * from ..999.. to ..000.., round up.
++	 */
++	if ((rate + scaler - 1) / scaler % 1000 == 0)
++		rate = roundup(rate, scaler);
++
++	return rate;
++}
++
+ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
  {
- 	u32 fbdiv;
--	long rate_div, f;
-+	u32 mult, div;
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
++	unsigned long rate;
+ 	u32 div;
  
--	/* Enable the fractional mode if needed */
--	rate_div = (rate * FRAC_DIV) / *prate;
--	f = rate_div % FRAC_DIV;
--	if (f) {
--		if (rate > PS_PLL_VCO_MAX) {
--			fbdiv = rate / PS_PLL_VCO_MAX;
--			rate = rate / (fbdiv + 1);
--		}
--		if (rate < PS_PLL_VCO_MIN) {
--			fbdiv = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
--			rate = rate * fbdiv;
--		}
--		return rate;
-+	/* Let rate fall inside the range PS_PLL_VCO_MIN ~ PS_PLL_VCO_MAX */
-+	if (rate > PS_PLL_VCO_MAX) {
-+		div = DIV_ROUND_UP(rate, PS_PLL_VCO_MAX);
-+		rate = rate / div;
-+	}
-+	if (rate < PS_PLL_VCO_MIN) {
-+		mult = DIV_ROUND_UP(PS_PLL_VCO_MIN, rate);
-+		rate = rate * mult;
- 	}
+ 	if (data->int_bits == 0 && data->frac_bits == 0)
+@@ -1007,7 +1032,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
  
- 	fbdiv = DIV_ROUND_CLOSEST(rate, *prate);
--	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
--	return *prate * fbdiv;
-+	if (fbdiv < PLL_FBDIV_MIN || fbdiv > PLL_FBDIV_MAX) {
-+		fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
-+		rate = *prate * fbdiv;
-+	}
+ 	div = cprman_read(cprman, data->div_reg);
+ 
+-	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
++	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
++
++	if (data->round_up)
++		rate = bcm2835_round_rate(rate);
 +
 +	return rate;
  }
  
- /**
+ static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
+@@ -2144,7 +2174,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_UARTDIV,
+ 		.int_bits = 10,
+ 		.frac_bits = 12,
+-		.tcnt_mux = 28),
++		.tcnt_mux = 28,
++		.round_up = true),
+ 
+ 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+ 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
 -- 
 2.35.1
 
