@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B5DC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21290C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232234AbiJMAnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:43:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34616 "EHLO
+        id S232231AbiJMAqy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229911AbiJMAnB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:43:01 -0400
+        with ESMTP id S232291AbiJMAqe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:46:34 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C444A24BF9;
-        Wed, 12 Oct 2022 17:35:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25EC413D62D;
+        Wed, 12 Oct 2022 17:39:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E0890B81CED;
-        Thu, 13 Oct 2022 00:23:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82642C433C1;
-        Thu, 13 Oct 2022 00:23:36 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D7F4AB81CC1;
+        Thu, 13 Oct 2022 00:25:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749F2C433C1;
+        Thu, 13 Oct 2022 00:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620617;
-        bh=+uNZkwr6oPBtDUd6jzY7rCjmM98v3IRGZerJnhG2IWo=;
+        s=k20201202; t=1665620704;
+        bh=FBILgOO9SOLZWeB7fDai1s80MSW11iIi7tuRqrZmg4c=;
         h=From:To:Cc:Subject:Date:From;
-        b=LzdOq8n72EnhhONrj9ksj8+OVeJth//wMCu0JRUxUhlPi7fJ85u0VUGz/DPs3rpJ1
-         aXG4qyAhqhgMJzeKAQccCJZAJhmi3f+vDHF92D1Rt0alevSxPJFCQp9AS1CYfSaUi8
-         its9Q7/7EZbDb/aXltmrjLuCVZDXYRdhoZtrwtOiLvSA/zmB4SLxHdrwoJ/wAok9XS
-         2q1PEXP95ic8Zpll5KCpvIfBW3aCKhc3/TFVU8tEGSCh1EL5H+j624LCd+xXil9HS1
-         XBSoCXdrnCDgXVka2pIEztxrswMzV6h/8zKN1Z8girzumSIS0Y7gQI0kO8oQsv5YG0
-         hAZyIq6hsi8IA==
+        b=ehpm7zwyLdXFDwuTSbCjFHvX7RDXE9a0hUoB7/P1D4Z7NJzZBmVwgATRLTb41qqYW
+         ZczfSmScJxvDNRefqAa4t3ela5iJBY8PRR9Mo6CBA5i4PzQlZD/RFzkP6x/GTQ8Pg7
+         ac6aSzPLH4UeMmgEL/1WmNG1/ZILcnYtOnu0eYLqeTEQ4gjkrEPEBkSXsMrxZ05WbL
+         yv/y96zSuFH/73XZya5KZexoTCnXGlvJSwAlirYcPScgg1rAss2ftOcccCm2crjo0r
+         752O/yQbZnDqltJWMRYPnWvq/rjkoq+hCzv4CjapGQHexqi0wesmPuMWWxkg0JSkuk
+         42CSEmf+Tk0ew==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ian Nam <young.kwan.nam@xilinx.com>,
@@ -40,9 +40,9 @@ Cc:     Ian Nam <young.kwan.nam@xilinx.com>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
         michal.simek@xilinx.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 01/33] clk: zynqmp: Fix stack-out-of-bounds in strncpy`
-Date:   Wed, 12 Oct 2022 20:23:00 -0400
-Message-Id: <20221013002334.1894749-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 01/27] clk: zynqmp: Fix stack-out-of-bounds in strncpy`
+Date:   Wed, 12 Oct 2022 20:24:33 -0400
+Message-Id: <20221013002501.1895204-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 X-stable: review
@@ -145,10 +145,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+)
 
 diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index db8d0d7161ce..9c82ae240c40 100644
+index 6f057ab9df03..4ef201ac8252 100644
 --- a/drivers/clk/zynqmp/clkc.c
 +++ b/drivers/clk/zynqmp/clkc.c
-@@ -687,6 +687,13 @@ static void zynqmp_get_clock_info(void)
+@@ -679,6 +679,13 @@ static void zynqmp_get_clock_info(void)
  				  FIELD_PREP(CLK_ATTR_NODE_INDEX, i);
  
  		zynqmp_pm_clock_get_name(clock[i].clk_id, &name);
