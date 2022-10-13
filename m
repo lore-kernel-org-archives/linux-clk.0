@@ -2,54 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D650C43219
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4B6C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Oct 2022 00:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbiJMAaN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Oct 2022 20:30:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46134 "EHLO
+        id S230139AbiJMAbv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Oct 2022 20:31:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231950AbiJMA3a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:29:30 -0400
+        with ESMTP id S230332AbiJMA3t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2022 20:29:49 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2EB129759;
-        Wed, 12 Oct 2022 17:27:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C0A3EA42;
+        Wed, 12 Oct 2022 17:27:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A8F7616CC;
-        Thu, 13 Oct 2022 00:27:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A33C433C1;
-        Thu, 13 Oct 2022 00:27:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 43585616B3;
+        Thu, 13 Oct 2022 00:19:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 937BAC43142;
+        Thu, 13 Oct 2022 00:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620831;
-        bh=ZV0c09dSBJY1PswURuA8I1QmLIT9hO93rRzTYy22ghk=;
+        s=k20201202; t=1665620377;
+        bh=Cs778EV16yW6rgUzQmQbbcwO76N19BWUWRroMVbo2DU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H3s0LUHJnLl1Bi7KTTOqOBGvuV5KPIIk6JOSx8E7lvP0BZvW5kCruHeJHW2BDPWlC
-         Jwm63Jj7qXAfGWZ7ZPCQfbTmQSEoqgBiF1Ab3xrZGccMU5jUVDxEP08+reTk96eYkf
-         6A1lpwsnrrGgd1vM8+ih5DL3RURML7ZObCFH4h0lOe6MPt2eyiUNOLsSS/tQTUpgE8
-         ubJF+bpGfR+qzGIT/7seID84GmVP7Xh85f/75SwsRiSlzLT/p4PiflK/SVMCHEAcHe
-         k9I8+xHy1qfj1+TtnmYD4byKIdzu/Pc/D98ZskBToFRXGOoffymr/QCIwzO5dpljxB
-         T7z53F3V7UHVw==
+        b=WtjpkXsL7XI41w3eTcdoK1iY4PIq7pqbtIrDJJbZ64WprngdFyZdxOFRzMDuVhbOK
+         EBiO0y5W2RE9IktF43sC8qm8wZ/L9f+NBRYPESq0f4nTnKHY2Z0gEMmf4DkTPpH/p9
+         Lti6RRGOcRixmX3X8YFCMEuGUul0Ra5d5F2ZU/bX092HlHPaHEGKwzwHI36WkYSxRH
+         0uVRYFqeQ4mJA75eRUZ6i5TIKrpnuQ+VmMiO/Etq0tVa5F2unvm9ZO40wxla9hkKEn
+         x5g565K065yOOUp7uKH9jrqoSBLUPCC7qDGzwGjj5unNt4IrVuZEG2othz6B0/n270
+         JuAMZuHliK0qw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        iivanov@suse.de, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 19/19] clk: bcm2835: Make peripheral PLLC critical
-Date:   Wed, 12 Oct 2022 20:26:18 -0400
-Message-Id: <20221013002623.1895576-19-sashal@kernel.org>
+        sboyd@kernel.org, linux-riscv@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.19 20/63] clk: microchip: mpfs: add MSS pll's set & round rate
+Date:   Wed, 12 Oct 2022 20:17:54 -0400
+Message-Id: <20221013001842.1893243-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013002623.1895576-1-sashal@kernel.org>
-References: <20221013002623.1895576-1-sashal@kernel.org>
+In-Reply-To: <20221013001842.1893243-1-sashal@kernel.org>
+References: <20221013001842.1893243-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,45 +53,93 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Maxime Ripard <maxime@cerno.tech>
+From: Conor Dooley <conor.dooley@microchip.com>
 
-[ Upstream commit 6c5422851d8be8c7451e968fd2e6da41b6109e17 ]
+[ Upstream commit 14016e4aafc5f157c10fb1a386fa3b3bd9c30e9a ]
 
-When testing for a series affecting the VEC, it was discovered that
-turning off and on the VEC clock is crashing the system.
+The MSS pll is not a fixed frequency clock, so add set() & round_rate()
+support.
+Control is limited to a 7 bit output divider as other devices on the
+FPGA occupy the other three outputs of the PLL & prevent changing
+the multiplier.
 
-It turns out that, when disabling the VEC clock, it's the only child of
-the PLLC-per clock which will also get disabled. The source of the crash
-is PLLC-per being disabled.
-
-It's likely that some other device might not take a clock reference that
-it actually needs, but it's unclear which at this point. Let's make
-PLLC-per critical so that we don't have that crash.
-
-Reported-by: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Link: https://lore.kernel.org/r/20220926084509.12233-1-maxime@cerno.tech
-Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Link: https://lore.kernel.org/r/20220909123123.2699583-9-conor.dooley@microchip.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/microchip/clk-mpfs.c | 54 ++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index fd78dd5356ed..4d5ac0b7b008 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1737,7 +1737,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLC_LOADPER,
- 		.hold_mask = CM_PLLC_HOLDPER,
- 		.fixed_divider = 1,
--		.flags = CLK_SET_RATE_PARENT),
-+		.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index b6b89413e090..cb4ec4749279 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -126,8 +126,62 @@ static unsigned long mpfs_clk_msspll_recalc_rate(struct clk_hw *hw, unsigned lon
+ 	return prate * mult / (ref_div * MSSPLL_FIXED_DIV * postdiv);
+ }
  
- 	/*
- 	 * PLLD is the display PLL, used to drive DSI display panels.
++static long mpfs_clk_msspll_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *prate)
++{
++	struct mpfs_msspll_hw_clock *msspll_hw = to_mpfs_msspll_clk(hw);
++	void __iomem *mult_addr = msspll_hw->base + msspll_hw->reg_offset;
++	void __iomem *ref_div_addr = msspll_hw->base + REG_MSSPLL_REF_CR;
++	u32 mult, ref_div;
++	unsigned long rate_before_ctrl;
++
++	mult = readl_relaxed(mult_addr) >> MSSPLL_FBDIV_SHIFT;
++	mult &= clk_div_mask(MSSPLL_FBDIV_WIDTH);
++	ref_div = readl_relaxed(ref_div_addr) >> MSSPLL_REFDIV_SHIFT;
++	ref_div &= clk_div_mask(MSSPLL_REFDIV_WIDTH);
++
++	rate_before_ctrl = rate * (ref_div * MSSPLL_FIXED_DIV) / mult;
++
++	return divider_round_rate(hw, rate_before_ctrl, prate, NULL, MSSPLL_POSTDIV_WIDTH,
++				  msspll_hw->flags);
++}
++
++static int mpfs_clk_msspll_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long prate)
++{
++	struct mpfs_msspll_hw_clock *msspll_hw = to_mpfs_msspll_clk(hw);
++	void __iomem *mult_addr = msspll_hw->base + msspll_hw->reg_offset;
++	void __iomem *ref_div_addr = msspll_hw->base + REG_MSSPLL_REF_CR;
++	void __iomem *postdiv_addr = msspll_hw->base + REG_MSSPLL_POSTDIV_CR;
++	u32 mult, ref_div, postdiv;
++	int divider_setting;
++	unsigned long rate_before_ctrl, flags;
++
++	mult = readl_relaxed(mult_addr) >> MSSPLL_FBDIV_SHIFT;
++	mult &= clk_div_mask(MSSPLL_FBDIV_WIDTH);
++	ref_div = readl_relaxed(ref_div_addr) >> MSSPLL_REFDIV_SHIFT;
++	ref_div &= clk_div_mask(MSSPLL_REFDIV_WIDTH);
++
++	rate_before_ctrl = rate * (ref_div * MSSPLL_FIXED_DIV) / mult;
++	divider_setting = divider_get_val(rate_before_ctrl, prate, NULL, MSSPLL_POSTDIV_WIDTH,
++					  msspll_hw->flags);
++
++	if (divider_setting < 0)
++		return divider_setting;
++
++	spin_lock_irqsave(&mpfs_clk_lock, flags);
++
++	postdiv = readl_relaxed(postdiv_addr);
++	postdiv &= ~(clk_div_mask(MSSPLL_POSTDIV_WIDTH) << MSSPLL_POSTDIV_SHIFT);
++	writel_relaxed(postdiv, postdiv_addr);
++
++	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
++
++	return 0;
++}
++
+ static const struct clk_ops mpfs_clk_msspll_ops = {
+ 	.recalc_rate = mpfs_clk_msspll_recalc_rate,
++	.round_rate = mpfs_clk_msspll_round_rate,
++	.set_rate = mpfs_clk_msspll_set_rate,
+ };
+ 
+ #define CLK_PLL(_id, _name, _parent, _shift, _width, _flags, _offset) {			\
 -- 
 2.35.1
 
