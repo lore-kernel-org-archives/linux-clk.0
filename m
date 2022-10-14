@@ -2,83 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B09DC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 20:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4010CC433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 21:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231434AbiJNUoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 16:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60690 "EHLO
+        id S229683AbiJNVnw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 17:43:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231210AbiJNUoc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 16:44:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BCB710827F;
-        Fri, 14 Oct 2022 13:44:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 35D9B61C2E;
-        Fri, 14 Oct 2022 20:44:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EFF1C433D6;
-        Fri, 14 Oct 2022 20:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665780269;
-        bh=xTf2Ia3ScKB9nTggrC2iJlvFfsBE9mChXtAKxwt5HyQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AQNJ6VNBsOyno7YgypSbGRUjRdV9CO4WesrSIs5Q566HF1ctr8ZayAUYQgFSBlSQJ
-         Plspp8x16hZsxzIm25/RCJY4aydxhHCqFlQHreavI9AVJlA7QGiyDAoSD5o2fEj84h
-         ZB/cqQ8d1DVwpjv6C2unvRhaADefGEh/X9R2owPpv0SXx+561OYNsZLQdHjM0+KuhN
-         WY0W22p+iGtGxV9qXNWrnHZTHuR0yPYy9IqtVRlEPP8f+1K0ylWM69p8psIAMOUfIP
-         6UXNAa7+vEoJUXo4undBgr4LZlm7JUphkqrWTy8RCMcTj7J7iSFrtfMOKC3FRfJB26
-         KqvqU/jnmNkDg==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229692AbiJNVnv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 17:43:51 -0400
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE1A1958C8;
+        Fri, 14 Oct 2022 14:43:50 -0700 (PDT)
+Received: by mail-oo1-f46.google.com with SMTP id k11-20020a4ab28b000000b0047659ccfc28so1882582ooo.8;
+        Fri, 14 Oct 2022 14:43:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nsufLNFM7jG51GY0dQr+V7Jz/aTFB4t5E1h05t4lU/Q=;
+        b=xpYRQhzpu0GtOGtWDS6yxDeRhfDoHU2CvF9Ji4b+5f8SLb2ao0VhwLfaQuR+7Q/hw5
+         Dychab4i3xf+g47oMph31Mykq2hxFGSYxNycp6CStjT+6Bt0WRvoJEUCETWc0CP8c1qe
+         hM6Yr9sJXE0kgPER12EnKDW1B/JkVu+LFgI7qQPlAguAEJKoIUdRxbHnw4OmVwkMn9YE
+         3ohxF2EwQoMi5T0qB2CB0/tGmyNjyJj376wdXbbFrXwvlOeOMK42qIme6mvP6lQA7BFx
+         rdZAIlU8TwdEKjriEprabvI3GeHg1v9tYFx7hbfSX7sYQtA+/wEISLhe16v6HiO7YsWf
+         nfog==
+X-Gm-Message-State: ACrzQf26vO/370sKnofckWIqIXdrAUcQeMtc/xhwgCrQFV9vVYCjilsJ
+        VKQ9UrYWtUc1pWmPqNB/SA==
+X-Google-Smtp-Source: AMsMyM6fLTHPSbOXoYwxDCAkaGDn+10AxfgooMekB9fxUJGM4iLfCvcG7NzoSyU6LCucpf/wUNLOZg==
+X-Received: by 2002:a4a:346:0:b0:476:8699:bdca with SMTP id 67-20020a4a0346000000b004768699bdcamr2768723ooi.29.1665783829754;
+        Fri, 14 Oct 2022 14:43:49 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id cv36-20020a056870c6a400b0011bde9f5745sm1902094oab.23.2022.10.14.14.43.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Oct 2022 14:43:49 -0700 (PDT)
+Received: (nullmailer pid 2949845 invoked by uid 1000);
+        Fri, 14 Oct 2022 21:43:50 -0000
+Date:   Fri, 14 Oct 2022 16:43:50 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: clock: Convert pwm-clock to DT schema
+Message-ID: <166578382952.2949791.14457951848803615803.robh@kernel.org>
+References: <20221011162919.3025038-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221010100046.6477-1-jonathanh@nvidia.com>
-References: <20221010100046.6477-1-jonathanh@nvidia.com>
-Subject: Re: [PATCH V3] clk: tegra: Fix Tegra PWM parent clock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Robert Eckelmann <longnoserob@gmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Fri, 14 Oct 2022 13:44:27 -0700
-User-Agent: alot/0.10
-Message-Id: <20221014204429.7EFF1C433D6@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221011162919.3025038-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jon Hunter (2022-10-10 03:00:46)
-> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-> the period calculation in the Tegra PWM driver and now returns an error
-> if the period requested is less than minimum period supported. This is
-> breaking PWM support on various Tegra platforms. For example, on the
-> Tegra210 Jetson Nano platform this is breaking the PWM fan support and
-> probing the PWM fan driver now fails ...
->=20
->  pwm-fan pwm-fan: Failed to configure PWM: -22
->  pwm-fan: probe of pwm-fan failed with error -22
->=20
-> The problem is that the default parent clock for the PWM on Tegra210 is
-> a 32kHz clock and is unable to support the requested PWM period.
->=20
-> Fix PWM support on Tegra20, Tegra30, Tegra114, Tegra124 and Tegra210 by
-> updating the parent clock for the PWM to be the PLL_P.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
-> Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com> # TF101 T20
-> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
-> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # TF700T T3
+On Tue, 11 Oct 2022 11:29:18 -0500, Rob Herring wrote:
+> Convert the pwm-clock binding to DT schema format. A straight-forward
+> conversion.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
+>  .../devicetree/bindings/clock/pwm-clock.txt   | 26 -----------
+>  .../devicetree/bindings/clock/pwm-clock.yaml  | 45 +++++++++++++++++++
+>  2 files changed, 45 insertions(+), 26 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/pwm-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/pwm-clock.yaml
+> 
 
-Applied to clk-next
+Applied, thanks!
