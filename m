@@ -2,74 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4010CC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 21:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD04C4167D
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 22:10:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbiJNVnw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 17:43:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54254 "EHLO
+        id S229462AbiJNWKp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 18:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiJNVnv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 17:43:51 -0400
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE1A1958C8;
-        Fri, 14 Oct 2022 14:43:50 -0700 (PDT)
-Received: by mail-oo1-f46.google.com with SMTP id k11-20020a4ab28b000000b0047659ccfc28so1882582ooo.8;
-        Fri, 14 Oct 2022 14:43:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nsufLNFM7jG51GY0dQr+V7Jz/aTFB4t5E1h05t4lU/Q=;
-        b=xpYRQhzpu0GtOGtWDS6yxDeRhfDoHU2CvF9Ji4b+5f8SLb2ao0VhwLfaQuR+7Q/hw5
-         Dychab4i3xf+g47oMph31Mykq2hxFGSYxNycp6CStjT+6Bt0WRvoJEUCETWc0CP8c1qe
-         hM6Yr9sJXE0kgPER12EnKDW1B/JkVu+LFgI7qQPlAguAEJKoIUdRxbHnw4OmVwkMn9YE
-         3ohxF2EwQoMi5T0qB2CB0/tGmyNjyJj376wdXbbFrXwvlOeOMK42qIme6mvP6lQA7BFx
-         rdZAIlU8TwdEKjriEprabvI3GeHg1v9tYFx7hbfSX7sYQtA+/wEISLhe16v6HiO7YsWf
-         nfog==
-X-Gm-Message-State: ACrzQf26vO/370sKnofckWIqIXdrAUcQeMtc/xhwgCrQFV9vVYCjilsJ
-        VKQ9UrYWtUc1pWmPqNB/SA==
-X-Google-Smtp-Source: AMsMyM6fLTHPSbOXoYwxDCAkaGDn+10AxfgooMekB9fxUJGM4iLfCvcG7NzoSyU6LCucpf/wUNLOZg==
-X-Received: by 2002:a4a:346:0:b0:476:8699:bdca with SMTP id 67-20020a4a0346000000b004768699bdcamr2768723ooi.29.1665783829754;
-        Fri, 14 Oct 2022 14:43:49 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id cv36-20020a056870c6a400b0011bde9f5745sm1902094oab.23.2022.10.14.14.43.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Oct 2022 14:43:49 -0700 (PDT)
-Received: (nullmailer pid 2949845 invoked by uid 1000);
-        Fri, 14 Oct 2022 21:43:50 -0000
-Date:   Fri, 14 Oct 2022 16:43:50 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229594AbiJNWKn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 18:10:43 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF13FAE64;
+        Fri, 14 Oct 2022 15:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1665785441; x=1697321441;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9aUIdZv2VVyCtC6BFt7t0JGlXrSrn9H2JmLsan6+qrg=;
+  b=D5ip0/+RfdVa8koEdoKqv7/kNBBW1lcBm8wii/RQq9P4lUNKOwsMFjG8
+   ut/zTl+vR3sQP7B7aR2opOQcQ3quhOxfQzaaY7y4YrLdvr3HsDHm3qCp7
+   pQECr7hWIDdPz37jo9Xj/rBYg+9tXPqwP1NLLlkAo7iaPgQPDdIA+thqZ
+   U=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 14 Oct 2022 15:10:38 -0700
+X-QCInternal: smtphost
+Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2022 15:10:37 -0700
+Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Fri, 14 Oct 2022 15:10:24 -0700
+From:   Melody Olvera <quic_molvera@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] dt-bindings: clock: Convert pwm-clock to DT schema
-Message-ID: <166578382952.2949791.14457951848803615803.robh@kernel.org>
-References: <20221011162919.3025038-1-robh@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v2 6/6] dt-bindings: qcom,pdc: Introduce pdc bindings for QDU1000 and QRU1000
+Date:   Fri, 14 Oct 2022 15:10:11 -0700
+Message-ID: <20221014221011.7360-7-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.38.0
+In-Reply-To: <20221014221011.7360-1-quic_molvera@quicinc.com>
+References: <20221014221011.7360-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221011162919.3025038-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 11 Oct 2022 11:29:18 -0500, Rob Herring wrote:
-> Convert the pwm-clock binding to DT schema format. A straight-forward
-> conversion.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/clock/pwm-clock.txt   | 26 -----------
->  .../devicetree/bindings/clock/pwm-clock.yaml  | 45 +++++++++++++++++++
->  2 files changed, 45 insertions(+), 26 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/pwm-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/pwm-clock.yaml
-> 
+Add compatible fields for QDU1000 and QRU1000 pdcs.
 
-Applied, thanks!
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ .../devicetree/bindings/interrupt-controller/qcom,pdc.yaml      | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+index b6f56cf5fbe3..68a80e1c77c5 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+@@ -26,6 +26,8 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - qcom,qdu1000-pdc
++          - qcom,qru1000-pdc
+           - qcom,sc7180-pdc
+           - qcom,sc7280-pdc
+           - qcom,sdm845-pdc
+-- 
+2.38.0
+
