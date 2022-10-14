@@ -2,62 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6B8C43219
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 08:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ED3C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 09:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230053AbiJNICa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 04:02:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40838 "EHLO
+        id S230192AbiJNJmE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 05:42:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbiJNICT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 04:02:19 -0400
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219D31BB96C
-        for <linux-clk@vger.kernel.org>; Fri, 14 Oct 2022 01:02:17 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 81481231FB; Fri, 14 Oct 2022 08:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1665734526; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=eETN8CPraefgx/z+Gr8+OIKiYqZcPd2QnhO0K4oOvnYcuLZ8LaLE+OKEPHD73ZpLr
-         QiX0y7RXPaTHOKt9ql4bXaHI8qI7+rnSCkaBfdUgcmUtDPC+2vrmFXQ1xJ8vfwd0Jw
-         D7y791oGvmmpnIzyLtQfWgkzKsJ52fDZZy9A0wZImgv5xCJd/FGX27ZLQXz/zACAMA
-         z8wUvsJiPAyAi3KIRyorYy/jQBFDXpe322zUQzvzNqSQC24NQzlgr3tuaoUm6znjzE
-         f1MKFQU6xnyVicOPs6jr1HPVzet97pfsTrcRxmAoHmLXAUG43sHA+IrGabzSh/Gg+9
-         54YIyMknso7/g==
-Received: by mail.fadrush.pl for <linux-clk@vger.kernel.org>; Fri, 14 Oct 2022 08:00:54 GMT
-Message-ID: <20221014064500-0.1.28.m7r6.0.7qke24766o@fadrush.pl>
-Date:   Fri, 14 Oct 2022 08:00:54 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        with ESMTP id S229948AbiJNJls (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 05:41:48 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D331C69D3;
+        Fri, 14 Oct 2022 02:41:43 -0700 (PDT)
+X-QQ-mid: bizesmtp84t1665740487ti9mbcvl
+Received: from [192.168.125.106] ( [113.72.147.11])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Fri, 14 Oct 2022 17:41:25 +0800 (CST)
+X-QQ-SSF: 01000000000000B09000000A0000000
+X-QQ-FEAT: DRnj/z+Sqafxf60URcKpJmk3M9Gtaudnpmqzg0zvN20ZC3tpAxv/lIwk8P1wS
+        m3l8EGZwu41bnQWypYQttWJDjQollXss8UsSl7cBIrVzT4b2g1DLEzT6ShKt5LbH7wTJvbB
+        wnV6vB9ISg9d+1i8dVp6ZSVyhLHjBIyNy8pikp+orY7/fvzwbsVz3jlVEv7YYJ3sYOrJu9b
+        OeueYAFz3GEopWBDXvo3vXn/pUGS0z1q4/GBW46Glh3/Ka/a0zrm/TwoUJF1+BkhrmkyOXX
+        ZxIFM8Exh+BnZy0bIKFTeqaKBBRV2zEKbkCjXUnJ/l6ayU0xgCDWxzIE1cDq93qjBGZt774
+        2QRI7gNwsyj49o/sZ1rlblUSoWEsKmVvt3n57IDmpRlBdY4uZ7o1KnqNdTr0Ze5A/Zzruj6
+X-QQ-GoodBg: 0
+Message-ID: <B1817962D78CFE67+41b72968-e452-3fa9-c1ba-054cb1642de4@linux.starfivetech.com>
+Date:   Fri, 14 Oct 2022 17:41:15 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 27/30] RISC-V: Add initial StarFive JH7110 device tree
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220930074914.6757-1-hal.feng@linux.starfivetech.com>
+ <Yzgb0GzpLsV3RJyk@spud>
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <Yzgb0GzpLsV3RJyk@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Sat, 1 Oct 2022 11:52:00 +0100, Conor Dooley wrote:
+> On Fri, Sep 30, 2022 at 03:49:14PM +0800, Hal Feng wrote:
+> > From: Emil Renner Berthing <kernel@esmil.dk>
+> > 
+> > Add initial device tree for the JH7110 RISC-V SoC by
+> > StarFive Technology Ltd.
+> > 
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> 
+> There's little point reviewing this dt since there's a load of issues
+> that you can trivially find by running dtbs_check/dt_binding_check, but
+> this SoB change is wrong - if Emil wrote the patch, then Jianlong's SoB
+> is either redundant or should be accompanied by a Co-developed-by tag.
+> 
+> Ditto for patch 28/30 "RISC-V: Add StarFive JH7110 VisionFive2 board
+> device tree".
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
+Will add Co-developed-by tag for Jianlong. Thanks.
 
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
+> 
+> > ---
+> >  arch/riscv/boot/dts/starfive/jh7110.dtsi | 449 +++++++++++++++++++++++
+> >  1 file changed, 449 insertions(+)
+> >  create mode 100644 arch/riscv/boot/dts/starfive/jh7110.dtsi
+> > 
+> > diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> > new file mode 100644
+> > index 000000000000..46f418d4198a
+> > --- /dev/null
+> > +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> 
+> > +
+> > +	osc: osc {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +	};
+> > +
+> > +	clk_rtc: clk_rtc {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +	};
+> > +
+> > +	gmac0_rmii_refin: gmac0_rmii_refin {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		clock-frequency = <50000000>;
+> 
+> I assume, given osc has it's frequency set in the board dts, that these
+> are all oscillators on the SoC?
 
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
+These are all on the board. Should move all "clock-frequency" to the board dts.
+I will recheck and modify this patch.
 
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
-
-
-Pozdrawiam
-Jakub Olejniczak
+Best regards,
+Hal
