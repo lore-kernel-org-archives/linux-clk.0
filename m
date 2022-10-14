@@ -2,28 +2,28 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA34C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 22:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63846C4167E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 22:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229651AbiJNWKo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 18:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44652 "EHLO
+        id S229694AbiJNWKq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 18:10:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiJNWKn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 18:10:43 -0400
+        with ESMTP id S229616AbiJNWKo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 18:10:44 -0400
 Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B86FAE66;
-        Fri, 14 Oct 2022 15:10:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF21FAE67;
+        Fri, 14 Oct 2022 15:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1665785442; x=1697321442;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=P3QMyKLfirC1SWV0s4npdIwk7ADO33QXeooooDPohT0=;
-  b=pp21dJaT00y2e8s+mxG25Eb8VvR7M5zuigk7DgjCQTYmY8NzfaFudJWm
-   FShny/33ayH9wyLK8YUpW78xc6whEPErv9u5sbd9/AjJ1YqTcSXfVztbD
-   pbPuc4OoKNkXk6+4w8S74l89X3QL6ytl3lwHdO9iXATlz7SrsVN1U57hj
-   o=;
+  t=1665785443; x=1697321443;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5uEw+FAfIDFTLWEQeabrCakWjStHt/ejpYxitVzALbU=;
+  b=iIgJvk79zG9G6LqEw2bv1pHmTGqQzwGXRnslHJ1Ds+2oBydBjy9xFTE2
+   J44/xflIiE3x+LYBaIRUfdrYIgaVDi1vJtEvglIonEUGFH1G0DG3ebbQ+
+   FKRrCVEIAS2k7dnrCHHgqL2RHRJTw0XOyT8Z5IM4Ho10z1rIB9ILbRvdw
+   k=;
 Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
   by alexa-out-sd-01.qualcomm.com with ESMTP; 14 Oct 2022 15:10:38 -0700
 X-QCInternal: smtphost
@@ -32,7 +32,7 @@ Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
 Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 14 Oct 2022 15:10:22 -0700
+ 15.2.986.29; Fri, 14 Oct 2022 15:10:24 -0700
 From:   Melody Olvera <quic_molvera@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -45,10 +45,12 @@ To:     Andy Gross <agross@kernel.org>,
 CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Melody Olvera <quic_molvera@quicinc.com>
-Subject: [PATCH v2 0/6] clk: qcom: Add clocks for the QDU1000 and QRU1000 SoCs
-Date:   Fri, 14 Oct 2022 15:10:05 -0700
-Message-ID: <20221014221011.7360-1-quic_molvera@quicinc.com>
+Subject: [PATCH v2 5/6] clk: qcom: Add support for QDU1000 and QRU1000 RPMh clocks
+Date:   Fri, 14 Oct 2022 15:10:10 -0700
+Message-ID: <20221014221011.7360-6-quic_molvera@quicinc.com>
 X-Mailer: git-send-email 2.38.0
+In-Reply-To: <20221014221011.7360-1-quic_molvera@quicinc.com>
+References: <20221014221011.7360-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -59,47 +61,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds the GCC, RPMh, and PDC clock support required for the
-QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
+Add support for RMPh clocks for QDU1000 and QRU1000 SoCs.
 
-The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
-1000 are new SoCs meant for enabling Open RAN solutions. See more at
-https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ drivers/clk/qcom/clk-rpmh.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-This patchset is based on the YAML conversion patch [1] submitted already.
-
-[1] https://lore.kernel.org/r/20220103074348.6039-1-luca.weiss@fairphone.com
-
-Imran Shaik (1):
-  clk: qcom: branch: Add BRANCH_HALT_INVERT flag support for branch
-    clocks
-
-Melody Olvera (4):
-  dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock bindings
-  dt-bindings: clock: Add RPMHCC bindings for QDU1000 and QRU1000
-  clk: qcom: Add support for QDU1000 and QRU1000 RPMh clocks
-  dt-bindings: qcom,pdc: Introduce pdc bindings for QDU1000 and QRU1000
-
-Taniya Das (1):
-  clk: qcom: Add QDU1000 and QRU1000 GCC support
-
- .../bindings/clock/qcom,gcc-qdu1000.yaml      |   70 +
- .../bindings/clock/qcom,rpmhcc.yaml           |    2 +
- .../interrupt-controller/qcom,pdc.yaml        |    2 +
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-branch.c                 |    5 +
- drivers/clk/qcom/clk-branch.h                 |    2 +
- drivers/clk/qcom/clk-rpmh.c                   |   14 +
- drivers/clk/qcom/gcc-qdu1000.c                | 2644 +++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-qdu1000.h  |  170 ++
- 10 files changed, 2918 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
- create mode 100644 drivers/clk/qcom/gcc-qdu1000.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-qdu1000.h
-
-
-base-commit: dca0a0385a4963145593ba417e1417af88a7c18d
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 0471bab82464..d4f8b0d1a91a 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -644,6 +644,18 @@ static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+ 	.num_clks = ARRAY_SIZE(sdx65_rpmh_clocks),
+ };
+ 
++DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
++
++static struct clk_hw *qdu1000_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]      = &qdu1000_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]    = &qdu1000_bi_tcxo_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_qdu1000 = {
++	.clks = qdu1000_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(qdu1000_rpmh_clocks),
++};
++
+ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+ 					 void *data)
+ {
+@@ -727,6 +739,8 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id clk_rpmh_match_table[] = {
++	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
++	{ .compatible = "qcom,qru1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+ 	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
+ 	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
+ 	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
 -- 
 2.38.0
 
