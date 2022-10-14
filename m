@@ -2,95 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5ABC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 19:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BE1C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 20:39:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbiJNTpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 15:45:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54968 "EHLO
+        id S231569AbiJNUjp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 16:39:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231465AbiJNTpg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 15:45:36 -0400
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C8931382E9;
-        Fri, 14 Oct 2022 12:45:33 -0700 (PDT)
-Received: by mail-qt1-x830.google.com with SMTP id hh9so4335330qtb.13;
-        Fri, 14 Oct 2022 12:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U555cJ7oEdcMNPdYOmtxquYWZkPSsvlm43vBiYFKjFY=;
-        b=CdFCrSGnPb39F/CIvynt9LAkFxUyTv4a7VuY3XVngkJj9X1jjjNV08qKes2/58FZMp
-         1GQn9IIfIj7BAJLqmzKqDsxrPsc2LzwOdiftR7Zd7YCfVJ694NlgI2C0AVag1XYfcBih
-         Im58IfhTl0zNsHfcoa1BddM73lkdldug7xFxgrOpP9SoEgOCwT9uQ35cackwPL952K6X
-         sYE9YCovERBHAZGgvFXdod0wjCtipAtB2lcgWgqW9hUU4kTMYvDIGysF/M+/oj/UrRBR
-         gQNZDEt2/cbcnOrJwXNhKsE3pTLmMlw+G9t7PhGYE6oKUJoNXRG2zTdcy7Q1JmjcKNP6
-         ZUgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U555cJ7oEdcMNPdYOmtxquYWZkPSsvlm43vBiYFKjFY=;
-        b=7BnNIksr1W/Pc5tetcnerfG7ZpnKZEnU161j1KVukMZNoBQPlLygD/mpAQy3ELeM8q
-         W8114K5G/cbVdf5zNYa0pEopMXevs5+BKIcst4JTiUuImt5qjXt132b0ttOtz+gHlgdm
-         64cgomyZsD7oTBsW5maPdUDuMIhx41TTmPEKXevQK9EwN1fhlN4F5xcPKm3EFafwrx3M
-         9WSzU2FxNt4zt5y1T0ijMHu4I2WT+nvd5L1jdDqHUBLtiF8t7sJ5iwnRK7T1Nqw/fVaG
-         pA9mXfg4rCcTaRwPi/x6tYTNNO6i4gFYv7kHlV0NujSCJ1slwihxYiukiXIpOjoYvPZF
-         aHjg==
-X-Gm-Message-State: ACrzQf2KgEqlLPvtpzfkgwEggdyY2rz55UpeJ1KaAUq5Ooe1EaH3NBjG
-        sxu1uawiuTqVojQI+boADLo=
-X-Google-Smtp-Source: AMsMyM5YwovOdmOixZxoCjVDQ3U5mtCE1JsPE8AHNwdOKu781m6RHftPl9Vq+OUrVZz+2BWZWmsacw==
-X-Received: by 2002:a05:622a:83:b0:35d:44c1:e026 with SMTP id o3-20020a05622a008300b0035d44c1e026mr5718168qtw.298.1665776732330;
-        Fri, 14 Oct 2022 12:45:32 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id u3-20020a05620a454300b006eed094dcdasm1548628qkp.70.2022.10.14.12.45.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Oct 2022 12:45:31 -0700 (PDT)
-Message-ID: <d8921e07-7444-33df-5d64-e5940f2665f8@gmail.com>
-Date:   Fri, 14 Oct 2022 12:45:24 -0700
+        with ESMTP id S231572AbiJNUjV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 16:39:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F86C108264;
+        Fri, 14 Oct 2022 13:38:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A69F61C3D;
+        Fri, 14 Oct 2022 20:38:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CD7C433D6;
+        Fri, 14 Oct 2022 20:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665779919;
+        bh=zD96eUSxSatwE9POdv8DucX3Ox8BNf2yVFULzp6knVo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=hkUgk4QXkDFui74OYyvU7iGCacSjsw/u5doG3ZMrfqSQ3HUX/0g9W1CnA0nNT+pJE
+         iah1PEGaYg4tT79oHejD5ehxK4hTJZbxGASzdx19O3PIz4QWWW0LyhH/ohj/XWVQsC
+         7Rdd27KFPJjN5gRO6q81N33bKvC+IB5UPQ0tI4vZ7pTX8G35ifurA3s1W3xBL3Dt8Z
+         3wlkGUVqI0Qu+KXpC9dx94tp+wDSgySvBqlrdreaAYfb8hazlwKFCj7dOSUOMNY1cQ
+         4buV8N82Fmrw6OjrSXtQXfnnP5NKnpTworF4Ye4B9inBR/NRHvz8LEEjMGbC6VwMRe
+         PcS5Hx/iI1HBg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3 3/7] firmware: raspberrypi: Provide a helper to query a
- clock max rate
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Emma Anholt <emma@anholt.net>, Stephen Boyd <sboyd@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        Dom Cobley <popcornmix@gmail.com>,
-        dri-devel@lists.freedesktop.org
-References: <20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech>
- <20220815-rpi-fix-4k-60-v3-3-fc56729d11fe@cerno.tech>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220815-rpi-fix-4k-60-v3-3-fc56729d11fe@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com>
+References: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] clk: mediatek: clk-mux: Add .determine_rate() callback
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
+        wenst@chromium.org, maxime@cerno.tech, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Date:   Fri, 14 Oct 2022 13:38:37 -0700
+User-Agent: alot/0.10
+Message-Id: <20221014203839.53CD7C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/13/22 02:13, Maxime Ripard wrote:
-> The firmware allows to query for its clocks the operating range of a
-> given clock. We'll need this for some drivers (KMS, in particular) to
-> infer the state of some configuration options, so let's create a
-> function to do so.
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Quoting AngeloGioacchino Del Regno (2022-10-11 06:55:48)
+> Since commit 262ca38f4b6e ("clk: Stop forwarding clk_rate_requests
+> to the parent"), the clk_rate_request is .. as the title says, not
+> forwarded anymore to the parent: this produces an issue with the
+> MediaTek clock MUX driver during GPU DVFS on MT8195, but not on
+> MT8192 or others.
+>=20
+> This is because, differently from others, like MT8192 where all of
+> the clocks in the MFG parents tree are of mtk_mux type, but in the
+> parent tree of MT8195's MFG clock, we have one mtk_mux clock and
+> one (clk framework generic) mux clock, like so:
+>=20
+> names: mfg_bg3d -> mfg_ck_fast_ref -> top_mfg_core_tmp (or) mfgpll
+> types: mtk_gate ->      mux        ->     mtk_mux      (or) mtk_pll
+>=20
+> To solve this issue and also keep the GPU DVFS clocks code working
+> as expected, wire up a .determine_rate() callback for the mtk_mux
+> ops; for that, the standard clk_mux_determine_rate_flags() was used
+> as it was possible to.
+>=20
+> This commit was successfully tested on MT6795 Xperia M5, MT8173 Elm,
+> MT8192 Spherion and MT8195 Tomato; no regressions were seen.
+>=20
+> For the sake of some more documentation about this issue here's the
+> trace of it:
+>=20
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Applied to clk-next
