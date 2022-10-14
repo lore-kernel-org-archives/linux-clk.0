@@ -2,68 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F95C4321E
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 20:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4A3C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 20:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbiJNUkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 16:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40054 "EHLO
+        id S231526AbiJNUmt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 16:42:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbiJNUjy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 16:39:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933B492CD1;
-        Fri, 14 Oct 2022 13:39:32 -0700 (PDT)
+        with ESMTP id S231504AbiJNUms (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 16:42:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5DA5106A4D;
+        Fri, 14 Oct 2022 13:42:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5A9BFB82421;
-        Fri, 14 Oct 2022 20:39:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D53FC433D7;
-        Fri, 14 Oct 2022 20:39:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 70DEC61C3C;
+        Fri, 14 Oct 2022 20:42:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7CAFC433B5;
+        Fri, 14 Oct 2022 20:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665779969;
-        bh=Iarhpng2U1jATe+718gp6xUn6xpKl89ko9ZIcVNMhfE=;
+        s=k20201202; t=1665780162;
+        bh=O2YPCkvYoPkPM51n6KuE/kCLXzRJRqmOqCJxc3Y7mZQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gnLbBp9b7xaGTOS8YlhXpYaV6INFMyRMu7/B0FNOcehzxfsJyTbFqsBNa9p2l0OJL
-         wOYBp1dzjgFMkioPRwWc5TAJMmIiS5DnaXfEZSQ2SoqXq/sNt7bQ7aGU5nt3SvpNvK
-         HEg2TsilRm35OrciYUmUlcOka9LNXJYfK+YBgs+rYOKa1itSDEfxDjlYurPDX+SW8d
-         H9ZrFJbtc1Yz2NJQ3X01GMCpL0jdaSIMDFLvl8/XHmNYyy02HsAugVxquzQiMOOZkT
-         qJS9sDXjGSjdCGAeDd3IeBaiy+o8ERcqbpZH8urxGzuKgoOljWB1wLUZwDSvSwji8u
-         sQbl3j+AjMRKw==
+        b=ErXdOE1Nm7fTP7QoH5gB7S2AdCRaYd2zN/6XSFY6kzVcntp6H8nDVfxYMaSg2jbpD
+         ND8eh4tCScUhdfjq8dKMuGaF1H2a9BMhS7wVF+KTquILvLUw8dn5ZZPnNRV+LSnTPR
+         hE2oQgKvcWdTMe9xzA2Adm+KaPmeaCAiUx5pGclOkMwFubWCrOekCbA/c3WLsM6uPm
+         WTbdZthF0elbni9zYxYISQgK1xp0UO5VOyPg8pR9hH/szkf7RA7/9HSPg72P0G340X
+         oQy+2mZVRvL0pWQsn91mp9BADJh6w0g2PkGkAFrLMzpm7ds9BQBh5eQEpihZNc2biO
+         WiTGC6WMReSrQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221012030635.13140-1-wangkefeng.wang@huawei.com>
-References: <20221012030635.13140-1-wangkefeng.wang@huawei.com>
-Subject: Re: [PATCH v2] clk: at91: fix the build with binutils 2.27
+In-Reply-To: <20221013112336.15438-3-johnson.wang@mediatek.com>
+References: <20221013112336.15438-1-johnson.wang@mediatek.com> <20221013112336.15438-3-johnson.wang@mediatek.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: arm: mediatek: Add new bindings of MediaTek frequency hopping
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-clk@vger.kernel.org
-Date:   Fri, 14 Oct 2022 13:39:27 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        kuan-hsin.lee@mediatek.com, yu-chang.wang@mediatek.com,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>
+To:     Johnson Wang <johnson.wang@mediatek.com>,
+        angelogioacchino.delregno@collabora.com,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
+Date:   Fri, 14 Oct 2022 13:42:40 -0700
 User-Agent: alot/0.10
-Message-Id: <20221014203929.0D53FC433D7@smtp.kernel.org>
+Message-Id: <20221014204242.C7CAFC433B5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kefeng Wang (2022-10-11 20:06:35)
-> There is an issue when build with older versions of binutils 2.27.0,
+Quoting Johnson Wang (2022-10-13 04:23:34)
+> Add the new binding documentation for MediaTek frequency hopping
+> and spread spectrum clocking control.
 >=20
-> arch/arm/mach-at91/pm_suspend.S: Assembler messages:
-> arch/arm/mach-at91/pm_suspend.S:1086: Error: garbage following instructio=
-n -- `ldr tmp1,=3D0x00020010UL'
->=20
-> Use UL() macro to fix the issue in assembly file.
->=20
-> Fixes: 4fd36e458392 ("ARM: at91: pm: add plla disable/enable support for =
-sam9x60")
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
+>  .../arm/mediatek/mediatek,mt8186-fhctl.yaml   | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediat=
+ek,mt8186-fhctl.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt81=
+86-fhctl.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8=
+186-fhctl.yaml
+> new file mode 100644
+> index 000000000000..59111946966c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-fhct=
+l.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-fhctl.ya=
+ml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek frequency hopping and spread spectrum clocking control
 
-Applied to clk-next
+The driver patch is in drivers/clk so why not put the binding in
+bindings/clock as well?
+
+> +
+> +maintainers:
+> +  - Edward-JW Yang <edward-jw.yang@mediatek.com>
+> +
+[...]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8186-clk.h>
+> +    fhctl: fhctl@1000ce00 {
+
+Is it a clock-controller? 'fhctl' isn't a generic node name.
+
+> +        compatible =3D "mediatek,mt8186-fhctl";
+> +        reg =3D <0x1000ce00 0x200>;
+> +        clocks =3D <&apmixedsys CLK_APMIXED_MSDCPLL>;
+> +        mediatek,hopping-ssc-percent =3D <3>;
