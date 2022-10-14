@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D96C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 19:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5ABC433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 19:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231390AbiJNTod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 15:44:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47714 "EHLO
+        id S230377AbiJNTpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 15:45:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231355AbiJNTob (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 15:44:31 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72851D79B2;
-        Fri, 14 Oct 2022 12:44:30 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id h10so3895238qvq.7;
-        Fri, 14 Oct 2022 12:44:30 -0700 (PDT)
+        with ESMTP id S231465AbiJNTpg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 15:45:36 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C8931382E9;
+        Fri, 14 Oct 2022 12:45:33 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id hh9so4335330qtb.13;
+        Fri, 14 Oct 2022 12:45:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jRUJ/QuzoFh7CZWCmP/Tvwc6hY7OTq8JN3QKuFbW8/8=;
-        b=iPwNeLHyqaFNTPw3QAfJflixPHFnxLKYWk27ZjSlOrkAf1sNonJPypAnjw+0nVjuP0
-         RTNYnwrrm8+SOU9H4gtwLe8/dFs0D+UOilYO5IlMqLfxNV+QUNY76S0GcIzMCWB03Ka1
-         gKUqtw/YFWBsYEr5kRK71GtG7k48lhNfycbF93pH5WjMYgywC555KUrCqwKswTztolOc
-         RVtjxYlccZcxs0vNyTI+6Z7LQiagsWoOm98ClzwSwE4KQAWqxBNWUh+FiYFI5CbVqy3B
-         dPnyWMQWgbzQklANOqoZMU+Qo3+tQqkNlIpLZ1AZvIvZC1LS0LkvEccVrtetuM8afc3T
-         afFg==
+        bh=U555cJ7oEdcMNPdYOmtxquYWZkPSsvlm43vBiYFKjFY=;
+        b=CdFCrSGnPb39F/CIvynt9LAkFxUyTv4a7VuY3XVngkJj9X1jjjNV08qKes2/58FZMp
+         1GQn9IIfIj7BAJLqmzKqDsxrPsc2LzwOdiftR7Zd7YCfVJ694NlgI2C0AVag1XYfcBih
+         Im58IfhTl0zNsHfcoa1BddM73lkdldug7xFxgrOpP9SoEgOCwT9uQ35cackwPL952K6X
+         sYE9YCovERBHAZGgvFXdod0wjCtipAtB2lcgWgqW9hUU4kTMYvDIGysF/M+/oj/UrRBR
+         gQNZDEt2/cbcnOrJwXNhKsE3pTLmMlw+G9t7PhGYE6oKUJoNXRG2zTdcy7Q1JmjcKNP6
+         ZUgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jRUJ/QuzoFh7CZWCmP/Tvwc6hY7OTq8JN3QKuFbW8/8=;
-        b=by3Cwvl51mY9KIw/Y3WIT3g+6Sxuhx7dzIsXnJf7ygYO0s94F6Bkl3zHcXzkmK7Dh2
-         ZJs8Xe3V9kM16A2tsUQQAvLOyk8K3B10U7606I5QIsCM1mIy39eznvlMXj6b/JIcZH6U
-         wT5TNTAtwzlob3VmQz70uHVAwSmg5Wz9hbAMAanXsmglVbnvZ3r2ncGvACSBCz/pBa9p
-         b3NkmX9nIb7hwjKjpmzDGMNWOQC3eU2EKuSNDvV/G9gOUyudBR4T321GzWnMB/vV6rUb
-         ZM9e9pCaGlOjVSDv6/aQojq1dVtZOpyBK3W8NfUBQs1Nq10hw43pzrOzWLGbeG9snbUl
-         loYw==
-X-Gm-Message-State: ACrzQf1SuUTBM6k8ahWlajx/Wqtw8cSfKhpohqvR8RntUuwC+ONENgBE
-        ImdOPX39EfPCloq+rU0S0ZY=
-X-Google-Smtp-Source: AMsMyM4Z3G8ESlxxaBGvcPzIV8pBrcD99S8yd+JZsybkrXWtMqOFr/g1WwkRVGlDPTmYl9kd5q08Gw==
-X-Received: by 2002:a05:6214:622:b0:4b1:d189:1631 with SMTP id a2-20020a056214062200b004b1d1891631mr5391197qvx.62.1665776669830;
-        Fri, 14 Oct 2022 12:44:29 -0700 (PDT)
+        bh=U555cJ7oEdcMNPdYOmtxquYWZkPSsvlm43vBiYFKjFY=;
+        b=7BnNIksr1W/Pc5tetcnerfG7ZpnKZEnU161j1KVukMZNoBQPlLygD/mpAQy3ELeM8q
+         W8114K5G/cbVdf5zNYa0pEopMXevs5+BKIcst4JTiUuImt5qjXt132b0ttOtz+gHlgdm
+         64cgomyZsD7oTBsW5maPdUDuMIhx41TTmPEKXevQK9EwN1fhlN4F5xcPKm3EFafwrx3M
+         9WSzU2FxNt4zt5y1T0ijMHu4I2WT+nvd5L1jdDqHUBLtiF8t7sJ5iwnRK7T1Nqw/fVaG
+         pA9mXfg4rCcTaRwPi/x6tYTNNO6i4gFYv7kHlV0NujSCJ1slwihxYiukiXIpOjoYvPZF
+         aHjg==
+X-Gm-Message-State: ACrzQf2KgEqlLPvtpzfkgwEggdyY2rz55UpeJ1KaAUq5Ooe1EaH3NBjG
+        sxu1uawiuTqVojQI+boADLo=
+X-Google-Smtp-Source: AMsMyM5YwovOdmOixZxoCjVDQ3U5mtCE1JsPE8AHNwdOKu781m6RHftPl9Vq+OUrVZz+2BWZWmsacw==
+X-Received: by 2002:a05:622a:83:b0:35d:44c1:e026 with SMTP id o3-20020a05622a008300b0035d44c1e026mr5718168qtw.298.1665776732330;
+        Fri, 14 Oct 2022 12:45:32 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id t138-20020a37aa90000000b006ecb9dfdd15sm3053872qke.92.2022.10.14.12.44.22
+        by smtp.googlemail.com with ESMTPSA id u3-20020a05620a454300b006eed094dcdasm1548628qkp.70.2022.10.14.12.45.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Oct 2022 12:44:29 -0700 (PDT)
-Message-ID: <c3535ca9-1676-750a-9041-8bcc4c636e86@gmail.com>
-Date:   Fri, 14 Oct 2022 12:44:20 -0700
+        Fri, 14 Oct 2022 12:45:31 -0700 (PDT)
+Message-ID: <d8921e07-7444-33df-5d64-e5940f2665f8@gmail.com>
+Date:   Fri, 14 Oct 2022 12:45:24 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v3 2/7] firmware: raspberrypi: Move the clock IDs to the
- firmware header
+Subject: Re: [PATCH v3 3/7] firmware: raspberrypi: Provide a helper to query a
+ clock max rate
 Content-Language: en-US
 To:     Maxime Ripard <maxime@cerno.tech>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -73,9 +73,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Dom Cobley <popcornmix@gmail.com>,
         dri-devel@lists.freedesktop.org
 References: <20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech>
- <20220815-rpi-fix-4k-60-v3-2-fc56729d11fe@cerno.tech>
+ <20220815-rpi-fix-4k-60-v3-3-fc56729d11fe@cerno.tech>
 From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220815-rpi-fix-4k-60-v3-2-fc56729d11fe@cerno.tech>
+In-Reply-To: <20220815-rpi-fix-4k-60-v3-3-fc56729d11fe@cerno.tech>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,9 +83,12 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 10/13/22 02:13, Maxime Ripard wrote:
-> We'll need the clock IDs in more drivers than just the clock driver from
-> now on, so let's move them in the firmware header.
+> The firmware allows to query for its clocks the operating range of a
+> given clock. We'll need this for some drivers (KMS, in particular) to
+> infer the state of some configuration options, so let's create a
+> function to do so.
 > 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
