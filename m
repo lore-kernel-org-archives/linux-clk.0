@@ -2,88 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE99C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 03:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6B8C43219
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 08:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbiJNDZa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Oct 2022 23:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37398 "EHLO
+        id S230053AbiJNICa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 04:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbiJNDZ3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Oct 2022 23:25:29 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA8CA9243;
-        Thu, 13 Oct 2022 20:25:25 -0700 (PDT)
-X-QQ-mid: bizesmtp70t1665717897tggdurz9
-Received: from [192.168.50.235] ( [113.72.147.11])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 14 Oct 2022 11:24:55 +0800 (CST)
-X-QQ-SSF: 01000000000000B09000000A0000000
-X-QQ-FEAT: Sm8l2YSuDykwx9zlf9aLJ0pyGRo8hfvyvKRxpLKx+MBlrJvD5pae//UyWDAHW
-        na+5Zc7KD3nH6kxeXh6Yqpsg0LCAFrZLbmfKzGrO0BDwerR9xpCu/dFNr2efEUDZBpPls6y
-        0LDmtH/jgCC728s/PbjIVFaNySz6J0mJm1iSKu6MrWK0k1EGan9i1YWZUUWi3EDBHYOAgW7
-        2LECSrZ7SDNEbTiafYaBMYy8np1WuK2EYswgPqtX9OxtcVauKnhg8LPOPxBNgvYoa5exsQ9
-        wQooaViwTDRQvilIPnMdhtemhJTHDS6oTPIW3h1NeNCTDhUYflKHmS7yqFkhvESXqWXhT27
-        dc07HIQ4XYHjmjFWxc2ve/5cGaJHF6vbiVpGk7z6+CQyfKG3JElOgvjk2WIIg==
-X-QQ-GoodBg: 0
-Message-ID: <7CB1B79E00E38D81+9631ccf1-48b5-9ffa-e5cd-b0c9a7c50a56@linux.starfivetech.com>
-Date:   Fri, 14 Oct 2022 11:24:44 +0800
+        with ESMTP id S230030AbiJNICT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 04:02:19 -0400
+Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219D31BB96C
+        for <linux-clk@vger.kernel.org>; Fri, 14 Oct 2022 01:02:17 -0700 (PDT)
+Received: by mail.fadrush.pl (Postfix, from userid 1002)
+        id 81481231FB; Fri, 14 Oct 2022 08:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
+        t=1665734526; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
+        h=Date:From:To:Subject:From;
+        b=eETN8CPraefgx/z+Gr8+OIKiYqZcPd2QnhO0K4oOvnYcuLZ8LaLE+OKEPHD73ZpLr
+         QiX0y7RXPaTHOKt9ql4bXaHI8qI7+rnSCkaBfdUgcmUtDPC+2vrmFXQ1xJ8vfwd0Jw
+         D7y791oGvmmpnIzyLtQfWgkzKsJ52fDZZy9A0wZImgv5xCJd/FGX27ZLQXz/zACAMA
+         z8wUvsJiPAyAi3KIRyorYy/jQBFDXpe322zUQzvzNqSQC24NQzlgr3tuaoUm6znjzE
+         f1MKFQU6xnyVicOPs6jr1HPVzet97pfsTrcRxmAoHmLXAUG43sHA+IrGabzSh/Gg+9
+         54YIyMknso7/g==
+Received: by mail.fadrush.pl for <linux-clk@vger.kernel.org>; Fri, 14 Oct 2022 08:00:54 GMT
+Message-ID: <20221014064500-0.1.28.m7r6.0.7qke24766o@fadrush.pl>
+Date:   Fri, 14 Oct 2022 08:00:54 GMT
+From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
+X-Mailer: mail.fadrush.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 29/30] RISC-V: defconfig: Enable CONFIG_SERIAL_8250_DW
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220930090653.7449-1-hal.feng@linux.starfivetech.com>
- <01c658ad-7f73-20fc-03c0-c82dcd820aa4@codethink.co.uk>
- <Yzdig6GepDx34u1j@spud>
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <Yzdig6GepDx34u1j@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 30 Sep 2022 22:41:23 +0100, Conor Dooley wrote:
-> On Fri, Sep 30, 2022 at 09:54:14PM +0100, Ben Dooks wrote:
-> > On 30/09/2022 10:06, Hal Feng wrote:
-> > > Add CONFIG_SERIAL_8250_DW=y, which is a necessary option for
-> > > StarFive JH7110 and JH7100 SoCs to boot with serial ports.
-> > > 
-> > > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> > 
-> > That might be useful for other users at some point an I don't
-> > think it adds much code.
-> 
-> Honestly I think this should be applied for 6.1, for parity with the
-> other SoCs that have their serial console enabled by default.
-> 
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Dzie=C5=84 dobry,
 
-Could this patch be pulled out and applied for v6.1? So the JH7100
-and the coming JH7110 can enable serial console by default when
-booting. Thanks.
+kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
+proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
+stwa firmie stabilny rozw=C3=B3j.=20
 
-Best regards,
-Hal
+Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
+a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
+nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
+po rozwoju firmy.
+
+Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
+nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
+adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
+j=C4=85 je innym.
+
+Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
+o=C5=9Bwiadczonego doradcy finansowego?
+
+
+Pozdrawiam
+Jakub Olejniczak
