@@ -2,70 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCF8C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 19:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA72C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 19:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231218AbiJNTbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 15:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47518 "EHLO
+        id S231310AbiJNTgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 15:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230450AbiJNTbn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 15:31:43 -0400
+        with ESMTP id S229534AbiJNTgx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 15:36:53 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4B23109D61;
-        Fri, 14 Oct 2022 12:31:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FADC189821;
+        Fri, 14 Oct 2022 12:36:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 66E9261C0D;
-        Fri, 14 Oct 2022 19:31:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A48C8C433C1;
-        Fri, 14 Oct 2022 19:31:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AF99C61C06;
+        Fri, 14 Oct 2022 19:36:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C745C433D6;
+        Fri, 14 Oct 2022 19:36:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665775901;
-        bh=tUBPE8pgS14Vo1Xv8t8dwBDPEUaw9xIL3GQsyiJxdeQ=;
+        s=k20201202; t=1665776212;
+        bh=eEjhidYj5VNDiYpsn0HCO9fjIL2iJoV/K1rtE5CgI+c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ESk+l1AjA5D4CHUMEGShawJE/ElnWJ+d9Urkmoq7c5IIp1ACXvyv2lZWZY1SSvFul
-         a9IIAemS/2lFkww8GzfZG7u4MmNHuA4n9GInj9sph7O51vTFYOe28WM1pqJCCsd+Ew
-         jVqHY+OUqyM20XDQemUl6aopAautE6lAz28L8tZjURk4FNGADYCVWpnGdRo2pMI9pc
-         ySTbzEW9vYfcMGiUvCzTBhyz9eMVMoJzc8O5eBO0G1aBxj1ZbCJ7om+FcGCgprEeK/
-         D+fkbDjly7N3sPj+Hk2AXjABjbTCTmZlvP3SojzGspeOL5Eg88L0HUP4QYYVUso5qt
-         /impH1mfV1T6w==
+        b=hh6OMbuLYYkASYw11pxYoljgA2UiKs3kot9AoYNPCPFO8QRgzGmnX7Iqkub/mNvCp
+         /WH49y9IFDgsbYhBLm86ry6R7MuRi+fP5mIkqW0sBDUkEhO5TXea9chdhqroaA7aJC
+         gdFRcBmUSN+D8ToYTXW6/jCZf5ne/iIgSarYfptVWYlg1ZLCgFPQG8GrOs4vH498At
+         KuAjBhT/G+L0dDXV+5slII16jNcDOV+mLSHeHZBKpD7hrTQDz8NkTUMial/yZgOYcE
+         +KHv7H6DCLgeK8CKlMUPgvGGJ03d7fdWYvV2g9WgZckCrYRes7IDJRnxWYWb/jwIe+
+         fj/Uc/fEKrqgA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220815-rpi-fix-4k-60-v3-2-fc56729d11fe@cerno.tech>
-References: <20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech> <20220815-rpi-fix-4k-60-v3-2-fc56729d11fe@cerno.tech>
-Subject: Re: [PATCH v3 2/7] firmware: raspberrypi: Move the clock IDs to the firmware header
+In-Reply-To: <20221012135619.wxyzuqheolhypoec@houat>
+References: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com> <20221012085555.3nls7ja56vlnaz2w@houat> <c4a1eb9f-016d-c184-e494-c869038b87ff@collabora.com> <20221012094004.jgiyvmbgomiyedik@houat> <6e76f90f-3b6a-330d-6902-b31bf3d33ad4@collabora.com> <20221012114813.6d6adro746w5bd7c@houat> <decfd5e5-a48b-b2d1-f21b-1a4d52e05538@collabora.com> <20221012135619.wxyzuqheolhypoec@houat>
+Subject: Re: [PATCH v2] clk: mediatek: clk-mux: Add .determine_rate() callback
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime@cerno.tech>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        Dom Cobley <popcornmix@gmail.com>,
-        dri-devel@lists.freedesktop.org
-To:     Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>, Emma Anholt <emma@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Date:   Fri, 14 Oct 2022 12:31:39 -0700
+Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
+        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
+        wenst@chromium.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Date:   Fri, 14 Oct 2022 12:36:50 -0700
 User-Agent: alot/0.10
-Message-Id: <20221014193141.A48C8C433C1@smtp.kernel.org>
+Message-Id: <20221014193652.0C745C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-10-13 02:13:09)
-> We'll need the clock IDs in more drivers than just the clock driver from
-> now on, so let's move them in the firmware header.
+Quoting Maxime Ripard (2022-10-12 06:56:19)
 >=20
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
+> I think we need to address this in multiple ways:
+>=20
+> - If you have ftrace enabled on that platform, running with "tp_printk
+>   trace_event=3Dclk:*" in the kernel command line on a failing kernel wou=
+ld
+>   be great, so that we can figure out what is happening exactly.
+>=20
+> - We really need to merge your patch above as well;
+>=20
+> - And, if we can, we should forbid to register a mux without a
+>   determine_rate implementation. We have to take into account that some
+>   muxes are going to be RO and won't need a determine_rate
+>   implementation at all, but a clock with a set_parent and without a
+>   determine_rate seems like a weird combination.
+>=20
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+So should I apply this patch now on clk-next? Given this regression I'm
+leaning towards not sending off the clk rate request this merge window
+and letting it bake another cycle.
