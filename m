@@ -2,112 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D4BC43217
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Oct 2022 23:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A86E1C433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 00:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229516AbiJNXxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 19:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46580 "EHLO
+        id S229704AbiJOAUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Oct 2022 20:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiJNXxk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 19:53:40 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC4786374;
-        Fri, 14 Oct 2022 16:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1665791618; x=1697327618;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rbflSGtIpPJO6C65/fJEG2ZGnDtsLTlgBQPQCuKjCoM=;
-  b=ZTJwN2IrGuyL287wDDpMJC7ncJW5uA3g1AKIC3uZTtmVt8wIoqHpHeMF
-   lpOErIvq1ghpbpyjmMrCUWaYwWmYQ8kqVL4TBvCTyhlPRSHT+tCj4/Vid
-   TjoDwZFi531MIfhRoEpNvt0VZIzWbxFO3CIJrb07yaI6NwuZp/Eex0G/N
-   s=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 14 Oct 2022 16:53:38 -0700
-X-QCInternal: smtphost
-Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2022 16:53:37 -0700
-Received: from [10.110.77.177] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 14 Oct
- 2022 16:53:37 -0700
-Message-ID: <eec2e9f5-5980-6a2e-53e5-71cc9a76f0a7@quicinc.com>
-Date:   Fri, 14 Oct 2022 16:53:36 -0700
+        with ESMTP id S229600AbiJOAUM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 20:20:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F9D2ED75;
+        Fri, 14 Oct 2022 17:20:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3D639B82454;
+        Sat, 15 Oct 2022 00:20:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3815C433D7;
+        Sat, 15 Oct 2022 00:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665793208;
+        bh=DLWGZUFypnQ4qJlqqqtH3Qnp1z+7q42ZDrSIyieCc8g=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=mllW1ZnrQ4EDhPWJhgVvnsWecaadIuLz2ioGthtSsax+ri6AaDEEh+OLQiuK7MeFW
+         novruXrSMi1zh0pwTh2rAkMB8fQderiZGYwv6fMNtLqBngOITkIqjuE8d5k0Ir/6n8
+         TLJrc5UuW2+eF31iy2+AAtNNVM7c+j/eQqrXDObnIo6ay+LVdK2/ft/NIV23V6rwP0
+         WrLNtcqguxV4exUt3ViT3T2q+Qw1I+Ao6xdKX9YJp5YKzTzUEKd9Nv+cvmKZ8kyp/6
+         CKO4A9/zFSjLgB4VgVrHXnFwnpTusO6ah8AxDe8graqUOMcdess4xk4XM6HVLVubT1
+         Hi6TMK1Lka/2A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 0/6] clk: qcom: Add clocks for the QDU1000 and QRU1000
- SoCs
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221014221011.7360-4-quic_molvera@quicinc.com>
+References: <20221014221011.7360-1-quic_molvera@quicinc.com> <20221014221011.7360-4-quic_molvera@quicinc.com>
+Subject: Re: [PATCH v2 3/6] clk: qcom: branch: Add BRANCH_HALT_INVERT flag support for branch clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221014221011.7360-1-quic_molvera@quicinc.com>
-Content-Language: en-US
-From:   Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <20221014221011.7360-1-quic_molvera@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+        Marc Zyngier <maz@kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Fri, 14 Oct 2022 17:20:06 -0700
+User-Agent: alot/0.10
+Message-Id: <20221015002007.E3815C433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Melody Olvera (2022-10-14 15:10:08)
+> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+> index f869fc6aaed6..b5dc1f4ef277 100644
+> --- a/drivers/clk/qcom/clk-branch.c
+> +++ b/drivers/clk/qcom/clk-branch.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reser=
+ved.
+>   */
+> =20
+>  #include <linux/kernel.h>
+> @@ -56,6 +57,10 @@ static bool clk_branch2_check_halt(const struct clk_br=
+anch *br, bool enabling)
+> =20
+>         if (enabling) {
+>                 val &=3D mask;
+> +
+> +               if (br->halt_check =3D=3D BRANCH_HALT_INVERT)
+> +                       return (val & BRANCH_CLK_OFF) =3D=3D BRANCH_CLK_O=
+FF;
+> +
+>                 return (val & BRANCH_CLK_OFF) =3D=3D 0 ||
+>                         val =3D=3D BRANCH_NOC_FSM_STATUS_ON;
+>         } else {
+> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> index 17a58119165e..4ac1debeb91e 100644
+> --- a/drivers/clk/qcom/clk-branch.h
+> +++ b/drivers/clk/qcom/clk-branch.h
+> @@ -1,5 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /* Copyright (c) 2013, The Linux Foundation. All rights reserved. */
+> +/* Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reser=
+ved. */
+> =20
+>  #ifndef __QCOM_CLK_BRANCH_H__
+>  #define __QCOM_CLK_BRANCH_H__
+> @@ -33,6 +34,7 @@ struct clk_branch {
+>  #define BRANCH_HALT_ENABLE_VOTED       (BRANCH_HALT_ENABLE | BRANCH_VOTE=
+D)
+>  #define BRANCH_HALT_DELAY              2 /* No bit to check; just delay =
+*/
+>  #define BRANCH_HALT_SKIP               3 /* Don't check halt bit */
+> +#define BRANCH_HALT_INVERT             4 /* Invert logic for halt bit */
 
-
-On 10/14/2022 3:10 PM, Melody Olvera wrote:
-> This series adds the GCC, RPMh, and PDC clock support required for the
-> QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
->
-> The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
-> 1000 are new SoCs meant for enabling Open RAN solutions. See more at
-> https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
->
-> This patchset is based on the YAML conversion patch [1] submitted already.
->
-> [1] https://lore.kernel.org/r/20220103074348.6039-1-luca.weiss@fairphone.com
-Changes from V1:
-- fixed alphabetic sorting
-- moved clk-branch changes to a separate commit
-- revised bindings
-> Imran Shaik (1):
->   clk: qcom: branch: Add BRANCH_HALT_INVERT flag support for branch
->     clocks
->
-> Melody Olvera (4):
->   dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock bindings
->   dt-bindings: clock: Add RPMHCC bindings for QDU1000 and QRU1000
->   clk: qcom: Add support for QDU1000 and QRU1000 RPMh clocks
->   dt-bindings: qcom,pdc: Introduce pdc bindings for QDU1000 and QRU1000
->
-> Taniya Das (1):
->   clk: qcom: Add QDU1000 and QRU1000 GCC support
->
->  .../bindings/clock/qcom,gcc-qdu1000.yaml      |   70 +
->  .../bindings/clock/qcom,rpmhcc.yaml           |    2 +
->  .../interrupt-controller/qcom,pdc.yaml        |    2 +
->  drivers/clk/qcom/Kconfig                      |    8 +
->  drivers/clk/qcom/Makefile                     |    1 +
->  drivers/clk/qcom/clk-branch.c                 |    5 +
->  drivers/clk/qcom/clk-branch.h                 |    2 +
->  drivers/clk/qcom/clk-rpmh.c                   |   14 +
->  drivers/clk/qcom/gcc-qdu1000.c                | 2644 +++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-qdu1000.h  |  170 ++
->  10 files changed, 2918 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
->  create mode 100644 drivers/clk/qcom/gcc-qdu1000.c
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-qdu1000.h
->
->
-> base-commit: dca0a0385a4963145593ba417e1417af88a7c18d
-
+How is it different from BRANCH_HALT vs. BRANCH_HALT_ENABLE?
