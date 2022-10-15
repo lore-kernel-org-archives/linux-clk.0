@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A47DC43219
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 15:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7E5C43217
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 15:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbiJOPDv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 15 Oct 2022 11:03:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46838 "EHLO
+        id S229737AbiJOPOh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 15 Oct 2022 11:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbiJOPDu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Oct 2022 11:03:50 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E490537D0
-        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:03:48 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id a18so4300729qko.0
-        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:03:48 -0700 (PDT)
+        with ESMTP id S229712AbiJOPOd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Oct 2022 11:14:33 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 076DE1054A
+        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:14:28 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id w3so5411040qtv.9
+        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:14:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IRXfSr+AeJv0MDB88/3kkIzBk6djfX71HiJlpWU4fUE=;
-        b=MmNUcHP2ChrnBow08VljA5fxjIYdGdDepyU/T8jyoNfEZdrye6p7nDfP9FjBDOKVgG
-         5mJKLtnhMb8gmCWTmmZs3Ke43wVPjRut9cStvukH2/lAqR7/TVw35JytHekj+Ye67jk2
-         nMX6wmw1o3MayEAAqiGcp75av5wh1I+vDoBuIOU5C9TYmWKDP0GBx0i/N1HPViH47g2b
-         ZVL256lmHrunPp9hJ6dNf9x46d9RElwFHae8Dax8VkpvGD6qW0nQjY70x/WLK0M4PS9P
-         47w6FEu0K0xS20KOj1jyca5js15JmJDnzcRjUC9TyRGK6TyprRPxsDv55c7x+hny2gc6
-         xWvw==
+        bh=xWtY9IbWt5il9NHyrw2WEzVDhghebg1APkZsyDdBupM=;
+        b=Ekt7K3DLeH5An4km8nCETBo6O+2kpYAzQPq9HK44a8q44AwYn7d1xBTlsHsnITEELr
+         LIbmbmJIfp7W9ZJre3SuVrpDXKpSA2o4Z+nEEVrpyJ8kJGzEyf5eienFpYH4e8MrIaoa
+         Bv8V9dV+XD88iG23T9SNbHWyWI6pMNG18PmwwyIIaSWdHJKiDbJ3BUkirC+5OFbN76ZQ
+         BJvLQYy6j855izl+3z+1aS7JniqE8q05n48e9FJI0BdAwKuBo+Ok4171iKofjfAdj593
+         ZwGEuiPJlv6/+4ELnllepdoL36zBEEZy70G8TJQqMUIBKdoWznEEKqrfulH/xeommql6
+         L0dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IRXfSr+AeJv0MDB88/3kkIzBk6djfX71HiJlpWU4fUE=;
-        b=0i4RZxO9AT8aUftXW/NmC3g7yQE/oWXYucQnRQpChB4cD9tdA3HijoMjJIfaySmo1p
-         NX2o7eJJJJnXESKAkowD5x7Ailego0ZZg3s03eBqWz8rjy+qnJxW65PA37Gw0vbsBWB6
-         mwgNri/NFCITHfhmsVLaG+UJSPSEJ1cKfQb8hBN0K5VoeyF3QHh6reECUeUzFJ38/q8S
-         50Knk80Q5VNgPxapcVtEEHEp2nfIQRYfq23cPc69plxWJWqYnZX9J8KTWXS0OEHxh1Uo
-         TJjib6mYn703NOh9XpSLKmoPm84LTHGtnrB2jr70F2sT9Y2xV5cSa9oXQg/LZEvXuMYT
-         rjOw==
-X-Gm-Message-State: ACrzQf0EmXkbdq8bDfIB4p1Om1JvEm17MGbr9YB4udGQHICpDaXZmMsc
-        hql4oxvh3svrWWeyjqqW//Xt1g==
-X-Google-Smtp-Source: AMsMyM6wOKBU8VXQG0sRCrLxwIlgwQtSfm9xcCrWrVzcLIRW5wCFiAzyTPdGmhqToNeXn8s8PO/zvw==
-X-Received: by 2002:a05:620a:45a6:b0:6ee:a169:f22b with SMTP id bp38-20020a05620a45a600b006eea169f22bmr2009569qkb.244.1665846227687;
-        Sat, 15 Oct 2022 08:03:47 -0700 (PDT)
+        bh=xWtY9IbWt5il9NHyrw2WEzVDhghebg1APkZsyDdBupM=;
+        b=YQlaSxZ3pvJinm2pq0vPuV/59zwXIsAledEIOtvYNNP+GxCUzZGcJSFdOoAFiw/8Kg
+         aQ6BvqeshbwAMC5SRjqOZM+klr7UWCI/TZ0N+Zs1lG4o1+sMNj41J6BAs2xlq0+YddPg
+         60/KJy6cKc0OhnAXn1c+iP6HyNhdUb0ayhPA4NXfLwYsQFpZrB2cXu/wXgByQ18Pjz3Q
+         J23N7t5qcXu/YC6fieyZ7uoRh2t8RWofRiIU5qomadZ9gHH+oJI/lQ+22ssyKyivr7U1
+         aWjDzcKtGgEhXPAtbsaWKCsJKGNnA9Ks7TCfDyfpQTyjitFdxisiqHqliqwP71EnpY+w
+         hp7w==
+X-Gm-Message-State: ACrzQf26bfVHi1PNdEktCzdyKUmtkth0dPhhiAPmU/0NR4RQ1sUCAf8b
+        uOkzSc3Yx5Ne6FjCjRL0iuXjEw==
+X-Google-Smtp-Source: AMsMyM7zH6DUMjoJWle+jyy6K2jNqugp2kdak+DoDBE1/iIesC19EcK38vi18d/rr2qIolI5TUyCEw==
+X-Received: by 2002:a05:622a:178e:b0:39c:c9ac:b4ad with SMTP id s14-20020a05622a178e00b0039cc9acb4admr2332516qtk.82.1665846867179;
+        Sat, 15 Oct 2022 08:14:27 -0700 (PDT)
 Received: from ?IPV6:2601:42:0:3450:9477:c2f0:ddea:ea08? ([2601:42:0:3450:9477:c2f0:ddea:ea08])
-        by smtp.gmail.com with ESMTPSA id v12-20020a05620a0f0c00b006c73c3d288esm4981055qkl.131.2022.10.15.08.03.46
+        by smtp.gmail.com with ESMTPSA id i9-20020a05620a404900b006bc192d277csm5192263qko.10.2022.10.15.08.14.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Oct 2022 08:03:47 -0700 (PDT)
-Message-ID: <dde4c160-e7f5-5759-d45b-c4608d1f28c1@linaro.org>
-Date:   Sat, 15 Oct 2022 11:03:45 -0400
+        Sat, 15 Oct 2022 08:14:26 -0700 (PDT)
+Message-ID: <19a408cb-995a-4729-dac8-ac8891909d84@linaro.org>
+Date:   Sat, 15 Oct 2022 11:14:24 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
@@ -86,9 +86,25 @@ On 14/10/2022 18:10, Melody Olvera wrote:
 >  .../devicetree/bindings/interrupt-controller/qcom,pdc.yaml      | 2 ++
 >  1 file changed, 2 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> index b6f56cf5fbe3..68a80e1c77c5 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> @@ -26,6 +26,8 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - qcom,qdu1000-pdc
+> +          - qcom,qru1000-pdc
 
+Un-reviewed.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Bindings do not match your DTS, so you are documenting different
+hardware then upstreaming.
+
+>            - qcom,sc7180-pdc
+>            - qcom,sc7280-pdc
+>            - qcom,sdm845-pdc
 
 Best regards,
 Krzysztof
