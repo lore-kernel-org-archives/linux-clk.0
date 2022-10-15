@@ -2,106 +2,182 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A86E1C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 00:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5901BC433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 09:10:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbiJOAUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Oct 2022 20:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55874 "EHLO
+        id S229704AbiJOJK3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 15 Oct 2022 05:10:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbiJOAUM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2022 20:20:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F9D2ED75;
-        Fri, 14 Oct 2022 17:20:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3D639B82454;
-        Sat, 15 Oct 2022 00:20:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3815C433D7;
-        Sat, 15 Oct 2022 00:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665793208;
-        bh=DLWGZUFypnQ4qJlqqqtH3Qnp1z+7q42ZDrSIyieCc8g=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mllW1ZnrQ4EDhPWJhgVvnsWecaadIuLz2ioGthtSsax+ri6AaDEEh+OLQiuK7MeFW
-         novruXrSMi1zh0pwTh2rAkMB8fQderiZGYwv6fMNtLqBngOITkIqjuE8d5k0Ir/6n8
-         TLJrc5UuW2+eF31iy2+AAtNNVM7c+j/eQqrXDObnIo6ay+LVdK2/ft/NIV23V6rwP0
-         WrLNtcqguxV4exUt3ViT3T2q+Qw1I+Ao6xdKX9YJp5YKzTzUEKd9Nv+cvmKZ8kyp/6
-         CKO4A9/zFSjLgB4VgVrHXnFwnpTusO6ah8AxDe8graqUOMcdess4xk4XM6HVLVubT1
-         Hi6TMK1Lka/2A==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221014221011.7360-4-quic_molvera@quicinc.com>
-References: <20221014221011.7360-1-quic_molvera@quicinc.com> <20221014221011.7360-4-quic_molvera@quicinc.com>
-Subject: Re: [PATCH v2 3/6] clk: qcom: branch: Add BRANCH_HALT_INVERT flag support for branch clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S229702AbiJOJK2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Oct 2022 05:10:28 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363B765C7;
+        Sat, 15 Oct 2022 02:10:27 -0700 (PDT)
+Received: from g550jk.arnhem.chello.nl (31-151-115-246.dynamic.upc.nl [31.151.115.246])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 71151C9D52;
+        Sat, 15 Oct 2022 09:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1665825023; bh=6JCUCll7KO+Z8XkfLAf6x6nD8Nh28IVWwpklTXnuBvQ=;
+        h=From:To:Cc:Subject:Date;
+        b=xL2TEOfrWgC9oD2frtEPnEsWPK6BfI/fewj2w9WtEv/nSjtJUgzVEDdZs+qWl6MLi
+         Dwdx56ybv7akkYHyMk8Y/NWtMI/pLWcbgGav+YYcxETaYjMKumcAvBa4ooPi2lvtDD
+         +BN58acoOof/6ktNA2+N7v2Xf5Gk2TY3+NSWrweo=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Luca Weiss <luca@z3ntu.xyz>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date:   Fri, 14 Oct 2022 17:20:06 -0700
-User-Agent: alot/0.10
-Message-Id: <20221015002007.E3815C433D7@smtp.kernel.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: Convert qcom,lcc to DT schema
+Date:   Sat, 15 Oct 2022 11:09:44 +0200
+Message-Id: <20221015090946.448820-1-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.38.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Melody Olvera (2022-10-14 15:10:08)
-> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-> index f869fc6aaed6..b5dc1f4ef277 100644
-> --- a/drivers/clk/qcom/clk-branch.c
-> +++ b/drivers/clk/qcom/clk-branch.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reser=
-ved.
->   */
-> =20
->  #include <linux/kernel.h>
-> @@ -56,6 +57,10 @@ static bool clk_branch2_check_halt(const struct clk_br=
-anch *br, bool enabling)
-> =20
->         if (enabling) {
->                 val &=3D mask;
-> +
-> +               if (br->halt_check =3D=3D BRANCH_HALT_INVERT)
-> +                       return (val & BRANCH_CLK_OFF) =3D=3D BRANCH_CLK_O=
-FF;
-> +
->                 return (val & BRANCH_CLK_OFF) =3D=3D 0 ||
->                         val =3D=3D BRANCH_NOC_FSM_STATUS_ON;
->         } else {
-> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> index 17a58119165e..4ac1debeb91e 100644
-> --- a/drivers/clk/qcom/clk-branch.h
-> +++ b/drivers/clk/qcom/clk-branch.h
-> @@ -1,5 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  /* Copyright (c) 2013, The Linux Foundation. All rights reserved. */
-> +/* Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reser=
-ved. */
-> =20
->  #ifndef __QCOM_CLK_BRANCH_H__
->  #define __QCOM_CLK_BRANCH_H__
-> @@ -33,6 +34,7 @@ struct clk_branch {
->  #define BRANCH_HALT_ENABLE_VOTED       (BRANCH_HALT_ENABLE | BRANCH_VOTE=
-D)
->  #define BRANCH_HALT_DELAY              2 /* No bit to check; just delay =
-*/
->  #define BRANCH_HALT_SKIP               3 /* Don't check halt bit */
-> +#define BRANCH_HALT_INVERT             4 /* Invert logic for halt bit */
+Convert the text bindings for the lcc to yaml format. Doing this showed
+that clocks and clock-names were not documented, so fix that now.
 
-How is it different from BRANCH_HALT vs. BRANCH_HALT_ENABLE?
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+ .../devicetree/bindings/clock/qcom,lcc.txt    | 22 -----
+ .../devicetree/bindings/clock/qcom,lcc.yaml   | 88 +++++++++++++++++++
+ 2 files changed, 88 insertions(+), 22 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,lcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lcc.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.txt b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
+deleted file mode 100644
+index a3c78aa88038..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,lcc.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-Qualcomm LPASS Clock & Reset Controller Binding
+-------------------------------------------------
+-
+-Required properties :
+-- compatible : shall contain only one of the following:
+-
+-			"qcom,lcc-msm8960"
+-			"qcom,lcc-apq8064"
+-			"qcom,lcc-ipq8064"
+-			"qcom,lcc-mdm9615"
+-
+-- reg : shall contain base register location and length
+-- #clock-cells : shall contain 1
+-- #reset-cells : shall contain 1
+-
+-Example:
+-	clock-controller@28000000 {
+-		compatible = "qcom,lcc-ipq8064";
+-		reg = <0x28000000 0x1000>;
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
+new file mode 100644
+index 000000000000..03c99435d342
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
+@@ -0,0 +1,88 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,lcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm LPASS Clock & Reset Controller Binding
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - qcom,lcc-apq8064
++      - qcom,lcc-ipq8064
++      - qcom,lcc-mdm9615
++      - qcom,lcc-msm8960
++
++  clocks:
++    minItems: 8
++    maxItems: 8
++
++  clock-names:
++    minItems: 8
++    maxItems: 8
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,lcc-apq8064
++              - qcom,lcc-msm8960
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board PXO source
++            - description: PLL 4 Vote clock
++            - description: MI2S codec clock
++            - description: Mic I2S codec clock
++            - description: Mic I2S spare clock
++            - description: Speaker I2S codec clock
++            - description: Speaker I2S spare clock
++            - description: PCM codec clock
++
++        clock-names:
++          items:
++            - const: pxo
++            - const: pll4_vote
++            - const: mi2s_codec_clk
++            - const: codec_i2s_mic_codec_clk
++            - const: spare_i2s_mic_codec_clk
++            - const: codec_i2s_spkr_codec_clk
++            - const: spare_i2s_spkr_codec_clk
++            - const: pcm_codec_clk
++
++      required:
++        - clocks
++        - clock-names
++
++examples:
++  - |
++    clock-controller@28000000 {
++        compatible = "qcom,lcc-ipq8064";
++        reg = <0x28000000 0x1000>;
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+-- 
+2.38.0
+
