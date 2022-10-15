@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A832CC433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 15:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2CFC4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Oct 2022 15:03:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbiJOPCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 15 Oct 2022 11:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45658 "EHLO
+        id S229704AbiJOPDj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 15 Oct 2022 11:03:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbiJOPCS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Oct 2022 11:02:18 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B5B52E46
-        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:02:16 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id hh9so5389163qtb.13
-        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:02:16 -0700 (PDT)
+        with ESMTP id S229691AbiJOPDi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Oct 2022 11:03:38 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8033B53021
+        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:03:36 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id mx8so5013990qvb.8
+        for <linux-clk@vger.kernel.org>; Sat, 15 Oct 2022 08:03:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6Ur3jsO+Ea30Hw7rO/35aci3iOoKWMoNPKYsW0lUBM0=;
-        b=yeD64SW78+M0+NSoS4kDlBmjtklL7UKAUOpb+fFHtEyCBYg6evtBICocG8OuJqatui
-         9ZKGf1LBBD9aEXlI2HjCWnDtSh4GgRlZxmbCGB1T1hfhGKrvuWLoFioC2maXtgtFq1WC
-         bymHNHA82cdf0/X+ZM8Y6WrauOZI4kXxPZ4BWIPX+fzQdkFe9CwM0lJy/Vn/EU3/xk5y
-         ACuG9cGReaIUsgDfvXg2l6ZuR4xQSCMz+eSsAa1K80qQr8n6ONyGm2FbAFkyLDQjerTN
-         htpXUO2d24SaQ41HzfalrtIdGli4xloRT/MxjCjw77psFAwmw1M+pS+iGGs6fl58e18Z
-         Qo+w==
+        bh=dupLLu0rDJmP6sNprGdvyzYPLrXQqVYFp1QhyvnLjEQ=;
+        b=uMP2E6ocAAGHIbJ+JEJidVNejbo1Y3bez8qT225n0Gyh3QrCQmwimL81EuBt8xvJRB
+         dzCOYtciQ7LJunOpNKRN+A4MCAPyMVhtOK/V8kw1XknBDAkPPeoc4i4DaC+r1dlOwhih
+         kxsESGRvJuwSbym4Y/dkXWXc4FtJmN7xXu1GIRN5arLvCS5OERgBIZPfge4pV4Rja1/t
+         ixgFBEAXG0SIA8+HKRFcaB8rsx/Plr9YNAUVQqTu4JBlCsc5JAP2/hjwVbhnoYE3JOzd
+         ZAxO3r0GJOt4hChcmdX5BJRgLb7LdQotFZi9Itm+tQ1PZ2G+aX7JpHGMQdzKBy7575td
+         ShNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Ur3jsO+Ea30Hw7rO/35aci3iOoKWMoNPKYsW0lUBM0=;
-        b=5bjoE6HC4GaC6mTMuDrfVR7LY7iXbngf8oVh06kpJpAvA5hhL9ADF+I2m10LY29P3n
-         pl6+C+fILF79vLBZOJxAxwgvipm2pF+5h6Fim+lpl2UUkBG8jDNC2qnYMgPMybvM/2lN
-         8Rp0G5u/HEa8XMpvJO/ofJ/r/IbgXWTXO7EklPQjfvEdpmyJSOwwOSXBF4qlRr1/uBFz
-         sqnNjkq7Ut6KkB0JrL3JUg+/xWfi65sc265yxuQLHRLqRrdlxv8hIzfTZnYEi0816ljy
-         OEK2N3Gjl+yg2qOQh85ItL5hFYkn/pYhUGylEXAIhuKTXJrL0VSgcr8fKeiYwlEbhiWM
-         ZLWg==
-X-Gm-Message-State: ACrzQf3WOghcOCan7qtV+x2ZyvVZAuZCl/Eci8tehSLsVCZfOVzGdlNP
-        tcuOnFEaY/z7xESbWIZsSVyi4oTpbJfLSQ==
-X-Google-Smtp-Source: AMsMyM6hPLoLcMAjPo2jkgKKjksiug8abEIOWvkuO4YgmYwanp5zrth37zq7NoHU7zsaaNPyNnSgXA==
-X-Received: by 2002:ac8:57c2:0:b0:39c:dbec:9488 with SMTP id w2-20020ac857c2000000b0039cdbec9488mr2258374qta.580.1665846136024;
-        Sat, 15 Oct 2022 08:02:16 -0700 (PDT)
+        bh=dupLLu0rDJmP6sNprGdvyzYPLrXQqVYFp1QhyvnLjEQ=;
+        b=NNRR6xB+RhGrizoyYBDbWJxRsdD3rwULSmzZZ2bdvzKW4lLCyklRuXwtJ8VROLBp60
+         K5y/FquQx3EYg0evtUyf1X2aqcMilxwJA+8pCCvTn1T6BZjhQAKtww+Xpt3Rn6k5X/vH
+         hBwrNASbHBsgyvHk/JRyv//QKXK/rqu1MEhpmZgKmGxhTY82Vm+RmDxGNygnZm2PfUaE
+         MSKIzvdwNEu7+D6rSu6GlZd75zJOK6CuBDr9n9COMMvgZWSLCGuY017U0iLBxwzj0pc4
+         wNRziNRhvnbsGCcDB6C5NJzf2o3LunNzYEpiES/FTmMuPaWNum57XExZB7bL/homVqNk
+         oyEw==
+X-Gm-Message-State: ACrzQf1UrVg1VR/80L9fw1jGjrSt8CYI2R6Pot6xhJinxYtSYKw7+jIX
+        OIGR9eCaXrkA9C9wfj+nY/ix+g==
+X-Google-Smtp-Source: AMsMyM6qvsxE3ALUza+9FbEKle1bSUFceZDUxSDpzD2NqUsBg5CVpKqCQ6aZNsqLkXgkl6yYZcIbyQ==
+X-Received: by 2002:a05:6214:2aaa:b0:4b1:94e6:6788 with SMTP id js10-20020a0562142aaa00b004b194e66788mr2327470qvb.68.1665846215095;
+        Sat, 15 Oct 2022 08:03:35 -0700 (PDT)
 Received: from ?IPV6:2601:42:0:3450:9477:c2f0:ddea:ea08? ([2601:42:0:3450:9477:c2f0:ddea:ea08])
-        by smtp.gmail.com with ESMTPSA id y11-20020ac8524b000000b0039bde72b14asm3955078qtn.92.2022.10.15.08.02.14
+        by smtp.gmail.com with ESMTPSA id u9-20020ac80509000000b00399813f4d5bsm4030425qtg.72.2022.10.15.08.03.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Oct 2022 08:02:15 -0700 (PDT)
-Message-ID: <432a24ba-5472-20c8-397f-387e5a1ad9d2@linaro.org>
-Date:   Sat, 15 Oct 2022 11:02:13 -0400
+        Sat, 15 Oct 2022 08:03:34 -0700 (PDT)
+Message-ID: <10de50b8-9586-7952-e837-2c6d264a960d@linaro.org>
+Date:   Sat, 15 Oct 2022 11:03:32 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: Add QDU1000 and QRU1000 GCC
- clock bindings
+Subject: Re: [PATCH v2 0/6] clk: qcom: Add clocks for the QDU1000 and QRU1000
+ SoCs
 Content-Language: en-US
 To:     Melody Olvera <quic_molvera@quicinc.com>,
         Andy Gross <agross@kernel.org>,
@@ -69,75 +69,35 @@ To:     Melody Olvera <quic_molvera@quicinc.com>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20221014221011.7360-1-quic_molvera@quicinc.com>
- <20221014221011.7360-2-quic_molvera@quicinc.com>
+ <eec2e9f5-5980-6a2e-53e5-71cc9a76f0a7@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221014221011.7360-2-quic_molvera@quicinc.com>
+In-Reply-To: <eec2e9f5-5980-6a2e-53e5-71cc9a76f0a7@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/10/2022 18:10, Melody Olvera wrote:
-> Add device tree bindings for global clock controller on QDU1000 and
-> QRU1000 SoCs.
+On 14/10/2022 19:53, Melody Olvera wrote:
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  .../bindings/clock/qcom,gcc-qdu1000.yaml      |  70 ++++++++
->  include/dt-bindings/clock/qcom,gcc-qdu1000.h  | 170 ++++++++++++++++++
->  2 files changed, 240 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-qdu1000.h
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
-> new file mode 100644
-> index 000000000000..b0746669e2ad
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc-qdu1000.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller for QDU1000 and QRU1000
-> +
-> +maintainers:
-> +  - Melody Olvera <quic_molvera@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets and
-> +  power domains on QDU1000 and QRU1000
-> +
-> +  See also:
-> +  - include/dt-bindings/clock/qcom,gcc-qdu1000.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,gcc-qdu1000
-> +      - qcom,gcc-qru1000
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Sleep clock source
-> +      - description: PCIE 0 Pipe clock source
-> +      - description: PCIE 0 Phy Auxiliary clock source
-> +      - description: USB3 Phy wrapper pipe clock source
-> +    minItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: sleep_clk
-> +      - const: pcie_0_pipe_clk
+> On 10/14/2022 3:10 PM, Melody Olvera wrote:
+>> This series adds the GCC, RPMh, and PDC clock support required for the
+>> QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
+>>
+>> The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
+>> 1000 are new SoCs meant for enabling Open RAN solutions. See more at
+>> https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
+>>
+>> This patchset is based on the YAML conversion patch [1] submitted already.
+>>
+>> [1] https://lore.kernel.org/r/20220103074348.6039-1-luca.weiss@fairphone.com
+> Changes from V1:
+> - fixed alphabetic sorting
+> - moved clk-branch changes to a separate commit
+> - revised binding
 
-This does not match your clocks, please test your bindings. I thought
-you understood my comment when you confirmed misunderstanding...
-
+This must be in the cover letter, not as a reply.
 
 Best regards,
 Krzysztof
