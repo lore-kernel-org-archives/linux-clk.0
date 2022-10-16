@@ -2,68 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E739C4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Oct 2022 18:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4D8C4332F
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Oct 2022 18:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbiJPSSy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Oct 2022 14:18:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47050 "EHLO
+        id S229702AbiJPSVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Oct 2022 14:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbiJPSSx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Oct 2022 14:18:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE8E45F66;
-        Sun, 16 Oct 2022 11:18:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1968460DE6;
-        Sun, 16 Oct 2022 18:18:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6F766C433D7;
-        Sun, 16 Oct 2022 18:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665944330;
-        bh=OllyS4eejixmT2pTZJkWi1jWtEaEHmk50op90/WjMDI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=GvePjA6HIBrnbInHxfl0zXnX5RL0Gh8oNMOh1F23G09XYuxVusmcdT4RWntFoqYII
-         BkVWzBDuqFv8CmTEW+Jbek8cVGVqsmmzZ26SqZxw2YXcRaAyPkg7WFfxZ4XY+VD7DV
-         zaeKWORaTRZ4mIRySDjL1Xzp6wKCnFn1VJmw6OsCKymuGxp3Zj88LC4Ap2IsRt1IwC
-         1UbTS3AfsAZfRa0npfUL9TFbuhHVw66UcpwCXFuzPAv6IerJzqvd3DVk+SBkumheSA
-         85491L7dhCOSN+io6zCFhFeQGv79tFMojqSnBQMTV3K4L8RD//FaIqeX8SxhHnqWjx
-         YXVmpvBtxs+rQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5C9F2C73FFC;
-        Sun, 16 Oct 2022 18:18:50 +0000 (UTC)
-Subject: Re: [GIT PULL] More clk changes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221016035430.560083-1-sboyd@kernel.org>
-References: <20221016035430.560083-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221016035430.560083-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: a7b78befbce2e79425224d57c05275083cf7ed61
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2fcd8f108f25ef0cbbfcb57acf1c42934c238ed5
-Message-Id: <166594433037.2997.9500107353532151717.pr-tracker-bot@kernel.org>
-Date:   Sun, 16 Oct 2022 18:18:50 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S229673AbiJPSVb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Oct 2022 14:21:31 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85E5118392;
+        Sun, 16 Oct 2022 11:21:30 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id h203so7577066iof.1;
+        Sun, 16 Oct 2022 11:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hNtSAftWKRCBzivZiSHl1o3Clg9CAG5ufkQWS1xM5dk=;
+        b=qr0E08OvIG/JOQcJDRt4eYasa75SB8F2qfi6jpcqCTRVXWxD2WYpeP2srg5xT0hmjr
+         qNKRP9Elbb1imaPiFVyk5R7l7Pp9MYJPXEKGtgwWMhd/GU5sfd9f0wVs3ArU5rtPca1X
+         t77icbnKIa0jy0WAnYh2uvXmTkX9CbHbOfmxrVXNAreAZiOmAN7HTkjs7oLcDPtHjUJE
+         QlMAAYrHfO7Y+zUseBlbmck2jQ1cbjXk/xgtAQJ/5xmZcS6E8jivyhZzixBRFKBb9x5P
+         A9LTDgGX2GzgIumCShiUgkHqazhvr0hjbq0yowb4NVj606yriuBjthJFafjPUeAJ58Lr
+         GxMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hNtSAftWKRCBzivZiSHl1o3Clg9CAG5ufkQWS1xM5dk=;
+        b=JNyzZkbYzMTSkLs/RN516c7Bq9/wI8jqFKxhcgabAAt4POMt9ok/+zk1bW0OipTKQY
+         fsMkQl8dF4zj7MEDVHWYjPKtOD0w+mwJIOPyaQbTxJyqPodv0V7oAC0bEEG5NBCsh9eZ
+         EXuy80X3xPlRg06mPiDkuSiOqktmVBBS1Q/db+OQXoREhKcOqqQJ0wjO6oo4+GBX3sIV
+         5dndfv06mdX3DnmMY3OGEEm6deolQLEjbH1L0GrbAb6GTsFyG3Q8/SE6sbVm46M+Ji5T
+         8CDpNzbv+9wxnlHU+BM9e/jvZoc6cHXIKX7LS72IsrKCQrzxZ7KJ9yS72iwnrIUqy/k6
+         aiqw==
+X-Gm-Message-State: ACrzQf1I1cxIQoyCjCw/8BvnbNj5PTxWCp2SDpnVmMf28z1dm9O77Np/
+        t+I5g0L6B8o4G2aYiCcBpQP2B4CQ8pdtUzFp1Zak92kExMeUag==
+X-Google-Smtp-Source: AMsMyM6YIAti+v0ycr+3MN2bvHwrODOtkVqs4HLOZAmOnKV1+BI1nRMrvsqDj4+GM/mWhShmxsd3rDqSUX6G5qzqagQ=
+X-Received: by 2002:a6b:6716:0:b0:6bc:113c:22a2 with SMTP id
+ b22-20020a6b6716000000b006bc113c22a2mr3001409ioc.12.1665944489899; Sun, 16
+ Oct 2022 11:21:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221016150110.3020451-1-lis8215@gmail.com> <20221016150110.3020451-4-lis8215@gmail.com>
+ <c2accc8b-f4eb-47ca-333f-eeb98da6a363@linaro.org>
+In-Reply-To: <c2accc8b-f4eb-47ca-333f-eeb98da6a363@linaro.org>
+From:   Siarhei Volkau <lis8215@gmail.com>
+Date:   Sun, 16 Oct 2022 21:21:18 +0300
+Message-ID: <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add Ingenic JZ4755 CGU header
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Sat, 15 Oct 2022 20:54:30 -0700:
+=D0=B2=D1=81, 16 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 18:32, Krzysztof K=
+ozlowski
+<krzysztof.kozlowski@linaro.org>:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+> Why did you choose 2.0+?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2fcd8f108f25ef0cbbfcb57acf1c42934c238ed5
+It's the first time that I need to choose a license, so it's a bit
+confusing what
+side effects they have, especially in that particular case.
 
-Thank you!
+What do you recommend?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+BR,
+Siarhei
