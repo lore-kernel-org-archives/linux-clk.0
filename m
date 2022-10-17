@@ -2,82 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD031C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 18:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8387C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 21:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbiJQSez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 14:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52964 "EHLO
+        id S230484AbiJQVGu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 17:06:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbiJQSez (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 14:34:55 -0400
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26314237CA;
-        Mon, 17 Oct 2022 11:34:54 -0700 (PDT)
-Received: by mail-oi1-f180.google.com with SMTP id o64so13064030oib.12;
-        Mon, 17 Oct 2022 11:34:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x4FmwvBqnJTncoPiKUPBPPBe171UWUDniXQaooeZxpw=;
-        b=cUtLFDCVPom9VJCBq9yxFHz+45hYXRfVxxbfwS4vTRR4L5jBfanW/xQGF97wjcilmF
-         J/EETbdnb0i4tY0juFXcW6wd3vO+pKfXF4hT/DW/e3kn+pC7uiQF7TuweGlThc/dLaVG
-         d0OyeiZtdmbUoXDXgerlAtsU9uGh/LF39J7yhOtjArpzVuzwBREVp5GEXO5sir///958
-         HFCnZU7jxUST22URv/usi6+BtI1ZGvKdbTl3rNEsWPCZZUWRSgKjv/msxuhIyZTeDOhO
-         1ma3NioE1JNyPhU6aqSoTYnl5cf1BMdpSPi2IMWg/5w1jpIj9U23BE4GeBFcyXc8lOV6
-         j6Xg==
-X-Gm-Message-State: ACrzQf1CUpRoZJovLX7AKSsQ26UW+EodKrNgUQuE5kMef/08k+wDkzlm
-        EWRAexqJvFLzjDaSJePu1fzd4SRQRA==
-X-Google-Smtp-Source: AMsMyM6zWSIgmd+I4omxIOYg2rHsSiGZaz0fVmjUISZiTCI2iq+9HRTI45XL5vYpiTUKkezyqPBipw==
-X-Received: by 2002:aca:240c:0:b0:355:41a7:d4dd with SMTP id n12-20020aca240c000000b0035541a7d4ddmr1197974oic.281.1666031693439;
-        Mon, 17 Oct 2022 11:34:53 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bv13-20020a0568300d8d00b006618eb616dbsm4977077otb.8.2022.10.17.11.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 11:34:52 -0700 (PDT)
-Received: (nullmailer pid 2255311 invoked by uid 1000);
-        Mon, 17 Oct 2022 18:34:53 -0000
-Date:   Mon, 17 Oct 2022 13:34:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Siarhei Volkau <lis8215@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add Ingenic JZ4755 CGU header
-Message-ID: <20221017183453.GA2253413-robh@kernel.org>
-References: <20221016150110.3020451-1-lis8215@gmail.com>
- <20221016150110.3020451-4-lis8215@gmail.com>
- <c2accc8b-f4eb-47ca-333f-eeb98da6a363@linaro.org>
- <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
+        with ESMTP id S231206AbiJQVGf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 17:06:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B527AC2B
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 14:06:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B6BD3611EF
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 21:06:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18589C433D7;
+        Mon, 17 Oct 2022 21:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666040784;
+        bh=43n54NkG4dt8LhHeNKhtcx2Oycro9sdIFotkSBtgcUE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=D/jAjwwJti+l0OSUVdTjUwmpqAWnLrn7mnH3nhwQOlgLGd5oi15co/gtNkWX71mq1
+         X6wYhfCaQ2ZvjToMCRQrig7/7WYGZcFKVL+5iXmI9UwJLXKCkTHTAVv3I6M6vJYQ13
+         jQIH0IHwrg5favFUgmEyrlEZhystqfv+86DAVpNUY/MAdx3Q+jHgjQdO8I3/DRdwnv
+         7xJCcrayCpIId2s8bGAjIawa0g0qbsbsb/9qzFVV82znWScp8cw4ISeKdwsPhb5KvZ
+         DyGW/pusFr8HLuixe6DU5x8OjJgspzrOnq5nZQousz/w7qelTzj9qedEfeAgiYe98h
+         wX7ZVszfcbkVA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220929195521.284497-1-marex@denx.de>
+References: <20220929195521.284497-1-marex@denx.de>
+Subject: Re: [PATCH v4] clk: rs9: Fix I2C accessors
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Vasut <marex@denx.de>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Michael Turquette <mturquette@baylibre.com>
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Mon, 17 Oct 2022 14:06:22 -0700
+User-Agent: alot/0.10
+Message-Id: <20221017210624.18589C433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 16, 2022 at 09:21:18PM +0300, Siarhei Volkau wrote:
-> вс, 16 окт. 2022 г. в 18:32, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>:
-> 
-> > Why did you choose 2.0+?
-> 
-> It's the first time that I need to choose a license, so it's a bit
-> confusing what
-> side effects they have, especially in that particular case.
-> 
-> What do you recommend?
+Quoting Marek Vasut (2022-09-29 12:55:21)
+> Add custom I2C accessors to this driver, since the regular I2C regmap ones
+> do not generate the exact I2C transfers required by the chip. On I2C writ=
+e,
+> it is mandatory to send transfer length first, on read the chip returns t=
+he
+> transfer length in first byte. Instead of always reading back 8 bytes, wh=
+ich
+> is the default and also the size of the entire register file, set BCP reg=
+ister
+> to 1 to read out 1 byte which is less wasteful.
+>=20
+> Fixes: 892e0ddea1aa ("clk: rs9: Add Renesas 9-series PCIe clock generator=
+ driver")
+> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
 
-Are you fine with GPLv4, GPLv5? Considering they haven't been written, I 
-wouldn't be.
-
-Rob
+Applied to clk-fixes
