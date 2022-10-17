@@ -2,102 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D8DC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 09:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39613C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 09:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230199AbiJQJcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 05:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42358 "EHLO
+        id S230455AbiJQJrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 05:47:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbiJQJcH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 05:32:07 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 099E6DFB9;
-        Mon, 17 Oct 2022 02:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1665999125; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rMKReQwIIVROnhNRRcRSrMq5WTBa2N/odX1/c/GVkLg=;
-        b=kJFze+j8yHYKpty5/eK7EP4QDoNyFl8juKwNPQ0r/r00EkgR/UUHdSeWh248/eDbhy5vM9
-        lLtvhNSmJbbkSmtDk9RZnKf9+JDMNgNdtt4b0qpPqp3OiaGUj+dEecyo/3I5vcY+SX5Gi2
-        W/1Zf15YfFPYNw2yS+MHt/IZjc6Zn08=
-Date:   Mon, 17 Oct 2022 10:31:53 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 7/8] serial: 8250/ingenic: Add support for the
- JZ4750/JZ4755 SoCs
+        with ESMTP id S231552AbiJQJrY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 05:47:24 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5CF50716
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 02:47:00 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id by36so13275387ljb.4
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 02:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m28MxXGYXT4qGN7nik464yL/UhJ82SzVaHoLGkQoTpw=;
+        b=pSF9QYPlsSgNQPRR9XdOhQ9tHnI5i7mpZjMTTlvUq8/jBVi240La3CiktdZ9cpYnbg
+         3gzgPCO57wDjxjV7KwmmBFQaXqWqjRqzXTrCgvh8wcmDIVE8Auov0FvGOGYsRXNhpQuR
+         v0uxqa/yDBhbsp7XhTBM5WkFr41VnSeB1B2KgRUcNxVTYYngf4c2n+TJnNslKA3qbycQ
+         3Mg/Pn05b14TDYhsHc6vl/ddFRe80qxr2PLv4DhzicBjcB9Y4NURWiXK++bV44Pf+VSK
+         HuYAflUusNFJlXHC9YSfpGVok3c6YUgICIPANvYBQ/qXi+g9MokQq0B+0qEWWxPhKkC5
+         GQGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m28MxXGYXT4qGN7nik464yL/UhJ82SzVaHoLGkQoTpw=;
+        b=eml1wl2PQNw0Y07XN84dopanlcC/7WvsWodx6TKEdq4Ix4zpYyWk63DyQdriuy7HF0
+         6jFl2qLeNhiLHweQKMcAQpDESL1Hbc4MAWXAVCKjY8NoPBDOUKANKF3Ua6z20SuOdAGf
+         yl9dNEJrpbWwuoitMq4Y8hevKdhyTH7PPel3kfwyj24EvoDAnjYhIhGyVhXxQqA+YJn8
+         bKge080u5eEv6cekE6U0uS9uB/f7Shz8Tc5OgFBKyzw9Z7dFG9QXg5Zbldq+nvWXxCoU
+         OYL3YR/sIYsar21RhoglbTzCwdCnHAyCog2HGQbv1RLLVh3eW1LJGl9DwWiwFKdqDTfd
+         1roA==
+X-Gm-Message-State: ACrzQf0DpHTHqgj28XoKQ7VBLHkWC1sGgNkXM0wVwvpe0AVM467KAOOQ
+        Sc/XmkwnYXqayhzQCU9F/pY/4bISqXBKZQsvU3QIgZB+mPQ=
+X-Google-Smtp-Source: AMsMyM4CGBR28SSkgO6sUfPaGHahhe5lagnYKp+a4Qpc5atANtQAtfZFWQQpanlTqBVMnG93twfz3+YjvG8BYu9pwjI=
+X-Received: by 2002:a17:906:5d04:b0:77f:ca9f:33d1 with SMTP id
+ g4-20020a1709065d0400b0077fca9f33d1mr8038485ejt.526.1666000007686; Mon, 17
+ Oct 2022 02:46:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221009181338.2896660-1-lis8215@gmail.com> <20221009181338.2896660-6-lis8215@gmail.com>
+In-Reply-To: <20221009181338.2896660-6-lis8215@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 17 Oct 2022 11:46:36 +0200
+Message-ID: <CACRpkdZL9qWPaoRhCt3h8m1it9DaoS3TJrxPHVOzGZWhL45PNw@mail.gmail.com>
+Subject: Re: [PATCH 5/8] pinctrl: ingenic: JZ4755 minor bug fixes
 To:     Siarhei Volkau <lis8215@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
-        kbuild-all@lists.01.org,
-        Michael Turquette <mturquette@baylibre.com>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Vinod Koul <vkoul@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Cercueil <paul@crapouillou.net>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
         Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>
-Message-Id: <555WJR.ESJD0KDHOG3S@crapouillou.net>
-In-Reply-To: <CAKNVLfbePJQN07GfhqAs-opm23poWsL0o-DkV=n-f9+H7Y7rpg@mail.gmail.com>
-References: <20221009181338.2896660-8-lis8215@gmail.com>
-        <202210100607.YdxoR0tD-lkp@intel.com>
-        <CAKNVLfaFvge4A8-QUzeq-JManpuYMGvyHXCJi-ew==CWN8-M=A@mail.gmail.com>
-        <bb9f79d4-82a9-4790-b849-d517333ea2d4@app.fastmail.com>
-        <GSPOJR.M4XZ4D03G60F@crapouillou.net>
-        <CAKNVLfZukazKx2yDBrLZc7J9=3cCvMgZbdghtt1YO7WivdPjvw@mail.gmail.com>
-        <CAKNVLfbePJQN07GfhqAs-opm23poWsL0o-DkV=n-f9+H7Y7rpg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Siarhei,
+On Sun, Oct 9, 2022 at 8:14 PM Siarhei Volkau <lis8215@gmail.com> wrote:
 
-Le dim., oct. 16 2022 at 21:39:48 +0300, Siarhei Volkau=20
-<lis8215@gmail.com> a =C3=A9crit :
-> =D1=87=D1=82, 13 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 21:56, Siarhei V=
-olkau=20
-> <lis8215@gmail.com>:
->=20
->>  > Just disable the divider in ingenic_fixup_fdt() in
->=20
->>  I'll check that.
->=20
-> I checked that approach: serial seems to be working as expected,
-> but not all the time: there's a time period when the CGU driver
-> started but serial console driver is still early one.
-> In my case UART produces garbage at that period since CGU
-> needs to enable clock divider back: ext is 24MHz but 12MHz
-> required for audio codec and USB to function properly.
+> Fixes UART1 function bits and mmc groups typo.
+>
+> For pins 0x97,0x99 function 0 is designated to PWM3/PWM5
+> respectively, function is 1 designated to the UART1.
+>
+> Tested-by: Siarhei Volkau <lis8215@gmail.com>
+> Signed-off-by: Siarhei Volkau <lis8215@gmail.com>
 
-What I'd do, is just force-enable it to 12 MHz in ingenic_fixup_fdt(),=20
-since the programming manual basically says that 24 MHz does not work=20
-properly.
+This patch applied for fixes.
 
-Then in the earlycon setup code hardcode the /2 divider with a big fat=20
-comment about why it's there.
-
-Cheers,
--Paul
-
-> So I think Arnd's approach:
->=20
->>  the hardware should already be in a working state,
->>  with no need to touch it during early boot.
->=20
-> shall resolve the problem, although I can't check it on all supported
-> hardware.
->=20
-> BR,
-> Siarhei
-
-
+Yours,
+Linus Walleij
