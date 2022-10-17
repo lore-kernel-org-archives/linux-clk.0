@@ -2,67 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B776C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 22:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A864EC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 22:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230392AbiJQWai (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 18:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59212 "EHLO
+        id S230340AbiJQWap (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 18:30:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbiJQWaW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 18:30:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 586A08263C;
-        Mon, 17 Oct 2022 15:30:09 -0700 (PDT)
+        with ESMTP id S230347AbiJQWa2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 18:30:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A3219282;
+        Mon, 17 Oct 2022 15:30:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0B815B81B37;
-        Mon, 17 Oct 2022 22:29:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D71DC433C1;
-        Mon, 17 Oct 2022 22:29:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 80F3D6128D;
+        Mon, 17 Oct 2022 22:29:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E6CC433D6;
+        Mon, 17 Oct 2022 22:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666045741;
-        bh=a0hL4DAeU1uv9+yPBashvADErL0rcOpOfClpiG5iyJU=;
+        s=k20201202; t=1666045790;
+        bh=o9CVNWd49B0uPG9CroMhov7CzALKXLQZhU8hnC2X5Gk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fR2jHtQzIpr4Uo8B1sFIglt9bmHNiGUckCOd6dd2HFnOva6qD1cyvEMzH3KVcotJ1
-         B2NzcG+z7iElo1R0kLDYU7ptO3GuqL3KuRPvmgLaW3kPPvErBcPT74/C9t7tWqGkjt
-         kmRslexsGUxhPasjAduMYPG3yrnOnyoz2FPQDvwD2zAyfgO2Iinnm2jljKAytSPjza
-         mcHjPsSLTaMEPHNTb039+Dh6jYL8a3QJ5vT6wPPf9bsKUD9fdjo4J3D2aB3khe4Fel
-         5/veLdB+RmvJ/7V3aZPAUTp8TUfkKH6lYg5Uikdq0/KVjNIv+42UaSlXlIOCo9Z7RR
-         Zp99bDMLAGhXQ==
+        b=CrW/x9BxfBywHF1VJRZmtjIKJ3ONVWBBqWy5KztLFr4mLYH22246ObCWm5D107irc
+         eIWhjh/X+/3u2lNmyKiL1NeCv9McZI6OxkZdofWnapdDBWxw70GG2J1zUNqwQSKpOf
+         qwfPkxnQb6h5cbOuPh58hj59cQPr/zZg9k5+KKnC5ea9nXlKzyVc5xpmQLBb51kywV
+         6gq48ZKDuoKlMElfNKi1+hT1U7NRG+FSqxKo48Tv5LBVDj1o7bla2DCT1OAQ5+Uf6v
+         6SWqaESiYC5a0XBpLql3mUIWB3jXtV9jvEROTd0aO8qbrKPsMb2OSpv14XVpKdn7cV
+         1dkPSebigJRaw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <bdc9c89317b5d338a6c4f1d49386b696e947a672.1665642720.git.rtanwar@maxlinear.com>
-References: <cover.1665642720.git.rtanwar@maxlinear.com> <bdc9c89317b5d338a6c4f1d49386b696e947a672.1665642720.git.rtanwar@maxlinear.com>
-Subject: Re: [PATCH v4 3/4] clk: mxl: Add option to override gate clks
+In-Reply-To: <20221003203103.2705007-1-sboyd@kernel.org>
+References: <20221003203103.2705007-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: xilinx: Drop duplicate depends on COMMON_CLK
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-lgm-soc@maxlinear.com,
-        Rahul Tanwar <rtanwar@maxlinear.com>
-To:     Rahul Tanwar <rtanwar@maxlinear.com>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, yzhu@maxlinear.com
-Date:   Mon, 17 Oct 2022 15:28:59 -0700
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Mon, 17 Oct 2022 15:29:49 -0700
 User-Agent: alot/0.10
-Message-Id: <20221017222901.9D71DC433C1@smtp.kernel.org>
+Message-Id: <20221017222950.D4E6CC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rahul Tanwar (2022-10-12 23:48:32)
-> In MxL's LGM SoC, gate clocks can be controlled either from CGU clk driver
-> i.e. this driver or directly from power management driver/daemon. It is
-> dependent on the power policy/profile requirements of the end product.
+Quoting Stephen Boyd (2022-10-03 13:31:03)
+> This entire Kconfig file is only included within the if COMMON_CLK
+> section of the drivers/clk/Kconfig file. That makes the depends on
+> COMMON_CLK here redundant. Remove it.
 >=20
-> To support such use cases, provide option to override gate clks enable/di=
-sable
-> by adding a flag GATE_CLK_HW which controls if these gate clks are contro=
-lled
-> by HW i.e. this driver or overridden in order to allow it to be controlled
-> by power profiles instead.
->=20
-> Reviewed-by: Yi xin Zhu <yzhu@maxlinear.com>
-> Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>
+> Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
