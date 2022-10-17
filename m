@@ -2,104 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B146C4321E
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Oct 2022 18:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67163C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 01:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbiJPSkC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Oct 2022 14:40:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33412 "EHLO
+        id S229985AbiJQBAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Oct 2022 21:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbiJPSkC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Oct 2022 14:40:02 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0565620994;
-        Sun, 16 Oct 2022 11:40:00 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id y80so7580407iof.3;
-        Sun, 16 Oct 2022 11:39:59 -0700 (PDT)
+        with ESMTP id S229838AbiJQBAT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Oct 2022 21:00:19 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AF71005A
+        for <linux-clk@vger.kernel.org>; Sun, 16 Oct 2022 18:00:17 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id l28so6905974qtv.4
+        for <linux-clk@vger.kernel.org>; Sun, 16 Oct 2022 18:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=er//qg/gl4dGP2tGaPp0ROa9zLnweqgMmV1YWZYYP7c=;
-        b=VLlF0F3ix3yIubo5GyNOzrxMT9uWk3plyHN40JmolDouSrQ6S1EkrNOya03i9KYYee
-         Pdev33Tl7wz7AOBvwkIWQLGgDzO0xQkh+PhQREIzD1GZPnPRO/lcMf1VWMop9hq358fl
-         aXOTiHnPm7vzpKXFYAJcnkfoGhLNd0RFOM2wNTECtw4VAB3Z8WkZM6t4+8EN3t5JCW4L
-         0kDq5AgEHKFhEyBJPfvXQmLC4Jb6kCZhJVx/oy7N6XuJqZhwJVR2VkREM2wKA0uzh8Fk
-         UIavRDjcsJugiUVfEo2acS8siEp0mDsbdgjZfIVNnTI51xK3B2T9kTvnL0L4+W4wKQoU
-         tMlA==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QqyNP0rk1a5dyKzMXLrktYgPBfFzcz/Grlk5GABzwuA=;
+        b=FgZ7SzmXaofeCzubIB0q8LhO+QvOY2ZDnUr84pd3Sbi/CYgekID5pFTHfuxQLVZI8R
+         kB4DNQOvnIyF+78IkyKhmIe8XAJOWrOk33SwiJMXUE8usYXMj++5ffXdaehwP8BgFHth
+         tOWCgr1V3Y4ZOGYueFQDrVd4tKBZGfnqLb6sauN3VAkIhsERznmBkd0SPj8rtPaMP1yi
+         0IRp6o8MdlsKD5/NGGdIDGJbNkCvwxMU8J6Fqrh7DtIlwbpkdsTyASZWvo8U6rHBTTvI
+         9qwV4mPVmP51EgyibZBTOri0FzBUt/frREO29j+jSsHYQdt754UbzbkQw9s3GpBuABiF
+         mbCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=er//qg/gl4dGP2tGaPp0ROa9zLnweqgMmV1YWZYYP7c=;
-        b=mMm23AdkgG1EnOyPnxxR3zgNWvxXWVThECAzYiCnBKBHI4P1kJb3NzA6i4MoP/lMwZ
-         7JhImFN/QqoBXAJDvFKDvRE8LPpgyIETuDJpCWD0QMjtwlAOgb4sOzYI+944OFg2vR1v
-         K5L5Vx7Lc+SG+ofpWwVy7Hwb8T6MqtCZGK+3CGRYqvuDz33bLIpzqOBSNa03IAUb0cuK
-         4/xzn9SsV8M/giTZWHVbz+5WYu1t1cn9EubagMfDP5w/V60Ba6Rbcyuo5GJAvg2nr6/q
-         i8gJP5ztRH2MWFsJXEUUDwO1fe2Hv4cYA10hbDY6S0c2qFUvW6njcP10nOAi0gNZSH0t
-         Frew==
-X-Gm-Message-State: ACrzQf0NAfdEwFvVIzjl/8Zkhf/RGf6li8JtmtP9Y23bXc8eg/b5UADb
-        UnNtauaM8lW9uK2lQ+9kW1aEB3/2GEv5EPnV0Ps=
-X-Google-Smtp-Source: AMsMyM418IYKdUWCL2jLsEzw/ZxVzVBP8CpmwVFc41Ps8SCy1jto6Dznc6/8LG+UqyyPQURKmvlBPoxB8eZ05lpVVqA=
-X-Received: by 2002:a6b:6716:0:b0:6bc:113c:22a2 with SMTP id
- b22-20020a6b6716000000b006bc113c22a2mr3022066ioc.12.1665945599378; Sun, 16
- Oct 2022 11:39:59 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QqyNP0rk1a5dyKzMXLrktYgPBfFzcz/Grlk5GABzwuA=;
+        b=inkDitfL+9m9YfUZpJ8HndErP2lHHnbLL9ZtuyF7OWithK8xiTC7aflC1OlxGpHRCp
+         pAS4+P27CGl1j0qxuz4+X/WgtzzI411wEYjay9QbedRrqKkU1DTltE8NplkQcUusdLj7
+         KnuaU11g0zhIWHoL6zaMZ4CgoEn5BMCfkevorSuqEFX0VtojnBvRXg9bDDXUPaLmHPkQ
+         Sbpm7tLHlbCv8cyu/A0mY6G8pwx5cPJZEoPHYd0gt7IU+2w5MrktxfOz6hEkut1U8QQy
+         VNiV0ipjfPO4i3aVntthBTklS4Kel6GKIuHm7Fi8CV+9E5ziy7FN3mr5aXz8Slomduo2
+         9fLQ==
+X-Gm-Message-State: ACrzQf16067tV5uLFUjAdcVgf8hJKclJfG3JXBpCbButCg7MKWEgkNTz
+        t4mJpx1fmX8PQ23RfzYWHzhX+w==
+X-Google-Smtp-Source: AMsMyM7ScFx2l6l+XhU8l+SU8mYkGkxtKI0WUNcEwqTGC/mT54llVp2PDO9rYrVrIl0JdEA0HVAsNg==
+X-Received: by 2002:ac8:5f08:0:b0:35c:cbe5:4b83 with SMTP id x8-20020ac85f08000000b0035ccbe54b83mr7114191qta.218.1665968416877;
+        Sun, 16 Oct 2022 18:00:16 -0700 (PDT)
+Received: from ?IPV6:2601:42:0:3450:bb7d:1aa4:bef8:ec27? ([2601:42:0:3450:bb7d:1aa4:bef8:ec27])
+        by smtp.gmail.com with ESMTPSA id d3-20020a05620a240300b006cfc01b4461sm8299700qkn.118.2022.10.16.18.00.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Oct 2022 18:00:15 -0700 (PDT)
+Message-ID: <365c0b94-c619-3790-c23a-5582631dd208@linaro.org>
+Date:   Sun, 16 Oct 2022 21:00:13 -0400
 MIME-Version: 1.0
-References: <20221009181338.2896660-8-lis8215@gmail.com> <202210100607.YdxoR0tD-lkp@intel.com>
- <CAKNVLfaFvge4A8-QUzeq-JManpuYMGvyHXCJi-ew==CWN8-M=A@mail.gmail.com>
- <bb9f79d4-82a9-4790-b849-d517333ea2d4@app.fastmail.com> <GSPOJR.M4XZ4D03G60F@crapouillou.net>
- <CAKNVLfZukazKx2yDBrLZc7J9=3cCvMgZbdghtt1YO7WivdPjvw@mail.gmail.com>
-In-Reply-To: <CAKNVLfZukazKx2yDBrLZc7J9=3cCvMgZbdghtt1YO7WivdPjvw@mail.gmail.com>
-From:   Siarhei Volkau <lis8215@gmail.com>
-Date:   Sun, 16 Oct 2022 21:39:48 +0300
-Message-ID: <CAKNVLfbePJQN07GfhqAs-opm23poWsL0o-DkV=n-f9+H7Y7rpg@mail.gmail.com>
-Subject: Re: [PATCH 7/8] serial: 8250/ingenic: Add support for the
- JZ4750/JZ4755 SoCs
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
-        kbuild-all@lists.01.org,
-        Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add Ingenic JZ4755 CGU header
+To:     Siarhei Volkau <lis8215@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20221016150110.3020451-1-lis8215@gmail.com>
+ <20221016150110.3020451-4-lis8215@gmail.com>
+ <c2accc8b-f4eb-47ca-333f-eeb98da6a363@linaro.org>
+ <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=D1=87=D1=82, 13 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 21:56, Siarhei Vol=
-kau <lis8215@gmail.com>:
+On 16/10/2022 14:21, Siarhei Volkau wrote:
+> вс, 16 окт. 2022 г. в 18:32, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>:
+> 
+>> Why did you choose 2.0+?
+> 
+> It's the first time that I need to choose a license, so it's a bit
+> confusing what
+> side effects they have, especially in that particular case.
+> 
+> What do you recommend?
 
-> > Just disable the divider in ingenic_fixup_fdt() in
+Choice was fine, just not common so I was just wondering. You can keep
+it but usually we choose what the checkpatch is asking for - so GPL-2.0
+(only )or BSD-2-clause.
 
-> I'll check that.
+Best regards,
+Krzysztof
 
-I checked that approach: serial seems to be working as expected,
-but not all the time: there's a time period when the CGU driver
-started but serial console driver is still early one.
-In my case UART produces garbage at that period since CGU
-needs to enable clock divider back: ext is 24MHz but 12MHz
-required for audio codec and USB to function properly.
-
-So I think Arnd's approach:
-
-> the hardware should already be in a working state,
-> with no need to touch it during early boot.
-
-shall resolve the problem, although I can't check it on all supported
-hardware.
-
-BR,
-Siarhei
