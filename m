@@ -2,92 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C039C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 01:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829CDC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 01:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230470AbiJRBCf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 21:02:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
+        id S230512AbiJRBER (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 21:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbiJRBCe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 21:02:34 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F8879694
-        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 18:02:33 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id b25so7798981qkk.7
-        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 18:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=orFSqE2BEwIkJmytrqiupr4Ypb+zklxtz9GR5dOGZmQ=;
-        b=aTnXXdxYPx1sRm6BnUdhvTTcYSj2rnidRY1jY422VxRv+ju+i5PvJhvC7aU4LuS97S
-         GhnlLAPkozGf77rnwSXRmEl/yWM9ZRqpZ+vAxWEjR5dAtH1uyqSMSc11hwcpJrN2Y6u5
-         bwOxesqYiQYSiMId2oo8GoKKu55lUoAKWMRLLxM4mnTXYCYhOOwSkn/U8mVei5iJW32s
-         DHUj+zkWoW6mOWi/Fq6BtAnYmOkgwxxw2gCYgr/YlbE7+l7HAqHcx75ED0/lc3k4DGiU
-         3GQaEeCtFeHrnnea6HqOiwZae4AN55tkKyxYudvnLHnepQ9Yu/nPPx4xAJEDd4OrOEZq
-         haYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=orFSqE2BEwIkJmytrqiupr4Ypb+zklxtz9GR5dOGZmQ=;
-        b=ERDFXwY9k/AghWV9HKcPEQ53mdjklYMXxI4e74L1p7wCJBCrHGz76KdgcTY74wByeZ
-         /WYxRlZAphCAyylNABdjFfk2SAgakIogf1E9Le+DrHWxzamDiqOxCM8HNiNj5ikQhfon
-         jgAbHSqdV0oJeYXyFMqTLTUv4eoQ3RDDykT1vM0/z1i3RrZjPf4Vzs15a89ZxWEskILL
-         NkAwmZ0VWO4PPvJ+uEYuQqyWPPFKoykozMKaCRVakhpRkiAwvHtH8wrKUMxTZENw583k
-         bIB5xEyfigD40SQWrHQMY9Z1+5gqmo/dfjD6h3jcA1KylaTB55EsltbB7LNO+ust8FbA
-         IL+w==
-X-Gm-Message-State: ACrzQf2jSzILQTVal1agrEnBHaUv8ieqYXHeC0liBc4pSiz67dSYGCEg
-        SacVsqtTBxfdz5DXcDRRwY1pyA==
-X-Google-Smtp-Source: AMsMyM6eRS8wZHL6RHm2zlZvUxxzBYUanEWE+zoFfrmAR2ebdTHaD+w8Xc9EJYj4McYsAAJUD9ENcQ==
-X-Received: by 2002:a05:620a:244e:b0:6ee:d8f2:6d56 with SMTP id h14-20020a05620a244e00b006eed8f26d56mr267023qkn.380.1666054952664;
-        Mon, 17 Oct 2022 18:02:32 -0700 (PDT)
-Received: from [192.168.10.124] (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
-        by smtp.gmail.com with ESMTPSA id s6-20020a05620a0bc600b006e6a7c2a269sm1224306qki.22.2022.10.17.18.02.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Oct 2022 18:02:31 -0700 (PDT)
-Message-ID: <c2aacd7c-1773-2ca7-415e-0b3ec7b5ef02@linaro.org>
-Date:   Mon, 17 Oct 2022 21:02:30 -0400
+        with ESMTP id S229683AbiJRBEQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 21:04:16 -0400
+Received: from smtpcmd0641.aruba.it (smtpcmd0641.aruba.it [62.149.156.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4D12B7C1D7
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 18:04:13 -0700 (PDT)
+Received: from localhost.localdomain ([146.241.87.206])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id kZxkoIDsHJpY4kZxloMdt3; Tue, 18 Oct 2022 01:56:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1666050965; bh=9AqIDwasHv/H4KU9S0QioOQou+hO6NpojAdY9uHOcbA=;
+        h=From:To:Subject:Date:MIME-Version;
+        b=LH2MqRH3B9uHU6tD9Dxd44gak30mkP0K/k0V5kUUBnOHawF2Olhg2Xu8xW1ShplNr
+         nwm3vIx37EAooAhU0t8Z07ZytmJDi0TeJ1812H3rBUsXqp2jysrqSNFzI/TWtccsKW
+         q0JDIcYjpcI4ITusCSNt33Gy2eM1VJ5H9sAcLIPpSRz9VfnkZL/JroakrNZ79k8wBj
+         lpszL44jGfsdP8hixzwOqCyaPwWSVQZyeD8lF68SWc3nt2mxEh5upDhPwOHEnmUChI
+         uKTbltN7gXOvjyNfTWLd62hqb+TWq3S+wzaZ4zYWe12TEP0L1oC2qfqTqY4BPGgNHa
+         tN3G5hlJVpYUg==
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>, Haibo Chen <haibo.chen@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>
+Subject: [PATCH 2/5] clk: imx: imxrt1050: add IMXRT1050_CLK_LCDIF_PIX clock gate
+Date:   Tue, 18 Oct 2022 01:55:59 +0200
+Message-Id: <20221017235602.86250-2-giulio.benetti@benettiengineering.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221017235602.86250-1-giulio.benetti@benettiengineering.com>
+References: <20221017235602.86250-1-giulio.benetti@benettiengineering.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add SC8280XP display clock controller
-Content-Language: en-US
-To:     Steev Klimaszewski <steev@kali.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220926203800.16771-1-quic_bjorande@quicinc.com>
- <20220926203800.16771-3-quic_bjorande@quicinc.com>
- <a8bf3887-b4fb-1f60-14e4-998f71b84181@kali.org>
- <bc96324f-c560-3baf-a771-beef6955a537@kali.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <bc96324f-c560-3baf-a771-beef6955a537@kali.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfPrn7ntQdoekybvwfhFyO67CFnqXTpbenwSu5crc4XKZ5ExrFtLgKub6vuPX7iwmOxEApIB8wqcmul4VKipnrJ27OwlZeUrE7KmNoEviAUNFWy5I+1jK
+ Er10ZCTFieqmKEHNcDB6Ng7qMSpyAFxg7ipKt/VcvJolwBx6RX8S+M39hOOc/VOvYWnecqGjNzK/kVcPY7JZifJTtYIWPnYAARwEY58+xTp/XQvKvyTSFB1Z
+ C6UfaD7j4D19FwrNcGCHX8XhVIyVugL4O+RAAdaMEbh0+fJZoac2gSx1NlaWbiZ0GahmGCYIP4Ef8QqEsEFQjxYu/YKQCY+GHHY5/pq4+U1hGkFOaVRTtlTO
+ 76N/gnGQVpL9VPF1n4+10sQCFizSAjUPk//MMKeog7rVul0qYBwEpbOcjfEdXAqD7GKRmoQlasBn9eNPFXU4SDIgx2ED23AbFRi7yN7afF1dJDEWDsehoKq6
+ 5hm0KOOkD4snEZOezBo0yu/wvojYXOX7oST69pEwuYUGzCrQgBGb2mMAqzvcrQzCVF/Va8oAv3VfNQWwQvrhCOBmx1SGBgA6grB4179aeZWCL8gwLON7c5MZ
+ TY0=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/10/2022 20:51, Steev Klimaszewski wrote:
-> Round 2 because the patch is too long for the mailing lists, I hope it 
-> is okay to strip out a bit of the patch
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ drivers/clk/imx/clk-imxrt1050.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes, it is okay, actually expected and much better way. There is no need
-to scroll a lot of message looking for a tag.
-
-Thank you!
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+index 26108e9f7e67..39f77c03b892 100644
+--- a/drivers/clk/imx/clk-imxrt1050.c
++++ b/drivers/clk/imx/clk-imxrt1050.c
+@@ -141,6 +141,7 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+ 	hws[IMXRT1050_CLK_USDHC2] = imx_clk_hw_gate2("usdhc2", "usdhc2_podf", ccm_base + 0x80, 4);
+ 	hws[IMXRT1050_CLK_LPUART1] = imx_clk_hw_gate2("lpuart1", "lpuart_podf", ccm_base + 0x7c, 24);
+ 	hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", "lcdif_podf", ccm_base + 0x70, 28);
++	hws[IMXRT1050_CLK_LCDIF_PIX] = imx_clk_hw_gate2("lcdif_pix", "lcdif", ccm_base + 0x74, 10);
+ 	hws[IMXRT1050_CLK_DMA] = imx_clk_hw_gate("dma", "ipg", ccm_base + 0x7C, 6);
+ 	hws[IMXRT1050_CLK_DMA_MUX] = imx_clk_hw_gate("dmamux0", "ipg", ccm_base + 0x7C, 7);
+ 	imx_check_clk_hws(hws, IMXRT1050_CLK_END);
+-- 
+2.34.1
 
