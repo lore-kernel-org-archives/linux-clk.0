@@ -2,129 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87541C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 16:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2DAC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 17:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbiJQQug (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 12:50:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34878 "EHLO
+        id S230021AbiJQRLK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 13:11:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbiJQQue (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 12:50:34 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE0D5A825
-        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 09:50:33 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id k2so26317234ejr.2
-        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 09:50:33 -0700 (PDT)
+        with ESMTP id S229982AbiJQRLJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 13:11:09 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B936566A46;
+        Mon, 17 Oct 2022 10:11:08 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id q18so6132174ils.12;
+        Mon, 17 Oct 2022 10:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=drbnWG6FnPMKy+1KjZWfuBI6Wm/8lttgnizdA5I4wh0=;
-        b=KuVlSmIb+mR5CV6eITXFG6u2+ges8sQgbxnm+3vT1lBOjzQyKbr7eP/m0ySlkX1gPv
-         yqRF3Zo8/T7hNqNhLfcWvnEEoYlhY4e6I+bT2Mfh1zGb5qHdQs9PpcpjOrF/mLdw3YtZ
-         4R153dfRrrKX3ZgPrqYnNF/NRVzUiyp09gv7w=
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2R50tDa31QheH9PegEd+bVdQ3X/I4pMIoJ98xHZVENU=;
+        b=gbhcWFmvoOoHlrSw7fwphKzkgX4hOti+XwRW5+LaeaV09djLDTNgfQKCLEOakbXiUh
+         6f502qo/Bl7lANxZjkoEIkS7L5KK6Qf5i/U6ptkvGFke7HF/tAEqYL+qYQHS7OYkEdyh
+         ltYiMuLS+7IfdQmAVOErtTPxsRart4tGjR/3CZXAMPJws1qPEmu3zgtiZLljDS3tgRJQ
+         5Z2QHUPebEzye+DfcfYK0s2UQQ7Cx/NhjjpcFlsOd+MXD1ugiTuHb4teeP9eyac+Ja3n
+         MN1WcJoWDF8NdJ7J40fHi/+l1sfti3ibT4DKferFq6osjrScVwcR2ySvdivCjJixyzRO
+         qxfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=drbnWG6FnPMKy+1KjZWfuBI6Wm/8lttgnizdA5I4wh0=;
-        b=gaGS1AP7nhkrtIxMdqpdiXJAy2xTkCNSbYf8fjQhKV9j5Qz1aVqPjkj9xB+GdvZzUI
-         V7vQviea91O0KwrpP2NvjqGNBOKU5t+r3H2jRB4Cac2N1uvr87knSxub/Jfmwoe7zPcq
-         IC4Dw10cWjqBUZSG/30SZtFmoiNO87TerYgOxNvrvgumDLZaeArPuMS7phoq8/ZsHPHb
-         TuZyObBYYbG2vQ/md7T3KpULEme44EV0h8bDxqu7wCJnAEGNzCWejNi3JYO345sJhLSt
-         MJZ1vZ8lD1Jimqefl6T+FGImrOsgfjZrEnG6n54hisRRbcaRHpDL4XJjH0UvuEEg8b6Y
-         5YTA==
-X-Gm-Message-State: ACrzQf0WyatrBn8jgfSXfMe0vtWQidBUDFov2nLdE3wbVQyJTtlVK45Z
-        lUD3vwRDYpIzbIq/65/ycf/mHTSTH0nzMw==
-X-Google-Smtp-Source: AMsMyM4GZiprC1PluXKiH0yH3vdFd+AeS3g/ZUhBCEiazBbo/4ME6PSXDI3ILqtbg7C+DWfkoNbZRw==
-X-Received: by 2002:a17:907:2d1e:b0:78e:2c3b:559f with SMTP id gs30-20020a1709072d1e00b0078e2c3b559fmr9375041ejc.435.1666025431720;
-        Mon, 17 Oct 2022 09:50:31 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-95-244-101-110.retail.telecomitalia.it. [95.244.101.110])
-        by smtp.gmail.com with ESMTPSA id o7-20020a170906774700b0077086d2db8esm6473027ejn.140.2022.10.17.09.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 09:50:31 -0700 (PDT)
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     michael@amarulasolutions.com,
-        Amarula patchwork <linux-amarula@amarulasolutions.com>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Allison Randal <allison@lohutok.net>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: [PATCH] clk: ti: dra7-atl: don't allocate `parent_names' variable
-Date:   Mon, 17 Oct 2022 18:50:28 +0200
-Message-Id: <20221017165028.4194254-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.32.0
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2R50tDa31QheH9PegEd+bVdQ3X/I4pMIoJ98xHZVENU=;
+        b=kYdynQVBm5Yha0A/2HWC6K82gYtvp9XZkZRSBsmbFouUm09r3Bfo+Z7+r69+atFo5A
+         VLYtMzsTqaq88KJaA9Pq0I9ymJhlNSLl+X9cVKDP0s5RVWb/VOhalb1EpfmtF0qYCFI4
+         YkbCxBPabbIbI+g2G9uzsuZupOEhOYm2IO6D01I1I6IBtJsWtSeOSXicenJ+Vg6atBBP
+         gArNicynLmSAGbUKhVbQq9ovThUR0kW0wk1i3sjlW3YsiVWu59uV+QE4pkX4uZ0h2klT
+         ebUWPUyD+hzh7a0kcwfITUfKy2rxXeUOokYllQ6w03I6mjCcd+H4xo4RWfSiD3xCeIF/
+         fIgA==
+X-Gm-Message-State: ACrzQf2LD03iRkgN6P/4hFeg+kNaCsonoQzNl/cdztNifmDCXIAtR8Px
+        EMjMzBz5CKrYGGFZo818dv9LaqjaV5SURuocFNk=
+X-Google-Smtp-Source: AMsMyM5/Jdn558aL2rhxtSZ2OiG2HQGSp5Yfh5ExHu+Z1RngoeO5tlE0YXRAp2g3o24MQ3WEV+KDly8jDeAa2vFPnAs=
+X-Received: by 2002:a05:6e02:20ea:b0:2fc:318b:a952 with SMTP id
+ q10-20020a056e0220ea00b002fc318ba952mr5121906ilv.236.1666026668164; Mon, 17
+ Oct 2022 10:11:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221016150110.3020451-1-lis8215@gmail.com> <20221016150110.3020451-5-lis8215@gmail.com>
+ <0S4WJR.4KB18PR21S9K1@crapouillou.net>
+In-Reply-To: <0S4WJR.4KB18PR21S9K1@crapouillou.net>
+From:   Siarhei Volkau <lis8215@gmail.com>
+Date:   Mon, 17 Oct 2022 20:10:56 +0300
+Message-ID: <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] clk: Add Ingenic JZ4755 CGU driver
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The `parent_names' variable was freed also in case of kzalloc() error.
-Instead of modifying the code to perform a proper memory release, I
-decided to fix the bug by not allocating memory.
-Since only one parent name is referenced, it is not necessary to
-allocate this variable at runtime and therefore you can avoid calling
-the kzalloc() function. This simplifies the code (even calls to kfree
-can be removed) and improves the performance of the routine.
+=D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:24, Paul Cercue=
+il <paul@crapouillou.net>:
 
-Note: Although no operation is performed by kfree() on a NULL pointer,
-it was however suboptimal and semantically wrong doing it.
+> > +     [JZ4755_CLK_AIC] =3D {
+> > +             "aic", CGU_CLK_GATE,
+> > +             .parents =3D { JZ4755_CLK_I2S, -1, -1, -1 },
+>
+> Wrong parent here, should be JZ4755_CLK_EXT_HALF.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+I don't  agree, see Figure 20-13 in the JZ4755 PM.
 
----
+> Well it would be good to know...
 
- drivers/clk/ti/clk-dra7-atl.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index ff4d6a951681..ec2473069143 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -164,7 +164,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- {
- 	struct dra7_atl_desc *clk_hw = NULL;
- 	struct clk_init_data init = { NULL };
--	const char **parent_names = NULL;
- 	const char *name;
- 	struct clk *clk;
- 
-@@ -188,24 +187,15 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 		goto cleanup;
- 	}
- 
--	parent_names = kzalloc(sizeof(char *), GFP_KERNEL);
--
--	if (!parent_names)
--		goto cleanup;
--
--	parent_names[0] = of_clk_get_parent_name(node, 0);
--
--	init.parent_names = parent_names;
-+	init.parent_names = of_clk_get_parent_name(node, 0);
- 
- 	clk = ti_clk_register(NULL, &clk_hw->hw, name);
--
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		kfree(parent_names);
- 		return;
- 	}
-+
- cleanup:
--	kfree(parent_names);
- 	kfree(clk_hw);
- }
- CLK_OF_DECLARE(dra7_atl_clock, "ti,dra7-atl-clock", of_dra7_atl_clock_setup);
--- 
-2.32.0
-
+Indeed, I will try to figure it out.
