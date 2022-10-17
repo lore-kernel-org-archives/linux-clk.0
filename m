@@ -2,66 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13510C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 21:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAAFC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 21:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbiJQVHu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 17:07:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42440 "EHLO
+        id S229770AbiJQVIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 17:08:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbiJQVHY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 17:07:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08915647E6;
-        Mon, 17 Oct 2022 14:07:23 -0700 (PDT)
+        with ESMTP id S230149AbiJQVIH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 17:08:07 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FC878BE5
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 14:08:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 90D70B81ACB;
-        Mon, 17 Oct 2022 21:07:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E280C433C1;
-        Mon, 17 Oct 2022 21:07:21 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B2F6DB81681
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2022 21:08:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75355C4347C;
+        Mon, 17 Oct 2022 21:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666040841;
-        bh=9fZvPQ6FH4+BSR67d3rvJb0rl7mn1fy9ZWDE+8emsZY=;
+        s=k20201202; t=1666040880;
+        bh=PEd3VMfM3ZdUTCnWiOBM/cEisVoIk6qegWHGtLrK200=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=uuB1yBzqtJUBiAgzUwLG3e267P0N3b3+y8NM3FAwPCErwlfNhNNcXD+FdQKUvfdtW
-         1tQIh6ah1kqlHOGh0iw2UNhee2T3wR8Ds/MqN/4PbTaf+WPpj+d24RpmAQ4HH8jbwu
-         L98VL6LGAZf2ifkHgI4pF0sbgSrwEDHA6qtPMfWMzwnNEdLoCv3F4MCmapE7pI7VAH
-         mn2DkXnw4YCVicpPHuwDXKLilfQ3RBZ5crk71fHh22Otlkgd1Im/xdU/0NYZ+79gT7
-         y5PIZCZiZnIen4r/YJ4CBUYo7MHON7PCF9x1U23oNAG0kNkXhpevPQ+/CghUQccUvE
-         Ht3edwh0MDHQQ==
+        b=DfqKUKtezIK5olz07bjE9D6ObY92gS+vXbPKLTpYKkOLOf7Rmq3/55B7EJj+QJXk7
+         0YaXf9v+gF9gaD9kp1scQYynsCXFHChs2uUE8Ds2atiiRiRZV8uEM0bIHQYCDAOUBN
+         7ahWhiHCHznExv0d0G8UzVIy7PcK0WueMXeQXpGIwXd5wxS7IP1/mB+UhFZgfIOPsG
+         kfoLr0GJ5WquSzI16sZ/IBw8U9oS8BM3XHkcnppY9dIF7Yedxsa1Evh/kYE3Ab2t4x
+         cOa7/gqOGXSDuzWSzKTF7NYhwG1eKeEBPqAQyIfCCZSjCJTNhWXqBmhGW1TwwIWj7o
+         xGGUgQA48QTKA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221005171348.167476-2-conor@kernel.org>
-References: <20221005171348.167476-1-conor@kernel.org> <20221005171348.167476-2-conor@kernel.org>
-Subject: Re: [PATCH 1/6] clk: sifive: select by default if SOC_SIFIVE
+In-Reply-To: <20221009025056.35311-1-yangyingliang@huawei.com>
+References: <20221009025056.35311-1-yangyingliang@huawei.com>
+Subject: Re: [PATCH] clk: mediatek: clk-mt8195-topckgen: Fix error return code in clk_mt8195_topck_probe()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-To:     Albert Ou <aou@eecs.berkeley.edu>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Conor Dooley <conor@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Date:   Mon, 17 Oct 2022 14:07:18 -0700
+Cc:     angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        mturquette@baylibre.com, yangyingliang@huawei.com
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date:   Mon, 17 Oct 2022 14:07:57 -0700
 User-Agent: alot/0.10
-Message-Id: <20221017210721.3E280C433C1@smtp.kernel.org>
+Message-Id: <20221017210800.75355C4347C@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2022-10-05 10:13:44)
-> From: Conor Dooley <conor.dooley@microchip.com>
+Quoting Yang Yingliang (2022-10-08 19:50:56)
+> If devm_clk_hw_register_mux() fails in clk_mt8195_topck_probe(), it shoul=
+d return
+> error code.
 >=20
-> With the aim of dropping direct selects of drivers from Kconfig.socs,
-> default the SiFive clock drivers to the value of SOC_SIFIVE.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Fixes: deeb2af77cf6 ("clk: mediatek: clk-mt8195-topckgen: Register mfg_ck=
+_fast_ref as generic mux")
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 > ---
 
 Applied to clk-fixes
