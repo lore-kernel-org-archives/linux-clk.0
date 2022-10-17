@@ -2,32 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966D1C43217
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 17:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0078C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 18:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230316AbiJQRY7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 13:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51748 "EHLO
+        id S230473AbiJQSIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 14:08:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbiJQRYh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 13:24:37 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D4665CE;
-        Mon, 17 Oct 2022 10:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1666027472; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q2LKFFdukj0Teo80d6xApjlkPmcHoDYGqshawhQ6Zp4=;
-        b=iamdcSxFgEwdT5Dd6NOiZ9hoaP/6qqx46nqgsRbZ84SwzSqeu69s+BZ4NZ+BKfwwJ9ja/k
-        oOaC/T7wZONdZpGf2331jSVlaUC+JhE+pfKNwBSccrGc0fMzPX4dEf+Ufh5oK8wZWUHPnf
-        tsyYtrCA+zggOaba6/A+8HQQZLoD0IM=
-Date:   Mon, 17 Oct 2022 18:24:22 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
+        with ESMTP id S230464AbiJQSIA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 14:08:00 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD0F74B8C;
+        Mon, 17 Oct 2022 11:07:59 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id h203so9785958iof.1;
+        Mon, 17 Oct 2022 11:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QEOWtVNjYdH9YkaPM5vlZiYdAHpFwckF9QtAFSfsGqA=;
+        b=pKRP1zgd6Q4k0q1nFaZ4ByQLmGLR4yopgzx4PRvBUNcappOfoWqE4JZhudsG0GffKG
+         vk2i4pydG1QSnz5rfF6kEAKjzYByjxFgEClxI6yu5E6GHDNa9k0sC+vqvaewVhWFSFuv
+         2ryvlMbrazWuTubDcOAMvD8gia7zy0a94rI8DE/8ycz1jRGQJ1peutbYG0Inm+WDJQnl
+         AZKSDEsamQlwcjgkUbBWrJHqS6KvIaHJMF+gZSPGX4DJrfDzySSPuAjTXaLnS2Hq+YN5
+         mETENz3PpTRUVLEbo3ZR+drpeA/6u2mAeDDhKYuWuNt/yKsiPWnyMz3jxWJ3aMaZS1pw
+         8Rog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QEOWtVNjYdH9YkaPM5vlZiYdAHpFwckF9QtAFSfsGqA=;
+        b=te0fAfPquR84XlIMquZkO4+CRpEmPmHdnhsMSDLd0I6b5GeHeizTzDOyFOfQ/FCF1D
+         GCitoaz/9iR/9HXVHluEHb2MODS8PjOmBEL1eb+ZvonU+RLGCY4rZFU7n/NYLVZyeXDZ
+         05eW2E26dCrVVTu7SmE/AAjkFzBT1y0XHnM1g7JwL8do3YbRN4YBN6KNg6LTV2smN/jF
+         t5TxWRfmbilOTiJRR4AvFRI2/itIu6/QXdUnCBBMWfYvQIdurIu80sGVowlFzURZXj2u
+         YBTa/2GycUs7sEbtQFXHgcXamPlsGCZVD95IzHiAJh2csFYRgUQd8+rbHmHWN1zqkHyF
+         cXtQ==
+X-Gm-Message-State: ACrzQf1b29Z7tXmnJwc2FD3ajfUSenyK0DdLKeFt3icPjY2nxx6YhRBj
+        ahd+gk9AOm86ZtZ+SonSOjKKM3HuiC7Xp/JkFLE=
+X-Google-Smtp-Source: AMsMyM77udb/S0MFXl+h+5pev1FZzF+2DS+r+HaH7gx3h1Jnzv0Dg4P2eFjll2WthNs/nHDpoV70jmtvXekovGsFHRk=
+X-Received: by 2002:a6b:6716:0:b0:6bc:113c:22a2 with SMTP id
+ b22-20020a6b6716000000b006bc113c22a2mr4946988ioc.12.1666030079215; Mon, 17
+ Oct 2022 11:07:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221016150110.3020451-1-lis8215@gmail.com> <20221016150110.3020451-5-lis8215@gmail.com>
+ <0S4WJR.4KB18PR21S9K1@crapouillou.net> <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
+ <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
+In-Reply-To: <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
+From:   Siarhei Volkau <lis8215@gmail.com>
+Date:   Mon, 17 Oct 2022 21:07:47 +0300
+Message-ID: <CAKNVLfbbAaNdhWDo10XrUtyCM4R5E1CidC+TTQt8tUYbBU93qw@mail.gmail.com>
 Subject: Re: [PATCH v2 4/4] clk: Add Ingenic JZ4755 CGU driver
-To:     Siarhei Volkau <lis8215@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,44 +63,53 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Message-Id: <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
-In-Reply-To: <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
-References: <20221016150110.3020451-1-lis8215@gmail.com>
-        <20221016150110.3020451-5-lis8215@gmail.com>
-        <0S4WJR.4KB18PR21S9K1@crapouillou.net>
-        <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+=D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 20:24, Paul Cercue=
+il <paul@crapouillou.net>:
+>
+>
+>
+> Le lun., oct. 17 2022 at 20:10:56 +0300, Siarhei Volkau
+> <lis8215@gmail.com> a =C3=A9crit :
+> > =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:24, Paul Ce=
+rcueil
+> > <paul@crapouillou.net>:
+> >
+> >>  > +     [JZ4755_CLK_AIC] =3D {
+> >>  > +             "aic", CGU_CLK_GATE,
+> >>  > +             .parents =3D { JZ4755_CLK_I2S, -1, -1, -1 },
+> >>
+> >>  Wrong parent here, should be JZ4755_CLK_EXT_HALF.
+> >
+> > I don't  agree, see Figure 20-13 in the JZ4755 PM.
+>
+> 20-13 describes the I2S clock, no?
 
+See 20.4.9 Serial Audio Clocks and Sampling Frequencies.
+It stated that: "For internal CODEC ... CODEC needs a 12MHz
+clock from CPM called SYS_CLK ...", but SYS_CLK is described
+only in the I2S Controller section. I assume it is the same clock.
 
-Le lun., oct. 17 2022 at 20:10:56 +0300, Siarhei Volkau=20
-<lis8215@gmail.com> a =C3=A9crit :
-> =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:24, Paul Cerc=
-ueil=20
-> <paul@crapouillou.net>:
->=20
->>  > +     [JZ4755_CLK_AIC] =3D {
->>  > +             "aic", CGU_CLK_GATE,
->>  > +             .parents =3D { JZ4755_CLK_I2S, -1, -1, -1 },
->>=20
->>  Wrong parent here, should be JZ4755_CLK_EXT_HALF.
->=20
-> I don't  agree, see Figure 20-13 in the JZ4755 PM.
+>
+> AIC clock's parent is EXT/2 according to the diagram in 8.2.2.
+>
 
-20-13 describes the I2S clock, no?
+It's a bit cryptic manual, who knows how it's done in the HW.
+I observed that codec runs on a desired sample rate only when PLL
+equals 432 or 216 MHz, but SYS_CLK is definitely configured to be
+12MHz - from EXTCLK. On other PLL frequencies it is lower by
+2-4% than expected. That isn't observed on JZ4725B.
 
-AIC clock's parent is EXT/2 according to the diagram in 8.2.2.
-
->>  Well it would be good to know...
->=20
-> Indeed, I will try to figure it out.
-
-Cheers,
--Paul
-
-
+> >>  Well it would be good to know...
+> >
+> > Indeed, I will try to figure it out.
+>
+> Cheers,
+> -Paul
+>
+>
