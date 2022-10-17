@@ -2,114 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0078C43217
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 18:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD031C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Oct 2022 18:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbiJQSIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 14:08:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
+        id S229772AbiJQSez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 14:34:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230464AbiJQSIA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 14:08:00 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD0F74B8C;
-        Mon, 17 Oct 2022 11:07:59 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id h203so9785958iof.1;
-        Mon, 17 Oct 2022 11:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QEOWtVNjYdH9YkaPM5vlZiYdAHpFwckF9QtAFSfsGqA=;
-        b=pKRP1zgd6Q4k0q1nFaZ4ByQLmGLR4yopgzx4PRvBUNcappOfoWqE4JZhudsG0GffKG
-         vk2i4pydG1QSnz5rfF6kEAKjzYByjxFgEClxI6yu5E6GHDNa9k0sC+vqvaewVhWFSFuv
-         2ryvlMbrazWuTubDcOAMvD8gia7zy0a94rI8DE/8ycz1jRGQJ1peutbYG0Inm+WDJQnl
-         AZKSDEsamQlwcjgkUbBWrJHqS6KvIaHJMF+gZSPGX4DJrfDzySSPuAjTXaLnS2Hq+YN5
-         mETENz3PpTRUVLEbo3ZR+drpeA/6u2mAeDDhKYuWuNt/yKsiPWnyMz3jxWJ3aMaZS1pw
-         8Rog==
+        with ESMTP id S229970AbiJQSez (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 14:34:55 -0400
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26314237CA;
+        Mon, 17 Oct 2022 11:34:54 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id o64so13064030oib.12;
+        Mon, 17 Oct 2022 11:34:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QEOWtVNjYdH9YkaPM5vlZiYdAHpFwckF9QtAFSfsGqA=;
-        b=te0fAfPquR84XlIMquZkO4+CRpEmPmHdnhsMSDLd0I6b5GeHeizTzDOyFOfQ/FCF1D
-         GCitoaz/9iR/9HXVHluEHb2MODS8PjOmBEL1eb+ZvonU+RLGCY4rZFU7n/NYLVZyeXDZ
-         05eW2E26dCrVVTu7SmE/AAjkFzBT1y0XHnM1g7JwL8do3YbRN4YBN6KNg6LTV2smN/jF
-         t5TxWRfmbilOTiJRR4AvFRI2/itIu6/QXdUnCBBMWfYvQIdurIu80sGVowlFzURZXj2u
-         YBTa/2GycUs7sEbtQFXHgcXamPlsGCZVD95IzHiAJh2csFYRgUQd8+rbHmHWN1zqkHyF
-         cXtQ==
-X-Gm-Message-State: ACrzQf1b29Z7tXmnJwc2FD3ajfUSenyK0DdLKeFt3icPjY2nxx6YhRBj
-        ahd+gk9AOm86ZtZ+SonSOjKKM3HuiC7Xp/JkFLE=
-X-Google-Smtp-Source: AMsMyM77udb/S0MFXl+h+5pev1FZzF+2DS+r+HaH7gx3h1Jnzv0Dg4P2eFjll2WthNs/nHDpoV70jmtvXekovGsFHRk=
-X-Received: by 2002:a6b:6716:0:b0:6bc:113c:22a2 with SMTP id
- b22-20020a6b6716000000b006bc113c22a2mr4946988ioc.12.1666030079215; Mon, 17
- Oct 2022 11:07:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221016150110.3020451-1-lis8215@gmail.com> <20221016150110.3020451-5-lis8215@gmail.com>
- <0S4WJR.4KB18PR21S9K1@crapouillou.net> <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
- <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
-In-Reply-To: <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
-From:   Siarhei Volkau <lis8215@gmail.com>
-Date:   Mon, 17 Oct 2022 21:07:47 +0300
-Message-ID: <CAKNVLfbbAaNdhWDo10XrUtyCM4R5E1CidC+TTQt8tUYbBU93qw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] clk: Add Ingenic JZ4755 CGU driver
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x4FmwvBqnJTncoPiKUPBPPBe171UWUDniXQaooeZxpw=;
+        b=cUtLFDCVPom9VJCBq9yxFHz+45hYXRfVxxbfwS4vTRR4L5jBfanW/xQGF97wjcilmF
+         J/EETbdnb0i4tY0juFXcW6wd3vO+pKfXF4hT/DW/e3kn+pC7uiQF7TuweGlThc/dLaVG
+         d0OyeiZtdmbUoXDXgerlAtsU9uGh/LF39J7yhOtjArpzVuzwBREVp5GEXO5sir///958
+         HFCnZU7jxUST22URv/usi6+BtI1ZGvKdbTl3rNEsWPCZZUWRSgKjv/msxuhIyZTeDOhO
+         1ma3NioE1JNyPhU6aqSoTYnl5cf1BMdpSPi2IMWg/5w1jpIj9U23BE4GeBFcyXc8lOV6
+         j6Xg==
+X-Gm-Message-State: ACrzQf1CUpRoZJovLX7AKSsQ26UW+EodKrNgUQuE5kMef/08k+wDkzlm
+        EWRAexqJvFLzjDaSJePu1fzd4SRQRA==
+X-Google-Smtp-Source: AMsMyM6zWSIgmd+I4omxIOYg2rHsSiGZaz0fVmjUISZiTCI2iq+9HRTI45XL5vYpiTUKkezyqPBipw==
+X-Received: by 2002:aca:240c:0:b0:355:41a7:d4dd with SMTP id n12-20020aca240c000000b0035541a7d4ddmr1197974oic.281.1666031693439;
+        Mon, 17 Oct 2022 11:34:53 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id bv13-20020a0568300d8d00b006618eb616dbsm4977077otb.8.2022.10.17.11.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Oct 2022 11:34:52 -0700 (PDT)
+Received: (nullmailer pid 2255311 invoked by uid 1000);
+        Mon, 17 Oct 2022 18:34:53 -0000
+Date:   Mon, 17 Oct 2022 13:34:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Siarhei Volkau <lis8215@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add Ingenic JZ4755 CGU header
+Message-ID: <20221017183453.GA2253413-robh@kernel.org>
+References: <20221016150110.3020451-1-lis8215@gmail.com>
+ <20221016150110.3020451-4-lis8215@gmail.com>
+ <c2accc8b-f4eb-47ca-333f-eeb98da6a363@linaro.org>
+ <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKNVLfZ8qi4MS6ineF4M5xnSmHW+=P5mdgifmr74g4kOSK2wGA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 20:24, Paul Cercue=
-il <paul@crapouillou.net>:
->
->
->
-> Le lun., oct. 17 2022 at 20:10:56 +0300, Siarhei Volkau
-> <lis8215@gmail.com> a =C3=A9crit :
-> > =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:24, Paul Ce=
-rcueil
-> > <paul@crapouillou.net>:
-> >
-> >>  > +     [JZ4755_CLK_AIC] =3D {
-> >>  > +             "aic", CGU_CLK_GATE,
-> >>  > +             .parents =3D { JZ4755_CLK_I2S, -1, -1, -1 },
-> >>
-> >>  Wrong parent here, should be JZ4755_CLK_EXT_HALF.
-> >
-> > I don't  agree, see Figure 20-13 in the JZ4755 PM.
->
-> 20-13 describes the I2S clock, no?
+On Sun, Oct 16, 2022 at 09:21:18PM +0300, Siarhei Volkau wrote:
+> вс, 16 окт. 2022 г. в 18:32, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>:
+> 
+> > Why did you choose 2.0+?
+> 
+> It's the first time that I need to choose a license, so it's a bit
+> confusing what
+> side effects they have, especially in that particular case.
+> 
+> What do you recommend?
 
-See 20.4.9 Serial Audio Clocks and Sampling Frequencies.
-It stated that: "For internal CODEC ... CODEC needs a 12MHz
-clock from CPM called SYS_CLK ...", but SYS_CLK is described
-only in the I2S Controller section. I assume it is the same clock.
+Are you fine with GPLv4, GPLv5? Considering they haven't been written, I 
+wouldn't be.
 
->
-> AIC clock's parent is EXT/2 according to the diagram in 8.2.2.
->
-
-It's a bit cryptic manual, who knows how it's done in the HW.
-I observed that codec runs on a desired sample rate only when PLL
-equals 432 or 216 MHz, but SYS_CLK is definitely configured to be
-12MHz - from EXTCLK. On other PLL frequencies it is lower by
-2-4% than expected. That isn't observed on JZ4725B.
-
-> >>  Well it would be good to know...
-> >
-> > Indeed, I will try to figure it out.
->
-> Cheers,
-> -Paul
->
->
+Rob
