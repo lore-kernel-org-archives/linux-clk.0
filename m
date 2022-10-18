@@ -2,263 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0D8C3A589
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 07:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE0EC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 07:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbiJRHVR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 03:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36500 "EHLO
+        id S230101AbiJRHcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 03:32:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbiJRHVP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 03:21:15 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FE5A0258;
-        Tue, 18 Oct 2022 00:21:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1666077673; x=1697613673;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=G/vj/lqmp9J6IKlQvrSZrkWaQzN/UAUrJThxXOZ9VOw=;
-  b=iDvcJFjGIGc7FPEIziKmAqujRGkg/IFiYSjM4PXaX+k4bnJ8FoHeWKpM
-   5fPjAknPCDofwS+X1gq0UcGUcaLNOrpxvSaCDdQOElFgZNLFX96DKSqYa
-   aR3KDeA2bKV+uMz2ofWuRz/xR+LguOenKcZW1fXiyhT7x1l/tqzE+ijgi
-   JXZhZjRmBU08UxAvsL+Ge2qyEBEQ3Q0dX6w/8xV2k6eHvlqvOyU7lSDfj
-   BOTn7iaYUJwEWoNc33iLtm3lJUtFK8Yh7tD05XNUlPsZ1hWrrLNKVLJvy
-   DBBBLR3M+QlBykCsZnGseegsZrlEWkdJxzhYlOKIO3Ix2Q9bMFEXEx1Xf
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.95,193,1661810400"; 
-   d="scan'208";a="26807801"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 18 Oct 2022 09:21:10 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 18 Oct 2022 09:21:10 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 18 Oct 2022 09:21:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1666077670; x=1697613670;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=G/vj/lqmp9J6IKlQvrSZrkWaQzN/UAUrJThxXOZ9VOw=;
-  b=ITT2y0CSNFa43VdkQTEkkMxkpv8xCZm8vzhue/yR1S6TxaEzcwJaBcj/
-   MyGbPSMqbswCOpNLhLTLhwSHi/Q6mVRhohh/ZHzzpLT8E6sH8yVQsXTNM
-   8U0OfDPRWjWxZMXe30nYcq3tjrrni9zkGLjpngh2hXtpUuZSDtSecmCkL
-   tpK19jjnIxq+nelCEkW7Jv1QXWKheENUVg0Pm5yNPVBM46QXgrVw97Ey8
-   0nlhMAWW25I5N58hrQaENAbHGuJXykZ+Nz/6zcB5SUrmx/VuqIhL4G9Ku
-   QBS5zqWfRsOSOerYkD1q8DdY3nfi6O5U9f1rKfIx1D7nMBOJn84HCxvmy
-   w==;
-X-IronPort-AV: E=Sophos;i="5.95,193,1661810400"; 
-   d="scan'208";a="26807800"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 18 Oct 2022 09:21:10 +0200
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 2C218280056;
-        Tue, 18 Oct 2022 09:21:10 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 1/1] dt-bindings: clock: ti,cdce925: Convert to DT schema
-Date:   Tue, 18 Oct 2022 09:21:06 +0200
-Message-Id: <20221018072106.2391771-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229998AbiJRHcI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 03:32:08 -0400
+Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0879B1FCE2;
+        Tue, 18 Oct 2022 00:32:06 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 757C6580155;
+        Tue, 18 Oct 2022 03:32:04 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 18 Oct 2022 03:32:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666078324; x=
+        1666085524; bh=x8Kpf7Ca60+0626HPD6lKqagYPSPMGNpcqJHOsdVPg4=; b=c
+        qk9JAMkhFYmJG+cxMVtlFC29ZG0OibbkpFqL8SZr4bKMbcs67y+kWVzwFJaxtngM
+        lT72P28/DfFs69Srr9tJ02RUQS4XuaAP3kFB6kDCYWEI9bGIQ2Aw11EXoFVM31YJ
+        swbwgfAI4nnwImpycgFBT0/Tf7iJ/5pwU5dzxFKF3sUOCiJ6EdqmkqH8HeS3+et/
+        0/d9pOI8v1he405a00A5/dUCF4HP0rQFLrI8bj7daewvXohydhZzpixy1IW/H+ev
+        ZffparVVjMse56F5unfod4bqNCdbGFIsc2GxM+T1m8Zkyrd3G6ADqPfYBq1kPe5G
+        GtVRTXe2DnITFTQxeHH5w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666078324; x=
+        1666085524; bh=x8Kpf7Ca60+0626HPD6lKqagYPSPMGNpcqJHOsdVPg4=; b=d
+        +yWVvqdRVhyutCeiw5LO0/K/MTbO/8W+XVxp/G+SDseiiq7JlVhJiyCUMSZMLLxR
+        hCkvWqW7tLBSZvUbTUvk+xBJyUKz68bgAdSmgHSiFEWOufQuiTnvzunCdaxcYann
+        5s6xSI9vUWeSO+1LC+uU63Ke35foc6dzOtMWDwGrBLK6lHId140UOz/e35uOeaxD
+        EUDJfVJ7GECZQLMWdJ8cicQZjK0IsjHedu9QHuq8rna2B6LvqoYXTnxLNHxhUA4R
+        jCTdceXycqdWFVkmr7j0zkRBNRTA3yDKwEenjrjEL0wSzf2PqX7ZVMlK6H5GrTDB
+        zea7VndIybeSO2R/YEJ/A==
+X-ME-Sender: <xms:c1ZOYx8gN6HMeSVgdKA6HlwKsdr3HeLers72Hu5Ejs1f2P1AVNvQVA>
+    <xme:c1ZOY1uj3vGcWeketnDs2VH4131C7teDKwip9Wls_VOZjiDwUkQTjF6sSeMOEA-Hg
+    9LzevIJsk49Q1y2PuM>
+X-ME-Received: <xmr:c1ZOY_Cn03uydnBNw5bXHh65QI8_MN3Dw7GtZHfANNaBlxSEmq4vEGTBQPkv>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeltddguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
+    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
+    frrghtthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeu
+    teefteefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:c1ZOY1eNIxhB8puT_IYpNRUAXnuZBvz_0ObXFVLgNBPgzMZLK1J1iQ>
+    <xmx:c1ZOY2MclzKYD2xBuaI0Wme__36uzx_8Ai2htL-zwps_1JpMm0-IIQ>
+    <xmx:c1ZOY3mkAtRL6Wlks6k9uHB0KajRoIb2LdzNRngldBZO6Ri6Qkfbfg>
+    <xmx:dFZOY-btamRaYp76W5Tjs6VR7RhBXTY4GoudmTotwJpoHZxGg1uDFg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Oct 2022 03:32:02 -0400 (EDT)
+Date:   Tue, 18 Oct 2022 09:32:01 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Emma Anholt <emma@anholt.net>, Stephen Boyd <sboyd@kernel.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        Dom Cobley <popcornmix@gmail.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 1/7] firmware: raspberrypi: Introduce
+ rpi_firmware_find_node()
+Message-ID: <20221018073201.hcptjdalvn47n25t@houat>
+References: <20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech>
+ <20220815-rpi-fix-4k-60-v3-1-fc56729d11fe@cerno.tech>
+ <890f6ab1-f6aa-76c8-01e8-f7233143d7ec@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <890f6ab1-f6aa-76c8-01e8-f7233143d7ec@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the TI CDCE925 clock binding to DT schema format.
-Including a small fix: Add the missing 'ti' prefix in the example
-compatible.
+Hi Florian
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-I have to admit I only have one specific addon platform for this
-hardware, which is actually a CECD813 tbh.
+On Fri, Oct 14, 2022 at 12:43:38PM -0700, Florian Fainelli wrote:
+> On 10/13/22 02:13, Maxime Ripard wrote:
+> > A significant number of RaspberryPi drivers using the firmware don't
+> > have a phandle to it, so end up scanning the device tree to find a node
+> > with the firmware compatible.
+> >=20
+> > That code is duplicated everywhere, so let's introduce a helper instead.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >   drivers/firmware/raspberrypi.c             | 7 +++++++
+> >   include/soc/bcm2835/raspberrypi-firmware.h | 7 +++++++
+> >   2 files changed, 14 insertions(+)
+> >=20
+> > diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberr=
+ypi.c
+> > index 4b8978b254f9..b916e1e171f8 100644
+> > --- a/drivers/firmware/raspberrypi.c
+> > +++ b/drivers/firmware/raspberrypi.c
+> > @@ -311,6 +311,13 @@ static int rpi_firmware_remove(struct platform_dev=
+ice *pdev)
+> >   	return 0;
+> >   }
+> > +static const struct of_device_id rpi_firmware_of_match[];
+>=20
+> This shadows the same variable that is used later for matching the firmwa=
+re
+> driver and probe it as a platform_driver, what am I missing here?
 
- .../devicetree/bindings/clock/ti,cdce925.txt  |  53 ---------
- .../devicetree/bindings/clock/ti,cdce925.yaml | 104 ++++++++++++++++++
- 2 files changed, 104 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.txt
- create mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.yaml
+I'm not shadowing the variable, but it's a forward-declaration.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.txt b/Documentation/devicetree/bindings/clock/ti,cdce925.txt
-deleted file mode 100644
-index df42ab72718f..000000000000
---- a/Documentation/devicetree/bindings/clock/ti,cdce925.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--Binding for TI CDCE913/925/937/949 programmable I2C clock synthesizers.
--
--Reference
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] https://www.ti.com/product/cdce913
--[3] https://www.ti.com/product/cdce925
--[4] https://www.ti.com/product/cdce937
--[5] https://www.ti.com/product/cdce949
--
--The driver provides clock sources for each output Y1 through Y5.
--
--Required properties:
-- - compatible: Shall be one of the following:
--	- "ti,cdce913": 1-PLL, 3 Outputs
--	- "ti,cdce925": 2-PLL, 5 Outputs
--	- "ti,cdce937": 3-PLL, 7 Outputs
--	- "ti,cdce949": 4-PLL, 9 Outputs
-- - reg: I2C device address.
-- - clocks: Points to a fixed parent clock that provides the input frequency.
-- - #clock-cells: From common clock bindings: Shall be 1.
--
--Optional properties:
-- - xtal-load-pf: Crystal load-capacitor value to fine-tune performance on a
--                 board, or to compensate for external influences.
--- vdd-supply: A regulator node for Vdd
--- vddout-supply: A regulator node for Vddout
--
--For all PLL1, PLL2, ... an optional child node can be used to specify spread
--spectrum clocking parameters for a board.
--  - spread-spectrum: SSC mode as defined in the data sheet.
--  - spread-spectrum-center: Use "centered" mode instead of "max" mode. When
--    present, the clock runs at the requested frequency on average. Otherwise
--    the requested frequency is the maximum value of the SCC range.
--
--
--Example:
--
--	clockgen: cdce925pw@64 {
--		compatible = "cdce925";
--		reg = <0x64>;
--		clocks = <&xtal_27Mhz>;
--		#clock-cells = <1>;
--		xtal-load-pf = <5>;
--		vdd-supply = <&1v8-reg>;
--		vddout-supply = <&3v3-reg>;
--		/* PLL options to get SSC 1% centered */
--		PLL2 {
--			spread-spectrum = <4>;
--			spread-spectrum-center;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.yaml b/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-new file mode 100644
-index 000000000000..1e68ee68e458
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,cdce925.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI CDCE913/925/937/949 programmable I2C clock synthesizers node bindings
-+
-+maintainers:
-+  - Mike Looijmans <mike.looijmans@topic.nl>
-+
-+description: |
-+  Flexible Low Power LVCMOS Clock Generator with SSC Support for EMI Reduction
-+
-+  - CDCE(L)913: 1-PLL, 3 Outputs https://www.ti.com/product/cdce913
-+  - CDCE(L)925: 2-PLL, 5 Outputs https://www.ti.com/product/cdce925
-+  - CDCE(L)937: 3-PLL, 7 Outputs https://www.ti.com/product/cdce937
-+  - CDCE(L)949: 4-PLL, 9 Outputs https://www.ti.com/product/cdce949
-+
-+properties:
-+  $nodename:
-+    pattern: "^clock-controller$"
-+
-+  compatible:
-+    enum:
-+      - ti,cdce913
-+      - ti,cdce925
-+      - ti,cdce937
-+      - ti,cdce949
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: fixed parent clock
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  vdd-supply:
-+    description: Regulator that provides 1.8V Vdd power supply
-+
-+  vddout-supply:
-+    description: |
-+      Regulator that provides Vddout power supply.
-+      non-L variant: 2.5V or 3.3V for
-+      L variant: 1.8V for
-+
-+  xtal-load-pf:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Crystal load-capacitor value to fine-tune performance on a
-+      board, or to compensate for external influences.
-+
-+patternProperties:
-+  "^PLL[1-4]$":
-+    type: object
-+    description: |
-+      optional child node can be used to specify spread
-+      spectrum clocking parameters for a board
-+
-+    properties:
-+      spread-spectrum:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: SSC mode as defined in the data sheet
-+
-+      spread-spectrum-center:
-+        type: boolean
-+        description: |
-+          Use "centered" mode instead of "max" mode. When
-+          present, the clock runs at the requested frequency on average.
-+          Otherwise the requested frequency is the maximum value of the
-+          SCC range.
-+
-+required:
-+  - compatible
-+  - ret
-+  - clocks
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        cdce925: clock-controller@64 {
-+            compatible = "ti,cdce925";
-+            reg = <0x64>;
-+            clocks = <&xtal_27Mhz>;
-+            #clock-cells = <1>;
-+            xtal-load-pf = <5>;
-+            vdd-supply = <&reg_1v8>;
-+            vddout-supply = <&reg_3v3>;
-+            /* PLL options to get SSC 1% centered */
-+            PLL2 {
-+                spread-spectrum = <4>;
-+                spread-spectrum-center;
-+            };
-+        };
-+    };
--- 
-2.25.1
-
+Maxime
