@@ -2,135 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E19C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 16:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68404C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 17:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbiJRQED (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 12:04:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35050 "EHLO
+        id S229490AbiJRR3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 13:29:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbiJRQEC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 12:04:02 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ADF89C2FD
-        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 09:03:57 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id u21so21162951edi.9
-        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 09:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8JlbMErcGNycCCtodyD6GpAsyH/iGxyyMdZWiKDQlaU=;
-        b=mxSI9U6ANwBzyr2DzsUzEZ5jHidPM/I7Z91CgyqWEgjleLppoOBKuSA3cHaE6L7Vki
-         UrFxXOXbRGPO6Fj91mhIQOqLC7PRzKhDFMUX6/7XYewOA17AIyLTwyxRRLEe5rB55XXk
-         9WHTSp6t0S0SQRb4u99G6OnjP7E70rJxF+Kns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8JlbMErcGNycCCtodyD6GpAsyH/iGxyyMdZWiKDQlaU=;
-        b=zGkYqRg07S9TdOytnkBeqnil4HiF4aXRp0rg7mgkYm4492xngdApowBGdj6IOBUitw
-         Q2nQmhFdv3VFTDd4jIIFLcPMgkYg+gt7tmPbyxA185PQZjK2C9en/KBAjs26A4xLz/fj
-         sVcYB30Tvry4pBGhvYhCO8D7sN+eTIcKmqgygqWQw1MRCol+lYLJ+w4yIfqLXIjAhWmp
-         /myPyRm7o3GIzXQ6Xz+pFpSSjZPujcItuIYVt15LkH4N8K4klXh5rOe4q4jIXkftSovj
-         J9Xl3PIYwri9jOIdX7Zdg0HBKpudC2XPcrGwnLaJLnOL41DVw48Q4b1n0/AUHoRIDsgt
-         HGMw==
-X-Gm-Message-State: ACrzQf3zdwkpgKOjdRExFiw3XhS6Kb3fsXKlfcAmJv8vKZxlhuc6krMO
-        y/3coHAdVwXp6QpuReTuL6et0w==
-X-Google-Smtp-Source: AMsMyM6xjsmr9XJ9txggMYCY5z0x99O51/w/iMiWSELcLeiATsV4UQaetsN4klbWvJZEOp88XURIMQ==
-X-Received: by 2002:a05:6402:34cd:b0:45d:a345:764 with SMTP id w13-20020a05640234cd00b0045da3450764mr3286646edc.415.1666109035532;
-        Tue, 18 Oct 2022 09:03:55 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-95-244-101-110.retail.telecomitalia.it. [95.244.101.110])
-        by smtp.gmail.com with ESMTPSA id j10-20020a17090623ea00b007919ba4295esm1166014ejg.216.2022.10.18.09.03.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 09:03:54 -0700 (PDT)
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Amarula patchwork <linux-amarula@amarulasolutions.com>,
-        michael@amarulasolutions.com,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        kernel test robot <lkp@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: [PATCH v2] clk: ti: dra7-atl: don't allocate `parent_names' variable
-Date:   Tue, 18 Oct 2022 18:03:52 +0200
-Message-Id: <20221018160352.1591428-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.32.0
+        with ESMTP id S229635AbiJRR3e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 13:29:34 -0400
+Received: from smtpcmd0987.aruba.it (smtpcmd0987.aruba.it [62.149.156.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1DC5A38B4
+        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 10:29:31 -0700 (PDT)
+Received: from [192.168.50.220] ([146.241.87.206])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id kqP9orvJLaWj1kqPAoCbei; Tue, 18 Oct 2022 19:29:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1666114169; bh=2R1Qx2v5j+cUhKJyPReXeVM3kkRyNKVJuTVaauBdp9A=;
+        h=Date:MIME-Version:Subject:To:From:Content-Type;
+        b=JI8QiS5clsPeOZ5Z35oTXgw7oDw+y5B8RIJGwZD91qzm4CEX8dkaysJCHn6TICCxK
+         gq//3IPx6dHZM1R9cr5N7U9oAufIXWpzabRrBxz721YhQ8PQiLgMQ8FSLjPgP2OSWK
+         +DGBKtFgutA4A7IGvQL9mwJTcSsad8oB2ZvckT2LYqr65dZD7IXGANsZptU3rZxWc9
+         mvdd1eSo7XjgIHjSAerDUyU52zrF4bACYvoQoOSNuL1LHYj3ztyHtLVdF41X96mpbJ
+         KsPuxZbRQWfTrx/7TeMEyRY5uwuV0GwljDufLHWAtA/1ISmrb6kJE6nC8WwEEJOX+0
+         a233rxHKTZDyQ==
+Message-ID: <de1957b5-ef9c-1f78-d2e6-b97a6f678b26@benettiengineering.com>
+Date:   Tue, 18 Oct 2022 19:29:27 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH 4/5] ARM: dts: imxrt1050: remove mmc max-frequency
+ property
+To:     Bough Chen <haibo.chen@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+References: <20221017235602.86250-1-giulio.benetti@benettiengineering.com>
+ <20221017235602.86250-4-giulio.benetti@benettiengineering.com>
+ <DB7PR04MB40100794ED12BA4224CD6B1B90289@DB7PR04MB4010.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+In-Reply-To: <DB7PR04MB40100794ED12BA4224CD6B1B90289@DB7PR04MB4010.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfEYXM2XHTtUBYOG3z6wAwj/H7EJCvinaFe/k/4O7VAg8rd3dOA3DFPlrEFst6KA5MxSfopjrt38ZI2rC8DZYHIxoExerTUxu2ika8uAbdR6Xfv94SZXH
+ xIRquoGlNPWaD5lhn6BEi9RXtMASMeO2ZxZtiBzjGH0QThzIAYqAGDleWQ1t9G7MBRyOeNk7ABRxflYHfiRh6qZ84TLpdIlAZSIGfMO3ieSojW+vs/xpPB+x
+ HonI+o/3AyiSxhG9hKj88qv9Y5+sfHRpvNBH2RjHRltsVWeUnMsXAIz8Qxc6CXbJ2/eqmJJiroXa+0b9miT7jRAszV2bjiq8vzpItyQsltdbiNsX/loe4hQh
+ Ft4gceRDDjV/TCVo0QfUC0FbKIgKZl0lmLe/vEXOsF/FwMYOS6e40ZukyxIRV457CjEmYckIpMCv21W/6uU1kd3ztqcHESdVyntFWT3DQFHmXfDadNiYzH93
+ gx5PiG5j44buLfV09vegssOEAKRwaZy1H7HPQVxkMtxVtOEDT8zbdFLkQw0=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The `parent_names' variable was freed also in case of kzalloc() error.
-Instead of modifying the code to perform a proper memory release, I
-decided to fix the bug by not allocating memory.
-Since only one parent name is referenced, it is not necessary to
-allocate this variable at runtime and therefore you can avoid calling
-the kzalloc() function. This simplifies the code (even calls to kfree
-can be removed) and improves the performance of the routine.
+Hi Haibo,
 
-Note: Although no operation is performed by kfree() on a NULL pointer,
-it was however suboptimal and semantically wrong doing it.
+On 18/10/22 05:01, Bough Chen wrote:
+>> -----Original Message-----
+>> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+>> Sent: 2022年10月18日 7:56
+>> To: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org;
+>> linux-mmc@vger.kernel.org
+>> Cc: Stephen Boyd <sboyd@kernel.org>; Bough Chen <haibo.chen@nxp.com>;
+>> Adrian Hunter <adrian.hunter@intel.com>; Ulf Hansson
+>> <ulf.hansson@linaro.org>; Giulio Benetti
+>> <giulio.benetti@benettiengineering.com>
+>> Subject: [PATCH 4/5] ARM: dts: imxrt1050: remove mmc max-frequency
+>> property
+>>
+>> According to i.MXRT1050 Reference Manual usdhc supports up to 208Mhz clock
+> 
+> Please double check this. As I know, the i.MXRT1050 and i.MX6/7/8/9 series use the same usdhc IP, maybe include some small difference.
+> For the usdhc in i.MX6/7/8/9, I confirmed with IC team, the card clock output from usdhc can't be upper than 
+200MHz, otherwise maybe meet some stable related issue.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Reported-by: kernel test robot <lkp@intel.com>
+Thanks for poiting, I've double checked and you're right. RM states 
+208Mhz but DS states 200Mhz and it makes sense because of HS200.
 
----
+> So here I think should change to like this:
+>   max-frequency = <200000000>;
 
-Changes in v2:
-- Fix compiling error
-- Add kernel test robot's Reported-by tag.
+Ok, I'll send a V2 for this. I wait for other comments on the other 
+patches for a bit before.
 
- drivers/clk/ti/clk-dra7-atl.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index ff4d6a951681..78482d1a4a33 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -164,7 +164,7 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- {
- 	struct dra7_atl_desc *clk_hw = NULL;
- 	struct clk_init_data init = { NULL };
--	const char **parent_names = NULL;
-+	const char *parent_names[1];
- 	const char *name;
- 	struct clk *clk;
- 
-@@ -188,24 +188,17 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 		goto cleanup;
- 	}
- 
--	parent_names = kzalloc(sizeof(char *), GFP_KERNEL);
--
--	if (!parent_names)
--		goto cleanup;
--
- 	parent_names[0] = of_clk_get_parent_name(node, 0);
- 
- 	init.parent_names = parent_names;
- 
- 	clk = ti_clk_register(NULL, &clk_hw->hw, name);
--
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		kfree(parent_names);
- 		return;
- 	}
-+
- cleanup:
--	kfree(parent_names);
- 	kfree(clk_hw);
- }
- CLK_OF_DECLARE(dra7_atl_clock, "ti,dra7-atl-clock", of_dra7_atl_clock_setup);
+Best regards
 -- 
-2.32.0
+Giulio Benetti
+CEO/CTO@Benetti Engineering sas
+
+> 
+> Best Regards
+> Haibo Chen
+> 
+> 
+>> so let's remove max-frequency property in the .dtsi base file and in case add
+>> that property in the board specific .dts file for a specific device connected to it.
+>>
+>> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+>> ---
+>>   arch/arm/boot/dts/imxrt1050.dtsi | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/imxrt1050.dtsi
+>> b/arch/arm/boot/dts/imxrt1050.dtsi
+>> index 114465e4dde6..0b44cc4ce6ad 100644
+>> --- a/arch/arm/boot/dts/imxrt1050.dtsi
+>> +++ b/arch/arm/boot/dts/imxrt1050.dtsi
+>> @@ -93,7 +93,6 @@ usdhc1: mmc@402c0000 {
+>>   			bus-width = <4>;
+>>   			fsl,wp-controller;
+>>   			no-1-8-v;
+>> -			max-frequency = <4000000>;
+>>   			fsl,tuning-start-tap = <20>;
+>>   			fsl,tuning-step = <2>;
+>>   			status = "disabled";
+>> --
+>> 2.34.1
+> 
 
