@@ -2,127 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68404C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 17:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F589C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 22:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbiJRR3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 13:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
+        id S229904AbiJRWgI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 18:36:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbiJRR3e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 13:29:34 -0400
-Received: from smtpcmd0987.aruba.it (smtpcmd0987.aruba.it [62.149.156.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1DC5A38B4
-        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 10:29:31 -0700 (PDT)
+        with ESMTP id S229882AbiJRWgI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 18:36:08 -0400
+Received: from smtpcmd0986.aruba.it (smtpcmd0986.aruba.it [62.149.156.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 28A0BD18DB
+        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 15:36:02 -0700 (PDT)
 Received: from [192.168.50.220] ([146.241.87.206])
         by Aruba Outgoing Smtp  with ESMTPSA
-        id kqP9orvJLaWj1kqPAoCbei; Tue, 18 Oct 2022 19:29:29 +0200
+        id kvBoovvaFaWj1kvBooEOsQ; Wed, 19 Oct 2022 00:36:01 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1666114169; bh=2R1Qx2v5j+cUhKJyPReXeVM3kkRyNKVJuTVaauBdp9A=;
+        t=1666132561; bh=luzvlvgLF0QVUwO0gT+OoCdQWZnYIwCJYht0pOjIZ3U=;
         h=Date:MIME-Version:Subject:To:From:Content-Type;
-        b=JI8QiS5clsPeOZ5Z35oTXgw7oDw+y5B8RIJGwZD91qzm4CEX8dkaysJCHn6TICCxK
-         gq//3IPx6dHZM1R9cr5N7U9oAufIXWpzabRrBxz721YhQ8PQiLgMQ8FSLjPgP2OSWK
-         +DGBKtFgutA4A7IGvQL9mwJTcSsad8oB2ZvckT2LYqr65dZD7IXGANsZptU3rZxWc9
-         mvdd1eSo7XjgIHjSAerDUyU52zrF4bACYvoQoOSNuL1LHYj3ztyHtLVdF41X96mpbJ
-         KsPuxZbRQWfTrx/7TeMEyRY5uwuV0GwljDufLHWAtA/1ISmrb6kJE6nC8WwEEJOX+0
-         a233rxHKTZDyQ==
-Message-ID: <de1957b5-ef9c-1f78-d2e6-b97a6f678b26@benettiengineering.com>
-Date:   Tue, 18 Oct 2022 19:29:27 +0200
+        b=dSUdRnUFi0Crty2pYHbqT/DSo4YUVoudW7NGYNWRPptQ30prDF4Ez61lAul/r/fkJ
+         GC5EJhNKQwRMchylAa0XX2Bq63Jhyj1n3uI2H1wj/2HcCflMHet7N0hIzC8sLh5K1a
+         +QixalwmxG2+EwDw6OFGoXStRtXobeohoJeyFsV49caURRoJemHUn9+XhgZ69sF+fC
+         FMqzn2cRohNqN8MIwbEuq/v+nxRRrBgRrOlnmM5YirOTF3IFSoXBSQ/fLiMyFpZddq
+         3eu7pAHjGK+kTcuDn5vuTFPOUD40hIMPbbYKDMzzFfZLjj19PIIc5gbCbBBtRoolyV
+         2NaThyRjN/a1g==
+Message-ID: <ac5c75e0-2921-84ef-90c3-93e526358d7c@benettiengineering.com>
+Date:   Wed, 19 Oct 2022 00:36:00 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH 4/5] ARM: dts: imxrt1050: remove mmc max-frequency
- property
-To:     Bough Chen <haibo.chen@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <20221017235602.86250-1-giulio.benetti@benettiengineering.com>
- <20221017235602.86250-4-giulio.benetti@benettiengineering.com>
- <DB7PR04MB40100794ED12BA4224CD6B1B90289@DB7PR04MB4010.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH 1/5] clk: imx: imxrt1050: fix IMXRT1050_CLK_LCDIF_APB
+ offsets
 Content-Language: en-US
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>, Haibo Chen <haibo.chen@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jesse T <mr.bossman075@gmail.com>
+References: <20221017235602.86250-1-giulio.benetti@benettiengineering.com>
 From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-In-Reply-To: <DB7PR04MB40100794ED12BA4224CD6B1B90289@DB7PR04MB4010.eurprd04.prod.outlook.com>
+In-Reply-To: <20221017235602.86250-1-giulio.benetti@benettiengineering.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfEYXM2XHTtUBYOG3z6wAwj/H7EJCvinaFe/k/4O7VAg8rd3dOA3DFPlrEFst6KA5MxSfopjrt38ZI2rC8DZYHIxoExerTUxu2ika8uAbdR6Xfv94SZXH
- xIRquoGlNPWaD5lhn6BEi9RXtMASMeO2ZxZtiBzjGH0QThzIAYqAGDleWQ1t9G7MBRyOeNk7ABRxflYHfiRh6qZ84TLpdIlAZSIGfMO3ieSojW+vs/xpPB+x
- HonI+o/3AyiSxhG9hKj88qv9Y5+sfHRpvNBH2RjHRltsVWeUnMsXAIz8Qxc6CXbJ2/eqmJJiroXa+0b9miT7jRAszV2bjiq8vzpItyQsltdbiNsX/loe4hQh
- Ft4gceRDDjV/TCVo0QfUC0FbKIgKZl0lmLe/vEXOsF/FwMYOS6e40ZukyxIRV457CjEmYckIpMCv21W/6uU1kd3ztqcHESdVyntFWT3DQFHmXfDadNiYzH93
- gx5PiG5j44buLfV09vegssOEAKRwaZy1H7HPQVxkMtxVtOEDT8zbdFLkQw0=
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfOrIqwcb7/+eOP2FY7EKspVzfwUbtM756/UiDbnbjXc52sKwXx1avxmGQAPGFy7tsJypcnBnEyow6xb7ccR38m69Kt67ZKk+OE1RyIbFR8IELk59oCPu
+ s51DqBg+n0VRDLG0SeI+/qmyT60QBmYWgkvxza+soxLIsEc0BMqM+QE1LmajxHiDbhpvwDaQUnWUO8DuM6dDvz8E5NHpcva0fvnDrp52WhykFnQBsQgsYhhR
+ cNeYfrFdxRiSO7uk+d6zTYq0Yhzp8OS7n9wgVPheVzPX65nvtqcuNWcbcZBSkAsBzaz1aBwCrL719VglAJLsDKsEoOQBM/4go3sT64ssMKvybYcetGrp2VDV
+ biQy0DpKM16tWe00D6WOkYyQpJFV3U3vkmgA2f0j9wpB1HNPd1n1faONXfz+spZ4i4t0gAPqi/tHOHb4Keb2MGwIxg5GNGFZ+M1gUE533fpNJ8gHP14TSY+k
+ jJSOfMbm8nOc4GCyTK8I5vIcZjYt+VsiLm41Sn5mPvMIkkKfUrvFeBKZHtRLezAJglFDTKxQazOF3Q4h2fbwrCKYlAWqs0WLWdmZLQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Haibo,
+Hi Jesse,
 
-On 18/10/22 05:01, Bough Chen wrote:
->> -----Original Message-----
->> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
->> Sent: 2022年10月18日 7:56
->> To: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org;
->> linux-mmc@vger.kernel.org
->> Cc: Stephen Boyd <sboyd@kernel.org>; Bough Chen <haibo.chen@nxp.com>;
->> Adrian Hunter <adrian.hunter@intel.com>; Ulf Hansson
->> <ulf.hansson@linaro.org>; Giulio Benetti
->> <giulio.benetti@benettiengineering.com>
->> Subject: [PATCH 4/5] ARM: dts: imxrt1050: remove mmc max-frequency
->> property
->>
->> According to i.MXRT1050 Reference Manual usdhc supports up to 208Mhz clock
+On 18/10/22 01:55, Giulio Benetti wrote:
+> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> ---
+>   drivers/clk/imx/clk-imxrt1050.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Please double check this. As I know, the i.MXRT1050 and i.MX6/7/8/9 series use the same usdhc IP, maybe include some small difference.
-> For the usdhc in i.MX6/7/8/9, I confirmed with IC team, the card clock output from usdhc can't be upper than 
-200MHz, otherwise maybe meet some stable related issue.
+> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+> index 9539d35588ee..26108e9f7e67 100644
+> --- a/drivers/clk/imx/clk-imxrt1050.c
+> +++ b/drivers/clk/imx/clk-imxrt1050.c
+> @@ -140,7 +140,7 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+>   	hws[IMXRT1050_CLK_USDHC1] = imx_clk_hw_gate2("usdhc1", "usdhc1_podf", ccm_base + 0x80, 2);
+>   	hws[IMXRT1050_CLK_USDHC2] = imx_clk_hw_gate2("usdhc2", "usdhc2_podf", ccm_base + 0x80, 4);
+>   	hws[IMXRT1050_CLK_LPUART1] = imx_clk_hw_gate2("lpuart1", "lpuart_podf", ccm_base + 0x7c, 24);
+> -	hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", "lcdif_podf", ccm_base + 0x74, 10);
+> +	hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", "lcdif_podf", ccm_base + 0x70, 28);
+>   	hws[IMXRT1050_CLK_DMA] = imx_clk_hw_gate("dma", "ipg", ccm_base + 0x7C, 6);
+>   	hws[IMXRT1050_CLK_DMA_MUX] = imx_clk_hw_gate("dmamux0", "ipg", ccm_base + 0x7C, 7);
+>   	imx_check_clk_hws(hws, IMXRT1050_CLK_END);
 
-Thanks for poiting, I've double checked and you're right. RM states 
-208Mhz but DS states 200Mhz and it makes sense because of HS200.
+I've forgotten to add you in Cc, can you please take a look at it?
+You've written the driver so you maybe can give me a feedback.
+Same for patch 2/5
 
-> So here I think should change to like this:
->   max-frequency = <200000000>;
-
-Ok, I'll send a V2 for this. I wait for other comments on the other 
-patches for a bit before.
+Thank you very much!
 
 Best regards
 -- 
 Giulio Benetti
 CEO/CTO@Benetti Engineering sas
-
-> 
-> Best Regards
-> Haibo Chen
-> 
-> 
->> so let's remove max-frequency property in the .dtsi base file and in case add
->> that property in the board specific .dts file for a specific device connected to it.
->>
->> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
->> ---
->>   arch/arm/boot/dts/imxrt1050.dtsi | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/imxrt1050.dtsi
->> b/arch/arm/boot/dts/imxrt1050.dtsi
->> index 114465e4dde6..0b44cc4ce6ad 100644
->> --- a/arch/arm/boot/dts/imxrt1050.dtsi
->> +++ b/arch/arm/boot/dts/imxrt1050.dtsi
->> @@ -93,7 +93,6 @@ usdhc1: mmc@402c0000 {
->>   			bus-width = <4>;
->>   			fsl,wp-controller;
->>   			no-1-8-v;
->> -			max-frequency = <4000000>;
->>   			fsl,tuning-start-tap = <20>;
->>   			fsl,tuning-step = <2>;
->>   			status = "disabled";
->> --
->> 2.34.1
-> 
-
