@@ -2,50 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A0DC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 03:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74021C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 03:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230203AbiJRDGn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Oct 2022 23:06:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33896 "EHLO
+        id S231346AbiJRDSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Oct 2022 23:18:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229974AbiJRDGe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 23:06:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30CE172B58;
-        Mon, 17 Oct 2022 20:06:34 -0700 (PDT)
+        with ESMTP id S231363AbiJRDSC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2022 23:18:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5253A937A7;
+        Mon, 17 Oct 2022 20:16:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BE7156120C;
-        Tue, 18 Oct 2022 03:06:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60363C433C1;
-        Tue, 18 Oct 2022 03:06:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DD5ED61407;
+        Tue, 18 Oct 2022 03:14:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A69C43470;
+        Tue, 18 Oct 2022 03:14:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666062393;
-        bh=MCPaHD1XR47XKulO53hDn82WBkySl3mI+YMPiYBC6ls=;
+        s=k20201202; t=1666062877;
+        bh=joEAajdFBUS+uI5I7QGs4b7iH6QTCl9/sEDNk0a3OKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wpv+FqKcuNOsAV2szJCGsxb2IZ1Yl4P95o9ZoCokt4+o7svJ37vGJoZ62K/D2mWd1
-         NoDw4Tl0xNtRtXz3y7FkrgG25zRWao2NwgTO/aIaufEfYHiM36FKCWc3uODsc43O70
-         hsIIuMgqm8qY/EXy+rXnZu8yKQvrDcWwyrrXnmW3umfz8vh5iSQUn6wR+UOuzuftDs
-         fZLQSF/TJTNoEvi1D0EqZhNfC5UijC5NjyguKIWHiWwbtYn9vGM4XikYEc5IZyXAfd
-         0yDs+lP761q1ktgJ+UwUMUaQzXlirQoGslnjZakcZUJc+OMg2xhv7IvxrJX6OXDq/X
-         gjjzi1D9Y0IXw==
+        b=P9jffexcY3p3sKihLezoph3yWTkKn/p/EuZXw06Z38KB/vcmXNTY/uLk8YE9TLGjr
+         85hJKL5gQpYW8EvTZGj2j+JvPLVwZueojXycjA3whWVVmLa4RBj5Uq0zmoacBanouY
+         6Awz4WDKkw+aqsBkUt00PtzPoSJeftkNdwqSzp+Qvtpyr8I9JJlXzyyFZ0QoAwBfe7
+         K110Sztdmr1E/6ZKauq6CAceDKbNF9ny1/bNQKdoyaVBvd+VKFbBWY6zG9GvhKjqg3
+         12zByV/9Uko3WCDUdAUjv5yDag5xJGPNeWSYzp06gDxyWR/e93JdzPkpv/J3D1HYge
+         YU3fpq0TDWymA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>, quic_tdas@quicinc.com,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        robh+dt@kernel.org, agross@kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 0/4] clk: qcom: add SM8450 Display clock controller support
-Date:   Mon, 17 Oct 2022 22:05:14 -0500
-Message-Id: <166606235853.3553294.15924373732172884011.b4-ty@kernel.org>
+To:     robh@kernel.org, quic_c_skakit@quicinc.com
+Cc:     quic_tdas@quicinc.com, Stephen Boyd <swboyd@chromium.org>,
+        devicetree@vger.kernel.org, mka@chromium.org,
+        linux-kernel@vger.kernel.org, agross@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sc7280: Add the reset reg for lpass audiocc on SC7280
+Date:   Mon, 17 Oct 2022 22:14:28 -0500
+Message-Id: <166606235856.3553294.15553489586953661871.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220908222850.3552050-1-dmitry.baryshkov@linaro.org>
-References: <20220908222850.3552050-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <1663674495-25748-1-git-send-email-quic_c_skakit@quicinc.com>
+References: <1663674495-25748-1-git-send-email-quic_c_skakit@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -53,26 +50,15 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 9 Sep 2022 01:28:46 +0300, Dmitry Baryshkov wrote:
-> Add support for the Display clock controller found on SM8450 platform.
+On Tue, 20 Sep 2022 17:18:15 +0530, Satya Priya wrote:
+> Add the reset register offset for clock gating.
 > 
-> Changes since v2:
->  - bindings: added missing gcc-sm8450.h include
 > 
-> Changes since v1:
->  - Rebased on top of 6.0-rc
->  - Dropped clk-names in favour of using parent indices (Bjorn)
->  - Added GCC_DISP_AHB_CLK to dispcc node (Bjorn)
->  - Changed bindings licence to dual GPL+BSD (Bjorn)
->  - Removed zero clocks in dt bindings
->  - Fixed syntax issues
-> 
-> [...]
 
 Applied, thanks!
 
-[4/4] arm64: dts: qcom: sm8450: add display clock controller
-      commit: 65b35e04d2656305320c453df2824c8413fe7150
+[1/1] arm64: dts: qcom: sc7280: Add the reset reg for lpass audiocc on SC7280
+      commit: cb1d0aaa674e99957b85af570cb2730145af01df
 
 Best regards,
 -- 
