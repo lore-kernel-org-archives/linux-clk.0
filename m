@@ -2,93 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3A9C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1ADC43217
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbiJRNTb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 09:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56576 "EHLO
+        id S229934AbiJRNbM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 09:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbiJRNT3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:19:29 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DFDB6573
-        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 06:19:26 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id t25so8567915qkm.2
-        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 06:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9pHiEMFfYao+vpXSzcw1Pyr5Zb1hstE5rItxZfxpi4Q=;
-        b=NYi6NDnnA73hScjXrX/J/+AsYL8Y40X28MTeO2hJDsxxSm1wNdO+FdH4chdaxuSacS
-         l1z1WDo6/nS7LpsELf+IynRlhYDLjEc84aNcJwFcdWGM2ln4OvZ2T+9gIxG7gDsgWBBU
-         UQxyZ1a5zPGcl9+0Dkf8DfpFdiEePLaFx9EqwdyYFhvwa6vBz20UlQAq/Nwa4N/iahyG
-         4vCmfh0zDkgaNUR/dELAslrL6PSti5EZ85M7QppecGgsQd3NdiOkJjVvSnJjYUfg3L1B
-         s1rpsPXvm7IG1kHu0s3fW/qsZYTTj8PKbHOII1myZqwCi52DpblVjl5ra2i6eDKpJnuJ
-         lYtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9pHiEMFfYao+vpXSzcw1Pyr5Zb1hstE5rItxZfxpi4Q=;
-        b=rT1iUqBe3ddFrutDNcJ4wfp+/pPoWeFysSm47yPdj3yyN+dCdIetSWoxQfeKS90Gth
-         P87SVjIyz1k1KGb9fA1kz4Rkoen/dJnoA35nrXeCGrYjLDPAHNVBQRS7ndZh3JXfYdeW
-         gFt8RKYma/BuOg0Wfo7zde506dQcs0x3iPauNtOTBSSbPPq5YXZ5HG1jTUb1pjCbBMiw
-         S+kNwkYaIX4eF63tK1IfdvK89GuSZHPbwEGYpF4UxJ10bJyTHzuKrTYWp1gsNQZdsCpq
-         czPlldPTfHuOzKzk268r/MPzDSe/42Nr31Qw/bFziaAD6UNv3KXQe8c8a804KA6ryeLG
-         LGOA==
-X-Gm-Message-State: ACrzQf0OP6IVTSZF6NI0vhtgZe8vJkjLuI6ftpR3NDvYDTnrtQYn1wVf
-        gtZo9pswO45b91WZD4LibLzRzQ==
-X-Google-Smtp-Source: AMsMyM4D7tu8vG7yq6HFiUpqmmutvXXMw5bAxoPEBAtdyVgzXpcN/wiY+KW8504fK1vupNWtM5BJ0g==
-X-Received: by 2002:a05:620a:45a0:b0:6ee:e153:8d49 with SMTP id bp32-20020a05620a45a000b006eee1538d49mr1833526qkb.170.1666099165270;
-        Tue, 18 Oct 2022 06:19:25 -0700 (PDT)
-Received: from krzk-bin.MSRM (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
-        by smtp.gmail.com with ESMTPSA id s6-20020a05620a0bc600b006e6a7c2a269sm2527599qki.22.2022.10.18.06.19.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 06:19:24 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S229509AbiJRNbL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:31:11 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8D8C6945;
+        Tue, 18 Oct 2022 06:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1666099867; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=g3MzspTM9Dr8LSMMQ6MITd3EeKWr2rZaVT6P5JRlgFc=;
+        b=nAc34R932407pmkTMuqbozzx64BjLHj4VBOG8Q9x82Nm0YPEk6WYI4Uvc+AY6jgKIlUogL
+        scmhs6NBK2SX5jpT1AvnxBbIwdc6oZb0UK1wNsQDthGPSXu24u6WwISI01Lqur1NB8HcAd
+        G5hGjtV2EBVWvTh2Fu7f5al1oI1Bf94=
+Date:   Tue, 18 Oct 2022 14:30:57 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 4/4] clk: Add Ingenic JZ4755 CGU driver
+To:     Siarhei Volkau <lis8215@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [RESEND PATCH] clk: samsung: exynos7885: Correct "div4" clock parents
-Date:   Tue, 18 Oct 2022 09:19:12 -0400
-Message-Id: <166609913433.8547.14138781440023077011.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221013151341.151208-1-virag.david003@gmail.com>
-References: <20221013151341.151208-1-virag.david003@gmail.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Message-Id: <LVAYJR.C9X3GOLBHW113@crapouillou.net>
+In-Reply-To: <CAKNVLfbbAaNdhWDo10XrUtyCM4R5E1CidC+TTQt8tUYbBU93qw@mail.gmail.com>
+References: <20221016150110.3020451-1-lis8215@gmail.com>
+        <20221016150110.3020451-5-lis8215@gmail.com>
+        <0S4WJR.4KB18PR21S9K1@crapouillou.net>
+        <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
+        <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
+        <CAKNVLfbbAaNdhWDo10XrUtyCM4R5E1CidC+TTQt8tUYbBU93qw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 13 Oct 2022 17:13:40 +0200, David Virag wrote:
-> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
-> 2 to achieve a by 4 division, thus their parents are the respective
-> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
-> This leads to the kernel thinking "div4"s and everything under them run
-> at 2x the clock speed. Fix this.
-> 
-> 
-> [...]
+Hi Siarhei,
 
-Applied, thanks!
+Le lun., oct. 17 2022 at 21:07:47 +0300, Siarhei Volkau=20
+<lis8215@gmail.com> a =C3=A9crit :
+> =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 20:24, Paul Cerc=
+ueil=20
+> <paul@crapouillou.net>:
+>>=20
+>>=20
+>>=20
+>>  Le lun., oct. 17 2022 at 20:10:56 +0300, Siarhei Volkau
+>>  <lis8215@gmail.com> a =C3=A9crit :
+>>  > =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:24, Paul =
+Cercueil
+>>  > <paul@crapouillou.net>:
+>>  >
+>>  >>  > +     [JZ4755_CLK_AIC] =3D {
+>>  >>  > +             "aic", CGU_CLK_GATE,
+>>  >>  > +             .parents =3D { JZ4755_CLK_I2S, -1, -1, -1 },
+>>  >>
+>>  >>  Wrong parent here, should be JZ4755_CLK_EXT_HALF.
+>>  >
+>>  > I don't  agree, see Figure 20-13 in the JZ4755 PM.
+>>=20
+>>  20-13 describes the I2S clock, no?
+>=20
+> See 20.4.9 Serial Audio Clocks and Sampling Frequencies.
+> It stated that: "For internal CODEC ... CODEC needs a 12MHz
+> clock from CPM called SYS_CLK ...", but SYS_CLK is described
+> only in the I2S Controller section. I assume it is the same clock.
 
-[1/1] clk: samsung: exynos7885: Correct "div4" clock parents
-      https://git.kernel.org/krzk/linux/c/ef80c95c29dc67c3034f32d93c41e2ede398e387
+Yes, and your SYS_CLK is the I2S clock, not the AIC clock.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>=20
+>>  AIC clock's parent is EXT/2 according to the diagram in 8.2.2.
+>>=20
+>=20
+> It's a bit cryptic manual, who knows how it's done in the HW.
+> I observed that codec runs on a desired sample rate only when PLL
+> equals 432 or 216 MHz, but SYS_CLK is definitely configured to be
+> 12MHz - from EXTCLK. On other PLL frequencies it is lower by
+> 2-4% than expected. That isn't observed on JZ4725B.
+
+The audio codec supplies SYS_CLK to the controller, not the other way=20
+around. Parent the I2S clock to EXT/2 (which is 12 MHz) and it should=20
+work fine, independently of the PLL.
+
+The AIC clock does not drive anything, it only "powers" the AIC module.=20
+It should be parented only to EXT/2, similar to what's done in every=20
+other CGU driver.
+
+Cheers,
+-Paul
+
+
