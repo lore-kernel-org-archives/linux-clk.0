@@ -2,98 +2,172 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F537C43219
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3815C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:46:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbiJRNcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 09:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38184 "EHLO
+        id S231176AbiJRNqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 09:46:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbiJRNcC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:32:02 -0400
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C96D3CA880;
-        Tue, 18 Oct 2022 06:32:01 -0700 (PDT)
-Received: by mail-oi1-f176.google.com with SMTP id g10so15525562oif.10;
-        Tue, 18 Oct 2022 06:32:01 -0700 (PDT)
+        with ESMTP id S231163AbiJRNqC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:46:02 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C03A2218
+        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 06:45:56 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id r19so9631131qtx.6
+        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 06:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=drTjJKcD8QJOd10zQ0gum6cJSH3rnvYwTkLWAPWtxQ8=;
+        b=J5zc6fWalORUSCdW1JctbKrNHS0caAhuRwj/l9+2ZWLPK56QNsX8ofOMISnF75kO1b
+         wDPDD5RVf607JAIQNn+zPEkowObf1NgW6Ck45kB8RUtDmEhMkqOQV9VoSQqfV0pufqyN
+         rNRS3i1FS7DgePYL8ggzvVHF8ooR7oiCG1ahazTF+iqItUJQPMYdi+BFPlqzf2da3zZ2
+         sqGRMVsIKdZqPbJYTLGhsZ4w/wY1EwAOhte9jADyXxC4nfupWmUV6Dnd4+Y53mLVP3QF
+         rO8UxqQt2RfIAt9NziZB5CoCDZcdqIb+0Ynk9wo6dPYcHDyTH9OK6NcA16FrJdOTvYJM
+         lqIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/sc5xfjWbep3XdzZfvFceKEVzMS+1eS5iVILCK+RzyA=;
-        b=KauH+vHA6xPWz7CJV4XBgw9vuw3colVkfSPap/bikAw9/uJh5n19Tf/5M8avFoa2aF
-         AZZl43vEPx3esSjL+3Chr/wz0BtBK9Y12dUQwdsoLASfVZ9i8mDViaxzuQS/APzSu03f
-         L1uxdOmwUk/kMPeB+z3aeYAAeu+NL82OXMth7QH23KlSsxrA1ybaCF1kfgIIJ763K1jc
-         FOf9OKCu6pATX8+JS+M6BCg/VCFAb3a+Fy9YXDvvFVfpkN8LFI7VQv7fAZpoyTn/aTZK
-         +hXauHsMrId1Sq/hQmX/d8trcu6u3L2x4IyzvW6ywsfV/v5gaTOeQUY2ObVBHE0X7E/G
-         M91A==
-X-Gm-Message-State: ACrzQf0VVws4OnuIb3cUa2CjOPI1fXPA2ya0Uu35ZqeiVNDnPlvzXlYi
-        05m/q+HpyigotJBCVEatvA==
-X-Google-Smtp-Source: AMsMyM6O96ho0FdVAHMJ0wdtQSaFrVSflxDHBhWXy9n/5CqGY3B7jr/SPsYk5PbQXTTdsZkI31qUAw==
-X-Received: by 2002:aca:4b0d:0:b0:354:c1fd:27d with SMTP id y13-20020aca4b0d000000b00354c1fd027dmr1420251oia.108.1666099921003;
-        Tue, 18 Oct 2022 06:32:01 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bd18-20020a056808221200b00354e8bc0236sm5643318oib.34.2022.10.18.06.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 06:32:00 -0700 (PDT)
-Received: (nullmailer pid 180824 invoked by uid 1000);
-        Tue, 18 Oct 2022 13:32:01 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
+        bh=drTjJKcD8QJOd10zQ0gum6cJSH3rnvYwTkLWAPWtxQ8=;
+        b=cp4XDXGc6YZhZpu+ouGS0dV7t/rbQn26XeFoRvmx5L3cU4G0k+/CpLUsuOSHRq556F
+         +8Iz8Tz6H6/bVMC+caYHYQuWeH/CVftB54iJR8O0kYhN3mzigHdqL1ClpKJTfvgQxOFX
+         sgW0Qu4WFgeabqLjUdP5wyOyh49hlLX5mqU0F6NKylKLtw0dgflmSyC6KJarlLO/wRmw
+         KR6vVlYuE60xsx0CVyibgVcXinp0Z4lxUcAx6/PLn0hPBsBEo4Tt3rse1uhvi7bjcxNQ
+         GafAJQn+Q4acGrF1fpf/8YPcIkhHGc/bG5RIVbbizAwfriTbPwbjxoqP4eoQ7I2eWHLF
+         cTUQ==
+X-Gm-Message-State: ACrzQf0N5mNlDZD8m5dWOgq55nflUEE4L/vn1NFytMTvOo26FyFf/gqq
+        z97SWV+t9Y2LbwOIGIms9uS8rQ==
+X-Google-Smtp-Source: AMsMyM4JkuiI01HNBhFX//zuBopPACdJXHKVAHoOUBuLa+96jKJfM3o2PgCLeFHCwdEj+oTWnZGs7A==
+X-Received: by 2002:ac8:5cc3:0:b0:39c:f695:d39b with SMTP id s3-20020ac85cc3000000b0039cf695d39bmr1592305qta.468.1666100754519;
+        Tue, 18 Oct 2022 06:45:54 -0700 (PDT)
+Received: from [192.168.10.124] (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
+        by smtp.gmail.com with ESMTPSA id bi26-20020a05620a319a00b006ce7bb8518bsm2514104qkb.5.2022.10.18.06.45.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Oct 2022 06:45:53 -0700 (PDT)
+Message-ID: <37dfc849-a822-661f-4816-f8fe917a1e2c@linaro.org>
+Date:   Tue, 18 Oct 2022 09:45:47 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v1 3/3] dt-bindings: clock: add loongson2k clock binding
+Content-Language: en-US
+To:     Yinbo Zhu <zhuyinbo@loongson.cn>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20221018072106.2391771-1-alexander.stein@ew.tq-group.com>
-References: <20221018072106.2391771-1-alexander.stein@ew.tq-group.com>
-Message-Id: <166609951951.171676.6449728650793742921.robh@kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: clock: ti,cdce925: Convert to DT schema
-Date:   Tue, 18 Oct 2022 08:32:01 -0500
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+References: <20221018130531.301-1-zhuyinbo@loongson.cn>
+ <20221018130531.301-3-zhuyinbo@loongson.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221018130531.301-3-zhuyinbo@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 18 Oct 2022 09:21:06 +0200, Alexander Stein wrote:
-> Convert the TI CDCE925 clock binding to DT schema format.
-> Including a small fix: Add the missing 'ti' prefix in the example
-> compatible.
+On 18/10/2022 09:05, Yinbo Zhu wrote:
+> Add the loongson2k clock binding with DT schema format using
+> json-schema.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
 > ---
-> I have to admit I only have one specific addon platform for this
-> hardware, which is actually a CECD813 tbh.
+>  .../bindings/clock/loongson,ls2k-clk.yaml     | 77 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
 > 
->  .../devicetree/bindings/clock/ti,cdce925.txt  |  53 ---------
->  .../devicetree/bindings/clock/ti,cdce925.yaml | 104 ++++++++++++++++++
->  2 files changed, 104 insertions(+), 53 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+> new file mode 100644
+> index 000000000000..cf42e7cd4c7e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/loongson,ls2k-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Loongson2 SoC Clock Control Module Binding
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Drop "Binding"
 
-yamllint warnings/errors:
+> +
+> +maintainers:
+> +  - Yinbo Zhu <zhuyinbo@loongson.cn>
+> +
+> +description: |
+> +  Loongson2 SoC clock control module is an integrated clock controller, which
+> +  generates and supplies to all modules.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - loongson,ls2k-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.example.dtb: clock-controller@64: $nodename:0: 'clock-controller@64' does not match '^clock-controller$'
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.example.dtb: clock-controller@64: 'ret' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
+maxItems instead
 
-doc reference errors (make refcheckdocs):
+> +
+> +  clock-names:
+> +    minItems: 1
 
-See https://patchwork.ozlabs.org/patch/
+Just list the items here.
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +    description:
+> +      The clock consumer should specify the desired clock by having the clock
+> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson2-clock.h
+> +      for the full list of loongson2 SoC clock IDs.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: loongson,ls2k-clk
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: 100m refclk
+> +        clock-names:
+> +          items:
+> +            - const: refclk_100m
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Drop entire allOf and move the contents to top level.
 
-pip3 install dtschema --upgrade
+Name just: "ref_100m"
 
-Please check and re-submit.
+>  
+
+Best regards,
+Krzysztof
 
