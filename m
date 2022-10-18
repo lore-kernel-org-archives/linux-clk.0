@@ -2,155 +2,263 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4147BC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 07:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0D8C3A589
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 07:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbiJRHHI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 03:07:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53234 "EHLO
+        id S229712AbiJRHVR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 03:21:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbiJRHHC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 03:07:02 -0400
-Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C479D6BD5F;
-        Tue, 18 Oct 2022 00:06:59 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 514442B067A5;
-        Tue, 18 Oct 2022 03:06:56 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 18 Oct 2022 03:06:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666076815; x=
-        1666084015; bh=1218Q8hjcADaeitkBJ8qYgkPVJTD+QuHR2ne+rHmWHs=; b=W
-        2e5lclZ/owkQ7qi7m8R+1jwwN+I8r2UBxPH5ix26g5O6MlAhPLVD48vnkG+zCG3a
-        jH+goVwE65ty29gUdsdt7S5eGNphIA+iam2XVqp4eQF1QM9jxr4NtQPj5lmh6zKh
-        REEKq49Jn9rgngzTw95OZgCrt3xhEVmOfHFuuSZ6MP1s6QqjUEqUMmGyUAgazghm
-        xyUlLvl/O1zmHHMTRpuFmL0nzUEsFRtg70dUGPrbGuNn92cGW8m4pSvhhZ3GdXNB
-        dOd5ji5FNslDEUOqoMSkLrAODL3Hl1TOUttps+9U8zh4G7mWlWdDonuO6YATVRuI
-        Rp0jQcAT0v3YAQr6JG6FA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666076815; x=
-        1666084015; bh=1218Q8hjcADaeitkBJ8qYgkPVJTD+QuHR2ne+rHmWHs=; b=P
-        aecRi+TYeNwR/aJhGVhKZPCjIyoAKZyYrOt0tbqgasVM34/2I9mV6AFjgOrIwRPj
-        S2yaRSIhWZNaRYzPhOzJyFRm1lD+mdU+gHFKnpa9phBzGUmjM2A0J6IlAdoyx7GV
-        b2mM68iYUe1lZceXF6aXO2KPd+JelO6GRYi6AMaGin2QxciCdw7jLi3T4ptVRFQi
-        JoF1KAsvkvoE0pnaI83Xzl9teS3x+tMNHZSNKzroDA4FY/ImCZs3HI6XbrH/Uhyz
-        zrUs0uax1ldsU4urwbCHGLuWrwgAWkzj9vZVcfd6KXi+5i5Vv5U6vohhnxiE4m6K
-        R6b2VGiptoZHGOlknxbGw==
-X-ME-Sender: <xms:j1BOY0DxVJYGUBCOE0xHbEk2IJa3420IDt9nHodS12WwGgEK5jQLYg>
-    <xme:j1BOY2hU4IH-tbADU20zoo0df2NZVnEVq0gGYPPvFeteqkNBu-Kl8Xffswl3F-Lhv
-    p8_MguTXIGs_bMGM50>
-X-ME-Received: <xmr:j1BOY3m4mc_9X7W1nIf1IgthYp1Z7jk8s3t-tT9UR7mKytyiMqRaaZzrClLe>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeltddguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
-    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
-    frrghtthgvrhhnpeehjefffeeggfeiveejvdffgfdvgfehtdfgvdeujedvjefgffdvueet
-    ieevudefvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdr
-    thgvtghh
-X-ME-Proxy: <xmx:j1BOY6ytn8Io7uaztRRmd7eAQTYLvNT71Z-xoHTiki_x_Kwq1E3tYQ>
-    <xmx:j1BOY5Q-2dLqSnhCECSat6OAKIFLt2-7MCpPz2BW5KAl50QEMXPpjw>
-    <xmx:j1BOY1Y5D370Daoca6PZS6-0UqSTRVXqNh5TweGOftnEIL7uSNCElg>
-    <xmx:j1BOY6SxO4vIjvfMtU9LPGXRTnRzovI2VtfsOP5LpQRq_Ya1_ksI7n_xdWw>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Oct 2022 03:06:54 -0400 (EDT)
-Date:   Tue, 18 Oct 2022 09:06:53 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com,
-        matthias.bgg@gmail.com, chun-jie.chen@mediatek.com,
-        miles.chen@mediatek.com, wenst@chromium.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: mediatek: clk-mux: Add .determine_rate() callback
-Message-ID: <20221018070653.gsvnacqe7chvzux2@houat>
-References: <20221011135548.318323-1-angelogioacchino.delregno@collabora.com>
- <20221012085555.3nls7ja56vlnaz2w@houat>
- <c4a1eb9f-016d-c184-e494-c869038b87ff@collabora.com>
- <20221012094004.jgiyvmbgomiyedik@houat>
- <6e76f90f-3b6a-330d-6902-b31bf3d33ad4@collabora.com>
- <20221012114813.6d6adro746w5bd7c@houat>
- <decfd5e5-a48b-b2d1-f21b-1a4d52e05538@collabora.com>
- <20221012135619.wxyzuqheolhypoec@houat>
- <20221014193652.0C745C433D6@smtp.kernel.org>
+        with ESMTP id S229808AbiJRHVP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 03:21:15 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FE5A0258;
+        Tue, 18 Oct 2022 00:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1666077673; x=1697613673;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=G/vj/lqmp9J6IKlQvrSZrkWaQzN/UAUrJThxXOZ9VOw=;
+  b=iDvcJFjGIGc7FPEIziKmAqujRGkg/IFiYSjM4PXaX+k4bnJ8FoHeWKpM
+   5fPjAknPCDofwS+X1gq0UcGUcaLNOrpxvSaCDdQOElFgZNLFX96DKSqYa
+   aR3KDeA2bKV+uMz2ofWuRz/xR+LguOenKcZW1fXiyhT7x1l/tqzE+ijgi
+   JXZhZjRmBU08UxAvsL+Ge2qyEBEQ3Q0dX6w/8xV2k6eHvlqvOyU7lSDfj
+   BOTn7iaYUJwEWoNc33iLtm3lJUtFK8Yh7tD05XNUlPsZ1hWrrLNKVLJvy
+   DBBBLR3M+QlBykCsZnGseegsZrlEWkdJxzhYlOKIO3Ix2Q9bMFEXEx1Xf
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.95,193,1661810400"; 
+   d="scan'208";a="26807801"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 18 Oct 2022 09:21:10 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 18 Oct 2022 09:21:10 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 18 Oct 2022 09:21:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1666077670; x=1697613670;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=G/vj/lqmp9J6IKlQvrSZrkWaQzN/UAUrJThxXOZ9VOw=;
+  b=ITT2y0CSNFa43VdkQTEkkMxkpv8xCZm8vzhue/yR1S6TxaEzcwJaBcj/
+   MyGbPSMqbswCOpNLhLTLhwSHi/Q6mVRhohh/ZHzzpLT8E6sH8yVQsXTNM
+   8U0OfDPRWjWxZMXe30nYcq3tjrrni9zkGLjpngh2hXtpUuZSDtSecmCkL
+   tpK19jjnIxq+nelCEkW7Jv1QXWKheENUVg0Pm5yNPVBM46QXgrVw97Ey8
+   0nlhMAWW25I5N58hrQaENAbHGuJXykZ+Nz/6zcB5SUrmx/VuqIhL4G9Ku
+   QBS5zqWfRsOSOerYkD1q8DdY3nfi6O5U9f1rKfIx1D7nMBOJn84HCxvmy
+   w==;
+X-IronPort-AV: E=Sophos;i="5.95,193,1661810400"; 
+   d="scan'208";a="26807800"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 18 Oct 2022 09:21:10 +0200
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 2C218280056;
+        Tue, 18 Oct 2022 09:21:10 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 1/1] dt-bindings: clock: ti,cdce925: Convert to DT schema
+Date:   Tue, 18 Oct 2022 09:21:06 +0200
+Message-Id: <20221018072106.2391771-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221014193652.0C745C433D6@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Convert the TI CDCE925 clock binding to DT schema format.
+Including a small fix: Add the missing 'ti' prefix in the example
+compatible.
 
-On Fri, Oct 14, 2022 at 12:36:50PM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-10-12 06:56:19)
-> >=20
-> > I think we need to address this in multiple ways:
-> >=20
-> > - If you have ftrace enabled on that platform, running with "tp_printk
-> >   trace_event=3Dclk:*" in the kernel command line on a failing kernel w=
-ould
-> >   be great, so that we can figure out what is happening exactly.
-> >=20
-> > - We really need to merge your patch above as well;
-> >=20
-> > - And, if we can, we should forbid to register a mux without a
-> >   determine_rate implementation. We have to take into account that some
-> >   muxes are going to be RO and won't need a determine_rate
-> >   implementation at all, but a clock with a set_parent and without a
-> >   determine_rate seems like a weird combination.
-> >=20
->=20
-> So should I apply this patch now on clk-next? Given this regression I'm
-> leaning towards not sending off the clk rate request this merge window
-> and letting it bake another cycle.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+I have to admit I only have one specific addon platform for this
+hardware, which is actually a CECD813 tbh.
 
-I saw that you sent the PR, thanks
+ .../devicetree/bindings/clock/ti,cdce925.txt  |  53 ---------
+ .../devicetree/bindings/clock/ti,cdce925.yaml | 104 ++++++++++++++++++
+ 2 files changed, 104 insertions(+), 53 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.yaml
 
-We spent some time with Angelo yesterday debugging this, and it's still
-not clear to me what happens.
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.txt b/Documentation/devicetree/bindings/clock/ti,cdce925.txt
+deleted file mode 100644
+index df42ab72718f..000000000000
+--- a/Documentation/devicetree/bindings/clock/ti,cdce925.txt
++++ /dev/null
+@@ -1,53 +0,0 @@
+-Binding for TI CDCE913/925/937/949 programmable I2C clock synthesizers.
+-
+-Reference
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] https://www.ti.com/product/cdce913
+-[3] https://www.ti.com/product/cdce925
+-[4] https://www.ti.com/product/cdce937
+-[5] https://www.ti.com/product/cdce949
+-
+-The driver provides clock sources for each output Y1 through Y5.
+-
+-Required properties:
+- - compatible: Shall be one of the following:
+-	- "ti,cdce913": 1-PLL, 3 Outputs
+-	- "ti,cdce925": 2-PLL, 5 Outputs
+-	- "ti,cdce937": 3-PLL, 7 Outputs
+-	- "ti,cdce949": 4-PLL, 9 Outputs
+- - reg: I2C device address.
+- - clocks: Points to a fixed parent clock that provides the input frequency.
+- - #clock-cells: From common clock bindings: Shall be 1.
+-
+-Optional properties:
+- - xtal-load-pf: Crystal load-capacitor value to fine-tune performance on a
+-                 board, or to compensate for external influences.
+-- vdd-supply: A regulator node for Vdd
+-- vddout-supply: A regulator node for Vddout
+-
+-For all PLL1, PLL2, ... an optional child node can be used to specify spread
+-spectrum clocking parameters for a board.
+-  - spread-spectrum: SSC mode as defined in the data sheet.
+-  - spread-spectrum-center: Use "centered" mode instead of "max" mode. When
+-    present, the clock runs at the requested frequency on average. Otherwise
+-    the requested frequency is the maximum value of the SCC range.
+-
+-
+-Example:
+-
+-	clockgen: cdce925pw@64 {
+-		compatible = "cdce925";
+-		reg = <0x64>;
+-		clocks = <&xtal_27Mhz>;
+-		#clock-cells = <1>;
+-		xtal-load-pf = <5>;
+-		vdd-supply = <&1v8-reg>;
+-		vddout-supply = <&3v3-reg>;
+-		/* PLL options to get SSC 1% centered */
+-		PLL2 {
+-			spread-spectrum = <4>;
+-			spread-spectrum-center;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.yaml b/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
+new file mode 100644
+index 000000000000..1e68ee68e458
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
+@@ -0,0 +1,104 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,cdce925.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI CDCE913/925/937/949 programmable I2C clock synthesizers node bindings
++
++maintainers:
++  - Mike Looijmans <mike.looijmans@topic.nl>
++
++description: |
++  Flexible Low Power LVCMOS Clock Generator with SSC Support for EMI Reduction
++
++  - CDCE(L)913: 1-PLL, 3 Outputs https://www.ti.com/product/cdce913
++  - CDCE(L)925: 2-PLL, 5 Outputs https://www.ti.com/product/cdce925
++  - CDCE(L)937: 3-PLL, 7 Outputs https://www.ti.com/product/cdce937
++  - CDCE(L)949: 4-PLL, 9 Outputs https://www.ti.com/product/cdce949
++
++properties:
++  $nodename:
++    pattern: "^clock-controller$"
++
++  compatible:
++    enum:
++      - ti,cdce913
++      - ti,cdce925
++      - ti,cdce937
++      - ti,cdce949
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: fixed parent clock
++
++  "#clock-cells":
++    const: 1
++
++  vdd-supply:
++    description: Regulator that provides 1.8V Vdd power supply
++
++  vddout-supply:
++    description: |
++      Regulator that provides Vddout power supply.
++      non-L variant: 2.5V or 3.3V for
++      L variant: 1.8V for
++
++  xtal-load-pf:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Crystal load-capacitor value to fine-tune performance on a
++      board, or to compensate for external influences.
++
++patternProperties:
++  "^PLL[1-4]$":
++    type: object
++    description: |
++      optional child node can be used to specify spread
++      spectrum clocking parameters for a board
++
++    properties:
++      spread-spectrum:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: SSC mode as defined in the data sheet
++
++      spread-spectrum-center:
++        type: boolean
++        description: |
++          Use "centered" mode instead of "max" mode. When
++          present, the clock runs at the requested frequency on average.
++          Otherwise the requested frequency is the maximum value of the
++          SCC range.
++
++required:
++  - compatible
++  - ret
++  - clocks
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        cdce925: clock-controller@64 {
++            compatible = "ti,cdce925";
++            reg = <0x64>;
++            clocks = <&xtal_27Mhz>;
++            #clock-cells = <1>;
++            xtal-load-pf = <5>;
++            vdd-supply = <&reg_1v8>;
++            vddout-supply = <&reg_3v3>;
++            /* PLL options to get SSC 1% centered */
++            PLL2 {
++                spread-spectrum = <4>;
++                spread-spectrum-center;
++            };
++        };
++    };
+-- 
+2.25.1
 
-He provided a significant amount of traces, and we first checked that
-the round_rate part of set_rate was returning something meaningful, and
-it does. The rate is fine, the parent is too, everything's great.
-
-Next we checked the decisions by clk_calc_new_rates, and it does return
-the proper top clock, and its proper rate.
-
-Finally, we hooked into clk_change_rate() to see what kind of decision
-it was enforcing, and it seems to be ok as well. It doesn't change
-parent, and it sets the proper rate, in both cases.
-
-There's still one thing we haven't checked: one of the clock in the tree
-(the parent of the one we want to change the rate on, and it has
-SET_RATE_PARENT) has a notifier. As we've had a bug recently over this
-I've not ruled out that this could be a similar bug.
-
-I don't really think it is though, since the notifier callback doesn't
-use the data provided by the framework:
-https://elixir.bootlin.com/linux/v6.1-rc1/source/drivers/clk/mediatek/clk-m=
-ux.c#L279
-
-I've pushed a branch for Angelo to test, just to confirm.
-
-So... yeah. I can't explain the regression at this point. Do you have an
-idea?
-
-The good news is, since you merged this patch the regression is
-invisible now to that platform. We still could encounter it on another
-platform, but maybe it will also have a more obvious setup to replicate?
-
-Thanks!
-Maxime
