@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DA2C46467
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 15:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE677C43219
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 15:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbiJRPOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 11:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34480 "EHLO
+        id S229623AbiJRPOd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 11:14:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbiJRPO3 (ORCPT
+        with ESMTP id S230043AbiJRPO3 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 11:14:29 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8276412;
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521FCBC93;
         Tue, 18 Oct 2022 08:14:28 -0700 (PDT)
 Received: from jupiter.universe (dyndsl-095-033-155-016.ewe-ip-backbone.de [95.33.155.16])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 50F7C660238F;
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 48E83660238E;
         Tue, 18 Oct 2022 16:14:21 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
         s=mail; t=1666106061;
-        bh=jJHEnIe1D+ZEFrgDtEJI+Axf/gJufH7/BD8/v9RQkxw=;
+        bh=+387BKRQUD05e5BRZcMNr0EsEiBwZ9y/fSKapHfwgbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jPi8h5i012heT8El+U+24kQJ3xEvrzDGrAX2gUOTWMGvi2+3Wu72I1+TdZapbLyV/
-         SQ9ik08U75bdwtU0TB6iUt14gO3fR1EwRhrl0B98pc759uADpJFduqMrzDYMLzxCR2
-         xwB70L2oHW1YL+RtnIzuY/jWtDFeL4UPwFoxyYLEuV0Y+uQb3cd6HXzM+o6Y6bGX0n
-         O6wfHdN7IxkaKF2MEPIUyxPl1zlBe8aZiSiN6iUmSqp35gaJCfmsN937RqtzI7augH
-         WsTsXmVh1tSmqYxlQPeSiAy+CaeqNAoJE4vxK/zyfsoRsi9ZOw5LHxDkln/uwiJdHA
-         bU2SXW1hi28mw==
+        b=oeXF/s46slnZpwqpb3qToXe4TgD5ya17gbIqnEkHuH28VSwIcCo5oL8GKR7eQwgam
+         Y3emPGAoNoJOI0FfjEOy3SCGJiRxhnTRX7baRrcJFkM4vFiEovP1QfkqH2JxGcJ/MV
+         Vy+xDY1TAfcjjeGMijtiIgrSlqPo8E8gdmiLdDjeUQVer5eI0U43m0uwuTW4hTjSJ3
+         P70CdpKXni30Oy/hn7U7t7rwuTZvDgGe3CISl8MoT2IbDQxevDrWcwBAAdeAajLd0d
+         pdQK9FhKX+IXhatjuuWc2bIIpqXHheDMnomI9uEkcX7DyP4WAT6ft8V3Q1TmA3ZMKi
+         ts7B1pLUHMunA==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id 2C8C34801BE; Tue, 18 Oct 2022 17:14:16 +0200 (CEST)
+        id 2A7CD4801BA; Tue, 18 Oct 2022 17:14:16 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -43,14 +43,13 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv3 6/9] clk: rockchip: clk-cpu: add mux setting for cpu change frequency
-Date:   Tue, 18 Oct 2022 17:14:04 +0200
-Message-Id: <20221018151407.63395-7-sebastian.reichel@collabora.com>
+Subject: [PATCHv3 5/9] clk: rockchip: add pll type for RK3588
+Date:   Tue, 18 Oct 2022 17:14:03 +0200
+Message-Id: <20221018151407.63395-6-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221018151407.63395-1-sebastian.reichel@collabora.com>
 References: <20221018151407.63395-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -58,121 +57,303 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Elaine Zhang <zhangqing@rock-chips.com>
 
-In order to improve the main frequency of CPU, the clock path of CPU is
-simplified as follows:
-                         |--\
-                         |   \            |--\
- --apll--|\              |    \           |   \
-         | |--apll_core--|     \          |    \
- --24M---|/              |mux1 |--[gate]--|mux2|---clk_core
-                         |     /          |    /
- --gpll--|\              |    /    |------|   /
-         | |--gpll_core--|   /     |      |--/
- --24M---|/              |--/      |
-                                   |
- -------apll_directly--------------|
-
-When the CPU requests high frequency, we want to use MUX2 select the
-"apll_directly".
-At low frequencies use MUX1 to select “apll_core" and then MUX2 to
-select "apll_core_gate".
-
-However, in this way, the CPU frequency conversion needs to be
-in the following order:
-1. MUX2 select to "apll_core_gate", MUX1 select "gpll_core"
-2. Apll sets slow_mode, sets APLL parameters, locks APLL, and then APLL
-sets normal_mode
-3. MUX1 select "apll_core", MUX2 select "apll_directly"
-
-So add pre_muxs and post_muxs to cover this special requirements.
+Add RK3588 PLL support fully relying on lookup tables like
+the other upstream supported rockchip platforms.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-[rebase]
+[rebase and modify code to avoid PLL parameter calculation]
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/clk/rockchip/clk-cpu.c | 41 ++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h     |  2 ++
- 2 files changed, 43 insertions(+)
+ drivers/clk/rockchip/clk-pll.c | 218 ++++++++++++++++++++++++++++++++-
+ drivers/clk/rockchip/clk.h     |  18 +++
+ 2 files changed, 235 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 11aa2259b532..6ea7fba9f9e5 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -113,6 +113,42 @@ static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
- 	}
- }
- 
-+static void rockchip_cpuclk_set_pre_muxs(struct rockchip_cpuclk *cpuclk,
-+					 const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the pre_muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->pre_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->pre_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
-+static void rockchip_cpuclk_set_post_muxs(struct rockchip_cpuclk *cpuclk,
-+					  const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->post_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->post_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
- static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 					   struct clk_notifier_data *ndata)
- {
-@@ -165,6 +201,9 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 			       cpuclk->reg_base + reg_data->core_reg[i]);
- 		}
- 	}
-+
-+	rockchip_cpuclk_set_pre_muxs(cpuclk, rate);
-+
- 	/* select alternate parent */
- 	if (reg_data->mux_core_reg)
- 		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
-@@ -219,6 +258,8 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
- 				     reg_data->mux_core_shift),
- 		       cpuclk->reg_base + reg_data->core_reg[0]);
- 
-+	rockchip_cpuclk_set_post_muxs(cpuclk, rate);
-+
- 	/* remove dividers */
- 	for (i = 0; i < reg_data->num_cores; i++) {
- 		writel(HIWORD_UPDATE(0, reg_data->div_core_mask[i],
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 6eb31d36c4cd..24d3e56d3f71 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -399,6 +399,8 @@ struct rockchip_cpuclk_clksel {
- struct rockchip_cpuclk_rate_table {
- 	unsigned long prate;
- 	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel pre_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel post_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index f7827b3b7fc1..4b9840994295 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -842,6 +842,213 @@ static const struct clk_ops rockchip_rk3399_pll_clk_ops = {
+ 	.init = rockchip_rk3399_pll_init,
  };
  
++/*
++ * PLL used in RK3588
++ */
++
++#define RK3588_PLLCON(i)               (i * 0x4)
++#define RK3588_PLLCON0_M_MASK          0x3ff
++#define RK3588_PLLCON0_M_SHIFT         0
++#define RK3588_PLLCON1_P_MASK          0x3f
++#define RK3588_PLLCON1_P_SHIFT         0
++#define RK3588_PLLCON1_S_MASK          0x7
++#define RK3588_PLLCON1_S_SHIFT         6
++#define RK3588_PLLCON2_K_MASK          0xffff
++#define RK3588_PLLCON2_K_SHIFT         0
++#define RK3588_PLLCON1_PWRDOWN         BIT(13)
++#define RK3588_PLLCON6_LOCK_STATUS     BIT(15)
++
++static int rockchip_rk3588_pll_wait_lock(struct rockchip_clk_pll *pll)
++{
++	u32 pllcon;
++	int ret;
++
++	/*
++	 * Lock time typical 250, max 500 input clock cycles @24MHz
++	 * So define a very safe maximum of 1000us, meaning 24000 cycles.
++	 */
++	ret = readl_relaxed_poll_timeout(pll->reg_base + RK3588_PLLCON(6),
++					 pllcon,
++					 pllcon & RK3588_PLLCON6_LOCK_STATUS,
++					 0, 1000);
++	if (ret)
++		pr_err("%s: timeout waiting for pll to lock\n", __func__);
++
++	return ret;
++}
++
++static void rockchip_rk3588_pll_get_params(struct rockchip_clk_pll *pll,
++					   struct rockchip_pll_rate_table *rate)
++{
++	u32 pllcon;
++
++	pllcon = readl_relaxed(pll->reg_base + RK3588_PLLCON(0));
++	rate->m = ((pllcon >> RK3588_PLLCON0_M_SHIFT) & RK3588_PLLCON0_M_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3588_PLLCON(1));
++	rate->p = ((pllcon >> RK3588_PLLCON1_P_SHIFT) & RK3588_PLLCON1_P_MASK);
++	rate->s = ((pllcon >> RK3588_PLLCON1_S_SHIFT) & RK3588_PLLCON1_S_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3588_PLLCON(2));
++	rate->k = ((pllcon >> RK3588_PLLCON2_K_SHIFT) & RK3588_PLLCON2_K_MASK);
++}
++
++static unsigned long rockchip_rk3588_pll_recalc_rate(struct clk_hw *hw, unsigned long prate)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	struct rockchip_pll_rate_table cur;
++	u64 rate64 = prate, postdiv;
++
++	rockchip_rk3588_pll_get_params(pll, &cur);
++
++	rate64 *= cur.m;
++	do_div(rate64, cur.p);
++
++	if (cur.k) {
++		/* fractional mode */
++		u64 frac_rate64 = prate * cur.k;
++
++		postdiv = cur.p * 65535;
++		do_div(frac_rate64, postdiv);
++		rate64 += frac_rate64;
++	}
++	rate64 = rate64 >> cur.s;
++
++	return (unsigned long)rate64;
++}
++
++static int rockchip_rk3588_pll_set_params(struct rockchip_clk_pll *pll,
++					  const struct rockchip_pll_rate_table *rate)
++{
++	const struct clk_ops *pll_mux_ops = pll->pll_mux_ops;
++	struct clk_mux *pll_mux = &pll->pll_mux;
++	struct rockchip_pll_rate_table cur;
++	int rate_change_remuxed = 0;
++	int cur_parent;
++	int ret;
++
++	pr_debug("%s: rate settings for %lu p: %d, m: %d, s: %d, k: %d\n",
++		 __func__, rate->rate, rate->p, rate->m, rate->s, rate->k);
++
++	rockchip_rk3588_pll_get_params(pll, &cur);
++	cur.rate = 0;
++
++	if (pll->type == pll_rk3588) {
++		cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
++		if (cur_parent == PLL_MODE_NORM) {
++			pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
++			rate_change_remuxed = 1;
++		}
++	}
++
++	/* set pll power down */
++	writel(HIWORD_UPDATE(RK3588_PLLCON1_PWRDOWN,
++			     RK3588_PLLCON1_PWRDOWN, 0),
++	       pll->reg_base + RK3399_PLLCON(1));
++
++	/* update pll values */
++	writel_relaxed(HIWORD_UPDATE(rate->m, RK3588_PLLCON0_M_MASK, RK3588_PLLCON0_M_SHIFT),
++		       pll->reg_base + RK3399_PLLCON(0));
++
++	writel_relaxed(HIWORD_UPDATE(rate->p, RK3588_PLLCON1_P_MASK, RK3588_PLLCON1_P_SHIFT) |
++		       HIWORD_UPDATE(rate->s, RK3588_PLLCON1_S_MASK, RK3588_PLLCON1_S_SHIFT),
++		       pll->reg_base + RK3399_PLLCON(1));
++
++	writel_relaxed(HIWORD_UPDATE(rate->k, RK3588_PLLCON2_K_MASK, RK3588_PLLCON2_K_SHIFT),
++		       pll->reg_base + RK3399_PLLCON(2));
++
++	/* set pll power up */
++	writel(HIWORD_UPDATE(0, RK3588_PLLCON1_PWRDOWN, 0),
++	       pll->reg_base + RK3588_PLLCON(1));
++
++	/* wait for the pll to lock */
++	ret = rockchip_rk3588_pll_wait_lock(pll);
++	if (ret) {
++		pr_warn("%s: pll update unsuccessful, trying to restore old params\n",
++			__func__);
++		rockchip_rk3588_pll_set_params(pll, &cur);
++	}
++
++	if ((pll->type == pll_rk3588) && rate_change_remuxed)
++		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_NORM);
++
++	return ret;
++}
++
++static int rockchip_rk3588_pll_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	const struct rockchip_pll_rate_table *rate;
++
++	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
++		 __func__, __clk_get_name(hw->clk), drate, prate);
++
++	/* Get required rate settings from table */
++	rate = rockchip_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	return rockchip_rk3588_pll_set_params(pll, rate);
++}
++
++static int rockchip_rk3588_pll_enable(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	writel(HIWORD_UPDATE(0, RK3588_PLLCON1_PWRDOWN, 0),
++	       pll->reg_base + RK3588_PLLCON(1));
++	rockchip_rk3588_pll_wait_lock(pll);
++
++	return 0;
++}
++
++static void rockchip_rk3588_pll_disable(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	writel(HIWORD_UPDATE(RK3588_PLLCON1_PWRDOWN, RK3588_PLLCON1_PWRDOWN, 0),
++	       pll->reg_base + RK3588_PLLCON(1));
++}
++
++static int rockchip_rk3588_pll_is_enabled(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	u32 pllcon = readl(pll->reg_base + RK3588_PLLCON(1));
++
++	return !(pllcon & RK3588_PLLCON1_PWRDOWN);
++}
++
++static int rockchip_rk3588_pll_init(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
++		return 0;
++
++	return 0;
++}
++
++static const struct clk_ops rockchip_rk3588_pll_clk_norate_ops = {
++	.recalc_rate = rockchip_rk3588_pll_recalc_rate,
++	.enable = rockchip_rk3588_pll_enable,
++	.disable = rockchip_rk3588_pll_disable,
++	.is_enabled = rockchip_rk3588_pll_is_enabled,
++};
++
++static const struct clk_ops rockchip_rk3588_pll_clk_ops = {
++	.recalc_rate = rockchip_rk3588_pll_recalc_rate,
++	.round_rate = rockchip_pll_round_rate,
++	.set_rate = rockchip_rk3588_pll_set_rate,
++	.enable = rockchip_rk3588_pll_enable,
++	.disable = rockchip_rk3588_pll_disable,
++	.is_enabled = rockchip_rk3588_pll_is_enabled,
++	.init = rockchip_rk3588_pll_init,
++};
++
+ /*
+  * Common registering of pll clocks
+  */
+@@ -890,7 +1097,8 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	if (pll_type == pll_rk3036 ||
+ 	    pll_type == pll_rk3066 ||
+ 	    pll_type == pll_rk3328 ||
+-	    pll_type == pll_rk3399)
++	    pll_type == pll_rk3399 ||
++	    pll_type == pll_rk3588)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+ 	/* the actual muxing is xin24m, pll-output, xin32k */
+@@ -957,6 +1165,14 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		else
+ 			init.ops = &rockchip_rk3399_pll_clk_ops;
+ 		break;
++	case pll_rk3588:
++	case pll_rk3588_core:
++		if (!pll->rate_table)
++			init.ops = &rockchip_rk3588_pll_clk_norate_ops;
++		else
++			init.ops = &rockchip_rk3588_pll_clk_ops;
++		init.flags = flags;
++		break;
+ 	default:
+ 		pr_warn("%s: Unknown pll type for pll clk %s\n",
+ 			__func__, name);
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 43a37a43b6f3..6eb31d36c4cd 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -240,6 +240,8 @@ enum rockchip_pll_type {
+ 	pll_rk3066,
+ 	pll_rk3328,
+ 	pll_rk3399,
++	pll_rk3588,
++	pll_rk3588_core,
+ };
+ 
+ #define RK3036_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,	\
+@@ -272,6 +274,15 @@ enum rockchip_pll_type {
+ 	.nb = _nb,						\
+ }
+ 
++#define RK3588_PLL_RATE(_rate, _p, _m, _s, _k)			\
++{								\
++	.rate   = _rate##U,					\
++	.p = _p,						\
++	.m = _m,						\
++	.s = _s,						\
++	.k = _k,						\
++}
++
  /**
+  * struct rockchip_clk_provider - information about clock provider
+  * @reg_base: virtual address for the register base.
+@@ -307,6 +318,13 @@ struct rockchip_pll_rate_table {
+ 			unsigned int dsmpd;
+ 			unsigned int frac;
+ 		};
++		struct {
++			/* for RK3588 */
++			unsigned int m;
++			unsigned int p;
++			unsigned int s;
++			unsigned int k;
++		};
+ 	};
+ };
+ 
 -- 
 2.35.1
 
