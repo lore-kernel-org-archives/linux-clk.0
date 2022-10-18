@@ -2,106 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1ADC43217
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F537C43219
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbiJRNbM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 09:31:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
+        id S229720AbiJRNcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 09:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbiJRNbL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:31:11 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8D8C6945;
-        Tue, 18 Oct 2022 06:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1666099867; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=g3MzspTM9Dr8LSMMQ6MITd3EeKWr2rZaVT6P5JRlgFc=;
-        b=nAc34R932407pmkTMuqbozzx64BjLHj4VBOG8Q9x82Nm0YPEk6WYI4Uvc+AY6jgKIlUogL
-        scmhs6NBK2SX5jpT1AvnxBbIwdc6oZb0UK1wNsQDthGPSXu24u6WwISI01Lqur1NB8HcAd
-        G5hGjtV2EBVWvTh2Fu7f5al1oI1Bf94=
-Date:   Tue, 18 Oct 2022 14:30:57 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 4/4] clk: Add Ingenic JZ4755 CGU driver
-To:     Siarhei Volkau <lis8215@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229868AbiJRNcC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:32:02 -0400
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C96D3CA880;
+        Tue, 18 Oct 2022 06:32:01 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id g10so15525562oif.10;
+        Tue, 18 Oct 2022 06:32:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/sc5xfjWbep3XdzZfvFceKEVzMS+1eS5iVILCK+RzyA=;
+        b=KauH+vHA6xPWz7CJV4XBgw9vuw3colVkfSPap/bikAw9/uJh5n19Tf/5M8avFoa2aF
+         AZZl43vEPx3esSjL+3Chr/wz0BtBK9Y12dUQwdsoLASfVZ9i8mDViaxzuQS/APzSu03f
+         L1uxdOmwUk/kMPeB+z3aeYAAeu+NL82OXMth7QH23KlSsxrA1ybaCF1kfgIIJ763K1jc
+         FOf9OKCu6pATX8+JS+M6BCg/VCFAb3a+Fy9YXDvvFVfpkN8LFI7VQv7fAZpoyTn/aTZK
+         +hXauHsMrId1Sq/hQmX/d8trcu6u3L2x4IyzvW6ywsfV/v5gaTOeQUY2ObVBHE0X7E/G
+         M91A==
+X-Gm-Message-State: ACrzQf0VVws4OnuIb3cUa2CjOPI1fXPA2ya0Uu35ZqeiVNDnPlvzXlYi
+        05m/q+HpyigotJBCVEatvA==
+X-Google-Smtp-Source: AMsMyM6O96ho0FdVAHMJ0wdtQSaFrVSflxDHBhWXy9n/5CqGY3B7jr/SPsYk5PbQXTTdsZkI31qUAw==
+X-Received: by 2002:aca:4b0d:0:b0:354:c1fd:27d with SMTP id y13-20020aca4b0d000000b00354c1fd027dmr1420251oia.108.1666099921003;
+        Tue, 18 Oct 2022 06:32:01 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id bd18-20020a056808221200b00354e8bc0236sm5643318oib.34.2022.10.18.06.32.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 06:32:00 -0700 (PDT)
+Received: (nullmailer pid 180824 invoked by uid 1000);
+        Tue, 18 Oct 2022 13:32:01 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Message-Id: <LVAYJR.C9X3GOLBHW113@crapouillou.net>
-In-Reply-To: <CAKNVLfbbAaNdhWDo10XrUtyCM4R5E1CidC+TTQt8tUYbBU93qw@mail.gmail.com>
-References: <20221016150110.3020451-1-lis8215@gmail.com>
-        <20221016150110.3020451-5-lis8215@gmail.com>
-        <0S4WJR.4KB18PR21S9K1@crapouillou.net>
-        <CAKNVLfYEMwRC+4VuGcaENd1eTvbhWD9=uFDAhaz+1Fd8Aaqg_w@mail.gmail.com>
-        <M0RWJR.TI6Q9ATD37DF3@crapouillou.net>
-        <CAKNVLfbbAaNdhWDo10XrUtyCM4R5E1CidC+TTQt8tUYbBU93qw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+In-Reply-To: <20221018072106.2391771-1-alexander.stein@ew.tq-group.com>
+References: <20221018072106.2391771-1-alexander.stein@ew.tq-group.com>
+Message-Id: <166609951951.171676.6449728650793742921.robh@kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: clock: ti,cdce925: Convert to DT schema
+Date:   Tue, 18 Oct 2022 08:32:01 -0500
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Siarhei,
+On Tue, 18 Oct 2022 09:21:06 +0200, Alexander Stein wrote:
+> Convert the TI CDCE925 clock binding to DT schema format.
+> Including a small fix: Add the missing 'ti' prefix in the example
+> compatible.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+> I have to admit I only have one specific addon platform for this
+> hardware, which is actually a CECD813 tbh.
+> 
+>  .../devicetree/bindings/clock/ti,cdce925.txt  |  53 ---------
+>  .../devicetree/bindings/clock/ti,cdce925.yaml | 104 ++++++++++++++++++
+>  2 files changed, 104 insertions(+), 53 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,cdce925.yaml
+> 
 
-Le lun., oct. 17 2022 at 21:07:47 +0300, Siarhei Volkau=20
-<lis8215@gmail.com> a =C3=A9crit :
-> =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 20:24, Paul Cerc=
-ueil=20
-> <paul@crapouillou.net>:
->>=20
->>=20
->>=20
->>  Le lun., oct. 17 2022 at 20:10:56 +0300, Siarhei Volkau
->>  <lis8215@gmail.com> a =C3=A9crit :
->>  > =D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:24, Paul =
-Cercueil
->>  > <paul@crapouillou.net>:
->>  >
->>  >>  > +     [JZ4755_CLK_AIC] =3D {
->>  >>  > +             "aic", CGU_CLK_GATE,
->>  >>  > +             .parents =3D { JZ4755_CLK_I2S, -1, -1, -1 },
->>  >>
->>  >>  Wrong parent here, should be JZ4755_CLK_EXT_HALF.
->>  >
->>  > I don't  agree, see Figure 20-13 in the JZ4755 PM.
->>=20
->>  20-13 describes the I2S clock, no?
->=20
-> See 20.4.9 Serial Audio Clocks and Sampling Frequencies.
-> It stated that: "For internal CODEC ... CODEC needs a 12MHz
-> clock from CPM called SYS_CLK ...", but SYS_CLK is described
-> only in the I2S Controller section. I assume it is the same clock.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Yes, and your SYS_CLK is the I2S clock, not the AIC clock.
+yamllint warnings/errors:
 
->>=20
->>  AIC clock's parent is EXT/2 according to the diagram in 8.2.2.
->>=20
->=20
-> It's a bit cryptic manual, who knows how it's done in the HW.
-> I observed that codec runs on a desired sample rate only when PLL
-> equals 432 or 216 MHz, but SYS_CLK is definitely configured to be
-> 12MHz - from EXTCLK. On other PLL frequencies it is lower by
-> 2-4% than expected. That isn't observed on JZ4725B.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.example.dtb: clock-controller@64: $nodename:0: 'clock-controller@64' does not match '^clock-controller$'
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.example.dtb: clock-controller@64: 'ret' is a required property
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
 
-The audio codec supplies SYS_CLK to the controller, not the other way=20
-around. Parent the I2S clock to EXT/2 (which is 12 MHz) and it should=20
-work fine, independently of the PLL.
+doc reference errors (make refcheckdocs):
 
-The AIC clock does not drive anything, it only "powers" the AIC module.=20
-It should be parented only to EXT/2, similar to what's done in every=20
-other CGU driver.
+See https://patchwork.ozlabs.org/patch/
 
-Cheers,
--Paul
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
