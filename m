@@ -2,73 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D507AC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 14:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F20CC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 14:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbiJROYN convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 10:24:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56626 "EHLO
+        id S231468AbiJROfK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 10:35:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbiJROYM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 10:24:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BEF1E715;
-        Tue, 18 Oct 2022 07:24:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S231388AbiJROfJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 10:35:09 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B477084E55;
+        Tue, 18 Oct 2022 07:35:05 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 693A1B81BE1;
-        Tue, 18 Oct 2022 14:24:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C117C433C1;
-        Tue, 18 Oct 2022 14:24:08 +0000 (UTC)
-Date:   Tue, 18 Oct 2022 10:24:09 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: Add trace events for rate requests
-Message-ID: <20221018102409.594be3e4@gandalf.local.home>
-In-Reply-To: <20221018-clk-rate-request-tracing-v1-2-6f3aa0b0b9de@cerno.tech>
-References: <20221018-clk-rate-request-tracing-v1-0-6f3aa0b0b9de@cerno.tech>
-        <20221018-clk-rate-request-tracing-v1-2-6f3aa0b0b9de@cerno.tech>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7BF8C66022FA;
+        Tue, 18 Oct 2022 15:35:02 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1666103702;
+        bh=qYYJybovclLEDHkvXdzXj0IFVUkJPyhf7OhToldsM1w=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gBfIoyOI5boTpSvODNJfBIKMGJjhKBWxN5LMjXARJ39K1x7xrXAG3CeiXRiMjewhs
+         YbcyIc42MPtS42QaPG6zFy0zkoyKC6iJBXI5X1I9MzmTF3JNM4s3UKo3a7QjMNvp/k
+         HVO1bcG6quLrMVVAooDZDox38GstNLwwEEKxhackb5bI5RZV4kwWYXRs6/ps95IhNo
+         G+5v0Rpvqyc6diE5jwJ13LzljDO7gOtB6U+S+7JIPeCxxWB71yiaIDgaVDthmaYfpi
+         8Lq+cUObGb8zBZHtl/BNzNeWAIW/Q84peuVk48dSs7Dv++dLbX8t74CF5MbalACgaB
+         gqoQpoS6MCJXg==
+Message-ID: <206b8841-5626-c32f-37df-ccc4a87313d0@collabora.com>
+Date:   Tue, 18 Oct 2022 16:34:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech>
+ <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 18 Oct 2022 15:56:42 +0200
-Maxime Ripard <maxime@cerno.tech> wrote:
-
-> It is currently fairly difficult to follow what clk_rate_request are
-> issued, and how they have been modified once done.
+Il 18/10/22 15:52, Maxime Ripard ha scritto:
+> The determine_rate hook allows to select the proper parent and its rate
+> for a given clock configuration. On another hand, set_parent is there to
+> change the parent of a mux.
 > 
-> Indeed, there's multiple paths that can be taken, some functions are
-> recursive and will just forward the request to its parent, etc.
+> Some clocks provide a set_parent hook but don't implement
+> determine_rate. In such a case, set_parent is pretty much useless since
+> the clock framework will always assume the current parent is to be used,
+> and we will thus never change it.
 > 
-> Adding a lot of debug prints is just not very convenient, so let's add
-> trace events for the clock requests, one before they are submitted and
-> one after they are returned.
+> This situation can be solved in two ways:
+>    - either we don't need to change the parent, and we thus shouldn't
+>      implement set_parent;
+>    - or we don't want to change the parent, in this case we should set
+>      CLK_SET_RATE_NO_REPARENT;
+>    - or we're missing a determine_rate implementation.
 > 
-> That way we can simply toggle the tracing on without modifying the
-> kernel code and without affecting performances or the kernel logs too
-> much.
+> The latter is probably just an oversight from the driver's author, and
+> we should thus raise their awareness about the fact that the current
+> state of the driver is confusing.
+> 
+> It's not clear at this point how many drivers are affected though, so
+> let's make it a warning instead of an error for now.
 > 
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-From a tracing point of view:
+That solves my concerns :-) :-)
 
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
--- Steve
-
-> ---
->  drivers/clk/clk.c          | 31 +++++++++++++++++++++++++++++++
->  include/trace/events/clk.h | 43 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 74 insertions(+)
 
