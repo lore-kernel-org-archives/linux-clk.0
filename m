@@ -2,137 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD29EC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79EAC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Oct 2022 13:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbiJRNxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 09:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33088 "EHLO
+        id S230482AbiJRN4r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Oct 2022 09:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231283AbiJRNxd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:53:33 -0400
+        with ESMTP id S231295AbiJRN4q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 09:56:46 -0400
 Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05375CF86D;
-        Tue, 18 Oct 2022 06:53:11 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 78F173200923;
-        Tue, 18 Oct 2022 09:53:10 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 18 Oct 2022 09:53:10 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF79D0184;
+        Tue, 18 Oct 2022 06:56:45 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 6A102320025E;
+        Tue, 18 Oct 2022 09:56:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 18 Oct 2022 09:56:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666101190; x=
-        1666187590; bh=ibUWEHKj/QGYphdrbN1NQxPjpBdpTfdPpbW8Zfp5n24=; b=q
-        fdt2iuJGXRsapKcoIvKsndV90b43m3LdWkH/T7RkSR37uK3Nf75NrrJTWAPsIWRl
-        QhKGn23g0Z5onkcIaAi2zzoIhQ2nWQuCd9PbfZM3pRM76w/TY+yC9SRtT1jBSpZn
-        8B1Sv4OUP5A58Rw7C50iU/TARLMoEUElP5n+KpAwSSQuhTdTmpbgKFWWSWsFD/vD
-        EyNmXdZNVridtOg9lGdYTW8J2w6WyOGDY33ZhZeuT/1tziodY5KwmUKB7nTPV+y/
-        bMEP7Jw7J6IdgwsS/3NsOeKI4VOHQPl/IJ6/hyAvINzNUdd3f0V122q4IuFws5y1
-        4l6px5eFUT3L2KgJNzwNA==
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1666101404; x=1666187804; bh=d6o/9ZjWll
+        tettTtq0x0QTbIW2ZWxkr4XOTjsAM1BxQ=; b=QJfdmUcngfRtR5r0k42D/lqIS/
+        kl1ZVK76EZYQWdQQ9/6dKNNTl5Y1op/V9aE5XMkWluq8Ddba2oLPELKAxG5HRzM7
+        P7KYEw8CEMQRzLLfUzlf8OsQ2hD7Aep7UCDEUpSQ32bGDpZ2rA/z/0jDI2WBbmJu
+        DCPk+gqqYE4E30lTAh9aA1vXprhj0JbHSn36u+RkmyO6yZxm8ENBGP3sQttS/JYn
+        XOjP29U5kwU5Bv2UJ9wi4KpZLI/+AkkSPUXLzbpFqWPcw5VD0mMkvn3JXMQ98qdL
+        Zk8bJr9GWbg6TEs/1UFz8bnJ0DITCzvrnm6eYlHaDw63boiISSm+QL5plCSQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666101190; x=
-        1666187590; bh=ibUWEHKj/QGYphdrbN1NQxPjpBdpTfdPpbW8Zfp5n24=; b=g
-        1B5U4uPMB2vzrOREFU+bd7TP+W4tMKIawGq74S8XCMEPT3rdOQlrxJgKApq3+10D
-        qKJw8MjqMOlba/tCmAXE7pR67YYDkFrcgMV0n7ZlHR1jtQyIkXSafp1ThM3+BtAP
-        pTcsHhwrGmHmjWrV8Bahoc1t8oXGSvg76bE3XwybOqBUg/UKO4c4ZCjWGP/UVU/E
-        MMtZl0cuk3/PbyewIHO5EYA2q+VjV2iyqPLenhwPeCROk5Sj/q3r73FLbVnny39O
-        KIAMozQyWo56b3GXammZP5O18PpqOkRNXwl9cVTzchror5rH6h5Wh5s9TSvMg5NN
-        y0D7yY9RfuO4d6xhNzg6w==
-X-ME-Sender: <xms:xa9OY61zsfZn6yGktQvMg84rdFC1oyz67_PckVlnyLl2Eu0OgoMgNA>
-    <xme:xa9OY9HK7Whx-zWhNxBhpkgRqWGT3E1jgpezNjrYWCMmGGLctqabIsLfySKknIgWP
-    PVBqVZlmod-1mc0Sv4>
-X-ME-Received: <xmr:xa9OYy55g3_NdSTeVgb_5AhUMkgbJPz0clSuQqrwjxL9m9Pboy96UDOwVMW7>
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1666101404; x=1666187804; bh=d6o/9ZjWlltet
+        tTtq0x0QTbIW2ZWxkr4XOTjsAM1BxQ=; b=OZs4beNAU1KIAZvlDs+MPnzZmc4jf
+        myliUlaYzIgKtwoAQGNm+WYEqzq841HwMkNMWN+xAsfkhoeR3rnQ5NZvOFqnOCo2
+        bj8fWJYH8LLQUnH6My7/rYRasl4js+KJhjJr6xX64v4nl6TBzilGxHKNUz7+yucv
+        O7mYtzcm5XUeAldby8lgrgKNK2LQQOtNzUU6S3Qc41DrrvAh5UYM8Y5/Xl7fdXa+
+        AFAuiJdbxKfANl4mewbCkX0qVqMTXyjztVuNgdoQK47O8YK8IhO9ozYAlfU1eOsz
+        Ln6anF79S/D3yvHuf2a0OvpYvtImuAy6ZDDDIaOo7ije39BqQk749m1MA==
+X-ME-Sender: <xms:m7BOYz5ZonXNqICaBxmukVMq8pebsWPijnRVCHoWUej2z2DPQdr8VA>
+    <xme:m7BOY47Pa0MJY4wQz0ZOW_8NAjhAzk3zewMdG15WFGy9mvt_wuvrR5wOJJGOR6Fpc
+    kJ740kQM8p0_pwrpkU>
+X-ME-Received: <xmr:m7BOY6dLqQN8iV2GQWcGjP8mFxfUZQVl-fFyCuOXMmiVb0yYaFrd4rCfr968>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeelvddggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepudduudfhveejteefgedvffdvvedvjedugedukeejhedtlefhffevtefh
-    jeeltdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:xq9OY71YJUkDks77RSXRsaKll73g92JsM34S7DlyAL4cPo4csdlvNA>
-    <xmx:xq9OY9FaIKO8wTintDSwollAe9sSqmfgDxAQQAEZ1ARCuO1UvFRaeA>
-    <xmx:xq9OY08N8f3mA_vAPPJixlv7LlB6iLBEzfKBMfOI22JWJDIV_nyTKQ>
-    <xmx:xq9OYxgBsqRgqkJZ2B4HH8eLaimdsLnScQjh06h9Cb_zYN0jDM3aNg>
+    cujfgurhepufggtgfghfffkffvvefosehtkeertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepvdehfeejtefhgeegudegveejieetfeeugeehveffteejkedufeeltedutdeu
+    geehnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:m7BOY0Ks5H2532Kz0GTpiWwh0OOQJSWa4Ubp1CrkRfcUAp-FKk027g>
+    <xmx:m7BOY3JoPFI9FzN3ttLy04AMTjd3yGT-jtKf90t897wps-7OTAXRwg>
+    <xmx:m7BOY9yAje_XaS3uztBy2ht7OotSGYqQtQA6JCjiM3w19gYKjSl0vw>
+    <xmx:nLBOY9gJwvwpXrPHudwjjHi0Xhmy4UMvmJKBrbF8gVzxJ8qy56sm4Q>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Oct 2022 09:53:09 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 18 Oct 2022 15:52:59 +0200
-Subject: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
+ 18 Oct 2022 09:56:43 -0400 (EDT)
+Subject: [PATCH 0/2] clk: Rate Request Tracing
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech>
+X-b4-tracking: H4sIAJiwTmMC/w3MMQrDMAxA0asEzRXYrkNDbyM7IhExKpWcLiF3r8c3/H+Bswk7vKcLjH/i8tGB+J
+ ig7qQbo6zDkEJKMcQFazvQqDMaf0/2jt2oim74yryEkudnXiOMvJAzFiOt+xjo2dp9/wH6kLqNbwAA AA==
+From:   Maxime Ripard <maxime@cerno.tech>
+Date:   Tue, 18 Oct 2022 15:56:40 +0200
+Message-Id: <20221018-clk-rate-request-tracing-v1-0-6f3aa0b0b9de@cerno.tech>
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org
+        Michael Turquette <mturquette@baylibre.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Maxime Ripard <maxime@cerno.tech>
 X-Mailer: b4 0.11.0-dev-7da52
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1775; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=oxdhfLzGwvzQhDYbvHA+Mn0OUJuj34vZoXZ5WdkABms=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMl+63fu+nej4e7DpG87NtquvJnTrMMx62dzYNLNbXErnauY
- 2wrvdZSyMIhxMciKKbLECJsviTs163UnG988mDmsTCBDGLg4BWAi6coM/90MRYpaOizO27CvW3v6es
- tUDa/H0y/p5RuocE679bJngxAjw8lgu7haNeP4yMWLlsUXLdALn5O/vTs66PqqVbcPXPIM5wYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=978; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=SwaImmjFBLVh/HJnbJyXqAs1S1NtasMsz9acLyU1qOY=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMl+G2aJNz3k/CHZc8myKrFYeePzE6FJ9V5RE7c1Hnv7KVRz
+ 6aSCjlIWBjEuBlkxRZYYYfMlcadmve5k45sHM4eVCWQIAxenAEykdAsjw/dZTZM8yjuDbC89tJpRKV
+ YTa6XxcrnbyQyfs9ZK/U/VZjL8Zr9zbiPfZqlDzg5Wuy78XLeR/0YHU+FEndzny6NKmm4GMgMA
 X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The determine_rate hook allows to select the proper parent and its rate
-for a given clock configuration. On another hand, set_parent is there to
-change the parent of a mux.
+Hi,
 
-Some clocks provide a set_parent hook but don't implement
-determine_rate. In such a case, set_parent is pretty much useless since
-the clock framework will always assume the current parent is to be used,
-and we will thus never change it.
+Here's a couple of patches to enable the tracing of clk_rate_requests as they
+are submitted to round/determine_rate.
 
-This situation can be solved in two ways:
-  - either we don't need to change the parent, and we thus shouldn't
-    implement set_parent;
-  - or we don't want to change the parent, in this case we should set
-    CLK_SET_RATE_NO_REPARENT;
-  - or we're missing a determine_rate implementation.
+Let me know what you think,
+Maxime
 
-The latter is probably just an oversight from the driver's author, and
-we should thus raise their awareness about the fact that the current
-state of the driver is confusing.
-
-It's not clear at this point how many drivers are affected though, so
-let's make it a warning instead of an error for now.
-
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+
 ---
- drivers/clk/clk.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Maxime Ripard (2):
+      clk: Store clk_core for clk_rate_request
+      clk: Add trace events for rate requests
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 57b83665e5c3..11c41d987ff4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3700,6 +3700,11 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
- 
-+	/* TODO: Promote to an error */
-+	if (core->ops->set_parent && !core->ops->determine_rate)
-+		pr_warn("%s: %s must implement .set_parent & .determine_rate\n",
-+			__func__, core->name);
-+
- 	if (core->num_parents > 1 && !core->ops->get_parent) {
- 		pr_err("%s: %s must implement .get_parent as it has multi parents\n",
- 		       __func__, core->name);
+ drivers/clk/clk.c            | 32 ++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ include/trace/events/clk.h   | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 77 insertions(+)
+---
+base-commit: 69a14e4a9d5a0e1ed73063e0d439c3cb33ce9829
+change-id: 20221018-clk-rate-request-tracing-74e80b4534d1
 
+Best regards,
 -- 
-b4 0.11.0-dev-7da52
+Maxime Ripard <maxime@cerno.tech>
