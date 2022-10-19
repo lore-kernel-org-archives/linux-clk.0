@@ -2,455 +2,463 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC38C43217
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 03:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210C6C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 05:05:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbiJSDvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Oct 2022 23:51:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49410 "EHLO
+        id S229729AbiJSFFl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 01:05:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbiJSDvj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Oct 2022 23:51:39 -0400
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80D08D77F6;
-        Tue, 18 Oct 2022 20:51:36 -0700 (PDT)
-Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8CxjdpHdE9jJqEAAA--.3469S3;
-        Wed, 19 Oct 2022 11:51:35 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Bxj+A+dE9j4hcBAA--.4371S3;
-        Wed, 19 Oct 2022 11:51:34 +0800 (CST)
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        Yinbo Zhu <zhuyinbo@loongson.cn>
-Subject: [PATCH v2 2/3] clk: clk-loongson2: add clock controller driver support
-Date:   Wed, 19 Oct 2022 11:51:16 +0800
-Message-Id: <20221019035117.29352-2-zhuyinbo@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20221019035117.29352-1-zhuyinbo@loongson.cn>
-References: <20221019035117.29352-1-zhuyinbo@loongson.cn>
+        with ESMTP id S229515AbiJSFFk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 01:05:40 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD99C50BBE
+        for <linux-clk@vger.kernel.org>; Tue, 18 Oct 2022 22:05:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XbGDlgHAhgGXbjLhoJ8hswtUewt/co0EMTl9elc0RelbDQfBpXM2xQL0OXeN0ZhMklJcUazjpqeO1m9d0bCtMPZLhIfJlitJTGOM5qBTlyhEQO1uiPU1SOGoSGZmHjn4tgR9A4zs2ZXtD9RrMS6dwF12z1yeOfOol0P0PpPBO/P6wywzdRm/zH2RZnmImyyg+AaiZhslAPv8fP/SseZRgMps53Zl00Y0ekaCUvJeWsLRKAJyGTCHVmxqJmo6PbJDmKvwrUKErAiBIgsoA0VNwxa+bpZG9LAATYHxrTE7dGqOx/Q2ZwTHXav6YbexZ/7VV2KhqZj4EJeQvYUekvGyPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jF/xDOfMi48rbJ5c/nOvBDysma8gjrqZeR9Mi8V0Ghg=;
+ b=cZnvAy77L4xfbdFgSjuNYIu+QN5B1ThsASFEO9m7IZ3pT18I3Eo/Q2NNnZUxXjH49B3shhPWI1lYLfuK3hQeBbhaD0wamqpZZ/9uGxYGhjr/qRs9/jSr6FWF7vCXMTZMUXcAMBciM3A29eiw3A0NnF2jc8dYaAzujEDY8zrc19Wr13CvjV5Xoh9+TIbusg6dzM753io6Sb0dlozgsz6GqOnCk8DkEUJ/ECxLrG+OMfNJUFQjzQIEqRSGrB21uMg3Rg0lSvtrW7gvX3+vQPWfWY+LD7HalJ38GhacfQRKEpirkqtfu0Gr8QZAziJPI3qaZ7YEIAjFY37WWHJ5MWlPFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jF/xDOfMi48rbJ5c/nOvBDysma8gjrqZeR9Mi8V0Ghg=;
+ b=sUokBJ8PjWdDw8bOMjEvGdlxhp/bVBbiXnjtnmlcHD4TOQeoYPxSKPeh3y16tLKewWq16uf13mXCFQs211bkH6LZMXxcVfmSLK4gQ0ls7D2zErfWmNj3SVtEN7QM9zNotxkwy2YR8o5nsBYJUgxh9hnDruRYUc/wP3shk4Dzh5k=
+Received: from DS7PR03CA0180.namprd03.prod.outlook.com (2603:10b6:5:3b2::35)
+ by PH8PR12MB6868.namprd12.prod.outlook.com (2603:10b6:510:1cb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Wed, 19 Oct
+ 2022 05:05:32 +0000
+Received: from DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b2:cafe::cf) by DS7PR03CA0180.outlook.office365.com
+ (2603:10b6:5:3b2::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.32 via Frontend
+ Transport; Wed, 19 Oct 2022 05:05:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT008.mail.protection.outlook.com (10.13.172.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5746.16 via Frontend Transport; Wed, 19 Oct 2022 05:05:32 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 19 Oct
+ 2022 00:05:31 -0500
+Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.31 via Frontend
+ Transport; Wed, 19 Oct 2022 00:05:30 -0500
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <michal.simek@xilinx.com>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>
+Subject: [PATCH] clocking-wizard: Support higher frequency accuracy
+Date:   Wed, 19 Oct 2022 10:35:29 +0530
+Message-ID: <20221019050529.17849-1-shubhrajyoti.datta@amd.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Bxj+A+dE9j4hcBAA--.4371S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW3CFy8Gr47GryDCryfCF18uFg_yoWkWFyDpF
-        yfA3y5WrWjqF4UuwsxtryDGrn8AasFk3W7AFW3Ga4qkrZ7Xa4rWr4xAFyxAF4UA3ykAFW2
-        vFZYgrWUCF45XwUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x
-        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
-        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_
-        Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-        WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-        CTnIWIevJa73UjIFyTuYvjxUc9mRUUUUU
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT008:EE_|PH8PR12MB6868:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19a2bed0-b7a6-4782-a1fd-08dab18f8cde
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uH4T+Nup4Ira4pTx93/VD6d3npcwXHtGY68aw5zlDJdcdkOOGpH8y3UII0D64StfGnlOqyugHMpThL6NDkNYNTgo7iHmg7aG0XLvrvKVmho0DcnREIxW8LUif/WVzD+lnOm4pgBn44R5jEpDuYfxgRNGpzvUjhTnm6HeVA46aaASBieCX6a/A5gznJMMoODm4a7ZGsaesSAyoXQ4DT/+w/PoXPdZjTmLYDfrK+FT6dpYiGD21ci/3+1p9ydM+wZHVKFzoI/AohTIzj9+RfuEvM48E0+skNHnKgXPgzTp3/rrGRysla1R5dVF8nOpLJ9z1TYNRO1uRaKK9hwjzkposz1cu0sNI+SVrsdjcs3ZwWLDdeC6RRW2jj7Pjmc7aoIB6x2pxy9YHj7LPw9POb4JflY7BqpAi8Ld751pewEA6z+tCKKKu3zcmrVZWUHt1LSn0khpT0YEoy1l68KJYJptIPlQT6YX/JzM9ZeyxWLtl0azl/Ntjkhx/AxCo64FT/OUi/WylewpYwKOAlsudry8nbBVHe/SnoRCFNgU6Rrl7SOouNHXxJ/a9vVncUw3pd0Jnh43oobZg90R5IyFa4+GCX25SNHgZEe07954zJlp3/B6mMwjd1pdRHifc84eEV1YmOL1PCFhZEr0LFVh+N8c3IR/YfuM8P6ZvqfBPEqxLLT3zJIUnMcfFzXJiwj4cp9kmEf7nAHupBwyYJBrK/5LuFvyrc+p9tySeo06hqe4L7o3UYQZPf7fiAz6tVpFwfcehauY9FkHXQ6D32XJcFlrZWNqSHBijXQzx8HJ3cAPr0mlHKfMwmV5sH6t2xVvSoZb
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(136003)(396003)(451199015)(40470700004)(46966006)(36840700001)(316002)(47076005)(54906003)(1076003)(186003)(2616005)(36756003)(336012)(2906002)(41300700001)(8936002)(26005)(44832011)(5660300002)(40460700003)(30864003)(83380400001)(4326008)(40480700001)(86362001)(8676002)(426003)(70206006)(70586007)(36860700001)(82310400005)(82740400003)(6916009)(356005)(81166007)(478600001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2022 05:05:32.7405
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19a2bed0-b7a6-4782-a1fd-08dab18f8cde
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6868
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver provides support for clock controller on Loongson2 SoC
-, the Loongson2 SoC uses a 100MHz clock as the PLL reference clock
-, there are five independent PLLs inside, each of which PLL can
-provide up to three sets of frequency dependent clock outputs.
+Change the multipliers and divisors to support a higher
+frequency accuracy if there is only one output.
+Currently only O is changed now we are changing M, D and O.
+For multiple output case the earlier behavior is retained.
 
-Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+
 ---
-Change in v2:
-		1. Update the include filename.
-		2. Change string from refclk/REFCLK to ref/REF.
 
- MAINTAINERS                  |   1 +
- arch/loongarch/Kconfig       |   1 +
- arch/loongarch/kernel/time.c |   2 +
- drivers/clk/Kconfig          |   9 ++
- drivers/clk/Makefile         |   1 +
- drivers/clk/clk-loongson2.c  | 285 +++++++++++++++++++++++++++++++++++
- 6 files changed, 299 insertions(+)
- create mode 100644 drivers/clk/clk-loongson2.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 401176784853..a4de8f1b81f0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11918,6 +11918,7 @@ LOONGSON2 SOC SERIES CLOCK DRIVER
- M:	Yinbo Zhu <zhuyinbo@loongson.cn>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
-+F:	drivers/clk/clk-loongson2.c
- F:	include/dt-bindings/clock/loongson,ls2k-clk.h
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 217 +++++++++++++++++++--
+ 1 file changed, 198 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index eb1dfe7ecc1b..2835cfa9c492 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -8,6 +8,7 @@
+  *
+  */
  
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 26aeb1408e56..8b65f349cd6e 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -122,6 +122,7 @@ config LOONGARCH
- 	select USE_PERCPU_NUMA_NODE_ID
- 	select USER_STACKTRACE_SUPPORT
- 	select ZONE_DMA32
-+	select COMMON_CLK
++#include <linux/bitfield.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+@@ -37,6 +38,7 @@
+ #define WZRD_CLKOUT_DIVIDE_MASK		(0xff << WZRD_DIVCLK_DIVIDE_SHIFT)
+ #define WZRD_CLKOUT_FRAC_SHIFT		8
+ #define WZRD_CLKOUT_FRAC_MASK		0x3ff
++#define WZRD_CLKOUT0_FRAC_MASK		GENMASK(17, 8)
  
- config 32BIT
- 	bool
-diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
-index 74f34c74679a..0d8b37763086 100644
---- a/arch/loongarch/kernel/time.c
-+++ b/arch/loongarch/kernel/time.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/sched_clock.h>
- #include <linux/spinlock.h>
-+#include <linux/of_clk.h>
+ #define WZRD_DR_MAX_INT_DIV_VALUE	255
+ #define WZRD_DR_STATUS_REG_OFFSET	0x04
+@@ -49,6 +51,22 @@
  
- #include <asm/cpu-features.h>
- #include <asm/loongarch.h>
-@@ -214,6 +215,7 @@ int __init constant_clocksource_init(void)
- 
- void __init time_init(void)
- {
-+	of_clk_init(NULL);
- #ifdef CONFIG_TIMER_PROBE
- 	timer_probe();
- #endif
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 48f8f4221e21..88620f86373f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -428,6 +428,15 @@ config COMMON_CLK_K210
- 	help
- 	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
- 
-+config COMMON_CLK_LOONGSON2
-+	bool "Clock driver for Loongson2 SoC"
-+	depends on COMMON_CLK && OF
-+	help
-+	  This driver provides support for Clock Controller that base on
-+	  Common Clock Framework Controller (CCF) on Loongson2 SoC.  The
-+	  Clock Controller can generates and supplies clock to various
-+	  peripherals within the SoC.
+ #define WZRD_USEC_POLL		10
+ #define WZRD_TIMEOUT_POLL		1000
 +
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/baikal-t1/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index d5db170d38d2..8ccc7436052f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -75,6 +75,7 @@ obj-$(CONFIG_COMMON_CLK_RS9_PCIE)	+= clk-renesas-pcie.o
- obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
- obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
-+obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
++/* Divider limits, from UG572 Table 3-4 for Ultrascale+ */
++#define DIV_O				0x01
++#define DIV_ALL				0x03
++
++#define WZRD_M_MIN			2
++#define WZRD_M_MAX			128
++#define WZRD_D_MIN			1
++#define WZRD_D_MAX			106
++#define WZRD_VCO_MIN			800000000
++#define WZRD_VCO_MAX			1600000000
++#define WZRD_O_MIN			1
++#define WZRD_O_MAX			128
++#define WZRD_MIN_ERR			20000
++#define WZRD_FRAC_POINTS		1000
++
+ /* Get the mask from width */
+ #define div_mask(width)			((1 << (width)) - 1)
  
- # please keep this section sorted lexicographically by directory path name
- obj-y					+= actions/
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-new file mode 100644
-index 000000000000..9b753821052c
---- /dev/null
-+++ b/drivers/clk/clk-loongson2.c
-@@ -0,0 +1,285 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
-+ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <dt-bindings/clock/loongson,ls2k-clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/clk.h>
-+
-+#define LOONGSON2_PLL_MULT_SHIFT		32
-+#define LOONGSON2_PLL_MULT_WIDTH		10
-+#define LOONGSON2_PLL_DIV_SHIFT			26
-+#define LOONGSON2_PLL_DIV_WIDTH			6
-+#define LOONGSON2_APB_FREQSCALE_SHIFT		20
-+#define LOONGSON2_APB_FREQSCALE_WIDTH		3
-+#define LOONGSON2_USB_FREQSCALE_SHIFT		16
-+#define LOONGSON2_USB_FREQSCALE_WIDTH		3
-+#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
-+#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
-+
-+void __iomem *loongson2_pll_base;
-+static DEFINE_SPINLOCK(loongson2_clk_lock);
-+static struct clk_hw **hws;
-+static struct clk_hw_onecell_data *clk_hw_data;
-+
-+static struct clk_hw *loongson2_clk_register(struct device *dev,
-+					  const char *name,
-+					  const char *parent_name,
-+					  const struct clk_ops *ops,
-+					  unsigned long flags)
+@@ -97,6 +115,9 @@ struct clk_wzrd {
+  * @width:	width of the divider bit field
+  * @flags:	clk_wzrd divider flags
+  * @table:	array of value/divider pairs, last entry should have div = 0
++ * @valuem:	value of the multiplier
++ * @valued:	value of the common divider
++ * @valueo:	value of the leaf divider
+  * @lock:	register lock
+  */
+ struct clk_wzrd_divider {
+@@ -107,6 +128,9 @@ struct clk_wzrd_divider {
+ 	u8 width;
+ 	u8 flags;
+ 	const struct clk_div_table *table;
++	u32 valuem;
++	u32 valued;
++	u32 valueo;
+ 	spinlock_t *lock;  /* divider lock */
+ };
+ 
+@@ -198,12 +222,151 @@ static long clk_wzrd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return *prate / div;
+ }
+ 
++static int clk_wzrd_get_divisors(struct clk_hw *hw, unsigned long rate,
++				 unsigned long parent_rate)
 +{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	unsigned long vco_freq, freq, diff;
++	u32 m, d, o;
++	u64 diff2 = U64_MAX;
++
++	for (m = WZRD_M_MIN; m <= WZRD_M_MAX; m++) {
++		for (d = WZRD_D_MIN; d <= WZRD_D_MAX; d++) {
++			vco_freq = DIV_ROUND_CLOSEST((parent_rate * m), d);
++			if (vco_freq >= WZRD_VCO_MIN && vco_freq <= WZRD_VCO_MAX) {
++				for (o = WZRD_O_MIN; o <= WZRD_O_MAX; o++) {
++					freq = DIV_ROUND_CLOSEST(vco_freq, o);
++					diff = abs(freq - rate);
++
++					if (diff < WZRD_MIN_ERR) {
++						divider->valuem = m;
++						divider->valued = d;
++						divider->valueo = o;
++						return 0;
++					}
++					if (diff < diff2) {
++						divider->valuem = m;
++						divider->valued = d;
++						divider->valueo = o;
++						diff2 = diff;
++					}
++				}
++			}
++		}
++	}
++	return -EBUSY;
++}
++
++static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long rate,
++				       unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	unsigned long vco_freq, rate_div, f, clockout0_div;
++	u32 reg, pre, value;
++	int err;
++
++	err = clk_wzrd_get_divisors(hw, rate, parent_rate);
++	if (err)
++		return err;
++
++	vco_freq = DIV_ROUND_CLOSEST((parent_rate * divider->valuem), divider->valued);
++	rate_div = DIV_ROUND_CLOSEST((vco_freq * WZRD_FRAC_POINTS), rate);
++
++	clockout0_div = rate_div / WZRD_FRAC_POINTS;
++
++	pre = DIV_ROUND_CLOSEST((vco_freq * WZRD_FRAC_POINTS), rate);
++	f = (u32)(pre - (clockout0_div * WZRD_FRAC_POINTS));
++	f = f & WZRD_CLKOUT_FRAC_MASK;
++
++	reg = FIELD_PREP(WZRD_CLKOUT_DIVIDE_MASK, clockout0_div) |
++	      FIELD_PREP(WZRD_CLKOUT0_FRAC_MASK, f);
++
++	writel(reg, divider->base + WZRD_CLK_CFG_REG(2));
++	/* Set divisor and clear phase offset */
++	reg = FIELD_PREP(WZRD_CLKFBOUT_MULT_MASK, divider->valuem) |
++	      FIELD_PREP(WZRD_DIVCLK_DIVIDE_MASK, divider->valued);
++	writel(reg, divider->base + WZRD_CLK_CFG_REG(0));
++	writel(divider->valueo, divider->base + WZRD_CLK_CFG_REG(2));
++	writel(0, divider->base + WZRD_CLK_CFG_REG(3));
++	/* Check status register */
++	err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
++				 value & WZRD_DR_LOCK_BIT_MASK,
++				 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
++	if (err)
++		return -ETIMEDOUT;
++
++	/* Initiate reconfiguration */
++	writel(WZRD_DR_BEGIN_DYNA_RECONF,
++	       divider->base + WZRD_DR_INIT_REG_OFFSET);
++
++	/* Check status register */
++	err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
++				 value & WZRD_DR_LOCK_BIT_MASK,
++				 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
++	if (err)
++		return -ETIMEDOUT;
++
++	return 0;
++}
++
++static int clk_wzrd_dynamic_all(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	unsigned long flags = 0;
 +	int ret;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
 +
-+	/* allocate the divider */
-+	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
-+	if (!hw)
-+		return ERR_PTR(-ENOMEM);
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
 +
-+	init.name = name;
-+	init.ops = ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+	hw->init = &init;
++	ret = clk_wzrd_dynamic_all_nolock(hw, rate, parent_rate);
 +
-+	/* register the clock */
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(hw);
-+		hw = ERR_PTR(ret);
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return ret;
++}
++
++static unsigned long clk_wzrd_recalc_rate_all(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	u32 m, d, o, div, reg, f;
++
++	reg = readl(divider->base + WZRD_CLK_CFG_REG(0));
++	d = FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
++	m = FIELD_GET(WZRD_CLKFBOUT_MULT_MASK, reg);
++	reg = readl(divider->base + WZRD_CLK_CFG_REG(2));
++	o = FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
++	f = FIELD_GET(WZRD_CLKOUT0_FRAC_MASK, reg);
++
++	div = DIV_ROUND_CLOSEST(d * (WZRD_FRAC_POINTS * o + f), WZRD_FRAC_POINTS);
++	return divider_recalc_rate(hw, parent_rate * m, div, divider->table,
++			divider->flags, divider->width);
++}
++
++static long clk_wzrd_round_rate_all(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *prate)
++{
++	return rate;
++}
++
+ static const struct clk_ops clk_wzrd_clk_divider_ops = {
+ 	.round_rate = clk_wzrd_round_rate,
+ 	.set_rate = clk_wzrd_dynamic_reconfig,
+ 	.recalc_rate = clk_wzrd_recalc_rate,
+ };
+ 
++static const struct clk_ops clk_wzrd_clk_div_all_ops = {
++	.round_rate = clk_wzrd_round_rate_all,
++	.set_rate = clk_wzrd_dynamic_all,
++	.recalc_rate = clk_wzrd_recalc_rate_all,
++};
++
+ static unsigned long clk_wzrd_recalc_ratef(struct clk_hw *hw,
+ 					   unsigned long parent_rate)
+ {
+@@ -280,7 +443,7 @@ static struct clk *clk_wzrd_register_divf(struct device *dev,
+ 					  void __iomem *base, u16 offset,
+ 					  u8 shift, u8 width,
+ 					  u8 clk_divider_flags,
+-					  const struct clk_div_table *table,
++					  u32 div_type,
+ 					  spinlock_t *lock)
+ {
+ 	struct clk_wzrd_divider *div;
+@@ -307,7 +470,7 @@ static struct clk *clk_wzrd_register_divf(struct device *dev,
+ 	div->flags = clk_divider_flags;
+ 	div->lock = lock;
+ 	div->hw.init = &init;
+-	div->table = table;
++	div->table = NULL;
+ 
+ 	hw = &div->hw;
+ 	ret =  devm_clk_hw_register(dev, hw);
+@@ -324,7 +487,7 @@ static struct clk *clk_wzrd_register_divider(struct device *dev,
+ 					     void __iomem *base, u16 offset,
+ 					     u8 shift, u8 width,
+ 					     u8 clk_divider_flags,
+-					     const struct clk_div_table *table,
++					     u32 div_type,
+ 					     spinlock_t *lock)
+ {
+ 	struct clk_wzrd_divider *div;
+@@ -337,7 +500,12 @@ static struct clk *clk_wzrd_register_divider(struct device *dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	init.name = name;
+-	init.ops = &clk_wzrd_clk_divider_ops;
++	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
++		init.ops = &clk_divider_ro_ops;
++	else if (div_type == DIV_O)
++		init.ops = &clk_wzrd_clk_divider_ops;
++	else
++		init.ops = &clk_wzrd_clk_div_all_ops;
+ 	init.flags = flags;
+ 	init.parent_names =  &parent_name;
+ 	init.num_parents =  1;
+@@ -349,7 +517,7 @@ static struct clk *clk_wzrd_register_divider(struct device *dev,
+ 	div->flags = clk_divider_flags;
+ 	div->lock = lock;
+ 	div->hw.init = &init;
+-	div->table = table;
++	div->table = NULL;
+ 
+ 	hw = &div->hw;
+ 	ret = devm_clk_hw_register(dev, hw);
+@@ -425,6 +593,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	const char *clk_name;
+ 	void __iomem *ctrl_reg;
+ 	struct clk_wzrd *clk_wzrd;
++	const char *clkout_name;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int nr_outputs;
+ 	unsigned long flags = 0;
+@@ -469,6 +638,26 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
++	ret = of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
++	if (ret || nr_outputs > WZRD_NUM_OUTPUTS) {
++		ret = -EINVAL;
++		goto err_disable_clk;
 +	}
 +
-+	return hw;
-+}
++	clkout_name = kasprintf(GFP_KERNEL, "%s_out0", dev_name(&pdev->dev));
++	if (nr_outputs == 1) {
++		clk_wzrd->clkout[0] = clk_wzrd_register_divider
++				(&pdev->dev, clkout_name,
++				__clk_get_name(clk_wzrd->clk_in1), 0,
++				clk_wzrd->base, WZRD_CLK_CFG_REG(3),
++				WZRD_CLKOUT_DIVIDE_SHIFT,
++				WZRD_CLKOUT_DIVIDE_WIDTH,
++				CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
++				DIV_ALL, &clkwzrd_lock);
 +
-+static struct clk_hw *loongson2_clk_pll_register(const char *name,
-+				const char *parent, void __iomem *reg)
-+{
-+	u64 val;
-+	u32 mult = 1, div = 1;
-+
-+	val = readq((void *)reg);
-+
-+	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
-+			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
-+	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
-+			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
-+
-+	return clk_hw_register_fixed_factor(NULL, name, parent,
-+				CLK_SET_RATE_PARENT, mult, div);
-+}
-+
-+static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u64 val;
-+	u32 mult;
-+	unsigned long rate;
-+
-+	val = readq((void *)(loongson2_pll_base + 0x50));
-+
-+	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
-+			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
-+
-+	rate = parent_rate * (mult + 1);
-+	do_div(rate, 8);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops loongson2_apb_clk_ops = {
-+	.recalc_rate = loongson2_apb_recalc_rate,
-+};
-+
-+static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u64 val;
-+	u32 mult;
-+	unsigned long rate;
-+
-+	val = readq((void *)(loongson2_pll_base + 0x50));
-+
-+	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
-+			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
-+
-+	rate = parent_rate * (mult + 1);
-+	do_div(rate, 8);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops loongson2_usb_clk_ops = {
-+	.recalc_rate = loongson2_usb_recalc_rate,
-+};
-+
-+static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u64 val;
-+	u32 mult;
-+	unsigned long rate;
-+
-+	val = readq((void *)(loongson2_pll_base + 0x50));
-+
-+	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
-+			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
-+
-+	rate = parent_rate * (mult + 1);
-+	do_div(rate, 8);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops loongson2_sata_clk_ops = {
-+	.recalc_rate = loongson2_sata_recalc_rate,
-+};
-+
-+static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (IS_ERR(clks[i]))
-+			pr_err("Loongson2 clk %u: register failed with %ld\n"
-+				, i, PTR_ERR(clks[i]));
-+}
-+
-+static struct clk_hw *loongson2_obtain_fixed_clk_hw(
-+					struct device_node *np,
-+					const char *name)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get_by_name(np, name);
-+	if (IS_ERR(clk))
-+		return ERR_PTR(-ENOENT);
-+
-+	return __clk_get_hw(clk);
-+}
-+
-+static void __init loongson2_clocks_init(struct device_node *np)
-+{
-+	loongson2_pll_base = of_iomap(np, 0);
-+
-+	if (!loongson2_pll_base) {
-+		pr_err("clk: unable to map loongson2 clk registers\n");
-+		goto err;
++		goto out;
 +	}
 +
-+	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
-+					GFP_KERNEL);
-+	if (WARN_ON(!clk_hw_data))
-+		goto err;
-+
-+	clk_hw_data->num = LOONGSON2_CLK_END;
-+	hws = clk_hw_data->hws;
-+
-+	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
-+						"ref_100m");
-+
-+	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base);
-+
-+	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x10);
-+
-+	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x20);
-+
-+	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x30);
-+
-+	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x40);
-+
-+	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node_clk",
-+						"node_pll_clk", 0,
-+						loongson2_pll_base + 0x8, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	/*
-+	 * The hda_clk divisor in the upper 32bits and the clk-prodiver
-+	 * layer code doesn't support 64bit io operation thus a conversion
-+	 * is required that subtract shift by 32 and add 4byte to the hda
-+	 * address
-+	 */
-+	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda_clk",
-+						"ddr_pll_clk", 0,
-+						loongson2_pll_base + 0x22, 12,
-+						7, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu_clk",
-+						"ddr_pll_clk", 0,
-+						loongson2_pll_base + 0x18, 22,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr_clk",
-+						"ddr_pll_clk", 0,
-+						loongson2_pll_base + 0x18, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac_clk",
-+						"dc_pll_clk", 0,
-+						loongson2_pll_base + 0x28, 22,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc_clk",
-+						"dc_pll_clk", 0,
-+						loongson2_pll_base + 0x28, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb_clk",
-+						"gmac_clk",
-+						&loongson2_apb_clk_ops, 0);
-+
-+	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb_clk",
-+						"gmac_clk",
-+						&loongson2_usb_clk_ops, 0);
-+
-+	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata_clk",
-+						"gmac_clk",
-+						&loongson2_sata_clk_ops, 0);
-+
-+	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0_clk",
-+						"pix0_pll_clk", 0,
-+						loongson2_pll_base + 0x38, 0, 6,
-+						CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1_clk",
-+						"pix1_pll_clk", 0,
-+						loongson2_pll_base + 0x48, 0, 6,
-+						CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-+
-+err:
-+	iounmap(loongson2_pll_base);
-+}
-+
-+CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
+ 	reg = readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0));
+ 	reg_f = reg & WZRD_CLKFBOUT_FRAC_MASK;
+ 	reg_f =  reg_f >> WZRD_CLKFBOUT_FRAC_SHIFT;
+@@ -481,19 +670,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 		ret = -ENOMEM;
+ 		goto err_disable_clk;
+ 	}
+-
+-	ret = of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
+-	if (ret || nr_outputs > WZRD_NUM_OUTPUTS) {
+-		ret = -EINVAL;
+-		goto err_disable_clk;
+-	}
+-	if (nr_outputs == 1)
+-		flags = CLK_SET_RATE_PARENT;
+-
+ 	clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
+ 			(&pdev->dev, clk_name,
+ 			 __clk_get_name(clk_wzrd->clk_in1),
+ 			0, mult, 1000);
++	kfree(clk_name);
+ 	if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul])) {
+ 		dev_err(&pdev->dev, "unable to register fixed-factor clock\n");
+ 		ret = PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul]);
+@@ -521,8 +702,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 
+ 	/* register div per output */
+ 	for (i = nr_outputs - 1; i >= 0 ; i--) {
+-		const char *clkout_name;
+-
+ 		clkout_name = kasprintf(GFP_KERNEL, "%s_out%d", dev_name(&pdev->dev), i);
+ 		if (!clkout_name) {
+ 			ret = -ENOMEM;
+@@ -537,7 +716,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 				WZRD_CLKOUT_DIVIDE_SHIFT,
+ 				WZRD_CLKOUT_DIVIDE_WIDTH,
+ 				CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+-				NULL, &clkwzrd_lock);
++				DIV_O, &clkwzrd_lock);
+ 		else
+ 			clk_wzrd->clkout[i] = clk_wzrd_register_divider
+ 				(&pdev->dev, clkout_name,
+@@ -546,7 +725,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 				WZRD_CLKOUT_DIVIDE_SHIFT,
+ 				WZRD_CLKOUT_DIVIDE_WIDTH,
+ 				CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+-				NULL, &clkwzrd_lock);
++				DIV_O, &clkwzrd_lock);
+ 		if (IS_ERR(clk_wzrd->clkout[i])) {
+ 			int j;
+ 
+@@ -560,7 +739,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	kfree(clk_name);
+-
++out:
+ 	clk_wzrd->clk_data.clks = clk_wzrd->clkout;
+ 	clk_wzrd->clk_data.clk_num = ARRAY_SIZE(clk_wzrd->clkout);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_wzrd->clk_data);
 -- 
-2.31.1
+2.17.1
 
