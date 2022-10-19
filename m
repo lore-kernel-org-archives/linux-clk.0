@@ -2,112 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5E1C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 17:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACCFC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 17:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230493AbiJSRGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Oct 2022 13:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37094 "EHLO
+        id S229905AbiJSRHk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 13:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231394AbiJSRGH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 13:06:07 -0400
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B882B15D095
-        for <linux-clk@vger.kernel.org>; Wed, 19 Oct 2022 10:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oRIooemmvL5rYb82UnBnVi3B/Pn+CODMXib3Ofvbw0U=; b=jRhB5LwA1I56IRGjW6uu22Bp1i
-        O/Lm7vrEPFNpa8/r3SIbI37uekZMZj2TPWN9zyBEr2QVhpXRUfAMrqT0uMwmi+BbsqEnJ3SQVjchF
-        kqKr+WA5TqRc+KNACOgb2ny2HEsDLb6gNytY7btRtz+AvQOQyWbp+x1VxRQuCO+qufxgPnds0qPg2
-        V9Wr+5s1UHneAP9G84UQnwaI/BfI4QODs2BIw5BvZNL8Z6PX4GCeaJrcr3CJm81zunwbDOaLFiBw7
-        Nm2srGa/YdGiBvP88sCDzNkNuXHgdOjkp+/4n4FpaDNWcEbZu1+HS7p+BI2D4FUwOKnmInKRAmTfl
-        85RziXeA==;
-Received: from [2600:1700:4830:1658::fb2] (port=55226)
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.95)
-        (envelope-from <david@lechnology.com>)
-        id 1olC4I-00031J-GZ;
-        Wed, 19 Oct 2022 12:37:31 -0400
-Message-ID: <e723900c-41ae-6e01-4415-7a859ab071fd@lechnology.com>
-Date:   Wed, 19 Oct 2022 11:37:28 -0500
+        with ESMTP id S229784AbiJSRHj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 13:07:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 009EF1BFBA6;
+        Wed, 19 Oct 2022 10:07:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F74E61978;
+        Wed, 19 Oct 2022 17:07:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE236C43470;
+        Wed, 19 Oct 2022 17:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666199258;
+        bh=XmJrrbSafjq8zQv0mI05L0CYiojcQ5ZabPJdPGIcFRU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GbUdkRsyHR330P3Tg2l1Tx1JW89l4TQl5CHywB8EFHFHIyI0ZZuf/IqXsPBXx9Gq/
+         z5H//ryh02h6qsWm3V1xSA4g00OOc+UIWkN4sjY7jXgKXTj9PZDwfhnzA3lfNloLN5
+         iwoIOVCufKf8NzUmvMRIc/WNY5BQnwh7bNu6x9NKqztZzOMFPxxzMgduG9biEgRqQq
+         hLiJM6weUGjwOAHyZqruQkImqYLu2nPuvztRcNO/f2OXbcnyUybOShQuXHg0iY4M5f
+         kKjh/pgb4HghVMDCgII7r1fgE0SwIDNvdWv5FEskyBFGn5KKwTtfRwT9qsfwIUPBWE
+         EzVIKXsq5L9HQ==
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     jh80.chung@samsung.com
+Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCHv5 2/6] arm64: dts: socfpga: Add clk-phase-sd-hs property to the sdmmc node
+Date:   Wed, 19 Oct 2022 12:06:53 -0500
+Message-Id: <20221019170657.68014-3-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221019170657.68014-1-dinguyen@kernel.org>
+References: <20221019170657.68014-1-dinguyen@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 02/14] ARM: davinci: drop DAVINCI_DMxxx references
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org
-References: <20221019152947.3857217-1-arnd@kernel.org>
- <20221019152947.3857217-3-arnd@kernel.org>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221019152947.3857217-3-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/19/22 10:29 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Support for all the dm3xx/dm64xx SoCs is no longer
-> available, so drop all other references to those.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+The sdmmc controller's CIU(Card Interface Unit) clock's phase can be
+adjusted through the register in the system manager. Add the binding
+"altr,sysmgr-syscon" to the SDMMC node for the driver to access the
+system manager. Add the "clk-phase-sd-hs" property in the SDMMC node to
+designate the smpsel and drvsel properties for the CIU clock.
 
->   int __init davinci_serial_init(struct platform_device *serial_dev)
-> diff --git a/arch/arm/mach-davinci/usb.c b/arch/arm/mach-davinci/usb.c
-> index a9e5c6e91e5d..9dc14c7977b3 100644
-> --- a/arch/arm/mach-davinci/usb.c
-> +++ b/arch/arm/mach-davinci/usb.c
-> @@ -41,11 +41,6 @@ static struct resource usb_resources[] = {
->   		.flags          = IORESOURCE_IRQ,
->   		.name		= "mc"
->   	},
-> -	{
-> -		/* placeholder for the dedicated CPPI IRQ */
-> -		.flags          = IORESOURCE_IRQ,
-> -		.name		= "dma"
-> -	},
->   };
->   
->   static u64 usb_dmamask = DMA_BIT_MASK(32);
-> @@ -67,14 +62,6 @@ void __init davinci_setup_usb(unsigned mA, unsigned potpgt_ms)
->   	usb_data.power = mA > 510 ? 255 : mA / 2;
->   	usb_data.potpgt = (potpgt_ms + 1) / 2;
->   
-> -	if (cpu_is_davinci_dm646x()) {
-> -		/* Override the defaults as DM6467 uses different IRQs. */
-> -		usb_dev.resource[1].start = DAVINCI_INTC_IRQ(IRQ_DM646X_USBINT);
-> -		usb_dev.resource[2].start = DAVINCI_INTC_IRQ(
-> -							IRQ_DM646X_USBDMAINT);
-> -	} else	/* other devices don't have dedicated CPPI IRQ */
-> -		usb_dev.num_resources = 2;
-> -
->   	platform_device_register(&usb_dev);
->   }
->   
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v5: add back reg_shift
+v4: no change
+v3: removed unnecessary property in "altr,sysmgr-syscon"
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi      | 1 +
+ arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi          | 1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts     | 1 +
+ arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts        | 1 +
+ 5 files changed, 5 insertions(+)
 
-Shouldn't the else case be kept since it applies to *all* "other devices"?
-(and therfore the usb_resources shouldn't be modified either?)
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+index 14c220d87807..55c5e1fdddc7 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+@@ -309,6 +309,7 @@ mmc: mmc@ff808000 {
+ 				 <&clkmgr STRATIX10_SDMMC_CLK>;
+ 			clock-names = "biu", "ciu";
+ 			iommus = <&smmu 5>;
++			altr,sysmgr-syscon = <&sysmgr 0x28 4>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index 48424e459f12..19e7284b4cd5 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -105,6 +105,7 @@ &mmc {
+ 	cap-mmc-highspeed;
+ 	broken-cd;
+ 	bus-width = <4>;
++	clk-phase-sd-hs = <0>, <135>;
+ };
+ 
+ &osc1 {
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+index 7bbec8aafa62..849b46dd8098 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+@@ -313,6 +313,7 @@ mmc: mmc@ff808000 {
+ 				 <&clkmgr AGILEX_SDMMC_CLK>;
+ 			clock-names = "biu", "ciu";
+ 			iommus = <&smmu 5>;
++			altr,sysmgr-syscon = <&sysmgr 0x28 4>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts b/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts
+index 26cd3c121757..07c3f8876613 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts
+@@ -83,6 +83,7 @@ &mmc {
+ 	cap-sd-highspeed;
+ 	broken-cd;
+ 	bus-width = <4>;
++	clk-phase-sd-hs = <0>, <135>;
+ };
+ 
+ &osc1 {
+diff --git a/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts b/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts
+index 62c66e52b656..08c088571270 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts
++++ b/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts
+@@ -74,6 +74,7 @@ &mmc {
+ 	cap-sd-highspeed;
+ 	broken-cd;
+ 	bus-width = <4>;
++	clk-phase-sd-hs = <0>, <135>;
+ };
+ 
+ &osc1 {
+-- 
+2.25.1
 
