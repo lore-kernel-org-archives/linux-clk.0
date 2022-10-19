@@ -2,110 +2,183 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689A9C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 20:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C62BC4167B
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 23:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbiJSUcr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Oct 2022 16:32:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
+        id S231515AbiJSXcC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 19:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229937AbiJSUcr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 16:32:47 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E437317D841;
-        Wed, 19 Oct 2022 13:32:45 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id BC3EA5C00C2;
-        Wed, 19 Oct 2022 16:32:42 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Wed, 19 Oct 2022 16:32:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1666211562; x=1666297962; bh=IL27WN9f+B
-        qy0uOKAIBE5GDrLy9RyB9daIupmpozQDc=; b=ddlsdl7lKAIvSKQ2z5Aeur6EMo
-        CSu/eY9svXExst8mndIHpjf+DzwRkkdYkYUcmEkj88i/Fx17kWhWdOqikeATKMX3
-        Ya+se51EPxKH668+ltxKrglHKHIgqoYDgtT4Kmk0lTCguYPcx8fUjnGQLvz1S5pK
-        Ehsk+Jm/qZLp/UdO7BRP82ayrD7RrsG6YJ5NVFIZLEGKmTnZSK/8uGaQD7qDVQ9t
-        kq3qagwV3dPNXTxVmcnXZqPVB2z0zvPku97X6SQCBaAXHZ5fonoTrbJB5UKszxMH
-        uY+wA3lS+0TaJbJ3mY4Q5IQeCQDGgVH3IVaqK1vUbbE4b8lc9EjxXcwEgd4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1666211562; x=1666297962; bh=IL27WN9f+Bqy0uOKAIBE5GDrLy9R
-        yB9daIupmpozQDc=; b=dpIo7rC3WYIKAPGm75mTGvA2+2fMaExN0+xBpVfTiyTk
-        3D6LOgXP9vjcQ4XoXutmHWV6xhMlXfQsabiGO8qoHP48nprlwk8JqwmolhFibzbs
-        xW3eTeCyg9/+71v9CzyntzdpbOWMIbig0yXLPyWHmME16BuCrYG/snfIdSmRAFPm
-        VfjLFGHA/MyxNh01m/CsuCZrfuCgWw0+BJIp+VRnMglvFFQHzcYI6jkb21QpHwU0
-        x/w7mcC0DceFDT7FwZbKfrMKd4hZ/Gwdp8M1xzqfAC2BI10aMmfmQ0HVrYX8Nhq3
-        J9RrlVXGP0wWvKlF3ndVVuFUTqPhsGL91miQWPogSg==
-X-ME-Sender: <xms:6V5QY-Qv1GkzvsHPobtTjTuYDt9rgbdJvK0TyXjyYwaXpZbyr_d5Sw>
-    <xme:6V5QYzxYhdjrdnwVG47RUUxrM2spxo21CWyEL2nPJzm6r71geKTYqIMXZ-kwcv3QX
-    EihDYHNZdPV6Hh0lvI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeelgedgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:6V5QY73RvFSF5_p6HkfM5SranryEpFl9qeNQNg_lNnKWI9Ok1YYFXQ>
-    <xmx:6V5QY6CH9D0G3WqYxCT_S4mthpVylV8vBqJpijz6_CIZZLm1TtYNRA>
-    <xmx:6V5QY3hDuxbRaDvabcoaHtbwrY2frDr1DfYHkBfviOXabGahPAW5kA>
-    <xmx:6l5QY3hpJXJlQKAD_YfPdqPqibf_jPn1HM3fzMafdzxpKCE7dgwmzQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id E44C0B60086; Wed, 19 Oct 2022 16:32:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1047-g9e4af4ada4-fm-20221005.001-g9e4af4ad
-Mime-Version: 1.0
-Message-Id: <501cc2cd-c3e0-452d-b32a-7234d14e8b9f@app.fastmail.com>
-In-Reply-To: <e723900c-41ae-6e01-4415-7a859ab071fd@lechnology.com>
-References: <20221019152947.3857217-1-arnd@kernel.org>
- <20221019152947.3857217-3-arnd@kernel.org>
- <e723900c-41ae-6e01-4415-7a859ab071fd@lechnology.com>
-Date:   Wed, 19 Oct 2022 22:32:20 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "David Lechner" <david@lechnology.com>,
-        "Arnd Bergmann" <arnd@kernel.org>, "Sekhar Nori" <nsekhar@ti.com>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        linux-arm-kernel@lists.infradead.org,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Kevin Hilman" <khilman@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/14] ARM: davinci: drop DAVINCI_DMxxx references
-Content-Type: text/plain
+        with ESMTP id S230467AbiJSXb5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 19:31:57 -0400
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 759A7170DD6;
+        Wed, 19 Oct 2022 16:31:56 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1322fa1cf6fso22584854fac.6;
+        Wed, 19 Oct 2022 16:31:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9AIp9bMJCr5Y+vVCCDJA4f0wPlmi8lCrHSWYwE065mg=;
+        b=uRj/zRxpP6QRekC7MgZt7r+Z/36KqL0eB1qideNSWgeNnZCJIbLg0n9WGF9R3NSe5z
+         t8rQO7phQ7YmmjZBEMSgXqWAuaVBFDG4JkacEFO1naym1Pwg1Csj5+9dWQUwlGoaKxGT
+         1Ia/lF2OYNPubC2wQ9quoJsz4bSIo5DBfSRNWq/4kKUARpjO+j2kevumpCntKy6mF1Q3
+         5VrK4xn5VERzkRMiVS2L2ubvooXeHvLVqIxdhprTbtcnpo/hl3bsz0Pw5x3P7lMv81+D
+         FFrSWgvIfWKGEXVWLhgO94jPDUEUgeCwJmUFHqb9bZgF+zMnuEG1XOheHLnmezw8ysUT
+         2Mrg==
+X-Gm-Message-State: ACrzQf1PSWhRbWx4B82DxHK5LHagUB0ycXWcDdogyjan/0ICIeM80DtL
+        1FoLJ9KsNUfB9JNvPPuFQw==
+X-Google-Smtp-Source: AMsMyM5bf2O1XCXcTT+EBxdNCZPqKq/zfFpFZLmILpaWROke+ZLdE9yyGbpPQwHfxM5CCj/Csptsuw==
+X-Received: by 2002:a05:6871:90:b0:136:b9e8:a024 with SMTP id u16-20020a056871009000b00136b9e8a024mr22611816oaa.60.1666222315586;
+        Wed, 19 Oct 2022 16:31:55 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id b133-20020aca348b000000b0035494c1202csm7235963oia.42.2022.10.19.16.31.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Oct 2022 16:31:54 -0700 (PDT)
+Received: (nullmailer pid 19946 invoked by uid 1000);
+        Wed, 19 Oct 2022 23:31:53 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, jh80.chung@samsung.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20221019170657.68014-2-dinguyen@kernel.org>
+References: <20221019170657.68014-1-dinguyen@kernel.org> <20221019170657.68014-2-dinguyen@kernel.org>
+Message-Id: <166622207591.14373.6525811988033372211.robh@kernel.org>
+Subject: Re: [PATCHv5 1/6] dt-bindings: mmc: synopsys-dw-mshc: document "altr,sysmgr-syscon"
+Date:   Wed, 19 Oct 2022 18:31:53 -0500
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 19, 2022, at 18:37, David Lechner wrote:
-> On 10/19/22 10:29 AM, Arnd Bergmann wrote:
->>   static u64 usb_dmamask = DMA_BIT_MASK(32);
->> @@ -67,14 +62,6 @@ void __init davinci_setup_usb(unsigned mA, unsigned potpgt_ms)
->>   	usb_data.power = mA > 510 ? 255 : mA / 2;
->>   	usb_data.potpgt = (potpgt_ms + 1) / 2;
->>   
->> -	if (cpu_is_davinci_dm646x()) {
->> -		/* Override the defaults as DM6467 uses different IRQs. */
->> -		usb_dev.resource[1].start = DAVINCI_INTC_IRQ(IRQ_DM646X_USBINT);
->> -		usb_dev.resource[2].start = DAVINCI_INTC_IRQ(
->> -							IRQ_DM646X_USBDMAINT);
->> -	} else	/* other devices don't have dedicated CPPI IRQ */
->> -		usb_dev.num_resources = 2;
->> -
->>   	platform_device_register(&usb_dev);
->>   }
->>   
->
-> Shouldn't the else case be kept since it applies to *all* "other devices"?
-> (and therfore the usb_resources shouldn't be modified either?)
+On Wed, 19 Oct 2022 12:06:52 -0500, Dinh Nguyen wrote:
+> Document the optional "altr,sysmgr-syscon" binding that is used to
+> access the System Manager register that controls the SDMMC clock
+> phase.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v5: document reg shift
+> v4: add else statement
+> v3: document that the "altr,sysmgr-syscon" binding is only applicable to
+>     "altr,socfpga-dw-mshc"
+> v2: document "altr,sysmgr-syscon" in the MMC section
+> ---
+>  .../bindings/mmc/synopsys-dw-mshc.yaml        | 32 +++++++++++++++++--
+>  1 file changed, 29 insertions(+), 3 deletions(-)
+> 
 
-.num_resources is already initialized to 2 from ARRAY_SIZE(),
-so it does not have to be changed afterwards.
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-     Arnd
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
+
+Full log is available here: https://patchwork.ozlabs.org/patch/
+
+
+dwmmc0@ff704000: $nodename:0: 'dwmmc0@ff704000' does not match '^mmc(@.*)?$'
+	arch/arm/boot/dts/socfpga_arria5_socdk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_chameleon96.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_socdk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_sockit.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_socrates.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_sodia.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dtb
+	arch/arm/boot/dts/socfpga_vt.dtb
+
+dwmmc0@ff704000: 'altr,sysmgr-syscon' is a required property
+	arch/arm/boot/dts/socfpga_arria5_socdk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_chameleon96.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_socdk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_sockit.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_socrates.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_sodia.dtb
+
+dwmmc0@ff704000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'broken-cd', 'bus-width', 'cap-mmc-highspeed', 'cap-sd-highspeed', 'cd-gpios', 'fifo-depth', 'resets', 'vmmc-supply', 'vqmmc-supply' were unexpected)
+	arch/arm/boot/dts/socfpga_cyclone5_socdk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_sodia.dtb
+
+dwmmc0@ff704000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'broken-cd', 'bus-width', 'cap-mmc-highspeed', 'cap-sd-highspeed', 'fifo-depth', 'resets', 'vmmc-supply', 'vqmmc-supply' were unexpected)
+	arch/arm/boot/dts/socfpga_arria5_socdk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_chameleon96.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_sockit.dtb
+
+dwmmc0@ff704000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'broken-cd', 'bus-width', 'cap-mmc-highspeed', 'cap-sd-highspeed', 'fifo-depth', 'resets' were unexpected)
+	arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_socrates.dtb
+	arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dtb
+	arch/arm/boot/dts/socfpga_vt.dtb
+
+dwmmc0@ff808000: $nodename:0: 'dwmmc0@ff808000' does not match '^mmc(@.*)?$'
+	arch/arm/boot/dts/socfpga_arria10_chameleonv3.dtb
+	arch/arm/boot/dts/socfpga_arria10_socdk_nand.dtb
+	arch/arm/boot/dts/socfpga_arria10_socdk_qspi.dtb
+	arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dtb
+
+dwmmc0@ff808000: 'altr,sysmgr-syscon' is a required property
+	arch/arm/boot/dts/socfpga_arria10_chameleonv3.dtb
+	arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dtb
+
+dwmmc0@ff808000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'broken-cd', 'bus-width', 'cap-mmc-highspeed', 'cap-sd-highspeed', 'fifo-depth', 'resets' were unexpected)
+	arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dtb
+
+dwmmc0@ff808000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'broken-cd', 'bus-width', 'cap-sd-highspeed', 'fifo-depth', 'resets' were unexpected)
+	arch/arm/boot/dts/socfpga_arria10_chameleonv3.dtb
+
+dwmmc0@ff808000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'fifo-depth', 'resets' were unexpected)
+	arch/arm/boot/dts/socfpga_arria10_socdk_nand.dtb
+	arch/arm/boot/dts/socfpga_arria10_socdk_qspi.dtb
+
+mmc@ff808000: 'altr,sysmgr-syscon' is a required property
+	arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dtb
+	arch/arm64/boot/dts/altera/socfpga_stratix10_swvp.dtb
+	arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dtb
+	arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dtb
+
+mmc@ff808000: Unevaluated properties are not allowed ('altr,dw-mshc-ciu-div', 'altr,dw-mshc-sdr-timing', 'iommus' were unexpected)
+	arch/arm64/boot/dts/altera/socfpga_stratix10_swvp.dtb
+
+mmc@ff808000: Unevaluated properties are not allowed ('iommus' was unexpected)
+	arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dtb
+	arch/arm64/boot/dts/altera/socfpga_stratix10_socdk_nand.dtb
+	arch/arm64/boot/dts/intel/socfpga_agilex_n6000.dtb
+	arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dtb
+	arch/arm64/boot/dts/intel/socfpga_agilex_socdk_nand.dtb
+	arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dtb
+
+mmcsd@40004000: $nodename:0: 'mmcsd@40004000' does not match '^mmc(@.*)?$'
+	arch/arm/boot/dts/lpc4337-ciaa.dtb
+	arch/arm/boot/dts/lpc4350-hitex-eval.dtb
+	arch/arm/boot/dts/lpc4357-ea4357-devkit.dtb
+	arch/arm/boot/dts/lpc4357-myd-lpc4357.dtb
+
+mmcsd@40004000: clock-names:0: 'biu' was expected
+	arch/arm/boot/dts/lpc4337-ciaa.dtb
+	arch/arm/boot/dts/lpc4350-hitex-eval.dtb
+	arch/arm/boot/dts/lpc4357-ea4357-devkit.dtb
+	arch/arm/boot/dts/lpc4357-myd-lpc4357.dtb
+
+mmcsd@40004000: clock-names:1: 'ciu' was expected
+	arch/arm/boot/dts/lpc4337-ciaa.dtb
+	arch/arm/boot/dts/lpc4350-hitex-eval.dtb
+	arch/arm/boot/dts/lpc4357-ea4357-devkit.dtb
+	arch/arm/boot/dts/lpc4357-myd-lpc4357.dtb
+
+mmcsd@40004000: Unevaluated properties are not allowed ('bus-width', 'clock-names', 'resets', 'vmmc-supply' were unexpected)
+	arch/arm/boot/dts/lpc4357-ea4357-devkit.dtb
+	arch/arm/boot/dts/lpc4357-myd-lpc4357.dtb
+
+mmcsd@40004000: Unevaluated properties are not allowed ('clock-names', 'resets' were unexpected)
+	arch/arm/boot/dts/lpc4337-ciaa.dtb
+	arch/arm/boot/dts/lpc4350-hitex-eval.dtb
+
