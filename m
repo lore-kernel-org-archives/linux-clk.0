@@ -2,100 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5BBC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 14:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22E1C4321E
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 15:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbiJSOrW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Oct 2022 10:47:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39720 "EHLO
+        id S232066AbiJSP1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 11:27:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbiJSOrE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 10:47:04 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6005D17A951
-        for <linux-clk@vger.kernel.org>; Wed, 19 Oct 2022 07:33:57 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 3F6718491C;
-        Wed, 19 Oct 2022 16:33:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1666190035;
-        bh=awwLFru55bPIwMLuVbQ5DyvBiqhLo35UcNGcYqGcjbc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Acr397ZbjAblbt8COdPevCB/mgp7sQ+M2yTR0XnG10bZ6DWROCCSorVyP5qQpYTLh
-         u5FzYdTppotpcMjWLGMbT+KYfCFpWFDUY/brIY5o4mrTPNXi7M5TeN1nx/X5B3Q/TJ
-         aq7ELpCWoI2Ha0t06nTjVr8npZe/j92PJuHyy/KvQI6X3RSufL+TkeZo6Tyu0y1qqF
-         ClWpacD7kwyYj8cud4+hFF123MkZmTIX7TLBY1pb2tu8iO0lhI6j+fLUfIr6pV3W+W
-         JiD8BvjPAMzx15dlCknSdpDZruFQFqq7U2ELslUWeTOXbnLmxJJCtFyGtRa9g+Psc5
-         o67gYCWMPtdng==
-Message-ID: <bf2af142-102b-24e0-a9d5-01ad520f7aee@denx.de>
-Date:   Wed, 19 Oct 2022 16:33:53 +0200
+        with ESMTP id S232171AbiJSP1D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 11:27:03 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C75A14C527;
+        Wed, 19 Oct 2022 08:19:53 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id i65so14770074ioa.0;
+        Wed, 19 Oct 2022 08:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KiAtnv3O8MX8nL+R91UDkC4RH0kfqHF5HE/wVPNVO9E=;
+        b=j/plf1bJ20J4G8S6RNOuUW/ahXCuyTBOVehUugkYj9HW+bWZp3E288RhnrDTBBLtg5
+         9XHeMaz5bL09MTVZ66Foxxkam2kIGyuF05IHkTbommDvOd2M/KS3nrfyZWnE9ynFfd9l
+         ZDorP9vGnGy/hXRENdDoE27Wi4rpKfO7FnX3k3Ezx5FtwrN/MlaUUrA8jpkV5+kzfRbT
+         nFsTfArSDT1wk8d1GqtiX1lVqrWg/uC0P5JaJ66VouWgEihLxjW5jUNdd/wc9uOaYByT
+         sENKdwS5+l6L4gkskVqUlxLN4ZcQetjAGTlbgMYexcyKNLPPNSF2ZyFpf1DJpYWs5Z+D
+         +WGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KiAtnv3O8MX8nL+R91UDkC4RH0kfqHF5HE/wVPNVO9E=;
+        b=jbjZqL5FXDm/Q3q57sjj+mkK0QCEN7ACC9rmMt4k0v4mjIuhebRYvRLV4pTkBG/jMP
+         1pUwGPMGvbj7O5yXofieqyu9t0tyNOcBwfH/8FSELRNe2kHdp8BZpezZEv+Ad9PGTtFG
+         L0dsOpNCZDp5tPnrmKNdl85lnyOujZLQu7kyzuWsy+IDOvomj01Ly8TkA2+ZYtLMRwfB
+         +vA+RYdnYUj9tsLkfZIBL7QSyFEsFOBNQF9Hg030iUOd9iTu2HW6InIix8lYznVJ74kA
+         7gCxlhlhxv/jGtT4qsZ/fOCHOMEk0jB1dNSYbRilYg7eA8D2g4ecVlEtcyAnkMGVWys7
+         sR/g==
+X-Gm-Message-State: ACrzQf1QYd0C4uHAmM0ynySBTHgLJ7XBuxu/iKWkRIMskRoqhHY0nrCz
+        eN+vEx3NtJ/WL4DGvQRm+Ez1AYwgtiGutolCLyU=
+X-Google-Smtp-Source: AMsMyM5qPsQtuBvKyPQMnBZjaxeLYE52tYSFcHWWnB70BrncG/Hn51NZd/lN2AWIwQJCxd/unWoBGJKg26X7wKRspXA=
+X-Received: by 2002:a05:6638:3452:b0:363:69f8:549f with SMTP id
+ q18-20020a056638345200b0036369f8549fmr6938721jav.190.1666192765289; Wed, 19
+ Oct 2022 08:19:25 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
-Content-Language: en-US
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     linux-clk@vger.kernel.org, abel.vesa@nxp.com, festevam@gmail.com,
-        l.stach@pengutronix.de, laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        mturquette@baylibre.com, ping.bai@nxp.com, sboyd@kernel.org,
-        shawnguo@kernel.org
-References: <20220625013235.710346-1-marex@denx.de>
- <20220625013235.710346-3-marex@denx.de>
- <20220625013235.710346-3-marex@denx.de>
- <CAA+D8ANLrPML3Hp3fYyfiSSUs9V6xAu55d4Y2-8cVVAuTNwaMw@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAA+D8ANLrPML3Hp3fYyfiSSUs9V6xAu55d4Y2-8cVVAuTNwaMw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20221009181338.2896660-8-lis8215@gmail.com> <202210100607.YdxoR0tD-lkp@intel.com>
+ <CAKNVLfaFvge4A8-QUzeq-JManpuYMGvyHXCJi-ew==CWN8-M=A@mail.gmail.com>
+ <bb9f79d4-82a9-4790-b849-d517333ea2d4@app.fastmail.com> <GSPOJR.M4XZ4D03G60F@crapouillou.net>
+ <CAKNVLfZukazKx2yDBrLZc7J9=3cCvMgZbdghtt1YO7WivdPjvw@mail.gmail.com>
+ <CAKNVLfbePJQN07GfhqAs-opm23poWsL0o-DkV=n-f9+H7Y7rpg@mail.gmail.com> <555WJR.ESJD0KDHOG3S@crapouillou.net>
+In-Reply-To: <555WJR.ESJD0KDHOG3S@crapouillou.net>
+From:   Siarhei Volkau <lis8215@gmail.com>
+Date:   Wed, 19 Oct 2022 18:19:13 +0300
+Message-ID: <CAKNVLfZ0ndwGUUq0VX3vdvxfDK6Shf61WS_dC5WocChKeYSWJg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] serial: 8250/ingenic: Add support for the
+ JZ4750/JZ4755 SoCs
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+        kbuild-all@lists.01.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/14/22 03:53, Shengjiu Wang wrote:
-> Hi Marek
+=D0=BF=D0=BD, 17 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 12:32, Paul Cercue=
+il <paul@crapouillou.net>:
+> > I checked that approach: serial seems to be working as expected,
+> > but not all the time: there's a time period when the CGU driver
+> > started but serial console driver is still early one.
+> > In my case UART produces garbage at that period since CGU
+> > needs to enable clock divider back: ext is 24MHz but 12MHz
+> > required for audio codec and USB to function properly.
+>
+> What I'd do, is just force-enable it to 12 MHz in ingenic_fixup_fdt(),
+> since the programming manual basically says that 24 MHz does not work
+> properly.
+>
+> Then in the earlycon setup code hardcode the /2 divider with a big fat
+> comment about why it's there.
 
-Hi,
+Agree, the vendor's kernel does that as well.
 
-[...]
-
->> +static const struct clk_parent_data clk_imx8mp_audiomix_pll_parents[] = {
->> +       { .fw_name = "osc_24m", .name = "osc_24m" },
->> +       { .name = "dummy" },
->> +       { .name = "dummy" },
->> +       { .name = "dummy" },
->> +};
->> +
->> +static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[]
->> = {
->> +       { .fw_name = "sai_pll", .name = "sai_pll" },
->> +       { .fw_name = "sai_pll_ref_sel", .name = "sai_pll_ref_sel" },
->> +};
->> +
->> +#define CLK_GATE(gname, cname)                                         \
->> +       {                                                               \
->> +               gname"_cg",                                             \
->> +               IMX8MP_CLK_AUDIOMIX_##cname,                            \
->> +               { .fw_name = "ahb", .name = "ahb" }, NULL, 1,           \
->>
->> { .fw_name = "audio_root_clk", .name = "audio_root_clk" }, NULL, 1,
->>       \
->>
->> Should be the 'audio_root_clk' better?
->>
->> Then the 'clocks' and 'clock-names' can be removed in dts node?
->>
->> Will you continue to follow up this patch series?
-
-Sure. Did anyone from NXP finally test this patch series, and can 
-provide useful review ?
-
-I am somewhat unhappy with the feedback I got thus far, which is based 
-on downstream kernel fork, different power domain driver and different 
-audiomix driver. I would really appreciate feedback for THIS driver instead.
+Also I found that:
+1. Many other drivers compile the early console only when
+CONFIG_SERIAL_8250_CONSOLE is set.
+2. All the early ingenic_ functions can be labeled as __init.
+Shall I fix that while I'm already here?
