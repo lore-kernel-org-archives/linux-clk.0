@@ -2,89 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5153FC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 17:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689A9C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 20:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbiJSRHy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Oct 2022 13:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43202 "EHLO
+        id S230222AbiJSUcr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 16:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbiJSRHr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 13:07:47 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8101C25DF;
-        Wed, 19 Oct 2022 10:07:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E3572B82569;
-        Wed, 19 Oct 2022 17:07:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A62C433D6;
-        Wed, 19 Oct 2022 17:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666199263;
-        bh=NBiNwt7o0VNrUfZVe+mze7hfm/agY6VvLH9+RfpkjI4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XDO4lZI7Y+1o0w/32vAGAx5EDuVyphtGY+VGYBpbXLcRmeqKpQfEGyHGeQS/49/4p
-         c0cPG5HOjo/6+hYy5oyrfZklgqYZuuZmXNn7OjTTybluP383b2PvZi3GfPqgR/LKe4
-         v5oWAlpHGXGb09aidwHCFup7X25IBw4gsHM0YykI6RUw6BkJkiP+C/pnA54t3j335k
-         nqy9FWaQVZaHqs3iGGJ8BSNGm0EkqrGYlHel+8ALJczCBZ+AaZ6DPMhKl3NkylD9Cp
-         5sYpOyyHNvx5j9ELvxaxNGynJJdr3vmY9uBUtVfsyCMDWZSe+e9bMxq7xgn8MWaqhe
-         k0aNSV6BzO2xQ==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     jh80.chung@samsung.com
-Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCHv5 6/6] arm: dts: socfpga: remove "clk-phase" in sdmmc_clk
-Date:   Wed, 19 Oct 2022 12:06:57 -0500
-Message-Id: <20221019170657.68014-7-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221019170657.68014-1-dinguyen@kernel.org>
-References: <20221019170657.68014-1-dinguyen@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S229937AbiJSUcr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 16:32:47 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E437317D841;
+        Wed, 19 Oct 2022 13:32:45 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id BC3EA5C00C2;
+        Wed, 19 Oct 2022 16:32:42 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Wed, 19 Oct 2022 16:32:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1666211562; x=1666297962; bh=IL27WN9f+B
+        qy0uOKAIBE5GDrLy9RyB9daIupmpozQDc=; b=ddlsdl7lKAIvSKQ2z5Aeur6EMo
+        CSu/eY9svXExst8mndIHpjf+DzwRkkdYkYUcmEkj88i/Fx17kWhWdOqikeATKMX3
+        Ya+se51EPxKH668+ltxKrglHKHIgqoYDgtT4Kmk0lTCguYPcx8fUjnGQLvz1S5pK
+        Ehsk+Jm/qZLp/UdO7BRP82ayrD7RrsG6YJ5NVFIZLEGKmTnZSK/8uGaQD7qDVQ9t
+        kq3qagwV3dPNXTxVmcnXZqPVB2z0zvPku97X6SQCBaAXHZ5fonoTrbJB5UKszxMH
+        uY+wA3lS+0TaJbJ3mY4Q5IQeCQDGgVH3IVaqK1vUbbE4b8lc9EjxXcwEgd4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1666211562; x=1666297962; bh=IL27WN9f+Bqy0uOKAIBE5GDrLy9R
+        yB9daIupmpozQDc=; b=dpIo7rC3WYIKAPGm75mTGvA2+2fMaExN0+xBpVfTiyTk
+        3D6LOgXP9vjcQ4XoXutmHWV6xhMlXfQsabiGO8qoHP48nprlwk8JqwmolhFibzbs
+        xW3eTeCyg9/+71v9CzyntzdpbOWMIbig0yXLPyWHmME16BuCrYG/snfIdSmRAFPm
+        VfjLFGHA/MyxNh01m/CsuCZrfuCgWw0+BJIp+VRnMglvFFQHzcYI6jkb21QpHwU0
+        x/w7mcC0DceFDT7FwZbKfrMKd4hZ/Gwdp8M1xzqfAC2BI10aMmfmQ0HVrYX8Nhq3
+        J9RrlVXGP0wWvKlF3ndVVuFUTqPhsGL91miQWPogSg==
+X-ME-Sender: <xms:6V5QY-Qv1GkzvsHPobtTjTuYDt9rgbdJvK0TyXjyYwaXpZbyr_d5Sw>
+    <xme:6V5QYzxYhdjrdnwVG47RUUxrM2spxo21CWyEL2nPJzm6r71geKTYqIMXZ-kwcv3QX
+    EihDYHNZdPV6Hh0lvI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeelgedgudehtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:6V5QY73RvFSF5_p6HkfM5SranryEpFl9qeNQNg_lNnKWI9Ok1YYFXQ>
+    <xmx:6V5QY6CH9D0G3WqYxCT_S4mthpVylV8vBqJpijz6_CIZZLm1TtYNRA>
+    <xmx:6V5QY3hDuxbRaDvabcoaHtbwrY2frDr1DfYHkBfviOXabGahPAW5kA>
+    <xmx:6l5QY3hpJXJlQKAD_YfPdqPqibf_jPn1HM3fzMafdzxpKCE7dgwmzQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id E44C0B60086; Wed, 19 Oct 2022 16:32:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1047-g9e4af4ada4-fm-20221005.001-g9e4af4ad
+Mime-Version: 1.0
+Message-Id: <501cc2cd-c3e0-452d-b32a-7234d14e8b9f@app.fastmail.com>
+In-Reply-To: <e723900c-41ae-6e01-4415-7a859ab071fd@lechnology.com>
+References: <20221019152947.3857217-1-arnd@kernel.org>
+ <20221019152947.3857217-3-arnd@kernel.org>
+ <e723900c-41ae-6e01-4415-7a859ab071fd@lechnology.com>
+Date:   Wed, 19 Oct 2022 22:32:20 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "David Lechner" <david@lechnology.com>,
+        "Arnd Bergmann" <arnd@kernel.org>, "Sekhar Nori" <nsekhar@ti.com>,
+        "Bartosz Golaszewski" <brgl@bgdev.pl>,
+        linux-arm-kernel@lists.infradead.org,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Kevin Hilman" <khilman@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/14] ARM: davinci: drop DAVINCI_DMxxx references
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the SDMMC driver can use the "clk-phase-sd-hs" binding, we don't
-need the clk-phase in the sdmmc_clk anymore.
+On Wed, Oct 19, 2022, at 18:37, David Lechner wrote:
+> On 10/19/22 10:29 AM, Arnd Bergmann wrote:
+>>   static u64 usb_dmamask = DMA_BIT_MASK(32);
+>> @@ -67,14 +62,6 @@ void __init davinci_setup_usb(unsigned mA, unsigned potpgt_ms)
+>>   	usb_data.power = mA > 510 ? 255 : mA / 2;
+>>   	usb_data.potpgt = (potpgt_ms + 1) / 2;
+>>   
+>> -	if (cpu_is_davinci_dm646x()) {
+>> -		/* Override the defaults as DM6467 uses different IRQs. */
+>> -		usb_dev.resource[1].start = DAVINCI_INTC_IRQ(IRQ_DM646X_USBINT);
+>> -		usb_dev.resource[2].start = DAVINCI_INTC_IRQ(
+>> -							IRQ_DM646X_USBDMAINT);
+>> -	} else	/* other devices don't have dedicated CPPI IRQ */
+>> -		usb_dev.num_resources = 2;
+>> -
+>>   	platform_device_register(&usb_dev);
+>>   }
+>>   
+>
+> Shouldn't the else case be kept since it applies to *all* "other devices"?
+> (and therfore the usb_resources shouldn't be modified either?)
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v5: new
----
- arch/arm/boot/dts/socfpga.dtsi         | 1 -
- arch/arm/boot/dts/socfpga_arria10.dtsi | 1 -
- 2 files changed, 2 deletions(-)
+.num_resources is already initialized to 2 from ARRAY_SIZE(),
+so it does not have to be changed afterwards.
 
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index 604fc6e0c4ad..a2419a5c6c26 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -453,7 +453,6 @@ sdmmc_clk: sdmmc_clk {
- 						compatible = "altr,socfpga-gate-clk";
- 						clocks = <&f2s_periph_ref_clk>, <&main_nand_sdmmc_clk>, <&per_nand_mmc_clk>;
- 						clk-gate = <0xa0 8>;
--						clk-phase = <0 135>;
- 					};
- 
- 					sdmmc_clk_divided: sdmmc_clk_divided {
-diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
-index b6ebe207e2bc..eb528c103d70 100644
---- a/arch/arm/boot/dts/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
-@@ -365,7 +365,6 @@ sdmmc_clk: sdmmc_clk {
- 						compatible = "altr,socfpga-a10-gate-clk";
- 						clocks = <&sdmmc_free_clk>;
- 						clk-gate = <0xC8 5>;
--						clk-phase = <0 135>;
- 					};
- 
- 					qspi_clk: qspi_clk {
--- 
-2.25.1
-
+     Arnd
