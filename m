@@ -2,87 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8C2C4167E
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 13:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5BBC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 14:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232076AbiJSNtn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Oct 2022 09:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        id S230245AbiJSOrW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 10:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233691AbiJSNs5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 09:48:57 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32711BBEE2;
-        Wed, 19 Oct 2022 06:32:53 -0700 (PDT)
-Received: (Authenticated sender: kory.maincent@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 86302E0018;
-        Wed, 19 Oct 2022 13:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1666186345;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=B4WZT0ijc4vr+yQWHuy8C2QHY5BLhRbeTNROpcFndPc=;
-        b=o3EnyrFn/BZ9wLYgskdr/Yz5E2HEnUC5VDVvCSe8kK/Cb+eCeTeiAOXfBVDsZsyN2MVyQP
-        aqWJDiXVy3b5y0ur4ojErVDDM0D3m8bfwbjaCEHHBJ8VV9y/DX627pFzvk9FWqgcKtkQWT
-        OcfkX6R5VEinSeWGSkfxXjIOUq7MKK9saWMOiVwa5i7TPWWfLWn90phJNE8Q89LlqYW9Yi
-        MgzEjUAObg+mIs6a31IHZljlVNygBUTGZXfjUwiDCjG1prvKn+jBd6ePiwCgyDTmPZNlWj
-        q0/18vCqFMUhdMyinLWf0/IoM3/pVCqOAKiulwoxmp264zzK09+50pSJoQOpkg==
-From:   =?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     thomas.petazzoni@bootlin.com,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 6/6] clk: spear: Fix SSP clock definition on SPEAr600
-Date:   Wed, 19 Oct 2022 15:32:08 +0200
-Message-Id: <20221019133208.319626-7-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221019133208.319626-1-kory.maincent@bootlin.com>
-References: <20221019133208.319626-1-kory.maincent@bootlin.com>
+        with ESMTP id S230319AbiJSOrE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 10:47:04 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6005D17A951
+        for <linux-clk@vger.kernel.org>; Wed, 19 Oct 2022 07:33:57 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 3F6718491C;
+        Wed, 19 Oct 2022 16:33:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1666190035;
+        bh=awwLFru55bPIwMLuVbQ5DyvBiqhLo35UcNGcYqGcjbc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Acr397ZbjAblbt8COdPevCB/mgp7sQ+M2yTR0XnG10bZ6DWROCCSorVyP5qQpYTLh
+         u5FzYdTppotpcMjWLGMbT+KYfCFpWFDUY/brIY5o4mrTPNXi7M5TeN1nx/X5B3Q/TJ
+         aq7ELpCWoI2Ha0t06nTjVr8npZe/j92PJuHyy/KvQI6X3RSufL+TkeZo6Tyu0y1qqF
+         ClWpacD7kwyYj8cud4+hFF123MkZmTIX7TLBY1pb2tu8iO0lhI6j+fLUfIr6pV3W+W
+         JiD8BvjPAMzx15dlCknSdpDZruFQFqq7U2ELslUWeTOXbnLmxJJCtFyGtRa9g+Psc5
+         o67gYCWMPtdng==
+Message-ID: <bf2af142-102b-24e0-a9d5-01ad520f7aee@denx.de>
+Date:   Wed, 19 Oct 2022 16:33:53 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
+Content-Language: en-US
+To:     Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     linux-clk@vger.kernel.org, abel.vesa@nxp.com, festevam@gmail.com,
+        l.stach@pengutronix.de, laurent.pinchart@ideasonboard.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        mturquette@baylibre.com, ping.bai@nxp.com, sboyd@kernel.org,
+        shawnguo@kernel.org
+References: <20220625013235.710346-1-marex@denx.de>
+ <20220625013235.710346-3-marex@denx.de>
+ <20220625013235.710346-3-marex@denx.de>
+ <CAA+D8ANLrPML3Hp3fYyfiSSUs9V6xAu55d4Y2-8cVVAuTNwaMw@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAA+D8ANLrPML3Hp3fYyfiSSUs9V6xAu55d4Y2-8cVVAuTNwaMw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Kory Maincent <kory.maincent@bootlin.com>
+On 10/14/22 03:53, Shengjiu Wang wrote:
+> Hi Marek
 
-There is no SPEAr600 device named "ssp-pl022.x". Instead, the description
-of the SSP (Synchronous Serial Port) was recently added to the Device Tree,
-and the device name is "xxx.spi", so we should associate the SSP gateable
-clock to these device names.
+Hi,
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/clk/spear/spear6xx_clock.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[...]
 
-diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-index ee0ed89f2954..adfa118520c3 100644
---- a/drivers/clk/spear/spear6xx_clock.c
-+++ b/drivers/clk/spear/spear6xx_clock.c
-@@ -326,13 +326,13 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
- 
- 	clk = clk_register_gate(NULL, "ssp0_clk", "apb_clk", 0, PERIP1_CLK_ENB,
- 			SSP0_CLK_ENB, 0, &_lock);
--	clk_register_clkdev(clk, NULL, "ssp-pl022.0");
-+	clk_register_clkdev(clk, NULL, "d0100000.spi");
- 
- 	clk = clk_register_gate(NULL, "ssp1_clk", "apb_clk", 0, PERIP1_CLK_ENB,
- 			SSP1_CLK_ENB, 0, &_lock);
--	clk_register_clkdev(clk, NULL, "ssp-pl022.1");
-+	clk_register_clkdev(clk, NULL, "d0180000.spi");
- 
- 	clk = clk_register_gate(NULL, "ssp2_clk", "apb_clk", 0, PERIP1_CLK_ENB,
- 			SSP2_CLK_ENB, 0, &_lock);
--	clk_register_clkdev(clk, NULL, "ssp-pl022.2");
-+	clk_register_clkdev(clk, NULL, "d8180000.spi");
- }
--- 
-2.25.1
+>> +static const struct clk_parent_data clk_imx8mp_audiomix_pll_parents[] = {
+>> +       { .fw_name = "osc_24m", .name = "osc_24m" },
+>> +       { .name = "dummy" },
+>> +       { .name = "dummy" },
+>> +       { .name = "dummy" },
+>> +};
+>> +
+>> +static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[]
+>> = {
+>> +       { .fw_name = "sai_pll", .name = "sai_pll" },
+>> +       { .fw_name = "sai_pll_ref_sel", .name = "sai_pll_ref_sel" },
+>> +};
+>> +
+>> +#define CLK_GATE(gname, cname)                                         \
+>> +       {                                                               \
+>> +               gname"_cg",                                             \
+>> +               IMX8MP_CLK_AUDIOMIX_##cname,                            \
+>> +               { .fw_name = "ahb", .name = "ahb" }, NULL, 1,           \
+>>
+>> { .fw_name = "audio_root_clk", .name = "audio_root_clk" }, NULL, 1,
+>>       \
+>>
+>> Should be the 'audio_root_clk' better?
+>>
+>> Then the 'clocks' and 'clock-names' can be removed in dts node?
+>>
+>> Will you continue to follow up this patch series?
 
+Sure. Did anyone from NXP finally test this patch series, and can 
+provide useful review ?
+
+I am somewhat unhappy with the feedback I got thus far, which is based 
+on downstream kernel fork, different power domain driver and different 
+audiomix driver. I would really appreciate feedback for THIS driver instead.
