@@ -2,119 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE07C43219
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 15:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E60C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Oct 2022 17:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232566AbiJSPqQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Oct 2022 11:46:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34394 "EHLO
+        id S230139AbiJSRGA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Oct 2022 13:06:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231402AbiJSPps (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 11:45:48 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B7051CFF21;
-        Wed, 19 Oct 2022 08:40:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D23EFB824B0;
-        Wed, 19 Oct 2022 15:39:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78462C433D6;
-        Wed, 19 Oct 2022 15:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666193975;
-        bh=R5mUdvcbU/2/tJ5ejtkz4jCaK/oLwR1v0C5V24F/6/k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Zjb61FJnSBefpHHnl1oA1kqetSFgeFF//FrU7kAN9jPwJ8ucHxBbhv3DNoABZ7Xvr
-         7UEj06IcirGVTOiz+Beq5LEQGjoMaqygdMVoVt4J192L3atmvpTDsLINx3sdkT//Fl
-         WP1htq1Nev9xjix5Qh5Lwxntmow9dH5Zd7UvO886IrNjriWoqt+I8xc7Hwo29Xv5BI
-         yC58Nmz4w9y7E5MSTGAegHwpuOFF095SCKQ5XJFPMYccIvsjAI4cXrtydl2qJefsbn
-         I5HBje7WUSFQH3Z4CDN1Hn1fLHnxqL4j8adgWZqVY13ekYxs6qYcT6H5S2WBGbyg03
-         N0amDzKZZNaQQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        with ESMTP id S230493AbiJSRF5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Oct 2022 13:05:57 -0400
+X-Greylist: delayed 1576 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Oct 2022 10:05:49 PDT
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412381578A5;
+        Wed, 19 Oct 2022 10:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=++P8P8qjfNt1suFBjhkyQfz1Y5h3Np7YkfW/laOGHwk=; b=Trqs8jTjgRTZsnIk3NHCQV0jjm
+        rzksNYJYBhbwplL/YGv7o1oKiybfQvH1BVguYJCczKhDczOymMFI06JapYcx1JwihFAlKjEwb/hu3
+        jn2MBHoBoedNl74jOSqMKo0GkmBF6wB8cBZ8yrGI9W5pVWqjvlx7ktAIoYn+OiZ19qFhMdvdw3hI2
+        9w1VaiWZaxSGG5vqarpMsaUX4wGla5cXc8iZyTLN0tqUBzodFP78sqlA4MAFSQssKHhl/p9QzApR2
+        O/Xv7N2MltlenQjZrS+1faRCczzZ2NYGot2MsEoG0CTjCLWfgGBUZVvvoaccZ6ZliGfdQwGWCA65l
+        XOYOeA5w==;
+Received: from [2600:1700:4830:1658::fb2] (port=50850)
+        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.95)
-        (envelope-from <maz@kernel.org>)
-        id 1olBAK-0001Wd-VX;
-        Wed, 19 Oct 2022 16:39:33 +0100
-Date:   Wed, 19 Oct 2022 16:39:32 +0100
-Message-ID: <867d0vg6vf.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        David Lechner <david@lechnology.com>,
+        (envelope-from <david@lechnology.com>)
+        id 1olC6D-0003V7-8h;
+        Wed, 19 Oct 2022 12:39:29 -0400
+Message-ID: <0586f41d-e316-b6b9-b962-f50766a680ed@lechnology.com>
+Date:   Wed, 19 Oct 2022 11:39:27 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 04/14] clk: remove davinci dm3xx drivers
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-arm-kernel@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Lee Jones <lee@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bin Liu <b-liu@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-media@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-usb@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH 00/14] ARM: remove unused davinci board & drivers
-In-Reply-To: <20221019152947.3857217-1-arnd@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org
 References: <20221019152947.3857217-1-arnd@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: arnd@kernel.org, nsekhar@ti.com, brgl@bgdev.pl, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, khilman@baylibre.com, arnd@arndb.de, linux@armlinux.org.uk, mchehab@kernel.org, damien.lemoal@opensource.wdc.com, s.shtylyov@omp.ru, david@lechnology.com, mturquette@baylibre.com, sboyd@kernel.org, dmitry.torokhov@gmail.com, tglx@linutronix.de, prabhakar.csengg@gmail.com, lee@kernel.org, a.zummo@towertech.it, alexandre.belloni@bootlin.com, gregkh@linuxfoundation.org, b-liu@ti.com, peter.ujfalusi@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl, yangyingliang@huawei.com, linux-media@vger.kernel.org, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-input@vger.kernel.org, linux-rtc@vger.kernel.org, linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+ <20221019152947.3857217-5-arnd@kernel.org>
+From:   David Lechner <david@lechnology.com>
+In-Reply-To: <20221019152947.3857217-5-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 Oct 2022 16:29:26 +0100,
-Arnd Bergmann <arnd@kernel.org> wrote:
-> 
+On 10/19/22 10:29 AM, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> As part of removing all board files that were previously marked as unused,
-> I looked through the davinci platform and recursively removed everything
-> that has now become unused.
+> The davinci dm3xx machines are all removed, so the clk driver
+> is no longer needed. The da8xx platforms are now using DT
+> exclusively, so those drivers remain untouched.
 > 
-> In particular, this is for all dm3xx support, in addition to the dm64xx
-> support removed previously. The remaining support is now for da8xx using
-> devicetree only, which means a lot of the da8xx specific device support
-> can also go away.
-> 
-> As with the previous series, I can keep patches together in the
-> soc tree, or subsystem maintainers can pick them up individually
-> through their subsystems, whichever they prefer.
-> 
-> Arnd Bergmann (14):
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-[...]
+Reviewed-by: David Lechner <david@lechnology.com>
 
->   irqchip: remove davinci aintc driver
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
