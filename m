@@ -2,452 +2,236 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73412C4167B
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 06:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A40BC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 07:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbiJTGgj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Oct 2022 02:36:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48294 "EHLO
+        id S229726AbiJTH3A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Oct 2022 03:29:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbiJTGgh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 02:36:37 -0400
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8226018C423;
-        Wed, 19 Oct 2022 23:36:34 -0700 (PDT)
-Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8CxKdhx7FBjrvUAAA--.2964S3;
-        Thu, 20 Oct 2022 14:36:33 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+Bq7FBjccEBAA--.7362S3;
-        Thu, 20 Oct 2022 14:36:32 +0800 (CST)
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229705AbiJTH27 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 03:28:59 -0400
+Received: from sender4-op-o18.zoho.com (sender4-op-o18.zoho.com [136.143.188.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2665F16020C;
+        Thu, 20 Oct 2022 00:28:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1666250898; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=kdLYwZDhp24poS9T8vwNHzSbnlFiC/4Yjd/u3EhCyjdTwCeRBjtLyNww/Lb+XV4xEAVL008PRmOu4WOFphoGs9msulBPFAE5TqmG/em+80Xg+TgToJJS/1NxJtveBtqEat1b4dLTNR4CW5rl2fwuQlzZhY6EobORdcpuQxhslfs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1666250898; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=nZtLa+5VE5jTe1U9kil22e7E5Qo/g/1xnIjPfOMmbqo=; 
+        b=ihmhOTnYFJGrWBiwNzKaAbwA5vkF5DxlRgz0Z6fIiSlp9nLnjgt2VMK3kH/rI09SZCLFJ3McoF5MjXdIwrdUW/+UNAhWYkHHJshH12+E2KiotbiiHXHRHf0JyGBmoUd1kjd86X9P9rT7y/2mRWoT43EMiiWouEcxjcE/rZlTN6I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=icenowy.me;
+        spf=pass  smtp.mailfrom=uwu@icenowy.me;
+        dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1666250898;
+        s=zmail; d=icenowy.me; i=uwu@icenowy.me;
+        h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+        bh=nZtLa+5VE5jTe1U9kil22e7E5Qo/g/1xnIjPfOMmbqo=;
+        b=J62xo6WQdPksJQmtX/LFLGb4Kh6jun7d4vJ5aPO8TJowcGj7qcHNiKI9qOu7L59x
+        W11MTETdFscGKX6EhlEVoMfhuf2/MMIf5ju1VidmNa2wJ3oWjI8ny3xLlwIWRWgBsUz
+        +AKuJ6GqRkbuDILAp6opOhFCZbJk+uFU4wOjG7+4=
+Received: from edelgard.fodlan.icenowy.me (112.94.100.46 [112.94.100.46]) by mx.zohomail.com
+        with SMTPS id 1666250896383103.29582748144344; Thu, 20 Oct 2022 00:28:16 -0700 (PDT)
+Message-ID: <23818a08294a6b32aa9c8eaf0f444eaef60080b8.camel@icenowy.me>
+Subject: Re: [PATCH v1 25/30] dt-bindings: pinctrl: Add StarFive JH7110
+ pinctrl bindings
+From:   Icenowy Zheng <uwu@icenowy.me>
+To:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        Yinbo Zhu <zhuyinbo@loongson.cn>
-Subject: [PATCH v3 2/3] clk: clk-loongson2: add clock controller driver support
-Date:   Thu, 20 Oct 2022 14:36:23 +0800
-Message-Id: <20221020063624.17548-2-zhuyinbo@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20221020063624.17548-1-zhuyinbo@loongson.cn>
-References: <20221020063624.17548-1-zhuyinbo@loongson.cn>
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 20 Oct 2022 15:28:07 +0800
+In-Reply-To: <20220930073845.6309-1-hal.feng@linux.starfivetech.com>
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+         <20220930073845.6309-1-hal.feng@linux.starfivetech.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Axf+Bq7FBjccEBAA--.7362S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW3CFy8Gr47GryDCFWUGw1rZwb_yoWkWr18pF
-        yfAay5WrWjqF4UuwsxtryDGrn8AasFk3W7AFW3Ga4qkrZ7Xa4rWrs7AFyxZF4UAaykAFW2
-        vFZagrWUCFs8XwUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
-        1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkE
-        cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
-        0Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC
-        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2
-        Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
-        1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-        Wlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j
-        6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr
-        0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
-        cSsGvfC2KfnxnUUI43ZEXa7IU8mQ6JUUUUU==
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver provides support for clock controller on Loongson2 SoC
-, the Loongson2 SoC uses a 100MHz clock as the PLL reference clock
-, there are five independent PLLs inside, each of which PLL can
-provide up to three sets of frequency dependent clock outputs.
-
-Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
----
- MAINTAINERS                  |   1 +
- arch/loongarch/Kconfig       |   1 +
- arch/loongarch/kernel/time.c |   3 +
- drivers/clk/Kconfig          |   9 ++
- drivers/clk/Makefile         |   1 +
- drivers/clk/clk-loongson2.c  | 285 +++++++++++++++++++++++++++++++++++
- 6 files changed, 300 insertions(+)
- create mode 100644 drivers/clk/clk-loongson2.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b6aae412de9c..f01d60cd5c3b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11911,6 +11911,7 @@ LOONGSON2 SOC SERIES CLOCK DRIVER
- M:	Yinbo Zhu <zhuyinbo@loongson.cn>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
-+F:	drivers/clk/clk-loongson2.c
- F:	include/dt-bindings/clock/loongson,ls2k-clk.h
- 
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 26aeb1408e56..8b65f349cd6e 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -122,6 +122,7 @@ config LOONGARCH
- 	select USE_PERCPU_NUMA_NODE_ID
- 	select USER_STACKTRACE_SUPPORT
- 	select ZONE_DMA32
-+	select COMMON_CLK
- 
- config 32BIT
- 	bool
-diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
-index 786735dcc8d6..09f20bc81798 100644
---- a/arch/loongarch/kernel/time.c
-+++ b/arch/loongarch/kernel/time.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/sched_clock.h>
- #include <linux/spinlock.h>
-+#include <linux/of_clk.h>
- 
- #include <asm/cpu-features.h>
- #include <asm/loongarch.h>
-@@ -214,6 +215,8 @@ int __init constant_clocksource_init(void)
- 
- void __init time_init(void)
- {
-+	of_clk_init(NULL);
-+
- 	if (!cpu_has_cpucfg)
- 		const_clock_freq = cpu_clock_freq;
- 	else
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 48f8f4221e21..88620f86373f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -428,6 +428,15 @@ config COMMON_CLK_K210
- 	help
- 	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
- 
-+config COMMON_CLK_LOONGSON2
-+	bool "Clock driver for Loongson2 SoC"
-+	depends on COMMON_CLK && OF
-+	help
-+	  This driver provides support for Clock Controller that base on
-+	  Common Clock Framework Controller (CCF) on Loongson2 SoC.  The
-+	  Clock Controller can generates and supplies clock to various
-+	  peripherals within the SoC.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/baikal-t1/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index d5db170d38d2..8ccc7436052f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -75,6 +75,7 @@ obj-$(CONFIG_COMMON_CLK_RS9_PCIE)	+= clk-renesas-pcie.o
- obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
- obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
-+obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
- 
- # please keep this section sorted lexicographically by directory path name
- obj-y					+= actions/
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-new file mode 100644
-index 000000000000..9b753821052c
---- /dev/null
-+++ b/drivers/clk/clk-loongson2.c
-@@ -0,0 +1,285 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
-+ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <dt-bindings/clock/loongson,ls2k-clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/clk.h>
-+
-+#define LOONGSON2_PLL_MULT_SHIFT		32
-+#define LOONGSON2_PLL_MULT_WIDTH		10
-+#define LOONGSON2_PLL_DIV_SHIFT			26
-+#define LOONGSON2_PLL_DIV_WIDTH			6
-+#define LOONGSON2_APB_FREQSCALE_SHIFT		20
-+#define LOONGSON2_APB_FREQSCALE_WIDTH		3
-+#define LOONGSON2_USB_FREQSCALE_SHIFT		16
-+#define LOONGSON2_USB_FREQSCALE_WIDTH		3
-+#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
-+#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
-+
-+void __iomem *loongson2_pll_base;
-+static DEFINE_SPINLOCK(loongson2_clk_lock);
-+static struct clk_hw **hws;
-+static struct clk_hw_onecell_data *clk_hw_data;
-+
-+static struct clk_hw *loongson2_clk_register(struct device *dev,
-+					  const char *name,
-+					  const char *parent_name,
-+					  const struct clk_ops *ops,
-+					  unsigned long flags)
-+{
-+	int ret;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
-+
-+	/* allocate the divider */
-+	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
-+	if (!hw)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+	hw->init = &init;
-+
-+	/* register the clock */
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(hw);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
-+static struct clk_hw *loongson2_clk_pll_register(const char *name,
-+				const char *parent, void __iomem *reg)
-+{
-+	u64 val;
-+	u32 mult = 1, div = 1;
-+
-+	val = readq((void *)reg);
-+
-+	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
-+			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
-+	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
-+			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
-+
-+	return clk_hw_register_fixed_factor(NULL, name, parent,
-+				CLK_SET_RATE_PARENT, mult, div);
-+}
-+
-+static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u64 val;
-+	u32 mult;
-+	unsigned long rate;
-+
-+	val = readq((void *)(loongson2_pll_base + 0x50));
-+
-+	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
-+			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
-+
-+	rate = parent_rate * (mult + 1);
-+	do_div(rate, 8);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops loongson2_apb_clk_ops = {
-+	.recalc_rate = loongson2_apb_recalc_rate,
-+};
-+
-+static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u64 val;
-+	u32 mult;
-+	unsigned long rate;
-+
-+	val = readq((void *)(loongson2_pll_base + 0x50));
-+
-+	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
-+			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
-+
-+	rate = parent_rate * (mult + 1);
-+	do_div(rate, 8);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops loongson2_usb_clk_ops = {
-+	.recalc_rate = loongson2_usb_recalc_rate,
-+};
-+
-+static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u64 val;
-+	u32 mult;
-+	unsigned long rate;
-+
-+	val = readq((void *)(loongson2_pll_base + 0x50));
-+
-+	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
-+			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
-+
-+	rate = parent_rate * (mult + 1);
-+	do_div(rate, 8);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops loongson2_sata_clk_ops = {
-+	.recalc_rate = loongson2_sata_recalc_rate,
-+};
-+
-+static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (IS_ERR(clks[i]))
-+			pr_err("Loongson2 clk %u: register failed with %ld\n"
-+				, i, PTR_ERR(clks[i]));
-+}
-+
-+static struct clk_hw *loongson2_obtain_fixed_clk_hw(
-+					struct device_node *np,
-+					const char *name)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get_by_name(np, name);
-+	if (IS_ERR(clk))
-+		return ERR_PTR(-ENOENT);
-+
-+	return __clk_get_hw(clk);
-+}
-+
-+static void __init loongson2_clocks_init(struct device_node *np)
-+{
-+	loongson2_pll_base = of_iomap(np, 0);
-+
-+	if (!loongson2_pll_base) {
-+		pr_err("clk: unable to map loongson2 clk registers\n");
-+		goto err;
-+	}
-+
-+	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
-+					GFP_KERNEL);
-+	if (WARN_ON(!clk_hw_data))
-+		goto err;
-+
-+	clk_hw_data->num = LOONGSON2_CLK_END;
-+	hws = clk_hw_data->hws;
-+
-+	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
-+						"ref_100m");
-+
-+	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base);
-+
-+	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x10);
-+
-+	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x20);
-+
-+	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x30);
-+
-+	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll_clk",
-+						"ref_100m",
-+						loongson2_pll_base + 0x40);
-+
-+	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node_clk",
-+						"node_pll_clk", 0,
-+						loongson2_pll_base + 0x8, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	/*
-+	 * The hda_clk divisor in the upper 32bits and the clk-prodiver
-+	 * layer code doesn't support 64bit io operation thus a conversion
-+	 * is required that subtract shift by 32 and add 4byte to the hda
-+	 * address
-+	 */
-+	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda_clk",
-+						"ddr_pll_clk", 0,
-+						loongson2_pll_base + 0x22, 12,
-+						7, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu_clk",
-+						"ddr_pll_clk", 0,
-+						loongson2_pll_base + 0x18, 22,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr_clk",
-+						"ddr_pll_clk", 0,
-+						loongson2_pll_base + 0x18, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac_clk",
-+						"dc_pll_clk", 0,
-+						loongson2_pll_base + 0x28, 22,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc_clk",
-+						"dc_pll_clk", 0,
-+						loongson2_pll_base + 0x28, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb_clk",
-+						"gmac_clk",
-+						&loongson2_apb_clk_ops, 0);
-+
-+	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb_clk",
-+						"gmac_clk",
-+						&loongson2_usb_clk_ops, 0);
-+
-+	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata_clk",
-+						"gmac_clk",
-+						&loongson2_sata_clk_ops, 0);
-+
-+	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0_clk",
-+						"pix0_pll_clk", 0,
-+						loongson2_pll_base + 0x38, 0, 6,
-+						CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1_clk",
-+						"pix1_pll_clk", 0,
-+						loongson2_pll_base + 0x48, 0, 6,
-+						CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-+
-+err:
-+	iounmap(loongson2_pll_base);
-+}
-+
-+CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
--- 
-2.31.1
+5ZyoIDIwMjItMDktMzDmmJ/mnJ/kupTnmoQgMTU6MzggKzA4MDDvvIxIYWwgRmVuZ+WGmemBk++8
+mgo+IEZyb206IEppYW5sb25nIEh1YW5nIDxqaWFubG9uZy5odWFuZ0BzdGFyZml2ZXRlY2guY29t
+Pgo+IAo+IEFkZCBwaW5jdHJsIGJpbmRpbmdzIGZvciBTdGFyRml2ZSBKSDcxMTAgU29DLgo+IAo+
+IFNpZ25lZC1vZmYtYnk6IEppYW5sb25nIEh1YW5nIDxqaWFubG9uZy5odWFuZ0BzdGFyZml2ZXRl
+Y2guY29tPgo+IFNpZ25lZC1vZmYtYnk6IEhhbCBGZW5nIDxoYWwuZmVuZ0BsaW51eC5zdGFyZml2
+ZXRlY2guY29tPgo+IC0tLQo+IMKgLi4uL3BpbmN0cmwvc3RhcmZpdmUsamg3MTEwLXBpbmN0cmwu
+eWFtbMKgwqDCoMKgwqAgfCAyMDIKPiArKysrKysrKysrKysrKysrKysKPiDCoDEgZmlsZSBjaGFu
+Z2VkLCAyMDIgaW5zZXJ0aW9ucygrKQo+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0Cj4gRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvc3RhcmZpdmUsamg3MTEwLQo+IHBpbmN0
+cmwueWFtbAo+IAo+IGRpZmYgLS1naXQKPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9waW5jdHJsL3N0YXJmaXZlLGpoNzExMC0KPiBwaW5jdHJsLnlhbWwKPiBiL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3N0YXJmaXZlLGpoNzExMC0KPiBwaW5j
+dHJsLnlhbWwKPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uNDgy
+MDEyYWQ4YTE0Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9waW5jdHJsL3N0YXJmaXZlLGpoNzExMC0KPiBwaW5jdHJsLnlhbWwKPiBAQCAt
+MCwwICsxLDIwMiBAQAo+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9ubHkg
+T1IgQlNELTItQ2xhdXNlCj4gKyVZQU1MIDEuMgo+ICstLS0KPiArJGlkOgo+IGh0dHA6Ly9kZXZp
+Y2V0cmVlLm9yZy9zY2hlbWFzL3BpbmN0cmwvc3RhcmZpdmUsamg3MTEwLXBpbmN0cmwueWFtbCMK
+PiArJHNjaGVtYTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwj
+Cj4gKwo+ICt0aXRsZTogU3RhckZpdmUgSkg3MTEwIFBpbiBDb250cm9sbGVyIERldmljZSBUcmVl
+IEJpbmRpbmdzCj4gKwo+ICtkZXNjcmlwdGlvbjogfAo+ICvCoCBCaW5kaW5ncyBmb3IgdGhlIEpI
+NzExMCBSSVNDLVYgU29DIGZyb20gU3RhckZpdmUgVGVjaG5vbG9neSBMdGQuCj4gKwo+ICttYWlu
+dGFpbmVyczoKPiArwqAgLSBKaWFubG9uZyBIdWFuZyA8amlhbmxvbmcuaHVhbmdAc3RhcmZpdmV0
+ZWNoLmNvbT4KPiArCj4gK3Byb3BlcnRpZXM6Cj4gK8KgIGNvbXBhdGlibGU6Cj4gK8KgwqDCoCBl
+bnVtOgo+ICvCoMKgwqAgLSBzdGFyZml2ZSxqaDcxMTAtc3lzLXBpbmN0cmwKPiArwqDCoMKgIC0g
+c3RhcmZpdmUsamg3MTEwLWFvbi1waW5jdHJsCj4gKwo+ICvCoCByZWc6Cj4gK8KgwqDCoCBtaW5J
+dGVtczogMgo+ICvCoMKgwqAgbWF4SXRlbXM6IDIKPiArCj4gK8KgIHJlZy1uYW1lczoKPiArwqDC
+oMKgIGl0ZW1zOgo+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IGNvbnRyb2wKPiArCj4gK8KgIGNsb2Nr
+czoKPiArwqDCoMKgIG1heEl0ZW1zOiAxCj4gKwo+ICvCoCByZXNldHM6Cj4gK8KgwqDCoCBtYXhJ
+dGVtczogMQo+ICsKPiArwqAgIiNncGlvLWNlbGxzIjoKPiArwqDCoMKgIGNvbnN0OiAyCj4gKwo+
+ICvCoCBpbnRlcnJ1cHRzOgo+ICvCoMKgwqAgbWF4SXRlbXM6IDEKPiArwqDCoMKgIGRlc2NyaXB0
+aW9uOiBUaGUgR1BJTyBwYXJlbnQgaW50ZXJydXB0Lgo+ICsKPiArwqAgaW50ZXJydXB0LWNvbnRy
+b2xsZXI6IHRydWUKPiArCj4gK8KgICIjaW50ZXJydXB0LWNlbGxzIjoKPiArwqDCoMKgIGNvbnN0
+OiAyCj4gKwo+ICvCoCBuZ3Bpb3M6Cj4gK8KgwqDCoCBlbnVtOgo+ICvCoMKgwqAgLSA2NAo+ICvC
+oMKgwqAgLSA0Cj4gKwo+ICtyZXF1aXJlZDoKPiArwqAgLSBjb21wYXRpYmxlCj4gK8KgIC0gcmVn
+Cj4gK8KgIC0gcmVnLW5hbWVzCj4gK8KgIC0gY2xvY2tzCj4gK8KgIC0gIiNncGlvLWNlbGxzIgo+
+ICvCoCAtIGludGVycnVwdHMKPiArwqAgLSBpbnRlcnJ1cHQtY29udHJvbGxlcgo+ICvCoCAtICIj
+aW50ZXJydXB0LWNlbGxzIgo+ICsKPiArcGF0dGVyblByb3BlcnRpZXM6Cj4gK8KgICctWzAtOV0r
+JCc6Cj4gK8KgwqDCoCB0eXBlOiBvYmplY3QKPiArwqDCoMKgIHBhdHRlcm5Qcm9wZXJ0aWVzOgo+
+ICvCoMKgwqDCoMKgICctcGlucyQnOgo+ICvCoMKgwqDCoMKgwqDCoCB0eXBlOiBvYmplY3QKPiAr
+wqDCoMKgwqDCoMKgwqAgZGVzY3JpcHRpb246IHwKPiArwqDCoMKgwqDCoMKgwqDCoMKgIEEgcGlu
+Y3RybCBub2RlIHNob3VsZCBjb250YWluIGF0IGxlYXN0IG9uZSBzdWJub2RlCj4gcmVwcmVzZW50
+aW5nIHRoZQo+ICvCoMKgwqDCoMKgwqDCoMKgwqAgcGluY3RybCBncm91cHMgYXZhaWxhYmxlIG9u
+IHRoZSBtYWNoaW5lLiBFYWNoIHN1Ym5vZGUgd2lsbAo+IGxpc3QgdGhlCj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoCBwaW5zIGl0IG5lZWRzLCBhbmQgaG93IHRoZXkgc2hvdWxkIGJlIGNvbmZpZ3VyZWQs
+IHdpdGgKPiByZWdhcmQgdG8KPiArwqDCoMKgwqDCoMKgwqDCoMKgIG11eGVyIGNvbmZpZ3VyYXRp
+b24sIHN5c3RlbSBzaWduYWwgY29uZmlndXJhdGlvbiwgcGluCj4gZ3JvdXBzIGZvcgo+ICvCoMKg
+wqDCoMKgwqDCoMKgwqAgdmluL3ZvdXQgbW9kdWxlLCBwaW4gdm9sdGFnZSwgbXV4IGZ1bmN0aW9u
+cyBmb3Igb3V0cHV0LAo+IG11eCBmdW5jdGlvbnMKPiArwqDCoMKgwqDCoMKgwqDCoMKgIGZvciBv
+dXRwdXQgZW5hYmxlLCBtdXggZnVuY3Rpb25zIGZvciBpbnB1dC4KPiArCj4gK8KgwqDCoMKgwqDC
+oMKgIHByb3BlcnRpZXM6Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxwaW5zOgo+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlc2NyaXB0aW9uOiB8Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIFRoZSBsaXN0IG9mIHBpbiBpZGVudGlmaWVycyB0aGF0IHByb3BlcnRpZXMgaW4g
+dGhlCj4gbm9kZSBhcHBseSB0by4KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVGhpcyBz
+aG91bGQgYmUgc2V0IHVzaW5nIHRoZSBQQURfR1BJT1ggbWFjcm9zLgo+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBUaGlzIGhhcyB0byBiZSBzcGVjaWZpZWQuCj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVmaW5pdGlvbnMvdWludDMyCj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWluaW11bTogMAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIG1heGltdW06IDYzCgpIaSwKCkkgYW0gYWRhcHRpbmcgZm9yIFBpbmU2NCdzIFN0YXI2NCBi
+b2FyZCwgd2hpY2ggdXRpbGl6ZXMgYSBKSDcxMTAgU29DLgoKSXQgZG9lcyBub3QgZmVhdHVyZXMg
+YSBVU0Igb3ZlcmN1cnJlbnQgcGluIGFzIEdQSU8sIHRodXMgdGhpcyBwaW4gbmVlZHMKdG8gYmUg
+cm91dGVkIGluIFBJTyBjb250cm9sbGVyIHRvIGZpeGVkIDEgKGJ5IHdyaXRpbmcgMSB0bwpTWVNf
+SU9NVVhfQ0ZHU0FJRl9fU1lTQ0ZHX0ZNVVhfMzJbMjI6MTZdKS4KCkkgdGhpbmsgdGhpcyBraW5k
+IG9mIHNpdHVhdGlvbiBuZWVkcyB0byBiZSBjb25zaWRlcmVkIGFzIHBhcnQgb2YgRFQKYmluZGlu
+Zy4KCkJUVyBpZiB5b3UgaGF2ZSBhbnkgZGlmZmljdWx0eSByZWZhY3RvcmluZyB0aGUgRFQgYmlu
+ZGluZyB0byBzdGFuZGFyZApwaW5jb25mIG9uZSwgSSBhbSBmcmVlIHRvIHByb3ZpZGUgaGVscC4K
+ClRoYW5rcywKSWNlbm93eSBaaGVuZwoKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2
+ZSxwaW5tdXg6Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGVzY3JpcHRpb246IHwKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVGhlIGxpc3Qgb2YgR1BJT3MgYW5kIHRoZWlyIG11eCBm
+dW5jdGlvbnMgdGhhdAo+IHByb3BlcnRpZXMgaW4gdGhlCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIG5vZGUgYXBwbHkgdG8uIFRoaXMgc2hvdWxkIGJlIHNldCB1c2luZyB0aGUKPiBQQURf
+R1BJT1hfRlVOQ19TRUwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWFjcm8gd2l0aCBp
+dHMgdmFsdWUuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFRoaXMgaXMgb3B0aW9uYWwg
+Zm9yIHNvbWUgcGlucy4KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVGhlIHZhbHVlIG9m
+IFBBRF9HUElPWF9GVU5DX1NFTCBtYWNybyBjYW4gc2VsZWN0czoKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIDA6IEdQSU9YIG11eCBmdW5jdGlvbiAwLAo+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgMTogR1BJT1ggbXV4IGZ1bmN0aW9uIDEsCj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCAyOiBHUElPWCBtdXggZnVuY3Rpb24gMi4KPiArCj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxwaW4taW9jb25maWc6Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgZGVzY3JpcHRpb246IHwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVGhpcyBp
+cyB1c2VkIHRvIGNvbmZpZ3VyZSB0aGUgY29yZSBzZXR0aW5ncyBvZiBzeXN0ZW0KPiBzaWduYWxz
+Lgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBUaGUgY29tYmluYXRpb24gb2YgR1BJT19J
+RSBvciBHUElPX0RTIG9yIEdQSU9fUFUgb3IKPiBHUElPX1BEIG9yCj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIEdQSU9fU0xFVyBvciBHUElPX1NNVCBvciBHUElPX1BPUy4KPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCAkcmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy91
+aW50MzIKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxwYWRtdXg6Cj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgZGVzY3JpcHRpb246IHwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgVGhlIHBhZG11eCBpcyBmb3IgdmluL3ZvdXQgbW9kdWxlIHRvIHNlbGVjdCBwaW4KPiBn
+cm91cHMuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDA6IHZvdXQgd2lsbCBiZSBzZXQg
+YXQgcGlucyBmcm9tIFBBRF9HUElPNyB0bwo+IFBBRF9HUElPMzQsCj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHdoZW4gUEFEX0dQSU9YX0ZVTkNfU0VMIGlzIHNldCBhcyAxLgo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2aW4gd2lsbCBiZSBzZXQgYXQgcGlu
+cyBmcm9tIFBBRF9HUElPNiB0bwo+IFBBRF9HUElPMjAuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHdoZW4gUEFEX0dQSU9YX0ZVTkNfU0VMIGlzIHNldCBhcyAyLgo+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxOiB2b3V0IHdpbGwgYmUgc2V0IGF0IHBpbnMgZnJvbSBQ
+QURfR1BJTzM2IHRvCj4gUEFEX0dQSU82MywKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgd2hlbiBQQURfR1BJT1hfRlVOQ19TRUwgaXMgc2V0IGFzIDEuCj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHZpbiB3aWxsIGJlIHNldCBhdCBwaW5zIGZyb20gUEFEX0dQ
+SU8yMSB0bwo+IFBBRF9HUElPMzUuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHdoZW4gUEFEX0dQSU9YX0ZVTkNfU0VMIGlzIHNldCBhcyAyLgo+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAyOiB2aW4gd2lsbCBiZSBzZXQgYXQgcGlucyBmcm9tIFBBRF9HUElPMzYgdG8K
+PiBQQURfR1BJTzUwLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3aGVuIFBB
+RF9HUElPWF9GVU5DX1NFTCBpcyBzZXQgYXMgMgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICRy
+ZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRpb25zL3VpbnQzMgo+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGVudW06IFswLCAxLCAyXQo+ICsKPiArwqDCoMKgwqDCoMKgwqDCoMKgIHN0
+YXJmaXZlLHBpbi1zeXNjb246Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGVzY3JpcHRpb246
+IHwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVGhpcyBpcyB1c2VkIHRvIHNldCBwaW4g
+dm9sdGFnZSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMDogMy4zViwgMTogMi41Viwg
+MjogMS44Vi4KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAkcmVmOiAvc2NoZW1hcy90eXBlcy55
+YW1sIy9kZWZpbml0aW9ucy91aW50MzIKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbnVtOiBb
+MCwgMSwgMl0KPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxwaW4tZ3Bpby1kb3V0
+Ogo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlc2NyaXB0aW9uOiB8Cj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIFRoaXMgaXMgdXNlZCB0byBzZXQgdGhlaXIgbXV4IGZ1bmN0aW9ucyBm
+b3Igb3V0cHV0Lgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBUaGlzIHNob3VsZCBiZSBz
+ZXQgdXNpbmcgdGhlIEdQT19YWFggbWFjcm8sCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHN1Y2ggYXMgR1BPX0xPVywgR1BPX1VBUlQwX1NPVVQuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVmaW5pdGlvbnMvdWludDMyCj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgbWluaW11bTogMAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1h
+eGltdW06IDEwNwo+ICsKPiArwqDCoMKgwqDCoMKgwqDCoMKgIHN0YXJmaXZlLHBpbi1ncGlvLWRv
+ZW46Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGVzY3JpcHRpb246IHwKPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgVGhpcyBpcyB1c2VkIHRvIHNldCB0aGVpciBtdXggZnVuY3Rpb25z
+IGZvciBvdXRwdXQKPiBlbmFibGUuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFRoaXMg
+c2hvdWxkIGJlIHNldCB1c2luZyB0aGUgT0VOX1hYWCBtYWNybywKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgc3VjaCBhcyBPRU5fTE9XLCBPRU5fSTJDMF9JQ19DTEtfT0UuCj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVmaW5pdGlvbnMv
+dWludDMyCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWluaW11bTogMAo+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIG1heGltdW06IDQ5Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoMKgwqAgc3RhcmZp
+dmUscGluLWdwaW8tZGluOgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlc2NyaXB0aW9uOiB8
+Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFRoaXMgaXMgdXNlZCB0byBzZXQgdGhlaXIg
+bXV4IGZ1bmN0aW9ucyBmb3IgaW5wdXQuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFRo
+aXMgc2hvdWxkIGJlIHNldCB1c2luZyB0aGUgR1BJX1hYWCBtYWNybywKPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgc3VjaCBhcyBHUElfQ0FOMF9DVFJMX1JYRCwgR1BJX0kyQzBfSUNfQ0xL
+X0lOX0EuCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFt
+bCMvZGVmaW5pdGlvbnMvdWludDMyCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWluaW11bTog
+MAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1heGltdW06IDkwCj4gKwo+ICvCoMKgwqDCoMKg
+wqDCoCBhZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKPiArCj4gK8KgwqDCoCBhZGRpdGlvbmFs
+UHJvcGVydGllczogZmFsc2UKPiArCj4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQo+ICsK
+PiArZXhhbXBsZXM6Cj4gK8KgIC0gfAo+ICvCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Ns
+b2NrL3N0YXJmaXZlLWpoNzExMC1zeXMuaD4KPiArwqDCoMKgICNpbmNsdWRlIDxkdC1iaW5kaW5n
+cy9yZXNldC9zdGFyZml2ZS1qaDcxMTAuaD4KPiArwqDCoMKgICNpbmNsdWRlIDxkdC1iaW5kaW5n
+cy9waW5jdHJsL3BpbmN0cmwtc3RhcmZpdmUtamg3MTEwLmg+Cj4gKwo+ICvCoMKgwqAgZ3Bpbzog
+Z3Bpb0AxMzA0MDAwMCB7Cj4gK8KgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcx
+MTAtc3lzLXBpbmN0cmwiOwo+ICvCoMKgwqDCoMKgIHJlZyA9IDwweDAgMHgxMzA0MDAwMCAweDAg
+MHgxMDAwMD47Cj4gK8KgwqDCoMKgwqAgcmVnLW5hbWVzID0gImNvbnRyb2wiOwo+ICvCoMKgwqDC
+oMKgIGNsb2NrcyA9IDwmY2xrZ2VuIEpINzExMF9TWVNfSU9NVVhfUENMSz47Cj4gK8KgwqDCoMKg
+wqAgcmVzZXRzID0gPCZyc3RnZW4gUlNUTl9VMF9TWVNfSU9NVVhfUFJFU0VUTj47Cj4gK8KgwqDC
+oMKgwqAgaW50ZXJydXB0cyA9IDw4Nj47Cj4gK8KgwqDCoMKgwqAgaW50ZXJydXB0LWNvbnRyb2xs
+ZXI7Cj4gK8KgwqDCoMKgwqAgI2dwaW8tY2VsbHMgPSA8Mj47Cj4gK8KgwqDCoMKgwqAgbmdwaW9z
+ID0gPDY0PjsKPiArwqDCoMKgwqDCoCBzdGF0dXMgPSAib2theSI7Cj4gKwo+ICvCoMKgwqDCoMKg
+IHVhcnQwX3BpbnM6IHVhcnQwLXBpbnMgewo+ICvCoMKgwqDCoMKgwqDCoCB1YXJ0MC1waW5zLXR4
+IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgIHN0YXJmaXZlLHBpbnMgPSA8UEFEX0dQSU81PjsKPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgIHN0YXJmaXZlLHBpbi1pb2NvbmZpZyA9IDxJTyhHUElPX0lFKDEp
+IHwgR1BJT19EUygzKSk+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqAgc3RhcmZpdmUscGluLWdwaW8t
+ZG91dCA9IDxHUE9fVUFSVDBfU09VVD47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxw
+aW4tZ3Bpby1kb2VuID0gPE9FTl9MT1c+Owo+ICvCoMKgwqDCoMKgwqDCoCB9Owo+ICsKPiArwqDC
+oMKgwqDCoMKgwqAgdWFydDAtcGlucy1yeCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2
+ZSxwaW5zID0gPFBBRF9HUElPNj47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxwaW5t
+dXggPSA8UEFEX0dQSU82X0ZVTkNfU0VMIDA+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqAgc3RhcmZp
+dmUscGluLWlvY29uZmlnID0gPElPKEdQSU9fSUUoMSkgfCBHUElPX1BVKDEpKT47Cj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoCBzdGFyZml2ZSxwaW4tZ3Bpby1kb2VuID0gPE9FTl9ISUdIPjsKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgIHN0YXJmaXZlLHBpbi1ncGlvLWRpbiA9wqAgPEdQSV9VQVJUMF9TSU4+
+Owo+ICvCoMKgwqDCoMKgwqDCoCB9Owo+ICvCoMKgwqDCoMKgIH07Cj4gK8KgwqDCoCB9Owo+ICsK
+PiArwqDCoMKgICZ1YXJ0MCB7Cj4gK8KgwqDCoMKgwqAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0
+IjsKPiArwqDCoMKgwqDCoCBwaW5jdHJsLTAgPSA8JnVhcnQwX3BpbnM+Owo+ICvCoMKgwqDCoMKg
+IHN0YXR1cyA9ICJva2F5IjsKPiArwqDCoMKgIH07Cj4gKwo+ICsuLi4KCg==
 
