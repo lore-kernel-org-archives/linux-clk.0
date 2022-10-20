@@ -2,193 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED5AC43217
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 09:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD6AC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 11:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbiJTJOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Oct 2022 05:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57766 "EHLO
+        id S231446AbiJTLoQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Oct 2022 07:44:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231215AbiJTJN7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 05:13:59 -0400
-Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3429E1ACAAD;
-        Thu, 20 Oct 2022 02:13:52 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 882442B05E5C;
-        Thu, 20 Oct 2022 05:13:49 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 20 Oct 2022 05:13:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666257229; x=
-        1666264429; bh=37BiTl/8+yRd6z/JmqgJOWpEYV/jaByX4NWqybx8188=; b=Y
-        r7HFLzYKe981sc+wrD+kDFdIU/i9QAzkOhfDjzJZ9iocg5lNsVAYDoLhlrHgjRkd
-        t7IVQYrr1yysOVj6PENg7oeqg/cq/o5oDkaj5XZUCR6evY4USJTxwY7ZbdaCSTnG
-        PUHEXrc1h79NOpNgKma6Dt2z/g1AIG77/C/c7kPRjO82zsAQHTepUNUWGgcZielY
-        vH4tis35CxhpFSwbZaiAuF4/773HUE5pBVsbwgrf4D6uMqBBDYRC5LeocgIjKtKB
-        13XioMr1D+HabW30pHfMXJyMkW66rIkZEZgEKHQ+QLr6iEkRuP1cfepACYABmnfk
-        iJQik0xum/0D1MmM2tMXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666257229; x=
-        1666264429; bh=37BiTl/8+yRd6z/JmqgJOWpEYV/jaByX4NWqybx8188=; b=V
-        Uy54n0G0shaXTiihmx9FRkBx7sAlfpA8V4IW0VPiOmlF3mZCvnjIZiu6VNy99IEM
-        5Y72kAbFoVCd1OIyJkZqhMu6C7T6/KuQzwZHFtPSDd6KZC1sy+lm2lxJJevrrbyg
-        9z2a6cqWNs1Ci2LLhUkfhhg4otpZviolWTNxURN/4oVDEUl4ycpVO5F5/qlggB1z
-        HbAzG4/7JP6u3UdSa5WibXljPYT2J8hGszUbDGefAIiUxzFpixGWkertxCI7YV/e
-        svOHr65I79oAyMBh7Wojc8S8aPb1O2i/G27MKeTe2c+FKugjE2lSXfTTEEi1slXN
-        POeW9RGBoaStVn6vUSOMQ==
-X-ME-Sender: <xms:TBFRYzNTbJJwrDjGo9WX0PKrR8nq8S3vj1WDWGT9mqa9gmNVmRq_jw>
-    <xme:TBFRY99a2d_phSBKR54NntMOP1bgd4vFPMUlUoRXZRGqp6-9GgsbL-qZY18uWzopG
-    c3ia9cYxruiMQrGhXE>
-X-ME-Received: <xmr:TBFRYyRjJLbG0oScQgWD-MyvAP_qKIczc2fnPghCAlQPS6tyCRmkYTMwyzub78wLit1AEiZGTFsSCz0K01fuoq7ltmSl_BUwR9lNtO7IIjtPUw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeliedgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpehmrgig
-    ihhmvgestggvrhhnohdrthgvtghhnecuggftrfgrthhtvghrnhepfeduhfegveehhfeftd
-    euveeuleduuddttedutddvvdegkeehleevhfetkeetiefhnecuvehluhhsthgvrhfuihii
-    vgepudenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvg
-    gthh
-X-ME-Proxy: <xmx:TRFRY3v6oyCp6RapDUhavIDbsLaWoyU_r5HdODsLjHDwzgbQMGLK3g>
-    <xmx:TRFRY7fsgwiSPeegsL8V0i1ixhu9j9H28Wy-DKbhk1AC62YfMBOKsw>
-    <xmx:TRFRYz3QcpLuJ9yeFSebpkq1tBs_9cqfn4mu8BrM9NUJFm9K4zrT4Q>
-    <xmx:TRFRY5_8c89IzPUhh6egmRmHrleFjQkmCsntINY_XOW-QHPAomfjdBmXjyc>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Oct 2022 05:13:48 -0400 (EDT)
-From:   maxime@cerno.tech
-Date:   Thu, 20 Oct 2022 11:12:14 +0200
-Subject: [PATCH v4 6/7] drm/vc4: hdmi: Add more checks for 4k resolutions
+        with ESMTP id S231339AbiJTLoP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 07:44:15 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5671DDDC0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Oct 2022 04:44:13 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id p4so8796890uao.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Oct 2022 04:44:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgkVAHFYBzf7xeOTCAVuEnoDAv9oQxRnYlVtkTlACqw=;
+        b=adkWWjuBVJKWz+k29lkHpJZgLvsE8Unbi89248gPAsGG+Q1WrPz8aHa7KSXTZB9Ybo
+         XUBs+EDDpB1Yf54vr2axcGH5pvrRAPAMqRCtHtMYGfvmMEXNFpCYv0xoiYHO4p9bhIpI
+         Pi1XwEvVAg/DzG3e2TFQZ+2f1x67lvNywKraCr7ctek3W6ta0lz7zaijz93ciR44sJzB
+         e/fDnOZU5o5wK1IMW5aVsiKptKlhYl58AlztWcKDa5g3fRZeT2vYOvz0H3GJcSYismQR
+         y2DPoimdeDBHQVsBXoYSIqbEmPqPLL7ndZvfLgjPUFSa6nf262WrpcrDCZ1DIEUxkROC
+         E+PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SgkVAHFYBzf7xeOTCAVuEnoDAv9oQxRnYlVtkTlACqw=;
+        b=JWAilyJkTLt/A+LN3fsEYBmhB5ETfHeDvynwtb/i1ROOoIeJu9KiBYih5UM5ys0WT0
+         jQ9Qp9U55PQe6dAIaMJ88OkbDS9KjTyT5bN8/WyiH+52rGwf7er1QFtrdjt9L/DruV0T
+         fJ5KUuApe56YtIWwMDUx/GPBGD8Z6nAoPGBS1YuUA3hRRYC0bPc/xW+fiX2ZQAWvT8+S
+         gp/jg6D/8w/K14f4KwCJQmG3PxfO3+Rr6hA+R4ku8AmSjg+nIOxyDCToBOSRFehfMapE
+         b6lLZP9/NvwyEoodvfO+wemOTaZz5kMuuBFPD8fdW8siEynn3D0+bikjw67VEt9XUetf
+         q+OQ==
+X-Gm-Message-State: ACrzQf17Qm8Bocy7HyAhmmGvzvF6TdmFcvHrgktKBcwy20CZb11w+nK7
+        JQrIjL96D5K2GF13HzuXMoOR/sKOlpvITX0RxizmRw==
+X-Google-Smtp-Source: AMsMyM5WbN+kP6upXD8BHZ2+7x8HSWM2dMtfPxkn6tsEadd4FVsVXgAbowFoG8e54aQRPlNENRIf1Asn7rsJtTUXMjA=
+X-Received: by 2002:a67:ab46:0:b0:3a7:d2b6:121b with SMTP id
+ k6-20020a67ab46000000b003a7d2b6121bmr6269919vsh.16.1666266252494; Thu, 20 Oct
+ 2022 04:44:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20220815-rpi-fix-4k-60-v4-6-a1b40526df3e@cerno.tech>
-References: <20220815-rpi-fix-4k-60-v4-0-a1b40526df3e@cerno.tech>
-In-Reply-To: <20220815-rpi-fix-4k-60-v4-0-a1b40526df3e@cerno.tech>
-To:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
+References: <20221019152947.3857217-1-arnd@kernel.org> <20221019152947.3857217-5-arnd@kernel.org>
+In-Reply-To: <20221019152947.3857217-5-arnd@kernel.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 20 Oct 2022 13:44:01 +0200
+Message-ID: <CAMRc=Mc4AjNiyaw2rQeb6_SrtHNZMXe=ipFyUUwyYvTcT+9zwA@mail.gmail.com>
+Subject: Re: [PATCH 04/14] clk: remove davinci dm3xx drivers
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Sekhar Nori <nsekhar@ti.com>, linux-arm-kernel@lists.infradead.org,
+        David Lechner <david@lechnology.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org
-X-Mailer: b4 0.10.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3442; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=QTgOeJuxmwauDIkCRKut8vRcGO6wjQAZnCghZDPfmdo=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMmBAq++Pkhc8fPyDaWQq1d9baxiHacyukvPi1qQ9tbSo5+9
- 66xpRykLgxgXg6yYIkuMsPmSuFOzXney8c2DmcPKBDKEgYtTACbS+oDhv2vM5d6KGY/NP022i/eLbb
- WdNHXp8k0rGx/Uv9uq13h++wlGhjl+XwxOha5/lm+UWqv66HDXrWqxJ4/i09+b5iREsS49xQEA
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dom Cobley <popcornmix@gmail.com>
+On Wed, Oct 19, 2022 at 5:33 PM Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The davinci dm3xx machines are all removed, so the clk driver
+> is no longer needed. The da8xx platforms are now using DT
+> exclusively, so those drivers remain untouched.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-At least the 4096x2160@60Hz mode requires some overclocking that isn't
-available by default, even if hdmi_enable_4kp60 is enabled.
-
-Let's add some logic to detect whether we can satisfy the core clock
-requirements for that mode, and prevent it from being used otherwise.
-
-Signed-off-by: Dom Cobley <popcornmix@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_drv.h  |  6 ++++++
- drivers/gpu/drm/vc4/vc4_hdmi.c | 11 +++++++++--
- drivers/gpu/drm/vc4/vc4_hvs.c  |  3 +++
- 3 files changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-index 8b2b1af565f9..72a6b7151d23 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.h
-+++ b/drivers/gpu/drm/vc4/vc4_drv.h
-@@ -347,6 +347,12 @@ struct vc4_hvs {
- 	 * available.
- 	 */
- 	bool vc5_hdmi_enable_scrambling;
-+
-+	/*
-+	 * 4096x2160@60 requires a core overclock to work, so register
-+	 * whether that is sufficient.
-+	 */
-+	bool vc5_hdmi_enable_4096by2160;
- };
- 
- struct vc4_plane {
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index afe3daa2173e..fd3730ea976f 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -1753,6 +1753,7 @@ vc4_hdmi_sink_supports_format_bpc(const struct vc4_hdmi *vc4_hdmi,
- 
- static enum drm_mode_status
- vc4_hdmi_encoder_clock_valid(const struct vc4_hdmi *vc4_hdmi,
-+			     const struct drm_display_mode *mode,
- 			     unsigned long long clock)
- {
- 	const struct drm_connector *connector = &vc4_hdmi->connector;
-@@ -1765,6 +1766,12 @@ vc4_hdmi_encoder_clock_valid(const struct vc4_hdmi *vc4_hdmi,
- 	if (!vc4->hvs->vc5_hdmi_enable_scrambling && clock > HDMI_14_MAX_TMDS_CLK)
- 		return MODE_CLOCK_HIGH;
- 
-+	/* 4096x2160@60 is not reliable without overclocking core */
-+	if (!vc4->hvs->vc5_hdmi_enable_4096by2160 &&
-+	    mode->hdisplay > 3840 && mode->vdisplay >= 2160 &&
-+	    drm_mode_vrefresh(mode) >= 50)
-+		return MODE_CLOCK_HIGH;
-+
- 	if (info->max_tmds_clock && clock > (info->max_tmds_clock * 1000))
- 		return MODE_CLOCK_HIGH;
- 
-@@ -1799,7 +1806,7 @@ vc4_hdmi_encoder_compute_clock(const struct vc4_hdmi *vc4_hdmi,
- 	unsigned long long clock;
- 
- 	clock = vc4_hdmi_encoder_compute_mode_clock(mode, bpc, fmt);
--	if (vc4_hdmi_encoder_clock_valid(vc4_hdmi, clock) != MODE_OK)
-+	if (vc4_hdmi_encoder_clock_valid(vc4_hdmi, mode, clock) != MODE_OK)
- 		return -EINVAL;
- 
- 	vc4_state->tmds_char_rate = clock;
-@@ -1962,7 +1969,7 @@ vc4_hdmi_encoder_mode_valid(struct drm_encoder *encoder,
- 	     (mode->hsync_end % 2) || (mode->htotal % 2)))
- 		return MODE_H_ILLEGAL;
- 
--	return vc4_hdmi_encoder_clock_valid(vc4_hdmi, mode->clock * 1000);
-+	return vc4_hdmi_encoder_clock_valid(vc4_hdmi, mode, mode->clock * 1000);
- }
- 
- static const struct drm_encoder_helper_funcs vc4_hdmi_encoder_helper_funcs = {
-diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-index 300ac0b57571..a68913f76687 100644
---- a/drivers/gpu/drm/vc4/vc4_hvs.c
-+++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-@@ -818,6 +818,9 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
- 		if (max_rate >= 550000000)
- 			hvs->vc5_hdmi_enable_scrambling = true;
- 
-+		if (max_rate >= 600000000)
-+			hvs->vc5_hdmi_enable_4096by2160 = true;
-+
- 		hvs->max_core_rate = max_rate;
- 
- 		ret = clk_prepare_enable(hvs->core_clk);
-
--- 
-b4 0.10.1
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
