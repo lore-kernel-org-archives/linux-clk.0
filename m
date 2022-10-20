@@ -2,102 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18ABC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 04:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6945BC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 06:36:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbiJTEgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Oct 2022 00:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
+        id S230039AbiJTGgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Oct 2022 02:36:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbiJTEgV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 00:36:21 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8169160ED0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Oct 2022 21:36:20 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id pb15so1813842pjb.5
-        for <linux-clk@vger.kernel.org>; Wed, 19 Oct 2022 21:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=o17RQhlYUBZsMUmpb8StxU8A9Z3KXwBN0N+ZYEngB1E=;
-        b=VtPEHdzhQMEWZw3owOIfjqIu3ZJVH0Wzl/cMEq++H/LvWPcPqd3qbMf1ACg8pFU0tM
-         /PJH1dDYxvocWs01HDEzzdsES93RJEa6FiXbRbX6/lHhoZiWrQRx1TLkPgOJnCvVZMPI
-         G9XADsRhdhLo7T228yY7PXtoXi7VEWJayJncCQ0r7YuARykYmWK/uPHizwuRYusubjnr
-         i/yP6fQtmIwa4Vs6mLxh11CgN2vmXNouV8vq5shWcixAhLiMMsjyCGAYtvGa6LLlY8cr
-         WCLyxAXusmezvVr6Nt6lsRhAra18fVI57dFv6RNB0uuxlAQRR14BPtgu91/nM0Oiw8pF
-         Fxvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o17RQhlYUBZsMUmpb8StxU8A9Z3KXwBN0N+ZYEngB1E=;
-        b=p7EFjrpKpubSHlMu8GPlR8JF+X5aZAuKsF9zLZUq+MFhDBTQ29O6SVGe48trArkQXF
-         ElKvGjCKOqkSAws9HL4FDbZ6vYJJuJRPbSe98ju7N2Hk6x0Mj5IqvhtGr0f5SlhCy/5J
-         hrQEX6Nv9IvhepOF4em4v14+/XwHHc9d7MG7fV94UQt7briPjzMKe3mU67z6Z08SQNMs
-         4yb9y/XU5/oQ8H34WFCHvoJJzyEcb82f3gR/fHJI/Vxgh0X4xvI7JDfQGMKJiL/TNGnq
-         iWatMYNKAKGfYYyIjS6ypVdSzK23e31dw0dxSbjdXwPTZk5BAqUw1/PlG36vDyXhNNP3
-         SK+A==
-X-Gm-Message-State: ACrzQf1P3g05sIcfDUu6zRP+VVoXvgcGj9dpRj+TdvTl4j1/K+F1raA7
-        KNbJ9qmFRA/Z2utVNFkiqVdECvOkd3W7Iw==
-X-Google-Smtp-Source: AMsMyM6JMa9WLiFbvoVx4vYwYCZzPiim1UptyMJUVWSD81py6SUfnrjSxJDxjmTh1qKJOoEy59NARg==
-X-Received: by 2002:a17:90b:691:b0:20d:6171:c94 with SMTP id m17-20020a17090b069100b0020d61710c94mr47924799pjz.25.1666240580413;
-        Wed, 19 Oct 2022 21:36:20 -0700 (PDT)
-Received: from localhost ([122.172.86.128])
-        by smtp.gmail.com with ESMTPSA id a29-20020aa795bd000000b0056234327070sm12602800pfk.95.2022.10.19.21.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 21:36:10 -0700 (PDT)
-Date:   Thu, 20 Oct 2022 10:06:05 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     =?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 4/6] clk: spear: Fix CLCD clock definition on SPEAr600
-Message-ID: <20221020043605.hyytaxyth2j5xnag@vireshk-i7>
-References: <20221019133208.319626-1-kory.maincent@bootlin.com>
- <20221019133208.319626-5-kory.maincent@bootlin.com>
+        with ESMTP id S229752AbiJTGgh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 02:36:37 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1D0F418C414;
+        Wed, 19 Oct 2022 23:36:33 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Axbdpw7FBjpvUAAA--.5001S3;
+        Thu, 20 Oct 2022 14:36:32 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+Bq7FBjccEBAA--.7362S2;
+        Thu, 20 Oct 2022 14:36:31 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/3] dt-bindings: clock: add loongson2 clock include file
+Date:   Thu, 20 Oct 2022 14:36:22 +0800
+Message-Id: <20221020063624.17548-1-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221019133208.319626-5-kory.maincent@bootlin.com>
+X-CM-TRANSID: AQAAf8Axf+Bq7FBjccEBAA--.7362S2
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7AF4UWr1kJr1Dtry3Cr18Grg_yoW8Kr4fpr
+        4kCFWfKry2yF4IkwsYgFy3Kr13uw4xG3W7AF47uF1jvF17Jw18JwnF9F1fAa9IqrWkGFWx
+        Zan7Cw409a9rX3DanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
+        1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkE
+        cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
+        0Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
+        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2
+        Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
+        1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+        Wlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I
+        6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr
+        0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
+        cSsGvfC2KfnxnUUI43ZEXa7IU8FAp5UUUUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-10-22, 15:32, Köry Maincent wrote:
-> From: Kory Maincent <kory.maincent@bootlin.com>
-> 
-> There is no SPEAr600 device named "clcd". Instead, the description of the
-> CLCD (color liquid crystal display controller) name is "fc200000.clcd", so
-> we should associate the CLCD gateable clock to this device name.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
->  drivers/clk/spear/spear6xx_clock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-> index c192a9141b86..ee0ed89f2954 100644
-> --- a/drivers/clk/spear/spear6xx_clock.c
-> +++ b/drivers/clk/spear/spear6xx_clock.c
-> @@ -207,7 +207,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
->  
->  	clk = clk_register_gate(NULL, "clcd_clk", "clcd_mclk", 0,
->  			PERIP1_CLK_ENB, CLCD_CLK_ENB, 0, &_lock);
-> -	clk_register_clkdev(clk, NULL, "clcd");
-> +	clk_register_clkdev(clk, NULL, "fc200000.clcd");
->  
->  	/* gpt clocks */
->  	clk = clk_register_gpt("gpt0_1_syn_clk", "pll1_clk", 0, PRSC0_CLK_CFG,
+This file defines all loongson2 soc clock indexes, it should be
+included in the device tree in which there's device using the
+clocks.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Change in v3:
+		1. Add the review information.
 
+ MAINTAINERS                                   |  6 ++++
+ include/dt-bindings/clock/loongson,ls2k-clk.h | 29 +++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+ create mode 100644 include/dt-bindings/clock/loongson,ls2k-clk.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0be0f520c032..b6aae412de9c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11907,6 +11907,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
+ F:	drivers/thermal/loongson2_thermal.c
+ 
++LOONGSON2 SOC SERIES CLOCK DRIVER
++M:	Yinbo Zhu <zhuyinbo@loongson.cn>
++L:	linux-clk@vger.kernel.org
++S:	Maintained
++F:	include/dt-bindings/clock/loongson,ls2k-clk.h
++
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+ M:	Sathya Prakash <sathya.prakash@broadcom.com>
+ M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
+new file mode 100644
+index 000000000000..db1e27e792ff
+--- /dev/null
++++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
++ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_LOONGSON2_H
++#define __DT_BINDINGS_CLOCK_LOONGSON2_H
++
++#define LOONGSON2_REF_100M				0
++#define LOONGSON2_NODE_PLL				1
++#define LOONGSON2_DDR_PLL				2
++#define LOONGSON2_DC_PLL				3
++#define LOONGSON2_PIX0_PLL				4
++#define LOONGSON2_PIX1_PLL				5
++#define LOONGSON2_NODE_CLK				6
++#define LOONGSON2_HDA_CLK				7
++#define LOONGSON2_GPU_CLK				8
++#define LOONGSON2_DDR_CLK				9
++#define LOONGSON2_GMAC_CLK				10
++#define LOONGSON2_DC_CLK				11
++#define LOONGSON2_APB_CLK				12
++#define LOONGSON2_USB_CLK				13
++#define LOONGSON2_SATA_CLK				14
++#define LOONGSON2_PIX0_CLK				15
++#define LOONGSON2_PIX1_CLK				16
++#define LOONGSON2_CLK_END				17
++
++#endif
 -- 
-viresh
+2.31.1
+
