@@ -2,82 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5869CC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 07:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 751E8C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Oct 2022 09:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbiJTHyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Oct 2022 03:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36330 "EHLO
+        id S230397AbiJTJN1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Oct 2022 05:13:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231138AbiJTHyA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 03:54:00 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3737113FDF4
-        for <linux-clk@vger.kernel.org>; Thu, 20 Oct 2022 00:53:59 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id fy4so45360880ejc.5
-        for <linux-clk@vger.kernel.org>; Thu, 20 Oct 2022 00:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XIy6ZVMvppl/b0MZxwgJbi/e6Y3XMjUjdrp2vf+E0nw=;
-        b=uhV0+YrtX7/80cANw90/dQxsRV8PBLKfv4W5FEPi/SR05BGohmBo1B7iIPtC2cvqaB
-         3lDOp2RZ+ouBW+86Zymgx+FphPVGIBFIWgwGr2vVSEyC80rlgDyVn60Mfy8BNkV7J+6Z
-         JYm1c7pft/bEhMCdR9oFN74JIgCucnzz8W3eku9GInNW41Z7k51MMifxTEyJqMsj6vxs
-         BO3zS9AZsGJ3HlTgcmSKsyj4Ok/qc7mvvxDqMewE9Bx/Jlq8f47GE3r+UrLDHbKltF2S
-         Be1Rx9equx103r/TY6a/i3IUepXQm1eTaje1JBHOrWHe69PbNjZp5wKdnqSAxw6F5Q0r
-         1tnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XIy6ZVMvppl/b0MZxwgJbi/e6Y3XMjUjdrp2vf+E0nw=;
-        b=igxFFTcOkTUp6/WcKcsFprnlew7RYrExMs6HTceacTFGAfYAkNckVNpgWtgmrWvnA4
-         yupukizK2HU3MJUzMBkvZfRN+sLmxB85ceNjQTN9l/sgq6AmgsrjapCK4PvozvoVYfCf
-         +kPnOCOfazVQoxa26JEbc78VzoZfN/+NvdZ+w3MISzsgTljft5v5dznUvJso1TDqCGN4
-         sR/OxgEo3PPRgECAhninmPpRy3SWXOR1rsVGnW8rgloSmVxJQ0qDQB+/iXbY6Vws+TWV
-         VpKWn4YClcUb0QoPQiL2EZI5Iw+NMYAvc5BSpcY/Uvx7WcIjoS1VkrbUHyx6TwDyF+kD
-         RLqA==
-X-Gm-Message-State: ACrzQf0VU53Zu3CyVFQfMoFDhNKqq+zlwwQNtLkTqSq5ZdmPHv0EQr4h
-        B5imJOgi2NddPj+QhPO39hiK+uou210u131udWY3gg==
-X-Google-Smtp-Source: AMsMyM7/ruAcTPWuF5rV5RbQhEQhWNz5EL/tLxUjgT4VSPPoQX6EP+m2UULvHnVE3w+d69SONmEQvMmkuF++WGzeKAU=
-X-Received: by 2002:a17:907:1624:b0:78d:d61c:2b4a with SMTP id
- hb36-20020a170907162400b0078dd61c2b4amr9754771ejc.208.1666252437594; Thu, 20
- Oct 2022 00:53:57 -0700 (PDT)
+        with ESMTP id S230389AbiJTJNY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2022 05:13:24 -0400
+Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBAB1A0F92;
+        Thu, 20 Oct 2022 02:13:22 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id 2CE182B05D99;
+        Thu, 20 Oct 2022 05:13:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 20 Oct 2022 05:13:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1666257198; x=1666264398; bh=mv2l83sdMQ
+        mtXju3veEb4whzGm3TG5FEEnnJETaLmU0=; b=BxEVtRx6zZlm/4oz1s4/rXCq5V
+        UTXhSIg+tVvrQ04rq2/U+z8TMdLIIzn6IdPd+JkYezGQJnvdt9tXwWbaDjPIfNG6
+        svZnaickH0ICblusxnNzaDzJcymxV7YK6kntoPLwrym9eJaK3JByUV6nf1aN7W/c
+        xFDRUfjYqGefWoFuULeuBq+5s3c47f9J60I+tIFYFE8WPxva3v3jwQnB50za5Fcd
+        82zhVK4ciHu6icvtNyJioGX6T99myPCM/M+GnMrOzKRWhuAOeKI+14ZMaknj9f1p
+        Eol1vyUplgUic9ou2Mm2paYB0Ci8KBUGuuYKIwHKc7QVQX1QAI3jAiiuUNqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1666257198; x=1666264398; bh=mv2l83sdMQmtX
+        ju3veEb4whzGm3TG5FEEnnJETaLmU0=; b=QEEg+PXFOEd85QjJFC/Va3yUAWSMC
+        6S2teTxbPm6TnUqKuJ1dOVe4p8mHEyd70BY5EHE5mTaDesxC1HEqe+NLHnm2uqRh
+        BTkXxclxCtakA9pIRJLZgA1ihzMTIjrUKl3pwa7OTQI3axE6D27c9fT/oO2xyzzQ
+        NpdrsBgnDG9ksSZ3Yvie+GeQqPSdIe9Mm3QVOXAQV0Jq8HlppmhxhMElE3Lfz3bg
+        fCf9MlJ4e7E59gPFlTX7Tzh7qiuVgSBJLRWFgjkz2CSZPnyX9NdKreyEtXbNnKPb
+        k3I/sXciyhuwjXyj3nRUa7zBmGzNzue5F11OSSdzCMvQQ9kl7QsINYviw==
+X-ME-Sender: <xms:LhFRYxcQZkPA_8AaJgOD4xpIWJilbk_MTwhWwQmKjUdaUAh57jVWpA>
+    <xme:LhFRY_OfE3Q8z_9MsPJ_DTY7l32Ubi0lYqFxpmOffTW3YJ6BEhfPTYBsqZos7m5Fl
+    _mCQ5jkDsjH92fZTs4>
+X-ME-Received: <xmr:LhFRY6jEczM4sSrBObhNEKexSd_4WHlkTY-LqNTzwOZcbX7RXO6kA13d07oaRjbdHAqzsxC5bBCQ3Znwze60V6a2vdq-fjAYUKs2C75RUI0eKQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeliedguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffugggtgfffkffvvefosehtkeertdertdejnecuhfhrohhmpehmrgigihhm
+    vgestggvrhhnohdrthgvtghhnecuggftrfgrthhtvghrnhepledtieefgfffteeuheeufe
+    fgvddtgfejgeeuteeitdetleeifeettdevhfelgfehnecuffhomhgrihhnpehkvghrnhgv
+    lhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:LhFRY68XvSqpHk11cCJPMmRqD8ozWu5Zp0jcIO8XBF5x6WXd8QFr4g>
+    <xmx:LhFRY9sTYukmqTb7j4C-xSJiOkpAKg0RLlkBgEpsVE4Spbgluoc_xg>
+    <xmx:LhFRY5HSYzWRTTQKXgnFunkziG7iPsssXtjhVZhjLb53wo3hrdQ0Cg>
+    <xmx:LhFRY0MGu7ij_6PcDK_w_0j6wGuqQ32S9Q7GDtXKzKjLrYUqLelH7VPbw08>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Oct 2022 05:13:18 -0400 (EDT)
+From:   maxime@cerno.tech
+Subject: [PATCH v4 0/7] drm/vc4: Fix the core clock behaviour
 MIME-Version: 1.0
-References: <20221019152947.3857217-1-arnd@kernel.org> <20221019152947.3857217-5-arnd@kernel.org>
-In-Reply-To: <20221019152947.3857217-5-arnd@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Oct 2022 09:53:45 +0200
-Message-ID: <CACRpkdYxuPFV-uQCRUJX03VKSdDZvFH8aKunM+bak0eVbmEV-A@mail.gmail.com>
-Subject: Re: [PATCH 04/14] clk: remove davinci dm3xx drivers
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-arm-kernel@lists.infradead.org,
-        David Lechner <david@lechnology.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-b4-tracking: H4sIAOgQUWMC/32OQQ6CMBBFr2K6dkg7hRZceQ/jAspUGpNiWtJoCHd3cOdCV5P/k/f+rCJTCpTF6b
+ CKRCXkMEcO9fEg3NTHG0EYOQuUiLJVDaRHAB+eUN/BSFAWrTaNrLEbBTNDnwmG1Ec37VQxldzrKeRl
+ Tq/PSkE+l1/CgiChazVaM7TaGzw7SnGuFmLjlVVF/8U14941xvJDSnn6wrdtewMpF4xY8QAAAA==
+Date:   Thu, 20 Oct 2022 11:12:08 +0200
+Message-Id: <20220815-rpi-fix-4k-60-v4-0-a1b40526df3e@cerno.tech>
+To:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org
+X-Mailer: b4 0.10.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3056; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=JajlL/w8KB/aQRhFW6egN7UoNaJPWKWmvTwp05GGwV8=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMmBAi/zDu5mcGPaPFNp0ZPjVt/m17Nv7rmydWZL5G1Z79nn
+ Q9pXdZSyMIhxMciKKbLECJsviTs163UnG988mDmsTCBDGLg4BWAil40Y/oe8dH+w5f0Jjdm5cx/rNW
+ 51N7Zdvt+7du6UWRNMpBZYuIYw/NP94p4743//uYPBD3XfLp195lDsosclH3IChQXY7Aq5YngA
+X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 5:33 PM Arnd Bergmann <arnd@kernel.org> wrote:
+Hi,
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The davinci dm3xx machines are all removed, so the clk driver
-> is no longer needed. The da8xx platforms are now using DT
-> exclusively, so those drivers remain untouched.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Those patches used to be part of a larger clock fixes series:
+https://lore.kernel.org/linux-clk/20220715160014.2623107-1-maxime@cerno.tech/
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+However, that series doesn't seem to be getting anywhere, so I've split out
+these patches that fix a regression that has been there since 5.18 and that
+prevents the 4k output from working on the RaspberryPi4.
 
-Yours,
-Linus Walleij
+Hopefully, we will be able to merge those patches through the DRM tree to avoid
+any further disruption.
+
+Let me know what you think,
+Maxime
+
+To: Florian Fainelli <f.fainelli@gmail.com>
+To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+To: Ray Jui <rjui@broadcom.com>
+To: Scott Branden <sbranden@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Emma Anholt <emma@anholt.net>
+To: Maxime Ripard <mripard@kernel.org>
+To: David Airlie <airlied@linux.ie>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: Dom Cobley <popcornmix@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+
+---
+Changes in v4:
+- Move the rpi_firmware_of_match to avoid confusion
+- Link to v3: https://lore.kernel.org/r/20220815-rpi-fix-4k-60-v3-0-fc56729d11fe@cerno.tech
+
+Changes in v3:
+- Return UINT_MAX when the firmware call fails in the _get_max_rate function
+- Link to v2: https://lore.kernel.org/r/20220815-rpi-fix-4k-60-v2-0-983276b83f62@cerno.tech
+
+Changes in v2:
+- Dropped the clock patches, made an ad-hoc function in the firmware driver
+- Link to v1: https://lore.kernel.org/r/20220815-rpi-fix-4k-60-v1-0-c52bd642f7c6@cerno.tech
+
+---
+Dom Cobley (1):
+      drm/vc4: hdmi: Add more checks for 4k resolutions
+
+Maxime Ripard (6):
+      firmware: raspberrypi: Introduce rpi_firmware_find_node()
+      firmware: raspberrypi: Move the clock IDs to the firmware header
+      firmware: raspberrypi: Provide a helper to query a clock max rate
+      drm/vc4: hdmi: Fix hdmi_enable_4kp60 detection
+      drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection code
+      drm/vc4: Make sure we don't end up with a core clock too high
+
+ drivers/clk/bcm/clk-raspberrypi.c          | 19 -----------
+ drivers/firmware/raspberrypi.c             | 38 ++++++++++++++++++----
+ drivers/gpu/drm/vc4/vc4_drv.h              | 16 +++++++++
+ drivers/gpu/drm/vc4/vc4_hdmi.c             | 25 +++++++-------
+ drivers/gpu/drm/vc4/vc4_hdmi.h             |  8 -----
+ drivers/gpu/drm/vc4/vc4_hvs.c              | 26 +++++++++++++++
+ drivers/gpu/drm/vc4/vc4_kms.c              | 13 +++++---
+ include/soc/bcm2835/raspberrypi-firmware.h | 52 ++++++++++++++++++++++++++++++
+ 8 files changed, 147 insertions(+), 50 deletions(-)
+---
+base-commit: 9abf2313adc1ca1b6180c508c25f22f9395cc780
+change-id: 20220815-rpi-fix-4k-60-17273650429d
+
+Best regards,
+-- 
+Maxime Ripard <maxime@cerno.tech>
