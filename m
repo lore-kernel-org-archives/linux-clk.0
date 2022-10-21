@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91359C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 08:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC34C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 08:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbiJUIGu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Oct 2022 04:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43726 "EHLO
+        id S229460AbiJUIIt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Oct 2022 04:08:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230038AbiJUIGr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 04:06:47 -0400
+        with ESMTP id S229843AbiJUIIs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 04:08:48 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6385A24989D;
-        Fri, 21 Oct 2022 01:06:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D659B2498BE;
+        Fri, 21 Oct 2022 01:08:46 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E74BB660252D;
-        Fri, 21 Oct 2022 09:06:42 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E48DB660252D;
+        Fri, 21 Oct 2022 09:08:44 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1666339603;
-        bh=JOzVQSWbOar0QWC89gDB7DxKIGXkAbTdcppYKPGwHlI=;
+        s=mail; t=1666339725;
+        bh=MwXEk9n4zFA+AG1gv3Y56fdU6wFaQLwUFj+QnnLrGvQ=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZLks2CCtqDoIKItBujkDcMzhOd4ITkNmXyDjKYMSUxjEqX1mqfBac2QAO/xmKEKBM
-         UTrTEdMcAKmFHlM8+LnXlFirzS+irIsKg1KEOSBZ5CSBjk4alsiH4szV6PJLYmmVSA
-         7CHv6Nd4qplQlKDpWoSI3wdZdvsyYQCGep9auZWvyfJsjPin2VtX5ECmKLfFobCy04
-         I5WrEFc/OcddwmMNglmMITivnmGB7e3IwsYn0RS+xAES+zRsgNuml+SzfnIhG1qA3J
-         9UK+iRTLF+t2Ia/rSB4ANSr66dqJqByJA0+w2Gsbg7Oc6vmEzIUcs2ejAdjfI4ssIq
-         fpR0IeVqeVLQg==
-Message-ID: <c32186a9-5a4b-e3ad-b955-164070bf893e@collabora.com>
-Date:   Fri, 21 Oct 2022 10:06:40 +0200
+        b=HhXp6ITXtHf9sBj55RIx8C0qo2GyL6Lj060l8ta1E+m/ZHTjOvOQTsJS+ZLbJFYa4
+         YqUtE41yTF3WTVVKbavl/d79ZTHGTdsSWn2fB5NwqyU7lygoYW0KoFDVFLSOkDMYmE
+         3d+HDH+g8POZ9KcGewQeuKiZTY7DaTmKOggQqwvgqEMziBZBpgeqG1K4kmHMaSY0ND
+         cTDy/bIiJbSeEHvip1KccI4seNUbSszWPbmKYEtARGFDQDvjsWNdVAh16/9lYtK6k6
+         EXG29KdmxLDsEh9ruF6OCMNbgtgmkuDOceGP6koF5uv6D2ec2fuQIvfyWB37CHmxwz
+         9xJCINotuOEuw==
+Message-ID: <9bde77be-f4ec-11e7-e645-7c4465bcf6db@collabora.com>
+Date:   Fri, 21 Oct 2022 10:08:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
@@ -66,6 +66,14 @@ Il 20/10/22 21:52, Daniel Golle ha scritto:
 > Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Sorry, I gave you my Reviewed-by tag, but I've just realized that you're missing
+a Fixes tag.
 
+Please send a v2 with:
 
+Fixes: ec97d23c8e22 ("clk: mediatek: add mt7986 clock support")
+
+...and retain my reviewed-by tag after that.
+
+Cheers,
+Angelo
