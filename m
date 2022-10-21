@@ -2,167 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BB1C38A2D
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 20:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123B6C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 22:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiJUUrg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Oct 2022 16:47:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
+        id S229965AbiJUWdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Oct 2022 18:33:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbiJUUrD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 16:47:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6692315711;
-        Fri, 21 Oct 2022 13:46:30 -0700 (PDT)
+        with ESMTP id S229959AbiJUWda (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 18:33:30 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B81592AD314;
+        Fri, 21 Oct 2022 15:33:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 99856B82D23;
-        Fri, 21 Oct 2022 20:46:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757ECC433D6;
-        Fri, 21 Oct 2022 20:46:24 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 69253B82CBE;
+        Fri, 21 Oct 2022 22:33:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4070CC433C1;
+        Fri, 21 Oct 2022 22:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666385187;
-        bh=r4rs+gBLRR2XnC/iBTUpmvw8Y1/CAN6bIqgMsnCS3+M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bEUU8QrTiTFvPH3Zs3lk4BYlQrncBQ27b3JEZ7yaGj50xGf//DsfDHZOPKOyFufVa
-         6nMW5QVb8ee2kX8yYQ4luotFom6IwrY+xE1qUt3yvhg0LPb81AaSj8Hjz6d6F177Ru
-         lZi8jSduBpDBFd0G6P8jl3epKd/ckixBVvwQlHY6w8t+tc3UkcU5USD4fUdzlfdSG/
-         x4Nr5rm65+P+QtI5jkg720jIM+qyrp4IRhkj/LVLS7NwJ8CwNe0qUOaFjN0aQHy55H
-         m7pyWO9Mc4H3h8+ox4O34LhmQhCJSxO476RkcFhRYlNbtmxDum5e1aJAeUEC7PTd/5
-         vbYBD2zsrbKYw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org,
+        s=k20201202; t=1666391607;
+        bh=g5SUbc3dxCone79caS0M2AEu5MpWd5JFL171Tn/U2d4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YtT4bLoLT3AdAlNhZAuWY10vexMQTJrTFgGjHybRvOmmgqCsx8pKtm0zVkueeQbLC
+         K1m/sojgD3EMuFX/rcQI58EnKk68AVJNtO9JiMKs/6ZwTgDRov4jmgc2ydvStn23ag
+         GvR7y/2LAlBe2M1nuLAhW5vkosztclzcGnUgYIgwqC81NmFmc1up42azXQpER9T20A
+         CLWBmZzb96celcpPnCzalJVcG3hOZMKp8B00T3IhYbMWjwpGhvoTMm1M/b4lZzePg3
+         YQlPgGhd1URgg6MqJfR9Yeai00VsTcYaYL1I9dJTOVXHN4hE0/5hMAK8/MoHnqxz4X
+         OUGBYYU9we38Q==
+Date:   Sat, 22 Oct 2022 00:33:18 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
         Simtec Linux Team <linux@simtec.co.uk>,
         Arnd Bergmann <arnd@arndb.de>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 11/21] clk: remove s3c24xx driver
-Date:   Fri, 21 Oct 2022 22:27:44 +0200
-Message-Id: <20221021203329.4143397-11-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20221021202254.4142411-1-arnd@kernel.org>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
+Message-ID: <Y1MeLqsE2fggyhzU@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-clk@vger.kernel.org
 References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-2-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="q4IaRr9rlP9eixcE"
+Content-Disposition: inline
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-The s3c24xx platform is gone, so the clk driver can be removed as
-well.
+--q4IaRr9rlP9eixcE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- MAINTAINERS                               |   1 -
- drivers/clk/samsung/Kconfig               |  32 --
- drivers/clk/samsung/Makefile              |   4 -
- drivers/clk/samsung/clk-s3c2410-dclk.c    | 440 ---------------------
- drivers/clk/samsung/clk-s3c2410.c         | 446 ----------------------
- drivers/clk/samsung/clk-s3c2412.c         | 254 ------------
- drivers/clk/samsung/clk-s3c2443.c         | 438 ---------------------
- include/linux/platform_data/clk-s3c2410.h |  19 -
- 8 files changed, 1634 deletions(-)
- delete mode 100644 drivers/clk/samsung/clk-s3c2410-dclk.c
- delete mode 100644 drivers/clk/samsung/clk-s3c2410.c
- delete mode 100644 drivers/clk/samsung/clk-s3c2412.c
- delete mode 100644 drivers/clk/samsung/clk-s3c2443.c
- delete mode 100644 include/linux/platform_data/clk-s3c2410.h
+On Fri, Oct 21, 2022 at 10:27:35PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 503ebd9800db..caf196041e3a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18078,7 +18078,6 @@ F:	include/dt-bindings/clock/s3c*.h
- F:	include/dt-bindings/clock/s5p*.h
- F:	include/dt-bindings/clock/samsung,*.h
- F:	include/linux/clk/samsung.h
--F:	include/linux/platform_data/clk-s3c2410.h
- 
- SAMSUNG SPI DRIVERS
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 8e8245ab3fd1..c07bb50513bf 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -94,38 +94,6 @@ config EXYNOS_CLKOUT
- 	  status of the certains clocks from SoC, but it could also be tied to
- 	  other devices as an input clock.
- 
--# For S3C24XX platforms, select following symbols:
--config S3C2410_COMMON_CLK
--	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
--	select COMMON_CLK_SAMSUNG
--	help
--	  Support for the clock controller present on the Samsung
--	  S3C2410/S3C2440/S3C2442 SoCs. Choose Y here only if you build for
--	  this SoC.
--
--config S3C2410_COMMON_DCLK
--	bool
--	select COMMON_CLK_SAMSUNG
--	select REGMAP_MMIO
--	help
--	  Support for the dclk clock controller present on the Samsung
--	  S3C2410/S3C2412/S3C2440/S3C2443 SoCs. Choose Y here only if you build
--	  for this SoC.
--
--config S3C2412_COMMON_CLK
--	bool "Samsung S3C2412 clock controller support" if COMPILE_TEST
--	select COMMON_CLK_SAMSUNG
--	help
--	  Support for the clock controller present on the Samsung S3C2412 SoCs.
--	  Choose Y here only if you build for this SoC.
--
--config S3C2443_COMMON_CLK
--	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
--	select COMMON_CLK_SAMSUNG
--	help
--	  Support for the clock controller present on the Samsung
--	  S3C2416/S3C2443 SoCs. Choose Y here only if you build for this SoC.
--
- config TESLA_FSD_COMMON_CLK
- 	bool "Tesla FSD clock controller support" if COMPILE_TEST
- 	depends on COMMON_CLK_SAMSUNG
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 239d9eead77f..ebbeacabe88f 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -21,10 +21,6 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7885.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov9.o
--obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
--obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
--obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
--obj-$(CONFIG_S3C2443_COMMON_CLK)+= clk-s3c2443.o
- obj-$(CONFIG_S3C64XX_COMMON_CLK)	+= clk-s3c64xx.o
- obj-$(CONFIG_S5PV210_COMMON_CLK)	+= clk-s5pv210.o clk-s5pv210-audss.o
- obj-$(CONFIG_TESLA_FSD_COMMON_CLK)	+= clk-fsd.o
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-deleted file mode 100644
-index f5e0a6ba2d12..000000000000
-diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-deleted file mode 100644
-index 3d152a46169b..000000000000
-diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-deleted file mode 100644
-index 724ef642f048..000000000000
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-deleted file mode 100644
-index a827d63766d1..000000000000
-diff --git a/include/linux/platform_data/clk-s3c2410.h b/include/linux/platform_data/clk-s3c2410.h
-deleted file mode 100644
-index 7eb1cfa5409b..000000000000
--- 
-2.29.2
+Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
 
+
+--q4IaRr9rlP9eixcE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNTHioACgkQFA3kzBSg
+KbYeNA/9HlDxIncjyh8NS2x57Q58pKmrahP7tNy2sriAnglRPdeXjkmitx/PDnHg
+bIozZCPd20DhLP05iEjhC03Z+mkJJjnjo+rhRpAKX8NlI1+pvJXTmfxiAvwkIU3b
+Ra+7NbDwBKiltZo/jJ7QNRjr6bWyZCLx3/0VIEx/ILC+ukZen1jdsJhdPD1/X1b3
+RiA8N9L3oPIcLmesbdb1HDiF5iD5C+2baALIuBeZ9xXwF8uFSsFpq4Qn1/HgpJFu
+AP6+2ksTWEj7H6ARmXOA/u6frOxsWH1kahCSTBB0dtX0gSarueTzo0FxEQsyhkAx
+dgtZB9qGsy7A92ya7u69s+VLgXQyEH3C+JOBW8Ww+faoCz2nk3VFqWjwKy8kqCil
+wgbEHv9oPuQDtlP2lw9ApUxfTkWIWp3v1EfZ7dALMcfSyMjh+kGcYntEhMlD1u3V
+lZrp9wbt5yJoIZ18mFHHbaiVCdcEjwn5fvLHSQ2znhLiyBT6pbWcC7Is5xb2hiF7
+Rl6+VuLynCXX36g/7J8hFkwcKZIa7x95++ksHb908o4tjNKX+6oYSKdbYW1gUhxJ
+yUNJs6W+HsoC0DFOWt71wex8PgRwG3HGkxBKDkd5dmLDcUYlLA9xENa6fH5MVdHI
+37v4yvkdM8L5yq07lG/mJkHC7C/7+kdZ/ahDQsSuIdcAoV1dIPc=
+=za7Y
+-----END PGP SIGNATURE-----
+
+--q4IaRr9rlP9eixcE--
