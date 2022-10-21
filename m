@@ -2,199 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA66FA373E
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 18:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 697EEC38A2D
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 18:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbiJUSHQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Oct 2022 14:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44404 "EHLO
+        id S229613AbiJUSwP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Oct 2022 14:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229902AbiJUSHP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 14:07:15 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CBCB256401;
-        Fri, 21 Oct 2022 11:07:14 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id e18so2772101wmq.3;
-        Fri, 21 Oct 2022 11:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UYevc0/VBCj9wBQRWlQ/9Q4O5TfPY8fJu+BvNTU/yG0=;
-        b=dUVoeS+r4UdeGMB+N1lX6A7ISaf2eJpRGohWDvas5cCg0h0Gcp5He+TmxRMkDkCqvT
-         x5exD9Oic5lyVKj6i8H3WukULH5PJz9XPMOnmH77GtSIazHzwhXfmjZASyEE+ukZOhbm
-         6sUznWCYsz2v2vNCrxoGZP+vqL6QIV8PTs4VBrEp/WJdWrpH014xO8b2+sTu8EKBv/tw
-         iUQtQT+WdP2Gxqe4/b85aahP4ag8EC1ZZtlEvVygVgsYrUF5L1PDUoJ/aE+mK56wW1km
-         /CYGqwoUG3V5AhkYby8nsvlPOZlpLY+evbCp4u8ZhKwdJRa9XuIoLwi5E1QTbqVBzYX1
-         nVRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYevc0/VBCj9wBQRWlQ/9Q4O5TfPY8fJu+BvNTU/yG0=;
-        b=jmXSeIEys6KSmwS/8sGo8Wr2iX8nglh9Tt38AnMLtqx9DEXAwSP9gX5vJYEN/q8yWq
-         No/qOV9Bv6xoitfWJuIqYSEU4Mj+4YYITDleO0rgkYxrNBYxOemGpiA59rqMkbhQWWZ9
-         0p6y2QSncPqiU/3wiMFO1auLh8e7tEz8o3IiwMDv7J/I0tq0qj1hqElTRHYadcbCiQvX
-         vqrnuII9odf/dF1bkHAazi9DiaVt7dETLX/wg0s6lEs1/ErHO94PoITiUu9bWtkOPyb1
-         MEOw3XCmHg21CyhIU/wh9iRbUXYww+zXL66YpS3aR4jRD/RJEZL0qbZCFmqdS/cWbg6a
-         CpEw==
-X-Gm-Message-State: ACrzQf36DyTlLCI77OHe78bwgk0aRlSDebwBmZQm+tzTzwd+ewApmuPY
-        Qcp+xWSfQYtlARH8XySAkOek5rBi+NA=
-X-Google-Smtp-Source: AMsMyM7O4wDTum8skBufRBwmROFBmHxMJ6EUTtfJYvNoxki5cnaYBDlB6wDG84J1Q5H4O1LcF63wdQ==
-X-Received: by 2002:a1c:f20e:0:b0:3c2:5062:4017 with SMTP id s14-20020a1cf20e000000b003c250624017mr34025752wmc.175.1666375632872;
-        Fri, 21 Oct 2022 11:07:12 -0700 (PDT)
-Received: from localhost.localdomain (93-42-70-134.ip85.fastwebnet.it. [93.42.70.134])
-        by smtp.googlemail.com with ESMTPSA id n4-20020a1ca404000000b003c41144b3cfsm280348wme.20.2022.10.21.11.07.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 11:07:12 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Robert Marko <robimarko@gmail.com>
-Subject: [RFC PATCH 2/2] clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf
-Date:   Fri, 21 Oct 2022 20:06:57 +0200
-Message-Id: <20221021180657.13474-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20221021180657.13474-1-ansuelsmth@gmail.com>
-References: <20221021180657.13474-1-ansuelsmth@gmail.com>
+        with ESMTP id S229941AbiJUSwO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 14:52:14 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C092623DA
+        for <linux-clk@vger.kernel.org>; Fri, 21 Oct 2022 11:52:12 -0700 (PDT)
+Received: from [192.168.1.139] ([37.4.248.17]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MvKTJ-1p3cb830vB-00rHmL; Fri, 21 Oct 2022 20:51:59 +0200
+Message-ID: <b93952bd-7f4d-45b0-92b7-f49606ac9782@i2se.com>
+Date:   Fri, 21 Oct 2022 20:51:58 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: BCM2835 clock driver, power domains and CLK_SET_RATE_GATE
+To:     maxime@cerno.tech
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>, linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+References: <20221021140505.kjmw5x4s6qhnrfif@houat>
+Content-Language: en-US
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20221021140505.kjmw5x4s6qhnrfif@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:/WhiNc5Co9B6JvLGDvw+CCM8MV/3Nv5HvwbyRBRKSRisr+cA+Ff
+ BbS7xqKoc6pDvcum9e4oGI8XnwrMFtGtLA7GJRqkagTmdabCAHYEgsjJ7q6Cay52LPm2/74
+ c+cg3pwS/BgYST24dgKvnoeQoZZDMr1c/DYKPLoKrsfRB3LdvZT/muw8ad8vlTBgk2QIYPx
+ OJBBqOBTnh2Yl2tCrtU6g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7VdAL8VmeYU=:Cn0Bs+dInBtoZkTKdrPBY2
+ 1Lu32Q4e6IbLvJt3v1HLetG9ICWr1de0toiGBIbdfzsZ6WSIpcGDIQLt3WyGOee/y622gzDDH
+ X3P3P5Tk/grzFKD5bFtE/0HSAIZeWOTZPhaG8d70a4086gZNOHrq2V2KboSmBkK622ORFlHw0
+ 4/nG9rJACA9TYF91I26x0MpSVBKRri5mXNYwtzA93Zq3WjKypq3e7yT1fkSQWx8Mo9j90hQ5p
+ isBjJxDShRC9vn+y//dC0XvljqHanFt5AFVQzKKcAavWIIiLPmBndGMlz4KhRAymJJ3gEzJu2
+ N7D26U6REWA26qJIn9nvyReLp8jQ+9KVzPsc8o00zqsWxX6/btZOoZ1+3EhoeV2B4/bR+ZprD
+ rtpTKxGoBhiW/A3vI6tmQQi5WEW6u42Kkbv2ZInPo7Lt86ZLEGBOgbOZVFbADUeVQrzkYHLYg
+ rLj+qrgun8yQ1s0aVh4yAuSqdFr0GtopecR9pvBQbG39qSvElnbyRZuZ16yxlQ4SZzn3XmDRK
+ kP3nqTbFkdtCtawBhyecvT1Dyssf7mITY9Txu1Ony1NcWsSccgFTKwtrT33UEAtS0rmxx0HVZ
+ 7oQlyrCxJ7OSR0h/P/5nD6vOSx0LxI0/ioC1Tmp0z1cL1fVMhRMz5iyd3sinwY4FnVdk5PVsI
+ zwYilzd5QOJD5orAkfpVHZaxtt8OVAueCyyW3XzWGUTACRbTid/mTmahu+Iw4ia2L2erw15AR
+ GMLXRguxvvKnfAWSLzFDb+Ha9MMnHzNXJTpO7iECajNJxEwtv3iD+G29WEwLcz8LSlLyM/1uK
+ NXV6vuwa9pt0t+eKt+Q2Vydszz2LQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rework nss_port5/6 to use the new multiple configuration implementation
-and correctly fix the clocks for these port under some corner case.
+Hi Maxime,
 
-This is particularly relevant for device that have 2.5G or 10G port
-connected to port5 or port 6 on ipq8074. As the parent are shared
-across multiple port it may be required to select the correct
-configuration to accomplish the desired clock. Without this patch such
-port doesn't work in some specific ethernet speed as the clock will be
-set to the wrong frequency as we just select the first configuration for
-the related frequency instead of selecting the best one.
+Am 21.10.22 um 16:05 schrieb maxime@cerno.tech:
+> Hi,
+>
+> I had to fix a regression today that was mostly due to the fact that
+> clk-bcm2835 and clk-raspberrypi have fairly diverging behaviour.
+>
+> https://lore.kernel.org/dri-devel/20221021131339.2203291-1-maxime@cerno.tech/
+>
+> The "fix" is rather suboptimal and I'd like to address it properly.
+>
+> Even though the commit message tries to explain everything and why other
+> solutions wouldn't work, the underlying cause is that clk-bcm2835 has a
+> bunch of restrictions that I don't really get and we have to work
+> around. I'm not sure I have the full picture either, so please take the
+> following with a grain of salt.
+>
+> The first one is that the HSM clock discussed in that patch is part of
+> the HDMI power domain, so it has to be powered for the clock to retain
+> its configuration.
+>
+> The side effect is that we need to initialize the clock at boot time so
+> that it has some rate. This is pretty important since that clock feeds
+> the register and thus a failure to initialize would lock the CPU on a
+> register access.
+>
+> The second one is that since clk-bcm2835 has CLK_SET_RATE_GATE, we have
+> to call clk_set_min_rate() before clk_prepare_enable(), or
+> clk_set_min_rate() is likely to fail.
+>
+> So we need in runtime_resume to call clk_set_min_rate with an absolute
+> minimum for the HDMI controller to be functional and then enable the
+> clock.
+>
+> But then, since we have enabled the HSM clock by the time
+> pm_runtime_resume_and_get in vc4_hdmi_encoder_pre_crtc_configure()
+> returns, the clock is enabled so we can't adjust its rate based on the
+> resolution after the runtime_resume.
+>
+> But if we do it before runtime_resume, then the clk_set_min_rate() call
+> in runtime_resume will override the "resolution rate" with the "absolute
+> minimum" rate.
+>
+> Removing CLK_SET_RATE_GATE would solve this entirely, since we could
+> move the pre_crtc_configure clk_set_min_rate() call after
+> runtime_resume, and it would work just fine.
+>
+> But the interaction with the power domain is weird to me. I'm not even
+> sure how it's even supposed to work if one has to disable the clock (and
+> its power domain?) to change the rate, but the configuration won't stick?
+>
+> So I guess my question is how can we untangle this a bit so that we can
+> simplify the users of that driver?
 
-Tested-by: Robert Marko <robimarko@gmail.com> # ipq8074 Qnap QHora-301W
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/qcom/gcc-ipq8074.c | 64 +++++++++++++++++++++++++---------
- 1 file changed, 48 insertions(+), 16 deletions(-)
+sorry, but i'm unable to help you here. This is out of my scope :-(
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 42d185fe19c8..02d04a552b78 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -1787,13 +1787,21 @@ static struct clk_regmap_div nss_port4_tx_div_clk_src = {
- 	},
- };
- 
-+static const struct freq_conf ftbl_nss_port5_rx_clk_src_25[] = {
-+	C(P_UNIPHY1_RX, 12.5, 0, 0),
-+	C(P_UNIPHY0_RX, 5, 0, 0),
-+};
-+
-+static const struct freq_conf ftbl_nss_port5_rx_clk_src_125[] = {
-+	C(P_UNIPHY1_RX, 2.5, 0, 0),
-+	C(P_UNIPHY0_RX, 1, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY1_RX, 12.5, 0, 0),
--	F(25000000, P_UNIPHY0_RX, 5, 0, 0),
-+	FM(25000000, ftbl_nss_port5_rx_clk_src_25),
- 	F(78125000, P_UNIPHY1_RX, 4, 0, 0),
--	F(125000000, P_UNIPHY1_RX, 2.5, 0, 0),
--	F(125000000, P_UNIPHY0_RX, 1, 0, 0),
-+	FM(125000000, ftbl_nss_port5_rx_clk_src_125),
- 	F(156250000, P_UNIPHY1_RX, 2, 0, 0),
- 	F(312500000, P_UNIPHY1_RX, 1, 0, 0),
- 	{ }
-@@ -1829,13 +1837,21 @@ static struct clk_regmap_div nss_port5_rx_div_clk_src = {
- 	},
- };
- 
-+static struct freq_conf ftbl_nss_port5_tx_clk_src_25[] = {
-+	C(P_UNIPHY1_TX, 12.5, 0, 0),
-+	C(P_UNIPHY0_TX, 5, 0, 0),
-+};
-+
-+static struct freq_conf ftbl_nss_port5_tx_clk_src_125[] = {
-+	C(P_UNIPHY1_TX, 2.5, 0, 0),
-+	C(P_UNIPHY0_TX, 1, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY1_TX, 12.5, 0, 0),
--	F(25000000, P_UNIPHY0_TX, 5, 0, 0),
-+	FM(25000000, ftbl_nss_port5_tx_clk_src_25),
- 	F(78125000, P_UNIPHY1_TX, 4, 0, 0),
--	F(125000000, P_UNIPHY1_TX, 2.5, 0, 0),
--	F(125000000, P_UNIPHY0_TX, 1, 0, 0),
-+	FM(125000000, ftbl_nss_port5_tx_clk_src_125),
- 	F(156250000, P_UNIPHY1_TX, 2, 0, 0),
- 	F(312500000, P_UNIPHY1_TX, 1, 0, 0),
- 	{ }
-@@ -1871,13 +1887,21 @@ static struct clk_regmap_div nss_port5_tx_div_clk_src = {
- 	},
- };
- 
-+static struct freq_conf ftbl_nss_port6_rx_clk_src_25[] = {
-+	C(P_UNIPHY2_RX, 5, 0, 0),
-+	C(P_UNIPHY2_RX, 12.5, 0, 0),
-+};
-+
-+static struct freq_conf ftbl_nss_port6_rx_clk_src_125[] = {
-+	C(P_UNIPHY2_RX, 1, 0, 0),
-+	C(P_UNIPHY2_RX, 2.5, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY2_RX, 5, 0, 0),
--	F(25000000, P_UNIPHY2_RX, 12.5, 0, 0),
-+	FM(25000000, ftbl_nss_port6_rx_clk_src_25),
- 	F(78125000, P_UNIPHY2_RX, 4, 0, 0),
--	F(125000000, P_UNIPHY2_RX, 1, 0, 0),
--	F(125000000, P_UNIPHY2_RX, 2.5, 0, 0),
-+	FM(125000000, ftbl_nss_port6_rx_clk_src_125),
- 	F(156250000, P_UNIPHY2_RX, 2, 0, 0),
- 	F(312500000, P_UNIPHY2_RX, 1, 0, 0),
- 	{ }
-@@ -1913,13 +1937,21 @@ static struct clk_regmap_div nss_port6_rx_div_clk_src = {
- 	},
- };
- 
-+static struct freq_conf ftbl_nss_port6_tx_clk_src_25[] = {
-+	C(P_UNIPHY2_TX, 5, 0, 0),
-+	C(P_UNIPHY2_TX, 12.5, 0, 0),
-+};
-+
-+static struct freq_conf ftbl_nss_port6_tx_clk_src_125[] = {
-+	C(P_UNIPHY2_TX, 1, 0, 0),
-+	C(P_UNIPHY2_TX, 2.5, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY2_TX, 5, 0, 0),
--	F(25000000, P_UNIPHY2_TX, 12.5, 0, 0),
-+	FM(25000000, ftbl_nss_port6_tx_clk_src_25),
- 	F(78125000, P_UNIPHY2_TX, 4, 0, 0),
--	F(125000000, P_UNIPHY2_TX, 1, 0, 0),
--	F(125000000, P_UNIPHY2_TX, 2.5, 0, 0),
-+	FM(125000000, ftbl_nss_port6_tx_clk_src_125),
- 	F(156250000, P_UNIPHY2_TX, 2, 0, 0),
- 	F(312500000, P_UNIPHY2_TX, 1, 0, 0),
- 	{ }
--- 
-2.37.2
+Stefan
 
+>
+> Thanks!
+> Maxime
