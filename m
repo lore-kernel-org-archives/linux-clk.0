@@ -2,138 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05655C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 13:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCE0C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 14:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230116AbiJUNcp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Oct 2022 09:32:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46876 "EHLO
+        id S231317AbiJUOFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Oct 2022 10:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbiJUNca (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 09:32:30 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FED2272117
-        for <linux-clk@vger.kernel.org>; Fri, 21 Oct 2022 06:32:22 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id o22so1972044qkl.8
-        for <linux-clk@vger.kernel.org>; Fri, 21 Oct 2022 06:32:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5+e3tfZKD8wPLq+xcmy+Hq7e5zoVdL8VVcXpDbD3Ib4=;
-        b=Yx8xloWDhbEQ67y0pJkRiQj2ByUZYLHTkUmjgXvkWGU/moYFskJONIRkSscwkXJuKl
-         7RSpTwuxzRQhww/X3kFwMir6d0xDIAwHLFDpaPpShmyrrrh3dvf+wLup6XNfeG+hgrYY
-         MMdOUkLsv/m9pSrImhvsnUUeWLn/3lyk78qiq4fhkZn7sso9wygWmffE/9B2E9U4zaqu
-         2KI6roiiVu+XhxlVNWv7WQ4Vql2wJ+91YP3jejvsL9cxAhBtU8iiIFdxBvAbv9uFnLCd
-         NV6qtkS//cq2mEUw7E1JJWEsebbN2i+T+DLSeeSCHl40e9ODk871N2jg+j5D+ASwq9EA
-         /K/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5+e3tfZKD8wPLq+xcmy+Hq7e5zoVdL8VVcXpDbD3Ib4=;
-        b=Rjk9j/nuUFKP8WCLyneS/YMbvOzd+zpXArJlEB8Fk9GQd+AQJ7pXivTXATVJwbZhs+
-         fFaNxlI3VYurKDxSbBSzaZz7XphDKfZu/DUvsabq7BaZiYL6sqKF1Ku1GyA0Tg4tToru
-         MetcmpN7GZ3USDcXE27VvMT8hkIlm72Tc+5qnlu7NojLLoC7hgX23SeQZO83KkJtHZHQ
-         +qZlyQ67NFUkI0xXvIv8jNFhfVA17yFZCtjkMxFbNjweLMMPEP4+k8019rm0laX/b6PX
-         I45kIFyU+BzQazD7Fhdr0jiy5erTm+eh0BvGH3fuFJ5w0/BeqsUvH9mn6BK9PwPw57lG
-         81mg==
-X-Gm-Message-State: ACrzQf1vlJRc2BSogDEWhfKYegwqDUMoiLM/xeBYUGySNajlU1xdkSVV
-        UcvrziZNzY7Oywg+qDdBr47Rqg==
-X-Google-Smtp-Source: AMsMyM6u87pLEnDFK4teTs0zAB89izZ7kLNHzzpukigPaqu6PxsLer0iBEt8sYL/DMFxF9c/ggx3Tg==
-X-Received: by 2002:ae9:ef4e:0:b0:6ee:80b6:2ee4 with SMTP id d75-20020ae9ef4e000000b006ee80b62ee4mr13415282qkg.126.1666359140868;
-        Fri, 21 Oct 2022 06:32:20 -0700 (PDT)
-Received: from [192.168.10.124] (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
-        by smtp.gmail.com with ESMTPSA id l3-20020a37f903000000b006ee2953fac4sm9387945qkj.136.2022.10.21.06.32.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Oct 2022 06:32:20 -0700 (PDT)
-Message-ID: <b74f37ba-d2e3-ab73-a035-739ffb2b0334@linaro.org>
-Date:   Fri, 21 Oct 2022 09:32:19 -0400
+        with ESMTP id S231325AbiJUOFQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 10:05:16 -0400
+Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5BDDEF09
+        for <linux-clk@vger.kernel.org>; Fri, 21 Oct 2022 07:05:10 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7F08858069E;
+        Fri, 21 Oct 2022 10:05:08 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 21 Oct 2022 10:05:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1666361108; x=1666368308; bh=bQtXpkItrCTIfbcLeF85nyweBxDeD5mVZji
+        0QAriNm4=; b=bXPK6Z10FrHP/OVRKfYmMLZb9GlPO1px9o5bbwItnp6ymYPIYIm
+        IlbrfoAKCUXVh7KX1dCjWEylk3nxzjjcOr9zJGHc7p3GbbeoJcOi13iJdsOg0OBo
+        aJCPKJOCqjDRoEC4u1TlK7wcAHdOa4fwgdA7PCMuKVr70q9INN0aYJFPNIiNs16E
+        C7VDyoqDQVHFidY/QYgIDLKD1MgQEu5salL8usNdrPLvizk9b6tosBrkm37R3XGt
+        mQpgpC5gkODmb2Qai09ZLuIA6YSzqP8+5vNzurWuebStuk65Hf/eGZQpxQ2OEtL5
+        SjFccpGL2JkxBOwGz5KhRr8DBmepmj+gsJw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:message-id:mime-version
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666361108; x=
+        1666368308; bh=bQtXpkItrCTIfbcLeF85nyweBxDeD5mVZji0QAriNm4=; b=g
+        3siw2fnRVo7y6d52g1sX2QeFL8HkhGuC+NOzJa3seFNHTiK6GCcDbAHDdMu/VkY1
+        Zhxf1osfEYCm5PMLNr8xNBljqhISom7BcBoZY/P7t/TnHGIpczFO4dAQ/yUXkqJq
+        4jHpBVzRxXr3Pnlc4+s/Qi+5Gn/2UYl6/94odVO+jfwedMz2D0mTY34HqOxH42/e
+        uuiws96MWa6VLZaGv8rMAnb7WGHbCYFdqsngF6nlPxAMGprcf4HuIX1NKuW927Hn
+        EyLYUFyZbdAcH88VXoXnPcM1Gcx+fei9sJOz64c8u87KJHx5MGsoByFMnarOegQ4
+        JRxfDZ344M7Wz0etV9v8Q==
+X-ME-Sender: <xms:FKdSYztQz6kziZgMON081XJIzjedZmrZ9_fMZj3hIcMX-YGLRbQlSg>
+    <xme:FKdSY0dHtPefi78KN_zF7T5AHhIKmEMkGIQmOaN8Xuxu92xDD5eYI64aac85aG-QT
+    cZjSBIER5Yx-NVylt8>
+X-ME-Received: <xmr:FKdSY2x7oK6chpni6vLjQmwjeJiYAvgUFO_1ohTGqeQqDYzQFgPU61O7Tz-5aO7VlbtxBKzawpOVKLnh49_kh60UAy5Qn0zYAfhp92fgAvKyJw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeelkedgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephfffvfevuffkgggtugesghdtreertddtvdenucfhrhhomhepmhgrgihimhgv
+    segtvghrnhhordhtvggthhenucggtffrrghtthgvrhhnpeeuleetvdduffeuffdufeeihf
+    dttdeludekfeejtdehtdekjeeiudffvdfgieejgfenucffohhmrghinhepkhgvrhhnvghl
+    rdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:FKdSYyMBqz1xUaj0o01SiU13TCKo--GagvYixfPPCcUysyREvhnuXw>
+    <xmx:FKdSYz-yXIfjG7IITEdNt_8DtUhZa8rENt2U6wf5QHvCdPRh6Q4-kw>
+    <xmx:FKdSYyUbl1_xL8jBfe5sdZEwowhnVwkuwbCa4oNjFVUgAL50GGW32w>
+    <xmx:FKdSY-eYIYoVyrkogPoPAWUM3nS3TBqjZqpSiN6jm12RRuaThyQu9w>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Oct 2022 10:05:07 -0400 (EDT)
+From:   maxime@cerno.tech
+Date:   Fri, 21 Oct 2022 16:05:05 +0200
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>, linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+Subject: BCM2835 clock driver, power domains and CLK_SET_RATE_GATE
+Message-ID: <20221021140505.kjmw5x4s6qhnrfif@houat>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCHv5 4/6] mmc: dw_mmc-pltfm: socfpga: add method to configure
- clk-phase
-Content-Language: en-US
-To:     Dinh Nguyen <dinguyen@kernel.org>, jh80.chung@samsung.com
-Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20221019170657.68014-1-dinguyen@kernel.org>
- <20221019170657.68014-5-dinguyen@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221019170657.68014-5-dinguyen@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ihghh7n2kocdeqfp"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/10/2022 13:06, Dinh Nguyen wrote:
-> The clock-phase settings for the SDMMC controller in the SoCFPGA
-> platforms reside in a register in the System Manager. Add a method
-> to access that register through the syscon interface.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
-> v5: change error handling from of_property_read_variable_u32_array()
->     support arm32 by reading the reg_shift
-> v4: no change
-> v3: add space before &socfpga_drv_data
-> v2: simplify clk-phase calculations
-> ---
->  drivers/mmc/host/dw_mmc-pltfm.c | 43 ++++++++++++++++++++++++++++++++-
->  1 file changed, 42 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
-> index 9901208be797..74421d13f466 100644
-> --- a/drivers/mmc/host/dw_mmc-pltfm.c
-> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
-> @@ -17,10 +17,16 @@
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/mmc.h>
->  #include <linux/of.h>
-> +#include <linux/mfd/altera-sysmgr.h>
-> +#include <linux/regmap.h>
->  
->  #include "dw_mmc.h"
->  #include "dw_mmc-pltfm.h"
->  
-> +#define SOCFPGA_DW_MMC_CLK_PHASE_STEP	45
-> +#define SYSMGR_SDMMC_CTRL_SET(smplsel, drvsel, reg_shift) \
-> +	((((smplsel) & 0x7) << reg_shift) | (((drvsel) & 0x7) << 0))
-> +
->  int dw_mci_pltfm_register(struct platform_device *pdev,
->  			  const struct dw_mci_drv_data *drv_data)
->  {
-> @@ -62,9 +68,44 @@ const struct dev_pm_ops dw_mci_pltfm_pmops = {
->  };
->  EXPORT_SYMBOL_GPL(dw_mci_pltfm_pmops);
->  
-> +static int dw_mci_socfpga_priv_init(struct dw_mci *host)
-> +{
-> +	struct device_node *np = host->dev->of_node;
-> +	struct regmap *sys_mgr_base_addr;
-> +	u32 clk_phase[2] = {0}, reg_offset, reg_shift;
-> +	int i, rc, hs_timing;
-> +
-> +	rc = of_property_read_variable_u32_array(np, "clk-phase-sd-hs", &clk_phase[0], 2, 0);
-> +	if (rc < 0) {
-> +		dev_err(host->dev, "clk-phase-sd-hs not found!\n");
-> +		return rc;
-> +	}
-> +
-> +	sys_mgr_base_addr = altr_sysmgr_regmap_lookup_by_phandle(np, "altr,sysmgr-syscon");
-> +	if (IS_ERR(sys_mgr_base_addr)) {
-> +		dev_err(host->dev, "failed to find altr,sys-mgr regmap!\n");
-> +		return -ENODEV;
 
-Isn't this now an ABI break? I have an impression we talked about this...
+--ihghh7n2kocdeqfp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+Hi,
 
+I had to fix a regression today that was mostly due to the fact that
+clk-bcm2835 and clk-raspberrypi have fairly diverging behaviour.
+
+https://lore.kernel.org/dri-devel/20221021131339.2203291-1-maxime@cerno.tech/
+
+The "fix" is rather suboptimal and I'd like to address it properly.
+
+Even though the commit message tries to explain everything and why other
+solutions wouldn't work, the underlying cause is that clk-bcm2835 has a
+bunch of restrictions that I don't really get and we have to work
+around. I'm not sure I have the full picture either, so please take the
+following with a grain of salt.
+
+The first one is that the HSM clock discussed in that patch is part of
+the HDMI power domain, so it has to be powered for the clock to retain
+its configuration.
+
+The side effect is that we need to initialize the clock at boot time so
+that it has some rate. This is pretty important since that clock feeds
+the register and thus a failure to initialize would lock the CPU on a
+register access.
+
+The second one is that since clk-bcm2835 has CLK_SET_RATE_GATE, we have
+to call clk_set_min_rate() before clk_prepare_enable(), or
+clk_set_min_rate() is likely to fail.
+
+So we need in runtime_resume to call clk_set_min_rate with an absolute
+minimum for the HDMI controller to be functional and then enable the
+clock.
+
+But then, since we have enabled the HSM clock by the time
+pm_runtime_resume_and_get in vc4_hdmi_encoder_pre_crtc_configure()
+returns, the clock is enabled so we can't adjust its rate based on the
+resolution after the runtime_resume.
+
+But if we do it before runtime_resume, then the clk_set_min_rate() call
+in runtime_resume will override the "resolution rate" with the "absolute
+minimum" rate.
+
+Removing CLK_SET_RATE_GATE would solve this entirely, since we could
+move the pre_crtc_configure clk_set_min_rate() call after
+runtime_resume, and it would work just fine.
+
+But the interaction with the power domain is weird to me. I'm not even
+sure how it's even supposed to work if one has to disable the clock (and
+its power domain?) to change the rate, but the configuration won't stick?
+
+So I guess my question is how can we untangle this a bit so that we can
+simplify the users of that driver?
+
+Thanks!
+Maxime
+
+--ihghh7n2kocdeqfp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY1KnEQAKCRDj7w1vZxhR
+xawsAP9iNQdKowVepzxWlYxBdfEIBIMczY7HWrgJJuWThlhMBQEA1N5uLfcVR3I5
+enz802cxD7hTT4QiPOGAsuKQRuNQlA4=
+=CDpp
+-----END PGP SIGNATURE-----
+
+--ihghh7n2kocdeqfp--
