@@ -2,90 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A033C04A95
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Oct 2022 11:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8275C3A59D
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Oct 2022 11:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbiJVLhC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Oct 2022 07:37:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58990 "EHLO
+        id S230346AbiJVLhw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Oct 2022 07:37:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbiJVLgr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Oct 2022 07:36:47 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C78D2D196F
-        for <linux-clk@vger.kernel.org>; Sat, 22 Oct 2022 04:21:36 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id q19so14802230edd.10
-        for <linux-clk@vger.kernel.org>; Sat, 22 Oct 2022 04:21:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uau5WlTSNdH5hHu6/4EE9XBJkPI5Seuz5EPcacn4qTA=;
-        b=GlvPEDLDWVSa5bMQhee/o8/jixFJt4sRIRb06zyDmO+5mhQrI7xsu/OGQou0Kv4QaF
-         cDFgRnCFGlIOxmZfIUoLzEWlG0gNf22VRPYRfqtrQpzQDpQsJeuhleR4bDZ3XFEQiiNa
-         Bo0ZUDb9Pz6DTLp4dBlnL4jSJQlKo11q8ggd52qZ7GB0su0gngkjmRRsDhZ6tDF407zH
-         qxoPjeEVMLOFu313wcylwp5Gmzjt2pEnM+2pcnrR/9UcZlgSrExQ9nOYOeIY2cEvBb3M
-         NTxhgrUiNhNRsC4D7hHW3qQQODUQgDOIEgF0azZnS2E8qFMvrKZswQ2uGty02Hpup54s
-         Sacw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uau5WlTSNdH5hHu6/4EE9XBJkPI5Seuz5EPcacn4qTA=;
-        b=esW9DMwokP2yPr2E1zPS+dRj347Yw7rCXhXl3Cr1OV0DsK6LESYwgSk5qVTbVF2QPU
-         2JNPUIobG83sRYRNyC7SydhKiY1Vg9hyPunaboyZoAabQ4MZxjBC/BPH5Z+bfUWoVrJO
-         aVOuBxhCfFIWIIgL1rmEupSHIU2iMJTidR1CwAn+6T1gM+lZRIPm3cfmxNaH0YgpLdYU
-         YJwo3ZOXO0j4pYh5fTAvqZ3dFpFiI7zvhyWxCqiLzY8SdEN3lVXx41k0dtt5YCRiXuTz
-         8HFZx/Z6YfEF5DVPcyUwdiImNi1LIy8n5Bc9Ap7PcIMN4JDz7+b0kQgcYtVC78/0FfIe
-         fE9A==
-X-Gm-Message-State: ACrzQf14h1f7je7tYg0OpkCx33p2/aimsXLsPjg8GJF2cqKPfyORHEq+
-        E7npV0fYhOIzUu9GJI84CNuU1YWqi/rhgfzylPg=
-X-Google-Smtp-Source: AMsMyM5LEcFTzC1Q4YGLhDbTxuF75M5we9/a1NEH3sdG1rvdgpjF8W6B1ACRlR/iDcP+H2dwpXTciBNmEE82JzhnpQE=
-X-Received: by 2002:a17:907:7203:b0:78d:b8ba:c1a4 with SMTP id
- dr3-20020a170907720300b0078db8bac1a4mr19133763ejc.60.1666437694164; Sat, 22
- Oct 2022 04:21:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <a801afc0-a8f2-a0a4-0f2b-a7201351d563@gmail.com> <32b218b0-b2cc-9401-8303-c09575ed5209@gmail.com>
-In-Reply-To: <32b218b0-b2cc-9401-8303-c09575ed5209@gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 22 Oct 2022 13:21:22 +0200
-Message-ID: <CAFBinCB=tuF-RW77w-iVVbzq82vcORisy1QwCW_Tk5SoCMwa+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: meson: pll: adjust timeout in meson_clk_pll_wait_lock()
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230020AbiJVLhi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Oct 2022 07:37:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F30DF9;
+        Sat, 22 Oct 2022 04:24:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3920260D34;
+        Sat, 22 Oct 2022 11:24:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED202C433C1;
+        Sat, 22 Oct 2022 11:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1666437854;
+        bh=QlHVwvQAZAIgvjk8abE10EkrdDUL7r/AigVC5ALYQK4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=un1PldCoLSJ88cWZRYnjm5Oi1KiCHJHB0LueFTTYXn8D7fIAxS0vK6V48SeMy9VdW
+         ZuWEiHtsrYztxbCEB+Ntyz+QhjY7UYniFteggfYw/ntXKMozNoEsqsq66wk3rOhU3K
+         hzsEaBZQY3uGlKbG/0kkX3FnGtw/tJtrFvWLyT24=
+Date:   Sat, 22 Oct 2022 13:24:12 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
+Message-ID: <Y1PS3A75mXIEb+MA@kroah.com>
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-2-arnd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Heiner,
+On Fri, Oct 21, 2022 at 10:27:35PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On Sat, Oct 22, 2022 at 1:17 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-[...]
-> Hi Jerome,
-> on Sep 6th you responded that the patch has been applied.
-> https://patchwork.kernel.org/project/linux-amlogic/patch/a801afc0-a8f2-a0a4-0f2b-a7201351d563@gmail.com/
-> However I still don't see it in linux-next. Is it pending in some other tree?
-Jerome has merged both your patches and they are part of the linux-clk
-pull request, see [0]
-But it seems like that hasn't been merged by the clock maintainers
-(Stephen) yet.
-
-Do you have that other mail in your inbox? If so, can you please ping
-Stephen in that thread?
-
-
-Best regards,
-Martin
-
-
-[0] https://lore.kernel.org/linux-amlogic/1jh71b3asq.fsf@starbuckisacylon.baylibre.com/
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
