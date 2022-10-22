@@ -2,152 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123B6C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Oct 2022 22:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A20C38A2D
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Oct 2022 00:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbiJUWdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Oct 2022 18:33:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45206 "EHLO
+        id S230027AbiJVAlL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Oct 2022 20:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbiJUWda (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 18:33:30 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B81592AD314;
-        Fri, 21 Oct 2022 15:33:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 69253B82CBE;
-        Fri, 21 Oct 2022 22:33:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4070CC433C1;
-        Fri, 21 Oct 2022 22:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666391607;
-        bh=g5SUbc3dxCone79caS0M2AEu5MpWd5JFL171Tn/U2d4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YtT4bLoLT3AdAlNhZAuWY10vexMQTJrTFgGjHybRvOmmgqCsx8pKtm0zVkueeQbLC
-         K1m/sojgD3EMuFX/rcQI58EnKk68AVJNtO9JiMKs/6ZwTgDRov4jmgc2ydvStn23ag
-         GvR7y/2LAlBe2M1nuLAhW5vkosztclzcGnUgYIgwqC81NmFmc1up42azXQpER9T20A
-         CLWBmZzb96celcpPnCzalJVcG3hOZMKp8B00T3IhYbMWjwpGhvoTMm1M/b4lZzePg3
-         YQlPgGhd1URgg6MqJfR9Yeai00VsTcYaYL1I9dJTOVXHN4hE0/5hMAK8/MoHnqxz4X
-         OUGBYYU9we38Q==
-Date:   Sat, 22 Oct 2022 00:33:18 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
-Message-ID: <Y1MeLqsE2fggyhzU@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20221021202254.4142411-1-arnd@kernel.org>
- <20221021203329.4143397-2-arnd@kernel.org>
+        with ESMTP id S230013AbiJVAlJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2022 20:41:09 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142F9FAE4F
+        for <linux-clk@vger.kernel.org>; Fri, 21 Oct 2022 17:41:05 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id j21so3083663qkk.9
+        for <linux-clk@vger.kernel.org>; Fri, 21 Oct 2022 17:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RrPjIQcXUTVTQbLthehjSdVtJ5wsCBFGwdqvbET3Nv4=;
+        b=uT4tEVDvrXXsIXLYLHC/+JilwU8FMbcbfjqAEp/aD4vUyde7trCRpCmJ40r2iekff+
+         E/1KOxu5YgexrykOsTc4YeQzEGCMJMkfzVzMnT5zPzbMyLc10EO3OdT6pPKQ24kR8KI5
+         ++LqaKPkR356Wwf4gX/48JgCN2mOAhrx1ImM5imLBxeJeT0qyAMXSY6fKfFItKKy+t+A
+         eBP358K1vY6Tr8PrveFnyqpdec2Y8ws/UvrnCaP/li7xvG3CPm7dZ4dYEkEPN7tZDX1c
+         MkWOWV7kBsXOoW9NSeFYG0tysE4RDZuqepX+ApjEMHI77lud9YXGL/Bfw18oh796Ws07
+         Xifg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RrPjIQcXUTVTQbLthehjSdVtJ5wsCBFGwdqvbET3Nv4=;
+        b=J+7L0BF+1pOPZMcGVk0PuPuLRB/MRt1vcTPZjM8++Vu1zUgh7QL1JS7yvXSHRN2hmK
+         3Q/UhLmSjk8l2j1KMQGz6HDVu1TN7gtoSpJEEzPhNkcmQqNaRoqJfAG3IiddTQBtc0Oc
+         i7kS6qRIuRwX5NXL1Y7/6ACYdJCeQvsjF2r6tPsW7jhn3aUwa96mQTjm7FAXE4AWC50M
+         9S1S9e3+Tq5arb2CWvGoHs4O2WgSSGq7q/lk9cmRusqf1HNCVMJ5+2WWKTcHH+fzp+5I
+         vTTScVKCQHz5mGEx3qS4zefsuARJjvJtS4wQlTbV5h+1F+0lNqum0wJlx29QYskzZ8aF
+         8KfQ==
+X-Gm-Message-State: ACrzQf3BUINk9ETkRiatfb7gy7ZCXRNpXQwTIIZpUm7GNourWrLqNInu
+        tSavIO5jXmgkYtM8J1eoZagL5g==
+X-Google-Smtp-Source: AMsMyM7ykfJjUZmYjeyoc8pHNbxFeVP6AU7RqpZSlor378l+nEizeZzw9rnBwLc5aiiGfYCyYMAA4g==
+X-Received: by 2002:ae9:ef4e:0:b0:6ee:80b6:2ee4 with SMTP id d75-20020ae9ef4e000000b006ee80b62ee4mr15503825qkg.126.1666399264741;
+        Fri, 21 Oct 2022 17:41:04 -0700 (PDT)
+Received: from [192.168.10.124] (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
+        by smtp.gmail.com with ESMTPSA id br44-20020a05620a462c00b006bbb07ebd83sm10201344qkb.108.2022.10.21.17.41.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Oct 2022 17:41:04 -0700 (PDT)
+Message-ID: <977ecc3e-c5d8-dae9-149e-5ff4e7f30130@linaro.org>
+Date:   Fri, 21 Oct 2022 20:41:02 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="q4IaRr9rlP9eixcE"
-Content-Disposition: inline
-In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v2 1/1] dt-bindings: clock: ti,cdce925: Convert to DT
+ schema
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20221021064757.379558-1-alexander.stein@ew.tq-group.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221021064757.379558-1-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 21/10/2022 02:47, Alexander Stein wrote:
+> Convert the TI CDCE925 clock binding to DT schema format.
+> Including a small fix: Add the missing 'ti' prefix in the example
+> compatible.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+> I have to admit I only have one specific addon platform for this
+> hardware, which is actually a CECD813 tbh.
+> 
+> Changes in v2:
+> * Fix bindings title
+> * Removed nodename pattern
+> * Add 'additionalProperties: false' for PLL subnodes
+> * Fix typo in required list
+> * I added myself as maintainer
 
---q4IaRr9rlP9eixcE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 21, 2022 at 10:27:35PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
-> similar symbols that are no longer available with the platform gone,
-> though the drivers themselves are still used on newer platforms,
-> so remove these hacks.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
+Best regards,
+Krzysztof
 
-
---q4IaRr9rlP9eixcE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNTHioACgkQFA3kzBSg
-KbYeNA/9HlDxIncjyh8NS2x57Q58pKmrahP7tNy2sriAnglRPdeXjkmitx/PDnHg
-bIozZCPd20DhLP05iEjhC03Z+mkJJjnjo+rhRpAKX8NlI1+pvJXTmfxiAvwkIU3b
-Ra+7NbDwBKiltZo/jJ7QNRjr6bWyZCLx3/0VIEx/ILC+ukZen1jdsJhdPD1/X1b3
-RiA8N9L3oPIcLmesbdb1HDiF5iD5C+2baALIuBeZ9xXwF8uFSsFpq4Qn1/HgpJFu
-AP6+2ksTWEj7H6ARmXOA/u6frOxsWH1kahCSTBB0dtX0gSarueTzo0FxEQsyhkAx
-dgtZB9qGsy7A92ya7u69s+VLgXQyEH3C+JOBW8Ww+faoCz2nk3VFqWjwKy8kqCil
-wgbEHv9oPuQDtlP2lw9ApUxfTkWIWp3v1EfZ7dALMcfSyMjh+kGcYntEhMlD1u3V
-lZrp9wbt5yJoIZ18mFHHbaiVCdcEjwn5fvLHSQ2znhLiyBT6pbWcC7Is5xb2hiF7
-Rl6+VuLynCXX36g/7J8hFkwcKZIa7x95++ksHb908o4tjNKX+6oYSKdbYW1gUhxJ
-yUNJs6W+HsoC0DFOWt71wex8PgRwG3HGkxBKDkd5dmLDcUYlLA9xENa6fH5MVdHI
-37v4yvkdM8L5yq07lG/mJkHC7C/7+kdZ/ahDQsSuIdcAoV1dIPc=
-=za7Y
------END PGP SIGNATURE-----
-
---q4IaRr9rlP9eixcE--
