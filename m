@@ -2,346 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B8CECDFA1
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Oct 2022 13:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789C4FA3741
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Oct 2022 14:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbiJVNeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Oct 2022 09:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34692 "EHLO
+        id S229583AbiJVOCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Oct 2022 10:02:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbiJVNeU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Oct 2022 09:34:20 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A8824FED3;
-        Sat, 22 Oct 2022 06:34:15 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id az22-20020a05600c601600b003c6b72797fdso3784435wmb.5;
-        Sat, 22 Oct 2022 06:34:15 -0700 (PDT)
+        with ESMTP id S229667AbiJVOCk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Oct 2022 10:02:40 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CE7172512
+        for <linux-clk@vger.kernel.org>; Sat, 22 Oct 2022 07:02:38 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id q19so15705181edd.10
+        for <linux-clk@vger.kernel.org>; Sat, 22 Oct 2022 07:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9NKJPhRSkJLOsySyGlti0UFPq+h3LBIVs/9Y7L6pDNg=;
-        b=DG+SDWMJJFwrjmEhOjCKxThHTEAbDnI+fqIqkMkwKUYMhM32dGfqZLSG3OlpCxNyw3
-         S0MGvguJSykiUy/LO7Qt552E3y5vzn1gsu1lJFQ9zSVhmMcYfmT0ZMjo5/dbyRsz913/
-         fFLdUBzxD84E/JqTYnWuzx6DoUGt6EiOtZqHuqJHmq07j0HxShLsril8c+6Mo4/mSMzC
-         dOGFmrFvyrdZ4/dXvJoz1HeHN+itfGXQtdgMoD/QOfE9zMBo7xW2sY6RMsJnCtDHhr4S
-         QcFPiqVYV+FAAHrBS7HFhGxQ6bb6n9/zSLBmZyfsxz7eX9NVKEIi6yIKHRU3cyJtIZ+g
-         1qYg==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LNVXeM54MuUTzkxW4S+h/avYMDRiH1JNQoeYcnCHBhM=;
+        b=GjMO9bieaHDBelf7XPvp7Mm6+ECuPSqx2R6/8PrakF0zbhlcSTaFXUaHjvuZ2PA8oC
+         6WcjMZS86zeqIwyvNpGwuo6uT7FBWc0z/XIKRCqsdCIqfvsYU5jrdGwZO3AN/Ut8O2PU
+         dVwNs+ZCerEYbOg45w7UYYLixBM2CbHkBDvT80VOQZCglZoEQDqqFHhmGHexg7wLDjKH
+         dwidHE+9u/Qqc/ZjBKywjSP+b7eto8KN5KoUI5cL/eSVRiUi9+a4YNFvdbLp0UHLJ6sl
+         gO3VAnOCQ8U/s+ZJg38eYK/md92XTywwgTsnnIKU+jdNd8yLoqJqnpyW7AhFA1JN3Ctq
+         CMQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9NKJPhRSkJLOsySyGlti0UFPq+h3LBIVs/9Y7L6pDNg=;
-        b=JxsmDujhyvmsQ0bFu5cbgkB0TSKHkE8ExEM49ds05fmVupACoiwzOOPJ5xwgXgK6Jd
-         +659Byf5OJZ21sK56GMuO0VzBcmhLyBKRSLbDw7ZFnkCjmBOXMvEYQI+6nzm7+B9BMOt
-         NtOY5/dSi3kgilWSeHFkot/qTJJ0o7x3jy0aFFfPYYkigXdCrgsgEKW8kZcd08nN5eJJ
-         g04vqcFd4yDY59867TXPWOGGyBWVQ7e5w/5wOoRzPSBHnntrdIY7jCq8bytRIBQf9AWE
-         1S/XQzrr8ngTElSgVzpPFJnngn6l4sQkzbySDzF3v9bONo4ucallRDh2nC7PeW8VXeKv
-         h/xw==
-X-Gm-Message-State: ACrzQf0E1Ka6BKB1dF9Qi9VHeg6m7+VyimtAcR9a7G60Vs8m+2+xvzds
-        SXrEWNH1y+4uN/MS+BJua8k=
-X-Google-Smtp-Source: AMsMyM6s4mYwoxbxgZtiJ5zkDU+NUFrOml/b19lGpi8frYGt6bAYEbQADxBEgv2cDblJRZhodoSN9Q==
-X-Received: by 2002:a05:600c:5cc:b0:3c6:674d:7138 with SMTP id p12-20020a05600c05cc00b003c6674d7138mr16173704wmd.176.1666445654421;
-        Sat, 22 Oct 2022 06:34:14 -0700 (PDT)
-Received: from debby ([2a01:e0a:a6d:a8d0:7ff4:8f61:5574:9f95])
-        by smtp.gmail.com with ESMTPSA id k16-20020a5d6290000000b0022ae4f8395dsm20765771wru.96.2022.10.22.06.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Oct 2022 06:34:14 -0700 (PDT)
-From:   Romain Perier <romain.perier@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Daniel Palmer <daniel@0x0f.com>,
-        Romain Perier <romain.perier@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Willy Tarreau <w@1wt.eu>
-Subject: [PATCH v7 1/1] clk: mstar: msc313 cpupll clk driver
-Date:   Sat, 22 Oct 2022 15:34:04 +0200
-Message-Id: <20221022133404.3832-2-romain.perier@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221022133404.3832-1-romain.perier@gmail.com>
-References: <20221022133404.3832-1-romain.perier@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LNVXeM54MuUTzkxW4S+h/avYMDRiH1JNQoeYcnCHBhM=;
+        b=4HQtZL1pbQmoMaKqfbkJhTk4E2N+Np8khDTz9dHn2dn1drO1IMSiphehPqEqodjXDk
+         Rmo/0HUloJ3g6pXCJvwUxNGF3Bpqw4KFbodwW9gNhZiYfvjpjWYc7X2wHstTHyXGhvVZ
+         t66NxIco59c55CAKxYULY5Yqb2vkj+6dbYRyMELHHQezRLfr0EVW8DbWxlIzxNGIkBux
+         8Gv2NHq9F8ZqJb4oUF3k/adkcfUIPSXB385cqaFZUFsWZx7Jzlybz+FNR78PxUycFPBL
+         X6N4C5RuIxvpWgXuk7zU2/AEpdHGz6+Dgt88bpEEp3SSrLlKtIzWqW5e8rplDepnLevP
+         8u5g==
+X-Gm-Message-State: ACrzQf1rbMWD+bgcmTqx5EnSP774Y0vbXpTwJDRHjCdBQ+bs+PopvqoC
+        NXc93CiuaG0+DVpGzJeC2QneLRpBj3TVAJ3k74kpwg==
+X-Google-Smtp-Source: AMsMyM7E0Zchl09puiKKoBotMVhULOKYzE0S/e35EOJ4h3CGvH2Wc0rTF+zAD6m+BsOpLEKYent2ulN8cXV4ms8GFBg=
+X-Received: by 2002:a05:6402:1d55:b0:45f:c87f:c753 with SMTP id
+ dz21-20020a0564021d5500b0045fc87fc753mr14243568edb.32.1666447356997; Sat, 22
+ Oct 2022 07:02:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221021202254.4142411-1-arnd@kernel.org> <20221021203329.4143397-2-arnd@kernel.org>
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 22 Oct 2022 16:02:25 +0200
+Message-ID: <CACRpkdacViTuL_gmhWULNm7HCHQeGBXwkonDxQjubSM0=v8vgw@mail.gmail.com>
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Daniel Palmer <daniel@0x0f.com>
+On Fri, Oct 21, 2022 at 10:37 PM Arnd Bergmann <arnd@kernel.org> wrote:
 
-Add a driver for the CPU pll/ARM pll/MIPS pll that is present
-in MStar SoCs.
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Currently there is no documentation for this block so it's possible
-this driver isn't entirely correct.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Only tested on the version of this IP in the MStar/SigmaStar
-ARMv7 SoCs.
-
-Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-Co-developed-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
----
- drivers/clk/mstar/Kconfig             |   7 +
- drivers/clk/mstar/Makefile            |   1 +
- drivers/clk/mstar/clk-msc313-cpupll.c | 220 ++++++++++++++++++++++++++
- 3 files changed, 228 insertions(+)
- create mode 100644 drivers/clk/mstar/clk-msc313-cpupll.c
-
-diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
-index de37e1bce2d2..b9bcb5e02814 100644
---- a/drivers/clk/mstar/Kconfig
-+++ b/drivers/clk/mstar/Kconfig
-@@ -1,4 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+config MSTAR_MSC313_CPUPLL
-+	bool "MStar CPUPLL driver"
-+	depends on ARCH_MSTARV7 || COMPILE_TEST
-+	default ARCH_MSTARV7
-+	help
-+	  Support for the CPU PLL present on MStar/Sigmastar SoCs.
-+
- config MSTAR_MSC313_MPLL
- 	bool "MStar MPLL driver"
- 	depends on ARCH_MSTARV7 || COMPILE_TEST
-diff --git a/drivers/clk/mstar/Makefile b/drivers/clk/mstar/Makefile
-index f8dcd25ede1d..17d97eedcd36 100644
---- a/drivers/clk/mstar/Makefile
-+++ b/drivers/clk/mstar/Makefile
-@@ -3,4 +3,5 @@
- # Makefile for mstar specific clk
- #
- 
-+obj-$(CONFIG_MSTAR_MSC313_CPUPLL) += clk-msc313-cpupll.o
- obj-$(CONFIG_MSTAR_MSC313_MPLL) += clk-msc313-mpll.o
-diff --git a/drivers/clk/mstar/clk-msc313-cpupll.c b/drivers/clk/mstar/clk-msc313-cpupll.c
-new file mode 100644
-index 000000000000..a93e2dba09d3
---- /dev/null
-+++ b/drivers/clk/mstar/clk-msc313-cpupll.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Daniel Palmer <daniel@thingy.jp>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+
-+/*
-+ * This IP is not documented outside of the messy vendor driver.
-+ * Below is what we think the registers look like based on looking at
-+ * the vendor code and poking at the hardware:
-+ *
-+ * 0x140 -- LPF low. Seems to store one half of the clock transition
-+ * 0x144 /
-+ * 0x148 -- LPF high. Seems to store one half of the clock transition
-+ * 0x14c /
-+ * 0x150 -- vendor code says "toggle lpf enable"
-+ * 0x154 -- mu?
-+ * 0x15c -- lpf_update_count?
-+ * 0x160 -- vendor code says "switch to LPF". Clock source config? Register bank?
-+ * 0x164 -- vendor code says "from low to high" which seems to mean transition from LPF low to
-+ * LPF high.
-+ * 0x174 -- Seems to be the PLL lock status bit
-+ * 0x180 -- Seems to be the current frequency, this might need to be populated by software?
-+ * 0x184 /  The vendor driver uses these to set the initial value of LPF low
-+ *
-+ * Frequency seems to be calculated like this:
-+ * (parent clock (432mhz) / register_magic_value) * 16 * 524288
-+ * Only the lower 24 bits of the resulting value will be used. In addition, the
-+ * PLL doesn't seem to be able to lock on frequencies lower than 220 MHz, as
-+ * divisor 0xfb586f (220 MHz) works but 0xfb7fff locks up.
-+ *
-+ * Vendor values:
-+ * frequency - register value
-+ *
-+ * 400000000  - 0x0067AE14
-+ * 600000000  - 0x00451EB8,
-+ * 800000000  - 0x0033D70A,
-+ * 1000000000 - 0x002978d4,
-+ */
-+
-+#define REG_LPF_LOW_L		0x140
-+#define REG_LPF_LOW_H		0x144
-+#define REG_LPF_HIGH_BOTTOM	0x148
-+#define REG_LPF_HIGH_TOP	0x14c
-+#define REG_LPF_TOGGLE		0x150
-+#define REG_LPF_MYSTERYTWO	0x154
-+#define REG_LPF_UPDATE_COUNT	0x15c
-+#define REG_LPF_MYSTERYONE	0x160
-+#define REG_LPF_TRANSITIONCTRL	0x164
-+#define REG_LPF_LOCK		0x174
-+#define REG_CURRENT		0x180
-+
-+#define LPF_LOCK_TIMEOUT	100000000
-+
-+#define MULTIPLIER_1		16
-+#define MULTIPLIER_2		524288
-+#define MULTIPLIER		(MULTIPLIER_1 * MULTIPLIER_2)
-+
-+struct msc313_cpupll {
-+	void __iomem *base;
-+	struct clk_hw clk_hw;
-+};
-+
-+#define to_cpupll(_hw) container_of(_hw, struct msc313_cpupll, clk_hw)
-+
-+static u32 msc313_cpupll_reg_read32(struct msc313_cpupll *cpupll, unsigned int reg)
-+{
-+	u32 value;
-+
-+	value = ioread16(cpupll->base + reg + 4) << 16;
-+	value |= ioread16(cpupll->base + reg);
-+
-+	return value;
-+}
-+
-+static void msc313_cpupll_reg_write32(struct msc313_cpupll *cpupll, unsigned int reg, u32 value)
-+{
-+	u16 l = value & 0xffff, h = (value >> 16) & 0xffff;
-+
-+	iowrite16(l, cpupll->base + reg);
-+	iowrite16(h, cpupll->base + reg + 4);
-+}
-+
-+static void msc313_cpupll_setfreq(struct msc313_cpupll *cpupll, u32 regvalue)
-+{
-+	ktime_t timeout;
-+
-+	msc313_cpupll_reg_write32(cpupll, REG_LPF_HIGH_BOTTOM, regvalue);
-+
-+	iowrite16(0x1, cpupll->base + REG_LPF_MYSTERYONE);
-+	iowrite16(0x6, cpupll->base + REG_LPF_MYSTERYTWO);
-+	iowrite16(0x8, cpupll->base + REG_LPF_UPDATE_COUNT);
-+	iowrite16(BIT(12), cpupll->base + REG_LPF_TRANSITIONCTRL);
-+
-+	iowrite16(0, cpupll->base + REG_LPF_TOGGLE);
-+	iowrite16(1, cpupll->base + REG_LPF_TOGGLE);
-+
-+	timeout = ktime_add_ns(ktime_get(), LPF_LOCK_TIMEOUT);
-+	while (!(ioread16(cpupll->base + REG_LPF_LOCK))) {
-+		if (ktime_after(ktime_get(), timeout)) {
-+			pr_err("timeout waiting for LPF_LOCK\n");
-+			return;
-+		}
-+		cpu_relax();
-+	}
-+
-+	iowrite16(0, cpupll->base + REG_LPF_TOGGLE);
-+
-+	msc313_cpupll_reg_write32(cpupll, REG_LPF_LOW_L, regvalue);
-+}
-+
-+static unsigned long msc313_cpupll_frequencyforreg(u32 reg, unsigned long parent_rate)
-+{
-+	unsigned long long prescaled = ((unsigned long long)parent_rate) * MULTIPLIER;
-+
-+	if (prescaled == 0 || reg == 0)
-+		return 0;
-+	return DIV_ROUND_DOWN_ULL(prescaled, reg);
-+}
-+
-+static u32 msc313_cpupll_regforfrequecy(unsigned long rate, unsigned long parent_rate)
-+{
-+	unsigned long long prescaled = ((unsigned long long)parent_rate) * MULTIPLIER;
-+
-+	if (prescaled == 0 || rate == 0)
-+		return 0;
-+	return DIV_ROUND_UP_ULL(prescaled, rate);
-+}
-+
-+static unsigned long msc313_cpupll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct msc313_cpupll *cpupll = to_cpupll(hw);
-+
-+	return msc313_cpupll_frequencyforreg(msc313_cpupll_reg_read32(cpupll, REG_LPF_LOW_L),
-+					     parent_rate);
-+}
-+
-+static long msc313_cpupll_round_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long *parent_rate)
-+{
-+	u32 reg = msc313_cpupll_regforfrequecy(rate, *parent_rate);
-+	long rounded = msc313_cpupll_frequencyforreg(reg, *parent_rate);
-+
-+	/*
-+	 * This is my poor attempt at making sure the resulting
-+	 * rate doesn't overshoot the requested rate.
-+	 */
-+	for (; rounded >= rate && reg > 0; reg--)
-+		rounded = msc313_cpupll_frequencyforreg(reg, *parent_rate);
-+
-+	return rounded;
-+}
-+
-+static int msc313_cpupll_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
-+{
-+	struct msc313_cpupll *cpupll = to_cpupll(hw);
-+	u32 reg = msc313_cpupll_regforfrequecy(rate, parent_rate);
-+
-+	msc313_cpupll_setfreq(cpupll, reg);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops msc313_cpupll_ops = {
-+	.recalc_rate	= msc313_cpupll_recalc_rate,
-+	.round_rate	= msc313_cpupll_round_rate,
-+	.set_rate	= msc313_cpupll_set_rate,
-+};
-+
-+static const struct of_device_id msc313_cpupll_of_match[] = {
-+	{ .compatible = "mstar,msc313-cpupll" },
-+	{}
-+};
-+
-+static int msc313_cpupll_probe(struct platform_device *pdev)
-+{
-+	struct clk_init_data clk_init = {};
-+	struct clk_parent_data cpupll_parent = { .index	= 0 };
-+	struct device *dev = &pdev->dev;
-+	struct msc313_cpupll *cpupll;
-+	int ret;
-+
-+	cpupll = devm_kzalloc(&pdev->dev, sizeof(*cpupll), GFP_KERNEL);
-+	if (!cpupll)
-+		return -ENOMEM;
-+
-+	cpupll->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(cpupll->base))
-+		return PTR_ERR(cpupll->base);
-+
-+	/* LPF might not contain the current frequency so fix that up */
-+	msc313_cpupll_reg_write32(cpupll, REG_LPF_LOW_L,
-+				  msc313_cpupll_reg_read32(cpupll, REG_CURRENT));
-+
-+	clk_init.name = dev_name(dev);
-+	clk_init.ops = &msc313_cpupll_ops;
-+	clk_init.parent_data = &cpupll_parent;
-+	clk_init.num_parents = 1;
-+	cpupll->clk_hw.init = &clk_init;
-+
-+	ret = devm_clk_hw_register(dev, &cpupll->clk_hw);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get, &cpupll->clk_hw);
-+}
-+
-+static struct platform_driver msc313_cpupll_driver = {
-+	.driver = {
-+		.name = "mstar-msc313-cpupll",
-+		.of_match_table = msc313_cpupll_of_match,
-+	},
-+	.probe = msc313_cpupll_probe,
-+};
-+builtin_platform_driver(msc313_cpupll_driver);
--- 
-2.35.1
-
+Yours,
+Linus Walleij
