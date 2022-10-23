@@ -2,205 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 483F9C3A59D
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Oct 2022 15:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14DFFA373E
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Oct 2022 16:41:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230241AbiJWPfP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Oct 2022 11:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36852 "EHLO
+        id S230226AbiJWQlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Oct 2022 12:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbiJWPfO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Oct 2022 11:35:14 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBEF2981A;
-        Sun, 23 Oct 2022 08:35:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1666539308; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1Jivb1GiQTg1GHvq4OafqU6HklinZswkG0b9+Dw4jUE=;
-        b=docbR5fulR37C2JGn19iGiT1TTFB+mYm/hUHmQcpCCBrGaca14OXqakZy6A4XXdjD1hHdo
-        Z4tagc8Wc2eaN/8CbgT1dAwRasc4KU206jut7Jl7cASXWtGdNwZMIVf+LyLs9qsIVxtO8a
-        85YdU59VvVGcleVM0KisUCiiDEFsCpI=
-Date:   Sun, 23 Oct 2022 16:34:58 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v1 5/5] clk: ingenic: Add X1000 audio clocks
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, zhouyu@wanyeetech.com,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <AYP7KR.ZQW0GW51WJAG@crapouillou.net>
-In-Reply-To: <20221023145653.177234-6-aidanmacdonald.0x0@gmail.com>
-References: <20221023145653.177234-1-aidanmacdonald.0x0@gmail.com>
-        <20221023145653.177234-6-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S230266AbiJWQlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Oct 2022 12:41:07 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A11534986
+        for <linux-clk@vger.kernel.org>; Sun, 23 Oct 2022 09:41:01 -0700 (PDT)
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 857AC848A1;
+        Sun, 23 Oct 2022 18:40:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1666543257;
+        bh=6JQ7AfwduSszHXHlETY0G1z0X3gKVn5kR1ZBqvsrG18=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IMXvZF6d+Pps1gb1WrqRbrVvr6+MRVNNWbwwdbfo6C0DQhH/cLqj2S96ZCqvztr6x
+         hiGV5uDePrZMqf9MExHrACAfHCVDTGY7ls+8/c+CHuqW5Qp4La9zQK8UnjNqqS8txc
+         RUx4urxzzYtKeyIN8UrOUq0l3y1ddB0qC/rSH9CDHdv4g/w0WwjiOsAfi/4Wa0c3Eq
+         p2ZJAmlBKXJq1GyLTNETxxtDFZ6DRwulFKG2nBLzh5RC0xnkDU9agRGSYRkTto5P1l
+         swPLmrb7yFn1ykqdXqosO8a9ncMxawWBIVpnvthPPQI0Apc0DHmD/kJZhTQLOlaR++
+         R3YRaZAPLQ7cQ==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Marek Vasut <marex@denx.de>, Fabio Estevam <festevam@denx.de>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com
+Subject: [PATCH] [RFC] soc: imx: gpcv2: Split clock prepare from clock enable in the domain
+Date:   Sun, 23 Oct 2022 18:40:00 +0200
+Message-Id: <20221023164000.555654-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aidan,
+It is possible for clk_disable_unused() to trigger lockdep warning
+regarding lock ordering in this driver. This happens in case of the
+following conditions:
 
-Le dim. 23 oct. 2022 =E0 15:56:53 +0100, Aidan MacDonald=20
-<aidanmacdonald.0x0@gmail.com> a =E9crit :
-> The X1000's CGU supplies the I2S system clock to the AIC module
-> and ultimately the audio codec, represented by the "i2s" clock.
-> It is a simple mux which can either pass through EXCLK or a PLL
-> multiplied by a fractional divider (the "i2s_pll" clock).
->=20
-> The AIC contains a separate 1/N divider controlled by the I2S
-> driver, which generates the bit clock from the system clock.
-> The frame clock is always fixed to 1/64th of the bit clock.
->=20
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-> ---
->  drivers/clk/ingenic/x1000-cgu.c | 69=20
-> +++++++++++++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
->=20
-> diff --git a/drivers/clk/ingenic/x1000-cgu.c=20
-> b/drivers/clk/ingenic/x1000-cgu.c
-> index b2ce3fb83f54..341276e5e1ef 100644
-> --- a/drivers/clk/ingenic/x1000-cgu.c
-> +++ b/drivers/clk/ingenic/x1000-cgu.c
-> @@ -8,6 +8,7 @@
->  #include <linux/delay.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> +#include <linux/rational.h>
->=20
->  #include <dt-bindings/clock/ingenic,x1000-cgu.h>
->=20
-> @@ -168,6 +169,37 @@ static const struct clk_ops x1000_otg_phy_ops =3D {
->  	.is_enabled	=3D x1000_usb_phy_is_enabled,
->  };
->=20
-> +static void
-> +x1000_i2spll_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
-> +			 unsigned long rate, unsigned long parent_rate,
-> +			 unsigned int *pm, unsigned int *pn, unsigned int *pod)
-> +{
-> +	const unsigned long m_max =3D GENMASK(pll_info->m_bits - 1, 0);
-> +	const unsigned long n_max =3D GENMASK(pll_info->n_bits - 1, 0);
-> +	unsigned long m, n;
-> +
-> +	rational_best_approximation(rate, parent_rate, m_max, n_max, &m,=20
-> &n);
-> +
-> +	/* n should not be less than 2*m */
-> +	if (n < 2 * m)
-> +		n =3D 2 * m;
-> +
-> +	*pm =3D m;
-> +	*pn =3D n;
-> +	*pod =3D 1;
-> +}
-> +
-> +static void
-> +x1000_i2spll_set_rate_hook(const struct ingenic_cgu_pll_info=20
-> *pll_info,
-> +			   unsigned long rate, unsigned long parent_rate)
-> +{
-> +	/*
-> +	 * For some reason, the I2S divider doesn't work properly after
-> +	 * updating I2SCDR unless I2SCDR1 is read & written back.
-> +	 */
-> +	writel(readl(cgu->base + CGU_REG_I2SCDR1), cgu->base +=20
-> CGU_REG_I2SCDR1);
+A) clock core clk_disable_unused() triggers the following sequence in a
+   driver which also uses GPCv2 domain:
+   - clk_prepare_lock() -> obtains clock core prepare_lock
+   - pm_runtime_get*() -> obtains &blk_ctrl_genpd_lock_class
 
-Not fond of the nesting here, just use a variable.
+B) driver powers up a power domain and triggers the following sequence
+   in GPCv2:
+   - pm_runtime_get_sync() -> obtains &blk_ctrl_genpd_lock_class
+   - clk_bulk_prepare_enable() -> obtains clock core prepare_lock
 
-Besides... According to the documentation, bits 31 and 30 of this=20
-register are misconnected: writing to bit 31 will be reflected in bit=20
-30, and vice-versa. So this would work only if the bits 30 and 31 have=20
-the same value.
+This can lead to a deadlock in case A and B runs on separate CPUs.
 
-And worse than that, where do you actually set the register's value?=20
-Because bits 30/31, if cleared, will automatically compute the M/N=20
-values to the I2SCDR fields, overriding what the driver's .set_rate()=20
-callback is doing.
+To avoid the deadlock, split clk_*prepare() from clk_*enable() and
+call the former before pm_runtime_get_sync(). This way, the GPCv2
+driver always claims the prepare_lock before blk_ctrl_genpd_lock_class
+and the deadlock is avoided.
 
-Either we want that, and in that case the I2S clock should be a custom=20
-clock (since it wouldn't need to compute or write M/N), or we don't,=20
-and in this case bits 30/31 of this register should be set.
+The imx8m and imx8mp block controller drivers likely need similar fix.
 
-> +}
-> +
->  static const s8 pll_od_encoding[8] =3D {
->  	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
->  };
-> @@ -319,6 +351,37 @@ static const struct ingenic_cgu_clk_info=20
-> x1000_cgu_clocks[] =3D {
->  		.gate =3D { CGU_REG_CLKGR, 25 },
->  	},
->=20
-> +	[X1000_CLK_I2SPLLMUX] =3D {
-> +		"i2s_pll_mux", CGU_CLK_MUX,
-> +		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: Fabio Estevam <festevam@denx.de>
+Cc: Jacky Bai <ping.bai@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-imx@nxp.com
+To: linux-arm-kernel@lists.infradead.org
+---
+ drivers/soc/imx/gpcv2.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-If you have only 1 bit you can only have two parents, so you can remove=20
-the -1s.
-
-> +		.mux =3D { CGU_REG_I2SCDR, 31, 1 },
-> +	},
-> +
-> +	[X1000_CLK_I2SPLL] =3D {
-> +		"i2s_pll", CGU_CLK_PLL,
-> +		.parents =3D { X1000_CLK_I2SPLLMUX, -1, -1, -1 },
-
-.parents =3D { X1000_CLK_I2SPLLMUX, },
-
-> +		.pll =3D {
-> +			.reg =3D CGU_REG_I2SCDR,
-> +			.rate_multiplier =3D 1,
-> +			.m_shift =3D 13,
-> +			.m_bits =3D 9,
-> +			.n_shift =3D 0,
-> +			.n_bits =3D 13,
-> +			.calc_m_n_od =3D x1000_i2spll_calc_m_n_od,
-> +			.set_rate_hook =3D x1000_i2spll_set_rate_hook,
-> +		},
-> +	},
-> +
-> +	[X1000_CLK_I2S] =3D {
-> +		"i2s", CGU_CLK_MUX,
-> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, X1000_CLK_I2SPLL },
-> +		/*
-> +		 * NOTE: the mux is at bit 30; bit 29 enables the M/N divider.
-> +		 * Therefore, the divider is disabled when EXCLK is selected.
-> +		 */
-> +		.mux =3D { CGU_REG_I2SCDR, 29, 2 },
-> +	},
-> +
->  	[X1000_CLK_LCD] =3D {
->  		"lcd", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
->  		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL },
-> @@ -426,6 +489,12 @@ static const struct ingenic_cgu_clk_info=20
-> x1000_cgu_clocks[] =3D {
->  		.gate =3D { CGU_REG_CLKGR, 9 },
->  	},
->=20
-> +	[X1000_CLK_AIC] =3D {
-> +		"aic", CGU_CLK_GATE,
-> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
-
-.parents =3D { X1000_CLK_EXCLK, },
-
-Cheers,
--Paul
-
-> +		.gate =3D { CGU_REG_CLKGR, 11 },
-> +	},
-> +
->  	[X1000_CLK_UART0] =3D {
->  		"uart0", CGU_CLK_GATE,
->  		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
-> --
-> 2.38.1
->=20
-
+diff --git a/drivers/soc/imx/gpcv2.c b/drivers/soc/imx/gpcv2.c
+index 88aee59730e39..ee9294ad25ba1 100644
+--- a/drivers/soc/imx/gpcv2.c
++++ b/drivers/soc/imx/gpcv2.c
+@@ -319,10 +319,16 @@ static int imx_pgc_power_up(struct generic_pm_domain *genpd)
+ 	u32 reg_val, pgc;
+ 	int ret;
+ 
++	ret = clk_bulk_prepare(domain->num_clks, domain->clks);
++	if (ret) {
++		dev_err(domain->dev, "failed to prepare reset clocks\n");
++		return ret;
++	}
++
+ 	ret = pm_runtime_get_sync(domain->dev);
+ 	if (ret < 0) {
+ 		pm_runtime_put_noidle(domain->dev);
+-		return ret;
++		goto out_clock_unprepare;
+ 	}
+ 
+ 	if (!IS_ERR(domain->regulator)) {
+@@ -338,7 +344,7 @@ static int imx_pgc_power_up(struct generic_pm_domain *genpd)
+ 	reset_control_assert(domain->reset);
+ 
+ 	/* Enable reset clocks for all devices in the domain */
+-	ret = clk_bulk_prepare_enable(domain->num_clks, domain->clks);
++	ret = clk_bulk_enable(domain->num_clks, domain->clks);
+ 	if (ret) {
+ 		dev_err(domain->dev, "failed to enable reset clocks\n");
+ 		goto out_regulator_disable;
+@@ -402,12 +408,14 @@ static int imx_pgc_power_up(struct generic_pm_domain *genpd)
+ 	return 0;
+ 
+ out_clk_disable:
+-	clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
++	clk_bulk_disable(domain->num_clks, domain->clks);
+ out_regulator_disable:
+ 	if (!IS_ERR(domain->regulator))
+ 		regulator_disable(domain->regulator);
+ out_put_pm:
+ 	pm_runtime_put(domain->dev);
++out_clock_unprepare:
++	clk_bulk_unprepare(domain->num_clks, domain->clks);
+ 
+ 	return ret;
+ }
+-- 
+2.35.1
 
