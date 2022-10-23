@@ -2,117 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C07FA373F
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Oct 2022 18:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59DFC3A59D
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Oct 2022 22:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230113AbiJWSJK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Oct 2022 14:09:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
+        id S229585AbiJWWpe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Oct 2022 18:45:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229882AbiJWSJE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Oct 2022 14:09:04 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571AA72B4B
-        for <linux-clk@vger.kernel.org>; Sun, 23 Oct 2022 11:09:00 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id e20-20020a05600c449400b003cce0107a6fso976418wmo.0
-        for <linux-clk@vger.kernel.org>; Sun, 23 Oct 2022 11:09:00 -0700 (PDT)
+        with ESMTP id S229714AbiJWWpc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Oct 2022 18:45:32 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB1D746630;
+        Sun, 23 Oct 2022 15:45:31 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id j15so2884200wrq.3;
+        Sun, 23 Oct 2022 15:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SqFi2wmLGXsQfu/MZ0ShWytXRLk9pwr7X9yOqzu3XMM=;
-        b=xr1jMXVmN57HPedWjHBHw1rrR1I978R/fF6s6AJxl5r6la7lQvhSNZVE8+g2y0CLiO
-         sDalDXJWkgYjhjEW/tk2thpgvWl6aN/4cUoHucR/vgyQGfBHk/P8fVym9OLTYL9CaDNc
-         gW1/wghLPtZzxuOCGhEE5dyrYtYTJsZ7jphSDYrKqG+oJwnjxwiZMzhfPhUVrkSGT+zu
-         5VweFASmBJDlLQN+flFQth9QRLtbPOQNBbETZ75/uwAkj0tW+hrOnW5GnQhWc/dIW6xR
-         vnkUaLQLdc5GSXiDVFlRPo8TgQp1RGMp1/59R56exH01qg/nbJrdKRA5l0wPE4Qmy1c+
-         JkKA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:in-reply-to
+         :subject:cc:to:from:references:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LHu5lMeuagF1RCqmN7A4QnSItxym5xxnI6GF6yli2JA=;
+        b=jeG+qE9fQq7upkBLV6xyHggWaHf4jrf7fl1eLreyiWyUnsZwHwfenLFvR/ja4Ewq+T
+         3U1Sys4lH6HFLMMk7xi+iL5mGo57TEGmFmQKPZ10ftP3twjC2zkzuB7R/e3tpqHgiAFn
+         5JZiRJ/InY/5OOq3vCTAHdv+p221YLANe3KLvvczeO8JcD/x1RnaN3EuxQMoth1OZyQI
+         qMeifA1aRAX8bGnY3KalX2qyJPRgywiHVW82jD3iFJ8BEnd7kyA9lZf8A4D49WDgRrus
+         309tQDXLqJuE8mHW7Nm1+0C4Gu1tkO83Cyg+bQzW5CiYmetVk2TJBvsOJ+1gW04CaH9B
+         FCQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SqFi2wmLGXsQfu/MZ0ShWytXRLk9pwr7X9yOqzu3XMM=;
-        b=cbY0ctIq++GdUiEXsisbx6p/Q5BMFDyBdVCdC/VNoNObK/psqMGkP79O7Z5LMl0XkT
-         ms66V/Z/bkp1xp0up3vyi5AfWEBjJJ0/nLUHKeTQaAjUwVFG0vFemLIG2IeTwNeN4+4O
-         LBLIu+zW4H4l4aRz475JBp6bySrl/DUIIwiCJbTgDtiZJ8CZKPq8gT+AJ3djjr/PZ7im
-         kNvPe/Vlu8J55CalxUSE8KWxJ2x9tqq5P6qnpDlueWn0kzLBbW7aTX4wK8YAkujKoyMB
-         h5G/MViht5iZD9GraPwWh/E3XC2tJlKAico4TP0dGJBa1FBMN0UoHzkaWT/TCuexbsuL
-         IEpQ==
-X-Gm-Message-State: ACrzQf3NhF2wSjlri62KuhDKIJtNDP5d+WDhUDr4PvX7y8hECCXP/Hot
-        7JX2Cv8Tek4O/x58d06iX9kG8Q==
-X-Google-Smtp-Source: AMsMyM72SUpT+H3YAHck0Mm/xenvuseMLAPPp2oOExNAh4/7iab4VjcAEYTBVCFws4DOL079RWUZ7Q==
-X-Received: by 2002:a05:600c:5104:b0:3c6:d8e0:bc2e with SMTP id o4-20020a05600c510400b003c6d8e0bc2emr19762303wms.156.1666548538775;
-        Sun, 23 Oct 2022 11:08:58 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:14a0:fbb0:c618:c972? ([2a05:6e02:1041:c10:14a0:fbb0:c618:c972])
-        by smtp.googlemail.com with ESMTPSA id g10-20020a5d554a000000b002364c77bcacsm8318216wrw.38.2022.10.23.11.08.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Oct 2022 11:08:58 -0700 (PDT)
-Message-ID: <b085d1ee-2924-47f5-a952-27040ae3eb1c@linaro.org>
-Date:   Sun, 23 Oct 2022 20:08:55 +0200
+        h=content-transfer-encoding:mime-version:message-id:date:in-reply-to
+         :subject:cc:to:from:references:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LHu5lMeuagF1RCqmN7A4QnSItxym5xxnI6GF6yli2JA=;
+        b=WizC2PyISMA0TXY1xDdelCWAHGFZEPtq0CtmizxOvKZi7HubumkjZVikPFkJ65jKXQ
+         i3bb5Z9SnG/x2fkoeW4Z8zSXXJx7Lbct4tcuH8I/lROiFkLtaIHgY0xeA8rc94QgYdTL
+         vQTMDB2cgFr1BgM3K/wHqMbvrRBibnmAlBuEfj5guQ7+aRjkkqOvolZ/Cd3yKG6KoirW
+         GATOpcUKWabDtWCVScjCEOcimzxlQ1SmyEDfcLjZ/QAcsg79Q3zUoDJGHmr0h3uWnSPk
+         6K1narSE8JD0yIoxNvgtoZl+np59S2VJwtX0eRADHfY21OW94+UBZUruL+3qkK5LennY
+         U55Q==
+X-Gm-Message-State: ACrzQf0eCQHxAbdqU3S4tMLv1Vn5YcsL1NdeAf+6t+5E4hEVxmRBOp8W
+        DuSXS3sxzzyxreJUY9zlOAk=
+X-Google-Smtp-Source: AMsMyM7xwMl57ho7nBPWI6OP/1BjwzSS2Cab9FPh3Wn9b1pmtcuIBEXJWsGJT3frmoCpa1rgMfmFDQ==
+X-Received: by 2002:a5d:4484:0:b0:236:574f:2536 with SMTP id j4-20020a5d4484000000b00236574f2536mr8613315wrq.7.1666565130213;
+        Sun, 23 Oct 2022 15:45:30 -0700 (PDT)
+Received: from localhost (188.28.3.213.threembb.co.uk. [188.28.3.213])
+        by smtp.gmail.com with ESMTPSA id bj19-20020a0560001e1300b002238ea5750csm9257365wrb.72.2022.10.23.15.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Oct 2022 15:45:29 -0700 (PDT)
+References: <20221023145653.177234-1-aidanmacdonald.0x0@gmail.com>
+ <20221023145653.177234-2-aidanmacdonald.0x0@gmail.com>
+ <TAP7KR.18SEZOBW3THM2@crapouillou.net>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, zhouyu@wanyeetech.com,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] clk: ingenic: Make PLL clock "od" field optional
+In-reply-to: <TAP7KR.18SEZOBW3THM2@crapouillou.net>
+Date:   Sun, 23 Oct 2022 23:45:28 +0100
+Message-ID: <FdF2cloQKfcDjZeA3AGn61Yfkecl2tgV@localhost>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20221021202254.4142411-1-arnd@kernel.org>
- <20221021203329.4143397-2-arnd@kernel.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/10/2022 22:27, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
-> similar symbols that are no longer available with the platform gone,
-> though the drivers themselves are still used on newer platforms,
-> so remove these hacks.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Paul Cercueil <paul@crapouillou.net> writes:
 
+> Hi Aidan,
+>
+> Le dim. 23 oct. 2022 =C3=A0 15:56:49 +0100, Aidan MacDonald
+> <aidanmacdonald.0x0@gmail.com> a =C3=A9crit :
+>> Add support for defining PLL clocks with od_bits =3D 0, meaning that
+>> OD is fixed to 1 and there is no OD field in the register.
+>> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+>> ---
+>>  drivers/clk/ingenic/cgu.c | 28 +++++++++++++++++++---------
+>>  drivers/clk/ingenic/cgu.h |  3 ++-
+>>  2 files changed, 21 insertions(+), 10 deletions(-)
+>> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+>> index 861c50d6cb24..7dc2e2567d53 100644
+>> --- a/drivers/clk/ingenic/cgu.c
+>> +++ b/drivers/clk/ingenic/cgu.c
+>> @@ -96,8 +96,11 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned l=
+ong
+>> parent_rate)
+>>  	m +=3D pll_info->m_offset;
+>>  	n =3D (ctl >> pll_info->n_shift) & GENMASK(pll_info->n_bits - 1, 0);
+>>  	n +=3D pll_info->n_offset;
+>> -	od_enc =3D ctl >> pll_info->od_shift;
+>> -	od_enc &=3D GENMASK(pll_info->od_bits - 1, 0);
+>> +
+>> +	if (pll_info->od_bits > 0) {
+>> +		od_enc =3D ctl >> pll_info->od_shift;
+>> +		od_enc &=3D GENMASK(pll_info->od_bits - 1, 0);
+>> +	}
+>>  	if (pll_info->bypass_bit >=3D 0) {
+>>  		ctl =3D readl(cgu->base + pll_info->bypass_reg);
+>> @@ -108,12 +111,17 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned
+>> long parent_rate)
+>>  			return parent_rate;
+>>  	}
+>> -	for (od =3D 0; od < pll_info->od_max; od++) {
+>> -		if (pll_info->od_encoding[od] =3D=3D od_enc)
+>> -			break;
+>> +	if (pll_info->od_bits > 0) {
+>> +		for (od =3D 0; od < pll_info->od_max; od++) {
+>> +			if (pll_info->od_encoding[od] =3D=3D od_enc)
+>> +				break;
+>> +		}
+>> +		BUG_ON(od =3D=3D pll_info->od_max);
+>> +		od++;
+>> +	} else {
+>> +		/* OD is fixed to 1 if no OD field is present. */
+>> +		od =3D 1;
+>>  	}
+>> -	BUG_ON(od =3D=3D pll_info->od_max);
+>> -	od++;
+>
+> I think if pll_info->od_max is 0 you get the same result without modifyin=
+g this
+> code. You just need to modify the BUG_ON() to only trigger if pll_info->o=
+d_max > 0.
+>
+> Cheers,
+> -Paul
+>
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Yeah, you're right, that's simpler. Thanks,
+Aidan
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>>  	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier,
+>>  		n * od);
+>> @@ -215,8 +223,10 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned lo=
+ng
+>> req_rate,
+>>  	ctl &=3D ~(GENMASK(pll_info->n_bits - 1, 0) << pll_info->n_shift);
+>>  	ctl |=3D (n - pll_info->n_offset) << pll_info->n_shift;
+>> -	ctl &=3D ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+>> -	ctl |=3D pll_info->od_encoding[od - 1] << pll_info->od_shift;
+>> +	if (pll_info->od_bits > 0) {
+>> +		ctl &=3D ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+>> +		ctl |=3D pll_info->od_encoding[od - 1] << pll_info->od_shift;
+>> +	}
+>>  	writel(ctl, cgu->base + pll_info->reg);
+>> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+>> index 147b7df0d657..567142b584bb 100644
+>> --- a/drivers/clk/ingenic/cgu.h
+>> +++ b/drivers/clk/ingenic/cgu.h
+>> @@ -33,7 +33,8 @@
+>>   * @od_shift: the number of bits to shift the post-VCO divider value by=
+ (ie.
+>>   *            the index of the lowest bit of the post-VCO divider value=
+ in
+>>   *            the PLL's control register)
+>> - * @od_bits: the size of the post-VCO divider field in bits
+>> + * @od_bits: the size of the post-VCO divider field in bits, or 0 if no
+>> + *	     OD field exists (then the OD is fixed to 1)
+>>   * @od_max: the maximum post-VCO divider value
+>>   * @od_encoding: a pointer to an array mapping post-VCO divider values =
+to
+>>   *               their encoded values in the PLL control register, or -=
+1 for
+>> --
+>> 2.38.1
+>>
