@@ -2,74 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FA3C67871
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A993FA373F
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Oct 2022 00:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbiJXX6S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 19:58:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56894 "EHLO
+        id S230436AbiJYAw4 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 20:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230468AbiJXX5s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:57:48 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCD28340C83
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:12:58 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id c31so930673uae.10
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+gEm7VONyS7UVuTvPLRkcNvl41HQoqLdSHbzsMHTSs=;
-        b=L3OSNOGMw4rOVmweIhebxGViBIgNhvyR7qzGaKgUw7RRl//uC1ARvYqlv1B6DAI1BS
-         m5BT0qCELCZs/zAsS7JKiewTklsvv+bD/SVebEh2sCIBcm0zyOhHgrqmM58CUBQ2nHAm
-         fOPt9JPgaFukt2vCQv1bnnfXkmpIpv6g4q6O4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2+gEm7VONyS7UVuTvPLRkcNvl41HQoqLdSHbzsMHTSs=;
-        b=0QfsniVH8nnXtynalTLMDNAUxYdqdkpHEGm4uWs9C/x6rpYRMkzm2Mwn3zvLRgjfpr
-         cWqklITaiGAB8+yb2M2jvwvuQ1//TfFjiy/hFjOhWLs7lTVwrbiXR3Fyn7wZH/AQRyfl
-         wKq/5yjjZDa5bYKSvZjMLgIi2w1qVVvPbOy7qawBYSLAX0IvQtURxxQmo8sSYgBYDh/6
-         tL9//zNfzBZxYY8hPxF5IQc4hwKOa+3TgoAD6lgwYZOCKlmzaGwzoAy0xU2+HzWxtrq/
-         7FoYmtkBp3OtaHxa1R0gZrv0IULwCUJhYU2+OA/L2U1UWumt+V7vnwivmKPVGQIXqPnF
-         ORIA==
-X-Gm-Message-State: ACrzQf0Ut5CnVYug8YfrPDGmHjmRvpn/wTsGYnRm3NpMtDl1R6OtJWGo
-        cJpx0ajepEFQ58c2mNWB5LHlOfv76xWW5NhgjGLYKw==
-X-Google-Smtp-Source: AMsMyM5HAWHqJDUUEN4IizBWaZrMz7exN/+WucGtaa+xWdXV1aB7+frNt8M+3SYIkfMvqtKI2U2+EXEtnsKLuJ2uOgQ=
-X-Received: by 2002:a9f:29a3:0:b0:3d6:4c6f:9d92 with SMTP id
- s32-20020a9f29a3000000b003d64c6f9d92mr20097126uas.43.1666649577519; Mon, 24
- Oct 2022 15:12:57 -0700 (PDT)
+        with ESMTP id S230422AbiJYAwk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 20:52:40 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACE115994D;
+        Mon, 24 Oct 2022 16:34:13 -0700 (PDT)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1omzeK-00031R-RG; Mon, 24 Oct 2022 17:46:00 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Arnd Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnaud Patard <arnaud.patard@rtp-net.org>,
+        Christer Weinigel <christer@weinigel.se>,
+        Guillaume GOURAT <guillaume.gourat@nexvision.tv>,
+        openmoko-kernel@lists.openmoko.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-doc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/21] ARM: s3c: remove all s3c24xx support
+Date:   Mon, 24 Oct 2022 17:45:59 +0200
+Message-ID: <2120112.irdbgypaU6@diego>
+In-Reply-To: <8d6ddb0d-98be-4c4d-9523-f024c339c8d0@app.fastmail.com>
+References: <20221021202254.4142411-1-arnd@kernel.org> <2204103.iZASKD2KPV@diego> <8d6ddb0d-98be-4c4d-9523-f024c339c8d0@app.fastmail.com>
 MIME-Version: 1.0
-References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-11-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221024102307.33722-11-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 24 Oct 2022 15:12:46 -0700
-Message-ID: <CAGXv+5HoMAyLJ=25weerEsHNUt-pZj1E7Aj-mWvM+hoCvovpOA@mail.gmail.com>
-Subject: Re: [PATCH 10/10] clk: mediatek: mt8186-topckgen: Add GPU clock mux notifier
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-        miles.chen@mediatek.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        jose.exposito89@gmail.com, yangyingliang@huawei.com,
-        msp@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 3:23 AM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Following the changes done to MT8183, MT8192, MT8195, register a
-> clock notifier for MT8186, allowing safe clockrate updates for the
-> MFG PLL.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Am Montag, 24. Oktober 2022, 16:27:31 CEST schrieb Arnd Bergmann:
+> On Sat, Oct 22, 2022, at 22:56, Heiko Stübner wrote:
+> > Am Freitag, 21. Oktober 2022, 22:27:34 CEST schrieb Arnd Bergmann:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >> 
+> >> The platform was deprecated in commit 6a5e69c7ddea ("ARM: s3c: mark
+> >> as deprecated and schedule removal") and can be removed. This includes
+> >> all files that are exclusively for s3c24xx and not shared with s3c64xx,
+> >> as well as the glue logic in Kconfig and the maintainer file entries.
+> >> 
+> >> Cc: Arnaud Patard <arnaud.patard@rtp-net.org>
+> >> Cc: Ben Dooks <ben-linux@fluff.org>
+> >> Cc: Christer Weinigel <christer@weinigel.se>
+> >> Cc: Guillaume GOURAT <guillaume.gourat@nexvision.tv>
+> >> Cc: Heiko Stuebner <heiko@sntech.de>
+> >> Cc: Simtec Linux Team <linux@simtec.co.uk>
+> >> Cc: openmoko-kernel@lists.openmoko.org
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > So many memories of me starting out in the kernel on s3c24xx.
+> > But it's no use trying to keep stuff around that nobody will likely
+> > ever use again. So with a sad face
+> >
+> > Acked-by: Heiko Stuebner <heiko@sntech.de>
+> >
+> >
+> > though you might want to also include
+> > 	drivers/dma/s3c24xx-dma.c
+> 
+> This was in a separate patch that removes the driver:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20221021203329.4143397-14-arnd@kernel.org/
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+ah ok, I guess git-send-email didn't want to send me that patch.
+So all is good in that part then :-)
+
+
+Heiko
+
+
