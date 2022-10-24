@@ -2,112 +2,243 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7249C38A2D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 10:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBB3C38A2D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 11:35:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbiJXKXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 06:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44210 "EHLO
+        id S230453AbiJXLf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 07:35:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbiJXKXi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 06:23:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCAA5A17A;
-        Mon, 24 Oct 2022 03:23:37 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 46435660282A;
-        Mon, 24 Oct 2022 11:23:35 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1666607016;
-        bh=OaQQU68d+mZ/y3nMS8j/flqN6YzM2nFoIK5HdQQzj2Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MRrKMkiYp1k47+EikQmkpcDPo7tWaNomrGUGzd6jDPvV0gt0NT6RypOVrEeJI40Lw
-         /4341jLzRNyukSrPxBFAOS+N8peIE9Dg22dAQlIqBleeU62k3lwPIIBlBRFlBlMH4c
-         7laxjJj1pcCFsL1uF/5ByXPp6vcVP11iWS8E9C+eNk94BTaXV4LrEx9jcn9wVKQP+z
-         wlk4kXEoF2M6w1LGZnSChq+kIV5MIhik61ONVsONdXyyrjpSmSRPzs7xJ8bdTvJXyl
-         rz10IeFhHJ88bTC7S/IH1hVNJN+ZyORtPRAaCoFObwVw1y/CvChmAT2ll80IoOeA5P
-         A5+UDGYXybUTg==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     sboyd@kernel.org
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        miles.chen@mediatek.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        jose.exposito89@gmail.com, yangyingliang@huawei.com,
-        msp@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/10] clk: mediatek: mt8186-topckgen: Add GPU clock mux notifier
-Date:   Mon, 24 Oct 2022 12:23:07 +0200
-Message-Id: <20221024102307.33722-11-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com>
-References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S230457AbiJXLfC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 07:35:02 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA15664D9;
+        Mon, 24 Oct 2022 04:34:18 -0700 (PDT)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Mon, 24 Oct
+ 2022 19:33:53 +0800
+Message-ID: <a53dcf50-760c-cb63-7768-efd5d7a381a9@amlogic.com>
+Date:   Mon, 24 Oct 2022 19:33:52 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH V3 3/6] clk: meson: S4: add support for Amlogic S4 SoC PLL
+ clock driver
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20220805085716.5635-1-yu.tu@amlogic.com>
+ <20220805085716.5635-4-yu.tu@amlogic.com>
+ <1jiln0yzgj.fsf@starbuckisacylon.baylibre.com>
+ <ed4038fb-c230-fc27-800c-c99bd1770a1c@amlogic.com>
+ <4e3cdd6b-5861-8a4f-1df7-af763f77bad5@amlogic.com>
+ <1jsflftm1y.fsf@starbuckisacylon.baylibre.com>
+ <0c7e6d90-2ce3-25ab-84b6-026ce8a238a8@amlogic.com>
+ <1jtu5uz0ry.fsf@starbuckisacylon.baylibre.com>
+ <9f9cf980-c0c6-d5c3-ced8-8ab50e392470@amlogic.com>
+ <21e14cc1-6b34-e6b0-8da2-ad4b34dac149@amlogic.com>
+ <1jy1u3zfas.fsf@starbuckisacylon.baylibre.com>
+ <095f1bd9-c390-196f-cccc-700d75c70cb0@amlogic.com>
+ <1j4jvwavoe.fsf@starbuckisacylon.baylibre.com>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <1j4jvwavoe.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following the changes done to MT8183, MT8192, MT8195, register a
-clock notifier for MT8186, allowing safe clockrate updates for the
-MFG PLL.
+Hi Jerome,
+	Thank you for your reply.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mt8186-topckgen.c | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+On 2022/10/22 20:22, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> 
+> On Thu 29 Sep 2022 at 15:07, Yu Tu <yu.tu@amlogic.com> wrote:
+> 
+>> Hi Jerome,
+>> 	Thank you for your reply.
+>>
+>> On 2022/9/28 23:27, Jerome Brunet wrote:
+>>> [ EXTERNAL EMAIL ]
+>>> On Wed 21 Sep 2022 at 16:40, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>
+>>>> Hi Jerome，
+>>>>
+>>>> On 2022/8/30 15:37, Yu Tu wrote:
+>>>>> On 2022/8/30 14:44, Jerome Brunet wrote:
+>>>>>> [ EXTERNAL EMAIL ]
+>>>>>>
+>>>>>>
+>>>>>> On Tue 30 Aug 2022 at 14:13, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>>>
+>>>>>>> On 2022/8/29 17:48, Jerome Brunet wrote:
+>>>>>>>> [ EXTERNAL EMAIL ]
+>>>>>>>> On Mon 15 Aug 2022 at 21:20, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>>>>>
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +static struct clk_regmap s4_hdmi_pll_dco = {
+>>>>>>>>>>>> +    .data = &(struct meson_clk_pll_data){
+>>>>>>>>>>>> +        .en = {
+>>>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>>>> +            .shift   = 28,
+>>>>>>>>>>>> +            .width   = 1,
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +        .m = {
+>>>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>>>> +            .shift   = 0,
+>>>>>>>>>>>> +            .width   = 8,
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +        .n = {
+>>>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>>>> +            .shift   = 10,
+>>>>>>>>>>>> +            .width   = 5,
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +        .frac = {
+>>>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL1,
+>>>>>>>>>>>> +            .shift   = 0,
+>>>>>>>>>>>> +            .width   = 17,
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +        .l = {
+>>>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>>>> +            .shift   = 31,
+>>>>>>>>>>>> +            .width   = 1,
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +        .rst = {
+>>>>>>>>>>>> +            .reg_off = ANACTRL_HDMIPLL_CTRL0,
+>>>>>>>>>>>> +            .shift   = 29,
+>>>>>>>>>>>> +            .width   = 1,
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +    },
+>>>>>>>>>>>> +    .hw.init = &(struct clk_init_data){
+>>>>>>>>>>>> +        .name = "hdmi_pll_dco",
+>>>>>>>>>>>> +        .ops = &meson_clk_pll_ro_ops,
+>>>>>>>>>>>> +        .parent_data = (const struct clk_parent_data []) {
+>>>>>>>>>>>> +            { .fw_name = "xtal", }
+>>>>>>>>>>>> +        },
+>>>>>>>>>>>> +        .num_parents = 1,
+>>>>>>>>>>>> +        /*
+>>>>>>>>>>>> +         * Display directly handle hdmi pll registers ATM, we need
+>>>>>>>>>>>> +         * NOCACHE to keep our view of the clock as accurate as
+>>>>>>>>>>>> +         * possible
+>>>>>>>>>>>> +         */
+>>>>>>>>>>>
+>>>>>>>>>>> Is it really ?
+>>>>>>>>>>>
+>>>>>>>>>>> Given that HDMI support for the s4 is there yet, the
+>>>>>>>>>>> addresses have changes and the region is no longer a syscon, it is
+>>>>>>>>>>> time
+>>>>>>>>>>> for the HDMI driver to get fixed.
+>>>>>>>>> The HDMI PLL is configured in the Uboot phase and does not change the
+>>>>>>>>> frequency in the kernel phase. So we use the NOCACHE flag and
+>>>>>>>>> "ro_ops".
+>>>>>>>> That's no reason to put NOCACHE or ro-ops
+>>>>>>>> If you want the frequencies to be statically assinged, the correct way
+>>>>>>>> would be through assigned-rate in DT I guess.
+>>>>>>>
+>>>>>>> Okay. You're right. However, when registering with OPS, HDMI PLL will be
+>>>>>>> reset. It takes time for PLL to stabilize the output frequency, which
+>>>>>>> will
+>>>>>>> lead to the startup screen flashing.
+>>>>>>>
+>>>>>>> I would like to know how to solve this problem if not using ro_ops.
+>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>>> You can add new ops or tweak the current init function.
+>>>>> HDMI PLL is not different from other PLLS, so I think adding OPS is
+>>>>> weird.
+>>>>>
+>>>>>>
+>>>>>> Safest would be to do the following :
+>>>>>>     * Check if the PLLs is already on.
+>>>>>>     * Check if the 'pll->init_regs' matches what is already set
+>>>>>>       - if so, you can skip the reset
+>>>>>>       - if not, you need to reset as usual
+>>>>> static int meson_clk_pll_init(struct clk_hw *hw)
+>>>>> {
+>>>>>            struct clk_regmap *clk = to_clk_regmap(hw);
+>>>>>            struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>>>>>            if (pll->init_count) {
+>>>>>                    meson_parm_write(clk->map, &pll->rst, 1);
+>>>>>                    regmap_multi_reg_write(clk->map, pll->init_regs,
+>>>>>                                    |      pll->init_count);
+>>>>>                    meson_parm_write(clk->map, &pll->rst, 0);
+>>>>>            }
+>>>>>            return 0;
+>>>>> }
+>>>>> Because the init function looks like this. Therefore, HDMI PLL init_count
+>>>>> is not given.
+>>> I don't get the remark. You've got pll->init_count right there.
+>>>
+>>>>> Can I change it like this?
+>>> What change ? The function above looks a lot like  meson_clk_pll_init()
+>>> in the actual source
+>>>
+>>>>
+>>>> I don't know if this change meets your requirements? Please give us your
+>>>> valuable advice.
+>>> What change ?
+>>
+>> static struct clk_regmap s4_hdmi_pll_dco = {          .data = &(struct
+>> meson_clk_pll_data){                  .en = {
+>> .reg_off = ANACTRL_HDMIPLL_CTRL0,                          .shift   = 28,
+>> .width   = 1,                  },                  .m = {
+>> .reg_off = ANACTRL_HDMIPLL_CTRL0,                          .shift   = 0,
+>> .width   = 8,                  },                  .n = {
+>> .reg_off = ANACTRL_HDMIPLL_CTRL0,                          .shift   = 10,
+>> .width   = 5,                  },                  .frac = {
+>> .reg_off = ANACTRL_HDMIPLL_CTRL1,                          .shift   = 0,
+>> .width   = 17,                  },                  .l = {
+>> .reg_off = ANACTRL_HDMIPLL_CTRL0,                          .shift   = 31,
+>> .width   = 1,                  },                  .rst = {
+>> .reg_off = ANACTRL_HDMIPLL_CTRL0,                          .shift   = 29,
+>> .width   = 1,                  },                  .range =
+>> &s4_gp0_pll_mult_range,          },          .hw.init = &(struct
+>> clk_init_data){                  .name = "hdmi_pll_dco",
+>> .ops = &meson_clk_pll_ops,                  .parent_data = (const struct
+>> clk_parent_data []) {                          { .fw_name = "xtal", }
+>> },                  .num_parents = 1,          }, };
+> 
+> I'm sorry but I can't read this
+> 
+>>
+>> This is my code right now. Because init_count and init_regs are not
+>> defined, HDMI PLL is not reset. In this way, the kernel will not blink when
+>> the Uboot starts. Then in the kernel stage, if we want to change the HDMI
+>> PLL frequency value, we can directly change M, N and OD. In fact, we will
+>> not change the HDMI PLL frequency value later.
+>>
+>> I wonder if you accept this change?
 
-diff --git a/drivers/clk/mediatek/clk-mt8186-topckgen.c b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-index 62b5ff4a5723..c2beda7ef976 100644
---- a/drivers/clk/mediatek/clk-mt8186-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-@@ -689,6 +689,28 @@ static const struct of_device_id of_match_clk_mt8186_topck[] = {
- 	{}
- };
- 
-+/* Register mux notifier for MFG mux */
-+static int clk_mt8186_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
-+{
-+	struct mtk_mux_nb *mfg_mux_nb;
-+	int i;
-+
-+	mfg_mux_nb = devm_kzalloc(dev, sizeof(*mfg_mux_nb), GFP_KERNEL);
-+	if (!mfg_mux_nb)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(top_mtk_muxes); i++)
-+		if (top_mtk_muxes[i].id == CLK_TOP_MFG)
-+			break;
-+	if (i == ARRAY_SIZE(top_mtk_muxes))
-+		return -EINVAL;
-+
-+	mfg_mux_nb->ops = top_mtk_muxes[i].ops;
-+	mfg_mux_nb->bypass_index = 0; /* Bypass to 26M crystal */
-+
-+	return devm_mtk_clk_mux_notifier_register(dev, clk, mfg_mux_nb);
-+}
-+
- static int clk_mt8186_topck_probe(struct platform_device *pdev)
- {
- 	struct clk_hw_onecell_data *clk_data;
-@@ -730,6 +752,11 @@ static int clk_mt8186_topck_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_composite_muxes;
- 
-+	r = clk_mt8186_reg_mfg_mux_notifier(&pdev->dev,
-+					    clk_data->hws[CLK_TOP_MFG]->clk);
-+	if (r)
-+		goto unregister_composite_divs;
-+
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (r)
- 		goto unregister_composite_divs;
--- 
-2.37.2
+Sorry, the code is not formatted properly.
+
+> 
+> I think it would be better to separate this topic from your new SoC support
+> 
+> I think you can make another version of the clock controller for the new
+> SoC, keeping the pll_ops as it is now.
+> 
+> With another series, you may submit something to avoid reseting the PLL if
+> is already correctly initialized. This can be useful to all the SoC, not
+> just the last one. It will be easier to discuss on properly formatted
+> patches
+
+Do you mean that hdmi_pll, I will submit the next version of code 
+according to pll_ro_ops first, and then we will discuss how to reject 
+the patch of reset pll in another topic?
 
