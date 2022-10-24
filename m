@@ -2,100 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575F9FA373F
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 21:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B9DC67871
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232839AbiJXVPQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 17:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42416 "EHLO
+        id S229871AbiJXXhw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 19:37:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231869AbiJXVO4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 17:14:56 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCFEEE0A7;
-        Mon, 24 Oct 2022 12:20:18 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id bb5so6193204qtb.11;
-        Mon, 24 Oct 2022 12:20:18 -0700 (PDT)
+        with ESMTP id S229971AbiJXXh2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:37:28 -0400
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDCC103278
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 14:57:40 -0700 (PDT)
+Received: by mail-vs1-xe2a.google.com with SMTP id s28so9201996vsr.10
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 14:57:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vOSW4zp7h0M1kGzDu+VDLbhY1Nz07dzMROKp50qg0is=;
-        b=AOsdx80LfH0rCtKsPduGSBeAAxIc0bD6B2tviT3zmM+U5YoRbN8c0gOYVd0CqaCm0R
-         9sdbMCqObzbNVjBFrKG8I0+eVd2H2FwJ0ymNtjpf2M0AjWx22inkKmxb3tQjU74cM15b
-         +hmEc5wUnlFI6uHvObJbIf87xVHZj9gMvGPUiOOfw71fYhaAeMLxMVueGZq5rDcLWPyD
-         mfoz8fiFccldajFBXFkoOgzXt56FOgBas82kcOwyjlpHlYPY5SZY43gcM6gWt1ESSFyX
-         BOMTikRXAQ2UGexI13xvm3JaCj0SWJ1SdV+mS3NoyABicdm7SaX0mTQp9sYXE3MaVmx4
-         XD6Q==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mie0dwILOoL5NP5Cg3Tf9BLyHE4I1j5avRUFdQRyJZQ=;
+        b=gNXcO91AfhdJU+tqEckzPK3JYjWSz1Js/FUQZO3PvIsUgwYmnA80qUARF9QI7nqyrK
+         7aDzrWPVkNNS9jt3kjz3H/2gbEyMAFDMxioj5GYU9tN+InKZaAywQuBlsdxCD8up/ZC1
+         cARm+ZNoI+B5/t+4cl+QXzAJHzscPydD8zxqc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vOSW4zp7h0M1kGzDu+VDLbhY1Nz07dzMROKp50qg0is=;
-        b=ZU3bX7sjn2wXn/Uqky5hrc4Pb//N0h7TcQsKoqWSHnunUIpJq6bpMybFmmKNDz3l2B
-         ummNcQK89nrfolkmYhqHhCuWIxERWtk9jVVSyMzg4j0y3V0Po3ggp0SfywV3uBFUeWbI
-         mBPlx9AqNIg4X5KKBukJFr0w9oT4UKx/nY+YQhQy37YZn2slH/zH1Gs5PhAeFoB81vdE
-         8TRcf2vI4vpQB7mnPCgABg6sccq65j1eTaNfIuZOiQK0/I34sOcjxo9wfhhull1pNXsa
-         pGiANE4ypN8WeKsxpRUKZkti1XhQWkgoHUdyEa9mnO8F9HtQn9tnj6vx7Zt8fGZI5QI0
-         Poxg==
-X-Gm-Message-State: ACrzQf1nYHBwpPaXGka+1LgsPuQL2gD/koCZ0hlZCoRMybKp1kVV1TEm
-        i6mnBwx9M7vWmYrOaVDSf+g=
-X-Google-Smtp-Source: AMsMyM6AVe+NA415k75JCzANA73liFiHt+KIKB6eDL9eiBKdiUkrgH4qwdfMVkDalSZWj5rT7ZL/tg==
-X-Received: by 2002:ac8:5e4d:0:b0:39e:cc0d:3428 with SMTP id i13-20020ac85e4d000000b0039ecc0d3428mr10980479qtx.44.1666639158575;
-        Mon, 24 Oct 2022 12:19:18 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id b24-20020ac84f18000000b00397101ac0f2sm432651qte.3.2022.10.24.12.19.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 12:19:18 -0700 (PDT)
-Message-ID: <17868eda-d450-8780-18b7-e52af86b3d3e@gmail.com>
-Date:   Mon, 24 Oct 2022 12:19:08 -0700
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mie0dwILOoL5NP5Cg3Tf9BLyHE4I1j5avRUFdQRyJZQ=;
+        b=J43nI0061T7f4T4w23pUzUHxVgQZ6BsEA0qqy036TYmd8s8QENolFF3dL2Pc7wLVYi
+         7Es46DCTHC9rht6tZk/QEClrtwTEhvQusbElUr41ReO38o2HBbRuHW7NMdxj0mMBveJN
+         R+FdRh524HQ0ysHysbWxi7P6Fsv8s7x6yNQKHUr0+S4SIknJymwXbxIoMXXbuTxK/UL1
+         vN51WYZNEdHq2YnXXWU7Ty48yFliyx0hABg5l9oExgsbO3rQsUbgFgPtvIwJWMRl0CYE
+         HmwuSBJ+CSDG6ZTfhW8LAdh+XfKxLli5ZCUiAkUMoPQuhADeR0GjUN0eG5i9qabZukih
+         eJJg==
+X-Gm-Message-State: ACrzQf2JzEJL1AUePqM0aYoEpmrkZlbISLq1/MR0yWA6oBOC9ddhcEGp
+        g55L9It8uyB6aWcDjbuA5/lA2eJOrfDYET8PKhJ40Q==
+X-Google-Smtp-Source: AMsMyM6PPYTAcOUSy3ZKM+pzj2N+X3xlMfiu8aQLbFXu3p60GkgOWzwhnMJsay3y56pkP1gHlZx4uqvmP7yqCYRajpU=
+X-Received: by 2002:a67:fa14:0:b0:3aa:1ba5:4ab0 with SMTP id
+ i20-20020a67fa14000000b003aa1ba54ab0mr3994142vsq.77.1666648640519; Mon, 24
+ Oct 2022 14:57:20 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v4 1/7] firmware: raspberrypi: Introduce
- rpi_firmware_find_node()
-Content-Language: en-US
-To:     maxime@cerno.tech, Daniel Vetter <daniel@ffwll.ch>,
-        Emma Anholt <emma@anholt.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221024102307.33722-2-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 24 Oct 2022 14:57:09 -0700
+Message-ID: <CAGXv+5HnJgmoX=8596OJZki_0qDaipP+cbbTWpkVxuOkErSBdA@mail.gmail.com>
+Subject: Re: [PATCH 01/10] clk: mediatek: clk-mtk: Allow specifying flags on
+ mtk_fixed_factor clocks
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+        miles.chen@mediatek.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, chun-jie.chen@mediatek.com,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        msp@baylibre.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org
-References: <20220815-rpi-fix-4k-60-v4-0-a1b40526df3e@cerno.tech>
- <20220815-rpi-fix-4k-60-v4-1-a1b40526df3e@cerno.tech>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220815-rpi-fix-4k-60-v4-1-a1b40526df3e@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/20/22 02:12, maxime@cerno.tech wrote:
-> A significant number of RaspberryPi drivers using the firmware don't
-> have a phandle to it, so end up scanning the device tree to find a node
-> with the firmware compatible.
-> 
-> That code is duplicated everywhere, so let's introduce a helper instead.
-> 
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+On Mon, Oct 24, 2022 at 3:23 AM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Before this change, every mtk_fixed_factor clock forced clock flags to
+> CLK_SET_RATE_PARENT: while this is harmless in some cases, it may not
+> be desired in some others, especially when performing clock muxing on
+> a clock having multiple parents of which one is a dedicated PLL and the
+> others are not.
+>
+> This is especially seen on the GPU clocks on some SoCs, where we are
+> muxing between multiple parents: a fixed clock (crystal), a programmable
+> GPU PLL and one or more dividers for the MAINPLL, used for a number of
+> devices; it happens that when a rate change is called for the GPU, the
+> clock framework will try to satisfy the rate request by using one of the
+> MAINPLL dividers, which have CLK_SET_RATE_PARENT and will set the rate
+> on MAINPLL itself - overclocking or underclocking many devices in the
+> system - and making it to lock up.
+>
+> Logically, it should be harmless (and would only reduce possible bugs)
+> to change all of the univpll and mainpll related fixed factor clocks
+> to not declare the CLK_SET_RATE_PARENT by default but, on some SoCs,
+> this is also used for dividers of other PLLs for which a rate change
+> based on the divider may be desired, hence introduce a new FACTOR_FLAGS()
+> macro to use custom flags (or none) on selected fixed factor clocks.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-
-Thanks for re-ordering the rpi_firmware_of_match array and avoiding a 
-forward declaration that I was initially confused about in v3.
--- 
-Florian
-
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
