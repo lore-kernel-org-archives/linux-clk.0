@@ -2,113 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B222ECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 14:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86EBC38A2D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 15:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232347AbiJXO53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 10:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57852 "EHLO
+        id S231636AbiJXPHT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 11:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232318AbiJXO5N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 10:57:13 -0400
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B3BE081
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 06:34:27 -0700 (PDT)
-Received: by mail-pf1-f171.google.com with SMTP id g16so3523494pfr.12
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 06:34:27 -0700 (PDT)
+        with ESMTP id S231720AbiJXPGx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 11:06:53 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8DF615382A
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 06:43:34 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id f22so5605474qto.3
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 06:43:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh8UQ4JmTZN9hL0/8CXAkNYRnuwMy/n4/v6mITjc4KY=;
-        b=y0W+zUyiBftSd0JgAGoPOqPtmV13guRpqzbMHskUNvLCEuQ6pihIc7oGP6TuC3oQt5
-         NjC6zT2GBgFpwt3TaO3sCktoTg2zHU1fTtWzfcwSmh6ykgmIp95Eot8a0sqsecpFyW7x
-         1HT6dR9s6lU9w8AQMYPhYLXd1Gu3x1edoP1WhBwFF/jIaERMSCG6bAABteTZbOS+Taz8
-         m7SCCh9de8RQXNTOTCxekuN5wUYGpUE+af/pdLsiLsH9H7ozUi1IJplIrGjD7sC4Tf7t
-         s+A+OHtLvPIWSHgE+4xzSs5FzW53+pzJ7Liv/i1SA0R2VvOs5lkPyZK2zhrwcwhQeqwz
-         cUfg==
+        bh=5D2qC8JkQWqg5OtsTeOnj08o8r3sOjBd1D5QMgS0xg8=;
+        b=yYWOASGG8+yX8Jd0BSwaMrWaTQaF1idwVNY9mplB3kPADoF+qgXoP3xMZt2A9V4TMD
+         U8KddUVeATgg0qHYSkx0ptmnMJq7I2xDfmVm0+IBUlBoGOikVUg9Jpwk5eMz6esfv7jd
+         83x4lC2Sofq69o2tabvK/ys18bnZTnxdJABSz6ze4rVJYCwyxsa8HjsNkCqKRG0uNWvH
+         N5ZJIeh9g+g1wjKWyOrYXlqKbl6NMW5lGWnwyj4Qpy1FoakM8J3AxonU/CD4QtVkm2/b
+         Sfzabawmy1yKvL7B1nOt26XSLMopqoxqsGUmf+DS1zqXfy0gy4qzL4TDgyMmUgOehaeE
+         ykeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh8UQ4JmTZN9hL0/8CXAkNYRnuwMy/n4/v6mITjc4KY=;
-        b=RUkxNNfrcXfmYTclmSazWistE+jAkwYAlzhXNqio0wrSPsTcyvTcx9ytv6ALlnbQ06
-         uJe9VDLm+NCdT4Z8effeTYMctAPTcrWwIp7X0QNrZKIsDOM/wb7iTkpAhTrCHk2ZONCM
-         Bz4giAPOxn0c1dWlNJUlAxftII5WxjbNE/5rxbPBUA24LIT1UaLa+InKAFBmo/byBTMW
-         15YGTwriCUKXdHpd9PS2gfE7Cd9B8n3J+ggbJPg4hKWNhbQtHHGrAepnzSXr68hg0wXr
-         eljEoqrzP6obrDQWQZTTa1/eBa0+n+b8pDrFi+aNdFRj5773C39CFT+ZG4KcGn7SO1Bo
-         GtkQ==
-X-Gm-Message-State: ACrzQf3UPEot/gOVC4QUf1UaCj29cihiWsZlNcyKuy4/8Rr/ikwpyOvz
-        108uY5xloC4p8EEP4zDapGjjjDkZgXrkbg==
-X-Google-Smtp-Source: AMsMyM64HS96JA+t5NegWTBhGoXrPmUTvN8S9j1oIuC6j5JnhVzd28Edhbio8VxlddWIvdR7T0/thQ==
-X-Received: by 2002:a0c:8ccc:0:b0:4b2:382e:ddaa with SMTP id q12-20020a0c8ccc000000b004b2382eddaamr27200510qvb.33.1666614368794;
-        Mon, 24 Oct 2022 05:26:08 -0700 (PDT)
+        bh=5D2qC8JkQWqg5OtsTeOnj08o8r3sOjBd1D5QMgS0xg8=;
+        b=fsYCl24RbZE481Yb/sfzBm+aXputJSrjXcsofjJUPj2DPCu5bkDILMF+XwUS9KCEle
+         SweHxlRKcLppVwPZf3E09TULIERLrlIPFRPN+cELH4k7fkOeaOwyJeM6n+8VotDEhOqK
+         3k2+1FB+Os6i4BlGf+n8eUV5OuxoNnPyFtnaXnfq9dQ5MjLrvF+YMiCgtNokRLJPGPZZ
+         +gFGirAOWtwxVNeTpUJKt4i/LyDjzyjqMOsfDsq80LG4RbdJQ1B1CM/6c+YuW2948/vw
+         CQWDvZsNXceRFCyeC2ECtMsfuKTmdJUD7TlCV4gdwxwaaS5McUYxoa6gmp/ikYaq65rv
+         iv+A==
+X-Gm-Message-State: ACrzQf3loXsgHFe34wwvdBX655FMwIF0+Kwe86Mc21ppfY/qme+7aNzH
+        mAufQJ64bnS6NzE/ar3ScYK+vcTnOPF0vw==
+X-Google-Smtp-Source: AMsMyM7WUD0Ah3DfBvBkzwZxZHjuXsIf/fAn07VWLqQ/iLKoKdePrhROBZ1MPk4ROCGiJJD/VF+9mQ==
+X-Received: by 2002:ac8:5894:0:b0:39d:13b5:1afd with SMTP id t20-20020ac85894000000b0039d13b51afdmr16699085qta.127.1666614142269;
+        Mon, 24 Oct 2022 05:22:22 -0700 (PDT)
 Received: from [192.168.1.8] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id u30-20020a37ab1e000000b006ef0350db8asm9109052qke.128.2022.10.24.05.26.06
+        by smtp.gmail.com with ESMTPSA id y5-20020a05620a44c500b006b5e296452csm15355428qkp.54.2022.10.24.05.22.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 05:26:08 -0700 (PDT)
-Message-ID: <a354c24d-0355-7c9d-ad05-4c21561af4dc@linaro.org>
-Date:   Mon, 24 Oct 2022 08:26:05 -0400
+        Mon, 24 Oct 2022 05:22:21 -0700 (PDT)
+Message-ID: <10e29fa9-e1b5-9d3d-1dd4-8914c4444099@linaro.org>
+Date:   Mon, 24 Oct 2022 08:22:20 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.0
-Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
+Subject: Re: [PATCH v5 1/3] dt-bindings: ingenic: Add support for the JZ4755
+ CGU
 Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+To:     Siarhei Volkau <lis8215@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20221021202254.4142411-1-arnd@kernel.org>
- <20221021203329.4143397-2-arnd@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20221024044057.4151633-1-lis8215@gmail.com>
+ <20221024044057.4151633-2-lis8215@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
+In-Reply-To: <20221024044057.4151633-2-lis8215@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/10/2022 16:27, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 24/10/2022 00:40, Siarhei Volkau wrote:
+> Add documentation for the clock generation unit (CGU)
+> of the JZ4755 SoC.
 > 
-> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
-> similar symbols that are no longer available with the platform gone,
-> though the drivers themselves are still used on newer platforms,
-> so remove these hacks.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
