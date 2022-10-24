@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F74FA373D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62110C67871
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229964AbiJXXyL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 19:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45064 "EHLO
+        id S230381AbiJXXzh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 19:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbiJXXxo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:53:44 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190432FFA76
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:11:04 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id 189so7971411vsi.9
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:11:04 -0700 (PDT)
+        with ESMTP id S230435AbiJXXzK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:55:10 -0400
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8472E303A80
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:11:37 -0700 (PDT)
+Received: by mail-qv1-xf2a.google.com with SMTP id w10so1127608qvr.3
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=stUhgmxHOajI9uqfx7NpPsmu7P60GiPKRF/7gBID+dg=;
-        b=bEFddOpdoZI+TExGmAdpUfmJNoo8dPBXr0GJGSgul5kqwh++/sgfJQl8+oGEvFD2ne
-         kpz6K8eWDmAVOCEWOuk3k3vaLpcYn1giG0Y4laOx4hW3kM36CeJfyuYRXRoygTCeOInv
-         vgzrStxX8eomyhmjrg03uh7HfE8n1gEyEMRiw=
+        bh=0wgYeHWDY557XtHMLRtUX7OPU/EboVT6jtNmcPBSKxk=;
+        b=ZajeYhpsV5Zdez+eRW07mbQARwemleDED0REBwglUw+M+wDur25dSDaISM+S6b3Es6
+         oup67PnJPBPwupR2R5rvogQnsFM1bfaz433n7LttMdI+qoMqLCAW0lUl/52BHps/aNW/
+         4s6um2wnBIb43aYtg8TtVqliJXipK3/drfa/k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=stUhgmxHOajI9uqfx7NpPsmu7P60GiPKRF/7gBID+dg=;
-        b=LrP8GP89h3LQ5sH6DAWpSPGdduv4gK3tc/f8ERPODPQ2/TJZ7zULStBEJ+d3iozyQg
-         yrZzj90PsVy3fMOdEvwFQ22Wm01CMDF0kPXBImo6pNS/Guz8TEnnUhFjR5jH75As/8IX
-         Bqiy1/mXwtaSQB1CG74KtfYub505HNM+G/3RouHDXiul+voWoq17XH/2j++lf74yvmr0
-         WvLzzwbuvAz3FPtQ/ryrdxtd/PKRlkk/n/wgucenYPWpjfOgj5kOPrSAvT/zH20rnG45
-         Ebl4TvvuIDJkjt/I1H4qOOLxDFkJm0L6DixZpdNyZxRko8shpRDLLD0AYGfuJg8a2X4G
-         Mh3g==
-X-Gm-Message-State: ACrzQf3HIqxppsehG52STrEBbgFGhbb5kVwAac57Nn/skT8MuZ//X/5b
-        gTSUUPi+wT1Wtdz459R3f2kGa3jWHRiOBOkx40EVqA==
-X-Google-Smtp-Source: AMsMyM4Efc9ufDsXBeEA5wir0gCDCtXUofm53iFeyXJEoyskf089urS75VK07NTr4nbtrLk6Bk5gGbtapSYnxvi7JQg=
-X-Received: by 2002:a67:f106:0:b0:3aa:efc:8610 with SMTP id
- n6-20020a67f106000000b003aa0efc8610mr6032143vsk.65.1666649460086; Mon, 24 Oct
- 2022 15:11:00 -0700 (PDT)
+        bh=0wgYeHWDY557XtHMLRtUX7OPU/EboVT6jtNmcPBSKxk=;
+        b=ubh6DijQnWX9cbxy2GnCYXcxiU/CRjQz0scFvJ15GtnY5uhmOBaDkTJd6f01TFdxYs
+         h14LpCHDaJcQdcxyRpd26vrOd1pV+EzexWKXWKw8qlLpsRkFMxAT82CI9Md2Xl4LDvLM
+         XHwN53jJ6w8PFJ3CINb/KK9EgA9Ni+0m0sGvg4afBjuX+EgEqs63poCaWgbmotWTMpbt
+         IlmqlRfjgBOAmZsvKepadWTh3av0LyeMdd2E9DQpymZFmcEcVpNFCMkdZjk7FHNUwolZ
+         f8qgOOB55AxiYoJPWbwU2aflNgQeLjy2CQ+CCZO0tOo2eZFxAzek2wtgjtKW1oQs3XD8
+         cR7A==
+X-Gm-Message-State: ACrzQf2768Q7KMUs7n4nZu7wqqeg8XqPwb7aflvhWM4rxLUwiZcAueFp
+        uUtJ4iPPkw0wi5n95Ncj+vk7aG0aKJBA6U4zDvAZcSTukR6GiQ==
+X-Google-Smtp-Source: AMsMyM4mB7pDUnJT5RpxnXEdEdWK0HwNgbfB+RNRZIgkDSL7pmpqSenH7TsBHZDWAklXfskjjMRaoRopr8Q8KHKkp7M=
+X-Received: by 2002:a05:6102:38c9:b0:3a9:7206:b99e with SMTP id
+ k9-20020a05610238c900b003a97206b99emr20722488vst.65.1666649482560; Mon, 24
+ Oct 2022 15:11:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-9-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221024102307.33722-9-angelogioacchino.delregno@collabora.com>
+References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-10-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221024102307.33722-10-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 24 Oct 2022 15:10:48 -0700
-Message-ID: <CAGXv+5EG0TwE6pEyEb3sK3bU8DWzbtQqPgtWcudJ0KpbR3XrCg@mail.gmail.com>
-Subject: Re: [PATCH 08/10] clk: mediatek: mt8195-topckgen: Drop flags for
- main/univpll fixed factors
+Date:   Mon, 24 Oct 2022 15:11:11 -0700
+Message-ID: <CAGXv+5HHAD_grwNXk-gVorY=p6DidHGqBgVHZhX5B2j5Vv-_Ew@mail.gmail.com>
+Subject: Re: [PATCH 09/10] clk: mediatek: mt8186-mfg: Propagate rate changes
+ to parent
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
@@ -67,17 +67,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Mon, Oct 24, 2022 at 3:23 AM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> The main/univpll clocks are used as clock sources for multiple
-> peripherals of different kind, some of which are critical (like AXIs);
-> a rate change on any of these two will produce a rate change on many
-> devices and that's likely to produce system instability if not done
-> correctly: this is the reason why we have (a lot of) "fixed factor"
-> main/univpll divider clocks, used by MUX clocks to provide different
-> rates based on PLL output dividers.
->
-> Following what was done on clk-mt8186-topckgen and also preventing the
-> same GPU DVFS issue, drop CLK_SET_RATE_PARENT from the aforementioned
-> clocks.
+> Propagate the rate changes to MFG_BG3D's parent on MT8186 to allow
+> for proper GPU DVFS.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
