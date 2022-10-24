@@ -2,90 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC28C38A2D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 15:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDCBECAAA1
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 15:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbiJXPiB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 11:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
+        id S229783AbiJXPj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 11:39:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbiJXPht (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 11:37:49 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E132495F2
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 07:25:47 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id y69so12890314ede.5
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 07:25:47 -0700 (PDT)
+        with ESMTP id S231326AbiJXPjh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 11:39:37 -0400
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3317222
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 07:29:22 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id b25so6135415qkk.7
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 07:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
+        d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uNRDUP9ouWlmlPu6POZXr/UqktEd3BwTrOrVcJ1HXpQ=;
-        b=Zre2CJjpDPgZ3ML+5uYe3oKtSH6m3xLiU4J6QrCHDDpo5kZY8xjs2ItrKKTfLcDYht
-         TVO4nENelYErdKgDYpqW6aR729OTlE/NHjfrcLDV8Crl51KvdX2Wyl3dH2Jegc8K29VM
-         lRVPQ90tlZl8N0YSyJgTFvwLm3nRrtNjasWxI=
+        bh=kVYj3QCBceIQ1q0wupJzLP0eSYUUbr2KRyu/kK2/7zc=;
+        b=G0DWAFKOqyqQFdFIXlj6kLBpRnL5JYzlLp0E6WVy4pls3/6j1AeLtxzxBZ+jhLV++/
+         PxHwC8uWse4I21Ym1lUCctWJicItZ9iEVOYX8Zcr9KIfD34MRXA+/Po28atn5QAX6ZNy
+         k0v0iZYVXFg+8BTYHuXTpqhOYFcbX2bEFUF5ZlIPXjXBnibhTJnVqr8Xf0zyHHEoUwMk
+         BuPuwWFDZdb7LxzX9D/z4tHwdMqfwK8ojwOnJJ9APk1xpHu9coKLCb2z+3XGXdrbx4gD
+         6cS65pGdMJEyUJ+/nb33LGpxrL9SaqhVoD30uprXtaUUNXFTopDYnugtpAsxcLkQNqcU
+         qAuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNRDUP9ouWlmlPu6POZXr/UqktEd3BwTrOrVcJ1HXpQ=;
-        b=Tg3oSgqb5xMD4MD7X1NdVgk0Sgj6q513UhW6kalSQgFKxY6AzZfIFI9nVEXmo37WHJ
-         aOI7U5Tg4ZCkxSvZ/D4XMFgAkSkUrtRbaWIDDi2+ZQlCKbJGaapuBatNjWWMv0hCD6JG
-         xZOP369gaBykEDHmtWRrBp1ZPZPh+YE1VBpDjxbqIf0jLUY+XhDZDp3MsXN/EySb4Cij
-         RAxwpxWwS7Xxxohq8XrLbJR2pmb5bgRQs0f5+y7uVbc6vNfd5ZSR4gQgTbJ/dxyo8xH0
-         TTIx93NsSFxPeal2Av7LWoxCOLEhcdXg1SQ+XQBOuYskwestIC7gxYVOOhy5OlvROkoz
-         O/sA==
-X-Gm-Message-State: ACrzQf0mrWU/x+A6TJeMVRYdyn3Ur7t+JBQSnWtvD1ZlGuXLZHhzuCTL
-        y58xIujXy/3jd/B14ySY4UZU3YN2jRyymECZpOw=
-X-Google-Smtp-Source: AMsMyM6GLxv6YpStCWiwlAyLglFzeiLykSKUvCjuukVmFp1jXb2lI1FAJdRQEzwFTD2k7tzPsely6w==
-X-Received: by 2002:a2e:b11a:0:b0:26e:4c9:f7f7 with SMTP id p26-20020a2eb11a000000b0026e04c9f7f7mr11624761ljl.522.1666619290405;
-        Mon, 24 Oct 2022 06:48:10 -0700 (PDT)
-Received: from [172.16.11.74] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o20-20020a2e7314000000b0025ebaef9570sm4954322ljc.40.2022.10.24.06.48.08
+        bh=kVYj3QCBceIQ1q0wupJzLP0eSYUUbr2KRyu/kK2/7zc=;
+        b=Fs/dfTKUea8CZIWhQfuGTYaO1FGUtnxwbIyE7BCBNm0NpzYkUWSmtTi0OoU1bDNrsL
+         fJpxogDa4uCZeV0GJHve2InhIgEbYUsx08zcKzT7MQZVfuvsamVon7WOAKl3jJADVae5
+         t8qtYWHU3g9GZDc1P7Srxbv+ZT7QXH/jthOzhR+s8Eh+ptfekCEei79hdlRDAr6lCmEt
+         wMyuzvfy94/piW402fwQ04tspz0bcL+BYLDNJySQldImXR1jFEdIPKzotyXH5TAL3oPJ
+         uFmjJbgQPUV4bp079ogeXZjoBONM5yxakm8jz6mFxd6Gg/yYNNtapVxG22IP6dH4jeKl
+         JjmQ==
+X-Gm-Message-State: ACrzQf0hksWM9uayoZ5+KZ51360yCbDNCRkc/LHL2oKVQv4De5hlSz/M
+        3qhY3ZgFJXI9lQUfDPopOmutoVVVUxZB7Q==
+X-Google-Smtp-Source: AMsMyM6WG2RrPBdlHGOnuUF5Zn/OxURzRJxpLn8hbsfkyCG52+3lz7p0PbPJNXd2mLDYhFv1n98JaA==
+X-Received: by 2002:a05:620a:22cc:b0:6ee:3e43:ac40 with SMTP id o12-20020a05620a22cc00b006ee3e43ac40mr22841775qki.454.1666614323567;
+        Mon, 24 Oct 2022 05:25:23 -0700 (PDT)
+Received: from [192.168.1.8] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id f4-20020ac84984000000b00398426e706fsm12571885qtq.65.2022.10.24.05.25.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 06:48:09 -0700 (PDT)
-Message-ID: <814496ae-4007-9a4e-0466-a0386aec6316@rasmusvillemoes.dk>
-Date:   Mon, 24 Oct 2022 15:48:08 +0200
+        Mon, 24 Oct 2022 05:25:23 -0700 (PDT)
+Message-ID: <41060ee4-0103-3c09-632b-81af396c0a06@linaro.org>
+Date:   Mon, 24 Oct 2022 08:25:20 -0400
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH 01/21] ARM: s3c: remove all s3c24xx support
 Content-Language: en-US
-To:     Abel Vesa <abelvesa@kernel.org>,
+To:     Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Arnaud Patard <arnaud.patard@rtp-net.org>,
+        Christer Weinigel <christer@weinigel.se>,
+        Guillaume GOURAT <guillaume.gourat@nexvision.tv>,
+        Heiko Stuebner <heiko@sntech.de>,
+        openmoko-kernel@lists.openmoko.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-In-Reply-To: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
+        Stephen Boyd <sboyd@kernel.org>, linux-doc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-1-arnd@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221021203329.4143397-1-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/09/2022 14.41, Rasmus Villemoes wrote:
-> We have an imx8mp-based board with an external gpio-triggered
-> watchdog. Currently, we don't get to handle that in time before it
-> resets the board.
+On 21/10/2022 16:27, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> The probe of the watchdog device gets deferred because the SOC's GPIO
-> controller is not yet ready, and the probe of that in turn gets deferred
-> because its clock provider (namely, this driver) is not yet
-> ready. Altogether, the watchdog does not get handled until the late
-> initcall deferred_probe_initcall has made sure all leftover devices
-> have been probed, and that's way too late.
+> The platform was deprecated in commit 6a5e69c7ddea ("ARM: s3c: mark
+> as deprecated and schedule removal") and can be removed. This includes
+> all files that are exclusively for s3c24xx and not shared with s3c64xx,
+> as well as the glue logic in Kconfig and the maintainer file entries.
 > 
-> Aside from being necessary for our board, this also reduces total boot
-> time because fewer device probes get deferred.
+> Cc: Arnaud Patard <arnaud.patard@rtp-net.org>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Christer Weinigel <christer@weinigel.se>
+> Cc: Guillaume GOURAT <guillaume.gourat@nexvision.tv>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Simtec Linux Team <linux@simtec.co.uk>
+> Cc: openmoko-kernel@lists.openmoko.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-ping
 
-Rasmus
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
