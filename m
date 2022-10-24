@@ -2,135 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599B0ECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 19:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EACC38A2D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 20:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbiJXTLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 15:11:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46600 "EHLO
+        id S232316AbiJXUGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 16:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232507AbiJXTKi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 15:10:38 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C002DD7
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 10:49:24 -0700 (PDT)
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id B9BB480076;
-        Mon, 24 Oct 2022 17:09:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1666624195;
-        bh=Yx8gNpZwSkH+u0dz5auO3h/0qkztyKzZiTPX1tvLoFU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XGZxABIi+H55GxLTX6rRXt74ktWxpKxOYYkieXir3zuLbfSGXrX/c8DnrhAhc78/N
-         4v0HMA2xYraCRBohwE8or11wObxuF2L/Fs5RY8TzQNq4x2+O8FF/UPx4ya3mRJCDLU
-         XdKiwcaNWx9lpdKrLHTN2tyna4Dd0CHfrKsBsV4O1x4ywlTkRlCfwbQhHcptf2jZrE
-         VWyrAkSeLqhBDpOmRuzMuwYXEQWaSrFuyXsUMTfRbILguc3NsXJC+buM31K3lV9p8I
-         CEvogBFJh57nBxrgsRTS1i6tLjDTbcODakOtLMgAIy1XtZE1fa/dCHha3xemFOCegC
-         spUUPudaGmyfA==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Marek Vasut <marex@denx.de>, Fabio Estevam <festevam@denx.de>,
-        Jacky Bai <ping.bai@nxp.com>,
+        with ESMTP id S233092AbiJXUGC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 16:06:02 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8783293090
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 11:26:29 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id 128so9379803pga.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 11:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4oIVzfpMgaAT0HX4FWTthc6xrrun7ylc9/g6rsWhf08=;
+        b=1O1ZHqYiBlXY2fwJNdkh+vQ/VNUVsNL1SE/FLAfOhoxD5MPiaq4El7Qm3wHo+8cgb3
+         gl9aeVRIggYlqbyizkSb3bBtxGG+NDi5jQPFLC5t5vcs2zVF6v3XXS2LwIAxKpdiwggC
+         n0PBC2uHZpCn05uEfUStTvJ1YOjR10a1WhlYwJ1EMZXodMLzQ2LjYg7xigqwXSPkiO03
+         194iUFBYOfLlARIf+xoEZo/W0V34QwVqxfhOTk30UjgjuOg0gjGBGTFOiN2O2yCX/CJd
+         B7mqvd4VripHn5nnSvfz8dNOkV/MSTcHE9+6t9xVPrjJY5DORvB26GRhxou4kxGlK326
+         FM1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4oIVzfpMgaAT0HX4FWTthc6xrrun7ylc9/g6rsWhf08=;
+        b=GeQutHGR4X0uiMioseaBkkPwZpdNrgmRtkfvO1OS/8MzbJ54ALz/bSANCH572G7Dv0
+         U9fxJjvY28Nn+LN40XgfUyKvATVlN1HY4SemzpYI/usC79I8oA4e6m7+d1RHn+jEdUFC
+         o9GXDHZgiXzpS8tkYpwXQgMWKUsp6sL1KxIzPuSIg09dYdoCD4RfhBifs2iMIN53NcrE
+         NdWy6EsTuoK7wV6C/RfT6zJOg0GT8IiqYRPpJWs2BVbdGdf8LW8/bgLcSC+ybmlwlpd9
+         DMFlzqBVESIw45mZzR6qea7eXzh1UNkdwEJ/k/xfmq0v7CXFpZ1/v1IzUv3bI6V1z0jy
+         n4fg==
+X-Gm-Message-State: ACrzQf0jLhtlp5JTEFHUmeRJ9q5mwc5IJ9zLYMA9bI0Pl7NpXhCv0/Sg
+        ZntdrFL2Cc75DZKNZP3eVL+5Tg==
+X-Google-Smtp-Source: AMsMyM5NJO1kEdsQTHB/8tQPhUzIwVroAro5GyKcBeo3+9Tpkq+lfovTaDaocHC24z3Nm955Wr4NWg==
+X-Received: by 2002:aa7:81cc:0:b0:563:4e53:c08b with SMTP id c12-20020aa781cc000000b005634e53c08bmr34743652pfn.19.1666635958991;
+        Mon, 24 Oct 2022 11:25:58 -0700 (PDT)
+Received: from localhost ([75.172.140.17])
+        by smtp.gmail.com with ESMTPSA id z11-20020a170903018b00b00177f4ef7970sm72911plg.11.2022.10.24.11.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 11:25:58 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Arnd Bergmann <arnd@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Lee Jones <lee@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bin Liu <b-liu@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com
-Subject: [PATCH] [RFC] soc: imx: imx8m-blk-ctrl: Split clock prepare from clock enable in the domain
-Date:   Mon, 24 Oct 2022 17:09:47 +0200
-Message-Id: <20221024150947.10739-1-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-media@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-usb@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH 00/14] ARM: remove unused davinci board & drivers
+In-Reply-To: <20221019152947.3857217-1-arnd@kernel.org>
+References: <20221019152947.3857217-1-arnd@kernel.org>
+Date:   Mon, 24 Oct 2022 11:25:57 -0700
+Message-ID: <7h7d0phydm.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is possible for clk_disable_unused() to trigger lockdep warning
-regarding lock ordering in this driver. This happens in case of the
-following conditions:
+Arnd Bergmann <arnd@kernel.org> writes:
 
-A) clock core clk_disable_unused() triggers the following sequence in a
-   driver which also uses blkctrl domain:
-   - clk_prepare_lock() -> obtains clock core prepare_lock
-   - pm_runtime_get*() -> obtains &blk_ctrl_genpd_lock_class
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> As part of removing all board files that were previously marked as unused,
+> I looked through the davinci platform and recursively removed everything
+> that has now become unused.
+>
+> In particular, this is for all dm3xx support, in addition to the dm64xx
+> support removed previously. The remaining support is now for da8xx using
+> devicetree only, which means a lot of the da8xx specific device support
+> can also go away.
 
-B) driver powers up a power domain and triggers the following sequence
-   in blkctrl:
-   - pm_runtime_get_sync() -> obtains &blk_ctrl_genpd_lock_class
-   - clk_bulk_prepare_enable() -> obtains clock core prepare_lock
+Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-This can lead to a deadlock in case A and B runs on separate CPUs.
-
-To avoid the deadlock, split clk_*prepare() from clk_*enable() and
-call the former before pm_runtime_get_sync(). This way, the blkctrl
-driver always claims the prepare_lock before blk_ctrl_genpd_lock_class
-and the deadlock is avoided.
-
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: Fabio Estevam <festevam@denx.de>
-Cc: Jacky Bai <ping.bai@nxp.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-imx@nxp.com
-To: linux-arm-kernel@lists.infradead.org
----
- drivers/soc/imx/imx8mp-blk-ctrl.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/imx/imx8mp-blk-ctrl.c b/drivers/soc/imx/imx8mp-blk-ctrl.c
-index b7d4161fcda9c..571c98b5b005b 100644
---- a/drivers/soc/imx/imx8mp-blk-ctrl.c
-+++ b/drivers/soc/imx/imx8mp-blk-ctrl.c
-@@ -393,15 +393,21 @@ static int imx8mp_blk_ctrl_power_on(struct generic_pm_domain *genpd)
- 	struct imx8mp_blk_ctrl *bc = domain->bc;
- 	int ret;
- 
-+	ret = clk_bulk_prepare(data->num_clks, domain->clks);
-+	if (ret) {
-+		dev_err(bc->dev, "failed to enable clocks\n");
-+		return ret;
-+	}
-+
- 	/* make sure bus domain is awake */
- 	ret = pm_runtime_resume_and_get(bc->bus_power_dev);
- 	if (ret < 0) {
- 		dev_err(bc->dev, "failed to power up bus domain\n");
--		return ret;
-+		goto rpm_put;
- 	}
- 
- 	/* enable upstream clocks */
--	ret = clk_bulk_prepare_enable(data->num_clks, domain->clks);
-+	ret = clk_bulk_enable(data->num_clks, domain->clks);
- 	if (ret) {
- 		dev_err(bc->dev, "failed to enable clocks\n");
- 		goto bus_put;
-@@ -426,9 +432,11 @@ static int imx8mp_blk_ctrl_power_on(struct generic_pm_domain *genpd)
- 	return 0;
- 
- clk_disable:
--	clk_bulk_disable_unprepare(data->num_clks, domain->clks);
-+	clk_bulk_disable(data->num_clks, domain->clks);
- bus_put:
- 	pm_runtime_put(bc->bus_power_dev);
-+rpm_put:
-+	clk_bulk_unprepare(data->num_clks, domain->clks);
- 
- 	return ret;
- }
--- 
-2.35.1
-
+Kevin
