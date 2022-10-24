@@ -2,134 +2,271 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D69ECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 19:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D036DFA3740
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 19:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbiJXTHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 15:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39498 "EHLO
+        id S232530AbiJXTIE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 15:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbiJXTGu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 15:06:50 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A03716339D
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 10:45:55 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id be13so17936661lfb.4
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 10:45:55 -0700 (PDT)
+        with ESMTP id S230260AbiJXTHr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 15:07:47 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE900A231F;
+        Mon, 24 Oct 2022 10:46:59 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id h9so6295786wrt.0;
+        Mon, 24 Oct 2022 10:46:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7+eHtyI1rSX9YnLKY0I0rogiG/gUcE1cQwN8V9LfHVw=;
-        b=gdnPlvQhV9Pppra45PdIsAR/ZQHd84+idlO+3NrBwt1aimu7wqQVWe/Qc2fwCON3XN
-         /8jwMbX44Nl4Cn+Xn68fypvgrGEBg+gOgq8QF9hcLF1KBlFrjoQgdSOwOZcHA8mUnUgS
-         pg5mTfWfr5MwVAUMapLtEno43/TJBJSHK6BLg=
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:in-reply-to
+         :subject:cc:to:from:references:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QCRd4IMiplHGr02uOdIgEYhNwjtCaJaq8uNKGxsO7tA=;
+        b=SiGLA+7446Gs22PXmMlRTtqX1bz+ACkFKZjJVkvf6rjOR8pzjYjdibWZ0SeACVvvPp
+         NGYaxLnZt1He29HUKMNf96cBp3JzlwrOu5dofMW8pZnQEAsHEbdo66AAk3CkUcKavWPW
+         XaZfOYQHu5S3r+oXxYlxu4wYsqZSETsQNXwCRgpDaDiFtzax3frHDz674avF6KJ2VsyG
+         FND47Wfd6kBVr+yO077xpG4M6HucTR9QlypeIfYTvvsVFKIifgZgi+A2ULcyATWhqzlR
+         6pxdiJ0ywItlbjhp7Rz0cB0k6qLP6sod8vWZsyP82Dv1ai2e9EPTtxEIX4cL2erotrrL
+         iYgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+eHtyI1rSX9YnLKY0I0rogiG/gUcE1cQwN8V9LfHVw=;
-        b=i3yK3uizLSUGv5Z3cSDjtx8I4EOEMP8p+Hdwqri2VjKUkhTgko2CjmIeVWFrymhWyH
-         I63I/qNp4ytH/cTiej43syG4dg/pE4saU22H8CfqYfMEfsAeGy3c5VXx0m6+ArkrVF2N
-         4vjw1KfVNGS/p1xCQg24wx0A1+sbK/qMgs86iKTW1jkGqnRfEkfoaDyJFCu0KJU62r5y
-         mLweViFB46UYIVpByYtixKECzDxeD7hfyz/hN3uBaMEpo/yjfXJCVhXQYrJGaaCC0A0n
-         KJYiI53/rX8NqckjYVlnRGwrsASxY3oD4nAgCbbiRjpRZqO9hRXfMFq2Vw8pEcvp1KP5
-         8JHg==
-X-Gm-Message-State: ACrzQf3fY4E6P+sZAaBymV4xsipy3r8XDQSswk/g6cg/+5UD6rJIL+42
-        hJPNnFCKYqgEFGZz4O+BD6mbdXg64ECKuRSC+qc=
-X-Google-Smtp-Source: AMsMyM4IxozLn2pU0Vju5g9AW8JZRuqtK2Wugua0nPk45LOWOHw0hmRaTnZDHovGoE5Fw4gGY2Vtgg==
-X-Received: by 2002:a05:651c:98f:b0:26d:ff18:97c6 with SMTP id b15-20020a05651c098f00b0026dff1897c6mr12785233ljq.375.1666621869801;
-        Mon, 24 Oct 2022 07:31:09 -0700 (PDT)
-Received: from [172.16.11.74] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o3-20020ac25e23000000b004a9c6f7a776sm1032357lfg.49.2022.10.24.07.31.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 07:31:09 -0700 (PDT)
-Message-ID: <7e52bb17-cbd4-eec2-092a-65c4a01d41ba@rasmusvillemoes.dk>
-Date:   Mon, 24 Oct 2022 16:31:07 +0200
+        h=content-transfer-encoding:mime-version:message-id:date:in-reply-to
+         :subject:cc:to:from:references:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QCRd4IMiplHGr02uOdIgEYhNwjtCaJaq8uNKGxsO7tA=;
+        b=irJ9T58oM8u1LI5FIBeHpJfqS2yj87m7h05QZgCa7bR/BW6o6jeKhUIVh51rn3YHIL
+         wGvxLQFMD7ypBINiOMB8shSxSC75d5Kfzverjf8wpThuBaUcApNlapD70971wfxdYjsS
+         CQMKYZWumOtLsiqRzKUlpsQNeJQ/niBHHvW/UJOi6kVfIcKcv9if+1OaOR2N1lU69A3W
+         rD6KJrPwUgGN3NkiYNXKEsf6LTc3b04Yaw1JU8vVr2tQQxe7VxiKEvvJBnhRmFO3V/Hd
+         CF2/jeKVwPSC/C5ziqg/KZG3LMIutHTfvss3enYT/hJR++PK0ZHz+SDRoHByXWJUUFzF
+         PyjA==
+X-Gm-Message-State: ACrzQf2cxdYIHB4X/el6WqqyYX2VV8fEq32AbFBsgPH344Dorhvh3Qsc
+        zWYCs32YlTY3qw2EJmqPbUPkelphbTfzbA==
+X-Google-Smtp-Source: AMsMyM4N5xLORfOZINF7JJiZPnZ4/OuZrHLGp8H9Ki94bRHAZ3WTC/Wc+OTTSER+TIgpjYr9uF9r0A==
+X-Received: by 2002:a05:6000:2c5:b0:22f:5242:131d with SMTP id o5-20020a05600002c500b0022f5242131dmr21315545wry.228.1666628953935;
+        Mon, 24 Oct 2022 09:29:13 -0700 (PDT)
+Received: from localhost (188.28.11.70.threembb.co.uk. [188.28.11.70])
+        by smtp.gmail.com with ESMTPSA id x4-20020a5d6b44000000b0023677081f3asm67695wrw.42.2022.10.24.09.29.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 09:29:13 -0700 (PDT)
+References: <20221023145653.177234-1-aidanmacdonald.0x0@gmail.com>
+ <20221023145653.177234-6-aidanmacdonald.0x0@gmail.com>
+ <AYP7KR.ZQW0GW51WJAG@crapouillou.net>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, zhouyu@wanyeetech.com,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] clk: ingenic: Add X1000 audio clocks
+In-reply-to: <AYP7KR.ZQW0GW51WJAG@crapouillou.net>
+Date:   Mon, 24 Oct 2022 17:29:09 +0100
+Message-ID: <fJMRClXZsQ81yO6lF2VxgYlkyJhstHCq@localhost>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
-Content-Language: en-US
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
- <814496ae-4007-9a4e-0466-a0386aec6316@rasmusvillemoes.dk>
- <ed50cdff-8fd2-6714-9b0b-1ce47a5c9d37@pengutronix.de>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-In-Reply-To: <ed50cdff-8fd2-6714-9b0b-1ce47a5c9d37@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/10/2022 16.00, Ahmad Fatoum wrote:
-> Hello Rasmus,
-> 
-> On 24.10.22 15:48, Rasmus Villemoes wrote:
->> On 28/09/2022 14.41, Rasmus Villemoes wrote:
->>> We have an imx8mp-based board with an external gpio-triggered
->>> watchdog. Currently, we don't get to handle that in time before it
->>> resets the board.
->>>
->>> The probe of the watchdog device gets deferred because the SOC's GPIO
->>> controller is not yet ready, and the probe of that in turn gets deferred
->>> because its clock provider (namely, this driver) is not yet
->>> ready. Altogether, the watchdog does not get handled until the late
->>> initcall deferred_probe_initcall has made sure all leftover devices
->>> have been probed, and that's way too late.
->>>
->>> Aside from being necessary for our board, this also reduces total boot
->>> time because fewer device probes get deferred.
+
+Paul Cercueil <paul@crapouillou.net> writes:
+
+> Hi Aidan,
+>
+> Le dim. 23 oct. 2022 =C3=A0 15:56:53 +0100, Aidan MacDonald
+> <aidanmacdonald.0x0@gmail.com> a =C3=A9crit :
+>> The X1000's CGU supplies the I2S system clock to the AIC module
+>> and ultimately the audio codec, represented by the "i2s" clock.
+>> It is a simple mux which can either pass through EXCLK or a PLL
+>> multiplied by a fractional divider (the "i2s_pll" clock).
+>> The AIC contains a separate 1/N divider controlled by the I2S
+>> driver, which generates the bit clock from the system clock.
+>> The frame clock is always fixed to 1/64th of the bit clock.
+>> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+>> ---
+>>  drivers/clk/ingenic/x1000-cgu.c | 69 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 69 insertions(+)
+>> diff --git a/drivers/clk/ingenic/x1000-cgu.c
+>> b/drivers/clk/ingenic/x1000-cgu.c
+>> index b2ce3fb83f54..341276e5e1ef 100644
+>> --- a/drivers/clk/ingenic/x1000-cgu.c
+>> +++ b/drivers/clk/ingenic/x1000-cgu.c
+>> @@ -8,6 +8,7 @@
+>>  #include <linux/delay.h>
+>>  #include <linux/io.h>
+>>  #include <linux/of.h>
+>> +#include <linux/rational.h>
+>>  #include <dt-bindings/clock/ingenic,x1000-cgu.h>
+>> @@ -168,6 +169,37 @@ static const struct clk_ops x1000_otg_phy_ops =3D {
+>>  	.is_enabled	=3D x1000_usb_phy_is_enabled,
+>>  };
+>> +static void
+>> +x1000_i2spll_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
+>> +			 unsigned long rate, unsigned long parent_rate,
+>> +			 unsigned int *pm, unsigned int *pn, unsigned int *pod)
+>> +{
+>> +	const unsigned long m_max =3D GENMASK(pll_info->m_bits - 1, 0);
+>> +	const unsigned long n_max =3D GENMASK(pll_info->n_bits - 1, 0);
+>> +	unsigned long m, n;
+>> +
+>> +	rational_best_approximation(rate, parent_rate, m_max, n_max, &m, &n);
+>> +
+>> +	/* n should not be less than 2*m */
+>> +	if (n < 2 * m)
+>> +		n =3D 2 * m;
+>> +
+>> +	*pm =3D m;
+>> +	*pn =3D n;
+>> +	*pod =3D 1;
+>> +}
+>> +
+>> +static void
+>> +x1000_i2spll_set_rate_hook(const struct ingenic_cgu_pll_info *pll_info,
+>> +			   unsigned long rate, unsigned long parent_rate)
+>> +{
+>> +	/*
+>> +	 * For some reason, the I2S divider doesn't work properly after
+>> +	 * updating I2SCDR unless I2SCDR1 is read & written back.
+>> +	 */
+>> +	writel(readl(cgu->base + CGU_REG_I2SCDR1), cgu->base + CGU_REG_I2SCDR1=
+);
+>
+> Not fond of the nesting here, just use a variable.
+>
+> Besides... According to the documentation, bits 31 and 30 of this registe=
+r are
+> misconnected: writing to bit 31 will be reflected in bit 30, and vice-ver=
+sa. So
+> this would work only if the bits 30 and 31 have the same value.
+
+From my tests it seems that reads are swapped w.r.t. the documented
+bit positions, but not writes. I'm assuming this is the case because
+when I write to the register with bit 30 (I2S_DEN) set, I can change
+I2SDIV_D freely, but if bit 30 is 0, then I2SDIV_D is replaced by
+I2SDIV_N/2 like the manual suggests.
+
+> And worse than that, where do you actually set the register's value? Beca=
+use
+> bits 30/31, if cleared, will automatically compute the M/N values to the =
+I2SCDR
+> fields, overriding what the driver's .set_rate() callback is doing.
+
+I don't initialize the register, but I2S_NEN (bit 31 of I2SCDR1) doesn't
+cause I2SCDR to be automatically updated like I see with I2SCDR1 when
+I2S_DEN =3D 0. It seems setting I2S_NEN to 1 has some other effect on the
+clock output, but I don't have an oscilloscope so I'm not sure exactly
+what it is. I'm limited to testing by ear.
+
+For example, with f_in =3D 1008 MHz, M =3D 7, N =3D 2500, the output should
+nominally be 2.8224 MHz (=3D 64 * 44.1 KHz). Now that works just fine
+for playing 44.1 KHz audio if I set I2S_NEN to 0, but setting it to 1,
+I need to increase M to 16 to get things to sound right. I've tested
+a couple other frequencies but there isn't an obvious pattern to what
+increase in M is needed (it always seems to need an increase).
+
+I don't really care to play around with it because everything works
+fine if I keep I2S_NEN =3D I2S_DEN =3D 0. I've tested that configuration
+from 8 KHz to 192 KHz at typical audio frequencies and randomly chosen
+non-standard frequencies, and haven't experienced any issues.
+
+> Either we want that, and in that case the I2S clock should be a custom cl=
+ock
+> (since it wouldn't need to compute or write M/N), or we don't, and in thi=
+s case
+> bits 30/31 of this register should be set.
+
+My experience suggests we should set I2S_NEN and I2S_DEN to 0 and
+calculate output frequency as F_out =3D F_in * I2SDIV_M / I2SDIV_N.
+
+Reading I2SCDR1 and writing the same value back is something I took
+from the Ingenic BSP kernels. (The manual also suggests doing this.)
+It worked fine for me so I didn't bother to invesigate it further.
+
+The important part actually seems to be refreshing I2SDIV_D to a
+"reasonable" value, which happens automatically when I2S_DEN =3D 0.
+But the automatic calculation only happens when writing the register.
+
+Writing 0 to I2SCDR1 solves both problems: the register is properly
+initialized and I2SDIV_D gets updated automatically. That seems to
+be the best solution.
+
+>> +}
+>> +
+>>  static const s8 pll_od_encoding[8] =3D {itt
+>>  	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
+>>  };
+>> @@ -319,6 +351,37 @@ static const struct ingenic_cgu_clk_info
+>> x1000_cgu_clocks[] =3D {
+>>  		.gate =3D { CGU_REG_CLKGR, 25 },
+>>  	},
+>> +	[X1000_CLK_I2SPLLMUX] =3D {
+>> +		"i2s_pll_mux", CGU_CLK_MUX,
+>> +		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
+>
+> If you have only 1 bit you can only have two parents, so you can remove t=
+he
+> -1s.
+>
+
+Thanks, will do.
+
+Regards,
+Aidan
+
+>> +		.mux =3D { CGU_REG_I2SCDR, 31, 1 },
+>> +	},
+>> +
+>> +	[X1000_CLK_I2SPLL] =3D {
+>> +		"i2s_pll", CGU_CLK_PLL,
+>> +		.parents =3D { X1000_CLK_I2SPLLMUX, -1, -1, -1 },
+>
+> .parents =3D { X1000_CLK_I2SPLLMUX, },
+>
+>> +		.pll =3D {
+>> +			.reg =3D CGU_REG_I2SCDR,
+>> +			.rate_multiplier =3D 1,
+>> +			.m_shift =3D 13,
+>> +			.m_bits =3D 9,
+>> +			.n_shift =3D 0,
+>> +			.n_bits =3D 13,
+>> +			.calc_m_n_od =3D x1000_i2spll_calc_m_n_od,
+>> +			.set_rate_hook =3D x1000_i2spll_set_rate_hook,
+>> +		},
+>> +	},
+>> +
+>> +	[X1000_CLK_I2S] =3D {
+>> +		"i2s", CGU_CLK_MUX,
+>> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, X1000_CLK_I2SPLL },
+>> +		/*
+>> +		 * NOTE: the mux is at bit 30; bit 29 enables the M/N divider.
+>> +		 * Therefore, the divider is disabled when EXCLK is selected.
+>> +		 */
+>> +		.mux =3D { CGU_REG_I2SCDR, 29, 2 },
+>> +	},
+>> +
+>>  	[X1000_CLK_LCD] =3D {
+>>  		"lcd", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+>>  		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL },
+>> @@ -426,6 +489,12 @@ static const struct ingenic_cgu_clk_info
+>> x1000_cgu_clocks[] =3D {
+>>  		.gate =3D { CGU_REG_CLKGR, 9 },
+>>  	},
+>> +	[X1000_CLK_AIC] =3D {
+>> +		"aic", CGU_CLK_GATE,
+>> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+>
+> .parents =3D { X1000_CLK_EXCLK, },
+>
+> Cheers,
+> -Paul
+>
+>> +		.gate =3D { CGU_REG_CLKGR, 11 },
+>> +	},
+>> +
+>>  	[X1000_CLK_UART0] =3D {
+>>  		"uart0", CGU_CLK_GATE,
+>>  		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+>> --
+>> 2.38.1
 >>
->> ping
-> 
-> Module build is unaffected, because arch_initcall expands to module_init
-> if it's built as a module, right?
-
-Yes.
-
- Noting that in the commit message would
-> be good I think.
-> 
-> Also, did you try booting with fw_devlink=on? This should have resolved
-> your issue too. Not sure what other issues it may cause on i.MX8MP.
-
-AFAICT, that's the default behaviour:
-
-drivers/base/core.c:static u32 fw_devlink_flags = FW_DEVLINK_FLAGS_ON;
-drivers/base/core.c-static int __init fw_devlink_setup(char *arg)
-drivers/base/core.c-{
-drivers/base/core.c-    if (!arg)
-drivers/base/core.c-            return -EINVAL;
-drivers/base/core.c-
-drivers/base/core.c-    if (strcmp(arg, "off") == 0) {
-drivers/base/core.c:            fw_devlink_flags = 0;
-drivers/base/core.c-    } else if (strcmp(arg, "permissive") == 0) {
-drivers/base/core.c:            fw_devlink_flags =
-FW_DEVLINK_FLAGS_PERMISSIVE;
-drivers/base/core.c-    } else if (strcmp(arg, "on") == 0) {
-drivers/base/core.c:            fw_devlink_flags = FW_DEVLINK_FLAGS_ON;
-drivers/base/core.c-    } else if (strcmp(arg, "rpm") == 0) {
-drivers/base/core.c:            fw_devlink_flags = FW_DEVLINK_FLAGS_RPM;
-drivers/base/core.c-    }
-drivers/base/core.c-    return 0;
-drivers/base/core.c-}
-drivers/base/core.c-early_param("fw_devlink", fw_devlink_setup);
-
-But I don't think the problem is that the driver core has inferred the
-dependency chain upfront from parsing DT; the problem is simply that we
-end up probing the clock controller, and hence all dependencies too late.
-
-Rasmus
