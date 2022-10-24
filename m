@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B9DC67871
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87467FA373D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:39:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbiJXXhw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 19:37:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46218 "EHLO
+        id S230056AbiJXXj4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 19:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbiJXXh2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:37:28 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDCC103278
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 14:57:40 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id s28so9201996vsr.10
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 14:57:40 -0700 (PDT)
+        with ESMTP id S230033AbiJXXjf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:39:35 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A4E30102E
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 14:58:48 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id q127so4322561vsa.7
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 14:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mie0dwILOoL5NP5Cg3Tf9BLyHE4I1j5avRUFdQRyJZQ=;
-        b=gNXcO91AfhdJU+tqEckzPK3JYjWSz1Js/FUQZO3PvIsUgwYmnA80qUARF9QI7nqyrK
-         7aDzrWPVkNNS9jt3kjz3H/2gbEyMAFDMxioj5GYU9tN+InKZaAywQuBlsdxCD8up/ZC1
-         cARm+ZNoI+B5/t+4cl+QXzAJHzscPydD8zxqc=
+        bh=BzSJYeJmaTtTxu26Xk7PIR207/FtZbc1yEGzfOkJ+8U=;
+        b=AFR5IkY1THjsaMBnZeQKwLYzIr9rrM6ni3gipAZKPDAEIe/ZGpVLpuD4pUFK0izrIU
+         Iexsw5MQ6s8SqjK8P+TyE7pURsY+RfYmeh+5VhtJliGnTKLRWXxdcK3KfafIdF9EtDd5
+         3ONuGx+5L5V0soyNKdJYLdTlJvp3MlQxIyxms=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Mie0dwILOoL5NP5Cg3Tf9BLyHE4I1j5avRUFdQRyJZQ=;
-        b=J43nI0061T7f4T4w23pUzUHxVgQZ6BsEA0qqy036TYmd8s8QENolFF3dL2Pc7wLVYi
-         7Es46DCTHC9rht6tZk/QEClrtwTEhvQusbElUr41ReO38o2HBbRuHW7NMdxj0mMBveJN
-         R+FdRh524HQ0ysHysbWxi7P6Fsv8s7x6yNQKHUr0+S4SIknJymwXbxIoMXXbuTxK/UL1
-         vN51WYZNEdHq2YnXXWU7Ty48yFliyx0hABg5l9oExgsbO3rQsUbgFgPtvIwJWMRl0CYE
-         HmwuSBJ+CSDG6ZTfhW8LAdh+XfKxLli5ZCUiAkUMoPQuhADeR0GjUN0eG5i9qabZukih
-         eJJg==
-X-Gm-Message-State: ACrzQf2JzEJL1AUePqM0aYoEpmrkZlbISLq1/MR0yWA6oBOC9ddhcEGp
-        g55L9It8uyB6aWcDjbuA5/lA2eJOrfDYET8PKhJ40Q==
-X-Google-Smtp-Source: AMsMyM6PPYTAcOUSy3ZKM+pzj2N+X3xlMfiu8aQLbFXu3p60GkgOWzwhnMJsay3y56pkP1gHlZx4uqvmP7yqCYRajpU=
-X-Received: by 2002:a67:fa14:0:b0:3aa:1ba5:4ab0 with SMTP id
- i20-20020a67fa14000000b003aa1ba54ab0mr3994142vsq.77.1666648640519; Mon, 24
- Oct 2022 14:57:20 -0700 (PDT)
+        bh=BzSJYeJmaTtTxu26Xk7PIR207/FtZbc1yEGzfOkJ+8U=;
+        b=VCt10Ogfq7HXk/M+VYQH6TJzQdt1sr7e3OP6CcHgxtTKntWOB7JxEnewt8RM6VwzJo
+         jfsFBK7jPK20GQ7wBi+1WYFsl5VrzyZXHRSFZwacr152ri9NfrJS/vIHccHij9gaSLgk
+         GBOWvdmsPb4VE7Z+mVzrTad6+1yls2xgDwoZiyJv0IIEdjuJcFwlNu0yLwCfNVdV7Yae
+         6OAjqYKXEnawjpOzY8caKmrWSGKuCW9qSCexONA7t9Q/wrFyN8FzCjDtFVcM3JQFLkdF
+         ZBpMtyg5d5ku4VeDHTXE7MH/H6MNmugOqDIcDKRFl+Mfe06UXBLqswxpsXJS2+SIQGD6
+         MrLg==
+X-Gm-Message-State: ACrzQf11HCbbZYLT3nDwkhD2HqjkiL2H2ubddF18Pwm/Fx8juI1lHH9l
+        Ec1RNV4AL/leouJ2fxyu1yuC72dIAXk6Bc3cRB1WLDY3PB60hA==
+X-Google-Smtp-Source: AMsMyM7xsfjKi9PBasDfAnPzuNevqgPkwVbkWIklAY6Btc1FAexcrTrDwOWAJj+nVch8ctcQNpEKCIhfuV4+G7aJBn0=
+X-Received: by 2002:a05:6102:3a4d:b0:3aa:762:5933 with SMTP id
+ c13-20020a0561023a4d00b003aa07625933mr9658131vsu.17.1666648719970; Mon, 24
+ Oct 2022 14:58:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-2-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221024102307.33722-2-angelogioacchino.delregno@collabora.com>
+References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-3-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221024102307.33722-3-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 24 Oct 2022 14:57:09 -0700
-Message-ID: <CAGXv+5HnJgmoX=8596OJZki_0qDaipP+cbbTWpkVxuOkErSBdA@mail.gmail.com>
-Subject: Re: [PATCH 01/10] clk: mediatek: clk-mtk: Allow specifying flags on
- mtk_fixed_factor clocks
+Date:   Mon, 24 Oct 2022 14:58:29 -0700
+Message-ID: <CAGXv+5FPUchS36ObBZQ73zh7cR5wyfk6bpNO4u5h3AH1GzSP0Q@mail.gmail.com>
+Subject: Re: [PATCH 02/10] clk: mediatek: mt8186-topckgen: Drop flags for
+ main/univpll fixed factors
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
@@ -67,28 +67,38 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Mon, Oct 24, 2022 at 3:23 AM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> Before this change, every mtk_fixed_factor clock forced clock flags to
-> CLK_SET_RATE_PARENT: while this is harmless in some cases, it may not
-> be desired in some others, especially when performing clock muxing on
-> a clock having multiple parents of which one is a dedicated PLL and the
-> others are not.
+> The mainpll and univpll clocks are used as clock sources for multiple
+> peripherals of different kind, some of which are critical (like AXIs);
+> a rate change on any of these two will produce a rate change on many
+> devices and that's likely to produce system instability if not done
+> correctly: this is the reason why we have "fixed factor" clocks, used
+> by MUX clocks to provide different rates based on PLL output dividers.
 >
-> This is especially seen on the GPU clocks on some SoCs, where we are
-> muxing between multiple parents: a fixed clock (crystal), a programmable
-> GPU PLL and one or more dividers for the MAINPLL, used for a number of
-> devices; it happens that when a rate change is called for the GPU, the
-> clock framework will try to satisfy the rate request by using one of the
-> MAINPLL dividers, which have CLK_SET_RATE_PARENT and will set the rate
-> on MAINPLL itself - overclocking or underclocking many devices in the
-> system - and making it to lock up.
+> Though, there's one fundamental issue that must be resolved somehow:
 >
-> Logically, it should be harmless (and would only reduce possible bugs)
-> to change all of the univpll and mainpll related fixed factor clocks
-> to not declare the CLK_SET_RATE_PARENT by default but, on some SoCs,
-> this is also used for dividers of other PLLs for which a rate change
-> based on the divider may be desired, hence introduce a new FACTOR_FLAGS()
-> macro to use custom flags (or none) on selected fixed factor clocks.
+> When performing GPU DVFS, we get a rate request that will try to change
+> the frequency of MAINPLL due to the CLK_TOP_MFG mux having clk26m,
+> mfgpll (the GPU dedicated PLL), mainpll_d3, mainpll_d5 (fixed factor
+> dividers) as possible parents.
+>
+> In order to solve that, there are two ways:
+>  1. Add new "fake" mainpll_d3_fixed, mainpll_d5_fixed clocks, clones
+>     of mainpll_d3, mainpll_d5 clocks, for the only purpose of not
+>     declaring CLK_SET_RATE_PARENT; or
+>  2. Simply drop said flag from the original dividers.
+>
+> After some careful validation, I cannot see anything calling a rate
+> change request during runtime for MAINPLL, nor for UNIVPLL (which would,
+> again, mean that we're reclocking lots of peripherals at once!), so it
+> is safe *and sane* to simply remove the CLK_SET_RATE_PARENT flag to all
+> of the main/univpll fixed factor divider clocks.
+>
+> Besides, if for any (doubtful) reason main/univpll rate change will be
+> required in the future, it's still possible to call that on the PLL main
+> clocks, so we're still covered anyway.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+AFAIK this matches what we do for some other SoC families, so
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
