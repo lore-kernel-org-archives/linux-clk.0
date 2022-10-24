@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33183C38A2D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F74FA373D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 23:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbiJXXw6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 19:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44034 "EHLO
+        id S229964AbiJXXyL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 19:54:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbiJXXwf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:52:35 -0400
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02012DFA9
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:10:31 -0700 (PDT)
-Received: by mail-vs1-xe2e.google.com with SMTP id s28so9230694vsr.10
-        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:10:31 -0700 (PDT)
+        with ESMTP id S230187AbiJXXxo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 19:53:44 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190432FFA76
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:11:04 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id 189so7971411vsi.9
+        for <linux-clk@vger.kernel.org>; Mon, 24 Oct 2022 15:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
         bh=stUhgmxHOajI9uqfx7NpPsmu7P60GiPKRF/7gBID+dg=;
-        b=aI7jghSe4eTqhLetWbp1CUXeviJT+nB0niZcj1EYJhDL5AD7HaUHBIBnjyFt5wHzMX
-         kuoy1TdwweW1mYpeAVavBgwSy7Cv65g5xnnQB6RTCg6Ou9V1otGvwMjJixkYCFuabC5v
-         yIqXOu/FOjlFETGXBPo0qK53a/g8ByJg0I/uI=
+        b=bEFddOpdoZI+TExGmAdpUfmJNoo8dPBXr0GJGSgul5kqwh++/sgfJQl8+oGEvFD2ne
+         kpz6K8eWDmAVOCEWOuk3k3vaLpcYn1giG0Y4laOx4hW3kM36CeJfyuYRXRoygTCeOInv
+         vgzrStxX8eomyhmjrg03uh7HfE8n1gEyEMRiw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=stUhgmxHOajI9uqfx7NpPsmu7P60GiPKRF/7gBID+dg=;
-        b=TbRlrV+vlGNGObXorcmxHn8bVsRLacT1GN5hCePDM4nrQKpCsekJaDcARqNvWoxD2Z
-         607RCIwVfUl7ZBjqrgNIk3hrRrt3aJeXq/x/FIOASEpvMAJ/7odwA+jTjTk/AMlG3ied
-         sdgR3r2QZk0tbXd4kmCnRUtztdWK+aP2hjCRco6w3Yb4rUjOROgk5w2cUXV120BrAFRI
-         8TDpwPCKYEIw8YxM+kik/UUjUOE6A4IXDbVPvQSZkJFtyLL1A0SasrRZlpYd6q0g1ayf
-         JwjZQzFyuiN+7f6itXyHeEqKpZvahdtiGB7aI8CpOFUxQvListidMNIaWBmndBSZsWBa
-         JXMQ==
-X-Gm-Message-State: ACrzQf058XsW1kUXjAtiAQhK/nyKPsJFddfSP7N5/U2ktyDK+K/TzwqJ
-        1P8tkTyr5fk+G8ttIunVVUSJnGMwsHLR0OEfx9CAQg==
-X-Google-Smtp-Source: AMsMyM4mF8OtH43I5lB0/0j3s/Xrw1R6qcOOGU77MvOGbIdfp4X/GbRrXsUymIVx+BbzSWL5HqwmMg4nQImm+z6TjYI=
-X-Received: by 2002:a67:f684:0:b0:392:ac17:f9b0 with SMTP id
- n4-20020a67f684000000b00392ac17f9b0mr20569192vso.85.1666649420213; Mon, 24
- Oct 2022 15:10:20 -0700 (PDT)
+        b=LrP8GP89h3LQ5sH6DAWpSPGdduv4gK3tc/f8ERPODPQ2/TJZ7zULStBEJ+d3iozyQg
+         yrZzj90PsVy3fMOdEvwFQ22Wm01CMDF0kPXBImo6pNS/Guz8TEnnUhFjR5jH75As/8IX
+         Bqiy1/mXwtaSQB1CG74KtfYub505HNM+G/3RouHDXiul+voWoq17XH/2j++lf74yvmr0
+         WvLzzwbuvAz3FPtQ/ryrdxtd/PKRlkk/n/wgucenYPWpjfOgj5kOPrSAvT/zH20rnG45
+         Ebl4TvvuIDJkjt/I1H4qOOLxDFkJm0L6DixZpdNyZxRko8shpRDLLD0AYGfuJg8a2X4G
+         Mh3g==
+X-Gm-Message-State: ACrzQf3HIqxppsehG52STrEBbgFGhbb5kVwAac57Nn/skT8MuZ//X/5b
+        gTSUUPi+wT1Wtdz459R3f2kGa3jWHRiOBOkx40EVqA==
+X-Google-Smtp-Source: AMsMyM4Efc9ufDsXBeEA5wir0gCDCtXUofm53iFeyXJEoyskf089urS75VK07NTr4nbtrLk6Bk5gGbtapSYnxvi7JQg=
+X-Received: by 2002:a67:f106:0:b0:3aa:efc:8610 with SMTP id
+ n6-20020a67f106000000b003aa0efc8610mr6032143vsk.65.1666649460086; Mon, 24 Oct
+ 2022 15:11:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-8-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221024102307.33722-8-angelogioacchino.delregno@collabora.com>
+References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com> <20221024102307.33722-9-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221024102307.33722-9-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 24 Oct 2022 15:10:09 -0700
-Message-ID: <CAGXv+5GLWLcG8n0vVjKV2rNHpVOxGfz_63OmZSfjqk503gADLw@mail.gmail.com>
-Subject: Re: [PATCH 07/10] clk: mediatek: mt8192: Drop flags for main/univpll
- fixed factors
+Date:   Mon, 24 Oct 2022 15:10:48 -0700
+Message-ID: <CAGXv+5EG0TwE6pEyEb3sK3bU8DWzbtQqPgtWcudJ0KpbR3XrCg@mail.gmail.com>
+Subject: Re: [PATCH 08/10] clk: mediatek: mt8195-topckgen: Drop flags for
+ main/univpll fixed factors
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
