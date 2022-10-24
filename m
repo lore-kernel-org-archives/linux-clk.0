@@ -2,124 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72225C38A2D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 04:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDD4FA373F
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 04:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbiJXE1U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 00:27:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56150 "EHLO
+        id S230010AbiJXElp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 00:41:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiJXE1T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 00:27:19 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0996972EC1
-        for <linux-clk@vger.kernel.org>; Sun, 23 Oct 2022 21:27:16 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id g12so4327903lfh.3
-        for <linux-clk@vger.kernel.org>; Sun, 23 Oct 2022 21:27:15 -0700 (PDT)
+        with ESMTP id S230040AbiJXElf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 00:41:35 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F087D422EF;
+        Sun, 23 Oct 2022 21:41:34 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id g12so1479669wrs.10;
+        Sun, 23 Oct 2022 21:41:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dsk5CrZNueDPtuaAH1T6ByrqedpifBu30NKTXE3DIrQ=;
-        b=CpCMkhdenirRouvRGG0BILtVUvFEd5aDGL7VID6oPrth7aNOd91QDz1oy7B7OH0Obh
-         B3RRzzs6FmVuEQIXqGIjEyyJBqDMNEvJf25QnS5VOLW3hF1Tbz45Lk+fW9SfeqTINsmC
-         U9Inbfmg+fkFeXwDqi/G+2fYuvlSGw3qFokOoiKWjyTp1OJwwruOmBaryzDu7fBTgVQM
-         bAEgsdi5lWIvTjdVCSoi5CVClE4aAPKwVtQHX6ROu8v4BpwTQSrzMAdd16e4lWJLohpD
-         CxU6kj2Yy7Fp282otnASNrJvUbJRUZK3Ed4F1K3pLWWMZvcjOJMmHkEk4BDkmRArxA3x
-         4eQQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eorg+/Ww/9XjaDGiE3G7GADATyRcOGLQTY6DHSskd48=;
+        b=QuvnFqc0iKixA40xm8USZ9WYyJCxtBTdwfF5Uk1etsEgWFoFwEb5ALUqvaWl6F02bX
+         GQ63h0UcjaVgrMb4mAYw3s7473Daf6BlPxo0BV2kxzSUpsBrkhUDwaIh9GMwTkL28ryM
+         Sz85SdeapZIPkGwNxbbSaZ3IeLyUK7vYmq9oLF4i/t9MKr4T15lasYe4wIvr5yU/Y6QF
+         phz+aUF3V7zIodHYobwWPF8vLT+2LQOX+y/k4Qn5cNl9t8FSBDmW0iB+wJUoBT8XmBdF
+         vkzQsxvOXeEmAdPpoHWfhdrgXT95bL2eYP1TrQ8Vj1oxxox/15pTo/9KuOCc7CA4JFVD
+         vnJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dsk5CrZNueDPtuaAH1T6ByrqedpifBu30NKTXE3DIrQ=;
-        b=iKd2Tn5GugH5Tq5EmUHm8jVW8C2Bo09HiqG+IDEvf4DJ37xj8sLMHTWkLCBbdc5fbf
-         epQflFSC3MMaqDsTtZLRMaDwkpSZZEa8gmcebBq/1gYmtKW/VLTv9DfvvmgiC/2gweBI
-         iWXHpORdvlJ3WiGzhW2lX8tXl6WF93iRldlS8IQQZG6TinY7k/cFwNrd2FR9G2K11AQl
-         /gWsWDdB0hyU+aVN1Qw6GXSenmHxInfaGWqYiHyfbjDc6ekGrZy/Pa6aifz4919yIe2i
-         MwnJ/rRAThbr4TzgdqOKPA+pPoa1IYPBIQRGt7EXK8sdQdkngnUZZHVB0zWWI1T69vFc
-         VmwA==
-X-Gm-Message-State: ACrzQf1P3WiOv91ULQM58KUxR9FMnFJMJi0NN4eAskSdT0zgzzCJjK0u
-        pJi9fgVFgz3cDzgc4mGzq1r+OCLGsGoRriLMHQiqXw==
-X-Google-Smtp-Source: AMsMyM4T3topThgg5ZuMoUHR0TVRDCF2V1F6PeP3YU93In1utVJUs/DA4F87zpq37OFYZ4BaDeiDJ+o98W2pyco+au4=
-X-Received: by 2002:a05:6512:2207:b0:4a2:6b5d:8afc with SMTP id
- h7-20020a056512220700b004a26b5d8afcmr10071171lfu.261.1666585634285; Sun, 23
- Oct 2022 21:27:14 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eorg+/Ww/9XjaDGiE3G7GADATyRcOGLQTY6DHSskd48=;
+        b=oVHRpdPbRiCuaOb0REEvyl8KcPW7E5r5htzeYbp/m8QZdO6TfZYXzWinztXLYrZ0YI
+         NeODfBMSU6ltfJdYba1SDGvmWKNN1V2ZgO0OAIB5uyYmDXuj+ICq2ZkOmdyhLP92quZg
+         RhEaHAYceDUAiOrU5wsQ4DB0x1wS+VkFsGJd9/1fYYuTjx1zTTKt5O7+UH+chWydBai4
+         kZ6i2pFKMo8j4GTHp1eoutvtqV99vDy/RKbsBZpXmXmH3511aIMgdF7/FjT07mzeHpY3
+         A4f2jE1Ph51lTuHZRPFHMlKUNKvw+scZiLBXLxEUqst8JZnH/BIJxVqtIcFTnHmaiHsa
+         RbnQ==
+X-Gm-Message-State: ACrzQf3nPuQvoamDRyvUVSiJobvrp4WtHbkIHvKKUhPtlnUK0O4BXu7M
+        WTIB2aWQEwWUJDxWlhTOj3w=
+X-Google-Smtp-Source: AMsMyM7L/JtlELi3aklbJQzRKOj6rIqKgn40eJOjtT5hGGN2bw7+G8bdr/AXSEcIuy4A6a8ZXurZ1g==
+X-Received: by 2002:a05:6000:180b:b0:236:5985:9c4e with SMTP id m11-20020a056000180b00b0023659859c4emr8194068wrh.584.1666586493463;
+        Sun, 23 Oct 2022 21:41:33 -0700 (PDT)
+Received: from hp-power-15.localdomain (mm-197-18-212-37.vitebsk.dynamic.pppoe.byfly.by. [37.212.18.197])
+        by smtp.gmail.com with ESMTPSA id l39-20020a05600c1d2700b003c6deb5c1edsm9856925wms.45.2022.10.23.21.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Oct 2022 21:41:32 -0700 (PDT)
+From:   Siarhei Volkau <lis8215@gmail.com>
+Cc:     Siarhei Volkau <lis8215@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Subject: [PATCH v5 0/3] Add Ingenic JZ4755 CGU driver
+Date:   Mon, 24 Oct 2022 07:40:53 +0300
+Message-Id: <20221024044057.4151633-1-lis8215@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220805074935.1158098-1-jun.nie@linaro.org> <20220805074935.1158098-3-jun.nie@linaro.org>
- <20220926162917.yte3kooilqenufrp@builder.lan>
-In-Reply-To: <20220926162917.yte3kooilqenufrp@builder.lan>
-From:   Jun Nie <jun.nie@linaro.org>
-Date:   Mon, 24 Oct 2022 12:27:03 +0800
-Message-ID: <CABymUCP9XbKvq=_7Q1ToE7cp3zP1JF2KThK-SSTz=B6mS92eXQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] soc: qcom: rpmpd: Add corner power-domains states
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     abel.vesa@linaro.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org,
-        shawn.guo@linaro.org, bryan.odonoghue@linaro.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Bjorn Andersson <andersson@kernel.org> =E4=BA=8E2022=E5=B9=B49=E6=9C=8827=
-=E6=97=A5=E5=91=A8=E4=BA=8C 00:29=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, Aug 05, 2022 at 03:49:33PM +0800, Jun Nie wrote:
-> > Some SoCs use corner instead of level in rpm regulator, such as
-> > MSM8916 and MSM8939. Add these power-domains states value so that
-> > devices can vote them.
-> >
-> > Note that there is a shift with 1 when converting the value from
-> > regulator usage in Qualcomm Linux 3.18 to power domain usage here.
-> > Because corner is not well hacked in regulator framework in 3.18.
-> > For example, RPM_REGULATOR_CORNER_RETENTION is 2 in 3.18 while
-> > RPM_SMD_CORNER_RETENTION is 1.
-> >
->
-> How about we just stick with the numbers in the rpmpd node in DT, as
-> that would be the only place these constants are used and all the actual
-> users can use the label associated there?
->
-> Regards,
-> Bjorn
+This patch series adds a Clock Generation Unit (CGU)
+driver for the JZ4755 SoC.
 
-The clock driver change in this patch set, the consumer of the
-regulator, is dropped. So there
-is no more consumers that need the name. So this whole patch set can
-be abandoned now.
+v5:
+ - reword commit msg for documentation
+ - reword cover letter
+v4:
+ - absent commit msg fixed
+ - +/- ack
+v3:
+ - MACH_JZ4755 creation removed
+ - AIC clock parent fixed
+ - EXT/512 clock clarified (tested)
+ - dt header license refined
+v2:
+ - CGU patches moved into its own patchset
+ - dual license for dt-bindings header
+ - Krzysztof's ack picked up
+v1:
+ - adds support for the whole JZ4755
 
-Regards,
-Jun
->
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > ---
-> >  include/dt-bindings/power/qcom-rpmpd.h | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindin=
-gs/power/qcom-rpmpd.h
-> > index 6cce5b7aa940..f778dbbf083d 100644
-> > --- a/include/dt-bindings/power/qcom-rpmpd.h
-> > +++ b/include/dt-bindings/power/qcom-rpmpd.h
-> > @@ -297,4 +297,12 @@
-> >  #define RPM_SMD_LEVEL_TURBO_HIGH      448
-> >  #define RPM_SMD_LEVEL_BINNING         512
-> >
-> > +/* RPM SMD Power Domain performance levels in regulator corner method =
-*/
-> > +#define RPM_SMD_CORNER_RETENTION     1
-> > +#define RPM_SMD_CORNER_SVS_KRAIT     2
-> > +#define RPM_SMD_CORNER_SVS_SOC               3
-> > +#define RPM_SMD_CORNER_NORMAL                4
-> > +#define RPM_SMD_CORNER_TURBO         5
-> > +#define RPM_SMD_CORNER_SUPER_TURBO   6
-> > +
-> >  #endif
-> > --
-> > 2.25.1
-> >
+Siarhei Volkau (3):
+  dt-bindings: ingenic: Add support for the JZ4755 CGU
+  dt-bindings: clock: Add Ingenic JZ4755 CGU header
+  clk: Add Ingenic JZ4755 CGU driver
+
+ .../bindings/clock/ingenic,cgu.yaml           |   2 +
+ drivers/clk/ingenic/Kconfig                   |  10 +
+ drivers/clk/ingenic/Makefile                  |   1 +
+ drivers/clk/ingenic/jz4755-cgu.c              | 346 ++++++++++++++++++
+ .../dt-bindings/clock/ingenic,jz4755-cgu.h    |  49 +++
+ 5 files changed, 408 insertions(+)
+ create mode 100644 drivers/clk/ingenic/jz4755-cgu.c
+ create mode 100644 include/dt-bindings/clock/ingenic,jz4755-cgu.h
+
+-- 
+2.36.1
+
