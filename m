@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E77FECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 10:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7249C38A2D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Oct 2022 10:23:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbiJXKXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Oct 2022 06:23:42 -0400
+        id S230422AbiJXKXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Oct 2022 06:23:50 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbiJXKXe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 06:23:34 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4E258DF9;
-        Mon, 24 Oct 2022 03:23:33 -0700 (PDT)
+        with ESMTP id S230077AbiJXKXi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Oct 2022 06:23:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCAA5A17A;
+        Mon, 24 Oct 2022 03:23:37 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0A4A76602826;
-        Mon, 24 Oct 2022 11:23:30 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 46435660282A;
+        Mon, 24 Oct 2022 11:23:35 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1666607011;
-        bh=YBBjods/SCiT991mfWMY/FD6Sm61W+Mx7LF3CER+vIg=;
+        s=mail; t=1666607016;
+        bh=OaQQU68d+mZ/y3nMS8j/flqN6YzM2nFoIK5HdQQzj2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dxmbkh1Qo3WvmUtf1Kto1l36FN7zCiOOtS02GKPs52OzXX43t1EswWl7FlTZZHJR5
-         zKxRw2EPTEk79T2wKeW4IOAf8/Aw56sJoyV3sLMeNkKTO8jnrrpxBcfIGjy7uq6sRy
-         RiyJhP/+ktnDsXmI10n5WfJi1X48YkFVQDl5Kbr8OBNX4ye2pcPVR4sR8znIaz9BdT
-         omuA0uTxpsGRmgBA4/9LIpD/+/KGcZ1VevpQI4UJoh2wapJEwtaB1kSte0Y8Ed3yAh
-         zyZ7dHCMOyMjmfIvVyyPKQdNZXcgP0gk0DF0FXGD77kdX0+aSEgjdeWQxGVc2busv1
-         hD/xCGysk/1lQ==
+        b=MRrKMkiYp1k47+EikQmkpcDPo7tWaNomrGUGzd6jDPvV0gt0NT6RypOVrEeJI40Lw
+         /4341jLzRNyukSrPxBFAOS+N8peIE9Dg22dAQlIqBleeU62k3lwPIIBlBRFlBlMH4c
+         7laxjJj1pcCFsL1uF/5ByXPp6vcVP11iWS8E9C+eNk94BTaXV4LrEx9jcn9wVKQP+z
+         wlk4kXEoF2M6w1LGZnSChq+kIV5MIhik61ONVsONdXyyrjpSmSRPzs7xJ8bdTvJXyl
+         rz10IeFhHJ88bTC7S/IH1hVNJN+ZyORtPRAaCoFObwVw1y/CvChmAT2ll80IoOeA5P
+         A5+UDGYXybUTg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     sboyd@kernel.org
@@ -42,9 +42,9 @@ Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
         msp@baylibre.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/10] clk: mediatek: mt6795-topckgen: Drop flags for main/sys/univpll fixed factors
-Date:   Mon, 24 Oct 2022 12:23:03 +0200
-Message-Id: <20221024102307.33722-7-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH 10/10] clk: mediatek: mt8186-topckgen: Add GPU clock mux notifier
+Date:   Mon, 24 Oct 2022 12:23:07 +0200
+Message-Id: <20221024102307.33722-11-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com>
 References: <20221024102307.33722-1-angelogioacchino.delregno@collabora.com>
@@ -54,128 +54,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The main/sys/univpll clocks are used as clock sources for multiple
-peripherals of different kind, some of which are critical (like AXIs);
-a rate change on any of these two will produce a rate change on many
-devices and that's likely to produce system instability if not done
-correctly: this is the reason why we have (a lot of) "fixed factor"
-main/sys/univpll divider clocks, used by MUX clocks to provide
-different rates based on PLL output dividers.
-
-Following what was done on clk-mt8186-topckgen and also preventing the
-same GPU DVFS issue, drop CLK_SET_RATE_PARENT from the aforementioned
-clocks.
+Following the changes done to MT8183, MT8192, MT8195, register a
+clock notifier for MT8186, allowing safe clockrate updates for the
+MFG PLL.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt6795-topckgen.c | 76 +++++++++++-----------
- 1 file changed, 38 insertions(+), 38 deletions(-)
+ drivers/clk/mediatek/clk-mt8186-topckgen.c | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt6795-topckgen.c b/drivers/clk/mediatek/clk-mt6795-topckgen.c
-index 2948dd1aee8f..8b8307635a35 100644
---- a/drivers/clk/mediatek/clk-mt6795-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt6795-topckgen.c
-@@ -359,19 +359,19 @@ static const struct mtk_fixed_factor top_divs[] = {
- 	FACTOR(CLK_TOP_ARMCA53PLL_754M, "armca53pll_754m", "clk26m", 1, 2),
- 	FACTOR(CLK_TOP_ARMCA53PLL_502M, "armca53pll_502m", "clk26m", 1, 3),
+diff --git a/drivers/clk/mediatek/clk-mt8186-topckgen.c b/drivers/clk/mediatek/clk-mt8186-topckgen.c
+index 62b5ff4a5723..c2beda7ef976 100644
+--- a/drivers/clk/mediatek/clk-mt8186-topckgen.c
++++ b/drivers/clk/mediatek/clk-mt8186-topckgen.c
+@@ -689,6 +689,28 @@ static const struct of_device_id of_match_clk_mt8186_topck[] = {
+ 	{}
+ };
  
--	FACTOR(CLK_TOP_MAIN_H546M, "main_h546m", "mainpll", 1, 2),
--	FACTOR(CLK_TOP_MAIN_H364M, "main_h364m", "mainpll", 1, 3),
--	FACTOR(CLK_TOP_MAIN_H218P4M, "main_h218p4m", "mainpll", 1, 5),
--	FACTOR(CLK_TOP_MAIN_H156M, "main_h156m", "mainpll", 1, 7),
-+	FACTOR_FLAGS(CLK_TOP_MAIN_H546M, "main_h546m", "mainpll", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_MAIN_H364M, "main_h364m", "mainpll", 1, 3, 0),
-+	FACTOR_FLAGS(CLK_TOP_MAIN_H218P4M, "main_h218p4m", "mainpll", 1, 5, 0),
-+	FACTOR_FLAGS(CLK_TOP_MAIN_H156M, "main_h156m", "mainpll", 1, 7, 0),
++/* Register mux notifier for MFG mux */
++static int clk_mt8186_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
++{
++	struct mtk_mux_nb *mfg_mux_nb;
++	int i;
++
++	mfg_mux_nb = devm_kzalloc(dev, sizeof(*mfg_mux_nb), GFP_KERNEL);
++	if (!mfg_mux_nb)
++		return -ENOMEM;
++
++	for (i = 0; i < ARRAY_SIZE(top_mtk_muxes); i++)
++		if (top_mtk_muxes[i].id == CLK_TOP_MFG)
++			break;
++	if (i == ARRAY_SIZE(top_mtk_muxes))
++		return -EINVAL;
++
++	mfg_mux_nb->ops = top_mtk_muxes[i].ops;
++	mfg_mux_nb->bypass_index = 0; /* Bypass to 26M crystal */
++
++	return devm_mtk_clk_mux_notifier_register(dev, clk, mfg_mux_nb);
++}
++
+ static int clk_mt8186_topck_probe(struct platform_device *pdev)
+ {
+ 	struct clk_hw_onecell_data *clk_data;
+@@ -730,6 +752,11 @@ static int clk_mt8186_topck_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto unregister_composite_muxes;
  
- 	FACTOR(CLK_TOP_TVDPLL_445P5M, "tvdpll_445p5m", "tvdpll", 1, 4),
- 	FACTOR(CLK_TOP_TVDPLL_594M, "tvdpll_594m", "tvdpll", 1, 3),
- 
--	FACTOR(CLK_TOP_UNIV_624M, "univ_624m", "univpll", 1, 2),
--	FACTOR(CLK_TOP_UNIV_416M, "univ_416m", "univpll", 1, 3),
--	FACTOR(CLK_TOP_UNIV_249P6M, "univ_249p6m", "univpll", 1, 5),
--	FACTOR(CLK_TOP_UNIV_178P3M, "univ_178p3m", "univpll", 1, 7),
--	FACTOR(CLK_TOP_UNIV_48M, "univ_48m", "univpll", 1, 26),
-+	FACTOR_FLAGS(CLK_TOP_UNIV_624M, "univ_624m", "univpll", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIV_416M, "univ_416m", "univpll", 1, 3, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIV_249P6M, "univ_249p6m", "univpll", 1, 5, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIV_178P3M, "univ_178p3m", "univpll", 1, 7, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIV_48M, "univ_48m", "univpll", 1, 26, 0),
- 
- 	FACTOR(CLK_TOP_CLKRTC_EXT, "clkrtc_ext", "clk32k", 1, 1),
- 	FACTOR(CLK_TOP_CLKRTC_INT, "clkrtc_int", "clk26m", 1, 793),
-@@ -402,20 +402,20 @@ static const struct mtk_fixed_factor top_divs[] = {
- 	FACTOR(CLK_TOP_MSDCPLL2_D2, "msdcpll2_d2", "msdcpll2", 1, 2),
- 	FACTOR(CLK_TOP_MSDCPLL2_D4, "msdcpll2_d4", "msdcpll2", 1, 4),
- 
--	FACTOR(CLK_TOP_SYSPLL_D2, "syspll_d2", "main_h546m", 1, 1),
--	FACTOR(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "main_h546m", 1, 2),
--	FACTOR(CLK_TOP_SYSPLL1_D4, "syspll1_d4", "main_h546m", 1, 4),
--	FACTOR(CLK_TOP_SYSPLL1_D8, "syspll1_d8", "main_h546m", 1, 8),
--	FACTOR(CLK_TOP_SYSPLL1_D16, "syspll1_d16", "main_h546m", 1, 16),
--	FACTOR(CLK_TOP_SYSPLL_D3, "syspll_d3", "main_h364m", 1, 1),
--	FACTOR(CLK_TOP_SYSPLL2_D2, "syspll2_d2", "main_h364m", 1, 2),
--	FACTOR(CLK_TOP_SYSPLL2_D4, "syspll2_d4", "main_h364m", 1, 4),
--	FACTOR(CLK_TOP_SYSPLL_D5, "syspll_d5", "main_h218p4m", 1, 1),
--	FACTOR(CLK_TOP_SYSPLL3_D2, "syspll3_d2", "main_h218p4m", 1, 2),
--	FACTOR(CLK_TOP_SYSPLL3_D4, "syspll3_d4", "main_h218p4m", 1, 4),
--	FACTOR(CLK_TOP_SYSPLL_D7, "syspll_d7", "main_h156m", 1, 1),
--	FACTOR(CLK_TOP_SYSPLL4_D2, "syspll4_d2", "main_h156m", 1, 2),
--	FACTOR(CLK_TOP_SYSPLL4_D4, "syspll4_d4", "main_h156m", 1, 4),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL_D2, "syspll_d2", "main_h546m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "main_h546m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL1_D4, "syspll1_d4", "main_h546m", 1, 4, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL1_D8, "syspll1_d8", "main_h546m", 1, 8, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL1_D16, "syspll1_d16", "main_h546m", 1, 16, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL_D3, "syspll_d3", "main_h364m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL2_D2, "syspll2_d2", "main_h364m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL2_D4, "syspll2_d4", "main_h364m", 1, 4, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL_D5, "syspll_d5", "main_h218p4m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL3_D2, "syspll3_d2", "main_h218p4m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL3_D4, "syspll3_d4", "main_h218p4m", 1, 4, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL_D7, "syspll_d7", "main_h156m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL4_D2, "syspll4_d2", "main_h156m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_SYSPLL4_D4, "syspll4_d4", "main_h156m", 1, 4, 0),
- 
- 	FACTOR(CLK_TOP_TVDPLL, "tvdpll_ck", "tvdpll_594m", 1, 1),
- 	FACTOR(CLK_TOP_TVDPLL_D2, "tvdpll_d2", "tvdpll_594m", 1, 2),
-@@ -423,21 +423,21 @@ static const struct mtk_fixed_factor top_divs[] = {
- 	FACTOR(CLK_TOP_TVDPLL_D8, "tvdpll_d8", "tvdpll_594m", 1, 8),
- 	FACTOR(CLK_TOP_TVDPLL_D16, "tvdpll_d16", "tvdpll_594m", 1, 16),
- 
--	FACTOR(CLK_TOP_UNIVPLL_D2, "univpll_d2", "univ_624m", 1, 1),
--	FACTOR(CLK_TOP_UNIVPLL1_D2, "univpll1_d2", "univ_624m", 1, 2),
--	FACTOR(CLK_TOP_UNIVPLL1_D4, "univpll1_d4", "univ_624m", 1, 4),
--	FACTOR(CLK_TOP_UNIVPLL1_D8, "univpll1_d8", "univ_624m", 1, 8),
--	FACTOR(CLK_TOP_UNIVPLL_D3, "univpll_d3", "univ_416m", 1, 1),
--	FACTOR(CLK_TOP_UNIVPLL2_D2, "univpll2_d2", "univ_416m", 1, 2),
--	FACTOR(CLK_TOP_UNIVPLL2_D4, "univpll2_d4", "univ_416m", 1, 4),
--	FACTOR(CLK_TOP_UNIVPLL2_D8, "univpll2_d8", "univ_416m", 1, 8),
--	FACTOR(CLK_TOP_UNIVPLL_D5, "univpll_d5", "univ_249p6m", 1, 1),
--	FACTOR(CLK_TOP_UNIVPLL3_D2, "univpll3_d2", "univ_249p6m", 1, 2),
--	FACTOR(CLK_TOP_UNIVPLL3_D4, "univpll3_d4", "univ_249p6m", 1, 4),
--	FACTOR(CLK_TOP_UNIVPLL3_D8, "univpll3_d8", "univ_249p6m", 1, 8),
--	FACTOR(CLK_TOP_UNIVPLL_D7, "univpll_d7", "univ_178p3m", 1, 1),
--	FACTOR(CLK_TOP_UNIVPLL_D26, "univpll_d26", "univ_48m", 1, 1),
--	FACTOR(CLK_TOP_UNIVPLL_D52, "univpll_d52", "univ_48m", 1, 2),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL_D2, "univpll_d2", "univ_624m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL1_D2, "univpll1_d2", "univ_624m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL1_D4, "univpll1_d4", "univ_624m", 1, 4, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL1_D8, "univpll1_d8", "univ_624m", 1, 8, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL_D3, "univpll_d3", "univ_416m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL2_D2, "univpll2_d2", "univ_416m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL2_D4, "univpll2_d4", "univ_416m", 1, 4, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL2_D8, "univpll2_d8", "univ_416m", 1, 8, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL_D5, "univpll_d5", "univ_249p6m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL3_D2, "univpll3_d2", "univ_249p6m", 1, 2, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL3_D4, "univpll3_d4", "univ_249p6m", 1, 4, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL3_D8, "univpll3_d8", "univ_249p6m", 1, 8, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL_D7, "univpll_d7", "univ_178p3m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL_D26, "univpll_d26", "univ_48m", 1, 1, 0),
-+	FACTOR_FLAGS(CLK_TOP_UNIVPLL_D52, "univpll_d52", "univ_48m", 1, 2, 0),
- 
- 	FACTOR(CLK_TOP_VCODECPLL, "vcodecpll_ck", "vcodecpll", 1, 3),
- 	FACTOR(CLK_TOP_VCODECPLL_370P5, "vcodecpll_370p5", "vcodecpll", 1, 4),
++	r = clk_mt8186_reg_mfg_mux_notifier(&pdev->dev,
++					    clk_data->hws[CLK_TOP_MFG]->clk);
++	if (r)
++		goto unregister_composite_divs;
++
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	if (r)
+ 		goto unregister_composite_divs;
 -- 
 2.37.2
 
