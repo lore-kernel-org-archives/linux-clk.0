@@ -2,56 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21059C38A02
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 00:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C74C38A02
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 01:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiJZAlM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Oct 2022 20:41:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55430 "EHLO
+        id S231790AbiJZBVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Oct 2022 21:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbiJZAlK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 20:41:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65590B56D1;
-        Tue, 25 Oct 2022 17:41:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 10A8FB81EED;
-        Wed, 26 Oct 2022 00:41:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 934A1C433C1;
-        Wed, 26 Oct 2022 00:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666744862;
-        bh=/M/cSFTEIbB4x5+l9bbSk5KzSc4pVUaMmK9baOOC12Q=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kuAmy+el+Kg4wa+l8WkE7gfOgfVWNrj1a06aW6gqaZH3CphZ5ee8ThSDnbHQh7ttv
-         lAz3jlz0hNtiO6rLID7gKSaMJ/1WknTnA+CuIEgrAOmPnZJW4AUFR/7aCY2w1wluFN
-         +aGm53lEmBjGe2C9/AM2SgjU43DKq5blNvR69+dUeAyGLr1sOXxIl2/PShJEDuS7zf
-         0c7ZU0UT9rz4S+CuvPZgVD45NNdBoIDEybtX3tPNi5R7Xz+fNQawXvtt4FNQRfbzwx
-         u1isoIx0Vip9H870PcC+FrsQ8HuJLzGKGLez5gb4b2dBeUkw/Zufr3WWAC4C/L/W2N
-         hq0ybkx9tTf2A==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221018-clk-rate-request-tracing-v1-1-6f3aa0b0b9de@cerno.tech>
-References: <20221018-clk-rate-request-tracing-v1-0-6f3aa0b0b9de@cerno.tech> <20221018-clk-rate-request-tracing-v1-1-6f3aa0b0b9de@cerno.tech>
-Subject: Re: [PATCH 1/2] clk: Store clk_core for clk_rate_request
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>,
+        with ESMTP id S229800AbiJZBVa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 21:21:30 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FDEBEAC7;
+        Tue, 25 Oct 2022 18:21:28 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id bk15so23910357wrb.13;
+        Tue, 25 Oct 2022 18:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Jz/vuqprTwlUswHT+3fQYYY63+kBW8BHUTRfhG1llY=;
+        b=OEHYEg101oDjbITmOmTAHCNj0HRcHTCchvZtotNvvAIhVbZcPmVW/KSnXx0nok+IA8
+         0x41O6RspdRnfAk9Jd9SzJ/8M0ynlVLiIuTvhFHYXMDqAbfxQ19IOP9tcIjnpDirGYr3
+         RxpAOISRff7tE7cONcw9LnOHTs6dDW4aLO4EWXSyezqt3IvHLwo8iCBK6hWcl1dpQbUK
+         ON80L9eSKMhst+TCRbONpecScmVzu8ypsYJNLpGOOP5+3x9ahfQzrkWR6siieXMdesMH
+         pWy4K1cJJDr9xM1Jl6DLS1eACGtNVgVwSzFm2Xb/56+O/1Y0I1hhpbLh/R9Bs279eC96
+         F6HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Jz/vuqprTwlUswHT+3fQYYY63+kBW8BHUTRfhG1llY=;
+        b=xXeynXrVkuiWzjTJZOWwRy7KsDDpA5qm2NYm+h9SpLq/NyupW1iUC9LCkh719pTEBl
+         bNj0YoTWKDEcMutugYJ7hVxuNXNvfqtzdSHZ+eDnBOBCxh68tVNUCKUfM5s0iDgLzmd2
+         fPW6zVrp/kwB9tzbEJW5i/OElnFiVmuKDWRQnPW9gsBKKJISVu5T/Kv5rSEstMe7V4l9
+         2waFS9gG1yV4UHF0MHMTFdopBikTTw/QXqrHrGPYyW17QZtD2ZJ0YGrFw0AsWwDW/gMs
+         i2G+N0ISX68iCGSbEaSp1ZZtDLtoKs8dOfsgGV6TfcQ6kzC4NsULblnqE7jOmkMiU5WD
+         YkpQ==
+X-Gm-Message-State: ACrzQf1rDwNISq/4giRyxPyFLFVgUyPjqQNSWqKfj6CZXcfLUfoJbI4y
+        Hs+6PZz1zV6UudMhmzl0/uY=
+X-Google-Smtp-Source: AMsMyM7TjQyEarJdQUz8kJ3bvQ8YOCO0mEm8pAH+q3zaxkAWblq2ftveFlDSnFSHssFKJ7+5Jqv7qw==
+X-Received: by 2002:a5d:6d0b:0:b0:232:bd2e:1bf2 with SMTP id e11-20020a5d6d0b000000b00232bd2e1bf2mr27339228wrq.534.1666747287415;
+        Tue, 25 Oct 2022 18:21:27 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:1d2a:d2a2:361e:a475])
+        by smtp.gmail.com with ESMTPSA id t2-20020a1c7702000000b003c6bd12ac27sm394456wmi.37.2022.10.25.18.21.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Oct 2022 18:21:26 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date:   Tue, 25 Oct 2022 17:41:00 -0700
-User-Agent: alot/0.10
-Message-Id: <20221026004102.934A1C433C1@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: rzg2l: Fix typo
+Date:   Wed, 26 Oct 2022 02:21:23 +0100
+Message-Id: <20221026012123.159790-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-10-18 06:56:41)
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Why?
+Fix typo pll5_mux_dsi_div_params -> mux_dsi_div_params
+
+Fixes the below warning (make W=1):
+
+drivers/clk/renesas/rzg2l-cpg.c:115: warning: Function parameter or member 'mux_dsi_div_params' not described in 'rzg2l_cpg_priv'
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index be4868fa3971..dfd676310ce9 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -95,7 +95,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
+  * @num_resets: Number of Module Resets in info->resets[]
+  * @last_dt_core_clk: ID of the last Core Clock exported to DT
+  * @info: Pointer to platform data
+- * @pll5_mux_dsi_div_params: pll5 mux and dsi div parameters
++ * @mux_dsi_div_params: pll5 mux and dsi div parameters
+  */
+ struct rzg2l_cpg_priv {
+ 	struct reset_controller_dev rcdev;
+
+base-commit: 888a358164525a701121192f504433de6c7a281b
+-- 
+2.25.1
+
