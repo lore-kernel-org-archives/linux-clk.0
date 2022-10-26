@@ -2,113 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0031CC38A2D
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 02:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6650FC38A2D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 03:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbiJZCID (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Oct 2022 22:08:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33000 "EHLO
+        id S232783AbiJZDEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Oct 2022 23:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230327AbiJZCIB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 22:08:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40498B14EB;
-        Tue, 25 Oct 2022 19:08:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DAE7361BE6;
-        Wed, 26 Oct 2022 02:08:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AC8C433C1;
-        Wed, 26 Oct 2022 02:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666750080;
-        bh=0C3A6REuaewLmHH5E6YwXG5jrIKOyFuUNR9RkKLw9IU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m9iKShnnwhLbiPWx2w7g9PXODebLnovzuRsSnzNbL/zeRqf+w7wnuHt2WyvYtn1Ny
-         jsk2o2p09U/rdliEzdXGsAYf7egrCekTiul4MpC1J0mDdofpADju2pq33wVF8OPazh
-         QLIJqfJ0XAOWukihNpEXbN4NrVIsR1c30WnOn5bxep8Iva0PqmaicHnvZgLKZd5URZ
-         xhCrYh+vXDr9m/bde6lsmSLldE5ydZ5+5eBKTHAJGSf9oc6hyk2a97OYCcM21exWQ0
-         +ZeUKJT3wfIPOC0cGtMxtIgF6HstIcSllG+cOZylmLOuW1IBirSiQEIp+irIoNzwGy
-         e164CJ/ynBOPw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232865AbiJZDDL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 23:03:11 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A655D8274F;
+        Tue, 25 Oct 2022 20:03:06 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Bxfdppo1hjPIUCAA--.10179S3;
+        Wed, 26 Oct 2022 11:03:05 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8AxPuBio1hjWR0FAA--.19405S4;
+        Wed, 26 Oct 2022 11:03:03 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 3/3] dt-bindings: clock: add loongson2 clock
+Date:   Wed, 26 Oct 2022 11:02:56 +0800
+Message-Id: <20221026030256.30512-3-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221026030256.30512-1-zhuyinbo@loongson.cn>
+References: <20221026030256.30512-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech> <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
-Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 25 Oct 2022 19:07:58 -0700
-User-Agent: alot/0.10
-Message-Id: <20221026020800.38AC8C433C1@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8AxPuBio1hjWR0FAA--.19405S4
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tF4kJw4fKFyfWF1kuFg_yoW5GrWrpF
+        nxC345GryIvF17Zws5Ka4xC3Z5Za1kCF17ZFnrAa42kr98G3W5XF17KryDZa9rAFy7Za9r
+        ZFyxCr4UCa18Cr7anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_
+        Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+        WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+        CTnIWIevJa73UjIFyTuYvjxU2iFxUUUUU
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-10-18 06:52:59)
-> The determine_rate hook allows to select the proper parent and its rate
-> for a given clock configuration. On another hand, set_parent is there to
-> change the parent of a mux.
->=20
-> Some clocks provide a set_parent hook but don't implement
-> determine_rate. In such a case, set_parent is pretty much useless since
-> the clock framework will always assume the current parent is to be used,
-> and we will thus never change it.
->=20
-> This situation can be solved in two ways:
->   - either we don't need to change the parent, and we thus shouldn't
->     implement set_parent;
->   - or we don't want to change the parent, in this case we should set
->     CLK_SET_RATE_NO_REPARENT;
->   - or we're missing a determine_rate implementation.
->=20
-> The latter is probably just an oversight from the driver's author, and
-> we should thus raise their awareness about the fact that the current
-> state of the driver is confusing.
+Add the loongson2 clock binding with DT schema format using
+json-schema.
 
-There is another case which is a leaf clk that is a mux where you only
-expect clk_set_parent() to be used, and not clk_set_rate(). This use
-case is odd though, so I'm not sure how much we care.
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/clock/loongson,ls2k-clk.yaml     | 63 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
 
->=20
-> It's not clear at this point how many drivers are affected though, so
-> let's make it a warning instead of an error for now.
->=20
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/clk.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 57b83665e5c3..11c41d987ff4 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3700,6 +3700,11 @@ static int __clk_core_init(struct clk_core *core)
->                 goto out;
->         }
-> =20
-> +       /* TODO: Promote to an error */
+diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+new file mode 100644
+index 000000000000..6cc6e0755735
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/loongson,ls2k-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson2 SoC Clock Control Module
++
++maintainers:
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++description: |
++  Loongson2 SoC clock control module is an integrated clock controller, which
++  generates and supplies to all modules.
++
++properties:
++  compatible:
++    enum:
++      - loongson,ls2k-clk
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: 100m ref
++
++  clock-names:
++    items:
++      - const: ref_100m
++
++  '#clock-cells':
++    const: 1
++    description:
++      The clock consumer should specify the desired clock by having the clock
++      ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
++      for the full list of loongson2 SoC clock IDs.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    ref_100m: clock-ref-100m {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <100000000>;
++        clock-output-names = "ref_100m";
++    };
++
++    clk: clock-controller@1fe00480 {
++        compatible = "loongson,ls2k-clk";
++        reg = <0x1fe00480 0x58>;
++        #clock-cells = <1>;
++        clocks = <&ref_100m>;
++        clock-names = "ref_100m";
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f01d60cd5c3b..f61a431ad8ca 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11911,6 +11911,7 @@ LOONGSON2 SOC SERIES CLOCK DRIVER
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+ F:	drivers/clk/clk-loongson2.c
+ F:	include/dt-bindings/clock/loongson,ls2k-clk.h
+ 
+-- 
+2.31.1
 
-The documentation should be updated in this patch (see the table of
-hardware characteristics in Documentation/driver-api/clk.rst).
-
-> +       if (core->ops->set_parent && !core->ops->determine_rate)
-> +               pr_warn("%s: %s must implement .set_parent & .determine_r=
-ate\n",
-
-You can grep for it:
-
- $ git grep -W 'struct clk_ops .*=3D'
-
-but I'm fairly certain a coccinelle script can detect most of these
-because clk_ops are usually statically defined (although not always).
-
-Either way I already see that 'owl_comp_div_ops' will trigger this
-warning. And 'at91sam9x5_smd_ops' looks even more likely. Given that I'm
-not super keen on applying this patch.
