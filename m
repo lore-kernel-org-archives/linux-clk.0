@@ -2,90 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61603C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 14:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAB6C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 15:18:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234265AbiJZORG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 10:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60642 "EHLO
+        id S234149AbiJZPSV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 11:18:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234231AbiJZOQy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 10:16:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4972910F89F;
-        Wed, 26 Oct 2022 07:16:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 00932B822B3;
-        Wed, 26 Oct 2022 14:16:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92519C43141;
-        Wed, 26 Oct 2022 14:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666793809;
-        bh=g/TFpBgxMMZqURiLLWUGN40leXx3CKJGLqcUxhIb9O8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KPtsDd4pw0/CTvV7jbKIiAIVPMA0P47HPqLp7hxifJy8HStyY2YRHqPh2uNUQD3P1
-         FnOehrCj7USbQ+uFtkxFMTHPyxpZWHQwzpYWEedebmByviObeXisSBCtzENfPt9Qm5
-         DlTWDYCOZvLP95xLk2rwNEczaxJPdZZLBD1FZS7eunwOdHPi/KMXBsMo5a/epjneSP
-         Y7an2IoAMm0+vR4SQ62nu0+jChrOk+529eu0bQHPBtOeuzdaG23ViqYqQAp9OUTBc9
-         A54fCkW9o2t3VquDnJyj5gbNvRrfjb+vNSeWnNpQQKmQBRLgib5b2MpRK64SxkrpG7
-         8Pcjk5OsX3P5Q==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     jh80.chung@samsung.com
-Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCHv6 6/6] arm: dts: socfpga: remove "clk-phase" in sdmmc_clk
-Date:   Wed, 26 Oct 2022 09:16:31 -0500
-Message-Id: <20221026141631.696863-6-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221026141631.696863-1-dinguyen@kernel.org>
-References: <20221026141631.696863-1-dinguyen@kernel.org>
+        with ESMTP id S234514AbiJZPSV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 11:18:21 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D264127BFA
+        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2022 08:18:20 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oniAZ-0004pf-Vl; Wed, 26 Oct 2022 17:18:16 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oniAa-000X4i-1W; Wed, 26 Oct 2022 17:18:15 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oniAY-00Aq9z-4i; Wed, 26 Oct 2022 17:18:14 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v3] clk: expand clk_ignore_unused mechanism to keep only a few clks on
+Date:   Wed, 26 Oct 2022 17:18:12 +0200
+Message-Id: <20221026151812.1042052-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the SDMMC driver can use the "clk-phase-sd-hs" binding, we don't
-need the clk-phase in the sdmmc_clk anymore.
+Allow to pass an integer n that results in only keeping n unused clocks
+enabled.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v6: no changes
-v5: new
----
- arch/arm/boot/dts/socfpga.dtsi         | 1 -
- arch/arm/boot/dts/socfpga_arria10.dtsi | 1 -
- 2 files changed, 2 deletions(-)
+This helps to debug the problem if you only know that clk_ignore_unused
+helps but you have no clue yet which clock is the culprit.
 
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index 604fc6e0c4ad..a2419a5c6c26 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -453,7 +453,6 @@ sdmmc_clk: sdmmc_clk {
- 						compatible = "altr,socfpga-gate-clk";
- 						clocks = <&f2s_periph_ref_clk>, <&main_nand_sdmmc_clk>, <&per_nand_mmc_clk>;
- 						clk-gate = <0xa0 8>;
--						clk-phase = <0 135>;
- 					};
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Hello,
+
+compared to v2 sent in August 2021 this is a trivial rebase on top of
+v6.1-rc1. I pinged that one repeatedly, I'm now trying with resending
+and calling the rebased patch v3 to maybe get some feedback. :-\
+
+Best regards
+Uwe
+
+ Documentation/driver-api/clk.rst |  4 +++-
+ drivers/clk/clk.c                | 33 ++++++++++++++++++++++++--------
+ 2 files changed, 28 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
+index 3cad45d14187..65ae7c3e2b33 100644
+--- a/Documentation/driver-api/clk.rst
++++ b/Documentation/driver-api/clk.rst
+@@ -259,7 +259,9 @@ the disabling means that the driver will remain functional while the issues
+ are sorted out.
  
- 					sdmmc_clk_divided: sdmmc_clk_divided {
-diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
-index b6ebe207e2bc..eb528c103d70 100644
---- a/arch/arm/boot/dts/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
-@@ -365,7 +365,6 @@ sdmmc_clk: sdmmc_clk {
- 						compatible = "altr,socfpga-a10-gate-clk";
- 						clocks = <&sdmmc_free_clk>;
- 						clk-gate = <0xC8 5>;
--						clk-phase = <0 135>;
- 					};
+ To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
+-kernel.
++kernel. If you pass "clk_ignore_unused=n" (where n is an integer) the first n
++found clocks are not disabled which can be useful for bisecting over the unused
++clks if you don't know yet which of them is reponsible for your problem.
  
- 					qspi_clk: qspi_clk {
+ Locking
+ =======
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c3c3f8c07258..356119a7e5fe 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1322,6 +1322,8 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+ 	clk_pm_runtime_put(core);
+ }
+ 
++static unsigned clk_unused_keep_on __initdata;
++
+ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+@@ -1352,12 +1354,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ 	 * back to .disable
+ 	 */
+ 	if (clk_core_is_enabled(core)) {
+-		trace_clk_disable(core);
+-		if (core->ops->disable_unused)
+-			core->ops->disable_unused(core->hw);
+-		else if (core->ops->disable)
+-			core->ops->disable(core->hw);
+-		trace_clk_disable_complete(core);
++		if (clk_unused_keep_on) {
++			pr_warn("Keep unused clk \"%s\" on\n", core->name);
++			clk_unused_keep_on -= 1;
++		} else {
++			trace_clk_disable(core);
++			if (core->ops->disable_unused)
++				core->ops->disable_unused(core->hw);
++			else if (core->ops->disable)
++				core->ops->disable(core->hw);
++			trace_clk_disable_complete(core);
++		}
+ 	}
+ 
+ unlock_out:
+@@ -1369,9 +1376,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ }
+ 
+ static bool clk_ignore_unused __initdata;
+-static int __init clk_ignore_unused_setup(char *__unused)
++static int __init clk_ignore_unused_setup(char *keep)
+ {
+-	clk_ignore_unused = true;
++	if (*keep == '=') {
++		int ret;
++
++		ret = kstrtouint(keep + 1, 0, &clk_unused_keep_on);
++		if (ret < 0)
++			pr_err("Warning: failed to parse clk_ignore_unused parameter, ignoring");
++	} else {
++		clk_ignore_unused = true;
++	}
+ 	return 1;
+ }
+ __setup("clk_ignore_unused", clk_ignore_unused_setup);
+@@ -1383,6 +1398,8 @@ static int __init clk_disable_unused(void)
+ 	if (clk_ignore_unused) {
+ 		pr_warn("clk: Not disabling unused clocks\n");
+ 		return 0;
++	} else if (clk_unused_keep_on) {
++		pr_warn("clk: Not disabling %u unused clocks\n", clk_unused_keep_on);
+ 	}
+ 
+ 	clk_prepare_lock();
 -- 
-2.25.1
+2.37.2
 
