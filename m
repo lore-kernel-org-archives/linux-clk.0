@@ -2,100 +2,336 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963DBC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 17:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1917FC38A2D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 19:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233840AbiJZRWm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 13:22:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
+        id S234556AbiJZTHr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 15:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233971AbiJZRWi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 13:22:38 -0400
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 553169AFCB
-        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2022 10:22:37 -0700 (PDT)
-Received: by mail-qt1-x835.google.com with SMTP id x3so3458663qtj.12
-        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2022 10:22:37 -0700 (PDT)
+        with ESMTP id S234839AbiJZTH3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 15:07:29 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE6C02B187;
+        Wed, 26 Oct 2022 12:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WITNKL8TR778dJFzrb3fUuwazYtuJjgYbXXyz70d1fw=;
-        b=Q9g4aMLHh4haHKSLVlwmql4hCniJh2yOmQmkiOT3ApcE41Q1RMN07XEhrSF9ASY/L8
-         ESsH61IjuInOuUfeVFMuuS/4DgSwP8KrkUzIRSucYTE73T7MNTkle73kFdrBb1+qzcAD
-         sKTQL4EYQtyOMEU0oDaAKm9vVul/N3a0lYq4b9UmRJAOQXI3NUFLgAc8/jJTMO3Q8Iha
-         LCRGv4f1zX/MiufSkzQX4Q9WwJJT/ADS3mVyIMwANspb01TvemN/4jkbS53oJX+PQ6nE
-         T5u6YTrs5GuRHIeD61KZRl/xQ9wTF8DYvWOcY3GK4OXlFnssZR9hJ9MR2HTkzAw+qzFA
-         yTVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WITNKL8TR778dJFzrb3fUuwazYtuJjgYbXXyz70d1fw=;
-        b=xafCZBGC1DPw6d+eL9MHzhlIqrlOWrrC+gJn8wTnKGbGfk+7Y3oPN/orjhi822Jn/i
-         hx/ehc23WMiFy5dBa72fCahOpd8/Jp6wWgkqRfdyanbi21dRXtXN/NIF7EnSiS6x2w7P
-         QXx06JD6lC1Pw/5meuvzt0DP4YYsvPHiO7t14cs7lWu7t3NntlmfZ4K5mkOVWa7e2xyG
-         Djqrz0sQi7Wx9d7DT6EFxnUNap5aS0xTdiDbMq0moNPt1XVUKvSuqv/3z1pbPEsXzMhV
-         MJPZVYI//YlunW+UBHojgs82urGsJ6bpsCuQokiVVhSmRv/aaiZOu/Y0oZUEx6Wi+hSe
-         H8RQ==
-X-Gm-Message-State: ACrzQf2ezRRLEhgK6Gf15Bjj+XvlY8+PiN87enfF/DIv3zynHV14Aefa
-        6rCzc3Mau1/XeKNCVFdPJfX7uQ==
-X-Google-Smtp-Source: AMsMyM4uF8CW1QJRvvl/zBwScOXvpSI80wscPzOw6/e00oUw96G5aWBfEfBOu+UzkSgYYyf5HKJMhQ==
-X-Received: by 2002:a05:622a:cc:b0:39c:deab:1e33 with SMTP id p12-20020a05622a00cc00b0039cdeab1e33mr37763801qtw.496.1666804956500;
-        Wed, 26 Oct 2022 10:22:36 -0700 (PDT)
-Received: from [192.168.1.11] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id s8-20020a05620a29c800b006ed99931456sm4419158qkp.88.2022.10.26.10.22.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Oct 2022 10:22:35 -0700 (PDT)
-Message-ID: <5dda5517-4a50-56bd-0740-389d7948e160@linaro.org>
-Date:   Wed, 26 Oct 2022 13:22:33 -0400
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1666811098; x=1698347098;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gEEq7bAomHGEXclFM2ob+LDLWlT0ND9nc7hV3WJR/KY=;
+  b=ZdwqDev0/ctJFXtYUpbaMIz8Ckzrw3q6FsoFClevpwkbCY9x8o3s6em5
+   BTJBn6uGnmBobuftK+q3H9k3t/EYOgKmm5a0u5+VDRlmleqn1Sx/XFWeX
+   KTbKmbrkcLv44k4aUbm4i71+xv2KZtiiQa9ANSEpD8QHfVZ9z0L60YhMd
+   8=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 26 Oct 2022 12:04:54 -0700
+X-QCInternal: smtphost
+Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2022 12:04:54 -0700
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Wed, 26 Oct 2022 12:04:53 -0700
+From:   Melody Olvera <quic_molvera@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>
+CC:     Taniya Das <quic_tdas@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v3 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock bindings
+Date:   Wed, 26 Oct 2022 12:04:37 -0700
+Message-ID: <20221026190441.4002212-2-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221026190441.4002212-1-quic_molvera@quicinc.com>
+References: <20221026190441.4002212-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH] clk: imx8mp: Add audio shared gate
-Content-Language: en-US
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>, shengjiu.wang@gmail.com,
-        abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, marex@denx.de
-References: <1666790761-4685-1-git-send-email-shengjiu.wang@nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1666790761-4685-1-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/10/2022 09:26, Shengjiu Wang wrote:
-> From: Abel Vesa <abel.vesa@nxp.com>
-> 
-> According to the RM, the CCGR101 is shared for the following root clocks:
-> - AUDIO_AHB_CLK_ROOT
-> - AUDIO_AXI_CLK_ROOT
-> - SAI1_CLK_ROOT
-> - SAI2_CLK_ROOT
-> - SAI3_CLK_ROOT
-> - SAI5_CLK_ROOT
-> - SAI6_CLK_ROOT
-> - SAI7_CLK_ROOT
-> - PDM_CLK_ROOT
-> 
-> And correct clock MX8MP_CLK_AUDIO_ROOT to be IMX8MP_CLK_AUDIO_AHB_ROOT.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mp.c             | 11 ++++++++++-
->  include/dt-bindings/clock/imx8mp-clock.h | 11 ++++++++++-
+Add device tree bindings for global clock controller on QDU1000 and
+QRU1000 SoCs.
 
-No, bindings are separate patches.
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ .../bindings/clock/qcom,gcc-qdu1000.yaml      |  77 ++++++++
+ include/dt-bindings/clock/qcom,gcc-qdu1000.h  | 170 ++++++++++++++++++
+ 2 files changed, 247 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-qdu1000.h
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
+new file mode 100644
+index 000000000000..ad460d628ffc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-qdu1000.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller for QDU1000 and QRU1000
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++maintainers:
++  - Melody Olvera <quic_molvera@quicinc.com>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on QDU1000 and QRU1000
++
++  See also:
++  - include/dt-bindings/clock/qcom,gcc-qdu1000.h
++
++properties:
++  compatible:
++    items:
++      - const: qcom,gcc-qdu1000
++      - const: syscon
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++      - description: PCIE 0 Pipe clock source
++      - description: PCIE 0 Phy Auxiliary clock source
++      - description: USB3 Phy wrapper pipe clock source
++    minItems: 2
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++      - const: sleep_clk
++      - const: pcie_0_pipe_clk
++    minItems: 2
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-qdu1000", "syscon";
++      reg = <0x00100000 0x001f4200>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>, <&sleep_clk>;
++      clock-names = "bi_tcxo", "sleep_clk";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/qcom,gcc-qdu1000.h b/include/dt-bindings/clock/qcom,gcc-qdu1000.h
+new file mode 100644
+index 000000000000..99edb688fef2
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gcc-qdu1000.h
+@@ -0,0 +1,170 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GCC_QDU1000_H
++#define _DT_BINDINGS_CLK_QCOM_GCC_QDU1000_H
++
++/* GCC clocks */
++#define GCC_GPLL0					0
++#define GCC_GPLL0_OUT_EVEN				1
++#define GCC_GPLL1					2
++#define GCC_GPLL2					3
++#define GCC_GPLL2_OUT_EVEN				4
++#define GCC_GPLL3					5
++#define GCC_GPLL4					6
++#define GCC_GPLL5					7
++#define GCC_GPLL5_OUT_EVEN				8
++#define GCC_GPLL6					9
++#define GCC_GPLL7					10
++#define GCC_GPLL8					11
++#define GCC_AGGRE_NOC_ECPRI_DMA_CLK			12
++#define GCC_AGGRE_NOC_ECPRI_DMA_CLK_SRC			13
++#define GCC_AGGRE_NOC_ECPRI_GSI_CLK_SRC			14
++#define GCC_BOOT_ROM_AHB_CLK				15
++#define GCC_CFG_NOC_ECPRI_CC_AHB_CLK			16
++#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK			17
++#define GCC_DDRSS_ECPRI_DMA_CLK				18
++#define GCC_ECPRI_AHB_CLK				19
++#define GCC_ECPRI_CC_GPLL0_CLK_SRC			20
++#define GCC_ECPRI_CC_GPLL1_EVEN_CLK_SRC			21
++#define GCC_ECPRI_CC_GPLL2_EVEN_CLK_SRC			22
++#define GCC_ECPRI_CC_GPLL3_CLK_SRC			23
++#define GCC_ECPRI_CC_GPLL4_CLK_SRC			24
++#define GCC_ECPRI_CC_GPLL5_EVEN_CLK_SRC			25
++#define GCC_ECPRI_XO_CLK				26
++#define GCC_ETH_DBG_SNOC_AXI_CLK			27
++#define GCC_GEMNOC_PCIE_QX_CLK				28
++#define GCC_GP1_CLK					29
++#define GCC_GP1_CLK_SRC					30
++#define GCC_GP2_CLK					31
++#define GCC_GP2_CLK_SRC					32
++#define GCC_GP3_CLK					33
++#define GCC_GP3_CLK_SRC					34
++#define GCC_PCIE_0_AUX_CLK				35
++#define GCC_PCIE_0_AUX_CLK_SRC				36
++#define GCC_PCIE_0_CFG_AHB_CLK				37
++#define GCC_PCIE_0_CLKREF_EN				38
++#define GCC_PCIE_0_MSTR_AXI_CLK				39
++#define GCC_PCIE_0_PHY_AUX_CLK				40
++#define GCC_PCIE_0_PHY_RCHNG_CLK			41
++#define GCC_PCIE_0_PHY_RCHNG_CLK_SRC			42
++#define GCC_PCIE_0_PIPE_CLK				43
++#define GCC_PCIE_0_SLV_AXI_CLK				44
++#define GCC_PCIE_0_SLV_Q2A_AXI_CLK			45
++#define GCC_PDM2_CLK					46
++#define GCC_PDM2_CLK_SRC				47
++#define GCC_PDM_AHB_CLK					48
++#define GCC_PDM_XO4_CLK					49
++#define GCC_QMIP_ANOC_PCIE_CLK				50
++#define GCC_QMIP_ECPRI_DMA0_CLK				51
++#define GCC_QMIP_ECPRI_DMA1_CLK				52
++#define GCC_QMIP_ECPRI_GSI_CLK				53
++#define GCC_QUPV3_WRAP0_CORE_2X_CLK			54
++#define GCC_QUPV3_WRAP0_CORE_CLK			55
++#define GCC_QUPV3_WRAP0_S0_CLK				56
++#define GCC_QUPV3_WRAP0_S0_CLK_SRC			57
++#define GCC_QUPV3_WRAP0_S1_CLK				58
++#define GCC_QUPV3_WRAP0_S1_CLK_SRC			59
++#define GCC_QUPV3_WRAP0_S2_CLK				60
++#define GCC_QUPV3_WRAP0_S2_CLK_SRC			61
++#define GCC_QUPV3_WRAP0_S3_CLK				62
++#define GCC_QUPV3_WRAP0_S3_CLK_SRC			63
++#define GCC_QUPV3_WRAP0_S4_CLK				64
++#define GCC_QUPV3_WRAP0_S4_CLK_SRC			65
++#define GCC_QUPV3_WRAP0_S5_CLK				66
++#define GCC_QUPV3_WRAP0_S5_CLK_SRC			67
++#define GCC_QUPV3_WRAP0_S6_CLK				68
++#define GCC_QUPV3_WRAP0_S6_CLK_SRC			69
++#define GCC_QUPV3_WRAP0_S7_CLK				70
++#define GCC_QUPV3_WRAP0_S7_CLK_SRC			71
++#define GCC_QUPV3_WRAP1_CORE_2X_CLK			72
++#define GCC_QUPV3_WRAP1_CORE_CLK			73
++#define GCC_QUPV3_WRAP1_S0_CLK				74
++#define GCC_QUPV3_WRAP1_S0_CLK_SRC			75
++#define GCC_QUPV3_WRAP1_S1_CLK				76
++#define GCC_QUPV3_WRAP1_S1_CLK_SRC			77
++#define GCC_QUPV3_WRAP1_S2_CLK				78
++#define GCC_QUPV3_WRAP1_S2_CLK_SRC			79
++#define GCC_QUPV3_WRAP1_S3_CLK				80
++#define GCC_QUPV3_WRAP1_S3_CLK_SRC			81
++#define GCC_QUPV3_WRAP1_S4_CLK				82
++#define GCC_QUPV3_WRAP1_S4_CLK_SRC			83
++#define GCC_QUPV3_WRAP1_S5_CLK				84
++#define GCC_QUPV3_WRAP1_S5_CLK_SRC			85
++#define GCC_QUPV3_WRAP1_S6_CLK				86
++#define GCC_QUPV3_WRAP1_S6_CLK_SRC			87
++#define GCC_QUPV3_WRAP1_S7_CLK				88
++#define GCC_QUPV3_WRAP1_S7_CLK_SRC			89
++#define GCC_QUPV3_WRAP_0_M_AHB_CLK			90
++#define GCC_QUPV3_WRAP_0_S_AHB_CLK			91
++#define GCC_QUPV3_WRAP_1_M_AHB_CLK			92
++#define GCC_QUPV3_WRAP_1_S_AHB_CLK			93
++#define GCC_SDCC5_AHB_CLK				94
++#define GCC_SDCC5_APPS_CLK				95
++#define GCC_SDCC5_APPS_CLK_SRC				96
++#define GCC_SDCC5_ICE_CORE_CLK				97
++#define GCC_SDCC5_ICE_CORE_CLK_SRC			98
++#define GCC_SNOC_CNOC_GEMNOC_PCIE_QX_CLK		99
++#define GCC_SNOC_CNOC_GEMNOC_PCIE_SOUTH_QX_CLK		100
++#define GCC_SNOC_CNOC_PCIE_QX_CLK			101
++#define GCC_SNOC_PCIE_SF_CENTER_QX_CLK			102
++#define GCC_SNOC_PCIE_SF_SOUTH_QX_CLK			103
++#define GCC_TSC_CFG_AHB_CLK				104
++#define GCC_TSC_CLK_SRC					105
++#define GCC_TSC_CNTR_CLK				106
++#define GCC_TSC_ETU_CLK					107
++#define GCC_USB2_CLKREF_EN				108
++#define GCC_USB30_PRIM_MASTER_CLK			109
++#define GCC_USB30_PRIM_MASTER_CLK_SRC			110
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK			111
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC		112
++#define GCC_USB30_PRIM_MOCK_UTMI_POSTDIV_CLK_SRC	113
++#define GCC_USB30_PRIM_SLEEP_CLK			114
++#define GCC_USB3_PRIM_PHY_AUX_CLK			115
++#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC			116
++#define GCC_USB3_PRIM_PHY_COM_AUX_CLK			117
++#define GCC_USB3_PRIM_PHY_PIPE_CLK			118
++#define GCC_SM_BUS_AHB_CLK				119
++#define GCC_SM_BUS_XO_CLK				120
++#define GCC_SM_BUS_XO_CLK_SRC				121
++#define GCC_USB3_PRIM_PHY_PIPE_CLK_SRC			122
++#define GCC_ETH_100G_C2C_HM_APB_CLK			123
++#define GCC_ETH_100G_FH_HM_APB_0_CLK			124
++#define GCC_ETH_100G_FH_HM_APB_1_CLK			125
++#define GCC_ETH_100G_FH_HM_APB_2_CLK			126
++#define GCC_ETH_DBG_C2C_HM_APB_CLK			127
++#define GCC_AGGRE_NOC_ECPRI_GSI_CLK			128
++#define GCC_PCIE_0_PIPE_CLK_SRC				129
++#define GCC_PCIE_0_PHY_AUX_CLK_SRC			130
++
++/* GCC resets */
++#define GCC_ECPRI_CC_BCR				0
++#define GCC_ECPRI_SS_BCR				1
++#define GCC_ETH_WRAPPER_BCR				2
++#define GCC_PCIE_0_BCR					3
++#define GCC_PCIE_0_LINK_DOWN_BCR			4
++#define GCC_PCIE_0_NOCSR_COM_PHY_BCR			5
++#define GCC_PCIE_0_PHY_BCR				6
++#define GCC_PCIE_0_PHY_NOCSR_COM_PHY_BCR		7
++#define GCC_PCIE_PHY_CFG_AHB_BCR			8
++#define GCC_PCIE_PHY_COM_BCR				9
++#define GCC_PDM_BCR					10
++#define GCC_QUPV3_WRAPPER_0_BCR				11
++#define GCC_QUPV3_WRAPPER_1_BCR				12
++#define GCC_QUSB2PHY_PRIM_BCR				13
++#define GCC_QUSB2PHY_SEC_BCR				14
++#define GCC_SDCC5_BCR					15
++#define GCC_TCSR_PCIE_BCR				16
++#define GCC_TSC_BCR					17
++#define GCC_USB30_PRIM_BCR				18
++#define GCC_USB3_DP_PHY_PRIM_BCR			19
++#define GCC_USB3_DP_PHY_SEC_BCR				20
++#define GCC_USB3_PHY_PRIM_BCR				21
++#define GCC_USB3_PHY_SEC_BCR				22
++#define GCC_USB3PHY_PHY_PRIM_BCR			23
++#define GCC_USB3PHY_PHY_SEC_BCR				24
++#define GCC_USB_PHY_CFG_AHB2PHY_BCR			25
++
++#endif
+-- 
+2.25.1
 
