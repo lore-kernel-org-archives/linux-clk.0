@@ -2,118 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9D4C38A2D
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 13:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFA9C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 13:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233833AbiJZNrO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 09:47:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43274 "EHLO
+        id S233888AbiJZNsR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 09:48:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233440AbiJZNqf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 09:46:35 -0400
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC32167073;
-        Wed, 26 Oct 2022 06:46:33 -0700 (PDT)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3020B1A81C5;
-        Wed, 26 Oct 2022 15:46:32 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BA5371A81C2;
-        Wed, 26 Oct 2022 15:46:31 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DC7CC183486A;
-        Wed, 26 Oct 2022 21:46:29 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     shengjiu.wang@gmail.com, abelvesa@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, marex@denx.de
-Subject: [PATCH] clk: imx8mp: Add audio shared gate
-Date:   Wed, 26 Oct 2022 21:26:01 +0800
-Message-Id: <1666790761-4685-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        with ESMTP id S233932AbiJZNsA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 09:48:00 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E672D105CCC;
+        Wed, 26 Oct 2022 06:47:30 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 679DE5C00D2;
+        Wed, 26 Oct 2022 09:47:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 26 Oct 2022 09:47:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1666792049; x=1666878449; bh=pnMK5XKDDG
+        c90XsqPqSH4CamFyR4mr2IljwezkbLwlE=; b=OjVqlYfYAfse9fEDEVNsG7dAAw
+        cfayJsp2QaqchCfykgEfBSRcSzBOfJc8dyyIryJKqBk0T1Mh80R6pWP8SPTfDU7L
+        rkddLPQwrr5KFSEDxXHEgsyigTTGexMfCtRA1Nep47CdUHmnP+F4y4wtlSLgmAu6
+        +CCg3cVMRoSeiTHbR4Xs6go8Uxg0JiVz1V9iyAA48raz9/Uqas7+KcjZYX0xTW58
+        0qBf0exCQBnGP3dxCPM2D2amVaoLDbEVILOQ9em2fAopwXivL1NWfdWMdlkQBDyE
+        eZ7scA3K8XO6GVrohkQ6ajaVSxmqRb6vgseQ5pNu9aX/azaNiULB15YU2gKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1666792049; x=1666878449; bh=pnMK5XKDDGc90
+        XsqPqSH4CamFyR4mr2IljwezkbLwlE=; b=e0ojpbSFaPGgu05tGKEdWK/8umhX8
+        isfK08aqe28pqF0fwbTK+pC/yzDrNJUHCZesjSeOuqpN9JNHucB6vUFHa6Rjd/pQ
+        K8CBUdzv0OhG+Xek0bJqE0Oo7QYpczjD4YukH5yWXGWLHHGX/a0woJSZpKCBtEPp
+        bzYxbhDyCPJWokxpIBaz89Ot6zNo5ahyA5gCtGobvubekPHDnkOcCaZUoSxEVhQ8
+        uZGr0xNJLzQWWAKNIE1oRTm1hSsCY430fvvhvJcz9Vso4CWIRwuHup2ZRmMmHm3E
+        99xD5JwCV015ci/t+H7waDBIpjCyhEtL9jsPNJ0d5Y3STRQCdI/kR2Gvw==
+X-ME-Sender: <xms:cTpZYyRQKcpg-ouuho5GBk6tPzpqrNW_QOAGPm7XNDpRPdeyND6DhA>
+    <xme:cTpZY3yTvZLmynfSnxh_lYCnFyD_77ZF5dUZyku1UqD5MtJWO6u3AmXKnBDLF6xMg
+    UnJ04ioJnhPK5VHWps>
+X-ME-Received: <xmr:cTpZY_2L6UKPfe-PZVhQNXjYUpGkAR5yE0R5bZhuGZ71oiOtW_epaK_k2z5AY4X4UAzNxka1gqwJ6dgrnuB5RufWvoFl-bbTI__WrkEdULbdJA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrtddvgdeilecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhufggtgfgfffkvfevofesthekredtredtjeenucfhrhhomhepmhgrgihimhgv
+    segtvghrnhhordhtvggthhenucggtffrrghtthgvrhhnpeeltdeifefgffetueehueefgf
+    dvtdfgjeegueetiedtteelieeftedtvefhlefgheenucffohhmrghinhepkhgvrhhnvghl
+    rdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:cTpZY-BUVQkLjmyPI9wetBjQ-G8gcB8KU824ZSQUQSz11a7OfzXe7A>
+    <xmx:cTpZY7gnWl7Xh_7izDGN3m3Y8v_cX5j4D7qDkUh-fuhraDvwRfF4nQ>
+    <xmx:cTpZY6rVmNrcSbmFuVuyc54ANH-LeVCGQprMdUwWOXiR-hdKNULs_A>
+    <xmx:cTpZY0bRilgFVh_H-YNqgNwskvJbEK1Za191LX1v-TfNKMAFeKhjwQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Oct 2022 09:47:28 -0400 (EDT)
+From:   maxime@cerno.tech
+Subject: [PATCH v2 0/2] clk: Rate Request Tracing
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-b4-tracking: H4sIAFE6WWMC/42NQQrCMBBFr1KydiRJo1ZX3kNcTNKxDZaUTtKClNzdwRO4+rwP//1dZeJIWd2aXT
+ FtMcc5CdhDo8KIaSCIvbCy2lqjTQdhegNjIWBaVsoFCmOIaYCLo057d2pdb5TMPWYCz5jCKIK0TpOU
+ Y8xl5s/vbjMSjz/MmwEN51eLqL32157ugTjNx0KiftZavzqfn0bGAAAA
+Date:   Wed, 26 Oct 2022 15:46:57 +0200
+Message-Id: <20221018-clk-rate-request-tracing-v2-0-5170b363c413@cerno.tech>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Maxime Ripard <maxime@cerno.tech>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+X-Mailer: b4 0.10.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1200; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=Ym/mQsI/sFoFqKKeo24pXbCH8MqSSbz1qd8rYqDzaQw=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMmRVsFtBg2Zv56piyZKzhbx9hA3WSewWd9wxZZsW8eAUzXs
+ fL87SlkYxLgYZMUUWWKEzZfEnZr1upONbx7MHFYmkCEMXJwCMJFzsxkZnpmUVPx/8iE+Yab9vJkrwp
+ p4nB3+fX72ct+U9TukRf8laDMyvJphu+wI91e9B6IBf/6aWckEz99Sl7TYJ+3i7QrnD/ozWAE=
+X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Abel Vesa <abel.vesa@nxp.com>
+Hi,
 
-According to the RM, the CCGR101 is shared for the following root clocks:
-- AUDIO_AHB_CLK_ROOT
-- AUDIO_AXI_CLK_ROOT
-- SAI1_CLK_ROOT
-- SAI2_CLK_ROOT
-- SAI3_CLK_ROOT
-- SAI5_CLK_ROOT
-- SAI6_CLK_ROOT
-- SAI7_CLK_ROOT
-- PDM_CLK_ROOT
+Here's a couple of patches to enable the tracing of clk_rate_requests as they
+are submitted to round/determine_rate.
 
-And correct clock MX8MP_CLK_AUDIO_ROOT to be IMX8MP_CLK_AUDIO_AHB_ROOT.
+Let me know what you think,
+Maxime
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+
 ---
- drivers/clk/imx/clk-imx8mp.c             | 11 ++++++++++-
- include/dt-bindings/clock/imx8mp-clock.h | 11 ++++++++++-
- 2 files changed, 20 insertions(+), 2 deletions(-)
+Changes in v2:
+- Used a more optimal structure layout for the event
+- Added a commit log to the first patch
+- Link to v1: https://lore.kernel.org/r/20221018-clk-rate-request-tracing-v1-0-6f3aa0b0b9de@cerno.tech
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 652ae58c2735..0ae3bc7bf8a1 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -17,6 +17,7 @@
- 
- static u32 share_count_nand;
- static u32 share_count_media;
-+static u32 share_count_audio;
- 
- static const char * const pll_ref_sels[] = { "osc_24m", "dummy", "dummy", "dummy", };
- static const char * const audio_pll1_bypass_sels[] = {"audio_pll1", "audio_pll1_ref_sel", };
-@@ -699,7 +700,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_HDMI_ROOT] = imx_clk_hw_gate4("hdmi_root_clk", "hdmi_axi", ccm_base + 0x45f0, 0);
- 	hws[IMX8MP_CLK_TSENSOR_ROOT] = imx_clk_hw_gate4("tsensor_root_clk", "ipg_root", ccm_base + 0x4620, 0);
- 	hws[IMX8MP_CLK_VPU_ROOT] = imx_clk_hw_gate4("vpu_root_clk", "vpu_bus", ccm_base + 0x4630, 0);
--	hws[IMX8MP_CLK_AUDIO_ROOT] = imx_clk_hw_gate4("audio_root_clk", "audio_ahb", ccm_base + 0x4650, 0);
-+	hws[IMX8MP_CLK_AUDIO_AHB_ROOT] = imx_clk_hw_gate2_shared2("audio_ahb_root", "audio_ahb", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_AUDIO_AXI_ROOT] = imx_clk_hw_gate2_shared2("audio_axi_root", "audio_axi", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI1_ROOT] = imx_clk_hw_gate2_shared2("sai1_root", "sai1", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI2_ROOT] = imx_clk_hw_gate2_shared2("sai2_root", "sai2", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI3_ROOT] = imx_clk_hw_gate2_shared2("sai3_root", "sai3", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI5_ROOT] = imx_clk_hw_gate2_shared2("sai5_root", "sai5", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI6_ROOT] = imx_clk_hw_gate2_shared2("sai6_root", "sai6", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI7_ROOT] = imx_clk_hw_gate2_shared2("sai7_root", "sai7", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_PDM_ROOT] = imx_clk_hw_gate2_shared2("pdm_root", "pdm", ccm_base + 0x4650, 0, &share_count_audio);
- 
- 	hws[IMX8MP_CLK_ARM] = imx_clk_hw_cpu("arm", "arm_a53_core",
- 					     hws[IMX8MP_CLK_A53_CORE]->clk,
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index 9d5cc2ddde89..2f6fec299662 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -324,8 +324,17 @@
- #define IMX8MP_CLK_CLKOUT2_SEL			317
- #define IMX8MP_CLK_CLKOUT2_DIV			318
- #define IMX8MP_CLK_CLKOUT2			319
-+#define IMX8MP_CLK_AUDIO_AHB_ROOT		320
-+#define IMX8MP_CLK_AUDIO_AXI_ROOT		321
-+#define IMX8MP_CLK_SAI1_ROOT			322
-+#define IMX8MP_CLK_SAI2_ROOT			323
-+#define IMX8MP_CLK_SAI3_ROOT			324
-+#define IMX8MP_CLK_SAI5_ROOT			325
-+#define IMX8MP_CLK_SAI6_ROOT			326
-+#define IMX8MP_CLK_SAI7_ROOT			327
-+#define IMX8MP_CLK_PDM_ROOT			328
- 
--#define IMX8MP_CLK_END				320
-+#define IMX8MP_CLK_END				329
- 
- #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
- #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
+---
+Maxime Ripard (2):
+      clk: Store clk_core for clk_rate_request
+      clk: Add trace events for rate requests
+
+ drivers/clk/clk.c            | 32 ++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ include/trace/events/clk.h   | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 77 insertions(+)
+---
+base-commit: 69a14e4a9d5a0e1ed73063e0d439c3cb33ce9829
+change-id: 20221018-clk-rate-request-tracing-74e80b4534d1
+
+Best regards,
 -- 
-2.34.1
-
+Maxime Ripard <maxime@cerno.tech>
