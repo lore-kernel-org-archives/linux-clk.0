@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C7BC38A2D
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 01:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0B0FA3740
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 01:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232488AbiJZBmm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Oct 2022 21:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46950 "EHLO
+        id S232528AbiJZBmn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Oct 2022 21:42:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231645AbiJZBml (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 21:42:41 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7BEDDA31;
-        Tue, 25 Oct 2022 18:42:39 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id bh7-20020a05600c3d0700b003c6fb3b2052so501692wmb.2;
-        Tue, 25 Oct 2022 18:42:39 -0700 (PDT)
+        with ESMTP id S232489AbiJZBmm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 21:42:42 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A91DDA31;
+        Tue, 25 Oct 2022 18:42:41 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id bp11so23424428wrb.9;
+        Tue, 25 Oct 2022 18:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lh32i4f+ofJMoVw2+1sIHFoGr4ymoW3HnTFs2g7No1E=;
-        b=XqsmMjmp+c0uQ/LhAyWTG7VY37rVLi3fOocIyx/VcPesJZJ1slnOJarCrv5RWDJFn1
-         fY6Bd10om5csatGDS6bwMPDi6GBXltE5pB3dw/dsriiT5yebIQAj3X5b0dzLCVdN0z2l
-         Pb9TM0xKk6JcWBD8dnFbVIc5J0g0OVD6+008Wm2JoLLQoKTzzo9WFGbhehm6abAgxksF
-         wfe+ZlaHbTLG9nZpK0D2oy1jOAcOdRTxlGwygY0Rtu/nxqzn8BZJMkaiZ2Ko23jo6cHQ
-         bs1TKe6Rlg78U5is5mP7UcryMDPaEHyjpSEWr6I0xn3Sg0dLB95dYOQRm7BbSUVB9AW2
-         4Djw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A1/Z+bzCI9wjYKSK20rnTwDEGDaX79Rtyi9JzBJPbm0=;
+        b=mAHlfJ9Guh2YsP1komhXJAkwwQmdr7O1L3+uDTme/wyogeFHW9Js1IuCBzYeZ+80y3
+         9eeklVyYaknONCB1JHlK7w+t+tbQisp0coMTJRUD4g4MhAH4DDp8oFLUh3W1HpPgtmSB
+         CNzZNf45haMvswfvWH58TItRXEhSTwNcwhctr80tc6W4tvVbyFCPnJ6oD2rvwC4e2MQg
+         8iN397FY/c1ZcHkxn5QQvKgEDIyiCulSxGiTnjG2tzfoSOF48/83YsuUrtUaNSAmVODd
+         HvVDBMUzVcViuL0xVbLUZGevbn+zTG+mSt2ty7iJo7sEviA86OwPc1tKbYx5praa2ePI
+         nVLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lh32i4f+ofJMoVw2+1sIHFoGr4ymoW3HnTFs2g7No1E=;
-        b=CyZFWe/EOt1E2CkaheObtyIeWwqD4Kdoe2Oqg5Af25xNnyyP7jprDTmTTv8aGHZr+4
-         qcj2XJWAqOm0kWXYsdGxjnHPV8XNytCnPN0Rxr8CXmGgTbhvTIJy52UL+Bjomll0OjV7
-         PmLfXnLwSIf5s6aYWspV2gnjbqei04ItBdKRyqwgnYw7U528TYrqnEXb7RmYbTf1SR/0
-         MOCl4VJA0rHxol3nojcy2nE3QgjtR7d0HcCiZmkRujPIc+pms1z8+skBBXYCnclIO5VG
-         OS9uoI/+H9UCy2ZesTiJ8ig6RX66/rSBXILABQvWqgWiQnNxPbEi2tBSoY5KEKkAXPYs
-         CwDw==
-X-Gm-Message-State: ACrzQf2R+a+gwLZoxcRoWsL5T/JyRPSNxFmFVx7oO/EJHluPRAglNUBN
-        xRnkefqfIW6onBmfT/JV7Q4qrCvkIAT55Eug
-X-Google-Smtp-Source: AMsMyM5JUW8TCtB+5aMGJEyoeb+CEzCehnvEUbOgiSfK6elNwIR09WhlKWHg6/bHkEhLBX2ZFqe1+g==
-X-Received: by 2002:a05:600c:6889:b0:3cd:d83b:7993 with SMTP id fn9-20020a05600c688900b003cdd83b7993mr614695wmb.143.1666748558098;
-        Tue, 25 Oct 2022 18:42:38 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A1/Z+bzCI9wjYKSK20rnTwDEGDaX79Rtyi9JzBJPbm0=;
+        b=sIMbDLrKxi95ei/mlzPp66J1+vRy+Sec2zL1jSGwJlVtmHdkWu6uQC5clqa+OVDV/R
+         Tw1Um5r3Xhyk4U/BqWUwb4j/QE21KdCI4B1ckPNfQzY4KefztzwuXEBQjv7lEPkeNf8Y
+         sL1AQ7pegeOUu0xsvCd4RSMwecz24JfLCBRvFdQSEMv9XZtXidVwtXhPWMG07Mxxas1W
+         eoBrWkHPndR5UtbgvUCo6UYEO7I3yFLYLEQBNMqNGA8kCjZRXa2gSHyd49TB7m9NgmWA
+         6x9V78GCcgjY0whu50Cjbr0orukj+XSPqDoFrB7A0hR+v/3K1pLp01UrUA7skeEeBbQq
+         R2pg==
+X-Gm-Message-State: ACrzQf1agZEqBoqLfxfxlwRgpoSuEf9oamn7ibV98aPBpdTGngg9vSU/
+        eEEEcdzmS+F296L3jqAR8ozXsmOdT4FuMolS
+X-Google-Smtp-Source: AMsMyM4KM8+DoBKREl6JDpQMRv0uaqwGTNvjAJq0TeZE+Bfhr4NRr9VssmKk7aIu7B345f7JkocVzQ==
+X-Received: by 2002:a05:6000:15c8:b0:236:812d:d3e5 with SMTP id y8-20020a05600015c800b00236812dd3e5mr3878070wry.303.1666748560438;
+        Tue, 25 Oct 2022 18:42:40 -0700 (PDT)
 Received: from prasmi.home ([2a00:23c8:2501:c701:1d2a:d2a2:361e:a475])
-        by smtp.gmail.com with ESMTPSA id x12-20020adff0cc000000b00236733f0f98sm3688956wro.107.2022.10.25.18.42.37
+        by smtp.gmail.com with ESMTPSA id x12-20020adff0cc000000b00236733f0f98sm3688956wro.107.2022.10.25.18.42.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Oct 2022 18:42:37 -0700 (PDT)
+        Tue, 25 Oct 2022 18:42:39 -0700 (PDT)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -58,10 +59,12 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/2] clk: renesas: RZ/G2L: Add support for no PM clocks
-Date:   Wed, 26 Oct 2022 02:42:25 +0100
-Message-Id: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/2] clk: renesas: r9a07g044: Add CRU_SYSCLK and CRU_VCLK to no PM list
+Date:   Wed, 26 Oct 2022 02:42:27 +0100
+Message-Id: <20221026014227.162121-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -70,44 +73,61 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
+sequence for the CRU block hence add these clocks to
+r9a07g044_no_pm_mod_clks[] array.
 
-This patch series adds support for indicating MOD clocks as no PM
-(if any). SoCs indicate no PM clocks by adding to no_pm_mod_clks[]
-array.
-
-Note this patch applies on top of [0] (rebased on renesas-clk-for-v6.2
-branch).
-
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221026012123.159790-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-v1 -> v2
-* Dropped DEF_NO_PM() macro
-* Added genpd member to struct rzg2l_cpg_priv
-* Added no_pm_mod_clks and num_no_pm_mod_clks members
-  to struct rzg2l_cpg_info
-* Updated commit messages
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2
+* Dropped usage of DEF_NO_PM() macro
+* Added CRU_SYSCLK and CRU_VCLK to no PM list
+* Updated commit message
 
 RFC->v1
-* Added no_pm_mod_clks and num_no_pm_mod_clks members as part of
-  struct rzg2l_cpg_priv so that we dont loop the entire mod clocks
-  array for each device probe.
-* Patch#2 unchanged
+* No change
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-RFC: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20220927203044.751611-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (2):
-  clk: renesas: rzg2l: Don't assume all CPG_MOD clocks support PM
-  clk: renesas: r9a07g044: Add CRU_SYSCLK and CRU_VCLK to no PM list
-
- drivers/clk/renesas/r9a07g044-cpg.c | 13 ++++++++++
- drivers/clk/renesas/rzg2l-cpg.c     | 37 ++++++++++++++++++-----------
- drivers/clk/renesas/rzg2l-cpg.h     |  4 ++++
- 3 files changed, 40 insertions(+), 14 deletions(-)
-
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index f5550fccb029..f923b7b3cfca 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -412,6 +412,11 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
+ };
+ 
++static const unsigned int r9a07g044_no_pm_mod_clks[] __initconst = {
++	MOD_CLK_BASE + R9A07G044_CRU_SYSCLK,
++	MOD_CLK_BASE + R9A07G044_CRU_VCLK,
++};
++
+ #ifdef CONFIG_CLK_R9A07G044
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	/* Core Clocks */
+@@ -429,6 +434,10 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(mod_clks.common),
+ 	.num_hw_mod_clks = R9A07G044_TSU_PCLK + 1,
+ 
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
++
+ 	/* Resets */
+ 	.resets = r9a07g044_resets,
+ 	.num_resets = R9A07G044_TSU_PRESETN + 1, /* Last reset ID + 1 */
+@@ -454,6 +463,10 @@ const struct rzg2l_cpg_info r9a07g054_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(mod_clks.common) + ARRAY_SIZE(mod_clks.drp),
+ 	.num_hw_mod_clks = R9A07G054_STPAI_ACLK_DRP + 1,
+ 
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
++
+ 	/* Resets */
+ 	.resets = r9a07g044_resets,
+ 	.num_resets = R9A07G054_STPAI_ARESETN + 1, /* Last reset ID + 1 */
 -- 
 2.25.1
 
