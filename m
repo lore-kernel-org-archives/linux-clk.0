@@ -2,56 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1600C38A2D
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 07:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9165FFA373D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 08:49:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233243AbiJZH6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 03:58:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59648 "EHLO
+        id S233077AbiJZItY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 04:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233181AbiJZH6h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 03:58:37 -0400
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD59A98C7;
-        Wed, 26 Oct 2022 00:58:36 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id ml12so9798819qvb.0;
-        Wed, 26 Oct 2022 00:58:36 -0700 (PDT)
+        with ESMTP id S233443AbiJZItM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 04:49:12 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BFD7696D;
+        Wed, 26 Oct 2022 01:49:10 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id k2so19425936ejr.2;
+        Wed, 26 Oct 2022 01:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJh7DiSXx4gAb7HCDsIOJJtlUdSHILNknT/gqSP4jIs=;
+        b=hUJXnkAmLoDFvc+OAKAbkTZjdAnA78VzhEiBOQ1/KbfUpWLwSJcDPx7W9gaJXgEdM2
+         PpxosC+syBwxuPJxFQYHW4ZtZvRF54oqw7v9DwcHMhMckXzmxauihWV6opRCWgnzZr7D
+         bg2lX3EnrZhZczuH2R+8hXD8aswuKrZ2zeoDq9Zl/R/KBgjvZA4R78QSMEENr711Sljf
+         T7lTAj3K9d4hJaRXYFjUzCplzKoTnTjTPcMyP15lDUVRc3boZRz7obYcecEu7a2MRmNb
+         MA6W+P5kbkYZoa4M8NyzSEZHerJ/+9F5dlh7giqj9DgxPEqUbIcbIJjzWR33/+JDxiLW
+         ylrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F3WQcdE0WzwCWNl9OlEV6pv3M37aoXQt24XvswxJUCM=;
-        b=MklElcdvI85ZWmYTMkPWgBay2Z124a6V8jrAw4WiLfi43L+nZp3yY3o7BfsgiqKJmy
-         R4pXeBUzGUa7+bFI4uLb1T/tZJq0+4RBYs4CDfZ3t2Ps/zuiWU/IwTnNsQzuKPOeFkyJ
-         T6O2hmgOPsVSC40ABGeFU3egi/OC4YdypSgF5u6V5e+ly6IOKq/7B3DpnXw1Ij4FWZm5
-         R2Kz8K7VnU2fGRFQQXtxe77yC+I+8Ym7FvqhQnszYJU/YjfgqxmiS1vRbSMIPcza4qv2
-         3rWS4m2KjaTlFArefqWbDMzfN9TZmpUReOACKNdP4lhUJ3qdDq+uDGfosN2b2g2G6IYS
-         yhkw==
-X-Gm-Message-State: ACrzQf3C4j0X1I3H7ptT0k1LQOHCkpV9t/Tl7hcwxoXi//m2t4LKkaAN
-        zF1qcy7tvB4CZit97cyuw3BMXuUdubB/9g==
-X-Google-Smtp-Source: AMsMyM41MnUS2Hloi2O7nf+sbHjyKCJuL/JnX5IN4I5NWOeJkBUYlzbPDbQwxbAT0A0iqRP1ZSYlpg==
-X-Received: by 2002:ad4:5be7:0:b0:4b3:fe6c:904b with SMTP id k7-20020ad45be7000000b004b3fe6c904bmr36303486qvc.42.1666771115415;
-        Wed, 26 Oct 2022 00:58:35 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id a25-20020a05620a16d900b006b615cd8c13sm3306437qkn.106.2022.10.26.00.58.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Oct 2022 00:58:35 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-333a4a5d495so139335527b3.10;
-        Wed, 26 Oct 2022 00:58:35 -0700 (PDT)
-X-Received: by 2002:a81:12c8:0:b0:36a:bd6b:92fb with SMTP id
- 191-20020a8112c8000000b0036abd6b92fbmr20336268yws.316.1666771114757; Wed, 26
- Oct 2022 00:58:34 -0700 (PDT)
+        bh=MJh7DiSXx4gAb7HCDsIOJJtlUdSHILNknT/gqSP4jIs=;
+        b=WHC8l3BgtA8IgNj+9JYG6038UiFx4GILYYe6PeedjHE2/0DqEeQghvlPfRMWDOQKbl
+         Hxn+5/vhHpCzxgGAIbA1d+LkSVVATFoddjCLpmpzHVHKFulQ2De/bFDfBCGsFa9VY/uK
+         2CpKnWdiz0QaJtlg9EhuL1/KjSb5Zx+H7HWDFZWKKFn2UiwN0+6i+ml+1RrAidRhcB+S
+         FAXevNRmcKh7CeABZG1U3dnlObdajy2vZe7A004vpqcwRyTu3kpyalXTkJD1TUbDA30Y
+         SNnVv9vm5Qn3lhi2yzD5mbAW0KdCJTsjiemgRswcds/hDwCUxcAnyiR7a2qiybn/Tz7e
+         RerA==
+X-Gm-Message-State: ACrzQf3DNKtCj2iCwRB4CWKZC/eaHN7NKHF05uk3w0I42MEHT86m5r3y
+        gGoFD9AsYoa20ViClzuToKd/C0FvmU+MY2uARyA=
+X-Google-Smtp-Source: AMsMyM6ha+jkiZv5zA162G038cLapYf7uShWHlkex2qKWutM+ighn8N0BhMgwOX0iz9VsH6WUh2FMVavZ6CFj+ZRLu4=
+X-Received: by 2002:a17:906:5a4b:b0:78d:4e5a:d101 with SMTP id
+ my11-20020a1709065a4b00b0078d4e5ad101mr35512916ejc.196.1666774149529; Wed, 26
+ Oct 2022 01:49:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20221026014227.162121-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20221026014227.162121-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Oct 2022 09:58:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVa28=84ZovtWazx0w=xWLDZioK0+CVnoE=NALjMewSkg@mail.gmail.com>
-Message-ID: <CAMuHMdVa28=84ZovtWazx0w=xWLDZioK0+CVnoE=NALjMewSkg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r9a07g044: Add CRU_SYSCLK and
- CRU_VCLK to no PM list
-To:     Prabhakar <prabhakar.csengg@gmail.com>
+References: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221026014227.162121-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVg1sFH1gAqo3yf5-m7edfHFO0VM63n=FmDQHhJqSpHyg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVg1sFH1gAqo3yf5-m7edfHFO0VM63n=FmDQHhJqSpHyg@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 26 Oct 2022 09:48:43 +0100
+Message-ID: <CA+V-a8sySpYZ4fAsNNc9aEzDL4v+8G3XB71KZt72nADnscUVhg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD
+ clocks support PM
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -63,50 +66,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+HI Geert,
 
-On Wed, Oct 26, 2022 at 3:42 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Thank you for the review.
+
+On Wed, Oct 26, 2022 at 8:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
-> sequence for the CRU block hence add these clocks to
-> r9a07g044_no_pm_mod_clks[] array.
+> Hi Prabhakar,
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> * Dropped usage of DEF_NO_PM() macro
-> * Added CRU_SYSCLK and CRU_VCLK to no PM list
-> * Updated commit message
-
-Thanks for the update!
-
-> --- a/drivers/clk/renesas/r9a07g044-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-> @@ -412,6 +412,11 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
->         MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
->  };
+> On Wed, Oct 26, 2022 at 3:42 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > There are cases where not all CPG_MOD clocks should be assumed to support
+> > PM. For example on the CRU block there is a particular sequence that needs
+> > to be followed to initialize the CSI-2 D-PHY in which individual clocks
+> > need to be turned ON/OFF, due to which Runtime PM support wasn't used by
+> > the CRU CSI-2 driver.
+> >
+> > This patch adds support to allow indicating if PM is not supported by the
+> > CPG_MOD clocks. Two new members no_pm_mod_clks and num_no_pm_mod_clks are
+> > added to struct rzg2l_cpg_info so that MOD clocks which do not support PM
+> > can be passed by no_pm_mod_clks[] array and when the driver uses Runtime
+> > PM support the clk ID is matched against the no_pm_mod_clks[] array to see
+> > if the clk is needed to be included as part of Runtime PM.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2
+> > * Dropped DEF_NO_PM() macro
+> > * Added genpd member to struct rzg2l_cpg_priv
+> > * Added no_pm_mod_clks and num_no_pm_mod_clks members
+> >   to struct rzg2l_cpg_info
+> > * Updated commit message
 >
-> +static const unsigned int r9a07g044_no_pm_mod_clks[] __initconst = {
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/rzg2l-cpg.c
+> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>
+> >
+> >  static int rzg2l_cpg_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+>
+> Time to rename "unused" to "domain" ;-)
+>
+Indeed, I think the naming came from R-Car :)
 
-This cannot be __initconst, so please drop this keyword.
+> >  {
+> > +       struct rzg2l_cpg_priv *priv = container_of(unused, struct rzg2l_cpg_priv, genpd);
+>
+> I can fix that while applying...
+>
+Thanks.
 
-> +       MOD_CLK_BASE + R9A07G044_CRU_SYSCLK,
-> +       MOD_CLK_BASE + R9A07G044_CRU_VCLK,
-> +};
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
 
-I believe I haven't seen patches yet to add support for these clocks?
-Perhaps these can be combined?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
