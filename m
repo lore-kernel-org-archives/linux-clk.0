@@ -2,154 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAB6C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 15:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3F6C38A2D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 15:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234149AbiJZPSV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 11:18:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
+        id S234545AbiJZP2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 11:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234514AbiJZPSV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 11:18:21 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D264127BFA
-        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2022 08:18:20 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oniAZ-0004pf-Vl; Wed, 26 Oct 2022 17:18:16 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oniAa-000X4i-1W; Wed, 26 Oct 2022 17:18:15 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oniAY-00Aq9z-4i; Wed, 26 Oct 2022 17:18:14 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v3] clk: expand clk_ignore_unused mechanism to keep only a few clks on
-Date:   Wed, 26 Oct 2022 17:18:12 +0200
-Message-Id: <20221026151812.1042052-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.37.2
+        with ESMTP id S234546AbiJZP2O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 11:28:14 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0162B12FFB3
+        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2022 08:28:13 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id f27so11698714eje.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2022 08:28:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6j1fHe9OYs4e+5UqU3Og3KPmdDBG92hQv3wiQCuJoA=;
+        b=kWE3JZ1ps1qMWp6E0WTYFDG5RgPeN0Ibtu1R/f81JmR5OjPwN1QedbbuJQO+F0r3Du
+         B5wvmn+JzhXgiHl3FJrdOjv8u0gWeNfoTW6/FvqbRLTMM4RofN/Z5q6kGkvmpFyxgV0R
+         twTuJQrEEVetK9ZsaW7Qwgbpk7jx1ULTaEko7L5vjRPb3vNvAgjXp7BVBlUw3EnhKBTo
+         Acsx92BI6QFMvGI3qqNfsqdpW/yd4bLW4e5e0g/c12IFbjC+hjorj8UtYB8Ig8NNbC6G
+         ATHmRLI4nXUw638h3aB8SAVeTRCf6BIvolek3NzKK9jF7iOL0BLpEtANPFWIiZOAp0d8
+         n+lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F6j1fHe9OYs4e+5UqU3Og3KPmdDBG92hQv3wiQCuJoA=;
+        b=0/1LgFBfxydsY5EfnOZxGpdAQvr1STIOlFSaph7LxqOUW/bnevIrfyffBxJQkSZBzF
+         waX//aMJ9GFkfSh4jgN1rW4iAUimYKDCIEnqjTgb4mfAzTjNommgKimrzv6q6/IOJ1H2
+         GIpxD1OhxNiBIo+86ZYBRO1ZOZhjmck572F54D15RKt1oOz4pU3IwxMFej8Jc2Ae3Inp
+         0AuH2hxDHGrwUqm+cYYwzEpJdMM7cXpvj7tIlTQeeMHjBbIXxHFL7kQ1alhNf/xQ05Ej
+         utYgq83C/lN09KZrAE41okmK4cfFQCnMuXNRs/0lEi4v3ld2V0pF6P+30RNRYdjJsq/u
+         vA0Q==
+X-Gm-Message-State: ACrzQf3vLnn1ZssMgx85xNbD5uTvUDwldT8gJhRgwNk72cXu3N37EDjd
+        smxPuaGndW05IoABxMozlCyA/vN3y5ZTDm/l8NkBlw==
+X-Google-Smtp-Source: AMsMyM7BgPlT1A2MOolxTVgE09nfjQjy9z4UQ54xIVZG4n7rTCJvLVDsOsKobk4izQ/DmWdHnJsxKdztGQlQfjOQipo=
+X-Received: by 2002:a17:907:1c98:b0:78d:3b08:33ef with SMTP id
+ nb24-20020a1709071c9800b0078d3b0833efmr39091535ejc.175.1666798091611; Wed, 26
+ Oct 2022 08:28:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20220815-rpi-fix-4k-60-v4-0-a1b40526df3e@cerno.tech> <20220815-rpi-fix-4k-60-v4-4-a1b40526df3e@cerno.tech>
+In-Reply-To: <20220815-rpi-fix-4k-60-v4-4-a1b40526df3e@cerno.tech>
+From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date:   Wed, 26 Oct 2022 16:27:56 +0100
+Message-ID: <CAPY8ntAkzWOy0fk4ojtKW9k7asH1zOYygoU8B_=yJjm7Ni7isw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/7] drm/vc4: hdmi: Fix hdmi_enable_4kp60 detection
+To:     maxime@cerno.tech
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow to pass an integer n that results in only keeping n unused clocks
-enabled.
+On Thu, 20 Oct 2022 at 10:14, <maxime@cerno.tech> wrote:
+>
+> In order to support higher HDMI frequencies, users have to set the
+> hdmi_enable_4kp60 parameter in their config.txt file.
+>
+> We were detecting this so far by calling clk_round_rate() on the core
+> clock with the frequency we're supposed to run at when one of those
+> modes is enabled. Whether or not the parameter was enabled could then be
+> inferred by the returned rate since the maximum clock rate reported by
+> the firmware was one of the side effect of setting that parameter.
+>
+> However, the recent clock rework we did changed what clk_round_rate()
+> was returning to always return the minimum allowed, and thus this test
+> wasn't reliable anymore.
+>
+> Let's use the new clk_get_max_rate() function to reliably determine the
+> maximum rate allowed on that clock and fix the 4k@60Hz output.
+>
+> Fixes: e9d6cea2af1c ("clk: bcm: rpi: Run some clocks at the minimum rate allowed")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-This helps to debug the problem if you only know that clk_ignore_unused
-helps but you have no clue yet which clock is the culprit.
+Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
-
-compared to v2 sent in August 2021 this is a trivial rebase on top of
-v6.1-rc1. I pinged that one repeatedly, I'm now trying with resending
-and calling the rebased patch v3 to maybe get some feedback. :-\
-
-Best regards
-Uwe
-
- Documentation/driver-api/clk.rst |  4 +++-
- drivers/clk/clk.c                | 33 ++++++++++++++++++++++++--------
- 2 files changed, 28 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-index 3cad45d14187..65ae7c3e2b33 100644
---- a/Documentation/driver-api/clk.rst
-+++ b/Documentation/driver-api/clk.rst
-@@ -259,7 +259,9 @@ the disabling means that the driver will remain functional while the issues
- are sorted out.
- 
- To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
--kernel.
-+kernel. If you pass "clk_ignore_unused=n" (where n is an integer) the first n
-+found clocks are not disabled which can be useful for bisecting over the unused
-+clks if you don't know yet which of them is reponsible for your problem.
- 
- Locking
- =======
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c3c3f8c07258..356119a7e5fe 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1322,6 +1322,8 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
- 	clk_pm_runtime_put(core);
- }
- 
-+static unsigned clk_unused_keep_on __initdata;
-+
- static void __init clk_disable_unused_subtree(struct clk_core *core)
- {
- 	struct clk_core *child;
-@@ -1352,12 +1354,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- 	 * back to .disable
- 	 */
- 	if (clk_core_is_enabled(core)) {
--		trace_clk_disable(core);
--		if (core->ops->disable_unused)
--			core->ops->disable_unused(core->hw);
--		else if (core->ops->disable)
--			core->ops->disable(core->hw);
--		trace_clk_disable_complete(core);
-+		if (clk_unused_keep_on) {
-+			pr_warn("Keep unused clk \"%s\" on\n", core->name);
-+			clk_unused_keep_on -= 1;
-+		} else {
-+			trace_clk_disable(core);
-+			if (core->ops->disable_unused)
-+				core->ops->disable_unused(core->hw);
-+			else if (core->ops->disable)
-+				core->ops->disable(core->hw);
-+			trace_clk_disable_complete(core);
-+		}
- 	}
- 
- unlock_out:
-@@ -1369,9 +1376,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- }
- 
- static bool clk_ignore_unused __initdata;
--static int __init clk_ignore_unused_setup(char *__unused)
-+static int __init clk_ignore_unused_setup(char *keep)
- {
--	clk_ignore_unused = true;
-+	if (*keep == '=') {
-+		int ret;
-+
-+		ret = kstrtouint(keep + 1, 0, &clk_unused_keep_on);
-+		if (ret < 0)
-+			pr_err("Warning: failed to parse clk_ignore_unused parameter, ignoring");
-+	} else {
-+		clk_ignore_unused = true;
-+	}
- 	return 1;
- }
- __setup("clk_ignore_unused", clk_ignore_unused_setup);
-@@ -1383,6 +1398,8 @@ static int __init clk_disable_unused(void)
- 	if (clk_ignore_unused) {
- 		pr_warn("clk: Not disabling unused clocks\n");
- 		return 0;
-+	} else if (clk_unused_keep_on) {
-+		pr_warn("clk: Not disabling %u unused clocks\n", clk_unused_keep_on);
- 	}
- 
- 	clk_prepare_lock();
--- 
-2.37.2
-
+> ---
+>  drivers/gpu/drm/vc4/vc4_hdmi.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> index 64f9feabf43e..87961d4de5aa 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> @@ -46,6 +46,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/rational.h>
+>  #include <linux/reset.h>
+> +#include <soc/bcm2835/raspberrypi-clocks.h>
+>  #include <sound/dmaengine_pcm.h>
+>  #include <sound/hdmi-codec.h>
+>  #include <sound/pcm_drm_eld.h>
+> @@ -3429,7 +3430,7 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+>
+>         if (variant->max_pixel_clock == 600000000) {
+>                 struct vc4_dev *vc4 = to_vc4_dev(drm);
+> -               long max_rate = clk_round_rate(vc4->hvs->core_clk, 550000000);
+> +               unsigned long max_rate = rpi_firmware_clk_get_max_rate(vc4->hvs->core_clk);
+>
+>                 if (max_rate < 550000000)
+>                         vc4_hdmi->disable_4kp60 = true;
+>
+> --
+> b4 0.10.1
