@@ -2,115 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E41C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 09:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AFAFA373D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 10:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232625AbiJZJDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 05:03:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
+        id S233126AbiJZKFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 06:05:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbiJZJDW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 05:03:22 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFC197D5C;
-        Wed, 26 Oct 2022 02:03:21 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 21so6401575edv.3;
-        Wed, 26 Oct 2022 02:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDNxtobUIfhtD2mKMmmLy/tXc7osg3CCVHX7FcrkmPc=;
-        b=T1yfzXvULUMP09Uf9fnUwN9VSCCe0NkyS2d0KwcTBHfrNUBabNh+WYyxzPa5VjyjaX
-         buKV34XWyOKSjK4VZnt0wHF/NskjZ6HAY5FEq4iSJKVuNmGvy9/7Tt/apwcHWDl2SWIg
-         0d84omawo5owLLuYtiZoPQKG/cmNoWZjdEdqFnRnE0NyGi/fawG5gKlMr6J6wTGPrCcf
-         Q0jiPT24y6oBY4j5KhI4nvpqidweOzWZMZs8jnrL94SPwwx6LASbCwRb2XbxW4fFvVzP
-         yNLKO1XXzM0fvJUBgf4ydxF69mHXve33jMLQdbkdQGINK/M0v1D7ZDhR/ePMM7E0Mc/F
-         aexQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gDNxtobUIfhtD2mKMmmLy/tXc7osg3CCVHX7FcrkmPc=;
-        b=Oq5i359IdOzpOsz806LkRHnabNsymaPpjUupatliloseiT8m3UACbxhAXTnEnA0VeR
-         YxFnFhCbfQSdze8enYRmTWauQnigPF8hDPbIJ78qchXsAxJletwwSTMBsmmo3yIiP26X
-         iadVod9LcbjW1LRkp3Ws0f/Mb8PNQBf/6RG0G+fEoOf4vJ/15X+p1hKM/xH8oeJ2CtUL
-         IcSo8XAMwUzYGm9AuFPlHqhzvV9p1P3CA6gpWRjiDEc1piEeLGo0PdD8flnL5Y3NHE5l
-         hvJa3mA3rkwexAfBsfsen6siwe798PXV8rs+w/PFMvCZg71TN/zIW31r2BdLclB+UgfL
-         0LtA==
-X-Gm-Message-State: ACrzQf3gKrCRNeT3UyV15jM7ehMXG6z9nH4mt3M/V0j0AhjatEjkQ8Hi
-        aOSOMmKDiid7viFMIkO4Cn+XvSillMWF8+U6tFT4ZyBNjrow5A==
-X-Google-Smtp-Source: AMsMyM63ecp3AsNA5gtSQQOnUBmaKiZJgJwUkJ0dya0NyFNs+fEUvY9D0Kc75T5z+p3tVL+/4eMPjfsy4tniIWmi1g8=
-X-Received: by 2002:a05:6402:2552:b0:45d:ecf:b23 with SMTP id
- l18-20020a056402255200b0045d0ecf0b23mr40194998edb.255.1666774999716; Wed, 26
- Oct 2022 02:03:19 -0700 (PDT)
+        with ESMTP id S232748AbiJZKFy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 06:05:54 -0400
+Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F4B3137B;
+        Wed, 26 Oct 2022 03:05:51 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1ondHU-006UUy-SN; Wed, 26 Oct 2022 18:05:42 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 26 Oct 2022 18:05:41 +0800
+Date:   Wed, 26 Oct 2022 18:05:41 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Corentin LABBE <clabbe@baylibre.com>
+Cc:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        ardb@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v10 00/33] crypto: rockchip: permit to pass self-tests
+Message-ID: <Y1kGdWyYPtcgQPtd@gondor.apana.org.au>
+References: <20220927075511.3147847-1-clabbe@baylibre.com>
+ <Y1KctXMZ1+c5uQqd@Red>
+ <4780296.31r3eYUQgx@diego>
+ <Y1jkqiYjXT30/hk5@Red>
 MIME-Version: 1.0
-References: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20221026014227.162121-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVa28=84ZovtWazx0w=xWLDZioK0+CVnoE=NALjMewSkg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVa28=84ZovtWazx0w=xWLDZioK0+CVnoE=NALjMewSkg@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Wed, 26 Oct 2022 10:02:53 +0100
-Message-ID: <CA+V-a8skHerzruXSnOm0bZLLk-O6e0pdh6nysXEFh5RJN-D3eA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r9a07g044: Add CRU_SYSCLK and
- CRU_VCLK to no PM list
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y1jkqiYjXT30/hk5@Red>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Wed, Oct 26, 2022 at 09:41:30AM +0200, Corentin LABBE wrote:
+>
+> Herbert any thought ?
 
-THank you for the review.
+Please let me know exactly which patches you want me to apply.
 
-On Wed, Oct 26, 2022 at 8:58 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, Oct 26, 2022 at 3:42 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
-> > sequence for the CRU block hence add these clocks to
-> > r9a07g044_no_pm_mod_clks[] array.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > * Dropped usage of DEF_NO_PM() macro
-> > * Added CRU_SYSCLK and CRU_VCLK to no PM list
-> > * Updated commit message
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/r9a07g044-cpg.c
-> > +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-> > @@ -412,6 +412,11 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
-> >         MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
-> >  };
-> >
-> > +static const unsigned int r9a07g044_no_pm_mod_clks[] __initconst = {
->
-> This cannot be __initconst, so please drop this keyword.
->
-OK.
-
-> > +       MOD_CLK_BASE + R9A07G044_CRU_SYSCLK,
-> > +       MOD_CLK_BASE + R9A07G044_CRU_VCLK,
-> > +};
->
-> I believe I haven't seen patches yet to add support for these clocks?
-> Perhaps these can be combined?
->
-Ahh my bad, yes the patches have not been sent out for it, I'll
-combine this while adding the clocks.
-
-Cheers,
-Prabhakar
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
