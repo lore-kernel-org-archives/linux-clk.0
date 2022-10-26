@@ -2,276 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E8DFA3741
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 13:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40ACC38A2D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 13:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233713AbiJZNsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 09:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43676 "EHLO
+        id S233953AbiJZNxR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 09:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233568AbiJZNsA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 09:48:00 -0400
+        with ESMTP id S233957AbiJZNwl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 09:52:41 -0400
 Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48C5105CF3;
-        Wed, 26 Oct 2022 06:47:33 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 2A64D5C007A;
-        Wed, 26 Oct 2022 09:47:33 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 26 Oct 2022 09:47:33 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9484F107ABF;
+        Wed, 26 Oct 2022 06:52:18 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id BC11E5C00B2;
+        Wed, 26 Oct 2022 09:52:17 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 26 Oct 2022 09:52:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666792053; x=
-        1666878453; bh=xI1tsfHLvEMtX5r1eIWCouHcztFGCTV7dpqnVfKOqCI=; b=p
-        wPIwCWqDOOTPp6b6Wp1pZwCyMyyoJ4Tjyr//WYt9gY3zJiNQF0N/S0IZ2j3IiVaj
-        bvDtFUHAq4M5aU3RCmcwi3FgQbvIOfQ5jbKO2AUKO3R0Bxddrz/NOxgkJtVWs5zg
-        X0x/xzBZSskKiS7aoF3oAeHAGmDHGZ2QM5VgoXb9KUdBb5wJL1daQawX/cQZ4ITl
-        XNW8jOD47TjY1W62eC+r/O4RPYthn/+UUwChcQ2ttuPkG/RYMAW6ZaBu6yoXxu5I
-        XHuaqUrbeJP2XXXaBgra0iYueocjRMs1d5Bb33z6QcBRz+5EsdfLyJ7ZZjqv60GJ
-        CLu4pH7e7sVWUeG4OlX4Q==
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1666792337; x=1666878737; bh=RKb3JKVHP8
+        tdzTHQi2dg6DBpxBDezcjBmxhlPuMoABU=; b=InNLBB2R+RRoTTQRJV28pqenb+
+        bcGAyLgT6DioT8GP9+7Tku2mYdbGHfQeeinOt8bEva+GCDYOrzYCdA4F27vmlzL7
+        t1O19PDbB5iX6zrT9b+bnHtvbjimqTBSy1bcIaxucHlmHHx8oBzHxdc4oJakjY3L
+        vkyAfWXAQU/Kq75XAmfX3cfcFAgJiViOQsRT1EWsPFMZHNhVBasW4dGTT0Yrb7uK
+        XkbvUbNPGqwcbImicFybIEBWy9UzFb5j03Db2ZG2hrd4Yn7MvyNZ1IrFPPuwAD5X
+        zocRZR6uX/kDxSFiwLVzwPdsLa+d46Ebq6Tqok3awsa0mtXtQ5h5by/m3kaw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666792053; x=
-        1666878453; bh=xI1tsfHLvEMtX5r1eIWCouHcztFGCTV7dpqnVfKOqCI=; b=D
-        7XzyEH0uPPAsJFdaA9NhKwaUOp7U1hrwPZ1ItM7PBoNyQn5+zaLEYofEJGrNz8ei
-        QjNcZGpZAiit8EYyRZvSCs/nOd5TmnWMDCpPRnKT0iARKNj742ejm8n2MhucTn4Z
-        xQ0PhRKpRTlFi6e2xhab77YeW6UoTLwLXc4ksTCXFESOqt48GZOU5zS1lhtFB4yp
-        ecrZg6fsTXbzU/IAEXzZ3LUUHalH1LP9h0YkTXev0Cy5OaD0KpEqUpO9YyW+KuAP
-        +/erDptyxu/oBK95w5j+qj9cxfmBk7MDW8HOXmRqqLbl7a9UAzxAAKOVjAmUwobY
-        +Dl4/JC4G7G2eTtYI1QnQ==
-X-ME-Sender: <xms:dDpZYzOZQP14_kdaW5u_GPEdQipU6_9gkBy6OGg77Pf9KDjJNYrp-g>
-    <xme:dDpZY98oH5vG13hMZZVQGMwldEM5aNwpgZSxkHoJQH7XrP0V8iXDWlMMNueHAs450
-    HmMjh03h2C3Ydp0X80>
-X-ME-Received: <xmr:dDpZYyQZ8RH8Jf-zO8y-F4tInGLMsvvPE9DxzT0zayoK08aHqB96NNjkO13GeU4ige46K7xDCz90oA2EZTVa1UBYaJszRuXEcDR5arw4fYmH5Q>
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1666792337; x=1666878737; bh=RKb3JKVHP8tdzTHQi2dg6DBpxBDe
+        zcjBmxhlPuMoABU=; b=MPYJtOADYhYr1Vja+m1ZxET6e1qkDeE/++z1ygOvs5wi
+        hiWyWrsV3UrbQbrxzW8+yc+g8OjNvPEzeyIi1zAecVIcMjbXpUeNFK5TBHf2h5KX
+        napgwNk4k6gE4VBJDFf2dZjHQvklqOvrCJ+Stm8bS5/Ps8lyxQDe7PRpKIrD0cPk
+        ZDaHDO8440WiEfI8tCXxRCgq/2bPGj4oO+cNHFyMLaksUs288RBOtluE60pywJvt
+        ZknZxzIsZShZG4i+yuqEmCOOyOUUl9k9kdAbjFCRtWs4Ro3MdSYZLmuU9XXXQ59a
+        k4edBaVsd/vb8Piv4ll/ClujB2BLUTw4KgOcvvV3tg==
+X-ME-Sender: <xms:kTtZY9JZ9TiQa-dpELOcOFDJEs19l4UD8WySqEfB-bY9veekKv7ojA>
+    <xme:kTtZY5IGuOATEmgR03enp4vE_TmUdqpusymQetwDM8eW6WL3Wpz1hnrisZ4VAA1D4
+    v_cTo14BFPe4QqMPFw>
+X-ME-Received: <xmr:kTtZY1tQOqYlu7d8IGWUf-sgrzFxpABjS7npRXd76TuI468QfFZPSKMdFLr40TR0rs56snydSdATvW-mYvTZYwOVKEeZfgF2_Z0b43ym36_pUA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrtddvgdejtdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomhepmhgrgihi
-    mhgvsegtvghrnhhordhtvggthhenucggtffrrghtthgvrhhnpeefudfhgeevhefhfedtue
-    evueeluddutdetuddtvddvgeekheelvefhteekteeihfenucevlhhushhtvghrufhiiigv
-    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtg
-    hh
-X-ME-Proxy: <xmx:dTpZY3t4UeoDOLDqfISlGK6kNdW5BVpuCOO16XiTiJ_dXHHStJKjuA>
-    <xmx:dTpZY7eSlu5d2LzToH5Lv220A8YrOWJ-fWa9ydRP2bbLs8Ng4qWoug>
-    <xmx:dTpZYz1-h1ErlNS8zlwhifAPVLCM4RojuLrwiDk1fIEnTgBQaQUCuA>
-    <xmx:dTpZY539s150Fw5tydFJhmq9QuKriAsti75BvUEt4zQkJFBZrGCVxQ>
+    fjughrpefhfffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpehmrgigihhm
+    vgestggvrhhnohdrthgvtghhnecuggftrfgrthhtvghrnheptdejvedthfdvieeuteefue
+    evffdtgedtuedtjedvueejveeuteefueeugfdtudehnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:kTtZY-ZkzW3pvBh0CwZu0_V0MQk3VG_w_JKNPKjsdeROxqhWmn9dTw>
+    <xmx:kTtZY0ZeZv1pYbApem-tt-Mcl7aq5eLTtU-0q_p5kx5VdUCmrwPE8Q>
+    <xmx:kTtZYyCkt_qC2YhtxhoMIBsNOuXpt-Bs1_0IfI9ZyD7wG25sF9r6gA>
+    <xmx:kTtZY6MFWmpjsISNacYeDsuG9b0DMl9Tx7x8n_lOVKwv_admvJ2xeQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Oct 2022 09:47:32 -0400 (EDT)
+ 26 Oct 2022 09:52:17 -0400 (EDT)
 From:   maxime@cerno.tech
-Date:   Wed, 26 Oct 2022 15:46:59 +0200
-Subject: [PATCH v2 2/2] clk: Add trace events for rate requests
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20221018-clk-rate-request-tracing-v2-2-5170b363c413@cerno.tech>
-References: <20221018-clk-rate-request-tracing-v2-0-5170b363c413@cerno.tech>
-In-Reply-To: <20221018-clk-rate-request-tracing-v2-0-5170b363c413@cerno.tech>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>, linux-kernel@vger.kernel.org,
+Date:   Wed, 26 Oct 2022 15:52:15 +0200
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         linux-clk@vger.kernel.org
-X-Mailer: b4 0.10.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5664; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=d6EIls9vpGf2tP8fqMCYnupVPvHrtJyms/XyJWeC0ek=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDMmRViG7fl68783BcThzx51jhdPVRL/v1Hc7ED5ZUcnFeZOZ
- rhZbRykLgxgXg6yYIkuMsPmSuFOzXney8c2DmcPKBDKEgYtTACbC3cvwP01q3Y76O5eXL903/8C2jP
- qX/L3tM/dy/3L6svSQz4OsRUaMDL//LzVj+8yvKy7Wc4ufJ8yirCpcJaqnX+JvweT23wGi7AA=
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
+Message-ID: <20221026135215.nqndtcb2unxqwwux@houat>
+References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech>
+ <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
+ <20221026020800.38AC8C433C1@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2hk6tkezha7y2a7h"
+Content-Disposition: inline
+In-Reply-To: <20221026020800.38AC8C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is currently fairly difficult to follow what clk_rate_request are
-issued, and how they have been modified once done.
 
-Indeed, there's multiple paths that can be taken, some functions are
-recursive and will just forward the request to its parent, etc.
+--2hk6tkezha7y2a7h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Adding a lot of debug prints is just not very convenient, so let's add
-trace events for the clock requests, one before they are submitted and
-one after they are returned.
+Hi,
 
-That way we can simply toggle the tracing on without modifying the
-kernel code and without affecting performances or the kernel logs too
-much.
+On Tue, Oct 25, 2022 at 07:07:58PM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-10-18 06:52:59)
+> > The determine_rate hook allows to select the proper parent and its rate
+> > for a given clock configuration. On another hand, set_parent is there to
+> > change the parent of a mux.
+> >=20
+> > Some clocks provide a set_parent hook but don't implement
+> > determine_rate. In such a case, set_parent is pretty much useless since
+> > the clock framework will always assume the current parent is to be used,
+> > and we will thus never change it.
+> >=20
+> > This situation can be solved in two ways:
+> >   - either we don't need to change the parent, and we thus shouldn't
+> >     implement set_parent;
+> >   - or we don't want to change the parent, in this case we should set
+> >     CLK_SET_RATE_NO_REPARENT;
+> >   - or we're missing a determine_rate implementation.
+> >=20
+> > The latter is probably just an oversight from the driver's author, and
+> > we should thus raise their awareness about the fact that the current
+> > state of the driver is confusing.
+>=20
+> There is another case which is a leaf clk that is a mux where you only
+> expect clk_set_parent() to be used, and not clk_set_rate(). This use
+> case is odd though, so I'm not sure how much we care.
+>=20
+> >=20
+> > It's not clear at this point how many drivers are affected though, so
+> > let's make it a warning instead of an error for now.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  drivers/clk/clk.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >=20
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 57b83665e5c3..11c41d987ff4 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3700,6 +3700,11 @@ static int __clk_core_init(struct clk_core *core)
+> >                 goto out;
+> >         }
+> > =20
+> > +       /* TODO: Promote to an error */
+>=20
+> The documentation should be updated in this patch (see the table of
+> hardware characteristics in Documentation/driver-api/clk.rst).
+>=20
+> > +       if (core->ops->set_parent && !core->ops->determine_rate)
+> > +               pr_warn("%s: %s must implement .set_parent & .determine=
+_rate\n",
+>=20
+> You can grep for it:
+>=20
+>  $ git grep -W 'struct clk_ops .*=3D'
 
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk.c          | 31 +++++++++++++++++++++++++++++++
- include/trace/events/clk.h | 43 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 74 insertions(+)
+TIL about -W. It's awesome, thanks
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index bc6f964cb676..343c50e7e214 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -603,10 +603,15 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 			}
- 
- 			clk_core_forward_rate_req(core, req, parent, &parent_req, req->rate);
-+
-+			trace_clk_rate_request_start(&parent_req);
-+
- 			ret = clk_core_round_rate_nolock(parent, &parent_req);
- 			if (ret)
- 				return ret;
- 
-+			trace_clk_rate_request_done(&parent_req);
-+
- 			best = parent_req.rate;
- 		} else if (parent) {
- 			best = clk_core_get_rate_nolock(parent);
-@@ -630,10 +635,15 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 			struct clk_rate_request parent_req;
- 
- 			clk_core_forward_rate_req(core, req, parent, &parent_req, req->rate);
-+
-+			trace_clk_rate_request_start(&parent_req);
-+
- 			ret = clk_core_round_rate_nolock(parent, &parent_req);
- 			if (ret)
- 				continue;
- 
-+			trace_clk_rate_request_done(&parent_req);
-+
- 			parent_rate = parent_req.rate;
- 		} else {
- 			parent_rate = clk_core_get_rate_nolock(parent);
-@@ -1551,10 +1561,15 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 		struct clk_rate_request parent_req;
- 
- 		clk_core_forward_rate_req(core, req, core->parent, &parent_req, req->rate);
-+
-+		trace_clk_rate_request_start(&parent_req);
-+
- 		ret = clk_core_round_rate_nolock(core->parent, &parent_req);
- 		if (ret)
- 			return ret;
- 
-+		trace_clk_rate_request_done(&parent_req);
-+
- 		req->best_parent_rate = parent_req.rate;
- 		req->rate = parent_req.rate;
- 
-@@ -1605,10 +1620,14 @@ unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
- 
- 	clk_core_init_rate_req(hw->core, &req, rate);
- 
-+	trace_clk_rate_request_start(&req);
-+
- 	ret = clk_core_round_rate_nolock(hw->core, &req);
- 	if (ret)
- 		return 0;
- 
-+	trace_clk_rate_request_done(&req);
-+
- 	return req.rate;
- }
- EXPORT_SYMBOL_GPL(clk_hw_round_rate);
-@@ -1637,8 +1656,12 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
- 
- 	clk_core_init_rate_req(clk->core, &req, rate);
- 
-+	trace_clk_rate_request_start(&req);
-+
- 	ret = clk_core_round_rate_nolock(clk->core, &req);
- 
-+	trace_clk_rate_request_done(&req);
-+
- 	if (clk->exclusive_count)
- 		clk_core_rate_protect(clk->core);
- 
-@@ -2130,10 +2153,14 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 
- 		clk_core_init_rate_req(core, &req, rate);
- 
-+		trace_clk_rate_request_start(&req);
-+
- 		ret = clk_core_determine_round_nolock(core, &req);
- 		if (ret < 0)
- 			return NULL;
- 
-+		trace_clk_rate_request_done(&req);
-+
- 		best_parent_rate = req.best_parent_rate;
- 		new_rate = req.rate;
- 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
-@@ -2329,8 +2356,12 @@ static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
- 
- 	clk_core_init_rate_req(core, &req, req_rate);
- 
-+	trace_clk_rate_request_start(&req);
-+
- 	ret = clk_core_round_rate_nolock(core, &req);
- 
-+	trace_clk_rate_request_done(&req);
-+
- 	/* restore the protection */
- 	clk_core_rate_restore_protect(core, cnt);
- 
-diff --git a/include/trace/events/clk.h b/include/trace/events/clk.h
-index e19edc63ee95..daed3c7a48c1 100644
---- a/include/trace/events/clk.h
-+++ b/include/trace/events/clk.h
-@@ -264,6 +264,49 @@ DEFINE_EVENT(clk_duty_cycle, clk_set_duty_cycle_complete,
- 	TP_ARGS(core, duty)
- );
- 
-+DECLARE_EVENT_CLASS(clk_rate_request,
-+
-+	TP_PROTO(struct clk_rate_request *req),
-+
-+	TP_ARGS(req),
-+
-+	TP_STRUCT__entry(
-+		__string(        name, req->core ? req->core->name : "none")
-+		__string(       pname, req->best_parent_hw ? clk_hw_get_name(req->best_parent_hw) : "none" )
-+		__field(unsigned long,           min                       )
-+		__field(unsigned long,           max                       )
-+		__field(unsigned long,           prate                     )
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name, req->core ? req->core->name : "none");
-+		__assign_str(pname, req->best_parent_hw ? clk_hw_get_name(req->best_parent_hw) : "none");
-+		__entry->min = req->min_rate;
-+		__entry->max = req->max_rate;
-+		__entry->prate = req->best_parent_rate;
-+	),
-+
-+	TP_printk("%s min %lu max %lu, parent %s (%lu)", __get_str(name),
-+		  (unsigned long)__entry->min,
-+		  (unsigned long)__entry->max,
-+		  __get_str(pname),
-+		  (unsigned long)__entry->prate)
-+);
-+
-+DEFINE_EVENT(clk_rate_request, clk_rate_request_start,
-+
-+	TP_PROTO(struct clk_rate_request *req),
-+
-+	TP_ARGS(req)
-+);
-+
-+DEFINE_EVENT(clk_rate_request, clk_rate_request_done,
-+
-+	TP_PROTO(struct clk_rate_request *req),
-+
-+	TP_ARGS(req)
-+);
-+
- #endif /* _TRACE_CLK_H */
- 
- /* This part must be outside protection */
+> but I'm fairly certain a coccinelle script can detect most of these
+> because clk_ops are usually statically defined (although not always).
+>=20
+> Either way I already see that 'owl_comp_div_ops' will trigger this
+> warning. And 'at91sam9x5_smd_ops' looks even more likely. Given that I'm
+> not super keen on applying this patch.
 
--- 
-b4 0.10.1
+It's the reason why I didn't return an error at first, I wanted to
+report that it's invalid and let to drivers the chance to be fixed
+still.
+
+Should I take your above comment as you'd rather have the affected
+drivers fixed in this patch and we then return an error, or is it that
+you don't want that patch at all?
+
+Maxime
+
+--2hk6tkezha7y2a7h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY1k7jwAKCRDj7w1vZxhR
+xf1jAQDGrQExtcQimUytmP89Y4KieiUjk5eWKtH+Tc60q99DIQD/XOKsfZo7EMit
+QwCGZzOoO70UzhoKF8IZvt0ilYs/Hw4=
+=MBW4
+-----END PGP SIGNATURE-----
+
+--2hk6tkezha7y2a7h--
