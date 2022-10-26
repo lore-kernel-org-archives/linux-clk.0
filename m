@@ -2,115 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 311DCFA373E
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Oct 2022 21:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB8DC38A02
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Oct 2022 00:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230157AbiJYVLB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Oct 2022 17:11:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
+        id S231646AbiJZAdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Oct 2022 20:33:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbiJYVK5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 17:10:57 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C3B4332C
-        for <linux-clk@vger.kernel.org>; Tue, 25 Oct 2022 14:10:53 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 8E0CA84E00;
-        Tue, 25 Oct 2022 23:10:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1666732250;
-        bh=VufwXIL1z1GD5jojw1yd+XinvVEZCwOoHqTuaWEVBlg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=RETpExIW/ldOe88gmRhTOWFpmkMxFmy+vG488b84eQnD/lNJCsQpK8GDJH6L4z5T9
-         PWZj1uBklFKJjASMcQUuWVpvsX3TEO8rZN0DgSarBdwoElcKWp0koqg0A6qHMjQc+1
-         wVhN6CWGDAgLBW4taVRhfkaUjcq0YAkG1egIG8Z1KxNmP4w6CB+5gwa9OQo+2Lrk6w
-         acWA7wzc3sKPXu7nl7vwnkLuDrEe3lMo9KGFAjlsoyNzuuljfq02qjeH2XIRSbAby2
-         9lndrhXWKGko98HtxgdgaQ1HDaF57h+kHCSp12yaoAo4o2JGLQUckVU4PJ1pStvgl/
-         7UDJOGndDNqAw==
-Message-ID: <9bd487ef-e64b-8cff-2340-adaaedacf78a@denx.de>
-Date:   Tue, 25 Oct 2022 23:10:49 +0200
+        with ESMTP id S230307AbiJZAdy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Oct 2022 20:33:54 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27BDBE09F7;
+        Tue, 25 Oct 2022 17:33:53 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id sc25so17125685ejc.12;
+        Tue, 25 Oct 2022 17:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4aaWjS4eNJQCSflTPbOyiWS6X5z8XgwuVIyZ0zSHeyw=;
+        b=SHvn6WzuKVF3LpTc/NiE0K7REkU1D+t31ewuYJJDe9vO/IGeR++UK4sJcY4JVfs9P9
+         4tn09MZgZ3umnJxr4I+8KrPkdfBjzNlProITgLufKqnsbp3aQXbC6NCLogOHJwEaxxpe
+         F0uTxKwYT/9nv3v/A7EnOX3iUNOz1GTG1WkEckuAy9wjtbw6hTYgTF7EmnEoh0LtbDra
+         HtVOmE4LVAhvpzeT/16Q6YbPl7I0uMDCskC+koYA7ExOwxG5iseAxtKwolV0o1bWHMx2
+         1KVMFGreiyq9AWLWBaAX2FabnXniRUVJ4LX4Tu9gMNf7bnBVox+SZbflXSSzaODyJqbN
+         MYDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4aaWjS4eNJQCSflTPbOyiWS6X5z8XgwuVIyZ0zSHeyw=;
+        b=Aaff+Hr30eXlESwQUUTC/gPJj1Y5Hx6g/JxIlgsbj1Zn53oYNUTMKnQI6CVq7kectC
+         R5SU+6EzD4RpJsKRMfuQ5I7llNBEfg5pOX2FkhECb54W0lZ3CVIVZOO2+MToFsEO84Pk
+         7tXMRCAsHu4GOljRxtGiYzTLabEZbGus32yWL0zW+R4ZZPFMuGDpOI9xktVBedEn04U4
+         CWdWpEY/3V1vmBvMQuLGj+YSF8YzSvrZOj+xIpe5MBxs9vUbxr7AiJoRd73s9LAvQKzE
+         Z69vQKeNpDv51S82Z6DxmdcVPvVDrRg2XF9DA4GbRjj5SbwXtbsyUBbwRWMSPJ5frbdK
+         lB8Q==
+X-Gm-Message-State: ACrzQf29EMM+3e3U+NSYc2J2jWGpmuwj/D/vd0MZEWqnaIengahmEuqz
+        CII4KVchsTSL+d+aE0N95dZizpWj+YtUEcMcZOrN3dYVCHk=
+X-Google-Smtp-Source: AMsMyM41fHmvE/tw4iklmaAb+tsqtyxfNYyQRmCSC3l1Ydpw8H0fd4O6opPaTD2iDYsaKwcpryWF6XN0IFp4SXx9s9g=
+X-Received: by 2002:a17:906:c14f:b0:793:30e1:96be with SMTP id
+ dp15-20020a170906c14f00b0079330e196bemr29985809ejc.447.1666744431536; Tue, 25
+ Oct 2022 17:33:51 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
-Content-Language: en-US
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
-        abel.vesa@nxp.com, festevam@gmail.com, l.stach@pengutronix.de,
-        laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        mturquette@baylibre.com, ping.bai@nxp.com, sboyd@kernel.org,
-        shawnguo@kernel.org
-References: <20220625013235.710346-1-marex@denx.de>
- <20220625013235.710346-3-marex@denx.de>
- <CAA+D8ANLrPML3Hp3fYyfiSSUs9V6xAu55d4Y2-8cVVAuTNwaMw@mail.gmail.com>
- <bf2af142-102b-24e0-a9d5-01ad520f7aee@denx.de>
- <CAA+D8ANdOQaz05_SCmTgEW_bCS4ABBLgMzXese_3WWiF8WxzqA@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAA+D8ANdOQaz05_SCmTgEW_bCS4ABBLgMzXese_3WWiF8WxzqA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20220929185119.335273-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220929185119.335273-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXR+Nsyd0EkNeBvUOpm+qPNUDMZedfY0wErESi5x2Z9JA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXR+Nsyd0EkNeBvUOpm+qPNUDMZedfY0wErESi5x2Z9JA@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 26 Oct 2022 01:33:24 +0100
+Message-ID: <CA+V-a8ujJR-Ca4QRgiosPfaEmscFKERHySUL9xpzr794x5EzmQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD clocks
+ support PM
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/20/22 05:06, Shengjiu Wang wrote:
-> On Wed, Oct 19, 2022 at 10:33 PM Marek Vasut <marex@denx.de> wrote:
-> 
->> On 10/14/22 03:53, Shengjiu Wang wrote:
->>> Hi Marek
->>
->> Hi,
->>
->> [...]
->>
->>>> +static const struct clk_parent_data clk_imx8mp_audiomix_pll_parents[]
->> = {
->>>> +       { .fw_name = "osc_24m", .name = "osc_24m" },
->>>> +       { .name = "dummy" },
->>>> +       { .name = "dummy" },
->>>> +       { .name = "dummy" },
->>>> +};
->>>> +
->>>> +static const struct clk_parent_data
->> clk_imx8mp_audiomix_pll_bypass_sels[]
->>>> = {
->>>> +       { .fw_name = "sai_pll", .name = "sai_pll" },
->>>> +       { .fw_name = "sai_pll_ref_sel", .name = "sai_pll_ref_sel" },
->>>> +};
->>>> +
->>>> +#define CLK_GATE(gname, cname)
->>   \
->>>> +       {
->>   \
->>>> +               gname"_cg",
->>   \
->>>> +               IMX8MP_CLK_AUDIOMIX_##cname,
->> \
->>>> +               { .fw_name = "ahb", .name = "ahb" }, NULL, 1,
->>   \
->>>>
->>>> { .fw_name = "audio_root_clk", .name = "audio_root_clk" }, NULL, 1,
->>>>        \
->>>>
->>>> Should be the 'audio_root_clk' better?
->>>>
->>>> Then the 'clocks' and 'clock-names' can be removed in dts node?
->>>>
->>>> Will you continue to follow up this patch series?
->>
->> Sure. Did anyone from NXP finally test this patch series, and can
->> provide useful review ?
->>
-> 
-> I have tested it, and I think "ahb" should be "audio_root_clk". others LGTM.
+Hi Geert,
 
-It seems those clock are actually called IMX8MP_CLK_AUDIO_AHB_ROOT in 
-the NXP downstream BSP, so those clock do drive AHB, correct ? If so, we 
-should keep the "ahb" name here, to differentiate them from already 
-existing IMX8MP_CLK_AUDIO_AXI , which seem to drive the AXI part.
+Thank you for the review.
+
+On Tue, Oct 25, 2022 at 9:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Sep 29, 2022 at 8:51 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > There are cases where not all CPG_MOD clocks should be assumed to support
+> > PM. For example on the CRU block there is a particular sequence that needs
+> > to be followed to initialize the CSI-2 D-PHY in which individual clocks
+> > need to be turned ON/OFF, due to which Runtime PM support wasn't used by
+> > the CRU CSI-2 driver.
+> >
+> > This patch adds support to allow indicating if PM is supported by the
+> > CPG_MOD clocks. A new macro is DEF_NO_PM() is added which sets the no_pm
+> > flag in struct rzg2l_mod_clk and when the driver uses Runtime PM support
+> > no_pm flag is checked to see if the clk needs to included as part of
+> > Runtime PM.
+> >
+> > CPG_MOD clocks with no_pm flag set need to be individually turned ON/OFF
+> > depending on the requirement of the driver.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > RFC->v1
+> > * Added no_pm_mod_clks and num_no_pm_mod_clks members as part of
+> >   struct rzg2l_cpg_priv
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/clk/renesas/rzg2l-cpg.c
+> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> > @@ -108,12 +108,16 @@ struct rzg2l_cpg_priv {
+> >         unsigned int num_mod_clks;
+> >         unsigned int num_resets;
+> >         unsigned int last_dt_core_clk;
+> > +       int *no_pm_mod_clks;
+> > +       unsigned int num_no_pm_mod_clks;
+> >
+> >         const struct rzg2l_cpg_info *info;
+> >
+> >         struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
+> >  };
+> >
+> > +static struct rzg2l_cpg_priv *rzg2l_cpg_priv;
+>
+> I think you can do without this, by moving the currently separately
+> allocated struct generic_pm_domain into struct rzg2l_cpg_priv,
+> and using container_of() on the currently unused pointer passed to
+> rzg2l_cpg_attach_dev().
+>
+Agreed.
+
+> Note to self: get rid of the cpg_mssr_clk_domain static pointer in
+> the CPG/MSSR driver.
+>
+> > +
+> >  static void rzg2l_cpg_del_clk_provider(void *data)
+> >  {
+> >         of_clk_del_provider(data);
+> > @@ -1225,16 +1229,24 @@ static int rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
+> >
+> >  static bool rzg2l_cpg_is_pm_clk(const struct of_phandle_args *clkspec)
+> >  {
+> > +       struct rzg2l_cpg_priv *priv = rzg2l_cpg_priv;
+> > +       const struct rzg2l_cpg_info *info = priv->info;
+>
+> info is used only once, expand user below?
+>
+With the below change suggested info will be used more than once
+(3-times), so I'll keep it.
+
+> > +       unsigned int id;
+> > +       unsigned int i;
+> > +
+> >         if (clkspec->args_count != 2)
+> >                 return false;
+> >
+> > -       switch (clkspec->args[0]) {
+> > -       case CPG_MOD:
+> > -               return true;
+> > -
+> > -       default:
+> > +       if (clkspec->args[0] != CPG_MOD)
+> >                 return false;
+> > +
+> > +       id = clkspec->args[1] + info->num_total_core_clks;
+> > +       for (i = 0; i < priv->num_no_pm_mod_clks; i++) {
+> > +               if (priv->no_pm_mod_clks[i] == id)
+> > +                       return false;
+> >         }
+> > +
+> > +       return true;
+> >  }
+> >
+> >  static int rzg2l_cpg_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+>
+> > @@ -1366,8 +1379,26 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+> >         for (i = 0; i < info->num_core_clks; i++)
+> >                 rzg2l_cpg_register_core_clk(&info->core_clks[i], info, priv);
+> >
+> > -       for (i = 0; i < info->num_mod_clks; i++)
+> > +       priv->num_no_pm_mod_clks = 0;
+> > +       for (i = 0; i < info->num_mod_clks; i++) {
+> > +               if (info->mod_clks[i].no_pm)
+> > +                       priv->num_no_pm_mod_clks++;
+> > +       }
+> > +
+> > +       if (priv->num_no_pm_mod_clks && info->num_mod_clks) {
+> > +               priv->no_pm_mod_clks =
+> > +                               devm_kmalloc_array(dev, priv->num_no_pm_mod_clks,
+> > +                                                  sizeof(info->mod_clks[0].id),
+> > +                                                  GFP_KERNEL);
+> > +               if (!priv->no_pm_mod_clks)
+> > +                       return -ENOMEM;
+> > +       }
+> > +
+> > +       for (i = 0, j = 0; i < info->num_mod_clks; i++) {
+> > +               if (info->mod_clks[i].no_pm)
+> > +                       priv->no_pm_mod_clks[j++] = info->mod_clks[i].id;
+> >                 rzg2l_cpg_register_mod_clk(&info->mod_clks[i], info, priv);
+> > +       }
+>
+> Alternatively, you could have a separate rzg2l_cpg_info.no_pm_clks[]
+> array, like .crit_mod_clks[], and do the counting etc. at compile-time.
+>
+Agreed.
+
+Cheers,
+Prabhakar
