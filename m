@@ -2,91 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95129FA3740
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 15:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF62ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 16:17:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235869AbiJ0P6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 11:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37254 "EHLO
+        id S236415AbiJ0QR4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 12:17:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235121AbiJ0P6a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 11:58:30 -0400
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9366D1958DA
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 08:58:29 -0700 (PDT)
-Received: by mail-qv1-xf2e.google.com with SMTP id i12so1705372qvs.2
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 08:58:29 -0700 (PDT)
+        with ESMTP id S236236AbiJ0QRz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 12:17:55 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B340B18499C;
+        Thu, 27 Oct 2022 09:17:54 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id f8so1318755qkg.3;
+        Thu, 27 Oct 2022 09:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XThBhQQU/fAMR7//UjBcVca9eLJYq0zQRqbYflF3e60=;
-        b=vn5+VIstoT3RANnBakJr3oJjBGf3nRuZN0W49n/m5aEv7EzCNUfP8eqJz0jkJtP/nh
-         ea8DtB0ONmmQcGED66p0MgwexUnbkOOlWMJgLMJOC4kxkiyznwKDexg41DM4giKqvMLW
-         QMLF+YvW9Rg8s2N7XkK900Yfa7eCiYO1V36vOxjMXQHOZl1OBifYkQXOwV0wcBrOBBHc
-         H2hMrx6ivQ9VclJzWvz7HNCiCU0Tsvisyc5k14hb+7+IoPKqJot5Vuvn27LXF9+f4qNj
-         OVTD1sGcXmDLEo7O1VuDsPNQ05dbaoCOF90pRkxi30DCgQyE2Ksq0Vu4jo6VZXNeDGcM
-         cHNA==
+        bh=WNivv6DRz6IEkkxyGRhb+JocG+RcUmjQEd9pXKbOdDc=;
+        b=NxS8gxZ5r2NidNCaiTXc+eL/q287MblVn2H5BsRA7or5nWiqGB6CkpEOwUw0ckzECs
+         yjt3sPFNpfdMT+XrqidYEuhYGhrNNGz7B5Ez9Mm9CiJfpcEJssXc8dloV8nM93+xBrHR
+         +aiqUB+ntichlicautD/OLfx/lO6ufjVKVMarUVBt3o8uR13AnIHVVSJH6nz3jcv/qmF
+         tUicgzZbJew7Yno+y1GqF7887A2KZPqZJSE023H42rx2wsxA6+S6S7ACNHWdStf6TZa0
+         ypb/lxBeharZN2Y2L29TT9md983qf412hShCxXQBnRVxzDhwVcJnYzhl8+mHxknZTr6Q
+         WYXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XThBhQQU/fAMR7//UjBcVca9eLJYq0zQRqbYflF3e60=;
-        b=mlApUbxVGU1CqvgDZYSnrv+R5gA1doQKQ0dcfsxJQbS5IoEiMRGVNhJVy3BIDUr2Ar
-         B5SIUTGRyrg2j2CHfA0eKXvK0xg+C1lEn0PLSfFMh6ysNdY/i1iFu+Vh8cgGvqSF+B0u
-         6yDzfhIX++2zYjrIAAn+hAd9d0GRr6U65Mfr3tx3tapGrHZ6LSfRh/07gJsx018oCMkC
-         X9KepiLWGTNkvLHSZvTh/xlo7LJgRecQKZ+HF68MKJVa++MFSHCJaUXqmQkRaBk9qOSm
-         P9qUj/NxllHiMSRVz2Me5/2mqKhKl5FW2ZYtYJOj3EOnlObNdSUtTFM2AGQmM4tNHKQ8
-         Up3Q==
-X-Gm-Message-State: ACrzQf1Va3mzVSHs2c/9UrPp8G9kPDaG2Mx4X9/jG09l/Ox3qVeWrydh
-        gL9ys5KollkqTT6ggY0kUOCBeg==
-X-Google-Smtp-Source: AMsMyM63dAZmL6dYeU/3TYl4x1vmFYE4NdY6zOrpG5oeG2B9Bloxk1vl5nT4e1Q3apnTjbkPHHAhQQ==
-X-Received: by 2002:a05:6214:2461:b0:4bb:4aa2:e59e with SMTP id im1-20020a056214246100b004bb4aa2e59emr27458509qvb.98.1666886308766;
-        Thu, 27 Oct 2022 08:58:28 -0700 (PDT)
-Received: from [192.168.1.11] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id h129-20020a37b787000000b006e702033b15sm1183574qkf.66.2022.10.27.08.58.27
+        bh=WNivv6DRz6IEkkxyGRhb+JocG+RcUmjQEd9pXKbOdDc=;
+        b=KglMzB1Rjpi/F2a3Kduj7NGiA5RRM8zAHIbEaaLGBoCylTzYpgBxc9gT1+/F+2Su8L
+         q73IxeIF1sXMEwYPtZrtJL9L0FJPHmpMlWc9hBDYEFfisQfNUNBCsiZ8BKXLDAPIWYuV
+         3Yrg9JBdy9tFKGmljN7OWGTYSL/7UG15uu/y5irPH/6QQkyKwQvLVTyVbSWn9KCWJqoU
+         bMzgi5X0EHsxtjW4h9gYGEsS27HWROwHrF1/g599eMeOUjjfGeG6qYeyKWvAqRmjyjz0
+         sSuUR2VxuEEBLYMPdo6iH9a0VTuBp7Q7NDtPyVmoPntVMZkulS5viuM/070sD0CVgOK6
+         yQgQ==
+X-Gm-Message-State: ACrzQf0yAIyOHh/qcirppPevU6q1WHa6k0zK8BH7/aELoDGoJj/G2J+O
+        uCyaw3dFfpJkrUg4Q0uUgVk=
+X-Google-Smtp-Source: AMsMyM5vHmoX2lyAii7orMewell05XbgGBaMZ0nuXVmF0ltTsUChJojDSXLe3If80wF1op6DMfBhEQ==
+X-Received: by 2002:a05:620a:40cb:b0:6ee:79ce:e985 with SMTP id g11-20020a05620a40cb00b006ee79cee985mr34437793qko.219.1666887473804;
+        Thu, 27 Oct 2022 09:17:53 -0700 (PDT)
+Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id y27-20020a37f61b000000b006cf19068261sm1177502qkj.116.2022.10.27.09.17.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Oct 2022 08:58:28 -0700 (PDT)
-Message-ID: <621c7467-6c3d-09a6-dd16-b9fbc22f7896@linaro.org>
-Date:   Thu, 27 Oct 2022 11:58:26 -0400
+        Thu, 27 Oct 2022 09:17:52 -0700 (PDT)
+Message-ID: <5c26e62a-0e69-aad6-c72f-eb7fc28051cb@gmail.com>
+Date:   Thu, 27 Oct 2022 09:17:51 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.0
-Subject: Re: [PATCH v3 5/5] dt-bindings: qcom,pdc: Introduce pdc bindings for
- QDU1000 and QRU1000
+Subject: Re: [PATCH v5 3/7] firmware: raspberrypi: Provide a helper to query a
+ clock max rate
 Content-Language: en-US
-To:     Melody Olvera <quic_molvera@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20221026190441.4002212-1-quic_molvera@quicinc.com>
- <20221026190441.4002212-6-quic_molvera@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221026190441.4002212-6-quic_molvera@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+        Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
+        David Airlie <airlied@linux.ie>, Ray Jui <rjui@broadcom.com>
+Cc:     linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+References: <20220815-rpi-fix-4k-60-v5-0-fe9e7ac8b111@cerno.tech>
+ <20220815-rpi-fix-4k-60-v5-3-fe9e7ac8b111@cerno.tech>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220815-rpi-fix-4k-60-v5-3-fe9e7ac8b111@cerno.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/10/2022 15:04, Melody Olvera wrote:
-> Add compatible fields for QDU1000 and QRU1000 pdcs.
+
+
+On 10/27/2022 5:52 AM, Maxime Ripard wrote:
+> The firmware allows to query for its clocks the operating range of a
+> given clock. We'll need this for some drivers (KMS, in particular) to
+> infer the state of some configuration options, so let's create a
+> function to do so.
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Looks ok, except usual stuff to fix...
-
-
-Best regards,
-Krzysztof
-
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
