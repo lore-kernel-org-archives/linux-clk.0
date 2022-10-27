@@ -2,98 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB37FA3741
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 01:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92B7FA3740
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 01:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233840AbiJ0B0P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Oct 2022 21:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46360 "EHLO
+        id S233648AbiJ0Byp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Oct 2022 21:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233849AbiJ0B0J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 21:26:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F7872FD2;
-        Wed, 26 Oct 2022 18:26:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 29DDCB82487;
-        Thu, 27 Oct 2022 01:26:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6769C433C1;
-        Thu, 27 Oct 2022 01:26:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666833965;
-        bh=hYASDY/RBPj7jGgnN4KncjSFTtzdy9NTDXP3AodJm+4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iJnBJo5BoHhr4k0kZgdsGd03Rb6LjjifodTow4Ad99tp1iDvTi0lPNFavQN8svbIV
-         1xe8u+gUxpSkbNvVQ+Q6OyZGHH/0WLMnAHJQ2HcVTyq+4GR3huUcpkUZoeh8k68GSg
-         7OCpRGxRk3ECJQ0YphQu2epB/pswj2RLrO9+uNNKwHglmXKp9ZmB7seyKd8ZX0z7C5
-         PsyHMIacUFrHh8MJJUhZb2mMMLjvi7HSz5zo4tbV1hdYYeTuuWHOkL8QGOSSFfrAQm
-         kc9TlU9xam3S2NTxl64v4XtZtBXIwEIk52XIoMZQDoI6pNOCbTvLSl3LFdSJ35kHwz
-         1olplLQyy/lqw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <07B628ED6CABEF1D+932737cc-7d4b-4071-531e-82f88d89a872@linux.starfivetech.com>
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com> <20220929175602.19946-1-hal.feng@linux.starfivetech.com> <20220930214824.A14ACC433D6@smtp.kernel.org> <CAJM55Z8xxrKqaN64KAP9miTis4wFbL2S9uhV5h-SOiYjbYng+g@mail.gmail.com> <20221012230525.C6E58C433D7@smtp.kernel.org> <07B628ED6CABEF1D+932737cc-7d4b-4071-531e-82f88d89a872@linux.starfivetech.com>
-Subject: Re: [PATCH v1 15/30] clk: starfive: Use regmap APIs to operate registers
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-To:     Hal Feng <hal.feng@linux.starfivetech.com>
-Date:   Wed, 26 Oct 2022 18:26:03 -0700
-User-Agent: alot/0.10
-Message-Id: <20221027012605.B6769C433C1@smtp.kernel.org>
+        with ESMTP id S229456AbiJ0Byk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2022 21:54:40 -0400
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBFC402D3;
+        Wed, 26 Oct 2022 18:54:38 -0700 (PDT)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B28751AB23A;
+        Thu, 27 Oct 2022 03:54:36 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7CE4F1AB237;
+        Thu, 27 Oct 2022 03:54:36 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 08353183486C;
+        Thu, 27 Oct 2022 09:54:34 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     shengjiu.wang@gmail.com, abelvesa@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, marex@denx.de
+Subject: [PATCH v2 1/2] dt-bindings: clock: imx8mp: Add ids for the audio shared gate
+Date:   Thu, 27 Oct 2022 09:34:01 +0800
+Message-Id: <1666834442-5609-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hal Feng (2022-10-22 21:11:41)
-> On Wed, 12 Oct 2022 16:05:23 -0700, Stephen Boyd wrote:
-> > I think we should use auxiliary bus and split the driver logically into
-> > a reset driver in drivers/reset and a clk driver in drivers/clk. That
-> > way the appropriate maintainers can review the code. There is only one
-> > platform device with a single reg property and node in DT, but there are
-> > two drivers.=20
->=20
-> Yes, I agree that the reset driver and the clock driver should be split.
-> However, I think using auxiliary bus is a little bit complicated in this
-> case, because the reset is not a part of functionality of the clock in=20
-> JH7110. They just share a common register base address.
+From: Abel Vesa <abel.vesa@nxp.com>
 
-That is why auxiliary bus exists.
+All these IDs are for one single HW gate (CCGR101) that is shared
+between these root clocks.
 
-> I think it is=20
-> better to use ioremap for the same address, and the dt will be like
->=20
-> syscrg_clk: clock-controller@13020000 {
->         compatible =3D "starfive,jh7110-clkgen-sys";
->         reg =3D <0x0 0x13020000 0x0 0x10000>;
->         ...
-> };
-> syscrg_rst: reset-controller@13020000 {
->         compatible =3D "starfive,jh7110-reset-sys";
->         reg =3D <0x0 0x13020000 0x0 0x10000>;
->         ...
-> };
->=20
-> What do you think of this approach? I would appreciate your suggestions.
->=20
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+changes in v2:
+- split dt-binding to separate patch
 
-We shouldn't have two different nodes with the same reg property. Please
-ioremap in whatever driver probes and creates the auxiliary device(s)
-and then pass the void __iomem * to it.
+ include/dt-bindings/clock/imx8mp-clock.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+index 9d5cc2ddde89..2f6fec299662 100644
+--- a/include/dt-bindings/clock/imx8mp-clock.h
++++ b/include/dt-bindings/clock/imx8mp-clock.h
+@@ -324,8 +324,17 @@
+ #define IMX8MP_CLK_CLKOUT2_SEL			317
+ #define IMX8MP_CLK_CLKOUT2_DIV			318
+ #define IMX8MP_CLK_CLKOUT2			319
++#define IMX8MP_CLK_AUDIO_AHB_ROOT		320
++#define IMX8MP_CLK_AUDIO_AXI_ROOT		321
++#define IMX8MP_CLK_SAI1_ROOT			322
++#define IMX8MP_CLK_SAI2_ROOT			323
++#define IMX8MP_CLK_SAI3_ROOT			324
++#define IMX8MP_CLK_SAI5_ROOT			325
++#define IMX8MP_CLK_SAI6_ROOT			326
++#define IMX8MP_CLK_SAI7_ROOT			327
++#define IMX8MP_CLK_PDM_ROOT			328
+ 
+-#define IMX8MP_CLK_END				320
++#define IMX8MP_CLK_END				329
+ 
+ #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
+ #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
+-- 
+2.34.1
+
