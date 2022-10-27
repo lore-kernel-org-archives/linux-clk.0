@@ -2,90 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 311E9ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 23:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE95FA373D
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 23:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235273AbiJ0XJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 19:09:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
+        id S234803AbiJ0XLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 19:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234803AbiJ0XJM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 19:09:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B224900C1;
-        Thu, 27 Oct 2022 16:09:11 -0700 (PDT)
+        with ESMTP id S229941AbiJ0XLF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 19:11:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14709A28C;
+        Thu, 27 Oct 2022 16:11:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EDD2162591;
-        Thu, 27 Oct 2022 23:09:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF58C43470;
-        Thu, 27 Oct 2022 23:09:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C51B62595;
+        Thu, 27 Oct 2022 23:11:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76F5C43470;
+        Thu, 27 Oct 2022 23:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666912150;
-        bh=hkVd0MHbdzv+0Fr8xN0jWV93AyTqcsDg/4xXphAOWoY=;
+        s=k20201202; t=1666912260;
+        bh=KpiEoi6pX2qKSKUG5diicN97WlLWtC2P66cRAuNsOnE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pQYR3IBIYxC2QnaF5LND3DsXVVjn40xDYIyLCoihxWofX3ZqgAAbOJXAoN5nGPzos
-         BP2ceaLG0LYEVVnTQC+ausc84DRwddiqM6pORsTRgVEmFl+HCo71CG0KCyCVyTPup0
-         7hta12meYHD6jgaMM6prV62LyaEAeYslaERDhUL1BYTmvDuJctdYvK3apQw9A0YRud
-         r5QETThHHgd7sXa0+pgIxoqz2ywZU/h19H3zY6gzpRRkfFeOXLguiLUr0deb1l+1io
-         Md0rj7W6MN6D+3cXAkxHi2pszbD8TyEyoMqKPLWvldCSgbUwGT/7T2sXflpmfCYXWK
-         WrXm5LTs2svTg==
+        b=Aoa2evZvjzvRF4K1QlaTMcMNpdb1/mxlcG+r8YmUmGF1l34Uecq70uF9O7xf+ICY6
+         2cQdLsVudksJ9udKltQeOWBIHEEye9dHJGVqiAjWS1HbTV3UVisCAbuiYMvo2Yp81o
+         asisy+aHeOSh5t7qrsLsMnpIID7Zcb5MfYQ5OtLH7NB8PDjZjjDupHr5NQYBVwFcrX
+         FxDZmmz94qFYesdi7izz8Foh4VPm/W80yAAQUKjsumAbM9JWXX9cNuSpvXAi0rdQnQ
+         s2pS4HeRbDMHCI541D2Tyy5G1DySXnjARmYp7LWWxFqOiLRKVgWgxXCnMg4BON7kDZ
+         na7zbhXEsEnwQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221027101159.942843-6-peng.fan@oss.nxp.com>
-References: <20221027101159.942843-1-peng.fan@oss.nxp.com> <20221027101159.942843-6-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH 5/6] clk: imx: keep hsio bus clock always on
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
+References: <20221021202254.4142411-1-arnd@kernel.org> <20221021203329.4143397-2-arnd@kernel.org>
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jacky Bai <ping.bai@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abel.vesa@linaro.org,
-        abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Thu, 27 Oct 2022 16:09:08 -0700
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 27 Oct 2022 16:10:58 -0700
 User-Agent: alot/0.10
-Message-Id: <20221027230910.4AF58C43470@smtp.kernel.org>
+Message-Id: <20221027231100.C76F5C43470@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (OSS) (2022-10-27 03:11:58)
-> From: Jacky Bai <ping.bai@nxp.com>
+Quoting Arnd Bergmann (2022-10-21 13:27:35)
+> From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> During Linux System suspend/resume stress test after System Sleep
-> enabled, system will stuck sometimes. It is because NICMIX is powered
-> down, which HSIOMIX(always on) is not powered down. When NICMIX
-> powering down, HSIOMIX will get a hardware handshake, without HSIO ROOT
-> clk, the handshake will lose. Then after NICMIX power on when system
-> resume, the access to HSIOMIX through NICMIX would be broken. So keep HSIO
-> ROOT always on.
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
 >=20
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
->  [Peng Fan] rewrite commit message
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/clk/imx/clk-imx93.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 422ad3c89845..74e8d810db7f 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -109,7 +109,7 @@ static const struct imx93_clk_root {
->         { IMX93_CLK_CCM_CKO2,           "ccm_cko2_root",        0x1d00, C=
-KO2_SEL, },
->         { IMX93_CLK_CCM_CKO3,           "ccm_cko3_root",        0x1d80, C=
-KO1_SEL, },
->         { IMX93_CLK_CCM_CKO4,           "ccm_cko4_root",        0x1e00, C=
-KO2_SEL, },
-> -       { IMX93_CLK_HSIO,               "hsio_root",            0x1e80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_HSIO,               "hsio_root",            0x1e80, L=
-OW_SPEED_IO_SEL, CLK_IS_CRITICAL},
 
-Similarly add a comment for critical flag please.
+Acked-by: Stephen Boyd <sboyd@kernel.org> # clk
