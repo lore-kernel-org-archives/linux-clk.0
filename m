@@ -2,108 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CD1ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 21:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A6FFA3740
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 22:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237164AbiJ0V7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 17:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
+        id S236369AbiJ0WAG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 18:00:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237160AbiJ0V7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 17:59:35 -0400
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9C7F26E7
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 14:59:31 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id o8so2727754qvw.5
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 14:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q7ugP0tq/kTqwapqa/g5RjNpPzZRDaE9uddOPhLuISc=;
-        b=o7sW47GHzXAoiD2j6H6QFu/7GUf/pA0/oDdbcm6+sZ9bOmjpAo/qB24B0IowZvt9P+
-         uEs+wbUUSlkmnLlVdNkn65fxdk5zBa5isbU+FAL+wpT+pO1YhGTdX2/pgOan1gvHNCPl
-         9qVN6T8ALdciWQ3Oo6k2+p55TKJ4AkaLgvxO0mveT+TCFzB/fAyxkViEbfJuupiToNIT
-         NQQWZo2QRbvY79zCmS+btF6flLLVtGFS+nGdVlM9nxoJw0C4oyKnyiBlDa+GMxDYAbRT
-         Yl7yiRraviHFOwYRsvBF8ogkgaSuOEtsuk8P1O7ywuqYPLFqDn6QWUmaDLBhaxsQL30e
-         +N2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7ugP0tq/kTqwapqa/g5RjNpPzZRDaE9uddOPhLuISc=;
-        b=73nFVinRKUQqPgiYxNnR/h6Z3nuwhsCKraVF3sQcLLz6g3J157s/ZXQ1LlORYtHrAt
-         PsmuOrtSwvw0WEd3xfgkKiLljJiIz3yxL08aKC44JMcZwtk9rUNv/Y8I7p3JqGxLIh2S
-         iWSdwxQEPQ7ZBsFYRqlbh5NdDpFzdJOe9KbYz8a0BgqQpUMBAh+qZQxs3b+3LXY5xUBR
-         yEdfQiEkuoYv6n2fz2KPgtH/Jxyo0Vgp8YnIOksrwaX8Z/ELyhWNCm3sEAa1FQ7xQ3FT
-         GYMILuu34bf0rVnsoFhGuT7GG+7OFgMi1GNvKFZ6lI2EGv79OUC2ohuz3u08fCeGy8nG
-         r2DA==
-X-Gm-Message-State: ACrzQf3gwvmgKMTIZW96ihuAMJf+rBmUIJoWypaTiQXfKcM8YoR7xa6m
-        PGXG+l7iu4EAajGX4bynR6ttvQ==
-X-Google-Smtp-Source: AMsMyM4FZ19Rf+aeDh57uIFiQqlt84X/FMAN2OviCklU/tLpK688yp4VPjiM2ZG3IyKbfArb+7ea7Q==
-X-Received: by 2002:a05:6214:20a7:b0:4bb:9359:8368 with SMTP id 7-20020a05621420a700b004bb93598368mr10237414qvd.122.1666907971077;
-        Thu, 27 Oct 2022 14:59:31 -0700 (PDT)
-Received: from [192.168.1.11] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id k10-20020a05620a414a00b006be8713f742sm1794489qko.38.2022.10.27.14.59.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Oct 2022 14:59:30 -0700 (PDT)
-Message-ID: <2c8c4642-8aee-3da3-7698-5e08b4c5894d@linaro.org>
-Date:   Thu, 27 Oct 2022 17:59:28 -0400
-MIME-Version: 1.0
+        with ESMTP id S237086AbiJ0WAB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 18:00:01 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-eopbgr60046.outbound.protection.outlook.com [40.107.6.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1003D186EA;
+        Thu, 27 Oct 2022 14:59:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MzLT5Ck5aQCXbymHq1pvbsmxW3kWoyjVTJfWmFhLeZ9zdUbfUj4MGtNKRDEuHAxRnQ2uEUjzZxbFKQvQCsoYNFXGERPXGUKbBYFfcpdnpE/t3DWQbao41q0E5nl1pmVHOjkKYifvNNLcps0nkJWWmWEaf6yoUXPHWrTZBjpODKy3ygudJ2sLcPHK4IL3Ao/3sqbsn8FemyV7UZQrM1FbLm3EaI3wW9k+C8VEIeCEnIGza0Q6m2ylP9PCXiRgsZkWK+ihSoMWTuNeepmzT+7OFCztZqkB7lwlnLASRfDjmurmAh39hOMl/hVHncALrCnzdqGLto8q/xyFdtDx2t11Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/oiGdJcywM3+glaTqHJKZ0IKkpLHg15QjctF18FkvPQ=;
+ b=lKo1V6MzWxI3oDRCnAB4/kyVypr7CwXafmiFaE5mBURXSlrUsKbjGfdcSSmU9yFoSCgPSRqYR++J9y8zU7cYQByATb6Bqt6luMNQtz2Ktl0YIG5vWgwjUdqSPEwiUFAyop8gm6nOE9JJUZJW1BePq3HPq9Y9uuOzBsud39CfRJGDZL+BZzsLT6I6vwZx14CUmxnrdH59ZkZhb8YT0VAJdhdjeiDfVq9z55iZyGyoVxWFz9s5HxB3fqZIbDPPdA/2o5escUGCSNL1OFSflHDyfIiRYZ+PWIv1JmLN/rrxBnafbPR+hgt7C6r09ZipD/ZtjVZtii39glw45wGuaYpYww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/oiGdJcywM3+glaTqHJKZ0IKkpLHg15QjctF18FkvPQ=;
+ b=1kNHr4plQE7ZNFdPwEJ95K9hvXmOCFtx1S+FnjBQBlFub3TBK+AoVxCgLFL1lSK/Gs3IcpuCG8yLxRO889+a+eZpJhzZpP7cQOgGHDntjCwq8miuz1TY4AGxIUurgFqoCsrFQ2CfNdJWdTEghBBC5FENxqwf5NuDq3V4Hp4oZ3Kk780ZfopbSYCYIxuagKSg+QEhTYIpGHepYLKmZF+eCOip12hcrU0j9dJ/hD+EU92OFWmdUeIZE9YbfS/i/qtKrP7JK242dyrlkLf1FjXrob17wyeufOyZujqzfuEI4Zn2y650GIPEu8lbpCKeRoNgRgN7OCJy18Yg6Ry9HXD/aQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB7PR03MB4972.eurprd03.prod.outlook.com (2603:10a6:10:7d::22)
+ by AM9PR03MB7169.eurprd03.prod.outlook.com (2603:10a6:20b:266::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.23; Thu, 27 Oct
+ 2022 21:59:55 +0000
+Received: from DB7PR03MB4972.eurprd03.prod.outlook.com
+ ([fe80::9489:5192:ea65:b786]) by DB7PR03MB4972.eurprd03.prod.outlook.com
+ ([fe80::9489:5192:ea65:b786%7]) with mapi id 15.20.5769.015; Thu, 27 Oct 2022
+ 21:59:54 +0000
+Message-ID: <eb9590e6-d26f-84d7-16d1-e00cc112fda9@seco.com>
+Date:   Thu, 27 Oct 2022 17:59:44 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.0
-Subject: Re: [PATCH v3 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC
- clock bindings
+Subject: Re: [PATCH v8 3/9] dt-bindings: clock: Add ids for Lynx 10g PLLs
 Content-Language: en-US
-To:     Melody Olvera <quic_molvera@quicinc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        devicetree@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        Rob Herring <robh@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20221026190441.4002212-1-quic_molvera@quicinc.com>
- <20221026190441.4002212-2-quic_molvera@quicinc.com>
- <e5009a33-1f71-1fe3-3a06-98bba031fdf0@linaro.org>
- <20221027182449.366AEC433D6@smtp.kernel.org>
- <cb9a2732-0904-4a2b-61a5-a6d65cad58ae@linaro.org>
- <a5e8c70a-3358-513b-c8a5-7a7903f6ea42@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a5e8c70a-3358-513b-c8a5-7a7903f6ea42@quicinc.com>
+        linux-clk@vger.kernel.org
+References: <20221027191113.403712-1-sean.anderson@seco.com>
+ <20221027191113.403712-4-sean.anderson@seco.com>
+ <20221027214947.3E375C433D7@smtp.kernel.org>
+From:   Sean Anderson <sean.anderson@seco.com>
+In-Reply-To: <20221027214947.3E375C433D7@smtp.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0035.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::10) To DB7PR03MB4972.eurprd03.prod.outlook.com
+ (2603:10a6:10:7d::22)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB7PR03MB4972:EE_|AM9PR03MB7169:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0430817a-007b-4f9a-0922-08dab8669471
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sm0DrFETVPR0OZKqtOid/VM4rk1FVJGKK7nYacwHpbGZOQxiHNFdtorHggPhsJhrIlK2dOkcvOtDD6QMa7oh/7IdNbcct4rh4ZlHlzWaqa0Aj7NO+KSEv2FlaUlWt/M34ikScfv9PvwmBEN9xplsYxmi/lIbVO0lAszJh2bByKXGemtzrom3W2iGhbx80ckHoxKqNM2n8pBQYoDxHEDSjdm3ZIS0PJ7p2l9WBqiRDa/KvnZ1v980cjud7ZSTEejOpczgtB8Hk+xUnJKLy5Gdb7FHZ6FlgtwDPqgtgDv9NwPZ0z1X8GnKyoyLsIV/SAkc8Iadl6SG9Ua1m2o+wvxG0P3MxqqTxhP5URpjWDdb1TR8KVwJVVloWboA3b7DJ5nLGZ+Nx8QvHfPixB1nXLEkJZjqlIidl3S7itjzVk3+dWzpn773ObbQ8+wDMIrrWVfzh2CONorSD29YNEIr0v2Kc2KMSvMmOObTGslaYA6HQm8+ipeOqBtCEMwWtZjCa5u0OACCAlAomgNaEJBiLkJJtas9c9KkjyM5fADioGg2bdm5g1vY7D5k5UaqXE2b2LCUEz8toPnGJGxGvSkhUMw9AACQpruaErU1Ui20sDGfOMT2SH6PhfqGC2ykWnK4Jv+ctFXiWTZH5aEVhVXjlrdehLRkHFhitawhckoheS34+YjvRXFN21UR4oiTQb7cYDdUiRpsaerU1QIdnP3VBZRHaZIj5UwTIl/ifJLwnXsEa50w4e6T6NfFp+5Eod2DbfwUdA7mF1u8XK6hlvdEr9rCcGHRs8DQioPNBwD9bYzosOYPRStQBeCz6s2BDnwRlkZLCBogXmDVEVwlUVEZFaM4DQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4972.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(396003)(376002)(346002)(136003)(39850400004)(451199015)(478600001)(6486002)(2616005)(186003)(41300700001)(110136005)(52116002)(44832011)(86362001)(54906003)(6506007)(26005)(8936002)(38350700002)(6512007)(4744005)(36756003)(38100700002)(83380400001)(66476007)(31686004)(66946007)(31696002)(5660300002)(53546011)(7416002)(2906002)(6666004)(66556008)(4001150100001)(316002)(4326008)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVI5VEN5NWNFN3pzNTdya0FObStMY3FMNHRoMWl5TWtaMzAyaWFtbi9aZ2pB?=
+ =?utf-8?B?WDh0ZjdZclJ5TDBteGFBTHZMRFdrUWxzWmdNZzA1bTdQTm5WK1ZRZVYyTE04?=
+ =?utf-8?B?RDFCK2Y0azRvbTlHYlVibW1XcUU4YmdiZmJCYW9yM1h5MDgxZnlBVy9rM1Fx?=
+ =?utf-8?B?Ny9COUkxN0t2UWRxa2N0Sjd6YU1WbGQyNS84MUdOQUZVMEh5TkVPeUZZZTN5?=
+ =?utf-8?B?OGU5L2duV1h2OS96MUhXK1JIQzJidHRWQ2lNcy81Ymltajh4MnMxSHB4eE1j?=
+ =?utf-8?B?OTg1Q3N4OTdRL3ZIV29hU2Nqak91MENjY25HdnNpVE4xNlM5a1N1OThjODBB?=
+ =?utf-8?B?UGVERUsrREUyeUU2cmRqeGc0dGpGcVlURm1PRE82M2Q1TjlhemNJV0lhYU5I?=
+ =?utf-8?B?RGc1dU9kRitwQWdhNW5ESUxKQnJBNk5sbUppWDNta3BxSmxQOTJta05nNE4w?=
+ =?utf-8?B?NVhXWG1rUnVINytndXBLc1JPYmlmU1B0djF1ODB5NDBxM0lkYTA2WEpsWnJj?=
+ =?utf-8?B?NFdERW5KOUpsUnRydi9La3ZOTm95L2VETXhNamhlZVB4Z2NoZXliTG5Scm1o?=
+ =?utf-8?B?blZxY00weWFVcVd6NEVYUktzWFNmL1RxRHFMdjVablZXZUNpdDNsdDVpQ1JU?=
+ =?utf-8?B?U2VONU1KWnV0UU95ekgybHZ3b3cxYUJFbmFQZGc2ZTRhV2F0OER0SDFJT1lH?=
+ =?utf-8?B?ZXlNdWc2WWxWVlhUL2RrWTIxM3VLWFBMdWZ1U2ZIaHRLN3MvZEs4dzl6NXVR?=
+ =?utf-8?B?cklsbGUyNUpGV2tRSDR2UXJuNWFmc1o1TFF3OFg1b1lFQll3VjRyVFYzc0c4?=
+ =?utf-8?B?RVp3allMTjhXN2kxMmpCeFRCSTB5SWNpUGw1WnB6RFJmYW9pNXRnbjZtTlBr?=
+ =?utf-8?B?T0xrUTJmRTJsalhXMDZqdnJhVWF4YStNRXNCcDhzNFFXaEN3c3hiQUpiODlJ?=
+ =?utf-8?B?cTBWZGo1eGxWcmtrNXAwZTVvTUphUWRWWDBXUG0xSjUrVjZzYkJvMUd4MjNO?=
+ =?utf-8?B?Q254eUNWOS8xMEROZUU2WXRUeVVtcmhyczZYRHd4OVpNYS9ZYkZwRnVGSGNZ?=
+ =?utf-8?B?YW50U3ptSUVvdWxvTExDV0tTcVRaVHJsUks5VXJKYzZtVGtFdEk2Wm1EaTJF?=
+ =?utf-8?B?TEhaRnZGWFhzVEZlYWFyaGVOd1psVGk5Z3dLbCtSSVBLYWJTLzIxSlA0QXpi?=
+ =?utf-8?B?MFJRTmhidFdoSWYzNG4wQTBId0F6Y3pPRlVwZEhuK2dVVlUrUE9VZjBwL3Jo?=
+ =?utf-8?B?UXBjdS9oMUJ4MlQ4VGFNck40dk55cWs1OXVBUklHVEdnZWtuN0NycnlZT0hZ?=
+ =?utf-8?B?SjZKWGprbWN6b2VCT3ZIbCs2d3ptQVdTTmxLSG0reGhkQUFidjBrb3RJWEpP?=
+ =?utf-8?B?WlQ4ZGc0WHhDRWpiMFBoUmJkb295bksrSXJIazZuM3JWN3BVbHY1YTUvQ3JB?=
+ =?utf-8?B?d0VVOHhVNS9ld0J6ck9DSnN1NTZXbGtqSGZGTjFFNEhMbmxEUDVwd0NuNmsz?=
+ =?utf-8?B?RTAxbEJDai9MMFJib0luOTVPU2libExpVmhjMFBMODhCZGNmclYzNzQ0d3Fo?=
+ =?utf-8?B?bU8yWitVeGJEanhLSmFaSlc0RURVWmwrVlZVaEoveXdIY05vVVcwR3BXQWZs?=
+ =?utf-8?B?aCtVNWFXU0owdTM2bEtpNHpBMG5rZ1ppV3JuWWRTeWNEYTIwQkxSWXJIcita?=
+ =?utf-8?B?WVJTTm1ZVFJkNUxpcGs3TFFJdE1zTjN0RXVZUE80OFhndmV0TFZrK1BuTngv?=
+ =?utf-8?B?Mit6anlLM3ZPbnU1Z3BDeC96ZTRtVUNOM2N6eTFzeG5icXE3Z3JscnNFN0da?=
+ =?utf-8?B?a3c1ME5HZithR3ZROFFKRENrS1JyQTVDUkxrTUovWjdnYmpUWmRpTmZQMW1C?=
+ =?utf-8?B?dXV2dFZVK2VZY252TmxEaE8zRElRQlBzYWNFZzNzdDdJOU5pNmFPNTdKdXJV?=
+ =?utf-8?B?dzVpQ3BUMzZGL1dnNnpvUTE5Mm9EWW1VNEZGZ2JXREpqcFA0K3hGWWczbHZ0?=
+ =?utf-8?B?ZElFY3k1TVdyTE9pVHFSbFUwRUlGVm1EQ2QwaURJcnc5clhXVlE5c21IYUM0?=
+ =?utf-8?B?VzZFQzAwWUZ3K2pwSkQ4b05XSm1BQ2F0OWd2bGxSelVvZmdGb3JodWcySmVi?=
+ =?utf-8?B?YU5COHpVd3lSRzl3VThOcGRubG4wejFzNXRYRVhoc0sydGxJdWVvNVhxZVJG?=
+ =?utf-8?B?Qnc9PQ==?=
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0430817a-007b-4f9a-0922-08dab8669471
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4972.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2022 21:59:54.6238
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M1IXDnBo86MVUoi4yy1Kh1RhgEKeZE/gatQc0tjVEuzRaScevHv3ny/W/ifJa3oYw6rDdFvKyXwq8fWNYcdQqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7169
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/10/2022 17:28, Melody Olvera wrote:
+On 10/27/22 17:49, Stephen Boyd wrote:
+> Quoting Sean Anderson (2022-10-27 12:11:07)
+>> This adds ids for the Lynx 10g SerDes's internal PLLs. These may be used
+>> with assigned-clock* to specify a particular frequency to use. For
+>> example, to set the second PLL (at offset 0x20)'s frequency, use
+>> LYNX10G_PLLa(1). These are for use only in the device tree, and are not
+>> otherwise used by the driver.
+>> 
+>> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
->>>>> +      - description: Board XO source
->>>>> +      - description: Sleep clock source
->>>>> +      - description: PCIE 0 Pipe clock source
->>>>> +      - description: PCIE 0 Phy Auxiliary clock source
->>>>> +      - description: USB3 Phy wrapper pipe clock source
->>>>> +    minItems: 2
->>>> Why the clocks are optional?
->>> They should not be optional. They're always there.
->> Just to be sure - I refer to last three clocks here as indicated by
->> minItems:2.
->>
->> DTS does not define them, so something here is not complete or correct.
->>
-> DT is incomplete; I don't have that in my current patchset. Will add later when PCIE and
-> USB nodes are complete.
+Whoops, looks like I forgot to pick this up in v5.
 
-Bindings should be complete as much as possible, therefore please define
-in the DTS stub clocks (fixed clocks) to fill these with a TODO notes.
+There's also an (internal) clock driver in the next patch if you want to
+look that over.
 
-Best regards,
-Krzysztof
-
+--Sean
