@@ -2,86 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0E4FA3740
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 18:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6558EECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 18:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235708AbiJ0SZO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 14:25:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39782 "EHLO
+        id S235638AbiJ0Sr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 14:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235842AbiJ0SYz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 14:24:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB4831DED;
-        Thu, 27 Oct 2022 11:24:52 -0700 (PDT)
+        with ESMTP id S236092AbiJ0Sr1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 14:47:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F85913E8B;
+        Thu, 27 Oct 2022 11:47:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BBCCDB82752;
-        Thu, 27 Oct 2022 18:24:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 366AEC433D6;
-        Thu, 27 Oct 2022 18:24:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A1DB162431;
+        Thu, 27 Oct 2022 18:47:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065D9C433D6;
+        Thu, 27 Oct 2022 18:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666895089;
-        bh=59Pw40a4Cn+LbgrGbl89Wp804IafCpdymwLTbzmtb8Q=;
+        s=k20201202; t=1666896445;
+        bh=GoCrn4imY1/B5eRyBLMzQqslmtbDVWoBPDbA+k1mJWU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PwetMeddijuZSfdb3qiz+ALrl6FPHsc1Ei/dIxhQiaQxHCeRRdYV9+Hpiq/qZghfF
-         jcYKLCDWLeYWlzaMjMRMc116RahtvDMmn5AHskY8stRDqNNPRWHfFUtbG7G+iYCglM
-         VtMEI+FWgRCBrujaz+mRJPPa5t7E8pEFJJ2ihiJHqKn42Gk19m82BVaHCAjypsdDeY
-         e7CNhKZU/TtBq5flOmTRUm9xNx/38qUmYnMjpWYMBeryAUNHDynM25IGSn4fQk5pmA
-         VTkcAcoCRwM+2vKazzC52qq71AmrnfB8Oc6KgA+ayo4fhRabQkyDPrEjTbLBkActAQ
-         huWBKCeodfluA==
+        b=AYTPDGyKf9/snaSrzOtDocU06QwBTPXxfQ9q0Y1Cg6p0U/c41cA1ve1cZxhOC+Z6b
+         sdMjBOfCQZq51Z1CuNpvDef2drfCUHnlcnt01TDMQ7E6iAZ4KygHZ+J9XC/pNfyi2d
+         QEuH0B+To/PqP3gxPAsic5l8tWWecwLAGUP8DBaSKLIx/Ck4P11msSZnk8VtI0WsGe
+         c8pLxGwKpncUDHezO+yu0kOGsEctVkYktT4JE6fWZ60/Bx0IxoCSj00nvT78XpAzMx
+         D5OrQd6JLA8lbGsSZHQIG6CQrEh6YxPu0AVcNvEAQp/yO8HSssUSmDw5u22Iw3U8Hq
+         9+vWu57nz3jKw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e5009a33-1f71-1fe3-3a06-98bba031fdf0@linaro.org>
-References: <20221026190441.4002212-1-quic_molvera@quicinc.com> <20221026190441.4002212-2-quic_molvera@quicinc.com> <e5009a33-1f71-1fe3-3a06-98bba031fdf0@linaro.org>
-Subject: Re: [PATCH v3 1/5] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clock bindings
+In-Reply-To: <20221022133404.3832-2-romain.perier@gmail.com>
+References: <20221022133404.3832-1-romain.perier@gmail.com> <20221022133404.3832-2-romain.perier@gmail.com>
+Subject: Re: [PATCH v7 1/1] clk: mstar: msc313 cpupll clk driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Willy Tarreau <w@1wt.eu>
+To:     Daniel Palmer <daniel@0x0f.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date:   Thu, 27 Oct 2022 11:24:45 -0700
+        Romain Perier <romain.perier@gmail.com>,
+        linux-clk@vger.kernel.org
+Date:   Thu, 27 Oct 2022 11:47:21 -0700
 User-Agent: alot/0.10
-Message-Id: <20221027182449.366AEC433D6@smtp.kernel.org>
+Message-Id: <20221027184725.065D9C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-10-27 08:54:51)
-> On 26/10/2022 15:04, Melody Olvera wrote:
-> > +description: |
-> > +  Qualcomm global clock control module which supports the clocks, rese=
-ts and
-> > +  power domains on QDU1000 and QRU1000
-> > +
-> > +  See also:
-> > +  - include/dt-bindings/clock/qcom,gcc-qdu1000.h
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: qcom,gcc-qdu1000
-> > +      - const: syscon
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Board XO source
-> > +      - description: Sleep clock source
-> > +      - description: PCIE 0 Pipe clock source
-> > +      - description: PCIE 0 Phy Auxiliary clock source
-> > +      - description: USB3 Phy wrapper pipe clock source
-> > +    minItems: 2
+Quoting Romain Perier (2022-10-22 06:34:04)
+> From: Daniel Palmer <daniel@0x0f.com>
 >=20
-> Why the clocks are optional?
+> Add a driver for the CPU pll/ARM pll/MIPS pll that is present
+> in MStar SoCs.
+>=20
+> Currently there is no documentation for this block so it's possible
+> this driver isn't entirely correct.
+>=20
+> Only tested on the version of this IP in the MStar/SigmaStar
+> ARMv7 SoCs.
+>=20
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> Co-developed-by: Willy Tarreau <w@1wt.eu>
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
+> Signed-off-by: Romain Perier <romain.perier@gmail.com>
+> ---
 
-They should not be optional. They're always there.
+Applied to clk-next
