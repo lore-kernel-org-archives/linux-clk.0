@@ -2,98 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992F0FA3740
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 12:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3CAFA3744
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 12:38:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235688AbiJ0Mf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 08:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58442 "EHLO
+        id S235442AbiJ0Mii (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 08:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235706AbiJ0MfN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 08:35:13 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F320033429
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 05:35:10 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id y12so2436446edc.9
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 05:35:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ixsyTYSU3qrk9nu6zgLYYDmntPbxw0EqXI+jxfXWgbg=;
-        b=eGI+nghoKIXTvxIUbAMX/UGn0FUTy6saar5V+Xm0lbVg8DFfBppUhTHZTI4cZfKwsi
-         udcabToxL2QqymNMtZ84C8e+33nabNHXvzXGDoHEwDUP8fzIu7MGXCbCXZAzV7lRE5Rq
-         6Bhedbx3qkoMuG54hlwnamXHE+9eQpsUL6MUiBSwidzUYO9IauyfuZdWBzezNr+VvPMl
-         2mbko/nxXeXBW+TCxK7o1w5e6UaiDymbLV9lzzCbLzZyPkDo50HDGLsm7lpyuuxp6IPs
-         wlGTQj636LIZV/bJE9Tnf3dpch3CCGBeQ+7fJ8A36s+fRTozI/oNKcjxbreKCzsOZbzW
-         TxlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ixsyTYSU3qrk9nu6zgLYYDmntPbxw0EqXI+jxfXWgbg=;
-        b=oC+QAj84OtbZsmPXLv+ppSsnLdXNv5zT4x3O5pnJo7bo52QT4IqvJJWM+AcJCD7OWm
-         uhmsVgaOQGBXxa51g4n9uHY+2wvz/juY5AgNIE57VPHFEwNLWO+7E8nwOFP1Ox77ZOPu
-         pJ2lUp6Mlte5AcyyIMN32CHmUrnM9f8LA6nxhtVUcOSVN/25EW9EA6QTO1SEiG9b1kdG
-         NKHm6ypJmdWB6S9kjWg3d52o8I0dYd1NhQyPQr/0he3gOt4hMhF94+UX9zD5PgMHw71j
-         5cPb4IpZBCtXngabVF3bg8zdmBvgss2RHSfT7VmNS/rW7ZX+HA8ll5OSdyOCVx74w375
-         bhTw==
-X-Gm-Message-State: ACrzQf3cKAQKmZM55fkC9be/RETxpxKiZMbUXQKCWuSGL444O71tLNYS
-        j1f2JZOdnp6W+VMDEGWqMTx0Ag==
-X-Google-Smtp-Source: AMsMyM7NCdoe+eiHzPhUQn0V4ikeEhZgjzF/EuqAC/E5mPZSh7/Os1mIKFocWtifRDJqFs/BoOcjDA==
-X-Received: by 2002:aa7:ce09:0:b0:461:5406:20e4 with SMTP id d9-20020aa7ce09000000b00461540620e4mr29636811edv.5.1666874109556;
-        Thu, 27 Oct 2022 05:35:09 -0700 (PDT)
-Received: from prec5560.. (freifunk-gw.bsa1-cpe1.syseleven.net. [176.74.57.43])
-        by smtp.gmail.com with ESMTPSA id p22-20020aa7d316000000b00461c1804cdasm942868edq.3.2022.10.27.05.35.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Oct 2022 05:35:07 -0700 (PDT)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        dmitry.baryshkov@linaro.org, Jonathan Marek <jonathan@marek.ca>
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [PATCH v1 5/5] clk: qcom: dispcc-sm8250: Disable link_div_clk_src for sm8150
-Date:   Thu, 27 Oct 2022 14:34:32 +0200
-Message-Id: <20221027123432.1818530-5-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221027123432.1818530-1-robert.foss@linaro.org>
-References: <20221027123432.1818530-1-robert.foss@linaro.org>
+        with ESMTP id S234187AbiJ0Mih (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 08:38:37 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F4C815CB26;
+        Thu, 27 Oct 2022 05:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1666874314; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uWrIFI7ge6bO/Ji1tjywa7ZOL5L27qwMjMguyEcsJ1c=;
+        b=p645aQ7oOBvLNpF3dsWu9LnYa7CD2QStwmz20Eh0Q3zCycirLk1g312XMOhWpF/Oi1Zmh7
+        CtPhyO8ez1ROeZFe5wt1bP8qozkmPJPPE1JmUZOzX8vTRsG8A0B1KuaCyRnX5PyqrDSZZ2
+        GKRmabSwhIQY0mlRXmq5Lt6o9JwjYUc=
+Date:   Thu, 27 Oct 2022 13:38:24 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/6] clk: ingenic: Make PLL clock "od" field optional
+To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, zhouyu@wanyeetech.com,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <0GWEKR.T961XCYIYOL52@crapouillou.net>
+In-Reply-To: <20221026194345.243007-2-aidanmacdonald.0x0@gmail.com>
+References: <20221026194345.243007-1-aidanmacdonald.0x0@gmail.com>
+        <20221026194345.243007-2-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SM8150 does not have any of the link_div_clk_src clocks, so
-let's disable them for this SoC.
+Hi Aidan,
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
----
- drivers/clk/qcom/dispcc-sm8250.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Le mer. 26 oct. 2022 =E0 20:43:40 +0100, Aidan MacDonald=20
+<aidanmacdonald.0x0@gmail.com> a =E9crit :
+> Add support for defining PLL clocks with od_bits =3D 0, meaning that
+> OD is fixed to 1 and there is no OD field in the register. In this
+> case od_max must also be 0, which is enforced with BUG_ON().
+>=20
+> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+> ---
+> v1 -> v2: Simplify od lookup in ingenic_pll_recalc_rate() and
+>           enforce od_max =3D=3D 0 when od_bits is zero.
+>=20
+>  drivers/clk/ingenic/cgu.c | 21 +++++++++++++++------
+>  drivers/clk/ingenic/cgu.h |  3 ++-
+>  2 files changed, 17 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+> index 861c50d6cb24..3481129114b1 100644
+> --- a/drivers/clk/ingenic/cgu.c
+> +++ b/drivers/clk/ingenic/cgu.c
+> @@ -83,7 +83,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned=20
+> long parent_rate)
+>  	const struct ingenic_cgu_clk_info *clk_info =3D=20
+> to_clk_info(ingenic_clk);
+>  	struct ingenic_cgu *cgu =3D ingenic_clk->cgu;
+>  	const struct ingenic_cgu_pll_info *pll_info;
+> -	unsigned m, n, od_enc, od;
+> +	unsigned m, n, od, od_enc =3D 0;
+>  	bool bypass;
+>  	u32 ctl;
+>=20
+> @@ -96,8 +96,11 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,=20
+> unsigned long parent_rate)
+>  	m +=3D pll_info->m_offset;
+>  	n =3D (ctl >> pll_info->n_shift) & GENMASK(pll_info->n_bits - 1, 0);
+>  	n +=3D pll_info->n_offset;
+> -	od_enc =3D ctl >> pll_info->od_shift;
+> -	od_enc &=3D GENMASK(pll_info->od_bits - 1, 0);
+> +
+> +	if (pll_info->od_bits > 0) {
+> +		od_enc =3D ctl >> pll_info->od_shift;
+> +		od_enc &=3D GENMASK(pll_info->od_bits - 1, 0);
+> +	}
+>=20
+>  	if (pll_info->bypass_bit >=3D 0) {
+>  		ctl =3D readl(cgu->base + pll_info->bypass_reg);
+> @@ -112,7 +115,11 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,=20
+> unsigned long parent_rate)
+>  		if (pll_info->od_encoding[od] =3D=3D od_enc)
+>  			break;
+>  	}
 
-diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index d2aaa44ed3d4..f6f719616f63 100644
---- a/drivers/clk/qcom/dispcc-sm8250.c
-+++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -1289,6 +1289,10 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
- 		disp_cc_pll1_config.config_ctl_hi1_val = 0x00000024;
- 		disp_cc_pll1_config.user_ctl_hi1_val = 0x000000D0;
- 		disp_cc_pll1_init.ops = &clk_alpha_pll_trion_ops;
-+
-+		disp_cc_sm8250_clocks[DISP_CC_MDSS_DP_LINK1_DIV_CLK_SRC] = NULL;
-+		disp_cc_sm8250_clocks[DISP_CC_MDSS_DP_LINK_DIV_CLK_SRC] = NULL;
-+		disp_cc_sm8250_clocks[DISP_CC_MDSS_EDP_LINK_DIV_CLK_SRC] = NULL;
- 	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8350-dispcc")) {
- 		static struct clk_rcg2 * const rcgs[] = {
- 			&disp_cc_mdss_byte0_clk_src,
--- 
-2.34.1
+I'd add a space there.
+
+With that:
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+
+> -	BUG_ON(od =3D=3D pll_info->od_max);
+> +	/* if od_max =3D 0, od_bits should be 0 and od is fixed to 1. */
+> +	if (pll_info->od_max =3D=3D 0)
+> +		BUG_ON(pll_info->od_bits !=3D 0);
+
+I don't think this first BUG_ON() is needed, if we do a good job=20
+reviewing patches. But I don't care enough to ask you to remove it.
+
+Cheers,
+-Paul
+
+> +	else
+> +		BUG_ON(od =3D=3D pll_info->od_max);
+>  	od++;
+>=20
+>  	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier,
+> @@ -215,8 +222,10 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned=20
+> long req_rate,
+>  	ctl &=3D ~(GENMASK(pll_info->n_bits - 1, 0) << pll_info->n_shift);
+>  	ctl |=3D (n - pll_info->n_offset) << pll_info->n_shift;
+>=20
+> -	ctl &=3D ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+> -	ctl |=3D pll_info->od_encoding[od - 1] << pll_info->od_shift;
+> +	if (pll_info->od_bits > 0) {
+> +		ctl &=3D ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+> +		ctl |=3D pll_info->od_encoding[od - 1] << pll_info->od_shift;
+> +	}
+>=20
+>  	writel(ctl, cgu->base + pll_info->reg);
+>=20
+> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+> index 147b7df0d657..567142b584bb 100644
+> --- a/drivers/clk/ingenic/cgu.h
+> +++ b/drivers/clk/ingenic/cgu.h
+> @@ -33,7 +33,8 @@
+>   * @od_shift: the number of bits to shift the post-VCO divider value=20
+> by (ie.
+>   *            the index of the lowest bit of the post-VCO divider=20
+> value in
+>   *            the PLL's control register)
+> - * @od_bits: the size of the post-VCO divider field in bits
+> + * @od_bits: the size of the post-VCO divider field in bits, or 0 if=20
+> no
+> + *	     OD field exists (then the OD is fixed to 1)
+>   * @od_max: the maximum post-VCO divider value
+>   * @od_encoding: a pointer to an array mapping post-VCO divider=20
+> values to
+>   *               their encoded values in the PLL control register,=20
+> or -1 for
+> --
+> 2.38.1
+>=20
+
 
