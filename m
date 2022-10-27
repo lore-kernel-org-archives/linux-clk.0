@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9239BFA3743
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 23:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311E9ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 23:09:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234581AbiJ0XFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 19:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54124 "EHLO
+        id S235273AbiJ0XJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 19:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235028AbiJ0XFd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 19:05:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384185A2E1;
-        Thu, 27 Oct 2022 16:05:32 -0700 (PDT)
+        with ESMTP id S234803AbiJ0XJM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 19:09:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B224900C1;
+        Thu, 27 Oct 2022 16:09:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C941F6258A;
-        Thu, 27 Oct 2022 23:05:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2288CC433D7;
-        Thu, 27 Oct 2022 23:05:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDD2162591;
+        Thu, 27 Oct 2022 23:09:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF58C43470;
+        Thu, 27 Oct 2022 23:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666911931;
-        bh=kMiSzIp8QDq8Q/JDWrd3tsQMI+u2ReRt1KdGThVt6sM=;
+        s=k20201202; t=1666912150;
+        bh=hkVd0MHbdzv+0Fr8xN0jWV93AyTqcsDg/4xXphAOWoY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SMdBv5HyjHZ/qmlwreA2kqytkytGSznE9Wx00Go/Yv25WmZwSIMX8mN7V44PGH/Cq
-         C1OYefQsJQpJCzC5ON9S3Huif7Z7rhHRq6zuSdPSoXSrGut1Y0jewOa6p0GaM1GKtO
-         vb7FK28RxGReFh/5aelUUKD3i4JSdQYwRnnyd/TgKm9/4ZXq8ndoDImiR9bqi0pLXW
-         NEYxl0jOlHp1uOAzhZHMxc9mCI7NTc4Dkzvn+Xg0NlQHd4fHm8HdRiNGm5BEiIJUE4
-         C+XIoEUTV8/+mBwZtCOlSm/0xEncEKobekqLofgFMaH90WpYg3Gqu7dSV8WWtEjO48
-         37q5SJy7a05ug==
+        b=pQYR3IBIYxC2QnaF5LND3DsXVVjn40xDYIyLCoihxWofX3ZqgAAbOJXAoN5nGPzos
+         BP2ceaLG0LYEVVnTQC+ausc84DRwddiqM6pORsTRgVEmFl+HCo71CG0KCyCVyTPup0
+         7hta12meYHD6jgaMM6prV62LyaEAeYslaERDhUL1BYTmvDuJctdYvK3apQw9A0YRud
+         r5QETThHHgd7sXa0+pgIxoqz2ywZU/h19H3zY6gzpRRkfFeOXLguiLUr0deb1l+1io
+         Md0rj7W6MN6D+3cXAkxHi2pszbD8TyEyoMqKPLWvldCSgbUwGT/7T2sXflpmfCYXWK
+         WrXm5LTs2svTg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221027101159.942843-7-peng.fan@oss.nxp.com>
-References: <20221027101159.942843-1-peng.fan@oss.nxp.com> <20221027101159.942843-7-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH 6/6] clk: imx93: keep sys ctr clock always on
+In-Reply-To: <20221027101159.942843-6-peng.fan@oss.nxp.com>
+References: <20221027101159.942843-1-peng.fan@oss.nxp.com> <20221027101159.942843-6-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH 5/6] clk: imx: keep hsio bus clock always on
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -46,49 +46,46 @@ To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abel.vesa@linaro.org,
         abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
         robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Thu, 27 Oct 2022 16:05:29 -0700
+Date:   Thu, 27 Oct 2022 16:09:08 -0700
 User-Agent: alot/0.10
-Message-Id: <20221027230531.2288CC433D7@smtp.kernel.org>
+Message-Id: <20221027230910.4AF58C43470@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (OSS) (2022-10-27 03:11:59)
+Quoting Peng Fan (OSS) (2022-10-27 03:11:58)
 > From: Jacky Bai <ping.bai@nxp.com>
 >=20
-> Keep sys ctr clock always on to make sure its register
-> can be accessed for cpuidle.
+> During Linux System suspend/resume stress test after System Sleep
+> enabled, system will stuck sometimes. It is because NICMIX is powered
+> down, which HSIOMIX(always on) is not powered down. When NICMIX
+> powering down, HSIOMIX will get a hardware handshake, without HSIO ROOT
+> clk, the handshake will lose. Then after NICMIX power on when system
+> resume, the access to HSIOMIX through NICMIX would be broken. So keep HSIO
+> ROOT always on.
 >=20
 > Reviewed-by: Peng Fan <peng.fan@nxp.com>
 > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+>  [Peng Fan] rewrite commit message
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
 >  drivers/clk/imx/clk-imx93.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
 > diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 74e8d810db7f..91db356564c1 100644
+> index 422ad3c89845..74e8d810db7f 100644
 > --- a/drivers/clk/imx/clk-imx93.c
 > +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -238,7 +238,7 @@ static const struct imx93_clk_ccgr {
->         { IMX93_CLK_HSIO_32K_GATE,      "hsio_32k",     "osc_32k",       =
-       0x9dc0, },
->         { IMX93_CLK_ENET1_GATE,         "enet1",        "wakeup_axi_root"=
-,      0x9e00, },
->         { IMX93_CLK_ENET_QOS_GATE,      "enet_qos",     "wakeup_axi_root"=
-,      0x9e40, },
-> -       { IMX93_CLK_SYS_CNT_GATE,       "sys_cnt",      "osc_24m",       =
-       0x9e80, },
-> +       { IMX93_CLK_SYS_CNT_GATE,       "sys_cnt",      "osc_24m",       =
-       0x9e80, CLK_IS_CRITICAL},
+> @@ -109,7 +109,7 @@ static const struct imx93_clk_root {
+>         { IMX93_CLK_CCM_CKO2,           "ccm_cko2_root",        0x1d00, C=
+KO2_SEL, },
+>         { IMX93_CLK_CCM_CKO3,           "ccm_cko3_root",        0x1d80, C=
+KO1_SEL, },
+>         { IMX93_CLK_CCM_CKO4,           "ccm_cko4_root",        0x1e00, C=
+KO2_SEL, },
+> -       { IMX93_CLK_HSIO,               "hsio_root",            0x1e80, L=
+OW_SPEED_IO_SEL, },
+> +       { IMX93_CLK_HSIO,               "hsio_root",            0x1e80, L=
+OW_SPEED_IO_SEL, CLK_IS_CRITICAL},
 
-Please add a comment like
-
-	/* Critical because clk accessed during CPU idle */
-
->         { IMX93_CLK_TSTMR1_GATE,        "tstmr1",       "bus_aon_root",  =
-       0x9ec0, },
->         { IMX93_CLK_TSTMR2_GATE,        "tstmr2",       "bus_wakeup_root"=
-,      0x9f00, },
->         { IMX93_CLK_TMC_GATE,           "tmc",          "osc_24m",       =
-       0x9f40, },
+Similarly add a comment for critical flag please.
