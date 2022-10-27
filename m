@@ -2,99 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DE5FA3740
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 21:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E94FA3740
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 21:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236638AbiJ0Vb1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 17:31:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60198 "EHLO
+        id S233569AbiJ0ViH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 17:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236554AbiJ0Vb0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 17:31:26 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF786A53F;
-        Thu, 27 Oct 2022 14:31:25 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29RLSjqx030206;
-        Thu, 27 Oct 2022 21:31:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=0SJxsD87sf1OuymdeyD/l4za5tDm5KeqnBGxkxHAamM=;
- b=lxf3yZkVNCj6oWNHr6w7k1CZvsG8mrmZbh0F4zB9bh+wTEaaw4zY4E7yrQkIwB0OturL
- XwZFJnW8JMaUdX/EHvGE9RL9c0szVsdj49JANH3YpwfzWTUADDYuDDHJFgotvM+GfXca
- 2C506+glrhQYuInf8ywCaMM8Sy8nzl4VWhO3TrOAEivIdMYSlqQyo5584iyr5izGqN6w
- 1a+XCmslRPHja4KbYQreeQ/5aiBwtAw8O6t0Z6r7et0oL1YRtrIx/1iNz09L/wMed7Zb
- ESlBwYWHaA3bOVr56dz2oXESsATw5Au0coyyFx1T6+oRigcAwprcaQwXKN/b9ksKGDXC pQ== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kfahvu93f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Oct 2022 21:31:10 +0000
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29RLV9gq010715
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Oct 2022 21:31:09 GMT
-Received: from [10.110.41.43] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 27 Oct
- 2022 14:31:08 -0700
-Message-ID: <eeb3e06d-316a-1ff8-b4b8-c257fa03a206@quicinc.com>
-Date:   Thu, 27 Oct 2022 14:31:08 -0700
+        with ESMTP id S235273AbiJ0ViG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 17:38:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3CD72B44;
+        Thu, 27 Oct 2022 14:38:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 574B06251D;
+        Thu, 27 Oct 2022 21:38:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50F1C433D6;
+        Thu, 27 Oct 2022 21:38:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666906684;
+        bh=ix0PYNSgySxYrk2hW53SOaFo1wchmy/qngotI3mQ60k=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=FlFwi1il3n7gBMxfgVrNJHlUjGgX+AciY8MIdiEaGdPowUVvmFaqwoDIdAAvUyz8r
+         Tf8gYxd+LhXstF12EuFWTGB0ocYBgB9ijMpNhxE+Lg8u2bDSWAxU0Ceq7l9lOl471Z
+         jJqG0ETuCxQEOXFJo6y5V/QH8jc59WscPn0XIq5/tjtflucFgwi7KuafLLqD5mamM8
+         KzK1i7ALvc86YY3YPBmDq1Vbbsp9RZcg1bJRRXBtfwZ4ucwfSRidwnKjBpbTbZ8Nw/
+         NNGQkPO7Rjcfti+FnIFSa8bsb/LpgkxPlHA3iaKF3koqB4JOovkbQS5FaoWd8AB2BM
+         vV2vEqjWpfZ9g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v3 5/5] dt-bindings: qcom,pdc: Introduce pdc bindings for
- QDU1000 and QRU1000
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <eeb3e06d-316a-1ff8-b4b8-c257fa03a206@quicinc.com>
+References: <20221026190441.4002212-1-quic_molvera@quicinc.com> <20221026190441.4002212-6-quic_molvera@quicinc.com> <20221027182240.E9FA0C433D6@smtp.kernel.org> <eeb3e06d-316a-1ff8-b4b8-c257fa03a206@quicinc.com>
+Subject: Re: [PATCH v3 5/5] dt-bindings: qcom,pdc: Introduce pdc bindings for QDU1000 and QRU1000
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Marc Zyngier <maz@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-CC:     Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221026190441.4002212-1-quic_molvera@quicinc.com>
- <20221026190441.4002212-6-quic_molvera@quicinc.com>
- <20221027182240.E9FA0C433D6@smtp.kernel.org>
-From:   Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <20221027182240.E9FA0C433D6@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: V2pSb2kE3eoOllPWGZHIZe95bOh0M6Bt
-X-Proofpoint-ORIG-GUID: V2pSb2kE3eoOllPWGZHIZe95bOh0M6Bt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-27_07,2022-10-27_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=852
- malwarescore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015
- suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2210270120
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Thu, 27 Oct 2022 14:38:02 -0700
+User-Agent: alot/0.10
+Message-Id: <20221027213804.A50F1C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Melody Olvera (2022-10-27 14:31:08)
+>=20
+>=20
+> On 10/27/2022 11:22 AM, Stephen Boyd wrote:
+> > Quoting Melody Olvera (2022-10-26 12:04:41)
+> >> Add compatible fields for QDU1000 and QRU1000 pdcs.
+> >>
+> >> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> >> ---
+> > Is there a reason why this patch continues to be included in what is
+> > otherwise a clk driver patch series? Can this patch be sent separately
+> > from the clk patches (and not Cced to clk maintainers/list) in the
+> > future?
+> Sure thing. On reflection, this belongs with the misc support patches.
+>=20
 
-
-On 10/27/2022 11:22 AM, Stephen Boyd wrote:
-> Quoting Melody Olvera (2022-10-26 12:04:41)
->> Add compatible fields for QDU1000 and QRU1000 pdcs.
->>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
-> Is there a reason why this patch continues to be included in what is
-> otherwise a clk driver patch series? Can this patch be sent separately
-> from the clk patches (and not Cced to clk maintainers/list) in the
-> future?
-Sure thing. On reflection, this belongs with the misc support patches.
-
-Thanks,
-Melody
+Thanks!
