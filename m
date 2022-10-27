@@ -2,68 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B7CECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 23:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D76ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 23:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234492AbiJ0XLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 19:11:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38640 "EHLO
+        id S235321AbiJ0XZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 19:25:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234642AbiJ0XLx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 19:11:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB469E2E9;
-        Thu, 27 Oct 2022 16:11:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AC1B262592;
-        Thu, 27 Oct 2022 23:11:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DC3C43470;
-        Thu, 27 Oct 2022 23:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666912311;
-        bh=qE45ZMWm8NxAU1S6nLPvp8ebvWjS46uVJ8CHgzGsuLg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Z4Gp+cu58RClezCBZ3x4FDdDHhjLaFHkek7L0h/0sTIxff3wTI62VXliZfQGTZL5b
-         9xToKjJCQgXPQ8azks3BPioc/fPOwE5TRE5ueIc9O/aHdYcRtFlu9djuuTppx0Uy0/
-         xwUOBzGyW0NwatSpUXjMGFAgIcJIODHEavNnp0n3ECE+c+izEEgwgLPkhJH6pUyuJK
-         fP+6mHm6Yqhf3zgOYDeLS8iv0UgY8oRi85IZzFoeHScTpQRQIXUDIb1gERCrmySz8u
-         4DCnx1rDJPhW4sh8YPJMQnj8Zeeuy86BjHt09Mq+qulwNjn4+4mdrSIy0aXMTq/s6G
-         UKSkUEcDNJnZQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221021203329.4143397-11-arnd@kernel.org>
-References: <20221021202254.4142411-1-arnd@kernel.org> <20221021203329.4143397-11-arnd@kernel.org>
-Subject: Re: [PATCH 11/21] clk: remove s3c24xx driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S235438AbiJ0XZF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 19:25:05 -0400
+Received: from fudo.makrotopia.org (fudo.makrotopia.org [IPv6:2a07:2ec0:3002::71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA823FF24;
+        Thu, 27 Oct 2022 16:24:53 -0700 (PDT)
+Received: from local
+        by fudo.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+         (Exim 4.94.2)
+        (envelope-from <daniel@makrotopia.org>)
+        id 1ooCEq-0006Aq-KP; Fri, 28 Oct 2022 01:24:40 +0200
+Date:   Fri, 28 Oct 2022 00:24:35 +0100
+From:   Daniel Golle <daniel@makrotopia.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 27 Oct 2022 16:11:48 -0700
-User-Agent: alot/0.10
-Message-Id: <20221027231151.01DC3C43470@smtp.kernel.org>
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Sam Shih <sam.shih@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v2] clk: mediatek: fix dependency of MT7986 ADC clocks
+Message-ID: <Y1sTM/E1VY+XdHk5@makrotopia.org>
+References: <9bde77be-f4ec-11e7-e645-7c4465bcf6db@collabora.com>
+ <5e55012567da74870e1fb2edc2dc513b5821e523.1666801017.git.daniel@makrotopia.org>
+ <20221027214151.7F112C433D6@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221027214151.7F112C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Arnd Bergmann (2022-10-21 13:27:44)
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The s3c24xx platform is gone, so the clk driver can be removed as
-> well.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+On Thu, Oct 27, 2022 at 02:41:49PM -0700, Stephen Boyd wrote:
+> Quoting Daniel Golle (2022-10-26 09:18:07)
+> > It seems like CLK_INFRA_ADC_FRC_CK always need to be enabled for
+> > CLK_INFRA_ADC_26M_CK to work. Instead of adding this dependency to the
+> > mtk-thermal and mt6577_auxadc drivers, add dependency to the clock
+> > driver clk-mt7986-infracfg.c.
+> 
+> Is this a cleanup patch? Or a pre-requisite for thermal and auxadc
+> drivers? I don't understand the priority of this patch. Should I apply
+> it to fix a regression?
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I'd say 'no', as AUXADC and thermal has not yet been added to
+mt7986a.dtsi, also the corresponding clocks are currently still unused.
+So while this commit does fix a previous commit, it doesn't have a direct
+impact and will only matter once thermal and auxadc units are added to
+mt7986.dtsi.
