@@ -2,109 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DB2ECAAA1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 12:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FB0FA3740
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 12:41:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235347AbiJ0Mkp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 08:40:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44224 "EHLO
+        id S235547AbiJ0MlY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 08:41:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235732AbiJ0Mkh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 08:40:37 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B427E4054A;
-        Thu, 27 Oct 2022 05:40:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1666874428; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YOr1T8oUsQJZkpF+Sk2DjoRqQo5I98igHbDnsfrbCqo=;
-        b=nR+TbAS6AHbixwsYdua78ljTgzQOFLJ8e15C2xlmY68dyuW7WWYWy25XNK2jU2/j2wAvEC
-        cknQK9IcRfhbYjYunFKr6me4iMmzLPIUcFjTo9vMnowF3flgDTnQPQfHsFxMWz51BBhNR7
-        QK6mlOmrohS0wIqYTiXqz+7NS4ntwRI=
-Date:   Thu, 27 Oct 2022 13:40:17 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 3/6] clk: ingenic: Add .set_rate_hook() for PLL clocks
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, zhouyu@wanyeetech.com,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <5JWEKR.5UVVAJI6C2MK@crapouillou.net>
-In-Reply-To: <20221026194345.243007-4-aidanmacdonald.0x0@gmail.com>
-References: <20221026194345.243007-1-aidanmacdonald.0x0@gmail.com>
-        <20221026194345.243007-4-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S235620AbiJ0MlI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 08:41:08 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653847C18A
+        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 05:40:57 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id g7so2581678lfv.5
+        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 05:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WOGsOSU6qiApXuDl4gAi6VlxOgrLgNHBnKcPxr+QRFU=;
+        b=cCF2ppUqxh38Komk3UstEWzGoeeosemva+oE1wDdzPFNXDdsCXAGt7pxUTDnYUPxbb
+         7zPV8fEg6XYw1mw7fEGhgOc4F6bAu1K3i4gTSrTbaIPFcCdpB+Kj/Z9ZiwzQZBiqV5a2
+         hq4nT7SKT2bGbvfV3ExMc6+SdFRpkpyq53V03rBNEZFo47wmvNKy6idVZixCr9vwmq2f
+         Qm1YTz0QEtyPjDH/EWOYhf7k8R85j+JuJ3PwsFyBHXYtTiDLSbBHrlIuk5Gj5v0ynujU
+         6LpYtEU9IrS7RsUEgLurVxtOpy4SwlvRtQEETAk6zl98lyD7i7d+H4L4CkoemMJt2JrF
+         5Pgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOGsOSU6qiApXuDl4gAi6VlxOgrLgNHBnKcPxr+QRFU=;
+        b=HglqS9YBMdW/N//3VLL3JcU7cmsoEsiFlBqoWeGEsBfL/MDkBw1hdN3bhNe90jpwnn
+         nuewXVpzCsg6zS5eliJPq3wqJ9EDpcfOswOewav3TMlljjCOE+/UoiMWFlpl7VEauzZi
+         3zTYvFeCVyQM+totwg5dS3jdOJBlp1KTWJ4d/VMYPvtsJfGP+6nI7aH/vRqe36H1XQrU
+         2Db2SbFXaFaEh1nR/fWXnS6S583hf4Igj5yPl0H1al5uOXfavLmwuK0yoz1hE9rG2xkd
+         f4VT62dHnQfKfxZsg6tmcue3+1bzGqTd/qkFEBRLwjNFuy55hZBFDfIf6SWGT3eVI+H/
+         M3xw==
+X-Gm-Message-State: ACrzQf1qynEZvHmxRGJr6IzO7xZPRghKmqyM/s5dnwBp4Zv1EMdodU9n
+        Sl6duvqC6TkbCDTLUS6suUNt+w==
+X-Google-Smtp-Source: AMsMyM4n44HMnbB16xltc6uPiXGeeBKXGjBuscM0W+8rVYB2d9/rXCms2g64vrLTehThtzLi3MY8tQ==
+X-Received: by 2002:a05:6512:1092:b0:4a2:6a45:1f0d with SMTP id j18-20020a056512109200b004a26a451f0dmr19337622lfg.483.1666874455598;
+        Thu, 27 Oct 2022 05:40:55 -0700 (PDT)
+Received: from [10.27.10.248] ([195.165.23.90])
+        by smtp.gmail.com with ESMTPSA id a13-20020a2eb54d000000b0026de1bf528esm210847ljn.119.2022.10.27.05.40.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Oct 2022 05:40:55 -0700 (PDT)
+Message-ID: <3b58b4a3-5e74-d848-211a-e127fb4440b6@linaro.org>
+Date:   Thu, 27 Oct 2022 15:40:54 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH v1 5/5] clk: qcom: dispcc-sm8250: Disable link_div_clk_src
+ for sm8150
+Content-Language: en-GB
+To:     Robert Foss <robert.foss@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Jonathan Marek <jonathan@marek.ca>
+References: <20221027123432.1818530-1-robert.foss@linaro.org>
+ <20221027123432.1818530-5-robert.foss@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221027123432.1818530-5-robert.foss@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aidan,
-
-Le mer. 26 oct. 2022 =E0 20:43:42 +0100, Aidan MacDonald=20
-<aidanmacdonald.0x0@gmail.com> a =E9crit :
-> The set rate hook is called immediately after updating the clock
-> register but before the spinlock is released. This allows another
-> register to be updated alongside the main one, which is needed to
-> handle the I2S divider on some SoCs.
->=20
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
+On 27/10/2022 15:34, Robert Foss wrote:
+> SM8150 does not have any of the link_div_clk_src clocks, so
+> let's disable them for this SoC.
+> 
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
 > ---
->  drivers/clk/ingenic/cgu.c | 3 +++
->  drivers/clk/ingenic/cgu.h | 4 ++++
->  2 files changed, 7 insertions(+)
->=20
-> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-> index aea01b6b2764..b6a4d4236c16 100644
-> --- a/drivers/clk/ingenic/cgu.c
-> +++ b/drivers/clk/ingenic/cgu.c
-> @@ -232,6 +232,9 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned=20
-> long req_rate,
->=20
->  	writel(ctl, cgu->base + pll_info->reg);
->=20
-> +	if (pll_info->set_rate_hook)
-> +		pll_info->set_rate_hook(pll_info, rate, parent_rate);
+>   drivers/clk/qcom/dispcc-sm8250.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+> index d2aaa44ed3d4..f6f719616f63 100644
+> --- a/drivers/clk/qcom/dispcc-sm8250.c
+> +++ b/drivers/clk/qcom/dispcc-sm8250.c
+> @@ -1289,6 +1289,10 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
+>   		disp_cc_pll1_config.config_ctl_hi1_val = 0x00000024;
+>   		disp_cc_pll1_config.user_ctl_hi1_val = 0x000000D0;
+>   		disp_cc_pll1_init.ops = &clk_alpha_pll_trion_ops;
 > +
->  	/* If the PLL is enabled, verify that it's stable */
->  	if (pll_info->enable_bit >=3D 0 && (ctl & BIT(pll_info->enable_bit)))
->  		ret =3D ingenic_pll_check_stable(cgu, pll_info);
-> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-> index a5e44ca7f969..99da9bd86e63 100644
-> --- a/drivers/clk/ingenic/cgu.h
-> +++ b/drivers/clk/ingenic/cgu.h
-> @@ -46,6 +46,8 @@
->   *		-1 if there is no enable bit (ie, the PLL is always on)
->   * @stable_bit: the index of the stable bit in the PLL control=20
-> register, or
->   *		-1 if there is no stable bit
-> + * @set_rate_hook: hook called immediately after updating the CGU=20
-> register,
-> + *		   before releasing the spinlock
->   */
->  struct ingenic_cgu_pll_info {
->  	unsigned reg;
-> @@ -61,6 +63,8 @@ struct ingenic_cgu_pll_info {
->  	void (*calc_m_n_od)(const struct ingenic_cgu_pll_info *pll_info,
->  			    unsigned long rate, unsigned long parent_rate,
->  			    unsigned int *m, unsigned int *n, unsigned int *od);
-> +	void (*set_rate_hook)(const struct ingenic_cgu_pll_info *pll_info,
-> +			      unsigned long rate, unsigned long parent_rate);
->  };
->=20
->  /**
-> --
-> 2.38.1
->=20
+> +		disp_cc_sm8250_clocks[DISP_CC_MDSS_DP_LINK1_DIV_CLK_SRC] = NULL;
+> +		disp_cc_sm8250_clocks[DISP_CC_MDSS_DP_LINK_DIV_CLK_SRC] = NULL;
+> +		disp_cc_sm8250_clocks[DISP_CC_MDSS_EDP_LINK_DIV_CLK_SRC] = NULL;
 
+We also have to fix link_intf clocks:
+
+disp_cc_mdss_dp_link_intf_clk.clkr.hw.init->parent_hws[0] = 
+&disp_cc_mdss_dp_link_clk_src.clkr.hw;
+disp_cc_mdss_dp_link1_intf_clk.clkr.hw.init->parent_hws[0] = 
+&disp_cc_mdss_dp_link1_clk_src.clkr.hw;
+disp_cc_mdss_edp_link_intf_clk.clkr.hw.init->parent_hws[0] = 
+&disp_cc_mdss_edp_link_clk_src.clkr.hw;
+
+
+
+>   	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8350-dispcc")) {
+>   		static struct clk_rcg2 * const rcgs[] = {
+>   			&disp_cc_mdss_byte0_clk_src,
+
+-- 
+With best wishes
+Dmitry
 
