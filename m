@@ -2,255 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7AAFA3740
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 13:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C15ECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 14:59:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235483AbiJ0N7C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 09:59:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
+        id S234988AbiJ0O7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 10:59:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235700AbiJ0N6t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 09:58:49 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169881863EA
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 06:58:47 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id f27so4894961eje.1
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 06:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=H9twCSyGmHCfZTs1VqmLobwiwtuvoOis8W3XsKIxLx8=;
-        b=B8yOwFyva/x37BSg5YDwe/WTfn4Dy+OrYCl6yAd0D663EOKU10TTXX8ypPceVKOQQU
-         WY5R0qdFqm87oaw6Kk/HgZWE+b93ELqsR/67egZ41eYecVTXylNCRrYJDMsq2am/USo1
-         6zOYJXNTJGCwjZa93uQA6i4+k2VGkojOf1NK7Cw37b3PtWI24ZMohrhW0zhL6vsyLWry
-         Kahv2nEBm7gxo4D/PdPJZGXpQr6qQegXrhvjJWKCIyiYoFW+DWEV4FdYp7njscxE0Xuz
-         hKQNglNp2/mpEWnl6QRo8g+FgoOG6v/JfXwHTIYpHe+FC/WfNr+pl7j39QBAsn0axctO
-         dhDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H9twCSyGmHCfZTs1VqmLobwiwtuvoOis8W3XsKIxLx8=;
-        b=BTMlLsjDc45lBUaTTtJypq0m2cvktDOPJEPu6xKJxv2bkTDQudC1W1Gv8QkBH/tI7T
-         SH8e4FSDdzjkvKzWAZPpaT+wqSsVj6qiT5pqswE0sfRTyDBVqe0t59sDJtvC5TAQIWKZ
-         8gJC3SQP6JNT++un56KbgAOzQfN1DACqiC3ax4XrB7sMKU0o0v/c9wDyS4fvAhEtBNpe
-         7YJlY3rHBQukdtosjphay87jElh1Y1F3U0SNxqsCRQip69cR8UdKCF2lCxeJeIK1U1jR
-         gZe4EKCw2lHraE0pL0lEYA5wvwGdotkDoPf4M6j9l4j5+OvGfGyhB9wmPBSJMitd+C70
-         obkQ==
-X-Gm-Message-State: ACrzQf1EKJjBjLxBWUpHt8NmhSg+wtLhSemUe0oM0xidJd8IiTIWN/0A
-        LRjeMet4tLwYfo1fweUdB1VRrCftn2dDN/PelvkuHw==
-X-Google-Smtp-Source: AMsMyM4V4CJCvWjZUc/wuUPnShNPdQnD1fPVocjSK9OtmP7BhvowApGpOFwkw7Gvj2mgE8ZRTqrzyxI6fUECIDlD/m4=
-X-Received: by 2002:a17:907:1c98:b0:78d:3b08:33ef with SMTP id
- nb24-20020a1709071c9800b0078d3b0833efmr43344625ejc.175.1666879125532; Thu, 27
- Oct 2022 06:58:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220815-rpi-fix-4k-60-v5-0-fe9e7ac8b111@cerno.tech> <20220815-rpi-fix-4k-60-v5-5-fe9e7ac8b111@cerno.tech>
-In-Reply-To: <20220815-rpi-fix-4k-60-v5-5-fe9e7ac8b111@cerno.tech>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Thu, 27 Oct 2022 14:58:30 +0100
-Message-ID: <CAPY8ntCft8_8TimHVs9LJk11Z6PEKtZynCfSUz_3g6-saVyzPQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/7] drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection code
-To:     Maxime Ripard <maxime@cerno.tech>
+        with ESMTP id S235086AbiJ0O7X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 10:59:23 -0400
+Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CCA618DA9C;
+        Thu, 27 Oct 2022 07:59:22 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id 6B3722B06707;
+        Thu, 27 Oct 2022 10:59:17 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 27 Oct 2022 10:59:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1666882757; x=1666889957; bh=RBYg14WquA
+        PHO/Rvaf3mTJVgsKomhCcikCm0o/kyeuc=; b=DbGdbbEesCm6HcSxGbiUGf4LrZ
+        JFOTDM9ZZfs8ntNhmmL2vI2nupEeFoCVR1BNRYOzvGfl3BZOAjfHLOeUEJqOXW6R
+        OyftBrAf0Sjq/1noT9ruXh59zwouLIOwxyW9ouybD/4Nb9L1kuFFb8z6hfVZcMOW
+        wA7WZSKGiYYkdyPs2odTjKn6SjtjKMlz+Fntk/zSIlk4/kcYb3QH8zuAzlf2leCS
+        avPYOlgrgCN/7FFAUrYpwBCv5rYWe2Ow4k83VgWQ+1KgUpgz5ahkyVBsPhtApb/y
+        1kIN6MeXQfN5cTlq4e2F6xQiOy8bE8E0dvwmtiWAigcFwaKK6vEUapXeWvRA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1666882757; x=1666889957; bh=RBYg14WquAPHO/Rvaf3mTJVgsKom
+        hCcikCm0o/kyeuc=; b=BGhZy5mKL4NscqkA2CWhJUrbfW+7npBleCTrrcdxztrg
+        P6zjj7o5wmlumnjdv5ieEgYoAUkKirlS8m93J3egAhxOoJvNFzRFQ/41STgIxyg7
+        Y8mNDMdHcaKXP6mVw3zFhYOWlphEbrxg6BiSeHY3aGOApBn5mSg3+PA6bRWxNItU
+        ijLzwm9lQ9JUStc53/yig5XvLnIf/46ufasGD7hAjlrtpoHRV6+SS17fG0IkqCm2
+        jwsBshPzeJWImaqLNIv/ksfzHomiNB9ebR9u/hA8sOtQAaYP9l8pnSeSPk9wAOck
+        fupy8ANDeBtO/hqwrvCUC7sr+Qe/ex5RZV0K5O879A==
+X-ME-Sender: <xms:xJxaY4vs5M-2rzbsRzUANgEZO9Wwl6iOOcAscoaVYyT6pCrWoPvozQ>
+    <xme:xJxaY1e1FxMzRR9nlodW01PophtLdnOFmLoEPf6njzjWLdkurDbj9bRxkSLl8EMBG
+    dVq2ATu0KLjGtPk8rU>
+X-ME-Received: <xmr:xJxaYzy4mAOCrZI4WL2ORVZRuz2bqDrW-2gsg-2mhhOT5I6cpUsI9_2Cs9IaYvlpGt1tKERSDSH1MgZhUTQVkcMQpowljNdvuovndqbvLVia7Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrtdeggdekudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnheptdelkeejiedufedvhfeiffetlefhiedvleeigfeiuefghfdvleeiffejieeg
+    teejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:xJxaY7PFv-GaMML4cVmBwXq8ns331c7_nRwKvYxD_vG0pcIf9NwMaQ>
+    <xmx:xJxaY4_DjSE-1IdS3065TNQlEpoBrNT7mJ1D-MXBn-Nti7RfDEuyBg>
+    <xmx:xJxaYzVayXG1srQ_vDIMoGt-fMiqaXlHiFu-W7gFUSB0KzOUibHpgQ>
+    <xmx:xZxaYx3DcVB2OJ9_cDFXUfU9sWnvA0xfG_-2pnvvTZEzhyCOilOvKNhIzxQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Oct 2022 10:59:16 -0400 (EDT)
+Date:   Thu, 27 Oct 2022 16:59:14 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Florian Fainelli <f.fainelli@gmail.com>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         Scott Branden <sbranden@broadcom.com>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
-        David Airlie <airlied@linux.ie>, Ray Jui <rjui@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Dom Cobley <popcornmix@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Content-Type: text/plain; charset="UTF-8"
+        David Airlie <airlied@linux.ie>, Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH v5 0/7] drm/vc4: Fix the core clock behaviour
+Message-ID: <20221027145914.jv7krzw6fomffyai@houat>
+References: <20220815-rpi-fix-4k-60-v5-0-fe9e7ac8b111@cerno.tech>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bcitvyeml2o7kure"
+Content-Disposition: inline
+In-Reply-To: <20220815-rpi-fix-4k-60-v5-0-fe9e7ac8b111@cerno.tech>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 27 Oct 2022 at 13:53, Maxime Ripard <maxime@cerno.tech> wrote:
->
-> In order to support higher HDMI frequencies, users have to set the
-> hdmi_enable_4kp60 parameter in their config.txt file.
->
-> This will have the side-effect of raising the maximum of the core clock,
-> tied to the HVS, and managed by the HVS driver.
->
-> However, we are querying this in the HDMI driver by poking into the HVS
-> structure to get our struct clk handle.
->
-> Let's make this part of the HVS bind implementation to have all the core
-> clock related setup in the same place.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Thanks for the rename of the variable - pulling scrambling into it
-made it confusing.
+--bcitvyeml2o7kure
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Hi Florian,
 
-> ---
->  drivers/gpu/drm/vc4/vc4_drv.h  | 10 ++++++++++
->  drivers/gpu/drm/vc4/vc4_hdmi.c | 15 ++++-----------
->  drivers/gpu/drm/vc4/vc4_hdmi.h |  8 --------
->  drivers/gpu/drm/vc4/vc4_hvs.c  | 23 +++++++++++++++++++++++
->  4 files changed, 37 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-> index 418a8242691f..8da2b80fdbd3 100644
-> --- a/drivers/gpu/drm/vc4/vc4_drv.h
-> +++ b/drivers/gpu/drm/vc4/vc4_drv.h
-> @@ -326,6 +326,8 @@ struct vc4_hvs {
->
->         struct clk *core_clk;
->
-> +       unsigned long max_core_rate;
-> +
->         /* Memory manager for CRTCs to allocate space in the display
->          * list.  Units are dwords.
->          */
-> @@ -337,6 +339,14 @@ struct vc4_hvs {
->         struct drm_mm_node mitchell_netravali_filter;
->
->         struct debugfs_regset32 regset;
-> +
-> +       /*
-> +        * Even if HDMI0 on the RPi4 can output modes requiring a pixel
-> +        * rate higher than 297MHz, it needs some adjustments in the
-> +        * config.txt file to be able to do so and thus won't always be
-> +        * available.
-> +        */
-> +       bool vc5_hdmi_enable_hdmi_20;
->  };
->
->  struct vc4_plane {
-> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> index 3acc1858c55f..98a6643821bb 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> @@ -46,7 +46,6 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/rational.h>
->  #include <linux/reset.h>
-> -#include <soc/bcm2835/raspberrypi-clocks.h>
->  #include <sound/dmaengine_pcm.h>
->  #include <sound/hdmi-codec.h>
->  #include <sound/pcm_drm_eld.h>
-> @@ -460,6 +459,7 @@ static int vc4_hdmi_connector_detect_ctx(struct drm_connector *connector,
->  static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
->  {
->         struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
-> +       struct vc4_dev *vc4 = to_vc4_dev(connector->dev);
->         int ret = 0;
->         struct edid *edid;
->
-> @@ -483,7 +483,7 @@ static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
->         ret = drm_add_edid_modes(connector, edid);
->         kfree(edid);
->
-> -       if (vc4_hdmi->disable_4kp60) {
-> +       if (!vc4->hvs->vc5_hdmi_enable_hdmi_20) {
->                 struct drm_device *drm = connector->dev;
->                 const struct drm_display_mode *mode;
->
-> @@ -1757,11 +1757,12 @@ vc4_hdmi_encoder_clock_valid(const struct vc4_hdmi *vc4_hdmi,
->  {
->         const struct drm_connector *connector = &vc4_hdmi->connector;
->         const struct drm_display_info *info = &connector->display_info;
-> +       struct vc4_dev *vc4 = to_vc4_dev(connector->dev);
->
->         if (clock > vc4_hdmi->variant->max_pixel_clock)
->                 return MODE_CLOCK_HIGH;
->
-> -       if (vc4_hdmi->disable_4kp60 && clock > HDMI_14_MAX_TMDS_CLK)
-> +       if (!vc4->hvs->vc5_hdmi_enable_hdmi_20 && clock > HDMI_14_MAX_TMDS_CLK)
->                 return MODE_CLOCK_HIGH;
->
->         if (info->max_tmds_clock && clock > (info->max_tmds_clock * 1000))
-> @@ -3428,14 +3429,6 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
->         vc4_hdmi->disable_wifi_frequencies =
->                 of_property_read_bool(dev->of_node, "wifi-2.4ghz-coexistence");
->
-> -       if (variant->max_pixel_clock == 600000000) {
-> -               struct vc4_dev *vc4 = to_vc4_dev(drm);
-> -               unsigned int max_rate = rpi_firmware_clk_get_max_rate(vc4->hvs->core_clk);
-> -
-> -               if (max_rate < 550000000)
-> -                       vc4_hdmi->disable_4kp60 = true;
-> -       }
-> -
->         ret = devm_pm_runtime_enable(dev);
->         if (ret)
->                 return ret;
-> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
-> index db823efb2563..e3619836ca17 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
-> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
-> @@ -156,14 +156,6 @@ struct vc4_hdmi {
->          */
->         bool disable_wifi_frequencies;
->
-> -       /*
-> -        * Even if HDMI0 on the RPi4 can output modes requiring a pixel
-> -        * rate higher than 297MHz, it needs some adjustments in the
-> -        * config.txt file to be able to do so and thus won't always be
-> -        * available.
-> -        */
-> -       bool disable_4kp60;
-> -
->         struct cec_adapter *cec_adap;
->         struct cec_msg cec_rx_msg;
->         bool cec_tx_ok;
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index 4ac9f5a2d5f9..fc4b7310bf63 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -28,6 +28,8 @@
->  #include <drm/drm_drv.h>
->  #include <drm/drm_vblank.h>
->
-> +#include <soc/bcm2835/raspberrypi-firmware.h>
-> +
->  #include "vc4_drv.h"
->  #include "vc4_regs.h"
->
-> @@ -791,12 +793,33 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
->         hvs->regset.nregs = ARRAY_SIZE(hvs_regs);
->
->         if (vc4->is_vc5) {
-> +               struct rpi_firmware *firmware;
-> +               struct device_node *node;
-> +               unsigned int max_rate;
-> +
-> +               node = rpi_firmware_find_node();
-> +               if (!node)
-> +                       return -EINVAL;
-> +
-> +               firmware = rpi_firmware_get(node);
-> +               of_node_put(node);
-> +               if (!firmware)
-> +                       return -EPROBE_DEFER;
-> +
->                 hvs->core_clk = devm_clk_get(&pdev->dev, NULL);
->                 if (IS_ERR(hvs->core_clk)) {
->                         dev_err(&pdev->dev, "Couldn't get core clock\n");
->                         return PTR_ERR(hvs->core_clk);
->                 }
->
-> +               max_rate = rpi_firmware_clk_get_max_rate(firmware,
-> +                                                        RPI_FIRMWARE_CORE_CLK_ID);
-> +               rpi_firmware_put(firmware);
-> +               if (max_rate >= 550000000)
-> +                       hvs->vc5_hdmi_enable_hdmi_20 = true;
-> +
-> +               hvs->max_core_rate = max_rate;
-> +
->                 ret = clk_prepare_enable(hvs->core_clk);
->                 if (ret) {
->                         dev_err(&pdev->dev, "Couldn't enable the core clock\n");
->
-> --
-> b4 0.11.0-dev-99e3a
+On Thu, Oct 27, 2022 at 02:52:40PM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> Those patches used to be part of a larger clock fixes series:
+> https://lore.kernel.org/linux-clk/20220715160014.2623107-1-maxime@cerno.t=
+ech/
+>=20
+> However, that series doesn't seem to be getting anywhere, so I've split o=
+ut
+> these patches that fix a regression that has been there since 5.18 and th=
+at
+> prevents the 4k output from working on the RaspberryPi4.
+>=20
+> Hopefully, we will be able to merge those patches through the DRM tree to=
+ avoid
+> any further disruption.
+
+I intend to get this through drm-misc, but you just gave your
+Reviewed-by on all the firmware patches but the first. Are you ok with
+this? If so, can I add your Acked-by?
+
+Thanks!
+Maxime
+
+--bcitvyeml2o7kure
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY1qcwgAKCRDj7w1vZxhR
+xRnpAP4mYypO0n/mu6W8PKbkeWkZB8q+mWTx9P/jV3NQOgm4cwD6Aue1CHu2k5RF
+QW/IToLJvz8grwPBhwxapcwmbghVKAk=
+=/kXP
+-----END PGP SIGNATURE-----
+
+--bcitvyeml2o7kure--
