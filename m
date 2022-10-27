@@ -2,65 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2824BFA3740
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 21:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E6AECAAA1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Oct 2022 21:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236297AbiJ0Vl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 17:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47828 "EHLO
+        id S236939AbiJ0VpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 17:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236117AbiJ0Vly (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 17:41:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7CB4B4A0;
-        Thu, 27 Oct 2022 14:41:54 -0700 (PDT)
+        with ESMTP id S236966AbiJ0VpL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 17:45:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9243F76971;
+        Thu, 27 Oct 2022 14:45:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E82B3B827DE;
-        Thu, 27 Oct 2022 21:41:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F112C433D6;
-        Thu, 27 Oct 2022 21:41:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3846762523;
+        Thu, 27 Oct 2022 21:45:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC66C433C1;
+        Thu, 27 Oct 2022 21:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666906911;
-        bh=+bqMYfhBoMQBNclMwiXInuF4126VdbEDPwSYcMlTatk=;
+        s=k20201202; t=1666907109;
+        bh=mTMAirvTRFpPduH/fF/LE6Jf3DwPW1HTbiNGhhjjb7Y=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CJRlxu66YR1gJs+s/NRcf9oKssdDMmsNjr8UoEhMmO0BXaC5th/zLePkc9dB6Kfk1
-         x6OmBiPkcO1KJDdZsxscaN8ZlqWvZdoHZbgds/k2Bvmgj9Dl3Yb9Cl946pyKrj2rat
-         hJHXHbwRo0MRo9ApgPkb4JO8xANJvDN8P5wR7cSjTWZEe5PmONuVZ7Y1GuEt0HcG6e
-         lbK6VL4KcBv7hSwPl2IRLroc1paBs4BmP9IMRzPc/BZ3xeTBHlOLDamhgj8NTRcuhL
-         jiHOk3G3pyDA5u5k6bnWMVP2zIMEJ+P9TxPvw7uzqzOX0iica03IJcc2g0VXYzlm1r
-         a/PEVvzF7+4bg==
+        b=g8Wqbn1zWUFFiBcPBZ2RiF1buP52eUOOhLy/mRUOVZsjtilVSn8JjeVzNS49IqQiD
+         LBStX2zQAzpe+NzAhHyRdhNm8Ij3a8nARkHZf7n33XlDacB1n3GwIkFDkE4TMzMd+l
+         NgAtrcqMth741cUIwqL3o4npNAuSRW+PMDqL+YlHkq/v5GS+9A/EslD/ac5ybYh/0W
+         9mQZFXp5yt3YghtPFRG0gKbVbK28ww3MzP+X5Mh3tpHORpV/ndtNKI0XvQ4W9DXrpZ
+         CUBg/EC+0yhvIzAD9LXvVczuhg8HGS7MOcs8bbTAhIJrbWLW4QepGI2F3M/KqZKTDW
+         SYtPSLpBQ+AiQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5e55012567da74870e1fb2edc2dc513b5821e523.1666801017.git.daniel@makrotopia.org>
-References: <9bde77be-f4ec-11e7-e645-7c4465bcf6db@collabora.com> <5e55012567da74870e1fb2edc2dc513b5821e523.1666801017.git.daniel@makrotopia.org>
-Subject: Re: [PATCH v2] clk: mediatek: fix dependency of MT7986 ADC clocks
+In-Reply-To: <20221026135215.nqndtcb2unxqwwux@houat>
+References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech> <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech> <20221026020800.38AC8C433C1@smtp.kernel.org> <20221026135215.nqndtcb2unxqwwux@houat>
+Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sam Shih <sam.shih@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-To:     Daniel Golle <daniel@makrotopia.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Date:   Thu, 27 Oct 2022 14:41:49 -0700
+        linux-clk@vger.kernel.org
+To:     maxime@cerno.tech
+Date:   Thu, 27 Oct 2022 14:45:07 -0700
 User-Agent: alot/0.10
-Message-Id: <20221027214151.7F112C433D6@smtp.kernel.org>
+Message-Id: <20221027214509.8EC66C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Golle (2022-10-26 09:18:07)
-> It seems like CLK_INFRA_ADC_FRC_CK always need to be enabled for
-> CLK_INFRA_ADC_26M_CK to work. Instead of adding this dependency to the
-> mtk-thermal and mt6577_auxadc drivers, add dependency to the clock
-> driver clk-mt7986-infracfg.c.
+Quoting maxime@cerno.tech (2022-10-26 06:52:15)
+> On Tue, Oct 25, 2022 at 07:07:58PM -0700, Stephen Boyd wrote:
+> >=20
+> > You can grep for it:
+> >=20
+> >  $ git grep -W 'struct clk_ops .*=3D'
+>=20
+> TIL about -W. It's awesome, thanks
 
-Is this a cleanup patch? Or a pre-requisite for thermal and auxadc
-drivers? I don't understand the priority of this patch. Should I apply
-it to fix a regression?
+:)
+
+>=20
+> > but I'm fairly certain a coccinelle script can detect most of these
+> > because clk_ops are usually statically defined (although not always).
+> >=20
+> > Either way I already see that 'owl_comp_div_ops' will trigger this
+> > warning. And 'at91sam9x5_smd_ops' looks even more likely. Given that I'm
+> > not super keen on applying this patch.
+>=20
+> It's the reason why I didn't return an error at first, I wanted to
+> report that it's invalid and let to drivers the chance to be fixed
+> still.
+>=20
+> Should I take your above comment as you'd rather have the affected
+> drivers fixed in this patch and we then return an error, or is it that
+> you don't want that patch at all?
+
+You can try fixing all the drivers that are failing to meet this
+requirement (found with grep) and if they are fixed we can start
+printing the warning. That seems to be the practical approach to getting
+this patch accepted. The TODO irks me to be honest. I'd rather we fix
+everything and make it an error and be done with it.
