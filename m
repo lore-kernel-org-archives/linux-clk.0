@@ -2,92 +2,230 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA93C38A02
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 11:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F25ECAAA1
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 11:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbiJ1Lit (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 07:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
+        id S229562AbiJ1Lmg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 07:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbiJ1Lis (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 07:38:48 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69EDF1D2990
-        for <linux-clk@vger.kernel.org>; Fri, 28 Oct 2022 04:38:46 -0700 (PDT)
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id DA93B84C36;
-        Fri, 28 Oct 2022 13:38:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1666957124;
-        bh=0I0TEK1G9LDmI03Hv3IB00bvJGwIogJnj1AGaj8yads=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GctRGkYKi1R2LsxgySLSE6HGHiBvqwlY2XBwUmOgX9W4NeB+DHav9TUCBq9m0VUGq
-         Qu6RL3a1FRyagdH8e+fFDgEjz8/4PbMjthVUE17GzD1+AnyNZ2GjihKxHqR4y536ai
-         fjAljVJXgm03lcXi3b4JXchdg1mdb1HGVHnBixQstPAi+WZ5YNcbZl/9hKRuNWUM+H
-         FqwR9IPdfzRd3C6dpz+qZISi5qLQtNhwVHi7GO5VoO5loyL7RdovqjPnCHZOwwc6Tg
-         fDznCQHiO526IKf+52dwVyHZNa3HX3hKHMzYt06GiiU5C4NETA65r+7em2IUd8T4in
-         wpXrom/SPdD/w==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ralph Siemsen <ralph.siemsen@linaro.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH v2] clk: renesas: r9a06g032: Repair grave increment error
-Date:   Fri, 28 Oct 2022 13:38:34 +0200
-Message-Id: <20221028113834.7496-1-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S230038AbiJ1Lme (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 07:42:34 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3ADD1C8136
+        for <linux-clk@vger.kernel.org>; Fri, 28 Oct 2022 04:42:32 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id t25so3203868qkm.2
+        for <linux-clk@vger.kernel.org>; Fri, 28 Oct 2022 04:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V4nl/yqB7JCdClSGpG/ZOGD2vqHnwuwrCcASM1BkB0c=;
+        b=a57mpQWbEEJOhp9YUTYfDTMzoO4ot3lAYdhjhKi+bBYvrmTBoU4El50dearP5eiKdX
+         mbSvm8xbnaYmu509n+YAZOBPvRJ9Oq+2Jp7EtXpzMeFhYvA2Ri8rwuFyVyG2jHJp2g3w
+         NwPymRHgpOKde85D2mQh8oHtPI1H9+9AGG+5dXxMQahBKu8OiJ+m0pJItXKfpi8U26KW
+         auxF7A44kEcA6F0/LZvJAmLaZyOkHxNRd/+bf8GOwEHDBVwC/Ktbi9jUb9xUF3wMFHpY
+         xSshQnZhdD4PDKpdV7wv6G2/AEj4E2l5A7I65tIHZ4pJNHvMH5/Ui0Wm64aMtsbP5V+w
+         N/jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4nl/yqB7JCdClSGpG/ZOGD2vqHnwuwrCcASM1BkB0c=;
+        b=7YdRGXYPO7rLdD3SsD5I7f/aaPv1n6OEMRZP39R0stJ18OGLPXwJiEsWqi4GH8Kz1w
+         bW+lEZ5XFB2laXntR1hcR+a5Bh+I0+iGnIIWjCNCpGpRm1J1kgpTuHpAn0WawLmPOWKh
+         gJP392j6fjpolV7Up8lRBDOe7BKF9JQS5JuGdo3x1gcb7uT8RVLN0S/fCa/m64y3Kvoj
+         lTxMkQazSIrE3IFydiqImw32lr9yjtgn9Iuostc2rVSufBM23/JVIBuKQ7BxqFry4bHy
+         PFOnX6hM9V2OwhVLk7Wyn7m4m+MgyQJ/IoPFrOTsxDck5lI01HPHxR52vDGnIvVYZ5VV
+         1cPg==
+X-Gm-Message-State: ACrzQf0Cg1ErrU56tRqtoB/2myIy+th2EFdTYLEeaFRcrsRYvkNFdYVO
+        dNIDj8A8fAfWOMADZicR1a7EAg==
+X-Google-Smtp-Source: AMsMyM4sd0CoRJgxFJv2RpxVf3ohbMa+KmVGqtd5yUL9dA2lUFymsH4viwvhEtZpnzQ60EpapBBYHg==
+X-Received: by 2002:a05:620a:22c3:b0:6ec:53bb:d296 with SMTP id o3-20020a05620a22c300b006ec53bbd296mr38031213qki.158.1666957352120;
+        Fri, 28 Oct 2022 04:42:32 -0700 (PDT)
+Received: from [192.168.1.11] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id bl7-20020a05620a1a8700b006b5cc25535fsm2719103qkb.99.2022.10.28.04.42.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Oct 2022 04:42:31 -0700 (PDT)
+Message-ID: <b63f7fde-4e51-00c5-b060-335e54f73f46@linaro.org>
+Date:   Fri, 28 Oct 2022 07:42:28 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH v6 2/3] clk: clk-loongson2: add clock controller driver
+ support
+Content-Language: en-US
+To:     Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+References: <20221028061922.19045-1-zhuyinbo@loongson.cn>
+ <20221028061922.19045-2-zhuyinbo@loongson.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221028061922.19045-2-zhuyinbo@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If condition (clkspec.np != pd->dev.of_node) is true, then the
-driver ends up in endless loop, forever, locking up the machine.
+On 28/10/2022 02:19, Yinbo Zhu wrote:
+> This driver provides support for clock controller on Loongson-2 SoC
+> , the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock
+> , there are five independent PLLs inside, each of which PLL can
 
-Fixes: aad03a66f902 ("clk: renesas: r9a06g032: Add clock domain support")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ralph Siemsen <ralph.siemsen@linaro.org>
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: Gareth Williams <gareth.williams.jx@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ralph Siemsen <ralph.siemsen@linaro.org>
----
-V2: - Drop Phil, add Gareth
-    - Add Fixes tag
-    - Add RB from Geert, Ralph
----
- drivers/clk/renesas/r9a06g032-clocks.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Same problem as in other patch - no new lines before commas.
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 1488c9d6e6394..983faa5707b9c 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -412,7 +412,7 @@ static int r9a06g032_attach_dev(struct generic_pm_domain *pd,
- 	int error;
- 	int index;
- 
--	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
-+	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i++,
- 					   &clkspec)) {
- 		if (clkspec.np != pd->dev.of_node)
- 			continue;
-@@ -425,7 +425,6 @@ static int r9a06g032_attach_dev(struct generic_pm_domain *pd,
- 			if (error)
- 				return error;
- 		}
--		i++;
- 	}
- 
- 	return 0;
--- 
-2.35.1
+> provide up to three sets of frequency dependent clock outputs.
+> 
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+> ---
+>  MAINTAINERS                  |   1 +
+>  arch/loongarch/Kconfig       |   1 +
+>  arch/loongarch/kernel/time.c |   3 +
+>  drivers/clk/Kconfig          |   9 ++
+>  drivers/clk/Makefile         |   1 +
+>  drivers/clk/clk-loongson2.c  | 285 +++++++++++++++++++++++++++++++++++
+>  6 files changed, 300 insertions(+)
+>  create mode 100644 drivers/clk/clk-loongson2.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 14af7ebf2be1..5136684fb6c6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11911,6 +11911,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
+>  M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+>  L:	linux-clk@vger.kernel.org
+>  S:	Maintained
+> +F:	drivers/clk/clk-loongson2.c
+>  F:	include/dt-bindings/clock/loongson,ls2k-clk.h
+>  
+>  LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 26aeb1408e56..8b65f349cd6e 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -122,6 +122,7 @@ config LOONGARCH
+>  	select USE_PERCPU_NUMA_NODE_ID
+>  	select USER_STACKTRACE_SUPPORT
+>  	select ZONE_DMA32
+> +	select COMMON_CLK
+>  
+>  config 32BIT
+>  	bool
+> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
+> index 786735dcc8d6..09f20bc81798 100644
+> --- a/arch/loongarch/kernel/time.c
+> +++ b/arch/loongarch/kernel/time.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/sched_clock.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/of_clk.h>
+>  
+>  #include <asm/cpu-features.h>
+>  #include <asm/loongarch.h>
+> @@ -214,6 +215,8 @@ int __init constant_clocksource_init(void)
+>  
+>  void __init time_init(void)
+>  {
+> +	of_clk_init(NULL);
+> +
+>  	if (!cpu_has_cpucfg)
+>  		const_clock_freq = cpu_clock_freq;
+>  	else
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 48f8f4221e21..e85a3ed88d4c 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -428,6 +428,15 @@ config COMMON_CLK_K210
+>  	help
+>  	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
+>  
+> +config COMMON_CLK_LOONGSON2
+
+Messed up order.
+
+> +	bool "Clock driver for Loongson-2 SoC"
+> +	depends on COMMON_CLK && OF
+> +	help
+> +	  This driver provides support for Clock Controller that base on
+> +	  Common Clock Framework Controller (CCF) on Loongson-2 SoC. The
+> +	  Clock Controller can generates and supplies clock to various
+> +	  peripherals within the SoC.
+> +
+>  source "drivers/clk/actions/Kconfig"
+>  source "drivers/clk/analogbits/Kconfig"
+>  source "drivers/clk/baikal-t1/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index d5db170d38d2..8ccc7436052f 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -75,6 +75,7 @@ obj-$(CONFIG_COMMON_CLK_RS9_PCIE)	+= clk-renesas-pcie.o
+>  obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
+>  obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+>  obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+> +obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
+
+Messed up order.
+
+>  
+>  # please keep this section sorted lexicographically by directory path name
+>  obj-y					+= actions/
+> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+> new file mode 100644
+> index 000000000000..359fede40112
+> --- /dev/null
+> +++ b/drivers/clk/clk-loongson2.c
+> @@ -0,0 +1,285 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
+> + * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
+> + */
+> +
+> +#include <linux/clkdev.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <dt-bindings/clock/loongson,ls2k-clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk.h>
+> +
+> +#define LOONGSON2_PLL_MULT_SHIFT		32
+> +#define LOONGSON2_PLL_MULT_WIDTH		10
+> +#define LOONGSON2_PLL_DIV_SHIFT			26
+> +#define LOONGSON2_PLL_DIV_WIDTH			6
+> +#define LOONGSON2_APB_FREQSCALE_SHIFT		20
+> +#define LOONGSON2_APB_FREQSCALE_WIDTH		3
+> +#define LOONGSON2_USB_FREQSCALE_SHIFT		16
+> +#define LOONGSON2_USB_FREQSCALE_WIDTH		3
+> +#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
+> +#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
+> +
+> +void __iomem *loongson2_pll_base;
+
+This must be static.
+
+> +static DEFINE_SPINLOCK(loongson2_clk_lock);
+> +static struct clk_hw **hws;
+> +static struct clk_hw_onecell_data *clk_hw_data;
+
+You have way too many file-scope variables. I would expect 0 and this
+being a driver.
+
+Best regards,
+Krzysztof
 
