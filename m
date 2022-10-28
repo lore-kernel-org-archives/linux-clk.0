@@ -2,24 +2,24 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093E7FA3744
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D3CFA3746
 	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 06:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229767AbiJ1GTg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 02:19:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37880 "EHLO
+        id S229766AbiJ1GTh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 02:19:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiJ1GTf (ORCPT
+        with ESMTP id S229629AbiJ1GTf (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 02:19:35 -0400
 Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6DB4F2AC3;
-        Thu, 27 Oct 2022 23:19:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 979905F54;
+        Thu, 27 Oct 2022 23:19:30 -0700 (PDT)
 Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8CxjdpwdFtjBwgDAA--.11638S3;
-        Fri, 28 Oct 2022 14:19:28 +0800 (CST)
+        by gateway (Coremail) with SMTP id _____8Axz7dxdFtjFAgDAA--.6665S3;
+        Fri, 28 Oct 2022 14:19:29 +0800 (CST)
 Received: from localhost.localdomain (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+BrdFtj_zQGAA--.22314S2;
-        Fri, 28 Oct 2022 14:19:27 +0800 (CST)
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+BrdFtj_zQGAA--.22314S4;
+        Fri, 28 Oct 2022 14:19:28 +0800 (CST)
 From:   Yinbo Zhu <zhuyinbo@loongson.cn>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -34,102 +34,129 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
         Yinbo Zhu <zhuyinbo@loongson.cn>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v6 1/3] dt-bindings: clock: add loongson-2 clock include file
-Date:   Fri, 28 Oct 2022 14:19:20 +0800
-Message-Id: <20221028061922.19045-1-zhuyinbo@loongson.cn>
+Subject: [PATCH v6 3/3] dt-bindings: clock: add loongson-2 clock
+Date:   Fri, 28 Oct 2022 14:19:22 +0800
+Message-Id: <20221028061922.19045-3-zhuyinbo@loongson.cn>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221028061922.19045-1-zhuyinbo@loongson.cn>
+References: <20221028061922.19045-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Axf+BrdFtj_zQGAA--.22314S2
+X-CM-TRANSID: AQAAf8Axf+BrdFtj_zQGAA--.22314S4
 X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW7Wry3AFyUJryUKr4kWr13XFb_yoW8KF1xpr
-        s5CFWfKry2yF4IkwsYgF13Kr13uw4xJ3W7AFW7uF1jyF17Jw18JwnruF1fAa9xXrWkGFWx
-        ZaykCw409a9rX3DanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tF4kJw4fKFyfWF1kuFg_yoW5GrWDpF
+        sxC343GryIvF17Zws5Ka4xA3Z5u3Z7CF17ZwnrCa42kr98W3W5XF17K34DZa9rAFy7Za9r
+        ZFWfCr4jka1Ikw7anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
         qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUAVWUZwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        bS8Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
         F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
+        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
+        80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
         0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
-        xVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_
-        Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-        WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-        CTnIWIevJa73UjIFyTuYvjxUcxwIDUUUU
+        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_
+        Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+        WUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
+        YxBIdaVFxhVjvjDU0xZFpf9x07UNjjkUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This file defines all Loongson-2 SoC clock indexes, it should be
-included in the device tree in which there's device using the
-clocks.
+Add the Loongson-2 clock binding with DT schema format using
+json-schema.
 
 Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Change in v6:
-		1. Replace string LOONGSON2 with LOONGSON-2 in MAINTAINERS.
+ .../bindings/clock/loongson,ls2k-clk.yaml     | 63 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
 
- MAINTAINERS                                   |  6 ++++
- include/dt-bindings/clock/loongson,ls2k-clk.h | 29 +++++++++++++++++++
- 2 files changed, 35 insertions(+)
- create mode 100644 include/dt-bindings/clock/loongson,ls2k-clk.h
-
+diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+new file mode 100644
+index 000000000000..63a59015987e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/loongson,ls2k-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson-2 SoC Clock Control Module
++
++maintainers:
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++description: |
++  Loongson-2 SoC clock control module is an integrated clock controller, which
++  generates and supplies to all modules.
++
++properties:
++  compatible:
++    enum:
++      - loongson,ls2k-clk
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: 100m ref
++
++  clock-names:
++    items:
++      - const: ref_100m
++
++  '#clock-cells':
++    const: 1
++    description:
++      The clock consumer should specify the desired clock by having the clock
++      ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
++      for the full list of Loongson-2 SoC clock IDs.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    ref_100m: clock-ref-100m {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <100000000>;
++        clock-output-names = "ref_100m";
++    };
++
++    clk: clock-controller@1fe00480 {
++        compatible = "loongson,ls2k-clk";
++        reg = <0x1fe00480 0x58>;
++        #clock-cells = <1>;
++        clocks = <&ref_100m>;
++        clock-names = "ref_100m";
++    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 6ae50b1257e9..14af7ebf2be1 100644
+index 5136684fb6c6..e5fb270dd363 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -11907,6 +11907,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
- F:	drivers/thermal/loongson2_thermal.c
+@@ -11911,6 +11911,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+ F:	drivers/clk/clk-loongson2.c
+ F:	include/dt-bindings/clock/loongson,ls2k-clk.h
  
-+LOONGSON-2 SOC SERIES CLOCK DRIVER
-+M:	Yinbo Zhu <zhuyinbo@loongson.cn>
-+L:	linux-clk@vger.kernel.org
-+S:	Maintained
-+F:	include/dt-bindings/clock/loongson,ls2k-clk.h
-+
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
- M:	Sathya Prakash <sathya.prakash@broadcom.com>
- M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
-new file mode 100644
-index 000000000000..db1e27e792ff
---- /dev/null
-+++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
-+ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_LOONGSON2_H
-+#define __DT_BINDINGS_CLOCK_LOONGSON2_H
-+
-+#define LOONGSON2_REF_100M				0
-+#define LOONGSON2_NODE_PLL				1
-+#define LOONGSON2_DDR_PLL				2
-+#define LOONGSON2_DC_PLL				3
-+#define LOONGSON2_PIX0_PLL				4
-+#define LOONGSON2_PIX1_PLL				5
-+#define LOONGSON2_NODE_CLK				6
-+#define LOONGSON2_HDA_CLK				7
-+#define LOONGSON2_GPU_CLK				8
-+#define LOONGSON2_DDR_CLK				9
-+#define LOONGSON2_GMAC_CLK				10
-+#define LOONGSON2_DC_CLK				11
-+#define LOONGSON2_APB_CLK				12
-+#define LOONGSON2_USB_CLK				13
-+#define LOONGSON2_SATA_CLK				14
-+#define LOONGSON2_PIX0_CLK				15
-+#define LOONGSON2_PIX1_CLK				16
-+#define LOONGSON2_CLK_END				17
-+
-+#endif
 -- 
 2.31.1
 
