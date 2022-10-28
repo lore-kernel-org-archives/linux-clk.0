@@ -2,111 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E357FA373D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 02:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D9AECAAA1
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 02:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236369AbiJ1Cq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 22:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49638 "EHLO
+        id S236002AbiJ1CzV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 22:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234884AbiJ1Cq5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 22:46:57 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19DA9F34F;
-        Thu, 27 Oct 2022 19:46:55 -0700 (PDT)
-X-QQ-mid: bizesmtp77t1666925205trdp212h
-Received: from [192.168.125.106] ( [113.72.144.82])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 28 Oct 2022 10:46:44 +0800 (CST)
-X-QQ-SSF: 01000000000000B0B000000A0000000
-X-QQ-FEAT: vqhsT3OOnzRLiM/g5o2j2J4W/+or9KnaRTkPOvebYDLsCzhWkN0QrHZbnLoVo
-        M/MhoZK0UtjJIzkdUkWy4KmfRps7PNjYdykPWjVgdeMBJDreHNWrZMezfqTdsGEQquL+rFb
-        bmLVfCjfEiL/+WJfDfk3jvnIf+Mtl4nNT2g+DLQWcFIuhFdJIyG9shL42UPYIg2EYp8oML4
-        j1tm8oPF9yK8KRRh1/eEQ/iVfNvLwQa5yq1FdOiprbOuuaq5NwJ5mrXE0UKN3NpH62Yiu76
-        oFMMYkeOM98R+3htFcuNmJl2IKijsoe/pbTbXo1LF2dk00BGpQzOL4MnonpcpXB7qW+C8e4
-        q1v0Idjt3wIZ5is6IV5KeliQKK7/6UH3LpI8VYY
-X-QQ-GoodBg: 0
-Message-ID: <44B201EE232142D8+724bfbd1-f1aa-a13d-fd38-655df7d7036e@linux.starfivetech.com>
-Date:   Fri, 28 Oct 2022 10:46:32 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 15/30] clk: starfive: Use regmap APIs to operate
- registers
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+        with ESMTP id S234558AbiJ1CzU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 22:55:20 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E09BF6527F;
+        Thu, 27 Oct 2022 19:55:18 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8BxHdmVRFtjRAEDAA--.11456S3;
+        Fri, 28 Oct 2022 10:55:17 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8BxmFePRFtj1R8GAA--.3496S2;
+        Fri, 28 Oct 2022 10:55:16 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929175602.19946-1-hal.feng@linux.starfivetech.com>
- <20220930214824.A14ACC433D6@smtp.kernel.org>
- <CAJM55Z8xxrKqaN64KAP9miTis4wFbL2S9uhV5h-SOiYjbYng+g@mail.gmail.com>
- <20221012230525.C6E58C433D7@smtp.kernel.org>
- <07B628ED6CABEF1D+932737cc-7d4b-4071-531e-82f88d89a872@linux.starfivetech.com>
- <20221027012605.B6769C433C1@smtp.kernel.org>
-Content-Language: en-US
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <20221027012605.B6769C433C1@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 1/3] dt-bindings: clock: add loongson-2 clock include file
+Date:   Fri, 28 Oct 2022 10:55:02 +0800
+Message-Id: <20221028025504.13247-1-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8BxmFePRFtj1R8GAA--.3496S2
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7Wry3AFyUJrW7AFWruFW7Jwb_yoW8KFy3pr
+        4kCFyfKry2yF4IkwsYqFy3Kr13uw4xJ3W7AF47uF1UAFnrJw18JwnruF1fA39xXrWkGFWx
+        ZaykCw4j9FsrW3DanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x
+        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_
+        Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+        WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+        CTnIWIevJa73UjIFyTuYvjxUc2Q6DUUUU
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 26 Oct 2022 18:26:03 -0700, Stephen Boyd wrote:
-> Quoting Hal Feng (2022-10-22 21:11:41)
-> > On Wed, 12 Oct 2022 16:05:23 -0700, Stephen Boyd wrote:
-> > > I think we should use auxiliary bus and split the driver logically into
-> > > a reset driver in drivers/reset and a clk driver in drivers/clk. That
-> > > way the appropriate maintainers can review the code. There is only one
-> > > platform device with a single reg property and node in DT, but there are
-> > > two drivers. 
-> > 
-> > Yes, I agree that the reset driver and the clock driver should be split.
-> > However, I think using auxiliary bus is a little bit complicated in this
-> > case, because the reset is not a part of functionality of the clock in 
-> > JH7110. They just share a common register base address.
-> 
-> That is why auxiliary bus exists.
-> 
-> > I think it is 
-> > better to use ioremap for the same address, and the dt will be like
-> > 
-> > syscrg_clk: clock-controller@13020000 {
-> >         compatible = "starfive,jh7110-clkgen-sys";
-> >         reg = <0x0 0x13020000 0x0 0x10000>;
-> >         ...
-> > };
-> > syscrg_rst: reset-controller@13020000 {
-> >         compatible = "starfive,jh7110-reset-sys";
-> >         reg = <0x0 0x13020000 0x0 0x10000>;
-> >         ...
-> > };
-> > 
-> > What do you think of this approach? I would appreciate your suggestions.
-> > 
-> 
-> We shouldn't have two different nodes with the same reg property. Please
-> ioremap in whatever driver probes and creates the auxiliary device(s)
-> and then pass the void __iomem * to it.
+This file defines all Loongson-2 SoC clock indexes, it should be
+included in the device tree in which there's device using the
+clocks.
 
-Okay, I will use auxiliary bus for clock and reset driver on the next version.
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Change in v5:
+		1. Replace loongson2/Loongson2 with loongson-2/Loongson-2.
+		2. Replace soc with SoC.
 
-Best regards,
-Hal
+ MAINTAINERS                                   |  6 ++++
+ include/dt-bindings/clock/loongson,ls2k-clk.h | 29 +++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+ create mode 100644 include/dt-bindings/clock/loongson,ls2k-clk.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6ae50b1257e9..369a527740c5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11907,6 +11907,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
+ F:	drivers/thermal/loongson2_thermal.c
+ 
++LOONGSON2 SOC SERIES CLOCK DRIVER
++M:	Yinbo Zhu <zhuyinbo@loongson.cn>
++L:	linux-clk@vger.kernel.org
++S:	Maintained
++F:	include/dt-bindings/clock/loongson,ls2k-clk.h
++
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+ M:	Sathya Prakash <sathya.prakash@broadcom.com>
+ M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
+new file mode 100644
+index 000000000000..db1e27e792ff
+--- /dev/null
++++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
++ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_LOONGSON2_H
++#define __DT_BINDINGS_CLOCK_LOONGSON2_H
++
++#define LOONGSON2_REF_100M				0
++#define LOONGSON2_NODE_PLL				1
++#define LOONGSON2_DDR_PLL				2
++#define LOONGSON2_DC_PLL				3
++#define LOONGSON2_PIX0_PLL				4
++#define LOONGSON2_PIX1_PLL				5
++#define LOONGSON2_NODE_CLK				6
++#define LOONGSON2_HDA_CLK				7
++#define LOONGSON2_GPU_CLK				8
++#define LOONGSON2_DDR_CLK				9
++#define LOONGSON2_GMAC_CLK				10
++#define LOONGSON2_DC_CLK				11
++#define LOONGSON2_APB_CLK				12
++#define LOONGSON2_USB_CLK				13
++#define LOONGSON2_SATA_CLK				14
++#define LOONGSON2_PIX0_CLK				15
++#define LOONGSON2_PIX1_CLK				16
++#define LOONGSON2_CLK_END				17
++
++#endif
+-- 
+2.31.1
 
