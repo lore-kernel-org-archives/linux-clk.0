@@ -2,161 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D3CFA3746
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 06:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3D6ECAAA1
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 07:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbiJ1GTh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 02:19:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37884 "EHLO
+        id S230080AbiJ1HTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 03:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbiJ1GTf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 02:19:35 -0400
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 979905F54;
-        Thu, 27 Oct 2022 23:19:30 -0700 (PDT)
-Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8Axz7dxdFtjFAgDAA--.6665S3;
-        Fri, 28 Oct 2022 14:19:29 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+BrdFtj_zQGAA--.22314S4;
-        Fri, 28 Oct 2022 14:19:28 +0800 (CST)
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        Yinbo Zhu <zhuyinbo@loongson.cn>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v6 3/3] dt-bindings: clock: add loongson-2 clock
-Date:   Fri, 28 Oct 2022 14:19:22 +0800
-Message-Id: <20221028061922.19045-3-zhuyinbo@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20221028061922.19045-1-zhuyinbo@loongson.cn>
-References: <20221028061922.19045-1-zhuyinbo@loongson.cn>
+        with ESMTP id S229519AbiJ1HTM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 03:19:12 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D03B1B76C9;
+        Fri, 28 Oct 2022 00:19:09 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id t25so2921632qkm.2;
+        Fri, 28 Oct 2022 00:19:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ygvJZjS5cqGS/Wb19opJUCwMym/FSRX+6Prvu5QHTU=;
+        b=qn0p4/DGOzi1Pyy+uoxWGPTsvd8rHGQBsjab4yUwWcr+9UkyV3Tk3CKtU9X6u32/We
+         /BrbyM6wIVQW02ShN2Q3fx4vAyWtiyGYw5HKOjvjT+9yHv57+Mmj5l43nL4eGOUgTz4g
+         Y+U8512rbKv1PYW0HADkeErqgcDfSJ0Cj1zTB+GrtZQKxBYY0z4/K4+iOUXAPpiBVrdb
+         rl4g1C9JTnZqWuLJ5R1dCys1ECMB3tbDCyW41E91/Jr2C7F99OXnHKXr07yyn6mpFwdU
+         Jv2SuElNbFNrP7iqX1uFz0RUoPHjtICWszFondrBxpmzgBEffHcRUfY+9xyg1ME8y77N
+         uWYA==
+X-Gm-Message-State: ACrzQf2ZfDW6joIs2+C/Og66ReS8lOrloe09gvTH5Z9PgR6AAQGevPAR
+        ReIkbTm1kFIGXO/aQMOY4CCQUV95uHgv9A==
+X-Google-Smtp-Source: AMsMyM4Wo4amUI5IdMl7bBCrpcs0+L7Fy7tKm9b4SdsQOIrJ4cAa0tol0CwupC4LKdYR68pR0C6t3Q==
+X-Received: by 2002:a05:620a:44cd:b0:6ec:51f9:5e82 with SMTP id y13-20020a05620a44cd00b006ec51f95e82mr38698350qkp.521.1666941548374;
+        Fri, 28 Oct 2022 00:19:08 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id q39-20020a05620a2a6700b006b640efe6dasm2462438qkp.132.2022.10.28.00.19.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Oct 2022 00:19:08 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id f205so5232066yba.2;
+        Fri, 28 Oct 2022 00:19:07 -0700 (PDT)
+X-Received: by 2002:a25:d64e:0:b0:6cb:7faa:af94 with SMTP id
+ n75-20020a25d64e000000b006cb7faaaf94mr15955833ybg.36.1666941547538; Fri, 28
+ Oct 2022 00:19:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Axf+BrdFtj_zQGAA--.22314S4
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tF4kJw4fKFyfWF1kuFg_yoW5GrWDpF
-        sxC343GryIvF17Zws5Ka4xA3Z5u3Z7CF17ZwnrCa42kr98W3W5XF17K34DZa9rAFy7Za9r
-        ZFWfCr4jka1Ikw7anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bS8Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
-        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
-        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_
-        Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-        WUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
-        YxBIdaVFxhVjvjDU0xZFpf9x07UNjjkUUUUU=
+References: <20221027163057.37257-1-marex@denx.de>
+In-Reply-To: <20221027163057.37257-1-marex@denx.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 28 Oct 2022 09:18:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW64XYebA_mMWAvB+CyKkguZT9ShMMsLELVFHR8c_=cRA@mail.gmail.com>
+Message-ID: <CAMuHMdW64XYebA_mMWAvB+CyKkguZT9ShMMsLELVFHR8c_=cRA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Repair grave increment error
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-clk@vger.kernel.org,
+        Ralph Siemsen <ralph.siemsen@linaro.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the Loongson-2 clock binding with DT schema format using
-json-schema.
+CC s/Phil/Gareth/
 
-Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/clock/loongson,ls2k-clk.yaml     | 63 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+On Thu, Oct 27, 2022 at 6:31 PM Marek Vasut <marex@denx.de> wrote:
+> If condition (clkspec.np != pd->dev.of_node) is true, then the
+> driver ends up in endless loop, forever, locking up the machine.
+>
+> Signed-off-by: Marek Vasut <marex@denx.de>
 
-diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-new file mode 100644
-index 000000000000..63a59015987e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/loongson,ls2k-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Loongson-2 SoC Clock Control Module
-+
-+maintainers:
-+  - Yinbo Zhu <zhuyinbo@loongson.cn>
-+
-+description: |
-+  Loongson-2 SoC clock control module is an integrated clock controller, which
-+  generates and supplies to all modules.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - loongson,ls2k-clk
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: 100m ref
-+
-+  clock-names:
-+    items:
-+      - const: ref_100m
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      The clock consumer should specify the desired clock by having the clock
-+      ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
-+      for the full list of Loongson-2 SoC clock IDs.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    ref_100m: clock-ref-100m {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <100000000>;
-+        clock-output-names = "ref_100m";
-+    };
-+
-+    clk: clock-controller@1fe00480 {
-+        compatible = "loongson,ls2k-clk";
-+        reg = <0x1fe00480 0x58>;
-+        #clock-cells = <1>;
-+        clocks = <&ref_100m>;
-+        clock-names = "ref_100m";
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5136684fb6c6..e5fb270dd363 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11911,6 +11911,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
- M:	Yinbo Zhu <zhuyinbo@loongson.cn>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
- F:	drivers/clk/clk-loongson2.c
- F:	include/dt-bindings/clock/loongson,ls2k-clk.h
- 
--- 
-2.31.1
+Fixes: aad03a66f902e18b ("clk: renesas: r9a06g032: Add clock domain support")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.2.
 
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> @@ -412,7 +412,7 @@ static int r9a06g032_attach_dev(struct generic_pm_domain *pd,
+>         int error;
+>         int index;
+>
+> -       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+> +       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i++,
+>                                            &clkspec)) {
+>                 if (clkspec.np != pd->dev.of_node)
+>                         continue;
+> @@ -425,7 +425,6 @@ static int r9a06g032_attach_dev(struct generic_pm_domain *pd,
+>                         if (error)
+>                                 return error;
+>                 }
+> -               i++;
+>         }
+>
+>         return 0;
+> --
+> 2.35.1
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
