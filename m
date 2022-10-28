@@ -2,74 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F479ECAAA1
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 12:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B02AECAAA1
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 13:43:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbiJ1Msu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 08:48:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49950 "EHLO
+        id S231388AbiJ1NnI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 09:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiJ1Mst (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 08:48:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EFB61D5862;
-        Fri, 28 Oct 2022 05:48:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B4D26282D;
-        Fri, 28 Oct 2022 12:48:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA151C433D6;
-        Fri, 28 Oct 2022 12:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666961327;
-        bh=LSwr3Q1J/pGFCWnuuN96Iwb8nLI745MpukwHAe01huk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BZZf13BfwEldKVyJNfqKMIqkWhYZjELSwbhUUScyaOYn/SHMZqRrvRo0aothu4efI
-         qU9xkJCYBo7rbd/cxm8aNqbmtMZX/HeGp8lrCToIQQzS9+A8vyo6jaKg8nxWSEV9hh
-         yEav3BQS7wb1NB5ceqhOenjClEwrBmQBDpou2VEseGkoOQSlizACxY1ds6a3zDzX7x
-         IzamiEZMmRDqmFw0HSGBBN9YqHYDl+WzfAAThCdE+P9axR1yEsq7WHSFXvPoit8n2R
-         yX36iYG3wbdQzNxXifRvo/x2J3C9lh/FivJYdi1/vlLGBHa92iUOy/ckjcmFLTuF+1
-         XRlG7/rWivHXw==
-Date:   Fri, 28 Oct 2022 18:18:43 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-phy@lists.infradead.org
-Subject: Re: [PATCH v4 3/3] phy: qcom-qmp-ufs: provide symbol clocks
-Message-ID: <Y1vPq/2Qjzh/fsWV@matsya>
-References: <20220916061740.87167-1-dmitry.baryshkov@linaro.org>
- <20220916061740.87167-4-dmitry.baryshkov@linaro.org>
- <20220930005647.99FE7C433D6@smtp.kernel.org>
+        with ESMTP id S231176AbiJ1Nmw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 09:42:52 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A24C130D71;
+        Fri, 28 Oct 2022 06:42:18 -0700 (PDT)
+X-QQ-mid: bizesmtp79t1666964523t4hfihhr
+Received: from localhost.localdomain ( [182.148.13.81])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Fri, 28 Oct 2022 21:42:02 +0800 (CST)
+X-QQ-SSF: 01000000000000F0J000000A0000000
+X-QQ-FEAT: hEgsg0a1R29entsb7H0r/VDA8PcvuIJllYztK3wMsF2TUFT2YFz9FY1aa2M+7
+        /5uef3/SNmZQL53GGGYGzfn5sZ79oJ6ooHD2F0gn13xFVf8aT7qDRy4cW0fLbMKErqd/RT9
+        IcJJ4MD6ul8y59fWDdF9DHZAmjioqNy5YRGMc5dkn/E23TABHKew855bGmCgsMLsTFvgK1C
+        Iv3XaAZ2XgWaM+hXwWuf0H73ysx9U+x0hOYiuh4lMZLs0eLsWu+TJaMOF9siP4ha3kUvHcv
+        +GJ26b+Q2pJrXWl82GOAMssNDhs5J754WPg4PGD96YFdoMlWQbLCa0XL9ZZSFw2eB3RjWO+
+        wRiZnW5sEHylcnpn6uXdGrpfPvl+As0YN97dJqE/9ULqjildYhg9ZkOr1bjhw==
+X-QQ-GoodBg: 0
+From:   Jilin Yuan <yuanjilin@cdjrlc.com>
+To:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jilin Yuan <yuanjilin@cdjrlc.com>
+Subject: [PATCH] clk: meson: fix repeated words in comments
+Date:   Fri, 28 Oct 2022 21:41:56 +0800
+Message-Id: <20221028134156.64042-1-yuanjilin@cdjrlc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220930005647.99FE7C433D6@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29-09-22, 17:56, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2022-09-15 23:17:40)
-> > Register three UFS symbol clocks (ufs_rx_symbol_0_clk_src,
-> > ufs_rx_symbol_1_clk_src ufs_tx_symbol_0_clk_src). Register OF clock
-> > provider to let other devices link these clocks through the DT.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> 
-> The previous two are on clk-fixed-rate branch if you want to pull it.
+Delete the redundant word 'of'.
 
-Okay, i dont think there is a compile time dependency, so these can go
-independently..
+Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
+---
+ drivers/clk/meson/clk-regmap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+index e365312da54e..e08a9fa0cc36 100644
+--- a/drivers/clk/meson/clk-regmap.h
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -18,7 +18,7 @@
+  * @data:	data specific to the clock type
+  *
+  * Clock which is controlled by regmap backed registers. The actual type of
+- * of the clock is controlled by the clock_ops and data.
++ * the clock is controlled by the clock_ops and data.
+  */
+ struct clk_regmap {
+ 	struct clk_hw	hw;
 -- 
-~Vinod
+2.36.1
+
