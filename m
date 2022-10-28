@@ -2,95 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C744FA3743
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 07:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C41EC38A02
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 07:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbiJ1Hsv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 03:48:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36976 "EHLO
+        id S230158AbiJ1HtR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 03:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230229AbiJ1Hss (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 03:48:48 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 154501BE1E0;
-        Fri, 28 Oct 2022 00:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1666943325; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=biY8c9UIA8tRU0N6X5LV3ObrP5qOGMkHf6HMaHaU6fU=;
-        b=T8ALAdRLQ3Qrz/Wa9O149SH/+i4hnqwKFlecDqEsJgO3GQstkdGJxbceRP8483YV16P31W
-        V7eXajhrBo2nCa5+SNLBLEZ1ylh8yaaBDBfQanG+tMxKdWCKOctJTiFtPzJYNsYbQdt03N
-        0B2jVvf/kkaK7EHFOaJVPewvBaa9o6o=
-Date:   Fri, 28 Oct 2022 08:48:35 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v6 3/3] clk: Add Ingenic JZ4755 CGU driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Siarhei Volkau <lis8215@gmail.com>,
-        Siarhei Volkau <lis8215@gmail.com>,
+        with ESMTP id S229962AbiJ1HtQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 03:49:16 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E78419ABE7;
+        Fri, 28 Oct 2022 00:49:15 -0700 (PDT)
+Received: from booty.fritz.box (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id E92141C0002;
+        Fri, 28 Oct 2022 07:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1666943353;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=m0oOZ7l6RvS8VTaNyT1SmYC8MhtuXGooOBg79bTfEm4=;
+        b=mdVRAKjAmqXAEtpaIwhfCi/rf7DHOZx/gC3jDRriH1FZY0O/hDmwlu+bQux9smX7b6AUm+
+        gOrFrbQPsVr0f5uwEPDH7ic7XQfK1SOJENmxclMb3XRhSs4Ngtj1ekQxQWp1p+RgjmDZMF
+        t/5t7V9yhHbfKGUViZnGmgQ+WsDvoiUDTswTdvnMSneIY5A9QaKoqIzBCAP0ZMKMDtEI3E
+        Cc66hEsNGMEwu7UHh49EEGNrroWaynC2/B2f+eFiXUrG7rIlEPD8H7lhXILaL4gW52z7O0
+        DDH5V5UoXFxKM3+oR7hryFXUVczlWTBXYAAFX4IsOHyeJBpuvNyZobLh0ik1Vg==
+From:   luca.ceresoli@bootlin.com
+To:     linux-tegra@vger.kernel.org
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Message-Id: <ZODGKR.IJ47UDRQGD431@crapouillou.net>
-In-Reply-To: <20221027215716.77250C433D6@smtp.kernel.org>
-References: <20221027192024.484320-1-lis8215@gmail.com>
-        <20221027192024.484320-4-lis8215@gmail.com>
-        <20221027215716.77250C433D6@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and Tegra30
+Date:   Fri, 28 Oct 2022 09:48:26 +0200
+Message-Id: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Le jeu. 27 oct. 2022 =E0 14:57:14 -0700, Stephen Boyd <sboyd@kernel.org>=20
-a =E9crit :
-> Quoting Siarhei Volkau (2022-10-27 12:20:23)
->>  diff --git a/drivers/clk/ingenic/jz4755-cgu.c=20
->> b/drivers/clk/ingenic/jz4755-cgu.c
->>  new file mode 100644
->>  index 000000000..d2eb3ae0c
->>  --- /dev/null
->>  +++ b/drivers/clk/ingenic/jz4755-cgu.c
->>  @@ -0,0 +1,346 @@
-> [...]
->>  +static void __init jz4755_cgu_init(struct device_node *np)
->>  +{
->>  +       int retval;
->>  +
->>  +       cgu =3D ingenic_cgu_new(jz4755_cgu_clocks,
->>  +                             ARRAY_SIZE(jz4755_cgu_clocks), np);
->>  +       if (!cgu) {
->>  +               pr_err("%s: failed to initialise CGU\n", __func__);
->>  +               return;
->>  +       }
->>  +
->>  +       retval =3D ingenic_cgu_register_clocks(cgu);
->>  +       if (retval)
->>  +               pr_err("%s: failed to register CGU Clocks\n",=20
->> __func__);
->>  +
->>  +       ingenic_cgu_register_syscore_ops(cgu);
->>  +}
->>  +CLK_OF_DECLARE_DRIVER(jz4755_cgu, "ingenic,jz4755-cgu",=20
->> jz4755_cgu_init);
->=20
-> Is there another driver that probes this device?=20
-> CLK_OF_DECLARE_DRIVER()
-> is for the situation where we want to probe this device again with
-> another platform driver. Please add a comment indicating what that=20
-> other
-> driver is.
+On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
+7 integer bits + 1 decimal bit. This has been verified on both
+documentation and real hardware for Tegra20 an on the documentation I was
+able to find for Tegra30.
 
-See: 03d570e1a4dc ("clk: ingenic: Use CLK_OF_DECLARE_DRIVER macro")
+However in the kernel code this clock is declared as an integer divider. A
+consequence of this is that requesting 144 MHz for HOST1X which is fed by
+pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
+MHz (216 / 1.5).
 
-Cheers,
--Paul
+Fix by replacing the INT() macro with the MUX() macro which, despite the
+name, defines a fractional divider. The only difference between the two
+macros is the former does not have the TEGRA_DIVIDER_INT flag.
 
+Also move the line together with the other MUX*() ones to keep the existing
+file organization.
+
+Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
+Cc: stable@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 4dcf7f7cb8a0..806d835ca0d2 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
+ 	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
+ 	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
+-	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+ 	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
+ 	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
+ 	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
+@@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
+ 	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
+ 	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
++	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+ 	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
+ 	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
+ 	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),
+-- 
+2.34.1
 
