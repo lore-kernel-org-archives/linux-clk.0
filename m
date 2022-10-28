@@ -2,111 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB91FA3742
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 04:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63564C38A02
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 05:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbiJ1EjV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 00:39:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41750 "EHLO
+        id S229604AbiJ1FB7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 01:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiJ1EjV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 00:39:21 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02531A1B04;
-        Thu, 27 Oct 2022 21:39:20 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id e19so2428892ili.4;
-        Thu, 27 Oct 2022 21:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1WhBTGaBcgzM59zxiugd1LdPyjuKQI0L1h5Ir7by9Mo=;
-        b=dmoaYIR9+pOQ2cu0Zj77vWOIrDG3SHVAUs75YWWHe+zERA3giEDX5sRZRvn1j0PAfq
-         OhOBPMh9KMos2fnr8MAEJCY1pSnkTBX951s1zMxj6+r2kOynw5Yi23bkm7dRi8Yz8A5/
-         PfX/HRTPUHnVcDrkx9Acz8Lj6j1WY6HTSD2FDro0R3Dg8PG43wCbP93mlVDZj0t/OVwV
-         S3Z87LQeWF3WcYrt2yCSSQJQOO72mi31RYcbj1uU6U1OPlrjNVFz5iuo5fTWFid5kD/y
-         63Y0GXmkY8wffgT2q+Z0j1cZo9hdA+ZMRaGflrCnLMQDr4q6hG5q/+Wauq0aY+dTaEkL
-         SDbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1WhBTGaBcgzM59zxiugd1LdPyjuKQI0L1h5Ir7by9Mo=;
-        b=HEAZHsKi79nRWWDcTLhnfC38YKsL9xuuTomOPSmVrFA1V9kAfVFCi0xImRUN/Ut/5j
-         CSfiuBaDFFxxqnf70NvSuiFc755CYOQlznFDIuh05PJPWDTxzfjM3IYZYVh/D5Koqyyp
-         /sBqgyE2rDnYv+wgtLkz1aaXvRf6nmOrNHQRFzJUWU0G8/2TiE15a+uA46UKigZWaNHr
-         2JTYDsqMq6OaNaA/aQRE8uFFkQIX2xTBABJzHDu8sswUeNXmkXNRsjmTqsTP/0pQtSf0
-         FsOc1sgW4/0Ud/LYb9DgtlnSQHzDeobcpWWVTHIykFeqUhMORYH5rZ+/rY6VeAFV9SVR
-         2QnA==
-X-Gm-Message-State: ACrzQf2cd+Ubve9N6si+nUcI3qEAbHiIdpqU6gZ937bl+WZWrlIiSpRQ
-        Z026fFCw2V1PMrmFCy4rQ6KRkp5W5VecJpH9kkY=
-X-Google-Smtp-Source: AMsMyM4K7vKfzl95B9uiZeNHtdbNAXz5q8UtaraFfmCu8xRlrsj2A63VBuhsOdt8ODpayZIfLekoxRq+QsDbjKWZXEE=
-X-Received: by 2002:a05:6e02:20ea:b0:2fa:bf8:300a with SMTP id
- q10-20020a056e0220ea00b002fa0bf8300amr32908132ilv.309.1666931960039; Thu, 27
- Oct 2022 21:39:20 -0700 (PDT)
+        with ESMTP id S229494AbiJ1FB6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 01:01:58 -0400
+Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDA931AFABE;
+        Thu, 27 Oct 2022 22:01:55 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1ooHUR-007UuU-3C; Fri, 28 Oct 2022 13:01:44 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 28 Oct 2022 13:01:43 +0800
+Date:   Fri, 28 Oct 2022 13:01:43 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     heiko@sntech.de, ardb@kernel.org, davem@davemloft.net,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v10 00/33] crypto: rockchip: permit to pass self-tests
+Message-ID: <Y1tiN9GSMrudUG6d@gondor.apana.org.au>
+References: <20220927075511.3147847-1-clabbe@baylibre.com>
 MIME-Version: 1.0
-References: <20221027192024.484320-1-lis8215@gmail.com> <20221027192024.484320-4-lis8215@gmail.com>
- <20221027215716.77250C433D6@smtp.kernel.org>
-In-Reply-To: <20221027215716.77250C433D6@smtp.kernel.org>
-From:   Siarhei Volkau <lis8215@gmail.com>
-Date:   Fri, 28 Oct 2022 07:39:08 +0300
-Message-ID: <CAKNVLfaA20jO0HMDMU28e-96HaQEAZ5At_vqQU+Ni_tEEt84gQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] clk: Add Ingenic JZ4755 CGU driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220927075511.3147847-1-clabbe@baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=D0=BF=D1=82, 28 =D0=BE=D0=BA=D1=82. 2022 =D0=B3. =D0=B2 00:57, Stephen Boy=
-d <sboyd@kernel.org>:
->
-> Quoting Siarhei Volkau (2022-10-27 12:20:23)
-> > diff --git a/drivers/clk/ingenic/jz4755-cgu.c b/drivers/clk/ingenic/jz4=
-755-cgu.c
-> > new file mode 100644
-> > index 000000000..d2eb3ae0c
-> > --- /dev/null
-> > +++ b/drivers/clk/ingenic/jz4755-cgu.c
-> > @@ -0,0 +1,346 @@
-> [...]
-> > +static void __init jz4755_cgu_init(struct device_node *np)
-> > +{
-> > +       int retval;
-> > +
-> > +       cgu =3D ingenic_cgu_new(jz4755_cgu_clocks,
-> > +                             ARRAY_SIZE(jz4755_cgu_clocks), np);
-> > +       if (!cgu) {
-> > +               pr_err("%s: failed to initialise CGU\n", __func__);
-> > +               return;
-> > +       }
-> > +
-> > +       retval =3D ingenic_cgu_register_clocks(cgu);
-> > +       if (retval)
-> > +               pr_err("%s: failed to register CGU Clocks\n", __func__)=
-;
-> > +
-> > +       ingenic_cgu_register_syscore_ops(cgu);
-> > +}
-> > +CLK_OF_DECLARE_DRIVER(jz4755_cgu, "ingenic,jz4755-cgu", jz4755_cgu_ini=
-t);
->
-> Is there another driver that probes this device? CLK_OF_DECLARE_DRIVER()
-> is for the situation where we want to probe this device again with
-> another platform driver. Please add a comment indicating what that other
-> driver is.
+On Tue, Sep 27, 2022 at 07:54:38AM +0000, Corentin Labbe wrote:
+> Hello
+> 
+> The rockchip crypto driver is broken and do not pass self-tests.
+> This serie's goal is to permit to become usable and pass self-tests.
+> 
+> This whole serie is tested on a rk3328-rock64, rk3288-miqi and
+> rk3399-khadas-edge-v with selftests (with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y)
+> 
+> Regards
+> 
+> Changes since v1:
+> - select CRYPTO_ENGINE
+> - forgot to free fallbacks TFMs
+> - fixed kernel test robots warning
+> - add the PM patch
+> 
+> Changes since v2:
+> - Added DMA clock back to 3288 since it dont work without it
+> - fallback needed to select CBC and ECB configs
+> - Added support for rk3399
+> - Added more patch (style, read_poll_timeout)
+> 
+> Changes since v3:
+> - full rewrite of support for RK3399
+> - splited dt-binding patch in two
+> 
+> Changes since v4:
+> - Another full rewrite of support for RK3399
+> - Fixed dt-binding from Krzysztof Kozlowski's comments
+> - Use readl_poll_timeout() instead of read_poll_timeout()
+> - Rewrite the fallback SG tests
+> 
+> Changes since v5:
+> - fixed errors in DT binding patch
+> 
+> Change since v6:
+> - remove quotes around const values in dt-bindings
+> 
+> Changes since v7:
+> - added lot of reviewed/tested by
+> - In patch 14: keep initial reset pulse.
+> 
+> Changes since v8:
+> - Removed some useless min/maxitems from dt-binding as reported by dt_binding_check
+> 
+> Change since v9:
+> - removed redundant rst_ from reset-names
+> - reworked patch #25 commit message
+> 
+> Corentin Labbe (33):
+>   crypto: rockchip: use dev_err for error message about interrupt
+>   crypto: rockchip: do not use uninitialized variable
+>   crypto: rockchip: do not do custom power management
+>   crypto: rockchip: fix privete/private typo
+>   crypto: rockchip: do not store mode globally
+>   crypto: rockchip: add fallback for cipher
+>   crypto: rockchip: add fallback for ahash
+>   crypto: rockchip: better handle cipher key
+>   crypto: rockchip: remove non-aligned handling
+>   crypto: rockchip: rework by using crypto_engine
+>   crypto: rockchip: rewrite type
+>   crypto: rockchip: add debugfs
+>   crypto: rockchip: introduce PM
+>   crypto: rockchip: handle reset also in PM
+>   crypto: rockchip: use clk_bulk to simplify clock management
+>   crypto: rockchip: add myself as maintainer
+>   crypto: rockchip: use read_poll_timeout
+>   crypto: rockchip: fix style issue
+>   crypto: rockchip: add support for rk3328
+>   crypto: rockchip: rename ablk functions to cipher
+>   crypto: rockchip: rework rk_handle_req function
+>   crypto: rockchip: use a rk_crypto_info variable instead of lot of
+>     indirection
+>   crypto: rockchip: use the rk_crypto_info given as parameter
+>   dt-bindings: crypto: convert rockchip-crypto to YAML
+>   dt-bindings: crypto: rockchip: add new compatible
+>   clk: rk3399: use proper crypto0 name
+>   arm64: dts: rockchip: add rk3328 crypto node
+>   arm64: dts: rockchip: rk3399: add crypto node
+>   crypto: rockchip: store crypto_info in request context
+>   crypto: rockchip: Check for clocks numbers and their frequencies
+>   crypto: rockchip: rk_ahash_reg_init use crypto_info from parameter
+>   crypto: rockchip: permit to have more than one reset
+>   crypto: rockchip: Add support for RK3399
+> 
+>  .../crypto/rockchip,rk3288-crypto.yaml        | 127 ++++
+>  .../bindings/crypto/rockchip-crypto.txt       |  28 -
+>  MAINTAINERS                                   |   7 +
+>  arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  11 +
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  20 +
+>  drivers/crypto/Kconfig                        |  15 +
+>  drivers/crypto/rockchip/rk3288_crypto.c       | 506 ++++++++--------
+>  drivers/crypto/rockchip/rk3288_crypto.h       | 107 ++--
+>  drivers/crypto/rockchip/rk3288_crypto_ahash.c | 267 +++++----
+>  .../crypto/rockchip/rk3288_crypto_skcipher.c  | 543 ++++++++++--------
+>  include/dt-bindings/clock/rk3399-cru.h        |   6 +-
+>  11 files changed, 949 insertions(+), 688 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+> 
+> -- 
+> 2.35.1
 
-I wasn't aware of that, it's just
-> + * Heavily based on JZ4725b CGU driver
-with no comment either, same as a few others.
-Maybe it's better to fix that in a separate commit as per Paul's
-proposal on unused macros'?
+Patches 1-25,29-33 applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
