@@ -2,56 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B302ECAAA1
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 00:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AAAECAAA1
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 00:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234705AbiJ1AXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Oct 2022 20:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46062 "EHLO
+        id S235086AbiJ1AYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Oct 2022 20:24:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233867AbiJ1AXt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 20:23:49 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CEA3A02D2
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 17:23:48 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id j14so6299072ljh.12
-        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 17:23:48 -0700 (PDT)
+        with ESMTP id S234920AbiJ1AYf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Oct 2022 20:24:35 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E572695BD
+        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 17:24:30 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id b18so6293800ljr.13
+        for <linux-clk@vger.kernel.org>; Thu, 27 Oct 2022 17:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bZYWmbkkX4tjycvaxT68XqwdEysdPnbhAunSSy5OJgM=;
-        b=IHxYowaoqHjIbbyLOYZS90Pa8uc4TM5JOtjG8Mn58hLNLNzChZt2xPWeUXf0xBUn9X
-         SdzHy2cgav9WSafWuNoL5gtQTLJuhgcDZRuECg+YcB1jBmmx0pMhjLp8MIlGJE/9u/z/
-         vVmzvbPI9f2NzGPdGLN3zoILUCGRSE2d/pnH0=
+        bh=zG8vNqu+yOnidTThsRRaGZjoea/P4g3Vo3zqFSDgNyo=;
+        b=l8rrr8Z85GFAmVl1MYomr5u3ZX297sQGN4+2wABZM/iRfD+r2T5n7Nngwech8/gi0t
+         05hJL/dAm9TOv8+IbW3z3IOl3Euj2WAJRAp/xVWlKhwIT3+Q7qinLIaY8eBZWCE+Rojs
+         +2ag0ajmdC5pmF1zNiyJ0gliOJJ03ok1/dR0o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bZYWmbkkX4tjycvaxT68XqwdEysdPnbhAunSSy5OJgM=;
-        b=zlngR7RXD85f8mretHiRrOt8DGvWVQbExJEkhq44ayX2nEWDJAdbg8mJsNhyqlO+mb
-         HKLN2w07HPRY08dsrHpbbjCdGfPAsOoJzs2QlZksWroENhbf8j6Hz1XQMDalzmimt7O9
-         pTPx4mEczxOoLwuaUSvywzIgav/xDxrrGkea7FSq6r5Z3wxvR+je7oaZIK459yQ6jnNn
-         mTJoM42lStKEX69djihT5M+oLqNoKO4J5QhL3E0SXPiR305XgiXDBh7F9VUsJTfJggYf
-         917mSNjZuekSfn6YNUfUrfOjNoQAAOOKuZCgiqEskyzVvplnwSskfe8sWh56ET8G8P++
-         KvHA==
-X-Gm-Message-State: ACrzQf1xiPlKwqg7qMXC3xscBBVTgwsXTnUOOYDeOielnK9U+QkrX17j
-        YIlFs2WDLkbhrgsZz2hEFUdbaxPvBTd+f41s7hCOFP/O98I=
-X-Google-Smtp-Source: AMsMyM4XnutzWavl2CaDfCXL+NDneRFi94v1QO+dssMzMZyLaX2H7s4OEN4i8mf8M3e074LWZ65Q0+cFfxQ3DjJdW8U=
-X-Received: by 2002:a05:651c:222c:b0:26b:dec5:a4f0 with SMTP id
- y44-20020a05651c222c00b0026bdec5a4f0mr20966207ljq.359.1666916626872; Thu, 27
- Oct 2022 17:23:46 -0700 (PDT)
+        bh=zG8vNqu+yOnidTThsRRaGZjoea/P4g3Vo3zqFSDgNyo=;
+        b=yPZ7yibwNh2DROpUELP3vViR/lm2giCC1gLrvD0yQnxKVSpxqb7WFTQECMrg5O5QjB
+         H0dXk6WCiFPbVyWwh2iA4HUKU0VRfqg1Ucit+dWv1D9pIOFfXJ4GbvTUnLqf9QkcFWbL
+         2jBBEIYHXYBLFG22ee6WVcFM6MTjf4MvW3P7tut3yZ3H0E0MnbzWx+CNFKkP5PcTsVg4
+         RIbjxEa2z/Xylg0dGQfmpPl4KFY42l5ifIhnIF9mdtNX3PsQ+VOQo18PoHBE/StVCQKE
+         RtxEUUwqP6ne6nktvOwvvqkgfpCoHO+ysnRoc16JOfG0WU4rEJOnpH3E0vgcs4hOgpXW
+         cOEA==
+X-Gm-Message-State: ACrzQf3S0arFZc0e5erh0fUsRKACnaFY1HH28PnyylakPvwRgUQG1GxT
+        T/n4+VYGcb968RXu9rJHg0tPG/qW04DLXNT1gyVAkQ==
+X-Google-Smtp-Source: AMsMyM6a19Ff+UZWtCjteZZ3KxTuJu0T7yhL5jb3q9l4sm2lLlt2HHa3p/naIEz1+VA2IO+Fp6GOG466ZtOwZ2jwpxw=
+X-Received: by 2002:a2e:8081:0:b0:277:b:33db with SMTP id i1-20020a2e8081000000b00277000b33dbmr11474019ljg.228.1666916669276;
+ Thu, 27 Oct 2022 17:24:29 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 27 Oct 2022 20:23:46 -0400
+ HTTPREST; Thu, 27 Oct 2022 20:24:28 -0400
 MIME-Version: 1.0
 In-Reply-To: <1666159535-6447-1-git-send-email-quic_c_skakit@quicinc.com>
 References: <1666159535-6447-1-git-send-email-quic_c_skakit@quicinc.com>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Thu, 27 Oct 2022 20:23:46 -0400
-Message-ID: <CAE-0n51s94fsxz2Ay7YOs96aL1ScPUQGovbjut3R5m=2yxHnzg@mail.gmail.com>
+Date:   Thu, 27 Oct 2022 20:24:28 -0400
+Message-ID: <CAE-0n52N6oxSLoU_=Cq1xK9bVX7H+AvPsR3dLepMNjKywdffvQ@mail.gmail.com>
 Subject: Re: [PATCH] clk: qcom: Update the force mem core bit for GPU clocks
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -71,11 +70,6 @@ Quoting Satya Priya (2022-10-18 23:05:35)
 > and thus enable the FORCE_MEM_PERIPH always for these clocks
 > to force the periph_on signal to remain active during halt
 > state of the clock.
->
-> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
-> Fixes: 3e0f01d6c7e7 ("clk: qcom: Add graphics clock controller driver for SC7280")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
-> ---
 
-Applied to clk-fixes
+I take it that missing this causes GPU to lose state when it suspends
+and that confuses the driver?
