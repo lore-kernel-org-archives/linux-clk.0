@@ -2,104 +2,452 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE128ECAAA1
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 05:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAF3FA3742
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 06:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbiJ1FxH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 01:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51856 "EHLO
+        id S229608AbiJ1GTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 02:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiJ1FxG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 01:53:06 -0400
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21501B6C8A;
-        Thu, 27 Oct 2022 22:53:05 -0700 (PDT)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7AD391A0C56;
-        Fri, 28 Oct 2022 07:53:04 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 11DD61A0C19;
-        Fri, 28 Oct 2022 07:53:04 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DD3CB180327D;
-        Fri, 28 Oct 2022 13:53:00 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     shengjiu.wang@gmail.com, abelvesa@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, marex@denx.de
-Subject: [PATCH v4 2/2] clk: imx8mp: Add audio shared gate
-Date:   Fri, 28 Oct 2022 13:32:24 +0800
-Message-Id: <1666935144-7364-3-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1666935144-7364-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1666935144-7364-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        with ESMTP id S229489AbiJ1GTe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 02:19:34 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E0B702BCF;
+        Thu, 27 Oct 2022 23:19:29 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Cx7NhwdFtjDAgDAA--.11665S3;
+        Fri, 28 Oct 2022 14:19:28 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+BrdFtj_zQGAA--.22314S3;
+        Fri, 28 Oct 2022 14:19:27 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH v6 2/3] clk: clk-loongson2: add clock controller driver support
+Date:   Fri, 28 Oct 2022 14:19:21 +0800
+Message-Id: <20221028061922.19045-2-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221028061922.19045-1-zhuyinbo@loongson.cn>
+References: <20221028061922.19045-1-zhuyinbo@loongson.cn>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8Axf+BrdFtj_zQGAA--.22314S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW3CFy8Gr47GryDCFWUGw1rZwb_yoWkGw4fpF
+        WfAay5WrWjgr4UursxtryDGr15AasxC3W7AF43Ga4jkrZ7X34rXr4kAFyfZF4UAFWkAFWI
+        vFZagrW8CFs8XwUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUAVWUZwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
+        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
+        80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x
+        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_
+        Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+        WUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
+        cSsGvfC2KfnxnUUI43ZEXa7IU1BOJ7UUUUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Abel Vesa <abel.vesa@nxp.com>
+This driver provides support for clock controller on Loongson-2 SoC
+, the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock
+, there are five independent PLLs inside, each of which PLL can
+provide up to three sets of frequency dependent clock outputs.
 
-According to the RM, the CCGR101 is shared for the following root clocks:
-- AUDIO_AHB_CLK_ROOT
-- AUDIO_AXI_CLK_ROOT
-- SAI1_CLK_ROOT
-- SAI2_CLK_ROOT
-- SAI3_CLK_ROOT
-- SAI5_CLK_ROOT
-- SAI6_CLK_ROOT
-- SAI7_CLK_ROOT
-- PDM_CLK_ROOT
-
-And still keep MX8MP_CLK_AUDIO_ROOT clock, even it is duplicate with
-AUDIO_AHB_CLK_ROOT, that is to avoid break any users.
-
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
 ---
- drivers/clk/imx/clk-imx8mp.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ MAINTAINERS                  |   1 +
+ arch/loongarch/Kconfig       |   1 +
+ arch/loongarch/kernel/time.c |   3 +
+ drivers/clk/Kconfig          |   9 ++
+ drivers/clk/Makefile         |   1 +
+ drivers/clk/clk-loongson2.c  | 285 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 300 insertions(+)
+ create mode 100644 drivers/clk/clk-loongson2.c
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 652ae58c2735..d9ad09877990 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -17,6 +17,7 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 14af7ebf2be1..5136684fb6c6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11911,6 +11911,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
++F:	drivers/clk/clk-loongson2.c
+ F:	include/dt-bindings/clock/loongson,ls2k-clk.h
  
- static u32 share_count_nand;
- static u32 share_count_media;
-+static u32 share_count_audio;
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 26aeb1408e56..8b65f349cd6e 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -122,6 +122,7 @@ config LOONGARCH
+ 	select USE_PERCPU_NUMA_NODE_ID
+ 	select USER_STACKTRACE_SUPPORT
+ 	select ZONE_DMA32
++	select COMMON_CLK
  
- static const char * const pll_ref_sels[] = { "osc_24m", "dummy", "dummy", "dummy", };
- static const char * const audio_pll1_bypass_sels[] = {"audio_pll1", "audio_pll1_ref_sel", };
-@@ -699,7 +700,21 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_HDMI_ROOT] = imx_clk_hw_gate4("hdmi_root_clk", "hdmi_axi", ccm_base + 0x45f0, 0);
- 	hws[IMX8MP_CLK_TSENSOR_ROOT] = imx_clk_hw_gate4("tsensor_root_clk", "ipg_root", ccm_base + 0x4620, 0);
- 	hws[IMX8MP_CLK_VPU_ROOT] = imx_clk_hw_gate4("vpu_root_clk", "vpu_bus", ccm_base + 0x4630, 0);
--	hws[IMX8MP_CLK_AUDIO_ROOT] = imx_clk_hw_gate4("audio_root_clk", "audio_ahb", ccm_base + 0x4650, 0);
+ config 32BIT
+ 	bool
+diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
+index 786735dcc8d6..09f20bc81798 100644
+--- a/arch/loongarch/kernel/time.c
++++ b/arch/loongarch/kernel/time.c
+@@ -12,6 +12,7 @@
+ #include <linux/kernel.h>
+ #include <linux/sched_clock.h>
+ #include <linux/spinlock.h>
++#include <linux/of_clk.h>
+ 
+ #include <asm/cpu-features.h>
+ #include <asm/loongarch.h>
+@@ -214,6 +215,8 @@ int __init constant_clocksource_init(void)
+ 
+ void __init time_init(void)
+ {
++	of_clk_init(NULL);
++
+ 	if (!cpu_has_cpucfg)
+ 		const_clock_freq = cpu_clock_freq;
+ 	else
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 48f8f4221e21..e85a3ed88d4c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -428,6 +428,15 @@ config COMMON_CLK_K210
+ 	help
+ 	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
+ 
++config COMMON_CLK_LOONGSON2
++	bool "Clock driver for Loongson-2 SoC"
++	depends on COMMON_CLK && OF
++	help
++	  This driver provides support for Clock Controller that base on
++	  Common Clock Framework Controller (CCF) on Loongson-2 SoC. The
++	  Clock Controller can generates and supplies clock to various
++	  peripherals within the SoC.
++
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/analogbits/Kconfig"
+ source "drivers/clk/baikal-t1/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index d5db170d38d2..8ccc7436052f 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -75,6 +75,7 @@ obj-$(CONFIG_COMMON_CLK_RS9_PCIE)	+= clk-renesas-pcie.o
+ obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
+ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
++obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
+ 
+ # please keep this section sorted lexicographically by directory path name
+ obj-y					+= actions/
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+new file mode 100644
+index 000000000000..359fede40112
+--- /dev/null
++++ b/drivers/clk/clk-loongson2.c
+@@ -0,0 +1,285 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
++ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
++ */
++
++#include <linux/clkdev.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <dt-bindings/clock/loongson,ls2k-clk.h>
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/clk.h>
++
++#define LOONGSON2_PLL_MULT_SHIFT		32
++#define LOONGSON2_PLL_MULT_WIDTH		10
++#define LOONGSON2_PLL_DIV_SHIFT			26
++#define LOONGSON2_PLL_DIV_WIDTH			6
++#define LOONGSON2_APB_FREQSCALE_SHIFT		20
++#define LOONGSON2_APB_FREQSCALE_WIDTH		3
++#define LOONGSON2_USB_FREQSCALE_SHIFT		16
++#define LOONGSON2_USB_FREQSCALE_WIDTH		3
++#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
++#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
++
++void __iomem *loongson2_pll_base;
++static DEFINE_SPINLOCK(loongson2_clk_lock);
++static struct clk_hw **hws;
++static struct clk_hw_onecell_data *clk_hw_data;
++
++static struct clk_hw *loongson2_clk_register(struct device *dev,
++					  const char *name,
++					  const char *parent_name,
++					  const struct clk_ops *ops,
++					  unsigned long flags)
++{
++	int ret;
++	struct clk_hw *hw;
++	struct clk_init_data init;
++
++	/* allocate the divider */
++	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++	if (!hw)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = ops;
++	init.flags = flags | CLK_IS_BASIC;
++	init.parent_names = (parent_name ? &parent_name : NULL);
++	init.num_parents = (parent_name ? 1 : 0);
++	hw->init = &init;
++
++	/* register the clock */
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(hw);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
++static struct clk_hw *loongson2_clk_pll_register(const char *name,
++				const char *parent, void __iomem *reg)
++{
++	u64 val;
++	u32 mult = 1, div = 1;
++
++	val = readq((void *)reg);
++
++	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
++			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
++	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
++			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
++
++	return clk_hw_register_fixed_factor(NULL, name, parent,
++				CLK_SET_RATE_PARENT, mult, div);
++}
++
++static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	u64 val;
++	u32 mult;
++	unsigned long rate;
++
++	val = readq((void *)(loongson2_pll_base + 0x50));
++
++	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
++			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
++
++	rate = parent_rate * (mult + 1);
++	do_div(rate, 8);
++
++	return rate;
++}
++
++static const struct clk_ops loongson2_apb_clk_ops = {
++	.recalc_rate = loongson2_apb_recalc_rate,
++};
++
++static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	u64 val;
++	u32 mult;
++	unsigned long rate;
++
++	val = readq((void *)(loongson2_pll_base + 0x50));
++
++	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
++			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
++
++	rate = parent_rate * (mult + 1);
++	do_div(rate, 8);
++
++	return rate;
++}
++
++static const struct clk_ops loongson2_usb_clk_ops = {
++	.recalc_rate = loongson2_usb_recalc_rate,
++};
++
++static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	u64 val;
++	u32 mult;
++	unsigned long rate;
++
++	val = readq((void *)(loongson2_pll_base + 0x50));
++
++	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
++			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
++
++	rate = parent_rate * (mult + 1);
++	do_div(rate, 8);
++
++	return rate;
++}
++
++static const struct clk_ops loongson2_sata_clk_ops = {
++	.recalc_rate = loongson2_sata_recalc_rate,
++};
++
++static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
++{
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		if (IS_ERR(clks[i]))
++			pr_err("Loongson2 clk %u: register failed with %ld\n"
++				, i, PTR_ERR(clks[i]));
++}
++
++static struct clk_hw *loongson2_obtain_fixed_clk_hw(
++					struct device_node *np,
++					const char *name)
++{
++	struct clk *clk;
++
++	clk = of_clk_get_by_name(np, name);
++	if (IS_ERR(clk))
++		return ERR_PTR(-ENOENT);
++
++	return __clk_get_hw(clk);
++}
++
++static void __init loongson2_clocks_init(struct device_node *np)
++{
++	loongson2_pll_base = of_iomap(np, 0);
++
++	if (!loongson2_pll_base) {
++		pr_err("clk: unable to map loongson2 clk registers\n");
++		goto err;
++	}
++
++	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
++					GFP_KERNEL);
++	if (WARN_ON(!clk_hw_data))
++		goto err;
++
++	clk_hw_data->num = LOONGSON2_CLK_END;
++	hws = clk_hw_data->hws;
++
++	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
++						"ref_100m");
++
++	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll",
++						"ref_100m",
++						loongson2_pll_base);
++
++	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll",
++						"ref_100m",
++						loongson2_pll_base + 0x10);
++
++	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll",
++						"ref_100m",
++						loongson2_pll_base + 0x20);
++
++	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll",
++						"ref_100m",
++						loongson2_pll_base + 0x30);
++
++	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll",
++						"ref_100m",
++						loongson2_pll_base + 0x40);
++
++	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
++						"node_pll", 0,
++						loongson2_pll_base + 0x8, 0,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
 +
 +	/*
-+	 * IMX8MP_CLK_AUDIO_ROOT is same as IMX8MP_CLK_AUDIO_AHB_ROOT.
-+	 * In order to avoid break any users, still keep it.
++	 * The hda clk divisor in the upper 32bits and the clk-prodiver
++	 * layer code doesn't support 64bit io operation thus a conversion
++	 * is required that subtract shift by 32 and add 4byte to the hda
++	 * address
 +	 */
-+	hws[IMX8MP_CLK_AUDIO_ROOT] = imx_clk_hw_gate2_shared2("audio_root_clk", "audio_ahb", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_AUDIO_AHB_ROOT] = imx_clk_hw_gate2_shared2("audio_ahb_root", "audio_ahb", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_AUDIO_AXI_ROOT] = imx_clk_hw_gate2_shared2("audio_axi_root", "audio_axi", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI1_ROOT] = imx_clk_hw_gate2_shared2("sai1_root", "sai1", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI2_ROOT] = imx_clk_hw_gate2_shared2("sai2_root", "sai2", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI3_ROOT] = imx_clk_hw_gate2_shared2("sai3_root", "sai3", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI5_ROOT] = imx_clk_hw_gate2_shared2("sai5_root", "sai5", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI6_ROOT] = imx_clk_hw_gate2_shared2("sai6_root", "sai6", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_SAI7_ROOT] = imx_clk_hw_gate2_shared2("sai7_root", "sai7", ccm_base + 0x4650, 0, &share_count_audio);
-+	hws[IMX8MP_CLK_PDM_ROOT] = imx_clk_hw_gate2_shared2("pdm_root", "pdm", ccm_base + 0x4650, 0, &share_count_audio);
- 
- 	hws[IMX8MP_CLK_ARM] = imx_clk_hw_cpu("arm", "arm_a53_core",
- 					     hws[IMX8MP_CLK_A53_CORE]->clk,
++	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
++						"ddr_pll", 0,
++						loongson2_pll_base + 0x22, 12,
++						7, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
++						"ddr_pll", 0,
++						loongson2_pll_base + 0x18, 22,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
++						"ddr_pll", 0,
++						loongson2_pll_base + 0x18, 0,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
++						"dc_pll", 0,
++						loongson2_pll_base + 0x28, 22,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
++						"dc_pll", 0,
++						loongson2_pll_base + 0x28, 0,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
++						"gmac",
++						&loongson2_apb_clk_ops, 0);
++
++	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
++						"gmac",
++						&loongson2_usb_clk_ops, 0);
++
++	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
++						"gmac",
++						&loongson2_sata_clk_ops, 0);
++
++	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
++						"pix0_pll", 0,
++						loongson2_pll_base + 0x38, 0, 6,
++						CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
++						"pix1_pll", 0,
++						loongson2_pll_base + 0x48, 0, 6,
++						CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
++
++err:
++	iounmap(loongson2_pll_base);
++}
++
++CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
 -- 
-2.34.1
+2.31.1
 
