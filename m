@@ -2,155 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 465C4FA3741
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Oct 2022 23:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F9BFA3741
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Oct 2022 02:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbiJ1X4V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Oct 2022 19:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45654 "EHLO
+        id S229482AbiJ2CyW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Oct 2022 22:54:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbiJ1X4T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 19:56:19 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF46E52DB
-        for <linux-clk@vger.kernel.org>; Fri, 28 Oct 2022 16:56:02 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id l28so4490949qtv.4
-        for <linux-clk@vger.kernel.org>; Fri, 28 Oct 2022 16:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8w2NYwcU/LxoZeA70fFUf8Snmsz0a/FEvB2F4yg5rzI=;
-        b=RS9HoOWqVyRPdi4iPukjXDBFWBHpBP+0R3pRGgU1YY0THtRKCGBm5+TvZe/Y7tqf4W
-         WmAnDLLOfK1tAVDJS6tTqjW5D4YCnPxAuDGxBXvqcVcm35aXhBSscbEQrS+bUo7MVXeY
-         HFn3q6CnpBg5EwMKeQ8hosbhPRbpnZ/dRNFUOSzWkb7z4ED525yYK3sC4Lig2GblI23S
-         PG7D3d8rlIrKNWvNrtcq/M6FOflJ/xRA7D5dm2eFUwz9kASav0ny4OklPZo8vPoIIlT2
-         7GTsH1bv4guGVz/o53yS6/pe4dw1k3AZPbYjUmQkPuoQNSuYDex5qn7X6WbZGUcHWLRf
-         u1yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8w2NYwcU/LxoZeA70fFUf8Snmsz0a/FEvB2F4yg5rzI=;
-        b=XiSEDIG9GnLXviQEVDOoKyMVkJ9AxPMU4VM/4dD7B8ic7gNrs3aeRPTPRH3BIA5cXy
-         MJom+sTNzSK9Bdywy2VjHHAH9fIBTTPCDP+itMlZej3SSvAU27zCqki//elpO1tSc1tb
-         wSyRkgoFkFbxrY8U1cMjE87rwV7YyL9gu6ETVyldc9mGOvXAd1x1RkY2DcttEof8SWWg
-         pXEZP1QZzMoqWFLjc1QEtOEOuP0ueMKjrYz/CiHMo1Q+6dP483jPdPectQ46ZdL1qHVi
-         rs/l0Q9PmEXsHHEpB3LjAdnaRlrD3Bk2AF7UZ9DlIFQWxiWW3jIWzjNeRU2nlR8ntecu
-         xBnw==
-X-Gm-Message-State: ACrzQf007/hqBQfa2+3bO0FEEnVKtq2g1t0pzaUafNHSd2Oy8Iwpwofx
-        CATFp7uTzfTgNzQ40SkxZj3lbw==
-X-Google-Smtp-Source: AMsMyM7fMyqhfK46Jxy9MvJOiMmlZBT+lsFy9twv/ntI4E00t092YTyfoMwUSvVgDhAOeV9pu7xWtQ==
-X-Received: by 2002:ac8:5e54:0:b0:399:e614:3b0b with SMTP id i20-20020ac85e54000000b00399e6143b0bmr1803085qtx.89.1667001361886;
-        Fri, 28 Oct 2022 16:56:01 -0700 (PDT)
-Received: from [192.168.1.11] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id i21-20020a05620a249500b006a6ebde4799sm33564qkn.90.2022.10.28.16.56.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Oct 2022 16:56:01 -0700 (PDT)
-Message-ID: <fdbde791-b0d9-7cb8-c028-5e4466ae3d81@linaro.org>
-Date:   Fri, 28 Oct 2022 19:55:59 -0400
+        with ESMTP id S229379AbiJ2CyV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2022 22:54:21 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 439EB1EB557;
+        Fri, 28 Oct 2022 19:54:12 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Axz7fSlVxj0DYDAA--.7201S3;
+        Sat, 29 Oct 2022 10:54:10 +0800 (CST)
+Received: from [10.180.13.64] (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxNlfSlVxjXKYGAA--.4822S2;
+        Sat, 29 Oct 2022 10:54:10 +0800 (CST)
+Subject: Re: [PATCH v5 1/3] dt-bindings: clock: add loongson-2 clock include
+ file
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+References: <20221028025504.13247-1-zhuyinbo@loongson.cn>
+ <01a38c4c-b42a-c170-3c3d-0b7e087bfaa4@linaro.org>
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+Message-ID: <2bd0f05d-a5c4-3c5c-ccbc-3e3385cc0a1d@loongson.cn>
+Date:   Sat, 29 Oct 2022 10:54:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
+In-Reply-To: <01a38c4c-b42a-c170-3c3d-0b7e087bfaa4@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-To:     Alex Helms <alexander.helms.jy@renesas.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, geert+renesas@glider.be
-References: <20220914211809.22500-1-alexander.helms.jy@renesas.com>
- <20220914211809.22500-2-alexander.helms.jy@renesas.com>
- <20220915120844.GA996386-robh@kernel.org>
- <8d71b849-7226-09ec-d099-ae5c172e1a17@renesas.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <8d71b849-7226-09ec-d099-ae5c172e1a17@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8DxNlfSlVxjXKYGAA--.4822S2
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvdXoWrJFy8JrW7ZF4fAry3WF4fuFg_yoWxWrXEkF
+        WIyw1DZw13GrZ3KanYqFyDCaySg34jy3yUKFZYqr4fXa4UtrWjvr48C3s3KrW3WrsFgr4r
+        ury8tw1xCw1fujkaLaAFLSUrUUUU0b8apTn2vfkv8UJUUUU8wcxFpf9Il3svdxBIdaVrn0
+        xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUO
+        j7CY07I20VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2
+        IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84AC
+        jcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84
+        ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8I
+        j28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+        WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkE
+        bVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r
+        126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE7xkE
+        bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+        80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+        I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
+        k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7Cj
+        xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jYnmiUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/09/2022 14:06, Alex Helms wrote:
-> On 9/15/2022 5:08 AM, Rob Herring wrote:
->> On Wed, Sep 14, 2022 at 02:18:08PM -0700, Alex Helms wrote:
->>> Add dt bindings for the Renesas ProXO oscillator.
->>>
->>> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
 
->>> ---
->>>  .../bindings/clock/renesas,proxo.yaml         | 50 +++++++++++++++++++
->>>  MAINTAINERS                                   |  5 ++
->>>  2 files changed, 55 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,proxo.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/renesas,proxo.yaml b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
->>> new file mode 100644
->>> index 000000000..2ae131431
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
->>> @@ -0,0 +1,50 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: https://jpn01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Frenesas%2Cversaclock7.yaml%23&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C34ce960b2542459b61d408da97130b50%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C637988405289843575%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=izvR%2FXbUNVXknaODSnMmcetPnn%2Ff3Jk%2F6RuBdZ7uSa0%3D&amp;reserved=0
->>> +$schema: https://jpn01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C34ce960b2542459b61d408da97130b50%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C637988405289843575%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=dQ7nZtgfTE5DrXB1iavJuOhSWmGl4tYI1m6iZpkPAhA%3D&amp;reserved=0
->>> +
->>> +title: Renesas ProXO Oscillator Device Tree Bindings
->>> +
->>> +maintainers:
->>> +  - Alex Helms <alexander.helms.jy@renesas.com>
->>> +
->>> +description: |
+在 2022/10/28 下午7:43, Krzysztof Kozlowski 写道:
+> On 27/10/2022 22:55, Yinbo Zhu wrote:
+>> This file defines all Loongson-2 SoC clock indexes, it should be
+>> included in the device tree in which there's device using the
+>> clocks.
 >>
->> Don't need '|' if no formatting to preserve.
+>> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>> Change in v5:
+>> 		1. Replace loongson2/Loongson2 with loongson-2/Loongson-2.
+>> 		2. Replace soc with SoC.
 >>
->>> +  Renesas ProXO is a family of programmable ultra-low phase noise 
->>> +  quartz-based oscillators.
->>
->> Are they all the same from a s/w standpoint. If not you need specific 
->> compatibles for the differences. 
 > 
-> At this time only the XP variant is supported and this is reflected in
-> the "compatible" string.
-
-You should document everything, if possible, not what is supported by
-some version of some system/driver/firmware.
-
+> Where is the rest of the changelog?
+What you're asking is where the replacement string is located.  it was 
+in commit log.
 > 
->>
->>> +
->>> +properties:
->>> +  '#clock-cells':
->>> +    const: 0
->>> +
->>> +  compatible:
->>> +    enum:
->>> +      - renesas,proxo-xp
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  renesas,xtal:
->>> +    description: Internal crystal frequency, default is 50000000 (50MHz)
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>
->> Use 'clock-frequency'.
+> Best regards,
+> Krzysztof
 > 
-> I think "crystal-frequency" would make more sense. The parts come
-> programmed to a factory clock frequency which is different than the
-> internal crystal frequency.
-
-We have a standard property and it should be used, when applicable.
-Don't encode here frequency for something else than the driving clock.
-
-Best regards,
-Krzysztof
 
