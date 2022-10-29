@@ -2,194 +2,200 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3205C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Oct 2022 08:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CB8FA3745
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Oct 2022 09:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbiJ2ISq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 29 Oct 2022 04:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48138 "EHLO
+        id S229716AbiJ2JLh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 29 Oct 2022 05:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiJ2ISp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 Oct 2022 04:18:45 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48C1A52EA;
-        Sat, 29 Oct 2022 01:18:42 -0700 (PDT)
-X-QQ-mid: bizesmtp87t1667031502tp57gzwl
-Received: from [192.168.1.231] ( [183.27.97.92])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Sat, 29 Oct 2022 16:18:20 +0800 (CST)
-X-QQ-SSF: 01000000000000B0B000B00A0000000
-X-QQ-FEAT: Xz3VOcA7Mr0ufGvzXNoh6TuMbfMiHqSs6DvufBwTWeiVDGCqal+16D3xUcS7i
-        q9kSmz8gLzMGhc8x8OoKNlpzjIq0e8/fH3+5jlI9NSeobDa9jGYkSQbFKkg4H0gJWh9/G23
-        7tw+RvBRwMl0FX9FrPxMqJq5r6xVUvqx+QOpktPeyA8l/Y/3Gf95fd1UhMZNbzT06JZNZ5b
-        v0zY/R2sDa28NowoPGrmKkegKld3MOhCBxE3jBs+EWTAq1pAZxh31RXB3wb583vqs59F0BN
-        EIhECwE/YFE5BOXou4yXGRpnS6k4ydyHq2AJpe1LkDAbkQwbjn2cXaCEOCqSsgN8KiZMNoq
-        NzMJnGWICgOSvXbErIKUikk96KsLQXHEoGc3PyD0X/oa3hf4Nw=
-X-QQ-GoodBg: 0
-Message-ID: <45F9A056FE1D6D23+fa337149-3574-1687-0695-15e554e24cbd@linux.starfivetech.com>
-Date:   Sat, 29 Oct 2022 16:18:19 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 28/30] RISC-V: Add StarFive JH7110 VisionFive2 board
- device tree
-To:     Conor Dooley <conor@kernel.org>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229741AbiJ2JLg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 Oct 2022 05:11:36 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 714A874DFF;
+        Sat, 29 Oct 2022 02:11:35 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id j7so2915633pjn.5;
+        Sat, 29 Oct 2022 02:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGovVwjV1E6BtwAiQsNOA452MnQdQNOQG6D6vOb6hjA=;
+        b=p2QpFFF5brhI4B/eXe+Z4xKQnOouzEpVnsR2XVDcm6l2MYNVqlTciLf4+nBkZxvVnP
+         oFSWEV1VNijYMeOfawxJGLATxCcZyE+2Ep5EkFwnGqACwpt188YeIlh0E/i3wPBvtwcQ
+         6p1hfuLM/TBc5AvXxutguyvUN4gvjjV8zvXSq8YqEzyiJfxZwSMvF7pSe5TTJuuXS5wy
+         vuLc60YIxYAEYtYjEjGQwsmjCIPzvg2e5WPgD4KqKhrtuyMw8ETHzKclKdrbZPz+5HYW
+         hInjBTHcD+fAYruoqy00HDYWKdsBiKLgfQKI+jqNeHCWdgEpjazZVUMUP+K96RgWDNoa
+         2kFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGovVwjV1E6BtwAiQsNOA452MnQdQNOQG6D6vOb6hjA=;
+        b=VBzXX0IgS4L2TJOOnHluohLpeXjon8mIhQeNgTdjoWc/XPS203Q5sbpFQBb392AFV9
+         AuTyxmNTTv8i+mqb+mUllZiC0BdoHpe/iCoIPPsGl6ATVn4OVyEoQlcwxJHenQrlTbVV
+         DynqjBuI8K9y3pMTskxu5/xZQkQKXIRnN3P7Sm98XFIs1nAtf4oFfXkKwHoTToMGMmc+
+         daazj/oLLlJI5b34Io2yLHSLFCbexnnqcJUpuLVJ6Y3qNxW8X8PpmW8LBtIqKS2e/wVf
+         aXqxyjcrg0b2mFNferbNN13tIbNlCQPPDnUjgb3McpCLRvReKCWbg+Yk0NOL7pbzwlDb
+         w51g==
+X-Gm-Message-State: ACrzQf27OWUudc0s3/fhXad6B1751sc/x6ypBddN2la8qoI5K0mbSOyM
+        MNDiC9Pp7ja8XoMmLK8iXBA=
+X-Google-Smtp-Source: AMsMyM4OatQFYqVqmKwLry/ueQrrTE1Ary//IAEG8r6UYYkfBMVy9IEHCtjpLWqjIXaf33tEae5evQ==
+X-Received: by 2002:a17:90a:9606:b0:213:aff5:e537 with SMTP id v6-20020a17090a960600b00213aff5e537mr1690450pjo.183.1667034694859;
+        Sat, 29 Oct 2022 02:11:34 -0700 (PDT)
+Received: from debian.me (subs02-180-214-232-1.three.co.id. [180.214.232.1])
+        by smtp.gmail.com with ESMTPSA id i66-20020a626d45000000b0056b8e788acesm789333pfc.82.2022.10.29.02.11.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Oct 2022 02:11:34 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 1AF4E103D6E; Sat, 29 Oct 2022 16:11:30 +0700 (WIB)
+Date:   Sat, 29 Oct 2022 16:11:30 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-phy@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220930075353.6842-1-hal.feng@linux.starfivetech.com>
- <YzghKZ2E8AN1ajnI@spud>
-Content-Language: en-US
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <YzghKZ2E8AN1ajnI@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v8 4/9] phy: fsl: Add Lynx 10G SerDes driver
+Message-ID: <Y1zuQvkyqtHOPGrk@debian.me>
+References: <20221027191113.403712-1-sean.anderson@seco.com>
+ <20221027191113.403712-5-sean.anderson@seco.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9mhS4nfECiIf9yXH"
+Content-Disposition: inline
+In-Reply-To: <20221027191113.403712-5-sean.anderson@seco.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 1 Oct 2022 12:14:49 +0100, Conor Dooley wrote:
-> On Fri, Sep 30, 2022 at 03:53:53PM +0800, Hal Feng wrote:
-> > From: Emil Renner Berthing <kernel@esmil.dk>
-> > 
-> > Add a minimal device tree for StarFive JH7110 VisionFive2 board.
-> > Support booting and basic clock/reset/pinctrl/uart drivers.
-> >
-> 
-> I would like to see a link to the publicly available datasheet or
-> documentation for the board (and for the SoC in patch 28) please.
 
-All documents can be found at RVspace Documentation Center maintained
-by StarFive. The related documents of JH7110 SoC and VisionFive2 board
-are as follows.
+--9mhS4nfECiIf9yXH
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-StarFive JH7110 SoC:
-https://doc-en.rvspace.org/Doc_Center/jh7110.html
-StarFive VisionFive2 board:
-https://doc-en.rvspace.org/Doc_Center/visionfive_2.html
+On Thu, Oct 27, 2022 at 03:11:08PM -0400, Sean Anderson wrote:
+>  .. only::  subproject and html
+> diff --git a/Documentation/driver-api/phy/lynx_10g.rst b/Documentation/dr=
+iver-api/phy/lynx_10g.rst
+> new file mode 100644
+> index 000000000000..ebbf4dd86726
+> --- /dev/null
+> +++ b/Documentation/driver-api/phy/lynx_10g.rst
+> @@ -0,0 +1,58 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +Lynx 10G Phy (QorIQ SerDes)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +
+> +Using this phy
+> +--------------
+> +
+> +:c:func:`phy_get` just gets (or creates) a new :c:type:`phy` with the la=
+nes
+> +described in the phandle. :c:func:`phy_init` is what actually reserves t=
+he
+> +lanes for use. Unlike some other drivers, when the phy is created, there=
+ is no
+> +default protocol. :c:func:`phy_set_mode <phy_set_mode_ext>` must be call=
+ed in
+> +order to set the protocol.
+> +
+> +Supporting SoCs
+> +---------------
+> +
+> +Each new SoC needs a :c:type:`struct lynx_conf <lynx_conf>`, containing =
+the
+> +number of lanes in each device, the endianness of the device, and the he=
+lper
+> +functions to use when selecting protocol controllers. For example, the
+> +configuration for the LS1046A is::
 
-> 
-> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> 
-> Ditto from patch 28 re: the SoB chain.
-> 
-> > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> > ---
-> 
-> > diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-v2.dts b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-v2.dts
-> > new file mode 100644
-> > index 000000000000..6b9fe32c7eac
-> > --- /dev/null
-> > +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-v2.dts
-> > @@ -0,0 +1,91 @@
-> > +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> > +/*
-> > + * Copyright (C) 2022 StarFive Technology Co., Ltd.
-> > + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "jh7110.dtsi"
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +#include <dt-bindings/pinctrl/pinctrl-starfive-jh7110.h>
-> > +
-> > +/ {
-> > +	model = "StarFive VisionFive V2";
-> > +	compatible = "starfive,visionfive-v2", "starfive,jh7110";
-> > +
-> > +	aliases {
-> > +		serial0 = &uart0;
-> > +	};
-> 
-> Should we also have a chosen node here?
+Did you mean struct lynx_cfg as in below snippet?
 
-Will add it. Thanks.
+> +
+> +    static const struct lynx_cfg ls1046a_cfg =3D {
+> +        .lanes =3D 4,
+> +        .endian =3D REGMAP_ENDIAN_BIG,
+> +        .mode_conflict =3D lynx_ls_mode_conflict,
+> +        .mode_apply =3D lynx_ls_mode_apply,
+> +        .mode_init =3D lynx_ls_mode_init,
+> +    };
+> +
+> +The ``mode_`` functions will generally be common to all SoCs in a series=
+ (e.g.
+> +all Layerscape SoCs or all T-series SoCs).
+> +
+> +In addition, you will need to add a device node as documented in
+> +``Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml``. This lets t=
+he
+> +driver know which lanes are available to configure.
+> +
+> +Supporting Protocols
+> +--------------------
+> +
+> +Each protocol is a combination of values which must be programmed into t=
+he lane
+> +registers. To add a new protocol, first add it to :c:type:`enum lynx_pro=
+tocol
+> +<lynx_protocol>`. Add a new entry to `lynx_proto_params`, and populate t=
+he
+> +appropriate fields. Modify `lynx_lookup_proto` to map the :c:type:`enum
+> +phy_mode <phy_mode>` to :c:type:`enum lynx_protocol <lynx_protocol>`. Up=
+date
+> +the ``mode_conflict``, ``mode_apply``, and ``mode_init`` helpers are upd=
+ated to
+> +support your protocol.
+> +
 
-> 
-> > +
-> > +	cpus {
-> > +		timebase-frequency = <4000000>;
-> > +	};
-> > +
-> > +	memory@40000000 {
-> > +		device_type = "memory";
-> > +		reg = <0x0 0x40000000 0x1 0x0>;
-> 
-> What is going to happen to the 2 GB variant if they attempt to use this
-> devicetree?
+These lynx_ keywords should be in double backticks to be consistent
+(rendered as inline code).
 
-The VisionFive2 board now has 4GB version and 8GB version only. Before
-linux startup, we will change this property in dtb through u-boot to
-make sure the board can boot up with the correct memory size.
+Also, don't forget to add conjunctions:
 
-> 
-> > +	};
-> > +
-> > +	reserved-memory {
-> > +		#address-cells = <2>;
-> > +		#size-cells = <2>;
-> > +		ranges;
-> > +
-> > +		linux,cma {
-> > +			compatible = "shared-dma-pool";
-> > +			reusable;
-> > +			size = <0x0 0x20000000>;
-> > +			alignment = <0x0 0x1000>;
-> > +			alloc-ranges = <0x0 0xa0000000 0x0 0x20000000>;
-> > +			linux,cma-default;
-> > +		};
-> > +
-> > +		e24_mem: e24@c0000000 {
-> 
-> I had a conversation previously with Icenowy [0] about the e24 on the
-> jh7100 that didn't really come to a conclusion about how to represent
-> it there - but looks like you've decided that it should be a remoteproc
-> for the jh7100?
+"... Then modify ``lynx_lookup_proto`` ... Finally, update the ...
+helpers ..."
 
-Yes, we treat it as a remoteproc outside the cpus node. But after
-communication with my colleagues, I found that all nodes in
-"reserved-memory" are not used in the minimal support for VisionFive2
-board. So for this series, I would like to remove "reserved-memory"
-in v2.
+> +You may need to modify :c:func:`lynx_set_mode` in order to support your
+> +protocol. This can happen when you have added members to :c:type:`struct
+> +lynx_proto_params <lynx_proto_params>`. It can also happen if you have s=
+pecific
+> +clocking requirements, or protocol-specific registers to program.
+> +
+> +Internal API Reference
+> +----------------------
+> +
+> +.. kernel-doc:: drivers/phy/freescale/phy-fsl-lynx-10g.c
 
-> 
-> Is this another situation where peripherals appear at different
-> addresses for the e24 compared to the u74s? Or has that changed for the> jh7100, and really the e24 should be described in the CPUs node? If it
-> is the latter, you can pick the first patch from [0] into your series.
-> 
-> 0 - https://lore.kernel.org/linux-riscv/e8543838cd221ab6699da16c985eed7514daa786.camel@icenowy.me> > +			reg = <0x0 0xc0110000 0x0 0xf0000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		xrp_reserved: xrpbuffer@f0000000 {
-> 
-> "Following the generic-names recommended practice, node names should
-> reflect the purpose of the node (ie. “framebuffer” or “dma-pool”)."
-> 
-> I tried googling around for an explanation for what the xrp was, and all
-> I could find was this out-of-tree text binding:
-> https://github.com/foss-xtensa/xrp/blob/master/xrp-kernel/cdns%2Cxrp-hw-simple%2Cv1.txt
+Otherwise LGTM, thanks.
 
-The name is from the device driver of HiFi4 DSP provided by Cadence,
-which is not in the mainline. "xrp" is a short name of
-"Xtensa Remote Processing".
+--=20
+An old man doll... just what I always wanted! - Clara
 
-Best regards,
-Hal
+--9mhS4nfECiIf9yXH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCY1zuPAAKCRD2uYlJVVFO
+o0lFAQDAGPql7PsJtgyOHANd61r9QA5C1NsAs7p1z2APtWtn7wD8CZbEagXT+kX1
+GJMBh0UPc1fhpUiL2ln6IRYVs6nfRw0=
+=CfkV
+-----END PGP SIGNATURE-----
+
+--9mhS4nfECiIf9yXH--
