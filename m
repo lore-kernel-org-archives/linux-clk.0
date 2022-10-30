@@ -2,95 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323AEFA3740
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Oct 2022 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DC2C38A02
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Oct 2022 13:01:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229542AbiJ3MCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Oct 2022 08:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52870 "EHLO
+        id S229874AbiJ3NBB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Oct 2022 09:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiJ3MCS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Oct 2022 08:02:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8A78C771;
-        Sun, 30 Oct 2022 05:02:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 81F87B80DA7;
-        Sun, 30 Oct 2022 12:02:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE1CC433D6;
-        Sun, 30 Oct 2022 12:02:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667131335;
-        bh=HRszhxNcL2xa9zIHaXT7CIUphxF72yX5b9TQHNkKxnE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jJuv/zABSSkBJJ3P9HwYtusgSfxCzmrjBDhvS9BTNEp8KVcZrhE2nvgQTF5DaLoxo
-         zHIBIA3g7z9TcJlfw5aAk5UhK+9CLletD7tWH5AYzKZFhUYzHB8pBV/6K+TkZrIEf5
-         7iu4d89NMBD293J3ijZ8/srtsjaCNryGPL25mvGRvleWAgZE5+Ek5R5sTCMJziN8S6
-         JFKjKJBG9aOqwUhgbk0qs0IIkgNL2UISvQ9B6e+9W8nGbYfmBb/h9qhmz4Ycm1Bb0p
-         j1Bdw0Kpp03KKAVzR4YvY3DwiSLf8W9Bo9XDNGB1gpBMooctV7QE2dv3xfam0hfff/
-         ivUN0dmq48Mxg==
-Date:   Sun, 30 Oct 2022 12:02:09 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 0/6] RISC-V: stop selecting device drivers in Kconfig.socs
-Message-ID: <Y15nwXmn7rToJkH2@spud>
-References: <20221005171348.167476-1-conor@kernel.org>
+        with ESMTP id S229850AbiJ3NBA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Oct 2022 09:01:00 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA32BB7EC
+        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 06:00:58 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id y14so23377206ejd.9
+        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 06:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cnm35rG8dnbniH3bAdsis2He6cISe2Pf5wrYV6j4Yuo=;
+        b=cBXwkIsKoN24vWlka5PMTG3c035GP+NNP31VTvKk/ovhdAguA9PbpUp6uDFTpc+1c6
+         3gnedIZ6l+tDi611G64eg4QQ5ceCfjHFuJAnoIllowDtcEyxO+RWGugtPxtISGjYjtpS
+         FGySmk4Q6UXqEnpwpOsb6BNHeeoT8Hh6DNIvc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cnm35rG8dnbniH3bAdsis2He6cISe2Pf5wrYV6j4Yuo=;
+        b=vYv+uhjotBHN+H1w0ewvSfdOnsmfvV2ytV0K6KcVs2LlEvfsu8XmAz8+W6Rsh79W9/
+         EqrCQsp3zjGVAJjF6CMJ4wzct10EVqDNCRTwEag5JtJmGLb2k1LyHxp4+bf+DvHmzp2Y
+         hYb1lvlesV8AjcnV4TxtHzcnxQLih6bfSFT5qO6ACWza9eSxIMcL5STIOBubV/8ppFPA
+         kE1+hskOTBy07YiLZR9CxKN84t/FzGqHbb0OB6JgBR0WeRBaarGmr2/epDe3eRLpezjg
+         lu8cO6UtflgTNW2d0hqnosNHlr36v95L01o+nI4M5OOBK7Pr6+3p2IOWHZPRWzd+89PM
+         o2ww==
+X-Gm-Message-State: ACrzQf3wBbrMAxRWnWmKf9JTRL8tCf+kWeeQWMfNkypEpDUyfFMQ9T+w
+        P05k1ZAcPTdpzoUSdI9kVNB70wC3/R9CKkNoulmgeg==
+X-Google-Smtp-Source: AMsMyM4NetBq4ut/QzVWMIts/JGh74r3MvWVZbbPWGZD2uBgHT+KD14ty4JVz9cs6pVTghOuapmPpBHAw0T1nDpVIoc=
+X-Received: by 2002:a17:906:4c4b:b0:7ad:a197:b58e with SMTP id
+ d11-20020a1709064c4b00b007ada197b58emr8190502ejw.203.1667134857432; Sun, 30
+ Oct 2022 06:00:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221005171348.167476-1-conor@kernel.org>
+References: <20221018160352.1591428-1-dario.binacchi@amarulasolutions.com> <20221028002710.89A81C43470@smtp.kernel.org>
+In-Reply-To: <20221028002710.89A81C43470@smtp.kernel.org>
+From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date:   Sun, 30 Oct 2022 14:00:46 +0100
+Message-ID: <CABGWkvp1iMN-4XDN_ifg6uyvQbpRzNyat_eDziWY75Cf_hCpQw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: ti: dra7-atl: don't allocate `parent_names' variable
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Amarula patchwork <linux-amarula@amarulasolutions.com>,
+        michael@amarulasolutions.com, kernel test robot <lkp@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 05, 2022 at 06:13:43PM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> As my RFC [0] series doing the symbol name changes has not yet reached
-> consensus, I've split out the removal of device driver selects into a
-> new series. I kept the plic as a direct select - although given how Maz
-> is treating the SiFive plic driver as the RISC-V plic driver, maybe that
-> should just be selected by default at an arch level...
-> 
-> I assume the individual patches can go via their subsystems & I'll
-> resubmit the arch/riscv patches a cycle later? I'm not in any rush.
+Hi Stephen,
 
-Hey,
+On Fri, Oct 28, 2022 at 2:27 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dario Binacchi (2022-10-18 09:03:52)
+> > diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+> > index ff4d6a951681..78482d1a4a33 100644
+> > --- a/drivers/clk/ti/clk-dra7-atl.c
+> > +++ b/drivers/clk/ti/clk-dra7-atl.c
+> > @@ -188,24 +188,17 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+> >                 goto cleanup;
+> >         }
+> >
+> > -       parent_names = kzalloc(sizeof(char *), GFP_KERNEL);
+> > -
+> > -       if (!parent_names)
+> > -               goto cleanup;
+> > -
+> >         parent_names[0] = of_clk_get_parent_name(node, 0);
+>
+> Can you use struct clk_parent_data instead and assign index to 0? Then
+> we don't even need to use of_clk_get_parent_name() here.
 
-What's the story here with the two serial patches, they just waiting for
-an Ack? I think these are archived on the riscv patchwork, so if that is
-the case I'll unarchive them and mark as needing one.
+I tried to test your suggestions on another platform (I don't have the
+hw to test the driver change) but if I
+don't add pdata.name = of_clk_get_parent_name () the board boot up fails.
 
-Thanks,
-Conor.
+As far I can see from the clk_core_populate_parent_map()
 
-> 
-> 0 - https://lore.kernel.org/linux-riscv/20220923185605.1900083-1-conor@kernel.org/
-> 
-> Conor Dooley (6):
->   clk: sifive: select by default if SOC_SIFIVE
->   serial: sifive: select by default if SOC_SIFIVE
->   serial: sifive: select by default if SOC_CANAAN
->   riscv: stop selecting the PolarFire SoC clock driver
->   riscv: stop selecting SiFive clock and serial drivers directly
->   riscv: stop directly selecting drivers for SOC_CANAAN
-> 
->  arch/riscv/Kconfig.socs    | 8 --------
->  drivers/clk/sifive/Kconfig | 4 +++-
->  drivers/tty/serial/Kconfig | 2 ++
->  3 files changed, 5 insertions(+), 9 deletions(-)
-> 
-> -- 
-> 2.37.3
-> 
+....
+/* Copy everything over because it might be __initdata */
+for (i = 0, parent = parents; i < num_parents; i++, parent++) {
+    parent->index = -1;
+    if (parent_names) {
+        /* throw a WARN if any entries are NULL */
+       WARN(!parent_names[i],
+            "%s: invalid NULL in %s's .parent_names\n",
+            __func__, core->name);
+        ret = clk_cpy_name(&parent->name, parent_names[i],
+                                        true);
+    } else if (parent_data) {
+        parent->hw = parent_data[i].hw;
+        parent->index = parent_data[i].index;
+        ret = clk_cpy_name(&parent->fw_name,
+                                         parent_data[i].fw_name, false);
+        if (!ret)
+            ret = clk_cpy_name(&parent->name,
+                                            parent_data[i].name,
+                                            false);
+...
+
+
+The function clk_cpy_name() is called with the parameter "mus_exist"
+to true in the path "parent_names" and false
+in the path "parent_data". Therefore, in the path "parent_data" it is
+allowed that parent-> name is not set.
+In doing so, therefore, the change would not even be backward compatible.
+
+So, IMHO, there are 2 possible options:
+ 1 okay to use parent_data, but we keep using of_clk_get_parent_name
+() to set parent_data::name.
+ 2 okay to use the version v2 of the patch.
+
+What do you think?
+
+Thanks and regards,
+Dario
+
+-- 
+
+Dario Binacchi
+
+Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
