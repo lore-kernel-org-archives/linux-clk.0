@@ -2,153 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DC2C38A02
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Oct 2022 13:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3277C38A02
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Oct 2022 14:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbiJ3NBB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Oct 2022 09:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47580 "EHLO
+        id S229629AbiJ3OYk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Oct 2022 10:24:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbiJ3NBA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Oct 2022 09:01:00 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA32BB7EC
-        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 06:00:58 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id y14so23377206ejd.9
-        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 06:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cnm35rG8dnbniH3bAdsis2He6cISe2Pf5wrYV6j4Yuo=;
-        b=cBXwkIsKoN24vWlka5PMTG3c035GP+NNP31VTvKk/ovhdAguA9PbpUp6uDFTpc+1c6
-         3gnedIZ6l+tDi611G64eg4QQ5ceCfjHFuJAnoIllowDtcEyxO+RWGugtPxtISGjYjtpS
-         FGySmk4Q6UXqEnpwpOsb6BNHeeoT8Hh6DNIvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cnm35rG8dnbniH3bAdsis2He6cISe2Pf5wrYV6j4Yuo=;
-        b=vYv+uhjotBHN+H1w0ewvSfdOnsmfvV2ytV0K6KcVs2LlEvfsu8XmAz8+W6Rsh79W9/
-         EqrCQsp3zjGVAJjF6CMJ4wzct10EVqDNCRTwEag5JtJmGLb2k1LyHxp4+bf+DvHmzp2Y
-         hYb1lvlesV8AjcnV4TxtHzcnxQLih6bfSFT5qO6ACWza9eSxIMcL5STIOBubV/8ppFPA
-         kE1+hskOTBy07YiLZR9CxKN84t/FzGqHbb0OB6JgBR0WeRBaarGmr2/epDe3eRLpezjg
-         lu8cO6UtflgTNW2d0hqnosNHlr36v95L01o+nI4M5OOBK7Pr6+3p2IOWHZPRWzd+89PM
-         o2ww==
-X-Gm-Message-State: ACrzQf3wBbrMAxRWnWmKf9JTRL8tCf+kWeeQWMfNkypEpDUyfFMQ9T+w
-        P05k1ZAcPTdpzoUSdI9kVNB70wC3/R9CKkNoulmgeg==
-X-Google-Smtp-Source: AMsMyM4NetBq4ut/QzVWMIts/JGh74r3MvWVZbbPWGZD2uBgHT+KD14ty4JVz9cs6pVTghOuapmPpBHAw0T1nDpVIoc=
-X-Received: by 2002:a17:906:4c4b:b0:7ad:a197:b58e with SMTP id
- d11-20020a1709064c4b00b007ada197b58emr8190502ejw.203.1667134857432; Sun, 30
- Oct 2022 06:00:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221018160352.1591428-1-dario.binacchi@amarulasolutions.com> <20221028002710.89A81C43470@smtp.kernel.org>
-In-Reply-To: <20221028002710.89A81C43470@smtp.kernel.org>
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date:   Sun, 30 Oct 2022 14:00:46 +0100
-Message-ID: <CABGWkvp1iMN-4XDN_ifg6uyvQbpRzNyat_eDziWY75Cf_hCpQw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: ti: dra7-atl: don't allocate `parent_names' variable
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Amarula patchwork <linux-amarula@amarulasolutions.com>,
-        michael@amarulasolutions.com, kernel test robot <lkp@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Miaoqian Lin <linmq006@gmail.com>,
+        with ESMTP id S229441AbiJ3OYi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Oct 2022 10:24:38 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF93B4BB;
+        Sun, 30 Oct 2022 07:24:37 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 29UEJ0eB029315;
+        Sun, 30 Oct 2022 14:24:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=LDUPl7AJWoGiHgR4WjutUPTsZY9o/snrEnz/KgKrF5g=;
+ b=k0wXczeyxGiROWoeVqWNRQYePwVtPoNC5eiPWpusSbIaPVJVpM9ZLxkBjCaKFEaV2kA2
+ O9ueXMHtexRR5rUTUCvI0TfdCb0HYB7t+mcTBxxosL3S7JpDNS16aRX+fBxY5VA4mzjl
+ qZMoU3SCzbpC1sqKNyFz/avlJWcz+zQGKhRQSgcF44rh/8A4cB3expSHtnjwMQF4JisV
+ FbxmyRYtrABMpts2/vSNZCYqV3nnr36bgZ6GMwPM7wqCWViMhDIGOBZe4QI9GTR6uRQE
+ GRhMebPYpyjkc0/gGThlOwstgW0NnhaoTKxRdFxUXAaGkEWIylF+0LgJxlgKLKPY+ldM 3w== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3khf9krkte-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 30 Oct 2022 14:24:25 +0000
+Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 29UEOO2f025649;
+        Sun, 30 Oct 2022 14:24:24 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 3khdn4hh9h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 30 Oct 2022 14:24:23 +0000
+Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 29UEON25025644;
+        Sun, 30 Oct 2022 14:24:23 GMT
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 29UEONCA025643
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 30 Oct 2022 14:24:23 +0000
+Received: from shazhuss-linux.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Sun, 30 Oct 2022 07:24:20 -0700
+From:   Shazad Hussain <quic_shazhuss@quicinc.com>
+To:     <andersson@kernel.org>
+CC:     <bmasney@redhat.com>, Shazad Hussain <quic_shazhuss@quicinc.com>,
+        "Andy Gross" <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for gcc_ufs_ref_clkref_clk
+Date:   Sun, 30 Oct 2022 19:53:33 +0530
+Message-ID: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+X-Mailer: git-send-email 2.38.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -CXHWSQnbCumlR0LcJXgIvhXYt3QXQrr
+X-Proofpoint-GUID: -CXHWSQnbCumlR0LcJXgIvhXYt3QXQrr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-30_08,2022-10-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxscore=0 phishscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1011
+ mlxlogscore=760 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2210300094
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Since 'commit f3aa975e230e ("arm64: dts: qcom: sc8280xp: correct ref
+clock for ufs_mem_phy")' we need to explicitly make cxo as parent to
+gcc_ufs_ref_clkref_clk to have an independent vote from ufs_mem_phy.
 
-On Fri, Oct 28, 2022 at 2:27 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dario Binacchi (2022-10-18 09:03:52)
-> > diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-> > index ff4d6a951681..78482d1a4a33 100644
-> > --- a/drivers/clk/ti/clk-dra7-atl.c
-> > +++ b/drivers/clk/ti/clk-dra7-atl.c
-> > @@ -188,24 +188,17 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
-> >                 goto cleanup;
-> >         }
-> >
-> > -       parent_names = kzalloc(sizeof(char *), GFP_KERNEL);
-> > -
-> > -       if (!parent_names)
-> > -               goto cleanup;
-> > -
-> >         parent_names[0] = of_clk_get_parent_name(node, 0);
->
-> Can you use struct clk_parent_data instead and assign index to 0? Then
-> we don't even need to use of_clk_get_parent_name() here.
+Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+---
+ drivers/clk/qcom/gcc-sc8280xp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I tried to test your suggestions on another platform (I don't have the
-hw to test the driver change) but if I
-don't add pdata.name = of_clk_get_parent_name () the board boot up fails.
-
-As far I can see from the clk_core_populate_parent_map()
-
-....
-/* Copy everything over because it might be __initdata */
-for (i = 0, parent = parents; i < num_parents; i++, parent++) {
-    parent->index = -1;
-    if (parent_names) {
-        /* throw a WARN if any entries are NULL */
-       WARN(!parent_names[i],
-            "%s: invalid NULL in %s's .parent_names\n",
-            __func__, core->name);
-        ret = clk_cpy_name(&parent->name, parent_names[i],
-                                        true);
-    } else if (parent_data) {
-        parent->hw = parent_data[i].hw;
-        parent->index = parent_data[i].index;
-        ret = clk_cpy_name(&parent->fw_name,
-                                         parent_data[i].fw_name, false);
-        if (!ret)
-            ret = clk_cpy_name(&parent->name,
-                                            parent_data[i].name,
-                                            false);
-...
-
-
-The function clk_cpy_name() is called with the parameter "mus_exist"
-to true in the path "parent_names" and false
-in the path "parent_data". Therefore, in the path "parent_data" it is
-allowed that parent-> name is not set.
-In doing so, therefore, the change would not even be backward compatible.
-
-So, IMHO, there are 2 possible options:
- 1 okay to use parent_data, but we keep using of_clk_get_parent_name
-() to set parent_data::name.
- 2 okay to use the version v2 of the patch.
-
-What do you think?
-
-Thanks and regards,
-Dario
-
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index a18ed88f3b82..72b545121c57 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -5848,6 +5848,8 @@ static struct clk_branch gcc_ufs_ref_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_ref_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 -- 
+2.38.0
 
-Dario Binacchi
-
-Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
