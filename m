@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C48ECAAA1
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Oct 2022 15:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6B4FA374D
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Oct 2022 15:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229743AbiJ3Pzf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Oct 2022 11:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46680 "EHLO
+        id S229746AbiJ3Pzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Oct 2022 11:55:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbiJ3Pzd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Oct 2022 11:55:33 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C38212CA
-        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 08:55:31 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id p8so15776751lfu.11
-        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 08:55:31 -0700 (PDT)
+        with ESMTP id S229757AbiJ3Pze (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Oct 2022 11:55:34 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C2CB48D
+        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 08:55:32 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id f37so15802132lfv.8
+        for <linux-clk@vger.kernel.org>; Sun, 30 Oct 2022 08:55:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VP/AAyYjw0Rr7hmFWioIleiT2CT56Mt2aJdhU6I1hPs=;
-        b=UKv/rrXR7trksbK8a9cgbxWjk6rcafUfDRaSMP3sfQftjvoNSW0HgwabmhTjpPcOls
-         SdzTS/Fd9EmXKaKTU2juCuj9EWBdqJP9pB4bDd8P0ynqISnzerkD2BjRY2o1ZBrWjH/5
-         eO8RIMur1xKNZWdcMME4DMZYG5LMsPWQROOH9LXcj8ms3E2NnhDjfSFM8VvFtLhiuemX
-         gvrEADK+vxg/dvc9hgYZcVOkA75stEYcGhOizuNIZSARmYi6AL/UtOXlJyq+Gqic5ZEk
-         EpGjI36MA9i6D5EOlysB2WBQZlUbcUqryyvbzArwRWd670xtWgqbQEfx9KhzQbj8ROO+
-         GyLA==
+        bh=NC4NbrJQrlp+s9gq+Fh3KaFB46BBGQ7TqKVwoCXoIhU=;
+        b=DRhmLIFUgpMsmgPLCDY0duqB5FPcRP6xZcLQMkPSLH1ySeRm9qRyfAhNHpflwFBspO
+         cLeztejZ6FJmKyWTAGtU1vhp9Vws8vzkXqKv3l7fSOM0VSpDwWqQIzsL4/aOBCteyFDu
+         RHs/mLmqb73Rx3xMHtxoKEAvqqraD6+bBMNnjvVgILrRLPI7xUsHcMPZkSNvSd3YvxcD
+         caZPLahy3yuEYhZTA+RerIufnErbT4TZGWbgk4T5Z/r8Hr/W7kfTtU96zjLWzrfGBlWL
+         duwUMPiaXIe+azovifZpq7ntNYYbBQcKpuWvDUJFa/iP+VeHwdQF/Av+QI6igwk08GYv
+         x2fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VP/AAyYjw0Rr7hmFWioIleiT2CT56Mt2aJdhU6I1hPs=;
-        b=FuCkxPMPE9MiQUmjVYuZncql6D2+eKkanvZC+g0VNNZ8cx7KslccE6NZtF+VdcZxSh
-         JcGXB5ttGbHXNA76Di8DGQvGEm7R4wKgNrW5FoTrIti8tRJCdqFbeSisJ4oYZWMm59ZM
-         OWkVfkK/ZHnSG+g0wCcx6squcKXmgtPnyzaqT2pfkoVyPNcYtSehu4mXdHmgJGDaceTi
-         nW1ZwD81So+DYnO6F/nq4Jr+bgTuJGkMZ2gcao0fXfqe6Vv1ACW0uQw9SqOVutTQdTJw
-         XoiMV9Ck3LenmyLSTrjoKqN7JtepUD+rUzeFZqEtoLd/HBG9H6Xr4ip9bUvwJfVCN2ad
-         Ixyg==
-X-Gm-Message-State: ACrzQf34ff597vzoewq9cA53zCMgfCyCKfWoT1DaUg+e+DdWbwbjrath
-        BgEcnGp/7QoO7m1LoVPBjvi4dw==
-X-Google-Smtp-Source: AMsMyM79vGE5PFEjFAOVv+DbTOO0VPtPZm7r9D3PRR3cr5HMSyg3SrQP8NxQj9GCPzgkc6o6XfqqVA==
-X-Received: by 2002:a05:6512:ac8:b0:4a2:61e7:7963 with SMTP id n8-20020a0565120ac800b004a261e77963mr3501593lfu.363.1667145330088;
-        Sun, 30 Oct 2022 08:55:30 -0700 (PDT)
+        bh=NC4NbrJQrlp+s9gq+Fh3KaFB46BBGQ7TqKVwoCXoIhU=;
+        b=voi9OvvgPC6KT2zwuuodV+qjwfvmUxYJ2F/D7telqL174ezXRw9W0JXfC5nea/7DR0
+         VARN1vb4E5u0S4SZvM3niQ0N7x5fbo7VT8EqCsHhiQDDRGlZ/cygTz2x5YbcbCOTHTZA
+         2lMNw3DWetEaphnIY0qvhYlQoGw/7hY9RzgxvrN0lt3aBrfijaumwyBKh5njpMJWKK4v
+         Uv0cDnruCzob6T8zXpMLOPNXje+CS/KyuV6VFENjQpaP+/eH+/u6Av/0IyoMOcjlK0fp
+         jpIHDc6qtHSKcQ2oaFZ9HLG5KA20uRzC85nC+ILgw1RE9g76nSkekNk+Th5u2FgRQ1Fz
+         3MZQ==
+X-Gm-Message-State: ACrzQf2C0IAE5Z86l68SZk5EBK3ZJEShW5c94aByIJsuYZ+iPU4fCd5r
+        1H2raJ2kXm4YhZfmzoEEmQYA6Q==
+X-Google-Smtp-Source: AMsMyM5WrV3XyBbV+5LiJsrycjC0/VXQ/7C+b7RTaJnFfiX5W1WIzPZaL8RFV4rpY32VLRV+PtsQBw==
+X-Received: by 2002:a05:6512:139c:b0:4aa:b25c:51f5 with SMTP id p28-20020a056512139c00b004aab25c51f5mr3423585lfa.120.1667145332058;
+        Sun, 30 Oct 2022 08:55:32 -0700 (PDT)
 Received: from localhost.localdomain ([195.165.23.90])
-        by smtp.gmail.com with ESMTPSA id f4-20020ac24e44000000b00497a1f92a72sm842982lfr.221.2022.10.30.08.55.29
+        by smtp.gmail.com with ESMTPSA id f4-20020ac24e44000000b00497a1f92a72sm842982lfr.221.2022.10.30.08.55.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Oct 2022 08:55:29 -0700 (PDT)
+        Sun, 30 Oct 2022 08:55:31 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,11 +59,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v3 07/11] clk: qcom: mmcc-msm8974: move clock parent tables down
-Date:   Sun, 30 Oct 2022 18:55:16 +0300
-Message-Id: <20221030155520.91629-8-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 09/11] ARM: dts: qcom: msm8974: add second DSI host and PHY
+Date:   Sun, 30 Oct 2022 18:55:18 +0300
+Message-Id: <20221030155520.91629-10-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221030155520.91629-1-dmitry.baryshkov@linaro.org>
 References: <20221030155520.91629-1-dmitry.baryshkov@linaro.org>
@@ -73,203 +72,108 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Move clock parent tables down, after the PLL declarataions, so that we
-can use pll hw clock fields in the next commit.
+Add second DSI host and PHY available on the msm8974 platform.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/mmcc-msm8974.c | 170 ++++++++++++++++----------------
- 1 file changed, 85 insertions(+), 85 deletions(-)
+ arch/arm/boot/dts/qcom-msm8974.dtsi | 77 +++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 9008df2305df..57f1a351c8f6 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -42,6 +42,91 @@ enum {
- 	P_DSI1PLL_BYTE,
- };
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index 7647cf9f2f76..7f8b4356ccdb 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -1542,6 +1542,13 @@ mdp5_intf1_out: endpoint {
+ 							remote-endpoint = <&dsi0_in>;
+ 						};
+ 					};
++
++					port@1 {
++						reg = <1>;
++						mdp5_intf2_out: endpoint {
++							remote-endpoint = <&dsi1_in>;
++						};
++					};
+ 				};
+ 			};
  
-+static struct clk_pll mmpll0 = {
-+	.l_reg = 0x0004,
-+	.m_reg = 0x0008,
-+	.n_reg = 0x000c,
-+	.config_reg = 0x0014,
-+	.mode_reg = 0x0000,
-+	.status_reg = 0x001c,
-+	.status_bit = 17,
-+        .clkr.hw.init = &(struct clk_init_data){
-+                .name = "mmpll0",
-+                .parent_names = (const char *[]){ "xo" },
-+                .num_parents = 1,
-+                .ops = &clk_pll_ops,
-+        },
-+};
-+
-+static struct clk_regmap mmpll0_vote = {
-+	.enable_reg = 0x0100,
-+	.enable_mask = BIT(0),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mmpll0_vote",
-+		.parent_names = (const char *[]){ "mmpll0" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+static struct clk_pll mmpll1 = {
-+	.l_reg = 0x0044,
-+	.m_reg = 0x0048,
-+	.n_reg = 0x004c,
-+	.config_reg = 0x0050,
-+	.mode_reg = 0x0040,
-+	.status_reg = 0x005c,
-+	.status_bit = 17,
-+        .clkr.hw.init = &(struct clk_init_data){
-+                .name = "mmpll1",
-+                .parent_names = (const char *[]){ "xo" },
-+                .num_parents = 1,
-+                .ops = &clk_pll_ops,
-+        },
-+};
-+
-+static struct clk_regmap mmpll1_vote = {
-+	.enable_reg = 0x0100,
-+	.enable_mask = BIT(1),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mmpll1_vote",
-+		.parent_names = (const char *[]){ "mmpll1" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+static struct clk_pll mmpll2 = {
-+	.l_reg = 0x4104,
-+	.m_reg = 0x4108,
-+	.n_reg = 0x410c,
-+	.config_reg = 0x4110,
-+	.mode_reg = 0x4100,
-+	.status_reg = 0x411c,
-+        .clkr.hw.init = &(struct clk_init_data){
-+                .name = "mmpll2",
-+                .parent_names = (const char *[]){ "xo" },
-+                .num_parents = 1,
-+                .ops = &clk_pll_ops,
-+        },
-+};
-+
-+static struct clk_pll mmpll3 = {
-+	.l_reg = 0x0084,
-+	.m_reg = 0x0088,
-+	.n_reg = 0x008c,
-+	.config_reg = 0x0090,
-+	.mode_reg = 0x0080,
-+	.status_reg = 0x009c,
-+	.status_bit = 17,
-+        .clkr.hw.init = &(struct clk_init_data){
-+                .name = "mmpll3",
-+                .parent_names = (const char *[]){ "xo" },
-+                .num_parents = 1,
-+                .ops = &clk_pll_ops,
-+        },
-+};
-+
- static const struct parent_map mmcc_xo_mmpll0_mmpll1_gpll0_map[] = {
- 	{ P_XO, 0 },
- 	{ P_MMPLL0, 1 },
-@@ -160,91 +245,6 @@ static const char * const mmcc_xo_dsibyte_hdmi_edp_gpll0[] = {
- 	"dsi1pllbyte",
- };
+@@ -1614,6 +1621,76 @@ dsi0_phy: phy@fd922a00 {
  
--static struct clk_pll mmpll0 = {
--	.l_reg = 0x0004,
--	.m_reg = 0x0008,
--	.n_reg = 0x000c,
--	.config_reg = 0x0014,
--	.mode_reg = 0x0000,
--	.status_reg = 0x001c,
--	.status_bit = 17,
--        .clkr.hw.init = &(struct clk_init_data){
--                .name = "mmpll0",
--                .parent_names = (const char *[]){ "xo" },
--                .num_parents = 1,
--                .ops = &clk_pll_ops,
--        },
--};
--
--static struct clk_regmap mmpll0_vote = {
--	.enable_reg = 0x0100,
--	.enable_mask = BIT(0),
--	.hw.init = &(struct clk_init_data){
--		.name = "mmpll0_vote",
--		.parent_names = (const char *[]){ "mmpll0" },
--		.num_parents = 1,
--		.ops = &clk_pll_vote_ops,
--	},
--};
--
--static struct clk_pll mmpll1 = {
--	.l_reg = 0x0044,
--	.m_reg = 0x0048,
--	.n_reg = 0x004c,
--	.config_reg = 0x0050,
--	.mode_reg = 0x0040,
--	.status_reg = 0x005c,
--	.status_bit = 17,
--        .clkr.hw.init = &(struct clk_init_data){
--                .name = "mmpll1",
--                .parent_names = (const char *[]){ "xo" },
--                .num_parents = 1,
--                .ops = &clk_pll_ops,
--        },
--};
--
--static struct clk_regmap mmpll1_vote = {
--	.enable_reg = 0x0100,
--	.enable_mask = BIT(1),
--	.hw.init = &(struct clk_init_data){
--		.name = "mmpll1_vote",
--		.parent_names = (const char *[]){ "mmpll1" },
--		.num_parents = 1,
--		.ops = &clk_pll_vote_ops,
--	},
--};
--
--static struct clk_pll mmpll2 = {
--	.l_reg = 0x4104,
--	.m_reg = 0x4108,
--	.n_reg = 0x410c,
--	.config_reg = 0x4110,
--	.mode_reg = 0x4100,
--	.status_reg = 0x411c,
--        .clkr.hw.init = &(struct clk_init_data){
--                .name = "mmpll2",
--                .parent_names = (const char *[]){ "xo" },
--                .num_parents = 1,
--                .ops = &clk_pll_ops,
--        },
--};
--
--static struct clk_pll mmpll3 = {
--	.l_reg = 0x0084,
--	.m_reg = 0x0088,
--	.n_reg = 0x008c,
--	.config_reg = 0x0090,
--	.mode_reg = 0x0080,
--	.status_reg = 0x009c,
--	.status_bit = 17,
--        .clkr.hw.init = &(struct clk_init_data){
--                .name = "mmpll3",
--                .parent_names = (const char *[]){ "xo" },
--                .num_parents = 1,
--                .ops = &clk_pll_ops,
--        },
--};
--
- static struct clk_rcg2 mmss_ahb_clk_src = {
- 	.cmd_rcgr = 0x5000,
- 	.hid_width = 5,
+ 				status = "disabled";
+ 			};
++
++			dsi1: dsi@fd922e00 {
++				compatible = "qcom,mdss-dsi-ctrl";
++				reg = <0xfd922e00 0x1f8>;
++				reg-names = "dsi_ctrl";
++
++				interrupt-parent = <&mdss>;
++				interrupts = <4>;
++
++				assigned-clocks = <&mmcc BYTE1_CLK_SRC>, <&mmcc PCLK1_CLK_SRC>;
++				assigned-clock-parents = <&dsi1_phy 0>, <&dsi1_phy 1>;
++
++				clocks = <&mmcc MDSS_MDP_CLK>,
++					 <&mmcc MDSS_AHB_CLK>,
++					 <&mmcc MDSS_AXI_CLK>,
++					 <&mmcc MDSS_BYTE1_CLK>,
++					 <&mmcc MDSS_PCLK1_CLK>,
++					 <&mmcc MDSS_ESC1_CLK>,
++					 <&mmcc MMSS_MISC_AHB_CLK>;
++				clock-names = "mdp_core",
++					      "iface",
++					      "bus",
++					      "byte",
++					      "pixel",
++					      "core",
++					      "core_mmss";
++
++				phys = <&dsi1_phy>;
++
++				status = "disabled";
++
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						dsi1_in: endpoint {
++							remote-endpoint = <&mdp5_intf2_out>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++						dsi1_out: endpoint {
++						};
++					};
++				};
++			};
++
++			dsi1_phy: phy@fd923000 {
++				compatible = "qcom,dsi-phy-28nm-hpm";
++				reg = <0xfd923000 0xd4>,
++				      <0xfd923100 0x280>,
++				      <0xfd923380 0x30>;
++				reg-names = "dsi_pll",
++					    "dsi_phy",
++					    "dsi_phy_regulator";
++
++				#clock-cells = <1>;
++				#phy-cells = <0>;
++
++				clocks = <&mmcc MDSS_AHB_CLK>, <&xo_board>;
++				clock-names = "iface", "ref";
++
++				status = "disabled";
++			};
+ 		};
+ 
+ 		gpu: adreno@fdb00000 {
 -- 
 2.35.1
 
