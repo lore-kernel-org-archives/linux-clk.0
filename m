@@ -2,253 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936B1ECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Oct 2022 21:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A030ECAAA1
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Oct 2022 22:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbiJaVLy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Oct 2022 17:11:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47488 "EHLO
+        id S229939AbiJaWIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Oct 2022 18:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiJaVLy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2022 17:11:54 -0400
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [5.144.164.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D73614011
-        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 14:11:53 -0700 (PDT)
-Received: from [192.168.1.101] (95.49.29.156.neoplus.adsl.tpnet.pl [95.49.29.156])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id EDD6F3EBDA;
-        Mon, 31 Oct 2022 22:11:48 +0100 (CET)
-Message-ID: <4340dd6a-c5f8-238a-c0a7-1baa68f0729e@somainline.org>
-Date:   Mon, 31 Oct 2022 22:11:48 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH v3 07/11] clk: qcom: mmcc-msm8974: move clock parent
- tables down
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229619AbiJaWIW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2022 18:08:22 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D305725D;
+        Mon, 31 Oct 2022 15:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1667254076; bh=VveKbMG/LTeQaxRP8VX1jI0G0ua9jD0BD6rfLDH/y98=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=sP4CweUGFldYkPrWsc+3fdSmFaSTIOLYa7Bgd1XTvLX6MnXXUmZQm4Ur/EvHVsi5t
+         nbYgNmKvkDf9qxdWbnmyLKyCcDWBcQQGpw+6YTUv2RKQmsW5e9qz/vWf8dzisCgqpb
+         BCvH3aSuzuBTZI54n9cBz2MDPZIMg0sn5JFOUHVA47StxKAVxMtuUKqNka2iyV54NN
+         mks5m7dcIPD+Owh/fYQgWda3SKSM1RSA/aKoZapdRzA4sqBJQTV2LwcMR6GQbyr6ts
+         qkD4+8tygQNex9my9491VWXHHU0R4tHwIA/facv+hBL01yvCTAsqK87PUXDlruppbl
+         PUBa7o0MpqZlw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([78.35.189.154]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MWAOQ-1oWMrO0hWE-00XeGW; Mon, 31
+ Oct 2022 23:07:56 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20221030155520.91629-1-dmitry.baryshkov@linaro.org>
- <20221030155520.91629-8-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20221030155520.91629-8-dmitry.baryshkov@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: Fix reference to CLK_OF_DECLARE in comment
+Date:   Mon, 31 Oct 2022 23:07:51 +0100
+Message-Id: <20221031220751.158341-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:j5Emc8TafbsF2QWUEXsuiBD6yXMpy+wKwVPFFwFvU3Zh8C+CfRF
+ h1keTk4bH98w1t+4AbGCbiggaJDXvvFAjkP696LacxG9NuEHiVBTRVXBPlMfKkis1417Ab2
+ zlPVbgbbI/dKXInlEd/YiF0NQiJbxNMnqBMmaSIErWguIn/U8n2whZ9ERDCP/OnBUXifQ/s
+ IBG+iYlWuJdkcCw/x7AVg==
+UI-OutboundReport: notjunk:1;M01:P0:vg87klxitfo=;mH/hOW9HM30y8XcYhkyU5YF5z8l
+ CuldXJj+yBuKqHrG/f6gNkXZOz3aDm47AxQ2Y+0Cog5x1jWGeUKEEEjDHN7ENxPkTpmdYGRj2
+ cTfqCmaxuLeY3M9ha7TC5qHUGZP4QclOD1wPprHkBhJmCL44zbgLT+rScSzVB6l1x74JIiGRD
+ 8NW4+X4IvNjI5bC0uYGgw6YAaAuH1e3Kv8jwpv4On/U9HL3ZuYm+W4GlYIdJElV6FdKmZ9bVQ
+ gN2EEjhzgO+mM+vGjqk13TWkeIjMK7wLpvxnnP0CGRrkQXTtD2GgevtV/RT7kP56mFxnAS0cp
+ v/AeiGs/X3p0XeOXgquPtM93KsvcdG2V4Ri6KDtv5wBrLj1JEjpTnUjUi/QIei7G55MGmteVH
+ bQQ8WzUra46dITtmSXa55bBHBJzt5p2VZ3h+j/749sJ0p7vpXFJD30UJHJnboURm+vuwyMqN/
+ 2lH4AVRmG4W/X8SbBHJ8XF/uwZ9c+MdeT75RGavMAmyNP0uNbe+8Ah28pMEG8YiT+x16gt5Ij
+ o8jMSjxVuW6E0OaqbysR7aiIs47DEkoi23YIL6hBM8LcecPki4mpBIIP+Q0411akjdrUWmo2E
+ pwFqnHH1lbbw8OY4JoHO2N0YBu2uOePhn/HzKUwloFUjV4OuIhZ305kuqiSHfamVGO74ArPJA
+ v2ZimHm24GECRSOQKvmrAOKkCtRMeZxgUO30eMyXYPLSJbAPHsSYdcFAKW/jxvmfAiE5Fq4i1
+ UcGNODo3zBJwzX3XWyzL/GC+tZrBFyK65BIzGltyXS+GrUFzke7hfiA6XazI5IgMisP4rB6Ls
+ j8BXjx5cUGlQIAmDNrweB4RMVkhM2GXC9bG1K0yL85rw8MhjSpqyu3Rdw95H+K6OA2cmhXJTa
+ iIQvRTpugRX+evRbT5XWudKa5Kn/LJl+2YT34ZzmbnFIBh4SAE71aMzC86KmIDPumSBo3fJKF
+ 0Zb8ww==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+It was misspelled as OF_CLK_DECLARE. Fix it.
 
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 30.10.2022 16:55, Dmitry Baryshkov wrote:
-> Move clock parent tables down, after the PLL declarataions, so that we
-> can use pll hw clock fields in the next commit.
-> 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsun=
+g/clk-exynos5-subcmu.c
+index 65c82d922b05c..96d74bc250e5d 100644
+=2D-- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -47,10 +47,10 @@ static void exynos5_subcmu_defer_gate(struct samsung_c=
+lk_provider *ctx,
+ /*
+  * Pass the needed clock provider context and register sub-CMU clocks
+  *
+- * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
++ * NOTE: This function has to be called from the main, CLK_OF_DECLARE-
+  * initialized clock provider driver. This happens very early during boot
+  * process. Then this driver, during core_initcall registers two platform
+- * drivers: one which binds to the same device-tree node as OF_CLK_DECLAR=
+E
++ * drivers: one which binds to the same device-tree node as CLK_OF_DECLAR=
+E
+  * driver and second, for handling its per-domain child-devices. Those
+  * platform drivers are bound to their devices a bit later in arch_initca=
+ll,
+  * when OF-core populates all device-tree nodes.
+=2D-
+2.35.1
 
-Konrad
->  drivers/clk/qcom/mmcc-msm8974.c | 170 ++++++++++++++++----------------
->  1 file changed, 85 insertions(+), 85 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-> index 9008df2305df..57f1a351c8f6 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -42,6 +42,91 @@ enum {
->  	P_DSI1PLL_BYTE,
->  };
->  
-> +static struct clk_pll mmpll0 = {
-> +	.l_reg = 0x0004,
-> +	.m_reg = 0x0008,
-> +	.n_reg = 0x000c,
-> +	.config_reg = 0x0014,
-> +	.mode_reg = 0x0000,
-> +	.status_reg = 0x001c,
-> +	.status_bit = 17,
-> +        .clkr.hw.init = &(struct clk_init_data){
-> +                .name = "mmpll0",
-> +                .parent_names = (const char *[]){ "xo" },
-> +                .num_parents = 1,
-> +                .ops = &clk_pll_ops,
-> +        },
-> +};
-> +
-> +static struct clk_regmap mmpll0_vote = {
-> +	.enable_reg = 0x0100,
-> +	.enable_mask = BIT(0),
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "mmpll0_vote",
-> +		.parent_names = (const char *[]){ "mmpll0" },
-> +		.num_parents = 1,
-> +		.ops = &clk_pll_vote_ops,
-> +	},
-> +};
-> +
-> +static struct clk_pll mmpll1 = {
-> +	.l_reg = 0x0044,
-> +	.m_reg = 0x0048,
-> +	.n_reg = 0x004c,
-> +	.config_reg = 0x0050,
-> +	.mode_reg = 0x0040,
-> +	.status_reg = 0x005c,
-> +	.status_bit = 17,
-> +        .clkr.hw.init = &(struct clk_init_data){
-> +                .name = "mmpll1",
-> +                .parent_names = (const char *[]){ "xo" },
-> +                .num_parents = 1,
-> +                .ops = &clk_pll_ops,
-> +        },
-> +};
-> +
-> +static struct clk_regmap mmpll1_vote = {
-> +	.enable_reg = 0x0100,
-> +	.enable_mask = BIT(1),
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "mmpll1_vote",
-> +		.parent_names = (const char *[]){ "mmpll1" },
-> +		.num_parents = 1,
-> +		.ops = &clk_pll_vote_ops,
-> +	},
-> +};
-> +
-> +static struct clk_pll mmpll2 = {
-> +	.l_reg = 0x4104,
-> +	.m_reg = 0x4108,
-> +	.n_reg = 0x410c,
-> +	.config_reg = 0x4110,
-> +	.mode_reg = 0x4100,
-> +	.status_reg = 0x411c,
-> +        .clkr.hw.init = &(struct clk_init_data){
-> +                .name = "mmpll2",
-> +                .parent_names = (const char *[]){ "xo" },
-> +                .num_parents = 1,
-> +                .ops = &clk_pll_ops,
-> +        },
-> +};
-> +
-> +static struct clk_pll mmpll3 = {
-> +	.l_reg = 0x0084,
-> +	.m_reg = 0x0088,
-> +	.n_reg = 0x008c,
-> +	.config_reg = 0x0090,
-> +	.mode_reg = 0x0080,
-> +	.status_reg = 0x009c,
-> +	.status_bit = 17,
-> +        .clkr.hw.init = &(struct clk_init_data){
-> +                .name = "mmpll3",
-> +                .parent_names = (const char *[]){ "xo" },
-> +                .num_parents = 1,
-> +                .ops = &clk_pll_ops,
-> +        },
-> +};
-> +
->  static const struct parent_map mmcc_xo_mmpll0_mmpll1_gpll0_map[] = {
->  	{ P_XO, 0 },
->  	{ P_MMPLL0, 1 },
-> @@ -160,91 +245,6 @@ static const char * const mmcc_xo_dsibyte_hdmi_edp_gpll0[] = {
->  	"dsi1pllbyte",
->  };
->  
-> -static struct clk_pll mmpll0 = {
-> -	.l_reg = 0x0004,
-> -	.m_reg = 0x0008,
-> -	.n_reg = 0x000c,
-> -	.config_reg = 0x0014,
-> -	.mode_reg = 0x0000,
-> -	.status_reg = 0x001c,
-> -	.status_bit = 17,
-> -        .clkr.hw.init = &(struct clk_init_data){
-> -                .name = "mmpll0",
-> -                .parent_names = (const char *[]){ "xo" },
-> -                .num_parents = 1,
-> -                .ops = &clk_pll_ops,
-> -        },
-> -};
-> -
-> -static struct clk_regmap mmpll0_vote = {
-> -	.enable_reg = 0x0100,
-> -	.enable_mask = BIT(0),
-> -	.hw.init = &(struct clk_init_data){
-> -		.name = "mmpll0_vote",
-> -		.parent_names = (const char *[]){ "mmpll0" },
-> -		.num_parents = 1,
-> -		.ops = &clk_pll_vote_ops,
-> -	},
-> -};
-> -
-> -static struct clk_pll mmpll1 = {
-> -	.l_reg = 0x0044,
-> -	.m_reg = 0x0048,
-> -	.n_reg = 0x004c,
-> -	.config_reg = 0x0050,
-> -	.mode_reg = 0x0040,
-> -	.status_reg = 0x005c,
-> -	.status_bit = 17,
-> -        .clkr.hw.init = &(struct clk_init_data){
-> -                .name = "mmpll1",
-> -                .parent_names = (const char *[]){ "xo" },
-> -                .num_parents = 1,
-> -                .ops = &clk_pll_ops,
-> -        },
-> -};
-> -
-> -static struct clk_regmap mmpll1_vote = {
-> -	.enable_reg = 0x0100,
-> -	.enable_mask = BIT(1),
-> -	.hw.init = &(struct clk_init_data){
-> -		.name = "mmpll1_vote",
-> -		.parent_names = (const char *[]){ "mmpll1" },
-> -		.num_parents = 1,
-> -		.ops = &clk_pll_vote_ops,
-> -	},
-> -};
-> -
-> -static struct clk_pll mmpll2 = {
-> -	.l_reg = 0x4104,
-> -	.m_reg = 0x4108,
-> -	.n_reg = 0x410c,
-> -	.config_reg = 0x4110,
-> -	.mode_reg = 0x4100,
-> -	.status_reg = 0x411c,
-> -        .clkr.hw.init = &(struct clk_init_data){
-> -                .name = "mmpll2",
-> -                .parent_names = (const char *[]){ "xo" },
-> -                .num_parents = 1,
-> -                .ops = &clk_pll_ops,
-> -        },
-> -};
-> -
-> -static struct clk_pll mmpll3 = {
-> -	.l_reg = 0x0084,
-> -	.m_reg = 0x0088,
-> -	.n_reg = 0x008c,
-> -	.config_reg = 0x0090,
-> -	.mode_reg = 0x0080,
-> -	.status_reg = 0x009c,
-> -	.status_bit = 17,
-> -        .clkr.hw.init = &(struct clk_init_data){
-> -                .name = "mmpll3",
-> -                .parent_names = (const char *[]){ "xo" },
-> -                .num_parents = 1,
-> -                .ops = &clk_pll_ops,
-> -        },
-> -};
-> -
->  static struct clk_rcg2 mmss_ahb_clk_src = {
->  	.cmd_rcgr = 0x5000,
->  	.hid_width = 5,
