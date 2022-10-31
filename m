@@ -2,168 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27122FA3740
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Oct 2022 09:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267BCFA3747
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Oct 2022 11:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229776AbiJaJPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Oct 2022 05:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48110 "EHLO
+        id S230454AbiJaLXH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Oct 2022 07:23:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbiJaJPv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2022 05:15:51 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67CAD2F0
-        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 02:15:49 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id j16so18227724lfe.12
-        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 02:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j1tjqjP0f5c5NtuHeHtjfjYtvba1hL3hwsHwqOPFWzQ=;
-        b=ZfplkGbmdtl6fkRU1Mc5XVnelJ1pZmw2UXH8LCXm7DlRWlxP9ZBqAEQW9wy8l36Qow
-         NiYZV8p5cq9CtnTXvTgCkR5lZcKokyNlokWrxNGk5V03S4PkLZdZ8vyA/y6gm2x6uXeU
-         +/mf7G4iGdJoB7BvtWc/CoYc2cqnyQrEH0Av0=
+        with ESMTP id S230427AbiJaLXG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2022 07:23:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B9BE089
+        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 04:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667215331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R3s940xgEPR1CURw7WAm+YgalLb7F1R1G/ZzPBXuNeQ=;
+        b=cRv0lpfNf8Wl+TU3HMUaA30jEVM+rvLwwgCTpu6LEUpsevAfOk/9G67ZbSNGLAjyHfKsOd
+        AKBSWa8YV14mvPTXMXzRda+wvXQEGaZlS0oGxHKo4aMynrPcgM9fVsOX91/kLTfkOcKO6F
+        ck1US8crVqYwPXb5viKkaUO9y0e1ufM=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-618-kwXBaPA2PEO4kCUXY90z4A-1; Mon, 31 Oct 2022 07:22:10 -0400
+X-MC-Unique: kwXBaPA2PEO4kCUXY90z4A-1
+Received: by mail-qt1-f199.google.com with SMTP id ff5-20020a05622a4d8500b003a526107477so1484418qtb.9
+        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 04:22:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j1tjqjP0f5c5NtuHeHtjfjYtvba1hL3hwsHwqOPFWzQ=;
-        b=6FmdBY/Gu7worqqEUIwqPCcQOzuU8i1WcVpKx6mQcj76XNf/PVXO+L6HVWU67ckJYQ
-         IcdPUSS7pwsFEnSqwVhXsli6IpNOHIDXZHRebwoBqTPpVFcoNnM9Zb7V9GoM5Ps2XFsI
-         QkzcKcNkBUyVUAyh7TAbwI2tnQ7LLG2avF4oRas2c7traUCydZs1lyG9XtzoGcR8AOeI
-         dSHIDqFewKmZkBXhAU1NxKfZo5WYZC4ug8JsBMzDPREnwdoUIXHIx7cgahJb4QvWvLXD
-         u4M5bvHLyyja9JO2np/LyROZjUrUnTDOaw9Vi05omaj5egPh3QwPWWlXcj1z6ZrL7lxj
-         S87Q==
-X-Gm-Message-State: ACrzQf1+NUK7Q//M/P0kRfru4/KQlTtEfKHpxPsID4UdUV8+sXbyHghf
-        5nQ70U7B5rJXT1FjhGjHptjgIw==
-X-Google-Smtp-Source: AMsMyM7tphVaAwqd2wHznUPi3TaqV761nJu3BjP/W0g/L34stybwhDqQIkk6GpTfPhAkAIluU/Gddg==
-X-Received: by 2002:a05:6512:32b7:b0:4aa:8d5a:2f53 with SMTP id q23-20020a05651232b700b004aa8d5a2f53mr4667511lfe.362.1667207748090;
-        Mon, 31 Oct 2022 02:15:48 -0700 (PDT)
-Received: from [172.16.11.74] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id bf13-20020a056512258d00b004a22599c4ddsm1188060lfb.268.2022.10.31.02.15.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 02:15:47 -0700 (PDT)
-Message-ID: <9723c439-fa24-f44b-2158-f0fad9c24960@rasmusvillemoes.dk>
-Date:   Mon, 31 Oct 2022 10:15:46 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R3s940xgEPR1CURw7WAm+YgalLb7F1R1G/ZzPBXuNeQ=;
+        b=kEEfmkwJ07AcnwUKpGYZf/6m+EwpBtsNr0kKXM5+YmeSZwOSboxdjKyXWL4M/MDqvq
+         Dxpbd4wl1RGgi6ltgcO/j4WBYTRfRZwjdE64/ZBniYt5RuO0mZSHL33S8sP1K5PuGpIb
+         pL4blCz+baKmNrAIRT89yrVei61ZPN1mG3aiSDdNwXu4c3DSen7MVlXP9+rr4jJsbXea
+         /y/euIh5Dslsv4Q5R8uJEZ9uH1OIO2JzYPxApKg8oolvO3L5QbdP3fVk7h/zseQ0WqU5
+         IWPllNbERKTiOSF8Hsbf/6TMPxdtMH1YKsGUJOSI1P8E8k7DzdFz0SFoQOm0FmD38RAc
+         jgTA==
+X-Gm-Message-State: ACrzQf0MA1qoML/dgrfW/erPm7Iy4KP9XUIIRWgtn3M8Ga0I6+w3rwk1
+        0uJ/yeNhKwVbqr2KIWAQr0h0FTlZQ6VPDUmiNs81LhDV+BrpyFKik1J4QNlQZGsWL2K0G+dwvYc
+        ksRhxSE3FEjZhv2e2bBdx
+X-Received: by 2002:ac8:4e93:0:b0:39c:ca5b:33a4 with SMTP id 19-20020ac84e93000000b0039cca5b33a4mr10155131qtp.264.1667215329894;
+        Mon, 31 Oct 2022 04:22:09 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6af+fqJqwU5y5JTc65YnZhRaZwFZJ803iMIIM2mj2X3PhlPBE5hhaKUgtAlC5q6tQte9oqeA==
+X-Received: by 2002:ac8:4e93:0:b0:39c:ca5b:33a4 with SMTP id 19-20020ac84e93000000b0039cca5b33a4mr10155113qtp.264.1667215329709;
+        Mon, 31 Oct 2022 04:22:09 -0700 (PDT)
+Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id a1-20020ac81081000000b003a4b88b886esm3422093qtj.96.2022.10.31.04.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Oct 2022 04:22:09 -0700 (PDT)
+Date:   Mon, 31 Oct 2022 07:22:08 -0400
+From:   Brian Masney <bmasney@redhat.com>
+To:     Shazad Hussain <quic_shazhuss@quicinc.com>
+Cc:     andersson@kernel.org, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
- <20221027232914.2F51DC43470@smtp.kernel.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-In-Reply-To: <20221027232914.2F51DC43470@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
+ gcc_ufs_ref_clkref_clk
+Message-ID: <Y1+v4M2/IVLAOjHJ@x1>
+References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/10/2022 01.29, Stephen Boyd wrote:
-> Quoting Rasmus Villemoes (2022-09-28 05:41:08)
->> We have an imx8mp-based board with an external gpio-triggered
->> watchdog. Currently, we don't get to handle that in time before it
->> resets the board.
+On Sun, Oct 30, 2022 at 07:53:33PM +0530, Shazad Hussain wrote:
+> Since 'commit f3aa975e230e ("arm64: dts: qcom: sc8280xp: correct ref
+> clock for ufs_mem_phy")' we need to explicitly make cxo as parent to
+> gcc_ufs_ref_clkref_clk to have an independent vote from ufs_mem_phy.
 > 
-> How much time does your bootloader give you to pet the watchdog? 
+> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
 
-The bootloader has no say; it's a simple piece of hardware with a
-hardcoded threshold. In this particular case 1 second. Most, if not all,
-custom designed industrial boards I've worked with has always been
-equipped with such an external watchdog (the threshold may be different,
-but the basic functionality and requirement is the same). In some cases,
-it's a matter of certifications, in others it's a requirement from
-certain end customers. But the hardware designers certainly never add
-this just for fun (obviously they want to keep complexity and BOM cost
-down).
+I verified that the QDrive3 still boots normally with this patch.
 
-Why is
-> the timeout short enough to trigger? Or is deferring probe slowing down
-> boot so significantly that boot times are bad?
-
-I wouldn't say that deferring probe slows down the boot as such (it
-does, but not by a lot), but the fact that the watchdog device gets
-deferred (because it depends on the gpio and in turn the clk IP blocks
-in the SOC) is a problem.
->>
->> The probe of the watchdog device gets deferred because the SOC's GPIO
->> controller is not yet ready, and the probe of that in turn gets deferred
->> because its clock provider (namely, this driver) is not yet
->> ready. Altogether, the watchdog does not get handled until the late
->> initcall deferred_probe_initcall has made sure all leftover devices
->> have been probed, and that's way too late.
->>
->> Aside from being necessary for our board, this also reduces total boot
->> time because fewer device probes get deferred.
-> 
-> This is a game of whack-a-mole. If we decide to move device population
-> from DT (of_platform_default_populate_init) to device_initcall() level
-> we may run into a similar problem.
-
-That's a red herring, because such a patch would be a regression for a
-lot of existing and working boards with an external gpio-wdt watchdog.
-
->>
->> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> ---
->> It would probably be reasonable to do the same to the other imx8m* clk
->> drivers, but I don't have any such hardware to test on.
->>
->>  drivers/clk/imx/clk-imx8mp.c | 14 +++++++++++++-
->>  1 file changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
->> index e89db568f5a8..9ddd39a664cc 100644
->> --- a/drivers/clk/imx/clk-imx8mp.c
->> +++ b/drivers/clk/imx/clk-imx8mp.c
->> @@ -734,7 +734,19 @@ static struct platform_driver imx8mp_clk_driver = {
->>                 .of_match_table = imx8mp_clk_of_match,
->>         },
->>  };
->> -module_platform_driver(imx8mp_clk_driver);
->> +
->> +static int __init imx8mp_clk_init(void)
->> +{
->> +       return platform_driver_register(&imx8mp_clk_driver);
->> +}
->> +arch_initcall(imx8mp_clk_init);
-> 
-> Furthermore, there isn't any comment about why this is arch_initcall
-> level. The next reader of this code can only assume why this was done or
-> go on a git archaeology dig to figure out that we're registering this
-> device early for some imx8mp-based board (is it upstream? What board is
-> it?). Please help people reading the code.
-
-Sure, I could add a comment here.
-
-But if we take a step back, doesn't it make sense in general to make
-sure a central IP block like the SOC's primary clk source is probed
-early, before various other dependent IP blocks and peripherals?
-Initializing such a core part of the SOC certainly sounds to me like an
-arch-level thing. And it's not like this would be the first SOC-specific
-clk driver with init called at arch_initcall, without any comment why it
-happens at that time. E.g. clk_mt7629_init. IMO, that doesn't require a
-comment, it's really just common sense.
-
-As I said, I think this change would make sense for at least all the
-imx8m drivers, and I'm happy to extend the patch to cover those for
-consistency.
-
-It also gives a small but measurable improvement in total boot time, but
-that by itself is not why I want to make this change - it's simply a
-necessary patch to make my customer's new imx8mp-based boards boot.
-
-Rasmus
+Tested-by: Brian Masney <bmasney@redhat.com>
 
