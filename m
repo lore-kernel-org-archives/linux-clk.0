@@ -2,169 +2,332 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDB3C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 23:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ADFC4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 23:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbiKAX1d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 19:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53822 "EHLO
+        id S229929AbiKAXe1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 19:34:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiKAX1c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 19:27:32 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2071.outbound.protection.outlook.com [40.107.21.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780611A808;
-        Tue,  1 Nov 2022 16:27:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lrZMX9hslRUG3QREZkB8r5tfb18dFE4Ory5DOmX9Z/QoX6JrjVAsbD70nfCED+z8FWgjjxXaMyFlf60Kopg1+iPhNrBrN/MfEZRjVTdTEEPXjh+l8Hz9m2OVIRWLSRUDYnPt5hNGhlTWUEIyLQM0Cw+uzrjrv03RYJOCImv31FC/EJlDf2fWlrnTpleyQAY9T6dEWKL8Dx5Hbmx+0zZ3/tM0aj1JWPybUI/YzUoDuKL1uf0Z+FI0zdoUEq8fAtBSIj54WnuHBUp0D+FSMHWjw9MD3V2+UaaEHum7MLSEEwaSnMo+CcCresIyMwRCBp+7lp2kKtUH7Si4TRoz45808w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fB0euJUs8R9BTyhOLwueavcpAxZAjDo48mVPWxSKbac=;
- b=f0If6PDoWUxENOseMFISIojzS6S6gvTQuBN0fjlfjUP8hSfntdSqKTDi4DuvLQ07o5LekU0pMSaRXDGGmn4e9jTPLgZQ6vAYm1du+cFHNcKSp4PN4t2NRSK0K5AP8DQU7xfRGtme1kRlLabSshEZu5+BjQK24uipxhj6wf+EUJOE8qdeizHFrqhSDDsCyxeRCitk9RwCbJWUeqZhFN95K/VWBeKmpidkYRRKXg2dGf0X0WDxJiPM8t5L5oMgmqdeUt4iM2UxaK/cCXLbr8tBo3gQ+CsLxInHdY2dz2YRYPqih67MthOehMZk3UAdf+yiN1BRuOKUResFe32jqZBm0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fB0euJUs8R9BTyhOLwueavcpAxZAjDo48mVPWxSKbac=;
- b=QcURuJzr9cetInqjo0My2GK9uNPzqP951rbXL+qbZB2D/SEEM3B+wf5U9jizewRyv5M6P4Och0MMC4AIzzABF3ABkfb2plf9jVxI3wuJKvxGNcbpEElnnAoZWw1qXmwDE/pubIOAc2eo3VnZIOnxszyZWdNt3y1X0Z9EU+6LxYGDlQNriGAzjhOy85CKR7A0ijY6NaCPjGqrUfOlgg/IBiJOeE7OH+BRBSKWa4yj28zt6FUCus5aV/P7NPqzGGOADV6FNMPYk5JspGpmcIhRdz+UkLJkCr+4kfAvILUhQhoVNJU3smXljagCFANCr6L6Rjj9u11NkoN3wRTXiCO/xA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from AM0PR03MB4964.eurprd03.prod.outlook.com (2603:10a6:208:fc::33)
- by AS8PR03MB7205.eurprd03.prod.outlook.com (2603:10a6:20b:2b4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.20; Tue, 1 Nov
- 2022 23:27:26 +0000
-Received: from AM0PR03MB4964.eurprd03.prod.outlook.com
- ([fe80::bebb:9559:edd8:5e79]) by AM0PR03MB4964.eurprd03.prod.outlook.com
- ([fe80::bebb:9559:edd8:5e79%7]) with mapi id 15.20.5769.021; Tue, 1 Nov 2022
- 23:27:26 +0000
-Message-ID: <45463950-7a4f-758d-d6a1-b8fdf9bfd319@seco.com>
-Date:   Tue, 1 Nov 2022 19:27:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v8 4/9] phy: fsl: Add Lynx 10G SerDes driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20221027191113.403712-1-sean.anderson@seco.com>
- <20221027191113.403712-5-sean.anderson@seco.com>
- <20221027230331.19C2FC433D6@smtp.kernel.org>
- <5f00ede6-10f5-c11c-ee21-54460c1f98b0@seco.com>
- <d13ff3b2-79f0-2a72-c9da-2c310c4e3bb8@seco.com>
- <20221101201020.B6180C433C1@smtp.kernel.org>
-From:   Sean Anderson <sean.anderson@seco.com>
-In-Reply-To: <20221101201020.B6180C433C1@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR20CA0015.namprd20.prod.outlook.com
- (2603:10b6:208:e8::28) To AM0PR03MB4964.eurprd03.prod.outlook.com
- (2603:10a6:208:fc::33)
+        with ESMTP id S229531AbiKAXe1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 19:34:27 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2EB1A807
+        for <linux-clk@vger.kernel.org>; Tue,  1 Nov 2022 16:34:24 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id y4so15013061plb.2
+        for <linux-clk@vger.kernel.org>; Tue, 01 Nov 2022 16:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fiCS58ae4A8sQ9uGla/myzHbwEt2fBq1HAnefdPpGXw=;
+        b=Q86fSDNTbms1Mb8JrOYHI1p7oaSFY/zMzgVag9dI/GNGn2oQYG2KaWanrqqryNhN9j
+         /o1IYA5nOqK9KoBrUAMx8Ecwoy4hREDsIUikXri20AkUxhiLBGnGM66xHMPV+I+0xFG4
+         LFONQS24R+U28wLX94W1q79A5ZLyNEmJmQJZ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fiCS58ae4A8sQ9uGla/myzHbwEt2fBq1HAnefdPpGXw=;
+        b=3ob5HvOuJ6A3+eAO+kHM+da8nzXlbFrM8sjL3uaXZRBJqy3Uehms9WRkI5woXiIPIx
+         AX1u97p1yU8PEv9aF6/mp9tMW3qXJj38QwPP3qN3nw/WbVZ8TaJ/pm7rmkc7a3k8fPqT
+         AIZ5DwOlnC1pkxkJV8PtuIy620r6McsIS1EaJGd5KTw5ovVcAIJBok7JM53bOD5z6Q16
+         dwyeeyhXg1JAnqHdRLwGND4hwMjI2q4n6FizuuSZ4rFO0qFkWS0zmoo3euCpqVC4dR4k
+         TOPllE2c1H7HzLnwy4Wk1JoaGxJAq9Fqv8NXq/Nmlfi6EthXkrmUUx41J28NQ/BEsb7C
+         OMrg==
+X-Gm-Message-State: ACrzQf3RDefrUzpIKJSt1R+osECJaTh0yQ0nTziuJFAqIEXjWD3rQ7yp
+        IEqvuN29wGY1av99vJtJKcZ3QQ==
+X-Google-Smtp-Source: AMsMyM72nKPR2ufazXxcn0DYr+8HSKemjmCYJg0pO1CLdZHKdz9XflAKz9Qzy1PCInazElLUrg97Qg==
+X-Received: by 2002:a17:902:b70b:b0:186:b014:9609 with SMTP id d11-20020a170902b70b00b00186b0149609mr22177828pls.108.1667345664412;
+        Tue, 01 Nov 2022 16:34:24 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:11a:201:4437:8d79:dd1:7eb8])
+        by smtp.gmail.com with ESMTPSA id a19-20020aa79713000000b0056bc1a41209sm7051224pfg.33.2022.11.01.16.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Nov 2022 16:34:23 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+Date:   Tue,  1 Nov 2022 16:34:21 -0700
+Message-Id: <20221101233421.997149-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.38.1.273.g43a17bfeac-goog
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR03MB4964:EE_|AS8PR03MB7205:EE_
-X-MS-Office365-Filtering-Correlation-Id: 678054b5-69b4-4815-793f-08dabc60a307
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mvz06i79cfDXqtUImMOhIUXCrXxYJ0kuHZBbccuNfGEqL0B5N3Uq4H8QrOjuJnTGc+J/UQHXlXeL01NCGJt5i4wB5Czw01dsbL1qPg3OLrQgdjOieGRgVk4cboLXT85yJuATraF9rw18kEuYUoFBbjydIp34/EJA4AWpqki7ruOkBinHHDPfpBqjpAG+5IkYb1OY6ke4/J/6abnj41Xe8bym6cx6Nmc8zVQM0XW4jruw+ZCg8P7RC++rqX5ixcrCYBFtjzGQFiaFOBWHzmXc8dMC9jtw9e3v2+fS8ki48lmHf6Mh8TjpkmPK8o3W1gAvP3kjNmUG8I6oCVuqtYw5gznmR6xXpjLi5vDRx2G7QguDa+FMUGHv06b3A+6M04d9QUoTtXwzzI9SRazm1SVJ5/Y79ueu7tFw3H/3YzgK20AA9qZDYex+PndfpiiyghH68xqq5r2zpORn72QsSbIFgiFPHq8Gr+FjMoyUa336bha1YcsPX/oZCADYybY9UrwcQK8TGVLJfOTFYZlBoGqkzRB+DfXwYe5M9BVujp77uJe22e2dlxgrC0BvmOS9zYRMgyHQpAeqaK5S6n78WDYdGnGZpFtHd9DcfcSgNcjMSawnRdDKfbxvvcI+mWvIJSFh0eLH0nvlBEzi6JMEOlfWqjkneDCk0iSTvkuaAXAHHz0BblosJ0AYXRMvyUZFCzjNwHm8zIxl3FZXikuOZLwNl14AV/c4uyTmr4jLLtjh4TIwKnwU54qBoJNnW8PiU4WCoz9X0nqE0cvqRtjS9EKPsrnr7P/smFuYmk/NA9SRThbi8LMDI3RTV8PbirPwku4h
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR03MB4964.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(39850400004)(366004)(136003)(346002)(376002)(451199015)(31696002)(86362001)(38350700002)(38100700002)(8936002)(316002)(66556008)(66476007)(7416002)(44832011)(6486002)(5660300002)(66946007)(8676002)(41300700001)(4326008)(54906003)(110136005)(2616005)(26005)(186003)(83380400001)(2906002)(478600001)(4001150100001)(53546011)(6506007)(6512007)(6666004)(52116002)(31686004)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K0JFV0dNa0JVeFY3eVMvZE8wVlFiQ05PamRiaGQzNGtqZUdQaDhvUlR4d1cy?=
- =?utf-8?B?ajNNeTNScWFFYkhVKzN1Y0g1S2QvNkFRVW8vcllWKzN3d1VVRTR1SjJlWEVt?=
- =?utf-8?B?UmdIUFQrazArQnFYTG0vNzhvazMzMGhuVktWM1M4blZsQjNyd3FTZ3VESFB2?=
- =?utf-8?B?T05JUE1OYjBLWUtmSHNSTzE4N0UwOE1pT1VxM25wODNFYlVqTXVMTzF5OFhy?=
- =?utf-8?B?R2YxS1FZL0RWN0ZMRG4xQUx5Y2JvenphRVFhbU54T3pvRGhQL1dXWGxKNi9I?=
- =?utf-8?B?ZEsyU0NiT2pJL1VjbHJqcFBOL2NJOW9TK0xHRCtxWVFTU3JKdm5OWURWMlF0?=
- =?utf-8?B?eFY3MkEzb0I4ejFkL2dLS1BXYXpRNit2a1BUczJVMnJub2JpcDZldW9rZWFM?=
- =?utf-8?B?cUVYV0krb29nTHl0eGF2WEM4K3kyeS92YUY0c1JyRjNHMVd6UnpEYUQ2RXJP?=
- =?utf-8?B?dXg0Y0NUWnJvZDRoU3QyS2FHYlZveUw2WHRvVGhpMzVVejdSYlFiNUdURk5G?=
- =?utf-8?B?NFJ2blRhd0tWV2FTNEZseVREK1RiREhScU0xTGVtbGIvQnlDa3ZWTUE4Sm95?=
- =?utf-8?B?ZUZBcFRlSUsraGU2WDdyUkpoSlRnb3EyNVZqV3RGeVJVK25yMGR0YzRxUW1z?=
- =?utf-8?B?aHpaZkwxRWEzbmprM0FhMVVkdnZieEtjUmNaNWZIMm1pSTFUVWZvTEM2Nnlx?=
- =?utf-8?B?WkZlR3dSVDJ4RWhjUU1FTlYycm1WR2xrWVZMbk5janFnMDhHWWZUK2IrTS8r?=
- =?utf-8?B?SGcyWkdkckdoa1k3VVlNc2VXUGczaGRpdGJ2d0V3cVAwa1VXajlnSkI3RDlW?=
- =?utf-8?B?dmNGME5lS2tMb1RFNEFCQU5HbjlaeEhhVHV3d0NBZGRJS0RjNHlWL1VVVGI4?=
- =?utf-8?B?bnUrQTBQTGJHTVlNb3YxRzZkN1dDRmcvQUdGQW1hc0NJUGVyNU1mcGExNi9F?=
- =?utf-8?B?S1M5MUF5WS9YNCsrcE4veWQwUE5hcDZTNlZlQk5SNE53Nks4MllJZjI1Zm9E?=
- =?utf-8?B?TzNIb04yWHpUQlpYVE0wdFh1OWh2U0Ezd3ZlRXlpUGc3Z2pwQjNtMmxUQTJO?=
- =?utf-8?B?cVdnbU5IUGY4NE1BTHNRZzRjMXBBUTZ3d3ZUUE9yV0dEdHkzRkQ2RG5zNmlP?=
- =?utf-8?B?R2dNUTk4RWRWZElPNWZDb3d3N0QzZU9GSk5wdE90SUxTc3FNdzFwbm1FYnB6?=
- =?utf-8?B?b1V1b2xFc2gycFJiN09VOE9wQytwQWx0RlVPQ3libTRkY2xYbFhkK3JhczM3?=
- =?utf-8?B?am5uT041MUMvTXpuYkRkUjk2WmMxZTRBaTREMHdnVm5BaDNTSkdkdGFuZW52?=
- =?utf-8?B?MUtRRFBpU0xwT1grY0Yya0UrL3JkSUwrWFNlN0h6L0trK3BFdzNSQnkveTBH?=
- =?utf-8?B?cXdMVFliNXdhQzJUZTd4dTZjN1Q2SUdWWURSNXppZVdOWGQ5WjR5ZmVFSGZ3?=
- =?utf-8?B?NjB1SVB0dEY0RVppc05VSjNoWHhpaFpNWktubDVQWVZJTVlLcmk1cVpIWXRS?=
- =?utf-8?B?d1hndmtoVjNsZ2dQazNUSUlVV3p2TWVWL1RxZkhxTGpNc2ExNzVlYXpqTHc2?=
- =?utf-8?B?dVlma2NBVWMwRmVkd3B5ejBOMjZaeHhYWGRUbUNlTU1qOWhvT2c4aVNBbkFF?=
- =?utf-8?B?M0QxN0RYeWRxTENjTXExNTdITGk3WVB3RHp2bm5PeTNtWW9pWUorWmUwYisx?=
- =?utf-8?B?T1F1cmpaSElwdnkwMFdpMHZRalZnWHBwcjdLNkpqcG1VeTZhVkxoRjlaUEls?=
- =?utf-8?B?WGNJYnNDSzFyTnZEYmZucjI0Vml6TFFrR05LVjBZRWdBQXg3SVUyMkE3NWVZ?=
- =?utf-8?B?dS9GZmJvSXNWdU5uMDZoYk9BZkNHTkE1MDZOT2ZjODdqZ25KeFV2RWJUdTlz?=
- =?utf-8?B?N05WVXVSZTBqUyttVFpTc2RPYThCOUVqZGtTUC9uT3paWFgvR2JucUFTZ0U3?=
- =?utf-8?B?MkhYNWc4Mnl0Z2FHR0dSMHd6RnliWk1aZW1Gc1dVbTZkSHhrRXl2bnFEY08v?=
- =?utf-8?B?NnRIeENNZXB3bDlGVkExdmlhZkVldkdjQUNsVllzN21POTFlSDdvekwvQWo5?=
- =?utf-8?B?eVJEWUpESkhQR1NHNWxUY05TN1NxMnlyRDB1R2NDMFFIZmhDclZDR1JGY08v?=
- =?utf-8?B?aU55aXRBQ2VFYmQ0VVNZYWp4dGlsWGdlWm5wMGk0Szl0MjZkazZESW81R3N5?=
- =?utf-8?B?MFE9PQ==?=
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 678054b5-69b4-4815-793f-08dabc60a307
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR03MB4964.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2022 23:27:26.8154
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dJK1QML+ZOb+fM7j+SDZf25D7r89NKySnYgzJVtlfh0UD2zzPCMKGpnsFGpyhoPH3isrKHr5tu0oWi5gJkSjkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7205
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/1/22 16:10, Stephen Boyd wrote:
-> Quoting Sean Anderson (2022-10-28 09:33:59)
->> On 10/28/22 12:13, Sean Anderson wrote:
->> > On 10/27/22 19:03, Stephen Boyd wrote:
->> >>> +       ref = devm_clk_get(dev, ref_name);
->> >>> +       if (IS_ERR(clk->ref)) {
->> >>> +               ret = PTR_ERR(clk->ref);
->> >>> +               dev_err_probe(dev, ret, "could not get %s\n", ref_name);
->> >>> +               goto out;
->> >>> +       }
->> >>> +
->> >>> +       clk->ref = __clk_get_hw(ref);
->> >>
->> >> Please don't use __clk_get_hw() for this. Instead use struct
->> >> clk_parent_data and set a DT index in the index member to map to this
->> >> clk.
->> > 
->> > OK
->> 
->> Oh, I remember why I did this. I need the reference clock for clk_hw_round_rate,
->> which is AFAICT the only correct way to implement round_rate.
->> 
-> 
-> Is the reference clk the parent of the clk implementing
-> clk_ops::round_rate()?
+We shouldn't be calling runtime PM APIs from within the genpd
+enable/disable path for a couple reasons.
 
-Yes. We may be able to produce a given output with multiple reference
-rates. However, the clock API provides no mechanism to say "Don't ask
-for the parent clock to be rate X, you just tried it and the parent
-clock can't support it." So instead, we loop over the possible reference
-rates and pick the first one which the parent says it can round to.
+First, this causes an AA lockdep splat because genpd can call into genpd
+code again while holding the genpd lock.
 
---Sean
+WARNING: possible recursive locking detected
+5.19.0-rc2-lockdep+ #7 Not tainted
+--------------------------------------------
+kworker/2:1/49 is trying to acquire lock:
+ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+
+but task is already holding lock:
+ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&genpd->mlock);
+  lock(&genpd->mlock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+3 locks held by kworker/2:1/49:
+ #0: 74ffff80811a5748 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x320/0x5fc
+ #1: ffffffc008537cf8 ((work_completion)(&genpd->power_off_work)){+.+.}-{0:0}, at: process_one_work+0x354/0x5fc
+ #2: ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+
+stack backtrace:
+CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 5.19.0-rc2-lockdep+ #7
+Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
+Workqueue: pm genpd_power_off_work_fn
+Call trace:
+ dump_backtrace+0x1a0/0x200
+ show_stack+0x24/0x30
+ dump_stack_lvl+0x7c/0xa0
+ dump_stack+0x18/0x44
+ __lock_acquire+0xb38/0x3634
+ lock_acquire+0x180/0x2d4
+ __mutex_lock_common+0x118/0xe30
+ mutex_lock_nested+0x70/0x7c
+ genpd_lock_mtx+0x24/0x30
+ genpd_runtime_suspend+0x2f0/0x414
+ __rpm_callback+0xdc/0x1b8
+ rpm_callback+0x4c/0xcc
+ rpm_suspend+0x21c/0x5f0
+ rpm_idle+0x17c/0x1e0
+ __pm_runtime_idle+0x78/0xcc
+ gdsc_disable+0x24c/0x26c
+ _genpd_power_off+0xd4/0x1c4
+ genpd_power_off+0x2d8/0x41c
+ genpd_power_off_work_fn+0x60/0x94
+ process_one_work+0x398/0x5fc
+ worker_thread+0x42c/0x6c4
+ kthread+0x194/0x1b4
+ ret_from_fork+0x10/0x20
+
+Second, this confuses runtime PM on CoachZ for the camera devices by
+causing the camera clock controller's runtime PM usage_count to go
+negative after resuming from suspend. This is because runtime PM is
+being used on the clock controller while runtime PM is disabled for the
+device.
+
+The reason for the negative count is because a GDSC is represented as a
+genpd and each genpd that is attached to a device is resumed during the
+noirq phase of system wide suspend/resume (see the noirq suspend ops
+assignment in pm_genpd_init() for more details). The camera GDSCs are
+attached to camera devices with the 'power-domains' property in DT.
+Every device has runtime PM disabled in the late system suspend phase
+via __device_suspend_late(). Runtime PM is not usable until runtime PM
+is enabled in device_resume_early(). The noirq phases run after the
+'late' and before the 'early' phase of suspend/resume. When the genpds
+are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
+that calls pm_runtime_resume_and_get() and that returns -EACCES to
+indicate failure to resume because runtime PM is disabled for all
+devices.
+
+Upon closer inspection, calling runtime PM APIs like this in the GDSC
+driver doesn't make sense. It was intended to make sure the GDSC for the
+clock controller providing other GDSCs was enabled, specifically the
+MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
+that GDSC register accesses succeeded. That will already happen because
+we make the 'dev->pm_domain' a parent domain of each GDSC we register in
+gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
+are accessed, we'll enable the parent domain (in this specific case
+MMCX).
+
+We also remove any getting of runtime PM during registration, because
+when a genpd is registered it increments the count on the parent if the
+genpd itself is already enabled. And finally, the runtime PM state of
+the clk controller registering the GDSC shouldn't matter to the
+subdomain setup. Therefore we always assign 'dev' unconditionally so
+when GDSCs are removed we properly unlink the GDSC from the clk
+controller's pm_domain.
+
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Taniya Das <quic_tdas@quicinc.com>
+Cc: Satya Priya <quic_c_skakit@quicinc.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>
+Reported-by: Stephen Boyd <swboyd@chromium.org>
+Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/clk/qcom/gdsc.c | 64 ++++++-----------------------------------
+ 1 file changed, 8 insertions(+), 56 deletions(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 7cf5e130e92f..a775ce1b7d8a 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -11,7 +11,6 @@
+ #include <linux/kernel.h>
+ #include <linux/ktime.h>
+ #include <linux/pm_domain.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset-controller.h>
+@@ -56,22 +55,6 @@ enum gdsc_status {
+ 	GDSC_ON
+ };
+ 
+-static int gdsc_pm_runtime_get(struct gdsc *sc)
+-{
+-	if (!sc->dev)
+-		return 0;
+-
+-	return pm_runtime_resume_and_get(sc->dev);
+-}
+-
+-static int gdsc_pm_runtime_put(struct gdsc *sc)
+-{
+-	if (!sc->dev)
+-		return 0;
+-
+-	return pm_runtime_put_sync(sc->dev);
+-}
+-
+ /* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
+ static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
+ {
+@@ -271,8 +254,9 @@ static void gdsc_retain_ff_on(struct gdsc *sc)
+ 	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
+ }
+ 
+-static int _gdsc_enable(struct gdsc *sc)
++static int gdsc_enable(struct generic_pm_domain *domain)
+ {
++	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+ 
+ 	if (sc->pwrsts == PWRSTS_ON)
+@@ -328,22 +312,11 @@ static int _gdsc_enable(struct gdsc *sc)
+ 	return 0;
+ }
+ 
+-static int gdsc_enable(struct generic_pm_domain *domain)
++static int gdsc_disable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+ 
+-	ret = gdsc_pm_runtime_get(sc);
+-	if (ret)
+-		return ret;
+-
+-	return _gdsc_enable(sc);
+-}
+-
+-static int _gdsc_disable(struct gdsc *sc)
+-{
+-	int ret;
+-
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+ 
+@@ -388,18 +361,6 @@ static int _gdsc_disable(struct gdsc *sc)
+ 	return 0;
+ }
+ 
+-static int gdsc_disable(struct generic_pm_domain *domain)
+-{
+-	struct gdsc *sc = domain_to_gdsc(domain);
+-	int ret;
+-
+-	ret = _gdsc_disable(sc);
+-
+-	gdsc_pm_runtime_put(sc);
+-
+-	return ret;
+-}
+-
+ static int gdsc_init(struct gdsc *sc)
+ {
+ 	u32 mask, val;
+@@ -447,11 +408,6 @@ static int gdsc_init(struct gdsc *sc)
+ 				return ret;
+ 		}
+ 
+-		/* ...and the power-domain */
+-		ret = gdsc_pm_runtime_get(sc);
+-		if (ret)
+-			goto err_disable_supply;
+-
+ 		/*
+ 		 * Votable GDSCs can be ON due to Vote from other masters.
+ 		 * If a Votable GDSC is ON, make sure we have a Vote.
+@@ -459,14 +415,14 @@ static int gdsc_init(struct gdsc *sc)
+ 		if (sc->flags & VOTABLE) {
+ 			ret = gdsc_update_collapse_bit(sc, false);
+ 			if (ret)
+-				goto err_put_rpm;
++				goto err_disable_supply;
+ 		}
+ 
+ 		/* Turn on HW trigger mode if supported */
+ 		if (sc->flags & HW_CTRL) {
+ 			ret = gdsc_hwctrl(sc, true);
+ 			if (ret < 0)
+-				goto err_put_rpm;
++				goto err_disable_supply;
+ 		}
+ 
+ 		/*
+@@ -495,14 +451,11 @@ static int gdsc_init(struct gdsc *sc)
+ 		sc->pd.power_on = gdsc_enable;
+ 
+ 	ret = pm_genpd_init(&sc->pd, NULL, !on);
+-	if (ret)
+-		goto err_put_rpm;
++	if (!ret)
++		goto err_disable_supply;
+ 
+ 	return 0;
+ 
+-err_put_rpm:
+-	if (on)
+-		gdsc_pm_runtime_put(sc);
+ err_disable_supply:
+ 	if (on && sc->rsupply)
+ 		regulator_disable(sc->rsupply);
+@@ -541,8 +494,7 @@ int gdsc_register(struct gdsc_desc *desc,
+ 	for (i = 0; i < num; i++) {
+ 		if (!scs[i])
+ 			continue;
+-		if (pm_runtime_enabled(dev))
+-			scs[i]->dev = dev;
++		scs[i]->dev = dev;
+ 		scs[i]->regmap = regmap;
+ 		scs[i]->rcdev = rcdev;
+ 		ret = gdsc_init(scs[i]);
+-- 
+https://chromeos.dev
+
