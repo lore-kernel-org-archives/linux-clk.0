@@ -2,101 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DBFC4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 19:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88951C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 19:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbiKATWT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 15:22:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        id S229763AbiKAToQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 15:44:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiKATWS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 15:22:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660CC1C93C;
-        Tue,  1 Nov 2022 12:22:17 -0700 (PDT)
+        with ESMTP id S229714AbiKAToP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 15:44:15 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7849F11C05;
+        Tue,  1 Nov 2022 12:44:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C65F61705;
-        Tue,  1 Nov 2022 19:22:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE5DC433D6;
-        Tue,  1 Nov 2022 19:22:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 332FDB81F0E;
+        Tue,  1 Nov 2022 19:44:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFB4C433D6;
+        Tue,  1 Nov 2022 19:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667330536;
-        bh=rzMpc3yyGF71lY7u/blmIwz+eJhbF9m5RL7Pl44fz0M=;
+        s=k20201202; t=1667331851;
+        bh=DoZu+AdSzcBGy+/tgbWd1ZGVY4aJ0Ll1DRtpT/Artho=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KaqT8v6ze0W8xaqIdyEs3+njmgpSmGE/13pvzPzBBpWFl9CAVJnchldF1ONTPCAE0
-         izA9dXVNw/Nq7sd9jI4NJDNSjS5WfebeT6+u2VDleROJfpDNpkOxTA7L/M5+9aP0fI
-         bpGO2L1bgsSdxHpRrW1Br12lRX0dl0sww86LOcxcuVTNtDOYwrkH2K5EJBvWeqLcso
-         JLqu8mE4jy2T/3uIoRNQE7Tr6vv3bJXx7PhO2k3ou8sWeXJ2tIp7p1+2ab6/xUEG6r
-         bP+lpsbpV8jmhQI7rs2LsCUhtiMJ3NsOqH6vZceDGLu74hOj4EYQM6mjIcd6H66mxB
-         faghF4Z8C0fmA==
+        b=MrKHKa0Y1aBa809oO+5nloeWVDJpU2h8CjnPGlQqAg5OOD2mjm5AGianEcwNTlnOt
+         rFHLK4/DgDhYDT3XTmBHOSx75zzqz9o4FNHeutCgXa7SOlSNo2nnS1rEZPPMiGyYf3
+         9tZm6Them2581uR6QMFGE64FylK0uWgawseHO220FENUParVgB/6SqIfprIuQITvRx
+         Grjb1W6spSlm4SQumL3DXmXAxjtOBmcBYa9WG6Lvn1/IjJyyLjkVM/0/XQWiDhFH6t
+         +5V3gMBm7R2qxa4M4Ui3oKmYvUr+5cT7ICZclSXYvUthgpEd2OtKRqvO4n4uu8JWJJ
+         ER/B6Jfy3i9Tg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZODGKR.IJ47UDRQGD431@crapouillou.net>
-References: <20221027192024.484320-1-lis8215@gmail.com> <20221027192024.484320-4-lis8215@gmail.com> <20221027215716.77250C433D6@smtp.kernel.org> <ZODGKR.IJ47UDRQGD431@crapouillou.net>
-Subject: Re: [PATCH v6 3/3] clk: Add Ingenic JZ4755 CGU driver
+In-Reply-To: <20221031183930.1338009-2-lis8215@gmail.com>
+References: <20221031183930.1338009-1-lis8215@gmail.com> <20221031183930.1338009-2-lis8215@gmail.com>
+Subject: Re: [PATCH v7 1/1] clk: Add Ingenic JZ4755 CGU driver
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Siarhei Volkau <lis8215@gmail.com>,
-        Siarhei Volkau <lis8215@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-To:     Paul Cercueil <paul@crapouillou.net>
-Date:   Tue, 01 Nov 2022 12:22:14 -0700
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org
+To:     Siarhei Volkau <lis8215@gmail.com>
+Date:   Tue, 01 Nov 2022 12:44:09 -0700
 User-Agent: alot/0.10
-Message-Id: <20221101192216.5EE5DC433D6@smtp.kernel.org>
+Message-Id: <20221101194411.CAFB4C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2022-10-28 00:48:35)
-> Hi Stephen,
+Quoting Siarhei Volkau (2022-10-31 11:39:29)
+> Add support for the clocks provided by the CGU in the Ingenic JZ4755
+> SoC.
 >=20
-> Le jeu. 27 oct. 2022 =EF=BF=BD 14:57:14 -0700, Stephen Boyd <sboyd@kernel=
-.org>=20
-> a =EF=BF=BDcrit :
-> > Quoting Siarhei Volkau (2022-10-27 12:20:23)
-> >>  diff --git a/drivers/clk/ingenic/jz4755-cgu.c=20
-> >> b/drivers/clk/ingenic/jz4755-cgu.c
-> >>  new file mode 100644
-> >>  index 000000000..d2eb3ae0c
-> >>  --- /dev/null
-> >>  +++ b/drivers/clk/ingenic/jz4755-cgu.c
-> >>  @@ -0,0 +1,346 @@
-> > [...]
-> >>  +static void __init jz4755_cgu_init(struct device_node *np)
-> >>  +{
-> >>  +       int retval;
-> >>  +
-> >>  +       cgu =3D ingenic_cgu_new(jz4755_cgu_clocks,
-> >>  +                             ARRAY_SIZE(jz4755_cgu_clocks), np);
-> >>  +       if (!cgu) {
-> >>  +               pr_err("%s: failed to initialise CGU\n", __func__);
-> >>  +               return;
-> >>  +       }
-> >>  +
-> >>  +       retval =3D ingenic_cgu_register_clocks(cgu);
-> >>  +       if (retval)
-> >>  +               pr_err("%s: failed to register CGU Clocks\n",=20
-> >> __func__);
-> >>  +
-> >>  +       ingenic_cgu_register_syscore_ops(cgu);
-> >>  +}
-> >>  +CLK_OF_DECLARE_DRIVER(jz4755_cgu, "ingenic,jz4755-cgu",=20
-> >> jz4755_cgu_init);
-> >=20
-> > Is there another driver that probes this device?=20
-> > CLK_OF_DECLARE_DRIVER()
-> > is for the situation where we want to probe this device again with
-> > another platform driver. Please add a comment indicating what that=20
-> > other
-> > driver is.
->=20
-> See: 03d570e1a4dc ("clk: ingenic: Use CLK_OF_DECLARE_DRIVER macro")
->=20
+> Signed-off-by: Siarhei Volkau <lis8215@gmail.com>
+> ---
 
-Does that mean this is also a simple-mfd?
+Applied to clk-next
