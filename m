@@ -2,116 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A2FC4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 18:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DBFC4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 19:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbiKASfS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 14:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51188 "EHLO
+        id S229636AbiKATWT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 15:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbiKASfR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 14:35:17 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 761BB1C93D;
-        Tue,  1 Nov 2022 11:35:16 -0700 (PDT)
+        with ESMTP id S229457AbiKATWS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 15:22:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660CC1C93C;
+        Tue,  1 Nov 2022 12:22:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2CCAEB81EB7;
-        Tue,  1 Nov 2022 18:35:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63E4C433C1;
-        Tue,  1 Nov 2022 18:35:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C65F61705;
+        Tue,  1 Nov 2022 19:22:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE5DC433D6;
+        Tue,  1 Nov 2022 19:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667327713;
-        bh=tP9v1fJaDtSk4ggL7MfdFf2595PWE1zeGgz3m0lWxww=;
+        s=k20201202; t=1667330536;
+        bh=rzMpc3yyGF71lY7u/blmIwz+eJhbF9m5RL7Pl44fz0M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=I28UVGphwA58whsoZYhoyBnIgNW8RRUJXjw27JWh04PkOCXwK6mf812iENfpja8zQ
-         S25YivMSryWjlZBhUJhUF34zYQXf+pbxA1omOrite234ioSgm6be0n7noCz/DlilFE
-         L0M7XFDWlttv+O4t+UzoRNI+aTGOk50hSuwAS0pDrN0IXUdGZIKLkARB0+QeNY0VKh
-         1xBmtj0NvU88rkBe34FPlCBNNtDYF05FhjHjFGJEAKCgaP1BmzkdHwAO6RSQF8zhyh
-         /6HWrZn4c1/FkAglvUhe5c0OtFuzvgbZbsuDiBrjCSoghR3X/Jr/O1VWtXQfbrSFQz
-         b9nx8JGWcOjKw==
+        b=KaqT8v6ze0W8xaqIdyEs3+njmgpSmGE/13pvzPzBBpWFl9CAVJnchldF1ONTPCAE0
+         izA9dXVNw/Nq7sd9jI4NJDNSjS5WfebeT6+u2VDleROJfpDNpkOxTA7L/M5+9aP0fI
+         bpGO2L1bgsSdxHpRrW1Br12lRX0dl0sww86LOcxcuVTNtDOYwrkH2K5EJBvWeqLcso
+         JLqu8mE4jy2T/3uIoRNQE7Tr6vv3bJXx7PhO2k3ou8sWeXJ2tIp7p1+2ab6/xUEG6r
+         bP+lpsbpV8jmhQI7rs2LsCUhtiMJ3NsOqH6vZceDGLu74hOj4EYQM6mjIcd6H66mxB
+         faghF4Z8C0fmA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CABGWkvp1iMN-4XDN_ifg6uyvQbpRzNyat_eDziWY75Cf_hCpQw@mail.gmail.com>
-References: <20221018160352.1591428-1-dario.binacchi@amarulasolutions.com> <20221028002710.89A81C43470@smtp.kernel.org> <CABGWkvp1iMN-4XDN_ifg6uyvQbpRzNyat_eDziWY75Cf_hCpQw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: ti: dra7-atl: don't allocate `parent_names' variable
+In-Reply-To: <ZODGKR.IJ47UDRQGD431@crapouillou.net>
+References: <20221027192024.484320-1-lis8215@gmail.com> <20221027192024.484320-4-lis8215@gmail.com> <20221027215716.77250C433D6@smtp.kernel.org> <ZODGKR.IJ47UDRQGD431@crapouillou.net>
+Subject: Re: [PATCH v6 3/3] clk: Add Ingenic JZ4755 CGU driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Amarula patchwork <linux-amarula@amarulasolutions.com>,
-        michael@amarulasolutions.com, kernel test robot <lkp@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Miaoqian Lin <linmq006@gmail.com>,
+Cc:     Siarhei Volkau <lis8215@gmail.com>,
+        Siarhei Volkau <lis8215@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date:   Tue, 01 Nov 2022 11:35:11 -0700
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+To:     Paul Cercueil <paul@crapouillou.net>
+Date:   Tue, 01 Nov 2022 12:22:14 -0700
 User-Agent: alot/0.10
-Message-Id: <20221101183513.C63E4C433C1@smtp.kernel.org>
+Message-Id: <20221101192216.5EE5DC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dario Binacchi (2022-10-30 06:00:46)
+Quoting Paul Cercueil (2022-10-28 00:48:35)
+> Hi Stephen,
 >=20
-> I tried to test your suggestions on another platform (I don't have the
-> hw to test the driver change) but if I
-> don't add pdata.name =3D of_clk_get_parent_name () the board boot up fail=
-s.
+> Le jeu. 27 oct. 2022 =EF=BF=BD 14:57:14 -0700, Stephen Boyd <sboyd@kernel=
+.org>=20
+> a =EF=BF=BDcrit :
+> > Quoting Siarhei Volkau (2022-10-27 12:20:23)
+> >>  diff --git a/drivers/clk/ingenic/jz4755-cgu.c=20
+> >> b/drivers/clk/ingenic/jz4755-cgu.c
+> >>  new file mode 100644
+> >>  index 000000000..d2eb3ae0c
+> >>  --- /dev/null
+> >>  +++ b/drivers/clk/ingenic/jz4755-cgu.c
+> >>  @@ -0,0 +1,346 @@
+> > [...]
+> >>  +static void __init jz4755_cgu_init(struct device_node *np)
+> >>  +{
+> >>  +       int retval;
+> >>  +
+> >>  +       cgu =3D ingenic_cgu_new(jz4755_cgu_clocks,
+> >>  +                             ARRAY_SIZE(jz4755_cgu_clocks), np);
+> >>  +       if (!cgu) {
+> >>  +               pr_err("%s: failed to initialise CGU\n", __func__);
+> >>  +               return;
+> >>  +       }
+> >>  +
+> >>  +       retval =3D ingenic_cgu_register_clocks(cgu);
+> >>  +       if (retval)
+> >>  +               pr_err("%s: failed to register CGU Clocks\n",=20
+> >> __func__);
+> >>  +
+> >>  +       ingenic_cgu_register_syscore_ops(cgu);
+> >>  +}
+> >>  +CLK_OF_DECLARE_DRIVER(jz4755_cgu, "ingenic,jz4755-cgu",=20
+> >> jz4755_cgu_init);
+> >=20
+> > Is there another driver that probes this device?=20
+> > CLK_OF_DECLARE_DRIVER()
+> > is for the situation where we want to probe this device again with
+> > another platform driver. Please add a comment indicating what that=20
+> > other
+> > driver is.
 >=20
-> As far I can see from the clk_core_populate_parent_map()
+> See: 03d570e1a4dc ("clk: ingenic: Use CLK_OF_DECLARE_DRIVER macro")
 >=20
-> ....
-> /* Copy everything over because it might be __initdata */
-> for (i =3D 0, parent =3D parents; i < num_parents; i++, parent++) {
->     parent->index =3D -1;
->     if (parent_names) {
->         /* throw a WARN if any entries are NULL */
->        WARN(!parent_names[i],
->             "%s: invalid NULL in %s's .parent_names\n",
->             __func__, core->name);
->         ret =3D clk_cpy_name(&parent->name, parent_names[i],
->                                         true);
->     } else if (parent_data) {
->         parent->hw =3D parent_data[i].hw;
->         parent->index =3D parent_data[i].index;
->         ret =3D clk_cpy_name(&parent->fw_name,
->                                          parent_data[i].fw_name, false);
->         if (!ret)
->             ret =3D clk_cpy_name(&parent->name,
->                                             parent_data[i].name,
->                                             false);
-> ...
->=20
->=20
-> The function clk_cpy_name() is called with the parameter "mus_exist"
-> to true in the path "parent_names" and false
-> in the path "parent_data". Therefore, in the path "parent_data" it is
-> allowed that parent-> name is not set.
-> In doing so, therefore, the change would not even be backward compatible.
->=20
-> So, IMHO, there are 2 possible options:
->  1 okay to use parent_data, but we keep using of_clk_get_parent_name
-> () to set parent_data::name.
->  2 okay to use the version v2 of the patch.
->=20
-> What do you think?
 
-I am confused.
-
-The struct clk_parent_data::name being used is whatever string is
-returned by of_clk_get_parent_name(node, 0). That is the same as setting
-struct clk_parent_data::index to 0, and not assigning the 'name' or
-'fw_name' field of the parent data structure. This is a compatible
-change because of_clk_get_parent_name() is getting the name of the clk
-in 'clocks' for 'node' at index 0. Using the index 0 in clk_parent_data
-tells clk framework that the parent of the clk being registered is the
-clk in 'clocks' for the 'dev->node' that is passed in during
-clk_register(). If you don't have a device pointer, use
-of_clk_hw_register() to pass 'node' directly. It looks like you will
-have to do that in this case to get the node pointer registered with
-this clk.
+Does that mean this is also a simple-mfd?
