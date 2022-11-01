@@ -2,102 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A030ECAAA1
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Oct 2022 22:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545B7ECAAA1
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 00:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbiJaWIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Oct 2022 18:08:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
+        id S229641AbiKAAnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Oct 2022 20:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbiJaWIW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2022 18:08:22 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D305725D;
-        Mon, 31 Oct 2022 15:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
-        t=1667254076; bh=VveKbMG/LTeQaxRP8VX1jI0G0ua9jD0BD6rfLDH/y98=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=sP4CweUGFldYkPrWsc+3fdSmFaSTIOLYa7Bgd1XTvLX6MnXXUmZQm4Ur/EvHVsi5t
-         nbYgNmKvkDf9qxdWbnmyLKyCcDWBcQQGpw+6YTUv2RKQmsW5e9qz/vWf8dzisCgqpb
-         BCvH3aSuzuBTZI54n9cBz2MDPZIMg0sn5JFOUHVA47StxKAVxMtuUKqNka2iyV54NN
-         mks5m7dcIPD+Owh/fYQgWda3SKSM1RSA/aKoZapdRzA4sqBJQTV2LwcMR6GQbyr6ts
-         qkD4+8tygQNex9my9491VWXHHU0R4tHwIA/facv+hBL01yvCTAsqK87PUXDlruppbl
-         PUBa7o0MpqZlw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([78.35.189.154]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MWAOQ-1oWMrO0hWE-00XeGW; Mon, 31
- Oct 2022 23:07:56 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-clk@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: Fix reference to CLK_OF_DECLARE in comment
-Date:   Mon, 31 Oct 2022 23:07:51 +0100
-Message-Id: <20221031220751.158341-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S229479AbiKAAnS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2022 20:43:18 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FE415FCD
+        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 17:43:17 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id f37so21659276lfv.8
+        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2022 17:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n0Mn6UUyn2POrZdflNpCqerE8BuvzKjwaM2cng/uy+8=;
+        b=amzzn0Xd3AhUBH4uuqjtr75nN6/YOpgMpVtin0zTna3Nb8OU/UgJCWSx6LasscEe1u
+         y3jQjvtBmOgSK04dUbImcWhz+KEQ0DSOhVAdc+XJ6tRlOuAxad27dKfrPMqBDEJbjQzz
+         mHNtDz2Pvyw5W/C/qbY1oWkSLW23DGI3hw4Ww=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n0Mn6UUyn2POrZdflNpCqerE8BuvzKjwaM2cng/uy+8=;
+        b=FvnK4k2znSvBGVs1jtKALcnQMBx3trny7IC4B6jkocboosy/NN2qSpIYmyiy8iYPvL
+         MYdMf8sQlrA/AYA5f+ktenbAX/mrgpfaQCmAt+SC7HGKbs/r+U/60YqOz0lsqFpW8vJ7
+         PJNsqiJMj8ZLg7VPVY1YwykSQQQ/F3UWOZ9EnEmLaw2DI/FqoJGnBM/NzQho/uVUB2sY
+         GZOa6T3S8vMcinoKhyXT4g0UODDITD6Imc/exTyb3ozG82DnVlWMxnT633J/iy8X27Xj
+         +g8yCGU7kv1IxG4D6kjJjxO5vZjD8reC5imixsksJHayk/aJ+Ei7SjGD4SKISA+7Z8hk
+         h83A==
+X-Gm-Message-State: ACrzQf1MKBrsrivm/b0WZ4kv+F6zSfQ1Gdkd7b0Jxlsj95Czpq+NZpqY
+        yMvS4fbJV05ifVlBK4QJS+GWdWsvEkoF9X6eNoV/dQ==
+X-Google-Smtp-Source: AMsMyM6lJhJnj6lqydNYNdWRz2TwLLKidbTAReBf++65kFH+LWYjaeDCIf8wZKfo9j9xkbp3qSWV5M1oGpPWgzbqBdE=
+X-Received: by 2002:a05:6512:1592:b0:4a2:b56c:388e with SMTP id
+ bp18-20020a056512159200b004a2b56c388emr15801lfb.145.1667263395579; Mon, 31
+ Oct 2022 17:43:15 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 31 Oct 2022 17:43:14 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:j5Emc8TafbsF2QWUEXsuiBD6yXMpy+wKwVPFFwFvU3Zh8C+CfRF
- h1keTk4bH98w1t+4AbGCbiggaJDXvvFAjkP696LacxG9NuEHiVBTRVXBPlMfKkis1417Ab2
- zlPVbgbbI/dKXInlEd/YiF0NQiJbxNMnqBMmaSIErWguIn/U8n2whZ9ERDCP/OnBUXifQ/s
- IBG+iYlWuJdkcCw/x7AVg==
-UI-OutboundReport: notjunk:1;M01:P0:vg87klxitfo=;mH/hOW9HM30y8XcYhkyU5YF5z8l
- CuldXJj+yBuKqHrG/f6gNkXZOz3aDm47AxQ2Y+0Cog5x1jWGeUKEEEjDHN7ENxPkTpmdYGRj2
- cTfqCmaxuLeY3M9ha7TC5qHUGZP4QclOD1wPprHkBhJmCL44zbgLT+rScSzVB6l1x74JIiGRD
- 8NW4+X4IvNjI5bC0uYGgw6YAaAuH1e3Kv8jwpv4On/U9HL3ZuYm+W4GlYIdJElV6FdKmZ9bVQ
- gN2EEjhzgO+mM+vGjqk13TWkeIjMK7wLpvxnnP0CGRrkQXTtD2GgevtV/RT7kP56mFxnAS0cp
- v/AeiGs/X3p0XeOXgquPtM93KsvcdG2V4Ri6KDtv5wBrLj1JEjpTnUjUi/QIei7G55MGmteVH
- bQQ8WzUra46dITtmSXa55bBHBJzt5p2VZ3h+j/749sJ0p7vpXFJD30UJHJnboURm+vuwyMqN/
- 2lH4AVRmG4W/X8SbBHJ8XF/uwZ9c+MdeT75RGavMAmyNP0uNbe+8Ah28pMEG8YiT+x16gt5Ij
- o8jMSjxVuW6E0OaqbysR7aiIs47DEkoi23YIL6hBM8LcecPki4mpBIIP+Q0411akjdrUWmo2E
- pwFqnHH1lbbw8OY4JoHO2N0YBu2uOePhn/HzKUwloFUjV4OuIhZ305kuqiSHfamVGO74ArPJA
- v2ZimHm24GECRSOQKvmrAOKkCtRMeZxgUO30eMyXYPLSJbAPHsSYdcFAKW/jxvmfAiE5Fq4i1
- UcGNODo3zBJwzX3XWyzL/GC+tZrBFyK65BIzGltyXS+GrUFzke7hfiA6XazI5IgMisP4rB6Ls
- j8BXjx5cUGlQIAmDNrweB4RMVkhM2GXC9bG1K0yL85rw8MhjSpqyu3Rdw95H+K6OA2cmhXJTa
- iIQvRTpugRX+evRbT5XWudKa5Kn/LJl+2YT34ZzmbnFIBh4SAE71aMzC86KmIDPumSBo3fJKF
- 0Zb8ww==
+In-Reply-To: <9a696c92-eac2-e8fc-5081-8feb9c6150c1@linaro.org>
+References: <CAE-0n52xbZeJ66RaKwggeRB57fUAwjvxGxfFMKOKJMKVyFTe+w@mail.gmail.com>
+ <CAPDyKFpay0w6n6rtv+bsdcTvL4ijtEPBODo1=XJpUFNdaooTcg@mail.gmail.com>
+ <CAE-0n52Bfe-7Fpawct=_3=miLBygR_-YXm1YPnhCWOwxFnjv7g@mail.gmail.com> <9a696c92-eac2-e8fc-5081-8feb9c6150c1@linaro.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Mon, 31 Oct 2022 17:43:14 -0700
+Message-ID: <CAE-0n50b+h_1tojmw-u0uMkmAHP_=-Kxx=oUURfn52gTv99KaA@mail.gmail.com>
+Subject: Re: clk: qcom: genpd lockdep warning in gdsc
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Rob Clark <robdclark@chromium.org>,
+        Yu Zhao <yuzhao@google.com>, linux-arm-msm@vger.kernel.org,
+        dianders@chromium.org, mka@chromium.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It was misspelled as OF_CLK_DECLARE. Fix it.
+Quoting Dmitry Baryshkov (2022-10-27 11:13:44)
+> On 27/10/2022 01:18, Stephen Boyd wrote:
+> > Reviving this old thread because this commit has lead to a couple bugs
+> > now.
+> >
+> > Quoting Ulf Hansson (2022-06-22 03:26:52)
+> >> On Fri, 17 Jun 2022 at 21:58, Stephen Boyd <swboyd@chromium.org> wrote:
+> >>>
+> >>> Hi Bjorn and Dmitry,
+> >>>
+> >>> Yu reported a lockdep warning coming from the gdsc driver. It looks like
+> >>> the runtime PM usage in gdsc.c is causing lockdep to see an AA deadlock
+> >>> possibility with 'genpd->mlock'. I suspect this is because we have
+> >>> commit 1b771839de05 ("clk: qcom: gdsc: enable optional power domain
+> >>> support"), and that is now calling runtime PM code from within the genpd
+> >>> code.
+> >
+> > This commit has caused a deadlock at boot for Doug[1] and I see that the
+> > camera driver on Google CoachZ and Wormdingler devices doesn't work
+> > after resuming from suspend once this commit is applied. I'm leaning
+> > towards sending a revert, because it seems to cause 3 issues while
+> > removing the regulator hack that was in place to enable MMCX. This patch
+> > is cleaning up the hack, but trading the hack for three more problems.
+> >
+> >> I think genpd already has nested lock support, so the only
+> >>> solution is to not use runtime PM from within genpd code and start
+> >>> expressing genpd parent relationships in genpd itself?
+> >>
+> >> Not sure exactly what you mean here, but yes, expressing the
+> >> parent/child domain relationship is always needed.
+> >>
+> >> Having gdsc_disable() to do runtime PM calls (gdsc_pm_runtime_put())
+> >> seems awkward to me. Why is that needed, more exactly?
+> >
+> > It seems like this is needed so that the gdsc_enable() and
+> > gdsc_disable() calls can read/write the registers for the genpd, while
+> > those registers live in some clk controller that needs either a
+> > different clk (probably some AHB clk) or another genpd to be enabled. It
+> > looks like for qcom,sm8250-dispcc it relies on MMCX gdsc (which is a
+> > genpd). From a hardware view, the MDSS_GDSC provided by the display clk
+> > controller is probably not a sub-domain of MMCX. Instead, we need to
+> > have MMCX enabled so that we can access the registers for the MDSS GDSC.
+>
+> Yes, exactly.
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- drivers/clk/samsung/clk-exynos5-subcmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for confirming. I've debugged further and found that we can't use
+runtime PM calls here in the gdsc enable/disable functions at all. What
+happens is runtime PM is disabled during device late suspend (see
+__device_suspend_late() and how it calls __pm_runtime_disable() early
+on). All genpds are assigned noirq phase suspend/resume operations that
+will power on and off the genpd during system wide suspend/resume (see
+the genpd->domain.ops assignments in pm_genpd_init() and how noirq PM
+ops are used).
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsun=
-g/clk-exynos5-subcmu.c
-index 65c82d922b05c..96d74bc250e5d 100644
-=2D-- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -47,10 +47,10 @@ static void exynos5_subcmu_defer_gate(struct samsung_c=
-lk_provider *ctx,
- /*
-  * Pass the needed clock provider context and register sub-CMU clocks
-  *
-- * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
-+ * NOTE: This function has to be called from the main, CLK_OF_DECLARE-
-  * initialized clock provider driver. This happens very early during boot
-  * process. Then this driver, during core_initcall registers two platform
-- * drivers: one which binds to the same device-tree node as OF_CLK_DECLAR=
-E
-+ * drivers: one which binds to the same device-tree node as CLK_OF_DECLAR=
-E
-  * driver and second, for handling its per-domain child-devices. Those
-  * platform drivers are bound to their devices a bit later in arch_initca=
-ll,
-  * when OF-core populates all device-tree nodes.
-=2D-
-2.35.1
+When it comes time to resume the system, we'll try to enable the gdsc,
+and call into gdsc_enable() which will try to call pm_runtime APIs on
+the parent clk controller during the noirq phase of resume and that is
+doomed to fail.
 
+>
+> >
+> > My question is if it makes sense to simply describe that the GDSCs
+> > provided by a device are sub-domains of whatever power domains are
+> > listed in DT for that device? I think if we did that here for sm8250
+> > dispcc, we wouldn't need to use runtime PM within the genpd code
+> > assuming that the MMCX parent genpd is enabled before we attempt to
+> > read/write the dispcc gdsc registers. Hopefully that is also done, i.e.
+> > enabling parent domains before enabling child domains if the parent is
+> > disabled.
+>
+> I will check this tomorrow. It should be possible to handle the
+> MMCX/MDSS_GDSC relationship in this way.
+>
+> > Is this already being done with pm_genpd_add_subdomain() in
+> > gdsc_register()? I see that we're attaching that to dispcc's struct
+> > device::pm_domain, but I assume that is different from the MMCX genpd.
+>
+> No, I think the only domain there is the MMCX domain, so this call s
+>
+
+Did this get deleted?
+
+> > Maybe that is the problem here. Dmitry can you further describe the
+> > problem being solved?
+>
+> I must admit, I don't remember what caused me to add this call. May be
+> it was added before me getting the pm_genpd_add_subdomain() call in place.
+>
+
+I see that the 'dev->pm_domain' pointer isn't assigned unless I have a
+'power-domains = <&some_pd>' property in DT for the clock controller
+registering GDSCs. This means that a driver using the pm clock APIs
+isn't populating 'dev->pm_domain' and thus the clks for the device
+aren't enabled when this gdsc is enabled.
+
+There is a GENPD_FLAG_PM_CLK flag that we could try, but
+genpd_resume_noirq() calls genpd_sync_power_on() before calling
+genpd_start_dev(), and the device it is trying to start there is the
+wrong device, it is the consumer of the gdsc. That looks like a
+dead-end.
+
+We really need some sort of way to mix pm clks with DT power-domains and
+tie that all up into some struct generic_pm_domain that turns on the DT
+power-domain along with the clks needed for the device to be accessible.
+If we had that domain we could then attach the GDSCs registered here as
+subdomains of that domain so that we didn't use runtime PM APIs.
+Possibly we can make a struct generic_pm_domain in the drivers that need
+this and have it call pm_clk_resume() directly and set the domain with
+dev_pm_domain_set()? I believe that runs into a problem though if we
+have a power-domain in DT and want to use pm_clks as well. The
+power-domain from DT will be auto-attached during probe and we don't
+want to do that.
+
+This problem exposes that the power-domains that we implement for GDSCs
+are not "complete". If we listed the clocks required for the domain to
+operate properly, then we would be able to attach those to the gdsc's
+genpd and have one power domain that represents everything for the
+device in DT. Of course, if the device itself had some sort of "freeze"
+or "lock" register that caused the device to not work unless you
+unlocked it by writing a special value then we would need to also start
+the device in the PM domain. I don't see any sort of call to start
+parent devices in genpd_resume_noirq(), so I don't know how this would
+work. Luckily I don't have this problem today, but I'm just thinking of
+how we slice up the genpd code and the device specific code and hook
+that all into genpd.
+
+In a sense, we want to resume the device that is providing the genpd,
+but that isn't happening here. Instead, we're noirq resuming a genpd
+while the provider of that genpd is still suspended. I think typically
+genpds are registered by a bus entity that is "always on" and doesn't
+need to power manage itself. That disconnect is where we're getting into
+trouble.
+
+TL;DR: This patch seems fairly broken. It works only for boot time probe
+and then breaks suspend/resume. I think we should revert it and work on
+a proper solution. Can we do that? Or are there DT dependencies stacked
+on top to move away from the regulator design?
