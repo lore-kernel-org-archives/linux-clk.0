@@ -2,332 +2,259 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ADFC4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 23:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B91AC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 23:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbiKAXe1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 19:34:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57200 "EHLO
+        id S229853AbiKAXmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 19:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiKAXe1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 19:34:27 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2EB1A807
-        for <linux-clk@vger.kernel.org>; Tue,  1 Nov 2022 16:34:24 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id y4so15013061plb.2
-        for <linux-clk@vger.kernel.org>; Tue, 01 Nov 2022 16:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fiCS58ae4A8sQ9uGla/myzHbwEt2fBq1HAnefdPpGXw=;
-        b=Q86fSDNTbms1Mb8JrOYHI1p7oaSFY/zMzgVag9dI/GNGn2oQYG2KaWanrqqryNhN9j
-         /o1IYA5nOqK9KoBrUAMx8Ecwoy4hREDsIUikXri20AkUxhiLBGnGM66xHMPV+I+0xFG4
-         LFONQS24R+U28wLX94W1q79A5ZLyNEmJmQJZ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fiCS58ae4A8sQ9uGla/myzHbwEt2fBq1HAnefdPpGXw=;
-        b=3ob5HvOuJ6A3+eAO+kHM+da8nzXlbFrM8sjL3uaXZRBJqy3Uehms9WRkI5woXiIPIx
-         AX1u97p1yU8PEv9aF6/mp9tMW3qXJj38QwPP3qN3nw/WbVZ8TaJ/pm7rmkc7a3k8fPqT
-         AIZ5DwOlnC1pkxkJV8PtuIy620r6McsIS1EaJGd5KTw5ovVcAIJBok7JM53bOD5z6Q16
-         dwyeeyhXg1JAnqHdRLwGND4hwMjI2q4n6FizuuSZ4rFO0qFkWS0zmoo3euCpqVC4dR4k
-         TOPllE2c1H7HzLnwy4Wk1JoaGxJAq9Fqv8NXq/Nmlfi6EthXkrmUUx41J28NQ/BEsb7C
-         OMrg==
-X-Gm-Message-State: ACrzQf3RDefrUzpIKJSt1R+osECJaTh0yQ0nTziuJFAqIEXjWD3rQ7yp
-        IEqvuN29wGY1av99vJtJKcZ3QQ==
-X-Google-Smtp-Source: AMsMyM72nKPR2ufazXxcn0DYr+8HSKemjmCYJg0pO1CLdZHKdz9XflAKz9Qzy1PCInazElLUrg97Qg==
-X-Received: by 2002:a17:902:b70b:b0:186:b014:9609 with SMTP id d11-20020a170902b70b00b00186b0149609mr22177828pls.108.1667345664412;
-        Tue, 01 Nov 2022 16:34:24 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:11a:201:4437:8d79:dd1:7eb8])
-        by smtp.gmail.com with ESMTPSA id a19-20020aa79713000000b0056bc1a41209sm7051224pfg.33.2022.11.01.16.34.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Nov 2022 16:34:23 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya <quic_c_skakit@quicinc.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
-Date:   Tue,  1 Nov 2022 16:34:21 -0700
-Message-Id: <20221101233421.997149-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.38.1.273.g43a17bfeac-goog
+        with ESMTP id S229636AbiKAXmC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 19:42:02 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2063.outbound.protection.outlook.com [40.107.21.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC181D0C3;
+        Tue,  1 Nov 2022 16:42:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UPzseU6nS66mNv6VVmqRr+Ns2Z1GCs+JrsJRmPnc2R/Uii8xYUbogDjPVPTmfaxhnB5DFrkqrTvPIvD4fzvoNmyHiSWLFnPZ7xy3qzCKoNb4P+twKmcE7V2xPXYjiLh9MhAEaJUAresuvye0rWIYgFCy/Bg9Xn77DnnsriTB/se5Jr/C13/+gaEtUI6HwSBz8+V3T0pNedIwUmbtHds9omTzHcM+Cpk4NxVHsfV2y4z4bfBdFXmmztiP3t3sD0QL9sl4enmB1cGFQuE7ZD274qPtYzAxsmLTxBFTN+Jb62oekWaOapPWWheTFgxmqy5TvoSlGWB8qySbK2J2E82nGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BBIzxVa4CvfreV3mlobdSYEzdP5FnqM1QW1y2rrl8Dk=;
+ b=hpV7gFbl4bA5uIGKxU8wy1D3rUOtXcAoizpa4hA6XQQmlATVFZqs6aFNDCvwxUe5gSeKV9K/88QqVd3C3tvDV5F+mb9IvwcX838eabW6oxgWbj9mfTgoXOYj/5maIXbl0PyF6kGmwlPHGgp/fLX8gtqd8hzH3fNQmXM2ntlDJNfwqYmL0ZFrN/bWttt20SNdlTu6bPVoJmmtMnoDfqZqsxmivksbVFx92ul8SrCURqCr5zRPnfwfmsHk08ksahPFIczV1gBoeO2Yx4y4KZAnRs16QEspWlxxl5Dt2wQhDrF4prslGxtflSELXV+VyMYEh+g4YCbcmNYQUgXWvNhDcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BBIzxVa4CvfreV3mlobdSYEzdP5FnqM1QW1y2rrl8Dk=;
+ b=gNvrJLhTxu6D+n8JDLBbhKEJY//5mcuqq7/RKnfIxPhp7lsTd/bu0hUIsen5IisRZAPxyOwK7QCpQaTyY4pFTbf54hi/PaPXnaAC4e7qq65H+pcxDJtJE4Fx4G0EbWDYaU8DZyUfxVPMzw+rM0ytgloGsVyLKeOQBeTohZPaTrrLaYBrOZtvGBf9UpR9/ahfiniK3AIzugOF7zBev89MW10emSDoFT7cSvj0xte8BaxqGklljiexlogpd2IbqXpDoI97NHL86Qgz1Qdz01+k8V4rIRBz+xk48YEZND/caGyNo4m3Kzf9sSZR4hfMOlNJ0ryRxxB+6P+32b42GYG1Kg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from AM0PR03MB4964.eurprd03.prod.outlook.com (2603:10a6:208:fc::33)
+ by AS8PR03MB8001.eurprd03.prod.outlook.com (2603:10a6:20b:428::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.16; Tue, 1 Nov
+ 2022 23:41:58 +0000
+Received: from AM0PR03MB4964.eurprd03.prod.outlook.com
+ ([fe80::bebb:9559:edd8:5e79]) by AM0PR03MB4964.eurprd03.prod.outlook.com
+ ([fe80::bebb:9559:edd8:5e79%7]) with mapi id 15.20.5769.021; Tue, 1 Nov 2022
+ 23:41:58 +0000
+Message-ID: <e2890214-ea71-999e-5733-5c6f109dac12@seco.com>
+Date:   Tue, 1 Nov 2022 19:41:53 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v8 4/9] phy: fsl: Add Lynx 10G SerDes driver
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20221027191113.403712-1-sean.anderson@seco.com>
+ <20221027191113.403712-5-sean.anderson@seco.com>
+ <20221027230331.19C2FC433D6@smtp.kernel.org>
+ <5f00ede6-10f5-c11c-ee21-54460c1f98b0@seco.com>
+ <20221101200757.4626BC433D6@smtp.kernel.org>
+From:   Sean Anderson <sean.anderson@seco.com>
+In-Reply-To: <20221101200757.4626BC433D6@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL0PR1501CA0035.namprd15.prod.outlook.com
+ (2603:10b6:207:17::48) To AM0PR03MB4964.eurprd03.prod.outlook.com
+ (2603:10a6:208:fc::33)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR03MB4964:EE_|AS8PR03MB8001:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2af6ed85-4089-40e9-0ebe-08dabc62aaef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: di/7fI8eSmPKpzX7OuCIYOs6CKB9Qi5C2zbuSwjauIuwh1fhkNCsMIkHggP2rLdvdG/+7uidAU8IjntYr92Y1FbmM21VhLl7AqFRN//YUmSzoda+shIWm4+mFOEF+2lcI+mJ6LuAW0+Oq4xFXihAy+bv+Zjsv8b1mhioRYuuSvFLayGwOK+V6gRwoRalMkj9yHdHJSHKMNn+sAn8xI5+kjodzfPBA52PaJOxwAfOE44SJve4IV49aAIYxrk4pDdj/x50HP+A0MvKL5Vo7wbkWhGJDQRexl26V8TMiyi5+KwIPQgfcZ5j6kYR405LOcjFQJf3ASr5RBqMOalOfRcxciL8CwQEJto5WqDcIuuzeY9TKyY+vid2rk3hv4/q5A1FkauOCOk8/5Y3vln9NL/dLhotg6LefW+1Xqt+P1NKobKgX3ifRzzAJyX06MF+uMGf7acq9GrVvU+59KaPPepxUwB2133v4lAs/N8v/5hg9/1+61mOx8gi4hEKou4D1/MxD2c4J94vwLdVVslhkVTpBqFnVd71Xv6RbVod0czkyYxiwXhpYfYamYFHdS6zx04WQuVaJ4OVasXdsHYUZLNYm8w3aOTOGYQqC6jt5uizRNHUd4Fuqss1wcndpWAyBGshcCuz+R6nd1MPfr/GU93x36U12aEEW2NxB57NwiAccK03bEULvcWrAhmpq8omdAbhPLgEMi/z20ReDmCNN3ah7kbxK/8NEUXCNndZv2H6A0WTr+2RAH39cxUMbggg1QQ9jJ/TZiS3bBtMB9ckzR2G0kfeQmxA6nx5+qP0pgCUbslQ+M6CBw2cW3d22QDzIsmmh5F7ESHLyhYIWxq9pc1cEg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR03MB4964.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(39850400004)(366004)(396003)(346002)(376002)(136003)(451199015)(7416002)(5660300002)(41300700001)(8936002)(6512007)(26005)(38100700002)(38350700002)(44832011)(2616005)(186003)(2906002)(86362001)(31696002)(4001150100001)(36756003)(83380400001)(66899015)(31686004)(6486002)(52116002)(66476007)(66946007)(66556008)(53546011)(8676002)(4326008)(6506007)(110136005)(316002)(6666004)(54906003)(478600001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NTJOVFQ2alFwWnBqQVg0dzZ0OW1YQU1MNW9PaytaMTcxM00xbUN0N2g5MHps?=
+ =?utf-8?B?V25QOVJOSndoL1h6a1EySmt2ZjFnMkVHbmtyZURKOVFUUlZJSkZxdlgrOVpO?=
+ =?utf-8?B?S0ZTTlJYeW1wTnJreWJRL2lET3JrQjlFcWxqb3gxT1JQK294MEpKUktPaCtl?=
+ =?utf-8?B?K2RiRDRMeHFRb0NDWlpiSjMvb2h5VGNoaytKMkJCTGtIOEdsOCtJQ1QwdFdo?=
+ =?utf-8?B?ZThjSW5rRlFjWTFuczNaaVFiNWExcWp2ZkZuU0o0ekJKRTJMek1WTzZNTWo3?=
+ =?utf-8?B?N0lLemJ2L0dnWFlITnZPWUx4bStxcmNZSTU0TDM2WkszZEY1YW81bnF0QTdq?=
+ =?utf-8?B?NFprQlQ4ekZ6aHdqRzhyMFRPcXdOaFVYNHN6Rzd4SFo5Rlg0VUNYUDhMd2V5?=
+ =?utf-8?B?TjMxSVVwNGtqTmxoaEt0NjBTWGEzbFQvMkpJUFhRb0czdFQrNHRTNDZDUnFH?=
+ =?utf-8?B?d21ydXlQYWV2Y0Y5NUd4Z2NBZnlQUFRteWhiTXFIdkNHeHdZSEZtT21pWFZS?=
+ =?utf-8?B?eGN1Ukl2cHF4MTZDZjk2YWlYZDNiZ1dyNXNzNW5lMC9FOVQwQXBoS1dSOWdy?=
+ =?utf-8?B?ZDVwZStybU9LaHloNEs5eGF0ZEZpQUNoanYvajFMd1huN0F6Q2hwaUlwV0Ns?=
+ =?utf-8?B?emJHWTFDMlRRbWF3YlFnMUdoL3l1YURiemtxVmd2UHNwN0k1UjNpNVd4cnVm?=
+ =?utf-8?B?OGthMEhMTGJ1QkN0OFdtTmRJQU5Wckw0ZVJRSlY2TXZMRG41SVdIQlpiNTQz?=
+ =?utf-8?B?QWJXWFFtdmdXdnRoUTI2dW9qQWROR21WajYxUHJMSEtUSFZmY212UjlIejVr?=
+ =?utf-8?B?TGdkbFJPSjVleU8ybnFweVNzb3FqRUNEMjVvUll4TU03eUtLYnhJV1RqVmQw?=
+ =?utf-8?B?VGhSQS9VbHN3N3BRYzR1V1NuN1lYMVlMOHp3ZzNmY2dHSFRHVlFJdFd0SE14?=
+ =?utf-8?B?ZlFzdS9QOWRGRHNSYWNLank0SU5wakowRzZTdjhQNWI0RGpEQmpGbG1GcWVJ?=
+ =?utf-8?B?RGFJTll4enBjUXVnM01TNXVqejJtUDRuUThYVVBUdHo3dVkyN3YySGc5UlNl?=
+ =?utf-8?B?eU9YM3ZUZm4ycEJSaVdaNkh2RklCTDNlS2RVbzJSNTRiclk1L2NBdTg2Vkpy?=
+ =?utf-8?B?Y0ZHaDNHOXdsQzU0WWRnb3Y0TTQ0cHYwUGs5UHdvK0lkT2FkZ3ltTlZ0UGNa?=
+ =?utf-8?B?S0JkemdoUGhmVEwzZWhRUW9FblE4UkM1WGRLNTZUcHFLbDl5VFIxMml4MzU3?=
+ =?utf-8?B?M2dub2ZtcEd2d3dRa08yUWcrMmxydHFpclltd0RTS0diRnV0WkxXVGFxbFll?=
+ =?utf-8?B?dTlvMGZwN0FLSW80eXNNNmo5bzVwbHc4NSsvTmFpMExaLzE3d0pkRWoyOVRH?=
+ =?utf-8?B?UlJlZGtvcCt2MnVrRUVTL3MzQjVuOGg1ZlJwcks3cGJwVHpKbDlKTEtBMmJO?=
+ =?utf-8?B?RWZqekkybXhRN3NLSW1vVk9OeThNdUNkYjNCaHhKOHArWVNhajRsSnZXZWpr?=
+ =?utf-8?B?WVc0dVFXYXNpK1Njc2dlL2dZUVR4SFcxdjNBSk1ZQXphK05oMjQ5Rk9JVU5P?=
+ =?utf-8?B?M0Q5K3hwY0tWc0FtNGJYK0xwOUl6WDdBRGNZbmJ4NkFhZTE3KzUyOGl4dmpm?=
+ =?utf-8?B?VUt1YndvcnJ5VGlGM2d3NHZ5UE1wSnBhVVZLc2t4TzlYdGk2bXVRRit2b1px?=
+ =?utf-8?B?WnBMY2JZNFBYQ3QwMXMwcUluRHBxei9mTDNKeVBaUEwyc201Wm9Bc3k5MTBo?=
+ =?utf-8?B?YStzbEhvUGpGQVB6OFJZcW5oS2dJQVp4NitzWFdYZ0l0aHdUNHE4UUFQZVBY?=
+ =?utf-8?B?NGdKMkprTG13enV4ajE3MVdtc3VQRTNvWWFtbEVBYjVEMWVRM0hPZFZ4VVZx?=
+ =?utf-8?B?djFEa3FKR2hmSDYyTktxcUpHN2NFY0NDN3VuT2h6K2dGTlc4Uk1tME5WVzhW?=
+ =?utf-8?B?b2VLOFFzQWJYQ2dUSWVWRE9BVXF6UlFaaXpyS1F5bFFlQ2ZjcXNIVW04T3No?=
+ =?utf-8?B?SVBPWXFjRDRNTmIvMUc1S25lVU9EWkNiTHNkcWVzZUErSDZSSkRDaWUyanVL?=
+ =?utf-8?B?Rkt1NWJzbHIwYzdhYmlCUEtmYUY0V0VkTk81bk5KbEh1UTk1eVdxMmVBZyt6?=
+ =?utf-8?B?RC9SeE1HY1dUMzZQU3lWYUtMQzZWbDhpdURnU1BNcEZZTG5DMGx3MHJjNE02?=
+ =?utf-8?B?cHc9PQ==?=
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2af6ed85-4089-40e9-0ebe-08dabc62aaef
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR03MB4964.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2022 23:41:58.8831
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tKJeldCuoQ7/S65fxBzJ3oVhiM5pgHZ3/IPCAlYOQiTkwTO9WTdLBtac2kDTeAtCqqa9neebarSMEPvyUsJhcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB8001
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We shouldn't be calling runtime PM APIs from within the genpd
-enable/disable path for a couple reasons.
+On 11/1/22 16:07, Stephen Boyd wrote:
+> Quoting Sean Anderson (2022-10-28 09:13:57)
+>> On 10/27/22 19:03, Stephen Boyd wrote:
+>> > Quoting Sean Anderson (2022-10-27 12:11:08)
+>> >> diff --git a/drivers/phy/freescale/Kconfig b/drivers/phy/freescale/Kconfig
+>> >> index 853958fb2c06..a6ccccf9e39b 100644
+>> >> --- a/drivers/phy/freescale/Kconfig
+>> >> +++ b/drivers/phy/freescale/Kconfig
+>> >> @@ -47,3 +47,25 @@ config PHY_FSL_LYNX_28G
+>> >>            found on NXP's Layerscape platforms such as LX2160A.
+>> >>            Used to change the protocol running on SerDes lanes at runtime.
+>> >>            Only useful for a restricted set of Ethernet protocols.
+>> >> +
+>> >> +config PHY_FSL_LYNX_10G
+>> >> +       tristate "Freescale QorIQ Lynx 10G SerDes support"
+>> >> +       depends on COMMON_CLK
+>> > 
+>> > Does something not compile if COMMON_CLK is disabled?
+>> 
+>> ld: drivers/phy/freescale/phy-fsl-lynx-10g-clk.o: in function `lynx_pll_round_rate':
+>> phy-fsl-lynx-10g-clk.c:(.text+0x444): undefined reference to `clk_hw_round_rate'
+>> ld: drivers/phy/freescale/phy-fsl-lynx-10g-clk.o: in function `lynx_clks_init':
+>> phy-fsl-lynx-10g-clk.c:(.text+0x5eb): undefined reference to `devm_clk_hw_register'
+>> ld: phy-fsl-lynx-10g-clk.c:(.text+0x625): undefined reference to `devm_clk_hw_register'
+> 
+> Cool thanks!
+> 
+>> 
+>> >> diff --git a/drivers/phy/freescale/lynx-10g.h b/drivers/phy/freescale/lynx-10g.h
+>> >> new file mode 100644
+>> >> index 000000000000..75d9353a867b
+>> >> --- /dev/null
+>> >> +++ b/drivers/phy/freescale/lynx-10g.h
+>> >> @@ -0,0 +1,16 @@
+>> >> +/* SPDX-License-Identifier: GPL-2.0 */
+>> >> +/*
+>> >> + * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
+>> >> + */
+>> >> +
+>> >> +#ifndef LYNX_10G
+>> >> +#define LYNX_10G
+>> >> +
+>> >> +struct clk;
+>> >> +struct device;
+>> >> +struct regmap;
+>> >> +
+>> >> +int lynx_clks_init(struct device *dev, struct regmap *regmap,
+>> > 
+>> > Can you use auxiliary bus to register this clk controller instead and
+>> > then move the clk file to drivers/clk/?
+>> 
+>> I don't want to have to deal with my clock driver getting unbound (aka
+>> the user has come and decided to make my life harder). Dynamic binding
+>> will only add complexity in this situation.
+> 
+> We have 'suppress_bind_attrs' for that. What dynamic binding are you
+> thinking about?
 
-First, this causes an AA lockdep splat because genpd can call into genpd
-code again while holding the genpd lock.
+Huh, neat. That may save me a lot of trouble in another subsystem.
 
-WARNING: possible recursive locking detected
-5.19.0-rc2-lockdep+ #7 Not tainted
---------------------------------------------
-kworker/2:1/49 is trying to acquire lock:
-ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+This was actually my main objection. I'll have a look at this bus...
 
-but task is already holding lock:
-ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+>> 
+>> I don't know how much context you've picked up, but this driver
+>> 
+>> - Has one consumer, and is is the serdes.
+>> - Is not accessible from outside the serdes.
+>> - Does not share any code with other drivers.
+>> - Has bits in its registers which can control the reset process of lanes
+>>    using the PLLs.
+>> 
+>> These drivers are tightly coupled to each other. It is very likely IMO
+>> that changes to one (bugs, features, etc) will affect the other. For
+>> this reason, I think it makes sense to keep them in the same source
+>> directory. I actually would have preferred to keep them in the same
+>> file.
+>> 
+> 
+> Using the auxiliary bus is about getting better code review on the
+> subsystem specific parts of a device. I'm not going to be paying a lot
+> of attention to the clk parts of this driver if it is outside
+> drivers/clk. Making this change helps with better code review.
+> 
+> The Kconfig symbol could be the same for the clk part and the phy part,
+> and this is already split to a different file. It seems that your
+> argument for keeping the clk file in the phy directory is because
+> they're part of the same phy device. Do you expect to get clk driver
+> review on the clk parts with the clk implementation in a different
+> directory?
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+...yes? Actually, I was mainly hoping for phy driver review (since I
+consider these PLLs part of the serdes), but you seem to be much more
+responsive, so I'll take what I can get.
 
-       CPU0
-       ----
-  lock(&genpd->mlock);
-  lock(&genpd->mlock);
+>> >> +       for (i = 0; i < NUM_PLLS; i++) {
+>> >> +               ret = lynx_clk_init(hw_data, dev, regmap, i);
+>> >> +               if (ret)
+>> >> +                       return ret;
+>> >> +
+>> >> +               plls[i] = hw_data->hws[LYNX10G_PLLa(i)]->clk;
+>> >> +               ex_dlys[i] = hw_data->hws[LYNX10G_PLLa_EX_DLY(i)]->clk;
+>> > 
+>> > Use clk_hw_get_clk() please.
+>> 
+>> I don't want to do that, because then I'd have to generate the clock ID
+>> again. And why do we even need a new clock consumer in the first place?
+>> This is only for internal use by the driver; the consumer is the same as
+>> the producer.
+>> 
+> 
+> We want to get rid of the clk pointer stashed in clk_hw. Using
+> clk_hw_get_clk() lets us easily change that and not need to change this
+> driver. I don't quite understand why you need to generate a clock ID.
+> Are you concerned about passing in the 'con_id' argument? That string
+> can be anything.
 
- *** DEADLOCK ***
+Yeah, but it has to be unique (there are usually multiple serdes on the same
+system), and it should be something useful (so e.g. clock_summary is useful).
+So it needs to be generated at runtime, and I'm already doing it when I create
+the clock.
 
- May be due to missing lock nesting notation
+IMO this would be much easier with numeric IDs; generating strings is a pain.
 
-3 locks held by kworker/2:1/49:
- #0: 74ffff80811a5748 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x320/0x5fc
- #1: ffffffc008537cf8 ((work_completion)(&genpd->power_off_work)){+.+.}-{0:0}, at: process_one_work+0x354/0x5fc
- #2: ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
-
-stack backtrace:
-CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 5.19.0-rc2-lockdep+ #7
-Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
-Workqueue: pm genpd_power_off_work_fn
-Call trace:
- dump_backtrace+0x1a0/0x200
- show_stack+0x24/0x30
- dump_stack_lvl+0x7c/0xa0
- dump_stack+0x18/0x44
- __lock_acquire+0xb38/0x3634
- lock_acquire+0x180/0x2d4
- __mutex_lock_common+0x118/0xe30
- mutex_lock_nested+0x70/0x7c
- genpd_lock_mtx+0x24/0x30
- genpd_runtime_suspend+0x2f0/0x414
- __rpm_callback+0xdc/0x1b8
- rpm_callback+0x4c/0xcc
- rpm_suspend+0x21c/0x5f0
- rpm_idle+0x17c/0x1e0
- __pm_runtime_idle+0x78/0xcc
- gdsc_disable+0x24c/0x26c
- _genpd_power_off+0xd4/0x1c4
- genpd_power_off+0x2d8/0x41c
- genpd_power_off_work_fn+0x60/0x94
- process_one_work+0x398/0x5fc
- worker_thread+0x42c/0x6c4
- kthread+0x194/0x1b4
- ret_from_fork+0x10/0x20
-
-Second, this confuses runtime PM on CoachZ for the camera devices by
-causing the camera clock controller's runtime PM usage_count to go
-negative after resuming from suspend. This is because runtime PM is
-being used on the clock controller while runtime PM is disabled for the
-device.
-
-The reason for the negative count is because a GDSC is represented as a
-genpd and each genpd that is attached to a device is resumed during the
-noirq phase of system wide suspend/resume (see the noirq suspend ops
-assignment in pm_genpd_init() for more details). The camera GDSCs are
-attached to camera devices with the 'power-domains' property in DT.
-Every device has runtime PM disabled in the late system suspend phase
-via __device_suspend_late(). Runtime PM is not usable until runtime PM
-is enabled in device_resume_early(). The noirq phases run after the
-'late' and before the 'early' phase of suspend/resume. When the genpds
-are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
-that calls pm_runtime_resume_and_get() and that returns -EACCES to
-indicate failure to resume because runtime PM is disabled for all
-devices.
-
-Upon closer inspection, calling runtime PM APIs like this in the GDSC
-driver doesn't make sense. It was intended to make sure the GDSC for the
-clock controller providing other GDSCs was enabled, specifically the
-MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
-that GDSC register accesses succeeded. That will already happen because
-we make the 'dev->pm_domain' a parent domain of each GDSC we register in
-gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
-are accessed, we'll enable the parent domain (in this specific case
-MMCX).
-
-We also remove any getting of runtime PM during registration, because
-when a genpd is registered it increments the count on the parent if the
-genpd itself is already enabled. And finally, the runtime PM state of
-the clk controller registering the GDSC shouldn't matter to the
-subdomain setup. Therefore we always assign 'dev' unconditionally so
-when GDSCs are removed we properly unlink the GDSC from the clk
-controller's pm_domain.
-
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>
-Cc: Satya Priya <quic_c_skakit@quicinc.com>
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Reported-by: Stephen Boyd <swboyd@chromium.org>
-Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/clk/qcom/gdsc.c | 64 ++++++-----------------------------------
- 1 file changed, 8 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 7cf5e130e92f..a775ce1b7d8a 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -11,7 +11,6 @@
- #include <linux/kernel.h>
- #include <linux/ktime.h>
- #include <linux/pm_domain.h>
--#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset-controller.h>
-@@ -56,22 +55,6 @@ enum gdsc_status {
- 	GDSC_ON
- };
- 
--static int gdsc_pm_runtime_get(struct gdsc *sc)
--{
--	if (!sc->dev)
--		return 0;
--
--	return pm_runtime_resume_and_get(sc->dev);
--}
--
--static int gdsc_pm_runtime_put(struct gdsc *sc)
--{
--	if (!sc->dev)
--		return 0;
--
--	return pm_runtime_put_sync(sc->dev);
--}
--
- /* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
- static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
- {
-@@ -271,8 +254,9 @@ static void gdsc_retain_ff_on(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
- }
- 
--static int _gdsc_enable(struct gdsc *sc)
-+static int gdsc_enable(struct generic_pm_domain *domain)
- {
-+	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
- 	if (sc->pwrsts == PWRSTS_ON)
-@@ -328,22 +312,11 @@ static int _gdsc_enable(struct gdsc *sc)
- 	return 0;
- }
- 
--static int gdsc_enable(struct generic_pm_domain *domain)
-+static int gdsc_disable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
--	ret = gdsc_pm_runtime_get(sc);
--	if (ret)
--		return ret;
--
--	return _gdsc_enable(sc);
--}
--
--static int _gdsc_disable(struct gdsc *sc)
--{
--	int ret;
--
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
-@@ -388,18 +361,6 @@ static int _gdsc_disable(struct gdsc *sc)
- 	return 0;
- }
- 
--static int gdsc_disable(struct generic_pm_domain *domain)
--{
--	struct gdsc *sc = domain_to_gdsc(domain);
--	int ret;
--
--	ret = _gdsc_disable(sc);
--
--	gdsc_pm_runtime_put(sc);
--
--	return ret;
--}
--
- static int gdsc_init(struct gdsc *sc)
- {
- 	u32 mask, val;
-@@ -447,11 +408,6 @@ static int gdsc_init(struct gdsc *sc)
- 				return ret;
- 		}
- 
--		/* ...and the power-domain */
--		ret = gdsc_pm_runtime_get(sc);
--		if (ret)
--			goto err_disable_supply;
--
- 		/*
- 		 * Votable GDSCs can be ON due to Vote from other masters.
- 		 * If a Votable GDSC is ON, make sure we have a Vote.
-@@ -459,14 +415,14 @@ static int gdsc_init(struct gdsc *sc)
- 		if (sc->flags & VOTABLE) {
- 			ret = gdsc_update_collapse_bit(sc, false);
- 			if (ret)
--				goto err_put_rpm;
-+				goto err_disable_supply;
- 		}
- 
- 		/* Turn on HW trigger mode if supported */
- 		if (sc->flags & HW_CTRL) {
- 			ret = gdsc_hwctrl(sc, true);
- 			if (ret < 0)
--				goto err_put_rpm;
-+				goto err_disable_supply;
- 		}
- 
- 		/*
-@@ -495,14 +451,11 @@ static int gdsc_init(struct gdsc *sc)
- 		sc->pd.power_on = gdsc_enable;
- 
- 	ret = pm_genpd_init(&sc->pd, NULL, !on);
--	if (ret)
--		goto err_put_rpm;
-+	if (!ret)
-+		goto err_disable_supply;
- 
- 	return 0;
- 
--err_put_rpm:
--	if (on)
--		gdsc_pm_runtime_put(sc);
- err_disable_supply:
- 	if (on && sc->rsupply)
- 		regulator_disable(sc->rsupply);
-@@ -541,8 +494,7 @@ int gdsc_register(struct gdsc_desc *desc,
- 	for (i = 0; i < num; i++) {
- 		if (!scs[i])
- 			continue;
--		if (pm_runtime_enabled(dev))
--			scs[i]->dev = dev;
-+		scs[i]->dev = dev;
- 		scs[i]->regmap = regmap;
- 		scs[i]->rcdev = rcdev;
- 		ret = gdsc_init(scs[i]);
--- 
-https://chromeos.dev
-
+--Sean
