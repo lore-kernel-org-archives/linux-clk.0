@@ -2,120 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34886C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 14:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D91C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Nov 2022 15:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230251AbiKAORS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 10:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37780 "EHLO
+        id S230314AbiKAPeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 11:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230233AbiKAORQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 10:17:16 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BC52411A32;
-        Tue,  1 Nov 2022 07:17:15 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1BE41FB;
-        Tue,  1 Nov 2022 07:17:21 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E38B13F703;
-        Tue,  1 Nov 2022 07:17:13 -0700 (PDT)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        Icenowy Zheng <uwu@icenowy.me>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH 5/9] clk: sunxi-ng: f1c100s: Add IR mod clock
-Date:   Tue,  1 Nov 2022 14:16:54 +0000
-Message-Id: <20221101141658.3631342-6-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221101141658.3631342-1-andre.przywara@arm.com>
-References: <20221101141658.3631342-1-andre.przywara@arm.com>
+        with ESMTP id S230264AbiKAPeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 11:34:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA62DDEE4;
+        Tue,  1 Nov 2022 08:34:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 80F8461637;
+        Tue,  1 Nov 2022 15:34:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB08AC433D6;
+        Tue,  1 Nov 2022 15:34:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667316861;
+        bh=qMkIVqVEWFZuwE65ZHG+MFl13mOX2Gs29/6OxtDWz3Q=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Eo2HJy/JTbLE5XD1A3dfBYlXniEQRt5waC7T/yvL9NBisyJE5yzaC7fPLncTz43X1
+         xRuQyGmlmO3++24VXm0Ia+4MWMvQElWMcvLijmh3uFQw8fq7dVZk/NPe9Jl2jspeoY
+         k6vqDNPkBUQfjjnS/dgafA4QqsfgDxwVUvgzVpPyXDv7lbJrdYb19kAUgCwpchZaGC
+         nozTuUHA6vLbAkg1V6YLZGpIMPPUN1rnowZnH4fRPGGYNn4ZJVMwzSpJl77Qfll0RS
+         5RRzYWYKS/7Y8303wFm8rawdMcsf/uhWxwX/ixXkiR5VbMMd0qcMrk640XOnkzj/P9
+         rtprl7kMkragA==
+Message-ID: <9d13da28-e7d5-f8d4-0e99-c89560d37833@kernel.org>
+Date:   Tue, 1 Nov 2022 10:34:19 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCHv6 5/6] clk: socfpga: remove the setting of clk-phase for
+ sdmmc_clk
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, jh80.chung@samsung.com
+Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221026141631.696863-1-dinguyen@kernel.org>
+ <20221026141631.696863-5-dinguyen@kernel.org>
+ <20221027213934.E9219C433C1@smtp.kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20221027213934.E9219C433C1@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For some reason the mod clock for the Allwinner F1C100s CIR (infrared
-receiver) peripheral was not modeled in the CCU driver.
 
-Add the clock description to the list, and wire it up in the clock list.
-By assigning a new clock ID at the end, it extends the number of clocks.
 
-This allows to use the CIR peripheral on any F1C100s series board.
+On 10/27/22 16:39, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2022-10-26 07:16:30)
+>> Now that the SDMMC driver supports setting the clk-phase, we can remove
+>> the need to do it in the clock driver.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+> 
+> Do you want to take this through mmc tree?
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c      | 11 ++++++++++-
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h      |  2 +-
- include/dt-bindings/clock/suniv-ccu-f1c100s.h |  2 ++
- 3 files changed, 13 insertions(+), 2 deletions(-)
+Yes, I'll do that.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-index ed097c4f780ff..af4811e720b39 100644
---- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-+++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-@@ -239,7 +239,14 @@ static SUNXI_CCU_MUX_WITH_GATE(i2s_clk, "i2s", i2s_spdif_parents,
- static SUNXI_CCU_MUX_WITH_GATE(spdif_clk, "spdif", i2s_spdif_parents,
- 			       0x0b4, 16, 2, BIT(31), 0);
- 
--/* The BSP header file has a CIR_CFG, but no mod clock uses this definition */
-+static const char * const ir_parents[] = { "osc32k", "osc24M" };
-+static SUNXI_CCU_MP_WITH_MUX_GATE(ir_clk, "ir",
-+				  ir_parents, 0x0b8,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 1,        /* mux */
-+				  BIT(31),      /* gate */
-+				  0);
- 
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
- 		      0x0cc, BIT(1), 0);
-@@ -355,6 +362,7 @@ static struct ccu_common *suniv_ccu_clks[] = {
- 	&mmc1_output_clk.common,
- 	&i2s_clk.common,
- 	&spdif_clk.common,
-+	&ir_clk.common,
- 	&usb_phy0_clk.common,
- 	&dram_ve_clk.common,
- 	&dram_csi_clk.common,
-@@ -446,6 +454,7 @@ static struct clk_hw_onecell_data suniv_hw_clks = {
- 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
- 		[CLK_I2S]		= &i2s_clk.common.hw,
- 		[CLK_SPDIF]		= &spdif_clk.common.hw,
-+		[CLK_IR]		= &ir_clk.common.hw,
- 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
- 		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
- 		[CLK_DRAM_CSI]		= &dram_csi_clk.common.hw,
-diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
-index b22484f1bb9a5..d56a4316289d8 100644
---- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
-+++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
-@@ -29,6 +29,6 @@
- 
- /* All bus gates, DRAM gates and mod clocks are exported */
- 
--#define CLK_NUMBER		(CLK_AVS + 1)
-+#define CLK_NUMBER		(CLK_IR + 1)
- 
- #endif /* _CCU_SUNIV_F1C100S_H_ */
-diff --git a/include/dt-bindings/clock/suniv-ccu-f1c100s.h b/include/dt-bindings/clock/suniv-ccu-f1c100s.h
-index f5ac155c9c70a..d7570765f424d 100644
---- a/include/dt-bindings/clock/suniv-ccu-f1c100s.h
-+++ b/include/dt-bindings/clock/suniv-ccu-f1c100s.h
-@@ -67,4 +67,6 @@
- #define CLK_CODEC		65
- #define CLK_AVS			66
- 
-+#define CLK_IR			67
-+
- #endif
--- 
-2.25.1
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
+Thanks!
+
+Dinh
