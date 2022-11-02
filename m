@@ -2,92 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B849C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 08:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3271C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 08:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbiKBINh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 04:13:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47664 "EHLO
+        id S229695AbiKBIcr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 04:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiKBINf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 04:13:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5D22704;
-        Wed,  2 Nov 2022 01:13:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 79A8961847;
-        Wed,  2 Nov 2022 08:13:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4FBC433D6;
-        Wed,  2 Nov 2022 08:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667376813;
-        bh=lpAAsFlmTm/LavhinI8aX5Gdc5BT8bM0i9kKwT4V+1w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hIuPC2Z6WOE7ysPjJJVdG8KR0j/MNsk4CrhiMJRXT5ylfRXHUF2Y8fSsX+x8YbWp6
-         VGE4quuJQRTkn8vYSu2r5xFoKYQ7LuMFnx+ZyPVKLHVBxvT4ptjl8Ytf8M9BX3HrRC
-         gZ6dbe86s2xt7pVAsnbY5nkZ/iPnxgrVg3vgRLm4ZX8cc1XAqbY15QmajrPpcQv5q3
-         LyGyQb/0vIx9E7v2hwa1vPJco2+9RSF0mhX6+F5MRXN7lkU36LZKzVAVDGc0Jw2mwn
-         3ZTTlmkr/bkgBUZ+eSlZoz2ze+EpJVTroFda+N/tuCMxVNM11J4UWcGr1EbvBVBthe
-         EXId+ts+RhnqQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oq8s9-0002XH-Ph; Wed, 02 Nov 2022 09:13:17 +0100
-Date:   Wed, 2 Nov 2022 09:13:17 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, andersson@kernel.org,
-        bmasney@redhat.com, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
- gcc_ufs_ref_clkref_clk
-Message-ID: <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
-References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
- <20221101182402.32CE5C433C1@smtp.kernel.org>
- <Y2IZaxukERXNcPGR@hovoldconsulting.com>
- <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
+        with ESMTP id S229539AbiKBIcq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 04:32:46 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933C9240AF;
+        Wed,  2 Nov 2022 01:32:45 -0700 (PDT)
+Received: (Authenticated sender: kory.maincent@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 58A321C0013;
+        Wed,  2 Nov 2022 08:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1667377964;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3dtpyVTwPgQUnhehX8zqlud+7lGgjvApwXe9PW42hFE=;
+        b=MseqCRQ+bWc0HZ2fTFw7uqZi3ih9tn/l7q3Mg6It2MnCcR3n7g6VDbOImxgZAXIQmJ3/1m
+        oDLwTxDt9DdN9HgWXJ/hgQ/WK1LmpsuqhLTKhztUENfsJPq5UEMPCD2pBMLkpzStwbiGbB
+        YsB4L1Jd1Z3MLEmh3DVFBand9uWvNVqK9q9JIcUrBM2bBzPaMcZyrNd7QCa8asyaGoWEYe
+        9waTZwbpKvk0sqaqBkX5E4ACek/7nEQG0d06fwBUw8sM6Wpo82K8ihUO0uaZ3WOaHQCFIS
+        UCkv9nlCvLDjcdFSU4wZ852YyRBeTsp9EsRQvee/EfTKafgYaKTURsjD5N8dCg==
+Date:   Wed, 2 Nov 2022 09:32:40 +0100
+From:   =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 6/6] clk: spear: Fix SSP clock definition on SPEAr600
+Message-ID: <20221102093240.62225991@kmaincent-XPS-13-7390>
+In-Reply-To: <20221028002219.6AEEEC43470@smtp.kernel.org>
+References: <20221019133208.319626-1-kory.maincent@bootlin.com>
+        <20221019133208.319626-7-kory.maincent@bootlin.com>
+        <20221028002219.6AEEEC43470@smtp.kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 01:28:48PM +0530, Shazad Hussain wrote:
-> On 11/2/2022 12:46 PM, Johan Hovold wrote:
-> > On Tue, Nov 01, 2022 at 11:23:59AM -0700, Stephen Boyd wrote:
-> >> Quoting Shazad Hussain (2022-10-30 07:23:33)
-> >>> Since 'commit f3aa975e230e ("arm64: dts: qcom: sc8280xp: correct ref
-> >>
-> >> So we should have a Fixes tag for this commit? Or really back to the
-> >> beginning of the driver?
-> >>
-> >>> clock for ufs_mem_phy")' we need to explicitly make cxo as parent to
-> >>> gcc_ufs_ref_clkref_clk to have an independent vote from ufs_mem_phy.
-> > 
-> > The commit message is slightly misleading as this affects the other UFS
-> > PHY as well.
-> > 
-> > If CX is indeed a parent of this clock then the issue has been there
-> > since the clock driver was added. (And otherwise, the PHY binding may
-> > need to be amended instead.)
+Hello Stephen,
 
-> CX is not the actual parent of this clk. GCC_UFS_REF_CLKREF_CLK is an 
-> external clk to the device, which needs to be voted. If we use the 
-> GCC_UFS_REF_CLKREF_CLK as ref clk, we don't have explicit vote for CX 
-> from ufs_mem_phy.
->
-> If no client votes for CX,(very unlikely) then it's won't be ON for 
-> ufs_mem_phy as well right ! So to maintain the voting to CX, we make 
-> this as parent to ref clk.
+On Thu, 27 Oct 2022 17:22:17 -0700
+Stephen Boyd <sboyd@kernel.org> wrote:
 
-Right, but if the PHYs really requires CX and it is not an ancestor of
-the refclk then this should be described by the binding (and not be
-hidden away in the clock driver).
+> Quoting K=C3=B6ry Maincent (2022-10-19 06:32:08)
+> > From: Kory Maincent <kory.maincent@bootlin.com>
+> >=20
+> > There is no SPEAr600 device named "ssp-pl022.x". Instead, the descripti=
+on
+> > of the SSP (Synchronous Serial Port) was recently added to the Device T=
+ree,
+> > and the device name is "xxx.spi", so we should associate the SSP gateab=
+le
+> > clock to these device names.
+> >=20
+> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com> =20
+>=20
+> Does this need a Fixes tag?
 
-Johan
+The old commits on SEAr6xx clock names definition update did not have it,
+therefore I don't think so.
+
+Regards,
