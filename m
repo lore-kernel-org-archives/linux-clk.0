@@ -2,77 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E8FC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 07:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A484FC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 07:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbiKBHNB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 03:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40258 "EHLO
+        id S230306AbiKBHRT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 03:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbiKBHM7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 03:12:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034EC20F5E;
-        Wed,  2 Nov 2022 00:12:59 -0700 (PDT)
+        with ESMTP id S229909AbiKBHRS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 03:17:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 939E5B4A4;
+        Wed,  2 Nov 2022 00:17:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9290F61808;
-        Wed,  2 Nov 2022 07:12:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94D3C433D6;
-        Wed,  2 Nov 2022 07:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1667373178;
-        bh=8YSLrlTKEH/zZIjxkCCQNXWTZJ2rwxcYE+d26YpyZhE=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2FAB661808;
+        Wed,  2 Nov 2022 07:17:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9775BC433D6;
+        Wed,  2 Nov 2022 07:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667373436;
+        bh=7B515svrha9lAVshcKZWJ9DaQON4RrUzPOsPKoKlGqg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GCHRTvzu2C+o/dTeJ1w2KnygFUzicLKPEmKXP8E6REFdfiHlRdHFNcSVW38NntkAe
-         Yf2g0IIWpTQrIVg+Y3E4GePvAmVfVWOwc02ANBuInOB4m/rOY6u1e6oZirNQJWOelb
-         Z6aUE5lXtjdRy1QOJWiS5GZhSXlYf7PWXyN0UOJQ=
-Date:   Wed, 2 Nov 2022 08:09:32 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+        b=lhDzsJdmwGWhVhdbFIaYqNzrjbxI3oLJjWbBtObV4JL1TR5nodCf/lu8kaRkgW1kB
+         +xTe+QRCh7qcckygkVHgAnaoh2Wck+1V6k6GV2/DWqL7t+7SPvdWnaLeDWVUB74vTD
+         Hj3knkUxA1UzMneMbVfxDJjD2sTgsS5Dr92xfj68Uk6OyIaDkijr/PHb3v5EsCUxP/
+         vI2aGq6flB0Y+6qLeBYAxFXN8U0LSXgotGoBjjzJeMzoB5g5ur6QnEpLu9Q0cnikXO
+         LA0z64HlNaEJAsHB6kuQQ6LeOm98ffGXEd+c8+ICWMQhfnEOvtDwtGYwL2D+cnidIa
+         N7rXXVDlbAA4A==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oq7zf-0001sl-P9; Wed, 02 Nov 2022 08:17:00 +0100
+Date:   Wed, 2 Nov 2022 08:16:59 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Shazad Hussain <quic_shazhuss@quicinc.com>, andersson@kernel.org,
+        bmasney@redhat.com, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 0/6] RISC-V: stop selecting device drivers in Kconfig.socs
-Message-ID: <Y2IXrD4FpXNmDDPk@kroah.com>
-References: <20221005171348.167476-1-conor@kernel.org>
- <Y15nwXmn7rToJkH2@spud>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
+ gcc_ufs_ref_clkref_clk
+Message-ID: <Y2IZaxukERXNcPGR@hovoldconsulting.com>
+References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+ <20221101182402.32CE5C433C1@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y15nwXmn7rToJkH2@spud>
+In-Reply-To: <20221101182402.32CE5C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 30, 2022 at 12:02:09PM +0000, Conor Dooley wrote:
-> On Wed, Oct 05, 2022 at 06:13:43PM +0100, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> > 
-> > As my RFC [0] series doing the symbol name changes has not yet reached
-> > consensus, I've split out the removal of device driver selects into a
-> > new series. I kept the plic as a direct select - although given how Maz
-> > is treating the SiFive plic driver as the RISC-V plic driver, maybe that
-> > should just be selected by default at an arch level...
-> > 
-> > I assume the individual patches can go via their subsystems & I'll
-> > resubmit the arch/riscv patches a cycle later? I'm not in any rush.
+On Tue, Nov 01, 2022 at 11:23:59AM -0700, Stephen Boyd wrote:
+> Quoting Shazad Hussain (2022-10-30 07:23:33)
+> > Since 'commit f3aa975e230e ("arm64: dts: qcom: sc8280xp: correct ref
 > 
-> Hey,
+> So we should have a Fixes tag for this commit? Or really back to the
+> beginning of the driver?
 > 
-> What's the story here with the two serial patches, they just waiting for
-> an Ack? I think these are archived on the riscv patchwork, so if that is
-> the case I'll unarchive them and mark as needing one.
+> > clock for ufs_mem_phy")' we need to explicitly make cxo as parent to
+> > gcc_ufs_ref_clkref_clk to have an independent vote from ufs_mem_phy.
 
-Sorry for the delay, I'll take both of them through the tty/serial tree.
+The commit message is slightly misleading as this affects the other UFS
+PHY as well.
 
-thanks,
+If CX is indeed a parent of this clock then the issue has been there
+since the clock driver was added. (And otherwise, the PHY binding may
+need to be amended instead.)
 
-greg k-h
+Johan
