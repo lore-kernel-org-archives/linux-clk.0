@@ -2,124 +2,216 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9F0C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 20:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECCCC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 23:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbiKBUk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 16:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
+        id S231374AbiKBXf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 19:35:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231285AbiKBUkX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 16:40:23 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653AF64F2
-        for <linux-clk@vger.kernel.org>; Wed,  2 Nov 2022 13:40:20 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id c8so13301587qvn.10
-        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 13:40:20 -0700 (PDT)
+        with ESMTP id S231337AbiKBXfG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 19:35:06 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D709B22BEB
+        for <linux-clk@vger.kernel.org>; Wed,  2 Nov 2022 16:27:30 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id d26so1035768eje.10
+        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 16:27:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sd70azK8MP8PUzuuvqBJ39esDubQ4+1f6bAqhKArwGE=;
-        b=XLuDX8evb09H4tyKKUQux/Sg8fAoxhx6pqOpuUOk8MIB4EqP8XX44e1W5hEWsumYh7
-         KZoCErNN8uojbnkBPrjHQLGRarsbM14fU9/V7eAxPRqIJIPkXJwrMlZ3yCh7GMW8JmP4
-         hZvXB9rCLUXoUaSp/O+Swr18I8y7iolrPv3aE+1k+0XDNo/mWDFUBRSZPsnmoNxpVRV4
-         OL9HOfUcD7x8hZD5WMC5P2c6z8GcV2vWk1feZyVAIyYK2vHLFLKN+r1Mnb1wH4xcbhJw
-         vXtnU3FFaWuy70+3u9Dr5THgk4hQV6Y6BWIXV7TCYB3gIjq4sQQu2yzlzH+4XCu5IBpQ
-         Bt3Q==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q4q9wfgcOclGdcMsl14RDjUCS9gfVlvxYztXFkY+AAE=;
+        b=eJKjIYfM3SW+G0n7AWqNkgTG0ba9Cy4iuR3meDnaeJvCu+4iV0UX3p5UwsRF6E1JJt
+         0vaJfVWpOgcBq2tnz00/mptxQk1uEIp+Qav50UiemxUjAGIOdzccOSqr1E06efrPYwgu
+         jHgQYYJB23zJDJX9hy1vb+BrWY9PhA3YOQf/U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sd70azK8MP8PUzuuvqBJ39esDubQ4+1f6bAqhKArwGE=;
-        b=mI+AqANp7monhvzDs9H5JdFmjJ4X3ay3WFBOkvmVm5Ru68c5gVxn5YhjGCkxDi6SF3
-         jLrSZeeIYgSgHBcCOYEIfOgbeD5v/A989QkNBRgMvLRS9SKqp/wr5IWhkY3l6uDbiHgK
-         ajji03bKO6jioHm3/h0A7EamTULH1ffzoopTf0rFpALP90ntZ5qUYE99MgfB+norVpcX
-         cCcDFf5jKjlCWakw2QnLpb1b5juDGN1TGYHSHBkcM2iFRmtjqkbRvyy8IAhtqUKOUd5o
-         UF2bToZSxSsZDWg7A02nSI3Z5juPDjn5EYXj6jKJq7/uPNQTKDJ3xwzKBb/oY1XoCYzu
-         O7xA==
-X-Gm-Message-State: ACrzQf3hOuHELzm9SSDUc0RJ4luTU7RuHquljFOFheNDMDc/LSj/B4Ln
-        BZbvz/iQAI5ACDL/3NGVrXD7BXwbElCYDg==
-X-Google-Smtp-Source: AMsMyM7Wt6ZhQtUp3aLlsPQeoyw11iNBvqVn3gNSOp2CLebWe/e9rHD4PyjZGAsT/lHmdjBI/LlIkw==
-X-Received: by 2002:a0c:9151:0:b0:4b1:8375:46d3 with SMTP id q75-20020a0c9151000000b004b1837546d3mr23670389qvq.122.1667421619599;
-        Wed, 02 Nov 2022 13:40:19 -0700 (PDT)
-Received: from ?IPV6:2601:586:5000:570:28d9:4790:bc16:cc93? ([2601:586:5000:570:28d9:4790:bc16:cc93])
-        by smtp.gmail.com with ESMTPSA id x10-20020ae9e64a000000b006e2d087fd63sm9093060qkl.63.2022.11.02.13.40.18
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q4q9wfgcOclGdcMsl14RDjUCS9gfVlvxYztXFkY+AAE=;
+        b=giVfSndClO5OkBHzvGW8+D1I/IJCPOis6myEPmpTrxw0sJBHBW79p9r+Wv4ZXtgm/8
+         5wEFCn/5CvDNUokYRy5ya38CpZ/y+IAyzqjXent9lEGa9kiYcu3CTzu145B2DjnxQzyZ
+         eHlto+ATbPTeJzAfbxFt6Ut8uyK8rQ6SKnG3oncFJ+kvcmd/RYt5veoF2ipWqlX5jnKo
+         5sir+igHMzvQY03nXIf7Qs1elN0IcgL9nFZ5lJBqJYHbyS/4R2big+80lS4vyf0aDZQ1
+         wb41A4t4VabKoGwfUDtKASrkuCacFvD+0ZIdVxqI0if3XepRPtk+bI0yFA/1TLfgbiNA
+         5qsw==
+X-Gm-Message-State: ACrzQf3zcklR6MO7zxDiuUVRvZ/AJr1jaj7H1mt7Kzig6WN/JvohY2PZ
+        UbA3cRc2lez+C+jFouUI7JH+H6DoxBIRdAho
+X-Google-Smtp-Source: AMsMyM5UoK5AjCb8ZOxBjxTn+fy/JRkreRKZuUAw+2I2nOghnLsIGXSSFwQ3CrGO5/ZvlCFrLLtYpQ==
+X-Received: by 2002:a17:907:761b:b0:7a3:86dd:d330 with SMTP id jx27-20020a170907761b00b007a386ddd330mr25766598ejc.34.1667431600240;
+        Wed, 02 Nov 2022 16:26:40 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id d25-20020aa7c1d9000000b00456c6b4b777sm6300157edp.69.2022.11.02.16.26.37
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Nov 2022 13:40:18 -0700 (PDT)
-Message-ID: <00a6c40c-da53-e7a4-dbe6-7d68d81128af@linaro.org>
-Date:   Wed, 2 Nov 2022 16:40:17 -0400
+        Wed, 02 Nov 2022 16:26:38 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id g12so359619wrs.10
+        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 16:26:37 -0700 (PDT)
+X-Received: by 2002:a5d:51cb:0:b0:236:6a62:4bc8 with SMTP id
+ n11-20020a5d51cb000000b002366a624bc8mr16755550wrv.583.1667431597355; Wed, 02
+ Nov 2022 16:26:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH v3 01/11] dt-bindings: clock: split
- qcom,gcc-msm8974,-msm8226 to the separate file
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+References: <20221102170717.1262547-1-swboyd@chromium.org>
+In-Reply-To: <20221102170717.1262547-1-swboyd@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 2 Nov 2022 16:26:24 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xb5h=Su+t32c5m8DDvWG5mt7MP9XRxoBmJjF=ePLhtUw@mail.gmail.com>
+Message-ID: <CAD=FV=Xb5h=Su+t32c5m8DDvWG5mt7MP9XRxoBmJjF=ePLhtUw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: qcom: gdsc: Remove direct runtime PM calls
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20221030155520.91629-1-dmitry.baryshkov@linaro.org>
- <20221030155520.91629-2-dmitry.baryshkov@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221030155520.91629-2-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/10/2022 11:55, Dmitry Baryshkov wrote:
-> Move schema for the GCC on MSM8974 and MSM8226 platforms to a separate
-> file to be able to define device-specific clock properties.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi,
+
+On Wed, Nov 2, 2022 at 10:07 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> We shouldn't be calling runtime PM APIs from within the genpd
+> enable/disable path for a couple reasons.
+>
+> First, this causes an AA lockdep splat because genpd can call into genpd
+> code again while holding the genpd lock.
+>
+> WARNING: possible recursive locking detected
+> 5.19.0-rc2-lockdep+ #7 Not tainted
+> --------------------------------------------
+> kworker/2:1/49 is trying to acquire lock:
+> ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+>
+> but task is already holding lock:
+> ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+>
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>
+>        CPU0
+>        ----
+>   lock(&genpd->mlock);
+>   lock(&genpd->mlock);
+>
+>  *** DEADLOCK ***
+>
+>  May be due to missing lock nesting notation
+>
+> 3 locks held by kworker/2:1/49:
+>  #0: 74ffff80811a5748 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x320/0x5fc
+>  #1: ffffffc008537cf8 ((work_completion)(&genpd->power_off_work)){+.+.}-{0:0}, at: process_one_work+0x354/0x5fc
+>  #2: ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+>
+> stack backtrace:
+> CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 5.19.0-rc2-lockdep+ #7
+> Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
+> Workqueue: pm genpd_power_off_work_fn
+> Call trace:
+>  dump_backtrace+0x1a0/0x200
+>  show_stack+0x24/0x30
+>  dump_stack_lvl+0x7c/0xa0
+>  dump_stack+0x18/0x44
+>  __lock_acquire+0xb38/0x3634
+>  lock_acquire+0x180/0x2d4
+>  __mutex_lock_common+0x118/0xe30
+>  mutex_lock_nested+0x70/0x7c
+>  genpd_lock_mtx+0x24/0x30
+>  genpd_runtime_suspend+0x2f0/0x414
+>  __rpm_callback+0xdc/0x1b8
+>  rpm_callback+0x4c/0xcc
+>  rpm_suspend+0x21c/0x5f0
+>  rpm_idle+0x17c/0x1e0
+>  __pm_runtime_idle+0x78/0xcc
+>  gdsc_disable+0x24c/0x26c
+>  _genpd_power_off+0xd4/0x1c4
+>  genpd_power_off+0x2d8/0x41c
+>  genpd_power_off_work_fn+0x60/0x94
+>  process_one_work+0x398/0x5fc
+>  worker_thread+0x42c/0x6c4
+>  kthread+0x194/0x1b4
+>  ret_from_fork+0x10/0x20
+>
+> Second, this confuses runtime PM on CoachZ for the camera devices by
+> causing the camera clock controller's runtime PM usage_count to go
+> negative after resuming from suspend. This is because runtime PM is
+> being used on the clock controller while runtime PM is disabled for the
+> device.
+>
+> The reason for the negative count is because a GDSC is represented as a
+> genpd and each genpd that is attached to a device is resumed during the
+> noirq phase of system wide suspend/resume (see the noirq suspend ops
+> assignment in pm_genpd_init() for more details). The camera GDSCs are
+> attached to camera devices with the 'power-domains' property in DT.
+> Every device has runtime PM disabled in the late system suspend phase
+> via __device_suspend_late(). Runtime PM is not usable until runtime PM
+> is enabled in device_resume_early(). The noirq phases run after the
+> 'late' and before the 'early' phase of suspend/resume. When the genpds
+> are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
+> that calls pm_runtime_resume_and_get() and that returns -EACCES to
+> indicate failure to resume because runtime PM is disabled for all
+> devices.
+>
+> Upon closer inspection, calling runtime PM APIs like this in the GDSC
+> driver doesn't make sense. It was intended to make sure the GDSC for the
+> clock controller providing other GDSCs was enabled, specifically the
+> MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
+> that GDSC register accesses succeeded. That will already happen because
+> we make the 'dev->pm_domain' a parent domain of each GDSC we register in
+> gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
+> are accessed, we'll enable the parent domain (in this specific case
+> MMCX).
+>
+> We also remove any getting of runtime PM during registration, because
+> when a genpd is registered it increments the count on the parent if the
+> genpd itself is already enabled. And finally, the runtime PM state of
+> the clk controller registering the GDSC shouldn't matter to the
+> subdomain setup. Therefore we always assign 'dev' unconditionally so
+> when GDSCs are removed we properly unlink the GDSC from the clk
+> controller's pm_domain.
+>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Johan Hovold <johan+linaro@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Matthias Kaehlcke <mka@chromium.org>
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
+> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 > ---
->  .../bindings/clock/qcom,gcc-msm8974.yaml      | 64 +++++++++++++++++++
->  .../bindings/clock/qcom,gcc-other.yaml        |  9 +--
->  2 files changed, 65 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
-> new file mode 100644
-> index 000000000000..a92a60f8c1af
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8974.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm MSM8974 (including Pro) and MSM8226 Global Clock & Reset
-> +  Controller
-> +
-> +maintainers:
-> +  - Stephen Boyd <sboyd@kernel.org>
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets and
-> +  power domains on MSM8974 (all variants) and MSM8226.
+>
+> Changes from v1 (https://lore.kernel.org/r/20221101233421.997149-1-swboyd@chromium.org):
+>  * Fix ret thinko
+>  * Update kerneldoc on 'dev' member
+>
+>  drivers/clk/qcom/gdsc.c | 62 +++++------------------------------------
+>  drivers/clk/qcom/gdsc.h |  2 +-
+>  2 files changed, 8 insertions(+), 56 deletions(-)
 
-Please incorporate the same changes I did here:
+Though I'm not an expert, this seems reasonable to me and certainly an
+improvement in that it no longer calls pm_runtime calls during the
+"noirq" resume phase. Thus a non-expert:
 
-https://lore.kernel.org/linux-devicetree/20221102163153.55460-2-krzysztof.kozlowski@linaro.org/
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-> +
+This also seems to avoid the problems I reported [1]. Even though the
+root cause (pm_runtime vs. clk prepare lock deadlock) is still
+theoretically possible at least the problem is no longer tickled for
+me (I tested on a sc7280-herobrine-villager board). Thus, I'm OK with:
 
-Rest looks good.
+Tested-by: Douglas Anderson <dianders@chromium.org>
 
-Best regards,
-Krzysztof
-
+[1] https://lore.kernel.org/r/20220922154354.2486595-1-dianders@chromium.org
