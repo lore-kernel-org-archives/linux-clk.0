@@ -2,135 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB23C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 08:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E477C43219
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 09:02:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbiKBIpt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 04:45:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50220 "EHLO
+        id S231315AbiKBJCi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 05:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229974AbiKBIpr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 04:45:47 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06E6527922;
-        Wed,  2 Nov 2022 01:45:45 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A28VUvc010387;
-        Wed, 2 Nov 2022 08:45:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=zb/9i99wRAEI78F9AvVaZ1VodJp1Q1VCuyoRXyw483Q=;
- b=UIldyo3cOZ7ffZu6ydOR9kTR0cPNIBYnm8pXYE6UsgE8/16ma7GEhO4FCrQMWtrwLEdM
- VOfFHrenjBz2cxISPyNOUwAmlA5RN5utuIaGHJKghJ9GtCAgecsutYYqZAJW7I2aG6Yh
- he1li7GdRauvdq76pdV+4jUvSrfCK61mvW7v94SGfDnKxe2n+7KqoxdriATqQ8jrROtf
- cWBnAGchrQd/HWownrBb0DPd4qdbclP4DuJFFNh/2DPG3+3Urr87RYPLQ40LLdhryIPU
- CHL4jLVhJpSOWwr61AG5Iv47jDRu0KYZXHE5xscCL4EUOCbJlvyWwh/GOZcXU7YPoVxP Yg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kkj88rea4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Nov 2022 08:45:39 +0000
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 2A28jXpt012214;
-        Wed, 2 Nov 2022 08:45:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3khdr04p72-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Nov 2022 08:45:33 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A28jWdY012192;
-        Wed, 2 Nov 2022 08:45:32 GMT
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 2A28jWVu012185
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Nov 2022 08:45:32 +0000
-Received: from [10.206.12.35] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 2 Nov 2022
- 01:45:29 -0700
-Message-ID: <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
-Date:   Wed, 2 Nov 2022 14:15:26 +0530
+        with ESMTP id S231359AbiKBJCE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 05:02:04 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0D0286D7
+        for <linux-clk@vger.kernel.org>; Wed,  2 Nov 2022 02:01:47 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id o4so23513144wrq.6
+        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 02:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fb2K4qbqcK2Y2tqiEOJiLZAT+uIy0/dc8UaXQsewLwA=;
+        b=dpnucKdFfRb01PE7FC9/sLijd6yiEF2ZNHCqNyOYl92jBQD+liWzbseCZ9znCF6DKu
+         uW5Ca3Hdg7TjaTDw58WkAMxEfqQ38ZR8kaM1szRZOjMF05KhBL48MpXZkuZPHi9NCmaW
+         d580Ib0D2Fkg++vdNldRtu/mbdgTZiR2cXJC3jtF3O5wobJATlNzZ8ZaBGZpkuGRmTBd
+         YY6RF2ZHGOyT4kd/v1p8mP9zlhJj9B0gyyEvg44aHUQoQgJ5SSzHUdIwiLDiClZf66tL
+         j23f3qEDpbQVdcYN7CDeyR5ykf0c9Hok/fj+4fiXQpNUFYYnp7Mvb5IU6RMg5dRsPFBj
+         Hzfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fb2K4qbqcK2Y2tqiEOJiLZAT+uIy0/dc8UaXQsewLwA=;
+        b=CcJst6H751RdqwpnUETCRleM0++rY7Hgb1lb9qJNGhr4eZzJzuoR360l6iYIZ+v6/h
+         hnI8uUb6WdL5m1dYe5g4+eSIAQ/EPIvz0IcK+oUEr6v5ObbQmOWjP4DGl9xqttEliJla
+         zun16m+qTvEPqpSzvkFkLq3vY6oxWaDmrb9TLQsGxv+eSh1ANPwVMnYIUzGbjN00F2yC
+         P/OoE26TnF3jxV4PjxsCR3deFog1kdJwVq11OdE4LbISOYn64i/5pWIXhNHxn2MwD1Yc
+         nZFAggi4lBusiDlL8VHD7PMPsGL3JxhQQ/lIgDzWRcoO8sW9Gf2Ns62Rw1/ZapsyJcOT
+         xOEg==
+X-Gm-Message-State: ACrzQf3foXarebNCVS2VdaIRm00nwjfDAydorjapjFTnox81xFPhYEyv
+        1TFRpelsuTxebSvuoT7j5xnYFQTP6An1GFJ9
+X-Google-Smtp-Source: AMsMyM758pxlcdQy009VmDr37vEIEa83qOgREZR/iULTELuI83RtVabMOnQnI4amuQuknTNLk3Zt8A==
+X-Received: by 2002:a05:6000:88:b0:236:b36c:a0d8 with SMTP id m8-20020a056000008800b00236b36ca0d8mr12982433wrx.459.1667379705547;
+        Wed, 02 Nov 2022 02:01:45 -0700 (PDT)
+Received: from prec5560.. (freifunk-gw.bsa1-cpe1.syseleven.net. [176.74.57.43])
+        by smtp.gmail.com with ESMTPSA id bd26-20020a05600c1f1a00b003cf6c2f9513sm1425322wmb.2.2022.11.02.02.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 02:01:44 -0700 (PDT)
+From:   Robert Foss <robert.foss@linaro.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        dmitry.baryshkov@linaro.org, Jonathan Marek <jonathan@marek.ca>
+Cc:     Robert Foss <robert.foss@linaro.org>
+Subject: [PATCH v2 0/5] dispcc-sm8250 misc fixes
+Date:   Wed,  2 Nov 2022 10:01:35 +0100
+Message-Id: <20221102090140.965450-1-robert.foss@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
- gcc_ufs_ref_clkref_clk
-Content-Language: en-US
-To:     Johan Hovold <johan@kernel.org>
-CC:     Stephen Boyd <sboyd@kernel.org>, <andersson@kernel.org>,
-        <bmasney@redhat.com>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
- <20221101182402.32CE5C433C1@smtp.kernel.org>
- <Y2IZaxukERXNcPGR@hovoldconsulting.com>
- <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
- <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
-From:   Shazad Hussain <quic_shazhuss@quicinc.com>
-In-Reply-To: <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: x4EzHIYmN3Jn2c10Mi1hbUFizg8GJrOP
-X-Proofpoint-ORIG-GUID: x4EzHIYmN3Jn2c10Mi1hbUFizg8GJrOP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-02_05,2022-11-01_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=898 adultscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211020052
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Changes since v1:
+ - Added new a-b/r-b tags
+ - Improved commit message - Dmitry
+ - Configure dp/edp link parent_hw for sm8150/sc8180
 
+Robert Foss (5):
+  clk: qcom: dispcc-sm8250: Disable EDP_GTC for sm8350
+  clk: qcom: dispcc-sm8250: Add RETAIN_FF_ENABLE flag for mdss_gdsc
+  dt-bindings: clock: dispcc-sm8250: Add EDP_LINK_DIV_CLK_SRC index
+  clk: qcom: dispcc-sm8250: Add missing EDP clocks for sm8350
+  clk: qcom: dispcc-sm8250: Disable link_div_clk_src for sm8150
 
-On 11/2/2022 1:43 PM, Johan Hovold wrote:
-> On Wed, Nov 02, 2022 at 01:28:48PM +0530, Shazad Hussain wrote:
->> On 11/2/2022 12:46 PM, Johan Hovold wrote:
->>> On Tue, Nov 01, 2022 at 11:23:59AM -0700, Stephen Boyd wrote:
->>>> Quoting Shazad Hussain (2022-10-30 07:23:33)
->>>>> Since 'commit f3aa975e230e ("arm64: dts: qcom: sc8280xp: correct ref
->>>>
->>>> So we should have a Fixes tag for this commit? Or really back to the
->>>> beginning of the driver?
->>>>
->>>>> clock for ufs_mem_phy")' we need to explicitly make cxo as parent to
->>>>> gcc_ufs_ref_clkref_clk to have an independent vote from ufs_mem_phy.
->>>
->>> The commit message is slightly misleading as this affects the other UFS
->>> PHY as well.
->>>
->>> If CX is indeed a parent of this clock then the issue has been there
->>> since the clock driver was added. (And otherwise, the PHY binding may
->>> need to be amended instead.)
-> 
->> CX is not the actual parent of this clk. GCC_UFS_REF_CLKREF_CLK is an
->> external clk to the device, which needs to be voted. If we use the
->> GCC_UFS_REF_CLKREF_CLK as ref clk, we don't have explicit vote for CX
->> from ufs_mem_phy.
->>
->> If no client votes for CX,(very unlikely) then it's won't be ON for
->> ufs_mem_phy as well right ! So to maintain the voting to CX, we make
->> this as parent to ref clk.
-> 
-> Right, but if the PHYs really requires CX and it is not an ancestor of
-> the refclk then this should be described by the binding (and not be
-> hidden away in the clock driver).
-> 
-> Johan
+ drivers/clk/qcom/dispcc-sm8250.c              | 38 ++++++++++++++++++-
+ .../dt-bindings/clock/qcom,dispcc-sm8250.h    |  1 +
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
-This makes sense, will be posting v2 post for the same.
-I assume this should use the Fixes tag then !
+-- 
+2.34.1
 
-Shazad
