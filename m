@@ -2,139 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF7EC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 10:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0253C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 13:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229537AbiKBKw7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 06:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40642 "EHLO
+        id S230416AbiKBNrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 09:47:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiKBKw6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 06:52:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737371403C;
-        Wed,  2 Nov 2022 03:52:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 12DD5617F0;
-        Wed,  2 Nov 2022 10:52:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E06C433C1;
-        Wed,  2 Nov 2022 10:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667386376;
-        bh=NDOSDtF1moYJudFzXEU8Fr9+WFsHcE/xRnSi1+ZcO7c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Na/BGUedFirgHaWPiyVX6ER5jxLKzRsnHS04v8ArlXi3JkKsB/MkA6Ku0a5LwoLb+
-         Dprv7i13JLcDhxy+iOP0LhPs//an9FpJoDmAgmfDxG6BetwzK+vivLBPCobjj19FEV
-         aweGk86xTmX1kj2fJVg0+2dK4TavfmqBzmV417uvcpPAar7D/czSTLme1Wm4OGaSHQ
-         qhzgURPCc3B4GQvVHW9Nte7PvR/QiIEu2vKD44OHHezyAIv+5LYWsMkPAIzyG9Lt8z
-         dOm+0GbTP/xoDc5T+TDeetUejclFfv+icFJ4LkGzyWVwntGPeeYp+s3x3w2UNfpI5R
-         8HKwfwX8j/zFA==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oqBMN-000123-Hg; Wed, 02 Nov 2022 11:52:40 +0100
-Date:   Wed, 2 Nov 2022 11:52:39 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Stephen Boyd <swboyd@chromium.org>
+        with ESMTP id S230280AbiKBNrW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 09:47:22 -0400
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14252AC7F;
+        Wed,  2 Nov 2022 06:47:19 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id p127so19202681oih.9;
+        Wed, 02 Nov 2022 06:47:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRJCGMY0czLPXWUKSvJT4HO+5iDHt9FD5Lzz55vRgWw=;
+        b=RZPH0ktVA2LmyfCSrxIr4GJrWkke2ITvwtOi0RpRqZMuEGrlZZ9pKUrdH5xb9aInxE
+         AoYklv1jiKWMPOXGyzTsLVoZmks7arS3fBD+Zzy36D85vvTeWHJiUeBd9kZxF03NuZ//
+         b7s7Ig0F+1JcejguqpgwedjgbWTQ/14uFXpX7CQbGbMHRNIpRqKEys/pJ3yLsK+tMnAu
+         WmWvs2b5gnkAJdfoqebZzFyjzfBJUNGtfjczIOB0ey9pFGmJ0RJZQWhkJbHerV2l6Y6g
+         oEvj+vkNGPYXssQVObPhUwOxp68asN5c6VrCK/eyq9xW12RA+o4cGV0n8Ms79Ck5cdF7
+         gkXg==
+X-Gm-Message-State: ACrzQf2ygqLQ6T3FAAqwZHWXWa5pYt2M/QQ2CGlYZ3H0/hOm4nE7WE9G
+        krqnyZ49c5WW2mHvzAr4RQ==
+X-Google-Smtp-Source: AMsMyM5hfkbuIMshcxeF+abrI0/QcS8KVZhCEBLc0a89QkhjjutY1aCziut1NUqk8G99dskvFPlitw==
+X-Received: by 2002:a54:450c:0:b0:359:fcaf:e78a with SMTP id l12-20020a54450c000000b00359fcafe78amr10303996oil.74.1667396838819;
+        Wed, 02 Nov 2022 06:47:18 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id g13-20020a056870d20d00b0012c21a64a76sm5973105oac.24.2022.11.02.06.47.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 06:47:18 -0700 (PDT)
+Received: (nullmailer pid 3704030 invoked by uid 1000);
+        Wed, 02 Nov 2022 13:47:20 -0000
+Date:   Wed, 2 Nov 2022 08:47:20 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya <quic_c_skakit@quicinc.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
-Message-ID: <Y2JL9/HFrb3E+CYY@hovoldconsulting.com>
-References: <20221101233421.997149-1-swboyd@chromium.org>
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: Re: [PATCH v3 01/11] dt-bindings: clock: split
+ qcom,gcc-msm8974,-msm8226 to the separate file
+Message-ID: <166739683962.3703965.16756743381542937216.robh@kernel.org>
+References: <20221030155520.91629-1-dmitry.baryshkov@linaro.org>
+ <20221030155520.91629-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221101233421.997149-1-swboyd@chromium.org>
+In-Reply-To: <20221030155520.91629-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 04:34:21PM -0700, Stephen Boyd wrote:
-> We shouldn't be calling runtime PM APIs from within the genpd
-> enable/disable path for a couple reasons.
-> 
-> First, this causes an AA lockdep splat because genpd can call into genpd
-> code again while holding the genpd lock.
-> 
-> WARNING: possible recursive locking detected
-> 5.19.0-rc2-lockdep+ #7 Not tainted
-> --------------------------------------------
-> kworker/2:1/49 is trying to acquire lock:
-> ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
-> 
-> but task is already holding lock:
-> ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
-> 
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
-> 
->        CPU0
->        ----
->   lock(&genpd->mlock);
->   lock(&genpd->mlock);
-> 
->  *** DEADLOCK ***
-> 
->  May be due to missing lock nesting notation
 
-I've seen this splat on sc8280xp as well but haven't had time to look
-into it yet.
-
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Johan Hovold <johan+linaro@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Satya Priya <quic_c_skakit@quicinc.com>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Matthias Kaehlcke <mka@chromium.org>
-> Reported-by: Stephen Boyd <swboyd@chromium.org>
-
-We typically don't add Reported-by tags for bugs we find and fix
-ourselves.
-
-> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+On Sun, 30 Oct 2022 18:55:10 +0300, Dmitry Baryshkov wrote:
+> Move schema for the GCC on MSM8974 and MSM8226 platforms to a separate
+> file to be able to define device-specific clock properties.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/clk/qcom/gdsc.c | 64 ++++++-----------------------------------
->  1 file changed, 8 insertions(+), 56 deletions(-)
+>  .../bindings/clock/qcom,gcc-msm8974.yaml      | 64 +++++++++++++++++++
+>  .../bindings/clock/qcom,gcc-other.yaml        |  9 +--
+>  2 files changed, 65 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8974.yaml
 > 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 7cf5e130e92f..a775ce1b7d8a 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
 
-> @@ -495,14 +451,11 @@ static int gdsc_init(struct gdsc *sc)
->  		sc->pd.power_on = gdsc_enable;
->  
->  	ret = pm_genpd_init(&sc->pd, NULL, !on);
-> -	if (ret)
-> -		goto err_put_rpm;
-> +	if (!ret)
-> +		goto err_disable_supply;
-
-The logic should not be inverted here (and only happens to work
-currently when you have no regulator or the gdsc was off).
-
->  	return 0;
->  
-> -err_put_rpm:
-> -	if (on)
-> -		gdsc_pm_runtime_put(sc);
->  err_disable_supply:
->  	if (on && sc->rsupply)
->  		regulator_disable(sc->rsupply);
-
-Johan
+Reviewed-by: Rob Herring <robh@kernel.org>
