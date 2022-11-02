@@ -2,239 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF81DC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 00:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB32C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 02:14:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230072AbiKBApd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 20:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58102 "EHLO
+        id S229591AbiKBCOH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 22:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230037AbiKBApW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 20:45:22 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 807D318E21
-        for <linux-clk@vger.kernel.org>; Tue,  1 Nov 2022 17:45:21 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id z18so19171362edb.9
-        for <linux-clk@vger.kernel.org>; Tue, 01 Nov 2022 17:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eSaSz/Z4qDcGiTl8x7mCllVE7aLOvaKXoGQ851RVNJk=;
-        b=AfgzHUqFn7VGV4Kz8Fi8rM1Hwq5OyFKM90jljZgJl17I9Ubqo0jCjbpO4e5kuB579S
-         qM6aPojZ5+HAqmj/1DU8AkQMDrQbOCzgHyS007RwUMkW9iE7lGfZ0+aQddSXZZsVixSE
-         R/G9WJ8YXjy7TaD2ShD2tdlUyQhK42JfXZ0EA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eSaSz/Z4qDcGiTl8x7mCllVE7aLOvaKXoGQ851RVNJk=;
-        b=PDhptv9TCGrbXlSQ4h3D6MGASQF1W1nCSZLLqOZ0EVKCOWpg6YGJ4WZwmWsFPv1edc
-         Y176H90RQlSiotz11uQ1p8gZrxkPYQ+IlJY/bb168+GswxtfVaWocxovhTSLcZ/hD3GK
-         jqlAoT9maV2Dl6WEMonl3YlfZPIXPxSufIkCifoAs8g6RucnVduAWOECUECkkXFLV3WE
-         En2EjZx0bsCO7YgDpcPyeLeVm/2kpZ0l1bJN0/2BH7uNpbR6K4H5RnqA/AyZvnkG9S70
-         iUhVA96fZTWTMkV13+q6KNfTZPTlHj++MyHxR6ddN4nFAWzD+QwRmkrRUxfcSFzrUjsJ
-         g5zQ==
-X-Gm-Message-State: ACrzQf1Wo8XyLtvGAN8vh7dBkKoAFcZDaVCaEWIHpVik/uTooBNfr3qr
-        GRY3Kyt33CtGnL7b1ZrhAnOKbo27nImeJbnO
-X-Google-Smtp-Source: AMsMyM5isDvejuupyGz+eQx0wZAixCmuVdcoPEd1PGN2syBctBeQVGfiw5oU1eV2dLadytEOSk2f3A==
-X-Received: by 2002:a05:6402:ca:b0:45c:dbdd:8143 with SMTP id i10-20020a05640200ca00b0045cdbdd8143mr21858231edu.213.1667349919822;
-        Tue, 01 Nov 2022 17:45:19 -0700 (PDT)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
-        by smtp.gmail.com with ESMTPSA id sg43-20020a170907a42b00b007aa3822f4d2sm4915724ejc.17.2022.11.01.17.45.15
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Nov 2022 17:45:17 -0700 (PDT)
-Received: by mail-wm1-f45.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so321092wmb.3
-        for <linux-clk@vger.kernel.org>; Tue, 01 Nov 2022 17:45:15 -0700 (PDT)
-X-Received: by 2002:a1c:4c16:0:b0:3cf:6f1a:9038 with SMTP id
- z22-20020a1c4c16000000b003cf6f1a9038mr10071773wmf.151.1667349915421; Tue, 01
- Nov 2022 17:45:15 -0700 (PDT)
+        with ESMTP id S230089AbiKBCOF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 22:14:05 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70040.outbound.protection.outlook.com [40.107.7.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C522658D;
+        Tue,  1 Nov 2022 19:14:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eP47Vy6k3N4Q3fM4qe9FBmfnwEFsh4IXWNjHPmUuCeSwu/Rrqlm3F0WnSr4/5n5giSVe5ySbb8cdPOv7NgyT24yxNToG0ztee7gHcUQ6nOfCJTpeSn/owcB1DXmjoe1t/Q8HvY/JVgQi+hXHzaty7nN9i+MIWZrv8yogvcKDK0yHxNysRrJ456M627wOc++w3XdCg1um+OdkVKX6fCro74zA6Plh1YDh+WBHrxPcMluJqavguxBxtlcNKuLoyOIG0kOw2czJc+HS+CxNdaQprCeXiVgvweBWV02he9NyvISbUaPZG1LNcc6dQk1YI0iaSiaHubu/LNuKT3T/Zyf4yQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JID4PaiO5nznSHcr2xVkN0LyV+nGq95xo7ow94FDg3A=;
+ b=nDS4UOR7LMwr6tYqhFhI8D2paPVllfEzGieXhS3NmePG1+PXrDc2Vy4uKGzl26nwgxSoSsb4klQNHV0GXKnGxdxKQuU0az/O4qOMXGkjThl0OvqxP6YoBXl8FJGzZTgW7/KzWqCoI3YX+0f/TJ982LNtkIxKYhexcPZ4BVx85CxmnqhWK8BlstkIO8Dvfn7uURPuQyGIpDQWalNU1UB3pvMHXtlmzS9JKRgfiAAEVTKwiXUTrdvQQWylF1rqShavKcX2vpaheqCifxdy9Vg9elk9pDDsXJbeXcwWFZxyNRzSmqrRqF5nCxDtsCPzk78ZA+mjoe5UVObOdsbTQ9RiLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JID4PaiO5nznSHcr2xVkN0LyV+nGq95xo7ow94FDg3A=;
+ b=SVePSQZqhyt8J8J1AeQqWau7f8/tDsJPvmmGHzPgNsPlwb+MkP07g7kX+1dA7BG1lTKaD3LJWCHKyDWX82W8Q7l6gjdRzfJmEnjgS84hhlbvIoiCDm8xbsQzCEavGdbovP6IVLZAmp3q2B+c5U68Km3+Gfb8xS8wStEqsGlT1Qo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB9PR04MB8363.eurprd04.prod.outlook.com (2603:10a6:10:24b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.16; Wed, 2 Nov
+ 2022 02:13:59 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::36a4:e1fc:67a2:c701]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::36a4:e1fc:67a2:c701%7]) with mapi id 15.20.5791.020; Wed, 2 Nov 2022
+ 02:13:59 +0000
+Message-ID: <b7be4912-542e-8fdc-6948-ac4626a63418@oss.nxp.com>
+Date:   Wed, 2 Nov 2022 10:13:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0
+Subject: Re: [PATCH 0/6] clk: imx93: fix and update
+From:   Peng Fan <peng.fan@oss.nxp.com>
+To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+References: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
+Content-Language: en-US
+In-Reply-To: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR03CA0114.apcprd03.prod.outlook.com
+ (2603:1096:4:91::18) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-References: <20221101233421.997149-1-swboyd@chromium.org>
-In-Reply-To: <20221101233421.997149-1-swboyd@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 1 Nov 2022 17:45:03 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XkhtgL_4-cpj-Xi3uH6FAtmWhk5u6sfakXABTnv5eYvw@mail.gmail.com>
-Message-ID: <CAD=FV=XkhtgL_4-cpj-Xi3uH6FAtmWhk5u6sfakXABTnv5eYvw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya <quic_c_skakit@quicinc.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DB9PR04MB8363:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ed23f78-904c-4942-2821-08dabc77e718
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U31DFqdiWvQfwMOE44m5/j7G6zGFC9vmfFyKPiIOd1MmMr6onEPoZuhDgkT+pOGiJUaMNdGnhiBq9x7ijE7avsU1zT1J3rsUmLUybpses8ss8m37WreDLPUSwpzIvWZTq23J2lTVKe7dTlfhFBV7ZavW65xXQJWivBi4zrm7+AgEAoedWin197WSfEZ9ILYTejK30ZtLuY+yzuqfBuff3F+UXQaFJlsBmGDY1v6+UBR90WOkY1Oz6xXc9LTpKloX86lKrEMaBZbnTgolBT+e3oGKz0+teR0Gl4+puGaOZHPzRFYhQy6NiQ9n2x5DVVkU+Ah0ztF3iFu9fSbnQKYit9l/VlnbAuIy+rCDlaI2nFNVxLGIPXwPW4yMp6lKTcBDIr+OrZGnTQjRGxy9KoBKM33GaGC6UIDGeEf+EBQhc9RmY/bLGcA9GCpHNy7AXbjPzPgKxX53eCCe3qRd9C9JNpwJPxgS/s7LaaruP2XDcHPE/KSXIp2g7M+NMj2bb2KXvQnOme6bkVgtkP3E7Xj/qMvu2mk7vgtV7FjEP9hH379aYbblCDfmB1OSAEidCHKf/jbSvLUFChEqm9bkJ10T/hImLkVG5XawTW8JxmMIuFNcG1sms8DhE76uY9qv7leYsnzSpuU92vdoyBTObzbFnNOyOTiGYYlkJ1Mv0cmrioM+AeWV1SELBmXCrXzrGCDtM9JopWeMKU+wDq0swemjBR6jZ7a49QkxrY+nF5gN98gcni6KePt4+c71pujMX41vlbJfEvqX6GyHAsDLEw3aL1BGXrnUScRPRvnVaXniDmENYDxot5anuxb5e0eFRhChIRtKV23Zxj7j97t9TZDDQJCI7gzoCzv2VoHuEM8z9GE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(376002)(346002)(396003)(136003)(451199015)(478600001)(6486002)(31686004)(6666004)(6506007)(316002)(52116002)(53546011)(4326008)(66476007)(66556008)(8676002)(66946007)(6512007)(38350700002)(7416002)(921005)(38100700002)(41300700001)(5660300002)(186003)(8936002)(26005)(31696002)(2906002)(15650500001)(83380400001)(44832011)(86362001)(2616005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WXdlRWszVDV2WklMeXdrMzdwRWhvWjJQQlUwV3NPaVRwdmlnSU5RNmpPamhP?=
+ =?utf-8?B?aUw5eVNEeVJhTGhhazJrTDU5cm5Da0NXbGxxQmxhc3p3d1NaVkVmWGlFMkgr?=
+ =?utf-8?B?emRVdnBETlhJNStrbVFFYVBkK01lU3pUQWYrbGtBbkFIMS9oYVJ5elFGVk1W?=
+ =?utf-8?B?d1hXa1JXa29HY25XejZzcHNqMTVsWE9YNEZYUDA5N3NvbXk4QVRWUTBqcHFn?=
+ =?utf-8?B?VFEzWGxKZER0VWl5MnJ4elBZSDBSNXljb09nTWNaRzI3Rk5ucE1yY2FGb1Yw?=
+ =?utf-8?B?YVZkOGV4TVRzdEhWd0xjbWM0T1ZEaHl4VkhjdVJERkU5UUM5cDEwMkJvbVgv?=
+ =?utf-8?B?WndwTUxRcUdMMjRsTys1QUVUY2RValhwbktLYUY4ZDN0RVFveWg3WUViOW96?=
+ =?utf-8?B?RkRqeXRXbzUzaUVBY29IZ0hnUkpJc3NlZ29wZmRiR201R2tiQk9JaXlLV2ha?=
+ =?utf-8?B?YllYVnZTQlgyWVY2YmQzRWFtdTBWS21sOUV0cTA4b3FpVWFCNE9iclg4UlZq?=
+ =?utf-8?B?aVZobmRsSVY1YWVXd3dqZGwzL0NvTXczeGNwWHFEY2Q2QjBVUFo4MG9XOE5M?=
+ =?utf-8?B?UEtMak9Kbjg5ZXZsaWRUVmh1QTMrdFhSUG43alNjekVRRlZsRDEwUzQwc1ZJ?=
+ =?utf-8?B?UnFnL0dzY0RRUjFhNnJrZkNEWFppZDVqRTNiOHdDZkIySHRsa1hvRGljNDBu?=
+ =?utf-8?B?N0Vva2NCU2V3K3Nub0tISUdWRFg0cXpXTUk3MGdFL2haek5nQWtYcEtUdkZ6?=
+ =?utf-8?B?dWl4b0NrOWx2Zks5R0E4QlNlY0c4cDlsVWVjakZZbUR1WkE5WXZZR2IyWmdK?=
+ =?utf-8?B?NkxxU2Q3TjFVSjRRWTh3NUhIcTJhMGcyTFlhQ01ERXpjckt0SmNlT3FRZ1g4?=
+ =?utf-8?B?VEowYkhidXJBVmY0aGQzczBBZWJhcFErODN1akZ6UUh4cVJWK2pHY2FqSXgv?=
+ =?utf-8?B?b1JRSkJJZ1R3aHJRcEFsdDZjWXcrVGNBYk9xN1ZIT3dRWGQrTHR2TTZDdmVI?=
+ =?utf-8?B?UXhObnEvdHRvRWVzNFlxUGREWXJQSEdXSjRaMTNsM0UxYVlCM3hnSUkxd0hY?=
+ =?utf-8?B?L2RhbURYOG9vaGtkR1kzdUs4QmxLdW1FbVdhd2RNdForMUNvY2NGS0Jnd2I1?=
+ =?utf-8?B?ZVROT3VEaGF3c0VFbHpON0tYZndnM0ZDOVorRlI4K3lnWHhIQlB0cmRYRWRs?=
+ =?utf-8?B?TFhXakZheVNWbjY2ZU90ajhxSmtYdUxTSHRvRFU4UWZNYzgxaXRjeWJKdnd6?=
+ =?utf-8?B?WEtLMlJqcjJ5M2t3R0FlK0J5eHE2bC9UVmpMWmRmVnZoc2dWVHdMazVBbG81?=
+ =?utf-8?B?Y1NGaEx5RXYrVTc3bHE0bFphMjRpejBPNHM0N291NUpOQXJNL29MZzhjdzhu?=
+ =?utf-8?B?VGVXbDVmTFlPZjBLc21ORzhFcjh5aUF3ZkVRSUZvblJETHk0cExpMlNFYmN4?=
+ =?utf-8?B?eXVmQmNVYTZzTGFNYkxFVjNZVUJZMGg5cFR3NlZrUDYrQ0NCMkxqRHVCL09B?=
+ =?utf-8?B?S05FWE1oTkdNamxVankvUHlZUW9FcHErM0ZyelNnMEd0ejlySGdkK3dLSFhj?=
+ =?utf-8?B?blU2QmFadHRsZFdVQTlQQ1NuejB2Q0pXWUJtV0JQUEM3QTVpRGJYMDhlUlVV?=
+ =?utf-8?B?Y1VXWW1JLzdTOXNGMWZHREhPRW4yYVV6bSt3QmZMQ3FSTzNhbktFNUI4bXg2?=
+ =?utf-8?B?Mk1YY0Y2cTFxNXFkdFJ5UHZSYkRGYWFKYVU2WCs2NDl5Wm5CTVNZR1hLb3Vo?=
+ =?utf-8?B?STA0UFJqY0oyWXBmU3RibXBzVHg4WnkxZ3o0TUtBa2hLWDZhcVZ5SHBsWTRX?=
+ =?utf-8?B?bmNnZEZWeGkya0QvNDdXd1RUazdjTnZiS0ZvL3JHV3JIaXlQYzRuNTVDYWxs?=
+ =?utf-8?B?eFNVZUp5SWo4d3hOMExuTUxkcS9jcFZOakVhbHFJVDRCS1FaT1F4d3d2eno0?=
+ =?utf-8?B?VERDVHZKc1hLanZQRXM0Y1hrM1FuYStrRi9wcTNteUZpMFB2TkFFUHRGTjBF?=
+ =?utf-8?B?NjZpdVJkaUhmNm1LcUFJV25QTGM4NzFSTVZheHhKV1FDWDZNajMxZDhJVWVB?=
+ =?utf-8?B?VGJRWDg5QUNIWk5rQUlFcFBsR0tKd0h1K2oySzVoOTlEaHprWkNMUUhyeDY1?=
+ =?utf-8?Q?f+fpFaXeneGxAgR0P1uBlaaRH?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ed23f78-904c-4942-2821-08dabc77e718
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2022 02:13:59.4189
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UqLOazmGOg+nha6GagemclxdTflMvHcz91lzpi4SYeG/rZJqG5UQ4CnyNYfmvO91j6I+IWE8Y/1pXcTDzHqGLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8363
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Abel, Stephen
 
-On Tue, Nov 1, 2022 at 4:34 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> We shouldn't be calling runtime PM APIs from within the genpd
-> enable/disable path for a couple reasons.
->
-> First, this causes an AA lockdep splat because genpd can call into genpd
-> code again while holding the genpd lock.
->
-> WARNING: possible recursive locking detected
-> 5.19.0-rc2-lockdep+ #7 Not tainted
-> --------------------------------------------
-> kworker/2:1/49 is trying to acquire lock:
-> ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
->
-> but task is already holding lock:
-> ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(&genpd->mlock);
->   lock(&genpd->mlock);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
->
-> 3 locks held by kworker/2:1/49:
->  #0: 74ffff80811a5748 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x320/0x5fc
->  #1: ffffffc008537cf8 ((work_completion)(&genpd->power_off_work)){+.+.}-{0:0}, at: process_one_work+0x354/0x5fc
->  #2: ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
->
-> stack backtrace:
-> CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 5.19.0-rc2-lockdep+ #7
-> Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
-> Workqueue: pm genpd_power_off_work_fn
-> Call trace:
->  dump_backtrace+0x1a0/0x200
->  show_stack+0x24/0x30
->  dump_stack_lvl+0x7c/0xa0
->  dump_stack+0x18/0x44
->  __lock_acquire+0xb38/0x3634
->  lock_acquire+0x180/0x2d4
->  __mutex_lock_common+0x118/0xe30
->  mutex_lock_nested+0x70/0x7c
->  genpd_lock_mtx+0x24/0x30
->  genpd_runtime_suspend+0x2f0/0x414
->  __rpm_callback+0xdc/0x1b8
->  rpm_callback+0x4c/0xcc
->  rpm_suspend+0x21c/0x5f0
->  rpm_idle+0x17c/0x1e0
->  __pm_runtime_idle+0x78/0xcc
->  gdsc_disable+0x24c/0x26c
->  _genpd_power_off+0xd4/0x1c4
->  genpd_power_off+0x2d8/0x41c
->  genpd_power_off_work_fn+0x60/0x94
->  process_one_work+0x398/0x5fc
->  worker_thread+0x42c/0x6c4
->  kthread+0x194/0x1b4
->  ret_from_fork+0x10/0x20
->
-> Second, this confuses runtime PM on CoachZ for the camera devices by
-> causing the camera clock controller's runtime PM usage_count to go
-> negative after resuming from suspend. This is because runtime PM is
-> being used on the clock controller while runtime PM is disabled for the
-> device.
->
-> The reason for the negative count is because a GDSC is represented as a
-> genpd and each genpd that is attached to a device is resumed during the
-> noirq phase of system wide suspend/resume (see the noirq suspend ops
-> assignment in pm_genpd_init() for more details). The camera GDSCs are
-> attached to camera devices with the 'power-domains' property in DT.
-> Every device has runtime PM disabled in the late system suspend phase
-> via __device_suspend_late(). Runtime PM is not usable until runtime PM
-> is enabled in device_resume_early(). The noirq phases run after the
-> 'late' and before the 'early' phase of suspend/resume. When the genpds
-> are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
-> that calls pm_runtime_resume_and_get() and that returns -EACCES to
-> indicate failure to resume because runtime PM is disabled for all
-> devices.
->
-> Upon closer inspection, calling runtime PM APIs like this in the GDSC
-> driver doesn't make sense. It was intended to make sure the GDSC for the
-> clock controller providing other GDSCs was enabled, specifically the
-> MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
-> that GDSC register accesses succeeded. That will already happen because
-> we make the 'dev->pm_domain' a parent domain of each GDSC we register in
-> gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
-> are accessed, we'll enable the parent domain (in this specific case
-> MMCX).
->
-> We also remove any getting of runtime PM during registration, because
-> when a genpd is registered it increments the count on the parent if the
-> genpd itself is already enabled. And finally, the runtime PM state of
-> the clk controller registering the GDSC shouldn't matter to the
-> subdomain setup. Therefore we always assign 'dev' unconditionally so
-> when GDSCs are removed we properly unlink the GDSC from the clk
-> controller's pm_domain.
->
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Johan Hovold <johan+linaro@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Satya Priya <quic_c_skakit@quicinc.com>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Matthias Kaehlcke <mka@chromium.org>
-> Reported-by: Stephen Boyd <swboyd@chromium.org>
-> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 64 ++++++-----------------------------------
->  1 file changed, 8 insertions(+), 56 deletions(-)
+On 10/28/2022 5:52 PM, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> V2:
+>   Update commit log for patch 3
+>   Add comment for critial clock for patch 5,6
 
-One small nit is that the kernel doc for "@dev" in "struct gdsc" is
-incorrect after your patch. It still says this even though we're not
-using it for pm_runtime calls anymore:
+V2 was not added to patch subject when I send out this patchset.
+If you need to repost with V2, please let me know.
 
- * @dev: the device holding the GDSC, used for pm_runtime calls
+Thanks,
+Peng.
 
-Other than that, this seems OK to me. I don't feel like I have a lot
-of good intuition around PM Clocks and genpd and all the topics talked
-about here, but I tried to look at the diff from before all the
-"recent" patches to "drivers/clk/qcom/gdsc.c" till the state after
-your patch. In other words the combined diff of these 4 patches:
-
-clk: qcom: gdsc: Remove direct runtime PM calls
-clk: qcom: gdsc: add missing error handling
-clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
-clk: qcom: gdsc: enable optional power domain support
-
-That basically shows a combined change that does two things:
-
-a) Adds error handling if pm_genpd_init() returns an error.
-
-b) Says that if "scs[i]->parent" wasn't provided that we can imply a
-parent from "dev->pm_domain".
-
-That seems to make sense, but one thing I'm wondering about for "b)"
-is how you know that "dev->pm_domain" can be safely upcast to a genpd.
-In other words, I'm hesitant about the "pd_to_genpd(dev->pm_domain)"
-call. I'll assume that "dev->pm_domain" isn't 100% guaranteed to be a
-genpd or else (presumably) we would have stored a genpd. Is there
-something about the "dev" that's passed in with "struct gdsc_desc"
-that gives the stronger guarantee about this being a genpd?
-
-
-In any case, I will note that this seems to make the hang that I
-described [1] go away. I never totally dug into why the patch was
-tickling it, but I'm happy for now that it's back to not reproducing.
-:-)
-
-
-[1] https://lore.kernel.org/r/20220922154354.2486595-1-dianders@chromium.org
-
-
--Doug
+> 
+> patch 1 is reported by Dan and marked as fix
+> 
+> During our development, per updated reference mannual and design
+> information, correct enet and drop tpm 1/3, lpit 1/2.
+> 
+> The TPM/LPIT patch 3,4 are not marked as fixes, there is no user,
+> so update binding and driver both.
+> 
+> Patch 5 enable HSIO root always on
+> Patch 6 enable sysctr always on for cpuidle
+> 
+> Jacky Bai (2):
+>    clk: imx: keep hsio bus clock always on
+>    clk: imx93: keep sys ctr clock always on
+> 
+> Peng Fan (4):
+>    clk: imx93: unmap anatop base in error handling path
+>    clk: imx93: correct enet clock
+>    dt-bindings: clock: imx93: drop TPM1/3 LPIT1/2 entry
+>    clk: imx93: drop tpm1/3, lpit1/2 clk
+> 
+>   drivers/clk/imx/clk-imx93.c             | 38 ++++++++++++++-----------
+>   include/dt-bindings/clock/imx93-clock.h |  4 ---
+>   2 files changed, 21 insertions(+), 21 deletions(-)
+> 
