@@ -2,166 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB32C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 02:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A63FC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 02:49:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiKBCOH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Nov 2022 22:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42540 "EHLO
+        id S230457AbiKBCtf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Nov 2022 22:49:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiKBCOF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 22:14:05 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70040.outbound.protection.outlook.com [40.107.7.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C522658D;
-        Tue,  1 Nov 2022 19:14:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eP47Vy6k3N4Q3fM4qe9FBmfnwEFsh4IXWNjHPmUuCeSwu/Rrqlm3F0WnSr4/5n5giSVe5ySbb8cdPOv7NgyT24yxNToG0ztee7gHcUQ6nOfCJTpeSn/owcB1DXmjoe1t/Q8HvY/JVgQi+hXHzaty7nN9i+MIWZrv8yogvcKDK0yHxNysRrJ456M627wOc++w3XdCg1um+OdkVKX6fCro74zA6Plh1YDh+WBHrxPcMluJqavguxBxtlcNKuLoyOIG0kOw2czJc+HS+CxNdaQprCeXiVgvweBWV02he9NyvISbUaPZG1LNcc6dQk1YI0iaSiaHubu/LNuKT3T/Zyf4yQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JID4PaiO5nznSHcr2xVkN0LyV+nGq95xo7ow94FDg3A=;
- b=nDS4UOR7LMwr6tYqhFhI8D2paPVllfEzGieXhS3NmePG1+PXrDc2Vy4uKGzl26nwgxSoSsb4klQNHV0GXKnGxdxKQuU0az/O4qOMXGkjThl0OvqxP6YoBXl8FJGzZTgW7/KzWqCoI3YX+0f/TJ982LNtkIxKYhexcPZ4BVx85CxmnqhWK8BlstkIO8Dvfn7uURPuQyGIpDQWalNU1UB3pvMHXtlmzS9JKRgfiAAEVTKwiXUTrdvQQWylF1rqShavKcX2vpaheqCifxdy9Vg9elk9pDDsXJbeXcwWFZxyNRzSmqrRqF5nCxDtsCPzk78ZA+mjoe5UVObOdsbTQ9RiLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JID4PaiO5nznSHcr2xVkN0LyV+nGq95xo7ow94FDg3A=;
- b=SVePSQZqhyt8J8J1AeQqWau7f8/tDsJPvmmGHzPgNsPlwb+MkP07g7kX+1dA7BG1lTKaD3LJWCHKyDWX82W8Q7l6gjdRzfJmEnjgS84hhlbvIoiCDm8xbsQzCEavGdbovP6IVLZAmp3q2B+c5U68Km3+Gfb8xS8wStEqsGlT1Qo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB9PR04MB8363.eurprd04.prod.outlook.com (2603:10a6:10:24b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.16; Wed, 2 Nov
- 2022 02:13:59 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::36a4:e1fc:67a2:c701]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::36a4:e1fc:67a2:c701%7]) with mapi id 15.20.5791.020; Wed, 2 Nov 2022
- 02:13:59 +0000
-Message-ID: <b7be4912-542e-8fdc-6948-ac4626a63418@oss.nxp.com>
-Date:   Wed, 2 Nov 2022 10:13:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.0
-Subject: Re: [PATCH 0/6] clk: imx93: fix and update
-From:   Peng Fan <peng.fan@oss.nxp.com>
-To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-References: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
-Content-Language: en-US
-In-Reply-To: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR03CA0114.apcprd03.prod.outlook.com
- (2603:1096:4:91::18) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S230448AbiKBCte (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2022 22:49:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882D31FFA7;
+        Tue,  1 Nov 2022 19:49:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 070D9B82072;
+        Wed,  2 Nov 2022 02:49:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F206C433C1;
+        Wed,  2 Nov 2022 02:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667357370;
+        bh=W4fAhnKbB727M/BBd7ZkvwyarygTC85F2EeJtyYUMec=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hvbtbU6E38Y8CQ1GJX/u7/GDZTJHDaRxGZPkNR8g/2SDCyeCVX2JhV/PzMO5LTcJa
+         rTDRkc0lPxIVjIGfpF38bwThUYCS4wiUpyE37ZHDX2IzapaZWA5dXmhiQWX3WzXbAI
+         kBKRIHR6Nz+qy4gjr/ZFmsu++QCrzvGVU6lT/uPNPrlBjrYnjhfTiMG4/faK0wSP3w
+         nyr4VXFUxqyirIXSv5uyfCOKJLluzF5a9pTbsaJaEIGG4+hS2qSrfSymwNfeHlcLtR
+         SyldkVAXhNW98BRCwZSZjBZDh3IhqnEUoEvxmWz6wkEsvb6X7xOTpx85uaRdELQffi
+         6RNvz62EWserA==
+Date:   Tue, 1 Nov 2022 21:49:27 -0500
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+Message-ID: <20221102024927.n5mjyzyqyapveapa@builder.lan>
+References: <20221101233421.997149-1-swboyd@chromium.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DB9PR04MB8363:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ed23f78-904c-4942-2821-08dabc77e718
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: U31DFqdiWvQfwMOE44m5/j7G6zGFC9vmfFyKPiIOd1MmMr6onEPoZuhDgkT+pOGiJUaMNdGnhiBq9x7ijE7avsU1zT1J3rsUmLUybpses8ss8m37WreDLPUSwpzIvWZTq23J2lTVKe7dTlfhFBV7ZavW65xXQJWivBi4zrm7+AgEAoedWin197WSfEZ9ILYTejK30ZtLuY+yzuqfBuff3F+UXQaFJlsBmGDY1v6+UBR90WOkY1Oz6xXc9LTpKloX86lKrEMaBZbnTgolBT+e3oGKz0+teR0Gl4+puGaOZHPzRFYhQy6NiQ9n2x5DVVkU+Ah0ztF3iFu9fSbnQKYit9l/VlnbAuIy+rCDlaI2nFNVxLGIPXwPW4yMp6lKTcBDIr+OrZGnTQjRGxy9KoBKM33GaGC6UIDGeEf+EBQhc9RmY/bLGcA9GCpHNy7AXbjPzPgKxX53eCCe3qRd9C9JNpwJPxgS/s7LaaruP2XDcHPE/KSXIp2g7M+NMj2bb2KXvQnOme6bkVgtkP3E7Xj/qMvu2mk7vgtV7FjEP9hH379aYbblCDfmB1OSAEidCHKf/jbSvLUFChEqm9bkJ10T/hImLkVG5XawTW8JxmMIuFNcG1sms8DhE76uY9qv7leYsnzSpuU92vdoyBTObzbFnNOyOTiGYYlkJ1Mv0cmrioM+AeWV1SELBmXCrXzrGCDtM9JopWeMKU+wDq0swemjBR6jZ7a49QkxrY+nF5gN98gcni6KePt4+c71pujMX41vlbJfEvqX6GyHAsDLEw3aL1BGXrnUScRPRvnVaXniDmENYDxot5anuxb5e0eFRhChIRtKV23Zxj7j97t9TZDDQJCI7gzoCzv2VoHuEM8z9GE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(376002)(346002)(396003)(136003)(451199015)(478600001)(6486002)(31686004)(6666004)(6506007)(316002)(52116002)(53546011)(4326008)(66476007)(66556008)(8676002)(66946007)(6512007)(38350700002)(7416002)(921005)(38100700002)(41300700001)(5660300002)(186003)(8936002)(26005)(31696002)(2906002)(15650500001)(83380400001)(44832011)(86362001)(2616005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WXdlRWszVDV2WklMeXdrMzdwRWhvWjJQQlUwV3NPaVRwdmlnSU5RNmpPamhP?=
- =?utf-8?B?aUw5eVNEeVJhTGhhazJrTDU5cm5Da0NXbGxxQmxhc3p3d1NaVkVmWGlFMkgr?=
- =?utf-8?B?emRVdnBETlhJNStrbVFFYVBkK01lU3pUQWYrbGtBbkFIMS9oYVJ5elFGVk1W?=
- =?utf-8?B?d1hXa1JXa29HY25XejZzcHNqMTVsWE9YNEZYUDA5N3NvbXk4QVRWUTBqcHFn?=
- =?utf-8?B?VFEzWGxKZER0VWl5MnJ4elBZSDBSNXljb09nTWNaRzI3Rk5ucE1yY2FGb1Yw?=
- =?utf-8?B?YVZkOGV4TVRzdEhWd0xjbWM0T1ZEaHl4VkhjdVJERkU5UUM5cDEwMkJvbVgv?=
- =?utf-8?B?WndwTUxRcUdMMjRsTys1QUVUY2RValhwbktLYUY4ZDN0RVFveWg3WUViOW96?=
- =?utf-8?B?RkRqeXRXbzUzaUVBY29IZ0hnUkpJc3NlZ29wZmRiR201R2tiQk9JaXlLV2ha?=
- =?utf-8?B?YllYVnZTQlgyWVY2YmQzRWFtdTBWS21sOUV0cTA4b3FpVWFCNE9iclg4UlZq?=
- =?utf-8?B?aVZobmRsSVY1YWVXd3dqZGwzL0NvTXczeGNwWHFEY2Q2QjBVUFo4MG9XOE5M?=
- =?utf-8?B?UEtMak9Kbjg5ZXZsaWRUVmh1QTMrdFhSUG43alNjekVRRlZsRDEwUzQwc1ZJ?=
- =?utf-8?B?UnFnL0dzY0RRUjFhNnJrZkNEWFppZDVqRTNiOHdDZkIySHRsa1hvRGljNDBu?=
- =?utf-8?B?N0Vva2NCU2V3K3Nub0tISUdWRFg0cXpXTUk3MGdFL2haek5nQWtYcEtUdkZ6?=
- =?utf-8?B?dWl4b0NrOWx2Zks5R0E4QlNlY0c4cDlsVWVjakZZbUR1WkE5WXZZR2IyWmdK?=
- =?utf-8?B?NkxxU2Q3TjFVSjRRWTh3NUhIcTJhMGcyTFlhQ01ERXpjckt0SmNlT3FRZ1g4?=
- =?utf-8?B?VEowYkhidXJBVmY0aGQzczBBZWJhcFErODN1akZ6UUh4cVJWK2pHY2FqSXgv?=
- =?utf-8?B?b1JRSkJJZ1R3aHJRcEFsdDZjWXcrVGNBYk9xN1ZIT3dRWGQrTHR2TTZDdmVI?=
- =?utf-8?B?UXhObnEvdHRvRWVzNFlxUGREWXJQSEdXSjRaMTNsM0UxYVlCM3hnSUkxd0hY?=
- =?utf-8?B?L2RhbURYOG9vaGtkR1kzdUs4QmxLdW1FbVdhd2RNdForMUNvY2NGS0Jnd2I1?=
- =?utf-8?B?ZVROT3VEaGF3c0VFbHpON0tYZndnM0ZDOVorRlI4K3lnWHhIQlB0cmRYRWRs?=
- =?utf-8?B?TFhXakZheVNWbjY2ZU90ajhxSmtYdUxTSHRvRFU4UWZNYzgxaXRjeWJKdnd6?=
- =?utf-8?B?WEtLMlJqcjJ5M2t3R0FlK0J5eHE2bC9UVmpMWmRmVnZoc2dWVHdMazVBbG81?=
- =?utf-8?B?Y1NGaEx5RXYrVTc3bHE0bFphMjRpejBPNHM0N291NUpOQXJNL29MZzhjdzhu?=
- =?utf-8?B?VGVXbDVmTFlPZjBLc21ORzhFcjh5aUF3ZkVRSUZvblJETHk0cExpMlNFYmN4?=
- =?utf-8?B?eXVmQmNVYTZzTGFNYkxFVjNZVUJZMGg5cFR3NlZrUDYrQ0NCMkxqRHVCL09B?=
- =?utf-8?B?S05FWE1oTkdNamxVankvUHlZUW9FcHErM0ZyelNnMEd0ejlySGdkK3dLSFhj?=
- =?utf-8?B?blU2QmFadHRsZFdVQTlQQ1NuejB2Q0pXWUJtV0JQUEM3QTVpRGJYMDhlUlVV?=
- =?utf-8?B?Y1VXWW1JLzdTOXNGMWZHREhPRW4yYVV6bSt3QmZMQ3FSTzNhbktFNUI4bXg2?=
- =?utf-8?B?Mk1YY0Y2cTFxNXFkdFJ5UHZSYkRGYWFKYVU2WCs2NDl5Wm5CTVNZR1hLb3Vo?=
- =?utf-8?B?STA0UFJqY0oyWXBmU3RibXBzVHg4WnkxZ3o0TUtBa2hLWDZhcVZ5SHBsWTRX?=
- =?utf-8?B?bmNnZEZWeGkya0QvNDdXd1RUazdjTnZiS0ZvL3JHV3JIaXlQYzRuNTVDYWxs?=
- =?utf-8?B?eFNVZUp5SWo4d3hOMExuTUxkcS9jcFZOakVhbHFJVDRCS1FaT1F4d3d2eno0?=
- =?utf-8?B?VERDVHZKc1hLanZQRXM0Y1hrM1FuYStrRi9wcTNteUZpMFB2TkFFUHRGTjBF?=
- =?utf-8?B?NjZpdVJkaUhmNm1LcUFJV25QTGM4NzFSTVZheHhKV1FDWDZNajMxZDhJVWVB?=
- =?utf-8?B?VGJRWDg5QUNIWk5rQUlFcFBsR0tKd0h1K2oySzVoOTlEaHprWkNMUUhyeDY1?=
- =?utf-8?Q?f+fpFaXeneGxAgR0P1uBlaaRH?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ed23f78-904c-4942-2821-08dabc77e718
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2022 02:13:59.4189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UqLOazmGOg+nha6GagemclxdTflMvHcz91lzpi4SYeG/rZJqG5UQ4CnyNYfmvO91j6I+IWE8Y/1pXcTDzHqGLQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8363
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221101233421.997149-1-swboyd@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Abel, Stephen
+On Tue, Nov 01, 2022 at 04:34:21PM -0700, Stephen Boyd wrote:
+> We shouldn't be calling runtime PM APIs from within the genpd
+> enable/disable path for a couple reasons.
+[..][
+> Upon closer inspection, calling runtime PM APIs like this in the GDSC
+> driver doesn't make sense. It was intended to make sure the GDSC for the
+> clock controller providing other GDSCs was enabled, specifically the
+> MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
+> that GDSC register accesses succeeded. That will already happen because
+> we make the 'dev->pm_domain' a parent domain of each GDSC we register in
+> gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
+> are accessed, we'll enable the parent domain (in this specific case
+> MMCX).
+> 
 
-On 10/28/2022 5:52 PM, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> V2:
->   Update commit log for patch 3
->   Add comment for critial clock for patch 5,6
+It's correct that adding the GDSCs as subdomains for the device's
+parent-domain will ensure that enabling a GDSC will propagate up and
+turn on the (typically) rpmhpd resource.
 
-V2 was not added to patch subject when I send out this patchset.
-If you need to repost with V2, please let me know.
+But the purpose for the explicit calls was to ensure that the clock
+controller itself is accessible. It's been a while since I looked at
+this, but iirc letting MMCX to turn off would cause the register access
+during dispcc probing to fail - similar to how
+clk_pm_runtime_get()/put() ensures the clock registers are accessible.
 
-Thanks,
-Peng.
 
-> 
-> patch 1 is reported by Dan and marked as fix
-> 
-> During our development, per updated reference mannual and design
-> information, correct enet and drop tpm 1/3, lpit 1/2.
-> 
-> The TPM/LPIT patch 3,4 are not marked as fixes, there is no user,
-> so update binding and driver both.
-> 
-> Patch 5 enable HSIO root always on
-> Patch 6 enable sysctr always on for cpuidle
-> 
-> Jacky Bai (2):
->    clk: imx: keep hsio bus clock always on
->    clk: imx93: keep sys ctr clock always on
-> 
-> Peng Fan (4):
->    clk: imx93: unmap anatop base in error handling path
->    clk: imx93: correct enet clock
->    dt-bindings: clock: imx93: drop TPM1/3 LPIT1/2 entry
->    clk: imx93: drop tpm1/3, lpit1/2 clk
-> 
->   drivers/clk/imx/clk-imx93.c             | 38 ++++++++++++++-----------
->   include/dt-bindings/clock/imx93-clock.h |  4 ---
->   2 files changed, 21 insertions(+), 21 deletions(-)
-> 
+Perhaps I misunderstood something in the process, or lost track of the
+actual issues?
+
+Regards,
+Bjorn
