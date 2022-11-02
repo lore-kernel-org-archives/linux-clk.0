@@ -2,91 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA2BC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 17:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEBAC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 18:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231181AbiKBRjc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 13:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36896 "EHLO
+        id S230199AbiKBSIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 14:08:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231377AbiKBRjJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 13:39:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C21C2494F;
-        Wed,  2 Nov 2022 10:39:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AD838B820D6;
-        Wed,  2 Nov 2022 17:38:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FC89C4347C;
-        Wed,  2 Nov 2022 17:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667410738;
-        bh=rZM/Jb1cF/J5Dk3UhHZ90vCNfl/3XrVYW+A+ti6fTZc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IesK7MHd5dukyAch713I2OIRLuxBIEKDFThjLDy+6HpPA7XO44jmY/IudmGKOzHhI
-         fhtLEZHiZPF3W618g13kxdNg2tnI4NvyOZVJqmQmBUa8J+c1uO4pVk94gdlzrMIDXa
-         bh6ISUfiDFu5i7tUpvvdvfDuY7hs4NPSULfnevvj7QLa3/supqr3azusXRue9rh/LK
-         PVG9xE+acBHC301oQ2eB1kctQf1wlDNEESIjPMK7FctYNwYgra+KBbTRuT0nitNDCM
-         6e3C5/gqs+ppnV+goFfPJzzeDrCfxJrlMY5tTiBQ1z0SebI5RLu4jbBSSoPeFOFO+X
-         71MFSiTvHTeng==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     jh80.chung@samsung.com
-Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCHv7 6/6] arm: dts: socfpga: remove "clk-phase" in sdmmc_clk
-Date:   Wed,  2 Nov 2022 12:38:43 -0500
-Message-Id: <20221102173843.409039-6-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221102173843.409039-1-dinguyen@kernel.org>
-References: <20221102173843.409039-1-dinguyen@kernel.org>
+        with ESMTP id S229887AbiKBSIM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 14:08:12 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597042EF65
+        for <linux-clk@vger.kernel.org>; Wed,  2 Nov 2022 11:08:10 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id p8so29461318lfu.11
+        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 11:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m6s+mDwTFEybSnfsv9FLfpZxULcbiJ7Ktz0jYPN4zbg=;
+        b=oZ190qKXbUdI3pa/TkZ7GnFQDtDHYWG8bjZi1njg37scSepa9KpKnNxCF5ZM/IM+KQ
+         Np/CHo9hpZWYYqOyMwWGXHorI5H2uxm7feX7c3TtuTfuYs5myB2q7dizQUWdWBfEbsKE
+         fwoSJGuEqhARSqpzkQV8FkHnpWPtOw232JAeI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m6s+mDwTFEybSnfsv9FLfpZxULcbiJ7Ktz0jYPN4zbg=;
+        b=s240CcaTP4PzO5x/3oLR3h5M9kv3pvFXZrHeDfMTfVtfqkPRMy1SYWjj7DYOfKPVSe
+         92NvouBBf+PDIwz4aCUpnFkCaZ9dYGzf0jtHwJrLthtVZJiYWO89RHfpRr8gt2oP41EI
+         aoMe0gWVzAK7tIZrIbaXMa6wcbLifWvEacW113uifWzY9mL2tmZidGRwocMV3L62e+Mp
+         N8MwWi/QW5+xRqzpWtrDRZpIYQXxjwTEQENdH47Um3CyKBarEGJZ0mXpykE5sjuxpCim
+         fvfDm70fAslx7Do0avGS7Au/fEkBUNOFd83+0s3vDMSkmI+LMcewLifnrEiVplg5ZYrW
+         KYKA==
+X-Gm-Message-State: ACrzQf01NBbmW+VMA+QOco46+Z4FlsU4s2BhEGzAV85E5VvUtGGplPfR
+        9KiZumx80QpUAkmKeiFa03L0GA0It4Ij2xl54yy7oQ==
+X-Google-Smtp-Source: AMsMyM74PhTMtaDdojPE3Gl+8/j0gbeo2ZUKzdZSx7kiyQHT7FwZ/NQ9JAOxrEN2lb9nIwl2MLZuQl03p4TzbuBym/Y=
+X-Received: by 2002:a05:6512:3dac:b0:4a4:8044:9c3 with SMTP id
+ k44-20020a0565123dac00b004a4804409c3mr9462216lfv.145.1667412488653; Wed, 02
+ Nov 2022 11:08:08 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 2 Nov 2022 11:08:08 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221102042933.mdlfknp45ajyrrpn@builder.lan>
+References: <20221101233421.997149-1-swboyd@chromium.org> <20221102024927.n5mjyzyqyapveapa@builder.lan>
+ <CAE-0n50uVf-xapfX5A_c7XU7gV58HrKBOf5DCUPCcahPrgkU0Q@mail.gmail.com> <20221102042933.mdlfknp45ajyrrpn@builder.lan>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Wed, 2 Nov 2022 11:08:08 -0700
+Message-ID: <CAE-0n52389Pmp1dxHbtGijK_x+0xGyJ4q4rFRpa6L2KkZHKX5Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the SDMMC driver can use the "clk-phase-sd-hs" binding, we don't
-need the clk-phase in the sdmmc_clk anymore.
+Quoting Bjorn Andersson (2022-11-01 21:29:33)
+> On Tue, Nov 01, 2022 at 08:29:20PM -0700, Stephen Boyd wrote:
+> > Quoting Bjorn Andersson (2022-11-01 19:49:27)
+> > >
+> > > It's correct that adding the GDSCs as subdomains for the device's
+> > > parent-domain will ensure that enabling a GDSC will propagate up and
+> > > turn on the (typically) rpmhpd resource.
+> > >
+> > > But the purpose for the explicit calls was to ensure that the clock
+> > > controller itself is accessible. It's been a while since I looked at
+> > > this, but iirc letting MMCX to turn off would cause the register access
+> > > during dispcc probing to fail - similar to how
+> > > clk_pm_runtime_get()/put() ensures the clock registers are accessible.
+> >
+> > The dispcc and videocc on sm8250 don't use pm_clk APIs. They do use
+> > pm_runtime APIs during probe (i.e. pm_runtime_resume_and_get()). That
+> > will enable the MMCX domain and keep it on.
+>
+> There's a corresponding pm_runtime_put() at the end of
+> disp_cc_sm8250_probe(), so this vote should be released.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v7: no changes
-v6: no changes
-v5: new
----
- arch/arm/boot/dts/socfpga.dtsi         | 1 -
- arch/arm/boot/dts/socfpga_arria10.dtsi | 1 -
- 2 files changed, 2 deletions(-)
+Correct.
 
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index 604fc6e0c4ad..a2419a5c6c26 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -453,7 +453,6 @@ sdmmc_clk: sdmmc_clk {
- 						compatible = "altr,socfpga-gate-clk";
- 						clocks = <&f2s_periph_ref_clk>, <&main_nand_sdmmc_clk>, <&per_nand_mmc_clk>;
- 						clk-gate = <0xa0 8>;
--						clk-phase = <0 135>;
- 					};
- 
- 					sdmmc_clk_divided: sdmmc_clk_divided {
-diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
-index b6ebe207e2bc..eb528c103d70 100644
---- a/arch/arm/boot/dts/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
-@@ -365,7 +365,6 @@ sdmmc_clk: sdmmc_clk {
- 						compatible = "altr,socfpga-a10-gate-clk";
- 						clocks = <&sdmmc_free_clk>;
- 						clk-gate = <0xC8 5>;
--						clk-phase = <0 135>;
- 					};
- 
- 					qspi_clk: qspi_clk {
--- 
-2.25.1
+>
+> While registering clocks, the framework will clk_pm_runtime_get()/put()
+> while accessing registers. The argument that was given when introducing
+> the calls in the probe was the same, covering the direct regmap
+> accesses...
+>
+> And I guess it avoids flipping the genpd on/off for each resource being
+> accessed.
 
+I don't think the genpd framework accesses anything when a genpd is
+registered. The clock controller is pm_runtime_resume_and_get() during
+the time the gdscs are registered with genpd, so there isn't any more
+need to get the runtime PM state of the clock controller during this
+time. The PM runtime put comes after qcom_cc_probe(). We should be good.
+
+>
+> > Then when the GDSCs are
+> > registered it will create genpds for each GDSC and make them subdomains
+> > of the 'dev->pm_domain' genpd for MMCX. If the GDSCs are enabled at
+> > probe time they will increment the count on MMCX to put the count into
+> > sync between MMCX and the GDSC provided.
+> >
+>
+> This does not fit my argument; if the purpose is for pm_runtime to
+> provide access to the registers (and the subdomain ensuring that the
+> GDSC is powered), we should have a pm_runtime_put() after each operation
+> (analog to clk_pm_runtime_put()).
+
+I believe registration/probe of the GDSCs is covered, the device is
+runtime resumed there. After that I'm not 100% positive, but with the
+GDSC as a subdomain of the clock controller's domain it will at least
+turn on MMCX before trying to enable the GDSC.
+
+>
+> > The clk framework also has runtime PM calls throughout the code to make
+> > sure the device is runtime resumed when it is accessed. Maybe the
+> > problem is if probe defers and enough runtime puts are called to runtime
+> > suspend the device thus disabling MMCX?
+>
+> Iirc the problem at hand was really that without any other votes for
+> MMCX, the register accesses during probe, gdsc and reset registration
+> would access registers without power.
+
+Makes sense. The runtime PM get call for the clock controller in the
+probe will keep MMCX enabled.
+
+>
+> > Can MMCX really ever be disabled
+> > or does disabling it act as a one way disable where you can never enable
+> > it again?
+> >
+>
+> I've not seen any indications of that.
+>
+> Only the side effect that if you set_performance_state() MMCX lower than
+> required during continuous splash the whole SoC get hosed.
+
+I see. That sounds different.
+
+>
+> > Or maybe this is the problem where not all constraints are determined
+> > yet but we're letting runtime PM put calls from the dispcc device shut
+> > down the entire multimedia subsystem while other devices that are within
+> > the same domain haven't probed and been able to sync their state but
+> > they're actively accessing the bus (i.e. continuous splash screen). I
+> > could see this problem being avoided by the pm_runtime_get() call in
+> > gdsc registration keeping MMCX on forever because there isn't a matching
+> > put anywhere.
+> >
+>
+> This implementation predates 41fff779d794 ("clk: qcom: gdsc: Bump parent
+> usage count when GDSC is found enabled"), so no this was not introduced
+> to hide the issue of
+> yet-to-be-probed-devices-not-voting-for-their-resources.
+>
+> This problem has been avoided by tying rpmhpd to sync_state and
+> requiring that people boot their systems with pd_ignore_unused.
+
+Heh ok.
