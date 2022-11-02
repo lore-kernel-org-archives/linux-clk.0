@@ -2,74 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FE0C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 13:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F020BC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 15:42:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231175AbiKBNro (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 09:47:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42972 "EHLO
+        id S230427AbiKBPmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 11:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230280AbiKBNrm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 09:47:42 -0400
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 329692AC5B;
-        Wed,  2 Nov 2022 06:47:41 -0700 (PDT)
-Received: by mail-ot1-f48.google.com with SMTP id 16-20020a9d0490000000b0066938311495so10304462otm.4;
-        Wed, 02 Nov 2022 06:47:41 -0700 (PDT)
+        with ESMTP id S229539AbiKBPme (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 11:42:34 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A7A2A24B
+        for <linux-clk@vger.kernel.org>; Wed,  2 Nov 2022 08:42:32 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id 128so16593585pga.1
+        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 08:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=d3T+apdPM9d/LVHvl4ssAZf/YXXS8AT6BrLPp56q6P4=;
+        b=bRoabxpWUjHKwQUA6JkZZIwcLtRde9H8Szf/vDnUvurleAFiQWwrgedTkyfECR07EJ
+         mNanCNLUePcOioA5/z/Bd0mCa+5+wDqMb/e9sEZ+R8d5HdEpoZACHT+IL5IxcrgXOoWK
+         63A4KtRgpD3JAY53QPxFEmVw+xDNCq8/IDxPjY3sCsQZLJNHoPN7WN2XcYJw0ddSCnWN
+         fSpJTl28VbRjRmg+gyk69ngOl6UuZmsaST0LfN0VGB9jGH/2ocnGfX8MTSxMCLu4wFWE
+         kAhpn8McWI0chHoTqw9HNUY+CnKLHkFvT+hH3lx50zat5pE6CgrNK33JbMTzJECZmyFb
+         Sf4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LGpEyXXVyXPOrEOOBkcZ03FYWwkR3GVThqUz07ODObE=;
-        b=h0vrRZkzpO8YT1zBp7ll09rY6O9aOevMJuOSD79eH6XXNrcmf0hGbT6jS+rUIvcc+l
-         fmH4kjNbBRMR+BrUtQAXRisYVrDw6WLoi3TbG46kbuUHLS42UcxCTGbKGuOT4tw3yRpl
-         jk+GqFSU5eu3aXsjL0PhV42pQ7TMZ+F3wfD3Os4r7Av8Sw8ihJia2pV/4ockE19czNis
-         r+H3JIE3cxi5w/0pkK3C6jeHxYviEfnUB9IW1wWtQwdmJhQUawltb9KgwwPlRDJq8CvY
-         CV0GoG3/j2BaT/ZGy9g/1vXmXFFGodONJznDKwyJnbbUhcmf5lC8dFEPL15MigKgBz4E
-         ht2Q==
-X-Gm-Message-State: ACrzQf3gHH+hgK9Na3gTozT2UT6nmVd0YYF7VLVoaBo7Fi4hPuu/7BGh
-        qHtBTVsD5JgzxuSdDRfDyA==
-X-Google-Smtp-Source: AMsMyM4rBlGbDO/gPIe3u2OjlrxQwDeQSgPaUoceBazCsEcgAWHwbXQEyWwUEo1cwLqhTTTrBvY15Q==
-X-Received: by 2002:a9d:7449:0:b0:66c:41be:56d7 with SMTP id p9-20020a9d7449000000b0066c41be56d7mr10536267otk.381.1667396860427;
-        Wed, 02 Nov 2022 06:47:40 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id c10-20020a9d480a000000b0066c75a2643asm682333otf.66.2022.11.02.06.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 06:47:39 -0700 (PDT)
-Received: (nullmailer pid 3704516 invoked by uid 1000);
-        Wed, 02 Nov 2022 13:47:41 -0000
-Date:   Wed, 2 Nov 2022 08:47:41 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Robert Marko <robimarko@gmail.com>
-Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andersson@kernel.org,
-        sboyd@kernel.org, devicetree@vger.kernel.org,
-        konrad.dybcio@somainline.org, tdas@codeaurora.org,
-        agross@kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH 2/3] dt-bindings: clocks: qcom,gcc-ipq8074: allow XO and
- sleep clocks
-Message-ID: <166739686110.3704462.17117268037747402541.robh@kernel.org>
-References: <20221030175703.1103224-1-robimarko@gmail.com>
- <20221030175703.1103224-2-robimarko@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d3T+apdPM9d/LVHvl4ssAZf/YXXS8AT6BrLPp56q6P4=;
+        b=Wxz2DJN3PLXetfEO5EPsAqchu01tZvJ3VouEXYJQvmK0Ehn1AHMIKFgADbjhxsR6oy
+         7H4pJkhKF4N1K/0ysQkepAOrnNok9UyzH2q+mg8R//KkzKP/EqquANMfx08Z3/zbFlj3
+         04054VBpqSMm6ZNUqg6q4295pCx5INkase//GkgrLgEm1LFp/jIgkJsDbUW/5Ashyww7
+         0ctLNg87n9vsUzTvaOcwKRO21eklUhSTXF26kaFwvw5yHsxPR1nxb8UvqDaHiF61sqhD
+         yB4uy29YQ1+GDpOAGuArSx6Di5OH1okcmNMAP2aGi0UA2bDT5KCqZrjPwD/XnSPBx4lm
+         rR0Q==
+X-Gm-Message-State: ACrzQf1pJX697/3/xi7tDIvlZnJ6SwaefkRHBaBb27c4ZdMN3qh9AmUO
+        8cGFn4QwEFpV3h4kGJljHjJa3z9o63SGXnVdq4opCw==
+X-Google-Smtp-Source: AMsMyM5VlkFzEUiLRxmTPergQNEyNQ9URlJgnCoi+4jtnGNY54X56u4XM8yxlyw/sQGfd4bQDtFzgTMLMYWYGFCjToA=
+X-Received: by 2002:a05:6a00:170a:b0:563:a40a:b5e1 with SMTP id
+ h10-20020a056a00170a00b00563a40ab5e1mr25480891pfc.40.1667403751851; Wed, 02
+ Nov 2022 08:42:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221030175703.1103224-2-robimarko@gmail.com>
+References: <20221026141631.696863-1-dinguyen@kernel.org> <20221026141631.696863-4-dinguyen@kernel.org>
+In-Reply-To: <20221026141631.696863-4-dinguyen@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 2 Nov 2022 16:41:55 +0100
+Message-ID: <CAPDyKFpe30P7HzF4yfo=oPt5EwytMtkcCdBakUXkeUYtbmHt7g@mail.gmail.com>
+Subject: Re: [PATCHv6 4/6] mmc: dw_mmc-pltfm: socfpga: add method to configure clk-phase
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     jh80.chung@samsung.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Sun, 30 Oct 2022 18:57:02 +0100, Robert Marko wrote:
-> Allow passing XO and sleep clocks to the IPQ8074 to avoid having to do
-> a global matching by name.
-> 
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
+On Wed, 26 Oct 2022 at 16:16, Dinh Nguyen <dinguyen@kernel.org> wrote:
+>
+> The clock-phase settings for the SDMMC controller in the SoCFPGA
+> platforms reside in a register in the System Manager. Add a method
+> to access that register through the syscon interface.
+>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
->  .../devicetree/bindings/clock/qcom,gcc-ipq8074.yaml    | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+> v6: not getting the clk-phase-sd-hs is not a hard failure
+> v5: change error handling from of_property_read_variable_u32_array()
+>     support arm32 by reading the reg_shift
+> v4: no change
+> v3: add space before &socfpga_drv_data
+> v2: simplify clk-phase calculations
+>
+> make property optional in driver
+> ---
+>  drivers/mmc/host/dw_mmc-pltfm.c | 43 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
+> index 9901208be797..fff6222d58e4 100644
+> --- a/drivers/mmc/host/dw_mmc-pltfm.c
+> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
+> @@ -17,10 +17,16 @@
+>  #include <linux/mmc/host.h>
+>  #include <linux/mmc/mmc.h>
+>  #include <linux/of.h>
+> +#include <linux/mfd/altera-sysmgr.h>
+> +#include <linux/regmap.h>
+>
+>  #include "dw_mmc.h"
+>  #include "dw_mmc-pltfm.h"
+>
+> +#define SOCFPGA_DW_MMC_CLK_PHASE_STEP  45
+> +#define SYSMGR_SDMMC_CTRL_SET(smplsel, drvsel, reg_shift) \
+> +       ((((smplsel) & 0x7) << reg_shift) | (((drvsel) & 0x7) << 0))
+> +
+>  int dw_mci_pltfm_register(struct platform_device *pdev,
+>                           const struct dw_mci_drv_data *drv_data)
+>  {
+> @@ -62,9 +68,44 @@ const struct dev_pm_ops dw_mci_pltfm_pmops = {
+>  };
+>  EXPORT_SYMBOL_GPL(dw_mci_pltfm_pmops);
+>
+> +static int dw_mci_socfpga_priv_init(struct dw_mci *host)
+> +{
+> +       struct device_node *np = host->dev->of_node;
+> +       struct regmap *sys_mgr_base_addr;
+> +       u32 clk_phase[2] = {0}, reg_offset, reg_shift;
+> +       int i, rc, hs_timing;
+> +
+> +       rc = of_property_read_variable_u32_array(np, "clk-phase-sd-hs", &clk_phase[0], 2, 0);
+> +       if (rc < 0) {
+> +               dev_info(host->dev, "Optional: clk-phase-sd-hs not found!\n");
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Printing things about missing optional features doesn't really make
+sense. Please drop this.
+
+> +               return 0;
+> +       }
+> +
+> +       sys_mgr_base_addr = altr_sysmgr_regmap_lookup_by_phandle(np, "altr,sysmgr-syscon");
+> +       if (IS_ERR(sys_mgr_base_addr)) {
+> +               dev_info(host->dev, "Optional: failed to find altr,sys-mgr regmap!\n");
+
+If the clk-phase-sd-hs property is found above, the altr,sysmgr-syscon
+property is required, isn't it?
+
+In that case, perhaps this deserves a dev_warn instead?
+
+> +               return 0;
+> +       }
+> +
+> +       of_property_read_u32_index(np, "altr,sysmgr-syscon", 1, &reg_offset);
+> +       of_property_read_u32_index(np, "altr,sysmgr-syscon", 2, &reg_shift);
+> +
+> +       for (i = 0; i < ARRAY_SIZE(clk_phase); i++)
+> +               clk_phase[i] /= SOCFPGA_DW_MMC_CLK_PHASE_STEP;
+> +
+> +       hs_timing = SYSMGR_SDMMC_CTRL_SET(clk_phase[0], clk_phase[1], reg_shift);
+> +       regmap_write(sys_mgr_base_addr, reg_offset, hs_timing);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct dw_mci_drv_data socfpga_drv_data = {
+> +       .init           = dw_mci_socfpga_priv_init,
+> +};
+> +
+>  static const struct of_device_id dw_mci_pltfm_match[] = {
+>         { .compatible = "snps,dw-mshc", },
+> -       { .compatible = "altr,socfpga-dw-mshc", },
+> +       { .compatible = "altr,socfpga-dw-mshc", .data = &socfpga_drv_data, },
+>         { .compatible = "img,pistachio-dw-mshc", },
+>         {},
+>  };
+
+Kind regards
+Uffe
