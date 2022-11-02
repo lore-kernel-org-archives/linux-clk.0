@@ -2,82 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A85FC43217
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 09:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6A0C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 10:35:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbiKBJ1p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 05:27:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
+        id S229570AbiKBKfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 06:35:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231186AbiKBJ1a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 05:27:30 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42011EEEF;
-        Wed,  2 Nov 2022 02:26:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5CBE6CE200A;
-        Wed,  2 Nov 2022 09:26:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7516AC433D6;
-        Wed,  2 Nov 2022 09:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667381189;
-        bh=mSmVuNa2iVDMcz+0i0b55GRgIdK4V6DaNIrH02lHInY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q0ZqnIl7ITyNb8t/Z6wirSZHpRM9fmnk9SwW0HbPbDNEw9djBZS8FmSUDNU14vf/K
-         ByHyWYJS72Ai19W3mlLZ4AO0Ayn1z2U3OjrMo2NEmtuQnLBgygkYlESQM0/UoN/dTl
-         LQy43pECrao9oYusKOvejSJwer6NYm3saPTgTTP3bOC/nRpZsqPNuv6DDz6u4cE9Bb
-         sXB1s2t6vRwJqcl8utU850F8Qv/UqWzuWtmPy6KqjlBRhAcs6m84Ws7Jkrfbem6VZo
-         fFVB4wkCQcMRe6b3kD35vLuMkZ/S4BOHQVdmZOZGN1oK59CoPE0JjxSwljvZQvRceP
-         OBERs9G78BlKw==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oqA0j-0008R1-MK; Wed, 02 Nov 2022 10:26:13 +0100
-Date:   Wed, 2 Nov 2022 10:26:13 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, andersson@kernel.org,
-        bmasney@redhat.com, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        with ESMTP id S229557AbiKBKfF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 06:35:05 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F3328E0D;
+        Wed,  2 Nov 2022 03:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1667385302; x=1698921302;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cnMTJX1z5oF/MNXmXzDoIQqydCI7Jem3sz3HAcS6ejI=;
+  b=yi+OAtnpgRRo/k9kwGY7fcaYrWv0jE+5rPjlHeQ9elrlnEnza4H+dU81
+   9/1Kwhzr1u0h4nWJeKAl6l9pMHihSjEdkBHLnKlMzJsgwv148yw+rZ8Qi
+   8VwmR8ezRT8ayWAPqSQPOnLBTHetcK3Vy5R4kL3nMN1eaXjPTtz8h/ngB
+   xveU+/yxQUQ4PXNiYQLAOpac3zbgYEb84d1z7XtZU5gS3bscBgMKAlfqk
+   xYBZLFa+Ee5jQilJI+V+9o0ikD7hWeLUSQm91cLdPsLJu19sD3BW6lSm3
+   nROq9BNhEd+759lcrjefpaZ+HXrMtYv2/kk2epHS/k8cqL6FTMsF5Jitd
+   g==;
+X-IronPort-AV: E=Sophos;i="5.95,232,1661842800"; 
+   d="scan'208";a="184990970"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Nov 2022 03:35:01 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Wed, 2 Nov 2022 03:35:01 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12 via Frontend
+ Transport; Wed, 2 Nov 2022 03:34:58 -0700
+Date:   Wed, 2 Nov 2022 10:34:43 +0000
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <palmer@dabbelt.com>
+CC:     Conor Dooley <conor@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
- gcc_ufs_ref_clkref_clk
-Message-ID: <Y2I3tekSAO42r0xR@hovoldconsulting.com>
-References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
- <20221101182402.32CE5C433C1@smtp.kernel.org>
- <Y2IZaxukERXNcPGR@hovoldconsulting.com>
- <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
- <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
- <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH 0/6] RISC-V: stop selecting device drivers in Kconfig.socs
+Message-ID: <Y2JHw/y1oWkLpOb2@wendy>
+References: <20221005171348.167476-1-conor@kernel.org>
+ <Y15nwXmn7rToJkH2@spud>
+ <Y2IXrD4FpXNmDDPk@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
+In-Reply-To: <Y2IXrD4FpXNmDDPk@kroah.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 02:15:26PM +0530, Shazad Hussain wrote:
-> On 11/2/2022 1:43 PM, Johan Hovold wrote:
+On Wed, Nov 02, 2022 at 08:09:32AM +0100, Greg Kroah-Hartman wrote:
+> On Sun, Oct 30, 2022 at 12:02:09PM +0000, Conor Dooley wrote:
+> > On Wed, Oct 05, 2022 at 06:13:43PM +0100, Conor Dooley wrote:
+> > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > 
+> > > As my RFC [0] series doing the symbol name changes has not yet reached
+> > > consensus, I've split out the removal of device driver selects into a
+> > > new series. I kept the plic as a direct select - although given how Maz
+> > > is treating the SiFive plic driver as the RISC-V plic driver, maybe that
+> > > should just be selected by default at an arch level...
+> > > 
+> > > I assume the individual patches can go via their subsystems & I'll
+> > > resubmit the arch/riscv patches a cycle later? I'm not in any rush.
+> > 
+> > Hey,
+> > 
+> > What's the story here with the two serial patches, they just waiting for
+> > an Ack? I think these are archived on the riscv patchwork, so if that is
+> > the case I'll unarchive them and mark as needing one.
+> 
+> Sorry for the delay, I'll take both of them through the tty/serial tree.
 
-> > Right, but if the PHYs really requires CX and it is not an ancestor of
-> > the refclk then this should be described by the binding (and not be
-> > hidden away in the clock driver).
+nw Greg, thanks.
 
-> This makes sense, will be posting v2 post for the same.
-> I assume this should use the Fixes tag then !
+@Palmer, I'll re-submit the Kconfig.socs bits of this after v6.2-rc1.
 
-Yeah, I guess to you can add a fixes tag for the commits adding support
-for sc8280xp to the UFS PHY binding and driver.
+Thanks,
+Conor.
 
-But please do check with the hardware documentation first so we get this
-right this time.
 
-I've already asked Bjorn to see what he can dig out as it is still not
-clear how the two "card" refclocks (GCC_UFS_CARD_CLKREF_CLK and
-GCC_UFS_1_CARD_CLKREF_CLK) are supposed to be used.
 
-Johan
