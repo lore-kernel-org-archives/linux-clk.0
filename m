@@ -2,97 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6A0C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 10:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF7EC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 10:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbiKBKfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 06:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52088 "EHLO
+        id S229537AbiKBKw7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 06:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbiKBKfF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 06:35:05 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F3328E0D;
-        Wed,  2 Nov 2022 03:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1667385302; x=1698921302;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cnMTJX1z5oF/MNXmXzDoIQqydCI7Jem3sz3HAcS6ejI=;
-  b=yi+OAtnpgRRo/k9kwGY7fcaYrWv0jE+5rPjlHeQ9elrlnEnza4H+dU81
-   9/1Kwhzr1u0h4nWJeKAl6l9pMHihSjEdkBHLnKlMzJsgwv148yw+rZ8Qi
-   8VwmR8ezRT8ayWAPqSQPOnLBTHetcK3Vy5R4kL3nMN1eaXjPTtz8h/ngB
-   xveU+/yxQUQ4PXNiYQLAOpac3zbgYEb84d1z7XtZU5gS3bscBgMKAlfqk
-   xYBZLFa+Ee5jQilJI+V+9o0ikD7hWeLUSQm91cLdPsLJu19sD3BW6lSm3
-   nROq9BNhEd+759lcrjefpaZ+HXrMtYv2/kk2epHS/k8cqL6FTMsF5Jitd
-   g==;
-X-IronPort-AV: E=Sophos;i="5.95,232,1661842800"; 
-   d="scan'208";a="184990970"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Nov 2022 03:35:01 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Wed, 2 Nov 2022 03:35:01 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12 via Frontend
- Transport; Wed, 2 Nov 2022 03:34:58 -0700
-Date:   Wed, 2 Nov 2022 10:34:43 +0000
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <palmer@dabbelt.com>
-CC:     Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 0/6] RISC-V: stop selecting device drivers in Kconfig.socs
-Message-ID: <Y2JHw/y1oWkLpOb2@wendy>
-References: <20221005171348.167476-1-conor@kernel.org>
- <Y15nwXmn7rToJkH2@spud>
- <Y2IXrD4FpXNmDDPk@kroah.com>
+        with ESMTP id S229496AbiKBKw6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 06:52:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737371403C;
+        Wed,  2 Nov 2022 03:52:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 12DD5617F0;
+        Wed,  2 Nov 2022 10:52:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E06C433C1;
+        Wed,  2 Nov 2022 10:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667386376;
+        bh=NDOSDtF1moYJudFzXEU8Fr9+WFsHcE/xRnSi1+ZcO7c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Na/BGUedFirgHaWPiyVX6ER5jxLKzRsnHS04v8ArlXi3JkKsB/MkA6Ku0a5LwoLb+
+         Dprv7i13JLcDhxy+iOP0LhPs//an9FpJoDmAgmfDxG6BetwzK+vivLBPCobjj19FEV
+         aweGk86xTmX1kj2fJVg0+2dK4TavfmqBzmV417uvcpPAar7D/czSTLme1Wm4OGaSHQ
+         qhzgURPCc3B4GQvVHW9Nte7PvR/QiIEu2vKD44OHHezyAIv+5LYWsMkPAIzyG9Lt8z
+         dOm+0GbTP/xoDc5T+TDeetUejclFfv+icFJ4LkGzyWVwntGPeeYp+s3x3w2UNfpI5R
+         8HKwfwX8j/zFA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oqBMN-000123-Hg; Wed, 02 Nov 2022 11:52:40 +0100
+Date:   Wed, 2 Nov 2022 11:52:39 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+Message-ID: <Y2JL9/HFrb3E+CYY@hovoldconsulting.com>
+References: <20221101233421.997149-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y2IXrD4FpXNmDDPk@kroah.com>
+In-Reply-To: <20221101233421.997149-1-swboyd@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 08:09:32AM +0100, Greg Kroah-Hartman wrote:
-> On Sun, Oct 30, 2022 at 12:02:09PM +0000, Conor Dooley wrote:
-> > On Wed, Oct 05, 2022 at 06:13:43PM +0100, Conor Dooley wrote:
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > > 
-> > > As my RFC [0] series doing the symbol name changes has not yet reached
-> > > consensus, I've split out the removal of device driver selects into a
-> > > new series. I kept the plic as a direct select - although given how Maz
-> > > is treating the SiFive plic driver as the RISC-V plic driver, maybe that
-> > > should just be selected by default at an arch level...
-> > > 
-> > > I assume the individual patches can go via their subsystems & I'll
-> > > resubmit the arch/riscv patches a cycle later? I'm not in any rush.
-> > 
-> > Hey,
-> > 
-> > What's the story here with the two serial patches, they just waiting for
-> > an Ack? I think these are archived on the riscv patchwork, so if that is
-> > the case I'll unarchive them and mark as needing one.
+On Tue, Nov 01, 2022 at 04:34:21PM -0700, Stephen Boyd wrote:
+> We shouldn't be calling runtime PM APIs from within the genpd
+> enable/disable path for a couple reasons.
 > 
-> Sorry for the delay, I'll take both of them through the tty/serial tree.
+> First, this causes an AA lockdep splat because genpd can call into genpd
+> code again while holding the genpd lock.
+> 
+> WARNING: possible recursive locking detected
+> 5.19.0-rc2-lockdep+ #7 Not tainted
+> --------------------------------------------
+> kworker/2:1/49 is trying to acquire lock:
+> ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+> 
+> but task is already holding lock:
+> ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(&genpd->mlock);
+>   lock(&genpd->mlock);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
 
-nw Greg, thanks.
+I've seen this splat on sc8280xp as well but haven't had time to look
+into it yet.
 
-@Palmer, I'll re-submit the Kconfig.socs bits of this after v6.2-rc1.
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Johan Hovold <johan+linaro@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Matthias Kaehlcke <mka@chromium.org>
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
 
-Thanks,
-Conor.
+We typically don't add Reported-by tags for bugs we find and fix
+ourselves.
 
+> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 64 ++++++-----------------------------------
+>  1 file changed, 8 insertions(+), 56 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 7cf5e130e92f..a775ce1b7d8a 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
 
+> @@ -495,14 +451,11 @@ static int gdsc_init(struct gdsc *sc)
+>  		sc->pd.power_on = gdsc_enable;
+>  
+>  	ret = pm_genpd_init(&sc->pd, NULL, !on);
+> -	if (ret)
+> -		goto err_put_rpm;
+> +	if (!ret)
+> +		goto err_disable_supply;
 
+The logic should not be inverted here (and only happens to work
+currently when you have no regulator or the gdsc was off).
+
+>  	return 0;
+>  
+> -err_put_rpm:
+> -	if (on)
+> -		gdsc_pm_runtime_put(sc);
+>  err_disable_supply:
+>  	if (on && sc->rsupply)
+>  		regulator_disable(sc->rsupply);
+
+Johan
