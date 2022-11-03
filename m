@@ -2,148 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61060C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 15:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6DCC43217
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 16:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231825AbiKCPYG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:24:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
+        id S231836AbiKCQH2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 12:07:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232161AbiKCPYC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 11:24:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309CA11162;
-        Thu,  3 Nov 2022 08:24:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DA425B828E9;
-        Thu,  3 Nov 2022 15:23:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9223C433D6;
-        Thu,  3 Nov 2022 15:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667489038;
-        bh=fg7hNvJiWPNnBMDzywvHNR7sYaua2ncK141ddfpOrdo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EQZzYkkUo2mOJJMcmlIl6A+bPZI4PMPBAwR7yQcBCWcvLZd8GR0o3rMY7/jG6yWab
-         OAh94msJVke3pTVCe0e+GmvKKr2oX54eoqO3aeVtEPy3OQ4TFDxx1lCJRAo3lQF1ys
-         /N9IrOe1t+3YlM2/XyBVq3xZLAOEK+XtdRH8XBRQEEU7+BPmrg3NM1nPGa4z+qeJgU
-         TnvsuyC890esfZn1ylZE8aig0/cGtbqiiD+HsKlBcGe9NXQ5IUd0IBpYroOWSMtaXr
-         sueqLf5HrHsArx9rZJuy1ojtPSi3ZcEueKhzEjAWlIdiXv/0kngawtnNlBthRZnOdz
-         v1+9XAS+x7rYw==
-Date:   Thu, 3 Nov 2022 10:23:55 -0500
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Shazad Hussain <quic_shazhuss@quicinc.com>,
-        Stephen Boyd <sboyd@kernel.org>, bmasney@redhat.com,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
- gcc_ufs_ref_clkref_clk
-Message-ID: <20221103152355.5sfbkpsfvjzgeixi@builder.lan>
-References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
- <20221101182402.32CE5C433C1@smtp.kernel.org>
- <Y2IZaxukERXNcPGR@hovoldconsulting.com>
- <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
- <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
- <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
- <Y2I3tekSAO42r0xR@hovoldconsulting.com>
- <20221103024949.lw4g2tavk7uw5xt4@builder.lan>
- <Y2OEjNAPXg5BfOxH@hovoldconsulting.com>
+        with ESMTP id S232124AbiKCQG5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 12:06:57 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC86F1C436
+        for <linux-clk@vger.kernel.org>; Thu,  3 Nov 2022 09:05:42 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id n12so6473761eja.11
+        for <linux-clk@vger.kernel.org>; Thu, 03 Nov 2022 09:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZjX82js1MEeHcR9vNScDckdgVeBb111bo+yliZ0LU2M=;
+        b=x7j2H2hfFCfGg8qWiLy9NsZwLf25fTTjJjZvNjK6ZXSLzy4O7aajUYEFp12DO85h85
+         R/3C5Nl2I4CyncUfO3qxnpxqRijqRjhmSvPILlqw9MbTEE4K8Tk3x3mZelotOS+D+pcH
+         e50u/2dbr0Oq7C+z9LI0TaPpBY/X3n03kr6Tf+Vk3qA2M1FR0TTPWf0oDOXlLhPWXRhN
+         C4MRYz5p5F6ZeJa8kz/j3XDoNIUDi81igpMBI4CTQBK+bTJOtmSa5uimBKlortNxF+vc
+         B0yyysJlP7EOWdvkn7SLPT/JEeVTj6zIXpvWeEy7RarNBhwTVRTO8cR8XLEZ0eliknEu
+         598g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZjX82js1MEeHcR9vNScDckdgVeBb111bo+yliZ0LU2M=;
+        b=TtD1hVEiqJsuYFmHhhS1gi+lfRYrJ6KF/n8wBAMXFo+mmTsj42nzOsMoIlVAS8XcL6
+         NaIPeF0pofDGJ9+85k6jZf+fX7mCqfs6uTcky/AyKIFpGLqab8Qv4NlRxwacDWDuON3m
+         j3p8iR/PBb8YD38fNSSGzxR4qlTeYORVBdrztHE0Uf7niL9iVVRmGoEz6wJKeNfLHwhS
+         ivFjLCuzJkSSadKBb2lPaiCRmvPrGfpWX3faTM0YvVGTLLWRUTNiBaqI7l/PnlG2gcVR
+         qetpTAZ3IT/xfmn5jfX+t86a2xaD32+Iba/LqPWvPknfGmybTtm5uyKjDRM9P3Urb108
+         96HQ==
+X-Gm-Message-State: ACrzQf3hPcaDxNiscDwK871fp6Js2WPc4QpfK3BLFUfRhYdh+4y/krlP
+        xFCLJGmRXbFrKnf7OzcMi4bDK0JAyNhut0rRpGly6g==
+X-Google-Smtp-Source: AMsMyM7umtXR9dZZBUzwJwdrFaiBTk5vMewRI+ViOLmUb1K+o7oAnalKkdPpAtcST34+nzychCbvz1OkY69yNaFoMZQ=
+X-Received: by 2002:a17:906:dc8f:b0:7a5:8160:1995 with SMTP id
+ cs15-20020a170906dc8f00b007a581601995mr30096358ejc.500.1667491541292; Thu, 03
+ Nov 2022 09:05:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y2OEjNAPXg5BfOxH@hovoldconsulting.com>
+References: <20221102171012.49150-1-kory.maincent@bootlin.com> <20221102171012.49150-4-kory.maincent@bootlin.com>
+In-Reply-To: <20221102171012.49150-4-kory.maincent@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 3 Nov 2022 17:05:30 +0100
+Message-ID: <CACRpkda7EFTe0TT4-hs_F3qTCwp25pgOAqhNSFyJgeNQ3=O7UQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] arm: configs: spear6xx: Enable PL110 display controller
+To:     =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>
+Cc:     viresh.kumar@linaro.org,
+        Vipul Kumar Samar <vipulkumar.samar@st.com>,
+        Vipin Kumar <vipin.kumar@st.com>,
+        Deepak Sikri <deepak.sikri@st.com>,
+        Bhavna Yadav <bhavna.yadav@st.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexandre Ghiti <alexandre.ghiti@canonical.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 10:06:20AM +0100, Johan Hovold wrote:
-> On Wed, Nov 02, 2022 at 09:49:49PM -0500, Bjorn Andersson wrote:
-> > On Wed, Nov 02, 2022 at 10:26:13AM +0100, Johan Hovold wrote:
-> > > On Wed, Nov 02, 2022 at 02:15:26PM +0530, Shazad Hussain wrote:
-> > > > On 11/2/2022 1:43 PM, Johan Hovold wrote:
-> > > 
-> > > > > Right, but if the PHYs really requires CX and it is not an ancestor of
-> > > > > the refclk then this should be described by the binding (and not be
-> > > > > hidden away in the clock driver).
-> > > 
-> > > > This makes sense, will be posting v2 post for the same.
-> > > > I assume this should use the Fixes tag then !
-> > > 
-> > > Yeah, I guess to you can add a fixes tag for the commits adding support
-> > > for sc8280xp to the UFS PHY binding and driver.
-> > > 
-> > > But please do check with the hardware documentation first so we get this
-> > > right this time.
-> > > 
-> > > I've already asked Bjorn to see what he can dig out as it is still not
-> > > clear how the two "card" refclocks (GCC_UFS_CARD_CLKREF_CLK and
-> > > GCC_UFS_1_CARD_CLKREF_CLK) are supposed to be used.
-> > > 
-> > 
-> > We've come full circle and Shazad's patch came from that discussion :)
-> 
-> Ah, good. :)
-> 
-> > In line with the downstream dts, we have GCC_UFS{,_1}_CARD_CLKREF_CLK
-> > providing a reference clock to the two phys. Then GCC_UFS_REF_CLKREF_CLK
-> > feeds the UFS refclock pads (both of them), which connect to the memory
-> > device(s).
-> > 
-> > In other words, GCC_UFS{,_1}_CARD_CLKREF_CLK should be "ref" in
-> > respective phy.
-> > 
-> > GCC_UFS_REF_CLKREF_CLK is the clock to the devices, but as we don't
-> > represent the memory device explicitly it seems suitable to use as
-> > "ref_clk" in the ufshc nodes - which would then match the special
-> > handling of the "link clock" in the UFS driver.
-> 
-> Thanks for clearing that up. Using GCC_UFS_REF_CLKREF_CLK as ref_clk for
-> the controller sounds reasonable.
-> 
-> I guess the only missing piece is which "card" ref clock is used by
-> which PHY.
-> 
-> The ADP dts uses:
-> 
-> 	phy			ref clock
-> 
-> 	phy@1d87000 (UFS_PHY)	GCC_UFS_CARD_CLKREF_CLK
-> 	phy@1da7000 (UFS_CARD)	GCC_UFS_1_CARD_CLKREF_CLK
-> 
+On Wed, Nov 2, 2022 at 6:10 PM K=C3=B6ry Maincent <kory.maincent@bootlin.co=
+m> wrote:
 
-This matches the documentation.
+> From: Kory Maincent <kory.maincent@bootlin.com>
+>
+> Enable the PL110 DRM driver, used by the spear600.
+>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Regards,
-Bjorn
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> but that is not what the firmware on ADP and CRD seem to enable.
-> 
-> Both the ADP and CRD fw leaves GCC_UFS_1_CARD_CLKREF_CLK enabled, while
-> GCC_UFS_CARD_CLKREF_CLK is only enabled on ADP (which unlike the CRD
-> also uses the UFS_CARD controller).
-> 
-> Does the ADP dts have these clocks switched or is the firmware confused?
-> 
-> (Also note that experiments suggest that neither refclock appears to
-> has to be explicitly enabled for the controllers to function.)
-> 
-> > All three clocks are sourced off the CXO pad, so I would like this patch
-> > to cover at least all of these. And
-> > 
-> > Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
-> > 
-> > seems to be in order for such patch.
-> > 
-> > 
-> > @Johan, would you mind writing a dts patch flipping the clocks around
-> > and Shazad can update this patch?
-> 
-> I'll do so, but I'll wait with posting until you can confirm which
-> clkref is which.
-> 
-> Johan
+Thanks for using the DRM driver!
+
+Yours,
+Linus Walleij
