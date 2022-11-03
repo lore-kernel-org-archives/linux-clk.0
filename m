@@ -2,216 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECCCC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Nov 2022 23:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8007C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 02:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbiKBXf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 19:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        id S230384AbiKCCuB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Nov 2022 22:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231337AbiKBXfG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 19:35:06 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D709B22BEB
-        for <linux-clk@vger.kernel.org>; Wed,  2 Nov 2022 16:27:30 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id d26so1035768eje.10
-        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 16:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q4q9wfgcOclGdcMsl14RDjUCS9gfVlvxYztXFkY+AAE=;
-        b=eJKjIYfM3SW+G0n7AWqNkgTG0ba9Cy4iuR3meDnaeJvCu+4iV0UX3p5UwsRF6E1JJt
-         0vaJfVWpOgcBq2tnz00/mptxQk1uEIp+Qav50UiemxUjAGIOdzccOSqr1E06efrPYwgu
-         jHgQYYJB23zJDJX9hy1vb+BrWY9PhA3YOQf/U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q4q9wfgcOclGdcMsl14RDjUCS9gfVlvxYztXFkY+AAE=;
-        b=giVfSndClO5OkBHzvGW8+D1I/IJCPOis6myEPmpTrxw0sJBHBW79p9r+Wv4ZXtgm/8
-         5wEFCn/5CvDNUokYRy5ya38CpZ/y+IAyzqjXent9lEGa9kiYcu3CTzu145B2DjnxQzyZ
-         eHlto+ATbPTeJzAfbxFt6Ut8uyK8rQ6SKnG3oncFJ+kvcmd/RYt5veoF2ipWqlX5jnKo
-         5sir+igHMzvQY03nXIf7Qs1elN0IcgL9nFZ5lJBqJYHbyS/4R2big+80lS4vyf0aDZQ1
-         wb41A4t4VabKoGwfUDtKASrkuCacFvD+0ZIdVxqI0if3XepRPtk+bI0yFA/1TLfgbiNA
-         5qsw==
-X-Gm-Message-State: ACrzQf3zcklR6MO7zxDiuUVRvZ/AJr1jaj7H1mt7Kzig6WN/JvohY2PZ
-        UbA3cRc2lez+C+jFouUI7JH+H6DoxBIRdAho
-X-Google-Smtp-Source: AMsMyM5UoK5AjCb8ZOxBjxTn+fy/JRkreRKZuUAw+2I2nOghnLsIGXSSFwQ3CrGO5/ZvlCFrLLtYpQ==
-X-Received: by 2002:a17:907:761b:b0:7a3:86dd:d330 with SMTP id jx27-20020a170907761b00b007a386ddd330mr25766598ejc.34.1667431600240;
-        Wed, 02 Nov 2022 16:26:40 -0700 (PDT)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
-        by smtp.gmail.com with ESMTPSA id d25-20020aa7c1d9000000b00456c6b4b777sm6300157edp.69.2022.11.02.16.26.37
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Nov 2022 16:26:38 -0700 (PDT)
-Received: by mail-wr1-f45.google.com with SMTP id g12so359619wrs.10
-        for <linux-clk@vger.kernel.org>; Wed, 02 Nov 2022 16:26:37 -0700 (PDT)
-X-Received: by 2002:a5d:51cb:0:b0:236:6a62:4bc8 with SMTP id
- n11-20020a5d51cb000000b002366a624bc8mr16755550wrv.583.1667431597355; Wed, 02
- Nov 2022 16:26:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221102170717.1262547-1-swboyd@chromium.org>
-In-Reply-To: <20221102170717.1262547-1-swboyd@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 2 Nov 2022 16:26:24 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xb5h=Su+t32c5m8DDvWG5mt7MP9XRxoBmJjF=ePLhtUw@mail.gmail.com>
-Message-ID: <CAD=FV=Xb5h=Su+t32c5m8DDvWG5mt7MP9XRxoBmJjF=ePLhtUw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: qcom: gdsc: Remove direct runtime PM calls
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        with ESMTP id S230077AbiKCCuA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 22:50:00 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CAD64D8;
+        Wed,  2 Nov 2022 19:49:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 2C1AECE24A0;
+        Thu,  3 Nov 2022 02:49:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D23BDC433C1;
+        Thu,  3 Nov 2022 02:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667443792;
+        bh=WyKwDvRZwnwe8d8BZAX+ibnlZ7XBzwl/srOk424MBBs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p7PWe6V07dCQyz8C6ULuahnVIvB6fXcjzFN8UeE99X8szfwc7nazBbq6ufFNbkb2w
+         tbIJrxJW/29aSrILSQumm7mLuAXp04ineRfUwBJo0tmeJGPw4SO313lKFXi2qcbBBt
+         f3XmgKz9+D4DvMi3YxZN1gis4JRhid5/rz/5Z+6GsGupSre+9e1VZIH/J7Ud9otvtX
+         hg8sArZCMAlMVllKNvOi9okzso7c9BCTuv27E2lv3IKdN1UZrvY61/w4iHB0tXu8PY
+         R+RZgnVNP32sN3hq8A+Sxsqup5NZAf7/MZHGNaUbgfxn1EzUv64WyefHqc4v1ky50w
+         tnwCKG8zdBfVQ==
+Date:   Wed, 2 Nov 2022 21:49:49 -0500
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Johan Hovold <johan@kernel.org>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, bmasney@redhat.com,
         Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya <quic_c_skakit@quicinc.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
+ gcc_ufs_ref_clkref_clk
+Message-ID: <20221103024949.lw4g2tavk7uw5xt4@builder.lan>
+References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+ <20221101182402.32CE5C433C1@smtp.kernel.org>
+ <Y2IZaxukERXNcPGR@hovoldconsulting.com>
+ <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
+ <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
+ <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
+ <Y2I3tekSAO42r0xR@hovoldconsulting.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y2I3tekSAO42r0xR@hovoldconsulting.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Wed, Nov 02, 2022 at 10:26:13AM +0100, Johan Hovold wrote:
+> On Wed, Nov 02, 2022 at 02:15:26PM +0530, Shazad Hussain wrote:
+> > On 11/2/2022 1:43 PM, Johan Hovold wrote:
+> 
+> > > Right, but if the PHYs really requires CX and it is not an ancestor of
+> > > the refclk then this should be described by the binding (and not be
+> > > hidden away in the clock driver).
+> 
+> > This makes sense, will be posting v2 post for the same.
+> > I assume this should use the Fixes tag then !
+> 
+> Yeah, I guess to you can add a fixes tag for the commits adding support
+> for sc8280xp to the UFS PHY binding and driver.
+> 
+> But please do check with the hardware documentation first so we get this
+> right this time.
+> 
+> I've already asked Bjorn to see what he can dig out as it is still not
+> clear how the two "card" refclocks (GCC_UFS_CARD_CLKREF_CLK and
+> GCC_UFS_1_CARD_CLKREF_CLK) are supposed to be used.
+> 
 
-On Wed, Nov 2, 2022 at 10:07 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> We shouldn't be calling runtime PM APIs from within the genpd
-> enable/disable path for a couple reasons.
->
-> First, this causes an AA lockdep splat because genpd can call into genpd
-> code again while holding the genpd lock.
->
-> WARNING: possible recursive locking detected
-> 5.19.0-rc2-lockdep+ #7 Not tainted
-> --------------------------------------------
-> kworker/2:1/49 is trying to acquire lock:
-> ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
->
-> but task is already holding lock:
-> ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(&genpd->mlock);
->   lock(&genpd->mlock);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
->
-> 3 locks held by kworker/2:1/49:
->  #0: 74ffff80811a5748 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x320/0x5fc
->  #1: ffffffc008537cf8 ((work_completion)(&genpd->power_off_work)){+.+.}-{0:0}, at: process_one_work+0x354/0x5fc
->  #2: ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
->
-> stack backtrace:
-> CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 5.19.0-rc2-lockdep+ #7
-> Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
-> Workqueue: pm genpd_power_off_work_fn
-> Call trace:
->  dump_backtrace+0x1a0/0x200
->  show_stack+0x24/0x30
->  dump_stack_lvl+0x7c/0xa0
->  dump_stack+0x18/0x44
->  __lock_acquire+0xb38/0x3634
->  lock_acquire+0x180/0x2d4
->  __mutex_lock_common+0x118/0xe30
->  mutex_lock_nested+0x70/0x7c
->  genpd_lock_mtx+0x24/0x30
->  genpd_runtime_suspend+0x2f0/0x414
->  __rpm_callback+0xdc/0x1b8
->  rpm_callback+0x4c/0xcc
->  rpm_suspend+0x21c/0x5f0
->  rpm_idle+0x17c/0x1e0
->  __pm_runtime_idle+0x78/0xcc
->  gdsc_disable+0x24c/0x26c
->  _genpd_power_off+0xd4/0x1c4
->  genpd_power_off+0x2d8/0x41c
->  genpd_power_off_work_fn+0x60/0x94
->  process_one_work+0x398/0x5fc
->  worker_thread+0x42c/0x6c4
->  kthread+0x194/0x1b4
->  ret_from_fork+0x10/0x20
->
-> Second, this confuses runtime PM on CoachZ for the camera devices by
-> causing the camera clock controller's runtime PM usage_count to go
-> negative after resuming from suspend. This is because runtime PM is
-> being used on the clock controller while runtime PM is disabled for the
-> device.
->
-> The reason for the negative count is because a GDSC is represented as a
-> genpd and each genpd that is attached to a device is resumed during the
-> noirq phase of system wide suspend/resume (see the noirq suspend ops
-> assignment in pm_genpd_init() for more details). The camera GDSCs are
-> attached to camera devices with the 'power-domains' property in DT.
-> Every device has runtime PM disabled in the late system suspend phase
-> via __device_suspend_late(). Runtime PM is not usable until runtime PM
-> is enabled in device_resume_early(). The noirq phases run after the
-> 'late' and before the 'early' phase of suspend/resume. When the genpds
-> are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
-> that calls pm_runtime_resume_and_get() and that returns -EACCES to
-> indicate failure to resume because runtime PM is disabled for all
-> devices.
->
-> Upon closer inspection, calling runtime PM APIs like this in the GDSC
-> driver doesn't make sense. It was intended to make sure the GDSC for the
-> clock controller providing other GDSCs was enabled, specifically the
-> MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
-> that GDSC register accesses succeeded. That will already happen because
-> we make the 'dev->pm_domain' a parent domain of each GDSC we register in
-> gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
-> are accessed, we'll enable the parent domain (in this specific case
-> MMCX).
->
-> We also remove any getting of runtime PM during registration, because
-> when a genpd is registered it increments the count on the parent if the
-> genpd itself is already enabled. And finally, the runtime PM state of
-> the clk controller registering the GDSC shouldn't matter to the
-> subdomain setup. Therefore we always assign 'dev' unconditionally so
-> when GDSCs are removed we properly unlink the GDSC from the clk
-> controller's pm_domain.
->
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Johan Hovold <johan+linaro@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Satya Priya <quic_c_skakit@quicinc.com>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Matthias Kaehlcke <mka@chromium.org>
-> Reported-by: Stephen Boyd <swboyd@chromium.org>
-> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Changes from v1 (https://lore.kernel.org/r/20221101233421.997149-1-swboyd@chromium.org):
->  * Fix ret thinko
->  * Update kerneldoc on 'dev' member
->
->  drivers/clk/qcom/gdsc.c | 62 +++++------------------------------------
->  drivers/clk/qcom/gdsc.h |  2 +-
->  2 files changed, 8 insertions(+), 56 deletions(-)
+We've come full circle and Shazad's patch came from that discussion :)
 
-Though I'm not an expert, this seems reasonable to me and certainly an
-improvement in that it no longer calls pm_runtime calls during the
-"noirq" resume phase. Thus a non-expert:
+In line with the downstream dts, we have GCC_UFS{,_1}_CARD_CLKREF_CLK
+providing a reference clock to the two phys. Then GCC_UFS_REF_CLKREF_CLK
+feeds the UFS refclock pads (both of them), which connect to the memory
+device(s).
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+In other words, GCC_UFS{,_1}_CARD_CLKREF_CLK should be "ref" in
+respective phy.
 
-This also seems to avoid the problems I reported [1]. Even though the
-root cause (pm_runtime vs. clk prepare lock deadlock) is still
-theoretically possible at least the problem is no longer tickled for
-me (I tested on a sc7280-herobrine-villager board). Thus, I'm OK with:
+GCC_UFS_REF_CLKREF_CLK is the clock to the devices, but as we don't
+represent the memory device explicitly it seems suitable to use as
+"ref_clk" in the ufshc nodes - which would then match the special
+handling of the "link clock" in the UFS driver.
 
-Tested-by: Douglas Anderson <dianders@chromium.org>
 
-[1] https://lore.kernel.org/r/20220922154354.2486595-1-dianders@chromium.org
+
+
+All three clocks are sourced off the CXO pad, so I would like this patch
+to cover at least all of these. And
+
+Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+
+seems to be in order for such patch.
+
+
+@Johan, would you mind writing a dts patch flipping the clocks around
+and Shazad can update this patch?
+
+Regards,
+Bjorn
