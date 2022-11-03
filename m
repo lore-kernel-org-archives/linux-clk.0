@@ -2,108 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D355AC43217
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 13:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36351C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 13:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbiKCNV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 09:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
+        id S229871AbiKCNuH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 09:50:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231759AbiKCNVz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 09:21:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8FB64EA;
-        Thu,  3 Nov 2022 06:21:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 56EEBB827CE;
-        Thu,  3 Nov 2022 13:21:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B94C433D7;
-        Thu,  3 Nov 2022 13:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667481712;
-        bh=Z0XmaPzB8/5OxlKcz/hqxjFMPGgVEHY0wHqktG+DZyw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QMJhet3iZ569LqI2RxhJ5QYzFlGVAz2fMhJvGFncZ9+TDlBN8IsBWwRbCsWNl62rV
-         v3NXT0pBKTJ40xjG8hV4CrITh2ZH2vyuPJFFAFEtT1y3SE7/UfQjdHEZBDpdHOvhDt
-         viiBZPXECITtsksc5raOEclCxfXcbZG0Q02CT79apotPc37nIMwQNOaUemfYUs4SoU
-         FzDeUx9vYw/xVnY7VDJhWzvW2gumGTRAcOx1NqRphIXdFcfhXdmDKxCbdgbZs3MYDn
-         ReUZ7bHw3NeZRPiXZtDR6y02Ri9IzqeyJR+N910XuYeIyn5DjS8qUZGTY8AfpDPU6c
-         pGBWE0xPv4rVA==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oqaA1-00082F-KI; Thu, 03 Nov 2022 14:21:34 +0100
-Date:   Thu, 3 Nov 2022 14:21:33 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S229507AbiKCNuG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 09:50:06 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D07D95B8;
+        Thu,  3 Nov 2022 06:50:06 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id bs21so2878026wrb.4;
+        Thu, 03 Nov 2022 06:50:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A37ZMyjpowuBe5MIQCPdhqkQNV0cmCgOXOGo/5OfEzI=;
+        b=FW0aTI7nEnBdu0iXyT1ZmpklKbrCtLZZguo/PWau6OjNRKqe6nZsE4H8rvx9b5Tus5
+         wPMVC7ZxTWE8VqxFK1lOKImJwhQ5vzYTyEiYb619yHBDdcwrB2a9UMAZMmKoZc8ghn2Z
+         OsXqDyIo19ypM3/IBE6c+nkFpXRFSJdmOSxRaMaM14kAoZYGzzX5O76oEjALfacSfQcw
+         SVUv2IhFWhtCnS1MEnirlQVX15oPbbOlK7fx8qflHM4X35zRwX0IWUaM0oT6zWTaaWuc
+         hkPNiGB0cO5YQ9aGuCqUj4nbvqdCWrERoXgsgZd49AGUPgUWIHBTtUm0sXL5HjQuZyI2
+         dItA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A37ZMyjpowuBe5MIQCPdhqkQNV0cmCgOXOGo/5OfEzI=;
+        b=4cay0xNQqvYBLxKIPBiFf+GjpcZOwWbsfDosI9wccnl64/r7GDqbmkYtxpdGNQmjI3
+         whkrJZ5JbANVgx/M55xmfYrxXJ+gJScKtM1YWgcJQaahGc2keQ/t3vnNhRfJZgH5m9aq
+         xBfyZnela6ybHkL+d4p/4QyPNtIjXfPndm5JJUxB4Dd1asnbfNHUJ+CQPW4iVGunByjL
+         flq0KhpZtXoTNWvgp91uv+c6CAOEEEmB37Kv/ibqDkUxTzRzj7oPQJwWCKwq1Hhr0PPB
+         qq3W1VoJ6npu+5SPZgnskGKc/eVazH88Fbygs0x2+kIq6xoNDS79TNj5LByZ1IoNtRbX
+         r2sw==
+X-Gm-Message-State: ACrzQf3q3CgirsGyktTJgyAnzISUD01nhvqniud2fomsABzvYsWoqjIf
+        EKP9Y/9bL93Ucr/VbShud9g2vr3g8xQ=
+X-Google-Smtp-Source: AMsMyM7AhTVOSV+Ga94VoTuFy4oB9Ti5NKQx5CTsfoWVYAb0mTQIMkTiwF3qvlj8qgyipv9+1AwDIg==
+X-Received: by 2002:a5d:4e88:0:b0:236:590:f5a9 with SMTP id e8-20020a5d4e88000000b002360590f5a9mr17658547wru.126.1667483404655;
+        Thu, 03 Nov 2022 06:50:04 -0700 (PDT)
+Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
+        by smtp.googlemail.com with ESMTPSA id bt12-20020a056000080c00b00236576c8eddsm957414wrb.12.2022.11.03.06.50.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 06:50:04 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya <quic_c_skakit@quicinc.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
-Message-ID: <Y2PAXX2oYL6iFTlB@hovoldconsulting.com>
-References: <20221101233421.997149-1-swboyd@chromium.org>
- <Y2JL9/HFrb3E+CYY@hovoldconsulting.com>
- <CAE-0n51Wuc6gVmsTOu4Nf4yx+6Wp-Oi3XZy06syhCMVmePWPEw@mail.gmail.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v2 1/4] clk: qcom: gcc-ipq6018: drop redundant F define
+Date:   Thu,  3 Nov 2022 14:49:41 +0100
+Message-Id: <20221103134944.23275-2-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20221103134944.23275-1-ansuelsmth@gmail.com>
+References: <20221103134944.23275-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE-0n51Wuc6gVmsTOu4Nf4yx+6Wp-Oi3XZy06syhCMVmePWPEw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 09:53:49AM -0700, Stephen Boyd wrote:
-> Quoting Johan Hovold (2022-11-02 03:52:39)
+The same exact F frequency table entry is defined in clk-rcg.h
+Drop the redundant define to cleanup code.
 
-> > > Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > Cc: Johan Hovold <johan+linaro@kernel.org>
-> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Cc: Taniya Das <quic_tdas@quicinc.com>
-> > > Cc: Satya Priya <quic_c_skakit@quicinc.com>
-> > > Cc: Douglas Anderson <dianders@chromium.org>
-> > > Cc: Matthias Kaehlcke <mka@chromium.org>
-> > > Reported-by: Stephen Boyd <swboyd@chromium.org>
-> >
-> > We typically don't add Reported-by tags for bugs we find and fix
-> > ourselves.
-> 
-> Heh, I didn't see anything like that in Documentation/ so it seems fine.
-> I debugged my problem and reported it.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq6018.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I'd say the documentation is pretty clear on this matter:
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index 3f9c2f61a5d9..350ead66914c 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -26,8 +26,6 @@
+ #include "clk-regmap-mux.h"
+ #include "reset.h"
+ 
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_BIAS_PLL,
+-- 
+2.37.2
 
-  Reported-by: names a user who reported a problem which is fixed by this
-  patch; this tag is used to give credit to the (often underappreciated)
-  people who test our code and let us know when things do not work
-  correctly.
-
-  - Documentation/process/5.Posting.rst
-
-  The Reported-by tag gives credit to people who find bugs and report
-  them and it hopefully inspires them to help us again in the future.
-  Please note that if the bug was reported in private, then ask for
-  permission first before using the Reported-by tag.
-
-  - Documentation/process/submitting-patches.rst
-
-Just like you don't add a Tested-by tag for every patch you submit, it
-is implied that you found the issue you fix unless you explicitly
-attribute that to a third party using Reported-by.
-
-This is the first time I see anyone trying to use Reported-by this way,
-and even if you think the documentation isn't clear enough on this, our
-praxis is.
-
-Johan
