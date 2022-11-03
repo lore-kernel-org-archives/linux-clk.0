@@ -2,199 +2,227 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA0DC43217
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 13:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AECC4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 14:31:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231359AbiKCNuM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 09:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47578 "EHLO
+        id S229667AbiKCObd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 10:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231253AbiKCNuK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 09:50:10 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A53CE1A;
-        Thu,  3 Nov 2022 06:50:09 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso1219625wmp.5;
-        Thu, 03 Nov 2022 06:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UYevc0/VBCj9wBQRWlQ/9Q4O5TfPY8fJu+BvNTU/yG0=;
-        b=d6OJjLYkTVYyj0VjESkE5EWtHiqvjt0kEB6y4IcY77JYyXS8Cup8RaMvRDnHOpxbuo
-         qZP+vizPDK6fdps12oaywwU12KIKc0tuOvkUyAZul6wIbilxp0khBz1Yxhk0+E+lx7N0
-         Z3+99s0lgMYRiABw7VCPiVb/n3XN1D+q/blvLsKNl0KooCakYtysUGBgbLLm9yMYKoRt
-         P0slatV+1Ltu5yG2zPhN85umCFptMKDj+yvRMFdNebJ8XvqLVcL4Hd9HgramtTo4HhRr
-         m+dWOa/xNLX5/7THOGCWVkA7yCRysyzS2P+hAS4hb4hPJJBKvHSsHman05tp74IxcMsF
-         CUFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYevc0/VBCj9wBQRWlQ/9Q4O5TfPY8fJu+BvNTU/yG0=;
-        b=bpUu/62kN4vZu8dGrvTWdXQZA+sWGGigyCezg8vw5MpU1nHY7qTX5lVGIBgfrB/WJw
-         q6g/PgCEuUnipPdpTdhRH/2UOIggxu+vOHF49Oru/0grNzYzw7kl9D2em7Tcpg1FlAVC
-         z3DtVWAOl3N7TdQ9DArcpuHaLWuCJ2o+2NVfPUdWBzT6UeDFi/djZaYJ5HI0CtL5vhY5
-         g+mQ35zua1Ldb/yBsyDTPdrVsTzjSu1xvW9bjiNDh705hDlH9cu5GGor/gqNWrVSwSEE
-         KUzNoQnVh+uDVuVToG6AlPfgasKqifwPPJORX1YKA+yB7qTt1QfHbK9rSOBQAzX6I0Q9
-         ICvQ==
-X-Gm-Message-State: ACrzQf0QqBk3DuI1T5pITJD9TS7AA2M/E970HIZ7NLzFNUSC3FElP6Wq
-        jCtRqi0LnRtnZNvaWUl2Qu6dUTUH5GA=
-X-Google-Smtp-Source: AMsMyM4/0Te6wr50IuSG1FJMDHBgSFNQGAvNEOPXZCEAfIgiGu6IIqEGLirF2PjMzHvLqkN7xp5pnA==
-X-Received: by 2002:a05:600c:a04:b0:3b4:f20e:63f4 with SMTP id z4-20020a05600c0a0400b003b4f20e63f4mr19678312wmp.201.1667483408237;
-        Thu, 03 Nov 2022 06:50:08 -0700 (PDT)
-Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.googlemail.com with ESMTPSA id bt12-20020a056000080c00b00236576c8eddsm957414wrb.12.2022.11.03.06.50.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 06:50:07 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S229935AbiKCObb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 10:31:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3815A13D0D;
+        Thu,  3 Nov 2022 07:31:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BA0C5B8286C;
+        Thu,  3 Nov 2022 14:31:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4E3C433C1;
+        Thu,  3 Nov 2022 14:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667485887;
+        bh=cV+KPyo1HQl6I0TSS6Fbc5Uo/+IhyGzcIW29pZoKBcc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jr41Zc8YDx1Cj+LFsLPTp5IYwG1Re1+DvzBrPQIqRN/U5oYmxSA4oNrK/LInnYf4V
+         cWgQf22o/uwDyprHyHFmOMhQtrq9e9+uMbkM5Yx+2nPksMAOt0lEo7QAPy744im/w+
+         9tWXvBnG/B8z+cxERP3UVhPJEk0+srFYUchnOso65PmvBzc31ddrTosVdL8Q/RxZa7
+         y5zFATXwrkf6uH8aISo0wX2mq60fDuGUtjv4wEKg3Yr8E4fPhrUdl5UM37hIU+jFqE
+         T0Jen93iuCtldUiL7fX3rhMPnU0XBKrACdRA66C2EhAzViKJVVYUyav3M19ElRd0iu
+         ehYxWu1msl3Cg==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oqbFN-0002UL-9F; Thu, 03 Nov 2022 15:31:10 +0100
+Date:   Thu, 3 Nov 2022 15:31:09 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Robert Marko <robimarko@gmail.com>
-Subject: [PATCH v2 4/4] clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf
-Date:   Thu,  3 Nov 2022 14:49:44 +0100
-Message-Id: <20221103134944.23275-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20221103134944.23275-1-ansuelsmth@gmail.com>
-References: <20221103134944.23275-1-ansuelsmth@gmail.com>
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v2] clk: qcom: gdsc: Remove direct runtime PM calls
+Message-ID: <Y2PQrRkGTEE40m4Q@hovoldconsulting.com>
+References: <20221102170717.1262547-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221102170717.1262547-1-swboyd@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rework nss_port5/6 to use the new multiple configuration implementation
-and correctly fix the clocks for these port under some corner case.
+On Wed, Nov 02, 2022 at 10:07:17AM -0700, Stephen Boyd wrote:
+> We shouldn't be calling runtime PM APIs from within the genpd
+> enable/disable path for a couple reasons.
+> 
+> First, this causes an AA lockdep splat because genpd can call into genpd
+> code again while holding the genpd lock.
+> 
+> WARNING: possible recursive locking detected
 
-This is particularly relevant for device that have 2.5G or 10G port
-connected to port5 or port 6 on ipq8074. As the parent are shared
-across multiple port it may be required to select the correct
-configuration to accomplish the desired clock. Without this patch such
-port doesn't work in some specific ethernet speed as the clock will be
-set to the wrong frequency as we just select the first configuration for
-the related frequency instead of selecting the best one.
+> Second, this confuses runtime PM on CoachZ for the camera devices by
+> causing the camera clock controller's runtime PM usage_count to go
+> negative after resuming from suspend. This is because runtime PM is
+> being used on the clock controller while runtime PM is disabled for the
+> device.
+> 
+> The reason for the negative count is because a GDSC is represented as a
+> genpd and each genpd that is attached to a device is resumed during the
+> noirq phase of system wide suspend/resume (see the noirq suspend ops
+> assignment in pm_genpd_init() for more details). The camera GDSCs are
+> attached to camera devices with the 'power-domains' property in DT.
+> Every device has runtime PM disabled in the late system suspend phase
+> via __device_suspend_late(). Runtime PM is not usable until runtime PM
+> is enabled in device_resume_early(). The noirq phases run after the
+> 'late' and before the 'early' phase of suspend/resume. When the genpds
+> are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
+> that calls pm_runtime_resume_and_get() and that returns -EACCES to
+> indicate failure to resume because runtime PM is disabled for all
+> devices.
 
-Tested-by: Robert Marko <robimarko@gmail.com> # ipq8074 Qnap QHora-301W
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/qcom/gcc-ipq8074.c | 64 +++++++++++++++++++++++++---------
- 1 file changed, 48 insertions(+), 16 deletions(-)
+Probably worth mentioning the fact that those runtime PM calls
+unconditionally failing during resume means that the GDSCs are never
+even enabled.
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 42d185fe19c8..02d04a552b78 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -1787,13 +1787,21 @@ static struct clk_regmap_div nss_port4_tx_div_clk_src = {
- 	},
- };
- 
-+static const struct freq_conf ftbl_nss_port5_rx_clk_src_25[] = {
-+	C(P_UNIPHY1_RX, 12.5, 0, 0),
-+	C(P_UNIPHY0_RX, 5, 0, 0),
-+};
-+
-+static const struct freq_conf ftbl_nss_port5_rx_clk_src_125[] = {
-+	C(P_UNIPHY1_RX, 2.5, 0, 0),
-+	C(P_UNIPHY0_RX, 1, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY1_RX, 12.5, 0, 0),
--	F(25000000, P_UNIPHY0_RX, 5, 0, 0),
-+	FM(25000000, ftbl_nss_port5_rx_clk_src_25),
- 	F(78125000, P_UNIPHY1_RX, 4, 0, 0),
--	F(125000000, P_UNIPHY1_RX, 2.5, 0, 0),
--	F(125000000, P_UNIPHY0_RX, 1, 0, 0),
-+	FM(125000000, ftbl_nss_port5_rx_clk_src_125),
- 	F(156250000, P_UNIPHY1_RX, 2, 0, 0),
- 	F(312500000, P_UNIPHY1_RX, 1, 0, 0),
- 	{ }
-@@ -1829,13 +1837,21 @@ static struct clk_regmap_div nss_port5_rx_div_clk_src = {
- 	},
- };
- 
-+static struct freq_conf ftbl_nss_port5_tx_clk_src_25[] = {
-+	C(P_UNIPHY1_TX, 12.5, 0, 0),
-+	C(P_UNIPHY0_TX, 5, 0, 0),
-+};
-+
-+static struct freq_conf ftbl_nss_port5_tx_clk_src_125[] = {
-+	C(P_UNIPHY1_TX, 2.5, 0, 0),
-+	C(P_UNIPHY0_TX, 1, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY1_TX, 12.5, 0, 0),
--	F(25000000, P_UNIPHY0_TX, 5, 0, 0),
-+	FM(25000000, ftbl_nss_port5_tx_clk_src_25),
- 	F(78125000, P_UNIPHY1_TX, 4, 0, 0),
--	F(125000000, P_UNIPHY1_TX, 2.5, 0, 0),
--	F(125000000, P_UNIPHY0_TX, 1, 0, 0),
-+	FM(125000000, ftbl_nss_port5_tx_clk_src_125),
- 	F(156250000, P_UNIPHY1_TX, 2, 0, 0),
- 	F(312500000, P_UNIPHY1_TX, 1, 0, 0),
- 	{ }
-@@ -1871,13 +1887,21 @@ static struct clk_regmap_div nss_port5_tx_div_clk_src = {
- 	},
- };
- 
-+static struct freq_conf ftbl_nss_port6_rx_clk_src_25[] = {
-+	C(P_UNIPHY2_RX, 5, 0, 0),
-+	C(P_UNIPHY2_RX, 12.5, 0, 0),
-+};
-+
-+static struct freq_conf ftbl_nss_port6_rx_clk_src_125[] = {
-+	C(P_UNIPHY2_RX, 1, 0, 0),
-+	C(P_UNIPHY2_RX, 2.5, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY2_RX, 5, 0, 0),
--	F(25000000, P_UNIPHY2_RX, 12.5, 0, 0),
-+	FM(25000000, ftbl_nss_port6_rx_clk_src_25),
- 	F(78125000, P_UNIPHY2_RX, 4, 0, 0),
--	F(125000000, P_UNIPHY2_RX, 1, 0, 0),
--	F(125000000, P_UNIPHY2_RX, 2.5, 0, 0),
-+	FM(125000000, ftbl_nss_port6_rx_clk_src_125),
- 	F(156250000, P_UNIPHY2_RX, 2, 0, 0),
- 	F(312500000, P_UNIPHY2_RX, 1, 0, 0),
- 	{ }
-@@ -1913,13 +1937,21 @@ static struct clk_regmap_div nss_port6_rx_div_clk_src = {
- 	},
- };
- 
-+static struct freq_conf ftbl_nss_port6_tx_clk_src_25[] = {
-+	C(P_UNIPHY2_TX, 5, 0, 0),
-+	C(P_UNIPHY2_TX, 12.5, 0, 0),
-+};
-+
-+static struct freq_conf ftbl_nss_port6_tx_clk_src_125[] = {
-+	C(P_UNIPHY2_TX, 1, 0, 0),
-+	C(P_UNIPHY2_TX, 2.5, 0, 0),
-+};
-+
- static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
--	F(25000000, P_UNIPHY2_TX, 5, 0, 0),
--	F(25000000, P_UNIPHY2_TX, 12.5, 0, 0),
-+	FM(25000000, ftbl_nss_port6_tx_clk_src_25),
- 	F(78125000, P_UNIPHY2_TX, 4, 0, 0),
--	F(125000000, P_UNIPHY2_TX, 1, 0, 0),
--	F(125000000, P_UNIPHY2_TX, 2.5, 0, 0),
-+	FM(125000000, ftbl_nss_port6_tx_clk_src_125),
- 	F(156250000, P_UNIPHY2_TX, 2, 0, 0),
- 	F(312500000, P_UNIPHY2_TX, 1, 0, 0),
- 	{ }
--- 
-2.37.2
+Seems like the PM runtime usage counters would still be balanced after
+this though as they are decremented also on failure during suspend (i.e.
+domain remains off and no usage counter is incremented during resume).
 
+But this is clearly just very broken.
+
+> Upon closer inspection, calling runtime PM APIs like this in the GDSC
+> driver doesn't make sense. It was intended to make sure the GDSC for the
+> clock controller providing other GDSCs was enabled, specifically the
+> MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
+> that GDSC register accesses succeeded. That will already happen because
+> we make the 'dev->pm_domain' a parent domain of each GDSC we register in
+> gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
+> are accessed, we'll enable the parent domain (in this specific case
+> MMCX).
+> 
+> We also remove any getting of runtime PM during registration, because
+> when a genpd is registered it increments the count on the parent if the
+> genpd itself is already enabled. And finally, the runtime PM state of
+> the clk controller registering the GDSC shouldn't matter to the
+> subdomain setup. Therefore we always assign 'dev' unconditionally so
+> when GDSCs are removed we properly unlink the GDSC from the clk
+> controller's pm_domain.
+
+This last bit makes no sense as 'dev' was only used for the runtime PM
+management and should be removed by this patch.
+
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Johan Hovold <johan+linaro@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Matthias Kaehlcke <mka@chromium.org>
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
+> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+> 
+> Changes from v1 (https://lore.kernel.org/r/20221101233421.997149-1-swboyd@chromium.org):
+>  * Fix ret thinko
+>  * Update kerneldoc on 'dev' member
+
+No credit to reviewers (e.g. names in parentheses)?
+
+>  drivers/clk/qcom/gdsc.c | 62 +++++------------------------------------
+>  drivers/clk/qcom/gdsc.h |  2 +-
+>  2 files changed, 8 insertions(+), 56 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 7cf5e130e92f..36d44eec03b6 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+
+> @@ -56,22 +55,6 @@ enum gdsc_status {
+>  	GDSC_ON
+>  };
+>  
+> -static int gdsc_pm_runtime_get(struct gdsc *sc)
+> -{
+> -	if (!sc->dev)
+> -		return 0;
+> -
+> -	return pm_runtime_resume_and_get(sc->dev);
+> -}
+> -
+> -static int gdsc_pm_runtime_put(struct gdsc *sc)
+> -{
+> -	if (!sc->dev)
+> -		return 0;
+> -
+> -	return pm_runtime_put_sync(sc->dev);
+> -}
+> -
+ 
+> -static int gdsc_enable(struct generic_pm_domain *domain)
+> +static int gdsc_disable(struct generic_pm_domain *domain)
+>  {
+>  	struct gdsc *sc = domain_to_gdsc(domain);
+>  	int ret;
+>  
+> -	ret = gdsc_pm_runtime_get(sc);
+> -	if (ret)
+> -		return ret;
+> -
+> -	return _gdsc_enable(sc);
+> -}
+ 
+> -static int gdsc_disable(struct generic_pm_domain *domain)
+> -{
+> -	struct gdsc *sc = domain_to_gdsc(domain);
+> -	int ret;
+> -
+> -	ret = _gdsc_disable(sc);
+> -
+> -	gdsc_pm_runtime_put(sc);
+> -
+> -	return ret;
+> -}
+
+> @@ -541,8 +494,7 @@ int gdsc_register(struct gdsc_desc *desc,
+>  	for (i = 0; i < num; i++) {
+>  		if (!scs[i])
+>  			continue;
+> -		if (pm_runtime_enabled(dev))
+> -			scs[i]->dev = dev;
+> +		scs[i]->dev = dev;
+
+As mentioned above, the gdsc dev pointer is now unused and should be
+removed.
+
+>  		scs[i]->regmap = regmap;
+>  		scs[i]->rcdev = rcdev;
+>  		ret = gdsc_init(scs[i]);
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 981a12c8502d..47de72834a85 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -30,7 +30,7 @@ struct reset_controller_dev;
+>   * @resets: ids of resets associated with this gdsc
+>   * @reset_count: number of @resets
+>   * @rcdev: reset controller
+> - * @dev: the device holding the GDSC, used for pm_runtime calls
+> + * @dev: the device providing the GDSC
+>   */
+>  struct gdsc {
+>  	struct generic_pm_domain	pd;
+> 
+> base-commit: 9abf2313adc1ca1b6180c508c25f22f9395cc780
+
+Johan
