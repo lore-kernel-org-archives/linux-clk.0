@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633E5C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 12:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A02F6C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 12:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231358AbiKCMde (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 08:33:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
+        id S229805AbiKCMjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 08:39:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231620AbiKCMde (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 08:33:34 -0400
+        with ESMTP id S231182AbiKCMjh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 08:39:37 -0400
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD11BF44;
-        Thu,  3 Nov 2022 05:33:32 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 817295C00F5;
-        Thu,  3 Nov 2022 08:33:31 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C84EB11162;
+        Thu,  3 Nov 2022 05:39:35 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9DFA35C0172;
+        Thu,  3 Nov 2022 08:39:32 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 03 Nov 2022 08:33:31 -0400
+  by compute4.internal (MEProxy); Thu, 03 Nov 2022 08:39:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1667478811; x=
-        1667565211; bh=BZrwsW27orAaFsHeOq+6v+A2mK56RKbIDvtFycbgvzw=; b=p
-        G+HEkObck7JV/djZFB1O5VfKbPPuIoth7vtg/ITJZRuO6wc0+9rjw9cTP9oHPnFW
-        4sh3i8UtPpTtAMq0O+A+idKgT6wJtnPrYuosiRkRvjITx0lJxJ9SoRpk68Rpf9VJ
-        Rhf8G+OOmGR/Fs1Fw9t5joScg++7hKIVlkK9rafBpnKf3gjddakGLj9XUoyzV5Tq
-        ZIJ1hSpjYSH+74VYzaGpWm7UvgxCZAUHLRohhqerWLyu8YQ2azqT211S2BBMLg+t
-        SHMe3BuxSUZhznGTspMAYs2zpZd8h39Q2JBpgO/x2f1wtY8bQ/2vKYjlT95HXtJM
-        NeCxZorpa20AKt+hj8wGg==
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1667479172; x=
+        1667565572; bh=tBDrAJ8sBb+woFd54hehHJ+Mvs/qgHmsd/IMMfzwL5E=; b=s
+        ZPnXjtXJ24nQmg6bvr8jGO3usTIGpanu8VdhKsagUAuwNRRagw3YKsjawKLwfo8g
+        Akl5YYx1BLete5+JwJOUhgu9NnUCNteJC+LmkO9YO0kCulpOBUY3uOenh3W3z6Xx
+        Gmp1OG94ww4KQi7NLJ623RSt1fAI0iZrCsWGFIIK4rQ3ip4kVIRQo9ldC3LpwG61
+        zilrVznG71EFroStD1WvjmuK+n8Z6b+C4Le0IzbVCQZ04odCzIVO/pYLH0TfgSyO
+        Bvz2Z2ZIHC9bYSG0LaiJF89jWgd7/FWMPkzIYzNxVvhUY+WDUucY2ZIDIzxK5a7C
+        hALSGEybH7n+hsRw2VYdA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:date:date:feedback-id:feedback-id:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1667478811; x=
-        1667565211; bh=BZrwsW27orAaFsHeOq+6v+A2mK56RKbIDvtFycbgvzw=; b=R
-        ID5DzaqXtAaVxDZTz6cxdQB+qSNNAeSxpRsy3FTwVVORO3+/GXOatZNPRZycyAVW
-        LDcTzSU/HT9uDqF3NiWiZIP614gd9qgcEsuXSoBakdRFRoEZYrEXxWPsTFA8/eUc
-        7ef096cpmAFx6Bou9beca5zHPV0AgPjtm9Z/D0GX/CJ98pDUBbja9A3ZHdluq/gB
-        ddFnH49a/7UTNMFK1sv4WhQGeTpbUicDkhpVHslnDD1YEKOqlxoVUx6TiMQSa30B
-        s4A69HFVbvG2WGyZUQSpq32q7aodY8vI6uikclJSFIyIPHSiCA5zuB5/NnjF5iYW
-        ne1K+7icRsG+qmShn+Ghw==
-X-ME-Sender: <xms:G7VjY3AbT0pQ4SX_CMmLZyQ57rJaKDIrylhb-n-MkWykIWXrvdBx6g>
-    <xme:G7VjY9hqi2kM-MPsEO00D0NigxFfvRbqsIjjVEmBs1ly4vpDRnNMncZgpcodG4PS_
-    pLtGyxkS3IZZaVTYvU>
-X-ME-Received: <xmr:G7VjYynm2vjTdtG1dBQg8EtQ0SSsDbYNzX_y6bl-knS59Gq1IKUaishVxdxMaDYM_nFuAwR96D__oRPSqu0XPxU30cCmVMN8Qtp3eSkFu8smzQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrudelgdefiecutefuodetggdotefrodftvf
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1667479172; x=
+        1667565572; bh=tBDrAJ8sBb+woFd54hehHJ+Mvs/qgHmsd/IMMfzwL5E=; b=h
+        S9/f7ziUg8qd3mt9TTb6dfevR4k97x2pk76OZKcdNh9syW3wNDD7EaexNFY/0wnc
+        JRzgBu+712wbVELM+/z9m6k+/w7Xng5/zS45CBXPl58h1eimZskCi2KXuwnvm+iS
+        rNI9yWldH8XKQIAhcH0BWeRV+E2sP7zvgj/NyykFG3K3BFvbg7+XTQuVTdIhi/ex
+        SKuarjBurtVPdG6wcrdwbwvqQFmlH1XwmZA7nWpjFror4b4WbNq1QxE76HCDIXvW
+        LelKO+G6nVlsdTiGhNbURZ1L8HR0m6YBWCSaCxqfq/QvllrgNlmPlNYBqcub8m2q
+        QZJjZoWINmxL3GD62Vzwg==
+X-ME-Sender: <xms:hLZjY0VDIOhIdTUq0fNsfA-n068vZenIU0urL9crnnU4O41twMTSpg>
+    <xme:hLZjY4m-vvOUqhDh75GyNmWsgzAIaymTVQ_nrvZ0JvQCj_dlzLuqsSdQJbE7xL71O
+    S8yenFzc2bzI5vIdqQ>
+X-ME-Received: <xmr:hLZjY4aOEpPC_MeFiLzoCZxJX0AMNkH-LC8LmF4Fp3IlaySwP-L4EdrDBMJuUqwGI936GpYH_czCOkR8to2RBNTcgZpbkl_QyjvWo2s2g31kFg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrudelgdefjecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
@@ -55,14 +55,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrudelgdefiecutefuodetggdote
     htthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeuteef
     teefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:G7VjY5xBrKBwUvWb-uHG4FAszPLyYTou82jTpIrc7Td_M6AJ9X1l0g>
-    <xmx:G7VjY8TbXSyvEeZbeIIQ_-yWNUJHFQMmqAS9xSq2kV4QFgDmT0tVcQ>
-    <xmx:G7VjY8ZG_0i3oLMM0MPHAmrO9mTlJup2ygxqKVMxhN6oRtsn59sG0w>
-    <xmx:G7VjY_Gqo8eeFI0EoQ2Q1uJU4lLah6XbIEKEoLMr-Mz8mpDf4c0LsQ>
+X-ME-Proxy: <xmx:hLZjYzV_XidNmFwVsb6YOrvo7G-zHlIxbYbH3pWHZPLOaFDJrqWCyg>
+    <xmx:hLZjY-mLpSBw_4fuK3uYAyvuqZN9KpnF1KxEztnIFe2pKs9fuRdPhQ>
+    <xmx:hLZjY4eE4ivv1eUIlDPPFqW0BgDnZkAjQT2NNO67-ofRF7Gz7L8Cfw>
+    <xmx:hLZjY44kOom2vzLep52d5746YDNDiQsnwFcRCwGNHU9KgB8-9GdxkQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Nov 2022 08:33:30 -0400 (EDT)
-Date:   Thu, 3 Nov 2022 13:33:28 +0100
+ 3 Nov 2022 08:39:31 -0400 (EDT)
+Date:   Thu, 3 Nov 2022 13:39:30 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -71,55 +71,47 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         <angelogioacchino.delregno@collabora.com>,
         linux-clk@vger.kernel.org
 Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
-Message-ID: <20221103123328.stzhtq5e2jscjdxd@houat>
+Message-ID: <20221103123930.koc22wtbch56ql4y@houat>
 References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech>
  <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
  <20221026020800.38AC8C433C1@smtp.kernel.org>
+ <20221026135215.nqndtcb2unxqwwux@houat>
+ <20221027214509.8EC66C433C1@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221026020800.38AC8C433C1@smtp.kernel.org>
+In-Reply-To: <20221027214509.8EC66C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Going back to this mail.
-
-On Tue, Oct 25, 2022 at 07:07:58PM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-10-18 06:52:59)
-> > The determine_rate hook allows to select the proper parent and its rate
-> > for a given clock configuration. On another hand, set_parent is there to
-> > change the parent of a mux.
+On Thu, Oct 27, 2022 at 02:45:07PM -0700, Stephen Boyd wrote:
+> Quoting maxime@cerno.tech (2022-10-26 06:52:15)
+> > On Tue, Oct 25, 2022 at 07:07:58PM -0700, Stephen Boyd wrote:
+> > > but I'm fairly certain a coccinelle script can detect most of these
+> > > because clk_ops are usually statically defined (although not always).
+> > >=20
+> > > Either way I already see that 'owl_comp_div_ops' will trigger this
+> > > warning. And 'at91sam9x5_smd_ops' looks even more likely. Given that =
+I'm
+> > > not super keen on applying this patch.
 > >=20
-> > Some clocks provide a set_parent hook but don't implement
-> > determine_rate. In such a case, set_parent is pretty much useless since
-> > the clock framework will always assume the current parent is to be used,
-> > and we will thus never change it.
+> > It's the reason why I didn't return an error at first, I wanted to
+> > report that it's invalid and let to drivers the chance to be fixed
+> > still.
 > >=20
-> > This situation can be solved in two ways:
-> >   - either we don't need to change the parent, and we thus shouldn't
-> >     implement set_parent;
-> >   - or we don't want to change the parent, in this case we should set
-> >     CLK_SET_RATE_NO_REPARENT;
-> >   - or we're missing a determine_rate implementation.
-> >=20
-> > The latter is probably just an oversight from the driver's author, and
-> > we should thus raise their awareness about the fact that the current
-> > state of the driver is confusing.
+> > Should I take your above comment as you'd rather have the affected
+> > drivers fixed in this patch and we then return an error, or is it that
+> > you don't want that patch at all?
 >=20
-> There is another case which is a leaf clk that is a mux where you only
-> expect clk_set_parent() to be used, and not clk_set_rate(). This use
-> case is odd though, so I'm not sure how much we care.
+> You can try fixing all the drivers that are failing to meet this
+> requirement (found with grep) and if they are fixed we can start
+> printing the warning. That seems to be the practical approach to
+> getting this patch accepted. The TODO irks me to be honest. I'd rather
+> we fix everything and make it an error and be done with it.
 
-It looks like there's a good number of clocks that do indeed only
-provide get_parent / set_parent. It's hard to tell if it's an oversight
-or a choice.
-
-I think we can make that decision explicit by providing a determine_rate
-helper that always returns the current parent and its rate. It shouldn't
-change anything from a CCF behavior point of view, and it makes it clear
-what the behavior is. And if someone wants something else, then they can
-change it to whatever they want.
+ACK. I had a look this morning and there's indeed a good number of
+clocks in that case. I'll work on it.
 
 Maxime
