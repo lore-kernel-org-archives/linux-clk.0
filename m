@@ -2,76 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF56C43217
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 20:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEE4C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 21:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbiKCU4A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 16:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
+        id S230341AbiKCVoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 17:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230410AbiKCUzz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 16:55:55 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27AF920F60
-        for <linux-clk@vger.kernel.org>; Thu,  3 Nov 2022 13:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=ZIsxFHujLlY59v
-        14nd1/go7NFo8ITL4grttW9boU+P0=; b=rvYUVJHhBvBABJeLNcU2iXlOnR7lLF
-        j3WYwhgX/hOOkVWmKBq6gizIoU4CZAb9KfrL5vNMZSJCsGoMzFcwyGdz26iZCY89
-        oWKkV21MYYBxFdR8nANc+N5hbryLytuWiRG3CMu/0oeoW2WufFMM/+tByF+etrCX
-        qqyymmEqelzLg=
-Received: (qmail 2787695 invoked from network); 3 Nov 2022 21:55:51 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2022 21:55:51 +0100
-X-UD-Smtp-Session: l3s3148p1@eJq5LpfsvOUujns0
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] clk: renesas: r8a779g0: Add TMU and SASYNCRT clocks
-Date:   Thu,  3 Nov 2022 21:55:42 +0100
-Message-Id: <20221103205546.24836-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221103205546.24836-1-wsa+renesas@sang-engineering.com>
-References: <20221103205546.24836-1-wsa+renesas@sang-engineering.com>
+        with ESMTP id S229487AbiKCVoX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 17:44:23 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AB320187;
+        Thu,  3 Nov 2022 14:44:22 -0700 (PDT)
+Received: from [192.168.2.125] (unknown [109.252.117.140])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7D6846602962;
+        Thu,  3 Nov 2022 21:44:19 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667511860;
+        bh=pPa/YSAVPL1N6jGFwvkkOusm5GGYIeJDDbcOgexGCEk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gfAzxu1Nz6i6XLCESRGtK2/omO1gKkqJpeReusnIZTkacUXJbT8AWmAW1zrBlZBbq
+         XsVuStpH7qS52LB7O+woOgODc/cDLFHtXMCVQ972MOz4s3K+HtVj2JB1iWeM5ni117
+         eisa1WIJ+MGtEJ4AN/LqS1lX+KXUTc13WIAvQv6z0WUadrQD0V4eATUBRnhlWkNUVA
+         4Cw8SzE0GqiZGYo0ZcDX+Q7zTXX0syCUhnu/TQKKCYNXGuuDmzLsNHZKlC+McxHYyf
+         ajSdKptZHXMKZwzLceUIvLl2ELT0nlq9R202ZysmvrqlxKfXESJBOCQVDHeR7yKA4e
+         pBS8bQ9N34QUw==
+Message-ID: <0e002130-868e-ca51-a1dd-091c269dba5d@collabora.com>
+Date:   Fri, 4 Nov 2022 00:44:16 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and
+ Tegra30
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     linux-tegra@vger.kernel.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
+References: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
+ <603a0227-7d25-b9da-6dc3-fa9fe1b951e7@collabora.com>
+ <20221102093255.0b5ba7d6@booty>
+Content-Language: en-US
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20221102093255.0b5ba7d6@booty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 11/2/22 11:32, Luca Ceresoli wrote:
+> Hello Dmitry,
+> 
+> On Mon, 31 Oct 2022 03:34:07 +0300
+> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> 
+>> On 10/28/22 10:48, luca.ceresoli@bootlin.com wrote:
+>>> From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>>>
+>>> On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
+>>> 7 integer bits + 1 decimal bit. This has been verified on both
+>>> documentation and real hardware for Tegra20 an on the documentation I was
+>>> able to find for Tegra30.
+>>>
+>>> However in the kernel code this clock is declared as an integer divider. A
+>>> consequence of this is that requesting 144 MHz for HOST1X which is fed by
+>>> pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
+>>> MHz (216 / 1.5).
+>>>
+>>> Fix by replacing the INT() macro with the MUX() macro which, despite the
+>>> name, defines a fractional divider. The only difference between the two
+>>> macros is the former does not have the TEGRA_DIVIDER_INT flag.
+>>>
+>>> Also move the line together with the other MUX*() ones to keep the existing
+>>> file organization.
+>>>
+>>> Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
+>>> Cc: stable@vger.kernel.org
+>>> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>>> ---
+>>>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+>>> index 4dcf7f7cb8a0..806d835ca0d2 100644
+>>> --- a/drivers/clk/tegra/clk-tegra-periph.c
+>>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+>>> @@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
+>>>  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
+>>>  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
+>>>  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
+>>> -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+>>>  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
+>>>  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
+>>>  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
+>>> @@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+>>>  	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
+>>>  	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
+>>>  	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
+>>> +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+>>>  	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
+>>>  	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
+>>>  	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),  
+>>
+>> This was attempted in the past
+>> https://lore.kernel.org/all/20180723085010.GK1636@tbergstrom-lnx.Nvidia.com/
+>>
+>> I assume here you're also porting the downstream patches to upstream.
+>> This one is too questionable. The host1x clock shouldn't affect overall
+>> performance to begin with. It doesn't make sense to use fractional clock
+>> just for getting extra KHz.
+> 
+> Thank you for the review and for the pointer!
+> 
+> Indeed I'm not sure this patch brings an actual improvement to my use
+> case, however I reached it by trying to replicate the configuration on
+> a known-working kernel 3.1, which uses a 1.5 divider. This seems to be
+> the same reason that led to the 2018 patch that also got rejected.
+> 
+> I'll be OK with dropping this patch after I have a 100% working setup
+> with an integer divider, which is very likely given your reply. But it
+> took time before I found the root cause of this issue, and I would like
+> to avoid other people waste time in the future, so what about adding a
+> comment there?
+> 
+> What about:
+> 
+>   /*
+>    * The host1x clock shouldn't affect overall performance. It doesn't
+>    * make sense to use fractional clock just for getting extra KHz, so
+>    * let's pretend it's an integer divider
+>    */
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 5cc0dc9149bc..7f0b4f75ff4d 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -130,6 +130,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED("s0d4_hsc",	R8A779G0_CLK_S0D4_HSC,	CLK_S0_HSC,	4, 1),
- 	DEF_FIXED("cl16m_hsc",	R8A779G0_CLK_CL16M_HSC,	CLK_S0_HSC,	48, 1),
- 	DEF_FIXED("s0d2_cc",	R8A779G0_CLK_S0D2_CC,	CLK_S0,		2, 1),
-+	DEF_FIXED("sasyncrt",	R8A779G0_CLK_SASYNCRT,	CLK_PLL5_DIV4,	48, 1),
- 	DEF_FIXED("sasyncperd1",R8A779G0_CLK_SASYNCPERD1, CLK_SASYNCPER,1, 1),
- 	DEF_FIXED("sasyncperd2",R8A779G0_CLK_SASYNCPERD2, CLK_SASYNCPER,2, 1),
- 	DEF_FIXED("sasyncperd4",R8A779G0_CLK_SASYNCPERD4, CLK_SASYNCPER,4, 1),
-@@ -185,6 +186,11 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("sdhi",		706,	R8A779G0_CLK_SD0),
- 	DEF_MOD("sydm0",	709,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("sydm1",	710,	R8A779G0_CLK_S0D6_PER),
-+	DEF_MOD("tmu0",		713,	R8A779G0_CLK_SASYNCRT),
-+	DEF_MOD("tmu1",		714,	R8A779G0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu2",		715,	R8A779G0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu3",		716,	R8A779G0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu4",		717,	R8A779G0_CLK_SASYNCPERD2),
- 	DEF_MOD("tpu0",		718,	R8A779G0_CLK_SASYNCPERD4),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779G0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779G0_CLK_CL16M),
+If host1x isn't the only clock like that, then comment shouldn't be
+directed to host1x. Have you checked other clocks?
+
+I'm curious who made that change originally in your downstream, was it
+coming from NVIDIA?
+
 -- 
-2.35.1
+Best regards,
+Dmitry
 
