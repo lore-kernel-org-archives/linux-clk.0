@@ -2,116 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A02F6C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 12:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D355AC43217
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 13:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbiKCMjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 08:39:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54660 "EHLO
+        id S231512AbiKCNV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 09:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231182AbiKCMjh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 08:39:37 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C84EB11162;
-        Thu,  3 Nov 2022 05:39:35 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9DFA35C0172;
-        Thu,  3 Nov 2022 08:39:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 03 Nov 2022 08:39:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1667479172; x=
-        1667565572; bh=tBDrAJ8sBb+woFd54hehHJ+Mvs/qgHmsd/IMMfzwL5E=; b=s
-        ZPnXjtXJ24nQmg6bvr8jGO3usTIGpanu8VdhKsagUAuwNRRagw3YKsjawKLwfo8g
-        Akl5YYx1BLete5+JwJOUhgu9NnUCNteJC+LmkO9YO0kCulpOBUY3uOenh3W3z6Xx
-        Gmp1OG94ww4KQi7NLJ623RSt1fAI0iZrCsWGFIIK4rQ3ip4kVIRQo9ldC3LpwG61
-        zilrVznG71EFroStD1WvjmuK+n8Z6b+C4Le0IzbVCQZ04odCzIVO/pYLH0TfgSyO
-        Bvz2Z2ZIHC9bYSG0LaiJF89jWgd7/FWMPkzIYzNxVvhUY+WDUucY2ZIDIzxK5a7C
-        hALSGEybH7n+hsRw2VYdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1667479172; x=
-        1667565572; bh=tBDrAJ8sBb+woFd54hehHJ+Mvs/qgHmsd/IMMfzwL5E=; b=h
-        S9/f7ziUg8qd3mt9TTb6dfevR4k97x2pk76OZKcdNh9syW3wNDD7EaexNFY/0wnc
-        JRzgBu+712wbVELM+/z9m6k+/w7Xng5/zS45CBXPl58h1eimZskCi2KXuwnvm+iS
-        rNI9yWldH8XKQIAhcH0BWeRV+E2sP7zvgj/NyykFG3K3BFvbg7+XTQuVTdIhi/ex
-        SKuarjBurtVPdG6wcrdwbwvqQFmlH1XwmZA7nWpjFror4b4WbNq1QxE76HCDIXvW
-        LelKO+G6nVlsdTiGhNbURZ1L8HR0m6YBWCSaCxqfq/QvllrgNlmPlNYBqcub8m2q
-        QZJjZoWINmxL3GD62Vzwg==
-X-ME-Sender: <xms:hLZjY0VDIOhIdTUq0fNsfA-n068vZenIU0urL9crnnU4O41twMTSpg>
-    <xme:hLZjY4m-vvOUqhDh75GyNmWsgzAIaymTVQ_nrvZ0JvQCj_dlzLuqsSdQJbE7xL71O
-    S8yenFzc2bzI5vIdqQ>
-X-ME-Received: <xmr:hLZjY4aOEpPC_MeFiLzoCZxJX0AMNkH-LC8LmF4Fp3IlaySwP-L4EdrDBMJuUqwGI936GpYH_czCOkR8to2RBNTcgZpbkl_QyjvWo2s2g31kFg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrudelgdefjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeuteef
-    teefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:hLZjYzV_XidNmFwVsb6YOrvo7G-zHlIxbYbH3pWHZPLOaFDJrqWCyg>
-    <xmx:hLZjY-mLpSBw_4fuK3uYAyvuqZN9KpnF1KxEztnIFe2pKs9fuRdPhQ>
-    <xmx:hLZjY4eE4ivv1eUIlDPPFqW0BgDnZkAjQT2NNO67-ofRF7Gz7L8Cfw>
-    <xmx:hLZjY44kOom2vzLep52d5746YDNDiQsnwFcRCwGNHU9KgB8-9GdxkQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Nov 2022 08:39:31 -0400 (EDT)
-Date:   Thu, 3 Nov 2022 13:39:30 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
+        with ESMTP id S231759AbiKCNVz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 09:21:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8FB64EA;
+        Thu,  3 Nov 2022 06:21:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 56EEBB827CE;
+        Thu,  3 Nov 2022 13:21:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B94C433D7;
+        Thu,  3 Nov 2022 13:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667481712;
+        bh=Z0XmaPzB8/5OxlKcz/hqxjFMPGgVEHY0wHqktG+DZyw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QMJhet3iZ569LqI2RxhJ5QYzFlGVAz2fMhJvGFncZ9+TDlBN8IsBWwRbCsWNl62rV
+         v3NXT0pBKTJ40xjG8hV4CrITh2ZH2vyuPJFFAFEtT1y3SE7/UfQjdHEZBDpdHOvhDt
+         viiBZPXECITtsksc5raOEclCxfXcbZG0Q02CT79apotPc37nIMwQNOaUemfYUs4SoU
+         FzDeUx9vYw/xVnY7VDJhWzvW2gumGTRAcOx1NqRphIXdFcfhXdmDKxCbdgbZs3MYDn
+         ReUZ7bHw3NeZRPiXZtDR6y02Ri9IzqeyJR+N910XuYeIyn5DjS8qUZGTY8AfpDPU6c
+         pGBWE0xPv4rVA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oqaA1-00082F-KI; Thu, 03 Nov 2022 14:21:34 +0100
+Date:   Thu, 3 Nov 2022 14:21:33 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
-Message-ID: <20221103123930.koc22wtbch56ql4y@houat>
-References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech>
- <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech>
- <20221026020800.38AC8C433C1@smtp.kernel.org>
- <20221026135215.nqndtcb2unxqwwux@houat>
- <20221027214509.8EC66C433C1@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+Message-ID: <Y2PAXX2oYL6iFTlB@hovoldconsulting.com>
+References: <20221101233421.997149-1-swboyd@chromium.org>
+ <Y2JL9/HFrb3E+CYY@hovoldconsulting.com>
+ <CAE-0n51Wuc6gVmsTOu4Nf4yx+6Wp-Oi3XZy06syhCMVmePWPEw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221027214509.8EC66C433C1@smtp.kernel.org>
+In-Reply-To: <CAE-0n51Wuc6gVmsTOu4Nf4yx+6Wp-Oi3XZy06syhCMVmePWPEw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 27, 2022 at 02:45:07PM -0700, Stephen Boyd wrote:
-> Quoting maxime@cerno.tech (2022-10-26 06:52:15)
-> > On Tue, Oct 25, 2022 at 07:07:58PM -0700, Stephen Boyd wrote:
-> > > but I'm fairly certain a coccinelle script can detect most of these
-> > > because clk_ops are usually statically defined (although not always).
-> > >=20
-> > > Either way I already see that 'owl_comp_div_ops' will trigger this
-> > > warning. And 'at91sam9x5_smd_ops' looks even more likely. Given that =
-I'm
-> > > not super keen on applying this patch.
-> >=20
-> > It's the reason why I didn't return an error at first, I wanted to
-> > report that it's invalid and let to drivers the chance to be fixed
-> > still.
-> >=20
-> > Should I take your above comment as you'd rather have the affected
-> > drivers fixed in this patch and we then return an error, or is it that
-> > you don't want that patch at all?
->=20
-> You can try fixing all the drivers that are failing to meet this
-> requirement (found with grep) and if they are fixed we can start
-> printing the warning. That seems to be the practical approach to
-> getting this patch accepted. The TODO irks me to be honest. I'd rather
-> we fix everything and make it an error and be done with it.
+On Wed, Nov 02, 2022 at 09:53:49AM -0700, Stephen Boyd wrote:
+> Quoting Johan Hovold (2022-11-02 03:52:39)
 
-ACK. I had a look this morning and there's indeed a good number of
-clocks in that case. I'll work on it.
+> > > Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Cc: Johan Hovold <johan+linaro@kernel.org>
+> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Cc: Taniya Das <quic_tdas@quicinc.com>
+> > > Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> > > Cc: Douglas Anderson <dianders@chromium.org>
+> > > Cc: Matthias Kaehlcke <mka@chromium.org>
+> > > Reported-by: Stephen Boyd <swboyd@chromium.org>
+> >
+> > We typically don't add Reported-by tags for bugs we find and fix
+> > ourselves.
+> 
+> Heh, I didn't see anything like that in Documentation/ so it seems fine.
+> I debugged my problem and reported it.
 
-Maxime
+I'd say the documentation is pretty clear on this matter:
+
+  Reported-by: names a user who reported a problem which is fixed by this
+  patch; this tag is used to give credit to the (often underappreciated)
+  people who test our code and let us know when things do not work
+  correctly.
+
+  - Documentation/process/5.Posting.rst
+
+  The Reported-by tag gives credit to people who find bugs and report
+  them and it hopefully inspires them to help us again in the future.
+  Please note that if the bug was reported in private, then ask for
+  permission first before using the Reported-by tag.
+
+  - Documentation/process/submitting-patches.rst
+
+Just like you don't add a Tested-by tag for every patch you submit, it
+is implied that you found the issue you fix unless you explicitly
+attribute that to a third party using Reported-by.
+
+This is the first time I see anyone trying to use Reported-by this way,
+and even if you think the documentation isn't clear enough on this, our
+praxis is.
+
+Johan
