@@ -2,156 +2,190 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEE4C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 21:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B22BC4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 22:11:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230341AbiKCVoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 17:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54974 "EHLO
+        id S230387AbiKCWLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 18:11:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiKCVoX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 17:44:23 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AB320187;
-        Thu,  3 Nov 2022 14:44:22 -0700 (PDT)
-Received: from [192.168.2.125] (unknown [109.252.117.140])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S231637AbiKCWLi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 18:11:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A31622B06;
+        Thu,  3 Nov 2022 15:11:36 -0700 (PDT)
+Received: from notapiano (unknown [IPv6:2600:4041:5b1a:cd00:524d:e95d:1a9c:492a])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7D6846602962;
-        Thu,  3 Nov 2022 21:44:19 +0000 (GMT)
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 88186660295F;
+        Thu,  3 Nov 2022 22:11:33 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1667511860;
-        bh=pPa/YSAVPL1N6jGFwvkkOusm5GGYIeJDDbcOgexGCEk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=gfAzxu1Nz6i6XLCESRGtK2/omO1gKkqJpeReusnIZTkacUXJbT8AWmAW1zrBlZBbq
-         XsVuStpH7qS52LB7O+woOgODc/cDLFHtXMCVQ972MOz4s3K+HtVj2JB1iWeM5ni117
-         eisa1WIJ+MGtEJ4AN/LqS1lX+KXUTc13WIAvQv6z0WUadrQD0V4eATUBRnhlWkNUVA
-         4Cw8SzE0GqiZGYo0ZcDX+Q7zTXX0syCUhnu/TQKKCYNXGuuDmzLsNHZKlC+McxHYyf
-         ajSdKptZHXMKZwzLceUIvLl2ELT0nlq9R202ZysmvrqlxKfXESJBOCQVDHeR7yKA4e
-         pBS8bQ9N34QUw==
-Message-ID: <0e002130-868e-ca51-a1dd-091c269dba5d@collabora.com>
-Date:   Fri, 4 Nov 2022 00:44:16 +0300
+        s=mail; t=1667513495;
+        bh=pgY0dvtyM8FwNva19FmPelXivw7RaAAO4XKizZMcieY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CFxur4ptUBDg7nGhx6dDOLzWzdzgMgpxTlSmAPSCP55GF1G+wVuCCHQeFU6+igc2b
+         jOhlKLfU2M0GUXM+S0c6g/JTL6GBReHOEz3BEbJsm9rTAe9hkY9ASLOMVKu9HY+y1T
+         H8YQpaU63a+D1cbi+B2YA5wUoFHz0n+L+rUTdURifcJPTfF0vf8BOmGrfAquN1YTsc
+         5LLR36LQ7R30Ony0YDIp59ut26FmT5HX79waVCxst2/XyNkDt+Pkb5gVHmRRKDaXKZ
+         1bHzhBQtXoHsmBvyRI6thybjEcHTPudxLp360clRIl7OlICUHJj+uVW2GcAxHHkEQ9
+         Qv6dp8PWOTxEw==
+Date:   Thu, 3 Nov 2022 18:11:30 -0400
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     Rex-BC Chen =?utf-8?B?KOmZs+afj+i+sCk=?= 
+        <Rex-BC.Chen@mediatek.com>
+Cc:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "angelogioacchino.delregno@collabora.com" 
+        <angelogioacchino.delregno@collabora.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wenst@chromium.org" <wenst@chromium.org>,
+        Runyang Chen =?utf-8?B?KOmZiOa2pua0iyk=?= 
+        <Runyang.Chen@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Miles Chen =?utf-8?B?KOmZs+awkeaouik=?= 
+        <Miles.Chen@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] reset: mediatek: Move MediaTek system clock reset
+ to reset/mediatek
+Message-ID: <20221103221130.eosmwl2vjo36va6c@notapiano>
+References: <20221021104804.21391-1-rex-bc.chen@mediatek.com>
+ <20221021104804.21391-2-rex-bc.chen@mediatek.com>
+ <8b73e38b-ae78-1f85-f5f0-f13bce6e45de@collabora.com>
+ <bcfd608b029377565dc656adf24effeba95d2433.camel@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and
- Tegra30
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
-References: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
- <603a0227-7d25-b9da-6dc3-fa9fe1b951e7@collabora.com>
- <20221102093255.0b5ba7d6@booty>
-Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20221102093255.0b5ba7d6@booty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bcfd608b029377565dc656adf24effeba95d2433.camel@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/2/22 11:32, Luca Ceresoli wrote:
-> Hello Dmitry,
+On Mon, Oct 31, 2022 at 05:14:40AM +0000, Rex-BC Chen (陳柏辰) wrote:
+> On Tue, 2022-10-25 at 12:36 +0200, AngeloGioacchino Del Regno wrote:
+> > Il 21/10/22 12:48, Bo-Chen Chen ha scritto:
+[..]
+> > > --- a/drivers/clk/mediatek/Kconfig
+> > > +++ b/drivers/clk/mediatek/Kconfig
+> > > @@ -8,6 +8,7 @@ menu "Clock driver for MediaTek SoC"
+> > >   config COMMON_CLK_MEDIATEK
+> > >   	tristate
+> > >   	select RESET_CONTROLLER
+> > > +	select RESET_MEDIATEK_SYSCLK
+> > >   	help
+> > >   	  MediaTek SoCs' clock support.
+> > >   
+> > 
+> > ..snip..
+> > 
+> > > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> > > index 3e7e5fd633a8..5cef7ccc9a7d 100644
+> > > --- a/drivers/reset/Makefile
+> > > +++ b/drivers/reset/Makefile
+> > > @@ -1,6 +1,7 @@
+> > >   # SPDX-License-Identifier: GPL-2.0
+> > >   obj-y += core.o
+> > >   obj-y += hisilicon/
+> > > +obj-y += mediatek/
+> > 
+> > I'd be more for
+> > 
+> > obj-$(CONFIG_ARCH_MEDIATEK) += mediatek/
+> > 
+> > as there's no reason to even compile these if MTK support isn't
+> > enabled at all.
+> > 
 > 
-> On Mon, 31 Oct 2022 03:34:07 +0300
-> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> Hello Angelo,
 > 
->> On 10/28/22 10:48, luca.ceresoli@bootlin.com wrote:
->>> From: Luca Ceresoli <luca.ceresoli@bootlin.com>
->>>
->>> On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
->>> 7 integer bits + 1 decimal bit. This has been verified on both
->>> documentation and real hardware for Tegra20 an on the documentation I was
->>> able to find for Tegra30.
->>>
->>> However in the kernel code this clock is declared as an integer divider. A
->>> consequence of this is that requesting 144 MHz for HOST1X which is fed by
->>> pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
->>> MHz (216 / 1.5).
->>>
->>> Fix by replacing the INT() macro with the MUX() macro which, despite the
->>> name, defines a fractional divider. The only difference between the two
->>> macros is the former does not have the TEGRA_DIVIDER_INT flag.
->>>
->>> Also move the line together with the other MUX*() ones to keep the existing
->>> file organization.
->>>
->>> Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
->>> Cc: stable@vger.kernel.org
->>> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->>> ---
->>>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
->>> index 4dcf7f7cb8a0..806d835ca0d2 100644
->>> --- a/drivers/clk/tegra/clk-tegra-periph.c
->>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
->>> @@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
->>>  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
->>>  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
->>>  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
->>> -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
->>>  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
->>>  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
->>>  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
->>> @@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
->>>  	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
->>>  	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
->>>  	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
->>> +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
->>>  	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
->>>  	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
->>>  	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),  
->>
->> This was attempted in the past
->> https://lore.kernel.org/all/20180723085010.GK1636@tbergstrom-lnx.Nvidia.com/
->>
->> I assume here you're also porting the downstream patches to upstream.
->> This one is too questionable. The host1x clock shouldn't affect overall
->> performance to begin with. It doesn't make sense to use fractional clock
->> just for getting extra KHz.
+> thanks for your review.
+> I obj-y += mediatek/ because if I don't write like this, it will build
+> fail for x86.
+> Is there any suggestion for this?
 > 
-> Thank you for the review and for the pointer!
-> 
-> Indeed I'm not sure this patch brings an actual improvement to my use
-> case, however I reached it by trying to replicate the configuration on
-> a known-working kernel 3.1, which uses a 1.5 divider. This seems to be
-> the same reason that led to the 2018 patch that also got rejected.
-> 
-> I'll be OK with dropping this patch after I have a 100% working setup
-> with an integer divider, which is very likely given your reply. But it
-> took time before I found the root cause of this issue, and I would like
-> to avoid other people waste time in the future, so what about adding a
-> comment there?
-> 
-> What about:
-> 
->   /*
->    * The host1x clock shouldn't affect overall performance. It doesn't
->    * make sense to use fractional clock just for getting extra KHz, so
->    * let's pretend it's an integer divider
->    */
+> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
+> linux-ld: vmlinux.o: in function `mtk_pericfg_init':
+> clk-mt8135.c:(.init.text+0x12a2b7): undefined reference to
+> `mtk_reset_init_with_node'
+> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
+> linux-ld: vmlinux.o: in function `mtk_infrasys_init':
+> clk-mt8135.c:(.init.text+0x12a3bb): undefined reference to
+> `mtk_reset_init_with_node'
+> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
+> linux-ld: vmlinux.o: in function `mtk_infrasys_init':
+> clk-mt8173.c:(.init.text+0x12ac47): undefined reference to
+> `mtk_reset_init_with_node'
+> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
+> linux-ld: vmlinux.o: in function `mtk_pericfg_init':
+> clk-mt8173.c:(.init.text+0x12ad25): undefined reference to
+> `mtk_reset_init_with_node'
+> /tmp/src_kernel/kernel/mediatek/scripts/Makefile.vmlinux:34: recipe for
+> target 'vmlinux' failed
+> make[3]: *** [vmlinux] Error 1
+> make[3]: Target '__default' not remade because of errors.
+> /tmp/src_kernel/kernel/mediatek/Makefile:1236: recipe for target
+> 'vmlinux' failed
+> make[2]: *** [vmlinux] Error 2
+> make[2]: Target '__all' not remade because of errors.
+> make[2]: Leaving directory '/tmp/out_kernel/out/allyesconfig.x86_64'
+> Makefile:231: recipe for target '__sub-make' failed
+> make[1]: *** [__sub-make] Error 2
+> make[1]: Target '__all' not remade because of errors.
+> make[1]: Leaving directory '/tmp/src_kernel/kernel/mediatek'
+> build/core/kbuild_test.mk:61: recipe for target 'all' failed
+> make: *** [all] Error 2
+> [11:44:04] Error: failed to build allyesconfig.x86_64
 
-If host1x isn't the only clock like that, then comment shouldn't be
-directed to host1x. Have you checked other clocks?
+From the errors it seems like you're compiling the clock drivers (like
+clk-mt8135.c) but not the sysclk reset driver (reset-mediatek-sysclk.c). Given
+that this happened when you added CONFIG_ARCH_MEDIATEK to that Makefile, then it
+must mean that that config is disabled, which would make sense for a x86 build.
+But then the fact that the clock driver was built even in this case must mean
+that you have COMPILE_TEST enabled.
 
-I'm curious who made that change originally in your downstream, was it
-coming from NVIDIA?
+I guess in order to have a working COMPILE_TEST=y build, you do need to have
+obj-y += mediatek/, and on the Kconfig below...
 
--- 
-Best regards,
-Dmitry
+> 
+> > >   obj-$(CONFIG_ARCH_STI) += sti/
+> > >   obj-$(CONFIG_ARCH_TEGRA) += tegra/
+> > >   obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
+> > > diff --git a/drivers/reset/mediatek/Kconfig
+> > > b/drivers/reset/mediatek/Kconfig
+> > > new file mode 100644
+> > > index 000000000000..a416cb938753
+> > > --- /dev/null
+> > > +++ b/drivers/reset/mediatek/Kconfig
+> > > @@ -0,0 +1,5 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > 
+> > Similarly, we should at this point also do....
+> > 
+> > if ARCH_MEDIATEK
 
+... have instead
+
+if ARCH_MEDIATEK || COMPILE_TEST
+
+I think that should fix the issue.
+
+Thanks,
+Nícolas
+
+> > 
+> > > +config RESET_MEDIATEK_SYSCLK
+> > > +	tristate "MediaTek System Clock Reset Driver"
+> > > +	help
+> > > +	  This enables the system clock reset driver for MediaTek SoCs.
+> > 
+> > endif # ARCH_MEDIATEK
