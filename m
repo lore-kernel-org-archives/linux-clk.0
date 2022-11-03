@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826B9C352A1
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5AFC63707
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232180AbiKCPPv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:15:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
+        id S232029AbiKCPPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 11:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232151AbiKCPPt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 11:15:49 -0400
+        with ESMTP id S231656AbiKCPPq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 11:15:46 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36BAA1A04E;
-        Thu,  3 Nov 2022 08:15:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6140919C20;
+        Thu,  3 Nov 2022 08:15:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C808DB828EC;
-        Thu,  3 Nov 2022 15:15:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE63C43141;
-        Thu,  3 Nov 2022 15:15:36 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 20203B828DC;
+        Thu,  3 Nov 2022 15:15:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79FFC433D7;
+        Thu,  3 Nov 2022 15:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667488537;
-        bh=3AJ/3Js0m6vffxwjqkk3LAfootk09OLSdWObi3CQN78=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UmPBcGPcuMTFfVRjMeI4yR4yD0IvqEkTk1USxS5FUfXkbui7zFGqdIJ37TpfXVUon
-         RCxmWmSXiraFhtLcW515x+S94R8wMc3G70Kuzdn3YJCuhJUo2AzKoyiHrGoN9THP4W
-         ec647hEJOrHIM4MKso5g4tt0rEtPTCvoIzQWoMV+JRX1of0AnUpYcP0roVJieNhGql
-         4vL6Q0BJu0IRVZj9gz1zZIYDMfMxxoLSgH9Eyuf1FJNW1Tj4qD6H4mHjrfAzePrGYJ
-         1cOwhGgkA9D7OM8dTO0uMvyPpNwO8fFSHo+3gNLnimaLvtooaLm7aQfojIbjKT+VSs
-         mUCpujHXigrqA==
+        s=k20201202; t=1667488531;
+        bh=iW4uEWQBBg7P34LNP+tKGYl5kuiCd+1lTZZRFWO6evg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XcA2bYmVE7H9mi8RYOH9IslXv5fWpd2E3o6wCynM5jBI7EQ2TdM2ebgFFKuET3O8+
+         P4V0Z1GNT7RN+CKX6Fa72aBq2bmCO5CnRl+/8ikaABpPzCRz8WixtkpK/5squdXCzT
+         cTFN0LOjNjdKUfFTuKdZ51ags1e12QsBwG/LRsas27eu15aUEIbF0NU7sGKbiPa4Xe
+         KsIKmT0h79Thdgm/Gakuv5m77nvnTTVxv4ZFdpDiQu0eGMZL4DV5AL3PThbY9afIcm
+         CsOwFIs8QcxY74ShGuyahHRnzdJqrw7dGDM6K513WJtT1L7z+Vr6cN6L75OEcZlvA3
+         F0HnLvtKOnLaQ==
 From:   Dinh Nguyen <dinguyen@kernel.org>
 To:     jh80.chung@samsung.com
 Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
@@ -38,227 +38,85 @@ Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
         sboyd@kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCHv8 5/6] clk: socfpga: remove the setting of clk-phase for sdmmc_clk
-Date:   Thu,  3 Nov 2022 10:15:24 -0500
-Message-Id: <20221103151525.474833-5-dinguyen@kernel.org>
+Subject: [PATCHv8 1/6] dt-bindings: mmc: synopsys-dw-mshc: document "altr,sysmgr-syscon"
+Date:   Thu,  3 Nov 2022 10:15:20 -0500
+Message-Id: <20221103151525.474833-1-dinguyen@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221103151525.474833-1-dinguyen@kernel.org>
-References: <20221103151525.474833-1-dinguyen@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the SDMMC driver supports setting the clk-phase, we can remove
-the need to do it in the clock driver.
+Document the optional "altr,sysmgr-syscon" binding that is used to
+access the System Manager register that controls the SDMMC clock
+phase.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
-v8: no changes
-v7: add acked-by
-v6: remove unused clk_phase in clk-gate.c
-v5: new
+v8: remove "" around synopsys-dw-mshc-common.yaml#
+v7: and "not" for the required "altr,sysmgr-syscon" binding
+v6: make "altr,sysmgr-syscon" optional
+v5: document reg shift
+v4: add else statement
+v3: document that the "altr,sysmgr-syscon" binding is only applicable to
+    "altr,socfpga-dw-mshc"
+v2: document "altr,sysmgr-syscon" in the MMC section
 ---
- drivers/clk/socfpga/clk-gate-a10.c | 68 ------------------------------
- drivers/clk/socfpga/clk-gate.c     | 61 ---------------------------
- drivers/clk/socfpga/clk.h          |  1 -
- 3 files changed, 130 deletions(-)
+ .../bindings/mmc/synopsys-dw-mshc.yaml        | 33 +++++++++++++++++--
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index 738c53391e39..7cdf2f07c79b 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -35,59 +35,7 @@ static unsigned long socfpga_gate_clk_recalc_rate(struct clk_hw *hwclk,
- 	return parent_rate / div;
- }
+diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+index ae6d6fca79e2..a37cd7a68417 100644
+--- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
++++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+@@ -6,9 +6,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--static int socfpga_clk_prepare(struct clk_hw *hwclk)
--{
--	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
--	int i;
--	u32 hs_timing;
--	u32 clk_phase[2];
--
--	if (socfpgaclk->clk_phase[0] || socfpgaclk->clk_phase[1]) {
--		for (i = 0; i < ARRAY_SIZE(clk_phase); i++) {
--			switch (socfpgaclk->clk_phase[i]) {
--			case 0:
--				clk_phase[i] = 0;
--				break;
--			case 45:
--				clk_phase[i] = 1;
--				break;
--			case 90:
--				clk_phase[i] = 2;
--				break;
--			case 135:
--				clk_phase[i] = 3;
--				break;
--			case 180:
--				clk_phase[i] = 4;
--				break;
--			case 225:
--				clk_phase[i] = 5;
--				break;
--			case 270:
--				clk_phase[i] = 6;
--				break;
--			case 315:
--				clk_phase[i] = 7;
--				break;
--			default:
--				clk_phase[i] = 0;
--				break;
--			}
--		}
--
--		hs_timing = SYSMGR_SDMMC_CTRL_SET_AS10(clk_phase[0], clk_phase[1]);
--		if (!IS_ERR(socfpgaclk->sys_mgr_base_addr))
--			regmap_write(socfpgaclk->sys_mgr_base_addr,
--				     SYSMGR_SDMMCGRP_CTRL_OFFSET, hs_timing);
--		else
--			pr_err("%s: cannot set clk_phase because sys_mgr_base_addr is not available!\n",
--					__func__);
--	}
--	return 0;
--}
--
- static struct clk_ops gateclk_ops = {
--	.prepare = socfpga_clk_prepare,
- 	.recalc_rate = socfpga_gate_clk_recalc_rate,
- };
+ title: Synopsys Designware Mobile Storage Host Controller Binding
  
-@@ -96,7 +44,6 @@ static void __init __socfpga_gate_init(struct device_node *node,
- {
- 	u32 clk_gate[2];
- 	u32 div_reg[3];
--	u32 clk_phase[2];
- 	u32 fixed_div;
- 	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
-@@ -136,21 +83,6 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 		socfpga_clk->div_reg = NULL;
- 	}
- 
--	rc = of_property_read_u32_array(node, "clk-phase", clk_phase, 2);
--	if (!rc) {
--		socfpga_clk->clk_phase[0] = clk_phase[0];
--		socfpga_clk->clk_phase[1] = clk_phase[1];
+-allOf:
+-  - $ref: "synopsys-dw-mshc-common.yaml#"
 -
--		socfpga_clk->sys_mgr_base_addr =
--			syscon_regmap_lookup_by_compatible("altr,sys-mgr");
--		if (IS_ERR(socfpga_clk->sys_mgr_base_addr)) {
--			pr_err("%s: failed to find altr,sys-mgr regmap!\n",
--					__func__);
--			kfree(socfpga_clk);
--			return;
--		}
--	}
--
- 	of_property_read_string(node, "clock-output-names", &clk_name);
+ maintainers:
+   - Ulf Hansson <ulf.hansson@linaro.org>
  
- 	init.name = clk_name;
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index 53d6e3ec4309..3e347b9e9eff 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -108,61 +108,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
- 	return parent_rate / div;
- }
+@@ -38,6 +35,36 @@ properties:
+       - const: biu
+       - const: ciu
  
--static int socfpga_clk_prepare(struct clk_hw *hwclk)
--{
--	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
--	struct regmap *sys_mgr_base_addr;
--	int i;
--	u32 hs_timing;
--	u32 clk_phase[2];
--
--	if (socfpgaclk->clk_phase[0] || socfpgaclk->clk_phase[1]) {
--		sys_mgr_base_addr = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
--		if (IS_ERR(sys_mgr_base_addr)) {
--			pr_err("%s: failed to find altr,sys-mgr regmap!\n", __func__);
--			return -EINVAL;
--		}
--
--		for (i = 0; i < 2; i++) {
--			switch (socfpgaclk->clk_phase[i]) {
--			case 0:
--				clk_phase[i] = 0;
--				break;
--			case 45:
--				clk_phase[i] = 1;
--				break;
--			case 90:
--				clk_phase[i] = 2;
--				break;
--			case 135:
--				clk_phase[i] = 3;
--				break;
--			case 180:
--				clk_phase[i] = 4;
--				break;
--			case 225:
--				clk_phase[i] = 5;
--				break;
--			case 270:
--				clk_phase[i] = 6;
--				break;
--			case 315:
--				clk_phase[i] = 7;
--				break;
--			default:
--				clk_phase[i] = 0;
--				break;
--			}
--		}
--		hs_timing = SYSMGR_SDMMC_CTRL_SET(clk_phase[0], clk_phase[1]);
--		regmap_write(sys_mgr_base_addr, SYSMGR_SDMMCGRP_CTRL_OFFSET,
--			hs_timing);
--	}
--	return 0;
--}
--
- static struct clk_ops gateclk_ops = {
--	.prepare = socfpga_clk_prepare,
- 	.recalc_rate = socfpga_clk_recalc_rate,
- 	.get_parent = socfpga_clk_get_parent,
- 	.set_parent = socfpga_clk_set_parent,
-@@ -172,7 +118,6 @@ void __init socfpga_gate_init(struct device_node *node)
- {
- 	u32 clk_gate[2];
- 	u32 div_reg[3];
--	u32 clk_phase[2];
- 	u32 fixed_div;
- 	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
-@@ -218,12 +163,6 @@ void __init socfpga_gate_init(struct device_node *node)
- 		socfpga_clk->div_reg = NULL;
- 	}
- 
--	rc = of_property_read_u32_array(node, "clk-phase", clk_phase, 2);
--	if (!rc) {
--		socfpga_clk->clk_phase[0] = clk_phase[0];
--		socfpga_clk->clk_phase[1] = clk_phase[1];
--	}
--
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	init.name = clk_name;
-diff --git a/drivers/clk/socfpga/clk.h b/drivers/clk/socfpga/clk.h
-index d80115fbdd6a..9a2fb2dde5b8 100644
---- a/drivers/clk/socfpga/clk.h
-+++ b/drivers/clk/socfpga/clk.h
-@@ -50,7 +50,6 @@ struct socfpga_gate_clk {
- 	u32 width;	/* only valid if div_reg != 0 */
- 	u32 shift;	/* only valid if div_reg != 0 */
- 	u32 bypass_shift;      /* only valid if bypass_reg != 0 */
--	u32 clk_phase[2];
- };
- 
- struct socfpga_periph_clk {
++  altr,sysmgr-syscon:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - items:
++          - description: phandle to the sysmgr node
++          - description: register offset that controls the SDMMC clock phase
++          - description: register shift for the smplsel(drive in) setting
++    description:
++      This property is optional. Contains the phandle to System Manager block
++      that contains the SDMMC clock-phase control register. The first value is
++      the pointer to the sysmgr, the 2nd value is the register offset for the
++      SDMMC clock phase register, and the 3rd value is the bit shift for the
++      smplsel(drive in) setting.
++
++allOf:
++  - $ref: synopsys-dw-mshc-common.yaml#
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: altr,socfpga-dw-mshc
++    then:
++      not:
++        required:
++          - altr,sysmgr-syscon
++    else:
++      properties:
++        altr,sysmgr-syscon: false
++
+ required:
+   - compatible
+   - reg
 -- 
 2.25.1
 
