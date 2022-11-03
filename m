@@ -2,57 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4DDC433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 16:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF64C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 18:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbiKCQzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 12:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54470 "EHLO
+        id S230337AbiKCSTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 14:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiKCQzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 12:55:49 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D076252
-        for <linux-clk@vger.kernel.org>; Thu,  3 Nov 2022 09:55:47 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id h12so2963965ljg.9
-        for <linux-clk@vger.kernel.org>; Thu, 03 Nov 2022 09:55:47 -0700 (PDT)
+        with ESMTP id S230056AbiKCSTM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 14:19:12 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DFD13D50
+        for <linux-clk@vger.kernel.org>; Thu,  3 Nov 2022 11:19:11 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id f37so4210056lfv.8
+        for <linux-clk@vger.kernel.org>; Thu, 03 Nov 2022 11:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UfNKvOanyjhHXBelrkaChFOyOSO1zGtjsNg5Ut58HCY=;
-        b=l8L5GV5CeR9wDYO+5JynTcHeJOpgCRiyXIH0gjfjyzpIYPBguREKcqoOHAxE9yxwcp
-         lsTsT2CcIczlSniwSfhfBeCvg+XNVj5J7fyDcwS2HIuZeNMJ9hxfjr88MBOgvMH/BTaV
-         nVU7d3mVSTMTgAT4Cw4Wh4IOS3OEw8YEr61m4=
+        bh=gkYzItvrSUXCjUZclqVlz4B1VRMJvcHSmP7Vz+/CqCc=;
+        b=Ql3Wst5IDeTBu02tDij8+8WotMSKPkvfwkpBGQrs5DCDmlReH9R39/cKMIGZ9nQTw4
+         CTNpSr+1rRsxJju1xOVWyv58dG7vruDtKj2QiyrwZZlt55RVpxRZMSd1GUviTtWFTlQt
+         bE6yo4OanX1qxxPqrtbBfkv3g2/e5P7r/JJ4c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UfNKvOanyjhHXBelrkaChFOyOSO1zGtjsNg5Ut58HCY=;
-        b=4Tuf2N3mUV6eWI6mUHSGw4Ovlty+rutXGSi1ObJM+7lX1r1Jqnpe1u03Jq0p3R2Acf
-         TM1b2pVmTaNpvQgH6owEYu92hQvNr7UKUdTX5WzM+srP5/qpd9h/LCHOlYV1/XHfwS/v
-         sIy2gugFcC05b9LI3952zBTiehXNsIa6uvCxuFCVJ0ZhYy1HhoBFeJSkHiwrd2XE01MO
-         vnxGSIofbnELlZoE3EYe3wPSjSFZx3n1D57N3nmU3k5DQLbz7RY/qdLT1TfrqgaeDY5m
-         +QYfGgS2Awq9w7qGXW2z/vohf2zsNy3GGs8b61CwZJHSzmTUilm8VcmXJZA20jy60hDk
-         /eGg==
-X-Gm-Message-State: ACrzQf0hAuKIdWF2nrAg+LGfIxaJuixTWlnSraf6Utx0fh7luvcHJy99
-        ikfNHlOPChXQMMreQOOleqVnNMe0HaGFy0/glI7rQQ==
-X-Google-Smtp-Source: AMsMyM7F6w1WR1rSV9GSlSeTP7m094zPjzqZZijj6DLJBRqC4jr2/5t8eFRsP4KqYMeT2vVp5eZ7kbdeNtIZBiT0/mg=
-X-Received: by 2002:a05:651c:222c:b0:26b:dec5:a4f0 with SMTP id
- y44-20020a05651c222c00b0026bdec5a4f0mr12924242ljq.359.1667494545853; Thu, 03
- Nov 2022 09:55:45 -0700 (PDT)
+        bh=gkYzItvrSUXCjUZclqVlz4B1VRMJvcHSmP7Vz+/CqCc=;
+        b=787MrhTtWZszAdyE6okaLCB7dG7fUAYnHE/Pb/ZmywuXi3HUqq6UPpVreIC8CZgqC4
+         TWfLDMJUxR0hc4rP01Ci3GAQms0S4u0Ym0L9j/Z+FnvR0/ErDOzKQoZfpHDwlTsQHEiS
+         IfDsVVBEwEO0cFVhFprF3zeQG/O0TxYul+SI0Lc+N6mEYbXNU+GFDdXM4P2AUFgimpht
+         OZokaqSkOt+7OPbf7aZMEYYKKxF+U3bus0GlKJ7HoYyYBg/RLSNr5XsjF8TR0gUTBAS8
+         F/Ebg7DNdzCeIZSQtWX7Vp5X607JKrLZW7BK/irjcUSpe8bO9FRFe35d2x58GrXi0ReI
+         bEBw==
+X-Gm-Message-State: ACrzQf1SgTpMrRSevf2lxzaQG4ILO6fhh1XcJXtF+4TEl7ci8pD9UEfV
+        qIWxB7ERko/Kt+0ZQu4R8soEEtu1WJb4y6Ms+6YVRg==
+X-Google-Smtp-Source: AMsMyM50DKyuqpFk3z0RRrS/jQXXsTcb+YgJ2uT1ZBFhUVkjX0OEggksGtq8mwZhheS/vIGyWyzlrWJVtBWPTzBnqNs=
+X-Received: by 2002:a05:6512:3403:b0:48c:9727:50b0 with SMTP id
+ i3-20020a056512340300b0048c972750b0mr11849146lfr.309.1667499549321; Thu, 03
+ Nov 2022 11:19:09 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 3 Nov 2022 09:55:45 -0700
+ HTTPREST; Thu, 3 Nov 2022 11:19:08 -0700
 MIME-Version: 1.0
-In-Reply-To: <Y2PQrRkGTEE40m4Q@hovoldconsulting.com>
-References: <20221102170717.1262547-1-swboyd@chromium.org> <Y2PQrRkGTEE40m4Q@hovoldconsulting.com>
+In-Reply-To: <Y2PAXX2oYL6iFTlB@hovoldconsulting.com>
+References: <20221101233421.997149-1-swboyd@chromium.org> <Y2JL9/HFrb3E+CYY@hovoldconsulting.com>
+ <CAE-0n51Wuc6gVmsTOu4Nf4yx+6Wp-Oi3XZy06syhCMVmePWPEw@mail.gmail.com> <Y2PAXX2oYL6iFTlB@hovoldconsulting.com>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Thu, 3 Nov 2022 09:55:45 -0700
-Message-ID: <CAE-0n52zxYSdbQg5VqVQ9gboZy2BSgJUgJ5orvNkzrz-3-81SA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: qcom: gdsc: Remove direct runtime PM calls
+Date:   Thu, 3 Nov 2022 11:19:08 -0700
+Message-ID: <CAE-0n5319JSX16Z3H5vKQSL9UDetOdfb38zo_vp0C=uX1jddWQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
 To:     Johan Hovold <johan@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
@@ -73,70 +74,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Johan Hovold (2022-11-03 07:31:09)
-> On Wed, Nov 02, 2022 at 10:07:17AM -0700, Stephen Boyd wrote:
-> > We shouldn't be calling runtime PM APIs from within the genpd
-> > enable/disable path for a couple reasons.
-> >
-> > First, this causes an AA lockdep splat because genpd can call into genpd
-> > code again while holding the genpd lock.
-> >
-> > WARNING: possible recursive locking detected
+Quoting Johan Hovold (2022-11-03 06:21:33)
+> On Wed, Nov 02, 2022 at 09:53:49AM -0700, Stephen Boyd wrote:
+> > Quoting Johan Hovold (2022-11-02 03:52:39)
 >
-> > Second, this confuses runtime PM on CoachZ for the camera devices by
-> > causing the camera clock controller's runtime PM usage_count to go
-> > negative after resuming from suspend. This is because runtime PM is
-> > being used on the clock controller while runtime PM is disabled for the
-> > device.
+> > > > Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > Cc: Johan Hovold <johan+linaro@kernel.org>
+> > > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > Cc: Taniya Das <quic_tdas@quicinc.com>
+> > > > Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> > > > Cc: Douglas Anderson <dianders@chromium.org>
+> > > > Cc: Matthias Kaehlcke <mka@chromium.org>
+> > > > Reported-by: Stephen Boyd <swboyd@chromium.org>
+> > >
+> > > We typically don't add Reported-by tags for bugs we find and fix
+> > > ourselves.
 > >
-> > The reason for the negative count is because a GDSC is represented as a
-> > genpd and each genpd that is attached to a device is resumed during the
-> > noirq phase of system wide suspend/resume (see the noirq suspend ops
-> > assignment in pm_genpd_init() for more details). The camera GDSCs are
-> > attached to camera devices with the 'power-domains' property in DT.
-> > Every device has runtime PM disabled in the late system suspend phase
-> > via __device_suspend_late(). Runtime PM is not usable until runtime PM
-> > is enabled in device_resume_early(). The noirq phases run after the
-> > 'late' and before the 'early' phase of suspend/resume. When the genpds
-> > are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
-> > that calls pm_runtime_resume_and_get() and that returns -EACCES to
-> > indicate failure to resume because runtime PM is disabled for all
-> > devices.
+> > Heh, I didn't see anything like that in Documentation/ so it seems fine.
+> > I debugged my problem and reported it.
 >
-> Probably worth mentioning the fact that those runtime PM calls
-> unconditionally failing during resume means that the GDSCs are never
-> even enabled.
+> I'd say the documentation is pretty clear on this matter:
 >
-> Seems like the PM runtime usage counters would still be balanced after
-> this though as they are decremented also on failure during suspend (i.e.
-> domain remains off and no usage counter is incremented during resume).
+>   Reported-by: names a user who reported a problem which is fixed by this
+>   patch; this tag is used to give credit to the (often underappreciated)
+>   people who test our code and let us know when things do not work
+>   correctly.
+>
+>   - Documentation/process/5.Posting.rst
+>
+>   The Reported-by tag gives credit to people who find bugs and report
+>   them and it hopefully inspires them to help us again in the future.
+>   Please note that if the bug was reported in private, then ask for
+>   permission first before using the Reported-by tag.
+>
+>   - Documentation/process/submitting-patches.rst
+
+I don't see anything above that says I can't add this tag if I reported
+(by sending an email about the problem to the list), debugged, and
+solved the problem by sending a patch.
+
+>
+> Just like you don't add a Tested-by tag for every patch you submit, it
+> is implied that you found the issue you fix unless you explicitly
+> attribute that to a third party using Reported-by.
+
+I don't see how this is the same. It certainly is not explicit, as you
+say.
+
+I wouldn't have added the tag if I didn't send an email to the list with
+the lockdep splat and follow that up with a bisection report for
+suspend/resume being broken. Shouldn't we value those sorts of bug
+report emails? I will add a link to the report in the commit text to
+clarify.
+
+>
+> This is the first time I see anyone trying to use Reported-by this way,
+> and even if you think the documentation isn't clear enough on this, our
+> praxis is.
 >
 
-I'm seeing negative usage counts.
-
-> But this is clearly just very broken.
->
-> > Upon closer inspection, calling runtime PM APIs like this in the GDSC
-> > driver doesn't make sense. It was intended to make sure the GDSC for the
-> > clock controller providing other GDSCs was enabled, specifically the
-> > MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
-> > that GDSC register accesses succeeded. That will already happen because
-> > we make the 'dev->pm_domain' a parent domain of each GDSC we register in
-> > gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
-> > are accessed, we'll enable the parent domain (in this specific case
-> > MMCX).
-> >
-> > We also remove any getting of runtime PM during registration, because
-> > when a genpd is registered it increments the count on the parent if the
-> > genpd itself is already enabled. And finally, the runtime PM state of
-> > the clk controller registering the GDSC shouldn't matter to the
-> > subdomain setup. Therefore we always assign 'dev' unconditionally so
-> > when GDSCs are removed we properly unlink the GDSC from the clk
-> > controller's pm_domain.
->
-> This last bit makes no sense as 'dev' was only used for the runtime PM
-> management and should be removed by this patch.
-
-Oh sheesh, the name 'gdsc_register()' really throws me off. I think it's
-one gdsc being registered, but it's actually plural gdscs, sigh. I will
-fix it.
+Ok, so is it just a shock to see this for the first time? What is the
+problem with the tag? Can you elaborate on your concerns? I would like
+to understand.
