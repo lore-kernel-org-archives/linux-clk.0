@@ -2,121 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5AFC63707
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61060C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 15:24:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbiKCPPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:15:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56008 "EHLO
+        id S231825AbiKCPYG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 11:24:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231656AbiKCPPq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 11:15:46 -0400
+        with ESMTP id S232161AbiKCPYC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 11:24:02 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6140919C20;
-        Thu,  3 Nov 2022 08:15:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309CA11162;
+        Thu,  3 Nov 2022 08:24:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 20203B828DC;
-        Thu,  3 Nov 2022 15:15:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79FFC433D7;
-        Thu,  3 Nov 2022 15:15:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DA425B828E9;
+        Thu,  3 Nov 2022 15:23:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9223C433D6;
+        Thu,  3 Nov 2022 15:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667488531;
-        bh=iW4uEWQBBg7P34LNP+tKGYl5kuiCd+1lTZZRFWO6evg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XcA2bYmVE7H9mi8RYOH9IslXv5fWpd2E3o6wCynM5jBI7EQ2TdM2ebgFFKuET3O8+
-         P4V0Z1GNT7RN+CKX6Fa72aBq2bmCO5CnRl+/8ikaABpPzCRz8WixtkpK/5squdXCzT
-         cTFN0LOjNjdKUfFTuKdZ51ags1e12QsBwG/LRsas27eu15aUEIbF0NU7sGKbiPa4Xe
-         KsIKmT0h79Thdgm/Gakuv5m77nvnTTVxv4ZFdpDiQu0eGMZL4DV5AL3PThbY9afIcm
-         CsOwFIs8QcxY74ShGuyahHRnzdJqrw7dGDM6K513WJtT1L7z+Vr6cN6L75OEcZlvA3
-         F0HnLvtKOnLaQ==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     jh80.chung@samsung.com
-Cc:     dinguyen@kernel.org, ulf.hansson@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCHv8 1/6] dt-bindings: mmc: synopsys-dw-mshc: document "altr,sysmgr-syscon"
-Date:   Thu,  3 Nov 2022 10:15:20 -0500
-Message-Id: <20221103151525.474833-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        s=k20201202; t=1667489038;
+        bh=fg7hNvJiWPNnBMDzywvHNR7sYaua2ncK141ddfpOrdo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EQZzYkkUo2mOJJMcmlIl6A+bPZI4PMPBAwR7yQcBCWcvLZd8GR0o3rMY7/jG6yWab
+         OAh94msJVke3pTVCe0e+GmvKKr2oX54eoqO3aeVtEPy3OQ4TFDxx1lCJRAo3lQF1ys
+         /N9IrOe1t+3YlM2/XyBVq3xZLAOEK+XtdRH8XBRQEEU7+BPmrg3NM1nPGa4z+qeJgU
+         TnvsuyC890esfZn1ylZE8aig0/cGtbqiiD+HsKlBcGe9NXQ5IUd0IBpYroOWSMtaXr
+         sueqLf5HrHsArx9rZJuy1ojtPSi3ZcEueKhzEjAWlIdiXv/0kngawtnNlBthRZnOdz
+         v1+9XAS+x7rYw==
+Date:   Thu, 3 Nov 2022 10:23:55 -0500
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Stephen Boyd <sboyd@kernel.org>, bmasney@redhat.com,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
+ gcc_ufs_ref_clkref_clk
+Message-ID: <20221103152355.5sfbkpsfvjzgeixi@builder.lan>
+References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+ <20221101182402.32CE5C433C1@smtp.kernel.org>
+ <Y2IZaxukERXNcPGR@hovoldconsulting.com>
+ <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
+ <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
+ <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
+ <Y2I3tekSAO42r0xR@hovoldconsulting.com>
+ <20221103024949.lw4g2tavk7uw5xt4@builder.lan>
+ <Y2OEjNAPXg5BfOxH@hovoldconsulting.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y2OEjNAPXg5BfOxH@hovoldconsulting.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the optional "altr,sysmgr-syscon" binding that is used to
-access the System Manager register that controls the SDMMC clock
-phase.
+On Thu, Nov 03, 2022 at 10:06:20AM +0100, Johan Hovold wrote:
+> On Wed, Nov 02, 2022 at 09:49:49PM -0500, Bjorn Andersson wrote:
+> > On Wed, Nov 02, 2022 at 10:26:13AM +0100, Johan Hovold wrote:
+> > > On Wed, Nov 02, 2022 at 02:15:26PM +0530, Shazad Hussain wrote:
+> > > > On 11/2/2022 1:43 PM, Johan Hovold wrote:
+> > > 
+> > > > > Right, but if the PHYs really requires CX and it is not an ancestor of
+> > > > > the refclk then this should be described by the binding (and not be
+> > > > > hidden away in the clock driver).
+> > > 
+> > > > This makes sense, will be posting v2 post for the same.
+> > > > I assume this should use the Fixes tag then !
+> > > 
+> > > Yeah, I guess to you can add a fixes tag for the commits adding support
+> > > for sc8280xp to the UFS PHY binding and driver.
+> > > 
+> > > But please do check with the hardware documentation first so we get this
+> > > right this time.
+> > > 
+> > > I've already asked Bjorn to see what he can dig out as it is still not
+> > > clear how the two "card" refclocks (GCC_UFS_CARD_CLKREF_CLK and
+> > > GCC_UFS_1_CARD_CLKREF_CLK) are supposed to be used.
+> > > 
+> > 
+> > We've come full circle and Shazad's patch came from that discussion :)
+> 
+> Ah, good. :)
+> 
+> > In line with the downstream dts, we have GCC_UFS{,_1}_CARD_CLKREF_CLK
+> > providing a reference clock to the two phys. Then GCC_UFS_REF_CLKREF_CLK
+> > feeds the UFS refclock pads (both of them), which connect to the memory
+> > device(s).
+> > 
+> > In other words, GCC_UFS{,_1}_CARD_CLKREF_CLK should be "ref" in
+> > respective phy.
+> > 
+> > GCC_UFS_REF_CLKREF_CLK is the clock to the devices, but as we don't
+> > represent the memory device explicitly it seems suitable to use as
+> > "ref_clk" in the ufshc nodes - which would then match the special
+> > handling of the "link clock" in the UFS driver.
+> 
+> Thanks for clearing that up. Using GCC_UFS_REF_CLKREF_CLK as ref_clk for
+> the controller sounds reasonable.
+> 
+> I guess the only missing piece is which "card" ref clock is used by
+> which PHY.
+> 
+> The ADP dts uses:
+> 
+> 	phy			ref clock
+> 
+> 	phy@1d87000 (UFS_PHY)	GCC_UFS_CARD_CLKREF_CLK
+> 	phy@1da7000 (UFS_CARD)	GCC_UFS_1_CARD_CLKREF_CLK
+> 
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v8: remove "" around synopsys-dw-mshc-common.yaml#
-v7: and "not" for the required "altr,sysmgr-syscon" binding
-v6: make "altr,sysmgr-syscon" optional
-v5: document reg shift
-v4: add else statement
-v3: document that the "altr,sysmgr-syscon" binding is only applicable to
-    "altr,socfpga-dw-mshc"
-v2: document "altr,sysmgr-syscon" in the MMC section
----
- .../bindings/mmc/synopsys-dw-mshc.yaml        | 33 +++++++++++++++++--
- 1 file changed, 30 insertions(+), 3 deletions(-)
+This matches the documentation.
 
-diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-index ae6d6fca79e2..a37cd7a68417 100644
---- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-+++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-@@ -6,9 +6,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Synopsys Designware Mobile Storage Host Controller Binding
- 
--allOf:
--  - $ref: "synopsys-dw-mshc-common.yaml#"
--
- maintainers:
-   - Ulf Hansson <ulf.hansson@linaro.org>
- 
-@@ -38,6 +35,36 @@ properties:
-       - const: biu
-       - const: ciu
- 
-+  altr,sysmgr-syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      - items:
-+          - description: phandle to the sysmgr node
-+          - description: register offset that controls the SDMMC clock phase
-+          - description: register shift for the smplsel(drive in) setting
-+    description:
-+      This property is optional. Contains the phandle to System Manager block
-+      that contains the SDMMC clock-phase control register. The first value is
-+      the pointer to the sysmgr, the 2nd value is the register offset for the
-+      SDMMC clock phase register, and the 3rd value is the bit shift for the
-+      smplsel(drive in) setting.
-+
-+allOf:
-+  - $ref: synopsys-dw-mshc-common.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: altr,socfpga-dw-mshc
-+    then:
-+      not:
-+        required:
-+          - altr,sysmgr-syscon
-+    else:
-+      properties:
-+        altr,sysmgr-syscon: false
-+
- required:
-   - compatible
-   - reg
--- 
-2.25.1
+Regards,
+Bjorn
 
+> but that is not what the firmware on ADP and CRD seem to enable.
+> 
+> Both the ADP and CRD fw leaves GCC_UFS_1_CARD_CLKREF_CLK enabled, while
+> GCC_UFS_CARD_CLKREF_CLK is only enabled on ADP (which unlike the CRD
+> also uses the UFS_CARD controller).
+> 
+> Does the ADP dts have these clocks switched or is the firmware confused?
+> 
+> (Also note that experiments suggest that neither refclock appears to
+> has to be explicitly enabled for the controllers to function.)
+> 
+> > All three clocks are sourced off the CXO pad, so I would like this patch
+> > to cover at least all of these. And
+> > 
+> > Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+> > 
+> > seems to be in order for such patch.
+> > 
+> > 
+> > @Johan, would you mind writing a dts patch flipping the clocks around
+> > and Shazad can update this patch?
+> 
+> I'll do so, but I'll wait with posting until you can confirm which
+> clkref is which.
+> 
+> Johan
