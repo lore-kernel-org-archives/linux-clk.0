@@ -2,86 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B4DC4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 02:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E1FC433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 05:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229935AbiKCCza (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Nov 2022 22:55:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43768 "EHLO
+        id S229980AbiKCFAp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 01:00:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231393AbiKCCzP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2022 22:55:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1904F13F5F;
-        Wed,  2 Nov 2022 19:54:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8BCB61D02;
-        Thu,  3 Nov 2022 02:54:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D6C6C433D6;
-        Thu,  3 Nov 2022 02:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667444058;
-        bh=TJnMJHD6hPbLCE+9UsVHwY4+xmWXlNigWRrcrs/Q/Jg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tv1Afe7clPt1KI/NDkhOMZ//XZIaeeKAad3qQdfq6a5tnmcdJLnZvQOmQfVlvurrw
-         cV5PHU21JWSGeiAeHPDBt1LJkX2wdyz5PfffFpRUwBCwAMbN2ACyIbI7hw8PWtZzGg
-         tPO/y2KAvwiPTlRV3Mo5wIo+OEFdFNDXsNo/H8Sp/p90f9tD5/cj2HB1ps+8PG7hTC
-         c/SmaEPBZ2FSqfSyYoyMgmmBDDBvR0/jkbdu02Sk797AxnO2n/xBgzF+xDlpUAFn4U
-         uYwWBv4yffznIl4a/0lOYIN6piOwosQK4o0JRZOjCj/jWL2DXIAoh/iA+SSC+GNQKA
-         ufKBDCyg5xrgQ==
-Date:   Wed, 2 Nov 2022 21:54:15 -0500
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc:     bmasney@redhat.com, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
- gcc_ufs_ref_clkref_clk
-Message-ID: <20221103025415.qchtpnoxssudch6q@builder.lan>
-References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+        with ESMTP id S229553AbiKCFAn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 01:00:43 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8C9B217E20;
+        Wed,  2 Nov 2022 22:00:41 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Bx37f3SmNj_SgEAA--.9649S3;
+        Thu, 03 Nov 2022 13:00:39 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxZ1fySmNjf2MLAA--.15382S2;
+        Thu, 03 Nov 2022 13:00:38 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v9 1/3] dt-bindings: clock: add loongson-2 clock include file
+Date:   Thu,  3 Nov 2022 13:00:30 +0800
+Message-Id: <20221103050032.29236-1-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8CxZ1fySmNjf2MLAA--.15382S2
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXr1kGr15Xw1ftw4DXw1rCrg_yoW5Ar15pr
+        4kCFZ3Kry2yF4IkanYgFy7Krnxua1xJw17AF47uw1jyFnrJw18XrnFkF1fA39xXrs7Aayx
+        Z3WkCw40vFZrZ3DanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUAVWUZwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x
+        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_
+        Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+        WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+        CTnIWIevJa73UjIFyTuYvjxU7g10UUUUU
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 30, 2022 at 07:53:33PM +0530, Shazad Hussain wrote:
-> Since 'commit f3aa975e230e ("arm64: dts: qcom: sc8280xp: correct ref
-> clock for ufs_mem_phy")' we need to explicitly make cxo as parent to
-> gcc_ufs_ref_clkref_clk to have an independent vote from ufs_mem_phy.
-> 
+This file defines all Loongson-2 SoC clock indexes, it should be
+included in the device tree in which there's device using the
+clocks.
 
-Prior to that change we relied on both cxo and gcc_ufs_ref_clkref_clk
-being voted for. So I think the reasoning for this patch should simply
-be to express the fact that the clkref is fed from CXO.
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Change in v9:
+		1. Add all history changelog infomation.
+Change in v8:
+		1. No change but this series patch has a change.
+Change in v7:
+		1. No change but this series patch has a change.
+Change in v6:
+		1. Replace string LOONGSON2 with LOONGSON-2 in MAINTAINERS.
+Change in v5:
+		1. Replace loongson2/Loongson2 with loongson-2/Loongson-2.
+		2. Replace soc with SoC.
+Change in v4:
+		1. No change but this series patch has a change. 
+Change in v3:
+		1. Add the review information.
+Change in v2:
+		1. Make filename matching the compatible.
+		2. Drop weird indentation after define.
+		3. Add dual license.
+		4. Use subject prefixes matching the subsystem.
 
-Regards,
-Bjorn
+ MAINTAINERS                                   |  6 ++++
+ include/dt-bindings/clock/loongson,ls2k-clk.h | 29 +++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+ create mode 100644 include/dt-bindings/clock/loongson,ls2k-clk.h
 
-> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-sc8280xp.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-> index a18ed88f3b82..72b545121c57 100644
-> --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -5848,6 +5848,8 @@ static struct clk_branch gcc_ufs_ref_clkref_clk = {
->  		.enable_mask = BIT(0),
->  		.hw.init = &(const struct clk_init_data) {
->  			.name = "gcc_ufs_ref_clkref_clk",
-> +			.parent_data = &gcc_parent_data_tcxo,
-> +			.num_parents = 1,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> -- 
-> 2.38.0
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3aff8b8723b1..d5d1f2b9fcfd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12018,6 +12018,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
+ F:	drivers/thermal/loongson2_thermal.c
+ 
++LOONGSON-2 SOC SERIES CLOCK DRIVER
++M:	Yinbo Zhu <zhuyinbo@loongson.cn>
++L:	linux-clk@vger.kernel.org
++S:	Maintained
++F:	include/dt-bindings/clock/loongson,ls2k-clk.h
++
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+ M:	Sathya Prakash <sathya.prakash@broadcom.com>
+ M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
+new file mode 100644
+index 000000000000..db1e27e792ff
+--- /dev/null
++++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
++ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_LOONGSON2_H
++#define __DT_BINDINGS_CLOCK_LOONGSON2_H
++
++#define LOONGSON2_REF_100M				0
++#define LOONGSON2_NODE_PLL				1
++#define LOONGSON2_DDR_PLL				2
++#define LOONGSON2_DC_PLL				3
++#define LOONGSON2_PIX0_PLL				4
++#define LOONGSON2_PIX1_PLL				5
++#define LOONGSON2_NODE_CLK				6
++#define LOONGSON2_HDA_CLK				7
++#define LOONGSON2_GPU_CLK				8
++#define LOONGSON2_DDR_CLK				9
++#define LOONGSON2_GMAC_CLK				10
++#define LOONGSON2_DC_CLK				11
++#define LOONGSON2_APB_CLK				12
++#define LOONGSON2_USB_CLK				13
++#define LOONGSON2_SATA_CLK				14
++#define LOONGSON2_PIX0_CLK				15
++#define LOONGSON2_PIX1_CLK				16
++#define LOONGSON2_CLK_END				17
++
++#endif
+-- 
+2.33.0
+
