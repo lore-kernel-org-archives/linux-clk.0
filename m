@@ -2,72 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0774C43217
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 18:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23770C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 19:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231605AbiKDSnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 14:43:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58808 "EHLO
+        id S229686AbiKDTSg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 15:18:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbiKDSnO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 14:43:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B5E2497D;
-        Fri,  4 Nov 2022 11:43:12 -0700 (PDT)
+        with ESMTP id S229501AbiKDTSf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 15:18:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB2E4178B1;
+        Fri,  4 Nov 2022 12:18:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 378A0B82EF9;
-        Fri,  4 Nov 2022 18:43:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6F8C433D6;
-        Fri,  4 Nov 2022 18:43:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4771862313;
+        Fri,  4 Nov 2022 19:18:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB8AC433D6;
+        Fri,  4 Nov 2022 19:18:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667587389;
-        bh=b0iolmf8VOPUkT90B7FyzHxPzj3yAK1SCR1Dm1JkQnE=;
+        s=k20201202; t=1667589513;
+        bh=MeLNeoS9sVOu/HfZN+g21DXFk1zljSplJ5VAsbDDdFE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XrAjNSLcZywAamBIuDuDZDW1cOe54XjFjDA2MVJc3jAmE+HtXisxZWm3qAB+54wdK
-         EE0giey9eK8Q7+rJC0WkBUFYkInEkAgd3VYTUj7AkDyazZnhubz8/XyHbG6iX/g4Tq
-         Pq14xj3XbjT8DFT7xJfiYHcQwYkdLIWBbPICzkD13hswYAocVsG0AUVwjLPSuBcL73
-         yoON7XUjKPolvv8JDnwnuHc0Lf2AStRtRLdtL0ruq4jCPZh2dn+0rHO8mXuetYqssr
-         fQQ4W6CqtbjLHMQHzlj2dz874QF7FQf7HXrr7H7rIxkvcEa1rJz6mjMb+U53U3nrDr
-         wPDqLEG7XNZxA==
+        b=EaK2VNcceiEUMwhho46/wTu7/5TvObUmK6NpCzjbIgJgIsn6pHx5wxzGLOLmVNcRB
+         iVHWIZjZ164BUdt96WD6m/eNaGfzrS7LZdp8jW2/D1ODummXYXjlEGX4qtE72qufRj
+         kRRCJKqUG++VW8Ts35mppkTusLH/MgPLgzQKqDiWtgH5sSX46RR5tPfz5eKRWG0G04
+         NkXYSTjUh4qtzLzwpZFeyXR1iZn3crAG2MdVzYzqgvLrI1q5BDdacVIp5hKViXN9Av
+         c+1EO6NW3YiadgKK1XYXa6+jsPQiQ3pYDjT2qgGXhCz0xI70VeQmVlWsZXqAFfc92/
+         wxme1vJbemafA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1667559042.git.geert+renesas@glider.be>
-References: <cover.1667559042.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.2
+In-Reply-To: <20221104182108.126515-1-krzysztof.kozlowski@linaro.org>
+References: <20221104182108.126515-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: clock: qcom,sdm845-lpasscc: convert to dtschema
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Fri, 04 Nov 2022 11:43:07 -0700
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 04 Nov 2022 12:18:31 -0700
 User-Agent: alot/0.10
-Message-Id: <20221104184309.CC6F8C433D6@smtp.kernel.org>
+Message-Id: <20221104191833.8DB8AC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2022-11-04 03:57:17)
->         Hi Mike, Stephen,
+Quoting Krzysztof Kozlowski (2022-11-04 11:21:08)
+> Convert Qualcomm SDM845 LPASS clock controller bindings to DT schema.
 >=20
-> The following changes since commit a9003f74f5a2f487e101f3aa1dd5c3d3a78c69=
-99:
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >=20
->   clk: renesas: r8a779g0: Fix HSCIF parent clocks (2022-10-26 12:05:36 +0=
-200)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.2-tag1
->=20
-> for you to fetch changes up to 02693e11611e082e3c4d8653e8af028e43d31164:
->=20
->   clk: renesas: r9a06g032: Repair grave increment error (2022-11-01 10:15=
-:28 +0100)
->=20
-> ----------------------------------------------------------------
+> ---
 
-Thanks. Pulled into clk-next
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
