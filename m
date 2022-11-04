@@ -2,113 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECD6C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 21:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445D1C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 21:35:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbiKDVeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 17:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
+        id S229495AbiKDVfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 17:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbiKDVeP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 17:34:15 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE73A47332
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 14:34:12 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id b2so16544971eja.6
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 14:34:12 -0700 (PDT)
+        with ESMTP id S229741AbiKDVfA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 17:35:00 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D2445EEC
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 14:34:58 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id 13so16599220ejn.3
+        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 14:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZlIX8cuZeOQRSQTQbQX9cRSlkV364TcFG+GGAYF/Z8=;
-        b=wD8sdK4C2h0XhONCEgetpPhAbLse9nzbZXp33TPCGfO4s/SBsMN8AFvXNRER6UQtTj
-         ZRIUKTxt7xJ5xzyyBPN0wgOH0s1histmEabT7cNK4lDSUg+BLBxh4O/4Q0RVH4vv+Uo/
-         USqg7nZR2Jm//8DmUS9h58/zmo2Rt+u6DVC0iSH/15acXG4JUA2e6k5ntDoCfmpj2WWH
-         jHgWRHW0cUQTcXIHCkfMGShWgRefu5eefqeHOxmrHcvVbrKXNc7vSqrsLjDUuZE6CIa/
-         vFndEY6r83SzbjTIKrnnCftZ7ArqtkC8DjJyYuifiajNcQpems9Pe0MBU8u9MAge9osc
-         WcQA==
+        bh=oTyGnpJ5YhorBp2JX7wEHP6ModLBzcsJYOX4pjjkkv8=;
+        b=IVdVca0e2hX1TpYC1LIQhOWz8CcePRBWKp2mOy65VboXmyuzUCr64/TOKrpSuIjfRT
+         fLhZvAFat5fJsMcwnKDJkzMI0RjQn8ZeH6QxSaytJRO/e7GeSiTzDpUsprHsq3MT6COR
+         Q2sOcbmuzAlSNCamApFYyysmw9WaGhtdzFMbQ/k2spiy+D2bvixipJAbwaXUdfLSpNNC
+         gMowjn9ngtKbS4kHXKRqUKHVtyYFcNj9sh4CLGEQYb2sRCGmyGH1W1/3MX+nzlHO2X8Z
+         iveLxBYAD1hRMqQwk4EJWB3QS9uHf8wGKUR8Cx1VtTP9dEVK5IMF545NeMjeJITRdidf
+         /r6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TZlIX8cuZeOQRSQTQbQX9cRSlkV364TcFG+GGAYF/Z8=;
-        b=FGPXVMxnQJGFss7DEbBzNBkpwaTGXXVlwjwpIZ5KtJwHfqjj1t9Vi33sVErJboEbhT
-         l3RCU3dD9NbBRAmSI5p8u3FQC+teHU+W9EoNCwZW+KWTZKnjTL6hgXhrYIz/7eDBiHxT
-         1pjWYsE2Dq58uqerfsqbFxUYBMUTlmlGcKOqe4dl5y30P5vpKsx15JuEeWWJa6CxMy3H
-         BUMpGflCpJq9xEtHnd8nueiPnIKLSrJya0j09FreB3KSdBHb+Fl7VKCqvUQEhHg0Zy4M
-         sbDr5CvzcfZkx0jf7+H23bp+PX/y1R/tb05ssPOVDTcDtJCILWlCxoTDHgg8WvR3TtoW
-         rblw==
-X-Gm-Message-State: ACrzQf0mbRzuASYHBgCCjpRoonO57U9gxbnBksMKfUfE7JI0lzuHspRU
-        2J1XK2nf+QXTyeCFhH+k9Uby1zzfwvc0jg==
-X-Google-Smtp-Source: AMsMyM52IVgyxrOzvYXBKOSHv/x6OVBfsWMnbzJEcL7xj0tR6Hp4938dpIhHCe6UutoQ06RqOST7Zg==
-X-Received: by 2002:a17:907:6d25:b0:7aa:f5a4:5f66 with SMTP id sa37-20020a1709076d2500b007aaf5a45f66mr35482545ejc.216.1667597651457;
-        Fri, 04 Nov 2022 14:34:11 -0700 (PDT)
+        bh=oTyGnpJ5YhorBp2JX7wEHP6ModLBzcsJYOX4pjjkkv8=;
+        b=bTB1mxssClB50LS2CIlrIMRhEpfH/phyX3j9HiKWFTJi0LUQAZXSI1IvO7NRAcrUq8
+         TMjot9qyl0fyTmYKXKX054VUwPyn/PPwZQ9srIM0UKiA2CJhZp0zXMm69BTHB0UctH7s
+         F1TaHneSisM9LLr9OQ5DLJN5sITKu+o6CArwyJBoKjI8+pcOQOGzlEwuWGtIHuvLzaTq
+         Y+VIDum3jRVkuUlWrWAs+PlXwO+1p6RqPgIx8+S5pt2/ijq6vSQ3oW+wLEjPo0kAxMIq
+         x4znVN0Q9P9/PBP5SUrkvokLjLUt9NeKSfdyGiCCilXg96HJtUjGb3kLo7rMZE5iqYbP
+         EZTA==
+X-Gm-Message-State: ACrzQf25dnvh/r9MFLe4g/GqIUCJW/7nrvCICfzryAWPoYtu73Y9QAXi
+        IqlVY1aUkB8mlUEVjc+KIfBgvsvVOUUVBA==
+X-Google-Smtp-Source: AMsMyM4doriTv/f1TyuR0MV5FL/cmZow5KbP8C9hoA9xtXr4uU+EZet3mrduIjH1aHAIK3bsPe+KDA==
+X-Received: by 2002:a17:906:ae48:b0:7ae:1723:e8c3 with SMTP id lf8-20020a170906ae4800b007ae1723e8c3mr10391205ejb.603.1667597696723;
+        Fri, 04 Nov 2022 14:34:56 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id q19-20020a17090676d300b007030c97ae62sm29041ejn.191.2022.11.04.14.34.10
+        by smtp.gmail.com with ESMTPSA id ev24-20020a056402541800b0046189948481sm273445edb.53.2022.11.04.14.34.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 14:34:10 -0700 (PDT)
-Date:   Fri, 4 Nov 2022 23:34:09 +0200
+        Fri, 04 Nov 2022 14:34:56 -0700 (PDT)
+Date:   Fri, 4 Nov 2022 23:34:55 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 5/6] clk: imx: keep hsio bus clock always on
-Message-ID: <Y2WFUVJVwA8s6Su4@linaro.org>
-References: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
- <20221028095211.2598312-6-peng.fan@oss.nxp.com>
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: imx: pll14xx: Add 320 MHz and 640 MHz entries for
+ PLL146x
+Message-ID: <Y2WFf1QOzhHHg0vE@linaro.org>
+References: <20221031204838.195292-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221028095211.2598312-6-peng.fan@oss.nxp.com>
+In-Reply-To: <20221031204838.195292-1-marex@denx.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-10-28 17:52:10, Peng Fan (OSS) wrote:
-> From: Jacky Bai <ping.bai@nxp.com>
+On 22-10-31 21:48:38, Marek Vasut wrote:
+> The PLL146x is used to implement SYS_PLL3 on i.MX8MP and can be used
+> to drive UARTn_ROOT clock. By setting the PLL3 to 320 MHz or 640 MHz,
+> the PLL3 output can be divided down to supply UARTn_ROOT clock with
+> precise 64 MHz, which divided down further by 16x oversampling factor
+> used by the i.MX UART core yields 4 Mbdps baud base for the UART IP.
+> This is useful e.g. for BCM bluetooth chips, which can operate up to
+> 4 Mbdps.
 > 
-> During Linux System suspend/resume stress test after System Sleep
-> enabled, system will stuck sometimes. It is because NICMIX is powered
-> down, which HSIOMIX(always on) is not powered down. When NICMIX
-> powering down, HSIOMIX will get a hardware handshake, without HSIO ROOT clk,
-> the handshake will lose. Then after NICMIX power on when system resume,
-> the access to HSIOMIX through NICMIX would be broken. So keep HSIO ROOT
-> always on.
+> Add 320 MHz and 640 MHz entries so the PLL can be configured accordingly.
 > 
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
->  [Peng Fan] rewrite commit message
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Marek Vasut <marex@denx.de>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-imx93.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Cc: Abel Vesa <abel.vesa@nxp.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> To: linux-clk@vger.kernel.org
+> ---
+>  drivers/clk/imx/clk-pll14xx.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 422ad3c89845..7dace96f36df 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -109,7 +109,11 @@ static const struct imx93_clk_root {
->  	{ IMX93_CLK_CCM_CKO2,		"ccm_cko2_root",	0x1d00,	CKO2_SEL, },
->  	{ IMX93_CLK_CCM_CKO3,		"ccm_cko3_root",	0x1d80,	CKO1_SEL, },
->  	{ IMX93_CLK_CCM_CKO4,		"ccm_cko4_root",	0x1e00,	CKO2_SEL, },
-> -	{ IMX93_CLK_HSIO,		"hsio_root",		0x1e80,	LOW_SPEED_IO_SEL, },
-> +	/*
-> +	 * Critical because clk is used for handshake between HSIOMIX and NICMIX when
-> +	 * NICMIX power down/on during system suspend/resume
-> +	 */
-> +	{ IMX93_CLK_HSIO,		"hsio_root",		0x1e80,	LOW_SPEED_IO_SEL, CLK_IS_CRITICAL},
->  	{ IMX93_CLK_HSIO_USB_TEST_60M,	"hsio_usb_test_60m_root", 0x1f00, LOW_SPEED_IO_SEL, },
->  	{ IMX93_CLK_HSIO_ACSCAN_80M,	"hsio_acscan_80m_root",	0x1f80,	LOW_SPEED_IO_SEL, },
->  	{ IMX93_CLK_HSIO_ACSCAN_480M,	"hsio_acscan_480m_root", 0x2000, MISC_SEL, },
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> index 1d0f79e9c3467..828336873a98f 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -54,7 +54,9 @@ static const struct imx_pll14xx_rate_table imx_pll1416x_tbl[] = {
+>  	PLL_1416X_RATE(800000000U,  200, 3, 1),
+>  	PLL_1416X_RATE(750000000U,  250, 2, 2),
+>  	PLL_1416X_RATE(700000000U,  350, 3, 2),
+> +	PLL_1416X_RATE(640000000U,  320, 3, 2),
+>  	PLL_1416X_RATE(600000000U,  300, 3, 2),
+> +	PLL_1416X_RATE(320000000U,  160, 3, 2),
+>  };
+>  
+>  static const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] = {
 > -- 
-> 2.37.1
+> 2.35.1
 > 
