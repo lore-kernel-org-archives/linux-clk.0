@@ -2,67 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E2AC4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 15:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D606C43217
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 15:45:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232409AbiKDPLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 11:11:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54658 "EHLO
+        id S231180AbiKDPpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 11:45:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232416AbiKDPLr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 11:11:47 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E9B1D663
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 08:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=esUmRi0N+eMqKm
-        IhV1wcq1P9T65++DGCkr9c6bq5b2s=; b=TCX6jU8tXeb6AaRgaDV5TvA9GivnP9
-        ApVzRcGATVe+pB56KwlNdN/G+z7yRCeDRHftQDFdJGTW1PGsmfACCgiKYiHfRjp+
-        15Qkn4eQhHn/lDRuXJ8jc5Mx91sadncMFUKqtwjt3aDfQVWtNL8DRINDsvH89+JY
-        h0FQB5MhaxjE8=
-Received: (qmail 3148185 invoked from network); 4 Nov 2022 16:11:43 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2022 16:11:43 +0100
-X-UD-Smtp-Session: l3s3148p1@q6vVfabsbjhZD+8G
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S230205AbiKDPpQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 11:45:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835702F392;
+        Fri,  4 Nov 2022 08:45:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F1DA6B82ECC;
+        Fri,  4 Nov 2022 15:45:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D8DEC433D6;
+        Fri,  4 Nov 2022 15:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667576710;
+        bh=E7bcdLSHvaAKIPE4ct56X1unFntQqaD0pUdA4q8WBPw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iW2uzuyJnRpdzdYsOnj4Dp2jfgwg/wmolQBPj30EcOuf2VsVt3t2KGn1L2da6vygL
+         dgk5H4xlPxNq7WJE0fBxhwwvtqV21rDvvnmzLfxGQBPtJoKomuEvU1KudXZgKZ8wWW
+         ZyxZO03YbaXh9LiyJ5Q4bfCvW1rwPZBk+tFh4ZHJfT60Uz3U5Lx1kVzYWIMttyDcmD
+         1TCxAOUJvc5dGmcoXZCI6AMCi4ilnI9/qlyIWWcoQ7fbhky8dXIQBZ3lKFJwFgma47
+         E5YyYFEuly9dIIRudPC0lqTN3GuIIXhBvPqf35m07Cag87dJ8kurm8ACuWPQ12Y02s
+         DtcPhURUzZJKg==
+Date:   Fri, 4 Nov 2022 15:44:53 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] clk: renesas: r8a779g0: Add CMT clocks
-Date:   Fri,  4 Nov 2022 16:11:33 +0100
-Message-Id: <20221104151135.4706-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221104151135.4706-1-wsa+renesas@sang-engineering.com>
-References: <20221104151135.4706-1-wsa+renesas@sang-engineering.com>
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
+Message-ID: <Y2UzdYyjgahJsbHg@sirena.org.uk>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-43-f6736dec138e@cerno.tech>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fVhQhryKijuhlxQZ"
+Content-Disposition: inline
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-43-f6736dec138e@cerno.tech>
+X-Cookie: Quack!
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 7f0b4f75ff4d..1da48c81d3dd 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -193,6 +193,10 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("tmu4",		717,	R8A779G0_CLK_SASYNCPERD2),
- 	DEF_MOD("tpu0",		718,	R8A779G0_CLK_SASYNCPERD4),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779G0_CLK_R),
-+	DEF_MOD("cmt0",		910,	R8A779G0_CLK_R),
-+	DEF_MOD("cmt1",		911,	R8A779G0_CLK_R),
-+	DEF_MOD("cmt2",		912,	R8A779G0_CLK_R),
-+	DEF_MOD("cmt3",		913,	R8A779G0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779G0_CLK_CL16M),
- 	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CL16M),
- 	DEF_MOD("pfc2",		917,	R8A779G0_CLK_CL16M),
--- 
-2.35.1
+--fVhQhryKijuhlxQZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Fri, Nov 04, 2022 at 02:18:00PM +0100, Maxime Ripard wrote:
+
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
+
+Given that the current approach involves patching every single user to
+set a default implementation it feels like it might be more
+straightforward to just have the clock API use that implementation if
+none is defined - as you say there's already a flag to indicate the
+unusual case where there's a solid reason to prevent reparenting.  It
+feels like the resulting API is more straightforward.
+
+--fVhQhryKijuhlxQZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNlM3UACgkQJNaLcl1U
+h9C5/gf/ZAWh5zvkI1qjXrZhZu2SWgV5WGeNOTbNz15+lAF9tH5C8ilg87uyeZMu
+FqNtaI2yJVBQ3uV+LbG0gypsDTeJ+LtfC+/saRJdP8mYUIu8fO9g6xzs31D73Vd0
+9DOeN92+hX3GUcy6kFSTwgF5zVmvHnwOewIOly65XCHvibSgBRyAgV1AyNmH9uiy
+zgVO88CdCE4NwAuMynXAR8mi+U4b0vDuk6EQ5UZjLJWWNRjxvFFJrcMCHISRJGsT
+yqZJd8iCFTk91ovn3IKGno5MZ5tA8qWSJ52cBxs9VRKqQhQuWQl4UD4qwWdgwN6Y
+liuJLyjGo/OfBHnsuDkzhj30nFiIUA==
+=scaI
+-----END PGP SIGNATURE-----
+
+--fVhQhryKijuhlxQZ--
