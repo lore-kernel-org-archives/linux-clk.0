@@ -2,114 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 996B5C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 21:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 889EDC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 21:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbiKDVUF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 17:20:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35278 "EHLO
+        id S229479AbiKDVU3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 17:20:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbiKDVUC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 17:20:02 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140D4EE10
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 14:19:49 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id u11so8111471ljk.6
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 14:19:49 -0700 (PDT)
+        with ESMTP id S229708AbiKDVU0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 17:20:26 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7971D6157
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 14:20:24 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id z18so9414271edb.9
+        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 14:20:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Bco6GFNVU1HGevRBeodLZeLGvp/i5iMrjxMWqPFArI=;
-        b=GL5H6SwIQ7SnPyD4oON4xBfjTDtVrCa9/Xki8VGFJD83uINEgUiij95xbgnMm86cqN
-         RDxCQFTbMYUGgzg6e1v/y4/nXYkFAQEJ1HKsM9mWwUwjdpv/PWNKkwHP/hYD6RVpTIQL
-         KNZiXlL5YoppusYjW8TIwl2fsbKq5X7G45NWs=
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3QTwUc+0ABT8lOPURWsE/s9ly5zaIlAKdIt/YceCmhQ=;
+        b=sEnF3YX4EcoAUBMUyeDyVfLosYH3BYj7B6VqrIOMYXz8EDWozXHKPUwhMkPdBk7sS6
+         SOW41dYxcU89gzuun0Th6UTunJkmuKNMiqklptTO/0IPd1jX8WltBawz/ri4/mHtF9+/
+         YcA6DjPb0aMLnJCmwSnAcN9MXG81qbBlleSORP70HBCV7NVkmucWkPRO29REZpZqD7s5
+         BV0kWzq7zzHTXc8p/qnvwBnhuu+Zn/RQYJf0Kp5tYl2rYn62Lt57qK6R+vXYptvxQ7CF
+         jO7+bYD6dnqWBfQZ9zRqlGuoVgt0eWEyhbOTPzwHSNnw7QMD6j64lTwwabJW+FRNoIhY
+         A1lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Bco6GFNVU1HGevRBeodLZeLGvp/i5iMrjxMWqPFArI=;
-        b=H89y+bbn/Voez47QJn2ejvcgL3quaPnbLExdH2/0Z7GtPrdcqiWcJKUnIIJWWdbctd
-         N/TnP8zHu2tJG2msjVWOSgCWqxu3lXQgnTAKREtGjBAQHLW/35DGpsBbOdPYEKGy8SHP
-         BUZHn/HBMo4qI6Peh86OLrzvS+ZDyRtRXNnReBL5ra8cmEXJVUi0L14TcNst9nb0EC9H
-         pqaDkCI0jw0zazg5C/9gTx07ZEWzulFPSO44feVnLJfEHRBYKYbJPDdVZl+iIBp4GH8o
-         ikjUkLAD+UbrJt7ilR4ezvMBereZ3aaPaSniI3MnE5IRfVxi9SH7TnDPiHFwYQ4VvdWH
-         l3tA==
-X-Gm-Message-State: ACrzQf3J8rysDfF4793Pl2+KJf+s3h5QeEn8XCfr0WTTuZpmXwqroRRG
-        m3vuZC8ZtYMKLteu5ibiCsoRpfcLBpgQ4N2nPEg6cg==
-X-Google-Smtp-Source: AMsMyM6z0i1Sv3zsd0Jq/pbof/zICrtZpxky+Y+f3KH0VlUri2O47At8vk0jaz4ZKam20cq9Bb5MAyac1cc20XSL2Nk=
-X-Received: by 2002:a2e:8810:0:b0:277:4819:a6c3 with SMTP id
- x16-20020a2e8810000000b002774819a6c3mr12733700ljh.4.1667596788296; Fri, 04
- Nov 2022 14:19:48 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 4 Nov 2022 14:19:47 -0700
+        bh=3QTwUc+0ABT8lOPURWsE/s9ly5zaIlAKdIt/YceCmhQ=;
+        b=0JTRAPr5qEtfbAaYndCha7+VOs7vnb/ivC7zbTAIbJdTDxKzPnxPGSf74XR55/n28j
+         Qt5EL/THX4Vav3vL7k9vKma03ankwo3diX0EDK6nPGBjIDz1b64NYjpS+TaGm2Q/1LvZ
+         5kA/xdZqcF05gQo+DkYzdzi6IV8Oekc9tfMjfA66VhrVjxygiFeaxwpr0gy4a9Ss3rkO
+         vHKo79WejQblQeOKKtdQ7GQ22CxmM9dXdVrcEi1vwjYDFlvLtYEw9oghiW9/QbYMQJ2G
+         7MrX0cEVE/elmJvIEBpJcJvkaJXxVc+Rnw1XQPMZn5+535eD4G2zE05ICQ9XzaXDiavI
+         pUQQ==
+X-Gm-Message-State: ACrzQf19zIdlrEuDQWYiipshUE3FTKIHXXxjAEw5Y0Es1W+HxLiZ+T+e
+        hawe0Rj1SY8oZr1hHSqS5uW0xg==
+X-Google-Smtp-Source: AMsMyM6knLELqNXPYiiLeFeRLblm3n6bNbMnYtHpkrvKA7sqvcELgfpIB6jE4Ca3nqc0lS90XIW87A==
+X-Received: by 2002:a05:6402:4505:b0:451:1551:7b14 with SMTP id ez5-20020a056402450500b0045115517b14mr16529382edb.300.1667596823030;
+        Fri, 04 Nov 2022 14:20:23 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id ca12-20020a170906a3cc00b0079800b81709sm11533ejb.219.2022.11.04.14.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 14:20:22 -0700 (PDT)
+Date:   Fri, 4 Nov 2022 23:20:21 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 1/6] clk: imx93: unmap anatop base in error handling path
+Message-ID: <Y2WCFSGLNN1Rt9UZ@linaro.org>
+References: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
+ <20221028095211.2598312-2-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20221104064055.2.I49b25b9bda9430fc7ea21e5a708ca5a0aced2798@changeid>
-References: <20221104064055.1.I00a0e4564a25489e85328ec41636497775627564@changeid>
- <20221104064055.2.I49b25b9bda9430fc7ea21e5a708ca5a0aced2798@changeid>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Fri, 4 Nov 2022 14:19:47 -0700
-Message-ID: <CAE-0n53FLz+4XROL7t5Vk1pEgvAX4tJYO4UK8rdCQUW0Pq78jg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: qcom: lpass-sc7180: Fix pm_runtime usage
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Judy Hsiao <judyhsiao@chromium.org>,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221028095211.2598312-2-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Douglas Anderson (2022-11-04 06:56:29)
-> The sc7180 lpass clock controller's pm_runtime usage wasn't broken
-> quite as spectacularly as the sc7280's pm_runtime usage, but it was
-> still broken. Putting some printouts in at boot showed me this (with
-> serial console enabled, which makes the prints slow and thus changes
-> timing):
->   [    3.109951] DOUG: my_pm_clk_resume, usage=1
->   [    3.114767] DOUG: my_pm_clk_resume, usage=1
->   [    3.664443] DOUG: my_pm_clk_suspend, usage=0
->   [    3.897566] DOUG: my_pm_clk_suspend, usage=0
->   [    3.910137] DOUG: my_pm_clk_resume, usage=1
->   [    3.923217] DOUG: my_pm_clk_resume, usage=0
->   [    4.440116] DOUG: my_pm_clk_suspend, usage=-1
->   [    4.444982] DOUG: my_pm_clk_suspend, usage=0
->   [   14.170501] DOUG: my_pm_clk_resume, usage=1
->   [   14.176245] DOUG: my_pm_clk_resume, usage=0
->
-> ...or this w/out serial console:
->   [    0.556139] DOUG: my_pm_clk_resume, usage=1
->   [    0.556279] DOUG: my_pm_clk_resume, usage=1
->   [    1.058422] DOUG: my_pm_clk_suspend, usage=-1
->   [    1.058464] DOUG: my_pm_clk_suspend, usage=0
->   [    1.186250] DOUG: my_pm_clk_resume, usage=1
->   [    1.186292] DOUG: my_pm_clk_resume, usage=0
->   [    1.731536] DOUG: my_pm_clk_suspend, usage=-1
->   [    1.731557] DOUG: my_pm_clk_suspend, usage=0
->   [   10.288910] DOUG: my_pm_clk_resume, usage=1
->   [   10.289496] DOUG: my_pm_clk_resume, usage=0
->
-> It seems to be doing roughly the right sequence of calls, but just
-> like with sc7280 this is more by luck than anything. Having a usage of
-> -1 is just not OK.
->
-> Let's fix this like we did with sc7280.
+On 22-10-28 17:52:06, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The anatop base is not unmapped during error handling path, fix it.
+> 
+> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Any Fixes tag?
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+>  drivers/clk/imx/clk-imx93.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 99cff1fd108b..9ef3fcbdd951 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -258,7 +258,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  	struct device_node *np = dev->of_node;
+>  	const struct imx93_clk_root *root;
+>  	const struct imx93_clk_ccgr *ccgr;
+> -	void __iomem *base = NULL;
+> +	void __iomem *base, *anatop_base;
+>  	int i, ret;
+>  
+>  	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
+> @@ -285,20 +285,22 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  								    "sys_pll_pfd2", 1, 2);
+>  
+>  	np = of_find_compatible_node(NULL, NULL, "fsl,imx93-anatop");
+> -	base = of_iomap(np, 0);
+> +	anatop_base = of_iomap(np, 0);
+>  	of_node_put(np);
+> -	if (WARN_ON(!base))
+> +	if (WARN_ON(!anatop_base))
+>  		return -ENOMEM;
+>  
+> -	clks[IMX93_CLK_AUDIO_PLL] = imx_clk_fracn_gppll("audio_pll", "osc_24m", base + 0x1200,
+> +	clks[IMX93_CLK_AUDIO_PLL] = imx_clk_fracn_gppll("audio_pll", "osc_24m", anatop_base + 0x1200,
+>  							&imx_fracn_gppll);
+> -	clks[IMX93_CLK_VIDEO_PLL] = imx_clk_fracn_gppll("video_pll", "osc_24m", base + 0x1400,
+> +	clks[IMX93_CLK_VIDEO_PLL] = imx_clk_fracn_gppll("video_pll", "osc_24m", anatop_base + 0x1400,
+>  							&imx_fracn_gppll);
+>  
+>  	np = dev->of_node;
+>  	base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (WARN_ON(IS_ERR(base)))
+> +	if (WARN_ON(IS_ERR(base))) {
+> +		iounmap(anatop_base);
+>  		return PTR_ERR(base);
+> +	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(root_array); i++) {
+>  		root = &root_array[i];
+> @@ -327,6 +329,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  
+>  unregister_hws:
+>  	imx_unregister_hw_clocks(clks, IMX93_CLK_END);
+> +	iounmap(anatop_base);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.37.1
+> 
