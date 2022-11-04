@@ -2,190 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B22BC4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Nov 2022 22:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0961BC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 02:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230387AbiKCWLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Nov 2022 18:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39052 "EHLO
+        id S230193AbiKDCJt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Nov 2022 22:09:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231637AbiKCWLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 18:11:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A31622B06;
-        Thu,  3 Nov 2022 15:11:36 -0700 (PDT)
-Received: from notapiano (unknown [IPv6:2600:4041:5b1a:cd00:524d:e95d:1a9c:492a])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S231244AbiKDCJW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2022 22:09:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12826114B;
+        Thu,  3 Nov 2022 19:08:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: nfraprado)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 88186660295F;
-        Thu,  3 Nov 2022 22:11:33 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1667513495;
-        bh=pgY0dvtyM8FwNva19FmPelXivw7RaAAO4XKizZMcieY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CFxur4ptUBDg7nGhx6dDOLzWzdzgMgpxTlSmAPSCP55GF1G+wVuCCHQeFU6+igc2b
-         jOhlKLfU2M0GUXM+S0c6g/JTL6GBReHOEz3BEbJsm9rTAe9hkY9ASLOMVKu9HY+y1T
-         H8YQpaU63a+D1cbi+B2YA5wUoFHz0n+L+rUTdURifcJPTfF0vf8BOmGrfAquN1YTsc
-         5LLR36LQ7R30Ony0YDIp59ut26FmT5HX79waVCxst2/XyNkDt+Pkb5gVHmRRKDaXKZ
-         1bHzhBQtXoHsmBvyRI6thybjEcHTPudxLp360clRIl7OlICUHJj+uVW2GcAxHHkEQ9
-         Qv6dp8PWOTxEw==
-Date:   Thu, 3 Nov 2022 18:11:30 -0400
-From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
-        <nfraprado@collabora.com>
-To:     Rex-BC Chen =?utf-8?B?KOmZs+afj+i+sCk=?= 
-        <Rex-BC.Chen@mediatek.com>
-Cc:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        Runyang Chen =?utf-8?B?KOmZiOa2pua0iyk=?= 
-        <Runyang.Chen@mediatek.com>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Miles Chen =?utf-8?B?KOmZs+awkeaouik=?= 
-        <Miles.Chen@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v6 1/3] reset: mediatek: Move MediaTek system clock reset
- to reset/mediatek
-Message-ID: <20221103221130.eosmwl2vjo36va6c@notapiano>
-References: <20221021104804.21391-1-rex-bc.chen@mediatek.com>
- <20221021104804.21391-2-rex-bc.chen@mediatek.com>
- <8b73e38b-ae78-1f85-f5f0-f13bce6e45de@collabora.com>
- <bcfd608b029377565dc656adf24effeba95d2433.camel@mediatek.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FAEF62066;
+        Fri,  4 Nov 2022 02:08:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA27C433D6;
+        Fri,  4 Nov 2022 02:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667527733;
+        bh=6vcgZO9W5PulT8vcY4daa97zjmOPRCCRD6o+HsQZiGI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Br4KxHHf+N0Uvd7wSlx5zdFjo+uWjO5VwuJ5g3kNoc6HeKrvuK55cJUGIt0YwMObz
+         FiAgYAuMoUZczaYjVrxP2bzwT4OzL2Os7P21UbNnsZSA1q8kfxLTL7w7D26NaIcn06
+         zt60zdzV3T+5jJVCSlARbp4JEi+/y2JTTbwpzDzKZoTRSZY6SZ5Bgnj1X+wH6KZ26Y
+         o4iU0cku6W6G78EqU8ZBacXgmpaIJ8j27OmwAAqTLcj/Lsi8H0g3/yILvqCYZnUawL
+         wh2QzybirTH8juOFI7eu35Fv/wPCXhXN1JVI41DewQPUU39St9XnBW9rUSnaqex2qO
+         1zvPwYeBNnaGA==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.1-rc3
+Date:   Thu,  3 Nov 2022 19:08:52 -0700
+Message-Id: <20221104020852.3958600-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bcfd608b029377565dc656adf24effeba95d2433.camel@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 05:14:40AM +0000, Rex-BC Chen (陳柏辰) wrote:
-> On Tue, 2022-10-25 at 12:36 +0200, AngeloGioacchino Del Regno wrote:
-> > Il 21/10/22 12:48, Bo-Chen Chen ha scritto:
-[..]
-> > > --- a/drivers/clk/mediatek/Kconfig
-> > > +++ b/drivers/clk/mediatek/Kconfig
-> > > @@ -8,6 +8,7 @@ menu "Clock driver for MediaTek SoC"
-> > >   config COMMON_CLK_MEDIATEK
-> > >   	tristate
-> > >   	select RESET_CONTROLLER
-> > > +	select RESET_MEDIATEK_SYSCLK
-> > >   	help
-> > >   	  MediaTek SoCs' clock support.
-> > >   
-> > 
-> > ..snip..
-> > 
-> > > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> > > index 3e7e5fd633a8..5cef7ccc9a7d 100644
-> > > --- a/drivers/reset/Makefile
-> > > +++ b/drivers/reset/Makefile
-> > > @@ -1,6 +1,7 @@
-> > >   # SPDX-License-Identifier: GPL-2.0
-> > >   obj-y += core.o
-> > >   obj-y += hisilicon/
-> > > +obj-y += mediatek/
-> > 
-> > I'd be more for
-> > 
-> > obj-$(CONFIG_ARCH_MEDIATEK) += mediatek/
-> > 
-> > as there's no reason to even compile these if MTK support isn't
-> > enabled at all.
-> > 
-> 
-> Hello Angelo,
-> 
-> thanks for your review.
-> I obj-y += mediatek/ because if I don't write like this, it will build
-> fail for x86.
-> Is there any suggestion for this?
-> 
-> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
-> linux-ld: vmlinux.o: in function `mtk_pericfg_init':
-> clk-mt8135.c:(.init.text+0x12a2b7): undefined reference to
-> `mtk_reset_init_with_node'
-> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
-> linux-ld: vmlinux.o: in function `mtk_infrasys_init':
-> clk-mt8135.c:(.init.text+0x12a3bb): undefined reference to
-> `mtk_reset_init_with_node'
-> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
-> linux-ld: vmlinux.o: in function `mtk_infrasys_init':
-> clk-mt8173.c:(.init.text+0x12ac47): undefined reference to
-> `mtk_reset_init_with_node'
-> /tmp/src_kernel/prebuilt/toolchain/0day/gcc/x86_64-linux/bin/x86_64-
-> linux-ld: vmlinux.o: in function `mtk_pericfg_init':
-> clk-mt8173.c:(.init.text+0x12ad25): undefined reference to
-> `mtk_reset_init_with_node'
-> /tmp/src_kernel/kernel/mediatek/scripts/Makefile.vmlinux:34: recipe for
-> target 'vmlinux' failed
-> make[3]: *** [vmlinux] Error 1
-> make[3]: Target '__default' not remade because of errors.
-> /tmp/src_kernel/kernel/mediatek/Makefile:1236: recipe for target
-> 'vmlinux' failed
-> make[2]: *** [vmlinux] Error 2
-> make[2]: Target '__all' not remade because of errors.
-> make[2]: Leaving directory '/tmp/out_kernel/out/allyesconfig.x86_64'
-> Makefile:231: recipe for target '__sub-make' failed
-> make[1]: *** [__sub-make] Error 2
-> make[1]: Target '__all' not remade because of errors.
-> make[1]: Leaving directory '/tmp/src_kernel/kernel/mediatek'
-> build/core/kbuild_test.mk:61: recipe for target 'all' failed
-> make: *** [all] Error 2
-> [11:44:04] Error: failed to build allyesconfig.x86_64
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
-From the errors it seems like you're compiling the clock drivers (like
-clk-mt8135.c) but not the sysclk reset driver (reset-mediatek-sysclk.c). Given
-that this happened when you added CONFIG_ARCH_MEDIATEK to that Makefile, then it
-must mean that that config is disabled, which would make sense for a x86 build.
-But then the fact that the clock driver was built even in this case must mean
-that you have COMPILE_TEST enabled.
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
-I guess in order to have a working COMPILE_TEST=y build, you do need to have
-obj-y += mediatek/, and on the Kconfig below...
+are available in the Git repository at:
 
-> 
-> > >   obj-$(CONFIG_ARCH_STI) += sti/
-> > >   obj-$(CONFIG_ARCH_TEGRA) += tegra/
-> > >   obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
-> > > diff --git a/drivers/reset/mediatek/Kconfig
-> > > b/drivers/reset/mediatek/Kconfig
-> > > new file mode 100644
-> > > index 000000000000..a416cb938753
-> > > --- /dev/null
-> > > +++ b/drivers/reset/mediatek/Kconfig
-> > > @@ -0,0 +1,5 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > 
-> > Similarly, we should at this point also do....
-> > 
-> > if ARCH_MEDIATEK
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-... have instead
+for you to fetch changes up to ffa20aa581cf5377fc397b0d0ff9d67ea823629b:
 
-if ARCH_MEDIATEK || COMPILE_TEST
+  clk: qcom: Update the force mem core bit for GPU clocks (2022-10-27 17:23:29 -0700)
 
-I think that should fix the issue.
+----------------------------------------------------------------
+Fixes in clk drivers and some clk rate range fixes in the core as well.
 
-Thanks,
-Nícolas
+ - Make sure the struct clk_rate_request is more sane.
 
-> > 
-> > > +config RESET_MEDIATEK_SYSCLK
-> > > +	tristate "MediaTek System Clock Reset Driver"
-> > > +	help
-> > > +	  This enables the system clock reset driver for MediaTek SoCs.
-> > 
-> > endif # ARCH_MEDIATEK
+ - Remove a WARN_ON that was triggering for clks with no parents
+   that can change frequency.
+
+ - Fix bad i2c bus transactions on Renesas rs9.
+
+ - Actually return an error in clk_mt8195_topck_probe() on an error
+   path.
+
+ - Keep the GPU memories powered while the clk isn't enabled on
+   Qualcomm's sc7280 SoC.
+
+ - Fix the parent clk for HSCIF modules on Renesas' R-Car V4H SoC.
+
+----------------------------------------------------------------
+Conor Dooley (1):
+      clk: sifive: select by default if SOC_SIFIVE
+
+Geert Uytterhoeven (2):
+      clk: renesas: r8a779g0: Add SASYNCPER clocks
+      clk: renesas: r8a779g0: Fix HSCIF parent clocks
+
+Marek Vasut (1):
+      clk: rs9: Fix I2C accessors
+
+Maxime Ripard (3):
+      clk: Remove WARN_ON NULL parent in clk_core_init_rate_req()
+      clk: Initialize the clk_rate_request even if clk_core is NULL
+      clk: Initialize max_rate in struct clk_rate_request
+
+Stephen Boyd (1):
+      Merge tag 'renesas-clk-fixes-for-v6.1-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into clk-fixes
+
+Taniya Das (1):
+      clk: qcom: Update the force mem core bit for GPU clocks
+
+Yang Yingliang (1):
+      clk: mediatek: clk-mt8195-topckgen: Fix error return code in clk_mt8195_topck_probe()
+
+ drivers/clk/clk-renesas-pcie.c             | 65 ++++++++++++++++++++++++++++--
+ drivers/clk/clk.c                          |  6 ++-
+ drivers/clk/mediatek/clk-mt8195-topckgen.c |  4 +-
+ drivers/clk/qcom/gcc-sc7280.c              |  1 +
+ drivers/clk/qcom/gpucc-sc7280.c            |  1 +
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c    | 13 ++++--
+ drivers/clk/sifive/Kconfig                 |  4 +-
+ 7 files changed, 84 insertions(+), 10 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
