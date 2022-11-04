@@ -2,123 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCF5C43217
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 09:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3377AC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 10:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbiKDJaD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 05:30:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46886 "EHLO
+        id S231504AbiKDKEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 06:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230194AbiKDJ3u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 05:29:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582C529CA4;
-        Fri,  4 Nov 2022 02:29:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E65ED62114;
-        Fri,  4 Nov 2022 09:29:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DCFC433C1;
-        Fri,  4 Nov 2022 09:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667554188;
-        bh=GvpMC/s97cy1zODznYS5BOEVcIvr4qyq43qRasSeRqs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WYbQsiIwNF1cF6QBI0aTi+8vG8quWpm81ADIzZIhiYBWKG1Ece4kXL5OLIshNohBf
-         wO5oSxVeOYvYS76vsIkHoO+BudVt4N7putwzbWkN6ULnSuaRjQE2ZrIsxhJXfjhYAh
-         bYPc1mZLfok3O/YriEm91hnClG5gwU1DePng7rLNKElK3GuEvMpIf6jQt0L0DOnUGU
-         o5x1VMLz8t4XAKAAdGKzI6LDbIxlRolpcY+PDN8c8/VuiIuH/oR4VMo5ZaFtZ0Vfe4
-         bHKXYbnemDuNvMs0HG+K1F/0SvWEhCUblmL2iAl40CmpSB/rgkAXziTOaDUsX0Q7tT
-         YJe5ZQ5YvyLmA==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oqt10-0004ha-Gb; Fri, 04 Nov 2022 10:29:30 +0100
-Date:   Fri, 4 Nov 2022 10:29:30 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Shazad Hussain <quic_shazhuss@quicinc.com>,
-        Stephen Boyd <sboyd@kernel.org>, bmasney@redhat.com,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: qcom: gcc-sc8280xp: add cxo as parent for
- gcc_ufs_ref_clkref_clk
-Message-ID: <Y2Tber39cHuOSR/W@hovoldconsulting.com>
-References: <20221030142333.31019-1-quic_shazhuss@quicinc.com>
- <20221101182402.32CE5C433C1@smtp.kernel.org>
- <Y2IZaxukERXNcPGR@hovoldconsulting.com>
- <c96304da-f57e-4926-2f3f-665c2054fb00@quicinc.com>
- <Y2Imnf1+v5j5CH9r@hovoldconsulting.com>
- <bb590bfb-07a4-97c1-e5c0-d00d840e2e11@quicinc.com>
- <Y2I3tekSAO42r0xR@hovoldconsulting.com>
- <20221103024949.lw4g2tavk7uw5xt4@builder.lan>
- <Y2OEjNAPXg5BfOxH@hovoldconsulting.com>
- <20221103152355.5sfbkpsfvjzgeixi@builder.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221103152355.5sfbkpsfvjzgeixi@builder.lan>
+        with ESMTP id S229985AbiKDKEy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 06:04:54 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BEEFFF
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 03:04:51 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221104100448epoutp017238622875ea3e2dfa35bad6a4f02813~kWZwI_EM40134001340epoutp01i
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 10:04:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221104100448epoutp017238622875ea3e2dfa35bad6a4f02813~kWZwI_EM40134001340epoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1667556288;
+        bh=6YrZb4rIVThny1YuuCHZdKWp6Aza2885Qa/dxfwyNuQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mYS9m7Ql92fYAk4lrGxoaVV+7L/HVCLztf5afuC5VK96VmVBFHwwWFl82aS7Olrm1
+         cjoH0xO3gCFargwoMQRE4OPKcMRj5XE1swKd2T/wjcP877Zx9uZX1wWUrGTKBVDk2/
+         bRzjjHE8ErmviPQxxemDZBZ+UR0IA2EfXwRA9uTA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20221104100447epcas5p3a3cd553ac66cd4f4b0a0b6c2a7788725~kWZvcJpah3214732147epcas5p3Z;
+        Fri,  4 Nov 2022 10:04:47 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4N3bp5331Bz4x9Pp; Fri,  4 Nov
+        2022 10:04:45 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9F.4D.39477.DB3E4636; Fri,  4 Nov 2022 19:04:45 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221104085410epcas5p24d88f59001b739075e9e190e2c47841e~kVcEwUP0W1926119261epcas5p2v;
+        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221104085410epsmtrp2877b16b524ac75f74d9f92dcf0b996b1~kVcEvaESi0462404624epsmtrp2P;
+        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
+X-AuditID: b6c32a4a-007ff70000019a35-92-6364e3bda44e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        86.46.18644.233D4636; Fri,  4 Nov 2022 17:54:10 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221104085407epsmtip1b37a75115cfe527d8477208458815b7d~kVcCHIU_Q3261232612epsmtip1h;
+        Fri,  4 Nov 2022 08:54:07 +0000 (GMT)
+From:   Inbaraj <inbaraj.e@samsung.com>
+To:     krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
+        tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, chanho61.park@samsung.com
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, pankaj.dubey@samsung.com,
+        Inbaraj <inbaraj.e@samsung.com>
+Subject: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
+ CMU_FSYS1 mmc card clock
+Date:   Fri,  4 Nov 2022 14:30:19 +0530
+Message-Id: <20221104090019.88387-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTQ3fv45Rkg7tfBC0ezNvGZnF5v7bF
+        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
+        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
+        JBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0
+        upJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10vL7XEytDAwMgU
+        qDAhO6Nn9wW2ghlcFSuP72BuYDzK0cXIySEhYCKxu/sHG4gtJLCbUWJHS1gXIxeQ/YlRYubf
+        e+wQzmdGiXsn9jPBdGzpuM0GkdjFKHHr8maoqlYmiaPHnoLNYhNQlTiw/RUjSEJE4CGjxP7m
+        ZjCHGcS5/+Q8O0iVsECcxNlF78BsFqCO/4ungHXzClgB1VxkgdgnL7F6wwFmkGYJgUYOiVPf
+        N7JCJFwk7s7pYoewhSVeHd8CZUtJfH63lw3C9pHYP+cXI4SdIXFs+3KoXnuJA1fmAC3gALpI
+        U2L9Ln2IsKzE1FPrwP5kFuCT6P39BOpnXokd82BsZYmZR+5DjZeU2Hl5J9SdHhJTe75AQzJW
+        Yu61z0wTGGVnIWxYwMi4ilEytaA4Nz212LTAKC+1HB5Vyfm5mxjBaVLLawfjwwcf9A4xMnEw
+        HmKU4GBWEuH9tC05WYg3JbGyKrUoP76oNCe1+BCjKTDMJjJLiSbnAxN1Xkm8oYmlgYmZmZmJ
+        pbGZoZI47+IZWslCAumJJanZqakFqUUwfUwcnFINTNMtPhbfu9ufOvu/sP+y1NmV+v9vTd61
+        Kk3Q9FbebotXO9b7PBb6bbb6yfqU0Gr1ZYbHfZPO7q4y4trXt4vx9a+VfirKRxcdLl/96qyP
+        VvSjR6uDVWKaOALDFqk17lX9N23KvJMp268tWP6p422SWmHvjmzd99Mit7Bmya9LLtDiso6S
+        DuL5uZzpi/Ks+okfLHZZdC7av+i1a3nJS/eq38cmW957aOBeFNBkbektqZj5XsU0ot1wk/2N
+        3PMxEdsF72/Ne97w6b7O2tIPtgsbdKoDAu+/ZSlPnXXCvO7/FudNZZ/tVS8xPlbd9KZhTQtv
+        5uxSY3X9+PU+onX7O87N5WfeWFy6ZeaFvubmCw09GUosxRmJhlrMRcWJANjxpH0cBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnK7R5ZRkg51n2SwezNvGZnF5v7bF
+        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
+        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
+        JBfAHsVlk5Kak1mWWqRvl8CV0bP7AlvBDK6Klcd3MDcwHuXoYuTkkBAwkdjScZuti5GLQ0hg
+        B6PE/qbprBAJSYnZv6ezQ9jCEiv/PWeHKGpmkvj0dTITSIJNQFXiwPZXjCAJEYHXjBL/731j
+        BnGYBZ4zSlx/sYkFpEpYIEZi8cJ/YB0sQB3/F09hA7F5Bawk7j+5yAKxQl5i9YYDzBMYeRYw
+        MqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgOWS2tHYx7Vn3QO8TIxMF4iFGCg1lJ
+        hPfTtuRkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphS
+        ZsZsSj5QyPQnpPFOxJTS/280zdV9v1hm3XDf8fOBkdeTmh73joZuRmn/V48ubj/Tu/KX5fTj
+        uWd2rH8XJVwx7ZL9D75u1s38ec03xCPXSHsUCLn/unZWUeJc0469gQt0JJdN/mxyznWd45rw
+        XzlBe/TaC2cGVJy3FTX9Nuf8g/pGnyvGMY/y3Cdt++D+LbNNf5Nj5rtZ97gUgqrCw4PuSjxe
+        phbCbqzyW5C/yzvMkstk45r5M8XXXDsRIGR19dPGlzHsXpfnJ3aYJl0MCs0Xnn8wb4EzWwZT
+        wunfq+43/bnyymZqRrLTspfMFp2PXrIb/VYVeGI5eYPXwb03pltYdDLnKYaJfNn9RzMyy02J
+        pTgj0VCLuag4EQDevkDgyAIAAA==
+X-CMS-MailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
+References: <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 10:23:55AM -0500, Bjorn Andersson wrote:
-> On Thu, Nov 03, 2022 at 10:06:20AM +0100, Johan Hovold wrote:
-> > On Wed, Nov 02, 2022 at 09:49:49PM -0500, Bjorn Andersson wrote:
+Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
 
-> > > In line with the downstream dts, we have GCC_UFS{,_1}_CARD_CLKREF_CLK
-> > > providing a reference clock to the two phys. Then GCC_UFS_REF_CLKREF_CLK
-> > > feeds the UFS refclock pads (both of them), which connect to the memory
-> > > device(s).
-> > > 
-> > > In other words, GCC_UFS{,_1}_CARD_CLKREF_CLK should be "ref" in
-> > > respective phy.
-> > > 
-> > > GCC_UFS_REF_CLKREF_CLK is the clock to the devices, but as we don't
-> > > represent the memory device explicitly it seems suitable to use as
-> > > "ref_clk" in the ufshc nodes - which would then match the special
-> > > handling of the "link clock" in the UFS driver.
-> > 
-> > Thanks for clearing that up. Using GCC_UFS_REF_CLKREF_CLK as ref_clk for
-> > the controller sounds reasonable.
-> > 
-> > I guess the only missing piece is which "card" ref clock is used by
-> > which PHY.
-> > 
-> > The ADP dts uses:
-> > 
-> > 	phy			ref clock
-> > 
-> > 	phy@1d87000 (UFS_PHY)	GCC_UFS_CARD_CLKREF_CLK
-> > 	phy@1da7000 (UFS_CARD)	GCC_UFS_1_CARD_CLKREF_CLK
-> > 
-> 
-> This matches the documentation.
+This fixes make dtbs_check warning as shown below:
 
-Thanks for checking.
+arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-controller@17040000:
+clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected
+From schema: /home/inbaraj/mainline/linux/Documentation/devicetree/
+bindings/clock/samsung,exynosautov9-clock.yaml
 
-> > > All three clocks are sourced off the CXO pad, so I would like this patch
-> > > to cover at least all of these. And
-> > > 
-> > > Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
-> > > 
-> > > seems to be in order for such patch.
-> > > 
-> > > 
-> > > @Johan, would you mind writing a dts patch flipping the clocks around
-> > > and Shazad can update this patch?
-> > 
-> > I'll do so, but I'll wait with posting until you can confirm which
-> > clkref is which.
+Fixes: 4b6ec8d88623 ("dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1")
+Signed-off-by: Inbaraj <inbaraj.e@samsung.com>
+---
+ .../devicetree/bindings/clock/samsung,exynosautov9-clock.yaml   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've know posted a patch fixing the devicetree here:
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+index 2ab4642679c0..55c4f94a14d1 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+@@ -148,7 +148,7 @@ allOf:
+           items:
+             - const: oscclk
+             - const: dout_clkcmu_fsys1_bus
+-            - const: dout_clkcmu_fsys1_mmc_card
++            - const: gout_clkcmu_fsys1_mmc_card
+             - const: dout_clkcmu_fsys1_usbdrd
+ 
+   - if:
+-- 
+2.17.1
 
-	https://lore.kernel.org/lkml/20221104092045.17410-1-johan+linaro@kernel.org/
-
-Note that we need to get Shazad's clock driver fix in first as the UFS
-controller driver expects a valid frequency for the device ref clock.
-
-Johan
