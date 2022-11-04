@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A92DC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 21:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 996B5C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 21:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbiKDVTP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 17:19:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34660 "EHLO
+        id S230139AbiKDVUF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 17:20:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiKDVTO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 17:19:14 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 927EDF59
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 14:19:12 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id c1so7366394lfi.7
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 14:19:12 -0700 (PDT)
+        with ESMTP id S229609AbiKDVUC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 17:20:02 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140D4EE10
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 14:19:49 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id u11so8111471ljk.6
+        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 14:19:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=L+pen+bclyorb8ogf6bpxsI2tvXi5ZuGCYXqmAjFI/g=;
-        b=XJNITXPyNkcNnI4VfJNFhxvsGcNZ0rAQl0ZqqMYKQh4nUReBgcc4uXnwTAwLDZQRs4
-         LYZANwCEbW5F9+854u1PG1+tjER3XnwothDcaJKX4mCwz3DTRsjRB2M7lnZBEOp9HL1J
-         upmnQMir3Q6QiUDlmnP85/moEVRKqPt3t+hqc=
+        bh=7Bco6GFNVU1HGevRBeodLZeLGvp/i5iMrjxMWqPFArI=;
+        b=GL5H6SwIQ7SnPyD4oON4xBfjTDtVrCa9/Xki8VGFJD83uINEgUiij95xbgnMm86cqN
+         RDxCQFTbMYUGgzg6e1v/y4/nXYkFAQEJ1HKsM9mWwUwjdpv/PWNKkwHP/hYD6RVpTIQL
+         KNZiXlL5YoppusYjW8TIwl2fsbKq5X7G45NWs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L+pen+bclyorb8ogf6bpxsI2tvXi5ZuGCYXqmAjFI/g=;
-        b=H1aJbcXzm1QTl4yEqEGsgrUwUDiyaT8bytcKsR+XgWjy5CQnogXL5QmJIsvU/rYGSI
-         N8nFmHH2go9shhF5yKWaOYkWt818PoeUTs3MUzbRNOBDaM/QENHqy8dcWWUDiQYU9TCC
-         eD1YmnvXyChgWbnPsBnI7ynQ83roYYUJJuVrW1iHRc3wTvMAlLQ4e0JyDeHP/YfjMCOi
-         E63Rtli+oqySf1/9kOmeeGoNWTnKCu7lulIMF66jFYMquv7Re8RQu4yYDHcl05uSQS4Q
-         1CksGV5WEI0nfuMu0O3BaLRWk27bbDZaUQLAXpQfrxVwBmajSaMGByK4AsLqj/UGhwlr
-         iZ0A==
-X-Gm-Message-State: ACrzQf3xck4mHSt/UhmNAg9PSNArLl/+xWMHLoGodc7VggLlO9kPJVVG
-        E6PszwskT4NG3/8QgkgwHQ1/uqxoFp1Icq87GJnD0w==
-X-Google-Smtp-Source: AMsMyM7hO7tIh7DUGKYkxLwL5wT6J+jrjdD8MBfAHIk43j8UcT87F7EAGjbtaoEX4G1b90StxBn3SpTuz37UP7/InaQ=
-X-Received: by 2002:ac2:4d81:0:b0:4b2:11d:fa0e with SMTP id
- g1-20020ac24d81000000b004b2011dfa0emr1166848lfe.309.1667596750945; Fri, 04
- Nov 2022 14:19:10 -0700 (PDT)
+        bh=7Bco6GFNVU1HGevRBeodLZeLGvp/i5iMrjxMWqPFArI=;
+        b=H89y+bbn/Voez47QJn2ejvcgL3quaPnbLExdH2/0Z7GtPrdcqiWcJKUnIIJWWdbctd
+         N/TnP8zHu2tJG2msjVWOSgCWqxu3lXQgnTAKREtGjBAQHLW/35DGpsBbOdPYEKGy8SHP
+         BUZHn/HBMo4qI6Peh86OLrzvS+ZDyRtRXNnReBL5ra8cmEXJVUi0L14TcNst9nb0EC9H
+         pqaDkCI0jw0zazg5C/9gTx07ZEWzulFPSO44feVnLJfEHRBYKYbJPDdVZl+iIBp4GH8o
+         ikjUkLAD+UbrJt7ilR4ezvMBereZ3aaPaSniI3MnE5IRfVxi9SH7TnDPiHFwYQ4VvdWH
+         l3tA==
+X-Gm-Message-State: ACrzQf3J8rysDfF4793Pl2+KJf+s3h5QeEn8XCfr0WTTuZpmXwqroRRG
+        m3vuZC8ZtYMKLteu5ibiCsoRpfcLBpgQ4N2nPEg6cg==
+X-Google-Smtp-Source: AMsMyM6z0i1Sv3zsd0Jq/pbof/zICrtZpxky+Y+f3KH0VlUri2O47At8vk0jaz4ZKam20cq9Bb5MAyac1cc20XSL2Nk=
+X-Received: by 2002:a2e:8810:0:b0:277:4819:a6c3 with SMTP id
+ x16-20020a2e8810000000b002774819a6c3mr12733700ljh.4.1667596788296; Fri, 04
+ Nov 2022 14:19:48 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 4 Nov 2022 14:19:10 -0700
+ HTTPREST; Fri, 4 Nov 2022 14:19:47 -0700
 MIME-Version: 1.0
-In-Reply-To: <20221104064055.3.I90ba14a47683a484f26531a08f7b46ace7f0a8a9@changeid>
+In-Reply-To: <20221104064055.2.I49b25b9bda9430fc7ea21e5a708ca5a0aced2798@changeid>
 References: <20221104064055.1.I00a0e4564a25489e85328ec41636497775627564@changeid>
- <20221104064055.3.I90ba14a47683a484f26531a08f7b46ace7f0a8a9@changeid>
+ <20221104064055.2.I49b25b9bda9430fc7ea21e5a708ca5a0aced2798@changeid>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Fri, 4 Nov 2022 14:19:10 -0700
-Message-ID: <CAE-0n53=YeA+sFkS0EVESwq60rQTyXisOY1gcPTXDG9Zm1zoYA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: qcom: lpass-sc7180: Avoid an extra "struct dev_pm_ops"
+Date:   Fri, 4 Nov 2022 14:19:47 -0700
+Message-ID: <CAE-0n53FLz+4XROL7t5Vk1pEgvAX4tJYO4UK8rdCQUW0Pq78jg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: qcom: lpass-sc7180: Fix pm_runtime usage
 To:     Bjorn Andersson <andersson@kernel.org>,
         Douglas Anderson <dianders@chromium.org>
 Cc:     Taniya Das <quic_tdas@quicinc.com>,
@@ -71,13 +71,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Douglas Anderson (2022-11-04 06:56:30)
-> The two devices managed by lpasscorecc-sc7180.c each had their own
-> "struct dev_pm_ops". This is not needed. They are exactly the same and
-> the structure is "static const" so it can't possible change. combine
-> the two. This matches what's done for sc7280.
+Quoting Douglas Anderson (2022-11-04 06:56:29)
+> The sc7180 lpass clock controller's pm_runtime usage wasn't broken
+> quite as spectacularly as the sc7280's pm_runtime usage, but it was
+> still broken. Putting some printouts in at boot showed me this (with
+> serial console enabled, which makes the prints slow and thus changes
+> timing):
+>   [    3.109951] DOUG: my_pm_clk_resume, usage=1
+>   [    3.114767] DOUG: my_pm_clk_resume, usage=1
+>   [    3.664443] DOUG: my_pm_clk_suspend, usage=0
+>   [    3.897566] DOUG: my_pm_clk_suspend, usage=0
+>   [    3.910137] DOUG: my_pm_clk_resume, usage=1
+>   [    3.923217] DOUG: my_pm_clk_resume, usage=0
+>   [    4.440116] DOUG: my_pm_clk_suspend, usage=-1
+>   [    4.444982] DOUG: my_pm_clk_suspend, usage=0
+>   [   14.170501] DOUG: my_pm_clk_resume, usage=1
+>   [   14.176245] DOUG: my_pm_clk_resume, usage=0
 >
-> This should be a noop other than saving a few bytes.
+> ...or this w/out serial console:
+>   [    0.556139] DOUG: my_pm_clk_resume, usage=1
+>   [    0.556279] DOUG: my_pm_clk_resume, usage=1
+>   [    1.058422] DOUG: my_pm_clk_suspend, usage=-1
+>   [    1.058464] DOUG: my_pm_clk_suspend, usage=0
+>   [    1.186250] DOUG: my_pm_clk_resume, usage=1
+>   [    1.186292] DOUG: my_pm_clk_resume, usage=0
+>   [    1.731536] DOUG: my_pm_clk_suspend, usage=-1
+>   [    1.731557] DOUG: my_pm_clk_suspend, usage=0
+>   [   10.288910] DOUG: my_pm_clk_resume, usage=1
+>   [   10.289496] DOUG: my_pm_clk_resume, usage=0
+>
+> It seems to be doing roughly the right sequence of calls, but just
+> like with sc7280 this is more by luck than anything. Having a usage of
+> -1 is just not OK.
+>
+> Let's fix this like we did with sc7280.
+
+Any Fixes tag?
+
 >
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
