@@ -2,113 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60718C4167D
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 17:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5BBC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 18:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231549AbiKDRrM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 13:47:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53628 "EHLO
+        id S231474AbiKDSKT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 14:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbiKDRrH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 13:47:07 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD3C765AB
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 10:47:05 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id h24so3468481qta.7
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 10:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wZUcE77o1yzWjb0fTasyoyk6GrW1k8wolBp/KJmZeFs=;
-        b=aTJncUTU61csNDX0UGztNm3uJUH4a3rJMzv7m0JmGps3lnjVb1938abOlb8jxHYYcf
-         rbBTBAgHQDpIfOCewXIS1dJDmufR78SfSlNORbhIYCpfex6MggHAYds9uYlP+9CQ3XZr
-         V7M1HG/V4MG3tAwAraszwL7kCKKRnc2+9AFvzp7+T15wM5EZODPbvJCKk6g5qbw/qXZT
-         bbu4xZEKGwPDhntH+PsTIHo5U6ThmfSHyCr3HapDp+4KjwFenwVPW6isLMGPwbm31QBA
-         tdmKUoCYPMWmESRS81x1BhMc6oMZEyuFFIr+BeTkWxgpvyVFJ5EOaMZWfXUVMXnBleF1
-         xrOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wZUcE77o1yzWjb0fTasyoyk6GrW1k8wolBp/KJmZeFs=;
-        b=ZYGfd3o37AIGZSRAsxoyHvnpps3b+JBk7BNiB5W7KEUOfzggJgyHnYHJiwD1t1ftMk
-         TOkZVZB4hRN1OE3yD4YsVQJ26G+PWJirXB3eU+HGQn3UUdAmV5UTGNWplCnwAfg8n2e+
-         XgqRooRzJffHQyEm8Oc0iFm6tezvcaeviU8XLxPkxfmUwTJWFfhV2rXSm3ty/pM9DJj2
-         Fy3nniahUg1d63n2ppC5C0Qe0mOoh8BJUL3ItXWNQEy8NUQeJsqi2VhUyRcxBj3aEuvX
-         kmsUcee+j2wMHZuDq1JGYHsRvoykRSPSZFnMBe1wTSzufWM7lgVaK1w5kn5kv5ZzFOuc
-         iFPQ==
-X-Gm-Message-State: ACrzQf3LakZ4GE3ay0atyzWVttgQVxKGxEFthIwtAd0c6P47hGsVx1DT
-        z/AjdfunSbyiv9usmO+paqG3hw==
-X-Google-Smtp-Source: AMsMyM45+S7Luyke1QTKNyUacM3gyzQXQHhhuHAb9M/YWli+5uvhotD+CNYWqDFz2zLNxQbC9Fn+aw==
-X-Received: by 2002:ac8:7f51:0:b0:3a5:5e3d:4b56 with SMTP id g17-20020ac87f51000000b003a55e3d4b56mr6175118qtk.519.1667584025047;
-        Fri, 04 Nov 2022 10:47:05 -0700 (PDT)
-Received: from krzk-bin.. ([2601:586:5000:570:aad6:acd8:4ed9:299b])
-        by smtp.gmail.com with ESMTPSA id c7-20020a05620a268700b006f84ee3a4f3sm3432908qkp.48.2022.11.04.10.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 10:47:04 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/3] dt-bindings: clock: qcom,audiocc-sm8250: add missing audio clock
-Date:   Fri,  4 Nov 2022 13:46:56 -0400
-Message-Id: <20221104174656.123979-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221104174656.123979-1-krzysztof.kozlowski@linaro.org>
-References: <20221104174656.123979-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S229548AbiKDSKR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 14:10:17 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E252045A20;
+        Fri,  4 Nov 2022 11:10:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5C58BCE2DAD;
+        Fri,  4 Nov 2022 18:10:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A664FC433C1;
+        Fri,  4 Nov 2022 18:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667585413;
+        bh=4i3rTbABUBKm7zPRQ7BoILAAr1dZHMGBMPBm6EZ/bnQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=keeLyl+YtL4w+aTBw3rQzjkQAiV5J4SmtwLNGXAy7vdFyGCugoJOak8BiX79g0prG
+         oDdwrbV+yNIk15Wqt6cduiNBoGfV/WfF4XzlwEDKWJEr5yslrrmXAeaC3XsBzW5PN1
+         V5ZC0c75Oq+vNrRDNeM72Egkk75II09Rv/MRbNiXGJg4boACSN12SymwAfbFh062gQ
+         k1SjRRdb4wbPw/9AaPPiIEzjNkl1Uh+mqdpxaH2BzaKqwE553dBSoVmhcomOQQwwf6
+         RnDGUfywauGG1QtA7i6wxOfIzcKLTYTxTZKIKBWZgCZdAw6Kr6liL/zjcj1zICsYSK
+         vCwogRcmVjEbQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221103123328.stzhtq5e2jscjdxd@houat>
+References: <20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech> <20221018-clk-range-checks-fixes-v1-4-f3ef80518140@cerno.tech> <20221026020800.38AC8C433C1@smtp.kernel.org> <20221103123328.stzhtq5e2jscjdxd@houat>
+Subject: Re: [PATCH 4/4] clk: Warn if we register a mux without determine_rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-clk@vger.kernel.org
+To:     Maxime Ripard <maxime@cerno.tech>
+Date:   Fri, 04 Nov 2022 11:10:11 -0700
+User-Agent: alot/0.10
+Message-Id: <20221104181013.A664FC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SM8250 DTS uses three clocks as input to LPASS AudioClock Controller
-(althopugh Linux driver seems not needing it), so document the missing
-audio voting clock.
+Quoting Maxime Ripard (2022-11-03 05:33:28)
+> On Tue, Oct 25, 2022 at 07:07:58PM -0700, Stephen Boyd wrote:
+> > There is another case which is a leaf clk that is a mux where you only
+> > expect clk_set_parent() to be used, and not clk_set_rate(). This use
+> > case is odd though, so I'm not sure how much we care.
+>=20
+> It looks like there's a good number of clocks that do indeed only
+> provide get_parent / set_parent. It's hard to tell if it's an oversight
+> or a choice.
+>=20
+> I think we can make that decision explicit by providing a determine_rate
+> helper that always returns the current parent and its rate. It shouldn't
+> change anything from a CCF behavior point of view, and it makes it clear
+> what the behavior is. And if someone wants something else, then they can
+> change it to whatever they want.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/clock/qcom,audiocc-sm8250.yaml       | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
-index 915d76206ad0..48c7e10cc1b9 100644
---- a/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
-@@ -28,11 +28,13 @@ properties:
-   clocks:
-     items:
-       - description: LPASS Core voting clock
-+      - description: LPASS Audio codec voting clock
-       - description: Glitch Free Mux register clock
- 
-   clock-names:
-     items:
-       - const: core
-+      - const: audio
-       - const: bus
- 
- required:
-@@ -53,6 +55,7 @@ examples:
-       compatible = "qcom,sm8250-lpass-audiocc";
-       reg = <0x03300000 0x30000>;
-       clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+               <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-                <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
--      clock-names = "core", "bus";
-+      clock-names = "core", "audio", "bus";
-     };
--- 
-2.34.1
-
+Ok sounds like a plan.
