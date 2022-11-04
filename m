@@ -2,142 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3377AC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 10:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1518FC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 10:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231504AbiKDKEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 06:04:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39124 "EHLO
+        id S231807AbiKDKyO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 06:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229985AbiKDKEy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 06:04:54 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BEEFFF
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 03:04:51 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221104100448epoutp017238622875ea3e2dfa35bad6a4f02813~kWZwI_EM40134001340epoutp01i
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 10:04:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221104100448epoutp017238622875ea3e2dfa35bad6a4f02813~kWZwI_EM40134001340epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667556288;
-        bh=6YrZb4rIVThny1YuuCHZdKWp6Aza2885Qa/dxfwyNuQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=mYS9m7Ql92fYAk4lrGxoaVV+7L/HVCLztf5afuC5VK96VmVBFHwwWFl82aS7Olrm1
-         cjoH0xO3gCFargwoMQRE4OPKcMRj5XE1swKd2T/wjcP877Zx9uZX1wWUrGTKBVDk2/
-         bRzjjHE8ErmviPQxxemDZBZ+UR0IA2EfXwRA9uTA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221104100447epcas5p3a3cd553ac66cd4f4b0a0b6c2a7788725~kWZvcJpah3214732147epcas5p3Z;
-        Fri,  4 Nov 2022 10:04:47 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4N3bp5331Bz4x9Pp; Fri,  4 Nov
-        2022 10:04:45 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.4D.39477.DB3E4636; Fri,  4 Nov 2022 19:04:45 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221104085410epcas5p24d88f59001b739075e9e190e2c47841e~kVcEwUP0W1926119261epcas5p2v;
-        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221104085410epsmtrp2877b16b524ac75f74d9f92dcf0b996b1~kVcEvaESi0462404624epsmtrp2P;
-        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
-X-AuditID: b6c32a4a-007ff70000019a35-92-6364e3bda44e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        86.46.18644.233D4636; Fri,  4 Nov 2022 17:54:10 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221104085407epsmtip1b37a75115cfe527d8477208458815b7d~kVcCHIU_Q3261232612epsmtip1h;
-        Fri,  4 Nov 2022 08:54:07 +0000 (GMT)
-From:   Inbaraj <inbaraj.e@samsung.com>
-To:     krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, chanho61.park@samsung.com
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, pankaj.dubey@samsung.com,
-        Inbaraj <inbaraj.e@samsung.com>
-Subject: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
- CMU_FSYS1 mmc card clock
-Date:   Fri,  4 Nov 2022 14:30:19 +0530
-Message-Id: <20221104090019.88387-1-inbaraj.e@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTQ3fv45Rkg7tfBC0ezNvGZnF5v7bF
-        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
-        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
-        JBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0
-        upJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10vL7XEytDAwMgU
-        qDAhO6Nn9wW2ghlcFSuP72BuYDzK0cXIySEhYCKxu/sHG4gtJLCbUWJHS1gXIxeQ/YlRYubf
-        e+wQzmdGiXsn9jPBdGzpuM0GkdjFKHHr8maoqlYmiaPHnoLNYhNQlTiw/RUjSEJE4CGjxP7m
-        ZjCHGcS5/+Q8O0iVsECcxNlF78BsFqCO/4ungHXzClgB1VxkgdgnL7F6wwFmkGYJgUYOiVPf
-        N7JCJFwk7s7pYoewhSVeHd8CZUtJfH63lw3C9pHYP+cXI4SdIXFs+3KoXnuJA1fmAC3gALpI
-        U2L9Ln2IsKzE1FPrwP5kFuCT6P39BOpnXokd82BsZYmZR+5DjZeU2Hl5J9SdHhJTe75AQzJW
-        Yu61z0wTGGVnIWxYwMi4ilEytaA4Nz212LTAKC+1HB5Vyfm5mxjBaVLLawfjwwcf9A4xMnEw
-        HmKU4GBWEuH9tC05WYg3JbGyKrUoP76oNCe1+BCjKTDMJjJLiSbnAxN1Xkm8oYmlgYmZmZmJ
-        pbGZoZI47+IZWslCAumJJanZqakFqUUwfUwcnFINTNMtPhbfu9ufOvu/sP+y1NmV+v9vTd61
-        Kk3Q9FbebotXO9b7PBb6bbb6yfqU0Gr1ZYbHfZPO7q4y4trXt4vx9a+VfirKRxcdLl/96qyP
-        VvSjR6uDVWKaOALDFqk17lX9N23KvJMp268tWP6p422SWmHvjmzd99Mit7Bmya9LLtDiso6S
-        DuL5uZzpi/Ks+okfLHZZdC7av+i1a3nJS/eq38cmW957aOBeFNBkbektqZj5XsU0ot1wk/2N
-        3PMxEdsF72/Ne97w6b7O2tIPtgsbdKoDAu+/ZSlPnXXCvO7/FudNZZ/tVS8xPlbd9KZhTQtv
-        5uxSY3X9+PU+onX7O87N5WfeWFy6ZeaFvubmCw09GUosxRmJhlrMRcWJANjxpH0cBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnK7R5ZRkg51n2SwezNvGZnF5v7bF
-        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
-        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
-        JBfAHsVlk5Kak1mWWqRvl8CV0bP7AlvBDK6Klcd3MDcwHuXoYuTkkBAwkdjScZuti5GLQ0hg
-        B6PE/qbprBAJSYnZv6ezQ9jCEiv/PWeHKGpmkvj0dTITSIJNQFXiwPZXjCAJEYHXjBL/731j
-        BnGYBZ4zSlx/sYkFpEpYIEZi8cJ/YB0sQB3/F09hA7F5Bawk7j+5yAKxQl5i9YYDzBMYeRYw
-        MqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgOWS2tHYx7Vn3QO8TIxMF4iFGCg1lJ
-        hPfTtuRkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphS
-        ZsZsSj5QyPQnpPFOxJTS/280zdV9v1hm3XDf8fOBkdeTmh73joZuRmn/V48ubj/Tu/KX5fTj
-        uWd2rH8XJVwx7ZL9D75u1s38ec03xCPXSHsUCLn/unZWUeJc0469gQt0JJdN/mxyznWd45rw
-        XzlBe/TaC2cGVJy3FTX9Nuf8g/pGnyvGMY/y3Cdt++D+LbNNf5Nj5rtZ97gUgqrCw4PuSjxe
-        phbCbqzyW5C/yzvMkstk45r5M8XXXDsRIGR19dPGlzHsXpfnJ3aYJl0MCs0Xnn8wb4EzWwZT
-        wunfq+43/bnyymZqRrLTspfMFp2PXrIb/VYVeGI5eYPXwb03pltYdDLnKYaJfNn9RzMyy02J
-        pTgj0VCLuag4EQDevkDgyAIAAA==
-X-CMS-MailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
-References: <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcas5p2.samsung.com>
+        with ESMTP id S231821AbiKDKyJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 06:54:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41AC52BB21;
+        Fri,  4 Nov 2022 03:54:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D10F462152;
+        Fri,  4 Nov 2022 10:54:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BA6C433C1;
+        Fri,  4 Nov 2022 10:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667559246;
+        bh=pvwG3Gm3N2eUyHgbPambsEuPVQ8R8/OOOxapou4YcUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cbBnPnYUkVl8HlirmjDewnnffVKehLHqlm1obIGLgPClQn+N8qpt6kVVeRv7jmkO8
+         pE7BDnwwVWraetTc50i8EYFTEP+BRLKvWFpiyw2Gs+LrYi2/9fCOWz7XWJBfFy+t+N
+         VUPPPDL7PDYnompJUihMxfpqHpM5QT45oSZ5IzRkkx4uYzpbz7+Gv+BVjPcpGO6D0h
+         EHGkwdAYVKkDvz+n0VT5S1PBTfxDR9q6nxMI2WHO3D8zYILp8VLd98rqj+kPqOMjW/
+         q1XTDuI5pJ+IMVj8PdQoZ6+dd96tvrhGWkjqbmv2oVa552CjRmOl1p1ptyfl2jnXxh
+         uWarmbCkIf6hg==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oquKZ-0001I6-77; Fri, 04 Nov 2022 11:53:47 +0100
+Date:   Fri, 4 Nov 2022 11:53:47 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+Message-ID: <Y2TvO875fYZTTNy9@hovoldconsulting.com>
+References: <20221101233421.997149-1-swboyd@chromium.org>
+ <Y2JL9/HFrb3E+CYY@hovoldconsulting.com>
+ <CAE-0n51Wuc6gVmsTOu4Nf4yx+6Wp-Oi3XZy06syhCMVmePWPEw@mail.gmail.com>
+ <Y2PAXX2oYL6iFTlB@hovoldconsulting.com>
+ <CAE-0n5319JSX16Z3H5vKQSL9UDetOdfb38zo_vp0C=uX1jddWQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE-0n5319JSX16Z3H5vKQSL9UDetOdfb38zo_vp0C=uX1jddWQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
+On Thu, Nov 03, 2022 at 11:19:08AM -0700, Stephen Boyd wrote:
+> Quoting Johan Hovold (2022-11-03 06:21:33)
+> > On Wed, Nov 02, 2022 at 09:53:49AM -0700, Stephen Boyd wrote:
+> > > Quoting Johan Hovold (2022-11-02 03:52:39)
+> >
+> > > > > Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > Cc: Johan Hovold <johan+linaro@kernel.org>
+> > > > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > > Cc: Taniya Das <quic_tdas@quicinc.com>
+> > > > > Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> > > > > Cc: Douglas Anderson <dianders@chromium.org>
+> > > > > Cc: Matthias Kaehlcke <mka@chromium.org>
+> > > > > Reported-by: Stephen Boyd <swboyd@chromium.org>
+> > > >
+> > > > We typically don't add Reported-by tags for bugs we find and fix
+> > > > ourselves.
+> > >
+> > > Heh, I didn't see anything like that in Documentation/ so it seems fine.
+> > > I debugged my problem and reported it.
+> >
+> > I'd say the documentation is pretty clear on this matter:
+> >
+> >   Reported-by: names a user who reported a problem which is fixed by this
+> >   patch; this tag is used to give credit to the (often underappreciated)
+> >   people who test our code and let us know when things do not work
+> >   correctly.
+> >
+> >   - Documentation/process/5.Posting.rst
+> >
+> >   The Reported-by tag gives credit to people who find bugs and report
+> >   them and it hopefully inspires them to help us again in the future.
+> >   Please note that if the bug was reported in private, then ask for
+> >   permission first before using the Reported-by tag.
+> >
+> >   - Documentation/process/submitting-patches.rst
+> 
+> I don't see anything above that says I can't add this tag if I reported
+> (by sending an email about the problem to the list), debugged, and
+> solved the problem by sending a patch.
 
-This fixes make dtbs_check warning as shown below:
-
-arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-controller@17040000:
-clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected
-From schema: /home/inbaraj/mainline/linux/Documentation/devicetree/
-bindings/clock/samsung,exynosautov9-clock.yaml
-
-Fixes: 4b6ec8d88623 ("dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1")
-Signed-off-by: Inbaraj <inbaraj.e@samsung.com>
----
- .../devicetree/bindings/clock/samsung,exynosautov9-clock.yaml   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-index 2ab4642679c0..55c4f94a14d1 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-@@ -148,7 +148,7 @@ allOf:
-           items:
-             - const: oscclk
-             - const: dout_clkcmu_fsys1_bus
--            - const: dout_clkcmu_fsys1_mmc_card
-+            - const: gout_clkcmu_fsys1_mmc_card
-             - const: dout_clkcmu_fsys1_usbdrd
+We don't try to prevent every strange interpretation of our docs by
+spelling everything out. Just look at why we added a tag in the first
+place and how it *is* being using.
  
-   - if:
--- 
-2.17.1
+> > Just like you don't add a Tested-by tag for every patch you submit, it
+> > is implied that you found the issue you fix unless you explicitly
+> > attribute that to a third party using Reported-by.
+> 
+> I don't see how this is the same. It certainly is not explicit, as you
+> say.
 
+We added the Reported-by tag so that users reporting bugs would get some
+credit and not just the person fixing the bug. Just as we did for
+Tested-by.
+
+If some author added a Tested-by tag for themselves to their own patches
+I'm sure you'd call that out too as that's not the way the tag is meant
+to be used.
+
+The reasoning is exactly the same for Reported-by.
+
+> I wouldn't have added the tag if I didn't send an email to the list with
+> the lockdep splat and follow that up with a bisection report for
+> suspend/resume being broken. Shouldn't we value those sorts of bug
+> report emails? I will add a link to the report in the commit text to
+> clarify.
+
+Ok, perhaps that would make this a bit more reasonable (Reported-by +
+Link to report), but I still do not think the tag is warranted.
+
+> > This is the first time I see anyone trying to use Reported-by this way,
+> > and even if you think the documentation isn't clear enough on this, our
+> > praxis is.
+> >
+> 
+> Ok, so is it just a shock to see this for the first time? What is the
+> problem with the tag? Can you elaborate on your concerns? I would like
+> to understand.
+
+It's apparently the first time you try to give credit to yourself for
+finding a bug this way too, so let's turn that question around. Why do
+you suddenly insist on crediting yourself this way when no one else does
+so?
+
+In the end it's about maintaining a common interpretation of these tags
+and avoiding unnecessary noise. I'm sure no one wants to see a redundant
+Tested-by tag on every commit nor a redundant Reported-by tag on every
+bug fix for bugs that kernel developers find themselves. And if only
+some people start using the tags this way it would also skew our
+statistics (e.g. the LWN reports).
+
+Johan
