@@ -2,186 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5FDC43219
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 16:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5129C43217
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 17:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231948AbiKDQwB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 12:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
+        id S230051AbiKDRGA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 13:06:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbiKDQvl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 12:51:41 -0400
-X-Greylist: delayed 248 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 04 Nov 2022 09:49:49 PDT
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9374D42F46;
-        Fri,  4 Nov 2022 09:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/fSoTUtqLSMP2KfCqxLZIKji3GOepn9Xc93RPyjSVkg=; b=S05yN9/OkId9ymzRJ4dCjcPWLQ
-        7kS+7hwLHIGVXlHp7W14BxEpjdI4ntV02EjHSD7RVjfxzjyZZY+kvQZZx58NMhQA3G5XgkIRxucIi
-        1OotghPODhkcufNUd5I3CGkJL57YrmUvR1N06/jUXH2swC2CkuimIhdic8beAfGSReYdk0zY/yiuZ
-        yCoOy4drXYmkZQ1P6bLMxXp+heS5TEP3UnHMbT+naZWwnajVpJ4cAXNOiBZHJHsv1ZCK1dTFhnhcE
-        kQfJJLIU0/MUGSPFRmI/cJ4R007YPo4eHbdvB68luhk9bsDRd+9PwexE0o4g4q5uI6q1mQphZaEQ8
-        PyW6kaVA==;
-Received: from ip98-183-112-30.ok.ok.cox.net ([98.183.112.30]:33812 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.95)
-        (envelope-from <david@lechnology.com>)
-        id 1oqzsl-00Ciq9-V8;
-        Fri, 04 Nov 2022 12:49:41 -0400
-Message-ID: <6296d944-e03d-6f2b-48b1-3dad78e3c89d@lechnology.com>
-Date:   Fri, 4 Nov 2022 11:49:34 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 54/65] clk: da8xx: clk48: Switch to determine_rate
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        with ESMTP id S230510AbiKDRF7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 13:05:59 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898AD3E092
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 10:05:57 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id s20so3449027qkg.5
+        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 10:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QmgwhFKSfmRVfZGc4RFN5XxR8b40r2de6Oo0rq1T4LM=;
+        b=JbUTll5MUjsFEpb6RFMbBc3v4wZC7nXCGMHb5OK0Dj1brJXpSu1B6bkm7Y7U9ncuKG
+         iqnkdFnjDpJ/4iU0uVw5784Yk5pIFbYFFk7YLX74gaga3r1+BZWyM8k/tte7jaoZfLp+
+         SlEYGRI1opxkZ1YRf0Y4i8oWvqEnxRFm1RUa5eAOVfW4YOseCzkAaRrueQgSzuEEILvk
+         i9eEPWx2w/roHu+WfzQFQEo2ebRYbXiUsIeEZxCb/+ZMK51rTc/95nl1+OfG4qFyIvkk
+         nOUuPaSW/ZFDusLt/V5JBCTDb231pwqVnE35hOL+wY7KG8B6OE9IbAc/plX1LmlgWrEp
+         VTzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QmgwhFKSfmRVfZGc4RFN5XxR8b40r2de6Oo0rq1T4LM=;
+        b=LY/bRFoToz5e7x2Lp9IJiUJxhFP8y/MiwdnOCicUJitPAhfbSEmrGpYNjCnrkg66Zz
+         RYTB6LV4kBWXa5MdnLEk1HsxZscd/OW4H26aJbqBhZs/M2RTa7nEkatUFW+c2UW/bqcy
+         70qVTupEeTFzXRhOqqPftpI4tpP0RNrMwahGY/HChv+9CC7HqwOm/UftXFQYZOwluUvi
+         6dWSpLyOtHFjU29tB+zrylJCBezNE7y6k9kTVSnBILbDcRC73gefmpDJif/rWlB7+IMS
+         e83PUEa6f/2tB3340nXQLxidjok+p/EDY0ha72hHEC2PvKjWhV0grDYh9Th8VPTNyJ/c
+         Z9GA==
+X-Gm-Message-State: ACrzQf1xn6/PQgBv3ce/BdVtiK2VsI4C8Z95GBQKxSoBMWyJgr2/wsN/
+        sFqtZ4HbHHRGi0hoHCgglhg0Cmpjz7d+mg==
+X-Google-Smtp-Source: AMsMyM6iuA5yKil9gA8TtmEMRoCASMZ22sLHJHjAsR2lUWcHqXr3ZMn45PnxakMpdKdj3KTXVDfCSQ==
+X-Received: by 2002:a37:2d84:0:b0:6fa:1747:5369 with SMTP id t126-20020a372d84000000b006fa17475369mr25414271qkh.693.1667581556663;
+        Fri, 04 Nov 2022 10:05:56 -0700 (PDT)
+Received: from krzk-bin.. ([2601:586:5000:570:aad6:acd8:4ed9:299b])
+        by smtp.gmail.com with ESMTPSA id c11-20020ac8054b000000b003a527d29a41sm2667370qth.75.2022.11.04.10.05.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 10:05:55 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-54-f6736dec138e@cerno.tech>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-54-f6736dec138e@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: clock: qcom,sdm845-lpasscc: convert to dtschema
+Date:   Fri,  4 Nov 2022 13:05:52 -0400
+Message-Id: <20221104170552.72242-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/4/22 8:18 AM, Maxime Ripard wrote:
-> The TI DA8xx USB0 clk48 clocks implements a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
-> 
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
-> 
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
-> 
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
-> 
-> The driver does implement round_rate() though, which means that we can
-> change the rate of the clock, but we will never get to change the
-> parent.
-> 
-> However, It's hard to tell whether it's been done on purpose or not.
-> 
-> Since we'll start mandating a determine_rate() implementation, let's
-> convert the round_rate() implementation to a determine_rate(), which
-> will also make the current behavior explicit. And if it was an
-> oversight, the clock behaviour can be adjusted later on.
+Convert Qualcomm SDM845 LPASS clock controller bindings to DT schema.
 
-I think this one should be the same as the clk:davinci changes and
-not allow re-parenting. Since this is a USB 48MHz PHY clock, a rate
-change will never be requested.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/clock/qcom,lpasscc.txt           | 26 ----------
+ .../bindings/clock/qcom,sdm845-lpasscc.yaml   | 47 +++++++++++++++++++
+ 2 files changed, 47 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-lpasscc.yaml
 
-> 
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->   drivers/clk/davinci/da8xx-cfgchip.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> index 4c1cc59bba53..f60c97091818 100644
-> --- a/drivers/clk/davinci/da8xx-cfgchip.c
-> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -462,10 +462,12 @@ static unsigned long da8xx_usb0_clk48_recalc_rate(struct clk_hw *hw,
->   	return 48000000;
->   }
->   
-> -static long da8xx_usb0_clk48_round_rate(struct clk_hw *hw, unsigned long rate,
-> -					unsigned long *parent_rate)
-> +static int da8xx_usb0_clk48_determine_rate(struct clk_hw *hw,
-> +					   struct clk_rate_request *req)
->   {
-> -	return 48000000;
-> +	req->rate = 48000000;
-> +
-> +	return 0;
->   }
->   
->   static int da8xx_usb0_clk48_set_parent(struct clk_hw *hw, u8 index)
-> @@ -494,7 +496,7 @@ static const struct clk_ops da8xx_usb0_clk48_ops = {
->   	.disable	= da8xx_usb0_clk48_disable,
->   	.is_enabled	= da8xx_usb0_clk48_is_enabled,
->   	.recalc_rate	= da8xx_usb0_clk48_recalc_rate,
-> -	.round_rate	= da8xx_usb0_clk48_round_rate,
-> +	.determine_rate	= da8xx_usb0_clk48_determine_rate,
->   	.set_parent	= da8xx_usb0_clk48_set_parent,
->   	.get_parent	= da8xx_usb0_clk48_get_parent,
->   };
-> 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+deleted file mode 100644
+index b9e9787045b9..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-Qualcomm LPASS Clock Controller Binding
+------------------------------------------------
+-
+-Required properties :
+-- compatible		: shall contain "qcom,sdm845-lpasscc"
+-- #clock-cells		: from common clock binding, shall contain 1.
+-- reg			: shall contain base register address and size,
+-			  in the order
+-			Index-0 maps to LPASS_CC register region
+-			Index-1 maps to LPASS_QDSP6SS register region
+-
+-Optional properties :
+-- reg-names	: register names of LPASS domain
+-		 "cc", "qdsp6ss".
+-
+-Example:
+-
+-The below node has to be defined in the cases where the LPASS peripheral loader
+-would bring the subsystem out of reset.
+-
+-	lpasscc: clock-controller@17014000 {
+-		compatible = "qcom,sdm845-lpasscc";
+-		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
+-		reg-names = "cc", "qdsp6ss";
+-		#clock-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-lpasscc.yaml
+new file mode 100644
+index 000000000000..10aa9b6e8d89
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-lpasscc.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sdm845-lpasscc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm SDM845 LPASS Clock Controller
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++description: |
++  Qualcomm SDM845 LPASS (Low Power Audio SubSystem) Clock Controller.
++
++  See also:: include/dt-bindings/clock/qcom,lpass-sdm845.h
++
++properties:
++  compatible:
++    const: qcom,sdm845-lpasscc
++
++  '#clock-cells':
++    const: 1
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: cc
++      - const: qdsp6ss
++
++required:
++  - compatible
++  - '#clock-cells'
++  - reg
++  - reg-names
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@17014000 {
++        compatible = "qcom,sdm845-lpasscc";
++        reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
++        reg-names = "cc", "qdsp6ss";
++        #clock-cells = <1>;
++    };
+-- 
+2.34.1
 
