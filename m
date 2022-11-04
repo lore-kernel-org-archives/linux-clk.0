@@ -2,127 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62AFC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 10:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F420C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 11:44:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbiKDK53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 06:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36776 "EHLO
+        id S231516AbiKDLob (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 07:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231816AbiKDK5X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 06:57:23 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB8D2BB2A
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 03:57:22 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:c5ee:bf27:9df:5172])
-        by andre.telenet-ops.be with bizsmtp
-        id gAxL2800r2kjr6L01AxLJZ; Fri, 04 Nov 2022 11:57:20 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oquNz-002mYT-Cw; Fri, 04 Nov 2022 11:57:19 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oquNy-00HWNj-NL; Fri, 04 Nov 2022 11:57:18 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.2
-Date:   Fri,  4 Nov 2022 11:57:17 +0100
-Message-Id: <cover.1667559042.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S231393AbiKDLob (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 07:44:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9212CC88;
+        Fri,  4 Nov 2022 04:44:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8A0996216C;
+        Fri,  4 Nov 2022 11:44:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA801C433D6;
+        Fri,  4 Nov 2022 11:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667562268;
+        bh=Fm4RmkkjBKi2J3sh9v6S2aRSdhr880Xg3fJGdAcANDY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fZqwDZQyk1Q1KEHu25MzHSyi663H6WkbJvSC0fUc1SkBj6V/V9RxG0hj7CoIZN334
+         wlDV0LzbOXYuVsKx5kgTnP68F8U+TThWMjOga1xUJ/QnuwTqA+7hHV+6KeJVfHViWZ
+         ah8KggQkb7OcmFOObkBckGjKgGLRgPOxm+J+U7FJOftUVYAUS9YeJwPpaXxWqlord9
+         u/6Jz28LL96zcldHJRqN/vJmvAEesiVW/ZHUQ7NjXrN2D+HpFCQPmrKnGgEolYI/Sk
+         NUYdgAqfalUcSREn4DxpyiwwZKRcdyczYUt2nw4Gt+W1f/lwucP9IOfn0sx7BMMciK
+         qfB8IxVRm1v+Q==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oqv7K-0003KN-U9; Fri, 04 Nov 2022 12:44:11 +0100
+Date:   Fri, 4 Nov 2022 12:44:10 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v3] clk: qcom: gdsc: Remove direct runtime PM calls
+Message-ID: <Y2T7Cp2HMChRbS/f@hovoldconsulting.com>
+References: <20221103183030.3594899-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221103183030.3594899-1-swboyd@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+On Thu, Nov 03, 2022 at 11:30:30AM -0700, Stephen Boyd wrote:
+> We shouldn't be calling runtime PM APIs from within the genpd
+> enable/disable path for a couple reasons.
+> 
+> First, this causes an AA lockdep splat[1] because genpd can call into
+> genpd code again while holding the genpd lock.
 
-The following changes since commit a9003f74f5a2f487e101f3aa1dd5c3d3a78c6999:
+> Second, this confuses runtime PM on CoachZ for the camera devices by
+> causing the camera clock controller's runtime PM usage_count to go
+> negative after resuming from suspend. This is because runtime PM is
+> being used on the clock controller while runtime PM is disabled for the
+> device.
+> 
+> The reason for the negative count is because a GDSC is represented as a
+> genpd and each genpd that is attached to a device is resumed during the
+> noirq phase of system wide suspend/resume (see the noirq suspend ops
+> assignment in pm_genpd_init() for more details). The camera GDSCs are
+> attached to camera devices with the 'power-domains' property in DT.
+> Every device has runtime PM disabled in the late system suspend phase
+> via __device_suspend_late(). Runtime PM is not usable until runtime PM
+> is enabled in device_resume_early(). The noirq phases run after the
+> 'late' and before the 'early' phase of suspend/resume. When the genpds
+> are resumed in genpd_resume_noirq(), we call down into gdsc_enable()
+> that calls pm_runtime_resume_and_get() and that returns -EACCES to
+> indicate failure to resume because runtime PM is disabled for all
+> devices.
+> 
+> Upon closer inspection, calling runtime PM APIs like this in the GDSC
+> driver doesn't make sense. It was intended to make sure the GDSC for the
+> clock controller providing other GDSCs was enabled, specifically the
+> MMCX GDSC for the display clk controller on SM8250 (sm8250-dispcc), so
+> that GDSC register accesses succeeded. That will already happen because
+> we make the 'dev->pm_domain' a parent domain of each GDSC we register in
+> gdsc_register() via pm_genpd_add_subdomain(). When any of these GDSCs
+> are accessed, we'll enable the parent domain (in this specific case
+> MMCX).
+> 
+> We also remove any getting of runtime PM during registration, because
+> when a genpd is registered it increments the count on the parent if the
+> genpd itself is already enabled.
+> 
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Johan Hovold <johan+linaro@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Cc: Satya Priya <quic_c_skakit@quicinc.com>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+> Cc: Matthias Kaehlcke <mka@chromium.org>
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
+> Link: https://lore.kernel.org/r/CAE-0n52xbZeJ66RaKwggeRB57fUAwjvxGxfFMKOKJMKVyFTe+w@mail.gmail.com [1]
+> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+> 
+> Changes from v2 (https://lore.kernel.org/r/20221102170717.1262547-1-swboyd@chromium.org):
+>  * Drop dev assignment and remove struct member
+>  * Update commit text, add link to report
+> 
+> Changes from v1 (https://lore.kernel.org/r/20221101233421.997149-1-swboyd@chromium.org):
+>  * Fix ret thinko
+>  * Update kerneldoc on 'dev' member
 
-  clk: renesas: r8a779g0: Fix HSCIF parent clocks (2022-10-26 12:05:36 +0200)
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.2-tag1
-
-for you to fetch changes up to 02693e11611e082e3c4d8653e8af028e43d31164:
-
-  clk: renesas: r9a06g032: Repair grave increment error (2022-11-01 10:15:28 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.2
-
-  - Round SD clock rate to improve parent clock selection,
-  - Add Ethernet Switch and internal SASYNCPER clocks on R-Car S4-8,
-  - Add DMA (SYS-DMAC), SPI (MSIOF), external interrupt (INTC-EX),
-    serial (SCIF), PWM (PWM and TPU), SDHI, and HyperFLASH/QSPI (RPC-IF)
-    clocks on R-Car V4H,
-  - Add Multi-Function Timer Pulse Unit (MTU3a) clock and reset on
-    RZ/G2L,
-  - Fix endless loop on RZ/N1,
-  - Miscellaneous fixes and improvements.
-
-Note that this includes my previous pull request for
-renesas-clk-fixes-for-v6.1-tag1, which you have already pulled.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (2):
-      clk: renesas: rzg2l: Support sd clk mux round operation
-      clk: renesas: r9a07g044: Add MTU3a clock and reset entry
-
-Geert Uytterhoeven (11):
-      clk: renesas: r8a779g0: Add SYS-DMAC clocks
-      clk: renesas: r8a779g0: Add MSIOF clocks
-      clk: renesas: r8a779g0: Add INTC-EX clock
-      Merge tag 'renesas-clk-fixes-for-v6.1-tag1'
-      clk: renesas: r8a779g0: Add SCIF clocks
-      clk: renesas: r8a779g0: Add PWM clock
-      clk: renesas: r8a779g0: Add TPU clock
-      clk: renesas: r8a779f0: Fix SD0H clock name
-      clk: renesas: r8a779f0: Add SASYNCPER internal clock
-      clk: renesas: r8a779g0: Add SDHI clocks
-      clk: renesas: r8a779g0: Add RPC-IF clock
-
-Lad Prabhakar (5):
-      clk: renesas: rzg2l: Fix typo in function name
-      clk: renesas: r9a07g044: Drop WDT2 clock and reset entry
-      clk: renesas: r9a07g043: Drop WDT2 clock and reset entry
-      clk: renesas: rzg2l: Fix typo in struct rzg2l_cpg_priv kerneldoc
-      clk: renesas: rzg2l: Don't assume all CPG_MOD clocks support PM
-
-Marek Vasut (1):
-      clk: renesas: r9a06g032: Repair grave increment error
-
-Wolfram Sang (1):
-      clk: renesas: r8a779a0: Fix SD0H clock name
-
-Yoshihiro Shimoda (1):
-      clk: renesas: r8a779f0: Add Ethernet Switch clocks
-
- drivers/clk/renesas/r8a779a0-cpg-mssr.c |  2 +-
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 12 +++++---
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 22 +++++++++++++--
- drivers/clk/renesas/r9a06g032-clocks.c  |  3 +-
- drivers/clk/renesas/r9a07g043-cpg.c     |  5 ----
- drivers/clk/renesas/r9a07g044-cpg.c     | 10 +++----
- drivers/clk/renesas/rzg2l-cpg.c         | 49 +++++++++++++++++++--------------
- drivers/clk/renesas/rzg2l-cpg.h         |  4 +++
- 8 files changed, 67 insertions(+), 40 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Johan
