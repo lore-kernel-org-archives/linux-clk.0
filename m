@@ -2,96 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEE0C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 19:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5AFC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 20:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbiKDTYB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 15:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55742 "EHLO
+        id S229528AbiKDUvO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 16:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiKDTXi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 15:23:38 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC3519016
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 12:23:25 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id k4so3676721qkj.8
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 12:23:25 -0700 (PDT)
+        with ESMTP id S229481AbiKDUvN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 16:51:13 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D851FCE7
+        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 13:51:11 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id i21so9304459edj.10
+        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 13:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hwx4i8kl3gAwulupSSsSkTjIChny3+b4UG2pCOA9J1M=;
-        b=NWihxHTRWa7P5zAWtjlkyg2Vnu7KgSW/DAq99rTTsQv+FWpEqkQHsNv8lD5ZZ9y9Ji
-         Q3LOosWuCXo1aT9A+WeLm0twlsu+DUIRj80oG7YCqVA9FHTvbvYsoGMWnm6t7mz+ykBZ
-         PnwoHwsgEJTfKvGYfb/SsiQljzmT5hMmKACvnnzY9mYfTepTmoG/TNvyf0w/YEYPn1H8
-         Gqa2MLN+Dz+72bDyzEUDjz34yb3vmM6MHFhKiKwYnIPWud5Q3euMqHPzGFrdrOHM/03H
-         6C/fBFvQVnUfQkXKhqpIOzOAzjAPnAsoDF7cfmZoMy/a/tEH9AZkr5mJraDURAgp1yrY
-         G4eQ==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=osyiUzHDpQ2b7ih/B+DgltcTg6y80KjFxz7EsgKKi4k=;
+        b=YHDfqHF4z+DLMhHV4CIqYlVbRtpF9Vs/WjejXbkhUiKi/IQcczSWnxwRNQX4LgT0di
+         M4ZFAikpqI/fsBcexazarbcUqV1JjnQWjf0CEbAgFfIzAuZkJ2HducuGb+kOHaOx43eI
+         /q++/gU/xAYb8SGp8zgqkw1p7EYf9/+thgO3lH3Ih4++TUOau92f9Hx9XewRnpN7cuAK
+         oXqdI/c/1DfXOS0roxj3aj7Gz/J8Op1YvBCiVjDuvF+h4FFH6gizUPvgzWCzki/aQk2Z
+         X+L8MCHqqKy5P5zVPCQuMsuZ85Y7pKzHY+PzLfL0A7POzyYJH56cABoe+NBOwbDAs9eh
+         Jlzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hwx4i8kl3gAwulupSSsSkTjIChny3+b4UG2pCOA9J1M=;
-        b=usGCOY5Zgw9+YUf70oEaOB5pAbpRy9wBaJhp48w2dgAxetPw5w5Ddyf6lOHTv96oYp
-         UxyB4fBS9bSFRUoU+qb9glRuMemGhzged0QhUinVwn6QWKYIO8c+o5L8ipRagCOcPXjN
-         sfBbfF3OaLtSiDlatOW9zj0d5zm3eplA3WihSdLCQ/7thSucX6zWswF8S/10oa8cCTFN
-         BQQdourEB3e/T/1SlDlOrQVUGSKVA63l4TNsEZhljv7u3e6nilQNcR/kVD/L5+Wu7oCs
-         pvfaBoTffNxeLp2phuuvS5VwIRd6NHbX83oMeJ5+uY781x2fxVXFxkK79o9cmHzASlpq
-         bGYw==
-X-Gm-Message-State: ACrzQf0alU507kb7RemSo1tELl11O16YMTKgwD/vcZbiXp/nh8usLvsT
-        AvsChMM8XJdGiWm3FgGH0erSaA==
-X-Google-Smtp-Source: AMsMyM63sQCJoLYWZE5iFa4ctJHidpSzagskhSlfSYHwmkvrA5KnZ60XMwDLlcNcUyRHhD3T6m0MMg==
-X-Received: by 2002:a05:620a:404c:b0:6d9:4c49:9d5f with SMTP id i12-20020a05620a404c00b006d94c499d5fmr28032759qko.708.1667589804684;
-        Fri, 04 Nov 2022 12:23:24 -0700 (PDT)
-Received: from ?IPV6:2601:586:5000:570:aad6:acd8:4ed9:299b? ([2601:586:5000:570:aad6:acd8:4ed9:299b])
-        by smtp.gmail.com with ESMTPSA id bq8-20020a05622a1c0800b003a4f435e381sm112870qtb.18.2022.11.04.12.23.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Nov 2022 12:23:23 -0700 (PDT)
-Message-ID: <7fe8cb02-be1f-ecac-134d-b78e596d4140@linaro.org>
-Date:   Fri, 4 Nov 2022 15:23:21 -0400
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=osyiUzHDpQ2b7ih/B+DgltcTg6y80KjFxz7EsgKKi4k=;
+        b=YQc3+pAjHMY/I9AgyQf68t9TJ8FKb71vVZ3rFhvqotf7QNYkJ43R9g9Un+Xg/t2HFN
+         nJYM0szMJgliJRDfl3q9JxGitn90/LdxBzbPyeaTDtPct42oJPd1RJ+CO0zFI68Bzzzs
+         kLZHhAWDRAbH7pvd9KEYeaOZzRwKI6PdjH4D03zY1OJW5rlp/DQyFT59Oo7rQjyhQL1w
+         2eRHiHLLGcQAUFk+GwudZA5Ie1DRqyoen/DN6i1IVTlAqPtkR1fjPW27QAE0wi1EYsto
+         tFcp9GJupNIHs6MIJ7vPB8hDUb+8A460tz/PrVPol9hom+FVDriegXCU5skWV3vRuxGl
+         0u/Q==
+X-Gm-Message-State: ACrzQf1jpDjHe9MS3NJ9RZinLhUcXByfZvk2FhHYhRRIB42t7C4bo1XJ
+        W570nTw+2mkKjtG7Qcl7HgQMQw==
+X-Google-Smtp-Source: AMsMyM7oXSJ3C4Rzx58L+qgDsaXMmR+B8N6HJBu02Ly92IqAOEQ3JFm5GqTGo9NNMe35JCj5VsIuow==
+X-Received: by 2002:a05:6402:1004:b0:464:778:c516 with SMTP id c4-20020a056402100400b004640778c516mr15586249edu.348.1667595070485;
+        Fri, 04 Nov 2022 13:51:10 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id v3-20020aa7d803000000b004585eba4baesm213243edq.80.2022.11.04.13.51.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 13:51:09 -0700 (PDT)
+Date:   Fri, 4 Nov 2022 22:51:08 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Peng Fan <peng.fan@oss.nxp.com>
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/6] clk: imx93: fix and update
+Message-ID: <Y2V7PPGtzFgTxI89@linaro.org>
+References: <20221028095211.2598312-1-peng.fan@oss.nxp.com>
+ <b7be4912-542e-8fdc-6948-ac4626a63418@oss.nxp.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
- CMU_FSYS1 mmc card clock
-To:     Inbaraj <inbaraj.e@samsung.com>, krzysztof.kozlowski@linaro.org,
-        s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, alim.akhtar@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        chanho61.park@samsung.com
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, pankaj.dubey@samsung.com
-References: <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcas5p2.samsung.com>
- <20221104090019.88387-1-inbaraj.e@samsung.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221104090019.88387-1-inbaraj.e@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7be4912-542e-8fdc-6948-ac4626a63418@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/11/2022 05:00, Inbaraj wrote:
-> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
+On 22-11-02 10:13:45, Peng Fan wrote:
+> Hi Abel, Stephen
 > 
-> This fixes make dtbs_check warning as shown below:
+> On 10/28/2022 5:52 PM, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> > 
+> > V2:
+> >   Update commit log for patch 3
+> >   Add comment for critial clock for patch 5,6
 > 
-> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-controller@17040000:
-> clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected
-> From schema: /home/inbaraj/mainline/linux/Documentation/devicetree/
-> bindings/clock/samsung,exynosautov9-clock.yaml
+> V2 was not added to patch subject when I send out this patchset.
+> If you need to repost with V2, please let me know.
+
+Sorry for the late reply.
+
+No need to resend.
+
 > 
-> Fixes: 4b6ec8d88623 ("dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1")
-> Signed-off-by: Inbaraj <inbaraj.e@samsung.com>
-
-One more comment - is Inbaraj your full legal name? Full name must be
-used in From and Sob. Your email address has some additional "e", so I
-wonder.
-
-Best regards,
-Krzysztof
-
+> Thanks,
+> Peng.
+> 
+> > 
+> > patch 1 is reported by Dan and marked as fix
+> > 
+> > During our development, per updated reference mannual and design
+> > information, correct enet and drop tpm 1/3, lpit 1/2.
+> > 
+> > The TPM/LPIT patch 3,4 are not marked as fixes, there is no user,
+> > so update binding and driver both.
+> > 
+> > Patch 5 enable HSIO root always on
+> > Patch 6 enable sysctr always on for cpuidle
+> > 
+> > Jacky Bai (2):
+> >    clk: imx: keep hsio bus clock always on
+> >    clk: imx93: keep sys ctr clock always on
+> > 
+> > Peng Fan (4):
+> >    clk: imx93: unmap anatop base in error handling path
+> >    clk: imx93: correct enet clock
+> >    dt-bindings: clock: imx93: drop TPM1/3 LPIT1/2 entry
+> >    clk: imx93: drop tpm1/3, lpit1/2 clk
+> > 
+> >   drivers/clk/imx/clk-imx93.c             | 38 ++++++++++++++-----------
+> >   include/dt-bindings/clock/imx93-clock.h |  4 ---
+> >   2 files changed, 21 insertions(+), 21 deletions(-)
+> > 
