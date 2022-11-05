@@ -2,139 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C353C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Nov 2022 22:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1617C4332F
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Nov 2022 03:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbiKDWIi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Nov 2022 18:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35914 "EHLO
+        id S229546AbiKEDpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Nov 2022 23:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiKDWIh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 18:08:37 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64ABFCED
-        for <linux-clk@vger.kernel.org>; Fri,  4 Nov 2022 15:08:35 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id t25so16679727ejb.8
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 15:08:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUWMpfCp8yMYMN27hOBTPmmaRDIODrfLy/QYyrxVC9U=;
-        b=N/5MobyCqMqaDHUf0VYAeGDlaShVI6gW3R/fr1tLkTjRzSd0mrwTwe6AgO1bc6rMAQ
-         vGqaYuhfvQ82vWTraoh76WIR9XOumQyzsOIhiQlm7A5wwEuKKd3o4BWpzigWjyVJAaHB
-         lXa1OaNbz5gonB88NC84ox0/3fAaw8jeOZ6TU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OUWMpfCp8yMYMN27hOBTPmmaRDIODrfLy/QYyrxVC9U=;
-        b=dUCd0HjT6ZAXIaPIY3kbzTm6hM0QG9fq//szkC6m0StGQQBwN/n8FNWtxqZDG8BWg1
-         i2PnEc/wvE3e6YRdD2qTLhvISVps6z+iArP+sxJwXft3FSANC+B3N+fDdDP0KKd29C/K
-         52upNCzbY1EojP3ArAr0EAWaCtdzx9FplAzr6vdUZOFRLAun0ANm0Zz4aQTT5nHMhrVZ
-         ljKT/LKN42xy5yC5qGvoBEQ5yH11nhJS66mLgnSRgeNfNbcjPpj4pZg/Fq/3x8aXSfDe
-         Jar0V6dV6BRtxTew1LojMhrVkmkz5S7RYdwlY3zo3wneVkDTMGXAVrHTCfzZYNTXWVvi
-         rUOA==
-X-Gm-Message-State: ACrzQf1v25oLZOzuoVAxkNKC8QGpbRJE3VDxT68YKkH6Eg6LiSfdvNPL
-        UkOdnxrzpZg5mwgB4KYh8ohQEHHnD40/Qw9x
-X-Google-Smtp-Source: AMsMyM4NNCUZFB2BetUa2/Us1A9Z1nJa8g0m65zBZAMRqVbrPtHsystPfRjCwi+whQBKKRZ1BGjzbQ==
-X-Received: by 2002:a17:907:7208:b0:78e:176e:e0c6 with SMTP id dr8-20020a170907720800b0078e176ee0c6mr36735080ejc.594.1667599713741;
-        Fri, 04 Nov 2022 15:08:33 -0700 (PDT)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id o5-20020a170906768500b007a1d4944d45sm71889ejm.142.2022.11.04.15.08.29
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Nov 2022 15:08:31 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id v124-20020a1cac82000000b003cf7a4ea2caso6214880wme.5
-        for <linux-clk@vger.kernel.org>; Fri, 04 Nov 2022 15:08:29 -0700 (PDT)
-X-Received: by 2002:a05:600c:2212:b0:3cf:6068:3c40 with SMTP id
- z18-20020a05600c221200b003cf60683c40mr25419745wml.57.1667599706005; Fri, 04
- Nov 2022 15:08:26 -0700 (PDT)
+        with ESMTP id S229469AbiKEDpK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Nov 2022 23:45:10 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC86A3054F;
+        Fri,  4 Nov 2022 20:45:08 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 668953200900;
+        Fri,  4 Nov 2022 23:45:07 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 04 Nov 2022 23:45:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1667619907; x=
+        1667706307; bh=8NEuN8SPTeYqFJdZJ2flEYsKN0L1d2Z1DQJbyjEXnEY=; b=A
+        OA6rgjrjPP9W3Srf0PtHE2dAUyEhtdlIImR4vIQfupbWhTLUhMOANhXkc4YA+BKj
+        Goxqk2tgT0yqU0g3buzpFFbvx4XJpt0dNz0Hm+lhXy8kuMi77csy4KoyFvE9ZqGO
+        MH6pGLEy8MUtDp0ApmElnyc1wEnKuZtgjAYgJDiOwRVcXbSG07dsJhXgoERgF7xE
+        SU/GrckTodI8I3qGxoBcOMzkqmNI3sZfHyk1IL2Jb2VuuUDiOxXqqIb626vsMwgn
+        n+nMB+8NjHN9hVv+DZxw3CpWyGSpG5qDYFHAvmBGD8FV3HublluvNyuKcYEv8JCV
+        ajbL5nrCo72dej9gqcKcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1667619907; x=
+        1667706307; bh=8NEuN8SPTeYqFJdZJ2flEYsKN0L1d2Z1DQJbyjEXnEY=; b=e
+        kiwLR3and6N+kb/NtgrykahcNGI+Iy1EM6jY1rCtLLqVAX06bi5xOBNtbgscNS2l
+        jqWCo7NIX4U2ThE4ZIRBtgsfVoI6JCahNh/z7TjHA8jN7cGW9TrjKxSr3nu8NPgl
+        F1ZxoymrzftlK2ZLWfCEomInH3C+EyC5gv174kfGe66kEaqjHdgeLqTOYshMg7wu
+        6qoPegFxGPaZC8rYT/GhK85iuwMfAEOafqMmbpjxfJM/NAH/+HTSbDoPQ91GrUJ4
+        6/oxbQL+HMAi3HxA9geBU0UHGTwR6sDwdJXiSIGuleHIX8G/8XNTwhUmd8FOtrrs
+        COEgKfrzFaa8f82Vho8VQ==
+X-ME-Sender: <xms:QtxlY875TzvBb17geuCnJwF0-7GUxoBtqFAkicr6i9-0dFptkQBtTg>
+    <xme:QtxlY96MWlGSWHyUyIiJ5TR0BpvW-9jS9sBZkRcI0p93Qn0kUIGtAPRuoUWcIVvXL
+    kVN3St9ANtis78-Vg>
+X-ME-Received: <xmr:QtxlY7fGJVYTNGHmR1moyXcS6PonxLz28U7-RI-dREsXXLdfdjhthHUhMv8iVm_Uhz1CHeJpsSc57WIeTuXyyPbRt00eoJo-_kT1IxDlo7V_ac4oSpdn8lC4CQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrvddvgdeivdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfvvehfhffujggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepjefgfffhudejfedtuedugeeutdetgfeiteffffehjeeugfeuvdeh
+    jeetfedtffdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:QtxlYxJyNcZSaM5yaqJhSBSwuVdgb1xcpTkupGQFCqLGxXwBqwi2ZA>
+    <xmx:QtxlYwKCGWpDQ9F9cDQQKGp8vU7fwSmGpj-2r8e2d-UDHQ93hcZ0qA>
+    <xmx:QtxlYyzDaC5WyEmDIk-3U1BV2AtAXXUF2RaxUvjBCWI3QX9K_EnVsw>
+    <xmx:Q9xlY9CYzFxbVXRq45wJrCKjc_cWPvk5lY5NrzxIQn2-XqIorJkczA>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 4 Nov 2022 23:45:05 -0400 (EDT)
+Message-ID: <81491c02-6c07-bf17-0a00-5c396f7878d6@sholland.org>
+Date:   Fri, 4 Nov 2022 22:45:05 -0500
 MIME-Version: 1.0
-References: <20221104064055.1.I00a0e4564a25489e85328ec41636497775627564@changeid>
- <20221104064055.2.I49b25b9bda9430fc7ea21e5a708ca5a0aced2798@changeid> <CAE-0n53FLz+4XROL7t5Vk1pEgvAX4tJYO4UK8rdCQUW0Pq78jg@mail.gmail.com>
-In-Reply-To: <CAE-0n53FLz+4XROL7t5Vk1pEgvAX4tJYO4UK8rdCQUW0Pq78jg@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 4 Nov 2022 15:08:12 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VSh90tdSDaxThoGaE_uYWPTMrGYBMM0UqcH=HUZaScNg@mail.gmail.com>
-Message-ID: <CAD=FV=VSh90tdSDaxThoGaE_uYWPTMrGYBMM0UqcH=HUZaScNg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: qcom: lpass-sc7180: Fix pm_runtime usage
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Judy Hsiao <judyhsiao@chromium.org>,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+User-Agent: Mozilla/5.0 (X11; Linux ppc64le; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-42-f6736dec138e@cerno.tech>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v2 42/65] rtc: sun6i: Add a determine_rate hook
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-42-f6736dec138e@cerno.tech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Maxime,
 
-On Fri, Nov 4, 2022 at 2:19 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Douglas Anderson (2022-11-04 06:56:29)
-> > The sc7180 lpass clock controller's pm_runtime usage wasn't broken
-> > quite as spectacularly as the sc7280's pm_runtime usage, but it was
-> > still broken. Putting some printouts in at boot showed me this (with
-> > serial console enabled, which makes the prints slow and thus changes
-> > timing):
-> >   [    3.109951] DOUG: my_pm_clk_resume, usage=1
-> >   [    3.114767] DOUG: my_pm_clk_resume, usage=1
-> >   [    3.664443] DOUG: my_pm_clk_suspend, usage=0
-> >   [    3.897566] DOUG: my_pm_clk_suspend, usage=0
-> >   [    3.910137] DOUG: my_pm_clk_resume, usage=1
-> >   [    3.923217] DOUG: my_pm_clk_resume, usage=0
-> >   [    4.440116] DOUG: my_pm_clk_suspend, usage=-1
-> >   [    4.444982] DOUG: my_pm_clk_suspend, usage=0
-> >   [   14.170501] DOUG: my_pm_clk_resume, usage=1
-> >   [   14.176245] DOUG: my_pm_clk_resume, usage=0
-> >
-> > ...or this w/out serial console:
-> >   [    0.556139] DOUG: my_pm_clk_resume, usage=1
-> >   [    0.556279] DOUG: my_pm_clk_resume, usage=1
-> >   [    1.058422] DOUG: my_pm_clk_suspend, usage=-1
-> >   [    1.058464] DOUG: my_pm_clk_suspend, usage=0
-> >   [    1.186250] DOUG: my_pm_clk_resume, usage=1
-> >   [    1.186292] DOUG: my_pm_clk_resume, usage=0
-> >   [    1.731536] DOUG: my_pm_clk_suspend, usage=-1
-> >   [    1.731557] DOUG: my_pm_clk_suspend, usage=0
-> >   [   10.288910] DOUG: my_pm_clk_resume, usage=1
-> >   [   10.289496] DOUG: my_pm_clk_resume, usage=0
-> >
-> > It seems to be doing roughly the right sequence of calls, but just
-> > like with sc7280 this is more by luck than anything. Having a usage of
-> > -1 is just not OK.
-> >
-> > Let's fix this like we did with sc7280.
->
-> Any Fixes tag?
+On 11/4/22 08:17, Maxime Ripard wrote:
+> The Allwinner sun6i RTC clock implements a mux with a set_parent hook,
+> but doesn't provide a determine_rate implementation.
+> 
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+> 
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+> 
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
 
-Ah, right. I guess the most obvious one is actually:
+For this driver, we always want to use the more accurate parent if it is
+available. The driver enforces this in the probe function already, so I
+think it would be better to just remove the .set_parent implementation.
 
-Fixes: ce8c195e652f ("clk: qcom: lpasscc: Introduce pm autosuspend for SC7180")
+Regards,
+Samuel
 
-That's what got us going negative. One could _sorta_ make the argument
-for a "Fixes" tag all the way to the start of the driver, though. The
-driver never did a pm_runtime_get() during probe and so there was (I
-guess) a chance that some of the bare register writes in probe could
-have been unclocked. I'm not aware of that ever being a problem, so I
-guess just the above "Fixes" is fine.
-
-
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
->
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
-Thanks! Yell if you want me to spin a v2 with the Fixes in place.
-
--Doug
