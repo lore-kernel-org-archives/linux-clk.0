@@ -2,235 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AA8C433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Nov 2022 10:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E47E7C4332F
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Nov 2022 08:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbiKEKeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Nov 2022 06:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42788 "EHLO
+        id S229624AbiKFIWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Nov 2022 03:22:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiKEKeV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Nov 2022 06:34:21 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1642AE38;
-        Sat,  5 Nov 2022 03:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1667644455; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TDaskHbQLkzLxZhbc0A77T82ys2sKHjzGtgSbl/eTqE=;
-        b=3fY3IZ0hJPiRN8vNazn9bcQMqR2JrjTIi9AXqwxwIe42aFOkSxs8/LodJeR17HX6gwP6nU
-        mZNm0vTVRbGLApx4Wl/flL8cOh+VgCBw+PxQes5goKWi15jShjtTx3YJEDgMNwV2KlXCJe
-        TCPPbMNaz+6Yvnpx7NfiTwQwJoNtT18=
-Date:   Sat, 05 Nov 2022 10:33:54 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        with ESMTP id S229525AbiKFIWM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Nov 2022 03:22:12 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E552DF31;
+        Sun,  6 Nov 2022 01:22:11 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id sc25so22899023ejc.12;
+        Sun, 06 Nov 2022 01:22:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X8GelLgZYA3Vgt9nX6+7vM2CkBVxbreUB1cvPD6I5ws=;
+        b=OotFQiWya9bBskjYnMUrAzFF0BhBomHxGJCP6vuAohO+pSS0nBMZoAxdjZId6ywvji
+         sjHEquCputQ8wcBvVkso3JELs4gsYfNgUrpd0WeT+cV5GmknwCFkZYP6ldNoyV808p14
+         WFT5U85CTcY62L01EgtCOX2VxCkE5obLo5ja3P66/Jt3PoPyxd7EnbLoarJo/m5pJslp
+         dyWbqtOaXAhENd5BJLQpx1xunvdAEz4k5cIYaHYRu0eCRa8PYnkZJnCA/3NC3uWwR1Eo
+         Pjn2T1cAlFWJSMACeyXdr9A0piAToRCkA6DE8TqmRlC9d2ZfYk5+jJ9M5uCxSEq09qQc
+         bfmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X8GelLgZYA3Vgt9nX6+7vM2CkBVxbreUB1cvPD6I5ws=;
+        b=eS2cJYUJoqrrgwxOWC5ewznCgUWNqKcZ/aHLHaHYU0kGVyczvldFrRHL8FLZzRGySf
+         g3ilO4Jg9/P4yymYnprJUaaCK0oBfKdIVvRqwNYSa32HTMh3jtND9gKv69dxhPCuUrGh
+         gUGbYMp7qRAMu61o2vYVUlRB8m8aKLPM1n/dmrPRa3EcMHLNOlw6dBxGmamuRkfrOPL3
+         W7sUj1RdQHUejfFs6b3DvsjmS3+GgtQ593j/e+HIvPd+S6Udoyq5EiIaXIECDpCq+v/W
+         VB48HIgVynKG2fULwVLmCbwWIz2urACrxolswwKi8EoCP69SzSrvhpNOWs6CIxS5mE33
+         w8hw==
+X-Gm-Message-State: ACrzQf1t4tmyvf6lLOfTxe7GP7i737rw228GQamZ4lN0Ng+NxNz8bAcg
+        d3FAE3tVZ0w11qo0/2sWM7A=
+X-Google-Smtp-Source: AMsMyM6Cs1H5dB0jxz4M9iP6q2ipekXRaaelRwUbpTc5p/piVdnVPEEHQyvZ0el90BKeN48gAW5UXA==
+X-Received: by 2002:a17:906:5a51:b0:7ad:cf9e:bfc6 with SMTP id my17-20020a1709065a5100b007adcf9ebfc6mr35747417ejc.445.1667722929860;
+        Sun, 06 Nov 2022 01:22:09 -0700 (PDT)
+Received: from jernej-laptop.localnet (89-212-118-115.static.t-2.net. [89.212.118.115])
+        by smtp.gmail.com with ESMTPSA id 8-20020a170906300800b0078d22b0bcf2sm1832079ejz.168.2022.11.06.01.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Nov 2022 01:22:09 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        Icenowy Zheng <uwu@icenowy.me>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Message-Id: <IOEVKR.TWFKJND2FJ473@crapouillou.net>
-In-Reply-To: <20221104145946.orsyrhiqvypisl5j@houat>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
-        <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
-        <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
-        <20221104145946.orsyrhiqvypisl5j@houat>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 5/9] clk: sunxi-ng: f1c100s: Add IR mod clock
+Date:   Sun, 06 Nov 2022 09:22:08 +0100
+Message-ID: <3519387.R56niFO833@jernej-laptop>
+In-Reply-To: <20221101141658.3631342-6-andre.przywara@arm.com>
+References: <20221101141658.3631342-1-andre.przywara@arm.com> <20221101141658.3631342-6-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
+Dne torek, 01. november 2022 ob 15:16:54 CET je Andre Przywara napisal(a):
+> For some reason the mod clock for the Allwinner F1C100s CIR (infrared
+> receiver) peripheral was not modeled in the CCU driver.
+> 
+> Add the clock description to the list, and wire it up in the clock list.
+> By assigning a new clock ID at the end, it extends the number of clocks.
+> 
+> This allows to use the CIR peripheral on any F1C100s series board.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c      | 11 ++++++++++-
+>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h      |  2 +-
+>  include/dt-bindings/clock/suniv-ccu-f1c100s.h |  2 ++
+>  3 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c index
+> ed097c4f780ff..af4811e720b39 100644
+> --- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> @@ -239,7 +239,14 @@ static SUNXI_CCU_MUX_WITH_GATE(i2s_clk, "i2s",
+> i2s_spdif_parents, static SUNXI_CCU_MUX_WITH_GATE(spdif_clk, "spdif",
+> i2s_spdif_parents, 0x0b4, 16, 2, BIT(31), 0);
+> 
+> -/* The BSP header file has a CIR_CFG, but no mod clock uses this definition
+> */ +static const char * const ir_parents[] = { "osc32k", "osc24M" };
+> +static SUNXI_CCU_MP_WITH_MUX_GATE(ir_clk, "ir",
+> +				  ir_parents, 0x0b8,
+> +				  0, 4,		/* M */
+> +				  16, 2,	/* P */
+> +				  24, 1,        /* mux */
 
-Le ven. 4 nov. 2022 =E0 15:59:46 +0100, Maxime Ripard=20
-<maxime@cerno.tech> a =E9crit :
-> Hi Paul,
->=20
-> On Fri, Nov 04, 2022 at 02:31:20PM +0000, Paul Cercueil wrote:
->>  Le ven. 4 nov. 2022 =E0 14:18:13 +0100, Maxime Ripard=20
->> <maxime@cerno.tech> a
->>  =E9crit :
->>  > The Ingenic CGU clocks implements a mux with a set_parent hook,=20
->> but
->>  > doesn't provide a determine_rate implementation.
->>  >
->>  > This is a bit odd, since set_parent() is there to, as its name=20
->> implies,
->>  > change the parent of a clock. However, the most likely candidate=20
->> to
->>  > trigger that parent change is a call to clk_set_rate(), with
->>  > determine_rate() figuring out which parent is the best suited for=20
->> a
->>  > given rate.
->>  >
->>  > The other trigger would be a call to clk_set_parent(), but it's=20
->> far less
->>  > used, and it doesn't look like there's any obvious user for that=20
->> clock.
->>  >
->>  > So, the set_parent hook is effectively unused, possibly because=20
->> of an
->>  > oversight. However, it could also be an explicit decision by the
->>  > original author to avoid any reparenting but through an explicit=20
->> call to
->>  > clk_set_parent().
->>  >
->>  > The driver does implement round_rate() though, which means that=20
->> we can
->>  > change the rate of the clock, but we will never get to change the
->>  > parent.
->>  >
->>  > However, It's hard to tell whether it's been done on purpose or=20
->> not.
->>  >
->>  > Since we'll start mandating a determine_rate() implementation,=20
->> let's
->>  > convert the round_rate() implementation to a determine_rate(),=20
->> which
->>  > will also make the current behavior explicit. And if it was an
->>  > oversight, the clock behaviour can be adjusted later on.
->>=20
->>  So it's partly on purpose, partly because I didn't know about
->>  .determine_rate.
->>=20
->>  There's nothing odd about having a lonely .set_parent callback; in=20
->> my case
->>  the clocks are parented from the device tree.
->>=20
->>  Having the clocks driver trigger a parent change when requesting a=20
->> rate
->>  change sounds very dangerous, IMHO. My MMC controller can be=20
->> parented to the
->>  external 48 MHz oscillator, and if the card requests 50 MHz, it=20
->> could switch
->>  to one of the PLLs. That works as long as the PLLs don't change=20
->> rate, but if
->>  one is configured as driving the CPU clock, it becomes messy.
->>  The thing is, the clocks driver has no way to know whether or not=20
->> it is
->>  "safe" to use a designated parent.
->>=20
->>  For that reason, in practice, I never actually want to have a clock
->>  re-parented - it's almost always a bad idea vs. sticking to the=20
->> parent clock
->>  configured in the DTS.
->=20
-> Yeah, and this is totally fine. But we need to be explicit about it.=20
-> The
-> determine_rate implementation I did in all the patches is an exact
-> equivalent to the round_rate one if there was one. We will never ask=20
-> to
-> change the parent.
->=20
-> Given what you just said, I would suggest to set the
-> CLK_SET_RATE_NO_REPARENT flag as well.
+Let's follow user manual here and make mux 2 bits wide. That way we'll 
+guarantee that bit 1 is always written 0.
 
-But that would introduce policy into the driver... The fact that I=20
-don't want the MMC parented to the PLLs, doesn't mean that it's an=20
-invalid configuration per se.
+Best regards,
+Jernej
 
-Cheers,
--Paul
+> +				  BIT(31),      /* gate */
+> +				  0);
+> 
+>  static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+>  		      0x0cc, BIT(1), 0);
+> @@ -355,6 +362,7 @@ static struct ccu_common *suniv_ccu_clks[] = {
+>  	&mmc1_output_clk.common,
+>  	&i2s_clk.common,
+>  	&spdif_clk.common,
+> +	&ir_clk.common,
+>  	&usb_phy0_clk.common,
+>  	&dram_ve_clk.common,
+>  	&dram_csi_clk.common,
+> @@ -446,6 +454,7 @@ static struct clk_hw_onecell_data suniv_hw_clks = {
+>  		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
+>  		[CLK_I2S]		= &i2s_clk.common.hw,
+>  		[CLK_SPDIF]		= &spdif_clk.common.hw,
+> +		[CLK_IR]		= &ir_clk.common.hw,
+>  		[CLK_USB_PHY0]		= 
+&usb_phy0_clk.common.hw,
+>  		[CLK_DRAM_VE]		= 
+&dram_ve_clk.common.hw,
+>  		[CLK_DRAM_CSI]		= 
+&dram_csi_clk.common.hw,
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+> b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h index
+> b22484f1bb9a5..d56a4316289d8 100644
+> --- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+> @@ -29,6 +29,6 @@
+> 
+>  /* All bus gates, DRAM gates and mod clocks are exported */
+> 
+> -#define CLK_NUMBER		(CLK_AVS + 1)
+> +#define CLK_NUMBER		(CLK_IR + 1)
+> 
+>  #endif /* _CCU_SUNIV_F1C100S_H_ */
+> diff --git a/include/dt-bindings/clock/suniv-ccu-f1c100s.h
+> b/include/dt-bindings/clock/suniv-ccu-f1c100s.h index
+> f5ac155c9c70a..d7570765f424d 100644
+> --- a/include/dt-bindings/clock/suniv-ccu-f1c100s.h
+> +++ b/include/dt-bindings/clock/suniv-ccu-f1c100s.h
+> @@ -67,4 +67,6 @@
+>  #define CLK_CODEC		65
+>  #define CLK_AVS			66
+> 
+> +#define CLK_IR			67
+> +
+>  #endif
 
->>=20
->>  > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
->>  > ---
->>  >  drivers/clk/ingenic/cgu.c | 15 ++++++++-------
->>  >  1 file changed, 8 insertions(+), 7 deletions(-)
->>  >
->>  > diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
->>  > index 1f7ba30f5a1b..0c9c8344ad11 100644
->>  > --- a/drivers/clk/ingenic/cgu.c
->>  > +++ b/drivers/clk/ingenic/cgu.c
->>  > @@ -491,22 +491,23 @@ ingenic_clk_calc_div(struct clk_hw *hw,
->>  >  	return div;
->>  >  }
->>  >
->>  > -static long
->>  > -ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
->>  > -		       unsigned long *parent_rate)
->>  > +static int ingenic_clk_determine_rate(struct clk_hw *hw,
->>  > +				      struct clk_rate_request *req)
->>  >  {
->>  >  	struct ingenic_clk *ingenic_clk =3D to_ingenic_clk(hw);
->>  >  	const struct ingenic_cgu_clk_info *clk_info =3D
->>  > to_clk_info(ingenic_clk);
->>  >  	unsigned int div =3D 1;
->>  >
->>  >  	if (clk_info->type & CGU_CLK_DIV)
->>  > -		div =3D ingenic_clk_calc_div(hw, clk_info, *parent_rate,=20
->> req_rate);
->>  > +		div =3D ingenic_clk_calc_div(hw, clk_info, req->best_parent_rate,
->>  > +					   req->rate);
->>=20
->>  Sorry but I'm not sure that this works.
->>=20
->>  You replace the "parent_rate" with the "best_parent_rate", and that=20
->> means
->>  you only check the requested rate vs. the parent with the highest=20
->> frequency,
->>  and not vs. the actual parent that will be used.
->=20
-> best_parent_rate is initialized to the current parent rate, not the
-> parent with the highest frequency:
-> https://elixir.bootlin.com/linux/v6.1-rc3/source/drivers/clk/clk.c#L1471
->=20
-> Maxime
+
 
 
