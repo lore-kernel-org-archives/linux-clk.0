@@ -2,90 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0C1C4321E
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 18:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C2BC4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 18:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232280AbiKGSFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:05:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43814 "EHLO
+        id S233019AbiKGSSn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 13:18:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232387AbiKGSFA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 13:05:00 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22462252A9;
-        Mon,  7 Nov 2022 10:01:17 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id l11so18855599edb.4;
-        Mon, 07 Nov 2022 10:01:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75rd0nxoknxf0qfQbRb/8Y9yf4jaHg7t68qk6D5sD+0=;
-        b=No3yWU+ZvUWANbDZ+qjs/d41PUWLkEp3ZQntEBUKqTP9nEE6l7iPGQIpcKobc7rXHn
-         de2ajss8UoYWFGc3vNShutT1wi2TOkRQ4ctRlkw8WQJ3/gd/AJ8rN0F3XIK6QtK4ZGUf
-         5Cayx1tSCGnsQrzFxwKGcH9OqLJVf5DtcDPX76MVmhGAZJBbTdK80c/OyeE6FzFKPWMv
-         ZbvvJtIMz3KH647cTvs70qQTddp4zWU4TAhvcg7382Fj2VnlUn4zSDer4hB2yvI9lFN6
-         lGBFwi+DMAotesVVNwC02gxfoaecU1TqfMiZUGCYGeo3fcx9p4C63gY+daSUf5GB9ckE
-         Q9EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=75rd0nxoknxf0qfQbRb/8Y9yf4jaHg7t68qk6D5sD+0=;
-        b=PDSCLqj7XZfrk98Ge6QrdaJ9GSrm8N14JDv7SDw0tgtUxPSBh0jIOXVdnoRrJNlRHz
-         YKdCms8mP72MYFsXFdciFbXO+Yg8eeQmxy31h7a/U5P81twSsvS//Hw91fuHR9qWUg4i
-         uzP6/fcVihIDTgd5Is68jL2nVpm+CLwfezUPB6X6FPuzAtOJyqs9sgz+hi7fxNY34E7x
-         qV4ccp4E8nrgp3WfPtDzWcL8H0Ei9uaBvAl+bty7e18qQfhratogGBXGRxe7OrqFriCB
-         FBmS2laKWmmK/t8dxuOJ7L9MABoES9wN1xHOtUwBVuEpmxhWFvGl16iN6mRzCEyn1De2
-         2RLA==
-X-Gm-Message-State: ACrzQf20f9NPqulR3g+/uWNwB88Q/EIjf+/8ACO/FR4zWfkJGj2u2pjk
-        AOpSoui35t4PQLy8A4rMRNM=
-X-Google-Smtp-Source: AMsMyM5eKPdfYS+IlAZoU0ygqoUgIXnHcMzzWVgZewDNf9rtC0lNn5Px5RhiHcRAVwr9tZ6aB5+WNg==
-X-Received: by 2002:a05:6402:2804:b0:439:83c2:8be2 with SMTP id h4-20020a056402280400b0043983c28be2mr52629025ede.292.1667844075676;
-        Mon, 07 Nov 2022 10:01:15 -0800 (PST)
-Received: from kista.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id 20-20020a170906319400b007ae38d837c5sm3802633ejy.174.2022.11.07.10.01.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 10:01:15 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>
-Cc:     =?ISO-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Icenowy Zheng <uwu@icenowy.me>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 04/10] clk: sunxi-ng: f1c100s: Add IR mod clock
-Date:   Mon, 07 Nov 2022 19:01:12 +0100
-Message-ID: <3461540.iIbC2pHGDl@kista>
-In-Reply-To: <20221107005433.11079-5-andre.przywara@arm.com>
-References: <20221107005433.11079-1-andre.przywara@arm.com> <20221107005433.11079-5-andre.przywara@arm.com>
+        with ESMTP id S233052AbiKGSSL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 13:18:11 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A59E83;
+        Mon,  7 Nov 2022 10:17:03 -0800 (PST)
+Received: from mercury (dyndsl-091-096-035-235.ewe-ip-backbone.de [91.96.35.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8FEFF660036C;
+        Mon,  7 Nov 2022 18:17:01 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667845021;
+        bh=ZJRCSTiIUO7mMlaT9jpPOoTTmzS39xNBMQ8EmypLwBA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U33QTZRJX2uJPdMv3wmwQ9EChRh5z+v50X2F87vEKs8gUJ08WonXXRoHPp8bCB7rv
+         dLt6bYmy7Atc9+/CxkzwX0cojzhBM6g9LhIhIQJYUC2+ukjDmR3z5aQc4WuFNpt3IL
+         AWzTckFvOSE6Ha35P05mMLnTc3n+qiRDU8ysF6MtYccmo2XuGKiT0ii3++H+4BDfWD
+         pxVXnJc7bK7LZQojAUOTvU61+CtmhXkgBeBvn07KsRM6VnNl8ovTo7Dzh6GhnB5qoY
+         OF8YDWSgPsaL4nAczFXPzkcBvSe5jNYdXYv6V7aUGi6RZjFpewXohaqeUfSB70CsgO
+         +bhMbAuv5clfg==
+Received: by mercury (Postfix, from userid 1000)
+        id 6CBF51069DE3; Mon,  7 Nov 2022 19:16:58 +0100 (CET)
+Date:   Mon, 7 Nov 2022 19:16:58 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv3 0/9] RK3588 Clock and Reset Support
+Message-ID: <20221107181658.uz2om46wqzlj2m5f@mercury.elektranox.org>
+References: <20221018151407.63395-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fjipx7j3dexdj2fi"
+Content-Disposition: inline
+In-Reply-To: <20221018151407.63395-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 07. november 2022 ob 01:54:27 CET je Andre Przywara 
-napisal(a):
-> For some reason the mod clock for the Allwinner F1C100s CIR (infrared
-> receiver) peripheral was not modeled in the CCU driver.
-> 
-> Add the clock description to the list, and wire it up in the clock list.
-> By assigning a new clock ID at the end, it extends the number of clocks.
-> 
-> This allows to use the CIR peripheral on any F1C100s series board.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+--fjipx7j3dexdj2fi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Jernej
+Hi,
 
+On Tue, Oct 18, 2022 at 05:13:58PM +0200, Sebastian Reichel wrote:
+> Hi,
+>=20
+> This has been part of a bigger patchset adding basic rk3588 support.
+> Since that gets more and more out of hand, I'm now sending patches
+> for each subsystem as individual patchset.
+>=20
+> Changes since PATCHv2:
+>  * https://lore.kernel.org/all/20220930153857.299396-1-sebastian.reichel@=
+collabora.com/
+>  * rebased to v6.1-rc1
+>  * define rk3588_rst_init() in clk.h to fix build warning
+>  * add input clocks to the binding
+>  * add some more rates from the rate table (merged downstream fix)
+>  * fix input of mux_700m_400m_200m_24m_p clock (merged downstream fix)
+>=20
+> Changes since PATCHv1:
+>  * https://lore.kernel.org/all/20220623160329.239501-1-sebastian.reichel@=
+collabora.com/
+>  * split dt-binding header addition into its own patch (requested by Heik=
+o)
+>  * split dt-binding header into clock and reset one (requested by Krzyszt=
+of)
+>  * use reset identifier instead of register offset (requested by Krzyszto=
+f)
+>   * (involves adding lookup table support to rockchip CRU reset code)
+>  * use linear, gapless clock identifier (requested by Krzysztof)
+>  * reword the DT binding description
+>=20
+> Changes since PATCHv0:
+>  * https://lore.kernel.org/all/20220504213251.264819-1-sebastian.reichel@=
+collabora.com/
+>  * Sync'd with latest downstream changes
+>  * Update bindings according to Rob's comments, except for license
+>    (no feedback from Rockchip)
+>=20
+> -- Sebastian
+>=20
+> Elaine Zhang (5):
+>   dt-bindings: clock: add rk3588 cru bindings
+>   clk: rockchip: add register offset of the cores select parent
+>   clk: rockchip: add pll type for RK3588
+>   clk: rockchip: clk-cpu: add mux setting for cpu change frequency
+>   clk: rockchip: add clock controller for the RK3588
+>=20
+> Sebastian Reichel (4):
+>   dt-bindings: clock: add rk3588 clock definitions
+>   dt-bindings: reset: add rk3588 reset definitions
+>   clk: rockchip: simplify rockchip_clk_add_lookup
+>   clk: rockchip: add lookup table support
+>=20
+>  .../bindings/clock/rockchip,rk3588-cru.yaml   |   71 +
+>  drivers/clk/rockchip/Kconfig                  |    8 +
+>  drivers/clk/rockchip/Makefile                 |    1 +
+>  drivers/clk/rockchip/clk-cpu.c                |   69 +-
+>  drivers/clk/rockchip/clk-pll.c                |  218 +-
+>  drivers/clk/rockchip/clk-rk3588.c             | 2538 +++++++++++++++++
+>  drivers/clk/rockchip/clk.c                    |   14 +-
+>  drivers/clk/rockchip/clk.h                    |   95 +-
+>  drivers/clk/rockchip/rst-rk3588.c             |  857 ++++++
+>  drivers/clk/rockchip/softrst.c                |   34 +-
+>  .../dt-bindings/clock/rockchip,rk3588-cru.h   |  766 +++++
+>  .../dt-bindings/reset/rockchip,rk3588-cru.h   |  754 +++++
+>  12 files changed, 5390 insertions(+), 35 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk35=
+88-cru.yaml
+>  create mode 100644 drivers/clk/rockchip/clk-rk3588.c
+>  create mode 100644 drivers/clk/rockchip/rst-rk3588.c
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3588-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3588-cru.h
 
+Can this be merged? It's the last blocker for basic rk3588 support.
+
+-- Sebastian
+
+--fjipx7j3dexdj2fi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNpS4sACgkQ2O7X88g7
++pqRxg//X0Vm4/QXcHwCzRzyy8Ib81+HtP+k2uIIvaQDdsob8ctKxrBgIUQE8FG0
+/oP/Bu9CjTcXaC5A9CRhYwOCvJg63q5kEVomsYdJDXuAVxO14Yy4pA9W7x/j0K48
+CuECS467T2gxJcI9S6GscYweULNc+j1/gGPChiWRuDXvTwS44hMMUz1KknHWNXEd
+g0ivb023UGHGvBDmR6tU8faMC+l1S+68zk+at3Ia8dC/U/40ZhNY95/fx4WfdD+A
+BZP1S2ids55pZqZBsDC9gXkWohMxBt/PgJlFkaNlARG/8H7X029imh83hpdczSNg
+ecNsV6Q651Q/Vhy4qxyd2/Nw5D6I+gsYQE0e6V1PcdIUseoEAfLaCl3KfVVqqmbJ
+ehmpgt7ud3Xb/80TKpZxP6e4VWlvJ4wTn1zUjG2BMtFF1V6Yin/U9OXA7HHs3org
+FvrXAyFelnWI4GJA1zUrTJeYgbzX9FMl0hd/Gsfok1Ib6s8Ib/0LvDJDaANIm95y
+ZDI+Y5BdtiuA2sOvn782/5yInkwZjLGtBNqfpABFWiucB8rrnSWWfSvoHx2myvyn
+YQp0O2O+KBGQ1gH3bRnFx00dKhPD4F/4bOQV2noamzEyjlMEOAUoIsrfUybRWFq0
++Y7w7LVVPuhE7TpCsOSTcWhzu76zJe5Uw5/KXt/ObH0BaAQox3A=
+=cK7F
+-----END PGP SIGNATURE-----
+
+--fjipx7j3dexdj2fi--
