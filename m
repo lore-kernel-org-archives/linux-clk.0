@@ -2,90 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76929C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 17:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0C1C4321E
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 18:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232566AbiKGRgX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 12:36:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
+        id S232280AbiKGSFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 13:05:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiKGRgX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 12:36:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982EF639C;
-        Mon,  7 Nov 2022 09:36:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 363CD611C0;
-        Mon,  7 Nov 2022 17:36:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBFCC433C1;
-        Mon,  7 Nov 2022 17:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667842581;
-        bh=AwBvVZIF9qlgA475hSkeq7qNy18IbEKQETL/LT5Aeqc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gIH2JjakcJY2CmwdiPDKG8y+DI2GCGN/BUntJ6gnHTb9fCs3ZgiXxQF2mgS0g8d60
-         LKnoSnHdsrnXYZvkkQedSobAV7/FMDbQlsnp8QW2n6KP8VEE6NEsMfF2OlP2QpupQ9
-         ROMCdiFjpZQvXcJJdD5/PtrV6D0SGEoMyrTAt6PhcYPJ6bnpexzC6dXs8/UF42BER1
-         BiW3BdLi6k38YZcPbiq7t1wzTP/vpe2Uh8bWQY0tl4xdC24qljQeK2CJDQq5+sdWpQ
-         o46w6j54+j8YBFx8Y4WR09Hzup0DCcCx0kUw3Oh+FdNwpbhfGecJzhRoOLisvhKc6A
-         qnSAKuPfZ2ANA==
-Date:   Mon, 7 Nov 2022 11:36:18 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Melody Olvera <quic_molvera@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S232387AbiKGSFA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 13:05:00 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22462252A9;
+        Mon,  7 Nov 2022 10:01:17 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id l11so18855599edb.4;
+        Mon, 07 Nov 2022 10:01:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75rd0nxoknxf0qfQbRb/8Y9yf4jaHg7t68qk6D5sD+0=;
+        b=No3yWU+ZvUWANbDZ+qjs/d41PUWLkEp3ZQntEBUKqTP9nEE6l7iPGQIpcKobc7rXHn
+         de2ajss8UoYWFGc3vNShutT1wi2TOkRQ4ctRlkw8WQJ3/gd/AJ8rN0F3XIK6QtK4ZGUf
+         5Cayx1tSCGnsQrzFxwKGcH9OqLJVf5DtcDPX76MVmhGAZJBbTdK80c/OyeE6FzFKPWMv
+         ZbvvJtIMz3KH647cTvs70qQTddp4zWU4TAhvcg7382Fj2VnlUn4zSDer4hB2yvI9lFN6
+         lGBFwi+DMAotesVVNwC02gxfoaecU1TqfMiZUGCYGeo3fcx9p4C63gY+daSUf5GB9ckE
+         Q9EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=75rd0nxoknxf0qfQbRb/8Y9yf4jaHg7t68qk6D5sD+0=;
+        b=PDSCLqj7XZfrk98Ge6QrdaJ9GSrm8N14JDv7SDw0tgtUxPSBh0jIOXVdnoRrJNlRHz
+         YKdCms8mP72MYFsXFdciFbXO+Yg8eeQmxy31h7a/U5P81twSsvS//Hw91fuHR9qWUg4i
+         uzP6/fcVihIDTgd5Is68jL2nVpm+CLwfezUPB6X6FPuzAtOJyqs9sgz+hi7fxNY34E7x
+         qV4ccp4E8nrgp3WfPtDzWcL8H0Ei9uaBvAl+bty7e18qQfhratogGBXGRxe7OrqFriCB
+         FBmS2laKWmmK/t8dxuOJ7L9MABoES9wN1xHOtUwBVuEpmxhWFvGl16iN6mRzCEyn1De2
+         2RLA==
+X-Gm-Message-State: ACrzQf20f9NPqulR3g+/uWNwB88Q/EIjf+/8ACO/FR4zWfkJGj2u2pjk
+        AOpSoui35t4PQLy8A4rMRNM=
+X-Google-Smtp-Source: AMsMyM5eKPdfYS+IlAZoU0ygqoUgIXnHcMzzWVgZewDNf9rtC0lNn5Px5RhiHcRAVwr9tZ6aB5+WNg==
+X-Received: by 2002:a05:6402:2804:b0:439:83c2:8be2 with SMTP id h4-20020a056402280400b0043983c28be2mr52629025ede.292.1667844075676;
+        Mon, 07 Nov 2022 10:01:15 -0800 (PST)
+Received: from kista.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
+        by smtp.gmail.com with ESMTPSA id 20-20020a170906319400b007ae38d837c5sm3802633ejy.174.2022.11.07.10.01.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 10:01:15 -0800 (PST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: clock: Add RPMHCC bindings for
- QDU1000 and QRU1000
-Message-ID: <20221107173618.ws5rrqbrmtu22iut@builder.lan>
-References: <20221026190441.4002212-1-quic_molvera@quicinc.com>
- <20221026190441.4002212-3-quic_molvera@quicinc.com>
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     =?ISO-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
+        Icenowy Zheng <uwu@icenowy.me>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] clk: sunxi-ng: f1c100s: Add IR mod clock
+Date:   Mon, 07 Nov 2022 19:01:12 +0100
+Message-ID: <3461540.iIbC2pHGDl@kista>
+In-Reply-To: <20221107005433.11079-5-andre.przywara@arm.com>
+References: <20221107005433.11079-1-andre.przywara@arm.com> <20221107005433.11079-5-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221026190441.4002212-3-quic_molvera@quicinc.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 26, 2022 at 12:04:38PM -0700, Melody Olvera wrote:
-> Add compatible strings for RPMHCC for QDU1000 and QRU1000.
+Dne ponedeljek, 07. november 2022 ob 01:54:27 CET je Andre Przywara 
+napisal(a):
+> For some reason the mod clock for the Allwinner F1C100s CIR (infrared
+> receiver) peripheral was not modeled in the CCU driver.
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-
-This is independent of the GCC binding/driver, so I fixed up the
-$subject per Krzysztof's feedback and picked the two patches.
-
-But like the PDC, it's better to post independent things separately.
-
-Thanks,
-Bjorn
-
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Add the clock description to the list, and wire it up in the clock list.
+> By assigning a new clock ID at the end, it extends the number of clocks.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> index 437a34b930e3..fccb91e78e49 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> @@ -17,6 +17,7 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - qcom,qdu1000-rpmh-clk
->        - qcom,sc7180-rpmh-clk
->        - qcom,sc7280-rpmh-clk
->        - qcom,sc8180x-rpmh-clk
-> -- 
-> 2.25.1
+> This allows to use the CIR peripheral on any F1C100s series board.
 > 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+
+Best regards,
+Jernej
+
+
