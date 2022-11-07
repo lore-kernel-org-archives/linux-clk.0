@@ -2,158 +2,180 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C2BC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 18:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B68C43217
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 18:24:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233019AbiKGSSn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:18:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58188 "EHLO
+        id S232959AbiKGSY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 13:24:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233052AbiKGSSL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 13:18:11 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A59E83;
-        Mon,  7 Nov 2022 10:17:03 -0800 (PST)
-Received: from mercury (dyndsl-091-096-035-235.ewe-ip-backbone.de [91.96.35.235])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8FEFF660036C;
-        Mon,  7 Nov 2022 18:17:01 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1667845021;
-        bh=ZJRCSTiIUO7mMlaT9jpPOoTTmzS39xNBMQ8EmypLwBA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U33QTZRJX2uJPdMv3wmwQ9EChRh5z+v50X2F87vEKs8gUJ08WonXXRoHPp8bCB7rv
-         dLt6bYmy7Atc9+/CxkzwX0cojzhBM6g9LhIhIQJYUC2+ukjDmR3z5aQc4WuFNpt3IL
-         AWzTckFvOSE6Ha35P05mMLnTc3n+qiRDU8ysF6MtYccmo2XuGKiT0ii3++H+4BDfWD
-         pxVXnJc7bK7LZQojAUOTvU61+CtmhXkgBeBvn07KsRM6VnNl8ovTo7Dzh6GhnB5qoY
-         OF8YDWSgPsaL4nAczFXPzkcBvSe5jNYdXYv6V7aUGi6RZjFpewXohaqeUfSB70CsgO
-         +bhMbAuv5clfg==
-Received: by mercury (Postfix, from userid 1000)
-        id 6CBF51069DE3; Mon,  7 Nov 2022 19:16:58 +0100 (CET)
-Date:   Mon, 7 Nov 2022 19:16:58 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv3 0/9] RK3588 Clock and Reset Support
-Message-ID: <20221107181658.uz2om46wqzlj2m5f@mercury.elektranox.org>
-References: <20221018151407.63395-1-sebastian.reichel@collabora.com>
+        with ESMTP id S232081AbiKGSY3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 13:24:29 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1A128E2A
+        for <linux-clk@vger.kernel.org>; Mon,  7 Nov 2022 10:24:05 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id l12so6797959lfp.6
+        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 10:24:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v/+DmlpUJNQ6H+y2+hAk27Zykcqu9Cxop/8nW/tfq8o=;
+        b=YM6wEP8D2ic+78mnkgabgCawUWu5PRsEDd33Uz5A4ygUYI7EaV1pBVoNegOluHeRBP
+         cpj54KXembu+3W9hDl8Qyro7au79xuQTxdiq6zb58BMrvmw4tzlESZVBcOZ5m3S7FOmU
+         SB8wdGGh7d+J47isBugbdpZrCno3LYjdZ5IUiwRQgUEr3rY11SkXAo7RikONu9QnX1vI
+         HU5YAF3KGAV0c51lqPbYeSrW/SOu7vO7uc9C9PnS8HamJQxPT3KOAS47YGutU11oBIeR
+         fPpPsCH6oP+s8yO3U2EmoHtmH4C3H52m8SAhIKzEd3ZCgijel+Yrtlc/STylA8BJbvK5
+         3/Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v/+DmlpUJNQ6H+y2+hAk27Zykcqu9Cxop/8nW/tfq8o=;
+        b=ZvXGlIiPmm+sDM7ppsOPpYZ2Ak8N0YsKMqO73bkl5A2Xmh8b4i4OcQNL29IkQI6GGx
+         pQO9ROSpUTBYkbdfrjXXvXbJjw2+bYZtkjpFXCt+D6aib234JhoGabd6wbCR79Fc46Vt
+         lEjv9D6QG4p49RVdGbmiBqSLvdk0dxwVgLG1dbDu7p1Oppo2Y/cMYnh9InA4L1CzDR7l
+         RVa5hQMC+42fD82suKHKPUxY55TAEyyaVHoSAi4RUoOdgK1gKFkpLcU0R5ol2gM0JPYR
+         7oOMIwhTcoM8d8JwsO4dR54OSAZpGsTxpc1L0bg6kGDESjGnKChG8xVcbneZnBNa8QqB
+         OLNg==
+X-Gm-Message-State: ANoB5pmDVS8nHpZJdieB3rOo7Z7kLziiS4pzU/TaPzjhRtxx0zh0XA8g
+        evIHsvR/bpctupgp8c9lEv3xEA==
+X-Google-Smtp-Source: AA0mqf5uwcpb6dUhKs4Vhu0uRUXiku2hqbfLgAsSVoGqbFd7CA76YcTVc/3qG22gp+wuXsTzA+O6sA==
+X-Received: by 2002:a05:6512:374e:b0:4b2:c8b:7a66 with SMTP id a14-20020a056512374e00b004b20c8b7a66mr4976348lfs.498.1667845443689;
+        Mon, 07 Nov 2022 10:24:03 -0800 (PST)
+Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
+        by smtp.gmail.com with ESMTPSA id q23-20020a19a417000000b004ab98cd5644sm1358051lfc.182.2022.11.07.10.24.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 10:24:02 -0800 (PST)
+Message-ID: <c10df12c-ccb9-03b7-96be-1aac5feee1aa@linaro.org>
+Date:   Mon, 7 Nov 2022 19:24:01 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fjipx7j3dexdj2fi"
-Content-Disposition: inline
-In-Reply-To: <20221018151407.63395-1-sebastian.reichel@collabora.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 4/7] dt-bindings: usb: add the Renesas USBF controller
+ binding
+Content-Language: en-US
+To:     Herve Codina <herve.codina@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20221107135825.583877-1-herve.codina@bootlin.com>
+ <20221107135825.583877-5-herve.codina@bootlin.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221107135825.583877-5-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 07/11/2022 14:58, Herve Codina wrote:
+> The Renesas USBF controller is an USB2.0 device controller
+> (UDC) available in Renesas r9a06g032 SoC (RZ/N1 family).
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  .../devicetree/bindings/usb/renesas,usbf.yaml | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/renesas,usbf.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/renesas,usbf.yaml b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
+> new file mode 100644
+> index 000000000000..f2b146d9d37b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/renesas,usbf.yaml#
 
---fjipx7j3dexdj2fi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Filename based on compatible, so renesas,rzn1-usbf.yaml.
 
-Hi,
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas USBF (USB Function) controller binding
+> +
+> +description: |
+> +   The Renesas USBF controller is an USB2.0 device
+> +   controller (UDC).
+> +
+> +maintainers:
+> +  - Herve Codina <herve.codina@bootlin.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
 
-On Tue, Oct 18, 2022 at 05:13:58PM +0200, Sebastian Reichel wrote:
-> Hi,
->=20
-> This has been part of a bigger patchset adding basic rk3588 support.
-> Since that gets more and more out of hand, I'm now sending patches
-> for each subsystem as individual patchset.
->=20
-> Changes since PATCHv2:
->  * https://lore.kernel.org/all/20220930153857.299396-1-sebastian.reichel@=
-collabora.com/
->  * rebased to v6.1-rc1
->  * define rk3588_rst_init() in clk.h to fix build warning
->  * add input clocks to the binding
->  * add some more rates from the rate table (merged downstream fix)
->  * fix input of mux_700m_400m_200m_24m_p clock (merged downstream fix)
->=20
-> Changes since PATCHv1:
->  * https://lore.kernel.org/all/20220623160329.239501-1-sebastian.reichel@=
-collabora.com/
->  * split dt-binding header addition into its own patch (requested by Heik=
-o)
->  * split dt-binding header into clock and reset one (requested by Krzyszt=
-of)
->  * use reset identifier instead of register offset (requested by Krzyszto=
-f)
->   * (involves adding lookup table support to rockchip CRU reset code)
->  * use linear, gapless clock identifier (requested by Krzysztof)
->  * reword the DT binding description
->=20
-> Changes since PATCHv0:
->  * https://lore.kernel.org/all/20220504213251.264819-1-sebastian.reichel@=
-collabora.com/
->  * Sync'd with latest downstream changes
->  * Update bindings according to Rob's comments, except for license
->    (no feedback from Rockchip)
->=20
-> -- Sebastian
->=20
-> Elaine Zhang (5):
->   dt-bindings: clock: add rk3588 cru bindings
->   clk: rockchip: add register offset of the cores select parent
->   clk: rockchip: add pll type for RK3588
->   clk: rockchip: clk-cpu: add mux setting for cpu change frequency
->   clk: rockchip: add clock controller for the RK3588
->=20
-> Sebastian Reichel (4):
->   dt-bindings: clock: add rk3588 clock definitions
->   dt-bindings: reset: add rk3588 reset definitions
->   clk: rockchip: simplify rockchip_clk_add_lookup
->   clk: rockchip: add lookup table support
->=20
->  .../bindings/clock/rockchip,rk3588-cru.yaml   |   71 +
->  drivers/clk/rockchip/Kconfig                  |    8 +
->  drivers/clk/rockchip/Makefile                 |    1 +
->  drivers/clk/rockchip/clk-cpu.c                |   69 +-
->  drivers/clk/rockchip/clk-pll.c                |  218 +-
->  drivers/clk/rockchip/clk-rk3588.c             | 2538 +++++++++++++++++
->  drivers/clk/rockchip/clk.c                    |   14 +-
->  drivers/clk/rockchip/clk.h                    |   95 +-
->  drivers/clk/rockchip/rst-rk3588.c             |  857 ++++++
->  drivers/clk/rockchip/softrst.c                |   34 +-
->  .../dt-bindings/clock/rockchip,rk3588-cru.h   |  766 +++++
->  .../dt-bindings/reset/rockchip,rk3588-cru.h   |  754 +++++
->  12 files changed, 5390 insertions(+), 35 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk35=
-88-cru.yaml
->  create mode 100644 drivers/clk/rockchip/clk-rk3588.c
->  create mode 100644 drivers/clk/rockchip/rst-rk3588.c
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3588-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3588-cru.h
+You have only one possibility, so oneOf is not needed. Unless you
+already predict it will grow with new incompatible lists?
 
-Can this be merged? It's the last blocker for basic rk3588 support.
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a06g032-usbf
+> +          - const: renesas,rzn1-usbf
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Internal bus clock (AHB) for Function
+> +      - description: Internal bus clock (AHB) for Power Management
 
--- Sebastian
+Blank line
 
---fjipx7j3dexdj2fi
-Content-Type: application/pgp-signature; name="signature.asc"
+> +  clock-names:
+> +    items:
+> +      - const: hclkf
+> +      - const: hclkpm
+> +
+> +  interrupts:
+> +    items:
+> +      - description: The USBF EPC interrupt
+> +      - description: The USBF AHB-EPC interrupt
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
+> +
+> +    usb@4001e000 {
+> +        compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
+> +        reg = <0x4001e000 0x2000>;
+> +        interrupts =
 
------BEGIN PGP SIGNATURE-----
+No need for line break. It's not helping in readability.
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNpS4sACgkQ2O7X88g7
-+pqRxg//X0Vm4/QXcHwCzRzyy8Ib81+HtP+k2uIIvaQDdsob8ctKxrBgIUQE8FG0
-/oP/Bu9CjTcXaC5A9CRhYwOCvJg63q5kEVomsYdJDXuAVxO14Yy4pA9W7x/j0K48
-CuECS467T2gxJcI9S6GscYweULNc+j1/gGPChiWRuDXvTwS44hMMUz1KknHWNXEd
-g0ivb023UGHGvBDmR6tU8faMC+l1S+68zk+at3Ia8dC/U/40ZhNY95/fx4WfdD+A
-BZP1S2ids55pZqZBsDC9gXkWohMxBt/PgJlFkaNlARG/8H7X029imh83hpdczSNg
-ecNsV6Q651Q/Vhy4qxyd2/Nw5D6I+gsYQE0e6V1PcdIUseoEAfLaCl3KfVVqqmbJ
-ehmpgt7ud3Xb/80TKpZxP6e4VWlvJ4wTn1zUjG2BMtFF1V6Yin/U9OXA7HHs3org
-FvrXAyFelnWI4GJA1zUrTJeYgbzX9FMl0hd/Gsfok1Ib6s8Ib/0LvDJDaANIm95y
-ZDI+Y5BdtiuA2sOvn782/5yInkwZjLGtBNqfpABFWiucB8rrnSWWfSvoHx2myvyn
-YQp0O2O+KBGQ1gH3bRnFx00dKhPD4F/4bOQV2noamzEyjlMEOAUoIsrfUybRWFq0
-+Y7w7LVVPuhE7TpCsOSTcWhzu76zJe5Uw5/KXt/ObH0BaAQox3A=
-=cK7F
------END PGP SIGNATURE-----
 
---fjipx7j3dexdj2fi--
+> +            <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
+> +            <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&sysctrl R9A06G032_HCLK_USBF>,
+> +                 <&sysctrl R9A06G032_HCLK_USBPM>;
+> +        clock-names = "hclkf", "hclkpm";
+> +    };
+
+Best regards,
+Krzysztof
+
