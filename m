@@ -2,109 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E0EC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 13:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F812C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 13:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbiKGN3V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 08:29:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60476 "EHLO
+        id S231464AbiKGNyL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 08:54:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231883AbiKGN3S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 08:29:18 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D6E1CB17;
-        Mon,  7 Nov 2022 05:29:07 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id q9so30216325ejd.0;
-        Mon, 07 Nov 2022 05:29:07 -0800 (PST)
+        with ESMTP id S231440AbiKGNyK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 08:54:10 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A391CFD5
+        for <linux-clk@vger.kernel.org>; Mon,  7 Nov 2022 05:54:08 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id x21so16334983ljg.10
+        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 05:54:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XDOdLV96aBPIAMlkNzE1ZyzcwED/u+zRiKOTdjgBJUU=;
-        b=YgLNaVxs1RztJCcCieI8ERHtdHkFdvRBWXaoGj+AFLeV0EnQ6J9GsBnutFSoPtBsGf
-         wqGEIUoUKqYNOPeCTfn1rUDGU9lSJJHHLAMyEkvxmsyoJ9eWysOIIAcot7QrHsOycz5S
-         +q4LOxO5qs1upjjEHf4jIk1N12UBXbFxAZwTxHCwRSJIduSE0b0ZzJNltKmKYx1KkoUt
-         XJ67MNa49mxB1PeKRLXDPhmykww37tN+1pOnpwTxZmVGCP7PD+HZlxp/DKqcBopnEb1V
-         ylZmHLI/HZ8aYw8pU8iCpTAdKu75zLJV/mhhhXEMhmp5q2GkuQ0NwczZFxyfCRvo4mQz
-         AOgw==
+        d=rasmusvillemoes.dk; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JE5T0seOQt35vnitPnZ86nKCKhAUPHXiTmRe5O7UgnQ=;
+        b=dr4k9KGvIsl2RMvfseVNbi/gfAqp/2XOsCKXmaZe4tuWKF+m23uXi2jPp5va0laZZH
+         aVdJuqROMvojn4rbQ7sfTZxAfiqWeLQmAiDhVBKkTKMn6lYqOQcULJgE1qCZCuo0yVkB
+         SV0NEWaXGK2u5RWXXk0TbFuGCkNLM6Yzb6wjU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XDOdLV96aBPIAMlkNzE1ZyzcwED/u+zRiKOTdjgBJUU=;
-        b=HPDnA8geCSuNImobfdCHM3QjfHemVxFNMA51rvatLbGeqXs7CECMrHkTGjef3qo1Uj
-         /RVYurq6X9xcTIgoDB0zgWFANkW1kO4/aPwabmB509O0H2AjujbrlGC8BpM5CEm2fX9V
-         TOiVzQAA8JilnNpRkRCFwwk9qt54x9qzaMBmB12QZpgz9vX7XDUWI6O4ggw83iWYj5Yb
-         ad3pHHD+9CaeSNjYNhNFZNElK4NqIhuc4EiZobBIa2Fb63jzAGCZyyBOrYKbGgHT2KTG
-         ZRzc2CWJSfnhvQ3tFaznCu+wCnPstk0WTSyn9F16FGb2WGXx7Wk/HyjK4HDvF1J8SGwk
-         nZ0g==
-X-Gm-Message-State: ACrzQf1XyZ3V1GmH0n6DITaINeHWXd5isafndPNkzxXfznc5nGtCcG3x
-        INVQdlwU81DQE7ihHX/+wNk=
-X-Google-Smtp-Source: AMsMyM6fliBlCshCjtfYk2Qg/pWwCrenj7y+n7lKdApNLB8h60d8aRsQrVG5i6G87s0IUlZDUF0Mgg==
-X-Received: by 2002:a17:907:c711:b0:7ae:35c9:f07b with SMTP id ty17-20020a170907c71100b007ae35c9f07bmr16421779ejc.423.1667827746465;
-        Mon, 07 Nov 2022 05:29:06 -0800 (PST)
-Received: from fedora.. (dh207-98-26.xnet.hr. [88.207.98.26])
-        by smtp.googlemail.com with ESMTPSA id ky14-20020a170907778e00b0073c8d4c9f38sm3446037ejc.177.2022.11.07.05.29.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 05:29:06 -0800 (PST)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH 3/3] clk: qcom: ipq8074: add missing networking resets
-Date:   Mon,  7 Nov 2022 14:29:01 +0100
-Message-Id: <20221107132901.489240-3-robimarko@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221107132901.489240-1-robimarko@gmail.com>
-References: <20221107132901.489240-1-robimarko@gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JE5T0seOQt35vnitPnZ86nKCKhAUPHXiTmRe5O7UgnQ=;
+        b=WFYRKlXeMZOGyT7U57Cgy+EuicU5UcVagO5Ja1wXoqMLi7RMCMTW7mrOoFHXkHx3Co
+         zkbRKNYLm8hpqqxFqj+7Z958SAjIjk4opSWhUKAjJbVQ5ZvQLczdxqN4pk8ESoci0+u/
+         +cLg8CgPSSUjHsnr9fRmK3iJJgdhXDDLpQwzOajKWGMQ2Gt7lZ6QLVS0UzhB1+QjOPX5
+         kjL4/xQ2DjH7mzrwubsmqkl1xQUzmJkshiyQKgAEqgEKGegmvvZMOWbyHWpODGAOZsxI
+         pE6kyxb8W8yD1KmqApkgoRegW6onVb4F4h3dJTB1ylx90Pa+i0FHMVUxsBlV7881uPFr
+         Mf1A==
+X-Gm-Message-State: ACrzQf2txsOiRQdwiPY4cOUweNesrVhHN24YuY93fGn3ERBfF+znj3mE
+        Fl18d1thZUweTc9bYDlggNt0BA==
+X-Google-Smtp-Source: AMsMyM48rERCdJEUu3F/vG1o670fBnUPEqP/H+Cu9hXSKljLeH7V0SgBpz/OPFioxHLXDQOiyCO7AQ==
+X-Received: by 2002:a2e:8ec3:0:b0:277:4b35:d94a with SMTP id e3-20020a2e8ec3000000b002774b35d94amr5039712ljl.21.1667829247131;
+        Mon, 07 Nov 2022 05:54:07 -0800 (PST)
+Received: from [172.16.11.74] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id i13-20020a2ea36d000000b00277074c12ddsm1241712ljn.125.2022.11.07.05.54.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 05:54:06 -0800 (PST)
+Message-ID: <08df1f08-1eea-0ee5-8e7b-6c427aa11d02@rasmusvillemoes.dk>
+Date:   Mon, 7 Nov 2022 14:54:04 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
+Content-Language: en-US, da
+To:     Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+In-Reply-To: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Downstream QCA 5.4 kernel defines networking resets which are not present
-in the mainline kernel but are required for the networking drivers.
+On 28/09/2022 14.41, Rasmus Villemoes wrote:
+> We have an imx8mp-based board with an external gpio-triggered
+> watchdog. Currently, we don't get to handle that in time before it
+> resets the board.
+> 
+> The probe of the watchdog device gets deferred because the SOC's GPIO
+> controller is not yet ready, and the probe of that in turn gets deferred
+> because its clock provider (namely, this driver) is not yet
+> ready. Altogether, the watchdog does not get handled until the late
+> initcall deferred_probe_initcall has made sure all leftover devices
+> have been probed, and that's way too late.
+> 
+> Aside from being necessary for our board, this also reduces total boot
+> time because fewer device probes get deferred.
 
-So, port the downstream resets and avoid using magic values for mask,
-construct mask for resets which require multiple bits to be set/cleared.
+Please advise on what I need to do in order to make progress here.
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- drivers/clk/qcom/gcc-ipq8074.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 42d185fe19c8..37d8a9f4105e 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4826,6 +4826,20 @@ static const struct qcom_reset_map gcc_ipq8074_resets[] = {
- 	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
- 	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
- 	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
-+	[GCC_PPE_FULL_RESET] = { .reg = 0x68014, .bitmask = GENMASK(19, 16) },
-+	[GCC_UNIPHY0_SOFT_RESET] = { .reg = 0x56004, .bitmask = GENMASK(13, 4) | BIT(1) },
-+	[GCC_UNIPHY0_XPCS_RESET] = { 0x56004, 2 },
-+	[GCC_UNIPHY1_SOFT_RESET] = { .reg = 0x56104, .bitmask = GENMASK(5, 4) | BIT(1) },
-+	[GCC_UNIPHY1_XPCS_RESET] = { 0x56104, 2 },
-+	[GCC_UNIPHY2_SOFT_RESET] = { .reg = 0x56204, .bitmask = GENMASK(5, 4) | BIT(1) },
-+	[GCC_UNIPHY2_XPCS_RESET] = { 0x56204, 2 },
-+	[GCC_EDMA_HW_RESET] = { .reg = 0x68014, .bitmask = GENMASK(21, 20) },
-+	[GCC_NSSPORT1_RESET] = { .reg = 0x68014, .bitmask = BIT(24) | GENMASK(1, 0) },
-+	[GCC_NSSPORT2_RESET] = { .reg = 0x68014, .bitmask = BIT(25) | GENMASK(3, 2) },
-+	[GCC_NSSPORT3_RESET] = { .reg = 0x68014, .bitmask = BIT(26) | GENMASK(5, 4) },
-+	[GCC_NSSPORT4_RESET] = { .reg = 0x68014, .bitmask = BIT(27) | GENMASK(9, 8) },
-+	[GCC_NSSPORT5_RESET] = { .reg = 0x68014, .bitmask = BIT(28) | GENMASK(11, 10) },
-+	[GCC_NSSPORT6_RESET] = { .reg = 0x68014, .bitmask = BIT(29) | GENMASK(13, 12) },
- };
- 
- static struct gdsc *gcc_ipq8074_gdscs[] = {
--- 
-2.38.1
+Thanks,
+Rasmus
 
