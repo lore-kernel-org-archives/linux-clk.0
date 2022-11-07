@@ -2,154 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF49BC43219
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 14:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10E8C43217
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 15:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232032AbiKGOxe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 09:53:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35816 "EHLO
+        id S232725AbiKGPKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 10:10:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbiKGOxc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 09:53:32 -0500
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3682B7660;
-        Mon,  7 Nov 2022 06:53:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yY2+3tqYHY5/Nj0gegT3dgan1cJadcoMTwqFRr5L2kw=; b=uoFE+zNkTW8nSe/gzYuumfpsP+
-        NvcVijNGM28CoRMokRZKPl1GdsfUdYxaotECOilfwMGqj6BDffp/BjbYJ4yNFbz+s2CxdyH6cX5Lr
-        MQbgkIJMMe4KCteld8LCqTAZGoq+yD1zwmKygBYrGlp9J890ITSxlUQinxYNMXaiIbjzZUNRkZLPc
-        eQ2bF+MdrKjTwAU1agFFumWE06f/sHmpU9d19bt9GE5dpUDqDWL2FEa0Etn1r/hl1rGdDPytmUEgS
-        3qcGJfAXI4zguO45vQRaGV2eDPPiAkD2S2PXeDRuGclR0xc+REj5X8IrdHJHPFg3D/FX3vIL0qFxd
-        Z+O33w3Q==;
-Received: from ip98-183-112-30.ok.ok.cox.net ([98.183.112.30]:44606 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.95)
-        (envelope-from <david@lechnology.com>)
-        id 1os3Ut-00DZTt-S5;
-        Mon, 07 Nov 2022 09:53:15 -0500
-Message-ID: <7a2bf9aa-9489-fc91-9338-ec9d0835a43c@lechnology.com>
-Date:   Mon, 7 Nov 2022 08:52:56 -0600
+        with ESMTP id S232726AbiKGPKA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 10:10:00 -0500
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16EF11DDE0;
+        Mon,  7 Nov 2022 07:09:58 -0800 (PST)
+Received: by mail-qv1-xf31.google.com with SMTP id c8so8251102qvn.10;
+        Mon, 07 Nov 2022 07:09:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xcR9lfWxQYYggutBYXX8jFDllzL5dvH/OMCsAac2+rw=;
+        b=AcAy4kj7xO7cxMUOheawQ40hciY65r2N0nwsNhsKmei8MAsBW05Y2mZXSzvF3iKLTL
+         RZPpjGzhVEJXVKYELaR499rXN4uWVp7jKPzuSgHdhLTKb4ZGgHZ38+K5TOe6DXywhqfB
+         kkagoojERWS6DOKPTyUYlBhXDi8wK3ZSStt6DnDL1n745Ky+gE64pzVvaNahmgECY+eM
+         sc8FRKWkwH1Yzfh33NBpVz4R3hMefG5ax+XM1wHJkydVlnpe/p26SnOXEGVt072V0Icf
+         ib3Egmk6Hhq9CYGt3+o7RFiN68F/upDfNYSxSPJp5wihuo9BRZSzLZAXWGySTIjuJ3Eo
+         xD6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xcR9lfWxQYYggutBYXX8jFDllzL5dvH/OMCsAac2+rw=;
+        b=rIQFpb+7JyRhlSZ6t8M3NFOY+8XVbL9f2XDgD6fbT9Z3NShyJtjfTwnGSFnStf/vHO
+         WHoC11FRkqAUuFyLrZ5nUcfxVg7a4/tXnFOA+g2uT22o3bMhN5ISVoCr4xNb+qpzROa/
+         NNnXQIURoVek/hCPvbZ2oWLSIELOsW2GPbFJcCwj3GRTT28PxzylttP+l3IZ7bvwN7QU
+         +QhoSK7y1bQW2jSivEpc9t+5UkUgVhdEN6tUHerlTV0ZOcydhGADQvudHoGf0LR2OnGt
+         6xZHGCOT5N4LZ1tD287G9A8dYmZYqyUs4CWODWQ7+9CkFOd9GyvjWeC+fHG2q8iAR8X9
+         aeAQ==
+X-Gm-Message-State: ACrzQf3vBmpeyMS+0t5+gSvoXnFeBvIFxgcD12x4PmMrQb+I+Mbfu+Qm
+        gW23gdtYN3VVBiip3AWmmWQ=
+X-Google-Smtp-Source: AMsMyM6aAFJE1en6KQCXeSWQDoqCPBynXxktK9qfeKbN5Zs3+uBYUavcNlBG6peXGVBkshXgPkVDlg==
+X-Received: by 2002:a05:6214:19ea:b0:4bc:1388:8d7c with SMTP id q10-20020a05621419ea00b004bc13888d7cmr30781708qvc.84.1667833797183;
+        Mon, 07 Nov 2022 07:09:57 -0800 (PST)
+Received: from [10.248.12.149] ([129.63.248.1])
+        by smtp.gmail.com with ESMTPSA id v22-20020a05620a441600b006eeaf9160d6sm7169680qkp.24.2022.11.07.07.09.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 07:09:56 -0800 (PST)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+Message-ID: <ef5d4f48-71b9-2d5c-37f4-7a029a32a41b@gmail.com>
+Date:   Mon, 7 Nov 2022 10:09:55 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: [PATCH v2 21/65] clk: davinci: da8xx-cfgchip: Add a
- determine_rate hook
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
+Subject: Re: [PATCH v1 7/7] ARM: dts: imx: Update i.MXRT1050.dtsi compatibles
+To:     Arnd Bergmann <arnd@arndb.de>, NXP Linux Team <linux-imx@nxp.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-21-f6736dec138e@cerno.tech>
- <187e61cd-7d02-2453-acf1-30180559d42f@lechnology.com>
- <20221107120611.vutsgpgpcorsgzwp@houat>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221107120611.vutsgpgpcorsgzwp@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Fabio Estevam <festevam@gmail.com>, aisheng.dong@nxp.com,
+        stefan@agner.ch, Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <linux@armlinux.org.uk>, abel.vesa@nxp.com,
+        dev@lynxeye.de, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        tharvey@gateworks.com, leoyang.li@nxp.com, fugang.duan@nxp.com,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-serial@vger.kernel.org
+References: <20221107071511.2764628-1-Mr.Bossman075@gmail.com>
+ <20221107071511.2764628-8-Mr.Bossman075@gmail.com>
+ <d293e410-223d-4baa-ba6d-65bc11ab1e55@app.fastmail.com>
+Content-Language: en-US
+In-Reply-To: <d293e410-223d-4baa-ba6d-65bc11ab1e55@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/7/22 6:06 AM, Maxime Ripard wrote:
-> Hi David,
-> 
-> On Fri, Nov 04, 2022 at 11:45:17AM -0500, David Lechner wrote:
->> On 11/4/22 8:17 AM, Maxime Ripard wrote:
->>> The Davinci DA8xxx cfgchip mux clock implements a mux with a set_parent
->>> hook, but doesn't provide a determine_rate implementation.
->>>
->>> This is a bit odd, since set_parent() is there to, as its name implies,
->>> change the parent of a clock. However, the most likely candidate to
->>> trigger that parent change is a call to clk_set_rate(), with
->>> determine_rate() figuring out which parent is the best suited for a
->>> given rate.
->>>
->>> The other trigger would be a call to clk_set_parent(), but it's far less
->>> used, and it doesn't look like there's any obvious user for that clock.
->>>
->>> So, the set_parent hook is effectively unused, possibly because of an
->>> oversight. However, it could also be an explicit decision by the
->>> original author to avoid any reparenting but through an explicit call to
->>> clk_set_parent().
->>
->>
->> The parent is defined in the device tree and is not expected to change
->> at runtime, so if I am understanding the patch correctly, setting the
->> CLK_SET_RATE_NO_REPARENT flag seems correct.
-> 
-> Is that an acked-by/reviewed-by?
-> 
-> Thanks!
-> Maxime
 
-The commit message could be updated to be more certain now, but sure...
 
-Acked-by: David Lechner <david@lechnology.com>
+On 11/7/22 02:44, Arnd Bergmann wrote:
+> On Mon, Nov 7, 2022, at 08:15, Jesse Taube wrote:
+>> Remove unused compatibles from i.MXRT1050.dtsi.
+>> Change GPT clock-names to match documentation.
+>>
+>> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+>> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> 
+> Can you make sure your changelog texts explain why you do this?
+Yes, sorry I wasn't clear.
+> Are they fundamentally different from the devices you had
+> claimed to be compatible with that need a different driver,
+UART and SDHC had drivers added which are better fit.
+The GPT binds to imx6dl which is also the same as imx6sl.
+> or are there drivers in the field that bind to the wrong
+> string first?
+I don't understand?
+
+Thanks,
+Jesse Taube
+> 
+>        Arnd
