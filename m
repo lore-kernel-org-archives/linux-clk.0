@@ -2,46 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBD2C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 03:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06297C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 03:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbiKGDOm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Nov 2022 22:14:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35048 "EHLO
+        id S231388AbiKGDOy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Nov 2022 22:14:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231200AbiKGDOO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Nov 2022 22:14:14 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B77810045;
-        Sun,  6 Nov 2022 19:13:11 -0800 (PST)
+        with ESMTP id S231237AbiKGDOT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Nov 2022 22:14:19 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D15251209A;
+        Sun,  6 Nov 2022 19:13:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AB937B80D94;
-        Mon,  7 Nov 2022 03:13:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C582FC43141;
-        Mon,  7 Nov 2022 03:13:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 85F5C60E9A;
+        Mon,  7 Nov 2022 03:13:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD87DC433D6;
+        Mon,  7 Nov 2022 03:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667790788;
-        bh=43OMBDPdLjd/l8543w5DP1nXrhojIwplzo6gqb/MlUw=;
+        s=k20201202; t=1667790792;
+        bh=5lPhuVO2WN3Opr2bN7Yy8gt5CFqVQHz0FlwMLGYszw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QN062wLdw6E3shU2kXMli+nSD5sqmSp9FltAXA99ylNJQFhdnQrIDi2MiSfjoyXpK
-         792x6v4XyEcpSoKpnhnsMRdfpuJfYpWEW7fAUlAnWZ/9wyQlxSql/8+bIQwOSshPpx
-         y/hMBZiRpWZo3b9vJOnlpTRUmM70zy9a7QjqX6C25+L5fQR8FIevC85v8exQz8vBx8
-         +jmAM2Rcq68/S4K0/M+CYxCc6nKqLMPykKtTmiC4FcbNUMC+dgaeX/Kl4NSkgTwoJN
-         yvHjR93bjgKAwc+uOijm840wopiOykMp2zGYuEass3G4S+oCUhrHv/ATknQSqqIiim
-         gU6s8JngqU+CA==
+        b=PcOCLWtzc8MG8+qiYefjV6dTN90+oxQPpiLYHuJGkd5+DLm3+M9/C2+X5T+clnjSN
+         lKxfItp0w2ZN3kXXYIrqCI/MYCMpQHY7/WlR0UuP3A1BvWXGZsjcLZ3Vv/ui4gIdOj
+         xLfj+pAqNaEptNi8VH4rbkkBMMijDZVmM9xozwH6XoGQanoXX4z6hwWGEVTnh6oWda
+         EaGSlUK3qDna3DgO8gkko4y5sYuaMmalgfcMrmi/cGmeN3JOdOzXVLI1jBBhXfv1JS
+         I1EuNNE62jEfVtSJHpu/ZvfmPzh3dGwhhBsjg/9QRsDxjTUSTOX9ywtb0uRk3EIpRA
+         nNxeBI1N0UF9w==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Manivannan Sadhasivam <mani@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, konrad.dybcio@somainline.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org
-Subject: Re: [PATCH v2] clk: qcom: gcc-sm8250: Use retention mode for USB GDSCs
-Date:   Sun,  6 Nov 2022 21:12:26 -0600
-Message-Id: <166779074272.500303.12843032172428817016.b4-ty@kernel.org>
+To:     martin.botka1@gmail.com, martin.botka@somainline.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, marijn.suijten@somainline.org,
+        paul.bouchara@somainline.org, linux-arm-msm@vger.kernel.org,
+        jamipkettunen@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        konrad.dybcio@somainline.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, Andy Gross <agross@kernel.org>
+Subject: Re: (subset) [PATCH 1/1] clk: qcom: gcc-sm6125: Remove gpll7 from sdcc2_apps
+Date:   Sun,  6 Nov 2022 21:12:29 -0600
+Message-Id: <166779074256.500303.357473237614927854.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221102091320.66007-1-manivannan.sadhasivam@linaro.org>
-References: <20221102091320.66007-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20221001185431.493440-1-martin.botka@somainline.org>
+References: <20221001185431.493440-1-martin.botka@somainline.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -49,18 +53,16 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2 Nov 2022 14:43:20 +0530, Manivannan Sadhasivam wrote:
-> USB controllers on SM8250 doesn't work after coming back from suspend.
-> This can be fixed by keeping the USB GDSCs in retention mode so that
-> hardware can keep them ON and put into rentention mode once the parent
-> domain goes to a low power state.
+On Sat, 1 Oct 2022 20:54:31 +0200, Martin Botka wrote:
+> This removes gpll7 clock source from sdcc2_apps as it caused issues on the
+> device during testing
 > 
 > 
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-sm8250: Use retention mode for USB GDSCs
-      commit: ac1c5a03d3772b1db25e8092f771aa33f6ae2f7e
+[1/1] clk: qcom: gcc-sm6125: Remove gpll7 from sdcc2_apps
+      commit: 6db4d77f5701699aa6eb4e9718d69a7a55f0aa65
 
 Best regards,
 -- 
