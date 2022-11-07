@@ -2,112 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3BBC43219
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 16:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDA0C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 16:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232448AbiKGQjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:39:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36842 "EHLO
+        id S232626AbiKGQzT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 11:55:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231426AbiKGQjR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 11:39:17 -0500
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91ED2218;
-        Mon,  7 Nov 2022 08:39:15 -0800 (PST)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 285CF20002;
-        Mon,  7 Nov 2022 16:39:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1667839154;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1y0s8VQyRRPKoR290AvBHMmKC1XvfiLfyXZ/t0ndQtc=;
-        b=CNYxkGV/NcHfsVKZW9py4VEQNd5Q7qgOA2FmKb8BMkQWOmRaMSg0qOHZ5ET/Zuur+EIJP3
-        DR1YJK+Xffm5Ug1EcFMTE6VQJ9C01M2TP4GgUWyhfvwQJmbmAPk75YRfq0dV5CyUtV21LA
-        MYIerceEF3t2EX/SL+gwQpjc0jdxQeXCBygeZnnE9nByDEZyJvq4efG5+1+7SwjsjABKux
-        XP/TU9PvZxYp3w4E8AFlx0goElOaVbi9UK+2245slTIecZm+9DBZoWq0zhHjzPQUHPA9O5
-        +aQSjGEHgC65aF5qCUfLrzjoYACY0zhpqvmwdutYlCDKtdBS5vJqalDmXM67NA==
-Date:   Mon, 7 Nov 2022 17:39:09 +0100
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 7/7] MAINTAINERS: add the Renesas RZ/N1 USBF controller
- entry
-Message-ID: <20221107173909.24ef160c@bootlin.com>
-In-Reply-To: <CAMuHMdVip_e7dZ2P7sv1OH+P48dQyjnmsJBoATHLAqzPEcwDdw@mail.gmail.com>
-References: <20221107135825.583877-1-herve.codina@bootlin.com>
-        <20221107135825.583877-8-herve.codina@bootlin.com>
-        <CAMuHMdVip_e7dZ2P7sv1OH+P48dQyjnmsJBoATHLAqzPEcwDdw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        with ESMTP id S231667AbiKGQzS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 11:55:18 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B0B1B1DE;
+        Mon,  7 Nov 2022 08:55:17 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A7Gd7ln022962;
+        Mon, 7 Nov 2022 16:55:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=KyO7Kqgqw3RkHRvFLoYkgPhFBPdHmz+orXJL+eEe4tY=;
+ b=iME60Btir4MNYbfFDmBtQ6BbhvcWzU1R5OZ6ZvnYDDkQK6FCwx0AsTay4digvRXE6cGz
+ QyUVjJHWx/Jw/RaKinjePftPCCfFDZuhItprCBvowd+Ir7FN9VZ/rMSFstPpVqEPKlMC
+ vbSoqMbBjZD+T+vg3wc5DlVLiRCJZ8r/e0lVdyGfXgH0NIyN99p/EQW3AM8Go1IDQEsH
+ 3Sr0fNo7adtV0uf50vnSMYQTmEGA8WznKzjTE0JjQDV/rdFQ7xoSo/QZjoFNYQfL2nJf
+ sRV/dv821LuWg7JqUCySeU5vjUKEhyOB+EY5zpJdsgBTrPQ94ahWtAj+cWCDmemNeixy jg== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kpvge9f1t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Nov 2022 16:55:00 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2A7GsxIJ011989
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 7 Nov 2022 16:54:59 GMT
+Received: from [10.216.2.134] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 7 Nov 2022
+ 08:54:52 -0800
+Message-ID: <d4654169-6dc7-468f-d0e6-b6de4cbad418@quicinc.com>
+Date:   Mon, 7 Nov 2022 22:24:49 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
+ 'reset' interface
+Content-Language: en-US
+To:     freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        <krzysztof.kozlowski@linaro.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GoWq44qxRLbz-4Al_VVhsdXIPLRL5Lvh
+X-Proofpoint-GUID: GoWq44qxRLbz-4Al_VVhsdXIPLRL5Lvh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-07_08,2022-11-07_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ mlxlogscore=999 impostorscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211070135
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On 10/5/2022 2:36 PM, Akhil P Oommen wrote:
+> Some clients like adreno gpu driver would like to ensure that its gdsc
+> is collapsed at hardware during a gpu reset sequence. This is because it
+> has a votable gdsc which could be ON due to a vote from another subsystem
+> like tz, hyp etc or due to an internal hardware signal. To allow
+> this, gpucc driver can expose an interface to the client driver using
+> reset framework. Using this the client driver can trigger a polling within
+> the gdsc driver.
+>
+> This series is rebased on top of qcom/linux:for-next branch.
+>
+> Related discussion: https://patchwork.freedesktop.org/patch/493144/
+>
+> Changes in v7:
+> - Update commit message (Bjorn)
+> - Rebased on top of qcom/linux:for-next branch.
+>
+> Changes in v6:
+> - No code changes in this version. Just captured the Acked-by tags
+>
+> Changes in v5:
+> - Nit: Remove a duplicate blank line (Krzysztof)
+>
+> Changes in v4:
+> - Update gpu dt-binding schema
+> - Typo fix in commit text
+>
+> Changes in v3:
+> - Use pointer to const for "struct qcom_reset_ops" in qcom_reset_map (Krzysztof)
+>
+> Changes in v2:
+> - Return error when a particular custom reset op is not implemented. (Dmitry)
+>
+> Akhil P Oommen (6):
+>    dt-bindings: clk: qcom: Support gpu cx gdsc reset
+>    clk: qcom: Allow custom reset ops
+>    clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+>    clk: qcom: gpucc-sc7280: Add cx collapse reset support
+>    dt-bindings: drm/msm/gpu: Add optional resets
+>    arm64: dts: qcom: sc7280: Add Reset support for gpu
+>
+>   .../devicetree/bindings/display/msm/gpu.yaml       |  6 +++++
+>   arch/arm64/boot/dts/qcom/sc7280.dtsi               |  3 +++
+>   drivers/clk/qcom/gdsc.c                            | 23 ++++++++++++++----
+>   drivers/clk/qcom/gdsc.h                            |  7 ++++++
+>   drivers/clk/qcom/gpucc-sc7280.c                    | 10 ++++++++
+>   drivers/clk/qcom/reset.c                           | 27 +++++++++++++++++++++-
+>   drivers/clk/qcom/reset.h                           |  8 +++++++
+>   include/dt-bindings/clock/qcom,gpucc-sc7280.h      |  3 +++
+>   8 files changed, 82 insertions(+), 5 deletions(-)
+>
+Bjorn,
 
-On Mon, 7 Nov 2022 15:42:49 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+The latest patchset has been in the mailing list for over a month now. 
+Could you please share how soon we can pick this? That will give me some 
+confidence to pull these patches into our chromeos kernel tree ASAP.
 
-> Hi Herv=C3=A9,
->=20
-> On Mon, Nov 7, 2022 at 3:00 PM Herve Codina <herve.codina@bootlin.com> wr=
-ote:
-> > After contributing the driver, add myself as the maintainer
-> > for Renesas RZ/N1 USBF controller.
-> >
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
->=20
-> Thanks for your patch!
->=20
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -17627,6 +17627,14 @@ S:     Maintained
-> >  F:     Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-> >  F:     drivers/rtc/rtc-rzn1.c
-> >
-> > +RENESAS RZ/N1 USBF CONTROLLER DRIVER
-> > +M:     Herve Codina <herve.codina@bootlin.com> =20
->=20
-> Herv=C3=A9?
-
-Just to be consistent with other places, I keep "Herve" :)
-
->=20
-> > +L:     linux-renesas-soc@vger.kernel.org
-> > +L:     linux-usb@vger.kernel.org
-> > +S:     Maintained
-> > +F:     Documentation/devicetree/bindings/usb/renesas,usbf.yaml
-> > +F:     drivers/usb/gadget/udc/renesas_usbf.c
-> > +
-> >  RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
-> >  M:     Miquel Raynal <miquel.raynal@bootlin.com>
-> >  L:     linux-mtd@lists.infradead.org =20
->=20
-> Up to you, so
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-
-Thanks for the review,
-Herv=C3=A9
-
---=20
-Herv=C3=A9 Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-Akhil.
