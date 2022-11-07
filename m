@@ -2,92 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E85C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 05:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF25C43219
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 07:15:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbiKGFiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 00:38:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
+        id S230513AbiKGHPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 02:15:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbiKGFis (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 00:38:48 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64085F7E;
-        Sun,  6 Nov 2022 21:38:47 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A75Ehj8008885;
-        Mon, 7 Nov 2022 05:38:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=LOmNW934C5MVnCwKLxAlx3sEVaqNfpouVEI8K0mtdkA=;
- b=e56vCSTLGNRm08gz8p25tPLe3x8KEYr5NwTCm53eysh4mUWi+1AO73f/DC5zSfiS8YEe
- 11pGA85jA+aigmkbxbyZzkgKlohO79f12yOFD6dLPGKnx4lXkfF3EjsRg2s4CkYaX5cQ
- Ro2BWu/vv0T8CghYzNOrjOO1bjK4sC31CqJOBmQwxtJHaSq1H495Grhj/GyGPYGSVuD6
- lyrDXUF0NDhvGX1YCfmUAuRLv1sd4JRqaRAu1mgjLYKYrDm5aMeR9yt4st/MBkJ9ZLnk
- ERAzx7f60AQXJcXHtFarT2nJYwLR+dVs+SfX5g6icUneHL81uRL7WdDHbU3GBqSPGafA zw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kphfv0nk9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Nov 2022 05:38:38 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2A75cbpK017933
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 7 Nov 2022 05:38:37 GMT
-Received: from [10.50.40.69] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Sun, 6 Nov 2022
- 21:38:34 -0800
-Message-ID: <21cd992c-334e-3a28-f3ac-68a49a4ef00b@quicinc.com>
-Date:   Mon, 7 Nov 2022 11:08:03 +0530
+        with ESMTP id S230509AbiKGHPO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 02:15:14 -0500
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0EF713D14;
+        Sun,  6 Nov 2022 23:15:13 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id mi9so7538428qvb.8;
+        Sun, 06 Nov 2022 23:15:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ConCPo0JgzXnifvtHayx2cdD1tHDcQM3uZHVa6AUFo=;
+        b=GjXZhSSi7DJnPZOo9Qxid2itQILmmID1uNtDj50BdEN01L7zxOkmFuyFsJ0JEQGVJ+
+         knabDzCESRfscOGUdl6W1EGv5L8mgudREwnp2YAs/wqWpJHw8+VH3JWJg4NQEe639TU8
+         HEsRCHx27dY32oSDO7tSWb04Vma1WNS13uShoFsGXIWdYbiD4gielxuLPoyPtgoVs3Of
+         ubvwgh5ZosO1eBKMQSHpFnI3Jp6ddnqoQ0+INYbN/LOehd5yrCwFvtkE5RL2Dm+njSwB
+         64BmxL/4eSt3bxGs1zW1MFwFdmlMmG98HFUYBsDUKIsBpXlbRr9TG419brH7SbofQxx4
+         8JuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ConCPo0JgzXnifvtHayx2cdD1tHDcQM3uZHVa6AUFo=;
+        b=GnI1jTZ2yxA4QVoSdpzwMb+xIR6YMBVkRWF3gMkPLhz9KZF1PDUYGgx2B4vYE/nKVe
+         /psdl2URUdzdGov9tOM/8sfM+QMFBKYRmwQTw50nxuL8APMWRa5UAsqthh5515I7J2Dc
+         687V+Uvlr6/pU+FqIMeFG8vftdZnMMKWgtj5RZP8aUsapOj8y4OQYBaNTb3PrbTbHugs
+         1r4rN9KcjhjwdvuZipn9ZgMzId/o4dIUACRBpFOwQnrnOoUdRP20wZaHSYLGna6KMcM+
+         sXTLftA/2xF9hahDRV5IfQxVzLNN84pBAYcntr5wT4UIk9E/C106+RwHyTlm52Htp/fy
+         PVLg==
+X-Gm-Message-State: ACrzQf0TcVtJU6iLyA6MInflvKAQ83vpjFQfHT/TccJ9jHEALPOu8IhU
+        1ybps8abI4zL6n9Wh0jcNGoBZH8P4T0=
+X-Google-Smtp-Source: AMsMyM6/9iKIN29/SQteS8iyAnmP0Ri9UTD+kzyEPbhKrlCLTG0MOAkrwwnN7PuD9Jy6OjM2fgk7JA==
+X-Received: by 2002:a05:6214:19cb:b0:4bb:6a28:83bc with SMTP id j11-20020a05621419cb00b004bb6a2883bcmr44021707qvc.102.1667805313040;
+        Sun, 06 Nov 2022 23:15:13 -0800 (PST)
+Received: from jesse-desktop.jtp-bos.lab (pool-108-26-185-122.bstnma.fios.verizon.net. [108.26.185.122])
+        by smtp.gmail.com with ESMTPSA id br8-20020a05620a460800b006cf38fd659asm6318428qkb.103.2022.11.06.23.15.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Nov 2022 23:15:12 -0800 (PST)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, sboyd@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de, linux@armlinux.org.uk,
+        abel.vesa@nxp.com, dev@lynxeye.de, marcel.ziswiler@toradex.com,
+        tharvey@gateworks.com, leoyang.li@nxp.com, fugang.duan@nxp.com,
+        Mr.Bossman075@gmail.com, giulio.benetti@benettiengineering.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH v1 0/7] Clean-up and documentation for i.MXRT1050
+Date:   Mon,  7 Nov 2022 02:15:04 -0500
+Message-Id: <20221107071511.2764628-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] clk: qcom: Update the force mem core bit for GPU clocks
-Content-Language: en-US
-To:     Stephen Boyd <swboyd@chromium.org>, Andy Gross <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>
-CC:     Douglas Anderson <dianders@chromium.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_tdas@quicinc.com>, <linux-clk@vger.kernel.org>
-References: <1666159535-6447-1-git-send-email-quic_c_skakit@quicinc.com>
- <CAE-0n52N6oxSLoU_=Cq1xK9bVX7H+AvPsR3dLepMNjKywdffvQ@mail.gmail.com>
-From:   "Satya Priya Kakitapalli (Temp)" <quic_c_skakit@quicinc.com>
-In-Reply-To: <CAE-0n52N6oxSLoU_=Cq1xK9bVX7H+AvPsR3dLepMNjKywdffvQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 66Aw6M2hN4prCn1f4-S61TrOFHmzE1Z7
-X-Proofpoint-GUID: 66Aw6M2hN4prCn1f4-S61TrOFHmzE1Z7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-06_16,2022-11-03_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- phishscore=0 adultscore=0 priorityscore=1501 clxscore=1011 mlxscore=0
- malwarescore=0 mlxlogscore=670 lowpriorityscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211070047
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+During the initial commit of i.MXRT1050
+many of the DT docs were missing; this patch adds them.
+The commit also adds docs for i.MXRT1170.
+Clean up dtsi.
+fix all the naming of pins in pinctrl,
+wrong due to a miscommunication.
 
-On 10/28/2022 5:54 AM, Stephen Boyd wrote:
-> Quoting Satya Priya (2022-10-18 23:05:35)
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> There are few GPU clocks which are powering up the memories
->> and thus enable the FORCE_MEM_PERIPH always for these clocks
->> to force the periph_on signal to remain active during halt
->> state of the clock.
-> I take it that missing this causes GPU to lose state when it suspends
-> and that confuses the driver?
+Jesse Taube (7):
+  dt-bindings: arm: imx: Add i.MXRT compatible Documentation
+  dt-bindings: pinctrl: Fix file path for pinfunc include
+  dt-bindings: timer: gpt: Add i.MXRT compatible Documentation
+  dt-bindings: serial: fsl-lpuart: add i.MXRT1170 compatible
+  dt-bindings: mmc: fsl-imx-esdhc: add i.MXRT1170 compatible
+  pinctrl: freescale: Fix i.MXRT1050 pad names
+  ARM: dts: imx: Update i.MXRT1050.dtsi compatibles
 
+ .../devicetree/bindings/arm/fsl.yaml          |  12 +
+ .../bindings/mmc/fsl-imx-esdhc.yaml           |   4 +
+ .../bindings/pinctrl/fsl,imxrt1050.yaml       |   2 +-
+ .../bindings/serial/fsl-lpuart.yaml           |   3 +
+ .../devicetree/bindings/timer/fsl,imxgpt.yaml |   2 +
+ arch/arm/boot/dts/imxrt1050.dtsi              |  11 +-
+ drivers/pinctrl/freescale/pinctrl-imxrt1050.c | 546 ++++++++----------
+ 7 files changed, 280 insertions(+), 300 deletions(-)
 
-It is more related to GPU SMMU states and the stability issues that are 
-encountered.
+-- 
+2.37.2
 
