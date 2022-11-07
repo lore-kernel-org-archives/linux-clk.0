@@ -2,154 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D7EC433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 16:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E0DC4167B
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 16:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232163AbiKGQCr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:02:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54998 "EHLO
+        id S232654AbiKGQ3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 11:29:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbiKGQCq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 11:02:46 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854FE1FFBC;
-        Mon,  7 Nov 2022 08:02:44 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E4D81610E7;
-        Mon,  7 Nov 2022 16:02:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F88C433D6;
-        Mon,  7 Nov 2022 16:02:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667836963;
-        bh=Q/9M3qSa1bFKeX3VjOKXXNeZQ8B6sH7ewCOsQSJl+z0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XOmgvny4UUp7BZnQahaV6KsWUNhmwIhMxpmcOq3tw9+9teYm6GP3wrPKa3hZGoLnw
-         E8JjujtcqktG/KkrpbyyurTKPktTQdPK912YFUTtXWMPkM5Mc8ahGVOnmMw4Uhs9uI
-         cTBlpsSY6QMvq4ve9Z36ouACRIQs64gqbTRuCpXHF7tFc/7x4f8H/Qv0fo1LJXDNr9
-         JzeHD9nkKpifY1CmMZpd4sb8KMqk3fuEl3XqfTd7Ru1lKOsEk7X40/JP1ugM9/6yCX
-         WursSOfQ18hBTkSv25XwIi5vVUTkBzpxlLxQrxg8iYZ3853WT5wCALjP37Nihp0/J3
-         NEZKY1McJ+eyw==
-Date:   Mon, 7 Nov 2022 16:02:28 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
-Message-ID: <Y2ksFHGNIEVm1ldF@sirena.org.uk>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-43-f6736dec138e@cerno.tech>
- <Y2UzdYyjgahJsbHg@sirena.org.uk>
- <20221104155123.qomguvthehnogkdd@houat>
- <Y2U2+ePwRieYkNjv@sirena.org.uk>
- <20221107084322.gk4j75r52zo5k7xk@houat>
- <Y2j0r0wX1XtQBvqO@sirena.org.uk>
- <20221107152603.57qimyzkinhifx5p@houat>
+        with ESMTP id S232302AbiKGQ3G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 11:29:06 -0500
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C6AE62;
+        Mon,  7 Nov 2022 08:27:27 -0800 (PST)
+Received: by mail-qv1-f51.google.com with SMTP id n18so8426545qvt.11;
+        Mon, 07 Nov 2022 08:27:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FHuZT/X3Udj945i4AGOq1IWIr+mvd6w8t7fykVu9RG0=;
+        b=oGht8EEfTsNU3ERrUE6MMXYWSEqDEQSf24bQxWYP6LQvExnmUFcoLgEaJexB/fExGQ
+         z/gJWZgGSSN+RyvEtndhGt5eM532IhgbHNMIUhYcCxuL9z1tQNrRBVenXAs3R0Z3r2ya
+         xxb2bDXE4vyBbqi8q6Rau02hYb1bGVDvIvNBLbq4yhk09Eo6KqwwTg+5Gi9nTjjJB6qH
+         adMyIIOLQfhlP+6wBC1KG9oDFxoGAhbFwPL7tNd/sBXFnSHJtwsVwj6ZQZUKawi7LXxw
+         dImNaGeIoBH7eppqeE2jxMc8bKTzK5HmS/YHprsvEYJYvF/JF5+O0Q2zILaZ+MDGuKLl
+         M6mg==
+X-Gm-Message-State: ACrzQf1S4eailQk85HXhg+kQR9GSQcJilIIZTF3YJSo9Y3h5NCaGKB06
+        Hz4SVhEspw+MUASHs0bagAzJVh+g9CwPWg==
+X-Google-Smtp-Source: AMsMyM5qZiogsQgXMx520QV3QS+W55Vw0zB/WEdMC2Q2PMpDB2F/E6xeCXr5Kuksr/86mQW4Ki+LMw==
+X-Received: by 2002:a05:6214:d6e:b0:4b9:692d:c486 with SMTP id 14-20020a0562140d6e00b004b9692dc486mr46025955qvs.104.1667838446157;
+        Mon, 07 Nov 2022 08:27:26 -0800 (PST)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id i15-20020a05622a08cf00b00398313f286dsm6370141qte.40.2022.11.07.08.27.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 08:27:25 -0800 (PST)
+Received: by mail-yb1-f177.google.com with SMTP id z192so14297801yba.0;
+        Mon, 07 Nov 2022 08:27:25 -0800 (PST)
+X-Received: by 2002:a25:6b07:0:b0:6cd:3a43:bfe5 with SMTP id
+ g7-20020a256b07000000b006cd3a43bfe5mr37690368ybc.89.1667838445507; Mon, 07
+ Nov 2022 08:27:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hTyRvcr/YAY3aApU"
-Content-Disposition: inline
-In-Reply-To: <20221107152603.57qimyzkinhifx5p@houat>
-X-Cookie: Minimum charge for booths.
+References: <20221103205546.24836-1-wsa+renesas@sang-engineering.com> <20221103205546.24836-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20221103205546.24836-2-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Nov 2022 17:27:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVxBEXWHK75tx0jxLOF5fFgcSDdtZZyqLmZ1MJO_Xmjvg@mail.gmail.com>
+Message-ID: <CAMuHMdVxBEXWHK75tx0jxLOF5fFgcSDdtZZyqLmZ1MJO_Xmjvg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: r8a779g0: Add TMU and SASYNCRT clocks
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Nov 3, 2022 at 9:55 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---hTyRvcr/YAY3aApU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.2.
 
-On Mon, Nov 07, 2022 at 04:26:03PM +0100, Maxime Ripard wrote:
-> On Mon, Nov 07, 2022 at 12:06:07PM +0000, Mark Brown wrote:
-> > On Mon, Nov 07, 2022 at 09:43:22AM +0100, Maxime Ripard wrote:
+Gr{oetje,eeting}s,
 
-> > The series does fill in __clk_mux_determine_rate for everything though -
-> > if it was just assumed by default the only thing that'd be needed would
-> > be adding the flag.
+                        Geert
 
-> The behavior assumed by default was equivalent to
-> __clk_mux_determine_rate + CLK_SET_RATE_NO_REPARENT. We could indeed set
-> both if determine_rate is missing in the core, but that's unprecedented
-> in the clock framework so I think we'll want Stephen to comment here :)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> It's also replacing one implicit behavior by another. The point of this
-> series was to raise awareness on that particular point, so I'm not sure
-> it actually fixes things. We'll see what Stephen thinks about it.
-
-We could also just set the operation and still require the flag to be
-specified.  I'm a little surprised to learn that it's something you
-might want to override, never mind that the API didn't have a default -
-it feels like a bit of a landmine that this is the case and is probably
-why there's so many cases to fix up.
-
---hTyRvcr/YAY3aApU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNpLBMACgkQJNaLcl1U
-h9BS0gf/chIMp6chtu1p8LwUn+lniQOfOjVm2GoGAQ06qSr9+3KsWgvPO3J4pFNa
-l036gwiNNFPM5gXlEj19YU0NgiAQIt2hoh9q92PY1kN8vmSQutr8U6QVxq27pphZ
-5T2AVdZG2/L1Za5fy+qtwzx6ji1EENFmdLOF/NRrtc1zJPm/bT9E14uqwH7vmK0f
-Jh1uBONY+x2wM44EMNgt3p4HTS/37ARwT9njBao9UUdt1uFWnUx05o0lerkyk4Xg
-QlkvyC2hU+mXML3s6FVEbx0TQImsJItRx7Fk4E0Pij30qxWDtd0uybSJOzuWo16R
-emQv+2HsLgl0L3qkctPVJREpPwCQuQ==
-=mfv5
------END PGP SIGNATURE-----
-
---hTyRvcr/YAY3aApU--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
