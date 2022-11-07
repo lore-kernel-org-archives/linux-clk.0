@@ -2,180 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B68C43217
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 18:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC1EC433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 19:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232959AbiKGSY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:24:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
+        id S232706AbiKGT5B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 14:57:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232081AbiKGSY3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 13:24:29 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1A128E2A
-        for <linux-clk@vger.kernel.org>; Mon,  7 Nov 2022 10:24:05 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id l12so6797959lfp.6
-        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 10:24:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v/+DmlpUJNQ6H+y2+hAk27Zykcqu9Cxop/8nW/tfq8o=;
-        b=YM6wEP8D2ic+78mnkgabgCawUWu5PRsEDd33Uz5A4ygUYI7EaV1pBVoNegOluHeRBP
-         cpj54KXembu+3W9hDl8Qyro7au79xuQTxdiq6zb58BMrvmw4tzlESZVBcOZ5m3S7FOmU
-         SB8wdGGh7d+J47isBugbdpZrCno3LYjdZ5IUiwRQgUEr3rY11SkXAo7RikONu9QnX1vI
-         HU5YAF3KGAV0c51lqPbYeSrW/SOu7vO7uc9C9PnS8HamJQxPT3KOAS47YGutU11oBIeR
-         fPpPsCH6oP+s8yO3U2EmoHtmH4C3H52m8SAhIKzEd3ZCgijel+Yrtlc/STylA8BJbvK5
-         3/Zw==
+        with ESMTP id S232712AbiKGT47 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 14:56:59 -0500
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB71D26AE6;
+        Mon,  7 Nov 2022 11:56:58 -0800 (PST)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-13b23e29e36so13904161fac.8;
+        Mon, 07 Nov 2022 11:56:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/+DmlpUJNQ6H+y2+hAk27Zykcqu9Cxop/8nW/tfq8o=;
-        b=ZvXGlIiPmm+sDM7ppsOPpYZ2Ak8N0YsKMqO73bkl5A2Xmh8b4i4OcQNL29IkQI6GGx
-         pQO9ROSpUTBYkbdfrjXXvXbJjw2+bYZtkjpFXCt+D6aib234JhoGabd6wbCR79Fc46Vt
-         lEjv9D6QG4p49RVdGbmiBqSLvdk0dxwVgLG1dbDu7p1Oppo2Y/cMYnh9InA4L1CzDR7l
-         RVa5hQMC+42fD82suKHKPUxY55TAEyyaVHoSAi4RUoOdgK1gKFkpLcU0R5ol2gM0JPYR
-         7oOMIwhTcoM8d8JwsO4dR54OSAZpGsTxpc1L0bg6kGDESjGnKChG8xVcbneZnBNa8QqB
-         OLNg==
-X-Gm-Message-State: ANoB5pmDVS8nHpZJdieB3rOo7Z7kLziiS4pzU/TaPzjhRtxx0zh0XA8g
-        evIHsvR/bpctupgp8c9lEv3xEA==
-X-Google-Smtp-Source: AA0mqf5uwcpb6dUhKs4Vhu0uRUXiku2hqbfLgAsSVoGqbFd7CA76YcTVc/3qG22gp+wuXsTzA+O6sA==
-X-Received: by 2002:a05:6512:374e:b0:4b2:c8b:7a66 with SMTP id a14-20020a056512374e00b004b20c8b7a66mr4976348lfs.498.1667845443689;
-        Mon, 07 Nov 2022 10:24:03 -0800 (PST)
-Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id q23-20020a19a417000000b004ab98cd5644sm1358051lfc.182.2022.11.07.10.24.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 10:24:02 -0800 (PST)
-Message-ID: <c10df12c-ccb9-03b7-96be-1aac5feee1aa@linaro.org>
-Date:   Mon, 7 Nov 2022 19:24:01 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 4/7] dt-bindings: usb: add the Renesas USBF controller
- binding
-Content-Language: en-US
-To:     Herve Codina <herve.codina@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r3mjAx7lLL85qpCZOJ6hUnCvzcFS81mcIgGEn4asyos=;
+        b=OvvFymnpaxwaWfuZUXHuwQyE1Aqb9tHN8wlhpWCKevoeuBIhVSxQlbnxa/7oQX/IH0
+         R1biC/QVEfpj6E9Qz/9t5W9Eb+staUVcxkGSIHIeLj9NNFmLUYK+9RtpwP5ZhbbAfv5A
+         3hagtK0w8MYeB8jahXJ4gqwsxI8uh62FNaM2851gfgqK7y8in4hKMcimnGcas1zvwwr3
+         VhFYE8VS0ZkEAtR7uJDsQCnqnIOqs6x45JfPSPBt9GIenXa6BveCQa/DdoWwnP00INIq
+         Rnp9HnkyfoRz0ZTsOkhd35a9VmZlP1dDdZvEtW7wl7dbDdqii3WYXZv80Tkbr5xQi3vA
+         ffOQ==
+X-Gm-Message-State: ACrzQf3B2mkPyGzb1Mf21fkRfSPNNsa2O5bgT7fw5XpXpYBZvz/jZjB0
+        rtVsOLbgMmqKcLpFOdKgsw==
+X-Google-Smtp-Source: AMsMyM5NYYJ3aS7MNOxMCRLSi7vINBfg4MRphj85IP5FOHjm2GVj/CoRXPEGpzKn0tuY+9X5jYR8DQ==
+X-Received: by 2002:a05:6870:41c4:b0:131:55a3:3069 with SMTP id z4-20020a05687041c400b0013155a33069mr30758903oac.159.1667851018033;
+        Mon, 07 Nov 2022 11:56:58 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id g92-20020a9d2de5000000b0066c4092ae4csm3272165otb.10.2022.11.07.11.56.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 11:56:57 -0800 (PST)
+Received: (nullmailer pid 1487934 invoked by uid 1000);
+        Mon, 07 Nov 2022 19:56:59 -0000
+Date:   Mon, 7 Nov 2022 13:56:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     jh80.chung@samsung.com, ulf.hansson@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20221107135825.583877-1-herve.codina@bootlin.com>
- <20221107135825.583877-5-herve.codina@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221107135825.583877-5-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCHv8 1/6] dt-bindings: mmc: synopsys-dw-mshc: document
+ "altr,sysmgr-syscon"
+Message-ID: <20221107195659.GA1483239-robh@kernel.org>
+References: <20221103151525.474833-1-dinguyen@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221103151525.474833-1-dinguyen@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/11/2022 14:58, Herve Codina wrote:
-> The Renesas USBF controller is an USB2.0 device controller
-> (UDC) available in Renesas r9a06g032 SoC (RZ/N1 family).
+On Thu, Nov 03, 2022 at 10:15:20AM -0500, Dinh Nguyen wrote:
+> Document the optional "altr,sysmgr-syscon" binding that is used to
+> access the System Manager register that controls the SDMMC clock
+> phase.
 > 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
->  .../devicetree/bindings/usb/renesas,usbf.yaml | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/renesas,usbf.yaml
+> v8: remove "" around synopsys-dw-mshc-common.yaml#
+> v7: and "not" for the required "altr,sysmgr-syscon" binding
+> v6: make "altr,sysmgr-syscon" optional
+> v5: document reg shift
+> v4: add else statement
+> v3: document that the "altr,sysmgr-syscon" binding is only applicable to
+>     "altr,socfpga-dw-mshc"
+> v2: document "altr,sysmgr-syscon" in the MMC section
+> ---
+>  .../bindings/mmc/synopsys-dw-mshc.yaml        | 33 +++++++++++++++++--
+>  1 file changed, 30 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/renesas,usbf.yaml b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
-> new file mode 100644
-> index 000000000000..f2b146d9d37b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/renesas,usbf.yaml#
-
-Filename based on compatible, so renesas,rzn1-usbf.yaml.
-
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas USBF (USB Function) controller binding
-> +
-> +description: |
-> +   The Renesas USBF controller is an USB2.0 device
-> +   controller (UDC).
-> +
-> +maintainers:
-> +  - Herve Codina <herve.codina@bootlin.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-
-You have only one possibility, so oneOf is not needed. Unless you
-already predict it will grow with new incompatible lists?
-
+> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+> index ae6d6fca79e2..a37cd7a68417 100644
+> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+> @@ -6,9 +6,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Synopsys Designware Mobile Storage Host Controller Binding
+>  
+> -allOf:
+> -  - $ref: "synopsys-dw-mshc-common.yaml#"
+> -
+>  maintainers:
+>    - Ulf Hansson <ulf.hansson@linaro.org>
+>  
+> @@ -38,6 +35,36 @@ properties:
+>        - const: biu
+>        - const: ciu
+>  
+> +  altr,sysmgr-syscon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
 > +      - items:
-> +          - enum:
-> +              - renesas,r9a06g032-usbf
-> +          - const: renesas,rzn1-usbf
+> +          - description: phandle to the sysmgr node
+> +          - description: register offset that controls the SDMMC clock phase
+> +          - description: register shift for the smplsel(drive in) setting
+> +    description:
+> +      This property is optional. Contains the phandle to System Manager block
+> +      that contains the SDMMC clock-phase control register. The first value is
+> +      the pointer to the sysmgr, the 2nd value is the register offset for the
+> +      SDMMC clock phase register, and the 3rd value is the bit shift for the
+> +      smplsel(drive in) setting.
 > +
-> +  reg:
-> +    maxItems: 1
+> +allOf:
+> +  - $ref: synopsys-dw-mshc-common.yaml#
 > +
-> +  clocks:
-> +    items:
-> +      - description: Internal bus clock (AHB) for Function
-> +      - description: Internal bus clock (AHB) for Power Management
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: altr,socfpga-dw-mshc
+> +    then:
+> +      not:
+> +        required:
+> +          - altr,sysmgr-syscon
 
-Blank line
+'required' evaluates true when all properties in the list are present.
 
-> +  clock-names:
-> +    items:
-> +      - const: hclkf
-> +      - const: hclkpm
-> +
-> +  interrupts:
-> +    items:
-> +      - description: The USBF EPC interrupt
-> +      - description: The USBF AHB-EPC interrupt
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-> +
-> +    usb@4001e000 {
-> +        compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
-> +        reg = <0x4001e000 0x2000>;
-> +        interrupts =
+So altr,sysmgr-syscon must not be present.
 
-No need for line break. It's not helping in readability.
+> +    else:
+> +      properties:
+> +        altr,sysmgr-syscon: false
 
+Else altr,sysmgr-syscon must not be present. ???
 
-> +            <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-> +            <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&sysctrl R9A06G032_HCLK_USBF>,
-> +                 <&sysctrl R9A06G032_HCLK_USBPM>;
-> +        clock-names = "hclkf", "hclkpm";
-> +    };
-
-Best regards,
-Krzysztof
-
+Rob
