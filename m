@@ -2,112 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4434C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 09:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDCEC433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 10:57:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231656AbiKGJMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 04:12:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
+        id S229530AbiKGK5e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 05:57:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231785AbiKGJMI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 04:12:08 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4472E167CE
-        for <linux-clk@vger.kernel.org>; Mon,  7 Nov 2022 01:12:07 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id g12so15867391lfh.3
-        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 01:12:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lnsPOK5motup9T8XBniEK+peF/D2fTuyq/bCy58k14U=;
-        b=bvOlLbXhahamOjqO+zkLPF8mhi4RlovgUaredeyun24ljOLREs9ppJVlJDipQmET9F
-         10KOQMwRSPJjZGOSvfSm+AQ5/8x2yTkCwd56WPI0oFTGR/YDdJj1OHtJldSWYo5mnP6R
-         TtjJxmftemResRP6WaV+b/pga2IveLsputjMd78VuHC/RFKQv9EW+LSntd246g2gMK/h
-         WTzSLL4hmksJhkznSmwYLEeEObYEShDfxLRvKoWZ2JHFY5bxV7oNR4oYjAEhJrKlCMqG
-         GNqY42NPIBSaMgccF3sYiF7GTRMlidv+/1s2KiuFGPoDatfTKdFYB7jng7EtmADN4Tqo
-         ivHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lnsPOK5motup9T8XBniEK+peF/D2fTuyq/bCy58k14U=;
-        b=nc22GImmN4DKCllsFY66mnwxAMiED3pQ/h0uGg8hPeor2e5LEr994qvUBFSdEhxaFV
-         hBz3cDx6AhLEO8fTVlFXXSwJj1Utwi2dA6TOrqth1OfNG0iUVJnFuD3FEaN6WzIMS+8R
-         f2fIlSwv5dvBpOHZISotIktffxrq20JkOyOVqXTd+V0YOw65RGuoecK45TLuF/yjRHpU
-         KVZ2Y6fwcXTiummVdCa9tTXppVWdQ5F8QM/NgV2dc8BNUHt6ms1J4nLHlcR4WobLjEDq
-         Jc3aRCDHDtR2FiosJHkV8u7bFO4VULPOaF7GPsSNga7BceNsMvONzLPM0e0Uvk1WZv1u
-         vSqw==
-X-Gm-Message-State: ACrzQf2NIojyFHtjp3Zu/4ufjKtkw1wnWqAvwRPw99gDfzK6s1jPhgfX
-        4yIPkZsPCZDZBbw1l42+B2NT1g==
-X-Google-Smtp-Source: AMsMyM7bXG55cIesK9wxtNvqOTQV+Xf1GiFjjQy9uqOkUa9uGlR/Zjx94GQGqhw1F7vSxJkhQLmuQA==
-X-Received: by 2002:a19:654a:0:b0:4b0:831b:ef35 with SMTP id c10-20020a19654a000000b004b0831bef35mr15143654lfj.206.1667812325644;
-        Mon, 07 Nov 2022 01:12:05 -0800 (PST)
-Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id r17-20020a194411000000b0048a9e899693sm1146236lfa.16.2022.11.07.01.12.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 01:12:05 -0800 (PST)
-Message-ID: <0e929d35-2a90-94fb-49d6-7f6a0f0a3ed0@linaro.org>
-Date:   Mon, 7 Nov 2022 10:12:04 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
- CMU_FSYS1 mmc card clock
-Content-Language: en-US
-To:     chanho61.park@samsung.com, Inbaraj E <inbaraj.e@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc:     "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        with ESMTP id S231922AbiKGK5J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 05:57:09 -0500
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089C0193D2;
+        Mon,  7 Nov 2022 02:57:08 -0800 (PST)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A75Ku16012177;
+        Mon, 7 Nov 2022 04:56:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=MTDWpx1hsSGPKEDqYGlpVHQIbEswPJLgPoSW4FILuto=;
+ b=i917JrNjkH3z3a2XXOdwc3doHM6OAxz7LbDVUIm7C+E3Cwrb58ZxQpsKKdqXGk5Z9z+/
+ hzIdNQ85JqsCyNGRwGzs83o+jomuHbPhAuHnJILygojPwEG6jpejkauG5tvHq+6Mjx1T
+ 10Yn1n9hWdF7kaZM8JMcssci6VZmHmvumMtu+EtvU3lJyidhtFDMwmr56awM5w5p+0ch
+ stqQ4q3mYnrkiSj6po7T4la5GvjwlpX4RBmjPsI7iQ7y3uUL/hIt6CTV9TTf6ttWh4IS
+ JztSITFuL9+F5l7b8BFUGCyo8869zZsKrryWoIr9+DG4ZaxCTT2UTGw8JJDMLIjOfV8b vg== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3knm8pa27e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Nov 2022 04:56:54 -0600
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.15; Mon, 7 Nov
+ 2022 04:56:53 -0600
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.2.1118.15 via Frontend
+ Transport; Mon, 7 Nov 2022 04:56:53 -0600
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 0BFD7468;
+        Mon,  7 Nov 2022 10:56:53 +0000 (UTC)
+Date:   Mon, 7 Nov 2022 10:56:53 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <alsa-devel@alsa-project.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-phy@lists.infradead.org>, <linux-mips@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-actions@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        <patches@opensource.cirrus.com>, <linux-tegra@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>
-References: <8f026f38-ef09-788e-7bd8-45683b074075@linaro.org>
- <20221104090019.88387-1-inbaraj.e@samsung.com>
- <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcms2p3>
- <20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c@epcms2p3>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c@epcms2p3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v2 65/65] clk: Warn if we register a mux without
+ determine_rate
+Message-ID: <20221107105653.GE10437@ediswmail.ad.cirrus.com>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-65-f6736dec138e@cerno.tech>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-65-f6736dec138e@cerno.tech>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-ORIG-GUID: UMPSZnVO7oPJzivHhsi11mqwMsALxb4N
+X-Proofpoint-GUID: UMPSZnVO7oPJzivHhsi11mqwMsALxb4N
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/11/2022 01:04, CHANHO PARK wrote:
->>> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
->>>
->>> This fixes make dtbs_check warning as shown below:
->>>
->>> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-
->> controller@17040000:
->>> clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected From schema:
->>> /home/inbaraj/mainline/linux/Documentation/devicetree/
->>> bindings/clock/samsung,exynosautov9-clock.yaml
->>
->> I don't understand:
->> 1. Why bindings are wrong not DTSI?
->> 2. What is "gout"? "dout" had a meaning as clock divider output.
+On Fri, Nov 04, 2022 at 02:18:22PM +0100, Maxime Ripard wrote:
+> The determine_rate hook allows to select the proper parent and its rate
+> for a given clock configuration. On another hand, set_parent is there to
+> change the parent of a mux.
 > 
-> "gout" is output of a gate clock, AFAIK.
-> Unlike any other clocks, the fsys1 mmc top clock does not have a divider. So, it should be "mout -> gout" instead of "mout -> gout -> dout".
+> Some clocks provide a set_parent hook but don't implement
+> determine_rate. In such a case, set_parent is pretty much useless since
+> the clock framework will always assume the current parent is to be used,
+> and we will thus never change it.
+> 
+> This situation can be solved in two ways:
+>   - either we don't need to change the parent, and we thus shouldn't
+>     implement set_parent;
+>   - or we don't want to change the parent, in this case we should set
+>     CLK_SET_RATE_NO_REPARENT;
+>   - or we're missing a determine_rate implementation.
+> 
+> The latter is probably just an oversight from the driver's author, and
+> we should thus raise their awareness about the fact that the current
+> state of the driver is confusing.
+> 
+> It's not clear at this point how many drivers are affected though, so
+> let's make it a warning instead of an error for now.
+> 
 
-OK, then this should be in commit msg.
+Commit message could probably use updated to make the new state
+of the chain.
 
-My question about full legal name remains, as here in replies I see
-"Inbaraj E".
-
-Best regards,
-Krzysztof
-
+Thanks,
+Charles
