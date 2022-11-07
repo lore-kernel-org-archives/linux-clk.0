@@ -2,148 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDA0C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 16:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3947C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 17:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232626AbiKGQzT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:55:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48812 "EHLO
+        id S232122AbiKGRAo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 12:00:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbiKGQzS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 11:55:18 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B0B1B1DE;
-        Mon,  7 Nov 2022 08:55:17 -0800 (PST)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A7Gd7ln022962;
-        Mon, 7 Nov 2022 16:55:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=KyO7Kqgqw3RkHRvFLoYkgPhFBPdHmz+orXJL+eEe4tY=;
- b=iME60Btir4MNYbfFDmBtQ6BbhvcWzU1R5OZ6ZvnYDDkQK6FCwx0AsTay4digvRXE6cGz
- QyUVjJHWx/Jw/RaKinjePftPCCfFDZuhItprCBvowd+Ir7FN9VZ/rMSFstPpVqEPKlMC
- vbSoqMbBjZD+T+vg3wc5DlVLiRCJZ8r/e0lVdyGfXgH0NIyN99p/EQW3AM8Go1IDQEsH
- 3Sr0fNo7adtV0uf50vnSMYQTmEGA8WznKzjTE0JjQDV/rdFQ7xoSo/QZjoFNYQfL2nJf
- sRV/dv821LuWg7JqUCySeU5vjUKEhyOB+EY5zpJdsgBTrPQ94ahWtAj+cWCDmemNeixy jg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kpvge9f1t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Nov 2022 16:55:00 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2A7GsxIJ011989
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 7 Nov 2022 16:54:59 GMT
-Received: from [10.216.2.134] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 7 Nov 2022
- 08:54:52 -0800
-Message-ID: <d4654169-6dc7-468f-d0e6-b6de4cbad418@quicinc.com>
-Date:   Mon, 7 Nov 2022 22:24:49 +0530
+        with ESMTP id S231461AbiKGRAn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 12:00:43 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B40B13F79
+        for <linux-clk@vger.kernel.org>; Mon,  7 Nov 2022 09:00:40 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id s12so8975868edd.5
+        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 09:00:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aK/Mb1lQmrWp0WIZzAQZyGa5kst0gFmBMRnnMnq6heo=;
+        b=YEKGVkj/9lV6H+WKl0DAv5UsTSd+466O/ymx34swbdZo5yizFGQodVqLifmQr1B9Ts
+         P//nlccbfUoJEv5iOO2ROpD1floSrnCSDZBZ8NO14TGSi7FGdj52KeZbbE8QJ6dB0UzZ
+         Yzal/BE/Z4JuuZAvAx4mN8D0lQbULbSyaxyGI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aK/Mb1lQmrWp0WIZzAQZyGa5kst0gFmBMRnnMnq6heo=;
+        b=pxKJD07AJCv+5tcDNjB1x2wPma1Z/2ArZ+eTiZaxTHTul0xDt+MJYGxUVd8kkgtaCx
+         kbeOgImEWsFxDYk1N5k7V7DWl5DyhBqt9FvPjXYArWr/nqg0X3kXi1SfYepcRaHXY0qP
+         ayjvK5DPDgPSiG+VwUOlJcAMxof6ucYe3Wcf/BKhtemL6+YW3s83OqbnUu2buuLUlHSs
+         efyaXjFipe1Ds8Zjo8TL2kdblNT5yKGu2J9kFUNYyKYJeITJVbTJkozbrW+0o1fjTpo9
+         IGFk7iNPDtLObAwuxo38bScbBX/j9ft/fUJ4WpxM+i9FZLiFw5WpX6ZsV8zlZYp2AX7q
+         DU/A==
+X-Gm-Message-State: ANoB5pkRa/1B7td9Yq7oBnZheiCaV1rcV/PD65uENIJJw8Ri3JBmzc6H
+        V9nOGEK7VwL9S9nUHSdST5evbkjtQ/KttRbZ
+X-Google-Smtp-Source: AA0mqf6xW2dHQS9GGmCsVRqT3IE98aQrULT0HznATZVqRPUGhRp4gkFjVHOj7YvSOndXXLTAm6BJSA==
+X-Received: by 2002:a50:cbc1:0:b0:466:4a4d:685 with SMTP id l1-20020a50cbc1000000b004664a4d0685mr8749092edi.312.1667840438512;
+        Mon, 07 Nov 2022 09:00:38 -0800 (PST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id i15-20020a17090671cf00b0078d76ee7543sm3605482ejk.222.2022.11.07.09.00.32
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 09:00:36 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id t1so7271061wmi.4
+        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 09:00:32 -0800 (PST)
+X-Received: by 2002:a05:600c:2212:b0:3cf:6068:3c40 with SMTP id
+ z18-20020a05600c221200b003cf60683c40mr34107154wml.57.1667840431739; Mon, 07
+ Nov 2022 09:00:31 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
- 'reset' interface
-Content-Language: en-US
-To:     freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
+References: <1666159535-6447-1-git-send-email-quic_c_skakit@quicinc.com>
+ <CAE-0n52N6oxSLoU_=Cq1xK9bVX7H+AvPsR3dLepMNjKywdffvQ@mail.gmail.com> <21cd992c-334e-3a28-f3ac-68a49a4ef00b@quicinc.com>
+In-Reply-To: <21cd992c-334e-3a28-f3ac-68a49a4ef00b@quicinc.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 7 Nov 2022 09:00:18 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WRCJ6d6jTHH2ZHvuh+c4yTeXhS_D5LZcvfMn1c4NP2aA@mail.gmail.com>
+Message-ID: <CAD=FV=WRCJ6d6jTHH2ZHvuh+c4yTeXhS_D5LZcvfMn1c4NP2aA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: Update the force mem core bit for GPU clocks
+To:     "Satya Priya Kakitapalli (Temp)" <quic_c_skakit@quicinc.com>
+Cc:     Stephen Boyd <swboyd@chromium.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC:     Douglas Anderson <dianders@chromium.org>,
-        <krzysztof.kozlowski@linaro.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
-        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
-From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GoWq44qxRLbz-4Al_VVhsdXIPLRL5Lvh
-X-Proofpoint-GUID: GoWq44qxRLbz-4Al_VVhsdXIPLRL5Lvh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-07_08,2022-11-07_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- phishscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 clxscore=1011 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211070135
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_tdas@quicinc.com, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/5/2022 2:36 PM, Akhil P Oommen wrote:
-> Some clients like adreno gpu driver would like to ensure that its gdsc
-> is collapsed at hardware during a gpu reset sequence. This is because it
-> has a votable gdsc which could be ON due to a vote from another subsystem
-> like tz, hyp etc or due to an internal hardware signal. To allow
-> this, gpucc driver can expose an interface to the client driver using
-> reset framework. Using this the client driver can trigger a polling within
-> the gdsc driver.
->
-> This series is rebased on top of qcom/linux:for-next branch.
->
-> Related discussion: https://patchwork.freedesktop.org/patch/493144/
->
-> Changes in v7:
-> - Update commit message (Bjorn)
-> - Rebased on top of qcom/linux:for-next branch.
->
-> Changes in v6:
-> - No code changes in this version. Just captured the Acked-by tags
->
-> Changes in v5:
-> - Nit: Remove a duplicate blank line (Krzysztof)
->
-> Changes in v4:
-> - Update gpu dt-binding schema
-> - Typo fix in commit text
->
-> Changes in v3:
-> - Use pointer to const for "struct qcom_reset_ops" in qcom_reset_map (Krzysztof)
->
-> Changes in v2:
-> - Return error when a particular custom reset op is not implemented. (Dmitry)
->
-> Akhil P Oommen (6):
->    dt-bindings: clk: qcom: Support gpu cx gdsc reset
->    clk: qcom: Allow custom reset ops
->    clk: qcom: gdsc: Add a reset op to poll gdsc collapse
->    clk: qcom: gpucc-sc7280: Add cx collapse reset support
->    dt-bindings: drm/msm/gpu: Add optional resets
->    arm64: dts: qcom: sc7280: Add Reset support for gpu
->
->   .../devicetree/bindings/display/msm/gpu.yaml       |  6 +++++
->   arch/arm64/boot/dts/qcom/sc7280.dtsi               |  3 +++
->   drivers/clk/qcom/gdsc.c                            | 23 ++++++++++++++----
->   drivers/clk/qcom/gdsc.h                            |  7 ++++++
->   drivers/clk/qcom/gpucc-sc7280.c                    | 10 ++++++++
->   drivers/clk/qcom/reset.c                           | 27 +++++++++++++++++++++-
->   drivers/clk/qcom/reset.h                           |  8 +++++++
->   include/dt-bindings/clock/qcom,gpucc-sc7280.h      |  3 +++
->   8 files changed, 82 insertions(+), 5 deletions(-)
->
-Bjorn,
+Hi,
 
-The latest patchset has been in the mailing list for over a month now. 
-Could you please share how soon we can pick this? That will give me some 
-confidence to pull these patches into our chromeos kernel tree ASAP.
+On Sun, Nov 6, 2022 at 9:38 PM Satya Priya Kakitapalli (Temp)
+<quic_c_skakit@quicinc.com> wrote:
+>
+>
+> On 10/28/2022 5:54 AM, Stephen Boyd wrote:
+> > Quoting Satya Priya (2022-10-18 23:05:35)
+> >> From: Taniya Das <quic_tdas@quicinc.com>
+> >>
+> >> There are few GPU clocks which are powering up the memories
+> >> and thus enable the FORCE_MEM_PERIPH always for these clocks
+> >> to force the periph_on signal to remain active during halt
+> >> state of the clock.
+> > I take it that missing this causes GPU to lose state when it suspends
+> > and that confuses the driver?
+>
+>
+> It is more related to GPU SMMU states and the stability issues that are
+> encountered.
 
--Akhil.
+I see a very similar code sequence for sc7180. Is any similar fix
+needed for sc7180, or is this something unique for sc7280?
+
+-Doug
