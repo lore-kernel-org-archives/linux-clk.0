@@ -2,135 +2,253 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC1EC433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 19:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB40C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 20:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232706AbiKGT5B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:57:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
+        id S232781AbiKGU53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 15:57:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232712AbiKGT47 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 14:56:59 -0500
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB71D26AE6;
-        Mon,  7 Nov 2022 11:56:58 -0800 (PST)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-13b23e29e36so13904161fac.8;
-        Mon, 07 Nov 2022 11:56:58 -0800 (PST)
+        with ESMTP id S233103AbiKGU5X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 15:57:23 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179992B632;
+        Mon,  7 Nov 2022 12:57:22 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id cl5so18010443wrb.9;
+        Mon, 07 Nov 2022 12:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:in-reply-to
+         :subject:cc:to:from:references:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNuIDh9+z0CfhmCPEaKB/O13kWB7hEyf2+U7jlAoSUM=;
+        b=PMUoELhE6AnXK+iNbgb6rPTOJPEKsFgBujXqxbWpgwA5fYf4gBdL2QEZ7s38On6Pdv
+         tEvNrpWkJH7345NtNVL6P6neZYoOwCet4Y628+aQE5juJnavU3qBi7KlO1rk5DAUAUOq
+         438HwMs8JiemVJnEaCYxBD3fJBcnKF+Ec4ElTT2rACGgYIzmW6zjKAQjhVEt1OoUDQVI
+         vKeu2GP4yAVneediojKblkMb81j+Ywo5HajTIEQtgDumphUC4m8/Zrw4Q3MU5M1r0ziT
+         8aiG4DnxTEwp4bvltkVyz/XtyJfkf0wefxRxSHxi02sFECEhyFppC6IqlBS76u0z4eLR
+         9SRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r3mjAx7lLL85qpCZOJ6hUnCvzcFS81mcIgGEn4asyos=;
-        b=OvvFymnpaxwaWfuZUXHuwQyE1Aqb9tHN8wlhpWCKevoeuBIhVSxQlbnxa/7oQX/IH0
-         R1biC/QVEfpj6E9Qz/9t5W9Eb+staUVcxkGSIHIeLj9NNFmLUYK+9RtpwP5ZhbbAfv5A
-         3hagtK0w8MYeB8jahXJ4gqwsxI8uh62FNaM2851gfgqK7y8in4hKMcimnGcas1zvwwr3
-         VhFYE8VS0ZkEAtR7uJDsQCnqnIOqs6x45JfPSPBt9GIenXa6BveCQa/DdoWwnP00INIq
-         Rnp9HnkyfoRz0ZTsOkhd35a9VmZlP1dDdZvEtW7wl7dbDdqii3WYXZv80Tkbr5xQi3vA
-         ffOQ==
-X-Gm-Message-State: ACrzQf3B2mkPyGzb1Mf21fkRfSPNNsa2O5bgT7fw5XpXpYBZvz/jZjB0
-        rtVsOLbgMmqKcLpFOdKgsw==
-X-Google-Smtp-Source: AMsMyM5NYYJ3aS7MNOxMCRLSi7vINBfg4MRphj85IP5FOHjm2GVj/CoRXPEGpzKn0tuY+9X5jYR8DQ==
-X-Received: by 2002:a05:6870:41c4:b0:131:55a3:3069 with SMTP id z4-20020a05687041c400b0013155a33069mr30758903oac.159.1667851018033;
-        Mon, 07 Nov 2022 11:56:58 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id g92-20020a9d2de5000000b0066c4092ae4csm3272165otb.10.2022.11.07.11.56.57
+        h=content-transfer-encoding:mime-version:message-id:date:in-reply-to
+         :subject:cc:to:from:references:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xNuIDh9+z0CfhmCPEaKB/O13kWB7hEyf2+U7jlAoSUM=;
+        b=JsLXa4biJokzvgDsx+WOLHELdsIAyAbr1+6cee+6wTnxzoPbYO3BjrlijspssfmSsN
+         LLKLAQtUd11MPSOft6/+qp0XLIUFdAucPc6sSg0QqoC2Wr1e+vyXaw7nD2f8njvVc7js
+         YVv6k057OaofuB4C/P03K/1WVJmMUwPqp21RGCRgGzjqOVluY3UhGcMP5Oq7zbAJIR4L
+         rupNKoKRlDmlhmgaya5NZeC3fOcZfty3co0Zfu6EtzAYN072AxK8HYIAfbqUn7on/7aK
+         vzs8Ivp2AZ066VMASy1c03lMmbFvQHzOjxs6hbDjwP5wF9xjOrWitpeqmorPMk1uWQ7Q
+         TGeA==
+X-Gm-Message-State: ACrzQf3kfBuprYTJPLuhCSQIBntTUEWaV5wtsTUrU+HdBAeT/xqoPqsW
+        aOk8Oae3zleHQh8DR1wjKrs=
+X-Google-Smtp-Source: AMsMyM68KhRfPQSDi8CFA78pakjxRAM3L6JCB7fc1yr/DnXKn9yQG4njsjQsXjAXYrNXUB9CMb72nw==
+X-Received: by 2002:a5d:4ec1:0:b0:22e:435c:1e0f with SMTP id s1-20020a5d4ec1000000b0022e435c1e0fmr633954wrv.200.1667854640408;
+        Mon, 07 Nov 2022 12:57:20 -0800 (PST)
+Received: from localhost (188.28.3.103.threembb.co.uk. [188.28.3.103])
+        by smtp.gmail.com with ESMTPSA id m1-20020a7bca41000000b003c6c3fb3cf6sm9173176wml.18.2022.11.07.12.57.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 11:56:57 -0800 (PST)
-Received: (nullmailer pid 1487934 invoked by uid 1000);
-        Mon, 07 Nov 2022 19:56:59 -0000
-Date:   Mon, 7 Nov 2022 13:56:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     jh80.chung@samsung.com, ulf.hansson@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCHv8 1/6] dt-bindings: mmc: synopsys-dw-mshc: document
- "altr,sysmgr-syscon"
-Message-ID: <20221107195659.GA1483239-robh@kernel.org>
-References: <20221103151525.474833-1-dinguyen@kernel.org>
+        Mon, 07 Nov 2022 12:57:19 -0800 (PST)
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+ <20221104145946.orsyrhiqvypisl5j@houat>
+ <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
+ <20221107085417.xrsh6xy3ouwdkp4z@houat>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+In-reply-to: <20221107085417.xrsh6xy3ouwdkp4z@houat>
+Date:   Mon, 07 Nov 2022 20:57:22 +0000
+Message-ID: <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221103151525.474833-1-dinguyen@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 10:15:20AM -0500, Dinh Nguyen wrote:
-> Document the optional "altr,sysmgr-syscon" binding that is used to
-> access the System Manager register that controls the SDMMC clock
-> phase.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
-> v8: remove "" around synopsys-dw-mshc-common.yaml#
-> v7: and "not" for the required "altr,sysmgr-syscon" binding
-> v6: make "altr,sysmgr-syscon" optional
-> v5: document reg shift
-> v4: add else statement
-> v3: document that the "altr,sysmgr-syscon" binding is only applicable to
->     "altr,socfpga-dw-mshc"
-> v2: document "altr,sysmgr-syscon" in the MMC section
-> ---
->  .../bindings/mmc/synopsys-dw-mshc.yaml        | 33 +++++++++++++++++--
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> index ae6d6fca79e2..a37cd7a68417 100644
-> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> @@ -6,9 +6,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Synopsys Designware Mobile Storage Host Controller Binding
->  
-> -allOf:
-> -  - $ref: "synopsys-dw-mshc-common.yaml#"
-> -
->  maintainers:
->    - Ulf Hansson <ulf.hansson@linaro.org>
->  
-> @@ -38,6 +35,36 @@ properties:
->        - const: biu
->        - const: ciu
->  
-> +  altr,sysmgr-syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to the sysmgr node
-> +          - description: register offset that controls the SDMMC clock phase
-> +          - description: register shift for the smplsel(drive in) setting
-> +    description:
-> +      This property is optional. Contains the phandle to System Manager block
-> +      that contains the SDMMC clock-phase control register. The first value is
-> +      the pointer to the sysmgr, the 2nd value is the register offset for the
-> +      SDMMC clock phase register, and the 3rd value is the bit shift for the
-> +      smplsel(drive in) setting.
-> +
-> +allOf:
-> +  - $ref: synopsys-dw-mshc-common.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: altr,socfpga-dw-mshc
-> +    then:
-> +      not:
-> +        required:
-> +          - altr,sysmgr-syscon
 
-'required' evaluates true when all properties in the list are present.
+Maxime Ripard <maxime@cerno.tech> writes:
 
-So altr,sysmgr-syscon must not be present.
+> Hi,
+>
+> On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
+>>
+>> Maxime Ripard <maxime@cerno.tech> writes:
+>>
+>> > Hi Paul,
+>> >
+>> > On Fri, Nov 04, 2022 at 02:31:20PM +0000, Paul Cercueil wrote:
+>> >> Le ven. 4 nov. 2022 =C3=A0 14:18:13 +0100, Maxime Ripard <maxime@cern=
+o.tech> a
+>> >> =C3=A9crit :
+>> >> > The Ingenic CGU clocks implements a mux with a set_parent hook, but
+>> >> > doesn't provide a determine_rate implementation.
+>> >> >
+>> >> > This is a bit odd, since set_parent() is there to, as its name impl=
+ies,
+>> >> > change the parent of a clock. However, the most likely candidate to
+>> >> > trigger that parent change is a call to clk_set_rate(), with
+>> >> > determine_rate() figuring out which parent is the best suited for a
+>> >> > given rate.
+>> >> >
+>> >> > The other trigger would be a call to clk_set_parent(), but it's far=
+ less
+>> >> > used, and it doesn't look like there's any obvious user for that cl=
+ock.
+>> >> >
+>> >> > So, the set_parent hook is effectively unused, possibly because of =
+an
+>> >> > oversight. However, it could also be an explicit decision by the
+>> >> > original author to avoid any reparenting but through an explicit ca=
+ll to
+>> >> > clk_set_parent().
+>> >> >
+>> >> > The driver does implement round_rate() though, which means that we =
+can
+>> >> > change the rate of the clock, but we will never get to change the
+>> >> > parent.
+>> >> >
+>> >> > However, It's hard to tell whether it's been done on purpose or not.
+>> >> >
+>> >> > Since we'll start mandating a determine_rate() implementation, let's
+>> >> > convert the round_rate() implementation to a determine_rate(), which
+>> >> > will also make the current behavior explicit. And if it was an
+>> >> > oversight, the clock behaviour can be adjusted later on.
+>> >>
+>> >> So it's partly on purpose, partly because I didn't know about
+>> >> .determine_rate.
+>> >>
+>> >> There's nothing odd about having a lonely .set_parent callback; in my=
+ case
+>> >> the clocks are parented from the device tree.
+>> >>
+>> >> Having the clocks driver trigger a parent change when requesting a ra=
+te
+>> >> change sounds very dangerous, IMHO. My MMC controller can be parented=
+ to the
+>> >> external 48 MHz oscillator, and if the card requests 50 MHz, it could=
+ switch
+>> >> to one of the PLLs. That works as long as the PLLs don't change rate,=
+ but if
+>> >> one is configured as driving the CPU clock, it becomes messy.
+>> >> The thing is, the clocks driver has no way to know whether or not it =
+is
+>> >> "safe" to use a designated parent.
+>> >>
+>> >> For that reason, in practice, I never actually want to have a clock
+>> >> re-parented - it's almost always a bad idea vs. sticking to the paren=
+t clock
+>> >> configured in the DTS.
+>> >
+>> > Yeah, and this is totally fine. But we need to be explicit about it. T=
+he
+>> > determine_rate implementation I did in all the patches is an exact
+>> > equivalent to the round_rate one if there was one. We will never ask to
+>> > change the parent.
+>> >
+>> > Given what you just said, I would suggest to set the
+>> > CLK_SET_RATE_NO_REPARENT flag as well.
+>>
+>> Ideally there should be a way for drivers and the device tree to
+>> say, "clock X must be driven by clock Y", but the clock framework
+>> would be allowed to re-parent clocks freely as long as it doesn't
+>> violate any DT or driver constraints.
+>
+> I'm not really sure what you mean there, sorry. Isn't it what
+> assigned-clock-parents/clk_set_parent() at probe, plus a determine_rate
+> implementation that would affect best_parent_hw would already provide?
 
-> +    else:
-> +      properties:
-> +        altr,sysmgr-syscon: false
+Assigning the parent clock in the DT works once, at boot, but going off
+what you wrote in the commit message, if the clock driver has a
+.determine_rate() implementation that *can* reparent clocks then it
+probably *will* reparent them, and the DT assignment will be lost.
 
-Else altr,sysmgr-syscon must not be present. ???
+What I'm suggesting is a runtime constraint that the clock subsystem
+would enforce, and actively prevent drivers from changing the parent.
+Either explicitly with clk_set_parent() or due to .determine_rate().
 
-Rob
+That way you could write a .determine_rate() implementation that *can*
+select a better parent, but if the DT applies a constraint to fix the
+clock to a particular parent, the clock subsystem will force that parent
+to be used so you can be sure the clock is never reparented by accident.
+
+>> That way allowing reparenting doesn't need to be an all-or-nothing
+>> thing, and it doesn't need to be decided at the clock driver level
+>> with special flags.
+>
+> Like I said, the default implementation is already working to what you
+> suggested if I understood properly. However, this has never been tested
+> for any of the drivers in that series so I don't want to introduce (and
+> debug ;)) regressions in all those drivers that were not setting any
+> constraint but never actually tested their reparenting code.
+>
+> So that series is strictly equivalent to what you had before, it's just
+> explicit now.
+>
+> If you find that some other decision make sense for your driver in
+> particular cases, feel free to change it. I barely know most of these
+> platforms, so I won't be able to make that decision (and test it)
+> unfortunately.
+>
+> Maxime
+
+That's OK, I didn't review the patch, I'm just making a general
+suggestion. :)
