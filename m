@@ -2,84 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53BCC433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 03:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E85C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 05:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231334AbiKGDPI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Nov 2022 22:15:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35524 "EHLO
+        id S230214AbiKGFiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 00:38:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231346AbiKGDOd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Nov 2022 22:14:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B3B12740;
-        Sun,  6 Nov 2022 19:13:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4208DB80D9C;
-        Mon,  7 Nov 2022 03:13:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD299C4347C;
-        Mon,  7 Nov 2022 03:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667790797;
-        bh=98zvi7moc2WiLI5Eo8TJ6PFp+Posb4WFHuUDE9xceUo=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=MH8AoAjmQi4ySd2aJbgv4TRJm2+TCPP2CQiFg3bpBDIBNGefhaV2baD7LKlZUReJd
-         w5aybzpA78BrfKrEt0SJJNCe7U/VgngjQhoQb5hgXhzGfAecUgSdXW5wWHHl3iPtz2
-         +6jHWyVMYFhcb+/GFyWBfBCBb9B6aHPfwGTjFDMcG4LOrXI4YhyKsRYk9WvcObNDuJ
-         xjsB6Ei4u0f+jpxQ3PWxt24YRsHrrWOwReQVbHvuSbDbyGqWZf9v0Gpz+v3OpHEhcx
-         bayx9MJCiEeh0dBHaClYtklKTGepg1EZe99bRxL/13YuV2+XS1xQuXMNIuCk7Qe7Fi
-         hJ9QdcfKF1Vzg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     mturquette@baylibre.com, dmitry.baryshkov@linaro.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, konrad.dybcio@somainline.org, jonathan@marek.ca,
-        Bjorn Andersson <andersson@kernel.org>, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        quic_bjorande@quicinc.com, robert.foss@linaro.org
-Subject: Re: [PATCH v2 0/5] dispcc-sm8250 misc fixes
-Date:   Sun,  6 Nov 2022 21:12:33 -0600
-Message-Id: <166779074273.500303.15465744246402461201.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221102090140.965450-1-robert.foss@linaro.org>
-References: <20221102090140.965450-1-robert.foss@linaro.org>
+        with ESMTP id S230050AbiKGFis (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 00:38:48 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64085F7E;
+        Sun,  6 Nov 2022 21:38:47 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A75Ehj8008885;
+        Mon, 7 Nov 2022 05:38:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=LOmNW934C5MVnCwKLxAlx3sEVaqNfpouVEI8K0mtdkA=;
+ b=e56vCSTLGNRm08gz8p25tPLe3x8KEYr5NwTCm53eysh4mUWi+1AO73f/DC5zSfiS8YEe
+ 11pGA85jA+aigmkbxbyZzkgKlohO79f12yOFD6dLPGKnx4lXkfF3EjsRg2s4CkYaX5cQ
+ Ro2BWu/vv0T8CghYzNOrjOO1bjK4sC31CqJOBmQwxtJHaSq1H495Grhj/GyGPYGSVuD6
+ lyrDXUF0NDhvGX1YCfmUAuRLv1sd4JRqaRAu1mgjLYKYrDm5aMeR9yt4st/MBkJ9ZLnk
+ ERAzx7f60AQXJcXHtFarT2nJYwLR+dVs+SfX5g6icUneHL81uRL7WdDHbU3GBqSPGafA zw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kphfv0nk9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Nov 2022 05:38:38 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2A75cbpK017933
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 7 Nov 2022 05:38:37 GMT
+Received: from [10.50.40.69] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Sun, 6 Nov 2022
+ 21:38:34 -0800
+Message-ID: <21cd992c-334e-3a28-f3ac-68a49a4ef00b@quicinc.com>
+Date:   Mon, 7 Nov 2022 11:08:03 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: Update the force mem core bit for GPU clocks
+Content-Language: en-US
+To:     Stephen Boyd <swboyd@chromium.org>, Andy Gross <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_tdas@quicinc.com>, <linux-clk@vger.kernel.org>
+References: <1666159535-6447-1-git-send-email-quic_c_skakit@quicinc.com>
+ <CAE-0n52N6oxSLoU_=Cq1xK9bVX7H+AvPsR3dLepMNjKywdffvQ@mail.gmail.com>
+From:   "Satya Priya Kakitapalli (Temp)" <quic_c_skakit@quicinc.com>
+In-Reply-To: <CAE-0n52N6oxSLoU_=Cq1xK9bVX7H+AvPsR3dLepMNjKywdffvQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 66Aw6M2hN4prCn1f4-S61TrOFHmzE1Z7
+X-Proofpoint-GUID: 66Aw6M2hN4prCn1f4-S61TrOFHmzE1Z7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-06_16,2022-11-03_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 clxscore=1011 mlxscore=0
+ malwarescore=0 mlxlogscore=670 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211070047
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2 Nov 2022 10:01:35 +0100, Robert Foss wrote:
-> Changes since v1:
->  - Added new a-b/r-b tags
->  - Improved commit message - Dmitry
->  - Configure dp/edp link parent_hw for sm8150/sc8180
-> 
-> Robert Foss (5):
->   clk: qcom: dispcc-sm8250: Disable EDP_GTC for sm8350
->   clk: qcom: dispcc-sm8250: Add RETAIN_FF_ENABLE flag for mdss_gdsc
->   dt-bindings: clock: dispcc-sm8250: Add EDP_LINK_DIV_CLK_SRC index
->   clk: qcom: dispcc-sm8250: Add missing EDP clocks for sm8350
->   clk: qcom: dispcc-sm8250: Disable link_div_clk_src for sm8150
-> 
-> [...]
 
-Applied, thanks!
+On 10/28/2022 5:54 AM, Stephen Boyd wrote:
+> Quoting Satya Priya (2022-10-18 23:05:35)
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> There are few GPU clocks which are powering up the memories
+>> and thus enable the FORCE_MEM_PERIPH always for these clocks
+>> to force the periph_on signal to remain active during halt
+>> state of the clock.
+> I take it that missing this causes GPU to lose state when it suspends
+> and that confuses the driver?
 
-[1/5] clk: qcom: dispcc-sm8250: Disable EDP_GTC for sm8350
-      commit: b5f84650fb0d6ebaa48a5f99183de70d32d0b115
-[2/5] clk: qcom: dispcc-sm8250: Add RETAIN_FF_ENABLE flag for mdss_gdsc
-      commit: e1a297a681bc4ab2c5cfe31eb4b59bb6f202035a
-[3/5] dt-bindings: clock: dispcc-sm8250: Add EDP_LINK_DIV_CLK_SRC index
-      commit: c2b6ad72959771730806bbab76aa69e99444bf29
-[4/5] clk: qcom: dispcc-sm8250: Add missing EDP clocks for sm8350
-      commit: 8305ff41c7426b49090b236da659e2e9bb05fcb9
-[5/5] clk: qcom: dispcc-sm8250: Disable link_div_clk_src for sm8150
-      commit: f05dbd1a500661a9e3af59f0690301d031140da7
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+It is more related to GPU SMMU states and the stability issues that are 
+encountered.
+
