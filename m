@@ -2,134 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA1CC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 14:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7F4C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Nov 2022 14:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbiKGObG convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 09:31:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42944 "EHLO
+        id S231921AbiKGOge (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 09:36:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232385AbiKGOaw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 09:30:52 -0500
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE8261E3D9;
-        Mon,  7 Nov 2022 06:26:56 -0800 (PST)
-Received: by mail-qk1-f180.google.com with SMTP id g10so7205843qkl.6;
-        Mon, 07 Nov 2022 06:26:56 -0800 (PST)
+        with ESMTP id S231742AbiKGOgb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 09:36:31 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD427204
+        for <linux-clk@vger.kernel.org>; Mon,  7 Nov 2022 06:36:29 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id b9so16567925ljr.5
+        for <linux-clk@vger.kernel.org>; Mon, 07 Nov 2022 06:36:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LqIVZEeBf3uiHZU4NmaZFcaInDSQv2WV0V3yZxmUSaM=;
+        b=yriZm8CvC+/u6Ha3VhxGKctXjrWrVtg04n+IwoYHZrkNOK1i4AZyiQrN0r5smL+q/Z
+         rMDrz/WV9fTd+TWZurNqWfGl9UVEPubVX0HsnsOTuRkASKznAQ+Py1NI8k6AZIb45bn7
+         JjgadSRwG92CPFIrd80y8SVbIHEuMq8C8SnmeK86rgOhQcZhwLBvOuldlkmHXIRK+fKf
+         xDPbJfjutvOTiUsRrKaebBS8bohdPmB3HeEXgMoULGexEzAyFTwyaS67LHs465jt8Vuu
+         1d+xKFJYqSHms60eWWkaFFmFiVol3KEfwD20ekcqoJRli8n9ChHhO8TakrYLsBvqYUqU
+         yelQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ft1r9aPFGJF0+nCT//rpLeqH0WDImyUG+eP+SvMdOUM=;
-        b=aQyZyVWsvpNpO/mxf/icp5EiRCg6lZ5KxIh3CaOEExqJiKWvJ0Uwsqza4zBgLK0zje
-         XEPuquZgemOHm8UoeuETaoYRyfvW202c8bDjNWSRGb3AcQZHh336vndZx1gcNOMndzmk
-         jDFIEwn4gikfQINXXX8Al0z8v57Z1mL/lnaYvVb4Xs2PgXvIMR+rDJAIwHjK0fw5unnw
-         7n81mGLlCSwl2m9vOOanZORGNEthVLBiqttuZPQ8z2vhGGPRB44GCntu+5SaLiugz2Nx
-         HqvGhdRyXEeoOYfbfacO4uBYz9xDgOxQw1vYLjwYJB7ignoSoG9uZn3GJXoQ8bt12LIn
-         x6sQ==
-X-Gm-Message-State: ACrzQf08b0yeD6gkp5YT2E7TinyczM9FZ+ao38B5FxcmXo2++8QEV3FI
-        Aq7HZNW1jHRGDjWoxUaeYPe8A8tBSHOocw==
-X-Google-Smtp-Source: AMsMyM6Jpv0EgHEXEmn+VZEsX8fU0eJLbwDLeD2piUtkylPTDhDBomQ0VQSOPxjzO4jkMEVQv5l5mg==
-X-Received: by 2002:a37:65c9:0:b0:6fa:1ef8:fa10 with SMTP id z192-20020a3765c9000000b006fa1ef8fa10mr32177855qkb.648.1667831215541;
-        Mon, 07 Nov 2022 06:26:55 -0800 (PST)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id u17-20020a05622a011100b003a598fcddefsm664637qtw.87.2022.11.07.06.26.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 06:26:54 -0800 (PST)
-Received: by mail-yb1-f169.google.com with SMTP id o70so13760513yba.7;
-        Mon, 07 Nov 2022 06:26:54 -0800 (PST)
-X-Received: by 2002:a05:6902:503:b0:6cf:c510:6a23 with SMTP id
- x3-20020a056902050300b006cfc5106a23mr30733838ybs.380.1667831214389; Mon, 07
- Nov 2022 06:26:54 -0800 (PST)
+        bh=LqIVZEeBf3uiHZU4NmaZFcaInDSQv2WV0V3yZxmUSaM=;
+        b=OtOKcYYKl8FdnI75zo7515C6PksUdVx+YmJ5xLyvNwF60jMlOXYJKC31yywDsXQMU3
+         tARp7wmameDCtJicpnaTlpgERTXRC5eDCgHimI7LQDMBXbZhwQBdKOXdl7p9rpjNYkVR
+         5X4UJDxpEvSB6YLr5WO+x5JF6UBkOtIiItIrcifXKDuSqMS9v9+NdJ2bq7YxgsmmmisG
+         2K6mfQ/7PSQanj6p+nsxMcw5UsdOtQ44oWUh29uNjA8Rf+Fx0h8YZzBvls8xnQDHl7i7
+         bCvDhOSBFiBIve/lHc01TiCiucn3i+mMbAc8Iof8Wd3afnpAsJlI8KYgSvaM2gUxF8WD
+         bJgA==
+X-Gm-Message-State: ANoB5pmI5h2rqfHvfcyt77YGpNIYkvMAW1vRN0RMg1QqEMj9GDDoQC7I
+        wuDIho48LCGO7w5heivsexmwcg==
+X-Google-Smtp-Source: AA0mqf5RmQNBqtBRxyGo20Mn+gZ2BBYK+tzFf/gbojSwxL0JPqZy60SjJAwKKAFCXqi8QNURwjvKjQ==
+X-Received: by 2002:a05:651c:212a:b0:278:a461:cb7d with SMTP id a42-20020a05651c212a00b00278a461cb7dmr1576286ljq.246.1667831787939;
+        Mon, 07 Nov 2022 06:36:27 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
+        by smtp.gmail.com with ESMTPSA id v12-20020a2ea60c000000b0026fb5525ee4sm1250408ljp.116.2022.11.07.06.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 06:36:27 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, chanho61.park@samsung.com,
+        alim.akhtar@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, Inbaraj E <inbaraj.e@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
+Date:   Mon,  7 Nov 2022 15:36:25 +0100
+Message-Id: <166783178314.199427.8409536178718528714.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221107124337.114135-1-inbaraj.e@samsung.com>
+References: <CGME20221107123641epcas5p26e310f1ab6addb4fa6757f5147b8e50b@epcas5p2.samsung.com> <20221107124337.114135-1-inbaraj.e@samsung.com>
 MIME-Version: 1.0
-References: <20221107135825.583877-1-herve.codina@bootlin.com> <20221107135825.583877-5-herve.codina@bootlin.com>
-In-Reply-To: <20221107135825.583877-5-herve.codina@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Nov 2022 15:26:43 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX9WBxkrQRV6yEXmJdj3qQ9Ne4W0xmiGDEC6j=R_ARgsQ@mail.gmail.com>
-Message-ID: <CAMuHMdX9WBxkrQRV6yEXmJdj3qQ9Ne4W0xmiGDEC6j=R_ARgsQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] dt-bindings: usb: add the Renesas USBF controller binding
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hervé,
+On Mon, 7 Nov 2022 18:13:37 +0530, Inbaraj E wrote:
+> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
+> 
+> "gout" is output of a gate clock.
+> Unlike any other clocks, the fsys1 mmc top clock does not have a divider.
+> So, it should be "mout -> gout" instead of "mout -> gout -> dout".
+> 
+> This fixes make dtbs_check warning as shown below:
+> 
+> [...]
 
-On Mon, Nov 7, 2022 at 3:00 PM Herve Codina <herve.codina@bootlin.com> wrote:
-> The Renesas USBF controller is an USB2.0 device controller
-> (UDC) available in Renesas r9a06g032 SoC (RZ/N1 family).
->
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Applied, thanks!
 
-Thanks for your patch!
+[1/1] dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
+      https://git.kernel.org/krzk/linux/c/4854e8b083d800b421c02d3a8482fbfe27fb33ec
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/renesas,usbf.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas USBF (USB Function) controller binding
-> +
-> +description: |
-> +   The Renesas USBF controller is an USB2.0 device
-> +   controller (UDC).
-> +
-> +maintainers:
-> +  - Herve Codina <herve.codina@bootlin.com>
-
-Hervé? ;-)
-
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a06g032-usbf
-> +          - const: renesas,rzn1-usbf
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Internal bus clock (AHB) for Function
-> +      - description: Internal bus clock (AHB) for Power Management
-> +  clock-names:
-> +    items:
-> +      - const: hclkf
-> +      - const: hclkpm
-
-power-domains?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
