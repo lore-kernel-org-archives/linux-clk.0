@@ -2,49 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BD0C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 01:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB7BC4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 01:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233523AbiKHB25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Nov 2022 20:28:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50396 "EHLO
+        id S233560AbiKHB3M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Nov 2022 20:29:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233414AbiKHB2g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 20:28:36 -0500
+        with ESMTP id S233453AbiKHB2p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2022 20:28:45 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386D02B250;
-        Mon,  7 Nov 2022 17:28:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD8D2D1EA;
+        Mon,  7 Nov 2022 17:28:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C707761388;
-        Tue,  8 Nov 2022 01:28:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13AB3C43470;
-        Tue,  8 Nov 2022 01:28:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 199F96137F;
+        Tue,  8 Nov 2022 01:28:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613E5C433C1;
+        Tue,  8 Nov 2022 01:28:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667870888;
-        bh=kHb/0kaYEYHJy6WjyZh1ezGPAYiw7Je+ByX/XxqPxYM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RsjDexSxkUp3X/k2rua3Pw24Bfq9Ummk9HLefx4t5stmb+hmFOj5ocoGPfK9A8dA/
-         0ZOJRUppf6/5SUCopSEJQefH+9+qsr0wMPMGa2+x0tIyZYMnqsoJ29vBg2q2FV7GT+
-         Z84jYb1dj8Ri94DAybtVgf+1HW0b2U7rTsWRgbYrpGQ0EDeB5tUWhkObtkTtKmG/Gy
-         Y21zqb9um2H46do2i+oavulBi2Ykvyzl/JKgJ0PU+UcfjaD/VB7Xpeo6D6ub5KXSJy
-         6gar01OrATqKAOgNxoDZSYi+NDThuYxzC+/hsGIhG00tsmNLCEI2MkrGTksbfRlgdo
-         oCnZzw4+3d4ZQ==
+        s=k20201202; t=1667870891;
+        bh=MjWgzZTvSUk8TgzqmYGrkXIelBKih+2xhBR6vIwJ3C4=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=KDc/D7BnGsA8FPoAVPKCqZUHSrudEbLuFhznl+OzZ/COKNLTeomjzqmsP6Da+lRhP
+         YVD8mYXbNEooCMhgyTe4ing3qZzuFM5a44rq+K4eerSVInZtSapznbGztsfklHyCge
+         8vG/5PJ7cfJ54MAGwQ2DoRG3W0nOOPyJk5D+R5YbFIHd6Yk5X8OwUzr3zhoOP38cXo
+         +gSMwXx8djuoB0mbuXtpVT8AqTVP7MpnhOcdCRq1sTjzDuaqbrS7CzO7quQ3hi2gwO
+         Imsp2u+s6mCkS8sxkBQIBAiD1LGqh6luEpxradjvUBM/FQwnleM+QJpzbsDrIRpGo0
+         S/GyRIfJAPEWg==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     quic_molvera@quicinc.com, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
+To:     robimarko@gmail.com, mturquette@baylibre.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
+        tdas@codeaurora.org, linux-clk@vger.kernel.org,
         krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
-        maz@kernel.org, tglx@linutronix.de
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        quic_tdas@quicinc.com, linux-kernel@vger.kernel.org,
+        konrad.dybcio@somainline.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 0/5] clk: qcom: Add clocks for the QDU1000 and QRU1000 SoCs
-Date:   Mon,  7 Nov 2022 19:27:37 -0600
-Message-Id: <166787084679.599230.10880542049435908148.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH 1/3] clk: qcom: ipq8074: convert to parent data
+Date:   Mon,  7 Nov 2022 19:27:40 -0600
+Message-Id: <166787084683.599230.14468289826380167527.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221026190441.4002212-1-quic_molvera@quicinc.com>
-References: <20221026190441.4002212-1-quic_molvera@quicinc.com>
+In-Reply-To: <20221030175703.1103224-1-robimarko@gmail.com>
+References: <20221030175703.1103224-1-robimarko@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,22 +51,18 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 26 Oct 2022 12:04:36 -0700, Melody Olvera wrote:
-> This series adds the GCC, RPMh, and PDC clock support required for the
-> QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
+On Sun, 30 Oct 2022 18:57:01 +0100, Robert Marko wrote:
+> Convert the IPQ8074 GCC driver to use parent data instead of global
+> name matching.
 > 
-> The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
-> 1000 are new SoCs meant for enabling Open RAN solutions. See more at
-> https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
+> Utilize ARRAY_SIZE for num_parents instead of hardcoding the value.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[2/5] dt-bindings: clock: Add RPMHCC bindings for QDU1000 and QRU1000
-      commit: 70d9f589918aaadd6d5547ecb27355b7b69fc32c
-[4/5] clk: qcom: Add support for QDU1000 and QRU1000 RPMh clocks
-      commit: 05e5c125b120c75b9313af0a6dc8c4f5a71e8e7c
+[3/3] arm64: dts: qcom: ipq8074: pass XO and sleep clocks to GCC
+      commit: 3aa0b8cd957b3e7806004c2150c61c85a606821a
 
 Best regards,
 -- 
