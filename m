@@ -2,101 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338A5C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 18:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA0EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 19:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234053AbiKHSEJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 13:04:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56346 "EHLO
+        id S229453AbiKHTm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 14:42:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233627AbiKHSEI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 13:04:08 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1566439
-        for <linux-clk@vger.kernel.org>; Tue,  8 Nov 2022 10:04:06 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id v1so22209352wrt.11
-        for <linux-clk@vger.kernel.org>; Tue, 08 Nov 2022 10:04:06 -0800 (PST)
+        with ESMTP id S229452AbiKHTm1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 14:42:27 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B32F716FA;
+        Tue,  8 Nov 2022 11:42:26 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id f5so41333076ejc.5;
+        Tue, 08 Nov 2022 11:42:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:date:subject:cc:to:from:user-agent:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iSN6UqyB7C5Cu1h1xzquSUVfnrfUY5yfizu2eB3hf+k=;
-        b=jYWntqPR99Ho0m/ioIbeJVnpCks/3M4bNsSOGr88h+tpsa81t1hNlFOmPPB6Y9rVOH
-         L/4kDh9R0JSEpCiO3lXmeaLkLs7voBm2USUKU9H2eMvMos6Xxkegdy1x1MSKaWxKNTE9
-         N9F1w9ru+uu5Ursw0bN8WOCSt4yX9LRaJhry1y8S8nBTwTDcoxyAPXBK7Fwpm+8y3RUC
-         yeY53v0mlFqpXWkG9LC93IHNYi9joqneHvcMenlzw5RYgSvSi3BivwAEWxLrZuBEmRPt
-         7H47cHurxKZC7zaMhr8XWvxcinsKalY2w9jhGrU4ll/Wmx3YYBTndiZSOflFoKG/4IIQ
-         +U+w==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCfFBPnvKgh1kXxmqYQOr9Dj76h0DzapsRsTmMteAyo=;
+        b=IQN9hEauYkqPNz3uDp7hm+fsvMGwRkAil3F6vVajQda2BkKKr+mDQYVUkw/hf2sb+/
+         9OWejEsRzQA6Ww70dbsT3hMJ+hiUZUf+jxELTn2MRZN/ViVJVft2iSI52y1FW56gqU3l
+         8OM+jxM4dVryfewYzxHvdymytD8Z/ronn7yRXRoZK6bzUW88PBJM/L+0iRHl/4KyY+RP
+         NQXhBg6rg1849qSZCmborLA3Rxa1zD8sS10NRb9JWmmCwgYCU72e0qbQ++P1BWgG6zol
+         p2OKptIqXHdpFI8BhlKStG4VPBaqOwKCRcTxNXx7RhmSPfupXK8aFLjQCBkqMt2oHtxH
+         o+ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:date:subject:cc:to:from:user-agent
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iSN6UqyB7C5Cu1h1xzquSUVfnrfUY5yfizu2eB3hf+k=;
-        b=G6sFRDd64q+BvvQzn54wdAkCw/Qwgog4ue170cUJLVPaQguQpAONZOUC/xCtSf71pD
-         bV3uNl7tkCFQ1KSGkIRVhoERy6M/EnuddvUcW+zRceOsOkkdxpmbOH99f48uqz0qHqcl
-         +KAGpKzJPmdW47/tp8hsE0IiT3O6xPJa6LEF0tF4j4q9kwNJULkk10dKjmPtMMK4hgJZ
-         0gZxY6cH12YVA91EnZzRVdKVxTZISkpvTES5q2iz3q95nzokkfgCo/KHqP0wn24CpJL9
-         pvMODIb4HoTgecD8FcT1w7Ja3HngvhQfI2vGkdgUmhcdbbwx0EpaiTitSfRSe1Udm9nY
-         2caw==
-X-Gm-Message-State: ACrzQf3qqNmTJZ7CbcK++XoNfsuAb/aX3O9Xa3vAIWhevPX5ztxj/V79
-        uvbRF7fgEXUTHYCupmtHv24YJFM1NpP5wQ==
-X-Google-Smtp-Source: AMsMyM5srUN7LgOKVByHbfcvEea1+HhebiTNCmHDdYR4QWajUt3lhjmINX2joydGtEzsld+Do7ujiQ==
-X-Received: by 2002:a5d:4cd2:0:b0:236:ca9e:79d8 with SMTP id c18-20020a5d4cd2000000b00236ca9e79d8mr31097307wrt.234.1667930644884;
-        Tue, 08 Nov 2022 10:04:04 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id m1-20020a7bca41000000b003c6c3fb3cf6sm11960077wml.18.2022.11.08.10.04.04
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uCfFBPnvKgh1kXxmqYQOr9Dj76h0DzapsRsTmMteAyo=;
+        b=tTh78YsINRgNIDFHSt4yBByFvf35PEcK7ER3X7/Haiudj/IJGngRdBLGfMSg20z2x2
+         nIH4PDeP7Ipb+Xf+Etqx920qPa5ClGZYSqJvH6reYMRu1P3K1AIyFrjcfx7o+hr9yN9U
+         eZqBg3bhoQaTQLY5P8tDmmJrHhUL15jpoajxRyUZYUGnb1yYQDE0DoWeEkGyS3gEC1jU
+         td0r5dVnmQ9pzBY3SDXOBTuVasE5LHs3eHSFVcLcUK101Jnbh3aDd8VwRfK98RhvzqWh
+         HxwKADyoTZFOYH8mGZ3WjA5JVqcuIuwNPu3s2VtE8frFs8RpBe+3wacuuxLk27XQz+kM
+         b6eg==
+X-Gm-Message-State: ANoB5pmZUMRU7eovKnsAAywlzzUxFZ8Yt3nG4cprY739srVZt9ol0Vz+
+        lWgceR05a2MReTv8vnYFxzXJYRU6uz6J4g==
+X-Google-Smtp-Source: AA0mqf5IwHC6JWNP+c7u4NO+CCMmNKWD3xYJivdfKnBsQQOObhTs4zo9bPlWFPCKqafEzPuMCD7pbQ==
+X-Received: by 2002:a17:907:2e0b:b0:7a7:d37e:4650 with SMTP id ig11-20020a1709072e0b00b007a7d37e4650mr13427702ejc.261.1667936544550;
+        Tue, 08 Nov 2022 11:42:24 -0800 (PST)
+Received: from fedora.. (dh207-98-26.xnet.hr. [88.207.98.26])
+        by smtp.googlemail.com with ESMTPSA id p20-20020aa7cc94000000b00457c85bd890sm5916142edt.55.2022.11.08.11.42.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 10:04:04 -0800 (PST)
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-amlogic <linux-amlogic-bounces@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.2
-Date:   Tue, 08 Nov 2022 18:59:18 +0100
-Message-ID: <1j1qqd1fxo.fsf@starbuckisacylon.baylibre.com>
+        Tue, 08 Nov 2022 11:42:23 -0800 (PST)
+From:   Robert Marko <robimarko@gmail.com>
+To:     andersson@kernel.org, agross@kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH] clk: qcom: ipq8074: populate fw_name for all parents
+Date:   Tue,  8 Nov 2022 20:42:17 +0100
+Message-Id: <20221108194217.553303-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+It appears that having only .name populated in parent_data for clocks
+which are only globally searchable currently will not work as the clk core
+won't copy that name if there is no .fw_name present as well.
 
-Hi Stephen,
+So, populate .fw_name for all parent clocks in parent_data.
 
-Here are the amlogic clock updates for v6.2.
-There is just 2 PLL driver fixes.
+Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
 
-These are actually the same I sent for v6.1 but it seems something was
-off with the mail and it got lost.
+Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 48 +++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-Cheers
-Jerome
-
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
-
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.2-1
-
-for you to fetch changes up to d73406ed2dcfab7d25493ff3a62dd57f0d9c2bf2:
-
-  clk: meson: pll: add pcie lock retry workaround (2022-11-08 17:05:02 +0100)
-
-----------------------------------------------------------------
-Amlogic clock updates for v6.1
-
-* Adds 2 PLL driver fixups
-
-----------------------------------------------------------------
-Heiner Kallweit (2):
-      clk: meson: pll: adjust timeout in meson_clk_pll_wait_lock()
-      clk: meson: pll: add pcie lock retry workaround
-
- drivers/clk/meson/clk-pll.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index d231866804f6..bf64aa683605 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -1137,7 +1137,7 @@ static const struct freq_tbl ftbl_nss_noc_bfdcd_clk_src[] = {
  
+ static const struct clk_parent_data gcc_xo_bias_pll_nss_noc_clk_gpll0_gpll2[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "bias_pll_nss_noc_clk" },
++	{ .fw_name = "bias_pll_nss_noc_clk", .name = "bias_pll_nss_noc_clk" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll2.clkr.hw },
+ };
+@@ -1362,7 +1362,7 @@ static const struct freq_tbl ftbl_nss_ppe_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_bias_gpll0_gpll4_nss_ubi32[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll4.clkr.hw },
+ 	{ .hw = &nss_crypto_pll.clkr.hw },
+@@ -1413,10 +1413,10 @@ static const struct freq_tbl ftbl_nss_port1_rx_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_ubi32_bias[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "uniphy0_gcc_rx_clk" },
+-	{ .name = "uniphy0_gcc_tx_clk" },
++	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
++	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
+ 	{ .hw = &ubi32_pll.clkr.hw },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ };
+ 
+ static const struct parent_map gcc_xo_uniphy0_rx_tx_ubi32_bias_map[] = {
+@@ -1465,10 +1465,10 @@ static const struct freq_tbl ftbl_nss_port1_tx_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_ubi32_bias[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "uniphy0_gcc_tx_clk" },
+-	{ .name = "uniphy0_gcc_rx_clk" },
++	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
++	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
+ 	{ .hw = &ubi32_pll.clkr.hw },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ };
+ 
+ static const struct parent_map gcc_xo_uniphy0_tx_rx_ubi32_bias_map[] = {
+@@ -1696,12 +1696,12 @@ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_uniphy1_rx_tx_ubi32_bias[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "uniphy0_gcc_rx_clk" },
+-	{ .name = "uniphy0_gcc_tx_clk" },
+-	{ .name = "uniphy1_gcc_rx_clk" },
+-	{ .name = "uniphy1_gcc_tx_clk" },
++	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
++	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
++	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
++	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
+ 	{ .hw = &ubi32_pll.clkr.hw },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ };
+ 
+ static const struct parent_map
+@@ -1758,12 +1758,12 @@ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_uniphy1_tx_rx_ubi32_bias[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "uniphy0_gcc_tx_clk" },
+-	{ .name = "uniphy0_gcc_rx_clk" },
+-	{ .name = "uniphy1_gcc_tx_clk" },
+-	{ .name = "uniphy1_gcc_rx_clk" },
++	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
++	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
++	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
++	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
+ 	{ .hw = &ubi32_pll.clkr.hw },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ };
+ 
+ static const struct parent_map
+@@ -1820,10 +1820,10 @@ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_uniphy2_rx_tx_ubi32_bias[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "uniphy2_gcc_rx_clk" },
+-	{ .name = "uniphy2_gcc_tx_clk" },
++	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
++	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
+ 	{ .hw = &ubi32_pll.clkr.hw },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ };
+ 
+ static const struct parent_map gcc_xo_uniphy2_rx_tx_ubi32_bias_map[] = {
+@@ -1877,10 +1877,10 @@ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
+ 
+ static const struct clk_parent_data gcc_xo_uniphy2_tx_rx_ubi32_bias[] = {
+ 	{ .fw_name = "xo", .name = "xo" },
+-	{ .name = "uniphy2_gcc_tx_clk" },
+-	{ .name = "uniphy2_gcc_rx_clk" },
++	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
++	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
+ 	{ .hw = &ubi32_pll.clkr.hw },
+-	{ .name = "bias_pll_cc_clk" },
++	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
+ };
+ 
+ static const struct parent_map gcc_xo_uniphy2_tx_rx_ubi32_bias_map[] = {
+-- 
+2.38.1
+
