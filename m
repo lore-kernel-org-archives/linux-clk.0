@@ -2,105 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42692C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 21:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB24C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 21:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbiKHVpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 16:45:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58978 "EHLO
+        id S229948AbiKHV4f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 16:56:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiKHVpA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 16:45:00 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86285205DC
-        for <linux-clk@vger.kernel.org>; Tue,  8 Nov 2022 13:44:58 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id l12so11905421lfp.6
-        for <linux-clk@vger.kernel.org>; Tue, 08 Nov 2022 13:44:58 -0800 (PST)
+        with ESMTP id S229880AbiKHV4d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 16:56:33 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08F16317B;
+        Tue,  8 Nov 2022 13:56:32 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id j15so23070276wrq.3;
+        Tue, 08 Nov 2022 13:56:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R7GvA9tWHY9AZLa68stWjC6ce95xZqCDLqklXANIaMI=;
-        b=FDTIpogtFzwz+utu1RvLlPJwx0Ac3AjlCx2mmoVLjD0dF7IjEEJljt/bM17A7MQBlQ
-         C5wNLCHdVn3mfaQ5H7fZccsgqaxGyh2U8EkO2Adq17rr4Cnf9L/Y4PcSw8AYDHrICljs
-         HrJEMHHoTBlurNSypUQ00jnZV2WB9REb8u/2lNV7BWF59fuQvtvat5Ti5wIcTBul8BlK
-         EVaSUxNUEXxaxHz1EcL9zpwv+AKzqPiCpg4XNw4i6UquLHXqCDaeREksiNU9aVikxV5V
-         lNgjZNu2BKnCLPX52tW0Fu7CzBy1LmexnKXLszY9wOLHTh5SPStyU82Fh0IfIskEUqsK
-         sS5A==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWi8AsnAXr1L5oWziawccETw/TpocZBIIBOJfBTzhJE=;
+        b=pjyFWfPlWsQy1nigSqke8Z0vXoHkUnsJH/2DB4nkoRCuL+5G3QbHge3HcayNZzFM57
+         fp1M3nPpxluF6CSUTGvF+qk+TVJ3UjY17/hoQJcGOWZvr5U0Qa7fvgKH/98XqfDcO6xp
+         zJjl+zRGWCCYwX4QWwvvDCSZ5QNT9J3bYb+p6qnbszVghd8dC9JhZn9LXjRJj9mXVgxS
+         KP4getsFS2tUGMkXJVR/EE44/nMw6XOhJYYl9R5L///w9YU7yIl9PNywnaPsyGI3JXJ3
+         h8RpWwTPGffZoQYt1voeCE8arRE4qjkrHX31rYSQKBumqkz9q87EeTFy9eW2oWRs1P4J
+         6pkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7GvA9tWHY9AZLa68stWjC6ce95xZqCDLqklXANIaMI=;
-        b=T8/lEFw88DldgK4gVIpJTQxEpR2O9gMOIxXAUTbcJfrqhmG7XXXhN+ggcTcujJrkrj
-         dVb/VuXeovjar41mMMS1waDkLOFTjBwqUbZnhilB/XUFKlaJlgVR/mwfJv78EJAXHQIi
-         wGeWSIDv9WJLVuOzJOnkySmhOOEOO2d4i379hX82qEjwyw7Mz/uJlEOBGixwfvAdtZ1j
-         2SeOymvwDPOAL18Rncv3B5+9ENoRfuQoML3MJl28dPh76t/MczdurvqZ8t3vdTOMPJA3
-         RwwHmcgyE/tUPhZXEiBjDILcnNveZ/5kAoOm+t4T45zriT6PI0Ib+UZm2Y0VDGVIrdI9
-         pXKw==
-X-Gm-Message-State: ACrzQf0Iei6UA2eCD63byIU8j7mwY3YhQ0k+QXvc4Ju0T3764nRmOQcY
-        klAEUo2PY8kMJd2FXLfwUZ8KFQ==
-X-Google-Smtp-Source: AMsMyM7bk4YRCc7fnjkk2YezhdntiCoZAiuwNqo1hcV86e5RpCoobNCXy3pEDPEGqk2X0JmcRwj6RQ==
-X-Received: by 2002:a05:6512:3085:b0:4a2:7d80:d4b4 with SMTP id z5-20020a056512308500b004a27d80d4b4mr21488256lfd.534.1667943896931;
-        Tue, 08 Nov 2022 13:44:56 -0800 (PST)
-Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id k16-20020a0565123d9000b0048b003c4bf7sm1918463lfv.169.2022.11.08.13.44.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Nov 2022 13:44:56 -0800 (PST)
-Message-ID: <0da15378-ca0d-4f26-c21c-184de2a89350@linaro.org>
-Date:   Tue, 8 Nov 2022 22:44:55 +0100
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fWi8AsnAXr1L5oWziawccETw/TpocZBIIBOJfBTzhJE=;
+        b=cQ1FMls8X9GSbIgPvYmlcBDBPSdTW4pvf44RIFILA+4GXxpMqZDaOig0nuKKJbLRRe
+         n05AwhbH/l+3MTc0k5D6kxMAKMNA7jzOLp3bijsFr9OAXgZRMiBiJfsrj8wTTjI4sORj
+         DLyfEVJz6Fr4e9uI3JShZAOmRoafhnf7cVtOFK35U9SCIs0fHNxV7Z7Y9m7dxrwST02d
+         L03IObU5vPM0CECC3sSCZB8HzjFKbyAtVbQatB4gavWi8PfjpQiblWwDlIS6BGoMMSG7
+         SVEz7sm05gw/sQkJAHXG+z8Y15zJv6S18uHSr803Ii9fbR0OHxR79aXKD0hmQ3WvhcaA
+         m+SA==
+X-Gm-Message-State: ACrzQf01qfKhJaJhjNKnSFjS4c9RIdfwXuGLSL/4jrh69IYfX8VZ7+tT
+        LCjhLl/GdTqPYenBZGtzVMg=
+X-Google-Smtp-Source: AMsMyM5ORItwMz8VDKtN780mz5LkE8pwEh5xtrCs0HjkrgOdXkxarj2n4V3w0AnPPRI1+oKRW/V7wQ==
+X-Received: by 2002:adf:f701:0:b0:236:e2b2:3b69 with SMTP id r1-20020adff701000000b00236e2b23b69mr27489598wrp.532.1667944591163;
+        Tue, 08 Nov 2022 13:56:31 -0800 (PST)
+Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
+        by smtp.googlemail.com with ESMTPSA id m3-20020a05600c4f4300b003b47b80cec3sm17050256wmq.42.2022.11.08.13.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Nov 2022 13:56:30 -0800 (PST)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH] clk: qcom: clk-krait: fix wrong div2 functions
+Date:   Tue,  8 Nov 2022 22:56:25 +0100
+Message-Id: <20221108215625.30186-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] clk: samsung: Revert "clk: samsung: exynos-clkout: Use
- of_device_get_match_data()"
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "Minghao Chi (CGEL ZTE)" <chi.minghao@zte.com.cn>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vinod Koul <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Mark Brown <broonie@kernel.org>
-References: <CGME20221108213728eucas1p2aa97d7925e280b7347bb9e76d3c9a177@eucas1p2.samsung.com>
- <20221108213718.32076-1-m.szyprowski@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221108213718.32076-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/11/2022 22:37, Marek Szyprowski wrote:
-> of_device_get_match_data() function should not be used on the device
-> other than the one matched to the given driver, because it always returns
-> the match_data of the matched driver. In case of exynos-clkout driver,
-> the code matched the OF IDs on the PARENT device, so replacing it with
-> of_device_get_match_data() broke the driver.
-> 
-> This reverts commit 777aaf3d1daf793461269b49c063aca1cee06a44.
+Currently div2 value is applied to the wrong bits. This is caused by a
+bug in the code where the shift is done only for lpl, for anything
+else the mask is not shifted to the correct bits.
 
-This was untested, automated commit and there were several other like
-that from Minghao. Other driver owners should check if they have the
-same issue. I made a quick look and seems fine, but it all depends what
-was the of_device_get_match_data() argument.
+Fix this by correctly shift if lpl is not supported.
 
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 4d7dc77babfe ("clk: qcom: Add support for Krait clocks")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/clk/qcom/clk-krait.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Please add Cc-stable tag. Do reverts need a Fixes tag? I guess as well...
-
-> ---
->  drivers/clk/samsung/clk-exynos-clkout.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+index 45da736bd5f4..293a9dfa7151 100644
+--- a/drivers/clk/qcom/clk-krait.c
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -114,6 +114,8 @@ static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (d->lpl)
+ 		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++	else
++		mask <<= d->shift;
+ 
+ 	spin_lock_irqsave(&krait_clock_reg_lock, flags);
+ 	val = krait_get_l2_indirect_reg(d->offset);
+-- 
+2.37.2
 
