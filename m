@@ -2,198 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA0EC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 19:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4E2C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 20:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229453AbiKHTm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 14:42:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
+        id S229814AbiKHUtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 15:49:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiKHTm1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 14:42:27 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B32F716FA;
-        Tue,  8 Nov 2022 11:42:26 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id f5so41333076ejc.5;
-        Tue, 08 Nov 2022 11:42:26 -0800 (PST)
+        with ESMTP id S229750AbiKHUtp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 15:49:45 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58741FCF5;
+        Tue,  8 Nov 2022 12:49:44 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id o4so22890656wrq.6;
+        Tue, 08 Nov 2022 12:49:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCfFBPnvKgh1kXxmqYQOr9Dj76h0DzapsRsTmMteAyo=;
-        b=IQN9hEauYkqPNz3uDp7hm+fsvMGwRkAil3F6vVajQda2BkKKr+mDQYVUkw/hf2sb+/
-         9OWejEsRzQA6Ww70dbsT3hMJ+hiUZUf+jxELTn2MRZN/ViVJVft2iSI52y1FW56gqU3l
-         8OM+jxM4dVryfewYzxHvdymytD8Z/ronn7yRXRoZK6bzUW88PBJM/L+0iRHl/4KyY+RP
-         NQXhBg6rg1849qSZCmborLA3Rxa1zD8sS10NRb9JWmmCwgYCU72e0qbQ++P1BWgG6zol
-         p2OKptIqXHdpFI8BhlKStG4VPBaqOwKCRcTxNXx7RhmSPfupXK8aFLjQCBkqMt2oHtxH
-         o+ow==
+        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
+        b=gr0qlsWBHZmn1TyGBv/Z2N6uvwlBvwWE79g5ZjVqCw3H/O524aPJcFptGEjZIc02z2
+         Dytm5S0Ysx9sum45onti0DITcgI+h2JgGu8QhV54SYB7sdcsThJuqrjkdoJOVQG1gjHD
+         SunfIdy0Byh3BewQSRIpkIiPTA24q1v5JfBD4139JxnoaWZXy7t8Kze/MVhJ31LMMeKZ
+         LiKNb++ayCxz8og1e3BXVN1Nc9IMKlkKYIGV6c6J4tf0obyiUF1pji+maGTmvs6ciFZC
+         OMvLo4jYyP8bNi/UvBq6m2vjesV4Bm8pzYA52sbRNjS5tRfqfg3x3SUv7SvqdfpiWE2b
+         LMKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uCfFBPnvKgh1kXxmqYQOr9Dj76h0DzapsRsTmMteAyo=;
-        b=tTh78YsINRgNIDFHSt4yBByFvf35PEcK7ER3X7/Haiudj/IJGngRdBLGfMSg20z2x2
-         nIH4PDeP7Ipb+Xf+Etqx920qPa5ClGZYSqJvH6reYMRu1P3K1AIyFrjcfx7o+hr9yN9U
-         eZqBg3bhoQaTQLY5P8tDmmJrHhUL15jpoajxRyUZYUGnb1yYQDE0DoWeEkGyS3gEC1jU
-         td0r5dVnmQ9pzBY3SDXOBTuVasE5LHs3eHSFVcLcUK101Jnbh3aDd8VwRfK98RhvzqWh
-         HxwKADyoTZFOYH8mGZ3WjA5JVqcuIuwNPu3s2VtE8frFs8RpBe+3wacuuxLk27XQz+kM
-         b6eg==
-X-Gm-Message-State: ANoB5pmZUMRU7eovKnsAAywlzzUxFZ8Yt3nG4cprY739srVZt9ol0Vz+
-        lWgceR05a2MReTv8vnYFxzXJYRU6uz6J4g==
-X-Google-Smtp-Source: AA0mqf5IwHC6JWNP+c7u4NO+CCMmNKWD3xYJivdfKnBsQQOObhTs4zo9bPlWFPCKqafEzPuMCD7pbQ==
-X-Received: by 2002:a17:907:2e0b:b0:7a7:d37e:4650 with SMTP id ig11-20020a1709072e0b00b007a7d37e4650mr13427702ejc.261.1667936544550;
-        Tue, 08 Nov 2022 11:42:24 -0800 (PST)
-Received: from fedora.. (dh207-98-26.xnet.hr. [88.207.98.26])
-        by smtp.googlemail.com with ESMTPSA id p20-20020aa7cc94000000b00457c85bd890sm5916142edt.55.2022.11.08.11.42.23
+        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
+        b=DnbOXxjEBIaUyNuy9LN7P1Eokp86v/xxIK3L2/pS0QBot2aezKh3FvGch2/XIwOqTq
+         EoRi78xLvc5uUcjYTD0b6UIQTJtj4LDWJF1NJBoaCcrgiLI/ZzSJED5FMU7XHFwyAhLr
+         a2tWHlCoOxPUYsHZzWq0caGRcc7vNfU6nNKkwBIp17pA4EhB5Y+VnmNGLXOJXw+p8RjB
+         PwktRL0nkNcymHURGfR71jByeVKZSwkJQ6hbNWRB+zZqZ3sB/8nfrubQ9WX77RTJOcFj
+         pkkCvDIAnNFqjg+kLMpwqHkl03uWtM2KOj1Lu2xOsLKbm4/cZQK6rhlHCWz+gxJg4JGf
+         detw==
+X-Gm-Message-State: ACrzQf1GgEyBsOE6HBeGNxzvWdn7dzm4z2sBKzpVQX2YnPXe7Kph9MB8
+        GmsN5A5smzlJiqu7Dw/ht6w=
+X-Google-Smtp-Source: AMsMyM7Ps/b7SlUeqy/KYdhJEp8/q7b0v7pN+IutpGDcykOvoIfsUsTWf8Jw+KICQXlFgaB+pMfO+Q==
+X-Received: by 2002:a5d:650b:0:b0:236:8ead:3ec2 with SMTP id x11-20020a5d650b000000b002368ead3ec2mr37169474wru.434.1667940582813;
+        Tue, 08 Nov 2022 12:49:42 -0800 (PST)
+Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
+        by smtp.googlemail.com with ESMTPSA id q12-20020a5d61cc000000b002238ea5750csm13390370wrv.72.2022.11.08.12.49.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 11:42:23 -0800 (PST)
-From:   Robert Marko <robimarko@gmail.com>
-To:     andersson@kernel.org, agross@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH] clk: qcom: ipq8074: populate fw_name for all parents
-Date:   Tue,  8 Nov 2022 20:42:17 +0100
-Message-Id: <20221108194217.553303-1-robimarko@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Tue, 08 Nov 2022 12:49:41 -0800 (PST)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Robert Marko <robimarko@gmail.com>
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH] clk: Warn and add workaround on misuse of .parent_data with .name only
+Date:   Tue,  8 Nov 2022 21:49:18 +0100
+Message-Id: <20221108204918.2805-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It appears that having only .name populated in parent_data for clocks
-which are only globally searchable currently will not work as the clk core
-won't copy that name if there is no .fw_name present as well.
+By a simple mistake in a .parent_names to .parent_data conversion it was
+found that clk core assume fw_name is always provided with a parent_data
+struct for each parent and never fallback to .name to get parent name even
+if declared.
 
-So, populate .fw_name for all parent clocks in parent_data.
+This is caused by clk_core_get that only checks for parent .fw_name and
+doesn't handle .name.
 
-Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
+While it's sane to request the dev to correctly do the conversion and
+add both .fw_name and .name in a parent_data struct, it's not sane to
+silently drop parents without a warning.
 
-Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
+Fix this in 2 ways. Add a kernel warning when a wrong implementation is
+used and copy .name in .fw_name in parent map populate function to
+handle clk problems and malfunctions.
+
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Signed-off-by: Robert Marko <robimarko@gmail.com>
 ---
- drivers/clk/qcom/gcc-ipq8074.c | 48 +++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/clk/clk.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index d231866804f6..bf64aa683605 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -1137,7 +1137,7 @@ static const struct freq_tbl ftbl_nss_noc_bfdcd_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_bias_pll_nss_noc_clk_gpll0_gpll2[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "bias_pll_nss_noc_clk" },
-+	{ .fw_name = "bias_pll_nss_noc_clk", .name = "bias_pll_nss_noc_clk" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll2.clkr.hw },
- };
-@@ -1362,7 +1362,7 @@ static const struct freq_tbl ftbl_nss_ppe_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_bias_gpll0_gpll4_nss_ubi32[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll4.clkr.hw },
- 	{ .hw = &nss_crypto_pll.clkr.hw },
-@@ -1413,10 +1413,10 @@ static const struct freq_tbl ftbl_nss_port1_rx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_rx_clk" },
--	{ .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy0_rx_tx_ubi32_bias_map[] = {
-@@ -1465,10 +1465,10 @@ static const struct freq_tbl ftbl_nss_port1_tx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_tx_clk" },
--	{ .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy0_tx_rx_ubi32_bias_map[] = {
-@@ -1696,12 +1696,12 @@ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_uniphy1_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_rx_clk" },
--	{ .name = "uniphy0_gcc_tx_clk" },
--	{ .name = "uniphy1_gcc_rx_clk" },
--	{ .name = "uniphy1_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
-+	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map
-@@ -1758,12 +1758,12 @@ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_uniphy1_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_tx_clk" },
--	{ .name = "uniphy0_gcc_rx_clk" },
--	{ .name = "uniphy1_gcc_tx_clk" },
--	{ .name = "uniphy1_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
-+	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map
-@@ -1820,10 +1820,10 @@ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy2_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy2_gcc_rx_clk" },
--	{ .name = "uniphy2_gcc_tx_clk" },
-+	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
-+	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy2_rx_tx_ubi32_bias_map[] = {
-@@ -1877,10 +1877,10 @@ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy2_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy2_gcc_tx_clk" },
--	{ .name = "uniphy2_gcc_rx_clk" },
-+	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
-+	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy2_tx_rx_ubi32_bias_map[] = {
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 57b83665e5c3..dccd4ea6f692 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4015,10 +4015,21 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 			ret = clk_cpy_name(&parent->name, parent_names[i],
+ 					   true);
+ 		} else if (parent_data) {
++			const char *parent_name;
++
+ 			parent->hw = parent_data[i].hw;
+ 			parent->index = parent_data[i].index;
++			parent_name = parent_data[i].fw_name;
++
++			if (!parent_name && parent_data[i].name) {
++				WARN(1, "Empty .fw_name with .name in %s's .parent_data. Using .name for .fw_name declaration.\n",
++				     core->name);
++				parent_name = parent_data[i].name;
++			}
++
+ 			ret = clk_cpy_name(&parent->fw_name,
+-					   parent_data[i].fw_name, false);
++					   parent_name, false);
++
+ 			if (!ret)
+ 				ret = clk_cpy_name(&parent->name,
+ 						   parent_data[i].name,
 -- 
-2.38.1
+2.37.2
 
