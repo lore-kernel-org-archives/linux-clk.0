@@ -2,60 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4E2C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 20:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C65B6C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 21:17:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbiKHUtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 15:49:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57152 "EHLO
+        id S229660AbiKHVRu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 16:17:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbiKHUtp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 15:49:45 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58741FCF5;
-        Tue,  8 Nov 2022 12:49:44 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id o4so22890656wrq.6;
-        Tue, 08 Nov 2022 12:49:44 -0800 (PST)
+        with ESMTP id S229801AbiKHVRr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 16:17:47 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5069160356;
+        Tue,  8 Nov 2022 13:17:43 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id y16so22893544wrt.12;
+        Tue, 08 Nov 2022 13:17:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
-        b=gr0qlsWBHZmn1TyGBv/Z2N6uvwlBvwWE79g5ZjVqCw3H/O524aPJcFptGEjZIc02z2
-         Dytm5S0Ysx9sum45onti0DITcgI+h2JgGu8QhV54SYB7sdcsThJuqrjkdoJOVQG1gjHD
-         SunfIdy0Byh3BewQSRIpkIiPTA24q1v5JfBD4139JxnoaWZXy7t8Kze/MVhJ31LMMeKZ
-         LiKNb++ayCxz8og1e3BXVN1Nc9IMKlkKYIGV6c6J4tf0obyiUF1pji+maGTmvs6ciFZC
-         OMvLo4jYyP8bNi/UvBq6m2vjesV4Bm8pzYA52sbRNjS5tRfqfg3x3SUv7SvqdfpiWE2b
-         LMKw==
+        bh=JaQ3qz4RAxB0OZvGVNsixJMinEHr+Sa/4oPbj4kqOBA=;
+        b=Mxkb/CgpSin7mV3Vzf7xtXQ0c62wTqd7CKX7ftEpwmSr7vrwIteF4BqUjxqqimJfTO
+         IdU74fecVdLsD4gBDDKI8JiEM8XHjIkdVyBz6pt+u6SmqZZzNW5yomEbh71H0n55/NtE
+         kgoElk2VPcuCzbRSLaodyhNoLS6mT2oHHy76rNhb7rW7LVF3a2+1GVNf1SMrmNxr+UaR
+         7P/FDnrDlOS2zM1Bdf1RTnMh0O9o5TF0Dpsbtl6KmRUYSkLSL8eZ6h1/h8MiDqhGAILs
+         J5UO8W5IsvH5WUQ9L8vHJUf8IQVxvwuv4xTxRPHk3dkMpaPw9st5uPmQQJVNhPjqAmzQ
+         te3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
-        b=DnbOXxjEBIaUyNuy9LN7P1Eokp86v/xxIK3L2/pS0QBot2aezKh3FvGch2/XIwOqTq
-         EoRi78xLvc5uUcjYTD0b6UIQTJtj4LDWJF1NJBoaCcrgiLI/ZzSJED5FMU7XHFwyAhLr
-         a2tWHlCoOxPUYsHZzWq0caGRcc7vNfU6nNKkwBIp17pA4EhB5Y+VnmNGLXOJXw+p8RjB
-         PwktRL0nkNcymHURGfR71jByeVKZSwkJQ6hbNWRB+zZqZ3sB/8nfrubQ9WX77RTJOcFj
-         pkkCvDIAnNFqjg+kLMpwqHkl03uWtM2KOj1Lu2xOsLKbm4/cZQK6rhlHCWz+gxJg4JGf
-         detw==
-X-Gm-Message-State: ACrzQf1GgEyBsOE6HBeGNxzvWdn7dzm4z2sBKzpVQX2YnPXe7Kph9MB8
-        GmsN5A5smzlJiqu7Dw/ht6w=
-X-Google-Smtp-Source: AMsMyM7Ps/b7SlUeqy/KYdhJEp8/q7b0v7pN+IutpGDcykOvoIfsUsTWf8Jw+KICQXlFgaB+pMfO+Q==
-X-Received: by 2002:a5d:650b:0:b0:236:8ead:3ec2 with SMTP id x11-20020a5d650b000000b002368ead3ec2mr37169474wru.434.1667940582813;
-        Tue, 08 Nov 2022 12:49:42 -0800 (PST)
+        bh=JaQ3qz4RAxB0OZvGVNsixJMinEHr+Sa/4oPbj4kqOBA=;
+        b=O5jIoRuwOl76Y+RFl01irGjqcMjobSB7vlZhCRia+/s2NzyliHhB6KvEat9fihCjE2
+         pv3IvyZoVKwFMuLV1BnWnzl9iJYfcRtjMqWm6duyWdEHUemhsy7aUqImr/BEhlXjfVNQ
+         /jACiGb7jNPiyDT+pjnqo0Sq+LY1V1jEAT3odG9dtugusNs4K0Bl0sseRVO3TrcnK4yM
+         p4A1wrc132N6PgJyYu3RJJ/7dZ2sUP0F0sFzhpzrsPWbtzRZRaHJSRfB4LxtEg+5dQz+
+         grWC4sGoibky1R7mp+DPAOIRltnZRAfo4SLYLYbhcPvyBW5NcrIYOI/GGMTphogi62JJ
+         be3A==
+X-Gm-Message-State: ANoB5pmewRM5+PqfvcX/QBFPzuo1Xrf6YriT7hjUmeBtqJcVBjO1KYdb
+        JCk7kzednJZ/HJ5Gca46Fz8=
+X-Google-Smtp-Source: AA0mqf7mkBlhcgeIAGPGEoDIwmMAx1+Q45J2QmFuenk0lQtrrRcgqL9tIt1S+mF1faiCdr4d3DuoSg==
+X-Received: by 2002:a5d:6392:0:b0:23b:4b0d:4591 with SMTP id p18-20020a5d6392000000b0023b4b0d4591mr15899667wru.635.1667942261715;
+        Tue, 08 Nov 2022 13:17:41 -0800 (PST)
 Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.googlemail.com with ESMTPSA id q12-20020a5d61cc000000b002238ea5750csm13390370wrv.72.2022.11.08.12.49.41
+        by smtp.googlemail.com with ESMTPSA id t20-20020a05600c199400b003cf9bf5208esm14337980wmq.19.2022.11.08.13.17.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 12:49:41 -0800 (PST)
+        Tue, 08 Nov 2022 13:17:41 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robert Marko <robimarko@gmail.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH] clk: Warn and add workaround on misuse of .parent_data with .name only
-Date:   Tue,  8 Nov 2022 21:49:18 +0100
-Message-Id: <20221108204918.2805-1-ansuelsmth@gmail.com>
+Subject: [PATCH] clk: qcom: kpss-xcc: register it as clk provider
+Date:   Tue,  8 Nov 2022 22:17:34 +0100
+Message-Id: <20221108211734.3707-1-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,54 +66,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By a simple mistake in a .parent_names to .parent_data conversion it was
-found that clk core assume fw_name is always provided with a parent_data
-struct for each parent and never fallback to .name to get parent name even
-if declared.
-
-This is caused by clk_core_get that only checks for parent .fw_name and
-doesn't handle .name.
-
-While it's sane to request the dev to correctly do the conversion and
-add both .fw_name and .name in a parent_data struct, it's not sane to
-silently drop parents without a warning.
-
-Fix this in 2 ways. Add a kernel warning when a wrong implementation is
-used and copy .name in .fw_name in parent map populate function to
-handle clk problems and malfunctions.
+krait-cc use this driver for the secondary mux. Register it as a clk
+provider to correctly use this clk in other drivers.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/clk/clk.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/kpss-xcc.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 57b83665e5c3..dccd4ea6f692 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4015,10 +4015,21 @@ static int clk_core_populate_parent_map(struct clk_core *core,
- 			ret = clk_cpy_name(&parent->name, parent_names[i],
- 					   true);
- 		} else if (parent_data) {
-+			const char *parent_name;
+diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
+index b1b370274ec4..97358c98c6c9 100644
+--- a/drivers/clk/qcom/kpss-xcc.c
++++ b/drivers/clk/qcom/kpss-xcc.c
+@@ -31,12 +31,13 @@ MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
+ 
+ static int kpss_xcc_driver_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	const struct of_device_id *id;
+ 	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	const char *name;
+ 
+-	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
++	id = of_match_device(kpss_xcc_match_table, dev);
+ 	if (!id)
+ 		return -ENODEV;
+ 
+@@ -45,7 +46,7 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	if (id->data) {
+-		if (of_property_read_string_index(pdev->dev.of_node,
++		if (of_property_read_string_index(dev->of_node,
+ 						  "clock-output-names",
+ 						  0, &name))
+ 			return -ENODEV;
+@@ -55,12 +56,16 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
+ 		base += 0x28;
+ 	}
+ 
+-	hw = devm_clk_hw_register_mux_parent_data_table(&pdev->dev, name, aux_parents,
++	hw = devm_clk_hw_register_mux_parent_data_table(dev, name, aux_parents,
+ 							ARRAY_SIZE(aux_parents), 0,
+ 							base, 0, 0x3,
+ 							0, aux_parent_map, NULL);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
+ 
+-	return PTR_ERR_OR_ZERO(hw);
++	of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get, hw);
 +
- 			parent->hw = parent_data[i].hw;
- 			parent->index = parent_data[i].index;
-+			parent_name = parent_data[i].fw_name;
-+
-+			if (!parent_name && parent_data[i].name) {
-+				WARN(1, "Empty .fw_name with .name in %s's .parent_data. Using .name for .fw_name declaration.\n",
-+				     core->name);
-+				parent_name = parent_data[i].name;
-+			}
-+
- 			ret = clk_cpy_name(&parent->fw_name,
--					   parent_data[i].fw_name, false);
-+					   parent_name, false);
-+
- 			if (!ret)
- 				ret = clk_cpy_name(&parent->name,
- 						   parent_data[i].name,
++	return 0;
+ }
+ 
+ static struct platform_driver kpss_xcc_driver = {
 -- 
 2.37.2
 
