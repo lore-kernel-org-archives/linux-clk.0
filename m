@@ -2,151 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B06FC4321E
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 13:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DECC43217
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Nov 2022 16:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233382AbiKHN1V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 08:27:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60994 "EHLO
+        id S233727AbiKHQ4g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 11:56:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234129AbiKHN1U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 08:27:20 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 202B71D64A
-        for <linux-clk@vger.kernel.org>; Tue,  8 Nov 2022 05:27:19 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id b2so38578403eja.6
-        for <linux-clk@vger.kernel.org>; Tue, 08 Nov 2022 05:27:19 -0800 (PST)
+        with ESMTP id S234207AbiKHQ4f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 11:56:35 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E7995986B
+        for <linux-clk@vger.kernel.org>; Tue,  8 Nov 2022 08:56:33 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id k19so22033177lji.2
+        for <linux-clk@vger.kernel.org>; Tue, 08 Nov 2022 08:56:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/2yj1vtV3WtEYwU3cNvgg/PVgtVCmwn3eJn8jo49wk=;
-        b=VMnat+U1KSonabFKRPuR13L5JqFFcM/AvvqPUwa+9VtqcDpyz6Op4uI9k8fhWWUfgj
-         OQMGyd7nBSVagfiyDveayuziCLNEcnxn2ErDoMUoLlpt3yo8/JHVhiTmfW1xUoXEQ8ch
-         5jJZRKNOXfrIQxouT0FZtywu8oBKzwLv6/7PIprEyWb5tHAmIqyiFvsPphy4dzO+D1O/
-         ByJEsT3p8EBbAPP+gKvFSCFRhufjqGSeVaHTdjl/xTUCo6crbpyBuirSVOUQflk15qBf
-         1q39gU7+oVdTRiJwpV9lCujVgxFVrOBGfRo6fbxcreewXR1hDWvKWjF1rSAwPNJVX2jh
-         IlsQ==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hC7+VolI2Xokgb3dmDEH4B60P4b9V47rxRyDrGnv7BY=;
+        b=Kvh1XU2ygifF8pd1pPYP3ss9QpfF5Pm4e3f1LTjwSDi8McME5MKp5XYnCoKryE5a4L
+         LI10oVlOhIkZ5ZAlQa2vWVShH3If5lawcb1l+4YhnVKgTA8vjrdjmExReZS+4dU0xdrY
+         29F0K2HTD4i/7U61F2duHKuWHCoVGdoF68T+gklopltu9ERau/FjUceOuEcWiUimBMBj
+         vvmcoHNOFd3UBBwUwcbNoA5QloXV3ObbT+WHvHiCmxSSkkTvbkiJ6ttu+amvAHPp960H
+         NXVtEsSN9z31KIxQVXmJEMh0L2RgPcpFPHoR+ATjYNAwpRnlKkvEaEtJSTPy88dkPVwC
+         dXKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N/2yj1vtV3WtEYwU3cNvgg/PVgtVCmwn3eJn8jo49wk=;
-        b=JMNJz5f+/j48jW3Rn0xeEmRvPSwzpeKv5o/1WjUnZAZiuhkn07C4nsDL0nrwoohpCg
-         LQkyjMXSk1to/m1MZcolfMc4rSTCG1FfrHEUAy0LPxY73FWEnsOBD7V2tTzMFRW9jTbi
-         WxgqZ2KW8B0Jb5dMfkLFAqy4Y0YX3PK4pfFy2P55xlXlgdXgBY0wwClKpf6XxL3oy8R1
-         6loFfzcYG6ptQYOO5DdU0INIkdDTPDuQQJPWiKWy+Fr2dUkpZHFxTYm0Ykuyg1l3paMA
-         efOv6ol61HaCyzvb1jAItIL+UZhuv+jD57Raitdx+qnb2uD8bUdJQPN7QUj7dRhTrtr0
-         yuWQ==
-X-Gm-Message-State: ACrzQf1zRIgZDx5ci03lDlzpsydeh6tu40jLtcisdvg48GlQtxFVNetp
-        ptMcxIMWjTzOYobQRr7/6U61N8Hxj6NrDgsOcI9Rqg==
-X-Google-Smtp-Source: AMsMyM4SQlliAGfUpQoe5HVHzBogl+LIrkzKv8wyDOakcTA7xnKfY84HO6wUWBApVXLz+WmeEpt0AVEmstNop5fvJLQ=
-X-Received: by 2002:a17:906:4c4b:b0:7ad:a197:b58e with SMTP id
- d11-20020a1709064c4b00b007ada197b58emr54058070ejw.203.1667914037645; Tue, 08
- Nov 2022 05:27:17 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hC7+VolI2Xokgb3dmDEH4B60P4b9V47rxRyDrGnv7BY=;
+        b=4iOHMxAYcd/PN57yE8tq5x/4t8qec+tSH4/dyJBbH6RHcvOdWE/SCYLr/rSTrsFcTt
+         +S6bmAIGs2fc0KAfN6rWG/COIIo/G+jwAO7Ma4Ey8EPQWlxsFZ7JNuJFQSyrtjeorApA
+         Xi3NGiWoxAWwiwnATtNCbTZmNqprfoUJbUMxj+nnBLRA/q8kusWG6rguHuLwjcaPQvud
+         sJBezcooL6vK1SdhCy90d/aiizqsLmghJkg69RU1uQPocQgHWH6Aiisix1GkdgAbldoV
+         1ILaj0Ofgre2NpHnfV/j3PFi5uhi35xv/JcO6n2mcI6r5ajQQuL4+R64ERw1D0ZJmNGe
+         U69w==
+X-Gm-Message-State: ACrzQf02X1xSvMXk+LIiJuDLvQUBbMolkwEnJcZo0yUOzguAWbFNDDVJ
+        sYbmHoZt8QCMdZ3CDtaQuJyBDg==
+X-Google-Smtp-Source: AMsMyM4XfQkuOM+aro7Fw77Bc9UCPCloL04gi1Xnx+NAhUmjFjVBoBMf3JHPikC/1fibOF/L2SZuWQ==
+X-Received: by 2002:a2e:a910:0:b0:26a:ed13:cda6 with SMTP id j16-20020a2ea910000000b0026aed13cda6mr18721501ljq.250.1667926591517;
+        Tue, 08 Nov 2022 08:56:31 -0800 (PST)
+Received: from [192.168.31.208] ([194.29.137.22])
+        by smtp.gmail.com with ESMTPSA id u3-20020a05651220c300b0049e9122bd1bsm1841693lfr.164.2022.11.08.08.56.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Nov 2022 08:56:30 -0800 (PST)
+Message-ID: <34f22ebb-2b9c-080f-697d-b37cd6deeed0@linaro.org>
+Date:   Tue, 8 Nov 2022 17:56:29 +0100
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech> <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 8 Nov 2022 14:27:06 +0100
-Message-ID: <CACRpkdaOM=T1pRJNK6hdc76m5tQfrjvF9nVBp7ZDf3wOMNSwyg@mail.gmail.com>
-Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.4.1
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add SC8280XP display clock controller
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220926203800.16771-1-quic_bjorande@quicinc.com>
+ <20220926203800.16771-3-quic_bjorande@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20220926203800.16771-3-quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 2:32 PM Maxime Ripard <maxime@cerno.tech> wrote:
 
-> The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
->
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
->
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
->
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
->
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On 26/09/2022 22:38, Bjorn Andersson wrote:
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> The Qualcomm SC8280XP platform has two display clock controller
+> instances, add support for these. Duplication between the two
+> implementations is reduced by reusing any constant data between the two
+> sets of clock data.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+Just a couple of bits:
 
-Yours,
-Linus Walleij
+- Use lowercase hex in constants
+- I'm not sure I like hacking clocks up with magic writes.. this
+driver can and will be compiled as a module by default and that
+prevents a de-facto clean removal.
+
+Other than that:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
