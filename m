@@ -2,153 +2,241 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADA9C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 09:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A431C43217
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 10:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbiKIJ1E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 04:27:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32986 "EHLO
+        id S230000AbiKIKy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 05:54:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbiKIJ06 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 04:26:58 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8085D19C22
-        for <linux-clk@vger.kernel.org>; Wed,  9 Nov 2022 01:26:57 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oshMF-0005Xb-1w; Wed, 09 Nov 2022 10:26:55 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oshMD-003DwK-Fv; Wed, 09 Nov 2022 10:26:54 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oshMD-00FO8i-OD; Wed, 09 Nov 2022 10:26:53 +0100
-Date:   Wed, 9 Nov 2022 10:26:53 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Doug Brown <doug@schmorgal.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] pwm: pxa: Wait for final PWM period to finish
-Message-ID: <20221109092653.qwwexcclg6gxn4cu@pengutronix.de>
-References: <20221003015546.202308-1-doug@schmorgal.com>
- <20221003015546.202308-5-doug@schmorgal.com>
- <20221019073929.3abj6ohhcreifyso@pengutronix.de>
- <a9c974f1-fc66-b964-c7f0-b7e4320f2177@schmorgal.com>
+        with ESMTP id S230013AbiKIKxl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 05:53:41 -0500
+Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3684D29C96;
+        Wed,  9 Nov 2022 02:53:12 -0800 (PST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id DB383580373;
+        Wed,  9 Nov 2022 05:53:07 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 09 Nov 2022 05:53:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1667991187; x=
+        1667998387; bh=rFpYMyteGOfAqhSkg+1Bq7UwfUr5hnbTR+ptZFTnXBQ=; b=d
+        9rjnj7HnOCP1X+SeQUgsQ3IucDnvzVGLm2dELGG3KHGc2Jaz/S56DblOlUBpxzB4
+        F8quqM+/7OFrlXJn61DnRvwbQIZE/xZR2lNx7cP/SAXozs7KtEYdwt02SrGKK7o1
+        us2EVYHqbSj7KNt7xi1NhBc9wKAP8MfhUM0qaadptAb+neoi1BJ6o1QmkqU02Yfe
+        0berZ0jxZQyBFqCfBIp+3sxuin8dyghdLbYvan6AnvyFPiMh0OpKlO0Q873v29v6
+        40IUtYpj5tqlPVfpABde2xwOgYTe4Z5iqblUUuTOjmN5BKyv6bKPG374pPg/EJaH
+        zFSsQ9oCcIk4mHkKvPhAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1667991187; x=
+        1667998387; bh=rFpYMyteGOfAqhSkg+1Bq7UwfUr5hnbTR+ptZFTnXBQ=; b=p
+        RvaZdegoo2TmyzmHQIkCS03rw/7QVrFwy+X8QhAzFw/G6qH9r4J8ABXk7q+j013D
+        ry+b+FzVgm0cS7diKNbZIv8W01PzwZlHlybUaFDwHWe++fB9Op0H6BXbZfkn22Hb
+        HvbxHtoCFEWsveHrV0TtYwlGYDxy/N64quV1biXWdpdhxuqaEoVLtJHi4MSKcD71
+        QIwwAaG97ix6C0FRIJAb1kYZvY5gxrN6RnsFwtHkfpGM26U/bkbi4xxQnTAt3imD
+        yTtVN1SLm0l2gXP7IeFVD2+1W71uoDjiXRfgUjYx78vkchBd4D0CxIUrqYHRYOde
+        vbFo6b6W4+xzk/AGPivkg==
+X-ME-Sender: <xms:kYZrY-tLlhO6ZUAX9-k6sQ88O6bV79mbri2Vu76BsCNU2WtceqQM4g>
+    <xme:kYZrYzeRzW2Xx9j5Vy5SrsKV1Axlb9W7IJm4to7NCoXBCQ2mA7sktDRmLvppOlH7N
+    Ko8eEGURV2x6lC8hQM>
+X-ME-Received: <xmr:kYZrY5yWEvlS3RcwFJ1Q8cnZOAMPeg8WoMGw9hs3jjQWSwoi2Bl17bow8ZYnQgjDaEptl70M9As3mQrrybOu4MsyWITW4LGGQ4fSrvKPerqqkA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrfedvgddvtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtudenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeelleefieelleetteefvdeikeeffeffvefhtdevgfehveduveehjedvvdei
+    ledtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:kYZrY5O07SRD6puA3358osiXrtuSMFdGVdRTIqNB_Y1j0e2kCrf3cA>
+    <xmx:kYZrY--4OXcwxilx3M7PefuYPOE7Q-cNXA_rzfVHe3YNDICUyK2Sxw>
+    <xmx:kYZrYxUU9d6D9QOR4wgnmfdDTJak7SCgP6L9mst33jeFoqJvvYx3Lg>
+    <xmx:k4ZrYzEPHAcIp0kQHYqoCO6CcZhqHoAWErXk2GU8pNi2CThqinPAvA>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Nov 2022 05:53:03 -0500 (EST)
+Date:   Wed, 9 Nov 2022 11:53:01 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+Message-ID: <20221109105301.ueus7o3b75j5yeff@houat>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+ <20221104145946.orsyrhiqvypisl5j@houat>
+ <IOEVKR.TWFKJND2FJ473@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="svigzme6xfd4tylu"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <a9c974f1-fc66-b964-c7f0-b7e4320f2177@schmorgal.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <IOEVKR.TWFKJND2FJ473@crapouillou.net>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Paul,
 
---svigzme6xfd4tylu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello Doug,
-
-On Sat, Oct 22, 2022 at 12:35:23PM -0700, Doug Brown wrote:
-> On 10/19/2022 12:39 AM, Uwe Kleine-K=F6nig wrote:
-> > On Sun, Oct 02, 2022 at 06:55:45PM -0700, Doug Brown wrote:
-> > > If the clock is turned on too quickly after being turned off, it won't
-> > > actually turn back on. Work around this problem by waiting for the fi=
-nal
-> > > period to complete when disabling the PWM. The delay logic is borrowed
-> > > from the pwm-sun4i driver.
-> > >=20
-> > > To avoid unnecessary delays, skip the whole config process if the PWM=
- is
-> > > already disabled and staying disabled.
+On Sat, Nov 05, 2022 at 10:33:54AM +0000, Paul Cercueil wrote:
+> Hi Maxime,
+>=20
+> Le ven. 4 nov. 2022 =E0 15:59:46 +0100, Maxime Ripard <maxime@cerno.tech>=
+ a
+> =E9crit :
+> > Hi Paul,
 > >=20
-> > I wonder if there is some documentation available about this issue. This
-> > feels like a workaround without knowledge about the details and so might
-> > break at the next opportunity.
+> > On Fri, Nov 04, 2022 at 02:31:20PM +0000, Paul Cercueil wrote:
+> > >  Le ven. 4 nov. 2022 =E0 14:18:13 +0100, Maxime Ripard
+> > > <maxime@cerno.tech> a
+> > >  =E9crit :
+> > >  > The Ingenic CGU clocks implements a mux with a set_parent hook,
+> > > but
+> > >  > doesn't provide a determine_rate implementation.
+> > >  >
+> > >  > This is a bit odd, since set_parent() is there to, as its name
+> > > implies,
+> > >  > change the parent of a clock. However, the most likely candidate
+> > > to
+> > >  > trigger that parent change is a call to clk_set_rate(), with
+> > >  > determine_rate() figuring out which parent is the best suited for
+> > > a
+> > >  > given rate.
+> > >  >
+> > >  > The other trigger would be a call to clk_set_parent(), but it's
+> > > far less
+> > >  > used, and it doesn't look like there's any obvious user for that
+> > > clock.
+> > >  >
+> > >  > So, the set_parent hook is effectively unused, possibly because
+> > > of an
+> > >  > oversight. However, it could also be an explicit decision by the
+> > >  > original author to avoid any reparenting but through an explicit
+> > > call to
+> > >  > clk_set_parent().
+> > >  >
+> > >  > The driver does implement round_rate() though, which means that
+> > > we can
+> > >  > change the rate of the clock, but we will never get to change the
+> > >  > parent.
+> > >  >
+> > >  > However, It's hard to tell whether it's been done on purpose or
+> > > not.
+> > >  >
+> > >  > Since we'll start mandating a determine_rate() implementation,
+> > > let's
+> > >  > convert the round_rate() implementation to a determine_rate(),
+> > > which
+> > >  > will also make the current behavior explicit. And if it was an
+> > >  > oversight, the clock behaviour can be adjusted later on.
+> > >=20
+> > >  So it's partly on purpose, partly because I didn't know about
+> > >  .determine_rate.
+> > >=20
+> > >  There's nothing odd about having a lonely .set_parent callback; in
+> > > my case
+> > >  the clocks are parented from the device tree.
+> > >=20
+> > >  Having the clocks driver trigger a parent change when requesting a
+> > > rate
+> > >  change sounds very dangerous, IMHO. My MMC controller can be
+> > > parented to the
+> > >  external 48 MHz oscillator, and if the card requests 50 MHz, it
+> > > could switch
+> > >  to one of the PLLs. That works as long as the PLLs don't change
+> > > rate, but if
+> > >  one is configured as driving the CPU clock, it becomes messy.
+> > >  The thing is, the clocks driver has no way to know whether or not
+> > > it is
+> > >  "safe" to use a designated parent.
+> > >=20
+> > >  For that reason, in practice, I never actually want to have a clock
+> > >  re-parented - it's almost always a bad idea vs. sticking to the
+> > > parent clock
+> > >  configured in the DTS.
+> >=20
+> > Yeah, and this is totally fine. But we need to be explicit about it. The
+> > determine_rate implementation I did in all the patches is an exact
+> > equivalent to the round_rate one if there was one. We will never ask to
+> > change the parent.
+> >=20
+> > Given what you just said, I would suggest to set the
+> > CLK_SET_RATE_NO_REPARENT flag as well.
 >=20
-> Thanks for reviewing! Yes, it does feel like a crazy workaround. I'm not
-> super proud of it. The best documentation I've been able to look at is
-> the PXA168 software manual [1]. Page 502 of the PDF talks about a
-> "graceful shutdown" where turning off the clock enable bit doesn't
-> immediately stop the clock, and instead it waits for the current PWM
-> period to complete first. This driver is currently configuring it for
-> graceful shutdown mode, because the PWMCR_SD bit is not set (page 1257).
->=20
-> I've experimentally determined that if you try to turn the clock back on
-> when a graceful shutdown is still scheduled, it doesn't cancel the
-> graceful shutdown, so the clock ends up off afterward, even though the
-> common clock framework thinks it's still on. The hacky delay in this
-> commit works around that problem. This almost seems like a problem that
-> should be solved on the common clock framework side instead, but it
-> doesn't know what the PWM frequency is so it wouldn't know how long to
-> delay.
->=20
-> Do all the other similar drivers in the kernel do a graceful shutdown
-> like this when they are turned off? If not, a simpler solution would be
-> to start turning on the PWMCR_SD bit instead, so the clock stops
-> immediately (potentially resulting in the final duty cycle being short).
+> But that would introduce policy into the driver...
 
-There are supported hardwares that (only) support immediate shutdown, so
-consumers cannot rely on a graceful stop anyhow. So I'd say using
-PWMCR_SD=3D1 is fine. The documentation suggests that in this case "PWM_OUT=
-x stops
-after at most one PSCLK_PWM" which might explain that the problem can
-still be triggered. (i.e. if you reenable before the next PSCLK_PWM
-cycle.)
+I'm not sure why you're bringing policies into that discussion. There's
+plenty of policy in the driver already, and the current code doesn't do
+something that the old wasn't doing (implicitly).
 
-BTW, the driver lacks information about how the hardware behaves on
-disable. The most common cases are
+And there's plenty of policies in drivers in general. Whether you limit
+the rate or not, whether you allow reparenting or not, even the
+CLK_SET_RATE_NO_REPARENT flag mentioned above is a policy decision set
+by drivers.
 
- - emits the inactive output
- - freezes where it just happens to be (assuming PWMCR_SD=3D1)
+> The fact that I don't want the MMC parented to the PLLs, doesn't mean
+> that it's an invalid configuration per se.
 
-Would you mind testing that and adding a patch to your series? (Look at
-e.g. drivers/pwm/pwm-sl28cpld.c for the desired format to ease
-grepping.)
+Sure, and that's another policy :)
 
-> I tested that change in place of this commit and it seems to work pretty
-> well, although I can still cause it to fail if I turn my PWM backlight
-> off and back on quickly without a "sleep 0.000001" in between. It feels
-> to me like there are some weird interdependencies between the clock
-> enable bits and the actual PWM controller block, at least in the PXA168,
-> likely due to "graceful shutdown" mode's existence.
->=20
-> What do you think? Turning on the PWMCR_SD bit would be very simple, but
-> it doesn't fully fix the issue in my testing. I'd still be okay with it
-> though, because the only failure case I can reproduce is a minor edge
-> case (plus, I don't love the delay solution).
-
-+1 for no love for the delay solution.
-=20
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---svigzme6xfd4tylu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNrcloACgkQwfwUeK3K
-7Ann6Af9EMrQQ7cnss/b+NWBDIHI0E95e2NXh4D/birDB5pzGI69RhHF5jJOU2ae
-DWjzU3P78EcuasdyW8IW3krtrYpIVdCITgJfkjJdUy9mf2HCIc8HmON+iFA9xKtZ
-5/z5yxU6kGIYqS0ah2PgIR2a04RX7QnSRAQtRpB7lCnZXHAvSHw+qt3ocUYRl/aN
-ks3npvgBbAalmuJ3gOcugMazpU2YgDptHOvYz6XGpfL7KkVc696MED7voKIf8TxA
-U+WOgUe6JYZIEhzjYjKAgwHK9FQ7/P2KSbQAChFEkocwQZRa6maYF8l1LKptZaUK
-FnhSu2cZafncH7sRUjPfDMgdmPMrgw==
-=8rN/
------END PGP SIGNATURE-----
-
---svigzme6xfd4tylu--
+Maxime
