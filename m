@@ -2,196 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E889CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 09:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C475C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 09:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbiKIJNR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 04:13:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44638 "EHLO
+        id S230195AbiKIJQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 04:16:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiKIJMo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 04:12:44 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3423123BF2;
-        Wed,  9 Nov 2022 01:11:53 -0800 (PST)
-Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8DxOdjXbmtj6YMFAA--.15961S3;
-        Wed, 09 Nov 2022 17:11:51 +0800 (CST)
-Received: from [10.180.13.64] (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxr+DWbmtje3gPAA--.43114S2;
-        Wed, 09 Nov 2022 17:11:50 +0800 (CST)
-Subject: Re: [PATCH v9 3/3] dt-bindings: clock: add loongson-2 clock
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20221103050032.29236-1-zhuyinbo@loongson.cn>
- <20221103050032.29236-3-zhuyinbo@loongson.cn>
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-Message-ID: <450c73ad-0008-1e32-6081-00ef54072dc1@loongson.cn>
-Date:   Wed, 9 Nov 2022 17:11:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        with ESMTP id S229676AbiKIJQI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 04:16:08 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE8C23BFD
+        for <linux-clk@vger.kernel.org>; Wed,  9 Nov 2022 01:14:43 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id b3so24752631lfv.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Nov 2022 01:14:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1rE5UJ2gWSpg6IpozSMRbtLn3mGKV5w8AwqD7IDy5jk=;
+        b=U06Q1gCUo2hO0VTiMtEoJoaSneZWE4NtURqBoL4XiYfNhfZBbfl7abW9xNjKv5GPbK
+         hCRmfTZe9WmG2yXqDRTlas8ZrrIDi+OzwEjNPm7bGmznXZ7Cwwavk9U1BzcaJcHnaD0D
+         Hm83QaSpWpdHNXd4FoVk4toCLw2NmEOE5C9/I++ru2D+fV+KKd28hu+q+R5z1iy2zt+E
+         QMjz1B7ywS8GyGIiiCsXtE2/h5+d39nVYAzdPtcvFP6Qt0VMcApOEMI4RTmg/NC0mSo3
+         NrUfV4bpVr+8b2r25x1Q9e7IwLff7VFq7i1eKsPhsW1LjqRFzDEbd3BpHYUR4DbgVhn+
+         mz3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rE5UJ2gWSpg6IpozSMRbtLn3mGKV5w8AwqD7IDy5jk=;
+        b=KlQIsnrGlDi9YSFW02tmEWGQx0B6YwEqLOQdSD7NLbpiSNsEtFV9BrO5jqMRXityMT
+         4dZzFO8AQjW2nWAuu9bcw7GUKMJ/AoRIfRDNFiZRJicwRjGLort/T+cC3J3aevVa5KvF
+         ymbzempvyFQyYb5IeJjPtpq/TKyWDYc9FWf83Ep7uPo4RJps72j9gLuT+mqOVwDqJ5jC
+         0SautXnB0ZUEVbVyUX2tjFF3SvkkEcTVQybImp9gqTxIt7I2GQwuP3Gab7JdEg/y5n09
+         YuLZhTSvbCS6T4YwO9JPFa1svftBryj8yMHrtcEHM+yDxVlWyYwDWl+B8JRTFw1F+d80
+         RVCA==
+X-Gm-Message-State: ACrzQf0BuZ9vAb6MYa0QWQnpPwvIkNQ+cCgevSqVKxAyr5jplXS9EmuT
+        o7Onn3FLS3jFRICcMH22QLXLAw==
+X-Google-Smtp-Source: AMsMyM7LgB3iu58DZRHLmWoJUX7TsMuJX1g8t6t7+zHqIzWcfEQTeAhOSuGqvRhzmMJAMw9LQxb0XA==
+X-Received: by 2002:a05:6512:110d:b0:4a2:7df9:30bc with SMTP id l13-20020a056512110d00b004a27df930bcmr22209442lfg.138.1667985281476;
+        Wed, 09 Nov 2022 01:14:41 -0800 (PST)
+Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
+        by smtp.gmail.com with ESMTPSA id p15-20020ac24ecf000000b0049adf925d00sm2146242lfr.1.2022.11.09.01.14.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Nov 2022 01:14:40 -0800 (PST)
+Message-ID: <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
+Date:   Wed, 9 Nov 2022 10:14:40 +0100
 MIME-Version: 1.0
-In-Reply-To: <20221103050032.29236-3-zhuyinbo@loongson.cn>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] clk: samsung: Revert "clk: samsung: exynos-clkout: Use
+ of_device_get_match_data()"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Dxr+DWbmtje3gPAA--.43114S2
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxWF4UJrW8AFWxCrW3Ary5Arb_yoW5KF48pF
-        sxCas5JFWIyF17uFsxKa4xtwn5uas7AFyqvw42ka4DAr98Xw1jqF1xKas8Z39xJryxZa9F
-        vF1S9r4UuanrC3DanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
-        v26r1q6r43MxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
-        7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
-        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
-        cVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jetC7UUUUU=
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Minghao Chi (CGEL ZTE)" <chi.minghao@zte.com.cn>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Mark Brown <broonie@kernel.org>
+References: <CGME20221108213728eucas1p2aa97d7925e280b7347bb9e76d3c9a177@eucas1p2.samsung.com>
+ <20221108213718.32076-1-m.szyprowski@samsung.com>
+ <0da15378-ca0d-4f26-c21c-184de2a89350@linaro.org>
+ <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi maintainer,
+On 08/11/2022 23:53, Marek Szyprowski wrote:
+> On 08.11.2022 22:44, Krzysztof Kozlowski wrote:
+>> On 08/11/2022 22:37, Marek Szyprowski wrote:
+>>> of_device_get_match_data() function should not be used on the device
+>>> other than the one matched to the given driver, because it always returns
+>>> the match_data of the matched driver. In case of exynos-clkout driver,
+>>> the code matched the OF IDs on the PARENT device, so replacing it with
+>>> of_device_get_match_data() broke the driver.
+>>>
+>>> This reverts commit 777aaf3d1daf793461269b49c063aca1cee06a44.
+>> This was untested, automated commit and there were several other like
+>> that from Minghao. Other driver owners should check if they have the
+>> same issue. I made a quick look and seems fine, but it all depends what
+>> was the of_device_get_match_data() argument.
+>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Please add Cc-stable tag. Do reverts need a Fixes tag? I guess as well...
+> 
+> Do we really need a CC-stable tag? v6.1-rc1 is the first release that 
+> contains that bug, so this revert imho should be simply applied as a fix 
+> for v6.1-rcX cycle.
 
-Please help me merge this patch to upstream.
+No, then it's fine.
 
-thanks,
-Yinbo.
+Stephen, can you take it directly to fixes for current RC?
 
-ÔÚ 2022/11/3 ÏÂÎç1:00, Yinbo Zhu Ð´µÀ:
-> Add the Loongson-2 clock binding with DT schema format using
-> json-schema.
-> 
-> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> Change in v9:
-> 		1. Add all history changlog information.
-> Change in v8:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v7:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v6:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v5:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v4:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v3:
-> 		1. Drop redundant (last) binding from the title.
-> 		2. Drop "- |" between ref_100m node and clk node.
-> Change in v2:
-> 		1. Drop "Binding" string in the title.
-> 		2. Drop entire allOf and move the contents to top level.
-> 		3. Change string "refclk_100m" to "ref_100m".
-> 
->   .../bindings/clock/loongson,ls2k-clk.yaml     | 63 +++++++++++++++++++
->   MAINTAINERS                                   |  1 +
->   2 files changed, 64 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> new file mode 100644
-> index 000000000000..63a59015987e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/loongson,ls2k-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Loongson-2 SoC Clock Control Module
-> +
-> +maintainers:
-> +  - Yinbo Zhu <zhuyinbo@loongson.cn>
-> +
-> +description: |
-> +  Loongson-2 SoC clock control module is an integrated clock controller, which
-> +  generates and supplies to all modules.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - loongson,ls2k-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: 100m ref
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ref_100m
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      The clock consumer should specify the desired clock by having the clock
-> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
-> +      for the full list of Loongson-2 SoC clock IDs.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    ref_100m: clock-ref-100m {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-frequency = <100000000>;
-> +        clock-output-names = "ref_100m";
-> +    };
-> +
-> +    clk: clock-controller@1fe00480 {
-> +        compatible = "loongson,ls2k-clk";
-> +        reg = <0x1fe00480 0x58>;
-> +        #clock-cells = <1>;
-> +        clocks = <&ref_100m>;
-> +        clock-names = "ref_100m";
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8b3d7bb18350..7afaf6d72800 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12022,6 +12022,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
->   M:	Yinbo Zhu <zhuyinbo@loongson.cn>
->   L:	linux-clk@vger.kernel.org
->   S:	Maintained
-> +F:	Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->   F:	drivers/clk/clk-loongson2.c
->   F:	include/dt-bindings/clock/loongson,ls2k-clk.h
->   
-> 
+Fixes: 777aaf3d1daf ("clk: samsung: exynos-clkout: Use of_device_get_match_data()")
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
