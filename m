@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD87BC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 00:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB59C43219
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 00:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiKIA4o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 19:56:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45912 "EHLO
+        id S229968AbiKIA4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 19:56:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229995AbiKIA4j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 19:56:39 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09216657E4;
-        Tue,  8 Nov 2022 16:56:38 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id j15so23545098wrq.3;
-        Tue, 08 Nov 2022 16:56:37 -0800 (PST)
+        with ESMTP id S229903AbiKIA4l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 19:56:41 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F056E64A04;
+        Tue,  8 Nov 2022 16:56:39 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id k8so23583661wrh.1;
+        Tue, 08 Nov 2022 16:56:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7fTAhiVVxrQpabu/VwldyEMjHFg35hTidaLAfmWyILs=;
-        b=ltKPNbDkcoBF9CoEybhxzda6g14YIAaFtjWpGmKTFx6btvvsfHce2ZyLfLv6U4uO8e
-         NyC/vzlFec2xZEQCZCEEbqZSDgBJJLDNvmoTA4qrphn4oK6iVHW561Zc2l90FQahakV2
-         I0zIh7r/K0uutn0AKOlwcWK8RAEWzVF50Q8gxjvvyMXCAbfir3M/OJKMV3UssPkcSF4w
-         UhT0bNQUaSAjWVjsVLWJ91hJVKpjieg3IKjaqBD9r17LlLIwhBrbiQsSZnb3Z82F9Kiy
-         ZyGYAkTxrO5NwjkkN7XMwcAQrDN2Uwhd1eHWkJyhVLk9VWbEH9AeQjk+PYhbA/MgPd6y
-         RnSg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nKH2DEqi/WyS0Gp7MHojWp9fGOlGca/3PwJ9fijM8Dk=;
+        b=pTtMClNH8jy20JOf4U/hfeOySzhvVCYDFNWrt2iskys97oOlDpSL3jS0Ij1MEDp1Dq
+         AFYLsQS0MFjkAEibTgI50uBBv4G3P2dPtQduu+c5cgfeyAs/uSpXJtT0VRYXdUuYc0T+
+         TiOecp5zEu9sLpRW3tSmkfJj+YLo+YQKkvaPRj1lduQNs2fX5WEhpXSQ9FGCzIrKT4Wn
+         UUEs7jOvBIuguOIfMnpExhacVwrWfFYpJazWlXXA1witjKlDIANDZOOK6/ZZCprolgoK
+         eUpxCB4Iv1pOSVQV8qFw9Q++bZWbPuZ9tGZo9VQEV28OVT6M17ewYza2SKkpGP+ky1nb
+         4YFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7fTAhiVVxrQpabu/VwldyEMjHFg35hTidaLAfmWyILs=;
-        b=2TkpZWZca5Ln857sklSYbe4ljVGNGNwSPrM+lJJkl6ATSQ5w7N04ZkcHhjgSwxjaoZ
-         NOjTHqZQPgix1zM3HxysTM+ATD1wXrW81AoSmEOticzH2wvjT+rcMcNr1k170bfozqCZ
-         X8PiZArCMOiSyOih+nurDK0Aw2VmG7Sf7xR7uSiBnsvdhAOAwFnluWeFLKm9ORHpbeNh
-         /Gfs5twkGYRDzqUX/QICLe4klubtYl4hvHEsQaFUR9efwXsdqP6gEYrhnM1+9DX2ydgh
-         ZBTXiNTrTkzsNOuV8VBO7VqAPBKM4xq44mnBNPEJYFx3/RalReHPcPMW4Y3WodPWjEt6
-         NlhQ==
-X-Gm-Message-State: ANoB5pm+l0ezJ295fOpnWUu4zY/NOn9HXBW4E9CBshDH6R3hKAkBDccQ
-        0VyQvYnFRjav7H5yq0p1Zl0=
-X-Google-Smtp-Source: AA0mqf63/8Ai37dHoH3Ly3mVPXe2aUflPnIghx200bdBRun0aFLppTePp+v/5LgDzz8FhIYbfdw59w==
-X-Received: by 2002:a05:6000:705:b0:23d:7ee7:67ed with SMTP id bs5-20020a056000070500b0023d7ee767edmr13163342wrb.352.1667955396377;
-        Tue, 08 Nov 2022 16:56:36 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nKH2DEqi/WyS0Gp7MHojWp9fGOlGca/3PwJ9fijM8Dk=;
+        b=ztbgS+dx2K82xZj77nKbgPEK0RNiSW2/0CTCZxYayY8M8Xto4ebuzeU9TDsnt6hjlO
+         VOFcutxjY1u0A+kvNeWp7M3qkl8TlvFzbfccyBsCbfNEfehv8SUC7/Q2JLPH+HIxOBwN
+         GVagQ+Kj1HqIuf9eadYknzMGN7YfPd8v+fRUAfMZRp98dQ9JEEa1YPuirIi6fGcRY6Ge
+         UQn05Mq/k1BxvX64QB9qfKcCDUPGdGQV34wpg8fPudY85jQPjhGvecXt7OvM5zszfiHC
+         4ywXzlSgmKPm8sXFXf2PRAgLz3BQWMnZbpp3FQesBFojQjZ5jSXgnbXbHIUPo6Y6lQXS
+         e/fA==
+X-Gm-Message-State: ACrzQf0m5Hlzpm6pVfZA2/6gji8lHyiiNE6x8RN/MDT1M7LGkxdhsf0y
+        ig9pkKhUWC+mEPEZ7LGLCEI=
+X-Google-Smtp-Source: AMsMyM6k9UPkLTa5uXTirLIQ9nXX6p7qlwmo8BsCDVd7veXcPJbWZrB4nVdvyyuQflKCmNI8bdLU6w==
+X-Received: by 2002:a5d:6da1:0:b0:231:c189:e077 with SMTP id u1-20020a5d6da1000000b00231c189e077mr37567746wrs.114.1667955398428;
+        Tue, 08 Nov 2022 16:56:38 -0800 (PST)
 Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.googlemail.com with ESMTPSA id z14-20020adff74e000000b0022cdb687bf9sm14130285wrp.0.2022.11.08.16.56.35
+        by smtp.googlemail.com with ESMTPSA id z14-20020adff74e000000b0022cdb687bf9sm14130285wrp.0.2022.11.08.16.56.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 16:56:35 -0800 (PST)
+        Tue, 08 Nov 2022 16:56:38 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -56,56 +57,60 @@ To:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 1/5] clk: qcom: krait-cc: fix wrong parent order for secondary mux
-Date:   Wed,  9 Nov 2022 01:56:27 +0100
-Message-Id: <20221109005631.3189-1-ansuelsmth@gmail.com>
+Subject: [PATCH 3/5] clk: qcom: krait-cc: handle secondary mux sourcing out of acpu_aux
+Date:   Wed,  9 Nov 2022 01:56:29 +0100
+Message-Id: <20221109005631.3189-3-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20221109005631.3189-1-ansuelsmth@gmail.com>
+References: <20221109005631.3189-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The secondary mux parent order is swapped.
-This currently doesn't cause problems as the secondary mux is used for idle
-clk and as a safe clk source while reprogramming the hfpll.
+Some bootloader may leave the system in an even more undefined state
+with the secondary mux of L2 or other cores sourcing out of the acpu_aux
+parent. This results in the clk set to the PXO rate or a PLL8 rate.
 
-Each mux have 2 or more output but he always have a safe source to
-switch while reprogramming the connected pll. We use a clk notifier to
-switch to the correct parent before clk core can apply the correct rate.
-The parent to switch is hardcoded in the mux struct.
-
-For the secondary mux the safe source to use is the qsb parent as it's
-the only fixed clk as the acpus_aux is a pll that can source from pxo or
-from pll8.
-
-The hardcoded safe parent for the secondary mux is set to index 0 that
-in the secondary mux map is set to 2.
-
-But the index 0 is actually acpu_aux in the parent list.
-
-Fix the swapped parents to correctly handle idle frequency and output a
-sane clk_summary report.
+The current logic to reset the mux and set them to a defined state only
+handle if the mux are configured to source out of QSB. Change this and
+force a new and defined state if the current clk is lower than the aux
+rate. This way we can handle any wrong configuration where the mux is
+sourcing out of QSB (rate 225MHz, currently set to a virtual rate of 1),
+PXO rate (rate 25MHz) or PLL8 (needs to be configured to run at 384Mhz).
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/clk/qcom/krait-cc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/krait-cc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index cfd961d5cc45..c2a261cfeb6a 100644
+index 0e497e69e3e3..17bf39076830 100644
 --- a/drivers/clk/qcom/krait-cc.c
 +++ b/drivers/clk/qcom/krait-cc.c
-@@ -116,8 +116,8 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
- 	int ret;
- 	struct krait_mux_clk *mux;
- 	static const char *sec_mux_list[] = {
--		"acpu_aux",
- 		"qsb",
-+		"acpu_aux",
- 	};
- 	struct clk_init_data init = {
- 		.parent_names = sec_mux_list,
+@@ -383,8 +383,8 @@ static int krait_cc_probe(struct platform_device *pdev)
+ 	 */
+ 	cur_rate = clk_get_rate(l2_pri_mux_clk);
+ 	aux_rate = 384000000;
+-	if (cur_rate == 1) {
+-		pr_info("L2 @ QSB rate. Forcing new rate.\n");
++	if (cur_rate < aux_rate) {
++		pr_info("L2 @ Undefined rate. Forcing new rate.\n");
+ 		cur_rate = aux_rate;
+ 	}
+ 	clk_set_rate(l2_pri_mux_clk, aux_rate);
+@@ -394,8 +394,8 @@ static int krait_cc_probe(struct platform_device *pdev)
+ 	for_each_possible_cpu(cpu) {
+ 		clk = clks[cpu];
+ 		cur_rate = clk_get_rate(clk);
+-		if (cur_rate == 1) {
+-			pr_info("CPU%d @ QSB rate. Forcing new rate.\n", cpu);
++		if (cur_rate < aux_rate) {
++			pr_info("CPU%d @ Undefined rate. Forcing new rate.\n", cpu);
+ 			cur_rate = aux_rate;
+ 		}
+ 
 -- 
 2.37.2
 
