@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EB1C4321E
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 00:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2351DC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 00:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229985AbiKIA4r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 19:56:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45924 "EHLO
+        id S229977AbiKIA4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 19:56:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbiKIA4j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 19:56:39 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060BF627C9;
-        Tue,  8 Nov 2022 16:56:39 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id j15so23545134wrq.3;
-        Tue, 08 Nov 2022 16:56:38 -0800 (PST)
+        with ESMTP id S229986AbiKIA4m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 19:56:42 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA5464A1C;
+        Tue,  8 Nov 2022 16:56:41 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id a14so23549467wru.5;
+        Tue, 08 Nov 2022 16:56:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vb5gpABVn01LzpmtL4kWa1L/Tu5YX24/NkCX3qOrieg=;
-        b=i9ZhUFUHgiBRSBtCiod+bre3frI5LjE8Nt+xlMbMGtA1IMGvfsBOfv5dIBJeaW3c+h
-         i27DNMxKwxq7rSEZfbR9pAB8jLklAmnIQZOqzaANE8Plf5Dp6ALI4TYlgMjbNpA6ZGbO
-         yRda1YqoQgd9BqH2bmJxCbhkC5ogAD9pFOwIhHW63hJOW5qbUHhf8vXLA1gY3eJB4VI+
-         rOckQpTKZRGRNZCZ032yXXLP7i7pF6F2NcV6U+AbDTxPoE7wxOB9xJ9CTvgR3Tzc3Drh
-         UL4KMaj1Q/WeukfWehBVawpheyQbUKzM8EJwwVdN6cMbew9x9mMGwIet9ZRX7Az0GQEA
-         Zyeg==
+        bh=tVPpA4RQ1p5rJwkA8HPIAk7M05A9PwrvQZVEWuO/aN8=;
+        b=LpBTxYKGGEkY4KPUVSgUl3YGPHhh6K2hrA0NYFqjeo3rzBX08iF6yoAVHqh9RaULR+
+         C0FUFFfxTyRj92YxXPqkOTHdMWj4npoRmz7DRsWqwDXHwIwzfU03DtZoma9+GUBX2dBo
+         nbucMiSk9eDcvGyBeMsjHm/tO315kVdV+ycvNMZZ4a+IEI5BeMj75xtkP3mrKKbR5vsQ
+         B3fLY1klTMNCMBy1ByzcB5DcgIE4Fbi96ULGBhvbQ0qevgJn7Xl91cVzHWYbIucVMCbl
+         Ga/D6W6yS7aZYsDrTNOQgvysbA+AaZ/xzeYCHpP6oUgmBnnh9emKfB7MAJih9aI2nAQ4
+         ouTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vb5gpABVn01LzpmtL4kWa1L/Tu5YX24/NkCX3qOrieg=;
-        b=ORwOGHgWrGVQQkuss8xJsQJS9m3rtxXmBY7fxt2bkmod+rcfIMjG4klK61XzH4wxtk
-         fzHbBnzaZgd5/PPGE/1P+j5/8vc6rQo1Scevm6TYaClLRY8BTr/6C65Ozi4M88ikz1YY
-         OcZZrsw+MbC+xGLRedQJckW3iRLgTQQNJTVMPnZwzPv/GKwCvbJpHzPJAEqf4RFfEH5X
-         A4yeUG88ceErkloillY5plKA89HZ0qJAVZDIqaKk5ugmmpMitWQE1l/lgR5swNBpg/nK
-         jwY8SHPLhfzShcn8+b0iZwaX93xHQpPtvlEZZjKs3Wm+FKbFlZAMjM+rq57AoiWrmcQ4
-         IZ0Q==
-X-Gm-Message-State: ANoB5pmyleoLTxVqbj5m1f6nfP3LKGuy2IzwWYJzwDLBhBAwB484p1xS
-        WXa9ZOPlz7z1N+rniWyPhFU=
-X-Google-Smtp-Source: AA0mqf4xBmbi68GzNNSOnmZniPp4snxp3vJ00b4b9jVqqUNSCWh7t3WtJ9Q4qhjd31lOhT3D412mBA==
-X-Received: by 2002:a05:6000:50a:b0:240:5bfa:c71b with SMTP id a10-20020a056000050a00b002405bfac71bmr10341370wrf.513.1667955397443;
-        Tue, 08 Nov 2022 16:56:37 -0800 (PST)
+        bh=tVPpA4RQ1p5rJwkA8HPIAk7M05A9PwrvQZVEWuO/aN8=;
+        b=0gADtuPPVlzUnfp/0XSuIZxwKWwic5JbA+wbGrHAkLS114tUDBcR1xfOBJYn9cJtLY
+         WWarOtnDmfG9ekwjYQwkJdLatKCivtRrwyIAc1sjXJjEctjbfZWTrQPOlJz/vfSmrE2d
+         52hew3qcI8XAnrlUaFP+de4Zl3fiXcEVX5qla7QMVxLrg9r7t/VrHyXa1cz2rk/kk5Gj
+         g/xnDjVO8VJkNsewnDaGfaRHyYsUu1RyexW8C4IgGA4T44iY4SFoB0ZI+3TC0PIUa1t8
+         9dVuUSGh9xstt2OKdDd27nl2FCQO6Ixencj3DMV2mBtYeOVmz9o4aw412jfAQh0hObBy
+         9lew==
+X-Gm-Message-State: ACrzQf2TLqAhswe9Wa87HJiTS/69rIHXYGfnLF3NMC3jo3hDX1udDxoe
+        zUaiFpqLsGDjGxHstMtzRo8=
+X-Google-Smtp-Source: AMsMyM6xJdMvO29Lnwp70VAea376C+BQwWParPutGWTDFol758rPA5aqVLbTZaR625aCkQ1kAG7pJQ==
+X-Received: by 2002:a5d:4644:0:b0:236:cb94:4c6c with SMTP id j4-20020a5d4644000000b00236cb944c6cmr32553798wrs.544.1667955399563;
+        Tue, 08 Nov 2022 16:56:39 -0800 (PST)
 Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.googlemail.com with ESMTPSA id z14-20020adff74e000000b0022cdb687bf9sm14130285wrp.0.2022.11.08.16.56.36
+        by smtp.googlemail.com with ESMTPSA id z14-20020adff74e000000b0022cdb687bf9sm14130285wrp.0.2022.11.08.16.56.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 16:56:37 -0800 (PST)
+        Tue, 08 Nov 2022 16:56:39 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 2/5] clk: qcom: krait-cc: also enable secondary mux and div clk
-Date:   Wed,  9 Nov 2022 01:56:28 +0100
-Message-Id: <20221109005631.3189-2-ansuelsmth@gmail.com>
+Subject: [PATCH 4/5] clk: qcom: krait-cc: convert to devm_clk_hw_register
+Date:   Wed,  9 Nov 2022 01:56:30 +0100
+Message-Id: <20221109005631.3189-4-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20221109005631.3189-1-ansuelsmth@gmail.com>
 References: <20221109005631.3189-1-ansuelsmth@gmail.com>
@@ -69,68 +69,105 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk-krait ignore any rate change if clk is not flagged as enabled.
-Correctly enable the secondary mux and div clk to correctly change rate
-instead of silently ignoring the request.
+clk_register is now deprecated. Convert the driver to devm_clk_hw_register.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/clk/qcom/krait-cc.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/krait-cc.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index c2a261cfeb6a..0e497e69e3e3 100644
+index 17bf39076830..63322cb38aa8 100644
 --- a/drivers/clk/qcom/krait-cc.c
 +++ b/drivers/clk/qcom/krait-cc.c
-@@ -80,6 +80,7 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+@@ -79,8 +79,7 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+ 		.flags = CLK_SET_RATE_PARENT,
  	};
  	const char *p_names[1];
- 	struct clk *clk;
-+	int cpu;
+-	struct clk *clk;
+-	int cpu;
++	int cpu, ret;
  
  	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
  	if (!div)
-@@ -103,6 +104,17 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+@@ -103,8 +102,8 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+ 		return -ENOMEM;
  	}
  
- 	clk = devm_clk_register(dev, &div->hw);
-+	if (IS_ERR(clk))
-+		goto err;
-+
-+	/* clk-krait ignore any rate change if mux is not flagged as enabled */
-+	if (id < 0)
-+		for_each_online_cpu(cpu)
-+			clk_prepare_enable(div->hw.clk);
-+	else
-+		clk_prepare_enable(div->hw.clk);
-+
-+err:
+-	clk = devm_clk_register(dev, &div->hw);
+-	if (IS_ERR(clk))
++	ret = devm_clk_hw_register(dev, &div->hw);
++	if (ret)
+ 		goto err;
+ 
+ 	/* clk-krait ignore any rate change if mux is not flagged as enabled */
+@@ -118,7 +117,7 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
  	kfree(p_names[0]);
  	kfree(init.name);
  
-@@ -113,7 +125,7 @@ static int
- krait_add_sec_mux(struct device *dev, int id, const char *s,
- 		  unsigned int offset, bool unique_aux)
- {
--	int ret;
-+	int cpu, ret;
- 	struct krait_mux_clk *mux;
- 	static const char *sec_mux_list[] = {
- 		"qsb",
-@@ -165,6 +177,13 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
+-	return PTR_ERR_OR_ZERO(clk);
++	return ret;
+ }
+ 
+ static int
+@@ -137,7 +136,6 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
+ 		.ops = &krait_mux_clk_ops,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	};
+-	struct clk *clk;
+ 
+ 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+@@ -166,14 +164,16 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
+ 	if (unique_aux) {
+ 		sec_mux_list[0] = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
+ 		if (!sec_mux_list[0]) {
+-			clk = ERR_PTR(-ENOMEM);
++			ret = -ENOMEM;
+ 			goto err_aux;
+ 		}
+ 	}
+ 
+-	clk = devm_clk_register(dev, &mux->hw);
++	ret = devm_clk_hw_register(dev, &mux->hw);
++	if (ret)
++		goto unique_aux;
+ 
+-	ret = krait_notifier_register(dev, clk, mux);
++	ret = krait_notifier_register(dev, mux->hw.clk, mux);
  	if (ret)
  		goto unique_aux;
  
-+	/* clk-krait ignore any rate change if mux is not flagged as enabled */
-+	if (id < 0)
-+		for_each_online_cpu(cpu)
-+			clk_prepare_enable(mux->hw.clk);
-+	else
-+		clk_prepare_enable(mux->hw.clk);
-+
- unique_aux:
- 	if (unique_aux)
+@@ -189,7 +189,7 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
  		kfree(sec_mux_list[0]);
+ err_aux:
+ 	kfree(init.name);
+-	return PTR_ERR_OR_ZERO(clk);
++	return ret;
+ }
+ 
+ static struct clk *
+@@ -241,11 +241,18 @@ krait_add_pri_mux(struct device *dev, int id, const char *s,
+ 		goto err_p2;
+ 	}
+ 
+-	clk = devm_clk_register(dev, &mux->hw);
++	ret = devm_clk_hw_register(dev, &mux->hw);
++	if (ret) {
++		clk = ERR_PTR(ret);
++		goto err_p3;
++	}
++
++	clk = mux->hw.clk;
+ 
+ 	ret = krait_notifier_register(dev, clk, mux);
+ 	if (ret)
+-		goto err_p3;
++		clk = ERR_PTR(ret);
++
+ err_p3:
+ 	kfree(p_names[2]);
+ err_p2:
 -- 
 2.37.2
 
