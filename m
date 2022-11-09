@@ -2,482 +2,195 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0591C4167B
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 00:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE46C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 02:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbiKIA4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Nov 2022 19:56:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
+        id S230173AbiKICok (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Nov 2022 21:44:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbiKIA4o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 19:56:44 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8423164A3C;
-        Tue,  8 Nov 2022 16:56:42 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id bk15so23480687wrb.13;
-        Tue, 08 Nov 2022 16:56:42 -0800 (PST)
+        with ESMTP id S230112AbiKICoc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2022 21:44:32 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B7E1F60E;
+        Tue,  8 Nov 2022 18:44:06 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 21so25315740edv.3;
+        Tue, 08 Nov 2022 18:44:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MLJFXJ9wFjgZ8dt+15qgCZ9/qEqxsRiMINkokB1vgY4=;
-        b=Uj2AXKFi2QKTH3RBZi4y2QP/H5if/0EtVJVe+dtsMVRg8LwRRyXAsNfLgrmhXD58xC
-         CkBn9uUlMJs7eXlpxWsaV7/x4btzJc178OMxG6vLetQfGAeToc52xe3Tj/lq6/dctEyf
-         kPzbHKkIE98ENHGeWAQInqoBgDmjaiwNKUYaYjy8ZxZ8+Vk0XkBHetKt5RsN+rZrrQqM
-         DXRK2cui25wUZ/TIkVsJhiKlcbDLYoHb7KOUIMJQnYVgxtD6KN9t1A53RKID0wY4CEbY
-         JMe4r/w+n4+gn5woZq9xWb0R1It+DhmNFPUVVLRXjqlKPI+mRMz6nUtILWuJvicIlszc
-         EWCQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSs9bG/LbFf1fIR0eapTeL6P50DjYrAFt1f1UPagmkc=;
+        b=fm3R7eHwEY7icgp5E36AR1x+G3iJ/B+gTC6qXXcb2VuX8T7PYbpIOMaEAEk+z5gP5C
+         C30KcgR4lm806IYQfNeeuFx0cfGof3DpzdH786/cCDzuWrdeUNc7jFOrL5vMwTo9Vbtm
+         dVxBVDI57pb7BVYvuH3eLaJ4JjrtQb9xL2MZ41TI7RBi2z65S87p9zWDePR0yCVz6VHw
+         JOVSi+JRNqY3PBDz9qa44qLlWzFaPdXGRa4GRcfXuEi5nSYmnCJ6Zyk7dG4zjutSYT5H
+         vN2MmXbmOeI+y4HkZpv6Bi0bN99D9Nar9mmN1KGg/88Sfc9R8fV6gzM/jPxbXATFIa/1
+         F+hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MLJFXJ9wFjgZ8dt+15qgCZ9/qEqxsRiMINkokB1vgY4=;
-        b=7UwZcOHeyEsILCe/pQMOHPdd9A2hzvsSTXiAyyolS8gL4K8lYavqTNU+H2n0tQvI/I
-         waOR2JVIxVD9Smubx8CQaaowjTiF0I/z0LetAG2+A/KolJf15rYoAKAuwidIfsdNQT6N
-         fHfFjHNUDj6HEMcY04kdq/tg72qgUVIckagQC/qyPLRRoNeWrziZXejQCxLr1j0wnPzJ
-         CYJdrOExsyIFzmgYnlBlyYxJnZMYeJ+wZ8JoxJI7NSuby9g7FJOLjj8pK2ittOuGVh3U
-         wRYEO5g84bs/6fxjTwwsKeTmZ/6IPuS8Y09t7uxqS7lYDgN3SCTaHMAYp4AefOPCfDqi
-         g3Yw==
-X-Gm-Message-State: ACrzQf0sPSWlrI2X7bsQKj+5NtMS15XS2zlPVk7QtgxjzXpaDKlYQee1
-        kf/athCuDhMJf8CDPXySe/M=
-X-Google-Smtp-Source: AMsMyM5q5r/doQfTmMv/40UtV3PqgvOp6Vqi2ietmfoA6VqtpYth5dcpMQcnNJKTh9AHkiwrbEwOTg==
-X-Received: by 2002:adf:dd4d:0:b0:236:6e72:be17 with SMTP id u13-20020adfdd4d000000b002366e72be17mr35459956wrm.460.1667955400749;
-        Tue, 08 Nov 2022 16:56:40 -0800 (PST)
-Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.googlemail.com with ESMTPSA id z14-20020adff74e000000b0022cdb687bf9sm14130285wrp.0.2022.11.08.16.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 16:56:40 -0800 (PST)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 5/5] clk: qcom: krait-cc: convert to parent_data API
-Date:   Wed,  9 Nov 2022 01:56:31 +0100
-Message-Id: <20221109005631.3189-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20221109005631.3189-1-ansuelsmth@gmail.com>
-References: <20221109005631.3189-1-ansuelsmth@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZSs9bG/LbFf1fIR0eapTeL6P50DjYrAFt1f1UPagmkc=;
+        b=5CtnRgA3dPVFuN08UuY4TnyRRqet4QvmPVkoFT1ld6lQ7isbyRj/jj7OqeiOBc8cgG
+         Yq0sinGdjulVP9Ais7n5GpWnw6k7KqBJt7sIINrGnEZgpjpRUAnuA9TZ0QMq00lGaK8b
+         5O3MPhaN0uMLR7qVPUQze1aykE5LVWuxi7Iy4RUnIcoTIlYPJVLuSnoE/Tx9oJRCD8PN
+         GAfaLJeQ0Dj+OFVYfbk1H+Z/KoXmb84nXnd8iGOiLblTTxGEtINzgFegojmAZkwT+nPO
+         JMUSLxyZ1oP4nWMFFtpGTNYu31248wl6Ps/cpfGWFA9HtUgpTtljtS08Ia/onAcxmmyZ
+         If2A==
+X-Gm-Message-State: ACrzQf2MjD4nOm7zkbG41ngjB1Bo0Sqi+qYAoEyx9iNfEE1OwnzFXaJ3
+        b9KQDrrkxJQku1SPPEbc6EnCmIfMM2ONCnxLLAs=
+X-Google-Smtp-Source: AMsMyM4o96Fp/fgGe8bWp9qyaCLc1d6jcauj7urZdaiQjIItG7q8RJuK4x04Dncd47Xu2Mogx93A97DsfgYY/BWPass=
+X-Received: by 2002:a05:6402:3806:b0:450:bad8:8cd5 with SMTP id
+ es6-20020a056402380600b00450bad88cd5mr59725933edb.305.1667961844484; Tue, 08
+ Nov 2022 18:44:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech> <20221018-clk-range-checks-fixes-v2-58-f6736dec138e@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-58-f6736dec138e@cerno.tech>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Wed, 9 Nov 2022 10:43:26 +0800
+Message-ID: <CAAfSe-t96pttpdLjLYntof5JCNcVHg0fMckk6zC7YHRRceDw+A@mail.gmail.com>
+Subject: Re: [PATCH v2 58/65] clk: sprd: composite: Switch to determine_rate
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Modernize the krait-cc driver to parent-data API and refactor to drop
-any use of parent_names. From Documentation all the required clocks should
-be declared in DTS so fw_name can be correctly used to get the parents
-for all the muxes. .name is also declared to save compatibility with old
-DT.
+On Fri, 4 Nov 2022 at 21:33, Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> The Spreadtrum composite clocks implements a mux with a set_parent
+> hook, but doesn't provide a determine_rate implementation.
+>
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+>
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+>
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+>
+> The driver does implement round_rate() though, which means that we can
+> change the rate of the clock, but we will never get to change the
+> parent.
+>
+> However, It's hard to tell whether it's been done on purpose or not.
+>
+> Since we'll start mandating a determine_rate() implementation, let's
+> convert the round_rate() implementation to a determine_rate(), which
+> will also make the current behavior explicit. And if it was an
+> oversight, the clock behaviour can be adjusted later on.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-While at it also drop some hardcoded index and introduce an enum to make
-index values more clear.
+Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/qcom/krait-cc.c | 202 ++++++++++++++++++++----------------
- 1 file changed, 112 insertions(+), 90 deletions(-)
+Thanks,
+Chunyan
 
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index 63322cb38aa8..0a15da568156 100644
---- a/drivers/clk/qcom/krait-cc.c
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -15,6 +15,16 @@
- 
- #include "clk-krait.h"
- 
-+enum {
-+	cpu0_mux = 0,
-+	cpu1_mux,
-+	cpu2_mux,
-+	cpu3_mux,
-+	l2_mux,
-+
-+	clks_max,
-+};
-+
- static unsigned int sec_mux_map[] = {
- 	2,
- 	0,
-@@ -69,21 +79,23 @@ static int krait_notifier_register(struct device *dev, struct clk *clk,
- 	return ret;
- }
- 
--static int
-+static struct clk_hw *
- krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
- {
- 	struct krait_div2_clk *div;
-+	static struct clk_parent_data p_data[1];
- 	struct clk_init_data init = {
--		.num_parents = 1,
-+		.num_parents = ARRAY_SIZE(p_data),
- 		.ops = &krait_div2_clk_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	};
--	const char *p_names[1];
-+	struct clk_hw *clk;
-+	char *parent_name;
- 	int cpu, ret;
- 
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
- 	if (!div)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	div->width = 2;
- 	div->shift = 6;
-@@ -93,18 +105,25 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
- 
- 	init.name = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
- 	if (!init.name)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
--	init.parent_names = p_names;
--	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
--	if (!p_names[0]) {
--		kfree(init.name);
--		return -ENOMEM;
-+	init.parent_data = p_data;
-+	parent_name = kasprintf(GFP_KERNEL, "hfpll%s", s);
-+	if (!parent_name) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_parent_name;
- 	}
- 
-+	p_data[0].fw_name = parent_name;
-+	p_data[0].name = parent_name;
-+
- 	ret = devm_clk_hw_register(dev, &div->hw);
--	if (ret)
--		goto err;
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err_clk;
-+	}
-+
-+	clk = &div->hw;
- 
- 	/* clk-krait ignore any rate change if mux is not flagged as enabled */
- 	if (id < 0)
-@@ -113,33 +132,36 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
- 	else
- 		clk_prepare_enable(div->hw.clk);
- 
--err:
--	kfree(p_names[0]);
-+err_clk:
-+	kfree(parent_name);
-+err_parent_name:
- 	kfree(init.name);
- 
--	return ret;
-+	return clk;
- }
- 
--static int
-+static struct clk_hw *
- krait_add_sec_mux(struct device *dev, int id, const char *s,
- 		  unsigned int offset, bool unique_aux)
- {
- 	int cpu, ret;
- 	struct krait_mux_clk *mux;
--	static const char *sec_mux_list[] = {
--		"qsb",
--		"acpu_aux",
-+	static struct clk_parent_data sec_mux_list[2] = {
-+		{ .name = "qsb", .fw_name = "qsb" },
-+		{},
- 	};
- 	struct clk_init_data init = {
--		.parent_names = sec_mux_list,
-+		.parent_data = sec_mux_list,
- 		.num_parents = ARRAY_SIZE(sec_mux_list),
- 		.ops = &krait_mux_clk_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	};
-+	struct clk_hw *clk;
-+	char *parent_name;
- 
- 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
- 	if (!mux)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	mux->offset = offset;
- 	mux->lpl = id >= 0;
-@@ -159,23 +181,33 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
- 
- 	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
- 	if (!init.name)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	if (unique_aux) {
--		sec_mux_list[0] = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
--		if (!sec_mux_list[0]) {
--			ret = -ENOMEM;
-+		parent_name = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
-+		if (!parent_name) {
-+			clk = ERR_PTR(-ENOMEM);
- 			goto err_aux;
- 		}
-+		sec_mux_list[1].fw_name = parent_name;
-+		sec_mux_list[1].name = parent_name;
-+	} else {
-+		sec_mux_list[1].name = "apu_aux";
- 	}
- 
- 	ret = devm_clk_hw_register(dev, &mux->hw);
--	if (ret)
--		goto unique_aux;
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err_clk;
-+	}
-+
-+	clk = &mux->hw;
- 
- 	ret = krait_notifier_register(dev, mux->hw.clk, mux);
--	if (ret)
--		goto unique_aux;
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err_clk;
-+	}
- 
- 	/* clk-krait ignore any rate change if mux is not flagged as enabled */
- 	if (id < 0)
-@@ -184,28 +216,29 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
- 	else
- 		clk_prepare_enable(mux->hw.clk);
- 
--unique_aux:
-+err_clk:
- 	if (unique_aux)
--		kfree(sec_mux_list[0]);
-+		kfree(parent_name);
- err_aux:
- 	kfree(init.name);
--	return ret;
-+	return clk;
- }
- 
--static struct clk *
--krait_add_pri_mux(struct device *dev, int id, const char *s,
--		  unsigned int offset)
-+static struct clk_hw *
-+krait_add_pri_mux(struct device *dev, struct clk_hw *hfpll_div, struct clk_hw *sec_mux,
-+		  int id, const char *s, unsigned int offset)
- {
- 	int ret;
- 	struct krait_mux_clk *mux;
--	const char *p_names[3];
-+	static struct clk_parent_data p_data[3];
- 	struct clk_init_data init = {
--		.parent_names = p_names,
--		.num_parents = ARRAY_SIZE(p_names),
-+		.parent_data = p_data,
-+		.num_parents = ARRAY_SIZE(p_data),
- 		.ops = &krait_mux_clk_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	};
--	struct clk *clk;
-+	struct clk_hw *clk;
-+	char *hfpll_name;
- 
- 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
- 	if (!mux)
-@@ -223,55 +256,44 @@ krait_add_pri_mux(struct device *dev, int id, const char *s,
- 	if (!init.name)
- 		return ERR_PTR(-ENOMEM);
- 
--	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
--	if (!p_names[0]) {
-+	hfpll_name = kasprintf(GFP_KERNEL, "hfpll%s", s);
-+	if (!hfpll_name) {
- 		clk = ERR_PTR(-ENOMEM);
--		goto err_p0;
-+		goto err_hfpll;
- 	}
- 
--	p_names[1] = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
--	if (!p_names[1]) {
--		clk = ERR_PTR(-ENOMEM);
--		goto err_p1;
--	}
-+	p_data[0].fw_name = hfpll_name;
-+	p_data[0].name = hfpll_name;
- 
--	p_names[2] = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
--	if (!p_names[2]) {
--		clk = ERR_PTR(-ENOMEM);
--		goto err_p2;
--	}
-+	p_data[1].hw = hfpll_div;
-+	p_data[2].hw = sec_mux;
- 
- 	ret = devm_clk_hw_register(dev, &mux->hw);
- 	if (ret) {
- 		clk = ERR_PTR(ret);
--		goto err_p3;
-+		goto err_clk;
- 	}
- 
--	clk = mux->hw.clk;
-+	clk = &mux->hw;
- 
--	ret = krait_notifier_register(dev, clk, mux);
-+	ret = krait_notifier_register(dev, mux->hw.clk, mux);
- 	if (ret)
- 		clk = ERR_PTR(ret);
- 
--err_p3:
--	kfree(p_names[2]);
--err_p2:
--	kfree(p_names[1]);
--err_p1:
--	kfree(p_names[0]);
--err_p0:
-+err_clk:
-+	kfree(hfpll_name);
-+err_hfpll:
- 	kfree(init.name);
- 	return clk;
- }
- 
- /* id < 0 for L2, otherwise id == physical CPU number */
--static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
-+static struct clk_hw *krait_add_clks(struct device *dev, int id, bool unique_aux)
- {
--	int ret;
-+	struct clk_hw *hfpll_div, *sec_mux, *pri_mux;
- 	unsigned int offset;
- 	void *p = NULL;
- 	const char *s;
--	struct clk *clk;
- 
- 	if (id >= 0) {
- 		offset = 0x4501 + (0x1000 * id);
-@@ -283,22 +305,23 @@ static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
- 		s = "_l2";
- 	}
- 
--	ret = krait_add_div(dev, id, s, offset);
--	if (ret) {
--		clk = ERR_PTR(ret);
-+	hfpll_div = krait_add_div(dev, id, s, offset);
-+	if (IS_ERR(hfpll_div)) {
-+		pri_mux = hfpll_div;
- 		goto err;
- 	}
- 
--	ret = krait_add_sec_mux(dev, id, s, offset, unique_aux);
--	if (ret) {
--		clk = ERR_PTR(ret);
-+	sec_mux = krait_add_sec_mux(dev, id, s, offset, unique_aux);
-+	if (IS_ERR(sec_mux)) {
-+		pri_mux = sec_mux;
- 		goto err;
- 	}
- 
--	clk = krait_add_pri_mux(dev, id, s, offset);
-+	pri_mux = krait_add_pri_mux(dev, hfpll_div, sec_mux, id, s, offset);
-+
- err:
- 	kfree(p);
--	return clk;
-+	return pri_mux;
- }
- 
- static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
-@@ -306,7 +329,7 @@ static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
- 	unsigned int idx = clkspec->args[0];
- 	struct clk **clks = data;
- 
--	if (idx >= 5) {
-+	if (idx >= clks_max) {
- 		pr_err("%s: invalid clock index %d\n", __func__, idx);
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -327,9 +350,8 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	const struct of_device_id *id;
- 	unsigned long cur_rate, aux_rate;
- 	int cpu;
--	struct clk *clk;
--	struct clk **clks;
--	struct clk *l2_pri_mux_clk;
-+	struct clk_hw *mux, *l2_pri_mux;
-+	struct clk *clk, **clks;
- 
- 	id = of_match_device(krait_cc_match_table, dev);
- 	if (!id)
-@@ -348,21 +370,21 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Krait configurations have at most 4 CPUs and one L2 */
--	clks = devm_kcalloc(dev, 5, sizeof(*clks), GFP_KERNEL);
-+	clks = devm_kcalloc(dev, clks_max, sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
- 		return -ENOMEM;
- 
- 	for_each_possible_cpu(cpu) {
--		clk = krait_add_clks(dev, cpu, id->data);
-+		mux = krait_add_clks(dev, cpu, id->data);
- 		if (IS_ERR(clk))
- 			return PTR_ERR(clk);
--		clks[cpu] = clk;
-+		clks[cpu] = mux->clk;
- 	}
- 
--	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
--	if (IS_ERR(l2_pri_mux_clk))
--		return PTR_ERR(l2_pri_mux_clk);
--	clks[4] = l2_pri_mux_clk;
-+	l2_pri_mux = krait_add_clks(dev, -1, id->data);
-+	if (IS_ERR(l2_pri_mux))
-+		return PTR_ERR(l2_pri_mux);
-+	clks[l2_mux] = l2_pri_mux->clk;
- 
- 	/*
- 	 * We don't want the CPU or L2 clocks to be turned off at late init
-@@ -372,7 +394,7 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	 * they take over.
- 	 */
- 	for_each_online_cpu(cpu) {
--		clk_prepare_enable(l2_pri_mux_clk);
-+		clk_prepare_enable(clks[l2_mux]);
- 		WARN(clk_prepare_enable(clks[cpu]),
- 		     "Unable to turn on CPU%d clock", cpu);
- 	}
-@@ -388,16 +410,16 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	 * two different rates to force a HFPLL reinit under all
- 	 * circumstances.
- 	 */
--	cur_rate = clk_get_rate(l2_pri_mux_clk);
-+	cur_rate = clk_get_rate(clks[l2_mux]);
- 	aux_rate = 384000000;
- 	if (cur_rate < aux_rate) {
- 		pr_info("L2 @ Undefined rate. Forcing new rate.\n");
- 		cur_rate = aux_rate;
- 	}
--	clk_set_rate(l2_pri_mux_clk, aux_rate);
--	clk_set_rate(l2_pri_mux_clk, 2);
--	clk_set_rate(l2_pri_mux_clk, cur_rate);
--	pr_info("L2 @ %lu KHz\n", clk_get_rate(l2_pri_mux_clk) / 1000);
-+	clk_set_rate(clks[l2_mux], aux_rate);
-+	clk_set_rate(clks[l2_mux], 2);
-+	clk_set_rate(clks[l2_mux], cur_rate);
-+	pr_info("L2 @ %lu KHz\n", clk_get_rate(clks[l2_mux]) / 1000);
- 	for_each_possible_cpu(cpu) {
- 		clk = clks[cpu];
- 		cur_rate = clk_get_rate(clk);
--- 
-2.37.2
-
+> ---
+>  drivers/clk/sprd/composite.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
+> index ebb644820b1e..d3a852720c07 100644
+> --- a/drivers/clk/sprd/composite.c
+> +++ b/drivers/clk/sprd/composite.c
+> @@ -9,13 +9,19 @@
+>
+>  #include "composite.h"
+>
+> -static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
+> -                               unsigned long *parent_rate)
+> +static int sprd_comp_determine_rate(struct clk_hw *hw,
+> +                                   struct clk_rate_request *req)
+>  {
+>         struct sprd_comp *cc = hw_to_sprd_comp(hw);
+> +       unsigned long rate;
+>
+> -       return sprd_div_helper_round_rate(&cc->common, &cc->div,
+> -                                        rate, parent_rate);
+> +       rate = sprd_div_helper_round_rate(&cc->common, &cc->div,
+> +                                         req->rate, &req->best_parent_rate);
+> +       if (rate < 0)
+> +               return rate;
+> +
+> +       req->rate = rate;
+> +       return 0;
+>  }
+>
+>  static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
+> @@ -53,7 +59,7 @@ const struct clk_ops sprd_comp_ops = {
+>         .get_parent     = sprd_comp_get_parent,
+>         .set_parent     = sprd_comp_set_parent,
+>
+> -       .round_rate     = sprd_comp_round_rate,
+> +       .determine_rate = sprd_comp_determine_rate,
+>         .recalc_rate    = sprd_comp_recalc_rate,
+>         .set_rate       = sprd_comp_set_rate,
+>  };
+>
+> --
+> b4 0.11.0-dev-99e3a
