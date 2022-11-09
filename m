@@ -2,82 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045B2C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 17:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA7CC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 18:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230407AbiKIRMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 12:12:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
+        id S231631AbiKISpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 13:45:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231301AbiKIRMQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 12:12:16 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1DEB175B8;
-        Wed,  9 Nov 2022 09:12:15 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id a67so28102749edf.12;
-        Wed, 09 Nov 2022 09:12:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SdpCW3bc/jcdSgpgyyMyHoNFC6KThem8jvb+gK7E5/o=;
-        b=pK9msVoQf50NdtWtpIXXlkZrHnEWpyZYXzAWvx61omamtFI3Hu9csIWT7JT3lPtr6E
-         QGSVrULPRqSRkC5295UNjb4Gj8EQfoiyRJWy4+k1lbfY3c+22OIoEXc8g5nfZkTV4heP
-         CXGhOI/q36uLYf2xENguFOUu/oWcA5n9klh5vf3ixcoi7oqg8fWj1iuiHvZUESD8GI72
-         bVYpLNx6PFAsGOn1FOnCG2r7EG9htj4Y6vpzkNvjTv+gp6Fp0BmTBPh/RGvEOKhUe/5q
-         8gzhh6JPDz2Vu7+kUIww4/c0yjxxR6qdfrdHw/AMiZhMOZkBBCYzloy6WHOX63huRt4j
-         gyCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SdpCW3bc/jcdSgpgyyMyHoNFC6KThem8jvb+gK7E5/o=;
-        b=CQcKR5t8BBP4mTonLq6vl1ESWGjpJi3HSBBrV8R8V9wL0FWyLkvcdZuCrtAeMDlqPm
-         Kg5Cch6RCmaVeqzyH65XrgaorofQqGSEd4qgm0WKxT6VOcCSn5rNxa/FwxwMbigMs4aC
-         cHVyUskuP+E5L0ndI2IZY9glwhKjtTfuzFVOKO8YCVgcjFOuKos0BLJ69C/Gt/TZfHXC
-         N3I+YVIxgC6Fl+XBnK1QXgL8VPoJ17b1sYOkgBXHJ8VnJ46A9+eR8BXiakf46L+w7rQh
-         SojEYN347fC/zYleGQb7JqK5IP7f2oZWIwtOLv6IP7WrdygVCb7uBUboKFOzFHS9urwm
-         XdQA==
-X-Gm-Message-State: ACrzQf338NCmccskH+xJWy7hAB44r+nCoKgRX5Bhq2prpF8HDui0bJFX
-        J+LJvmBRhznvETXoBi0Hyh0=
-X-Google-Smtp-Source: AMsMyM6EJMzUY7rLwPusiIvQLOBzAMFWUGe22HwzXfwYL4gg165ptAUE1ivXgSZer5IhdM6K1ztEtg==
-X-Received: by 2002:a05:6402:344:b0:461:7d4:9c9 with SMTP id r4-20020a056402034400b0046107d409c9mr62045783edw.141.1668013934364;
-        Wed, 09 Nov 2022 09:12:14 -0800 (PST)
-Received: from kista.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id k10-20020a17090632ca00b007adaca75bd0sm6154098ejk.179.2022.11.09.09.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 09:12:13 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Wei Li <liwei391@huawei.com>
-Cc:     linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, huawei.libin@huawei.com
-Subject: Re: [PATCH] clk: sunxi-ng: v3s: Correct the header guard of ccu-sun8i-v3s.h
-Date:   Wed, 09 Nov 2022 18:12:12 +0100
-Message-ID: <6441491.G0QQBjFxQf@kista>
-In-Reply-To: <20221108094335.3597008-1-liwei391@huawei.com>
-References: <20221108094335.3597008-1-liwei391@huawei.com>
+        with ESMTP id S231630AbiKISpA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 13:45:00 -0500
+Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A67E165CB
+        for <linux-clk@vger.kernel.org>; Wed,  9 Nov 2022 10:44:22 -0800 (PST)
+Date:   Wed, 09 Nov 2022 18:43:58 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=skothe.de;
+        s=protonmail; t=1668019445; x=1668278645;
+        bh=tArBFYxIU8rbGdc3B/KNaqlX3OdHDKjOAiShTGewKg8=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=eQupFHc6pq1c8eC1zGUovZetU9NBkOcVbGpzGok5LlvgD7DpySYsBGFVReJoUJCVa
+         SfrWJXdGWjR1JMbjqqIfohBzxjAYC/1/ZOcORi1iQfnEe7BqKTrCV/6fTGVzaBhUfI
+         qsY3GIOG+8NoQWF0jwC3sQzNFsSUh9703knnGB2TP0bOcTAfKNRK/yy4lDfeucWB3D
+         K0tvunJVmSGMc7ovZ535D4bJd1q9zmRP7ZUtNMj4oifT4wQfmd+u71Pxi6SNiWB4Z0
+         gxyKXlF+WDBUnI7UBbVeH8UNlsnzLKpY3wz2lHqORzdaZweyRkLuc8uFc7qFdsBowS
+         hUARvukQZCtJA==
+To:     mturquette@baylibre.com, sboyd@kernel.org
+From:   Steffen Kothe <steffen.kothe@skothe.de>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steffen Kothe <steffen.kothe@skothe.de>
+Subject: [PATCH] drivers: clk: clk-conf.c: Move err to warn msg for clk re-parenting
+Message-ID: <20221109184253.40531-1-steffen.kothe@skothe.de>
+Feedback-ID: 55345914:user:proton
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne torek, 08. november 2022 ob 10:43:35 CET je Wei Li napisal(a):
-> Rename the header guard of ccu-sun8i-v3s.h from _CCU_SUN8I_H3_H_ to
-> _CCU_SUN8I_V3S_H_ what corresponding with the file name.
-> 
-> Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
-> Signed-off-by: Wei Li <liwei391@huawei.com>
+Failed clock re-parenting does not necessarily imply critical errors
+since systems can initialize clocks which prohibit it by default and
+purpose.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+The error does not even imply any required handling which should treat
+as a warning then.
 
-Best regards,
-Jernej
+Signed-off-by: Steffen Kothe <steffen.kothe@skothe.de>
+---
+ drivers/clk/clk-conf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 2ef819606c417..d83591dc22356 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -62,7 +62,7 @@ static int __set_clk_parents(struct device_node *node, bo=
+ol clk_supplier)
+
+ =09=09rc =3D clk_set_parent(clk, pclk);
+ =09=09if (rc < 0)
+-=09=09=09pr_err("clk: failed to reparent %s to %s: %d\n",
++=09=09=09pr_warn("clk: failed to reparent %s to %s: %d\n",
+ =09=09=09       __clk_get_name(clk), __clk_get_name(pclk), rc);
+ =09=09clk_put(clk);
+ =09=09clk_put(pclk);
+--
+2.30.2
 
 
