@@ -2,111 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C475C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 09:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADA9C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 09:27:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbiKIJQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 04:16:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49604 "EHLO
+        id S230205AbiKIJ1E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 04:27:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbiKIJQI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 04:16:08 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE8C23BFD
-        for <linux-clk@vger.kernel.org>; Wed,  9 Nov 2022 01:14:43 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id b3so24752631lfv.2
-        for <linux-clk@vger.kernel.org>; Wed, 09 Nov 2022 01:14:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1rE5UJ2gWSpg6IpozSMRbtLn3mGKV5w8AwqD7IDy5jk=;
-        b=U06Q1gCUo2hO0VTiMtEoJoaSneZWE4NtURqBoL4XiYfNhfZBbfl7abW9xNjKv5GPbK
-         hCRmfTZe9WmG2yXqDRTlas8ZrrIDi+OzwEjNPm7bGmznXZ7Cwwavk9U1BzcaJcHnaD0D
-         Hm83QaSpWpdHNXd4FoVk4toCLw2NmEOE5C9/I++ru2D+fV+KKd28hu+q+R5z1iy2zt+E
-         QMjz1B7ywS8GyGIiiCsXtE2/h5+d39nVYAzdPtcvFP6Qt0VMcApOEMI4RTmg/NC0mSo3
-         NrUfV4bpVr+8b2r25x1Q9e7IwLff7VFq7i1eKsPhsW1LjqRFzDEbd3BpHYUR4DbgVhn+
-         mz3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1rE5UJ2gWSpg6IpozSMRbtLn3mGKV5w8AwqD7IDy5jk=;
-        b=KlQIsnrGlDi9YSFW02tmEWGQx0B6YwEqLOQdSD7NLbpiSNsEtFV9BrO5jqMRXityMT
-         4dZzFO8AQjW2nWAuu9bcw7GUKMJ/AoRIfRDNFiZRJicwRjGLort/T+cC3J3aevVa5KvF
-         ymbzempvyFQyYb5IeJjPtpq/TKyWDYc9FWf83Ep7uPo4RJps72j9gLuT+mqOVwDqJ5jC
-         0SautXnB0ZUEVbVyUX2tjFF3SvkkEcTVQybImp9gqTxIt7I2GQwuP3Gab7JdEg/y5n09
-         YuLZhTSvbCS6T4YwO9JPFa1svftBryj8yMHrtcEHM+yDxVlWyYwDWl+B8JRTFw1F+d80
-         RVCA==
-X-Gm-Message-State: ACrzQf0BuZ9vAb6MYa0QWQnpPwvIkNQ+cCgevSqVKxAyr5jplXS9EmuT
-        o7Onn3FLS3jFRICcMH22QLXLAw==
-X-Google-Smtp-Source: AMsMyM7LgB3iu58DZRHLmWoJUX7TsMuJX1g8t6t7+zHqIzWcfEQTeAhOSuGqvRhzmMJAMw9LQxb0XA==
-X-Received: by 2002:a05:6512:110d:b0:4a2:7df9:30bc with SMTP id l13-20020a056512110d00b004a27df930bcmr22209442lfg.138.1667985281476;
-        Wed, 09 Nov 2022 01:14:41 -0800 (PST)
-Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id p15-20020ac24ecf000000b0049adf925d00sm2146242lfr.1.2022.11.09.01.14.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 01:14:40 -0800 (PST)
-Message-ID: <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
-Date:   Wed, 9 Nov 2022 10:14:40 +0100
+        with ESMTP id S229978AbiKIJ06 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 04:26:58 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8085D19C22
+        for <linux-clk@vger.kernel.org>; Wed,  9 Nov 2022 01:26:57 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oshMF-0005Xb-1w; Wed, 09 Nov 2022 10:26:55 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oshMD-003DwK-Fv; Wed, 09 Nov 2022 10:26:54 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oshMD-00FO8i-OD; Wed, 09 Nov 2022 10:26:53 +0100
+Date:   Wed, 9 Nov 2022 10:26:53 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Doug Brown <doug@schmorgal.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] pwm: pxa: Wait for final PWM period to finish
+Message-ID: <20221109092653.qwwexcclg6gxn4cu@pengutronix.de>
+References: <20221003015546.202308-1-doug@schmorgal.com>
+ <20221003015546.202308-5-doug@schmorgal.com>
+ <20221019073929.3abj6ohhcreifyso@pengutronix.de>
+ <a9c974f1-fc66-b964-c7f0-b7e4320f2177@schmorgal.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] clk: samsung: Revert "clk: samsung: exynos-clkout: Use
- of_device_get_match_data()"
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "Minghao Chi (CGEL ZTE)" <chi.minghao@zte.com.cn>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vinod Koul <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Mark Brown <broonie@kernel.org>
-References: <CGME20221108213728eucas1p2aa97d7925e280b7347bb9e76d3c9a177@eucas1p2.samsung.com>
- <20221108213718.32076-1-m.szyprowski@samsung.com>
- <0da15378-ca0d-4f26-c21c-184de2a89350@linaro.org>
- <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="svigzme6xfd4tylu"
+Content-Disposition: inline
+In-Reply-To: <a9c974f1-fc66-b964-c7f0-b7e4320f2177@schmorgal.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/11/2022 23:53, Marek Szyprowski wrote:
-> On 08.11.2022 22:44, Krzysztof Kozlowski wrote:
->> On 08/11/2022 22:37, Marek Szyprowski wrote:
->>> of_device_get_match_data() function should not be used on the device
->>> other than the one matched to the given driver, because it always returns
->>> the match_data of the matched driver. In case of exynos-clkout driver,
->>> the code matched the OF IDs on the PARENT device, so replacing it with
->>> of_device_get_match_data() broke the driver.
->>>
->>> This reverts commit 777aaf3d1daf793461269b49c063aca1cee06a44.
->> This was untested, automated commit and there were several other like
->> that from Minghao. Other driver owners should check if they have the
->> same issue. I made a quick look and seems fine, but it all depends what
->> was the of_device_get_match_data() argument.
->>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Please add Cc-stable tag. Do reverts need a Fixes tag? I guess as well...
-> 
-> Do we really need a CC-stable tag? v6.1-rc1 is the first release that 
-> contains that bug, so this revert imho should be simply applied as a fix 
-> for v6.1-rcX cycle.
 
-No, then it's fine.
+--svigzme6xfd4tylu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen, can you take it directly to fixes for current RC?
+Hello Doug,
 
-Fixes: 777aaf3d1daf ("clk: samsung: exynos-clkout: Use of_device_get_match_data()")
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Sat, Oct 22, 2022 at 12:35:23PM -0700, Doug Brown wrote:
+> On 10/19/2022 12:39 AM, Uwe Kleine-K=F6nig wrote:
+> > On Sun, Oct 02, 2022 at 06:55:45PM -0700, Doug Brown wrote:
+> > > If the clock is turned on too quickly after being turned off, it won't
+> > > actually turn back on. Work around this problem by waiting for the fi=
+nal
+> > > period to complete when disabling the PWM. The delay logic is borrowed
+> > > from the pwm-sun4i driver.
+> > >=20
+> > > To avoid unnecessary delays, skip the whole config process if the PWM=
+ is
+> > > already disabled and staying disabled.
+> >=20
+> > I wonder if there is some documentation available about this issue. This
+> > feels like a workaround without knowledge about the details and so might
+> > break at the next opportunity.
+>=20
+> Thanks for reviewing! Yes, it does feel like a crazy workaround. I'm not
+> super proud of it. The best documentation I've been able to look at is
+> the PXA168 software manual [1]. Page 502 of the PDF talks about a
+> "graceful shutdown" where turning off the clock enable bit doesn't
+> immediately stop the clock, and instead it waits for the current PWM
+> period to complete first. This driver is currently configuring it for
+> graceful shutdown mode, because the PWMCR_SD bit is not set (page 1257).
+>=20
+> I've experimentally determined that if you try to turn the clock back on
+> when a graceful shutdown is still scheduled, it doesn't cancel the
+> graceful shutdown, so the clock ends up off afterward, even though the
+> common clock framework thinks it's still on. The hacky delay in this
+> commit works around that problem. This almost seems like a problem that
+> should be solved on the common clock framework side instead, but it
+> doesn't know what the PWM frequency is so it wouldn't know how long to
+> delay.
+>=20
+> Do all the other similar drivers in the kernel do a graceful shutdown
+> like this when they are turned off? If not, a simpler solution would be
+> to start turning on the PWMCR_SD bit instead, so the clock stops
+> immediately (potentially resulting in the final duty cycle being short).
 
-Best regards,
-Krzysztof
+There are supported hardwares that (only) support immediate shutdown, so
+consumers cannot rely on a graceful stop anyhow. So I'd say using
+PWMCR_SD=3D1 is fine. The documentation suggests that in this case "PWM_OUT=
+x stops
+after at most one PSCLK_PWM" which might explain that the problem can
+still be triggered. (i.e. if you reenable before the next PSCLK_PWM
+cycle.)
 
+BTW, the driver lacks information about how the hardware behaves on
+disable. The most common cases are
+
+ - emits the inactive output
+ - freezes where it just happens to be (assuming PWMCR_SD=3D1)
+
+Would you mind testing that and adding a patch to your series? (Look at
+e.g. drivers/pwm/pwm-sl28cpld.c for the desired format to ease
+grepping.)
+
+> I tested that change in place of this commit and it seems to work pretty
+> well, although I can still cause it to fail if I turn my PWM backlight
+> off and back on quickly without a "sleep 0.000001" in between. It feels
+> to me like there are some weird interdependencies between the clock
+> enable bits and the actual PWM controller block, at least in the PXA168,
+> likely due to "graceful shutdown" mode's existence.
+>=20
+> What do you think? Turning on the PWMCR_SD bit would be very simple, but
+> it doesn't fully fix the issue in my testing. I'd still be okay with it
+> though, because the only failure case I can reproduce is a minor edge
+> case (plus, I don't love the delay solution).
+
++1 for no love for the delay solution.
+=20
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--svigzme6xfd4tylu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNrcloACgkQwfwUeK3K
+7Ann6Af9EMrQQ7cnss/b+NWBDIHI0E95e2NXh4D/birDB5pzGI69RhHF5jJOU2ae
+DWjzU3P78EcuasdyW8IW3krtrYpIVdCITgJfkjJdUy9mf2HCIc8HmON+iFA9xKtZ
+5/z5yxU6kGIYqS0ah2PgIR2a04RX7QnSRAQtRpB7lCnZXHAvSHw+qt3ocUYRl/aN
+ks3npvgBbAalmuJ3gOcugMazpU2YgDptHOvYz6XGpfL7KkVc696MED7voKIf8TxA
+U+WOgUe6JYZIEhzjYjKAgwHK9FQ7/P2KSbQAChFEkocwQZRa6maYF8l1LKptZaUK
+FnhSu2cZafncH7sRUjPfDMgdmPMrgw==
+=8rN/
+-----END PGP SIGNATURE-----
+
+--svigzme6xfd4tylu--
