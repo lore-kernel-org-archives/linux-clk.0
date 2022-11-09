@@ -2,258 +2,373 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3714C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 12:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03C0C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Nov 2022 13:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbiKIMxn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 07:53:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39790 "EHLO
+        id S229937AbiKINT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 08:19:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiKIMxn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 07:53:43 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84D5175A9
-        for <linux-clk@vger.kernel.org>; Wed,  9 Nov 2022 04:53:41 -0800 (PST)
+        with ESMTP id S229629AbiKINTZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 08:19:25 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2669DE13;
+        Wed,  9 Nov 2022 05:19:24 -0800 (PST)
 Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A4F4B283;
-        Wed,  9 Nov 2022 13:53:39 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D25D3896;
+        Wed,  9 Nov 2022 14:19:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1667998419;
-        bh=sK/OoGMss0eqn8adyVyNrJ2BFJ8S/SwAZRf3hpyjDUM=;
+        s=mail; t=1667999961;
+        bh=cDMccYD5NBy6LXUqfpS59aa/jLTlyZ6pzQKa95MZI9M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eM5/9UyXr9CpQzVxhM5bFbt7xnA2g8bfsvrhYt9vZn7Zkeu6WevKuJSaTdmcuZAY+
-         xH1fvC8/tKPD8JE7jXdO6/EC2ztXI4/vFcGeuzqySdBzDvcFrrxkVFvKRGVQbiaSzg
-         tn5hjvRM3QaWgHpyh7NeVVSKHX7K2N1aIC31Vq/o=
-Date:   Wed, 9 Nov 2022 14:53:20 +0200
+        b=R9z+BmGyJO6nTBKOA3syeUU9NaK0zHo0jY2dCQvEBwuTdW21e4k7rYSdJ99LHJYIg
+         /tGmpnessCqYtTK/FuPGHlLHsF7u3zm079ft4NbTufD4z77snAKbB5BcGh5sVyT/7i
+         8LA/2RrkpKE8BaVoWGwD9FBZeD35j8hK9EhK6JGE=
+Date:   Wed, 9 Nov 2022 15:19:02 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Marek Vasut <marex@denx.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@denx.de>, Jacky Bai <ping.bai@nxp.com>,
+Cc:     linux-pm@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Lucas Stach <l.stach@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
+        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com
-Subject: Re: [PATCH] [RFC] soc: imx: imx8m-blk-ctrl: Split clock prepare from
- clock enable in the domain
-Message-ID: <Y2uiwEbH2rBTvw+6@pendragon.ideasonboard.com>
-References: <20221024150947.10739-1-marex@denx.de>
- <Y1cs++TV2GCuh4tS@pendragon.ideasonboard.com>
- <f4df1f39-bb63-7b7c-55d6-50c3ea9e176d@denx.de>
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off
+ callbacks
+Message-ID: <Y2uoxuAXrVSD0r6k@pendragon.ideasonboard.com>
+References: <20221108013517.749665-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f4df1f39-bb63-7b7c-55d6-50c3ea9e176d@denx.de>
+In-Reply-To: <20221108013517.749665-1-marex@denx.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Marek,
 
-On Wed, Nov 09, 2022 at 01:28:03AM +0100, Marek Vasut wrote:
-> On 10/25/22 02:25, Laurent Pinchart wrote:
-> > On Mon, Oct 24, 2022 at 05:09:47PM +0200, Marek Vasut wrote:
-> >> It is possible for clk_disable_unused() to trigger lockdep warning
-> >> regarding lock ordering in this driver. This happens in case of the
-> >> following conditions:
-> >>
-> >> A) clock core clk_disable_unused() triggers the following sequence in a
-> >>     driver which also uses blkctrl domain:
-> >>     - clk_prepare_lock() -> obtains clock core prepare_lock
-> >>     - pm_runtime_get*() -> obtains &blk_ctrl_genpd_lock_class
-> >>
-> >> B) driver powers up a power domain and triggers the following sequence
-> >>     in blkctrl:
-> >>     - pm_runtime_get_sync() -> obtains &blk_ctrl_genpd_lock_class
-> >>     - clk_bulk_prepare_enable() -> obtains clock core prepare_lock
-> >>
-> >> This can lead to a deadlock in case A and B runs on separate CPUs.
-> >>
-> >> To avoid the deadlock, split clk_*prepare() from clk_*enable() and
-> >> call the former before pm_runtime_get_sync(). This way, the blkctrl
-> >> driver always claims the prepare_lock before blk_ctrl_genpd_lock_class
-> >> and the deadlock is avoided.
-> > 
-> > I'm afraid I'm still getting occasional warnings from lockdep :-( This
-> > one happened at boot time:
-> > 
-> > [   17.837243]
-> > [   17.837254] ======================================================
-> > [   17.837256] WARNING: possible circular locking dependency detected
-> > [   17.837260] 6.1.0-rc2-00199-gd504fb27855a-dirty #301 Not tainted
-> > [   17.837265] ------------------------------------------------------
-> > [   17.837267] kworker/u8:6/152 is trying to acquire lock:
-> > [   17.837273] ffff000000eab6f0 (&blk_ctrl_genpd_lock_class){+.+.}-{3:3}, at: genpd_lock_mtx+0x20/0x30
-> > [   17.837300]
-> > [   17.837300] but task is already holding lock:
-> > [   17.837302] ffff800009c1e5e8 (prepare_lock){+.+.}-{3:3}, at: clk_prepare_lock+0x34/0xb0
-> > [   17.837321]
-> > [   17.837321] which lock already depends on the new lock.
-> > [   17.837321]
-> > [   17.837323]
-> > [   17.837323] the existing dependency chain (in reverse order) is:
-> > [   17.837326]
-> > [   17.837326] -> #1 (prepare_lock){+.+.}-{3:3}:
-> > [   17.837337]        lock_acquire+0x68/0x90
-> > [   17.837345]        __mutex_lock+0x8c/0x420
-> > [   17.837354]        mutex_lock_nested+0x34/0x40
-> > [   17.837360]        clk_prepare_lock+0x54/0xb0
-> > [   17.837367]        clk_unprepare+0x2c/0x50
-> > [   17.837373]        clk_bulk_unprepare+0x44/0x60
-> > [   17.837380]        imx8mp_blk_ctrl_power_off+0xb4/0x100
-> > [   17.837386]        _genpd_power_off+0x9c/0x180
-> > [   17.837392]        genpd_power_off.part.0.isra.0+0x130/0x2a0
-> > [   17.837399]        genpd_power_off_work_fn+0x6c/0x90
-> > [   17.837405]        process_one_work+0x294/0x6b0
-> > [   17.837412]        worker_thread+0x7c/0x450
-> > [   17.837416]        kthread+0x114/0x120
-> > [   17.837424]        ret_from_fork+0x10/0x20
-> > [   17.837431]
-> > [   17.837431] -> #0 (&blk_ctrl_genpd_lock_class){+.+.}-{3:3}:
-> > [   17.837442]        __lock_acquire+0x1148/0x1910
-> > [   17.837448]        lock_acquire.part.0+0xec/0x260
-> > [   17.837454]        lock_acquire+0x68/0x90
-> > [   17.837459]        __mutex_lock+0x8c/0x420
-> > [   17.837466]        mutex_lock_nested+0x34/0x40
-> > [   17.837472]        genpd_lock_mtx+0x20/0x30
-> > [   17.837478]        genpd_runtime_resume+0xfc/0x2e0
-> > [   17.837484]        __rpm_callback+0x50/0x1b0
-> > [   17.837492]        rpm_callback+0x74/0x80
-> > [   17.837499]        rpm_resume+0x434/0x6e0
-> > [   17.837505]        __pm_runtime_resume+0x54/0xa0
-> > [   17.837512]        clk_pm_runtime_get.part.0.isra.0+0x24/0xa0
-> > [   17.837518]        clk_core_set_rate_nolock+0xbc/0x2b0
-> > [   17.837524]        clk_set_rate+0x40/0xa0
-> > [   17.837529]        lcdif_crtc_atomic_enable+0x98/0x880 [imx_lcdif]
-> > [   17.837544]        drm_atomic_helper_commit_modeset_enables+0xac/0x2b0
-> > [   17.837551]        drm_atomic_helper_commit_tail_rpm+0x58/0xb0
-> > [   17.837558]        commit_tail+0xac/0x1a0
-> > [   17.837563]        drm_atomic_helper_commit+0x1a0/0x1c0
-> > [   17.837569]        drm_atomic_commit+0x94/0x130
-> > [   17.837574]        drm_client_modeset_commit_atomic+0x230/0x2a0
-> > [   17.837582]        drm_client_modeset_commit_locked+0x68/0x1d0
-> > [   17.837588]        drm_client_modeset_commit+0x38/0x60
-> > [   17.837594]        drm_fb_helper_set_par+0xd4/0x130
-> > [   17.837600]        fbcon_init+0x3d4/0x540
-> > [   17.837606]        visual_init+0xb8/0x110
-> > [   17.837613]        do_bind_con_driver.isra.0+0x1c8/0x3a0
-> > [   17.837620]        do_take_over_console+0x148/0x200
-> > [   17.837627]        do_fbcon_takeover+0x74/0xf0
-> > [   17.837632]        fbcon_fb_registered+0x18c/0x200
-> > [   17.837637]        register_framebuffer+0x1bc/0x2b0
-> > [   17.837645]        __drm_fb_helper_initial_config_and_unlock+0x338/0x5c0
-> > [   17.837650]        drm_fbdev_client_hotplug+0xd8/0x1c0
-> > [   17.837656]        drm_fbdev_generic_setup+0xbc/0x1b0
-> > [   17.837661]        lcdif_probe+0x2b0/0x310 [imx_lcdif]
-> > [   17.837672]        platform_probe+0x70/0xf0
-> > [   17.837678]        really_probe+0xc8/0x3e0
-> > [   17.837685]        __driver_probe_device+0x84/0x190
-> > [   17.837692]        driver_probe_device+0x44/0x120
-> > [   17.837699]        __device_attach_driver+0xc4/0x160
-> > [   17.837707]        bus_for_each_drv+0x80/0xe0
-> > [   17.837713]        __device_attach+0xb0/0x1f0
-> > [   17.837720]        device_initial_probe+0x1c/0x30
-> > [   17.837727]        bus_probe_device+0xa4/0xb0
-> > [   17.837734]        deferred_probe_work_func+0xac/0x100
-> > [   17.837740]        process_one_work+0x294/0x6b0
-> > [   17.837746]        worker_thread+0x7c/0x450
-> > [   17.837751]        kthread+0x114/0x120
-> > [   17.837758]        ret_from_fork+0x10/0x20
-> > [   17.837764]
-> > [   17.837764] other info that might help us debug this:
-> > [   17.837764]
-> > [   17.837766]  Possible unsafe locking scenario:
-> > [   17.837766]
-> > [   17.837768]        CPU0                    CPU1
-> > [   17.837770]        ----                    ----
-> > [   17.837772]   lock(prepare_lock);
-> > [   17.837779]                                lock(&blk_ctrl_genpd_lock_class);
-> > [   17.837785]                                lock(prepare_lock);
-> > [   17.837790]   lock(&blk_ctrl_genpd_lock_class);
-> > [   17.837796]
-> > [   17.837796]  *** DEADLOCK ***
-> > [   17.837796]
-> > [   17.837799] 11 locks held by kworker/u8:6/152:
-> > [   17.837803]  #0: ffff000000040938 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1fc/0x6b0
-> > [   17.837821]  #1: ffff80000b74bdd0 (deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1fc/0x6b0
-> > [   17.837838]  #2: ffff0000003f58f8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x40/0x1f0
-> > [   17.837856]  #3: ffff800009c1ddc0 (registration_lock){+.+.}-{3:3}, at: register_framebuffer+0x4c/0x2b0
-> > [   17.837875]  #4: ffff800009ae4e68 (console_lock){+.+.}-{0:0}, at: fbcon_fb_registered+0x1f8/0x200
-> > [   17.837892]  #5: ffff000002f1ee78 (&helper->lock){+.+.}-{3:3}, at: drm_fb_helper_set_par+0x98/0x130
-> > [   17.837909]  #6: ffff0000038611a8 (&dev->master_mutex){+.+.}-{3:3}, at: drm_master_internal_acquire+0x2c/0x70
-> > [   17.837928]  #7: ffff000002f1ec98 (&client->modeset_mutex){+.+.}-{3:3}, at: drm_client_modeset_commit_locked+0x34/0x1d0
-> > [   17.837947]  #8: ffff80000b74b690 (crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_client_modeset_commit_atomic+0x50/0x2a0
-> > [   17.837964]  #9: ffff000003863138 (crtc_ww_class_mutex){+.+.}-{3:3}, at: drm_modeset_lock+0x48/0x130
-> > [   17.837984]  #10: ffff800009c1e5e8 (prepare_lock){+.+.}-{3:3}, at: clk_prepare_lock+0x34/0xb0
-> > [   17.838003]
-> > [   17.838003] stack backtrace:
-> > [   17.838007] CPU: 1 PID: 152 Comm: kworker/u8:6 Not tainted 6.1.0-rc2-00199-gd504fb27855a-dirty #301
-> > [   17.838013] Hardware name: Polyhex Debix Model A i.MX8MPlus board (DT)
-> > [   17.838018] Workqueue: events_unbound deferred_probe_work_func
-> > [   17.838029] Call trace:
-> > [   17.838031]  dump_backtrace+0xe4/0x140
-> > [   17.838042]  show_stack+0x20/0x50
-> > [   17.838049]  dump_stack_lvl+0x9c/0xd8
-> > [   17.838055]  dump_stack+0x18/0x34
-> > [   17.838060]  print_circular_bug+0x1f8/0x200
-> > [   17.838066]  check_noncircular+0x160/0x180
-> > [   17.838072]  __lock_acquire+0x1148/0x1910
-> > [   17.838078]  lock_acquire.part.0+0xec/0x260
-> > [   17.838084]  lock_acquire+0x68/0x90
-> > [   17.838089]  __mutex_lock+0x8c/0x420
-> > [   17.838098]  mutex_lock_nested+0x34/0x40
-> > [   17.838104]  genpd_lock_mtx+0x20/0x30
-> > [   17.838110]  genpd_runtime_resume+0xfc/0x2e0
-> > [   17.838117]  __rpm_callback+0x50/0x1b0
-> > [   17.838125]  rpm_callback+0x74/0x80
-> > [   17.838132]  rpm_resume+0x434/0x6e0
-> > [   17.838138]  __pm_runtime_resume+0x54/0xa0
-> > [   17.838145]  clk_pm_runtime_get.part.0.isra.0+0x24/0xa0
-> > [   17.838150]  clk_core_set_rate_nolock+0xbc/0x2b0
-> > [   17.838157]  clk_set_rate+0x40/0xa0
-> > [   17.838162]  lcdif_crtc_atomic_enable+0x98/0x880 [imx_lcdif]
-> > [   17.838175]  drm_atomic_helper_commit_modeset_enables+0xac/0x2b0
-> > [   17.838182]  drm_atomic_helper_commit_tail_rpm+0x58/0xb0
-> > [   17.838188]  commit_tail+0xac/0x1a0
-> > [   17.838194]  drm_atomic_helper_commit+0x1a0/0x1c0
-> > [   17.838200]  drm_atomic_commit+0x94/0x130
-> > [   17.838205]  drm_client_modeset_commit_atomic+0x230/0x2a0
-> > [   17.838212]  drm_client_modeset_commit_locked+0x68/0x1d0
-> > [   17.838218]  drm_client_modeset_commit+0x38/0x60
-> > [   17.838224]  drm_fb_helper_set_par+0xd4/0x130
-> > [   17.838230]  fbcon_init+0x3d4/0x540
-> > [   17.838235]  visual_init+0xb8/0x110
-> > [   17.838243]  do_bind_con_driver.isra.0+0x1c8/0x3a0
-> > [   17.838250]  do_take_over_console+0x148/0x200
-> > [   17.838257]  do_fbcon_takeover+0x74/0xf0
-> > [   17.838262]  fbcon_fb_registered+0x18c/0x200
-> > [   17.838268]  register_framebuffer+0x1bc/0x2b0
-> > [   17.838275]  __drm_fb_helper_initial_config_and_unlock+0x338/0x5c0
-> > [   17.838282]  drm_fbdev_client_hotplug+0xd8/0x1c0
-> > [   17.838288]  drm_fbdev_generic_setup+0xbc/0x1b0
-> > [   17.838293]  lcdif_probe+0x2b0/0x310 [imx_lcdif]
-> > [   17.838304]  platform_probe+0x70/0xf0
-> > [   17.838309]  really_probe+0xc8/0x3e0
-> > [   17.838316]  __driver_probe_device+0x84/0x190
-> > [   17.838323]  driver_probe_device+0x44/0x120
-> > [   17.838330]  __device_attach_driver+0xc4/0x160
-> > [   17.838338]  bus_for_each_drv+0x80/0xe0
-> > [   17.838344]  __device_attach+0xb0/0x1f0
-> > [   17.838351]  device_initial_probe+0x1c/0x30
-> > [   17.838358]  bus_probe_device+0xa4/0xb0
-> > [   17.838365]  deferred_probe_work_func+0xac/0x100
-> > [   17.838372]  process_one_work+0x294/0x6b0
-> > [   17.838378]  worker_thread+0x7c/0x450
-> > [   17.838383]  kthread+0x114/0x120
-> > [   17.838390]  ret_from_fork+0x10/0x20
-> 
-> Let's see if this works any better:
-> 
-> https://patchwork.kernel.org/project/linux-pm/list/?series=693012
+Thank you for the patch.
 
-I've added that to my tree, but won't be able to test it this week as
-I'm travelling and don't have access to the necessary hardware. I'll try
-to report test results next week.
+On Tue, Nov 08, 2022 at 02:35:15AM +0100, Marek Vasut wrote:
+> Currently it is possible that a power domain power on or off would claim
+> the genpd lock first and clock core prepare_lock second, while another
+> thread could do the reverse, and this would trigger lockdep warning.
+> 
+> Introduce new callbacks, .power_pre/post_on() and .power_off_pre/post(), which
+> are triggered before the genpd_lock() and after genpd_unlock() respectively in
+> case the domain is powered on and off. Those are meant to let drivers claim
+> clock core prepare_lock via clk_*prepare() call and release the lock via
+> clk_*unprepare() call to always assure that the clock and genpd lock ordering
+> is correct.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+> Cc: Adam Ford <aford173@gmail.com>
+> Cc: Fabio Estevam <festevam@denx.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jacky Bai <ping.bai@nxp.com>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Marek Vasut <marex@denx.de>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Martin Kepplinger <martink@posteo.de>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-imx@nxp.com
+> Cc: linux-pm@vger.kernel.org
+> To: linux-arm-kernel@lists.infradead.org
+> ---
+>  drivers/base/power/domain.c | 103 ++++++++++++++++++++++++++++++++----
+>  include/linux/pm_domain.h   |   4 ++
+>  2 files changed, 97 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 6471b559230e9..df2a93d0674e4 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -494,6 +494,22 @@ void dev_pm_genpd_set_next_wakeup(struct device *dev, ktime_t next)
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_genpd_set_next_wakeup);
+>  
+> +static int genpd_power_pre_on(struct generic_pm_domain *genpd)
+> +{
+> +	if (!genpd->power_pre_on)
+> +		return 0;
+> +
+> +	return genpd->power_pre_on(genpd);
+> +}
+> +
+> +static int genpd_power_post_on(struct generic_pm_domain *genpd)
+> +{
+> +	if (!genpd->power_post_on)
+> +		return 0;
+> +
+> +	return genpd->power_post_on(genpd);
+> +}
+> +
+>  static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+>  {
+>  	unsigned int state_idx = genpd->state_idx;
+> @@ -544,6 +560,22 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+>  	return ret;
+>  }
+>  
+> +static int genpd_power_off_pre(struct generic_pm_domain *genpd)
+> +{
+> +	if (!genpd->power_off_pre)
+> +		return 0;
+> +
+> +	return genpd->power_off_pre(genpd);
+> +}
+> +
+> +static int genpd_power_off_post(struct generic_pm_domain *genpd)
+> +{
+> +	if (!genpd->power_off_post)
+> +		return 0;
+> +
+> +	return genpd->power_off_post(genpd);
+> +}
+> +
+>  static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
+>  {
+>  	unsigned int state_idx = genpd->state_idx;
+> @@ -816,12 +848,18 @@ static int genpd_dev_pm_qos_notifier(struct notifier_block *nb,
+>  static void genpd_power_off_work_fn(struct work_struct *work)
+>  {
+>  	struct generic_pm_domain *genpd;
+> +	int ret;
+>  
+>  	genpd = container_of(work, struct generic_pm_domain, power_off_work);
+>  
+> +	ret = genpd_power_off_pre(genpd);
+> +	if (ret)
+> +		return;
+>  	genpd_lock(genpd);
+>  	genpd_power_off(genpd, false, 0);
+>  	genpd_unlock(genpd);
+> +	ret = genpd_power_off_post(genpd);
+> +	WARN_ON_ONCE(ret);
+>  }
+>  
+>  /**
+> @@ -938,12 +976,14 @@ static int genpd_runtime_suspend(struct device *dev)
+>  	if (irq_safe_dev_in_sleep_domain(dev, genpd))
+>  		return 0;
+>  
+> +	ret = genpd_power_off_pre(genpd);
+> +	if (ret)
+> +		return ret;
+>  	genpd_lock(genpd);
+>  	gpd_data->rpm_pstate = genpd_drop_performance_state(dev);
+>  	genpd_power_off(genpd, true, 0);
+>  	genpd_unlock(genpd);
+> -
+> -	return 0;
+> +	return genpd_power_off_post(genpd);
+>  }
+>  
+>  /**
+> @@ -977,12 +1017,21 @@ static int genpd_runtime_resume(struct device *dev)
+>  	if (irq_safe_dev_in_sleep_domain(dev, genpd))
+>  		goto out;
+>  
+> +	ret = genpd_power_pre_on(genpd);
+> +	if (ret)
+> +		return ret;
+>  	genpd_lock(genpd);
+>  	ret = genpd_power_on(genpd, 0);
+>  	if (!ret)
+>  		genpd_restore_performance_state(dev, gpd_data->rpm_pstate);
+>  	genpd_unlock(genpd);
+>  
+> +	if (ret) {
+> +		genpd_power_post_on(genpd);
+> +		return ret;
+> +	}
+> +
+> +	ret = genpd_power_post_on(genpd);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1017,10 +1066,13 @@ static int genpd_runtime_resume(struct device *dev)
+>  	genpd_stop_dev(genpd, dev);
+>  err_poweroff:
+>  	if (!pm_runtime_is_irq_safe(dev) || genpd_is_irq_safe(genpd)) {
+> -		genpd_lock(genpd);
+> -		gpd_data->rpm_pstate = genpd_drop_performance_state(dev);
+> -		genpd_power_off(genpd, true, 0);
+> -		genpd_unlock(genpd);
+> +		if (!genpd_power_off_pre(genpd)) {
+> +			genpd_lock(genpd);
+> +			gpd_data->rpm_pstate = genpd_drop_performance_state(dev);
+> +			genpd_power_off(genpd, true, 0);
+> +			genpd_unlock(genpd);
+> +			genpd_power_off_post(genpd);
+> +		}
+>  	}
+>  
+>  	return ret;
+> @@ -1225,12 +1277,14 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
+>  		}
+>  	}
+>  
+> +	ret = genpd_power_off_pre(genpd);
+> +	if (ret)
+> +		return ret;
+>  	genpd_lock(genpd);
+>  	genpd->suspended_count++;
+>  	genpd_sync_power_off(genpd, true, 0);
+>  	genpd_unlock(genpd);
+> -
+> -	return 0;
+> +	return genpd_power_off_post(genpd);
+>  }
+>  
+>  /**
+> @@ -1267,10 +1321,16 @@ static int genpd_resume_noirq(struct device *dev)
+>  	if (device_wakeup_path(dev) && genpd_is_active_wakeup(genpd))
+>  		return pm_generic_resume_noirq(dev);
+>  
+> +	ret = genpd_power_pre_on(genpd);
+> +	if (ret)
+> +		return ret;
+>  	genpd_lock(genpd);
+>  	genpd_sync_power_on(genpd, true, 0);
+>  	genpd->suspended_count--;
+>  	genpd_unlock(genpd);
+> +	ret = genpd_power_post_on(genpd);
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (genpd->dev_ops.stop && genpd->dev_ops.start &&
+>  	    !pm_runtime_status_suspended(dev)) {
+> @@ -1378,6 +1438,9 @@ static int genpd_restore_noirq(struct device *dev)
+>  	 * At this point suspended_count == 0 means we are being run for the
+>  	 * first time for the given domain in the present cycle.
+>  	 */
+> +	ret = genpd_power_pre_on(genpd);
+> +	if (ret)
+> +		return ret;
+>  	genpd_lock(genpd);
+>  	if (genpd->suspended_count++ == 0) {
+>  		/*
+> @@ -1390,6 +1453,9 @@ static int genpd_restore_noirq(struct device *dev)
+>  
+>  	genpd_sync_power_on(genpd, true, 0);
+>  	genpd_unlock(genpd);
+> +	ret = genpd_power_post_on(genpd);
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (genpd->dev_ops.stop && genpd->dev_ops.start &&
+>  	    !pm_runtime_status_suspended(dev)) {
+> @@ -1413,6 +1479,7 @@ static int genpd_restore_noirq(struct device *dev)
+>  static void genpd_complete(struct device *dev)
+>  {
+>  	struct generic_pm_domain *genpd;
+> +	int ret;
+
+This variable is unused, causing a compilation error.
+
+>  
+>  	dev_dbg(dev, "%s()\n", __func__);
+>  
+> @@ -1435,6 +1502,7 @@ static void genpd_switch_state(struct device *dev, bool suspend)
+>  {
+>  	struct generic_pm_domain *genpd;
+>  	bool use_lock;
+> +	int ret;
+>  
+>  	genpd = dev_to_genpd_safe(dev);
+>  	if (!genpd)
+> @@ -1442,8 +1510,13 @@ static void genpd_switch_state(struct device *dev, bool suspend)
+>  
+>  	use_lock = genpd_is_irq_safe(genpd);
+>  
+> -	if (use_lock)
+> +	if (use_lock) {
+> +		ret = suspend ? genpd_power_off_pre(genpd) :
+> +				genpd_power_pre_on(genpd);
+> +		if (ret)
+> +			return;
+>  		genpd_lock(genpd);
+> +	}
+>  
+>  	if (suspend) {
+>  		genpd->suspended_count++;
+> @@ -1453,8 +1526,12 @@ static void genpd_switch_state(struct device *dev, bool suspend)
+>  		genpd->suspended_count--;
+>  	}
+>  
+> -	if (use_lock)
+> +	if (use_lock) {
+>  		genpd_unlock(genpd);
+> +		ret = suspend ? genpd_power_off_post(genpd) :
+> +				genpd_power_post_on(genpd);
+> +		WARN_ON_ONCE(ret);
+> +	}
+>  }
+>  
+>  /**
+> @@ -2750,9 +2827,15 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
+>  	dev->pm_domain->sync = genpd_dev_pm_sync;
+>  
+>  	if (power_on) {
+> +		ret = genpd_power_pre_on(pd);
+> +		if (ret)
+> +			return ret;
+>  		genpd_lock(pd);
+>  		ret = genpd_power_on(pd, 0);
+>  		genpd_unlock(pd);
+> +		ret = genpd_power_post_on(pd);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	if (ret) {
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index ebc3516980907..3cf231a27cb1b 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -134,8 +134,12 @@ struct generic_pm_domain {
+>  	unsigned int prepared_count;	/* Suspend counter of prepared devices */
+>  	unsigned int performance_state;	/* Aggregated max performance state */
+>  	cpumask_var_t cpus;		/* A cpumask of the attached CPUs */
+> +	int (*power_off_pre)(struct generic_pm_domain *domain);
+>  	int (*power_off)(struct generic_pm_domain *domain);
+> +	int (*power_off_post)(struct generic_pm_domain *domain);
+> +	int (*power_pre_on)(struct generic_pm_domain *domain);
+>  	int (*power_on)(struct generic_pm_domain *domain);
+> +	int (*power_post_on)(struct generic_pm_domain *domain);
+>  	struct raw_notifier_head power_notifiers; /* Power on/off notifiers */
+>  	struct opp_table *opp_table;	/* OPP table of the genpd */
+>  	unsigned int (*opp_to_performance_state)(struct generic_pm_domain *genpd,
 
 -- 
 Regards,
