@@ -2,140 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA32C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 08:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA718C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 09:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232931AbiKJICj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Nov 2022 03:02:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35324 "EHLO
+        id S229547AbiKJJAZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Nov 2022 04:00:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232964AbiKJICY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2022 03:02:24 -0500
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF57C31EF9;
-        Thu, 10 Nov 2022 00:02:22 -0800 (PST)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2B6201C000B;
-        Thu, 10 Nov 2022 08:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1668067341;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WqL93lMbLibNFmjL/ZxBaK+pr+dw8H6VpJCHP8INXo0=;
-        b=YpgztuC1ou+CSt9KwkJAV0BNxbZsErmlR2pB2E8hM4PMlV73AzNMLA4wWIK+DXC4wgmS/C
-        37S+lQKONQsNz0MXyt/8MfyfXoRn4GarhrqBruI/sMv4pH/oA1/Ab1xQT11XdP8iHU7GXM
-        JEkIWte037BqcOCj9kklk60g8Jpa69S/FzVRzjvVnuOfUZtaaKMemAvQ8PJ4eoppoGMe1N
-        LrSamTKWWWSzbBX7WzFne0CpdJfqjxBJm/IrCz+sISAYHLZVTHEc6Eb5Ri5eBrXlGgXBqz
-        WIDduuYZxTaI5PYmRhq5A9rl1F5y+4PNSPnDd5mGWOGUJlQ4562sSLh7LdGdqw==
-Date:   Thu, 10 Nov 2022 09:02:17 +0100
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 1/7] soc: renesas: r9a06g032-sysctrl: Export function to
- get H2MODE from CFG_USB register
-Message-ID: <20221110090217.4f4f4a0e@bootlin.com>
-In-Reply-To: <CAMuHMdUGz3z12Wwg8AoYwC7SN7xtAj7Osq6S9gO1mA+_KD4-vg@mail.gmail.com>
-References: <20221107135825.583877-1-herve.codina@bootlin.com>
-        <20221107135825.583877-2-herve.codina@bootlin.com>
-        <CAMuHMdVbWGYPkspMx40S02cr6sX2LZkGwye3JQCtiPtLhuDCPw@mail.gmail.com>
-        <20221107175446.29c93376@bootlin.com>
-        <CAMuHMdUGz3z12Wwg8AoYwC7SN7xtAj7Osq6S9gO1mA+_KD4-vg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S229575AbiKJJAY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2022 04:00:24 -0500
+X-Greylist: delayed 374 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Nov 2022 01:00:22 PST
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3DD169DE6;
+        Thu, 10 Nov 2022 01:00:22 -0800 (PST)
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mxct.zte.com.cn (FangMail) with ESMTPS id 4N7Fxp1jXkz1DyZ;
+        Thu, 10 Nov 2022 16:54:06 +0800 (CST)
+Received: from mxus.zte.com.cn (unknown [10.207.168.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mxde.zte.com.cn (FangMail) with ESMTPS id 4N7FxX1vcHz9vXNx;
+        Thu, 10 Nov 2022 16:53:52 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mxus.zte.com.cn (FangMail) with ESMTPS id 4N7FxT2m03z9tyD6;
+        Thu, 10 Nov 2022 16:53:49 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4N7FxN2Qx9z5BNS0;
+        Thu, 10 Nov 2022 16:53:44 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.40.50])
+        by mse-fl1.zte.com.cn with SMTP id 2AA8rQFa043755;
+        Thu, 10 Nov 2022 16:53:27 +0800 (+08)
+        (envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+        by mapi (Zmail) with MAPI id mid31;
+        Thu, 10 Nov 2022 16:53:29 +0800 (CST)
+Date:   Thu, 10 Nov 2022 16:53:29 +0800 (CST)
+X-Zmail-TransId: 2afa636cbc09ffffffffb2faccdb
+X-Mailer: Zmail v1.0
+Message-ID: <202211101653295187226@zte.com.cn>
+Mime-Version: 1.0
+From:   <ye.xingchen@zte.com.cn>
+To:     <mturquette@baylibre.com>
+Cc:     <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <chi.minghao@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBkbWFlbmdpbmU6IHVzZSBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl1.zte.com.cn 2AA8rQFa043755
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.251.14.novalocal with ID 636CBC2D.001 by FangMail milter!
+X-FangMail-Envelope: 1668070446/4N7Fxp1jXkz1DyZ/636CBC2D.001/10.35.20.121/[10.35.20.121]/mxde.zte.com.cn/<ye.xingchen@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 636CBC2D.001/4N7Fxp1jXkz1DyZ
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+From: Minghao Chi <chi.minghao@zte.com.cn>
 
-Oops, my bad I removed all people from the email previously.
-Re-added them on this reply.=20
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
-On Mon, 7 Nov 2022 20:23:06 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+---
+ drivers/dma/bcm2835-dma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> Hi Herv=C3=A9,
->=20
-> On Mon, Nov 7, 2022 at 5:54 PM Herve Codina <herve.codina@bootlin.com> wr=
-ote:
-> > On Mon, 7 Nov 2022 15:40:53 +0100
-> > Geert Uytterhoeven <geert@linux-m68k.org> wrote: =20
-> > > On Mon, Nov 7, 2022 at 2:59 PM Herve Codina <herve.codina@bootlin.com=
-> wrote: =20
-> > > > The CFG_USB register is located within the system controller.
-> > > >
-> > > > We need a helper to get the H2MODE value from the CFG_USB register
-> > > > without syscon.
-> > > >
-> > > > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
-> > > =20
-> > > > --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> > > > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> > > > @@ -25,6 +25,8 @@
-> > > >  #include <linux/spinlock.h>
-> > > >  #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-> > > >
-> > > > +#define R9A06G032_SYSCTRL_USB    0x00
-> > > > +#define R9A06G032_SYSCTRL_USB_H2MODE  (1<<1)
-> > > >  #define R9A06G032_SYSCTRL_DMAMUX 0xA0
-> > > >
-> > > >  struct r9a06g032_gate {
-> > > > @@ -341,6 +343,22 @@ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32=
- val)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
-> > > >
-> > > > +
-> > > > +/* Exported helper to get the H2MODE bit from USB register */
-> > > > +int r9a06g032_sysctrl_get_usb_h2mode(bool *h2mode)
-> > > > +{
-> > > > +       u32 usb;
-> > > > +
-> > > > +       if (!sysctrl_priv)
-> > > > +               return -EPROBE_DEFER;
-> > > > +
-> > > > +       usb =3D readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_USB);
-> > > > +       *h2mode =3D (usb & R9A06G032_SYSCTRL_USB_H2MODE) ? true : f=
-alse;
-> > > > +
-> > > > +       return 0; =20
-> > >
-> > > Perhaps not pass *h2mode, but just return USB_ROLE_{HOST,DEVICE}
-> > > (enum usb_role in <linux/usb/role.h>), or a negative error code? =20
-> >
-> > Yes, good idea.
-> > I will also rename the function :
-> >   enum usb_role r9a06g032_sysctrl_get_usb_role(void);
-> >
-> > Is that ok for you or do you prefer that I keep the previous name ? =20
->=20
-> r9a06g032_sysctrl_get_usb_role() sounds fine!
-> But it should return "int", as the return value can be a negative error c=
-ode,
-> too.
+diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
+index 630dfbb01a40..1547f528a58e 100644
+--- a/drivers/dma/bcm2835-dma.c
++++ b/drivers/dma/bcm2835-dma.c
+@@ -902,8 +902,7 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
 
-All right, I will do that in v2 series.
+ 	dma_set_max_seg_size(&pdev->dev, 0x3FFFFFFF);
 
-Thanks,
-Herv=C3=A9
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
 
---=20
-Herv=C3=A9 Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+2.25.1
