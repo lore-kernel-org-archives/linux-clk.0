@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF45AC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 11:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED68CC43217
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 11:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbiKJL3U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Nov 2022 06:29:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
+        id S230416AbiKJLkF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Nov 2022 06:40:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbiKJL3U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2022 06:29:20 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E5DF17044
-        for <linux-clk@vger.kernel.org>; Thu, 10 Nov 2022 03:29:19 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id m6so1797606pfb.0
-        for <linux-clk@vger.kernel.org>; Thu, 10 Nov 2022 03:29:19 -0800 (PST)
+        with ESMTP id S230404AbiKJLkB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2022 06:40:01 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E3D071F02
+        for <linux-clk@vger.kernel.org>; Thu, 10 Nov 2022 03:39:59 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id a67so2605574edf.12
+        for <linux-clk@vger.kernel.org>; Thu, 10 Nov 2022 03:39:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dZWp2kHBH7BxTK24vYMYaWuh8ES61v4HZQKkOxWH97c=;
-        b=nm5AzPUP/c5SxnOWRF0E8OOs8vIUdOgDjB6wYkEQYpfYDRuGKSxS+CBIeuds7UEokj
-         CAc3O4M3Lzp0CmH9uvJ+chSuCz2e7UtgkMxDMXFmH0EFBdC81NQcL56cIa/e5fTzyvWS
-         kSegvkcOyKB6FEauX3mSzkzzDIAUq5r5SATzN3WmVSBqg1jyg/gg0kYs06KdBSG3zxV/
-         fvTxGa1dt18Ruz+5BEtQasGBTHQrEp0wpReAHWWGdK+pWMVHzmdtTwn3mkonTWk309ZV
-         x5RN6EKVnoWzvPKijsEeJPqRTGi+5rLHTCBxYP1D5lgzLbOuhL8arV0ezTVKJRNayIhr
-         L9Iw==
+        bh=ck1BFgYQUoxfjthSY0Z/ICMvhRDs51HkE0D/E51e4wU=;
+        b=cLoqN/9Hw4WN89uoDoxpq9Ce/Ps341RBpybWaA/Ttn7dX0XjEZSpQMeE/cLupilSy+
+         h9M/AwRJwi+wD3lcUZtgCbl5J3Y1/4+a+UG987xrzyBKVQSsdTGx1Fm9p56BVwQCgeqw
+         ImbNP+V0cuLG09qZBqDEVWEBH4JmnDYapBzy20rI0QOEnuyEvU41wtqwWtHQ/Ku+SIq6
+         z/iAwWeg98cPs684u3jM1bZkrHRFlxBeM553WE2HZydhyBqAswoiUSyHfbMc8MScHPVp
+         jTxj/0bSYX2PEajd6PNI/IV0ZBru+l7g17Wn1GCvWMrBI6s8qLNSd3U7dwQx3hiin+sp
+         LiYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dZWp2kHBH7BxTK24vYMYaWuh8ES61v4HZQKkOxWH97c=;
-        b=exqBtICwVinT+t0Htji482/9g5m8kJYjOPVuGq3XywXrfHqmfM+gaazq8VRj1Ggzm4
-         uBbuk31Ihe1HPBEx3ZqO9ALRAp9O1p5PEkOdtEjGF2atheZn+wngdlMxYxPC/7Gy8E1O
-         qeg6Sv7gQDaMPniW7EKNRESGE7pcA5Ruo2us+4AuozEacnSLYLU5QrFhAReVmge7KD3E
-         BsCUxjZVcG+GpAkrb05VmLVMWjA/MDsLdFbH2uDcb8w3yi8856pn8w8wkycc0Q4O4Fql
-         0l+pX6CEb3HuPmIiutKvyL5+xSxl77qZmJltGJm3fiosc5BeiaTgctBuusjG2gZn8vqJ
-         DPwg==
-X-Gm-Message-State: ACrzQf0TA+ahmUd0logKuP8IicGkjguKERArnUAm8HuHsw69cne/kUv7
-        rn8Z3wldgx0sFgDBlvI91aAjsYWnt0EYbUV3LiOZGg==
-X-Google-Smtp-Source: AMsMyM4cuzpOD/TX9hqFyYyupcC8P3vPeFAFlSRm0wZ2MgnRUbZnV+cRg9A/mVHt7wBrkUdmfz48YahbcXukazUMnzc=
-X-Received: by 2002:a63:4204:0:b0:442:ee11:4894 with SMTP id
- p4-20020a634204000000b00442ee114894mr2372631pga.595.1668079758533; Thu, 10
- Nov 2022 03:29:18 -0800 (PST)
+        bh=ck1BFgYQUoxfjthSY0Z/ICMvhRDs51HkE0D/E51e4wU=;
+        b=YTIrxWTlR8tFLC2jtRSKnJLyI8GH3O3nUrAcQ3FRJSGFBXwpn46FP5AZGz4Aa6xKjv
+         aSjf+5e00D6h4mcj5gRtzP3iDCGmMvutf0RtarWBHQ1jm58Zh1yuJc4hBcDnFZTFYJvT
+         YFFnDMeQNnkQ1Jrj4JbYlr69do4TqTZb039GRja8HAIqSCLFx/2g/Qmx0HLPZHy73lV4
+         x8wy5dJ5LWZu2ybOaiYDyIcVO9W7Dx1QUs/Igjd4v4J8xLPIkqkhDz91SZd0b9j4edB9
+         lRwgncCLIUe0KQbRVMqSU9ECRKeaZSEH8seJrywc3S7Upt+pXt3DFrorulNRwOAxZw22
+         Cd7g==
+X-Gm-Message-State: ACrzQf0MmciLgggTJTJT8X3pL48SL6y4oBxHnLgJm1OZvSyQgsyRjbiz
+        LdbK4taGebt8cJHhyJ1m6wiuU+4RIwjHKoNSYeOKIQ==
+X-Google-Smtp-Source: AMsMyM6KPfAGNVILTJIJybxZbWNcNW1j294XPOEkghGZsATADMyuAh5FXMGRYiA9Y0UOLTHKSZCe9zdW3Mb4U369XWo=
+X-Received: by 2002:a05:6402:4002:b0:463:bc31:2604 with SMTP id
+ d2-20020a056402400200b00463bc312604mr2100488eda.32.1668080397979; Thu, 10 Nov
+ 2022 03:39:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech> <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 10 Nov 2022 12:28:41 +0100
-Message-ID: <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech> <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
+In-Reply-To: <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 10 Nov 2022 12:39:46 +0100
+Message-ID: <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
 Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -85,7 +86,6 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sekhar Nori <nsekhar@ti.com>,
         Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
         Takashi Iwai <tiwai@suse.com>,
         David Airlie <airlied@gmail.com>,
         Luca Ceresoli <luca.ceresoli@bootlin.com>,
@@ -113,89 +113,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
+On Thu, Nov 10, 2022 at 12:29 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
+> >
+> > The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
+> > hook, but doesn't provide a determine_rate implementation.
+> >
+> > This is a bit odd, since set_parent() is there to, as its name implies,
+> > change the parent of a clock. However, the most likely candidate to
+> > trigger that parent change is a call to clk_set_rate(), with
+> > determine_rate() figuring out which parent is the best suited for a
+> > given rate.
+> >
+> > The other trigger would be a call to clk_set_parent(), but it's far less
+> > used, and it doesn't look like there's any obvious user for that clock.
 >
-> The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
->
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
+> If I recall correctly, that is the use case we did target for these
+> types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
 
-If I recall correctly, that is the use case we did target for these
-types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
+Hm I am trying to get that driver to work ... from time to time.
+It's just that ALSA SoC DT has changed to much that it turns out
+into a complete rewrite :/
 
-Maybe there are some additional pieces missing from the old down
-stream kernel, I don't have full picture, sorry.
+So in sound/soc/ux500/mop500_ab8500.c
+I see this:
 
-Anyway, if I am not wrong, this was about supporting a low-power audio
-use case, which requires us to switch the parent clock (to avoid
-wasting energy).
+        status = clk_set_parent(drvdata->clk_ptr_intclk, clk_ptr);
+        if (status)
+(...)
 
->
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
+and there is elaborate code to switch between "SYSCLK" and
+"ULPCLK" (ulta-low power clock). Just like you say... however
+a clock named SYSCLK or ULPCLK does not appear in the
+code in drivers/clk/ux500 or any DT bindings so... it seems to
+be non-working for the time being.
 
-Yes, this was the reason.
-
-As a matter of fact, I don't even recall that re-parenting was
-possible through clk_set_rate() when this clock driver was introduced.
-But, I might be wrong, it's quite a while ago.
-
->
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
->
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-
-Seems reasonable to me!
-
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
-
-> ---
->  drivers/clk/ux500/clk-sysctrl.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> index 702f2f8b43fa..d36336665b6d 100644
-> --- a/drivers/clk/ux500/clk-sysctrl.c
-> +++ b/drivers/clk/ux500/clk-sysctrl.c
-> @@ -110,6 +110,7 @@ static const struct clk_ops clk_sysctrl_gate_fixed_rate_ops = {
->  };
->
->  static const struct clk_ops clk_sysctrl_set_parent_ops = {
-> +       .determine_rate = __clk_mux_determine_rate,
->         .set_parent = clk_sysctrl_set_parent,
->         .get_parent = clk_sysctrl_get_parent,
->  };
-> @@ -220,6 +221,7 @@ struct clk *clk_reg_sysctrl_set_parent(struct device *dev,
->                                 unsigned long flags)
->  {
->         return clk_reg_sysctrl(dev, name, parent_names, num_parents,
-> -                       reg_sel, reg_mask, reg_bits, 0, 0, flags,
-> +                       reg_sel, reg_mask, reg_bits, 0, 0,
-> +                       flags | CLK_SET_RATE_NO_REPARENT,
->                         &clk_sysctrl_set_parent_ops);
->  }
->
-> --
-> b4 0.11.0-dev-99e3a
+Yours,
+Linus Walleij
