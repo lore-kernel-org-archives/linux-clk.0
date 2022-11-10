@@ -2,48 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCA7C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 04:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD8FC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 04:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232570AbiKJEJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 23:09:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        id S232580AbiKJEJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 23:09:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231185AbiKJEJS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 23:09:18 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67C8C21E19;
-        Wed,  9 Nov 2022 20:09:17 -0800 (PST)
+        with ESMTP id S232574AbiKJEJT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 23:09:19 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD7ED27CD8;
+        Wed,  9 Nov 2022 20:09:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id CC5CACE2149;
-        Thu, 10 Nov 2022 04:09:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE8AC433D6;
-        Thu, 10 Nov 2022 04:09:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 682DE61D76;
+        Thu, 10 Nov 2022 04:09:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFB0C433D7;
+        Thu, 10 Nov 2022 04:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668053354;
-        bh=7yH7JrckIGUDV7kW3P9KSyXq3PuMvdOaTwqEkFre4pw=;
+        s=k20201202; t=1668053357;
+        bh=jk3JZNyq9AH3w2zPFFMG02UXloY9dAyP2DgBr7MRrA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DaSdg8X+kNG0YXmfGX5FQem7lgW+grzj52emEkHr/cu2IFEH+qimY2tUjHIY5dHQV
-         yV9vm4Ojg+7c5zruJLCT1/A5n0US9X7kqPuZ06rljDAZ6FBxM+gznBMSj9doffxwEG
-         bZkeVOhVSZp3mvdPpQyM+frzuBqMCLiznQIzMF72Tjp4VcsWTNavM28D05NZ04umrp
-         d3oA/7odQObmmUkwYU1efyiFW7gUGSU+f0JJ6XPMoaydb4JdpypLNARVpWzSyAmxgt
-         qKlxFCwDyX6kKXplaB8I8jwO3pxUoTNzhbDIaQ+5gbhFfSErfk487ZsRDb+Lknb4IT
-         9BJ4FoVOIPXdQ==
+        b=WVoaQJxLaYd/8yYOSiviMQPpxEhI44CCySWiKLySTMLJaQ7oduGqbd7Tg+BjSBdLO
+         667i5SbDF7N+p6/1MRYaUTQ0RItNBFBm2jS8bTVlDlyG8qdAKU0GAjPvnoxxy77mi6
+         dBIQwwpv9KvivRtrlhrUJDdX85Fa2m2iJWfN4hqbWxooPsFbCkNbueEpbs9pHiGDgJ
+         8s9fvaVIdkj2ld+P4u6AKPf9xls4Np6pa6lj9Y6ri7gupKKj6crmsDcKppsicbhnhg
+         /9fCiI6rNXKwm/bz9+NynhcZiAPthCm15woWILNWu8V8dGryjSaPvV9QyyOMD6dFRw
+         0HUVtE6f9U5Zw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     robh+dt@kernel.org, sboyd@kernel.org, konrad.dybcio@somainline.org,
-        agross@kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     mturquette@baylibre.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/2] clock: qcom: SC8280XP display clock controller
-Date:   Wed,  9 Nov 2022 22:09:06 -0600
-Message-Id: <166805334838.800572.10546755147001769767.b4-ty@kernel.org>
+To:     agross@kernel.org, quic_bjorande@quicinc.com
+Cc:     robh+dt@kernel.org, konrad.dybcio@somainline.org, sboyd@kernel.org,
+        mturquette@baylibre.com, devicetree@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/2] clock: qcom: SC8280XP display clock controller
+Date:   Wed,  9 Nov 2022 22:09:10 -0600
+Message-Id: <166805334840.800572.11422604282237278467.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220811041211.3825786-1-bjorn.andersson@linaro.org>
-References: <20220811041211.3825786-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20220926203800.16771-1-quic_bjorande@quicinc.com>
+References: <20220926203800.16771-1-quic_bjorande@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,19 +50,19 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 10 Aug 2022 21:12:09 -0700, Bjorn Andersson wrote:
+On Mon, 26 Sep 2022 13:37:58 -0700, Bjorn Andersson wrote:
 > This adds binding and implementation of the SC8280XP display clock controller.
 > 
 > Bjorn Andersson (2):
 >   dt-bindings: clock: Add Qualcomm SC8280XP display clock bindings
 >   clk: qcom: Add SC8280XP display clock controller
 > 
-> .../bindings/clock/qcom,dispcc-sc8280xp.yaml  |   98 +
+> .../bindings/clock/qcom,dispcc-sc8280xp.yaml  |   97 +
 >  drivers/clk/qcom/Kconfig                      |    9 +
 >  drivers/clk/qcom/Makefile                     |    1 +
 >  drivers/clk/qcom/dispcc-sc8280xp.c            | 3218 +++++++++++++++++
 >  .../dt-bindings/clock/qcom,dispcc-sc8280xp.h  |  100 +
->  5 files changed, 3426 insertions(+)
+>  5 files changed, 3425 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
 >  create mode 100644 drivers/clk/qcom/dispcc-sc8280xp.c
 >  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
