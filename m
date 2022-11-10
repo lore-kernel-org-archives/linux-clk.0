@@ -2,191 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17955C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 03:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCA7C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 04:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbiKJDZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Nov 2022 22:25:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38062 "EHLO
+        id S232570AbiKJEJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Nov 2022 23:09:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232450AbiKJDZN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 22:25:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECBC1AF1F;
-        Wed,  9 Nov 2022 19:25:10 -0800 (PST)
+        with ESMTP id S231185AbiKJEJS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2022 23:09:18 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67C8C21E19;
+        Wed,  9 Nov 2022 20:09:17 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 799C6B82083;
-        Thu, 10 Nov 2022 03:25:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5E6C433C1;
-        Thu, 10 Nov 2022 03:25:07 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id CC5CACE2149;
+        Thu, 10 Nov 2022 04:09:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE8AC433D6;
+        Thu, 10 Nov 2022 04:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668050708;
-        bh=+oBQRQRKGOx/bxxQ4d3T1WtdN/WNJGx7LQ/mUoMIC6E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BQjc/gqh+5t2sz7/iqPFGvwRI3UVAV6A9JVX3E4Hp8CZAvYfOB90QCfchcvcUBgY6
-         0e9BUOTMhQvpVZABErjAlHid3M80QKuN4OkZfNXXEx1LKnO4C26G1rxRSxMd2/yDDb
-         wCjt5MABJ55R8nl7Ii/YvD+KiW3iZriZdEICJRk0xFKhfhx1PuXBzw2IrIFp7naVGL
-         DBZQBgE2BGllEkr3s8Qo5YF72kiN62mLWf4HD2dkp75faId7p+Dn5PBjHX7dYE9FLd
-         rNDaZWNMAbIxs17tzK+wusVo+5w87btP0Bl+W3vZOVhk1IHE0aOkHO8gx/KkbdGmAA
-         fNWZXLKWwcIVw==
-Date:   Wed, 9 Nov 2022 21:25:05 -0600
+        s=k20201202; t=1668053354;
+        bh=7yH7JrckIGUDV7kW3P9KSyXq3PuMvdOaTwqEkFre4pw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DaSdg8X+kNG0YXmfGX5FQem7lgW+grzj52emEkHr/cu2IFEH+qimY2tUjHIY5dHQV
+         yV9vm4Ojg+7c5zruJLCT1/A5n0US9X7kqPuZ06rljDAZ6FBxM+gznBMSj9doffxwEG
+         bZkeVOhVSZp3mvdPpQyM+frzuBqMCLiznQIzMF72Tjp4VcsWTNavM28D05NZ04umrp
+         d3oA/7odQObmmUkwYU1efyiFW7gUGSU+f0JJ6XPMoaydb4JdpypLNARVpWzSyAmxgt
+         qKlxFCwDyX6kKXplaB8I8jwO3pxUoTNzhbDIaQ+5gbhFfSErfk487ZsRDb+Lknb4IT
+         9BJ4FoVOIPXdQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Robert Marko <robimarko@gmail.com>
-Cc:     agross@kernel.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH] clk: qcom: ipq8074: populate fw_name for all parents
-Message-ID: <20221110032505.hkdlaad2vb7pqpdu@builder.lan>
-References: <20221108194217.553303-1-robimarko@gmail.com>
+To:     robh+dt@kernel.org, sboyd@kernel.org, konrad.dybcio@somainline.org,
+        agross@kernel.org, Bjorn Andersson <andersson@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     mturquette@baylibre.com, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/2] clock: qcom: SC8280XP display clock controller
+Date:   Wed,  9 Nov 2022 22:09:06 -0600
+Message-Id: <166805334838.800572.10546755147001769767.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220811041211.3825786-1-bjorn.andersson@linaro.org>
+References: <20220811041211.3825786-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221108194217.553303-1-robimarko@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 08, 2022 at 08:42:17PM +0100, Robert Marko wrote:
-> It appears that having only .name populated in parent_data for clocks
-> which are only globally searchable currently will not work as the clk core
-> won't copy that name if there is no .fw_name present as well.
+On Wed, 10 Aug 2022 21:12:09 -0700, Bjorn Andersson wrote:
+> This adds binding and implementation of the SC8280XP display clock controller.
 > 
+> Bjorn Andersson (2):
+>   dt-bindings: clock: Add Qualcomm SC8280XP display clock bindings
+>   clk: qcom: Add SC8280XP display clock controller
+> 
+> .../bindings/clock/qcom,dispcc-sc8280xp.yaml  |   98 +
+>  drivers/clk/qcom/Kconfig                      |    9 +
+>  drivers/clk/qcom/Makefile                     |    1 +
+>  drivers/clk/qcom/dispcc-sc8280xp.c            | 3218 +++++++++++++++++
+>  .../dt-bindings/clock/qcom,dispcc-sc8280xp.h  |  100 +
+>  5 files changed, 3426 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sc8280xp.yaml
+>  create mode 100644 drivers/clk/qcom/dispcc-sc8280xp.c
+>  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc8280xp.h
+> 
+> [...]
 
-While we want to migrate users to .fw_name and .index, that sounds like
-a bug. Where does this (not) happen?
+Applied, thanks!
 
-Regards,
-Bjorn
+[1/2] dt-bindings: clock: Add Qualcomm SC8280XP display clock bindings
+      commit: 73d9c10a96e52aaa2cd19806ac127a3a0e87c410
+[2/2] clk: qcom: Add SC8280XP display clock controller
+      commit: 4a66e76fdb6d0c742ad13db45888c14a9c1ef1a9
 
-> So, populate .fw_name for all parent clocks in parent_data.
-> 
-> Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
-> 
-> Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
-> ---
->  drivers/clk/qcom/gcc-ipq8074.c | 48 +++++++++++++++++-----------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-> index d231866804f6..bf64aa683605 100644
-> --- a/drivers/clk/qcom/gcc-ipq8074.c
-> +++ b/drivers/clk/qcom/gcc-ipq8074.c
-> @@ -1137,7 +1137,7 @@ static const struct freq_tbl ftbl_nss_noc_bfdcd_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_bias_pll_nss_noc_clk_gpll0_gpll2[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "bias_pll_nss_noc_clk" },
-> +	{ .fw_name = "bias_pll_nss_noc_clk", .name = "bias_pll_nss_noc_clk" },
->  	{ .hw = &gpll0.clkr.hw },
->  	{ .hw = &gpll2.clkr.hw },
->  };
-> @@ -1362,7 +1362,7 @@ static const struct freq_tbl ftbl_nss_ppe_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_bias_gpll0_gpll4_nss_ubi32[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  	{ .hw = &gpll0.clkr.hw },
->  	{ .hw = &gpll4.clkr.hw },
->  	{ .hw = &nss_crypto_pll.clkr.hw },
-> @@ -1413,10 +1413,10 @@ static const struct freq_tbl ftbl_nss_port1_rx_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_ubi32_bias[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "uniphy0_gcc_rx_clk" },
-> -	{ .name = "uniphy0_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
->  	{ .hw = &ubi32_pll.clkr.hw },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  };
->  
->  static const struct parent_map gcc_xo_uniphy0_rx_tx_ubi32_bias_map[] = {
-> @@ -1465,10 +1465,10 @@ static const struct freq_tbl ftbl_nss_port1_tx_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_ubi32_bias[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "uniphy0_gcc_tx_clk" },
-> -	{ .name = "uniphy0_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
->  	{ .hw = &ubi32_pll.clkr.hw },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  };
->  
->  static const struct parent_map gcc_xo_uniphy0_tx_rx_ubi32_bias_map[] = {
-> @@ -1696,12 +1696,12 @@ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_uniphy1_rx_tx_ubi32_bias[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "uniphy0_gcc_rx_clk" },
-> -	{ .name = "uniphy0_gcc_tx_clk" },
-> -	{ .name = "uniphy1_gcc_rx_clk" },
-> -	{ .name = "uniphy1_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
->  	{ .hw = &ubi32_pll.clkr.hw },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  };
->  
->  static const struct parent_map
-> @@ -1758,12 +1758,12 @@ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_uniphy1_tx_rx_ubi32_bias[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "uniphy0_gcc_tx_clk" },
-> -	{ .name = "uniphy0_gcc_rx_clk" },
-> -	{ .name = "uniphy1_gcc_tx_clk" },
-> -	{ .name = "uniphy1_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
->  	{ .hw = &ubi32_pll.clkr.hw },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  };
->  
->  static const struct parent_map
-> @@ -1820,10 +1820,10 @@ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_uniphy2_rx_tx_ubi32_bias[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "uniphy2_gcc_rx_clk" },
-> -	{ .name = "uniphy2_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
->  	{ .hw = &ubi32_pll.clkr.hw },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  };
->  
->  static const struct parent_map gcc_xo_uniphy2_rx_tx_ubi32_bias_map[] = {
-> @@ -1877,10 +1877,10 @@ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
->  
->  static const struct clk_parent_data gcc_xo_uniphy2_tx_rx_ubi32_bias[] = {
->  	{ .fw_name = "xo", .name = "xo" },
-> -	{ .name = "uniphy2_gcc_tx_clk" },
-> -	{ .name = "uniphy2_gcc_rx_clk" },
-> +	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
-> +	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
->  	{ .hw = &ubi32_pll.clkr.hw },
-> -	{ .name = "bias_pll_cc_clk" },
-> +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
->  };
->  
->  static const struct parent_map gcc_xo_uniphy2_tx_rx_ubi32_bias_map[] = {
-> -- 
-> 2.38.1
-> 
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
