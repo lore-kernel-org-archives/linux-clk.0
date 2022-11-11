@@ -2,222 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018D6C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Nov 2022 13:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B9DC4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Nov 2022 06:39:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbiKJNby (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Nov 2022 08:31:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51236 "EHLO
+        id S232583AbiKKGjr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Nov 2022 01:39:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbiKJNbv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2022 08:31:51 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B8ADC2;
-        Thu, 10 Nov 2022 05:31:50 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id bs21so2274857wrb.4;
-        Thu, 10 Nov 2022 05:31:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Exm3X31YbmGeADZoqYxlrtAsh+A0P0If35sTgy29YG8=;
-        b=Rcj+XhtyOqr0Fa/DlimnA5Q/w/k0mIGXeYKCjmqDYhH6/R8/o0NAJS6/lC3mJv+Uqf
-         uwaTJLJJSsGF4c/5ouiMBKhXK/ZLRctAjaDCr3locKG+5GwSVyimlplOGd6nVGYbqHAY
-         diBdE0VaI/rJNTXxis0vD/mQdtIHPi2IBbBV8PPCK51zxR/dULfBV3FqBPJl6OOYSclO
-         zkk8R+REs0KfsLPAOXQLdbQMoBGkgp5gT20yyO602nPBevTnefapeD9INinFshfDDuLb
-         D/E3or3NOZaShwhVLsjffpqc+j8LWpT9H9bX4iY6EB0zdf50tYk7RXCJiMD1qIyJKIzT
-         onBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Exm3X31YbmGeADZoqYxlrtAsh+A0P0If35sTgy29YG8=;
-        b=fRAh07HhqBD+k8Eopd4CcrVVHrpfLhvunT5Z/7O8blC4liWLeFMrWs29yoUNN9MORk
-         3nciTKJyOn+fwjy1g2/QMYgbeAMEsyGIhWCsjzaK+gwudyc/WmyiMsupaYtx5ixrYUfw
-         gDk7+aAT7JS5lTmE5AFLuY1v0NZ1qWck+7UU7xwLAzfx42IWHow5uPluLO0S2NekaM4s
-         U+RGzxEBnFq1n+lSti6Iw2UjtoRSLBtFW/Q9KyGhsFMddXptuMmmL8rYPSg8eHkMCZ3o
-         XSnriuIhAlZhsGCffBrj2/fWgysKFTrOHzkkibbMWXqJU2whRs/T13TuEuMgar8CTdWh
-         IcUg==
-X-Gm-Message-State: ACrzQf1rVm92gTRC7ewiFNMOyjt6WyWajFoL4wDZmrHzXgCm2ltThIKt
-        A7Dk1K+mZHar89VNV7aeaTI=
-X-Google-Smtp-Source: AMsMyM582M9SqtnrX7AZhLq2TOs8eIwTjL2eK2oof4hzlikxlQwv0zvC7o9pFXccAplRA3ZviSp00g==
-X-Received: by 2002:adf:e6c3:0:b0:236:acdb:4d9b with SMTP id y3-20020adfe6c3000000b00236acdb4d9bmr40245556wrm.528.1668087108623;
-        Thu, 10 Nov 2022 05:31:48 -0800 (PST)
-Received: from Ansuel-xps. (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.gmail.com with ESMTPSA id j18-20020a056000125200b0023677fd2657sm15455224wrx.52.2022.11.10.05.31.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 05:31:47 -0800 (PST)
-Message-ID: <636cfd43.050a0220.1e5e0.5c67@mx.google.com>
-X-Google-Original-Message-ID: <Y2z9QFFz+hEV+Dwg@Ansuel-xps.>
-Date:   Thu, 10 Nov 2022 14:31:44 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Robert Marko <robimarko@gmail.com>, agross@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: ipq8074: populate fw_name for all parents
-References: <20221108194217.553303-1-robimarko@gmail.com>
- <20221110032505.hkdlaad2vb7pqpdu@builder.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221110032505.hkdlaad2vb7pqpdu@builder.lan>
+        with ESMTP id S232082AbiKKGjr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Nov 2022 01:39:47 -0500
+X-Greylist: delayed 78360 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Nov 2022 22:39:45 PST
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F58A27CD0;
+        Thu, 10 Nov 2022 22:39:45 -0800 (PST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4N7pwJ0Dq1z8RV7D;
+        Fri, 11 Nov 2022 14:39:44 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.40.50])
+        by mse-fl1.zte.com.cn with SMTP id 2AB6dXlx072625;
+        Fri, 11 Nov 2022 14:39:33 +0800 (+08)
+        (envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+        by mapi (Zmail) with MAPI id mid31;
+        Fri, 11 Nov 2022 14:39:35 +0800 (CST)
+Date:   Fri, 11 Nov 2022 14:39:35 +0800 (CST)
+X-Zmail-TransId: 2afa636dee2757b85e56
+X-Mailer: Zmail v1.0
+Message-ID: <202211111439357842458@zte.com.cn>
+Mime-Version: 1.0
+From:   <ye.xingchen@zte.com.cn>
+To:     <mturquette@baylibre.com>
+Cc:     <sboyd@kernel.org>, <sugaya.taichi@socionext.com>,
+        <orito.takao@socionext.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <chi.minghao@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBjbG9jazogbWlsYmVhdXQ6IHVzZSBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl1.zte.com.cn 2AB6dXlx072625
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 636DEE30.000 by FangMail milter!
+X-FangMail-Envelope: 1668148784/4N7pwJ0Dq1z8RV7D/636DEE30.000/10.5.228.132/[10.5.228.132]/mse-fl1.zte.com.cn/<ye.xingchen@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 636DEE30.000/4N7pwJ0Dq1z8RV7D
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 09, 2022 at 09:25:05PM -0600, Bjorn Andersson wrote:
-> On Tue, Nov 08, 2022 at 08:42:17PM +0100, Robert Marko wrote:
-> > It appears that having only .name populated in parent_data for clocks
-> > which are only globally searchable currently will not work as the clk core
-> > won't copy that name if there is no .fw_name present as well.
-> > 
-> 
-> While we want to migrate users to .fw_name and .index, that sounds like
-> a bug. Where does this (not) happen?
-> 
+From: Minghao Chi <chi.minghao@zte.com.cn>
 
-While we discover this and decided to send a fix, I also check why this
-happen and sent a patch about this [0]. The reason is interesting,
-in short clk_core_get hardcode the use of fw_name to get parent name and
-if that is empty just fails without checking for .name.
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
-I decided to add a warning and a workaround instead of fixing it in
-clk_core_get to push devs to use .fw_name. (also I think this should be
-documented somewhere but no idea where)
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+---
+ drivers/clk/clk-milbeaut.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-[0] https://patchwork.kernel.org/project/linux-clk/patch/20221108204918.2805-1-ansuelsmth@gmail.com/
+diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
+index 80b9d78493bc..050fd4fb588f 100644
+--- a/drivers/clk/clk-milbeaut.c
++++ b/drivers/clk/clk-milbeaut.c
+@@ -560,14 +560,12 @@ static void m10v_reg_mux_pre(const struct m10v_clk_mux_factors *factors,
+ static int m10v_clk_probe(struct platform_device *pdev)
+ {
+ 	int id;
+-	struct resource *res;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	void __iomem *base;
+ 	const char *parent_name;
 
-> > So, populate .fw_name for all parent clocks in parent_data.
-> > 
-> > Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
-> > 
-> > Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
-> > ---
-> >  drivers/clk/qcom/gcc-ipq8074.c | 48 +++++++++++++++++-----------------
-> >  1 file changed, 24 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-> > index d231866804f6..bf64aa683605 100644
-> > --- a/drivers/clk/qcom/gcc-ipq8074.c
-> > +++ b/drivers/clk/qcom/gcc-ipq8074.c
-> > @@ -1137,7 +1137,7 @@ static const struct freq_tbl ftbl_nss_noc_bfdcd_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_bias_pll_nss_noc_clk_gpll0_gpll2[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "bias_pll_nss_noc_clk" },
-> > +	{ .fw_name = "bias_pll_nss_noc_clk", .name = "bias_pll_nss_noc_clk" },
-> >  	{ .hw = &gpll0.clkr.hw },
-> >  	{ .hw = &gpll2.clkr.hw },
-> >  };
-> > @@ -1362,7 +1362,7 @@ static const struct freq_tbl ftbl_nss_ppe_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_bias_gpll0_gpll4_nss_ubi32[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  	{ .hw = &gpll0.clkr.hw },
-> >  	{ .hw = &gpll4.clkr.hw },
-> >  	{ .hw = &nss_crypto_pll.clkr.hw },
-> > @@ -1413,10 +1413,10 @@ static const struct freq_tbl ftbl_nss_port1_rx_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_ubi32_bias[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "uniphy0_gcc_rx_clk" },
-> > -	{ .name = "uniphy0_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> >  	{ .hw = &ubi32_pll.clkr.hw },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  };
-> >  
-> >  static const struct parent_map gcc_xo_uniphy0_rx_tx_ubi32_bias_map[] = {
-> > @@ -1465,10 +1465,10 @@ static const struct freq_tbl ftbl_nss_port1_tx_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_ubi32_bias[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "uniphy0_gcc_tx_clk" },
-> > -	{ .name = "uniphy0_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> >  	{ .hw = &ubi32_pll.clkr.hw },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  };
-> >  
-> >  static const struct parent_map gcc_xo_uniphy0_tx_rx_ubi32_bias_map[] = {
-> > @@ -1696,12 +1696,12 @@ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_uniphy1_rx_tx_ubi32_bias[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "uniphy0_gcc_rx_clk" },
-> > -	{ .name = "uniphy0_gcc_tx_clk" },
-> > -	{ .name = "uniphy1_gcc_rx_clk" },
-> > -	{ .name = "uniphy1_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
-> >  	{ .hw = &ubi32_pll.clkr.hw },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  };
-> >  
-> >  static const struct parent_map
-> > @@ -1758,12 +1758,12 @@ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_uniphy1_tx_rx_ubi32_bias[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "uniphy0_gcc_tx_clk" },
-> > -	{ .name = "uniphy0_gcc_rx_clk" },
-> > -	{ .name = "uniphy1_gcc_tx_clk" },
-> > -	{ .name = "uniphy1_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
-> >  	{ .hw = &ubi32_pll.clkr.hw },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  };
-> >  
-> >  static const struct parent_map
-> > @@ -1820,10 +1820,10 @@ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_uniphy2_rx_tx_ubi32_bias[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "uniphy2_gcc_rx_clk" },
-> > -	{ .name = "uniphy2_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
-> >  	{ .hw = &ubi32_pll.clkr.hw },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  };
-> >  
-> >  static const struct parent_map gcc_xo_uniphy2_rx_tx_ubi32_bias_map[] = {
-> > @@ -1877,10 +1877,10 @@ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
-> >  
-> >  static const struct clk_parent_data gcc_xo_uniphy2_tx_rx_ubi32_bias[] = {
-> >  	{ .fw_name = "xo", .name = "xo" },
-> > -	{ .name = "uniphy2_gcc_tx_clk" },
-> > -	{ .name = "uniphy2_gcc_rx_clk" },
-> > +	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
-> > +	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
-> >  	{ .hw = &ubi32_pll.clkr.hw },
-> > -	{ .name = "bias_pll_cc_clk" },
-> > +	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
-> >  };
-> >  
-> >  static const struct parent_map gcc_xo_uniphy2_tx_rx_ubi32_bias_map[] = {
-> > -- 
-> > 2.38.1
-> > 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, res);
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
 
 -- 
-	Ansuel
+2.25.1
