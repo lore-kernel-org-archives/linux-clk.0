@@ -2,27 +2,24 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1976C4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Nov 2022 21:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4FDC4332F
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Nov 2022 08:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231814AbiKLVuk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Nov 2022 16:50:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35206 "EHLO
+        id S235259AbiKMIsa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Nov 2022 03:48:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbiKLVuk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Nov 2022 16:50:40 -0500
-X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 12 Nov 2022 13:50:39 PST
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9876F9FD0
-        for <linux-clk@vger.kernel.org>; Sat, 12 Nov 2022 13:50:39 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id tyHJoEBHyu8pltyHKom6SK; Sat, 12 Nov 2022 22:43:07 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 12 Nov 2022 22:43:07 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        with ESMTP id S235255AbiKMIs3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Nov 2022 03:48:29 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA341B0;
+        Sun, 13 Nov 2022 00:48:26 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1ou8f6-0001bW-7E; Sun, 13 Nov 2022 09:48:20 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -30,68 +27,64 @@ To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Heiko Stuebner <heiko@sntech.de>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org
-Subject: [PATCH] clk: Remove a useless include
-Date:   Sat, 12 Nov 2022 22:43:03 +0100
-Message-Id: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH] clk: Remove a useless include
+Date:   Sun, 13 Nov 2022 09:48:19 +0100
+Message-ID: <3166437.e9J7NaK4W3@diego>
+In-Reply-To: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
+References: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-<linux/rational.h> is not needed for these drivers. Remove the
-corresponding #include.
+Am Samstag, 12. November 2022, 22:43:03 CET schrieb Christophe JAILLET:
+> <linux/rational.h> is not needed for these drivers. Remove the
+> corresponding #include.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/clk/clk-versaclock5.c | 1 -
+>  drivers/clk/meson/clk-pll.c   | 1 -
+>  drivers/clk/rockchip/clk.c    | 1 -
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/clk-versaclock5.c | 1 -
- drivers/clk/meson/clk-pll.c   | 1 -
- drivers/clk/rockchip/clk.c    | 1 -
- 3 files changed, 3 deletions(-)
+Clock-trees for soc families normally have different sub-maintainers,
+so depending on how we want to merge this, you might need to split
+this into 3 patches.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 88689415aff9..e9737969170e 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -20,7 +20,6 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
--#include <linux/rational.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 9e55617bc3b4..4b96e1590224 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -32,7 +32,6 @@
- #include <linux/io.h>
- #include <linux/math64.h>
- #include <linux/module.h>
--#include <linux/rational.h>
- 
- #include "clk-regmap.h"
- #include "clk-pll.h"
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index e63d4f20b479..398c427b8e81 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -21,7 +21,6 @@
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/reboot.h>
--#include <linux/rational.h>
- 
- #include "../clk-fractional-divider.h"
- #include "clk.h"
--- 
-2.34.1
+But at least for the Rockchip part, I'm also fine with the patch going
+in as a whole, so (for the Rockchip part):
+
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+
+Heiko
+
+>  3 files changed, 3 deletions(-)
+> 
+
+[...]
+
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index e63d4f20b479..398c427b8e81 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -21,7 +21,6 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reboot.h>
+> -#include <linux/rational.h>
+>  
+>  #include "../clk-fractional-divider.h"
+>  #include "clk.h"
+> 
+
+
 
