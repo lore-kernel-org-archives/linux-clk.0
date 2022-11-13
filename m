@@ -2,144 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9E6C43217
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Nov 2022 18:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47600C4332F
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Nov 2022 19:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235443AbiKMSL5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Nov 2022 13:11:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56020 "EHLO
+        id S235477AbiKMTsx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Nov 2022 14:48:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235398AbiKMSLz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Nov 2022 13:11:55 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0D821AB
-        for <linux-clk@vger.kernel.org>; Sun, 13 Nov 2022 10:11:54 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id i21so14273623edj.10
-        for <linux-clk@vger.kernel.org>; Sun, 13 Nov 2022 10:11:54 -0800 (PST)
+        with ESMTP id S234152AbiKMTsw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Nov 2022 14:48:52 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8085EF026
+        for <linux-clk@vger.kernel.org>; Sun, 13 Nov 2022 11:48:50 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id k8so13919042wrh.1
+        for <linux-clk@vger.kernel.org>; Sun, 13 Nov 2022 11:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uVJeOgU1MIdsaRRuNRXfWkoor1WXWdAlm1t56aPqLUQ=;
-        b=ZeE7sehyqyO8yEGseHk2i8Alz+UA6NHE4c0cFh7YkV/8NlpSx2RpWD4vMfON3omgrB
-         lMRk0aYkM8yi9B5gWpTacPadQ85MRiQorRk9YokTWE7FPEcTJoP9fO6AdmGdhw0YrOxG
-         0OLBu3M43F13pPkadkbKJ/bHckw/gai77fgps=
+        bh=urtGGp5NSKnCzuNmXw8f0REx4oVfO4cm/5CFl8huK7k=;
+        b=sWuR3DluAzhLY0r9rRBiXIRKVARJIxWuX97LL6z/Ma201raTGFXLhGiIP0psImJorI
+         XxoyyaOV8UY43efNeYjhkp4/X5fGpy4cwnOcXRE6sFKwmoM1Yuh9+VxypmIdr49F2tKo
+         G/Y7ACZnLx+Z4pP3xlA+u831eXwruRHaXZuOh1F71TM3dzbPmMnPV5HmXVDkzDIqeQKT
+         879Ku/ITAv0dMn3lGDMtuBwuWNrOmpWtICdaUVTU2TxBZhjwyw2FATwPmBhxbsLufUub
+         oxoIhjbVJVMO/i+0bmDeG1DfELuVYfaO6lb8ytasFXDXyExfTSLLE9urigJ4Ve8rVADP
+         258w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uVJeOgU1MIdsaRRuNRXfWkoor1WXWdAlm1t56aPqLUQ=;
-        b=1xGkPAN85T2sxP5I3pqZwypb/R+fxiM3E6hUgRj5TU7u/6PfDRt2BxK/azHDvYk3Ym
-         Ns71A8adDAS5ZHCxHbEgrWl1SCM2wnfAB5Gm+90mKbzgOcHyvv5Sw0+nbO6G0bcBmxVP
-         xYOjeZBorSsUk+fwOzHLboKYBf3Pd4VDKU3OhvuhBVVQvNf55igw2p+lFhPeGq86TQIO
-         kQDWbprQw6a40TBuexrotOjmEgsGq6h5xIAnOM+gcFf+PWP6dglYXZDYflzuWsrS6H1A
-         q3LbW/sCIvXyWPH/FfVuivR2UB2mQuhOMTFtkeQEgBt4v4Iq2uqRRvPm0NX0Dz21kfn/
-         DL8g==
-X-Gm-Message-State: ANoB5pnCclsyTRdYx6TmlzMBNscE8OMGDcdweqbJlqRr0ZMEDNIcfhp5
-        h2vgNbD0DN+z5wo9IhxLtW6m1w==
-X-Google-Smtp-Source: AA0mqf5ezW1G+OZ8sWz55+aS7bofz0kd9bhX7jV4sX3OArkjBj2ZqzWGEEuR0nCjDcBecItFzHS4WA==
-X-Received: by 2002:a05:6402:291e:b0:45c:98a9:7bbf with SMTP id ee30-20020a056402291e00b0045c98a97bbfmr8617406edb.372.1668363113421;
-        Sun, 13 Nov 2022 10:11:53 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-40-103-33.business.telecomitalia.it. [79.40.103.33])
-        by smtp.gmail.com with ESMTPSA id i20-20020a50fd14000000b004618a89d273sm3753534eds.36.2022.11.13.10.11.52
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=urtGGp5NSKnCzuNmXw8f0REx4oVfO4cm/5CFl8huK7k=;
+        b=VOItxiHb9MWWM6ZvtY9y/zBsZKXJlBWv2NZSsraqpcT5vAj8VlDEzFKHjJ01101Ozd
+         nkS91zYdsYi7zNNA9cNH00ejr6Y36W1Q8seUnqAF2ccuhiNmuO5hpQzfsMTnSSk60Lo0
+         bUwKngDv+FQW35b0qUWdpQ3bGO8+tEtsikb3x+DJBlEKBBZdOHemSWVxcMG/FckSH7uv
+         uQcBvAsAmFiZpZ1iKU7LVspikhNrqFhnGxmvWnutRDgDqN89kMgSsPG4C9zI0xNrFgL6
+         aqtpHWN5qPaMdXUpEh9WgwU8EZP1eVYh6uDqPbCLtdrtcCS+h6Tgo3KnsCVnQAUw0SLA
+         2QBQ==
+X-Gm-Message-State: ANoB5pnXAzY5dIlUc1XeLt4lx/6FKYoEd7kWJpQZsGYnzKyDWlht5bxX
+        c0sfGqcrlfIFWGC/NxUwSyabaA==
+X-Google-Smtp-Source: AA0mqf7dHWm0nu9EyIOQEhW9pElK5EQKu08wMF+XsqBePbB1wQDev5K2ghiHPElC7l0zOJX+GLyD3w==
+X-Received: by 2002:adf:fc8f:0:b0:22e:362e:570a with SMTP id g15-20020adffc8f000000b0022e362e570amr5538648wrr.127.1668368929033;
+        Sun, 13 Nov 2022 11:48:49 -0800 (PST)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id m10-20020a5d56ca000000b00241736714c3sm6588801wrw.14.2022.11.13.11.48.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Nov 2022 10:11:53 -0800 (PST)
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Amarula patchwork <linux-amarula@amarulasolutions.com>,
-        michael@amarulasolutions.com,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        kernel test robot <lkp@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Miaoqian Lin <linmq006@gmail.com>,
+        Sun, 13 Nov 2022 11:48:48 -0800 (PST)
+References: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
+ <3166437.e9J7NaK4W3@diego>
+User-agent: mu4e 1.8.10; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: [PATCH v4 2/2] clk: ti: dra7-atl: don't allocate `parent_names' variable
-Date:   Sun, 13 Nov 2022 19:11:47 +0100
-Message-Id: <20221113181147.1626585-2-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20221113181147.1626585-1-dario.binacchi@amarulasolutions.com>
-References: <20221113181147.1626585-1-dario.binacchi@amarulasolutions.com>
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: Remove a useless include
+Date:   Sun, 13 Nov 2022 20:29:43 +0100
+In-reply-to: <3166437.e9J7NaK4W3@diego>
+Message-ID: <1jo7ta3aao.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The `parent_names' variable was freed also in case of kzalloc() error.
-Instead of modifying the code to perform a proper memory release, I
-decided to fix the bug by not allocating memory.
-Since only one parent name is referenced, it is not necessary to
-allocate this variable at runtime and therefore you can avoid calling
-the kzalloc() function. This simplifies the code (even calls to kfree
-can be removed) and improves the performance of the routine.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Reported-by: kernel test robot <lkp@intel.com>
+On Sun 13 Nov 2022 at 09:48, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
 
----
+> Am Samstag, 12. November 2022, 22:43:03 CET schrieb Christophe JAILLET:
+>> <linux/rational.h> is not needed for these drivers. Remove the
+>> corresponding #include.
+>>=20
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 1 -
+>>  drivers/clk/meson/clk-pll.c   | 1 -
+>>  drivers/clk/rockchip/clk.c    | 1 -
+>
+> Clock-trees for soc families normally have different sub-maintainers,
+> so depending on how we want to merge this, you might need to split
+> this into 3 patches.
+>
+> But at least for the Rockchip part, I'm also fine with the patch going
+> in as a whole, so (for the Rockchip part):
+>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>
+>
+> Heiko
 
-(no changes since v3)
+Same for the Amlogic part
 
-Changes in v3:
-- Add the "clk: ti: add of_ti_clk_register() helper" patch to the series.
-- Use a variable of type struct clk_parent_data to furthermore simplify
-  the code.
-- Update the commit message.
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Changes in v2:
-- Fix compiling error
-- Add kernel test robot's Reported-by tag.
-
- drivers/clk/ti/clk-dra7-atl.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index 1c576599f6db..d964e3affd42 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -163,8 +163,8 @@ static const struct clk_ops atl_clk_ops = {
- static void __init of_dra7_atl_clock_setup(struct device_node *node)
- {
- 	struct dra7_atl_desc *clk_hw = NULL;
-+	struct clk_parent_data pdata = { .index = 0 };
- 	struct clk_init_data init = { NULL };
--	const char **parent_names = NULL;
- 	const char *name;
- 	struct clk *clk;
- 
-@@ -188,24 +188,14 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 		goto cleanup;
- 	}
- 
--	parent_names = kzalloc(sizeof(char *), GFP_KERNEL);
--
--	if (!parent_names)
--		goto cleanup;
--
--	parent_names[0] = of_clk_get_parent_name(node, 0);
--
--	init.parent_names = parent_names;
--
-+	init.parent_data = &pdata;
- 	clk = of_ti_clk_register(node, &clk_hw->hw, name);
- 
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		kfree(parent_names);
- 		return;
- 	}
- cleanup:
--	kfree(parent_names);
- 	kfree(clk_hw);
- }
- CLK_OF_DECLARE(dra7_atl_clock, "ti,dra7-atl-clock", of_dra7_atl_clock_setup);
--- 
-2.32.0
+>
+>>  3 files changed, 3 deletions(-)
+>>=20
+>
+> [...]
+>
+>> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+>> index e63d4f20b479..398c427b8e81 100644
+>> --- a/drivers/clk/rockchip/clk.c
+>> +++ b/drivers/clk/rockchip/clk.c
+>> @@ -21,7 +21,6 @@
+>>  #include <linux/mfd/syscon.h>
+>>  #include <linux/regmap.h>
+>>  #include <linux/reboot.h>
+>> -#include <linux/rational.h>
+>>=20=20
+>>  #include "../clk-fractional-divider.h"
+>>  #include "clk.h"
+>>=20
 
