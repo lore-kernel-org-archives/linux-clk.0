@@ -2,407 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D125AC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 19:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1193C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 20:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237226AbiKNTlc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 14:41:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44388 "EHLO
+        id S236843AbiKNUML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 15:12:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237117AbiKNTl3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 14:41:29 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA6521260
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 11:41:27 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id v3so11135434pgh.4
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 11:41:27 -0800 (PST)
+        with ESMTP id S237563AbiKNULz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 15:11:55 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223E01CFD1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 12:11:53 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id h14so11353715pjv.4
+        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 12:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yd27tgQr+0/60rgjYTAmAKuLM8bTPM8JxSoQaSar6No=;
-        b=wm5MacI9Icz3uTsibnoP0tS3rbE085GVnTJR3uBY6eeg9Y0CUTRmfpy2UUIPyMU0aB
-         1tsiI+xnhFsMqSDkmq1jb0Tar0dErUI85TRFcRMMWKI9wWCYx7dX9ppSdCzON9SZvDfp
-         k3p+yVaA/f9AuB0lmmeqGlEiZaobkSigurkq6dW2rPmlIKphoCPqbdmk3iWRKxoZYJP/
-         D14hyf09VrytR4xyk0D5UlP96veA3RmbYrdj23Z814rN6msvEIrE7xICHrMkwVdRE5gt
-         HLrtLcq+3LREaKREMbQclF/hZXDxmY68KkWIaaJ9j3nn9gCdlx979bck0sGvmTNguNSh
-         SBlw==
+        bh=F8YJKTEaSjeWZUEi+lCVZoSmHdKaA45O5/BX7Jv9leE=;
+        b=Bo4ud/9wy/hrzT1vvhDfzIZliKL3nHdYeO1xarp/GBtmeBMu1ebHsicCRbtzgA4VvD
+         zhsCLmYqXAuFGyZ2iJDfrGzsRIfcQNJ7Y4Wg6aOgZKxatMr/2V88oS2o+LK3CFByBcAy
+         wPb3b62Csfvpo/22qIFNqV1MXqzfNfF9PWmixTMiZGauBYITr61tA5ZtWXU0rBHMRt+H
+         rygyifAQLrP0osA+HOHDhYKOu+XXlcDQhf9PYuaDl2rTJuKTkVqI1fM6Q/EJI0xF8DiD
+         QAJzD0uRu4y39bHmuiGEqt4gnA0rEpUbR25D9M0CqdA/+2RCiSSO7Y43j5t+1rl9FcgD
+         swGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yd27tgQr+0/60rgjYTAmAKuLM8bTPM8JxSoQaSar6No=;
-        b=jjRMN+ICu3mJhOy61+kKD/kbqWxEVckhanFxDezqQkAkaJY/dy/+fh4HuJQVFiyKj2
-         qNMEWhaBjj4BuDLd9xO5xrgUwL9iNXcOd/y9C7AxP3rsljMCw1vcH86L2MLUIkKrJc0y
-         KIXgF/ONL/dWnBB10Wm5mf9j4WpqjbKjL5KDyxo50VMt7OvLboCSaBvcSqEuGlwGnEht
-         g/O4HAyiTelN/d+Yfe+/8FteU4Jd11dn8cXwXT3yQSMjgMmuBZQFhtoptKVSy3lmbNwI
-         7BoACAy2QUDxdaDfGkVi+oZfMsHJRgUcDqT1k6bwwEzabQobC0uqzYwFQSeuMWk7Qfzt
-         sLXQ==
-X-Gm-Message-State: ANoB5plZmJq274t8f8ackc5Tj677De90A1ZF+jqvds9keraeEMIZunpE
-        LLIA5ybiz/2jwrKvbySuJhD0GDFS6FPvHYhsSuuWXQ==
-X-Google-Smtp-Source: AA0mqf6+Ps0tnDmGtxM5PjS7+fsyJ9xn6V2nTtdaGUJIaciaB0E+S+B+jWQVKytEt4DtrLr5itomEiLh2oDfWs6cV8s=
-X-Received: by 2002:a05:6a00:88c:b0:56b:e1d8:e7a1 with SMTP id
- q12-20020a056a00088c00b0056be1d8e7a1mr15136590pfj.28.1668454887057; Mon, 14
- Nov 2022 11:41:27 -0800 (PST)
+        bh=F8YJKTEaSjeWZUEi+lCVZoSmHdKaA45O5/BX7Jv9leE=;
+        b=0gScISIP4pWrg8E9NMTnSElvj4nZcVAtxpAh8d8kF3pkymqIzEkmoElglH06IHtfhD
+         RiMvoI37r05J+qGHIekaPbRTaQVRp3SeiiT9rP0ASl15GfJBYQ8kJFUDz3A3NTpih6nS
+         LLHSt7Fgwt9Z6Uwdvg3mX2wLymXy1nbYCigQ9ZDNn2nfJHn3VIu/tgXa3Fn5X301pbds
+         FqqHuHGRJRUAJL/jS4q0bZNH3090aYZ3YZnWy57Bsg1OOrGw/w4EVj2ym10pvbshjJv7
+         +0qicZvNt4oVtd6NbwU0O97XL5PPTQOotUdiIqvzFGWIAk4HyegvkyHr5BEeDMdUZdJF
+         kmog==
+X-Gm-Message-State: ANoB5pmImlCC1KWjupZ3YXcFSqFhGxXZEFsFGiFIEjYyip8JyxGadnrC
+        LT95HkrKQn1wRWfXHEjOh7ciVn5SmQnpoGAsDPt7JDt+Ngy18g==
+X-Google-Smtp-Source: AA0mqf67zLfaITSHy+eAhqfQdT/uWKph5nU4Nbw6RfC1+A1fyleHLDtSWtGzZ6dKgqVm0q4ZyoONgDwQ/zFsYrOeAlo=
+X-Received: by 2002:a17:90a:e64b:b0:20d:b124:33b1 with SMTP id
+ ep11-20020a17090ae64b00b0020db12433b1mr14918522pjb.202.1668456713336; Mon, 14
+ Nov 2022 12:11:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20221108013517.749665-1-marex@denx.de>
-In-Reply-To: <20221108013517.749665-1-marex@denx.de>
+References: <20221101233421.997149-1-swboyd@chromium.org> <CAD=FV=XkhtgL_4-cpj-Xi3uH6FAtmWhk5u6sfakXABTnv5eYvw@mail.gmail.com>
+ <CAE-0n539akxzrof5nZXb1=8tM9=A7NKaB98LjkQ4tWJmSbWm_A@mail.gmail.com>
+In-Reply-To: <CAE-0n539akxzrof5nZXb1=8tM9=A7NKaB98LjkQ4tWJmSbWm_A@mail.gmail.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 14 Nov 2022 20:40:50 +0100
-Message-ID: <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off callbacks
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-pm@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Len Brown <len.brown@intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Martin Kepplinger <martink@posteo.de>,
-        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com
+Date:   Mon, 14 Nov 2022 21:11:16 +0100
+Message-ID: <CAPDyKFqLx8rnjN0=ysdE7=1osiug1Si13ywJPan9jCM=nrxYVA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Matthias Kaehlcke <mka@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 8 Nov 2022 at 02:35, Marek Vasut <marex@denx.de> wrote:
+On Wed, 2 Nov 2022 at 04:16, Stephen Boyd <swboyd@chromium.org> wrote:
 >
-> Currently it is possible that a power domain power on or off would claim
-> the genpd lock first and clock core prepare_lock second, while another
-> thread could do the reverse, and this would trigger lockdep warning.
-
-I am not quite sure I fully understand. In this case is the lockdep
-warning relevant or just something that we want to silence?
-
+> Quoting Doug Anderson (2022-11-01 17:45:03)
+> >
+> > One small nit is that the kernel doc for "@dev" in "struct gdsc" is
+> > incorrect after your patch. It still says this even though we're not
+> > using it for pm_runtime calls anymore:
+> >
+> >  * @dev: the device holding the GDSC, used for pm_runtime calls
 >
-> Introduce new callbacks, .power_pre/post_on() and .power_off_pre/post(), which
-> are triggered before the genpd_lock() and after genpd_unlock() respectively in
-> case the domain is powered on and off. Those are meant to let drivers claim
-> clock core prepare_lock via clk_*prepare() call and release the lock via
-> clk_*unprepare() call to always assure that the clock and genpd lock ordering
-> is correct.
+> Good catch! I can remove the part after the comma.
+>
+> >
+> > Other than that, this seems OK to me. I don't feel like I have a lot
+> > of good intuition around PM Clocks and genpd and all the topics talked
+> > about here, but I tried to look at the diff from before all the
+> > "recent" patches to "drivers/clk/qcom/gdsc.c" till the state after
+> > your patch. In other words the combined diff of these 4 patches:
+> >
+> > clk: qcom: gdsc: Remove direct runtime PM calls
+> > clk: qcom: gdsc: add missing error handling
+> > clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
+> > clk: qcom: gdsc: enable optional power domain support
+> >
+> > That basically shows a combined change that does two things:
+> >
+> > a) Adds error handling if pm_genpd_init() returns an error.
+> >
+> > b) Says that if "scs[i]->parent" wasn't provided that we can imply a
+> > parent from "dev->pm_domain".
+> >
+> > That seems to make sense, but one thing I'm wondering about for "b)"
+> > is how you know that "dev->pm_domain" can be safely upcast to a genpd.
+> > In other words, I'm hesitant about the "pd_to_genpd(dev->pm_domain)"
+> > call. I'll assume that "dev->pm_domain" isn't 100% guaranteed to be a
+> > genpd or else (presumably) we would have stored a genpd. Is there
+> > something about the "dev" that's passed in with "struct gdsc_desc"
+> > that gives the stronger guarantee about this being a genpd?
+>
+> Not really any stronger guarantee. The guarantee is pretty strong
+> already though. You can look at the callers of dev_pm_domain_set() and
+> see that nothing is calling that really besides the genpd attachment
+> logic when a driver is bound to a device (follow dev_pm_domain_attach()
+> from platform_probe()). The dev->pm_domain is going to be assigned to a
+> genpd assuming the 'dev' pointer is a platform device and has
+> 'power-domains' in DT.
+>
+> It's not great, but it works for now. Certainly if we ever want to
+> replace the pm_domain with something that isn't a genpd then we'll be in
+> trouble. I'm not sure it will ever happen. Ulf, can you provide more
+> assurances here?
 
-To me, this sounds like a problem that may be better fixed by trying
-to model the parent/child-domains in a more strict way, through genpd.
+I think the call to pd_to_genpd() should be considered as safe, as
+long as the call is made in a controlled way from within a genpd
+provider.
 
-There is a comment in the code in imx8mp_blk_ctrl_probe() that seems
-to be pointing in this direction too.
+However, in some cases, we want to pick up a genpd from the
+dev->pm_domain, that isn't a genpd provider. Internally in genpd we
+use dev_to_genpd_safe(). Is that something that would be valuable to
+use here? If so, I don't see any issues with exporting that as a new
+genpd helper function.
 
-"* We use runtime PM to trigger power on/off of the upstream GPC
-  * domain, as a strict hierarchical parent/child power domain
-  * setup doesn't allow us to meet the sequencing requirements......"
-
-I am wondering about what those "sequencing requirements" are - and
-whether it could make better sense to fix these issues instead?
+[...]
 
 Kind regards
 Uffe
-
->
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
-> Cc: Adam Ford <aford173@gmail.com>
-> Cc: Fabio Estevam <festevam@denx.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jacky Bai <ping.bai@nxp.com>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Marek Vasut <marex@denx.de>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Martin Kepplinger <martink@posteo.de>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-imx@nxp.com
-> Cc: linux-pm@vger.kernel.org
-> To: linux-arm-kernel@lists.infradead.org
-> ---
->  drivers/base/power/domain.c | 103 ++++++++++++++++++++++++++++++++----
->  include/linux/pm_domain.h   |   4 ++
->  2 files changed, 97 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 6471b559230e9..df2a93d0674e4 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -494,6 +494,22 @@ void dev_pm_genpd_set_next_wakeup(struct device *dev, ktime_t next)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_genpd_set_next_wakeup);
->
-> +static int genpd_power_pre_on(struct generic_pm_domain *genpd)
-> +{
-> +       if (!genpd->power_pre_on)
-> +               return 0;
-> +
-> +       return genpd->power_pre_on(genpd);
-> +}
-> +
-> +static int genpd_power_post_on(struct generic_pm_domain *genpd)
-> +{
-> +       if (!genpd->power_post_on)
-> +               return 0;
-> +
-> +       return genpd->power_post_on(genpd);
-> +}
-> +
->  static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
->  {
->         unsigned int state_idx = genpd->state_idx;
-> @@ -544,6 +560,22 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
->         return ret;
->  }
->
-> +static int genpd_power_off_pre(struct generic_pm_domain *genpd)
-> +{
-> +       if (!genpd->power_off_pre)
-> +               return 0;
-> +
-> +       return genpd->power_off_pre(genpd);
-> +}
-> +
-> +static int genpd_power_off_post(struct generic_pm_domain *genpd)
-> +{
-> +       if (!genpd->power_off_post)
-> +               return 0;
-> +
-> +       return genpd->power_off_post(genpd);
-> +}
-> +
->  static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
->  {
->         unsigned int state_idx = genpd->state_idx;
-> @@ -816,12 +848,18 @@ static int genpd_dev_pm_qos_notifier(struct notifier_block *nb,
->  static void genpd_power_off_work_fn(struct work_struct *work)
->  {
->         struct generic_pm_domain *genpd;
-> +       int ret;
->
->         genpd = container_of(work, struct generic_pm_domain, power_off_work);
->
-> +       ret = genpd_power_off_pre(genpd);
-> +       if (ret)
-> +               return;
->         genpd_lock(genpd);
->         genpd_power_off(genpd, false, 0);
->         genpd_unlock(genpd);
-> +       ret = genpd_power_off_post(genpd);
-> +       WARN_ON_ONCE(ret);
->  }
->
->  /**
-> @@ -938,12 +976,14 @@ static int genpd_runtime_suspend(struct device *dev)
->         if (irq_safe_dev_in_sleep_domain(dev, genpd))
->                 return 0;
->
-> +       ret = genpd_power_off_pre(genpd);
-> +       if (ret)
-> +               return ret;
->         genpd_lock(genpd);
->         gpd_data->rpm_pstate = genpd_drop_performance_state(dev);
->         genpd_power_off(genpd, true, 0);
->         genpd_unlock(genpd);
-> -
-> -       return 0;
-> +       return genpd_power_off_post(genpd);
->  }
->
->  /**
-> @@ -977,12 +1017,21 @@ static int genpd_runtime_resume(struct device *dev)
->         if (irq_safe_dev_in_sleep_domain(dev, genpd))
->                 goto out;
->
-> +       ret = genpd_power_pre_on(genpd);
-> +       if (ret)
-> +               return ret;
->         genpd_lock(genpd);
->         ret = genpd_power_on(genpd, 0);
->         if (!ret)
->                 genpd_restore_performance_state(dev, gpd_data->rpm_pstate);
->         genpd_unlock(genpd);
->
-> +       if (ret) {
-> +               genpd_power_post_on(genpd);
-> +               return ret;
-> +       }
-> +
-> +       ret = genpd_power_post_on(genpd);
->         if (ret)
->                 return ret;
->
-> @@ -1017,10 +1066,13 @@ static int genpd_runtime_resume(struct device *dev)
->         genpd_stop_dev(genpd, dev);
->  err_poweroff:
->         if (!pm_runtime_is_irq_safe(dev) || genpd_is_irq_safe(genpd)) {
-> -               genpd_lock(genpd);
-> -               gpd_data->rpm_pstate = genpd_drop_performance_state(dev);
-> -               genpd_power_off(genpd, true, 0);
-> -               genpd_unlock(genpd);
-> +               if (!genpd_power_off_pre(genpd)) {
-> +                       genpd_lock(genpd);
-> +                       gpd_data->rpm_pstate = genpd_drop_performance_state(dev);
-> +                       genpd_power_off(genpd, true, 0);
-> +                       genpd_unlock(genpd);
-> +                       genpd_power_off_post(genpd);
-> +               }
->         }
->
->         return ret;
-> @@ -1225,12 +1277,14 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
->                 }
->         }
->
-> +       ret = genpd_power_off_pre(genpd);
-> +       if (ret)
-> +               return ret;
->         genpd_lock(genpd);
->         genpd->suspended_count++;
->         genpd_sync_power_off(genpd, true, 0);
->         genpd_unlock(genpd);
-> -
-> -       return 0;
-> +       return genpd_power_off_post(genpd);
->  }
->
->  /**
-> @@ -1267,10 +1321,16 @@ static int genpd_resume_noirq(struct device *dev)
->         if (device_wakeup_path(dev) && genpd_is_active_wakeup(genpd))
->                 return pm_generic_resume_noirq(dev);
->
-> +       ret = genpd_power_pre_on(genpd);
-> +       if (ret)
-> +               return ret;
->         genpd_lock(genpd);
->         genpd_sync_power_on(genpd, true, 0);
->         genpd->suspended_count--;
->         genpd_unlock(genpd);
-> +       ret = genpd_power_post_on(genpd);
-> +       if (ret)
-> +               return ret;
->
->         if (genpd->dev_ops.stop && genpd->dev_ops.start &&
->             !pm_runtime_status_suspended(dev)) {
-> @@ -1378,6 +1438,9 @@ static int genpd_restore_noirq(struct device *dev)
->          * At this point suspended_count == 0 means we are being run for the
->          * first time for the given domain in the present cycle.
->          */
-> +       ret = genpd_power_pre_on(genpd);
-> +       if (ret)
-> +               return ret;
->         genpd_lock(genpd);
->         if (genpd->suspended_count++ == 0) {
->                 /*
-> @@ -1390,6 +1453,9 @@ static int genpd_restore_noirq(struct device *dev)
->
->         genpd_sync_power_on(genpd, true, 0);
->         genpd_unlock(genpd);
-> +       ret = genpd_power_post_on(genpd);
-> +       if (ret)
-> +               return ret;
->
->         if (genpd->dev_ops.stop && genpd->dev_ops.start &&
->             !pm_runtime_status_suspended(dev)) {
-> @@ -1413,6 +1479,7 @@ static int genpd_restore_noirq(struct device *dev)
->  static void genpd_complete(struct device *dev)
->  {
->         struct generic_pm_domain *genpd;
-> +       int ret;
->
->         dev_dbg(dev, "%s()\n", __func__);
->
-> @@ -1435,6 +1502,7 @@ static void genpd_switch_state(struct device *dev, bool suspend)
->  {
->         struct generic_pm_domain *genpd;
->         bool use_lock;
-> +       int ret;
->
->         genpd = dev_to_genpd_safe(dev);
->         if (!genpd)
-> @@ -1442,8 +1510,13 @@ static void genpd_switch_state(struct device *dev, bool suspend)
->
->         use_lock = genpd_is_irq_safe(genpd);
->
-> -       if (use_lock)
-> +       if (use_lock) {
-> +               ret = suspend ? genpd_power_off_pre(genpd) :
-> +                               genpd_power_pre_on(genpd);
-> +               if (ret)
-> +                       return;
->                 genpd_lock(genpd);
-> +       }
->
->         if (suspend) {
->                 genpd->suspended_count++;
-> @@ -1453,8 +1526,12 @@ static void genpd_switch_state(struct device *dev, bool suspend)
->                 genpd->suspended_count--;
->         }
->
-> -       if (use_lock)
-> +       if (use_lock) {
->                 genpd_unlock(genpd);
-> +               ret = suspend ? genpd_power_off_post(genpd) :
-> +                               genpd_power_post_on(genpd);
-> +               WARN_ON_ONCE(ret);
-> +       }
->  }
->
->  /**
-> @@ -2750,9 +2827,15 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->         dev->pm_domain->sync = genpd_dev_pm_sync;
->
->         if (power_on) {
-> +               ret = genpd_power_pre_on(pd);
-> +               if (ret)
-> +                       return ret;
->                 genpd_lock(pd);
->                 ret = genpd_power_on(pd, 0);
->                 genpd_unlock(pd);
-> +               ret = genpd_power_post_on(pd);
-> +               if (ret)
-> +                       return ret;
->         }
->
->         if (ret) {
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index ebc3516980907..3cf231a27cb1b 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -134,8 +134,12 @@ struct generic_pm_domain {
->         unsigned int prepared_count;    /* Suspend counter of prepared devices */
->         unsigned int performance_state; /* Aggregated max performance state */
->         cpumask_var_t cpus;             /* A cpumask of the attached CPUs */
-> +       int (*power_off_pre)(struct generic_pm_domain *domain);
->         int (*power_off)(struct generic_pm_domain *domain);
-> +       int (*power_off_post)(struct generic_pm_domain *domain);
-> +       int (*power_pre_on)(struct generic_pm_domain *domain);
->         int (*power_on)(struct generic_pm_domain *domain);
-> +       int (*power_post_on)(struct generic_pm_domain *domain);
->         struct raw_notifier_head power_notifiers; /* Power on/off notifiers */
->         struct opp_table *opp_table;    /* OPP table of the genpd */
->         unsigned int (*opp_to_performance_state)(struct generic_pm_domain *genpd,
-> --
-> 2.35.1
->
