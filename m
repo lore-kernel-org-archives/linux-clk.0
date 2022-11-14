@@ -2,139 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1193C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 20:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7348FC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 20:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236843AbiKNUML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 15:12:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37906 "EHLO
+        id S236658AbiKNUcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 15:32:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237563AbiKNULz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 15:11:55 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223E01CFD1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 12:11:53 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id h14so11353715pjv.4
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 12:11:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=F8YJKTEaSjeWZUEi+lCVZoSmHdKaA45O5/BX7Jv9leE=;
-        b=Bo4ud/9wy/hrzT1vvhDfzIZliKL3nHdYeO1xarp/GBtmeBMu1ebHsicCRbtzgA4VvD
-         zhsCLmYqXAuFGyZ2iJDfrGzsRIfcQNJ7Y4Wg6aOgZKxatMr/2V88oS2o+LK3CFByBcAy
-         wPb3b62Csfvpo/22qIFNqV1MXqzfNfF9PWmixTMiZGauBYITr61tA5ZtWXU0rBHMRt+H
-         rygyifAQLrP0osA+HOHDhYKOu+XXlcDQhf9PYuaDl2rTJuKTkVqI1fM6Q/EJI0xF8DiD
-         QAJzD0uRu4y39bHmuiGEqt4gnA0rEpUbR25D9M0CqdA/+2RCiSSO7Y43j5t+1rl9FcgD
-         swGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F8YJKTEaSjeWZUEi+lCVZoSmHdKaA45O5/BX7Jv9leE=;
-        b=0gScISIP4pWrg8E9NMTnSElvj4nZcVAtxpAh8d8kF3pkymqIzEkmoElglH06IHtfhD
-         RiMvoI37r05J+qGHIekaPbRTaQVRp3SeiiT9rP0ASl15GfJBYQ8kJFUDz3A3NTpih6nS
-         LLHSt7Fgwt9Z6Uwdvg3mX2wLymXy1nbYCigQ9ZDNn2nfJHn3VIu/tgXa3Fn5X301pbds
-         FqqHuHGRJRUAJL/jS4q0bZNH3090aYZ3YZnWy57Bsg1OOrGw/w4EVj2ym10pvbshjJv7
-         +0qicZvNt4oVtd6NbwU0O97XL5PPTQOotUdiIqvzFGWIAk4HyegvkyHr5BEeDMdUZdJF
-         kmog==
-X-Gm-Message-State: ANoB5pmImlCC1KWjupZ3YXcFSqFhGxXZEFsFGiFIEjYyip8JyxGadnrC
-        LT95HkrKQn1wRWfXHEjOh7ciVn5SmQnpoGAsDPt7JDt+Ngy18g==
-X-Google-Smtp-Source: AA0mqf67zLfaITSHy+eAhqfQdT/uWKph5nU4Nbw6RfC1+A1fyleHLDtSWtGzZ6dKgqVm0q4ZyoONgDwQ/zFsYrOeAlo=
-X-Received: by 2002:a17:90a:e64b:b0:20d:b124:33b1 with SMTP id
- ep11-20020a17090ae64b00b0020db12433b1mr14918522pjb.202.1668456713336; Mon, 14
- Nov 2022 12:11:53 -0800 (PST)
+        with ESMTP id S236559AbiKNUcT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 15:32:19 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94035102;
+        Mon, 14 Nov 2022 12:32:17 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 7E188833F9;
+        Mon, 14 Nov 2022 21:32:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1668457935;
+        bh=9YyOSpKzqVVws+Y9bNHk1/QJAvQGfurrcCfXg7JraVI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gXuSAEWmcLjvoIj7RYKkTRkklx+oGIsBKGCaPTLmx2CQggrvkzUaDWDBgoQliC4sb
+         1qR6pftyLU/jiIkTfZ34N98RHZZnFR3W7ryJkvuIcLs5IPG3b40hf8IVgr55K5te4Y
+         ONse+XjUsp/KWJghgmcNDza9Ye14iBpI/Lq9RTS3IAO82dQqXS5wTpUl/TrewVISiP
+         N7EIt8R0OAM4F0FMbNvNiOfWlAqcKnjKoPJDAW+PNmhLMjZIkI/Oj24t85Dt3luoGG
+         U/RxTWSemvE3C//SGKNLad0lEgJSugxJJxTpdkjACjgAaehIfvCfzVF6P6Obp+qkmV
+         kAz83lKq4jnDw==
+Message-ID: <52578b45-cf4c-e949-b2b1-a0f251815337@denx.de>
+Date:   Mon, 14 Nov 2022 21:32:12 +0100
 MIME-Version: 1.0
-References: <20221101233421.997149-1-swboyd@chromium.org> <CAD=FV=XkhtgL_4-cpj-Xi3uH6FAtmWhk5u6sfakXABTnv5eYvw@mail.gmail.com>
- <CAE-0n539akxzrof5nZXb1=8tM9=A7NKaB98LjkQ4tWJmSbWm_A@mail.gmail.com>
-In-Reply-To: <CAE-0n539akxzrof5nZXb1=8tM9=A7NKaB98LjkQ4tWJmSbWm_A@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 14 Nov 2022 21:11:16 +0100
-Message-ID: <CAPDyKFqLx8rnjN0=ysdE7=1osiug1Si13ywJPan9jCM=nrxYVA@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gdsc: Remove direct runtime PM calls
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya <quic_c_skakit@quicinc.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off
+ callbacks
+Content-Language: en-US
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-pm@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Len Brown <len.brown@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
+        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com
+References: <20221108013517.749665-1-marex@denx.de>
+ <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2 Nov 2022 at 04:16, Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Doug Anderson (2022-11-01 17:45:03)
-> >
-> > One small nit is that the kernel doc for "@dev" in "struct gdsc" is
-> > incorrect after your patch. It still says this even though we're not
-> > using it for pm_runtime calls anymore:
-> >
-> >  * @dev: the device holding the GDSC, used for pm_runtime calls
->
-> Good catch! I can remove the part after the comma.
->
-> >
-> > Other than that, this seems OK to me. I don't feel like I have a lot
-> > of good intuition around PM Clocks and genpd and all the topics talked
-> > about here, but I tried to look at the diff from before all the
-> > "recent" patches to "drivers/clk/qcom/gdsc.c" till the state after
-> > your patch. In other words the combined diff of these 4 patches:
-> >
-> > clk: qcom: gdsc: Remove direct runtime PM calls
-> > clk: qcom: gdsc: add missing error handling
-> > clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
-> > clk: qcom: gdsc: enable optional power domain support
-> >
-> > That basically shows a combined change that does two things:
-> >
-> > a) Adds error handling if pm_genpd_init() returns an error.
-> >
-> > b) Says that if "scs[i]->parent" wasn't provided that we can imply a
-> > parent from "dev->pm_domain".
-> >
-> > That seems to make sense, but one thing I'm wondering about for "b)"
-> > is how you know that "dev->pm_domain" can be safely upcast to a genpd.
-> > In other words, I'm hesitant about the "pd_to_genpd(dev->pm_domain)"
-> > call. I'll assume that "dev->pm_domain" isn't 100% guaranteed to be a
-> > genpd or else (presumably) we would have stored a genpd. Is there
-> > something about the "dev" that's passed in with "struct gdsc_desc"
-> > that gives the stronger guarantee about this being a genpd?
->
-> Not really any stronger guarantee. The guarantee is pretty strong
-> already though. You can look at the callers of dev_pm_domain_set() and
-> see that nothing is calling that really besides the genpd attachment
-> logic when a driver is bound to a device (follow dev_pm_domain_attach()
-> from platform_probe()). The dev->pm_domain is going to be assigned to a
-> genpd assuming the 'dev' pointer is a platform device and has
-> 'power-domains' in DT.
->
-> It's not great, but it works for now. Certainly if we ever want to
-> replace the pm_domain with something that isn't a genpd then we'll be in
-> trouble. I'm not sure it will ever happen. Ulf, can you provide more
-> assurances here?
+On 11/14/22 20:40, Ulf Hansson wrote:
+> On Tue, 8 Nov 2022 at 02:35, Marek Vasut <marex@denx.de> wrote:
+>>
+>> Currently it is possible that a power domain power on or off would claim
+>> the genpd lock first and clock core prepare_lock second, while another
+>> thread could do the reverse, and this would trigger lockdep warning.
+> 
+> I am not quite sure I fully understand. In this case is the lockdep
+> warning relevant or just something that we want to silence?
 
-I think the call to pd_to_genpd() should be considered as safe, as
-long as the call is made in a controlled way from within a genpd
-provider.
+This is a valid problem, see patches 2/3 and 3/3 for details too.
 
-However, in some cases, we want to pick up a genpd from the
-dev->pm_domain, that isn't a genpd provider. Internally in genpd we
-use dev_to_genpd_safe(). Is that something that would be valuable to
-use here? If so, I don't see any issues with exporting that as a new
-genpd helper function.
+>> Introduce new callbacks, .power_pre/post_on() and .power_off_pre/post(), which
+>> are triggered before the genpd_lock() and after genpd_unlock() respectively in
+>> case the domain is powered on and off. Those are meant to let drivers claim
+>> clock core prepare_lock via clk_*prepare() call and release the lock via
+>> clk_*unprepare() call to always assure that the clock and genpd lock ordering
+>> is correct.
+> 
+> To me, this sounds like a problem that may be better fixed by trying
+> to model the parent/child-domains in a more strict way, through genpd.
+> 
+> There is a comment in the code in imx8mp_blk_ctrl_probe() that seems
+> to be pointing in this direction too.
+> 
+> "* We use runtime PM to trigger power on/off of the upstream GPC
+>    * domain, as a strict hierarchical parent/child power domain
+>    * setup doesn't allow us to meet the sequencing requirements......"
+> 
+> I am wondering about what those "sequencing requirements" are - and
+> whether it could make better sense to fix these issues instead?
+
+Here is the lockdep splat:
+
+https://lore.kernel.org/all/Y1cs++TV2GCuh4tS@pendragon.ideasonboard.com/
+
+It really is a problem between the clock and genpd subsystem locks, they 
+can be claimed in arbitrary order, see patch 2/3 and 3/3.
+
+I think that might clarify what I am attempting to solve here.
 
 [...]
-
-Kind regards
-Uffe
