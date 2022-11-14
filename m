@@ -2,84 +2,167 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A943C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 08:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E0EC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 09:07:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236591AbiKNIkL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 03:40:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58064 "EHLO
+        id S236812AbiKNJH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 04:07:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236592AbiKNIkJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 03:40:09 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8078B1C93C
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 00:40:08 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ouV0d-0005Rj-Dt; Mon, 14 Nov 2022 09:40:03 +0100
-Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ouV0d-0004p3-01; Mon, 14 Nov 2022 09:40:03 +0100
-Date:   Mon, 14 Nov 2022 09:40:02 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Anson Huang <Anson.Huang@nxp.com>,
+        with ESMTP id S237070AbiKNJHQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 04:07:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96EA7273C;
+        Mon, 14 Nov 2022 01:05:51 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0AC6260F51;
+        Mon, 14 Nov 2022 09:05:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA65C433C1;
+        Mon, 14 Nov 2022 09:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668416750;
+        bh=D7WS1/Iq9HsSGiJfZeeNpWeUbfN2wCTKHRwR1waF5b8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gu23KWX+hkd2VrW8L8cgRL+RvzQoNmHr4ZHYqyx7b9ggw62j+4gl+srj7mMWbYEWO
+         eMq9AeoWeTXuHN/JCWdPJOC4s9/SfymP7ivydCT3Rc5lzvj0XxUfCGvOXg+FUovve3
+         mBjFDbEU8fbv5pZjeBcZG4yoTG+UTWC2w0hMhrdGaf5jiuivlIjmg6M0icdu4BayDd
+         QORZ6I5Y6XZL3p7KDrZaQgns3WiyBQD5S5uJ7AJ3isJBuf/JmKGDVf410NdJ4z5Krb
+         lm/rhmS+2/v3szQ2Sg6geE8bZDNcFgYVQt+IzZj3PeuYYzaH8viYNnTeheDKRc95zq
+         VsYSZrpR3L72Q==
+Date:   Mon, 14 Nov 2022 09:05:34 +0000
+From:   Lee Jones <lee@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-amarula@amarulasolutions.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>, michael@amarulasolutions.com,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abelvesa@kernel.org>
-Subject: Re: [PATCH 0/5] clk: imx8mn: miscellaneous cleanups and bug fixes
-Message-ID: <20221114084002.azyaqvc667s5bmag@pengutronix.de>
-References: <20221113180710.1625410-1-dario.binacchi@amarulasolutions.com>
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
+Message-ID: <Y3IE3ta8hLLUcu7H@google.com>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
+ <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
+ <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
+ <CAPDyKFr6VeF3s47JfzJ9urtMsEem+GiBtHeU=_S8jNaz-D+qnw@mail.gmail.com>
+ <CACRpkdb8uYfs6w99FVjD_t6nZgDhPUx=yB1j=CmpHTHAM2QGQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20221113180710.1625410-1-dario.binacchi@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdb8uYfs6w99FVjD_t6nZgDhPUx=yB1j=CmpHTHAM2QGQw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dario,
+On Fri, 11 Nov 2022, Linus Walleij wrote:
 
-On 22-11-13, Dario Binacchi wrote:
-> This series has been tested on the BSH SystemMaster (SMM) S2 board.
+> On Thu, Nov 10, 2022 at 2:05 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > On Thu, 10 Nov 2022 at 12:39, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > >
+> > > On Thu, Nov 10, 2022 at 12:29 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
+> > > > >
+> > > > > The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
+> > > > > hook, but doesn't provide a determine_rate implementation.
+> > > > >
+> > > > > This is a bit odd, since set_parent() is there to, as its name implies,
+> > > > > change the parent of a clock. However, the most likely candidate to
+> > > > > trigger that parent change is a call to clk_set_rate(), with
+> > > > > determine_rate() figuring out which parent is the best suited for a
+> > > > > given rate.
+> > > > >
+> > > > > The other trigger would be a call to clk_set_parent(), but it's far less
+> > > > > used, and it doesn't look like there's any obvious user for that clock.
+> > > >
+> > > > If I recall correctly, that is the use case we did target for these
+> > > > types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
+> > >
+> > > Hm I am trying to get that driver to work ... from time to time.
+> > > It's just that ALSA SoC DT has changed to much that it turns out
+> > > into a complete rewrite :/
+> > >
+> > > So in sound/soc/ux500/mop500_ab8500.c
+> > > I see this:
+> > >
+> > >         status = clk_set_parent(drvdata->clk_ptr_intclk, clk_ptr);
+> > >         if (status)
+> > > (...)
+> > >
+> > > and there is elaborate code to switch between "SYSCLK" and
+> > > "ULPCLK" (ulta-low power clock). Just like you say... however
+> > > a clock named SYSCLK or ULPCLK does not appear in the
+> > > code in drivers/clk/ux500 or any DT bindings so... it seems to
+> > > be non-working for the time being.
+> >
+> > It's definitely not working, but the corresponding clocks ("ulpclk",
+> > "intclk", "audioclk", etc) are being registered in ab8500_reg_clks().
+> >
+> > What seems to be missing is a DT conversion for these clocks, so they
+> > can be consumed properly. Right?
+> 
+> Yeps that and a few more things, I have a scratch rewrite here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git/log/?h=ux500-audio-rewrite
+> 
+> I remember Lee said he had audio working with the mainline kernel
+> on Snowball at one point, unfortunately I think that was before we
+> started with the DT conversions and then we probably broke it.
 
-the series LGTM, except for the two patches I commented. Also I think
-that all patches can contain the Fixes tag.
+That was also 100 years ago. :)
 
-Regards,
-  Marco
+But yes, it used to work at one point.
 
-> 
-> Dario Binacchi (5):
->   clk: imx8mn: rename vpu_pll to m7_alt_pll
->   clk: imx: replace osc_hdmi with dummy
->   clk: imx: rename video_pll1 to video_pll
->   clk: imx8mn: fix imx8mn_sai2_sels clocks list
->   clk: imx8mn: fix imx8mn_enet_phy_sels clocks list
-> 
->  drivers/clk/imx/clk-imx8mn.c             | 116 +++++++++++------------
->  include/dt-bindings/clock/imx8mn-clock.h |  16 ++--
->  2 files changed, 66 insertions(+), 66 deletions(-)
-> 
-> -- 
-> 2.32.0
-> 
-> 
-> 
+-- 
+Lee Jones [李琼斯]
