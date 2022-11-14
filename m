@@ -2,167 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E0EC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 09:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10ABAC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 11:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236812AbiKNJH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 04:07:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
+        id S236608AbiKNLO6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 06:14:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237070AbiKNJHQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 04:07:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96EA7273C;
-        Mon, 14 Nov 2022 01:05:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0AC6260F51;
-        Mon, 14 Nov 2022 09:05:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA65C433C1;
-        Mon, 14 Nov 2022 09:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668416750;
-        bh=D7WS1/Iq9HsSGiJfZeeNpWeUbfN2wCTKHRwR1waF5b8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gu23KWX+hkd2VrW8L8cgRL+RvzQoNmHr4ZHYqyx7b9ggw62j+4gl+srj7mMWbYEWO
-         eMq9AeoWeTXuHN/JCWdPJOC4s9/SfymP7ivydCT3Rc5lzvj0XxUfCGvOXg+FUovve3
-         mBjFDbEU8fbv5pZjeBcZG4yoTG+UTWC2w0hMhrdGaf5jiuivlIjmg6M0icdu4BayDd
-         QORZ6I5Y6XZL3p7KDrZaQgns3WiyBQD5S5uJ7AJ3isJBuf/JmKGDVf410NdJ4z5Krb
-         lm/rhmS+2/v3szQ2Sg6geE8bZDNcFgYVQt+IzZj3PeuYYzaH8viYNnTeheDKRc95zq
-         VsYSZrpR3L72Q==
-Date:   Mon, 14 Nov 2022 09:05:34 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-Message-ID: <Y3IE3ta8hLLUcu7H@google.com>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
- <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
- <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
- <CAPDyKFr6VeF3s47JfzJ9urtMsEem+GiBtHeU=_S8jNaz-D+qnw@mail.gmail.com>
- <CACRpkdb8uYfs6w99FVjD_t6nZgDhPUx=yB1j=CmpHTHAM2QGQw@mail.gmail.com>
+        with ESMTP id S235967AbiKNLO2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 06:14:28 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A3022520
+        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 03:10:06 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:9cda:b28b:1ded:8138])
+        by michel.telenet-ops.be with bizsmtp
+        id kBA3280033NlhLw06BA3uE; Mon, 14 Nov 2022 12:10:03 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ouXLm-000TjG-N0; Mon, 14 Nov 2022 12:10:02 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ouX4J-003Jpk-Ml; Mon, 14 Nov 2022 11:51:59 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779g0: Add Z0 clock support
+Date:   Mon, 14 Nov 2022 11:51:58 +0100
+Message-Id: <75daa1fd8fa7eaef7b8945bb5906c787222c7ac4.1668423063.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdb8uYfs6w99FVjD_t6nZgDhPUx=yB1j=CmpHTHAM2QGQw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 11 Nov 2022, Linus Walleij wrote:
+Add support for the Z0 (Cortex-A76 Sub-System) clock on R-Car V4H, based
+on the existing support for Z clocks on R-Car Gen4.
 
-> On Thu, Nov 10, 2022 at 2:05 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > On Thu, 10 Nov 2022 at 12:39, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > >
-> > > On Thu, Nov 10, 2022 at 12:29 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
-> > > > >
-> > > > > The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> > > > > hook, but doesn't provide a determine_rate implementation.
-> > > > >
-> > > > > This is a bit odd, since set_parent() is there to, as its name implies,
-> > > > > change the parent of a clock. However, the most likely candidate to
-> > > > > trigger that parent change is a call to clk_set_rate(), with
-> > > > > determine_rate() figuring out which parent is the best suited for a
-> > > > > given rate.
-> > > > >
-> > > > > The other trigger would be a call to clk_set_parent(), but it's far less
-> > > > > used, and it doesn't look like there's any obvious user for that clock.
-> > > >
-> > > > If I recall correctly, that is the use case we did target for these
-> > > > types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
-> > >
-> > > Hm I am trying to get that driver to work ... from time to time.
-> > > It's just that ALSA SoC DT has changed to much that it turns out
-> > > into a complete rewrite :/
-> > >
-> > > So in sound/soc/ux500/mop500_ab8500.c
-> > > I see this:
-> > >
-> > >         status = clk_set_parent(drvdata->clk_ptr_intclk, clk_ptr);
-> > >         if (status)
-> > > (...)
-> > >
-> > > and there is elaborate code to switch between "SYSCLK" and
-> > > "ULPCLK" (ulta-low power clock). Just like you say... however
-> > > a clock named SYSCLK or ULPCLK does not appear in the
-> > > code in drivers/clk/ux500 or any DT bindings so... it seems to
-> > > be non-working for the time being.
-> >
-> > It's definitely not working, but the corresponding clocks ("ulpclk",
-> > "intclk", "audioclk", etc) are being registered in ab8500_reg_clks().
-> >
-> > What seems to be missing is a DT conversion for these clocks, so they
-> > can be consumed properly. Right?
-> 
-> Yeps that and a few more things, I have a scratch rewrite here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git/log/?h=ux500-audio-rewrite
-> 
-> I remember Lee said he had audio working with the mainline kernel
-> on Snowball at one point, unfortunately I think that was before we
-> started with the DT conversions and then we probably broke it.
+Extracted from a patch in the BSP by LUU HOAI.
 
-That was also 100 years ago. :)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Tested on the White-Hawk development board by changing
 
-But yes, it used to work at one point.
+    -#undef CLOCK_ALLOW_WRITE_DEBUGFS
+    +#define CLOCK_ALLOW_WRITE_DEBUGFS
 
+in drivers/clk/clk.c, writing the desired clock rate to
+/sys/kernel/debug/clk/z0/clk_rate, and running the Dhrystones benchmark.
+The performance/clock rate looks fine over the full range from 53 MHz to
+1.7 GHz.
+---
+To be queued in renesas-clk-for-v6.2.
+---
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 1da48c81d3ddf3df..c6337a408e5e30da 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -96,6 +96,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
+ 	DEF_FIXED(".vc",	CLK_VC,		CLK_PLL5_DIV2,	3, 1),
+ 
+ 	/* Core Clock Outputs */
++	DEF_GEN4_Z("z0",	R8A779G0_CLK_Z0,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	2, 0),
+ 	DEF_FIXED("s0d2",	R8A779G0_CLK_S0D2,	CLK_S0,		2, 1),
+ 	DEF_FIXED("s0d3",	R8A779G0_CLK_S0D3,	CLK_S0,		3, 1),
+ 	DEF_FIXED("s0d4",	R8A779G0_CLK_S0D4,	CLK_S0,		4, 1),
 -- 
-Lee Jones [李琼斯]
+2.25.1
+
