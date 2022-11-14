@@ -2,90 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6D6C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 13:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0E3C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 15:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236659AbiKNNeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 08:34:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
+        id S237062AbiKNPMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 10:12:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236779AbiKNNeM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 08:34:12 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622A5193F4;
-        Mon, 14 Nov 2022 05:34:11 -0800 (PST)
-Received: by mail-qt1-f172.google.com with SMTP id cg5so6699759qtb.12;
-        Mon, 14 Nov 2022 05:34:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0enCl3aA3oSehDqOarw87aM8R6LctgbZ471ws/S8kmA=;
-        b=IiJXQRlYJNA+c1htr+QvDVftp/julRl8ORMkAYgCNh1oeTszNvexwKDJsEWc/91rCL
-         kLwX5XHtT2O6P31Ur+1Vp+yVbLFnqnfbHv0vA6nTacYnkkspJMFUfGZTcJQrhZ0js/Y6
-         7mVd6DLS8DIQgzLk3LcKn8oorFrF3Y9RmPSfIl6DTHkw3+UBU9S4u8F76Frl06jK0T2I
-         z3wkjoqD9AkQimKbtw0WlQpNj7Yw3S9Yd08v/WGkdiDicxPtRdqVFeAC/HEupDvpi/8M
-         i6k/e44hr/xwGCYZF+0fYbQGu+1omE5MHB5Zzj6sfRLCRdU9oEwS9CWjRZBMnwvtShOL
-         pWaw==
-X-Gm-Message-State: ANoB5pkrsyEXLXGnljjJBX+zuyGw+d2E0+5KIi0vp5ntOFdTcMSvSDm3
-        is4T+loJsKuwlaWFJtH1AZZ85zy46J8GSg==
-X-Google-Smtp-Source: AA0mqf7nS7nPiTEBoRNcCLh3vSlXK2loevcYGefNVeNypOeDiRV1ZyjihrKfxF8JkmF9BQe0i1CvCA==
-X-Received: by 2002:ac8:474b:0:b0:3a5:177d:d9cb with SMTP id k11-20020ac8474b000000b003a5177dd9cbmr12196423qtp.64.1668432849301;
-        Mon, 14 Nov 2022 05:34:09 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id v11-20020ac8728b000000b003a526675c07sm5598118qto.52.2022.11.14.05.34.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Nov 2022 05:34:08 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id j2so13412870ybb.6;
-        Mon, 14 Nov 2022 05:34:08 -0800 (PST)
-X-Received: by 2002:a25:844b:0:b0:6de:6c43:3991 with SMTP id
- r11-20020a25844b000000b006de6c433991mr11541758ybm.604.1668432848711; Mon, 14
- Nov 2022 05:34:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20221114111513.1436165-1-herve.codina@bootlin.com> <20221114111513.1436165-3-herve.codina@bootlin.com>
-In-Reply-To: <20221114111513.1436165-3-herve.codina@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 14 Nov 2022 14:33:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUy8mG-=NXP_+kC-QWyy06E=epVQd6kYQRyRauf87jO0w@mail.gmail.com>
-Message-ID: <CAMuHMdUy8mG-=NXP_+kC-QWyy06E=epVQd6kYQRyRauf87jO0w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl: Add
- h2mode property
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S237111AbiKNPMh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 10:12:37 -0500
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE43BCAB;
+        Mon, 14 Nov 2022 07:12:35 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 5F49C5C0118;
+        Mon, 14 Nov 2022 10:12:32 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Mon, 14 Nov 2022 10:12:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1668438752; x=
+        1668525152; bh=0AuGUPMpHoja+9h2KXd2rB+g1YZCSmA/pv709yYusZs=; b=N
+        imHqBCHQBx3TqPO+3otVYxSKGkXs9YDWBK8oMsEYTqKR9EoIJCrmDRSKajhuDm+t
+        xLTCyKkRPHs3O+ij5BTy63PS+jupxgqF2umtceFZYgbFE6YTCKe0Qn8CTzph7Bjn
+        QXzhCpOSapHICvU7ROHCfPBYRQVufWoovONSGqAJ37ZE9q/NXHU+U5e61EMfWBd8
+        Ahjy4T/tkZ51WxkXz3RrkIlrMoWqVDXqUVyJ9Fz/k+FZlBEsiXfTHIsnUev/DwpC
+        F57eKOjmtj+8dv1yrTj5BYuE0SdxDbXIfXb/wBR7//tX36prdU86J03rJrY0sDwy
+        Tj2Yq7jEoMiXYGkyy164Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1668438752; x=
+        1668525152; bh=0AuGUPMpHoja+9h2KXd2rB+g1YZCSmA/pv709yYusZs=; b=l
+        fQLNXCnKbkA0PiBeyW6h5RRt+6oD3D8Q3pbG6mY5+RoQhd7+cLjQum8Q9DJJvZ51
+        CNijv/9Fiil1hA305ooBtfYIF98WNix84zLxX+ONDuYL2twQBQKStuY3y/hbyzcW
+        IiJHKEFyHI+WwhUr0vJJ3GyJd54VQeY4J1XvzOQ2CZe62IFDausnwo0Ad1LVF62d
+        deZlOsPB61X3dffxQ8zzhp3Yaf0Bj36tu/ZmMAY7YCKVc8SIXdOPpm23wYKaYJj0
+        S1RZDBlUXA6FXgGCXJHGaMX8X5z2jbHR4xfrW853TuejXe/+7Z3y+jHes3/M5UeE
+        SI+ifKZ53v+kiAaX0GQ+Q==
+X-ME-Sender: <xms:31pyY0VjEwxO4EUW4JC-rkT1WJFaktgNwfoQbSCB5gxKgs312nLL7Q>
+    <xme:31pyY4leAzEB72KnV4EBvk3-i2PolJiBgggZsJXDnLCatVeqbipug-HYUp6hA00zx
+    v5IrrOpB7sRFJdxG-s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrgedvgdegiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:31pyY4auCtGnKuYCUHE2ey5OhveTmmnaHss32ff3o_ZAfOKV6FBdmQ>
+    <xmx:31pyYzUfxPb39MIdkWZo6zEyNV4CjCgkn-RgocA9m2SnJdYX2H44hQ>
+    <xmx:31pyY-mrqjwT4Db8756KAc9bjOnJuyrTpS42w7ymvcQiTlaIj1wFkA>
+    <xmx:4FpyY8tZffa25m1byUcHEEBq8VzuHYfdg-DU2LEaArTgu7bxeNKDiQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id C3AF2B60086; Mon, 14 Nov 2022 10:12:31 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1115-g8b801eadce-fm-20221102.001-g8b801ead
+Mime-Version: 1.0
+Message-Id: <48a6bfab-6b88-4a5a-989d-ab87430290c7@app.fastmail.com>
+In-Reply-To: <20221102171012.49150-1-kory.maincent@bootlin.com>
+References: <20221102171012.49150-1-kory.maincent@bootlin.com>
+Date:   Mon, 14 Nov 2022 16:12:11 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+        "Viresh Kumar" <viresh.kumar@linaro.org>,
+        "Shiraz Hashim" <shiraz.linux.kernel@gmail.com>,
+        "Vipin Kumar" <vipin.kumar@st.com>,
+        "Vijay Kumar Mishra" <vijay.kumar@st.com>,
+        "Deepak Sikri" <deepak.sikri@st.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+        "Viresh Kumar" <vireshk@kernel.org>, soc@kernel.org,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Sudeep Holla" <sudeep.holla@arm.com>,
+        "Gregory Clement" <gregory.clement@bootlin.com>,
+        "Neil Armstrong" <neil.armstrong@linaro.org>,
+        "Alexandre Ghiti" <alexandre.ghiti@canonical.com>,
+        "Rajeev Kumar" <rajeev-dlh.kumar@st.com>,
+        "Vipul Kumar Samar" <vipulkumar.samar@st.com>
+Subject: Re: [PATCH v2 0/6] Support new features to the SPEAr600
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 12:15 PM Herve Codina <herve.codina@bootlin.com> wrote:
-> Add the h2mode property to force the USBs mode ie:
->  - 2 hosts
-> or
->  - 1 host and 1 device
+On Wed, Nov 2, 2022, at 18:10, K=C3=B6ry Maincent wrote:
+> From: Kory Maincent <kory.maincent@bootlin.com>
 >
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> This patches series adds two features of the SPEAr600 SOC:
+>
+> - Enable the display controller
+>
+> - Enable the SPI buses using the SSP controller
+>
+> Changes in v2:
+> - Keep the I2C_CONFIG in the spear6xx_defconfig while enabling DRM.
+> - Send cover letter which was not sent in v1 due to a mistake in my git
+>   mail config.
+>
+> Viresh, will you take the patches and submit a pull request to the ARM=
+ SoC
+> maintainers?
+>
+> Kory Maincent (6):
+>   arm: configs: spear6xx: Refresh defconfig
+>   arm: dts: spear600: Fix clcd interrupt
+>   arm: configs: spear6xx: Enable PL110 display controller
+>   clk: spear: Fix CLCD clock definition on SPEAr600
+>   arm: dts: spear600: Add ssp controller nodes
+>   clk: spear: Fix SSP clock definition on SPEAr600
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I've picked up patches 1 and 3 into the arm/defconfig branch,
+and patches 2 and 5 into the soc/dt branch now.
 
-Gr{oetje,eeting}s,
+I can also take patches 4 and 6, but I think it's better to have
+them merged through the clk tree.
 
-                        Geert
+Maybe resend them to just the clk maintainers.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+       Arnd
