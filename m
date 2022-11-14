@@ -2,78 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10ABAC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 11:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F119C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 11:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236608AbiKNLO6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 06:14:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43068 "EHLO
+        id S235948AbiKNLSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 06:18:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235967AbiKNLO2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 06:14:28 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A3022520
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2022 03:10:06 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:9cda:b28b:1ded:8138])
-        by michel.telenet-ops.be with bizsmtp
-        id kBA3280033NlhLw06BA3uE; Mon, 14 Nov 2022 12:10:03 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ouXLm-000TjG-N0; Mon, 14 Nov 2022 12:10:02 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ouX4J-003Jpk-Ml; Mon, 14 Nov 2022 11:51:59 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        with ESMTP id S235660AbiKNLRd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 06:17:33 -0500
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 424E85F59;
+        Mon, 14 Nov 2022 03:15:38 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id 5021960004;
+        Mon, 14 Nov 2022 11:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668424537;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=erW/gAS4dULA5JTOLl0FGx1bAeaHIYZy6jpj3FKM28s=;
+        b=Bflxvrp7c3nXu/Kr/0hrFTO2EHZ6ONMIQHFqPMc6WfW5LqLxreWMhI06Bs4dUy8KaNlMfm
+        wgmaHq2U6ke2q1OTwmGuWch9Szpe3BH7GS2k5wI7AISz/l+bkbbqoAnbRej7nSWpwjJlbq
+        Yr7C7iURAgXf/wkGzILPKTRgfplwCLielX0wsfSAyKIsKTdmzD4Hc1zbnE9X8iautFNFzu
+        MMg/TpWgAuh4KlFPT2YRC7UEgT2Qiv0eENyQTc+NXn6Hrx6QrqyQlbKyPguOgqujBN3Xnh
+        qcFRQqcWWVZnnCRpP1JrSeI9Uo+tH1cu5p9lF2NwB8zjB7Vq2lobr1KachUFsQ==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779g0: Add Z0 clock support
-Date:   Mon, 14 Nov 2022 11:51:58 +0100
-Message-Id: <75daa1fd8fa7eaef7b8945bb5906c787222c7ac4.1668423063.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 4/7] dt-bindings: usb: add the Renesas RZ/N1 USBF controller binding
+Date:   Mon, 14 Nov 2022 12:15:10 +0100
+Message-Id: <20221114111513.1436165-5-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221114111513.1436165-1-herve.codina@bootlin.com>
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the Z0 (Cortex-A76 Sub-System) clock on R-Car V4H, based
-on the existing support for Z clocks on R-Car Gen4.
+The Renesas RZ/N1 USBF controller is an USB2.0 device controller
+(UDC) available in the Renesas r9a06g032 SoC (RZ/N1 family).
 
-Extracted from a patch in the BSP by LUU HOAI.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
-Tested on the White-Hawk development board by changing
+ .../bindings/usb/renesas,rzn1-usbf.yaml       | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
 
-    -#undef CLOCK_ALLOW_WRITE_DEBUGFS
-    +#define CLOCK_ALLOW_WRITE_DEBUGFS
-
-in drivers/clk/clk.c, writing the desired clock rate to
-/sys/kernel/debug/clk/z0/clk_rate, and running the Dhrystones benchmark.
-The performance/clock rate looks fine over the full range from 53 MHz to
-1.7 GHz.
----
-To be queued in renesas-clk-for-v6.2.
----
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 1da48c81d3ddf3df..c6337a408e5e30da 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -96,6 +96,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED(".vc",	CLK_VC,		CLK_PLL5_DIV2,	3, 1),
- 
- 	/* Core Clock Outputs */
-+	DEF_GEN4_Z("z0",	R8A779G0_CLK_Z0,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	2, 0),
- 	DEF_FIXED("s0d2",	R8A779G0_CLK_S0D2,	CLK_S0,		2, 1),
- 	DEF_FIXED("s0d3",	R8A779G0_CLK_S0D3,	CLK_S0,		3, 1),
- 	DEF_FIXED("s0d4",	R8A779G0_CLK_S0D4,	CLK_S0,		4, 1),
+diff --git a/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+new file mode 100644
+index 000000000000..b67e9cea2522
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/renesas,rzn1-usbf.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 SoCs USBF (USB Function) controller binding
++
++description: |
++   The Renesas USBF controller is an USB2.0 device
++   controller (UDC).
++
++maintainers:
++  - Herve Codina <herve.codina@bootlin.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a06g032-usbf
++      - const: renesas,rzn1-usbf
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Internal bus clock (AHB) for Function
++      - description: Internal bus clock (AHB) for Power Management
++
++  clock-names:
++    items:
++      - const: hclkf
++      - const: hclkpm
++
++  power-domains:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: The USBF EPC interrupt
++      - description: The USBF AHB-EPC interrupt
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++    usb@4001e000 {
++        compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
++        reg = <0x4001e000 0x2000>;
++        interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&sysctrl R9A06G032_HCLK_USBF>,
++                 <&sysctrl R9A06G032_HCLK_USBPM>;
++        clock-names = "hclkf", "hclkpm";
++        power-domains = <&sysctrl>;
++    };
 -- 
-2.25.1
+2.38.1
 
