@@ -2,114 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7348FC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 20:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E40DC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 21:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236658AbiKNUcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 15:32:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50996 "EHLO
+        id S237682AbiKNVJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 16:09:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236559AbiKNUcT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 15:32:19 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94035102;
-        Mon, 14 Nov 2022 12:32:17 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 7E188833F9;
-        Mon, 14 Nov 2022 21:32:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1668457935;
-        bh=9YyOSpKzqVVws+Y9bNHk1/QJAvQGfurrcCfXg7JraVI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=gXuSAEWmcLjvoIj7RYKkTRkklx+oGIsBKGCaPTLmx2CQggrvkzUaDWDBgoQliC4sb
-         1qR6pftyLU/jiIkTfZ34N98RHZZnFR3W7ryJkvuIcLs5IPG3b40hf8IVgr55K5te4Y
-         ONse+XjUsp/KWJghgmcNDza9Ye14iBpI/Lq9RTS3IAO82dQqXS5wTpUl/TrewVISiP
-         N7EIt8R0OAM4F0FMbNvNiOfWlAqcKnjKoPJDAW+PNmhLMjZIkI/Oj24t85Dt3luoGG
-         U/RxTWSemvE3C//SGKNLad0lEgJSugxJJxTpdkjACjgAaehIfvCfzVF6P6Obp+qkmV
-         kAz83lKq4jnDw==
-Message-ID: <52578b45-cf4c-e949-b2b1-a0f251815337@denx.de>
-Date:   Mon, 14 Nov 2022 21:32:12 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off
- callbacks
-Content-Language: en-US
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-pm@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Kevin Hilman <khilman@kernel.org>,
+        with ESMTP id S237580AbiKNVIu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 16:08:50 -0500
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DACCBE18;
+        Mon, 14 Nov 2022 13:08:43 -0800 (PST)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id CCBD540002;
+        Mon, 14 Nov 2022 21:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668460122;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WUcN8Hyfr1CcrMqYvHeNHTB6GPer8+O1tgop6jO/i4o=;
+        b=LoY2BISB89oKKYW3bgqoV/6ifu5d0aCRaj643or12/Zq89QFtRZr3S3ZrVgAij0TEk8XXQ
+        AhUZdvHzKr7WlOZYmyp79CsK6/2kgZ7LuKbnTNhEy/2F00YleILJTTbt4XWLv6EcWHkddO
+        07N+3CbUW3UjsWpTpWswfjJa5YcWwUPAbHvRjcx+CRzClWi6Oemsy2iDr6ntRAimB6b9qB
+        xqyjY+iJaKWSW//kWkKE5ce0oW0tNfg2vyhksnqzqDD/LLdbUHis+e1Roj4fwu7T+UZ4Iq
+        g/nCFdH3jroKXyOxlPcbfVVZki+yfk+NVUNqr6/xsMpotUg6GrfrQW179o9zdQ==
+Date:   Mon, 14 Nov 2022 22:08:38 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-staging@lists.linux.dev,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Lee Jones <lee@kernel.org>, linux-media@vger.kernel.org,
+        linux-input@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Len Brown <len.brown@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Kevin Hilman <khilman@baylibre.com>,
+        David Lechner <david@lechnology.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Brown <broonie@kernel.org>, linux-rtc@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Martin Kepplinger <martink@posteo.de>,
-        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com
-References: <20221108013517.749665-1-marex@denx.de>
- <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+        alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        linux-ide@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Bin Liu <b-liu@ti.com>, Takashi Iwai <tiwai@suse.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 00/14] ARM: remove unused davinci board & drivers
+Message-ID: <166846004404.2111985.9223963351202037616.b4-ty@bootlin.com>
+References: <20221019152947.3857217-1-arnd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221019152947.3857217-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/14/22 20:40, Ulf Hansson wrote:
-> On Tue, 8 Nov 2022 at 02:35, Marek Vasut <marex@denx.de> wrote:
->>
->> Currently it is possible that a power domain power on or off would claim
->> the genpd lock first and clock core prepare_lock second, while another
->> thread could do the reverse, and this would trigger lockdep warning.
+On Wed, 19 Oct 2022 17:29:26 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> I am not quite sure I fully understand. In this case is the lockdep
-> warning relevant or just something that we want to silence?
-
-This is a valid problem, see patches 2/3 and 3/3 for details too.
-
->> Introduce new callbacks, .power_pre/post_on() and .power_off_pre/post(), which
->> are triggered before the genpd_lock() and after genpd_unlock() respectively in
->> case the domain is powered on and off. Those are meant to let drivers claim
->> clock core prepare_lock via clk_*prepare() call and release the lock via
->> clk_*unprepare() call to always assure that the clock and genpd lock ordering
->> is correct.
+> As part of removing all board files that were previously marked as unused,
+> I looked through the davinci platform and recursively removed everything
+> that has now become unused.
 > 
-> To me, this sounds like a problem that may be better fixed by trying
-> to model the parent/child-domains in a more strict way, through genpd.
+> In particular, this is for all dm3xx support, in addition to the dm64xx
+> support removed previously. The remaining support is now for da8xx using
+> devicetree only, which means a lot of the da8xx specific device support
+> can also go away.
 > 
-> There is a comment in the code in imx8mp_blk_ctrl_probe() that seems
-> to be pointing in this direction too.
-> 
-> "* We use runtime PM to trigger power on/off of the upstream GPC
->    * domain, as a strict hierarchical parent/child power domain
->    * setup doesn't allow us to meet the sequencing requirements......"
-> 
-> I am wondering about what those "sequencing requirements" are - and
-> whether it could make better sense to fix these issues instead?
+> [...]
 
-Here is the lockdep splat:
+Applied, thanks!
 
-https://lore.kernel.org/all/Y1cs++TV2GCuh4tS@pendragon.ideasonboard.com/
+[08/14] rtc: remove davinci rtc driver
+        commit: 6274ef3c7eb5e9792a708c23757e16b444e4267f
 
-It really is a problem between the clock and genpd subsystem locks, they 
-can be claimed in arbitrary order, see patch 2/3 and 3/3.
+Best regards,
 
-I think that might clarify what I am attempting to solve here.
-
-[...]
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
