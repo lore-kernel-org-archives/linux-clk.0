@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D919C41535
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E77AC46467
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Nov 2022 11:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236190AbiKNLSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Nov 2022 06:18:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43084 "EHLO
+        id S236264AbiKNLSS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Nov 2022 06:18:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236993AbiKNLRb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 06:17:31 -0500
+        with ESMTP id S236966AbiKNLR1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2022 06:17:27 -0500
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6245585;
-        Mon, 14 Nov 2022 03:15:35 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9E321E15;
+        Mon, 14 Nov 2022 03:15:28 -0800 (PST)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id A781C60015;
-        Mon, 14 Nov 2022 11:15:31 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 79CDA60010;
+        Mon, 14 Nov 2022 11:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1668424534;
+        t=1668424527;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Rv0zLQImLa4WkJ4GwDBS+qU7R6NBbI82C3pfv4/EYHA=;
-        b=oRxEg/Pwf9nu/cfmv5rnPFTPBTNLajBKT1eMW6J6TI4BH2ENRLtc+cVN/RDq5eUDgPT2u/
-        aNHw+ZpXRRunkrWCwiVLjjcF2xeKYsKFiSpg9Q6rXhs2pJmp4/ww2LrIyILkPJk7g9DbdE
-        OK8OZRGP2EgfWlYaF0Hr7hS/68sG/WIA+uRUv08Ucn31S+2UPo5reLxfaf29pO9uziaJvJ
-        33eVxqbUDNRZm34t3phTTgcNk2bJYiRs4UrIFCa2cFlpVKFXGCwSHNXEarM2jPrCbOSNkN
-        byBLAsGOYRYqT87X34hO/xG6K2+WUByrdMsegqk7OPVwy4RGHLSq35djikkaUQ==
+        bh=9cWUMqDjvAHZdUQxoiw0zECZSqsjwWcZqSuQI2RSbWA=;
+        b=ZybhulNlYT1pNvqmEey2XL1wO+TYkEWwGd+yGtJuqzYNp79OeRp7b9Plcn1uLKsv+cEsqW
+        IGb0QgNytpqoA3fJ9buEWJkQLTaxooraYKXIlHyDSHKaxgGiDGTAsQ7N6phHBwOG54bJgS
+        c7MTZUZ2+sw1OVr/cueK8OsKzWJb3B4ZsgqjOndC7iM8+IADPL+1sQpJmNKIpGOQ1zNqXB
+        VFljSe76rWgPjja+giwJJJCLa/zwwJWoQV4+amHSXRXWnr/YGicLahr7Rl9QmmnxVwETSo
+        Gc9SRryQbHsFEJUH+9y2m9hvgipmz6l9YTmSKTgRIjdEjwjXDaFPQ5WrvtSMkg==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -44,9 +44,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-usb@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 3/7] soc: renesas: r9a06g032-sysctrl: Handle h2mode device-tree property
-Date:   Mon, 14 Nov 2022 12:15:09 +0100
-Message-Id: <20221114111513.1436165-4-herve.codina@bootlin.com>
+Subject: [PATCH v2 1/7] soc: renesas: r9a06g032-sysctrl: Export function to get the usb role
+Date:   Mon, 14 Nov 2022 12:15:07 +0100
+Message-Id: <20221114111513.1436165-2-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221114111513.1436165-1-herve.codina@bootlin.com>
 References: <20221114111513.1436165-1-herve.codina@bootlin.com>
@@ -56,53 +56,72 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Handle the h2mode property and forces the CFG_USB[H2MODE] bit
-accordingly.
+The usb role retrieved is determined from the CFG_USB[H2MODE]
+value. The CFG_USB register is located within the system
+controller.
+
+We need a helper to get the usb role based on H2MODE value from
+the CFG_USB register without syscon.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/clk/renesas/r9a06g032-clocks.c        | 18 ++++++++++++++++++
+ include/linux/soc/renesas/r9a06g032-sysctrl.h |  2 ++
+ 2 files changed, 20 insertions(+)
 
 diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 9ee056498714..7a5a96c0d082 100644
+index 1488c9d6e639..9ee056498714 100644
 --- a/drivers/clk/renesas/r9a06g032-clocks.c
 +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -946,6 +946,7 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	struct clk *mclk;
- 	unsigned int i;
- 	u16 uart_group_sel[2];
-+	u32 usb, h2mode;
- 	int error;
+@@ -23,8 +23,11 @@
+ #include <linux/slab.h>
+ #include <linux/soc/renesas/r9a06g032-sysctrl.h>
+ #include <linux/spinlock.h>
++#include <linux/usb/role.h>
+ #include <dt-bindings/clock/r9a06g032-sysctrl.h>
  
- 	clocks = devm_kzalloc(dev, sizeof(*clocks), GFP_KERNEL);
-@@ -966,6 +967,26 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	clocks->reg = of_iomap(np, 0);
- 	if (WARN_ON(!clocks->reg))
- 		return -ENOMEM;
++#define R9A06G032_SYSCTRL_USB    0x00
++#define R9A06G032_SYSCTRL_USB_H2MODE  (1<<1)
+ #define R9A06G032_SYSCTRL_DMAMUX 0xA0
+ 
+ struct r9a06g032_gate {
+@@ -341,6 +344,21 @@ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
+ }
+ EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
+ 
 +
-+	error = of_property_read_u32(np, "renesas,h2mode", &h2mode);
-+	if (!error) {
-+		usb = readl(clocks->reg + R9A06G032_SYSCTRL_USB);
-+		switch (h2mode) {
-+		case 0:
-+			/* 1 host, 1 device */
-+			usb &= ~R9A06G032_SYSCTRL_USB_H2MODE;
-+			break;
-+		case 1:
-+			/* 2 hosts */
-+			usb |= R9A06G032_SYSCTRL_USB_H2MODE;
-+			break;
-+		default:
-+			dev_err(dev, "invalid h2mode %d\n", h2mode);
-+			return -EINVAL;
-+		}
-+		writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
-+	}
++/* Exported helper to get the H2MODE bit from USB register */
++int r9a06g032_sysctrl_get_usb_role(void)
++{
++	u32 usb;
 +
- 	for (i = 0; i < ARRAY_SIZE(r9a06g032_clocks); ++i) {
- 		const struct r9a06g032_clkdesc *d = &r9a06g032_clocks[i];
- 		const char *parent_name = d->source ?
++	if (!sysctrl_priv)
++		return -EPROBE_DEFER;
++
++	usb = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_USB);
++	return (usb & R9A06G032_SYSCTRL_USB_H2MODE) ?
++		USB_ROLE_HOST : USB_ROLE_DEVICE;
++}
++EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_get_usb_role);
++
+ /* register/bit pairs are encoded as an uint16_t */
+ static void
+ clk_rdesc_set(struct r9a06g032_priv *clocks,
+diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
+index 066dfb15cbdd..fc18d013a498 100644
+--- a/include/linux/soc/renesas/r9a06g032-sysctrl.h
++++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
+@@ -4,8 +4,10 @@
+ 
+ #ifdef CONFIG_CLK_R9A06G032
+ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
++int r9a06g032_sysctrl_get_usb_role(void);
+ #else
+ static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
++static inline int r9a06g032_sysctrl_get_usb_role(void) { return -ENODEV; }
+ #endif
+ 
+ #endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
 -- 
 2.38.1
 
