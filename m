@@ -2,76 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D079C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 08:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE13C43219
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 09:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232526AbiKOIeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 03:34:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48254 "EHLO
+        id S232302AbiKOJiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 04:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229966AbiKOIeW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 03:34:22 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BA1ABA5
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 00:34:20 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:8c33:62a1:bd29:7c58])
-        by xavier.telenet-ops.be with bizsmtp
-        id kYaH280070JF8f801YaHwE; Tue, 15 Nov 2022 09:34:17 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ourOa-000XlC-QW; Tue, 15 Nov 2022 09:34:16 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ourOa-004HxP-FF; Tue, 15 Nov 2022 09:34:16 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] clk: renesas: r8a779f0: Fix Ethernet Switch clocks
-Date:   Tue, 15 Nov 2022 09:34:14 +0100
-Message-Id: <99b8b41bd2c5043c9e457862ef4bc144869eca58.1668501212.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229825AbiKOJiS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 04:38:18 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA4D1A83D
+        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 01:38:16 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id c1so23539100lfi.7
+        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 01:38:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ADm39rqyfjpSRfhU67zfC4NHD+8x5Nv/QWMyB5+FVho=;
+        b=kcuus02aGgmW9RkzhYkKs7RMlJRHKg8VOHIQIatQ1i8EC/xuDAJbqm45ZyPbIhC9Ap
+         npuhQU5jYW+JYFLsCPpKEoXkCoIRsWKg7vKqp8iIDcJWmrx3w2Q4qqtJ4yyjnAZuRFOY
+         2pIM0lLYTGb02zTnW9gSxEwhB/npVdozq4gMnVW5c7MHcFB+3+YKY4QH6S+L9VA/i0Ht
+         XOH9SpcjDs8Er1RNjWNpR3J3H1MyRSEuyuqFoJm8Jmo4mCMxcHnlltu5/MFFagzqMBrn
+         puQvAq4hXSKMZlClKPR7sRsKkyQYKGcrPydvZFUDdooeQT32MbozBfX6q+GRDdvN0ll2
+         IeDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADm39rqyfjpSRfhU67zfC4NHD+8x5Nv/QWMyB5+FVho=;
+        b=QIsbpF9mHT1cMe4sUT6QeKWvcctxUvLcphmgCqz9wOE2+96rXU5DLWpvaJHuQ5/y9p
+         JFyWoamIYjhmiwjge5ihm/2nDqYpbV5lNeVh976LNRQCxCrTU8FdQlcDsD/Y+DQH0oXY
+         tRTzMuaERz9GpCSEL4HBruR6MmddZriqsEVJH5vnLvd2CzVPq01zzaNIhWr4wXLqZZkY
+         gHCASPqxwCWVZo+L0itjSvt4k0NjkGfp21oCOwkBeeDuE5fjMzYvsCltSpGhDZlxa5Lu
+         cM93Q+U73dQk4jqq/fAYal5+o1dHPR/ptJFN08+z3HIPOAh0Uyhm06SvrAObT0mZW9Tq
+         sRqg==
+X-Gm-Message-State: ANoB5pk1+4mXH5jU5JDo79r2Br3VWyfWrH13mLWBCvrGYlSfnfCvzYT/
+        juM/R6sjBOnuhcLdmN3MuVw77w==
+X-Google-Smtp-Source: AA0mqf7Nyn0t/l3gblajEa+AIkxJIRCjo0o6dQgQ3O9rpdPVmbthJxcjTjLs7LvfD6PkT2jTJuYOOg==
+X-Received: by 2002:ac2:4a8e:0:b0:4b3:b6db:8ca7 with SMTP id l14-20020ac24a8e000000b004b3b6db8ca7mr5333118lfp.590.1668505095302;
+        Tue, 15 Nov 2022 01:38:15 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id t14-20020a2e8e6e000000b0026bf0d71b1esm2415560ljk.93.2022.11.15.01.38.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 01:38:14 -0800 (PST)
+Message-ID: <6976d129-a274-f3a7-52fe-b26275a900cd@linaro.org>
+Date:   Tue, 15 Nov 2022 10:38:13 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] clk: samsung: Revert "clk: samsung: exynos-clkout: Use
+ of_device_get_match_data()"
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Minghao Chi (CGEL ZTE)" <chi.minghao@zte.com.cn>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Mark Brown <broonie@kernel.org>
+References: <CGME20221108213728eucas1p2aa97d7925e280b7347bb9e76d3c9a177@eucas1p2.samsung.com>
+ <20221108213718.32076-1-m.szyprowski@samsung.com>
+ <0da15378-ca0d-4f26-c21c-184de2a89350@linaro.org>
+ <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
+ <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
+In-Reply-To: <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RSwitch2 and EtherTSN-IF clocks were accidentally mixed up.
-While at it, rename them to better match the (future) documentation.
+On 09/11/2022 10:14, Krzysztof Kozlowski wrote:
+> On 08/11/2022 23:53, Marek Szyprowski wrote:
+>> On 08.11.2022 22:44, Krzysztof Kozlowski wrote:
+>>> On 08/11/2022 22:37, Marek Szyprowski wrote:
+>>>> of_device_get_match_data() function should not be used on the device
+>>>> other than the one matched to the given driver, because it always returns
+>>>> the match_data of the matched driver. In case of exynos-clkout driver,
+>>>> the code matched the OF IDs on the PARENT device, so replacing it with
+>>>> of_device_get_match_data() broke the driver.
+>>>>
+>>>> This reverts commit 777aaf3d1daf793461269b49c063aca1cee06a44.
+>>> This was untested, automated commit and there were several other like
+>>> that from Minghao. Other driver owners should check if they have the
+>>> same issue. I made a quick look and seems fine, but it all depends what
+>>> was the of_device_get_match_data() argument.
+>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Please add Cc-stable tag. Do reverts need a Fixes tag? I guess as well...
+>>
+>> Do we really need a CC-stable tag? v6.1-rc1 is the first release that 
+>> contains that bug, so this revert imho should be simply applied as a fix 
+>> for v6.1-rcX cycle.
+> 
+> No, then it's fine.
+> 
 
-Fixes: a3b4137a4d4023e6 ("clk: renesas: r8a779f0: Add Ethernet Switch clocks")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-v2:
-  - Add Tested-by,
-  - s/ethertsn-if/ether-serdes/ to match future documentation.
+I applied it.
 
-To be queued in renesas-clk for v6.2.
----
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 800fdc104edd657f..f721835c7e21248b 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -163,8 +163,8 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("cmt3",		913,	R8A779F0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
- 	DEF_MOD("tsc",		919,	R8A779F0_CLK_CL16M),
--	DEF_MOD("tsn",		1505,	R8A779F0_CLK_S0D2_HSC),
--	DEF_MOD("rsw",		1506,	R8A779F0_CLK_RSW2),
-+	DEF_MOD("rswitch2",	1505,	R8A779F0_CLK_RSW2),
-+	DEF_MOD("ether-serdes",	1506,	R8A779F0_CLK_S0D2_HSC),
- 	DEF_MOD("ufs",		1514,	R8A779F0_CLK_S0D4_HSC),
- };
- 
--- 
-2.25.1
+Best regards,
+Krzysztof
 
