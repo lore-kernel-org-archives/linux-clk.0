@@ -2,91 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5C5C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC25BC64EBC
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbiKONEx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:04:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39020 "EHLO
+        id S238008AbiKONFo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 08:05:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbiKONEw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:04:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A7EBAE48
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:03:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668517428;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pwFTRSjvBq3e+IXuQuSlNARebSjDFofjy3AIZnLKcDs=;
-        b=DI+U5LtGZm3xOiD2I4bTT8BmbqY9OGzGS2tcBxmtwFVDeiRPMPRCrN7Q4BxyD7bnRDN+N+
-        shCbyCxqvQqqunvWUD2xIIZfAnJr12DexEVr6tVc6Yr3Fn7v58PLQ6lmPdBfByLELZaGiv
-        HV41aH8+gPZb1iD5ZAD/MMAD5bGdfjk=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-517-mSY67lroPyOllCUCsdz4rA-1; Tue, 15 Nov 2022 08:03:47 -0500
-X-MC-Unique: mSY67lroPyOllCUCsdz4rA-1
-Received: by mail-qt1-f197.google.com with SMTP id ew11-20020a05622a514b00b003a524196d31so10102979qtb.2
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:03:47 -0800 (PST)
+        with ESMTP id S237069AbiKONFn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:05:43 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E83312AED
+        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:05:41 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id s8so7167358lfc.8
+        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:05:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mdvIIl4cgeDqGAAZabaWbNUrV+o8u8RyyIYZ5puj5yk=;
+        b=qOtJaIwH5zDp2x+c7JZp5p6url0leqnsVkLXKiytCF+mj9qC/OPnLPj+LipgqD5BoI
+         hfd1LAOrqW8F0caLVPawRfohG+XUQdZMRPGQDRmQndRQpOke7jigxlvXImtU0edjAQsx
+         xFJGxCvvnvcm158dkvd4JFuB0TEz4P7c9P7L/CTPyZrQNGFHJlqpI8U48Ztgi5c+rysz
+         mDLJ+ZjLe6xNgIuWvquFNs1ureCvY4ydvXC/UtTMJ4pAXLkC7lQuZ7fzfuguWyYRh6+5
+         HhOUZ/+sGDPkLAa6p5dj7ekCJIxNILV+zs3IPIUQnORa0pK9Yb3LJq1ULLXemoB2apHk
+         Nd5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pwFTRSjvBq3e+IXuQuSlNARebSjDFofjy3AIZnLKcDs=;
-        b=TSP9ofjn90B1uAYgjit8SE1Fc1DYU3XRm1I6Z3CrvKU56Gjg0UmG7pE+Q/PZ7ayN4g
-         xSRFfPIs8KvJujv4VGiq50ADsd+vPf+jA9ybsX8SsSSlkQNmsGMZhCAFtPz0OC9h0Vi6
-         v97nxxKtdjXpY7b75RIw2fp9SYA66pIT48iJRL8N91CjIIbVHq7LsJmuGEZq636eIzvl
-         /SNCdlIpwIN0bVZvZlGUGhERiHI//jGbh4JGB/Qxb/QguJTk68k6XnGqXQjLqqGDpFTM
-         e8FG2Y/iEAA8p+jq4JZ0fLVZoyZHjscMygoLphBaOwOaEdSH34wkTojlwckXcE0yO8Tl
-         xI+w==
-X-Gm-Message-State: ANoB5pkl/VVV3/MKWY/15aQ54QkDYkoVICKrY9CY43lGXZSOusY3Dp8Z
-        S35sKw/K0iKv+TxXUdkmvn9vn3gOwMqSAkhEvKk60o1dY95EwzY9Bnvxph2AdkIfTeoIl1Yh0qj
-        8nixhBRZW5KtDivkC3MCu
-X-Received: by 2002:ac8:4415:0:b0:3a5:2556:42ed with SMTP id j21-20020ac84415000000b003a5255642edmr16135251qtn.422.1668517426808;
-        Tue, 15 Nov 2022 05:03:46 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf6g4wONIalNVue6tn6WP7hXmPOBZBfpwYnNOhI3Rflggb5LyweprHhYoAyHIk52G5OdRUrCgA==
-X-Received: by 2002:ac8:4415:0:b0:3a5:2556:42ed with SMTP id j21-20020ac84415000000b003a5255642edmr16135238qtn.422.1668517426562;
-        Tue, 15 Nov 2022 05:03:46 -0800 (PST)
-Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
-        by smtp.gmail.com with ESMTPSA id o26-20020ac8699a000000b003a50b9f099esm7112858qtq.12.2022.11.15.05.03.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 05:03:46 -0800 (PST)
-Date:   Tue, 15 Nov 2022 08:03:45 -0500
-From:   Brian Masney <bmasney@redhat.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Shazad Hussain <quic_shazhuss@quicinc.com>, andersson@kernel.org,
-        sboyd@kernel.org, agross@kernel.org, mturquette@baylibre.com,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: gcc-sc8280xp: add cxo as parent for three
- ufs ref clks
-Message-ID: <Y3OOMXZBvew9eg9T@x1>
-References: <20221115102217.6381-1-quic_shazhuss@quicinc.com>
- <Y3OLDj6xzOVjvEdV@x1>
- <Y3ONkOhcdK+gt46g@hovoldconsulting.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdvIIl4cgeDqGAAZabaWbNUrV+o8u8RyyIYZ5puj5yk=;
+        b=6xVDMhy8dXaeaSPsr6JxMJeXFkEizvVU1tWfVRuXFU5jcpS+EV6UaGJJW6g1GMavC0
+         AGLyyypGSA68Tx5+/znVtcEgM4QeFrKrMi5Pk150nCF8y+GIks9KgfS95YDQOvpM1pBo
+         ih0LOah8IwCD+2g1hAyks8Hpdnzy4bTNxKmvrzGKLJ7bn2ICvLhho6goxeFQPKWeKUWS
+         O8Cd4a4qi64rJrlAbuTPmgtFXpWMSdrpgZD7bhZtuTZEgNlX+frutwMnrzdhMCRPvi1k
+         C4bvXBQrDHhb5KOZdlI+5R5vC831d29BxPnxhUQG2QcworUac2967rPiqMIoy95dU1CT
+         sdew==
+X-Gm-Message-State: ANoB5pmwnFrw6g0adLdkt8FBd4D4tpdbsC6TtgC6aFXcKIGZWOs1Vi8t
+        BQ+D7+XydD2lEi71xNT5WxXM2w==
+X-Google-Smtp-Source: AA0mqf6kInCc+A0yhclN+A1KPhxr4No2Ve/TJmp4KVoenUiZl6E/W2ygFzWNtp+0/7LIUoFw4og0aw==
+X-Received: by 2002:a19:e30e:0:b0:4a2:5163:f61b with SMTP id a14-20020a19e30e000000b004a25163f61bmr5403368lfh.177.1668517539513;
+        Tue, 15 Nov 2022 05:05:39 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id e10-20020a19674a000000b0049311968ca4sm2194132lfj.261.2022.11.15.05.05.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 05:05:38 -0800 (PST)
+Message-ID: <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
+Date:   Tue, 15 Nov 2022 14:05:37 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3ONkOhcdK+gt46g@hovoldconsulting.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl: Add
+ h2mode property
+Content-Language: en-US
+To:     Herve Codina <herve.codina@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
+ <20221114111513.1436165-3-herve.codina@bootlin.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221114111513.1436165-3-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 02:01:04PM +0100, Johan Hovold wrote:
-> > Put this Link beneath the --- since Bjorn will add one that's specific
-> > to your patch when he adds it to his tree.
+On 14/11/2022 12:15, Herve Codina wrote:
+> Add the h2mode property to force the USBs mode ie:
+>  - 2 hosts
+> or
+>  - 1 host and 1 device
 > 
-> I think it's ok to keep that Link if it was intended as a reference to
-> the discussions leading up to this patch. There can be more than one
-> Link tag, and this one is more in line with how Linus thinks they should
-> be used than the ones added by tooling such as b4 when applying.
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  .../bindings/clock/renesas,r9a06g032-sysctrl.yaml      | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+> index 95bf485c6cec..f9e0a58aa4fb 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+> @@ -39,6 +39,16 @@ properties:
+>    '#power-domain-cells':
+>      const: 0
+>  
+> +  renesas,h2mode:
+> +    description: |
+> +      Configure the USBs mode.
+> +        - <0> : the USBs are in 1 host and 1 device mode.
+> +        - <1> : the USBs are in 2 host mode.
+> +      If the property is not present, the value used is the one already present
+> +      in the CFG_USB register (from reset or set by the bootloader).
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
 
-OK, good to know. Thank you!
+0/1 are quite cryptic. Why not making it a string which is easy to read
+and understand? Can be something like "two-hosts" and "one-host". Or
+anything you find more readable...
 
-Brian
+Best regards,
+Krzysztof
 
