@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26486C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE5E0C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238173AbiKON2I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:28:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57482 "EHLO
+        id S229915AbiKON3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 08:29:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232435AbiKON2D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:28:03 -0500
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D75EA13E3F;
-        Tue, 15 Nov 2022 05:27:59 -0800 (PST)
+        with ESMTP id S229828AbiKON3Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:29:24 -0500
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE8A39F;
+        Tue, 15 Nov 2022 05:29:22 -0800 (PST)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 54F07240009;
-        Tue, 15 Nov 2022 13:27:55 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 7D9911BF20B;
+        Tue, 15 Nov 2022 13:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1668518878;
+        t=1668518961;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gX3uUI4yRv7S26wyE0a/h6eL5PlN9No1T6Sm4lRgxT4=;
-        b=a2gGxnhURXutAjcZSaIEJ+6B6ocRP7jvvHklxB92MhUHBprpZnk99duO1TLAbOuZdegB2H
-        BObc6a74lgAvLr5f4BXakbhTuPvnqbLuxKYH7CmFEYwRN7sFIuzj50G7sFXvXfR3hS9cv8
-        vpI9e9/qcnQXrkQvvcshngMB2I2i/zcpWV2KAs2LZ07UTeIzvZv8riSxsX7YUegOjRlHst
-        7w6DDV2ZU7nND6qWsFmE0gjPRi97307M2xX4foarhxZ7Nl0csbT0kiR9wDyL4J3Tv+1nWh
-        uqlxWFNJz9GJtuaOwmKvD/sIiOpuTiQMerdrSzzIy4E2PHQ/zOYFk5IVY6/v1Q==
-Date:   Tue, 15 Nov 2022 14:27:54 +0100
+        bh=lJxvgQFewGeH+lNYexUEwtwmd3hrAmaAreqDAyyZF4A=;
+        b=jIHayz5ZZavVsRHqyoB8Yd3ScdS1hDY8zfiK0mvDzh/MPwk6zb0wy7p5AXdhUOl/vbYC0Q
+        a/218pWElmPCX3kr/Dt5ljqgcVwOtQMpcdL6bcMXgCTLw0yN00qU1J3V0hFKtF4Rj+L96g
+        0Lysz4FdAb9acC+wnHQjk2YCE4Lps8FtHDy0lpxLUoArONyU7gJkcifqOnKvilgFvs+tx1
+        08uSyOEFGiU8Dlu/tMT2zVdPQ5qDZrLFn7NOWbqIZF9NDxBWL3KhSTGfxaB6nebWraVcQ2
+        qbBWAFVv9bTClvWMSLNrFUnvg5geAdq05oQppNOISzQL8dfR8avXKpQmi7bNUw==
+Date:   Tue, 15 Nov 2022 14:29:17 +0100
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -45,13 +45,13 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-usb@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 6/7] ARM: dts: r9a06g032: Add the USBF controller
- node
-Message-ID: <20221115142754.6253881b@bootlin.com>
-In-Reply-To: <51d42fc2-0492-9077-302d-5c3be4b45cd1@linaro.org>
+Subject: Re: [PATCH v2 4/7] dt-bindings: usb: add the Renesas RZ/N1 USBF
+ controller binding
+Message-ID: <20221115142917.20c30f46@bootlin.com>
+In-Reply-To: <a5d53378-51dc-a024-bbda-5dd03bbf37b3@linaro.org>
 References: <20221114111513.1436165-1-herve.codina@bootlin.com>
-        <20221114111513.1436165-7-herve.codina@bootlin.com>
-        <51d42fc2-0492-9077-302d-5c3be4b45cd1@linaro.org>
+        <20221114111513.1436165-5-herve.codina@bootlin.com>
+        <a5d53378-51dc-a024-bbda-5dd03bbf37b3@linaro.org>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -61,49 +61,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-
-On Tue, 15 Nov 2022 14:16:27 +0100
+On Tue, 15 Nov 2022 14:13:00 +0100
 Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
 > On 14/11/2022 12:15, Herve Codina wrote:
-> > Add the USBF controller available in the r9a06g032 SoC.
+> > The Renesas RZ/N1 USBF controller is an USB2.0 device controller
+> > (UDC) available in the Renesas r9a06g032 SoC (RZ/N1 family). =20
+>=20
+> Subject: drop redundant, second "binding".
+>=20
 > >=20
 > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > > ---
-> >  arch/arm/boot/dts/r9a06g032.dtsi | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
+> >  .../bindings/usb/renesas,rzn1-usbf.yaml       | 68 +++++++++++++++++++
+> >  1 file changed, 68 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-=
+usbf.yaml
 > >=20
-> > diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06=
-g032.dtsi
-> > index 563024c9a4ae..a4bb069457a3 100644
-> > --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> > @@ -117,6 +117,18 @@ dmamux: dma-router@a0 {
-> >  			};
-> >  		};
-> > =20
-> > +		udc: usb@4001e000 {
-> > +			compatible =3D "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
-> > +			reg =3D <0x4001e000 0x2000>;
-> > +			interrupts =3D <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-> > +			clocks =3D <&sysctrl R9A06G032_HCLK_USBF>,
-> > +				 <&sysctrl R9A06G032_HCLK_USBPM>;
-> > +			clock-names =3D "hclkf", "hclkpm";
-> > +			power-domains =3D <&sysctrl>;
-> > +			status =3D "disabled"; =20
+> > diff --git a/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.ya=
+ml b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+> > new file mode 100644
+> > index 000000000000..b67e9cea2522
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+> > @@ -0,0 +1,68 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/renesas,rzn1-usbf.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas RZ/N1 SoCs USBF (USB Function) controller binding =20
 >=20
-> If you provided all resources (clocks, power domains etc), why disabling =
-it?
+> Drop "binding"
+>=20
+> With two above:
+>=20
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-Because I forgot to remove the 'status' property ...
-'status' will be simply removed in v3.
-Sorry for this mistake.
+"binding" will be dropped as suggested in v3.
+Thanks for the review.
 
-Thanks for the review,
 Herv=C3=A9
-
 
 --=20
 Herv=C3=A9 Codina, Bootlin
