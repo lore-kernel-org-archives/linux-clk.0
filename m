@@ -2,134 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6E4C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 17:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6046C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 17:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231165AbiKORNv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 12:13:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48020 "EHLO
+        id S232587AbiKORqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 12:46:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231186AbiKORNv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 12:13:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23316EE08;
-        Tue, 15 Nov 2022 09:13:48 -0800 (PST)
+        with ESMTP id S232474AbiKORqj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 12:46:39 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13293EBA;
+        Tue, 15 Nov 2022 09:46:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 25D7EB81A2F;
-        Tue, 15 Nov 2022 17:13:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDA0C433D6;
-        Tue, 15 Nov 2022 17:13:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F31B61962;
+        Tue, 15 Nov 2022 17:46:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A996C433D7;
+        Tue, 15 Nov 2022 17:46:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668532425;
-        bh=E2Ix0booTdpUdUIVDbuoAPq8iFBqUQnyUJ0GGMyLTVA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eB2SkQegJqT9LR5HkZTMj5ejtasKn/azCQj5kmf9jqf1Ev+F33SZVEot+fWkQVd8r
-         bq9Lim3hEmna0Djtks3LcjqrQU3ZDpgZi3axc7UNkMOF0k3xZD7yedNJV6LgrTulpS
-         0XNxc3fxCEtmWnbOjTQMDFcydJSo/wFTbK9OFCwwtBdD3zvZyLB0ksZapq4cdFOIW9
-         eiQuSLDWKls+qdC8xfQNgOaSSS9+5+9yEztCSOUMmW9+qoZ6ct7CUTwO0O84F152CH
-         QE1ZFkb6I9rmk1ceGjtsY+F4f5EYD4T+5SHaPScvXjsQn84yhiGW6sz+dkif2iyyCh
-         Sp8owc0MKTEhA==
-Date:   Tue, 15 Nov 2022 11:13:42 -0600
+        s=k20201202; t=1668534397;
+        bh=dMtcSNBQcQgILJj+tM8JSnzQQOykIsWtB7W8E/0ngzc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UHLmcXWf0fMI4SxAtnrNJwi90WLGXDqL4+9u6pMGCHkvwByWaWjeVVMV39yVlRFcu
+         U5/6dY1WW9RJc//0UBpRUKaVmJK4sSnTQrwvNO+E1W1LABK63KwcHpRwdkQkk53LHF
+         9IgmMH0l8JXl+qbE2GTQUazikVeXOq4OsAX+srLMQY/hBn8aUMNypyK8WEayU7aHxA
+         /ltAaOzjSwYqwzc3leA4GyPJXTPWHVzED7FwUFVqW2FXNGvpXvnk++f7uuvEnSQACF
+         n/1PMQDCvCOg0xFx301XMA9frfx5Mi+4ZdHl/Qb8xfkp67OQEQ2YnF74hopcQJp+Vy
+         JWXJaa/ZU+aKA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Shazad Hussain <quic_shazhuss@quicinc.com>, sboyd@kernel.org
-Cc:     johan@kernel.org, bmasney@redhat.com, agross@kernel.org,
-        mturquette@baylibre.com, ahalaney@redhat.com,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: qcom: gcc-sc8280xp: add cxo as parent for three
- ufs ref clks
-Message-ID: <20221115171342.v37vq4cqe7pxatlk@builder.lan>
-References: <20221115152956.21677-1-quic_shazhuss@quicinc.com>
+To:     linux-arm-msm@vger.kernel.org, konrad.dybcio@linaro.org,
+        krzysztof.kozlowski@linaro.org, agross@kernel.org
+Cc:     mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, patches@linaro.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org, sboyd@kernel.org
+Subject: Re: (subset) [PATCH v2 1/2] dt-bindings: clock: add QCOM SM6375 display clock bindings
+Date:   Tue, 15 Nov 2022 11:46:30 -0600
+Message-Id: <166853438865.1276519.10413893363571799353.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20221115155808.10899-1-konrad.dybcio@linaro.org>
+References: <20221115155808.10899-1-konrad.dybcio@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221115152956.21677-1-quic_shazhuss@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 08:59:56PM +0530, Shazad Hussain wrote:
-> The three UFS reference clocks, gcc_ufs_ref_clkref_clk for external
-> UFS devices, gcc_ufs_card_clkref_clk and gcc_ufs_1_card_clkref_clk for
-> two PHYs are all sourced from CXO.
+On Tue, 15 Nov 2022 16:58:04 +0100, Konrad Dybcio wrote:
+> Add device tree bindings for display clock controller for
+> Qualcomm Technology Inc's SM6375 SoC.
 > 
-> Added parent_data for all three reference clocks described above to
-> reflect that all three clocks are sourced from CXO to have valid
-> frequency for the ref clock needed by UFS controller driver.
 > 
-> Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
-> Link: https://lore.kernel.org/lkml/Y2Tber39cHuOSR%2FW@hovoldconsulting.com/
-> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> Tested-by: Andrew Halaney <ahalaney@redhat.com>
-> Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
-> Reviewed-by: Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Really-really-reviewed-by? ;)
+Applied, thanks!
 
+[1/2] dt-bindings: clock: add QCOM SM6375 display clock bindings
+      commit: 9285e61a5670657cb0a0f0f4e5c5a320dd18b471
+[2/2] clk: qcom: Add display clock controller driver for SM6375
+      commit: aec5f36cf6763a1f246befd9db266d24ba6e8d4b
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-
-
-@Stephen, could you please pick this for clk-fixes?
-
-Thanks,
-Bjorn
-
-> ---
-> Changes since v2:
-> -  Tweaked commit message and added R-b T-b from v2
-> 
-> v2 of this patch can be found at
-> https://lore.kernel.org/all/20221115102217.6381-1-quic_shazhuss@quicinc.com/
-> 
-> v1 of this patch can be found at
-> https://lore.kernel.org/all/20221030142333.31019-1-quic_shazhuss@quicinc.com/
-> 
-> used below patches for verification on next-20221114
-> https://lore.kernel.org/lkml/20221104092045.17410-2-johan+linaro@kernel.org/
-> https://lore.kernel.org/lkml/20221104092045.17410-3-johan+linaro@kernel.org/
-> https://lore.kernel.org/lkml/20221111113732.461881-1-thierry.reding@gmail.com/
-> 
->  drivers/clk/qcom/gcc-sc8280xp.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-> index a18ed88f3b82..b3198784e1c3 100644
-> --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -5364,6 +5364,8 @@ static struct clk_branch gcc_ufs_1_card_clkref_clk = {
->  		.enable_mask = BIT(0),
->  		.hw.init = &(const struct clk_init_data) {
->  			.name = "gcc_ufs_1_card_clkref_clk",
-> +			.parent_data = &gcc_parent_data_tcxo,
-> +			.num_parents = 1,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -5432,6 +5434,8 @@ static struct clk_branch gcc_ufs_card_clkref_clk = {
->  		.enable_mask = BIT(0),
->  		.hw.init = &(const struct clk_init_data) {
->  			.name = "gcc_ufs_card_clkref_clk",
-> +			.parent_data = &gcc_parent_data_tcxo,
-> +			.num_parents = 1,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -5848,6 +5852,8 @@ static struct clk_branch gcc_ufs_ref_clkref_clk = {
->  		.enable_mask = BIT(0),
->  		.hw.init = &(const struct clk_init_data) {
->  			.name = "gcc_ufs_ref_clkref_clk",
-> +			.parent_data = &gcc_parent_data_tcxo,
-> +			.num_parents = 1,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> -- 
-> 2.38.0
-> 
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
