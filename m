@@ -2,127 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D244C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 15:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5A8C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 15:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230487AbiKOPJ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 10:09:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48248 "EHLO
+        id S232302AbiKOPbr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 10:31:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230165AbiKOPJZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 10:09:25 -0500
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630037664;
-        Tue, 15 Nov 2022 07:09:21 -0800 (PST)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 47A9AC0006;
-        Tue, 15 Nov 2022 15:09:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1668524960;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=52nZTyzLtyLE0oMbZMuPmwJjms8J7lFPa4BIfaCMGt8=;
-        b=Qdgpyqb++6k8h2Ul3v4+WDXeTugffLUG8/ox2YuZ9jkQakjENUumrptpRObBjztTwMiSJW
-        /UktSqmj/blsk2CPlU645Te7QzJWC6T/KO+gusI8l9yE0SYLzDMW7WGWFIJ2HKPe70u7KJ
-        7IjpyUTnISrtXARiMfZ97to3FiW9zSosv8CnXeu8bwUgH5b0qzQCzOa/T6a1pZrHdEQ56Q
-        yir514nkITii/3WblZTLcb39qjCoU+juEipCLiP2wgbdqlYYkvb5nZk54mxAYCWRV7h6Ka
-        SR/3hWaW52GXwRzFGCF2ZUDZ81kOeOG1qG98I/gIW1MxVWHorJFgGMFBRPv5GQ==
-Date:   Tue, 15 Nov 2022 16:09:17 +0100
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 6/7] ARM: dts: r9a06g032: Add the USBF controller
- node
-Message-ID: <20221115160917.73e7b4ef@bootlin.com>
-In-Reply-To: <20221115142754.6253881b@bootlin.com>
-References: <20221114111513.1436165-1-herve.codina@bootlin.com>
-        <20221114111513.1436165-7-herve.codina@bootlin.com>
-        <51d42fc2-0492-9077-302d-5c3be4b45cd1@linaro.org>
-        <20221115142754.6253881b@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        with ESMTP id S229665AbiKOPbO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 10:31:14 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B1432E680;
+        Tue, 15 Nov 2022 07:30:45 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AFFTfD6026417;
+        Tue, 15 Nov 2022 15:30:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=x2ko2X3xrP6OAwA31iyaWLsAmnHHrOj2dnutRGO0xvQ=;
+ b=Nr5zEzlPDVb+IRIZbccqRex2kZFWRQr1VdFySMNYNAAE2dCOqO3XWm8horfcPohCaUrv
+ kGKSWHabvmxLHpZ8ikLiZ+dxhbJ442bv9aLLITbXoLEIeFpqNRulmDhrnJRx+KAEzSCR
+ jAt097u+8HCqlNpZa/FCgp3lK+twGLtZ9S5w6Odwnh4cRsb7fFRxsRTioFO3aCTN2fLd
+ CdJryk4TrdoZd98+bczHFOE3Oz5ipNxo88iJsmyMMZpUoKXhXSoPJcvnH7mHvIfmMLXH
+ Cw8RcsLGaJEfpt36BsZ88bFNMXDaDV55+emghW2M3Ju3HBTypQan+lmC8i0uarCu8IXz QA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kv51htdvt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Nov 2022 15:30:40 +0000
+Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 2AFFUebo015670;
+        Tue, 15 Nov 2022 15:30:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 3kutnem5bh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Nov 2022 15:30:40 +0000
+Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AFFUeYG015662;
+        Tue, 15 Nov 2022 15:30:40 GMT
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 2AFFUdDB015661
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Nov 2022 15:30:40 +0000
+Received: from shazhuss-linux.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 15 Nov 2022 07:30:35 -0800
+From:   Shazad Hussain <quic_shazhuss@quicinc.com>
+To:     <andersson@kernel.org>, <johan@kernel.org>
+CC:     <sboyd@kernel.org>, <bmasney@redhat.com>, <agross@kernel.org>,
+        <mturquette@baylibre.com>, <ahalaney@redhat.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] clk: qcom: gcc-sc8280xp: add cxo as parent for three ufs ref clks
+Date:   Tue, 15 Nov 2022 20:59:56 +0530
+Message-ID: <20221115152956.21677-1-quic_shazhuss@quicinc.com>
+X-Mailer: git-send-email 2.38.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: I6FDNuKTZ3SOcpP610kka_oyCnQj2kv9
+X-Proofpoint-GUID: I6FDNuKTZ3SOcpP610kka_oyCnQj2kv9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-15_08,2022-11-15_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ spamscore=0 clxscore=1011 impostorscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211150104
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof
+The three UFS reference clocks, gcc_ufs_ref_clkref_clk for external
+UFS devices, gcc_ufs_card_clkref_clk and gcc_ufs_1_card_clkref_clk for
+two PHYs are all sourced from CXO.
 
-On Tue, 15 Nov 2022 14:27:54 +0100
-Herve Codina <herve.codina@bootlin.com> wrote:
+Added parent_data for all three reference clocks described above to
+reflect that all three clocks are sourced from CXO to have valid
+frequency for the ref clock needed by UFS controller driver.
 
-> Hi Krzysztof,
->=20
-> On Tue, 15 Nov 2022 14:16:27 +0100
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
->=20
-> > On 14/11/2022 12:15, Herve Codina wrote: =20
-> > > Add the USBF controller available in the r9a06g032 SoC.
-> > >=20
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > > ---
-> > >  arch/arm/boot/dts/r9a06g032.dtsi | 12 ++++++++++++
-> > >  1 file changed, 12 insertions(+)
-> > >=20
-> > > diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a=
-06g032.dtsi
-> > > index 563024c9a4ae..a4bb069457a3 100644
-> > > --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> > > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> > > @@ -117,6 +117,18 @@ dmamux: dma-router@a0 {
-> > >  			};
-> > >  		};
-> > > =20
-> > > +		udc: usb@4001e000 {
-> > > +			compatible =3D "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
-> > > +			reg =3D <0x4001e000 0x2000>;
-> > > +			interrupts =3D <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			clocks =3D <&sysctrl R9A06G032_HCLK_USBF>,
-> > > +				 <&sysctrl R9A06G032_HCLK_USBPM>;
-> > > +			clock-names =3D "hclkf", "hclkpm";
-> > > +			power-domains =3D <&sysctrl>;
-> > > +			status =3D "disabled";   =20
-> >=20
-> > If you provided all resources (clocks, power domains etc), why disablin=
-g it? =20
->=20
-> Because I forgot to remove the 'status' property ...
-> 'status' will be simply removed in v3.
-> Sorry for this mistake.
->=20
-> Thanks for the review,
-> Herv=C3=A9
->=20
+Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+Link: https://lore.kernel.org/lkml/Y2Tber39cHuOSR%2FW@hovoldconsulting.com/
+Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Andrew Halaney <ahalaney@redhat.com>
+Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
+Reviewed-by: Reviewed-by: Brian Masney <bmasney@redhat.com>
+---
+Changes since v2:
+-  Tweaked commit message and added R-b T-b from v2
 
-I said something completely wrong for this point.
+v2 of this patch can be found at
+https://lore.kernel.org/all/20221115102217.6381-1-quic_shazhuss@quicinc.com/
 
-status is set disabled because it is a .dtsi and can be
-included by several dts to represent a board.
-This node (USB device) can be wired on some board and not on
-some others.
-So, the node will be enabled in each dts board that has the USBF
-device wired and used.
+v1 of this patch can be found at
+https://lore.kernel.org/all/20221030142333.31019-1-quic_shazhuss@quicinc.com/
 
-Herv=C3=A9
+used below patches for verification on next-20221114
+https://lore.kernel.org/lkml/20221104092045.17410-2-johan+linaro@kernel.org/
+https://lore.kernel.org/lkml/20221104092045.17410-3-johan+linaro@kernel.org/
+https://lore.kernel.org/lkml/20221111113732.461881-1-thierry.reding@gmail.com/
 
---=20
-Herv=C3=A9 Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ drivers/clk/qcom/gcc-sc8280xp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index a18ed88f3b82..b3198784e1c3 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -5364,6 +5364,8 @@ static struct clk_branch gcc_ufs_1_card_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_1_card_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -5432,6 +5434,8 @@ static struct clk_branch gcc_ufs_card_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_card_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -5848,6 +5852,8 @@ static struct clk_branch gcc_ufs_ref_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_ref_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+-- 
+2.38.0
+
