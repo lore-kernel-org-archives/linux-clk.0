@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 758A3C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD560C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:16:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230456AbiKONNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:13:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45128 "EHLO
+        id S231960AbiKONQd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 08:16:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230380AbiKONNI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:13:08 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C617C2AC7E
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:13:03 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id be13so24359828lfb.4
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:13:03 -0800 (PST)
+        with ESMTP id S230465AbiKONQc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:16:32 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9CF28E2E
+        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:16:30 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id p8so24338376lfu.11
+        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 05:16:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kTB4xFkuSqDJkguPgbNRXgSTiSjC5T2+Eayiy8u0drU=;
-        b=qkr1mPq/Iaq6jH68zz8NMaNhWjw1jXQNLTUA5ro/GwxRqLhvYOZZJggPfjJLkD/sDC
-         OybF5JEtdGoOcSJxev4oDb3DAV/yywXLFJre0xAjokkiNWsg3uVG9YHJdmit0j0MpjIC
-         eapXuzqulT4CYxV4+AsCscwvDmRIK+62394ng8bV4CSuxQL3wmriKBpy+2TApOKbthG3
-         hA09F9owNUYO9l4rc+W0cwptaDo2BnaUgPk8XFlfhZwYF2sJRUzYymXKaAbwFsQc5dKc
-         crN8yNqhipyN9V2aV7rBaJjk6g2aC+z9RyAwL4+U0e3b4bDXGENEaJ4Ri57Kv/Gf4fyR
-         Hapw==
+        bh=vl1BV7fBxn6Va3uDyQcOPanm5XadBqhJHUBBX9Sb6bI=;
+        b=M+nPLf+nbaNgQJZE3GZoHbIVDgFHNZyWDibcs3t07MLtUGfM+jXjJ4HMxEXGmruaKO
+         2rMbiJQKIt7T5dUt2xI7GQIs4T6EFphstUZVsobgWUz2wybUBqkKo7BhEiE8k0VGYmP9
+         F92t0Z8Up2MvN5Lx6F4B4tZ3/H/qeK11Khpe5vrxAFRc2z+jjVmdB/f0snl28Phd5G3Z
+         VhU2P0WgWkgC5B+NIS2hkr5ga7bb0r1QfvFF9P8c7bWl1W+KitlJNJSELPEElQtzJUHj
+         5VIPwVqpArabsYNNFerQQ62tF72X3gcMAVY68mmBQjvkbIyJ0LCzOioZk0BrnsaHOlcJ
+         rtnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kTB4xFkuSqDJkguPgbNRXgSTiSjC5T2+Eayiy8u0drU=;
-        b=mP6EjWchw5bzoka8asA7Wyz7x1owGgWubnq2t/ICtpgRRMukGJyIIp5u/HgE53OAhI
-         dwf68K9eE2rqle3l9TLd7Vis0BACe2SozBdIib2leEwgNlCWbI4uuOyk4WhEfbaRyhv+
-         I19/eiuE0FABMrB2+nOurpRkruNp9DoDEMpxUiyEe46rShVNtsf562TLHcipvYS7k0KH
-         a+/3EWSzjHYjz1VFo+ooLcFtJPKeLuJLV+6jJgO8r5UZki4Yd9ZaeTcY/oesmdBL7ezI
-         LS/tVAU5iY8bBnWz1foJoi+67hgFiP8ArcogEVAvODg/cip7BvMXVUIuQsOwhL8jTmkE
-         97iA==
-X-Gm-Message-State: ANoB5pk0a0CDYTJHJ2+9ctLMlAze1FdFLNSg8WH/AeQHfu1dDr9hoKqP
-        Su/rA2d7wYVMUX1ieFcHDOGWLg==
-X-Google-Smtp-Source: AA0mqf6bmDAkHFG20vnLLPsWE6BGuUChzkPAn4GcFmO719fkh9AATz5foTHq2aVxbcn4IGkfFeB/cQ==
-X-Received: by 2002:a19:645e:0:b0:4a9:e27a:1cfa with SMTP id b30-20020a19645e000000b004a9e27a1cfamr5452473lfj.147.1668517982163;
-        Tue, 15 Nov 2022 05:13:02 -0800 (PST)
+        bh=vl1BV7fBxn6Va3uDyQcOPanm5XadBqhJHUBBX9Sb6bI=;
+        b=4T95tCmoK1JMGpUNwdwZky/qkqvdy9JCs3vwvi/GnHR3Lvg6yaD4otAzya1faok7/F
+         okAlH8385AwIKK+P0WTV0vaiDlZX1jkrgx/0DhKsZr1woxVyLGHkF5VbUK/2Xw6UOPlo
+         9dZ5rfTySDnSjm/z2kpY0HZcaYX4gCWa5KCgSHoIMPs7bLHMQjqUSN1S6WB6QSHF/jp6
+         aqXsLRvI0UaBrCu3KoTEGz1/9T0bXFia1qBXG94Fnmqw8c9OH0p3ZLjHZan7fG1FVmkQ
+         xX1xWI0BKAAv2pIxhTKBdmrYjn87NkX9l3vHAP0KuK5B8p0ZCN2b67fqFwW/7gxsuPL/
+         Lvvw==
+X-Gm-Message-State: ANoB5ploSxRBsJ93nT+PDyQaf2RqGbvi2jXcE8pexVUzNaJJZvXt8jrp
+        6mTZt/SN4Ar9hjuJqhegSBbcOg==
+X-Google-Smtp-Source: AA0mqf4khaa5y9EhlBl8gS9PmoJr4OoakMGwbZAbkLgVi7zDvGOcJrtmg5qiaP7TkzP5lsOga3hyuw==
+X-Received: by 2002:a05:6512:128e:b0:4b3:ccea:9b2e with SMTP id u14-20020a056512128e00b004b3ccea9b2emr6383119lfs.379.1668518188894;
+        Tue, 15 Nov 2022 05:16:28 -0800 (PST)
 Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id bd24-20020a05651c169800b0026e04cc88cfsm2501210ljb.124.2022.11.15.05.13.00
+        by smtp.gmail.com with ESMTPSA id bi20-20020a05651c231400b0026dcf0cbb97sm2507562ljb.137.2022.11.15.05.16.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Nov 2022 05:13:01 -0800 (PST)
-Message-ID: <a5d53378-51dc-a024-bbda-5dd03bbf37b3@linaro.org>
-Date:   Tue, 15 Nov 2022 14:13:00 +0100
+        Tue, 15 Nov 2022 05:16:28 -0800 (PST)
+Message-ID: <51d42fc2-0492-9077-302d-5c3be4b45cd1@linaro.org>
+Date:   Tue, 15 Nov 2022 14:16:27 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH v2 4/7] dt-bindings: usb: add the Renesas RZ/N1 USBF
- controller binding
+Subject: Re: [PATCH v2 6/7] ARM: dts: r9a06g032: Add the USBF controller node
 Content-Language: en-US
 To:     Herve Codina <herve.codina@bootlin.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -72,9 +71,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
 References: <20221114111513.1436165-1-herve.codina@bootlin.com>
- <20221114111513.1436165-5-herve.codina@bootlin.com>
+ <20221114111513.1436165-7-herve.codina@bootlin.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221114111513.1436165-5-herve.codina@bootlin.com>
+In-Reply-To: <20221114111513.1436165-7-herve.codina@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,37 +81,33 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 14/11/2022 12:15, Herve Codina wrote:
-> The Renesas RZ/N1 USBF controller is an USB2.0 device controller
-> (UDC) available in the Renesas r9a06g032 SoC (RZ/N1 family).
-
-Subject: drop redundant, second "binding".
-
+> Add the USBF controller available in the r9a06g032 SoC.
 > 
 > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > ---
->  .../bindings/usb/renesas,rzn1-usbf.yaml       | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+>  arch/arm/boot/dts/r9a06g032.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
-> new file mode 100644
-> index 000000000000..b67e9cea2522
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
-> @@ -0,0 +1,68 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/renesas,rzn1-usbf.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas RZ/N1 SoCs USBF (USB Function) controller binding
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index 563024c9a4ae..a4bb069457a3 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -117,6 +117,18 @@ dmamux: dma-router@a0 {
+>  			};
+>  		};
+>  
+> +		udc: usb@4001e000 {
+> +			compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
+> +			reg = <0x4001e000 0x2000>;
+> +			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_USBF>,
+> +				 <&sysctrl R9A06G032_HCLK_USBPM>;
+> +			clock-names = "hclkf", "hclkpm";
+> +			power-domains = <&sysctrl>;
+> +			status = "disabled";
 
-Drop "binding"
-
-With two above:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If you provided all resources (clocks, power domains etc), why disabling it?
 
 Best regards,
 Krzysztof
