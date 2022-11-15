@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 700EAC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 20:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CA7C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 20:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbiKOUqA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 15:46:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51710 "EHLO
+        id S229638AbiKOUrN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 15:47:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbiKOUp5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 15:45:57 -0500
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5906D63A9;
-        Tue, 15 Nov 2022 12:45:56 -0800 (PST)
-Received: by mail-qk1-x735.google.com with SMTP id x21so10397035qkj.0;
-        Tue, 15 Nov 2022 12:45:56 -0800 (PST)
+        with ESMTP id S229633AbiKOUrM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 15:47:12 -0500
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A5C1EECB;
+        Tue, 15 Nov 2022 12:47:10 -0800 (PST)
+Received: by mail-qv1-xf29.google.com with SMTP id j6so10566563qvn.12;
+        Tue, 15 Nov 2022 12:47:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7BtXbBABgo0H5/POSbS5zs2QbNbB+wIA7vTbJVeUtOU=;
-        b=ZkqmNSlcU9tb+Sr1x16dLNwCqTlZz/9UIOEGoB2IUtQbz08uP3JKnUHS5AAGDV5KDv
-         mbLm/cz03jbmvMQVU41BLFtSTurrvwUBdSPGajoI3MRGWZa9mzQbgz4LugjIM7/ujcGq
-         x0BS9611+fNsC6mkoCAS6D7mywRTJT8P3V09njUSaGKpkQAIq65PVwa2eyeMs/y2Rg8I
-         nbn5M+0bXWKaJ2gckndHbflRWyb7Pwo+h/HyxuJ3nR9ZtLWrCs109mmb0DJpGtty3x7a
-         sQpAd9IH17mVf7ZLPqYc0zFWksq1R4+vdy55f5/SmcNpaNG9XNEU6D1UlCdILexQfV2C
-         03zw==
+        bh=PaujosqZgD+9nGp4WpeQDZHeIobxvaj6k2xEkA643lA=;
+        b=cNpiTovvYxnIu62xcsLWO7MOCS1BN+2DpsIfVyGOQ0urMTf+WGIGaG2E+/bCqn+q96
+         6nK9Kjwf9u3cUob4sfwRLOLkIMPq6Kx5m4HvD+m91K+u1CxdOj5iaHSc3XFi8k7xZfs3
+         piOUqngs3fMIW0hgDTdW7v4JnDQ6zsQzw8+/KMYmXBYAWFnP+ZRVlYydam91BXxVaNFY
+         eo5sXqalIUroEjYQ+JDagfWszOQHdSC/CEixtYMAGRY83YYjnGnvDhmSF971YsCLlI+C
+         XOJs6kW/OnzVozX8/DJZ2fJUo/5hgP6G80IVL/exrUwTcFgtswNEWIqx81yG1S7OBC7V
+         OG/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BtXbBABgo0H5/POSbS5zs2QbNbB+wIA7vTbJVeUtOU=;
-        b=1FsIi6q553mV8sFh5q/yDY8PsfoeQzkRWKRSTkdnELrIZh8F+jEdYsAjUbrzsMdqS6
-         DHPmZOMBVrlxRXae20L7r8R+6CucSb3zFidhFWMDTUgst9RisIqRzqNBorjxYV1MZt9S
-         66uneu8Ik3gHPHlhfuWnM+0mYSgwEr8QPstXMafoQzVlJuov3/PQvsypeUTCogQ/hPXA
-         T5kPfApZrGOtcvDtSNQ8qwScygGsDz7ATGEHwrWLafWUpOsTlQfx0g+9kuuI/CPdI8iX
-         ktV0/3eh4sSDdT0UbrWZvxrUfvcdjsBrVi8FVyJUtXiNQBBSRofCWyAe0MJi805baCkN
-         f8WQ==
-X-Gm-Message-State: ANoB5pmX63CzQ0tHVkPIHQVqFH+BR/PvoDrNrE2McQys104p/YzgDPxm
-        AJJmDqvKNuRT0zVTVhdU3/QdT1Rv7n4=
-X-Google-Smtp-Source: AA0mqf4RPayW1TgKEZCypkaacG26N45Dme4i3MHtuz9gu7Wy9rdyiJtQGmOKj/rgH/9QdjHgPn8bxQ==
-X-Received: by 2002:ae9:e119:0:b0:6fa:398c:e7c2 with SMTP id g25-20020ae9e119000000b006fa398ce7c2mr17167818qkm.517.1668545155427;
-        Tue, 15 Nov 2022 12:45:55 -0800 (PST)
+        bh=PaujosqZgD+9nGp4WpeQDZHeIobxvaj6k2xEkA643lA=;
+        b=gW//87tSb/+X4bKzheHaY8umTs50Jsk/aX+wQRVm5bteti14touEzJ1ai0PX6p2Dh6
+         vXRSVOr7MckR43M26v+VuUaOJ8wepe9qW53uDaeb78KNzgF931S10h2+uub7Bf8ncAzZ
+         wwb+5RPv199u6GIu63Rz8aF6QpXqvytyPNbgv4kMFfiLyQPdTlK3XYy7XKddEb79rpFx
+         MOpjJf6V41JUmR43nU8h+3/X6jcYrOyOhXwMljiKcvIKhF86H/MF/X7kLRas22TNrEZO
+         k+bGfjGzmU/ErJOoMSbZEohH6nPpqwqhpkuhML5uoOlFiD2QcUKuU2s80PZHUeD8awly
+         ZA7Q==
+X-Gm-Message-State: ANoB5pmikSZnL/K1h4Uhe9XQblC81cV+HQpd4cVMDj09Au/MEU6oxMhn
+        0Yqu+uAQ2itlQ2cO7mongwc=
+X-Google-Smtp-Source: AA0mqf6GCIGJQX7d4EzAVBSYABUYg2W+QWtz3SM3EuliPORZQPJcLgTXuQLNKgbaA5//vMSAyOHF3A==
+X-Received: by 2002:a0c:b35c:0:b0:4c6:5908:84f0 with SMTP id a28-20020a0cb35c000000b004c6590884f0mr4109481qvf.9.1668545229840;
+        Tue, 15 Nov 2022 12:47:09 -0800 (PST)
 Received: from [10.4.10.38] ([96.237.180.62])
-        by smtp.gmail.com with ESMTPSA id l11-20020a37f90b000000b006fa9d101775sm8833476qkj.33.2022.11.15.12.45.54
+        by smtp.gmail.com with ESMTPSA id s8-20020a05620a254800b006fa16fe93bbsm8810927qko.15.2022.11.15.12.47.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Nov 2022 12:45:55 -0800 (PST)
-Message-ID: <56c0d9b4-222e-e92f-4508-458d51e19761@gmail.com>
-Date:   Tue, 15 Nov 2022 15:45:54 -0500
+        Tue, 15 Nov 2022 12:47:09 -0800 (PST)
+Message-ID: <92868186-4251-d37f-8cbc-69971dd0afb0@gmail.com>
+Date:   Tue, 15 Nov 2022 15:47:08 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH v2 3/4] ARM: dts: imxrt1050: increase mmc max-frequency
- property
+Subject: Re: [PATCH v2 4/4] ARM: dts: imx: prepend a 0 in the memory address
+ to make it clear it's 32MB
 Content-Language: en-US
 To:     Giulio Benetti <giulio.benetti@benettiengineering.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -72,9 +72,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Bough Chen <haibo.chen@nxp.com>
 References: <20221115193244.10484-1-giulio.benetti@benettiengineering.com>
- <20221115193244.10484-3-giulio.benetti@benettiengineering.com>
+ <20221115193244.10484-4-giulio.benetti@benettiengineering.com>
 From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20221115193244.10484-3-giulio.benetti@benettiengineering.com>
+In-Reply-To: <20221115193244.10484-4-giulio.benetti@benettiengineering.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -84,31 +84,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 11/15/22 14:32, Giulio Benetti wrote:
-> According to i.MXRT1050 Datasheet usdhc supports up to 200Mhz clock so
-> let's increase max-frequency property to 200Mhz.
-> 
 > Cc: Jesse Taube <mr.bossman075@gmail.com>
 > Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Again I'm not sure if this is necessary but I think there should be a 
+commit description. Otherwise
+Acked-by: Jesse Taube <mr.bossman075@gmail.com>
 > ---
 > V1->V2:
-> * set max-frequency to 200Mhz instead of removing it as suggested by
->    Bough Chen
+> * nothing done
 > ---
->   arch/arm/boot/dts/imxrt1050.dtsi | 2 +-
+>   arch/arm/boot/dts/imxrt1050-evk.dts | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm/boot/dts/imxrt1050.dtsi b/arch/arm/boot/dts/imxrt1050.dtsi
-> index 114465e4dde6..5b1991c32748 100644
-> --- a/arch/arm/boot/dts/imxrt1050.dtsi
-> +++ b/arch/arm/boot/dts/imxrt1050.dtsi
-> @@ -93,7 +93,7 @@ usdhc1: mmc@402c0000 {
->   			bus-width = <4>;
->   			fsl,wp-controller;
->   			no-1-8-v;
-> -			max-frequency = <4000000>;
-> +			max-frequency = <200000000>;
->   			fsl,tuning-start-tap = <20>;
->   			fsl,tuning-step = <2>;
->   			status = "disabled";
-
-Acked-by: Jesse Taube <mr.bossman075@gmail.com>
+> diff --git a/arch/arm/boot/dts/imxrt1050-evk.dts b/arch/arm/boot/dts/imxrt1050-evk.dts
+> index 1d339f48899f..3de392d014fe 100644
+> --- a/arch/arm/boot/dts/imxrt1050-evk.dts
+> +++ b/arch/arm/boot/dts/imxrt1050-evk.dts
+> @@ -28,7 +28,7 @@ aliases {
+>   
+>   	memory@80000000 {
+>   		device_type = "memory";
+> -		reg = <0x80000000 0x2000000>;
+> +		reg = <0x80000000 0x02000000>;
+>   	};
+>   
+>   	panel {
