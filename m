@@ -2,111 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE13C43219
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 09:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847C2C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 10:22:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232302AbiKOJiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 04:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
+        id S229917AbiKOKWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 05:22:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229825AbiKOJiS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 04:38:18 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA4D1A83D
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 01:38:16 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id c1so23539100lfi.7
-        for <linux-clk@vger.kernel.org>; Tue, 15 Nov 2022 01:38:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ADm39rqyfjpSRfhU67zfC4NHD+8x5Nv/QWMyB5+FVho=;
-        b=kcuus02aGgmW9RkzhYkKs7RMlJRHKg8VOHIQIatQ1i8EC/xuDAJbqm45ZyPbIhC9Ap
-         npuhQU5jYW+JYFLsCPpKEoXkCoIRsWKg7vKqp8iIDcJWmrx3w2Q4qqtJ4yyjnAZuRFOY
-         2pIM0lLYTGb02zTnW9gSxEwhB/npVdozq4gMnVW5c7MHcFB+3+YKY4QH6S+L9VA/i0Ht
-         XOH9SpcjDs8Er1RNjWNpR3J3H1MyRSEuyuqFoJm8Jmo4mCMxcHnlltu5/MFFagzqMBrn
-         puQvAq4hXSKMZlClKPR7sRsKkyQYKGcrPydvZFUDdooeQT32MbozBfX6q+GRDdvN0ll2
-         IeDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ADm39rqyfjpSRfhU67zfC4NHD+8x5Nv/QWMyB5+FVho=;
-        b=QIsbpF9mHT1cMe4sUT6QeKWvcctxUvLcphmgCqz9wOE2+96rXU5DLWpvaJHuQ5/y9p
-         JFyWoamIYjhmiwjge5ihm/2nDqYpbV5lNeVh976LNRQCxCrTU8FdQlcDsD/Y+DQH0oXY
-         tRTzMuaERz9GpCSEL4HBruR6MmddZriqsEVJH5vnLvd2CzVPq01zzaNIhWr4wXLqZZkY
-         gHCASPqxwCWVZo+L0itjSvt4k0NjkGfp21oCOwkBeeDuE5fjMzYvsCltSpGhDZlxa5Lu
-         cM93Q+U73dQk4jqq/fAYal5+o1dHPR/ptJFN08+z3HIPOAh0Uyhm06SvrAObT0mZW9Tq
-         sRqg==
-X-Gm-Message-State: ANoB5pk1+4mXH5jU5JDo79r2Br3VWyfWrH13mLWBCvrGYlSfnfCvzYT/
-        juM/R6sjBOnuhcLdmN3MuVw77w==
-X-Google-Smtp-Source: AA0mqf7Nyn0t/l3gblajEa+AIkxJIRCjo0o6dQgQ3O9rpdPVmbthJxcjTjLs7LvfD6PkT2jTJuYOOg==
-X-Received: by 2002:ac2:4a8e:0:b0:4b3:b6db:8ca7 with SMTP id l14-20020ac24a8e000000b004b3b6db8ca7mr5333118lfp.590.1668505095302;
-        Tue, 15 Nov 2022 01:38:15 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id t14-20020a2e8e6e000000b0026bf0d71b1esm2415560ljk.93.2022.11.15.01.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Nov 2022 01:38:14 -0800 (PST)
-Message-ID: <6976d129-a274-f3a7-52fe-b26275a900cd@linaro.org>
-Date:   Tue, 15 Nov 2022 10:38:13 +0100
+        with ESMTP id S238127AbiKOKWx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 05:22:53 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2317D1F9F1;
+        Tue, 15 Nov 2022 02:22:50 -0800 (PST)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AF8Ek4k004588;
+        Tue, 15 Nov 2022 10:22:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=BIGCnaiFy7YNCZXdgVkrUvh5iKWcR3W3fZ3jy0dp1jQ=;
+ b=c4mKFTlUgeS9PeUxCR49hJAlRYpREABMY68/zuQJeClx838WWELy8zSpM6VCQKXFThC6
+ /RGbS1v7DkroR5KvGqnUe+ppmjkEzFhpQs41Ps3rvRXU8uzBPz01cSoVJ0geNcsfIcsu
+ 0Va7MEtqm5l9UargEXTCsnGhh6UVOasa5XAks86Eudvxp2XFKgwMw7Uq724YXtFHdeSn
+ zJKxdYgYhB/J7ru7OcJ2wO72BuXnIIxxqEsHXrG2c0/yX93cRepRbwv09tRVveF1X/jx
+ z3jGU8N2DgX/DQCf7/5w0OWH/BGweDySC6zkahxI6jEFfEEMBVjlSP9EW0LxLvreVyFn fg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kuxm09hkb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Nov 2022 10:22:40 +0000
+Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 2AFAMdJ6019979;
+        Tue, 15 Nov 2022 10:22:39 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3kt4jm3e7k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Nov 2022 10:22:39 +0000
+Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AFAL60l018263;
+        Tue, 15 Nov 2022 10:22:39 GMT
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 2AFAMdhY019973
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Nov 2022 10:22:39 +0000
+Received: from shazhuss-linux.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 15 Nov 2022 02:22:35 -0800
+From:   Shazad Hussain <quic_shazhuss@quicinc.com>
+To:     <andersson@kernel.org>, <johan@kernel.org>
+CC:     <sboyd@kernel.org>, <bmasney@redhat.com>, <agross@kernel.org>,
+        <mturquette@baylibre.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] clk: qcom: gcc-sc8280xp: add cxo as parent for three ufs ref clks
+Date:   Tue, 15 Nov 2022 15:52:17 +0530
+Message-ID: <20221115102217.6381-1-quic_shazhuss@quicinc.com>
+X-Mailer: git-send-email 2.38.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] clk: samsung: Revert "clk: samsung: exynos-clkout: Use
- of_device_get_match_data()"
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "Minghao Chi (CGEL ZTE)" <chi.minghao@zte.com.cn>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vinod Koul <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Mark Brown <broonie@kernel.org>
-References: <CGME20221108213728eucas1p2aa97d7925e280b7347bb9e76d3c9a177@eucas1p2.samsung.com>
- <20221108213718.32076-1-m.szyprowski@samsung.com>
- <0da15378-ca0d-4f26-c21c-184de2a89350@linaro.org>
- <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
- <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
-In-Reply-To: <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: C2DtN1PIcxxMrpKWkG_95hEwGahN2_yD
+X-Proofpoint-GUID: C2DtN1PIcxxMrpKWkG_95hEwGahN2_yD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-15_05,2022-11-15_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 bulkscore=0 mlxlogscore=793 spamscore=0 clxscore=1011
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211150071
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/11/2022 10:14, Krzysztof Kozlowski wrote:
-> On 08/11/2022 23:53, Marek Szyprowski wrote:
->> On 08.11.2022 22:44, Krzysztof Kozlowski wrote:
->>> On 08/11/2022 22:37, Marek Szyprowski wrote:
->>>> of_device_get_match_data() function should not be used on the device
->>>> other than the one matched to the given driver, because it always returns
->>>> the match_data of the matched driver. In case of exynos-clkout driver,
->>>> the code matched the OF IDs on the PARENT device, so replacing it with
->>>> of_device_get_match_data() broke the driver.
->>>>
->>>> This reverts commit 777aaf3d1daf793461269b49c063aca1cee06a44.
->>> This was untested, automated commit and there were several other like
->>> that from Minghao. Other driver owners should check if they have the
->>> same issue. I made a quick look and seems fine, but it all depends what
->>> was the of_device_get_match_data() argument.
->>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Please add Cc-stable tag. Do reverts need a Fixes tag? I guess as well...
->>
->> Do we really need a CC-stable tag? v6.1-rc1 is the first release that 
->> contains that bug, so this revert imho should be simply applied as a fix 
->> for v6.1-rcX cycle.
-> 
-> No, then it's fine.
-> 
+Added parent_data as CXO for three UFS reference clocks named,
+gcc_ufs_ref_clkref_clk, gcc_ufs_card_clkref_clk and
+gcc_ufs_1_card_clkref_clk.
 
-I applied it.
+Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+Link: https://lore.kernel.org/lkml/Y2Tber39cHuOSR%2FW@hovoldconsulting.com/
+Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+---
+Changes since v1:
+- Renamed patch subject. Did not include Brian's T-b comment.
+- Added parent data for two ufs phy ref clocks.
 
-Best regards,
-Krzysztof
+v1 of this patch can be found at
+https://lore.kernel.org/all/20221030142333.31019-1-quic_shazhuss@quicinc.com/
+
+used below patches for verification on next-20221114
+https://lore.kernel.org/lkml/20221104092045.17410-2-johan+linaro@kernel.org/
+https://lore.kernel.org/lkml/20221104092045.17410-3-johan+linaro@kernel.org/
+https://lore.kernel.org/lkml/20221111113732.461881-1-thierry.reding@gmail.com/
+
+ drivers/clk/qcom/gcc-sc8280xp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index a18ed88f3b82..b3198784e1c3 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -5364,6 +5364,8 @@ static struct clk_branch gcc_ufs_1_card_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_1_card_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -5432,6 +5434,8 @@ static struct clk_branch gcc_ufs_card_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_card_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -5848,6 +5852,8 @@ static struct clk_branch gcc_ufs_ref_clkref_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_ref_clkref_clk",
++			.parent_data = &gcc_parent_data_tcxo,
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+-- 
+2.38.0
 
