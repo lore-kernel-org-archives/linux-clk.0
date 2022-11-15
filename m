@@ -2,241 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772B3C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 20:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E757DC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 20:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238395AbiKOUdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 15:33:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
+        id S229794AbiKOUnt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 15:43:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbiKOUc7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 15:32:59 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E1322D751;
-        Tue, 15 Nov 2022 12:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668544222; x=1700080222;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nwVVHGJwYKY5kCjLKGilRmLEBJRYK6W7/9ysp6hMtaQ=;
-  b=d9HHfMeTlUVRnoXO3UiE144L7AMM9YzXa6Qb719N+z5QJ8riwJTBaQIw
-   1+4CuDfweYnYM1qnv4S5CxBMbn1xBUGm6mJh12vreV9vwuBzxxAxPKFdZ
-   Oy6ZZ6LPt0p4FpDvEJG7iaHXlHuVCTpAaSQC9XNEdREqsFwQNg8kSa89e
-   ZDySZAOOXICcNChgBnkvlpiClcEM/gAXJ/Hzl2+EUYhN1IMam7KCrk8aq
-   vJEdxEY9TnOSv0kTVUNeobefnnoI+EqxzJ+e/BnAjv0EzDuajbDraBcbb
-   TGgmOLRB2iuQnVYyGkHrPc0JGGVbXl1R7cCXdC1049Fij2oG53sHyJ4je
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="312367031"
-X-IronPort-AV: E=Sophos;i="5.96,166,1665471600"; 
-   d="scan'208";a="312367031"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 12:30:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="813814464"
-X-IronPort-AV: E=Sophos;i="5.96,166,1665471600"; 
-   d="scan'208";a="813814464"
-Received: from lkp-server01.sh.intel.com (HELO ebd99836cbe0) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 15 Nov 2022 12:30:18 -0800
-Received: from kbuild by ebd99836cbe0 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1ov2ZV-0001e7-2k;
-        Tue, 15 Nov 2022 20:30:17 +0000
-Date:   Wed, 16 Nov 2022 04:30:07 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-mm@kvack.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-afs@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 3c1f24109dfc4fb1a3730ed237e50183c6bb26b3
-Message-ID: <6373f6cf.OhGqx4uDp+acnhuc%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229478AbiKOUnr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 15:43:47 -0500
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008A963A9;
+        Tue, 15 Nov 2022 12:43:45 -0800 (PST)
+Received: by mail-qv1-xf31.google.com with SMTP id c8so10548831qvn.10;
+        Tue, 15 Nov 2022 12:43:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q87uCsHCBTu9Z0/6CF1vDWYXnEVvrdO31JXyGw3q8M0=;
+        b=jF5I4hmhDrYs3/Fpf2k+KouEY8u8ERsCeluyxLdxtS1coXenuTmlq/1+Z4PIk07Mr2
+         ZExdYGAI2/BdEq4l0SRT1WYAlL2LhFTf1XumBObTWmsPwhgiPY2PdJHK0ySiLQumIMDw
+         3ARiz8zQ1068vyxH/QgCInKC8OR1u5sUq876ZVstkamFfZ0jxAcmiDhy0Bg0IL2w48NY
+         uDIdGAnM92bSxFPVFZOlWblAn9RVwPy8NyOJ9mvZiWng2ekUXnSnO/3X6Tk+K1FBBADs
+         Zq2cOEJLuiBIFUVHagL2qXxQHTEZgpCWO4npvW7dddA7iJ7YwzBfQuPXMM/ENfiL/SUo
+         abWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q87uCsHCBTu9Z0/6CF1vDWYXnEVvrdO31JXyGw3q8M0=;
+        b=1EHrhIMrMASq+5kolbGtSIuCjA9sv55ZivnNtyqwLC4yhuBoXjOnxW6NEeBzuk3Ngb
+         Eaj3tyaH/xJnba2Hy5fopwq1Z0hX79/Z/v9oC/TnN1RcaR9WR+2OBiXcxRByZWzsq/E+
+         NRG7Yoy/sJdult4qiqQvpBW+ElrOLdRKczDzbDzI4CAvOT7PX5Nq8sh7VD7fZ7tKXKJn
+         sSjRjWMGtcgF9N16Xupy9B/97RhmmjLBRznhzsNlLkVaiBvtJwSo0gY4GwHbN44KeBOy
+         GMDArqQUhF44DYnnuUAmzZpKi44E6t3IooMAGLsgHkxucPIe/jkyy6+kfRgPvajBZpCC
+         PeJQ==
+X-Gm-Message-State: ANoB5pk7olHGV67iE/iS5thKK4wjLh5Nlh7cdolDaukwgd5b7iZ/L2xH
+        o/zRbtGDTDbjUnLXbtouEyk=
+X-Google-Smtp-Source: AA0mqf543qnsocNHrWBmFuloL+X64vLd7zWgx3ulcBS+q0kbikND+rN79Jq9tAIIo3idUYG2pdDLaA==
+X-Received: by 2002:a05:6214:5a81:b0:4bb:64ec:c465 with SMTP id ln1-20020a0562145a8100b004bb64ecc465mr18546030qvb.24.1668545025030;
+        Tue, 15 Nov 2022 12:43:45 -0800 (PST)
+Received: from [10.4.10.38] ([96.237.180.62])
+        by smtp.gmail.com with ESMTPSA id d7-20020a05620a240700b006fba44843a5sm1000557qkn.52.2022.11.15.12.43.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 12:43:44 -0800 (PST)
+Message-ID: <b09ead30-3fc6-f00b-e157-8c753358d5d4@gmail.com>
+Date:   Tue, 15 Nov 2022 15:43:43 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH v2 2/4] clk: imx: imxrt1050: add IMXRT1050_CLK_LCDIF_PIX
+ clock gate
+Content-Language: en-US
+To:     Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bough Chen <haibo.chen@nxp.com>
+References: <20221115193244.10484-1-giulio.benetti@benettiengineering.com>
+ <20221115193244.10484-2-giulio.benetti@benettiengineering.com>
+From:   Jesse Taube <mr.bossman075@gmail.com>
+In-Reply-To: <20221115193244.10484-2-giulio.benetti@benettiengineering.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 3c1f24109dfc4fb1a3730ed237e50183c6bb26b3  Add linux-next specific files for 20221115
 
-Error/Warning reports:
 
-https://lore.kernel.org/oe-kbuild-all/202211041320.coq8EELJ-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211090634.RyFKK0WS-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211130053.Np70VIdn-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211152134.2APMmViw-lkp@intel.com
+On 11/15/22 14:32, Giulio Benetti wrote:
+> Cc: Jesse Taube <mr.bossman075@gmail.com>
+> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> ---
+> V1->V2:
+> * nothing done
+> ---
+>   drivers/clk/imx/clk-imxrt1050.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+> index 26108e9f7e67..39f77c03b892 100644
+> --- a/drivers/clk/imx/clk-imxrt1050.c
+> +++ b/drivers/clk/imx/clk-imxrt1050.c
+> @@ -141,6 +141,7 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+>   	hws[IMXRT1050_CLK_USDHC2] = imx_clk_hw_gate2("usdhc2", "usdhc2_podf", ccm_base + 0x80, 4);
+>   	hws[IMXRT1050_CLK_LPUART1] = imx_clk_hw_gate2("lpuart1", "lpuart_podf", ccm_base + 0x7c, 24);
+>   	hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", "lcdif_podf", ccm_base + 0x70, 28);
+> +	hws[IMXRT1050_CLK_LCDIF_PIX] = imx_clk_hw_gate2("lcdif_pix", "lcdif", ccm_base + 0x74, 10);
+I think it makes sense to squash this with PATCH1 because it changes the 
+same file. It also will make the change more understandable as I swapped 
+the offsets for PIX clock and APB clock accidentally. I'm not sure if 
+this is necessary but I think there should be a commit description. 
+Otherwise
+Acked-by: Jesse Taube <mr.bossman075@gmail.com>
 
-Error/Warning: (recently discovered and may have been fixed)
-
-arch/arm/mach-s3c/devs.c:32:10: fatal error: linux/platform_data/dma-s3c24xx.h: No such file or directory
-drivers/clk/clk.c:1022:5: error: redefinition of 'clk_prepare'
-drivers/clk/clk.c:1268:6: error: redefinition of 'clk_is_enabled_when_prepared'
-drivers/clk/clk.c:941:6: error: redefinition of 'clk_unprepare'
-drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:4887: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:5073:24: warning: implicit conversion from 'enum <anonymous>' to 'enum dc_status' [-Wenum-conversion]
-drivers/gpu/drm/nouveau/nvkm/engine/fifo/gf100.c:451:1: warning: no previous prototype for 'gf100_fifo_nonstall_block' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/fifo/runl.c:34:1: warning: no previous prototype for 'nvkm_engn_cgrp_get' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/gr/tu102.c:210:1: warning: no previous prototype for 'tu102_gr_load' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/nvfw/acr.c:49:1: warning: no previous prototype for 'wpr_generic_header_dump' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/subdev/acr/lsfw.c:221:21: warning: variable 'loc' set but not used [-Wunused-but-set-variable]
-ld.lld: error: .btf.vmlinux.bin.o: unknown file type
-ld.lld: error: undefined symbol: ipv6_icmp_error
-net/rxrpc/local_object.c:36: undefined reference to `ipv6_icmp_error'
-vmlinux.o: warning: objtool: __btrfs_map_block+0x1e22: unreachable instruction
-
-Unverified Error/Warning (likely false positive, please contact us if interested):
-
-drivers/cpufreq/acpi-cpufreq.c:970 acpi_cpufreq_boost_init() error: uninitialized symbol 'ret'.
-lib/zstd/compress/huf_compress.c:460 HUF_getIndex() warn: the 'RANK_POSITION_LOG_BUCKETS_BEGIN' macro might need parens
-lib/zstd/decompress/zstd_decompress_block.c:1009 ZSTD_execSequence() warn: inconsistent indenting
-lib/zstd/decompress/zstd_decompress_block.c:894 ZSTD_execSequenceEnd() warn: inconsistent indenting
-lib/zstd/decompress/zstd_decompress_block.c:942 ZSTD_execSequenceEndSplitLitBuffer() warn: inconsistent indenting
-lib/zstd/decompress/zstd_decompress_internal.h:206 ZSTD_DCtx_get_bmi2() warn: inconsistent indenting
-mm/khugepaged.c:2038 collapse_file() warn: iterator used outside loop: 'page'
-
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- alpha-randconfig-r032-20221114
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arm-allyesconfig
-|   |-- arch-arm-mach-s3c-devs.c:fatal-error:linux-platform_data-dma-s3c24xx.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arm-defconfig
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arm64-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- i386-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-clang_recent_errors
-|-- hexagon-randconfig-r041-20221114
-|   `-- ld.lld:error:undefined-symbol:ipv6_icmp_error
-|-- i386-randconfig-a015
-|   `-- ld.lld:error:undefined-symbol:ipv6_icmp_error
-|-- x86_64-randconfig-a005
-|   |-- ld.lld:error:.btf.vmlinux.bin.o:unknown-file-type
-|   `-- ld.lld:error:undefined-symbol:ipv6_icmp_error
-`-- x86_64-randconfig-a012-20221114
-    `-- vmlinux.o:warning:objtool:handle_bug:call-to-kmsan_unpoison_entry_regs()-leaves-.noinstr.text-section
-
-elapsed time: 734m
-
-configs tested: 64
-configs skipped: 2
-
-gcc tested configs:
-i386                                defconfig
-x86_64                        randconfig-a004
-um                             i386_defconfig
-x86_64                        randconfig-a002
-um                           x86_64_defconfig
-powerpc                          allmodconfig
-x86_64                        randconfig-a006
-i386                 randconfig-a001-20221114
-mips                             allyesconfig
-x86_64                              defconfig
-x86_64                           rhel-8.3-syz
-powerpc                           allnoconfig
-i386                 randconfig-a002-20221114
-x86_64                            allnoconfig
-x86_64                         rhel-8.3-kunit
-sh                               allmodconfig
-i386                 randconfig-a005-20221114
-i386                 randconfig-a006-20221114
-arc                  randconfig-r043-20221115
-x86_64                           rhel-8.3-kvm
-arc                                 defconfig
-riscv                randconfig-r042-20221115
-ia64                             allmodconfig
-i386                             allyesconfig
-arm                                 defconfig
-arc                  randconfig-r043-20221114
-i386                 randconfig-a003-20221114
-x86_64                    rhel-8.3-kselftests
-s390                 randconfig-r044-20221115
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-i386                 randconfig-a004-20221114
-s390                             allmodconfig
-i386                          randconfig-a014
-alpha                               defconfig
-s390                                defconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-s390                             allyesconfig
-arc                              allyesconfig
-i386                          randconfig-a012
-x86_64                           allyesconfig
-i386                          randconfig-a016
-alpha                            allyesconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-
-clang tested configs:
-x86_64                        randconfig-a005
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-x86_64               randconfig-a014-20221114
-x86_64               randconfig-a012-20221114
-x86_64               randconfig-a013-20221114
-x86_64               randconfig-a011-20221114
-x86_64               randconfig-a016-20221114
-x86_64               randconfig-a015-20221114
-hexagon              randconfig-r045-20221114
-hexagon              randconfig-r045-20221115
-hexagon              randconfig-r041-20221114
-i386                          randconfig-a013
-s390                 randconfig-r044-20221114
-hexagon              randconfig-r041-20221115
-riscv                randconfig-r042-20221114
-i386                          randconfig-a011
-i386                          randconfig-a015
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Thanks,
+Jesse Taube
+>   	hws[IMXRT1050_CLK_DMA] = imx_clk_hw_gate("dma", "ipg", ccm_base + 0x7C, 6);
+>   	hws[IMXRT1050_CLK_DMA_MUX] = imx_clk_hw_gate("dmamux0", "ipg", ccm_base + 0x7C, 7);
+>   	imx_check_clk_hws(hws, IMXRT1050_CLK_END);
