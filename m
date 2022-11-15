@@ -2,89 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D18C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 13:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8486AC43219
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 14:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231236AbiKON6c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:58:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56982 "EHLO
+        id S238523AbiKOOEh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 09:04:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230393AbiKON61 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 08:58:27 -0500
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E839399;
-        Tue, 15 Nov 2022 05:58:24 -0800 (PST)
-Received: (Authenticated sender: kory.maincent@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 4A2AD1C0014;
-        Tue, 15 Nov 2022 13:58:22 +0000 (UTC)
+        with ESMTP id S231294AbiKOOEe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 09:04:34 -0500
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246AD2B249;
+        Tue, 15 Nov 2022 06:04:27 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 80E43240007;
+        Tue, 15 Nov 2022 14:04:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1668520703;
+        t=1668521066;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=C2xVfnlmooK7Qg1BmLHoWVwjVfzC1dVIJEO1AD5E1VU=;
-        b=FNKVsKjgQzR8g1b6dlfOcwb0WiId/4yqMgDzJut3rJM4x6yG2FgJMm6ID4pfDnE3a7j+f8
-        Rrfb5yvkFPSuUm6yGwS6JrYvI/y9Om4Wq16mEqJYuH+UoOR9t3Kh9k4ptNRzgM7g1NUJr3
-        FSaFdyPUt5WinN2eOoRaym8fOUUtsPpGheeXTtQqIkDDHqQF5EOxwSFDy4dsvLD+vxpXEc
-        sY+E3yi+J5GZO5eBCufzgnjSmpNoYxZfddQZBvIIUkI8lhty5r6yKHXj73DfIZ/mNwB8oG
-        3yUBaR63Unc7skLNPFI5ky+CONAXqo16GOSJf1k7fdFZTKBOY0MOGgW6qu2jsQ==
-From:   =?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        bh=m52RNtELDDNqeiQtokfOg67uyM39sRsLuDiZvZRE3B0=;
+        b=NudmAyB06AsNNnCsJt4iwJTc6oYb518K4zCuIOTgbH8Jph8xyl9lERBCB2rnRwhIGlKBQp
+        0SCkDrVS9j7Y6KCJBn7R/kjc9dvG7aYqFHfIRuJSmjqhK2bOqQeAl44Si8MpfBCh22fcNk
+        NlRqtIHOgh45m2guJrdSSJ7SxCHrVVUvxxzkG6xjm6yA9uxRs9d4YUexh8zpT6WRdv0RTk
+        PGhDPkAejvpA8OGDZ98Mz+prO9BXnSRl7YWadgkJb8aicuF1+vFP11gcp+xcyUH9SQ0rym
+        SAsKehe8H7y8d99gTxn8KMhegCxtNBHK1+2Xsdo4DLgiWtxwdUHLQ2QRvebGqQ==
+Date:   Tue, 15 Nov 2022 15:04:17 +0100
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        thomas.petazzoni@bootlin.com, Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org
-Subject: [PATCH v3 2/2] clk: spear: Fix SSP clock definition on SPEAr600
-Date:   Tue, 15 Nov 2022 14:58:13 +0100
-Message-Id: <20221115135814.214388-3-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221115135814.214388-1-kory.maincent@bootlin.com>
-References: <20221115135814.214388-1-kory.maincent@bootlin.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl:
+ Add h2mode property
+Message-ID: <20221115150417.513955a7@bootlin.com>
+In-Reply-To: <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org>
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
+        <20221114111513.1436165-3-herve.codina@bootlin.com>
+        <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
+        <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Kory Maincent <kory.maincent@bootlin.com>
+Hi Krzysztof,
 
-There is no SPEAr600 device named "ssp-pl022.x". Instead, the description
-of the SSP (Synchronous Serial Port) was recently added to the Device Tree,
-and the device name is "xxx.spi", so we should associate the SSP gateable
-clock to these device names.
+On Tue, 15 Nov 2022 14:07:52 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/clk/spear/spear6xx_clock.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> On 15/11/2022 14:05, Krzysztof Kozlowski wrote:
+> > On 14/11/2022 12:15, Herve Codina wrote: =20
+> >> Add the h2mode property to force the USBs mode ie:
+> >>  - 2 hosts
+> >> or
+> >>  - 1 host and 1 device
+> >>
+> >> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> >> ---
+> >>  .../bindings/clock/renesas,r9a06g032-sysctrl.yaml      | 10 ++++++++++
+> >>  1 file changed, 10 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032=
+-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-s=
+ysctrl.yaml
+> >> index 95bf485c6cec..f9e0a58aa4fb 100644
+> >> --- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctr=
+l.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctr=
+l.yaml
+> >> @@ -39,6 +39,16 @@ properties:
+> >>    '#power-domain-cells':
+> >>      const: 0
+> >> =20
+> >> +  renesas,h2mode:
+> >> +    description: |
+> >> +      Configure the USBs mode.
+> >> +        - <0> : the USBs are in 1 host and 1 device mode.
+> >> +        - <1> : the USBs are in 2 host mode.
+> >> +      If the property is not present, the value used is the one alrea=
+dy present
+> >> +      in the CFG_USB register (from reset or set by the bootloader).
+> >> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >> +    enum: [0, 1] =20
+> >=20
+> > 0/1 are quite cryptic. Why not making it a string which is easy to read
+> > and understand? Can be something like "two-hosts" and "one-host". Or
+> > anything you find more readable... =20
+>=20
+> ...but actually you should rather make it a property of your USB
+> controller, not clock controller. You have two controllers and we have a
+> generic property for them - dr_mode.
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-index ee0ed89f2954..adfa118520c3 100644
---- a/drivers/clk/spear/spear6xx_clock.c
-+++ b/drivers/clk/spear/spear6xx_clock.c
-@@ -326,13 +326,13 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
- 
- 	clk = clk_register_gate(NULL, "ssp0_clk", "apb_clk", 0, PERIP1_CLK_ENB,
- 			SSP0_CLK_ENB, 0, &_lock);
--	clk_register_clkdev(clk, NULL, "ssp-pl022.0");
-+	clk_register_clkdev(clk, NULL, "d0100000.spi");
- 
- 	clk = clk_register_gate(NULL, "ssp1_clk", "apb_clk", 0, PERIP1_CLK_ENB,
- 			SSP1_CLK_ENB, 0, &_lock);
--	clk_register_clkdev(clk, NULL, "ssp-pl022.1");
-+	clk_register_clkdev(clk, NULL, "d0180000.spi");
- 
- 	clk = clk_register_gate(NULL, "ssp2_clk", "apb_clk", 0, PERIP1_CLK_ENB,
- 			SSP2_CLK_ENB, 0, &_lock);
--	clk_register_clkdev(clk, NULL, "ssp-pl022.2");
-+	clk_register_clkdev(clk, NULL, "d8180000.spi");
- }
--- 
-2.25.1
+IMHO, this property in the USB controllers does not make sense.
+Indeed each controller cannot have a different 'mode'.
+Some controllers are USB host only (EHCI and OHCI) and the USBF
+controller I worked on is device only.
+'h2mode' allows to choose between host or device on one of the USB
+but not at the USB controller level.
 
+This property should be handle outside the USB controller nodes.
+
+Currently, this node (declared as a clock node) is in fact a sysctrl
+node and can do some configuration not related to clocks.
+
+I agree with you something related to choosing USB Host/Device in
+a clock node seems strange.
+
+Some discussion were already opened related to this property and how
+to handle it:
+  https://lore.kernel.org/all/20221107182642.05a09f2f@bootlin.com/
+  https://lore.kernel.org/all/20221107173614.474707d7@bootlin.com/
+
+Regards,
+Herv=C3=A9
+
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
