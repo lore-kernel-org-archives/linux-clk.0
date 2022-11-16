@@ -2,219 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 306CDC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 21:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9E4C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 22:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233857AbiKPVrI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 16:47:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49088 "EHLO
+        id S234000AbiKPWJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 17:09:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234174AbiKPVrC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 16:47:02 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7AF13DDD;
-        Wed, 16 Nov 2022 13:46:59 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id f18so379770ejz.5;
-        Wed, 16 Nov 2022 13:46:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ykJo8V9fWn3GFRM/unyg99u9L1PO5QmNvrxh5n3ttGc=;
-        b=NffHHuqtVh/pBVF5D21t5xweV1ph1r7m5P9bLakoUzpSIOYxSTJsHryKa75h2GqaOH
-         4pqPaaoPc9OQ2QEY4fIN/797QpTbfH/q0eidaP4KEQpzW+ZE8gntbTBW+sUuJqfRRhZJ
-         TxMwjY91+/5foG/uqNFppKKPIvA8mZMI7h8juyXqJUfiVRbh075gW2gnoIPP1ldvvGaG
-         CLdrbF23O7BYWyknOhRQp7cAViG0JhurPDSi76KqukRWfdlMnnfUjaUphQwmst4iHeJh
-         E9zSVEOF4QnPmgc9u9Iy/mWWLCNoLuy/HWoOvhgYt/87+dM3+P8y6aen49t6B8vuAMrO
-         kBxw==
+        with ESMTP id S233476AbiKPWJ4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 17:09:56 -0500
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B9A6A6B0;
+        Wed, 16 Nov 2022 14:09:55 -0800 (PST)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-13b6c1c89bdso45858fac.13;
+        Wed, 16 Nov 2022 14:09:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ykJo8V9fWn3GFRM/unyg99u9L1PO5QmNvrxh5n3ttGc=;
-        b=1mO0kNraLkIKnONiFfXrtggGel4J43lkfBZhJ6sDhgb12grIQTh2Vj8HKODlw8HZJR
-         s3WgYGAXJEd2ogB+HxVp/zvXRJfFk5/LE5wwzjkdsCiMDIogcLECnEXdk1Fn4nTcMXgW
-         /p0p2QTfUZz85OJ+718or/CCk0bWMB9CcvhsWipvX3Bzvy/gF8JHKRPMEmzxRk7/bkQ6
-         GzE/InqZZ+lLlF6tthquCqZVVKkI1CLx6pyTklx6KXITCeCw+1+BoRt7g1bM3pdFewtA
-         f/FaiYQdFgX4hZGOEgfyqbMcZ3+/H1MMHDfM9fCmPm/zhXueWJdH6L21VjNxF3zW9X9s
-         VVag==
-X-Gm-Message-State: ANoB5pkIJMIrFoPnD4TC7GHBdwOKVUb3ba9MfZTpuh2358ZfffvWmaXc
-        yOVl7JG8/tOzBwu0rYHiNSY=
-X-Google-Smtp-Source: AA0mqf4MgcSZTKPoxfJV82q3xQrh3h3PidjHnRbvFvvTUy2tujz3E5HM+Uo1KqHQrnAaBDSc5Ij/vA==
-X-Received: by 2002:a17:906:2ecf:b0:778:f9b6:6fc with SMTP id s15-20020a1709062ecf00b00778f9b606fcmr19739257eji.580.1668635218195;
-        Wed, 16 Nov 2022 13:46:58 -0800 (PST)
-Received: from fedora.. (dh207-99-145.xnet.hr. [88.207.99.145])
-        by smtp.googlemail.com with ESMTPSA id qx17-20020a170906fcd100b0073d7ab84375sm7420078ejb.92.2022.11.16.13.46.57
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jw1yoo+4ZX3f+L+425h9MTVqYZoAVRJPKumy0cdjiik=;
+        b=HNUJ2mX+Id3oCTVfspQvtk7nOmqucvB7ImFIVHLgJUf6dV/aL6iJkqwbuJkuWp7S/q
+         MqXqeY19gDbz41MOR/hQGy/RPi8HGiaRQyLIWYMjPOfVz7qmwZxy7DcBdC8D7Z9v/JHP
+         neoGc19NO/1E6dSySJ3kuK+WOvy0zBlV0CcsLjRJSlZUOL6ZVy9ialWJ2qy4ofs8Cho3
+         fz8MkPGIbKZDkY0p2+TeITdKQegVoaOQNAwiHc+ZtVmZC3brp0ZL6RrDSK0/ruptbHLt
+         B5n2GnR9muBQFbWckfB9MklxuN8Ly7BOUHOWn+quVQXMLw0ajx89XgqSc90zlpCSqTaI
+         Q1Fw==
+X-Gm-Message-State: ANoB5pkeBISPfqwW4hDj+pOew9zC6jwHT/LD20f7yqWPovAiR4gC6s08
+        KQd2nVQrsQnxDYBO1QcN0A==
+X-Google-Smtp-Source: AA0mqf6KH0l9o34qBzHvTxvjSR3iS8elJHxabA2vJ4mabAS8T1L5xJ7HXS0sBGcq91Uh8+qUbwprwA==
+X-Received: by 2002:a05:6870:cb94:b0:13b:f801:efab with SMTP id ov20-20020a056870cb9400b0013bf801efabmr2933982oab.193.1668636593970;
+        Wed, 16 Nov 2022 14:09:53 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id z19-20020a0568301db300b006690f65a830sm7011617oti.14.2022.11.16.14.09.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 13:46:57 -0800 (PST)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v2] clk: qcom: ipq8074: populate fw_name for all parents
-Date:   Wed, 16 Nov 2022 22:46:55 +0100
-Message-Id: <20221116214655.1116467-1-robimarko@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Wed, 16 Nov 2022 14:09:53 -0800 (PST)
+Received: (nullmailer pid 1110375 invoked by uid 1000);
+        Wed, 16 Nov 2022 22:09:55 -0000
+Date:   Wed, 16 Nov 2022 16:09:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc:     linux-clk@vger.kernel.org, git@amd.com, devicetree@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, michal.simek@xilinx.com,
+        shubhrajyoti.datta@gmail.com, sboyd@kernel.org,
+        mturquette@baylibre.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: clk: Add binding for versal clocking
+ wizard
+Message-ID: <20221116220955.GA1042427-robh@kernel.org>
+References: <20221115145005.4747-1-shubhrajyoti.datta@amd.com>
+ <20221115145005.4747-2-shubhrajyoti.datta@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221115145005.4747-2-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It appears that having only .name populated in parent_data for clocks
-which are only globally searchable currently will not work as the clk core
-won't copy that name if there is no .fw_name present as well.
+On Tue, Nov 15, 2022 at 08:20:04PM +0530, Shubhrajyoti Datta wrote:
+> The Clocking Wizard for Versal adaptive compute acceleration platforms
+> generates multiple configurable number of clock outputs.
+> Add device tree binding for Versal clocking wizard support.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
+> 
+> Changes in v2:
+> rename the clocks clk_in1 to in1 and s_axi_clk to s_axi in dt
 
-So, populate .fw_name for all parent clocks in parent_data.
+Why? Now you don't match the other clocking wizard. Yes, 'clk' is kind 
+of redundant, but making up different names for each version of h/w is 
+worse.
 
-Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
+What happened to using the same schema file so we aren't defining the 
+same property (xlnx,nr-outputs) twice?
 
-Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
-Changes in v2:
-* Add fw_name for PCIe PHY pipe clocks as well
----
- drivers/clk/qcom/gcc-ipq8074.c | 52 +++++++++++++++++-----------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index d231866804f6..8374cc40915a 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -680,7 +680,7 @@ static struct clk_rcg2 pcie0_aux_clk_src = {
- };
- 
- static const struct clk_parent_data gcc_pcie20_phy0_pipe_clk_xo[] = {
--	{ .name = "pcie20_phy0_pipe_clk" },
-+	{ .fw_name = "pcie0_pipe", .name = "pcie20_phy0_pipe_clk" },
- 	{ .fw_name = "xo", .name = "xo" },
- };
- 
-@@ -733,7 +733,7 @@ static struct clk_rcg2 pcie1_aux_clk_src = {
- };
- 
- static const struct clk_parent_data gcc_pcie20_phy1_pipe_clk_xo[] = {
--	{ .name = "pcie20_phy1_pipe_clk" },
-+	{ .fw_name = "pcie1_pipe", .name = "pcie20_phy1_pipe_clk" },
- 	{ .fw_name = "xo", .name = "xo" },
- };
- 
-@@ -1137,7 +1137,7 @@ static const struct freq_tbl ftbl_nss_noc_bfdcd_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_bias_pll_nss_noc_clk_gpll0_gpll2[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "bias_pll_nss_noc_clk" },
-+	{ .fw_name = "bias_pll_nss_noc_clk", .name = "bias_pll_nss_noc_clk" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll2.clkr.hw },
- };
-@@ -1362,7 +1362,7 @@ static const struct freq_tbl ftbl_nss_ppe_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_bias_gpll0_gpll4_nss_ubi32[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll4.clkr.hw },
- 	{ .hw = &nss_crypto_pll.clkr.hw },
-@@ -1413,10 +1413,10 @@ static const struct freq_tbl ftbl_nss_port1_rx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_rx_clk" },
--	{ .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy0_rx_tx_ubi32_bias_map[] = {
-@@ -1465,10 +1465,10 @@ static const struct freq_tbl ftbl_nss_port1_tx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_tx_clk" },
--	{ .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy0_tx_rx_ubi32_bias_map[] = {
-@@ -1696,12 +1696,12 @@ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_uniphy1_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_rx_clk" },
--	{ .name = "uniphy0_gcc_tx_clk" },
--	{ .name = "uniphy1_gcc_rx_clk" },
--	{ .name = "uniphy1_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
-+	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map
-@@ -1758,12 +1758,12 @@ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_uniphy1_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy0_gcc_tx_clk" },
--	{ .name = "uniphy0_gcc_rx_clk" },
--	{ .name = "uniphy1_gcc_tx_clk" },
--	{ .name = "uniphy1_gcc_rx_clk" },
-+	{ .fw_name = "uniphy0_gcc_tx_clk", .name = "uniphy0_gcc_tx_clk" },
-+	{ .fw_name = "uniphy0_gcc_rx_clk", .name = "uniphy0_gcc_rx_clk" },
-+	{ .fw_name = "uniphy1_gcc_tx_clk", .name = "uniphy1_gcc_tx_clk" },
-+	{ .fw_name = "uniphy1_gcc_rx_clk", .name = "uniphy1_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map
-@@ -1820,10 +1820,10 @@ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy2_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy2_gcc_rx_clk" },
--	{ .name = "uniphy2_gcc_tx_clk" },
-+	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
-+	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy2_rx_tx_ubi32_bias_map[] = {
-@@ -1877,10 +1877,10 @@ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_uniphy2_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "xo", .name = "xo" },
--	{ .name = "uniphy2_gcc_tx_clk" },
--	{ .name = "uniphy2_gcc_rx_clk" },
-+	{ .fw_name = "uniphy2_gcc_tx_clk", .name = "uniphy2_gcc_tx_clk" },
-+	{ .fw_name = "uniphy2_gcc_rx_clk", .name = "uniphy2_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy2_tx_rx_ubi32_bias_map[] = {
--- 
-2.38.1
-
+> Update the compatible to reflect versal
+> 
+>  .../clock/xlnx,versal-clk-wizard.yaml         | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,versal-clk-wizard.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk-wizard.yaml
+> new file mode 100644
+> index 000000000000..aaba91a57713
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk-wizard.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/xlnx,versal-clk-wizard.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx Versal clocking wizard
+> +
+> +maintainers:
+> +  - Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> +
+> +description:
+> +  The clocking wizard is a soft ip clocking block of Xilinx Versal. The IP
+> +  uses the input clock frequencies and generates the requested
+> +  clock output.
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,versal-clk-wizard
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    description: External input clocks to the given clock controller.
+> +    items:
+> +      - description: functional clock input
+> +      - description: axi clock or the interface clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: in1
+> +      - const: s_axi
+> +
+> +  xlnx,nr-outputs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 8
+> +    description:
+> +      Number of outputs.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - xlnx,nr-outputs
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-generator@40040000 {
+> +        compatible = "xlnx,versal-clk-wizard";
+> +        reg = <0x40040000 0x1000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clkc 15>, <&clkc 15>;
+> +        clock-names = "in1", "s_axi";
+> +        xlnx,nr-outputs = <6>;
+> +    };
+> +...
+> -- 
+> 2.17.1
+> 
+> 
