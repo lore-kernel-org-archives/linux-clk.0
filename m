@@ -2,175 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00F1C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 02:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71014C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbiKPCgJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 21:36:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
+        id S232678AbiKPIUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 03:20:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231492AbiKPCgG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 21:36:06 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E86B31EE3;
-        Tue, 15 Nov 2022 18:36:04 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AG2M3LR006378;
-        Wed, 16 Nov 2022 02:35:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=/wZDpuE91CllGHxN7CVleKANvN3PHHDtLtCAsPlzH90=;
- b=aY5CljOJzHuRN56luzluHbZ+wA/pyiwHsO8GmTGCDKkQ4xhffnwRo+BtVoZxuYh8U+V8
- 4GolIPVeqUoNT19cuUWnWUhL94jWvD/zwAiWIynv5Zv0Ms4JERDZGKQLteS/rlgkWy9Z
- N5jyYlzi/Ky7FrAHVSuNsUnP8RKo+HSI6nYr/J2hySvcGJ4chH7oCHGy5XcXQo6RATnO
- tBUVBDFUzsBXanNBdQMHyGzQIi98WSk2hRqeaDE3/Xgm55Zo4bhqlrfq2Yhux9UdTxr8
- H2xsBJHOYJLYybppy07Jk5Mx4kTxBWb03g8Zc43VaNZ/SOJ0mlyf1uh4xCVgo/t7+UuH 1Q== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kvkw1rc9a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 02:35:58 +0000
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 2AG2UUFT008128;
-        Wed, 16 Nov 2022 02:35:57 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3kt4jm6d6j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 02:35:57 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AG2Zte5013677;
-        Wed, 16 Nov 2022 02:35:57 GMT
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 2AG2ZvUt013698
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 02:35:57 +0000
-Received: from [10.216.30.230] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 15 Nov
- 2022 18:35:52 -0800
-Message-ID: <4a27136e-a6e3-a932-a063-cbcdebb9485e@quicinc.com>
-Date:   Wed, 16 Nov 2022 08:05:28 +0530
+        with ESMTP id S232000AbiKPIUa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:20:30 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F448614E
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:20:25 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id j4so28390010lfk.0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:20:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=20QIWTDhxs5zpxfjzQDwrXucngPgVQ+JOvZAayYi6hk=;
+        b=ddqPFfDM59WUbI9URyKo7Wu9Vum3BpFnaox+hRouL9QzJqOse+muzQwkNGtVMlZ5Zs
+         wxElcJ87TL+rGlJ73eCySG5L4L9VBc9asBWfuy/rfOgkkHWrPqbRH/BESzcX51Mj1xoG
+         BclxmopYl0NXcYviJ9ogHWuvf80+psdHS8TUSzN6d+dDX/sKSrcDpp9rjzl1gWQ0yF2Q
+         bnRxatjHV7HgjKNp3lhDacF8O9SNnoyyEke2jZeDhcOtRMuTwR6xyKtR7/lmDwoqBNJp
+         E42sIi/PYUnzUulpPUoVshXgVheNlYOClOs6YSF+l/ndAZE5Ilq6VP9kEj33+/VK9ngm
+         Zy4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=20QIWTDhxs5zpxfjzQDwrXucngPgVQ+JOvZAayYi6hk=;
+        b=R08CZQxuhicCR0IGXm73qEpU6jwVFUPstpJtQgATCf9X1hiJu9b7rQzfV9YEzJICs6
+         7a9KwobBSG9wJcEpJiGYyWNu03pU/KxrBA+ljTaRi0H44wxWldUdCut6VPlYXyH3I8PX
+         kXT4rWSb7bksYEDDBwyq87tLSDgxvk3MAG2GUZ8WoM42PooczYota32T8GiCNZzNCvQ6
+         nR0KDeHpoeA9YvJ+VFMcZd38juOlEDFXjTdTkDKPG8RWByAe20J04IouOW4GgQinJRz3
+         Wz0I8RGlAScSb92JMp66GNyRl1qONVkAfiFX66JU/g0JulTPQ9MClzbmVuQXKFRSO8Q1
+         x7eQ==
+X-Gm-Message-State: ANoB5pm+bMVlkaLllXPWLMdDBvdYL3libLBrqgs9ljGRLoO4K0Pq1H1P
+        bzyZgBUFqYzAsIsziZSS6jhvBw==
+X-Google-Smtp-Source: AA0mqf6Z7C14uz2nU+dWtpSFYMdf+a93HGeoSotCFIFvFrqMsbC8WgrVJY+5FdIxsakJ8XPLIIzwQQ==
+X-Received: by 2002:ac2:4ac9:0:b0:4ac:102e:5c93 with SMTP id m9-20020ac24ac9000000b004ac102e5c93mr7889381lfp.352.1668586823210;
+        Wed, 16 Nov 2022 00:20:23 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id g16-20020a19e050000000b00494a11c5f52sm2503698lfj.256.2022.11.16.00.20.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Nov 2022 00:20:22 -0800 (PST)
+Message-ID: <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+Date:   Wed, 16 Nov 2022 09:20:21 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3] clk: qcom: gcc-sc8280xp: add cxo as parent for three
- ufs ref clks
-To:     Bjorn Andersson <andersson@kernel.org>, <sboyd@kernel.org>
-CC:     <johan@kernel.org>, <bmasney@redhat.com>, <agross@kernel.org>,
-        <mturquette@baylibre.com>, <ahalaney@redhat.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221115152956.21677-1-quic_shazhuss@quicinc.com>
- <20221115171342.v37vq4cqe7pxatlk@builder.lan>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
 Content-Language: en-US
-From:   Shazad Hussain <quic_shazhuss@quicinc.com>
-In-Reply-To: <20221115171342.v37vq4cqe7pxatlk@builder.lan>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Alex Helms <alexander.helms.jy@renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be
+References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
+ <20221115192625.9410-2-alexander.helms.jy@renesas.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221115192625.9410-2-alexander.helms.jy@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 815sP-xyYAK5Pw4MOzQBRd_D8Savvjm3
-X-Proofpoint-GUID: 815sP-xyYAK5Pw4MOzQBRd_D8Savvjm3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-15_08,2022-11-15_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 spamscore=0 adultscore=0 phishscore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211160016
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 15/11/2022 20:26, Alex Helms wrote:
+> Add dt bindings for the Renesas PhiClock clock generator.
+> 
 
+Subject: drop second, redundant "bindings"
 
-On 11/15/2022 10:43 PM, Bjorn Andersson wrote:
-> On Tue, Nov 15, 2022 at 08:59:56PM +0530, Shazad Hussain wrote:
->> The three UFS reference clocks, gcc_ufs_ref_clkref_clk for external
->> UFS devices, gcc_ufs_card_clkref_clk and gcc_ufs_1_card_clkref_clk for
->> two PHYs are all sourced from CXO.
->>
->> Added parent_data for all three reference clocks described above to
->> reflect that all three clocks are sourced from CXO to have valid
->> frequency for the ref clock needed by UFS controller driver.
->>
->> Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
->> Link: https://lore.kernel.org/lkml/Y2Tber39cHuOSR%2FW@hovoldconsulting.com/
->> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
->> Tested-by: Johan Hovold <johan+linaro@kernel.org>
->> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
->> Tested-by: Andrew Halaney <ahalaney@redhat.com>
->> Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
->> Reviewed-by: Reviewed-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> ---
+>  .../bindings/clock/renesas,phiclock.yaml      | 81 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 ++
+>  2 files changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
 > 
-> Really-really-reviewed-by?  >
-My bad, thanks for pointing it Bjorn :)
-> 
-> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-> 
-> 
-> @Stephen, could you please pick this for clk-fixes?
-> 
-> Thanks,
-> Bjorn
-> 
->> ---
->> Changes since v2:
->> -  Tweaked commit message and added R-b T-b from v2
->>
->> v2 of this patch can be found at
->> https://lore.kernel.org/all/20221115102217.6381-1-quic_shazhuss@quicinc.com/
->>
->> v1 of this patch can be found at
->> https://lore.kernel.org/all/20221030142333.31019-1-quic_shazhuss@quicinc.com/
->>
->> used below patches for verification on next-20221114
->> https://lore.kernel.org/lkml/20221104092045.17410-2-johan+linaro@kernel.org/
->> https://lore.kernel.org/lkml/20221104092045.17410-3-johan+linaro@kernel.org/
->> https://lore.kernel.org/lkml/20221111113732.461881-1-thierry.reding@gmail.com/
->>
->>   drivers/clk/qcom/gcc-sc8280xp.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
->> index a18ed88f3b82..b3198784e1c3 100644
->> --- a/drivers/clk/qcom/gcc-sc8280xp.c
->> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
->> @@ -5364,6 +5364,8 @@ static struct clk_branch gcc_ufs_1_card_clkref_clk = {
->>   		.enable_mask = BIT(0),
->>   		.hw.init = &(const struct clk_init_data) {
->>   			.name = "gcc_ufs_1_card_clkref_clk",
->> +			.parent_data = &gcc_parent_data_tcxo,
->> +			.num_parents = 1,
->>   			.ops = &clk_branch2_ops,
->>   		},
->>   	},
->> @@ -5432,6 +5434,8 @@ static struct clk_branch gcc_ufs_card_clkref_clk = {
->>   		.enable_mask = BIT(0),
->>   		.hw.init = &(const struct clk_init_data) {
->>   			.name = "gcc_ufs_card_clkref_clk",
->> +			.parent_data = &gcc_parent_data_tcxo,
->> +			.num_parents = 1,
->>   			.ops = &clk_branch2_ops,
->>   		},
->>   	},
->> @@ -5848,6 +5852,8 @@ static struct clk_branch gcc_ufs_ref_clkref_clk = {
->>   		.enable_mask = BIT(0),
->>   		.hw.init = &(const struct clk_init_data) {
->>   			.name = "gcc_ufs_ref_clkref_clk",
->> +			.parent_data = &gcc_parent_data_tcxo,
->> +			.num_parents = 1,
->>   			.ops = &clk_branch2_ops,
->>   		},
->>   	},
->> -- 
->> 2.38.0
->>
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+> new file mode 100644
+> index 000000000..2b36534d3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+
+Filename based on compatible.
+
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/renesas,phiclock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas PhiClock Clock Generator Device Tree Bindings
+
+Drop "Device Tree Bindings"
+
+> +
+> +maintainers:
+> +  - Alex Helms <alexander.helms.jy@renesas.com>
+> +
+> +description: |
+> +  The Renesas PhiClock is a programmable I2C clock generator that provides
+> +  1 reference output and 2 clock outputs.
+> +
+> +  The driver supports spread spectrum but only if all configurations use the
+
+Driver as in Linux driver? Drop entire paragraph. Bindings are about
+hardware, not driver.
+
+> +  same spread spectrum parameters. If your configuration uses spread spectrum,
+> +  you must include renesas,ss-amount-percent, renesas,ss-modulation-hz, and
+> +  renesas,ss-direction in the device tree.
+> +
+> +properties:
+
+compatible goes always first. Start your schema from example-schema.yaml.
+
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xin-clkin
+
+Just "xin" or entirely drop.
+
+> +
+> +  clocks:
+> +    const: 1
+> +
+> +  compatible:
+> +    enum:
+> +      - renesas,9fgv1006
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  renesas,ss-amount-percent:
+> +    description: Spread spectrum absolute amount as hundredths of a percent, e.g. 150 is 1.50%.
+
+What? If this is percent then it cannot be hundreds of percent. Percent
+is percent. Use appropriate units.
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+
+> +    minimum: 0
+> +    maximum: 500
+> +
+> +  renesas,ss-modulation-hz:
+> +    description: Spread spectrum modulation rate in Hz
+> +    minimum: 30000
+> +    maximum: 63000
+> +
+> +  renesas,ss-direction:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: Spread spectrum direction
+> +    enum: [ down, center ]
+> +
+> +required:
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    ref25: ref25m {
+> +      compatible = "fixed-clock";
+> +      #clock-cells = <0>;
+> +      clock-frequency = <25000000>;
+> +    };
+
+Drop, it's obvious, isn't it?
+
+> +
+
+Best regards,
+Krzysztof
+
