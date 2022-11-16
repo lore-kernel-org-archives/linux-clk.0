@@ -2,40 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4770BC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 20:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398A8C4321E
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 20:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233480AbiKPU1f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 15:27:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49116 "EHLO
+        id S234232AbiKPUfp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 15:35:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232527AbiKPU1e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 15:27:34 -0500
-Received: from smtpcmd0642.aruba.it (smtpcmd0642.aruba.it [62.149.156.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C96A41C42A
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 12:27:31 -0800 (PST)
-Received: from [192.168.50.220] ([146.241.88.137])
+        with ESMTP id S234139AbiKPUfo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 15:35:44 -0500
+Received: from smtpcmd0986.aruba.it (smtpcmd0986.aruba.it [62.149.156.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C4933AE7B
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 12:35:41 -0800 (PST)
+Received: from localhost.localdomain ([146.241.88.137])
         by Aruba Outgoing Smtp  with ESMTPSA
-        id vP0KouklmEclovP0LoJbVb; Wed, 16 Nov 2022 21:27:29 +0100
+        id vP8FomxyItoIqvP8Goagxh; Wed, 16 Nov 2022 21:35:40 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1668630449; bh=+JRtOayWKQNzm8a7ydAMoZlnFkRlaIc41mGw4qjaIcg=;
-        h=Date:MIME-Version:Subject:To:From:Content-Type;
-        b=Jc967SzOu/+JXcL+rDLtzghtLQemHymhCNUkM1LC8qNXTXAOLw+WwT7B2WhYy9JpH
-         K/xpY/hUPBie2CO+4m0KLzjj27C2rHILmX0nnp7xT7OVABjsyJaJ3ZArmlZEV7ehcy
-         n597koKqMI853DvvvcZSYBmgK+eHqr8XJm0v3PW6jQRCWozoW0eqDiYYV3oD4BJ775
-         udUcnRS1+bubwimb4iDg5bK4dq/UOrq9XqCvbYOZ+wLiPAiLAP6J2ngz5GiFLyoNy3
-         qxYYtUJP7rOqFEZB00sa9DFmmABSeT3Zo+9W5yTB6Ud5Nw8WkNTgcfqOZrunHqF/IQ
-         q3vIZwkI/6SLQ==
-Message-ID: <4a31d860-0bd0-e1df-2b0a-93cad42d59f4@benettiengineering.com>
-Date:   Wed, 16 Nov 2022 21:27:28 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v2 2/4] clk: imx: imxrt1050: add IMXRT1050_CLK_LCDIF_PIX
- clock gate
-To:     Jesse Taube <mr.bossman075@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
+        t=1668630940; bh=Fh4mbulo6FHv5De1d10u87IV2cruNNbHjVbqsAACBS8=;
+        h=From:To:Subject:Date:MIME-Version;
+        b=AGDVwmtS3aJ0mmwTavxzSBolO1TgCarY9OpvselZDyrW430kWoEAophTNw8bdaRrq
+         UeHhLv5PaF+osPuQM9Xsy7XP+eu9Y8axIcHgZRJRwoTOSb93HX6GEpARpHC8aQ+ooX
+         ZfmuDQzrschCBUgYt7NART4xRWocA7Yq9+s7OPetTZ+91+OpD7xQ7pzqsIvpM72Dct
+         VxedLWvNM8rdt6daXInzNwD/ygQLD/QnVZwQ2dIG+yhT1SnFI4Sz6Og7praEtgf3nu
+         0p33HJcj3mDhGugFvGhOjMSjv+sU6wip1+ERTifKEts7AoqWOJiVBHdYgF/rZM6I6O
+         FbkAoQiDVGwCw==
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -46,84 +39,52 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>
-References: <20221115193244.10484-1-giulio.benetti@benettiengineering.com>
- <20221115193244.10484-2-giulio.benetti@benettiengineering.com>
- <b09ead30-3fc6-f00b-e157-8c753358d5d4@gmail.com>
-Content-Language: en-US
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-In-Reply-To: <b09ead30-3fc6-f00b-e157-8c753358d5d4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Bough Chen <haibo.chen@nxp.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Jesse Taube <mr.bossman075@gmail.com>
+Subject: [PATCH v3 1/4] clk: imx: imxrt1050: fix IMXRT1050_CLK_LCDIF_APB offsets
+Date:   Wed, 16 Nov 2022 21:35:17 +0100
+Message-Id: <20221116203520.8300-1-giulio.benetti@benettiengineering.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfE99GrT/syc0EXpp6Wjlrx6BMuFyfuaOS/bjNjHK2raoUdS/3sfzW0/J/EkBR0XtCEM2VcEo4VaU2QJ98dMxOVID3SgfylaBkF5nXwb1gK5MzQ0mGo8q
- pxhJmztbWZerTvlqYeNa3jwkbB4Nk50OvnFoThxFAqVfGlO3b4XOdtdUsI2bCYtOtVLPdJJxOoVR/3m3X7jqbUh4Sshp2ZeRj3u2FGlGophPVWMS1lm4a6BK
- O/Iz6qZ+ulYBBcqXjP1XvdQjCppiBz7lVYooXf6lj1vd71kD8iNSbIFmMg4mbwrhJok7feU9cqZtv4Ze8ieN8fqtsVguugVU5Mef29qZO/iXNe0CdD8Ujrjg
- vOKcv2G10ebQ+0RRX7bRdq/MW9AEJ5b/O/l2DaFOCXPTsvZixCZBOfpf0ygJqZUgH3nAoOCBZXQdjJZBPFrvSsToQ7mw/m2hgjG/8dlsNRO9lYsyNqn7A+fZ
- AybtBfZXdRUSgJwiRzDcGOG/khrWpmfwTHn60Gi5NhrgS/IWpAURqgiolAQfPmvH0PmCwsZLU0dksq9RzKAkbbH07nlHVeDzVQvbWE7ntBLNyjCaC/lk7vXQ
- CgP5YThxSSXYvbI6m8iWE+DCW5mpCjM1yHp5nQ8hmHzqeuV58MvCWGNFk8l4ikr9jB6r7bwk47FPLTYZN755zVuT9SOfiHGx3qUlAUPsmE/tCqpP6oVBnr0F
- Dr1c60IkoMYYJkNGJjnIDLIcWKgEYg3fnyToksthLkORIk1+DEL9cg==
+X-CMAE-Envelope: MS4xfAfxVgfJweJS6Vdvtz2HYiuEmyNRKGqCeoiUtpP+84sQyUnrk+eb21ftZA0ylW2DcVbxhyuERT/1QXde/oTq1AiAE6dN+PIsOmjOGhipYGnIOr4Hi3vr
+ ZifsOOxsA0tBeg9YZWBKSAvQ6cBKguWG3PVfoavLilLaFiLGiUJWsUB2Zxgt0hysUt4T5wvLdvaFhZagAZ9oiGIBtcArrne8EGw1WO4CsB9kumNvjp3E/r8s
+ jXq4/4IzK4Y6xVOYoB/MA1OjS8tbraBNpffVL1f4YLFF74OkrWRdeieAez/GhFigfZbgvzdFMHxSBiLuTd6Zzv3S9vm1stRRdFxo8t/maIHBt8tv5loakFZ5
+ P7rUMN4cM6GCaqDcHWAEkjFwnNiLKF4yQK/Lj+Ga2tiXt4WH9fIFb2WHJazbcQlHuniLkVL9uQncH2bvKG2TG/fsxYQeXwUMwnrRK9/CZ+gsNMYddYAW59RI
+ NxDai6GoWw+fDOjBMsUpMunL58vu9sFf77lEFicycuUPCE1z4SQOhUjlQxMVEd7YuxZ95cmSoUpwfYRtFdBfOncZdpt7lZRYN0LSe7m1SJ7kJvxAtUlj6+IR
+ YrLUFc0iBESDXTJwqjNI3DKlaHPpRn/drmVEfpJXIysPX/TyvjbxtTvFbhMiOPhQOjhZo01VyWNIyyzElKN3bEpEIDnz+qm9idr5iZBDP0lXIY9SpxXbY8/c
+ RjGzOvdlx/4VdkjRDQy3Y4vl1LdhbSFXohGq4Z8t+WmFEUtHVjR8ST2fsTissdnIIxCxYxcIMDadQoRy/eJndI7p8lJ+HnDQYBV8qZR3j7+DskyMrW/qQQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jesse,
+Fix IMXRT1050_CLK_LCDIF_APB offsets.
 
-On 15/11/22 21:43, Jesse Taube wrote:
-> 
-> 
-> On 11/15/22 14:32, Giulio Benetti wrote:
->> Cc: Jesse Taube <mr.bossman075@gmail.com>
->> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
->> ---
->> V1->V2:
->> * nothing done
->> ---
->>   drivers/clk/imx/clk-imxrt1050.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/imx/clk-imxrt1050.c 
->> b/drivers/clk/imx/clk-imxrt1050.c
->> index 26108e9f7e67..39f77c03b892 100644
->> --- a/drivers/clk/imx/clk-imxrt1050.c
->> +++ b/drivers/clk/imx/clk-imxrt1050.c
->> @@ -141,6 +141,7 @@ static int imxrt1050_clocks_probe(struct 
->> platform_device *pdev)
->>       hws[IMXRT1050_CLK_USDHC2] = imx_clk_hw_gate2("usdhc2", 
->> "usdhc2_podf", ccm_base + 0x80, 4);
->>       hws[IMXRT1050_CLK_LPUART1] = imx_clk_hw_gate2("lpuart1", 
->> "lpuart_podf", ccm_base + 0x7c, 24);
->>       hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", 
->> "lcdif_podf", ccm_base + 0x70, 28);
->> +    hws[IMXRT1050_CLK_LCDIF_PIX] = imx_clk_hw_gate2("lcdif_pix", 
->> "lcdif", ccm_base + 0x74, 10);
-> I think it makes sense to squash this with PATCH1 because it changes the 
-> same file. It also will make the change more understandable as I swapped 
-> the offsets for PIX clock and APB clock accidentally. 
+Cc: Jesse Taube <mr.bossman075@gmail.com>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+V1->V2:
+* nothing done
+V2->V3:
+* added commit log and not only subject as suggested by Jesse Taube
+---
+ drivers/clk/imx/clk-imxrt1050.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I would not squash them since on "Patch 1/4" fixes something, while
-"Patch 2/4" adds something.
-
-> I'm not sure if 
-> this is necessary but I think there should be a commit description. 
-
-You're right and same goes for all patches, I keep forgetting.
-
-Sorry for the noise.
-
-Thank you
-Best regards
+diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+index 9539d35588ee..26108e9f7e67 100644
+--- a/drivers/clk/imx/clk-imxrt1050.c
++++ b/drivers/clk/imx/clk-imxrt1050.c
+@@ -140,7 +140,7 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+ 	hws[IMXRT1050_CLK_USDHC1] = imx_clk_hw_gate2("usdhc1", "usdhc1_podf", ccm_base + 0x80, 2);
+ 	hws[IMXRT1050_CLK_USDHC2] = imx_clk_hw_gate2("usdhc2", "usdhc2_podf", ccm_base + 0x80, 4);
+ 	hws[IMXRT1050_CLK_LPUART1] = imx_clk_hw_gate2("lpuart1", "lpuart_podf", ccm_base + 0x7c, 24);
+-	hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", "lcdif_podf", ccm_base + 0x74, 10);
++	hws[IMXRT1050_CLK_LCDIF_APB] = imx_clk_hw_gate2("lcdif", "lcdif_podf", ccm_base + 0x70, 28);
+ 	hws[IMXRT1050_CLK_DMA] = imx_clk_hw_gate("dma", "ipg", ccm_base + 0x7C, 6);
+ 	hws[IMXRT1050_CLK_DMA_MUX] = imx_clk_hw_gate("dmamux0", "ipg", ccm_base + 0x7C, 7);
+ 	imx_check_clk_hws(hws, IMXRT1050_CLK_END);
 -- 
-Giulio Benetti
-CEO/CTO@Benetti Engineering sas
-
-> Otherwise
-> Acked-by: Jesse Taube <mr.bossman075@gmail.com>
-> 
-> Thanks,
-> Jesse Taube
->>       hws[IMXRT1050_CLK_DMA] = imx_clk_hw_gate("dma", "ipg", ccm_base 
->> + 0x7C, 6);
->>       hws[IMXRT1050_CLK_DMA_MUX] = imx_clk_hw_gate("dmamux0", "ipg", 
->> ccm_base + 0x7C, 7);
->>       imx_check_clk_hws(hws, IMXRT1050_CLK_END);
+2.34.1
 
