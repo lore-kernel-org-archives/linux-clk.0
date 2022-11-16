@@ -2,109 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D790CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93DAC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232973AbiKPIvV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 03:51:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
+        id S233322AbiKPIv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 03:51:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233364AbiKPIvP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:51:15 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15981A80D
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:51:13 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id s24so20918713ljs.11
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=16W+WhRYw2qO31HAZVLt3mv3/qC3AjEWZLnL5iEaKNw=;
-        b=E/eIyOzpn4tkTNxnGMFFoQYJH4B0F+2EkASmXoGGnp0TON6UlNT4E62dHdhJcPkyTl
-         gTsTfb4lslvmv9HrRS46q0wDd3YlWja541Jv7XiZo2sAm7pvnPWMBFeg/QFv34JOZ0I5
-         E3CGyZ4T45NkaNSS3ORtC/aHMfgf7gkreKrbYW0XWmCZxDtQ5js7ZGD3JdqzqvtPIubt
-         rxk8wlN52PBtx1bf1tn99wUhlLUw/yGzm56OH3KM7uxH+mBE0caeuoik58wWkIJoq3E/
-         CjSp9onVDgRefhG+vY8fgNEsfnBY2N4vYl4zljUul7jM66pHXgNhxzA/spMqzD5fzDV+
-         UhOw==
+        with ESMTP id S232045AbiKPIv0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:51:26 -0500
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A18C19C17;
+        Wed, 16 Nov 2022 00:51:25 -0800 (PST)
+Received: by mail-qk1-f170.google.com with SMTP id x21so11219429qkj.0;
+        Wed, 16 Nov 2022 00:51:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=16W+WhRYw2qO31HAZVLt3mv3/qC3AjEWZLnL5iEaKNw=;
-        b=TG8iMBFSTW5qnZHmwkK/UMWTSga/ypcXhH3zx1npzQE7SgEP7Bv5h3oKTwAhHIP8I4
-         jZbKNclUiENKmw58nG7nzLswfPfhYDjtu4yhb8MJ1CY3SJrxI5j79yoOU176i7bSZMgD
-         9oyWPsenNaTnVdTg/T9GBEdaWRAP/A1Z0JWR0IqvfMzNLHWRPJ4fdPNqMT6nPVBUBlYq
-         K3jo1cMgWdNoAJJnLsAa+ls4Vp195oqVznXq5CE6ZhN4NMid4KXV7S6FEUosWGtPfjTT
-         cLlQsabceb+vbVYicU75Sbp0fFtTqTXcZb+cHRU56ZyEhau164VQ/geJhOKHNxxezPld
-         X40g==
-X-Gm-Message-State: ANoB5pmEYl+aId/sPjYUfg4hhTDQhSyo9cLdbHpT0UCOkRw/FQEUt0kS
-        E4SsvQaisZySorE5YVHJOOCjqA==
-X-Google-Smtp-Source: AA0mqf4HK9tHUA7GTdHjmreR9R0RVHvQFj1mBQwdl6HN86KkMOofMEERzF1AQ7Y+70Nt//u6fsBn4A==
-X-Received: by 2002:a2e:b5b6:0:b0:277:394:34e with SMTP id f22-20020a2eb5b6000000b002770394034emr6798698ljn.18.1668588672098;
-        Wed, 16 Nov 2022 00:51:12 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id q9-20020a2e84c9000000b0026dced9840dsm2820895ljh.61.2022.11.16.00.51.11
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQu4Kk2VsAJA/MwzBFNdfwCCKiskjqEECAV5YXUKBl0=;
+        b=3+SdDdWVIdgHg+BPtj0En8ex0aZMy0RY/vOFu35sOKrh/n9NOTngM87XsiVq/11cIf
+         myAQoz7gL8gydwPjj1s1LD9CrSlPyZJCwlzrDoU2cPZZXSU1ZJRf7b0PJO3/iFlVK+J5
+         27TUyBzpJFPtLEYMiaJsztNRVuUmDiAuoLAwiv471dbF+ztDs/8t9uuwvGDxZ9EELUIz
+         9+ciYFMRAlHqz1Vs9shyF1OFmftD5r2bJYSPCykECOa5kPYsyktHscXWGLOL6MYWdqeM
+         BXNCE08TueczSxcrm58lCamlLwNd03xfxMURFIgUjvTdkqKJxvK1gYuq1RE1oa0YbeIV
+         BnuQ==
+X-Gm-Message-State: ANoB5pm1LusAugHc//IVHMzczl+2bxDAUxMDp2kcz4MKZ36vzzFmluJJ
+        xH2TpXzRSIzsZ+G2TJWEWkvUtldHjkwKSA==
+X-Google-Smtp-Source: AA0mqf7xKyaPimgenMIqplwMStWHpyoWD+X4MgPtzcG2aaUVND4AHhhfv37J5ZPzn/Gb0nkCRZxQ6Q==
+X-Received: by 2002:a05:620a:15ae:b0:6ea:3fa0:bbfb with SMTP id f14-20020a05620a15ae00b006ea3fa0bbfbmr18218551qkk.473.1668588684352;
+        Wed, 16 Nov 2022 00:51:24 -0800 (PST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id bp32-20020a05620a45a000b006fbaf9c1b70sm376197qkb.133.2022.11.16.00.51.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 00:51:11 -0800 (PST)
-Message-ID: <451f71d7-f921-e0ac-75bc-5e42db4bd200@linaro.org>
-Date:   Wed, 16 Nov 2022 09:51:10 +0100
+        Wed, 16 Nov 2022 00:51:24 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-382f0906929so69848417b3.10;
+        Wed, 16 Nov 2022 00:51:23 -0800 (PST)
+X-Received: by 2002:a81:4ed2:0:b0:370:202b:f085 with SMTP id
+ c201-20020a814ed2000000b00370202bf085mr20953147ywb.502.1668588683661; Wed, 16
+ Nov 2022 00:51:23 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Alex Helms <alexander.helms.jy@renesas.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-        geert+renesas@glider.be
-References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
- <20221115192625.9410-2-alexander.helms.jy@renesas.com>
- <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
- <CAMuHMdX-tziOhCLi-_s_MjPcHr4OW9=xA9xDVgf+fUya1R6TzA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAMuHMdX-tziOhCLi-_s_MjPcHr4OW9=xA9xDVgf+fUya1R6TzA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20221114111513.1436165-1-herve.codina@bootlin.com> <20221114111513.1436165-7-herve.codina@bootlin.com>
+In-Reply-To: <20221114111513.1436165-7-herve.codina@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 16 Nov 2022 09:51:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUzRqaAYZou5y6GivUcTfSAOx=ETDZXHhdK=iTGohUZNQ@mail.gmail.com>
+Message-ID: <CAMuHMdUzRqaAYZou5y6GivUcTfSAOx=ETDZXHhdK=iTGohUZNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] ARM: dts: r9a06g032: Add the USBF controller node
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/11/2022 09:34, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
-> 
-> On Wed, Nov 16, 2022 at 9:20 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> On 15/11/2022 20:26, Alex Helms wrote:
->>> Add dt bindings for the Renesas PhiClock clock generator.
->>>
->>
->> Subject: drop second, redundant "bindings"
->>
->>> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
->>> ---
->>>  .../bindings/clock/renesas,phiclock.yaml      | 81 +++++++++++++++++++
->>>  MAINTAINERS                                   |  5 ++
->>>  2 files changed, 86 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
->>> new file mode 100644
->>> index 000000000..2b36534d3
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
->>
->> Filename based on compatible.
-> 
-> Looks like there are more of them, so I guess the family name is fine?
+On Mon, Nov 14, 2022 at 12:15 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> Add the USBF controller available in the r9a06g032 SoC.
 >
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-If you are sure, then yes. Can we add them now? If not, it's also fine.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
