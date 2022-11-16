@@ -2,222 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C95C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 16:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8DBC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 18:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233483AbiKPQiR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 11:38:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        id S238685AbiKPSuf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 13:50:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234332AbiKPQhp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 11:37:45 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D005E9CB
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 08:31:34 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id l6so17036909pjj.0
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 08:31:34 -0800 (PST)
+        with ESMTP id S238629AbiKPSuJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 13:50:09 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A418682AD;
+        Wed, 16 Nov 2022 10:46:29 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id bs21so31404585wrb.4;
+        Wed, 16 Nov 2022 10:46:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i88IAcIsdYCAGoTCPZugxj0xQwcF+5Ggaj25XSDy32Y=;
-        b=zT0jurnm2DTlXGXq5Ie4QhTJEt7bwGvu7ggwmjVq6S9LkHxh4/rG7Cbi0h/tTAPBBz
-         JamaDghbKVArTvGUBNF8bA8Qws0qyjVRmwmyWBldUG2GZCA2Ro5c5YhpDxI1ezHJNai9
-         EqGg2pkrGdpWdaw0EWaLz8yBkGEDCq5pB6+Ug+OBk7vqidXoobOlkUx32nLyuEL0Zf53
-         8+Xzbyxknl0IAqTj03v/k812nJwws9k58UHT9/K7Kp9kQ9SoRh7JBa/JyXecbpzKgSWL
-         YgAIG2iqYGRd/9Pgjz42+XPkiEpbRQJyid2qVwI6BSR87shYy5MjQlVO+o8GhVdRMa5G
-         5+BQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TwJWWDBntVeku1uedvJVLfXfsM4W2+ZHodqQlFwIwe4=;
+        b=OibLO0sDtzDXMimFfooed4Mm/dgLbyq2mjRVnOCEfks0t5txdFiJxkccrWJg+aTekg
+         cqkVzTwGUJd9LIZKW/dOjzSgdt3CBPQzoEf3ud1bClR3NCT7/Si6Xs1T6FBIY8u1z0gt
+         EDh6NZvFsWXMQnNRtP13l40LtyCIpikqDBDTB2M9qboqOQnKoA5XGTizcEAPqgxwmxwy
+         hNMqXThGe/Cx1I7nnW5+3bf2laRThvjIPtus3c0JOPGcrWqLBjg0rkYAZ4nSVIKkR6Wb
+         32uPcg/u5KoO6pdoKmx4iyPR8Dpls+VRwd9z5a0x3oIxglYWChXDk4JghpMdCuObz/lJ
+         srsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i88IAcIsdYCAGoTCPZugxj0xQwcF+5Ggaj25XSDy32Y=;
-        b=3jFbOHHS2zFYrlB9Y9tbGx4NJXbf3/k7AEXLUv3/j9CMJFbbjsEdaUbwKm8T2Xb1l0
-         +PN58XkK9FTbRlzBGwnfdgJVIHoaM2SW7JAbGischKZbb1NhVsDVYDZOWD+YkWZjAjPD
-         8VZ66RUohwDz/5Fmg2UuQ4s2wWKG5qWQi9dQECCew3SbOGPkoaSkR000ZIklMzZpN3ko
-         8+a8v/A3oQ2zvdHGLLo319RmZJO55kJUVWB3k/cJKYG7d0ykbjwto6JJKVmqLzgVG+A4
-         n6mNODhDfMULEbRKkf87VdktYRmZpAngK1EVMSp98uvMgnTf4BZeqJfnGaHXWWU7TLzm
-         g+mw==
-X-Gm-Message-State: ANoB5pme/LiMP7Y2QuLkriFMcJNL5+MzkdPXUxg7AL1gQs4faJa5++47
-        G+DrF8ibUVrNrpuqS4IqF7BbFuJUcMndtHG6XIg+3A==
-X-Google-Smtp-Source: AA0mqf5FcJJ32RgDlv7+0aZYCZT7Y4FBdmZlrgnvymgpUnY37sphc3Xa5E7ASdBVpGmj5gOTMwDKopzW5NdSSFOYebs=
-X-Received: by 2002:a17:902:a584:b0:186:be05:798e with SMTP id
- az4-20020a170902a58400b00186be05798emr9597038plb.37.1668616293556; Wed, 16
- Nov 2022 08:31:33 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TwJWWDBntVeku1uedvJVLfXfsM4W2+ZHodqQlFwIwe4=;
+        b=In48yipxG1X7iOfiNXlwjl5JPrPBM6lB7m4EKmo9bjqZmpNCBzBy5iz/E8cz7ffmqz
+         1oqOn19wkAfheQI93zm0XoVHq4zRy41vjFvowR4kHRDSl5eCr3t884GO0vUYnSNJblzA
+         gM0gqnx0W3vW2V5IzDvBmMqlYNBqAdKgTjAZM1BmfjUmzqbTwRSsPCdCeg/y52P6E/lZ
+         Dbs+8OWXeZIxt3K/QkZUa/A2hIv44t7Xiio6qsDB9lqnxahm8kEhO6nhRb3vK2AlFIDk
+         7QQzicRabVafSmMVmYfpfoKx3TVIVpzWTGAf+rduZkeqH4OJY0UHV1Nc1YAZIBTjJjRf
+         F7xA==
+X-Gm-Message-State: ANoB5pm3i/pooeuBeBO4zwKxgpbjhtUXfdYjpXs122VfdBxybDMTr/rX
+        w6ZS4MimwfisLoQmm3COouo=
+X-Google-Smtp-Source: AA0mqf4JvHTxi8KK+MvHKwXoWZs8vKCo+lLf+kIDv9+vjextNU3TcfsfMIZRw+SXCq7BnCmhY9Z9SQ==
+X-Received: by 2002:a5d:4589:0:b0:236:698d:9c44 with SMTP id p9-20020a5d4589000000b00236698d9c44mr14667418wrq.571.1668624380454;
+        Wed, 16 Nov 2022 10:46:20 -0800 (PST)
+Received: from kista.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
+        by smtp.gmail.com with ESMTPSA id e21-20020a05600c4b9500b003c5571c27a1sm3165422wmp.32.2022.11.16.10.46.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 10:46:20 -0800 (PST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Wei Li <liwei391@huawei.com>
+Cc:     linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, huawei.libin@huawei.com
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: Correct the header guard of ccu-sun8i-v3s.h
+Date:   Wed, 16 Nov 2022 19:46:19 +0100
+Message-ID: <2259258.ElGaqSPkdT@kista>
+In-Reply-To: <20221108094335.3597008-1-liwei391@huawei.com>
+References: <20221108094335.3597008-1-liwei391@huawei.com>
 MIME-Version: 1.0
-References: <20221108013517.749665-1-marex@denx.de> <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
- <52578b45-cf4c-e949-b2b1-a0f251815337@denx.de> <CAPDyKFrQ0Uvhsa2AXwTdzOC1xhQ6qjRP=1TzVXC3StLv5FOoBA@mail.gmail.com>
- <cf304d09c26416eb286f03bfe1e292aa8399b349.camel@pengutronix.de>
-In-Reply-To: <cf304d09c26416eb286f03bfe1e292aa8399b349.camel@pengutronix.de>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 16 Nov 2022 17:30:56 +0100
-Message-ID: <CAPDyKFqONWFj86FbhhGXmxVTMvdwdwWUNLDqEK5gg2-bDitmxg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off callbacks
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Marek Vasut <marex@denx.de>, linux-pm@vger.kernel.org,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Len Brown <len.brown@intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Martin Kepplinger <martink@posteo.de>,
-        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 16 Nov 2022 at 14:25, Lucas Stach <l.stach@pengutronix.de> wrote:
->
-> Hi Ulf,
->
-> Am Mittwoch, dem 16.11.2022 um 13:41 +0100 schrieb Ulf Hansson:
-> > + Stephen Boyd
-> >
-> > On Mon, 14 Nov 2022 at 21:32, Marek Vasut <marex@denx.de> wrote:
-> > >
-> > > On 11/14/22 20:40, Ulf Hansson wrote:
-> > > > On Tue, 8 Nov 2022 at 02:35, Marek Vasut <marex@denx.de> wrote:
-> > > > >
-> > > > > Currently it is possible that a power domain power on or off would claim
-> > > > > the genpd lock first and clock core prepare_lock second, while another
-> > > > > thread could do the reverse, and this would trigger lockdep warning.
-> > > >
-> > > > I am not quite sure I fully understand. In this case is the lockdep
-> > > > warning relevant or just something that we want to silence?
-> > >
-> > > This is a valid problem, see patches 2/3 and 3/3 for details too.
-> > >
-> > > > > Introduce new callbacks, .power_pre/post_on() and .power_off_pre/post(), which
-> > > > > are triggered before the genpd_lock() and after genpd_unlock() respectively in
-> > > > > case the domain is powered on and off. Those are meant to let drivers claim
-> > > > > clock core prepare_lock via clk_*prepare() call and release the lock via
-> > > > > clk_*unprepare() call to always assure that the clock and genpd lock ordering
-> > > > > is correct.
-> > > >
-> > > > To me, this sounds like a problem that may be better fixed by trying
-> > > > to model the parent/child-domains in a more strict way, through genpd.
-> > > >
-> > > > There is a comment in the code in imx8mp_blk_ctrl_probe() that seems
-> > > > to be pointing in this direction too.
-> > > >
-> > > > "* We use runtime PM to trigger power on/off of the upstream GPC
-> > > >    * domain, as a strict hierarchical parent/child power domain
-> > > >    * setup doesn't allow us to meet the sequencing requirements......"
-> > > >
-> > > > I am wondering about what those "sequencing requirements" are - and
-> > > > whether it could make better sense to fix these issues instead?
-> > >
-> > > Here is the lockdep splat:
-> > >
-> > > https://lore.kernel.org/all/Y1cs++TV2GCuh4tS@pendragon.ideasonboard.com/
-> >
-> > Yes, that certainly helped!
-> >
-> > >
-> > > It really is a problem between the clock and genpd subsystem locks, they
-> > > can be claimed in arbitrary order, see patch 2/3 and 3/3.
-> > >
-> > > I think that might clarify what I am attempting to solve here.
-> >
-> > Let me try to put some more words behind this, to make sure I have
-> > understood correctly, but also to easier allow more people to chim in.
-> >
-> > Note that, in your commit messages in patch2 and patch3, you are
-> > mentioning clk_disable_unused(), but that's not what the lockdep splat
-> > above is pointing at. Although, it seems the clk_disable_unused()
-> > thingy, would trigger a similar problem for this configuration for the
-> > imx8mp platform.
-> >
-> > Case #1:
-> > Triggered from the workqueue, the genpd_power_off_work_fn() ends up
-> > calling clk_bulk_unprepare(), from a genpd's ->power_off() callback(),
-> > which has been assigned to imx8mp_blk_ctrl_power_off(). Before genpd's
-> > ->power_off() is called, the genpd-lock(s) have been acquired, thus we
-> > are trying to acquire the global clk-prepare lock via
-> > clk_bulk_unprepare() while holding the genpd-lock(s).
-> >
-> > Case #0:
-> > The "drm driver" calls clk_set_rate(), thus we start by acquiring the
-> > global clk-prepare lock. Internally in the clock frameworks, the
-> > clk_set_rate() path continues to call clk_pm_runtime_get(). In this
-> > case, the corresponding clock provider's struct *device, seems to be
-> > attached to a genpd too. This means the call to clk_pm_runtime_get()
-> > ends up in genpd_runtime_resume(), which needs to acquire the
-> > genpd-lock(s) before it continues to call genpd_power_on() to power-on
-> > the PM domain. In other words, we try to acquire genpd-lock(s) while
-> > holding the global clk-prepare lock.
-> >
-> > The solution to fix these problems that you suggest in the $subject
-> > patch, isn't the direction I want this to take. The new callbacks are
-> > prone to be abused and it would also require genpd provider specific
-> > code to fix the problems. Of course, we need things to work, but let's
-> > look at a couple of options first. See below.
-> >
-> > 1)
-> > In a way, it looks like we have a circular description in DT of the
-> > hierarchy of the clock- and genpd providers, which is a bit awkward in
-> > my opinion. I was browsing the imx8mp DTS files to find this, but I
-> > couldn't. Can you perhaps point me to the DTS file(s) you are using? I
-> > can try to have a look so see if this could be arranged differently.
->
-> The dependency chain isn't circular, it just happens to converge in the
-> clock framework and its single big hammer lock. The chain looks some
-> thing like this:
->
-> 1. DRM driver request pixel clock (clk_prepare_enable ->
-> clk_prepare_mutex)
-> 2. Pixel clock is supplied from the PHY, which is in a power domain, so
-> in order to supply the clock it needs to runtime resume
-> 3. genpd powers up the PHY blk-ctrl domain, which again is inside a
-> GPCv2 power domain
-> 4. genpd powers up GPCv2 domain, which needs a specific clock to be
-> running in order to power up the domain, so it does a
-> clk_prepare_enable, which now happens to hit the clk_prepare_mutex
-> taken in step 1.
->
-> As the runtime resume/suspend for the PHY may go through a workqueue we
-> have two different contexts trying to take the clk_prepare_mutex, which
-> is what lockdep complains about.
+Dne torek, 08. november 2022 ob 10:43:35 CET je Wei Li napisal(a):
+> Rename the header guard of ccu-sun8i-v3s.h from _CCU_SUN8I_H3_H_ to
+> _CCU_SUN8I_V3S_H_ what corresponding with the file name.
+> 
+> Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
+> Signed-off-by: Wei Li <liwei391@huawei.com>
 
-I see. Thanks for bringing some more clarity in this.
+Applied, thanks!
 
-So the above is described in some of the in-kernel DTS(i) files too?
+Best regards,
+Jernej
 
->
-> >
-> > 2)
-> > What we have seen from other use cases [1], is that calling
-> > pm_runtime_get|put*(), while holding subsystem specific locks (like
-> > the genpd-lock(s) and clk-prepare lock), isn't working very well. So,
-> > I am thinking that we could have a look at the runtime PM deployment
-> > in the clock framework, to see if we can avoid holding the global
-> > clk-prepare lock, while calling into runtime PM. I believe that should
-> > fix these problems too.
->
-> I don't see any straight forward way to avoid the clock framework calls
-> in the chain laid out above. I would be happy if anyone has some good
-> suggestions.
 
-I think you misunderstood what I proposed above. What I was suggesting
-is that we could re-work the runtime PM deployment in the clock
-framework.
-
-In this way, we would not be holding the global clk-prepare lock while
-trying to power-on the phy and its PM domain. Wouldn't that work?
-
-Kind regards
-Uffe
