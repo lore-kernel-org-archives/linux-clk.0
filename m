@@ -2,188 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71014C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A312FC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232678AbiKPIUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 03:20:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
+        id S232043AbiKPIeo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 03:34:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232000AbiKPIUa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:20:30 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F448614E
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:20:25 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id j4so28390010lfk.0
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:20:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=20QIWTDhxs5zpxfjzQDwrXucngPgVQ+JOvZAayYi6hk=;
-        b=ddqPFfDM59WUbI9URyKo7Wu9Vum3BpFnaox+hRouL9QzJqOse+muzQwkNGtVMlZ5Zs
-         wxElcJ87TL+rGlJ73eCySG5L4L9VBc9asBWfuy/rfOgkkHWrPqbRH/BESzcX51Mj1xoG
-         BclxmopYl0NXcYviJ9ogHWuvf80+psdHS8TUSzN6d+dDX/sKSrcDpp9rjzl1gWQ0yF2Q
-         bnRxatjHV7HgjKNp3lhDacF8O9SNnoyyEke2jZeDhcOtRMuTwR6xyKtR7/lmDwoqBNJp
-         E42sIi/PYUnzUulpPUoVshXgVheNlYOClOs6YSF+l/ndAZE5Ilq6VP9kEj33+/VK9ngm
-         Zy4g==
+        with ESMTP id S229942AbiKPIeo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:34:44 -0500
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386EEF29;
+        Wed, 16 Nov 2022 00:34:43 -0800 (PST)
+Received: by mail-qv1-f42.google.com with SMTP id mi9so11453889qvb.8;
+        Wed, 16 Nov 2022 00:34:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=20QIWTDhxs5zpxfjzQDwrXucngPgVQ+JOvZAayYi6hk=;
-        b=R08CZQxuhicCR0IGXm73qEpU6jwVFUPstpJtQgATCf9X1hiJu9b7rQzfV9YEzJICs6
-         7a9KwobBSG9wJcEpJiGYyWNu03pU/KxrBA+ljTaRi0H44wxWldUdCut6VPlYXyH3I8PX
-         kXT4rWSb7bksYEDDBwyq87tLSDgxvk3MAG2GUZ8WoM42PooczYota32T8GiCNZzNCvQ6
-         nR0KDeHpoeA9YvJ+VFMcZd38juOlEDFXjTdTkDKPG8RWByAe20J04IouOW4GgQinJRz3
-         Wz0I8RGlAScSb92JMp66GNyRl1qONVkAfiFX66JU/g0JulTPQ9MClzbmVuQXKFRSO8Q1
-         x7eQ==
-X-Gm-Message-State: ANoB5pm+bMVlkaLllXPWLMdDBvdYL3libLBrqgs9ljGRLoO4K0Pq1H1P
-        bzyZgBUFqYzAsIsziZSS6jhvBw==
-X-Google-Smtp-Source: AA0mqf6Z7C14uz2nU+dWtpSFYMdf+a93HGeoSotCFIFvFrqMsbC8WgrVJY+5FdIxsakJ8XPLIIzwQQ==
-X-Received: by 2002:ac2:4ac9:0:b0:4ac:102e:5c93 with SMTP id m9-20020ac24ac9000000b004ac102e5c93mr7889381lfp.352.1668586823210;
-        Wed, 16 Nov 2022 00:20:23 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id g16-20020a19e050000000b00494a11c5f52sm2503698lfj.256.2022.11.16.00.20.22
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wJK9b4B7NWAtgof3K5gbwAvDcs0xP62iIN8fCNsFCJk=;
+        b=8RxxdvuBGtbhM2CGKbUq5wQQcC40IGXjF6b3nzQpm9ooy0hXhxNtOA+DvrvefL6ijf
+         Vc8E/xx5kHuQAom2y98UPbi0G3YngvJGY3k8Nl8LUj+bbfNzeXKVmas/vmUamcV8Enhw
+         jL2DHaUfFA9iZJUyFQr8eZodESmDgeRLtjTmE/rMpL179Kt5fPV0GNM5TOMtJFISW/Wc
+         LmiB5vO4T0FTGSc1qIGovyOa+8qSfKYscncs1F3ui8Q+GLZoy1vHArJYAFvaC7IGeVeA
+         zPpJzo90148YFaHJSpBKmsOrcyFXleYTWY6ijrE/bdAiO7mar6OQd5xtQ5kXiFxNDaZE
+         UBzA==
+X-Gm-Message-State: ANoB5pl0cuK7e/OnMF3aGzYiBf4uPXpncKJbLg70W+lpKGsqiAFC+1rz
+        ITn8jjye+/kFnZZ+yjiTFC4l9vxHjXx/eQ==
+X-Google-Smtp-Source: AA0mqf5aSw1ewdDDHXoaTchUWFQNPxoquCEmartcZ11rgaNikOEntsuHw/7C/GsDditnMKitGI2Yhw==
+X-Received: by 2002:a0c:9042:0:b0:4bb:e74a:f63b with SMTP id o60-20020a0c9042000000b004bbe74af63bmr20387656qvo.15.1668587682148;
+        Wed, 16 Nov 2022 00:34:42 -0800 (PST)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id w8-20020a05620a444800b006fb7f94a65bsm4985318qkp.44.2022.11.16.00.34.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 00:20:22 -0800 (PST)
-Message-ID: <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
-Date:   Wed, 16 Nov 2022 09:20:21 +0100
+        Wed, 16 Nov 2022 00:34:41 -0800 (PST)
+Received: by mail-yb1-f180.google.com with SMTP id 136so4485957ybn.1;
+        Wed, 16 Nov 2022 00:34:41 -0800 (PST)
+X-Received: by 2002:a25:cb4a:0:b0:6dd:b521:a8f2 with SMTP id
+ b71-20020a25cb4a000000b006ddb521a8f2mr19813619ybg.380.1668587681340; Wed, 16
+ Nov 2022 00:34:41 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
-Content-Language: en-US
-To:     Alex Helms <alexander.helms.jy@renesas.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be
 References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
- <20221115192625.9410-2-alexander.helms.jy@renesas.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221115192625.9410-2-alexander.helms.jy@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20221115192625.9410-2-alexander.helms.jy@renesas.com> <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+In-Reply-To: <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 16 Nov 2022 09:34:30 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX-tziOhCLi-_s_MjPcHr4OW9=xA9xDVgf+fUya1R6TzA@mail.gmail.com>
+Message-ID: <CAMuHMdX-tziOhCLi-_s_MjPcHr4OW9=xA9xDVgf+fUya1R6TzA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alex Helms <alexander.helms.jy@renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        geert+renesas@glider.be
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/11/2022 20:26, Alex Helms wrote:
-> Add dt bindings for the Renesas PhiClock clock generator.
-> 
+Hi Krzysztof,
 
-Subject: drop second, redundant "bindings"
+On Wed, Nov 16, 2022 at 9:20 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 15/11/2022 20:26, Alex Helms wrote:
+> > Add dt bindings for the Renesas PhiClock clock generator.
+> >
+>
+> Subject: drop second, redundant "bindings"
+>
+> > Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> > ---
+> >  .../bindings/clock/renesas,phiclock.yaml      | 81 +++++++++++++++++++
+> >  MAINTAINERS                                   |  5 ++
+> >  2 files changed, 86 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+> > new file mode 100644
+> > index 000000000..2b36534d3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+>
+> Filename based on compatible.
 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> ---
->  .../bindings/clock/renesas,phiclock.yaml      | 81 +++++++++++++++++++
->  MAINTAINERS                                   |  5 ++
->  2 files changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
-> new file mode 100644
-> index 000000000..2b36534d3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+Looks like there are more of them, so I guess the family name is fine?
 
-Filename based on compatible.
+Gr{oetje,eeting}s,
 
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,phiclock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas PhiClock Clock Generator Device Tree Bindings
+                        Geert
 
-Drop "Device Tree Bindings"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +
-> +maintainers:
-> +  - Alex Helms <alexander.helms.jy@renesas.com>
-> +
-> +description: |
-> +  The Renesas PhiClock is a programmable I2C clock generator that provides
-> +  1 reference output and 2 clock outputs.
-> +
-> +  The driver supports spread spectrum but only if all configurations use the
-
-Driver as in Linux driver? Drop entire paragraph. Bindings are about
-hardware, not driver.
-
-> +  same spread spectrum parameters. If your configuration uses spread spectrum,
-> +  you must include renesas,ss-amount-percent, renesas,ss-modulation-hz, and
-> +  renesas,ss-direction in the device tree.
-> +
-> +properties:
-
-compatible goes always first. Start your schema from example-schema.yaml.
-
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xin-clkin
-
-Just "xin" or entirely drop.
-
-> +
-> +  clocks:
-> +    const: 1
-> +
-> +  compatible:
-> +    enum:
-> +      - renesas,9fgv1006
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  renesas,ss-amount-percent:
-> +    description: Spread spectrum absolute amount as hundredths of a percent, e.g. 150 is 1.50%.
-
-What? If this is percent then it cannot be hundreds of percent. Percent
-is percent. Use appropriate units.
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-
-> +    minimum: 0
-> +    maximum: 500
-> +
-> +  renesas,ss-modulation-hz:
-> +    description: Spread spectrum modulation rate in Hz
-> +    minimum: 30000
-> +    maximum: 63000
-> +
-> +  renesas,ss-direction:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: Spread spectrum direction
-> +    enum: [ down, center ]
-> +
-> +required:
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    ref25: ref25m {
-> +      compatible = "fixed-clock";
-> +      #clock-cells = <0>;
-> +      clock-frequency = <25000000>;
-> +    };
-
-Drop, it's obvious, isn't it?
-
-> +
-
-Best regards,
-Krzysztof
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
