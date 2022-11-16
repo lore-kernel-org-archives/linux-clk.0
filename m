@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBDEC43217
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 11:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA8BC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 11:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238806AbiKPLeE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 06:34:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50894 "EHLO
+        id S238363AbiKPLla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 06:41:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233693AbiKPLd2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 06:33:28 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E27F275E2
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 03:23:21 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id a5so26033225edb.11
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 03:23:21 -0800 (PST)
+        with ESMTP id S232496AbiKPLlB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 06:41:01 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83834875A
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 03:27:24 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id x102so10850532ede.0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 03:27:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j+J/SdbEViUXyY/VUeChCmLVo4mO3vOtwEtzDloRYdM=;
-        b=okELnb8eaaNB4E50NsZrZ3lFPDMdazxFdqdxxo7Mlbjixnr+uCKtrFGa19w9DSkMGb
-         R+/WVwkLC2gtw9QJOAbw79wc2iQZJ+RoYQOiLgCJtsB/l1WQs4llY0gH1gYO5yc8qFO6
-         771fN2VMS8hM+U24hy+Fgx/iXkJ6fkL6AnDoaf/wm0k56hN7AlnFadAAtitTFpo0Oy0m
-         iXIsUvu8vxF/RqJlToxl5kxYCKy6ChSbESvptsvf5X/revOnbLZ4KtSCeB54xsjGB829
-         HCQKmJcSmEhnl0rP78HyOrQh1axS6PwrsR2LyNZcdSxS2yk21ob1EYxhiyEcFe/RXCTG
-         OcFg==
+        bh=kBEe6J/PNu7It6u01bJ/j5wrzz9A2Et9pPRKKdqF238=;
+        b=wKRqf5aMNm9bNCbdu6eaIgZgIoh1yCNvlLEhQH230lh5vVDTcpKmcZCOKjEecVjtn2
+         khlY8Rs5d9ss4PsaaGgvMX/Yq2bBtEBuKN+fN6eEgrDSMj4Fwsjs7mHaxlRNZHtTo7PY
+         gfJrFY+oc8Tu8m8wfiR5ZUZ4hMYup7jAZ6PKBlr569E4C+jZmcDMPPOSovnioAJ4Cmmm
+         6o6uUg1dVF+XETc4hnC7fXWyztMAleTleTj0iEZjCNisH3AZCNF7yBbUIWlFq5UgZQyO
+         SLN3HeEM34EESrM7//Q0YbRiVdTnJBeGmUNTqL1bUq+2SZnX6qG47Tq2J0sJiOEOcVkB
+         yekQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=j+J/SdbEViUXyY/VUeChCmLVo4mO3vOtwEtzDloRYdM=;
-        b=5u5aS0SXaDMLOCGt5BlFLRrEgQW64ZVDgeQxdTj4/KWmpUXk9FI80H58h7xiP3d0yt
-         SA3kGlh4InWYhJkQhiRK5QSA6d5sKR/07zm8P6nAupA0g9GIoyBd1T+5xwoZkj1Q07SP
-         utklhvJ7xnoV2LZh79Ae5xdvzFpXbGcHl6ZPL6dcRItvAYxna37vjtZL7ifMyI4kPX7z
-         MCnwyzK03CZx5zuoK8sIiMgdQX4S4JIsTMDUjbvUUMq3WbliSq1mAqQgUFrCkKKOrNGp
-         ihZAxw147I5B4KNXQiWL9xbeahgHaGIhR/pY+n8/QHMDjB/sQP13hr5o/nvn3pXuOGYv
-         3sbw==
-X-Gm-Message-State: ANoB5pmO0M4slgVTlQd1VMl5yPJ5IqXaLd98JBu3JPgh1L5xzsDtW2/n
-        Kx+8NMtsOgvdxlsjVKlH6n9mFw==
-X-Google-Smtp-Source: AA0mqf6L3j4K6l4ggeXY5ki7+jE24lD4ek/f3w9lIh1wqj/7sbPQNOdA2Ov7fo0tAySe3mJw9qGO1A==
-X-Received: by 2002:a05:6402:1495:b0:461:b506:6b8a with SMTP id e21-20020a056402149500b00461b5066b8amr18646832edv.208.1668597799798;
-        Wed, 16 Nov 2022 03:23:19 -0800 (PST)
+        bh=kBEe6J/PNu7It6u01bJ/j5wrzz9A2Et9pPRKKdqF238=;
+        b=MO01EP/x9Kmq6zw0MjC+IB4su9OSl2Wa5QozUdVt3neJfo4grfEcOEWvkIfx/DPj3F
+         MOEqnD/kwp8iV5sbdbPvqks4DjRyzt676cd+QFbkaqYYoBnHqQiHLC9XYfJq6IBnQaJ7
+         3wNfokwwXblZdkdkLd3eyl+tmp7m/0u+4nhFE2fI7kbPRgd8aGcAiNOZ2QaISnL3OpsY
+         mmp1CX7l9KVZyOgm16HHaQVrnFuT+zd/HiF/nnyYsM7LVvR7M8zCnhYn4qycdZ3XjwK/
+         WmBm1LsAdw1qTKgfaV8/geDaF8Gmtr8mO7hlsdOQ8TWGOg/Ar6AM90k3qfxTGyr5XuT/
+         HQ6g==
+X-Gm-Message-State: ANoB5plW2g7JAl3Nt34nk0uflefumMcBrP+W5lGRkPLsBP1C3rKcerRl
+        OskWERoOZl7ZxiVP+VMGnQRsJw==
+X-Google-Smtp-Source: AA0mqf6HxpF68fsaUTd4I97V3xidhV6ZuecVnv28Mbb39lbNCcDmXflPXkGeCQzMqVNNDO261WBWxQ==
+X-Received: by 2002:a05:6402:4501:b0:461:ca0f:affc with SMTP id ez1-20020a056402450100b00461ca0faffcmr18234521edb.169.1668598043519;
+        Wed, 16 Nov 2022 03:27:23 -0800 (PST)
 Received: from [192.168.31.208] ([194.29.137.22])
-        by smtp.gmail.com with ESMTPSA id 2-20020a170906218200b007aed2057ea1sm6151124eju.167.2022.11.16.03.23.18
+        by smtp.gmail.com with ESMTPSA id y22-20020a056402171600b0046776f98d0csm6130593edu.79.2022.11.16.03.27.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 03:23:19 -0800 (PST)
-Message-ID: <9472d09b-b586-a687-86e9-feb0ad5972b6@linaro.org>
-Date:   Wed, 16 Nov 2022 12:23:12 +0100
+        Wed, 16 Nov 2022 03:27:22 -0800 (PST)
+Message-ID: <010238f2-f520-41b8-c2cf-d65e9c12160d@linaro.org>
+Date:   Wed, 16 Nov 2022 12:27:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.4.2
-Subject: Re: [PATCH 3/9] clk: qcom: Add LUCID_OLE PLL type for SM8550
+Subject: Re: [PATCH 7/9] clk: qcom: rpmh: Add support for SM8550 rpmh clocks
 To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -64,9 +64,9 @@ Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20221116104716.2583320-1-abel.vesa@linaro.org>
- <20221116104716.2583320-4-abel.vesa@linaro.org>
+ <20221116104716.2583320-8-abel.vesa@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20221116104716.2583320-4-abel.vesa@linaro.org>
+In-Reply-To: <20221116104716.2583320-8-abel.vesa@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,72 +76,152 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 16/11/2022 11:47, Abel Vesa wrote:
-> Add a LUCID_OLE PLL type for SM8550 SoC from Qualcomm.
+> Adds the RPMH clocks present in SM8550 SoC.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>   drivers/clk/qcom/clk-rpmh.c | 110 +++++++++++++++++++++++++++++-------
+>   1 file changed, 90 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 1da45a6e2f29..63975490ab54 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -579,6 +579,73 @@ static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
+>   	.num_clks = ARRAY_SIZE(sm8450_rpmh_clocks),
+>   };
+>   
+> +#define DEFINE_CLK_RPMH_FIXED(_platform, _name, _name_active,	\
+> +				  _parent_name, _name_active_parent,	\
+> +				  _div)					\
+> +	static struct clk_fixed_factor _platform##_##_name = {		\
+> +		.mult = 1,						\
+> +		.div = _div,						\
+> +		.hw.init = &(struct clk_init_data){			\
+> +			.ops = &clk_fixed_factor_ops,			\
+> +			.name = #_name,					\
+> +			.parent_data =  &(const struct clk_parent_data){ \
+> +					.fw_name = #_parent_name,	\
+> +					.name = #_parent_name,		\
+No need to introduce .name if we do DT properly from the get-go, I think
+
 
 Konrad
->   drivers/clk/qcom/clk-alpha-pll.c | 16 ++++++++++++++++
->   drivers/clk/qcom/clk-alpha-pll.h |  5 +++++
->   2 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 1973d79c9465..f9e4cfd7261c 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -155,6 +155,22 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->   		[PLL_OFF_TEST_CTL_U] = 0x30,
->   		[PLL_OFF_TEST_CTL_U1] = 0x34,
->   	},
-> +	[CLK_ALPHA_PLL_TYPE_LUCID_OLE] = {
-> +		[PLL_OFF_OPMODE] = 0x04,
-> +		[PLL_OFF_STATE] = 0x08,
-> +		[PLL_OFF_STATUS] = 0x0c,
-> +		[PLL_OFF_L_VAL] = 0x10,
-> +		[PLL_OFF_ALPHA_VAL] = 0x14,
-> +		[PLL_OFF_USER_CTL] = 0x18,
-> +		[PLL_OFF_USER_CTL_U] = 0x1c,
-> +		[PLL_OFF_CONFIG_CTL] = 0x20,
-> +		[PLL_OFF_CONFIG_CTL_U] = 0x24,
-> +		[PLL_OFF_CONFIG_CTL_U1] = 0x28,
-> +		[PLL_OFF_TEST_CTL] = 0x2c,
-> +		[PLL_OFF_TEST_CTL_U] = 0x30,
-> +		[PLL_OFF_TEST_CTL_U1] = 0x34,
-> +		[PLL_OFF_TEST_CTL_U2] = 0x38,
-> +	},
->   	[CLK_ALPHA_PLL_TYPE_RIVIAN_EVO] = {
->   		[PLL_OFF_OPMODE] = 0x04,
->   		[PLL_OFF_STATUS] = 0x0c,
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index f9524b3fce6b..2bdae362c827 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -18,6 +18,7 @@ enum {
->   	CLK_ALPHA_PLL_TYPE_AGERA,
->   	CLK_ALPHA_PLL_TYPE_ZONDA,
->   	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
-> +	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
->   	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
->   	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
->   	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
-> @@ -38,6 +39,8 @@ enum {
->   	PLL_OFF_TEST_CTL,
->   	PLL_OFF_TEST_CTL_U,
->   	PLL_OFF_TEST_CTL_U1,
-> +	PLL_OFF_TEST_CTL_U2,
-> +	PLL_OFF_STATE,
->   	PLL_OFF_STATUS,
->   	PLL_OFF_OPMODE,
->   	PLL_OFF_FRAC,
-> @@ -160,7 +163,9 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
->   extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
->   extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
->   extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
-> +#define clk_alpha_pll_fixed_lucid_ole_ops clk_alpha_pll_fixed_lucid_evo_ops
->   extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
-> +#define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
+> +			},						\
+> +			.num_parents = 1,				\
+> +		},							\
+> +	};								\
+> +	static struct clk_fixed_factor _platform##_##_name_active = {	\
+> +		.mult = 1,						\
+> +		.div = _div,						\
+> +		.hw.init = &(struct clk_init_data){			\
+> +			.ops = &clk_fixed_factor_ops,			\
+> +			.name = #_name_active,				\
+> +			.parent_data =  &(const struct clk_parent_data){ \
+> +					.fw_name = #_name_active_parent,\
+> +					.name = #_name_active_parent,	\
+> +			},						\
+> +			.num_parents = 1,				\
+> +		},							\
+> +	}
+> +
+> +DEFINE_CLK_RPMH_ARC(sm8550, xo_pad, xo_pad_ao, "xo.lvl", 0x03, 2);
+> +DEFINE_CLK_RPMH_FIXED(sm8550, bi_tcxo, bi_tcxo_ao, xo_pad, xo_pad_ao, 2);
+> +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk1, rf_clk1_ao, "clka1", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk2, rf_clk2_ao, "clka2", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk3, rf_clk3_ao, "clka3", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk4, rf_clk4_ao, "clka4", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk1, ln_bb_clk1_ao, "clka6", 2);
+> +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk2, ln_bb_clk2_ao, "clka7", 2);
+> +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk3, ln_bb_clk3_ao, "clka8", 2);
+> +
+> +static struct clk_hw *sm8550_rpmh_clocks[] = {
+> +	[RPMH_CXO_PAD_CLK]      = &sm8550_xo_pad.hw,
+> +	[RPMH_CXO_PAD_CLK_A]    = &sm8550_xo_pad_ao.hw,
+> +	[RPMH_CXO_CLK]		= &sm8550_bi_tcxo.hw,
+> +	[RPMH_CXO_CLK_A]	= &sm8550_bi_tcxo_ao.hw,
+> +	[RPMH_LN_BB_CLK1]	= &sm8550_ln_bb_clk1.hw,
+> +	[RPMH_LN_BB_CLK1_A]	= &sm8550_ln_bb_clk1_ao.hw,
+> +	[RPMH_LN_BB_CLK2]	= &sm8550_ln_bb_clk2.hw,
+> +	[RPMH_LN_BB_CLK2_A]	= &sm8550_ln_bb_clk2_ao.hw,
+> +	[RPMH_LN_BB_CLK3]	= &sm8550_ln_bb_clk3.hw,
+> +	[RPMH_LN_BB_CLK3_A]	= &sm8550_ln_bb_clk3_ao.hw,
+> +	[RPMH_RF_CLK1]		= &sm8550_rf_clk1.hw,
+> +	[RPMH_RF_CLK1_A]	= &sm8550_rf_clk1_ao.hw,
+> +	[RPMH_RF_CLK2]		= &sm8550_rf_clk2.hw,
+> +	[RPMH_RF_CLK2_A]	= &sm8550_rf_clk2_ao.hw,
+> +	[RPMH_RF_CLK3]		= &sm8550_rf_clk3.hw,
+> +	[RPMH_RF_CLK3_A]	= &sm8550_rf_clk3_ao.hw,
+> +	[RPMH_RF_CLK4]		= &sm8550_rf_clk4.hw,
+> +	[RPMH_RF_CLK4_A]	= &sm8550_rf_clk4_ao.hw,
+> +	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
+> +};
+> +
+> +static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
+> +	.clks = sm8550_rpmh_clocks,
+> +	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
+> +};
+> +
+>   static struct clk_hw *sc7280_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
+> @@ -694,29 +761,31 @@ static int clk_rpmh_probe(struct platform_device *pdev)
 >   
->   extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
->   #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+>   		name = hw_clks[i]->init->name;
+>   
+> -		rpmh_clk = to_clk_rpmh(hw_clks[i]);
+> -		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+> -		if (!res_addr) {
+> -			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+> -				rpmh_clk->res_name);
+> -			return -ENODEV;
+> -		}
+> +		if (hw_clks[i]->init->ops != &clk_fixed_factor_ops) {
+> +			rpmh_clk = to_clk_rpmh(hw_clks[i]);
+> +			res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+> +			if (!res_addr) {
+> +				dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+> +					rpmh_clk->res_name);
+> +				return -ENODEV;
+> +			}
+>   
+> -		data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
+> -		if (IS_ERR(data)) {
+> -			ret = PTR_ERR(data);
+> -			dev_err(&pdev->dev,
+> -				"error reading RPMh aux data for %s (%d)\n",
+> -				rpmh_clk->res_name, ret);
+> -			return ret;
+> -		}
+> +			data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
+> +			if (IS_ERR(data)) {
+> +				ret = PTR_ERR(data);
+> +				dev_err(&pdev->dev,
+> +					"error reading RPMh aux data for %s (%d)\n",
+> +					rpmh_clk->res_name, ret);
+> +				return ret;
+> +			}
+>   
+> -		/* Convert unit from Khz to Hz */
+> -		if (aux_data_len == sizeof(*data))
+> -			rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
+> +			/* Convert unit from Khz to Hz */
+> +			if (aux_data_len == sizeof(*data))
+> +				rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
+>   
+> -		rpmh_clk->res_addr += res_addr;
+> -		rpmh_clk->dev = &pdev->dev;
+> +			rpmh_clk->res_addr += res_addr;
+> +			rpmh_clk->dev = &pdev->dev;
+> +		}
+>   
+>   		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
+>   		if (ret) {
+> @@ -752,6 +821,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+>   	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
+>   	{ .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
+>   	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
+> +	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
+>   	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+>   	{ }
+>   };
