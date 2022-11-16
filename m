@@ -2,585 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D49BC4167B
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Nov 2022 23:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2610CC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 00:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229651AbiKOXiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Nov 2022 18:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40798 "EHLO
+        id S229643AbiKPAGh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Nov 2022 19:06:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231580AbiKOXiP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 18:38:15 -0500
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2101.outbound.protection.outlook.com [40.107.113.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42F62A27C;
-        Tue, 15 Nov 2022 15:38:12 -0800 (PST)
+        with ESMTP id S229561AbiKPAGg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2022 19:06:36 -0500
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2090.outbound.protection.outlook.com [40.107.114.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C80727B0C;
+        Tue, 15 Nov 2022 16:06:34 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wtw+WUclIkVKKE9Kz2fKR7lsBn3gaCeVAPzPvS8h3RR8ZW8wis/aPCIPmSoZXaq7bdJwK5NkIky4XmraBJPacc2XT3fhXYcvKl+lTvdhdhPj1UonY8Ino+zv4LU+qKBwwuo+BYmXbcWCrpFu4cV6FQZS4jBThOmBywQoLELg1I4Ssj7DtbiqvVT3fqX0hgvmMNFzL4QhE23OO2hthmv/gU6Ly/5jNsvffpu3N9tsa/Cxy0gt42bmYmyfwddxFQrKFUUhXSrP57/N53yqnHEo7hWzddpP60Gs/qMfx/yL9bJ3Gw0xSsv/TFOdf9IODMhiizJAp0ErchdCp2bV525gLQ==
+ b=Rvf6eQkk7M/GATzbORZWrVoOr5v3sozV2l7svAL5rcyuu7EWJthjmV11kCDk8CgtHh1vfiQOJt4R32KTh24rk+RfMGXxvRoqmOYcLLFTJ5gIkghtHsknqwXavdNx45Q0uAmq2gQ7O4JaQJhJxQAT85lJZKAS6tRoknBGc86OBdBQK7YvPGEPNxRnliLxWmU4yNKXh6HSClNclD0K01aF031v43SGaSiIQYy3qhvLhhaOq20JTgYctbp2ijLefBppWlFRZ+FyYbbp+24Ie9WjZuiALVVKReybJVZRKWR+tcj1Fy+tF+P7kkOYNA6oOfAITtm52EuKxCFH6DoBRZ/NlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KxuLH6HTvJ99lMDIe9+ZKFcNFsWiCK41QU/oWCAQQNY=;
- b=QWr5CPa6q8/VkDkfz72JLOSTZ8Rvv3j8ANXPqNitNLEkJubxLxrF53s3OFpT0w4GGnvgT3DSHbW8cEGPxM5PPHm8ziDS+V29NGDE5QFO42i+4EdBof+hUrfc59ah9oWh/UFxk8hPlPJkLOIWolZvgXvGfPn8fBwxtvx3UdSH4EHu7mIPFXgaRXTkt+3ZhOp6YLlFgHMQ3d9bZh/cp1ri/RspBYgu4gMG12vw1hhp6YsC8TgPWtjRRF+Wp092mpccap2AXFjuug/JmkSIZSvf4L/KhhrvqNluc85Vs8WP7Efw7s339mjEWhcF3BLeZQKRCwEWibYnei58acjtgiEbPg==
+ bh=Q7V6AM5hzlmH6q56FThnqIaRHFdUDyRJ4HRr568VTW8=;
+ b=MpyN8Aj/QLui5dNGWslwiaK7KRiPKvkHgINqCI8VMbtwCiWhTJUfjozQ1AJHmqQLbou8BGd1xlDANkgxadS+WcXl43UEpC/7dWTRhev1AbRNz8vU4BJAVy6lCshQa/8f49FH9M8gvUrlDrrvoZkKWRoQVK8mZZZKMx7ylc1EGOntrz88aJX/+fQdL6FoDthbiRqclSou/ssQ76wFyTEaEv1UN4wg5BiaxkkjVJoSVqyb1eGac00VrASk1PLGojK7dk+ca7z+3XqbXJt3KBJUZ7W/vz3htonnzFQnskpWtG+BugB5QXmA4Kf+zpLvEND+gaoySnNfzvoS5Az9P7zwcw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
  dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KxuLH6HTvJ99lMDIe9+ZKFcNFsWiCK41QU/oWCAQQNY=;
- b=DkYx9GK3SuHf4P0DaqfjFZnEyvJrHt3Ntf+AIyBtIhOa2NOAgtPe2gDGfbMbcuGJKgdadxn4RXpAOfA9YcG13aYn6hT2DAWn0I7FqBtnc9RCNhdoJXAc0cY/n40cd1ppkgx5wC3BARslTBPVjpPjZtrJYWv9DmJr0L6MDRrs0hM=
-Authentication-Results: dkim=none (message not signed)
+ bh=Q7V6AM5hzlmH6q56FThnqIaRHFdUDyRJ4HRr568VTW8=;
+ b=NiphMjIQR56Dcw2nsAR2CMsZ99efjMROfnkcYljr4TbvtLFSsyyNCP9aFXgXIBI7TYYvl4764WDU56idvkzg9lA7Qq+fnO8QSr87w5rIqOsqU/Fj1o+gUDPUDR+B+APUaTrJLe0H2sYSwAqnHSFz7GIajl3LDFZ1keUbmBaLQPU=
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ (2603:1096:404:8028::13) by TYWPR01MB10645.jpnprd01.prod.outlook.com
+ (2603:1096:400:2a0::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Wed, 16 Nov
+ 2022 00:06:32 +0000
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::cd89:4a4b:161e:b78d]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::cd89:4a4b:161e:b78d%9]) with mapi id 15.20.5813.018; Wed, 16 Nov 2022
+ 00:06:32 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] clk: renesas: r8a779f0: Fix Ethernet Switch clocks
+Thread-Topic: [PATCH v2] clk: renesas: r8a779f0: Fix Ethernet Switch clocks
+Thread-Index: AQHY+M0PfHKpuIsq30mT5KxUqyKfeK5ArK3A
+Date:   Wed, 16 Nov 2022 00:06:32 +0000
+Message-ID: <TYBPR01MB53414B51FF1575B1BFE51C21D8079@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+References: <99b8b41bd2c5043c9e457862ef4bc144869eca58.1668501212.git.geert+renesas@glider.be>
+In-Reply-To: <99b8b41bd2c5043c9e457862ef4bc144869eca58.1668501212.git.geert+renesas@glider.be>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from OSAPR01MB3892.jpnprd01.prod.outlook.com (2603:1096:604:5b::23)
- by OS3PR01MB8842.jpnprd01.prod.outlook.com (2603:1096:604:17f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Tue, 15 Nov
- 2022 23:38:09 +0000
-Received: from OSAPR01MB3892.jpnprd01.prod.outlook.com
- ([fe80::60f7:f062:7c7c:d289]) by OSAPR01MB3892.jpnprd01.prod.outlook.com
- ([fe80::60f7:f062:7c7c:d289%6]) with mapi id 15.20.5813.018; Tue, 15 Nov 2022
- 23:38:09 +0000
-From:   Alex Helms <alexander.helms.jy@renesas.com>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be,
-        alexander.helms.jy@renesas.com
-Subject: [PATCH v3 2/2] clk: Add support for Renesas ProXO oscillator
-Date:   Tue, 15 Nov 2022 16:37:49 -0700
-Message-Id: <20221115233749.10161-3-alexander.helms.jy@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221115233749.10161-1-alexander.helms.jy@renesas.com>
-References: <20221115233749.10161-1-alexander.helms.jy@renesas.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0052.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::27) To OSAPR01MB3892.jpnprd01.prod.outlook.com
- (2603:1096:604:5b::23)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYBPR01MB5341:EE_|TYWPR01MB10645:EE_
+x-ms-office365-filtering-correlation-id: 88069b11-1e26-4bda-cf55-08dac7666b08
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: uxocCqw4nXMxkgODUrl7e6bMETgxVKaiBsGUCypVO/xypCTrVrlPVPIR1Kw0ckCbGTxvdeSm6DnDlHOnF8Jb8vHXOr7Px38rJidI7Aof/ZDgSYUN23TCUZbjVeGXTzWsCasZfooIq/dXoKq4+GorVYvuVcRNt7ilJ8XoLhsxBgcx2SvT3hSeYj9LuxEkThN3UtmyCxQvOw7vffsaZ5bjJAr7NIIyGzM0OQx1RONzxJjW+bL4XQQdC5n2oRHibkExLFA+cnp/VTVlbbPZhaYy4YVyF0RHNEuUWcuPRJ/Hw2UabEcd55t5xn9ljm5oesShGnIv1Twrny4A7FO5GzfUL1tbg3X/YKSIFXbOzH2Jb0xDQ1FW4w46rXQCNeyzUbUTHSFpgLtEBZaC7VdwLpFoB9Yo4D+k+TVd6SCFjOCgjzjCxH+N5nrTXEssP/HerO1AyiGhG66aNB3bZfiuW4/tQuMHeZl/bx8f9CWqhoxW2EV6xs5prkdcqy/eyRM/gGgHS7LTNgk0vovj0muqnhQg0kAVn9B6xfvdpQW0NBdBuanSNo5iyZGbMeG09EeKsrEdQIYIBr/YVeorXbe16n5armhylwtjuZVi5gML+4SQK+Aq/jbVf9OPm3GGPmyfKEx0xdU8UqQ1ofei4gTBYqfWDKaFI/D5PzM7E2xBdGTWazB1l5acHMvdNpdkJ0w2+DM+zl8qhU4Hk35jRqIr3cx96s9AE4VWRHAz82E8pNyB00lS01EwfmnLu1LoUHm7Vchb9I9bHegTQT5a80IIIPEHVA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(366004)(346002)(396003)(376002)(451199015)(38100700002)(122000001)(38070700005)(86362001)(55016003)(8936002)(5660300002)(8676002)(4326008)(66556008)(76116006)(64756008)(41300700001)(71200400001)(54906003)(52536014)(316002)(66446008)(66946007)(66476007)(2906002)(83380400001)(186003)(110136005)(6506007)(7696005)(478600001)(9686003)(33656002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?kWLLV1fklpTsNJeMQ5t+7w1Lc5GRD+s/qONucmJ0Kb/pyBzUgw+M6ZsPeFq/?=
+ =?us-ascii?Q?6nf+rzR4SlhX9RweGSYTGOXDxEouclPM6KUq+99/MgYl++14rL532sCUjyuO?=
+ =?us-ascii?Q?tUUPZfZZMXSDM27TiqRCfa0LEAEU2Ve+MHriFvXPQdcHWFcawKuMGLUrEBzo?=
+ =?us-ascii?Q?GRd33hWxcw83YAccfXdVSR9OecBHC0wrOckXq6rYvhL0g9TLBKEhNiVp9kAe?=
+ =?us-ascii?Q?Hig51GNlkaOSdMmNRRp9FgTSbUPyAqrmU7zxrQdOFXu0LmXl4dM8Cf62u0AJ?=
+ =?us-ascii?Q?Ot32mUZKrF8yCX13fpZEHKQsewGgPKYMJOEIodRvPjfopK0ZK+Ftg4Pck1iN?=
+ =?us-ascii?Q?9wt5v5h1I/qSSFkOSa7icylHKqICIEogRI34iWd9X4GVac2Wr4buVo/61Ont?=
+ =?us-ascii?Q?ziVLYSHLI74BQZDalJ/sUItzqMIrOJwu5gk1fteGa9sThUjFMUv2Rl391vdd?=
+ =?us-ascii?Q?n64Qh7rOK1AHjgwvQqbE1r11GJCaagp3udKCZCtCMPnep3a98LqcuffF7Ir9?=
+ =?us-ascii?Q?OW6MZey+xVs7c3Q7Z8xGTK/wHtCitXHUCP4bTcOlfE2BTsSCW1TEMS1L5ynk?=
+ =?us-ascii?Q?/zhnS10H5/T6M6YX2VNGZhzSBxii7t6iY0argezjz91Dp61p0YgNhR6FuFmZ?=
+ =?us-ascii?Q?cAt86g2wgF7+p/eIi9JNwhcy1iy179Y8ozA4AW/RYaRg/bSeA2cn5BFO75Is?=
+ =?us-ascii?Q?v/V+1GHcnoj8Tz0UR5IRk5KKbePSH38qdYZDLZmKr4rxUQdZwL+vhXca8BC5?=
+ =?us-ascii?Q?bMmwjpalJXsNAvplkH0jE8/GiJ82BecxU/qPkzkd1PRGPPF72pgS9kBp35xs?=
+ =?us-ascii?Q?DjrHUuDsW+O9uQZgOED1hFh5udbmG01Vkh7w7bkXJ+6IuKpdCzBcmpque8xq?=
+ =?us-ascii?Q?UJOfdnJNX5RTTWHUX+MGE/FXiyFCIDuPqXlIdfBX3M3+zsV/1hNrVNzWWatJ?=
+ =?us-ascii?Q?TaAZE0zecqJu3Nd0Dj+om+VuEenv1PTiDRbQHbxH8X7hplhZRc/1mFaFG41Y?=
+ =?us-ascii?Q?N8f/MhsBLAp5QJovx6zHbejW2kzqkdMhiazelO6GeXqyruNya16/4lz9hegw?=
+ =?us-ascii?Q?BgLlp5RvDXTpdUPGG6eLfVeQU2s9XP3WIG8YuNxAbEBoEzx32f5ZfHceTA3v?=
+ =?us-ascii?Q?fUy/FUPqLV5rcCHm1cTLxkkT99ntfVHCocdDwV/AkmTUKHUaivbU5kztDyf3?=
+ =?us-ascii?Q?zGj6esVknZE5Q4Z0RRwuswhmcomsoTxzenSwWAjw6walnxESFTlxyvrf/GBz?=
+ =?us-ascii?Q?O3izi3hY449rLZcHPmW/1YFgbB4EJF654O6dLPeotbwSPeBl0w71pkPmNMCa?=
+ =?us-ascii?Q?hl3dCOpr1BOWoxyFYkU4/2HcKxzaoOmelIHtHuvC9rEKYcZBCdydF6Ic63PC?=
+ =?us-ascii?Q?u0fRQsxG2dkijfOsN1ifBHkIyM3C8SjlTjX34ZwXzaiylhX1cNswyktAuEQw?=
+ =?us-ascii?Q?KnsLvlyrsWJKlfJzfruXeHGj7lh+dG+ELcurLpsEHVrEXV/aqSS507gzAkGc?=
+ =?us-ascii?Q?eFC1YEgdwP7KlGUNGEKZv3kMRjPRGfyuUQruXhEuZIKOJ8B9hlAsw2ZgL8Mv?=
+ =?us-ascii?Q?jLebhetggt15FLiBGGlPh5KvkhywS6KQ5qSEheqY49Bp1NWj61w9PM10LNSf?=
+ =?us-ascii?Q?JkmWmZevjWIvBtOyP5sZfWNOoTOAzXDE6bLOUSz1lQ9vISC05aBLN/Gv96B0?=
+ =?us-ascii?Q?REPgMw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSAPR01MB3892:EE_|OS3PR01MB8842:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0316ef2c-bf10-42ea-05b3-08dac7627441
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: lK43rrcdf4uj1SwnjEAN1f8qP8CZwBccrWxHTHrrFK3uD6dA4q9+mMiVUbGqwRbYEGQQjqYheHN5jhVRl6lwVSlZhHIdRrp0xgUcf3CIBCtfI9pR0e1izRkweOvmHvKgWVbJzDY/q16rTkjBhFuPTqDkrk/dtCze0jlfhqVLCQPj84oeFORVKvgD6DMndDFh2+HwmIj/JKFu9PW5NHsYf4yTDta9eUCysyOhw5+V2enniZ/7LGDaFKdac9oVIxcUrQN2gMrq20xamYe4papnuLEdG7+tkFHNl85LcMcwFz0Tpjs1uKqy0YOqxxaG/Qdh4dB/Qs6XlWdKEsWxtIf+NjnanbRsgJJCSNvn6zKqZHI9B/BHojd33NLciaO7srw0ziKCuAb4sGiyfYuhlAY0AY4vci0vTMPKZju6YE06jCttjpP1+bAYaQIvR68yOSbqnhK+AGn3MDlSewsuBbLtvC6iz3Qffh6kXofAh7K6x5o+rAw2Xv/7Gv1F4CtZJpuH44qFF5tYzlhChyQtseXXsqdTgHFUUURenAfOONRRHVhbek11z/LviDL750Ab4f9qxJgtlGWfvZFFrgMEMxdXgc5dlt4klWD7yvroh2+7lOmae4f69FWBUILabRAEeJPonJ4VXalDh7JdzEP65WdDn9vqgT0pcRh6mYdQwqaZT6uwucp63t+sWxdekqJVTkiPmsaMHl5Du25FM6d5P1+sYFykoI+bcg+3ws9B3ulZLt6kSSpcuIxQuCbYcfuHcNea
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB3892.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(376002)(396003)(366004)(39860400002)(451199015)(1076003)(186003)(36756003)(83380400001)(6486002)(478600001)(6512007)(2616005)(107886003)(6666004)(52116002)(6506007)(86362001)(103116003)(38350700002)(8936002)(38100700002)(41300700001)(2906002)(26005)(5660300002)(30864003)(316002)(8676002)(66476007)(66946007)(66556008)(4326008);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?sSLwzu2e1D6R5ruuHCA8blUq3yMC1TFcfvkoXJbuKjqwlV6Cbl3MszcjaQEm?=
- =?us-ascii?Q?lm9S22paGFKnyWK5c5wgxyI+LG3PF2m1L7FnTeuHrqTb8ksGDPXkmbLkBAV7?=
- =?us-ascii?Q?RHMy2mUBD3fukXe+++Wdygd+wXzryKk1s9KLQPXJCShgTDQWj981uAztpiCs?=
- =?us-ascii?Q?CKvQz1I7nWA0tjjDcRMxe/eXZkIaBJCrx8zhhiLaUkjGH3CoDanyNcbP39dy?=
- =?us-ascii?Q?1WlARhFSY4drAZclOOCZGclkDWTD7J5bPaLq8zwkaCNEo4SbaMOvtOYuKsVr?=
- =?us-ascii?Q?acLE0XpWz3g9dFlvpEI+ebcyclqgxb2SSfHAnCyXUGoNFaOF7RQShLw//LY3?=
- =?us-ascii?Q?jnzo9XfDH13ifyg5HcsQPFXEcF5CZNtPYtJBSgvgfRqkJeooh7EurYUXV5Ye?=
- =?us-ascii?Q?RWeFwkiZgeHPhikwYV0PAulKfO8TXojnOuth3OBoLoZPP7/nzxu2KnaXSYnV?=
- =?us-ascii?Q?+aXw/XhRaKaeqH/xQV3J7JpgGnI1uucmTEN0QwPAP+V03BkHAxzg7oYnJa9J?=
- =?us-ascii?Q?siYRWLrhQo5vXvJ1Ug2dYnCg2o0QgZ/IIBImd4RssUkiEbsNn7oAhQhgov66?=
- =?us-ascii?Q?evXoVWaej89H0kI7WrQLuGjtfYMPWEAgZr3bNGmj04yQbCx1ERdA8+DEzUV4?=
- =?us-ascii?Q?EgZPUF4rrs+QnLAK9TRiLQXit/EtyBKQSlQjbjipJEAWljlrko5BL8+Cu3oE?=
- =?us-ascii?Q?M3H5DNmEwzjOgWkdcIshpxZFdIUVdZzFv7HZTA3rkMCFhW6oiflX3lacsQ1F?=
- =?us-ascii?Q?LHJK6e3X9hg7kK09CyVkarbiegUccIlmymFCrggxNolshBpAxWK9Ys1gRkDt?=
- =?us-ascii?Q?q6L605Z7XYRPaSd1ud6Tfhl0rn6HoYVn0zQxR4LXy9e7+mZgbEw//OJpAxLl?=
- =?us-ascii?Q?7Dq8BYsIvHElEsCXzAwMQjP5H/pLXd/bq+pezJ+378nS9FXX8PdK3Y2rEmSj?=
- =?us-ascii?Q?RTmh6xGtJ7jcv1cdqUld6N53DP6ERdLPSkgb/LZ85tQFQtmc/qOt5kahA8C/?=
- =?us-ascii?Q?gQO1LwtAd8D1Wh9XyB2p4U66RblDIv+b7MZL2eW4r1MAvwIkxFxIDHvFgSRu?=
- =?us-ascii?Q?k0nFe3SU/GFaUAodmBZtaotXtF4VlYmVGOPG6X3pHnBW5E92F20VTJ5KIs5u?=
- =?us-ascii?Q?XW9mqxVpYnzCubDgZN8G+NLSJra/DkWuqGd7/cIwCJYPTR7a8ZGm593BhBag?=
- =?us-ascii?Q?2s983Qk5RCxi1gB/G25fkY6wj/NeSp0SxTFhiiTnwQ+47t7BIOUnEwwRHtVS?=
- =?us-ascii?Q?mzdFt1tATiKM3+BjpnrnvFI3mJr3TS3asLYjSJMphtdDOD89LTFKgss1qcAU?=
- =?us-ascii?Q?TGJEfyKRXeCBLnCMwLCwO+Eq+Zs1O7/b5w3h3gLujRmjWPb5CVta2ARx8rXP?=
- =?us-ascii?Q?QpNdkq7OIlg2wdm82klJ+DJdsg7NTf+DOaeWT3s52LhYXy4k/SOsTs+CSGgz?=
- =?us-ascii?Q?6mixsRSiAfaZrrl6gY0q/zXswHbeQcPgudMJLBb/MHOAPiZWdeHtPTPZAh4P?=
- =?us-ascii?Q?ggmfy33y1pERcVoubnaNa/obCVBSzS14A5faB9FHIY0ydUCd47G+/uCMmvm+?=
- =?us-ascii?Q?dqqQGCNseADh01jiD5XoHr5vcROhHnQMR6Zym7akhBd5BLCzVYOCVNfAZjw2?=
- =?us-ascii?Q?pUeBX1fiwbGq3BYqanWOTto=3D?=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0316ef2c-bf10-42ea-05b3-08dac7627441
-X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB3892.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2022 23:38:09.8580
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88069b11-1e26-4bda-cf55-08dac7666b08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2022 00:06:32.2365
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W+2tQuBf2yxllxdZehzZ3Vhh8XwrgLhKAQHtmHCBorN7tk4r7AfzpeVpaRmB4YeSAWlg+KiKZLSPftSNRJH1DsbQBOOtTpNJypaMz0Y0uKM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8842
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 00b8hV0EvM6i+koremHVeQ1pvab2LzyaGS3FzE7nqU+9A6F8/wmcW0d4QntyjpzcILMgQKsfOyNMn6/Pw2FNGVLB7x14kbOyQA4Fv5ONYoky4z57UVGda33+A74fqAnp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10645
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ProXO is a programmable ultra-low phase noise quartz-based
-oscillator with a single output. This driver supports changing
-the frequency of the ProXP XP variant.
+Hi Geert-san,
 
-Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
----
- MAINTAINERS             |   1 +
- drivers/clk/Kconfig     |   7 +
- drivers/clk/Makefile    |   1 +
- drivers/clk/clk-proxo.c | 410 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 419 insertions(+)
- create mode 100644 drivers/clk/clk-proxo.c
+> From: Geert Uytterhoeven, Sent: Tuesday, November 15, 2022 5:34 PM
+>=20
+> The RSwitch2 and EtherTSN-IF clocks were accidentally mixed up.
+> While at it, rename them to better match the (future) documentation.
+>=20
+> Fixes: a3b4137a4d4023e6 ("clk: renesas: r8a779f0: Add Ethernet Switch clo=
+cks")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+> v2:
+>   - Add Tested-by,
+>   - s/ethertsn-if/ether-serdes/ to match future documentation.
+>=20
+> To be queued in renesas-clk for v6.2.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d52a8a5d2..c7f5c0655 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16084,6 +16084,7 @@ RENESAS PROXO CLOCK DRIVER
- M:	Alex Helms <alexander.helms.jy@renesas.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-+F:	drivers/clk/clk-proxo.c
- 
- RESET CONTROLLER FRAMEWORK
- M:	Philipp Zabel <p.zabel@pengutronix.de>
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 8f905df60..31f684d69 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -396,6 +396,13 @@ config COMMON_CLK_K210
- 	help
- 	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
- 
-+config COMMON_CLK_PROXO
-+	bool "Clock driver for Renesas ProXO"
-+	depends on I2C && OF
-+	select REGMAP_I2C
-+	help
-+	  Support for the Renesas ProXO oscillator clock.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/baikal-t1/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 99941b4a3..be6e28cc4 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
- obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+= clk-plldig.o
-+obj-$(CONFIG_COMMON_CLK_PROXO)		+= clk-proxo.o
- obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-diff --git a/drivers/clk/clk-proxo.c b/drivers/clk/clk-proxo.c
-new file mode 100644
-index 000000000..7d4268687
---- /dev/null
-+++ b/drivers/clk/clk-proxo.c
-@@ -0,0 +1,410 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Common clock framework driver for the ProXO family of quartz-based oscillators.
-+ *
-+ * Copyright (c) 2022 Renesas Electronics Corporation
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+#include <linux/swab.h>
-+
-+/* Most ProXO products have a 50MHz xtal, can be overridden in device tree */
-+#define PROXO_DEFAULT_XTAL	50000000
-+
-+/* VCO range is 6.86 GHz to 8.65 GHz */
-+#define PROXO_FVCO_MIN		6860000000ULL
-+#define PROXO_FVCO_MAX		8650000000ULL
-+
-+/* Output range is 15MHz to 2.1GHz */
-+#define PROXO_FOUT_MIN		15000000UL
-+#define PROXO_FOUT_MAX		2100000000UL
-+
-+#define PROXO_FRAC_BITS		24
-+#define PROXO_FRAC_DIVISOR	BIT(PROXO_FRAC_BITS)
-+
-+/* Disable the doubler if the crystal is > 80MHz */
-+#define PROXO_FDBL_MAX		80000000U
-+
-+#define PROXO_OUTDIV_MIN	4
-+#define PROXO_OUTDIV_MAX	511
-+#define PROXO_FB_MIN		41
-+
-+#define PROXO_REG_FREQ0		0x10
-+#define PROXO_REG_XO		0x51
-+#define PROXO_REG_TRIG		0x62
-+
-+#define OUTDIV_8_MASK		0x80
-+#define FBDIV_INT_8_7_MASK	0x30
-+#define FBDIV_INT_6_0_MASK	0x7f
-+#define DOUBLE_DIS_MASK		0x80
-+#define CP_MASK			0x0e
-+#define PLL_MODE_MASK		0x01
-+
-+enum proxo_model {
-+	PROXO_XP,
-+};
-+
-+enum proxo_pll_mode {
-+	PLL_MODE_FRAC,
-+	PLL_MODE_INT,
-+};
-+
-+struct clk_proxo {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	struct i2c_client *i2c_client;
-+	enum proxo_model model;
-+	u32 fxtal;
-+	u64 fvco;
-+	u32 fout;
-+	u8 double_dis;
-+	u16 fb_int;
-+	u32 fb_frac;
-+	u16 out_div;
-+};
-+
-+#define to_clk_proxo(_hw)	container_of(_hw, struct clk_proxo, hw)
-+
-+static u8 proxo_get_cp_value(u64 fvco)
-+{
-+	if (fvco < 7000000000ULL)
-+		return 5;
-+	else if (fvco >= 7000000000ULL && fvco < 7400000000ULL)
-+		return 4;
-+	else if (fvco >= 7400000000ULL && fvco < 7800000000ULL)
-+		return 3;
-+	else
-+		return 2;
-+}
-+
-+static u64 proxo_calc_fvco(u32 fxtal, u8 double_dis, u16 fb_int, u32 fb_frac)
-+{
-+	u64 fref, fvco;
-+	u8 doubler;
-+
-+	doubler = double_dis ? 1 : 2;
-+	fref = (u64)fxtal * doubler;
-+	fvco = (fref * fb_int) + div_u64(fref * fb_frac, PROXO_FRAC_DIVISOR);
-+
-+	return fvco;
-+}
-+
-+static int proxo_get_divs(struct clk_proxo *proxo, u16 *out_div, u16 *fb_int, u32 *fb_frac,
-+			  u8 *double_dis)
-+{
-+	int ret;
-+	u8 reg[6];
-+	unsigned int xo;
-+
-+	ret = regmap_bulk_read(proxo->regmap, PROXO_REG_FREQ0, reg, ARRAY_SIZE(reg));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(proxo->regmap, PROXO_REG_XO, &xo);
-+	if (ret)
-+		return ret;
-+
-+	*out_div = (u16_get_bits(reg[1], OUTDIV_8_MASK) << 8) + reg[0];
-+	*fb_int = (u16_get_bits(reg[2], FBDIV_INT_8_7_MASK) << 7) + (reg[1] & FBDIV_INT_6_0_MASK);
-+	*fb_frac = ((u32)reg[5] << 16) + ((u32)reg[4] << 8) + reg[3];
-+	*double_dis = !!(xo & DOUBLE_DIS_MASK);
-+
-+	if (*fb_frac > (PROXO_FRAC_DIVISOR >> 1))
-+		(*fb_int)--;
-+
-+	pr_debug("%s - out_div: %u, fb_int: %u, fb_frac: %u, doubler_dis: %u\n",
-+		 __func__, *out_div, *fb_int, *fb_frac, *double_dis);
-+
-+	return ret;
-+}
-+
-+static int proxo_get_defaults(struct clk_proxo *proxo)
-+{
-+	int ret;
-+
-+	ret = proxo_get_divs(proxo, &proxo->out_div, &proxo->fb_int, &proxo->fb_frac,
-+			     &proxo->double_dis);
-+	if (ret)
-+		return ret;
-+
-+	proxo->fvco = proxo_calc_fvco(proxo->fxtal, proxo->double_dis, proxo->fb_int,
-+				      proxo->fb_frac);
-+	proxo->fout = div_u64(proxo->fvco, proxo->out_div);
-+
-+	pr_debug("%s - out_div: %u, fb_int: %u, fb_frac: %u, doubler_dis: %u, fvco: %llu, fout: %u\n",
-+		 __func__, proxo->out_div, proxo->fb_int, proxo->fb_frac, proxo->double_dis,
-+		 proxo->fvco, proxo->fout);
-+
-+	return ret;
-+}
-+
-+static int proxo_calc_divs(unsigned long frequency, struct clk_proxo *proxo, u32 *fout,
-+			   u16 *out_div, u16 *fb_int, u32 *fb_frac, u8 *double_dis)
-+{
-+	int i;
-+	u8 doubler;
-+	u16 out_div_start;
-+	u32 fref;
-+	u64 fvco;
-+	bool found = false, allow_frac = false;
-+
-+	out_div_start = 1 + div64_u64(PROXO_FVCO_MIN, frequency);
-+	doubler = proxo->fxtal <= PROXO_FDBL_MAX ? 2 : 1;
-+	fref = proxo->fxtal * doubler;
-+	*fout = (u32)max(PROXO_FOUT_MIN, min(PROXO_FOUT_MAX, (unsigned long)*fout));
-+	*out_div = PROXO_OUTDIV_MIN;
-+	*fb_int = PROXO_FB_MIN;
-+	*fb_frac = 0;
-+	*double_dis = doubler == 1 ? 1 : 0;
-+
-+retry:
-+	for (i = out_div_start; i <= PROXO_OUTDIV_MAX; ++i) {
-+		*out_div = i;
-+		fvco = frequency * *out_div;
-+		if (fvco > PROXO_FVCO_MAX) {
-+			allow_frac = true;
-+			goto retry;
-+		}
-+		*fb_int = div_u64_rem(fvco, fref, fb_frac);
-+		if (*fb_frac == 0) {
-+			found = true;
-+			break;
-+		}
-+		if (allow_frac) {
-+			*fb_frac = 1 + (u32)div_u64((u64)*fb_frac << PROXO_FRAC_BITS, fref);
-+			found = true;
-+			break;
-+		}
-+	}
-+
-+	if (!found)
-+		return -EINVAL;
-+
-+	if (fvco < PROXO_FVCO_MIN || fvco > PROXO_FVCO_MAX)
-+		return -EINVAL;
-+
-+	fvco = ((u64)fref * *fb_int) + div_u64((u64)fref * *fb_frac, PROXO_FRAC_DIVISOR);
-+	*fout = div_u64(fvco, *out_div);
-+
-+	return 0;
-+}
-+
-+static int proxo_update_frequency(struct clk_proxo *proxo)
-+{
-+	enum proxo_pll_mode pll_mode;
-+	u8 cp_value;
-+	u16 fb_int;
-+	u8 reg[6];
-+
-+	cp_value = proxo_get_cp_value(proxo->fvco);
-+	pll_mode = proxo->fb_frac == 0 ? PLL_MODE_INT : PLL_MODE_FRAC;
-+	fb_int = proxo->fb_frac > (PROXO_FRAC_DIVISOR >> 1) ? proxo->fb_int + 1 : proxo->fb_int;
-+
-+	reg[0] = proxo->out_div & 0xff;
-+	reg[1] = ((proxo->out_div >> 1) & OUTDIV_8_MASK) + (fb_int & FBDIV_INT_6_0_MASK);
-+	reg[2] = (fb_int >> 3) & FBDIV_INT_8_7_MASK;
-+	reg[2] = u8_replace_bits(reg[2], cp_value, CP_MASK);
-+	reg[2] = u8_replace_bits(reg[2], pll_mode, PLL_MODE_MASK);
-+	reg[3] = proxo->fb_frac & 0xff;
-+	reg[4] = (proxo->fb_frac >> 8) & 0xff;
-+	reg[5] = (proxo->fb_frac >> 16) & 0xff;
-+
-+	return regmap_bulk_write(proxo->regmap, PROXO_REG_FREQ0, reg, ARRAY_SIZE(reg));
-+}
-+
-+static int proxo_set_frequency(struct clk_proxo *proxo, unsigned long frequency)
-+{
-+	int ret;
-+
-+	ret = proxo_calc_divs(frequency, proxo, &proxo->fout, &proxo->out_div, &proxo->fb_int,
-+			      &proxo->fb_frac, &proxo->double_dis);
-+	if (ret)
-+		return ret;
-+
-+	proxo->fvco = proxo_calc_fvco(proxo->fxtal, proxo->double_dis, proxo->fb_int,
-+				      proxo->fb_frac);
-+	proxo->fout = div_u64(proxo->fvco, proxo->out_div);
-+
-+	pr_debug("%s - out_div: %u, fb_int: %u, fb_frac: %u, doubler_dis: %u, fvco: %llu, fout: %u\n",
-+		 __func__, proxo->out_div, proxo->fb_int, proxo->fb_frac,
-+	proxo->double_dis, proxo->fvco, proxo->fout);
-+
-+	proxo_update_frequency(proxo);
-+
-+	/* trigger frequency change */
-+	regmap_write(proxo->regmap, PROXO_REG_TRIG, 0x00);
-+	regmap_write(proxo->regmap, PROXO_REG_TRIG, 0x01);
-+	regmap_write(proxo->regmap, PROXO_REG_TRIG, 0x00);
-+
-+	return ret;
-+}
-+
-+static unsigned long proxo_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_proxo *proxo = to_clk_proxo(hw);
-+	int ret;
-+	u8 double_dis;
-+	u16 out_div, fb_int;
-+	u32 fout, fb_frac;
-+	u64 fvco;
-+
-+	ret = proxo_get_divs(proxo, &out_div, &fb_int, &fb_frac, &double_dis);
-+	if (ret) {
-+		dev_err(&proxo->i2c_client->dev, "unable to recalc rate\n");
-+		return 0;
-+	}
-+
-+	fvco = proxo_calc_fvco(proxo->fxtal, double_dis, fb_int, fb_frac);
-+	fout = div_u64(fvco, out_div);
-+
-+	return fout;
-+}
-+
-+static long proxo_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *parent_rate)
-+{
-+	struct clk_proxo *proxo = to_clk_proxo(hw);
-+	int ret;
-+	u8 double_dis;
-+	u16 out_div, fb_int;
-+	u32 fout, fb_frac;
-+
-+	if (!rate)
-+		return 0;
-+
-+	ret = proxo_calc_divs(rate, proxo, &fout, &out_div, &fb_int, &fb_frac, &double_dis);
-+	if (ret) {
-+		dev_err(&proxo->i2c_client->dev, "unable to round rate\n");
-+		return 0;
-+	}
-+
-+	return fout;
-+}
-+
-+static int proxo_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
-+{
-+	struct clk_proxo *proxo = to_clk_proxo(hw);
-+
-+	if (rate < PROXO_FOUT_MIN || rate > PROXO_FOUT_MAX) {
-+		dev_err(&proxo->i2c_client->dev, "requested frequency %lu Hz is out of range\n",
-+			rate);
-+		return -EINVAL;
-+	}
-+
-+	return proxo_set_frequency(proxo, rate);
-+}
-+
-+static const struct clk_ops proxo_clk_ops = {
-+	.recalc_rate = proxo_recalc_rate,
-+	.round_rate = proxo_round_rate,
-+	.set_rate = proxo_set_rate,
-+};
-+
-+static const struct i2c_device_id proxo_i2c_id[] = {
-+	{ "proxo-xp", PROXO_XP },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(i2c, proxo_i2c_id);
-+
-+static const struct regmap_config proxo_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = 0x63,
-+	.cache_type = REGCACHE_RBTREE,
-+	.use_single_write = true,
-+	.use_single_read = true,
-+};
-+
-+static int proxo_probe(struct i2c_client *client)
-+{
-+	struct clk_proxo *proxo;
-+	struct clk_init_data init;
-+	const struct i2c_device_id *id = i2c_match_id(proxo_i2c_id, client);
-+	int ret;
-+
-+	proxo = devm_kzalloc(&client->dev, sizeof(*proxo), GFP_KERNEL);
-+	if (!proxo)
-+		return -ENOMEM;
-+
-+	init.ops = &proxo_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = 0;
-+	proxo->hw.init = &init;
-+	proxo->i2c_client = client;
-+	proxo->model = id->driver_data;
-+
-+	if (of_property_read_string(client->dev.of_node, "clock-output-names", &init.name))
-+		init.name = client->dev.of_node->name;
-+
-+	if (of_property_read_u32(client->dev.of_node, "renesas,crystal-frequency-hz", &proxo->fxtal))
-+		proxo->fxtal = PROXO_DEFAULT_XTAL;
-+
-+	proxo->regmap = devm_regmap_init_i2c(client, &proxo_regmap_config);
-+	if (IS_ERR(proxo->regmap))
-+		return PTR_ERR(proxo->regmap);
-+
-+	i2c_set_clientdata(client, proxo);
-+
-+	ret = proxo_get_defaults(proxo);
-+	if (ret) {
-+		dev_err(&client->dev, "getting defaults failed\n");
-+		return ret;
-+	}
-+
-+	ret = devm_clk_hw_register(&client->dev, &proxo->hw);
-+	if (ret) {
-+		dev_err(&client->dev, "clock registration failed\n");
-+		return ret;
-+	}
-+
-+	ret = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get, &proxo->hw);
-+	if (ret) {
-+		dev_err(&client->dev, "unable to add clk provider\n");
-+		return ret;
-+	}
-+
-+	ret = clk_set_rate_range(proxo->hw.clk, PROXO_FOUT_MIN, PROXO_FOUT_MAX);
-+	if (ret) {
-+		dev_err(&client->dev, "clk_set_rate_range failed\n");
-+		return ret;
-+	}
-+
-+	dev_info(&client->dev, "registered, current frequency %u Hz\n", proxo->fout);
-+
-+	return ret;
-+}
-+
-+static int proxo_remove(struct i2c_client *client)
-+{
-+	of_clk_del_provider(client->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct of_device_id proxo_of_match[] = {
-+	{ .compatible = "renesas,proxo-xp" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, proxo_of_match);
-+
-+static struct i2c_driver proxo_i2c_driver = {
-+	.driver = {
-+		.name = "proxo",
-+		.of_match_table = proxo_of_match,
-+	},
-+	.probe_new = proxo_probe,
-+	.remove = proxo_remove,
-+	.id_table = proxo_i2c_id,
-+};
-+module_i2c_driver(proxo_i2c_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Alex Helms <alexander.helms.jy@renesas.com");
-+MODULE_DESCRIPTION("Renesas ProXO common clock framework driver");
--- 
-2.30.2
+Thank you for the patch!
+
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
+
+> ---
+>  drivers/clk/renesas/r8a779f0-cpg-mssr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesa=
+s/r8a779f0-cpg-mssr.c
+> index 800fdc104edd657f..f721835c7e21248b 100644
+> --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+> @@ -163,8 +163,8 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] =
+__initconst =3D {
+>  	DEF_MOD("cmt3",		913,	R8A779F0_CLK_R),
+>  	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
+>  	DEF_MOD("tsc",		919,	R8A779F0_CLK_CL16M),
+> -	DEF_MOD("tsn",		1505,	R8A779F0_CLK_S0D2_HSC),
+> -	DEF_MOD("rsw",		1506,	R8A779F0_CLK_RSW2),
+> +	DEF_MOD("rswitch2",	1505,	R8A779F0_CLK_RSW2),
+> +	DEF_MOD("ether-serdes",	1506,	R8A779F0_CLK_S0D2_HSC),
+>  	DEF_MOD("ufs",		1514,	R8A779F0_CLK_S0D4_HSC),
+>  };
+>=20
+> --
+> 2.25.1
 
