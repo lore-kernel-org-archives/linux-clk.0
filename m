@@ -2,129 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80273C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D790CC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 08:51:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232729AbiKPIua (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 03:50:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48164 "EHLO
+        id S232973AbiKPIvV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 03:51:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiKPIu3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:50:29 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A18CA1B9
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:50:28 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id c1so28427032lfi.7
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:50:28 -0800 (PST)
+        with ESMTP id S233364AbiKPIvP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 03:51:15 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15981A80D
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:51:13 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id s24so20918713ljs.11
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 00:51:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tmMdI4WFLpMX3R8QoEHliNFUihkav6luIBgijGBFVqM=;
-        b=tZvavu3atKzH6HkUL4xw65NKlHm9/49SW8Zn6whRQEBNVZnh5Byst3O4WZpUtUKAz2
-         rzAyXnqJdOE+5IOh92jywg1HY9sJMnXrn6KueGawoWcxKj1fsILNwpuLEiQWzBErMRnQ
-         QJ+tg5QkztqZDizu7ufkgCiJgpiDDDYl1l7vi2wKqEviSuK7GHmwr3tViDOElUTM0a4U
-         SVxF67yaP8/z9l/RkfejDzYZZn7yDgusiAqwTnoe4DGhkGzQKey+JpZf4xoOQ1A2TNvP
-         pkJPzgB740r5UHVnhKUlopDNYVMyW3br6pS8PTscUfd5nTpPmUBW7APXLqiOZIhsrxeP
-         Z2lA==
+        bh=16W+WhRYw2qO31HAZVLt3mv3/qC3AjEWZLnL5iEaKNw=;
+        b=E/eIyOzpn4tkTNxnGMFFoQYJH4B0F+2EkASmXoGGnp0TON6UlNT4E62dHdhJcPkyTl
+         gTsTfb4lslvmv9HrRS46q0wDd3YlWja541Jv7XiZo2sAm7pvnPWMBFeg/QFv34JOZ0I5
+         E3CGyZ4T45NkaNSS3ORtC/aHMfgf7gkreKrbYW0XWmCZxDtQ5js7ZGD3JdqzqvtPIubt
+         rxk8wlN52PBtx1bf1tn99wUhlLUw/yGzm56OH3KM7uxH+mBE0caeuoik58wWkIJoq3E/
+         CjSp9onVDgRefhG+vY8fgNEsfnBY2N4vYl4zljUul7jM66pHXgNhxzA/spMqzD5fzDV+
+         UhOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tmMdI4WFLpMX3R8QoEHliNFUihkav6luIBgijGBFVqM=;
-        b=4pQtqC7FkmFL8NbOTItzON+4E8r5skp/gBsmZapf2/2uatTTvdSU3ZNGwbagiNU+LN
-         J5K15M0t2zfGMSQYf+45jXpofY8Ns0YEEPEDP+11aa8FRXPhJEeK1NPkiMK2JaUcPWXQ
-         BcT1ksvAbyFGgTwp5kr+2JcPuIn7b+MEXywsnI/LgY5zEaZj6MG/A2YX06qR6+xbqxEC
-         V8I2tBBTUy7iwOGP8AYUM7ItlnZB5m3ZH/Py4PQn+7PMd7dbEClA+l+Xp+mqKtGePle8
-         Bio2jOnd+IXqMcYVw2Qbso1otodKsT1SuIJIYI4cz3ureHDh6u1h1R/e2vWdXhVOqc6e
-         R7IQ==
-X-Gm-Message-State: ANoB5pl3BEKEq+uFKBYMEg9bDcrdzgKhcJovFagVoEhbiq+e1p6uIvRf
-        9uDrPKB3ihFgGrvbp/St0isAPQ==
-X-Google-Smtp-Source: AA0mqf5Gm3nkC4nCOWNd3+CUtd+Ha8+85ZHi/1/29g6hyZDOEHrihpAtNiwzQ+GD1IeVwdiv6nz0cQ==
-X-Received: by 2002:a05:6512:12c1:b0:4b1:785c:838d with SMTP id p1-20020a05651212c100b004b1785c838dmr6620071lfg.388.1668588626874;
-        Wed, 16 Nov 2022 00:50:26 -0800 (PST)
+        bh=16W+WhRYw2qO31HAZVLt3mv3/qC3AjEWZLnL5iEaKNw=;
+        b=TG8iMBFSTW5qnZHmwkK/UMWTSga/ypcXhH3zx1npzQE7SgEP7Bv5h3oKTwAhHIP8I4
+         jZbKNclUiENKmw58nG7nzLswfPfhYDjtu4yhb8MJ1CY3SJrxI5j79yoOU176i7bSZMgD
+         9oyWPsenNaTnVdTg/T9GBEdaWRAP/A1Z0JWR0IqvfMzNLHWRPJ4fdPNqMT6nPVBUBlYq
+         K3jo1cMgWdNoAJJnLsAa+ls4Vp195oqVznXq5CE6ZhN4NMid4KXV7S6FEUosWGtPfjTT
+         cLlQsabceb+vbVYicU75Sbp0fFtTqTXcZb+cHRU56ZyEhau164VQ/geJhOKHNxxezPld
+         X40g==
+X-Gm-Message-State: ANoB5pmEYl+aId/sPjYUfg4hhTDQhSyo9cLdbHpT0UCOkRw/FQEUt0kS
+        E4SsvQaisZySorE5YVHJOOCjqA==
+X-Google-Smtp-Source: AA0mqf4HK9tHUA7GTdHjmreR9R0RVHvQFj1mBQwdl6HN86KkMOofMEERzF1AQ7Y+70Nt//u6fsBn4A==
+X-Received: by 2002:a2e:b5b6:0:b0:277:394:34e with SMTP id f22-20020a2eb5b6000000b002770394034emr6798698ljn.18.1668588672098;
+        Wed, 16 Nov 2022 00:51:12 -0800 (PST)
 Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id s7-20020a056512202700b004a0589786ddsm2499844lfs.69.2022.11.16.00.50.25
+        by smtp.gmail.com with ESMTPSA id q9-20020a2e84c9000000b0026dced9840dsm2820895ljh.61.2022.11.16.00.51.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 00:50:26 -0800 (PST)
-Message-ID: <83492f7f-1217-69aa-8b38-ec1f08995832@linaro.org>
-Date:   Wed, 16 Nov 2022 09:50:25 +0100
+        Wed, 16 Nov 2022 00:51:11 -0800 (PST)
+Message-ID: <451f71d7-f921-e0ac-75bc-5e42db4bd200@linaro.org>
+Date:   Wed, 16 Nov 2022 09:51:10 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
+Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
 Content-Language: en-US
-To:     Alex Helms <alexander.helms.jy@renesas.com>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Alex Helms <alexander.helms.jy@renesas.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be
-References: <20221115233749.10161-1-alexander.helms.jy@renesas.com>
- <20221115233749.10161-2-alexander.helms.jy@renesas.com>
+        linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        geert+renesas@glider.be
+References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
+ <20221115192625.9410-2-alexander.helms.jy@renesas.com>
+ <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+ <CAMuHMdX-tziOhCLi-_s_MjPcHr4OW9=xA9xDVgf+fUya1R6TzA@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221115233749.10161-2-alexander.helms.jy@renesas.com>
+In-Reply-To: <CAMuHMdX-tziOhCLi-_s_MjPcHr4OW9=xA9xDVgf+fUya1R6TzA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/11/2022 00:37, Alex Helms wrote:
-> Add dt bindings for the Renesas ProXO oscillator.
+On 16/11/2022 09:34, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> ---
->  .../bindings/clock/renesas,proxo.yaml         | 51 +++++++++++++++++++
->  MAINTAINERS                                   |  5 ++
->  2 files changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,proxo.yaml
+> On Wed, Nov 16, 2022 at 9:20 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>> On 15/11/2022 20:26, Alex Helms wrote:
+>>> Add dt bindings for the Renesas PhiClock clock generator.
+>>>
+>>
+>> Subject: drop second, redundant "bindings"
+>>
+>>> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+>>> ---
+>>>  .../bindings/clock/renesas,phiclock.yaml      | 81 +++++++++++++++++++
+>>>  MAINTAINERS                                   |  5 ++
+>>>  2 files changed, 86 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+>>> new file mode 100644
+>>> index 000000000..2b36534d3
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/renesas,phiclock.yaml
+>>
+>> Filename based on compatible.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,proxo.yaml b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> new file mode 100644
-> index 000000000..ff960196d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,proxo.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas ProXO Oscillator Device Tree Bindings
+> Looks like there are more of them, so I guess the family name is fine?
+>
 
-Same comments as for your other patch. All the same...
-
-> +
-> +maintainers:
-> +  - Alex Helms <alexander.helms.jy@renesas.com>
-> +
-> +description:
-> +  Renesas ProXO is a family of programmable ultra-low phase noise
-> +  quartz-based oscillators.
-> +
-> +properties:
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  compatible:
-> +    enum:
-> +      - renesas,proxo-xp
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  renesas,crystal-frequency-hz:
-> +    description: Internal crystal frequency, default is 50000000 (50MHz)
-
-If it is internal, then it is fixed, right? Embedded in the chip, always
-the same. Why do you need to specify it?
-
+If you are sure, then yes. Can we add them now? If not, it's also fine.
 
 Best regards,
 Krzysztof
