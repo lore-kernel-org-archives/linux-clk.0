@@ -2,322 +2,184 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3FAC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 11:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1313C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 12:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiKPLpy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 06:45:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58764 "EHLO
+        id S236345AbiKPMmO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Nov 2022 07:42:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238363AbiKPLpM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 06:45:12 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F0553EF6
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 03:29:40 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id n12so43265649eja.11
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 03:29:40 -0800 (PST)
+        with ESMTP id S236982AbiKPMmO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 07:42:14 -0500
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E1E2645
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 04:42:12 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id n17so8902979pgh.9
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 04:42:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q2SoQ9ygrZxwElHRWkPB1O298Abhbc3Q5HFt/q0VeiA=;
-        b=IYsoU9rTX3q/Ch3uBQqDPTTBKcrKSRMXsBg0wKmgopzfRB8wJ0+X6X76I0S5IzhbZW
-         +uW9lZcZnqhzmGZ/U1mMKmPTcTcJ6bFCd2XNp4Z7WJ7/XL593bCPdZB5HZpOFEgiD5Ws
-         SCBYPz41H7C3qorpHggHwKsJ5KJHpruFCMg2y4XsOq6NEi9LVG2T14VCoszJdBHTSOGe
-         yGQ7qX5xEsriUBCaOW4eQslJvl7ICuMWRORaWmmKnyy5rZuk+LfZnQtEPyQZdCVaRYel
-         TE2hkJRY2DfcXel5uaob9oimPTr3HH90xEV+Te3CRbRc7jP7+hcQLPGybU2lR3zLO6Z4
-         tlqQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gvrbc6wf9VTnmEkCtmE919cp0HDqXfEWQsvisSZRlpk=;
+        b=rCMrBq8cI4BGc9Q13v7hJDW9lQtgT6gUKkH2l44tEkn8ye7uwsjb1Adl8z9qa2HepV
+         pCZ+EIWaLzkAKrJQZJO3+x9HI7KKC8w7kqTZGIMKzUg685CFOMz9qY6hW18f5S/yjfQ/
+         9NWFLMshdPJVRbooziZGmrvA1QwUKtNZYOAUHuqmI0EpBIIndYG/devnryrp2kNtuqXy
+         WztIwGHqAC+GRezs1dqItPRe2wCIjTS285mayhXb+lYO8UOjZEPtRNC2+a/QJOFvjMJL
+         q0v2tbm/ONyXhnyM083iGkWiXe7zdgNj/f8daCqPV9EQP8kMsWijODf94KuQsNrj99rc
+         EmJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q2SoQ9ygrZxwElHRWkPB1O298Abhbc3Q5HFt/q0VeiA=;
-        b=g4aPaK6si/rPgniEXbe6L78NAXAZ74EAKNnoQX2NeB5pXWj1Ckq9SfhEUPYMfUv439
-         uBuq7scbecvxmKrpuC6X6qeNRrTy3fqz4EsvvKzAlB9Sd2oX4xtu5CIjxzJsy/zjTlt8
-         9bn4Rk6Nesh7rHdUM1t2j+PlEGdP4xTNYFi6iIQfNQHWMUb2jPQvNIKbCiuOCaGcM2ke
-         GqbodUz4Kk5g8olCaoa+CdlO4fELYeY0vwftUyLTOydzhPIUXMPCh0eod+Tt3ELnB+Jm
-         QWTeOhQ9OM26a6agSf5T9SF7Isj2eOu5SXoR2YJEWl0C+D5PST5WstmNZHlht7PPZZvY
-         Dacg==
-X-Gm-Message-State: ANoB5plLcq6e71UhXSlau8DQTZvUpZyrOKOP6BlyqKgPB4owYvxpV7rc
-        dlD0zZ1hVQHGfeVpDzSAoqWY/w==
-X-Google-Smtp-Source: AA0mqf60i7cUpvPkeAwL3bCmZ525anP932HOm6rh+XeoERV8Whmxj6lqEGbCjFpf3ySWITwX3L5f5g==
-X-Received: by 2002:a17:906:6c81:b0:7a6:ea24:7b01 with SMTP id s1-20020a1709066c8100b007a6ea247b01mr16249762ejr.410.1668598179517;
-        Wed, 16 Nov 2022 03:29:39 -0800 (PST)
-Received: from [192.168.31.208] ([194.29.137.22])
-        by smtp.gmail.com with ESMTPSA id i20-20020a50fd14000000b004618a89d273sm7434538eds.36.2022.11.16.03.29.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 03:29:38 -0800 (PST)
-Message-ID: <af7c814a-a82d-199a-7968-243bebae1db3@linaro.org>
-Date:   Wed, 16 Nov 2022 12:29:32 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gvrbc6wf9VTnmEkCtmE919cp0HDqXfEWQsvisSZRlpk=;
+        b=aBwn9W2XL7z5t2mWB9mRQjURA4Txjdx5HH2Q3xxbwyYrnSXcyeCjXELP2QdLRI4e+Q
+         jRIxxD0ij5+dDcqazX63P8EpzqJB/FiDmfnKfDSdVURQp4+A3dimSrupnkxMpwZC4x8B
+         9YvrgnmuTBGuIRGIdLDnJtOi0+fsX6MyqHuCg99uoXNhNrCVgbLWDl3ST1sqLWgecsjN
+         83lEuoHwLaoyCuhstby8sMZ+RL3Ha/YNR3k7eGGWyLXzeoJ/TyJHLeL1KaLtayTN/4E0
+         3LOyCK8nn2ooKx4bysOQtjFVvw34WRNaRPiHorhFfyHqbDWiZb6yqVc6JhRA+oj/F1XP
+         foJw==
+X-Gm-Message-State: ANoB5pnmD4cG95M+Ui4gjBZh4fT9OxjGNpWLponHZeKK41lrO0zY0Wr+
+        qs9PiFXDaB8desHycCroXODB3r0LW0jofwbK/lWkWQ==
+X-Google-Smtp-Source: AA0mqf72Qwe9MIMib3FkU7+65Bb6tYoPQzHnOQ18IhhtgHNDiK91R7gcbrYWhvBYsnx4UtN+1CPmGwTeCapRitRF9C4=
+X-Received: by 2002:a63:121f:0:b0:442:ee11:4894 with SMTP id
+ h31-20020a63121f000000b00442ee114894mr20819442pgl.595.1668602531957; Wed, 16
+ Nov 2022 04:42:11 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.2
-Subject: Re: [PATCH 9/9] clk: qcom: Add TCSR clock driver for SM8550
-To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20221116104716.2583320-1-abel.vesa@linaro.org>
- <20221116104716.2583320-10-abel.vesa@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20221116104716.2583320-10-abel.vesa@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221108013517.749665-1-marex@denx.de> <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
+ <52578b45-cf4c-e949-b2b1-a0f251815337@denx.de>
+In-Reply-To: <52578b45-cf4c-e949-b2b1-a0f251815337@denx.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 16 Nov 2022 13:41:35 +0100
+Message-ID: <CAPDyKFrQ0Uvhsa2AXwTdzOC1xhQ6qjRP=1TzVXC3StLv5FOoBA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off callbacks
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-pm@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Len Brown <len.brown@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
+        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
++ Stephen Boyd
 
+On Mon, 14 Nov 2022 at 21:32, Marek Vasut <marex@denx.de> wrote:
+>
+> On 11/14/22 20:40, Ulf Hansson wrote:
+> > On Tue, 8 Nov 2022 at 02:35, Marek Vasut <marex@denx.de> wrote:
+> >>
+> >> Currently it is possible that a power domain power on or off would claim
+> >> the genpd lock first and clock core prepare_lock second, while another
+> >> thread could do the reverse, and this would trigger lockdep warning.
+> >
+> > I am not quite sure I fully understand. In this case is the lockdep
+> > warning relevant or just something that we want to silence?
+>
+> This is a valid problem, see patches 2/3 and 3/3 for details too.
+>
+> >> Introduce new callbacks, .power_pre/post_on() and .power_off_pre/post(), which
+> >> are triggered before the genpd_lock() and after genpd_unlock() respectively in
+> >> case the domain is powered on and off. Those are meant to let drivers claim
+> >> clock core prepare_lock via clk_*prepare() call and release the lock via
+> >> clk_*unprepare() call to always assure that the clock and genpd lock ordering
+> >> is correct.
+> >
+> > To me, this sounds like a problem that may be better fixed by trying
+> > to model the parent/child-domains in a more strict way, through genpd.
+> >
+> > There is a comment in the code in imx8mp_blk_ctrl_probe() that seems
+> > to be pointing in this direction too.
+> >
+> > "* We use runtime PM to trigger power on/off of the upstream GPC
+> >    * domain, as a strict hierarchical parent/child power domain
+> >    * setup doesn't allow us to meet the sequencing requirements......"
+> >
+> > I am wondering about what those "sequencing requirements" are - and
+> > whether it could make better sense to fix these issues instead?
+>
+> Here is the lockdep splat:
+>
+> https://lore.kernel.org/all/Y1cs++TV2GCuh4tS@pendragon.ideasonboard.com/
 
-On 16/11/2022 11:47, Abel Vesa wrote:
-> The TCSR clock controller found on SM8550 provides refclks
-> for PCIE, USB and UFS. Add clock driver for it.
-> 
-> This patch is based on initial code downstream.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Yes, that certainly helped!
 
-Konrad
->   drivers/clk/qcom/Kconfig         |   7 ++
->   drivers/clk/qcom/Makefile        |   1 +
->   drivers/clk/qcom/tcsrcc-sm8550.c | 193 +++++++++++++++++++++++++++++++
->   3 files changed, 201 insertions(+)
->   create mode 100644 drivers/clk/qcom/tcsrcc-sm8550.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 7186faf70562..653049b08a25 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -788,6 +788,13 @@ config SM_GPUCC_8350
->   	  Say Y if you want to support graphics controller devices and
->   	  functionality such as 3D graphics.
->   
-> +config SM_TCSRCC_8550
-> +	tristate "SM8550 TCSR Clock Controller"
-> +	select QCOM_GDSC
-> +	help
-> +	  Support for the TCSR clock controller on SM8550 devices.
-> +	  Say Y if you want to use peripheral devices such as SD/UFS.
-> +
->   config SM_VIDEOCC_8150
->   	tristate "SM8150 Video Clock Controller"
->   	select SM_GCC_8150
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index dc4b803d3f3d..17d878482a45 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -111,6 +111,7 @@ obj-$(CONFIG_SM_GPUCC_6350) += gpucc-sm6350.o
->   obj-$(CONFIG_SM_GPUCC_8150) += gpucc-sm8150.o
->   obj-$(CONFIG_SM_GPUCC_8250) += gpucc-sm8250.o
->   obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
-> +obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
->   obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
->   obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
->   obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-> diff --git a/drivers/clk/qcom/tcsrcc-sm8550.c b/drivers/clk/qcom/tcsrcc-sm8550.c
-> new file mode 100644
-> index 000000000000..3e6756da1e83
-> --- /dev/null
-> +++ b/drivers/clk/qcom/tcsrcc-sm8550.c
-> @@ -0,0 +1,193 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2022, Linaro Limited
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,tcsrcc-sm8550.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +#include "common.h"
-> +#include "reset.h"
-> +
-> +enum {
-> +	DT_BI_TCXO,
-> +	DT_BI_TCXO_PAD,
-> +};
-> +
-> +static struct clk_branch tcsr_pcie_0_clkref_en = {
-> +	.halt_reg = 0x15100,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x15100,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "tcsr_pcie_0_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_pcie_1_clkref_en = {
-> +	.halt_reg = 0x15114,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x15114,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "tcsr_pcie_1_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_ufs_clkref_en = {
-> +	.halt_reg = 0x15110,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x15110,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "tcsr_ufs_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_ufs_pad_clkref_en = {
-> +	.halt_reg = 0x15104,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x15104,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "tcsr_ufs_pad_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_usb2_clkref_en = {
-> +	.halt_reg = 0x15118,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x15118,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "tcsr_usb2_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO_PAD,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_usb3_clkref_en = {
-> +	.halt_reg = 0x15108,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x15108,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "tcsr_usb3_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap *tcsr_cc_sm8550_clocks[] = {
-> +	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
-> +	[TCSR_PCIE_1_CLKREF_EN] = &tcsr_pcie_1_clkref_en.clkr,
-> +	[TCSR_UFS_CLKREF_EN] = &tcsr_ufs_clkref_en.clkr,
-> +	[TCSR_UFS_PAD_CLKREF_EN] = &tcsr_ufs_pad_clkref_en.clkr,
-> +	[TCSR_USB2_CLKREF_EN] = &tcsr_usb2_clkref_en.clkr,
-> +	[TCSR_USB3_CLKREF_EN] = &tcsr_usb3_clkref_en.clkr,
-> +};
-> +
-> +static const struct regmap_config tcsr_cc_sm8550_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.max_register = 0x2f000,
-> +	.fast_io = true,
-> +};
-> +
-> +static const struct qcom_cc_desc tcsr_cc_sm8550_desc = {
-> +	.config = &tcsr_cc_sm8550_regmap_config,
-> +	.clks = tcsr_cc_sm8550_clocks,
-> +	.num_clks = ARRAY_SIZE(tcsr_cc_sm8550_clocks),
-> +};
-> +
-> +static const struct of_device_id tcsr_cc_sm8550_match_table[] = {
-> +	{ .compatible = "qcom,sm8550-tcsrcc" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, tcsr_cc_sm8550_match_table);
-> +
-> +static int tcsr_cc_sm8550_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +
-> +	regmap = qcom_cc_map(pdev, &tcsr_cc_sm8550_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	return qcom_cc_really_probe(pdev, &tcsr_cc_sm8550_desc, regmap);
-> +}
-> +
-> +static struct platform_driver tcsr_cc_sm8550_driver = {
-> +	.probe = tcsr_cc_sm8550_probe,
-> +	.driver = {
-> +		.name = "tcsr_cc-sm8550",
-> +		.of_match_table = tcsr_cc_sm8550_match_table,
-> +	},
-> +};
-> +
-> +static int __init tcsr_cc_sm8550_init(void)
-> +{
-> +	return platform_driver_register(&tcsr_cc_sm8550_driver);
-> +}
-> +subsys_initcall(tcsr_cc_sm8550_init);
-> +
-> +static void __exit tcsr_cc_sm8550_exit(void)
-> +{
-> +	platform_driver_unregister(&tcsr_cc_sm8550_driver);
-> +}
-> +module_exit(tcsr_cc_sm8550_exit);
-> +
-> +MODULE_DESCRIPTION("QTI TCSRCC SM8550 Driver");
-> +MODULE_LICENSE("GPL");
+>
+> It really is a problem between the clock and genpd subsystem locks, they
+> can be claimed in arbitrary order, see patch 2/3 and 3/3.
+>
+> I think that might clarify what I am attempting to solve here.
+
+Let me try to put some more words behind this, to make sure I have
+understood correctly, but also to easier allow more people to chim in.
+
+Note that, in your commit messages in patch2 and patch3, you are
+mentioning clk_disable_unused(), but that's not what the lockdep splat
+above is pointing at. Although, it seems the clk_disable_unused()
+thingy, would trigger a similar problem for this configuration for the
+imx8mp platform.
+
+Case #1:
+Triggered from the workqueue, the genpd_power_off_work_fn() ends up
+calling clk_bulk_unprepare(), from a genpd's ->power_off() callback(),
+which has been assigned to imx8mp_blk_ctrl_power_off(). Before genpd's
+->power_off() is called, the genpd-lock(s) have been acquired, thus we
+are trying to acquire the global clk-prepare lock via
+clk_bulk_unprepare() while holding the genpd-lock(s).
+
+Case #0:
+The "drm driver" calls clk_set_rate(), thus we start by acquiring the
+global clk-prepare lock. Internally in the clock frameworks, the
+clk_set_rate() path continues to call clk_pm_runtime_get(). In this
+case, the corresponding clock provider's struct *device, seems to be
+attached to a genpd too. This means the call to clk_pm_runtime_get()
+ends up in genpd_runtime_resume(), which needs to acquire the
+genpd-lock(s) before it continues to call genpd_power_on() to power-on
+the PM domain. In other words, we try to acquire genpd-lock(s) while
+holding the global clk-prepare lock.
+
+The solution to fix these problems that you suggest in the $subject
+patch, isn't the direction I want this to take. The new callbacks are
+prone to be abused and it would also require genpd provider specific
+code to fix the problems. Of course, we need things to work, but let's
+look at a couple of options first. See below.
+
+1)
+In a way, it looks like we have a circular description in DT of the
+hierarchy of the clock- and genpd providers, which is a bit awkward in
+my opinion. I was browsing the imx8mp DTS files to find this, but I
+couldn't. Can you perhaps point me to the DTS file(s) you are using? I
+can try to have a look so see if this could be arranged differently.
+
+2)
+What we have seen from other use cases [1], is that calling
+pm_runtime_get|put*(), while holding subsystem specific locks (like
+the genpd-lock(s) and clk-prepare lock), isn't working very well. So,
+I am thinking that we could have a look at the runtime PM deployment
+in the clock framework, to see if we can avoid holding the global
+clk-prepare lock, while calling into runtime PM. I believe that should
+fix these problems too.
+
+Kind regards
+Uffe
+
+[1]
+https://lore.kernel.org/all/20221103183030.3594899-1-swboyd@chromium.org/
+https://lore.kernel.org/all/CAE-0n52xbZeJ66RaKwggeRB57fUAwjvxGxfFMKOKJMKVyFTe+w@mail.gmail.com/
