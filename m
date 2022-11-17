@@ -2,205 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301B5C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 08:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BF2C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 08:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239446AbiKQIHg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 03:07:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        id S239444AbiKQIK7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 03:10:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239477AbiKQIHR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 03:07:17 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 34D33716EF;
-        Thu, 17 Nov 2022 00:07:16 -0800 (PST)
-Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8DxPdmz63VjtzcIAA--.23490S3;
-        Thu, 17 Nov 2022 16:07:15 +0800 (CST)
-Received: from [10.180.13.64] (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJlex63Vjns8VAA--.39175S2;
-        Thu, 17 Nov 2022 16:07:14 +0800 (CST)
-Subject: Re: [PATCH v9 3/3] dt-bindings: clock: add loongson-2 clock
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20221103050032.29236-1-zhuyinbo@loongson.cn>
- <20221103050032.29236-3-zhuyinbo@loongson.cn>
- <450c73ad-0008-1e32-6081-00ef54072dc1@loongson.cn>
-Message-ID: <08dd3b1a-4a18-87d3-d62a-15bfd4a1e5c7@loongson.cn>
-Date:   Thu, 17 Nov 2022 16:07:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        with ESMTP id S239495AbiKQIKy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 03:10:54 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68788725E0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 00:10:52 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id 5so836728wmo.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 00:10:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rS3CeytroYBrMcNfPAlV3kO7KBX6UypX1JFTunmJQ6E=;
+        b=MUvEyxH4DRxNaF7xFHViK9OG50/qiE94TeFhQ+WKPXbtu6yvEkisNv6BqW/aWMDeXc
+         4r1osV2RoM4r8EyV5Wwv6u/NV5VEMEIpDAHkTWv6RjKGQFzq4TaUbp48aJ/DCqfpQawO
+         UU7bA/vtI+Tp3wGKuTUUkQhvCzrG606jDgwTDqw2ya5/z9NX4b16BZ5uIsRUCWssM0Qv
+         L60ckv466eVN761sHHu3/wODYF2FMoR0/NEW2164I14r2QFYx1ubP5pClJwT/kLJvFPO
+         t1Uk9CcWH1vytbnggod9PT2k4YKKwVu6JgMNquDBaJFr9DUlJnuEJm8ZryFgMAwUWaiN
+         BvfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rS3CeytroYBrMcNfPAlV3kO7KBX6UypX1JFTunmJQ6E=;
+        b=Q+TJBjeu07aSKahvTnYQxtTtoDI3fr9Iksi6e0UGpjB38REqqDon97yO+Kynhby5XZ
+         6beOWzkhsTvdpgV64LpdV0D3C76DpT1Uuc8TbPzJ05u9c/pTaRsW1pGza8YX/yP52fWP
+         Pe0CCW4j8ax2r8xB+7KwJz6tUi/sCEERAl/yS6cdjTVhzGosllgYhW6a3QohLndc8MQ9
+         v7nDaqLxU/9VXsVmO9NmVZuT9Shv3n5KCdi5qGlMOMjGEu9kscp9gQQ1QtIX+OTa6Mip
+         m1IvhOnXUrLXhFSrUseYY5kqkbbzCtwFfeVw4cSyajyhv+SRrYhzjdJVcve3JH1dw9+R
+         HKgQ==
+X-Gm-Message-State: ANoB5pldiEc7OjMGDrXl4wUJtwSUl4pU0LgBuFiLSONSqZcjq9VwnYUs
+        ihsxBSDMRBYD9lV0WiPGOR6j8g==
+X-Google-Smtp-Source: AA0mqf6DHcphfUQiQ1Qf31pjKrpHs6JhRRfu6R33TLUn1mY/HZDYnfvDwkZp8OgPXhOEszdnwb0PNA==
+X-Received: by 2002:a05:600c:5389:b0:3cf:a343:9a28 with SMTP id hg9-20020a05600c538900b003cfa3439a28mr4369653wmb.186.1668672650950;
+        Thu, 17 Nov 2022 00:10:50 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id t6-20020a5d6906000000b0022e47b57735sm219490wru.97.2022.11.17.00.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 00:10:50 -0800 (PST)
+Date:   Thu, 17 Nov 2022 10:10:48 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/9] clk: qcom: rpmh: Add support for SM8550 rpmh clocks
+Message-ID: <Y3XsiDSQNQ7Squaz@linaro.org>
+References: <20221116104716.2583320-1-abel.vesa@linaro.org>
+ <20221116104716.2583320-8-abel.vesa@linaro.org>
+ <010238f2-f520-41b8-c2cf-d65e9c12160d@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <450c73ad-0008-1e32-6081-00ef54072dc1@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8CxJlex63Vjns8VAA--.39175S2
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxAryrJrWxtF43ur1UZF18Xwb_yoWruw43pF
-        1kCFZ8Jry0yr1fur1UtFy7Jr98Aw18J3WDJr10qFyDAry3J34jqr17Wryq9rWDXr4xZr4U
-        ZF1jqr47Zr17ArJanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bqAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_Gc
-        Wl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Wrv_ZF1lYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC
-        6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-        AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC
-        6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42
-        IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2
-        jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxU42YLDUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <010238f2-f520-41b8-c2cf-d65e9c12160d@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Any updates?
+On 22-11-16 12:27:16, Konrad Dybcio wrote:
+> 
+> 
+> On 16/11/2022 11:47, Abel Vesa wrote:
+> > Adds the RPMH clocks present in SM8550 SoC.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >   drivers/clk/qcom/clk-rpmh.c | 110 +++++++++++++++++++++++++++++-------
+> >   1 file changed, 90 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> > index 1da45a6e2f29..63975490ab54 100644
+> > --- a/drivers/clk/qcom/clk-rpmh.c
+> > +++ b/drivers/clk/qcom/clk-rpmh.c
+> > @@ -579,6 +579,73 @@ static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
+> >   	.num_clks = ARRAY_SIZE(sm8450_rpmh_clocks),
+> >   };
+> > +#define DEFINE_CLK_RPMH_FIXED(_platform, _name, _name_active,	\
+> > +				  _parent_name, _name_active_parent,	\
+> > +				  _div)					\
+> > +	static struct clk_fixed_factor _platform##_##_name = {		\
+> > +		.mult = 1,						\
+> > +		.div = _div,						\
+> > +		.hw.init = &(struct clk_init_data){			\
+> > +			.ops = &clk_fixed_factor_ops,			\
+> > +			.name = #_name,					\
+> > +			.parent_data =  &(const struct clk_parent_data){ \
+> > +					.fw_name = #_parent_name,	\
+> > +					.name = #_parent_name,		\
+> No need to introduce .name if we do DT properly from the get-go, I think
 
-在 2022/11/9 下午5:11, Yinbo Zhu 写道:
-> Hi maintainer,
-> 
-> Please help me merge this patch to upstream.
-> 
-> thanks,
-> Yinbo.
-> 
-> 在 2022/11/3 下午1:00, Yinbo Zhu 写道:
->> Add the Loongson-2 clock binding with DT schema format using
->> json-schema.
->>
->> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->> Change in v9:
->>         1. Add all history changlog information.
->> Change in v8:
->>         1. NO change, but other patch in this series of patches has
->>            changes.
->> Change in v7:
->>         1. NO change, but other patch in this series of patches has
->>            changes.
->> Change in v6:
->>         1. NO change, but other patch in this series of patches has
->>            changes.
->> Change in v5:
->>         1. NO change, but other patch in this series of patches has
->>            changes.
->> Change in v4:
->>         1. NO change, but other patch in this series of patches has
->>            changes.
->> Change in v3:
->>         1. Drop redundant (last) binding from the title.
->>         2. Drop "- |" between ref_100m node and clk node.
->> Change in v2:
->>         1. Drop "Binding" string in the title.
->>         2. Drop entire allOf and move the contents to top level.
->>         3. Change string "refclk_100m" to "ref_100m".
->>
->>   .../bindings/clock/loongson,ls2k-clk.yaml     | 63 +++++++++++++++++++
->>   MAINTAINERS                                   |  1 +
->>   2 files changed, 64 insertions(+)
->>   create mode 100644 
->> Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->>
->> diff --git 
->> a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml 
->> b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->> new file mode 100644
->> index 000000000000..63a59015987e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->> @@ -0,0 +1,63 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/loongson,ls2k-clk.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Loongson-2 SoC Clock Control Module
->> +
->> +maintainers:
->> +  - Yinbo Zhu <zhuyinbo@loongson.cn>
->> +
->> +description: |
->> +  Loongson-2 SoC clock control module is an integrated clock 
->> controller, which
->> +  generates and supplies to all modules.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - loongson,ls2k-clk
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: 100m ref
->> +
->> +  clock-names:
->> +    items:
->> +      - const: ref_100m
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +    description:
->> +      The clock consumer should specify the desired clock by having 
->> the clock
->> +      ID in its "clocks" phandle cell. See 
->> include/dt-bindings/clock/loongson,ls2k-clk.h
->> +      for the full list of Loongson-2 SoC clock IDs.
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    ref_100m: clock-ref-100m {
->> +        compatible = "fixed-clock";
->> +        #clock-cells = <0>;
->> +        clock-frequency = <100000000>;
->> +        clock-output-names = "ref_100m";
->> +    };
->> +
->> +    clk: clock-controller@1fe00480 {
->> +        compatible = "loongson,ls2k-clk";
->> +        reg = <0x1fe00480 0x58>;
->> +        #clock-cells = <1>;
->> +        clocks = <&ref_100m>;
->> +        clock-names = "ref_100m";
->> +    };
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 8b3d7bb18350..7afaf6d72800 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -12022,6 +12022,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
->>   M:    Yinbo Zhu <zhuyinbo@loongson.cn>
->>   L:    linux-clk@vger.kernel.org
->>   S:    Maintained
->> +F:    Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->>   F:    drivers/clk/clk-loongson2.c
->>   F:    include/dt-bindings/clock/loongson,ls2k-clk.h
->>
+Sure. Will drop it. Will also move the define up, close to the other
+ones.
 
+Thanks,
+Abel
+
+> 
+> 
+> Konrad
+> > +			},						\
+> > +			.num_parents = 1,				\
+> > +		},							\
+> > +	};								\
+> > +	static struct clk_fixed_factor _platform##_##_name_active = {	\
+> > +		.mult = 1,						\
+> > +		.div = _div,						\
+> > +		.hw.init = &(struct clk_init_data){			\
+> > +			.ops = &clk_fixed_factor_ops,			\
+> > +			.name = #_name_active,				\
+> > +			.parent_data =  &(const struct clk_parent_data){ \
+> > +					.fw_name = #_name_active_parent,\
+> > +					.name = #_name_active_parent,	\
+> > +			},						\
+> > +			.num_parents = 1,				\
+> > +		},							\
+> > +	}
+> > +
+> > +DEFINE_CLK_RPMH_ARC(sm8550, xo_pad, xo_pad_ao, "xo.lvl", 0x03, 2);
+> > +DEFINE_CLK_RPMH_FIXED(sm8550, bi_tcxo, bi_tcxo_ao, xo_pad, xo_pad_ao, 2);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk1, rf_clk1_ao, "clka1", 1);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk2, rf_clk2_ao, "clka2", 1);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk3, rf_clk3_ao, "clka3", 1);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk4, rf_clk4_ao, "clka4", 1);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk1, ln_bb_clk1_ao, "clka6", 2);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk2, ln_bb_clk2_ao, "clka7", 2);
+> > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk3, ln_bb_clk3_ao, "clka8", 2);
+> > +
+> > +static struct clk_hw *sm8550_rpmh_clocks[] = {
+> > +	[RPMH_CXO_PAD_CLK]      = &sm8550_xo_pad.hw,
+> > +	[RPMH_CXO_PAD_CLK_A]    = &sm8550_xo_pad_ao.hw,
+> > +	[RPMH_CXO_CLK]		= &sm8550_bi_tcxo.hw,
+> > +	[RPMH_CXO_CLK_A]	= &sm8550_bi_tcxo_ao.hw,
+> > +	[RPMH_LN_BB_CLK1]	= &sm8550_ln_bb_clk1.hw,
+> > +	[RPMH_LN_BB_CLK1_A]	= &sm8550_ln_bb_clk1_ao.hw,
+> > +	[RPMH_LN_BB_CLK2]	= &sm8550_ln_bb_clk2.hw,
+> > +	[RPMH_LN_BB_CLK2_A]	= &sm8550_ln_bb_clk2_ao.hw,
+> > +	[RPMH_LN_BB_CLK3]	= &sm8550_ln_bb_clk3.hw,
+> > +	[RPMH_LN_BB_CLK3_A]	= &sm8550_ln_bb_clk3_ao.hw,
+> > +	[RPMH_RF_CLK1]		= &sm8550_rf_clk1.hw,
+> > +	[RPMH_RF_CLK1_A]	= &sm8550_rf_clk1_ao.hw,
+> > +	[RPMH_RF_CLK2]		= &sm8550_rf_clk2.hw,
+> > +	[RPMH_RF_CLK2_A]	= &sm8550_rf_clk2_ao.hw,
+> > +	[RPMH_RF_CLK3]		= &sm8550_rf_clk3.hw,
+> > +	[RPMH_RF_CLK3_A]	= &sm8550_rf_clk3_ao.hw,
+> > +	[RPMH_RF_CLK4]		= &sm8550_rf_clk4.hw,
+> > +	[RPMH_RF_CLK4_A]	= &sm8550_rf_clk4_ao.hw,
+> > +	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
+> > +};
+> > +
+> > +static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
+> > +	.clks = sm8550_rpmh_clocks,
+> > +	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
+> > +};
+> > +
+> >   static struct clk_hw *sc7280_rpmh_clocks[] = {
+> >   	[RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
+> >   	[RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
+> > @@ -694,29 +761,31 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+> >   		name = hw_clks[i]->init->name;
+> > -		rpmh_clk = to_clk_rpmh(hw_clks[i]);
+> > -		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+> > -		if (!res_addr) {
+> > -			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+> > -				rpmh_clk->res_name);
+> > -			return -ENODEV;
+> > -		}
+> > +		if (hw_clks[i]->init->ops != &clk_fixed_factor_ops) {
+> > +			rpmh_clk = to_clk_rpmh(hw_clks[i]);
+> > +			res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+> > +			if (!res_addr) {
+> > +				dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+> > +					rpmh_clk->res_name);
+> > +				return -ENODEV;
+> > +			}
+> > -		data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
+> > -		if (IS_ERR(data)) {
+> > -			ret = PTR_ERR(data);
+> > -			dev_err(&pdev->dev,
+> > -				"error reading RPMh aux data for %s (%d)\n",
+> > -				rpmh_clk->res_name, ret);
+> > -			return ret;
+> > -		}
+> > +			data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
+> > +			if (IS_ERR(data)) {
+> > +				ret = PTR_ERR(data);
+> > +				dev_err(&pdev->dev,
+> > +					"error reading RPMh aux data for %s (%d)\n",
+> > +					rpmh_clk->res_name, ret);
+> > +				return ret;
+> > +			}
+> > -		/* Convert unit from Khz to Hz */
+> > -		if (aux_data_len == sizeof(*data))
+> > -			rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
+> > +			/* Convert unit from Khz to Hz */
+> > +			if (aux_data_len == sizeof(*data))
+> > +				rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
+> > -		rpmh_clk->res_addr += res_addr;
+> > -		rpmh_clk->dev = &pdev->dev;
+> > +			rpmh_clk->res_addr += res_addr;
+> > +			rpmh_clk->dev = &pdev->dev;
+> > +		}
+> >   		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
+> >   		if (ret) {
+> > @@ -752,6 +821,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+> >   	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
+> >   	{ .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
+> >   	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
+> > +	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
+> >   	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+> >   	{ }
+> >   };
