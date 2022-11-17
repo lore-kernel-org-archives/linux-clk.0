@@ -2,226 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BF2C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 08:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5004C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 08:11:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239444AbiKQIK7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 03:10:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
+        id S239497AbiKQILo convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 03:11:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239495AbiKQIKy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 03:10:54 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68788725E0
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 00:10:52 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 5so836728wmo.1
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 00:10:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rS3CeytroYBrMcNfPAlV3kO7KBX6UypX1JFTunmJQ6E=;
-        b=MUvEyxH4DRxNaF7xFHViK9OG50/qiE94TeFhQ+WKPXbtu6yvEkisNv6BqW/aWMDeXc
-         4r1osV2RoM4r8EyV5Wwv6u/NV5VEMEIpDAHkTWv6RjKGQFzq4TaUbp48aJ/DCqfpQawO
-         UU7bA/vtI+Tp3wGKuTUUkQhvCzrG606jDgwTDqw2ya5/z9NX4b16BZ5uIsRUCWssM0Qv
-         L60ckv466eVN761sHHu3/wODYF2FMoR0/NEW2164I14r2QFYx1ubP5pClJwT/kLJvFPO
-         t1Uk9CcWH1vytbnggod9PT2k4YKKwVu6JgMNquDBaJFr9DUlJnuEJm8ZryFgMAwUWaiN
-         BvfQ==
+        with ESMTP id S239504AbiKQILm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 03:11:42 -0500
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568996DCD9;
+        Thu, 17 Nov 2022 00:11:41 -0800 (PST)
+Received: by mail-qt1-f176.google.com with SMTP id fz10so642245qtb.3;
+        Thu, 17 Nov 2022 00:11:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rS3CeytroYBrMcNfPAlV3kO7KBX6UypX1JFTunmJQ6E=;
-        b=Q+TJBjeu07aSKahvTnYQxtTtoDI3fr9Iksi6e0UGpjB38REqqDon97yO+Kynhby5XZ
-         6beOWzkhsTvdpgV64LpdV0D3C76DpT1Uuc8TbPzJ05u9c/pTaRsW1pGza8YX/yP52fWP
-         Pe0CCW4j8ax2r8xB+7KwJz6tUi/sCEERAl/yS6cdjTVhzGosllgYhW6a3QohLndc8MQ9
-         v7nDaqLxU/9VXsVmO9NmVZuT9Shv3n5KCdi5qGlMOMjGEu9kscp9gQQ1QtIX+OTa6Mip
-         m1IvhOnXUrLXhFSrUseYY5kqkbbzCtwFfeVw4cSyajyhv+SRrYhzjdJVcve3JH1dw9+R
-         HKgQ==
-X-Gm-Message-State: ANoB5pldiEc7OjMGDrXl4wUJtwSUl4pU0LgBuFiLSONSqZcjq9VwnYUs
-        ihsxBSDMRBYD9lV0WiPGOR6j8g==
-X-Google-Smtp-Source: AA0mqf6DHcphfUQiQ1Qf31pjKrpHs6JhRRfu6R33TLUn1mY/HZDYnfvDwkZp8OgPXhOEszdnwb0PNA==
-X-Received: by 2002:a05:600c:5389:b0:3cf:a343:9a28 with SMTP id hg9-20020a05600c538900b003cfa3439a28mr4369653wmb.186.1668672650950;
-        Thu, 17 Nov 2022 00:10:50 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id t6-20020a5d6906000000b0022e47b57735sm219490wru.97.2022.11.17.00.10.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 00:10:50 -0800 (PST)
-Date:   Thu, 17 Nov 2022 10:10:48 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 7/9] clk: qcom: rpmh: Add support for SM8550 rpmh clocks
-Message-ID: <Y3XsiDSQNQ7Squaz@linaro.org>
-References: <20221116104716.2583320-1-abel.vesa@linaro.org>
- <20221116104716.2583320-8-abel.vesa@linaro.org>
- <010238f2-f520-41b8-c2cf-d65e9c12160d@linaro.org>
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s4parOYjCXkKKOyavCWPd/uYGoV22cew15gslyG1Z/c=;
+        b=5eCOgi2abKtfLuMwvPV606QIHTeTJX2py7wq2fmWG4JBQDNrSdANA4wB5s08gzAHtl
+         2EV7xk9089HWuTJ0AUicAjrbs9wxZg2MVzdFtzIqp6jOaMMr1kDsJqYUPuvFlQ4CsRfh
+         iD0YoceeA96/gyypEIm0C/mpmC+Bc9NWr37KIBOflBzl2phS+7HOE3xYv4DS+5xleUJ6
+         0Prgx1aS80QymWbrOlyPusdGiZaE2unTOq8rrrpmXMwTrvElzUov23jCc25wAcGuNOt4
+         /FCmLdildRu/6cYRB05EXo4bgbTMhi7TB5Ho1f2/4jQjJJ5V8FN5WHihIuAk4Itzn/RS
+         kHow==
+X-Gm-Message-State: ANoB5pnpj8p6NOwRRjuIVVxhCK0Oh9ivindLxW3bwXu/O0Xu54yDPg48
+        dxq0qGXWBjyyU1tFz+cu6lvSrTkWetTbVg==
+X-Google-Smtp-Source: AA0mqf4wCrUtPzuGuZWUPNtG4wpG6d8tOl+GlBTTJCiKZVrNR5N3g4sKmJuTL+gDZF1sGlAllFicMg==
+X-Received: by 2002:ac8:734d:0:b0:3a5:2784:f462 with SMTP id q13-20020ac8734d000000b003a52784f462mr1232098qtp.590.1668672700173;
+        Thu, 17 Nov 2022 00:11:40 -0800 (PST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id y10-20020a05622a120a00b0039cc64bcb53sm40443qtx.27.2022.11.17.00.11.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Nov 2022 00:11:39 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-39115d17f3dso5509847b3.1;
+        Thu, 17 Nov 2022 00:11:39 -0800 (PST)
+X-Received: by 2002:a05:690c:b01:b0:370:202b:f085 with SMTP id
+ cj1-20020a05690c0b0100b00370202bf085mr969602ywb.502.1668672699377; Thu, 17
+ Nov 2022 00:11:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <010238f2-f520-41b8-c2cf-d65e9c12160d@linaro.org>
+References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
+ <20221115192625.9410-2-alexander.helms.jy@renesas.com> <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+ <9231404a-85b2-9a9f-f040-f97615bf8ec0@renesas.com> <6dc67c30-d9c3-5906-a2bc-263ac83df051@linaro.org>
+In-Reply-To: <6dc67c30-d9c3-5906-a2bc-263ac83df051@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 17 Nov 2022 09:11:27 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVoCVz7zyWvAbCydSGQ6RnRxH2kBFDyu-M-Fn8h_XicLQ@mail.gmail.com>
+Message-ID: <CAMuHMdVoCVz7zyWvAbCydSGQ6RnRxH2kBFDyu-M-Fn8h_XicLQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alex Helms <alexander.helms.jy@renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        geert+renesas@glider.be
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-11-16 12:27:16, Konrad Dybcio wrote:
-> 
-> 
-> On 16/11/2022 11:47, Abel Vesa wrote:
-> > Adds the RPMH clocks present in SM8550 SoC.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >   drivers/clk/qcom/clk-rpmh.c | 110 +++++++++++++++++++++++++++++-------
-> >   1 file changed, 90 insertions(+), 20 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> > index 1da45a6e2f29..63975490ab54 100644
-> > --- a/drivers/clk/qcom/clk-rpmh.c
-> > +++ b/drivers/clk/qcom/clk-rpmh.c
-> > @@ -579,6 +579,73 @@ static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
-> >   	.num_clks = ARRAY_SIZE(sm8450_rpmh_clocks),
-> >   };
-> > +#define DEFINE_CLK_RPMH_FIXED(_platform, _name, _name_active,	\
-> > +				  _parent_name, _name_active_parent,	\
-> > +				  _div)					\
-> > +	static struct clk_fixed_factor _platform##_##_name = {		\
-> > +		.mult = 1,						\
-> > +		.div = _div,						\
-> > +		.hw.init = &(struct clk_init_data){			\
-> > +			.ops = &clk_fixed_factor_ops,			\
-> > +			.name = #_name,					\
-> > +			.parent_data =  &(const struct clk_parent_data){ \
-> > +					.fw_name = #_parent_name,	\
-> > +					.name = #_parent_name,		\
-> No need to introduce .name if we do DT properly from the get-go, I think
+On Thu, Nov 17, 2022 at 8:39 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 16/11/2022 21:11, Alex Helms wrote:
+> >>> +  clocks:
+> >>> +    const: 1
+> >>> +
+> >>> +  compatible:
+> >>> +    enum:
+> >>> +      - renesas,9fgv1006
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  renesas,ss-amount-percent:
+> >>> +    description: Spread spectrum absolute amount as hundredths of a percent, e.g. 150 is 1.50%.
+> >>
+> >> What? If this is percent then it cannot be hundreds of percent. Percent
+> >> is percent. Use appropriate units.
+> >> https://jpn01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fdevicetree-org%2Fdt-schema%2Fblob%2Fmain%2Fdtschema%2Fschemas%2Fproperty-units.yaml&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C9c13a32848f3434e217108dac7ab69f6%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C638041836281252737%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=6MULpJhPyyjWSo1SvPCrz6KidE1VEtiiNYk1O5wS1vI%3D&amp;reserved=0
+> >>
+> >
+> > Values like 0.5% or 2.5% must be representable which is why this
+> > property is an integer of hundredths of percent. How else would you
+> > represent a non-integer percent?
+>
+> With an appropriate unit.
 
-Sure. Will drop it. Will also move the define up, close to the other
-ones.
+Krzysztof really means the property should be named e.g.
+"renesas,ss-amount-centipercent" instead.
 
-Thanks,
-Abel
+Gr{oetje,eeting}s,
 
-> 
-> 
-> Konrad
-> > +			},						\
-> > +			.num_parents = 1,				\
-> > +		},							\
-> > +	};								\
-> > +	static struct clk_fixed_factor _platform##_##_name_active = {	\
-> > +		.mult = 1,						\
-> > +		.div = _div,						\
-> > +		.hw.init = &(struct clk_init_data){			\
-> > +			.ops = &clk_fixed_factor_ops,			\
-> > +			.name = #_name_active,				\
-> > +			.parent_data =  &(const struct clk_parent_data){ \
-> > +					.fw_name = #_name_active_parent,\
-> > +					.name = #_name_active_parent,	\
-> > +			},						\
-> > +			.num_parents = 1,				\
-> > +		},							\
-> > +	}
-> > +
-> > +DEFINE_CLK_RPMH_ARC(sm8550, xo_pad, xo_pad_ao, "xo.lvl", 0x03, 2);
-> > +DEFINE_CLK_RPMH_FIXED(sm8550, bi_tcxo, bi_tcxo_ao, xo_pad, xo_pad_ao, 2);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk1, rf_clk1_ao, "clka1", 1);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk2, rf_clk2_ao, "clka2", 1);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk3, rf_clk3_ao, "clka3", 1);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk4, rf_clk4_ao, "clka4", 1);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk1, ln_bb_clk1_ao, "clka6", 2);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk2, ln_bb_clk2_ao, "clka7", 2);
-> > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk3, ln_bb_clk3_ao, "clka8", 2);
-> > +
-> > +static struct clk_hw *sm8550_rpmh_clocks[] = {
-> > +	[RPMH_CXO_PAD_CLK]      = &sm8550_xo_pad.hw,
-> > +	[RPMH_CXO_PAD_CLK_A]    = &sm8550_xo_pad_ao.hw,
-> > +	[RPMH_CXO_CLK]		= &sm8550_bi_tcxo.hw,
-> > +	[RPMH_CXO_CLK_A]	= &sm8550_bi_tcxo_ao.hw,
-> > +	[RPMH_LN_BB_CLK1]	= &sm8550_ln_bb_clk1.hw,
-> > +	[RPMH_LN_BB_CLK1_A]	= &sm8550_ln_bb_clk1_ao.hw,
-> > +	[RPMH_LN_BB_CLK2]	= &sm8550_ln_bb_clk2.hw,
-> > +	[RPMH_LN_BB_CLK2_A]	= &sm8550_ln_bb_clk2_ao.hw,
-> > +	[RPMH_LN_BB_CLK3]	= &sm8550_ln_bb_clk3.hw,
-> > +	[RPMH_LN_BB_CLK3_A]	= &sm8550_ln_bb_clk3_ao.hw,
-> > +	[RPMH_RF_CLK1]		= &sm8550_rf_clk1.hw,
-> > +	[RPMH_RF_CLK1_A]	= &sm8550_rf_clk1_ao.hw,
-> > +	[RPMH_RF_CLK2]		= &sm8550_rf_clk2.hw,
-> > +	[RPMH_RF_CLK2_A]	= &sm8550_rf_clk2_ao.hw,
-> > +	[RPMH_RF_CLK3]		= &sm8550_rf_clk3.hw,
-> > +	[RPMH_RF_CLK3_A]	= &sm8550_rf_clk3_ao.hw,
-> > +	[RPMH_RF_CLK4]		= &sm8550_rf_clk4.hw,
-> > +	[RPMH_RF_CLK4_A]	= &sm8550_rf_clk4_ao.hw,
-> > +	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> > +};
-> > +
-> > +static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
-> > +	.clks = sm8550_rpmh_clocks,
-> > +	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
-> > +};
-> > +
-> >   static struct clk_hw *sc7280_rpmh_clocks[] = {
-> >   	[RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
-> >   	[RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
-> > @@ -694,29 +761,31 @@ static int clk_rpmh_probe(struct platform_device *pdev)
-> >   		name = hw_clks[i]->init->name;
-> > -		rpmh_clk = to_clk_rpmh(hw_clks[i]);
-> > -		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-> > -		if (!res_addr) {
-> > -			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
-> > -				rpmh_clk->res_name);
-> > -			return -ENODEV;
-> > -		}
-> > +		if (hw_clks[i]->init->ops != &clk_fixed_factor_ops) {
-> > +			rpmh_clk = to_clk_rpmh(hw_clks[i]);
-> > +			res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-> > +			if (!res_addr) {
-> > +				dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
-> > +					rpmh_clk->res_name);
-> > +				return -ENODEV;
-> > +			}
-> > -		data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
-> > -		if (IS_ERR(data)) {
-> > -			ret = PTR_ERR(data);
-> > -			dev_err(&pdev->dev,
-> > -				"error reading RPMh aux data for %s (%d)\n",
-> > -				rpmh_clk->res_name, ret);
-> > -			return ret;
-> > -		}
-> > +			data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
-> > +			if (IS_ERR(data)) {
-> > +				ret = PTR_ERR(data);
-> > +				dev_err(&pdev->dev,
-> > +					"error reading RPMh aux data for %s (%d)\n",
-> > +					rpmh_clk->res_name, ret);
-> > +				return ret;
-> > +			}
-> > -		/* Convert unit from Khz to Hz */
-> > -		if (aux_data_len == sizeof(*data))
-> > -			rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
-> > +			/* Convert unit from Khz to Hz */
-> > +			if (aux_data_len == sizeof(*data))
-> > +				rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
-> > -		rpmh_clk->res_addr += res_addr;
-> > -		rpmh_clk->dev = &pdev->dev;
-> > +			rpmh_clk->res_addr += res_addr;
-> > +			rpmh_clk->dev = &pdev->dev;
-> > +		}
-> >   		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
-> >   		if (ret) {
-> > @@ -752,6 +821,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
-> >   	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
-> >   	{ .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
-> >   	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
-> > +	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
-> >   	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
-> >   	{ }
-> >   };
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
