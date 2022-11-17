@@ -2,120 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5951EC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 15:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F358C43217
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 15:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239679AbiKQPvP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 10:51:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
+        id S240109AbiKQP7K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 10:59:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234851AbiKQPvK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 10:51:10 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A3270A06;
-        Thu, 17 Nov 2022 07:51:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668700269; x=1700236269;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BWDzsCwCXR7fUBoOm58dEqg3TsEeYspRHu9MmmNT8XE=;
-  b=TUVfhWZ9+tB1Q2263cJigbnWMLw5ULJCLWiLWvAn0A7KATLeXKvWpAbx
-   5v42wCp/ShxZ0uLUc8S6lOw3YYQ6TxbEex5c7AcDknYRWIcUOcNP1goho
-   lmyDOj5+6sh32A/TQfQoh/6awqo42P+kY8zmcxF71zni9xzf8m7wm/J3V
-   DGnEEnlRzXxth/ozquYHumyfbQUdwajqqqanzkEX8aukpVGBPDgkPXAKA
-   A876czyXojg3QgqpttynY9s3O2pzEjkr7Pl0CMUy17DFbi18sUYzYPZEw
-   YRaT7i1OEuWr5qsInqqa1jcVkDQGvVrNLCiFvJUVlqn8OHYlh2xt5+R2L
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="375016483"
-X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
-   d="scan'208";a="375016483"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 07:50:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="814557612"
-X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
-   d="scan'208";a="814557612"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 17 Nov 2022 07:50:49 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E9D8A2B7; Thu, 17 Nov 2022 17:51:13 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v1 1/3] clk: fractional-divider: Split out clk_fd_get_div() helper
-Date:   Thu, 17 Nov 2022 17:51:03 +0200
-Message-Id: <20221117155105.1486-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S239986AbiKQP7B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 10:59:01 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482E970A02;
+        Thu, 17 Nov 2022 07:58:59 -0800 (PST)
+Received: from frapeml500006.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NCkxL2vgnz67FVn;
+        Thu, 17 Nov 2022 23:54:14 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
+ frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 17 Nov 2022 16:58:57 +0100
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Thu, 17 Nov
+ 2022 15:58:56 +0000
+Date:   Thu, 17 Nov 2022 15:58:55 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-mips@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-can@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-spi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <linux-watchdog@vger.kernel.org>
+Subject: Re: [RFC PATCH 5/9] dt-bindings: drop redundant part of title (end,
+ part two)
+Message-ID: <20221117155855.000066f7@Huawei.com>
+In-Reply-To: <20221117123850.368213-6-krzysztof.kozlowski@linaro.org>
+References: <20221117123850.368213-1-krzysztof.kozlowski@linaro.org>
+        <20221117123850.368213-6-krzysztof.kozlowski@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.76]
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Split out clk_fd_get_div() helper for the future use elsewhere.
+On Thu, 17 Nov 2022 13:38:46 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/clk/clk-fractional-divider.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+> The Devicetree bindings document does not have to say in the title that
+> it is a "binding", but instead just describe the hardware.
+> 
+> Drop trailing "Node|Tree|Generic bindings" in various forms (also with
+> trailling full stop):
+> 
+>   find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+>     -not -name 'trivial-devices.yaml' \
+>     -exec sed -i -e 's/^title: \(.*\) [nN]ode [bB]indings\?\.\?$/title: \1/' {} \;
+> 
+>   find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+>     -not -name 'trivial-devices.yaml' \
+>     -exec sed -i -e 's/^title: \(.*\) [tT]ree [bB]indings\?\.\?$/title: \1/' {} \;
+> 
+>   find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+>     -not -name 'trivial-devices.yaml' \
+>     -exec sed -i -e 's/^title: \(.*\) [gG]eneric [bB]indings\?\.\?$/title: \1/' {} \;
+> 
+>   find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+>     -not -name 'trivial-devices.yaml' \
+>     -exec sed -i -e 's/^title: \(.*\) [bB]indings\? description\.\?$/title: \1/' {} \;
+> 
+>   find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+>     -not -name 'trivial-devices.yaml' \
+>     -exec sed -i -e 's/^title: \(.*\) [bB]indings\? document\.\?$/title: \1/' {} \;
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 8efa5142ff8c..5c6f1d0f8fb4 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -40,6 +40,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/device.h>
- #include <linux/slab.h>
-@@ -63,14 +64,12 @@ static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
- 		writel(val, fd->reg);
- }
- 
--static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
--					unsigned long parent_rate)
-+static void clk_fd_get_div(struct clk_hw *hw, struct u32_fract *fract)
- {
- 	struct clk_fractional_divider *fd = to_clk_fd(hw);
- 	unsigned long flags = 0;
- 	unsigned long m, n;
- 	u32 val;
--	u64 ret;
- 
- 	if (fd->lock)
- 		spin_lock_irqsave(fd->lock, flags);
-@@ -92,11 +91,22 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 		n++;
- 	}
- 
--	if (!n || !m)
-+	fract->numerator = m;
-+	fract->denominator = n;
-+}
-+
-+static unsigned long clk_fd_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct u32_fract fract;
-+	u64 ret;
-+
-+	clk_fd_get_div(hw, &fract);
-+
-+	if (!fract.numerator || !fract.denominator)
- 		return parent_rate;
- 
--	ret = (u64)parent_rate * m;
--	do_div(ret, n);
-+	ret = (u64)parent_rate * fract.numerator;
-+	do_div(ret, fract.denominator);
- 
- 	return ret;
- }
--- 
-2.35.1
+FWIW eyeballed these as well and all look good to me.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
 
