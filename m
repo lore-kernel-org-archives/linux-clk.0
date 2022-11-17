@@ -2,87 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22CDC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 06:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22DFC43217
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 07:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239310AbiKQGER (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 01:04:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
+        id S234575AbiKQHjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 02:39:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239321AbiKQGEO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 01:04:14 -0500
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B9729831;
-        Wed, 16 Nov 2022 22:04:07 -0800 (PST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NCTrQ0NVfz8R041;
-        Thu, 17 Nov 2022 14:04:06 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.40.50])
-        by mse-fl2.zte.com.cn with SMTP id 2AH63WUf079891;
-        Thu, 17 Nov 2022 14:03:32 +0800 (+08)
-        (envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-        by mapi (Zmail) with MAPI id mid31;
-        Thu, 17 Nov 2022 14:03:34 +0800 (CST)
-Date:   Thu, 17 Nov 2022 14:03:34 +0800 (CST)
-X-Zmail-TransId: 2af96375ceb6ffffffffc4c4508b
-X-Mailer: Zmail v1.0
-Message-ID: <202211171403340042731@zte.com.cn>
-Mime-Version: 1.0
-From:   <ye.xingchen@zte.com.cn>
-To:     <andersson@kernel.org>
-Cc:     <agross@kernel.org>, <konrad.dybcio@somainline.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBjbGs6IHFjb206IGhmcGxsOiB1c2UKCiBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl2.zte.com.cn 2AH63WUf079891
-X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 6375CED6.001 by FangMail milter!
-X-FangMail-Envelope: 1668665046/4NCTrQ0NVfz8R041/6375CED6.001/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6375CED6.001/4NCTrQ0NVfz8R041
+        with ESMTP id S238868AbiKQHjF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 02:39:05 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F6AB1B
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 23:39:04 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id c25so1612975ljr.8
+        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 23:39:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sUvLTegV+G0N0TmpvkICnkOYLNff/i43AeGnNT12OYU=;
+        b=gryPTaF8AT0hCXfN1kMmwi+ySsQwvvIvlYuRYzHrQ/IK2QJGuFbSpUCV1pP/ULOLot
+         oERFXBjRObHT1YrCkS1RJFZqSqPehCBoZGITYhSfpLMKfqOqX/DJOw98qKOoy5rrgO/t
+         BtawxCVJR/Lcj9NNNhaCXTxcem0Kon7cxR6dBMsVf0cgUWj12Ut728op8xHTfMUvSazK
+         PhUo1wfrXCfWE8FFkfFr04c5h6aw7mAW16QzqSSAywoVgct5JQcN4Rh6613DOPPIKy9K
+         eAKx10HUxTfWOS4+7yZfg94K8aVWhxBN2EFPBcT9UQ85KVvsSMFpKiNZQKfRDp0iN4hQ
+         64kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sUvLTegV+G0N0TmpvkICnkOYLNff/i43AeGnNT12OYU=;
+        b=EfsObyfPvucGbOvL0xqzYQmOtX6Yvcyz2MpBIBrfnLqooDC1M5/TgiFBGb14dbHfsC
+         tUhOSlGqmi5+whWSQ3/2zsEvf3OIgcFJrQW/LGYOl7Y9i15t/fqYetRsc3j9aulvx1Nr
+         G9RAGjS+VczmaAgLMqFGcX3oFrDRxjmfq/gPHHIzt7oSPIWseLiFxOEtcVlDVaTRVLlk
+         cTh3/sPQ+8IrxjLI6TGLAu/jX7aYdZF7dwCT0kRdbNvmrH72CJlvgFwA7GEyAyZ/F4XY
+         qa78/YecxpaQKikr+HBuIkwlhSgPOCPKh0dWXQhXFsmZHVMI6m8CB8EW6Orzn1/SqRDj
+         yBjw==
+X-Gm-Message-State: ANoB5pmhplXhQMCzhhVvd8w9Hsr+z/BIv05S+BJJcJq0UvXevpeIjYFL
+        HE5xOTY9IZOjXTbMFRGDTo7oVw==
+X-Google-Smtp-Source: AA0mqf6b93e4ySz+tC7QI4L/A34/l+f9zG80cm3J+IE/QRvaO2GLyKn6z3cdHkLn8Myx7Lp0ZqgayA==
+X-Received: by 2002:a2e:8e6f:0:b0:279:6df:38df with SMTP id t15-20020a2e8e6f000000b0027906df38dfmr573644ljk.211.1668670742793;
+        Wed, 16 Nov 2022 23:39:02 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id o2-20020a05651205c200b0049e9122bd0esm19821lfo.114.2022.11.16.23.39.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Nov 2022 23:39:02 -0800 (PST)
+Message-ID: <6dc67c30-d9c3-5906-a2bc-263ac83df051@linaro.org>
+Date:   Thu, 17 Nov 2022 08:39:01 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
+To:     Alex Helms <alexander.helms.jy@renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be
+References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
+ <20221115192625.9410-2-alexander.helms.jy@renesas.com>
+ <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+ <9231404a-85b2-9a9f-f040-f97615bf8ec0@renesas.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <9231404a-85b2-9a9f-f040-f97615bf8ec0@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+On 16/11/2022 21:11, Alex Helms wrote:
+>>> +  clocks:
+>>> +    const: 1
+>>> +
+>>> +  compatible:
+>>> +    enum:
+>>> +      - renesas,9fgv1006
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  renesas,ss-amount-percent:
+>>> +    description: Spread spectrum absolute amount as hundredths of a percent, e.g. 150 is 1.50%.
+>>
+>> What? If this is percent then it cannot be hundreds of percent. Percent
+>> is percent. Use appropriate units.
+>> https://jpn01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fdevicetree-org%2Fdt-schema%2Fblob%2Fmain%2Fdtschema%2Fschemas%2Fproperty-units.yaml&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C9c13a32848f3434e217108dac7ab69f6%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C638041836281252737%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=6MULpJhPyyjWSo1SvPCrz6KidE1VEtiiNYk1O5wS1vI%3D&amp;reserved=0
+>>
+> 
+> Values like 0.5% or 2.5% must be representable which is why this
+> property is an integer of hundredths of percent. How else would you
+> represent a non-integer percent?
 
-Convert platform_get_resource(), devm_ioremap_resource() to a single
-call to devm_platform_get_and_ioremap_resource(), as this is exactly
-what this function does.
+With an appropriate unit.
 
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
----
- drivers/clk/qcom/hfpll.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+>>> +    minimum: 0
+>>> +    maximum: 500
+>>> +
+>>> +  renesas,ss-modulation-hz:
+>>> +    description: Spread spectrum modulation rate in Hz
+>>> +    minimum: 30000
+>>> +    maximum: 63000
+>>> +
+>>> +  renesas,ss-direction:
+>>> +    $ref: /schemas/types.yaml#/definitions/string
+>>> +    description: Spread spectrum direction
+>>> +    enum: [ down, center ]
+>>> +
+>>> +required:
+>>> +  - clock-names
+>>> +  - '#clock-cells'
+>>> +  - compatible
+>>> +  - reg
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    ref25: ref25m {
+>>> +      compatible = "fixed-clock";
+>>> +      #clock-cells = <0>;
+>>> +      clock-frequency = <25000000>;
+>>> +    };
+>>
+>> Drop, it's obvious, isn't it?
+>>
+> 
+> I disagree, this may be obvious to someone familiar with how clocks in
+> the device tree works but not long ago it was entirely new to me and
+> examples like these in the dt schemas were very helpful in getting the
+> device up and running. There are several other bindings that define
+> external crystals and reference clocks in this way.
 
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-index 5ff7f5a60620..f4d78003d189 100644
---- a/drivers/clk/qcom/hfpll.c
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -47,7 +47,6 @@ static const struct regmap_config hfpll_regmap_config = {
+It is obvious because it is the same for every device being a consumer
+of external clock. There is no point to duplicate non-device related
+examples in every device binding.
 
- static int qcom_hfpll_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 	void __iomem *base;
- 	struct regmap *regmap;
-@@ -70,8 +69,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
- 	if (!h)
- 		return -ENOMEM;
+Best regards,
+Krzysztof
 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-
--- 
-2.25.1
