@@ -2,145 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22DFC43217
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 07:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD02C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 08:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234575AbiKQHjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 02:39:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
+        id S229658AbiKQIF3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 03:05:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238868AbiKQHjF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 02:39:05 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F6AB1B
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 23:39:04 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id c25so1612975ljr.8
-        for <linux-clk@vger.kernel.org>; Wed, 16 Nov 2022 23:39:04 -0800 (PST)
+        with ESMTP id S239258AbiKQIF1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 03:05:27 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A3C716E7
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 00:05:25 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id j15so1836910wrq.3
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 00:05:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sUvLTegV+G0N0TmpvkICnkOYLNff/i43AeGnNT12OYU=;
-        b=gryPTaF8AT0hCXfN1kMmwi+ySsQwvvIvlYuRYzHrQ/IK2QJGuFbSpUCV1pP/ULOLot
-         oERFXBjRObHT1YrCkS1RJFZqSqPehCBoZGITYhSfpLMKfqOqX/DJOw98qKOoy5rrgO/t
-         BtawxCVJR/Lcj9NNNhaCXTxcem0Kon7cxR6dBMsVf0cgUWj12Ut728op8xHTfMUvSazK
-         PhUo1wfrXCfWE8FFkfFr04c5h6aw7mAW16QzqSSAywoVgct5JQcN4Rh6613DOPPIKy9K
-         eAKx10HUxTfWOS4+7yZfg94K8aVWhxBN2EFPBcT9UQ85KVvsSMFpKiNZQKfRDp0iN4hQ
-         64kA==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKXYExdFPBk6x5LL48YmrBCt/Ex+r4UJ3aXw7toOApc=;
+        b=JbcW44dILJwm0wi2gWylt6XUA0QoEFA2sBCQ9vchinitjnk2CVTPOoED5IVzakXcko
+         Mum8HNtrKiWiAXYGrXGaNNeIRt6YWRHbT7YmpbhopIX3X9pWf0KBztjMvyE43SMRyxYY
+         uyVi7BAZdhRiFt73AtL74DeKif/2MjxAIjBvP6k1BoE6pRLSxsQxLknREs311LxHFSRZ
+         Z9vdG21Mby0rs/9Q1EIFLfxIaJauGzqoMEMLS7u5qDo6nJb5CT+rroC4LWaxeRNHYW1r
+         TjG/UEXMPyINJ/TZ+vawpX+rhK03JrFPZdQbdyX65J9otSrnVeEIeSh34fzH1m66qSC6
+         sIYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUvLTegV+G0N0TmpvkICnkOYLNff/i43AeGnNT12OYU=;
-        b=EfsObyfPvucGbOvL0xqzYQmOtX6Yvcyz2MpBIBrfnLqooDC1M5/TgiFBGb14dbHfsC
-         tUhOSlGqmi5+whWSQ3/2zsEvf3OIgcFJrQW/LGYOl7Y9i15t/fqYetRsc3j9aulvx1Nr
-         G9RAGjS+VczmaAgLMqFGcX3oFrDRxjmfq/gPHHIzt7oSPIWseLiFxOEtcVlDVaTRVLlk
-         cTh3/sPQ+8IrxjLI6TGLAu/jX7aYdZF7dwCT0kRdbNvmrH72CJlvgFwA7GEyAyZ/F4XY
-         qa78/YecxpaQKikr+HBuIkwlhSgPOCPKh0dWXQhXFsmZHVMI6m8CB8EW6Orzn1/SqRDj
-         yBjw==
-X-Gm-Message-State: ANoB5pmhplXhQMCzhhVvd8w9Hsr+z/BIv05S+BJJcJq0UvXevpeIjYFL
-        HE5xOTY9IZOjXTbMFRGDTo7oVw==
-X-Google-Smtp-Source: AA0mqf6b93e4ySz+tC7QI4L/A34/l+f9zG80cm3J+IE/QRvaO2GLyKn6z3cdHkLn8Myx7Lp0ZqgayA==
-X-Received: by 2002:a2e:8e6f:0:b0:279:6df:38df with SMTP id t15-20020a2e8e6f000000b0027906df38dfmr573644ljk.211.1668670742793;
-        Wed, 16 Nov 2022 23:39:02 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id o2-20020a05651205c200b0049e9122bd0esm19821lfo.114.2022.11.16.23.39.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 23:39:02 -0800 (PST)
-Message-ID: <6dc67c30-d9c3-5906-a2bc-263ac83df051@linaro.org>
-Date:   Thu, 17 Nov 2022 08:39:01 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
-To:     Alex Helms <alexander.helms.jy@renesas.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iKXYExdFPBk6x5LL48YmrBCt/Ex+r4UJ3aXw7toOApc=;
+        b=dyqIaapwjbkJMu9ylynJTbA+qE4SQKDPZWDSC6ljxKxYkUgPgY6P84kqHe5IwH708N
+         gixBGLXdQaqHgFqh/UBsi/rAPXicvV7DQYihf2TX2OV/y4jQE7RCJjPwX4L9zB4Vi8CD
+         czvuEbybmOVdgkMJGUZnAUP4Bi3xCJMrk4nfVoAr8C2nRB4NGbt0EaZVyVgFybdvCGTy
+         YfyzBMQb8fckCuFjr5Oa87ZqjhkOBJQ+np6g/YNI/dyY4sTt8mB4rhz9j5D98En8810R
+         V+71sfm9Bq7bfn5oBDcp9HBtNauF6uj2zQDCJbXyq4jHp2MDXrZfKKI5QjuYQf6VLD3Q
+         lJOw==
+X-Gm-Message-State: ANoB5pkGU1lPOjmZ/R4bDJNFwrVhdfV6YbxgJvG1vNOvWkKvJFHErq7W
+        TPu9BYeLsigLYYw5vj/cTRtJLg==
+X-Google-Smtp-Source: AA0mqf4z1Vw0osU9THOIqfd9q3COzRk87Bb9SpjfWJEe8ARfejulNJEeCFJYH4ns55QzuC7Fx9ys2A==
+X-Received: by 2002:a5d:440a:0:b0:238:3dc7:2adc with SMTP id z10-20020a5d440a000000b002383dc72adcmr708168wrq.160.1668672324057;
+        Thu, 17 Nov 2022 00:05:24 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id m4-20020a05600c4f4400b003cffd3c3d6csm452796wmq.12.2022.11.17.00.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 00:05:23 -0800 (PST)
+Date:   Thu, 17 Nov 2022 10:05:22 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be
-References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
- <20221115192625.9410-2-alexander.helms.jy@renesas.com>
- <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
- <9231404a-85b2-9a9f-f040-f97615bf8ec0@renesas.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <9231404a-85b2-9a9f-f040-f97615bf8ec0@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/9] clk: qcom: gdsc: Add configurable poll timeout
+Message-ID: <Y3XrQrnT0dxTvc5S@linaro.org>
+References: <20221116104716.2583320-1-abel.vesa@linaro.org>
+ <20221116104716.2583320-3-abel.vesa@linaro.org>
+ <9c5b6037-c962-81d3-41c1-a9ec459c9adc@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c5b6037-c962-81d3-41c1-a9ec459c9adc@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/11/2022 21:11, Alex Helms wrote:
->>> +  clocks:
->>> +    const: 1
->>> +
->>> +  compatible:
->>> +    enum:
->>> +      - renesas,9fgv1006
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  renesas,ss-amount-percent:
->>> +    description: Spread spectrum absolute amount as hundredths of a percent, e.g. 150 is 1.50%.
->>
->> What? If this is percent then it cannot be hundreds of percent. Percent
->> is percent. Use appropriate units.
->> https://jpn01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fdevicetree-org%2Fdt-schema%2Fblob%2Fmain%2Fdtschema%2Fschemas%2Fproperty-units.yaml&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C9c13a32848f3434e217108dac7ab69f6%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C638041836281252737%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=6MULpJhPyyjWSo1SvPCrz6KidE1VEtiiNYk1O5wS1vI%3D&amp;reserved=0
->>
+On 22-11-16 12:19:09, Konrad Dybcio wrote:
 > 
-> Values like 0.5% or 2.5% must be representable which is why this
-> property is an integer of hundredths of percent. How else would you
-> represent a non-integer percent?
+> 
+> On 16/11/2022 11:47, Abel Vesa wrote:
+> > Depending on the platform, the poll timeout delay might be different,
+> > so allow the platform specific drivers to specify their own values.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >   drivers/clk/qcom/gdsc.c | 5 ++++-
+> >   drivers/clk/qcom/gdsc.h | 1 +
+> >   2 files changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> > index 0f21a8a767ac..3753f3ef7241 100644
+> > --- a/drivers/clk/qcom/gdsc.c
+> > +++ b/drivers/clk/qcom/gdsc.c
+> > @@ -107,7 +107,7 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+> >   	do {
+> >   		if (gdsc_check_status(sc, status))
+> >   			return 0;
+> > -	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+> > +	} while (ktime_us_delta(ktime_get(), start) < sc->poll_timeout);
+> What about the second usage of TIMEOUT_US (in gdsc_toggle_logic)? Is it fine
+> for that to be the default value?
 
-With an appropriate unit.
+The usleep you mention is not really for polling the state.
+So I think it should stay as is. Who knows, maybe in the future we will
+need to have the configurable as well, but as a toggle delay rather than
+a status poll timeout.
+
+I added this configurable poll timeout just because I saw that
+downstream, each driver has different values. And it kind of makes sense,
+because the state machine inside the GDSC might be different between
+platforms, and so, it might take different time to reach a certain on/off
+state.
+
+Thanks,
+Abel
 
 > 
->>> +    minimum: 0
->>> +    maximum: 500
->>> +
->>> +  renesas,ss-modulation-hz:
->>> +    description: Spread spectrum modulation rate in Hz
->>> +    minimum: 30000
->>> +    maximum: 63000
->>> +
->>> +  renesas,ss-direction:
->>> +    $ref: /schemas/types.yaml#/definitions/string
->>> +    description: Spread spectrum direction
->>> +    enum: [ down, center ]
->>> +
->>> +required:
->>> +  - clock-names
->>> +  - '#clock-cells'
->>> +  - compatible
->>> +  - reg
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    ref25: ref25m {
->>> +      compatible = "fixed-clock";
->>> +      #clock-cells = <0>;
->>> +      clock-frequency = <25000000>;
->>> +    };
->>
->> Drop, it's obvious, isn't it?
->>
 > 
-> I disagree, this may be obvious to someone familiar with how clocks in
-> the device tree works but not long ago it was entirely new to me and
-> examples like these in the dt schemas were very helpful in getting the
-> device up and running. There are several other bindings that define
-> external crystals and reference clocks in this way.
-
-It is obvious because it is the same for every device being a consumer
-of external clock. There is no point to duplicate non-device related
-examples in every device binding.
-
-Best regards,
-Krzysztof
-
+> Konrad
+> >   	if (gdsc_check_status(sc, status))
+> >   		return 0;
+> > @@ -454,6 +454,9 @@ static int gdsc_init(struct gdsc *sc)
+> >   	if (ret)
+> >   		goto err_disable_supply;
+> > +	if (!sc->poll_timeout)
+> > +		sc->poll_timeout = 500;
+> > +
+> >   	return 0;
+> >   err_disable_supply:
+> > diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> > index 803512688336..9a1e1fb3d12f 100644
+> > --- a/drivers/clk/qcom/gdsc.h
+> > +++ b/drivers/clk/qcom/gdsc.h
+> > @@ -36,6 +36,7 @@ struct gdsc {
+> >   	struct generic_pm_domain	*parent;
+> >   	struct regmap			*regmap;
+> >   	unsigned int			gdscr;
+> > +	unsigned int			poll_timeout;
+> >   	unsigned int			collapse_ctrl;
+> >   	unsigned int			collapse_mask;
+> >   	unsigned int			gds_hw_ctrl;
