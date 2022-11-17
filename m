@@ -2,135 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E44C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Nov 2022 22:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22CDC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 06:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233308AbiKPWTS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Nov 2022 17:19:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43268 "EHLO
+        id S239310AbiKQGER (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 01:04:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234789AbiKPWTO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2022 17:19:14 -0500
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089516A68E;
-        Wed, 16 Nov 2022 14:19:13 -0800 (PST)
-Received: by mail-ot1-f47.google.com with SMTP id a7-20020a056830008700b0066c82848060so11334552oto.4;
-        Wed, 16 Nov 2022 14:19:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C1BseCQ919mBRDJ4MavG4MG7H9ttIbDk/xHMoGJiS7w=;
-        b=7O72zFjzF+EjbNtsilcSLKtz2441KmRTBcoHm0UXf68n4CjKGQagdqQSueQpfIx0NU
-         48O7cRHvMSR9wuMkhXuJlyGUMI6M0LKgU1FVt+j5L9S4rYSeGmOqZBaJRKM83m0OaMU+
-         CHL1hHCoG+YFyfEQvlDp55ZNCNBz8edGO0raqoXGxOcApwqi9kiqsFw7oSdz0Frwm+Oa
-         4Nw/HtM1A/BbKfFcolGclTTJzVXM813S9FYdtGbO0JlchLC7SPtZgJPKdTYv9kCI6kPO
-         2tD4Rrx46kh600jBvcJaBxk9pnj52P2NHFKIH1qzmAHswU+aNwm4doc+mKOPygo0JVQi
-         uerg==
-X-Gm-Message-State: ANoB5pmIXLfjYgrHDIisrOxCLKDTs9O0aclEmZIfyWLY0GcnA2t10x2n
-        a6kRETZ5wsoriLfRHxIJlg==
-X-Google-Smtp-Source: AA0mqf6Eebdg5PeMSU93AwHCbQ145qDurdgn9Iyf/Z25WtRx17/SMhDd27vWtGm1avZsTvXXn+MsOA==
-X-Received: by 2002:a9d:730d:0:b0:661:a568:7b27 with SMTP id e13-20020a9d730d000000b00661a5687b27mr118701otk.28.1668637152220;
-        Wed, 16 Nov 2022 14:19:12 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id h12-20020a056870538c00b0013ae39d0575sm8623086oan.15.2022.11.16.14.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 14:19:11 -0800 (PST)
-Received: (nullmailer pid 1130415 invoked by uid 1000);
-        Wed, 16 Nov 2022 22:19:13 -0000
-Date:   Wed, 16 Nov 2022 16:19:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alex Helms <alexander.helms.jy@renesas.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add bindings for Renesas ProXO
-Message-ID: <20221116221913.GA1122997-robh@kernel.org>
-References: <20221115233749.10161-1-alexander.helms.jy@renesas.com>
- <20221115233749.10161-2-alexander.helms.jy@renesas.com>
- <83492f7f-1217-69aa-8b38-ec1f08995832@linaro.org>
- <abc55598-8833-c4b2-aadc-c4e589aa775a@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <abc55598-8833-c4b2-aadc-c4e589aa775a@renesas.com>
+        with ESMTP id S239321AbiKQGEO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 01:04:14 -0500
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B9729831;
+        Wed, 16 Nov 2022 22:04:07 -0800 (PST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NCTrQ0NVfz8R041;
+        Thu, 17 Nov 2022 14:04:06 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.40.50])
+        by mse-fl2.zte.com.cn with SMTP id 2AH63WUf079891;
+        Thu, 17 Nov 2022 14:03:32 +0800 (+08)
+        (envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+        by mapi (Zmail) with MAPI id mid31;
+        Thu, 17 Nov 2022 14:03:34 +0800 (CST)
+Date:   Thu, 17 Nov 2022 14:03:34 +0800 (CST)
+X-Zmail-TransId: 2af96375ceb6ffffffffc4c4508b
+X-Mailer: Zmail v1.0
+Message-ID: <202211171403340042731@zte.com.cn>
+Mime-Version: 1.0
+From:   <ye.xingchen@zte.com.cn>
+To:     <andersson@kernel.org>
+Cc:     <agross@kernel.org>, <konrad.dybcio@somainline.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBjbGs6IHFjb206IGhmcGxsOiB1c2UKCiBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl2.zte.com.cn 2AH63WUf079891
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 6375CED6.001 by FangMail milter!
+X-FangMail-Envelope: 1668665046/4NCTrQ0NVfz8R041/6375CED6.001/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6375CED6.001/4NCTrQ0NVfz8R041
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 01:17:54PM -0700, Alex Helms wrote:
-> On 11/16/2022 1:50 AM, Krzysztof Kozlowski wrote:
-> > On 16/11/2022 00:37, Alex Helms wrote:
-> >> Add dt bindings for the Renesas ProXO oscillator.
-> >>
-> >> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> >> ---
-> >>  .../bindings/clock/renesas,proxo.yaml         | 51 +++++++++++++++++++
-> >>  MAINTAINERS                                   |  5 ++
-> >>  2 files changed, 56 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/renesas,proxo.yaml b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> >> new file mode 100644
-> >> index 000000000..ff960196d
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/renesas,proxo.yaml
-> >> @@ -0,0 +1,51 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: https://jpn01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Frenesas%2Cproxo.yaml%23&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C248dc84dbca44a4013d408dac7af9cf1%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C638041854305996374%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=iGbtWJLjV%2FM%2Fps0lPk7f40bMzX8qdt8VZBtH9J4LdOw%3D&amp;reserved=0
-> >> +$schema: https://jpn01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C248dc84dbca44a4013d408dac7af9cf1%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C638041854305996374%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=zYh4aHuw6G6A35rXBD7FTKeFrC7Hfcxag60ghkKUaGA%3D&amp;reserved=0
-> >> +
-> >> +title: Renesas ProXO Oscillator Device Tree Bindings
-> > 
-> > Same comments as for your other patch. All the same...
-> > 
-> >> +
-> >> +maintainers:
-> >> +  - Alex Helms <alexander.helms.jy@renesas.com>
-> >> +
-> >> +description:
-> >> +  Renesas ProXO is a family of programmable ultra-low phase noise
-> >> +  quartz-based oscillators.
-> >> +
-> >> +properties:
-> >> +  '#clock-cells':
-> >> +    const: 0
-> >> +
-> >> +  compatible:
-> >> +    enum:
-> >> +      - renesas,proxo-xp
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  clock-output-names:
-> >> +    maxItems: 1
-> >> +
-> >> +  renesas,crystal-frequency-hz:
-> >> +    description: Internal crystal frequency, default is 50000000 (50MHz)
-> > 
-> > If it is internal, then it is fixed, right? Embedded in the chip, always
-> > the same. Why do you need to specify it?
-> > 
-> 
-> Yes, it is embedded in the package but there are different values
-> depending on what chip is ordered and therefore must be specified for
-> some configurations.
-> 
-> I'm also not sure what you mean by me ignoring Rob's comment. I
-> explained my case for calling it "crystal-frequency-hz" and moved
-> forward. I can call it "clock-frequency" if you want but I find that
-> more confusing. Yes it is a built-in name in the schema but it seems to
-> be used in a variety of ways. Some devices use it as a crystal input,
-> but most seem to use it as the desired output frequency of the device
-> which is not how it is used here. Therefore I chose a more clear name
-> that better reflects what it is doing.
+From: Minghao Chi <chi.minghao@zte.com.cn>
 
-I think it is fine as-is. But you should have 'default: 50000000' 
-instead of prose.
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
-Rob
+Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
+---
+ drivers/clk/qcom/hfpll.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+index 5ff7f5a60620..f4d78003d189 100644
+--- a/drivers/clk/qcom/hfpll.c
++++ b/drivers/clk/qcom/hfpll.c
+@@ -47,7 +47,6 @@ static const struct regmap_config hfpll_regmap_config = {
+
+ static int qcom_hfpll_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct device *dev = &pdev->dev;
+ 	void __iomem *base;
+ 	struct regmap *regmap;
+@@ -70,8 +69,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+ 	if (!h)
+ 		return -ENOMEM;
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, res);
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+
+-- 
+2.25.1
