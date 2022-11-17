@@ -2,94 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA0CC4321E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 18:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF596C43217
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 21:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234990AbiKQSKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:10:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49150 "EHLO
+        id S239887AbiKQVJn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 16:09:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239492AbiKQSKZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 13:10:25 -0500
-Received: from smtpcmd0986.aruba.it (smtpcmd0986.aruba.it [62.149.156.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3F5F97FF12
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 10:10:18 -0800 (PST)
-Received: from localhost.localdomain ([146.241.88.137])
-        by Aruba Outgoing Smtp  with ESMTPSA
-        id vjL5ohRGp6OFPvjL7oOWDC; Thu, 17 Nov 2022 19:10:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1668708618; bh=Q1SqYvBrNnUgR2sXc9/h51g3EEMVjt/rfSR0IKOWq/8=;
-        h=From:To:Subject:Date:MIME-Version;
-        b=NCSrR7BGXlfeIZ9AqzR6hflynn/Yp2GJqjL6HmhVi90YkjYRLjKfGEeJ0/450r4/y
-         sjGkJ6SnoihSCEy+Mg/9NlIpU+xt2k/NpOD90qhjKpj4NtHWgwWniHAE8PW1YM/Vgi
-         EjeUVz4AYJddT8RDFx0evAD7ZMUaL1cbbCXHWohdRHxsEQAsAqUFUYAFK6twxG1HfO
-         uEI7zYNPEtl+I/HDtM/MUcSzRoGq6/jtMBvV0RoSn+i29BOapS2UO5ws87ykkABlHI
-         IyLKlg8Txmi3NJurEI6eUvxavOSXyP7HI4P5ke15oD2+ZZ6+/OhkyVsFwhTUhO5Szc
-         9B9pBVgun3bXw==
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Bough Chen <haibo.chen@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S240624AbiKQVJZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 16:09:25 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCA87722F;
+        Thu, 17 Nov 2022 13:08:04 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 4969620007;
+        Thu, 17 Nov 2022 21:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668719281;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=72JrUM6NacHh18cxNPJTokOPFIy2MlvUmUZu6AVg77s=;
+        b=kQ3WnKEHtW817TTGo/51w1BLV9fElm+d4PRny19l0Xo5WVvRKUWbYa4RLUCeb4hzAu+blU
+        gN78c5WiYd88yo78Tac1K8UgLdjF8sGEUg2eG4K4KIGZ2aSd/NCisT3pEqKgpi8MG9t8wo
+        Mhed7VoKwoPF1Ad6rnk8zscQKUda7EVdabBo89uHsVUfKLNbVRCzBabKqvqOG3TKdkeI5N
+        elXTmNOrt8pOHvUy7n2mYZBmGVFue71mi4Gp0X7blRdSkQQj+FNRIx2l1Hm3E/1dFZjljQ
+        ITXz8XlIez/SUSB6b7UDZFkg18YUByW5VovCJRgF+828mYPwuo2FHFq7f7zwSg==
+Date:   Thu, 17 Nov 2022 22:07:56 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jesse Taube <mr.bossman075@gmail.com>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>
-Subject: [PATCH 4/4] ARM: dts: imx: prepend a 0 in the memory address to make it clear it's 32MB
-Date:   Thu, 17 Nov 2022 19:10:14 +0100
-Message-Id: <20221117181014.851505-4-giulio.benetti@benettiengineering.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221117181014.851505-1-giulio.benetti@benettiengineering.com>
-References: <20221117181014.851505-1-giulio.benetti@benettiengineering.com>
+        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH 1/9] dt-bindings: drop redundant part of title of
+ shared bindings
+Message-ID: <20221117220756.7a1bf734@xps-13>
+In-Reply-To: <20221117123850.368213-2-krzysztof.kozlowski@linaro.org>
+References: <20221117123850.368213-1-krzysztof.kozlowski@linaro.org>
+        <20221117123850.368213-2-krzysztof.kozlowski@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfEGoKFYJtsS+LxJMJuhIQhyE88lRdTsRxYFjI0JhWP78wchn8e7HG5ipF2Hfc7wTDIwMtdFtZWWRBc5xIQ+7z/AtoVlAOdbN3dFILJzyaLbNIrL4sBeJ
- zB23vOv1Rf7t0zLZmTjGCc40kbBhhlJvFL+atvVyl7by6Pid98w0hYsomY6bvfgNBRacszwPELMbojgC/3fN++fqIYeZmZtQsAf7B4qwbopwQQLqix8/nA9/
- OWSQO782tjaI2dACIiwleOX73IAIdrxl9vz91vdPnqNI//52Jc4J5EsSiiDPVn4ZcirKrVfhFKsrbFU1auBfO4iF2zxdupUbHlk6ZErfN/VyPcNtfYsJO9q1
- YB9oQ2nSPRlRBsKMZUZLSc7WxvUszR1izRV2gKqobB/7U12jpuTPcapWyk6i4LNwRxAiz6rfW/owTO3LmSb3ZcAUDs4hhoBENbyospdecLZCVX1pCUUrUkYM
- CFvc56enH9FixN3NjVXGfDfqhvysZyJzpd+yyNriS3T6+bqF5eg1dlZHWwDjQ5Lo6SuyWe+ELbjS6GtY8uAmzm6+bBec9ovLQSeBgjmJIvRb8iL2w3Iw3vdR
- Hs/qf1OupC21bWsTyVzm2v0KycEE9oIxXV/SZomDOoWi3SMS4jtsFsjkcay/WX/Pc6bFHmIxPmI0+0hva3cYYROFf5ctttDcf6hzPHuOGW2ENGTiy6ZGvY3h
- j6OmRj2QK+gLR5HBabOJaSEAtHqm4qNb0Vj4DfHBWsp+zZA1Xkfwes1HDqOBgpWt9u/7Mv1frgwMUWGecHWwUNq3KHvg3JxZCNVwHcjUFRHYSugu2SFqFg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Prepend a 0 in the memory address to make it clear it's 32MB
+Hi Krzysztof,
 
-Cc: Jesse Taube <mr.bossman075@gmail.com>
-Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-Acked-by: Jesse Taube <mr.bossman075@gmail.com>
----
-V1->V2:
-* nothing done
-V2->V3:
-* added commit log and not only subject as suggested by Jesse Taube
-* added Jesse Taube's Acked-by:
-V3->V4:
-* nothing done
----
- arch/arm/boot/dts/imxrt1050-evk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+krzysztof.kozlowski@linaro.org wrote on Thu, 17 Nov 2022 13:38:42 +0100:
 
-diff --git a/arch/arm/boot/dts/imxrt1050-evk.dts b/arch/arm/boot/dts/imxrt1050-evk.dts
-index 1d339f48899f..3de392d014fe 100644
---- a/arch/arm/boot/dts/imxrt1050-evk.dts
-+++ b/arch/arm/boot/dts/imxrt1050-evk.dts
-@@ -28,7 +28,7 @@ aliases {
- 
- 	memory@80000000 {
- 		device_type = "memory";
--		reg = <0x80000000 0x2000000>;
-+		reg = <0x80000000 0x02000000>;
- 	};
- 
- 	panel {
--- 
-2.34.1
+> The Devicetree bindings document does not have to say in the title that
+> it is a "binding", but instead just describe the hardware.  For shared
+> (re-usable) schemas, name them all as "common properties".
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc.yaml         | 2 +-
+>  Documentation/devicetree/bindings/dma/dma-common.yaml         | 2 +-
+>  Documentation/devicetree/bindings/dma/dma-controller.yaml     | 4 ++--
+>  Documentation/devicetree/bindings/dma/dma-router.yaml         | 4 ++--
+>  Documentation/devicetree/bindings/iio/adc/adc.yaml            | 2 +-
+>  .../devicetree/bindings/media/video-interface-devices.yaml    | 2 +-
+>  Documentation/devicetree/bindings/media/video-interfaces.yaml | 2 +-
+>  Documentation/devicetree/bindings/mmc/mmc-controller.yaml     | 2 +-
+>  Documentation/devicetree/bindings/mtd/nand-chip.yaml          | 2 +-
+>  Documentation/devicetree/bindings/mtd/nand-controller.yaml    | 2 +-
+>  .../bindings/net/bluetooth/bluetooth-controller.yaml          | 2 +-
+>  Documentation/devicetree/bindings/net/can/can-controller.yaml | 2 +-
+>  .../devicetree/bindings/net/ethernet-controller.yaml          | 2 +-
+>  Documentation/devicetree/bindings/net/ethernet-phy.yaml       | 2 +-
+>  Documentation/devicetree/bindings/net/mdio.yaml               | 2 +-
+>  Documentation/devicetree/bindings/opp/opp-v2-base.yaml        | 2 +-
+>  .../devicetree/bindings/power/reset/restart-handler.yaml      | 2 +-
+>  Documentation/devicetree/bindings/rtc/rtc.yaml                | 2 +-
+>  .../devicetree/bindings/soundwire/soundwire-controller.yaml   | 2 +-
+>  Documentation/devicetree/bindings/spi/spi-controller.yaml     | 2 +-
+>  Documentation/devicetree/bindings/watchdog/watchdog.yaml      | 2 +-
+>  21 files changed, 23 insertions(+), 23 deletions(-)
+>=20
 
+[...]
+
+> diff --git a/Documentation/devicetree/bindings/mtd/nand-chip.yaml b/Docum=
+entation/devicetree/bindings/mtd/nand-chip.yaml
+> index 97ac3a3fbb52..20b195ef9b70 100644
+> --- a/Documentation/devicetree/bindings/mtd/nand-chip.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/nand-chip.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/mtd/nand-chip.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: NAND Chip and NAND Controller Generic Binding
+> +title: NAND Chip and NAND Controller common properties
+
+I only see this now but the title should be
+
+	"NAND chip common properties"
+
+> =20
+>  maintainers:
+>    - Miquel Raynal <miquel.raynal@bootlin.com>
+> diff --git a/Documentation/devicetree/bindings/mtd/nand-controller.yaml b=
+/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+> index 359a015d4e5a..a004efc42842 100644
+> --- a/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: NAND Chip and NAND Controller Generic Binding
+> +title: NAND Chip and NAND Controller common properties
+
+And here just "NAND controller..."
+
+Of course the original purpose of your series is more to clean those
+titles rather than fixing them and if you disagree I am fine doing it
+myself aside, but if you could at the same time make the title more
+accurate that would be perfect.
+
+Either ways:
+
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Cheers,
+Miqu=C3=A8l
