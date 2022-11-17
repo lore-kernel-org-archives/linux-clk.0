@@ -2,81 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8174C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 16:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA30C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 17:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234960AbiKQQSO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 11:18:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54120 "EHLO
+        id S240719AbiKQRPm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 12:15:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234749AbiKQQSN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 11:18:13 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B265F73BB1;
-        Thu, 17 Nov 2022 08:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668701892; x=1700237892;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uRwGw5VIjGJYpIriu0SlA1b3di7m84GdxzpfQl8VPps=;
-  b=Bwv39NjgiaPwMhd9GN1sW3ozbJxzcdOpEGxRohF65ejXZ5EZzULv8O/J
-   EKfwyaHvegBdivsmsZv8cdJQiZxz2t+yQO+RO7PwbnLVaBClrTQK6sKGg
-   2H9ED0pfvdlsvO3KgjMz5aAV/xmiFERpJM6q3cAOIqOyv3BihKnmucJtg
-   Jay0ZBsJw/rgQ4qFpcmTWY+FfEOVe/2pXcy+nwDrSSKsCJqhA90n+CLGy
-   /oWCH60/wFs0J7OovkIH7pH6o6W7+yq2O/aRkWgDKi5RIZYJKqoAXWUjF
-   6Lt3eUT/EMsPjz80ss7G3CcL6vvgGyb+cXE2Oxg13wbCDWHGaOIhx8X0y
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="377160623"
-X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
-   d="scan'208";a="377160623"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 08:17:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="968929062"
-X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
-   d="scan'208";a="968929062"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Nov 2022 08:17:50 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ovhaH-00Ddo6-1f;
-        Thu, 17 Nov 2022 18:17:49 +0200
-Date:   Thu, 17 Nov 2022 18:17:49 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v1 3/3] clk: fractional-divider: Regroup inclusions
-Message-ID: <Y3ZerQIW7fzOrRdt@smile.fi.intel.com>
-References: <20221117155105.1486-1-andriy.shevchenko@linux.intel.com>
- <20221117155105.1486-3-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S240716AbiKQRPl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 12:15:41 -0500
+Received: from mail-40138.protonmail.ch (mail-40138.protonmail.ch [185.70.40.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87D673B8E
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 09:15:40 -0800 (PST)
+Date:   Thu, 17 Nov 2022 17:15:26 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1668705338; x=1668964538;
+        bh=dW92NfqJF9I5odBniSAN3HdOJVVBTtflw7kZQiRR6D8=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=KlkGvxw6ftiz2mNoE9miBobvV1zFeKvvM2HwSC/Jjh+qx9h+1/rzgH30rQ06maH2J
+         Wg/m+tTo0V4GZoE9pEjC9cJmvOmCjRwOMRyoKAL4S86a4tBJ0o9VLnpocjBxX1L2yw
+         jkAbQ7BmnobI4TP/sfX4VM46H5DpAGMj294p9KGDUTpI57mW2KGBMBmBixOJP1joeF
+         FZA943yFVU3hqOJo9sxyVzrXG15eJ/JqRVzVFGex6WYQzg8xEk2pTzY91aDaEnzyG9
+         UevOrmhK6Sn4QQcUKmU+jU2SUOA3/phKg/aoFDDOkwDJ5qoMGOjMNYH1mbu03urWt0
+         WAPstBe57vL7g==
+To:     linux-clk@vger.kernel.org
+From:   "Lin, Meng-Bo" <linmengbo0689@protonmail.com>
+Cc:     Nikita Travkin <nikita@trvn.ru>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:QUALCOMM CLOCK DRIVERS" <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: qcom: gcc-msm8939: Add rates to the GP clocks
+Message-ID: <20221117171343.24216-1-linmengbo0689@protonmail.com>
+Feedback-ID: 40467236:user:proton
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221117155105.1486-3-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 05:51:05PM +0200, Andy Shevchenko wrote:
-> For the better maintenance regroup inclusions as follows:
-> - split CCF related headers in its own group
-> - order groups from generic to particular
-> - sort each group alphabetically
+Similar to msm8916, msm8939 has (at least) 6 "General Purpose" clocks that
+can be muxed to SoC pins. These clocks are:
 
-...
+GP_CLK{0, 1} : GPIO_{31, 32} (Belongs to CAMSS according to Linux)
+GP_CLK_{1-3}{A, B} : GPIO_{49-51, 97, 12, 13} (Belongs to GCC itself)
+GP_MN : GPIO_110 (Doesn't seem to be described in gcc,
+    ignored in this patch)
 
->  #include <linux/clk-provider.h>
+Those clocks may be used as e.g. PWM sources for external peripherals.
+Add more frequencies to the table for those clocks so it's possible
+for arbitrary peripherals to make use of them.
 
-Forgot removing this one.
+Reference: https://lore.kernel.org/r/20220612145955.385787-5-nikita@trvn.ru
 
-Anyway, I will wait for comments and then will send a v2.
+Signed-off-by: Lin, Meng-Bo <linmengbo0689@protonmail.com>
+---
+ drivers/clk/qcom/gcc-msm8939.c | 35 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.=
+c
+index af608f165896..712073f9dc69 100644
+--- a/drivers/clk/qcom/gcc-msm8939.c
++++ b/drivers/clk/qcom/gcc-msm8939.c
+@@ -1033,7 +1033,20 @@ static struct clk_rcg2 cci_clk_src =3D {
+ =09},
+ };
+=20
++/*
++ * This is a frequency table for "General Purpose" clocks.
++ * These clocks can be muxed to the SoC pins and may be used by
++ * external devices. They're often used as PWM source.
++ *
++ * See comment at ftbl_gcc_gp1_3_clk.
++ */
+ static const struct freq_tbl ftbl_gcc_camss_gp0_1_clk[] =3D {
++=09F(10000,   P_XO,    16,  1, 120),
++=09F(100000,  P_XO,    16,  1,  12),
++=09F(500000,  P_GPLL0, 16,  1, 100),
++=09F(1000000, P_GPLL0, 16,  1,  50),
++=09F(2500000, P_GPLL0, 16,  1,  20),
++=09F(5000000, P_GPLL0, 16,  1,  10),
+ =09F(100000000, P_GPLL0, 8, 0, 0),
+ =09F(200000000, P_GPLL0, 4, 0, 0),
+ =09{ }
+@@ -1198,7 +1211,29 @@ static struct clk_rcg2 crypto_clk_src =3D {
+ =09},
+ };
+=20
++/*
++ * This is a frequency table for "General Purpose" clocks.
++ * These clocks can be muxed to the SoC pins and may be used by
++ * external devices. They're often used as PWM source.
++ *
++ * Please note that MND divider must be enabled for duty-cycle
++ * control to be possible. (M !=3D N) Also since D register is configured
++ * with a value multiplied by 2, and duty cycle is calculated as
++ *                             (2 * D) % 2^W
++ *                DutyCycle =3D ----------------
++ *                              2 * (N % 2^W)
++ * (where W =3D .mnd_width)
++ * N must be half or less than maximum value for the register.
++ * Otherwise duty-cycle control would be limited.
++ * (e.g. for 8-bit NMD N should be less than 128)
++ */
+ static const struct freq_tbl ftbl_gcc_gp1_3_clk[] =3D {
++=09F(10000,   P_XO,    16,  1, 120),
++=09F(100000,  P_XO,    16,  1,  12),
++=09F(500000,  P_GPLL0, 16,  1, 100),
++=09F(1000000, P_GPLL0, 16,  1,  50),
++=09F(2500000, P_GPLL0, 16,  1,  20),
++=09F(5000000, P_GPLL0, 16,  1,  10),
+ =09F(19200000, P_XO, 1, 0,=090),
+ =09{ }
+ };
+--=20
+2.30.2
 
 
