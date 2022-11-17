@@ -2,175 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB963C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 10:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD59C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Nov 2022 10:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234813AbiKQK1d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 05:27:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58058 "EHLO
+        id S234669AbiKQKlJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Nov 2022 05:41:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234765AbiKQK1b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 05:27:31 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2F8532E1
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 02:27:29 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id d3so2160966ljl.1
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 02:27:28 -0800 (PST)
+        with ESMTP id S231469AbiKQKlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 05:41:07 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69064BE0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 02:41:06 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id d3so2200542ljl.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 02:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9kynY50ckiw0RzKQXKaPoaoAm91QSwXd4fLVfpMm4e0=;
-        b=qei0nzvmfzHhFzvLpeh2XvFtLPoO3C6JaIH7olZAhujhgIhGDAtQWExPnqO4l6iQnt
-         qJvZs+Rzv/EGieAd6m29GfntY34jMeKImzZJzvqyAKxdW1FAJauhGOtkXAYU2RxZDmYe
-         ksukKt07+zeDvu/GEDBAakV6MOqm34dInbD79VFlPWxIvZKD2HJejvrAjZEKTgHbKie5
-         kkjZapVNwX3dlIhHtgQ1VPNHDKb+QczHNW6ip9E4yPPC+8hDvnXKKf9KUovZkUksvB6/
-         GpKoX5Zu6ADrNfHw8Zioi4h+SspRvNYSXXHN+HKErwPtM6Ga5WSf6i9v02UQ5YpuGF2y
-         OXtA==
+        bh=YaIoPEw50t/WnUVDQR7OpPSHvfe9ZA8zd1uZiMhTfVs=;
+        b=aPeuNckmtl5EB/l+0Qale09NLiNdChQfebcy4/BvqLQEWkKt6+qqyqo9aFR4/60ryB
+         5stGSPj95r5pywiQvYVBiu4rRG7Df7TshFubUoVtJUiTrclc2/yRnc0GtUscauLByE9t
+         jf2NweY5ROB3AY6ZW2Hpt49eejWPUjif/yIYLwlS6esHt3hlMqqgiFlDRrMHtzIE2514
+         j2eQO7jAmb2ot030R148X+w64MkeMgSext2zFi5/j3bz7hN/8N+vn6s5L5H0M9vN1+HH
+         43MnnCx/eAP+Ay7gPaG7Waq/qZInnv57tUgsCQuoxgbwpHmRJcTr24nSuZtCaYV9uGnZ
+         hNcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kynY50ckiw0RzKQXKaPoaoAm91QSwXd4fLVfpMm4e0=;
-        b=RjXlmuZZkfH92FSBofrE8FLm7hXf+VSwwVjGlKjeh6HRqDe6Qcm1XXITwvh9lcWkDd
-         VNYHQjb7tKOI8iB+uGMjAqd4DrJePkK4OpwUSPLjLl422YRnAmaWSnqiVaIPN6TQRsV+
-         qOl9hCt0ctY9osxzVLpMxVbVpJQCh1tCFOPOuMtmEnYGArjrQyQsEe6aqiSlctk3Jq9n
-         fFfz7kBJPQkt8epn/UE7KkFEpHNGqlCEmF1Jgk8jLbzgm6XQhcrkaqwlYVBtvrS/Spph
-         AGpv+kt3StXtM0gvmSUhjsZmxrZC4L65WYIAJK4vfZ7L25vOiKRKD52EZVIgLxLNnaoU
-         BVTQ==
-X-Gm-Message-State: ANoB5pk7RbucVsH4SW8upJZIsl70NyOhz6P+Q2fmMssPxuGRjf+Z50k4
-        s12BCrzUlIGfPNIAVMFARMexyIy2ftEZsWFF
-X-Google-Smtp-Source: AA0mqf40gp0JWS9vrbYpcdERZdh+kArkyDdZuUk9mw4xv2UGpAVsutP2+H25Kj2gJE925TQqyDK/vw==
-X-Received: by 2002:a2e:9f47:0:b0:277:1273:f3b8 with SMTP id v7-20020a2e9f47000000b002771273f3b8mr720385ljk.178.1668680847373;
-        Thu, 17 Nov 2022 02:27:27 -0800 (PST)
+        bh=YaIoPEw50t/WnUVDQR7OpPSHvfe9ZA8zd1uZiMhTfVs=;
+        b=RrRNPV52nsz8Vf/acagvey2u1X7s5RZJDIX3+9piquqs4NN7gGAQ50NPhRPH0luU84
+         hFfuF2z9bx2H30qq85nz2n6tmUrlXHStBfkKF0D5FGKV+QV6Vm2fD8rHh7SVWTfmGw08
+         U7I8tccYN9z8i7nzr++SAuWbuc9TLFkU2WrIm2tjjVQucfn/XUjUBC2nm+QguCaSupiE
+         Q0rhSNt9LChnTdsH4Llw96bxdCaQxcfTK5dnmnrezDKu3mzH9JVymsX4/VaGUNRNLkr5
+         5CubmrX0vdXvv0N9I3YzGd6mrbN02ZXMpcjSMVtDLLjMSnPymjp1v/W5bMkLnAnnr9D6
+         CLgA==
+X-Gm-Message-State: ANoB5plMB0gLYdirlOE66YQRe8arg7sNXYqlFrlg/GHpfP9TQBKzwSyY
+        PqJo/eIb9zW4dlKPsL6KE7lXPA==
+X-Google-Smtp-Source: AA0mqf4z2oP3JjGAWN93rZG5cxw7xFixqf6bHZNRbG5efsjg1g6+wHUM+FNDDRDmlqcs4lWO2Oczrw==
+X-Received: by 2002:a2e:350d:0:b0:277:10b2:47e5 with SMTP id z13-20020a2e350d000000b0027710b247e5mr728289ljz.502.1668681664835;
+        Thu, 17 Nov 2022 02:41:04 -0800 (PST)
 Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id h1-20020a19ca41000000b0049476667228sm84417lfj.65.2022.11.17.02.27.26
+        by smtp.gmail.com with ESMTPSA id z8-20020ac25de8000000b004946bb30469sm88934lfq.82.2022.11.17.02.41.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Nov 2022 02:27:26 -0800 (PST)
-Message-ID: <a51164de-eb2b-497c-8f07-a5cd734e293d@linaro.org>
-Date:   Thu, 17 Nov 2022 11:27:25 +0100
+        Thu, 17 Nov 2022 02:41:04 -0800 (PST)
+Message-ID: <5a986cd4-12fe-a9f9-51f2-844fa6989bc8@linaro.org>
+Date:   Thu, 17 Nov 2022 11:41:03 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH 1/9] dt-bindings: clock: Add SM8550 GCC clock bindings
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20221116104716.2583320-1-abel.vesa@linaro.org>
- <20221116104716.2583320-2-abel.vesa@linaro.org>
- <c298fd71-22e9-98c5-14c6-88b078687b3d@linaro.org>
- <Y3YBpXIjDELtit0k@linaro.org>
+Subject: Re: [PATCH 1/2] dtbindings: clock: Add bindings for Renesas PhiClock
 Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Alex Helms <alexander.helms.jy@renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        geert+renesas@glider.be
+References: <20221115192625.9410-1-alexander.helms.jy@renesas.com>
+ <20221115192625.9410-2-alexander.helms.jy@renesas.com>
+ <e9fd112f-0fd2-e833-8687-9a256c307842@linaro.org>
+ <9231404a-85b2-9a9f-f040-f97615bf8ec0@renesas.com>
+ <6dc67c30-d9c3-5906-a2bc-263ac83df051@linaro.org>
+ <CAMuHMdVoCVz7zyWvAbCydSGQ6RnRxH2kBFDyu-M-Fn8h_XicLQ@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <Y3YBpXIjDELtit0k@linaro.org>
+In-Reply-To: <CAMuHMdVoCVz7zyWvAbCydSGQ6RnRxH2kBFDyu-M-Fn8h_XicLQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/11/2022 10:40, Abel Vesa wrote:
-> On 22-11-17 10:08:05, Krzysztof Kozlowski wrote:
->> On 16/11/2022 11:47, Abel Vesa wrote:
->>> Add device tree bindings for global clock controller on SM8550 SoCs.
->>
->> Subject: drop second, redundant "bindings".
-> 
-> Sure thing, will drop.
-> 
->>
+On 17/11/2022 09:11, Geert Uytterhoeven wrote:
+>>>>> +
+>>>>> +  renesas,ss-amount-percent:
+>>>>> +    description: Spread spectrum absolute amount as hundredths of a percent, e.g. 150 is 1.50%.
+>>>>
+>>>> What? If this is percent then it cannot be hundreds of percent. Percent
+>>>> is percent. Use appropriate units.
+>>>> https://jpn01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fdevicetree-org%2Fdt-schema%2Fblob%2Fmain%2Fdtschema%2Fschemas%2Fproperty-units.yaml&amp;data=05%7C01%7Calexander.helms.jy%40renesas.com%7C9c13a32848f3434e217108dac7ab69f6%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C638041836281252737%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=6MULpJhPyyjWSo1SvPCrz6KidE1VEtiiNYk1O5wS1vI%3D&amp;reserved=0
+>>>>
 >>>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>> ---
->>>  .../bindings/clock/qcom,gcc-sm8550.yaml       |  88 +++++++
->>>  include/dt-bindings/clock/qcom,gcc-sm8550.h   | 231 ++++++++++++++++++
->>>  2 files changed, 319 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8550.yaml
->>>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8550.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8550.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8550.yaml
->>> new file mode 100644
->>> index 000000000000..a2468167c8ab
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8550.yaml
->>> @@ -0,0 +1,88 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sm8550.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm Global Clock & Reset Controller Binding for SM8550
+>>> Values like 0.5% or 2.5% must be representable which is why this
+>>> property is an integer of hundredths of percent. How else would you
+>>> represent a non-integer percent?
 >>
->> You need to base on recent bindings. See commit ece3c3198182a1.
->>
+>> With an appropriate unit.
 > 
-> Yep, will do.
+> Krzysztof really means the property should be named e.g.
+> "renesas,ss-amount-centipercent" instead.
 > 
->>> +
->>> +maintainers:
->>> +  - Bjorn Andersson <andersson@kernel.org>
->>> +
->>> +description: |
->>> +  Qualcomm global clock control module which supports the clocks, resets and
->>> +  power domains on SM8550
->>
->> Ditto
->>
->>> +
->>> +  See also:
->>> +  - dt-bindings/clock/qcom,gcc-sm8550.h
->>
->> Ditto
->>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,sm8550-gcc
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: Board XO source
->>> +      - description: Sleep clock source
->>> +      - description: PCIE 0 Pipe clock source (Optional clock)
->>
->> Drop "(Optional clock)"
-> 
-> Sure, will drop. I based this on SM8450, but maybe that also needs an
-> update.
-> 
->>
->>> +      - description: PCIE 1 Pipe clock source (Optional clock)
->>> +      - description: PCIE 1 Phy Auxiliary clock source (Optional clock)
->>> +      - description: UFS Phy Rx symbol 0 clock source (Optional clock)
->>> +      - description: UFS Phy Rx symbol 1 clock source (Optional clock)
->>> +      - description: UFS Phy Tx symbol 0 clock source (Optional clock)
->>> +      - description: USB3 Phy wrapper pipe clock source (Optional clock)
->>> +    minItems: 2
->>
->> This does not look correct. Why clocks of GCC are inputs clocks to GCC?
-> 
-> Well, it is not a GCC clock. It is a fixed-clock fed into GCC.
-> The name is taken from downstream, but I'm pretty sure the HW clock is
-> named so. So I think we should keep it as is.
 
-I don't get it. The "PCIE 0 Pipe clock source" is defined here in this
-header:
-+#define GCC_PCIE_0_PIPE_CLK_SRC	41
-so what do you mean it is not GCC clock?
-
-Second thing, you have only one GCC, so how these clocks can be
-optional? Either they are there or they are not. Optional means usually
-that you have two devices having same compatible and they can operate a
-bit differently or some pins are not connected. It's not the case here.
+I provided an URL to document with units, so I was hoping Alex will take
+a bit of effort to open it. Hundredths of percent sounds like basis
+point... If it is not basis point, maybe it could be made such?
 
 Best regards,
 Krzysztof
