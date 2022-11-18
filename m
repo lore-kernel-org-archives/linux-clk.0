@@ -2,124 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64352C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 07:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 406DDC4321E
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 08:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241062AbiKRHsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Nov 2022 02:48:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
+        id S241405AbiKRI2b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Nov 2022 03:28:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241118AbiKRHsr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 02:48:47 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D42813F90
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 23:48:45 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id f27so11117625eje.1
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2022 23:48:45 -0800 (PST)
+        with ESMTP id S241369AbiKRI21 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 03:28:27 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9364633E
+        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 00:28:24 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id b9so5904367ljr.5
+        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 00:28:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vU5W8ur9B7l9Zgg+quFd2BNNrxWQGL6WPh6e5iN/YH0=;
-        b=KxET/fko3S2n6IOG7KINMUOcnceh2Wvz27WxoFfOlioE8UpFlQaRuaeyWeA/albMDD
-         LFmvrykoUwbqVB82jXVYa4q8dHCut12EKe7PeEB+ssXFGyKQ2TOk2dYpyZf0AiLW3u+M
-         6B7tGwopUM7HR/cKL7JS4WkOoXATlkna3MPyA=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MrA5CDs46lQZm6VaAVmPmV1Nyk9XIySNq9lvhXdo7k8=;
+        b=yIT6wd8Tn/4EigMdSev3RTx1dShvONUZ1o2LJic5y3UzW8LgMuG7uFp80Y8Mw7p+2i
+         u+Hx+MWiciMmXSYnrFx98cxa4sbmSAURAUt99p8E3r2tMmF0ygoLGxcFQPJrif3jPMLj
+         y0DxRVohO6j383Jju+uqZkJFVPAKCT7G1d+SNz0aRrDl59ec+iH3SvLunNJnRAN3fFHp
+         uj/yuz8SV/cGRRKi6lGP5BHU+Y9YeVlbn5zwGo+B4clkg1nQfYqsfFdJXz60NiVE7C5x
+         xoWYk/DHjlYtipany3Ms311spap+ZgR86DO9tnSirVslPkUYj7drcMZpd/Ds56w7qUSX
+         eO2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vU5W8ur9B7l9Zgg+quFd2BNNrxWQGL6WPh6e5iN/YH0=;
-        b=UdCyGTPW6+cn2qdrdWWtdS0fHnI0cj8Q8CHsbxQEK1TeI/FhIivhPG1JqlkNvHQV68
-         fGpPMG0jU5YetNtGJI7u2buSQdU+neItK4OKa8MhZw7xywP9MjJpUDF//wrrF4bm9Od6
-         dR/bN79e1Dyp2Q6ue9Aw8EEnRMCP+4G9lf5RNwQGYMNVLaAkIJYRVP+ObKoeG+NZtcCh
-         RzDYoCNITIfNKuXxYHBPfH0DqjpxD2KZ/QAvSwvDvzPRkF/T/RuVWrgHlOZQy9IymOZ3
-         dRq4aKUbQ2nzirgLaed48QSLHV1yjJQL8PBkHwqUFKFkDyVycCLizHwleoGyz7m3/4lE
-         H6mA==
-X-Gm-Message-State: ANoB5pkyXNMv5IMkR1oMPBuFWyfU6bMg3r/LtDK14n3liAuLxorB+FmT
-        QAiq+cZc4g+2gHVwrbn6FS5O6mbGlSWzNZwHF/sO0Q==
-X-Google-Smtp-Source: AA0mqf4bSaAT71nfpqxoEd7xZPMY65vR+S9YMqPyEdv+Aqr7nFTuKyPxwekcvOADbNSzBGvqYPHDUcMMiLjzE/WMv2A=
-X-Received: by 2002:a17:906:32d9:b0:7ae:31a0:5727 with SMTP id
- k25-20020a17090632d900b007ae31a05727mr5072471ejk.540.1668757723895; Thu, 17
- Nov 2022 23:48:43 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MrA5CDs46lQZm6VaAVmPmV1Nyk9XIySNq9lvhXdo7k8=;
+        b=4AzelRoDDZwedQ5X7/YECoTMVWkpbXXbOwMq/V+1RdTYjQrZivo/Hy7XDqRSt/YSkQ
+         ozqNtr7bwloXiWAYRStGogfF9pBnSieks3Ljo2QOF8fMTFzOCks9T9tyV6Fd3d1wz0Lb
+         3fWZ+OgnyT8ivdy7M2ZbkODWGzROHcFfGUAanOvzU2HLGWTpmKaHFrjfq9sqHFB0mRML
+         Weab0H8R165IK6wm2B5vJG+R5VsscX7U0VeTSehiSlNb8ojVEORLieiFPTLmnzlvUQWx
+         hrEPPeoYS7hyBqPZxRf4bf87bLvdSHiUdRxyhnhAnl2QUsyyJfEAErTdttNda1QRA/ju
+         LuIw==
+X-Gm-Message-State: ANoB5pnOAw8mfw96rLAH/g7EpkwD04VkjuEjT925WEJ0los+n/otz7n2
+        ZD3JdjrglccqwjVn+t0SHaoOLQ==
+X-Google-Smtp-Source: AA0mqf4FSTsj7jWLGFDuUM1KolU0pAAAlYx7n+VRF6tfHUnjgf3Tz4kJo9qfndGCbN01BGn3foVCSQ==
+X-Received: by 2002:a2e:9052:0:b0:26e:eeb:f9cf with SMTP id n18-20020a2e9052000000b0026e0eebf9cfmr2211769ljg.480.1668760070041;
+        Fri, 18 Nov 2022 00:27:50 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id g27-20020a2eb0db000000b0026bf0d71b1esm573326ljl.93.2022.11.18.00.27.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Nov 2022 00:27:49 -0800 (PST)
+Message-ID: <06ac1c86-22f7-97ff-bf59-6fb0994dfcc5@linaro.org>
+Date:   Fri, 18 Nov 2022 09:27:47 +0100
 MIME-Version: 1.0
-References: <20221117113637.1978703-1-dario.binacchi@amarulasolutions.com> <20221117114252.g3bcggwzyf4dxa3z@pengutronix.de>
-In-Reply-To: <20221117114252.g3bcggwzyf4dxa3z@pengutronix.de>
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date:   Fri, 18 Nov 2022 08:48:33 +0100
-Message-ID: <CABGWkvo3LZ7_JUpN3v5fWXfCgJrFepUqokTUo5b03H=C6jfq7A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] clk: imx8mn: miscellaneous cleanups and bug fixes
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-amarula@amarulasolutions.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [RFC PATCH 1/9] dt-bindings: drop redundant part of title of
+ shared bindings
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>, michael@amarulasolutions.com,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abelvesa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-watchdog@vger.kernel.org
+References: <20221117123850.368213-1-krzysztof.kozlowski@linaro.org>
+ <20221117123850.368213-2-krzysztof.kozlowski@linaro.org>
+ <Y3Z0w6JH1f5zgwvW@spud>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <Y3Z0w6JH1f5zgwvW@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marco,
+On 17/11/2022 18:52, Conor Dooley wrote:
+> On Thu, Nov 17, 2022 at 01:38:42PM +0100, Krzysztof Kozlowski wrote:
+>> The Devicetree bindings document does not have to say in the title that
+>> it is a "binding", but instead just describe the hardware.  For shared
+>> (re-usable) schemas, name them all as "common properties".
+> 
+> 
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> index 1ab416c83c8d..d2de3d128b73 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> @@ -4,7 +4,7 @@
+>>  $id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+>>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>  
+>> -title: Qualcomm Global Clock & Reset Controller Common Bindings
+>> +title: Qualcomm Global Clock & Reset Controller common parts
+>>  
+>>  maintainers:
+>>    - Stephen Boyd <sboyd@kernel.org>
+> 
+> 
+>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+>> index cf9c2f7bddc2..20ac432dc683 100644
+>> --- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+>> @@ -4,7 +4,7 @@
+>>  $id: http://devicetree.org/schemas/opp/opp-v2-base.yaml#
+>>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>  
+>> -title: Generic OPP (Operating Performance Points) Common Binding
+>> +title: Generic OPP (Operating Performance Points) common parts
+>>  
+>>  maintainers:
+>>    - Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> Hey Krzysztof,
+> 
+> Hopefully I've not overlooked something obvious, but it wasnt noted in
+> the commit message - how come these two are "parts" rather than
+> "properties"? The opp one at least don't seem to have much more than
+> properties and patterProperties in it.
 
-On Thu, Nov 17, 2022 at 12:42 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
->
-> Hi Dario,
->
-> On 22-11-17, Dario Binacchi wrote:
-> > This series has been tested on the BSH SystemMaster (SMM) S2 board.
-> >
-> > Changes in v2:
-> > - Update the commit message.
-> > - Add Fixes tag.
-> > - Maintain IMX8MN_VPU_* constants to not break backward compatibility.
-> > - Update the commit message.
-> > - Add Fixes tag.
-> > - Maintain IMX8MN_VIDEO_PLL1* constants to not break backward
-> >   compatibility.
-> >
-> > Dario Binacchi (5):
-> >   clk: imx8mn: rename vpu_pll to m7_alt_pll
-> >   clk: imx: replace osc_hdmi with dummy
-> >   clk: imx: rename video_pll1 to video_pll
-> >   clk: imx8mn: fix imx8mn_sai2_sels clocks list
-> >   clk: imx8mn: fix imx8mn_enet_phy_sels clocks list
->
-> Whole series lgtm, feel free to add my
->
-> Acked-by: Marco Felsch <m.felsch@pengutronix.de>
-
-Thanks for the review
-
-Regards,
-Dario
+They should be properties, will fix in v2.
 
 
--- 
+Best regards,
+Krzysztof
 
-Dario Binacchi
-
-Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
