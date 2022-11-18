@@ -2,65 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA16C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 17:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619D5C43217
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 17:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241173AbiKRRPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Nov 2022 12:15:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51146 "EHLO
+        id S242518AbiKRRSl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Nov 2022 12:18:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242093AbiKRRPL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 12:15:11 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64AB5B7C5
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 09:15:09 -0800 (PST)
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com [209.85.219.200])
+        with ESMTP id S242123AbiKRRSj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 12:18:39 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7F6617A92
+        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 09:18:37 -0800 (PST)
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 187B73F2FF
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 17:15:08 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E800E3F4B3
+        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 17:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1668791708;
-        bh=JOZUK9RGSwdPJyBqQhjDoeKgKG9IktmohsvMmg16Drk=;
+        s=20210705; t=1668791915;
+        bh=Ihl+Je3Z+y8gG//tf2j+pj2UsuFi/UkCnl/8sS+58OE=;
         h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
          To:Cc:Content-Type;
-        b=ktPTIeqCh/Ooq6hundAd5mRPzREgOrhzrpML+xLv3i2dJEWS/NG7XIqJxJ7NKQvoM
-         MPQRAbfjbpBexfrvR+T00YfGLK/gYqMswnpvtm5iIESU6qdQA0ujWQ55j4lEO9Vn3U
-         VMwapxHpHGeesPnw3ihx6MGz2MQkOlkm4cpjrxXJuTDlvfbhUpEvGcmi5RInT1fYiG
-         6QM1rNu5iQwPA5ILISCO4VbnnLhU2U3A3mpO6osrMFl9IDFPtMyC99pBQ8c09bRa1f
-         4Wu2FX38V1R+OjRDpL4iWChR6bJle7L3ti683zPpu1TV/1SxvlpQejaXyPF/C5z750
-         VlKId926gFHFg==
-Received: by mail-yb1-f200.google.com with SMTP id w127-20020a25df85000000b006e990dfd5b8so356676ybg.1
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 09:15:08 -0800 (PST)
+        b=AjLhQ40i1l+2Hc8kL1a9pZ1f0v/938FYIp2MYmTAxeVorh+GFsDhiI+gbv0aPbtsS
+         U4MmRrOQWcwtCIh5QO6AAzd8B/azM4dBob2Mmbet0+b1QE75nVnLIJXd+JpRujlfOX
+         daO5Rwk4YGVpTC9uhtGGx29sSTIpIKL+m3cDLZ8SNWgX4WPdkgaqrBelcknCbu4+VY
+         jcnCGM+8ue7H6j+SR/qDdhfIJil2ivAWsDnEECnRFsV0YK1/Q3BzvcNGYYYTXm2e4L
+         SGFJofoOHEsVwqWsPEYpsAh/qpLmxkimyaaDqEVUdLKWzMRPmCQ5FkWiEZyb7qkFdc
+         iXTlHt780PZlw==
+Received: by mail-yb1-f199.google.com with SMTP id y82-20020a253255000000b006e7a04f3824so4220387yby.19
+        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 09:18:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JOZUK9RGSwdPJyBqQhjDoeKgKG9IktmohsvMmg16Drk=;
-        b=SPT+7FGXFc8kf2qWoszRiNLoSdCPOp1HwS+PfJoOXQ6n07UxS9Tx1m6iebmd1owRZd
-         VmjJyk1eAJJ973yV3vxUWPqauJPFJG/SN1B1g/bYCYJtXJNSe1brBZKLqeejZnTki9oQ
-         In4T1N2G7Mb7EimeA+Op6Xum6UnHhKeI6YRQ5yBwDUKEW2Enzv5ELW0uEA5Ri62STGaw
-         Dl2V3l/qRJdiwLTrRy2s5CoOwMZCbp2HNwO7my5SfIpW/EIkKhaVCjiAAvD/LWCzzoFM
-         a9NaYpr4INf1EUKlAyLy9rOjKLo2TbiYhu6u/LaOeFCoeyxW5zldH2Q64o9ld9g9oXIS
-         la6A==
-X-Gm-Message-State: ANoB5plLzKUM6cDuRxFpy0ehyTKRxPs5V/9+0Gmjw/uoKQo8jwH1C4mq
-        vVtSzJ+ORy50/dG+aFPSh0Dn05wZ+xEkMQ56m10i2u8vUQ4uMaBATHcWA0uvrz5MWiw3ZeRhf5a
-        aDlT4eaCaezpZoFx0/sbzjC9CEvzaPCPTphe5OhBqlfz3efF7FS2YAg==
-X-Received: by 2002:a25:e80f:0:b0:6df:927f:38c9 with SMTP id k15-20020a25e80f000000b006df927f38c9mr7103646ybd.92.1668791707103;
-        Fri, 18 Nov 2022 09:15:07 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf4I4oZFvr41MjaIHsCGKb3O39hviHXG7d6XOFbJmPb2RtvH+a1VVrT4/f02mov5cJMQQ0aIly9y6uogaTo3+EY=
-X-Received: by 2002:a25:e80f:0:b0:6df:927f:38c9 with SMTP id
- k15-20020a25e80f000000b006df927f38c9mr7103630ybd.92.1668791706858; Fri, 18
- Nov 2022 09:15:06 -0800 (PST)
+        bh=Ihl+Je3Z+y8gG//tf2j+pj2UsuFi/UkCnl/8sS+58OE=;
+        b=fR1S0JPbDQGtXpzKVRo3IWdAGdtVVfot61abMVjPkdexJj7O3SOu2Bmh/gXejhuTne
+         eD/OA9eZQrtluCJnkV9HTG35XsjvJYL8DTsnxeIoLGe3lUHFASt3+yVBt1+NYSAXDzY8
+         I+xVCoQwJiNiGiTzDyTHPI9V/FbGRBDJjCJ5gLHfgU579PYwzNsmRibIpsRhk4kTXHsm
+         cPF00wRLjGRKToEmql8wCPSdZUe0bNuFpbTlI8M5KQfuQePTnH1HfaGfJLToZ4GdivKe
+         67LuMFuIn8ky6Zs0wDfekmm38Lr2EUk5N4cXwagKty4iqlBTfETqmbhbwTs2grkHVlnm
+         55aQ==
+X-Gm-Message-State: ANoB5plaDyDAJMAjdQt4VG6YnJpb4SsfTPxrqNfPPHujXfqm1+NeFT/D
+        0Wee9ykTnGlg4sbOTqIK3kGOz2vAnbGsllNAiuQOI8+el5n5Pq3yc+p4pMuuTtajH0PtOZlEm7j
+        3EUjE/dzCusRWnLRDjeApnIloOvaV0NM5QeH1Psk52Jwy7BRulv54fQ==
+X-Received: by 2002:a25:3b51:0:b0:6de:f83b:3160 with SMTP id i78-20020a253b51000000b006def83b3160mr7210021yba.467.1668791914852;
+        Fri, 18 Nov 2022 09:18:34 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf6gNMjZV4v2icTvtOBtm8WnqynWPCLqrTz9saKsC/CrUDCNOM3JEQ5u9gZtmPCMVbMaRenaOlMRVu0ODuMyivY=
+X-Received: by 2002:a25:3b51:0:b0:6de:f83b:3160 with SMTP id
+ i78-20020a253b51000000b006def83b3160mr7210002yba.467.1668791914667; Fri, 18
+ Nov 2022 09:18:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20221118010627.70576-1-hal.feng@starfivetech.com> <20221118010627.70576-14-hal.feng@starfivetech.com>
-In-Reply-To: <20221118010627.70576-14-hal.feng@starfivetech.com>
+References: <20221118010627.70576-1-hal.feng@starfivetech.com> <20221118010627.70576-15-hal.feng@starfivetech.com>
+In-Reply-To: <20221118010627.70576-15-hal.feng@starfivetech.com>
 From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Fri, 18 Nov 2022 18:14:50 +0100
-Message-ID: <CAJM55Z8Vfoi5bPLNUOX-F5R5hfwg_20HiGLyjcmziYMiz24xBQ@mail.gmail.com>
-Subject: Re: [PATCH v2 13/14] reset: starfive: Add StarFive JH7110 reset driver
+Date:   Fri, 18 Nov 2022 18:18:18 +0100
+Message-ID: <CAJM55Z8t8yotMTWVw2J7gtGMyx5no2onj-YcfB6d1BY0ACeDJg@mail.gmail.com>
+Subject: Re: [PATCH v2 14/14] clk: starfive: jh71x0: Don't register aux
+ devices if JH7110 reset is disabled
 To:     Hal Feng <hal.feng@starfivetech.com>
 Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, Conor Dooley <conor@kernel.org>,
@@ -78,143 +79,47 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
 >
-> Add auxiliary driver to support StarFive JH7110 system
-> and always-on resets.
+> The JH7110 clock drivers will not register redundant auxiliary
+> devices if the JH7110 reset auxiliary driver is disabled.
 >
 > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 > ---
->  drivers/reset/starfive/Kconfig                |  8 +++
->  drivers/reset/starfive/Makefile               |  1 +
->  .../reset/starfive/reset-starfive-jh7110.c    | 67 +++++++++++++++++++
->  .../reset/starfive/reset-starfive-jh71x0.h    |  7 ++
->  4 files changed, 83 insertions(+)
->  create mode 100644 drivers/reset/starfive/reset-starfive-jh7110.c
+>  drivers/clk/starfive/clk-starfive-jh71x0.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/reset/starfive/Kconfig b/drivers/reset/starfive/Kconfig
-> index 9d15c4110e40..fab1a081af17 100644
-> --- a/drivers/reset/starfive/Kconfig
-> +++ b/drivers/reset/starfive/Kconfig
-> @@ -10,3 +10,11 @@ config RESET_STARFIVE_JH7100
->         default SOC_STARFIVE
->         help
->           This enables the reset controller driver for the StarFive JH7100 SoC.
-> +
-> +config RESET_STARFIVE_JH7110
-> +       bool "StarFive JH7110 Reset Driver"
-> +       depends on AUXILIARY_BUS && CLK_STARFIVE_JH7110_SYS
-> +       select RESET_STARFIVE_JH71X0
-> +       default CLK_STARFIVE_JH7110_SYS
-> +       help
-> +         This enables the reset controller driver for the StarFive JH7110 SoC.
-> diff --git a/drivers/reset/starfive/Makefile b/drivers/reset/starfive/Makefile
-> index f6aa12466fad..7a44b66fb9d5 100644
-> --- a/drivers/reset/starfive/Makefile
-> +++ b/drivers/reset/starfive/Makefile
-> @@ -2,3 +2,4 @@
->  obj-$(CONFIG_RESET_STARFIVE_JH71X0)            += reset-starfive-jh71x0.o
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> index dda19c6937cb..4e69f56b00cc 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> @@ -333,7 +333,7 @@ const struct clk_ops *starfive_jh71x0_clk_ops(u32 max)
+>  }
+>  EXPORT_SYMBOL_GPL(starfive_jh71x0_clk_ops);
 >
->  obj-$(CONFIG_RESET_STARFIVE_JH7100)            += reset-starfive-jh7100.o
-> +obj-$(CONFIG_RESET_STARFIVE_JH7110)            += reset-starfive-jh7110.o
-> diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
-> new file mode 100644
-> index 000000000000..00f3b4ecfb02
-> --- /dev/null
-> +++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-> @@ -0,0 +1,67 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Reset driver for the StarFive JH7110 SoC
-> + *
-> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
-> + * Copyright (C) 2022 Hal Feng <hal.feng@starfivetech.com>
-> + */
+> -#if IS_ENABLED(CONFIG_CLK_STARFIVE_JH7110_SYS)
+> +#if IS_ENABLED(CONFIG_RESET_STARFIVE_JH7110)
+
+I don't see any reason you'd want to build a kernel that needs the
+clock driver but not the resets, so I don't think this is something we
+should optimize for. I'd just drop this patch and let such broken
+kernels register the auxiliary devices even when no reset driver is
+there to use them.
+
+>  static void jh7110_reset_unregister_adev(void *_adev)
+>  {
+> @@ -384,4 +384,13 @@ int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+>  }
+>  EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
+>
+> +#else /* !CONFIG_RESET_STARFIVE_JH7110 */
 > +
-> +#include <linux/auxiliary_bus.h>
-> +
-> +#include "reset-starfive-jh71x0.h"
-> +
-> +#include <dt-bindings/reset/starfive-jh7110.h>
-> +
-> +static int jh7110_reset_probe(struct auxiliary_device *adev,
-> +                             const struct auxiliary_device_id *id)
+> +int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+> +                                    const char *adev_name,
+> +                                    u32 adev_id)
 > +{
-> +       struct reset_info *info = (struct reset_info *)(id->driver_data);
-> +       void __iomem *base = dev_get_drvdata(adev->dev.parent);
-> +
-> +       if (!info || !base)
-> +               return -ENODEV;
-> +
-> +       return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
-> +                                             base + info->assert_offset,
-> +                                             base + info->status_offset,
-> +                                             info->asserted,
-> +                                             info->nr_resets,
-> +                                             false);
+> +       return 0;
 > +}
 > +
-> +static const struct reset_info jh7110_sys_info = {
-> +       .nr_resets = JH7110_SYSRST_END,
-> +       .assert_offset = 0x2F8,
-> +       .status_offset = 0x308,
-> +       .asserted = NULL,
-> +};
-> +
-> +static const struct reset_info jh7110_aon_info = {
-> +       .nr_resets = JH7110_AONRST_END,
-> +       .assert_offset = 0x38,
-> +       .status_offset = 0x3C,
-> +       .asserted = NULL,
-> +};
-
-It doesn't seem like syscrg, aoncrg or stgcrg have any inverted lines.
-Do you know if any other CRGs do? If not you can just leave out the
-.asserted member and always pass NULL.
-
-> +static const struct auxiliary_device_id jh7110_reset_ids[] = {
-> +       {
-> +               .name = "clk_starfive_jh71x0.reset-sys",
-> +               .driver_data = (kernel_ulong_t)&jh7110_sys_info,
-> +       },
-> +       {
-> +               .name = "clk_starfive_jh71x0.reset-aon",
-> +               .driver_data = (kernel_ulong_t)&jh7110_aon_info,
-> +       },
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, jh7110_reset_ids);
-> +
-> +static struct auxiliary_driver jh7110_reset_driver = {
-> +       .probe          = jh7110_reset_probe,
-> +       .id_table       = jh7110_reset_ids,
-> +};
-> +module_auxiliary_driver(jh7110_reset_driver);
-> +
-> +MODULE_DESCRIPTION("StarFive JH7110 Reset Driver");
-> +MODULE_AUTHOR("Hal Feng <hal.feng@starfivetech.com>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
-> index e6b27110de48..63a94ee1b395 100644
-> --- a/drivers/reset/starfive/reset-starfive-jh71x0.h
-> +++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-> @@ -6,6 +6,13 @@
->  #ifndef __RESET_STARFIVE_JH71X0_H
->  #define __RESET_STARFIVE_JH71X0_H
->
-> +struct reset_info {
-> +       unsigned int nr_resets;
-> +       unsigned int assert_offset;
-> +       unsigned int status_offset;
-> +       const u32 *asserted;
-> +};
-
-This struct isn't used outside of reset-starfive-jh7110.c, so no need
-to define it in this header.
-Also consider calling it jh7110_reset_info so it blends in with the
-functions defined in that file.
-
->  int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
->                                    void __iomem *assert, void __iomem *status,
->                                    const u32 *asserted, unsigned int nr_resets,
+>  #endif
 > --
 > 2.38.1
 >
