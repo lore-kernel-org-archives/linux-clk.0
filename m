@@ -2,147 +2,184 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909BFC43217
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 09:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 349CCC433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 10:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241247AbiKRJrd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Nov 2022 04:47:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56914 "EHLO
+        id S241701AbiKRKYJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Nov 2022 05:24:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241256AbiKRJqY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 04:46:24 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE648FFAA
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 01:46:04 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id v28so4372321pfi.12
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 01:46:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPuBk7QpwTGjZyc1/9nTkVIP5Q9YhdcXA+K9KZrkrmY=;
-        b=UtQGDof7bBDHAztrqkOGkhOuyOoYom4lxvwSofr49GG85ox4N1jxBtXdwhueKLBsZF
-         md3lgH2QPow60IL+THnukxXt8eb9zwDDLi2JeVrRNa7vFkTe+5OUuceX19P5yLvfi0ZA
-         G6FythdyG4s72nwGJXbCUVwuhe5UZjjpo60/rmlkB2nvRysl7UjLbwBUoafqvmU+lXd3
-         ruWPfnfeoaYHdu22I0XoMSTjqSN6MGlO6tEEo3aZAis+kCJgjfpOHQXwBpgjVRJm3gsp
-         3aYSGAsLC/yvL+iIbNrROF7Pn8wMMHbN8bGjYaG6kqE6LVpfRtz/oXnwrmx2tIO+I8E5
-         mO7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VPuBk7QpwTGjZyc1/9nTkVIP5Q9YhdcXA+K9KZrkrmY=;
-        b=34Mb20pHWdgwtrGoVy5n3TgyQb0q6liSdqd0kQnKv7aMwPV10BJ+HkzvAy9zwRixlo
-         gc4fcIvCAKdrHNybMuC8JeEwHBmEZcGE5JrYdi0dvU61I1EbFCj1/hJxN3VHiuW0xhZ9
-         pEkplsjb6eRq4dfHYPS9SUG4HYTjbPGtJ7G7uiUQFBnMU4lqVHkMc7gWefFQyt+qJlvK
-         tPpnDvGNm/so3/kZ6YAFSuN9q1HuQWGGX2t3sScUWFyRcztI4MyFqRtoDJuuE/R1pa37
-         hOwroJjuZ7pPb74o830Gy1CznXJqJflIw9FS78Ah/sdvEi0mXszANTfJvMDhckbizI6q
-         TUIA==
-X-Gm-Message-State: ANoB5pkh/oM9w2xtG+4Y/rcCWALkSK0zVhSOEoTjbRBC+3T/Iio4bD6L
-        pp1Jz5+Mcrmin7/QGwF/TQ3xSeekJr6ZqO8lLCdcUQ==
-X-Google-Smtp-Source: AA0mqf6QIOb3Jmxesp2Fnwa9wIZIPdyJQjihp4TUuc+lz3x9Z722ORzgiY4TWwjAuu8MHj574CjcyY88WfncL2yHBZs=
-X-Received: by 2002:a63:4285:0:b0:477:15c8:cd8a with SMTP id
- p127-20020a634285000000b0047715c8cd8amr4536822pga.595.1668764763969; Fri, 18
- Nov 2022 01:46:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20221114230217.202634-1-dinguyen@kernel.org>
-In-Reply-To: <20221114230217.202634-1-dinguyen@kernel.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 18 Nov 2022 10:45:27 +0100
-Message-ID: <CAPDyKFq_Vu8CD6JRK_vZY8+tDQaU-uwXMY8M08Z=TF1a1rLmgQ@mail.gmail.com>
-Subject: Re: [PATCHv9 1/6] dt-bindings: mmc: synopsys-dw-mshc: document "altr,sysmgr-syscon"
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     jh80.chung@samsung.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-mmc@vger.kernel.org,
+        with ESMTP id S241685AbiKRKYH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 05:24:07 -0500
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B78A82BF9;
+        Fri, 18 Nov 2022 02:24:02 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 79BA9240012;
+        Fri, 18 Nov 2022 10:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668767041;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gAcx7QAUPrBgKxdDsMkzSjOogdyVGhpWAUFHST1vmNg=;
+        b=if+/MVMSSjiNWlYdIqPhPPvdvL3j3E+LU3MfyW/y2pI2vFZO80VfbWNzZAbvYzFLTIDjDV
+        NPmMGGKojW5nGz+AIQz/gSYLZgnLoTsBmRwvZH2oBPhJAm5zCSTJmkoZ8o6o+TAZDWiypp
+        DBtObKz5Min24uivAmZIRVl3bGmpJjzG6iacNZVhTlZotFvsyMEuOcv8cLRyxPXh+ptA+x
+        kGRafjawWQ00oZCQ+/rnEewwpxMFpQmZmHYUkKwFbSpHfrecZxFbgB+krRglPrkNyYJL+q
+        aKeHPrQVs9pjro+ghTQ07JW+5IYGA9gFPWQQi3migO/faekywO39QVkvKETh2w==
+Date:   Fri, 18 Nov 2022 11:23:49 +0100
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl:
+ Add h2mode property
+Message-ID: <20221118112349.7f09eefb@bootlin.com>
+In-Reply-To: <20221115150417.513955a7@bootlin.com>
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
+        <20221114111513.1436165-3-herve.codina@bootlin.com>
+        <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
+        <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org>
+        <20221115150417.513955a7@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 15 Nov 2022 at 00:02, Dinh Nguyen <dinguyen@kernel.org> wrote:
->
-> Document the optional "altr,sysmgr-syscon" binding that is used to
-> access the System Manager register that controls the SDMMC clock
-> phase.
->
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Hi Krzysztof, Geert,
 
-Applied for next, thanks!
+On Tue, 15 Nov 2022 15:04:17 +0100
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-Kind regards
-Uffe
+> Hi Krzysztof,
+>=20
+> On Tue, 15 Nov 2022 14:07:52 +0100
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+>=20
+> > On 15/11/2022 14:05, Krzysztof Kozlowski wrote: =20
+> > > On 14/11/2022 12:15, Herve Codina wrote:   =20
+> > >> Add the h2mode property to force the USBs mode ie:
+> > >>  - 2 hosts
+> > >> or
+> > >>  - 1 host and 1 device
+> > >>
+> > >> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > >> ---
+> > >>  .../bindings/clock/renesas,r9a06g032-sysctrl.yaml      | 10 +++++++=
++++
+> > >>  1 file changed, 10 insertions(+)
+> > >>
+> > >> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g0=
+32-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032=
+-sysctrl.yaml
+> > >> index 95bf485c6cec..f9e0a58aa4fb 100644
+> > >> --- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysc=
+trl.yaml
+> > >> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysc=
+trl.yaml
+> > >> @@ -39,6 +39,16 @@ properties:
+> > >>    '#power-domain-cells':
+> > >>      const: 0
+> > >> =20
+> > >> +  renesas,h2mode:
+> > >> +    description: |
+> > >> +      Configure the USBs mode.
+> > >> +        - <0> : the USBs are in 1 host and 1 device mode.
+> > >> +        - <1> : the USBs are in 2 host mode.
+> > >> +      If the property is not present, the value used is the one alr=
+eady present
+> > >> +      in the CFG_USB register (from reset or set by the bootloader).
+> > >> +    $ref: /schemas/types.yaml#/definitions/uint32
+> > >> +    enum: [0, 1]   =20
+> > >=20
+> > > 0/1 are quite cryptic. Why not making it a string which is easy to re=
+ad
+> > > and understand? Can be something like "two-hosts" and "one-host". Or
+> > > anything you find more readable...   =20
+> >=20
+> > ...but actually you should rather make it a property of your USB
+> > controller, not clock controller. You have two controllers and we have a
+> > generic property for them - dr_mode.
+> >=20
+> > Best regards,
+> > Krzysztof
+> >  =20
+>=20
+> IMHO, this property in the USB controllers does not make sense.
+> Indeed each controller cannot have a different 'mode'.
+> Some controllers are USB host only (EHCI and OHCI) and the USBF
+> controller I worked on is device only.
+> 'h2mode' allows to choose between host or device on one of the USB
+> but not at the USB controller level.
+>=20
+> This property should be handle outside the USB controller nodes.
+>=20
+> Currently, this node (declared as a clock node) is in fact a sysctrl
+> node and can do some configuration not related to clocks.
+>=20
+> I agree with you something related to choosing USB Host/Device in
+> a clock node seems strange.
+>=20
+> Some discussion were already opened related to this property and how
+> to handle it:
+>   https://lore.kernel.org/all/20221107182642.05a09f2f@bootlin.com/
+>   https://lore.kernel.org/all/20221107173614.474707d7@bootlin.com/
+>=20
+
+We advanced on this topic.
+
+First, even if 'renesas,r9a06g032-sysctrl.yaml' is present in
+the devicetree/bindings/clock/ directory, this node is really
+a 'system controller' node:
+- title: Renesas RZ/N1D (R9A06G032) System Controller
+- compatible: renesas,r9a06g032-sysctrl
+
+It handles clocks, power domains, some DMA routing, ...
+
+Now, the property 'h2mode' allows to choose between:
+  - 2 USB hosts
+or
+  - 1 USB host and 1 USB device.
+
+This switching is system wide and has no reason to be done in
+one specific USB controller. It can impact multiple devices and
+PLL settings.
+
+The 'renesas,r9a06g032-sysctrl' node, as the system control
+node of our system, is the best candidate to handle the property.
+
+In order to be less cryptic in the property value, what do you
+think about:
+  renesas,h2mode:
+    - one-dev : the USBs are in 1 host and 1 device mode.
+    - only-hosts : the USBs are in 2 hosts mode.
+
+With these details and change on the property value,
+Is it ok for you to have the 'renesas,h2mode' property
+in the 'renesas,r9a06g032-sysctrl' node ?
 
 
+Regards,
+Herv=C3=A9
 
-
-> ---
-> v9: remove required for "altr,sysmgr-syscon"
-> v8: remove "" around synopsys-dw-mshc-common.yaml#
-> v7: and "not" for the required "altr,sysmgr-syscon" binding
-> v6: make "altr,sysmgr-syscon" optional
-> v5: document reg shift
-> v4: add else statement
-> v3: document that the "altr,sysmgr-syscon" binding is only applicable to
->     "altr,socfpga-dw-mshc"
-> v2: document "altr,sysmgr-syscon" in the MMC section
-> ---
->  .../bindings/mmc/synopsys-dw-mshc.yaml        | 32 +++++++++++++++++--
->  1 file changed, 29 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> index ae6d6fca79e2..e1f5f26f3f1c 100644
-> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> @@ -6,9 +6,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->
->  title: Synopsys Designware Mobile Storage Host Controller Binding
->
-> -allOf:
-> -  - $ref: "synopsys-dw-mshc-common.yaml#"
-> -
->  maintainers:
->    - Ulf Hansson <ulf.hansson@linaro.org>
->
-> @@ -38,6 +35,35 @@ properties:
->        - const: biu
->        - const: ciu
->
-> +  altr,sysmgr-syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to the sysmgr node
-> +          - description: register offset that controls the SDMMC clock phase
-> +          - description: register shift for the smplsel(drive in) setting
-> +    description:
-> +      This property is optional. Contains the phandle to System Manager block
-> +      that contains the SDMMC clock-phase control register. The first value is
-> +      the pointer to the sysmgr, the 2nd value is the register offset for the
-> +      SDMMC clock phase register, and the 3rd value is the bit shift for the
-> +      smplsel(drive in) setting.
-> +
-> +allOf:
-> +  - $ref: synopsys-dw-mshc-common.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: altr,socfpga-dw-mshc
-> +    then:
-> +      properties:
-> +        altr,sysmgr-syscon: true
-> +    else:
-> +      properties:
-> +        altr,sysmgr-syscon: false
-> +
->  required:
->    - compatible
->    - reg
-> --
-> 2.25.1
->
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
