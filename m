@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B56C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 01:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572A1C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 01:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbiKRBc3 convert rfc822-to-8bit (ORCPT
+        id S234747AbiKRBeh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 20:32:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
+        Thu, 17 Nov 2022 20:34:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240775AbiKRBcX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 20:32:23 -0500
+        with ESMTP id S240889AbiKRBeY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 20:34:24 -0500
 Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610866E54B;
-        Thu, 17 Nov 2022 17:32:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89526305;
+        Thu, 17 Nov 2022 17:34:22 -0800 (PST)
 Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id D244624E188;
-        Fri, 18 Nov 2022 09:06:38 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id 0669124E1DF;
+        Fri, 18 Nov 2022 09:06:36 +0800 (CST)
 Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX166.cuchost.com
  (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 18 Nov
- 2022 09:06:38 +0800
+ 2022 09:06:36 +0800
 Received: from ubuntu.localdomain (183.27.96.116) by EXMBX072.cuchost.com
  (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 18 Nov
- 2022 09:06:38 +0800
+ 2022 09:06:35 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
@@ -39,9 +39,9 @@ CC:     Conor Dooley <conor@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 13/14] reset: starfive: Add StarFive JH7110 reset driver
-Date:   Fri, 18 Nov 2022 09:06:26 +0800
-Message-ID: <20221118010627.70576-14-hal.feng@starfivetech.com>
+Subject: [PATCH v2 09/14] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
+Date:   Fri, 18 Nov 2022 09:06:22 +0800
+Message-ID: <20221118010627.70576-10-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221118010627.70576-1-hal.feng@starfivetech.com>
 References: <20221118010627.70576-1-hal.feng@starfivetech.com>
@@ -56,134 +56,118 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add auxiliary driver to support StarFive JH7110 system
-and always-on resets.
+From: Emil Renner Berthing <kernel@esmil.dk>
 
+Add bindings for the system clock and reset generator (SYSCRG) on the
+JH7110 RISC-V SoC by StarFive Ltd.
+
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- drivers/reset/starfive/Kconfig                |  8 +++
- drivers/reset/starfive/Makefile               |  1 +
- .../reset/starfive/reset-starfive-jh7110.c    | 67 +++++++++++++++++++
- .../reset/starfive/reset-starfive-jh71x0.h    |  7 ++
- 4 files changed, 83 insertions(+)
- create mode 100644 drivers/reset/starfive/reset-starfive-jh7110.c
+ .../clock/starfive,jh7110-syscrg.yaml         | 80 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 2 files changed, 81 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
 
-diff --git a/drivers/reset/starfive/Kconfig b/drivers/reset/starfive/Kconfig
-index 9d15c4110e40..fab1a081af17 100644
---- a/drivers/reset/starfive/Kconfig
-+++ b/drivers/reset/starfive/Kconfig
-@@ -10,3 +10,11 @@ config RESET_STARFIVE_JH7100
- 	default SOC_STARFIVE
- 	help
- 	  This enables the reset controller driver for the StarFive JH7100 SoC.
-+
-+config RESET_STARFIVE_JH7110
-+	bool "StarFive JH7110 Reset Driver"
-+	depends on AUXILIARY_BUS && CLK_STARFIVE_JH7110_SYS
-+	select RESET_STARFIVE_JH71X0
-+	default CLK_STARFIVE_JH7110_SYS
-+	help
-+	  This enables the reset controller driver for the StarFive JH7110 SoC.
-diff --git a/drivers/reset/starfive/Makefile b/drivers/reset/starfive/Makefile
-index f6aa12466fad..7a44b66fb9d5 100644
---- a/drivers/reset/starfive/Makefile
-+++ b/drivers/reset/starfive/Makefile
-@@ -2,3 +2,4 @@
- obj-$(CONFIG_RESET_STARFIVE_JH71X0)		+= reset-starfive-jh71x0.o
- 
- obj-$(CONFIG_RESET_STARFIVE_JH7100)		+= reset-starfive-jh7100.o
-+obj-$(CONFIG_RESET_STARFIVE_JH7110)		+= reset-starfive-jh7110.o
-diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
+diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
 new file mode 100644
-index 000000000000..00f3b4ecfb02
+index 000000000000..a8cafbc0afe2
 --- /dev/null
-+++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-@@ -0,0 +1,67 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Reset driver for the StarFive JH7110 SoC
-+ *
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Hal Feng <hal.feng@starfivetech.com>
-+ */
++++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/auxiliary_bus.h>
++title: StarFive JH7110 System Clock and Reset Generator
 +
-+#include "reset-starfive-jh71x0.h"
++maintainers:
++  - Emil Renner Berthing <kernel@esmil.dk>
 +
-+#include <dt-bindings/reset/starfive-jh7110.h>
++properties:
++  compatible:
++    const: starfive,jh7110-syscrg
 +
-+static int jh7110_reset_probe(struct auxiliary_device *adev,
-+			      const struct auxiliary_device_id *id)
-+{
-+	struct reset_info *info = (struct reset_info *)(id->driver_data);
-+	void __iomem *base = dev_get_drvdata(adev->dev.parent);
++  reg:
++    maxItems: 1
 +
-+	if (!info || !base)
-+		return -ENODEV;
++  clocks:
++    items:
++      - description: Main Oscillator (24 MHz)
++      - description: RMII reference clock
++      - description: RGMII RX clock
++      - description: I2S TX bit clock
++      - description: I2S TX left/right clock
++      - description: I2S RX bit clock
++      - description: I2S RX left/right clock
++      - description: TDM
++      - description: mclk
 +
-+	return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
-+					      base + info->assert_offset,
-+					      base + info->status_offset,
-+					      info->asserted,
-+					      info->nr_resets,
-+					      false);
-+}
++  clock-names:
++    items:
++      - const: osc
++      - const: gmac1_rmii_refin
++      - const: gmac1_rgmii_rxin
++      - const: i2stx_bclk_ext
++      - const: i2stx_lrck_ext
++      - const: i2srx_bclk_ext
++      - const: i2srx_lrck_ext
++      - const: tdm_ext
++      - const: mclk_ext
 +
-+static const struct reset_info jh7110_sys_info = {
-+	.nr_resets = JH7110_SYSRST_END,
-+	.assert_offset = 0x2F8,
-+	.status_offset = 0x308,
-+	.asserted = NULL,
-+};
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/starfive-jh7110.h> for valid indices.
 +
-+static const struct reset_info jh7110_aon_info = {
-+	.nr_resets = JH7110_AONRST_END,
-+	.assert_offset = 0x38,
-+	.status_offset = 0x3C,
-+	.asserted = NULL,
-+};
++  '#reset-cells':
++    const: 1
++    description:
++      See <dt-bindings/reset/starfive-jh7110.h> for valid indices.
 +
-+static const struct auxiliary_device_id jh7110_reset_ids[] = {
-+	{
-+		.name = "clk_starfive_jh71x0.reset-sys",
-+		.driver_data = (kernel_ulong_t)&jh7110_sys_info,
-+	},
-+	{
-+		.name = "clk_starfive_jh71x0.reset-aon",
-+		.driver_data = (kernel_ulong_t)&jh7110_aon_info,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, jh7110_reset_ids);
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
 +
-+static struct auxiliary_driver jh7110_reset_driver = {
-+	.probe		= jh7110_reset_probe,
-+	.id_table	= jh7110_reset_ids,
-+};
-+module_auxiliary_driver(jh7110_reset_driver);
++additionalProperties: false
 +
-+MODULE_DESCRIPTION("StarFive JH7110 Reset Driver");
-+MODULE_AUTHOR("Hal Feng <hal.feng@starfivetech.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
-index e6b27110de48..63a94ee1b395 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.h
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-@@ -6,6 +6,13 @@
- #ifndef __RESET_STARFIVE_JH71X0_H
- #define __RESET_STARFIVE_JH71X0_H
++examples:
++  - |
++    clock-controller@13020000 {
++        compatible = "starfive,jh7110-syscrg";
++        reg = <0x13020000 0x10000>;
++        clocks = <&osc>, <&gmac1_rmii_refin>,
++                 <&gmac1_rgmii_rxin>,
++                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
++                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
++                 <&tdm_ext>, <&mclk_ext>;
++        clock-names = "osc", "gmac1_rmii_refin",
++                      "gmac1_rgmii_rxin",
++                      "i2stx_bclk_ext", "i2stx_lrck_ext",
++                      "i2srx_bclk_ext", "i2srx_lrck_ext",
++                      "tdm_ext", "mclk_ext";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eeab26f5597c..ec6647e2772f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19602,7 +19602,7 @@ STARFIVE CLOCK DRIVERS
+ M:	Emil Renner Berthing <kernel@esmil.dk>
+ M:	Hal Feng <hal.feng@starfivetech.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/clock/starfive,jh7100-*.yaml
++F:	Documentation/devicetree/bindings/clock/starfive*
+ F:	drivers/clk/starfive/
+ F:	include/dt-bindings/clock/starfive*
  
-+struct reset_info {
-+	unsigned int nr_resets;
-+	unsigned int assert_offset;
-+	unsigned int status_offset;
-+	const u32 *asserted;
-+};
-+
- int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
- 				   const u32 *asserted, unsigned int nr_resets,
 -- 
 2.38.1
 
