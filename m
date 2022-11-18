@@ -2,81 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88936C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 13:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3358C43217
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 13:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbiKRNJi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Nov 2022 08:09:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
+        id S242042AbiKRNQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Nov 2022 08:16:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235025AbiKRNJh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 08:09:37 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4C113CE1
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 05:09:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1668776975; x=1700312975;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=i9EU8CIuKhQcCrR6sA6bSZtoKR1G7JMKPiCVip/UEIQ=;
-  b=qEWhOntIVeAw4oamTf4ZZlpgDvGuEasSvQmbrMmlXcck7w+jr0iK50Jv
-   mkYwS4XLBje7/hY/ngJNDBFnLH/DmrgQxCFIGE/XOeW3k6F3xnw9WT1Mg
-   icHJ6PFlh5MB/85z2sKOhYYPC7pXMA0yF+zzN1GUv0iF8efCjS/I2ZdQf
-   4gFUzowwWl8Q0vYsG3DYFeo9dPjFdj2kh2orbZYY3lCmvhMHOWMolBSYw
-   JVspPAz/wfTlZvAVmOjkJDX54ZGmibMF5kItIDPlH1Pdn+24ENM2x6VV4
-   fl6BeIoZpLT78SMLuJrduGjJaix39MVJSBXUY+ZxuIa+wIBKIh25/2238
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.96,174,1665471600"; 
-   d="scan'208";a="187637443"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Nov 2022 06:09:34 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Fri, 18 Nov 2022 06:09:24 -0700
-Received: from localhost.localdomain (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.12 via Frontend Transport; Fri, 18 Nov 2022 06:09:22 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <conor.dooley@microchip.com>, <linux-clk@vger.kernel.org>
-Subject: [GIT PULL] Microchip clock fixes for 6.1
-Date:   Fri, 18 Nov 2022 15:14:14 +0200
-Message-ID: <20221118131414.301703-1-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.33.0
+        with ESMTP id S242051AbiKRNQv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 08:16:51 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DDB6A7CB8B;
+        Fri, 18 Nov 2022 05:16:49 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.96,174,1665414000"; 
+   d="scan'208";a="143137440"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 18 Nov 2022 22:16:49 +0900
+Received: from localhost.localdomain (unknown [10.226.92.26])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DBB5943651B3;
+        Fri, 18 Nov 2022 22:16:44 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 0/5] Add RZ/V2{M, MA} driver support
+Date:   Fri, 18 Nov 2022 13:16:36 +0000
+Message-Id: <20221118131641.469238-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+The RZ/V2{M, MA} PWM Timer (PWM) is composed of 16 channels. Linux is only
+allowed access to channels 8 to 14 on RZ/V2M, while there is no restriction
+for RZ/V2MA.
 
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+The RZ/V2{M, MA} PWM Timer (PWM) supports the following functions:
+ * The PWM has 24-bit counters which operate at PWM_CLK (48 MHz).
+ * The frequency division ratio for internal counter operation is selectable
+    as PWM_CLK divided by 1, 16, 256, or 2048.
+ * The period as well as the duty cycle is adjustable.
+ * The low-level and high-level order of the PWM signals can be inverted.
+ * The duty cycle of the PWM signal is selectable in the range from 0 to 100%.
+ * The minimum resolution is 20.83 ns.
+ * Three interrupt sources: Rising and falling edges of the PWM signal and
+   clearing of the counter
+ * Counter operation and the bus interface are asynchronous and both can
+   operate independently of the magnitude relationship of the respective
+   clock periods.
 
-are available in the Git repository at:
+Note:
+ Hardware manual for this IP can be found here
+ https://www.renesas.com/in/en/document/mah/rzv2m-users-manual-hardware?language=en
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-fixes-6.1
+Biju Das (5):
+  clk: renesas: r9a09g011: Add PWM clock entries
+  dt-bindings: pwm: Add RZ/V2M PWM binding
+  pwm: Add support for RZ/V2M PWM driver
+  arm64: dts: renesas: r9a09g011: Add pwm nodes
+  arm64: dts: renesas: rzv2m evk: Enable pwm
 
-for you to fetch changes up to 57976762428675f259339385d3324d28ee53ec02:
+ .../bindings/pwm/renesas,rzv2m-pwm.yaml       |  98 +++++
+ .../boot/dts/renesas/r9a09g011-v2mevk2.dts    |  70 ++++
+ arch/arm64/boot/dts/renesas/r9a09g011.dtsi    |  91 ++++
+ drivers/clk/renesas/r9a09g011-cpg.c           |   9 +
+ drivers/pwm/Kconfig                           |  11 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-rzv2m.c                       | 390 ++++++++++++++++++
+ 7 files changed, 670 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzv2m-pwm.yaml
+ create mode 100644 drivers/pwm/pwm-rzv2m.c
 
-  ARM: at91: rm9200: fix usb device clock id (2022-11-17 15:35:52 +0200)
+-- 
+2.25.1
 
-----------------------------------------------------------------
-Microchip clock fixes for 6.1
-
-It contains fixes for AT91 SoCs as follows:
-- fix the clock ID for USB device port on RM9200 SoCs; along with it the
-  device tree references to this clocks were fixed in this patch to ease the
-  backporting and to avoid USB driver probe failure.
-
-----------------------------------------------------------------
-Michael Grzeschik (1):
-      ARM: at91: rm9200: fix usb device clock id
-
- arch/arm/boot/dts/at91rm9200.dtsi | 2 +-
- drivers/clk/at91/at91rm9200.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
