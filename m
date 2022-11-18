@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F547C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 01:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA11C43217
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 01:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240965AbiKRBo3 convert rfc822-to-8bit (ORCPT
+        id S240995AbiKRBob convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Nov 2022 20:44:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55104 "EHLO
+        Thu, 17 Nov 2022 20:44:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240912AbiKRBo1 (ORCPT
+        with ESMTP id S240816AbiKRBo1 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2022 20:44:27 -0500
 Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECDD73BAC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5324C73B98;
         Thu, 17 Nov 2022 17:44:22 -0800 (PST)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 1D2D324E1E1;
-        Fri, 18 Nov 2022 09:06:38 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id 4DF5324E1BA;
+        Fri, 18 Nov 2022 09:06:35 +0800 (CST)
 Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 18 Nov
- 2022 09:06:38 +0800
+ 2022 09:06:35 +0800
 Received: from ubuntu.localdomain (183.27.96.116) by EXMBX072.cuchost.com
  (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 18 Nov
- 2022 09:06:37 +0800
+ 2022 09:06:34 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
@@ -39,9 +39,9 @@ CC:     Conor Dooley <conor@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 12/14] clk: starfive: Add StarFive JH7110 always-on clock driver
-Date:   Fri, 18 Nov 2022 09:06:25 +0800
-Message-ID: <20221118010627.70576-13-hal.feng@starfivetech.com>
+Subject: [PATCH v2 08/14] dt-bindings: reset: Add StarFive JH7110 system and always-on reset definitions
+Date:   Fri, 18 Nov 2022 09:06:21 +0800
+Message-ID: <20221118010627.70576-9-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221118010627.70576-1-hal.feng@starfivetech.com>
 References: <20221118010627.70576-1-hal.feng@starfivetech.com>
@@ -58,218 +58,197 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Add driver for the StarFive JH7110 always-on clock controller
-and register an auxiliary device for always-on reset controller
-which is named as "reset-aon".
+Add resets for the StarFive JH7110 system (SYS) and always-on (AON)
+reset controller.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- drivers/clk/starfive/Kconfig                  |  10 ++
- drivers/clk/starfive/Makefile                 |   1 +
- .../clk/starfive/clk-starfive-jh7110-aon.c    | 165 ++++++++++++++++++
- 3 files changed, 176 insertions(+)
- create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
+ MAINTAINERS                                 |   5 +-
+ include/dt-bindings/reset/starfive-jh7110.h | 154 ++++++++++++++++++++
+ 2 files changed, 157 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/reset/starfive-jh7110.h
 
-diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-index 7a6ff6614c74..baa602d384b7 100644
---- a/drivers/clk/starfive/Kconfig
-+++ b/drivers/clk/starfive/Kconfig
-@@ -30,3 +30,13 @@ config CLK_STARFIVE_JH7110_SYS
- 	help
- 	  Say yes here to support the system clock controller on the
- 	  StarFive JH7110 SoC.
-+
-+config CLK_STARFIVE_JH7110_AON
-+	tristate "StarFive JH7110 always-on clock support"
-+	depends on CLK_STARFIVE_JH7110_SYS
-+	select AUXILIARY_BUS
-+	select CLK_STARFIVE_JH71X0
-+	default CLK_STARFIVE_JH7110_SYS
-+	help
-+	  Say yes here to support the always-on clock controller on the
-+	  StarFive JH7110 SoC.
-diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-index 5ca4e887fb9c..f3df7d957b1e 100644
---- a/drivers/clk/starfive/Makefile
-+++ b/drivers/clk/starfive/Makefile
-@@ -5,3 +5,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100)	+= clk-starfive-jh7100.o
- obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)	+= clk-starfive-jh7100-audio.o
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e97dac9c0ee4..eeab26f5597c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19614,12 +19614,13 @@ F:	Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+ F:	drivers/pinctrl/starfive/
+ F:	include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
  
- obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)	+= clk-starfive-jh7110-sys.o
-+obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+= clk-starfive-jh7110-aon.o
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+-STARFIVE JH7100 RESET CONTROLLER DRIVERS
++STARFIVE RESET CONTROLLER DRIVERS
+ M:	Emil Renner Berthing <kernel@esmil.dk>
++M:	Hal Feng <hal.feng@starfivetech.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+ F:	drivers/reset/starfive/
+-F:	include/dt-bindings/reset/starfive-jh7100.h
++F:	include/dt-bindings/reset/starfive*
+ 
+ STATIC BRANCH/CALL
+ M:	Peter Zijlstra <peterz@infradead.org>
+diff --git a/include/dt-bindings/reset/starfive-jh7110.h b/include/dt-bindings/reset/starfive-jh7110.h
 new file mode 100644
-index 000000000000..643728f9904a
+index 000000000000..1a5bab671161
 --- /dev/null
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-@@ -0,0 +1,165 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/include/dt-bindings/reset/starfive-jh7110.h
+@@ -0,0 +1,154 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +/*
-+ * StarFive JH7110 Always-On Clock Driver
-+ *
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
++ * Copyright (C) 2021-2022 Emil Renner Berthing <kernel@esmil.dk>
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
++#ifndef __DT_BINDINGS_RESET_STARFIVE_JH7110_H__
++#define __DT_BINDINGS_RESET_STARFIVE_JH7110_H__
 +
-+#include <dt-bindings/clock/starfive-jh7110.h>
++/* SYSCRG resets */
++#define JH7110_SYSRST_JTAG2APB			0
++#define JH7110_SYSRST_SYSCON			1
++#define JH7110_SYSRST_IOMUX			2
++#define JH7110_SYSRST_BUS			3
++#define JH7110_SYSRST_DEBUG			4
++#define JH7110_SYSRST_CORE0			5
++#define JH7110_SYSRST_CORE1			6
++#define JH7110_SYSRST_CORE2			7
++#define JH7110_SYSRST_CORE3			8
++#define JH7110_SYSRST_CORE4			9
++#define JH7110_SYSRST_CORE0_ST			10
++#define JH7110_SYSRST_CORE1_ST			11
++#define JH7110_SYSRST_CORE2_ST			12
++#define JH7110_SYSRST_CORE3_ST			13
++#define JH7110_SYSRST_CORE4_ST			14
++#define JH7110_SYSRST_TRACE0			15
++#define JH7110_SYSRST_TRACE1			16
++#define JH7110_SYSRST_TRACE2			17
++#define JH7110_SYSRST_TRACE3			18
++#define JH7110_SYSRST_TRACE4			19
++#define JH7110_SYSRST_TRACE_COM			20
++#define JH7110_SYSRST_GPU_APB			21
++#define JH7110_SYSRST_GPU_DOMA			22
++#define JH7110_SYSRST_NOC_BUS_APB_BUS		23
++#define JH7110_SYSRST_NOC_BUS_AXICFG0_AXI	24
++#define JH7110_SYSRST_NOC_BUS_CPU_AXI		25
++#define JH7110_SYSRST_NOC_BUS_DISP_AXI		26
++#define JH7110_SYSRST_NOC_BUS_GPU_AXI		27
++#define JH7110_SYSRST_NOC_BUS_ISP_AXI		28
++#define JH7110_SYSRST_NOC_BUS_DDRC		29
++#define JH7110_SYSRST_NOC_BUS_STG_AXI		30
++#define JH7110_SYSRST_NOC_BUS_VDEC_AXI		31
 +
-+#include "clk-starfive-jh71x0.h"
++#define JH7110_SYSRST_NOC_BUS_VENC_AXI		32
++#define JH7110_SYSRST_AXI_CFG1_DEC_AHB		33
++#define JH7110_SYSRST_AXI_CFG1_DEC_MAIN		34
++#define JH7110_SYSRST_AXI_CFG0_DEC_MAIN		35
++#define JH7110_SYSRST_AXI_CFG0_DEC_MAIN_DIV	36
++#define JH7110_SYSRST_AXI_CFG0_DEC_HIFI4	37
++#define JH7110_SYSRST_DDR_AXI			38
++#define JH7110_SYSRST_DDR_OSC			39
++#define JH7110_SYSRST_DDR_APB			40
++#define JH7110_SYSRST_DOM_ISP_TOP_N		41
++#define JH7110_SYSRST_DOM_ISP_TOP_AXI		42
++#define JH7110_SYSRST_DOM_VOUT_TOP_SRC		43
++#define JH7110_SYSRST_CODAJ12_AXI		44
++#define JH7110_SYSRST_CODAJ12_CORE		45
++#define JH7110_SYSRST_CODAJ12_APB		46
++#define JH7110_SYSRST_WAVE511_AXI		47
++#define JH7110_SYSRST_WAVE511_BPU		48
++#define JH7110_SYSRST_WAVE511_VCE		49
++#define JH7110_SYSRST_WAVE511_APB		50
++#define JH7110_SYSRST_VDEC_JPG_ARB_JPG		51
++#define JH7110_SYSRST_VDEC_JPG_ARB_MAIN		52
++#define JH7110_SYSRST_AXIMEM0_AXI		53
++#define JH7110_SYSRST_WAVE420L_AXI		54
++#define JH7110_SYSRST_WAVE420L_BPU		55
++#define JH7110_SYSRST_WAVE420L_VCE		56
++#define JH7110_SYSRST_WAVE420L_APB		57
++#define JH7110_SYSRST_AXIMEM1_AXI		58
++#define JH7110_SYSRST_AXIMEM2_AXI		59
++#define JH7110_SYSRST_INTMEM			60
++#define JH7110_SYSRST_QSPI_AHB			61
++#define JH7110_SYSRST_QSPI_APB			62
++#define JH7110_SYSRST_QSPI_REF			63
 +
-+/* external clocks */
-+#define JH7110_AONCLK_OSC		(JH7110_AONCLK_END + 0)
-+#define JH7110_AONCLK_RTC		(JH7110_AONCLK_END + 1)
-+#define JH7110_AONCLK_GMAC0_RMII_REFIN	(JH7110_AONCLK_END + 2)
-+#define JH7110_AONCLK_GMAC0_RGMII_RXIN	(JH7110_AONCLK_END + 3)
-+#define JH7110_AONCLK_STG_AXIAHB	(JH7110_AONCLK_END + 4)
-+#define JH7110_AONCLK_APB_BUS_FUNC	(JH7110_AONCLK_END + 5)
-+#define JH7110_AONCLK_GMAC0_GTXCLK	(JH7110_AONCLK_END + 6)
++#define JH7110_SYSRST_SDIO0_AHB			64
++#define JH7110_SYSRST_SDIO1_AHB			65
++#define JH7110_SYSRST_GMAC1_AXI			66
++#define JH7110_SYSRST_GMAC1_AHB			67
++#define JH7110_SYSRST_MAILBOX			68
++#define JH7110_SYSRST_SPI0_APB			69
++#define JH7110_SYSRST_SPI1_APB			70
++#define JH7110_SYSRST_SPI2_APB			71
++#define JH7110_SYSRST_SPI3_APB			72
++#define JH7110_SYSRST_SPI4_APB			73
++#define JH7110_SYSRST_SPI5_APB			74
++#define JH7110_SYSRST_SPI6_APB			75
++#define JH7110_SYSRST_I2C0_APB			76
++#define JH7110_SYSRST_I2C1_APB			77
++#define JH7110_SYSRST_I2C2_APB			78
++#define JH7110_SYSRST_I2C3_APB			79
++#define JH7110_SYSRST_I2C4_APB			80
++#define JH7110_SYSRST_I2C5_APB			81
++#define JH7110_SYSRST_I2C6_APB			82
++#define JH7110_SYSRST_UART0_APB			83
++#define JH7110_SYSRST_UART0_CORE		84
++#define JH7110_SYSRST_UART1_APB			85
++#define JH7110_SYSRST_UART1_CORE		86
++#define JH7110_SYSRST_UART2_APB			87
++#define JH7110_SYSRST_UART2_CORE		88
++#define JH7110_SYSRST_UART3_APB			89
++#define JH7110_SYSRST_UART3_CORE		90
++#define JH7110_SYSRST_UART4_APB			91
++#define JH7110_SYSRST_UART4_CORE		92
++#define JH7110_SYSRST_UART5_APB			93
++#define JH7110_SYSRST_UART5_CORE		94
++#define JH7110_SYSRST_SPDIF_APB			95
 +
-+static const struct jh71x0_clk_data jh7110_aonclk_data[] = {
-+	/* source */
-+	JH71X0__DIV(JH7110_AONCLK_OSC_DIV4, "osc_div4", 4,
-+		    JH7110_AONCLK_OSC),
-+	JH71X0__MUX(JH7110_AONCLK_APB_FUNC, "aon_apb_func", 2,
-+		    JH7110_AONCLK_OSC_DIV4,
-+		    JH7110_AONCLK_OSC),
-+	/* gmac0 */
-+	JH71X0_GATE(JH7110_AONCLK_GMAC0_AHB, "gmac0_ahb", 0,
-+		    JH7110_AONCLK_STG_AXIAHB),
-+	JH71X0_GATE(JH7110_AONCLK_GMAC0_AXI, "gmac0_axi", 0,
-+		    JH7110_AONCLK_STG_AXIAHB),
-+	JH71X0__DIV(JH7110_AONCLK_GMAC0_RMII_RTX, "gmac0_rmii_rtx", 30,
-+		    JH7110_AONCLK_GMAC0_RMII_REFIN),
-+	JH71X0_GMUX(JH7110_AONCLK_GMAC0_TX, "gmac0_tx", 0, 2,
-+		    JH7110_AONCLK_GMAC0_GTXCLK,
-+		    JH7110_AONCLK_GMAC0_RMII_RTX),
-+	JH71X0__INV(JH7110_AONCLK_GMAC0_TX_INV, "gmac0_tx_inv",
-+		    JH7110_AONCLK_GMAC0_TX),
-+	JH71X0__MUX(JH7110_AONCLK_GMAC0_RX, "gmac0_rx", 2,
-+		    JH7110_AONCLK_GMAC0_RGMII_RXIN,
-+		    JH7110_AONCLK_GMAC0_RMII_RTX),
-+	JH71X0__INV(JH7110_AONCLK_GMAC0_RX_INV, "gmac0_rx_inv",
-+		    JH7110_AONCLK_GMAC0_RX),
-+	/* otpc */
-+	JH71X0_GATE(JH7110_AONCLK_OTPC_APB, "otpc_apb", CLK_IGNORE_UNUSED,
-+		    JH7110_AONCLK_APB_BUS_FUNC),
-+	/* rtc */
-+	JH71X0_GATE(JH7110_AONCLK_RTC_APB, "rtc_apb", CLK_IGNORE_UNUSED,
-+		    JH7110_AONCLK_APB_BUS_FUNC),
-+	JH71X0__DIV(JH7110_AONCLK_RTC_INTERNAL, "rtc_internal", 1022,
-+		    JH7110_AONCLK_OSC),
-+	JH71X0__MUX(JH7110_AONCLK_RTC_32K, "rtc_32k", 2,
-+		    JH7110_AONCLK_RTC,
-+		    JH7110_AONCLK_RTC_INTERNAL),
-+	JH71X0_GATE(JH7110_AONCLK_RTC_CAL, "rtc_cal", 0,
-+		    JH7110_AONCLK_OSC),
-+};
++#define JH7110_SYSRST_PWMDAC_APB		96
++#define JH7110_SYSRST_PDM_DMIC			97
++#define JH7110_SYSRST_PDM_APB			98
++#define JH7110_SYSRST_I2SRX_APB			99
++#define JH7110_SYSRST_I2SRX_BCLK		100
++#define JH7110_SYSRST_I2STX0_APB		101
++#define JH7110_SYSRST_I2STX0_BCLK		102
++#define JH7110_SYSRST_I2STX1_APB		103
++#define JH7110_SYSRST_I2STX1_BCLK		104
++#define JH7110_SYSRST_TDM_AHB			105
++#define JH7110_SYSRST_TDM_CORE			106
++#define JH7110_SYSRST_TDM_APB			107
++#define JH7110_SYSRST_PWM_APB			108
++#define JH7110_SYSRST_WDT_APB			109
++#define JH7110_SYSRST_WDT_CORE			110
++#define JH7110_SYSRST_CAN0_APB			111
++#define JH7110_SYSRST_CAN0_CORE			112
++#define JH7110_SYSRST_CAN0_TIMER		113
++#define JH7110_SYSRST_CAN1_APB			114
++#define JH7110_SYSRST_CAN1_CORE			115
++#define JH7110_SYSRST_CAN1_TIMER		116
++#define JH7110_SYSRST_TIMER_APB			117
++#define JH7110_SYSRST_TIMER0			118
++#define JH7110_SYSRST_TIMER1			119
++#define JH7110_SYSRST_TIMER2			120
++#define JH7110_SYSRST_TIMER3			121
++#define JH7110_SYSRST_INT_CTRL_APB		122
++#define JH7110_SYSRST_TEMP_APB			123
++#define JH7110_SYSRST_TEMP_CORE			124
++#define JH7110_SYSRST_JTAG_CERTIFICATION	125
 +
-+static struct clk_hw *jh7110_aonclk_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct jh71x0_clk_priv *priv = data;
-+	unsigned int idx = clkspec->args[0];
++#define	JH7110_SYSRST_END			126
 +
-+	if (idx < JH7110_AONCLK_END)
-+		return &priv->reg[idx].hw;
++/* AONCRG resets */
++#define JH7110_AONRST_GMAC0_AXI			0
++#define JH7110_AONRST_GMAC0_AHB			1
++#define JH7110_AONRST_AON_IOMUX			2
++#define JH7110_AONRST_PMU_APB			3
++#define JH7110_AONRST_PMU_WKUP			4
++#define JH7110_AONRST_RTC_APB			5
++#define JH7110_AONRST_RTC_CAL			6
++#define JH7110_AONRST_RTC_32K			7
 +
-+	return ERR_PTR(-EINVAL);
-+}
++#define	JH7110_AONRST_END			8
 +
-+static int jh7110_aoncrg_probe(struct platform_device *pdev)
-+{
-+	struct jh71x0_clk_priv *priv;
-+	unsigned int idx;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev,
-+			    struct_size(priv, reg, JH7110_AONCLK_END),
-+			    GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&priv->rmw_lock);
-+	priv->dev = &pdev->dev;
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	dev_set_drvdata(priv->dev, priv->base);
-+
-+	for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
-+		u32 max = jh7110_aonclk_data[idx].max;
-+		struct clk_parent_data parents[4] = {};
-+		struct clk_init_data init = {
-+			.name = jh7110_aonclk_data[idx].name,
-+			.ops = starfive_jh71x0_clk_ops(max),
-+			.parent_data = parents,
-+			.num_parents = ((max & JH71X0_CLK_MUX_MASK)
-+					>> JH71X0_CLK_MUX_SHIFT) + 1,
-+			.flags = jh7110_aonclk_data[idx].flags,
-+		};
-+		struct jh71x0_clk *clk = &priv->reg[idx];
-+		unsigned int i;
-+
-+		for (i = 0; i < init.num_parents; i++) {
-+			unsigned int pidx = jh7110_aonclk_data[idx].parents[i];
-+
-+			if (pidx < JH7110_AONCLK_END)
-+				parents[i].hw = &priv->reg[pidx].hw;
-+			else if (pidx == JH7110_AONCLK_OSC)
-+				parents[i].fw_name = "osc";
-+			else if (pidx == JH7110_AONCLK_RTC)
-+				parents[i].fw_name = "clk_rtc";
-+			else if (pidx == JH7110_AONCLK_GMAC0_RMII_REFIN)
-+				parents[i].fw_name = "gmac0_rmii_refin";
-+			else if (pidx == JH7110_AONCLK_GMAC0_RGMII_RXIN)
-+				parents[i].fw_name = "gmac0_rgmii_rxin";
-+			else if (pidx == JH7110_AONCLK_STG_AXIAHB)
-+				parents[i].fw_name = "stg_axiahb";
-+			else if (pidx == JH7110_AONCLK_APB_BUS_FUNC)
-+				parents[i].fw_name = "apb_bus_func";
-+			else if (pidx == JH7110_AONCLK_GMAC0_GTXCLK)
-+				parents[i].fw_name = "gmac0_gtxclk";
-+		}
-+
-+		clk->hw.init = &init;
-+		clk->idx = idx;
-+		clk->max_div = max & JH71X0_CLK_DIV_MASK;
-+
-+		ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_aonclk_get, priv);
-+	if (ret)
-+		return ret;
-+
-+	return jh7110_reset_controller_register(priv, "reset-aon", 1);
-+}
-+
-+static const struct of_device_id jh7110_aoncrg_match[] = {
-+	{ .compatible = "starfive,jh7110-aoncrg" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, jh7110_aoncrg_match);
-+
-+static struct platform_driver jh7110_aoncrg_driver = {
-+	.probe = jh7110_aoncrg_probe,
-+	.driver = {
-+		.name = "clk-starfive-jh7110-aon",
-+		.of_match_table = jh7110_aoncrg_match,
-+	},
-+};
-+module_platform_driver(jh7110_aoncrg_driver);
-+
-+MODULE_AUTHOR("Emil Renner Berthing");
-+MODULE_DESCRIPTION("StarFive JH7110 always-on clock driver");
-+MODULE_LICENSE("GPL v2");
++#endif /* __DT_BINDINGS_RESET_STARFIVE_JH7110_H__ */
 -- 
 2.38.1
 
