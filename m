@@ -2,83 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B8CC4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Nov 2022 05:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BB5C433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Nov 2022 10:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbiKSFwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Nov 2022 00:52:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
+        id S229670AbiKSKnN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Nov 2022 05:43:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbiKSFwL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Nov 2022 00:52:11 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD348FE4E;
-        Fri, 18 Nov 2022 21:52:10 -0800 (PST)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NDjPF3JfKzqSVS;
-        Sat, 19 Nov 2022 13:48:17 +0800 (CST)
-Received: from kwepemm600005.china.huawei.com (7.193.23.191) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 19 Nov 2022 13:52:08 +0800
-Received: from ubuntu1804.huawei.com (10.67.175.30) by
- kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 19 Nov 2022 13:52:07 +0800
-From:   Hui Tang <tanghui20@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yusongping@huawei.com>, <claudiu.beznea@microchip.com>,
-        <conor.dooley@microchip.com>
-Subject: [PATCH] clk: microchip: check for null return of devm_kzalloc()
-Date:   Sat, 19 Nov 2022 13:48:58 +0800
-Message-ID: <20221119054858.178629-1-tanghui20@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229470AbiKSKnN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Nov 2022 05:43:13 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5081484824;
+        Sat, 19 Nov 2022 02:43:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D73C560959;
+        Sat, 19 Nov 2022 10:43:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E3B3C433C1;
+        Sat, 19 Nov 2022 10:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668854591;
+        bh=/+iRDvo5pjoK/3d+uFgmlFaUxqq5N45gM/Zxq/W3Tx4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CG/RU7Ua81xKFWKG+czQ5Up/u88hGSTpEFf58HsFm8vLhhdQoX5CH1Oa72ZPfo7zI
+         HqxL5pMi8jh/j2iu0aJftZ92NsL3tyCeYLUpRSaj5EEOOPC53JaRaxVK+lxNtvCJ5y
+         ruZpj20hvwbi5OxiBR7S2At6nPJqnyZ0hUu5XcmCU5SbYAwlgN+1sMsWAAwuHA+4FX
+         7ZMS/E0xsoOmkYGurwLtppLUNR3qb+YYa0pllt0r0mDz4YDRx4yE7QenBdGOEJq+Pc
+         8/fWrS9DoMoZnjLYCrOEXIf9S2ftIaFluWjGQye+fXGKhVC/CamnocqI+n7ckXXrXt
+         5bb91z8TzpwCQ==
+Date:   Sat, 19 Nov 2022 10:43:06 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Hui Tang <tanghui20@huawei.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yusongping@huawei.com, claudiu.beznea@microchip.com,
+        conor.dooley@microchip.com
+Subject: Re: [PATCH] clk: microchip: check for null return of devm_kzalloc()
+Message-ID: <Y3izOuF56/NywpOR@spud>
+References: <20221119054858.178629-1-tanghui20@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.30]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600005.china.huawei.com (7.193.23.191)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221119054858.178629-1-tanghui20@huawei.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Because of the possilble failure of devm_kzalloc(), name might be NULL and
-will cause null pointer derefrence later.
+On Sat, Nov 19, 2022 at 01:48:58PM +0800, Hui Tang wrote:
+> Because of the possilble failure of devm_kzalloc(), name might be NULL and
+> will cause null pointer derefrence later.
 
-Therefore, it might be better to check it and directly return -ENOMEM.
+In theory, yeah?
 
-Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
-Signed-off-by: Hui Tang <tanghui20@huawei.com>
----
- drivers/clk/microchip/clk-mpfs-ccc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+(note to self, s/refrence/reference/, s/possilble/possible)
 
-diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
-index 7be028dced63..32aae880a14f 100644
---- a/drivers/clk/microchip/clk-mpfs-ccc.c
-+++ b/drivers/clk/microchip/clk-mpfs-ccc.c
-@@ -166,6 +166,9 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
- 		struct mpfs_ccc_out_hw_clock *out_hw = &out_hws[i];
- 		char *name = devm_kzalloc(dev, 23, GFP_KERNEL);
- 
-+		if (!name)
-+			return -ENOMEM;
-+
- 		snprintf(name, 23, "%s_out%u", parent->name, i);
- 		out_hw->divider.hw.init = CLK_HW_INIT_HW(name, &parent->hw, &clk_divider_ops, 0);
- 		out_hw->divider.reg = data->pll_base[i / MPFS_CCC_OUTPUTS_PER_PLL] +
-@@ -200,6 +203,9 @@ static int mpfs_ccc_register_plls(struct device *dev, struct mpfs_ccc_pll_hw_clo
- 		struct mpfs_ccc_pll_hw_clock *pll_hw = &pll_hws[i];
- 		char *name = devm_kzalloc(dev, 18, GFP_KERNEL);
- 
-+		if (!name)
-+			return -ENOMEM;
-+
- 		pll_hw->base = data->pll_base[i];
- 		snprintf(name, 18, "ccc%s_pll%u", strchrnul(dev->of_node->full_name, '@'), i);
- 		pll_hw->name = (const char *)name;
--- 
-2.17.1
+> Therefore, it might be better to check it and directly return -ENOMEM.
 
+I agree with your use of might here. If the allocations do fail, we
+likely aren't getting the system off the ground anyway - but there is
+no harm in checking.
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+@Claudiu, supposedly I can push to the at91 repo now so I will try to do
+that.
+
+Thanks,
+Conor.
+
+> 
+> Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
+> Signed-off-by: Hui Tang <tanghui20@huawei.com>
+> ---
+>  drivers/clk/microchip/clk-mpfs-ccc.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
+> index 7be028dced63..32aae880a14f 100644
+> --- a/drivers/clk/microchip/clk-mpfs-ccc.c
+> +++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+> @@ -166,6 +166,9 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
+>  		struct mpfs_ccc_out_hw_clock *out_hw = &out_hws[i];
+>  		char *name = devm_kzalloc(dev, 23, GFP_KERNEL);
+>  
+> +		if (!name)
+> +			return -ENOMEM;
+> +
+>  		snprintf(name, 23, "%s_out%u", parent->name, i);
+>  		out_hw->divider.hw.init = CLK_HW_INIT_HW(name, &parent->hw, &clk_divider_ops, 0);
+>  		out_hw->divider.reg = data->pll_base[i / MPFS_CCC_OUTPUTS_PER_PLL] +
+> @@ -200,6 +203,9 @@ static int mpfs_ccc_register_plls(struct device *dev, struct mpfs_ccc_pll_hw_clo
+>  		struct mpfs_ccc_pll_hw_clock *pll_hw = &pll_hws[i];
+>  		char *name = devm_kzalloc(dev, 18, GFP_KERNEL);
+>  
+> +		if (!name)
+> +			return -ENOMEM;
+> +
+>  		pll_hw->base = data->pll_base[i];
+>  		snprintf(name, 18, "ccc%s_pll%u", strchrnul(dev->of_node->full_name, '@'), i);
+>  		pll_hw->name = (const char *)name;
+> -- 
+> 2.17.1
+> 
