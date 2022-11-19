@@ -2,81 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C5DC43217
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Nov 2022 20:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B8CC4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Nov 2022 05:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbiKRUhv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Nov 2022 15:37:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38728 "EHLO
+        id S230171AbiKSFwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Nov 2022 00:52:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbiKRUht (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2022 15:37:49 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7232BB33
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 12:37:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DB9B3B82522
-        for <linux-clk@vger.kernel.org>; Fri, 18 Nov 2022 20:37:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15B07C433C1;
-        Fri, 18 Nov 2022 20:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668803866;
-        bh=cOn+UeznysT4egNokhEsxa/YqRTQE0tFv74FA17/TIk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=A+iuoCTGcgj+ZVrawrNzi4CnU8rKW/Fd4M9XsJSS3w43HVkAbyfKhazmLkym85u8m
-         TxnGopASRnpUdahSBmuwc1raEMJl9qal9EXpmbVKM1Qv6m8qrYMDm8hx86EK1lVKLj
-         y/tFVFlBu9bYFZHVOwebAdYgohpcZrQLSbwcrZYIz+Mw0Gzw4j4vu4uFXt0iYGbV5E
-         WrkfCN4NbVlUwibT76ekToos90NNKX7N9/oUuov+s6WR0hn8no99Gj8BsrcrPDotXA
-         t1/ZkC9j0VsldSV9g7ghZLoBT5y3ZTie33EV05qDNOM8YOxbcc2Aa8q19DknsbD7hY
-         pkHwrD2EzMwKw==
-Date:   Fri, 18 Nov 2022 21:37:42 +0100
-From:   Jernej Skrabec <jernej@kernel.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev
-Subject: [GIT PULL] Allwinner clock changes for 6.2, try 2
-Message-ID: <Y3ftFp9FoTmGCi9+@jernej-laptop>
+        with ESMTP id S229878AbiKSFwL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Nov 2022 00:52:11 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD348FE4E;
+        Fri, 18 Nov 2022 21:52:10 -0800 (PST)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NDjPF3JfKzqSVS;
+        Sat, 19 Nov 2022 13:48:17 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (7.193.23.191) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 19 Nov 2022 13:52:08 +0800
+Received: from ubuntu1804.huawei.com (10.67.175.30) by
+ kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 19 Nov 2022 13:52:07 +0800
+From:   Hui Tang <tanghui20@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yusongping@huawei.com>, <claudiu.beznea@microchip.com>,
+        <conor.dooley@microchip.com>
+Subject: [PATCH] clk: microchip: check for null return of devm_kzalloc()
+Date:   Sat, 19 Nov 2022 13:48:58 +0800
+Message-ID: <20221119054858.178629-1-tanghui20@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.67.175.30]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
+Because of the possilble failure of devm_kzalloc(), name might be NULL and
+will cause null pointer derefrence later.
 
-Please pull following clock changes for 6.2.
+Therefore, it might be better to check it and directly return -ENOMEM.
 
-Best regards,
-Jernej
+Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
+Signed-off-by: Hui Tang <tanghui20@huawei.com>
+---
+ drivers/clk/microchip/clk-mpfs-ccc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
+index 7be028dced63..32aae880a14f 100644
+--- a/drivers/clk/microchip/clk-mpfs-ccc.c
++++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+@@ -166,6 +166,9 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
+ 		struct mpfs_ccc_out_hw_clock *out_hw = &out_hws[i];
+ 		char *name = devm_kzalloc(dev, 23, GFP_KERNEL);
+ 
++		if (!name)
++			return -ENOMEM;
++
+ 		snprintf(name, 23, "%s_out%u", parent->name, i);
+ 		out_hw->divider.hw.init = CLK_HW_INIT_HW(name, &parent->hw, &clk_divider_ops, 0);
+ 		out_hw->divider.reg = data->pll_base[i / MPFS_CCC_OUTPUTS_PER_PLL] +
+@@ -200,6 +203,9 @@ static int mpfs_ccc_register_plls(struct device *dev, struct mpfs_ccc_pll_hw_clo
+ 		struct mpfs_ccc_pll_hw_clock *pll_hw = &pll_hws[i];
+ 		char *name = devm_kzalloc(dev, 18, GFP_KERNEL);
+ 
++		if (!name)
++			return -ENOMEM;
++
+ 		pll_hw->base = data->pll_base[i];
+ 		snprintf(name, 18, "ccc%s_pll%u", strchrnul(dev->of_node->full_name, '@'), i);
+ 		pll_hw->name = (const char *)name;
+-- 
+2.17.1
 
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-6.2-1
-
-for you to fetch changes up to f64603c9729af406167cb9beb66687b1abc4196e:
-
-  clk: sunxi-ng: f1c100s: Add IR mod clock (2022-11-16 19:49:18 +0100)
-
-----------------------------------------------------------------
-- fixed header guard for V3S clocks
-- add IR module clock for f1c100s
-
-----------------------------------------------------------------
-Andre Przywara (1):
-      clk: sunxi-ng: f1c100s: Add IR mod clock
-
-Wei Li (1):
-      clk: sunxi-ng: v3s: Correct the header guard of ccu-sun8i-v3s.h
-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |  6 +++---
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c      | 11 ++++++++++-
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h      |  2 +-
- include/dt-bindings/clock/suniv-ccu-f1c100s.h |  2 ++
- 4 files changed, 16 insertions(+), 5 deletions(-)
