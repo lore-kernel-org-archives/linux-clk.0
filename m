@@ -2,82 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA2AC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 10:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC2FC63709
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 11:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbiKUK7x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 05:59:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
+        id S229967AbiKULHG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 06:07:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiKUK7w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 05:59:52 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E759E95F;
-        Mon, 21 Nov 2022 02:59:51 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id q96-20020a17090a1b6900b00218b8f9035cso1747138pjq.5;
-        Mon, 21 Nov 2022 02:59:51 -0800 (PST)
+        with ESMTP id S230042AbiKULGu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 06:06:50 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53C43B08CE
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 03:06:26 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id d20so14048631ljc.12
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 03:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BA5PxtGiUsCZ9o2M8Np4MQIC5EXCplZc1D9t1PWgXsQ=;
-        b=iZBBxT0FR5nFckpM99wxqo3CAphNatCWMTcU1iWUpPdbj27cSn8n6RGaPL0/0wO3k8
-         k5ctEC6rc+D3qaadbYqjuCwY4+epWxeW7VdSiRRZ5XE4NX1BYgZGlm9BaGBQNow5v7Dz
-         8icNDgC6+YHCTwXXZD6GKtzd95Tm+w4tgVJqc7pG71lfHwEyaJ3BqXo6BH/YutbngEkb
-         CFDu/rxFiHGpogPZ/lm9O4nZI2rNOGDSfDabF+tiGpfOoqUVg/GQUygQAz34/I3WXlHC
-         uNZmstvLqObxV6u+DioyjG3CkchBx7IPOzwK1zaa0UFaTaobd+ij06APCFu2iGu9iGzR
-         PJUg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YyWwGeNhRFmvWfv+vCOYlIM/UFkEFOWpWKA/JfKWszY=;
+        b=k1zR2LZGJzgjCfmMp4p4sU+lt9Y/jVgcaRyvmTurxH242gX8IQXQ/MjQg7EUV7qPIt
+         Uocx5kN58tws2Qih7DmeyVqq2zI1PiY7WtbxX0Vqnp47COj5UTsxlGsTBd5Wl+uEIrIM
+         znlDN9X06BKuJ8t3bWEeuK4hDuMdNeiwc7hmSsyJuwHor8VOB+IozAqcJtzsXFTFSqnp
+         BAvpVY23qpQTdFU+5YR6MFtjqOF7YDE9y2+1WIPKLJz8k1FKV7oBPXJ1iT5SNYu8EFn4
+         aIlRvpPlykkiIQhw6Gzo5jqzl0qGOlMgAgnCb/uRZuFaGL67r5tTmVBcXdviOBviPPgy
+         Le7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BA5PxtGiUsCZ9o2M8Np4MQIC5EXCplZc1D9t1PWgXsQ=;
-        b=4BBFBlLZmbGi2cWCN4L/ASbAWz7P01hZAeaMjI9W4Ahveb3B97/xeVViGAWGhcfYM/
-         MEmly9rSRJWe3H3fqxDylBzTc7rnGUOLixzaEDuYAVHU5B15wLR+S3SpeYLkJsdYfVS0
-         iTKR5pBMnoVyo+O+g+bfgqSeqhWomBAqb4fWML5Pq+cP8IBLV/KzWzvLwZ1zR+CEPOaW
-         etNAeiZ6vRzflOyKI9Ys4jVWWpg4IQFZ/GpibkeeCBKlDG2kH9UpGNvx+d66BHV0vVns
-         CNMaVyGXNu9kjnV9+uQfhMJD3TyoFEX0yZgCY2AKBF1S0p7x8LbO04SnL7wD2n/BXGkP
-         Mbqw==
-X-Gm-Message-State: ANoB5pnU2kTwzNokx1Hphh6Qzg5boZT88/hLq+f77mY0akYYTa19XPwU
-        bZXn63DqMEe+WbpnbjCovB6OnzTYodZRVCAfJ+K3PwfE
-X-Google-Smtp-Source: AA0mqf4YnjqRjHru/Zao3sO2SqSc3fcg2mA+nOGRKm+vwVpRuwFVR7hucvrKPDC+d4lLJrc9fuulPcZQEh7/WfXecL8=
-X-Received: by 2002:a17:90a:7004:b0:218:ab86:3acb with SMTP id
- f4-20020a17090a700400b00218ab863acbmr5765589pjk.195.1669028391342; Mon, 21
- Nov 2022 02:59:51 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YyWwGeNhRFmvWfv+vCOYlIM/UFkEFOWpWKA/JfKWszY=;
+        b=SLaW7nqqcz0pbRZbeoEYXFO3qHG0saI4h5xoN1U//XQ8WqJTSgunjiZGPn+vkWodU0
+         CQjc2RyqCq2eoZcFUOaPGE/f+0/vC8SQU7uGZmBs0Vl3I9Q8+56eK1WwwihyTd5VWUAQ
+         qhh/5AwPn5Gxi3k4mL4qy7KMzTBDmbNVK9wmigPyo72lyORNr8pyiB7syurlJZhJ4yzj
+         /eNOzcezN9gvjLm3W7C5mYnAt4D2iZgLTougWfKFtAKFVfxS6R3jYsUDHCa32l93IfBg
+         gb/jr8tj3Xil86kQu7UZie/jVJ57N/cKE7v1nJJzlRjpA/Gvm45GIh6qNOaXvvaDJxpT
+         zfqw==
+X-Gm-Message-State: ANoB5pld+M1kFl/AhVutmcEictGSxRHsFkpLis3lskdF5dMtxWFGjwiK
+        rmotA+m+TWxEMqwP9yhVVpm/tQ==
+X-Google-Smtp-Source: AA0mqf6U7Ox5Cg3AOmfzFZsyMueM2uMreFj1RmdNjod5QJ6XQGeJ0gdoX1HOEA4iywF9yX/nrfBnTw==
+X-Received: by 2002:a2e:9786:0:b0:277:2e8a:bc59 with SMTP id y6-20020a2e9786000000b002772e8abc59mr5136640lji.344.1669028784202;
+        Mon, 21 Nov 2022 03:06:24 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id n1-20020a05651203e100b0049313f77755sm1991521lfq.213.2022.11.21.03.06.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Nov 2022 03:06:23 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v2 2/9] dt-bindings: memory-controllers: ti,gpmc-child: drop redundant part of title
+Date:   Mon, 21 Nov 2022 12:06:08 +0100
+Message-Id: <20221121110615.97962-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
+References: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
- <CAOMZO5BPtEU6VCZXRk5FTHXDad6cegF=+oHTTA0wgjBuoh9-rQ@mail.gmail.com>
- <09611b2d-096e-058b-5349-627684e3a13c@rasmusvillemoes.dk> <CAOMZO5AXSSkHpeuHNRQ6qkFoe2uiFLVxndz1u7_y7s9cLD9ppw@mail.gmail.com>
- <8cce4dae-c653-515b-1a5d-024986afbabf@rasmusvillemoes.dk>
-In-Reply-To: <8cce4dae-c653-515b-1a5d-024986afbabf@rasmusvillemoes.dk>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 21 Nov 2022 07:59:33 -0300
-Message-ID: <CAOMZO5CpFXjm1a2C01=uiHLjcNSe4MzgLUyfDvK0LCdQ8+KNEw@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 6:44 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
+The Devicetree bindings document does not have to say in the title that
+it is a "Devicetree binding", but instead just describe the hardware.
 
-> That doesn't seem to be true. To test, I just built the imx8mq clk
-> driver as a module, and I could certainly both load and unload that on
-> my imx8mp platform. Sure, no "bind" attribute shows up in the
-> /sys/bus/platform/drivers/imx8mq-ccm/ directory, which is exactly what
-> one expects, but the module can be loaded just fine. And since it can be
-> loaded, it should also have a proper __exit call for deregistering the
-> driver on unload.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ .../devicetree/bindings/memory-controllers/ti,gpmc-child.yaml   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are right. Sorry for the confusion.
+diff --git a/Documentation/devicetree/bindings/memory-controllers/ti,gpmc-child.yaml b/Documentation/devicetree/bindings/memory-controllers/ti,gpmc-child.yaml
+index 4a257fac577e..383d19e0ba26 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/ti,gpmc-child.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/ti,gpmc-child.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/memory-controllers/ti,gpmc-child.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: device tree bindings for children of the Texas Instruments GPMC
++title: Texas Instruments GPMC Bus Child Nodes
+ 
+ maintainers:
+   - Tony Lindgren <tony@atomide.com>
+-- 
+2.34.1
+
