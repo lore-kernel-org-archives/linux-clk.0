@@ -2,97 +2,289 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BC0C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 16:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9E8C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 16:34:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbiKUQJS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 11:09:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39744 "EHLO
+        id S229500AbiKUQeJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 11:34:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231178AbiKUQJR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 11:09:17 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0015C6051
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 08:09:15 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso9387306wmo.1
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 08:09:15 -0800 (PST)
+        with ESMTP id S230283AbiKUQdW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 11:33:22 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308896164
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 08:33:21 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id r12so19679607lfp.1
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 08:33:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ndp9pCENyU3E4kYpzWJmUyLiPz4xKgo+kLDz3SBfds0=;
-        b=RuHGAabA4hXPn3XQZEVESTm6Zxg8aPGVZevPgWPfcBQWmIc0bR+GmdVIRs6EqWggsb
-         vTBlf6Jg+gTq3hXIwtn5VlJ4d5fjMAQTncxa02bh+1PgjTFgkCQ4bZmC0IGprWjBGrmD
-         e6B8V1tRdc73kMfiv46H88IpUaJowwsGOIL6hOw2hvJUQH9ZoQf9DLfq3OKAF5ip1xF2
-         /D9vXSD2k8IZy33VLFpwLC3GulH6DwT48m4xC5ifzDvejPWdSvyx2Uluxr1POSsN3KVW
-         T0ik0MTRHhigZP9kuw3rzH2wnlFl2KYG45tLLxFxIXxkOTF1F9EY8KhWJmIscwz5L0yu
-         GmqQ==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v7bCY/p1jGN+V4P5Z66XMF5hNOBYBBm1FqcPkoGvfxU=;
+        b=OmNdLGayr0K2uHjD9IPM8w72U2KjB7+vNdAR8H2hvr+gllj/JxgNlft/VApT5Ilpxv
+         W7sRS2oF2J/DMfU01xKR0ra049PEJfe/iu2YvAuG8M+uLkbzOq3Uv7Wir4qdSIL3bv4g
+         sTAVIstvEl4q65oRKO69Uj5cxnag/p8MgzFsv9H5QeD2EB0TX3dcfhDLFdb9aXyetAQG
+         JTC/cGqLZjjsowAYneMAPftrA/JFYuhBGywoTuRFwTmTZQEPUSAKghSRi0cLUT2Ig5Kl
+         I4ivuQug/alS4j3AeafADEsDOOhaYVGojDGcR9JXaGytVpvZDsMrOn5HxIP2kk6Z3KEa
+         QShg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ndp9pCENyU3E4kYpzWJmUyLiPz4xKgo+kLDz3SBfds0=;
-        b=JNKaJnkqHQYq1mMdsxtSdiuB6/3Jrt4hQxWtNx4NDORAyXbJg21BrpFFj8YLJY4ZZx
-         GEZvNS3y2GJHT2RorniqaLTcxTMXg6wBsAU+D8uWfs4dGq5ipW1vv4uLsExuoP9yYHtV
-         /FNxPeKp9T6KIGG1/DENJ0E6Khv0EH8mHZUyL82glmu1rY3Z3B4cZeCPHVi1zQcLzsDn
-         feB4zV+xx3l1N6DWVTeLPLwnvvbz6izhalJGUHzoWWKcvfuXUcMh7/0soPryv3rSISMJ
-         Om6Bj/SE+/Iyw2qdx82wRvFcl3+6FfkWZ/Wy6/50qh+cVI/Y/mGRdlvci0w4NZu+fN0C
-         IUow==
-X-Gm-Message-State: ANoB5pnRS0rEP+Zpg5NJfXfv4PRApLdbjYpya8oDNmOxo3Jqr9LpV3PO
-        sv9OY6l4sxwzI+8LDKrWRqBY+Q==
-X-Google-Smtp-Source: AA0mqf5XhJAinBijJRnm3g7NsHsk+2UOjaTXO9W0Sj4/cUjCh+dc3ZFbNaI4+bdvwhSR2ws7hvn5wA==
-X-Received: by 2002:a05:600c:3514:b0:3cf:e0ef:1f6c with SMTP id h20-20020a05600c351400b003cfe0ef1f6cmr6411633wmq.75.1669046954280;
-        Mon, 21 Nov 2022 08:09:14 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id m16-20020adffe50000000b00241bee11825sm10474963wrs.103.2022.11.21.08.09.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 08:09:13 -0800 (PST)
-Date:   Mon, 21 Nov 2022 18:09:11 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     shengjiu.wang@gmail.com, abelvesa@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, marex@denx.de
-Subject: Re: [PATCH v5 0/2] clk: imx8mp: Add audio shared gate
-Message-ID: <Y3uip2mPNkx+KLWG@linaro.org>
-References: <1667811007-19222-1-git-send-email-shengjiu.wang@nxp.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v7bCY/p1jGN+V4P5Z66XMF5hNOBYBBm1FqcPkoGvfxU=;
+        b=eHpK4tEmvmRSwzqEzttf2BzaffBPbKEA0yMBA60Y1bFUZ5OObHthne59EqTA6T+1C/
+         jWekinEs9rGhQOgWhnIGUjBBlR6rg1ND1mRAHa1vQZE9PM6jS53BPhncImR5TCMfENnd
+         jDfiO7ARB8ZTX2By0mdFq+jt/sgQ7U73OPIxFxYe0z4kPssSo3JhnkslgmpFJbNzyWDP
+         cZNefrD/X3gSDPcjhddHDGIzU4V0hTVIC4xFOfqRjyjvRdPtch9drm4uP3WiEc8MbGDv
+         FCD2PoU6DxG6MOQ6OLRw0UnHg/rZn4QnEHXWeMvn/KHqtCA5WqJgf8lk+2SPo+2yb9bw
+         6OQQ==
+X-Gm-Message-State: ANoB5pnAdwO46RmdHo/FP6PEY2W+4VC2LRFzYVoJmqx2cewVLN6aOYAi
+        23PMnVHnq7vuDLeMIhfrcx8FMA==
+X-Google-Smtp-Source: AA0mqf6hPKAKuica8wFz5ikBMwC3NwA7GHdzU+RruvrJ6fAFg9DjK/NDFmfcdHymKHVkbhlWrqLavg==
+X-Received: by 2002:ac2:4e0a:0:b0:4a2:2aab:5460 with SMTP id e10-20020ac24e0a000000b004a22aab5460mr1168869lfr.62.1669048399433;
+        Mon, 21 Nov 2022 08:33:19 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id c27-20020ac25f7b000000b0049f53b65790sm2080450lfc.228.2022.11.21.08.33.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Nov 2022 08:33:19 -0800 (PST)
+Message-ID: <4e54bfb4-bb67-73b8-f58f-56797c5925d3@linaro.org>
+Date:   Mon, 21 Nov 2022 17:33:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1667811007-19222-1-git-send-email-shengjiu.wang@nxp.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl: Add
+ h2mode property
+Content-Language: en-US
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
+ <20221114111513.1436165-3-herve.codina@bootlin.com>
+ <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
+ <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org>
+ <20221115150417.513955a7@bootlin.com> <20221118112349.7f09eefb@bootlin.com>
+ <d9bd5075-9d06-888d-36a9-911e2d7ec5af@linaro.org>
+ <20221121165921.559d6538@bootlin.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221121165921.559d6538@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-11-07 16:50:05, Shengjiu Wang wrote:
-> changes in v5:
-> - define IMX8MP_CLK_AUDIO_AHB_ROOT as IMX8MP_CLK_AUDIO_ROOT
+On 21/11/2022 16:59, Herve Codina wrote:
+> Hi,
 > 
+> On Mon, 21 Nov 2022 12:43:16 +0100
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> 
+>> On 18/11/2022 11:23, Herve Codina wrote:
+>>> Hi Krzysztof, Geert,
+>>>
+>>> On Tue, 15 Nov 2022 15:04:17 +0100
+>>> Herve Codina <herve.codina@bootlin.com> wrote:
+>>>   
+>>>> Hi Krzysztof,
+>>>>
+>>>> On Tue, 15 Nov 2022 14:07:52 +0100
+>>>> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+>>>>  
+>>>>> On 15/11/2022 14:05, Krzysztof Kozlowski wrote:    
+>>>>>> On 14/11/2022 12:15, Herve Codina wrote:      
+>>>>>>> Add the h2mode property to force the USBs mode ie:
+>>>>>>>  - 2 hosts
+>>>>>>> or
+>>>>>>>  - 1 host and 1 device
+>>>>>>>
+>>>>>>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+>>>>>>> ---
+>>>>>>>  .../bindings/clock/renesas,r9a06g032-sysctrl.yaml      | 10 ++++++++++
+>>>>>>>  1 file changed, 10 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+>>>>>>> index 95bf485c6cec..f9e0a58aa4fb 100644
+>>>>>>> --- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+>>>>>>> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+>>>>>>> @@ -39,6 +39,16 @@ properties:
+>>>>>>>    '#power-domain-cells':
+>>>>>>>      const: 0
+>>>>>>>  
+>>>>>>> +  renesas,h2mode:
+>>>>>>> +    description: |
+>>>>>>> +      Configure the USBs mode.
+>>>>>>> +        - <0> : the USBs are in 1 host and 1 device mode.
+>>>>>>> +        - <1> : the USBs are in 2 host mode.
+>>>>>>> +      If the property is not present, the value used is the one already present
+>>>>>>> +      in the CFG_USB register (from reset or set by the bootloader).
+>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>>> +    enum: [0, 1]      
+>>>>>>
+>>>>>> 0/1 are quite cryptic. Why not making it a string which is easy to read
+>>>>>> and understand? Can be something like "two-hosts" and "one-host". Or
+>>>>>> anything you find more readable...      
+>>>>>
+>>>>> ...but actually you should rather make it a property of your USB
+>>>>> controller, not clock controller. You have two controllers and we have a
+>>>>> generic property for them - dr_mode.
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>>     
+>>>>
+>>>> IMHO, this property in the USB controllers does not make sense.
+>>>> Indeed each controller cannot have a different 'mode'.
+>>>> Some controllers are USB host only (EHCI and OHCI) and the USBF
+>>>> controller I worked on is device only.
+>>>> 'h2mode' allows to choose between host or device on one of the USB
+>>>> but not at the USB controller level.
+>>>>
+>>>> This property should be handle outside the USB controller nodes.
+>>>>
+>>>> Currently, this node (declared as a clock node) is in fact a sysctrl
+>>>> node and can do some configuration not related to clocks.
+>>>>
+>>>> I agree with you something related to choosing USB Host/Device in
+>>>> a clock node seems strange.
+>>>>
+>>>> Some discussion were already opened related to this property and how
+>>>> to handle it:
+>>>>   https://lore.kernel.org/all/20221107182642.05a09f2f@bootlin.com/
+>>>>   https://lore.kernel.org/all/20221107173614.474707d7@bootlin.com/
+>>>>  
+>>>
+>>> We advanced on this topic.
+>>>
+>>> First, even if 'renesas,r9a06g032-sysctrl.yaml' is present in
+>>> the devicetree/bindings/clock/ directory, this node is really
+>>> a 'system controller' node:
+>>> - title: Renesas RZ/N1D (R9A06G032) System Controller
+>>> - compatible: renesas,r9a06g032-sysctrl
+>>>
+>>> It handles clocks, power domains, some DMA routing, ...
+>>>
+>>> Now, the property 'h2mode' allows to choose between:
+>>>   - 2 USB hosts
+>>> or
+>>>   - 1 USB host and 1 USB device.
+>>>
+>>> This switching is system wide and has no reason to be done in
+>>> one specific USB controller. It can impact multiple devices and
+>>> PLL settings.
+>>>
+>>> The 'renesas,r9a06g032-sysctrl' node, as the system control
+>>> node of our system, is the best candidate to handle the property.  
+>>
+>> Not necessarily. IIUC, you have:
+>>
+>> 1. sysctrl with some register(s) for choosing device mode
+>> 2. usb device or host at one address
+>> 3. usb host at separate address
+>>
+> 
+> Just to clarify, usb device and host controller are not provided by
+> the same IP.
+> We have an USB host at some address range (PCI OHCI/EHCI USB host
+> below a PCI bridge) and the USB device at some other address range
+> (below a AHB to someting bridge).
+> And I am not sure that only USB host or devices are affected by this
+> property change.
+> 
+>> If so then:
+>> A. Pretty often we have wrapper nodes for this purpose (USB, phy
+>> wrappers or glues) which are usually needed to configure something for a
+>> generic block (like Synopsys etc).
+>>
+>> B. Pretty often the device (so your USB host or device) needs to poke
+>> something in system controller registers, e.g. for power or some other
+>> setup.
+> 
+> And we did it for some items (clocks and power).
+> 
+>>
+>> Your case looks a lot like (B). We have many, many of such examples
+>> already. Actually it is exactly like that, except that it affects
+>> possibility of another device (e.g. choosing USB device blocks having
+>> host there).
+>>
+>> C. It looks a bit like a multi-serial-protocol interfaces (so
+>> UART+I2C+SPI). The difference is that such cases have all these nodes
+>> defined as a children of the protocol-wrapping device. Not here.
+>>
+>> I would propose to go with (B) unless of course it's causes some crazy
+>> architecture/code choices. Why? Because with exception of (C) we should
+>> not define properties which represent DT node choices. IOW, Choosing a
+>> node and compatible (e.g. usb controller as device) is enough to
+>> describe the hardware. No need for other properties to control some
+>> register in other block.
+> 
+> The issue with h2mode is that it affects several devices and these
+> devices should not be in a "running" state when the h2mode is changed.
 
-Applied both. Thanks!
+Why the change should happen when device is running? And why this should
+be anyway different than your existing hsmode property - it also will
+happen when system and device are running.
 
-> changes in v4:
-> - don't remove IMX8MP_CLK_AUDIO_ROOT, to avoid any break
+
+> PCI devices (host controllers) itself are not described in the DT. They
+> are automatically enumerated.
+
+Aren't we talking about USB controller in a MMIO-based SoC?
+
+> Changing the property in USB device controller can leads to hang on
+> other busses. Indeed, changing this property when a device affected
+> by the property is running can lead to a bus hang.>
+> In order to do that from the USB device controller I need to synchronize
+> the other devices to wait for this setting before running.
+> 1) probe sysctrl without setting h2mode
+> 2) probe some devices (USB host and probably others)
+>    Stop at some point and wait for the h2mode property setting.
+
+Why do you need to wait? Which device needs to wait? There are no such
+devices... if they are then please bring entire DTS, not some pieces in
+this patchset.
+
+> 3) probe usb device -> Set h2mode property
+> 4) allow devices waiting for the property setting to continue.
+
+I don't get why do you need such order. Your sysctrl also probes any
+time so old solution has exactly the same problem, doesn't it?
+
+> This synchronization seems pretty tricky and what to do if nobody
+> set the property (USB device controller not present or status="disabled"
+> for instance) ?
 > 
-> changes in v3:
-> - remove IMX8MP_CLK_AUDIO_ROOT
-> 
-> changes in v2:
-> - split dt-binding to separate patch
-> 
-> Abel Vesa (2):
->   dt-bindings: clock: imx8mp: Add ids for the audio shared gate
->   clk: imx8mp: Add audio shared gate
-> 
->  drivers/clk/imx/clk-imx8mp.c             | 12 +++++++++++-
->  include/dt-bindings/clock/imx8mp-clock.h | 11 ++++++++++-
->  2 files changed, 21 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+> Setting this property in sysctrl probe avoid the need for all of this
+> synchronization:
+> 1) probe sysctrl and set h2mode.
+> 2) probe other devices (no need to wait for the setting as it is already done)
+
+No, because other devices probe before sysctrl. If you bring here any
+manual ordering, you are doing it wrong.
+
+> The probing of the other devices (or the starting of they running state)
+> is guaranteed as they all need some clocks and so cannot start without
+> having the sysctrl node already probed.
+> This sysctrl node handles the clocks.
+
+Ah, so sysctrl is a clock controller for these?
+
+Then still there are no other devices depending on your USB. The USB is
+the owner of this property (specific bits in register), no one else.
+
+Best regards,
+Krzysztof
+
