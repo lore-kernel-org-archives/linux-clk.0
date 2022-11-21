@@ -2,44 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B862FC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 12:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A56C4321E
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 12:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231145AbiKUMa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 07:30:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46972 "EHLO
+        id S230504AbiKUMbC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 07:31:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbiKUMad (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 07:30:33 -0500
+        with ESMTP id S231276AbiKUMah (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 07:30:37 -0500
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C816121264;
-        Mon, 21 Nov 2022 04:30:08 -0800 (PST)
-X-UUID: 561be8b00c1947edad2e3c687d520082-20221121
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E559AB7E9D;
+        Mon, 21 Nov 2022 04:30:09 -0800 (PST)
+X-UUID: b8a7040ecb154a14ab771569cd2a09d6-20221121
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=chwOzhzqZetC3MhgqfNY3NF6RywTjwGetB7f0sa8uTc=;
-        b=lLYZivN2/S1nwx6oLSNyIpCcHWdfX8tjwWhMlfJNySMOA/FgVxDqznoVDSFFTm7qgKQjZzU23gn1yoUDtSnpb2XznPH4lo+fI5T+BU+Qhx5s+QxuTj/dezU2+GzMJzzHeIN2GK8fk8ftt9KrrV5ARYb0P3vsLVy4AWq9sczM2GI=;
-X-CID-P-RULE: Spam_GS6885AD
-X-CID-O-INFO: VERSION:1.1.13,REQID:418dd751-eaec-42b1-a089-306f342d4e48,IP:0,U
-        RL:25,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS6885AD,ACT
-        ION:quarantine,TS:120
-X-CID-INFO: VERSION:1.1.13,REQID:418dd751-eaec-42b1-a089-306f342d4e48,IP:0,URL
-        :25,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTIO
-        N:quarantine,TS:120
-X-CID-META: VersionHash:d12e911,CLOUDID:c01f622f-2938-482e-aafd-98d66723b8a9,B
-        ulkID:221121203003XVC9FD9T,BulkQuantity:0,Recheck:0,SF:38|28|17|19|48,TC:n
-        il,Content:0,EDM:-3,IP:nil,URL:11|1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: 561be8b00c1947edad2e3c687d520082-20221121
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ZwqPOKoKMm0AWKiPPVru/YWszwi30e2Q4/lpqb4TXBM=;
+        b=aJesibmmBc6DTGGWcMFwhOlKXxyp53JSU62EUnpYuDLjHanHmgAHzEYeL4nFHIf3X0IeYCEqNAIS4A/6SKYoS3OUgS3nt9q2Es9FKVvXOLwv6B4g6rWidHaDXofBa2UljKk8bTtyAzR+x5sP7cjzA+dXPkmsFRUmrPFZ9FhGZW4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.13,REQID:fadf2fbd-4ac3-495f-84bd-c2231dfc2789,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-25
+X-CID-META: VersionHash:d12e911,CLOUDID:bb1f622f-2938-482e-aafd-98d66723b8a9,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: b8a7040ecb154a14ab771569cd2a09d6-20221121
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
         (envelope-from <johnson.wang@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1580543132; Mon, 21 Nov 2022 20:30:00 +0800
+        with ESMTP id 1144589622; Mon, 21 Nov 2022 20:30:00 +0800
 Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Mon, 21 Nov 2022 20:29:59 +0800
+ 15.2.792.15; Mon, 21 Nov 2022 20:29:58 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Mon, 21 Nov 2022 20:29:59 +0800
+ 15.2.792.15 via Frontend Transport; Mon, 21 Nov 2022 20:29:58 +0800
 From:   Johnson Wang <johnson.wang@mediatek.com>
 To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         <angelogioacchino.delregno@collabora.com>, <sboyd@kernel.org>
@@ -48,14 +45,11 @@ CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Johnson Wang <johnson.wang@mediatek.com>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>
-Subject: [PATCH v5 2/4] dt-bindings: clock: mediatek: Add new bindings of MediaTek frequency hopping
-Date:   Mon, 21 Nov 2022 20:29:55 +0800
-Message-ID: <20221121122957.21611-3-johnson.wang@mediatek.com>
+        Johnson Wang <johnson.wang@mediatek.com>
+Subject: [PATCH v5 0/4] Introduce MediaTek frequency hopping driver
+Date:   Mon, 21 Nov 2022 20:29:53 +0800
+Message-ID: <20221121122957.21611-1-johnson.wang@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20221121122957.21611-1-johnson.wang@mediatek.com>
-References: <20221121122957.21611-1-johnson.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -63,78 +57,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the new binding documentation for MediaTek frequency hopping
-and spread spectrum clocking control.
+The purpose of this serie is to enhance frequency hopping and spread spectrum
+clocking feature for MT8186.
+We introduce new PLL register APIs and some helpers for FHCTL hardware control.
+For MT8186 PLL driver, we replace mtk_clk_register_plls() with newly added API
+to support frequency hopping and SSC function for specific PLLs.
 
-Co-developed-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/clock/mediatek,mt8186-fhctl.yaml | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
+Changes in v5:
+- Add the reviewed-by tags.
+- Move binding document to bindings/clock folder.
+- change some coding style in clk-pllfh.c
+
+Changes in v4:
+- Fixup iospace error in the binding.
+- Use GENMASK marco and remove extra line.
+
+Changes in v3:
+- Change binding file name.
+- Add some constraints for properties.
+- Rename "mediatek,hopping-ssc-percents" to "mediatek,hopping-ssc-percent".
+- Add new config symbol.
+
+Changes in v2:
+- Use SoC-specific compatible instead of generic one.
+- Use standard clocks property and vendor-specific property in dt-binding.
+- Remove some unused arguments and fix some coding style.
+
+Johnson Wang (4):
+  clk: mediatek: Export PLL operations symbols
+  dt-bindings: clock: mediatek: Add new bindings of MediaTek frequency
+    hopping
+  clk: mediatek: Add new clock driver to handle FHCTL hardware
+  clk: mediatek: Change PLL register API for MT8186
+
+ .../bindings/clock/mediatek,mt8186-fhctl.yaml |  53 ++++
+ drivers/clk/mediatek/Kconfig                  |   8 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-fhctl.c              | 244 ++++++++++++++++
+ drivers/clk/mediatek/clk-fhctl.h              |  26 ++
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c  |  66 ++++-
+ drivers/clk/mediatek/clk-pll.c                |  84 +++---
+ drivers/clk/mediatek/clk-pll.h                |  55 ++++
+ drivers/clk/mediatek/clk-pllfh.c              | 275 ++++++++++++++++++
+ drivers/clk/mediatek/clk-pllfh.h              |  82 ++++++
+ 10 files changed, 841 insertions(+), 53 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml
+ create mode 100644 drivers/clk/mediatek/clk-fhctl.c
+ create mode 100644 drivers/clk/mediatek/clk-fhctl.h
+ create mode 100644 drivers/clk/mediatek/clk-pllfh.c
+ create mode 100644 drivers/clk/mediatek/clk-pllfh.h
 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml
-new file mode 100644
-index 000000000000..cfd042ac1e14
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/mediatek,mt8186-fhctl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek frequency hopping and spread spectrum clocking control
-+
-+maintainers:
-+  - Edward-JW Yang <edward-jw.yang@mediatek.com>
-+
-+description: |
-+  Frequency hopping control (FHCTL) is a piece of hardware that control
-+  some PLLs to adopt "hopping" mechanism to adjust their frequency.
-+  Spread spectrum clocking (SSC) is another function provided by this hardware.
-+
-+properties:
-+  compatible:
-+    const: mediatek,mt8186-fhctl
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    description: Phandles of the PLL with FHCTL hardware capability.
-+    minItems: 1
-+    maxItems: 30
-+
-+  mediatek,hopping-ssc-percent:
-+    description: The percentage of spread spectrum clocking for one PLL.
-+    minItems: 1
-+    maxItems: 30
-+    items:
-+      default: 0
-+      minimum: 0
-+      maximum: 8
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/mt8186-clk.h>
-+    fhctl: fhctl@1000ce00 {
-+        compatible = "mediatek,mt8186-fhctl";
-+        reg = <0x1000ce00 0x200>;
-+        clocks = <&apmixedsys CLK_APMIXED_MSDCPLL>;
-+        mediatek,hopping-ssc-percent = <3>;
-+    };
 -- 
 2.18.0
 
