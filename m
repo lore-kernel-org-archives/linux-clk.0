@@ -2,187 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CF4C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 20:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F5BC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 20:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231926AbiKUUTU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 15:19:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34786 "EHLO
+        id S229526AbiKUUZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 15:25:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231240AbiKUUTP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 15:19:15 -0500
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0FEFCFE97;
-        Mon, 21 Nov 2022 12:19:14 -0800 (PST)
+        with ESMTP id S229648AbiKUUZS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 15:25:18 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9AEE58BE7
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 12:25:14 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id z4so6961428wrr.3
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 12:25:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1669061954; x=1700597954;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lJjPPfqtwXDOZTz8w4nKeTkIpxh4baLgRuhX2/yvNOE=;
-  b=C386iROQu47t7+Iq/NVP1NVfQI+DRcY85+BuSs4xD0kl84zW9F336Efu
-   p1Ad+hmTawi67GSyobrCd4pPyR1vb1k8wllo/SGvdWbFDszlS+r847uxA
-   pc6J8YmZvON1tkz4HBFQqgf6NyYIbPZZsA7ZA+LFfnC6dy1gCWJH5mEug
-   k=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 21 Nov 2022 12:19:14 -0800
-X-QCInternal: smtphost
-Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2022 12:19:13 -0800
-Received: from [10.110.33.239] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 21 Nov
- 2022 12:19:12 -0800
-Message-ID: <bb5f2000-1e54-fc37-a596-0a3dafdbff57@quicinc.com>
-Date:   Mon, 21 Nov 2022 14:19:11 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add QDU1000 and QRU1000 GCC
- clocks
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s8XCWIoNJx+zOHXlaBX5GAAQYuNWepS6xNmfTP4LxGA=;
+        b=kOPMnLuIUxyBy9vQVQkK6kuqjk3XbD1wMzY1cbzoDy+BKAJLPpETMGwmrqjszpNDHm
+         3oGpoXZkvpnmZh12KtMZxhTESDGVX+koQVNG0FbnF0sXhJFa7tKGgy2wtjiBDWvBkI5G
+         elAs+HQKfhhrHyxOYPvAhh2UvH3RgHWE2cWq12/39GBDT9l4E0OeC6zd24Wai3kYQhqI
+         kEC/YxTZjl7bflKOulW0kw5KFyAK42rpqjRF5UxjhoEubnOtFhUtRE4x2Q0d+1cWotAF
+         jJ52NK2AEw/AxIFGwBXGUlJgAMTk4W70k8d8zWpWloQSCHRlrExp+wEYEI9DjGNgXxwX
+         G9/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8XCWIoNJx+zOHXlaBX5GAAQYuNWepS6xNmfTP4LxGA=;
+        b=BLNVIVg1p+ffS0We34VODkeKfHaoGKYDulm3ICN3P9FjIADKrmqlwz3WCMB2rfGRS+
+         AfgfKyX4H+PYUqJyBqU2ntKvE+q1OOtK7jeXS1B4nGJWY5haIpZxTN0g09X1O88l641K
+         jeHv5JWPEfEijq4lfIgimkC7lwN2Ukw8mAJP1rM23OjzV2ZhvjJ1WEGOFG14lvBcp8lQ
+         4KEzJ4Ctr5F07tnXofUB25SlAU5tC44T08AOwqgY0I0ySd1RaU8MjOiydOlm09pXN844
+         Oq6wzuth7ehZ/p0X85eSgWMngKF2wgdrcSMCkr9VkZs0GJcf5GpLCtV+SRkFBjfbAszg
+         l7ag==
+X-Gm-Message-State: ANoB5pm9X9qSSmODGRNRHn+sax/X8zfmcxkrI6Qu78ReVEVYXZARordD
+        UhrUnVWfpcGNy9H6XAy7SIyn6A==
+X-Google-Smtp-Source: AA0mqf4EJHtZyBnKBbvQAYAA9oMyDl9oHoEZtWufNhjo4fdZR68vc8+WBz/qi0g8wYERQ8lUp4A5lA==
+X-Received: by 2002:adf:ed8b:0:b0:241:d375:88b6 with SMTP id c11-20020adfed8b000000b00241d37588b6mr4525252wro.88.1669062313404;
+        Mon, 21 Nov 2022 12:25:13 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id r13-20020a056000014d00b0024165454262sm12119514wrx.11.2022.11.21.12.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Nov 2022 12:25:12 -0800 (PST)
+Date:   Mon, 21 Nov 2022 22:25:11 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+        michael@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221118181826.28269-1-quic_molvera@quicinc.com>
- <20221118181826.28269-2-quic_molvera@quicinc.com>
- <a5afd699-64a5-4034-88d2-95035e08c9c7@linaro.org>
-From:   Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <a5afd699-64a5-4034-88d2-95035e08c9c7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] clk: imx8mn: fix imx8mn_enet_phy_sels clocks list
+Message-ID: <Y3vep1zwBikjsB0R@linaro.org>
+References: <20221117113637.1978703-1-dario.binacchi@amarulasolutions.com>
+ <20221117113637.1978703-6-dario.binacchi@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221117113637.1978703-6-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 22-11-17 12:36:37, Dario Binacchi wrote:
+> According to the "Clock Root" table of the reference manual (document
+> IMX8MNRM Rev 2, 07/2022):
+> 
+>      Clock Root         offset     Source Select (CCM_TARGET_ROOTn[MUX])
+>         ...              ...                    ...
+>  ENET_PHY_REF_CLK_ROOT  0xAA80            000 - 24M_REF_CLK
+>                                           001 - SYSTEM_PLL2_DIV20
+>                                           010 - SYSTEM_PLL2_DIV8
+>                                           011 - SYSTEM_PLL2_DIV5
+>                                           100 - SYSTEM_PLL2_DIV2
+>                                           101 - AUDIO_PLL1_CLK
+>                                           110 - VIDEO_PLL_CLK
+>                                           111 - AUDIO_PLL2_CLK
+>         ...              ...                    ...
+> 
+> while the imx8mn_enet_phy_sels list didn't contained audio_pll1_out for
+> source select bits 101b.
+> 
+> Fixes: 96d6392b54dbb ("clk: imx: Add support for i.MX8MN clock driver")
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-On 11/20/2022 5:06 AM, Krzysztof Kozlowski wrote:
-> On 18/11/2022 19:18, Melody Olvera wrote:
->> Add device tree bindings for global clock controller on QDU1000 and
->> QRU1000 SoCs.
->>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>  .../bindings/clock/qcom,gcc-qdu1000.yaml      |  70 ++++++++
->>  include/dt-bindings/clock/qcom,gcc-qdu1000.h  | 170 ++++++++++++++++++
->>  2 files changed, 240 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
->>  create mode 100644 include/dt-bindings/clock/qcom,gcc-qdu1000.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
->> new file mode 100644
->> index 000000000000..90935a6795ee
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qdu1000.yaml
->> @@ -0,0 +1,70 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,gcc-qdu1000.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Global Clock & Reset Controller for QDU1000 and QRU1000
->> +
->> +allOf:
->> +  - $ref: qcom,gcc.yaml#
->> +
->> +maintainers:
->> +  - Melody Olvera <quic_molvera@quicinc.com>
->> +
->> +description: |
->> +  Qualcomm global clock control module which supports the clocks, resets and
->> +  power domains on QDU1000 and QRU1000
-> Keep the same style as existing files. They were cleaned up recently.
->
->> +
->> +  See also:
->> +  - include/dt-bindings/clock/qcom,gcc-qdu1000.h
-> Keep the same style, so missing '::', drop '- '.
-
-Got it.
-
->
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: qcom,gcc-qdu1000
-> SM8550 is coming with proper style of compatible, so let's do the same
-> also here: qcom,qdu1000-gcc
-> (and file name matching it)
-
-Ok... this is fine if we're moving to a new style. sm8550 seems to have the file
-name wrong in last PS.
-
->
->
->> +      - const: syscon
-> I don't see usage of it as syscon. Which parts of GCC are needed for whom?
-
-I think I got this from another binding. We can remove.
-
->
->> +
->> +  clocks:
->> +    items:
->> +      - description: Board XO source
->> +      - description: Sleep clock source
->> +      - description: PCIE 0 Pipe clock source
->> +      - description: PCIE 0 Phy Auxiliary clock source
->> +      - description: USB3 Phy wrapper pipe clock source
->> +    minItems: 2
-> Same question as for SM8550 - why inputs are flexible? Either you have
-> these or you do not.
-
-Fair enough. We have these clocks so we can remove minItems.
-
->
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +  '#power-domain-cells':
->> +    const: 1
-> Missing ref to gcc.yaml. Drop all properties provided by gcc.yaml.
-
-Got it.
-
->
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - '#clock-cells'
->> +  - '#reset-cells'
-> Drop these required by gcc.yaml.
-
-Ack.
-
-Thanks,
-Melody
->
->
->
-> Best regards,
-> Krzysztof
->
-
+> 
+> ---
+> 
+> (no changes since v1)
+> 
+>  drivers/clk/imx/clk-imx8mn.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+> index 37128c35198d..2afea905f7f3 100644
+> --- a/drivers/clk/imx/clk-imx8mn.c
+> +++ b/drivers/clk/imx/clk-imx8mn.c
+> @@ -140,8 +140,8 @@ static const char * const imx8mn_enet_timer_sels[] = {"osc_24m", "sys_pll2_100m"
+>  						      "clk_ext4", "video_pll_out", };
+>  
+>  static const char * const imx8mn_enet_phy_sels[] = {"osc_24m", "sys_pll2_50m", "sys_pll2_125m",
+> -						    "sys_pll2_200m", "sys_pll2_500m", "video_pll_out",
+> -						    "audio_pll2_out", };
+> +						    "sys_pll2_200m", "sys_pll2_500m", "audio_pll1_out",
+> +						    "video_pll_out", "audio_pll2_out", };
+>  
+>  static const char * const imx8mn_nand_sels[] = {"osc_24m", "sys_pll2_500m", "audio_pll1_out",
+>  						"sys_pll1_400m", "audio_pll2_out", "sys_pll3_out",
+> -- 
+> 2.32.0
+> 
