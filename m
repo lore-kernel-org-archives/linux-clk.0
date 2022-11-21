@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09EBC43217
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 11:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECB6C4321E
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 11:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbiKULIw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 06:08:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60782 "EHLO
+        id S230300AbiKULJu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 06:09:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229983AbiKULGr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 06:06:47 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26CCBA6A20
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 03:06:24 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id b3so18301172lfv.2
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 03:06:24 -0800 (PST)
+        with ESMTP id S230157AbiKULIU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 06:08:20 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59FD9A5D1
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 03:06:50 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id a29so18226408lfj.9
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 03:06:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WWhVscdioJN/cEHs4ipvczCnfx2VKdpPaEhWUzL9tgY=;
-        b=TcXsdn3Qtm9pSsZpB4uyZ+VKiUjBNjjrnjV/LhDDleQh2kOlS8ua8NIT/WS+2XcLWf
-         S90IuNT/oahtqVTPCgt/ydRob/wMJfugZYb1Poz5eGmnv56iFPkjPy0BtmoZ3jOmR/f3
-         ApGVYbleUz57OTf+/hnwcVDgiT/GChfiPbV062XHKTc7PGsIkwNzIar8U+9Q2dSkqyYq
-         AemGQPHF1Eua9KXqxCovwdVa/1l1++bId1c0aA2VsV2PBGjXEeQv8G79blofw4eW7znJ
-         Ua2kT+bU6KQ6ats+S4YHbuaDJyq0AyNAUnwrmmUFLUH0zxcwBejyaCDbZ0hg5nFy6VeH
-         qgcw==
+        bh=g9G5glcqTTNsFXoqERQyI4nK43OsyCP6dvDkzTWOAug=;
+        b=OFuE9/4kdVsIn6qlc00yVtvHA0GKVtlaitlxeGN0HFfGJciEczP9AL+wjsWnzfDhqd
+         Nz6NBPtQho23iI0ddF/B8CEe/bpBMksdyauDp6PISQB0mpPvGGYywKu+mXKWb6Q/jCRp
+         KOF6cdI1l3fbo5NfTALy9tepKPB4+LE4aFPWMRtemgh1ymmv8u5CLtjZEUtEhFWmYgaG
+         gAvyDBINsOxx9dUs1qu3ZyyvC2bzxOYou/VTxBGUqHC+2Jacz+73YihChRkwpwobneby
+         79R2HW3OyEadYioaN/xwWsapdkTXmo1zeyZL8ljl24lEU6Y4/3pQVPc5/P4IpdRCJys2
+         /HjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WWhVscdioJN/cEHs4ipvczCnfx2VKdpPaEhWUzL9tgY=;
-        b=3uExmO7f883tDX+L6AnaV0JBFSYXXISqofLtwY8wyvzTHF9l3tiz8CENjz3j9+MYax
-         puxQVkT3kmqDpDZFJVRZyJqx7UqDmgsAFGQ9gSC8wQ4Uoxb8WRrL+kTIHDZcBTkYzjb4
-         90jSj6cbc3oYxvkonPB0d1yR59NK0weLctFh6Z+xnDhTpQia/DFLtU2fwG1GMf87TMLR
-         W2bcK+HiBqkzEMcnE/SE7LR6dy5kO/YMoIQoLoeJZLwujCPYa+v9ZaAJbs6J82sknghF
-         LPfEQBIU5vfYaGncdXZQiT3yWfg9b88FiXpMuRSe0Oef2vijFQU8gYU6u4b4dPyxUebH
-         BaaQ==
-X-Gm-Message-State: ANoB5pl/76KnE15Ga+AVmrwSrz118JJ4i7TjF869qOBf5qM7QqPjaQAp
-        GJmEsZ+I7WFm9d1WZ9Q1fVOHhQ==
-X-Google-Smtp-Source: AA0mqf4QLih8RM/9VdAlECwB7C0VVn0R/fZFDhHCIfnJRYNFZz8wQfEvOoAnqnW2HmRxfMhxIxldJw==
-X-Received: by 2002:a05:6512:118d:b0:4a6:c596:6ffd with SMTP id g13-20020a056512118d00b004a6c5966ffdmr1392886lfr.427.1669028782210;
-        Mon, 21 Nov 2022 03:06:22 -0800 (PST)
+        bh=g9G5glcqTTNsFXoqERQyI4nK43OsyCP6dvDkzTWOAug=;
+        b=EDyqlI7Ew+vDGBf7YX/a5VEHJbGCDuA/qp4+4o3MmBLIDysNP4XmcibCmIcj5yugVJ
+         g3GgoSEvYzLPXGZkoqoi7skC3BFNnu5oBt5LME3+97mUcHjmpkWChy0WsYIrpEFp3oPs
+         QtIO+kPaMUGYhIk2VQKJeWvNdumZkhA6rj36FoRdjifOeZZPovH4ohx+2hRIe1coHiuv
+         ijPEwWD3jQPMBM177kkVCzAxzmrzBki4lJhOZkTrqrqNPNatA9B0v0KgKoFqU7KdJI1Z
+         pjedjwxW67AoL7K5KVDaO+W+5L0dFnN69V0/MPn5Tt9TK5ycpzf54r+Ww3ZHtsgQFiGh
+         R08Q==
+X-Gm-Message-State: ANoB5pnGoNOqv5PGbhMM0xeMxrKTxLgj7rtIhCjErJucs9cK0okFHlNb
+        pvsGd9VGEvoJTitUgsudDgOvPg==
+X-Google-Smtp-Source: AA0mqf7/F1ua4aZQ+Td9IIhcrn7EFoeWJkLW7jdqkTK/poRoJKeWOiT10blX4mGbRkDfSyUP83WvhA==
+X-Received: by 2002:a05:6512:104b:b0:4b4:cf91:3419 with SMTP id c11-20020a056512104b00b004b4cf913419mr1519807lfb.161.1669028791203;
+        Mon, 21 Nov 2022 03:06:31 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id n1-20020a05651203e100b0049313f77755sm1991521lfq.213.2022.11.21.03.06.20
+        by smtp.gmail.com with ESMTPSA id n1-20020a05651203e100b0049313f77755sm1991521lfq.213.2022.11.21.03.06.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 03:06:21 -0800 (PST)
+        Mon, 21 Nov 2022 03:06:30 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -79,338 +79,261 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v2 1/9] dt-bindings: drop redundant part of title of shared bindings
-Date:   Mon, 21 Nov 2022 12:06:07 +0100
-Message-Id: <20221121110615.97962-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 5/9] dt-bindings: drop redundant part of title (end, part two)
+Date:   Mon, 21 Nov 2022 12:06:11 +0100
+Message-Id: <20221121110615.97962-6-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
 References: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 The Devicetree bindings document does not have to say in the title that
-it is a "binding", but instead just describe the hardware.  For shared
-(re-usable) schemas, name them all as "common properties".
+it is a "binding", but instead just describe the hardware.
+
+Drop trailing "Node|Tree|Generic bindings" in various forms (also with
+trailling full stop):
+
+  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+    -not -name 'trivial-devices.yaml' \
+    -exec sed -i -e 's/^title: \(.*\) [nN]ode [bB]indings\?\.\?$/title: \1/' {} \;
+
+  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+    -not -name 'trivial-devices.yaml' \
+    -exec sed -i -e 's/^title: \(.*\) [tT]ree [bB]indings\?\.\?$/title: \1/' {} \;
+
+  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+    -not -name 'trivial-devices.yaml' \
+    -exec sed -i -e 's/^title: \(.*\) [gG]eneric [bB]indings\?\.\?$/title: \1/' {} \;
+
+  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+    -not -name 'trivial-devices.yaml' \
+    -exec sed -i -e 's/^title: \(.*\) [bB]indings\? description\.\?$/title: \1/' {} \;
+
+  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
+    -not -name 'trivial-devices.yaml' \
+    -exec sed -i -e 's/^title: \(.*\) [bB]indings\? document\.\?$/title: \1/' {} \;
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Guenter Roeck <linux@roeck-us.net> # watchdog
 Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # IIO
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- Documentation/devicetree/bindings/clock/qcom,gcc.yaml           | 2 +-
- Documentation/devicetree/bindings/dma/dma-common.yaml           | 2 +-
- Documentation/devicetree/bindings/dma/dma-controller.yaml       | 2 +-
- Documentation/devicetree/bindings/dma/dma-router.yaml           | 2 +-
- Documentation/devicetree/bindings/iio/adc/adc.yaml              | 2 +-
- Documentation/devicetree/bindings/input/input.yaml              | 2 +-
- .../devicetree/bindings/media/video-interface-devices.yaml      | 2 +-
- Documentation/devicetree/bindings/media/video-interfaces.yaml   | 2 +-
- Documentation/devicetree/bindings/mmc/mmc-controller.yaml       | 2 +-
- Documentation/devicetree/bindings/mtd/nand-chip.yaml            | 2 +-
- Documentation/devicetree/bindings/mtd/nand-controller.yaml      | 2 +-
- .../devicetree/bindings/net/bluetooth/bluetooth-controller.yaml | 2 +-
- Documentation/devicetree/bindings/net/can/can-controller.yaml   | 2 +-
- Documentation/devicetree/bindings/net/ethernet-controller.yaml  | 2 +-
- Documentation/devicetree/bindings/net/ethernet-phy.yaml         | 2 +-
- Documentation/devicetree/bindings/net/mdio.yaml                 | 2 +-
- Documentation/devicetree/bindings/opp/opp-v2-base.yaml          | 2 +-
- .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
- Documentation/devicetree/bindings/rtc/rtc.yaml                  | 2 +-
- .../devicetree/bindings/soundwire/soundwire-controller.yaml     | 2 +-
- Documentation/devicetree/bindings/spi/spi-controller.yaml       | 2 +-
- Documentation/devicetree/bindings/watchdog/watchdog.yaml        | 2 +-
- 22 files changed, 22 insertions(+), 22 deletions(-)
+ Documentation/devicetree/bindings/clock/ti,sci-clk.yaml         | 2 +-
+ Documentation/devicetree/bindings/cpu/idle-states.yaml          | 2 +-
+ .../devicetree/bindings/net/dsa/microchip,lan937x.yaml          | 2 +-
+ .../devicetree/bindings/net/wireless/mediatek,mt76.yaml         | 2 +-
+ Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml   | 2 +-
+ Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml | 2 +-
+ Documentation/devicetree/bindings/phy/brcm,ns2-pcie-phy.yaml    | 2 +-
+ Documentation/devicetree/bindings/phy/qcom,usb-hs-phy.yaml      | 2 +-
+ Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml      | 2 +-
+ Documentation/devicetree/bindings/power/domain-idle-state.yaml  | 2 +-
+ .../devicetree/bindings/reserved-memory/shared-dma-pool.yaml    | 2 +-
+ Documentation/devicetree/bindings/reset/ti,sci-reset.yaml       | 2 +-
+ Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml   | 2 +-
+ Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml     | 2 +-
+ Documentation/devicetree/bindings/sound/audio-graph-port.yaml   | 2 +-
+ 15 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-index 1ab416c83c8d..7129fbcf2b6c 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+index 0e370289a053..63d976341696 100644
+--- a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+ $id: http://devicetree.org/schemas/clock/ti,sci-clk.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Qualcomm Global Clock & Reset Controller Common Bindings
-+title: Qualcomm Global Clock & Reset Controller Common Properties
+-title: TI-SCI clock controller node bindings
++title: TI-SCI clock controller
  
  maintainers:
-   - Stephen Boyd <sboyd@kernel.org>
-diff --git a/Documentation/devicetree/bindings/dma/dma-common.yaml b/Documentation/devicetree/bindings/dma/dma-common.yaml
-index ad06d36af208..ea700f8ee6c6 100644
---- a/Documentation/devicetree/bindings/dma/dma-common.yaml
-+++ b/Documentation/devicetree/bindings/dma/dma-common.yaml
+   - Nishanth Menon <nm@ti.com>
+diff --git a/Documentation/devicetree/bindings/cpu/idle-states.yaml b/Documentation/devicetree/bindings/cpu/idle-states.yaml
+index fa4d4142ac93..b8cc826c9501 100644
+--- a/Documentation/devicetree/bindings/cpu/idle-states.yaml
++++ b/Documentation/devicetree/bindings/cpu/idle-states.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/dma/dma-common.yaml#
+ $id: http://devicetree.org/schemas/cpu/idle-states.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: DMA Engine Generic Binding
-+title: DMA Engine Common Properties
+-title: Idle states binding description
++title: Idle states
  
  maintainers:
-   - Vinod Koul <vkoul@kernel.org>
-diff --git a/Documentation/devicetree/bindings/dma/dma-controller.yaml b/Documentation/devicetree/bindings/dma/dma-controller.yaml
-index 6d3727267fa8..538ebadff652 100644
---- a/Documentation/devicetree/bindings/dma/dma-controller.yaml
-+++ b/Documentation/devicetree/bindings/dma/dma-controller.yaml
+   - Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
+index 630bf0f8294b..b34de303966b 100644
+--- a/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/dma/dma-controller.yaml#
+ $id: http://devicetree.org/schemas/net/dsa/microchip,lan937x.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: DMA Controller Generic Binding
-+title: DMA Controller Common Properties
+-title: LAN937x Ethernet Switch Series Tree Bindings
++title: LAN937x Ethernet Switch Series
  
  maintainers:
-   - Vinod Koul <vkoul@kernel.org>
-diff --git a/Documentation/devicetree/bindings/dma/dma-router.yaml b/Documentation/devicetree/bindings/dma/dma-router.yaml
-index 4b817f5dc30e..f8d8c3c88bcc 100644
---- a/Documentation/devicetree/bindings/dma/dma-router.yaml
-+++ b/Documentation/devicetree/bindings/dma/dma-router.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+   - UNGLinuxDriver@microchip.com
+diff --git a/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml b/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
+index 70e328589cfb..f0c78f994491 100644
+--- a/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
+@@ -6,7 +6,7 @@
+ $id: http://devicetree.org/schemas/net/wireless/mediatek,mt76.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: DMA Router Generic Binding
-+title: DMA Router Common Properties
+-title: MediaTek mt76 wireless devices Generic Binding
++title: MediaTek mt76 wireless devices
  
  maintainers:
-   - Vinod Koul <vkoul@kernel.org>
-diff --git a/Documentation/devicetree/bindings/iio/adc/adc.yaml b/Documentation/devicetree/bindings/iio/adc/adc.yaml
-index db348fcbb52c..261601729745 100644
---- a/Documentation/devicetree/bindings/iio/adc/adc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adc.yaml
+   - Felix Fietkau <nbd@nbd.name>
+diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+index 7029cb1f38ff..0e5412cff2bc 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/iio/adc/adc.yaml#
+ $id: http://devicetree.org/schemas/net/wireless/qca,ath9k.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Generic IIO bindings for ADC channels
-+title: IIO Common Properties for ADC Channels
+-title: Qualcomm Atheros ath9k wireless devices Generic Binding
++title: Qualcomm Atheros ath9k wireless devices
  
  maintainers:
-   - Jonathan Cameron <jic23@kernel.org>
-diff --git a/Documentation/devicetree/bindings/input/input.yaml b/Documentation/devicetree/bindings/input/input.yaml
-index 17512f4347fd..94f7942189e8 100644
---- a/Documentation/devicetree/bindings/input/input.yaml
-+++ b/Documentation/devicetree/bindings/input/input.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/input/input.yaml#
+   - Toke Høiland-Jørgensen <toke@toke.dk>
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+index f7cf135aa37f..556eb523606a 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+@@ -6,7 +6,7 @@
+ $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Common input schema binding
-+title: Input Devices Common Properties
+-title: Qualcomm Technologies ath11k wireless devices Generic Binding
++title: Qualcomm Technologies ath11k wireless devices
  
  maintainers:
-   - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-diff --git a/Documentation/devicetree/bindings/media/video-interface-devices.yaml b/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-index 4527f56a5a6e..cf7712ad297c 100644
---- a/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-+++ b/Documentation/devicetree/bindings/media/video-interface-devices.yaml
+   - Kalle Valo <kvalo@kernel.org>
+diff --git a/Documentation/devicetree/bindings/phy/brcm,ns2-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/brcm,ns2-pcie-phy.yaml
+index 70eb48b391c9..527010702f5e 100644
+--- a/Documentation/devicetree/bindings/phy/brcm,ns2-pcie-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/brcm,ns2-pcie-phy.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/media/video-interface-devices.yaml#
+ $id: http://devicetree.org/schemas/phy/brcm,ns2-pcie-phy.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Common bindings for video receiver and transmitter devices
-+title: Common Properties for Video Receiver and Transmitter Devices
+-title: Broadcom NS2 PCIe PHY binding document
++title: Broadcom NS2 PCIe PHY
  
  maintainers:
-   - Jacopo Mondi <jacopo@jmondi.org>
-diff --git a/Documentation/devicetree/bindings/media/video-interfaces.yaml b/Documentation/devicetree/bindings/media/video-interfaces.yaml
-index 68c3b9871cf3..8a7162ce34f6 100644
---- a/Documentation/devicetree/bindings/media/video-interfaces.yaml
-+++ b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+   - Ray Jui <ray.jui@broadcom.com>
+diff --git a/Documentation/devicetree/bindings/phy/qcom,usb-hs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,usb-hs-phy.yaml
+index 0655e485b260..aa97478dd016 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,usb-hs-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,usb-hs-phy.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/media/video-interfaces.yaml#
+ $id: http://devicetree.org/schemas/phy/qcom,usb-hs-phy.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Common bindings for video receiver and transmitter interface endpoints
-+title: Common Properties for Video Receiver and Transmitter Interface Endpoints
+-title: Qualcomm's USB HS PHY binding description
++title: Qualcomm's USB HS PHY
  
  maintainers:
-   - Sakari Ailus <sakari.ailus@linux.intel.com>
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-index 802e3ca8be4d..613095a3d19d 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+   - Bjorn Andersson <bjorn.andersson@linaro.org>
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml b/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
+index 3a6d686383cf..6d46f57fa1b4 100644
+--- a/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
++++ b/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
+@@ -5,7 +5,7 @@
+ $id: "http://devicetree.org/schemas/phy/ti,phy-gmii-sel.yaml#"
+ $schema: "http://devicetree.org/meta-schemas/core.yaml#"
+ 
+-title: CPSW Port's Interface Mode Selection PHY Tree Bindings
++title: CPSW Port's Interface Mode Selection PHY
+ 
+ maintainers:
+   - Kishon Vijay Abraham I <kishon@ti.com>
+diff --git a/Documentation/devicetree/bindings/power/domain-idle-state.yaml b/Documentation/devicetree/bindings/power/domain-idle-state.yaml
+index 4ee920a1de69..ec1f6f669e50 100644
+--- a/Documentation/devicetree/bindings/power/domain-idle-state.yaml
++++ b/Documentation/devicetree/bindings/power/domain-idle-state.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/mmc/mmc-controller.yaml#
+ $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: MMC Controller Generic Binding
-+title: MMC Controller Common Properties
+-title: PM Domain Idle States binding description
++title: PM Domain Idle States
  
  maintainers:
    - Ulf Hansson <ulf.hansson@linaro.org>
-diff --git a/Documentation/devicetree/bindings/mtd/nand-chip.yaml b/Documentation/devicetree/bindings/mtd/nand-chip.yaml
-index 6e2dc025d694..33d079f76c05 100644
---- a/Documentation/devicetree/bindings/mtd/nand-chip.yaml
-+++ b/Documentation/devicetree/bindings/mtd/nand-chip.yaml
+diff --git a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml b/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
+index 618105f079be..47696073b665 100644
+--- a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
++++ b/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/mtd/nand-chip.yaml#
+ $id: http://devicetree.org/schemas/reserved-memory/shared-dma-pool.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: NAND Chip and NAND Controller Generic Binding
-+title: NAND Chip Common Properties
+-title: /reserved-memory DMA pool node bindings
++title: /reserved-memory DMA pool
  
  maintainers:
-   - Miquel Raynal <miquel.raynal@bootlin.com>
-diff --git a/Documentation/devicetree/bindings/mtd/nand-controller.yaml b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
-index 220aa2c8c0b5..efcd415f8641 100644
---- a/Documentation/devicetree/bindings/mtd/nand-controller.yaml
-+++ b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+   - devicetree-spec@vger.kernel.org
+diff --git a/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml b/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
+index 4639d2cec557..dcf9206e12be 100644
+--- a/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
++++ b/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
+ $id: http://devicetree.org/schemas/reset/ti,sci-reset.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: NAND Chip and NAND Controller Generic Binding
-+title: NAND Controller Common Properties
+-title: TI-SCI reset controller node bindings
++title: TI-SCI reset controller
  
  maintainers:
-   - Miquel Raynal <miquel.raynal@bootlin.com>
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/bluetooth-controller.yaml b/Documentation/devicetree/bindings/net/bluetooth/bluetooth-controller.yaml
-index 9309dc40f54f..59bb0d7e8ab3 100644
---- a/Documentation/devicetree/bindings/net/bluetooth/bluetooth-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/bluetooth-controller.yaml
+   - Nishanth Menon <nm@ti.com>
+diff --git a/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml b/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml
+index afc835eda0ef..f436f2cf1df7 100644
+--- a/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml
++++ b/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/bluetooth/bluetooth-controller.yaml#
+ $id: http://devicetree.org/schemas/reset/ti,tps380x-reset.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Bluetooth Controller Generic Binding
-+title: Bluetooth Controller Common Properties
+-title: TI TPS380x reset controller node bindings
++title: TI TPS380x reset controller
  
  maintainers:
-   - Marcel Holtmann <marcel@holtmann.org>
-diff --git a/Documentation/devicetree/bindings/net/can/can-controller.yaml b/Documentation/devicetree/bindings/net/can/can-controller.yaml
-index 1f0e98051074..217be90960e8 100644
---- a/Documentation/devicetree/bindings/net/can/can-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/can/can-controller.yaml
+   - Marco Felsch <kernel@pengutronix.de>
+diff --git a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+index 9e6cb4ee9755..5df7688a1e1c 100644
+--- a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
++++ b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/can/can-controller.yaml#
+ $id: http://devicetree.org/schemas/soc/ti/sci-pm-domain.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: CAN Controller Generic Binding
-+title: CAN Controller Common Properties
+-title: TI-SCI generic power domain node bindings
++title: TI-SCI generic power domain
  
  maintainers:
-   - Marc Kleine-Budde <mkl@pengutronix.de>
-diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-index 3aef506fa158..00be387984ac 100644
---- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+   - Nishanth Menon <nm@ti.com>
+diff --git a/Documentation/devicetree/bindings/sound/audio-graph-port.yaml b/Documentation/devicetree/bindings/sound/audio-graph-port.yaml
+index 64654ceef208..f5b8b6d13077 100644
+--- a/Documentation/devicetree/bindings/sound/audio-graph-port.yaml
++++ b/Documentation/devicetree/bindings/sound/audio-graph-port.yaml
 @@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/ethernet-controller.yaml#
+ $id: http://devicetree.org/schemas/sound/audio-graph-port.yaml#
  $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--title: Ethernet Controller Generic Binding
-+title: Ethernet Controller Common Properties
+-title: Audio Graph Card 'port' Node Bindings
++title: Audio Graph Card 'port'
  
  maintainers:
-   - David S. Miller <davem@davemloft.net>
-diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-index ad808e9ce5b9..1327b81f15a2 100644
---- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/ethernet-phy.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Ethernet PHY Generic Binding
-+title: Ethernet PHY Common Properties
- 
- maintainers:
-   - Andrew Lunn <andrew@lunn.ch>
-diff --git a/Documentation/devicetree/bindings/net/mdio.yaml b/Documentation/devicetree/bindings/net/mdio.yaml
-index b5706d4e7e38..a266ade918ca 100644
---- a/Documentation/devicetree/bindings/net/mdio.yaml
-+++ b/Documentation/devicetree/bindings/net/mdio.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/mdio.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: MDIO Bus Generic Binding
-+title: MDIO Bus Common Properties
- 
- maintainers:
-   - Andrew Lunn <andrew@lunn.ch>
-diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-index cf9c2f7bddc2..47e6f36b7637 100644
---- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-+++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/opp/opp-v2-base.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Generic OPP (Operating Performance Points) Common Binding
-+title: Generic OPP (Operating Performance Points) Common Properties
- 
- maintainers:
-   - Viresh Kumar <viresh.kumar@linaro.org>
-diff --git a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-index 1f9a2aac53c0..378b404af7fd 100644
---- a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-+++ b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/power/reset/restart-handler.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Restart and shutdown handler generic binding
-+title: Restart and Shutdown Handler Common Properties
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/rtc/rtc.yaml b/Documentation/devicetree/bindings/rtc/rtc.yaml
-index 0ec3551f12dd..c6fff5486fe6 100644
---- a/Documentation/devicetree/bindings/rtc/rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/rtc.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/rtc/rtc.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: RTC Generic Binding
-+title: Real Time Clock Common Properties
- 
- maintainers:
-   - Alexandre Belloni <alexandre.belloni@bootlin.com>
-diff --git a/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml b/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
-index 4aad121eff3f..fdeb8af417d7 100644
---- a/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
-+++ b/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/soundwire/soundwire-controller.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: SoundWire Controller Generic Binding
-+title: SoundWire Controller Common Properties
- 
- maintainers:
-   - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-index 01042a7f382e..5a7c72cadf76 100644
---- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/spi/spi-controller.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: SPI Controller Generic Binding
-+title: SPI Controller Common Properties
- 
- maintainers:
-   - Mark Brown <broonie@kernel.org>
-diff --git a/Documentation/devicetree/bindings/watchdog/watchdog.yaml b/Documentation/devicetree/bindings/watchdog/watchdog.yaml
-index e3dfb02f0ca5..fccae0d00110 100644
---- a/Documentation/devicetree/bindings/watchdog/watchdog.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/watchdog.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/watchdog/watchdog.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Watchdog Generic Bindings
-+title: Watchdog Common Properties
- 
- maintainers:
-   - Guenter Roeck <linux@roeck-us.net>
+   - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 -- 
 2.34.1
 
