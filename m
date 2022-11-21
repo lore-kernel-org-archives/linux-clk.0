@@ -2,129 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5F0C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 15:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7B7C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 15:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231307AbiKUPo3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 10:44:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45638 "EHLO
+        id S230083AbiKUPy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 10:54:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232553AbiKUPnv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 10:43:51 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B85B961D
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:43:29 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id i12so16591779wrb.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:43:29 -0800 (PST)
+        with ESMTP id S230254AbiKUPy4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 10:54:56 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991F5CB966
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:54:54 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id r10-20020a1c440a000000b003d0283bf132so337648wma.4
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:54:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V2lIGlwcvsCZa9IcKo7MgrHT6cVmzxMA6TTWsMTFuyA=;
-        b=SQNXv+al5NAgzXmoSIlSRMh5Az4zjemYDhPwzrQdgHLcKwZu8w5OIBKViycqriQkBN
-         Vdh2og/8cCf8/66kVpPm9A7+27DN/9Fiunvp7VRXEmuESt9CD33tmWiGwvuZNXdoZU6y
-         7kElMsvfa4SbhSZc/QNGhVtL/geinCVN7vgzKEnGnxA3AhUbZoMFJ5DYh8UHZ34mN46M
-         +IqEVxe6lyYVhjK4JezThrxx17x6d54Vh3VUMPjqjLosdBP9B3fThzxIg9aF3EEuvt6I
-         a94QmISZX0Da8eT5Bou71jh1CKbkmYKX9PFNimWF/48lg09R5E1ZnZoFC5z/VvbCoTWY
-         aQXw==
+        bh=VhC7MH0VaCgvduDECjUtDc6gX+8kpBTvl/K92Gs9O8M=;
+        b=AJtiw86Id5SmGMWAq9DYsqntgYJPzqqtBZ2l6Kz1rELUS1RN4e1Wry4QlU2kwHhIOf
+         7ZMXCjQYDuhbW5Se/DSJ9pVp+PS6e7qdk3npkRuaRyvbJ45ruqV0YgXs0jirD2oeR2AQ
+         f73ixzFcyRMSCYteFw2bgzQp9wWAT1/5KbfOjzXDU+8+0BJgdLd7TU+4sNCjc0OdUEcf
+         WQyoZJAQWwrDUiUcOOIQKDjtNJTJmJf2zo/34NhZ+AX5yANdT1Mu983J1HMh34fozbI1
+         yk+PFgFxVdgeSQTEq5zTX4/tbWyvAvsc1ISSTgRz8BiTXnWlnd6pmULODga6H0eUiai4
+         V53Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V2lIGlwcvsCZa9IcKo7MgrHT6cVmzxMA6TTWsMTFuyA=;
-        b=kWDqJfKFz0j71OU4ZrF75m8aAM7eKiivYkNJyuwUrNDx4Fat022V1gHSiurnf0UIhN
-         ECgA8lCWlv1SjwESieXTcKGK0Y1N3w8bShTvmMyR1uJmCNoAaVoBezwIL7coEBXh6sWE
-         Hb7gUPKVzMl/UA1VTGPo2ZP22CR1ovl6lcXYeBKZvfQyBix0e/j6gfgSlH79RwPL4kZ+
-         fDrVYF1Px4Qebs7AJeLEIo0/zIit722GBUJVpbSijernAJ0Gigmd0eCPzC6/a4HiZV+q
-         FynLhnip+xJ1YeWEAjuK9wnBOeCRdjhFy8pIby5l6N+PZu9Kd+v3SVSpFACg/Az1M7P/
-         vWdQ==
-X-Gm-Message-State: ANoB5plPcqhBVCIHhJuGD8x1LKa78dJdkZGLCRPysSIm8S11179OqtBL
-        Cvp7K5+vvsTZZB7KR0hj3nl4Jw==
-X-Google-Smtp-Source: AA0mqf4ntZh4kH2zh2P3K0YmZa58vopdhnQOfQpnr59oiFjsoJ9dGaVRr6/+xEXN+ItxC32qiL7gqw==
-X-Received: by 2002:a5d:58cc:0:b0:236:5c6c:1e06 with SMTP id o12-20020a5d58cc000000b002365c6c1e06mr709597wrf.156.1669045407991;
-        Mon, 21 Nov 2022 07:43:27 -0800 (PST)
+        bh=VhC7MH0VaCgvduDECjUtDc6gX+8kpBTvl/K92Gs9O8M=;
+        b=carawQbU0K/FcptyZJdnmDVgQQ1sZsVP7LWhsFwA9oq27KhqeeVnVeMVSeuX36j5WH
+         93k9ebQ7dQ6pTv5VladDCE16xEcG8mT1KYFCIywI4Ca+gRS45RYVHOYzRWUFt1rKZuj5
+         jrHKCgCDlAgObhknV/z6/Zmrzcu9qA01LbXjpijNc20D0oIAQ6Al3waiPyTC2T8zzTEg
+         xo6jr303cbRrTGPqC3lmRHjLj+l+9FwofPlKisPmBkDJ4bOMtbpK+kcJT73RPXf/KVBm
+         Of3B6lRxd+c2HffGHzRsYmKMtOA50PKMF99GkLcoqkLntiqfqbrTE/OVqvU5GY9RgzDw
+         Ky8A==
+X-Gm-Message-State: ANoB5plQltlqotz4ZDCe8T9Vdy/lMddx2u+Jh94hEpuGTFqqj5Lh9f1H
+        J3tb9YkJXf57DwcvSG0tbn/u+Ap8aKcxzQ==
+X-Google-Smtp-Source: AA0mqf5kO52nvv+XXbv5ZCPepkiMpWr0j+e5sA/DUAEzQC8s/uD10WhBRyCgfrEnpDm8QptnPqrQ7g==
+X-Received: by 2002:a05:600c:3b09:b0:3cf:987a:2bf with SMTP id m9-20020a05600c3b0900b003cf987a02bfmr103773wms.157.1669046093174;
+        Mon, 21 Nov 2022 07:54:53 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id fc10-20020a05600c524a00b003cf9bf5208esm20551850wmb.19.2022.11.21.07.43.26
+        by smtp.gmail.com with ESMTPSA id m42-20020a05600c3b2a00b003cf47556f21sm20559865wms.2.2022.11.21.07.54.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 07:43:27 -0800 (PST)
-Date:   Mon, 21 Nov 2022 17:43:25 +0200
+        Mon, 21 Nov 2022 07:54:52 -0800 (PST)
+Date:   Mon, 21 Nov 2022 17:54:51 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
-Message-ID: <Y3ucncQOBNHpZaxn@linaro.org>
-References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
+To:     haibo.chen@nxp.com
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        peng.fan@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH v2] clk: imx93: correct the flexspi1 clock setting
+Message-ID: <Y3ufS144g5ndCQPs@linaro.org>
+References: <1666589199-1199-1-git-send-email-haibo.chen@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <1666589199-1199-1-git-send-email-haibo.chen@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-09-28 14:41:08, Rasmus Villemoes wrote:
-> We have an imx8mp-based board with an external gpio-triggered
-> watchdog. Currently, we don't get to handle that in time before it
-> resets the board.
+On 22-10-24 13:26:39, haibo.chen@nxp.com wrote:
+> From: Haibo Chen <haibo.chen@nxp.com>
 > 
-> The probe of the watchdog device gets deferred because the SOC's GPIO
-> controller is not yet ready, and the probe of that in turn gets deferred
-> because its clock provider (namely, this driver) is not yet
-> ready. Altogether, the watchdog does not get handled until the late
-> initcall deferred_probe_initcall has made sure all leftover devices
-> have been probed, and that's way too late.
+> Correct IMX93_CLK_FLEXSPI1_GATE CCGR setting. Otherwise the flexspi
+> always can't be assigned to a parent clock when dump the clock tree.
 > 
-> Aside from being necessary for our board, this also reduces total boot
-> time because fewer device probes get deferred.
-> 
+> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 
-I'm gonna be honest here. I can't say I'm happy with this.
-I would suggest finding a solution to disable the external watchdog
-before booting the kernel, up until the driver probes, would be preferable
-to me.
+Applied to my tree. Thanks.
 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 > ---
-> It would probably be reasonable to do the same to the other imx8m* clk
-> drivers, but I don't have any such hardware to test on.
+>  drivers/clk/imx/clk-imx93.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  drivers/clk/imx/clk-imx8mp.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index e89db568f5a8..9ddd39a664cc 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -734,7 +734,19 @@ static struct platform_driver imx8mp_clk_driver = {
->  		.of_match_table = imx8mp_clk_of_match,
->  	},
->  };
-> -module_platform_driver(imx8mp_clk_driver);
-> +
-> +static int __init imx8mp_clk_init(void)
-> +{
-> +	return platform_driver_register(&imx8mp_clk_driver);
-> +}
-> +arch_initcall(imx8mp_clk_init);
-> +
-> +static void __exit imx8mp_clk_exit(void)
-> +{
-> +	platform_driver_unregister(&imx8mp_clk_driver);
-> +}
-> +module_exit(imx8mp_clk_exit);
-> +
->  module_param(mcore_booted, bool, S_IRUGO);
->  MODULE_PARM_DESC(mcore_booted, "See Cortex-M core is booted or not");
->  
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 99cff1fd108b..40ecee3b5e78 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -170,7 +170,7 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_MU2_B_GATE,		"mu2_b",	"bus_wakeup_root",	0x8500, 0, &share_count_mub },
+>  	{ IMX93_CLK_EDMA1_GATE,		"edma1",	"m33_root",		0x8540, },
+>  	{ IMX93_CLK_EDMA2_GATE,		"edma2",	"wakeup_axi_root",	0x8580, },
+> -	{ IMX93_CLK_FLEXSPI1_GATE,	"flexspi",	"flexspi_root",		0x8640, },
+> +	{ IMX93_CLK_FLEXSPI1_GATE,	"flexspi1",	"flexspi1_root",	0x8640, },
+>  	{ IMX93_CLK_GPIO1_GATE,		"gpio1",	"m33_root",		0x8880, },
+>  	{ IMX93_CLK_GPIO2_GATE,		"gpio2",	"bus_wakeup_root",	0x88c0, },
+>  	{ IMX93_CLK_GPIO3_GATE,		"gpio3",	"bus_wakeup_root",	0x8900, },
 > -- 
-> 2.37.2
+> 2.34.1
 > 
