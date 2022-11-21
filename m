@@ -2,85 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DD6C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 07:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94142C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 07:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiKUHQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 02:16:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41238 "EHLO
+        id S229666AbiKUH0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 02:26:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiKUHQl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 02:16:41 -0500
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D3913DFA;
-        Sun, 20 Nov 2022 23:16:38 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 5CA6024E199;
-        Mon, 21 Nov 2022 15:16:37 +0800 (CST)
-Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 21 Nov
- 2022 15:16:37 +0800
-Received: from [192.168.125.106] (113.72.144.23) by EXMBX072.cuchost.com
- (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 21 Nov
- 2022 15:16:36 +0800
-Message-ID: <13578755-ab98-7567-258d-bc6c4164ee6c@starfivetech.com>
-Date:   Mon, 21 Nov 2022 15:16:22 +0800
+        with ESMTP id S229476AbiKUH0t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 02:26:49 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69392A419;
+        Sun, 20 Nov 2022 23:26:47 -0800 (PST)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NFzPS6hvlzqSYh;
+        Mon, 21 Nov 2022 15:22:52 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (7.193.23.191) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 21 Nov 2022 15:26:45 +0800
+Received: from [10.67.109.54] (10.67.109.54) by kwepemm600005.china.huawei.com
+ (7.193.23.191) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 21 Nov
+ 2022 15:26:45 +0800
+Subject: Re: [PATCH] clk: microchip: check for null return of devm_kzalloc()
+To:     Conor Dooley <conor@kernel.org>
+References: <20221119054858.178629-1-tanghui20@huawei.com>
+ <Y3izOuF56/NywpOR@spud>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yusongping@huawei.com>, <claudiu.beznea@microchip.com>,
+        <conor.dooley@microchip.com>
+From:   Hui Tang <tanghui20@huawei.com>
+Message-ID: <39867664-1c14-9628-a82f-a9682a22c5f8@huawei.com>
+Date:   Mon, 21 Nov 2022 15:26:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v2 02/14] clk: starfive: Rename "jh7100" to "jh71x0" for
- the common code
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20221118010627.70576-1-hal.feng@starfivetech.com>
- <20221118010627.70576-3-hal.feng@starfivetech.com>
- <CAJM55Z-Zftr29oGzeBFzOKuGixABSJEzPF-R2c0U9Pg5qDcRCQ@mail.gmail.com>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <CAJM55Z-Zftr29oGzeBFzOKuGixABSJEzPF-R2c0U9Pg5qDcRCQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <Y3izOuF56/NywpOR@spud>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.144.23]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX072.cuchost.com
- (172.16.6.82)
-X-YovoleRuleAgent: yovoleflag
+X-Originating-IP: [10.67.109.54]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 19 Nov 2022 00:26:27 +0800, Emil Renner Berthing wrote:
-> On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
-> >
-> > Rename "clk-starfive-jh7100.h" to "clk-starfive-jh71x0.h" and rename
-> > some variables from "jh7100" or "JH7100" to "jh71x0" or "JH71X0".
-> >
-> > Co-developed-by: Emil Renner Berthing <kernel@esmil.dk>
-> 
-> The patch is fine, but I'm a little unsure about this Co-developed-by.
-> This patch is taken directly from my jh7110 branch so does Hal sending
-> it count as co-developed-by?
 
-Your original patch merged patch 1 and patch 2. Suggested by Stephen, I
-split the patch into two patches, and I need to add a new commit. My
-previous thinking was that the Co-developed-by tag should not be added
-to the commit author, so I added it to you.
 
-Best regards,
-Hal
+On 2022/11/19 18:43, Conor Dooley wrote:
+> On Sat, Nov 19, 2022 at 01:48:58PM +0800, Hui Tang wrote:
+>> Because of the possilble failure of devm_kzalloc(), name might be NULL and
+>> will cause null pointer derefrence later.
+>
+> In theory, yeah?
+>
+> (note to self, s/refrence/reference/, s/possilble/possible)
 
-> 
-> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+Sorry, I make spelling mistakes.
 
+Thanks.
