@@ -2,99 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7B7C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 15:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF13C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 15:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230083AbiKUPy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 10:54:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56256 "EHLO
+        id S229904AbiKUP4q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 10:56:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbiKUPy4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 10:54:56 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991F5CB966
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:54:54 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id r10-20020a1c440a000000b003d0283bf132so337648wma.4
-        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:54:54 -0800 (PST)
+        with ESMTP id S229476AbiKUP4p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 10:56:45 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879ACCFA4C
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:56:44 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id s5so3304325wru.1
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 07:56:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VhC7MH0VaCgvduDECjUtDc6gX+8kpBTvl/K92Gs9O8M=;
-        b=AJtiw86Id5SmGMWAq9DYsqntgYJPzqqtBZ2l6Kz1rELUS1RN4e1Wry4QlU2kwHhIOf
-         7ZMXCjQYDuhbW5Se/DSJ9pVp+PS6e7qdk3npkRuaRyvbJ45ruqV0YgXs0jirD2oeR2AQ
-         f73ixzFcyRMSCYteFw2bgzQp9wWAT1/5KbfOjzXDU+8+0BJgdLd7TU+4sNCjc0OdUEcf
-         WQyoZJAQWwrDUiUcOOIQKDjtNJTJmJf2zo/34NhZ+AX5yANdT1Mu983J1HMh34fozbI1
-         yk+PFgFxVdgeSQTEq5zTX4/tbWyvAvsc1ISSTgRz8BiTXnWlnd6pmULODga6H0eUiai4
-         V53Q==
+        bh=gLrf8pFJ9/J1g/QK7YuMf2dUfUQFHFeJtN0xM6Gmens=;
+        b=VRBo5if4qzUXy/nhsK1D1Oq2zKGwOyy5TDu2nDtfpjlbVfbaxiBAIoerx5kpb/OMEf
+         gWP2AFT6DnGdDFeOb8rH8x3ZckTtvsRMwnhVlpJBp+0DWgvnjvPrQLLBQOxwvBEtDbU/
+         Hx341mVq1KdMwMd3SQC/ygleTS5kiPbJNwNu9qwL8fVXepBjn2nAxd9CmZo3+GFr3pRU
+         0lXGJK7fi7+SCwn4359CIvYcK4ILRRDU9qtP0dmrxJIEc7GW4BPXByM03LPt0yVh8cw7
+         T3paaVleYcAwwUFrr5Jrra1jXX/scBFOefzRZUcGxYVxMRmv5v4Ran7jj98sOWvH3NoT
+         l5vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VhC7MH0VaCgvduDECjUtDc6gX+8kpBTvl/K92Gs9O8M=;
-        b=carawQbU0K/FcptyZJdnmDVgQQ1sZsVP7LWhsFwA9oq27KhqeeVnVeMVSeuX36j5WH
-         93k9ebQ7dQ6pTv5VladDCE16xEcG8mT1KYFCIywI4Ca+gRS45RYVHOYzRWUFt1rKZuj5
-         jrHKCgCDlAgObhknV/z6/Zmrzcu9qA01LbXjpijNc20D0oIAQ6Al3waiPyTC2T8zzTEg
-         xo6jr303cbRrTGPqC3lmRHjLj+l+9FwofPlKisPmBkDJ4bOMtbpK+kcJT73RPXf/KVBm
-         Of3B6lRxd+c2HffGHzRsYmKMtOA50PKMF99GkLcoqkLntiqfqbrTE/OVqvU5GY9RgzDw
-         Ky8A==
-X-Gm-Message-State: ANoB5plQltlqotz4ZDCe8T9Vdy/lMddx2u+Jh94hEpuGTFqqj5Lh9f1H
-        J3tb9YkJXf57DwcvSG0tbn/u+Ap8aKcxzQ==
-X-Google-Smtp-Source: AA0mqf5kO52nvv+XXbv5ZCPepkiMpWr0j+e5sA/DUAEzQC8s/uD10WhBRyCgfrEnpDm8QptnPqrQ7g==
-X-Received: by 2002:a05:600c:3b09:b0:3cf:987a:2bf with SMTP id m9-20020a05600c3b0900b003cf987a02bfmr103773wms.157.1669046093174;
-        Mon, 21 Nov 2022 07:54:53 -0800 (PST)
+        bh=gLrf8pFJ9/J1g/QK7YuMf2dUfUQFHFeJtN0xM6Gmens=;
+        b=V9eAVoo/LmfunBGn2ieVat+Y6/Zt6LnA1L23OHC1fLEzaFW2XBSOSkS7x6oCqi4J2h
+         1PmuyuF1CMsKA3WE3qxUgzf1ZMaiDZ2s7Ac/yIUk6k0Jwk+QoCvPV3UcxiB66hwjt7DI
+         TUaw/Vr9VY6YBdNoLCK5r/OTdQigFT0V4sI9JyaTGW6p3dTZeBWOhplIqVu+TwdJyHvA
+         FEK9F17ZyBY1aGP3YOxu/WVXaxFC+fgz40W9pwnBdTrrUVF08zKkIJNmy6IFEqjGnXNv
+         926f/e4LP7+4GgVOKPJsnm3v2MGhuxd/lE2auMuWV7J/2ktIRnGUJpzGeaVIIDssHkSS
+         qR9g==
+X-Gm-Message-State: ANoB5pmOtzQjqowSY4Cy+6L86Ue+VRQTu5c2/as4upIEzrxMDk+KqBME
+        ifZZ3+R6+P41nqJ0W8Lc2jht+w==
+X-Google-Smtp-Source: AA0mqf4etBn+a6CY5wJ1uQSVF+zfA6vnlLMaBDO/4ZIhKQv1RISNEa+A5jCKfNfLjUK7jUwFiqyU7A==
+X-Received: by 2002:a05:6000:61a:b0:236:8a38:66f1 with SMTP id bn26-20020a056000061a00b002368a3866f1mr11539965wrb.327.1669046203048;
+        Mon, 21 Nov 2022 07:56:43 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id m42-20020a05600c3b2a00b003cf47556f21sm20559865wms.2.2022.11.21.07.54.51
+        by smtp.gmail.com with ESMTPSA id g18-20020a5d46d2000000b00236722ebe66sm11475360wrs.75.2022.11.21.07.56.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 07:54:52 -0800 (PST)
-Date:   Mon, 21 Nov 2022 17:54:51 +0200
+        Mon, 21 Nov 2022 07:56:42 -0800 (PST)
+Date:   Mon, 21 Nov 2022 17:56:40 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     haibo.chen@nxp.com
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        peng.fan@nxp.com, ping.bai@nxp.com
-Subject: Re: [PATCH v2] clk: imx93: correct the flexspi1 clock setting
-Message-ID: <Y3ufS144g5ndCQPs@linaro.org>
-References: <1666589199-1199-1-git-send-email-haibo.chen@nxp.com>
+To:     Li Jun <jun.li@nxp.com>
+Cc:     sboyd@kernel.org, abelvesa@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, mturquette@baylibre.com, l.stach@pengutronix.de,
+        peng.fan@nxp.com, alexander.stein@ew.tq-group.com,
+        gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: clocks: imx8mp: Add ID for usb
+ suspend clock
+Message-ID: <Y3ufuH1UAT+rsjl7@linaro.org>
+References: <1664549663-20364-1-git-send-email-jun.li@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1666589199-1199-1-git-send-email-haibo.chen@nxp.com>
+In-Reply-To: <1664549663-20364-1-git-send-email-jun.li@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-10-24 13:26:39, haibo.chen@nxp.com wrote:
-> From: Haibo Chen <haibo.chen@nxp.com>
+On 22-09-30 22:54:21, Li Jun wrote:
+> usb suspend clock has a gate shared with usb_root_clk.
 > 
-> Correct IMX93_CLK_FLEXSPI1_GATE CCGR setting. Otherwise the flexspi
-> always can't be assigned to a parent clock when dump the clock tree.
-> 
-> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> Fixes: 9c140d9926761 ("clk: imx: Add support for i.MX8MP clock driver")
+> Cc: stable@vger.kernel.org # v5.19+
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Li Jun <jun.li@nxp.com>
 
-Applied to my tree. Thanks.
+Applied all. Thanks.
 
 > ---
->  drivers/clk/imx/clk-imx93.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/dt-bindings/clock/imx8mp-clock.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 99cff1fd108b..40ecee3b5e78 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -170,7 +170,7 @@ static const struct imx93_clk_ccgr {
->  	{ IMX93_CLK_MU2_B_GATE,		"mu2_b",	"bus_wakeup_root",	0x8500, 0, &share_count_mub },
->  	{ IMX93_CLK_EDMA1_GATE,		"edma1",	"m33_root",		0x8540, },
->  	{ IMX93_CLK_EDMA2_GATE,		"edma2",	"wakeup_axi_root",	0x8580, },
-> -	{ IMX93_CLK_FLEXSPI1_GATE,	"flexspi",	"flexspi_root",		0x8640, },
-> +	{ IMX93_CLK_FLEXSPI1_GATE,	"flexspi1",	"flexspi1_root",	0x8640, },
->  	{ IMX93_CLK_GPIO1_GATE,		"gpio1",	"m33_root",		0x8880, },
->  	{ IMX93_CLK_GPIO2_GATE,		"gpio2",	"bus_wakeup_root",	0x88c0, },
->  	{ IMX93_CLK_GPIO3_GATE,		"gpio3",	"bus_wakeup_root",	0x8900, },
+> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+> index 9d5cc2ddde89..1417b7b1b7df 100644
+> --- a/include/dt-bindings/clock/imx8mp-clock.h
+> +++ b/include/dt-bindings/clock/imx8mp-clock.h
+> @@ -324,8 +324,9 @@
+>  #define IMX8MP_CLK_CLKOUT2_SEL			317
+>  #define IMX8MP_CLK_CLKOUT2_DIV			318
+>  #define IMX8MP_CLK_CLKOUT2			319
+> +#define IMX8MP_CLK_USB_SUSP			320
+>  
+> -#define IMX8MP_CLK_END				320
+> +#define IMX8MP_CLK_END				321
+>  
+>  #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
+>  #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
 > -- 
 > 2.34.1
 > 
