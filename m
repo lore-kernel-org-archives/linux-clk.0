@@ -2,135 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00929C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 09:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3677BC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Nov 2022 09:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbiKUJXs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 04:23:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39826 "EHLO
+        id S230333AbiKUJoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 04:44:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbiKUJXr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 04:23:47 -0500
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D52233B9;
-        Mon, 21 Nov 2022 01:23:40 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 4D39E24E226;
-        Mon, 21 Nov 2022 17:23:39 +0800 (CST)
-Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 21 Nov
- 2022 17:23:39 +0800
-Received: from [192.168.125.106] (113.72.144.23) by EXMBX072.cuchost.com
- (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 21 Nov
- 2022 17:23:38 +0800
-Message-ID: <4dd7ebaf-89db-3c22-e8bc-e9f7211fa06b@starfivetech.com>
-Date:   Mon, 21 Nov 2022 17:23:24 +0800
+        with ESMTP id S230330AbiKUJo2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 04:44:28 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBABB63D7
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 01:44:26 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id d6so17968311lfs.10
+        for <linux-clk@vger.kernel.org>; Mon, 21 Nov 2022 01:44:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+9hqrMS9B+nvH/yEhygH31S4BoEMDHz7FeZlY6dMGmQ=;
+        b=VUSTo/HzQH5ydBMBXPZPqSolTwbWJC6N28ctQs+ZlNU3Pqu6zay8zMB7aPaywL9Nwr
+         atrgGKkrZlriMzthYQl8OwGjifv+dH8cHrjt8iCKoqCWUqzWWFlykSbjodgnlN0N3OAA
+         z5nMs6xBIB/MiV3BSOd0ZDJE5YKklp+o43j/c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9hqrMS9B+nvH/yEhygH31S4BoEMDHz7FeZlY6dMGmQ=;
+        b=A7szzHsgGnxZ3YcLVcdQw1wKf26uAE/RSc/zHdx3NX8diWaoLUxH/iHw6F7nGKbEuY
+         sGt7wsayAJT43CQGnQ1YMKMjWhUE2R1IBSr5mAx0gDsiPOju9Lh9SoITdziQ8fV8OcMv
+         LmcqMAuByYdeMhb+vPE5KG+Uxt8X+9vZd78uAiqY2EcRIPaYdwr8xhrdYT+Ceg+5lMbg
+         gMSAZNvTtnFaSMQPwlRqkcsPDXazRcn4c3+ibE6oOPRxFFQkwojErmomGOaK73Gfc9ZO
+         LwheXiIySckdyw2VBfdZFJ54K3p+q/jz4bYlIWHrObuWtjJpDtYfbqGTw9XBA74gTaXe
+         LG8A==
+X-Gm-Message-State: ANoB5plnNalRKKg5vBwpdwCPK2gT98W1sWPhJDHc/ekWHCJYD6DqpRza
+        blrWDVkO/3lVovYjQ6xzavCGcQ==
+X-Google-Smtp-Source: AA0mqf5eG/YVXKD4OF1GjHxnjooe0zcDcbGGAKkf6ZqAp6gR4SpZxH6weCfEGxvO+NCFeZyyW6naEA==
+X-Received: by 2002:ac2:46f0:0:b0:4b4:c0c:89a3 with SMTP id q16-20020ac246f0000000b004b40c0c89a3mr5361997lfo.129.1669023865281;
+        Mon, 21 Nov 2022 01:44:25 -0800 (PST)
+Received: from [172.16.11.74] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id v1-20020a05651203a100b004a2386b8cf5sm1949893lfp.215.2022.11.21.01.44.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Nov 2022 01:44:24 -0800 (PST)
+Message-ID: <8cce4dae-c653-515b-1a5d-024986afbabf@rasmusvillemoes.dk>
+Date:   Mon, 21 Nov 2022 10:44:22 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v2 04/14] reset: starfive: Factor out common JH71X0 reset
- code
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] clk: imx8mp: register driver at arch_initcall time
+Content-Language: en-US, da
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20221118010627.70576-1-hal.feng@starfivetech.com>
- <20221118010627.70576-5-hal.feng@starfivetech.com>
- <CAJM55Z8z9OLU5_Z0HiyKN0mMZHrKSkGJqbP_1QOw3nEt6b5MxQ@mail.gmail.com>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <CAJM55Z8z9OLU5_Z0HiyKN0mMZHrKSkGJqbP_1QOw3nEt6b5MxQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220928124108.500369-1-linux@rasmusvillemoes.dk>
+ <CAOMZO5BPtEU6VCZXRk5FTHXDad6cegF=+oHTTA0wgjBuoh9-rQ@mail.gmail.com>
+ <09611b2d-096e-058b-5349-627684e3a13c@rasmusvillemoes.dk>
+ <CAOMZO5AXSSkHpeuHNRQ6qkFoe2uiFLVxndz1u7_y7s9cLD9ppw@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+In-Reply-To: <CAOMZO5AXSSkHpeuHNRQ6qkFoe2uiFLVxndz1u7_y7s9cLD9ppw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.144.23]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX072.cuchost.com
- (172.16.6.82)
-X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 19 Nov 2022 00:39:35 +0800, Emil Renner Berthing wrote:
-> On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
-> > diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
-> > similarity index 50%
-> > copy from drivers/reset/starfive/reset-starfive-jh7100.c
-> > copy to drivers/reset/starfive/reset-starfive-jh71x0.c
-> > index fc44b2fb3e03..1e230f3f9841 100644
-> > --- a/drivers/reset/starfive/reset-starfive-jh7100.c
-> > +++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-
-[...]
-
-> > -static int __init jh7100_reset_probe(struct platform_device *pdev)
-> > +int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
-> > +                                  void __iomem *assert, void __iomem *status,
-> > +                                  const u64 *asserted, unsigned int nr_resets,
-> > +                                  bool is_module)
-> >  {
-> >         struct jh7100_reset *data;
-> >
-> > -       data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> > +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> >         if (!data)
-> >                 return -ENOMEM;
-> >
-> > -       data->base = devm_platform_ioremap_resource(pdev, 0);
-> > -       if (IS_ERR(data->base))
-> > -               return PTR_ERR(data->base);
-> > -
-> >         data->rcdev.ops = &jh7100_reset_ops;
-> > -       data->rcdev.owner = THIS_MODULE;
-> > -       data->rcdev.nr_resets = JH7100_RSTN_END;
-> > -       data->rcdev.dev = &pdev->dev;
-> > -       data->rcdev.of_node = pdev->dev.of_node;
-> > +       if (is_module)
-> > +               data->rcdev.owner = THIS_MODULE;
+On 19/11/2022 23.02, Fabio Estevam wrote:
+> On Sat, Nov 19, 2022 at 6:57 PM Rasmus Villemoes
+> <linux@rasmusvillemoes.dk> wrote:
 > 
-> nit: consider just passing the owner directly, so this would just be
-> data->rcdev.owner = owner;
+>> Sorry, I don't follow. Before this patch, the driver also implicitly had
+>> a module_exit() doing exactly this platform_driver_unregister(), it was
+>> just hidden inside the module_platform_driver() macro. And I think
+>> that's necessary if one wants to test that the module can be loaded and
+>> unloaded (I don't think it's ever useful or even possible to have it be
+>> a module on an actual imx8mp board).
 > 
-> ..and callers that used false can just pass NULL.
+> You cannot load/unload it due to .suppress_bind_attrs = true, being passed.
 
-Yeah, will fix it.
+That doesn't seem to be true. To test, I just built the imx8mq clk
+driver as a module, and I could certainly both load and unload that on
+my imx8mp platform. Sure, no "bind" attribute shows up in the
+/sys/bus/platform/drivers/imx8mq-ccm/ directory, which is exactly what
+one expects, but the module can be loaded just fine. And since it can be
+loaded, it should also have a proper __exit call for deregistering the
+driver on unload.
 
-> 
-> > +       data->rcdev.nr_resets = nr_resets;
-> > +       data->rcdev.dev = dev;
-> > +       data->rcdev.of_node = of_node;
-> 
-> Is it important to register this with the auxiliary device and not
-> just use the parent device?
-
-I'm not sure whether it still works if we use the same device, but
-it's general to separate the devices of clock and reset. They have
-different device names and different drivers.
-
-Best regards,
-Hal
-
-> If not you can just always pass the device that has the right of_node
-> and have this be
-> 
-> data->rcdev.of_node = dev->of_node;
-> 
-> > +
-> >         spin_lock_init(&data->lock);
-> > +       data->assert = assert;
-> > +       data->status = status;
-> > +       data->asserted = asserted;
-> >
-> > -       return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-> > +       return devm_reset_controller_register(dev, &data->rcdev);
-> >  }
+Rasmus
 
