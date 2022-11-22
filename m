@@ -2,88 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73237C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB75C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 02:11:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231675AbiKVBs5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 20:48:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51672 "EHLO
+        id S230076AbiKVCLc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 21:11:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232396AbiKVBsv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:48:51 -0500
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81D2BE14F6;
-        Mon, 21 Nov 2022 17:48:50 -0800 (PST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NGRxY1vVxz8RV5L;
-        Tue, 22 Nov 2022 09:48:49 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.40.50])
-        by mse-fl2.zte.com.cn with SMTP id 2AM1mfKc041693;
-        Tue, 22 Nov 2022 09:48:41 +0800 (+08)
-        (envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-        by mapi (Zmail) with MAPI id mid31;
-        Tue, 22 Nov 2022 09:48:41 +0800 (CST)
-Date:   Tue, 22 Nov 2022 09:48:41 +0800 (CST)
-X-Zmail-TransId: 2afa637c2a79ffffffffa821397f
-X-Mailer: Zmail v1.0
-Message-ID: <202211220948416946619@zte.com.cn>
-Mime-Version: 1.0
-From:   <ye.xingchen@zte.com.cn>
-To:     <mani@kernel.org>
-Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chi.minghao@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBjbGs6IHVzZSBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl2.zte.com.cn 2AM1mfKc041693
-X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 637C2A81.000 by FangMail milter!
-X-FangMail-Envelope: 1669081729/4NGRxY1vVxz8RV5L/637C2A81.000/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 637C2A81.000/4NGRxY1vVxz8RV5L
+        with ESMTP id S229882AbiKVCLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 21:11:31 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18FEEE2B4F;
+        Mon, 21 Nov 2022 18:11:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=S5UQwhQ86B3Sk/yj+YA+vYGEBxKXXRDQ5dJk/qGX/I8=; b=bWjPQkvTLxBsmebw/tihw0Co9f
+        r7fMuNokzwFEwD2FFdcmraInf+ey5ldekR6juJOTwFopwInVwCvBCOVS7dFMftkbW13Tc7MaLQ9XC
+        K4dBYgsuFCZjdnhuQENexY47JwK4vsaSMcb3jffm+KRuVXSivOKFh8rqyOlHEcKqWDmjMfaS7eZv4
+        7DudSvHzIsQIA6sm9QNdG7qw4fBE1Z8CayLyQS6nGavLqdX92ox4zpxpwQG/MyhHt+s+lpBytrqkx
+        h+52XYCf77Yu8JvZ4mLsNQSlS1PuTixw7vBYxO7CMwUIirOAfwVrRrr2D4N2YPwht6nVmS/oFq6v7
+        pluGnCbQ==;
+Received: from [2601:1c2:d80:3110::a2e7]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oxIkr-002M9O-Db; Tue, 22 Nov 2022 02:11:21 +0000
+Message-ID: <c9cf3c02-fb48-33bd-4a3b-987209c7c21d@infradead.org>
+Date:   Mon, 21 Nov 2022 18:11:20 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH -next] clk: Fix one kernel-doc comment
+Content-Language: en-US
+To:     Yang Li <yang.lee@linux.alibaba.com>, mturquette@baylibre.com
+Cc:     sboyd@kernel.org, wens@csie.org, jernej.skrabec@gmail.com,
+        samuel@sholland.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20221122011616.1530-1-yang.lee@linux.alibaba.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20221122011616.1530-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+Hi--
 
-Convert platform_get_resource(), devm_ioremap_resource() to a single
-call to devm_platform_get_and_ioremap_resource(), as this is exactly
-what this function does.
+On 11/21/22 17:16, Yang Li wrote:
+> drivers/clk/sunxi-ng/ccu_mmc_timing.c:54: warning: expecting prototype for sunxi_ccu_set_mmc_timing_mode(). Prototype was for sunxi_ccu_get_mmc_timing_mode() instead
+> 
+> Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=3230
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu_mmc_timing.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+> index de33414fc5c2..c6a6ce98ca03 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+> @@ -43,7 +43,7 @@ int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
+>  EXPORT_SYMBOL_GPL(sunxi_ccu_set_mmc_timing_mode);
+>  
+>  /**
+> - * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
+> + * sunxi_ccu_get_mmc_timing_mode: Get the current MMC clock timing mode
 
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
----
- drivers/clk/clk-bm1880.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+function name and description should be separated by a '-' instead of ':'.
 
-diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-index fad78a22218e..1013be67254b 100644
---- a/drivers/clk/clk-bm1880.c
-+++ b/drivers/clk/clk-bm1880.c
-@@ -876,16 +876,13 @@ static int bm1880_clk_probe(struct platform_device *pdev)
- 	struct bm1880_clock_data *clk_data;
- 	void __iomem *pll_base, *sys_base;
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	int num_clks, i;
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pll_base = devm_ioremap_resource(&pdev->dev, res);
-+	pll_base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
- 	if (IS_ERR(pll_base))
- 		return PTR_ERR(pll_base);
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	sys_base = devm_ioremap_resource(&pdev->dev, res);
-+	sys_base = devm_platform_get_and_ioremap_resource(pdev, 1, NULL);
- 	if (IS_ERR(sys_base))
- 		return PTR_ERR(sys_base);
+>   * @clk: clock to query
+>   *
+>   * Returns 0 if the clock is in old timing mode, > 0 if it is in
 
 -- 
-2.25.1
+~Randy
