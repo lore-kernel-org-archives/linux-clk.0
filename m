@@ -2,105 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CF0C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73237C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231747AbiKVBqJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 20:46:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48390 "EHLO
+        id S231675AbiKVBs5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 20:48:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230468AbiKVBqI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:46:08 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0C7C606D;
-        Mon, 21 Nov 2022 17:46:03 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 6F8A524DBE9;
-        Tue, 22 Nov 2022 09:46:02 +0800 (CST)
-Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 22 Nov
- 2022 09:46:02 +0800
-Received: from [192.168.125.106] (113.72.144.23) by EXMBX072.cuchost.com
- (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 22 Nov
- 2022 09:46:03 +0800
-Message-ID: <126b0517-2f10-4a31-e76d-8afb1aff6275@starfivetech.com>
-Date:   Tue, 22 Nov 2022 09:45:47 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v2 09/14] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20221118010627.70576-1-hal.feng@starfivetech.com>
- <20221118010627.70576-10-hal.feng@starfivetech.com>
- <CAJM55Z_Gq22NiVYHawvjsehL8j3agvp_b2RCgabdTki+ovWa8Q@mail.gmail.com>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <CAJM55Z_Gq22NiVYHawvjsehL8j3agvp_b2RCgabdTki+ovWa8Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.144.23]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX072.cuchost.com
- (172.16.6.82)
-X-YovoleRuleAgent: yovoleflag
+        with ESMTP id S232396AbiKVBsv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:48:51 -0500
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81D2BE14F6;
+        Mon, 21 Nov 2022 17:48:50 -0800 (PST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NGRxY1vVxz8RV5L;
+        Tue, 22 Nov 2022 09:48:49 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.40.50])
+        by mse-fl2.zte.com.cn with SMTP id 2AM1mfKc041693;
+        Tue, 22 Nov 2022 09:48:41 +0800 (+08)
+        (envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+        by mapi (Zmail) with MAPI id mid31;
+        Tue, 22 Nov 2022 09:48:41 +0800 (CST)
+Date:   Tue, 22 Nov 2022 09:48:41 +0800 (CST)
+X-Zmail-TransId: 2afa637c2a79ffffffffa821397f
+X-Mailer: Zmail v1.0
+Message-ID: <202211220948416946619@zte.com.cn>
+Mime-Version: 1.0
+From:   <ye.xingchen@zte.com.cn>
+To:     <mani@kernel.org>
+Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chi.minghao@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBjbGs6IHVzZSBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl2.zte.com.cn 2AM1mfKc041693
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 637C2A81.000 by FangMail milter!
+X-FangMail-Envelope: 1669081729/4NGRxY1vVxz8RV5L/637C2A81.000/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 637C2A81.000/4NGRxY1vVxz8RV5L
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 19 Nov 2022 00:50:41 +0800, Emil Renner Berthing wrote:
-> On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
-> > diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> > new file mode 100644
-> > index 000000000000..a8cafbc0afe2
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> > @@ -0,0 +1,80 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: StarFive JH7110 System Clock and Reset Generator
-> > +
-> > +maintainers:
-> > +  - Emil Renner Berthing <kernel@esmil.dk>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: starfive,jh7110-syscrg
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Main Oscillator (24 MHz)
-> > +      - description: RMII reference clock
-> > +      - description: RGMII RX clock
-> > +      - description: I2S TX bit clock
-> > +      - description: I2S TX left/right clock
-> > +      - description: I2S RX bit clock
-> > +      - description: I2S RX left/right clock
-> > +      - description: TDM
-> > +      - description: mclk
-> 
-> Maybe you could ask your colleagues for a better description of these clocks.
+From: Minghao Chi <chi.minghao@zte.com.cn>
 
-OK, I will improve the description.
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
-Best regards,
-Hal
+Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
+---
+ drivers/clk/clk-bm1880.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+index fad78a22218e..1013be67254b 100644
+--- a/drivers/clk/clk-bm1880.c
++++ b/drivers/clk/clk-bm1880.c
+@@ -876,16 +876,13 @@ static int bm1880_clk_probe(struct platform_device *pdev)
+ 	struct bm1880_clock_data *clk_data;
+ 	void __iomem *pll_base, *sys_base;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	int num_clks, i;
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pll_base = devm_ioremap_resource(&pdev->dev, res);
++	pll_base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+ 	if (IS_ERR(pll_base))
+ 		return PTR_ERR(pll_base);
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	sys_base = devm_ioremap_resource(&pdev->dev, res);
++	sys_base = devm_platform_get_and_ioremap_resource(pdev, 1, NULL);
+ 	if (IS_ERR(sys_base))
+ 		return PTR_ERR(sys_base);
+
+-- 
+2.25.1
