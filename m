@@ -2,181 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549D8C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CF0C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:46:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbiKVBk6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 20:40:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44274 "EHLO
+        id S231747AbiKVBqJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 20:46:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231463AbiKVBk5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:40:57 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 811C9B9489;
-        Mon, 21 Nov 2022 17:40:55 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id d1so10444133wrs.12;
-        Mon, 21 Nov 2022 17:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=54RP2IWIIhy2xxrG6c6vLV9h3bx5Ywa0moelQvuO0uI=;
-        b=EtFDMxmvIub6AsvD5gUZq2j5iVqjX7b7XEX5dtvzYtqsqABsmsM4uIIZWxNPm9dISL
-         fK7m5cnFEK2m/3pm4yVvUsnyMgB7C0F+Z2yN7uo9lmxccGBUlVsGtqskMGcmA/RT2joC
-         obhoRSzaSLN2YtWMgaEq9BSTIcc3q02Wiv2Bk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=54RP2IWIIhy2xxrG6c6vLV9h3bx5Ywa0moelQvuO0uI=;
-        b=K6QGCXhXDXol8wUNQrcKsPaMN0E5YTcAkh4f5McC+DJaOvcCBrhOJvHtdwUWFHa5sk
-         urTFZXX8zpxBRQTRs4864qi+ZuuAZOBvhbGCAqDuYLHCWMaF0BVm6601Q+ioNgnOIblr
-         qX5hE7bPeRwom2IQD6yeB21qawQzJ0EELWs7aKbMyM724EOUBwM4ZPMZ6PAkcZFJON05
-         gDJceN6ufqLhLs60GEJxmlf+HC5bd0tfVMqAICp0a4RZjzW6FvDmi0iGs4PLvgVd3cme
-         2HpJIbPyffhuGLjRtvG9HGQ4WMvJxP4/9/BQ1Oh24CjGL9wg8BDytwx8ZS28NU0Ux9Tz
-         fudQ==
-X-Gm-Message-State: ANoB5pmCCZ37sRguw12oWrpOJ81WWYSm8Bq25ezNTsxEy4uFZtIfXo+G
-        SoChY2ZMtlZWmeQ7seEQ+gxVhmWLvw3QmAUOlEU=
-X-Google-Smtp-Source: AA0mqf4wL1IspdUOJeOJ/cWD2vinkqtYh79NadtQHo1Z0VjTDwiPzWDFg7XEJZqop4Z+XKeKlDDYRDYQS7jNsQKKF7w=
-X-Received: by 2002:a5d:6642:0:b0:236:6a28:eeda with SMTP id
- f2-20020a5d6642000000b002366a28eedamr12437764wrw.315.1669081253980; Mon, 21
- Nov 2022 17:40:53 -0800 (PST)
+        with ESMTP id S230468AbiKVBqI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:46:08 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0C7C606D;
+        Mon, 21 Nov 2022 17:46:03 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 6F8A524DBE9;
+        Tue, 22 Nov 2022 09:46:02 +0800 (CST)
+Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 22 Nov
+ 2022 09:46:02 +0800
+Received: from [192.168.125.106] (113.72.144.23) by EXMBX072.cuchost.com
+ (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 22 Nov
+ 2022 09:46:03 +0800
+Message-ID: <126b0517-2f10-4a31-e76d-8afb1aff6275@starfivetech.com>
+Date:   Tue, 22 Nov 2022 09:45:47 +0800
 MIME-Version: 1.0
-References: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
-In-Reply-To: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 22 Nov 2022 01:40:42 +0000
-Message-ID: <CACPK8XdXrAPMdnn0T6GQiYEK3R4MvwprOZu_Yvmv=WVOfivROg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] Nuvoton WPCM450 clock and reset driver
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        devicetree@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Patrick Venture <venture@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Avi Fishman <avifishman70@gmail.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v2 09/14] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Benjamin Fair <benjaminfair@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Tomer Maimon <tmaimon77@gmail.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20221118010627.70576-1-hal.feng@starfivetech.com>
+ <20221118010627.70576-10-hal.feng@starfivetech.com>
+ <CAJM55Z_Gq22NiVYHawvjsehL8j3agvp_b2RCgabdTki+ovWa8Q@mail.gmail.com>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <CAJM55Z_Gq22NiVYHawvjsehL8j3agvp_b2RCgabdTki+ovWa8Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.144.23]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX072.cuchost.com
+ (172.16.6.82)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 4 Nov 2022 at 16:21, Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.ne=
-t> wrote:
->
-> This series adds support for the clock and reset controller in the Nuvoto=
-n
-> WPCM450 SoC. This means that the clock rates for peripherals will be calc=
-ulated
-> automatically based on the clock tree as it was preconfigured by the boot=
-loader.
-> The 24 MHz dummy clock, that is currently in the devicetree, is no longer=
- needed.
-> Somewhat unfortunately, this also means that there is a breaking change o=
-nce
-> the devicetree starts relying on the clock driver, but I find it acceptab=
-le in
-> this case, because WPCM450 is still at a somewhat early stage.
+On Sat, 19 Nov 2022 00:50:41 +0800, Emil Renner Berthing wrote:
+> On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
+> > diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> > new file mode 100644
+> > index 000000000000..a8cafbc0afe2
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> > @@ -0,0 +1,80 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: StarFive JH7110 System Clock and Reset Generator
+> > +
+> > +maintainers:
+> > +  - Emil Renner Berthing <kernel@esmil.dk>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: starfive,jh7110-syscrg
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: Main Oscillator (24 MHz)
+> > +      - description: RMII reference clock
+> > +      - description: RGMII RX clock
+> > +      - description: I2S TX bit clock
+> > +      - description: I2S TX left/right clock
+> > +      - description: I2S RX bit clock
+> > +      - description: I2S RX left/right clock
+> > +      - description: TDM
+> > +      - description: mclk
+> 
+> Maybe you could ask your colleagues for a better description of these clocks.
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+OK, I will improve the description.
 
->
->
-> Upstreaming plan (although other suggestions are welcome):
->
-> Once reviewed,
->
-> - The ARM/dts changes should go through Joel Stanley's bmc tree
-
-I've picked up the standalone patch ("Add clock controller node").
-
-> - The clocksource/timer changes should probably go via Daniel Lezcano and=
- TIP
-> - The clock controller bindings and driver should go through the clk tree
-
-Stephen, do you plan on merging this driver for v6.2?
-
-Alternatively, could we get an ack from you and merge this entire
-series through Arnd, where we have precedent for merging these initial
-support cross-tree patch sets?
-
-
-
-> - It probably makes sense to delay the final ARM/dts patch ("ARM: dts:
->   wpcm450: Switch clocks to clock controller") until next cycle to make
->   sure it is merged after the clock driver.
->
->
-> v5:
-> - Dropped patch 2 (watchdog: npcm: Enable clock if provided), which
->   was since merged upstream
-> - Added patch 2 (clocksource: timer-npcm7xx: Enable timer 1 clock before =
-use) again,
->   because I wasn't able to find it in linux-next
-> - Switched the driver to using struct clk_parent_data
-> - Rebased on 6.1-rc3
->
-> v4:
-> - https://lore.kernel.org/lkml/20220610072141.347795-1-j.neuschaefer@gmx.=
-net/
-> - Leave WDT clock running during after restart handler
-> - Fix reset controller initialization
-> - Dropped patch 2/7 (clocksource: timer-npcm7xx: Enable timer 1 clock bef=
-ore use),
->   as it was applied by Daniel Lezcano
->
-> v3:
-> - https://lore.kernel.org/lkml/20220508194333.2170161-1-j.neuschaefer@gmx=
-.net/
-> - Changed "refclk" string to "ref"
-> - Fixed some dead code in the driver
-> - Added clk_prepare_enable call to the watchdog restart handler
-> - Added a few review tags
->
-> v2:
-> - https://lore.kernel.org/lkml/20220429172030.398011-1-j.neuschaefer@gmx.=
-net/
-> - various small improvements
->
-> v1:
-> - https://lore.kernel.org/lkml/20220422183012.444674-1-j.neuschaefer@gmx.=
-net/
->
-> Jonathan Neusch=C3=A4fer (6):
->   dt-bindings: timer: nuvoton,npcm7xx-timer: Allow specifying all clocks
->   clocksource: timer-npcm7xx: Enable timer 1 clock before use
->   dt-bindings: clock: Add Nuvoton WPCM450 clock/reset controller
->   ARM: dts: wpcm450: Add clock controller node
->   clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller driver
->   [NOT FOR MERGE] ARM: dts: wpcm450: Switch clocks to clock controller
->
->  .../bindings/clock/nuvoton,wpcm450-clk.yaml   |  66 +++
->  .../bindings/timer/nuvoton,npcm7xx-timer.yaml |   8 +-
->  arch/arm/boot/dts/nuvoton-wpcm450.dtsi        |  29 +-
->  drivers/clk/Makefile                          |   1 +
->  drivers/clk/clk-wpcm450.c                     | 375 ++++++++++++++++++
->  drivers/clocksource/timer-npcm7xx.c           |  10 +
->  drivers/reset/Kconfig                         |   2 +-
->  .../dt-bindings/clock/nuvoton,wpcm450-clk.h   |  67 ++++
->  8 files changed, 549 insertions(+), 9 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,wpcm4=
-50-clk.yaml
->  create mode 100644 drivers/clk/clk-wpcm450.c
->  create mode 100644 include/dt-bindings/clock/nuvoton,wpcm450-clk.h
->
-> --
-> 2.35.1
->
+Best regards,
+Hal
