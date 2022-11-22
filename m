@@ -2,90 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F89C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 08:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77632C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 08:26:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232498AbiKVIK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Nov 2022 03:10:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
+        id S232748AbiKVI0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Nov 2022 03:26:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232154AbiKVIKZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 03:10:25 -0500
-Received: from smtp1-g21.free.fr (smtp1-g21.free.fr [IPv6:2a01:e0c:1:1599::10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B6522BE7;
-        Tue, 22 Nov 2022 00:10:21 -0800 (PST)
-Received: from [192.168.10.46] (unknown [130.180.211.218])
-        (Authenticated sender: daniel.lezcano@free.fr)
-        by smtp1-g21.free.fr (Postfix) with ESMTPA id A0B24B0055A;
-        Tue, 22 Nov 2022 09:09:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-        s=smtp-20201208; t=1669104619;
-        bh=QqT0gBw0xLVZALCHaBpNFHcCmr+fibAnqkfvXhxig94=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=YWx0Y5rMecZm8dj2aaa9zKoRmXYW5RDTj3g3ZoslU9YoIxwdmfC5fpn3uPG9kMJd0
-         mDCTXhUrqMfDCOKwrRh1D4dnnYENzRfbDZVY39jUVIUGGhPkphxJ2s5WfvP0PuY7x1
-         lZc/rYX6wVO4lgWIZuuWcI/Rl3BUT+wRqqhFSEEjXHZNLYsv0+MXPIB4HONnnZm1z/
-         DUpYtzOwj91El8w3ugBL/7+i/3VCa8PEQRrjQhjY9GJr69DDaSIjhqJ7BBx+Gdp3rp
-         rM8Y8eXL1FgKO/4MSrdRa0Ps/X0QDB5esiDpeurpx66fWzo5hIXDoMnRq0YiZgqb6M
-         jljMVQkHGOdpQ==
-Message-ID: <69a959d4-6058-de70-e1c7-15d81b33373c@free.fr>
-Date:   Tue, 22 Nov 2022 09:09:55 +0100
+        with ESMTP id S232731AbiKVIZw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 03:25:52 -0500
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65AE64047B;
+        Tue, 22 Nov 2022 00:25:50 -0800 (PST)
+Received: by mail-qt1-f179.google.com with SMTP id jr19so8833934qtb.7;
+        Tue, 22 Nov 2022 00:25:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+a9AQHe77TpOi1nNEBNs7a4bTR4w2mw5oUVGtsuLCj8=;
+        b=LCkYXeCBi5miYV1qs8WXYwAxOvVQgl3OpcFXqgrvDOMoDjeNEEYOC8K+SxAeMjGidu
+         PEnTce3Zmpu1FjuTgHzMCmJmgED0oyg8T+Q9jXmgr685rsOyP9cADveIeAA/e0HX9SQP
+         5Dx5qtmAHX6ButOzq5q+8ukasM/r8wj0QaQISnSZXiAHtPkr3kxCWn++zMHOxedfaA/U
+         5jpXC4KJzbXdiyfIG6HvckZJkN4A/4JTAZ4qCP73KpusGbsT7XsM8a6BOx+6WXy+x9pa
+         MwmCPtyxk+V4hLpcOoFKFw6QC+nygEUzTa75zLRedXl6PWNMA6VPOTMvZNpkCPcoeT7v
+         MQbg==
+X-Gm-Message-State: ANoB5pkK+XaKoj5qn313qdhd4TfFW21VSnRL+rVLw2iNY8s3JIKH0WZ4
+        sP3DQqmodyB1mstmmh+JYUcemltHG2VwjA==
+X-Google-Smtp-Source: AA0mqf5QmpJU/yJ68T8miverIZ6IoUt66s8gW8cXuA5LzFzLjsr8dIWOUgLZCHg8UKP7Ag3NeeVQkQ==
+X-Received: by 2002:a05:622a:4d4e:b0:39a:78d4:57e with SMTP id fe14-20020a05622a4d4e00b0039a78d4057emr5838777qtb.118.1669105549313;
+        Tue, 22 Nov 2022 00:25:49 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id h9-20020a05620a244900b006fbdeecad51sm7310306qkn.48.2022.11.22.00.25.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Nov 2022 00:25:48 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id b131so16482694yba.11;
+        Tue, 22 Nov 2022 00:25:48 -0800 (PST)
+X-Received: by 2002:a25:8249:0:b0:6dd:b521:a8f2 with SMTP id
+ d9-20020a258249000000b006ddb521a8f2mr2342411ybn.380.1669105548029; Tue, 22
+ Nov 2022 00:25:48 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v5 0/6] Nuvoton WPCM450 clock and reset driver
-Content-Language: en-US
-To:     Joel Stanley <joel@jms.id.au>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        devicetree@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Patrick Venture <venture@google.com>,
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
+ <20221114111513.1436165-3-herve.codina@bootlin.com> <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
+ <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org> <20221115150417.513955a7@bootlin.com>
+ <20221118112349.7f09eefb@bootlin.com> <d9bd5075-9d06-888d-36a9-911e2d7ec5af@linaro.org>
+ <20221121165921.559d6538@bootlin.com> <4e54bfb4-bb67-73b8-f58f-56797c5925d3@linaro.org>
+ <CAMuHMdU=-ZUzHSb0Z8P3wsLK9cgGVCPdMi6AcjTH23tUQEeEBA@mail.gmail.com>
+ <a3e1332e-fc15-8a78-0ddd-6d5b26197f11@linaro.org> <CAMuHMdXzqZB4sKMmroriq5oPp7z=yXiHk=+eQKwSyPhNbYqgYA@mail.gmail.com>
+ <1f12883b-1e37-7f2b-f9e9-c8bad290a133@linaro.org>
+In-Reply-To: <1f12883b-1e37-7f2b-f9e9-c8bad290a133@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 22 Nov 2022 09:25:36 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVbzg8y2So+A=z8nUwHMoL+XKUrvoXp9QdbCnUve1_Atw@mail.gmail.com>
+Message-ID: <CAMuHMdVbzg8y2So+A=z8nUwHMoL+XKUrvoXp9QdbCnUve1_Atw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl: Add
+ h2mode property
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Herve Codina <herve.codina@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Avi Fishman <avifishman70@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Tomer Maimon <tmaimon77@gmail.com>
-References: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
- <CACPK8XdXrAPMdnn0T6GQiYEK3R4MvwprOZu_Yvmv=WVOfivROg@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@free.fr>
-In-Reply-To: <CACPK8XdXrAPMdnn0T6GQiYEK3R4MvwprOZu_Yvmv=WVOfivROg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/11/2022 02:40, Joel Stanley wrote:
-> On Fri, 4 Nov 2022 at 16:21, Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
->>
->> This series adds support for the clock and reset controller in the Nuvoton
->> WPCM450 SoC. This means that the clock rates for peripherals will be calculated
->> automatically based on the clock tree as it was preconfigured by the bootloader.
->> The 24 MHz dummy clock, that is currently in the devicetree, is no longer needed.
->> Somewhat unfortunately, this also means that there is a breaking change once
->> the devicetree starts relying on the clock driver, but I find it acceptable in
->> this case, because WPCM450 is still at a somewhat early stage.
-> 
-> Reviewed-by: Joel Stanley <joel@jms.id.au>
-> 
->>
->>
->> Upstreaming plan (although other suggestions are welcome):
->>
->> Once reviewed,
->>
->> - The ARM/dts changes should go through Joel Stanley's bmc tree
-> 
-> I've picked up the standalone patch ("Add clock controller node").
-> 
->> - The clocksource/timer changes should probably go via Daniel Lezcano and TIP
+Hi Krzysztof,
 
-I picked the timer change along with the binding
+On Tue, Nov 22, 2022 at 8:45 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 21/11/2022 21:46, Geert Uytterhoeven wrote:
+> >> This does not change anything. Herve wrote:
+> >>
+> >>> probe some devices (USB host and probably others)
+> >>
+> >> Why some can be probed earlier and some not, if there are no
+> >> dependencies? If there are dependencies, it's the same case with sysctrl
+> >> touching the register bit and the USB controller touching it (as well
+> >> via syscon, but that's obvious, I assume).
+> >>
+> >> Where is the synchronization problem?
+> >
+> > The h2mode bit (and probably a few other controls we haven't figured out
+> > yet) in the sysctrl must be set before any of the USB devices is active.
+> > Hence it's safest for the sysctrl to do this before any of the USB drivers
+> > probes.
+>
+> Again, this does not differ from many, many of other devices. All of
+> them must set something in system controller block, before they start
+> operating (or at specific time). It's exactly the same everywhere.
+
+The issue here is that there are two _different drivers_ (USB host
+and device). When both are modular, and the driver that depends on the
+sysctrl setting is loaded second, you have a problem: the sysctrl change
+must not be done when the first driver is already using the hardware.
+
+Hence the sysctrl driver should take care of it itself during early
+initialization (it's the main clock controller, so it's a dependency
+for all other I/O device drivers).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
