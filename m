@@ -2,66 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFB6C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 10:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961D0C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 10:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233616AbiKVKbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Nov 2022 05:31:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56858 "EHLO
+        id S233384AbiKVKe4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Nov 2022 05:34:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233648AbiKVKal (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 05:30:41 -0500
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F97183B2;
-        Tue, 22 Nov 2022 02:26:22 -0800 (PST)
-Received: by mail-qt1-f177.google.com with SMTP id z6so8957910qtv.5;
-        Tue, 22 Nov 2022 02:26:22 -0800 (PST)
+        with ESMTP id S232080AbiKVKeB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 05:34:01 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1826B112B
+        for <linux-clk@vger.kernel.org>; Tue, 22 Nov 2022 02:30:52 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id s24so17406778ljs.11
+        for <linux-clk@vger.kernel.org>; Tue, 22 Nov 2022 02:30:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0ITFibk1D5kN6pD+TuW/Zc9FBNNeG7KecXWMUXzLtY=;
+        b=Tv6UFU9BtdA2bzA1xaIgMpHGf+KWGuuoNEQiGhuaAoUtRWfOmM7z4L50kA2gT1LB/f
+         7LLu51ykx5KWyMi+gXzLv3fe+HdFHwYjALXRn+ajgknC1Xgfw6nw4knYSOymopZjnXL2
+         8yOTgrFLCC5IdSUtOQYe6yfvcJtL/mjO92VJUAKf+T11TqJb0Tg138Kk3a7iQbskwS6i
+         VghECyydrPro+UPt4Kzot59fv/G/SYe21XwZ7lGQVH7MI02hM0heLwU8fdIxSSQaztBG
+         2n6FjbjcLkcVzF1kMY5NFzUAz+vOZnZ6Nt1WatOZ7lU2mWQUAME9Bn64QOkBTNLMDi6r
+         ds/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=chfY2WySadeE6tcUA+nZ6X4EgtVEmwm/moQdjBt/eSI=;
-        b=2tsD+0VRrQ2WIiARI7damFtEUq3ZgiMODXgJDXh0URv9rqx0nRWv6KFDHRXkQXtGD3
-         TcYV9j1nKIyK1h+QeuGKwTSHB8A9Ib9lp48sRaGf3eAEJu/M8lMztz4xGM7KwmNpzy+C
-         P6JmsMBs07mu0DcYZ1teZfcl5q4ntNLurMkXl9KPjHrjgFhRh3Bb6nPuxBhcqnB1vAU4
-         aQ5tq6Qqoeuhz7B0DJmayAkaifrgygJYmKciC+fBbLrhnsFPC/Kx5W8sG+TCcJfCDaUD
-         mF7pYlCwbC98Iy0scNZhlQ6VJWZkpSWq5x1WPcHyRQrGOtsSaFOZAHNQ1r/DEYbfYR1V
-         H6DQ==
-X-Gm-Message-State: ANoB5pnaxhPFJ03psv99MwpX9kUOl9iVxfl0GvgPeQVOkKpuNK/wrmhp
-        X50lfeRrRdBlFFDz30xa3UBlBVexoY4kPw==
-X-Google-Smtp-Source: AA0mqf4UT4FYqqb9h2w6g8aReoc4JLXBySZ7Nk/9Ns7TTaEMk9kPlrKolIpzsejMJQwpincsSh2hOg==
-X-Received: by 2002:ac8:1090:0:b0:3a5:6047:c75b with SMTP id a16-20020ac81090000000b003a56047c75bmr2852431qtj.60.1669112781701;
-        Tue, 22 Nov 2022 02:26:21 -0800 (PST)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id y18-20020ac87092000000b0039a08c0a594sm7919670qto.82.2022.11.22.02.26.20
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0ITFibk1D5kN6pD+TuW/Zc9FBNNeG7KecXWMUXzLtY=;
+        b=kpPDRL3jITRiuwcDQZ8qNJpfCkp+gzCNTfI+NpSFuJECwz2b8LWldvFf/Jt5gHHhS4
+         /gjwRKpQjwR2sKcLR1/gEwzJqlkDQKTESMlpl/JofKJyvJ9tWayOTEDMPktK8WXSRYP5
+         UbpK6LeiPvHFw1N4q4kDqJDexuExGzIbViHK9ht8WgcEG+yHfvVvZAHgo5G/hR5el8gd
+         1nXUTcHOk0V1WgFsuOowqBPuRpnJQBjFxvJ8bd1PRextp3v8aPZ4monfOe2+kSnhS/Iq
+         WNRp1Ys39WVijdUNYY0//KcdUG2ZR2GXMf6oVboblIPvPOmSqEBoDBAheX/qTQyYJ/s+
+         2jwg==
+X-Gm-Message-State: ANoB5pkIyj1Ej42/+Tp6o2UOvxyl6XpT3OI61hV9b2swVvkzWid5xQoL
+        Clf+lLhhaRHQidbD54Iuh13Dhg==
+X-Google-Smtp-Source: AA0mqf4vCk0Y0fVSS2MiuBk42reQriklJL/35xBjCEdH8codYy58/kMo3JCA3+bchA5tm+Jxn28NdQ==
+X-Received: by 2002:a2e:a4b4:0:b0:26c:5cf3:cc89 with SMTP id g20-20020a2ea4b4000000b0026c5cf3cc89mr7390586ljm.483.1669113050432;
+        Tue, 22 Nov 2022 02:30:50 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id g23-20020a2ea4b7000000b0026dce0a5ca9sm1803692ljm.70.2022.11.22.02.30.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Nov 2022 02:26:20 -0800 (PST)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-398cff43344so90191777b3.0;
-        Tue, 22 Nov 2022 02:26:20 -0800 (PST)
-X-Received: by 2002:a0d:dc87:0:b0:370:61f5:b19e with SMTP id
- f129-20020a0ddc87000000b0037061f5b19emr20430887ywe.316.1669112779913; Tue, 22
- Nov 2022 02:26:19 -0800 (PST)
+        Tue, 22 Nov 2022 02:30:49 -0800 (PST)
+Message-ID: <3856e2d8-1c16-a69f-4ac5-34b8e7f18c2b@linaro.org>
+Date:   Tue, 22 Nov 2022 11:30:48 +0100
 MIME-Version: 1.0
-References: <20221114111513.1436165-1-herve.codina@bootlin.com>
- <20221114111513.1436165-3-herve.codina@bootlin.com> <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
- <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org> <20221115150417.513955a7@bootlin.com>
- <20221118112349.7f09eefb@bootlin.com> <d9bd5075-9d06-888d-36a9-911e2d7ec5af@linaro.org>
- <20221121165921.559d6538@bootlin.com> <4e54bfb4-bb67-73b8-f58f-56797c5925d3@linaro.org>
- <CAMuHMdU=-ZUzHSb0Z8P3wsLK9cgGVCPdMi6AcjTH23tUQEeEBA@mail.gmail.com>
- <a3e1332e-fc15-8a78-0ddd-6d5b26197f11@linaro.org> <CAMuHMdXzqZB4sKMmroriq5oPp7z=yXiHk=+eQKwSyPhNbYqgYA@mail.gmail.com>
- <1f12883b-1e37-7f2b-f9e9-c8bad290a133@linaro.org> <CAMuHMdVbzg8y2So+A=z8nUwHMoL+XKUrvoXp9QdbCnUve1_Atw@mail.gmail.com>
- <191a7f3e-0733-8058-5829-fe170a06dd5a@linaro.org> <CAMuHMdV1Y4Ldq2Hu5X8awTOWYTHq4DPYWCMkyg-9TQY=DaxREg@mail.gmail.com>
- <978fb5a1-64f3-7ee6-3e98-1e31b8b6a88b@linaro.org>
-In-Reply-To: <978fb5a1-64f3-7ee6-3e98-1e31b8b6a88b@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Nov 2022 11:26:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXMoYnCHBmSwgzriOhL=EEibzsUsMKnnMK_9sZ20339Bw@mail.gmail.com>
-Message-ID: <CAMuHMdXMoYnCHBmSwgzriOhL=EEibzsUsMKnnMK_9sZ20339Bw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Subject: Re: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl: Add
  h2mode property
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Herve Codina <herve.codina@bootlin.com>,
+Content-Language: en-US
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -74,75 +71,105 @@ Cc:     Herve Codina <herve.codina@bootlin.com>,
         linux-usb@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
+ <20221114111513.1436165-3-herve.codina@bootlin.com>
+ <a1a7fdf4-2608-d6c9-7c7a-f8e8fae3a742@linaro.org>
+ <c9a77262-f137-21d9-58af-eb4efb8aadbf@linaro.org>
+ <20221115150417.513955a7@bootlin.com> <20221118112349.7f09eefb@bootlin.com>
+ <d9bd5075-9d06-888d-36a9-911e2d7ec5af@linaro.org>
+ <20221121165921.559d6538@bootlin.com>
+ <4e54bfb4-bb67-73b8-f58f-56797c5925d3@linaro.org>
+ <CAMuHMdU=-ZUzHSb0Z8P3wsLK9cgGVCPdMi6AcjTH23tUQEeEBA@mail.gmail.com>
+ <a3e1332e-fc15-8a78-0ddd-6d5b26197f11@linaro.org>
+ <CAMuHMdXzqZB4sKMmroriq5oPp7z=yXiHk=+eQKwSyPhNbYqgYA@mail.gmail.com>
+ <1f12883b-1e37-7f2b-f9e9-c8bad290a133@linaro.org>
+ <CAMuHMdVbzg8y2So+A=z8nUwHMoL+XKUrvoXp9QdbCnUve1_Atw@mail.gmail.com>
+ <191a7f3e-0733-8058-5829-fe170a06dd5a@linaro.org>
+ <20221122100706.739cec4d@bootlin.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221122100706.739cec4d@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-
-On Tue, Nov 22, 2022 at 11:23 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 22/11/2022 10:01, Geert Uytterhoeven wrote:
-> >>>>> The h2mode bit (and probably a few other controls we haven't figured out
-> >>>>> yet) in the sysctrl must be set before any of the USB devices is active.
-> >>>>> Hence it's safest for the sysctrl to do this before any of the USB drivers
-> >>>>> probes.
-> >>>>
-> >>>> Again, this does not differ from many, many of other devices. All of
-> >>>> them must set something in system controller block, before they start
-> >>>> operating (or at specific time). It's exactly the same everywhere.
-> >>>
-> >>> The issue here is that there are two _different drivers_ (USB host
-> >>> and device). When both are modular, and the driver that depends on the
-> >>> sysctrl setting is loaded second, you have a problem: the sysctrl change
-> >>> must not be done when the first driver is already using the hardware.
-> >>>
-> >>> Hence the sysctrl driver should take care of it itself during early
-> >>> initialization (it's the main clock controller, so it's a dependency
-> >>> for all other I/O device drivers).
-> >>
-> >> I assumed you have there bit for the first device (which can switch
-> >> between USB host and USB device) to choose appropriate mode. The
-> >> bindings also expressed this - "the USBs are". Never said anything about
-> >> dependency between these USBs.
-> >>
-> >> Are you saying that the mode for first device cannot be changed once the
-> >> second device (which is only host) is started? IOW, the mode setup must
-> >> happen before any of these devices are started?
-> >
-> > Exactly.
-> >
-> >> Anyway with sysctrl approach you will have dependency and you cannot
-> >> rely on clock provider-consumer relationship to order that dependency.
-> >> What if you make all clocks on and do not take any clocks in USB device?
-> >
-> > Enabling the clocks does not have anything to do with this ordering.
+On 22/11/2022 10:07, Herve Codina wrote:
+> On Tue, 22 Nov 2022 09:42:48 +0100
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> 
+>> On 22/11/2022 09:25, Geert Uytterhoeven wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On Tue, Nov 22, 2022 at 8:45 AM Krzysztof Kozlowski
+>>> <krzysztof.kozlowski@linaro.org> wrote:  
+>>>> On 21/11/2022 21:46, Geert Uytterhoeven wrote:  
+>>>>>> This does not change anything. Herve wrote:
+>>>>>>  
+>>>>>>> probe some devices (USB host and probably others)  
+>>>>>>
+>>>>>> Why some can be probed earlier and some not, if there are no
+>>>>>> dependencies? If there are dependencies, it's the same case with sysctrl
+>>>>>> touching the register bit and the USB controller touching it (as well
+>>>>>> via syscon, but that's obvious, I assume).
+>>>>>>
+>>>>>> Where is the synchronization problem?  
+>>>>>
+>>>>> The h2mode bit (and probably a few other controls we haven't figured out
+>>>>> yet) in the sysctrl must be set before any of the USB devices is active.
+>>>>> Hence it's safest for the sysctrl to do this before any of the USB drivers
+>>>>> probes.  
+>>>>
+>>>> Again, this does not differ from many, many of other devices. All of
+>>>> them must set something in system controller block, before they start
+>>>> operating (or at specific time). It's exactly the same everywhere.  
+>>>
+>>> The issue here is that there are two _different drivers_ (USB host
+>>> and device). When both are modular, and the driver that depends on the
+>>> sysctrl setting is loaded second, you have a problem: the sysctrl change
+>>> must not be done when the first driver is already using the hardware.
+>>>
+>>> Hence the sysctrl driver should take care of it itself during early
+>>> initialization (it's the main clock controller, so it's a dependency
+>>> for all other I/O device drivers).  
+>>
+>> I assumed you have there bit for the first device (which can switch
+>> between USB host and USB device) to choose appropriate mode. The
+>> bindings also expressed this - "the USBs are". Never said anything about
+>> dependency between these USBs.
+>>
+>> Are you saying that the mode for first device cannot be changed once the
+>> second device (which is only host) is started? IOW, the mode setup must
+>> happen before any of these devices are started?
+>>
+>> Anyway with sysctrl approach you will have dependency and you cannot
+>> rely on clock provider-consumer relationship to order that dependency.
+>> What if you make all clocks on and do not take any clocks in USB device?
+>> Broken dependency. What if you want to use this in a different SoC,
+>> where the sysctrl does not provide clocks? Broken dependency.
+> 
+> The issue is really related to the Renesas sysctrl itself and not related
+> to the USB drivers themselves.
+> From the drivers themselves, the issue is not seen (I mean the driver
+> takes no specific action related to this issue).
+> If we change the SOC, the issue will probably not exist anymore.
 >
-> That was the argument from Herve, that ordering is guaranteed by clocks.
->
-> > Clock consumers that are part of the clock domain are probed after
-> > clock providers.  If the clock is missing, that would be an incorrect
-> > description in DTS.
->
-> If not clocks, what else is guaranteeing the ordering? You did not
-> express it in DT.
 
-clocks and power-domains
+Yeah, and in the next SoC you will bring 10 of such properties to
+sysctrl arguing that if one was approved, 10 is also fine. Somehow
+people on the lists like to use that argument - I saw it somewhere, so I
+am allowed to do here the same.
 
-And if not clocks and power-domains... Oops, we didn't express in DT
-that the SoC needs to be powered at all ;-)
+I understand that the registers responsible for configuration are in
+sysctrl block, but it does not mean that it should be described as part
+of sysctrl Devicetree node. If there was no synchronization problem,
+this would be regular example of register in syscon which is handled
+(toggled) by the device (so USB device/host controller). Since there is
+synchronization problem, you argue that it is correct representation of
+hardware. No, it is not, because logically in DT you do not describe
+mode or existence of other devices in some other node and it still does
+not describe this ordering.
 
-Can we please stop this pointless discussion?
-Thanks!
+Best regards,
+Krzysztof
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
