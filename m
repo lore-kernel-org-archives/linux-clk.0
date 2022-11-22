@@ -2,61 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ED9C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BC1C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Nov 2022 01:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbiKVBQZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Nov 2022 20:16:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
+        id S231891AbiKVBUV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Nov 2022 20:20:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbiKVBQY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:16:24 -0500
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2418A6272;
-        Mon, 21 Nov 2022 17:16:22 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VVPc8zs_1669079778;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VVPc8zs_1669079778)
-          by smtp.aliyun-inc.com;
-          Tue, 22 Nov 2022 09:16:19 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, wens@csie.org, jernej.skrabec@gmail.com,
-        samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] clk: Fix one kernel-doc comment
-Date:   Tue, 22 Nov 2022 09:16:16 +0800
-Message-Id: <20221122011616.1530-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        with ESMTP id S229488AbiKVBUV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2022 20:20:21 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF9CC9BA1C;
+        Mon, 21 Nov 2022 17:20:18 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 8688724E059;
+        Tue, 22 Nov 2022 09:20:16 +0800 (CST)
+Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 22 Nov
+ 2022 09:20:16 +0800
+Received: from [192.168.125.106] (113.72.144.23) by EXMBX072.cuchost.com
+ (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 22 Nov
+ 2022 09:20:17 +0800
+Message-ID: <8548c903-40c6-c895-b95b-a1e939b425d3@starfivetech.com>
+Date:   Tue, 22 Nov 2022 09:20:02 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v2 08/14] dt-bindings: reset: Add StarFive JH7110 system
+ and always-on reset definitions
+Content-Language: en-US
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20221118010627.70576-1-hal.feng@starfivetech.com>
+ <20221118010627.70576-9-hal.feng@starfivetech.com>
+ <CAJM55Z80xyve9JHXT__E2FfsLUH5njmj75Wj8B3H81dxp9Zh-w@mail.gmail.com>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <CAJM55Z80xyve9JHXT__E2FfsLUH5njmj75Wj8B3H81dxp9Zh-w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.144.23]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX072.cuchost.com
+ (172.16.6.82)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-drivers/clk/sunxi-ng/ccu_mmc_timing.c:54: warning: expecting prototype for sunxi_ccu_set_mmc_timing_mode(). Prototype was for sunxi_ccu_get_mmc_timing_mode() instead
+On Sat, 19 Nov 2022 00:47:21 +0800, Emil Renner Berthing wrote:
+> On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
+> > diff --git a/include/dt-bindings/reset/starfive-jh7110.h b/include/dt-bindings/reset/starfive-jh7110.h
+> > new file mode 100644
+> > index 000000000000..1a5bab671161
+> > --- /dev/null
+> > +++ b/include/dt-bindings/reset/starfive-jh7110.h
+> > @@ -0,0 +1,154 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+> > +/*
+> > + * Copyright (C) 2021-2022 Emil Renner Berthing <kernel@esmil.dk>
+> 
+> I'm not sure how this ended up here, but I definitely didn't start
+> working on this before 2022.
 
-Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=3230
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- drivers/clk/sunxi-ng/ccu_mmc_timing.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I just cherry-picked your commit. And I found the same problem in
+your latest branch. Anyway, I will fix it.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-index de33414fc5c2..c6a6ce98ca03 100644
---- a/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-+++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-@@ -43,7 +43,7 @@ int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
- EXPORT_SYMBOL_GPL(sunxi_ccu_set_mmc_timing_mode);
- 
- /**
-- * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
-+ * sunxi_ccu_get_mmc_timing_mode: Get the current MMC clock timing mode
-  * @clk: clock to query
-  *
-  * Returns 0 if the clock is in old timing mode, > 0 if it is in
--- 
-2.20.1.7.g153144c
-
+Best regards,
+Hal
