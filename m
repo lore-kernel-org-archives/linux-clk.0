@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59730C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 11:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4319AC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 11:23:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234151AbiKWLRf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 06:17:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51888 "EHLO
+        id S236123AbiKWLW7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 06:22:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237620AbiKWLR0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 06:17:26 -0500
+        with ESMTP id S235951AbiKWLW6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 06:22:58 -0500
 Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD5F6238C;
-        Wed, 23 Nov 2022 03:16:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8A1E6316E;
+        Wed, 23 Nov 2022 03:22:07 -0800 (PST)
 Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Wed, 23 Nov
- 2022 19:16:06 +0800
-Message-ID: <92b570ea-3ddc-8e91-5a7a-ed601bb7c02c@amlogic.com>
-Date:   Wed, 23 Nov 2022 19:16:06 +0800
+ 2022 19:22:05 +0800
+Message-ID: <cf7295c7-3ec6-3017-0c21-167da06e3214@amlogic.com>
+Date:   Wed, 23 Nov 2022 19:22:05 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.1
-Subject: Re: [PATCH V5 1/4] clk: meson: S4: add support for Amlogic S4 SoC PLL
- clock driver and bindings
+Subject: Re: [PATCH V5 3/4] clk: meson: s4: add s4 SoC peripheral clock
+ controller driver and bindings
 Content-Language: en-US
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         <linux-clk@vger.kernel.org>,
@@ -41,10 +41,10 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 CC:     <kelvin.zhang@amlogic.com>
 References: <20221123021346.18136-1-yu.tu@amlogic.com>
- <20221123021346.18136-2-yu.tu@amlogic.com>
- <f03f331a-5666-298e-a1a2-bdb9bab11a48@linaro.org>
+ <20221123021346.18136-4-yu.tu@amlogic.com>
+ <09a443b3-4e27-a751-ba2c-057d69363a13@linaro.org>
 From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <f03f331a-5666-298e-a1a2-bdb9bab11a48@linaro.org>
+In-Reply-To: <09a443b3-4e27-a751-ba2c-057d69363a13@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.18.29.47]
@@ -54,138 +54,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-	Thank you for your reply.
 
-On 2022/11/23 18:08, Krzysztof Kozlowski wrote:
+
+On 2022/11/23 18:09, Krzysztof Kozlowski wrote:
 > [ EXTERNAL EMAIL ]
 > 
 > On 23/11/2022 03:13, Yu Tu wrote:
->> Add the S4 PLL clock controller found and bindings in the s4 SoC family.
+>> Add the peripherals clock controller found and bindings in the s4 SoC family.
 >>
 >> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
 >> ---
->>   .../bindings/clock/amlogic,s4-pll-clkc.yaml   |  51 +
+>>   .../clock/amlogic,s4-peripherals-clkc.yaml    |  105 +
 > 
-> This is v5 and still bindings are here? Bindings are always separate
-> patches. Use subject prefixes matching the subsystem (git log --oneline
-> -- ...).
+> No, this is total mess now.
 > 
-> And this was split, wasn't it? What happened here?!?
+> Additionally, you received a lot of feedback but your changelog says only:
+> "V3 -> V4: change format and clock flags."
+> so you ignored entire feedback?
+> 
+> That's not the way to work with patches.
 
-Put bindings and clock driver patch together from Jerome. Maybe you can 
-read this chat history.
-https://lore.kernel.or/all/1jy1v6z14n.fsf@starbuckisacylon.baylibre.com/
-
-> 
-> 
->>   MAINTAINERS                                   |   1 +
->>   drivers/clk/meson/Kconfig                     |  13 +
->>   drivers/clk/meson/Makefile                    |   1 +
->>   drivers/clk/meson/s4-pll.c                    | 875 ++++++++++++++++++
->>   drivers/clk/meson/s4-pll.h                    |  88 ++
->>   .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |  30 +
->>   7 files changed, 1059 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->>   create mode 100644 drivers/clk/meson/s4-pll.c
->>   create mode 100644 drivers/clk/meson/s4-pll.h
->>   create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->> new file mode 100644
->> index 000000000000..fd517e8ef14f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->> @@ -0,0 +1,51 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/amlogic,s4-pll-clkc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Amlogic Meson S serials PLL Clock Controller
->> +
->> +maintainers:
->> +  - Neil Armstrong <narmstrong@baylibre.com>
->> +  - Jerome Brunet <jbrunet@baylibre.com>
->> +  - Yu Tu <yu.hu@amlogic.com>
->> +
-> One blank line.
-
-  I will delete this, on next version patch.
-
-> 
->> +
->> +properties:
->> +  compatible:
->> +    const: amlogic,s4-pll-clkc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  clock-names:
->> +    items:
->> +      - const: xtal
->> +
->> +  "#clock-cells":
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - "#clock-cells"
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    clkc_pll: clock-controller@fe008000 {
->> +      compatible = "amlogic,s4-pll-clkc";
->> +      reg = <0xfe008000 0x1e8>;
->> +      clocks = <&xtal>;
->> +      clock-names = "xtal";
->> +      #clock-cells = <1>;
->> +    };
-> 
-> 
->> +#endif /* __MESON_S4_PLL_H__ */
->> diff --git a/include/dt-bindings/clock/amlogic,s4-pll-clkc.h b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
->> new file mode 100644
->> index 000000000000..345f87023886
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
-> 
-> This belongs to bindings patch, not driver.
-> 
->> @@ -0,0 +1,30 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
->> + * Author: Yu Tu <yu.tu@amlogic.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
->> +#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
->> +
->> +/*
->> + * CLKID index values
->> + */
->> +
->> +#define CLKID_FIXED_PLL			1
->> +#define CLKID_FCLK_DIV2			3
-> 
-> Indexes start from 0 and are incremented by 1. Not by 2.
-> 
-> NAK.
-
-I remember Jerome discussing this with you.You can look at this 
-submission history.
-https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
+Hi Krzysztof,
+	You can check the previous email reply. Now I don't know who to follow 
+your advice or Jerome's. I'm confused. Maybe you need to come to a 
+conclusion. So I can change it in the next patch.
 
 > 
 > Best regards,
