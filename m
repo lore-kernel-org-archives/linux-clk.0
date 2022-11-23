@@ -2,100 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E99C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 02:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9504C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 02:22:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235550AbiKWCRO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Nov 2022 21:17:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35258 "EHLO
+        id S235446AbiKWCWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Nov 2022 21:22:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235516AbiKWCRC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 21:17:02 -0500
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1239DBAE80;
-        Tue, 22 Nov 2022 18:16:06 -0800 (PST)
-Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Wed, 23 Nov 2022
- 10:16:03 +0800
-From:   Yu Tu <yu.tu@amlogic.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>, Yu Tu <yu.tu@amlogic.com>
-Subject: [PATCH V5 4/4] arm64: dts: meson: add S4 Soc Peripheral clock controller in DT
-Date:   Wed, 23 Nov 2022 10:13:46 +0800
-Message-ID: <20221123021346.18136-5-yu.tu@amlogic.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20221123021346.18136-1-yu.tu@amlogic.com>
-References: <20221123021346.18136-1-yu.tu@amlogic.com>
+        with ESMTP id S232445AbiKWCWR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 21:22:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091AFC67DE;
+        Tue, 22 Nov 2022 18:22:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C150DB81E5B;
+        Wed, 23 Nov 2022 02:22:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79212C433D6;
+        Wed, 23 Nov 2022 02:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669170132;
+        bh=6U8PIp0SwFrn5knbLXFnQIk8VYAWD20xFlLAjA93zPg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=qKeLsVzwGvTOtenfRi0Oe9KWWK8VMpDtOJxHCGegk2tWbzgAjZdRyQVuQZMtDfSsY
+         noxOlRtzOt0LjXWPy9wOLNUgIxt2P3vSyHACNDmO67ynrUSaXAnkS4GY1PMchunAIU
+         qhMXa2DlBdFKHuc31kHdxj3Tni5+KzUvvLnzO8isHw79R3umVGW1wJQulV7SLoqGSX
+         hVZscnXA31eFccOZV4/ExcGZIgc5CPTfYI1o+ta5T1Vkz8UIbd+Klkvps0+JduHk1g
+         6u/Y1YbyVzcaP4czAeO1entaizgY7t7jr1T5tBX0fPJ//Ms055k2/Uc3TuzNFDc8RP
+         am3ODipirW5nw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.18.11.248]
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221122130732.48537-1-andriy.shevchenko@linux.intel.com>
+References: <20221122130732.48537-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 1/3] clk: fractional-divider: Split out clk_fd_get_div() helper
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 22 Nov 2022 18:22:08 -0800
+User-Agent: alot/0.10
+Message-Id: <20221123022212.79212C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Added information about the S4 SOC Peripheral Clock controller in DT.
+Quoting Andy Shevchenko (2022-11-22 05:07:30)
+> Split out clk_fd_get_div() helper for the future use elsewhere.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-Signed-off-by: Yu Tu <yu.tu@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-index bd9c2ef83314..e7fab6e400be 100644
---- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-@@ -6,6 +6,8 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
-+#include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
- 
- / {
- 	cpus {
-@@ -100,6 +102,30 @@ clkc_pll: clock-controller@8000 {
- 				#clock-cells = <1>;
- 			};
- 
-+			clkc_periphs: clock-controller {
-+				compatible = "amlogic,s4-peripherals-clkc";
-+				reg = <0x0 0x0 0x0 0x49c>;
-+				clocks = <&clkc_pll CLKID_FCLK_DIV2>,
-+					<&clkc_pll CLKID_FCLK_DIV2P5>,
-+					<&clkc_pll CLKID_FCLK_DIV3>,
-+					<&clkc_pll CLKID_FCLK_DIV4>,
-+					<&clkc_pll CLKID_FCLK_DIV5>,
-+					<&clkc_pll CLKID_FCLK_DIV7>,
-+					<&clkc_pll CLKID_HIFI_PLL>,
-+					<&clkc_pll CLKID_GP0_PLL>,
-+					<&clkc_pll CLKID_MPLL0>,
-+					<&clkc_pll CLKID_MPLL1>,
-+					<&clkc_pll CLKID_MPLL2>,
-+					<&clkc_pll CLKID_MPLL3>,
-+					<&clkc_pll CLKID_HDMI_PLL>,
-+					<&xtal>;
-+				clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3",
-+						"fclk_div4", "fclk_div5", "fclk_div7",
-+						"hifi_pll", "gp0_pll", "mpll0", "mpll1",
-+						"mpll2", "mpll3", "hdmi_pll", "xtal";
-+				#clock-cells = <1>;
-+			};
-+
- 			periphs_pinctrl: pinctrl@4000 {
- 				compatible = "amlogic,meson-s4-periphs-pinctrl";
- 				#address-cells = <2>;
--- 
-2.33.1
-
+Applied to clk-next
