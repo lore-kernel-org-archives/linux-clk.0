@@ -2,59 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC03C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 02:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E6BC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 02:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235489AbiKWCWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Nov 2022 21:22:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39818 "EHLO
+        id S235288AbiKWC2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Nov 2022 21:28:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235505AbiKWCWy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 21:22:54 -0500
+        with ESMTP id S234023AbiKWC2M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 21:28:12 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37ECE9A27D;
-        Tue, 22 Nov 2022 18:22:52 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE2192D1E1;
+        Tue, 22 Nov 2022 18:27:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CC1F0619F3;
-        Wed, 23 Nov 2022 02:22:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C30C433C1;
-        Wed, 23 Nov 2022 02:22:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 73E4661A02;
+        Wed, 23 Nov 2022 02:27:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82CDC433B5;
+        Wed, 23 Nov 2022 02:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669170171;
-        bh=zGv6AraZC7adGE2mTHkUpnNRAtW0gGDS836wAIKnlFg=;
+        s=k20201202; t=1669170465;
+        bh=j70E8biRidyKpLWNs2x+HXH8VmJwsFnhf56UTmYl1vs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=D4DpA6XN351UiIDYkp3Q0TB8MEWoPr2vAl4wSNd1GQmLi4DwbSLW1dxYBOJcNy1MI
-         bApbIdnQHAe5dlRpQSkXeNyE+ODi5oQdmn8SXD9yxV+wZgsaVV0km7e7zpH5N0zYd1
-         5fYHs1GlpWNpRmXupza3DjRrKQSWB6MCdY+ebNmIlSgviDH6xEwzMLFP51AAbqVlGl
-         gITFmc7/e1mxeMJGdVgmKj76xB7sXa95/x/mE2p6eBhFpvTabfDs+0HszyeeXrEO+c
-         T5UYtIku44sbUz8kazMZsS5UEpGwMnfE7M1uXqiLAMHTx1IHh6dDW8/fkDsXr6S0fe
-         fvei4x03bxMnQ==
+        b=IEmCDi4Et0Ynn5CD3ufKKdYIiFcttpG4ACNm+45fulJTTXqrpaxRk+Jfbx2bvPrpM
+         1eZQ6pDT5SQjmjpaB0OShwdxykbvbm8PyBuks7ap0LYRRjn0HJ9zo//3P5wdsxTpt6
+         OQyJTDDDkEbq4ieuyPau1acMrKbNxdpfAjlghBMoJOZy2ZjAjfCj39XhzHAdFJi9ee
+         DW3wEdR6hnLdV4m5cQZncCscMTvVjOM2Zlo9hb5qXBoTpNn6Dt488g4jDP49V1XPzS
+         MXtCiXGZIqLsfbl7OGn8KRtmm8UmYKT4NmwU/gFc0x01ONVSGEbdCx9Lnb0VNLBbSr
+         J/FpHYvlUotiQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221122130732.48537-3-andriy.shevchenko@linux.intel.com>
-References: <20221122130732.48537-1-andriy.shevchenko@linux.intel.com> <20221122130732.48537-3-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 3/3] clk: fractional-divider: Regroup inclusions
+In-Reply-To: <20221115152956.21677-1-quic_shazhuss@quicinc.com>
+References: <20221115152956.21677-1-quic_shazhuss@quicinc.com>
+Subject: Re: [PATCH v3] clk: qcom: gcc-sc8280xp: add cxo as parent for three ufs ref clks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Cc:     bmasney@redhat.com, agross@kernel.org, mturquette@baylibre.com,
+        ahalaney@redhat.com, Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 22 Nov 2022 18:22:47 -0800
+To:     Shazad Hussain <quic_shazhuss@quicinc.com>, andersson@kernel.org,
+        johan@kernel.org
+Date:   Tue, 22 Nov 2022 18:27:42 -0800
 User-Agent: alot/0.10
-Message-Id: <20221123022251.28C30C433C1@smtp.kernel.org>
+Message-Id: <20221123022745.B82CDC433B5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Andy Shevchenko (2022-11-22 05:07:32)
-> For the better maintenance regroup inclusions as follows:
-> - split CCF related headers in its own group
-> - order groups from generic to particular
-> - sort each group alphabetically
+Quoting Shazad Hussain (2022-11-15 07:29:56)
+> The three UFS reference clocks, gcc_ufs_ref_clkref_clk for external
+> UFS devices, gcc_ufs_card_clkref_clk and gcc_ufs_1_card_clkref_clk for
+> two PHYs are all sourced from CXO.
 >=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Added parent_data for all three reference clocks described above to
+> reflect that all three clocks are sourced from CXO to have valid
+> frequency for the ref clock needed by UFS controller driver.
+>=20
+> Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+> Link: https://lore.kernel.org/lkml/Y2Tber39cHuOSR%2FW@hovoldconsulting.co=
+m/
+> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Tested-by: Andrew Halaney <ahalaney@redhat.com>
+> Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
+> Reviewed-by: Reviewed-by: Brian Masney <bmasney@redhat.com>
 > ---
 
-Applied to clk-next
+Fixed the double Rb
+
+Applied to clk-fixes
