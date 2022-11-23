@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57922C3A59F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7436CC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237157AbiKWOUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:20:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43924 "EHLO
+        id S236185AbiKWOUr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 09:20:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237064AbiKWOUc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:20:32 -0500
+        with ESMTP id S237882AbiKWOUg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:20:36 -0500
 Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B5C654F5
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:24 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id x5so25549773wrt.7
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D86E7663CD
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:29 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id n3so13044941wrp.5
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7te0vel29soMxRllHr57VveDfFHJcBPQQEi2+x2vELY=;
-        b=a3m3viXN3IzLNf7p+L4t8UXvrLaFB6T6anOc0Sg+/ktJ1Tuvjbu8Vb95NXXRv63e9G
-         0ZuDTMg5kkd+jtuCgtnLo0M2P8dgRkUQPgB60Tx5AJAKIR6kdXHnRebfp2OiHxaDl2Sc
-         zta/2/sttlWMSfHMRnxh9XjAgY+q43ZlgOllf2Yhn3/kASu5KKa8H8NYc1KE2AeECTWV
-         DuzRgNTX8q6wQFG9q8Ns0c76AtqaQ+u3j8sRjK2boejgx/vfv9ey5p/bVr3PZnizrkF8
-         RlMJO9cHAWOxnojttB7ZwZnlyAyRcA6aHTbFvxP1Wv9lz0pxuPAYsIV0uu1v8wHCKuns
-         re1Q==
+        bh=1nwk9ZDzj4f3oCxgYA9516gm4S6RtG9ILhUbfQ8JxHU=;
+        b=L+3PEVfkzTMurgF1Pq7oMkWjcR9izDlB4cs8rfzSJsWA4NIpZfxFU5gWxxrODnks2x
+         vW3ThKxGMiknEPCrm3CdvJNiVafl9fe+GAgniVVOc56UJl36U5RV57H1hLuRkhIPdy82
+         jaQwNJ2A8jEKjVMaqxejUPuS6YhQr8kY27BsXQguKDpXcO/vx7HEF7t2kBf+ozDxnDCP
+         qludLvDXwOFBVs5E0EcnJfCNARS+BoZkE60kuNMEQx+zMx2Z6+bQnA4aoNvgbRViGoph
+         wfH/CWlp+IfOhzHWwVP7iox97ddvJIpwx9M4G3hKUwRG/w1J2HfeLl7slH2sASkMMzQi
+         L9pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7te0vel29soMxRllHr57VveDfFHJcBPQQEi2+x2vELY=;
-        b=k9Q0tsWlcRF7De4hW5gWD72bKtNY1bkbm81H3z7QpjYR14dp3MHT0iY7ZUdO/+AAzq
-         sJyI+369CqVZ07915XKAaXRuFpivGpUIF5io1wJMjapqYRYPWw6mre01NdVRP97k3+Sp
-         Lh1SuzLypMiEx1sOa9RhJj+OQ2kqqeKe3/5ymcDlXxcFdFyfm2ifY4j7gWPQu86H27nI
-         eb65DJhGDeEoMpO/Z1fUSPzGIjsaKuRTJq23mBBGOU+iTCo3XxJrbPn5dbEHRo111u/F
-         uI+rNHLU69/WF/zIWn82NtfUMQcEbyQptwYnm2Lid7x2LU5x5yZ+Zoklx+jMu7CPjbia
-         xzAA==
-X-Gm-Message-State: ANoB5pnwnDxCj8ea9k4ibfHEoKkhMJb4NQKzZ6a91kzYlLOTepurUlv+
-        nPQHK4dE+HjmxJSUWJoUrVnFzw==
-X-Google-Smtp-Source: AA0mqf4GrGMqqZLuTtwDxVsItw3cIKwn5sYR13+/xSINmwn3L6b2DfAt7GJd3ZcDy9kPHyuW7Ifo3A==
-X-Received: by 2002:a5d:6e90:0:b0:241:e3b9:36a0 with SMTP id k16-20020a5d6e90000000b00241e3b936a0mr4715085wrz.607.1669213223272;
-        Wed, 23 Nov 2022 06:20:23 -0800 (PST)
+        bh=1nwk9ZDzj4f3oCxgYA9516gm4S6RtG9ILhUbfQ8JxHU=;
+        b=rrSQtrLESgq4lrrvJdypvTYIGsooh4mcBJHz7FEa5tAWYnQIecDUeAOnw45nDQqtkO
+         /chvDafYGHDKFijQkLpmHFFuvbIhwlLdfpUHk76hEdkV+rhZeWrC55d6GrYC5ympRKD8
+         0bB6elkJPjs/dRz1qZZvp2fkw4JHZDi13VPDldRPH5JIhZTmBHtmDgPVoThTfSm9sgTf
+         +8vrP8Fb5W4sBjM9gtQ/tWeWBqsLN1oK9ZhdrGwBLP3adC/mYb/iZiyuwndFHIS1Sdjl
+         XMmGPHl76nVOP/Rn1C4Rbl1IxpE1v8sKjv8qwEmQ0AgUtEiKNk4PsI3FxZoZNlgzaTxL
+         XOhQ==
+X-Gm-Message-State: ANoB5pnmViafUdLr99jG1Tn2k+dKvKWc7R6tdWaFwmOXWrFcfw1vAuAP
+        W73qEoUV3nvt018WAA2n7elFSQ==
+X-Google-Smtp-Source: AA0mqf6iufSGN8Siv1QRRTblUjizIyXG9xaOU3+bcfaQifjisr+JO/GIClkcMtgfMBEhRnIOQER1MQ==
+X-Received: by 2002:adf:f3d0:0:b0:241:f721:3ba2 with SMTP id g16-20020adff3d0000000b00241f7213ba2mr921857wrp.681.1669213228394;
+        Wed, 23 Nov 2022 06:20:28 -0800 (PST)
 Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd58409desm2837438wmq.13.2022.11.23.06.20.22
+        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd58409desm2837438wmq.13.2022.11.23.06.20.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 06:20:22 -0800 (PST)
+        Wed, 23 Nov 2022 06:20:27 -0800 (PST)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,10 +59,11 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/9] dt-bindings: clock: Add SM8550 TCSR CC clocks
-Date:   Wed, 23 Nov 2022 16:20:02 +0200
-Message-Id: <20221123142009.594781-3-abel.vesa@linaro.org>
+        linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 6/9] dt-bindings: clock: Add RPMHCC for SM8550
+Date:   Wed, 23 Nov 2022 16:20:06 +0200
+Message-Id: <20221123142009.594781-7-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221123142009.594781-1-abel.vesa@linaro.org>
 References: <20221123142009.594781-1-abel.vesa@linaro.org>
@@ -72,96 +73,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings documentation for clock TCSR driver on SM8550.
+Add bindings and update documentation for clock rpmh driver on SM8550.
 
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
 
 Changes since v1:
- * based on recent bindings, like Krzysztof asked
- * used qcom,gcc.yaml and dropped redundant properties
- * used additionalProperties instead unevaluatedProperties
- * renamed qcom,tcsrcc-sm8550.h to qcom,sm8550-tcsrcc.h, to match
-   compatible
- * added dual lincese to qcom,sm8550-tcsrcc.h
- * moved patch to the beginning of patchset
- * dropped redundant "bindings" from subject line
+ * dropped redundant "bindings" from subject
+ * added Krzysztof's R-b tag
 
- .../bindings/clock/qcom,sm8550-tcsrcc.yaml    | 39 +++++++++++++++++++
- .../dt-bindings/clock/qcom,sm8550-tcsrcc.h    | 18 +++++++++
- 2 files changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
-new file mode 100644
-index 000000000000..a4531a7cad8c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
-@@ -0,0 +1,39 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm8550-tcsrcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm TCSR Clock Controller on SM8550
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+
-+description: |
-+  Qualcomm TCSR clock control module provides the clocks, resets and
-+  power domains on SM8550
-+
-+  See also:: include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-+
-+allOf:
-+  - $ref qcom,gcc.yaml#
-+
-+properties:
-+  compatible:
-+    const: qcom,sm8550-tcsrcc
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@1fc0000 {
-+      compatible = "qcom,sm8550-tcsrcc";
-+      reg = <0x1fc0000 0x30000>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-+
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h b/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-new file mode 100644
-index 000000000000..4ce98ffc43ce
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2022, Linaro Limited
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-+#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-+
-+/* GCC clocks */
-+#define TCSR_PCIE_0_CLKREF_EN					0
-+#define TCSR_PCIE_1_CLKREF_EN					1
-+#define TCSR_UFS_CLKREF_EN					2
-+#define TCSR_UFS_PAD_CLKREF_EN					3
-+#define TCSR_USB2_CLKREF_EN					4
-+#define TCSR_USB3_CLKREF_EN					5
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 437a34b930e3..d465dd691107 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -30,6 +30,7 @@ properties:
+       - qcom,sm8250-rpmh-clk
+       - qcom,sm8350-rpmh-clk
+       - qcom,sm8450-rpmh-clk
++      - qcom,sm8550-rpmh-clk
+ 
+   clocks:
+     maxItems: 1
 -- 
 2.34.1
 
