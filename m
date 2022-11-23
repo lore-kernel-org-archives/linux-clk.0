@@ -2,76 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2699C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 00:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B34C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 00:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234076AbiKWArN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Nov 2022 19:47:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59324 "EHLO
+        id S235016AbiKWAuz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Nov 2022 19:50:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235329AbiKWArM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 19:47:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F460D5A1B;
-        Tue, 22 Nov 2022 16:47:11 -0800 (PST)
+        with ESMTP id S233239AbiKWAuy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Nov 2022 19:50:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB158CB96;
+        Tue, 22 Nov 2022 16:50:52 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F00796194A;
-        Wed, 23 Nov 2022 00:47:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5245DC433D7;
-        Wed, 23 Nov 2022 00:47:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 69B59B81E48;
+        Wed, 23 Nov 2022 00:50:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D2EBC433D6;
+        Wed, 23 Nov 2022 00:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669164430;
-        bh=lDXdSzw4PMXXXF3nLrHVxQyZSnT026dh4Nn6IkU0BoE=;
+        s=k20201202; t=1669164650;
+        bh=rXMmXg9Mcj7PCVs+oJe1QmRf4N8yh+jRzjlmHDF48vk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fONDl5k1h7xPaYRhwR/ZemCKa1Gug8LSReGg8z2vWwv7Uv0JSpU41MJlxzUlsuK91
-         SwRGmf/yw1FozuNeod0H7EdllsB067ZT4XnurkY+bjamJoVclq8WDH7pDeYFv6Hw49
-         GkPj0rQP3qpv4DkIdBuyoo6rDN7GtTCIRNgzxaXI6Vjmj6adT5BrcYLdDoMQOWiOdD
-         VWDBx8Y05U24utxAk0MUzFeq8K5aCsMkzhm045ZpDpGVLHasrj1J81oISP949JY0Gy
-         3ckwwR5QyAyhOdkQnbm76ZxvfAS7EsWw/vdyiebEy4IhMkyJG83ef8I4AdkyozVn+0
-         G3IXfxIetxfYQ==
+        b=uiJlqZz5oWRj2tZnhqbzyzZObvJEzIT+39m6e7NJdwO1KLAh33peOSSsDnXWBthWu
+         /P15M8BK4rWhIg6e/tQ7cAADTh2sCFeQx6+stDEWWPlqIKKbzQWCanXMeivfc13K7l
+         5vob0ZgT8foj2W1joZUF0VVaegaDNGKf9sw0VI57LcxigBvtd5mvVlBJb01BQFaPvo
+         ZJ4NkOglA20HXCH/BJUkgKy+TTaLXj7szFVkrcjkiZ5c8Urw7V9fAF5jmkcn1yOKtH
+         SDWnM5bi53wksi7SkrkVZjZQkm6tRCrYZ74qAYRykD5Lbgc54iEkI3na51Q7osYhLc
+         LmbF8a3AThFWA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221116092616.17960-1-krzysztof.kozlowski@linaro.org>
-References: <20221116092616.17960-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: Pull for v6.2
+In-Reply-To: <cover.1668789961.git.geert+renesas@glider.be>
+References: <cover.1668789961.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.2 (take two)
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 22 Nov 2022 16:47:08 -0800
+Date:   Tue, 22 Nov 2022 16:50:47 -0800
 User-Agent: alot/0.10
-Message-Id: <20221123004710.5245DC433D7@smtp.kernel.org>
+Message-Id: <20221123005050.0D2EBC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-11-16 01:26:16)
-> The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc7=
-80:
+Quoting Geert Uytterhoeven (2022-11-18 08:54:05)
+>         Hi Mike, Stephen,
 >=20
->   Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+> The following changes since commit 02693e11611e082e3c4d8653e8af028e43d311=
+64:
+>=20
+>   clk: renesas: r9a06g032: Repair grave increment error (2022-11-01 10:15=
+:28 +0100)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.2
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.2-tag2
 >=20
-> for you to fetch changes up to 2bc5febd05abe86c3e3d4b4f18dff4bc4316c1be:
+> for you to fetch changes up to 777bcc85e1fbadfea1927e828165102cf5050b53:
 >=20
->   clk: samsung: Revert "clk: samsung: exynos-clkout: Use of_device_get_ma=
-tch_data()" (2022-11-15 10:36:54 +0100)
+>   clk: renesas: r8a779f0: Fix Ethernet Switch clocks (2022-11-16 09:05:59=
+ +0100)
 >=20
 > ----------------------------------------------------------------
 
-Thanks. Pulled into clk-fixes even though the subject says v6.2 they
-look like fixes that we really want now instead of later.
+Thanks. Pulled into clk-next
