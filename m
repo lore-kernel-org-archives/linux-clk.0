@@ -2,36 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B92C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 11:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8E3C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 13:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236491AbiKWLaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 06:30:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35098 "EHLO
+        id S237492AbiKWNXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 08:23:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237045AbiKWL3m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 06:29:42 -0500
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78523F1D81;
-        Wed, 23 Nov 2022 03:27:27 -0800 (PST)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Wed, 23 Nov
- 2022 19:27:25 +0800
-Message-ID: <9858039f-e635-2749-80a2-75072d6e9cea@amlogic.com>
-Date:   Wed, 23 Nov 2022 19:27:25 +0800
+        with ESMTP id S237549AbiKWNXH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 08:23:07 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1FB237
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 05:02:27 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id l8so21262759ljh.13
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 05:02:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RUEe+xvo6A9bHKL3WK6VHdimu7vun/3ExSCGDYJweEg=;
+        b=y0sFuHh0+K0wq6VzFe3oKGdWnx5+CfVCg3XFcbMQz32cMMuXuO1TlrU1gJaCosrhLC
+         Ik8BY0drtu8PucxwsTRSYqdJM3F/oG31rbPMf9FgclXEojCyPO45fhVsPi9GOQkYxehW
+         S9qNwcGKbqEUTH1G/UVtMv+S8gOJlWf8UjEWtzzUCg2hHem8RR+ITe/aqynuahKqmxOj
+         A87gX0uXXhnYLWS2ZspJrGvVGeC9zRNkP2rzR4dk/NwEuj1kBhYRyDLM6s+YXc2qPSuf
+         5WTIvFBzZm20BOzLilDiZkewal5Mo31sfO2GWH5BXRHcVb6ZH5VsqLffaIypSiuMUKgP
+         k3SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RUEe+xvo6A9bHKL3WK6VHdimu7vun/3ExSCGDYJweEg=;
+        b=zipEkqi+vxGjRs52aaXanwCcIeyT/2s0AT9LTOPFIeopZimWgjHPexecs8lx+MJ2Qm
+         4Cy1iw38UMRsRcclpn+Rjccp+xmNKljl+JNlOklaBJsqccF0lMDMURdAT+TxjYUgdphk
+         TJCrQMtXchcvvDx6v7uUgDle4XYkabwxQpggHXNjbm5g5uIAgGY9Em7hNiPOlCvIS8ty
+         IKSkXhh65L7qkytWnMHUgaeb2DI3yCug/EjCEzWDd812LwDt1ZUUdF2B/XNbULXhQOkN
+         Yz0JULJ1fqc4IURhajC/tC1ly1O9JMrCO3tUY2TuEy0eGqenfP+ymjXzjI92wcjtdFKJ
+         NbOg==
+X-Gm-Message-State: ANoB5pmYBidkC4C92Ke7zEtqNOpFmlp0vWX7aoR/FhjDuE5pt+kIsf6i
+        yVcq2w8gBru79wjM1iJlmnAM1g==
+X-Google-Smtp-Source: AA0mqf70gL5arrMjHAnvTcCUxrJKMuIh2LzxlvsWO54zS2pI8ANGvVSfxKuPIAZ4LAMQafD4IQQ5Rg==
+X-Received: by 2002:a05:651c:1601:b0:277:3a1:e86d with SMTP id f1-20020a05651c160100b0027703a1e86dmr4179100ljq.152.1669208544042;
+        Wed, 23 Nov 2022 05:02:24 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id k21-20020a05651239d500b00494618889c0sm2882886lfu.42.2022.11.23.05.02.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Nov 2022 05:02:23 -0800 (PST)
+Message-ID: <8dbb3ce2-c8d9-70be-d1de-ed875de0ea1b@linaro.org>
+Date:   Wed, 23 Nov 2022 14:02:22 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
 Subject: Re: [PATCH V5 4/4] arm64: dts: meson: add S4 Soc Peripheral clock
  controller in DT
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
@@ -39,67 +68,67 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>
+Cc:     kelvin.zhang@amlogic.com
 References: <20221123021346.18136-1-yu.tu@amlogic.com>
  <20221123021346.18136-5-yu.tu@amlogic.com>
  <ae43fadf-9255-7db7-8b5e-01200e02a2c6@linaro.org>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <ae43fadf-9255-7db7-8b5e-01200e02a2c6@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <9858039f-e635-2749-80a2-75072d6e9cea@amlogic.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <9858039f-e635-2749-80a2-75072d6e9cea@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-	
-On 2022/11/23 18:10, Krzysztof Kozlowski wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On 23/11/2022 03:13, Yu Tu wrote:
->> Added information about the S4 SOC Peripheral Clock controller in DT.
+On 23/11/2022 12:27, Yu Tu wrote:
+> Hi Krzysztof,
+> 	
+> On 2022/11/23 18:10, Krzysztof Kozlowski wrote:
+>> [ EXTERNAL EMAIL ]
 >>
->> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->> ---
->>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 26 +++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
+>> On 23/11/2022 03:13, Yu Tu wrote:
+>>> Added information about the S4 SOC Peripheral Clock controller in DT.
+>>>
+>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>> ---
+>>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 26 +++++++++++++++++++++++
+>>>   1 file changed, 26 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>> index bd9c2ef83314..e7fab6e400be 100644
+>>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>>> @@ -6,6 +6,8 @@
+>>>   #include <dt-bindings/interrupt-controller/irq.h>
+>>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>   #include <dt-bindings/gpio/gpio.h>
+>>> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+>>> +#include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
+>>>   
+>>>   / {
+>>>   	cpus {
+>>> @@ -100,6 +102,30 @@ clkc_pll: clock-controller@8000 {
+>>>   				#clock-cells = <1>;
+>>>   			};
+>>>   
+>>> +			clkc_periphs: clock-controller {
+>>> +				compatible = "amlogic,s4-peripherals-clkc";
+>>> +				reg = <0x0 0x0 0x0 0x49c>;
 >>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> index bd9c2ef83314..e7fab6e400be 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> @@ -6,6 +6,8 @@
->>   #include <dt-bindings/interrupt-controller/irq.h>
->>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>   #include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
->> +#include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->>   
->>   / {
->>   	cpus {
->> @@ -100,6 +102,30 @@ clkc_pll: clock-controller@8000 {
->>   				#clock-cells = <1>;
->>   			};
->>   
->> +			clkc_periphs: clock-controller {
->> +				compatible = "amlogic,s4-peripherals-clkc";
->> +				reg = <0x0 0x0 0x0 0x49c>;
+>> This is broken... did you check for warnings?
+> Yes, i do.
+> You can have a look at the results of my test, as follows.
 > 
-> This is broken... did you check for warnings?
-Yes, i do.
-You can have a look at the results of my test, as follows.
+> total: 0 errors, 0 warnings, 0 checks, 38 lines checked
+> 
+> ../patch_clk_v5_1122/0004-arm64-dts-meson-add-S4-Soc-Peripheral-clock-controll.patch 
+> has no obvious style problems and is ready for submission.
+> 
 
-total: 0 errors, 0 warnings, 0 checks, 38 lines checked
+This is a checkpatch output. I am talking about DTS broken. dtc should
+warn you.
 
-../patch_clk_v5_1122/0004-arm64-dts-meson-add-S4-Soc-Peripheral-clock-controll.patch 
-has no obvious style problems and is ready for submission.
+Best regards,
+Krzysztof
 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> .
