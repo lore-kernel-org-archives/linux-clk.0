@@ -2,125 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF80C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 732A8C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238028AbiKWONa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:13:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
+        id S236736AbiKWOU1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 09:20:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237799AbiKWON2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:13:28 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDA62D1F4
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:13:26 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id a29so28285303lfj.9
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:13:26 -0800 (PST)
+        with ESMTP id S236364AbiKWOU1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:20:27 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1662962057
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:22 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id cl5so29629176wrb.9
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8/Gp8oNJZw3cLXUYP8ks4PwvnFzrrxOR4KiPfsrpS5s=;
-        b=Eu4w0mKIlQN/48m6aFJ+zpEBptQk93sPQh9M8czvaTGBgj/obNFUppnhII4bHaL+t8
-         WDRLzC/3Bq9UVwLtv7GnkM96heFTdJivk2h6ne0AJWun7grt5tlGRIkzjFdSsrMuxmm9
-         fOEoOPvp1SOx/oesbnKiK5xb2kGivh5DafLvQPvRzONO+0HYgfFbCsn5INIWAqht3SWV
-         XGyvUJUdga+HZqaWOemqlq7N/FMRO9J5Gswx85kxcWL5ADEik4+K0/FZgRLrjRPkD6Cx
-         EIDe//PF9Abt7YL/j3jqsSf12pvXQUFX1J8fSacwR2zK+LGdDdBoE3fd3uPb87puxjNj
-         KbKg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMoXuHIdbhjwJcHJBXXgxho78Ko/2YIp+fuaUAlW2rY=;
+        b=UqeKHDjXeHPPYMhTlC9FYSoN/VLX8nN9SzpWL2c8bInJb/BM+st7kwbQPLjYgqeMf2
+         Ta/IK17zgDEC303ru/IWF1DrALGhUdKXwcbPk6/0PPkIrzcko7JH6vChe2yLwSh6Y9hV
+         HfMq9k2Cv0GB5WzTD3+rBAxpLCfPfuUNOV6U0uDcEWWBmLe9/hP5TV7+jACNBVTRSk/A
+         pWww9GWjGlwjVYS4VHueBqyjcNoYCwK0d4RUCD4kVvhh3X1gJ7Rm3vSxyItOQUcBaFO1
+         8leiLlGOXxQxOe+u548BsE31gKKGi/ZHbZnojcqp6ljxV0G6t2NnT5yYoU5Cti/0KMML
+         xyLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/Gp8oNJZw3cLXUYP8ks4PwvnFzrrxOR4KiPfsrpS5s=;
-        b=Wp+cvvmVFQFpPF4y12JMmk01yfREa6qAvEXtqY0npTrCmSvP+OEOQKpRNKuaypJxzr
-         LX3cxmGjWQuxu7RhoUR5BsOfTLqKtVPtAqn8mWv5SHymkLKxp6UrZ9FYTWGGlHVoGCkX
-         E708B7WoUKMR+VUrB2KTDsp+s+cDGxn8TUaIBWPhZpiRfL3V/hgyznZQzF4xsWw9xM0o
-         D0Z718lBj/YTSqIMjrRcQsDzm8oGn9ftz8pcCLXAltWdtqjaTxoU3CrJiDz20BdCsMYT
-         ZDtrnbsEAGufrehZ5eZKgmeMwDBdIBTUd7K/yJypgmjLSZ88p8qeccYOM9k+BgCwGM8R
-         9fTg==
-X-Gm-Message-State: ANoB5pkp5p0gqtsqJe+0CVAaTo/KZwFWXAg6z2ka/mVrTdvIj7mAFTnX
-        Pjn9FTS7Xfd7RjqfL80MyjCClA==
-X-Google-Smtp-Source: AA0mqf5quQBr81TBL9QYOBAQk89wKtHmN891t6m5JcSES8bjEfXcUWIQE5L7V2X5rE6LA0yj51omnw==
-X-Received: by 2002:ac2:5f62:0:b0:4b4:6ca6:c669 with SMTP id c2-20020ac25f62000000b004b46ca6c669mr9176286lfc.338.1669212804830;
-        Wed, 23 Nov 2022 06:13:24 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id 21-20020ac24835000000b004a2588520f5sm2893414lft.166.2022.11.23.06.13.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Nov 2022 06:13:24 -0800 (PST)
-Message-ID: <7f3a34a0-a5b0-3a72-8e0e-00656bd77ff6@linaro.org>
-Date:   Wed, 23 Nov 2022 15:13:23 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH V5 4/4] arm64: dts: meson: add S4 Soc Peripheral clock
- controller in DT
-Content-Language: en-US
-To:     neil.armstrong@linaro.org, Yu Tu <yu.tu@amlogic.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EMoXuHIdbhjwJcHJBXXgxho78Ko/2YIp+fuaUAlW2rY=;
+        b=MBpyC3XW0Xb4RGTfEyVOrHmK31n9Mt1RL5ITlompFZsExC8TgAKC1WZwVvHWhUEAvj
+         nVPVmOBkBIxCoQpQ3qEkLWmBLt6wt8ikwG1LOv2j+P080O6wW1bZUmhCf8c5obe8+94f
+         FfwCLMaU4lILcrvEB5fItxSc7sLhpFqUhSi8+FWiRWLWpZDrah9WPmKMuensZHd4JwHs
+         R+lG18md+mWKplEc7jPqGGx90HFiunjnw9E/689hn+tFIeqZHJqjRgACmUHnEVeFjjuJ
+         wSIU5VTS4Nah1Glg8CgCa2Z9R++3KYg6f+u4tvmziq9E6+BWWVFAI1rMs4bRmFFMdD7E
+         H4Bg==
+X-Gm-Message-State: ANoB5pmbpbLyIJLVULLoGhBF8KgEBcgJ7xm+r5YfkQdwb0OrbRmmbJJT
+        iS8+pi0WSX2Bx4sFjMKLOPW2hg==
+X-Google-Smtp-Source: AA0mqf5/MjcP0RI/+UciB6PzI31sTUYrP2jKOSevJGF3jEz1P1vukOEYSoL/oxxMiaB9/eHN/I1Crw==
+X-Received: by 2002:adf:de0a:0:b0:241:cdf6:6a81 with SMTP id b10-20020adfde0a000000b00241cdf66a81mr7110202wrm.243.1669213220617;
+        Wed, 23 Nov 2022 06:20:20 -0800 (PST)
+Received: from localhost.localdomain ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd58409desm2837438wmq.13.2022.11.23.06.20.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Nov 2022 06:20:20 -0800 (PST)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com
-References: <20221123021346.18136-1-yu.tu@amlogic.com>
- <20221123021346.18136-5-yu.tu@amlogic.com>
- <ae43fadf-9255-7db7-8b5e-01200e02a2c6@linaro.org>
- <9961d579-9463-c585-34a6-a3abcd4b3e52@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <9961d579-9463-c585-34a6-a3abcd4b3e52@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/9] clk: qcom: Add support for SM8550
+Date:   Wed, 23 Nov 2022 16:20:00 +0200
+Message-Id: <20221123142009.594781-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/11/2022 14:27, Neil Armstrong wrote:
-> On 23/11/2022 11:10, Krzysztof Kozlowski wrote:
->> On 23/11/2022 03:13, Yu Tu wrote:
->>> Added information about the S4 SOC Peripheral Clock controller in DT.
->>>
->>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>> ---
->>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 26 +++++++++++++++++++++++
->>>   1 file changed, 26 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>> index bd9c2ef83314..e7fab6e400be 100644
->>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>> @@ -6,6 +6,8 @@
->>>   #include <dt-bindings/interrupt-controller/irq.h>
->>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>   #include <dt-bindings/gpio/gpio.h>
->>> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
->>> +#include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->>>   
->>>   / {
->>>   	cpus {
->>> @@ -100,6 +102,30 @@ clkc_pll: clock-controller@8000 {
->>>   				#clock-cells = <1>;
->>>   			};
->>>   
->>> +			clkc_periphs: clock-controller {
->>> +				compatible = "amlogic,s4-peripherals-clkc";
->>> +				reg = <0x0 0x0 0x0 0x49c>;
->>
->> This is broken... did you check for warnings?
-> 
-> This is actually fine, the parent node has a ranges property:
-> https://github.com/torvalds/linux/blob/eb7081409f94a9a8608593d0fb63a1aa3d6f95d8/arch/arm64/boot/dts/amlogic/meson-s4.dtsi#L93
+This patchset adds clock support for the Qualcomm SM8550 SoC,
+It adds support for the new type of PLL, the TCSR clock controller
+driver, support for configurable poll timeout, the RPMh clocks
+and the bindings.
 
-The parent ranges do not change here anything. You cannot have a reg
-without unit address and the tools report it. No need to use reviewers
-for this...
+To: Andy Gross <agross@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Best regards,
-Krzysztof
+Abel Vesa (9):
+  dt-bindings: clock: Add SM8550 GCC clocks
+  dt-bindings: clock: Add SM8550 TCSR CC clocks
+  clk: qcom: gdsc: Add configurable poll timeout
+  clk: qcom: Add LUCID_OLE PLL type for SM8550
+  clk: qcom: Add clock driver for SM8550
+  dt-bindings: clock: Add RPMHCC for SM8550
+  dt-bindings: clock: qcom,rpmh: Add CXO PAD clock IDs
+  clk: qcom: rpmh: Add support for SM8550 rpmh clocks
+  clk: qcom: Add TCSR clock driver for SM8550
+
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm8550-gcc.yaml       |   56 +
+ .../bindings/clock/qcom,sm8550-tcsrcc.yaml    |   39 +
+ drivers/clk/qcom/Kconfig                      |   15 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   16 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    5 +
+ drivers/clk/qcom/clk-rpmh.c                   |  110 +-
+ drivers/clk/qcom/gcc-sm8550.c                 | 3396 +++++++++++++++++
+ drivers/clk/qcom/gdsc.c                       |    5 +-
+ drivers/clk/qcom/gdsc.h                       |    1 +
+ drivers/clk/qcom/tcsrcc-sm8550.c              |  193 +
+ include/dt-bindings/clock/qcom,rpmh.h         |    2 +
+ include/dt-bindings/clock/qcom,sm8550-gcc.h   |  231 ++
+ .../dt-bindings/clock/qcom,sm8550-tcsrcc.h    |   18 +
+ 15 files changed, 4069 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm8550.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-sm8550.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8550-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
+
+-- 
+2.34.1
 
