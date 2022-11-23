@@ -2,55 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E32AC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79219C4167D
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:10:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237720AbiKWOGD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:06:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57382 "EHLO
+        id S236850AbiKWOKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 09:10:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236175AbiKWOFh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:05:37 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5646669DC7;
-        Wed, 23 Nov 2022 06:01:55 -0800 (PST)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1oxqJq-0008O9-Qm; Wed, 23 Nov 2022 15:01:42 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, mturquette@linaro.org
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2] clk: rockchip: Fix memory leak in rockchip_clk_register_pll()
-Date:   Wed, 23 Nov 2022 15:01:41 +0100
-Message-Id: <166921209718.1733563.10543357754581908332.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221123091201.199819-1-xiujianfeng@huawei.com>
-References: <20221123091201.199819-1-xiujianfeng@huawei.com>
+        with ESMTP id S237906AbiKWOKj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:10:39 -0500
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBDB2A267;
+        Wed, 23 Nov 2022 06:08:40 -0800 (PST)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Wed, 23 Nov
+ 2022 22:08:38 +0800
+Message-ID: <69008e98-2dad-9999-9ebc-e5fc0d384808@amlogic.com>
+Date:   Wed, 23 Nov 2022 22:08:37 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH V5 3/4] clk: meson: s4: add s4 SoC peripheral clock
+ controller driver and bindings
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <kelvin.zhang@amlogic.com>
+References: <20221123021346.18136-1-yu.tu@amlogic.com>
+ <20221123021346.18136-4-yu.tu@amlogic.com>
+ <09a443b3-4e27-a751-ba2c-057d69363a13@linaro.org>
+ <cf7295c7-3ec6-3017-0c21-167da06e3214@amlogic.com>
+ <2418f79c-ae56-9e4e-46e2-f1ca757642ee@linaro.org>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <2418f79c-ae56-9e4e-46e2-f1ca757642ee@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 23 Nov 2022 17:12:01 +0800, Xiu Jianfeng wrote:
-> If clk_register() fails, @pll->rate_table may have allocated memory by
-> kmemdup(), so it needs to be freed, otherwise will cause memory leak
-> issue, this patch fixes it.
+Hi Krzysztof,
+
+On 2022/11/23 21:06, Krzysztof Kozlowski wrote:
+> [ EXTERNAL EMAIL ]
 > 
+> On 23/11/2022 12:22, Yu Tu wrote:
+>>
+>>
+>> On 2022/11/23 18:09, Krzysztof Kozlowski wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> On 23/11/2022 03:13, Yu Tu wrote:
+>>>> Add the peripherals clock controller found and bindings in the s4 SoC family.
+>>>>
+>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>> ---
+>>>>    .../clock/amlogic,s4-peripherals-clkc.yaml    |  105 +
+>>>
+>>> No, this is total mess now.
+>>>
+>>> Additionally, you received a lot of feedback but your changelog says only:
+>>> "V3 -> V4: change format and clock flags."
+>>> so you ignored entire feedback?
+>>>
+>>> That's not the way to work with patches.
+>>
+>> Hi Krzysztof,
+>> 	You can check the previous email reply. Now I don't know who to follow
+>> your advice or Jerome's. I'm confused. Maybe you need to come to a
+>> conclusion. So I can change it in the next patch.
+> 
+> I don't understand your comment. You received a lot of things to change
+> for your v3. You said here "change format and clock flagS", so all other
+> feedbacks from me were ignored? They were not contradicting to Jerome's
+> comments, so either you implement them and mention this in changelog, or
+> you keep discussing.
 > 
 
-Applied, thanks!
+I'm sorry I didn't write that clearly. The reality is that V4 I have 
+changed some of the suggestions from Jerome. But there was a part that 
+didn't agree before I sent V4, which Jerome chose to skip. Let's 
+continue with V3, and then prepare this V5.
 
-[1/1] clk: rockchip: Fix memory leak in rockchip_clk_register_pll()
-      commit: 739a6a6bbdb793bd57938cb24aa5a6df89983546
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+> Best regards,
+> Krzysztof
+> 
+> .
