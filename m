@@ -2,110 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804A3C4321E
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 09:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AF3C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 09:26:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237514AbiKWJVp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 04:21:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
+        id S237695AbiKWJ0I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 04:26:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237513AbiKWJVJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 04:21:09 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DF2107E43;
-        Wed, 23 Nov 2022 01:21:07 -0800 (PST)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4NHFwL6JCWz15MqQ;
-        Wed, 23 Nov 2022 17:20:34 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 23 Nov 2022 17:21:05 +0800
-Subject: Re: [PATCH] clk: rockchip: Fix memory leak in
- rockchip_clk_register_pll()
-To:     Heiko Stuebner <heiko@sntech.de>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <mturquette@linaro.org>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20221123032237.64567-1-xiujianfeng@huawei.com>
- <6301679.31r3eYUQgx@phil>
-From:   xiujianfeng <xiujianfeng@huawei.com>
-Message-ID: <648ff5d2-9a52-3a73-46b8-a903315202d9@huawei.com>
-Date:   Wed, 23 Nov 2022 17:21:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        with ESMTP id S237651AbiKWJZo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 04:25:44 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9761917417;
+        Wed, 23 Nov 2022 01:24:36 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id b4so679770pfb.9;
+        Wed, 23 Nov 2022 01:24:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HUxMWImFdFlFIDOsCEiIbn33y9KXI+sgMRS7gd08XCc=;
+        b=SPKnNkM3UoDe6C+kiqTEwh+QimzFLMn0A1LJjNzD/Exd6JKDBm+ubEFhJANKMMYJ3n
+         noT8hlInwGISr4G6CiEahZhsh7RroNaZn7UfXDsKWtE1jsLva57fbOgzjcDzRGN69D0h
+         OVdy+wXU5/UY0wDwV6D9cCJBNnrkwz1mzPWQIO0xMi54d5UaP2rAGASNJZCR4G6cXGnA
+         hVF/e89azTZje+O5I89YUmqZ8AYe6dHAdXFbxJ+8h0R9SL4qiabUAKiAxE0IkafKce3k
+         23zbYmFR32Zuqb7hBZs6X9PhZI1619ktfIJc2TYisHsnCNgSs6f1E7df4cGq3wbxrJAU
+         5YxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HUxMWImFdFlFIDOsCEiIbn33y9KXI+sgMRS7gd08XCc=;
+        b=61xRYL3ZFA16PunqttCp9dgI19IXSHPGi0f33PCMitwLFIeT0EJYxLhgkXjEMRUVvV
+         4WlMrDeBDP6iZ2j9xUICdt8RbzX5wrBuaQR5IBlXbzBRBIH0jnxvRV5iXAroWQ/gr5mJ
+         G5LTHQ2ssfboYWKzPaYYrm+rLiBheHR1WiWyYnLL2zYBkVADKAwTAApL5uhXziaDhRbl
+         esNei+31ASepGU7rJ26Iv4/47H1iNMEjLpNlAEX87Ix/qzbIKSNHEvIORkGBOylp42ig
+         lBZbMU6b/6WE6DLFVh39ONFLgNj/SiQ3D/Lb2lP5PuSqGAxZZX/RKG1lnm4aZ9H08ZUw
+         wWaw==
+X-Gm-Message-State: ANoB5pl+/S3AVJH+SBgJ01QJAvJuhnCHijybtBbYLFBoes2Zf6Rvp8aa
+        AQ19hyXpS1R+9fxOPvrVV2UJP97oddTp3XClZPI=
+X-Google-Smtp-Source: AA0mqf5HYg51oCkzTJ1zaC5Ac1wFnubNUWUChJon4uOPQ1vg2i7wbWSyWM/3nLNe7Z5gaUZROV7ECIihFH8LDIZ/kjc=
+X-Received: by 2002:aa7:9af5:0:b0:56c:b5fc:9167 with SMTP id
+ y21-20020aa79af5000000b0056cb5fc9167mr9451242pfp.40.1669195475987; Wed, 23
+ Nov 2022 01:24:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6301679.31r3eYUQgx@phil>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.112]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+References: <20221116214655.1116467-1-robimarko@gmail.com> <20221123023027.487A7C433D7@smtp.kernel.org>
+In-Reply-To: <20221123023027.487A7C433D7@smtp.kernel.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Wed, 23 Nov 2022 10:24:25 +0100
+Message-ID: <CAOX2RU4xzOH_EHBWvA86L5Agmyvub2Uu1dpgQBiWmnx26hYN_Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: qcom: ipq8074: populate fw_name for all parents
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        Christian Marangi <ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Wed, 23 Nov 2022 at 03:30, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Robert Marko (2022-11-16 13:46:55)
+> > It appears that having only .name populated in parent_data for clocks
+> > which are only globally searchable currently will not work as the clk core
+> > won't copy that name if there is no .fw_name present as well.
+> >
+> > So, populate .fw_name for all parent clocks in parent_data.
+> >
+> > Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
+> >
+> > Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > ---
+> > Changes in v2:
+> > * Add fw_name for PCIe PHY pipe clocks as well
+> > ---
+> >  drivers/clk/qcom/gcc-ipq8074.c | 52 +++++++++++++++++-----------------
+> >  1 file changed, 26 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> > index d231866804f6..8374cc40915a 100644
+> > --- a/drivers/clk/qcom/gcc-ipq8074.c
+> > +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> > @@ -680,7 +680,7 @@ static struct clk_rcg2 pcie0_aux_clk_src = {
+> >  };
+> >
+> >  static const struct clk_parent_data gcc_pcie20_phy0_pipe_clk_xo[] = {
+> > -       { .name = "pcie20_phy0_pipe_clk" },
+> > +       { .fw_name = "pcie0_pipe", .name = "pcie20_phy0_pipe_clk" },
+>
+> Is there a DT binding update for these firmware names?
 
-ÔÚ 2022/11/23 17:01, Heiko Stuebner Ð´µÀ:
-> Hi,
-> 
-> Am Mittwoch, 23. November 2022, 04:22:37 CET schrieb Xiu Jianfeng:
->> If clk_register() fails, @pll->rate_table may have allocated memory by
->> kmemdup(), so it needs to be freed, otherwise will cause memory leak
->> issue, this patch fixes it.
->>
->> Fixes: 90c590254051 ("clk: rockchip: add clock type for pll clocks and pll used on rk3066")
->> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->> ---
->>   drivers/clk/rockchip/clk-pll.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
->> index 4b9840994295..dc4ce280d125 100644
->> --- a/drivers/clk/rockchip/clk-pll.c
->> +++ b/drivers/clk/rockchip/clk-pll.c
->> @@ -1200,6 +1200,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
->>   	clk_unregister(mux_clk);
->>   	mux_clk = pll_clk;
->>   err_mux:
->> +	kfree(pll->rate_table);
-> 
-> I think this free needs to go up to the err_pll block.
-> 
-> In the code it is
-> - clk_register(pll_mux->hw)   -> err_mux
-> - kmemdup
-> - clk_register(pll->hw)	-> err_pll
-> 
-> so the kfree for the rate-table should probably
-> be at
-> 	err_pll:
-> 		kfree(rate_table)
+Hi Stephen,
+I have that name documented as part of series for passing the QMP
+PCI output clock directly to GCC instead of global matching that
+I wanted to send after this and PCI fixups were merged.
 
-Thanks for you review, I think here should be kfree(pll->rate_table) 
-instead of kfree(rate_table), because @rate_table is the intput param 
-while pll->rate_table is the new allocated memory.
+I can change it to match the global name, but that is a bit confusing
+as pcie20_phy0_pipe_clk is actually from the Gen3 PHY but the GCC
+driver was made for v1 of the SoC which was pre-production and then
+it got updated to support v2 which is only supported so the name stuck
+as it would break backwards compatibility.
 
-v2 already sent.
-
-> 		clk_unregister(mux_clk);
-> 		...
-> 
-> 
-> Heiko
-> 
->>   	kfree(pll);
->>   	return mux_clk;
->>   }
->>
-> 
-> 
-> 
-> 
-> 
-> .
-> 
+Regards,
+Robert
