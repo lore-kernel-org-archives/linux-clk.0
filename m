@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE21FC4708C
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57922C3A59F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Nov 2022 14:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237577AbiKWOUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:20:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
+        id S237157AbiKWOUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Nov 2022 09:20:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237750AbiKWOUd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:20:33 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D8D65E54
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:27 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id o7-20020a05600c510700b003cffc0b3374so1427468wms.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:27 -0800 (PST)
+        with ESMTP id S237064AbiKWOUc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2022 09:20:32 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B5C654F5
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:24 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id x5so25549773wrt.7
+        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 06:20:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/oo2ZK3AM2iQWnSIEMV5C2nrt+bywo8WT8cL0P8W1RY=;
-        b=JJUrcWLT59HEdSLBOcfqScs/cAXc4SqMuF0B8FnCe/S26rrUs+UOprN7N05GDxw9XA
-         pviSjWSwGSNACropUReBnsY2ZcLotiXfonzjF/lgCIkbezjZoeyayqtrAsI03x22IOpY
-         TjkBmQ+sApzBjxngRK6M1WPpktHPfFCRBb0nn5qCQZvWasA4dcHeogOfEIlCU/TUJl/C
-         B5kV/kaAF0pzUmFlOywIbMKonGz/4e6a89bnGsfYvwVZmBiNZQ/Tyie+L5x/cVk75ZWB
-         vEUMzj4VrY4leFLcCrkKwJHjro0G8x3COBscIRa7p9IH6BYbsmSvZHB2MQyJiqrrOi/y
-         1Z7g==
+        bh=7te0vel29soMxRllHr57VveDfFHJcBPQQEi2+x2vELY=;
+        b=a3m3viXN3IzLNf7p+L4t8UXvrLaFB6T6anOc0Sg+/ktJ1Tuvjbu8Vb95NXXRv63e9G
+         0ZuDTMg5kkd+jtuCgtnLo0M2P8dgRkUQPgB60Tx5AJAKIR6kdXHnRebfp2OiHxaDl2Sc
+         zta/2/sttlWMSfHMRnxh9XjAgY+q43ZlgOllf2Yhn3/kASu5KKa8H8NYc1KE2AeECTWV
+         DuzRgNTX8q6wQFG9q8Ns0c76AtqaQ+u3j8sRjK2boejgx/vfv9ey5p/bVr3PZnizrkF8
+         RlMJO9cHAWOxnojttB7ZwZnlyAyRcA6aHTbFvxP1Wv9lz0pxuPAYsIV0uu1v8wHCKuns
+         re1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/oo2ZK3AM2iQWnSIEMV5C2nrt+bywo8WT8cL0P8W1RY=;
-        b=aIp+fik8gwyA4cZ57iGJTpsKYYikmDTvWwHMCZzKUQi6JmJr0RUakSoY17YlaoJshL
-         Za94mDk/3cfc3BUbirf1gh52ysfjlPNucC07xTWPNT8rkwGhhMxSW3MLq3FTblN32ceY
-         wNioYHirTP+RPJgOgbsiXbfRKaifwqR2aQOBOJiZno3wNIF4uT5AV70O4RU1fEmFvt6l
-         Xn7Dk7XQ0vl1/VUyuWjaGl6P2cet3emiv1ofOAfMJE8M56TrbGP1kI8HA/uNcZpU4/A6
-         BJUC0M1Y1r4IXtfeh+AN/IREGhEiIoyy7YrM9vfEseZMPKxuLS+UiPZxygOFNOnRgCRM
-         ZMPQ==
-X-Gm-Message-State: ANoB5pk+1P6opvrcVd+ED5XtNzS56fpBypkCClJNpDbrC3ZYwPASgTnJ
-        FlsoMYJadkyaAJskdcIPxggMsw==
-X-Google-Smtp-Source: AA0mqf5EFTIP2KsezGbCbyiQlJUTUDodBHCPOQJiBoejiL9Wo1VTMeCxyYvHKxk5qfiU+vz1soqqlg==
-X-Received: by 2002:a7b:c011:0:b0:3cf:633e:bf6a with SMTP id c17-20020a7bc011000000b003cf633ebf6amr9221623wmb.63.1669213225617;
-        Wed, 23 Nov 2022 06:20:25 -0800 (PST)
+        bh=7te0vel29soMxRllHr57VveDfFHJcBPQQEi2+x2vELY=;
+        b=k9Q0tsWlcRF7De4hW5gWD72bKtNY1bkbm81H3z7QpjYR14dp3MHT0iY7ZUdO/+AAzq
+         sJyI+369CqVZ07915XKAaXRuFpivGpUIF5io1wJMjapqYRYPWw6mre01NdVRP97k3+Sp
+         Lh1SuzLypMiEx1sOa9RhJj+OQ2kqqeKe3/5ymcDlXxcFdFyfm2ifY4j7gWPQu86H27nI
+         eb65DJhGDeEoMpO/Z1fUSPzGIjsaKuRTJq23mBBGOU+iTCo3XxJrbPn5dbEHRo111u/F
+         uI+rNHLU69/WF/zIWn82NtfUMQcEbyQptwYnm2Lid7x2LU5x5yZ+Zoklx+jMu7CPjbia
+         xzAA==
+X-Gm-Message-State: ANoB5pnwnDxCj8ea9k4ibfHEoKkhMJb4NQKzZ6a91kzYlLOTepurUlv+
+        nPQHK4dE+HjmxJSUWJoUrVnFzw==
+X-Google-Smtp-Source: AA0mqf4GrGMqqZLuTtwDxVsItw3cIKwn5sYR13+/xSINmwn3L6b2DfAt7GJd3ZcDy9kPHyuW7Ifo3A==
+X-Received: by 2002:a5d:6e90:0:b0:241:e3b9:36a0 with SMTP id k16-20020a5d6e90000000b00241e3b936a0mr4715085wrz.607.1669213223272;
+        Wed, 23 Nov 2022 06:20:23 -0800 (PST)
 Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd58409desm2837438wmq.13.2022.11.23.06.20.24
+        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd58409desm2837438wmq.13.2022.11.23.06.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 06:20:25 -0800 (PST)
+        Wed, 23 Nov 2022 06:20:22 -0800 (PST)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 4/9] clk: qcom: Add LUCID_OLE PLL type for SM8550
-Date:   Wed, 23 Nov 2022 16:20:04 +0200
-Message-Id: <20221123142009.594781-5-abel.vesa@linaro.org>
+Subject: [PATCH v2 2/9] dt-bindings: clock: Add SM8550 TCSR CC clocks
+Date:   Wed, 23 Nov 2022 16:20:02 +0200
+Message-Id: <20221123142009.594781-3-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221123142009.594781-1-abel.vesa@linaro.org>
 References: <20221123142009.594781-1-abel.vesa@linaro.org>
@@ -72,77 +72,96 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a LUCID_OLE PLL type for SM8550 SoC from Qualcomm.
+Add bindings documentation for clock TCSR driver on SM8550.
 
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
 
 Changes since v1:
- * Added Konrad's R-b tag
+ * based on recent bindings, like Krzysztof asked
+ * used qcom,gcc.yaml and dropped redundant properties
+ * used additionalProperties instead unevaluatedProperties
+ * renamed qcom,tcsrcc-sm8550.h to qcom,sm8550-tcsrcc.h, to match
+   compatible
+ * added dual lincese to qcom,sm8550-tcsrcc.h
+ * moved patch to the beginning of patchset
+ * dropped redundant "bindings" from subject line
 
- drivers/clk/qcom/clk-alpha-pll.c | 16 ++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  5 +++++
- 2 files changed, 21 insertions(+)
+ .../bindings/clock/qcom,sm8550-tcsrcc.yaml    | 39 +++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm8550-tcsrcc.h    | 18 +++++++++
+ 2 files changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 1973d79c9465..f9e4cfd7261c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -155,6 +155,22 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL_U] = 0x30,
- 		[PLL_OFF_TEST_CTL_U1] = 0x34,
- 	},
-+	[CLK_ALPHA_PLL_TYPE_LUCID_OLE] = {
-+		[PLL_OFF_OPMODE] = 0x04,
-+		[PLL_OFF_STATE] = 0x08,
-+		[PLL_OFF_STATUS] = 0x0c,
-+		[PLL_OFF_L_VAL] = 0x10,
-+		[PLL_OFF_ALPHA_VAL] = 0x14,
-+		[PLL_OFF_USER_CTL] = 0x18,
-+		[PLL_OFF_USER_CTL_U] = 0x1c,
-+		[PLL_OFF_CONFIG_CTL] = 0x20,
-+		[PLL_OFF_CONFIG_CTL_U] = 0x24,
-+		[PLL_OFF_CONFIG_CTL_U1] = 0x28,
-+		[PLL_OFF_TEST_CTL] = 0x2c,
-+		[PLL_OFF_TEST_CTL_U] = 0x30,
-+		[PLL_OFF_TEST_CTL_U1] = 0x34,
-+		[PLL_OFF_TEST_CTL_U2] = 0x38,
-+	},
- 	[CLK_ALPHA_PLL_TYPE_RIVIAN_EVO] = {
- 		[PLL_OFF_OPMODE] = 0x04,
- 		[PLL_OFF_STATUS] = 0x0c,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index f9524b3fce6b..2bdae362c827 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -18,6 +18,7 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_AGERA,
- 	CLK_ALPHA_PLL_TYPE_ZONDA,
- 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
-+	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
- 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
- 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
- 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
-@@ -38,6 +39,8 @@ enum {
- 	PLL_OFF_TEST_CTL,
- 	PLL_OFF_TEST_CTL_U,
- 	PLL_OFF_TEST_CTL_U1,
-+	PLL_OFF_TEST_CTL_U2,
-+	PLL_OFF_STATE,
- 	PLL_OFF_STATUS,
- 	PLL_OFF_OPMODE,
- 	PLL_OFF_FRAC,
-@@ -160,7 +163,9 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
- extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
- extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
- extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
-+#define clk_alpha_pll_fixed_lucid_ole_ops clk_alpha_pll_fixed_lucid_evo_ops
- extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
-+#define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
- 
- extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
- #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
+new file mode 100644
+index 000000000000..a4531a7cad8c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
+@@ -0,0 +1,39 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sm8550-tcsrcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm TCSR Clock Controller on SM8550
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++
++description: |
++  Qualcomm TCSR clock control module provides the clocks, resets and
++  power domains on SM8550
++
++  See also:: include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
++
++allOf:
++  - $ref qcom,gcc.yaml#
++
++properties:
++  compatible:
++    const: qcom,sm8550-tcsrcc
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@1fc0000 {
++      compatible = "qcom,sm8550-tcsrcc";
++      reg = <0x1fc0000 0x30000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
++
++...
+diff --git a/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h b/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
+new file mode 100644
+index 000000000000..4ce98ffc43ce
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2022, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2022, Linaro Limited
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
++#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
++
++/* GCC clocks */
++#define TCSR_PCIE_0_CLKREF_EN					0
++#define TCSR_PCIE_1_CLKREF_EN					1
++#define TCSR_UFS_CLKREF_EN					2
++#define TCSR_UFS_PAD_CLKREF_EN					3
++#define TCSR_USB2_CLKREF_EN					4
++#define TCSR_USB3_CLKREF_EN					5
++
++#endif
 -- 
 2.34.1
 
