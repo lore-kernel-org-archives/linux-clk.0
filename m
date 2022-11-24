@@ -2,99 +2,231 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754DAC352A1
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Nov 2022 19:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B38C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Nov 2022 19:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbiKXTQ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Nov 2022 14:16:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58968 "EHLO
+        id S229583AbiKXTao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Nov 2022 14:30:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbiKXTQz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2022 14:16:55 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9E07187A67;
-        Thu, 24 Nov 2022 11:16:53 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.96,190,1665414000"; 
-   d="scan'208";a="141120254"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Nov 2022 04:16:53 +0900
-Received: from localhost.localdomain (unknown [10.226.92.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0522B40C6827;
-        Fri, 25 Nov 2022 04:16:50 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH v2 1/5] clk: renesas: r9a09g011: Add PWM clock and reset entries
-Date:   Thu, 24 Nov 2022 19:16:39 +0000
-Message-Id: <20221124191643.3193423-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221124191643.3193423-1-biju.das.jz@bp.renesas.com>
-References: <20221124191643.3193423-1-biju.das.jz@bp.renesas.com>
+        with ESMTP id S229555AbiKXTam (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2022 14:30:42 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E103F078;
+        Thu, 24 Nov 2022 11:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669318241; x=1700854241;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bHTOzMzFXVcaodmnHlYzawapV3y1nvrCEByICL6XbKc=;
+  b=Mo7lZHMC5pFaB+43Fodrx1MtsRovm33M6+ls1+iS1DNFcjKFwXGfrt5U
+   u+wTDryQHOdpbWN7rfaoHVfmwkCxbGPWHEbkKeFf5ewQhbTfTum9lEYne
+   FUey/XeI0qHpKY2S3xHgg0IKtL1Fq98pPJ9VD+iKW5M0fEVHwRWWVZJvE
+   1BATSyF1gpKrKAx8ymdhsS02/c9RVM0I3DLp6/DF+xsJh4F2klAXlTTEz
+   D3oWIwm07OgEY6JgsPsHRZVc/dbUNEcHQw+UdUj6VdTNFTgOKu8MCVe0L
+   tn0fyeRQ1y3vLf9JJ/P/zL2BXPiGvy1FXhl2l9uaXbT+2sZUnvZG98QHg
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10541"; a="294741242"
+X-IronPort-AV: E=Sophos;i="5.96,191,1665471600"; 
+   d="scan'208";a="294741242"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2022 11:30:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10541"; a="748339411"
+X-IronPort-AV: E=Sophos;i="5.96,191,1665471600"; 
+   d="scan'208";a="748339411"
+Received: from lkp-server01.sh.intel.com (HELO 64a2d449c951) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 24 Nov 2022 11:30:33 -0800
+Received: from kbuild by 64a2d449c951 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oyHvd-0004BZ-03;
+        Thu, 24 Nov 2022 19:30:33 +0000
+Date:   Fri, 25 Nov 2022 03:29:39 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     nouveau@lists.freedesktop.org, netfilter-devel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-usb@vger.kernel.org,
+        linux-mm@kvack.org, linux-iio@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, coreteam@netfilter.org,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ c35bd4e428856ed8c1fae7f7dfa08a9141c153d1
+Message-ID: <637fc623.F26g8M0ZuGkeOPM2%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add PWM{8..14} clock and reset entries to CPG driver.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: c35bd4e428856ed8c1fae7f7dfa08a9141c153d1  Add linux-next specific files for 20221124
 
-The PWM IP on the RZ/V2M comes with 16 channels, but the ISP has
-full control of channels 0 to 7, and channel 15, therefore Linux
-is only allowed to use channels 8 to 14.
+Error/Warning reports:
 
-The PWM channel 15 shares apb clock and reset with PWM{8..14}.
-The reset is deasserted by the bootloader/ISP.
+https://lore.kernel.org/oe-kbuild-all/202211090634.RyFKK0WS-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202211241736.K6437e7j-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202211242021.FDZRFNA8-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202211242120.MzZVGULn-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202211250227.grPjpxyN-lkp@intel.com
 
-Add PWM{8..14} clocks to CPG driver and mark apb clock as
-critical clock, so that the apb clock will be always on.
+Error/Warning: (recently discovered and may have been fixed)
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Updated commit description
- * Replaced pwm8_15_pclk->cperi_grpf
- * Added reset entry R9A09G011_PWM_GPF_PRESETN
----
- drivers/clk/renesas/r9a09g011-cpg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+arch/arm/mach-s3c/devs.c:32:10: fatal error: linux/platform_data/dma-s3c24xx.h: No such file or directory
+arch/powerpc/kernel/kvm_emul.o: warning: objtool: kvm_template_end(): can't find starting instruction
+arch/powerpc/kernel/optprobes_head.o: warning: objtool: optprobe_template_end(): can't find starting instruction
+drivers/clk/clk.c:1022:5: error: redefinition of 'clk_prepare'
+drivers/clk/clk.c:1268:6: error: redefinition of 'clk_is_enabled_when_prepared'
+drivers/clk/clk.c:941:6: error: redefinition of 'clk_unprepare'
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:4968: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:5075:24: warning: implicit conversion from 'enum <anonymous>' to 'enum dc_status' [-Wenum-conversion]
+drivers/gpu/drm/amd/amdgpu/../display/dc/irq/dcn201/irq_service_dcn201.c:40:20: warning: no previous prototype for 'to_dal_irq_source_dcn201' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/engine/fifo/gf100.c:451:1: warning: no previous prototype for 'gf100_fifo_nonstall_block' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/engine/fifo/gf100.c:451:1: warning: no previous prototype for function 'gf100_fifo_nonstall_block' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/engine/fifo/runl.c:34:1: warning: no previous prototype for 'nvkm_engn_cgrp_get' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/engine/fifo/runl.c:34:1: warning: no previous prototype for function 'nvkm_engn_cgrp_get' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/engine/gr/tu102.c:210:1: warning: no previous prototype for 'tu102_gr_load' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/engine/gr/tu102.c:210:1: warning: no previous prototype for function 'tu102_gr_load' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/nvfw/acr.c:49:1: warning: no previous prototype for 'wpr_generic_header_dump' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/nvfw/acr.c:49:1: warning: no previous prototype for function 'wpr_generic_header_dump' [-Wmissing-prototypes]
+drivers/gpu/drm/nouveau/nvkm/subdev/acr/lsfw.c:221:21: warning: variable 'loc' set but not used [-Wunused-but-set-variable]
+drivers/iio/addac/ad74115.c:320:27: warning: 'ad74115_dac_slew_rate_hz_tbl' defined but not used [-Wunused-const-variable=]
+mm/vmscan.c:4090:30: error: implicit declaration of function 'pmd_young'; did you mean 'pte_young'? [-Werror=implicit-function-declaration]
+net/netfilter/nf_conntrack_netlink.c:2674:6: warning: unused variable 'mark' [-Wunused-variable]
+vmlinux.o: warning: objtool: __btrfs_map_block+0x1d77: unreachable instruction
 
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index fbef1b35d254..dd5e442ec4a9 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -136,6 +136,14 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_MOD("iic_pclk1",	R9A09G011_IIC_PCLK1,	 CLK_SEL_E,    0x424, 12),
- 	DEF_MOD("wdt0_pclk",	R9A09G011_WDT0_PCLK,	 CLK_SEL_E,    0x428, 12),
- 	DEF_MOD("wdt0_clk",	R9A09G011_WDT0_CLK,	 CLK_MAIN,     0x428, 13),
-+	DEF_MOD("cperi_grpf",	R9A09G011_CPERI_GRPF_PCLK, CLK_SEL_E,  0x434, 0),
-+	DEF_MOD("pwm8_clk",	R9A09G011_PWM8_CLK,	 CLK_MAIN,     0x434, 4),
-+	DEF_MOD("pwm9_clk",	R9A09G011_PWM9_CLK,	 CLK_MAIN,     0x434, 5),
-+	DEF_MOD("pwm10_clk",	R9A09G011_PWM10_CLK,	 CLK_MAIN,     0x434, 6),
-+	DEF_MOD("pwm11_clk",	R9A09G011_PWM11_CLK,	 CLK_MAIN,     0x434, 7),
-+	DEF_MOD("pwm12_clk",	R9A09G011_PWM12_CLK,	 CLK_MAIN,     0x434, 8),
-+	DEF_MOD("pwm13_clk",	R9A09G011_PWM13_CLK,	 CLK_MAIN,     0x434, 9),
-+	DEF_MOD("pwm14_clk",	R9A09G011_PWM14_CLK,	 CLK_MAIN,     0x434, 10),
- 	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	 CLK_SEL_E,    0x438, 4),
- 	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	 CLK_SEL_W0,   0x438, 5),
- 	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	 CLK_DIV_A,    0x448, 0),
-@@ -147,11 +155,13 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
- 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
- 	DEF_RST(R9A09G011_IIC_GPA_PRESETN,	0x614, 8),
- 	DEF_RST(R9A09G011_IIC_GPB_PRESETN,	0x614, 9),
-+	DEF_RST_MON(R9A09G011_PWM_GPF_PRESETN,	0x614, 5, 23),
- 	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
- };
- 
- static const unsigned int r9a09g011_crit_mod_clks[] __initconst = {
- 	MOD_CLK_BASE + R9A09G011_CA53_CLK,
-+	MOD_CLK_BASE + R9A09G011_CPERI_GRPF_PCLK,
- 	MOD_CLK_BASE + R9A09G011_GIC_CLK,
- 	MOD_CLK_BASE + R9A09G011_SYC_CNT_CLK,
- 	MOD_CLK_BASE + R9A09G011_URT_PCLK,
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+drivers/usb/fotg210/fotg210-udc.c:632:17: sparse: sparse: restricted __le16 degrades to integer
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
+|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
+|-- alpha-randconfig-r005-20221124
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
+|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
+|-- alpha-randconfig-r016-20221124
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
+|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
+|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
+|-- arc-randconfig-r004-20221124
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
+|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
+|-- arc-randconfig-r043-20221124
+|   `-- mm-vmscan.c:error:implicit-declaration-of-function-pmd_young
+|-- arm-allyesconfig
+|   |-- arch-arm-mach-s3c-devs.c:fatal-error:linux-platform_data-dma-s3c24xx.h:No-such-file-or-directory
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
+|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
+|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
+clang_recent_errors
+|-- i386-randconfig-a013
+|   `-- net-netfilter-nf_conntrack_netlink.c:warning:unused-variable-mark
+`-- riscv-randconfig-r042-20221124
+    |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-function-gf100_fifo_nonstall_block
+    |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-function-nvkm_engn_cgrp_get
+    |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-function-tu102_gr_load
+    `-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-function-wpr_generic_header_dump
+
+elapsed time: 731m
+
+configs tested: 53
+configs skipped: 2
+
+gcc tested configs:
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              defconfig
+arc                                 defconfig
+s390                             allmodconfig
+arm                                 defconfig
+alpha                               defconfig
+arc                  randconfig-r043-20221124
+s390                                defconfig
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
+x86_64                           rhel-8.3-kvm
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+ia64                             allmodconfig
+x86_64                        randconfig-a002
+i386                          randconfig-a014
+s390                             allyesconfig
+arm                              allyesconfig
+i386                          randconfig-a001
+i386                                defconfig
+x86_64                          rhel-8.3-func
+i386                          randconfig-a003
+x86_64                    rhel-8.3-kselftests
+m68k                             allmodconfig
+powerpc                           allnoconfig
+x86_64                        randconfig-a006
+powerpc                          allmodconfig
+i386                          randconfig-a005
+arc                              allyesconfig
+i386                          randconfig-a012
+arm64                            allyesconfig
+x86_64                        randconfig-a004
+sh                               allmodconfig
+i386                          randconfig-a016
+alpha                            allyesconfig
+mips                             allyesconfig
+m68k                             allyesconfig
+i386                             allyesconfig
+
+clang tested configs:
+hexagon              randconfig-r041-20221124
+hexagon              randconfig-r045-20221124
+s390                 randconfig-r044-20221124
+i386                          randconfig-a013
+riscv                randconfig-r042-20221124
+x86_64                        randconfig-a001
+i386                          randconfig-a011
+i386                          randconfig-a002
+i386                          randconfig-a006
+x86_64                        randconfig-a003
+i386                          randconfig-a004
+x86_64                        randconfig-a005
+i386                          randconfig-a015
+x86_64                          rhel-8.3-rust
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
