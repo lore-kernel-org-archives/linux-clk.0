@@ -2,102 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD30C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Nov 2022 07:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7398BC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Nov 2022 08:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbiKXHMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Nov 2022 02:12:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44290 "EHLO
+        id S229897AbiKXIka (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Nov 2022 03:40:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbiKXHMO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2022 02:12:14 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229D3CFA47
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 23:16:36 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id 6so875994pgm.6
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2022 23:16:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9beI1qbDaBEZGBMzOodYXezAJNnkCn943LXJypsps08=;
-        b=jN9Iu2JG6Jbf9f/Vtx6/x8W99mbfvmkmA5JpUTuuOhHuX9hE65G+zwT360z98Yxh2l
-         i6PqDF91yJmzwCKNYEVFuLVfqGCqoHx9I7wNV8pa819eMDoiMR27SZF1GHdGnGDHcMWz
-         pqI4i03rsZDpQ60ONyvQHuYR+N3femATVqrSC4hLc3ih0MmJpf23tjAqEmigk+Q4lN5p
-         TjriD73VK+kqD8Wil5LA1NXQ4waHtGM3IZBFIczk95hCWTGki63dLVXFv0wvyqKSahPp
-         nd3iHhwTtHF7fG/CtXcp1E5PNjqsgHvp71L23Lt4pdmYQDMtQS6xnA3gM9hUIGynee9E
-         kaMQ==
+        with ESMTP id S230023AbiKXIkY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2022 03:40:24 -0500
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C3D79E05;
+        Thu, 24 Nov 2022 00:40:24 -0800 (PST)
+Received: by mail-qv1-f42.google.com with SMTP id i12so597526qvs.2;
+        Thu, 24 Nov 2022 00:40:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9beI1qbDaBEZGBMzOodYXezAJNnkCn943LXJypsps08=;
-        b=hqd1hRUs89HQhF1dhekAoq5dHJxvOagkqPRog9xo2t+2V5cEWsUmlKO/OgBzExbdU2
-         e3Sdyv54Log7lamwCG8R7fHsyMN6lXE085QSGcZhHp5pCZFFsJoAZwdmLMWzCFUcexff
-         s2T8Yk3RPnJHemyNw9bIx5rRw2ZeUwTECJGSo3NZOfnzYdqm4Wuclg02BlFK0IfFbY31
-         VvFLwAdGxVn1DIXzzLHPYunBvvh7TNy27r1nF8koKJ1PyYoeyMWQ7iHrIO2ZyYxa2woD
-         UTajJv8UojxqIO19lhmWJ6VCMRhB/dP9Mz5giqWTESt1Qvge8pv3MVcpw3HcHgaJxm0M
-         ca5g==
-X-Gm-Message-State: ANoB5pn+iPgvs23LEga1Y8Ul/ghK2jvxw1JvagxCKNFABRZKHpTNIqpO
-        ZL9o37H1yj9kHiMi2nFQZ6HkSQ==
-X-Google-Smtp-Source: AA0mqf539xW7yp+XmSaeh7QyKEx/uI4+Px0TRaTKiiPa7cXAYmK2DoSN46/6FwkQRO+vECyNwcPwTg==
-X-Received: by 2002:aa7:8c19:0:b0:573:620a:3b1c with SMTP id c25-20020aa78c19000000b00573620a3b1cmr13160104pfd.50.1669274195379;
-        Wed, 23 Nov 2022 23:16:35 -0800 (PST)
-Received: from localhost ([122.172.85.60])
-        by smtp.gmail.com with ESMTPSA id k4-20020a170902c40400b001867fdec154sm414181plk.224.2022.11.23.23.16.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 23:16:34 -0800 (PST)
-Date:   Thu, 24 Nov 2022 12:46:32 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2 0/9] dt-bindings: cleanup titles
-Message-ID: <20221124071632.5cadtc6pbdvdv3xb@vireshk-i7>
-References: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6mHrJdqmIqTbAfjlnJ1O6QyoDPtWi7jgY+Jyky+p5yk=;
+        b=hjivPxAliNrh4GnjwB0ln+bw5xT9l2xjN6M6hCiVcAmf/cI+U34Ee9fVp7Wqrvvhsa
+         ShrFcCLN+ww7t4KSKErAkPLzQRwclG8mUq3AUcrvZgTN0nwEJ/hrxhktUVuUNXisB1BF
+         dtysfoHmr3EcfEOTnTNkubt4+YEaytrTbRvJU6L3+ARryiSxFD4cKzk6jvSIWEqQWgLn
+         dxNVQ6PRGXKW8ix189FwFa78iMc2vQ/nE14bWI/cVIqVde0nDjwW4JTW7ACuedzuCWsA
+         YiVCPYrojStksNCXS/C7LMRRLILtW88nxxrml/hI5fTUzuATEpwEnlNMG4HfFajsFlms
+         y1vw==
+X-Gm-Message-State: ANoB5ply6CkNtS52g9ypgE24fHzCWtKuv9OKUyhD4VOeCtxrHsTMoAg7
+        rs5m3oft8EvUF3lAYWDpAk9Afz+/GWLdfQ==
+X-Google-Smtp-Source: AA0mqf5vNnaOuQn/oE4jWlNJHewrVqOot9Pfjhm9xn7ifryICwLmC8c2WUDi+rpEsweutIlNM+DOTA==
+X-Received: by 2002:a0c:ec4a:0:b0:4bb:c9fc:cae5 with SMTP id n10-20020a0cec4a000000b004bbc9fccae5mr12800092qvq.1.1669279223091;
+        Thu, 24 Nov 2022 00:40:23 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id f17-20020ac84711000000b003a6328ee7acsm278138qtp.87.2022.11.24.00.40.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Nov 2022 00:40:22 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id y83so1054276yby.12;
+        Thu, 24 Nov 2022 00:40:22 -0800 (PST)
+X-Received: by 2002:a5b:24b:0:b0:6ca:3b11:8d76 with SMTP id
+ g11-20020a5b024b000000b006ca3b118d76mr11765047ybp.202.1669279221988; Thu, 24
+ Nov 2022 00:40:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
+References: <20221118131641.469238-1-biju.das.jz@bp.renesas.com> <20221118131641.469238-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20221118131641.469238-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 24 Nov 2022 09:40:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWONMvHeShCK76_2G0FiYKsqTO57kKOhG0nN1Sb09+6YQ@mail.gmail.com>
+Message-ID: <CAMuHMdWONMvHeShCK76_2G0FiYKsqTO57kKOhG0nN1Sb09+6YQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: renesas: r9a09g011: Add PWM clock entries
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-11-22, 12:06, Krzysztof Kozlowski wrote:
->  .../devicetree/bindings/cpufreq/cpufreq-mediatek-hw.yaml        | 2 +-
->  .../devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml         | 2 +-
->  Documentation/devicetree/bindings/opp/opp-v1.yaml               | 2 +-
->  Documentation/devicetree/bindings/opp/opp-v2-base.yaml          | 2 +-
->  Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml      | 2 +-
->  Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml    | 2 +-
->  Documentation/devicetree/bindings/opp/opp-v2.yaml               | 2 +-
+Hi Biju,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Thanks for your patch!
 
--- 
-viresh
+On Fri, Nov 18, 2022 at 2:16 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The PWM IP on the RZ/V2M comes with 16 channels, but the ISP has
+> full control of channels 0 to 7, and channel 15, therefore Linux
+> is only allowed to use channels 8 to 14.
+>
+> The PWM channel 15 shares apb clock and reset with PWM{8..14}.
+> The reset is deasserted by the bootloader/ISP.
+
+Shouldn't you add the reset anyway, but make sure it stays deasserted
+by increasing its refcount, cfr. critical clocks?
+
+> Add PWM{8..14} clocks to CPG driver and mark apb clock as
+> critical clock, so that the apb clock will be always on.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+> --- a/drivers/clk/renesas/r9a09g011-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g011-cpg.c
+> @@ -136,6 +136,14 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
+>         DEF_MOD("iic_pclk1",    R9A09G011_IIC_PCLK1,     CLK_SEL_E,    0x424, 12),
+>         DEF_MOD("wdt0_pclk",    R9A09G011_WDT0_PCLK,     CLK_SEL_E,    0x428, 12),
+>         DEF_MOD("wdt0_clk",     R9A09G011_WDT0_CLK,      CLK_MAIN,     0x428, 13),
+> +       DEF_MOD("pwm8_15_pclk", R9A09G011_CPERI_GRPF_PCLK, CLK_SEL_E,  0x434, 0),
+
+"cperi_grpf"?
+
+> +       DEF_MOD("pwm8_clk",     R9A09G011_PWM8_CLK,      CLK_MAIN,     0x434, 4),
+> +       DEF_MOD("pwm9_clk",     R9A09G011_PWM9_CLK,      CLK_MAIN,     0x434, 5),
+> +       DEF_MOD("pwm10_clk",    R9A09G011_PWM10_CLK,     CLK_MAIN,     0x434, 6),
+> +       DEF_MOD("pwm11_clk",    R9A09G011_PWM11_CLK,     CLK_MAIN,     0x434, 7),
+> +       DEF_MOD("pwm12_clk",    R9A09G011_PWM12_CLK,     CLK_MAIN,     0x434, 8),
+> +       DEF_MOD("pwm13_clk",    R9A09G011_PWM13_CLK,     CLK_MAIN,     0x434, 9),
+> +       DEF_MOD("pwm14_clk",    R9A09G011_PWM14_CLK,     CLK_MAIN,     0x434, 10),
+>         DEF_MOD("urt_pclk",     R9A09G011_URT_PCLK,      CLK_SEL_E,    0x438, 4),
+>         DEF_MOD("urt0_clk",     R9A09G011_URT0_CLK,      CLK_SEL_W0,   0x438, 5),
+>         DEF_MOD("ca53",         R9A09G011_CA53_CLK,      CLK_DIV_A,    0x448, 0),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
