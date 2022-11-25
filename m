@@ -2,231 +2,284 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B38C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Nov 2022 19:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED06FC4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Nov 2022 02:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbiKXTao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Nov 2022 14:30:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40152 "EHLO
+        id S229480AbiKYCda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Nov 2022 21:33:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbiKXTam (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2022 14:30:42 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E103F078;
-        Thu, 24 Nov 2022 11:30:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1669318241; x=1700854241;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bHTOzMzFXVcaodmnHlYzawapV3y1nvrCEByICL6XbKc=;
-  b=Mo7lZHMC5pFaB+43Fodrx1MtsRovm33M6+ls1+iS1DNFcjKFwXGfrt5U
-   u+wTDryQHOdpbWN7rfaoHVfmwkCxbGPWHEbkKeFf5ewQhbTfTum9lEYne
-   FUey/XeI0qHpKY2S3xHgg0IKtL1Fq98pPJ9VD+iKW5M0fEVHwRWWVZJvE
-   1BATSyF1gpKrKAx8ymdhsS02/c9RVM0I3DLp6/DF+xsJh4F2klAXlTTEz
-   D3oWIwm07OgEY6JgsPsHRZVc/dbUNEcHQw+UdUj6VdTNFTgOKu8MCVe0L
-   tn0fyeRQ1y3vLf9JJ/P/zL2BXPiGvy1FXhl2l9uaXbT+2sZUnvZG98QHg
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10541"; a="294741242"
-X-IronPort-AV: E=Sophos;i="5.96,191,1665471600"; 
-   d="scan'208";a="294741242"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2022 11:30:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10541"; a="748339411"
-X-IronPort-AV: E=Sophos;i="5.96,191,1665471600"; 
-   d="scan'208";a="748339411"
-Received: from lkp-server01.sh.intel.com (HELO 64a2d449c951) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 24 Nov 2022 11:30:33 -0800
-Received: from kbuild by 64a2d449c951 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oyHvd-0004BZ-03;
-        Thu, 24 Nov 2022 19:30:33 +0000
-Date:   Fri, 25 Nov 2022 03:29:39 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     nouveau@lists.freedesktop.org, netfilter-devel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-usb@vger.kernel.org,
-        linux-mm@kvack.org, linux-iio@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, coreteam@netfilter.org,
-        amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- c35bd4e428856ed8c1fae7f7dfa08a9141c153d1
-Message-ID: <637fc623.F26g8M0ZuGkeOPM2%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229452AbiKYCd3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2022 21:33:29 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B271F62C;
+        Thu, 24 Nov 2022 18:33:25 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id DBA1324E1A4;
+        Fri, 25 Nov 2022 10:33:16 +0800 (CST)
+Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 25 Nov
+ 2022 10:33:17 +0800
+Received: from [192.168.125.106] (183.27.97.81) by EXMBX072.cuchost.com
+ (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 25 Nov
+ 2022 10:33:15 +0800
+Message-ID: <d367c8c3-50ce-585f-9caa-573f42b76064@starfivetech.com>
+Date:   Fri, 25 Nov 2022 10:33:47 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+From:   Hal Feng <hal.feng@starfivetech.com>
+Subject: Re: [PATCH v2 11/14] clk: starfive: Add StarFive JH7110 system clock
+ driver
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20221118010627.70576-1-hal.feng@starfivetech.com>
+ <20221118010627.70576-12-hal.feng@starfivetech.com>
+ <CAJM55Z9fshBmW0x4B4+9s=tffqcPrAd7MbdbvmS0kCBdJunHPg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAJM55Z9fshBmW0x4B4+9s=tffqcPrAd7MbdbvmS0kCBdJunHPg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.81]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX072.cuchost.com
+ (172.16.6.82)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: c35bd4e428856ed8c1fae7f7dfa08a9141c153d1  Add linux-next specific files for 20221124
+On Sat, 19 Nov 2022 01:03:54 +0800, Emil Renner Berthing wrote:
+> On Fri, 18 Nov 2022 at 02:06, Hal Feng <hal.feng@starfivetech.com> wrote:
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+>> new file mode 100644
+>> index 000000000000..3c1afd691210
+>> --- /dev/null
+>> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+>> @@ -0,0 +1,650 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * StarFive JH7110 System Clock Driver
+>> + *
+>> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+>> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <dt-bindings/clock/starfive-jh7110.h>
+>> +
+>> +#include "clk-starfive-jh71x0.h"
+>> +
+>> +/* external clocks */
+>> +#define JH7110_SYSCLK_OSC                      (JH7110_SYSCLK_END + 0)
+>> +#define JH7110_SYSCLK_GMAC1_RMII_REFIN         (JH7110_SYSCLK_END + 1)
+>> +#define JH7110_SYSCLK_GMAC1_RGMII_RXIN         (JH7110_SYSCLK_END + 2)
+>> +#define JH7110_SYSCLK_I2STX_BCLK_EXT           (JH7110_SYSCLK_END + 3)
+>> +#define JH7110_SYSCLK_I2STX_LRCK_EXT           (JH7110_SYSCLK_END + 4)
+>> +#define JH7110_SYSCLK_I2SRX_BCLK_EXT           (JH7110_SYSCLK_END + 5)
+>> +#define JH7110_SYSCLK_I2SRX_LRCK_EXT           (JH7110_SYSCLK_END + 6)
+>> +#define JH7110_SYSCLK_TDM_EXT                  (JH7110_SYSCLK_END + 7)
+>> +#define JH7110_SYSCLK_MCLK_EXT                 (JH7110_SYSCLK_END + 8)
+>> +
+>> +static const struct jh71x0_clk_data jh7110_sysclk_data[] __initconst = {
+>> +       /* root */
+>> +       JH71X0__MUX(JH7110_SYSCLK_CPU_ROOT, "cpu_root", 2,
+>> +                   JH7110_SYSCLK_OSC,
+>> +                   JH7110_SYSCLK_PLL0_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_CPU_CORE, "cpu_core", 7,
+>> +                   JH7110_SYSCLK_CPU_ROOT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_CPU_BUS, "cpu_bus", 2,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0__MUX(JH7110_SYSCLK_GPU_ROOT, "gpu_root", 2,
+>> +                   JH7110_SYSCLK_PLL2_OUT,
+>> +                   JH7110_SYSCLK_PLL1_OUT),
+>> +       JH71X0_MDIV(JH7110_SYSCLK_PERH_ROOT, "perh_root", 2, 2,
+>> +                   JH7110_SYSCLK_PLL0_OUT,
+>> +                   JH7110_SYSCLK_PLL2_OUT),
+>> +       JH71X0__MUX(JH7110_SYSCLK_BUS_ROOT, "bus_root", 2,
+>> +                   JH7110_SYSCLK_OSC,
+>> +                   JH7110_SYSCLK_PLL2_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_NOCSTG_BUS, "nocstg_bus", 3,
+>> +                   JH7110_SYSCLK_BUS_ROOT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_AXI_CFG0, "axi_cfg0", 3,
+>> +                   JH7110_SYSCLK_BUS_ROOT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_STG_AXIAHB, "stg_axiahb", 2,
+>> +                   JH7110_SYSCLK_AXI_CFG0),
+>> +       JH71X0_GATE(JH7110_SYSCLK_AHB0, "ahb0", CLK_IS_CRITICAL,
+>> +                   JH7110_SYSCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_SYSCLK_AHB1, "ahb1", CLK_IS_CRITICAL,
+>> +                   JH7110_SYSCLK_STG_AXIAHB),
+>> +       JH71X0__DIV(JH7110_SYSCLK_APB_BUS_FUNC, "apb_bus_func", 8,
+>> +                   JH7110_SYSCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_SYSCLK_APB0, "apb0", CLK_IS_CRITICAL,
+>> +                   JH7110_SYSCLK_APB_BUS),
+>> +       JH71X0__DIV(JH7110_SYSCLK_PLL0_DIV2, "pll0_div2", 2,
+>> +                   JH7110_SYSCLK_PLL0_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_PLL1_DIV2, "pll1_div2", 2,
+>> +                   JH7110_SYSCLK_PLL1_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_PLL2_DIV2, "pll2_div2", 2,
+>> +                   JH7110_SYSCLK_PLL2_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_AUDIO_ROOT, "audio_root", 8,
+>> +                   JH7110_SYSCLK_PLL2_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_MCLK_INNER, "mclk_inner", 64,
+>> +                   JH7110_SYSCLK_AUDIO_ROOT),
+>> +       JH71X0__MUX(JH7110_SYSCLK_MCLK, "mclk", 2,
+>> +                   JH7110_SYSCLK_MCLK_INNER,
+>> +                   JH7110_SYSCLK_MCLK_EXT),
+>> +       JH71X0_GATE(JH7110_SYSCLK_MCLK_OUT, "mclk_out", 0,
+>> +                   JH7110_SYSCLK_MCLK_INNER),
+>> +       JH71X0_MDIV(JH7110_SYSCLK_ISP_2X, "isp_2x", 8, 2,
+>> +                   JH7110_SYSCLK_PLL2_OUT,
+>> +                   JH7110_SYSCLK_PLL1_OUT),
+>> +       JH71X0__DIV(JH7110_SYSCLK_ISP_AXI, "isp_axi", 4,
+>> +                   JH7110_SYSCLK_ISP_2X),
+>> +       JH71X0_GDIV(JH7110_SYSCLK_GCLK0, "gclk0", 0, 62,
+>> +                   JH7110_SYSCLK_PLL0_DIV2),
+>> +       JH71X0_GDIV(JH7110_SYSCLK_GCLK1, "gclk1", 0, 62,
+>> +                   JH7110_SYSCLK_PLL1_DIV2),
+>> +       JH71X0_GDIV(JH7110_SYSCLK_GCLK2, "gclk2", 0, 62,
+>> +                   JH7110_SYSCLK_PLL2_DIV2),
+>> +       /* cores */
+>> +       JH71X0_GATE(JH7110_SYSCLK_CORE, "core_clk", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_CORE1, "core_clk1", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_CORE2, "core_clk2", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_CORE3, "core_clk3", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_CORE4, "core_clk4", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_DEBUG, "debug_clk", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_BUS),
+>> +       JH71X0__DIV(JH7110_SYSCLK_RTC_TOGGLE, "rtc_toggle", 6,
+>> +                   JH7110_SYSCLK_OSC),
+>> +       JH71X0_GATE(JH7110_SYSCLK_TRACE0, "trace_clk0", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_TRACE1, "trace_clk1", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_TRACE2, "trace_clk2", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_TRACE3, "trace_clk3", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_TRACE4, "trace_clk4", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_CORE),
+>> +       JH71X0_GATE(JH7110_SYSCLK_TRACE_COM, "trace_com", CLK_IGNORE_UNUSED,
+>> +                   JH7110_SYSCLK_CPU_BUS),
+> 
+> Why should these clocks not be turned off if they're not critical like
+> the clocks above?
+> 
+> My guess would be that the clocks for core 1-4 are critical, but maybe
+> not the trace and debug clocks.
 
-Error/Warning reports:
+I synchronized these flags before with StarFive JH7110 SDK which is not
+released yet. But you're right, the core clocks should be enabled and the
+debug/trace clocks could be disabled during system booting. After some
+discussion, we think it's more appropriate to remove the flags of
+trace/debug clocks and set the flags of core clocks as CLK_IS_CRITICAL.
 
-https://lore.kernel.org/oe-kbuild-all/202211090634.RyFKK0WS-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211241736.K6437e7j-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211242021.FDZRFNA8-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211242120.MzZVGULn-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202211250227.grPjpxyN-lkp@intel.com
+> 
+[...]
+>> +};
+>> +
+>> +static const struct {
+>> +       const char *name;
+>> +       const char *parent;
+>> +       unsigned int mul;
+>> +       unsigned int div;
+>> +} jh7110_fixed_factor_clocks[JH7110_SYSCLK_END - JH7110_SYSCLK_PLL0_OUT] __initconst = {
+>> +       [JH7110_SYSCLK_PLL0_OUT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "pll0_out", "osc", 625, 12 /* 24MHz -> 1250.0MHz */
+>> +       },
+>> +       [JH7110_SYSCLK_PLL1_OUT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "pll1_out", "osc", 533, 12 /* 24MHz -> 1066.0MHz */
+>> +       },
+>> +       [JH7110_SYSCLK_PLL2_OUT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "pll2_out", "osc", 99, 2 /* 24MHz -> 1188.0MHz */
+>> +       },
+>> +       [JH7110_SYSCLK_PCLK2_MUX_FUNC - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "pclk2_mux_func", "apb_bus_func", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_PCLK2_MUX - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "pclk2_mux", "pclk2_mux_func", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_APB_BUS - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "apb_bus", "pclk2_mux", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_AXI_CFG1 - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "axi_cfg1", "isp_axi", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_APB12 - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "apb12", "apb_bus", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_VOUT_ROOT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "vout_root", "pll2_out", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_VENC_ROOT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "venc_root", "pll2_out", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_VDEC_ROOT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "vdec_root", "pll0_out", 1, 1
+>> +       },
+>> +       [JH7110_SYSCLK_GMACUSB_ROOT - JH7110_SYSCLK_PLL0_OUT] = {
+>> +               "gmacusb_root", "pll0_out", 1, 1
+>> +       },
+>> +};
+> 
+> Having these extra 1-1 clocks that can't be controlled anyway seems unnecessary.
+> Consider sync'ing with my latest jh7110 branch at
+> https://github.com/esmil/linux/tree/jh7110
 
-Error/Warning: (recently discovered and may have been fixed)
+Thanks. I'll have a look.
 
-arch/arm/mach-s3c/devs.c:32:10: fatal error: linux/platform_data/dma-s3c24xx.h: No such file or directory
-arch/powerpc/kernel/kvm_emul.o: warning: objtool: kvm_template_end(): can't find starting instruction
-arch/powerpc/kernel/optprobes_head.o: warning: objtool: optprobe_template_end(): can't find starting instruction
-drivers/clk/clk.c:1022:5: error: redefinition of 'clk_prepare'
-drivers/clk/clk.c:1268:6: error: redefinition of 'clk_is_enabled_when_prepared'
-drivers/clk/clk.c:941:6: error: redefinition of 'clk_unprepare'
-drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:4968: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:5075:24: warning: implicit conversion from 'enum <anonymous>' to 'enum dc_status' [-Wenum-conversion]
-drivers/gpu/drm/amd/amdgpu/../display/dc/irq/dcn201/irq_service_dcn201.c:40:20: warning: no previous prototype for 'to_dal_irq_source_dcn201' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/fifo/gf100.c:451:1: warning: no previous prototype for 'gf100_fifo_nonstall_block' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/fifo/gf100.c:451:1: warning: no previous prototype for function 'gf100_fifo_nonstall_block' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/fifo/runl.c:34:1: warning: no previous prototype for 'nvkm_engn_cgrp_get' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/fifo/runl.c:34:1: warning: no previous prototype for function 'nvkm_engn_cgrp_get' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/gr/tu102.c:210:1: warning: no previous prototype for 'tu102_gr_load' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/engine/gr/tu102.c:210:1: warning: no previous prototype for function 'tu102_gr_load' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/nvfw/acr.c:49:1: warning: no previous prototype for 'wpr_generic_header_dump' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/nvfw/acr.c:49:1: warning: no previous prototype for function 'wpr_generic_header_dump' [-Wmissing-prototypes]
-drivers/gpu/drm/nouveau/nvkm/subdev/acr/lsfw.c:221:21: warning: variable 'loc' set but not used [-Wunused-but-set-variable]
-drivers/iio/addac/ad74115.c:320:27: warning: 'ad74115_dac_slew_rate_hz_tbl' defined but not used [-Wunused-const-variable=]
-mm/vmscan.c:4090:30: error: implicit declaration of function 'pmd_young'; did you mean 'pte_young'? [-Werror=implicit-function-declaration]
-net/netfilter/nf_conntrack_netlink.c:2674:6: warning: unused variable 'mark' [-Wunused-variable]
-vmlinux.o: warning: objtool: __btrfs_map_block+0x1d77: unreachable instruction
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+>> index baf4b5cb4b8a..7a52e46eb6db 100644
+>> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
+>> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+>> @@ -105,10 +105,18 @@ struct jh71x0_clk_priv {
+>>         spinlock_t rmw_lock;
+>>         struct device *dev;
+>>         void __iomem *base;
+>> -       struct clk_hw *pll[3];
+>> +       struct clk_hw *pll[12];
+>>         struct jh71x0_clk reg[];
+>>  };
+>>
+>>  const struct clk_ops *starfive_jh71x0_clk_ops(u32 max);
+>>
+>> +#if IS_ENABLED(CONFIG_CLK_STARFIVE_JH7110_SYS)
+> 
+> The function below is used both in the syscrg driver and the aoncrg
+> driver, so why guard it like this?
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+Because the aoncrg driver depends on the syscrg driver, which is set
+in Kconfig.
 
-drivers/usb/fotg210/fotg210-udc.c:632:17: sparse: sparse: restricted __le16 degrades to integer
+Best regards,
+Hal
 
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- alpha-randconfig-r005-20221124
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- alpha-randconfig-r016-20221124
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arc-randconfig-r004-20221124
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-acr-lsfw.c:warning:variable-loc-set-but-not-used
-|-- arc-randconfig-r043-20221124
-|   `-- mm-vmscan.c:error:implicit-declaration-of-function-pmd_young
-|-- arm-allyesconfig
-|   |-- arch-arm-mach-s3c-devs.c:fatal-error:linux-platform_data-dma-s3c24xx.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:warning:implicit-conversion-from-enum-anonymous-to-enum-dc_status
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-irq-dcn201-irq_service_dcn201.c:warning:no-previous-prototype-for-to_dal_irq_source_dcn201
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-gf100_fifo_nonstall_block
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-nvkm_engn_cgrp_get
-|   |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-tu102_gr_load
-|   |-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-wpr_generic_header_dump
-clang_recent_errors
-|-- i386-randconfig-a013
-|   `-- net-netfilter-nf_conntrack_netlink.c:warning:unused-variable-mark
-`-- riscv-randconfig-r042-20221124
-    |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-gf100.c:warning:no-previous-prototype-for-function-gf100_fifo_nonstall_block
-    |-- drivers-gpu-drm-nouveau-nvkm-engine-fifo-runl.c:warning:no-previous-prototype-for-function-nvkm_engn_cgrp_get
-    |-- drivers-gpu-drm-nouveau-nvkm-engine-gr-tu102.c:warning:no-previous-prototype-for-function-tu102_gr_load
-    `-- drivers-gpu-drm-nouveau-nvkm-nvfw-acr.c:warning:no-previous-prototype-for-function-wpr_generic_header_dump
-
-elapsed time: 731m
-
-configs tested: 53
-configs skipped: 2
-
-gcc tested configs:
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              defconfig
-arc                                 defconfig
-s390                             allmodconfig
-arm                                 defconfig
-alpha                               defconfig
-arc                  randconfig-r043-20221124
-s390                                defconfig
-x86_64                           rhel-8.3-syz
-x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-x86_64                               rhel-8.3
-x86_64                           allyesconfig
-ia64                             allmodconfig
-x86_64                        randconfig-a002
-i386                          randconfig-a014
-s390                             allyesconfig
-arm                              allyesconfig
-i386                          randconfig-a001
-i386                                defconfig
-x86_64                          rhel-8.3-func
-i386                          randconfig-a003
-x86_64                    rhel-8.3-kselftests
-m68k                             allmodconfig
-powerpc                           allnoconfig
-x86_64                        randconfig-a006
-powerpc                          allmodconfig
-i386                          randconfig-a005
-arc                              allyesconfig
-i386                          randconfig-a012
-arm64                            allyesconfig
-x86_64                        randconfig-a004
-sh                               allmodconfig
-i386                          randconfig-a016
-alpha                            allyesconfig
-mips                             allyesconfig
-m68k                             allyesconfig
-i386                             allyesconfig
-
-clang tested configs:
-hexagon              randconfig-r041-20221124
-hexagon              randconfig-r045-20221124
-s390                 randconfig-r044-20221124
-i386                          randconfig-a013
-riscv                randconfig-r042-20221124
-x86_64                        randconfig-a001
-i386                          randconfig-a011
-i386                          randconfig-a002
-i386                          randconfig-a006
-x86_64                        randconfig-a003
-i386                          randconfig-a004
-x86_64                        randconfig-a005
-i386                          randconfig-a015
-x86_64                          rhel-8.3-rust
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> 
+>> +int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+>> +                                    const char *adev_name,
+>> +                                    u32 adev_id);
+>> +
+>> +#endif
+>> +
+>>  #endif
