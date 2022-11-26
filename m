@@ -2,125 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2D7C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Nov 2022 23:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFDAC4321E
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Nov 2022 15:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbiKYXGN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Nov 2022 18:06:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39658 "EHLO
+        id S229496AbiKZPXg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Nov 2022 10:23:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbiKYXGM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Nov 2022 18:06:12 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02A6532F2;
-        Fri, 25 Nov 2022 15:06:10 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id q7so7816401wrr.8;
-        Fri, 25 Nov 2022 15:06:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:to
-         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gdc60uUtAd13JAaaUEwIiBYF4E+nu8yqS9AdF7o+jnQ=;
-        b=AUrpT0+NfaeksQBgyKP3rYSU50T/25HC+sM/6mywP7BsKUe1UxI6rpYfR0zFMcYFCu
-         VcLJUn99l2QEm1s/XnoSt0727rf4VlftMJGvOmKHNcznGTeNaeImbSdh3RZ0ZMXSWn+Z
-         A6QUIQdDDPrSZqPn6pfpgwOlqsKQITdKbit5si2Stii4TVRwyIB7WcLdxaow8HiMCIy2
-         xOHD7uzzLZGfWNuP+hBJX4sUZiikMaWezkljc36TMVFs9vZIV1Y3Kijes8NbPZxJrhTb
-         lEWDElTovAnfnBJIRaaGiiNblkPq/SmMlgIlbSK0oSzpNWIBMdoz5dq7j93XDed2WINP
-         vWdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:to
-         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gdc60uUtAd13JAaaUEwIiBYF4E+nu8yqS9AdF7o+jnQ=;
-        b=3yDB7V7fbgE53G/vEr4txz9HZu8w1RVgYbG+YtiA3PNIncbcX+ke/+0cA740x9KH2b
-         Q9rmUQn1NqY1sQ5YkhMJVFghPiW8sBvoM97e/NE93gMqQZ9+c0E/7mjamT0zsd0HW8jh
-         RhuBQxc3e+eXEAihjQ0l3r5rykK2EnlqWmlbrAdDVRVsJSkzrzWQB5tl4qE7YHzeEVO2
-         bZNpyYPcUJweUfiLjTq4lM9IiGQ255Q8GJI/yDUCbhtdjR/DeaR8dzhVx5IZPFx4lXtk
-         gnB8Wghld5Cknv0j3yf5qbgslpEQaX98RnJtYAv0RApmbuWVp8GGLc0Ke8UqN+WH6dTX
-         SMrg==
-X-Gm-Message-State: ANoB5pm2ZApD1Fvi3j/azKneC46tTAaWncSmTnXWnF6fAx1x7IRvo2d0
-        wCv6NqfMnmBkZ3NS2WLz/v0=
-X-Google-Smtp-Source: AA0mqf4wvOW0HT/jKuLc7rIhiTLutuKXTEab6buMlVq3WtRoiiZn/6riSjNomhIPNGprC1KQlCcQmg==
-X-Received: by 2002:a5d:6886:0:b0:238:8896:7876 with SMTP id h6-20020a5d6886000000b0023888967876mr17827996wru.645.1669417569041;
-        Fri, 25 Nov 2022 15:06:09 -0800 (PST)
-Received: from Ansuel-xps. (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.gmail.com with ESMTPSA id m6-20020adfc586000000b002366fb99cdasm4695968wrg.50.2022.11.25.15.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Nov 2022 15:06:08 -0800 (PST)
-Message-ID: <63814a60.df0a0220.22f38.b1a4@mx.google.com>
-X-Google-Original-Message-ID: <Y4FKX8opRdR2PolN@Ansuel-xps.>
-Date:   Sat, 26 Nov 2022 00:06:07 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robert Marko <robimarko@gmail.com>
-Subject: Re: [PATCH] clk: Warn and add workaround on misuse of .parent_data
- with .name only
-References: <20221108204918.2805-1-ansuelsmth@gmail.com>
+        with ESMTP id S229446AbiKZPXg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Nov 2022 10:23:36 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C25C15FCD
+        for <linux-clk@vger.kernel.org>; Sat, 26 Nov 2022 07:23:32 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id C19918447C;
+        Sat, 26 Nov 2022 16:23:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1669476210;
+        bh=ORhUdPiMSPxcTdmDB6lmYEYs/frODvFOQ5OncYhGRfE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=OW6KM0wyj67l9zFZWZjLD6xNiI+01jjRBrUequkqLO5BADcgrIfRLYNFbVhQFaLXN
+         yzibUUBHHgKb0my18MoY8rYkAeU/5Zup8u5sH0OVpsoJ1jQHVvtM6qn/TPpHoLZgAz
+         lArJyRrxBmJSagFIqf43Cza32e8c9RPfBfXx3e09kD3G385K5uYkdOLQcEqgjx2vjm
+         xfzoz0nok4cw1iH3Dngo8XKhSkm9mje2E4VVp+fooTMPjuCR61XwWizKg/7JqhckAG
+         tFAxrD8azHAybcR3qhOXp14UzPP6QGkqrDF7MNg/f87iZ4kPJZnnaB75GnAqqI0ZkU
+         INRJ2WDJZUdHQ==
+Message-ID: <2cc590a3-4b03-03b8-c537-3a0d8e9840b6@denx.de>
+Date:   Sat, 26 Nov 2022 16:23:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221108204918.2805-1-ansuelsmth@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v3 1/6] clk: Introduce
+ devm_clk_hw_register_mux_parent_data()
+Content-Language: en-US
+To:     Richard Leitner <richard.leitner@linux.dev>
+Cc:     linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+References: <20220625013235.710346-1-marex@denx.de>
+ <Y3s0GzxgSG9Tu450@skidata.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <Y3s0GzxgSG9Tu450@skidata.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 08, 2022 at 09:49:18PM +0100, Christian Marangi wrote:
-> By a simple mistake in a .parent_names to .parent_data conversion it was
-> found that clk core assume fw_name is always provided with a parent_data
-> struct for each parent and never fallback to .name to get parent name even
-> if declared.
-> 
-> This is caused by clk_core_get that only checks for parent .fw_name and
-> doesn't handle .name.
-> 
-> While it's sane to request the dev to correctly do the conversion and
-> add both .fw_name and .name in a parent_data struct, it's not sane to
-> silently drop parents without a warning.
-> 
-> Fix this in 2 ways. Add a kernel warning when a wrong implementation is
-> used and copy .name in .fw_name in parent map populate function to
-> handle clk problems and malfunctions.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+On 11/21/22 09:17, Richard Leitner wrote:
+> Hi,
 
-Friendly bump for this?
+Hi,
 
-> ---
->  drivers/clk/clk.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+> On Sat, Jun 25, 2022 at 03:32:30AM +0200, Marek Vasut wrote:
+>> Add an API for clock mux that uses parent_data for the parent instead of
+>> a string parent_name.
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 57b83665e5c3..dccd4ea6f692 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4015,10 +4015,21 @@ static int clk_core_populate_parent_map(struct clk_core *core,
->  			ret = clk_cpy_name(&parent->name, parent_names[i],
->  					   true);
->  		} else if (parent_data) {
-> +			const char *parent_name;
-> +
->  			parent->hw = parent_data[i].hw;
->  			parent->index = parent_data[i].index;
-> +			parent_name = parent_data[i].fw_name;
-> +
-> +			if (!parent_name && parent_data[i].name) {
-> +				WARN(1, "Empty .fw_name with .name in %s's .parent_data. Using .name for .fw_name declaration.\n",
-> +				     core->name);
-> +				parent_name = parent_data[i].name;
-> +			}
-> +
->  			ret = clk_cpy_name(&parent->fw_name,
-> -					   parent_data[i].fw_name, false);
-> +					   parent_name, false);
-> +
->  			if (!ret)
->  				ret = clk_cpy_name(&parent->name,
->  						   parent_data[i].name,
-> -- 
-> 2.37.2
-> 
+> Just stubled across this thread while trying to bring up audio on a
+> i.MX8MP. The last reply in this series is from October and patch #1 & #6
+> doesn't apply on v6.1-rc6...
+> Therefore I'm curious if there is any newer version of this series I
+> missed? Or is there something I can help with? Especially testing?
 
--- 
-	Ansuel
+Currently blocked by race conditions between clock and genpd locking, 
+those need to be fixed first. See discussion in:
+
+[PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off callbacks
