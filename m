@@ -2,184 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F58BC4167B
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Nov 2022 19:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BAFC43217
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Nov 2022 17:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbiKZTNb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Nov 2022 14:13:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
+        id S229504AbiK0RYp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Nov 2022 12:24:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbiKZTN3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Nov 2022 14:13:29 -0500
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8202013DC0;
-        Sat, 26 Nov 2022 11:13:28 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id F00EE5C00C2;
-        Sat, 26 Nov 2022 14:13:27 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Sat, 26 Nov 2022 14:13:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1669490007; x=1669576407; bh=y5
-        djLeQ/hPY8ak4OuL7Fb/c3s4IkUrbhmjUh9vU8Iao=; b=II7wBM85JhQYWyaxV6
-        ASpiOEvIffOUjAnDJiAbN45q03pZS2YyRfcBePaDgXGE3vTd2dL5+sm+Qt9DTqlZ
-        ZGmbjlDWjmUxDUW3v6UnvnRcVaHtWcSmKtIPglaCRGStC/mu905uCq8JfFjmP03t
-        r3k7d3ol6idc+IEP/475AV+R2XZyvf0yQktDP7d/CZYCYjbo59CwSW6TlQ+oOSOx
-        cCxbUC/ziC+Ya9wHUKpm+8DMpClzsb/jeq83aqGzQMKu+3humIuFj73RaqOw/Swe
-        8tN6e0VIh5YzOP6hVgH3eaLUL8qfsBxp3lT+Js41q707N9Z0fxBkRdFhGyWeTRCi
-        7NWg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1669490007; x=1669576407; bh=y5djLeQ/hPY8a
-        k4OuL7Fb/c3s4IkUrbhmjUh9vU8Iao=; b=FsdV1FgD9jQRX2/99lfl3XUy/0543
-        SeQi0BhzkryRO5iHY8VE0n1BGbwnzUo8C5TDWDPhug9gSHqAeeLRERYTtdTcTdE0
-        2HM2MoZBa89RMKre0hgUW+rR+Tuo1Cup0G1T9fyI7Wunj88W9rV1l8dgbRJXr+E/
-        7Eig7HmrlmFTXA68e4PW3hVLu2dKaTnkqwRjZqN4LSmRwl4gdER2WV732XOIAmNS
-        WKQsLZ+Z/fdUa79qG0dyp9/fLEWea8kWT6SbEWrLWs8XoHYxiNj3otr6VuRH/+/C
-        YmrZD4fbjk+5x+mzhjR1TuhGy9LPvWTVsbvkml444RPjFj3SpREgUmJJw==
-X-ME-Sender: <xms:V2WCY_yjCaAOaLKzS8cbk9irg9Posedxqfp8IZGwLJplVMLeixhmDQ>
-    <xme:V2WCY3RWtcnaxcaccJqJ1vXw7OpyirH_F_y8BUShC2srqyXeLvQxcqD_zG01_N84Y
-    mgAPncibU9hpjkYlA>
-X-ME-Received: <xmr:V2WCY5VfMhCBNIU-VzFC7bqMN3HN-MKYdDdtqP8Ul1gOqIxp1uRSa911lOesjTmZG8G1agC30E6kHrNLjy-Cua-CV2QwwuFcguEgVD83UzcsqFkJcXEsqR7imOi9JhHLRPxZoA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrieejgdduvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepudekteeuudehtdelteevgfduvddvjefhfedulefgudevgeeghefg
-    udefiedtveetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:V2WCY5j8kb8LtAxPgtKQaKBxFqT5E5crgMYr26cedMKG8bNBXbLTgA>
-    <xmx:V2WCYxDhfKI90hdskNeusrfBosmS3oBjILV1xYZxCcuO_M979xwooQ>
-    <xmx:V2WCYyLQBj3C7QbzzCYUVSdhpzM58dCbU9OabS5Y9IWXbc5rJBF2fg>
-    <xmx:V2WCY168ratK2q8KIKSvGPae6IACFhKO-iRW_T7fUuuHKnKkBpsexg>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 26 Nov 2022 14:13:26 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        Fabien Poussin <fabien.poussin@gmail.com>
-Subject: [PATCH 5/5] clk: sunxi-ng: d1: Add CAN bus gates and resets
-Date:   Sat, 26 Nov 2022 13:13:19 -0600
-Message-Id: <20221126191319.6404-6-samuel@sholland.org>
-X-Mailer: git-send-email 2.37.4
-In-Reply-To: <20221126191319.6404-1-samuel@sholland.org>
-References: <20221126191319.6404-1-samuel@sholland.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S229475AbiK0RYo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Nov 2022 12:24:44 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A6463BD;
+        Sun, 27 Nov 2022 09:24:43 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id hd14-20020a17090b458e00b0021909875bccso4761860pjb.1;
+        Sun, 27 Nov 2022 09:24:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7y1qNNd/rnLboER7671YJEja2V7agUxEto42Sj8dHEo=;
+        b=I/mF4i5yCr1yCDooGqgCD7bW8IXqPfXbxV4De9ZrH/9OVDJ4xT0NYINRuVtuDPIpWa
+         vOrO+w96CtT7QiKZ1WiuCRXNPwDQXOhcB/A4o0X7vRce0mpkx7c1R900QgQpX8Xkyemd
+         Ydh2TiXxW0ekJrHI5NRA4xLKQXZ5lbfM2xLqyerfU91FJ6JDIlIMTDdCjS6hw1DD5oza
+         NUSSTIkQ2IpN+WoJqJ+0D7VO7cwwb6MVxCx3p8OdX3ZZUaE87w5a5O0nq7lLbrtPXl/D
+         sEfSbC2CHpxfjQMPa4UCk6ZIZjdKdX/9RQgcuhlRiVjCDApslmXwYUk9OgAuiNCPPki4
+         msPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7y1qNNd/rnLboER7671YJEja2V7agUxEto42Sj8dHEo=;
+        b=q9pgwy8ja1mXdFp8E8K2otXX2tNp8stiZQ9BtzzQ+hhbH1TmEGlbPA5DOPiersiFxI
+         n8L238xb+d9uIwVAETgrYeVlX2zEkuiF1h6zfGwlu5zXoIvG6x6TnhbEx0L6VYdu2rJR
+         X5tRSSfTRt8tZdVhdz09K1ko/HfTmdW6eXZouRFjqZoRwnSUmg2b0sSiBYu/kg54q01p
+         jEImlBcCAO9tdli/shPEBLVqenLGgu1nrbbtj4AO9pNZcG6DUqe28UFfrcnimccdM2Im
+         z0T9nS7RQSZUYOs3pQO2PQTbPIzDQGie1xLm6BvDA7GL4wqX1LpmtDf92IbjOnWQY7Yd
+         h9YQ==
+X-Gm-Message-State: ANoB5pnsESH0ey1R4Du3WODc2VhrKr7tyh71qSiLsM9ApiTChQytOP3Q
+        b3Pcd4DedkoFU+nEjAke5NQ6hBJrnYQ=
+X-Google-Smtp-Source: AA0mqf7qIGfYWx8LgAjZi8RMfn8Li5+7aZGdpvFxCPA46/9bXrndFQptSWd5keaCKYlQe9aOi0wobg==
+X-Received: by 2002:a17:902:cad3:b0:189:8b52:cee7 with SMTP id y19-20020a170902cad300b001898b52cee7mr996908pld.62.1669569882822;
+        Sun, 27 Nov 2022 09:24:42 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:1cc4:c66e:6c75:d2b8:130e:c9e5])
+        by smtp.googlemail.com with ESMTPSA id r1-20020a635141000000b0046feb2754e5sm5439407pgl.28.2022.11.27.09.24.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Nov 2022 09:24:41 -0800 (PST)
+From:   Vishal Badole <badolevishal1116@gmail.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
+        mintupatel89@gmail.com, vimal.kumar32@gmail.com,
+        Vishal Badole <badolevishal1116@gmail.com>
+Subject: [PATCH v5] Common clock: To list active consumers of clocks
+Date:   Sun, 27 Nov 2022 22:53:19 +0530
+Message-Id: <1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Fabien Poussin <fabien.poussin@gmail.com>
+This feature lists the clock consumer's name and respective connection
+id. Using this feature user can easily check that which user has
+acquired and enabled a particular clock.
 
-The D1 CCU contains gates and resets for two CAN buses. While the CAN
-bus controllers are only documented for the T113 SoC, the CCU is the
-same across all SoC variants.
+Usage:
+>> cat /sys/kernel/debug/clk/clk_summary
+                      enable  prepare  protect
+                                                                          duty  hardware                            Connection
+   clock               count    count    count    rate   accuracy phase  cycle    enable   consumer                         Id
+------------------------------------------------------------------------------------------------------------------------------
+ clk_mcasp0_fixed         0        0        0    24576000          0      0  50000     Y   deviceless                     of_clk_get_from_provider
+                                                                                           deviceless                     no_connection_id
+    clk_mcasp0            0        0        0    24576000          0      0  50000     N      simple-audio-card,cpu           no_connection_id
+                                                                                              deviceless                      no_connection_id
 
-Signed-off-by: Fabien Poussin <fabien.poussin@gmail.com>
-Signed-off-by: Samuel Holland <samuel@sholland.org>
+Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
+Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
+Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
 ---
+ drivers/clk/clk.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c      | 11 +++++++++++
- drivers/clk/sunxi-ng/ccu-sun20i-d1.h      |  2 +-
- include/dt-bindings/clock/sun20i-d1-ccu.h |  2 ++
- include/dt-bindings/reset/sun20i-d1-ccu.h |  2 ++
- 4 files changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-index c5a7df93602c..48a8fb2c43b7 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-@@ -469,6 +469,11 @@ static SUNXI_CCU_GATE_HWS(bus_i2c2_clk, "bus-i2c2", apb1_hws,
- static SUNXI_CCU_GATE_HWS(bus_i2c3_clk, "bus-i2c3", apb1_hws,
- 			  0x91c, BIT(3), 0);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index bd0b35c..c4aa3b4 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2952,28 +2952,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 				 int level)
+ {
+ 	int phase;
++	struct clk *clk_user;
++	int multi_node = 0;
  
-+static SUNXI_CCU_GATE_HWS(bus_can0_clk, "bus-can0", apb1_hws,
-+			  0x92c, BIT(0), 0);
-+static SUNXI_CCU_GATE_HWS(bus_can1_clk, "bus-can1", apb1_hws,
-+			  0x92c, BIT(1), 0);
+-	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
++	seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
+ 		   level * 3 + 1, "",
+-		   30 - level * 3, c->name,
++		   35 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+ 		   clk_core_get_rate_recalc(c),
+ 		   clk_core_get_accuracy_recalc(c));
+ 
+ 	phase = clk_core_get_phase(c);
+ 	if (phase >= 0)
+-		seq_printf(s, "%5d", phase);
++		seq_printf(s, "%-5d", phase);
+ 	else
+ 		seq_puts(s, "-----");
+ 
+-	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
++	seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
+ 
+ 	if (c->ops->is_enabled)
+-		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
++		seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
+ 	else if (!c->ops->enable)
+-		seq_printf(s, " %9c\n", 'Y');
++		seq_printf(s, " %5c ", 'Y');
+ 	else
+-		seq_printf(s, " %9c\n", '?');
++		seq_printf(s, " %5c ", '?');
 +
- static const struct clk_parent_data spi_parents[] = {
- 	{ .fw_name = "hosc" },
- 	{ .hw = &pll_periph0_clk.hw },
-@@ -997,6 +1002,8 @@ static struct ccu_common *sun20i_d1_ccu_clks[] = {
- 	&bus_i2c1_clk.common,
- 	&bus_i2c2_clk.common,
- 	&bus_i2c3_clk.common,
-+	&bus_can0_clk.common,
-+	&bus_can1_clk.common,
- 	&spi0_clk.common,
- 	&spi1_clk.common,
- 	&bus_spi0_clk.common,
-@@ -1147,6 +1154,8 @@ static struct clk_hw_onecell_data sun20i_d1_hw_clks = {
- 		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
- 		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
- 		[CLK_BUS_I2C3]		= &bus_i2c3_clk.common.hw,
-+		[CLK_BUS_CAN0]		= &bus_can0_clk.common.hw,
-+		[CLK_BUS_CAN1]		= &bus_can1_clk.common.hw,
- 		[CLK_SPI0]		= &spi0_clk.common.hw,
- 		[CLK_SPI1]		= &spi1_clk.common.hw,
- 		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
-@@ -1252,6 +1261,8 @@ static struct ccu_reset_map sun20i_d1_ccu_resets[] = {
- 	[RST_BUS_I2C1]		= { 0x91c, BIT(17) },
- 	[RST_BUS_I2C2]		= { 0x91c, BIT(18) },
- 	[RST_BUS_I2C3]		= { 0x91c, BIT(19) },
-+	[RST_BUS_CAN0]		= { 0x92c, BIT(16) },
-+	[RST_BUS_CAN1]		= { 0x92c, BIT(17) },
- 	[RST_BUS_SPI0]		= { 0x96c, BIT(16) },
- 	[RST_BUS_SPI1]		= { 0x96c, BIT(17) },
- 	[RST_BUS_EMAC]		= { 0x97c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.h b/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-index e303176f0d4e..b14da36e2537 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-@@ -10,6 +10,6 @@
- #include <dt-bindings/clock/sun20i-d1-ccu.h>
- #include <dt-bindings/reset/sun20i-d1-ccu.h>
++	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
++		seq_printf(s, "%*s%-*s  %-25s\n",
++			   level * 3 + 2 + 105 * multi_node, "",
++			   30,
++			   clk_user->dev_id ? clk_user->dev_id : "deviceless",
++			   clk_user->con_id ? clk_user->con_id : "no_connection_id");
++
++		multi_node = 1;
++	}
++
+ }
  
--#define CLK_NUMBER		(CLK_FANOUT2 + 1)
-+#define CLK_NUMBER		(CLK_BUS_CAN1 + 1)
+ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+@@ -2994,9 +3007,10 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
  
- #endif /* _CCU_SUN20I_D1_H_ */
-diff --git a/include/dt-bindings/clock/sun20i-d1-ccu.h b/include/dt-bindings/clock/sun20i-d1-ccu.h
-index e3ac53315e1a..e143b9929763 100644
---- a/include/dt-bindings/clock/sun20i-d1-ccu.h
-+++ b/include/dt-bindings/clock/sun20i-d1-ccu.h
-@@ -152,5 +152,7 @@
- #define CLK_FANOUT0		142
- #define CLK_FANOUT1		143
- #define CLK_FANOUT2		144
-+#define CLK_BUS_CAN0		145
-+#define CLK_BUS_CAN1		146
+-	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+-	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+-	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            connection\n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id\n");
++	seq_puts(s, "---------------------------------------------------------------------------------------------------------------------------------------------\n");
++
  
- #endif /* _DT_BINDINGS_CLK_SUN20I_D1_CCU_H_ */
-diff --git a/include/dt-bindings/reset/sun20i-d1-ccu.h b/include/dt-bindings/reset/sun20i-d1-ccu.h
-index de9ff5203239..f8001cf50bf1 100644
---- a/include/dt-bindings/reset/sun20i-d1-ccu.h
-+++ b/include/dt-bindings/reset/sun20i-d1-ccu.h
-@@ -73,5 +73,7 @@
- #define RST_BUS_DSP_CFG		63
- #define RST_BUS_DSP_DBG		64
- #define RST_BUS_RISCV_CFG	65
-+#define RST_BUS_CAN0		66
-+#define RST_BUS_CAN1		67
+ 	clk_prepare_lock();
  
- #endif /* _DT_BINDINGS_RST_SUN20I_D1_CCU_H_ */
 -- 
-2.37.4
+2.7.4
 
