@@ -2,319 +2,195 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8E1C46467
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 12:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56167C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 12:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231567AbiK1M3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Nov 2022 07:29:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40492 "EHLO
+        id S230203AbiK1Mdf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Nov 2022 07:33:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230321AbiK1M2r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 07:28:47 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95460E000
-        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 04:28:46 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id o5so7542426wrm.1
-        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 04:28:46 -0800 (PST)
+        with ESMTP id S230132AbiK1Mdc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 07:33:32 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A501A05F
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 04:33:31 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id 83-20020a1c0256000000b003d03017c6efso10818343wmc.4
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 04:33:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BDlfvZiCltaFwWrxIrbNKlhGCQpfErljR0Lh1JgpyPI=;
-        b=oWCf2jMq56iso5OBH2XZ8qGwX6TTfew+J4J+aeOd/RnKlPXdlMw6TN8f1DTNJ5iX/c
-         aFjOocd0qq4q8c+Cc1ppaOr5vt0pyA5bnaIyEm6feLTMlKUjEFzO6qcG13Xudk87pUZ1
-         lVNolYqMpNIuXRCUgnXqp4xTaz7QrWyM2rM4F/VltJn2tFFQ5isTaqKIDk058ZI5AQ3j
-         EF/5tABWHPJewrL1mGTmccuWlzPAL8nHGka/rL6VYJAKC0mqWBqZo/MeCi6+i+u58ErA
-         pv0/EFoiNmTIoEvS0LVLpIlZDpw3floFGNGJyRKBfymeigzGBawc+mZbvCMV8UkVgzQ/
-         HE+g==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gmo9nIirdbed4J/LDnU4BNvdJRcxPBpHK1YwQWHx3A=;
+        b=Ov/KaEuWs1Y8eHtYdGfDUCbL84zNHUFESCRmPJbwiL4b4IkVYPUs0G1f90nHsfQ/zv
+         ehKTVNWofEcOeyX9H++dsbFfqvqpLv4UI5SpMeltJX+7PhkxVUhqbOS5sWWAgao/afWy
+         Vmu2IYeujw1lNxavecWXZtBV2Xt7zVVCw10XpuwEZq0dkxd13hpGwtmlvIqyQeE/KNoX
+         rA3Xh3b7GEY59tYVfwF7IRQcBMpp4dMqeAK/0dBG+Bw03kgBT6s60v17KxK+pPdPro6G
+         FLxZbP+uH3QEA3DqFca6aUkawOebjlWwlLD1jmOpKkTr40d27MyLfvvmN0ta9OMOThQY
+         4WLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BDlfvZiCltaFwWrxIrbNKlhGCQpfErljR0Lh1JgpyPI=;
-        b=TX2xB+VQ1N8fxbZ4oAZ1jt8YqpQTXYSnFQQQULn+yunQuyr9H7XuWsBynDTVcTPItl
-         C2384omKji6eoIooANSiUVYN3P5xRSQol4iVv8HzaHGqRV2i5h7M/McXU9WILP1j6JNJ
-         cB9yGcbBVXLPKAIEew4vlbHu8gn5ZHgrOt8F7kABBghVQH4X3DuagKo19zZDWSOzTNm6
-         GwdHixgDDVyUazooPxGq3NLR7jyjEY/PP4oVdTsqx4ARVOY+sk07WRHqLcOcddn896cU
-         +lDOL08tc9U7daxzeMz32jdIoINnauU0FH96lhamUYI3y7I1LTd1do/M+bJL++9P+8kN
-         8t5A==
-X-Gm-Message-State: ANoB5pkT2siwu9v6dKh9ql7K/ZxBXY9XlCHd1NAcugxZJrhO4AIgAEM8
-        TWwZQzy7sQYrgQMWG8pDSmmT+A==
-X-Google-Smtp-Source: AA0mqf4TN1CLTGXmfDB+YxhDwTzutwkjlnS2p6cMXMb9F1eoz8JPjukdOG6mo2PJaAxr7B+2EciXrg==
-X-Received: by 2002:adf:f803:0:b0:236:563b:6f5d with SMTP id s3-20020adff803000000b00236563b6f5dmr24904886wrp.532.1669638525146;
-        Mon, 28 Nov 2022 04:28:45 -0800 (PST)
-Received: from hackbox.lan ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id u18-20020adfdd52000000b002421db5f279sm598405wrm.78.2022.11.28.04.28.43
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+gmo9nIirdbed4J/LDnU4BNvdJRcxPBpHK1YwQWHx3A=;
+        b=CNQiOnXRnzTOcUixHCbfQWG+ub0iKXssU9OhLNAXpTvdxxB8p/SyiWXUwBsAd/5Nat
+         84T+rEikChyeoC2rnI/60cejO6WeVr9KrhPXINGonsBLZbWomATNpg1dr+SiISqQQFUk
+         Rpl/+MVXm4Qw/rVTAaLzZT39FXPdpSLMU8qF5b45NtB5XRrEgJfkIypaiUuTs0ykz2ID
+         HnvSFcP6pRcBMniPdYCu+iYjCrm2tEe864xiO+jwIOxMJ5e10UWRyCkvWqTnoONORUHG
+         mpwHmkEAIVIEo3n9Fx7K3XitmuPobDNF9PtN2jJr7hc1oqzOONIVgJdY+WmrMJSdFtH1
+         mY0A==
+X-Gm-Message-State: ANoB5pkLyXZ3hGZUtzY+YG1obUFE94liJVqMcOR4kfy45aqsYvsgjt96
+        Onxse5C3eKApjw3XZvz8JG0BmA==
+X-Google-Smtp-Source: AA0mqf4jVHezM2bL21HVhzKH1EZ/A3CxuShkRmJj0N14THKAhU4L/c00faHr4CoC1CPZ4bH3MFrAHA==
+X-Received: by 2002:a05:600c:35cf:b0:3cf:aa11:93a8 with SMTP id r15-20020a05600c35cf00b003cfaa1193a8mr41173747wmq.31.1669638809617;
+        Mon, 28 Nov 2022 04:33:29 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id bs30-20020a056000071e00b002364c77bcacsm10489898wrb.38.2022.11.28.04.33.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Nov 2022 04:28:44 -0800 (PST)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
+        Mon, 28 Nov 2022 04:33:28 -0800 (PST)
+References: <20221123021346.18136-1-yu.tu@amlogic.com>
+ <20221123021346.18136-4-yu.tu@amlogic.com>
+ <1jbkov2vb9.fsf@starbuckisacylon.baylibre.com>
+ <81d9a794-2920-64f1-1d80-50653113624c@amlogic.com>
+User-agent: mu4e 1.8.10; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 9/9] clk: qcom: Add TCSR clock driver for SM8550
-Date:   Mon, 28 Nov 2022 14:28:20 +0200
-Message-Id: <20221128122820.798610-10-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221128122820.798610-1-abel.vesa@linaro.org>
-References: <20221128122820.798610-1-abel.vesa@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     kelvin.zhang@amlogic.com
+Subject: Re: [PATCH V5 3/4] clk: meson: s4: add s4 SoC peripheral clock
+ controller driver and bindings
+Date:   Mon, 28 Nov 2022 13:23:08 +0100
+In-reply-to: <81d9a794-2920-64f1-1d80-50653113624c@amlogic.com>
+Message-ID: <1jilizp8bs.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The TCSR clock controller found on SM8550 provides refclks
-for PCIE, USB and UFS. Add clock driver for it.
 
-This patch is based on initial code downstream.
+On Mon 28 Nov 2022 at 16:08, Yu Tu <yu.tu@amlogic.com> wrote:
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/Kconfig         |   7 ++
- drivers/clk/qcom/Makefile        |   1 +
- drivers/clk/qcom/tcsrcc-sm8550.c | 193 +++++++++++++++++++++++++++++++
- 3 files changed, 201 insertions(+)
- create mode 100644 drivers/clk/qcom/tcsrcc-sm8550.c
+>>> +
+>>> +/*
+>>> + * This RTC clock can be supplied by an external 32KHz crystal oscillator.
+>>> + * If it is used, it should be documented in using fw_name and documented in the
+>>> + * Bindings. Not currently in use on this board, so skip it.
+>>> + */
+>>> +static u32 rtc_clk_sel[] = { 0, 1 };
+>> No reason to do that
+>
+> I'm going to change it to static u32 rtc_clk_sel[] = { 0, 1, 2 };.
+> I don't know if that's okay with you?
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e2cfa9c74bcf..67ce8c4d3ff9 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -779,6 +779,13 @@ config SM_GPUCC_8350
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
- 
-+config SM_TCSRCC_8550
-+	tristate "SM8550 TCSR Clock Controller"
-+	select QCOM_GDSC
-+	help
-+	  Support for the TCSR clock controller on SM8550 devices.
-+	  Say Y if you want to use peripheral devices such as SD/UFS.
-+
- config SM_VIDEOCC_8150
- 	tristate "SM8150 Video Clock Controller"
- 	select SM_GCC_8150
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 06ae671bdea6..29469f1290e6 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -110,6 +110,7 @@ obj-$(CONFIG_SM_GPUCC_6350) += gpucc-sm6350.o
- obj-$(CONFIG_SM_GPUCC_8150) += gpucc-sm8150.o
- obj-$(CONFIG_SM_GPUCC_8250) += gpucc-sm8250.o
- obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
-+obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
- obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
- obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-diff --git a/drivers/clk/qcom/tcsrcc-sm8550.c b/drivers/clk/qcom/tcsrcc-sm8550.c
-new file mode 100644
-index 000000000000..a1395d01a536
---- /dev/null
-+++ b/drivers/clk/qcom/tcsrcc-sm8550.c
-@@ -0,0 +1,193 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2022, Linaro Limited
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,sm8550-tcsrcc.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "clk-regmap-divider.h"
-+#include "clk-regmap-mux.h"
-+#include "common.h"
-+#include "reset.h"
-+
-+enum {
-+	DT_BI_TCXO,
-+	DT_BI_TCXO_PAD,
-+};
-+
-+static struct clk_branch tcsr_pcie_0_clkref_en = {
-+	.halt_reg = 0x15100,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x15100,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_pcie_0_clkref_en",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch tcsr_pcie_1_clkref_en = {
-+	.halt_reg = 0x15114,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x15114,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_pcie_1_clkref_en",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch tcsr_ufs_clkref_en = {
-+	.halt_reg = 0x15110,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x15110,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_ufs_clkref_en",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch tcsr_ufs_pad_clkref_en = {
-+	.halt_reg = 0x15104,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x15104,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_ufs_pad_clkref_en",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch tcsr_usb2_clkref_en = {
-+	.halt_reg = 0x15118,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x15118,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_usb2_clkref_en",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO_PAD,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch tcsr_usb3_clkref_en = {
-+	.halt_reg = 0x15108,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x15108,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_usb3_clkref_en",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap *tcsr_cc_sm8550_clocks[] = {
-+	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
-+	[TCSR_PCIE_1_CLKREF_EN] = &tcsr_pcie_1_clkref_en.clkr,
-+	[TCSR_UFS_CLKREF_EN] = &tcsr_ufs_clkref_en.clkr,
-+	[TCSR_UFS_PAD_CLKREF_EN] = &tcsr_ufs_pad_clkref_en.clkr,
-+	[TCSR_USB2_CLKREF_EN] = &tcsr_usb2_clkref_en.clkr,
-+	[TCSR_USB3_CLKREF_EN] = &tcsr_usb3_clkref_en.clkr,
-+};
-+
-+static const struct regmap_config tcsr_cc_sm8550_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x2f000,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc tcsr_cc_sm8550_desc = {
-+	.config = &tcsr_cc_sm8550_regmap_config,
-+	.clks = tcsr_cc_sm8550_clocks,
-+	.num_clks = ARRAY_SIZE(tcsr_cc_sm8550_clocks),
-+};
-+
-+static const struct of_device_id tcsr_cc_sm8550_match_table[] = {
-+	{ .compatible = "qcom,sm8550-tcsrcc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tcsr_cc_sm8550_match_table);
-+
-+static int tcsr_cc_sm8550_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+
-+	regmap = qcom_cc_map(pdev, &tcsr_cc_sm8550_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	return qcom_cc_really_probe(pdev, &tcsr_cc_sm8550_desc, regmap);
-+}
-+
-+static struct platform_driver tcsr_cc_sm8550_driver = {
-+	.probe = tcsr_cc_sm8550_probe,
-+	.driver = {
-+		.name = "tcsr_cc-sm8550",
-+		.of_match_table = tcsr_cc_sm8550_match_table,
-+	},
-+};
-+
-+static int __init tcsr_cc_sm8550_init(void)
-+{
-+	return platform_driver_register(&tcsr_cc_sm8550_driver);
-+}
-+subsys_initcall(tcsr_cc_sm8550_init);
-+
-+static void __exit tcsr_cc_sm8550_exit(void)
-+{
-+	platform_driver_unregister(&tcsr_cc_sm8550_driver);
-+}
-+module_exit(tcsr_cc_sm8550_exit);
-+
-+MODULE_DESCRIPTION("QTI TCSRCC SM8550 Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
+... then there is no need to specify this table.
 
+
+
+>
+>> 
+>>> +static const struct clk_parent_data rtc_clk_sel_parent_data[] = {
+>>> +	{ .hw = &s4_rtc_32k_by_oscin.hw },
+>>> +	{ .hw = &s4_rtc_32k_by_oscin_div.hw },
+>>> +	{ .fw_name = "ext_32k",  }
+>>> +};
+>>> +
+>>> +static struct clk_regmap s4_rtc_clk = {
+>>> +	.data = &(struct clk_regmap_mux_data) {
+>>> +		.offset = CLKCTRL_RTC_CTRL,
+>>> +		.mask = 0x3,
+>>> +		.shift = 0,
+>>> +		.table = rtc_clk_sel,
+>>> +		.flags = CLK_MUX_ROUND_CLOSEST,
+>>> +	},
+>>> +	.hw.init = &(struct clk_init_data){
+>>> +		.name = "rtc_clk_sel",
+>>> +		.ops = &clk_regmap_mux_ops,
+>>> +		.parent_data = rtc_clk_sel_parent_data,
+>>> +		.num_parents = 2,
+>>> +		.flags = CLK_SET_RATE_PARENT,
+>>> +	},
+>>> +};
+>>> +
+
+[...]
+
+>>> +
+>>> +/* Video Clocks */
+>>> +static struct clk_regmap s4_vid_pll_div = {
+>>> +	.data = &(struct meson_vid_pll_div_data){
+>>> +		.val = {
+>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
+>>> +			.shift   = 0,
+>>> +			.width   = 15,
+>>> +		},
+>>> +		.sel = {
+>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
+>>> +			.shift   = 16,
+>>> +			.width   = 2,
+>>> +		},
+>>> +	},
+>>> +	.hw.init = &(struct clk_init_data) {
+>>> +		.name = "vid_pll_div",
+>>> +		/* Same to g12a */
+>>> +		.ops = &meson_vid_pll_div_ro_ops,
+>> Please add an helpful explanation.
+>> 'Same to g12a' is not helpful.
+>> 
+>
+> "Because the vid_pll_div clock is a clock that does not need to change the
+> divisor, ops only provides meson_vid_pll_div_ro_ops."
+> I wonder if this description is ok for you?
+
+I understand this divider will not change with RO ops.
+I'm interrested why it does not change and how it is expected to be setup.
+
+>
+>>> +		.parent_data = (const struct clk_parent_data []) {
+>>> +			{ .fw_name = "hdmi_pll", }
+>>> +		},
+>>> +		.num_parents = 1,
+>>> +		.flags = CLK_SET_RATE_PARENT,
+>>> +	},
+>>> +};
+
+[...]
+
+>>> +
+>>> +static struct clk_regmap s4_vclk_sel = {
+>>> +	.data = &(struct clk_regmap_mux_data){
+>>> +		.offset = CLKCTRL_VID_CLK_CTRL,
+>>> +		.mask = 0x7,
+>>> +		.shift = 16,
+>>> +	},
+>>> +	.hw.init = &(struct clk_init_data){
+>>> +		.name = "vclk_sel",
+>>> +		.ops = &clk_regmap_mux_ops,
+>>> +		.parent_data = s4_vclk_parent_data,
+>>> +		.num_parents = ARRAY_SIZE(s4_vclk_parent_data),
+>>> +	},
+>> You are stopping rate propagation here.
+>> It deserves an explanation. Same goes below.
+>
+> "When the driver uses this clock, needs to specify the patent clock he
+> wants in the dts."
+> Is ok for you?
+
+Then you still don't understand the clock flag usage.
+
+Preserving the parent selection (CLK_SET_RATE_NO_REPARENT) and rate
+propagation (CLK_SET_RATE_PARENT) is not the same thing.
+
+As it stands, your comment is not aliged with what you do.
+
+>
+>> 
+>>> +};
