@@ -2,200 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A64EC43217
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 14:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DA0C4708A
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 21:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232268AbiK1ODw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Nov 2022 09:03:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59072 "EHLO
+        id S234338AbiK1V0F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Nov 2022 16:26:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231232AbiK1ODu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 09:03:50 -0500
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D08A478;
-        Mon, 28 Nov 2022 06:02:50 -0800 (PST)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Mon, 28 Nov
- 2022 22:02:47 +0800
-Message-ID: <c9551542-6224-f443-bfce-cc537771220b@amlogic.com>
-Date:   Mon, 28 Nov 2022 22:02:47 +0800
+        with ESMTP id S234548AbiK1V0C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 16:26:02 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3822FFCE
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 13:25:56 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id g7so19473872lfv.5
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 13:25:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WnMHEyYqf4JABxGOEKdDo36/UmgQjGCOb1+pWIHU2Xo=;
+        b=eObK5wb1JfLnMiEcFoHYj6swOACa3W0OEmp/Mwl36h81H+YYasg8ZtWk2BPTN2wn98
+         q0SEGNdO98E5sx4WYMH7QGTsDzohx+sRIIT6zGE4r4K13sArQ+KP874ZNLU1bS382AB7
+         SZGvON1MofRTFeMg8jnUZ9zmHWt5gKOZfRibD56u5FTA7t1iwR2+4yY+W4myDWgdznFv
+         P+LZ8h/HPFoTMqIlJDiLKoNGJ6g8ZrtFCiaLEKZjp8fihNsPbavewOrYQTPCsuNh0mjk
+         xeSNqbjbwWKID14F5AcDwJPEOgwDWKT55RZFj1AEBVvZwG25lL3cJewGTObst2DpubSt
+         4h0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WnMHEyYqf4JABxGOEKdDo36/UmgQjGCOb1+pWIHU2Xo=;
+        b=S3jsioHrfxh9jwyBfPl3BEnwVRzBDt/uIfXHBk8IKud0wAjaAYMh/mxQD6/41UdFom
+         CTN+JUfVejV4oRxqBSXZUZOqG47ZNKu9j9FIXJS4uXMmOVzxBq+JQLI8yx4FvAFYK3ga
+         l1YEcpXXUTPcn169R+E6R6GAatZzGnGFv3arwHl8e6ZCJcuMDjwQzFDBRKTsKGNGbYBE
+         OVAMVEh9qsWx7Ox8WpppGu2FLep8FYxXHSi6yA8UMHXi6SbQ1OdfIDkmoUA6prCjmvEw
+         uyCywt8JEo2KOm1Ri/P6wzyxzTprIxqCax/iEdNUtQawaV3tym3pAdeBkfiZNHW7h2xy
+         5fRA==
+X-Gm-Message-State: ANoB5pnwKFkMU/bvm/G6TRbzqDnjbvPslYeVEu0Wy6rKTVeLKJWew0ko
+        rmbQVRoCzC5RNRxuC9lA6I8lcg==
+X-Google-Smtp-Source: AA0mqf7mr3wNPIOENPGrqrElt9mDtKiHDn7sCXpf3iPrdlhCXXl+yln1x75T1wBfwbC/fWA3HNcxpg==
+X-Received: by 2002:ac2:4e8c:0:b0:4ac:d6e4:41cf with SMTP id o12-20020ac24e8c000000b004acd6e441cfmr14056927lfr.102.1669670755050;
+        Mon, 28 Nov 2022 13:25:55 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id o9-20020a05651c050900b0026dcf81d804sm1336698ljp.31.2022.11.28.13.25.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Nov 2022 13:25:54 -0800 (PST)
+Message-ID: <cf418569-abeb-b9df-8e19-5c50c6e3ac95@linaro.org>
+Date:   Mon, 28 Nov 2022 22:25:53 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH V5 3/4] clk: meson: s4: add s4 SoC peripheral clock
- controller driver and bindings
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v3 1/9] dt-bindings: clock: Add SM8550 GCC clocks
 Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>
-References: <20221123021346.18136-1-yu.tu@amlogic.com>
- <20221123021346.18136-4-yu.tu@amlogic.com>
- <1jbkov2vb9.fsf@starbuckisacylon.baylibre.com>
- <81d9a794-2920-64f1-1d80-50653113624c@amlogic.com>
- <1jilizp8bs.fsf@starbuckisacylon.baylibre.com>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <1jilizp8bs.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20221128122820.798610-1-abel.vesa@linaro.org>
+ <20221128122820.798610-2-abel.vesa@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221128122820.798610-2-abel.vesa@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
+On 28/11/2022 13:28, Abel Vesa wrote:
+> Add device tree bindings for global clock controller on SM8550 SoCs.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-On 2022/11/28 20:23, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> 
-> On Mon 28 Nov 2022 at 16:08, Yu Tu <yu.tu@amlogic.com> wrote:
-> 
->>>> +
->>>> +/*
->>>> + * This RTC clock can be supplied by an external 32KHz crystal oscillator.
->>>> + * If it is used, it should be documented in using fw_name and documented in the
->>>> + * Bindings. Not currently in use on this board, so skip it.
->>>> + */
->>>> +static u32 rtc_clk_sel[] = { 0, 1 };
->>> No reason to do that
->>
->> I'm going to change it to static u32 rtc_clk_sel[] = { 0, 1, 2 };.
->> I don't know if that's okay with you?
-> 
-> ... then there is no need to specify this table.
-> 
 
-I got it.I'll change it as you suggest.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> 
-> 
->>
->>>
->>>> +static const struct clk_parent_data rtc_clk_sel_parent_data[] = {
->>>> +	{ .hw = &s4_rtc_32k_by_oscin.hw },
->>>> +	{ .hw = &s4_rtc_32k_by_oscin_div.hw },
->>>> +	{ .fw_name = "ext_32k",  }
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_rtc_clk = {
->>>> +	.data = &(struct clk_regmap_mux_data) {
->>>> +		.offset = CLKCTRL_RTC_CTRL,
->>>> +		.mask = 0x3,
->>>> +		.shift = 0,
->>>> +		.table = rtc_clk_sel,
->>>> +		.flags = CLK_MUX_ROUND_CLOSEST,
->>>> +	},
->>>> +	.hw.init = &(struct clk_init_data){
->>>> +		.name = "rtc_clk_sel",
->>>> +		.ops = &clk_regmap_mux_ops,
->>>> +		.parent_data = rtc_clk_sel_parent_data,
->>>> +		.num_parents = 2,
->>>> +		.flags = CLK_SET_RATE_PARENT,
->>>> +	},
->>>> +};
->>>> +
-> 
-> [...]
-> 
->>>> +
->>>> +/* Video Clocks */
->>>> +static struct clk_regmap s4_vid_pll_div = {
->>>> +	.data = &(struct meson_vid_pll_div_data){
->>>> +		.val = {
->>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>>> +			.shift   = 0,
->>>> +			.width   = 15,
->>>> +		},
->>>> +		.sel = {
->>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>>> +			.shift   = 16,
->>>> +			.width   = 2,
->>>> +		},
->>>> +	},
->>>> +	.hw.init = &(struct clk_init_data) {
->>>> +		.name = "vid_pll_div",
->>>> +		/* Same to g12a */
->>>> +		.ops = &meson_vid_pll_div_ro_ops,
->>> Please add an helpful explanation.
->>> 'Same to g12a' is not helpful.
->>>
->>
->> "Because the vid_pll_div clock is a clock that does not need to change the
->> divisor, ops only provides meson_vid_pll_div_ro_ops."
->> I wonder if this description is ok for you?
-> 
-> I understand this divider will not change with RO ops.
-> I'm interrested why it does not change and how it is expected to be setup.
-> 
+Best regards,
+Krzysztof
 
-Maybe you can be more specific, I don't understand, you're interested in 
-that part of it specifically.
-
-I don't know if you have the document of chip. If not, I can provide it 
-to you privately. You can ask specific questions in conjunction with 
-your documentation and submission(The original submission came from you.).
-I can give you a specific answer or ask the chip designer to give you a 
-reply.Do you think that's okay with you
-
->>
->>>> +		.parent_data = (const struct clk_parent_data []) {
->>>> +			{ .fw_name = "hdmi_pll", }
->>>> +		},
->>>> +		.num_parents = 1,
->>>> +		.flags = CLK_SET_RATE_PARENT,
->>>> +	},
->>>> +};
-> 
-> [...]
-> 
->>>> +
->>>> +static struct clk_regmap s4_vclk_sel = {
->>>> +	.data = &(struct clk_regmap_mux_data){
->>>> +		.offset = CLKCTRL_VID_CLK_CTRL,
->>>> +		.mask = 0x7,
->>>> +		.shift = 16,
->>>> +	},
->>>> +	.hw.init = &(struct clk_init_data){
->>>> +		.name = "vclk_sel",
->>>> +		.ops = &clk_regmap_mux_ops,
->>>> +		.parent_data = s4_vclk_parent_data,
->>>> +		.num_parents = ARRAY_SIZE(s4_vclk_parent_data),
->>>> +	},
->>> You are stopping rate propagation here.
->>> It deserves an explanation. Same goes below.
->>
->> "When the driver uses this clock, needs to specify the patent clock he
->> wants in the dts."
->> Is ok for you?
-> 
-> Then you still don't understand the clock flag usage.
-> 
-> Preserving the parent selection (CLK_SET_RATE_NO_REPARENT) and rate
-> propagation (CLK_SET_RATE_PARENT) is not the same thing.
-> 
-> As it stands, your comment is not aliged with what you do.
-> 
-
-Thanks for the explanation of flag.
-My goal is to have the clock user describe themselves in DTS using the 
-parent, or using the assigned-clocks and assigned-clock-parents settings 
-in DTS. According to your explanation, some clocks like this should use 
-CLK_SET_RATE_NO_REPARENT, right?
-
->>
->>>
->>>> +};
-> 
-> .
