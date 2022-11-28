@@ -2,248 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E6CC4167D
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 07:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C510EC43217
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 09:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbiK1Hkj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Nov 2022 02:40:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
+        id S229880AbiK1JuL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Nov 2022 04:50:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230152AbiK1HkQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 02:40:16 -0500
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25D115737;
-        Sun, 27 Nov 2022 23:39:03 -0800 (PST)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Mon, 28 Nov
- 2022 15:39:01 +0800
-Message-ID: <a6cf1b3f-259d-44b7-8a9a-2a0cd29c714b@amlogic.com>
-Date:   Mon, 28 Nov 2022 15:39:00 +0800
+        with ESMTP id S229704AbiK1JuK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 04:50:10 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9022912AFC
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 01:50:08 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id z4so15869985wrr.3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 01:50:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QYr3PilnPfWFQx/WIKEh38kY2BYH/dcp/YHhoxh8Bg8=;
+        b=pIYQDfZ6HevvCeW6JkvkPYU94gSISP8LKRfeusWna5rnmfks+QnVirtOsyIDXn6pMt
+         gjK0bTnH6KKf0RAzypNj0lC/chxDxtuo6OXo7tHam0+lG0HMHk14nC6gEUGKZTFL10Uv
+         6ql9Gx0/jZKNE2q9RyMBt6+Q3Y0W6i2QPlA82TzEXPpNZcJIWDjMWEnYKSLICS0/pmlC
+         xRfXgSJ6vv4Gww5f+XVExV4ziK+LbArKsuBXi/JwIAseZkT4ZwXNUNC7zALP7u6r0mUJ
+         jwzIG/v1Z+/isCqaVAeclcOzDP3W+PP8WtfTppN8wpLl+r59DR56EjQ2rR6y2+EeLl/J
+         eEPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QYr3PilnPfWFQx/WIKEh38kY2BYH/dcp/YHhoxh8Bg8=;
+        b=4mg0EgtOfHwSi1QdO3O9xV7C5q6QIELZYRcUYsfDDq7muweDxXvZWyu0iKpz5OsBQB
+         C3AeAQ+ExGjqy7YZmqjet0yOI8HVZacbyYeCn0ED1zyCSeuQ7RzR+pESum11Ry12tdgY
+         yWvydCI9sCvD7UYKXIY9z/6Y/recUVBdL+Hh+9g154z8wKZ+FYeZd1t1HmLr3OXINHq3
+         njOVjaZaoLSD6Wcy6CXVlIrLG+WE39by+KE+OXVaGdh5IoVWpu95dk+T2iK5/CuRZSVx
+         DR+iOX8g9gT0tJRtyZECS6FY+GBsPCdse+wpbSObQts5AuJhfhJKNjBIb89mCeeyWPlL
+         Th9A==
+X-Gm-Message-State: ANoB5pmxoBKeATNJegGkJkavN/1V1SfES1MGaNIKEK7+aViZMGohK3Fd
+        VNtpOBZJw5SelB3uBJb7ebAjOnGcAgTYyw==
+X-Google-Smtp-Source: AA0mqf4TqhtfTx2q9HBSScoSM1pxasjaHVG8orHA6o3c8NPUwqjEi3am9lKc1nd+omUA/b25dyHnRw==
+X-Received: by 2002:adf:f3cb:0:b0:22e:3659:2d92 with SMTP id g11-20020adff3cb000000b0022e36592d92mr21009773wrp.604.1669629007113;
+        Mon, 28 Nov 2022 01:50:07 -0800 (PST)
+Received: from hackbox.lan ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id q10-20020a05600c46ca00b003c6bd91caa5sm15569079wmo.17.2022.11.28.01.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 01:50:06 -0800 (PST)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.2
+Date:   Mon, 28 Nov 2022 11:49:52 +0200
+Message-Id: <20221128094952.667315-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH V5 1/4] clk: meson: S4: add support for Amlogic S4 SoC PLL
- clock driver and bindings
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <neil.armstrong@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>
-References: <20221123021346.18136-1-yu.tu@amlogic.com>
- <20221123021346.18136-2-yu.tu@amlogic.com>
- <f03f331a-5666-298e-a1a2-bdb9bab11a48@linaro.org>
- <92b570ea-3ddc-8e91-5a7a-ed601bb7c02c@amlogic.com>
- <eb56ed39-cfaa-3368-a2c0-0a4e89440e40@linaro.org>
- <5b7176b4-d7a2-c67f-31c6-e842e0870836@linaro.org>
- <1jfse72wqk.fsf@starbuckisacylon.baylibre.com>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <1jfse72wqk.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
-	Thank you for your reply.
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
-On 2022/11/25 17:23, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> 
-> On Wed 23 Nov 2022 at 14:53, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->> On 23/11/2022 14:23, Neil Armstrong wrote:
->>> Hi,
->>>
->>> On 23/11/2022 12:16, Yu Tu wrote:
->>>> Hi Krzysztof,
->>>>       Thank you for your reply.
->>>>
->>>> On 2022/11/23 18:08, Krzysztof Kozlowski wrote:
->>>>> [ EXTERNAL EMAIL ]
->>>>>
->>>>> On 23/11/2022 03:13, Yu Tu wrote:
->>>>>> Add the S4 PLL clock controller found and bindings in the s4 SoC family.
->>>>>>
->>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>>>> ---
->>>>>>    .../bindings/clock/amlogic,s4-pll-clkc.yaml   |  51 +
->>>>>
->>>>> This is v5 and still bindings are here? Bindings are always separate
->>>>> patches. Use subject prefixes matching the subsystem (git log --oneline
->>>>> -- ...).
->>>>>
->>>>> And this was split, wasn't it? What happened here?!?
->>>>
->>>> Put bindings and clock driver patch together from Jerome. Maybe you can read this chat history.
->>>> https://lore.kernel.or/all/1jy1v6z14n.fsf@starbuckisacylon.baylibre.com/
->>>
->>> Jerome was asking you to send 2 patchsets, one with :
->>> - bindings in separate patches
->>> - drivers in separate patches
->>> and a second with DT changes.
-> 
-> Indeed, this is what was asked. It is aligned with Krzysztof's request.
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
-According to your discussion, I still should send patches in the 
-previous way in series. But I'm going to change it like you suggested.
-I don't know, am I getting it right?
+are available in the Git repository at:
 
-> 
->>>
->>> Then when the bindings + clocks patches are merged, a pull request of the bindings
->>> can be done to me so I can merge it with DT.
->>>
->>>>
->>>>>
->>>>>
->>>>>>    MAINTAINERS                                   |   1 +
->>>>>>    drivers/clk/meson/Kconfig                     |  13 +
->>>>>>    drivers/clk/meson/Makefile                    |   1 +
->>>>>>    drivers/clk/meson/s4-pll.c                    | 875 ++++++++++++++++++
->>>>>>    drivers/clk/meson/s4-pll.h                    |  88 ++
->>>>>>    .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |  30 +
->>>>>>    7 files changed, 1059 insertions(+)
->>>>>>    create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->>>>>>    create mode 100644 drivers/clk/meson/s4-pll.c
->>>>>>    create mode 100644 drivers/clk/meson/s4-pll.h
->>>>>>    create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->>>>>> new file mode 100644
->>>>>> index 000000000000..fd517e8ef14f
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->>>>>> @@ -0,0 +1,51 @@
->>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>>> +%YAML 1.2
->>>>>> +---
->>>>>> +$id: http://devicetree.org/schemas/clock/amlogic,s4-pll-clkc.yaml#
->>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>> +
->>>>>> +title: Amlogic Meson S serials PLL Clock Controller
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Neil Armstrong <narmstrong@baylibre.com>
->>>>>> +  - Jerome Brunet <jbrunet@baylibre.com>
->>>>>> +  - Yu Tu <yu.hu@amlogic.com>
->>>>>> +
->>>>> One blank line.
->>>>
->>>>    I will delete this, on next version patch.
->>>>
->>>>>
->>>>>> +
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    const: amlogic,s4-pll-clkc
->>>>>> +
->>>>>> +  reg:
->>>>>> +    maxItems: 1
->>>>>> +
->>>>>> +  clocks:
->>>>>> +    maxItems: 1
->>>>>> +
->>>>>> +  clock-names:
->>>>>> +    items:
->>>>>> +      - const: xtal
->>>>>> +
->>>>>> +  "#clock-cells":
->>>>>> +    const: 1
->>>>>> +
->>>>>> +required:
->>>>>> +  - compatible
->>>>>> +  - reg
->>>>>> +  - clocks
->>>>>> +  - clock-names
->>>>>> +  - "#clock-cells"
->>>>>> +
->>>>>> +additionalProperties: false
->>>>>> +
->>>>>> +examples:
->>>>>> +  - |
->>>>>> +    clkc_pll: clock-controller@fe008000 {
->>>>>> +      compatible = "amlogic,s4-pll-clkc";
->>>>>> +      reg = <0xfe008000 0x1e8>;
->>>>>> +      clocks = <&xtal>;
->>>>>> +      clock-names = "xtal";
->>>>>> +      #clock-cells = <1>;
->>>>>> +    };
->>>>>
->>>>>
->>>>>> +#endif /* __MESON_S4_PLL_H__ */
->>>>>> diff --git a/include/dt-bindings/clock/amlogic,s4-pll-clkc.h b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
->>>>>> new file mode 100644
->>>>>> index 000000000000..345f87023886
->>>>>> --- /dev/null
->>>>>> +++ b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
->>>>>
->>>>> This belongs to bindings patch, not driver.
->>>>>
->>>>>> @@ -0,0 +1,30 @@
->>>>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>>>>> +/*
->>>>>> + * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
->>>>>> + * Author: Yu Tu <yu.tu@amlogic.com>
->>>>>> + */
->>>>>> +
->>>>>> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
->>>>>> +#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
->>>>>> +
->>>>>> +/*
->>>>>> + * CLKID index values
->>>>>> + */
->>>>>> +
->>>>>> +#define CLKID_FIXED_PLL            1
->>>>>> +#define CLKID_FCLK_DIV2            3
->>>>>
->>>>> Indexes start from 0 and are incremented by 1. Not by 2.
->>>>>
->>>>> NAK.
->>>>
->>>> I remember Jerome discussing this with you.You can look at this submission history.
->>>> https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
->>>
->>> Historically we did that by only exposing part of the numbers, controlling which
->>> clocks were part of the bindings.
->>>
->>> But it seems this doesn't make sens anymore, maybe it would be time to put all the
->>> clock ids in the bindings for this new SoC and break with the previous strategy.
-> 
-> Krzysztof and I agreed there is nothing wrong with the current
-> approach, I believe.
-> 
-> It does not prevent someone from using an un-exposed clock, sure, or
-> exposing it in the future if necessary.
-> 
-> However, I think it clearly shows that an un-exposed element is not
-> expected to be used by an external consumers. It should be enough to
-> trigger a discussion if this expectation is wrong.
-> 
->>
->> So the outcome of the previous discussion was somewhere later in that
->> thread:
->>
->>> It is just a choice to not expose some IDs.
->>> It is not tied to the implementation at all.
->>> I think we actually follow the rules and the idea behind it.
->>
->>
->> Best regards,
->> Krzysztof
-> 
-> .
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.2
+
+for you to fetch changes up to 8178e245fa953f793670147368642717fcdb302e:
+
+  clk: imx: rename imx_obtain_fixed_clk_hw() to imx_get_clk_hw_by_name() (2022-11-25 11:22:15 +0200)
+
+----------------------------------------------------------------
+i.MX clocks changes for 6.2
+
+- Fix parent for FlexSPI clock for i.MX93
+- Add USB suspend clock on i.MX8MP
+- Unmap anatop base on error for i.MX93 driver
+- Change enet clock parent to wakeup_axi_root for i.MX93
+- Drop LPIT1, LPIT2, TPM1 and TPM3 clocks for i.MX93
+- Mark HSIO bus clock and SYS_CNT clock as critical on i.MX93
+- Add 320MHz and 640MHz entries to PLL146x
+- Add audio shared gate and SAI clocks for i.MX8MP
+
+----------------------------------------------------------------
+Abel Vesa (2):
+      dt-bindings: clock: imx8mp: Add ids for the audio shared gate
+      clk: imx8mp: Add audio shared gate
+
+Dario Binacchi (6):
+      clk: imx8mn: rename vpu_pll to m7_alt_pll
+      clk: imx: replace osc_hdmi with dummy
+      clk: imx: rename video_pll1 to video_pll
+      clk: imx8mn: fix imx8mn_sai2_sels clocks list
+      clk: imx8mn: fix imx8mn_enet_phy_sels clocks list
+      clk: imx: rename imx_obtain_fixed_clk_hw() to imx_get_clk_hw_by_name()
+
+Giulio Benetti (2):
+      clk: imx: imxrt1050: fix IMXRT1050_CLK_LCDIF_APB offsets
+      clk: imx: imxrt1050: add IMXRT1050_CLK_LCDIF_PIX clock gate
+
+Haibo Chen (1):
+      clk: imx93: correct the flexspi1 clock setting
+
+Jacky Bai (2):
+      clk: imx: keep hsio bus clock always on
+      clk: imx93: keep sys ctr clock always on
+
+Li Jun (2):
+      dt-bindings: clocks: imx8mp: Add ID for usb suspend clock
+      clk: imx: imx8mp: add shared clk gate for usb suspend clk
+
+Marek Vasut (1):
+      clk: imx: pll14xx: Add 320 MHz and 640 MHz entries for PLL146x
+
+Peng Fan (4):
+      clk: imx93: unmap anatop base in error handling path
+      clk: imx93: correct enet clock
+      dt-bindings: clock: imx93: drop TPM1/3 LPIT1/2 entry
+      clk: imx93: drop tpm1/3, lpit1/2 clk
+
+ drivers/clk/imx/clk-imx6sll.c            |   8 +-
+ drivers/clk/imx/clk-imx6sx.c             |  12 +--
+ drivers/clk/imx/clk-imx6ul.c             |   8 +-
+ drivers/clk/imx/clk-imx7d.c              |   4 +-
+ drivers/clk/imx/clk-imx7ulp.c            |  10 +--
+ drivers/clk/imx/clk-imx8mm.c             |  12 +--
+ drivers/clk/imx/clk-imx8mn.c             | 128 +++++++++++++++----------------
+ drivers/clk/imx/clk-imx8mp.c             |  28 +++++--
+ drivers/clk/imx/clk-imx8mq.c             |  14 ++--
+ drivers/clk/imx/clk-imx93.c              |  46 ++++++-----
+ drivers/clk/imx/clk-imxrt1050.c          |   5 +-
+ drivers/clk/imx/clk-pll14xx.c            |   2 +
+ drivers/clk/imx/clk.c                    |   5 +-
+ drivers/clk/imx/clk.h                    |   3 +-
+ include/dt-bindings/clock/imx8mn-clock.h |  24 ++++--
+ include/dt-bindings/clock/imx8mp-clock.h |  12 ++-
+ include/dt-bindings/clock/imx93-clock.h  |   4 -
+ 17 files changed, 178 insertions(+), 147 deletions(-)
