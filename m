@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E445C47089
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Nov 2022 10:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5E8C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Nov 2022 10:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbiK2KMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230092AbiK2KMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 29 Nov 2022 05:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33444 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232274AbiK2KLn (ORCPT
+        with ESMTP id S232297AbiK2KLn (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 05:11:43 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADD760E92
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B32560EBC
         for <linux-clk@vger.kernel.org>; Tue, 29 Nov 2022 02:10:28 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id l8so16185987ljh.13
+Received: by mail-lf1-x134.google.com with SMTP id p8so21688420lfu.11
         for <linux-clk@vger.kernel.org>; Tue, 29 Nov 2022 02:10:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDM+ShLi5j1R3rBNlVsV4BO3GL6r9EGCePLwu3eI7YY=;
-        b=TEPDnPhDWvVIej9MlCwmigOjBKXoR5+M8Hy3gBFWWMnoCHfhPp+Y1Yj5cgymj0qX58
-         NJNd+LIE5pW8hdvulLI2/w6dfpNc3md1/RsFSitQOH1Pf9E6fxDNNnsw8Nrcsr24ErjV
-         N7baOrVbFR4w3waf5QMzo3NthMO1xjqbCtUei8WbDveLSyQzDw8tyTepyJKgVAWd4IrB
-         W5yiLm+yJT4yxdsKnkQTwpneme1bUhOhcgV4kjLJpzJiKBvBRGjUlV90ctdIdoJN+gHG
-         k1BkTtkh2k4g/HtfddL3qnWDsPqV1FlZObhc9MaIRW5dew5cZkSy9O1ramT76qWIwH2E
-         TFmQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Df4azlMoxK0hL9mQz9ccBsBEsIE5rHBzW9/Il0gb7J0=;
+        b=TDHu2i7MPWX5cy6Qf7mbTVsf8eZYo9jG3oE/ED7u7Oxf9g1Yqyko5L1m1AB3RbLyrG
+         /tyjPwrohr8bGwHYJULvixcUPKhRrugOzTmPVd3naj31UwpIwr/rHx0DDYneSujNFRPe
+         tY57kSX6FXdnhZrIz/NZ09I/GOQ0knr3r43BqTqelm1+uMxoiMeWO98hiHF4YjzWtx5S
+         8Yv5SeshoO8KcUNfPeU+v6e4mf/AkGSty19WGevuiZVfAQoufhaNpmZ31IC/X2S45+NJ
+         PZx1O+E51tO0W1y+nl2/9Cq4jRuPB4qqfeo1gA3fOrZzUoVQxkmFkilx5H8OB062MfdL
+         V0pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KDM+ShLi5j1R3rBNlVsV4BO3GL6r9EGCePLwu3eI7YY=;
-        b=aWcSQiP1kuD4IhD1KsfVXBh4zD4m+NjuaOPlN9FBlMG+/9DNqd3SYPQjfXg1jT0YJj
-         Zv4CgWdg0cjtfDjxqcHfp6i9bdFTSRKMzJMglpFM0anFkRXTzQBNk3j+QQtFWQ2b6GF+
-         vefkGEYKYNVQrNEEAYi7N17F3yx25N9K8EAKbhftNjZb25dpF+bhfBSIfQ9dDMQK5W9f
-         h/h6KhrgLw59KVO/exg7CNVxi5Fx5hPTmp8S73e0jyhcdyu324gDERSZlWLKIPkEcLPP
-         +Ld702iJTBfy152E6jnryFYhYSj9Nb6xOdJBNs+sa6TSnzbzbTT+1rT8o8qyTOT7J7wW
-         OfWg==
-X-Gm-Message-State: ANoB5pl7Xj96VlLKcTxRi090hqoljCPPyFl+3RfSmavHvqAZNxzLDQmg
-        0uKsj7SsWdS8mEnHg8Mx1yJltQ==
-X-Google-Smtp-Source: AA0mqf6bY3ojWKTwwPnA4/VbJnCoaHvCgzWvXVFaGKunsI/yTRx5Vt8QqIGHBN/gBofIaa95UO7kIQ==
-X-Received: by 2002:a2e:9c14:0:b0:277:5665:2404 with SMTP id s20-20020a2e9c14000000b0027756652404mr19282499lji.155.1669716626580;
-        Tue, 29 Nov 2022 02:10:26 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Df4azlMoxK0hL9mQz9ccBsBEsIE5rHBzW9/Il0gb7J0=;
+        b=hTJWOdmr9SCqs5uyk/1vPkq0GMt9pQhsC+CkMGtFU7f/myrEcLBsnk0LpqQsubJUqS
+         A0yzT8Yyk2nASe0u4eWf8/wiRqeqe1W5zejtzoiiYmc+kMHmo8ehY+itbReOEgq+wEcK
+         FYsLxnerfBegNujo8axEinQ+ZTZaaNnko2JynkbcI99gMVPH5NPoADCFNsPt74P0UZPv
+         FFf4FUisYJvkwq2tbPaXEAp3bxUCU/cgpQDTUDmUd/gSR/4zuiX5TmesbgYP3L6Cw1bg
+         oeOp/ovdskVDMZgj/bU3mSwYfH1XXSCaPCC2Do8utDax/lf7ri+URh09KdNcgp66Dlmv
+         8mSQ==
+X-Gm-Message-State: ANoB5pkWisKnhJ+Rf/dc0QWloE0kC057TIjzw19oNjKb4vr7s14KY28h
+        IfPVhyw1dOZbOWx4hl//xaTElw==
+X-Google-Smtp-Source: AA0mqf4fnVylFQaDpD3D0UAZSCB7CPY5KLtN6lqbN9d/6ZUOBxoGvN2qI+mLdtZawv7Q97ObVZNdrw==
+X-Received: by 2002:ac2:5f49:0:b0:4a4:7db1:b853 with SMTP id 9-20020ac25f49000000b004a47db1b853mr17933119lfz.562.1669716627337;
+        Tue, 29 Nov 2022 02:10:27 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id a12-20020ac25e6c000000b004b0a1e77cb2sm2146642lfr.137.2022.11.29.02.10.25
+        by smtp.gmail.com with ESMTPSA id a12-20020ac25e6c000000b004b0a1e77cb2sm2146642lfr.137.2022.11.29.02.10.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Nov 2022 02:10:25 -0800 (PST)
+        Tue, 29 Nov 2022 02:10:26 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,35 +58,161 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Alex Elder <elder@linaro.org>
-Subject: [PATCH 0/4] clk: qcom: rpm/rpmh: drop platform names
-Date:   Tue, 29 Nov 2022 12:10:21 +0200
-Message-Id: <20221129101025.960110-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 1/4] clk: qcom: rpmh: group clock definitions together
+Date:   Tue, 29 Nov 2022 12:10:22 +0200
+Message-Id: <20221129101025.960110-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221129101025.960110-1-dmitry.baryshkov@linaro.org>
+References: <20221129101025.960110-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Both RPM and RPMH clocks use platform (SoC) as a part of the clock
-definition. However there is nothing really SoC-specific in this
-part. Using it just leads to confusion and sometimes to duplication of
-definitions. Drop the SoC name where it is logical.
+In preparations to the further changes, group all RPMH clock definitions
+to ease review.
 
-Note: the smd-rpm clocks also suffer from the same issue a bit, there
-are platform-specific and platform-independent clocks. Corresponding
-patches will be sent later if this approach is accepted.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/clk-rpmh.c | 55 ++++++++++++++++++-------------------
+ 1 file changed, 26 insertions(+), 29 deletions(-)
 
-Dmitry Baryshkov (4):
-  clk: qcom: rpmh: group clock definitions together
-  clk: qcom: rpmh: reuse common duplicate clocks
-  clk: qcom: rpmh: drop the platform from clock definitions
-  clk: qcom: rpm: drop the platform from clock definitions
-
- drivers/clk/qcom/clk-rpm.c  | 194 ++++++++---------
- drivers/clk/qcom/clk-rpmh.c | 419 ++++++++++++++++++------------------
- 2 files changed, 294 insertions(+), 319 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 1da45a6e2f29..f13c9bd610d0 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -342,19 +342,45 @@ static const struct clk_ops clk_rpmh_bcm_ops = {
+ };
+ 
+ /* Resource name must match resource id present in cmd-db */
++DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
+ DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
++DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
++DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
++
++DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 2);
+ DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+ DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
++DEFINE_CLK_RPMH_VRM(sc8280xp, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
++
++DEFINE_CLK_RPMH_VRM(sdx65, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
++DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
++DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
++
++DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
++DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
++
+ DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
+ DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
+ DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
+ DEFINE_CLK_RPMH_VRM(sm8150, rf_clk3, rf_clk3_ao, "rfclka3", 1);
++DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
++DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
++
+ DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+ DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+ DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk3, rf_clk3_ao, "rfclkd3", 1);
+ DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk4, rf_clk4_ao, "rfclkd4", 1);
++DEFINE_CLK_RPMH_VRM(sdx55, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
++DEFINE_CLK_RPMH_VRM(sdx55, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
++
++DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
++
+ DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
+ DEFINE_CLK_RPMH_BCM(sdm845, ce, "CE0");
++DEFINE_CLK_RPMH_BCM(sdx55, ipa, "IP0");
++DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
++DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
++DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
+ 
+ static struct clk_hw *sdm845_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+@@ -398,11 +424,6 @@ static const struct clk_rpmh_desc clk_rpmh_sdm670 = {
+ 	.num_clks = ARRAY_SIZE(sdm670_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_VRM(sdx55, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+-DEFINE_CLK_RPMH_VRM(sdx55, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+-DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
+-DEFINE_CLK_RPMH_BCM(sdx55, ipa, "IP0");
+-
+ static struct clk_hw *sdx55_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+@@ -478,8 +499,6 @@ static const struct clk_rpmh_desc clk_rpmh_sc8180x = {
+ 	.num_clks = ARRAY_SIZE(sc8180x_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 2);
+-
+ static struct clk_hw *sm8250_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+@@ -500,12 +519,6 @@ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+ 	.num_clks = ARRAY_SIZE(sm8250_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
+-DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
+-DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
+-DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
+-DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
+-
+ static struct clk_hw *sm8350_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+@@ -533,8 +546,6 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
+ 	.num_clks = ARRAY_SIZE(sm8350_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_VRM(sc8280xp, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
+-
+ static struct clk_hw *sc8280xp_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+@@ -550,12 +561,6 @@ static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
+ 	.num_clks = ARRAY_SIZE(sc8280xp_rpmh_clocks),
+ };
+ 
+-/* Resource name must match resource id present in cmd-db */
+-DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
+-
+-DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+-DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
+-
+ static struct clk_hw *sm8450_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sc7280_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]	= &sc7280_bi_tcxo_ao.hw,
+@@ -600,10 +605,6 @@ static const struct clk_rpmh_desc clk_rpmh_sc7280 = {
+ 	.num_clks = ARRAY_SIZE(sc7280_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
+-DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
+-DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
+-
+ static struct clk_hw *sm6350_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sc7280_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]	= &sc7280_bi_tcxo_ao.hw,
+@@ -620,8 +621,6 @@ static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+ 	.num_clks = ARRAY_SIZE(sm6350_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_VRM(sdx65, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+-
+ static struct clk_hw *sdx65_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
+@@ -644,8 +643,6 @@ static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+ 	.num_clks = ARRAY_SIZE(sdx65_rpmh_clocks),
+ };
+ 
+-DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
+-
+ static struct clk_hw *qdu1000_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]      = &qdu1000_bi_tcxo.hw,
+ 	[RPMH_CXO_CLK_A]    = &qdu1000_bi_tcxo_ao.hw,
 -- 
 2.35.1
 
