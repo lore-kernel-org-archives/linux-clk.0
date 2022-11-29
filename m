@@ -2,353 +2,230 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36208C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Nov 2022 21:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3404C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Nov 2022 22:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236799AbiK2Vqr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Nov 2022 16:46:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33310 "EHLO
+        id S234423AbiK2WH2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Nov 2022 17:07:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236671AbiK2Vqq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 16:46:46 -0500
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE386C701;
-        Tue, 29 Nov 2022 13:46:44 -0800 (PST)
-Received: from nat1.ooonet.ru (gw.zelenaya.net [91.207.137.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id A405B504F7D;
-        Wed, 30 Nov 2022 00:33:53 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru A405B504F7D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1669757636; bh=jxC5mb/B563MYzjyvSKFbgKSDLCEdK3pzyR9nUdt0G8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DET4Nkq4PmScypnwvF5IFjbz4erXktgCgNOltyJex6PNoErMpgqYjneHvBMIMNPqE
-         HQvMkfaCL/xuko2nbfskLrYoJ6Rpq2S/kRe+Tf2Yq5gCntYfv0x83JSDTdUyRfm7Ou
-         LmBpw3wa4OzeIQ3FDVMUbizUtY0Pyfa/HbBuWxMs=
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     netdev@vger.kernel.org, Vadim Fedorenko <vadfed@fb.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH v4 3/4] dpll: documentation on DPLL subsystem interface
-Date:   Wed, 30 Nov 2022 00:37:23 +0300
-Message-Id: <20221129213724.10119-4-vfedorenko@novek.ru>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20221129213724.10119-1-vfedorenko@novek.ru>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
+        with ESMTP id S232970AbiK2WH1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 17:07:27 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76EA76F0E6
+        for <linux-clk@vger.kernel.org>; Tue, 29 Nov 2022 14:07:26 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id f6so7303590ilu.13
+        for <linux-clk@vger.kernel.org>; Tue, 29 Nov 2022 14:07:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zzexLakNpquls7kWsuxvVbCtkfJ7G69Vhom8bc/ySNg=;
+        b=ysvSp2dDXaZ5MgrnSksjZWLkC8IvHVnucCXIjGryoB8pmQ5OQkWstrgGxDW1SaWqfm
+         o6mLpln798fcNTtjayxkG/Z10cEaQ8YR2lgTPA/KDHFjsakdWiY5t94cES7Hb2Hjda+R
+         +aQ9UfgR1px5szIpq6Om6eV0vGYXGzvTlrf+cozIromx4sEeZ6yzWbBVU8janO7hYC9S
+         l3zSP7ZHm5RKduIIEJT6Vmz7gYyx6AiXii4rOFuGPzrorwvrley59Fxi5Mpa27XuGUtS
+         YF134GZOBCONcbjp/rxTLNZuaSZk8wlymSrOG5DIjmfH3id0LF0nHEplwi6xu4rvE+M9
+         VcMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zzexLakNpquls7kWsuxvVbCtkfJ7G69Vhom8bc/ySNg=;
+        b=Rg22vZhJvYuxRrfAE6IUHv+J/nNgdwtK5IN7iYzN7poyscfOgVe1WPD8+kZUNlZrO9
+         No0LjiDI5RIPz395J3vxnoj+ScKVj03eDGZn7+rUdK2IysabEkVgY8ThlZVmFrqSncwn
+         204pcAe3iIz000tefgN0z1KyOVkvIKRduEcQCn7hUTcsNyrbYyHgFHA1/S2/0U+xow5t
+         25CxQgnLha1KmyRAd+6U60NF+bNouU00do+BKbfQlHU/aMkef813VLihVmYydEEDrnGZ
+         WTy9QW+wfLFTNjwGQMEj2it0/o03mf277eXa8qMUYD5b1vVJhrqqDJBsMcTd3GC6Dw28
+         e4dw==
+X-Gm-Message-State: ANoB5plmrmF0Smno9MfL+OlKEUor0Ll8/g9HZSeDYWtlvNPvoEqUfoDJ
+        L8uS342ElVI4J0u4xrC5fTdaxA==
+X-Google-Smtp-Source: AA0mqf6etbRllRiARTec4snD4UG0v3858wcOV21VtPd7eSHon+1OqJltSe86Rwzp4RTq1BemyJUopw==
+X-Received: by 2002:a92:d1c3:0:b0:302:b7fb:318f with SMTP id u3-20020a92d1c3000000b00302b7fb318fmr20164673ilg.130.1669759645736;
+        Tue, 29 Nov 2022 14:07:25 -0800 (PST)
+Received: from [172.22.22.4] ([98.61.227.136])
+        by smtp.googlemail.com with ESMTPSA id g12-20020a92cdac000000b003024a44cd95sm5042583ild.34.2022.11.29.14.07.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Nov 2022 14:07:25 -0800 (PST)
+Message-ID: <9d4c660c-d3d8-dc8f-ad6e-c4dd1e9a74e3@linaro.org>
+Date:   Tue, 29 Nov 2022 16:07:24 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/4] clk: qcom: rpmh: group clock definitions together
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221129101025.960110-1-dmitry.baryshkov@linaro.org>
+ <20221129101025.960110-2-dmitry.baryshkov@linaro.org>
+From:   Alex Elder <elder@linaro.org>
+In-Reply-To: <20221129101025.960110-2-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vadim Fedorenko <vadfed@fb.com>
+On 11/29/22 4:10 AM, Dmitry Baryshkov wrote:
+> In preparations to the further changes, group all RPMH clock definitions
+> to ease review.
 
-Add documentation explaining common netlink interface to configure DPLL
-devices and monitoring events. Common way to implement DPLL device in
-a driver is also covered.
+It isn't completely clear to me why these were grouped
+in the way you did.  Do you happen to know what ARC and
+VRM stand for?  BCM is bus clock manager, and RPMH might
+be resource power manager--hardware.
 
-Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
----
- Documentation/networking/dpll.rst  | 271 +++++++++++++++++++++++++++++
- Documentation/networking/index.rst |   1 +
- 2 files changed, 272 insertions(+)
- create mode 100644 Documentation/networking/dpll.rst
+Anyway, I can confirm you simply rearranged these definitions,
+and that it still compiles, so...
 
-diff --git a/Documentation/networking/dpll.rst b/Documentation/networking/dpll.rst
-new file mode 100644
-index 000000000000..58401e2b70a7
---- /dev/null
-+++ b/Documentation/networking/dpll.rst
-@@ -0,0 +1,271 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============================
-+The Linux kernel DPLL subsystem
-+===============================
-+
-+
-+The main purpose of DPLL subsystem is to provide general interface
-+to configure devices that use any kind of Digital PLL and could use
-+different sources of signal to synchronize to as well as different
-+types of outputs.
-+The main interface is NETLINK_GENERIC based protocol with an event
-+monitoring multicast group defined.
-+
-+
-+Pin object
-+==========
-+A pin is amorphic object which represents either input and output, it
-+could be internal component of the device, as well as externaly
-+connected.
-+The number of pins per dpll vary, but usually multiple pins shall be
-+provided for a single dpll device.
-+Direction of a pin and it's capabilities are provided to the user in
-+response for netlink dump request messages.
-+Pin can be shared by multiple dpll devices. Where configuration on one
-+pin can alter multiple dplls (i.e. DPLL_PIN_SGINAL_TYPE, DPLL_PIN_TYPE,
-+DPLL_PIN_STATE), or just one pin-dpll pair (i.e. DPLL_PIN_PRIO).
-+Pin can be also a MUX type, where one or more pins are attached to
-+a parent pin. The parent pin is the one directly connected to the dpll,
-+which may be used by dplls in DPLL_MODE_AUTOMATIC selection mode, where
-+only pins directly connected to the dpll are capable of automatic
-+source pin selection. In such case, pins are dumped with
-+DPLLA_PIN_PARENT_IDX, and are able to be selected by the userspace with
-+netlink request.
-+
-+Configuration commands group
-+============================
-+
-+Configuration commands are used to get or dump information about
-+registered DPLL devices (and pins), as well as set configuration of
-+device or pins. As DPLL device could not be abstract and reflects real
-+hardware, there is no way to add new DPLL device via netlink from user
-+space and each device should be registered by it's driver.
-+
-+List of command with possible attributes
-+========================================
-+
-+All constants identifying command types use ``DPLL_CMD_`` prefix and
-+suffix according to command purpose. All attributes use ``DPLLA_``
-+prefix and suffix according to attribute purpose:
-+
-+  ============================  =======================================
-+  ``DEVICE_GET``                userspace to get device info
-+    ``ID``                      attr internal dpll device index
-+    ``NAME``                    attr dpll device name
-+    ``MODE``                    attr selection mode
-+    ``MODE_SUPPORTED``          attr available selection modes
-+    ``SOURCE_PIN_IDX``          attr index of currently selected source
-+    ``LOCK_STATUS``             attr internal frequency-lock status
-+    ``TEMP``                    attr device temperature information
-+    ``NETIFINDEX``              attr dpll owner Linux netdevice index
-+  ``DEVICE_SET``                userspace to set dpll device
-+                                configuration
-+    ``ID``                      attr internal dpll device index
-+    ``MODE``                    attr selection mode to configure
-+    ``PIN_IDX``                 attr index of source pin to select as
-+                                active source
-+  ``PIN_SET``                   userspace to set pins configuration
-+    ``ID``                      attr internal dpll device index
-+    ``PIN_IDX``                 attr index of a pin to configure
-+    ``PIN_TYPE``                attr type configuration value for
-+                                selected pin
-+    ``PIN_SIGNAL_TYPE``         attr signal type configuration value
-+                                for selected pin
-+    ``PIN_CUSTOM_FREQ``         attr signal custom frequency to be set
-+    ``PIN_STATE``               attr pin state to be set
-+    ``PIN_PRIO``                attr pin priority to be set
-+
-+Netlink dump requests
-+=====================
-+The ``DEVICE_GET`` command is capable of dump type netlink requests.
-+In such case the userspace shall provide ``DUMP_FILTER`` attribute
-+value to filter the response as required.
-+If filter is not provided only name and id of available dpll(s) is
-+provided. If the request also contains ``ID`` attribute, only selected
-+dpll device shall be dumped.
-+
-+Possible response message attributes for netlink requests depending on
-+the value of ``DPLLA_DUMP_FILTER`` attribute:
-+
-+  =============================== ====================================
-+  ``DPLL_DUMP_FILTER_PINS``       value of ``DUMP_FILTER`` attribute
-+    ``PIN``                       attr nested type contain single pin
-+                                  attributes
-+    ``PIN_IDX``                   attr index of dumped pin
-+    ``PIN_DESCRIPTION``           description of a pin provided by
-+                                  driver
-+    ``PIN_TYPE``                  attr value of pin type
-+    ``PIN_TYPE_SUPPORTED``        attr value of supported pin type
-+    ``PIN_SIGNAL_TYPE``           attr value of pin signal type
-+    ``PIN_SIGNAL_TYPE_SUPPORTED`` attr value of supported pin signal
-+                                  type
-+    ``PIN_CUSTOM_FREQ``           attr value of pin custom frequency
-+    ``PIN_STATE``                 attr value of pin state
-+    ``PIN_STATE_SUPPORTED``       attr value of supported pin state
-+    ``PIN_PRIO``                  attr value of pin prio
-+    ``PIN_PARENT_IDX``            attr value of pin patent index
-+    ``PIN_NETIFINDEX``            attr value of netdevice assocaiated
-+                                  with the pin
-+  ``DPLL_DUMP_FILTER_STATUS``     value of ``DUMP_FILTER`` attribute
-+    ``ID``                        attr internal dpll device index
-+    ``NAME``                      attr dpll device name
-+    ``MODE``                      attr selection mode
-+    ``MODE_SUPPORTED``            attr available selection modes
-+    ``SOURCE_PIN_IDX``            attr index of currently selected
-+                                  source
-+    ``LOCK_STATUS``               attr internal frequency-lock status
-+    ``TEMP``                      attr device temperature information
-+    ``NETIFINDEX``                attr dpll owner Linux netdevice index
-+
-+
-+The pre-defined enums
-+=====================
-+
-+All the enums use the ``DPLL_`` prefix.
-+
-+Values for ``PIN_TYPE`` and ``PIN_TYPE_SUPPORTED`` attributes:
-+
-+  ============================ ========================================
-+  ``PIN_TYPE_MUX``             MUX type pin, connected pins shall
-+                               have their own types
-+  ``PIN_TYPE_EXT``             External pin
-+  ``PIN_TYPE_SYNCE_ETH_PORT``  SyncE on Ethernet port
-+  ``PIN_TYPE_INT_OSCILLATOR``  Internal Oscillator (i.e. Holdover
-+                               with Atomic Clock as a Source)
-+  ``PIN_TYPE_GNSS``            GNSS 1PPS source
-+
-+Values for ``PIN_SIGNAL_TYPE`` and ``PIN_SIGNAL_TYPE_SUPPORTED``
-+attributes:
-+
-+  ===============================  ===================================
-+  ``PIN_SIGNAL_TYPE_1_PPS``        1 Hz frequency
-+  ``PIN_SIGNAL_TYPE_10_MHZ``       10 MHz frequency
-+  ``PIN_SIGNAL_TYPE_CUSTOM_FREQ``  Frequency value provided in attr
-+                                   ``PIN_CUSTOM_FREQ``
-+
-+Values for ``LOCK_STATUS`` attribute:
-+
-+  ============================= ======================================
-+  ``LOCK_STATUS_UNLOCKED``      DPLL is in freerun, not locked to any
-+                                source pin
-+  ``LOCK_STATUS_CALIBRATING``   DPLL device calibrates to lock to the
-+                                source pin signal
-+  ``LOCK_STATUS_LOCKED``        DPLL device is locked to the source
-+                                pin frequency
-+  ``LOCK_STATUS_HOLDOVER``      DPLL device lost a lock, using its
-+                                frequency holdover capabilities
-+
-+Values for ``PIN_STATE`` and ``PIN_STATE_SUPPORTED`` attributes:
-+
-+============================= ============================
-+  ``PIN_STATE_CONNECTED``     Pin connected to a dpll
-+  ``PIN_STATE_DISCONNECTED``  Pin disconnected from dpll
-+  ``PIN_STATE_SOURCE``        Source pin
-+  ``PIN_STATE_OUTPUT``        Output pin
-+
-+Possible DPLL source selection mode values:
-+
-+  =================== ================================================
-+  ``MODE_FORCED``     source pin is force-selected by
-+                      ``DPLL_CMD_DEVICE_SET`` with given value of
-+                      ``DPLLA_SOURCE_PIN_IDX`` attribute
-+  ``MODE_AUTOMATIC``  source pin ise auto selected according to
-+                      configured pin priorities and source signal
-+                      validity
-+  ``MODE_HOLDOVER``   force holdover mode of DPLL
-+  ``MODE_FREERUN``    DPLL is driven by supplied system clock without
-+                      holdover capabilities
-+  ``MODE_NCO``        similar to FREERUN, with possibility to
-+                      numerically control frequency offset
-+
-+Notifications
-+================
-+
-+DPLL device can provide notifications regarding status changes of the
-+device, i.e. lock status changes, source/output type changes or alarms.
-+This is the multicast group that is used to notify user-space apps via
-+netlink socket:
-+
-+Notifications messages:
-+
-+  ========================= ==========================================
-+  ``EVENT_DEVICE_CREATE``   event value new DPLL device was created
-+    ``ID``                  attr dpll device index
-+    ``NAME``                attr dpll device name
-+  ``EVENT_DEVICE_DELETE``   event value DPLL device was deleted
-+    ``ID``                  attr dpll device index
-+  ``EVENT_DEVICE_CHANGE``   event value DPLL device attribute has changed
-+    ``ID``                  attr dpll device index
-+    ``CHANGE_TYPE``         attr the reason for change with values of
-+                            ``enum dpll_event_change``
-+
-+Device change event reasons, values of ``CHANGE_TYPE`` attribute:
-+
-+  =========================== =========================================
-+   ``CHANGE_MODE``            DPLL selection mode has changed
-+   ``CHANGE_LOCK_STATUS``     DPLL lock status has changed
-+   ``CHANGE_SOURCE_PIN``      DPLL source pin has changed
-+   ``CHANGE_TEMP``            DPLL temperature has changed
-+   ``CHANGE_PIN_ADD``         pin added to DPLL
-+   ``CHANGE_PIN_DEL``         pin removed from DPLL
-+   ``CHANGE_PIN_TYPE``        pin type has chaned
-+   ``CHANGE_PIN_SIGNAL_TYPE`` pin signal type has changed
-+   ``CHANGE_PIN_CUSTOM_FREQ`` pin custom frequency value has changed
-+   ``CHANGE_PIN_STATE``       pin state has changed
-+   ``CHANGE_PIN_PRIO``        pin prio has changed
-+
-+
-+Device driver implementation
-+============================
-+
-+For device to operate as DPLL subsystem device, it should implement
-+set of operations and register device via ``dpll_device_alloc`` and
-+``dpll_device_register`` provide the operations set, unique device
-+cookie, type of dpll (PPS/EEC), and pointers to parent device and
-+its private data for calling back the ops.
-+
-+The pins are allocated separately with ``dpll_pin_alloc``, which
-+requires providing pin description and its length.
-+
-+Once DPLL device is created, allocated pin can be registered with it
-+with 2 different methods, always providing implemented pin callbacks,
-+and private data pointer for calling them:
-+``dpll_pin_register`` - simple registration with a dpll device.
-+``dpll_muxed_pin_register`` - register pin with another MUX type pin.
-+
-+It is also possible to register pin already registered with different
-+DPLL device by calling ``dpll_shared_pin_register`` - in this case
-+changes requested on a single pin would affect all DPLLs which were
-+registered with that pin.
-+
-+For different instances of a device driver requiring to find already
-+registered DPLL (i.e. to connect its pins to id)
-+use ``dpll_device_get_by_cookie`` providing the same cookie, type of
-+dpll and index of the DPLL device of such type, same as given on
-+original device allocation.
-+
-+The name od DPLL device is generated based on registerer device struct
-+pointer, DPLL type and an index received from registerer device driver.
-+Name is in format: ``dpll-%s-%s-%s%d`` witch arguments:
-+``dev_driver_string(parent)``        - syscall on parent device
-+``dev_name(parent)``                 - syscall on parent device
-+``type ? dpll_type_str(type) : ""``  - DPLL type converted to string
-+``idx``                              - registerer given index
-+
-+Notifications of adding or removing DPLL devices are created within
-+subsystem itself.
-+Notifications about configurations changes are also invoked when
-+requested change was successfully accepted by device driver with
-+corresponding set command.
-+Although the interface provides device drivers with
-+``dpll_notify_device_change``, so notifications or alarms can be
-+requested by device driver if needed, as different ways of confirmation
-+could be used. All the interfaces for notification messages could be
-+found in ``<linux/dpll.h>``, constants and enums are placed in
-+``<uapi/linux/dpll.h>`` to be consistent with user-space.
-+
-+There is no strict requirement to implement all the operations for
-+each device, every operation handler is checked for existence and
-+ENOTSUPP is returned in case of absence of specific handler.
-+
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index 4f2d1f682a18..d50d98939942 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -16,6 +16,7 @@ Contents:
-    device_drivers/index
-    dsa/index
-    devlink/index
-+   dpll
-    caif/index
-    ethtool-netlink
-    ieee802154
--- 
-2.27.0
+Reviewed-by: Alex Elder <elder@linaro.org>
+
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/clk/qcom/clk-rpmh.c | 55 ++++++++++++++++++-------------------
+>   1 file changed, 26 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 1da45a6e2f29..f13c9bd610d0 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -342,19 +342,45 @@ static const struct clk_ops clk_rpmh_bcm_ops = {
+>   };
+>   
+>   /* Resource name must match resource id present in cmd-db */
+> +DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
+>   DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
+> +DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
+> +DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
+> +
+> +DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 2);
+>   DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+>   DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
+> +DEFINE_CLK_RPMH_VRM(sc8280xp, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
+> +
+> +DEFINE_CLK_RPMH_VRM(sdx65, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> +DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> +DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
+> +
+> +DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
+> +DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
+> +
+>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
+>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
+>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
+>   DEFINE_CLK_RPMH_VRM(sm8150, rf_clk3, rf_clk3_ao, "rfclka3", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
+> +
+>   DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+>   DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+>   DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk3, rf_clk3_ao, "rfclkd3", 1);
+>   DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk4, rf_clk4_ao, "rfclkd4", 1);
+> +DEFINE_CLK_RPMH_VRM(sdx55, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+> +DEFINE_CLK_RPMH_VRM(sdx55, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+> +
+> +DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
+> +
+>   DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
+>   DEFINE_CLK_RPMH_BCM(sdm845, ce, "CE0");
+> +DEFINE_CLK_RPMH_BCM(sdx55, ipa, "IP0");
+> +DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
+> +DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
+> +DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
+>   
+>   static struct clk_hw *sdm845_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+> @@ -398,11 +424,6 @@ static const struct clk_rpmh_desc clk_rpmh_sdm670 = {
+>   	.num_clks = ARRAY_SIZE(sdm670_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_VRM(sdx55, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+> -DEFINE_CLK_RPMH_VRM(sdx55, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+> -DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
+> -DEFINE_CLK_RPMH_BCM(sdx55, ipa, "IP0");
+> -
+>   static struct clk_hw *sdx55_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+> @@ -478,8 +499,6 @@ static const struct clk_rpmh_desc clk_rpmh_sc8180x = {
+>   	.num_clks = ARRAY_SIZE(sc8180x_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 2);
+> -
+>   static struct clk_hw *sm8250_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+> @@ -500,12 +519,6 @@ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+>   	.num_clks = ARRAY_SIZE(sm8250_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
+> -DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
+> -DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
+> -DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
+> -DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
+> -
+>   static struct clk_hw *sm8350_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+> @@ -533,8 +546,6 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
+>   	.num_clks = ARRAY_SIZE(sm8350_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_VRM(sc8280xp, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
+> -
+>   static struct clk_hw *sc8280xp_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+> @@ -550,12 +561,6 @@ static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
+>   	.num_clks = ARRAY_SIZE(sc8280xp_rpmh_clocks),
+>   };
+>   
+> -/* Resource name must match resource id present in cmd-db */
+> -DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
+> -
+> -DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> -DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
+> -
+>   static struct clk_hw *sm8450_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sc7280_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]	= &sc7280_bi_tcxo_ao.hw,
+> @@ -600,10 +605,6 @@ static const struct clk_rpmh_desc clk_rpmh_sc7280 = {
+>   	.num_clks = ARRAY_SIZE(sc7280_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
+> -DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
+> -DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
+> -
+>   static struct clk_hw *sm6350_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]		= &sc7280_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]	= &sc7280_bi_tcxo_ao.hw,
+> @@ -620,8 +621,6 @@ static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+>   	.num_clks = ARRAY_SIZE(sm6350_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_VRM(sdx65, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> -
+>   static struct clk_hw *sdx65_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
+> @@ -644,8 +643,6 @@ static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+>   	.num_clks = ARRAY_SIZE(sdx65_rpmh_clocks),
+>   };
+>   
+> -DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
+> -
+>   static struct clk_hw *qdu1000_rpmh_clocks[] = {
+>   	[RPMH_CXO_CLK]      = &qdu1000_bi_tcxo.hw,
+>   	[RPMH_CXO_CLK_A]    = &qdu1000_bi_tcxo_ao.hw,
 
