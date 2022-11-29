@@ -2,94 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7097C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Nov 2022 21:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 463C5C4321E
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Nov 2022 00:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234427AbiK1V0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Nov 2022 16:26:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
+        id S234835AbiK2AAy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Nov 2022 19:00:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234228AbiK1V0c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 16:26:32 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C615D26555
-        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 13:26:30 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id x6so506145lji.10
-        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 13:26:30 -0800 (PST)
+        with ESMTP id S234790AbiK2AAx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2022 19:00:53 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9025A2983E
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 16:00:52 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id i85so8927670ioa.5
+        for <linux-clk@vger.kernel.org>; Mon, 28 Nov 2022 16:00:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MqF/vPvGSRlnkNfRE7ZwgV461GzDRthCdVTW17k8+Mw=;
-        b=mFVndKxRlcrXGjtS8xbEr3frusXRA87L62kMxR0t4bAP32KtgWOXjO4s8yB66IohOZ
-         IaGKC4ygwy7PubIVkQrFRPOGl1mNVuPGGE37Hue2/7cK8QS6dDHyclrpFJPRffunpmYO
-         UgnKNq92E7j8VltxxbCJgHfrSkqwLqmZorHeFkhJH0Qn8zjdVJS7FyGqXD4qvEiwqyuO
-         TrGp01tdnnIxjFDJi79+neICv6z613z9QCA8MuvzYDCfgc0LuOmkidnpKnK/MdlTcFFy
-         lzbdSnrS7wcLxRvXMCwZO4QRnoa/mfoQWBKrHGPYDiHf1M4glbL9IUJCQ0p8C84i28bW
-         R+JA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hhfYdg/3GZik1IMOmAbhjnBOvfz8Tbl2fRiogYFz6Ec=;
+        b=B1K8iVpwgNKycprzKMVupGt5aU3/YPZoE3ne8dVcDjdWV49CsomNWXyocSa3LSVOzY
+         y0VeWqruxwa2dFxPn9Le4BKYckcCT1piWPp07YLttD/d00iAOE4WkHWi3XfanR9acWby
+         VwLnp5rNVcqdnzWJQeJGjyDoYMvfJBkmcwersQBSR3XeiEifLEHf8xI27/pcmia/kqvS
+         QYf7Hz8qm2XmCojHgwCpUnUrxD0tEny0eT0eT1BpskOwwf+oNrAJ40EdRzv5G5UJu50M
+         hryVptODwnMZ7I8mXHW+rWy/xD6w7NqFe/uRShkE0fMftpJKSiVEeqluQ9y83p39vphL
+         u7Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MqF/vPvGSRlnkNfRE7ZwgV461GzDRthCdVTW17k8+Mw=;
-        b=Fk2pLnj6YjRei+Nh7YPzqazWF1hHMfh6II5Icrdlg8dPKXvXNNArxNi/vtzEvMbYXu
-         K7VCDBRPWsZW7zkn17QpnHDQSIOtTraBDt8B0uqCvDSCvbAMTtnV+wsdCU69ssjrPPYu
-         ozoCqQZ+Bo7vVJi/Pkthdmehhg5Wm9y5wnRk4IHoQHdviaz7M4YTxpx2SrMjYFmVhI0z
-         LB36JvVWeUSfLcuzOrxoae5BKj1a5vEdOhlhpdULYDmMc5axk4SHOzgAG/zPuP4c0Ck2
-         /zPXlWuMWgJof5igSHGaZznwzFUs+l5podeTPG9kneigBpwBDJL6Vr5XKljwcudkT0dV
-         LQrg==
-X-Gm-Message-State: ANoB5pmr8yxl92WIVuF3953SVq/EwFw2KZtFnUdP7EqQmplC7wDG3A3I
-        sviuGUTL900KhmmwTojD+KVrvQ==
-X-Google-Smtp-Source: AA0mqf7vdeGSIbvyyOexOobx6plSnYLm1oLzAIJDc/j+i13vpXyW0KfgLOM1Pn5yGdLNZjLAjsK0cw==
-X-Received: by 2002:a2e:b80c:0:b0:279:78b7:fbed with SMTP id u12-20020a2eb80c000000b0027978b7fbedmr9025436ljo.308.1669670788999;
-        Mon, 28 Nov 2022 13:26:28 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id a18-20020a194f52000000b00494643db68fsm1877720lfk.81.2022.11.28.13.26.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Nov 2022 13:26:28 -0800 (PST)
-Message-ID: <94e94d0d-c786-accc-089e-e7aa56331b2f@linaro.org>
-Date:   Mon, 28 Nov 2022 22:26:27 +0100
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hhfYdg/3GZik1IMOmAbhjnBOvfz8Tbl2fRiogYFz6Ec=;
+        b=q4K9FyQ3zA2pTQV/rJTxK6V3d+0QmneSKT8Ct+PljyCjyhNpTJAvAwaQEhPp74jhTm
+         QiX2MXZ62hduyRcs9Vkt193OCgcSKfUSxIlvF+7ERdxTq6Oz/DBRhaBTZA2Ta4Gcn8TA
+         UyhfRQ3fspgcoL8eKSIXyRkKC3hT59d4OcQgLTCUzAcOlct8vz+Lu9P+BmfKmrdH5lgM
+         x1tGWTzb9CMuQgDH1EjwRHKT4vl43B4MHUKcjDb6k+IRy+XjQzU9YZ7N++E4Vm8QXiXI
+         kFXDrNNkCAinnn/VrzHLsTjzH6bo2BEDwsLWTltob1U3y9xrCCtlSwuhws1mx2XJYdE9
+         Me4A==
+X-Gm-Message-State: ANoB5pklo0oEjCwmZ9ShRQ47Ac9ciBmBzUazYo97GBJbDHqYnBLYxio/
+        b8YhuSrs01gcYpbMQb1/oSB5Fw==
+X-Google-Smtp-Source: AA0mqf7DA4USSvm8KHAP2sWWiM6AxLdfxFxR0kIOpEUl8QFNby1SQ6cUuW6Xh7+oF0bcd5Uj4eGv0Q==
+X-Received: by 2002:a05:6602:887:b0:6bc:1103:f36b with SMTP id f7-20020a056602088700b006bc1103f36bmr15104317ioz.205.1669680051850;
+        Mon, 28 Nov 2022 16:00:51 -0800 (PST)
+Received: from localhost.localdomain ([98.61.227.136])
+        by smtp.gmail.com with ESMTPSA id ay10-20020a5d9d8a000000b006de38ee994esm4969314iob.47.2022.11.28.16.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 16:00:51 -0800 (PST)
+From:   Alex Elder <elder@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
+        konrad.dybcio@linaro.org, agross@kernel.org
+Cc:     Luca Weiss <luca.weiss@fairphone.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: rpmh: add support for SM6350 rpmh IPA clock
+Date:   Mon, 28 Nov 2022 18:00:47 -0600
+Message-Id: <20221129000047.697089-1-elder@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v3 2/9] dt-bindings: clock: Add SM8550 TCSR CC clocks
-Content-Language: en-US
-To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20221128122820.798610-1-abel.vesa@linaro.org>
- <20221128122820.798610-3-abel.vesa@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221128122820.798610-3-abel.vesa@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/11/2022 13:28, Abel Vesa wrote:
-> Add bindings documentation for clock TCSR driver on SM8550.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> 
-> Changes since v2:
->  * dropped the allOf clause
->  * changed comments in bindings header to mention TCSR CC clocks
-> 
+From: Luca Weiss <luca.weiss@fairphone.com>
 
+The IPA core clock is required for SM6350.  Define it.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ drivers/clk/qcom/clk-rpmh.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 0471bab824642..6a5887aae21a4 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -603,6 +603,7 @@ static const struct clk_rpmh_desc clk_rpmh_sc7280 = {
+ DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
+ DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
+ DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
++DEFINE_CLK_RPMH_BCM(sm6350, ipa, "IP0");
+ 
+ static struct clk_hw *sm6350_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sc7280_bi_tcxo.hw,
+@@ -613,6 +614,7 @@ static struct clk_hw *sm6350_rpmh_clocks[] = {
+ 	[RPMH_LN_BB_CLK3_A]	= &sm6350_ln_bb_clk3_ao.hw,
+ 	[RPMH_QLINK_CLK]	= &sm6350_qlink.hw,
+ 	[RPMH_QLINK_CLK_A]	= &sm6350_qlink_ao.hw,
++	[RPMH_IPA_CLK]		= &sm6350_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+-- 
+2.34.1
 
