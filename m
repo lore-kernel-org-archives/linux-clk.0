@@ -2,486 +2,667 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F07C352A1
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 10:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7890AC352A1
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 10:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235443AbiK3KQc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Nov 2022 05:16:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
+        id S229861AbiK3KVi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Nov 2022 05:21:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235611AbiK3KQa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 05:16:30 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 271CF63FC;
-        Wed, 30 Nov 2022 02:16:27 -0800 (PST)
-Received: from loongson.cn (unknown [117.133.84.114])
-        by gateway (Coremail) with SMTP id _____8CxI_B6LYdjLlUCAA--.5569S3;
-        Wed, 30 Nov 2022 18:16:26 +0800 (CST)
-Received: from [192.168.1.7] (unknown [117.133.84.114])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxd1d2LYdjMHgiAA--.1985S3;
-        Wed, 30 Nov 2022 18:16:23 +0800 (CST)
-Message-ID: <36a3e1c3-39b1-5d8c-e934-be7cdd31cc8d@loongson.cn>
-Date:   Wed, 30 Nov 2022 18:16:22 +0800
+        with ESMTP id S235935AbiK3KVS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 05:21:18 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37BF57B4C9
+        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 02:20:06 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id l67so20959287ybl.1
+        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 02:20:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VsMd9vMEW4iIS67puz4SPbkjdi7LKuVxz3yAiVP9E/Y=;
+        b=SZPjialpai4Sz9pGYiyF2vAsdc4X36d71Xkf9sx1lvkzRzptfkgbRAgdx6QlDNUEXn
+         Uuo+dXGuoBXvsqFbZL7TCqimU7+48b4EV9Jz0JVCe3WcUHZBIRjljAtplOIj8tiECgjs
+         ymAF+S53e17XPE2EuX5ZXmdbpTm4iZ6U6Ijfo225cEm/3zV9iepDHd3IWKPOGBj0pKkQ
+         eOKT+BgxzsI4ISZeuTJo885P9i4f4MBNEtVVHHaRWRRmC1yURWX6l/hKNzj2RrDtqqHw
+         nQ1c21xg+zK1wAxRkjWkWIY3ChMxFG/AfLDSq8z2ZR2OpE0/lLIZezYmGuTUbkEB0jg5
+         EWKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VsMd9vMEW4iIS67puz4SPbkjdi7LKuVxz3yAiVP9E/Y=;
+        b=AvvAD1lrrd34HC9L3Ek7Y6zaiFQqgwRNuc0G5m8hmdyQLrNUHDOE5e2P41trfQOmJc
+         ip0eqHfkdxISjk3pOH0eNLgNK2d5Vildjqu1NnQgTJEVlUNimhReJvIXadh7X4rGKloR
+         lL11IZjnba1A+EPojibNl63aFh/4uMJglAD6AokFq68TfdcAr9Yb0STr4Z1FmMWDkqX6
+         D7Z2KxRVw87dDa/RCaooeoiN1bXyyjEAKxUzCLHJ/VaF0Ydosf5jJCFCWcrz/xe/uxIz
+         W1MeTcYGAKog8C/VV8QNRFpjrlkoKzb0EGhALyt20LkCZeew/gBCKZaFA8Xp00WVsFVE
+         EP0Q==
+X-Gm-Message-State: ANoB5pl7hOktGiIf9OUZR9ZeNYFbStoFjAj+sG2anWJpf+ZhP9jxAtr4
+        mrlrTujgPpkDX5mhQwCw3XQv+o+01sbDDQ0ZEiUbJeTz75s=
+X-Google-Smtp-Source: AA0mqf5ajilJH4RXqHSxNuuscSi1XtOOwrAA0MN288TJXbz1Eljq5KRdSEbKcqOfFSTbi/Gt7JRwMb7Ws08CtQskk5I=
+X-Received: by 2002:a25:d952:0:b0:6f4:4ac9:82a7 with SMTP id
+ q79-20020a25d952000000b006f44ac982a7mr21007933ybg.152.1669803599326; Wed, 30
+ Nov 2022 02:19:59 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
- support
-To:     XiaochuanMao <maoxiaochuan@loongson.cn>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20221129101025.960110-1-dmitry.baryshkov@linaro.org>
+ <20221129101025.960110-4-dmitry.baryshkov@linaro.org> <7aeedf55-5cce-7cca-e0c9-1faff6be3fee@linaro.org>
+In-Reply-To: <7aeedf55-5cce-7cca-e0c9-1faff6be3fee@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 30 Nov 2022 12:19:48 +0200
+Message-ID: <CAA8EJpqyjW3G=tKxQXKozJGtAt_7fF93+hOSg=pDsJNFb5vRzw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: qcom: rpmh: drop the platform from clock definitions
+To:     Alex Elder <elder@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
- <20221129034157.15036-2-zhuyinbo@loongson.cn>
- <dfc61f0b-0051-4146-f534-6436e3076b65@loongson.cn>
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-In-Reply-To: <dfc61f0b-0051-4146-f534-6436e3076b65@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Dxd1d2LYdjMHgiAA--.1985S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvAXoWfGF1rJw43Aw15CFy5Gry5XFb_yoW8Jw18uo
-        W3uFn3ZrsxJ348JFW0v345tr42qFn09w47AF1xZwnxJF4Yka4DWrW8JF43AF4xKFy8KF13
-        Aa4ftFWFyF4Iqrs5n29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
-        J3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnRJU
-        UUPj1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFV
-        AK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2
-        z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0ow
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
-        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-        c4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI
-        0_JF0_Jw1l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCj
-        c4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-        AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-        1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7uc_DUUUU
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 30 Nov 2022 at 00:07, Alex Elder <elder@linaro.org> wrote:
+>
+> On 11/29/22 4:10 AM, Dmitry Baryshkov wrote:
+> > A single clock definition can be used on different platforms. Thus the
+> > platform part of the clock name is not correct (and can be misleading).
+> >
+> > Remove the platform-specific part of the defined clock. To keep the name
+> > visible to the userspace add an extra optional 'suffix' argument which
+> > is used to distinguish similar clocks in the code.
+>
+> OK, I like what you're doing here, but I think it could use
+> some more thought.
+>
+> I very much dislike the "empty" parameters passed to the macros.
+> I.e., the consecutive commas in the calls
+>
+> Instead, please find a reasonable way to have a different version
+> of the macro that omits the missing/empty argument.
 
-在 2022/11/30 11:27, XiaochuanMao 写道:
->
-> hi, yinbo
->
-> On 2022/11/29 11:41, Yinbo Zhu wrote:
->> This driver provides support for clock controller on Loongson-2 SoC,
->> the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock,
->> there are five independent PLLs inside, each of which PLL can
->> provide up to three sets of frequency dependent clock outputs.
->>
->> Signed-off-by: Yinbo Zhu<zhuyinbo@loongson.cn>
->> ---
->> Change in v10:
->> 		1. Detach of_clk_init to another patch.
->> Change in v9:
->> 		1. Add all history changelog information.
->> Change in v8:
->> 		1. Remove the flag "CLK_IS_BASIC".
->> Change in v7:
->> 		1. Adjust position alphabetically in Kconfig and Makefile.
->> 		2. Add static for loongson2_pll_base.
->> 		3. Move other file-scope variables in probe.
->> Change in v6:
->> 		1. NO change, but other patch in this series of patches has
->> 		   changes.
->> Change in v5:
->> 		1. Replace loongson2 with Loongson-2 in commit info.
->> 		2. Replace Loongson2 with Loongson-2 in binding and
->> 		   Kconfig file.
->> 		3. Replace soc with SoC.
->> Change in v4:
->> 		1. Fixup clock-names that replace "xxx-clk" with "xxx".
->> Change in v3:
->> 		1. NO change, but other patch in this series of patches has
->> 		   changes.
->> Change in v2:
->> 		1. Update the include filename.
->> 		2. Change string from refclk/REFCLK to ref/REF.
->>
->>   MAINTAINERS                 |   1 +
->>   arch/loongarch/Kconfig      |   1 +
->>   drivers/clk/Kconfig         |   9 ++
->>   drivers/clk/Makefile        |   1 +
->>   drivers/clk/clk-loongson2.c | 286 ++++++++++++++++++++++++++++++++++++
->>   5 files changed, 298 insertions(+)
->>   create mode 100644 drivers/clk/clk-loongson2.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index ab94893fe2f6..73fa56f1fd5d 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -12025,6 +12025,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
->>   M:	Yinbo Zhu<zhuyinbo@loongson.cn>
->>   L:	linux-clk@vger.kernel.org
->>   S:	Maintained
->> +F:	drivers/clk/clk-loongson2.c
->>   F:	include/dt-bindings/clock/loongson,ls2k-clk.h
->>   
->>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
->> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->> index 903096bd87f8..4f8f1b8f796d 100644
->> --- a/arch/loongarch/Kconfig
->> +++ b/arch/loongarch/Kconfig
->> @@ -127,6 +127,7 @@ config LOONGARCH
->>   	select USE_PERCPU_NUMA_NODE_ID
->>   	select USER_STACKTRACE_SUPPORT
->>   	select ZONE_DMA32
->> +	select COMMON_CLK
->>   
->>   config 32BIT
->>   	bool
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index d79905f3e174..d13626f63739 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -326,6 +326,15 @@ config COMMON_CLK_LOCHNAGAR
->>   	  This driver supports the clocking features of the Cirrus Logic
->>   	  Lochnagar audio development board.
->>   
->> +config COMMON_CLK_LOONGSON2
->> +	bool "Clock driver for Loongson-2 SoC"
->> +	depends on COMMON_CLK && OF
->> +	help
->> +	  This driver provides support for Clock Controller that base on
->> +	  Common Clock Framework Controller (CCF) on Loongson-2 SoC. The
->> +	  Clock Controller can generates and supplies clock to various
->> +	  peripherals within the SoC.
->> +
->>   config COMMON_CLK_NXP
->>   	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
->>   	select REGMAP_MMIO if ARCH_LPC32XX
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index e3ca0d058a25..b298c5dabc1a 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -43,6 +43,7 @@ obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
->>   obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
->>   obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
->>   obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
->> +obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
->>   obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
->>   obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
->>   obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
->> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
->> new file mode 100644
->> index 000000000000..7487effceeab
->> --- /dev/null
->> +++ b/drivers/clk/clk-loongson2.c
->> @@ -0,0 +1,286 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Author: Yinbo Zhu<zhuyinbo@loongson.cn>
->> + * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
->> + */
->> +
->> +#include <linux/clkdev.h>
->> +#include <linux/err.h>
->> +#include <linux/init.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <dt-bindings/clock/loongson,ls2k-clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/slab.h>
->> +#include <linux/clk.h>
->> +
->> +#define LOONGSON2_PLL_MULT_SHIFT		32
->> +#define LOONGSON2_PLL_MULT_WIDTH		10
->> +#define LOONGSON2_PLL_DIV_SHIFT			26
->> +#define LOONGSON2_PLL_DIV_WIDTH			6
->> +#define LOONGSON2_APB_FREQSCALE_SHIFT		20
->> +#define LOONGSON2_APB_FREQSCALE_WIDTH		3
->> +#define LOONGSON2_USB_FREQSCALE_SHIFT		16
->> +#define LOONGSON2_USB_FREQSCALE_WIDTH		3
->> +#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
->> +#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
->> +
->> +static void __iomem *loongson2_pll_base;
->> +
->> +static struct clk_hw *loongson2_clk_register(struct device *dev,
->> +					  const char *name,
->> +					  const char *parent_name,
->> +					  const struct clk_ops *ops,
->> +					  unsigned long flags)
->> +{
->> +	int ret;
->> +	struct clk_hw *hw;
->> +	struct clk_init_data init;
->> +
->> +	/* allocate the divider */
->> +	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
->> +	if (!hw)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	init.name = name;
->> +	init.ops = ops;
->> +	init.flags = flags;
->> +	init.parent_names = (parent_name ? &parent_name : NULL);
->> +	init.num_parents = (parent_name ? 1 : 0);
->> +	hw->init = &init;
->> +
->> +	/* register the clock */
->> +	ret = clk_hw_register(dev, hw);
->> +	if (ret) {
->> +		kfree(hw);
->> +		hw = ERR_PTR(ret);
->> +	}
->> +
->> +	return hw;
->> +}
->> +
->> +static struct clk_hw *loongson2_clk_pll_register(const char *name,
->> +				const char *parent, void __iomem *reg)
->> +{
->> +	u64 val;
->> +	u32 mult = 1, div = 1;
->> +
->> +	val = readq((void *)reg);
->> +
->> +	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
->> +			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
->> +	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
->> +			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
->> +
->> +	return clk_hw_register_fixed_factor(NULL, name, parent,
->> +				CLK_SET_RATE_PARENT, mult, div);
->> +}
->> +
->> +static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
->> +					  unsigned long parent_rate)
->> +{
->> +	u64 val;
->> +	u32 mult;
->> +	unsigned long rate;
->> +
->> +	val = readq((void *)(loongson2_pll_base + 0x50));
->> +
-> it may be more common to use macro defintions instead of magic number. 
-> the clock configuration logic of  2k500 is  same as 2k1000,  only the 
-> base  and offset are different。
-<https://fanyi.baidu.com/###>
-In addition to address differences, there are others, but according to 
-internal requirements,
-2k1000 is considered first.  2k500 clock will be added later use other 
-compatibility method in
-this driver.
->> +	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
->> +			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
->> +
->> +	rate = parent_rate * (mult + 1);
->> +	do_div(rate, 8);
->> +
->> +	return rate;
->> +}
->> +
->> +static const struct clk_ops loongson2_apb_clk_ops = {
->> +	.recalc_rate = loongson2_apb_recalc_rate,
->> +};
->> +
->> +static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
->> +					  unsigned long parent_rate)
->> +{
->> +	u64 val;
->> +	u32 mult;
->> +	unsigned long rate;
->> +
->> +	val = readq((void *)(loongson2_pll_base + 0x50));
->> +
->> +	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
->> +			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
->> +
->> +	rate = parent_rate * (mult + 1);
->> +	do_div(rate, 8);
->> +
->> +	return rate;
->> +}
->> +
->> +static const struct clk_ops loongson2_usb_clk_ops = {
->> +	.recalc_rate = loongson2_usb_recalc_rate,
->> +};
->> +
->> +static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
->> +					  unsigned long parent_rate)
->> +{
->> +	u64 val;
->> +	u32 mult;
->> +	unsigned long rate;
->> +
->> +	val = readq((void *)(loongson2_pll_base + 0x50));
->> +
->> +	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
->> +			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
->> +
->> +	rate = parent_rate * (mult + 1);
->> +	do_div(rate, 8);
->> +
->> +	return rate;
->> +}
->> +
->> +static const struct clk_ops loongson2_sata_clk_ops = {
->> +	.recalc_rate = loongson2_sata_recalc_rate,
->> +};
->> +
->> +static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
->> +{
->> +	unsigned int i;
->> +
->> +	for (i = 0; i < count; i++)
->> +		if (IS_ERR(clks[i]))
->> +			pr_err("Loongson2 clk %u: register failed with %ld\n"
->> +				, i, PTR_ERR(clks[i]));
->> +}
->> +
->> +static struct clk_hw *loongson2_obtain_fixed_clk_hw(
->> +					struct device_node *np,
->> +					const char *name)
->> +{
->> +	struct clk *clk;
->> +
->> +	clk = of_clk_get_by_name(np, name);
->> +	if (IS_ERR(clk))
->> +		return ERR_PTR(-ENOENT);
->> +
->> +	return __clk_get_hw(clk);
->> +}
->> +
->> +static void __init loongson2_clocks_init(struct device_node *np)
->> +{
->> +	struct clk_hw **hws;
->> +	struct clk_hw_onecell_data *clk_hw_data;
->> +	spinlock_t loongson2_clk_lock;
->> +
->> +	loongson2_pll_base = of_iomap(np, 0);
->> +
->> +	if (!loongson2_pll_base) {
->> +		pr_err("clk: unable to map loongson2 clk registers\n");
->> +		goto err;
->> +	}
->> +
->> +	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
->> +					GFP_KERNEL);
->> +	if (WARN_ON(!clk_hw_data))
->> +		goto err;
->> +
->> +	clk_hw_data->num = LOONGSON2_CLK_END;
->> +	hws = clk_hw_data->hws;
->> +
->> +	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
->> +						"ref_100m");
->> +
->> +	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll",
->> +						"ref_100m",
->> +						loongson2_pll_base);
->> +
->> +	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll",
->> +						"ref_100m",
->> +						loongson2_pll_base + 0x10);
->> +
->> +	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll",
->> +						"ref_100m",
->> +						loongson2_pll_base + 0x20);
->> +
->> +	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll",
->> +						"ref_100m",
->> +						loongson2_pll_base + 0x30);
->> +
->> +	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll",
->> +						"ref_100m",
->> +						loongson2_pll_base + 0x40);
->> +
->> +	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
->> +						"node_pll", 0,
->> +						loongson2_pll_base + 0x8, 0,
->> +						6, CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	/*
->> +	 * The hda clk divisor in the upper 32bits and the clk-prodiver
->> +	 * layer code doesn't support 64bit io operation thus a conversion
->> +	 * is required that subtract shift by 32 and add 4byte to the hda
->> +	 * address
->> +	 */
->> +	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
->> +						"ddr_pll", 0,
->> +						loongson2_pll_base + 0x22, 12,
->> +						7, CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
->> +						"ddr_pll", 0,
->> +						loongson2_pll_base + 0x18, 22,
->> +						6, CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
->> +						"ddr_pll", 0,
->> +						loongson2_pll_base + 0x18, 0,
->> +						6, CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
->> +						"dc_pll", 0,
->> +						loongson2_pll_base + 0x28, 22,
->> +						6, CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
->> +						"dc_pll", 0,
->> +						loongson2_pll_base + 0x28, 0,
->> +						6, CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
->> +						"gmac",
->> +						&loongson2_apb_clk_ops, 0);
->> +
->> +	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
->> +						"gmac",
->> +						&loongson2_usb_clk_ops, 0);
->> +
->> +	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
->> +						"gmac",
->> +						&loongson2_sata_clk_ops, 0);
->> +
->> +	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
->> +						"pix0_pll", 0,
->> +						loongson2_pll_base + 0x38, 0, 6,
->> +						CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
->> +
->> +	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
->> +						"pix1_pll", 0,
->> +						loongson2_pll_base + 0x48, 0, 6,
->> +						CLK_DIVIDER_ONE_BASED,
->> +						&loongson2_clk_lock);
-> above this,   it may be more common to use macro defintions instead of 
-> magic number. the clock configuration logic of 2k500 is same as 
-> 2k1000， only the base  and offset are different。 
+Ack, let's see what I can do.
 
-clk_hw_register_divider is a commone interface, I think
+> Second, I observe that (with the exception of the missing parameters)
+> the suffix always seems to encode the divider value.  Can you find
+> a way to have that be leveraged in the macro definition?
 
->> +
->> +	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
->> +
->> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
->> +
->> +err:
->> +	iounmap(loongson2_pll_base);
->> +}
->> +
->> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
+I thought about this, but I decided against that. For example, bb
+clocks also encode the resource type (_a4 vs _g4). Let me see if I can
+do better while removing the empty params.
+
 >
+> I have a few white space comments below but I'm going to leave it
+> at that.
+
+Ack
+
 >
-> thanks
+>                                         -Alex
+>
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/clk/qcom/clk-rpmh.c | 396 ++++++++++++++++++------------------
+> >   1 file changed, 198 insertions(+), 198 deletions(-)
+> >
+> > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> > index c4852bbd00bf..513c3a025f4b 100644
+> > --- a/drivers/clk/qcom/clk-rpmh.c
+> > +++ b/drivers/clk/qcom/clk-rpmh.c
+> > @@ -70,15 +70,15 @@ struct clk_rpmh_desc {
+> >
+> >   static DEFINE_MUTEX(rpmh_clk_lock);
+> >
+> > -#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name, \
+> > +#define __DEFINE_CLK_RPMH(_name, _name_active, _suffix,      _res_name,      \
+>
+> Replace the tab in the line above with space.  (If you have anything
+> similar elsewhere, please fix.)
+>
+> >                         _res_en_offset, _res_on, _div)                \
+> > -     static struct clk_rpmh _platform##_##_name_active;              \
+> > -     static struct clk_rpmh _platform##_##_name = {                  \
+> > +     static struct clk_rpmh clk_rpmh_##_name_active ## _suffix;      \
+> > +     static struct clk_rpmh clk_rpmh_##_name ## _suffix = {          \
+> >               .res_name = _res_name,                                  \
+> >               .res_addr = _res_en_offset,                             \
+> >               .res_on_val = _res_on,                                  \
+> >               .div = _div,                                            \
+> > -             .peer = &_platform##_##_name_active,                    \
+> > +             .peer = &clk_rpmh_##_name_active ## _suffix,            \
+> >               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
+> >                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
+> >                                     BIT(RPMH_SLEEP_STATE)),           \
+> > @@ -92,12 +92,12 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+> >                       .num_parents = 1,                               \
+> >               },                                                      \
+> >       };                                                              \
+> > -     static struct clk_rpmh _platform##_##_name_active = {           \
+> > +     static struct clk_rpmh clk_rpmh_##_name_active ## _suffix = {   \
+> >               .res_name = _res_name,                                  \
+> >               .res_addr = _res_en_offset,                             \
+> >               .res_on_val = _res_on,                                  \
+> >               .div = _div,                                            \
+> > -             .peer = &_platform##_##_name,                           \
+> > +             .peer = &clk_rpmh_##_name ## _suffix,                   \
+> >               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
+> >                                       BIT(RPMH_ACTIVE_ONLY_STATE)),   \
+> >               .hw.init = &(struct clk_init_data){                     \
+> > @@ -111,18 +111,18 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+> >               },                                                      \
+> >       }
+> >
+> > -#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name,       \
+> > +#define DEFINE_CLK_RPMH_ARC(_name, _name_active, _suffix, _res_name, \
+> >                           _res_on, _div)                              \
+> > -     __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
+> > +     __DEFINE_CLK_RPMH(_name, _name_active,_suffix, _res_name,       \
+>
+> Add a space before _suffix above.  (If you have anything similar
+> elsewhere, please fix.)
+>
+> >                         CLK_RPMH_ARC_EN_OFFSET, _res_on, _div)
+> >
+> > -#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,       \
+> > -                             _div)                                   \
+> > -     __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
+> > +#define DEFINE_CLK_RPMH_VRM(_name, _name_active, _suffix, _res_name, \
+> > +                         _div)                                       \
+> > +     __DEFINE_CLK_RPMH(_name, _name_active, _suffix, _res_name,      \
+> >                         CLK_RPMH_VRM_EN_OFFSET, 1, _div)
+> >
+> > -#define DEFINE_CLK_RPMH_BCM(_platform, _name, _res_name)             \
+> > -     static struct clk_rpmh _platform##_##_name = {                  \
+> > +#define DEFINE_CLK_RPMH_BCM(_name, _res_name)                                \
+> > +     static struct clk_rpmh clk_rpmh_##_name = {                     \
+> >               .res_name = _res_name,                                  \
+> >               .valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),        \
+> >               .div = 1,                                               \
+> > @@ -342,55 +342,55 @@ static const struct clk_ops clk_rpmh_bcm_ops = {
+> >   };
+> >
+> >   /* Resource name must match resource id present in cmd-db */
+> > -DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
+> > -DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
+> > -DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
+> > -DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
+> > +DEFINE_CLK_RPMH_ARC(bi_tcxo, bi_tcxo_ao, _div1, "xo.lvl", 0x3, 1);
+> > +DEFINE_CLK_RPMH_ARC(bi_tcxo, bi_tcxo_ao, _div2, "xo.lvl", 0x3, 2);
+> > +DEFINE_CLK_RPMH_ARC(bi_tcxo, bi_tcxo_ao, _div4,  "xo.lvl", 0x3, 4);
+> > +DEFINE_CLK_RPMH_ARC(qlink, qlink_ao,, "qphy.lvl", 0x1, 4);
+> >
+> > -DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 2);
+> > -DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+> > -DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk1, ln_bb_clk1_ao, , "lnbclka1", 2);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk2, ln_bb_clk2_ao, , "lnbclka2", 2);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk3, ln_bb_clk3_ao, , "lnbclka3", 2);
+> >
+> > -DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> > -DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk1, ln_bb_clk1_ao, _a4, "lnbclka1", 4);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk2, ln_bb_clk2_ao, _a4, "lnbclka2", 4);
+> >
+> > -DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
+> > -DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk2, ln_bb_clk2_ao, _g4, "lnbclkg2", 4);
+> > +DEFINE_CLK_RPMH_VRM(ln_bb_clk3, ln_bb_clk3_ao, _g4, "lnbclkg3", 4);
+> >
+> > -DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
+> > -DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
+> > -DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
+> > -DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
+> > -DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk1, rf_clk1_ao,, "rfclka1", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk2, rf_clk2_ao,, "rfclka2", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk3, rf_clk3_ao,, "rfclka3", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk4, rf_clk4_ao,, "rfclka4", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk5, rf_clk5_ao,, "rfclka5", 1);
+> >
+> > -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+> > -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+> > -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk3, rf_clk3_ao, "rfclkd3", 1);
+> > -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk4, rf_clk4_ao, "rfclkd4", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk1, rf_clk1_ao, _d, "rfclkd1", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk2, rf_clk2_ao, _d, "rfclkd2", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk3, rf_clk3_ao, _d, "rfclkd3", 1);
+> > +DEFINE_CLK_RPMH_VRM(rf_clk4, rf_clk4_ao, _d, "rfclkd4", 1);
+> >
+> > -DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
+> > +DEFINE_CLK_RPMH_VRM(div_clk1, div_clk1_ao,, "divclka1", 2);
+> >
+> > -DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
+> > -DEFINE_CLK_RPMH_BCM(sdm845, ce, "CE0");
+> > -DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
+> > -DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
+> > -DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
+> > +DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+> > +DEFINE_CLK_RPMH_BCM(ce, "CE0");
+> > +DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
+> > +DEFINE_CLK_RPMH_BCM(pka, "PKA0");
+> > +DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
+> >
+> >   static struct clk_hw *sdm845_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > -     [RPMH_CE_CLK]           = &sdm845_ce.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> > +     [RPMH_CE_CLK]           = &clk_rpmh_ce.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
+> > @@ -399,18 +399,18 @@ static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
+> >   };
+> >
+> >   static struct clk_hw *sdm670_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > -     [RPMH_CE_CLK]           = &sdm845_ce.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> > +     [RPMH_CE_CLK]           = &clk_rpmh_ce.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sdm670 = {
+> > @@ -419,14 +419,14 @@ static const struct clk_rpmh_desc clk_rpmh_sdm670 = {
+> >   };
+> >
+> >   static struct clk_hw *sdx55_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sc8180x_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sc8180x_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sc8180x_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sc8180x_rf_clk2_ao.hw,
+> > -     [RPMH_QPIC_CLK]         = &sdx55_qpic_clk.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1_d.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao_d.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2_d.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao_d.hw,
+> > +     [RPMH_QPIC_CLK]         = &clk_rpmh_qpic_clk.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sdx55 = {
+> > @@ -435,18 +435,18 @@ static const struct clk_rpmh_desc clk_rpmh_sdx55 = {
+> >   };
+> >
+> >   static struct clk_hw *sm8150_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
+> > @@ -455,17 +455,17 @@ static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
+> >   };
+> >
+> >   static struct clk_hw *sc7180_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
+> > @@ -474,18 +474,18 @@ static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
+> >   };
+> >
+> >   static struct clk_hw *sc8180x_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sc8180x_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sc8180x_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sc8180x_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sc8180x_rf_clk2_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sc8180x_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sc8180x_rf_clk3_ao.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1_d.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao_d.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2_d.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao_d.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3_d.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao_d.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sc8180x = {
+> > @@ -494,18 +494,18 @@ static const struct clk_rpmh_desc clk_rpmh_sc8180x = {
+> >   };
+> >
+> >   static struct clk_hw *sm8250_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK1]       = &sm8250_ln_bb_clk1.hw,
+> > -     [RPMH_LN_BB_CLK1_A]     = &sm8250_ln_bb_clk1_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK1]       = &clk_rpmh_ln_bb_clk1.hw,
+> > +     [RPMH_LN_BB_CLK1_A]     = &clk_rpmh_ln_bb_clk1_ao.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+> > @@ -514,25 +514,25 @@ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+> >   };
+> >
+> >   static struct clk_hw *sm8350_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_DIV_CLK1]         = &sm8350_div_clk1.hw,
+> > -     [RPMH_DIV_CLK1_A]       = &sm8350_div_clk1_ao.hw,
+> > -     [RPMH_LN_BB_CLK1]       = &sm8250_ln_bb_clk1.hw,
+> > -     [RPMH_LN_BB_CLK1_A]     = &sm8250_ln_bb_clk1_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> > -     [RPMH_RF_CLK4]          = &sm8350_rf_clk4.hw,
+> > -     [RPMH_RF_CLK4_A]        = &sm8350_rf_clk4_ao.hw,
+> > -     [RPMH_RF_CLK5]          = &sm8350_rf_clk5.hw,
+> > -     [RPMH_RF_CLK5_A]        = &sm8350_rf_clk5_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > -     [RPMH_PKA_CLK]          = &sm8350_pka.hw,
+> > -     [RPMH_HWKM_CLK]         = &sm8350_hwkm.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_DIV_CLK1]         = &clk_rpmh_div_clk1.hw,
+> > +     [RPMH_DIV_CLK1_A]       = &clk_rpmh_div_clk1_ao.hw,
+> > +     [RPMH_LN_BB_CLK1]       = &clk_rpmh_ln_bb_clk1.hw,
+> > +     [RPMH_LN_BB_CLK1_A]     = &clk_rpmh_ln_bb_clk1_ao.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao.hw,
+> > +     [RPMH_RF_CLK4]          = &clk_rpmh_rf_clk4.hw,
+> > +     [RPMH_RF_CLK4_A]        = &clk_rpmh_rf_clk4_ao.hw,
+> > +     [RPMH_RF_CLK5]          = &clk_rpmh_rf_clk5.hw,
+> > +     [RPMH_RF_CLK5_A]        = &clk_rpmh_rf_clk5_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> > +     [RPMH_PKA_CLK]          = &clk_rpmh_pka.hw,
+> > +     [RPMH_HWKM_CLK]         = &clk_rpmh_hwkm.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
+> > @@ -541,13 +541,13 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
+> >   };
+> >
+> >   static struct clk_hw *sc8280xp_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sdm845_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > -     [RPMH_PKA_CLK]          = &sm8350_pka.hw,
+> > -     [RPMH_HWKM_CLK]         = &sm8350_hwkm.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div2.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div2.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> > +     [RPMH_PKA_CLK]          = &clk_rpmh_pka.hw,
+> > +     [RPMH_HWKM_CLK]         = &clk_rpmh_hwkm.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
+> > @@ -556,21 +556,21 @@ static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
+> >   };
+> >
+> >   static struct clk_hw *sm8450_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK1]       = &sm8450_ln_bb_clk1.hw,
+> > -     [RPMH_LN_BB_CLK1_A]     = &sm8450_ln_bb_clk1_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sm8450_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sm8450_ln_bb_clk2_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> > -     [RPMH_RF_CLK4]          = &sm8350_rf_clk4.hw,
+> > -     [RPMH_RF_CLK4_A]        = &sm8350_rf_clk4_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div4.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div4.hw,
+> > +     [RPMH_LN_BB_CLK1]       = &clk_rpmh_ln_bb_clk1_a4.hw,
+> > +     [RPMH_LN_BB_CLK1_A]     = &clk_rpmh_ln_bb_clk1_ao_a4.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2_a4.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao_a4.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao.hw,
+> > +     [RPMH_RF_CLK4]          = &clk_rpmh_rf_clk4.hw,
+> > +     [RPMH_RF_CLK4_A]        = &clk_rpmh_rf_clk4_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
+> > @@ -579,19 +579,19 @@ static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
+> >   };
+> >
+> >   static struct clk_hw *sc7280_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]   = &sdm845_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A] = &sdm845_ln_bb_clk2_ao.hw,
+> > -     [RPMH_RF_CLK1]      = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]    = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK3]      = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]    = &sdm845_rf_clk3_ao.hw,
+> > -     [RPMH_RF_CLK4]      = &sm8350_rf_clk4.hw,
+> > -     [RPMH_RF_CLK4_A]    = &sm8350_rf_clk4_ao.hw,
+> > -     [RPMH_IPA_CLK]      = &sdm845_ipa.hw,
+> > -     [RPMH_PKA_CLK]      = &sm8350_pka.hw,
+> > -     [RPMH_HWKM_CLK]     = &sm8350_hwkm.hw,
+> > +     [RPMH_CXO_CLK]      = &clk_rpmh_bi_tcxo_div4.hw,
+> > +     [RPMH_CXO_CLK_A]    = &clk_rpmh_bi_tcxo_ao_div4.hw,
+> > +     [RPMH_LN_BB_CLK2]   = &clk_rpmh_ln_bb_clk2.hw,
+> > +     [RPMH_LN_BB_CLK2_A] = &clk_rpmh_ln_bb_clk2_ao.hw,
+> > +     [RPMH_RF_CLK1]      = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]    = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK3]      = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]    = &clk_rpmh_rf_clk3_ao.hw,
+> > +     [RPMH_RF_CLK4]      = &clk_rpmh_rf_clk4.hw,
+> > +     [RPMH_RF_CLK4_A]    = &clk_rpmh_rf_clk4_ao.hw,
+> > +     [RPMH_IPA_CLK]      = &clk_rpmh_ipa.hw,
+> > +     [RPMH_PKA_CLK]      = &clk_rpmh_pka.hw,
+> > +     [RPMH_HWKM_CLK]     = &clk_rpmh_hwkm.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sc7280 = {
+> > @@ -600,14 +600,14 @@ static const struct clk_rpmh_desc clk_rpmh_sc7280 = {
+> >   };
+> >
+> >   static struct clk_hw *sm6350_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK2]       = &sm6350_ln_bb_clk2.hw,
+> > -     [RPMH_LN_BB_CLK2_A]     = &sm6350_ln_bb_clk2_ao.hw,
+> > -     [RPMH_LN_BB_CLK3]       = &sm6350_ln_bb_clk3.hw,
+> > -     [RPMH_LN_BB_CLK3_A]     = &sm6350_ln_bb_clk3_ao.hw,
+> > -     [RPMH_QLINK_CLK]        = &sm6350_qlink.hw,
+> > -     [RPMH_QLINK_CLK_A]      = &sm6350_qlink_ao.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div4.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div4.hw,
+> > +     [RPMH_LN_BB_CLK2]       = &clk_rpmh_ln_bb_clk2_g4.hw,
+> > +     [RPMH_LN_BB_CLK2_A]     = &clk_rpmh_ln_bb_clk2_ao_g4.hw,
+> > +     [RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3_g4.hw,
+> > +     [RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_ao_g4.hw,
+> > +     [RPMH_QLINK_CLK]        = &clk_rpmh_qlink.hw,
+> > +     [RPMH_QLINK_CLK_A]      = &clk_rpmh_qlink_ao.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+> > @@ -616,20 +616,20 @@ static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+> >   };
+> >
+> >   static struct clk_hw *sdx65_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
+> > -     [RPMH_LN_BB_CLK1]       = &sm8450_ln_bb_clk1.hw,
+> > -     [RPMH_LN_BB_CLK1_A]     = &sm8450_ln_bb_clk1_ao.hw,
+> > -     [RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> > -     [RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> > -     [RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> > -     [RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> > -     [RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> > -     [RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> > -     [RPMH_RF_CLK4]          = &sm8350_rf_clk4.hw,
+> > -     [RPMH_RF_CLK4_A]        = &sm8350_rf_clk4_ao.hw,
+> > -     [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> > -     [RPMH_QPIC_CLK]         = &sdx55_qpic_clk.hw,
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div4.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_ao_div4.hw,
+> > +     [RPMH_LN_BB_CLK1]       = &clk_rpmh_ln_bb_clk1_a4.hw,
+> > +     [RPMH_LN_BB_CLK1_A]     = &clk_rpmh_ln_bb_clk1_ao_a4.hw,
+> > +     [RPMH_RF_CLK1]          = &clk_rpmh_rf_clk1.hw,
+> > +     [RPMH_RF_CLK1_A]        = &clk_rpmh_rf_clk1_ao.hw,
+> > +     [RPMH_RF_CLK2]          = &clk_rpmh_rf_clk2.hw,
+> > +     [RPMH_RF_CLK2_A]        = &clk_rpmh_rf_clk2_ao.hw,
+> > +     [RPMH_RF_CLK3]          = &clk_rpmh_rf_clk3.hw,
+> > +     [RPMH_RF_CLK3_A]        = &clk_rpmh_rf_clk3_ao.hw,
+> > +     [RPMH_RF_CLK4]          = &clk_rpmh_rf_clk4.hw,
+> > +     [RPMH_RF_CLK4_A]        = &clk_rpmh_rf_clk4_ao.hw,
+> > +     [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+> > +     [RPMH_QPIC_CLK]         = &clk_rpmh_qpic_clk.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+> > @@ -638,8 +638,8 @@ static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+> >   };
+> >
+> >   static struct clk_hw *qdu1000_rpmh_clocks[] = {
+> > -     [RPMH_CXO_CLK]      = &qdu1000_bi_tcxo.hw,
+> > -     [RPMH_CXO_CLK_A]    = &qdu1000_bi_tcxo_ao.hw,
+> > +     [RPMH_CXO_CLK]      = &clk_rpmh_bi_tcxo_div1.hw,
+> > +     [RPMH_CXO_CLK_A]    = &clk_rpmh_bi_tcxo_ao_div1.hw,
+> >   };
+> >
+> >   static const struct clk_rpmh_desc clk_rpmh_qdu1000 = {
 >
 
+
+-- 
+With best wishes
+Dmitry
