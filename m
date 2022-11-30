@@ -2,349 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12077C46467
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Nov 2022 22:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFE1C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 00:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236555AbiK2WHj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Nov 2022 17:07:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44490 "EHLO
+        id S229774AbiK3AH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Nov 2022 19:07:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232970AbiK2WHg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 17:07:36 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A20A2184
-        for <linux-clk@vger.kernel.org>; Tue, 29 Nov 2022 14:07:34 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id p193so980305iod.6
-        for <linux-clk@vger.kernel.org>; Tue, 29 Nov 2022 14:07:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h6+xCJXnT9nzHdOxlT6D6XSnQuvZqcJD7XY6bH49DHc=;
-        b=WZzEKhjH8UUAUFp4UOtU3bpTMK5ZCXjoAzJ5QbK38LmHEa4JLoEG2SBq6LvdibphWx
-         po+pPi2Hbz0t3Vhv8kD+1cKzq/W5vCrGS3dzgYwXJhzU/ww6V5VZCMQAEqxkxhrGey7e
-         Bc8153bg2h4jtRGP1nxj3mNRAbLg/UQftBhgaV24Yn+F4e6Eru+m65Zgj0yJNfAS/A98
-         /SuuBIlMzvl8FDt+1r8wYjriPurn0Aw8QAeWceOgsrPGIetW9Nz6m1vFYIbrb8v/idq6
-         O/QgUqeCEBJ+detBU+zgtwNx/SnaJuTr7rm8aM6NE2HmjZi+/XIWNYCTdeQcPGYmgw80
-         giKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6+xCJXnT9nzHdOxlT6D6XSnQuvZqcJD7XY6bH49DHc=;
-        b=UAUmjsGvtpnfzZy5lW57N/xW+6znBhengdQAUa4uwGlM/0aIze2PS7IYjaw+7Pmc5S
-         YzikWBULQuHgd2rWhb9/gnR/mMxzzFKSQIsUsp6QnmitP1U5JZTh8MIN7Xg0INzqsMgh
-         jDxeA6y+udGGsmCXei6evBiMEq65DheLs0zn1nHaPfdQZZlBjFJ5hO6mfTMlhSeorPfl
-         Efma4GnQ4VxqvhVqDTW/YZmqzdjTdDXNlo0ijCBS1w886020UdYgRXY+6Udm/876F8lD
-         9UNvx+/GziAlnCXopAcFBZ/E+aCNPwIn8/uvIL+AQoxegvjqcPGqaIJYobFXNNHla4W7
-         ICPg==
-X-Gm-Message-State: ANoB5pm6QN5FIJEYoqTRY96n0iBP1o9vZ2Gc1QoOmvSUuQAeu2Be+Bp3
-        z//s+HFpoHlaHUMKb0T6tyHZ8A==
-X-Google-Smtp-Source: AA0mqf5TJeM5FtKMXHnKmw8AQO9X232GAwK8fBe3zDDBssDWpi6cxBWRynW7pc85rfzB9EYOqTdIrg==
-X-Received: by 2002:a02:942a:0:b0:373:d769:bc14 with SMTP id a39-20020a02942a000000b00373d769bc14mr19563199jai.264.1669759653678;
-        Tue, 29 Nov 2022 14:07:33 -0800 (PST)
-Received: from [172.22.22.4] ([98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id v17-20020a92c811000000b002f139ba4135sm5034166iln.86.2022.11.29.14.07.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Nov 2022 14:07:33 -0800 (PST)
-Message-ID: <bd13999d-4a13-5bcf-c0e2-e0388a55a7fc@linaro.org>
-Date:   Tue, 29 Nov 2022 16:07:32 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 4/4] clk: qcom: rpm: drop the platform from clock
- definitions
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229700AbiK3AHX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 19:07:23 -0500
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2091.outbound.protection.outlook.com [40.107.114.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681427044E;
+        Tue, 29 Nov 2022 16:07:21 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W16R1wtBsSX+Eg5R/Scsu9uPc4eXpaNKqWns5dPFz0ssmsA3PZYsp2dosWs9QT4wVUOmaS7H7+PZWsc2uHGuENkKYk2W0wfCrgkPcq9StTM5d92GoQPLZsWxciBQwoM4o12eeT7dYjfvSHgRwtoUe3YDMPVoiM2syWPxF4GONHbJIuKKLZ9zYkitEJ53qzGYjPCo/DURqECHw19h3Gf/GqC+DzD+i1iA27joUP446/KJx20K5+ajVq7I3BlsgqWbnDWG6otL7EtBK/cO6lC5mBkihVdhHy+v9/WyE0sSAEFGRzoEfQh50FAiO6SKZivalBs3O0/8gb2IGiWluh9H3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xlg1FaLHoMGkw6+fU61uSvEV+YTro34tCUKS6WzgcS8=;
+ b=eFUJCkwCS09cfee0xaR3S2XFSdSH7GTYi9ByxjlTk+Eue3p+mJTVN4/TbCUvzzZ7NeqYDoCcZ/tpq02gL/Tw5nRKHWoUAPi0xollpZ63C6EJ22oqhFpsb9+67tfjjplaYRpjXMsNR+F71wBPnFKMyTkUJt2429DCgyterX4bVyySKmF+OEHyqXDxb72KGzf6npBnStFGR93X89OMnZcYDxJ7nz/uV2UPKwXbFgVTy57dAET09+AiQSZiwcxg9tIyrsQGBQysewWSKQ3po9qgHD4jfFFOaQvJc50tutOql4Jd9DbcZnB13PBjK6PIyTVGfzTUBkvp2oFLZnMKD9JS+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xlg1FaLHoMGkw6+fU61uSvEV+YTro34tCUKS6WzgcS8=;
+ b=CBaTVqzINfqCD08+V5a6R8mAlvgfmzgLMcT5PZaFwThklcKtAXgifF088Q68O+MXq6EeXPJ4iLtPGv1DnwCtkmCqyIfut3iXKZx55+2SiCImtzUG5JZ3Qgq7rsL81CU4mrKgcYMaQ2VymcooLE3n89nfNA4HRPziNIWNjX4ZZWA=
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ (2603:1096:404:8028::13) by TYCPR01MB10135.jpnprd01.prod.outlook.com
+ (2603:1096:400:1ef::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Wed, 30 Nov
+ 2022 00:07:19 +0000
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::cd89:4a4b:161e:b78d]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::cd89:4a4b:161e:b78d%8]) with mapi id 15.20.5857.023; Wed, 30 Nov 2022
+ 00:07:19 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20221129101025.960110-1-dmitry.baryshkov@linaro.org>
- <20221129101025.960110-5-dmitry.baryshkov@linaro.org>
-From:   Alex Elder <elder@linaro.org>
-In-Reply-To: <20221129101025.960110-5-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: r8a779g0: Fix OSC predividers
+Thread-Topic: [PATCH] clk: renesas: r8a779g0: Fix OSC predividers
+Thread-Index: AQHZBBMf51qNif4Ce0+wp088vwZa6a5WlpnQ
+Date:   Wed, 30 Nov 2022 00:07:19 +0000
+Message-ID: <TYBPR01MB5341DE55220BD3B702F3044CD8159@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+References: <dcd572acc584c237f70d2309e038f25040236a87.1669740722.git.geert+renesas@glider.be>
+In-Reply-To: <dcd572acc584c237f70d2309e038f25040236a87.1669740722.git.geert+renesas@glider.be>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYBPR01MB5341:EE_|TYCPR01MB10135:EE_
+x-ms-office365-filtering-correlation-id: 7a1cc393-15c6-486d-f236-08dad266d8cc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xI46JYhSeg3BwbFrbSxNa7+NRuS5lBGmwYtOBwoSeO3dLUCQmlmV/geH0r83Pt40hATEYPLzru/yerFVmDqoJs2d8LVjPjNtsmE/pPOJ5DK6Gog1OLI1Su2ti5l2kj7cnrBYNYNf7OSi7k4m9by7AA/Uft3BgLLwRZeGPwgV3qhhj6FjmrRkHz8i3jeOMf+kN/DAbOcKLYP5ZHLLkHZu2gbWbXRc93yFPG9Zw3knrdHCQwmvBDX+opcPzJa0lK5TU88nLvMJgVvHqrKfOIKpb4B1E0xUnyss1ty7XglVrlSVxI9iUK4YBp1qHnL03B+NMmqpe8Z3Ix0BrxCwwE0g/EhCVXchcnKj4nRBepcc4hdWVmT+j99hOIOcTTvhF281y5T0lIohzXFlc32msAhIPrW5ahf3IANXJtkLbiXxa/CeGznu9/e03t9FEae8WtrPJy0iFAFZdfI+wZWviNZT5+urPhEjfHlulMb+TMbDo1youbZ0iA+bNR5RS/8ST1E8a5h3N6pqchFhvgFi49wC6zHPdqyykVNZl5AdvqEYbcItVMUjM9sp/hJPbWxgdkymcsZoTyPAbJIDgEa/wAzhaUbYuvAOdqgFZVj1aQafPdTvN72SBDQxOf6O3dJrvIlq6GO/iluc+2XqriU/c7ksBQKYdQsy6KN1etYRPXvUGTWmpz0os6E78MndhSfgZZ6duDrlxiDQdESO1ereo8f3jg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(136003)(376002)(366004)(396003)(451199015)(33656002)(66476007)(38100700002)(122000001)(38070700005)(41300700001)(2906002)(66556008)(83380400001)(86362001)(66946007)(64756008)(8676002)(54906003)(316002)(71200400001)(66446008)(478600001)(76116006)(110136005)(55016003)(5660300002)(8936002)(6506007)(4326008)(52536014)(186003)(9686003)(7696005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?YEtyZBGznNZdcAYZbgyiT02yhAhySS+ShLxSJx2zIrxFNf4swL4dbkJX383y?=
+ =?us-ascii?Q?WFkKPlTz4kEKZMMor6fNDDa6D7Pu9N8Wss13L5CIOg7epZtoLYmEcJpfoQ73?=
+ =?us-ascii?Q?SLFoZNvgwDdVALlEyISIgczO7scQJnP9in8UkR7hPwq8XoSudSMdLy/crZVP?=
+ =?us-ascii?Q?T30utB7blyQz/J65Fu6mDrrLLiFm1U890pENSStpNUAQjKNgi2VDQBYiFzh0?=
+ =?us-ascii?Q?Va9pmZ7xKwrijKismUUvvVFU/lT7Ginn0VeqfMIUndxvxmpZW+nguoOfnJ5w?=
+ =?us-ascii?Q?nxVDoy2Pn9EvycMFUtyWi3nLQC6xv49pJu9EI2JJ69PH/m2ZEDtyG2ZfHdPs?=
+ =?us-ascii?Q?UyDsiUaBAYo+EqpmZgQ3daYgScgZUDjsqEEvqR57oeMvlPle9gwfhwrKYsi3?=
+ =?us-ascii?Q?TEcOx8pTfxsLkHxc6zH0y4NvUd1RaqK1+w5AdlpPAVRuMEH8uocvmPWtiOdE?=
+ =?us-ascii?Q?QaVFdGo7HVIXHkt5GfzZzkqOUiWF2nYCNPH9f2GIRStRJfbJG8+qPeF93N0O?=
+ =?us-ascii?Q?EhhEUR3uU97K1bogBkbvLpd3iGAGXZnkHP6AR4WTjqdyvHLPUj2eUSmmU4eO?=
+ =?us-ascii?Q?YEqeDYGDdm/DYPAP6QZYghGB0WyaF8IMCuFYTsJ/aXUaaj/Ka95h/amHSAxN?=
+ =?us-ascii?Q?qZo0TZpSoJNSO0wpVcwWjOXaotJ+5Vv8SpGHS3YJg7hBnF6CSxn8fPD6b1nF?=
+ =?us-ascii?Q?oYlDzJWIiKlNoBqI/lyo7UaPAeMq04qzwypfuQtouNAFKjymvlMBRYAS5Dzm?=
+ =?us-ascii?Q?3n3ZeC3hJxfLwvA2VFCijUWUG4eDCQVoHlkUT+LLklgQLR3QPdApxXty8nPg?=
+ =?us-ascii?Q?P0x8rYXwSiT5AeCDV5d89XrqGoHnoZpQIpO1DKZDni99UlLeDyYZ7oI44eEL?=
+ =?us-ascii?Q?k1veyZG3WKl2IPjbG8ntv2FGTyJL9SjJm9gsPLFO5iBTkzsHu5UYwCwMmLdT?=
+ =?us-ascii?Q?5SmwekEPE+Cz6l+PiLkB9NVUq3g2D2k3fX1Z6vsD8krLMg+luyHPRSSKS3yq?=
+ =?us-ascii?Q?DG456leyqzmUKQVd9rfmda1ZDY3aoz9V//IOe5ad5hpQ1bgfU/c8NJWyZdKl?=
+ =?us-ascii?Q?BGytBCYiVlP1nXtq4lETkxd6UbJzW4WTgTyM1gJqv5IvuTlXv/G+XkD0BjMa?=
+ =?us-ascii?Q?CaqO8kdr6XlmyDWR+FiWBMyECfaYMG2Z6pArgynQN07gwqyVWQ5DAg6EWqAr?=
+ =?us-ascii?Q?nLk8WNv7j/d1J2esZkbmMOFfDjuoq8Hexa0p7fr9TflRnz2SrKdZqeZfYT1Z?=
+ =?us-ascii?Q?yHX863xp7ZeawN0wCvXeMB3A7ZNZyBHsxvDl52Kw9DraV40yEZEAVfCvvs43?=
+ =?us-ascii?Q?83B25/gefZ3qz9Z2jniVChg9i8at7LVJKZtWedzFT0lz3xEW3SJ9Ko1L8w12?=
+ =?us-ascii?Q?SYJlovIuC9Bcyuz9BsucUKaiWvhSz6TG3fai8i4pVQqXcpkI+VoLK2BirJhP?=
+ =?us-ascii?Q?gwi8dgV1BOYn/WV9aBCmMt1k1o+VaOEjk5Qd0fpU281AUSudKEVLknSMMZsi?=
+ =?us-ascii?Q?V/Ac1RY9/jNxnZRfl2MBpo/Lb+iLsCAIvx8d2+JIoxtV+1o0Z2n+m4hC8h7U?=
+ =?us-ascii?Q?FcbWwUetyB2Swh1qGl9EIlNowKYz5k6Y8uTeWhdqSzyO/cfeHDnVpJt1QRFQ?=
+ =?us-ascii?Q?n+CvaRIV9pN69uqNkixXPIs1HgnorWLUjsNQ4W8XCKLY+aYbmrh7y6bcCQMe?=
+ =?us-ascii?Q?kk9sqA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a1cc393-15c6-486d-f236-08dad266d8cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2022 00:07:19.1684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Sm0FhvP24SLmPPs/aIT/BwtkiyeNhiy9r2Tc05Q84QqmC6ncksN+jp47CJNceVuaqzOiEcTwDQAXvCv0p2j6YQ8KAhJpj+LtZLkBB8HxZcP1J01OaCtLdOiL8CekOwPs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10135
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/29/22 4:10 AM, Dmitry Baryshkov wrote:
-> A single clock definition can be used on different platforms. Thus the
-> platform part of the clock name is not correct (and can be misleading).
-> 
-> Remove the platform-specific part of the defined clock.
+Hi Geert-san,
 
-Again, I like what you're trying to do but I'll wait until you've
-had a chance to try to address my comments on patch 3 to comment
-further.
+> From: Geert Uytterhoeven, Sent: Wednesday, November 30, 2022 1:53 AM
+>=20
+> According to the table in Note 5 for the OSC clock in Table 8.1.4e
+> ("Lists of CPG clocks generated from PLL5") of the R-Car V4H Series
+> Hardware User's Manual Rev. 0.54, the predividers for the OSC clock are
+> 16 resp. 32 when using a 16.66 resp. 33.33 MHz external crystal.
+>=20
+> Fixes: 0ab55cf1834177a2 ("clk: renesas: cpg-mssr: Add support for R-Car V=
+4H")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-					-Alex
+Thank you for the patch!
 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
 > ---
->   drivers/clk/qcom/clk-rpm.c | 194 +++++++++++++++++--------------------
->   1 file changed, 89 insertions(+), 105 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-> index 747c473b0b5e..bcab76776571 100644
-> --- a/drivers/clk/qcom/clk-rpm.c
-> +++ b/drivers/clk/qcom/clk-rpm.c
-> @@ -31,11 +31,11 @@ static const struct clk_parent_data gcc_cxo[] = {
->   	{ .fw_name = "cxo", .name = "cxo_board" },
->   };
->   
-> -#define DEFINE_CLK_RPM(_platform, _name, _active, r_id)			      \
-> -	static struct clk_rpm _platform##_##_active;			      \
-> -	static struct clk_rpm _platform##_##_name = {			      \
-> +#define DEFINE_CLK_RPM(_name, _active, r_id)				      \
-> +	static struct clk_rpm clk_rpm_##_active;			      \
-> +	static struct clk_rpm clk_rpm_##_name = {			      \
->   		.rpm_clk_id = (r_id),					      \
-> -		.peer = &_platform##_##_active,				      \
-> +		.peer = &clk_rpm_##_active,				      \
->   		.rate = INT_MAX,					      \
->   		.hw.init = &(struct clk_init_data){			      \
->   			.ops = &clk_rpm_ops,				      \
-> @@ -44,9 +44,9 @@ static const struct clk_parent_data gcc_cxo[] = {
->   			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
->   		},							      \
->   	};								      \
-> -	static struct clk_rpm _platform##_##_active = {			      \
-> +	static struct clk_rpm clk_rpm_##_active = {			      \
->   		.rpm_clk_id = (r_id),					      \
-> -		.peer = &_platform##_##_name,				      \
-> +		.peer = &clk_rpm_##_name,				      \
->   		.active_only = true,					      \
->   		.rate = INT_MAX,					      \
->   		.hw.init = &(struct clk_init_data){			      \
-> @@ -57,20 +57,20 @@ static const struct clk_parent_data gcc_cxo[] = {
->   		},							      \
->   	}
->   
-> -#define DEFINE_CLK_RPM_XO_BUFFER(_platform, _name, _active, offset)	      \
-> -	static struct clk_rpm _platform##_##_name = {			      \
-> +#define DEFINE_CLK_RPM_XO_BUFFER(_name, _active, offset)		      \
-> +	static struct clk_rpm clk_rpm_##_name = {			      \
->   		.rpm_clk_id = QCOM_RPM_CXO_BUFFERS,			      \
->   		.xo_offset = (offset),					      \
->   		.hw.init = &(struct clk_init_data){			      \
-> -			.ops = &clk_rpm_xo_ops,			      \
-> +			.ops = &clk_rpm_xo_ops,				      \
->   			.name = #_name,					      \
->   			.parent_data = gcc_cxo,				      \
->   			.num_parents = ARRAY_SIZE(gcc_cxo),		      \
->   		},							      \
->   	}
->   
-> -#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
-> -	static struct clk_rpm _platform##_##_name = {			      \
-> +#define DEFINE_CLK_RPM_FIXED(_name, _active, r_id, r)			      \
-> +	static struct clk_rpm clk_rpm_##_name = {			      \
->   		.rpm_clk_id = (r_id),					      \
->   		.rate = (r),						      \
->   		.hw.init = &(struct clk_init_data){			      \
-> @@ -403,37 +403,47 @@ static const struct clk_ops clk_rpm_ops = {
->   };
->   
->   /* MSM8660/APQ8060 */
-> -DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-> -DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-> -DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-> -DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-> -DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-> -DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-> -DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-> -DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
-> -DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-> -DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
-> +DEFINE_CLK_RPM(afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-> +DEFINE_CLK_RPM(sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-> +DEFINE_CLK_RPM(mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-> +DEFINE_CLK_RPM(daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-> +DEFINE_CLK_RPM(sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-> +DEFINE_CLK_RPM(cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-> +DEFINE_CLK_RPM(mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-> +DEFINE_CLK_RPM(smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
-> +DEFINE_CLK_RPM(ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-> +DEFINE_CLK_RPM(qdss_clk, qdss_a_clk, QCOM_RPM_QDSS_CLK);
-> +DEFINE_CLK_RPM(nss_fabric_0_clk, nss_fabric_0_a_clk, QCOM_RPM_NSS_FABRIC_0_CLK);
-> +DEFINE_CLK_RPM(nss_fabric_1_clk, nss_fabric_1_a_clk, QCOM_RPM_NSS_FABRIC_1_CLK);
-> +
-> +DEFINE_CLK_RPM_FIXED(pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
-> +
-> +DEFINE_CLK_RPM_XO_BUFFER(xo_d0_clk, xo_d0_a_clk, 0);
-> +DEFINE_CLK_RPM_XO_BUFFER(xo_d1_clk, xo_d1_a_clk, 8);
-> +DEFINE_CLK_RPM_XO_BUFFER(xo_a0_clk, xo_a0_a_clk, 16);
-> +DEFINE_CLK_RPM_XO_BUFFER(xo_a1_clk, xo_a1_a_clk, 24);
-> +DEFINE_CLK_RPM_XO_BUFFER(xo_a2_clk, xo_a2_a_clk, 28);
->   
->   static struct clk_rpm *msm8660_clks[] = {
-> -	[RPM_APPS_FABRIC_CLK] = &msm8660_afab_clk,
-> -	[RPM_APPS_FABRIC_A_CLK] = &msm8660_afab_a_clk,
-> -	[RPM_SYS_FABRIC_CLK] = &msm8660_sfab_clk,
-> -	[RPM_SYS_FABRIC_A_CLK] = &msm8660_sfab_a_clk,
-> -	[RPM_MM_FABRIC_CLK] = &msm8660_mmfab_clk,
-> -	[RPM_MM_FABRIC_A_CLK] = &msm8660_mmfab_a_clk,
-> -	[RPM_DAYTONA_FABRIC_CLK] = &msm8660_daytona_clk,
-> -	[RPM_DAYTONA_FABRIC_A_CLK] = &msm8660_daytona_a_clk,
-> -	[RPM_SFPB_CLK] = &msm8660_sfpb_clk,
-> -	[RPM_SFPB_A_CLK] = &msm8660_sfpb_a_clk,
-> -	[RPM_CFPB_CLK] = &msm8660_cfpb_clk,
-> -	[RPM_CFPB_A_CLK] = &msm8660_cfpb_a_clk,
-> -	[RPM_MMFPB_CLK] = &msm8660_mmfpb_clk,
-> -	[RPM_MMFPB_A_CLK] = &msm8660_mmfpb_a_clk,
-> -	[RPM_SMI_CLK] = &msm8660_smi_clk,
-> -	[RPM_SMI_A_CLK] = &msm8660_smi_a_clk,
-> -	[RPM_EBI1_CLK] = &msm8660_ebi1_clk,
-> -	[RPM_EBI1_A_CLK] = &msm8660_ebi1_a_clk,
-> -	[RPM_PLL4_CLK] = &msm8660_pll4_clk,
-> +	[RPM_APPS_FABRIC_CLK] = &clk_rpm_afab_clk,
-> +	[RPM_APPS_FABRIC_A_CLK] = &clk_rpm_afab_a_clk,
-> +	[RPM_SYS_FABRIC_CLK] = &clk_rpm_sfab_clk,
-> +	[RPM_SYS_FABRIC_A_CLK] = &clk_rpm_sfab_a_clk,
-> +	[RPM_MM_FABRIC_CLK] = &clk_rpm_mmfab_clk,
-> +	[RPM_MM_FABRIC_A_CLK] = &clk_rpm_mmfab_a_clk,
-> +	[RPM_DAYTONA_FABRIC_CLK] = &clk_rpm_daytona_clk,
-> +	[RPM_DAYTONA_FABRIC_A_CLK] = &clk_rpm_daytona_a_clk,
-> +	[RPM_SFPB_CLK] = &clk_rpm_sfpb_clk,
-> +	[RPM_SFPB_A_CLK] = &clk_rpm_sfpb_a_clk,
-> +	[RPM_CFPB_CLK] = &clk_rpm_cfpb_clk,
-> +	[RPM_CFPB_A_CLK] = &clk_rpm_cfpb_a_clk,
-> +	[RPM_MMFPB_CLK] = &clk_rpm_mmfpb_clk,
-> +	[RPM_MMFPB_A_CLK] = &clk_rpm_mmfpb_a_clk,
-> +	[RPM_SMI_CLK] = &clk_rpm_smi_clk,
-> +	[RPM_SMI_A_CLK] = &clk_rpm_smi_a_clk,
-> +	[RPM_EBI1_CLK] = &clk_rpm_ebi1_clk,
-> +	[RPM_EBI1_A_CLK] = &clk_rpm_ebi1_a_clk,
-> +	[RPM_PLL4_CLK] = &clk_rpm_pll4_clk,
->   };
->   
->   static const struct rpm_clk_desc rpm_clk_msm8660 = {
-> @@ -441,46 +451,30 @@ static const struct rpm_clk_desc rpm_clk_msm8660 = {
->   	.num_clks = ARRAY_SIZE(msm8660_clks),
->   };
->   
-> -/* apq8064 */
-> -DEFINE_CLK_RPM(apq8064, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-> -DEFINE_CLK_RPM(apq8064, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-> -DEFINE_CLK_RPM(apq8064, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-> -DEFINE_CLK_RPM(apq8064, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-> -DEFINE_CLK_RPM(apq8064, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-> -DEFINE_CLK_RPM(apq8064, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-> -DEFINE_CLK_RPM(apq8064, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-> -DEFINE_CLK_RPM(apq8064, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-> -DEFINE_CLK_RPM(apq8064, qdss_clk, qdss_a_clk, QCOM_RPM_QDSS_CLK);
-> -DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_d0_clk, xo_d0_a_clk, 0);
-> -DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_d1_clk, xo_d1_a_clk, 8);
-> -DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_a0_clk, xo_a0_a_clk, 16);
-> -DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_a1_clk, xo_a1_a_clk, 24);
-> -DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_a2_clk, xo_a2_a_clk, 28);
-> -
->   static struct clk_rpm *apq8064_clks[] = {
-> -	[RPM_APPS_FABRIC_CLK] = &apq8064_afab_clk,
-> -	[RPM_APPS_FABRIC_A_CLK] = &apq8064_afab_a_clk,
-> -	[RPM_CFPB_CLK] = &apq8064_cfpb_clk,
-> -	[RPM_CFPB_A_CLK] = &apq8064_cfpb_a_clk,
-> -	[RPM_DAYTONA_FABRIC_CLK] = &apq8064_daytona_clk,
-> -	[RPM_DAYTONA_FABRIC_A_CLK] = &apq8064_daytona_a_clk,
-> -	[RPM_EBI1_CLK] = &apq8064_ebi1_clk,
-> -	[RPM_EBI1_A_CLK] = &apq8064_ebi1_a_clk,
-> -	[RPM_MM_FABRIC_CLK] = &apq8064_mmfab_clk,
-> -	[RPM_MM_FABRIC_A_CLK] = &apq8064_mmfab_a_clk,
-> -	[RPM_MMFPB_CLK] = &apq8064_mmfpb_clk,
-> -	[RPM_MMFPB_A_CLK] = &apq8064_mmfpb_a_clk,
-> -	[RPM_SYS_FABRIC_CLK] = &apq8064_sfab_clk,
-> -	[RPM_SYS_FABRIC_A_CLK] = &apq8064_sfab_a_clk,
-> -	[RPM_SFPB_CLK] = &apq8064_sfpb_clk,
-> -	[RPM_SFPB_A_CLK] = &apq8064_sfpb_a_clk,
-> -	[RPM_QDSS_CLK] = &apq8064_qdss_clk,
-> -	[RPM_QDSS_A_CLK] = &apq8064_qdss_a_clk,
-> -	[RPM_XO_D0] = &apq8064_xo_d0_clk,
-> -	[RPM_XO_D1] = &apq8064_xo_d1_clk,
-> -	[RPM_XO_A0] = &apq8064_xo_a0_clk,
-> -	[RPM_XO_A1] = &apq8064_xo_a1_clk,
-> -	[RPM_XO_A2] = &apq8064_xo_a2_clk,
-> +	[RPM_APPS_FABRIC_CLK] = &clk_rpm_afab_clk,
-> +	[RPM_APPS_FABRIC_A_CLK] = &clk_rpm_afab_a_clk,
-> +	[RPM_CFPB_CLK] = &clk_rpm_cfpb_clk,
-> +	[RPM_CFPB_A_CLK] = &clk_rpm_cfpb_a_clk,
-> +	[RPM_DAYTONA_FABRIC_CLK] = &clk_rpm_daytona_clk,
-> +	[RPM_DAYTONA_FABRIC_A_CLK] = &clk_rpm_daytona_a_clk,
-> +	[RPM_EBI1_CLK] = &clk_rpm_ebi1_clk,
-> +	[RPM_EBI1_A_CLK] = &clk_rpm_ebi1_a_clk,
-> +	[RPM_MM_FABRIC_CLK] = &clk_rpm_mmfab_clk,
-> +	[RPM_MM_FABRIC_A_CLK] = &clk_rpm_mmfab_a_clk,
-> +	[RPM_MMFPB_CLK] = &clk_rpm_mmfpb_clk,
-> +	[RPM_MMFPB_A_CLK] = &clk_rpm_mmfpb_a_clk,
-> +	[RPM_SYS_FABRIC_CLK] = &clk_rpm_sfab_clk,
-> +	[RPM_SYS_FABRIC_A_CLK] = &clk_rpm_sfab_a_clk,
-> +	[RPM_SFPB_CLK] = &clk_rpm_sfpb_clk,
-> +	[RPM_SFPB_A_CLK] = &clk_rpm_sfpb_a_clk,
-> +	[RPM_QDSS_CLK] = &clk_rpm_qdss_clk,
-> +	[RPM_QDSS_A_CLK] = &clk_rpm_qdss_a_clk,
-> +	[RPM_XO_D0] = &clk_rpm_xo_d0_clk,
-> +	[RPM_XO_D1] = &clk_rpm_xo_d1_clk,
-> +	[RPM_XO_A0] = &clk_rpm_xo_a0_clk,
-> +	[RPM_XO_A1] = &clk_rpm_xo_a1_clk,
-> +	[RPM_XO_A2] = &clk_rpm_xo_a2_clk,
->   };
->   
->   static const struct rpm_clk_desc rpm_clk_apq8064 = {
-> @@ -488,33 +482,23 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
->   	.num_clks = ARRAY_SIZE(apq8064_clks),
->   };
->   
-> -/* ipq806x */
-> -DEFINE_CLK_RPM(ipq806x, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-> -DEFINE_CLK_RPM(ipq806x, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-> -DEFINE_CLK_RPM(ipq806x, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-> -DEFINE_CLK_RPM(ipq806x, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-> -DEFINE_CLK_RPM(ipq806x, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-> -DEFINE_CLK_RPM(ipq806x, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-> -DEFINE_CLK_RPM(ipq806x, nss_fabric_0_clk, nss_fabric_0_a_clk, QCOM_RPM_NSS_FABRIC_0_CLK);
-> -DEFINE_CLK_RPM(ipq806x, nss_fabric_1_clk, nss_fabric_1_a_clk, QCOM_RPM_NSS_FABRIC_1_CLK);
-> -
->   static struct clk_rpm *ipq806x_clks[] = {
-> -	[RPM_APPS_FABRIC_CLK] = &ipq806x_afab_clk,
-> -	[RPM_APPS_FABRIC_A_CLK] = &ipq806x_afab_a_clk,
-> -	[RPM_CFPB_CLK] = &ipq806x_cfpb_clk,
-> -	[RPM_CFPB_A_CLK] = &ipq806x_cfpb_a_clk,
-> -	[RPM_DAYTONA_FABRIC_CLK] = &ipq806x_daytona_clk,
-> -	[RPM_DAYTONA_FABRIC_A_CLK] = &ipq806x_daytona_a_clk,
-> -	[RPM_EBI1_CLK] = &ipq806x_ebi1_clk,
-> -	[RPM_EBI1_A_CLK] = &ipq806x_ebi1_a_clk,
-> -	[RPM_SYS_FABRIC_CLK] = &ipq806x_sfab_clk,
-> -	[RPM_SYS_FABRIC_A_CLK] = &ipq806x_sfab_a_clk,
-> -	[RPM_SFPB_CLK] = &ipq806x_sfpb_clk,
-> -	[RPM_SFPB_A_CLK] = &ipq806x_sfpb_a_clk,
-> -	[RPM_NSS_FABRIC_0_CLK] = &ipq806x_nss_fabric_0_clk,
-> -	[RPM_NSS_FABRIC_0_A_CLK] = &ipq806x_nss_fabric_0_a_clk,
-> -	[RPM_NSS_FABRIC_1_CLK] = &ipq806x_nss_fabric_1_clk,
-> -	[RPM_NSS_FABRIC_1_A_CLK] = &ipq806x_nss_fabric_1_a_clk,
-> +	[RPM_APPS_FABRIC_CLK] = &clk_rpm_afab_clk,
-> +	[RPM_APPS_FABRIC_A_CLK] = &clk_rpm_afab_a_clk,
-> +	[RPM_CFPB_CLK] = &clk_rpm_cfpb_clk,
-> +	[RPM_CFPB_A_CLK] = &clk_rpm_cfpb_a_clk,
-> +	[RPM_DAYTONA_FABRIC_CLK] = &clk_rpm_daytona_clk,
-> +	[RPM_DAYTONA_FABRIC_A_CLK] = &clk_rpm_daytona_a_clk,
-> +	[RPM_EBI1_CLK] = &clk_rpm_ebi1_clk,
-> +	[RPM_EBI1_A_CLK] = &clk_rpm_ebi1_a_clk,
-> +	[RPM_SYS_FABRIC_CLK] = &clk_rpm_sfab_clk,
-> +	[RPM_SYS_FABRIC_A_CLK] = &clk_rpm_sfab_a_clk,
-> +	[RPM_SFPB_CLK] = &clk_rpm_sfpb_clk,
-> +	[RPM_SFPB_A_CLK] = &clk_rpm_sfpb_a_clk,
-> +	[RPM_NSS_FABRIC_0_CLK] = &clk_rpm_nss_fabric_0_clk,
-> +	[RPM_NSS_FABRIC_0_A_CLK] = &clk_rpm_nss_fabric_0_a_clk,
-> +	[RPM_NSS_FABRIC_1_CLK] = &clk_rpm_nss_fabric_1_clk,
-> +	[RPM_NSS_FABRIC_1_A_CLK] = &clk_rpm_nss_fabric_1_a_clk,
->   };
->   
->   static const struct rpm_clk_desc rpm_clk_ipq806x = {
+> To be queued in renesas-clk-for-v6.3.
+>=20
+> Presumably this was copied from r8a779f0-cpg-mssr.c, as R-Car S4-8 does
+> support dividers of 15 and 19 with a 16.00 resp. 40.00 MHz external
+> crystal.
+
+I think so.
+
+Best regards,
+Yoshihiro Shimoda
+
+> ---
+>  drivers/clk/renesas/r8a779g0-cpg-mssr.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesa=
+s/r8a779g0-cpg-mssr.c
+> index 9863f1a51f4b36e2..2feb97fc37759267 100644
+> --- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> @@ -212,20 +212,20 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[=
+] __initconst =3D {
+>   *   MD	 EXTAL		PLL1	PLL2	PLL3	PLL4	PLL5	PLL6	OSC
+>   * 14 13 (MHz)
+>   * ---------------------------------------------------------------------=
+---
+> - * 0  0	 16.66 / 1	x192	x204	x192	x144	x192	x168	/15
+> + * 0  0	 16.66 / 1	x192	x204	x192	x144	x192	x168	/16
+>   * 0  1	 20    / 1	x160	x170	x160	x120	x160	x140	/19
+>   * 1  0	 Prohibited setting
+> - * 1  1	 33.33 / 2	x192	x204	x192	x144	x192	x168	/38
+> + * 1  1	 33.33 / 2	x192	x204	x192	x144	x192	x168	/32
+>   */
+>  #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
+>  					 (((md) & BIT(13)) >> 13))
+>=20
+>  static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] =3D {
+>  	/* EXTAL div	PLL1 mult/div	PLL2 mult/div	PLL3 mult/div	PLL4 mult/div	PL=
+L5 mult/div	PLL6 mult/div
+> 	OSC prediv */
+> -	{ 1,		192,	1,	204,	1,	192,	1,	144,	1,	192,	1,	168,	1,
+> 	15,	},
+> +	{ 1,		192,	1,	204,	1,	192,	1,	144,	1,	192,	1,	168,	1,
+> 	16,	},
+>  	{ 1,		160,	1,	170,	1,	160,	1,	120,	1,	160,	1,	140,	1,
+> 	19,	},
+>  	{ 0,		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+> 	0,	},
+> -	{ 2,		192,	1,	204,	1,	192,	1,	144,	1,	192,	1,	168,	1,
+> 	38,	},
+> +	{ 2,		192,	1,	204,	1,	192,	1,	144,	1,	192,	1,	168,	1,
+> 	32,	},
+>  };
+>=20
+>  static int __init r8a779g0_cpg_mssr_init(struct device *dev)
+> --
+> 2.25.1
 
