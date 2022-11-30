@@ -2,132 +2,470 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB96C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 00:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4986C4167B
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 03:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbiK3ARF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Nov 2022 19:17:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
+        id S231363AbiK3Dcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Nov 2022 22:32:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231213AbiK3ARE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 19:17:04 -0500
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2116.outbound.protection.outlook.com [40.107.114.116])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F5AFADD;
-        Tue, 29 Nov 2022 16:17:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VS14Oz9uGk3GW/5F8LWSVRPnClyMMLtFu1VxKKnIbUn/Zu6NEpw501lOLNKwpe8cwVsnVYCiswu5effSHu+C3eI6WC5u7OZbyzHZXY2/motinufk0qHJDZ3MKSkxngJ1J5gySQHQxRdY7B3615w0mqjR4+XfheJPQYMgfl+obrJ2eN3xwx5hDaNgzM0EbtiIZD3IlfbAoY1jMTcfGwFkhVT9uAj2qno/RxSDHAhnAPmB6emH72ONTJDWy7usV1lTDAi3VrWA/9mBVYiI1PzZkwjVOEEaFSTm2hoIfflg5ewjRZe5aXgIqG/YB1tzapy+iVRZg5fyu0xMd8nGaMQAxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3g2qyE0uOQdJsfE5YS7A4XZGILUpt9Mv1n7XyZGTJOs=;
- b=F2NhFmZtBtLvJYiU+/cfFe8zeeUk7jwPdewRWAZvfj1G+m+8Z8OH8OTc+x4FUAsQmn0nSN1OU0PBuik84y6hb6o3t086g6e3xpErwnC6nkRVjHjsdegYnjSh//357vhCcrZFv1dXR8FcfMD2Q6ZWLih/H6S6yk9xrSWoOqJlZw80DQsQv2LxAT1okX+DuQl1z6jLSFmRdEmmA9lm9xfn+tcpGrWrN7QpW65SR4Y6AhX2L64jJxq0wH9YFhKRQu1zKU1wgTXO4vD1LFwVU3a6WIOoR91nHAijZWnwa9X/VIsTDDSkmlxZLECZ3yiRWVulmZsTxkmRMJUyvAe/YfgVNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3g2qyE0uOQdJsfE5YS7A4XZGILUpt9Mv1n7XyZGTJOs=;
- b=p+6ANf/KW/sPmKtcJdPkF79aNFA9JXPOwAlRUJGcDeUAFKCMWHfg05WhfSPUzpWZ+dptAMkNojInUaLiErdkZvzYC2lx4i067hchLghDhwtXcEdaBMN6SyHLKpXdcbe3mt61inhrQtmk529UQueQpglvO2SuGNEqAC1pxjpZuI0=
-Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
- (2603:1096:404:8028::13) by TYCPR01MB9338.jpnprd01.prod.outlook.com
- (2603:1096:400:199::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Wed, 30 Nov
- 2022 00:17:00 +0000
-Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
- ([fe80::cd89:4a4b:161e:b78d]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
- ([fe80::cd89:4a4b:161e:b78d%8]) with mapi id 15.20.5857.023; Wed, 30 Nov 2022
- 00:17:00 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: rcar-gen4: Restore PLL enum sort order
-Thread-Topic: [PATCH] clk: renesas: rcar-gen4: Restore PLL enum sort order
-Thread-Index: AQHZBBNYy31vMRHGBk+aMI55/hDo6a5WmchQ
-Date:   Wed, 30 Nov 2022 00:17:00 +0000
-Message-ID: <TYBPR01MB5341FC5641B210CACC1FA8BED8159@TYBPR01MB5341.jpnprd01.prod.outlook.com>
-References: <dbd61ed19f79e9ae751fbb533d6c946e810e4359.1669740824.git.geert+renesas@glider.be>
-In-Reply-To: <dbd61ed19f79e9ae751fbb533d6c946e810e4359.1669740824.git.geert+renesas@glider.be>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYBPR01MB5341:EE_|TYCPR01MB9338:EE_
-x-ms-office365-filtering-correlation-id: 63f0377e-c947-43d4-d1a9-08dad2683345
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QpvfGk1YsVPJYrlIz8fKWHLchcrdRbTZpaHm1geAFEPMgfM9iGZMDj7pRIpYE+yZbUlBXHBy4RP4PGXOiLWdlw59Mm93lIPpr24Hmomml5UDRJ/zwBftr0HPip3JlR6RXVzTyuGNwZkgBRyCJH3UgxCwH6cEEOJQbrt+9/BS/SxLSCFhNb2ZJrBLhAEkObdfbvNKi7zFYiaGc6acuuwnUfjH6VJ3t9WxkL+5ARyZUhT+zXboRWzyjhElssXlOHINDT2c+J6h5pM+o0/r0eCZP4OHnXkNuqULzMLGh08sAhvtGxHyivSudw08lHxApVBn2g3CLrzaHm7pZk4QPHT1BK/IbAIkREyVnxb97FVweE0TIp2/v1MjEkaMohULSWMmOSmw+VkolUs7gs93XGkqkIMAZ8rkL4//PVR15kiXBKoEWXfsOQa7tKPdovEN/Bcg/lqIH6tsQHv1Nzc2OdcohjsKlikMgnkx3zgKrSGT0fGtpK8v9VQMR059P99MGdK+R0OMPeTe575PtYgfx4QRxRtk8lIJZjyRC0EMQP3Lg71pZ2dV7qQCA22BIIKlRE60qXEzyUFiHW3I3CASObeoW5jkP1YUCMopwMHrYFk/z9mJz6WgeL+Dq1OomC/m5JjmoF8Mh382/QLuQ45q+Vb89ByRLsVV3a7QJ3Cc8cHliUk7vLd96ezuOoij2a7rCgtt1uzbNIt3hUXYJWc83uvrxw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(136003)(39860400002)(366004)(396003)(451199015)(9686003)(83380400001)(71200400001)(7696005)(110136005)(6506007)(33656002)(54906003)(55016003)(38070700005)(86362001)(38100700002)(122000001)(8676002)(186003)(4744005)(52536014)(5660300002)(66476007)(478600001)(76116006)(41300700001)(66446008)(8936002)(66946007)(4326008)(2906002)(316002)(66556008)(64756008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Z2UrIUzyKFyzUIbrmS4p4qkjwvU5r7SqtORdxsRopBwDdsmTQm4BHhjiMTi0?=
- =?us-ascii?Q?WJpTRPerwcdCvardkocRBDS41k27Ej5WdOpDFu7P9w7515wgjZ189cxIxvb3?=
- =?us-ascii?Q?cCgM5uMdAFTxCthkxitrq7KvOfKm06KclLtcwal95g23GZE9XWGogwEmtnVE?=
- =?us-ascii?Q?ykpghHrHR3Hif5NZJdVktF2CqoWikEcoMyh/mjtoiN+jx1Udyb14D+CqOtHq?=
- =?us-ascii?Q?yvubkiSQ3Trz6CSIdV6LzbDROQBZFPsZDl0W8UOJ13z1QMvsthNXEn6RjfPO?=
- =?us-ascii?Q?6t3T4rPJcucSQWgOJRJzi1v1Lyw7ZlDD+Yfj+ffEgUsujpqGhUG6dd/TBrDg?=
- =?us-ascii?Q?Jkf+FrWBE2AP0+iJZAtfdR+zE5qBvKF79iOfOTJ5T+n/9a9v5FEJ4MCDnq8T?=
- =?us-ascii?Q?zsm6Z03NtgZBrK71//IJjFuaSXsm0rtbjhVGy+Mcod20wwKulgqdcyTQC8kB?=
- =?us-ascii?Q?POSRWWYUu14M2vNc1ialM7KJFqdWU9CLaggO0T6Xh/gEPCFT005DPAVFBmZc?=
- =?us-ascii?Q?3IX/6mXIL5AtaeZe1O6ddHlOqnrpInBr5oAadXnr87EkVdI2Hwc2K4/UIsK9?=
- =?us-ascii?Q?PKsrf7ky4xgim61LRIsxXtAC5AffABLKBKVSdFeRoJcEpHGM3+l3CN9Uzy/l?=
- =?us-ascii?Q?7qYnTcQiBZjGW6b80YdHs/Gv5b5/9OqQk1pAPWt1snGAb3XrXxlu2aIIm/ry?=
- =?us-ascii?Q?oME3oFdmgWPp/4SJoNBQM7xZhFGa+mCGRsTdbMqW8yciOMdlyo8sUJILdRcW?=
- =?us-ascii?Q?5WJcuiv/mI1kbrgdIqlMdokNaimgUph2VxlDdUmkwE539MOp7XWTt6ZQstmh?=
- =?us-ascii?Q?miU3OhUe6Eiv8hQEta0kEcWMBcBcblJ6OgGWu2UtbqZZ3wXJLMPdUCHM8LkJ?=
- =?us-ascii?Q?onbrGkn3rp/KxywEJkFVg7P9coq8etQzx3U5Xud0Jk4L0WbrPhugKjwqPjj5?=
- =?us-ascii?Q?XZxCvOOk+5t44tTAEInjpoqf/Cvof3jelo8LkODdNj2oGK5oYP/QRTuFhPIB?=
- =?us-ascii?Q?RuPbJToL27FAITfuPNJyaFIup/eyb7xWk8bvGkTBd14n2ACom1bImTxsHyn6?=
- =?us-ascii?Q?Qgs+a8/QTLKWTIyy3zq5vqshZEP3H6PnN71lvEjTK0Zp29zpMq6ZncuD+m6f?=
- =?us-ascii?Q?vdjUnQvJAiWULJBhPwrOOkfWx4LMsP6o3M/RYNBUJWtMZbElcHno7Jlujy/a?=
- =?us-ascii?Q?5j4Jq9HjhvDqpjjgxvS7uNq7p1ip6257g2+LkF0ApxwiljXP9VDh8blsfoJQ?=
- =?us-ascii?Q?CR3ADeeXvrAeZn3xQYZNhxqeyT9cOjoi4xh6aUm0vjiQdEcWeuBgb7puK2Ka?=
- =?us-ascii?Q?WNH+ymA1xKZ6IOafQhbgo5NtRDJ+muhLt/oxglPS5TrQb+pJ4td1SQ0WyQzV?=
- =?us-ascii?Q?/SZcllb9HaAY/00bs0O1gcfnjWPFxPzu0p/Psar3f2UyInn8RlmlYL8RD5pI?=
- =?us-ascii?Q?5YU4GNItcrw0xsKdgfM7jFVjyePVWmENWW2zmFkfTlYRUiGyDWbBkdKjSZBh?=
- =?us-ascii?Q?ZlCgFF5/cxV3fhW4QY+s6gkBGZW9CmfSxA8IO8TBZOsgAFi/8C7soaiDv4M+?=
- =?us-ascii?Q?ak7+lu2FYIfizkQzH0KLMON33voecUywYSa8av23dKYduC4fnlE/KR4LcEaV?=
- =?us-ascii?Q?dipREoAEDmXYQbgJOLH3I3liVZEh7qcG7wZqytXzDpdBfkhXIc54kwNTqEkz?=
- =?us-ascii?Q?E7acJA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S230033AbiK3Dcx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2022 22:32:53 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6419627B38;
+        Tue, 29 Nov 2022 19:32:50 -0800 (PST)
+Received: from loongson.cn (unknown [112.94.31.56])
+        by gateway (Coremail) with SMTP id _____8Dx_+vgzoZj2kACAA--.5203S3;
+        Wed, 30 Nov 2022 11:32:48 +0800 (CST)
+Received: from [127.0.0.1] (unknown [112.94.31.56])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxNlfezoZjVjQiAA--.1228S3;
+        Wed, 30 Nov 2022 11:32:47 +0800 (CST)
+Message-ID: <f0399e7d-d9be-d72f-2693-fb07984a4be6@loongson.cn>
+Date:   Wed, 30 Nov 2022 11:32:46 +0800
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63f0377e-c947-43d4-d1a9-08dad2683345
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2022 00:17:00.4835
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qMnHh4bULVE/7uQtX7YcLDtF/g89PWy/9hMOL+qhGXQxTCCAyYQK/eVcIEAyckXtahvvoyWb8HbhRXxs+24tmvvda5A/1MZ8TvHMDZGIBit2EpAv3m2Zu0xf4tPoPcfc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9338
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
+ support
+Content-Language: en-US
+To:     Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
+ <20221129034157.15036-2-zhuyinbo@loongson.cn>
+From:   XiaochuanMao <maoxiaochuan@loongson.cn>
+In-Reply-To: <20221129034157.15036-2-zhuyinbo@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8DxNlfezoZjVjQiAA--.1228S3
+X-CM-SenderInfo: xpdr5xxdrfx3ldqnw6o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBjvAXoWfJw1UGFykAr4rWF1xZw1kZrb_yoW8Jr48Wo
+        W3uFn3Zr4fJ348Jay0qr15tr42qFnI9rsrAFyxZrs8JFWSkr98JrW8Gr43CF4xAFyrKFnx
+        Aa4S9ayrJF4IqrZ8n29KB7ZKAUJUUUUt529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
+        J3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnRJU
+        UUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG6rWj6s
+        0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+        Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84
+        ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
+        M2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zV
+        CFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2
+        z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2
+        IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E
+        4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGw
+        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48J
+        MIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMI
+        IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
+        87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDUUUU
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert-san,
+hi, yinbo
 
-> From: Geert Uytterhoeven, Sent: Wednesday, November 30, 2022 1:55 AM
->=20
-> When CLK_TYPE_GEN4_PLL4 was added to the rcar_gen4_clk_types enum, it
-> was inserted at a random location.  Restore sort order of the clock
-> types referring to PLLs.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Thank you for the patch!
-
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
+On 2022/11/29 11:41, Yinbo Zhu wrote:
+> This driver provides support for clock controller on Loongson-2 SoC,
+> the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock,
+> there are five independent PLLs inside, each of which PLL can
+> provide up to three sets of frequency dependent clock outputs.
+>
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+> ---
+> Change in v10:
+> 		1. Detach of_clk_init to another patch.
+> Change in v9:
+> 		1. Add all history changelog information.
+> Change in v8:
+> 		1. Remove the flag "CLK_IS_BASIC".
+> Change in v7:
+> 		1. Adjust position alphabetically in Kconfig and Makefile.
+> 		2. Add static for loongson2_pll_base.
+> 		3. Move other file-scope variables in probe.
+> Change in v6:
+> 		1. NO change, but other patch in this series of patches has
+> 		   changes.
+> Change in v5:
+> 		1. Replace loongson2 with Loongson-2 in commit info.
+> 		2. Replace Loongson2 with Loongson-2 in binding and
+> 		   Kconfig file.
+> 		3. Replace soc with SoC.
+> Change in v4:
+> 		1. Fixup clock-names that replace "xxx-clk" with "xxx".
+> Change in v3:
+> 		1. NO change, but other patch in this series of patches has
+> 		   changes.
+> Change in v2:
+> 		1. Update the include filename.
+> 		2. Change string from refclk/REFCLK to ref/REF.
+>
+>   MAINTAINERS                 |   1 +
+>   arch/loongarch/Kconfig      |   1 +
+>   drivers/clk/Kconfig         |   9 ++
+>   drivers/clk/Makefile        |   1 +
+>   drivers/clk/clk-loongson2.c | 286 ++++++++++++++++++++++++++++++++++++
+>   5 files changed, 298 insertions(+)
+>   create mode 100644 drivers/clk/clk-loongson2.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ab94893fe2f6..73fa56f1fd5d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12025,6 +12025,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
+>   M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+>   L:	linux-clk@vger.kernel.org
+>   S:	Maintained
+> +F:	drivers/clk/clk-loongson2.c
+>   F:	include/dt-bindings/clock/loongson,ls2k-clk.h
+>   
+>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 903096bd87f8..4f8f1b8f796d 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -127,6 +127,7 @@ config LOONGARCH
+>   	select USE_PERCPU_NUMA_NODE_ID
+>   	select USER_STACKTRACE_SUPPORT
+>   	select ZONE_DMA32
+> +	select COMMON_CLK
+>   
+>   config 32BIT
+>   	bool
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index d79905f3e174..d13626f63739 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -326,6 +326,15 @@ config COMMON_CLK_LOCHNAGAR
+>   	  This driver supports the clocking features of the Cirrus Logic
+>   	  Lochnagar audio development board.
+>   
+> +config COMMON_CLK_LOONGSON2
+> +	bool "Clock driver for Loongson-2 SoC"
+> +	depends on COMMON_CLK && OF
+> +	help
+> +	  This driver provides support for Clock Controller that base on
+> +	  Common Clock Framework Controller (CCF) on Loongson-2 SoC. The
+> +	  Clock Controller can generates and supplies clock to various
+> +	  peripherals within the SoC.
+> +
+>   config COMMON_CLK_NXP
+>   	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
+>   	select REGMAP_MMIO if ARCH_LPC32XX
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index e3ca0d058a25..b298c5dabc1a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
+>   obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
+>   obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
+>   obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
+> +obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
+>   obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+>   obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
+>   obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
+> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+> new file mode 100644
+> index 000000000000..7487effceeab
+> --- /dev/null
+> +++ b/drivers/clk/clk-loongson2.c
+> @@ -0,0 +1,286 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
+> + * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
+> + */
+> +
+> +#include <linux/clkdev.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <dt-bindings/clock/loongson,ls2k-clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk.h>
+> +
+> +#define LOONGSON2_PLL_MULT_SHIFT		32
+> +#define LOONGSON2_PLL_MULT_WIDTH		10
+> +#define LOONGSON2_PLL_DIV_SHIFT			26
+> +#define LOONGSON2_PLL_DIV_WIDTH			6
+> +#define LOONGSON2_APB_FREQSCALE_SHIFT		20
+> +#define LOONGSON2_APB_FREQSCALE_WIDTH		3
+> +#define LOONGSON2_USB_FREQSCALE_SHIFT		16
+> +#define LOONGSON2_USB_FREQSCALE_WIDTH		3
+> +#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
+> +#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
+> +
+> +static void __iomem *loongson2_pll_base;
+> +
+> +static struct clk_hw *loongson2_clk_register(struct device *dev,
+> +					  const char *name,
+> +					  const char *parent_name,
+> +					  const struct clk_ops *ops,
+> +					  unsigned long flags)
+> +{
+> +	int ret;
+> +	struct clk_hw *hw;
+> +	struct clk_init_data init;
+> +
+> +	/* allocate the divider */
+> +	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
+> +	if (!hw)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = ops;
+> +	init.flags = flags;
+> +	init.parent_names = (parent_name ? &parent_name : NULL);
+> +	init.num_parents = (parent_name ? 1 : 0);
+> +	hw->init = &init;
+> +
+> +	/* register the clock */
+> +	ret = clk_hw_register(dev, hw);
+> +	if (ret) {
+> +		kfree(hw);
+> +		hw = ERR_PTR(ret);
+> +	}
+> +
+> +	return hw;
+> +}
+> +
+> +static struct clk_hw *loongson2_clk_pll_register(const char *name,
+> +				const char *parent, void __iomem *reg)
+> +{
+> +	u64 val;
+> +	u32 mult = 1, div = 1;
+> +
+> +	val = readq((void *)reg);
+> +
+> +	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
+> +			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
+> +	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
+> +			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
+> +
+> +	return clk_hw_register_fixed_factor(NULL, name, parent,
+> +				CLK_SET_RATE_PARENT, mult, div);
+> +}
+> +
+> +static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u64 val;
+> +	u32 mult;
+> +	unsigned long rate;
+> +
+> +	val = readq((void *)(loongson2_pll_base + 0x50));
+> +
+> +	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
+> +			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
+> +
+> +	rate = parent_rate * (mult + 1);
+> +	do_div(rate, 8);
+> +
+> +	return rate;
+> +}
+> +
+> +static const struct clk_ops loongson2_apb_clk_ops = {
+> +	.recalc_rate = loongson2_apb_recalc_rate,
+> +};
+> +
+> +static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u64 val;
+> +	u32 mult;
+> +	unsigned long rate;
+> +
+> +	val = readq((void *)(loongson2_pll_base + 0x50));
+> +
+> +	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
+> +			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
+> +
+> +	rate = parent_rate * (mult + 1);
+> +	do_div(rate, 8);
+> +
+> +	return rate;
+> +}
+> +
+> +static const struct clk_ops loongson2_usb_clk_ops = {
+> +	.recalc_rate = loongson2_usb_recalc_rate,
+> +};
+> +
+> +static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u64 val;
+> +	u32 mult;
+> +	unsigned long rate;
+> +
+> +	val = readq((void *)(loongson2_pll_base + 0x50));
+it may be more common to use macro defintions instead of magic number. 
+the clock configuration logic of  2k500 is  same as 2k1000, only the 
+base  and offset are different。
+> +
+> +	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
+> +			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
+> +
+> +	rate = parent_rate * (mult + 1);
+> +	do_div(rate, 8);
+> +
+> +	return rate;
+> +}
+> +
+> +static const struct clk_ops loongson2_sata_clk_ops = {
+> +	.recalc_rate = loongson2_sata_recalc_rate,
+> +};
+> +
+> +static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < count; i++)
+> +		if (IS_ERR(clks[i]))
+> +			pr_err("Loongson2 clk %u: register failed with %ld\n"
+> +				, i, PTR_ERR(clks[i]));
+> +}
+> +
+> +static struct clk_hw *loongson2_obtain_fixed_clk_hw(
+> +					struct device_node *np,
+> +					const char *name)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = of_clk_get_by_name(np, name);
+> +	if (IS_ERR(clk))
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	return __clk_get_hw(clk);
+> +}
+> +
+> +static void __init loongson2_clocks_init(struct device_node *np)
+> +{
+> +	struct clk_hw **hws;
+> +	struct clk_hw_onecell_data *clk_hw_data;
+> +	spinlock_t loongson2_clk_lock;
+> +
+> +	loongson2_pll_base = of_iomap(np, 0);
+> +
+> +	if (!loongson2_pll_base) {
+> +		pr_err("clk: unable to map loongson2 clk registers\n");
+> +		goto err;
+> +	}
+> +
+> +	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
+> +					GFP_KERNEL);
+> +	if (WARN_ON(!clk_hw_data))
+> +		goto err;
+> +
+> +	clk_hw_data->num = LOONGSON2_CLK_END;
+> +	hws = clk_hw_data->hws;
+> +
+> +	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
+> +						"ref_100m");
+> +
+> +	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base);
+> +
+> +	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x10);
+> +
+> +	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x20);
+> +
+> +	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x30);
+> +
+> +	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x40);
+> +
+> +	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
+> +						"node_pll", 0,
+> +						loongson2_pll_base + 0x8, 0,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	/*
+> +	 * The hda clk divisor in the upper 32bits and the clk-prodiver
+> +	 * layer code doesn't support 64bit io operation thus a conversion
+> +	 * is required that subtract shift by 32 and add 4byte to the hda
+> +	 * address
+> +	 */
+> +	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
+> +						"ddr_pll", 0,
+> +						loongson2_pll_base + 0x22, 12,
+> +						7, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
+> +						"ddr_pll", 0,
+> +						loongson2_pll_base + 0x18, 22,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
+> +						"ddr_pll", 0,
+> +						loongson2_pll_base + 0x18, 0,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
+> +						"dc_pll", 0,
+> +						loongson2_pll_base + 0x28, 22,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
+> +						"dc_pll", 0,
+> +						loongson2_pll_base + 0x28, 0,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
+> +						"gmac",
+> +						&loongson2_apb_clk_ops, 0);
+> +
+> +	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
+> +						"gmac",
+> +						&loongson2_usb_clk_ops, 0);
+> +
+> +	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
+> +						"gmac",
+> +						&loongson2_sata_clk_ops, 0);
+> +
+> +	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
+> +						"pix0_pll", 0,
+> +						loongson2_pll_base + 0x38, 0, 6,
+> +						CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
+> +						"pix1_pll", 0,
+> +						loongson2_pll_base + 0x48, 0, 6,
+> +						CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+above this,   it may be more common to use macro defintions instead of 
+magic number. the clock configuration logic of 2k500 is same as 2k1000， 
+only the base  and offset are different
+> +	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
+> +
+> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> +
+> +err:
+> +	iounmap(loongson2_pll_base);
+> +}
+> +
+> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
 
