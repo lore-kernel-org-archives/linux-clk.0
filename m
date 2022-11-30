@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83DC7C47088
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 11:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9212CC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 11:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234705AbiK3L3Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Nov 2022 06:29:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51464 "EHLO
+        id S234888AbiK3L33 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Nov 2022 06:29:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234650AbiK3L3V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 06:29:21 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2345FA1
-        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 03:29:20 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id e27so40566225ejc.12
-        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 03:29:20 -0800 (PST)
+        with ESMTP id S234729AbiK3L3W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 06:29:22 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D7510FCF
+        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 03:29:21 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id s5so23569752edc.12
+        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 03:29:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jsddZjuiwpi1hxeQr5oczCe9bOg87MCuu+iWR7ARxxg=;
-        b=rBQ+HyzyCSGvEl6xTCGbLmibKHPwSei+RSdPq21JQsAe3XJrMk+9ilplTyuSnqaZmQ
-         wJu/XUcHb8xEOOLuz7vnmapHpSWCn90gFnpqLp7z0KYJLpjZlqIFhOENylCxtz23Aczs
-         0FLj0pdTJM7UwEK6ZD9/635Q9g4a42u2BmVzNBwsKLK9vbt4/YGdkHZ8o9ND5/+frIIU
-         wym+8Zsna8maYBR2GiHqHcba3nrejV9qNX7vc6LhTU6ee02IcexSCd+EFr/2W92ueeRY
-         /HkwrDuaJx2b0GSgD3gcwI4MMGHuicsp3nmRfhrQbBgLyYldKXMigRS4rjcZGB154yg6
-         W2Lw==
+        bh=hehlayLfD+VpoMaqp50JltEW9ZOkwoZi8i1XpqkJ+jY=;
+        b=vhYCJaRMhkgAFkQWkWvK5OOYSJehqu9ffJamCBNus7OXFyt3b/N8eW2AyJITrAFlYr
+         Eo3qwS6XXyJ31ZulZx8VJxbdIvLbrsJdYF4POSVdGzGOkaZ8GnthF7i/Cm0Jb/yHkzWA
+         XcyxOIKDBVe/lXi8bAUCZIeU7bx2DgBQkdlXnridaRR6i8vJ5Uu7nTxfsnEpuNM8MC4d
+         R0u0slKFikInN4QyQRlhPBp/7NXZYbtOmLpBdhnyWFOddxDaPbU0iJa4+J8i1ArZNhwS
+         0IvYHAhcrMaqI2VP5vvoGC9gZB9TBjMtTNLhLW9X4EgEwVE5z76aztk3uGbx74clMC7L
+         wFIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jsddZjuiwpi1hxeQr5oczCe9bOg87MCuu+iWR7ARxxg=;
-        b=Ej6Dy08HRckvc100nywZUQpScDH0febyvxqvZzLGSTaF56QC4JOgP6MUudREwRGiH0
-         xJw2b49F4eOte8H0BeeZ3RxqmL/O8/5J3fhv0lRXImaZ9jFVSm8RXE62Gv9PukC0sdug
-         Wn9SW9loao0nLffhUDQn7gLPP7ZBNv//Eu2+rB9HwxaWTOE2m3N/vdP52PTt7Z+MIxSq
-         hkc/S4celJUjo9si5C9Ytv7iy2+pH7LBdCXSt48rDImvWJi94YzJZ1jSClFm5pHbe82a
-         wR9KjHgOV7aqxrA5R6FI0vytTKTiDBfzoX6BgQoMldujfhjyuEwUufEef9IgdjvGnAs9
-         pUqQ==
-X-Gm-Message-State: ANoB5pnnIlgwV03ii4/F8CbwutQD6qx/YtS3tyjYnbtVRZDsEi6lNrnX
-        Ib9vPAPXxSSJ7bu0EWaFLSEkKQ==
-X-Google-Smtp-Source: AA0mqf4ItKock4qVNORxWKgDIle6+W3fLS/PJW8LzTulaFBDxYi9za6Suolp65zlgpuz8AbD/hfb9A==
-X-Received: by 2002:a17:906:3109:b0:7a0:b505:cae5 with SMTP id 9-20020a170906310900b007a0b505cae5mr52521283ejx.648.1669807759070;
-        Wed, 30 Nov 2022 03:29:19 -0800 (PST)
+        bh=hehlayLfD+VpoMaqp50JltEW9ZOkwoZi8i1XpqkJ+jY=;
+        b=hE0EruuNN3ZJFp+ffJfFae8p+U8D5EMhRmzNzPgLvNX5CsN5347hf1XJSvA+qnlyvg
+         R3u3cSp1mrgGiGAX9vHf9uExwqjmBn1QXsZww5wpSdtJrNIaF2eTU/aEh6WoV6u3u88Y
+         oz2vFuChlfqthHTBLe8NGxH8SUjTduvCwJID4M03A4aPAo3eR0zDjmix3SSH+SLQTZa0
+         XYePkrckqu/uvCSt6aAjOLk4dzYH8IzU3VCfp8vAEm5c7K6FBEtdHt9htUI1WsLhlKbV
+         TGxYP7jYhU7wvEhpd3h9TpN8v+vO6tfvwK7Jl7rY/ZMJWozZE0iCszu2dlALbNXsTWH2
+         bNLQ==
+X-Gm-Message-State: ANoB5pko5oHUSTpzBqGXGgAH0m9TuGZ7JlAXiZ7cG5r5KHu/kW/uRJHP
+        8RfptM0vudgcRgQgfmWaP37RtA==
+X-Google-Smtp-Source: AA0mqf7XVYo6lcf3HEZlw/qZtDbZcHH5i+D2F89xiI6jljmuk1BCZgGJPz0MsnHkk2t54o+iU3FMNQ==
+X-Received: by 2002:a05:6402:3203:b0:467:b8c9:a7fa with SMTP id g3-20020a056402320300b00467b8c9a7famr40567500eda.25.1669807760403;
+        Wed, 30 Nov 2022 03:29:20 -0800 (PST)
 Received: from hackbox.lan ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id x10-20020a1709060a4a00b007c073be0127sm521593ejf.202.2022.11.30.03.29.17
+        by smtp.gmail.com with ESMTPSA id x10-20020a1709060a4a00b007c073be0127sm521593ejf.202.2022.11.30.03.29.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 03:29:18 -0800 (PST)
+        Wed, 30 Nov 2022 03:29:19 -0800 (PST)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v4 3/9] clk: qcom: gdsc: Increase status poll timeout
-Date:   Wed, 30 Nov 2022 13:28:46 +0200
-Message-Id: <20221130112852.2977816-4-abel.vesa@linaro.org>
+Subject: [PATCH v4 4/9] clk: qcom: Add LUCID_OLE PLL type for SM8550
+Date:   Wed, 30 Nov 2022 13:28:47 +0200
+Message-Id: <20221130112852.2977816-5-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221130112852.2977816-1-abel.vesa@linaro.org>
 References: <20221130112852.2977816-1-abel.vesa@linaro.org>
@@ -72,36 +72,73 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SM8550 GCC GDSCs need a higher timeout value when polling for status,
-so increase it to 1500us, while leaving the delay between disable-enable
-sequence for votable gdscs to stay the same.
+Add a LUCID_OLE PLL type for SM8550 SoC from Qualcomm.
 
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gdsc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 16 ++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  5 +++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 0f21a8a767ac..9e4d6ce891aa 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -46,6 +46,7 @@
- #define RETAIN_MEM		BIT(14)
- #define RETAIN_PERIPH		BIT(13)
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 1973d79c9465..f9e4cfd7261c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -155,6 +155,22 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x30,
+ 		[PLL_OFF_TEST_CTL_U1] = 0x34,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_LUCID_OLE] = {
++		[PLL_OFF_OPMODE] = 0x04,
++		[PLL_OFF_STATE] = 0x08,
++		[PLL_OFF_STATUS] = 0x0c,
++		[PLL_OFF_L_VAL] = 0x10,
++		[PLL_OFF_ALPHA_VAL] = 0x14,
++		[PLL_OFF_USER_CTL] = 0x18,
++		[PLL_OFF_USER_CTL_U] = 0x1c,
++		[PLL_OFF_CONFIG_CTL] = 0x20,
++		[PLL_OFF_CONFIG_CTL_U] = 0x24,
++		[PLL_OFF_CONFIG_CTL_U1] = 0x28,
++		[PLL_OFF_TEST_CTL] = 0x2c,
++		[PLL_OFF_TEST_CTL_U] = 0x30,
++		[PLL_OFF_TEST_CTL_U1] = 0x34,
++		[PLL_OFF_TEST_CTL_U2] = 0x38,
++	},
+ 	[CLK_ALPHA_PLL_TYPE_RIVIAN_EVO] = {
+ 		[PLL_OFF_OPMODE] = 0x04,
+ 		[PLL_OFF_STATUS] = 0x0c,
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index f9524b3fce6b..2bdae362c827 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -18,6 +18,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_AGERA,
+ 	CLK_ALPHA_PLL_TYPE_ZONDA,
+ 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
++	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
+ 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
+ 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
+@@ -38,6 +39,8 @@ enum {
+ 	PLL_OFF_TEST_CTL,
+ 	PLL_OFF_TEST_CTL_U,
+ 	PLL_OFF_TEST_CTL_U1,
++	PLL_OFF_TEST_CTL_U2,
++	PLL_OFF_STATE,
+ 	PLL_OFF_STATUS,
+ 	PLL_OFF_OPMODE,
+ 	PLL_OFF_FRAC,
+@@ -160,7 +163,9 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
+ extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
++#define clk_alpha_pll_fixed_lucid_ole_ops clk_alpha_pll_fixed_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
++#define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
  
-+#define STATUS_POLL_TIMEOUT_US	1500
- #define TIMEOUT_US		500
- 
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
-@@ -107,7 +108,7 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
- 	do {
- 		if (gdsc_check_status(sc, status))
- 			return 0;
--	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-+	} while (ktime_us_delta(ktime_get(), start) < STATUS_POLL_TIMEOUT_US);
- 
- 	if (gdsc_check_status(sc, status))
- 		return 0;
+ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+ #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
 -- 
 2.34.1
 
