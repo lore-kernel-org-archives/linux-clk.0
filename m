@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4FBC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 13:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF21C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 13:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233564AbiK3NXs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Nov 2022 08:23:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33216 "EHLO
+        id S234741AbiK3N0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Nov 2022 08:26:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230505AbiK3NXr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 08:23:47 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435DC51C26
-        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 05:23:46 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id j16so26888581lfe.12
-        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 05:23:46 -0800 (PST)
+        with ESMTP id S229472AbiK3N0o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 08:26:44 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB1A55289B
+        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 05:26:42 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id j4so26973248lfk.0
+        for <linux-clk@vger.kernel.org>; Wed, 30 Nov 2022 05:26:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7fQM7R454VR8mK6L7ejpGxkH3sbzn6pRcjKoOvq/tm0=;
-        b=QM2deq+FIzdz1eW4YyYOf6vGQO8V7cxvWiTN+W96TevsJz11XwRHCYH5PVyMpdlzTb
-         jY6cTzBXtsOPCLDusVrc7L9fMaI1QqZ8epl4Ocpig0VX9DmifIfXHfgVDLTBBKte12PR
-         czJlv+F8z4zFd7S3UNguVn53jZGt5Mr/clP+MHQNl7tZi4yQcr0Sd+867nDqjyZPDidd
-         9NO2LPICc672iPeD8tMQwBrvJbPh+Kqyz4EnUwcuZ/rXrhZVbtt8fEyVdjsFqB3QnkwN
-         fUizddlzjRy6y23kGrIJRu62fbPJdSSwmXc6MpVXmtyBsWmhzhnm1CG4cjPeA1GhzBnV
-         lwMw==
+        bh=XyDGkYajv+Nfdoc9qAKpKOjBInJYCoPIt9VVyTaGnKI=;
+        b=SbtsxOYtyQP2Ke4+fVx1pp69pG7dOTubKux1lUaWRMNp28vf9WaITUBrVL84ybKq9G
+         OYinGDy26yEoTz6xh4/UOtS6VAV3rFrfZUlpcqst16I5UDi4e3bQsZGDf/tAXWoHjoi9
+         8N5EqRXa1vDSSVMc5XyPlrsYQrk5Zi9V6qZSjaNwHqFWO3tjUHalbAYEbV8vzUOxY1qm
+         H2cNTnBAh0fH5zsOsPlRd3SaeKMYUm1SJ4DnzEkHtONdxhmquyOoGBirE1+5aJow07wR
+         cQ21mq74kbJY4QHnc6oW88poNBVldSjx9NarEqtFH7WSulDEfm091ztNVZDCJfUnJZQb
+         zsLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7fQM7R454VR8mK6L7ejpGxkH3sbzn6pRcjKoOvq/tm0=;
-        b=1paOKXPwrNs3rqKPtuw0vnUb7sA6nxC4Y7t5N3ZcW1uz6DUYBeEbYjTopVDGQA+/PX
-         FpIntibEVp01dxeLTp+BBFuz7gxPeZC9+KSUaJ7KvgFV/3o9Cu6gPGKs9KzZE2HKUd+U
-         f/pNZdnUUS26/k/eJS5nF0WsMuaENd3VDC5WD4u/WwYTL+xAdPucv7z66xZTx4mwLfzt
-         iteLPCdcAtmZ3F63amabAyQp4lj6wGv9h/b+bZqPLjUlmmLhEMY3ipVWrO8Qv9U17Uwn
-         P3ShGS2ZGn9v+nusO2+C56Q4HSiRNqLWjo8ezX0Ie9iKyi0UwiLTZDpClkSAM5qTVBlF
-         ogwQ==
-X-Gm-Message-State: ANoB5pliO06cf4o6hbmpKcCXVMbpxawbBoNLSFnRcVeUkwQ1veOyiMeY
-        DaB7you1M1/Oc4G74k2bZpWYew==
-X-Google-Smtp-Source: AA0mqf6kt+1kUIuOGCMxXGqwqUvftlwcXdzNIqEIeIjBml+lEe8qEQVvB0cSOimbUoblwLkshnEVjA==
-X-Received: by 2002:a05:6512:25a8:b0:4aa:a6f8:f042 with SMTP id bf40-20020a05651225a800b004aaa6f8f042mr19360353lfb.405.1669814624235;
-        Wed, 30 Nov 2022 05:23:44 -0800 (PST)
+        bh=XyDGkYajv+Nfdoc9qAKpKOjBInJYCoPIt9VVyTaGnKI=;
+        b=QFfMYF0Wxu21G6c8kc5PoqExitKN4uhHeJ4nBVirNLxHh3IInhZbIpq6RlstKOB5M1
+         Wvn8n3mb/O9+hpm1z9116YCXZB5MmU8XDuMV1+rFgNFyBVN8JZNVnsEUxYUxeCOIO6Rv
+         KCrXuX+ASc0ujmw6GT0M24giyeydNhsUb+V31GpH3A4up4Qam34HGPzYrjyf9z8ZiqSf
+         WlHlNryCokD0DtCaOUmBg04wRounqEEV3JeEDK7j9NhGiVIwnLGF4+sGjr1pkngX/i0a
+         dV9PjxoAF9TD8GQVy1GHavBeqftMIDTAJKb+gaDufJabhY3uzLUOU9uuGdIAEyC9KuzT
+         y3gA==
+X-Gm-Message-State: ANoB5plLVp9gHgG/HuCuSaU0B/2FVRaMtVgECuiX5dvKPCQOkxdu01hx
+        s0t39JBjRRnyBvt6EOyhs8TBdA==
+X-Google-Smtp-Source: AA0mqf5xs7rZeFWD2ORNxFIDDmXxfLMor1Qo1A9ZvI9bpkv0jyhhGT36SVHiDaC5a520jXsvKMquKg==
+X-Received: by 2002:a05:6512:118b:b0:4a4:77a8:45a4 with SMTP id g11-20020a056512118b00b004a477a845a4mr19885471lfr.654.1669814799721;
+        Wed, 30 Nov 2022 05:26:39 -0800 (PST)
 Received: from [192.168.1.101] (95.49.125.236.neoplus.adsl.tpnet.pl. [95.49.125.236])
-        by smtp.gmail.com with ESMTPSA id h2-20020a2ea482000000b0027713ef5360sm130058lji.71.2022.11.30.05.23.42
+        by smtp.gmail.com with ESMTPSA id e10-20020a05651c038a00b00279811b20aasm136133ljp.2.2022.11.30.05.26.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Nov 2022 05:23:43 -0800 (PST)
-Message-ID: <a080a67c-6bc2-c99f-c5e3-7b06411a660e@linaro.org>
-Date:   Wed, 30 Nov 2022 14:23:42 +0100
+        Wed, 30 Nov 2022 05:26:39 -0800 (PST)
+Message-ID: <2ff1d4c1-284f-fd2e-022d-e286b6752098@linaro.org>
+Date:   Wed, 30 Nov 2022 14:26:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
-Subject: Re: [PATCH v2 4/8] clk: qcom: rpmh: remove platform names from BCM
- clocks
+Subject: Re: [PATCH v2 7/8] clk: qcom: rpmh: remove the last traces of the
+ platform usage
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -66,9 +66,9 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Alex Elder <elder@linaro.org>
 References: <20221130131001.20912-1-dmitry.baryshkov@linaro.org>
- <20221130131001.20912-5-dmitry.baryshkov@linaro.org>
+ <20221130131001.20912-8-dmitry.baryshkov@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20221130131001.20912-5-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221130131001.20912-8-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -77,149 +77,68 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 30.11.2022 14:09, Dmitry Baryshkov wrote:
-> There are no platform-specific parts in the BCM clocks, drop the
-> platform name from the clock definitions, replacing it with clk_rpmh to
-> have the common prefix.
+On 30.11.2022 14:10, Dmitry Baryshkov wrote:
+> Simplify __DEFINE_CLK_RPMH macros to use clk_rpmh directly instead of
+> passing it through the `_platform' argument.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/clk/qcom/clk-rpmh.c | 52 ++++++++++++++++++-------------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
+>  drivers/clk/qcom/clk-rpmh.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 00c0c8f851bd..5044f9fa156d 100644
+> index dcac84614b06..2bcf725dd919 100644
 > --- a/drivers/clk/qcom/clk-rpmh.c
 > +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -119,8 +119,8 @@ static DEFINE_MUTEX(rpmh_clk_lock);
->  	__DEFINE_CLK_RPMH(_platform, _name, _res_name,			\
+> @@ -70,15 +70,15 @@ struct clk_rpmh_desc {
+>  
+>  static DEFINE_MUTEX(rpmh_clk_lock);
+>  
+> -#define __DEFINE_CLK_RPMH(_platform, _name, _cname, _res_name,		\
+> +#define __DEFINE_CLK_RPMH(_name, _cname, _res_name,			\
+>  			  _res_en_offset, _res_on, _div)		\
+> -	static struct clk_rpmh _platform##_##_cname##_ao;		\
+> -	static struct clk_rpmh _platform##_##_cname = {			\
+> +	static struct clk_rpmh clk_rpmh_##_cname##_ao;			\
+> +	static struct clk_rpmh clk_rpmh_##_cname = {			\
+>  		.res_name = _res_name,					\
+>  		.res_addr = _res_en_offset,				\
+>  		.res_on_val = _res_on,					\
+>  		.div = _div,						\
+> -		.peer = &_platform##_##_cname##_ao,			\
+> +		.peer = &clk_rpmh_##_cname##_ao,				\
+>  		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
+>  				      BIT(RPMH_ACTIVE_ONLY_STATE) |	\
+>  				      BIT(RPMH_SLEEP_STATE)),		\
+> @@ -92,12 +92,12 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>  			.num_parents = 1,				\
+>  		},							\
+>  	};								\
+> -	static struct clk_rpmh _platform##_##_cname##_ao= {		\
+> +	static struct clk_rpmh clk_rpmh_##_cname##_ao= {			\
+>  		.res_name = _res_name,					\
+>  		.res_addr = _res_en_offset,				\
+>  		.res_on_val = _res_on,					\
+>  		.div = _div,						\
+> -		.peer = &_platform##_##_cname,				\
+> +		.peer = &clk_rpmh_##_cname,				\
+>  		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
+>  					BIT(RPMH_ACTIVE_ONLY_STATE)),	\
+>  		.hw.init = &(struct clk_init_data){			\
+> @@ -112,11 +112,11 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>  	}
+>  
+>  #define DEFINE_CLK_RPMH_ARC(_name, _res_name, _res_on, _div)		\
+> -	__DEFINE_CLK_RPMH(clk_rpmh, _name, _name##_##div##_div, _res_name, \
+> +	__DEFINE_CLK_RPMH(_name, _name##_##div##_div, _res_name,	\
+>  			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _div)
+>  
+>  #define DEFINE_CLK_RPMH_VRM(_name, _suffix, _res_name, _div)		\
+> -	__DEFINE_CLK_RPMH(clk_rpmh, _name, _name##_suffix, _res_name,	\
+> +	__DEFINE_CLK_RPMH(_name, _name##_suffix, _res_name,		\
 >  			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
 >  
-> -#define DEFINE_CLK_RPMH_BCM(_platform, _name, _res_name)		\
-> -	static struct clk_rpmh _platform##_##_name = {			\
-> +#define DEFINE_CLK_RPMH_BCM(_name, _res_name)				\
-> +	static struct clk_rpmh clk_rpmh_##_name = {			\
->  		.res_name = _res_name,					\
->  		.valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),	\
->  		.div = 1,						\
-> @@ -368,11 +368,11 @@ DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk4, "rfclkd4", 1);
->  
->  DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, "divclka1", 2);
->  
-> -DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
-> -DEFINE_CLK_RPMH_BCM(sdm845, ce, "CE0");
-> -DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
-> -DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
-> -DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
-> +DEFINE_CLK_RPMH_BCM(ipa, "IP0");
-> +DEFINE_CLK_RPMH_BCM(ce, "CE0");
-> +DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
-> +DEFINE_CLK_RPMH_BCM(pka, "PKA0");
-> +DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
->  
->  static struct clk_hw *sdm845_rpmh_clocks[] = {
->  	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-> @@ -387,8 +387,8 @@ static struct clk_hw *sdm845_rpmh_clocks[] = {
->  	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
->  	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
->  	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-> -	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> -	[RPMH_CE_CLK]		= &sdm845_ce.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-> +	[RPMH_CE_CLK]		= &clk_rpmh_ce.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
-> @@ -407,8 +407,8 @@ static struct clk_hw *sdm670_rpmh_clocks[] = {
->  	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
->  	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
->  	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-> -	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> -	[RPMH_CE_CLK]		= &sdm845_ce.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-> +	[RPMH_CE_CLK]		= &clk_rpmh_ce.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sdm670 = {
-> @@ -423,8 +423,8 @@ static struct clk_hw *sdx55_rpmh_clocks[] = {
->  	[RPMH_RF_CLK1_A]	= &sc8180x_rf_clk1_ao.hw,
->  	[RPMH_RF_CLK2]		= &sc8180x_rf_clk2.hw,
->  	[RPMH_RF_CLK2_A]	= &sc8180x_rf_clk2_ao.hw,
-> -	[RPMH_QPIC_CLK]		= &sdx55_qpic_clk.hw,
-> -	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> +	[RPMH_QPIC_CLK]		= &clk_rpmh_qpic_clk.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sdx55 = {
-> @@ -463,7 +463,7 @@ static struct clk_hw *sc7180_rpmh_clocks[] = {
->  	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
->  	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
->  	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-> -	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
-> @@ -528,9 +528,9 @@ static struct clk_hw *sm8350_rpmh_clocks[] = {
->  	[RPMH_RF_CLK4_A]	= &sm8350_rf_clk4_ao.hw,
->  	[RPMH_RF_CLK5]		= &sm8350_rf_clk5.hw,
->  	[RPMH_RF_CLK5_A]	= &sm8350_rf_clk5_ao.hw,
-> -	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> -	[RPMH_PKA_CLK]		= &sm8350_pka.hw,
-> -	[RPMH_HWKM_CLK]		= &sm8350_hwkm.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-> +	[RPMH_PKA_CLK]		= &clk_rpmh_pka.hw,
-> +	[RPMH_HWKM_CLK]		= &clk_rpmh_hwkm.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
-> @@ -543,9 +543,9 @@ static struct clk_hw *sc8280xp_rpmh_clocks[] = {
->  	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
->  	[RPMH_LN_BB_CLK3]       = &sdm845_ln_bb_clk3.hw,
->  	[RPMH_LN_BB_CLK3_A]     = &sdm845_ln_bb_clk3_ao.hw,
-> -	[RPMH_IPA_CLK]          = &sdm845_ipa.hw,
-> -	[RPMH_PKA_CLK]          = &sm8350_pka.hw,
-> -	[RPMH_HWKM_CLK]         = &sm8350_hwkm.hw,
-> +	[RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
-> +	[RPMH_PKA_CLK]          = &clk_rpmh_pka.hw,
-> +	[RPMH_HWKM_CLK]         = &clk_rpmh_hwkm.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
-> @@ -568,7 +568,7 @@ static struct clk_hw *sm8450_rpmh_clocks[] = {
->  	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
->  	[RPMH_RF_CLK4]		= &sm8350_rf_clk4.hw,
->  	[RPMH_RF_CLK4_A]	= &sm8350_rf_clk4_ao.hw,
-> -	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
-> @@ -587,9 +587,9 @@ static struct clk_hw *sc7280_rpmh_clocks[] = {
->  	[RPMH_RF_CLK3_A]    = &sdm845_rf_clk3_ao.hw,
->  	[RPMH_RF_CLK4]      = &sm8350_rf_clk4.hw,
->  	[RPMH_RF_CLK4_A]    = &sm8350_rf_clk4_ao.hw,
-> -	[RPMH_IPA_CLK]      = &sdm845_ipa.hw,
-> -	[RPMH_PKA_CLK]      = &sm8350_pka.hw,
-> -	[RPMH_HWKM_CLK]     = &sm8350_hwkm.hw,
-> +	[RPMH_IPA_CLK]      = &clk_rpmh_ipa.hw,
-> +	[RPMH_PKA_CLK]      = &clk_rpmh_pka.hw,
-> +	[RPMH_HWKM_CLK]     = &clk_rpmh_hwkm.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sc7280 = {
-> @@ -626,8 +626,8 @@ static struct clk_hw *sdx65_rpmh_clocks[] = {
->  	[RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
->  	[RPMH_RF_CLK4]          = &sm8350_rf_clk4.hw,
->  	[RPMH_RF_CLK4_A]        = &sm8350_rf_clk4_ao.hw,
-> -	[RPMH_IPA_CLK]          = &sdm845_ipa.hw,
-> -	[RPMH_QPIC_CLK]         = &sdx55_qpic_clk.hw,
-> +	[RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
-> +	[RPMH_QPIC_CLK]         = &clk_rpmh_qpic_clk.hw,
->  };
->  
->  static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+>  #define DEFINE_CLK_RPMH_BCM(_name, _res_name)				\
