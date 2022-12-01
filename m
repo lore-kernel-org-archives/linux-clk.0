@@ -2,161 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A776C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Dec 2022 22:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B473C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Dec 2022 22:57:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbiLAWMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Dec 2022 17:12:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58454 "EHLO
+        id S230494AbiLAW5N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Dec 2022 17:57:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231261AbiLAWM1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2022 17:12:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B13C462A;
-        Thu,  1 Dec 2022 14:12:24 -0800 (PST)
+        with ESMTP id S230284AbiLAW5M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2022 17:57:12 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51973BE4E6;
+        Thu,  1 Dec 2022 14:57:11 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0BD5362163;
-        Thu,  1 Dec 2022 22:12:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4D7C433C1;
-        Thu,  1 Dec 2022 22:12:22 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0649CB82059;
+        Thu,  1 Dec 2022 22:57:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158DCC433C1;
+        Thu,  1 Dec 2022 22:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669932743;
-        bh=6L29YbZfP45KfSEKeCJ4KJ1OrLqAXiCErdwDskNl5Co=;
+        s=k20201202; t=1669935428;
+        bh=Iece4Ggdjnc0zgVTxLn8Qf6TaPc+ROmQXehO4YnTyUk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BItB6QRZJ6pvebRb6hRT1PxYp6WMMEpxBscCUHUW7Q819f+34QTROwOVQKHtcmIXC
-         AWZkVtgm0p/uWiWQz3IG7cfs15NL3WEprU380IRjfv3zgTJ2e/eyv+wf2l6R2Fjs10
-         M4xqmbk39g+LooqnZ7Reht1AmpwsP+cZO9bs/lWU2uPGjwGEZsIXR7DiPQhbvfFFYV
-         TfkPlVYyDkzzcFkykeX81F9XpltkQ/Tdxiw6e6rmUCO0kwvNkIc8gVGSIegvSJdyvd
-         mrEmzXPHPhGrdjmQV8ivQZGO+LHC2BdJGnilIa5wiwpswTmFfuB/0CsT+M7BJoZgAA
-         AWR3XOjWeXmow==
-Date:   Thu, 1 Dec 2022 16:12:20 -0600
+        b=Dhi9a4n1MDkugPm6zzlyfa1b463Z4vsP2TF/EUCWg0UeTI/wZXo9HV75Wrqt9ktiN
+         0VE/7gjmbALvarkSaaTK2vduEPR3b0vHlQ8YRjQW8VWmt3r+0KG1ZSer25P2FwUi4j
+         cIPN0/vWkJ8U0tyCI294h+QP/yExXFxgYvLJKem9oRgF7bqTyzY4Cwk8MzOUMgialh
+         XqMJ+4y7T+NuC9fDSOQlLlGdDWFmKH7jGWrxKiw6TPwsijz0ec+D7b7uT0a9dTAuWG
+         W4sAIyUbit8zbldtmN0SLaKsxMhCJgIrQev/i8YLwVihXjXRSQEWEKeAiL1dqsFWj6
+         m/m92RAlKTIxA==
+Date:   Thu, 1 Dec 2022 16:57:05 -0600
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        krzysztof.kozlowski@linaro.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 2/9] dt-bindings: clock: Add SM8550 TCSR CC clocks
-Message-ID: <20221201221220.7kdbndug3m3om62p@builder.lan>
-References: <20221130112852.2977816-1-abel.vesa@linaro.org>
- <20221130112852.2977816-3-abel.vesa@linaro.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
+ 'reset' interface
+Message-ID: <20221201225705.46r2m35ketvzipox@builder.lan>
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221130112852.2977816-3-abel.vesa@linaro.org>
+In-Reply-To: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 30, 2022 at 01:28:45PM +0200, Abel Vesa wrote:
-> Add bindings documentation for clock TCSR driver on SM8550.
+On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/clock/qcom,sm8550-tcsrcc.yaml    | 45 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,sm8550-tcsrcc.h    | 18 ++++++++
->  2 files changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
-> new file mode 100644
-> index 000000000000..b2de251328e4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsrcc.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8550-tcsrcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm TCSR Clock Controller on SM8550
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +
-> +description: |
-> +  Qualcomm TCSR clock control module provides the clocks, resets and
-> +  power domains on SM8550
-> +
-> +  See also:: include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8550-tcsrcc
 
-The block described is the TCSR block, the clock controller represents
-one of the functions provided. I think it would be more appropriate if
-the compatible represented the generic nature of the block, even though
-you currently only care about exposing these clocks.
+@Ulf, Akhil has a power-domain for a piece of hardware which may be
+voted active by multiple different subsystems (co-processors/execution
+contexts) in the system.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
+As such, during the powering down sequence we don't wait for the
+power-domain to turn off. But in the event of an error, the recovery
+mechanism relies on waiting for the hardware to settle in a powered off
+state.
 
-Your clocks are fed by cxo. While there might be reasons for not wire
-the parent up in the clocks, I think you should represent it in the
-binding.
+The proposal here is to use the reset framework to wait for this state
+to be reached, before continuing with the recovery mechanism in the
+client driver.
+
+Given our other discussions on quirky behavior, do you have any
+input/suggestions on this?
+
+> Some clients like adreno gpu driver would like to ensure that its gdsc
+> is collapsed at hardware during a gpu reset sequence. This is because it
+> has a votable gdsc which could be ON due to a vote from another subsystem
+> like tz, hyp etc or due to an internal hardware signal. To allow
+> this, gpucc driver can expose an interface to the client driver using
+> reset framework. Using this the client driver can trigger a polling within
+> the gdsc driver.
+
+@Akhil, this description is fairly generic. As we've reached the state
+where the hardware has settled and we return to the client, what
+prevents it from being powered up again?
+
+Or is it simply a question of it hitting the powered-off state, not
+necessarily staying there?
 
 Regards,
 Bjorn
 
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@1fc0000 {
-> +      compatible = "qcom,sm8550-tcsrcc";
-> +      reg = <0x1fc0000 0x30000>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h b/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-> new file mode 100644
-> index 000000000000..091cb76f953a
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,sm8550-tcsrcc.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022, Linaro Limited
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-> +#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-> +
-> +/* TCSR CC clocks */
-> +#define TCSR_PCIE_0_CLKREF_EN					0
-> +#define TCSR_PCIE_1_CLKREF_EN					1
-> +#define TCSR_UFS_CLKREF_EN					2
-> +#define TCSR_UFS_PAD_CLKREF_EN					3
-> +#define TCSR_USB2_CLKREF_EN					4
-> +#define TCSR_USB3_CLKREF_EN					5
-> +
-> +#endif
+> 
+> This series is rebased on top of qcom/linux:for-next branch.
+> 
+> Related discussion: https://patchwork.freedesktop.org/patch/493144/
+> 
+> Changes in v7:
+> - Update commit message (Bjorn)
+> - Rebased on top of qcom/linux:for-next branch.
+> 
+> Changes in v6:
+> - No code changes in this version. Just captured the Acked-by tags
+> 
+> Changes in v5:
+> - Nit: Remove a duplicate blank line (Krzysztof)
+> 
+> Changes in v4:
+> - Update gpu dt-binding schema
+> - Typo fix in commit text
+> 
+> Changes in v3:
+> - Use pointer to const for "struct qcom_reset_ops" in qcom_reset_map (Krzysztof)
+> 
+> Changes in v2:
+> - Return error when a particular custom reset op is not implemented. (Dmitry)
+> 
+> Akhil P Oommen (6):
+>   dt-bindings: clk: qcom: Support gpu cx gdsc reset
+>   clk: qcom: Allow custom reset ops
+>   clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+>   clk: qcom: gpucc-sc7280: Add cx collapse reset support
+>   dt-bindings: drm/msm/gpu: Add optional resets
+>   arm64: dts: qcom: sc7280: Add Reset support for gpu
+> 
+>  .../devicetree/bindings/display/msm/gpu.yaml       |  6 +++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi               |  3 +++
+>  drivers/clk/qcom/gdsc.c                            | 23 ++++++++++++++----
+>  drivers/clk/qcom/gdsc.h                            |  7 ++++++
+>  drivers/clk/qcom/gpucc-sc7280.c                    | 10 ++++++++
+>  drivers/clk/qcom/reset.c                           | 27 +++++++++++++++++++++-
+>  drivers/clk/qcom/reset.h                           |  8 +++++++
+>  include/dt-bindings/clock/qcom,gpucc-sc7280.h      |  3 +++
+>  8 files changed, 82 insertions(+), 5 deletions(-)
+> 
 > -- 
-> 2.34.1
+> 2.7.4
 > 
