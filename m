@@ -2,88 +2,205 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D855C43217
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Dec 2022 16:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A739C43217
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Dec 2022 19:20:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232250AbiLAQgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Dec 2022 11:36:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53318 "EHLO
+        id S230152AbiLATUx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Dec 2022 14:20:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232262AbiLAQgw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2022 11:36:52 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29109ABA20;
-        Thu,  1 Dec 2022 08:36:52 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BA95C62075;
-        Thu,  1 Dec 2022 16:36:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75632C433D6;
-        Thu,  1 Dec 2022 16:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669912611;
-        bh=teeOjCiHN0Fv9n+KoC6rqOlGObhK/vE2PhcSLZFcjpY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=gTttZ1jERE9crYJe1Kw/glqQ02k9wSlJRYm0ISYhQw1V+ulysMPAfJ4LccCgxbtNv
-         XCrBfhucsrlZ4dpPCaR+sQJX5x7sPKQP8AXsCQZpqRUNPJQGGRbnuQPCPf1lhSAwH2
-         e8uXmdgGQyOvvW/52aBhZi1DUCihSWuxwgrRQj4s+CPPvop911k4zw+81GwZkCiaqA
-         BeCmsYyJgNbvRoy13zVGCvYA86yngubBpG1lxINYGJbDhMQ0EIfW2TfbX0QB7ufaEo
-         lK1FEDr85gyy6iTzI5zREoxckN9+ng/UcDxnPH+ZPyhxHN7rXJYGzpBIbbZhzWh7ey
-         euHZfYclxrbcw==
-Message-ID: <e037b3b5-3a5a-90c3-0d91-e4882700cbf5@kernel.org>
-Date:   Thu, 1 Dec 2022 10:36:48 -0600
+        with ESMTP id S229462AbiLATUw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2022 14:20:52 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE167C23F6
+        for <linux-clk@vger.kernel.org>; Thu,  1 Dec 2022 11:20:50 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id a27so2150621qtw.10
+        for <linux-clk@vger.kernel.org>; Thu, 01 Dec 2022 11:20:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O6gMwtINLykfyqwwsHMxH5BJE1tY0k/NUWaScnO2AKA=;
+        b=FCmlVQ5f2lRmyzleGisVfpkE5lnimOgJGRVhVkidO++PQi4goYIcTDwoNZb439GR06
+         j3vE/k636c3yObPVTY0vmBchBjGmdy2Qw3KQ20/U9xV4YT+423CcxmwuQZgpX71y4a8R
+         k6WHTSjHpS73sVCIgXDZ2+J/GetZv/AyjAMzJXjMDcnP3WQYn3LZK3+O7ZTGbFMUPRdg
+         FTMrcGHhJKuFTepP2iu1iF9eWLs4Aqr6IlmLS2mGNMdtjxB2KLBSl2/pEvzVh15aVq4P
+         MsMdMzCYrvc1GltmIbD0IOkkOdUD6QaYdHGez7324x9RXDuNxC7wWtHSaN50j3KNdMjg
+         5BzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6gMwtINLykfyqwwsHMxH5BJE1tY0k/NUWaScnO2AKA=;
+        b=n1aEdQTJ3X6sLXQhepkWDQB6Bmwx47/EeV1Ljirv3pLzmv1eMpDDNu4rRxXh6hWoe0
+         GwO9f5YulkQDx1bhxK0rxkRlB8/u0CqwAAms1/TTjjCAO0/6yWCe0qxyYIHt7M4Yb8B/
+         CcPKbtRxoSwZJWyFL41SnLv3gHspFmIo/0cs3YvlaztkThf8rMvF9ALHEvEG9647r0Fk
+         gwiPQBekyk5j1tNIVa1DQZ2JxxWsGWN9o5ZJ4g7rRSQC5HHgutFpSIAlSZFCOxvP/jSi
+         W1qJQxnWjsEvQPDSYev2CphD92pGQj9sZqfXea0Wfg8X6IZKch7xkXe13X6xqiFXB0AK
+         riSw==
+X-Gm-Message-State: ANoB5pkluTjaboTDsCICwUcr/NQWq1V9pbyZ82yiiLFvknCDlb2asKCK
+        vn/IOgBMvRZQJrpq/ltb9+zN1Q==
+X-Google-Smtp-Source: AA0mqf69GP+Um7d0r1VHKKT8Te31BjJMYbzCDhZKLTuL6HRa9Ia7pSXl9Uv+tObaj8DudRpO6oBXBw==
+X-Received: by 2002:a05:620a:164e:b0:6ec:7654:63d5 with SMTP id c14-20020a05620a164e00b006ec765463d5mr51012079qko.425.1669922449687;
+        Thu, 01 Dec 2022 11:20:49 -0800 (PST)
+Received: from [172.22.22.4] ([98.61.227.136])
+        by smtp.googlemail.com with ESMTPSA id o14-20020ac8698e000000b003a580cd979asm3020916qtq.58.2022.12.01.11.20.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Dec 2022 11:20:49 -0800 (PST)
+Message-ID: <8f582c0f-2655-c566-f2c3-12915ce33ffa@linaro.org>
+Date:   Thu, 1 Dec 2022 13:20:48 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH] clk: socfpga: Fix memory leak in socfpga_gate_init()
+Subject: Re: [PATCH v2 3/8] clk: qcom: rpmh: drop all _ao names
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221130131001.20912-1-dmitry.baryshkov@linaro.org>
+ <20221130131001.20912-4-dmitry.baryshkov@linaro.org>
 Content-Language: en-US
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221123031622.63171-1-xiujianfeng@huawei.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20221123031622.63171-1-xiujianfeng@huawei.com>
+From:   Alex Elder <elder@linaro.org>
+In-Reply-To: <20221130131001.20912-4-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 11/22/22 21:16, Xiu Jianfeng wrote:
-> Free @socfpga_clk and @ops on the error path to avoid memory leak issue.
+On 11/30/22 7:09 AM, Dmitry Baryshkov wrote:
+> In preparation for the further cleanup, remove the active only names,
+> they can be easily generated from the standard ones.
 > 
-> Fixes: a30a67be7b6e ("clk: socfpga: Don't have get_parent for single parent ops")
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+I like this.
+
+Reviewed-by: Alex Elder <elder@linaro.org>
+
 > ---
->   drivers/clk/socfpga/clk-gate.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+>   drivers/clk/qcom/clk-rpmh.c | 62 ++++++++++++++++++-------------------
+>   1 file changed, 30 insertions(+), 32 deletions(-)
 > 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-> index 3e347b9e9eff..0c18c55edf8c 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -133,8 +133,10 @@ void __init socfpga_gate_init(struct device_node *node)
->   		return;
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index c4852bbd00bf..00c0c8f851bd 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -70,15 +70,15 @@ struct clk_rpmh_desc {
 >   
->   	ops = kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
-> -	if (WARN_ON(!ops))
-> +	if (WARN_ON(!ops)) {
-> +		kfree(socfpga_clk);
->   		return;
-> +	}
+>   static DEFINE_MUTEX(rpmh_clk_lock);
 >   
->   	rc = of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
->   	if (rc)
-> @@ -182,6 +184,7 @@ void __init socfpga_gate_init(struct device_node *node)
->   
->   	err = clk_hw_register(NULL, hw_clk);
->   	if (err) {
-> +		kfree(ops);
->   		kfree(socfpga_clk);
->   		return;
+> -#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
+> +#define __DEFINE_CLK_RPMH(_platform, _name, _res_name,			\
+>   			  _res_en_offset, _res_on, _div)		\
+> -	static struct clk_rpmh _platform##_##_name_active;		\
+> +	static struct clk_rpmh _platform##_##_name##_ao;		\
+>   	static struct clk_rpmh _platform##_##_name = {			\
+>   		.res_name = _res_name,					\
+>   		.res_addr = _res_en_offset,				\
+>   		.res_on_val = _res_on,					\
+>   		.div = _div,						\
+> -		.peer = &_platform##_##_name_active,			\
+> +		.peer = &_platform##_##_name##_ao,			\
+>   		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
+>   				      BIT(RPMH_ACTIVE_ONLY_STATE) |	\
+>   				      BIT(RPMH_SLEEP_STATE)),		\
+> @@ -92,7 +92,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>   			.num_parents = 1,				\
+>   		},							\
+>   	};								\
+> -	static struct clk_rpmh _platform##_##_name_active = {		\
+> +	static struct clk_rpmh _platform##_##_name##_ao= {		\
+>   		.res_name = _res_name,					\
+>   		.res_addr = _res_en_offset,				\
+>   		.res_on_val = _res_on,					\
+> @@ -102,7 +102,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>   					BIT(RPMH_ACTIVE_ONLY_STATE)),	\
+>   		.hw.init = &(struct clk_init_data){			\
+>   			.ops = &clk_rpmh_ops,				\
+> -			.name = #_name_active,				\
+> +			.name = #_name "_ao",				\
+>   			.parent_data =  &(const struct clk_parent_data){ \
+>   					.fw_name = "xo",		\
+>   					.name = "xo_board",		\
+> @@ -111,14 +111,12 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>   		},							\
 >   	}
+>   
+> -#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name,	\
+> -			    _res_on, _div)				\
+> -	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
+> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _res_name, _res_on, _div)	\
+> +	__DEFINE_CLK_RPMH(_platform, _name, _res_name,			\
+>   			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _div)
+>   
+> -#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
+> -				_div)					\
+> -	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
+> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _res_name, _div)		\
+> +	__DEFINE_CLK_RPMH(_platform, _name, _res_name,			\
+>   			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
+>   
+>   #define DEFINE_CLK_RPMH_BCM(_platform, _name, _res_name)		\
+> @@ -342,33 +340,33 @@ static const struct clk_ops clk_rpmh_bcm_ops = {
+>   };
+>   
+>   /* Resource name must match resource id present in cmd-db */
+> -DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 1);
+> -DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
+> -DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
+> -DEFINE_CLK_RPMH_ARC(sm6350, qlink, qlink_ao, "qphy.lvl", 0x1, 4);
+> +DEFINE_CLK_RPMH_ARC(qdu1000, bi_tcxo, "xo.lvl", 0x3, 1);
+> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, "xo.lvl", 0x3, 2);
+> +DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, "xo.lvl", 0x3, 4);
+> +DEFINE_CLK_RPMH_ARC(sm6350, qlink, "qphy.lvl", 0x1, 4);
+>   
+> -DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 2);
+> -DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+> -DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
+> +DEFINE_CLK_RPMH_VRM(sm8250, ln_bb_clk1, "lnbclka1", 2);
+> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, "lnbclka2", 2);
+> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, "lnbclka3", 2);
+>   
+> -DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> -DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
+> +DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, "lnbclka1", 4);
+> +DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, "lnbclka2", 4);
+>   
+> -DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, ln_bb_clk2_ao, "lnbclkg2", 4);
+> -DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, ln_bb_clk3_ao, "lnbclkg3", 4);
+> +DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk2, "lnbclkg2", 4);
+> +DEFINE_CLK_RPMH_VRM(sm6350, ln_bb_clk3, "lnbclkg3", 4);
+>   
+> -DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
+> -DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
+> -DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
+> -DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
+> -DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, "rfclka1", 1);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, "rfclka2", 1);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, "rfclka3", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, "rfclka4", 1);
+> +DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, "rfclka5", 1);
+>   
+> -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
+> -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
+> -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk3, rf_clk3_ao, "rfclkd3", 1);
+> -DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk4, rf_clk4_ao, "rfclkd4", 1);
+> +DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk1, "rfclkd1", 1);
+> +DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk2, "rfclkd2", 1);
+> +DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk3, "rfclkd3", 1);
+> +DEFINE_CLK_RPMH_VRM(sc8180x, rf_clk4, "rfclkd4", 1);
+>   
+> -DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
+> +DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, "divclka1", 2);
+>   
+>   DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
+>   DEFINE_CLK_RPMH_BCM(sdm845, ce, "CE0");
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
