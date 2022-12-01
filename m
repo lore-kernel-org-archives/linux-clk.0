@@ -2,112 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0386C47088
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Nov 2022 22:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD881C43217
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Dec 2022 08:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbiK3W5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Nov 2022 17:57:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34332 "EHLO
+        id S229514AbiLAIea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Dec 2022 03:34:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbiK3W5X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Nov 2022 17:57:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC36792A0A;
-        Wed, 30 Nov 2022 14:57:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 64E4161E36;
-        Wed, 30 Nov 2022 22:57:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BB9C433C1;
-        Wed, 30 Nov 2022 22:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669849041;
-        bh=pybQYKi2gR0IlbnVuLeDx89kUYolz4gTT5Rd9aKijSI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bZkPwGIbaM8iGj5LhDqvrwo985+pfYojiKg05qNp3H3XmjAI1tyYdQGTgYaLlYmAl
-         371OvfRJ0itE5oFguAUTc/0x3b9vzWrSD2c9otXF/isS9n/dB1M+eo+10shBliDh5t
-         5P+u2kMCSeXkiCebeThs7tLYcmeJ3N1SOVkesNQclP1iGtgRHIwRBCFtKA44dQRFWx
-         VsQcSjH2PE7lCSkkIT2Jvg8qBpVQuNdPOqohyTHdy+UFrnU7YR0HkrgUlHDwWNFrnR
-         /90zev+LSTn5LuRBL8i2g+pox+i6iayu7Oo1dgUrZjaTjhxAYMjMObOCu5MGgEg2Kx
-         FvsJKRceafadw==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.1-rc7
-Date:   Wed, 30 Nov 2022 14:57:20 -0800
-Message-Id: <20221130225720.1615026-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.38.1.584.g0f3c55d4c2-goog
+        with ESMTP id S229503AbiLAIe3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2022 03:34:29 -0500
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C0358027;
+        Thu,  1 Dec 2022 00:34:28 -0800 (PST)
+Received: by mail-qv1-f41.google.com with SMTP id i12so872000qvs.2;
+        Thu, 01 Dec 2022 00:34:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nhY3YFkRWIrtWfmzSO+RL6iW0d4inthXuirOzpTcfjk=;
+        b=yCupXeeUlsSUfFL0e3PPU8odxJ0r8G2XlQvlLtRx2Hn130XavBKgmOhhGvsMLSyCz0
+         8SQFOenUpbaK3VjJb3OxbhmmFNQA4679SZH1SViRWt+HybNos+x3SfuyNAJzNZoEFku5
+         7d5V9S/WxPF0m9Ic01373dd1LsjnO2W6zNdJHJcMYYoUjgxxluful+GV3AJPzPAYc+T8
+         U33kFtQItzLlkI4H94RgZ3savKV+7UJ4/QtDZ/H7o4NpEohPF96+iFrdcWIOO5aTw1v1
+         bZj85YtAp5K6tm4llIdRFaRsQgUStF7z61yHyeerx+QNdR/KEB8di7KKSIVC5mrtaWf9
+         3BJQ==
+X-Gm-Message-State: ANoB5plXZvUERjCegQFysgTMLgJBkNiQlyLb4V1vpKXOKn/iipHn+L5w
+        UpRN27HqQmdPxbLdUl/zerRuFGxlE2Ecuw==
+X-Google-Smtp-Source: AA0mqf6TpOay+2AS7h2spm2Pb3xmuafkA4DALYH8dsr+o4J2sA00Xtu7/2X3pkJqmbEXnhjWRkgV1g==
+X-Received: by 2002:a0c:8002:0:b0:4c6:ec49:9768 with SMTP id 2-20020a0c8002000000b004c6ec499768mr24254937qva.120.1669883667127;
+        Thu, 01 Dec 2022 00:34:27 -0800 (PST)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id de3-20020a05620a370300b006e99290e83fsm2923060qkb.107.2022.12.01.00.34.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Dec 2022 00:34:26 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-3876f88d320so9922937b3.6;
+        Thu, 01 Dec 2022 00:34:26 -0800 (PST)
+X-Received: by 2002:a81:a148:0:b0:3b4:8af5:48e with SMTP id
+ y69-20020a81a148000000b003b48af5048emr33859202ywg.383.1669883666369; Thu, 01
+ Dec 2022 00:34:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221124191643.3193423-1-biju.das.jz@bp.renesas.com> <20221124191643.3193423-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20221124191643.3193423-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 1 Dec 2022 09:34:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWimoWKYMfH3kYFxoSfQqa+chUmCR_XtzC7QkjHWnzCog@mail.gmail.com>
+Message-ID: <CAMuHMdWimoWKYMfH3kYFxoSfQqa+chUmCR_XtzC7QkjHWnzCog@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] clk: renesas: r9a09g011: Add PWM clock and reset entries
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit ffa20aa581cf5377fc397b0d0ff9d67ea823629b:
+On Thu, Nov 24, 2022 at 8:16 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add PWM{8..14} clock and reset entries to CPG driver.
+>
+> The PWM IP on the RZ/V2M comes with 16 channels, but the ISP has
+> full control of channels 0 to 7, and channel 15, therefore Linux
+> is only allowed to use channels 8 to 14.
+>
+> The PWM channel 15 shares apb clock and reset with PWM{8..14}.
+> The reset is deasserted by the bootloader/ISP.
+>
+> Add PWM{8..14} clocks to CPG driver and mark apb clock as
+> critical clock, so that the apb clock will be always on.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Updated commit description
+>  * Replaced pwm8_15_pclk->cperi_grpf
+>  * Added reset entry R9A09G011_PWM_GPF_PRESETN
 
-  clk: qcom: Update the force mem core bit for GPU clocks (2022-10-27 17:23:29 -0700)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.3.
 
-are available in the Git repository at:
+Gr{oetje,eeting}s,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+                        Geert
 
-for you to fetch changes up to f6abcc21d94393801937aed808b8f055ffec8579:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  clk: qcom: gcc-sc8280xp: add cxo as parent for three ufs ref clks (2022-11-22 18:27:07 -0800)
-
-----------------------------------------------------------------
-A set of clk driver fixes that resolve issues for various SoCs. Most of
-these are incorrect clk data, like bad parent descriptions. When the clk
-tree is improperly described things don't work, like USB and UFS
-controllers, because clk frequencies are wonky. Here are the extra
-details:
-
- - Fix the parent of UFS reference clks on Qualcomm SC8280XP so that UFS
-   works properly.
- - Fix the clk ID for USB on AT91 RM9200 so the USB driver continues to
-   probe.
- - Stop using of_device_get_match_data() on the wrong device for a
-   Samsung Exynos driver so it gets the proper clk data.
- - Fix ExynosAutov9 binding.
- - Fix the parent of the div4 clk on Exynos7885.
- - Stop calling runtime PM APIs from the Qualcomm GDSC driver directly
-   as it leads to a lockdep splat and is just plain wrong because it
-   violates runtime PM semantics by calling runtime PM APIs when the
-   device has been runtime PM disabled.
-
-----------------------------------------------------------------
-David Virag (1):
-      clk: samsung: exynos7885: Correct "div4" clock parents
-
-Inbaraj E (1):
-      dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
-
-Marek Szyprowski (1):
-      clk: samsung: Revert "clk: samsung: exynos-clkout: Use of_device_get_match_data()"
-
-Michael Grzeschik (1):
-      ARM: at91: rm9200: fix usb device clock id
-
-Shazad Hussain (1):
-      clk: qcom: gcc-sc8280xp: add cxo as parent for three ufs ref clks
-
-Stephen Boyd (3):
-      clk: qcom: gdsc: Remove direct runtime PM calls
-      Merge tag 'samsung-clk-6.2' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into clk-fixes
-      Merge tag 'clk-microchip-fixes-6.1' of https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into clk-fixes
-
- .../bindings/clock/samsung,exynosautov9-clock.yaml |  2 +-
- arch/arm/boot/dts/at91rm9200.dtsi                  |  2 +-
- drivers/clk/at91/at91rm9200.c                      |  2 +-
- drivers/clk/qcom/gcc-sc8280xp.c                    |  6 +++
- drivers/clk/qcom/gdsc.c                            | 61 +++-------------------
- drivers/clk/qcom/gdsc.h                            |  2 -
- drivers/clk/samsung/clk-exynos-clkout.c            |  6 ++-
- drivers/clk/samsung/clk-exynos7885.c               |  4 +-
- 8 files changed, 21 insertions(+), 64 deletions(-)
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
