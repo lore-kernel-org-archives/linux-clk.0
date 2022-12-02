@@ -2,47 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53F5C636F9
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 20:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FB8C47088
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 20:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234204AbiLBU66 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 15:58:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
+        id S233972AbiLBU7A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 15:59:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234149AbiLBU66 (ORCPT
+        with ESMTP id S234145AbiLBU66 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 15:58:58 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D583EAB42;
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875EAEA5F0;
         Fri,  2 Dec 2022 12:58:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AC1B623E3;
-        Fri,  2 Dec 2022 20:58:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0262EC433D6;
-        Fri,  2 Dec 2022 20:58:55 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 32601B8229F;
+        Fri,  2 Dec 2022 20:58:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBD2C433B5;
+        Fri,  2 Dec 2022 20:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670014736;
-        bh=Yr1PEvQ+ZEHC3rq/dNAn0BB7nX0No5OXt5Ex9lWhLdU=;
+        s=k20201202; t=1670014734;
+        bh=OoCuIuTN9sVFI7SsOG8CnZ4zpormaQMMQinSSJAqCAI=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=ZsCGSQ9kBEYUsWOoRZjl0ZsZr7726GuycwGdLT+ePQXsxyVItPEf4sTxm8NlZCL2M
-         uJO7q1ZebH3g0cQLl6j3cPSjgCYOLBeIe6BIUeoq2EsnTFWhoduNkpgAzXsWMG3402
-         I1WbIxG7nGqwTdWpFEXLUnAkd4Y6oiItQEGvXtvylIs+reXAR9cjxqpfxCqAFgof5W
-         Vs83YaHq5Pf03JFmQQV4ArHo+qKC8ntbD8vqFqLqWX9BD7hv3NIW31LBZ2r19kItT3
-         xPE9P9SMNllZpVI9A3GV/O7EgZu5mmh8LBuGdxPErAM0AoU3JVyreaBaCCLvG5bGJM
-         ZSuIiao+5oFBg==
+        b=h/BfE3ntny1e8UG0H7NBvUuByyE9BNTwdxt0ZEtpWSCYXB2pEJbpxQGGRpSWf0cB7
+         TPVCy2+wbeY1q/59YDd9TKMC2WYZr9IGCndl1r0M2PjRx3aU2qtKiBAFE/LtdGCuv/
+         zlPX8tKTn+lGSQqZx9/nN5fN7VXt1xYLhd+S4hphtuoVByjKEH3oaqLM4FBfY0eziN
+         6FbqVrdnjCKhMOSmcNrnrBFv9r6BL5XF0mfEg+S5H2BYaGgZvMl4NpTzwdtRhafEU+
+         2JA+EWRjsReFVxCMvKFQAUDVYOuQ7tL5BCvtfMgaCG9lThy5SdusITphMbxbOdnDd3
+         z2kVWoZnmDxDA==
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     konrad.dybcio@somainline.org, sboyd@kernel.org,
         linux-arm-msm@vger.kernel.org, agross@kernel.org,
         mturquette@baylibre.com, linux-kernel@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: kpss-xcc: register it as clk provider
-Date:   Fri,  2 Dec 2022 14:58:42 -0600
-Message-Id: <167001472421.2721945.15982523175698665071.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH 1/5] clk: qcom: krait-cc: fix wrong parent order for secondary mux
+Date:   Fri,  2 Dec 2022 14:58:40 -0600
+Message-Id: <167001472423.2721945.2708236422464747552.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221108211734.3707-1-ansuelsmth@gmail.com>
-References: <20221108211734.3707-1-ansuelsmth@gmail.com>
+In-Reply-To: <20221109005631.3189-1-ansuelsmth@gmail.com>
+References: <20221109005631.3189-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,16 +50,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 8 Nov 2022 22:17:34 +0100, Christian Marangi wrote:
-> krait-cc use this driver for the secondary mux. Register it as a clk
-> provider to correctly use this clk in other drivers.
+On Wed, 9 Nov 2022 01:56:27 +0100, Christian Marangi wrote:
+> The secondary mux parent order is swapped.
+> This currently doesn't cause problems as the secondary mux is used for idle
+> clk and as a safe clk source while reprogramming the hfpll.
 > 
+> Each mux have 2 or more output but he always have a safe source to
+> switch while reprogramming the connected pll. We use a clk notifier to
+> switch to the correct parent before clk core can apply the correct rate.
+> The parent to switch is hardcoded in the mux struct.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: kpss-xcc: register it as clk provider
-      commit: 09be1a39e685d8c5edd471fd1cac9a8f8280d2de
+[1/5] clk: qcom: krait-cc: fix wrong parent order for secondary mux
+      commit: 8e456411abcbf899c04740b9dbb3dcefcd61c946
+[2/5] clk: qcom: krait-cc: also enable secondary mux and div clk
+      commit: 18ae57b1e8abee6c453381470f6e18991d2901a8
+[3/5] clk: qcom: krait-cc: handle secondary mux sourcing out of acpu_aux
+      commit: e5dc1a4c01510da8438dddfdf4200b79d73990dc
+[4/5] clk: qcom: krait-cc: convert to devm_clk_hw_register
+      commit: 8ea9fb841a7e528bc8ae79d726ce951dcf7b46e2
+[5/5] clk: qcom: krait-cc: convert to parent_data API
+      commit: 56a655e1c41a86445cf2de656649ad93424b2a63
 
 Best regards,
 -- 
