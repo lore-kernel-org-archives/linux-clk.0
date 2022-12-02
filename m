@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0C4C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 19:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDD0C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 19:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233637AbiLBTmN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 14:42:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
+        id S233505AbiLBTzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 14:55:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbiLBTmM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 14:42:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C8B8E801F;
-        Fri,  2 Dec 2022 11:42:11 -0800 (PST)
+        with ESMTP id S233888AbiLBTzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 14:55:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F87EE958;
+        Fri,  2 Dec 2022 11:55:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 862F661CD5;
-        Fri,  2 Dec 2022 19:42:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CABC433D7;
-        Fri,  2 Dec 2022 19:42:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 03236B8227D;
+        Fri,  2 Dec 2022 19:55:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1279C433D7;
+        Fri,  2 Dec 2022 19:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670010130;
-        bh=Q8Ldh2CarbtjRyADsmuRznQ616b8eNaOu+tBX+CQdEE=;
+        s=k20201202; t=1670010934;
+        bh=UMwUIwq+M9H+o5Bxi/xKVwNlpCJ8/S67RkKQ+RvKbPk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JrwaIHeMFAW1xCdAjnaOq9JOv12wwffYFergE5JbIUUJkivr03Ymw1ZFBnSssT6n2
-         rB24qZmn/cBmUmBlw5TaDOAQipYB6I0W9jjCyhqjc348CN5qvM92plEkL4j4uqDykU
-         xZYahtSS9sVsm0hZ4fXeeYiQzQCJe9kLCCXkzctq+oahvLu7/Oq5rLIoxrUws4jSge
-         bgAi97Ovpgwq34TPyZXh4YCED28vCIcPEBWeJI5dc8qn/zLsutm8dJrwL937aIeAay
-         j581XdAESyYP0KQPqtM9klDvOV6wLbYj+FB8snhKrcaSivHX+xnnApil2laBcH6OEe
-         kEh37lZtHR7gA==
-Date:   Fri, 2 Dec 2022 13:42:08 -0600
+        b=aSZWgb4OdtdgpqgVuuqhAH4ha779pmcvj9diZsTnzkDU7UwzNkSzhBA0y2gXr911a
+         xZ72AtHkKOtt6IM+/cJLH67hLWBs7TrZWa+ji8Dl1QZVlhyffzL2s4SZA7KDi0dB8S
+         sHN1Mw6u2bREsVoYWXbFi5VYoYUtxo3EBDWzpjKGzmEB04+ACDekAJ3dLGLCMwQtq/
+         YclP2bm7FwFWCJUzVB82wR33N12h9WFYL7nAJf5rtpuYslroJx2d4+YFXglTqx6KF8
+         aB8oBEX2S8XkK6qxX/1TpjiLRvkBwS/VPR/s1W/qzyhCV7FpWVXGuASMsKtT044HwJ
+         e/cm1Yc+AuJwg==
+Date:   Fri, 2 Dec 2022 13:55:31 -0600
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -39,45 +39,49 @@ Cc:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: qcom: rpm: drop platform names
-Message-ID: <20221202194208.rmr3nxj7a5bj4iri@builder.lan>
-References: <20221202070814.482470-1-dmitry.baryshkov@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Alex Elder <elder@linaro.org>
+Subject: Re: [PATCH v3 0/8] clk: qcom: rpm/rpmh: drop platform names
+Message-ID: <20221202195531.kwp4fqzgfzznuzzp@builder.lan>
+References: <20221202185843.721673-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221202070814.482470-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221202185843.721673-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 09:08:10AM +0200, Dmitry Baryshkov wrote:
-> The RPM clocks driver uses platform (SoC) as a part of the clock
+On Fri, Dec 02, 2022 at 08:58:35PM +0200, Dmitry Baryshkov wrote:
+> Both RPM and RPMH clocks use platform (SoC) as a part of the clock
 > definition. However there is nothing really SoC-specific in this
 > part. Using it just leads to confusion and sometimes to duplication of
 > definitions. Drop the SoC name where it is logical.
+> 
 
 Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
 Regards,
 Bjorn
 
-> 
 > Changes since v2:
-> - Split from the RPMH patchset
-> - Dropped superfluous active-only clock names when there are no actual
->   clocks behind
-> - Removed the _clk and _a_clk suffixes, moving them to preprocessor
->   macro, no need to have them all over the code.
+> - Additional rework of ARC/VRM clock handling as suggested by Alex
 > 
-> Dmitry Baryshkov (4):
->   clk: qcom: rpm: remove unused active-only clock names
->   clk: qcom: rpm: drop separate active-only names
->   clk: qcom: rpm: drop the _clk suffix completely
->   clk: qcom: rpm: drop the platform from clock definitions
+> Changes since v1:
+> - Reworked and split the Soc-name removal patch for RPMH clocks
 > 
->  drivers/clk/qcom/clk-rpm.c | 204 +++++++++++++++++--------------------
->  1 file changed, 94 insertions(+), 110 deletions(-)
+> Dmitry Baryshkov (8):
+>   clk: qcom: rpmh: group clock definitions together
+>   clk: qcom: rpmh: reuse common duplicate clocks
+>   clk: qcom: rpmh: drop all _ao names
+>   clk: qcom: rpmh: remove platform names from BCM clocks
+>   clk: qcom: rpmh: support separate symbol name for the RPMH clocks
+>   clk: qcom: rpmh: rename ARC clock data
+>   clk: qcom: rpmh: rename VRM clock data
+>   clk: qcom: rpmh: remove usage of platform name
+> 
+>  drivers/clk/qcom/clk-rpmh.c | 421 ++++++++++++++++++------------------
+>  1 file changed, 205 insertions(+), 216 deletions(-)
 > 
 > -- 
 > 2.35.1
