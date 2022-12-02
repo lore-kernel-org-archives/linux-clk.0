@@ -2,87 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDD0C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 19:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52727C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 20:58:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233505AbiLBTzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 14:55:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
+        id S233989AbiLBU64 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 15:58:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233888AbiLBTzh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 14:55:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F87EE958;
-        Fri,  2 Dec 2022 11:55:37 -0800 (PST)
+        with ESMTP id S229527AbiLBU6z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 15:58:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B2FFE98BF;
+        Fri,  2 Dec 2022 12:58:55 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 03236B8227D;
-        Fri,  2 Dec 2022 19:55:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1279C433D7;
-        Fri,  2 Dec 2022 19:55:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C33F623E3;
+        Fri,  2 Dec 2022 20:58:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320A5C433C1;
+        Fri,  2 Dec 2022 20:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670010934;
-        bh=UMwUIwq+M9H+o5Bxi/xKVwNlpCJ8/S67RkKQ+RvKbPk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aSZWgb4OdtdgpqgVuuqhAH4ha779pmcvj9diZsTnzkDU7UwzNkSzhBA0y2gXr911a
-         xZ72AtHkKOtt6IM+/cJLH67hLWBs7TrZWa+ji8Dl1QZVlhyffzL2s4SZA7KDi0dB8S
-         sHN1Mw6u2bREsVoYWXbFi5VYoYUtxo3EBDWzpjKGzmEB04+ACDekAJ3dLGLCMwQtq/
-         YclP2bm7FwFWCJUzVB82wR33N12h9WFYL7nAJf5rtpuYslroJx2d4+YFXglTqx6KF8
-         aB8oBEX2S8XkK6qxX/1TpjiLRvkBwS/VPR/s1W/qzyhCV7FpWVXGuASMsKtT044HwJ
-         e/cm1Yc+AuJwg==
-Date:   Fri, 2 Dec 2022 13:55:31 -0600
+        s=k20201202; t=1670014734;
+        bh=wGY8lJ1GJAvKkUvM3I4IjwBecvV3JJhgpdjNyFjjw7o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lZojk65d1TT90I9vhsVS6+2R6TXdG7fz42pbAqnMePK1UYPfx+zZAxY051WWuUITx
+         vGZ5Fn19gnRt4lgy2T+1Bqj7dttr8usJ26jQJzemvfq4nDDGr0H7p1gh92hyv/Viz8
+         WhrXd4oRbHk4yrv62iA+wFAWnbEwmjdtjUfnvscmpoMUZiAIN7RAw/CcP8tMS6YoaZ
+         MkLYbHtDJXKPZFXx7sEP8TAopKWPOv8S6oCut2M9jXzS/FIAFpBzWxl/wI2Pe4fIaG
+         ZVqS6541T/pIOw3GcT5Ih5pyyTY2L46QZu8FiKuKuHgPcFN1c5vhcqfX/w+sNxn32+
+         tuwX82LweI/Ng==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Alex Elder <elder@linaro.org>
-Subject: Re: [PATCH v3 0/8] clk: qcom: rpm/rpmh: drop platform names
-Message-ID: <20221202195531.kwp4fqzgfzznuzzp@builder.lan>
-References: <20221202185843.721673-1-dmitry.baryshkov@linaro.org>
+To:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        sboyd@kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>,
+        abel.vesa@linaro.org, agross@kernel.org, mturquette@baylibre.com
+Cc:     linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v4 0/9] clk: qcom: Add support for SM8550
+Date:   Fri,  2 Dec 2022 14:58:39 -0600
+Message-Id: <167001472430.2721945.18371070491439646319.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20221130112852.2977816-1-abel.vesa@linaro.org>
+References: <20221130112852.2977816-1-abel.vesa@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221202185843.721673-1-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 08:58:35PM +0200, Dmitry Baryshkov wrote:
-> Both RPM and RPMH clocks use platform (SoC) as a part of the clock
-> definition. However there is nothing really SoC-specific in this
-> part. Using it just leads to confusion and sometimes to duplication of
-> definitions. Drop the SoC name where it is logical.
+On Wed, 30 Nov 2022 13:28:43 +0200, Abel Vesa wrote:
+> This patchset adds clock support for the Qualcomm SM8550 SoC,
+> It adds support for the new type of PLL, the TCSR clock controller
+> driver, support for configurable poll timeout, the RPMh clocks
+> and the bindings.
 > 
+> Changes since v3:
+>  * Dropped the GDSC configurable poll timeout patch, like Stephen
+>    suggested
+>  * Added Krzysztof's R-b tag to TCSRCC and GCC binding patches
+> 
+> [...]
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Applied, thanks!
 
-Regards,
-Bjorn
+[1/9] dt-bindings: clock: Add SM8550 GCC clocks
+      commit: 47ba9c50bbeb1c5005eb06ca0a2ab92604a54b62
+[3/9] clk: qcom: gdsc: Increase status poll timeout
+      commit: 7364379d725fc8240a90190dc9da662ada43d9d1
+[4/9] clk: qcom: Add LUCID_OLE PLL type for SM8550
+      commit: 1de7e70941fff80139df8a37d4b35264543e3fc0
+[5/9] clk: qcom: Add GCC driver for SM8550
+      commit: 955f2ea3b9e94d0fa20ce3a78ef3063923d41b58
 
-> Changes since v2:
-> - Additional rework of ARC/VRM clock handling as suggested by Alex
-> 
-> Changes since v1:
-> - Reworked and split the Soc-name removal patch for RPMH clocks
-> 
-> Dmitry Baryshkov (8):
->   clk: qcom: rpmh: group clock definitions together
->   clk: qcom: rpmh: reuse common duplicate clocks
->   clk: qcom: rpmh: drop all _ao names
->   clk: qcom: rpmh: remove platform names from BCM clocks
->   clk: qcom: rpmh: support separate symbol name for the RPMH clocks
->   clk: qcom: rpmh: rename ARC clock data
->   clk: qcom: rpmh: rename VRM clock data
->   clk: qcom: rpmh: remove usage of platform name
-> 
->  drivers/clk/qcom/clk-rpmh.c | 421 ++++++++++++++++++------------------
->  1 file changed, 205 insertions(+), 216 deletions(-)
-> 
-> -- 
-> 2.35.1
-> 
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
