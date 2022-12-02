@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C4EC4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 12:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983E0C4321E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 12:34:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233482AbiLBM1B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 07:27:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50916 "EHLO
+        id S233494AbiLBMeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 07:34:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233023AbiLBM0z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 07:26:55 -0500
+        with ESMTP id S233504AbiLBMd7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 07:33:59 -0500
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C9DCBA70;
-        Fri,  2 Dec 2022 04:26:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D5A9D836;
+        Fri,  2 Dec 2022 04:33:55 -0800 (PST)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 3F1A95FD0B;
-        Fri,  2 Dec 2022 15:26:51 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 7EF755FD0B;
+        Fri,  2 Dec 2022 15:33:53 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1669984011;
-        bh=8OBXNzSAS41lpYJ9BhmbrARwv9XI5QpXEVQ2Yvfc/tU=;
+        s=mail; t=1669984433;
+        bh=282kx+HEwvxtZ+H+mSqaI8GU81yvcnptjbfPg0xRDS4=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=ihCgOiIlELXCrpiiNICxGJoV1LWQ8yVz8asct5UUredVutLNjzuZzGGP98L78Jk27
-         kN62mykio3iggELzYidmLK0/Rwr9hX3A+AiWyee/sjbsRENF1jTvns51bqlB8seRX5
-         waaFao0pEXNng9fC/oErDwUTGMlVGPtzuF6a9xMAm5DwIwa4uOB1ZITqR3o8rAfjiz
-         R8duAW65C6r2TLY4skcIBg/y30jv52znpi4dqt3SeK72UEUQO8w3IGcN4eL0AUNUqO
-         5bOiARbtf2MHlHgySg2RST4PzqdhEcd5iVnigkXp6VjMIXMnbgZ6mnaMJR5MLde52X
-         AW3/Iz2wJRcPQ==
+        b=d2P6mwXz96RuDx0v+EaGl68N58etx16QPu4Nh1WYVurzd7uW5M7ioALfUdL65oMw2
+         wi/9tGc91qZ+9tn1OgAeTZUN+WdoMzRb3iV2PVhbpCdkRYkN8naIgoKa79l3LOGghS
+         7zf1uUQgJY+ISVTDAden9/Lv4PKL+KvPd/+YPL7q94qufWxjljEB19Utm9SH0J4kGQ
+         oVWCreWmp9BrqkrLneDMJbQy9DHg2jOQqAap/afg175Rw1GZspgEoDhmiNlokTUjL1
+         qf7//iSE6/xQAGPT5zulmS+uXsP7762cCvnCJhgOUWj4gLr8zaVO3NzO8Kyr0xaPyU
+         tkOBMTScwLRCA==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  2 Dec 2022 15:26:50 +0300 (MSK)
-Date:   Fri, 2 Dec 2022 15:26:50 +0300
+        Fri,  2 Dec 2022 15:33:53 +0300 (MSK)
+Date:   Fri, 2 Dec 2022 15:33:53 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
@@ -41,19 +41,19 @@ CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
         <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 01/11] dt-bindings: clock: meson: add A1 PLL clock
- controller bindings
-Message-ID: <20221202122650.bybwjszlgdnu3zvm@CAB-WSD-L081021>
+Subject: Re: [PATCH v8 04/11] clk: meson: a1: add support for Amlogic A1
+ Peripheral clock driver
+Message-ID: <20221202123353.d6l5h5jb26fp5snm@CAB-WSD-L081021>
 References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
- <20221201225703.6507-2-ddrokosov@sberdevices.ru>
- <1jbkom83fg.fsf@starbuckisacylon.baylibre.com>
+ <20221201225703.6507-5-ddrokosov@sberdevices.ru>
+ <1j359y82fn.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1jbkom83fg.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1j359y82fn.fsf@starbuckisacylon.baylibre.com>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -66,74 +66,115 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 12:11:53PM +0100, Jerome Brunet wrote:
+...
+
+> > +		.ops = &clk_regmap_gate_ro_ops,
+> > +		.parent_data = &(const struct clk_parent_data) {
+> > +			.fw_name = "xtal",
+> > +		},
+> > +		.num_parents = 1,
+> > +	},
+> > +};
+> > +
+> > +static struct clk_regmap a1_xtal_fixpll = {
+> > +	.data = &(struct clk_regmap_gate_data){
+> > +		.offset = SYS_OSCIN_CTRL,
+> > +		.bit_idx = 1,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data) {
+> > +		.name = "xtal_fixpll",
 > 
-> On Fri 02 Dec 2022 at 01:56, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> same here, this is not a crystal.
+> It is the fixpll input gate, what about "fixpll_in"
 > 
-> > From: Jian Hu <jian.hu@amlogic.com>
-> >
-> > Add the documentation to support Amlogic A1 PLL clock driver,
-> > and add A1 PLL clock controller bindings.
-> >
-> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> > ---
-> >  .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 52 +++++++++++++++++++
-> >  include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
-> >  2 files changed, 68 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> >  create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > new file mode 100644
-> > index 000000000000..d67250fbeece
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > @@ -0,0 +1,52 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: "http://devicetree.org/schemas/amlogic,a1-pll-clkc.yaml#"
-> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > +
-> > +title: Amlogic Meson A/C serials PLL Clock Control Unit Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Neil Armstrong <narmstrong@baylibre.com>
-> > +  - Jerome Brunet <jbrunet@baylibre.com>
-> > +  - Jian Hu <jian.hu@jian.hu.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: amlogic,a1-pll-clkc
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +     - description: input xtal_fixpll
-> > +     - description: input xtal_hifipll
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: xtal_fixpll
-> > +      - const: xtal_hifipll
-> 
-> Do we really need the "xtal_" prefix ?
-> 
-> Seems like the clock is the PLL, not the xtal
+> Same bellow - you get the idea ...
 > 
 
-This name was formed from specification registers description. Register
-CLKTREE_SYS_OSCIN_CTRL has "gate en" field which calls "xtal ->
-HIFIPLL", therefore if was transformed to xtal_hifipll name.
+Yep, got it. Will fix in the v9.
 
-But I agree with you, that "hifipll" is better name choice.
- 
+...
+
+> > +static struct clk_regmap a1_rtc_32k_sel = {
+> > +	.data = &(struct clk_regmap_mux_data) {
+> > +		.offset = RTC_CTRL,
+> > +		.mask = 0x3,
+> > +		.shift = 0,
+> > +		.flags = CLK_MUX_ROUND_CLOSEST,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data){
+> > +		.name = "rtc_32k_sel",
+> > +		.ops = &clk_regmap_mux_ops,
+> > +		.parent_hws = (const struct clk_hw *[]) {
+> > +			&a1_rtc_32k_xtal.hw,
+> > +			&a1_rtc_32k_div.hw,
+> > +		},
+> > +		.num_parents = 2,
+> > +		.flags = CLK_SET_RATE_PARENT,
+> > +	},
+> > +};
+> > +
+> > +struct clk_regmap a1_rtc_clk = {
+> > +	.data = &(struct clk_regmap_gate_data){
+> > +		.offset = RTC_BY_OSCIN_CTRL0,
+> > +		.bit_idx = 30,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data){
+> > +		.name = "rtc_clk",
+> 
+> Everytime there is an "_clk" suffix, you can remove it.
+> In this driver, we know we are going to get clocks ;)
+> 
+
+Exactly! :-)
+
+...
+
+> > +static struct clk_regmap a1_dspa_en = {
+> > +	.data = &(struct clk_regmap_gate_data){
+> > +		.offset = DSPA_CLK_EN,
+> > +		.bit_idx = 1,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data) {
+> > +		.name = "dspa_en",
+> > +		.ops = &clk_regmap_gate_ops,
+> > +		.parent_hws = (const struct clk_hw *[]) {
+> > +			&a1_dspa_sel.hw
+> > +		},
+> > +		.num_parents = 1,
+> > +		.flags = CLK_SET_RATE_PARENT,
+> 
+> Maybe as a 2nd step, but I suspect a "CLK_SET_RATE_NOREPARENT" is going to
+> be needed here at some point.
+> 
+
+I will think about it, and try to mark all needed points with that in
+the next version.
+
+...
+
+> > +static struct clk_regmap a1_dspb_a = {
+> > +	.data = &(struct clk_regmap_gate_data){
+> > +		.offset = DSPB_CLK_CTRL0,
+> > +		.bit_idx = 13,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data) {
+> > +		.name = "dspb_a",
+> > +		.ops = &clk_regmap_gate_ops,
+> > +		.parent_hws = (const struct clk_hw *[]) {
+> > +			&a1_dspb_a_div.hw
+> > +		},
+> > +		.num_parents = 1,
+> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> 
+> Any chance we can remove this CLK_IGNORE_UNUSED, or comment why it is
+> needed ?
+> 
+
+This is needed for DSP accelerator in the SoC. I'm afraid it can't be
+disabled by kernel logic run on Core IP.
+
+...
+
 -- 
 Thank you,
 Dmitry
