@@ -2,179 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BE4C4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 13:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C082FC4321E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 13:36:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233613AbiLBNCY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 08:02:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
+        id S233708AbiLBNgV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 08:36:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233469AbiLBNCX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 08:02:23 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEFAC511D
-        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 05:02:21 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id q7so7696033wrr.8
-        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 05:02:21 -0800 (PST)
+        with ESMTP id S232372AbiLBNgP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 08:36:15 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739AAC82EB
+        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 05:36:14 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id f18so7827680wrj.5
+        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 05:36:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=VSGdRkSATXRqKQ0oJba1FJCwjfGxv8hG7quZPS95hvo=;
-        b=kVQJH+qbKlFSL/lKFRaeroiYGaVJTUnlUnXd7aiavCn9HHnizu+WWANGihtdRNDna8
-         gOt9GvdHfAe6rYp5ofwnMes+P4GZy9Hf5LozVSkkicjfe8g8Zoucopd609V/EwGpW9UN
-         GIFT4Zvk0w6TpKs5Y+8/t9RA0qC2cvhVey8tmcArrLMXMFxhfE466wMJGQjvrGwd3Q5/
-         ENO+zqUQd9BanfxXBWeC+RFMomLTUyulJ3/utt3lTTlmsT38RH5mGVGHSSD0bmEb5of/
-         sgShbMSo2KGdgRxn0fkcjb4MW1ZuCbuFKojyEGKpMUJK83QTxUoVJvK2yC8uMy4COhiU
-         6x8g==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NSQmW5YxjbuneNhJ6KbeJhq3/ChGxKuyY2+shwyWAFY=;
+        b=hThn92958p8GAYwnggbWKyJot52EESD2qp4nNgtQPuVsGuUD08W0X1M0L5K5QNm4W7
+         YFpdSZJ22DlMnB4thycsIXgPH2hUH6T0PjSJSaZzDr7uzzusq6TTquOy7cqqHnwbtPc0
+         OJcf/4rRR3XjDZSaa1oaDZYUaGPiykA2x2ZMhx1PkEYPwoEExQmu7aVl9R31GWM9/LGY
+         T77SepAnUB3XPNUJU7eIUbxf5feKUEH7NTivKdqAxlUNir1AZxBvR0Lsa70nSTmLORaQ
+         1qPfB++LV82kCLHqJhpFG4K/Q0UEavY513XrewGEaBcrTJDdJuikWhFzrLuC7Ac0zjWq
+         JRTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VSGdRkSATXRqKQ0oJba1FJCwjfGxv8hG7quZPS95hvo=;
-        b=70h3q5hWFOZaJcP3izefiOoTirGww9KNCmY6AJuH2+kBVh3SeXfrK/0bvSgMWgXvuj
-         bjwtm9d6hUfoBOymc0r6xicKR0EIIWwQfPxwAhdvq1aYOco+SXhxh6m6Uc9bX7bI3njF
-         HHxGSNz/W+HISNKm1oVjNGfCKZ1yDB1Xgc6yQX19JMBP6zKVXsbH6pn6f894rUEbTTk3
-         VV3kT3SHnsu66e82y5FC49rbs4T67zLRbqXvoOYybzuQNHIN4VODcp0kHCxzXSrKALhd
-         +LONdmDRxdKfCIk2Tzcvy3HN4KltkrJ67Dw7dOM5vuJ5HxA+f4mB0KkPJm0A8TFoeVIU
-         tzGA==
-X-Gm-Message-State: ANoB5pmeUTS/CRIaUHmoIg0JjnEtqJ3A0FUYFbYjRVcPtIPcPr68D1GT
-        GiOL3BDFgJ1QjN09tbUTQHwTOg==
-X-Google-Smtp-Source: AA0mqf4nlk4w6LcawMx9ECvjWt6+yVF8oBT4lT6RFJmdvgQzCahSEK7NLtivQOb0bLQz3bsBY/s6mg==
-X-Received: by 2002:adf:ee0d:0:b0:242:28c9:d116 with SMTP id y13-20020adfee0d000000b0024228c9d116mr8740663wrn.286.1669986139791;
-        Fri, 02 Dec 2022 05:02:19 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j33-20020a05600c1c2100b003b4ff30e566sm14902720wms.3.2022.12.02.05.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 05:02:19 -0800 (PST)
-References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
- <20221201225703.6507-8-ddrokosov@sberdevices.ru>
- <1jtu2e6mn5.fsf@starbuckisacylon.baylibre.com>
- <20221202124730.uckax232hnjqg26a@CAB-WSD-L081021>
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-        kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 07/11] clk: meson: a1: redesign Amlogic A1 PLL clock
- controller
-Date:   Fri, 02 Dec 2022 13:49:59 +0100
-In-reply-to: <20221202124730.uckax232hnjqg26a@CAB-WSD-L081021>
-Message-ID: <1jh6ye6js6.fsf@starbuckisacylon.baylibre.com>
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NSQmW5YxjbuneNhJ6KbeJhq3/ChGxKuyY2+shwyWAFY=;
+        b=5kO/NQioJ1jwl8OUO9Hpwpw8o7txIBPclkFmM1exr2DxzWFm4AfIvzYQ5eKM9ofBAC
+         c1zyj5q5+tmvNVCG/R0XZNMi7HLsIwieLscVpCmzAdbSKORKl5E07EcR6ul2GL81yquW
+         dEnR4uF+TCtakS39chwqBPN9QR0yPPfT80zXn8uqwUbPFLN+K1iawpInezfZU7NllQ/q
+         EUn55Kcl166OTjex9KVLc5Z2OYk96W2LOj2b8Vjao77g4Kt2Ky8/7v5x8e2r35ZTWmww
+         ouMZldDGIIvSb/Hdptfz7ryUgq63oPlPs+tb+KrIMDlJMzObfkw/8Pf4O8b8vX2Kyds/
+         rHTw==
+X-Gm-Message-State: ANoB5pniFcHk10cv4jmaNvNsqmUS4PfKgRzgA4VYp9RK/l0a7rWqHQhm
+        Yf2L6+LIT96iDsDAAjbpsxLoDYCH7xMXGMFuAmg=
+X-Google-Smtp-Source: AA0mqf4lMbaEjBgYIV2OLBHivBa/8hU4TeVP1kZQZvX6vp9GnI6UFiFG6l+7NheRXkwYaUBfmjai9Q==
+X-Received: by 2002:a05:6000:1c1e:b0:242:1aec:7c5b with SMTP id ba30-20020a0560001c1e00b002421aec7c5bmr14270946wrb.386.1669988172939;
+        Fri, 02 Dec 2022 05:36:12 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c6e:eb0:b551:55ee? ([2a01:e0a:982:cbb0:c6e:eb0:b551:55ee])
+        by smtp.gmail.com with ESMTPSA id i14-20020a5d55ce000000b002422816aa25sm8571784wrw.108.2022.12.02.05.36.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Dec 2022 05:36:12 -0800 (PST)
+Message-ID: <3b02ab6f-56c7-a877-1b2f-01fc1fb8f552@linaro.org>
+Date:   Fri, 2 Dec 2022 14:36:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+From:   neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v8 01/11] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+Content-Language: en-US
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        sboyd@kernel.org, khilman@baylibre.com, kernel@sberdevices.ru,
+        robh+dt@kernel.org, martin.blumenstingl@googlemail.com,
+        linux-arm-kernel@lists.infradead.org, jian.hu@amlogic.com,
+        linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-amlogic@lists.infradead.org, rockosov@gmail.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org
+References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
+ <20221201225703.6507-2-ddrokosov@sberdevices.ru>
+ <166995398251.2089685.16059995540663317860.robh@kernel.org>
+ <20221202095124.4ecpfqhtzf34lwbf@CAB-WSD-L081021>
+ <cea3cdd4-3d36-1439-b211-047091c05a0f@linaro.org>
+ <1jfsdy83h3.fsf@starbuckisacylon.baylibre.com>
+ <b425da35-c189-aabb-65b9-f956945d7b08@linaro.org>
+ <20221202112826.zkpjyb3f4e2755sh@CAB-WSD-L081021>
+Organization: Linaro Developer Services
+In-Reply-To: <20221202112826.zkpjyb3f4e2755sh@CAB-WSD-L081021>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Fri 02 Dec 2022 at 15:47, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-
-> On Fri, Dec 02, 2022 at 12:42:17PM +0100, Jerome Brunet wrote:
->> 
->> On Fri 02 Dec 2022 at 01:56, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
->> 
->> > Summary changes:
->> >     - supported meson-a1-clkc common driver
->> >     - inherited from the base clk-pll driver, implemented own version of
->> >       init/enable/disable/enabled routines; rate calculating logic is
->> >       fully the same
->> >     - aligned CLKID-related definitions with CLKID list from order
->> >       perspective to remove holes and permutations
->> >     - corrected Kconfig dependencies and types
->> >     - provided correct MODULE_AUTHORs() and MODULE_LICENSE()
->> >     - optimized and fix up some clock relationships
->> >     - removed unused register offset definitions (ANACTRL_* group)
->> 
->> This patch mix PLL stuff, factorization change, etc ...
->> In general, when your commit description is a list, it is a hint that
->> you are doing more than one thing in it. It is unlikely to be OK then
->
-> It will be fixed by itself, when I'll squash patches.
->
->> > +static int meson_a1_pll_init(struct clk_hw *hw)
->> > +{
->> > +	struct clk_regmap *clk = to_clk_regmap(hw);
->> > +	struct meson_a1_pll_data *pll = meson_a1_pll_data(clk);
->> > +
->> > +	regmap_multi_reg_write(clk->map, pll->base.init_regs,
->> > +			       pll->base.init_count);
->> > +
->> > +	return 0;
->> 
->> Looks the the default init mostly
->> 
->> Looks like you are trying the handle the absence of the rst bit.
->> I'm pretty sure the hifi PLL of the SoC as one but you really don't want
->> to poke, this can be in the generic driver, with MESON_PARM_APPLICABLE()
->> test.
->> 
->> No need to redefine this
->> 
->
-> I've redefined it, because in the previous v7 you mentioned that's
-> not acceptable to mix init/enable/disable sequences between a1 pll and clk
-> common pll driver:
->
-> https://lore.kernel.org/linux-amlogic/1jd0ac5kpk.fsf@starbuckisacylon.baylibre.com/
->
-> Hmmm, looks like I've made a mistake. You meant only enable/disable
-> callbacks...
->
-> Anyway, it doesn't matter to me. I think both approaches are okay:
->     * clk-pll customization using MESON_PARM_APPLICABLE()
->     * custom callbacks implementation for some clk_ops like implemented in
->       this patchset.
->
-> Please advise what's the best from you point of view?
-
-It is a balance.
-
-Everytime a new PLL comes up, it tends to treaded as a new ip block but,
-most of the time after some digging and rework, we learn new things and
-it ends up being compatible with the previous ones.
-
-From what I see here
-* You are trying to make rst optional, that's fine. Do it with
-  MESON_PARM_APPLICABLE() in the main driver. Still I would recommend to
-  thorougly for this bit. I'm pretty sure the hifi pll has one.
-
-* You add a new feature called current self-adaptation.
-  This can be made optional too in the enable sequence.
-  I would not be surprised to find out more PLL have that, even on
-  earlier SoC.
-
->
->> > +}
->> > +
->> > +static int meson_a1_pll_is_enabled(struct clk_hw *hw)
->> > +{
->> > +	struct clk_regmap *clk = to_clk_regmap(hw);
->> > +	struct meson_a1_pll_data *pll = meson_a1_pll_data(clk);
->> > +
->> > +	if (MESON_PARM_APPLICABLE(&pll->base.rst) &&
->> > +	    meson_parm_read(clk->map, &pll->base.rst))
->> > +		return 0;
->> > +
->> > +	if (!meson_parm_read(clk->map, &pll->base.en) ||
->> > +	    !meson_parm_read(clk->map, &pll->base.l))
->> > +		return 0;
->> > +
->> 
->> Same here, pretty sure rst is there and the generic function works but
->> if this update is required, it seems safe to do in the generic driver.
->
-> The same thing... in the v7 version you suggested to not touch clk-pll
-> driver.
->
-> https://lore.kernel.org/linux-amlogic/1jd0ac5kpk.fsf@starbuckisacylon.baylibre.com/
->
+On 02/12/2022 12:28, Dmitry Rokosov wrote:
+>>>>>> On Fri, 02 Dec 2022 01:56:53 +0300, Dmitry Rokosov wrote:
+>>>>>>> From: Jian Hu <jian.hu@amlogic.com>
+>>>>>>>
+>>>>>>> Add the documentation to support Amlogic A1 PLL clock driver,
+>>>>>>> and add A1 PLL clock controller bindings.
+>>>>>>>
+>>>>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>>>>>> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+>>>>>>> ---
+>>>>>>>   .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 52 +++++++++++++++++++
+>>>>>>>   include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
+>>>>>>>   2 files changed, 68 insertions(+)
+>>>>>>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>>>>>>   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+>>>>>>>
+>>>>>>
+>>>>>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>>>>>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>>>>>
+>>>>>> yamllint warnings/errors:
+>>>>>> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml:26:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
+>>>>>>
+>>>>>> dtschema/dtc warnings/errors:
+>>>>>> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml: $id: relative path/filename doesn't match actual path or filename
+> 
 > ...
+> 
+>>>>>
+>>>>> Please find all fixes of above warnings and errors in the my patch
+>>>>> located at the link:
+>>>>>
+>>>>> https://lore.kernel.org/linux-amlogic/20221201225703.6507-9-ddrokosov@sberdevices.ru/
+>>>>
+>>>> Why? This patch here is broken and it should be fixed. Don't apply
+>>>> broken patches...
+>>>
+>>> Dmitry is ressurecting a series that is several years old and not his to
+>>> begin with.
+>>>
+>>> He was unsure about take the code of somebody else.
+>>> To be fair, he even asked for advice on IRC about to proceed.
+>>>
+>>> Dmitry, as you may have guessed, for next revision, please fix Jian Hu
+>>> original patches in place, not with fixup patches.
+>>>
+>>> If your fixes are minor (not complete rewrite), please keep the original
+>>> author and add your SoB
+>>
+>> We never take intentionally wrong patches, e.g. code which does not even
+>> compile, and immediately fix it in next patch.
+>>
+>> Can you imagine adding such drivers? Which are broken in the commit they
+>> are added?
+>>
+>> So the patchset is old or abandoned, take ownership, add co-developed
+>> etc. Just don't add known broken code.
+> 
+> Okay, I've got your point. It's reasonable.
+> I will fix Jian Hu's patches (squash with mine) and mark all of them
+> with co-developed and SoB Jian Hu tags. Thank you for explanation.
+
+It was clearly explained in the cover-letter, nobody expected these patches
+to be applied as-is.
+
+Using RFC would have been the best solution, but this situation is rather
+specific and he made the right decisions to trigger this current discussion
+toward an acceptable solution for everybody.
+
+Neil
+
+> 
 
