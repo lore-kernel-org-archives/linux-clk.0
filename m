@@ -2,65 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D08C4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 11:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBAF9C4321E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 11:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232672AbiLBL2h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 06:28:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45252 "EHLO
+        id S232753AbiLBLb3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 06:31:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232279AbiLBL2g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 06:28:36 -0500
+        with ESMTP id S233073AbiLBLbL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 06:31:11 -0500
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A2B91C3C;
-        Fri,  2 Dec 2022 03:28:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CABD3DF9;
+        Fri,  2 Dec 2022 03:31:10 -0800 (PST)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 38ADA5FD0B;
-        Fri,  2 Dec 2022 14:28:32 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id E9A9E5FD0C;
+        Fri,  2 Dec 2022 14:31:08 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1669980512;
-        bh=QzvFMzqrA0Xg0ajrI6zhrJuw38OKMTtVraispL2tE5E=;
+        s=mail; t=1669980669;
+        bh=gUwn4rgw/3aJmLAswDc3LzNzhfrHmZOgM875DBVbpAc=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=lBwot9vFV15uD5M33HJ79TCkCRtyuaA/E3weqyezHlA3yqraYskiuEPjO6v448V7i
-         5deR42884JIBqJBxZ4aCDvA1AAVuc6sMLx/PQ/oepAvvpcO9VOjyh4dZTdHwYkoHka
-         laB1/HmW19+QVZ7Q846YakiBgWThM/+Xdg3V+PVIHH9dk1pitWvKjXLzbBbKyuIfQ/
-         T4SNyRifAot1M7bPFURV69UEtNkq/eBVTmdg9RpaDDrZ3waihQQj27bXq/34w4w12a
-         usOQWRH+BjonlmObazTAIhxiojKtwtArt7qiIMyKzcsxLPaUpc7lMs77H7smW9KMSA
-         B/nlHTjDxpEQw==
+        b=XGyZdqRXwz2PxRkJNwfZSoNCSfGDhus0I1vEL7cbMnV8+FsGo+A3SvzQe9cnc7SzW
+         1hLaBgaL2BcBlepqocMiYJw584LlYyPuEl4yolnIldOEFA1uQPYbrIgrZvs4nQM9FA
+         yKjGAWOA47MRsNulb+a/MpT/dVHB+nSHfVl+Z/MEYLZWvsjpr2TIwypLyPH1hrReF8
+         +Y9qolJbnWOaWg34cLllhhcYMObceltpeueE0JmI8YAqm8z3oP4e6zNidNgw7zFJny
+         UetZFTW+5iAVlDR0+udXcKFN0OVMPmd3XnazM9U9yCJ1uNPXOKx6mvSmESSt7in96I
+         KGEUel/ByZAfw==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  2 Dec 2022 14:28:32 +0300 (MSK)
-Date:   Fri, 2 Dec 2022 14:28:26 +0300
+        Fri,  2 Dec 2022 14:31:08 +0300 (MSK)
+Date:   Fri, 2 Dec 2022 14:31:08 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
-        <sboyd@kernel.org>, <khilman@baylibre.com>,
-        <kernel@sberdevices.ru>, <robh+dt@kernel.org>,
-        <martin.blumenstingl@googlemail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <jian.hu@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-amlogic@lists.infradead.org>, <rockosov@gmail.com>,
-        <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v8 01/11] dt-bindings: clock: meson: add A1 PLL clock
- controller bindings
-Message-ID: <20221202112826.zkpjyb3f4e2755sh@CAB-WSD-L081021>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v8 02/11] clk: meson: a1: add support for Amlogic A1 PLL
+ clock driver
+Message-ID: <20221202113108.netb53ajd4ayqnfy@CAB-WSD-L081021>
 References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
- <20221201225703.6507-2-ddrokosov@sberdevices.ru>
- <166995398251.2089685.16059995540663317860.robh@kernel.org>
- <20221202095124.4ecpfqhtzf34lwbf@CAB-WSD-L081021>
- <cea3cdd4-3d36-1439-b211-047091c05a0f@linaro.org>
- <1jfsdy83h3.fsf@starbuckisacylon.baylibre.com>
- <b425da35-c189-aabb-65b9-f956945d7b08@linaro.org>
+ <20221201225703.6507-3-ddrokosov@sberdevices.ru>
+ <1j7cza8368.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <b425da35-c189-aabb-65b9-f956945d7b08@linaro.org>
+In-Reply-To: <1j7cza8368.fsf@starbuckisacylon.baylibre.com>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -73,66 +66,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> >>>> On Fri, 02 Dec 2022 01:56:53 +0300, Dmitry Rokosov wrote:
-> >>>>> From: Jian Hu <jian.hu@amlogic.com>
-> >>>>>
-> >>>>> Add the documentation to support Amlogic A1 PLL clock driver,
-> >>>>> and add A1 PLL clock controller bindings.
-> >>>>>
-> >>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> >>>>> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> >>>>> ---
-> >>>>>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 52 +++++++++++++++++++
-> >>>>>  include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
-> >>>>>  2 files changed, 68 insertions(+)
-> >>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> >>>>>  create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
-> >>>>>
-> >>>>
-> >>>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> >>>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> >>>>
-> >>>> yamllint warnings/errors:
-> >>>> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml:26:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
-> >>>>
-> >>>> dtschema/dtc warnings/errors:
-> >>>> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml: $id: relative path/filename doesn't match actual path or filename
-
-...
-
-> >>>
-> >>> Please find all fixes of above warnings and errors in the my patch
-> >>> located at the link:
-> >>>
-> >>> https://lore.kernel.org/linux-amlogic/20221201225703.6507-9-ddrokosov@sberdevices.ru/
-> >>
-> >> Why? This patch here is broken and it should be fixed. Don't apply
-> >> broken patches...
-> > 
-> > Dmitry is ressurecting a series that is several years old and not his to
-> > begin with.
-> > 
-> > He was unsure about take the code of somebody else.
-> > To be fair, he even asked for advice on IRC about to proceed.
-> > 
-> > Dmitry, as you may have guessed, for next revision, please fix Jian Hu
-> > original patches in place, not with fixup patches.
-> > 
-> > If your fixes are minor (not complete rewrite), please keep the original
-> > author and add your SoB
+On Fri, Dec 02, 2022 at 12:16:12PM +0100, Jerome Brunet wrote:
+> >  drivers/clk/meson/Kconfig  |   9 +
+> >  drivers/clk/meson/Makefile |   1 +
+> >  drivers/clk/meson/a1-pll.c | 360 +++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/meson/a1-pll.h |  56 ++++++
+> >  4 files changed, 426 insertions(+)
+> >  create mode 100644 drivers/clk/meson/a1-pll.c
+> >  create mode 100644 drivers/clk/meson/a1-pll.h
+> >
+> > diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> > index fc002c155bc3..ab34662b24f0 100644
+> > --- a/drivers/clk/meson/Kconfig
+> > +++ b/drivers/clk/meson/Kconfig
+> > @@ -99,6 +99,15 @@ config COMMON_CLK_AXG_AUDIO
+> >  	  Support for the audio clock controller on AmLogic A113D devices,
+> >  	  aka axg, Say Y if you want audio subsystem to work.
+> >  
+> > +config COMMON_CLK_A1_PLL
+> > +	bool
 > 
-> We never take intentionally wrong patches, e.g. code which does not even
-> compile, and immediately fix it in next patch.
+> Could you add a tristate with some text please ?
 > 
-> Can you imagine adding such drivers? Which are broken in the commit they
-> are added?
-> 
-> So the patchset is old or abandoned, take ownership, add co-developed
-> etc. Just don't add known broken code.
 
-Okay, I've got your point. It's reasonable.
-I will fix Jian Hu's patches (squash with mine) and mark all of them
-with co-developed and SoB Jian Hu tags. Thank you for explanation.
+Yep... I did it in my fixup patches :-) Looks like it's better to review
+the next version with already squashed patches.
 
 -- 
 Thank you,
