@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A2BC47088
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 09:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63D4C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 09:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233144AbiLBJt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 04:49:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54032 "EHLO
+        id S233084AbiLBJv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 04:51:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232815AbiLBJts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 04:49:48 -0500
+        with ESMTP id S233039AbiLBJv3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 04:51:29 -0500
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08794CB229;
-        Fri,  2 Dec 2022 01:49:44 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F987CAF89;
+        Fri,  2 Dec 2022 01:51:26 -0800 (PST)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id D027B5FD0A;
-        Fri,  2 Dec 2022 12:49:41 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id D13BF5FD0B;
+        Fri,  2 Dec 2022 12:51:24 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1669974581;
-        bh=FbqsU5GM/s6H3tix6hLnnOQO0K56pMLJtqHLVhUNgXs=;
+        s=mail; t=1669974684;
+        bh=72VVTkRY9DjXgUjSD9VXksh7Od+zuedUupDyk8ZPL64=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=UPYOpBXln+D9Lxmxx9q2ygclqrJdoUAa8swbKYm+8ASGftkpKx8beygRXG6PDCV9n
-         HgQuF0cb+CgZx7AOSCrDHHp7oZmRUVK9kEasMLDnPWYCyeaIianqRHgb2Qgc1TL7yK
-         0/dZrba9wr0NfWFU5U+4wSXwiaYrtrPqO0s4M3FGue8qiTqjuHsOBTeKE4ZteYBix6
-         z0xkxkFAE89NSuG2hysxpUUXcIGBahNZHJZbaRfLPR7IVVxsknE0nS83aYFCFtvExS
-         JPsRvTSVerFnrsPEzUzjmXHFqugK929a1DRr2cAK7dFDahM9yzU5w/BtTKIDcJs/TG
-         ONH9njUxEksEg==
+        b=Ud3M/0dAGTjSPWCJ4qDcqnrloGRDW4WyDNac2USRNB1fBT0jW82Aagmxt+Imnip4B
+         zpGE9qStbUJLOpbGVZZR7Ksa3sdzYFNee1SYP2uDfwQt/T4deWBHFyHULhK2dQ6ixH
+         9DvfRo3qDQwt1dpvlZRknRuT5NCArqi98n2vb4Ja+w6CCDfPeejQOtYVfrVorbQmaw
+         l8WkEuaZxJJxEBuZdaWVCy3mEA4TORauZczB4vpdYNyHkDXhz41yyoUzBTN6Fyejxn
+         szgQlsAAE53MM/dnECSed+OhqBqBK8mNTAPCel9vx2pgk3WU15JgPUSTmRYDZn9xWU
+         Z3MTXLbQa/tMg==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  2 Dec 2022 12:49:41 +0300 (MSK)
-Date:   Fri, 2 Dec 2022 12:49:40 +0300
+        Fri,  2 Dec 2022 12:51:24 +0300 (MSK)
+Date:   Fri, 2 Dec 2022 12:51:24 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     Rob Herring <robh@kernel.org>
-CC:     <martin.blumenstingl@googlemail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <jian.hu@amlogic.com>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <linux-amlogic@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <rockosov@gmail.com>,
-        <kernel@sberdevices.ru>, <neil.armstrong@linaro.org>,
-        <robh+dt@kernel.org>, <sboyd@kernel.org>
-Subject: Re: [PATCH v8 03/11] dt-bindings: clock: meson: add A1 peripheral
- clock controller bindings
-Message-ID: <20221202094940.elhjbz7tbgxesr52@CAB-WSD-L081021>
+CC:     <devicetree@vger.kernel.org>, <sboyd@kernel.org>,
+        <khilman@baylibre.com>, <kernel@sberdevices.ru>,
+        <robh+dt@kernel.org>, <martin.blumenstingl@googlemail.com>,
+        <linux-arm-kernel@lists.infradead.org>, <jian.hu@amlogic.com>,
+        <linux-kernel@vger.kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-amlogic@lists.infradead.org>, <jbrunet@baylibre.com>,
+        <rockosov@gmail.com>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>, <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v8 01/11] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+Message-ID: <20221202095124.4ecpfqhtzf34lwbf@CAB-WSD-L081021>
 References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
- <20221201225703.6507-4-ddrokosov@sberdevices.ru>
- <166995398331.2089708.18189499743713568568.robh@kernel.org>
+ <20221201225703.6507-2-ddrokosov@sberdevices.ru>
+ <166995398251.2089685.16059995540663317860.robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <166995398331.2089708.18189499743713568568.robh@kernel.org>
+In-Reply-To: <166995398251.2089685.16059995540663317860.robh@kernel.org>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -69,37 +69,37 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Dec 01, 2022 at 10:10:04PM -0600, Rob Herring wrote:
 > 
-> On Fri, 02 Dec 2022 01:56:55 +0300, Dmitry Rokosov wrote:
+> On Fri, 02 Dec 2022 01:56:53 +0300, Dmitry Rokosov wrote:
 > > From: Jian Hu <jian.hu@amlogic.com>
 > > 
-> > Add the documentation to support Amlogic A1 peripheral clock driver,
-> > and add A1 peripheral clock controller bindings.
+> > Add the documentation to support Amlogic A1 PLL clock driver,
+> > and add A1 PLL clock controller bindings.
 > > 
 > > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 > > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 > > ---
-> >  .../bindings/clock/amlogic,a1-clkc.yaml       | 65 ++++++++++++
-> >  include/dt-bindings/clock/a1-clkc.h           | 98 +++++++++++++++++++
-> >  2 files changed, 163 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> >  create mode 100644 include/dt-bindings/clock/a1-clkc.h
+> >  .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 52 +++++++++++++++++++
+> >  include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
+> >  2 files changed, 68 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> >  create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
 > > 
 > 
 > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
 > on your patch (DT_CHECKER_FLAGS is new in v5.13):
 > 
 > yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml:26:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
 > 
 > dtschema/dtc warnings/errors:
-> ./Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml: $id: relative path/filename doesn't match actual path or filename
-> 	expected: http://devicetree.org/schemas/clock/amlogic,a1-clkc.yaml#
-> Documentation/devicetree/bindings/clock/amlogic,a1-clkc.example.dts:18.48-30.11: Warning (unit_address_vs_reg): /example-0/periphs-clock-controller: node has a reg or ranges property, but no unit name
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.example.dtb: periphs-clock-controller: reg: [[0, 2048], [0, 260]] is too long
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml: $id: relative path/filename doesn't match actual path or filename
+> 	expected: http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.example.dtb: pll-clock-controller@7c80: reg: [[0, 31872], [0, 396]] is too long
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
 > 
 > doc reference errors (make refcheckdocs):
 > 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221201225703.6507-4-ddrokosov@sberdevices.ru
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221201225703.6507-2-ddrokosov@sberdevices.ru
 > 
 > The base for the series is generally the latest rc1. A different dependency
 > should be noted in *this* patch.
@@ -115,10 +115,11 @@ On Thu, Dec 01, 2022 at 10:10:04PM -0600, Rob Herring wrote:
 > your schema. However, it must be unset to test all examples with your schema.
 > 
 
-That's totally right warnings and errors. All of them are fixed in the
-my "fixup" patch of Jian's original dt_binding schema:
+Please find all fixes of above warnings and errors in the my patch
+located at the link:
 
-https://lore.kernel.org/linux-amlogic/20221201225703.6507-11-ddrokosov@sberdevices.ru/
+https://lore.kernel.org/linux-amlogic/20221201225703.6507-9-ddrokosov@sberdevices.ru/
+
 
 -- 
 Thank you,
