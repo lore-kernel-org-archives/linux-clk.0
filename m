@@ -2,179 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983E0C4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 12:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF48DC47088
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 12:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233494AbiLBMeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 07:34:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
+        id S233538AbiLBMjr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 07:39:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233504AbiLBMd7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 07:33:59 -0500
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D5A9D836;
-        Fri,  2 Dec 2022 04:33:55 -0800 (PST)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 7EF755FD0B;
-        Fri,  2 Dec 2022 15:33:53 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1669984433;
-        bh=282kx+HEwvxtZ+H+mSqaI8GU81yvcnptjbfPg0xRDS4=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=d2P6mwXz96RuDx0v+EaGl68N58etx16QPu4Nh1WYVurzd7uW5M7ioALfUdL65oMw2
-         wi/9tGc91qZ+9tn1OgAeTZUN+WdoMzRb3iV2PVhbpCdkRYkN8naIgoKa79l3LOGghS
-         7zf1uUQgJY+ISVTDAden9/Lv4PKL+KvPd/+YPL7q94qufWxjljEB19Utm9SH0J4kGQ
-         oVWCreWmp9BrqkrLneDMJbQy9DHg2jOQqAap/afg175Rw1GZspgEoDhmiNlokTUjL1
-         qf7//iSE6/xQAGPT5zulmS+uXsP7762cCvnCJhgOUWj4gLr8zaVO3NzO8Kyr0xaPyU
-         tkOBMTScwLRCA==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  2 Dec 2022 15:33:53 +0300 (MSK)
-Date:   Fri, 2 Dec 2022 15:33:53 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 04/11] clk: meson: a1: add support for Amlogic A1
- Peripheral clock driver
-Message-ID: <20221202123353.d6l5h5jb26fp5snm@CAB-WSD-L081021>
-References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
- <20221201225703.6507-5-ddrokosov@sberdevices.ru>
- <1j359y82fn.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S233520AbiLBMjk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 07:39:40 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B763D4AC6
+        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 04:39:38 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id z92so6354588ede.1
+        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 04:39:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8jC7da2W+ukwOwEQYKKMGcqvppPDfTMpCFP/Jwhh/vM=;
+        b=GHGxMCzfJMseZVfpWvl2V28HsXKKWJ5d7TyS9GxoG/+yyEYois2e0x/n9fxVpQWhzy
+         VoQUo45+HYBUh5NYCn0lscProp+UyJLEEClGrVdEUI6Eg77fMyGVk+T/YyueqYZIsCr/
+         ofhRf/ERvG3gYovGF2+x19GFUHgGqcgCW3Im0A4tfUDqYTQ8XmFc4j5IOdy8GMH05ukL
+         HxURuO5SFuJRfFTkvK2b1eE6njo0XUz2lkYxeyYAxvKJRtrEFuetydHnFOJEN81QDsuR
+         VATXulY4cPSio5xPRrOF+x8fBHteScBg2YnEZfoggQIYK9BU1iRRgYplvCPyHsmEAxwW
+         sq8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8jC7da2W+ukwOwEQYKKMGcqvppPDfTMpCFP/Jwhh/vM=;
+        b=jsSbVwlbpAuwaEWjkUFLG3vx3d5sjp+rqMerQM7aDcZYZ6spcrLCTVK1METVp1bXQt
+         xt5iFFoocb2PaGZQyzCijL7HvHwpZ6eyqjISCfb48TXsKJJx9VPyT3mp6IK/xuFmTILA
+         24JVaaM8oamBUfSN4r8HNMHvKNo6q9AnNnhNkenpOrMSUAtmAORLCBJh+m6+cFH2g9fY
+         byC1k+JGzqCDoOrgFiCEIJN+E8huz44uywP1QwVe+uYDljVAmANy1EUE76YAiTLzSNHl
+         bRuLKonkYE7K6l7F6N1LTgEb7+w4Sz+WsRf6gkG54tR5ZucqzeJKzf10AlLNx6JG1F4H
+         mRjw==
+X-Gm-Message-State: ANoB5pnmZYKNrPAlbShE6ciHIqtGufvetIj/1UNmbV/P2BVTyZGJx0IU
+        HyChnlpBMgE5hEfnxkGSL7oZaw==
+X-Google-Smtp-Source: AA0mqf6z+SAK9/8ueehDS8BhD7X+jXXxouu9P3VguQ4xI3VPnvJECeOsrYAUbmy/WuIFMqFQW0zEDA==
+X-Received: by 2002:a50:ee19:0:b0:46b:51e6:2e69 with SMTP id g25-20020a50ee19000000b0046b51e62e69mr18990436eds.354.1669984776881;
+        Fri, 02 Dec 2022 04:39:36 -0800 (PST)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id ky1-20020a170907778100b0072a881b21d8sm2951052ejc.119.2022.12.02.04.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Dec 2022 04:39:36 -0800 (PST)
+Date:   Fri, 2 Dec 2022 13:39:35 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
+Message-ID: <Y4nyBwNPjuJFB5Km@nanopsycho>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+ <20221129213724.10119-3-vfedorenko@novek.ru>
+ <Y4eGxb2i7uwdkh1T@nanopsycho>
+ <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1j359y82fn.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2022/12/02 07:44:00 #20636821
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-...
+Fri, Dec 02, 2022 at 12:27:35PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Wednesday, November 30, 2022 5:37 PM
+>>Tue, Nov 29, 2022 at 10:37:22PM CET, vfedorenko@novek.ru wrote:
+>>>From: Vadim Fedorenko <vadfed@fb.com>
 
-> > +		.ops = &clk_regmap_gate_ro_ops,
-> > +		.parent_data = &(const struct clk_parent_data) {
-> > +			.fw_name = "xtal",
-> > +		},
-> > +		.num_parents = 1,
-> > +	},
-> > +};
-> > +
-> > +static struct clk_regmap a1_xtal_fixpll = {
-> > +	.data = &(struct clk_regmap_gate_data){
-> > +		.offset = SYS_OSCIN_CTRL,
-> > +		.bit_idx = 1,
-> > +	},
-> > +	.hw.init = &(struct clk_init_data) {
-> > +		.name = "xtal_fixpll",
-> 
-> same here, this is not a crystal.
-> It is the fixpll input gate, what about "fixpll_in"
-> 
-> Same bellow - you get the idea ...
-> 
+[...]
 
-Yep, got it. Will fix in the v9.
 
-...
+>>>+static int
+>>>+dpll_msg_add_pin_netifindex(struct sk_buff *msg, const struct
+>>dpll_pin_attr *attr)
+>>>+{
+>>>+	unsigned int netifindex; // TODO: Should be u32?
+>>>+
+>>>+	if (dpll_pin_attr_netifindex_get(attr, &netifindex))
+>>>+		return 0;
+>>>+	if (nla_put_u32(msg, DPLLA_PIN_NETIFINDEX, netifindex))
+>>
+>>I was thinking about this. It is problematic. DPLL has no notion of
+>>network namespaces. So if the driver passes ifindex, dpll/user has no
+>>clue in which network namespace it is (ifindexes ovelay in multiple
+>>namespaces).
+>>
+>>There is no easy/nice solution. For now, I would go without this and
+>>only have linkage the opposite direction, from netdev to dpll.
+>
+>Well, makes sense to me.
+>Although as I have checked `ip a` showed the same ifindex either if port was
+>in the namespace or not.
 
-> > +static struct clk_regmap a1_rtc_32k_sel = {
-> > +	.data = &(struct clk_regmap_mux_data) {
-> > +		.offset = RTC_CTRL,
-> > +		.mask = 0x3,
-> > +		.shift = 0,
-> > +		.flags = CLK_MUX_ROUND_CLOSEST,
-> > +	},
-> > +	.hw.init = &(struct clk_init_data){
-> > +		.name = "rtc_32k_sel",
-> > +		.ops = &clk_regmap_mux_ops,
-> > +		.parent_hws = (const struct clk_hw *[]) {
-> > +			&a1_rtc_32k_xtal.hw,
-> > +			&a1_rtc_32k_div.hw,
-> > +		},
-> > +		.num_parents = 2,
-> > +		.flags = CLK_SET_RATE_PARENT,
-> > +	},
-> > +};
-> > +
-> > +struct clk_regmap a1_rtc_clk = {
-> > +	.data = &(struct clk_regmap_gate_data){
-> > +		.offset = RTC_BY_OSCIN_CTRL0,
-> > +		.bit_idx = 30,
-> > +	},
-> > +	.hw.init = &(struct clk_init_data){
-> > +		.name = "rtc_clk",
-> 
-> Everytime there is an "_clk" suffix, you can remove it.
-> In this driver, we know we are going to get clocks ;)
-> 
+That is not the problem. The problem is, that you can have following
+two netdevs with the same ifindex each in different netns.
+1) netdev x: ifindex 8, netns ns1
+2) netdev y: ifindex 8, netns ns2
 
-Exactly! :-)
+>Isn't it better to let the user know ifindex, even if he has to iterate all
+>the namespaces he has created?
 
-...
+Definitelly not. As I showed above, one ifindex may refer to multiple
+netdevice instances.
 
-> > +static struct clk_regmap a1_dspa_en = {
-> > +	.data = &(struct clk_regmap_gate_data){
-> > +		.offset = DSPA_CLK_EN,
-> > +		.bit_idx = 1,
-> > +	},
-> > +	.hw.init = &(struct clk_init_data) {
-> > +		.name = "dspa_en",
-> > +		.ops = &clk_regmap_gate_ops,
-> > +		.parent_hws = (const struct clk_hw *[]) {
-> > +			&a1_dspa_sel.hw
-> > +		},
-> > +		.num_parents = 1,
-> > +		.flags = CLK_SET_RATE_PARENT,
-> 
-> Maybe as a 2nd step, but I suspect a "CLK_SET_RATE_NOREPARENT" is going to
-> be needed here at some point.
-> 
 
-I will think about it, and try to mark all needed points with that in
-the next version.
+[...]
 
-...
 
-> > +static struct clk_regmap a1_dspb_a = {
-> > +	.data = &(struct clk_regmap_gate_data){
-> > +		.offset = DSPB_CLK_CTRL0,
-> > +		.bit_idx = 13,
-> > +	},
-> > +	.hw.init = &(struct clk_init_data) {
-> > +		.name = "dspb_a",
-> > +		.ops = &clk_regmap_gate_ops,
-> > +		.parent_hws = (const struct clk_hw *[]) {
-> > +			&a1_dspb_a_div.hw
-> > +		},
-> > +		.num_parents = 1,
-> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> 
-> Any chance we can remove this CLK_IGNORE_UNUSED, or comment why it is
-> needed ?
-> 
+>>>+	DPLLA_NETIFINDEX,
+>>
+>>Duplicate, you have it under pin.
+>
+>The pin can have netifindex as pin signal source may originate there by
+>Clock recovery mechanics.
+>The dpll can have ifindex as it "owns" the dpll.
 
-This is needed for DSP accelerator in the SoC. I'm afraid it can't be
-disabled by kernel logic run on Core IP.
+DPLL is not owned by any netdevice. That does not make any sense.
+Netdevice may be "child" of the same PCI device as the dpll instance.
+But that's it.
 
-...
 
--- 
-Thank you,
-Dmitry
+>Shall user know about it? probably nothing usefull for him, although
+>didn't Maciej Machnikowski asked to have such traceability?
