@@ -2,156 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D603EC4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 10:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7BCC4167B
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 11:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232591AbiLBK6t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 05:58:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45216 "EHLO
+        id S232598AbiLBLLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 06:11:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232598AbiLBK6r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 05:58:47 -0500
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21799381B;
-        Fri,  2 Dec 2022 02:58:38 -0800 (PST)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id CB99C5FD0B;
-        Fri,  2 Dec 2022 13:58:35 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1669978715;
-        bh=bmtQOp0MHFjIRwhVsuo8y6uKrcRollt9lDuoEi9K2Ns=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=sDgpn/xX2RPFtFDVGuLMmeVg7uLVdiBcZaROU6x3DAGgZM0FchEFeCx3JRUpYdwY9
-         y0yN84dSkfMyxuZZx5BqNzh6pjlUzcngmgoy7o3gSei2fdiZaCs5SqM1MiSuh8ENyr
-         4Q9BGy/bvHKtkCPe7M+FE2HhijT3NzguM1r8bkpMBxuUn6oTb13fzxElpr6Z+ihNdV
-         Si1fMikx9d8XNdgMs5pwxrKkmv/S6Y8nd2pIjbIHKLXOO4BCi17f5m7qlR9lQNN8gJ
-         QU0PJlCJ7QtMAGiuJKKIh9fzjGqMACArv3WmsnL7QrIZdZBOGAbqvVkBYxf+aXuCrG
-         nVZ6pfv+kampw==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  2 Dec 2022 13:58:35 +0300 (MSK)
-Date:   Fri, 2 Dec 2022 13:58:34 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Rob Herring <robh@kernel.org>,
-        <martin.blumenstingl@googlemail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <jian.hu@amlogic.com>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <linux-amlogic@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <rockosov@gmail.com>,
-        <kernel@sberdevices.ru>, <neil.armstrong@linaro.org>,
-        <robh+dt@kernel.org>, <sboyd@kernel.org>
-Subject: Re: [PATCH v8 03/11] dt-bindings: clock: meson: add A1 peripheral
- clock controller bindings
-Message-ID: <20221202105834.4avip2trjbm3tpn7@CAB-WSD-L081021>
+        with ESMTP id S232532AbiLBLLm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 06:11:42 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B294C7245
+        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 03:11:40 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id bx10so7356461wrb.0
+        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 03:11:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPFY6FywBKVj+Q58Yw/8slS+YqsfBvqMM52HPpLV7Yg=;
+        b=PK8M1saJytpZlmaXb3XWJFyS5hZ3aAlrzHUwrN6PU6ZaeGcR7pPz4JuaiUSCVdPF6y
+         PcAIYFZfibtHJZDGbvk3wIlQ1dKWdMMrlXlQ7DZQ+HTXVPCwSTc+RQUHp8Hj1RDgjGlZ
+         On3vt7uwklxoeMeYWvOAjbpUGwmpMzFPPzX7oibG5vs5V3gQneg1WbQi+AZUpwuv0VPb
+         3yIYyUI/Qm0upcz1kwIeZAbzZoLUmsyuLMQqAT7WjLaUpU55M8W82UHK8RixmCfbRDkT
+         Jg+TxM//BNrTccnwgm5hD2KCkmSSr7ddCsMoCsvm/bkcAepwwVyBSOBE7w97k+btGteg
+         vTVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zPFY6FywBKVj+Q58Yw/8slS+YqsfBvqMM52HPpLV7Yg=;
+        b=VEaVRLnz6/zZf2ixo2p3VJcb2F5iw16lb9u8PclPAey94FsVe60RwhNuy515QRdBxB
+         5nWKj4RscvCcX+J4+egi2Gb/crkF/xfYrl/HJ4aNKBtO85WfXPrVxLLzgLkO/dDxATtM
+         zA/4SZoC6ulgAuVsNEwN7Ke4an9n7xX7ZnGmi5IzLqp3VoKM7CRrSMfvPo3eW05KkIva
+         o+UlSVdJeQCj3RopqHzQWQ5iUrQZG7bFdnX6h+SGJWC9Y5NjOyO/pwlsFnOAaCQNvuaH
+         sUq9SEG+iHqbAt+xY5aU+JL3IyHwkMyoq2mnzux/Vu+PJS/yAG3DR7B1eIZLWCwymdEc
+         8s6Q==
+X-Gm-Message-State: ANoB5pmYRugbQxOWdZMUGYW9LvtmBW3SGVBb64u6VRTl+wB9p8F0vTOI
+        uUMv2e65kTN8EKhDGjtUualfiw==
+X-Google-Smtp-Source: AA0mqf4ecV5sn0MU3WIXansYGgAefGMmGfieNqDEHYX8GlRHU+otVXVZ8ZQgQ62Qiq3SOe//i8WZ+Q==
+X-Received: by 2002:a5d:58d5:0:b0:242:1ff2:eeb4 with SMTP id o21-20020a5d58d5000000b002421ff2eeb4mr11630176wrf.419.1669979498869;
+        Fri, 02 Dec 2022 03:11:38 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b16-20020a5d4b90000000b002422202fa7fsm4038995wrt.39.2022.12.02.03.11.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Dec 2022 03:11:38 -0800 (PST)
 References: <20221201225703.6507-1-ddrokosov@sberdevices.ru>
- <20221201225703.6507-4-ddrokosov@sberdevices.ru>
- <166995398331.2089708.18189499743713568568.robh@kernel.org>
- <20221202094940.elhjbz7tbgxesr52@CAB-WSD-L081021>
- <640ad325-91c4-109a-5ccd-05ac653a29bb@linaro.org>
+ <20221201225703.6507-2-ddrokosov@sberdevices.ru>
+ <166995398251.2089685.16059995540663317860.robh@kernel.org>
+ <20221202095124.4ecpfqhtzf34lwbf@CAB-WSD-L081021>
+ <cea3cdd4-3d36-1439-b211-047091c05a0f@linaro.org>
+User-agent: mu4e 1.8.10; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, sboyd@kernel.org, khilman@baylibre.com,
+        kernel@sberdevices.ru, robh+dt@kernel.org,
+        martin.blumenstingl@googlemail.com,
+        linux-arm-kernel@lists.infradead.org, jian.hu@amlogic.com,
+        linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-amlogic@lists.infradead.org, rockosov@gmail.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        neil.armstrong@linaro.org
+Subject: Re: [PATCH v8 01/11] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+Date:   Fri, 02 Dec 2022 12:04:51 +0100
+In-reply-to: <cea3cdd4-3d36-1439-b211-047091c05a0f@linaro.org>
+Message-ID: <1jfsdy83h3.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <640ad325-91c4-109a-5ccd-05ac653a29bb@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2022/12/02 07:44:00 #20636821
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Krzysztof,
 
-Thank you for quick review. Let me explain you why I sent Jian broken
-patches and applied my fixup patches above.
+On Fri 02 Dec 2022 at 11:39, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-I've found several versions of A1 clkc drivers from Jian Hu Amlogic engineer,
-the last one version was a couple years ago.
-I've reworked the last (v7) version and didn't know the correct way to apply
-all fixes.
+> On 02/12/2022 10:51, Dmitry Rokosov wrote:
+>> On Thu, Dec 01, 2022 at 10:10:04PM -0600, Rob Herring wrote:
+>>>
+>>> On Fri, 02 Dec 2022 01:56:53 +0300, Dmitry Rokosov wrote:
+>>>> From: Jian Hu <jian.hu@amlogic.com>
+>>>>
+>>>> Add the documentation to support Amlogic A1 PLL clock driver,
+>>>> and add A1 PLL clock controller bindings.
+>>>>
+>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>>> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+>>>> ---
+>>>>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 52 +++++++++++++++++++
+>>>>  include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
+>>>>  2 files changed, 68 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>>>  create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+>>>>
+>>>
+>>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>>
+>>> yamllint warnings/errors:
+>>> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml:26:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
+>>>
+>>> dtschema/dtc warnings/errors:
+>>> ./Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml: $id: relative path/filename doesn't match actual path or filename
+>>> 	expected: http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#
+>>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.example.dtb: pll-clock-controller@7c80: reg: [[0, 31872], [0, 396]] is too long
+>>> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>>
+>>> doc reference errors (make refcheckdocs):
+>>>
+>>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221201225703.6507-2-ddrokosov@sberdevices.ru
+>>>
+>>> The base for the series is generally the latest rc1. A different dependency
+>>> should be noted in *this* patch.
+>>>
+>>> If you already ran 'make dt_binding_check' and didn't see the above
+>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>>> date:
+>>>
+>>> pip3 install dtschema --upgrade
+>>>
+>>> Please check and re-submit after running the above command yourself. Note
+>>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>>> your schema. However, it must be unset to test all examples with your schema.
+>>>
+>> 
+>> Please find all fixes of above warnings and errors in the my patch
+>> located at the link:
+>> 
+>> https://lore.kernel.org/linux-amlogic/20221201225703.6507-9-ddrokosov@sberdevices.ru/
+>
+> Why? This patch here is broken and it should be fixed. Don't apply
+> broken patches...
 
-From my point of view I thought about two options:
-1) Merge all my changes with Jian Hu patches and leave Jian Hu SoB
-2) Don't touch Jian Hu v7 patches and apply my changes above.
+Dmitry is ressurecting a series that is several years old and not his to
+begin with.
 
-I have chosen the second option, because it looks like respect Jian Hu's
-effort. I don't want to "stealing" his patches, just want to fix all
-broken things.
+He was unsure about take the code of somebody else.
+To be fair, he even asked for advice on IRC about to proceed.
 
-So I'm sorry for misunderstanding here and please correct
-me what's right workflow in such situation.
+Dmitry, as you may have guessed, for next revision, please fix Jian Hu
+original patches in place, not with fixup patches.
 
-On Fri, Dec 02, 2022 at 11:39:47AM +0100, Krzysztof Kozlowski wrote:
-> On 02/12/2022 10:49, Dmitry Rokosov wrote:
-> > On Thu, Dec 01, 2022 at 10:10:04PM -0600, Rob Herring wrote:
-> >>
-> >> On Fri, 02 Dec 2022 01:56:55 +0300, Dmitry Rokosov wrote:
-> >>> From: Jian Hu <jian.hu@amlogic.com>
-> >>>
-> >>> Add the documentation to support Amlogic A1 peripheral clock driver,
-> >>> and add A1 peripheral clock controller bindings.
-> >>>
-> >>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> >>> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> >>> ---
-> >>>  .../bindings/clock/amlogic,a1-clkc.yaml       | 65 ++++++++++++
-> >>>  include/dt-bindings/clock/a1-clkc.h           | 98 +++++++++++++++++++
-> >>>  2 files changed, 163 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> >>>  create mode 100644 include/dt-bindings/clock/a1-clkc.h
-> >>>
-> >>
-> >> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> >> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> >>
-> >> yamllint warnings/errors:
-> >>
-> >> dtschema/dtc warnings/errors:
-> >> ./Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml: $id: relative path/filename doesn't match actual path or filename
-> >> 	expected: http://devicetree.org/schemas/clock/amlogic,a1-clkc.yaml#
-> >> Documentation/devicetree/bindings/clock/amlogic,a1-clkc.example.dts:18.48-30.11: Warning (unit_address_vs_reg): /example-0/periphs-clock-controller: node has a reg or ranges property, but no unit name
-> >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.example.dtb: periphs-clock-controller: reg: [[0, 2048], [0, 260]] is too long
-> >> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> >>
-> >> doc reference errors (make refcheckdocs):
-> >>
-> >> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221201225703.6507-4-ddrokosov@sberdevices.ru
-> >>
-> >> The base for the series is generally the latest rc1. A different dependency
-> >> should be noted in *this* patch.
-> >>
-> >> If you already ran 'make dt_binding_check' and didn't see the above
-> >> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> >> date:
-> >>
-> >> pip3 install dtschema --upgrade
-> >>
-> >> Please check and re-submit after running the above command yourself. Note
-> >> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> >> your schema. However, it must be unset to test all examples with your schema.
-> >>
-> > 
-> > That's totally right warnings and errors. All of them are fixed in the
-> > my "fixup" patch of Jian's original dt_binding schema:
-> > 
-> > https://lore.kernel.org/linux-amlogic/20221201225703.6507-11-ddrokosov@sberdevices.ru/
-> 
-> No, this patch must be fixed. It's not correct.
-> 
+If your fixes are minor (not complete rewrite), please keep the original
+author and add your SoB
+
+>
 > Best regards,
 > Krzysztof
-> 
 
--- 
-Thank you,
-Dmitry
