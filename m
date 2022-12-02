@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBFAC4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 16:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22FBC4321E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 16:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233155AbiLBQP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 11:15:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52652 "EHLO
+        id S233510AbiLBQYX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 11:24:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232678AbiLBQP2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 11:15:28 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C94AD304
-        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 08:15:27 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id n21so12636148ejb.9
-        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 08:15:27 -0800 (PST)
+        with ESMTP id S234045AbiLBQYJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 11:24:09 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484D627931
+        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 08:20:38 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id b2so12683936eja.7
+        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 08:20:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=resnulli-us.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kaxyw0y6A96dV/JlLT84d98tXLfc2Ox7qoi5kR5vbqA=;
-        b=HVEuKvGdJJwpqJIx6DmExSfkDyGnZlNyygIYTlta3lzPcId1r8utFVifV5qbv4i8ir
-         9auwDIW5WWjtXB/so4pdurJQhtsBXVOA6EATAhXfmHzKISMkSy5NQb/Trl9ALTWCvNdC
-         l7IOnYwM3hq5BUGgQqjUxMbW87/ih4evxmgSc50ExZwqnpeGpM57n/8T91sEokWFAJmD
-         pEpqHMrfzRIBLEh1jhvTriObUggWd8x8haWYMq0YKqOy8BOEaWBgX0qKeeDqyzzj31ir
-         XLNJIvRSEaDjjhkNUevN9J787IxYzImg2DjmeZ30Q1eiOhds3cWOY7VhOwKpaKjRDou8
-         HxMw==
+        bh=Y8LFScKqDqzJLrtmOOWlBwZ43NPyTwr4I3sDAVqBnGc=;
+        b=7s8mLbD6VDNc/lOLdjSMH1X/KN4UtySwF8Rioh+6fuONHVoJ3Rs6jsAMwB1lRaLbEa
+         wmLEK33GR1k9uCEthryrvIxDzAme+CRxhr13biSKLAwQj176m5zgHrs6S8U6NZMdKzv3
+         5FpUeQD5l85J2CCMg1YktcyfTGWGhlVFEdnhZwxsz6BHg9UizNUcNO6EFJccL5vH8+8N
+         2rvIgmfrIcvUYtBxFkyCwQJWoVWoM2nxOa3sLHd1vnSCJiE0sC5kKLrhCbG4Vanhxrr4
+         4rbcbzE8+5SG5AHPk9txwGTCRq7BVvhWSOtpuUfcqtBTn+1+lsA06JSlhbe1FHvh9hbk
+         tm7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Kaxyw0y6A96dV/JlLT84d98tXLfc2Ox7qoi5kR5vbqA=;
-        b=Xzx0TS8J0zfxjzo1a5k83XJ91jqmeL2bXhfVghmbg6ynOzGoE8td7Yx6DJk1PUtZn2
-         pIEpgYco3c2w3dojMDK2MwHjU/xYzktWHkZuGpLroBWqaq85fFgqTZSORyz7FJSFpRXO
-         a/NScvd5tq8dJdOPJrNry7XfNEtkjBDZy3eWAvvZYxRGol+Gj44xIRxOTDJWjBPUTA6c
-         EquycVC6hv4vgff8CKGlGt49VTdTB5NscvBlk+Zr5lcfIwN48pSrX87S303HHzk7jTHY
-         qij/J4KwzmyDpkLdm23hJOWOGW+p3gbhLImPip8XvkP6MIFjUsDIG0Hh/oWVTDLXLruo
-         msag==
-X-Gm-Message-State: ANoB5pl3nykFhJfS+7jSh+1/uIKz5VSRKBTrFxeqLAQLtan2TRxuHVk0
-        MdpNbzca/aXfKw12W9e7BeXB3YhCHt3vKhU2YGZCvg==
-X-Google-Smtp-Source: AA0mqf6+H+O0fs0gpI1xdx4NW+EjICIlxrx+pqx+gxEZkmJGbe4CuPeoEg5jYfgWO+qF5znsRhaHCw==
-X-Received: by 2002:a17:907:9116:b0:78a:16ad:8250 with SMTP id p22-20020a170907911600b0078a16ad8250mr49303168ejq.747.1669997725853;
-        Fri, 02 Dec 2022 08:15:25 -0800 (PST)
+        bh=Y8LFScKqDqzJLrtmOOWlBwZ43NPyTwr4I3sDAVqBnGc=;
+        b=cMDdmkHNR/U/9rfPRMok8vN0AMdcm8fLRrSBCEhEDNi796OHJJtVSmu8YqbKVmEl/U
+         G5jmTmq8gTqqhGQ4pDXZN7AWr7l299sE8VuJYi2q8Q5yui8B+cesARm6TFg98WOSViB2
+         yUNVHZ9o+E/HbC36vXleZryaA2/BuGh3FGTTfAXHZ7jaegsqj79vkULZoZNwKJ4QETbG
+         fcXcL4u4TSvQFCEoubJQI8MOyyLPAd6O5rzH3cXSBOvXTmmAjuh426uF1zaJNzDqSiLD
+         6vLInI0pQD84KnOuOpfeLRpFp/ymZBYS9AHoc2AMoP5FmrZXYJ3/RP4lb6cal4iDLIwY
+         kSXQ==
+X-Gm-Message-State: ANoB5pmgCnlyQ2lnHNDKGyAuWsBlg4zMcArxP9rnBm9JK6cy1bkXie/j
+        VOEs+nLZNAkcimmEVOqmZ+HRKg==
+X-Google-Smtp-Source: AA0mqf5i6upWvhvjXMNyRH65grYqmXIUmKbfuBXzercxFOECmsfQ/bU491DNLSWw5XLYfNioxXgZNw==
+X-Received: by 2002:a17:906:99c8:b0:7b5:ff35:6715 with SMTP id s8-20020a17090699c800b007b5ff356715mr41992388ejn.255.1669998036795;
+        Fri, 02 Dec 2022 08:20:36 -0800 (PST)
 Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id f23-20020aa7d857000000b0045cf4f72b04sm3044464eds.94.2022.12.02.08.15.24
+        by smtp.gmail.com with ESMTPSA id fg7-20020a056402548700b0046b847d6a1csm3052642edb.21.2022.12.02.08.20.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 08:15:25 -0800 (PST)
-Date:   Fri, 2 Dec 2022 17:15:23 +0100
+        Fri, 02 Dec 2022 08:20:35 -0800 (PST)
+Date:   Fri, 2 Dec 2022 17:20:34 +0100
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
 Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
@@ -59,110 +59,277 @@ Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
         Vadim Fedorenko <vadfed@fb.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
-Message-ID: <Y4okm5TrBj+JAJrV@nanopsycho>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 4/4] ptp_ocp: implement DPLL ops
+Message-ID: <Y4ol0o5Gpe8ZgAas@nanopsycho>
 References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <20221129213724.10119-3-vfedorenko@novek.ru>
- <Y4eGxb2i7uwdkh1T@nanopsycho>
- <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4nyBwNPjuJFB5Km@nanopsycho>
- <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <20221129213724.10119-5-vfedorenko@novek.ru>
+ <Y4dPaHx1kT3A80n/@nanopsycho>
+ <DM6PR11MB4657D9753412AD9DEE7FAB7D9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4n0H9BbzaX5pCpQ@nanopsycho>
+ <DM6PR11MB465721310114ECA13F556E8A9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+In-Reply-To: <DM6PR11MB465721310114ECA13F556E8A9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Dec 02, 2022 at 03:54:33PM CET, arkadiusz.kubalewski@intel.com wrote:
+Fri, Dec 02, 2022 at 03:39:17PM CET, arkadiusz.kubalewski@intel.com wrote:
 >>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Friday, December 2, 2022 1:40 PM
+>>Sent: Friday, December 2, 2022 1:49 PM
 >>
->>Fri, Dec 02, 2022 at 12:27:35PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>Fri, Dec 02, 2022 at 12:27:32PM CET, arkadiusz.kubalewski@intel.com wrote:
 >>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>Sent: Wednesday, November 30, 2022 5:37 PM Tue, Nov 29, 2022 at
->>>>10:37:22PM CET, vfedorenko@novek.ru wrote:
+>>>>Sent: Wednesday, November 30, 2022 1:41 PM
+>>>>
+>>>>Tue, Nov 29, 2022 at 10:37:24PM CET, vfedorenko@novek.ru wrote:
 >>>>>From: Vadim Fedorenko <vadfed@fb.com>
 >>
 >>[...]
 >>
 >>
->>>>>+static int
->>>>>+dpll_msg_add_pin_netifindex(struct sk_buff *msg, const struct
->>>>dpll_pin_attr *attr)
+>>>>>+static int ptp_ocp_dpll_get_attr(struct dpll_device *dpll, struct
+>>>>dpll_attr *attr)
 >>>>>+{
->>>>>+	unsigned int netifindex; // TODO: Should be u32?
+>>>>>+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
+>>>>>+	int sync;
 >>>>>+
->>>>>+	if (dpll_pin_attr_netifindex_get(attr, &netifindex))
->>>>>+		return 0;
->>>>>+	if (nla_put_u32(msg, DPLLA_PIN_NETIFINDEX, netifindex))
+>>>>>+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
+>>>>>+	dpll_attr_lock_status_set(attr, sync ? DPLL_LOCK_STATUS_LOCKED :
+>>>>DPLL_LOCK_STATUS_UNLOCKED);
 >>>>
->>>>I was thinking about this. It is problematic. DPLL has no notion of
->>>>network namespaces. So if the driver passes ifindex, dpll/user has no
->>>>clue in which network namespace it is (ifindexes ovelay in multiple
->>>>namespaces).
->>>>
->>>>There is no easy/nice solution. For now, I would go without this and
->>>>only have linkage the opposite direction, from netdev to dpll.
+>>>>get,set,confuse. This attr thing sucks, sorry :/
 >>>
->>>Well, makes sense to me.
->>>Although as I have checked `ip a` showed the same ifindex either if
->>>port was in the namespace or not.
->>
->>That is not the problem. The problem is, that you can have following two
->>netdevs with the same ifindex each in different netns.
->>1) netdev x: ifindex 8, netns ns1
->>2) netdev y: ifindex 8, netns ns2
->>
->
->OK, I now see your point what is the confusion.
->Thanks for explanation.
->But I am still not sure how to make it this way in Linux, if interface added to
->netns uses original netdev ifindex, and driver after reload receives new
->(previously unused ifindex) what would be the steps/commands to make it as you
->described? 
-
-As I said, I don't see a way to have the ifindex exposed throught dpll
-at all. I believe we should do it only the other way around. Assign
-dpll_pin pointer to struct net_device and expose this over new attr
-IFLA_DPLL_PIN over RT netlink.
-
-
->
->>>Isn't it better to let the user know ifindex, even if he has to iterate
->>>all the namespaces he has created?
->>
->>Definitelly not. As I showed above, one ifindex may refer to multiple
->>netdevice instances.
->>
->>
->>[...]
->>
->>
->>>>>+	DPLLA_NETIFINDEX,
->>>>
->>>>Duplicate, you have it under pin.
+>>>Once again, I feel obligated to add some explanations :)
 >>>
->>>The pin can have netifindex as pin signal source may originate there by
->>>Clock recovery mechanics.
->>>The dpll can have ifindex as it "owns" the dpll.
+>>>getter is ops called by dpll subsystem, it requires data, so here value
+>>>shall be set for the caller, right?
+>>>Also have explained the reason why this attr struct and functions are
+>>>done this way in the response to cover letter concerns.
 >>
->>DPLL is not owned by any netdevice. That does not make any sense.
->>Netdevice may be "child" of the same PCI device as the dpll instance.
->>But that's it.
+>>Okay, I will react there.
 >
->Sure, I won't insist on having it there, as I said, thought Maciej have seen
->a benefit with such traceability, unfortunately I cannot recall what was it.
+>Thanks!
 >
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>>>+
+>>>>>+	return 0;
+>>>>>+}
+>>>>>+
+>>>>>+static int ptp_ocp_dpll_pin_get_attr(struct dpll_device *dpll,
+>>>>>+struct
+>>>>dpll_pin *pin,
+>>>>>+				     struct dpll_pin_attr *attr) {
+>>>>>+	dpll_pin_attr_type_set(attr, DPLL_PIN_TYPE_EXT);
+>>>>
+>>>>This is exactly what I was talking about in the cover letter. This is
+>>>>const, should be put into static struct and passed to
+>>>>dpll_device_alloc().
+>>>
+>>>Actually this type or some other parameters might change in the
+>>>run-time,
+>>
+>>No. This should not change.
+>>If the pin is SyncE port, it's that for all lifetime of pin. It cannot turn
+>>to be a EXT/SMA connector all of the sudden. This should be definitelly
+>>fixed, it's a device topology.
+>>
+>>Can you explain the exact scenario when the change of personality of pin
+>>can happen? Perhaps I'm missing something.
+>>
 >
->Thanks,
+>Our device is not capable of doing this type of switch, but why to assume
+>that some other HW would not? As I understand generic dpll subsystem must not
+>be tied to any HW, and you proposal makes it exactly tied to our approaches.
+>As Vadim requested to have possibility to change pin between source/output
+>"states" this seems also possible that some HW might have multiple types
+>possible.
+
+How? How do you physically change from EXT connector to SyncE port? That
+does not make sense. Topology is given. Let's go back to Earth here.
+
+
+>I don't get why "all of the sudden", DPLLA_PIN_TYPE_SUPPORTED can have multiple
+>values, which means that the user can pick one of those with set command.
+>Then if HW supports it could redirect signals/setup things accordingly.
+
+We have to stritly distinguis between things that are given, wired-up,
+static and things that could be configured.
+
+
+>
+>>
+>>
+>>>depends on the device, it is up to the driver how it will handle any
+>>>getter, if driver knows it won't change it could also have some static
+>>>member and copy the data with: dpll_pin_attr_copy(...);
+>>>
+>>>>
+>>>>
+>>>>>+	return 0;
+>>>>>+}
+>>>>>+
+>>>>>+static struct dpll_device_ops dpll_ops = {
+>>>>>+	.get	= ptp_ocp_dpll_get_attr,
+>>>>>+};
+>>>>>+
+>>>>>+static struct dpll_pin_ops dpll_pin_ops = {
+>>>>>+	.get	= ptp_ocp_dpll_pin_get_attr,
+>>>>>+};
+>>>>>+
+>>>>> static int
+>>>>> ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>>>> {
+>>>>>+	const u8 dpll_cookie[DPLL_COOKIE_LEN] = { "OCP" };
+>>>>>+	char pin_desc[PIN_DESC_LEN];
+>>>>> 	struct devlink *devlink;
+>>>>>+	struct dpll_pin *pin;
+>>>>> 	struct ptp_ocp *bp;
+>>>>>-	int err;
+>>>>>+	int err, i;
+>>>>>
+>>>>> 	devlink = devlink_alloc(&ptp_ocp_devlink_ops, sizeof(*bp), &pdev-
+>>>>>dev);
+>>>>> 	if (!devlink) {
+>>>>>@@ -4230,6 +4263,20 @@ ptp_ocp_probe(struct pci_dev *pdev, const
+>>>>>struct
+>>>>pci_device_id *id)
+>>>>>
+>>>>> 	ptp_ocp_info(bp);
+>>>>> 	devlink_register(devlink);
+>>>>>+
+>>>>>+	bp->dpll = dpll_device_alloc(&dpll_ops, DPLL_TYPE_PPS, dpll_cookie,
+>>>>pdev->bus->number, bp, &pdev->dev);
+>>>>>+	if (!bp->dpll) {
+>>>>>+		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
+>>>>>+		goto out;
+>>>>>+	}
+>>>>>+	dpll_device_register(bp->dpll);
+>>>>
+>>>>You still have the 2 step init process. I believe it would be better
+>>>>to just have dpll_device_create/destroy() to do it in one shot.
+>>>
+>>>For me either is ok, but due to pins alloc/register as explained below
+>>>I would leave it as it is.
+>>
+>>Please don't, it has no value. Just adds unnecesary code. Have it nice and
+>>simple.
+>>
+>
+>Actually this comment relates to the other commit, could we keep comments
+>in the threads they belong to please, this would be much easier to track.
+>But yeah sure, if there is no strong opinion on that we could change it.
+
+Ok.
+
+
+>
+>>
+>>>
+>>>>
+>>>>
+>>>>>+
+>>>>>+	for (i = 0; i < 4; i++) {
+>>>>>+		snprintf(pin_desc, PIN_DESC_LEN, "sma%d", i + 1);
+>>>>>+		pin = dpll_pin_alloc(pin_desc, PIN_DESC_LEN);
+>>>>>+		dpll_pin_register(bp->dpll, pin, &dpll_pin_ops, bp);
+>>>>
+>>>>Same here, no point of having 2 step init.
+>>>
+>>>The alloc of a pin is not required if the pin already exist and would
+>>>be just registered with another dpll.
+>>
+>>Please don't. Have a pin created on a single DPLL. Why you make things
+>>compitated here? I don't follow.
+>
+>Tried to explain on the cover-letter thread, let's discuss there please.
+
+Ok.
+
+
+>
+>>
+>>
+>>>Once we decide to entirely drop shared pins idea this could be probably
+>>>done, although other kernel code usually use this twostep approach?
+>>
+>>No, it does not. It's is used whatever fits on the individual usecase.
+>
+>Similar to above, no strong opinion here from me, for shared pin it is
+>certainly useful.
+>
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>>>+	}
+>>>>>+
+>>>>> 	return 0;
+>>>>
+>>>>
+>>>>Btw, did you consider having dpll instance here as and auxdev? It
+>>>>would be suitable I believe. It is quite simple to do it. See
+>>>>following patch as an example:
+>>>
+>>>I haven't think about it, definetly gonna take a look to see if there
+>>>any benefits in ice.
+>>
+>>Please do. The proper separation and bus/device modelling is at least one
+>>of the benefits. The other one is that all dpll drivers would happily live
+>>in drivers/dpll/ side by side.
+>>
+>
+>Well, makes sense, but still need to take a closer look on that.
+>I could do that on ice-driver part, don't feel strong enough yet to introduce
+
+Sure Ice should be ready.
+
+
+>Changes here in ptp_ocp.
+
+I think that Vadim said he is going to look at that during the call. My
+commit introducing this to mlxsw is a nice and simple example how this
+could be done in ptp_ocp.
+
+
+>
+>Thank you,
 >Arkadiusz
-> 
+>
 >>
 >>
->>>Shall user know about it? probably nothing usefull for him, although
->>>didn't Maciej Machnikowski asked to have such traceability?
+>>>
+>>>Thanks,
+>>>Arkadiusz
+>>>
+>>>>
+>>>>commit bd02fd76d1909637c95e8ef13e7fd1e748af910d
+>>>>Author: Jiri Pirko <jiri@nvidia.com>
+>>>>Date:   Mon Jul 25 10:29:17 2022 +0200
+>>>>
+>>>>    mlxsw: core_linecards: Introduce per line card auxiliary device
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>>
+>>>>> out:
+>>>>>@@ -4247,6 +4294,8 @@ ptp_ocp_remove(struct pci_dev *pdev)
+>>>>> 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
+>>>>> 	struct devlink *devlink = priv_to_devlink(bp);
+>>>>>
+>>>>>+	dpll_device_unregister(bp->dpll);
+>>>>>+	dpll_device_free(bp->dpll);
+>>>>> 	devlink_unregister(devlink);
+>>>>> 	ptp_ocp_detach(bp);
+>>>>> 	pci_disable_device(pdev);
+>>>>>--
+>>>>>2.27.0
+>>>>>
