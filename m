@@ -2,241 +2,421 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51E6C4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 14:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B08EC4321E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 16:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbiLBOym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 09:54:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55580 "EHLO
+        id S233799AbiLBQMQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 11:12:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbiLBOyk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 09:54:40 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9A7D2D84;
-        Fri,  2 Dec 2022 06:54:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1669992879; x=1701528879;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=XYVYV++pUMEPUSmEW/xk+KTmynfETsgYwnoqcJvi6WY=;
-  b=h4e1qjC1iC2IE/aE2rZc1N8wCwp/gDJdyAP/A+SSGTMyIL9eP9yck637
-   26nUYqfhe5+h9E+aro9afYVLWUiQwiQ2GRSei95/uQNz4C4LM5aitMxAq
-   BM88MqJbENR1LQKYQ0OOExaweAZ140y7FDHeD/CkadtdLi01DPlxc4uDP
-   24qiuOUBfyHFUS/k+VtENPPHGVEGEd0EodkaP+OH4hKYM7KepL8Yv0VeD
-   vq8HqbX1aJHBT6qzJK/N3e/tgL22c1RALJaPrLgsaxENUJvtfjjX9xTec
-   XJ2/w44Bryh8IcXAqjGQ1xzZgmePTF/Jy1WhJqvWCGRGamb/2u2icniw/
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="402247367"
-X-IronPort-AV: E=Sophos;i="5.96,212,1665471600"; 
-   d="scan'208";a="402247367"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2022 06:54:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="622722114"
-X-IronPort-AV: E=Sophos;i="5.96,212,1665471600"; 
-   d="scan'208";a="622722114"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga006.jf.intel.com with ESMTP; 02 Dec 2022 06:54:38 -0800
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Fri, 2 Dec 2022 06:54:37 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Fri, 2 Dec 2022 06:54:37 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16 via Frontend Transport; Fri, 2 Dec 2022 06:54:37 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.174)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.16; Fri, 2 Dec 2022 06:54:35 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VtgEfrNkTN7KAMRc7vq6fLoWGy0cILTg/7eXG60WcVrajjInWvFclVzW2AFy7PKu0GKuhA3kLOESWm3Dgp5biczIAGUVbmuBYgdw/VyeA2ANl1qSN8EIBKD3bSOGdOBBAIxonvzuKEwragXKNS6Ud2Ke63FXh5tWVF0MjPp/9114lq4SP6Uxe5naIVa2taE5Cvb2pA5L/SA7O0Q4+CAaXPF/INVyrvAYsmo1QQazbyqv9qWAvQz6Pxnxro1GgbRZMw6+vGUUrPdxM9ZPBgINXAY6IHwjXIqjNozkWqIvGAbyLOHxjOh/GDn6KRFGdJtnForMMHGdlwuKOJ9+HkVEFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QmM6cXq5ad5yoz0MINBbBiWfPWq8vjI4dCJG0f0cn+E=;
- b=YtpPArpYUq8O5BLIZ1Qp7ubJRihTE056OQV1PONXIavbv2ITXMd+OsP/wLPLxTpcYW93KlSqUQt7jK6u2ddCfUXPXJ2B54tnMUuz6cHDmN4sReaxfTeRPLvGCa89zyUaDUvwC/mwwnHbkgeQN5+n2AwE0RGHmfjxkRfW0T0O2MYQBAWkid11xmJjNpv1RokZj/5/8two3ExBpxbn23VhhiyQJjJrsDwP61/TAAsqR3ueaAh3bYTr7Bszrs0ME4IYFtKbp6TEf+EJBQdjdZioVy7Ap2caUe98++9aeKXkO97Ouwbdi3md4qT0kzpBnuvI550Ozi3HhphyPTuDiV+ylw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5880.8; Fri, 2 Dec 2022 14:54:33 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::5006:f262:3103:f080]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::5006:f262:3103:f080%8]) with mapi id 15.20.5880.010; Fri, 2 Dec 2022
- 14:54:33 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jiri Pirko <jiri@resnulli.us>
-CC:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        with ESMTP id S233779AbiLBQMN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 11:12:13 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57278ACA6D
+        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 08:12:10 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id d14so2143380edj.11
+        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 08:12:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bz5f4zL5wYGc031JRJNMmmPVTjKmJYPCIfit1sIYYRA=;
+        b=lY0BXQrFkYFmQLJWCUQAeYKpYMl2mG+emRVS2a7k+2d56y8JuSYCmr51xCF7vicwl5
+         EgqicGx1GVkfR5z/QlyPuvaRAUk35Wi+kzXD1nCsrowE2XzYrwD3/U7V4ulNwloN6JjY
+         GpraWjPbuoz2wVSa2T6U+vsELLV9Hh3AGNLGboOnrdk8OzVRtD5zXXaV8BiQGfR/RCbK
+         0LQi8kVZSSmbZRLUKhlQclUDLOylUzaFbQ+jYKSPvBtCFkLhSyWTXZXK5M70VdOo4Idp
+         zl0N3id0i1FhBkQ1EANx0b2bb4DA5ZZGcijWQCxP8cyiXKIPeCnhbSf2TPVJ+plO6bye
+         wCvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bz5f4zL5wYGc031JRJNMmmPVTjKmJYPCIfit1sIYYRA=;
+        b=b449bEYYosEKvxtpKR1sF66Q9EwHAVH2UASxUiliz5wnp2Xsx7Esq8DGqHXA4x2Pho
+         5tpy5ovYKgS2iNTMbEAl29IMFakHgFLi2856/ZZOj1nnlOG+52QRABrQNbb033hBAaxO
+         G9VUBDs0xPAAng+G3WPlJ6gzVjUNPfv8r6xlfEUcTXy7TzXGmZpwhZtDi2/waqyBmMGQ
+         mKBPTaQRLxf3VjmOsyeTMEhYNhyIolgFuyFLj76A/fqms/1nHPXJxH38sPzVmk56F9tO
+         oJUm7H+N124LzaiD13deGFcA9nHbfuGOWpTi0GgUm8qJP3yMghw4j7uTrxfLUzsJR0Vr
+         ToPg==
+X-Gm-Message-State: ANoB5plt2ZFQ1b0A66JWHbU0vGnTsFRdp7geBJOIWA+qVSB0xovMmdUr
+        ITeyWrBuHguLPY89v14yhqw1bw==
+X-Google-Smtp-Source: AA0mqf4Q/72OiRSV9ieJb7mpBGCe7gnJ07an05NKjS/XOtjFuoW+gNP1dogJ0wnbkKbl6WQ9Msl4vg==
+X-Received: by 2002:aa7:c754:0:b0:46b:6096:a884 with SMTP id c20-20020aa7c754000000b0046b6096a884mr18355252eds.152.1669997528685;
+        Fri, 02 Dec 2022 08:12:08 -0800 (PST)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id c9-20020a170906762900b007be3aa82543sm3162631ejn.35.2022.12.02.08.12.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Dec 2022 08:12:07 -0800 (PST)
+Date:   Fri, 2 Dec 2022 17:12:06 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
         Jakub Kicinski <kuba@kernel.org>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Paolo Abeni <pabeni@redhat.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Vadim Fedorenko <vadfed@fb.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: RE: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
-Thread-Topic: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
-Thread-Index: AQHZBDrzHhOO6jCKv0uW33ic8hB1f65Xq5eAgALEiZCAAB2ugIAAIBXA
-Date:   Fri, 2 Dec 2022 14:54:33 +0000
-Message-ID: <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y4oj1q3VtcQdzeb3@nanopsycho>
 References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <20221129213724.10119-3-vfedorenko@novek.ru> <Y4eGxb2i7uwdkh1T@nanopsycho>
- <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4nyBwNPjuJFB5Km@nanopsycho>
-In-Reply-To: <Y4nyBwNPjuJFB5Km@nanopsycho>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|BN9PR11MB5530:EE_
-x-ms-office365-filtering-correlation-id: cc8bc5d9-e545-4bd5-103b-08dad4751fd6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +PShc1aGAyDfKi3YEvu/I5lKO5NNwhPSkkl3dgPcFUZiznvEvn09nfjICqis16NdUmgfbHlC+SDXulJ+bO/hpE/gLQGtwevteFth4gdiDf5tiNcpOWvyq4S8sqCTGLw3Wg5gYJQBIiv2c3Ieq5aosg7kAf1hrLohmh4q34mHmRHzKWRuticZDhfkAnIW/dpLI3U1sNWUvcDuTjeZwcDG6CUkyeiSAQa1vPNJO+FvJrOfViYVnM9U3NN2FLPJXQn8T9Y39QOSZZnnSUU3D8chU9Ep+ylDRlSiIpUgRetDkpEHv1NpVBJyqRW0qHxZKepK3TPqRieBhBtB8iyZq9Kcm50kpu66ubF9rf3uVf4AyTCtQXVTyuMP2vtDLm7M2jPIh5t0Csz4jnRDIvPHJqTPtNQ72OdoHNob0wxnjD1bwX+L59ulRJWffe/ZZ1v11micBAPIJfmDULZqHQFD3yl2qLhixg58vA7FD52gKe1KQ7y5ycTZpJ8tY4CNzFPJX/aqJ1M0SUdN/1uZggD/k4f70MRjtjyUst6M02jwCgT8wvN8WahP1yn+9RwbLwZZb3/LK+my/xJfZgculNrlm+bixqctrasQ6nPvUkMZj8D7x/pnG/CROa6Urpqs4zNiI/GEIj7JSQbxd4hj/NE9C0iph9mCEbYofFdDmxcu6V00UW1BaP/H+S0b9OFG9R/7jnLlNaQ0gEXSsBWXLLNkpDJJvQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(376002)(346002)(136003)(39860400002)(366004)(451199015)(33656002)(26005)(478600001)(86362001)(7696005)(9686003)(6506007)(71200400001)(55016003)(38070700005)(82960400001)(83380400001)(186003)(38100700002)(122000001)(52536014)(76116006)(66476007)(41300700001)(107886003)(5660300002)(66446008)(66556008)(2906002)(54906003)(64756008)(8676002)(66946007)(6916009)(8936002)(4326008)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?HMxh62/Uq89IgiEjUANX0WzK+2FeFGmYdAPmu1vyjUlvmbasv7E8HRutVaFa?=
- =?us-ascii?Q?eLBWDKNSajKhkknT6FfueTA1YxQhEoAMUlDB1iWbqSFEzxk9SRSYbfF5txfb?=
- =?us-ascii?Q?FCu+uujSaPYoVWWbodF1msZ9kvBSwKHQLoV2LEjiJE7WU2OBFPlOXbuP/1uj?=
- =?us-ascii?Q?pvNl2qPbRi8WIeP+hLXx2hShWIkKyY9Fr6I4QhvKcV327ALXqYJUTGtuMIQm?=
- =?us-ascii?Q?S+NTqMTJWAeYEzdztBUm6Z/yEBg7Ew9At27XK64wmksaJNoAapgehnKNp3mK?=
- =?us-ascii?Q?N+923TET0YqnhBBvkzoavJRIa0tLabfSxddbJgiLnbUl4Fcpn2qtclZaQSJG?=
- =?us-ascii?Q?sqRhppK/PTrdrCS8ArlFiqvq4kosWh//y4DJSkeHwMVx02TyaHX0apHVkxnz?=
- =?us-ascii?Q?MQSDyju50p1phcjPhyv+Jd45m2KSY76zkPmik4yDPLay0vOSXXvqfnmdQMId?=
- =?us-ascii?Q?kmsQMQL4nXgupJhE2Lc4JFPWsUpGED/VBl1/ughQXhLqrIxa2/Vs85UJ3lVr?=
- =?us-ascii?Q?UJu09bTpNGtLbTFWOsI2Cisb8Ric/3mZzuq60rCCECjuA28o2/J0W70B2SQK?=
- =?us-ascii?Q?foIRgfTFH8h+IrjbvgF7NmQ7qEaQwgiGX8CIsS0IBYBC2uoYHSH0YnOX9E/V?=
- =?us-ascii?Q?JfP26uIPIMmavP7B+JlSJ0FrVFqcRsba686wZcWzlsEbJLO1Acmy/t2YOqJc?=
- =?us-ascii?Q?KbN6S9LyjsJC8JF+vJ+tAvqnDBnfqup6mHohvetkIfQRJFwjRQ+o/1v67IuK?=
- =?us-ascii?Q?R3mTN6jg/JCIYAF8qPyWGnG9wpr+r0TA6/oMaQSYLHsL3qqycboc13pLeOqj?=
- =?us-ascii?Q?abm4zyn/W89w/+0KU2BvJtxNMZ37URRQpfYDuV2Srj4QjGzPYbPdPrdAlUOd?=
- =?us-ascii?Q?o2WntBVvtLnWLTclY5TqarPHmotOZDDKgjecBAP5VdGfymIeClY0U9QzaeUV?=
- =?us-ascii?Q?yPxaXLtpAeBQ3/fuzM7kT+ftuUHvGy/M+ecTsnL9A9Cde0H6TceNL18nrwlR?=
- =?us-ascii?Q?bqn02ztJWrwkFEuRwNt/L8TthxR9FHLn7LysKYNa4y9OYNUeVxDJKSPYEXt7?=
- =?us-ascii?Q?f0VFi9VdZpQl22bKAi1njkb07l7EAnMNvn/ff0kd4PyMUXsDQ1IAPr2+Cjvq?=
- =?us-ascii?Q?KHJEQy5eqqyg1qmZG3SkQqlqkt/KWeG6MsNLagpr7+irRo+BbtBLxg33u4wp?=
- =?us-ascii?Q?QGIhRC9jfmR3xA5p/LcqX/wF/u1xV77z09BmZzGcFTEpd2DTJdGw1AaqOOmJ?=
- =?us-ascii?Q?p/ezRFIjPT9199zXua4rW5tqSkcjOSydzP4NqCzsd6gJhgQCff6H4A83aE3L?=
- =?us-ascii?Q?KWLrFufo+THPZ4I0q5BOx3MpwIQfAQVZwH6hxgIlzFaFHsxyDcFS3CSrPJuj?=
- =?us-ascii?Q?yVju2p6ao146+EGQraF3SLXp5/9YG7Z3WTuSfscf11D5ARxCK/5aBuR3c5uf?=
- =?us-ascii?Q?RcJmaUJ699h5dpn3zlDswu4YMjjAf+OLJVu9pBlTtwxVqGD14gjbHDlvQNOy?=
- =?us-ascii?Q?KdLa+LzvWgUPxP4B/KLN/bC21ypwmp4aNTnYCtytFBT9Oi+9694A+n2L2IJY?=
- =?us-ascii?Q?s0QZaSDU9JL0OtchJwun5ObPm9GH29w/P4uYsisa60HYHXIK/AvD/9mjNtrR?=
- =?us-ascii?Q?Zw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <Y4dNV14g7dzIQ3x7@nanopsycho>
+ <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc8bc5d9-e545-4bd5-103b-08dad4751fd6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2022 14:54:33.6261
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rjdgnPR9HNdfjYEA27G3zimA3h3nwwjqNyLqjw8fBtri0TMG/7wgHTOvAjZ7jNzz0YCl6xneqsvM1oE8BxsVLPVTDmrDeO6OREPdAOhmqFs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5530
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Jiri Pirko <jiri@resnulli.us>
->Sent: Friday, December 2, 2022 1:40 PM
->
->Fri, Dec 02, 2022 at 12:27:35PM CET, arkadiusz.kubalewski@intel.com wrote:
->>>From: Jiri Pirko <jiri@resnulli.us>
->>>Sent: Wednesday, November 30, 2022 5:37 PM Tue, Nov 29, 2022 at
->>>10:37:22PM CET, vfedorenko@novek.ru wrote:
->>>>From: Vadim Fedorenko <vadfed@fb.com>
->
->[...]
->
->
->>>>+static int
->>>>+dpll_msg_add_pin_netifindex(struct sk_buff *msg, const struct
->>>dpll_pin_attr *attr)
->>>>+{
->>>>+	unsigned int netifindex; // TODO: Should be u32?
->>>>+
->>>>+	if (dpll_pin_attr_netifindex_get(attr, &netifindex))
->>>>+		return 0;
->>>>+	if (nla_put_u32(msg, DPLLA_PIN_NETIFINDEX, netifindex))
->>>
->>>I was thinking about this. It is problematic. DPLL has no notion of
->>>network namespaces. So if the driver passes ifindex, dpll/user has no
->>>clue in which network namespace it is (ifindexes ovelay in multiple
->>>namespaces).
->>>
->>>There is no easy/nice solution. For now, I would go without this and
->>>only have linkage the opposite direction, from netdev to dpll.
+Fri, Dec 02, 2022 at 12:27:24PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Wednesday, November 30, 2022 1:32 PM
 >>
->>Well, makes sense to me.
->>Although as I have checked `ip a` showed the same ifindex either if
->>port was in the namespace or not.
->
->That is not the problem. The problem is, that you can have following two
->netdevs with the same ifindex each in different netns.
->1) netdev x: ifindex 8, netns ns1
->2) netdev y: ifindex 8, netns ns2
->
-
-OK, I now see your point what is the confusion.
-Thanks for explanation.
-But I am still not sure how to make it this way in Linux, if interface adde=
-d to
-netns uses original netdev ifindex, and driver after reload receives new
-(previously unused ifindex) what would be the steps/commands to make it as =
-you
-described?=20
-
->>Isn't it better to let the user know ifindex, even if he has to iterate
->>all the namespaces he has created?
->
->Definitelly not. As I showed above, one ifindex may refer to multiple
->netdevice instances.
->
->
->[...]
->
->
->>>>+	DPLLA_NETIFINDEX,
->>>
->>>Duplicate, you have it under pin.
+>>Tue, Nov 29, 2022 at 10:37:20PM CET, vfedorenko@novek.ru wrote:
+>>>Implement common API for clock/DPLL configuration and status reporting.
+>>>The API utilises netlink interface as transport for commands and event
+>>>notifications. This API aim to extend current pin configuration and
+>>>make it flexible and easy to cover special configurations.
 >>
->>The pin can have netifindex as pin signal source may originate there by
->>Clock recovery mechanics.
->>The dpll can have ifindex as it "owns" the dpll.
+>>Overall, I see a lot of issues on multiple levels. I will go over them in
+>>follow-up emails. So far, after couple of hours looking trought this, I
+>>have following general feelings/notes:
 >
->DPLL is not owned by any netdevice. That does not make any sense.
->Netdevice may be "child" of the same PCI device as the dpll instance.
->But that's it.
+>Hi Jiri,
+>
+>As we have been participating in last version, feel obligated to answer to
+>the concerns.
 
-Sure, I won't insist on having it there, as I said, thought Maciej have see=
-n
-a benefit with such traceability, unfortunately I cannot recall what was it=
-.
+Cool.
 
 
-Thanks,
-Arkadiusz
-=20
+> 
+>>
+>>1) Netlink interface looks much saner than in previous versions. I will
+>>   send couple of notes, mainly around events and object mixtures and
+>>   couple of bugs/redundancies. But overall, looks fineish.
+>>
+>>2) I don't like that concept of a shared pin, at all. It makes things
+>>   unnecessary complicated. Just have a pin created for dpll instance
+>>   and that's it. If another instance has the same pin, it should create
+>>   it as well. Keeps things separate and easy to model. Let the
+>>   hw/fw/driver figure out the implementation oddities.
+>>   Why exactly you keep pushing the shared pin idea? Perhaps I'm missing
+>>   something crucial.
 >
 >
->>Shall user know about it? probably nothing usefull for him, although
->>didn't Maciej Machnikowski asked to have such traceability?
+>If the user request change on pin#0 of dpll#0, the dpll#0 knows about the
+>change, it reacts accordingly, and notifies the user the something has changed.
+>Which is rather simple.
+>
+>Now, if the dpll#1 is using the same pin (pin#0 of dpll#0), the complicated
+>part starts. First we have to assume:
+>- it was initialized with the same description (as it should, to prevent
+>confusing the user)
+>- it was initialized with the same order (this is at least nice to have from
+>user POV, as pin indices are auto generated), and also in case of multiple pins
+>being shared it would be best for the user to have exactly the same number of
+>pins initialized, so they have same indices and initialization order doesn't
+>introduce additional confusion.
+>
+>Thus, one reason of shared pins was to prevent having this assumptions ever.
+>If the pin is shared, all dplls sharing a pin would have the same description
+>and pin index for a shared pin out of the box.
+>
+>Pin attribute changes
+>The change on dpll#0 pin#0 impacts also dpll#1 pin#0. Notification about the
+>change shall be also requested from the driver that handles dpll#1. In such
+>case the driver has to have some dpll monitoring/notifying mechanics, which at
+>first doesn't look very hard to do, but most likely only if both dplls are
+>initialized and managed by a single instance of a driver/firmware.
+>
+>If board has 2 dplls but each one is managed by its own firmware/driver
+>instance. User changes frequency of pin#0 signal, the driver of dpll#0 must
+>also notify driver of dpll#1 that pin#0 frequency has changed, dpll#1 reacts on
+>the change, notifies the user.
+
+Right.
+
+
+>But this is only doable with assumption, that the board is internally capable
+>of such internal board level communication, which in case of separated
+>firmwares handling multiple dplls might not be the case, or it would require
+>to have some other sw component feel that gap.
+
+Yep, you have the knowledge of sharing inside the driver, so you should
+do it there. For multiple instances, use in-driver notifier for example.
+
+
+>
+>For complex boards with multiple dplls/sync channels, multiple ports,
+>multiple firmware instances, it seems to be complicated to share a pin if
+>each driver would have own copy and should notify all the other about changes.
+>
+>To summarize, that is certainly true, shared pins idea complicates stuff
+>inside of dpll subsystem.
+>But at the same time it removes complexity from all the drivers which would use
+
+There are currently 3 drivers for dpll I know of. This in ptp_ocp and
+mlx5 there is no concept of sharing pins. You you are talking about a
+single driver.
+
+What I'm trying to say is, looking at the code, the pin sharing,
+references and locking makes things uncomfortably complex. You are so
+far the only driver to need this, do it internally. If in the future
+other driver appears, this code would be eventually pushed into dpll
+core. No impact on UAPI from what I see. Please keep things as simple as
+possible.
+
+
+>it and is easier for the userspace due to common identification of pins.
+
+By identification, you mean "description" right? I see no problem of 2
+instances have the same pin "description"/label.
+
+
+>This solution scales up without any additional complexity in the driver,
+>and without any need for internal per-board communication channels.
+>
+>Not sure if this is good or bad, but with current version, both approaches are
+>possible, so it pretty much depending on the driver to initialize dplls with
+>separated pin objects as you have suggested (and take its complexity into
+>driver) or just share them.
+>
+>>
+>>3) I don't like the concept of muxed pins and hierarchies of pins. Why
+>>   does user care? If pin is muxed, the rest of the pins related to this
+>>   one should be in state disabled/disconnected. The user only cares
+>>   about to see which pins are related to each other. It can be easily
+>>   exposed by "muxid" like this:
+>>   pin 1
+>>   pin 2
+>>   pin 3 muxid 100
+>>   pin 4 muxid 100
+>>   pin 5 muxid 101
+>>   pin 6 muxid 101
+>>   In this example pins 3,4 and 5,6 are muxed, therefore the user knows
+>>   if he connects one, the other one gets disconnected (or will have to
+>>   disconnect the first one explicitly first).
+>>
+>
+>Currently DPLLA_PIN_PARENT_IDX is doing the same thing as you described, it
+>groups MUXed pins, the parent pin index here was most straightforward to me,
+
+There is a big difference if we model flat list of pins with a set of
+attributes for each, comparing to a tree of pins, some acting as leaf,
+node and root. Do we really need such complexicity? What value does it
+bring to the user to expose this?
+
+
+>as in case of DPLL_MODE_AUTOMATIC, where dpll auto-selects highest priority
+>available signal. The priority can be only assigned to the pins directly
+>connected to the dpll. The rest of pins (which would have present
+>attribute DPLLA_PIN_PARENT_IDX) are the ones that require manual selection
+>even if DPLL_MODE_AUTOMATIC is enabled.
+>
+>Enabling a particular pin and sub-pin in DPLL_MODE_AUTOMATIC requires from user
+>to select proper priority on on a dpll-level MUX-pin and manually select one of
+>the sub-pins.  
+>On the other hand for DPLL_MODE_FORCED, this might be also beneficial, as the
+>user could select a directly connected pin and muxed pin with two separated
+>commands, which could be handled in separated driver instances (if HW design
+>requires such approach) or either it can be handled just by one select call
+>for the pin connected directly and handled entirely in the one driver instance.
+
+Talk netlink please. What are the actual commands with cmds used to
+select the source and select a mux pin? You are talking about 2 types of
+selections:
+1) Source select
+   - this is as you described either auto/forces (manual) mode,
+   according to some prio, dpll select the best source
+2) Pin select in a mux
+   - here the pin could be source or output
+
+But again, from the user perspective, why does he have to distinguish
+these? Extending my example:
+
+   pin 1 source
+   pin 2 output
+   pin 3 muxid 100 source
+   pin 4 muxid 100 source
+   pin 5 muxid 101 source
+   pin 6 muxid 101 source
+   pin 7 output
+
+User now can set individial prios for sources:
+
+dpll x pin 1 set prio 10
+etc
+The result would be:
+
+   pin 1 source prio 10
+   pin 2 output
+   pin 3 muxid 100 source prio 8
+   pin 4 muxid 100 source prio 20
+   pin 5 muxid 101 source prio 50
+   pin 6 muxid 101 source prio 60
+   pin 7 output
+
+Now when auto is enabled, the pin 3 is selected. Why would user need to
+manually select between 3 and 4? This is should be abstracted out by the
+driver.
+
+Only issues I see when pins are output. User would have to somehow
+select one of the pins in the mux (perhaps another dpll cmd). But the
+mux pin instance does not help with anything there...
+
+
+
+>
+>>4) I don't like the "attr" indirection. It makes things very tangled. It
+>>   comes from the concepts of classes and objects and takes it to
+>>   extreme. Not really something we are commonly used to in kernel.
+>>   Also, it brings no value from what I can see, only makes things very
+>>   hard to read and follow.
+>>
+>
+>Yet again, true, I haven't find anything similar in the kernel, it was more
+>like a try to find out a way to have a single structure with all the stuff that
+>is passed between netlink/core/driver parts. Came up with this, and to be
+>honest it suits pretty well, those are well defined containers. They store
+>attributes that either user or driver have set, with ability to obtain a valid
+>value only if it was set. Thus whoever reads a struct, knows which of those
+>attributes were actually set.
+
+Sorry for being blunt here, but when I saw the code I remembered my days
+as a student where they forced us to do similar things Java :)
+There you tend to make things contained, everything is a class, getters,
+setters and whatnot. In kernel, this is overkill.
+
+I'm not saying it's functionally wrong. What I say is that it is
+completely unnecessary. I see no advantage, by having this indirection.
+I see only disadvantages. It makes code harder to read and follow.
+What I suggest, again, is to make things nice and simple. Set of ops
+that the driver implements for dpll commands or parts of commands,
+as we are used to in the rest of the kernel.
+
+
+>As you said, seems a bit revolutionary, but IMHO it simplifies stuff, and
+>basically it is value and validity bit, which I believe is rather common in the
+>kernel, this differs only with the fact it is encapsulated. No direct access to
+>the fields of structure is available for the users.
+
+I don't see any reason for any validity bits whan you just do it using
+driver-implemented ops.
+
+
+>Most probably there are some things that could be improved with it, but in
+>general it is very easy to use and understand how it works.
+>What could be improved:
+>- naming scheme as function names are a bit long right now, although mostly
+>still fits the line-char limits, thus not that problematic
+>- bit mask values are capable of storing 32 bits and bit(0) is always used as
+>unspec, which ends up with 31 values available for the enums so if by any
+>chance one of the attribute enums would go over 32 it could be an issue.
+> 
+>It is especially useful for multiple values passed with the same netlink
+>attribute id. I.e. please take a look at dpll_msg_add_pin_types_supported(..)
+>function.
+>
+>>   Please keep things direct and simple:
+>>   * If some option could be changed for a pin or dpll, just have an
+>>     op that is directly called from netlink handler to change it.
+>>     There should be clear set of ops for configuration of pin and
+>>     dpll object. This "attr" indirection make this totally invisible.
+>
+>In last review you have asked to have rather only set and get ops defined
+>with a single attribute struct. This is exactly that, altough encapsulated.
+
+For objects, yes. Pass a struct you directly read/write if the amount of
+function args would be bigger then say 4. The whole encapsulation is not
+good for anything.
+
+
+>
+>>   * If some attribute is const during dpll or pin lifetime, have it
+>>     passed during dpll or pin creation.
+>>
+>>
+>
+>Only driver knows which attributes are const and which are not, this shall
+
+Nonono. This is semantics defined by the subsystem. The pin
+label/description for example. That is const, cannot be set by the user.
+The type of the pin (synce/gnss/ext) is const, cannot be set by the user.
+This you have to clearly specify when you define driver API.
+This const attrs should be passed during pin creation/registration.
+
+Talking about dpll instance itself, the clock_id, clock_quality, these
+should be also const attrs.
+
+
+
+>be also part of driver implementation.
+>As I understand all the fields present in (dpll/dpll_pin)_attr, used in get/set
+>ops, could be altered in run-time depending on HW design.
+>
+>Thanks,
+>Arkadiusz
+>
+>>
+>>>
+>>>v3 -> v4:
+>>> * redesign framework to make pins dynamically allocated (Arkadiusz)
+>>> * implement shared pins (Arkadiusz)
+>>>v2 -> v3:
+>>> * implement source select mode (Arkadiusz)
+>>> * add documentation
+>>> * implementation improvements (Jakub)
+>>>v1 -> v2:
+>>> * implement returning supported input/output types
+>>> * ptp_ocp: follow suggestions from Jonathan
+>>> * add linux-clk mailing list
+>>>v0 -> v1:
+>>> * fix code style and errors
+>>> * add linux-arm mailing list
+>>>
+>>>
+>>>Arkadiusz Kubalewski (1):
+>>>  dpll: add dpll_attr/dpll_pin_attr helper classes
+>>>
+>>>Vadim Fedorenko (3):
+>>>  dpll: Add DPLL framework base functions
+>>>  dpll: documentation on DPLL subsystem interface
+>>>  ptp_ocp: implement DPLL ops
+>>>
+>>> Documentation/networking/dpll.rst  | 271 ++++++++
+>>> Documentation/networking/index.rst |   1 +
+>>> MAINTAINERS                        |   8 +
+>>> drivers/Kconfig                    |   2 +
+>>> drivers/Makefile                   |   1 +
+>>> drivers/dpll/Kconfig               |   7 +
+>>> drivers/dpll/Makefile              |  11 +
+>>> drivers/dpll/dpll_attr.c           | 278 +++++++++
+>>> drivers/dpll/dpll_core.c           | 760 +++++++++++++++++++++++
+>>> drivers/dpll/dpll_core.h           | 176 ++++++
+>>> drivers/dpll/dpll_netlink.c        | 963 +++++++++++++++++++++++++++++
+>>> drivers/dpll/dpll_netlink.h        |  24 +
+>>> drivers/dpll/dpll_pin_attr.c       | 456 ++++++++++++++
+>>> drivers/ptp/Kconfig                |   1 +
+>>> drivers/ptp/ptp_ocp.c              | 123 ++--
+>>> include/linux/dpll.h               | 261 ++++++++
+>>> include/linux/dpll_attr.h          | 433 +++++++++++++
+>>> include/uapi/linux/dpll.h          | 263 ++++++++
+>>> 18 files changed, 4002 insertions(+), 37 deletions(-) create mode
+>>> 100644 Documentation/networking/dpll.rst create mode 100644
+>>> drivers/dpll/Kconfig create mode 100644 drivers/dpll/Makefile create
+>>> mode 100644 drivers/dpll/dpll_attr.c create mode 100644
+>>> drivers/dpll/dpll_core.c create mode 100644 drivers/dpll/dpll_core.h
+>>> create mode 100644 drivers/dpll/dpll_netlink.c create mode 100644
+>>> drivers/dpll/dpll_netlink.h create mode 100644
+>>> drivers/dpll/dpll_pin_attr.c create mode 100644 include/linux/dpll.h
+>>> create mode 100644 include/linux/dpll_attr.h create mode 100644
+>>> include/uapi/linux/dpll.h
+>>>
+>>>--
+>>>2.27.0
+>>>
