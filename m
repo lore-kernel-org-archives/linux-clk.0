@@ -2,101 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731F3C4321E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Dec 2022 23:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E674AC4321E
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Dec 2022 00:16:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234492AbiLBX7s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 18:59:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35836 "EHLO
+        id S234510AbiLCAQn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 19:16:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234150AbiLBX7r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 18:59:47 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CD5C869F
-        for <linux-clk@vger.kernel.org>; Fri,  2 Dec 2022 15:59:46 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id bp15so9679393lfb.13
-        for <linux-clk@vger.kernel.org>; Fri, 02 Dec 2022 15:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gcx6EJrERIS41tFi54fuFIgkz5Y7a9ARxSk63zLAPZc=;
-        b=EMffVBCmlKeK2weAjOGLRSTx+TU3bl0w45ZSkrz4fMkZ2gJsbG/nCF9q92PgjkYB6u
-         +qNEXjHE7VmMP1CC+lGUNEc9Ks/TjY3cgwdEiJJB2qzDvFc4DWwc2l74xKG++hlFR9+5
-         YTf7mGzd5HYyOv0yknYoiPABIsZk7Cj26FrxmLexg/pw4CV6SoBlpLOYkbgLKH4RGUnE
-         vl5GSTfybXVjKL8EnWVPxlp86RaMoH0+L9Iqkjqz7oiRm+pcfWEclT4eEfY5EWFYqml8
-         qdn13a/n1z5+PVKX+pugh4Zyve3Bm2VOkgVhw4OSdcA5votKUW3XxJLlq4IFEb4Tuquo
-         w0lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gcx6EJrERIS41tFi54fuFIgkz5Y7a9ARxSk63zLAPZc=;
-        b=GZSJN8Tvk3Jcp6ECy7CvJd3vBDd57B2Zp7VHMqodI4TlKk4g3ZTW7eW+0nQPv7rQNo
-         Shtr/UKuW168/lCPMReAzLU8iYSYy4Wt12Tzd6OLQkJELl7IRlTf8C94MWa7MqLa3yAQ
-         oY7STnyecTwxWNxAt0UULIUN5QNikmJAGiPlfZ4wChXKiUYVLpLLV1INDxHR6o4KA+/A
-         brfSbDkt4vAiwK4omSAWTQf+m2fmyCMid72uX2hymIEfZUC3KzTwu5z/ReeF30mlPdwp
-         r3ytCaLWIJRp0jocTzoMxY4hXBy+0DvkzRo0zWwWXXH5Ovu7xDWdgWf15qDNSsIpuH7n
-         4PyQ==
-X-Gm-Message-State: ANoB5pl+SY3ZDZbytysZTaPwPsH2FkImrIDNUwKYuD6jJ6+li0M2/Y6p
-        5roWZez/N790/p+MDxUkeNw0XLiv3tA6tjQO
-X-Google-Smtp-Source: AA0mqf4XoC2QNoBx1FsO5mp11ykgbFUvoWnuryO1zNEcpffp3LGSyTQ9NbCL+sMhnOYM4iiXrVdhQg==
-X-Received: by 2002:a05:6512:208a:b0:4b4:b2c6:5d28 with SMTP id t10-20020a056512208a00b004b4b2c65d28mr22647280lfr.47.1670025584689;
-        Fri, 02 Dec 2022 15:59:44 -0800 (PST)
-Received: from [192.168.1.101] (95.49.31.115.neoplus.adsl.tpnet.pl. [95.49.31.115])
-        by smtp.gmail.com with ESMTPSA id u5-20020ac243c5000000b004b40c2fccfdsm1175762lfl.59.2022.12.02.15.59.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Dec 2022 15:59:43 -0800 (PST)
-Message-ID: <8bbc5c50-8fe8-6557-d6b4-bcd41351e302@linaro.org>
-Date:   Sat, 3 Dec 2022 00:59:41 +0100
+        with ESMTP id S234369AbiLCAQm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 19:16:42 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4EFA9D80E6;
+        Fri,  2 Dec 2022 16:16:41 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2D2423A;
+        Fri,  2 Dec 2022 16:16:47 -0800 (PST)
+Received: from slackpad.lan (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 299303F73B;
+        Fri,  2 Dec 2022 16:16:39 -0800 (PST)
+Date:   Sat, 3 Dec 2022 00:14:57 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 1/5] clk: sunxi-ng: Remove duplicate ARCH_SUNXI
+ dependencies
+Message-ID: <20221203001439.64284671@slackpad.lan>
+In-Reply-To: <20221126191319.6404-2-samuel@sholland.org>
+References: <20221126191319.6404-1-samuel@sholland.org>
+        <20221126191319.6404-2-samuel@sholland.org>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2] clk: qcom: rpmh: add support for SM6350 rpmh IPA clock
-To:     Alex Elder <elder@linaro.org>, sboyd@kernel.org,
-        mturquette@baylibre.com, andersson@kernel.org, agross@kernel.org
-Cc:     Luca Weiss <luca.weiss@fairphone.com>, dmitry.baryshkov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20221202221240.225720-1-elder@linaro.org>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20221202221240.225720-1-elder@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, 26 Nov 2022 13:13:15 -0600
+Samuel Holland <samuel@sholland.org> wrote:
 
+Hi,
 
-On 2.12.2022 23:12, Alex Elder wrote:
-> From: Luca Weiss <luca.weiss@fairphone.com>
+thanks for addressing this!
+
+> SUNXI_CCU already depends on ARCH_SUNXI, so adding the dependency to
+> individual SoC drivers is redundant.
 > 
-> The IPA core clock is required for SM6350.  Define it.
-> 
-> [elder@linaro.org: rebased with Dmitry's changes]
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
-> v2: This is now based on qualcomm/for-next.
 > 
->  drivers/clk/qcom/clk-rpmh.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/sunxi-ng/Kconfig | 43 ++++++++++++++++++------------------
+>  1 file changed, 21 insertions(+), 22 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 2c2ef4b6d130e..586a810c682ca 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -606,6 +606,7 @@ static struct clk_hw *sm6350_rpmh_clocks[] = {
->  	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_ln_bb_clk3_g4_ao.hw,
->  	[RPMH_QLINK_CLK]	= &clk_rpmh_qlink_div4.hw,
->  	[RPMH_QLINK_CLK_A]	= &clk_rpmh_qlink_div4_ao.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->  };
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 461537679c04..64cfa022e320 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -14,43 +14,43 @@ config SUNIV_F1C100S_CCU
 >  
->  static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+>  config SUN20I_D1_CCU
+>  	tristate "Support for the Allwinner D1 CCU"
+> -	default RISCV && ARCH_SUNXI
+> -	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
+> +	default RISCV
+> +	depends on RISCV || COMPILE_TEST
+
+I agree on the "depends" part: Indeed the guard symbol already covers
+that, so it's redundant.
+However I am not so sure about the "default" part: When ARCH_SUNXI is
+deselected, but COMPILE_TEST in enabled, we default to every CCU driver
+being built-in. I am not sure this is the intention, or at least
+expected when doing compile testing?
+
+>  
+>  config SUN20I_D1_R_CCU
+>  	tristate "Support for the Allwinner D1 PRCM CCU"
+> -	default RISCV && ARCH_SUNXI
+> -	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
+> +	default RISCV
+> +	depends on RISCV || COMPILE_TEST
+>  
+>  config SUN50I_A64_CCU
+>  	tristate "Support for the Allwinner A64 CCU"
+> -	default ARM64 && ARCH_SUNXI
+> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default ARM64
+> +	depends on ARM64 || COMPILE_TEST
+
+I wonder if this "depends" line was always wrong and should be fixed:
+We can compile a 32-bit ARM kernel and run it on an A64. Granted this
+requires a special bootloader or a hacked U-Boot (tried that), and
+reveals some other issues with the decompressor, but technically there
+is no 64-bit dependency in here.
+The same goes for all the other ARM64 CCUs: Cortex-A53s can run AArch32
+in all exception levels.
+So shall we just completely remove the "depends" line for those, and
+let SUNXI_CCU do that job? Or use use !RISCV || COMPILE_TEST?
+
+Cheers,
+Andre
+
+>  
+>  config SUN50I_A100_CCU
+>  	tristate "Support for the Allwinner A100 CCU"
+> -	default ARM64 && ARCH_SUNXI
+> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default ARM64
+> +	depends on ARM64 || COMPILE_TEST
+>  
+>  config SUN50I_A100_R_CCU
+>  	tristate "Support for the Allwinner A100 PRCM CCU"
+> -	default ARM64 && ARCH_SUNXI
+> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default ARM64
+> +	depends on ARM64 || COMPILE_TEST
+>  
+>  config SUN50I_H6_CCU
+>  	tristate "Support for the Allwinner H6 CCU"
+> -	default ARM64 && ARCH_SUNXI
+> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default ARM64
+> +	depends on ARM64 || COMPILE_TEST
+>  
+>  config SUN50I_H616_CCU
+>  	tristate "Support for the Allwinner H616 CCU"
+> -	default ARM64 && ARCH_SUNXI
+> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default ARM64
+> +	depends on ARM64 || COMPILE_TEST
+>  
+>  config SUN50I_H6_R_CCU
+>  	tristate "Support for the Allwinner H6 and H616 PRCM CCU"
+> -	default ARM64 && ARCH_SUNXI
+> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default ARM64
+> +	depends on ARM64 || COMPILE_TEST
+>  
+>  config SUN4I_A10_CCU
+>  	tristate "Support for the Allwinner A10/A20 CCU"
+> @@ -71,8 +71,7 @@ config SUN6I_A31_CCU
+>  
+>  config SUN6I_RTC_CCU
+>  	tristate "Support for the Allwinner H616/R329 RTC CCU"
+> -	default ARCH_SUNXI
+> -	depends on ARCH_SUNXI || COMPILE_TEST
+> +	default y
+>  
+>  config SUN8I_A23_CCU
+>  	tristate "Support for the Allwinner A23 CCU"
+> @@ -91,8 +90,8 @@ config SUN8I_A83T_CCU
+>  
+>  config SUN8I_H3_CCU
+>  	tristate "Support for the Allwinner H3 CCU"
+> -	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+> -	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> +	default MACH_SUN8I || ARM64
+> +	depends on MACH_SUN8I || ARM64 || COMPILE_TEST
+>  
+>  config SUN8I_V3S_CCU
+>  	tristate "Support for the Allwinner V3s CCU"
+> @@ -101,7 +100,7 @@ config SUN8I_V3S_CCU
+>  
+>  config SUN8I_DE2_CCU
+>  	tristate "Support for the Allwinner SoCs DE2 CCU"
+> -	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+> +	default MACH_SUN8I || ARM64
+>  
+>  config SUN8I_R40_CCU
+>  	tristate "Support for the Allwinner R40 CCU"
+> @@ -115,6 +114,6 @@ config SUN9I_A80_CCU
+>  
+>  config SUN8I_R_CCU
+>  	tristate "Support for Allwinner SoCs' PRCM CCUs"
+> -	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
+> +	default MACH_SUN8I || ARM64
+>  
+>  endif
+
