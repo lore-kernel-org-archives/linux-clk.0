@@ -2,156 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4B7C352A1
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Dec 2022 13:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE20C4708D
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Dec 2022 17:58:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbiLCN6y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Dec 2022 08:58:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52504 "EHLO
+        id S229801AbiLCR6T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Dec 2022 12:58:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiLCN6x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Dec 2022 08:58:53 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2C101275D5;
-        Sat,  3 Dec 2022 05:58:52 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4658123A;
-        Sat,  3 Dec 2022 05:58:58 -0800 (PST)
-Received: from slackpad.lan (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD4A23F73D;
-        Sat,  3 Dec 2022 05:58:49 -0800 (PST)
-Date:   Sat, 3 Dec 2022 13:57:13 +0000
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229807AbiLCR6N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Dec 2022 12:58:13 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7AC10056
+        for <linux-clk@vger.kernel.org>; Sat,  3 Dec 2022 09:58:11 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id b3so12225594lfv.2
+        for <linux-clk@vger.kernel.org>; Sat, 03 Dec 2022 09:58:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GV6lStOUC0qtqhWbdKjqKtQ9zNSmxaDPHpqHNhhRf3w=;
+        b=YK8W6WGD7l9l5vpBDYUtb/PE7En050lSbHBCnkpVg0DrGWOWIB8eps/f0pvkbWdmXU
+         qouznzVH91p79rPkf73L2bEzQY2WGDVTDXoigBvdH69VnQuL5Y0B+TwV2Zm3LqEg8WPO
+         nCHym4ZGg2wUFyIzeAw6M+lh9SaGw8omLOZnKxe4AfEcarL9yB6ZSj3jKXP+Hkz+33EM
+         p3l1F5+RL1T6LjbRImat91LYd3JCLt/0BJYQNfMs7/wXC6ZHmhkQIWGI5tmcULHvdj18
+         NWZdyP253ODJg+luTpu7E3VajP1nr0CEPJeiPaT1FXVkJXYwn0IntSUaWSq2t1QHuG7y
+         8UfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GV6lStOUC0qtqhWbdKjqKtQ9zNSmxaDPHpqHNhhRf3w=;
+        b=2XmFuR6Et4/5s/U9cpG/PuhG3mEQqEaVG5lr+dY3rJ2c8KSJphRpasICflqgtJDmlO
+         gHRW/LoayTygpKxQuRXwKq8sZoIwKDi752ItgOCMTt0EfHZR0zD5YwS7oK/KrN4xqO5j
+         qDxXBARdrVqokxRyRdBIr2nqM5qjUHwQiwSlK+uDX1VpBenPdpCFdtk2MIRjofySWI8N
+         9uBzovZjcbarg8g84oNN258GQm3gVCpN0IxRxL5YhYf+OvoW4QiyQOtAUoFabQiR2QmD
+         ADKEh0ZpmxSvspVaVyckya0We1+EJfM2JUJAu8npNORrU36wocHALQiuGAARQSP+NnWN
+         vxVQ==
+X-Gm-Message-State: ANoB5pkVFiwrsX/73mmmDPjKXxX/HrQfOYU+3G1qm5UUl0o/LFrmDzrA
+        b6Gtrsd+DRHZMbTdye4yMmpw5w==
+X-Google-Smtp-Source: AA0mqf6J7xAkO0UMSFvsbvvxPAsA+fjiFHu76zH1o3iPMjFFHFlzSUXjYljNUnuWVBrHxMR6UCBW1g==
+X-Received: by 2002:a19:8c06:0:b0:4b4:b63f:a69a with SMTP id o6-20020a198c06000000b004b4b63fa69amr25354872lfd.197.1670090289858;
+        Sat, 03 Dec 2022 09:58:09 -0800 (PST)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id m4-20020a056512358400b004b19f766b07sm1124703lfr.91.2022.12.03.09.58.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Dec 2022 09:58:09 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 1/5] clk: sunxi-ng: Remove duplicate ARCH_SUNXI
- dependencies
-Message-ID: <20221203135713.0591b0b7@slackpad.lan>
-In-Reply-To: <b7774c58-ccf8-4204-2e7e-6841fd13002d@sholland.org>
-References: <20221126191319.6404-1-samuel@sholland.org>
-        <20221126191319.6404-2-samuel@sholland.org>
-        <20221203001439.64284671@slackpad.lan>
-        <b7774c58-ccf8-4204-2e7e-6841fd13002d@sholland.org>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Alex Elder <elder@linaro.org>
+Subject: [PATCH 00/16] clk: qcom: smd-rpm: drop platform names
+Date:   Sat,  3 Dec 2022 19:57:52 +0200
+Message-Id: <20221203175808.859067-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2 Dec 2022 19:52:41 -0600
-Samuel Holland <samuel@sholland.org> wrote:
+This series concludes the previous work on Qualcomm RPM and RPMH clock
+drivers. It reworks the clk-smd-rpm driver to drop the SoC name from the
+clock symbol name, as the clock definitions are shared between different
+SoCs (platforms). Having an SoC name in the clock definition can lead to
+all sources of confusion and/or errors.
 
-Hi Samuel,
+Dmitry Baryshkov (16):
+  clk: qcom: smd-rpm: remove duplication between sm6375 and sm6125
+    clocks
+  clk: qcom: smd-rpm: enable pin-controlled ln_bb_clk clocks on qcs404
+  clk: qcom: smd-rpm: remove duplication between qcs404 and qcm2290
+    clocks
+  clk: qcom: smd-rpm: add missing ln_bb_clkN clocks
+  clk: qcom: smd-rpm: use msm8998_ln_bb_clk2 for qcm2290 SoC
+  clk: qcom: smd-rpm: rename msm8992_ln_bb_* clocks to qcs404_ln_bb_*
+  clk: qcom: smd-rpm: add XO_BUFFER clock for each XO_BUFFER_PINCTRL
+    clock
+  clk: qcom: smd-rpm: drop the rpm_status_id field
+  clk: qcom: smd-rpm: move clock definitions together
+  clk: qcom: smd-rpm: rename some msm8974 active-only clocks
+  clk: qcom: smd-rpm: simplify XO_BUFFER clocks definitions
+  clk: qcom: smd-rpm: simplify SMD_RPM/_BRANCH/_QDSS clock definitions
+  clk: qcom: smd-rpm: rename SMD_RPM_BRANCH clock symbols
+  clk: qcom: smd-rpm: rename the qcm2290 rf_clk3 clocks
+  clk: qcom: smd-rpm: rename SMD_RPM_BUS clocks
+  clk: qcom: smd-rpm: remove usage of platform name
 
-> On 12/2/22 18:14, Andre Przywara wrote:
-> > On Sat, 26 Nov 2022 13:13:15 -0600
-> > Samuel Holland <samuel@sholland.org> wrote:
-> > 
-> > Hi,
-> > 
-> > thanks for addressing this!
-> >   
-> >> SUNXI_CCU already depends on ARCH_SUNXI, so adding the dependency to
-> >> individual SoC drivers is redundant.
-> >>
-> >> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> >> ---
-> >>
-> >>  drivers/clk/sunxi-ng/Kconfig | 43 ++++++++++++++++++------------------
-> >>  1 file changed, 21 insertions(+), 22 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-> >> index 461537679c04..64cfa022e320 100644
-> >> --- a/drivers/clk/sunxi-ng/Kconfig
-> >> +++ b/drivers/clk/sunxi-ng/Kconfig
-> >> @@ -14,43 +14,43 @@ config SUNIV_F1C100S_CCU
-> >>  
-> >>  config SUN20I_D1_CCU
-> >>  	tristate "Support for the Allwinner D1 CCU"
-> >> -	default RISCV && ARCH_SUNXI
-> >> -	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
-> >> +	default RISCV
-> >> +	depends on RISCV || COMPILE_TEST  
-> > 
-> > I agree on the "depends" part: Indeed the guard symbol already covers
-> > that, so it's redundant.
-> > However I am not so sure about the "default" part: When ARCH_SUNXI is
-> > deselected, but COMPILE_TEST in enabled, we default to every CCU driver
-> > being built-in. I am not sure this is the intention, or at least
-> > expected when doing compile testing?  
-> 
-> SUNXI_CCU, which these depend on, is still "default ARCH_SUNXI", so if
-> you have ARCH_SUNXI disabled, you only get any drivers if you manually
-> enable SUNXI_CCU. I mentioned this in the patch 2 description, but maybe
-> I should move that comment here.
+ drivers/clk/qcom/clk-smd-rpm.c         | 1393 ++++++++++++------------
+ include/dt-bindings/clock/qcom,rpmcc.h |    2 +
+ include/linux/soc/qcom/smd-rpm.h       |    1 -
+ 3 files changed, 693 insertions(+), 703 deletions(-)
 
-Yeah, I read this later on, I guess it's fine then.
-
-> 
-> >>  
-> >>  config SUN20I_D1_R_CCU
-> >>  	tristate "Support for the Allwinner D1 PRCM CCU"
-> >> -	default RISCV && ARCH_SUNXI
-> >> -	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
-> >> +	default RISCV
-> >> +	depends on RISCV || COMPILE_TEST
-> >>  
-> >>  config SUN50I_A64_CCU
-> >>  	tristate "Support for the Allwinner A64 CCU"
-> >> -	default ARM64 && ARCH_SUNXI
-> >> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
-> >> +	default ARM64
-> >> +	depends on ARM64 || COMPILE_TEST  
-> > 
-> > I wonder if this "depends" line was always wrong and should be fixed:
-> > We can compile a 32-bit ARM kernel and run it on an A64. Granted this
-> > requires a special bootloader or a hacked U-Boot (tried that), and
-> > reveals some other issues with the decompressor, but technically there
-> > is no 64-bit dependency in here.
-> > The same goes for all the other ARM64 CCUs: Cortex-A53s can run AArch32
-> > in all exception levels.  
-> 
-> I was trying to simplify things by hiding irrelevant options, and you
-> bring up an edge case of an edge case. :) I am okay with relaxing the
-> dependency, though I would want to leave them disabled by default for
-> 32-bit kernels (excluding them from the change in patch 2).
-
-Yes, definitely, that was the idea.
-
-And sorry for being a nuisance, but I think this "depends on ARCH_SUNXI"
-here is and was always misplaced. In contrast to things like "depends
-on PCI" or "depends on GPIOLIB", there is no real dependency on
-ARCH_SUNXI or even ARM/RISCV here, it's more a "only useful on
-ARCH_SUNXI".
-And this ARM vs ARM64 was just another rationale for not being
-overzealous with the dependency.
-
-But I see that this is an orthogonal discussion to this patch, so this
-should not block it. I will meditate over both patches again, since I
-have the gut feeling that the end result is fine.
-
-Cheers,
-Andre
-
-> 
-> > So shall we just completely remove the "depends" line for those, and
-> > let SUNXI_CCU do that job? Or use use !RISCV || COMPILE_TEST?  
-> 
-> That, or we could add MACH_SUN8I to the condition. I don't have a strong
-> opinion.
-> 
-> Regards,
-> Samuel
-> 
+-- 
+2.35.1
 
