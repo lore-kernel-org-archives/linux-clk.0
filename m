@@ -2,27 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA936C47089
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Dec 2022 00:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEC1C4321E
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Dec 2022 01:52:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235240AbiLCAuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Dec 2022 19:50:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38554 "EHLO
+        id S229664AbiLCBwv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Dec 2022 20:52:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235246AbiLCAtv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 19:49:51 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8CD861F60F;
-        Fri,  2 Dec 2022 16:42:42 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E724023A;
-        Fri,  2 Dec 2022 16:42:47 -0800 (PST)
-Received: from slackpad.lan (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 437743F73B;
-        Fri,  2 Dec 2022 16:42:39 -0800 (PST)
-Date:   Sat, 3 Dec 2022 00:40:53 +0000
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Samuel Holland <samuel@sholland.org>
+        with ESMTP id S234568AbiLCBwu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2022 20:52:50 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 861F01C424;
+        Fri,  2 Dec 2022 17:52:47 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id C186D5C00C2;
+        Fri,  2 Dec 2022 20:52:44 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 02 Dec 2022 20:52:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1670032364; x=
+        1670118764; bh=qCFdQNJyL5Qi9scJku+NmJywt0J5lgF/iOTG+QsY94g=; b=i
+        vYLCqdVtr8DPyj6NdN0/Y84CnCuPO8LxmvuHIGUHazadhfwpV5MKxl4GH2rTfKgi
+        LknmZ67+mCkDVa7CH8O04Fdrb4EaWkEXY2XJmvsS37kXD7iFoT45tG11sJrprgXr
+        LcXF4qC2gJjb95B+bmAXBC4JT49jAO13fW7hpjo5MGOYLRXxqhVtu75vhTRDnSBX
+        CI4NhaKPqHVqeQUkEgIatk2BRkFdoHM1DWP1CuAgSwP2E/eXPwOJMBNbYkqrLFdq
+        1N+haPpxilqj9awxUdm9SnAIUtfteJmd3G7RXHLJ8Tv1WTIaJZzugyDt98GP19H6
+        I0kJc4s+eQN2CA8NK4eTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1670032364; x=
+        1670118764; bh=qCFdQNJyL5Qi9scJku+NmJywt0J5lgF/iOTG+QsY94g=; b=D
+        lHkpOYDxiC1wCVtKKi5YMDF0b/EKrJaTwUrkn31v9epUy9z+1NgGGW5puIUWMbYB
+        U/0c+pKz96WzOrSY+Kdlr59Tv26wX/lATGlNchwBh1OXhSwFfy77nROahKyyJNJQ
+        of44jMCkd1GvSR7NlIGEbQYvyxxKPHUQmfSqboP1FtDS7sczAfjP8U0VHv+zmj1Y
+        mq+V/ErnUyU6wzT+WYn1riw2glmsaF8eTjpKC/pY/yYFnDqdWO+ZCvpzMhXdLc/z
+        Ot/qBabML4dLtn6SmTfhNY76Mf9nFyefGoSrnsPiO9O4Hb50EqriHm47+V+1lFvp
+        VwQ5Mm0TIfKogx4QLSAoQ==
+X-ME-Sender: <xms:66uKY7GB6fI_mJm_rPpWdeai4QQGlKnRly1BF7oZC9WIaWaOI351qg>
+    <xme:66uKY4VaE40ZtgUr-H3uiedM9K9VRw_-1MK1Cy7Tbw_GmSWxg8GJqTULw8bRydIZ3
+    8rTUgaj33Cn23TYQg>
+X-ME-Received: <xmr:66uKY9JgjTRZ2AwsxPguwwP4Bm9sjDLNmNHP1ROSBmJjBNhL5JbLL726_vxbNT2rhPRmkpaMrHadw_xoa6p3TTlpctJ8PP0A9o3StaMkLa6PmaEJeEn8hfu1Bg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrtdelgdeflecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfvvehfhffujggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepjefgfffhudejfedtuedugeeutdetgfeiteffffehjeeugfeuvdeh
+    jeetfedtffdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:66uKY5FRqgfZgwKo988t8REdQu7HUxb7_-iAq2qbgv1NyF3Wk9Agxw>
+    <xmx:66uKYxXFvHTMkFletaQrcdKSLTQQtP3rI4gKBGaY3NmFrCnhsnbaEA>
+    <xmx:66uKY0Nks7PoT7NA7Toc3fZLf4SoRWOV7-49zHnFytxDGrn7Ttrd8w>
+    <xmx:7KuKY8MNR9QDNkxdTyVkSMbTZ7yuLzIPsRebrvU_OkQeDgSZjj9OJA>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 2 Dec 2022 20:52:42 -0500 (EST)
+Message-ID: <b7774c58-ccf8-4204-2e7e-6841fd13002d@sholland.org>
+Date:   Fri, 2 Dec 2022 19:52:41 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux ppc64le; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Content-Language: en-US
+To:     Andre Przywara <andre.przywara@arm.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -31,132 +77,96 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        Fabien Poussin <fabien.poussin@gmail.com>
-Subject: Re: [PATCH 5/5] clk: sunxi-ng: d1: Add CAN bus gates and resets
-Message-ID: <20221203004053.1be69003@slackpad.lan>
-In-Reply-To: <20221126191319.6404-6-samuel@sholland.org>
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
 References: <20221126191319.6404-1-samuel@sholland.org>
-        <20221126191319.6404-6-samuel@sholland.org>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+ <20221126191319.6404-2-samuel@sholland.org>
+ <20221203001439.64284671@slackpad.lan>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH 1/5] clk: sunxi-ng: Remove duplicate ARCH_SUNXI
+ dependencies
+In-Reply-To: <20221203001439.64284671@slackpad.lan>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 26 Nov 2022 13:13:19 -0600
-Samuel Holland <samuel@sholland.org> wrote:
-
-Hi,
-
-> From: Fabien Poussin <fabien.poussin@gmail.com>
+On 12/2/22 18:14, Andre Przywara wrote:
+> On Sat, 26 Nov 2022 13:13:15 -0600
+> Samuel Holland <samuel@sholland.org> wrote:
 > 
-> The D1 CCU contains gates and resets for two CAN buses. While the CAN
-> bus controllers are only documented for the T113 SoC, the CCU is the
-> same across all SoC variants.
-
-So my version of the T113 manual only barely mentions the existence of
-CAN controllers, but doesn't list any details, not even a base address
-or those clock gates.
-However I can confirm that the two lowest bits are implemented in
-+0x92c. I also verified that the bits and numbers below match up.
-
-> Signed-off-by: Fabien Poussin <fabien.poussin@gmail.com>
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre
-
-> ---
+> Hi,
 > 
->  drivers/clk/sunxi-ng/ccu-sun20i-d1.c      | 11 +++++++++++
->  drivers/clk/sunxi-ng/ccu-sun20i-d1.h      |  2 +-
->  include/dt-bindings/clock/sun20i-d1-ccu.h |  2 ++
->  include/dt-bindings/reset/sun20i-d1-ccu.h |  2 ++
->  4 files changed, 16 insertions(+), 1 deletion(-)
+> thanks for addressing this!
 > 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-> index c5a7df93602c..48a8fb2c43b7 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-> @@ -469,6 +469,11 @@ static SUNXI_CCU_GATE_HWS(bus_i2c2_clk, "bus-i2c2", apb1_hws,
->  static SUNXI_CCU_GATE_HWS(bus_i2c3_clk, "bus-i2c3", apb1_hws,
->  			  0x91c, BIT(3), 0);
->  
-> +static SUNXI_CCU_GATE_HWS(bus_can0_clk, "bus-can0", apb1_hws,
-> +			  0x92c, BIT(0), 0);
-> +static SUNXI_CCU_GATE_HWS(bus_can1_clk, "bus-can1", apb1_hws,
-> +			  0x92c, BIT(1), 0);
-> +
->  static const struct clk_parent_data spi_parents[] = {
->  	{ .fw_name = "hosc" },
->  	{ .hw = &pll_periph0_clk.hw },
-> @@ -997,6 +1002,8 @@ static struct ccu_common *sun20i_d1_ccu_clks[] = {
->  	&bus_i2c1_clk.common,
->  	&bus_i2c2_clk.common,
->  	&bus_i2c3_clk.common,
-> +	&bus_can0_clk.common,
-> +	&bus_can1_clk.common,
->  	&spi0_clk.common,
->  	&spi1_clk.common,
->  	&bus_spi0_clk.common,
-> @@ -1147,6 +1154,8 @@ static struct clk_hw_onecell_data sun20i_d1_hw_clks = {
->  		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
->  		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
->  		[CLK_BUS_I2C3]		= &bus_i2c3_clk.common.hw,
-> +		[CLK_BUS_CAN0]		= &bus_can0_clk.common.hw,
-> +		[CLK_BUS_CAN1]		= &bus_can1_clk.common.hw,
->  		[CLK_SPI0]		= &spi0_clk.common.hw,
->  		[CLK_SPI1]		= &spi1_clk.common.hw,
->  		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
-> @@ -1252,6 +1261,8 @@ static struct ccu_reset_map sun20i_d1_ccu_resets[] = {
->  	[RST_BUS_I2C1]		= { 0x91c, BIT(17) },
->  	[RST_BUS_I2C2]		= { 0x91c, BIT(18) },
->  	[RST_BUS_I2C3]		= { 0x91c, BIT(19) },
-> +	[RST_BUS_CAN0]		= { 0x92c, BIT(16) },
-> +	[RST_BUS_CAN1]		= { 0x92c, BIT(17) },
->  	[RST_BUS_SPI0]		= { 0x96c, BIT(16) },
->  	[RST_BUS_SPI1]		= { 0x96c, BIT(17) },
->  	[RST_BUS_EMAC]		= { 0x97c, BIT(16) },
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.h b/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-> index e303176f0d4e..b14da36e2537 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-> +++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-> @@ -10,6 +10,6 @@
->  #include <dt-bindings/clock/sun20i-d1-ccu.h>
->  #include <dt-bindings/reset/sun20i-d1-ccu.h>
->  
-> -#define CLK_NUMBER		(CLK_FANOUT2 + 1)
-> +#define CLK_NUMBER		(CLK_BUS_CAN1 + 1)
->  
->  #endif /* _CCU_SUN20I_D1_H_ */
-> diff --git a/include/dt-bindings/clock/sun20i-d1-ccu.h b/include/dt-bindings/clock/sun20i-d1-ccu.h
-> index e3ac53315e1a..e143b9929763 100644
-> --- a/include/dt-bindings/clock/sun20i-d1-ccu.h
-> +++ b/include/dt-bindings/clock/sun20i-d1-ccu.h
-> @@ -152,5 +152,7 @@
->  #define CLK_FANOUT0		142
->  #define CLK_FANOUT1		143
->  #define CLK_FANOUT2		144
-> +#define CLK_BUS_CAN0		145
-> +#define CLK_BUS_CAN1		146
->  
->  #endif /* _DT_BINDINGS_CLK_SUN20I_D1_CCU_H_ */
-> diff --git a/include/dt-bindings/reset/sun20i-d1-ccu.h b/include/dt-bindings/reset/sun20i-d1-ccu.h
-> index de9ff5203239..f8001cf50bf1 100644
-> --- a/include/dt-bindings/reset/sun20i-d1-ccu.h
-> +++ b/include/dt-bindings/reset/sun20i-d1-ccu.h
-> @@ -73,5 +73,7 @@
->  #define RST_BUS_DSP_CFG		63
->  #define RST_BUS_DSP_DBG		64
->  #define RST_BUS_RISCV_CFG	65
-> +#define RST_BUS_CAN0		66
-> +#define RST_BUS_CAN1		67
->  
->  #endif /* _DT_BINDINGS_RST_SUN20I_D1_CCU_H_ */
+>> SUNXI_CCU already depends on ARCH_SUNXI, so adding the dependency to
+>> individual SoC drivers is redundant.
+>>
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> ---
+>>
+>>  drivers/clk/sunxi-ng/Kconfig | 43 ++++++++++++++++++------------------
+>>  1 file changed, 21 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+>> index 461537679c04..64cfa022e320 100644
+>> --- a/drivers/clk/sunxi-ng/Kconfig
+>> +++ b/drivers/clk/sunxi-ng/Kconfig
+>> @@ -14,43 +14,43 @@ config SUNIV_F1C100S_CCU
+>>  
+>>  config SUN20I_D1_CCU
+>>  	tristate "Support for the Allwinner D1 CCU"
+>> -	default RISCV && ARCH_SUNXI
+>> -	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
+>> +	default RISCV
+>> +	depends on RISCV || COMPILE_TEST
+> 
+> I agree on the "depends" part: Indeed the guard symbol already covers
+> that, so it's redundant.
+> However I am not so sure about the "default" part: When ARCH_SUNXI is
+> deselected, but COMPILE_TEST in enabled, we default to every CCU driver
+> being built-in. I am not sure this is the intention, or at least
+> expected when doing compile testing?
+
+SUNXI_CCU, which these depend on, is still "default ARCH_SUNXI", so if
+you have ARCH_SUNXI disabled, you only get any drivers if you manually
+enable SUNXI_CCU. I mentioned this in the patch 2 description, but maybe
+I should move that comment here.
+
+>>  
+>>  config SUN20I_D1_R_CCU
+>>  	tristate "Support for the Allwinner D1 PRCM CCU"
+>> -	default RISCV && ARCH_SUNXI
+>> -	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
+>> +	default RISCV
+>> +	depends on RISCV || COMPILE_TEST
+>>  
+>>  config SUN50I_A64_CCU
+>>  	tristate "Support for the Allwinner A64 CCU"
+>> -	default ARM64 && ARCH_SUNXI
+>> -	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+>> +	default ARM64
+>> +	depends on ARM64 || COMPILE_TEST
+> 
+> I wonder if this "depends" line was always wrong and should be fixed:
+> We can compile a 32-bit ARM kernel and run it on an A64. Granted this
+> requires a special bootloader or a hacked U-Boot (tried that), and
+> reveals some other issues with the decompressor, but technically there
+> is no 64-bit dependency in here.
+> The same goes for all the other ARM64 CCUs: Cortex-A53s can run AArch32
+> in all exception levels.
+
+I was trying to simplify things by hiding irrelevant options, and you
+bring up an edge case of an edge case. :) I am okay with relaxing the
+dependency, though I would want to leave them disabled by default for
+32-bit kernels (excluding them from the change in patch 2).
+
+> So shall we just completely remove the "depends" line for those, and
+> let SUNXI_CCU do that job? Or use use !RISCV || COMPILE_TEST?
+
+That, or we could add MACH_SUN8I to the condition. I don't have a strong
+opinion.
+
+Regards,
+Samuel
 
