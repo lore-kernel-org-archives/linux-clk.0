@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1616AC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 20:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66EEC4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 20:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232591AbiLEUOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 15:14:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
+        id S232548AbiLEUQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 15:16:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232230AbiLEUOV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 15:14:21 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32FD26567;
-        Mon,  5 Dec 2022 12:14:19 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id vv4so1253867ejc.2;
-        Mon, 05 Dec 2022 12:14:19 -0800 (PST)
+        with ESMTP id S231965AbiLEUQt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 15:16:49 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1352D275D1;
+        Mon,  5 Dec 2022 12:16:49 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id gu23so1184994ejb.10;
+        Mon, 05 Dec 2022 12:16:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A7iqaD9NQm0VyRYiAKdqd9SMWPMi9ylBYy253DQgNSw=;
-        b=oCD0W0IaSoHbayzt9V8/oDsDC53nzKKZ2Mo+oqka/f8QqAYYtwy3EBqNbZfu1mX51c
-         UfN/tURajh7slXey/xU2cZvzi/n4R+WZboo+Zcce0F27jnC84wt8lWG300qk8Au3OVID
-         Tb7NoZcxH1cKX0sXJqdKs9wLf6FMTFzkBe8zOEC4zjViKEn2zJZ6v+goOWAdeJUW+Zr/
-         LSQR1H6vL9vKdw+sEb306UPCf4/kf3zgrjytWukowI6XV5Bdbu10EDZbSQ775W3eLDV4
-         WIq4CNhOCK5a3RAGjgGcf9J3ImVs7WXCUV7yhxZ5od7N48wsBr8C6kaHEYtgSA2aJ2DU
-         QzuQ==
+        bh=Z/8PD+0FCsCI5+iBj2b9lGbdoNFHsSi0yThSh9yKErQ=;
+        b=fUbiS0O5RNRd/6YLOHExF2EWqK3wCnZYEzYQ4vhl8yHzO9NXLOjsX5fBHsMsG/YpO5
+         0EuncsVTRMxs4LWoQgA/NRhKu14AudrbM/hnQQb9DQC4LB9c+qntnAXbRNQApfSWxs6V
+         j4xx3bRA+KLz+Celw7jK8swAP29jnoPHm74MD/uhy42TMmO0zTzfEumgpztQz96OaGvK
+         E/N/JbvJrOhBiqz3bXE4j0RryuTnVT4kxSbGltjKjd391OvIgsl9i5u67jLFFJ61tI/J
+         X5nRNnN/n87a4iR+vgfECNf8cvmKsCgWpUBB1GlJUknuMkThb5hDhceDlLS2kZNKPhFw
+         OxFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A7iqaD9NQm0VyRYiAKdqd9SMWPMi9ylBYy253DQgNSw=;
-        b=mno3rUBgoHauoKv3ARXSL3iCxfWlKFUqEtgCe7vQBvvEL3jRuRCsH+ShbY1JDeNXh2
-         lmsOUo7ljj5MSrRT8DSTsyCoLrUosCFRySxqS5bGGSthgRLQtOUTLkDHYL170fN2AljR
-         yvsrFBK5VFFUgP0LgtC2tnCbGS1XSw6BDAmfUmmeovrklSY/sZ8K/CckCkWV4TcuvzNr
-         QErE9n8RC/yl3aEK+TWCbC0vCWFU7UYLSXnI2xCS2cGY7rTazXAsFfkNQgR5B69ghu6g
-         qoI723fOdOoODvjzVtv3cly53bCSvKjJ156lf/bG4mWYoFlD30EavxosFoc3fyF6HljZ
-         y9Kg==
-X-Gm-Message-State: ANoB5pm4Hh6+5Q4vA5gNigM7DYXgxOQ9CKvTmOkGOEzpB9IVBh0KDi/l
-        p5Msar97FxOjM6GZQFHAAf0=
-X-Google-Smtp-Source: AA0mqf5q1oILM2xX1UEbTreI2l/RpJd/mjGJV0cxlhtwsxgQ5R9AS3T4LmZh6w6dtXyv9cjBfn1InQ==
-X-Received: by 2002:a17:906:1310:b0:7c0:c5e9:634d with SMTP id w16-20020a170906131000b007c0c5e9634dmr13260599ejb.220.1670271258235;
-        Mon, 05 Dec 2022 12:14:18 -0800 (PST)
+        bh=Z/8PD+0FCsCI5+iBj2b9lGbdoNFHsSi0yThSh9yKErQ=;
+        b=XQZ3pFxuhYc8K6lbVomIFs/Lfu+KZu/J9GrtvCCdRDkeYh5CP1TM31DDODVrAjKU/a
+         FGDg6ViQVtIifycp93H9pwmbspyYxy/1NtMm1tp9G26GMKfZCvTxc8qrEoviRHMll+ns
+         9xnQnf9pBPmTKcsXakrooTaWe8qW91pbzrRQ9a5Cb6vpiLl30iMtziPNcMTaiRRciWyN
+         FoY3SdUhmyeSKn8JSf2akt/eCqpylU5B/3YOyKLhtu3SEFfdkG2itrMjOifaWidFzwqq
+         6utAT9Uj4MYrT7hDJTZUCof7uWjPPRtx//p61kD2GKt6lMXldzPY2HyBWxpsDN2CEwhj
+         qT+w==
+X-Gm-Message-State: ANoB5pl/fhqktQmehCLWFpLP6SDepJ2Gri8c4cUEIAEUB597wS/+nq5L
+        mG6kUgHF/psJg15HfLr37SU=
+X-Google-Smtp-Source: AA0mqf74Gku64+ob6YAE4dV316Y74LBb5vnlKktLNPxs0a6p3f6Hx/aBnfk8Np3/5dcuHpYly/Z3Ww==
+X-Received: by 2002:a17:906:830f:b0:7c0:a3c6:e788 with SMTP id j15-20020a170906830f00b007c0a3c6e788mr8193345ejx.476.1670271407686;
+        Mon, 05 Dec 2022 12:16:47 -0800 (PST)
 Received: from kista.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id gg9-20020a170906e28900b007c0d41736c0sm3426117ejb.39.2022.12.05.12.14.17
+        by smtp.gmail.com with ESMTPSA id og40-20020a1709071de800b007c0d6b34d54sm3218302ejc.129.2022.12.05.12.16.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 12:14:17 -0800 (PST)
+        Mon, 05 Dec 2022 12:16:47 -0800 (PST)
 From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To:     Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -60,11 +60,11 @@ Cc:     Samuel Holland <samuel@sholland.org>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 3/5] clk: sunxi-ng: d1: Allow building for R528/T113
-Date:   Mon, 05 Dec 2022 21:14:16 +0100
-Message-ID: <2261489.ElGaqSPkdT@kista>
-In-Reply-To: <20221126191319.6404-4-samuel@sholland.org>
-References: <20221126191319.6404-1-samuel@sholland.org> <20221126191319.6404-4-samuel@sholland.org>
+Subject: Re: [PATCH 2/5] clk: sunxi-ng: Move SoC driver conditions to dependencies
+Date:   Mon, 05 Dec 2022 21:16:46 +0100
+Message-ID: <1834760.tdWV9SEqCh@kista>
+In-Reply-To: <20221126191319.6404-3-samuel@sholland.org>
+References: <20221126191319.6404-1-samuel@sholland.org> <20221126191319.6404-3-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -72,9 +72,15 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sobota, 26. november 2022 ob 20:13:17 CET je Samuel Holland napisal(a):
-> Allwinner released some 32-bit ARM (sun8i) SoCs which use the same CCU
-> as D1. Allow them to reuse the driver.
+Dne sobota, 26. november 2022 ob 20:13:16 CET je Samuel Holland napisal(a):
+> Do not duplicate the same expression on the `default` line, so the two
+> lines do not need to be kept in sync. Drivers stay disabled under
+> COMPILE_TEST because of the `default ARCH_SUNXI` applied to SUNXI_CCU.
+> 
+> Three drivers had no conditions.
+>  - SUN6I_RTC_CCU and SUN8I_DE2_CCU are used on current hardware
+>    regardless of CPU architecture.
+>  - SUN8I_R_CCU is only used on pre-H6 SoCs, which means no RISCV SoCs.
 > 
 > Signed-off-by: Samuel Holland <samuel@sholland.org>
 
