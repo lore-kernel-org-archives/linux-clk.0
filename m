@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484E1C47089
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 17:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0315C4321E
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 17:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbiLEREj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 12:04:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
+        id S231906AbiLEREl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 12:04:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbiLEREf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 12:04:35 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 225161704C
-        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 09:04:34 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id o12so8626734qvn.3
-        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 09:04:34 -0800 (PST)
+        with ESMTP id S231828AbiLEREi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 12:04:38 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D769918E31
+        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 09:04:37 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id y15so11852259qtv.5
+        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 09:04:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kMudJkmHXx0RSiG1AIGL5sbbU53DzHdSasiAqN0q8ok=;
-        b=xpkVUmU41OOMmlFrpGXcAQ70Fo8PrELMSWmg6+rLDyNOpWbkfqasJwqnmI/JKBrrul
-         OhjlrDpjbe+xl+nDyeDAxZWcen7t5MaVoiX7a8KnsVmwSWqah1ER+oTAP5dOUzMlcCHW
-         2euY7cNsS7EAa3bpj7OIIESi6RWA5b54sn3jym0+n3SZZOwPLVi0/jGQ5a4zX9DOSQcc
-         txMtJX8jgVyXki+9bMAvOqovuH7QD6m7kZw+5pTaRhFabLQOgmnXvMnjnyzXC68yHs2J
-         TaIEhslgEIGzVQkiWZqdlhHOaiaiEWfR8YQcomxVizFMkLxVpkqS77o/4lxKNur2UfZQ
-         ocLQ==
+        bh=Nh9KwaSUxyUVvW9NXvR+G5RIVUSK0RWSQlbrImVIjYw=;
+        b=AHurxprRVpLFLHPRz9sBJyWavtPu9/Y4AfzqOuS3Heq9Tw+gQqCNsHhdLBlgUSvIes
+         iXxRvKSAzCqVDau4FOh9/2+gfLXfHIIg7q/90GjLRb3qPK0GLHgtZS+jhchxsCp/W+H+
+         mfNB7ExCEBEdS8gJtUDJ+GThE9EAq4qkuUMqAIpCCw06xVHW5TuslqR+Gjctr9p61qWK
+         +/n7ns52EayCU0uK3tZPbQAGHNwp1BOf/89WMh+OJJXZraQWF30LsUSIJdXskQK9Rhb9
+         0NcuvvcoJABcnSo8PDlgLLDVzlnX24J3M7c2gTxDpenIxcFTuhxOcJYbNtijrX5xWN8I
+         nl1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMudJkmHXx0RSiG1AIGL5sbbU53DzHdSasiAqN0q8ok=;
-        b=74fOAvVv9W9xjKktFrEh3rSCSDHTpiXch8h/Szoni3NAfwnFB2assT0zRcjpDHJhge
-         EDQ5a5JntLw+OsvIK75+bL9x8aamY9Vm4e1zXOg6s1opJdgxqe7VGZx1+5nKIOH6mJZa
-         l4bR0gZfIC2dJP4xREEnuKrFJ0JJi8vAnEokGyQrapYifoxIReyh/1SBmjFnWvzFlK3x
-         LabxsKMompTls8NOFVYpMkirEtlM7sNn+Ltj7k89ULTfzjs16KYTbEd7FASYDuuhE3tu
-         7GW59EtPMeq8fJb9E1OhQxUNkcHE4E0D4llrh+2VZcfY/2KVyQUL1NlZlgGh51wHOW0Q
-         Q3oA==
-X-Gm-Message-State: ANoB5pmTrcYnAcRAR8M9DdSDQXWh0OuRs3J47ce8FG0v+lXTi2AFdSam
-        SJ1J/1tmK9L6kxBaSxN6Q+F5nw==
-X-Google-Smtp-Source: AA0mqf6Ttj5i03cxv28AgsW2U3ORm0VSpNiek7FOXsQ8p3C4CYKcvJwOF9lGdOGCzhg+QNdKBQT0lQ==
-X-Received: by 2002:a0c:ea88:0:b0:4c7:87f:f11b with SMTP id d8-20020a0cea88000000b004c7087ff11bmr29687913qvp.115.1670259873170;
-        Mon, 05 Dec 2022 09:04:33 -0800 (PST)
+        bh=Nh9KwaSUxyUVvW9NXvR+G5RIVUSK0RWSQlbrImVIjYw=;
+        b=Sir/hLVsmSHX0Z0ZkrF2gRMT/h174FV+088axO7Lw778laemyEf058dLfxKsAI3OhK
+         DRwGa9z4VT9dxXxkLFID7ELSmzPWX2KC7nZqfbkvkWN9wScjKHhkLocGrTXL3kYFKNOA
+         3ytdz2qz2cebsvR5YKZhvMVqSgCxn4pRLE66KH5cTUVuXQurXEzo9+presVWB/ymqpgP
+         6Ud8IwoaeHglfeKiTqlJBwbCIOrNzlCWdWmRrOUmAeK9VOpcWYn3cVvd7tDEBDMZSLEH
+         PGjxK5GCxoeiqAtzaMQemRChH/tZVF7dEXlOdKudg4TMZN0VQUC5NTZdbkEAtAc41SBr
+         CYUQ==
+X-Gm-Message-State: ANoB5pnaVwliOjWhmjjjo2I2+8HzJ3fwJa0ZcjNV3RJxhRJonECITbeg
+        8zwFXF62O8epuLyzp3x3iFo4wQ==
+X-Google-Smtp-Source: AA0mqf5cxqN11DjzDiWTK0ulqxQ7rgLxnqNrRukxRvWBg7aSQuZdIfeB+Jc9EfSbFTIwu8Ti6PYjmA==
+X-Received: by 2002:ac8:454e:0:b0:3a5:10c2:9eed with SMTP id z14-20020ac8454e000000b003a510c29eedmr63584452qtn.562.1670259876866;
+        Mon, 05 Dec 2022 09:04:36 -0800 (PST)
 Received: from [172.22.22.4] ([98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id t27-20020a05622a181b00b0039cc0fbdb61sm10245759qtc.53.2022.12.05.09.04.32
+        by smtp.googlemail.com with ESMTPSA id cf16-20020a05622a401000b003996aa171b9sm9765824qtb.97.2022.12.05.09.04.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Dec 2022 09:04:32 -0800 (PST)
-Message-ID: <d1386fa7-9e9a-68a2-9eed-538a36ed706d@linaro.org>
-Date:   Mon, 5 Dec 2022 11:04:31 -0600
+        Mon, 05 Dec 2022 09:04:36 -0800 (PST)
+Message-ID: <2b443583-3d7a-184f-3331-bdd1c9d27a03@linaro.org>
+Date:   Mon, 5 Dec 2022 11:04:35 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH 04/16] clk: qcom: smd-rpm: add missing ln_bb_clkN clocks
+Subject: Re: [PATCH 05/16] clk: qcom: smd-rpm: use msm8998_ln_bb_clk2 for
+ qcm2290 SoC
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -65,9 +66,9 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20221203175808.859067-1-dmitry.baryshkov@linaro.org>
- <20221203175808.859067-5-dmitry.baryshkov@linaro.org>
+ <20221203175808.859067-6-dmitry.baryshkov@linaro.org>
 From:   Alex Elder <elder@linaro.org>
-In-Reply-To: <20221203175808.859067-5-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221203175808.859067-6-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -75,110 +76,40 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 12/3/22 11:57 AM, Dmitry Baryshkov wrote:
-> Newer platforms (msm8998, sdm660, sm6125) have low noise LN_BB_CLKn
-> clocks. The driver already uses proper clock indices
-> (RPM_SMD_LN_BB_CLKn). Fix clock names used by these platforms.
-
-Should these lines be deleted also?
-
-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk1, bb_clk1_a, 1, 19200000);
-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk2, bb_clk2_a, 2, 19200000);
-
-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk1_pin, 
-bb_clk1_a_pin, 1, 19200000);
-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk2_pin, 
-bb_clk2_a_pin, 2, 19200000);
-
-					-Alex
-
+> The qcm2290's ln_bb_clk2 is identical to the freshly added msm8998's
+> ln_bb_clk2 one. Use the latter and drop the SoC-specific version.
 > 
-> Fixes: a0384ecfe2aa ("clk: qcom: smd-rpm: De-duplicate identical entries")
-> Fixes: edeb2ca74716 ("clk: qcom: smd: Add support for SM6125 rpm clocks")
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Looks good.
+
+Reviewed-by: Alex Elder <elder@linaro.org>
+
 > ---
->   drivers/clk/qcom/clk-smd-rpm.c | 44 ++++++++++++++++++----------------
->   1 file changed, 24 insertions(+), 20 deletions(-)
+>   drivers/clk/qcom/clk-smd-rpm.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index 26c4738eaacf..42d55bf35a33 100644
+> index 42d55bf35a33..6af0753454ea 100644
 > --- a/drivers/clk/qcom/clk-smd-rpm.c
 > +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -852,6 +852,10 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
->   	.num_clks = ARRAY_SIZE(qcs404_clks),
+> @@ -1167,7 +1167,6 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6375 = {
 >   };
 >   
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk1, ln_bb_clk1_a, 1, 19200000);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk1_pin, ln_bb_clk1_a_pin, 1, 19200000);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk2, ln_bb_clk2_a, 2, 19200000);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk2_pin, ln_bb_clk2_a_pin, 2, 19200000);
->   DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk3, ln_bb_clk3_a, 3, 19200000);
->   DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3_pin, ln_bb_clk3_a_pin, 3, 19200000);
->   DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
-> @@ -882,16 +886,16 @@ static struct clk_smd_rpm *msm8998_clks[] = {
->   	[RPM_SMD_DIV_A_CLK3] = &msm8992_div_clk3_a,
->   	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
->   	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
-> -	[RPM_SMD_LN_BB_CLK1] = &msm8916_bb_clk1,
-> -	[RPM_SMD_LN_BB_CLK1_A] = &msm8916_bb_clk1_a,
-> -	[RPM_SMD_LN_BB_CLK2] = &msm8916_bb_clk2,
-> -	[RPM_SMD_LN_BB_CLK2_A] = &msm8916_bb_clk2_a,
-> +	[RPM_SMD_LN_BB_CLK1] = &msm8998_ln_bb_clk1,
-> +	[RPM_SMD_LN_BB_CLK1_A] = &msm8998_ln_bb_clk1_a,
+>   /* QCM2290 */
+> -DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, ln_bb_clk2, ln_bb_clk2_a, 0x2, 19200000);
+>   DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, rf_clk3, rf_clk3_a, 6, 38400000);
+>   
+>   DEFINE_CLK_SMD_RPM(qcm2290, cpuss_gnoc_clk, cpuss_gnoc_a_clk,
+> @@ -1184,8 +1183,8 @@ static struct clk_smd_rpm *qcm2290_clks[] = {
+>   	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
+>   	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
+>   	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
+> -	[RPM_SMD_LN_BB_CLK2] = &qcm2290_ln_bb_clk2,
+> -	[RPM_SMD_LN_BB_CLK2_A] = &qcm2290_ln_bb_clk2_a,
 > +	[RPM_SMD_LN_BB_CLK2] = &msm8998_ln_bb_clk2,
 > +	[RPM_SMD_LN_BB_CLK2_A] = &msm8998_ln_bb_clk2_a,
->   	[RPM_SMD_LN_BB_CLK3] = &msm8998_ln_bb_clk3,
->   	[RPM_SMD_LN_BB_CLK3_A] = &msm8998_ln_bb_clk3_a,
-> -	[RPM_SMD_LN_BB_CLK1_PIN] = &msm8916_bb_clk1_pin,
-> -	[RPM_SMD_LN_BB_CLK1_A_PIN] = &msm8916_bb_clk1_a_pin,
-> -	[RPM_SMD_LN_BB_CLK2_PIN] = &msm8916_bb_clk2_pin,
-> -	[RPM_SMD_LN_BB_CLK2_A_PIN] = &msm8916_bb_clk2_a_pin,
-> +	[RPM_SMD_LN_BB_CLK1_PIN] = &msm8998_ln_bb_clk1_pin,
-> +	[RPM_SMD_LN_BB_CLK1_A_PIN] = &msm8998_ln_bb_clk1_a_pin,
-> +	[RPM_SMD_LN_BB_CLK2_PIN] = &msm8998_ln_bb_clk2_pin,
-> +	[RPM_SMD_LN_BB_CLK2_A_PIN] = &msm8998_ln_bb_clk2_a_pin,
->   	[RPM_SMD_LN_BB_CLK3_PIN] = &msm8998_ln_bb_clk3_pin,
->   	[RPM_SMD_LN_BB_CLK3_A_PIN] = &msm8998_ln_bb_clk3_a_pin,
->   	[RPM_SMD_MMAXI_CLK] = &msm8996_mmssnoc_axi_rpm_clk,
-> @@ -946,18 +950,18 @@ static struct clk_smd_rpm *sdm660_clks[] = {
->   	[RPM_SMD_RF_CLK1_A] = &msm8916_rf_clk1_a,
->   	[RPM_SMD_DIV_CLK1] = &msm8974_div_clk1,
->   	[RPM_SMD_DIV_A_CLK1] = &msm8974_div_a_clk1,
-> -	[RPM_SMD_LN_BB_CLK] = &msm8916_bb_clk1,
-> -	[RPM_SMD_LN_BB_A_CLK] = &msm8916_bb_clk1_a,
-> -	[RPM_SMD_LN_BB_CLK2] = &msm8916_bb_clk2,
-> -	[RPM_SMD_LN_BB_CLK2_A] = &msm8916_bb_clk2_a,
-> +	[RPM_SMD_LN_BB_CLK] = &msm8998_ln_bb_clk1,
-> +	[RPM_SMD_LN_BB_A_CLK] = &msm8998_ln_bb_clk1_a,
-> +	[RPM_SMD_LN_BB_CLK2] = &msm8998_ln_bb_clk2,
-> +	[RPM_SMD_LN_BB_CLK2_A] = &msm8998_ln_bb_clk2_a,
->   	[RPM_SMD_LN_BB_CLK3] = &msm8998_ln_bb_clk3,
->   	[RPM_SMD_LN_BB_CLK3_A] = &msm8998_ln_bb_clk3_a,
->   	[RPM_SMD_RF_CLK1_PIN] = &msm8916_rf_clk1_pin,
->   	[RPM_SMD_RF_CLK1_A_PIN] = &msm8916_rf_clk1_a_pin,
-> -	[RPM_SMD_LN_BB_CLK1_PIN] = &msm8916_bb_clk1_pin,
-> -	[RPM_SMD_LN_BB_CLK1_A_PIN] = &msm8916_bb_clk1_a_pin,
-> -	[RPM_SMD_LN_BB_CLK2_PIN] = &msm8916_bb_clk2_pin,
-> -	[RPM_SMD_LN_BB_CLK2_A_PIN] = &msm8916_bb_clk2_a_pin,
-> +	[RPM_SMD_LN_BB_CLK1_PIN] = &msm8998_ln_bb_clk1_pin,
-> +	[RPM_SMD_LN_BB_CLK1_A_PIN] = &msm8998_ln_bb_clk1_a_pin,
-> +	[RPM_SMD_LN_BB_CLK2_PIN] = &msm8998_ln_bb_clk2_pin,
-> +	[RPM_SMD_LN_BB_CLK2_A_PIN] = &msm8998_ln_bb_clk2_a_pin,
->   	[RPM_SMD_LN_BB_CLK3_PIN] = &msm8998_ln_bb_clk3_pin,
->   	[RPM_SMD_LN_BB_CLK3_A_PIN] = &msm8998_ln_bb_clk3_a_pin,
->   };
-> @@ -1057,10 +1061,10 @@ static struct clk_smd_rpm *sm6125_clks[] = {
->   	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
->   	[RPM_SMD_CE1_CLK] = &msm8992_ce1_clk,
->   	[RPM_SMD_CE1_A_CLK] = &msm8992_ce1_a_clk,
-> -	[RPM_SMD_LN_BB_CLK1] = &msm8916_bb_clk1,
-> -	[RPM_SMD_LN_BB_CLK1_A] = &msm8916_bb_clk1_a,
-> -	[RPM_SMD_LN_BB_CLK2] = &msm8916_bb_clk2,
-> -	[RPM_SMD_LN_BB_CLK2_A] = &msm8916_bb_clk2_a,
-> +	[RPM_SMD_LN_BB_CLK1] = &msm8998_ln_bb_clk1,
-> +	[RPM_SMD_LN_BB_CLK1_A] = &msm8998_ln_bb_clk1_a,
-> +	[RPM_SMD_LN_BB_CLK2] = &msm8998_ln_bb_clk2,
-> +	[RPM_SMD_LN_BB_CLK2_A] = &msm8998_ln_bb_clk2_a,
->   	[RPM_SMD_LN_BB_CLK3] = &msm8998_ln_bb_clk3,
->   	[RPM_SMD_LN_BB_CLK3_A] = &msm8998_ln_bb_clk3_a,
->   	[RPM_SMD_QUP_CLK] = &sm6125_qup_clk,
+>   	[RPM_SMD_RF_CLK3] = &qcm2290_rf_clk3,
+>   	[RPM_SMD_RF_CLK3_A] = &qcm2290_rf_clk3_a,
+>   	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
 
