@@ -2,109 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B844C4321E
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 10:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 176E4C47089
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 11:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbiLEKcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 05:32:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34778 "EHLO
+        id S231494AbiLELNs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 06:13:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiLEKcJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 05:32:09 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DCB2BE3B
-        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 02:32:07 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id e13so15076559edj.7
-        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 02:32:07 -0800 (PST)
+        with ESMTP id S231521AbiLELNo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 06:13:44 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9459F17437
+        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 03:13:41 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id d20so15333255edn.0
+        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 03:13:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5fpoZJPaIxa+iAwbcp/aUZH0HPeDz4PPni1VjWgLtZs=;
-        b=tG60iLLOTJzz/wdBJOABaJkp41N7vWZuGWo3OfpG0y4mIn7iLlr5LFlGFQ4LRWN9de
-         fDT6GRKZ4OX820ZQpxodCU4W02sEr/McVZbEDygubp1Ui5LNvYQTkGeNdzlpDYNu0maG
-         Fk7M4xL8VDo29lS8R8rFx54ErIwc+FUFW8zzxaTWdtoXrKYXWi4kpKbJpezqJtc+dgK6
-         nJys8tdoOw/0x8XvDw+VRnMtOE/yHDAesRrniTEMims89aIfmN6G1iDUBfylhlFn/9Pu
-         fItBBy4HYjnpo2aFww0sDxbgDL5vWXHHEspLoq0vKky7e7PJo1RR0tBqyjtc9tl398Hm
-         F84g==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KQ0RqMSAAwdQT6/3KI0lCQiT4MSWF8waW/AXXmzDku0=;
+        b=VuHwdj+v0Qcx5Bno3q+cO6yJlNABzctjhRdE0jO4FuHvTrudv5pk80xdrj5OqlHPM5
+         gb9Nhx2NMOZqizgCoSjl/P7gSmXKdROgfdp9wNJzOiyiJzoTjLX8vwUHIjP9B9OjzdwO
+         FpCDps7WmgjrRR6HihPe+qgDomOhxg+T4mmP4t7Ysh9UFAaFHH4xrQc04AHOseBYgxvy
+         +zteVRoQDS1UMLWliV5jCc5UOWChCJI4opSElDQyNQoibhUiAP6KFSb8JBqU0u5YnFMW
+         k6W0kuiVEOOWh7Bt1tMqipxnJ5U2yeXkF1xKkf9tTfZhrC8izqEDLdghnvmO+bsT9O/V
+         XecQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5fpoZJPaIxa+iAwbcp/aUZH0HPeDz4PPni1VjWgLtZs=;
-        b=SRBohHBJUSM1ah7BOAUNBzD04mfiUiNDrZeiohRvXPwfGjzujcSnVZKcwft7opNuiT
-         CpmXN+NfvJRmjrGrhvKtNESiH6E4Qe+8eWrMoFIVUW8RAn4nW7GpBnE3bMmVkqhT5hnj
-         PEWwZYyCRx3xtOcgwdaKWKqX9764TXfIlz22aY3/2ORh+mViAj77F+Y3tFeuNdPffbDB
-         OPRMseY/r9dJQ3batm50wDfcv3TTqW0QelSvAqDiAE1nTIy7reI+FX057Z4aF1QV5qLr
-         PeylKt7Lse1/PsBt4uq887v61LaYxw6AkWzxM5s/0feB6TtWVOVtsiKQJZWGGYe9TJu9
-         +F1g==
-X-Gm-Message-State: ANoB5pl8VeTLdOuQ3E1G1ZNTbIi1zCE9cNAzv+AYjQuCqjg4JA3OofsP
-        wal5Jqq+uvbrIqYyfo3KBICDFA==
-X-Google-Smtp-Source: AA0mqf6uqbOB5OxqzEMjwdQ0h5HDWCr4Cs7UQe0Ido3SB9WNJ7dIV7UGBAws/2Jm7WwGS9+B1EuQZA==
-X-Received: by 2002:aa7:c502:0:b0:46c:6bdc:40fd with SMTP id o2-20020aa7c502000000b0046c6bdc40fdmr7258470edq.74.1670236325970;
-        Mon, 05 Dec 2022 02:32:05 -0800 (PST)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id l2-20020a056402124200b004615f7495e0sm6109204edw.8.2022.12.05.02.32.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 02:32:05 -0800 (PST)
-Date:   Mon, 5 Dec 2022 11:32:04 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Vadim Fedorenko <vadfed@fb.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
-Message-ID: <Y43IpIQ3C0vGzHQW@nanopsycho>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <20221129213724.10119-3-vfedorenko@novek.ru>
- <Y4eGxb2i7uwdkh1T@nanopsycho>
- <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4nyBwNPjuJFB5Km@nanopsycho>
- <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4okm5TrBj+JAJrV@nanopsycho>
- <20221202212206.3619bd5f@kernel.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KQ0RqMSAAwdQT6/3KI0lCQiT4MSWF8waW/AXXmzDku0=;
+        b=V/H0Fqn0o2Flfl8zaFDkeGEoK/822JcUH8MN8XN9LNhA/0AgSD/6gB2SvHd3SE9Sjh
+         6Ke/OgXSVW3ei+D2VjIMCj0mYuMDI8xxws2PTQOHy7AoB+xikq17fBfz3VMy30BfrwNI
+         vPaoJY9+vp2HFR+J7/qx2bsuC4vJH8Qd7kjewVQ36QrdJJxKSaKfKrEjNzqpvcmAIepy
+         60HMt5PE9reuYZOz49I1u/D5UdV9RQGs5wrKf7Vd/6K+Nm09jUSVfogsUA4gf+00AP00
+         /bIYsIzwcVP8DYwZk4I7Flzm8K7YVxFM78bWBiKTRv8EL5wh+E1/9lIaI/EcW6tkFGGD
+         nxww==
+X-Gm-Message-State: ANoB5pnFTQoNA3EzPR4f/s/CNl5jbZhkp9LytdwYe18JBZVsjLqbajrn
+        8VT3u5VZTukKF3sNssOBKJpzyw==
+X-Google-Smtp-Source: AA0mqf5hfhdZ627ut0pfp5gM1MER8/lIl5sZuTx9DA5ee9y6CaXQNUBZuW35gOmQrc64Xx1SHl8dtQ==
+X-Received: by 2002:aa7:c055:0:b0:45a:1af2:ed6d with SMTP id k21-20020aa7c055000000b0045a1af2ed6dmr57633752edo.364.1670238819858;
+        Mon, 05 Dec 2022 03:13:39 -0800 (PST)
+Received: from [192.168.31.208] ([194.29.137.22])
+        by smtp.gmail.com with ESMTPSA id 6-20020a170906310600b00738795e7d9bsm6097475ejx.2.2022.12.05.03.13.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Dec 2022 03:13:39 -0800 (PST)
+Message-ID: <e75289d7-26b2-dd6c-998c-971d80378f18@linaro.org>
+Date:   Mon, 5 Dec 2022 12:13:38 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221202212206.3619bd5f@kernel.org>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.5.0
+Subject: Re: [PATCH 01/16] clk: qcom: smd-rpm: remove duplication between
+ sm6375 and sm6125 clocks
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Alex Elder <elder@linaro.org>
+References: <20221203175808.859067-1-dmitry.baryshkov@linaro.org>
+ <20221203175808.859067-2-dmitry.baryshkov@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20221203175808.859067-2-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sat, Dec 03, 2022 at 06:22:06AM CET, kuba@kernel.org wrote:
->On Fri, 2 Dec 2022 17:15:23 +0100 Jiri Pirko wrote:
->> >OK, I now see your point what is the confusion.
->> >Thanks for explanation.
->> >But I am still not sure how to make it this way in Linux, if interface added to
->> >netns uses original netdev ifindex, and driver after reload receives new
->> >(previously unused ifindex) what would be the steps/commands to make it as you
->> >described?
->>
->> As I said, I don't see a way to have the ifindex exposed throught dpll
->> at all.
->
->We can quite easily only report ifindexes in the same namespace
->as the socket, right?
-
-Sure, hmm, thinkign about it more, this would be probably a good start.
 
 
->
->> I believe we should do it only the other way around. Assign
->> dpll_pin pointer to struct net_device and expose this over new attr
->> IFLA_DPLL_PIN over RT netlink.
->
->The ID table is global, what's the relationship between DPLLs
->and net namespaces? We tie DPLLs to a devlink instance which
->has a namespace? We pretend namespaces don't exist? :S
+On 03/12/2022 18:57, Dmitry Baryshkov wrote:
+> Reuse sm6125's MMAXI clocks for sm6375. Also drop QCOM_SMD_RPM_MMXI_CLK,
+> which is equal to QCOM_SMD_RPM_MMAXI_CLK.
+> 
+> Fixes: 644c42295592 ("clk: qcom: smd: Add SM6375 clocks")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+Nice catch!
 
-Well, if would be odd to put dpll itself into a namespace. It might not
-have anything to do with networking, for example in case of ptp_ocp.
-What would mean for a dpll to be in a net namespace?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>   drivers/clk/qcom/clk-smd-rpm.c   | 10 ++++------
+>   include/linux/soc/qcom/smd-rpm.h |  1 -
+>   2 files changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index fea505876855..077875cf0d80 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -1120,8 +1120,6 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6115 = {
+>   };
+>   
+>   /* SM6375 */
+> -DEFINE_CLK_SMD_RPM(sm6375, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMXI_CLK, 0);
+> -DEFINE_CLK_SMD_RPM(sm6375, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMXI_CLK, 1);
+>   DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
+>   DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
+>   DEFINE_CLK_SMD_RPM_BRANCH(sm6375, bimc_freq_log, bimc_freq_log_a, QCOM_SMD_RPM_MISC_CLK, 4, 1);
+> @@ -1140,10 +1138,10 @@ static struct clk_smd_rpm *sm6375_clks[] = {
+>   	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
+>   	[RPM_SMD_QUP_CLK] = &sm6125_qup_clk,
+>   	[RPM_SMD_QUP_A_CLK] = &sm6125_qup_a_clk,
+> -	[RPM_SMD_MMRT_CLK] = &sm6375_mmrt_clk,
+> -	[RPM_SMD_MMRT_A_CLK] = &sm6375_mmrt_a_clk,
+> -	[RPM_SMD_MMNRT_CLK] = &sm6375_mmnrt_clk,
+> -	[RPM_SMD_MMNRT_A_CLK] = &sm6375_mmnrt_a_clk,
+> +	[RPM_SMD_MMRT_CLK] = &sm6125_mmrt_clk,
+> +	[RPM_SMD_MMRT_A_CLK] = &sm6125_mmrt_a_clk,
+> +	[RPM_SMD_MMNRT_CLK] = &sm6125_mmnrt_clk,
+> +	[RPM_SMD_MMNRT_A_CLK] = &sm6125_mmnrt_a_clk,
+>   	[RPM_SMD_SNOC_PERIPH_CLK] = &sm6125_snoc_periph_clk,
+>   	[RPM_SMD_SNOC_PERIPH_A_CLK] = &sm6125_snoc_periph_a_clk,
+>   	[RPM_SMD_SNOC_LPASS_CLK] = &sm6125_snoc_lpass_clk,
+> diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
+> index 3ab8c07f71c0..82c9d489833a 100644
+> --- a/include/linux/soc/qcom/smd-rpm.h
+> +++ b/include/linux/soc/qcom/smd-rpm.h
+> @@ -41,7 +41,6 @@ struct qcom_smd_rpm;
+>   #define QCOM_SMD_RPM_HWKM_CLK	0x6d6b7768
+>   #define QCOM_SMD_RPM_PKA_CLK	0x616b70
+>   #define QCOM_SMD_RPM_MCFG_CLK	0x6766636d
+> -#define QCOM_SMD_RPM_MMXI_CLK	0x69786d6d
+>   
+>   int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
+>   		       int state,
