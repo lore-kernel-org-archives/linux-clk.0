@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFA6C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 19:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 081CAC4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 19:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234374AbiLETfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 14:35:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34232 "EHLO
+        id S234569AbiLETiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 14:38:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234227AbiLETel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 14:34:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB086102F;
-        Mon,  5 Dec 2022 11:30:19 -0800 (PST)
+        with ESMTP id S234462AbiLEThu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 14:37:50 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3318B25E98;
+        Mon,  5 Dec 2022 11:34:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7F489B811EC;
-        Mon,  5 Dec 2022 19:30:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD78C433D6;
-        Mon,  5 Dec 2022 19:30:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C30B261335;
+        Mon,  5 Dec 2022 19:34:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC751C433D6;
+        Mon,  5 Dec 2022 19:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1670268617;
-        bh=fpdrOP9blBsCvAYEXwR7d4LdMaxCuGc1e0RdGMUn8Lg=;
+        s=korg; t=1670268884;
+        bh=tGe3E7rsjegcxXYBvUN+80kpXgkL52+FhXRG7Djf2Uc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mPx+ROAXQoMKCcgkD7yoCuA4Wz94o/cLLi/+Cam442NXrBQ19TU3lfbVBo4sN705u
-         WpKHgqsj1DFD8ukyeQZVoQkOuO2Z6r2O6cb8+FFn7S0Gxqpq9QLZP3oRHNvCWnRiPy
-         psfX/Vs78PmLxgd+5QcR1+jbVnxJM+7trUFwT8PE=
+        b=seGSCrwifJfBiOOGf+Tl8yrjXIKoyV0gfbprDr75YnIFFIYduu4xChIJNItsx9W9q
+         xTNQuhLP+0doO3/kuyK+AQZk+xLdQf6US8mrO960EQ4bZ6258IAiiwGED33y56gCxx
+         Hw3PehVSlA1RedEkf4xv5WidjInDD6CgjGnVjNuI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,12 +38,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
         Michael Grzeschik <m.grzeschik@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 15/92] ARM: at91: rm9200: fix usb device clock id
-Date:   Mon,  5 Dec 2022 20:09:28 +0100
-Message-Id: <20221205190804.002877643@linuxfoundation.org>
+Subject: [PATCH 5.15 019/120] ARM: at91: rm9200: fix usb device clock id
+Date:   Mon,  5 Dec 2022 20:09:19 +0100
+Message-Id: <20221205190807.152315013@linuxfoundation.org>
 X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221205190803.464934752@linuxfoundation.org>
-References: <20221205190803.464934752@linuxfoundation.org>
+In-Reply-To: <20221205190806.528972574@linuxfoundation.org>
+References: <20221205190806.528972574@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -96,10 +96,10 @@ index d1181ead18e5..21344fbc89e5 100644
  				status = "disabled";
  			};
 diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-index 2c3d8e6ca63c..7cc20c0f8865 100644
+index 428a6f4b9ebc..8d36e615cd9d 100644
 --- a/drivers/clk/at91/at91rm9200.c
 +++ b/drivers/clk/at91/at91rm9200.c
-@@ -38,7 +38,7 @@ static const struct clk_pll_characteristics rm9200_pll_characteristics = {
+@@ -40,7 +40,7 @@ static const struct clk_pll_characteristics rm9200_pll_characteristics = {
  };
  
  static const struct sck at91rm9200_systemck[] = {
