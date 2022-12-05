@@ -2,97 +2,196 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3677C47089
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 21:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CB5C4321E
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 21:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231156AbiLEVOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 16:14:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49460 "EHLO
+        id S232118AbiLEViW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 16:38:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbiLEVOV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 16:14:21 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96BA32B183;
-        Mon,  5 Dec 2022 13:14:20 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id vp12so1525435ejc.8;
-        Mon, 05 Dec 2022 13:14:20 -0800 (PST)
+        with ESMTP id S230254AbiLEViV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 16:38:21 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0B0220F1
+        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 13:38:19 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id x11so15081007ljh.7
+        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 13:38:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UwCLtcgRqAXaeCXVskNsfVzWFdvmdwTNRfhMMyafH50=;
-        b=nqQlU52LHVuHNQPy2g4cmtI6I8xJfVlddc5Cndp6VOX+HVh2EkEYhxu163qni6ouO1
-         Mwj/l0vXDKR/1cOLAx15GYMJIJeWgLY7W0GlvO5o3u5Llo1w/avJNuL06Mk5QbLT0n89
-         0W4dHN/bvLUQcSJIY+q+UKLPPcvPza2BteC4yR8BQVaWJ6WIU3GvSB8NgCNhcj8MKMhq
-         6BgHba6QKO1BiVEySKfWE7bb4AypaCyelEODU11KGIr+6NjQv9U+0NtDPxRy1L5wkwH1
-         f3onqe4vNErYXuJJO21En+tjM38OvqryDqw63M67bttvMlZ4BeZQjF9bDxdI9WfjrCaZ
-         M0Hw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1zGhkJQnRc9OCOboiJR7eBa33ck6Hcmn3DLCXnVO7lU=;
+        b=lMsvYT0M5DCevJX0HmTvRjHNDCQv5AMtZyh1UuuIk/B47KxBNEwwcG7BdPpSlGesY3
+         xkHlGncWM+QV57GzcBhWOAnAJKoOAnDIE+bVqKx3FwmcJ/DpPUhY0AByih7Jomm2DpYC
+         6+X2kL1ZbodpdgVsHs4VKiIEpvP5McKssG2tKfgaWJFq+Zh23p9NypTaoZ9X3GdwfeeR
+         eSZlw2hxoJI+9ATs45bXKlMWebNwMe4hS1/HUGQuTZJHf0zmH6LhmsdZoqqyO0ofXz1x
+         ZKV098f7eAybmmOYCq6ENFZ94jZVXp+O/jUvoXd8Q4kuQphtv2xFnM/0h1Jiz4oQNLay
+         uFxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UwCLtcgRqAXaeCXVskNsfVzWFdvmdwTNRfhMMyafH50=;
-        b=wYL3W/tlFvzaN/iy4PV/6ROxTlHcLN56Gy6Zl2ipvk4hhTtpjjPXXxV1FUfXG5uVqb
-         LG8rYvHXISYRno2njkUpid6HHvHaYwBPCaeyeEOk+2VJ4WIiTwGLyVyylrKLNZUSfd40
-         zGQBUjwp5qLik7CdmHzwA4UNgW70S0Dc4xOUHOvdwtKX7t7i+9cG/ejMqtCLptW7V9oc
-         ueND+pVtxJW2vuGqyZlVkPxiws+1BYAXUtMKgHVJEwufmW5haDoaGHdA9SvRw4kt+dlt
-         kqE0G/CioCYhwppgyyoA7vEo4j9GanUmawUj1I1qMGwAYi40WUg4DPtlmT330htaWe1y
-         +KWg==
-X-Gm-Message-State: ANoB5pn9RxV/Jmj0ibRvL8mIIG+6Qsc/AoN+z8vwJp7Wl34xYDzZStwP
-        TuLBWW1XMn6z5wec6Nd9K4AWAQcyZpOQvA==
-X-Google-Smtp-Source: AA0mqf527m69tsEGmdPutWKFPV0Jzva42TA/gfB89ypPw7CMGtIYrCgOUwTqqC3WL5n8OcaF1Bo5QA==
-X-Received: by 2002:a17:906:524b:b0:7ad:a030:485c with SMTP id y11-20020a170906524b00b007ada030485cmr68688048ejm.605.1670274859173;
-        Mon, 05 Dec 2022 13:14:19 -0800 (PST)
-Received: from kista.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id ca13-20020a170906a3cd00b007c08439161dsm6631006ejb.50.2022.12.05.13.14.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 13:14:18 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1zGhkJQnRc9OCOboiJR7eBa33ck6Hcmn3DLCXnVO7lU=;
+        b=4IYLXNnVQlCuCkkGlH0fx/65txGN+w4xt6lwz96sBS0+NXHGYAfVdTuglTPD+8j604
+         fKv9ieACiN4ZWH1kAqtXXH77InyhoDPYSiFEoBR/yi2nMOZiZEypAg+KrGd9MdS40AcH
+         8tz4cAf5c9wwvJJLd2cmQjsOBhXm/VS5yt9GGzLqDOUSWghkG2NLNvZUqwsEOZK0KqdG
+         RE0kLoKA99usB9CPc0hdwg9kAv+zyo/HIu+T0WmeGZx4BncKKiqtHxELLIJ03UO/3teL
+         27A/sI6/UJpP358e4K92BoittZ3RC8NYTknhs+dvANeFoWBOOLFttOtqWwlAg4jKAQu/
+         wC3g==
+X-Gm-Message-State: ANoB5pnTNS/31AgFaHYnVcpmKMVpTYCZDWeECb9MUIBzXAd/CdRRSVNa
+        ll3RDgx6FH2kC7IirI5RW6wOLw==
+X-Google-Smtp-Source: AA0mqf7xZtVu6qeM1GB+thRvFD/vc7cuBejQD22cfS0Oada1Np40xYWeYiheOujwlxBWIrIhBgVfxA==
+X-Received: by 2002:a05:651c:4d0:b0:27a:b1d:5662 with SMTP id e16-20020a05651c04d000b0027a0b1d5662mr602824lji.356.1670276298278;
+        Mon, 05 Dec 2022 13:38:18 -0800 (PST)
+Received: from [127.0.0.1] ([94.25.229.129])
+        by smtp.gmail.com with ESMTPSA id s7-20020a056512202700b004b561202ea2sm1072955lfs.182.2022.12.05.13.38.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Dec 2022 13:38:17 -0800 (PST)
+Date:   Tue, 06 Dec 2022 00:38:14 +0300
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Alex Elder <elder@linaro.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: fix ccu_mmc_timing.c kernel-doc issues
-Date:   Mon, 05 Dec 2022 22:14:17 +0100
-Message-ID: <4105181.1IzOArtZ34@kista>
-In-Reply-To: <20221122184844.6794-1-rdunlap@infradead.org>
-References: <20221122184844.6794-1-rdunlap@infradead.org>
+        Taniya Das <quic_tdas@quicinc.com>
+CC:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/16] clk: qcom: smd-rpm: drop the rpm_status_id field
+User-Agent: K-9 Mail for Android
+In-Reply-To: <b250eddc-5164-817a-1c8b-26999feb6b27@linaro.org>
+References: <20221203175808.859067-1-dmitry.baryshkov@linaro.org> <20221203175808.859067-9-dmitry.baryshkov@linaro.org> <b250eddc-5164-817a-1c8b-26999feb6b27@linaro.org>
+Message-ID: <77F879AA-7303-4D3A-AD81-9EC5E9CB5ACC@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne torek, 22. november 2022 ob 19:48:44 CET je Randy Dunlap napisal(a):
-> Use '-' to separate the function name and its description.
-> Use '%' on constants in kernel-doc notation.
-> Use the kernel-doc Return: format for function return values.
-> 
-> Fixes this warning:
-> ccu_mmc_timing.c:21: warning: No description found for return value of
-> 'sunxi_ccu_set_mmc_timing_mode'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Yang Li <yang.lee@linux.alibaba.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-sunxi@lists.linux.dev
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
 
 
+On 5 December 2022 20:04:54 GMT+03:00, Alex Elder <elder@linaro=2Eorg> wro=
+te:
+>On 12/3/22 11:58 AM, Dmitry Baryshkov wrote:
+>> The rpm_status_id field is a leftover from the non-SMD clocks=2E It is =
+of
+>> no use for the SMD-RPM clock driver and is always equal to zero=2E Drop=
+ it
+>> completely=2E
+>>=20
+>> Signed-off-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
+>
+>Since the macro is defining static structures it's fine, but it
+>could be reassuring to see the rpm_status_id explicitly assigned
+>to 0=2E  (Just a comment, no change needed=2E)  It's a good change=2E
+
+Excuse me, probably I misunderstood your comment=2E The field is removed c=
+ompletely, so there is no place for it to be assigned to 0=2E
+
+>
+>Reviewed-by: Alex Elder <elder@linaro=2Eorg>
+>
+>> ---
+>>   drivers/clk/qcom/clk-smd-rpm=2Ec | 20 +++++++-------------
+>>   1 file changed, 7 insertions(+), 13 deletions(-)
+>>=20
+>> diff --git a/drivers/clk/qcom/clk-smd-rpm=2Ec b/drivers/clk/qcom/clk-sm=
+d-rpm=2Ec
+>> index e52e0e242294=2E=2E828cae6769f9 100644
+>> --- a/drivers/clk/qcom/clk-smd-rpm=2Ec
+>> +++ b/drivers/clk/qcom/clk-smd-rpm=2Ec
+>> @@ -25,13 +25,11 @@
+>>   #define QCOM_RPM_SMD_KEY_STATE				0x54415453
+>>   #define QCOM_RPM_SCALING_ENABLE_ID			0x2
+>>   -#define __DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id, =
+stat_id,  \
+>> -			     key)					      \
+>> +#define __DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id, ke=
+y)      \
+>>   	static struct clk_smd_rpm _platform##_##_active;		      \
+>>   	static struct clk_smd_rpm _platform##_##_name =3D {		      \
+>>   		=2Erpm_res_type =3D (type),					      \
+>>   		=2Erpm_clk_id =3D (r_id),					      \
+>> -		=2Erpm_status_id =3D (stat_id),				      \
+>>   		=2Erpm_key =3D (key),					      \
+>>   		=2Epeer =3D &_platform##_##_active,				      \
+>>   		=2Erate =3D INT_MAX,					      \
+>> @@ -48,7 +46,6 @@
+>>   	static struct clk_smd_rpm _platform##_##_active =3D {		      \
+>>   		=2Erpm_res_type =3D (type),					      \
+>>   		=2Erpm_clk_id =3D (r_id),					      \
+>> -		=2Erpm_status_id =3D (stat_id),				      \
+>>   		=2Eactive_only =3D true,					      \
+>>   		=2Erpm_key =3D (key),					      \
+>>   		=2Epeer =3D &_platform##_##_name,				      \
+>> @@ -65,12 +62,11 @@
+>>   	}
+>>     #define __DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type=
+, r_id,    \
+>> -				    stat_id, r, key)			      \
+>> +				    r, key)			      \
+>>   	static struct clk_smd_rpm _platform##_##_active;		      \
+>>   	static struct clk_smd_rpm _platform##_##_name =3D {		      \
+>>   		=2Erpm_res_type =3D (type),					      \
+>>   		=2Erpm_clk_id =3D (r_id),					      \
+>> -		=2Erpm_status_id =3D (stat_id),				      \
+>>   		=2Erpm_key =3D (key),					      \
+>>   		=2Ebranch =3D true,						      \
+>>   		=2Epeer =3D &_platform##_##_active,				      \
+>> @@ -88,7 +84,6 @@
+>>   	static struct clk_smd_rpm _platform##_##_active =3D {		      \
+>>   		=2Erpm_res_type =3D (type),					      \
+>>   		=2Erpm_clk_id =3D (r_id),					      \
+>> -		=2Erpm_status_id =3D (stat_id),				      \
+>>   		=2Eactive_only =3D true,					      \
+>>   		=2Erpm_key =3D (key),					      \
+>>   		=2Ebranch =3D true,						      \
+>> @@ -107,19 +102,19 @@
+>>     #define DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id)	 =
+     \
+>>   		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
+>> -		0, QCOM_RPM_SMD_KEY_RATE)
+>> +		QCOM_RPM_SMD_KEY_RATE)
+>>     #define DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, =
+r_id, r)   \
+>>   		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type,  \
+>> -		r_id, 0, r, QCOM_RPM_SMD_KEY_ENABLE)
+>> +		r_id, r, QCOM_RPM_SMD_KEY_ENABLE)
+>>     #define DEFINE_CLK_SMD_RPM_QDSS(_platform, _name, _active, type, r_=
+id)	      \
+>>   		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
+>> -		0, QCOM_RPM_SMD_KEY_STATE)
+>> +		QCOM_RPM_SMD_KEY_STATE)
+>>     #define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_i=
+d, r)      \
+>>   		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
+>> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, r,			      \
+>> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, r,			      \
+>>   		QCOM_RPM_KEY_SOFTWARE_ENABLE)
+>>     #define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _act=
+ive,	      \
+>> @@ -128,7 +123,7 @@
+>>   					     r_id, r);			      \
+>>   		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name##_pin,	      \
+>>   		_active##_pin,						      \
+>> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, r,			      \
+>> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, r,			      \
+>>   		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
+>>     #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, h=
+w)
+>> @@ -137,7 +132,6 @@ struct clk_smd_rpm {
+>>   	const int rpm_res_type;
+>>   	const int rpm_key;
+>>   	const int rpm_clk_id;
+>> -	const int rpm_status_id;
+>>   	const bool active_only;
+>>   	bool enabled;
+>>   	bool branch;
+>
+
+--=20
+With best wishes
+Dmitry
