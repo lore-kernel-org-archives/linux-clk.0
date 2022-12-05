@@ -2,114 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AFAC4708E
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 15:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73C9C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 17:04:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbiLEPAJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 10:00:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60886 "EHLO
+        id S231688AbiLEREP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 12:04:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbiLEPAI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 10:00:08 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 868C8BC85;
-        Mon,  5 Dec 2022 07:00:03 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.96,219,1665414000"; 
-   d="scan'208";a="142271622"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2022 00:00:02 +0900
-Received: from localhost.localdomain (unknown [10.226.92.127])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8F8834007F3F;
-        Mon,  5 Dec 2022 23:59:57 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-iio@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
-Date:   Mon,  5 Dec 2022 14:59:49 +0000
-Message-Id: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S231651AbiLEREO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 12:04:14 -0500
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1D0167FA
+        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 09:04:13 -0800 (PST)
+Received: by mail-qt1-x82b.google.com with SMTP id g7so533439qts.1
+        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 09:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dg1xVh4Yg1L/k9vHsFFKZgYg91qTS9E3CTp05X8jmk0=;
+        b=TJd0d9HabudjwWyvoLesW1BVBcITB9Q9zUWft0b3HcJtxPAnamy0K89l8uXLvB5pAc
+         p7EtnqT2jYWr6t4Xk8lNZ+pU1ToZiJjU0Bo20UnbWgtROMa6BO/IHvySdlercKeUlXJg
+         Wzojx1XXz6ok7gsZ/sa+VL0rxmCLhcnydOczjeQV0I0ZTt/iszOEZr1i6lpWvtZNB4ab
+         a1b99Ri/rO4U0QSCEjxEHBqHqCBWQumfllPPCYDyAkuk7e+sflw+wqXoR/bOTOvzUoGh
+         X6QMteK56trhN71CVbMrN3RB7bkGcHIF9neFnDBFAjZ4/OOlMFGhw3jWdNDu09f2c9Tl
+         iWsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dg1xVh4Yg1L/k9vHsFFKZgYg91qTS9E3CTp05X8jmk0=;
+        b=NFWtUYpUOjaO0z+1c3lczHUODgfBc3sEP6ufSFD/B+E+HocxO3TzfHZ69GEzdiNT5G
+         vqBOCM+hpx38EQNQnPf9I4gTUFBqhUcSdzdSXhxVEIIfJEx28v9artrz3ShTk25KwYbT
+         0ABjSLkA25PLSMQMlWwapddXp4eDYLXS4TtKQBewfvvo2jLHavBYJoEKlzrE8VrFLE6i
+         GHZBEzO8krloR619WW1HydJATAejyf7RPfvQsGvMeoNnpiieWjHCGXEGlSNmQpYYHxEM
+         W9WKAOUtt6SgdnjA24KFDkYrs03wFMrC7xZ7w1++mHsxktMVs9iVPgNDrNXKvyyPOr0+
+         lHvg==
+X-Gm-Message-State: ANoB5plzzWbX2S6wLKQ05zIeWpouTVsrj6z1TnsuxWeyEqjZWM9+hliP
+        YKVeK9QTYfMP5I8/m3qJBZ3Eow==
+X-Google-Smtp-Source: AA0mqf4od8V3YTPvAvVMDByG40K1n3O0nac4Uc4oVdZ4v7LIdWVkwj4jQCHoN/cUTSTfOoMbcmQG4w==
+X-Received: by 2002:a05:622a:258d:b0:3a6:5758:e24 with SMTP id cj13-20020a05622a258d00b003a657580e24mr57466319qtb.261.1670259852310;
+        Mon, 05 Dec 2022 09:04:12 -0800 (PST)
+Received: from [172.22.22.4] ([98.61.227.136])
+        by smtp.googlemail.com with ESMTPSA id u25-20020a37ab19000000b006eeca296c00sm12322192qke.104.2022.12.05.09.04.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Dec 2022 09:04:03 -0800 (PST)
+Message-ID: <cbc7894e-7de2-5c6f-5a52-739eaceeaa49@linaro.org>
+Date:   Mon, 5 Dec 2022 11:04:00 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 01/16] clk: qcom: smd-rpm: remove duplication between
+ sm6375 and sm6125 clocks
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221203175808.859067-1-dmitry.baryshkov@linaro.org>
+ <20221203175808.859067-2-dmitry.baryshkov@linaro.org>
+From:   Alex Elder <elder@linaro.org>
+In-Reply-To: <20221203175808.859067-2-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series aims to add support for Compare-Match Timer (TIM)
-module found on RZ/V2M SoC.
+On 12/3/22 11:57 AM, Dmitry Baryshkov wrote:
+> Reuse sm6125's MMAXI clocks for sm6375. Also drop QCOM_SMD_RPM_MMXI_CLK,
+> which is equal to QCOM_SMD_RPM_MMAXI_CLK.
+> 
+> Fixes: 644c42295592 ("clk: qcom: smd: Add SM6375 clocks")
 
-it is composed of 32 channels and channels 0-7 and 24-32 are
-reserved for ISP usage.
+Was there an actual bug in the above commit?  I only ask because
+the "Fixes" thing to me implies that this patch is a bug fix to
+be back-ported, and I don't think that's the case here.
 
-Channel 22 is modelled as clock source and Channel 23 is modelled as clock
-event driver and the rest of the channels are modelled as counter driver
-as it provides
+Perhaps the MMXI/MMAXI duplication could be considered a bug,
+but if that's the case please fix that separately (first), and
+then reuse the same clock for both SoCs second.
 
-1) counter for counting
-2) configurable counter value for generating timer interrupt
-3) userspace event for each interrupt.
+Otherwise this looks good to me.
 
-logs:-
-Counter driver:
-Counter driver is tested by reading counts and interrupts tested by
-counter-example in tools/counter/counter_example.c
+Reviewed-by: Alex Elder <elder@linaro.org>
 
-Count snapshot value:
-3114
-Output from counter_example when it triggers interrupts:
-Timestamp 0: 24142152969        Count 0: 5
-Error Message 0: Success
-
-Clock source:
-Clock source driver is tested by clock-source-switch app.
-[ 1275.703567] clocksource: Switched to clocksource arch_sys_counter
-[ 1275.710189] clocksource: Switched to clocksource a4000b00.timer
-[OK]
-# Totals: pass[ 1275.718112] clocksource: Switched to clocksource arch_sys_counter
-:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-# Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Clock event:
-clock event driver is tested by changing the rating as 500.
-
-Biju Das (6):
-  clk: renesas: r9a09g011: Add TIM clock and reset entries
-  dt-bindings: timer: Add RZ/V2M TIM binding
-  clocksource/drivers/rzv2m-tim: Add Renesas RZ/V2M compare match
-    timer(TIM) driver
-  dt-bindings: counter: Add RZ/V2M TIM counter binding
-  counter: Add Renesas RZ/V2M TIM counter driver
-  arm64: dts: renesas: r9a09g011: Add tim nodes
-
- .../counter/renesas,rzv2m-tim-cnt.yaml        |  83 +++++
- .../bindings/timer/renesas,rzv2m-tim.yaml     |  83 +++++
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi    | 192 ++++++++++
- drivers/clk/renesas/r9a09g011-cpg.c           |  22 ++
- drivers/clocksource/Kconfig                   |   7 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/rzv2m-tim.c               | 330 ++++++++++++++++++
- drivers/counter/Kconfig                       |  10 +
- drivers/counter/Makefile                      |   1 +
- drivers/counter/rzv2m-tim-cnt.c               | 312 +++++++++++++++++
- 10 files changed, 1041 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/counter/renesas,rzv2m-tim-cnt.yaml
- create mode 100644 Documentation/devicetree/bindings/timer/renesas,rzv2m-tim.yaml
- create mode 100644 drivers/clocksource/rzv2m-tim.c
- create mode 100644 drivers/counter/rzv2m-tim-cnt.c
-
--- 
-2.25.1
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/clk/qcom/clk-smd-rpm.c   | 10 ++++------
+>   include/linux/soc/qcom/smd-rpm.h |  1 -
+>   2 files changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index fea505876855..077875cf0d80 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -1120,8 +1120,6 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6115 = {
+>   };
+>   
+>   /* SM6375 */
+> -DEFINE_CLK_SMD_RPM(sm6375, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMXI_CLK, 0);
+> -DEFINE_CLK_SMD_RPM(sm6375, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMXI_CLK, 1);
+>   DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
+>   DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
+>   DEFINE_CLK_SMD_RPM_BRANCH(sm6375, bimc_freq_log, bimc_freq_log_a, QCOM_SMD_RPM_MISC_CLK, 4, 1);
+> @@ -1140,10 +1138,10 @@ static struct clk_smd_rpm *sm6375_clks[] = {
+>   	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
+>   	[RPM_SMD_QUP_CLK] = &sm6125_qup_clk,
+>   	[RPM_SMD_QUP_A_CLK] = &sm6125_qup_a_clk,
+> -	[RPM_SMD_MMRT_CLK] = &sm6375_mmrt_clk,
+> -	[RPM_SMD_MMRT_A_CLK] = &sm6375_mmrt_a_clk,
+> -	[RPM_SMD_MMNRT_CLK] = &sm6375_mmnrt_clk,
+> -	[RPM_SMD_MMNRT_A_CLK] = &sm6375_mmnrt_a_clk,
+> +	[RPM_SMD_MMRT_CLK] = &sm6125_mmrt_clk,
+> +	[RPM_SMD_MMRT_A_CLK] = &sm6125_mmrt_a_clk,
+> +	[RPM_SMD_MMNRT_CLK] = &sm6125_mmnrt_clk,
+> +	[RPM_SMD_MMNRT_A_CLK] = &sm6125_mmnrt_a_clk,
+>   	[RPM_SMD_SNOC_PERIPH_CLK] = &sm6125_snoc_periph_clk,
+>   	[RPM_SMD_SNOC_PERIPH_A_CLK] = &sm6125_snoc_periph_a_clk,
+>   	[RPM_SMD_SNOC_LPASS_CLK] = &sm6125_snoc_lpass_clk,
+> diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
+> index 3ab8c07f71c0..82c9d489833a 100644
+> --- a/include/linux/soc/qcom/smd-rpm.h
+> +++ b/include/linux/soc/qcom/smd-rpm.h
+> @@ -41,7 +41,6 @@ struct qcom_smd_rpm;
+>   #define QCOM_SMD_RPM_HWKM_CLK	0x6d6b7768
+>   #define QCOM_SMD_RPM_PKA_CLK	0x616b70
+>   #define QCOM_SMD_RPM_MCFG_CLK	0x6766636d
+> -#define QCOM_SMD_RPM_MMXI_CLK	0x69786d6d
+>   
+>   int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
+>   		       int state,
 
