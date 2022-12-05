@@ -2,192 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E70C4321E
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 21:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 477C0C4708E
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Dec 2022 22:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233235AbiLEV4D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Dec 2022 16:56:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55146 "EHLO
+        id S233144AbiLEWux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Dec 2022 17:50:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232809AbiLEVzp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 16:55:45 -0500
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE62FB7DB
-        for <linux-clk@vger.kernel.org>; Mon,  5 Dec 2022 13:54:41 -0800 (PST)
-Received: by mail-io1-xd36.google.com with SMTP id q190so3414168iod.10
-        for <linux-clk@vger.kernel.org>; Mon, 05 Dec 2022 13:54:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u+AmwLSmxjTyQnjlvK0vFRf0x1rcJCoW+1z6eBfZS58=;
-        b=BAHDVu4QbF8d2giMn4B9XCOMNRg6yLsqGxXleO80T+fXHSgksKd+sQgSyeiWkdunlF
-         uzCbMsdLbbjvHRyYHXXtLUc2hXJMPpDRZrKF9zNhACA1wxeA7KMDCBNTmOQdp8i6uFUO
-         zfr0jggtjVJXcVlhJtQSG3TVcKJXf00avlkO0AEW/2THfE2xtJsSToY5Y2ziBMXdPSdx
-         ZOqNVStv2+1E/ckF74HagEoDX8+oODMREhpPvWpWgp1TMfv3awJ6kwDsFZY9LX4qUPdO
-         /lnKC6VXoBxakHtoNHbJjXCxYo6Alixd0l5OWwtm7VI9e/RZVIsiBChbUjtWTVexK4EY
-         pKKQ==
+        with ESMTP id S232135AbiLEWup (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2022 17:50:45 -0500
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DB960C8;
+        Mon,  5 Dec 2022 14:50:44 -0800 (PST)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-12c8312131fso15297218fac.4;
+        Mon, 05 Dec 2022 14:50:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u+AmwLSmxjTyQnjlvK0vFRf0x1rcJCoW+1z6eBfZS58=;
-        b=ThaZwxiICzCJcI/VFC2VjatVW9kYNoV/BKdhv9mHpOYjR+n04ntXxC7shlyxgIhmjs
-         oihr3EfV2e18/fIl3ljN8LT5AF8cx+4Yd9R2gvAgLLVeRu8ghCTp9mcMsRiFqwVtPz7F
-         pYn1z7l+AT8rFl++TSwzgljlEjotaVzMF2FiQwniyGAfX8gbbx6JKg4SfiT08PeW5r+o
-         4f5jn5C8suD1daO81BGQGeiEHe330vdKLG7PSjyvwW4M7DiQY6oH0tXhTWOCA7jfNKQP
-         kNDHhEskP+GyWfmxj60KhIwstSENeBZgXFeR4hznPkwTLIhz2NHn0jzcJHUOgmJi4TDL
-         Y5Mw==
-X-Gm-Message-State: ANoB5pk+4UAArFfX1Xu7k0YvdqrqTvbbBB5ZhCmohPdctKujioklSsnF
-        CTND9kgXMFbHhL/LE/mq2Scrcg==
-X-Google-Smtp-Source: AA0mqf7sNVJpJrhGFg7xGhyPyhF6AJ/WwjJelEPLdLiSGDRTHWuo5ddbOsmmFwjctEWGoWjo5r1AyA==
-X-Received: by 2002:a5d:9d4b:0:b0:6de:3e2c:a77a with SMTP id k11-20020a5d9d4b000000b006de3e2ca77amr38360212iok.148.1670277281069;
-        Mon, 05 Dec 2022 13:54:41 -0800 (PST)
-Received: from [172.22.22.4] ([98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id q7-20020a0566022f0700b006ddd85d06c2sm6333055iow.55.2022.12.05.13.54.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Dec 2022 13:54:40 -0800 (PST)
-Message-ID: <a9226554-e592-1d41-d6c7-e343f0e48e97@linaro.org>
-Date:   Mon, 5 Dec 2022 15:54:39 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 08/16] clk: qcom: smd-rpm: drop the rpm_status_id field
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TxzHvxWYmZNaSPLEYbPmMtXeESk2K7kyfAJQblqVQ4Y=;
+        b=J7EJVj65xEzNemPIjtCvtsbeKGBMvJkD6qDOySW1LhpNKCwB8S4RXKRDLrWrdgEv3l
+         XCmSqJUuRidalQ2rr1weme+ZYipxdpnfxX8qILWblZWx7U1EHnqgFgRHzwilYHsvkYti
+         JJrNk+o0BFW2szZ6wzO+tv5ooMT7uRwwRPk0ewYsh1Y5tgNYhkwKnhnLJNP2jsFmU6ND
+         qp+Z6pqFQ5hCv5nVTNl8Sv0CuLPpeol6ZiDGhkoq+ani0Hz5QcA85eqKR/aE5bBxmmdd
+         JYYktI+5pIU8M5djZ3y2V8XclxrqrhrfAbSUMo6gaSHaALa8aoWA6bnyr+0g5p3fqbA/
+         X0Qw==
+X-Gm-Message-State: ANoB5pku6zBlAoXZX9M5hWcIDKQYBB16yGZJ/mIH7Gc+SugRCnCPVggt
+        1or/Iz3tMgsGtH8Uh0X24A==
+X-Google-Smtp-Source: AA0mqf7KXJ756pvRNU+pFCeaYq8k5ygB2LcP2STdNxTP3B6jBGxIhCZjdG51aLUleUczY8Cm7yTj0A==
+X-Received: by 2002:a05:6870:ad09:b0:143:bdd8:ee2f with SMTP id nt9-20020a056870ad0900b00143bdd8ee2fmr21163024oab.7.1670280644076;
+        Mon, 05 Dec 2022 14:50:44 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y39-20020a05687045a700b0014435b51ef7sm6783694oao.30.2022.12.05.14.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Dec 2022 14:50:43 -0800 (PST)
+Received: (nullmailer pid 2831916 invoked by uid 1000);
+        Mon, 05 Dec 2022 22:50:42 -0000
+Date:   Mon, 5 Dec 2022 16:50:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        William Breathitt Gray <william.gray@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20221203175808.859067-1-dmitry.baryshkov@linaro.org>
- <20221203175808.859067-9-dmitry.baryshkov@linaro.org>
- <b250eddc-5164-817a-1c8b-26999feb6b27@linaro.org>
- <77F879AA-7303-4D3A-AD81-9EC5E9CB5ACC@linaro.org>
-From:   Alex Elder <elder@linaro.org>
-In-Reply-To: <77F879AA-7303-4D3A-AD81-9EC5E9CB5ACC@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
+Message-ID: <20221205225042.GA2812115-robh@kernel.org>
+References: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/5/22 3:38 PM, Dmitry Baryshkov wrote:
+On Mon, Dec 05, 2022 at 02:59:49PM +0000, Biju Das wrote:
+> This patch series aims to add support for Compare-Match Timer (TIM)
+> module found on RZ/V2M SoC.
 > 
+> it is composed of 32 channels and channels 0-7 and 24-32 are
+> reserved for ISP usage.
 > 
-> On 5 December 2022 20:04:54 GMT+03:00, Alex Elder <elder@linaro.org> wrote:
->> On 12/3/22 11:58 AM, Dmitry Baryshkov wrote:
->>> The rpm_status_id field is a leftover from the non-SMD clocks. It is of
->>> no use for the SMD-RPM clock driver and is always equal to zero. Drop it
->>> completely.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>
->> Since the macro is defining static structures it's fine, but it
->> could be reassuring to see the rpm_status_id explicitly assigned
->> to 0.  (Just a comment, no change needed.)  It's a good change.
+> Channel 22 is modelled as clock source and Channel 23 is modelled as clock
+> event driver and the rest of the channels are modelled as counter driver
+> as it provides
+
+Why did you pick those 2 counters for those functions?
+
+Unless the h/w blocks are different, this is an abuse of compatible 
+strings. What's the h/w difference that makes you care which counter the 
+OS picks? That's what the DT should describe. If any timer will do, just 
+let the OS pick.
+
 > 
-> Excuse me, probably I misunderstood your comment. The field is removed completely, so there is no place for it to be assigned to 0.
-
-No, I missed that last hunk, where the field got eliminated.
-
-Nevermind my comment, thanks for correcting me.
-
-					-Alex
-
->>
->> Reviewed-by: Alex Elder <elder@linaro.org>
->>
->>> ---
->>>    drivers/clk/qcom/clk-smd-rpm.c | 20 +++++++-------------
->>>    1 file changed, 7 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->>> index e52e0e242294..828cae6769f9 100644
->>> --- a/drivers/clk/qcom/clk-smd-rpm.c
->>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->>> @@ -25,13 +25,11 @@
->>>    #define QCOM_RPM_SMD_KEY_STATE				0x54415453
->>>    #define QCOM_RPM_SCALING_ENABLE_ID			0x2
->>>    -#define __DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id, stat_id,  \
->>> -			     key)					      \
->>> +#define __DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id, key)      \
->>>    	static struct clk_smd_rpm _platform##_##_active;		      \
->>>    	static struct clk_smd_rpm _platform##_##_name = {		      \
->>>    		.rpm_res_type = (type),					      \
->>>    		.rpm_clk_id = (r_id),					      \
->>> -		.rpm_status_id = (stat_id),				      \
->>>    		.rpm_key = (key),					      \
->>>    		.peer = &_platform##_##_active,				      \
->>>    		.rate = INT_MAX,					      \
->>> @@ -48,7 +46,6 @@
->>>    	static struct clk_smd_rpm _platform##_##_active = {		      \
->>>    		.rpm_res_type = (type),					      \
->>>    		.rpm_clk_id = (r_id),					      \
->>> -		.rpm_status_id = (stat_id),				      \
->>>    		.active_only = true,					      \
->>>    		.rpm_key = (key),					      \
->>>    		.peer = &_platform##_##_name,				      \
->>> @@ -65,12 +62,11 @@
->>>    	}
->>>      #define __DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id,    \
->>> -				    stat_id, r, key)			      \
->>> +				    r, key)			      \
->>>    	static struct clk_smd_rpm _platform##_##_active;		      \
->>>    	static struct clk_smd_rpm _platform##_##_name = {		      \
->>>    		.rpm_res_type = (type),					      \
->>>    		.rpm_clk_id = (r_id),					      \
->>> -		.rpm_status_id = (stat_id),				      \
->>>    		.rpm_key = (key),					      \
->>>    		.branch = true,						      \
->>>    		.peer = &_platform##_##_active,				      \
->>> @@ -88,7 +84,6 @@
->>>    	static struct clk_smd_rpm _platform##_##_active = {		      \
->>>    		.rpm_res_type = (type),					      \
->>>    		.rpm_clk_id = (r_id),					      \
->>> -		.rpm_status_id = (stat_id),				      \
->>>    		.active_only = true,					      \
->>>    		.rpm_key = (key),					      \
->>>    		.branch = true,						      \
->>> @@ -107,19 +102,19 @@
->>>      #define DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id)	      \
->>>    		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
->>> -		0, QCOM_RPM_SMD_KEY_RATE)
->>> +		QCOM_RPM_SMD_KEY_RATE)
->>>      #define DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id, r)   \
->>>    		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type,  \
->>> -		r_id, 0, r, QCOM_RPM_SMD_KEY_ENABLE)
->>> +		r_id, r, QCOM_RPM_SMD_KEY_ENABLE)
->>>      #define DEFINE_CLK_SMD_RPM_QDSS(_platform, _name, _active, type, r_id)	      \
->>>    		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
->>> -		0, QCOM_RPM_SMD_KEY_STATE)
->>> +		QCOM_RPM_SMD_KEY_STATE)
->>>      #define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_id, r)      \
->>>    		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
->>> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, r,			      \
->>> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, r,			      \
->>>    		QCOM_RPM_KEY_SOFTWARE_ENABLE)
->>>      #define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _active,	      \
->>> @@ -128,7 +123,7 @@
->>>    					     r_id, r);			      \
->>>    		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name##_pin,	      \
->>>    		_active##_pin,						      \
->>> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, r,			      \
->>> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, r,			      \
->>>    		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
->>>      #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
->>> @@ -137,7 +132,6 @@ struct clk_smd_rpm {
->>>    	const int rpm_res_type;
->>>    	const int rpm_key;
->>>    	const int rpm_clk_id;
->>> -	const int rpm_status_id;
->>>    	const bool active_only;
->>>    	bool enabled;
->>>    	bool branch;
->>
+> 1) counter for counting
+> 2) configurable counter value for generating timer interrupt
+> 3) userspace event for each interrupt.
 > 
+> logs:-
+> Counter driver:
+> Counter driver is tested by reading counts and interrupts tested by
+> counter-example in tools/counter/counter_example.c
+> 
+> Count snapshot value:
+> 3114
+> Output from counter_example when it triggers interrupts:
+> Timestamp 0: 24142152969        Count 0: 5
+> Error Message 0: Success
+> 
+> Clock source:
+> Clock source driver is tested by clock-source-switch app.
+> [ 1275.703567] clocksource: Switched to clocksource arch_sys_counter
+> [ 1275.710189] clocksource: Switched to clocksource a4000b00.timer
 
+Do you have any use case to really switch. Doing so disables the vDSO 
+access to the clocksource.
+
+Rob
