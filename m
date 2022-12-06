@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDC1C3A5A7
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 23:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC494C3A5A7
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 23:26:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbiLFX0G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Dec 2022 18:26:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36460 "EHLO
+        id S229479AbiLFX0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Dec 2022 18:26:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiLFX0G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 18:26:06 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEFCB29353
-        for <linux-clk@vger.kernel.org>; Tue,  6 Dec 2022 15:26:04 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id j4so26132448lfk.0
-        for <linux-clk@vger.kernel.org>; Tue, 06 Dec 2022 15:26:04 -0800 (PST)
+        with ESMTP id S229487AbiLFX0L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 18:26:11 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539B32EF57
+        for <linux-clk@vger.kernel.org>; Tue,  6 Dec 2022 15:26:10 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id z4so19004152ljq.6
+        for <linux-clk@vger.kernel.org>; Tue, 06 Dec 2022 15:26:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
         bh=l526E0M3m2oeB1LGIT6sGPLZlCdqeAgIKILU4qw9R8o=;
-        b=s4rxbPqRt7Xtl7khZlnLCLPWDJNS1o/oRUeXxqZBSxEuMe17Hfi8w+2xulHnNkZh+D
-         VXJQ4AAofz6eCyVSiAxiV0K1lo2C/BE0gjVVjsBop+K0U2hF1GGOPAIwPR6BGvylIBOe
-         BOhk5cyerhymAgyKzJfBov1B7bWcqkgk44TfdPr1EA47jYp4uA+5w2z4xudWb5HnUX86
-         /ts5VwcFlddNJX9f+EDJb5MOYQ+JjGo+GmZUUkEPZ6afWSBX1LqKME/Glcsmr7VRqmH0
-         9eMwI+QlkPm2LlA3SRz7erlYJpfmVJ6BVkrgugvCNGmOd6oWQyP16sbkbhFNXb/KSDb4
-         MnhQ==
+        b=axdpt8rtOC+4lWH3yeM7CqJipR688ChCb1DV9otuZRi6Es07a3T1t81R7VRGuhFrDO
+         9sqnWjphfzPU/TkZG7v6fO1cR+7zMjychCWUZMtDhPqJa7r+nxrGxUTBzM8tBECJUge/
+         h6pd6jEb8hRvEquzMC6v1toloTJPuN5eLA2evS7JgRx8ktg1zDqAvtBzw+PB/reyUb9d
+         ohvBB+CgQCIGFrMN5wSM5iWTOHtgNWLE6z3iD3/DzMwhVSqrxNmN9vq1PjRVW/gaQlOl
+         yTmdTeyyJ1d7hsoStraG67xMR713y+3+sCHCctalLfHe4/veWqmni7ThxJWUpaHT3Qs5
+         A8tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=l526E0M3m2oeB1LGIT6sGPLZlCdqeAgIKILU4qw9R8o=;
-        b=F3Q1p2GpYmj5mc5tVi31QDigBrdBtAd40hzeFDtPgtFwWB9o3pA6uzEwI9OGDAxrEF
-         MQMjm0sMhlUP/NlxYBls2Qa/PNUykoiB3CtCYGrbJ0obhflKFN6M99mEdgfT6m5sanjK
-         HpCEHPHn9KGlgBLDEDSWvkxrmW6bzrS7JXLGV0ZXL3k6J/zsq4PnSmDrArD1LG05tOoz
-         4umnAt1BVNygFQ1R3kI4CndsTzA4deCRsrAQ4Ah95D4GbH21w8SkiZ+9LxlUGfY0TQw8
-         YM7pZBdRq+pei5IpBb6yLYfslzAKDnKtUx/EOmSdvy7EJG6BBrpOENe5lwYnvcf5b1eD
-         vhVg==
-X-Gm-Message-State: ANoB5pmYU6R7yg9/ILTvPrI2+gyj5v/234usjr/jxYwLWq0LhTCE61p8
-        ITY557YivtgZQrNixyA/Ra+mKA==
-X-Google-Smtp-Source: AA0mqf4BoWRwOwbzrlivar/cFYmd4/tWTYZ5h1khweGtYqyIdSzIjI0+GdVRyi8Lz8ijONptI+cLbQ==
-X-Received: by 2002:a05:6512:340b:b0:4b5:704c:b79c with SMTP id i11-20020a056512340b00b004b5704cb79cmr3932205lfr.281.1670369163102;
-        Tue, 06 Dec 2022 15:26:03 -0800 (PST)
+        b=Fa9kN39GTZK4CenLkiOupZNf3Hl/8SSbF+DnN/CmwWwFFOOvqNVIqWwCcHsXv94Ubw
+         UcuS3YV7380JBO1tHkQSvj9w2kOHpCQDBvqCq0LV+WG0ZVESxrtxjO8wJs8VoAPN3bBd
+         h6JdJAVd3as3czo8evP9lB0xhIiV4oWWMaciquDoSyc1dNr7H6AvYG5K6Fqz/XsmHQfk
+         ZpVqj55ghfqx4GRQHKKMppp2r71NbhZo6gyNwtumrAUQSVuG+cq6d0Eq5JPtp0rr0wIC
+         Rn78yLO21uxsbv81ZkIEzBNdP2iR8dUCXEccnuzsGbzbv5FrqL4OgojASWKZaUaIkbJa
+         uk0w==
+X-Gm-Message-State: ANoB5pl/r4+iuT/X1fL1uoyLtNPiSDCvT7UAT3VxUbvFLVCSgqSPH2vD
+        YMuN7D0/Vkr8AuRd/NZXHPd2Zw==
+X-Google-Smtp-Source: AA0mqf5AMBhOUAlsSTuDp8La/PiMR5li1Szx4VI1AWPh2b5s120FGNjnxk3yF6z61cRnerkyBsj5bg==
+X-Received: by 2002:a2e:a791:0:b0:27a:13ad:14b1 with SMTP id c17-20020a2ea791000000b0027a13ad14b1mr1174186ljf.351.1670369168644;
+        Tue, 06 Dec 2022 15:26:08 -0800 (PST)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id j19-20020a056512345300b004b549ad99adsm1690364lfr.304.2022.12.06.15.26.02
+        by smtp.gmail.com with ESMTPSA id m8-20020a2e9108000000b0026dffa29989sm1492438ljg.23.2022.12.06.15.26.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Dec 2022 15:26:02 -0800 (PST)
-Message-ID: <b13c2c9f-6949-57ee-22df-e99b1d3c098b@linaro.org>
-Date:   Wed, 7 Dec 2022 01:26:02 +0200
+        Tue, 06 Dec 2022 15:26:08 -0800 (PST)
+Message-ID: <76c419d6-c017-713c-a7af-7f8876462335@linaro.org>
+Date:   Wed, 7 Dec 2022 01:26:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
