@@ -2,65 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 917D2C47090
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 18:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2203FC4708C
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 18:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbiLFSTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Dec 2022 13:19:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33248 "EHLO
+        id S230078AbiLFS3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Dec 2022 13:29:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbiLFSTY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 13:19:24 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07CFFA45D;
-        Tue,  6 Dec 2022 10:19:20 -0800 (PST)
+        with ESMTP id S230138AbiLFS3A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 13:29:00 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B774E4B99B;
+        Tue,  6 Dec 2022 10:24:09 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B4144B81AD7;
-        Tue,  6 Dec 2022 18:19:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C96BFC433C1;
-        Tue,  6 Dec 2022 18:19:16 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id AFC9DCE1AF9;
+        Tue,  6 Dec 2022 18:23:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE95C433D6;
+        Tue,  6 Dec 2022 18:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670350757;
-        bh=rj/mVJVWuy/34su8OwO33Cp8pq0OuQeJZ7/9ytPZOrU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dJjZPPOW7vcRW+9/AeDyJ4GwN+09xCjP+nncRo089HpF6iwf+OA+BKdVuiMRrhMQE
-         iP5GsrkIQzplknDPJCaTGSR3cFOTvs+BTaQJil6Ha1h83wsLU+xVujLmBlIJxDRQcY
-         +z5vUapZIT/8CeHnh3vZOxJFQM/rAEHPhYrAkLsqK08y+qEoHO7rtLloKFfwiUW8r+
-         wO9BHp44xor1JniqEa2V3GTsQ4FJqJKIVTKxTFCIARblNu673K6LlhdegK2/KKp+cG
-         tb96piyqlB+SlK/rhqjGGFsqsjNVswGK9VvXSdW7pPsQPQaGVCcnEqyxHsEpdIAw3c
-         eoXsCkOfB/BCQ==
+        s=k20201202; t=1670351014;
+        bh=M8WKNBU3VnzY0vAPfX8+hUUgSFuMbkBjP5zVOGHhQz8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fqazpemNzOVMBIdamfGyH89ClbVP/HRxlj/qWxetTDkooWyvpjj5J0WEI4d62HuIk
+         ayJFpl1vnPALluPk0xVlrvoVnGblfboEaTBMIL5v+ebNHbLy+H5Pk85oy/tjJdokz4
+         eRms3g+wwr0djaX31g1lyh+RUwePzQMry88QyB4bTV6MLEOH5bqlSULQy8SzeXcZFk
+         Op7hv3aDHD7J0lScdeqdyUStNSgNh9OUCr+wyvHoxM4r6EBkOdfZKBLYvEbJDYHBGU
+         jQhU7d6F92Jes/X8zndi86PFMA/fnlDPVnoNuARXDN2j13oXUlFyjhj49d18nr2XIz
+         r61vHslNYOSpA==
+Date:   Tue, 6 Dec 2022 12:23:32 -0600
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     robert.marko@sartura.hr, sboyd@kernel.org, mturquette@baylibre.com,
-        konrad.dybcio@linaro.org, agross@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     luka.perkov@sartura.hr
-Subject: Re: [PATCH] clk: qcom: gcc-ipq4019: switch to devm_clk_notifier_register
-Date:   Tue,  6 Dec 2022 12:19:15 -0600
-Message-Id: <167035074144.3154869.10845823932222956063.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221205113545.575702-1-robert.marko@sartura.hr>
-References: <20221205113545.575702-1-robert.marko@sartura.hr>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 1/5] dt-bindings: clock: Add SM8550 TCSR CC clocks
+Message-ID: <20221206182332.oi7mxxryv2kvd3wu@builder.lan>
+References: <20221206125635.952114-1-abel.vesa@linaro.org>
+ <20221206125635.952114-2-abel.vesa@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221206125635.952114-2-abel.vesa@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 5 Dec 2022 12:35:45 +0100, Robert Marko wrote:
-> Switch to using devres-managed version of clk_notifier_register(). This
-> allows us to drop driver's remove() callback.
+On Tue, Dec 06, 2022 at 02:56:31PM +0200, Abel Vesa wrote:
+> Add bindings documentation for clock TCSR driver on SM8550.
 > 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml      | 53 +++++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm8550-tcsr.h  | 18 +++++++
+>  2 files changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsr.h
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> new file mode 100644
+> index 000000000000..15176b0457d1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8550-tcsr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm TCSR Clock Controller on SM8550
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +
+> +description: |
+> +  Qualcomm TCSR clock control module provides the clocks, resets and
+> +  power domains on SM8550
+> +
+> +  See also:: include/dt-bindings/clock/qcom,sm8550-tcsr.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm8550-tcsr
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
 
-Applied, thanks!
+This sounds like the crystal feeding the PMIC, but the clock here should
+be the signal that arrives at the CXO pin of the SoC.
 
-[1/1] clk: qcom: gcc-ipq4019: switch to devm_clk_notifier_register
-      commit: 52fb1b8e481b423afbb34259be964494ba5b8614
+Other than that, this looks good now.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Thanks,
+Bjorn
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +    clock-controller@1fc0000 {
+> +      compatible = "qcom,sm8550-tcsr";
+> +      reg = <0x1fc0000 0x30000>;
+> +      clocks = <&rpmhcc RPMH_CXO_PAD_CLK>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +    };
+> +
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,sm8550-tcsr.h b/include/dt-bindings/clock/qcom,sm8550-tcsr.h
+> new file mode 100644
+> index 000000000000..091cb76f953a
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm8550-tcsr.h
+> @@ -0,0 +1,18 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2022, Linaro Limited
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
+> +#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
+> +
+> +/* TCSR CC clocks */
+> +#define TCSR_PCIE_0_CLKREF_EN					0
+> +#define TCSR_PCIE_1_CLKREF_EN					1
+> +#define TCSR_UFS_CLKREF_EN					2
+> +#define TCSR_UFS_PAD_CLKREF_EN					3
+> +#define TCSR_USB2_CLKREF_EN					4
+> +#define TCSR_USB3_CLKREF_EN					5
+> +
+> +#endif
+> -- 
+> 2.34.1
+> 
