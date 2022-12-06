@@ -2,106 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D266C3A5A7
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 18:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6BFC352A1
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 19:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbiLFSd4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Dec 2022 13:33:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51628 "EHLO
+        id S229546AbiLFT7K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Dec 2022 14:59:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbiLFSdg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 13:33:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC2743852;
-        Tue,  6 Dec 2022 10:31:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C0CB6189A;
-        Tue,  6 Dec 2022 18:31:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD5AFC433C1;
-        Tue,  6 Dec 2022 18:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670351461;
-        bh=5xTLjp4LeFj0uXRgLCQLSq2wJXbvdG8fJOW+4kkXY+U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=amYtWejkR96N3Rc+kkrX8N3+no0s11/MLffgcbXb7n7YOdyxIIak+ZUvQI6VX/LUA
-         u8QahuoSc7o4D7f9BMlgHunGFnbwHF8kFyTjzfxe6HW/PsufUfk/9bLWjBuxujZvj9
-         bDcg/l+jLIk0df4Iw+tUNRSOp/DG3UpRvBBOAwxeAjq/nutULrKAu5srwrtxCOrpfZ
-         1zyrM+aLV9H2o7qm1zD3A3SocX/yrJsxvc/pFLGp70Q87gcuKnaIF1k6ZQ69bMX3Cb
-         TFag4Qqvm9fAE9V9i97cDPMa2O44XkmqwVZstDSJVubzxlrw0BSjQkIJbImfHz4EyG
-         /OTJsPMFBMapg==
-Date:   Tue, 6 Dec 2022 12:30:58 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Alex Elder <alex.elder@linaro.org>
-Cc:     Alex Elder <elder@linaro.org>, sboyd@kernel.org,
-        mturquette@baylibre.com, konrad.dybcio@linaro.org,
-        agross@kernel.org, Luca Weiss <luca.weiss@fairphone.com>,
-        dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: rpmh: add support for SM6350 rpmh IPA clock
-Message-ID: <20221206183058.rsws5ciqa2u5q7oj@builder.lan>
-References: <20221202221240.225720-1-elder@linaro.org>
- <20221205225646.gtwhakd4lxh6vlfc@builder.lan>
- <39903fb5-fd28-c159-b300-47d3ec4cd0fc@linaro.org>
+        with ESMTP id S229575AbiLFT7J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 14:59:09 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF65E40444;
+        Tue,  6 Dec 2022 11:59:07 -0800 (PST)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B6JQX4T009973;
+        Tue, 6 Dec 2022 19:58:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=/qoa6QkTRVtzY7PQwUYrr7Mo3VfK02MILbYzCqvXZuY=;
+ b=FlIwAlGSPy6+EpNeBXX/ONOXvQCdM5nxLDd+AHymLjmbcijWeXc0VelIrOWayUMzwve/
+ 67DJvgNzU1TvfvtCs8GoarnngS7QmFoqhYwN0Ko+rnwgl1nrf/WcJFqHkc/knzUVK/fq
+ UNJn6tJuc2PJSQEL1Yi9MBOXxl2FGOC20r6/23VrVWvqz6l0qViL4fW6ltYqs1K+SOIp
+ dzbGId0YDC2M1Z9M0M8Qb7+pZudDv2I5lFVZ+TRTvFph2+xC0FKAofvfpo1/UfhlHTtP
+ 771tVvu/kwTAwSxYh37bl15g+AAFk8j2HYvWLpVlVStf5HYeAlBduGDMJzoRgPRMUZu6 2g== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3m9wa2tj3u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Dec 2022 19:58:44 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2B6Jwg2A003806
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 6 Dec 2022 19:58:42 GMT
+Received: from [10.216.31.39] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 6 Dec 2022
+ 11:58:35 -0800
+Message-ID: <a174f4a8-42a6-c861-f08a-91fb497a5f43@quicinc.com>
+Date:   Wed, 7 Dec 2022 01:28:32 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39903fb5-fd28-c159-b300-47d3ec4cd0fc@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [Freedreno] [PATCH v7 0/6] clk/qcom: Support gdsc collapse
+ polling using 'reset' interface
+Content-Language: en-US
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC:     David Airlie <airlied@linux.ie>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-clk@vger.kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Andy Gross <agross@kernel.org>, <devicetree@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Sean Paul" <sean@poorly.run>, Stephen Boyd <sboyd@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        <krzysztof.kozlowski@linaro.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        freedreno <freedreno@lists.freedesktop.org>
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
+ <20221201225705.46r2m35ketvzipox@builder.lan>
+ <a0544298-f463-4994-1cf4-9e290f85bf37@quicinc.com>
+In-Reply-To: <a0544298-f463-4994-1cf4-9e290f85bf37@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GFOILXgwYLeNOI7SR9e4VLJ4UKh9T2dr
+X-Proofpoint-ORIG-GUID: GFOILXgwYLeNOI7SR9e4VLJ4UKh9T2dr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-06_11,2022-12-06_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 spamscore=0 mlxscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2212060167
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 05, 2022 at 09:05:30PM -0600, Alex Elder wrote:
-> On 12/5/22 4:56 PM, Bjorn Andersson wrote:
-> > On Fri, Dec 02, 2022 at 04:12:40PM -0600, Alex Elder wrote:
-> > > From: Luca Weiss <luca.weiss@fairphone.com>
-> > > 
-> > > The IPA core clock is required for SM6350.  Define it.
-> > > 
-> > > [elder@linaro.org: rebased with Dmitry's changes]
-> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> 
-> Sorry about that, I knew I was supposed to sign
-> off and thought I had.
-> 
-> You told me separately that this was sufficient:
-> 
-> Signed-off-by: Alex Elder <elder@linaro.org>
-> 
-> If you want me to send a new version with the
-> signoff just let me know.  Thanks.
-> 
+On 12/2/2022 12:30 PM, Akhil P Oommen wrote:
+> On 12/2/2022 4:27 AM, Bjorn Andersson wrote:
+>> On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
+>> @Ulf, Akhil has a power-domain for a piece of hardware which may be
+>> voted active by multiple different subsystems (co-processors/execution
+>> contexts) in the system.
+>>
+>> As such, during the powering down sequence we don't wait for the
+>> power-domain to turn off. But in the event of an error, the recovery
+>> mechanism relies on waiting for the hardware to settle in a powered off
+>> state.
+>>
+>> The proposal here is to use the reset framework to wait for this state
+>> to be reached, before continuing with the recovery mechanism in the
+>> client driver.
+>>
+>> Given our other discussions on quirky behavior, do you have any
+>> input/suggestions on this?
+Ulf,
 
-That works fine, thank you.
-Bjorn
+Gentle ping! Could you please share your feedback?
 
-> 					-Alex
-> > 
-> > Thanks for rebasing this Alex. But as you're handling the patch you need
-> > to add your S-o-b; which will make sure your [] makes sense as well.
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > ---
-> > > v2: This is now based on qualcomm/for-next.
-> > > 
-> > >   drivers/clk/qcom/clk-rpmh.c | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> > > index 2c2ef4b6d130e..586a810c682ca 100644
-> > > --- a/drivers/clk/qcom/clk-rpmh.c
-> > > +++ b/drivers/clk/qcom/clk-rpmh.c
-> > > @@ -606,6 +606,7 @@ static struct clk_hw *sm6350_rpmh_clocks[] = {
-> > >   	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_ln_bb_clk3_g4_ao.hw,
-> > >   	[RPMH_QLINK_CLK]	= &clk_rpmh_qlink_div4.hw,
-> > >   	[RPMH_QLINK_CLK_A]	= &clk_rpmh_qlink_div4_ao.hw,
-> > > +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-> > >   };
-> > >   static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
-> > > -- 
-> > > 2.34.1
-> > > 
-> 
+-Akhil.
+>>
+>>> Some clients like adreno gpu driver would like to ensure that its gdsc
+>>> is collapsed at hardware during a gpu reset sequence. This is because it
+>>> has a votable gdsc which could be ON due to a vote from another subsystem
+>>> like tz, hyp etc or due to an internal hardware signal. To allow
+>>> this, gpucc driver can expose an interface to the client driver using
+>>> reset framework. Using this the client driver can trigger a polling within
+>>> the gdsc driver.
+>> @Akhil, this description is fairly generic. As we've reached the state
+>> where the hardware has settled and we return to the client, what
+>> prevents it from being powered up again?
+>>
+>> Or is it simply a question of it hitting the powered-off state, not
+>> necessarily staying there?
+> Correct. It doesn't need to stay there. The intention is to hit the powered-off state at least once to clear all the internal hw states (basically a hw reset).
+>
+> -Akhil.
+>> Regards,
+>> Bjorn
+>>
+>>> This series is rebased on top of qcom/linux:for-next branch.
+>>>
+>>> Related discussion: https://patchwork.freedesktop.org/patch/493144/
+>>>
+>>> Changes in v7:
+>>> - Update commit message (Bjorn)
+>>> - Rebased on top of qcom/linux:for-next branch.
+>>>
+>>> Changes in v6:
+>>> - No code changes in this version. Just captured the Acked-by tags
+>>>
+>>> Changes in v5:
+>>> - Nit: Remove a duplicate blank line (Krzysztof)
+>>>
+>>> Changes in v4:
+>>> - Update gpu dt-binding schema
+>>> - Typo fix in commit text
+>>>
+>>> Changes in v3:
+>>> - Use pointer to const for "struct qcom_reset_ops" in qcom_reset_map (Krzysztof)
+>>>
+>>> Changes in v2:
+>>> - Return error when a particular custom reset op is not implemented. (Dmitry)
+>>>
+>>> Akhil P Oommen (6):
+>>>   dt-bindings: clk: qcom: Support gpu cx gdsc reset
+>>>   clk: qcom: Allow custom reset ops
+>>>   clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+>>>   clk: qcom: gpucc-sc7280: Add cx collapse reset support
+>>>   dt-bindings: drm/msm/gpu: Add optional resets
+>>>   arm64: dts: qcom: sc7280: Add Reset support for gpu
+>>>
+>>>  .../devicetree/bindings/display/msm/gpu.yaml       |  6 +++++
+>>>  arch/arm64/boot/dts/qcom/sc7280.dtsi               |  3 +++
+>>>  drivers/clk/qcom/gdsc.c                            | 23 ++++++++++++++----
+>>>  drivers/clk/qcom/gdsc.h                            |  7 ++++++
+>>>  drivers/clk/qcom/gpucc-sc7280.c                    | 10 ++++++++
+>>>  drivers/clk/qcom/reset.c                           | 27 +++++++++++++++++++++-
+>>>  drivers/clk/qcom/reset.h                           |  8 +++++++
+>>>  include/dt-bindings/clock/qcom,gpucc-sc7280.h      |  3 +++
+>>>  8 files changed, 82 insertions(+), 5 deletions(-)
+>>>
+>>> -- 
+>>> 2.7.4
+>>>
+
