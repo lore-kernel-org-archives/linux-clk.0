@@ -2,165 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2203FC4708C
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 18:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A8BC352A1
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 18:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbiLFS3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Dec 2022 13:29:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
+        id S230033AbiLFSdz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Dec 2022 13:33:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230138AbiLFS3A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 13:29:00 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B774E4B99B;
-        Tue,  6 Dec 2022 10:24:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229703AbiLFSdd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 13:33:33 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88537D138;
+        Tue,  6 Dec 2022 10:30:50 -0800 (PST)
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id AFC9DCE1AF9;
-        Tue,  6 Dec 2022 18:23:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE95C433D6;
-        Tue,  6 Dec 2022 18:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670351014;
-        bh=M8WKNBU3VnzY0vAPfX8+hUUgSFuMbkBjP5zVOGHhQz8=;
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C7D386602B2C;
+        Tue,  6 Dec 2022 18:30:41 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1670351447;
+        bh=w/xHJDdu02/REEs8caf9Uw8W1mhWaHk5rVGr0//60Zo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fqazpemNzOVMBIdamfGyH89ClbVP/HRxlj/qWxetTDkooWyvpjj5J0WEI4d62HuIk
-         ayJFpl1vnPALluPk0xVlrvoVnGblfboEaTBMIL5v+ebNHbLy+H5Pk85oy/tjJdokz4
-         eRms3g+wwr0djaX31g1lyh+RUwePzQMry88QyB4bTV6MLEOH5bqlSULQy8SzeXcZFk
-         Op7hv3aDHD7J0lScdeqdyUStNSgNh9OUCr+wyvHoxM4r6EBkOdfZKBLYvEbJDYHBGU
-         jQhU7d6F92Jes/X8zndi86PFMA/fnlDPVnoNuARXDN2j13oXUlFyjhj49d18nr2XIz
-         r61vHslNYOSpA==
-Date:   Tue, 6 Dec 2022 12:23:32 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/5] dt-bindings: clock: Add SM8550 TCSR CC clocks
-Message-ID: <20221206182332.oi7mxxryv2kvd3wu@builder.lan>
-References: <20221206125635.952114-1-abel.vesa@linaro.org>
- <20221206125635.952114-2-abel.vesa@linaro.org>
+        b=ep06ChAedJWVSn2zpjJ0IJMFrhCxHQYnRhZFEkmeTFqrRAw3vRUPqqjd4Ab2ZMgiT
+         cw+GZNqNoheTh69hmJGerSj1l6Yy3CIeKIXeo/KbJJ9TlRl7xymnlQ0sqzyieJ01Yw
+         By+P3TeIGGTHk9uTRAH+1nSixfbBRgv0nMYILrpt2hAz65HSrMogG0pDUDRvfpkRW0
+         wiTZ9qRVOsGt0MlWjPh/T9ROZTJ/11x1/QO4MdHymwGDDbILzkT3akgnjgmNFxjr5f
+         q7nZtYwkNNhLUmmApe6pCwPyPgOsLB8cD5jd3Ve9AOJTO93QSlNAPEc6nbJ3WpdCuS
+         4QpDjWhec/GHA==
+Date:   Tue, 6 Dec 2022 15:30:37 -0300
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     matthias.bgg@gmail.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, wenst@chromium.org,
+        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, jose.exposito89@gmail.com,
+        drinkcat@chromium.org, weiyi.lu@mediatek.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        angelogioacchino.delregno@collabora.com
+Subject: Re: [PATCH v3 01/10] arm64: dts: mt8183: Fix Mali GPU clock
+Message-ID: <20221206183037.3jnssar4yxcx5hpb@notapiano>
+References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
+ <20220927101128.44758-2-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20221206125635.952114-2-abel.vesa@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220927101128.44758-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 06, 2022 at 02:56:31PM +0200, Abel Vesa wrote:
-> Add bindings documentation for clock TCSR driver on SM8550.
+On Tue, Sep 27, 2022 at 12:11:19PM +0200, AngeloGioacchino Del Regno wrote:
+> From: Chen-Yu Tsai <wenst@chromium.org>
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/clock/qcom,sm8550-tcsr.yaml      | 53 +++++++++++++++++++
->  include/dt-bindings/clock/qcom,sm8550-tcsr.h  | 18 +++++++
->  2 files changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsr.h
+> The actual clock feeding into the Mali GPU on the MT8183 is from the
+> clock gate in the MFGCFG block, not CLK_TOP_MFGPLL_CK from the TOPCKGEN
+> block, which itself is simply a pass-through placeholder for the MFGPLL
+> in the APMIXEDSYS block.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> new file mode 100644
-> index 000000000000..15176b0457d1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> @@ -0,0 +1,53 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8550-tcsr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm TCSR Clock Controller on SM8550
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +
-> +description: |
-> +  Qualcomm TCSR clock control module provides the clocks, resets and
-> +  power domains on SM8550
-> +
-> +  See also:: include/dt-bindings/clock/qcom,sm8550-tcsr.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8550-tcsr
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
+> Fix the hardware description with the correct clock reference.
+> 
+> Fixes: a8168cebf1bc ("arm64: dts: mt8183: Add node for the Mali GPU")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-This sounds like the crystal feeding the PMIC, but the clock here should
-be the signal that arrives at the CXO pin of the SoC.
+Hi,
 
-Other than that, this looks good now.
+it seems that while all other patches on this series were applied by Chen-Yu
+through the clk tree, this commit never made it to the mediatek tree.
+
+As a result, MT8183-based machines (or at least mt8183-kukui-jacuzzi, where I
+tested on) currently hang during boot not only on next, but also on mainline,
+v6.1-rc8. With this commit applied I've confirmed that the machine boots fine
+again.
+
+Matthias, could you please apply this commit and make sure it makes its way to
+v6.1? Given the Fixes tag it should eventually make its way there anyway, but if
+still possible would be good to have it fixed right from v6.1.
+
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 Thanks,
-Bjorn
+Nícolas
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +    clock-controller@1fc0000 {
-> +      compatible = "qcom,sm8550-tcsr";
-> +      reg = <0x1fc0000 0x30000>;
-> +      clocks = <&rpmhcc RPMH_CXO_PAD_CLK>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,sm8550-tcsr.h b/include/dt-bindings/clock/qcom,sm8550-tcsr.h
-> new file mode 100644
-> index 000000000000..091cb76f953a
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,sm8550-tcsr.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022, Linaro Limited
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-> +#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-> +
-> +/* TCSR CC clocks */
-> +#define TCSR_PCIE_0_CLKREF_EN					0
-> +#define TCSR_PCIE_1_CLKREF_EN					1
-> +#define TCSR_UFS_CLKREF_EN					2
-> +#define TCSR_UFS_PAD_CLKREF_EN					3
-> +#define TCSR_USB2_CLKREF_EN					4
-> +#define TCSR_USB3_CLKREF_EN					5
-> +
-> +#endif
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8183.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> index a70b669c49ba..402136bfd535 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> @@ -1678,7 +1678,7 @@ gpu: gpu@13040000 {
+>  				<GIC_SPI 278 IRQ_TYPE_LEVEL_LOW>;
+>  			interrupt-names = "job", "mmu", "gpu";
+>  
+> -			clocks = <&topckgen CLK_TOP_MFGPLL_CK>;
+> +			clocks = <&mfgcfg CLK_MFG_BG3D>;
+>  
+>  			power-domains =
+>  				<&spm MT8183_POWER_DOMAIN_MFG_CORE0>,
 > -- 
-> 2.34.1
+> 2.37.2
+> 
+> 
 > 
