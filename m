@@ -2,272 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4B7C4708C
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 10:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA86FC4708C
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Dec 2022 11:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234407AbiLFKw2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Dec 2022 05:52:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44714 "EHLO
+        id S234663AbiLFL2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Dec 2022 06:28:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234378AbiLFKw0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 05:52:26 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C2B1E3C3
-        for <linux-clk@vger.kernel.org>; Tue,  6 Dec 2022 02:52:24 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id m18so3664422eji.5
-        for <linux-clk@vger.kernel.org>; Tue, 06 Dec 2022 02:52:24 -0800 (PST)
+        with ESMTP id S234698AbiLFL2m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 06:28:42 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD292DDA;
+        Tue,  6 Dec 2022 03:28:41 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id m14so23003046wrh.7;
+        Tue, 06 Dec 2022 03:28:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fkld1YTjBZQbiVlABTivpm7yE0ABi+qWnMTJBt+zNt4=;
-        b=hsBTGePNUoSTwRGUi1FtySpPoaX/qu5Dcin8TYngB/vD1D4r40JEKvOT5uAnNPeuHo
-         CqpuNVe6c2awF+TquLCO/ifY6hbkfSlIploxZWD1MDaSolnx4b7jRCjC+4pafC7aZ4Zh
-         9h9gJq1XTxmy54bz0S2bx/IS2/naIHVELj22cCtGjXRL3zCzfCEgp0EEZ3b+TmhFnwFo
-         U4pGNPcLk/wdEhJhK9ytOweih0G5/9QzE8K3pANJMV7DZvSffQjHZNU4uMayhExtBvWD
-         l5rK7EATYJP5fHcHu/k7k9uxUi9usMM3TX2Vwe4TpNZI2+vhfH6dXChpbJQOgBxz768u
-         Q1xg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZygCRQ1Dg3l/MqYYmt2oFaYwy1M9Isk1FWgtgtscaJw=;
+        b=RIzC/lR+jPw3BuMTBca+kDYOV6oE6l0uPIleJXL8YkM0/y02seLQTrDw96yvkoRr3D
+         r7+e7gHEKgQ3sxHWyJ+7XAu669sbB/FAjHl8QFeb+Uoio858KrzEfteonEvd/hrhMa5l
+         IST1UvbBARcwJcQFN1KWd3vwHD7HOx/Q91Xg4Oe9Q1zDOYQqHCnUZJJcjZxvkDGUnwnt
+         g84LvvT86Jz+hEkrj3sEhdyVXcvAB6+NEEsn+Xs02ks/twjGLIb1jyH2yCA39rmM9C49
+         ElSZVjaBGLuNlN1JfxCv35uJwuFHsFAEpSNGThPuskhuRE4BkmfgkZ1tRq6ieYVflY2M
+         Xj4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fkld1YTjBZQbiVlABTivpm7yE0ABi+qWnMTJBt+zNt4=;
-        b=Po7jXelrhLn43gnMIx5KMVJEDZmqYLEZekQbpWC2cL0fLMZVZpZy+DgqzctDtxmzdG
-         gRM/hb61o4PTv+cew7b6pTq8jGpRSgJLUqDAZ50JWL0KBRVk78YsYFvM+ttaqgEFGJiM
-         KPM0TorXhKMMqlr5nas+8pMdB0AhcOpdHflvmka+jx54VUrfRBer73F6A+gqZcWZn6nY
-         kysq2rzlyxZ9vp1WPwYqg5hpH/vMoU7OP5SPambGftkYTX5VRuqZsgxI4wqyHtw+gnXj
-         5Pqv/3mEr/VWXa0V1cGjar5xnEQYT7t+UIcWVE93SZk3LjZxAQOHePDsYN9zjz9C4CYp
-         5VoA==
-X-Gm-Message-State: ANoB5pmm/MaKgHQZ2jSm0pKG0Qpp7eB/SVyhS6pPyQJ2lITacEaIdUDM
-        3OvTPQCZCsmuVXshjL7DxjxJDA==
-X-Google-Smtp-Source: AA0mqf53cSC8NGoH1VuFJO3pbOsz57KByEubiVPxg2fE7nRRltUUOu5hW1zrt6Il80tdNx4juRkD4g==
-X-Received: by 2002:a17:906:a0c6:b0:7bd:3a5c:4dea with SMTP id bh6-20020a170906a0c600b007bd3a5c4deamr4085569ejb.190.1670323942713;
-        Tue, 06 Dec 2022 02:52:22 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id ky20-20020a170907779400b007c0ac4e6b6esm6413333ejc.143.2022.12.06.02.52.21
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZygCRQ1Dg3l/MqYYmt2oFaYwy1M9Isk1FWgtgtscaJw=;
+        b=ygGEtQSA0R/U5brYGSwTiNdi65HZqSoK6QvkpH6Ag4XO2iR8LsyrlaC69Txloqn033
+         NTWZPKlfMBAORptHfkzYZVjOxF1qSrISJZbVAh8OViXAAY2ZnkkA5Zt9dAIf+nL5V30S
+         htgDKilIGLIsOIPSZuBh849VKg+GjQsSPkyN3IkDOrTdsglFmWO+ew6mQTDDVBZdMW23
+         xHNoxygwEdepeNJlHFYn0AwcKgmQYMd2lONk8Fjblc12Qb1L8tGbkrKS8sCekVa96PeS
+         jLfYzqlZtzyCeE+7GEsOVdcEzMaen1vgwOH+amvdy8i49TugrI2uBAwtfvKkqhxKmB2B
+         QRAA==
+X-Gm-Message-State: ANoB5pkWXYcbQ4tI7jKA/puDjJtL8ekUFtI9voOAqlp36A0ed3TJaORZ
+        MZAlu/yuBfxlcA+PL9++TAs=
+X-Google-Smtp-Source: AA0mqf7ZCHpY/LNHi75NDhWXSSDU/bJXmPtQrkwIwqTi6/4uQMNfX2U971iDJipazGxIlhZWMAQ0lw==
+X-Received: by 2002:a5d:6d84:0:b0:242:4ba2:312c with SMTP id l4-20020a5d6d84000000b002424ba2312cmr9600363wrs.406.1670326120264;
+        Tue, 06 Dec 2022 03:28:40 -0800 (PST)
+Received: from demon-pc.localdomain ([188.24.13.177])
+        by smtp.gmail.com with ESMTPSA id m126-20020a1c2684000000b003d1d5a83b2esm4913686wmm.35.2022.12.06.03.28.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 02:52:22 -0800 (PST)
-Date:   Tue, 6 Dec 2022 12:52:21 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
+        Tue, 06 Dec 2022 03:28:39 -0800 (PST)
+From:   Cosmin Tanislav <demonsingur@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 8/9] clk: qcom: rpmh: Add support for SM8550 rpmh
- clocks
-Message-ID: <Y48e5bcy/dGLWYUX@linaro.org>
-References: <20221130112852.2977816-1-abel.vesa@linaro.org>
- <20221130112852.2977816-9-abel.vesa@linaro.org>
- <CAA8EJppgpe_LK=2=qncHB_fpDz4AmUBzcRQ=8_kb0YrLCQNweg@mail.gmail.com>
- <CAA8EJpqgzc01756fVMU6QbRrObZY4bSwQajVzdinZKC2n92h4g@mail.gmail.com>
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [RFC PATCH 0/1] CCF 64-bit transition
+Date:   Tue,  6 Dec 2022 13:28:26 +0200
+Message-Id: <20221206112827.115674-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpqgzc01756fVMU6QbRrObZY4bSwQajVzdinZKC2n92h4g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-11-30 13:59:00, Dmitry Baryshkov wrote:
-> On Wed, 30 Nov 2022 at 13:45, Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > On Wed, 30 Nov 2022 at 13:30, Abel Vesa <abel.vesa@linaro.org> wrote:
-> > >
-> > > Adds the RPMH clocks present in SM8550 SoC.
-> > >
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > ---
-> > >  drivers/clk/qcom/clk-rpmh.c | 110 +++++++++++++++++++++++++++++-------
-> > >  1 file changed, 90 insertions(+), 20 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> > > index 0471bab82464..3204df3fda86 100644
-> > > --- a/drivers/clk/qcom/clk-rpmh.c
-> > > +++ b/drivers/clk/qcom/clk-rpmh.c
-> > > @@ -132,6 +132,36 @@ static DEFINE_MUTEX(rpmh_clk_lock);
-> > >                 },                                                      \
-> > >         }
-> > >
-> > > +#define DEFINE_CLK_RPMH_FIXED(_platform, _name, _name_active,  \
-> > > +                                 _parent_name, _name_active_parent,    \
-> > > +                                 _div)                                 \
-> > > +       static struct clk_fixed_factor _platform##_##_name = {          \
-> > > +               .mult = 1,                                              \
-> > > +               .div = _div,                                            \
-> > > +               .hw.init = &(struct clk_init_data){                     \
-> > > +                       .ops = &clk_fixed_factor_ops,                   \
-> > > +                       .name = #_name,                                 \
-> > > +                       .parent_data =  &(const struct clk_parent_data){ \
-> > > +                                       .fw_name = #_parent_name,       \
-> > > +                                       .name = #_parent_name,          \
-> > > +                       },                                              \
-> > > +                       .num_parents = 1,                               \
-> > > +               },                                                      \
-> > > +       };                                                              \
-> > > +       static struct clk_fixed_factor _platform##_##_name_active = {   \
-> > > +               .mult = 1,                                              \
-> > > +               .div = _div,                                            \
-> > > +               .hw.init = &(struct clk_init_data){                     \
-> > > +                       .ops = &clk_fixed_factor_ops,                   \
-> > > +                       .name = #_name_active,                          \
-> > > +                       .parent_data =  &(const struct clk_parent_data){ \
-> > > +                                       .fw_name = #_name_active_parent,\
-> > > +                                       .name = #_name_active_parent,   \
-> > > +                       },                                              \
-> > > +                       .num_parents = 1,                               \
-> > > +               },                                                      \
-> > > +       }
-> > > +
-> >
-> > Please use CLK_FIXED_FACTOR_FW_NAME() instead.
-> 
-> Or even better CLK_FIXED_FACTOR_HW(). It fits better here.
+I sent this as an RFC to get input from the maintainers, since I doubt
+this is in a state to be accepted right away and it has not been thoroughly
+tested.
 
-I think DEFINE_CLK_FIXED_FACTOR would be even a better fit. No _HW since we
-are not defining just the clk_hw. Also we should keep the DEFINE_ prefix to
-be consistent with the others.
+Internally, we've been using a simpler way of scaling the clocks for both
+providers and consumers, but it doesn't fit too well in the CCF.
 
-> 
-> >
-> > >  static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
-> > >  {
-> > >         return container_of(_hw, struct clk_rpmh, hw);
-> > > @@ -579,6 +609,43 @@ static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
-> > >         .num_clks = ARRAY_SIZE(sm8450_rpmh_clocks),
-> > >  };
-> > >
-> > > +DEFINE_CLK_RPMH_ARC(sm8550, xo_pad, xo_pad_ao, "xo.lvl", 0x03, 2);
-> > > +DEFINE_CLK_RPMH_FIXED(sm8550, bi_tcxo, bi_tcxo_ao, xo_pad, xo_pad_ao, 2);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk1, rf_clk1_ao, "clka1", 1);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk2, rf_clk2_ao, "clka2", 1);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk3, rf_clk3_ao, "clka3", 1);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, rf_clk4, rf_clk4_ao, "clka4", 1);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk1, ln_bb_clk1_ao, "clka6", 2);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk2, ln_bb_clk2_ao, "clka7", 2);
-> > > +DEFINE_CLK_RPMH_VRM(sm8550, ln_bb_clk3, ln_bb_clk3_ao, "clka8", 2);
-> > > +
-> > > +static struct clk_hw *sm8550_rpmh_clocks[] = {
-> > > +       [RPMH_CXO_PAD_CLK]      = &sm8550_xo_pad.hw,
-> > > +       [RPMH_CXO_PAD_CLK_A]    = &sm8550_xo_pad_ao.hw,
-> > > +       [RPMH_CXO_CLK]          = &sm8550_bi_tcxo.hw,
-> > > +       [RPMH_CXO_CLK_A]        = &sm8550_bi_tcxo_ao.hw,
-> > > +       [RPMH_LN_BB_CLK1]       = &sm8550_ln_bb_clk1.hw,
-> > > +       [RPMH_LN_BB_CLK1_A]     = &sm8550_ln_bb_clk1_ao.hw,
-> > > +       [RPMH_LN_BB_CLK2]       = &sm8550_ln_bb_clk2.hw,
-> > > +       [RPMH_LN_BB_CLK2_A]     = &sm8550_ln_bb_clk2_ao.hw,
-> > > +       [RPMH_LN_BB_CLK3]       = &sm8550_ln_bb_clk3.hw,
-> > > +       [RPMH_LN_BB_CLK3_A]     = &sm8550_ln_bb_clk3_ao.hw,
-> > > +       [RPMH_RF_CLK1]          = &sm8550_rf_clk1.hw,
-> > > +       [RPMH_RF_CLK1_A]        = &sm8550_rf_clk1_ao.hw,
-> > > +       [RPMH_RF_CLK2]          = &sm8550_rf_clk2.hw,
-> > > +       [RPMH_RF_CLK2_A]        = &sm8550_rf_clk2_ao.hw,
-> > > +       [RPMH_RF_CLK3]          = &sm8550_rf_clk3.hw,
-> > > +       [RPMH_RF_CLK3_A]        = &sm8550_rf_clk3_ao.hw,
-> > > +       [RPMH_RF_CLK4]          = &sm8550_rf_clk4.hw,
-> > > +       [RPMH_RF_CLK4_A]        = &sm8550_rf_clk4_ao.hw,
-> > > +       [RPMH_IPA_CLK]          = &sdm845_ipa.hw,
-> > > +};
-> > > +
-> > > +static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
-> > > +       .clks = sm8550_rpmh_clocks,
-> > > +       .num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
-> > > +};
-> > > +
-> > >  static struct clk_hw *sc7280_rpmh_clocks[] = {
-> > >         [RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
-> > >         [RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
-> > > @@ -682,29 +749,31 @@ static int clk_rpmh_probe(struct platform_device *pdev)
-> > >
-> > >                 name = hw_clks[i]->init->name;
-> > >
-> > > -               rpmh_clk = to_clk_rpmh(hw_clks[i]);
-> > > -               res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-> > > -               if (!res_addr) {
-> > > -                       dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
-> > > -                               rpmh_clk->res_name);
-> > > -                       return -ENODEV;
-> > > -               }
-> > > +               if (hw_clks[i]->init->ops != &clk_fixed_factor_ops) {
-> >
-> > This looks ugly a bit. I'd rather add something like non_cmd_clks to
-> > the clk_rpmh_desc data and register them separately. Or even worse,
-> > you can keep the rpmh as is, with only cmd-db based clocks and add a
-> > fixed factor clock to the sm8550 dtsi directly. I have a slight
-> > preference for the former method, but the latter would also work.
-> 
-> After a second thought, I'd withdraw the second method. Just add a
-> separate array with non-cmd-db clocks.
-> 
-> >
-> > > +                       rpmh_clk = to_clk_rpmh(hw_clks[i]);
-> > > +                       res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-> > > +                       if (!res_addr) {
-> > > +                               dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
-> > > +                                       rpmh_clk->res_name);
-> > > +                               return -ENODEV;
-> > > +                       }
-> > >
-> > > -               data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
-> > > -               if (IS_ERR(data)) {
-> > > -                       ret = PTR_ERR(data);
-> > > -                       dev_err(&pdev->dev,
-> > > -                               "error reading RPMh aux data for %s (%d)\n",
-> > > -                               rpmh_clk->res_name, ret);
-> > > -                       return ret;
-> > > -               }
-> > > +                       data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
-> > > +                       if (IS_ERR(data)) {
-> > > +                               ret = PTR_ERR(data);
-> > > +                               dev_err(&pdev->dev,
-> > > +                                       "error reading RPMh aux data for %s (%d)\n",
-> > > +                                       rpmh_clk->res_name, ret);
-> > > +                               return ret;
-> > > +                       }
-> > >
-> > > -               /* Convert unit from Khz to Hz */
-> > > -               if (aux_data_len == sizeof(*data))
-> > > -                       rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
-> > > +                       /* Convert unit from Khz to Hz */
-> > > +                       if (aux_data_len == sizeof(*data))
-> > > +                               rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
-> > >
-> > > -               rpmh_clk->res_addr += res_addr;
-> > > -               rpmh_clk->dev = &pdev->dev;
-> > > +                       rpmh_clk->res_addr += res_addr;
-> > > +                       rpmh_clk->dev = &pdev->dev;
-> > > +               }
-> > >
-> > >                 ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
-> > >                 if (ret) {
-> > > @@ -739,6 +808,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
-> > >         { .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
-> > >         { .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
-> > >         { .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
-> > > +       { .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
-> > >         { .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
-> > >         { }
-> > >  };
-> > > --
-> > > 2.34.1
-> > >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
-> 
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Making the switch to 64-bit integers in the CCF would let us upstream more
+of our drivers without needing a 64-bit system.
+
+I've thought of some ways to improve this or make the transition easier,
+but I need input before moving onto implementing them.
+
+a)
+
+Add a _32 suffix to the old API, and move the clk.h and clk-provider.h
+headers to clk-internal.h and clk-provider-internal.h.
+
+Add new clk.h and clk-provider.h headers that include the
+clk-internal.h and clk-provider-internal.h header, and use macros to alias
+the _32 suffixed API to the old unsuffixed names.
+
+Add new clk-64.h and clk-provider-64.h headers that include the
+clk-internal.h and clk-provider-internal.h header, and use macros to alias
+the _64 suffixed API to the old unsuffixed names.
+
+Drivers could transition to the 64-bit API by simply swapping the headers
+that they include (and, obviously, testing). Code changes will still be
+necessary to swap long for u64, but at least the API interaction will be
+kept as close as possible.
+
+b)
+
+Introduce a clk_rate_t type. In case we will ever need to change the
+definition again, it will be easier. I have no good ideas for a naming
+scheme for the new API that will make use of this new type.
+
+Cosmin Tanislav (1):
+  clk: core: use 64-bit integers
+
+ drivers/clk/clk.c            | 564 +++++++++++++++++++++++++++--------
+ include/linux/clk-provider.h |  90 ++++++
+ include/linux/clk.h          |  44 +++
+ 3 files changed, 578 insertions(+), 120 deletions(-)
+
+-- 
+2.38.1
+
