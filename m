@@ -2,89 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040D6C63708
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 15:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0788CC63703
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbiLGPyS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 10:54:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56068 "EHLO
+        id S229486AbiLGQBb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 11:01:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbiLGPyI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 10:54:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D51391D9;
-        Wed,  7 Dec 2022 07:54:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 49392B81EE6;
-        Wed,  7 Dec 2022 15:54:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434BCC4314B;
-        Wed,  7 Dec 2022 15:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670428444;
-        bh=xIPmWCibkdavxCRVOURX8EUvxlNv0n6NgzyQqLhKu40=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NglCdmYGmRf+JoRXVGcExDaePqTYOl2L2MQhkpXMwItrZ6FBkgMwdR8kYK6e4uSXU
-         hGqB2CVg5Jst/hsmMFfxgBfFqP3W2NJVetktXSJyoiYQ/dYYaVidqNqSEMs7BOyrJy
-         dj3w5NjkFycyfCHxauS5cC/Oeu2iRUFB7xEnKbsOZB2hUdThloDqLBjHxBC0ws5PmL
-         sVTFmvUglU2CIBk2mMpP72HCmRyUreD14daLiqGksW8dNaCB+GIosgTi+axWigSZDC
-         czFxepv3QhmEfqj2Qg73MQcoovmOi3MYloTwZdAhzTFhJHg1IBx0mRjs0Bip3p22A3
-         tDEL9NsaMT6zQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     robh+dt@kernel.org, mturquette@baylibre.com,
-        konrad.dybcio@linaro.org, dmitry.baryshkov@linaro.org,
-        quic_tdas@quicinc.com, krzysztof.kozlowski+dt@linaro.org,
-        agross@kernel.org, sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 00/11] clk: qcom: update MSM8974 clock controller drivers
-Date:   Wed,  7 Dec 2022 09:54:00 -0600
-Message-Id: <167042843840.3235558.2401904749733882313.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221204124508.1415713-1-dmitry.baryshkov@linaro.org>
-References: <20221204124508.1415713-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S229702AbiLGQB3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:01:29 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A5ED3F050
+        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 08:01:28 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id 82so16804775pgc.0
+        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 08:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=d1kIptz7lKS34gKJ86GNyP5WqgoufGO1GV/3C71h5+Y=;
+        b=Zv+M3sdOTc2OaYw1U1lD9VTedffjOCXGlzUX5YnRjqpDj/9mhaAVkhtuzC+ogifVNu
+         p1S/8EKd2QORb28ZpoA3LQnVibjwCkCNAAb9dr9XCl2C4l+Lt3Z6K4ir7sm+3mW4x/85
+         6pBJiFAc5UE0fruWDoMsAuJxxN5FRe4wKarL0lpXgBiZNMb0+WQ3q6mYx9fH+BVE9sXN
+         gbcBsoVcq0qongaEmXQHvGOHZ7fI+IIGnay3mc2RIntIRbvuzxhNHt+9sR/XJZeaoNbC
+         fkZqCAqy2kkWqJJLUpz0hIpe2AeBemrvPLy50G6cklmneX0nbRZt8TDVpi+8T7V/GUDd
+         oNxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d1kIptz7lKS34gKJ86GNyP5WqgoufGO1GV/3C71h5+Y=;
+        b=PYpGo55+sFyCIC2u9MlK9lHLxkOsntTxXTBO4ngEIHMLS3NrPhZ51e1Uxnt+3Go9cM
+         VBFz0drHee8DlqgBIhZTAOF1Wj4MTOr9n4vT2POa28zDfT7BhpuSY7YJw4mA8ZalDi+I
+         itHxsvu37sOabhv0iwC/T+BN+xBrRvXUdSxBRWwB2i57+zm8Pq57CvpoH26YH9Om8qUt
+         Yf3+ezrCYsVMZnIx8EpHXjrX7W6EpdfCVONBzGR3KrXdt9dWwwlemyKRuK4er6nFhi3L
+         UGMLa8JphlEGI5QfPttqDvoF3LImSmRhE2H/9TKRWqmFy2ViJxcvwoTGaapYoiZfEpjo
+         aYPQ==
+X-Gm-Message-State: ANoB5pnkWBKc6iztgm14AThqTjkiNCJavEJaecP6N+0XVX6hrDW/Xsya
+        QDvC4e++87z9Xp+cKqiywDrZ7B14qf/FX+qEk8Yatw==
+X-Google-Smtp-Source: AA0mqf6sjup+AAww0D1CxABtpTEw5G9veD+P+n64BdJc1XGnX7DToNoJVds9RCkhIAyxzhqjXASkgW/44ET/nN1v+Fo=
+X-Received: by 2002:aa7:951d:0:b0:577:3e5e:7a4 with SMTP id
+ b29-20020aa7951d000000b005773e5e07a4mr8456102pfp.57.1670428887514; Wed, 07
+ Dec 2022 08:01:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com> <20221201225705.46r2m35ketvzipox@builder.lan>
+In-Reply-To: <20221201225705.46r2m35ketvzipox@builder.lan>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 7 Dec 2022 17:00:51 +0100
+Message-ID: <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
+ 'reset' interface
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        krzysztof.kozlowski@linaro.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 4 Dec 2022 14:44:57 +0200, Dmitry Baryshkov wrote:
-> Modernize drivers for global and multimedia clock controllers on the
-> MSM8974 platform. Switch them to using parent_hws/parent_data, use
-> clocks through the DT links rather than fetching them from the system
-> clocks list, update schema and platform DT files.
-> 
-> Changes since v3:
-> - Rebased on top of for-next
-> - Changed gcc-msm8974 description and title to follow Krzysztof's
->   changes
-> - Fixed commit messages to describe the reasons for xo -> xo_board
->   change
-> 
-> [...]
+On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
+>
+> On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
+> >
+>
+> @Ulf, Akhil has a power-domain for a piece of hardware which may be
+> voted active by multiple different subsystems (co-processors/execution
+> contexts) in the system.
+>
+> As such, during the powering down sequence we don't wait for the
+> power-domain to turn off. But in the event of an error, the recovery
+> mechanism relies on waiting for the hardware to settle in a powered off
+> state.
+>
+> The proposal here is to use the reset framework to wait for this state
+> to be reached, before continuing with the recovery mechanism in the
+> client driver.
 
-Applied, thanks!
+I tried to review the series (see my other replies), but I am not sure
+I fully understand the consumer part.
 
-[01/11] dt-bindings: clock: split qcom,gcc-msm8974,-msm8226 to the separate file
-        commit: 7c9c38fc6bda7214c1af3d3e741bc99df979897d
-[02/11] dt-bindings: clocks: qcom,mmcc: define clocks/clock-names for MSM8974
-        commit: e80313c70a23c1c92f1ea1749799a90a1b490be4
-[03/11] clk: qcom: gcc-msm8974: use ARRAY_SIZE instead of specifying num_parents
-        commit: fce760071df1f32163655c37555eec8c1577581d
-[04/11] clk: qcom: gcc-msm8974: move clock parent tables down
-        commit: f2b4f1490e82dec9881565b2f92467c5b6f4636d
-[05/11] clk: qcom: gcc-msm8974: use parent_hws/_data instead of parent_names
-        commit: ff81be97120b6bb79f1239a184bb0c851d7ed9a7
-[06/11] clk: qcom: mmcc-msm8974: use ARRAY_SIZE instead of specifying num_parents
-        commit: 4e74e921ea0c576682ffd7981af1d4a73ceaca11
-[07/11] clk: qcom: mmcc-msm8974: move clock parent tables down
-        commit: 28c6c02527757a4b3c63b30d77f7e7d5c112c085
-[08/11] clk: qcom: mmcc-msm8974: use parent_hws/_data instead of parent_names
-        commit: a174d29a59ec9462d3e72fd00a9fd05054c4ab20
+More exactly, when and who is going to pull the reset and at what point?
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+>
+> Given our other discussions on quirky behavior, do you have any
+> input/suggestions on this?
+>
+> > Some clients like adreno gpu driver would like to ensure that its gdsc
+> > is collapsed at hardware during a gpu reset sequence. This is because it
+> > has a votable gdsc which could be ON due to a vote from another subsystem
+> > like tz, hyp etc or due to an internal hardware signal. To allow
+> > this, gpucc driver can expose an interface to the client driver using
+> > reset framework. Using this the client driver can trigger a polling within
+> > the gdsc driver.
+>
+> @Akhil, this description is fairly generic. As we've reached the state
+> where the hardware has settled and we return to the client, what
+> prevents it from being powered up again?
+>
+> Or is it simply a question of it hitting the powered-off state, not
+> necessarily staying there?
+
+Okay, so it's indeed the GPU driver that is going to assert/de-assert
+the reset at some point. Right?
+
+That seems like a reasonable approach to me, even if it's a bit
+unclear under what conditions that could happen.
+
+[...]
+
+Kind regards
+Uffe
