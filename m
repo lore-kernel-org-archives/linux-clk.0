@@ -2,140 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCBFC63705
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385EDC352A1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 17:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbiLGQzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 11:55:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41358 "EHLO
+        id S229847AbiLGRAT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 12:00:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiLGQzE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:55:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4356177A;
-        Wed,  7 Dec 2022 08:55:04 -0800 (PST)
+        with ESMTP id S229795AbiLGQ74 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:59:56 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05DB6931C;
+        Wed,  7 Dec 2022 08:59:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AD319B81F81;
-        Wed,  7 Dec 2022 16:55:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC00C433D6;
-        Wed,  7 Dec 2022 16:54:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A99D61ACE;
+        Wed,  7 Dec 2022 16:59:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 496CBC433C1;
+        Wed,  7 Dec 2022 16:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670432101;
-        bh=g2V0Wwn6EW5nnAQJVxm3ydv5yxtTxZ3faTwyKAV+Vng=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qeakXi+qjXqru5YplfgJgzLRGD1+Kp+o1u0MtV7noIDhWiTg7e3xbj8jVEsQ96Fmv
-         LlXtOYrRtAoKkmkW9F9lPuMN0YF8HUFGmbuu/XmUnh6ppKiyi82Q8cp8/iIKMNRzWM
-         IMLQMMXKxv2yI0KcyYTf7j0fU1iWLIJyNJObT39c5/QSnhwnumB3UmD997BkKwb+4i
-         91DwB8cxBiyad80jtnVTax/B81fD88ThFL6Ib+gQCxGQrez8M6+CZoApcaNceeVPB8
-         j0prjEvp4t/dfe4FPo6dF4K9r9LaNvhtY1L9p1W/VaPEn/zZw16Csx6NCRIYYE4hfs
-         pyjh1A6JwOZ0w==
-Date:   Wed, 7 Dec 2022 10:54:57 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        krzysztof.kozlowski@linaro.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
- 'reset' interface
-Message-ID: <20221207165457.kwdwwiycbwjpogxl@builder.lan>
-References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
- <20221201225705.46r2m35ketvzipox@builder.lan>
- <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
+        s=k20201202; t=1670432382;
+        bh=UOTMAATjpNxXnTsgAzUbM8B4waAQT2pl6BE2XR4t/K4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XhC0mmciJkcpwLG7sYOOaGKrWKwIVpdwqR/Dn9xSR635jBTpIfxxIFXzwfXPYVpEz
+         vGBuzGWW7ET8W+aDFMjo/7nqquvc5C14fBzF2ICGG5AHL3B1tPic0PhuElEjw5MePz
+         dSGQz57sc87bI7czj63nZHx4zLOn8UmGQMh3IEmE76m18pKx/b9m2mltqiwwyA8t38
+         xX3r6WcL8IFg/Fft1OPCDBrsOr6TrDx7KzneN2T6feczbHYDqLBBpf/qgF4i0lOQLA
+         sakSWPZtM/QutnbGlBUiCypq4x/a3Vcl3DdQl7k+tGNM2RgJ9kEkzJKqhnG29KJC6B
+         RuZyGWjftleCw==
+Date:   Wed, 7 Dec 2022 08:59:41 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
+Message-ID: <20221207085941.3b56bc8c@kernel.org>
+In-Reply-To: <Y5CQ0qddxuUQg8R8@nanopsycho>
+References: <Y4eGxb2i7uwdkh1T@nanopsycho>
+        <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <Y4nyBwNPjuJFB5Km@nanopsycho>
+        <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <Y4okm5TrBj+JAJrV@nanopsycho>
+        <20221202212206.3619bd5f@kernel.org>
+        <Y43IpIQ3C0vGzHQW@nanopsycho>
+        <20221205161933.663ea611@kernel.org>
+        <Y48CS98KYCMJS9uM@nanopsycho>
+        <20221206092705.108ded86@kernel.org>
+        <Y5CQ0qddxuUQg8R8@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 07, 2022 at 05:00:51PM +0100, Ulf Hansson wrote:
-> On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
+On Wed, 7 Dec 2022 14:10:42 +0100 Jiri Pirko wrote:
+> >> Why do we need this association at all?  
 > >
-> > On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
-> > >
-> >
-> > @Ulf, Akhil has a power-domain for a piece of hardware which may be
-> > voted active by multiple different subsystems (co-processors/execution
-> > contexts) in the system.
-> >
-> > As such, during the powering down sequence we don't wait for the
-> > power-domain to turn off. But in the event of an error, the recovery
-> > mechanism relies on waiting for the hardware to settle in a powered off
-> > state.
-> >
-> > The proposal here is to use the reset framework to wait for this state
-> > to be reached, before continuing with the recovery mechanism in the
-> > client driver.
+> >Someone someday may want netns delegation and if we don't have the
+> >support from the start we may break backward compat introducing it.  
 > 
-> I tried to review the series (see my other replies), but I am not sure
-> I fully understand the consumer part.
-> 
-> More exactly, when and who is going to pull the reset and at what point?
-> 
-> >
-> > Given our other discussions on quirky behavior, do you have any
-> > input/suggestions on this?
-> >
-> > > Some clients like adreno gpu driver would like to ensure that its gdsc
-> > > is collapsed at hardware during a gpu reset sequence. This is because it
-> > > has a votable gdsc which could be ON due to a vote from another subsystem
-> > > like tz, hyp etc or due to an internal hardware signal. To allow
-> > > this, gpucc driver can expose an interface to the client driver using
-> > > reset framework. Using this the client driver can trigger a polling within
-> > > the gdsc driver.
-> >
-> > @Akhil, this description is fairly generic. As we've reached the state
-> > where the hardware has settled and we return to the client, what
-> > prevents it from being powered up again?
-> >
-> > Or is it simply a question of it hitting the powered-off state, not
-> > necessarily staying there?
-> 
-> Okay, so it's indeed the GPU driver that is going to assert/de-assert
-> the reset at some point. Right?
-> 
-> That seems like a reasonable approach to me, even if it's a bit
-> unclear under what conditions that could happen.
-> 
+> Hmm. Can you imagine a usecase?
 
-Generally the disable-path of the power-domain does not check that the
-power-domain is actually turned off, because the status might indicate
-that the hardware is voting for the power-domain to be on.
+Running DPLL control in a namespace / container.
 
-As part of the recovery of the GPU after some fatal fault, the GPU
-driver does something which will cause the hardware votes for the
-power-domain to be let go, and then the driver does pm_runtime_put().
+I mean - I generally think netns is overused, but yes, it's what
+containers use, so I think someone may want to develop their
+timer controller SW in as a container?
 
-But in this case the GPU driver wants to ensure that the power-domain is
-actually powered down, before it does pm_runtime_get() again. To ensure
-that the hardware lost its state...
+> Link to devlink instance btw might be a problem. In case of mlx5, one
+> dpll instance is going to be created for 2 (or more) PFs. 1 per ConnectX
+> ASIC as there is only 1 clock there. And PF devlinks can come and go,
+> does not make sense to link it to any of them.
 
-The proposal here is to use a reset to reach into the power-domain
-provider and wait for the hardware to be turned off, before the GPU
-driver attempts turning the power-domain on again.
+If only we stuck to the "one devlink instance per ASIC", huh? :)
 
+> Thinking about it a bit more, DPLL itself has no network notion. The
+> special case is SyncE pin, which is linked to netdevice. Just a small
+> part of dpll device. And the netdevice already has notion of netns.
+> Isn't that enough?
 
-In other words, there is no reset. This is a hack to make a normally
-asynchronous pd.power_off() to be synchronous in this particular case.
-
-Regards,
-Bjorn
+So we can't use devlink or netdev. Hm. So what do we do?
+Make DPLLs only visible in init_net? And require init_net admin?
+And when someone comes asking we add an explicit "move to netns"
+command to DPLL?
