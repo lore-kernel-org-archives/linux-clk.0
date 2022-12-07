@@ -2,158 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E84C4708E
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 14:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42291C352A1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 14:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbiLGOJK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 09:09:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39334 "EHLO
+        id S230103AbiLGOvw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 09:51:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbiLGOJI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 09:09:08 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD55101F;
-        Wed,  7 Dec 2022 06:09:07 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id vv4so14306272ejc.2;
-        Wed, 07 Dec 2022 06:09:07 -0800 (PST)
+        with ESMTP id S229709AbiLGOvu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 09:51:50 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADFED55CBB
+        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 06:51:45 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id t17so14609525eju.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 06:51:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HfRbWXj1ryZ5GigKdlnSpxHeKcoIXzKhe5JQwEmq1f8=;
-        b=WHXdNthSpVMYh8TQeOUuH5dQ6K2I04nxBLe8eERBlRWZkH4jajaNfBC0xcirw+9zXc
-         CzRsbbjgCTnKewSdaeR4Q8eIh66aNHe6uOcVN1E+QQlKshfcLwooa98jI01bExdaEJCh
-         QBsci2ey5uTCe2L4RFyUY1Nxzk7MYoGJnP0Q+HKqs5Y8vMbX+zU+YiX6ySKpK4odMiD7
-         BS3aUnVW4pjXvvI7H7uHZ552LImRc5bci8nhyJz4QrMQJYjO71AptlKHBpWzwoNtmwDx
-         4mFe41gdZgdKn+sksY0zTJsXMoVL10ffFKOTTauBEcCQEDI55eHiMwbVRDJV+92d7REk
-         77ow==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YOoLyltdiLP2JEEnnOjDDBjmowt4f2XyOeFTDUjuF0o=;
+        b=8LPvLa5f8GWVmsFwwTg1U5kbOjmfPOIweDVg0JgDkU66U1Ai1CbGUzeH5erXRynjOi
+         bpCw2zeV3JTSuD4QxVcpaCSD65NM5j/LicODL+gOZ/fyGnZm2JdE/LAmtPIs08k3OafD
+         gzY126/r2xXz3k3USm6gxKL86ySXNxid+nHRkNG9XNIXdoisTW6DyfyWeTrF+CE7MuvH
+         phmUUNN96h8w6chWW22UHnVkGmKHWUs1ME3SN0+GJGAZs1eY3Peh+8H1UGD9QwSobNdY
+         kNDYVcWIBg/M02ThYpRLRfaSzbvWC9q7qVOtW8q9ueoTalt19EPU8s/8Tbgnk1gMB+Bs
+         oX/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HfRbWXj1ryZ5GigKdlnSpxHeKcoIXzKhe5JQwEmq1f8=;
-        b=0DiTuUaVmJMYVnzOIAodZ4ooYk1y2Wde1F80oE+iPC5rjX0qoab5SO5REEi9SHVUma
-         wv0xG0jKJ8f1KmMFeOUVUjsfiVrkfVNes3ih2H4Kqg0FoZ1/oi5zBbKu1no2gKBjj+vW
-         LIphI1xkUbvCW3YQG80hK0uhLOgbIQahTMYl1WliwkRZ+LVY8zrQ2UDUnc7UeJS9s1Yy
-         DE+iiuLj8AuUl2CW7frn3fWeqwdnxdbR9KiLvpoH8zX/bwfCzUM7ikXViL5q/1ErD3Xl
-         6tHJ95ssup1HcfRV2zCCUSVLqyyDsLK2Iq2Haj/rp1rTvW0+l4NqXgMo5xZEDIrADlPu
-         G8XA==
-X-Gm-Message-State: ANoB5pkMEINEMAP/toRDpyDI/v7+qOo2S80fm9gwy22GRz6c44Oqoyxm
-        izI5FIN9CCzgmSHOvd4v8q0=
-X-Google-Smtp-Source: AA0mqf7ZnHqgf3A3Z9YTz+W3oqPd9lBAUCzC6xkNs7SctMaeg0v9SYT3FuDRMeLl+p9+puQm5h6pJw==
-X-Received: by 2002:a17:906:22d6:b0:7c0:9e25:8908 with SMTP id q22-20020a17090622d600b007c09e258908mr27501905eja.673.1670422145680;
-        Wed, 07 Dec 2022 06:09:05 -0800 (PST)
-Received: from NVBTQK6D3 (83.8.188.9.ipv4.supernova.orange.pl. [83.8.188.9])
-        by smtp.gmail.com with ESMTPSA id du1-20020a17090772c100b00772061034dbsm8580812ejc.182.2022.12.07.06.09.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Dec 2022 06:09:05 -0800 (PST)
-From:   <netdev.dump@gmail.com>
-To:     "'Jakub Kicinski'" <kuba@kernel.org>,
-        "'Jiri Pirko'" <jiri@resnulli.us>
-Cc:     "'Kubalewski, Arkadiusz'" <arkadiusz.kubalewski@intel.com>,
-        "'Vadim Fedorenko'" <vfedorenko@novek.ru>,
-        "'Jonathan Lemon'" <jonathan.lemon@gmail.com>,
-        "'Paolo Abeni'" <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>        <Y4dNV14g7dzIQ3x7@nanopsycho>        <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>        <Y4oj1q3VtcQdzeb3@nanopsycho> <20221206184740.28cb7627@kernel.org>
-In-Reply-To: <20221206184740.28cb7627@kernel.org>
-Subject: RE: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Date:   Wed, 7 Dec 2022 15:09:03 +0100
-Message-ID: <10bb01d90a45$77189060$6549b120$@gmail.com>
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YOoLyltdiLP2JEEnnOjDDBjmowt4f2XyOeFTDUjuF0o=;
+        b=7naa0QUwF/ji3Puio8qb16wPHhI5LaBQOBZ9X900X1ypoFrYEChQJ/seHaeUc+KTyw
+         9gsALw2AFIrzeaSXAeTGTMXFQnbBurjlbejr8+/3+9RBz8Y3qRC9ybJ0c5MaMR9P7YVi
+         LNK5X8lJmb97Bprtr3suVZQdYkv1vVONmHyRwvOnLySzW9aNZrLKSYawI2eLyZiNKxnN
+         kugKYGYn69HHWHVAEFehhryU6P3DTaBvp/oBJnZZXj9PVPKXUNjlXHqS/0CZf8L6B+DP
+         weZhlQLHZprxlPHIIUNGZAxK0v8cAo2yGwlld3wV41i++nQl+Nt0Q2sFGFHKwKmXCicA
+         lhgw==
+X-Gm-Message-State: ANoB5pnmJWrTIQIeC7UTduJCxjO6o/cqqaMjhLwWemUqBeAnBHxLMf0U
+        P/Jqlt4jDGpZGbJN3XHfYCocXA==
+X-Google-Smtp-Source: AA0mqf4OhmBvoNlAGnMbABNrcBrV4WGf+zkPhfefEbSuw49mlb/2DuiPLNVZwEQyVvDzmJlJx3pPTA==
+X-Received: by 2002:a17:906:39c8:b0:7ad:79c0:5482 with SMTP id i8-20020a17090639c800b007ad79c05482mr67114184eje.730.1670424704218;
+        Wed, 07 Dec 2022 06:51:44 -0800 (PST)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id s26-20020a056402015a00b00461bacee867sm2294555edu.25.2022.12.07.06.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Dec 2022 06:51:43 -0800 (PST)
+Date:   Wed, 7 Dec 2022 15:51:42 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y5CofhLCykjsFie6@nanopsycho>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+ <Y4dNV14g7dzIQ3x7@nanopsycho>
+ <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4oj1q3VtcQdzeb3@nanopsycho>
+ <20221206184740.28cb7627@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQGuvSISvoht30pwfXCmDPUNHV3PZAJbzGJCAQIu/1AB4Mb46wHXujcVrn5LKlA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221206184740.28cb7627@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> -----Original Message-----
-> From: Jakub Kicinski <kuba@kernel.org>
-> Sent: Wednesday, December 7, 2022 3:48 AM
-> Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-> 
-> On Fri, 2 Dec 2022 17:12:06 +0100 Jiri Pirko wrote:
-> > >But this is only doable with assumption, that the board is internally
-capable
-> > >of such internal board level communication, which in case of separated
-> > >firmwares handling multiple dplls might not be the case, or it would
-require
-> > >to have some other sw component feel that gap.
-> >
-> > Yep, you have the knowledge of sharing inside the driver, so you should
-> > do it there. For multiple instances, use in-driver notifier for example.
-> 
-> No, complexity in the drivers is not a good idea. The core should cover
-> the complexity and let the drivers be simple.
+Wed, Dec 07, 2022 at 03:47:40AM CET, kuba@kernel.org wrote:
+>On Fri, 2 Dec 2022 17:12:06 +0100 Jiri Pirko wrote:
+>> >But this is only doable with assumption, that the board is internally capable
+>> >of such internal board level communication, which in case of separated
+>> >firmwares handling multiple dplls might not be the case, or it would require
+>> >to have some other sw component feel that gap.  
+>> 
+>> Yep, you have the knowledge of sharing inside the driver, so you should
+>> do it there. For multiple instances, use in-driver notifier for example.
+>
+>No, complexity in the drivers is not a good idea. The core should cover
+>the complexity and let the drivers be simple.
 
-But how does Driver A know where to connect its pin to? It makes sense to
-share 
-pins between the DPLLs exposed by a single driver, but not really outside of
-it.
-And that can be done simply by putting the pin ptr from the DPLLA into the
-pin
-list of DPLLB.
+Really, even in case only one driver actually consumes the complexicity?
+I understand having a "libs" to do common functionality for drivers,
+even in case there is one. But this case, I don't see any benefit.
 
-If we want the kitchen-and-sink solution, we need to think about corner
-cases.
-Which pin should the API give to the userspace app - original, or
-muxed/parent?
-How would a teardown look like - if Driver A registered DPLLA with Pin1 and
-Driver B added the muxed pin then how should Driver A properly
-release its pins? Should it just send a message to driver B and trust that
-it
-will receive it in time before we tear everything apart?
 
-There are many problems with that approach, and the submitted patch is not
-explaining any of them. E.g. it contains the dpll_muxed_pin_register but no
-free 
-counterpart + no flows.
+>
+>> >For complex boards with multiple dplls/sync channels, multiple ports,
+>> >multiple firmware instances, it seems to be complicated to share a pin if
+>> >each driver would have own copy and should notify all the other about changes.
+>> >
+>> >To summarize, that is certainly true, shared pins idea complicates stuff
+>> >inside of dpll subsystem.
+>> >But at the same time it removes complexity from all the drivers which would use  
+>> 
+>> There are currently 3 drivers for dpll I know of. This in ptp_ocp and
+>> mlx5 there is no concept of sharing pins. You you are talking about a
+>> single driver.
+>> 
+>> What I'm trying to say is, looking at the code, the pin sharing,
+>> references and locking makes things uncomfortably complex. You are so
+>> far the only driver to need this, do it internally. If in the future
+>> other driver appears, this code would be eventually pushed into dpll
+>> core. No impact on UAPI from what I see. Please keep things as simple as
+>> possible.
+>
+>But the pin is shared for one driver. Who cares if it's not shared in
+>another. The user space must be able to reason about the constraints.
 
-If we want to get shared pins, we need a good example of how this mechanism
-can be used.
+Sorry, I don't follow :/ Could you please explain what do you mean by
+this?
 
-> 
-> > >For complex boards with multiple dplls/sync channels, multiple ports,
-> > >multiple firmware instances, it seems to be complicated to share a pin
-if
-> > >each driver would have own copy and should notify all the other about
-> changes.
-> > >
-> > >To summarize, that is certainly true, shared pins idea complicates
-stuff
-> > >inside of dpll subsystem.
-> > >But at the same time it removes complexity from all the drivers which
-would
-> use
-> >
-> > There are currently 3 drivers for dpll I know of. This in ptp_ocp and
-> > mlx5 there is no concept of sharing pins. You you are talking about a
-> > single driver.
-> >
-> > What I'm trying to say is, looking at the code, the pin sharing,
-> > references and locking makes things uncomfortably complex. You are so
-> > far the only driver to need this, do it internally. If in the future
-> > other driver appears, this code would be eventually pushed into dpll
-> > core. No impact on UAPI from what I see. Please keep things as simple as
-> > possible.
-> 
-> But the pin is shared for one driver. Who cares if it's not shared in
-> another. The user space must be able to reason about the constraints.
-> 
-> You are suggesting drivers to magically flip state in core objects
-> because of some hidden dependencies?!
-> 
+>
+>You are suggesting drivers to magically flip state in core objects
+>because of some hidden dependencies?!
 
-If we want to go outside the device, we'd need some universal language
-to describe external connections - such as the devicetree. I don't see how
-we can reliably implement inter-driver dependency otherwise.
+It's not a state flip. It's more like a well propagated event of a state
+change. The async changes may happen anyway, so the userspace needs
+to handle them. Why is this different?
 
-I think this would be better served in the userspace with a board-specific
-config file. Especially since the pins can be externally connected anyway.
+
+>
+>> >it and is easier for the userspace due to common identification of pins.  
+>> 
+>> By identification, you mean "description" right? I see no problem of 2
+>> instances have the same pin "description"/label.
+>>
+>> >This solution scales up without any additional complexity in the driver,
+>> >and without any need for internal per-board communication channels.
+>> >
+>> >Not sure if this is good or bad, but with current version, both approaches are
+>> >possible, so it pretty much depending on the driver to initialize dplls with
+>> >separated pin objects as you have suggested (and take its complexity into
+>> >driver) or just share them.
+>> >  
+>> >>
+>> >>3) I don't like the concept of muxed pins and hierarchies of pins. Why
+>> >>   does user care? If pin is muxed, the rest of the pins related to this
+>> >>   one should be in state disabled/disconnected. The user only cares
+>> >>   about to see which pins are related to each other. It can be easily
+>> >>   exposed by "muxid" like this:
+>> >>   pin 1
+>> >>   pin 2
+>> >>   pin 3 muxid 100
+>> >>   pin 4 muxid 100
+>> >>   pin 5 muxid 101
+>> >>   pin 6 muxid 101
+>> >>   In this example pins 3,4 and 5,6 are muxed, therefore the user knows
+>> >>   if he connects one, the other one gets disconnected (or will have to
+>> >>   disconnect the first one explicitly first).
+>> >
+>> >Currently DPLLA_PIN_PARENT_IDX is doing the same thing as you described, it
+>> >groups MUXed pins, the parent pin index here was most straightforward to me,  
+>> 
+>> There is a big difference if we model flat list of pins with a set of
+>> attributes for each, comparing to a tree of pins, some acting as leaf,
+>> node and root. Do we really need such complexicity? What value does it
+>> bring to the user to expose this?
+>
+>The fact that you can't auto select from devices behind muxes.
+
+Why? What's wrong with the mechanism I described in another part of this
+thread?
+
+Extending my example from above
+
+   pin 1 source
+   pin 2 output
+   pin 3 muxid 100 source
+   pin 4 muxid 100 source
+   pin 5 muxid 101 source
+   pin 6 muxid 101 source
+   pin 7 output
+
+User now can set individial prios for sources:
+
+dpll x pin 1 set prio 10
+etc
+The result would be:
+
+   pin 1 source prio 10
+   pin 2 output
+   pin 3 muxid 100 source prio 8
+   pin 4 muxid 100 source prio 20
+   pin 5 muxid 101 source prio 50
+   pin 6 muxid 101 source prio 60
+   pin 7 output
+
+Now when auto is enabled, the pin 3 is selected. Why would user need to
+manually select between 3 and 4? This is should be abstracted out by the
+driver.
+
+Actually, this is neat as you have one cmd to do selection in manual
+mode and you have uniform way of configuring/monitoring selection in
+autosel. Would the muxed pin make this better?
+
+For muxed pin being output, only one pin from mux would be set:
+
+   pin 1 source
+   pin 2 output
+   pin 3 muxid 100 disconnected
+   pin 4 muxid 100 disconnected
+   pin 5 muxid 101 output
+   pin 6 muxid 101 disconnected
+   pin 7 output
+
+
+>The HW topology is of material importance to user space.
+
+Interesting. When I was working on linecards, you said that the user
+does not care about the inner HW topology. And it makes sense. When
+things could be abstracted out to make iface clean, I think they should.
+
+
+>How many times does Arkadiusz have to explain this :|
+
+Pardon my ignorance, I don't see why exactly we need mux hierarchy
+(trees) exposed to user.
 
