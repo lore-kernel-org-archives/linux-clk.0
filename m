@@ -2,226 +2,209 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42291C352A1
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 14:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6CAC352A1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 15:46:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbiLGOvw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 09:51:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41710 "EHLO
+        id S229565AbiLGPqN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 10:46:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbiLGOvu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 09:51:50 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADFED55CBB
-        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 06:51:45 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id t17so14609525eju.1
-        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 06:51:45 -0800 (PST)
+        with ESMTP id S229437AbiLGPqM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 10:46:12 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733C5275C1
+        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 07:46:11 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id f9so16710933pgf.7
+        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 07:46:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOoLyltdiLP2JEEnnOjDDBjmowt4f2XyOeFTDUjuF0o=;
-        b=8LPvLa5f8GWVmsFwwTg1U5kbOjmfPOIweDVg0JgDkU66U1Ai1CbGUzeH5erXRynjOi
-         bpCw2zeV3JTSuD4QxVcpaCSD65NM5j/LicODL+gOZ/fyGnZm2JdE/LAmtPIs08k3OafD
-         gzY126/r2xXz3k3USm6gxKL86ySXNxid+nHRkNG9XNIXdoisTW6DyfyWeTrF+CE7MuvH
-         phmUUNN96h8w6chWW22UHnVkGmKHWUs1ME3SN0+GJGAZs1eY3Peh+8H1UGD9QwSobNdY
-         kNDYVcWIBg/M02ThYpRLRfaSzbvWC9q7qVOtW8q9ueoTalt19EPU8s/8Tbgnk1gMB+Bs
-         oX/A==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UfOHvK7ecYIuUe0s4A5xd+Shfnx26W2C73pfnXWOFPw=;
+        b=iT5h2rMguX+IY5q8yLBNZmN/99vOp91cbgceJR1iIMkvim2gs5WBUbHDUfjpuyh0H+
+         uzXwjjS7uqH45oKea6deOwTqj2zlfFWOhsQTwYzT8WxQ5cjhPChGJQd8t0UwQN66xUN7
+         QV8nuyqydi5raOny0PZCpMlfZ9XQE2IwcZbnWzNskDHsPkKwnTPS7Me3nnP12TY9m6NO
+         dbGAJGkjQzuRtXz0Y0XZEaim3vlqvfbkbQRK+SzWOZIrqR0SDFTGlByFU4ILTSI0DFwJ
+         LGPPpy3VjocWPnrf7+O1+gA2pUvdbEP0tSuWlI3kBXgvvMEYfcTSO1aYrXgmfBI+ra3q
+         nAMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YOoLyltdiLP2JEEnnOjDDBjmowt4f2XyOeFTDUjuF0o=;
-        b=7naa0QUwF/ji3Puio8qb16wPHhI5LaBQOBZ9X900X1ypoFrYEChQJ/seHaeUc+KTyw
-         9gsALw2AFIrzeaSXAeTGTMXFQnbBurjlbejr8+/3+9RBz8Y3qRC9ybJ0c5MaMR9P7YVi
-         LNK5X8lJmb97Bprtr3suVZQdYkv1vVONmHyRwvOnLySzW9aNZrLKSYawI2eLyZiNKxnN
-         kugKYGYn69HHWHVAEFehhryU6P3DTaBvp/oBJnZZXj9PVPKXUNjlXHqS/0CZf8L6B+DP
-         weZhlQLHZprxlPHIIUNGZAxK0v8cAo2yGwlld3wV41i++nQl+Nt0Q2sFGFHKwKmXCicA
-         lhgw==
-X-Gm-Message-State: ANoB5pnmJWrTIQIeC7UTduJCxjO6o/cqqaMjhLwWemUqBeAnBHxLMf0U
-        P/Jqlt4jDGpZGbJN3XHfYCocXA==
-X-Google-Smtp-Source: AA0mqf4OhmBvoNlAGnMbABNrcBrV4WGf+zkPhfefEbSuw49mlb/2DuiPLNVZwEQyVvDzmJlJx3pPTA==
-X-Received: by 2002:a17:906:39c8:b0:7ad:79c0:5482 with SMTP id i8-20020a17090639c800b007ad79c05482mr67114184eje.730.1670424704218;
-        Wed, 07 Dec 2022 06:51:44 -0800 (PST)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id s26-20020a056402015a00b00461bacee867sm2294555edu.25.2022.12.07.06.51.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 06:51:43 -0800 (PST)
-Date:   Wed, 7 Dec 2022 15:51:42 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y5CofhLCykjsFie6@nanopsycho>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <Y4dNV14g7dzIQ3x7@nanopsycho>
- <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4oj1q3VtcQdzeb3@nanopsycho>
- <20221206184740.28cb7627@kernel.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UfOHvK7ecYIuUe0s4A5xd+Shfnx26W2C73pfnXWOFPw=;
+        b=OyOPTfMyFAJuUtSuheN5iZbT09mZOcWXCvnPb8Y4BqB5mGoJ4TNs0CuF8+h2uH2YXw
+         02GeCmiRl2+UHuQKHeKtSxMqMxwlUA/kAbImwvRsi8yWgfzwi6lj2dIHZZEd/vaR5Ck/
+         CgHfk7EnK2jIvMvjUQCyqxO/kcqEiXfoYHQiMsRQQyLVvR0SjOssvrKJKLdEbt4Wcb9q
+         cslEHebwv9ATCZfhotW2l7WEkllheAGtFCx6rxsIGlWOhJMUG+2zcRi58TohzTz4JlYK
+         YbTQBaUjheUEPtt3W1HeVCIMUy5tUwcEuxoMxhB8kgvloyXYhS5pNjp59hKW5Bx8RPFz
+         jEgw==
+X-Gm-Message-State: ANoB5pmfWob6jetRMvcOZHJ+mDEjXYnWzoN4GxuJ2ZAqGxIuE5x0yPbU
+        NUs3IFbhw1291ihZUj1we40QRKvfkLAzOS/nJ0WxUQ==
+X-Google-Smtp-Source: AA0mqf4loW0n0K8rBmh1RZRv2mZ9kBVaPS0r1AUXAFFSQCa/AbskGM6a4jYQ6OSdRF3Zfxqatvnkl5J1s9WWGmB6Y1o=
+X-Received: by 2002:aa7:951d:0:b0:577:3e5e:7a4 with SMTP id
+ b29-20020aa7951d000000b005773e5e07a4mr8405149pfp.57.1670427970858; Wed, 07
+ Dec 2022 07:46:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221206184740.28cb7627@kernel.org>
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com> <20221005143618.v7.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
+In-Reply-To: <20221005143618.v7.3.I162c4be55f230cd439f0643f1624527bdc8a9831@changeid>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 7 Dec 2022 16:45:34 +0100
+Message-ID: <CAPDyKFpMUQo-Q2sbm3YXPeagt88zsRFWgc06GmNm0TVUPmPY_g@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+To:     Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        krzysztof.kozlowski@linaro.org, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Dec 07, 2022 at 03:47:40AM CET, kuba@kernel.org wrote:
->On Fri, 2 Dec 2022 17:12:06 +0100 Jiri Pirko wrote:
->> >But this is only doable with assumption, that the board is internally capable
->> >of such internal board level communication, which in case of separated
->> >firmwares handling multiple dplls might not be the case, or it would require
->> >to have some other sw component feel that gap.  
->> 
->> Yep, you have the knowledge of sharing inside the driver, so you should
->> do it there. For multiple instances, use in-driver notifier for example.
+On Wed, 5 Oct 2022 at 11:08, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
 >
->No, complexity in the drivers is not a good idea. The core should cover
->the complexity and let the drivers be simple.
+> Add a reset op compatible function to poll for gdsc collapse. This is
+> required because:
+>   1. We don't wait for it to turn OFF at hardware for VOTABLE GDSCs.
+>   2. There is no way for client drivers (eg. gpu driver) to do
+>   put-with-wait for these gdscs which is required in some scenarios
+>   (eg. GPU recovery).
 
-Really, even in case only one driver actually consumes the complexicity?
-I understand having a "libs" to do common functionality for drivers,
-even in case there is one. But this case, I don't see any benefit.
+What puzzles me a bit, who is the typical consumer of the reset.
 
+I looked at patch4 and tried to figure it out, but let's discuss that
+in that thread instead. Some more comments, see below.
 
 >
->> >For complex boards with multiple dplls/sync channels, multiple ports,
->> >multiple firmware instances, it seems to be complicated to share a pin if
->> >each driver would have own copy and should notify all the other about changes.
->> >
->> >To summarize, that is certainly true, shared pins idea complicates stuff
->> >inside of dpll subsystem.
->> >But at the same time it removes complexity from all the drivers which would use  
->> 
->> There are currently 3 drivers for dpll I know of. This in ptp_ocp and
->> mlx5 there is no concept of sharing pins. You you are talking about a
->> single driver.
->> 
->> What I'm trying to say is, looking at the code, the pin sharing,
->> references and locking makes things uncomfortably complex. You are so
->> far the only driver to need this, do it internally. If in the future
->> other driver appears, this code would be eventually pushed into dpll
->> core. No impact on UAPI from what I see. Please keep things as simple as
->> possible.
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 >
->But the pin is shared for one driver. Who cares if it's not shared in
->another. The user space must be able to reason about the constraints.
+> Changes in v7:
+> - Update commit message (Bjorn)
+>
+> Changes in v2:
+> - Minor update to function prototype
+>
+>  drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++++----
+>  drivers/clk/qcom/gdsc.h |  7 +++++++
+>  2 files changed, 26 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 7cf5e13..ccef742 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+>  #include "gdsc.h"
+> +#include "reset.h"
+>
+>  #define PWR_ON_MASK            BIT(31)
+>  #define EN_REST_WAIT_MASK      GENMASK_ULL(23, 20)
+> @@ -116,7 +117,8 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+>         return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+>  }
+>
+> -static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+> +static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status,
+> +               s64 timeout_us, unsigned int interval_ms)
+>  {
+>         ktime_t start;
+>
+> @@ -124,7 +126,9 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+>         do {
+>                 if (gdsc_check_status(sc, status))
+>                         return 0;
+> -       } while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+> +               if (interval_ms)
+> +                       msleep(interval_ms);
+> +       } while (ktime_us_delta(ktime_get(), start) < timeout_us);
 
-Sorry, I don't follow :/ Could you please explain what do you mean by
-this?
+Rather than continue to open code this polling loop, would it not make
+sense to convert the code into using readx_poll_timeout() (or some of
+its friends).
+
+Down the road, this leads to that the msleep() above should become
+usleep_range() instead, which seems more correct to me.
 
 >
->You are suggesting drivers to magically flip state in core objects
->because of some hidden dependencies?!
-
-It's not a state flip. It's more like a well propagated event of a state
-change. The async changes may happen anyway, so the userspace needs
-to handle them. Why is this different?
-
-
+>         if (gdsc_check_status(sc, status))
+>                 return 0;
+> @@ -189,7 +193,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>                 udelay(1);
+>         }
 >
->> >it and is easier for the userspace due to common identification of pins.  
->> 
->> By identification, you mean "description" right? I see no problem of 2
->> instances have the same pin "description"/label.
->>
->> >This solution scales up without any additional complexity in the driver,
->> >and without any need for internal per-board communication channels.
->> >
->> >Not sure if this is good or bad, but with current version, both approaches are
->> >possible, so it pretty much depending on the driver to initialize dplls with
->> >separated pin objects as you have suggested (and take its complexity into
->> >driver) or just share them.
->> >  
->> >>
->> >>3) I don't like the concept of muxed pins and hierarchies of pins. Why
->> >>   does user care? If pin is muxed, the rest of the pins related to this
->> >>   one should be in state disabled/disconnected. The user only cares
->> >>   about to see which pins are related to each other. It can be easily
->> >>   exposed by "muxid" like this:
->> >>   pin 1
->> >>   pin 2
->> >>   pin 3 muxid 100
->> >>   pin 4 muxid 100
->> >>   pin 5 muxid 101
->> >>   pin 6 muxid 101
->> >>   In this example pins 3,4 and 5,6 are muxed, therefore the user knows
->> >>   if he connects one, the other one gets disconnected (or will have to
->> >>   disconnect the first one explicitly first).
->> >
->> >Currently DPLLA_PIN_PARENT_IDX is doing the same thing as you described, it
->> >groups MUXed pins, the parent pin index here was most straightforward to me,  
->> 
->> There is a big difference if we model flat list of pins with a set of
->> attributes for each, comparing to a tree of pins, some acting as leaf,
->> node and root. Do we really need such complexicity? What value does it
->> bring to the user to expose this?
+> -       ret = gdsc_poll_status(sc, status);
+> +       ret = gdsc_poll_status(sc, status, TIMEOUT_US, 0);
+>         WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
 >
->The fact that you can't auto select from devices behind muxes.
+>         if (!ret && status == GDSC_OFF && sc->rsupply) {
+> @@ -360,7 +364,7 @@ static int _gdsc_disable(struct gdsc *sc)
+>                  */
+>                 udelay(1);
+>
+> -               ret = gdsc_poll_status(sc, GDSC_ON);
+> +               ret = gdsc_poll_status(sc, GDSC_ON, TIMEOUT_US, 0);
+>                 if (ret)
+>                         return ret;
+>         }
+> @@ -608,3 +612,14 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
+> +
+> +int gdsc_wait_for_collapse(void *priv)
+> +{
+> +       struct gdsc *sc = priv;
+> +       int ret;
+> +
+> +       ret = gdsc_poll_status(sc, GDSC_OFF, 500000, 5);
+> +       WARN(ret, "%s status stuck at 'on'", sc->pd.name);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(gdsc_wait_for_collapse);
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 981a12c..5395f69 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -12,6 +12,7 @@
+>  struct regmap;
+>  struct regulator;
+>  struct reset_controller_dev;
+> +struct qcom_reset_map;
+>
+>  /**
+>   * struct gdsc - Globally Distributed Switch Controller
+> @@ -88,6 +89,7 @@ int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
+>                   struct regmap *);
+>  void gdsc_unregister(struct gdsc_desc *desc);
+>  int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
+> +int gdsc_wait_for_collapse(void *priv);
+>  #else
+>  static inline int gdsc_register(struct gdsc_desc *desc,
+>                                 struct reset_controller_dev *rcdev,
+> @@ -97,5 +99,10 @@ static inline int gdsc_register(struct gdsc_desc *desc,
+>  }
+>
+>  static inline void gdsc_unregister(struct gdsc_desc *desc) {};
+> +
+> +static int gdsc_wait_for_collapse(void *priv)
+> +{
+> +       return  -ENOSYS;
+> +}
+>  #endif /* CONFIG_QCOM_GDSC */
+>  #endif /* __QCOM_GDSC_H__ */
 
-Why? What's wrong with the mechanism I described in another part of this
-thread?
-
-Extending my example from above
-
-   pin 1 source
-   pin 2 output
-   pin 3 muxid 100 source
-   pin 4 muxid 100 source
-   pin 5 muxid 101 source
-   pin 6 muxid 101 source
-   pin 7 output
-
-User now can set individial prios for sources:
-
-dpll x pin 1 set prio 10
-etc
-The result would be:
-
-   pin 1 source prio 10
-   pin 2 output
-   pin 3 muxid 100 source prio 8
-   pin 4 muxid 100 source prio 20
-   pin 5 muxid 101 source prio 50
-   pin 6 muxid 101 source prio 60
-   pin 7 output
-
-Now when auto is enabled, the pin 3 is selected. Why would user need to
-manually select between 3 and 4? This is should be abstracted out by the
-driver.
-
-Actually, this is neat as you have one cmd to do selection in manual
-mode and you have uniform way of configuring/monitoring selection in
-autosel. Would the muxed pin make this better?
-
-For muxed pin being output, only one pin from mux would be set:
-
-   pin 1 source
-   pin 2 output
-   pin 3 muxid 100 disconnected
-   pin 4 muxid 100 disconnected
-   pin 5 muxid 101 output
-   pin 6 muxid 101 disconnected
-   pin 7 output
-
-
->The HW topology is of material importance to user space.
-
-Interesting. When I was working on linecards, you said that the user
-does not care about the inner HW topology. And it makes sense. When
-things could be abstracted out to make iface clean, I think they should.
-
-
->How many times does Arkadiusz have to explain this :|
-
-Pardon my ignorance, I don't see why exactly we need mux hierarchy
-(trees) exposed to user.
-
+Kind regards
+Uffe
