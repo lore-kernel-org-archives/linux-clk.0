@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78639C352A1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01759C4708D
 	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 00:15:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbiLGAPU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229802AbiLGAPU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 6 Dec 2022 19:15:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229802AbiLGAPJ (ORCPT
+        with ESMTP id S229813AbiLGAPJ (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 19:15:09 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9DD4B996
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1624B995
         for <linux-clk@vger.kernel.org>; Tue,  6 Dec 2022 16:15:08 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id f16so7440421ljc.8
+Received: by mail-lf1-x12a.google.com with SMTP id d6so26200252lfs.10
         for <linux-clk@vger.kernel.org>; Tue, 06 Dec 2022 16:15:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RTP1NRUDSX5225KiuwC45k5TpOV1gR8oKoLR/7vo90U=;
-        b=bk8ugj5Qz1qy7mPNsviDC9NeuDALHIfUZ4+BOWgW8h/V8X/Oh5S1EnIuHjiPoejhmQ
-         3/s8mhsxIgXl/qqELDxOkNcrCPjypt7j0tPKu4CHKZJsXzhMLgQWwz+i4u9dgi0MDPOD
-         /M/ejo9tiCJ5jifgJxy6ovTj2swbjuiRfyjmwEd6jRrkddM0VvIOXIYMJhM+/XRFe/MB
-         EYmYS5pcVLBTtNaMLoB8GYM0i/LEALyri1lpST4K8ibdmdCd5uMYTs2TrZLa9T9BMKqF
-         cx3aSzPOC/SjatCRy34w5AaPW5Lo8sxVt5odyiqDRBhDNtV0nMA49Scq3Jeh4IlgOXzF
-         SXEg==
+        bh=xVwPaQWXDnANQ48vXa4DWtI+NXMXKWbnMhAHV1xHXeo=;
+        b=Yei/59De/qKL8IocMhOskbLNJlIvb0Ll8NC/hH13n6zu2cgtUCLuxA5ZVQKzuB6Hy6
+         HA2/YMVB0V3LZeHJeXrQl7iwbWahm0FEeUbhgpWSsQbMAGYnhPnNSq8zVTXLte4D73sD
+         pQYkWY5be1wk4hi7TQB9t0XhSvzLCI6PHAFVBRdwOjylZlMKpHErRja97ukwOPielS8W
+         sNhfSEX1HN1VMlV9F0hozICoD82mSTP+B0BpSnsbQ6IWqrb735F1fy0WOhHdMT0y7RKI
+         58A/Lg5ei+2xkKSZ4gxKMocOxes/c6BA6EEYKh8mXb+OBwYX5zCYZwKSJFWcFNO6cHF7
+         rGDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RTP1NRUDSX5225KiuwC45k5TpOV1gR8oKoLR/7vo90U=;
-        b=4VPKgHUT+kdgcfz86E3K/4ZjlnJFlwYDxL56tmACMsDwKCInChuk1HvqjnACX5oCiZ
-         6lbYCbIVskKkJqbHUirNgWfpGUAxk/pc8xfjesMuFJTvLomSzzSsgQvq9FI8JHA5IvG3
-         hOZzv5bWDausioeHCWMzHzPGMkEZgNtAq6jlgGeoZT+9N0K00s8LUp4dQcClai1ApSdC
-         tMqbrQ0vH1hyeSOwLQMn7hPS1o+S06m2xtvYTaCMWSmGbS6c7xKfA4As+Tb1ERfTIkXm
-         tLk9ZxUgCRMpSmgHjQOmA9Qpwa7GJ7jEmw4FJSxESd3YivrtBW4NWrEw+2SkIDY0Jp+s
-         aBDg==
-X-Gm-Message-State: ANoB5pnl/Z4BgE1Q18c8IIzA2qfkf5ysn3tGj8GLBIf6/SS0qbZ2USq6
-        Jsrg18MQV9pP3pui/eMWDS1Nhw==
-X-Google-Smtp-Source: AA0mqf5MPTZMBxcqEuA9orGguuJaYXrYvUA9n+hONYvIOQ3ePqTAmH/3cl/MfEEcO66GP5vazpnvRg==
-X-Received: by 2002:a2e:6e03:0:b0:279:97a4:35da with SMTP id j3-20020a2e6e03000000b0027997a435damr16112855ljc.363.1670372107810;
-        Tue, 06 Dec 2022 16:15:07 -0800 (PST)
+        bh=xVwPaQWXDnANQ48vXa4DWtI+NXMXKWbnMhAHV1xHXeo=;
+        b=EulCLXIpbELj0lsngS4cJWh74dL/plkYzxFD5A39x6xTgSx4pIRCa6FM1tuvF5VMnM
+         UNq92iEZlHrsxgnkfb2T5q3yVFu9/LKF/01sqzTT01PZmempn7iXMLAGHM5nW4ISW4c4
+         DUCrgderPTHDP9ZRjPOBKOEzeqxgfY3D6F6g8gW5RV9GexjfSPNrW2fVljFmKUalP+tn
+         DehfOdO8t/A9DE7OSwY6Wi8vAsPvpG0V+vNgvibS0jZHy6cBpFfdAC90izgSbh2+yxFG
+         7e/qyQYEysZv/h5z0rz0lnLDrSARmx2/4y4MBd6VJVrVjAZbQeM3bDuIrQsVe20MuOlR
+         Xf8w==
+X-Gm-Message-State: ANoB5pmdYLMCsNIZCdmdbdS3IJhffBUMKEhJPKrSq8hTeLAKkZ2xM/Ap
+        GfXp/E/7aF2YYRJDI/OCjKXCRA==
+X-Google-Smtp-Source: AA0mqf4PFPjrJJTV2hXBHAl8CCrzlXyEgG2lm3ksBfOZqki5/Qs/18NDQH5Yoj3nvpmhtOJpQrXeTA==
+X-Received: by 2002:ac2:5f57:0:b0:4b5:8f72:d0f5 with SMTP id 23-20020ac25f57000000b004b58f72d0f5mr776473lfz.590.1670372106478;
+        Tue, 06 Dec 2022 16:15:06 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id 16-20020ac25f50000000b004b53eb60e3csm2308555lfz.256.2022.12.06.16.15.07
+        by smtp.gmail.com with ESMTPSA id 16-20020ac25f50000000b004b53eb60e3csm2308555lfz.256.2022.12.06.16.15.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 16:15:07 -0800 (PST)
+        Tue, 06 Dec 2022 16:15:06 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -56,11 +56,10 @@ To:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Alex Elder <elder@linaro.org>
-Subject: [PATCH v2 05/18] clk: qcom: smd-rpm: use msm8998_ln_bb_clk2 for qcm2290 SoC
-Date:   Wed,  7 Dec 2022 02:14:50 +0200
-Message-Id: <20221207001503.93790-6-dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 03/18] clk: qcom: smd-rpm: remove duplication between qcs404 and qcm2290 clocks
+Date:   Wed,  7 Dec 2022 02:14:48 +0200
+Message-Id: <20221207001503.93790-4-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221207001503.93790-1-dmitry.baryshkov@linaro.org>
 References: <20221207001503.93790-1-dmitry.baryshkov@linaro.org>
@@ -70,39 +69,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The qcm2290's ln_bb_clk2 is identical to the freshly added msm8998's
-ln_bb_clk2 one. Use the latter and drop the SoC-specific version.
+Reuse qcs404's QPIC and BIMC_GPU clock for qcm2290.
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+Fixes: 78b727d02815 ("clk: qcom: smd-rpm: Add QCM2290 RPM clock support")
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/clk-smd-rpm.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index a0bf58785921..7dffc30ddb61 100644
+index ccc54913eca5..31ef6345ff01 100644
 --- a/drivers/clk/qcom/clk-smd-rpm.c
 +++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -1169,7 +1169,6 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6375 = {
- };
- 
- /* QCM2290 */
--DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, ln_bb_clk2, ln_bb_clk2_a, 0x2, 19200000);
+@@ -1168,11 +1168,8 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6375 = {
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, ln_bb_clk2, ln_bb_clk2_a, 0x2, 19200000);
  DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, rf_clk3, rf_clk3_a, 6, 38400000);
  
+-DEFINE_CLK_SMD_RPM(qcm2290, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
  DEFINE_CLK_SMD_RPM(qcm2290, cpuss_gnoc_clk, cpuss_gnoc_a_clk,
-@@ -1184,8 +1183,8 @@ static struct clk_smd_rpm *qcm2290_clks[] = {
- 	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
- 	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
- 	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
--	[RPM_SMD_LN_BB_CLK2] = &qcm2290_ln_bb_clk2,
--	[RPM_SMD_LN_BB_CLK2_A] = &qcm2290_ln_bb_clk2_a,
-+	[RPM_SMD_LN_BB_CLK2] = &msm8998_ln_bb_clk2,
-+	[RPM_SMD_LN_BB_CLK2_A] = &msm8998_ln_bb_clk2_a,
- 	[RPM_SMD_RF_CLK3] = &qcm2290_rf_clk3,
- 	[RPM_SMD_RF_CLK3_A] = &qcm2290_rf_clk3_a,
- 	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
+ 		   QCOM_SMD_RPM_MEM_CLK, 1);
+-DEFINE_CLK_SMD_RPM(qcm2290, bimc_gpu_clk, bimc_gpu_a_clk,
+-		   QCOM_SMD_RPM_MEM_CLK, 2);
+ 
+ static struct clk_smd_rpm *qcm2290_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+@@ -1203,14 +1200,14 @@ static struct clk_smd_rpm *qcm2290_clks[] = {
+ 	[RPM_SMD_SNOC_LPASS_A_CLK] = &sm6125_snoc_lpass_a_clk,
+ 	[RPM_SMD_CE1_CLK] = &msm8992_ce1_clk,
+ 	[RPM_SMD_CE1_A_CLK] = &msm8992_ce1_a_clk,
+-	[RPM_SMD_QPIC_CLK] = &qcm2290_qpic_clk,
+-	[RPM_SMD_QPIC_CLK_A] = &qcm2290_qpic_a_clk,
++	[RPM_SMD_QPIC_CLK] = &qcs404_qpic_clk,
++	[RPM_SMD_QPIC_CLK_A] = &qcs404_qpic_a_clk,
+ 	[RPM_SMD_HWKM_CLK] = &qcm2290_hwkm_clk,
+ 	[RPM_SMD_HWKM_A_CLK] = &qcm2290_hwkm_a_clk,
+ 	[RPM_SMD_PKA_CLK] = &qcm2290_pka_clk,
+ 	[RPM_SMD_PKA_A_CLK] = &qcm2290_pka_a_clk,
+-	[RPM_SMD_BIMC_GPU_CLK] = &qcm2290_bimc_gpu_clk,
+-	[RPM_SMD_BIMC_GPU_A_CLK] = &qcm2290_bimc_gpu_a_clk,
++	[RPM_SMD_BIMC_GPU_CLK] = &qcs404_bimc_gpu_clk,
++	[RPM_SMD_BIMC_GPU_A_CLK] = &qcs404_bimc_gpu_a_clk,
+ 	[RPM_SMD_CPUSS_GNOC_CLK] = &qcm2290_cpuss_gnoc_clk,
+ 	[RPM_SMD_CPUSS_GNOC_A_CLK] = &qcm2290_cpuss_gnoc_a_clk,
+ };
 -- 
 2.35.1
 
