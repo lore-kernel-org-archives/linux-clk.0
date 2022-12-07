@@ -2,211 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6861C352A1
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 11:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E729FC63705
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 13:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbiLGLf3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 06:35:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44798 "EHLO
+        id S229700AbiLGNKt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 08:10:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiLGLf2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 06:35:28 -0500
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2104.outbound.protection.outlook.com [40.107.114.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED2D49B45;
-        Wed,  7 Dec 2022 03:35:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WYgWjEE9Gtf1ws30PXgMmOwExcaDxZVekBz8FueUewhaddmgnh59zarGytMpmZZUx8B/wP8Da4PGsnDNOeUuOtWMVR46PzwwrccxPV7VU/EXnRvRUX2ibs+OPQ3z+tUQoRFeU2Y6n33ShfmOa4R9oE8Z+vOX266ekPVdYzaPrn3rAmj/RFfsF2gY7kJBfrLzbu/gOhSJRwnQXIyWBZ8tO55HVyifSSco3ruiN3sl6le9UZExS1p7hYbAMP1Zi5zSe+AEb/Czo7mI2JcToTAPwnEuQOgv0VM/5KmGAphQIuON3jQWsqhq9KBC5drBJIcIRVovSrnT31uFJwPVhFLYgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C3xim9rjqeiPkVPvi5zPZaezXF7hMix+qagWDqwO1BA=;
- b=jNARsTUfbbzORCVC7LbNnu4JYPC/2RDTLMvOLlXwCTYJgqJfqi1fMsg5CAHmQ0hx0Ctfk1Rs4JHelsaf0YM1HTEPG+ViIsNjXZag6rO/lnPpK0+Xp7iA9iHdc9Wi5n9shOMsfb/h4I8HSsN4IiBpveOtawYijSN5CGtl383PrFEdNa6CCdO3aMb0aizaEEWou75wenYTLeFwgJG1oWSAurzFDN7psUXx2mSrOkbme+PJju1QAp3LrFRG1vjlRw3MRBpoebumIVMcHTcyEb8VmMey3nAamaYr6b+aTN5u9OPFilJ+WdaWhdlNYmPtnx11uihjDZJBIsY8EExI7I5scg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C3xim9rjqeiPkVPvi5zPZaezXF7hMix+qagWDqwO1BA=;
- b=r0Crmn6UkYlADeFl1M9vIJlXzW8Uuci1fgv+I9rmdKO5X8nU44teU+j0mvG6GhIwdA+XFjqEwyc5KOuFCbV5wKCoNbVsL6hfAFaaDgSopowI9Ss0QtThcAK4T+XwPiotgCe9RVCZKgAXTi2ddB7S+kZnZoDO2WmfDtNHaMzBfIw=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYCPR01MB7846.jpnprd01.prod.outlook.com (2603:1096:400:183::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.14; Wed, 7 Dec
- 2022 11:35:24 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::2cfb:38d2:d52e:c8a3]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::2cfb:38d2:d52e:c8a3%5]) with mapi id 15.20.5880.014; Wed, 7 Dec 2022
- 11:35:24 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Rob Herring <robh@kernel.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: RE: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
-Thread-Topic: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
-Thread-Index: AQHZCLpBadXv7d6jXkypwu+29R+sIq5f5owAgACX9uCAAAzJgIAABM+AgAFyA3CAAEDVgIAAAqWA
-Date:   Wed, 7 Dec 2022 11:35:24 +0000
-Message-ID: <OS0PR01MB5922B590AB9791B9741E2A1D861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
- <20221205225042.GA2812115-robh@kernel.org>
- <OS0PR01MB592211AD4D0AE23DA7075DD5861B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdX2=AwerQZS2cqR4exq_QNtt=Fwp5KBcmPr1qmOBNOSAg@mail.gmail.com>
- <87sfhsgb9e.ffs@tglx>
- <OS0PR01MB59228CED6187C7B19776CE22861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <878rjjfprw.ffs@tglx>
-In-Reply-To: <878rjjfprw.ffs@tglx>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYCPR01MB7846:EE_
-x-ms-office365-filtering-correlation-id: 1063924c-6de7-4660-55f3-08dad847219d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pz1Em1kTH4db9mHwwfewbhC1GiGvrNtjZ17Qhk//vt2tcoz7cmPNeWirbx6SGjr6E3TJKe8PlY+NM1ACjyFnkPky/LoCnS5Ygk3Y+Q6gfNyTlAgxUXrjGTEVVBPyZ0W2dVKvUWzsVc5faD+euntzdpa6TUeOXwxF9m3vaxTuEByTVIVIFTMsF4uB/mDmUUDztwtIwtGJZqJmxdju0uBA/EQSyoAGDWFsRIx4iu72Dgcs9MlpptQwpnDyLOuMDlqhI63HAmsvrdYnT6fg1ULjZW0qjxwBfZnE93ubp3mkmc3cXcsQcaBAGHa6Lbvav+Ng9jojVDwO96oQ7032pZ87GnF2d4a/SHdx1hvN5WQeV5OfMmPCkHJIBrR8Glw9XMv3Oyz3/3tv4UcG7Xg1SzK3LOfr7RafSIMWYo3Vr906noSfTqebKAqbtMZQOyYOjr4x9N8KdVVBuuJpyE//u8Vx3MBlo+oh/mf77b1DeQOy/LyucxAO0yiMUNfL54OdJjfKHjI23qFhPZxuy1PW2FUjQCnx9dxm74rDNYOweM1myvO6M57c7iQQur9e5dbO+E8H5FuzArpy6SQp4HPM5k2S3rF//fr1wWz7CU7JMr483PRv3tJXdiB9fQRLhrrC90ssUYfw26rvB2qVjVRKTqB66eZ4xOp2x7UogdP1s1zBipQDvZRS5DBxw/OHYwoMI9fJPGMr622iHLYwsjrhIvbhJQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(136003)(396003)(346002)(376002)(366004)(451199015)(2906002)(33656002)(76116006)(41300700001)(86362001)(122000001)(38100700002)(26005)(186003)(110136005)(9686003)(38070700005)(7416002)(71200400001)(83380400001)(55016003)(54906003)(66476007)(8936002)(66446008)(107886003)(52536014)(66556008)(5660300002)(8676002)(4326008)(64756008)(478600001)(7696005)(316002)(6506007)(66946007);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?z3uveqm/Kj1UEL9wpJQjLs1+DroONL3/T/ON6N2iR6JGRi5mdKi+77cYvPId?=
- =?us-ascii?Q?xLmY/RKdsA8/k5c4yWLBKp01Z2vZ/H5G/FLerA5X6Uj7++Cdem3xShBiq5Pk?=
- =?us-ascii?Q?SU3dyz/6SHkMtl9ogiu20yUSvdKnBvD4gPVLLYVyycazRMIDedj+mVfqtVrG?=
- =?us-ascii?Q?8SZhcGOAv96TDf4zht51WdHpAfnqp9uX2u8AqKnDtiJ7bo6GdeKmunPbQ/Lz?=
- =?us-ascii?Q?1IVZzuLY0Drcuxn/rQ6dnZVav5Y6sL6luoCrGVNCMybLknmhy7SozIsm7/mx?=
- =?us-ascii?Q?VErOV2X/e0oRX8Vvk7i+tPckHYHL/E4PBbI5GpYTs96x94i6T3qGjJj9qEba?=
- =?us-ascii?Q?jmZQ++LLJQTr3aPnNM/Cbv6iK1q4XujgO3ssPZ41DVBJntxQb1qi8ghqWg2s?=
- =?us-ascii?Q?KFVAAZkq8JQ54exqyuXo1fCczGj/0tsdxmbR7x4sDCLqaRzuPCMzRij+9M9B?=
- =?us-ascii?Q?qzAgUxiRPR+m4wNzdHerBF86MWVLu0rHUz3FC8uyYn/JEJkPT8dUrFlCkXmb?=
- =?us-ascii?Q?teIkRxr6x0MSIvDG3mVWsMBSdXIu51pRfFVLZEroGkpf3Lr64mqAU9ZlsGXH?=
- =?us-ascii?Q?OjnZLtF4YLofr1WkZU/9u/wIZLSbHsmeAecQz4YjzyC8R/jMGCmFH17OR9Tn?=
- =?us-ascii?Q?CtzsNEwugOcfJqchLu+GnMhIwNj/ffFpXS5Ic8A8z278E1mw8pS1Nxr2RjiP?=
- =?us-ascii?Q?njJ1jDQ566kjmi/UZdukWzXxRd4ymWBw25BXqXQxK+Xe6FOPFP41ycWguKfR?=
- =?us-ascii?Q?f92s1jNQIMwFGVzJE+dgT7yDzcrePzGuwpUCU3RIS0+XBh9EgRJPqsOxTrv5?=
- =?us-ascii?Q?APJhVfPy8lYSV8JJGiZHAqUbiUKhSbqLJKKg1lxYr0rU3Ah1JFqRUYcj6pci?=
- =?us-ascii?Q?X9SW0Ik6nmdJaXlX3+jks5kb71oAESmT6woRPfZTlUHHuwqoKGEJXRhnQi9D?=
- =?us-ascii?Q?CKWA6GH2ohY4H10u+o6ejwSCBjxJN0ZF/6UzKJFnMp0sc3KO9cNRROCA4EAC?=
- =?us-ascii?Q?xNlm/S654F6s4MxDPH25wA3zJugK5dAvLHmrALP9gb02bFgBxAK6oY0h6QTm?=
- =?us-ascii?Q?8ZwD+WzUxr+ViOpQ+cEnbb2VewPHRq9KYnGhU9VRJbQlHo0OMipg4p1e8TK/?=
- =?us-ascii?Q?71qmjG2TblM0D/usv+BCHXfK2pG9ytlQNjm8iTzBIS/wg5Zl7twEbxHu5nEE?=
- =?us-ascii?Q?y0rf1yfpjfvDfQY4PQzDuQwoDyFF+9vIG5eBZgmE+9zJzHLYXtzlBzT7BWRT?=
- =?us-ascii?Q?U+2nJU9RnBoNRbTzryhm5FRBClG/Un/p3r43Uwje0HqLuxdeID1kPc+vCtob?=
- =?us-ascii?Q?worA6GW1edd+pt/Oa6HAU42ZeaHgFV+l/5/e3ZkpmJikQSXYw7dJyK8HXnZF?=
- =?us-ascii?Q?jINHXZkQt+ZoNHMge1NMnMJZeHQ1iFLnADlvpFG6+IYUnfqtLCOrWqisDULg?=
- =?us-ascii?Q?tIq2P2/Y26wZXUIGflJuw7egbq05rdYbH2/mQI9tsKp8q452Fiie4iFs2LhC?=
- =?us-ascii?Q?F+Q9tHqEaiCjpetyT9d3e3AnWybRH62W3hR/5VrG6nLhI54Ur32PsWoU6y8X?=
- =?us-ascii?Q?V+PfUsBV2ntSPXmuN3lJGXZxr05zx1XMNJ8jJ1cEhLfcNzn6TWn5K5d8qeo0?=
- =?us-ascii?Q?rQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S229847AbiLGNKr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 08:10:47 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064A656EF6
+        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 05:10:46 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id vv4so13909114ejc.2
+        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 05:10:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ou3Fk2Irg7eK6b3UgZwKC8kZv42UyPRCF5b6cACD0ek=;
+        b=EOcoZ2gqOYri3OdNf2eWcBugPym4istQe0643ZN2qwHGnqbETuuiTVNmINAfKvTCAq
+         +bDAXaLNv7TsiPwYbOLR2UJBEm9gFa9eXl+NP+KWr5NaS/hUrKHZMfHBRQBaseneJRL8
+         yJLmPKL3nt4+fS0kqHPKwIqyN1kXr8OQCEjjcrslq9b331+DsFCgwFxsSaiTzGGUuJzN
+         qVLohUxswngg5r4Px4ggawMda66lbEyfSz3BDmQQ5j6XAiOVHtfv3TDLToZNUkGFI21L
+         zEHiHNG17eoWeLIZdp1VUcwGX2Z/31FqfO/t7QXvC793WwnmWVDX0+TzAPvd0i+fxtw2
+         eaBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ou3Fk2Irg7eK6b3UgZwKC8kZv42UyPRCF5b6cACD0ek=;
+        b=hka6fr3sQxu5x5RnggQfy9Ge4g3gMmqLNE9CZgxBri11fMwLlOnTdAAHZU+s0FcA8f
+         kL9B1BC77eWKx2lr+XLRWtJixKh0uybZ8qgIcwif/1sfVw4CGZrM4qMjlPQ1yvlh3ax2
+         dL767IoLBwp0TASwO5QqUIbmJtmO3jppgBnORv/nsbhEfD8Zib/dDKIusUWIjjYpD0uV
+         uSivTjTd1mdtwoZoRxoLu90OXB0j2d7oBzI5j5KaXFAW8DcOd/bGaefJZB1Zo1iqlI4G
+         K0ew2oWwYfeVcnuW6Z0lzprCY7XoOgM0cyVh8MSmsJ2UfiJ1sngtejG6jhL4IizWmWV5
+         Wjog==
+X-Gm-Message-State: ANoB5pnvZFzUa0dFa+SXGgABUP++X671/RZe094ZslpRtnVZ8aX/di8K
+        iv6+Ny6m/aGcTdLe3arzHXcslw==
+X-Google-Smtp-Source: AA0mqf4C2loeS6wG8nSTXbNYNX13ovAzfSYxgB9gpooa66WdeXRavQ7+9LKyrDQmomGPeGEgLzuLaQ==
+X-Received: by 2002:a17:906:bc4a:b0:7c0:eb36:5225 with SMTP id s10-20020a170906bc4a00b007c0eb365225mr12713164ejv.229.1670418644424;
+        Wed, 07 Dec 2022 05:10:44 -0800 (PST)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id r1-20020a1709061ba100b00779a605c777sm8488129ejg.192.2022.12.07.05.10.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Dec 2022 05:10:43 -0800 (PST)
+Date:   Wed, 7 Dec 2022 14:10:42 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
+Message-ID: <Y5CQ0qddxuUQg8R8@nanopsycho>
+References: <Y4eGxb2i7uwdkh1T@nanopsycho>
+ <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4nyBwNPjuJFB5Km@nanopsycho>
+ <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4okm5TrBj+JAJrV@nanopsycho>
+ <20221202212206.3619bd5f@kernel.org>
+ <Y43IpIQ3C0vGzHQW@nanopsycho>
+ <20221205161933.663ea611@kernel.org>
+ <Y48CS98KYCMJS9uM@nanopsycho>
+ <20221206092705.108ded86@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1063924c-6de7-4660-55f3-08dad847219d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2022 11:35:24.3961
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Z891yXg5Q+AGZqi4VzXRaDXLAtgXQ6HXu1QGq5hTR8wUD37t4oH3VrowUyuJnwnEHdK6SQxcmFMpTnl9QyGNpOXV3DGMoa80/h6KIZ4WY4Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7846
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221206092705.108ded86@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Thomas Gleixner,
+Tue, Dec 06, 2022 at 06:27:05PM CET, kuba@kernel.org wrote:
+>On Tue, 6 Dec 2022 09:50:19 +0100 Jiri Pirko wrote:
+>>> Yeah, that's a slightly tricky one. We'd probably need some form 
+>>> of second order association. Easiest if we link it to a devlink
+>>> instance, I reckon. The OCP clock card does not have netdevs so we
+>>> can't follow the namespace of netdevs (which would be the second
+>>> option).  
+>> 
+>> Why do we need this association at all?
+>
+>Someone someday may want netns delegation and if we don't have the
+>support from the start we may break backward compat introducing it.
 
-Thanks for the feedback.
+Hmm. Can you imagine a usecase?
 
-> Subject: RE: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
->=20
-> Biju!
->=20
-> On Wed, Dec 07 2022 at 07:52, Biju Das wrote:
-> >> On Tue, Dec 06 2022 at 09:40, Geert Uytterhoeven wrote:
-> >> > When multiple clocksources are registered, the clocksource
-> >> > subsystems picks the best one anyway, right?
-> >>
-> >> As it does for the clock event devices. If there is an architected
-> >> timer then that should be always preferred.
-> >>
-> >> No idea why there is a need for the extra hardware and the drivers
-> >> which are both never utilized.
-> >
-> > I got feedback from BSP team for the actual usage of this timer.
-> >
-> > Basically, this HW timer is used for measuring the processing time of
-> > DRP-AI accurately compared to the CPU timer normally we use.
->=20
-> How is a slow to access timer with a lower clock frequency more accurate?
+Link to devlink instance btw might be a problem. In case of mlx5, one
+dpll instance is going to be created for 2 (or more) PFs. 1 per ConnectX
+ASIC as there is only 1 clock there. And PF devlinks can come and go,
+does not make sense to link it to any of them.
 
-But our tick frequency for arm64 defconfig is CONFIG_HZ_250=3Dy. So we get =
-timer interrupt
-at every 4 msec.=20
-
-How do we get timer event interrupt, eg: for 1 microsec?
-
->=20
-> > The example use cases,
-> > Timer in FREERUN mode, Check the timer value after the restart(1usec)"
-> > Timer in FREERUN mode, Check the timer value after the
-> restart(10000000usec)"
-> >
-> > What is the model to be used for this kind of HW usage? Counter or
-> Timer?
-> >
-> > I can think of one possible HW usage by using Counter model.
-> > Not sure how timer model can be used for this kind of HW usage??
-> >
-> > Eg: we can set ceiling values 1usec and 10000000usec using counter
-> framework
-> >   And that will trigger interrupt events corresponding to the ceiling
-> values
-> >   to user space and user space app can accurately measure the DRP-AI
-> processing time.
-> >
-> > Also counter model exposes count values to user space from the counter
-> HW.
->=20
-> Counter subsystem !=3D clocksource/event subsystem.
->=20
-> We are debating a clocksource/clockevent driver and not a counter driver,
-> right?
-
-Yes, Rob pointed out we should not misuse the compatibles as I have both
-Timer and counter bindings for a given HW timer.
-
-Timer, It can be used as broadcast and highres timer for RT.
-
-Counter, It can be used as measuring the processing time of DRP-AI.
-
-What is the best way to use this hardware to take care of all this use case=
-s?=20
-
-So far all the Renesas timers used timer model. But for RZ/V2M the HW usage=
- is different.
-The customer BSP mainly uses this timer for measuring the processing time o=
-f DRP-AI,=20
-so the expectation is we should at least have support for this use case.
-
-Cheers,
-Biju
-
+Thinking about it a bit more, DPLL itself has no network notion. The
+special case is SyncE pin, which is linked to netdevice. Just a small
+part of dpll device. And the netdevice already has notion of netns.
+Isn't that enough?
