@@ -2,117 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC5DC352A1
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCBFC63705
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbiLGQtQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 11:49:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38218 "EHLO
+        id S229470AbiLGQzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 11:55:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbiLGQtO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:49:14 -0500
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52AA5446D;
-        Wed,  7 Dec 2022 08:49:12 -0800 (PST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1670431750;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7uqFvxvkYpcyFM86fQv9yXZ51d2JEFzcw8TpGHczOpc=;
-        b=12yUhL53fLv0GE7ZAaNXcOe1ZHzbc1wGUzqI9k5c/bGgLjdmMIl9wtEcOvuaEiIA7hlK3C
-        9waipIMlHN/s4cJrqQfof6eZXV0ScUUbJbjMNJ6xu8CoxDLwW6oyxydNvkDnYHOPeJuDsB
-        HgkEa+2fm1sTdbkoYdx42LgEne5/dk5N0pG+jQatoerPFYZ/OIP1HqWX+r4KSKVRpt+hjW
-        VCN1MnCVTFJhpHeUj5UfH80C3D8j0FebBCZCrsSqIxFJ0fhW9Qy1YjdxvxvfVMtmuW20c4
-        u4iJSAD980pDlay0t41cD8/4flOINnLm7SzlnHqDtaVc4HS8cyUPefjsQalbvA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1670431750;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7uqFvxvkYpcyFM86fQv9yXZ51d2JEFzcw8TpGHczOpc=;
-        b=GoVe2d6hG2SwJWydJujJPKvmuwmH7o9CzDpT2eJCdMYZV39SbEMc6QKuljbDYcMxmGadQ9
-        ML7WYhn2Id81AMAg==
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S229560AbiLGQzE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:55:04 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4356177A;
+        Wed,  7 Dec 2022 08:55:04 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AD319B81F81;
+        Wed,  7 Dec 2022 16:55:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC00C433D6;
+        Wed,  7 Dec 2022 16:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670432101;
+        bh=g2V0Wwn6EW5nnAQJVxm3ydv5yxtTxZ3faTwyKAV+Vng=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qeakXi+qjXqru5YplfgJgzLRGD1+Kp+o1u0MtV7noIDhWiTg7e3xbj8jVEsQ96Fmv
+         LlXtOYrRtAoKkmkW9F9lPuMN0YF8HUFGmbuu/XmUnh6ppKiyi82Q8cp8/iIKMNRzWM
+         IMLQMMXKxv2yI0KcyYTf7j0fU1iWLIJyNJObT39c5/QSnhwnumB3UmD997BkKwb+4i
+         91DwB8cxBiyad80jtnVTax/B81fD88ThFL6Ib+gQCxGQrez8M6+CZoApcaNceeVPB8
+         j0prjEvp4t/dfe4FPo6dF4K9r9LaNvhtY1L9p1W/VaPEn/zZw16Csx6NCRIYYE4hfs
+         pyjh1A6JwOZ0w==
+Date:   Wed, 7 Dec 2022 10:54:57 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        William Breathitt Gray <william.gray@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        krzysztof.kozlowski@linaro.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: RE: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
-In-Reply-To: <OS0PR01MB5922B590AB9791B9741E2A1D861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
- <20221205225042.GA2812115-robh@kernel.org>
- <OS0PR01MB592211AD4D0AE23DA7075DD5861B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdX2=AwerQZS2cqR4exq_QNtt=Fwp5KBcmPr1qmOBNOSAg@mail.gmail.com>
- <87sfhsgb9e.ffs@tglx>
- <OS0PR01MB59228CED6187C7B19776CE22861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <878rjjfprw.ffs@tglx>
- <OS0PR01MB5922B590AB9791B9741E2A1D861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-Date:   Wed, 07 Dec 2022 17:49:09 +0100
-Message-ID: <87sfhrdure.ffs@tglx>
+        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
+ 'reset' interface
+Message-ID: <20221207165457.kwdwwiycbwjpogxl@builder.lan>
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
+ <20221201225705.46r2m35ketvzipox@builder.lan>
+ <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Biju!
+On Wed, Dec 07, 2022 at 05:00:51PM +0100, Ulf Hansson wrote:
+> On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
+> >
+> > On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
+> > >
+> >
+> > @Ulf, Akhil has a power-domain for a piece of hardware which may be
+> > voted active by multiple different subsystems (co-processors/execution
+> > contexts) in the system.
+> >
+> > As such, during the powering down sequence we don't wait for the
+> > power-domain to turn off. But in the event of an error, the recovery
+> > mechanism relies on waiting for the hardware to settle in a powered off
+> > state.
+> >
+> > The proposal here is to use the reset framework to wait for this state
+> > to be reached, before continuing with the recovery mechanism in the
+> > client driver.
+> 
+> I tried to review the series (see my other replies), but I am not sure
+> I fully understand the consumer part.
+> 
+> More exactly, when and who is going to pull the reset and at what point?
+> 
+> >
+> > Given our other discussions on quirky behavior, do you have any
+> > input/suggestions on this?
+> >
+> > > Some clients like adreno gpu driver would like to ensure that its gdsc
+> > > is collapsed at hardware during a gpu reset sequence. This is because it
+> > > has a votable gdsc which could be ON due to a vote from another subsystem
+> > > like tz, hyp etc or due to an internal hardware signal. To allow
+> > > this, gpucc driver can expose an interface to the client driver using
+> > > reset framework. Using this the client driver can trigger a polling within
+> > > the gdsc driver.
+> >
+> > @Akhil, this description is fairly generic. As we've reached the state
+> > where the hardware has settled and we return to the client, what
+> > prevents it from being powered up again?
+> >
+> > Or is it simply a question of it hitting the powered-off state, not
+> > necessarily staying there?
+> 
+> Okay, so it's indeed the GPU driver that is going to assert/de-assert
+> the reset at some point. Right?
+> 
+> That seems like a reasonable approach to me, even if it's a bit
+> unclear under what conditions that could happen.
+> 
 
-On Wed, Dec 07 2022 at 11:35, Biju Das wrote:
->> Subject: RE: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
->> On Wed, Dec 07 2022 at 07:52, Biju Das wrote:
->> > Basically, this HW timer is used for measuring the processing time of
->> > DRP-AI accurately compared to the CPU timer normally we use.
->> 
->> How is a slow to access timer with a lower clock frequency more accurate?
->
-> But our tick frequency for arm64 defconfig is CONFIG_HZ_250=y. So we
-> get timer interrupt at every 4 msec.
+Generally the disable-path of the power-domain does not check that the
+power-domain is actually turned off, because the status might indicate
+that the hardware is voting for the power-domain to be on.
 
-CONFIG_HIGH_RES_TIMERS=y
+As part of the recovery of the GPU after some fatal fault, the GPU
+driver does something which will cause the hardware votes for the
+power-domain to be let go, and then the driver does pm_runtime_put().
 
-> How do we get timer event interrupt, eg: for 1 microsec?
+But in this case the GPU driver wants to ensure that the power-domain is
+actually powered down, before it does pm_runtime_get() again. To ensure
+that the hardware lost its state...
 
-clock_nanosleep(...);
+The proposal here is to use a reset to reach into the power-domain
+provider and wait for the hardware to be turned off, before the GPU
+driver attempts turning the power-domain on again.
 
-Though 1usec is wishful thinking with either variant of timer hardware.
 
->> 
->> We are debating a clocksource/clockevent driver and not a counter driver,
->> right?
->
-> Yes, Rob pointed out we should not misuse the compatibles as I have both
-> Timer and counter bindings for a given HW timer.
->
-> Timer, It can be used as broadcast and highres timer for RT.
+In other words, there is no reset. This is a hack to make a normally
+asynchronous pd.power_off() to be synchronous in this particular case.
 
-I buy the broadcast part if you really have a ARM architected timer
-which stops in deep idle states. Highres for RT, no! The arm architected
-timer works perfectly fine for that.
-
-> Counter, It can be used as measuring the processing time of DRP-AI.
-
-Sigh. You can do that with the architected timer too, especially when
-you are going to do the measurement in user space.
-
-clock_gettime(), which uses the VDSO with the architected timer is fast
-to access and accurate.
-
-Thanks,
-
-        tglx
+Regards,
+Bjorn
