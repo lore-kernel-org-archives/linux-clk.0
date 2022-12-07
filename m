@@ -2,131 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0788CC63703
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDEBC352A1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbiLGQBb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 11:01:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33038 "EHLO
+        id S229636AbiLGQYp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 11:24:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbiLGQB3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:01:29 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A5ED3F050
-        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 08:01:28 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id 82so16804775pgc.0
-        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 08:01:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d1kIptz7lKS34gKJ86GNyP5WqgoufGO1GV/3C71h5+Y=;
-        b=Zv+M3sdOTc2OaYw1U1lD9VTedffjOCXGlzUX5YnRjqpDj/9mhaAVkhtuzC+ogifVNu
-         p1S/8EKd2QORb28ZpoA3LQnVibjwCkCNAAb9dr9XCl2C4l+Lt3Z6K4ir7sm+3mW4x/85
-         6pBJiFAc5UE0fruWDoMsAuJxxN5FRe4wKarL0lpXgBiZNMb0+WQ3q6mYx9fH+BVE9sXN
-         gbcBsoVcq0qongaEmXQHvGOHZ7fI+IIGnay3mc2RIntIRbvuzxhNHt+9sR/XJZeaoNbC
-         fkZqCAqy2kkWqJJLUpz0hIpe2AeBemrvPLy50G6cklmneX0nbRZt8TDVpi+8T7V/GUDd
-         oNxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d1kIptz7lKS34gKJ86GNyP5WqgoufGO1GV/3C71h5+Y=;
-        b=PYpGo55+sFyCIC2u9MlK9lHLxkOsntTxXTBO4ngEIHMLS3NrPhZ51e1Uxnt+3Go9cM
-         VBFz0drHee8DlqgBIhZTAOF1Wj4MTOr9n4vT2POa28zDfT7BhpuSY7YJw4mA8ZalDi+I
-         itHxsvu37sOabhv0iwC/T+BN+xBrRvXUdSxBRWwB2i57+zm8Pq57CvpoH26YH9Om8qUt
-         Yf3+ezrCYsVMZnIx8EpHXjrX7W6EpdfCVONBzGR3KrXdt9dWwwlemyKRuK4er6nFhi3L
-         UGMLa8JphlEGI5QfPttqDvoF3LImSmRhE2H/9TKRWqmFy2ViJxcvwoTGaapYoiZfEpjo
-         aYPQ==
-X-Gm-Message-State: ANoB5pnkWBKc6iztgm14AThqTjkiNCJavEJaecP6N+0XVX6hrDW/Xsya
-        QDvC4e++87z9Xp+cKqiywDrZ7B14qf/FX+qEk8Yatw==
-X-Google-Smtp-Source: AA0mqf6sjup+AAww0D1CxABtpTEw5G9veD+P+n64BdJc1XGnX7DToNoJVds9RCkhIAyxzhqjXASkgW/44ET/nN1v+Fo=
-X-Received: by 2002:aa7:951d:0:b0:577:3e5e:7a4 with SMTP id
- b29-20020aa7951d000000b005773e5e07a4mr8456102pfp.57.1670428887514; Wed, 07
- Dec 2022 08:01:27 -0800 (PST)
-MIME-Version: 1.0
-References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com> <20221201225705.46r2m35ketvzipox@builder.lan>
-In-Reply-To: <20221201225705.46r2m35ketvzipox@builder.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 7 Dec 2022 17:00:51 +0100
-Message-ID: <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
- 'reset' interface
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        krzysztof.kozlowski@linaro.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S229762AbiLGQYo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:24:44 -0500
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE8A2BF1;
+        Wed,  7 Dec 2022 08:24:42 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id E8FDB40003;
+        Wed,  7 Dec 2022 16:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1670430280;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=uXJ9vQ0Ynsot47CGwLCWr7UusrmSQ01bL1ZRlYaTFVo=;
+        b=jWDZwiQ8jwUnrFFI1b5mTkv69adeV5Eug7HW9Dba1jfz2rniPainJkBrJlVaZFSGfbYdD1
+        2I1z0cr16Jm7Zpo0GBx8JPmmXTC9Lx1D33B23cmmyO0QOR9pffoiUQQiSHYkp75rF2dKQH
+        XAUiWHY22RRehFAZp1L2y1U+p9yGZ0aHpPM+JmT1EHIRhxFB8f2MdiH2iglaArOZf9t2vy
+        tZBm7m10XE09CArmpWBiubotGMHEXBuVIC/OnaU3Xsej2CUoN+ZEokGW7jcu5pOrIbbXUh
+        88Fd9SSvFUlM6D+bzyxYoCTXcqeD/rUSK48RnO4em9+KcPGPa056jZZbS4arqg==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v3 0/9] Add the Renesas USBF controller support
+Date:   Wed,  7 Dec 2022 17:24:26 +0100
+Message-Id: <20221207162435.1001782-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.38.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
-> >
->
-> @Ulf, Akhil has a power-domain for a piece of hardware which may be
-> voted active by multiple different subsystems (co-processors/execution
-> contexts) in the system.
->
-> As such, during the powering down sequence we don't wait for the
-> power-domain to turn off. But in the event of an error, the recovery
-> mechanism relies on waiting for the hardware to settle in a powered off
-> state.
->
-> The proposal here is to use the reset framework to wait for this state
-> to be reached, before continuing with the recovery mechanism in the
-> client driver.
+Hi,
 
-I tried to review the series (see my other replies), but I am not sure
-I fully understand the consumer part.
+This series add support for the Renesas USBF controller (USB Device
+Controller) available in the Renesas RZ/N1 SoC.
 
-More exactly, when and who is going to pull the reset and at what point?
+Based on previous review:
+  https://lore.kernel.org/all/20221114111513.1436165-3-herve.codina@bootlin.com/
+  
+A new strategy is proposed to handle the H2MODE bit from CFG_USB
+register compared to the previous versions on the series. As a
+reminder, H2MODE bit allows to configure the internal USB Port
+interface for two hosts or one host and one device.
 
->
-> Given our other discussions on quirky behavior, do you have any
-> input/suggestions on this?
->
-> > Some clients like adreno gpu driver would like to ensure that its gdsc
-> > is collapsed at hardware during a gpu reset sequence. This is because it
-> > has a votable gdsc which could be ON due to a vote from another subsystem
-> > like tz, hyp etc or due to an internal hardware signal. To allow
-> > this, gpucc driver can expose an interface to the client driver using
-> > reset framework. Using this the client driver can trigger a polling within
-> > the gdsc driver.
->
-> @Akhil, this description is fairly generic. As we've reached the state
-> where the hardware has settled and we return to the client, what
-> prevents it from being powered up again?
->
-> Or is it simply a question of it hitting the powered-off state, not
-> necessarily staying there?
+This new strategy is:
+  - Add the new generic 'depends-on' property in the device tree.
 
-Okay, so it's indeed the GPU driver that is going to assert/de-assert
-the reset at some point. Right?
+    This generic property expresses an simple functionnal dependency
+    that does not rely on a specific topic. It is an 'order only'
+    dependency that can be used for dependencies between consumers
+    and producers that are not based on a specific infrastructure
+    and not need other relationship than this simple 'order only'
+    (ie no API is provided between the provider and the consumer)
 
-That seems like a reasonable approach to me, even if it's a bit
-unclear under what conditions that could happen.
+    The 'depends-on' property is handled in a generic way using
+    fw_devlink. The probe() function calls order is ensured by the
+    core infrastructure.
 
-[...]
+    In the nodes impacted by H2MODE, 'depends-on' is used to
+    express the dependency to sysctrl.
 
-Kind regards
-Uffe
+  - At sysctrl level, during the probe, switch to '1 host, 1 device'
+    mode only if the USB device is available.
+
+Patches 1, 2 and 3 are related to 'depends-on' in the PCI bridge
+node. This PCI bridge connects the USB host controllers to the AHB bus
+
+Patch 4 adds the 'depends-on' support in fw_devlink
+Patch 6 handles h2mode in sysctrl
+
+Patch 5, 7, 8 and 9 are related to the USBF controller with a new
+binding definition, the driver itself and myself as a maintainer
+of this controller.
+
+Best regards,
+Herve Codina
+
+Changes v2 -> v3:
+  - v2 Patches 1, 2 and 3 removed.
+
+  - Patches 1, 2, 3 and 4 (new patches)
+
+  - Patch 5 (v2 patch 4):
+    Add 'depends-on' property
+    Removed redundant 'binding' word
+
+  - Patch 6 (new patch)
+
+  - Patch 7 (v2 patch 5)
+    Removed h2mode checking. This check is no more needed and the API no more
+    available.
+
+  - Patch 8 (v2 patch 6)
+    Add 'depends-on' property
+
+  - Patch 9 (v2 patch 7)
+    Fix file name
+
+Changes v1 -> v2:
+  - Patch 1:
+    Rename r9a06g032_sysctrl_get_usb_h2mode to r9a06g032_sysctrl_get_usb_role
+    and return USB_ROLE_{HOST,DEVICE} or an error code.
+    Reword commit log
+
+  - Patches 2 and 3:
+    No changes. Some previous feedbacks still need to be taken into account
+      https://lore.kernel.org/all/20221107182642.05a09f2f@bootlin.com/
+      https://lore.kernel.org/all/20221107173614.474707d7@bootlin.com/
+
+  - Patch 4:
+    Rename file from renesas,usbf.yaml to renesas,rzn1-usbf.yaml.
+    Remove 'oneOf'.
+    Add blank line and line break.
+    Add 'power-domains'.
+    Reword commit log
+
+  - Patch 5:
+    Remove clocks handling (handled by runtime PM through the clock domain
+    pointed by power-domains).
+    Fix compilation warning raised by the 'kernel test robot'.
+
+  - Patch 6:
+    Add 'power-domains'
+
+  - Patch 7:
+    Add 'Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>'
+
+
+Herve Codina (9):
+  dt-bindings: PCI: renesas,pci-rcar-gen2: Add depends-on for RZ/N1 SoC
+    family
+  ARM: dts: r9a06g032: Add dependency to sysctrl in the PCI bridge
+  dt-bindings: PCI: renesas,pci-rcar-gen2: 'depends-on' is no more
+    optional
+  of: property: fw_devlink: Add support for "depends-on"
+  dt-bindings: usb: add the Renesas RZ/N1 USBF controller
+  soc: renesas: r9a06g032-sysctrl: Handle h2mode setting based on USBF
+    presence
+  usb: gadget: udc: add Renesas RZ/N1 USBF controller support
+  ARM: dts: r9a06g032: Add the USBF controller node
+  MAINTAINERS: add the Renesas RZ/N1 USBF controller entry
+
+ .../bindings/pci/renesas,pci-rcar-gen2.yaml   |    7 +
+ .../bindings/usb/renesas,rzn1-usbf.yaml       |   77 +
+ MAINTAINERS                                   |    8 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |   14 +
+ drivers/clk/renesas/r9a06g032-clocks.c        |   28 +
+ drivers/of/property.c                         |    2 +
+ drivers/usb/gadget/udc/Kconfig                |   11 +
+ drivers/usb/gadget/udc/Makefile               |    1 +
+ drivers/usb/gadget/udc/renesas_usbf.c         | 3420 +++++++++++++++++
+ 9 files changed, 3568 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+ create mode 100644 drivers/usb/gadget/udc/renesas_usbf.c
+
+-- 
+2.38.1
+
