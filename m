@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A12C6370A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 00:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3760CC63707
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 00:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbiLGAP1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Dec 2022 19:15:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
+        id S229621AbiLGAP2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Dec 2022 19:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbiLGAPV (ORCPT
+        with ESMTP id S229842AbiLGAPV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2022 19:15:21 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF964C26A
-        for <linux-clk@vger.kernel.org>; Tue,  6 Dec 2022 16:15:13 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id c1so26219108lfi.7
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3704D5C3
+        for <linux-clk@vger.kernel.org>; Tue,  6 Dec 2022 16:15:14 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id a7so19055275ljq.12
         for <linux-clk@vger.kernel.org>; Tue, 06 Dec 2022 16:15:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=COIwOpR3AFBIRvfDbD4zcFvWKfpmHLetCDIWQdTm83I=;
-        b=fdI6DDiXDys8UMoHcfTggzWoPdqQa544Ggas2v5H+CbjRuDsZsIeaXaWXRHbh9h/K5
-         c/L80//MHthxaXIb+4MsNBqZMFBpAhKWYIoQqpS1bnaY7F+qrPqxUzPhVegKeQG5dpyH
-         ZmD8hNWumieYmOGU8f9FGxOiP4oTyNsVMAEFpp0fNzyFbblj0DUSzqOtT6Yi5qoURDN/
-         7UYLW/r8V2ez6xy7gtH4w6VGX+eAkRQGaHSTQgac3FnZWjAWthGFvEQFd9n2zR4nXRfj
-         Ea1+DdMGeculVKmXMvwmMCogDHGQ62Vc3emi3IpLaKJWc84pDnB+XZSQKPbwPdflbFup
-         mbvQ==
+        bh=FGzQyhdenSwcHEboe3rA+QyA3pqYTdrZAd8HXwWyub4=;
+        b=pVKqUaR+C5mumvDtp0Zci8ZU0vZtoK1/4WOfX1NtkAWqzVad3vGRFIZlMdk8WmkcI/
+         esQTs5ZaRxe+EYnOtCJcHA29TVESRGCfBe15hmzQrCZyqsUIu9hKErgwyz3DoNF/ZIEi
+         fN8f7X6mu4xpg6K1ZFzpCTquQ72r7scwuQEQe1lR3UoqJHXYqEjR8xmAxN2maaUTTfoY
+         3HTpv+j+N7GZAgQO1KwWrGopjXIcPuCclyRCpcFrF0V7/6v3/1G9aSytAXPzUeAK1MF+
+         F7jIyS46Z99s0A+LQhs/FiuDgL5BD/Fbe67GZ9x7yXZ1gqw/0ylRdDNz+PiFFa3WUdGg
+         KJig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=COIwOpR3AFBIRvfDbD4zcFvWKfpmHLetCDIWQdTm83I=;
-        b=n+If7hiW6ZtUHe4sjMREza55SE1qX6oIVWq7m4CaPCLlhGCby4LFlLXgOSbfgR7feX
-         fHtPlp4mCauNvjaA7Jx2z7OBUggG2wO0ojcKKajQdJOTadacRxM/zgwjJ0kpalmZszRu
-         MzHVoQaMQym7enSohUMEjLUz3LtuQZSw+EVOQzIMmvSLARCRZB1DXVcTCN2v2M1Nlenm
-         crRPGIaBA65AjGmdg4KdIexxic1hpEGNqAHQ7WAqdXa4ZnK4sMZw5DiOBZS5+d13q3q6
-         SvbpG1KiIVY0iceFL4HPEb0uit/OhyghTrDRRfBsGTCOcLLh5CHebTawAHL8WoxD9NXO
-         0wxA==
-X-Gm-Message-State: ANoB5pmu0mLNNHo9tdW0UUYZGmMs5eA0lYxzdXVWP1YYtgf6BYWoy9jR
-        7yj84Yok/KvckLAcV7B8aHj0kA==
-X-Google-Smtp-Source: AA0mqf77OsSnbhTeP4BwkqA/zzklZ0AtQ27MA7RDKUlxw99ss5WcE6an/GrnyhJblk+y0aiYj7ce/A==
-X-Received: by 2002:ac2:5dfa:0:b0:4b5:7b91:54ca with SMTP id z26-20020ac25dfa000000b004b57b9154camr2957873lfq.234.1670372111542;
-        Tue, 06 Dec 2022 16:15:11 -0800 (PST)
+        bh=FGzQyhdenSwcHEboe3rA+QyA3pqYTdrZAd8HXwWyub4=;
+        b=vLyOFlTYcuYbNhCnBxRQ6ThpvEITwAUlbzn/p0Y6vvw+jx6m1fbf6+JqM8/ZEU6Wfh
+         /sAotuOkHuijI3B1LiJxDh2rJVVXHDfuQ8WjVGzfqRO4stR4HVwrvt/X6mblysCkwwed
+         XK35POh3grw5zr0KryLfhfw7Js8LoMwCIGDHocoiSLvJVMDj01I6cx8uVjER2KfQ+weg
+         QKLBCxxMtTauTjOYYMWnFQEBg/B/5qZTs2V/c2RNTPAIcJZbcxO9Od5/IplVJJpRFTJq
+         mCqg6Op+GeG0lLC2rANmNCkp2od/7q8FWuf8R41UhOGIt+s0FCMYm05rEaGJvwoMEK02
+         VUag==
+X-Gm-Message-State: ANoB5pkGZPCoeo0DtZ+TNVe6t4QKE8qMHs5aDiO9raofnAdFqAu9DDy8
+        MTSmKXadwWzVaa9i8Ycizy41Bg==
+X-Google-Smtp-Source: AA0mqf7UkS0sayfFFpOAxH++j8Z+pl68/NjtGhMcOr2prh8jGf1yg0PEqbltBLaB03l2qEEkkTfrYQ==
+X-Received: by 2002:a2e:a5c5:0:b0:277:155d:28c4 with SMTP id n5-20020a2ea5c5000000b00277155d28c4mr24523132ljp.123.1670372112267;
+        Tue, 06 Dec 2022 16:15:12 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id 16-20020ac25f50000000b004b53eb60e3csm2308555lfz.256.2022.12.06.16.15.10
+        by smtp.gmail.com with ESMTPSA id 16-20020ac25f50000000b004b53eb60e3csm2308555lfz.256.2022.12.06.16.15.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 06 Dec 2022 16:15:11 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -56,10 +56,11 @@ To:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 10/18] clk: qcom: smd-rpm: fix alignment of line breaking backslashes
-Date:   Wed,  7 Dec 2022 02:14:55 +0200
-Message-Id: <20221207001503.93790-11-dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Alex Elder <elder@linaro.org>
+Subject: [PATCH v2 11/18] clk: qcom: smd-rpm: move clock definitions together
+Date:   Wed,  7 Dec 2022 02:14:56 +0200
+Message-Id: <20221207001503.93790-12-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221207001503.93790-1-dmitry.baryshkov@linaro.org>
 References: <20221207001503.93790-1-dmitry.baryshkov@linaro.org>
@@ -69,79 +70,239 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The commit 52a436e0b7fe ("clk: qcom: smd-rpm: Switch to parent_data")
-introduced ragged right alignment for the line breaking backslash. Fix
-it to make the code look consistently.
+To ease review and reuse group all clock definitions together.
 
+Reviewed-by: Alex Elder <elder@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/clk/qcom/clk-smd-rpm.c | 128 +++++++++++++++------------------
+ 1 file changed, 59 insertions(+), 69 deletions(-)
 
 diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 2075cfd34f99..7e43ecdda763 100644
+index 7e43ecdda763..98d82d1f3a75 100644
 --- a/drivers/clk/qcom/clk-smd-rpm.c
 +++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -36,10 +36,10 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_ops,			      \
- 			.name = #_name,					      \
--			.parent_data =  &(const struct clk_parent_data){ \
--					.fw_name = "xo",		\
--					.name = "xo_board",		\
--			},						\
-+			.parent_data =  &(const struct clk_parent_data){      \
-+					.fw_name = "xo",		      \
-+					.name = "xo_board",		      \
-+			},						      \
- 			.num_parents = 1,				      \
- 		},							      \
- 	};								      \
-@@ -53,10 +53,10 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_ops,			      \
- 			.name = #_active,				      \
--			.parent_data =  &(const struct clk_parent_data){ \
--					.fw_name = "xo",		\
--					.name = "xo_board",		\
--			},						\
-+			.parent_data =  &(const struct clk_parent_data){      \
-+					.fw_name = "xo",		      \
-+					.name = "xo_board",		      \
-+			},						      \
- 			.num_parents = 1,				      \
- 		},							      \
- 	}
-@@ -74,10 +74,10 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_branch_ops,			      \
- 			.name = #_name,					      \
--			.parent_data =  &(const struct clk_parent_data){ \
--					.fw_name = "xo",		\
--					.name = "xo_board",		\
--			},						\
-+			.parent_data =  &(const struct clk_parent_data){      \
-+					.fw_name = "xo",		      \
-+					.name = "xo_board",		      \
-+			},						      \
- 			.num_parents = 1,				      \
- 		},							      \
- 	};								      \
-@@ -92,10 +92,10 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_branch_ops,			      \
- 			.name = #_active,				      \
--			.parent_data =  &(const struct clk_parent_data){ \
--					.fw_name = "xo",		\
--					.name = "xo_board",		\
--			},						\
-+			.parent_data =  &(const struct clk_parent_data){      \
-+					.fw_name = "xo",		      \
-+					.name = "xo_board",		      \
-+			},						      \
- 			.num_parents = 1,				      \
- 		},							      \
- 	}
+@@ -411,15 +411,73 @@ static const struct clk_ops clk_smd_rpm_branch_ops = {
+ };
+ 
+ DEFINE_CLK_SMD_RPM_BRANCH(sdm660, bi_tcxo, bi_tcxo_a, QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
++DEFINE_CLK_SMD_RPM_BRANCH(sm6125, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1, 19200000);
++DEFINE_CLK_SMD_RPM_QDSS(msm8916, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_BRANCH(sm6375, bimc_freq_log, bimc_freq_log_a, QCOM_SMD_RPM_MISC_CLK, 4, 1);
++
++DEFINE_CLK_SMD_RPM_BRANCH(msm8992, mss_cfg_ahb_clk, mss_cfg_ahb_a_clk, QCOM_SMD_RPM_MCFG_CLK, 0, 19200000);
++
++DEFINE_CLK_SMD_RPM_BRANCH(msm8996, aggre1_noc_clk, aggre1_noc_a_clk, QCOM_SMD_RPM_AGGR_CLK, 1, 1000);
++DEFINE_CLK_SMD_RPM_BRANCH(msm8996, aggre2_noc_clk, aggre2_noc_a_clk, QCOM_SMD_RPM_AGGR_CLK, 2, 1000);
++DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk, QCOM_SMD_RPM_AGGR_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk, QCOM_SMD_RPM_AGGR_CLK, 2);
++
+ DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8916, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM(msm8974, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM(msm8974, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk, QCOM_SMD_RPM_BUS_CLK, 3);
++DEFINE_CLK_SMD_RPM(sm6125, snoc_periph_clk, snoc_periph_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(sm6125, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM(sm6125, snoc_lpass_clk, snoc_lpass_a_clk, QCOM_SMD_RPM_BUS_CLK, 5);
++
+ DEFINE_CLK_SMD_RPM(msm8916, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM(qcm2290, cpuss_gnoc_clk, cpuss_gnoc_a_clk, QCOM_SMD_RPM_MEM_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8974, gfx3d_clk_src, gfx3d_a_clk_src, QCOM_SMD_RPM_MEM_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8974, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
++DEFINE_CLK_SMD_RPM(qcs404, bimc_gpu_clk, bimc_gpu_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
++
++DEFINE_CLK_SMD_RPM(msm8992, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8992, ce2_clk, ce2_a_clk, QCOM_SMD_RPM_CE_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8994, ce3_clk, ce3_a_clk, QCOM_SMD_RPM_CE_CLK, 2);
++
++DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
++
++DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
++
++DEFINE_CLK_SMD_RPM(msm8996, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 1);
++
++DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
++
+ DEFINE_CLK_SMD_RPM(qcs404, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
+-DEFINE_CLK_SMD_RPM_QDSS(msm8916, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
++
++DEFINE_CLK_SMD_RPM(sm6125, qup_clk, qup_a_clk, QCOM_SMD_RPM_QUP_CLK, 0);
++
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk1, bb_clk1_a, 1, 19200000);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk2, bb_clk2_a, 2, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk1, ln_bb_clk1_a, 1, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk2, ln_bb_clk2_a, 2, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3, ln_bb_clk3_a, 3, 19200000);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk1, rf_clk1_a, 4, 19200000);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk2, rf_clk2_a, 5, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3, rf_clk3_a, 6, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(qcs404, ln_bb_clk, ln_bb_clk_a, 8, 19200000);
++
++DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, rf_clk3, rf_clk3_a, 6, 38400000);
++
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_d0, cxo_d0_a, 1, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_d1, cxo_d1_a, 2, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a0, cxo_a0_a, 4, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a1, cxo_a1_a, 5, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a2, cxo_a2_a, 6, 19200000);
++
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, diff_clk, diff_a_clk, 7, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk1, div_a_clk1, 11, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk2, div_a_clk2, 12, 19200000);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8992, div_clk3, div_clk3_a, 13, 19200000);
+ 
+ static struct clk_smd_rpm *msm8909_clks[] = {
+ 	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
+@@ -487,8 +545,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8916 = {
+ 	.num_clks = ARRAY_SIZE(msm8916_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+-
+ static struct clk_smd_rpm *msm8936_clks[] = {
+ 	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
+ 	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
+@@ -523,19 +579,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8936 = {
+ 		.num_clks = ARRAY_SIZE(msm8936_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(msm8974, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+-DEFINE_CLK_SMD_RPM(msm8974, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk, QCOM_SMD_RPM_BUS_CLK, 3);
+-DEFINE_CLK_SMD_RPM(msm8974, gfx3d_clk_src, gfx3d_a_clk_src, QCOM_SMD_RPM_MEM_CLK, 1);
+-DEFINE_CLK_SMD_RPM(msm8974, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, diff_clk, diff_a_clk, 7, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk1, div_a_clk1, 11, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk2, div_a_clk2, 12, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_d0, cxo_d0_a, 1, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_d1, cxo_d1_a, 2, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a0, cxo_a0_a, 4, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a1, cxo_a1_a, 5, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a2, cxo_a2_a, 6, 19200000);
+-
+ static struct clk_smd_rpm *msm8974_clks[] = {
+ 	[RPM_SMD_PNOC_CLK]		= &msm8916_pcnoc_clk,
+ 	[RPM_SMD_PNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
+@@ -586,8 +629,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
+ 	.num_clks = ARRAY_SIZE(msm8974_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+-
+ static struct clk_smd_rpm *msm8976_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+@@ -622,14 +663,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
+ 	.num_clks = ARRAY_SIZE(msm8976_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8992, div_clk3, div_clk3_a, 13, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(qcs404, ln_bb_clk, ln_bb_clk_a, 8, 19200000);
+-
+-DEFINE_CLK_SMD_RPM(msm8992, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
+-DEFINE_CLK_SMD_RPM(msm8992, ce2_clk, ce2_a_clk, QCOM_SMD_RPM_CE_CLK, 1);
+-
+-DEFINE_CLK_SMD_RPM_BRANCH(msm8992, mss_cfg_ahb_clk, mss_cfg_ahb_a_clk,
+-			  QCOM_SMD_RPM_MCFG_CLK, 0, 19200000);
+ static struct clk_smd_rpm *msm8992_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+@@ -688,8 +721,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8992 = {
+ 	.num_clks = ARRAY_SIZE(msm8992_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(msm8994, ce3_clk, ce3_a_clk, QCOM_SMD_RPM_CE_CLK, 2);
+-
+ static struct clk_smd_rpm *msm8994_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+@@ -750,13 +781,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8994 = {
+ 	.num_clks = ARRAY_SIZE(msm8994_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(msm8996, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
+-		   QCOM_SMD_RPM_MMAXI_CLK, 0);
+-DEFINE_CLK_SMD_RPM_BRANCH(msm8996, aggre1_noc_clk, aggre1_noc_a_clk,
+-			  QCOM_SMD_RPM_AGGR_CLK, 1, 1000);
+-DEFINE_CLK_SMD_RPM_BRANCH(msm8996, aggre2_noc_clk, aggre2_noc_a_clk,
+-			  QCOM_SMD_RPM_AGGR_CLK, 2, 1000);
+-
+ static struct clk_smd_rpm *msm8996_clks[] = {
+ 	[RPM_SMD_PCNOC_CLK] = &msm8916_pcnoc_clk,
+ 	[RPM_SMD_PCNOC_A_CLK] = &msm8916_pcnoc_a_clk,
+@@ -809,8 +833,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8996 = {
+ 	.num_clks = ARRAY_SIZE(msm8996_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(qcs404, bimc_gpu_clk, bimc_gpu_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
+-
+ static struct clk_smd_rpm *qcs404_clks[] = {
+ 	[RPM_SMD_QDSS_CLK] = &msm8916_qdss_clk,
+ 	[RPM_SMD_QDSS_A_CLK] = &msm8916_qdss_a_clk,
+@@ -839,15 +861,6 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
+ 	.num_clks = ARRAY_SIZE(qcs404_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk1, ln_bb_clk1_a, 1, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk2, ln_bb_clk2_a, 2, 19200000);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3, ln_bb_clk3_a, 3, 19200000);
+-DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
+-		   QCOM_SMD_RPM_AGGR_CLK, 1);
+-DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
+-		   QCOM_SMD_RPM_AGGR_CLK, 2);
+-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3, rf_clk3_a, 6, 19200000);
+-
+ static struct clk_smd_rpm *msm8998_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+@@ -1012,19 +1025,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8953 = {
+ 	.num_clks = ARRAY_SIZE(msm8953_clks),
+ };
+ 
+-/* SM6125 */
+-DEFINE_CLK_SMD_RPM(sm6125, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+-DEFINE_CLK_SMD_RPM(sm6125, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+-DEFINE_CLK_SMD_RPM_BRANCH(sm6125, qdss_clk, qdss_a_clk,
+-					QCOM_SMD_RPM_MISC_CLK, 1, 19200000);
+-DEFINE_CLK_SMD_RPM(sm6125, qup_clk, qup_a_clk, QCOM_SMD_RPM_QUP_CLK, 0);
+-DEFINE_CLK_SMD_RPM(sm6125, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 0);
+-DEFINE_CLK_SMD_RPM(sm6125, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 1);
+-DEFINE_CLK_SMD_RPM(sm6125, snoc_periph_clk, snoc_periph_a_clk,
+-						QCOM_SMD_RPM_BUS_CLK, 0);
+-DEFINE_CLK_SMD_RPM(sm6125, snoc_lpass_clk, snoc_lpass_a_clk,
+-						QCOM_SMD_RPM_BUS_CLK, 5);
+-
+ static struct clk_smd_rpm *sm6125_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+@@ -1108,10 +1108,6 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6115 = {
+ 	.num_clks = ARRAY_SIZE(sm6115_clks),
+ };
+ 
+-/* SM6375 */
+-DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
+-DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
+-DEFINE_CLK_SMD_RPM_BRANCH(sm6375, bimc_freq_log, bimc_freq_log_a, QCOM_SMD_RPM_MISC_CLK, 4, 1);
+ static struct clk_smd_rpm *sm6375_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+@@ -1149,12 +1145,6 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6375 = {
+ 	.num_clks = ARRAY_SIZE(sm6375_clks),
+ };
+ 
+-/* QCM2290 */
+-DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, rf_clk3, rf_clk3_a, 6, 38400000);
+-
+-DEFINE_CLK_SMD_RPM(qcm2290, cpuss_gnoc_clk, cpuss_gnoc_a_clk,
+-		   QCOM_SMD_RPM_MEM_CLK, 1);
+-
+ static struct clk_smd_rpm *qcm2290_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
 -- 
 2.35.1
 
