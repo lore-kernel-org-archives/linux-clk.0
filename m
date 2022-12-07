@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC56C63707
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4049EC47089
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 16:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230160AbiLGQZb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 11:25:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48754 "EHLO
+        id S230064AbiLGQZt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 11:25:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbiLGQZL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:25:11 -0500
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A57866C9D;
-        Wed,  7 Dec 2022 08:25:02 -0800 (PST)
+        with ESMTP id S229775AbiLGQZ0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 11:25:26 -0500
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10A86721F;
+        Wed,  7 Dec 2022 08:25:09 -0800 (PST)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 8174540005;
-        Wed,  7 Dec 2022 16:24:59 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id ED7324000A;
+        Wed,  7 Dec 2022 16:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1670430300;
+        t=1670430308;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TihRoOIIlvWBr2aPxHY68KFlI34LyysIMIjsTZJBegk=;
-        b=phliuoeEnzcMaOBgjmn0khKUXd4Djca6HtKn0flaBs1Z31VbhoSX3XyE6mTOmR/wMf6Or/
-        a8p4cKEXfV5j/sVaLi3qWaZfPkLRQGT79MDKzBJ9mqwcNXaNKGZRKDvbRE3H4yaL1RBL+3
-        00UTbiYc95oNwMbnAdPHvZzqLsVw25wkU2uWQKI6zIypiqcRHEQRGZiuif4jI0Ug6yI1Tq
-        OYl6jO/Lv3LvrBXBh1Hdjdt+OValFF5qz2pp3v084/Dhq2MRj3C7LBV3aclBOILbv0iOFG
-        bsHD4BQledwST/XCg4TktGIovxj7AHMrONeOmWNWWM7nr0igSwbYmw/plXsJzw==
+        bh=qVVPGGJ5wD/Pxteagqvg58bV2zwW32bCcfFwOUVXpsY=;
+        b=InaD6Obosh7+P5c7PmHRZXVJ/tICh/b190U+1Cz1Th3q970arZlVnX0Q05skh4RU5L3vXj
+        270vVj8yxI/OJg0CrjVu+medqAIrKDRnJmOoy+zQckqWW0lO4EVCRKeUWlKjOL+ARqsIZz
+        oeBjFghpSJ7vsV3g9GtwEOytDP/BtGHrJy78rgD0rcMWLoRq3fs6dEYCnt/aEqMacA/K3r
+        A4B+IiIDge5oFBFmAVmPXCjbU83QMJvg8yEzFfzOvfcPZyv0w3rFL2GCb1Yqh3Pdy4VaQ9
+        0ahsix94J6YNsgpXwv2VJ4SNk/3sai6KnAMNF5jy/TeUK9ujKrnoHc5lNgw36A==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -44,9 +44,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-usb@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 8/9] ARM: dts: r9a06g032: Add the USBF controller node
-Date:   Wed,  7 Dec 2022 17:24:34 +0100
-Message-Id: <20221207162435.1001782-9-herve.codina@bootlin.com>
+Subject: [PATCH v3 9/9] MAINTAINERS: add the Renesas RZ/N1 USBF controller entry
+Date:   Wed,  7 Dec 2022 17:24:35 +0100
+Message-Id: <20221207162435.1001782-10-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221207162435.1001782-1-herve.codina@bootlin.com>
 References: <20221207162435.1001782-1-herve.codina@bootlin.com>
@@ -56,37 +56,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the USBF controller available in the r9a06g032 SoC.
+After contributing the driver, add myself as the maintainer
+for Renesas RZ/N1 USBF controller.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 401c88bcdd51..d3c459537dbb 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -117,6 +117,19 @@ dmamux: dma-router@a0 {
- 			};
- 		};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1daadaa4d48b..5bf800b4e166 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17632,6 +17632,14 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+ F:	drivers/rtc/rtc-rzn1.c
  
-+		udc: usb@4001e000 {
-+			compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
-+			reg = <0x4001e000 0x2000>;
-+			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_HCLK_USBF>,
-+				 <&sysctrl R9A06G032_HCLK_USBPM>;
-+			clock-names = "hclkf", "hclkpm";
-+			power-domains = <&sysctrl>;
-+			depends-on = <&sysctrl>;
-+			status = "disabled";
-+		};
++RENESAS RZ/N1 USBF CONTROLLER DRIVER
++M:	Herve Codina <herve.codina@bootlin.com>
++L:	linux-renesas-soc@vger.kernel.org
++L:	linux-usb@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
++F:	drivers/usb/gadget/udc/renesas_usbf.c
 +
- 		pci_usb: pci@40030000 {
- 			compatible = "renesas,pci-r9a06g032", "renesas,pci-rzn1";
- 			device_type = "pci";
+ RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
+ M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ L:	linux-mtd@lists.infradead.org
 -- 
 2.38.1
 
