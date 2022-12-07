@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E729FC63705
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 13:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A93C352A1
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 13:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbiLGNKt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 08:10:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45434 "EHLO
+        id S229593AbiLGNT2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 08:19:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbiLGNKr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 08:10:47 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064A656EF6
-        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 05:10:46 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id vv4so13909114ejc.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 05:10:45 -0800 (PST)
+        with ESMTP id S229755AbiLGNT0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 08:19:26 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB0D412A92
+        for <linux-clk@vger.kernel.org>; Wed,  7 Dec 2022 05:19:25 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id x22so13868983ejs.11
+        for <linux-clk@vger.kernel.org>; Wed, 07 Dec 2022 05:19:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=resnulli-us.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ou3Fk2Irg7eK6b3UgZwKC8kZv42UyPRCF5b6cACD0ek=;
-        b=EOcoZ2gqOYri3OdNf2eWcBugPym4istQe0643ZN2qwHGnqbETuuiTVNmINAfKvTCAq
-         +bDAXaLNv7TsiPwYbOLR2UJBEm9gFa9eXl+NP+KWr5NaS/hUrKHZMfHBRQBaseneJRL8
-         yJLmPKL3nt4+fS0kqHPKwIqyN1kXr8OQCEjjcrslq9b331+DsFCgwFxsSaiTzGGUuJzN
-         qVLohUxswngg5r4Px4ggawMda66lbEyfSz3BDmQQ5j6XAiOVHtfv3TDLToZNUkGFI21L
-         zEHiHNG17eoWeLIZdp1VUcwGX2Z/31FqfO/t7QXvC793WwnmWVDX0+TzAPvd0i+fxtw2
-         eaBw==
+        bh=8IsR/7BBSr99fNGUQc2zD3gScYgcXe04DZhFoUN8RzE=;
+        b=NqOLNQ99Mm5MnH16nxDcXzdPyAK+lhiZV5mfD4s1VWTntvNtRtx6hGLwU/igrx1dJT
+         QLBws3FchORmSVWVupm5ZsdVsRV/FjcPw676LKTLXR1Xg9HrQvLGvlpujYqKhoyEHc+A
+         vHECdlvEba2G1cJR7lcPpkUjIhB71bdo+ZsNdQkS/bv1DPO++HT3yj9iaxGXFUJ0QdcV
+         p4+7Te52kuwvF6GM8phr+op8Qkik+NUhl9GWR6PlP/bfU/vyg+iRk5nvEO8Hgdh3f+Fg
+         uWDYK01EOlPzwbaN7u5OIC4T74FMZZgoxLA4tpgdAumTMk/TGTMU6ZUXCIsL4c80pFgq
+         +ETQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ou3Fk2Irg7eK6b3UgZwKC8kZv42UyPRCF5b6cACD0ek=;
-        b=hka6fr3sQxu5x5RnggQfy9Ge4g3gMmqLNE9CZgxBri11fMwLlOnTdAAHZU+s0FcA8f
-         kL9B1BC77eWKx2lr+XLRWtJixKh0uybZ8qgIcwif/1sfVw4CGZrM4qMjlPQ1yvlh3ax2
-         dL767IoLBwp0TASwO5QqUIbmJtmO3jppgBnORv/nsbhEfD8Zib/dDKIusUWIjjYpD0uV
-         uSivTjTd1mdtwoZoRxoLu90OXB0j2d7oBzI5j5KaXFAW8DcOd/bGaefJZB1Zo1iqlI4G
-         K0ew2oWwYfeVcnuW6Z0lzprCY7XoOgM0cyVh8MSmsJ2UfiJ1sngtejG6jhL4IizWmWV5
-         Wjog==
-X-Gm-Message-State: ANoB5pnvZFzUa0dFa+SXGgABUP++X671/RZe094ZslpRtnVZ8aX/di8K
-        iv6+Ny6m/aGcTdLe3arzHXcslw==
-X-Google-Smtp-Source: AA0mqf4C2loeS6wG8nSTXbNYNX13ovAzfSYxgB9gpooa66WdeXRavQ7+9LKyrDQmomGPeGEgLzuLaQ==
-X-Received: by 2002:a17:906:bc4a:b0:7c0:eb36:5225 with SMTP id s10-20020a170906bc4a00b007c0eb365225mr12713164ejv.229.1670418644424;
-        Wed, 07 Dec 2022 05:10:44 -0800 (PST)
+        bh=8IsR/7BBSr99fNGUQc2zD3gScYgcXe04DZhFoUN8RzE=;
+        b=LVC1A9x+s24f+XPqgG6ni/NfiXuwWKHcjhZZwbRUyKzFy81X6i0DeYdcqDRXc7b7Xb
+         /ULG4thXg6gsEHrTHVVUOQcOXfOWwBWT05hpewVfK8ivRH+5prOgwkT/eQ+a7qrdSl0/
+         nO2RV4rcpNvI3M8saCXhjF/CDOYoUmLdQqBqL4k9ET7EIK+REyJ25tNQKf8ekNktSD6w
+         wHmnfIPwIlE21oavdxrLKsFUS9nb4pvfQ2wKUthvhsD2eCqetIiNU/CxuinO5QAKOMu/
+         CapfbvLlcz8oSX+JfkqM9GbOa3OYEqud5p6F5kNjAD35RB+YRP34hhEkDgc0ac2lExNa
+         5mFg==
+X-Gm-Message-State: ANoB5pk+1/NB36Ne4rGcBReAZu0nEjSgdZiKLnyMnBbW06cScwL3uuLU
+        GCy9/EUmM20KMCgxndxWjqvSgw==
+X-Google-Smtp-Source: AA0mqf65DnAvWOUpig9182b+xplZFrf2ffwn/LssCXLx6RHMw6LFoQVfWvmx3u5SXkByC4FDNxAMbw==
+X-Received: by 2002:a17:906:6c7:b0:78d:4061:5e1b with SMTP id v7-20020a17090606c700b0078d40615e1bmr67809617ejb.47.1670419164119;
+        Wed, 07 Dec 2022 05:19:24 -0800 (PST)
 Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id r1-20020a1709061ba100b00779a605c777sm8488129ejg.192.2022.12.07.05.10.43
+        by smtp.gmail.com with ESMTPSA id i13-20020a17090639cd00b0073022b796a7sm8646766eje.93.2022.12.07.05.19.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 05:10:43 -0800 (PST)
-Date:   Wed, 7 Dec 2022 14:10:42 +0100
+        Wed, 07 Dec 2022 05:19:23 -0800 (PST)
+Date:   Wed, 7 Dec 2022 14:19:22 +0100
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     Jakub Kicinski <kuba@kernel.org>
 Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
@@ -57,50 +57,54 @@ Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
         Paolo Abeni <pabeni@redhat.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Vadim Fedorenko <vadfed@fb.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
-Message-ID: <Y5CQ0qddxuUQg8R8@nanopsycho>
-References: <Y4eGxb2i7uwdkh1T@nanopsycho>
- <DM6PR11MB4657DE713E4E83E09DFCFA4B9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4nyBwNPjuJFB5Km@nanopsycho>
- <DM6PR11MB4657C8417DEB0B14EC35802E9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4okm5TrBj+JAJrV@nanopsycho>
- <20221202212206.3619bd5f@kernel.org>
- <Y43IpIQ3C0vGzHQW@nanopsycho>
- <20221205161933.663ea611@kernel.org>
- <Y48CS98KYCMJS9uM@nanopsycho>
- <20221206092705.108ded86@kernel.org>
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 4/4] ptp_ocp: implement DPLL ops
+Message-ID: <Y5CS2lO8WaoPmMbq@nanopsycho>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+ <20221129213724.10119-5-vfedorenko@novek.ru>
+ <Y4dPaHx1kT3A80n/@nanopsycho>
+ <DM6PR11MB4657D9753412AD9DEE7FAB7D9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4n0H9BbzaX5pCpQ@nanopsycho>
+ <DM6PR11MB465721310114ECA13F556E8A9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <20221206183313.713656f8@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221206092705.108ded86@kernel.org>
+In-Reply-To: <20221206183313.713656f8@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, Dec 06, 2022 at 06:27:05PM CET, kuba@kernel.org wrote:
->On Tue, 6 Dec 2022 09:50:19 +0100 Jiri Pirko wrote:
->>> Yeah, that's a slightly tricky one. We'd probably need some form 
->>> of second order association. Easiest if we link it to a devlink
->>> instance, I reckon. The OCP clock card does not have netdevs so we
->>> can't follow the namespace of netdevs (which would be the second
->>> option).  
+Wed, Dec 07, 2022 at 03:33:13AM CET, kuba@kernel.org wrote:
+>On Fri, 2 Dec 2022 14:39:17 +0000 Kubalewski, Arkadiusz wrote:
+>> >>>Btw, did you consider having dpll instance here as and auxdev? It
+>> >>>would be suitable I believe. It is quite simple to do it. See
+>> >>>following patch as an example:  
+>> >>
+>> >>I haven't think about it, definetly gonna take a look to see if there
+>> >>any benefits in ice.  
+>> >
+>> >Please do. The proper separation and bus/device modelling is at least one
+>> >of the benefits. The other one is that all dpll drivers would happily live
+>> >in drivers/dpll/ side by side.
 >> 
->> Why do we need this association at all?
+>> Well, makes sense, but still need to take a closer look on that.
+>> I could do that on ice-driver part, don't feel strong enough yet to introduce
+>> Changes here in ptp_ocp.
 >
->Someone someday may want netns delegation and if we don't have the
->support from the start we may break backward compat introducing it.
+>FWIW auxdev makes absolutely no sense to me for DPLL :/
+>So Jiri, please say why.
 
-Hmm. Can you imagine a usecase?
+Why not? It's a subdev of a device. In mlx5, we have separate auxdevs
+for eth, rdma, vnet, representors. DPLL is also a separate entity which
+could be instantiated independently (as it is not really dependent on
+eth/rdma/etc)). Auxdev looks like an awesome fit. Why do you think it is
+not?
 
-Link to devlink instance btw might be a problem. In case of mlx5, one
-dpll instance is going to be created for 2 (or more) PFs. 1 per ConnectX
-ASIC as there is only 1 clock there. And PF devlinks can come and go,
-does not make sense to link it to any of them.
+Also, what's good about auxdev is that you can maintain them quite
+independetly. So there is going to be driver/dpll/ directory which would
+contain all dpll drivers.
 
-Thinking about it a bit more, DPLL itself has no network notion. The
-special case is SyncE pin, which is linked to netdevice. Just a small
-part of dpll device. And the netdevice already has notion of netns.
-Isn't that enough?
+
