@@ -2,71 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42A8C4708D
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 21:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC1AC4708D
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Dec 2022 22:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229877AbiLGVtf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 16:49:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36938 "EHLO
+        id S229586AbiLGWT7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 17:19:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbiLGVtR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 16:49:17 -0500
+        with ESMTP id S229589AbiLGWT5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 17:19:57 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF0BE84DE4;
-        Wed,  7 Dec 2022 13:48:57 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C5069AAC;
+        Wed,  7 Dec 2022 14:19:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E0CE5B8216E;
-        Wed,  7 Dec 2022 21:48:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74030C433D7;
-        Wed,  7 Dec 2022 21:48:54 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C3057B8218F;
+        Wed,  7 Dec 2022 22:19:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E6AC43470;
+        Wed,  7 Dec 2022 22:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670449734;
-        bh=5dCNbmox6waUeuX2Iir4OK5SdTorc7GU4B8l9qRHQWQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vIYh4Har7Mb8hxyOkjyXUxLcj2ioKv8LNilKJqHb2rNIcREFqI9CBb5Ya5smNOJ0S
-         Bn7Y/u6vdr+V5UAGtGXPRS73IBztInR4k7P+hdWcejUTpZPNk2/qyxOklRkxKpS18Y
-         gIR9qEYDgN8JtNkPOc2N+yRdxBAqNmW8LNNkRuU7vqGopEwRuTN0HUYN/qlq7QuWAI
-         2hwc7Nzg2f7CbnvSF0AGs8BS6xOsg4lrAjafBp7c2SAcdjMFEpC29lN+hzlSv2FwEN
-         48yYrCbRgAknQg7VqPpEq7mfcMSC2DK/FZ+Dxjcq12G8ek1AzuizNfEepN91Kjb4vx
-         Kv2apagmDsBYA==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1670451594;
+        bh=Z6y1S2c4O/wQVEci3pG8Cjc3WmkGbiLwEfx3oMfIjck=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OCzOmaGjJvSkeIY2d/ch72xW78HASiWEjCv+COoZdnTgvkbcLvkwqw9nRliNM7Nr7
+         Vh5ZKgh6udrB+8stTTSMByhHAjlcp/qqbJ8HcYxS+wKcLi1v5EH17QABp3OodWWQja
+         nYT3Yw8ShUY/8OMh7z0R0HWl2YvOAvbMtSypH42zZvCp7RNFIfLybieNj/DV0uJCOC
+         BXDbq3pjWQpAMu2LpGYfaqHQN+39X8JkC3xgx7kA8D1GV5VPtn0dLPsNpkiNHGrtNo
+         Q/c3+qkPf0oeD9Bvjzrb5Q2jX7ab7UTYIxO+yMVw608bhxM/dSOw681DSkG5CKRMPl
+         GSbjoaiZaYfmA==
+Received: by mail-ua1-f50.google.com with SMTP id e24so6502644uam.10;
+        Wed, 07 Dec 2022 14:19:54 -0800 (PST)
+X-Gm-Message-State: ANoB5pnDavVVUGpwlR+N8IDCtBRXSn5dXe6aQxCmM0VROPydGBFiBW6F
+        v0G0mLmWjWehJeunLuxNtFwS4ijmWn9IKG3WAA==
+X-Google-Smtp-Source: AA0mqf7sjL89XYXP7++xV6ahJfBPE5ZnuFqEZVVoFHM87m+y1bCKE4MXIBGEtgCvE7SaKjFdqV+bCcJFTgMrIRcBLr0=
+X-Received: by 2002:ab0:1006:0:b0:419:70a:90cb with SMTP id
+ f6-20020ab01006000000b00419070a90cbmr32720021uab.36.1670451593309; Wed, 07
+ Dec 2022 14:19:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221018-clk-rate-request-tracing-v2-2-5170b363c413@cerno.tech>
-References: <20221018-clk-rate-request-tracing-v2-0-5170b363c413@cerno.tech> <20221018-clk-rate-request-tracing-v2-2-5170b363c413@cerno.tech>
-Subject: Re: [PATCH v2 2/2] clk: Add trace events for rate requests
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
+References: <20221207162435.1001782-1-herve.codina@bootlin.com>
+In-Reply-To: <20221207162435.1001782-1-herve.codina@bootlin.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 7 Dec 2022 16:19:42 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJiZU=sHVPc92nDNoqUjm7FUb=u0izGYa+irkUW1XmA_w@mail.gmail.com>
+Message-ID: <CAL_JsqJiZU=sHVPc92nDNoqUjm7FUb=u0izGYa+irkUW1XmA_w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] Add the Renesas USBF controller support
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Steven Rostedt <rostedt@goodmis.org>, maxime@cerno.tech
-Date:   Wed, 07 Dec 2022 13:48:52 -0800
-User-Agent: alot/0.10
-Message-Id: <20221207214854.74030C433D7@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting maxime@cerno.tech (2022-10-26 06:46:59)
-> It is currently fairly difficult to follow what clk_rate_request are
-> issued, and how they have been modified once done.
->=20
-> Indeed, there's multiple paths that can be taken, some functions are
-> recursive and will just forward the request to its parent, etc.
->=20
-> Adding a lot of debug prints is just not very convenient, so let's add
-> trace events for the clock requests, one before they are submitted and
-> one after they are returned.
->=20
-> That way we can simply toggle the tracing on without modifying the
-> kernel code and without affecting performances or the kernel logs too
-> much.
->=20
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
+On Wed, Dec 7, 2022 at 10:24 AM Herve Codina <herve.codina@bootlin.com> wrote:
+>
+> Hi,
+>
+> This series add support for the Renesas USBF controller (USB Device
+> Controller) available in the Renesas RZ/N1 SoC.
+>
+> Based on previous review:
+>   https://lore.kernel.org/all/20221114111513.1436165-3-herve.codina@bootlin.com/
+>
+> A new strategy is proposed to handle the H2MODE bit from CFG_USB
+> register compared to the previous versions on the series. As a
+> reminder, H2MODE bit allows to configure the internal USB Port
+> interface for two hosts or one host and one device.
 
-Applied to clk-next
+Is this case any different from all the phandle properties we have in
+bindings that point to some misc registers somewhere else you need to
+poke? If so, I'm not really a fan of duplicating the information.
+
+We also have cases of of_find_compatible_node(NULL, NULL,
+"foo-bar-syscon") which is a dependency expressed in the driver, but
+not DT. In either case, adding 'depends-on' would be an ABI break as
+you are requiring a DT change.
+
+> This new strategy is:
+>   - Add the new generic 'depends-on' property in the device tree.
+>
+>     This generic property expresses an simple functionnal dependency
+>     that does not rely on a specific topic. It is an 'order only'
+>     dependency that can be used for dependencies between consumers
+>     and producers that are not based on a specific infrastructure
+>     and not need other relationship than this simple 'order only'
+>     (ie no API is provided between the provider and the consumer)
+
+Isn't getting a regmap an API?
+
+Rob
