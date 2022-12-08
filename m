@@ -2,86 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E57C63709
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 02:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F35C4708E
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 02:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbiLHCX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 21:23:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50732 "EHLO
+        id S229685AbiLHC07 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 21:26:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiLHCXg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 21:23:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA826934D9;
-        Wed,  7 Dec 2022 18:23:30 -0800 (PST)
+        with ESMTP id S229479AbiLHC0z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 21:26:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148158E599;
+        Wed,  7 Dec 2022 18:26:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B8F461D43;
-        Thu,  8 Dec 2022 02:23:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9410C433D6;
-        Thu,  8 Dec 2022 02:23:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 95A5461D22;
+        Thu,  8 Dec 2022 02:26:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E436DC433D6;
+        Thu,  8 Dec 2022 02:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670466209;
-        bh=ctNvEkMwUgwEJ9SlshFrR+/sf9kEHQBdQRj2f79tMZ0=;
+        s=k20201202; t=1670466413;
+        bh=EEXv31EHijcWe+oAPW/O/oSGFu1i6dgrthd8lpIk1JE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LLbQ5C03QVMTeUy19/862Rs8zTCftgNiCG2tor2i/i42zXU+l2xfudtXtOe23gfAw
-         XTKDRmwv1YaCiKjaq2F3lI31z9gA5hRh7fquPsrrCNlhvOPvA1ZtNreikJRMG35y2l
-         p2NPA71JbalZgYNOmaeYCYjFfAmS3SxeAne8LIo2DqEwb1ZdMAquOToDFiPQLBlCsy
-         oUY7zHP9aevkWmzWmDQ2w6BmncVgKWOryEViG++17kllt08+1jetSk2xcXJ/MZTtQz
-         QFb20MGrKlVRPdakShU4mxAlce7eqZ/zIJTBSz34pbNU06B8ZzpFSNJV+GQ9+L808V
-         BOtHa6Kozxm5A==
+        b=QFRj0NUJc2P+g/jO+Akg9dD4y0vBw9PBp0aq/ExBHu2lvdDF3AKdeZnsMsxvP9V33
+         iVXkDdFaXObf7ow9tCK11q8FiBY1SIiTpnWf0Vq1UfcsM1NTJyrGZlMmHuU7P6f8uZ
+         mmFulhQ+1JmrU9q4yfE6FNyvpbgivu7DIoxzHfnLFux+SlauCZUyelJYD6q8QnheMh
+         iy8nY6xV1Er2EhVpw2CezbfFLBNGT9nG8hBrqApl8HMdvdqbnfHZtbe6vkfKQccWLz
+         SW3ITzzEvA2KmobEM4NC5Nfz+jz8pAb4ea9ymRUWD2vAkSkOYnbrChpy3M34vDc21S
+         xmhqGvv+3/7Eg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221207204626.3253372-1-andersson@kernel.org>
-References: <20221207204626.3253372-1-andersson@kernel.org>
-Subject: Re: [GIT PULL] Qualcomm clock updates for 6.2
+In-Reply-To: <20221123032015.63980-1-xiujianfeng@huawei.com>
+References: <20221123032015.63980-1-xiujianfeng@huawei.com>
+Subject: Re: [PATCH] clk: samsung: Fix memory leak in _samsung_clk_register_pll()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Andy Gross <agross@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Lin@vger.kernel.org, Meng-Bo <linmengbo0689@protonmail.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Robert Marko <robert.marko@sartura.hr>
-To:     Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
-Date:   Wed, 07 Dec 2022 18:23:27 -0800
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, alim.akhtar@samsung.com,
+        cw00.choi@samsung.com, dianders@chromium.org,
+        krzysztof.kozlowski@linaro.org, mturquette@baylibre.com,
+        mturquette@linaro.org, s.nawrocki@samsung.com,
+        tomasz.figa@gmail.com, yadi.brar@samsung.com
+Date:   Wed, 07 Dec 2022 18:26:50 -0800
 User-Agent: alot/0.10
-Message-Id: <20221208022329.C9410C433D6@smtp.kernel.org>
+Message-Id: <20221208022652.E436DC433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-12-07 12:46:26)
-> The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc7=
-80:
+Quoting Xiu Jianfeng (2022-11-22 19:20:15)
+> If clk_register() fails, @pll->rate_table may have allocated memory by
+> kmemdup(), so it needs to be freed, otherwise will cause memory leak
+> issue, this patch fixes it.
 >=20
->   Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-6.2
->=20
-> for you to fetch changes up to 2931aa6758da9f871b4bd7ee52a4be2f9d24e6ce:
->=20
->   clk: qcom: rpmh: add support for SM6350 rpmh IPA clock (2022-12-06 12:3=
-0:20 -0600)
->=20
-> ----------------------------------------------------------------
+> Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table fo=
+r samsung plls")
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
