@@ -2,156 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992E8C4167B
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 18:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457A0C4167B
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 20:44:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbiLHSXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 13:23:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44042 "EHLO
+        id S229677AbiLHUot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 15:44:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiLHSXg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 13:23:36 -0500
-X-Greylist: delayed 903 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 08 Dec 2022 10:23:34 PST
-Received: from sender4-of-o53.zoho.com (sender4-of-o53.zoho.com [136.143.188.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3114D5F2;
-        Thu,  8 Dec 2022 10:23:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1670522891; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=clSJvTgXI3YP5BwKy+RhSSz8KV/7/WlKN8jkv1vgDWLqjKvdw+VxronQE0ilzYXReEAPmrAUT4v1FfIV0wxfEgef9x3veI+5Bcl63iiAfAANKhp7DGDd5SQ1J/P/h1EMA7RcaBJQ7V0Ez32RBcc0+IwprwWlBgGDwGoEPk17XF8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1670522891; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=lVl0AW6NjKtrDN8pXdhzjnNBt7YZtcamrLdGxj4L9Y4=; 
-        b=Ov44NLqvu0uUaN4cxaC5UUWXgDQBLazCzgeGT+8vMQJrJqsVJjSlbYE/0GnykbB+ndtAwJWwluCd45e7p6BIKYmASHCTx1FSJknwcoW2IazukLB/ksssbYR4Z9zVJyIBb8Issk/+689CYYsPzkjd49EY2ybZB959nK/8iklnhBA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=machnikowski.net;
-        spf=pass  smtp.mailfrom=maciek@machnikowski.net;
-        dmarc=pass header.from=<maciek@machnikowski.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1670522891;
-        s=zoho; d=machnikowski.net; i=maciek@machnikowski.net;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=lVl0AW6NjKtrDN8pXdhzjnNBt7YZtcamrLdGxj4L9Y4=;
-        b=QVSEZbndRq3Zzufk8gnYWqfmBP3KeMuj09MZEdyjs7ElO+TfjiWSxzi7DOdi4vfb
-        6fimYWaP0E0IF4+3opGuV3IRifOrb0hm8miLsNfsqfSUp7eOfKAU/qTfobzqY5AqK7z
-        miahNHBuKvfGKHoCFJuPiScgYIY1aQ9ixjeXDzeh5a3WFDu9MkBDjMCvQjdU9QnTD6t
-        gEgqsAvDIap4MbXdQJrt4LajvVaoLs2Fou5e/3JDVzB2UN05kNKW427KNLoVCd3g0Da
-        Heaa8jXhadYJCI3aTUNNZZZykqqLQ2FFjrXSHjx/OUFgtvnfyFsfMetI6Wes0RKGHip
-        RuJbhIUA6w==
-Received: from [192.168.1.227] (83.8.188.9.ipv4.supernova.orange.pl [83.8.188.9]) by mx.zohomail.com
-        with SMTPS id 167052288851018.2093850153816; Thu, 8 Dec 2022 10:08:08 -0800 (PST)
-Message-ID: <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
-Date:   Thu, 8 Dec 2022 19:08:04 +0100
+        with ESMTP id S229479AbiLHUor (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 15:44:47 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01701AF33;
+        Thu,  8 Dec 2022 12:44:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 61DB8B825E5;
+        Thu,  8 Dec 2022 20:44:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CBE2C43398;
+        Thu,  8 Dec 2022 20:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670532284;
+        bh=Op3UYf+6olBgWrruca2+4Cw44tWd/dJqwafFuHi8BuQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TzZk98Sm7iHP5ggszXg7OSQVOGQWmechaPq8sdWf6iN8A8VkpGD4NQDM06bssaYaN
+         lgWc9vcIcmS6g+dsTZ/1ykRw3u6RG+Fg9/2sFyQhj2ilkoUszIPR7GUwMfYbHGofAm
+         j17lqnYNJok5WR1ys0ih3OZlds6Dy28ib/oZubk70FfQWd02vSqrFQlxmcl1MIdJZj
+         GmiUrnYKWGJjellgBWsKNJpZltUqi4nlu09jAQVueDNlfoaGhzcRIaeZ+lV6LMtmBW
+         hajdN19eK7yyFNHS/V16wBGnRt3VSGa+q5PONKJViCXbo20GWmxcEv2RwLEgNoNAZz
+         9qoWk3T7xXZ/g==
+Received: by mail-ua1-f50.google.com with SMTP id m5so772987uah.3;
+        Thu, 08 Dec 2022 12:44:44 -0800 (PST)
+X-Gm-Message-State: ANoB5pk3s4dy/5FRocmvte06X+ULIi0ycfzRFK6pffIsoS3/8pGfZNbS
+        ozDYP1ODQo/dWFNkHQrh1Agqy6zvL07c01jr2w==
+X-Google-Smtp-Source: AA0mqf4ma8F1BT0uBQEYiHxBjiJL0Ol47jNJrTLDn/AAI8VlbTaGwaiuMSNkRkY2hh2jshSQyk61IDhlm1kZOsxD1n0=
+X-Received: by 2002:a9f:22c7:0:b0:3d6:45ee:7efc with SMTP id
+ 65-20020a9f22c7000000b003d645ee7efcmr44640221uan.86.1670532282914; Thu, 08
+ Dec 2022 12:44:42 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Content-Language: en-US
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     'Jiri Pirko' <jiri@resnulli.us>,
-        "'Kubalewski, Arkadiusz'" <arkadiusz.kubalewski@intel.com>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <Y4dNV14g7dzIQ3x7@nanopsycho>
- <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4oj1q3VtcQdzeb3@nanopsycho> <20221206184740.28cb7627@kernel.org>
- <10bb01d90a45$77189060$6549b120$@gmail.com>
- <20221207152157.6185b52b@kernel.org>
-From:   Maciek Machnikowski <maciek@machnikowski.net>
-In-Reply-To: <20221207152157.6185b52b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20221207162435.1001782-1-herve.codina@bootlin.com>
+ <CAL_JsqJiZU=sHVPc92nDNoqUjm7FUb=u0izGYa+irkUW1XmA_w@mail.gmail.com> <20221208092439.6170cf5e@bootlin.com>
+In-Reply-To: <20221208092439.6170cf5e@bootlin.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 8 Dec 2022 14:44:31 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLjD=DbKJRrmn2GmbAwmVyE=gVcz-fZfNJ_xAup6GReSA@mail.gmail.com>
+Message-ID: <CAL_JsqLjD=DbKJRrmn2GmbAwmVyE=gVcz-fZfNJ_xAup6GReSA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] Add the Renesas USBF controller support
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/8/2022 12:21 AM, Jakub Kicinski wrote:
-> On Wed, 7 Dec 2022 15:09:03 +0100 netdev.dump@gmail.com wrote:
->>> -----Original Message-----
->>> From: Jakub Kicinski <kuba@kernel.org>
->> pins between the DPLLs exposed by a single driver, but not really outside of
->> it.
->> And that can be done simply by putting the pin ptr from the DPLLA into the
->> pin
->> list of DPLLB.
-> 
-> Are you saying within the driver it's somehow easier? The driver state
-> is mostly per bus device, so I don't see how.
-> 
->> If we want the kitchen-and-sink solution, we need to think about corner
->> cases.
->> Which pin should the API give to the userspace app - original, or
->> muxed/parent?
-> 
-> IDK if I parse but I think both. If selected pin is not directly
-> attached the core should configure muxes.
-> 
->> How would a teardown look like - if Driver A registered DPLLA with Pin1 and
->> Driver B added the muxed pin then how should Driver A properly
->> release its pins? Should it just send a message to driver B and trust that
->> it
->> will receive it in time before we tear everything apart?
-> 
-> Trivial.
-> 
->> There are many problems with that approach, and the submitted patch is not
->> explaining any of them. E.g. it contains the dpll_muxed_pin_register but no
->> free 
->> counterpart + no flows.
-> 
-> SMOC.
-> 
->> If we want to get shared pins, we need a good example of how this mechanism
->> can be used.
-> 
-> Agreed.
+On Thu, Dec 8, 2022 at 2:24 AM Herve Codina <herve.codina@bootlin.com> wrote:
+>
+> Hi Rob,
+>
+> On Wed, 7 Dec 2022 16:19:42 -0600
+> Rob Herring <robh+dt@kernel.org> wrote:
+>
+> > On Wed, Dec 7, 2022 at 10:24 AM Herve Codina <herve.codina@bootlin.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > This series add support for the Renesas USBF controller (USB Device
+> > > Controller) available in the Renesas RZ/N1 SoC.
+> > >
+> > > Based on previous review:
+> > >   https://lore.kernel.org/all/20221114111513.1436165-3-herve.codina@bootlin.com/
+> > >
+> > > A new strategy is proposed to handle the H2MODE bit from CFG_USB
+> > > register compared to the previous versions on the series. As a
+> > > reminder, H2MODE bit allows to configure the internal USB Port
+> > > interface for two hosts or one host and one device.
+> >
+> > Is this case any different from all the phandle properties we have in
+> > bindings that point to some misc registers somewhere else you need to
+> > poke? If so, I'm not really a fan of duplicating the information.
+>
+> Our case is that there is a bit in a register that affect several
+> devices. This bit must be set before the devices are started.
+> If this bit is changed while affected devices are running, system
+> hangs can occurs (datasheet).
+>
+> So, in order to do that we need the device in charge to set
+> this bit (sysctrl) to set this bit before other devices (USBF
+> and PCI bridge) were started.
 
-My main complaint about the current pins implementation is that they put
-everything in a single bag. In a netdev world - it would be like we put
-TX queues and RX queues together, named them "Queues", expose a list to
-the userspace and let the user figure out which ones which by reading a
-"TX" flag.
+That sounds like you just need some platform level initialization and
+you are working around the desire to not have platform level
+initialization.
 
-All DPLLs I know have a Sources block, DPLLs and Output blocks. See:
+Why doesn't/can't the bootloader initialize this? Seems like it might
+want to use PCI or USB too.
 
-https://www.renesas.com/us/en/products/clocks-timing/jitter-attenuators-frequency-translation/8a34044-multichannel-dpll-dco-four-eight-channels#overview
+> At sysctrl level, the bit is set during the probe() call.
+> The property 'depends-on' aim is to ensure the probe() calls
+> order between provider (sysctrl) and consumers (USBF and PCI
+> bridge).
+>
+> regmap and syscon are used to export registers from one device
+> to an other and the probe() calls order is not ensured by the
+> core or regmap infrastructure. Indeed, the regmap provider
+> probe() will not be called if the regmap provider was not probed
+> before the consumer ask for the regmap.
+>   https://elixir.bootlin.com/linux/latest/source/drivers/mfd/syscon.c#L152
+>   https://elixir.bootlin.com/linux/latest/source/drivers/mfd/syscon.c#L43
+> No specific action synchronisation are done with regmap/syscon
+> other than the regmap creation itself.
 
-https://ww1.microchip.com/downloads/aemDocuments/documents/TIM/ProductDocuments/ProductBrief/ZL3063x-System-Synchronizers-with-up-to-5-Channels-10-Inputs-20-Outputs-Product-Brief-DS20006634.pdf
+Oh right. That's in place of course to avoid probe ordering issues...
 
-https://www.sitime.com/support/resource-library/product-briefs/cascade-sit9514x-clock-system-chip-family
+> I don't think the regmap/syscon will help in our case.
+>
+> >
+> > We also have cases of of_find_compatible_node(NULL, NULL,
+> > "foo-bar-syscon") which is a dependency expressed in the driver, but
+> > not DT. In either case, adding 'depends-on' would be an ABI break as
+> > you are requiring a DT change.
+>
+> In order to avoid the DT change, I can keep the 'depends-on'
+> optional in the PCI bridge binding.
+> This will be functionnal as sysctrl is already used in this node
+> (power-domain = <&sysctrl>). The relationship is already present
+> with this power-domain link.
+>
+> If ok, I will do this change in v4 series.
 
-https://www.ti.com/lit/ds/symlink/lmk5b33414.pdf?ts=1670516132647&ref_url=https%253A%252F%252Fwww.ti.com%252Fclocks-timing%252Fjitter-cleaners-synchronizers%252Fproducts.html
+I agree with Geert that this shouldn't be needed.
 
-If we model everything as "pins" we won't be able to correctly extend
-the API to add new features.
-
-Sources can configure the expected frequency, input signal monitoring
-(on multiple layers), expected signal levels, input termination and so
-on. Outputs will need the enable flag, signal format, frequency, phase
-offset etc. Multiple DPLLs can reuse a single source inside the same
-package simultaneously.
-
-A source should be able to link to a pin or directly to the netdev for
-some embedded solutions. We don't need to go through the pin abstraction
-at all.
-
-An optional pin entity should only represent a physical connection with
-a name and maybe a 3-state selection of In/Out/HiZ and then link to
-sources or output of the DPLL(s).
-
-Finally, the DPLL object should keep track of the source priority list,
-have a proper status (locked/unlocked/holdover/freerunning), implement
-the NCO mode, lock thresholds, bandwidths, auto-switch mode and so on.
-
-Current implementation creates a lot of ambiguity, mixes input pins with
-output pins and assigns priories to pins. Every SW entity will receive a
-big list of pins and will need to parse it.
-
-I prefer the approach that the ptp subsystem set - with its abstraction
-of input/output channels and pins that can be assigned to them. While
-not perfect - it represents reality much closer.
-
-Thanks
-Maciek
+Rob
