@@ -2,240 +2,289 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD849C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 12:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A195C3A5A7
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 13:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbiLHMCQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 07:02:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52362 "EHLO
+        id S230222AbiLHNHt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 08:07:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiLHMCP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 07:02:15 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FC6862D0
-        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 04:02:12 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id i15so1782527edf.2
-        for <linux-clk@vger.kernel.org>; Thu, 08 Dec 2022 04:02:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qz3MP8hDU1IsxsCEe+N2MZItnF0m71Vp8b1O7ckwZcA=;
-        b=7iGcG4y6WEOvG7ppT7je8BwERX7JRrYwRxsJTwKO7IkUnzyhTABt2RuFROoI1/AITF
-         mqhvHnUsOzwlPBMdbYE/bKMWQtZQnS/+7i0n05HCIypZhJfEvFqyxotpVFYCzJp5WBoL
-         HaMUZTbLcW4vcDXjp+B8CUByJ1ACdZFF9ejZ2VUZikcblsk2B0FuH09+ZsOb6/4EDSBT
-         EhBYBI71EEvP9r6g2+rD9KhzA9/re3POEVnUNqTLtp2GRlhg2Vk8m6j7XLR9yUkdpOGv
-         1i8VpMfI5JP8KaPfxsbTnW++lF2X0y84l+BBocT5txuBvTrqXw8EwNpEIBYCWbC23/RS
-         v6dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qz3MP8hDU1IsxsCEe+N2MZItnF0m71Vp8b1O7ckwZcA=;
-        b=F5B5mYHkie6Z/tI0IDUVSAvIJlBUdfANdIk48FT/YlLfQZUxXaYP6s6qfxT4VYmfoo
-         VtA3+7loxHZyRcJz75qdS1hByVhXO1zGwdNbP6hZNplln+DJ2i7Borokeg7UZrqB70DZ
-         H/5MrwF7VYuqEUGbQ/S7eVe7LjFIbfmpI/5uRCQiFL4e3lrgS782lftPxYRXMO3Vpjdy
-         aXsrF4eXz9AyhA69V10k+u3R8yk4ksrZ3xNvmDoesEtln2Giq53ETYyIoI8htk7lWS0I
-         9/ywrtpCny8IsemUHLYr7lwV9JjCl5x3bu58gwXvPrbg6ZCu1MV7V5iNn6PPwjmwa+Cc
-         gz6Q==
-X-Gm-Message-State: ANoB5pm06NsQECBEbpZdBS2hSoomP3Puzis3lNNopGj20vEyik9w86qx
-        2M06IjGSrPNEnfHUCODDUSSSyA==
-X-Google-Smtp-Source: AA0mqf7dmEc8cfEAKf5s+0mmMiNPbAoDNOYS0r9qBabTpzLNPaiSbpCgcK9k0zK7FwH5wNdXlo7RDg==
-X-Received: by 2002:a05:6402:eaa:b0:462:c7ed:7b41 with SMTP id h42-20020a0564020eaa00b00462c7ed7b41mr2063468eda.21.1670500931147;
-        Thu, 08 Dec 2022 04:02:11 -0800 (PST)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id r19-20020aa7cb93000000b00463c5c32c6esm3269411edt.89.2022.12.08.04.02.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Dec 2022 04:02:10 -0800 (PST)
-Date:   Thu, 8 Dec 2022 13:02:09 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y5HSQU1aCGpOZLiJ@nanopsycho>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <Y4dNV14g7dzIQ3x7@nanopsycho>
- <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4oj1q3VtcQdzeb3@nanopsycho>
- <20221206184740.28cb7627@kernel.org>
- <Y5CofhLCykjsFie6@nanopsycho>
- <20221207091946.3115742f@kernel.org>
+        with ESMTP id S229791AbiLHNHp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 08:07:45 -0500
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AA8DC22
+        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 05:07:34 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5574:4fdf:a801:888e])
+        by andre.telenet-ops.be with bizsmtp
+        id tp7X280022deJRf01p7XxN; Thu, 08 Dec 2022 14:07:32 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1p3GIF-002tBF-Lc; Thu, 08 Dec 2022 13:46:27 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1p3DeN-002fmw-3l; Thu, 08 Dec 2022 10:57:07 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Tho Vu <tho.vu.wh@renesas.com>, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] clk: renesas: r8a779g0: Add custom clock for PLL2
+Date:   Thu,  8 Dec 2022 10:56:58 +0100
+Message-Id: <76a5952900a6e15604c640bc8a27762e0e936677.1670492384.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1670492384.git.geert+renesas@glider.be>
+References: <cover.1670492384.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221207091946.3115742f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Dec 07, 2022 at 06:19:46PM CET, kuba@kernel.org wrote:
->On Wed, 7 Dec 2022 15:51:42 +0100 Jiri Pirko wrote:
->> Wed, Dec 07, 2022 at 03:47:40AM CET, kuba@kernel.org wrote:
->> >On Fri, 2 Dec 2022 17:12:06 +0100 Jiri Pirko wrote:  
->> >> Yep, you have the knowledge of sharing inside the driver, so you should
->> >> do it there. For multiple instances, use in-driver notifier for example.  
->> >
->> >No, complexity in the drivers is not a good idea. The core should cover
->> >the complexity and let the drivers be simple.  
->> 
->> Really, even in case only one driver actually consumes the complexicity?
->> I understand having a "libs" to do common functionality for drivers,
->> even in case there is one. But this case, I don't see any benefit.
->
->In the same email thread you admit that mlx5 has multiple devlink
->instances for the same ASIC and refuse to try to prevent similar
->situation happening in the new subsystem.
+Currently the PLLs are modeled as fixed factor clocks, based on initial
+settings.  However, enabling CPU boost clock rates requires increasing
+the PLL clock rates.
 
-I don't understand your point. In CX there is 1 clock for 2 pci PFs. I
-plan to have 1 dpll instance for the clock shared.
+Add a custom clock driver to model the PLL clocks on R-Car Gen4, and use
+it for PLL2 on R-Car V4H.  This allows the Z clock (Cortex-A76 core
+clock) to request PLL rate changes, and enable boost mode for the High
+Performance mode.  For now this is limited to integer multiplication
+modes.
 
-But how is what you write relevant to the discussion? We are talking
-about:
-a) 1 pin in 2 dpll instances
-what I undestand you say here is to prevent:
-b) 2 dpll instances for 1 clock
-apples and oranges. Am I missing something?
+Note that the definition for CPG_PLLxCR0_NI uses the value for R-Car V4H.
+On R-Car S4-8, the integer and fractional multiplication fields are one
+bit larger resp. smaller, but R-Car S4-8 does not support High
+Performance mode.
 
-I'm totally against b) but that is not what we discuss here, correct?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c |  14 +--
+ drivers/clk/renesas/rcar-gen4-cpg.c     | 156 ++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen4-cpg.h     |   1 +
+ 3 files changed, 164 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 745ff9214fe8609d..48d9f34bbf37657a 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -66,13 +66,13 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
+ 	DEF_INPUT("extalr",	CLK_EXTALR),
+ 
+ 	/* Internal Core Clocks */
+-	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN, CLK_EXTAL),
+-	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1, CLK_MAIN),
+-	DEF_BASE(".pll2", CLK_PLL2,	CLK_TYPE_GEN4_PLL2, CLK_MAIN),
+-	DEF_BASE(".pll3", CLK_PLL3,	CLK_TYPE_GEN4_PLL3, CLK_MAIN),
+-	DEF_BASE(".pll4", CLK_PLL4,	CLK_TYPE_GEN4_PLL4, CLK_MAIN),
+-	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5, CLK_MAIN),
+-	DEF_BASE(".pll6", CLK_PLL6,	CLK_TYPE_GEN4_PLL6, CLK_MAIN),
++	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN,     CLK_EXTAL),
++	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1,     CLK_MAIN),
++	DEF_BASE(".pll2", CLK_PLL2,	CLK_TYPE_GEN4_PLL2_VAR, CLK_MAIN),
++	DEF_BASE(".pll3", CLK_PLL3,	CLK_TYPE_GEN4_PLL3,     CLK_MAIN),
++	DEF_BASE(".pll4", CLK_PLL4,	CLK_TYPE_GEN4_PLL4,     CLK_MAIN),
++	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5,     CLK_MAIN),
++	DEF_BASE(".pll6", CLK_PLL6,	CLK_TYPE_GEN4_PLL6,     CLK_MAIN),
+ 
+ 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
+ 	DEF_FIXED(".pll2_div2",	CLK_PLL2_DIV2,	CLK_PLL2,	2, 1),
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index e27832e5114fbdf0..c68d8b987054131b 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -17,6 +17,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/slab.h>
+ 
+ #include "renesas-cpg-mssr.h"
+@@ -27,6 +28,152 @@ static const struct rcar_gen4_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
+ static u32 cpg_mode __initdata;
+ 
++#define CPG_PLLECR		0x0820	/* PLL Enable Control Register */
++
++#define CPG_PLLECR_PLLST(n)	BIT(8 + ((n) < 3 ? (n) - 1 : \
++					 (n) > 3 ? (n) + 1 : n)) /* PLLn Circuit Status */
++
++#define CPG_PLL1CR0		0x830	/* PLLn Control Registers */
++#define CPG_PLL1CR1		0x8b0
++#define CPG_PLL2CR0		0x834
++#define CPG_PLL2CR1		0x8b8
++#define CPG_PLL3CR0		0x83c
++#define CPG_PLL3CR1		0x8c0
++#define CPG_PLL4CR0		0x844
++#define CPG_PLL4CR1		0x8c8
++#define CPG_PLL6CR0		0x84c
++#define CPG_PLL6CR1		0x8d8
++
++#define CPG_PLLxCR0_KICK	BIT(31)
++#define CPG_PLLxCR0_NI		GENMASK(27, 20)	/* Integer mult. factor */
++#define CPG_PLLxCR0_SSMODE	GENMASK(18, 16)	/* PLL mode */
++#define CPG_PLLxCR0_SSMODE_FM	BIT(18)	/* Fractional Multiplication */
++#define CPG_PLLxCR0_SSMODE_DITH	BIT(17) /* Frequency Dithering */
++#define CPG_PLLxCR0_SSMODE_CENT	BIT(16)	/* Center (vs. Down) Spread Dithering */
++#define CPG_PLLxCR0_SSFREQ	GENMASK(14, 8)	/* SSCG Modulation Frequency */
++#define CPG_PLLxCR0_SSDEPT	GENMASK(6, 0)	/* SSCG Modulation Depth */
++
++#define SSMODE_FM		BIT(2)	/* Fractional Multiplication */
++#define SSMODE_DITHER		BIT(1)	/* Frequency Dithering */
++#define SSMODE_CENTER		BIT(0)	/* Center (vs. Down) Spread Dithering */
++
++/* PLL Clocks */
++struct cpg_pll_clk {
++	struct clk_hw hw;
++	void __iomem *pllcr0_reg;
++	void __iomem *pllecr_reg;
++	u32 pllecr_pllst_mask;
++};
++
++#define to_pll_clk(_hw)   container_of(_hw, struct cpg_pll_clk, hw)
++
++static unsigned long cpg_pll_clk_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
++	unsigned int mult;
++
++	mult = FIELD_GET(CPG_PLLxCR0_NI, readl(pll_clk->pllcr0_reg)) + 1;
++
++	return parent_rate * mult * 2;
++}
++
++static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
++				      struct clk_rate_request *req)
++{
++	unsigned int min_mult, max_mult, mult;
++	unsigned long prate;
++
++	prate = req->best_parent_rate * 2;
++	min_mult = max(div64_ul(req->min_rate, prate), 1ULL);
++	max_mult = min(div64_ul(req->max_rate, prate), 256ULL);
++	if (max_mult < min_mult)
++		return -EINVAL;
++
++	mult = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
++	mult = clamp(mult, min_mult, max_mult);
++
++	req->rate = prate * mult;
++	return 0;
++}
++
++static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
++	unsigned int mult;
++	u32 val;
++
++	mult = DIV_ROUND_CLOSEST_ULL(rate, parent_rate * 2);
++	mult = clamp(mult, 1U, 256U);
++
++	if (readl(pll_clk->pllcr0_reg) & CPG_PLLxCR0_KICK)
++		return -EBUSY;
++
++	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI,
++		       FIELD_PREP(CPG_PLLxCR0_NI, mult - 1));
++
++	/*
++	 * Set KICK bit in PLLxCR0 to update hardware setting and wait for
++	 * clock change completion.
++	 */
++	cpg_reg_modify(pll_clk->pllcr0_reg, 0, CPG_PLLxCR0_KICK);
++
++	/*
++	 * Note: There is no HW information about the worst case latency.
++	 *
++	 * Using experimental measurements, it seems that no more than
++	 * ~45 µs are needed, independently of the CPU rate.
++	 * Since this value might be dependent on external xtal rate, pll
++	 * rate or even the other emulation clocks rate, use 1000 as a
++	 * "super" safe value.
++	 */
++	return readl_poll_timeout(pll_clk->pllecr_reg, val,
++				  val & pll_clk->pllecr_pllst_mask, 0, 1000);
++}
++
++static const struct clk_ops cpg_pll_clk_ops = {
++	.recalc_rate = cpg_pll_clk_recalc_rate,
++	.determine_rate = cpg_pll_clk_determine_rate,
++	.set_rate = cpg_pll_clk_set_rate,
++};
++
++static struct clk * __init cpg_pll_clk_register(const char *name,
++						const char *parent_name,
++						void __iomem *base,
++						unsigned int cr0_offset,
++						unsigned int cr1_offset,
++						unsigned int index)
++
++{
++	struct cpg_pll_clk *pll_clk;
++	struct clk_init_data init = {};
++	struct clk *clk;
++
++	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
++	if (!pll_clk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &cpg_pll_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	pll_clk->hw.init = &init;
++	pll_clk->pllcr0_reg = base + cr0_offset;
++	pll_clk->pllecr_reg = base + CPG_PLLECR;
++	pll_clk->pllecr_pllst_mask = CPG_PLLECR_PLLST(index);
++
++	/* Disable Fractional Multiplication and Frequency Dithering */
++	writel(0, base + cr1_offset);
++	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_SSMODE, 0);
++
++	clk = clk_register(NULL, &pll_clk->hw);
++	if (IS_ERR(clk))
++		kfree(pll_clk);
++
++	return clk;
++}
+ /*
+  * Z0 Clock & Z1 Clock
+  */
+@@ -205,6 +352,15 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+ 		div = cpg_pll_config->pll1_div;
+ 		break;
+ 
++	case CLK_TYPE_GEN4_PLL2_VAR:
++		/*
++		 * PLL2 is implemented as a custom clock, to change the
++		 * multiplier when cpufreq changes between normal and boost
++		 * modes.
++		 */
++		return cpg_pll_clk_register(core->name, __clk_get_name(parent),
++					    base, CPG_PLL2CR0, CPG_PLL2CR1, 2);
++
+ 	case CLK_TYPE_GEN4_PLL2:
+ 		mult = cpg_pll_config->pll2_mult;
+ 		div = cpg_pll_config->pll2_div;
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
+index 0a0e3bdb3a664c10..006537e29e4eb10e 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.h
++++ b/drivers/clk/renesas/rcar-gen4-cpg.h
+@@ -13,6 +13,7 @@ enum rcar_gen4_clk_types {
+ 	CLK_TYPE_GEN4_MAIN = CLK_TYPE_CUSTOM,
+ 	CLK_TYPE_GEN4_PLL1,
+ 	CLK_TYPE_GEN4_PLL2,
++	CLK_TYPE_GEN4_PLL2_VAR,
+ 	CLK_TYPE_GEN4_PLL2X_3X,	/* r8a779a0 only */
+ 	CLK_TYPE_GEN4_PLL3,
+ 	CLK_TYPE_GEN4_PLL4,
+-- 
+2.25.1
 
->
->> >> There are currently 3 drivers for dpll I know of. This in ptp_ocp and
->> >> mlx5 there is no concept of sharing pins. You you are talking about a
->> >> single driver.
->> >> 
->> >> What I'm trying to say is, looking at the code, the pin sharing,
->> >> references and locking makes things uncomfortably complex. You are so
->> >> far the only driver to need this, do it internally. If in the future
->> >> other driver appears, this code would be eventually pushed into dpll
->> >> core. No impact on UAPI from what I see. Please keep things as simple as
->> >> possible.  
->> >
->> >But the pin is shared for one driver. Who cares if it's not shared in
->> >another. The user space must be able to reason about the constraints.  
->> 
->> Sorry, I don't follow :/ Could you please explain what do you mean by
->> this?
->
->We don't wait with adding APIs until there is more than one driver that
->needs them.
-
-Agreed. I was under impression that this is only kernel internals and
-won't affect the UAPI. Perhaps I'm wrong.
-
-
->
->> >You are suggesting drivers to magically flip state in core objects
->> >because of some hidden dependencies?!  
->> 
->> It's not a state flip. It's more like a well propagated event of a state
->> change. The async changes may happen anyway, so the userspace needs
->> to handle them. Why is this different?
->
->What if the user space wants conflicting configurations for the muxes
->behind a shared pin?
->
->The fact that there is a notification does not solve the problem of
->user space not knowing what's going on. Why would the user space play
->guessing games if the driver _knows_ the topology and can easily tell
->it.
-
-Okay. I get your point. This visibility is probably something nice to
-have. If it weights over the added complexicity, I'm not sure. But it
-looks like you are, and I don't care that much. So let's focus on
-defining the shared pin model properly.
-
-
->> >> There is a big difference if we model flat list of pins with a set of
->> >> attributes for each, comparing to a tree of pins, some acting as leaf,
->> >> node and root. Do we really need such complexicity? What value does it
->> >> bring to the user to expose this?  
->> >
->> >The fact that you can't auto select from devices behind muxes.  
->> 
->> Why? What's wrong with the mechanism I described in another part of this
->> thread?
->> 
->> Extending my example from above
->> 
->>    pin 1 source
->>    pin 2 output
->>    pin 3 muxid 100 source
->>    pin 4 muxid 100 source
->>    pin 5 muxid 101 source
->>    pin 6 muxid 101 source
->>    pin 7 output
->> 
->> User now can set individial prios for sources:
->> 
->> dpll x pin 1 set prio 10
->> etc
->> The result would be:
->> 
->>    pin 1 source prio 10
->>    pin 2 output
->>    pin 3 muxid 100 source prio 8
->>    pin 4 muxid 100 source prio 20
->>    pin 5 muxid 101 source prio 50
->>    pin 6 muxid 101 source prio 60
->>    pin 7 output
->> 
->> Now when auto is enabled, the pin 3 is selected. Why would user need to
->> manually select between 3 and 4? This is should be abstracted out by the
->> driver.
->> 
->> Actually, this is neat as you have one cmd to do selection in manual
->> mode and you have uniform way of configuring/monitoring selection in
->> autosel. Would the muxed pin make this better?
->> 
->> For muxed pin being output, only one pin from mux would be set:
->> 
->>    pin 1 source
->>    pin 2 output
->>    pin 3 muxid 100 disconnected
->>    pin 4 muxid 100 disconnected
->>    pin 5 muxid 101 output
->>    pin 6 muxid 101 disconnected
->>    pin 7 output
->
->Sorry, can't parse, could you draw the diagram?
-
-There is no diagram. It's a plain list of pins with attributes, one pin
-with attributes per line.
-
-
->
->To answer the most basic question - my understanding is that for
->prio-based selection there needs to be silicon that can tell if
->there is a valid clock on the line. While mux is just a fancy switch,
->it has no complex logic, just connects wires.
->
->Arkadiusz, is my understanding incorrect? I may have "intuited" this.
->
->IDK if there are any bidirectional pins after a mux, but that'd be
->another problem. Muxes are only simple for inputs.
->
->> >The HW topology is of material importance to user space.  
->> 
->> Interesting. When I was working on linecards, you said that the user
->> does not care about the inner HW topology. And it makes sense. When
->> things could be abstracted out to make iface clean, I think they should.
->
->I recall only the FW related conversations, but what I think is key 
->is whether the information can be acted upon.
-
-What I was refering to was the device/gearbox exposure per-linecard.
-
->
->> >How many times does Arkadiusz have to explain this :|  
->> 
->> Pardon my ignorance, I don't see why exactly we need mux hierarchy
->> (trees) exposed to user.
