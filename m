@@ -2,63 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F35C4708E
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 02:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 960E7C4708D
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 02:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbiLHC07 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Dec 2022 21:26:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51846 "EHLO
+        id S229479AbiLHC1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Dec 2022 21:27:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiLHC0z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 21:26:55 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148158E599;
-        Wed,  7 Dec 2022 18:26:54 -0800 (PST)
+        with ESMTP id S229546AbiLHC1W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2022 21:27:22 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F60F8E599;
+        Wed,  7 Dec 2022 18:27:22 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95A5461D22;
-        Thu,  8 Dec 2022 02:26:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E436DC433D6;
-        Thu,  8 Dec 2022 02:26:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDA6161D45;
+        Thu,  8 Dec 2022 02:27:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC01C433D6;
+        Thu,  8 Dec 2022 02:27:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670466413;
-        bh=EEXv31EHijcWe+oAPW/O/oSGFu1i6dgrthd8lpIk1JE=;
+        s=k20201202; t=1670466441;
+        bh=tYKB/4hRQmNJp7Bpc82wlwoNLccUXdf+TKbOHeIeGhM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QFRj0NUJc2P+g/jO+Akg9dD4y0vBw9PBp0aq/ExBHu2lvdDF3AKdeZnsMsxvP9V33
-         iVXkDdFaXObf7ow9tCK11q8FiBY1SIiTpnWf0Vq1UfcsM1NTJyrGZlMmHuU7P6f8uZ
-         mmFulhQ+1JmrU9q4yfE6FNyvpbgivu7DIoxzHfnLFux+SlauCZUyelJYD6q8QnheMh
-         iy8nY6xV1Er2EhVpw2CezbfFLBNGT9nG8hBrqApl8HMdvdqbnfHZtbe6vkfKQccWLz
-         SW3ITzzEvA2KmobEM4NC5Nfz+jz8pAb4ea9ymRUWD2vAkSkOYnbrChpy3M34vDc21S
-         xmhqGvv+3/7Eg==
+        b=MoryZRTF36q730ReOxY9dgBQWO5BcUUu/Z2tTyd2EsrMylGZ37eBLUREF6XYBsIOr
+         Dl8hv6k/pCrTFxVKPlV+ik+q7tqHd9n9s03jxlmcsKl6zyMA5kdGuByBr1lzCLSPCD
+         pQH7ls1j/dkZO5ZaoUWVML960Bpe1d0jOOwuW+GDuf5vfphij6AiqSHSvYw81fGb1U
+         QpxuEECI8W1nTEhoWz68FugFTRdRmRIvf9K3q9MRVehRYzY4R8kOEfDCuN+jTgJ/p2
+         HyNEXghl6U05yoE6iNKBG4VU2aazkD0LJKVWkPUREq3Fdgq4WxVATOo/AoO5lHdBRT
+         pk+69KCs+7F3g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221123032015.63980-1-xiujianfeng@huawei.com>
-References: <20221123032015.63980-1-xiujianfeng@huawei.com>
-Subject: Re: [PATCH] clk: samsung: Fix memory leak in _samsung_clk_register_pll()
+In-Reply-To: <20221122133614.184910-1-xiujianfeng@huawei.com>
+References: <20221122133614.184910-1-xiujianfeng@huawei.com>
+Subject: Re: [PATCH] clk: st: Fix memory leak in st_of_quadfs_setup()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, alim.akhtar@samsung.com,
-        cw00.choi@samsung.com, dianders@chromium.org,
-        krzysztof.kozlowski@linaro.org, mturquette@baylibre.com,
-        mturquette@linaro.org, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, yadi.brar@samsung.com
-Date:   Wed, 07 Dec 2022 18:26:50 -0800
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, avolmat@me.com,
+        mturquette@baylibre.com, patrice.chotard@foss.st.com,
+        windhl@126.com
+Date:   Wed, 07 Dec 2022 18:27:19 -0800
 User-Agent: alot/0.10
-Message-Id: <20221208022652.E436DC433D6@smtp.kernel.org>
+Message-Id: <20221208022721.4DC01C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Xiu Jianfeng (2022-11-22 19:20:15)
-> If clk_register() fails, @pll->rate_table may have allocated memory by
-> kmemdup(), so it needs to be freed, otherwise will cause memory leak
-> issue, this patch fixes it.
+Quoting Xiu Jianfeng (2022-11-22 05:36:14)
+> If st_clk_register_quadfs_pll() fails, @lock should be freed before goto
+> @err_exit, otherwise will cause meory leak issue, fix it.
 >=20
-> Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table fo=
-r samsung plls")
 > Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 > ---
 
