@@ -2,55 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C76C6370C
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 09:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48252C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 09:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbiLHJHU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 04:07:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35792 "EHLO
+        id S230310AbiLHJKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 04:10:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbiLHJHF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 04:07:05 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD3C6932B;
-        Thu,  8 Dec 2022 01:05:42 -0800 (PST)
-Received: by mail-qk1-f182.google.com with SMTP id z17so389095qki.11;
-        Thu, 08 Dec 2022 01:05:42 -0800 (PST)
+        with ESMTP id S230043AbiLHJJl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 04:09:41 -0500
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C6F115E;
+        Thu,  8 Dec 2022 01:09:14 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id k3so389688qki.13;
+        Thu, 08 Dec 2022 01:09:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lCZaqfL2y6oIi6qLsen9O1deOB3/ZmHwo5ZQSP89+xA=;
-        b=qSqMknCYgFU577LvCwAsCpl7Cx6TjvOg0CnwpYvc+W8/x8bPJe7sP2tbvrBoLMB2YE
-         cRpetONhy/av3o/fZd3oQGFYbQEKP0v4frp/0eESwBi+L8CuItrwub+1x12eFh8e0X2H
-         5uPLE/WmpVr7Rdo4jkm+JDsCLWXWgwAU2JEb39oCVnW8tQL3GOnzIzMMDacLQKW1ate4
-         N89o2EtNJv5e7fd1tXYr95k0oBzQE5Az7pWDZvlNKkv0s3Xo+6TTXTpk/ZWXFGB3t20V
-         74C1XPfDJvqjXBr2Za0qZMz0lQNRoYDB679/5JpypRWCV+q4jSlltVH95M/bUFTU6Qr9
-         fBzw==
-X-Gm-Message-State: ANoB5pkCL5/Cw4vBCM34LS7iBIrcxLMRFueR43KiX+DUXdU1AuotsqoH
-        /81XzpgFy7XCbNFBq5gmZKmblGacNHFqkA==
-X-Google-Smtp-Source: AA0mqf7cuDXYaD0qMZul8zY7D6cXsEuiDiUwx4kykcoQr08hPHEu2y87dRy/NqKsDVBU34uyyhI5Kw==
-X-Received: by 2002:a37:bf46:0:b0:6fa:894c:da6d with SMTP id p67-20020a37bf46000000b006fa894cda6dmr83297302qkf.527.1670490341100;
-        Thu, 08 Dec 2022 01:05:41 -0800 (PST)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id ck15-20020a05622a230f00b0039953dcc480sm15330451qtb.88.2022.12.08.01.05.40
+        bh=GX7yoUJ5UVZ3SHZOJ/FiTU1z5/uRyGEiAnkth1oZIWc=;
+        b=R32eRC3eN2Q/wcD8aDFGZpNNl001yhOpDRho97ztCblTGuFZgvJcn21SPykwg7fFwI
+         Dyj2ClmsJFxY/0kn50rgGMhburszagOnwmIvHipbmD/vxoplFTKIkIz9zyIj4/iOYxaS
+         vMhMMhhsIqSyx0EXFuisgBJ7KS5YFs3j8ZvMqnhbtfjKoHt7nHYKgR+zMePlsWLKJQGA
+         EtGDW4lS3+7/vpg6eefFgk+uAtVGIBRsdZVE8yYw+zj6/ce4FOxRilxRT0dzytOGkS0S
+         8ouk/C/08jFVbIbVFA/SQCg6rhq/mUatqRCNe8MlQjZrPhTDryO5YE3suBXF8VgXoGoj
+         eZnA==
+X-Gm-Message-State: ANoB5pk7kCv3sLWF/B18/goWCTWXNwBpr4aH34RdiPRqhTHsQXgFByp2
+        eJYwDA1auAYHgCu/F0tdzQ0A1YpJJiRtSQ==
+X-Google-Smtp-Source: AA0mqf5l+PK1CNxVV9iNxJPKT6GbAODSzpi9YxDLSJm9goYqz+8iYayk/3veYB2dHvHMItjwVnrl3A==
+X-Received: by 2002:a05:620a:2190:b0:6fe:c24c:3b15 with SMTP id g16-20020a05620a219000b006fec24c3b15mr12149929qka.380.1670490553148;
+        Thu, 08 Dec 2022 01:09:13 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id s18-20020a05620a29d200b006f9ddaaf01esm19602731qkp.102.2022.12.08.01.09.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Dec 2022 01:05:40 -0800 (PST)
-Received: by mail-yb1-f177.google.com with SMTP id g4so878781ybg.7;
-        Thu, 08 Dec 2022 01:05:40 -0800 (PST)
-X-Received: by 2002:a25:7a02:0:b0:6f7:952d:b145 with SMTP id
- v2-20020a257a02000000b006f7952db145mr41094078ybc.604.1670490339896; Thu, 08
- Dec 2022 01:05:39 -0800 (PST)
+        Thu, 08 Dec 2022 01:09:12 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id s11so906582ybe.2;
+        Thu, 08 Dec 2022 01:09:12 -0800 (PST)
+X-Received: by 2002:a5b:24b:0:b0:6ca:3b11:8d76 with SMTP id
+ g11-20020a5b024b000000b006ca3b118d76mr71131994ybp.202.1670490552413; Thu, 08
+ Dec 2022 01:09:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20221207162435.1001782-1-herve.codina@bootlin.com> <20221207162435.1001782-7-herve.codina@bootlin.com>
-In-Reply-To: <20221207162435.1001782-7-herve.codina@bootlin.com>
+References: <20221207162435.1001782-1-herve.codina@bootlin.com> <20221207162435.1001782-9-herve.codina@bootlin.com>
+In-Reply-To: <20221207162435.1001782-9-herve.codina@bootlin.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 8 Dec 2022 10:05:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVxegUAK+C1X_591=3Uup6Qa_R=Q0TydYJ6TCP5-789pg@mail.gmail.com>
-Message-ID: <CAMuHMdVxegUAK+C1X_591=3Uup6Qa_R=Q0TydYJ6TCP5-789pg@mail.gmail.com>
-Subject: Re: [PATCH v3 6/9] soc: renesas: r9a06g032-sysctrl: Handle h2mode
- setting based on USBF presence
+Date:   Thu, 8 Dec 2022 10:09:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWHVStUFx61oKWh=YiJ9wfXZaeWEnt2CSRgn3HQe3pQ6w@mail.gmail.com>
+Message-ID: <CAMuHMdWHVStUFx61oKWh=YiJ9wfXZaeWEnt2CSRgn3HQe3pQ6w@mail.gmail.com>
+Subject: Re: [PATCH v3 8/9] ARM: dts: r9a06g032: Add the USBF controller node
 To:     Herve Codina <herve.codina@bootlin.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -69,19 +68,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 7, 2022 at 5:24 PM Herve Codina <herve.codina@bootlin.com> wrote:
-> The CFG_USB[H2MODE] allows to switch the USB configuration. The
-> configuration supported are:
->   - One host and one device
-> or
->   - Two hosts
->
-> Set CFG_USB[H2MODE] based on the USBF controller (USB device)
-> availability.
+On Wed, Dec 7, 2022 at 5:25 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> Add the USBF controller available in the r9a06g032 SoC.
 >
 > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
+My
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+on v2 is still valid.
 
 Gr{oetje,eeting}s,
 
