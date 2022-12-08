@@ -2,183 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA3FC3A5A7
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 11:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862C3C3A5A7
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 11:40:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbiLHL26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 06:28:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
+        id S229759AbiLHLkF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 06:40:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiLHL25 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 06:28:57 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CABD937FB6
-        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 03:28:55 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id vp12so3107073ejc.8
-        for <linux-clk@vger.kernel.org>; Thu, 08 Dec 2022 03:28:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7jGKjRaadAUWcKSMtuLDogAQ/W6NGI72ajRE5rNrApc=;
-        b=KjLGzqUKS159EmmEtRJx7xfA5ut9ROS2kHppVMWG6+QIhhcjUUE8Qq4zH9hBC6vxwZ
-         5ZRTeOYJQ9wwXKcjgfDx9KbdXCiPAtzRYszxiGN2FmmsODYxrZt/FBg6CS9PXI4nWZaG
-         WBnPvtqzSRq3pC3V34cZ7ID+JHdMECICzoymGWLxgNXa1lUUOdXm0TLTj9u8PV2x8H6e
-         N47hJthEE7Xx9ZpV+TWBUvhZZo63w3QMXWBK61gOKSd/VOET3AV8FpWmPXtc+v25kQWG
-         qju4uQGp+nnvgoc+8c1KP6zGe/GWpwG4Fa1YLjijc7CC5OeOfHTNtSR5oem8LJWcqinj
-         +nvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7jGKjRaadAUWcKSMtuLDogAQ/W6NGI72ajRE5rNrApc=;
-        b=qjBfdxc7CfDLldyvpAcY33DDrWQertj0NM4a043G++uCn3sEQ91ViGHCmlRbMuEWON
-         BHNIsaGy9inrK4W4Y8mdoTOhMq+7YyV9pO5ELUVIkQWTFNs/1WvKgUQc134JTLGhNrTF
-         tslOHiYUfVVn5cDvTppGywJ5J0/35PHUACBqJpSH5HMxYjoUGMhPcDZ9Vis76Nvf2G3A
-         EPT4wdW5E0/t/M4MGRI/tBRl2rONWTwl6HJfDGwNJEKC97GYgpGqBrjBdHpqaRBHpwRj
-         LS8QuGRFHKNlV5IvzwgcmhO5HkKTuTDTOWIACr7PqEvgc3cM5mUQRzxzsu5cPN/FgRQo
-         5PHw==
-X-Gm-Message-State: ANoB5pmbAlSm1T5OdEpKWOzmsrcoNvStCIbI7rarKhQpYgitajUXjofq
-        5Sq2dv5Kx3s34gS6pWaBVh5ylg==
-X-Google-Smtp-Source: AA0mqf759X1K6h12OhkxauKHQLHS1lYoLdNVreZYJllcF0e8LARSjsjhaDfQLMBgcNgpC6cQJQnWjQ==
-X-Received: by 2002:a17:906:af6a:b0:7c1:12ef:bf52 with SMTP id os10-20020a170906af6a00b007c112efbf52mr1489681ejb.3.1670498933806;
-        Thu, 08 Dec 2022 03:28:53 -0800 (PST)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id g2-20020a170906198200b007bd1ef2cccasm9634138ejd.48.2022.12.08.03.28.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Dec 2022 03:28:53 -0800 (PST)
-Date:   Thu, 8 Dec 2022 12:28:51 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev.dump@gmail.com,
-        "'Kubalewski, Arkadiusz'" <arkadiusz.kubalewski@intel.com>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y5HKczFwRnfRVtnR@nanopsycho>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <Y4dNV14g7dzIQ3x7@nanopsycho>
- <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4oj1q3VtcQdzeb3@nanopsycho>
- <20221206184740.28cb7627@kernel.org>
- <10bb01d90a45$77189060$6549b120$@gmail.com>
- <20221207152157.6185b52b@kernel.org>
+        with ESMTP id S229758AbiLHLkE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 06:40:04 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AAF263D67;
+        Thu,  8 Dec 2022 03:40:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1670499602; x=1702035602;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DadCGguRmCbiHLwC3f6DRh6AXTOiQ6/F7FUthwy8OGo=;
+  b=N0m+PolguWprR3b1rhCtUx07ZE4uiN2NqM0kPugr/S/9wGHpfV0Onn58
+   BNQ42AcEnrRfZW4bx2vyE3R9PRylKb3uMmSFtFtYUTfBBR5DD3EAp15/u
+   VZB07GEwKG8S/KVjgQI1YKF130S++IQ3l0BW9+GdJst+2L/GzglstKOEj
+   xlSjiVUF5IE8NFnZEEik/AmdXZpm6lhfxYqgNr4PlHBM4mW9VzxhuNIQp
+   dlsa6cTx1oHc9swRBn9UEz4VicidMpV2SAPR/RsU316ALk1lWSdOjJbbc
+   m2vJ+UENkZanblM8nI4EgUSbR12QiVjHa0nCG6dH6/gT2AuRZrKnE1klx
+   A==;
+X-IronPort-AV: E=Sophos;i="5.96,227,1665471600"; 
+   d="scan'208";a="127111667"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Dec 2022 04:40:01 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Thu, 8 Dec 2022 04:39:59 -0700
+Received: from localhost.localdomain (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.12 via Frontend Transport; Thu, 8 Dec 2022 04:39:57 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <krzysztof.kozlowski@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/3] clk: at91: mark ddr clocks as critical
+Date:   Thu, 8 Dec 2022 13:45:12 +0200
+Message-ID: <20221208114515.35179-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221207152157.6185b52b@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Dec 08, 2022 at 12:21:57AM CET, kuba@kernel.org wrote:
->On Wed, 7 Dec 2022 15:09:03 +0100 netdev.dump@gmail.com wrote:
->> > -----Original Message-----
->> > From: Jakub Kicinski <kuba@kernel.org>
->> > Sent: Wednesday, December 7, 2022 3:48 AM
->> > Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
->> > 
->> > On Fri, 2 Dec 2022 17:12:06 +0100 Jiri Pirko wrote:  
->>  [...]  
->> capable
->>  [...]  
->> require
->>  [...]  
->
->Please fix line wrapping in your email client. 
->And add a name to your account configuration :/
->
->> > > Yep, you have the knowledge of sharing inside the driver, so you should
->> > > do it there. For multiple instances, use in-driver notifier for example.  
->> > 
->> > No, complexity in the drivers is not a good idea. The core should cover
->> > the complexity and let the drivers be simple.  
->> 
->> But how does Driver A know where to connect its pin to? It makes sense to
->> share 
->
->I think we discussed using serial numbers.
+Hi,
 
-Can you remind it? Do you mean serial number of pin?
+The series marks DDR clocks of AT91 SoCs as critical and remove the
+atmel-sdramc.c driver as this does only clock request and enable and
+don't prevent any of DDR clock consumers do DDR clocks.
 
+Thank you,
+Claudiu Beznea
 
->
->> pins between the DPLLs exposed by a single driver, but not really outside of
->> it.
->> And that can be done simply by putting the pin ptr from the DPLLA into the
->> pin
->> list of DPLLB.
->
->Are you saying within the driver it's somehow easier? The driver state
->is mostly per bus device, so I don't see how.
+Claudiu Beznea (3):
+  clk: at91: mark ddr clocks as critical
+  memory: atmel-sdramc: remove the driver
+  clk: at91: do not compile dt-compat.c for sama7g5 and sam9x60
 
-You can have some shared data for multiple instances in the driver code,
-why not?
+ drivers/clk/at91/Makefile         | 16 +++----
+ drivers/clk/at91/at91rm9200.c     |  2 +-
+ drivers/clk/at91/at91sam9260.c    |  2 +-
+ drivers/clk/at91/at91sam9g45.c    | 10 +++-
+ drivers/clk/at91/at91sam9n12.c    | 12 +++--
+ drivers/clk/at91/at91sam9rl.c     |  2 +-
+ drivers/clk/at91/at91sam9x5.c     | 17 +++++--
+ drivers/clk/at91/clk-peripheral.c |  8 ++--
+ drivers/clk/at91/clk-system.c     |  4 +-
+ drivers/clk/at91/dt-compat.c      | 25 +++++++++-
+ drivers/clk/at91/pmc.h            |  4 +-
+ drivers/clk/at91/sam9x60.c        | 20 ++++++--
+ drivers/clk/at91/sama5d2.c        | 22 +++++++--
+ drivers/clk/at91/sama5d3.c        | 20 ++++++--
+ drivers/clk/at91/sama5d4.c        | 22 +++++++--
+ drivers/clk/at91/sama7g5.c        |  4 +-
+ drivers/memory/Makefile           |  1 -
+ drivers/memory/atmel-sdramc.c     | 76 -------------------------------
+ 18 files changed, 139 insertions(+), 128 deletions(-)
+ delete mode 100644 drivers/memory/atmel-sdramc.c
 
+-- 
+2.34.1
 
->
->> If we want the kitchen-and-sink solution, we need to think about corner
->> cases.
->> Which pin should the API give to the userspace app - original, or
->> muxed/parent?
->
->IDK if I parse but I think both. If selected pin is not directly
->attached the core should configure muxes.
->
->> How would a teardown look like - if Driver A registered DPLLA with Pin1 and
->> Driver B added the muxed pin then how should Driver A properly
->> release its pins? Should it just send a message to driver B and trust that
->> it
->> will receive it in time before we tear everything apart?
->
->Trivial.
->
->> There are many problems with that approach, and the submitted patch is not
->> explaining any of them. E.g. it contains the dpll_muxed_pin_register but no
->> free 
->> counterpart + no flows.
->
->SMOC.
-
-Care to spell this out. I guess you didn't mean "South Middlesex
-Opportunity Council" :D
-
-
->
->> If we want to get shared pins, we need a good example of how this mechanism
->> can be used.
->
->Agreed.
->
->> > > There are currently 3 drivers for dpll I know of. This in ptp_ocp and
->> > > mlx5 there is no concept of sharing pins. You you are talking about a
->> > > single driver.
->> > >
->> > > What I'm trying to say is, looking at the code, the pin sharing,
->> > > references and locking makes things uncomfortably complex. You are so
->> > > far the only driver to need this, do it internally. If in the future
->> > > other driver appears, this code would be eventually pushed into dpll
->> > > core. No impact on UAPI from what I see. Please keep things as simple as
->> > > possible.  
->> > 
->> > But the pin is shared for one driver. Who cares if it's not shared in
->> > another. The user space must be able to reason about the constraints.
->> > 
->> > You are suggesting drivers to magically flip state in core objects
->> > because of some hidden dependencies?!
->> 
->> If we want to go outside the device, we'd need some universal language
->> to describe external connections - such as the devicetree. I don't see how
->> we can reliably implement inter-driver dependency otherwise.
->
->There's plenty examples in the tree. If we can't use serial number
->directly we can compare the driver pointer + whatever you'd compare
->in the driver internal solution.
->
->> I think this would be better served in the userspace with a board-specific
->> config file. Especially since the pins can be externally connected anyway.
->
->Opinions vary, progress is not being made.
