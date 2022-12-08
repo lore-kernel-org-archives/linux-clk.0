@@ -2,185 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1B2C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 13:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95874C3A5A7
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 14:19:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbiLHNmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 08:42:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52448 "EHLO
+        id S229792AbiLHOTR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 09:19:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230152AbiLHNls (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 08:41:48 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300DB98575
-        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 05:41:32 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id jn7so1508099plb.13
-        for <linux-clk@vger.kernel.org>; Thu, 08 Dec 2022 05:41:32 -0800 (PST)
+        with ESMTP id S229738AbiLHOTQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 09:19:16 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92EA483E8E
+        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 06:19:15 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id q7so1692479ljp.9
+        for <linux-clk@vger.kernel.org>; Thu, 08 Dec 2022 06:19:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nsVDMGdrrcenDbAQ2t+1J/nqCclkhOqEn3pqIwRUG2w=;
-        b=uQy/0f7YV2jnlbCc1jSFqVrE4lbQvl+RRAJkhOLwNKMTRwuan4cjvWkayuWGs0R8oL
-         vnygiP558bf0VxQTsmO1gMaSyfuPFtroV61zbBi/whfupcirDxi2CZL1YSNKEfXqDE+T
-         5piNZUnqR67+TNZqTfGGTQsSVyDTmdMKrUSaB/GcKRURw0DdMy1ZRW3zLz+Mm9NTRcz4
-         dXo/Fy6vLBQU6ntaMD3EpYjq2lVYXCLz0x7AANz9QfcsPOPKY33HoqaaBT3zcY9lcMkH
-         yXHm35VDMvBDL6KcyGNoNfTrflmO5iPsaeb9inrWk2puhSN2S/QjoIr7Dnn/InlZbwtU
-         f9Dw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zee3YNW88hhZh1L7P1Y/lqj8Rf3TbJlBPbbl5HQ00WQ=;
+        b=KmZ6nQNBkZV4OK5WS9FnD+qMCvPHHmybYxMD1fGYiDZDi+5B6NtbBY8b/CzrGuvMDH
+         eKoqGSM/9KdF4l9QeWUfNgDi/IPhqZEtJNBNWQvMVh0bAO/2ZFhSV2l8a3dC6S/QKdQy
+         qXnztYeRpmfqQS4DFwqVh6/xtSbBlg+QRpUxlXNr+D++Mi/LUQQfgeq4WBUvI1ULsJCq
+         FbtQ3HRgtf5j1ZRyw0Jrcrc7k/DbKFNxwijRxNGc70VyucSBKxVyZeIQRbClhXeXOnls
+         lchaLs4HJ2ck3jtksxU5GI+s10VM56sEbOcomN6p0Irg5eTXevrwqMsx5IR47Pape2o3
+         3F4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nsVDMGdrrcenDbAQ2t+1J/nqCclkhOqEn3pqIwRUG2w=;
-        b=hlGpnUqKks5sknx4W+Q5rA6uKdJ6khhTHR6p8ISviWe65LhiS8VxHAMQBTA7I+2kyN
-         FCSZqMcp0trzNfUg8c6MO9/sHIIpHR1qLgAiP+xWqDc0EkmROKN6OkKxGCpHClpZAZIb
-         DK4TSqzqnesuIcvL2tvKWzWNdwkTZUqzngdM3rg7lOx8xe7ciI6y8ilInaEvOfxhh+wI
-         MwueemMG6jCZtBGGBEckvScjY6o31nSDAmT+LzDqYRMaOaL289Zh4NIg5BpODvWRv7hM
-         qoxboFrkLxXWqXSnrBlI9xvAGYvKf8SYbOrtkxvjveXaXDoLtD++ICntU+NAWrE9ngNw
-         OCow==
-X-Gm-Message-State: ANoB5ploUozXWx+LbnDsdL7NbXKj3yWlnUagWSQpQlCMw2ReevgZq95u
-        6lM0S8vwp8iklSZ/zXUglTDANAwLJpH4Liejp85rJg==
-X-Google-Smtp-Source: AA0mqf7MdR24OCVzRBWFHBA1Ih0rv9hUVtp5dojJr48004Fk2Ur1P7IRRT950dIzOhONwDL/P4n1lllvwgn2ibEO+gk=
-X-Received: by 2002:a17:903:40c6:b0:189:f799:676e with SMTP id
- t6-20020a17090340c600b00189f799676emr6120063pld.148.1670506892322; Thu, 08
- Dec 2022 05:41:32 -0800 (PST)
+        bh=Zee3YNW88hhZh1L7P1Y/lqj8Rf3TbJlBPbbl5HQ00WQ=;
+        b=ULcpwK9HClzR0/K5zz5Py2KUDSwxL/zixtveopKR1nLYuvqbfHWqRTtUnu/WHSt46d
+         9wSKmbs18hjWJDcUKj0SSK4jYBvI4RJ7PrJeb5OrP03b5kyXwTLNiO7u6Wil/ji2CBZ/
+         GQigalWaLpuyRDZgGtv3roFcsHzxDHr8k3xCVa5q0oWYNdn7BrtJ8Ef0sy5nAKFgD+MO
+         RIbr5iqCNGTFWj6W07QpmC3gIoGOR4CPp1Dl/ft7AGQpxQkMZgb+R+5FK8NqMj1ecsR8
+         y1LzIYWvXi5VW+53BEljGJ/+M1dopZKw7gx3vqa6X73f8nPF48BBo09uwQhBkE+ykJAn
+         tCww==
+X-Gm-Message-State: ANoB5pmzc95MJpl5n5DvhvR5Yi/2vZXdRKTFCPaqvuH9LVAceGLbXbFa
+        BWcWFQvLV4q2eJMiSiBsQ7QuFw==
+X-Google-Smtp-Source: AA0mqf5EZ2ebcJ+J2+Q8WnkiDedlhZOJxuYOVR2/nsY20/svgIxR+ihixwWD28oGtlnkBcDKl7w0IA==
+X-Received: by 2002:a2e:9eca:0:b0:279:c410:958a with SMTP id h10-20020a2e9eca000000b00279c410958amr11256395ljk.327.1670509153834;
+        Thu, 08 Dec 2022 06:19:13 -0800 (PST)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id s17-20020a056512203100b004b578e52d81sm1514692lfs.176.2022.12.08.06.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Dec 2022 06:19:13 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 1/3] clk: qcom: dispcc-sm6115: use parent_hws for disp_cc_mdss_rot_clk
+Date:   Thu,  8 Dec 2022 17:19:10 +0300
+Message-Id: <20221208141912.47262-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
- <20221201225705.46r2m35ketvzipox@builder.lan> <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
- <20221207165457.kwdwwiycbwjpogxl@builder.lan>
-In-Reply-To: <20221207165457.kwdwwiycbwjpogxl@builder.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 8 Dec 2022 14:40:55 +0100
-Message-ID: <CAPDyKFpYgYkDdJ79xxkwr-Mqnj5CoBrV+ZZe6Xz4hGLNR4zUVw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
- 'reset' interface
-To:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        krzysztof.kozlowski@linaro.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 7 Dec 2022 at 17:55, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Wed, Dec 07, 2022 at 05:00:51PM +0100, Ulf Hansson wrote:
-> > On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
-> > >
-> > > On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
-> > > >
-> > >
-> > > @Ulf, Akhil has a power-domain for a piece of hardware which may be
-> > > voted active by multiple different subsystems (co-processors/execution
-> > > contexts) in the system.
-> > >
-> > > As such, during the powering down sequence we don't wait for the
-> > > power-domain to turn off. But in the event of an error, the recovery
-> > > mechanism relies on waiting for the hardware to settle in a powered off
-> > > state.
-> > >
-> > > The proposal here is to use the reset framework to wait for this state
-> > > to be reached, before continuing with the recovery mechanism in the
-> > > client driver.
-> >
-> > I tried to review the series (see my other replies), but I am not sure
-> > I fully understand the consumer part.
-> >
-> > More exactly, when and who is going to pull the reset and at what point?
-> >
-> > >
-> > > Given our other discussions on quirky behavior, do you have any
-> > > input/suggestions on this?
-> > >
-> > > > Some clients like adreno gpu driver would like to ensure that its gdsc
-> > > > is collapsed at hardware during a gpu reset sequence. This is because it
-> > > > has a votable gdsc which could be ON due to a vote from another subsystem
-> > > > like tz, hyp etc or due to an internal hardware signal. To allow
-> > > > this, gpucc driver can expose an interface to the client driver using
-> > > > reset framework. Using this the client driver can trigger a polling within
-> > > > the gdsc driver.
-> > >
-> > > @Akhil, this description is fairly generic. As we've reached the state
-> > > where the hardware has settled and we return to the client, what
-> > > prevents it from being powered up again?
-> > >
-> > > Or is it simply a question of it hitting the powered-off state, not
-> > > necessarily staying there?
-> >
-> > Okay, so it's indeed the GPU driver that is going to assert/de-assert
-> > the reset at some point. Right?
-> >
-> > That seems like a reasonable approach to me, even if it's a bit
-> > unclear under what conditions that could happen.
-> >
->
-> Generally the disable-path of the power-domain does not check that the
-> power-domain is actually turned off, because the status might indicate
-> that the hardware is voting for the power-domain to be on.
+Rework disp_cc_mdss_rot_clk to use parent_hws isntead of parent_names.
 
-Is there a good reason why the HW needs to vote too, when the GPU
-driver is already in control?
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/dispcc-sm6115.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Or perhaps that depends on the running use case?
+diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+index 818bb8f4637c..1937edf23f21 100644
+--- a/drivers/clk/qcom/dispcc-sm6115.c
++++ b/drivers/clk/qcom/dispcc-sm6115.c
+@@ -466,8 +466,8 @@ static struct clk_branch disp_cc_mdss_rot_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "disp_cc_mdss_rot_clk",
+-			.parent_names = (const char *[]){
+-				"disp_cc_mdss_rot_clk_src",
++			.parent_hws = (const struct clk_hw*[]) {
++				&disp_cc_mdss_rot_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
+-- 
+2.30.2
 
->
-> As part of the recovery of the GPU after some fatal fault, the GPU
-> driver does something which will cause the hardware votes for the
-> power-domain to be let go, and then the driver does pm_runtime_put().
-
-Okay. That "something", sounds like a device specific setting for the
-corresponding gdsc, right?
-
-So somehow the GPU driver needs to manage that setting, right?
-
->
-> But in this case the GPU driver wants to ensure that the power-domain is
-> actually powered down, before it does pm_runtime_get() again. To ensure
-> that the hardware lost its state...
-
-I see.
-
->
-> The proposal here is to use a reset to reach into the power-domain
-> provider and wait for the hardware to be turned off, before the GPU
-> driver attempts turning the power-domain on again.
->
->
-> In other words, there is no reset. This is a hack to make a normally
-> asynchronous pd.power_off() to be synchronous in this particular case.
-
-Alright, assuming I understood your clarifications above correctly
-(thanks!), I think I have got a much better picture now.
-
-Rather than abusing the reset interface, I think we should manage this
-through the genpd's power on/off notifiers (GENPD_NOTIFY_OFF). The GPU
-driver should register its corresponding device for them
-(dev_pm_genpd_add_notifier()).
-
-The trick however, is to make the behaviour of the power-domain for
-the gdsc (the genpd->power_off() callback) conditional on whether the
-HW is configured to vote or not. If the HW can vote, it should not
-poll for the state - and vice versa when the HW can't vote.
-
-Would this work?
-
-Kind regards
-Uffe
