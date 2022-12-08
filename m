@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A743C63703
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 13:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB82C3A5A7
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 13:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbiLHNH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 08:07:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
+        id S230212AbiLHNH6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 08:07:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiLHNHx (ORCPT
+        with ESMTP id S230196AbiLHNHx (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 08:07:53 -0500
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BCA23145
-        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 05:07:46 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07965D79
+        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 05:07:47 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5574:4fdf:a801:888e])
         by albert.telenet-ops.be with bizsmtp
-        id tp7k2800C2deJRf06p7kyk; Thu, 08 Dec 2022 14:07:45 +0100
+        id tp7m2800D2deJRf06p7mz3; Thu, 08 Dec 2022 14:07:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1p3GIF-002tBF-Ng; Thu, 08 Dec 2022 13:46:27 +0100
+        id 1p3GIF-002tBF-HV; Thu, 08 Dec 2022 13:46:27 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1p3DeN-002fmq-2w; Thu, 08 Dec 2022 10:57:07 +0100
+        id 1p3DeN-002fnQ-6n; Thu, 08 Dec 2022 10:57:07 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -32,10 +32,12 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     Tho Vu <tho.vu.wh@renesas.com>, linux-renesas-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] renesas: r8a779g0: Add support for boost mode
-Date:   Thu,  8 Dec 2022 10:56:57 +0100
-Message-Id: <cover.1670492384.git.geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: renesas: r8a779g0: Add Cortex-A76 1.8 GHz opp
+Date:   Thu,  8 Dec 2022 10:57:00 +0100
+Message-Id: <cc2bae27776523f499d01655ef18fe463a3ae1ae.1670492384.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1670492384.git.geert+renesas@glider.be>
+References: <cover.1670492384.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,38 +45,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi all,
+Add an operating point for running the Cortex-A76 CPU cores on R-Car
+V4H at 1.8 GHz (High Performance mode).
 
-This patch series adds support for running the Cortex-A76 CPU cores on
-R-Car V4H at 1.8 GHz (High Performance mode aka "boost mode").
+Based on a patch in the BSP by Tho Vu.
 
-The first patch adds boost support to the clock driver.
-The second patch contains an RFC improvement for the clock driver.
-The third patch describes the 1.8 GHz operating point in DT.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Tested on the Renesas White-Hawk development board by using the CPUfreq
+userspace governor, enabling boost mode, writing the desired CPU clock
+rate to the CPUfreq policy's "scaling_setspeed" file in sysfs, verifying
+the clock rate of the Z0φ clock in debugfs, and running the dhrystones
+benchmark on the various CPU cores.
 
-Thanks for your comments!
+$ echo 1 > /sys/devices/system/cpu/cpufreq/boost
+$ echo 1800000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
+---
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Geert Uytterhoeven (3):
-  clk: renesas: r8a779g0: Add custom clock for PLL2
-  clk: renesas: rcar-gen4: Add support for fractional multiplication
-  arm64: dts: renesas: r8a779g0: Add Cortex-A76 1.8 GHz opp
-
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi |   6 +
- drivers/clk/renesas/r8a779g0-cpg-mssr.c   |  14 +-
- drivers/clk/renesas/rcar-gen4-cpg.c       | 195 ++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen4-cpg.h       |   1 +
- 4 files changed, 209 insertions(+), 7 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+index 83d1666a2ea16de2..7a87a5dc1b6ad219 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+@@ -39,6 +39,12 @@ opp-1700000000 {
+ 			clock-latency-ns = <500000>;
+ 			opp-suspend;
+ 		};
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <880000>;
++			clock-latency-ns = <500000>;
++			turbo-mode;
++		};
+ 	};
+ 
+ 	cpus {
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
