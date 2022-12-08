@@ -2,208 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF38AC6370A
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 13:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1B2C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 13:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiLHNH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 08:07:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33002 "EHLO
+        id S229960AbiLHNmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 08:42:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230255AbiLHNHx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 08:07:53 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661A131368
-        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 05:07:49 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5574:4fdf:a801:888e])
-        by laurent.telenet-ops.be with bizsmtp
-        id tp7n280032deJRf01p7nsB; Thu, 08 Dec 2022 14:07:47 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p3GIF-002tBF-JX; Thu, 08 Dec 2022 13:46:27 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p3DeN-002fn0-4a; Thu, 08 Dec 2022 10:57:07 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Tho Vu <tho.vu.wh@renesas.com>, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] clk: renesas: rcar-gen4: Add support for fractional multiplication
-Date:   Thu,  8 Dec 2022 10:56:59 +0100
-Message-Id: <a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1670492384.git.geert+renesas@glider.be>
-References: <cover.1670492384.git.geert+renesas@glider.be>
+        with ESMTP id S230152AbiLHNls (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 08:41:48 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300DB98575
+        for <linux-clk@vger.kernel.org>; Thu,  8 Dec 2022 05:41:32 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id jn7so1508099plb.13
+        for <linux-clk@vger.kernel.org>; Thu, 08 Dec 2022 05:41:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsVDMGdrrcenDbAQ2t+1J/nqCclkhOqEn3pqIwRUG2w=;
+        b=uQy/0f7YV2jnlbCc1jSFqVrE4lbQvl+RRAJkhOLwNKMTRwuan4cjvWkayuWGs0R8oL
+         vnygiP558bf0VxQTsmO1gMaSyfuPFtroV61zbBi/whfupcirDxi2CZL1YSNKEfXqDE+T
+         5piNZUnqR67+TNZqTfGGTQsSVyDTmdMKrUSaB/GcKRURw0DdMy1ZRW3zLz+Mm9NTRcz4
+         dXo/Fy6vLBQU6ntaMD3EpYjq2lVYXCLz0x7AANz9QfcsPOPKY33HoqaaBT3zcY9lcMkH
+         yXHm35VDMvBDL6KcyGNoNfTrflmO5iPsaeb9inrWk2puhSN2S/QjoIr7Dnn/InlZbwtU
+         f9Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nsVDMGdrrcenDbAQ2t+1J/nqCclkhOqEn3pqIwRUG2w=;
+        b=hlGpnUqKks5sknx4W+Q5rA6uKdJ6khhTHR6p8ISviWe65LhiS8VxHAMQBTA7I+2kyN
+         FCSZqMcp0trzNfUg8c6MO9/sHIIpHR1qLgAiP+xWqDc0EkmROKN6OkKxGCpHClpZAZIb
+         DK4TSqzqnesuIcvL2tvKWzWNdwkTZUqzngdM3rg7lOx8xe7ciI6y8ilInaEvOfxhh+wI
+         MwueemMG6jCZtBGGBEckvScjY6o31nSDAmT+LzDqYRMaOaL289Zh4NIg5BpODvWRv7hM
+         qoxboFrkLxXWqXSnrBlI9xvAGYvKf8SYbOrtkxvjveXaXDoLtD++ICntU+NAWrE9ngNw
+         OCow==
+X-Gm-Message-State: ANoB5ploUozXWx+LbnDsdL7NbXKj3yWlnUagWSQpQlCMw2ReevgZq95u
+        6lM0S8vwp8iklSZ/zXUglTDANAwLJpH4Liejp85rJg==
+X-Google-Smtp-Source: AA0mqf7MdR24OCVzRBWFHBA1Ih0rv9hUVtp5dojJr48004Fk2Ur1P7IRRT950dIzOhONwDL/P4n1lllvwgn2ibEO+gk=
+X-Received: by 2002:a17:903:40c6:b0:189:f799:676e with SMTP id
+ t6-20020a17090340c600b00189f799676emr6120063pld.148.1670506892322; Thu, 08
+ Dec 2022 05:41:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
+ <20221201225705.46r2m35ketvzipox@builder.lan> <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
+ <20221207165457.kwdwwiycbwjpogxl@builder.lan>
+In-Reply-To: <20221207165457.kwdwwiycbwjpogxl@builder.lan>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 8 Dec 2022 14:40:55 +0100
+Message-ID: <CAPDyKFpYgYkDdJ79xxkwr-Mqnj5CoBrV+ZZe6Xz4hGLNR4zUVw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
+ 'reset' interface
+To:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        krzysztof.kozlowski@linaro.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-R-Car Gen4 PLLs support fractional multiplication, which can improve
-accuracy when configuring a specific frequency.
+On Wed, 7 Dec 2022 at 17:55, Bjorn Andersson <andersson@kernel.org> wrote:
+>
+> On Wed, Dec 07, 2022 at 05:00:51PM +0100, Ulf Hansson wrote:
+> > On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
+> > >
+> > > On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
+> > > >
+> > >
+> > > @Ulf, Akhil has a power-domain for a piece of hardware which may be
+> > > voted active by multiple different subsystems (co-processors/execution
+> > > contexts) in the system.
+> > >
+> > > As such, during the powering down sequence we don't wait for the
+> > > power-domain to turn off. But in the event of an error, the recovery
+> > > mechanism relies on waiting for the hardware to settle in a powered off
+> > > state.
+> > >
+> > > The proposal here is to use the reset framework to wait for this state
+> > > to be reached, before continuing with the recovery mechanism in the
+> > > client driver.
+> >
+> > I tried to review the series (see my other replies), but I am not sure
+> > I fully understand the consumer part.
+> >
+> > More exactly, when and who is going to pull the reset and at what point?
+> >
+> > >
+> > > Given our other discussions on quirky behavior, do you have any
+> > > input/suggestions on this?
+> > >
+> > > > Some clients like adreno gpu driver would like to ensure that its gdsc
+> > > > is collapsed at hardware during a gpu reset sequence. This is because it
+> > > > has a votable gdsc which could be ON due to a vote from another subsystem
+> > > > like tz, hyp etc or due to an internal hardware signal. To allow
+> > > > this, gpucc driver can expose an interface to the client driver using
+> > > > reset framework. Using this the client driver can trigger a polling within
+> > > > the gdsc driver.
+> > >
+> > > @Akhil, this description is fairly generic. As we've reached the state
+> > > where the hardware has settled and we return to the client, what
+> > > prevents it from being powered up again?
+> > >
+> > > Or is it simply a question of it hitting the powered-off state, not
+> > > necessarily staying there?
+> >
+> > Okay, so it's indeed the GPU driver that is going to assert/de-assert
+> > the reset at some point. Right?
+> >
+> > That seems like a reasonable approach to me, even if it's a bit
+> > unclear under what conditions that could happen.
+> >
+>
+> Generally the disable-path of the power-domain does not check that the
+> power-domain is actually turned off, because the status might indicate
+> that the hardware is voting for the power-domain to be on.
 
-Add support for fractional multiplication to the custom clock driver
-for PLLs, which is currently used only for PLL2 on R-Car V4H.
+Is there a good reason why the HW needs to vote too, when the GPU
+driver is already in control?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-I am not so sure it is worth supporting this.
-On R-Car V4H, the following clock rates are seen for PLL2 and the
-Cortex-A76 CPU core clock, when using the Normal vs. the
-High-Performance mode:
+Or perhaps that depends on the running use case?
 
-					Multiplication Mode
-					Integer         Frational
-					----------	----------
-    Normal (1.7 GHz):            PLL2   3399999864      3399999997
-				 Z0     1699999932      1699999999
-    High-Performance (1.8 GHz):  PLL2   3599999856      3599999997
-				 Z0     1799999928      1799999999
+>
+> As part of the recovery of the GPU after some fatal fault, the GPU
+> driver does something which will cause the hardware votes for the
+> power-domain to be let go, and then the driver does pm_runtime_put().
 
-The improvement is of a similar order of magnitude as the accuracy of
-the external crystal, hence insignificant...
+Okay. That "something", sounds like a device specific setting for the
+corresponding gdsc, right?
 
-With the current implementation, fractional multiplication does not have
-any impact on lower performance points, as those rely on changing the Z0
-divider (which supports 32 steps only), instead of changing the PLL.
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 69 ++++++++++++++++++++++-------
- 1 file changed, 54 insertions(+), 15 deletions(-)
+So somehow the GPU driver needs to manage that setting, right?
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index c68d8b987054131b..54dc3aa82b499725 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -57,10 +57,13 @@ static u32 cpg_mode __initdata;
- #define SSMODE_DITHER		BIT(1)	/* Frequency Dithering */
- #define SSMODE_CENTER		BIT(0)	/* Center (vs. Down) Spread Dithering */
- 
-+#define CPG_PLLxCR1_NF		GENMASK(24, 0)	/* Fractional mult. factor */
-+
- /* PLL Clocks */
- struct cpg_pll_clk {
- 	struct clk_hw hw;
- 	void __iomem *pllcr0_reg;
-+	void __iomem *pllcr1_reg;
- 	void __iomem *pllecr_reg;
- 	u32 pllecr_pllst_mask;
- };
-@@ -71,17 +74,26 @@ static unsigned long cpg_pll_clk_recalc_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
- 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
--	unsigned int mult;
--
--	mult = FIELD_GET(CPG_PLLxCR0_NI, readl(pll_clk->pllcr0_reg)) + 1;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
-+	unsigned long rate;
-+
-+	ni = (FIELD_GET(CPG_PLLxCR0_NI, cr0) + 1) * 2;
-+	rate = parent_rate * ni;
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		nf = FIELD_GET(CPG_PLLxCR1_NF, readl(pll_clk->pllcr1_reg));
-+		rate += ((u64)parent_rate * nf) >> 24;
-+	}
- 
--	return parent_rate * mult * 2;
-+	return rate;
- }
- 
- static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
- 				      struct clk_rate_request *req)
- {
--	unsigned int min_mult, max_mult, mult;
-+	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
-+	unsigned int min_mult, max_mult, ni, nf;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
- 	unsigned long prate;
- 
- 	prate = req->best_parent_rate * 2;
-@@ -90,10 +102,23 @@ static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
- 	if (max_mult < min_mult)
- 		return -EINVAL;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
--	mult = clamp(mult, min_mult, max_mult);
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		ni = div64_ul(req->rate, prate);
-+		if (ni < min_mult) {
-+			ni = min_mult;
-+			nf = 0;
-+		} else {
-+			ni = min(ni, max_mult);
-+			nf = ((u64)(req->rate - prate * ni) << 24) /
-+			     req->best_parent_rate;
-+		}
-+	} else {
-+		ni = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
-+		ni = clamp(ni, min_mult, max_mult);
-+		nf = 0;
-+	}
-+	req->rate = prate * ni + (((u64)req->best_parent_rate * nf) >> 24);
- 
--	req->rate = prate * mult;
- 	return 0;
- }
- 
-@@ -101,17 +126,31 @@ static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
- 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
--	unsigned int mult;
-+	unsigned long prate = parent_rate * 2;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
-+	int error;
- 	u32 val;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(rate, parent_rate * 2);
--	mult = clamp(mult, 1U, 256U);
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		ni = div64_ul(rate, prate);
-+		if (ni < 1) {
-+			ni = 1;
-+			nf = 0;
-+		} else {
-+			ni = min(ni, 256U);
-+			nf = ((u64)(rate - prate * ni) << 24) / parent_rate;
-+		}
-+	} else {
-+		ni = DIV_ROUND_CLOSEST_ULL(rate, prate);
-+		ni = clamp(ni, 1U, 256U);
-+	}
- 
- 	if (readl(pll_clk->pllcr0_reg) & CPG_PLLxCR0_KICK)
- 		return -EBUSY;
- 
- 	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI,
--		       FIELD_PREP(CPG_PLLxCR0_NI, mult - 1));
-+		       FIELD_PREP(CPG_PLLxCR0_NI, ni - 1));
- 
- 	/*
- 	 * Set KICK bit in PLLxCR0 to update hardware setting and wait for
-@@ -161,12 +200,12 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
- 
- 	pll_clk->hw.init = &init;
- 	pll_clk->pllcr0_reg = base + cr0_offset;
-+	pll_clk->pllcr1_reg = base + cr1_offset;
- 	pll_clk->pllecr_reg = base + CPG_PLLECR;
- 	pll_clk->pllecr_pllst_mask = CPG_PLLECR_PLLST(index);
- 
--	/* Disable Fractional Multiplication and Frequency Dithering */
--	writel(0, base + cr1_offset);
--	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_SSMODE, 0);
-+	/* Enable Fractional Multiplication */
-+	cpg_reg_modify(pll_clk->pllcr0_reg, 0, CPG_PLLxCR0_SSMODE_FM);
- 
- 	clk = clk_register(NULL, &pll_clk->hw);
- 	if (IS_ERR(clk))
--- 
-2.25.1
+>
+> But in this case the GPU driver wants to ensure that the power-domain is
+> actually powered down, before it does pm_runtime_get() again. To ensure
+> that the hardware lost its state...
 
+I see.
+
+>
+> The proposal here is to use a reset to reach into the power-domain
+> provider and wait for the hardware to be turned off, before the GPU
+> driver attempts turning the power-domain on again.
+>
+>
+> In other words, there is no reset. This is a hack to make a normally
+> asynchronous pd.power_off() to be synchronous in this particular case.
+
+Alright, assuming I understood your clarifications above correctly
+(thanks!), I think I have got a much better picture now.
+
+Rather than abusing the reset interface, I think we should manage this
+through the genpd's power on/off notifiers (GENPD_NOTIFY_OFF). The GPU
+driver should register its corresponding device for them
+(dev_pm_genpd_add_notifier()).
+
+The trick however, is to make the behaviour of the power-domain for
+the gdsc (the genpd->power_off() callback) conditional on whether the
+HW is configured to vote or not. If the HW can vote, it should not
+poll for the state - and vice versa when the HW can't vote.
+
+Would this work?
+
+Kind regards
+Uffe
