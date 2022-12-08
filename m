@@ -2,164 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A39C3A5A7
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 15:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F44C63703
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Dec 2022 15:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbiLHPh7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 10:37:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54332 "EHLO
+        id S229769AbiLHPvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 10:51:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229909AbiLHPhk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 10:37:40 -0500
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2078.outbound.protection.outlook.com [40.107.22.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48417509E;
-        Thu,  8 Dec 2022 07:36:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y9kphbdSsZ9b0dft95gPArwf4wtGQ3yQtg4ZSBu4GRPIZGSkv3eUZAgCK9MlqG3X07GLbeUL8rqytv1pN+xpmnfX0hlvEJCAbI6bMYb16ML5eqnOUIhIcMM6flh4N1XSxowsWfTOprJGmYa1O/OJcLLyQp2idEdIVz1IM2GIPrs0MkQfbJb/4H24U3b38jajlSDSkJBFpbfiN4BInwckfkPecB0wTsujii4I8nmv4et83pBQBz9cmypH+EiOOpMWj2IdEIR7VSGs2ko6fp8k7IRIXw99KPfwkFwsi3iB7QY8R1NolBgg9ox/6+R80EfYInqG7PnDZslvvxDRfCCl1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5I5xcRaF8L3+CpoQNYe4Us5Sbm9Pb+Sf5SDlAS2uY14=;
- b=hDB+iTJD/3F3lDncOB0s1Ke1BDv9Xf1fFzY2ZDrMpHQWTmH31jI2Ij/9UFnsS6aIvdJCPtPBe+uggOGs+FAOQnUEhgzqNrRKB+l5yG2K7Zsr2D4ZPsZGOA0wyxvMZ52spxJsKPYADFGRdReDBmmHAnXf+klV87lxB/XtGvRareADvS+Iy/VGwaloEExZA4Q+8d3pRXzuh0irNYWJyiwO4geS93kVXsfbcFCp4KseZ28Sqrn4R2RRc8WNLL5nNyvM3fB6xxhHGnMBcDVqJJVmmcrH9dD8WmlkBfU3XLGlDm5vstUz1BaxbilThaShYFX2goH2cpVIUaS6kONvPlQAGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5I5xcRaF8L3+CpoQNYe4Us5Sbm9Pb+Sf5SDlAS2uY14=;
- b=pfMvuv5hx16lG4s5p8KSw/6mv9X+OxTz7TrpAUVhQLdSZHEWRc3/cJrkCeM/jvJUmH12NfkjxeXU3CHIPiBbT4grazA0uEuPE2miPI4d/8m1ZTzuQ2xppPLaenvN7zF6nGDNdQ8NhcB3iwCma+peJ/7cGAW1IFioGygBUYrO9DFjpeZLftpVrztarHFasBCHE49//yZA5teoWHJe3sRzveorG0tjgL6CyZRZd74KUQSUxSY0u31ejWwmQeI1ImLOQSToPRNXnDn90qd8PrTqtaL7JbXF/YMc+I6s3JuUNW2p7CWGZCLjrds8mEPMFFbx6b79luUbry+Mu24I9CaKNw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
- by PR3PR03MB6665.eurprd03.prod.outlook.com (2603:10a6:102:7d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.11; Thu, 8 Dec
- 2022 15:36:53 +0000
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::2b95:1fe4:5d8f:22fb]) by DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::2b95:1fe4:5d8f:22fb%7]) with mapi id 15.20.5880.014; Thu, 8 Dec 2022
- 15:36:52 +0000
-Message-ID: <8b42763d-5fc3-3853-c421-227494c0144a@seco.com>
-Date:   Thu, 8 Dec 2022 10:36:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v8 4/9] phy: fsl: Add Lynx 10G SerDes driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        with ESMTP id S229610AbiLHPvK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 10:51:10 -0500
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [217.70.178.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE59E26553;
+        Thu,  8 Dec 2022 07:51:06 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 7DD6E240012;
+        Thu,  8 Dec 2022 15:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1670514665;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=g5n3JsbbZaE7ybECVhrvextoT7PBeRSsX4KeV8+PcM0=;
+        b=UyngXYx9Vcm9JGJ1b3z7b8NO21EvHn5BIi7f4ns15NUnU/N1IIK5CNH2c7ecEyW/V8uFgY
+        Ni34Ojo008tCgLgY/9IESNlGr6CUyt+e2amEEV/NVXQlZNEbjyEuE6WPO32o5bJy0+SIKu
+        hpswvin9x1zQfcqy+oNxdyMLN9LUKC6fQMp5TsXaK0mjpluyLENZmqfR3k/V32Vo9fLxhr
+        B1QimGkMWjtcPbHfhtckx3QwyHpnLSBq/R1W0lbTAbX1wxQeBoa/qzgQAIkeSCVo4+XNak
+        VB6f1fmQjxSE2kwN4nE9YC63UcpmCHxly4fMv8fEngeppnb8GVyZOfTNl6iSAg==
+Date:   Thu, 8 Dec 2022 16:51:01 +0100
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20221027191113.403712-1-sean.anderson@seco.com>
- <20221027191113.403712-5-sean.anderson@seco.com>
- <20221027230331.19C2FC433D6@smtp.kernel.org>
- <5f00ede6-10f5-c11c-ee21-54460c1f98b0@seco.com>
- <d13ff3b2-79f0-2a72-c9da-2c310c4e3bb8@seco.com>
- <20221101201020.B6180C433C1@smtp.kernel.org>
- <45463950-7a4f-758d-d6a1-b8fdf9bfd319@seco.com>
- <20221207021742.A3596C433C1@smtp.kernel.org>
-From:   Sean Anderson <sean.anderson@seco.com>
-In-Reply-To: <20221207021742.A3596C433C1@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0092.namprd13.prod.outlook.com
- (2603:10b6:208:2b9::7) To DB9PR03MB8847.eurprd03.prod.outlook.com
- (2603:10a6:10:3dd::13)
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v3 3/9] dt-bindings: PCI: renesas,pci-rcar-gen2:
+ 'depends-on' is no more optional
+Message-ID: <20221208165101.584e4b92@bootlin.com>
+In-Reply-To: <8dfb5b8a-766a-14ec-16d4-74fdd9f7d622@linaro.org>
+References: <20221207162435.1001782-1-herve.codina@bootlin.com>
+        <20221207162435.1001782-4-herve.codina@bootlin.com>
+        <36895e49-aea5-3676-e7df-78b30277e6a0@linaro.org>
+        <20221208100530.137fa8b7@bootlin.com>
+        <8dfb5b8a-766a-14ec-16d4-74fdd9f7d622@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|PR3PR03MB6665:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3af0bde-735a-497b-448f-08dad93206b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bS0eFpD/eJrArJkz1QJLEL5ll4OnC5NZ+7stbRNu63YEBQC9SdeSGVqCVeVWUY0DfSj/dA53QCy58xdiNYGI415v4SIogMwPxeuZ0r9sKLv+HA8Ixkt9Yj3P4ZXV0DJoGb1/WE/vaMX7QtNiv7DSLOEGrUzZKUNhm4MjtEw54rRQeast33zZfFRr/0FJlN2d290vD/aevFEVC+k/j8zxsaMC4AqaQJKsB3CvcwHqypvBA0D9bfzBikhq5oWsr/yhlwkkRVL4dKpJWizxVfXCPvyamxZaZPnAhpFj7q5hA57x5iLLLbPLjicgJdBxWX4SobhuwcwsAEc9i8VyRedXACKXvkIz4nKZuUKLZFyPaLDYAOOnDhzWyIDr+5JVlbtVJADXxKrHaKVLuZelAhvBdwRs3GfaiNHsD3FqheV0j9Bf4wscnP6OeB2JPEOmoTaLNx6/yrYqQb2G+o7BgZVax+6J7kwZ9P6ZK/7EMgPf1Mw2pbOyWuS3qHT1DJiyat1gunV4m6vo5EjXQRW06W4cIHrY9TaAbpEJbBR9pL17P9yc7ANEoKJG+WjI4E/lUzoR25WzfCc3JVCuJ1OpaAqpSzrsL+4OCEpHVWvAVeYIIrLZJuGMzfNWf1hOr9r7WPnGp901IzUieazCM+thXb1pGUkrpN9XPa+gpM560Qv9F57fjPwLL7tzGfajuvx9OV9WpfMXMnsr+SLpkJxPwzBBmoUD61jrRUFtYDNYK5QjiEdBrwZVbd0iyw3sUrl/kabi5+WCODhSofpVMi3eRxzFfg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(39850400004)(346002)(366004)(376002)(136003)(451199015)(8936002)(83380400001)(31696002)(38100700002)(38350700002)(44832011)(7416002)(86362001)(5660300002)(4326008)(2906002)(8676002)(41300700001)(6512007)(53546011)(52116002)(26005)(6666004)(186003)(6506007)(316002)(110136005)(478600001)(6486002)(54906003)(66476007)(2616005)(66946007)(66556008)(31686004)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SXYrZHhJTnltMTlnRnprbm8yNjRsMnh0dGlWa2JOK21WUWVSNldPRlB5V1VZ?=
- =?utf-8?B?c3Z6ajdzZkZBRDdpZkYvSjhaNkpLQVRiVHgyTE9KSnRyRmZxeHRyWUtxY0ox?=
- =?utf-8?B?dFdEcjI0T0JCSHRqTFo2aGtTeG5XWWZSamJ1SWJOMWJKUllWMHZpRHpCeFBI?=
- =?utf-8?B?YzEwNTVNUGNlMUQrU3U0bmZ5ZW9wa0pqS3FlNWdhR1BzSEVPTEE1MHBWSGRw?=
- =?utf-8?B?N3p2U3dHcENXMFdId1grOXZhbGp3dStBREoyYmlSVkMzdG45OWxiMmJHV2ZH?=
- =?utf-8?B?T1AySnllNDJDNGkxVitxZmE2Y2MvMlVwdGExLzZEaG1mejYyNGl2TGk3bVFL?=
- =?utf-8?B?RGRialRpNGNMcXJCNDg4SDMwQmhvWVJJMzBNazNReE12VWhxNUQraXRFZzNF?=
- =?utf-8?B?SE04MWQ3NldOQW1wbDBDVStVT2NoRFZ0RlAzU3dZNk5pd0Q0enk3bStEOG54?=
- =?utf-8?B?bjM1bGZNMFYwcjROQ1RVcGhPOXZ3N0JzUGFEbW94OWkyYUgyVEFveGQ3cHhT?=
- =?utf-8?B?dzdwdE9RbGJRSUZQU0tOdWgxblZYSzhVeUk2LzBudWthU3VuRHhPVVNNMkEy?=
- =?utf-8?B?Z2h3Q28rYjhmZHNTU3ArVnhwVHlNQmpMSTk2d2hZVjBhTVcwU0FRNmkxNU5n?=
- =?utf-8?B?bDZ0ZG1pL1pSdmNHcGU1SC9MM0tBc3IvMStGd08wWjJ4OGczYjRqajg4TkJO?=
- =?utf-8?B?RTR3WWtCUzNWMVhGbjZTZ0JhZ3hJOXJaWTkrY0ZiN0szWmRYUXh1OXFPVlhX?=
- =?utf-8?B?ZlBiaU1vVTlTdnkwd2lPUVAwNklaUkFtZzFOYTlpM0lTeFNQNVBKWDhTcEgz?=
- =?utf-8?B?QUYwN1ZLcml0ZnJNOEVLWm1jUGVUcGVpdmh0cjFpcG9aNTlHc2pPdlN0WEhG?=
- =?utf-8?B?NDVucGJrN3hmOUU2RGQzK2RzajVadCt5Rm0yTGgrQW5rVE5GZGFqWmZrZVRN?=
- =?utf-8?B?aGZjU3kvYTRaMVBENkV4NXFtZitteXRjYllBZW04ZDZmYmhmdGVwRkJDSWor?=
- =?utf-8?B?VTdKalQ3TUJGaHZsRzdIK251Q1RJRTFxV24vblJlTEY0WVY2Rk5GNCtGRG1o?=
- =?utf-8?B?Z3dpSW9maEVUdzRyVldSd0ZNYlFtbE9lZExaL2JoTWJRdnRaUi9WS0dSYTRo?=
- =?utf-8?B?cU1oRnE1OFJiQWZrSlIrMGFyNjUvU3ZENGhRQ1VKOFNaOXczY3JlcGhpUm9r?=
- =?utf-8?B?aStWYkdKOWEwM1FSMnpTMzRCNHo0NUpqYjl6WWIxK0JGWnBtS3oyREMxelBE?=
- =?utf-8?B?b1Y3ZXg5ci9PSU9yNXJ3SXlmbkJRLzlSOEVLRFgzM0xyRUNhUWx2eHByVGcy?=
- =?utf-8?B?KzZtOTZNYVpiVVJhR0pFSi9XU1RhSEc1MjE2UlNhdlJtbmY3dHNkM3hOV1l5?=
- =?utf-8?B?S1hmQ3Y0UmZmR3pWT2tzSVh3V0MrMzB2cHhFc1hFSzR1Y3krMkNvUEdYZEN0?=
- =?utf-8?B?R2FRWTc5NDVsaVR6MUtDSEpwa0lWTkxIZzFWTUtZSWJ3ZXVxZWxCZ3FvZE9E?=
- =?utf-8?B?djZXMzhKbkdHT1E4alFQZkJUbVJ6WGpXL2d6ZUppWlAwWnFoK3JLeDJvdWVn?=
- =?utf-8?B?RlJham02RUFPQmgreHMyb05tVkdUN3JvSTAxYkpHQUR0cVZ4R0tHZmNOb2Zm?=
- =?utf-8?B?aXprcnFGK3RCbVBJQXIvTHpuUi9xbFcrcjd2clYvSm5PTk5weStVbjllTFBG?=
- =?utf-8?B?a2J4Qk5BTDUwK1ArQkV5Rjk5NFpJNGREV00zREt4cmhXRkZsVm5SNTlFS2sz?=
- =?utf-8?B?OWNzQ25PVXgraThOa1pGRC8yaUZ5NjVtOFd1ZnFSdGkwVnVKN3JMcmRaMm1M?=
- =?utf-8?B?dkN3VEpaOWQxSytEM0lTTS84UWFlSkMxS0dpeW1MYjN5bzMvbXFmR1grTlFJ?=
- =?utf-8?B?cXptNDlkcE4weFN4VXhRNldZQm9zaDFpeFIzajdCM25aSDgyOFdDUUpRdUlT?=
- =?utf-8?B?MHNaZXlBcjVkMFl4c0hwc0ZSVlJ3ZlRiaDFqeTZ0UGluK3lqVkUxZjJNWVJT?=
- =?utf-8?B?ZDk1ZlkvUHNtWXVhUkp6QXFCV1RPeWc2WjZmT0NCYXdGTlV1Mm84V3BoNG5j?=
- =?utf-8?B?Zkx5bVNnMkpaTHduK0tTaFA1eURsdElKWVZuS2JsN2xBeEZvVlA5U0hQOUZ1?=
- =?utf-8?B?TkM5ZXI4R0FDOHlPU3VuMVBGUktqZThpbEhnMUt6U1A4ZDdvV0ZTYkVzNS9J?=
- =?utf-8?B?Tnc9PQ==?=
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3af0bde-735a-497b-448f-08dad93206b1
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR03MB8847.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2022 15:36:52.6309
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ao1fYTFHzGMMCBmau9NPohj3LEpseNLU3oFwa4CPl/UC6tDiVAHZwN9FdzqEy6xabul4INN15zQAU7C869jbxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR03MB6665
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/6/22 21:17, Stephen Boyd wrote:
-> Quoting Sean Anderson (2022-11-01 16:27:21)
->> On 11/1/22 16:10, Stephen Boyd wrote:
->> >> 
->> >> Oh, I remember why I did this. I need the reference clock for clk_hw_round_rate,
->> >> which is AFAICT the only correct way to implement round_rate.
->> >> 
->> > 
->> > Is the reference clk the parent of the clk implementing
->> > clk_ops::round_rate()?
->> 
->> Yes. We may be able to produce a given output with multiple reference
->> rates. However, the clock API provides no mechanism to say "Don't ask
->> for the parent clock to be rate X, you just tried it and the parent
->> clock can't support it." So instead, we loop over the possible reference
->> rates and pick the first one which the parent says it can round to.
->> 
-> 
-> Sorry, I'm lost. Why can't you loop over possible reference rates in
-> determine_rate/round_rate clk op here?
+Hi Krzysztof,
 
-This is what I do currently, but you need to have the parent clock to do
-so. With your suggested method, we never actually get a struct clk(_hw)
-which we can query for rate support.
+On Thu, 8 Dec 2022 10:46:32 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
---Sean
+> On 08/12/2022 10:05, Herve Codina wrote:
+> > Hi Krzysztof,
+> >=20
+> > On Thu, 8 Dec 2022 09:26:41 +0100
+> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> >  =20
+> >> On 07/12/2022 17:24, Herve Codina wrote: =20
+> >>> The 'depends-on' property is set in involved DTS.
+> >>>
+> >>> Move it to a required property.
+> >>>
+> >>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/pci/renesas,pci-rcar-gen2.yaml | 1=
+ +   =20
+> >>
+> >> This should be squashed with previous patch. There is no point to add
+> >> property and immediately in the next patch make it required. Remember
+> >> that bindings are separate from DTS.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >> =20
+> >=20
+> > I though about make dtbs_check in case of git bisect. =20
+>=20
+> And what would this commit change? In Git you will have
+> 1. dt-bindings: PCI: renesas,pci-rcar-gen2: Add depends-on for RZ/N1 SoC
+> family
+> 2. dt-bindings: PCI: renesas,pci-rcar-gen2: 'depends-on' is no more optio=
+nal
+>=20
+> so what is the difference for git bisect?
+
+Well, today, I have:
+1. dt-bindings: Add depends-on
+2. dts: Add depends-on
+3. dt-bindings: Move depends-on to mandatory
+
+If I squash dt-bindings commits, I am going to have:
+  1. dt-bindings: Add mandatory depends-on
+  2. dts: Add depends-on
+or
+  1. dts: Add depends-on
+  2. dt-bindings: Add mandatory depends-on
+
+I have not tested but if I used only the first commit in each
+case (git bisect):
+In the first case, dtbs_check is probably going to signal the
+missing 'depends-on' property on dts.
+In the second case, dtbs_check is probably going to signal the
+not described 'depends-on' property present in dts.
+
+>=20
+> >=20
+> > But, ok I will squash or perhaps remove completely this commit.
+> > It introduces a DT compatibility break adding a new mandatory
+> > property (raised by Rob on cover letter review).
+> > Is this compatibility break can be acceptable ? =20
+>=20
+> Requiring property in bindings as a fix for something which was broken
+> is ok. But this is independent of Linux drivers, which should not stop
+> working.
+
+Ok, thanks.
+
+>=20
+> Best regards,
+> Krzysztof
+>=20
+
+Regards,
+Herv=C3=A9
