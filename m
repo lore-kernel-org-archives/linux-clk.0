@@ -2,62 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE32DC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 18:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B9FC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 20:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbiLIS2C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 13:28:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53228 "EHLO
+        id S229728AbiLIUVW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Dec 2022 15:21:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbiLIS15 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 13:27:57 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E24532EE;
-        Fri,  9 Dec 2022 10:27:55 -0800 (PST)
+        with ESMTP id S229498AbiLIUVV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 15:21:21 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F2385D1E;
+        Fri,  9 Dec 2022 12:21:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EA46622F2;
-        Fri,  9 Dec 2022 18:27:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 030F9C433EF;
-        Fri,  9 Dec 2022 18:27:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B390462313;
+        Fri,  9 Dec 2022 20:21:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFACC433D2;
+        Fri,  9 Dec 2022 20:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670610474;
-        bh=8vekvIuMoN9SLcC/7erPZXNzxTduODMnP/xUFfZumk0=;
+        s=k20201202; t=1670617280;
+        bh=7KlzrXzZgFv2ULvcVa0LE8h5/L4wz+K9d1oUyIijkCE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QlbIs+nYCnVPSeWpCGXFr7V/34JQdWLrL2HPd9fT3qfdB5e/1jzuJ5KI/pBbF1fxC
-         opMEULVsWXFUQVjHh+AAhi7sD+jrjxsy0SWLvb2RcxhPMmCP7i/0tsNTEeIGwI3fV5
-         ig5dskWhjhRPbOdREiLh0sp9+dzTYfElNGaXZmT2qrQH7nF/OZ2f0adBurr/wqDPzb
-         NhXOR1PuX/9iS+JjwlfpINMpzpmoLcrkojTyFIr7/6iJoFNoT9PU0msgIGXFvFi4r7
-         wqVJha22Rs9atFRgLw+lareBIKORzGyMzSIs/U6HWEu6ugRLoc4BgkCJojxkX5Njm3
-         b96HeDaW03ysw==
+        b=ch1kovAO2wYhJrpZnNvsp+FkzzKxV9SKrWWPEHb1MA7LHqlSNP6qLIOyE2eOGHs78
+         CBUSl8Ts7C3bz6SGyaseTIggg6kAuT8HTpZpIHy34hQV8R3KYAJoZeulFAvKZ//SFr
+         MrmFb4gKQzBEfotnca5Wto1X+9eAHBCTNIVMZ14fgHKh1svG7oEdbIUtTd6tHoq/8V
+         H9AoAxMaDryHlCAYlMhic5Qiwy/xMJ+Qg+cQ5/oPoLS+BpZvDZcyDqzDgUgUrm0Kfd
+         SvgDr/SGzpX1erBF3W/83FKOcY6nofNxotfD9fUF6/xtCJSncYyQ7lcmIU7FjR/2JN
+         8rDZFV4caFP/Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221207081042.3897128-1-Qing-wu.Li@leica-geosystems.com.cn>
-References: <20221207081042.3897128-1-Qing-wu.Li@leica-geosystems.com.cn>
-Subject: Re: [PATCH V1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
+In-Reply-To: <20221104161850.2889894-4-j.neuschaefer@gmx.net>
+References: <20221104161850.2889894-1-j.neuschaefer@gmx.net> <20221104161850.2889894-4-j.neuschaefer@gmx.net>
+Subject: Re: [PATCH v5 3/6] dt-bindings: clock: Add Nuvoton WPCM450 clock/reset controller
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Qing-wu.Li@leica-geosystems.com.cn, 18701859600@163.com
-To:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>,
-        abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, s.hauer@pengutronix.de,
-        shawnguo@kernel.org
-Date:   Fri, 09 Dec 2022 10:27:51 -0800
+Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
+Date:   Fri, 09 Dec 2022 12:21:17 -0800
 User-Agent: alot/0.10
-Message-Id: <20221209182754.030F9C433EF@smtp.kernel.org>
+Message-Id: <20221209202120.0AFACC433D2@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting LI Qingwu (2022-12-07 00:10:42)
-> Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
-> but never assigned. It will cause the system to hang if using it.
-> Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
-> for backward compatibility.
+Quoting Jonathan Neusch=C3=A4fer (2022-11-04 09:18:47)
+> The Nuvoton WPCM450 SoC has a combined clock and reset controller.
+> Add a devicetree binding for it, as well as definitions for the bit
+> numbers used by it.
 >=20
-> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Any Fixes tag?
+Applied to clk-next
