@@ -2,68 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7950C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 15:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C1AC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 15:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230521AbiLIPas (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 10:30:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51350 "EHLO
+        id S230217AbiLIPaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Dec 2022 10:30:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbiLIPaf (ORCPT
+        with ESMTP id S230424AbiLIPaf (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 10:30:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D4520F4B
-        for <linux-clk@vger.kernel.org>; Fri,  9 Dec 2022 07:29:30 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260B1CE7
+        for <linux-clk@vger.kernel.org>; Fri,  9 Dec 2022 07:29:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670599770;
+        s=mimecast20190719; t=1670599774;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=78ekr5iKDc85J9/69t3GPkuuIlp1L5lRDkKcFj8Hw1M=;
-        b=AuaCXJ2DWcXa5wttcxjJ2h07eyUZwnecU9FjiML8k0wLsbmmrdTnXnQopHTRU+QnQEgnvL
-        xhGL9pfZNWSwaVvvvWgQDKkQLuL6O4sQ+L2vs15saEiJhk3yQyGRKXSANcPloqrrqWecT1
-        iu1xiBTow8SacjhB8bDw/4BJ/ywb7QQ=
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
- [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=TnfSWneK8MGkHTJmldzwfHxM+WYStFYZRT9qyOXWyWc=;
+        b=bqI9aiVDl+AB2DnpF9i/qEtQyOUTFjeM1cmyHZvw29Xv9kM/dLYaDeQHH8vkRiVvpmOQzj
+        lHAJGyjf+fnrol11qRS4u9T5Q+NYvJ5cgHjD0Ya/z2aTdEtVqKr8S6FOS9cTsolP0XRzpG
+        B5nR2DflIAkCRRGcxFlhgSosVgGawQY=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-384-YQ-0YKsmN0ePA8xDv_yb7Q-1; Fri, 09 Dec 2022 10:29:29 -0500
-X-MC-Unique: YQ-0YKsmN0ePA8xDv_yb7Q-1
-Received: by mail-vk1-f198.google.com with SMTP id a191-20020a1f98c8000000b003bc486cb97eso1755455vke.23
-        for <linux-clk@vger.kernel.org>; Fri, 09 Dec 2022 07:29:28 -0800 (PST)
+ us-mta-211-uIDUXHkTNwaMDuRlXkE2uw-1; Fri, 09 Dec 2022 10:29:25 -0500
+X-MC-Unique: uIDUXHkTNwaMDuRlXkE2uw-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-3b102317668so54199417b3.23
+        for <linux-clk@vger.kernel.org>; Fri, 09 Dec 2022 07:29:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=78ekr5iKDc85J9/69t3GPkuuIlp1L5lRDkKcFj8Hw1M=;
-        b=ZUrP6jA1K6ppU++UVTePXj1vpnxvJAU5z48/kn+13Ffh1SgHUMi6ohqh7bjefK3JP4
-         rdupjGPTnt7qE60HnJJmRYlcqG7TZhMV15Msc314poW+DzcPL5y49RS4bjE00BFgzSN2
-         FneSTqWzfS/5KkfH16QYgrMxUGDbH3sOwyHuiHHTuhugdBXQMS2MvyLRjPF1rTvXNu21
-         tfEveGFJgLmvrhpUBj7EdvluzzgV3nN/P4gnFx7tQQBAsD6YjqUIh3A8XN2UlZqFIduq
-         /BF5+grALBk/0R/A1vo7HEVpyxBGMREc5NKcEkLZEHB6VkV6FRt/Yh47Vs+HJzg2dwv8
-         cs/Q==
-X-Gm-Message-State: ANoB5pnT8ejI2iV924K7qq8hoWvOAo4A0RY7rzMCOJejBtr9oBSC9ktI
-        /xSB8HlU6LwUVGh6r2ots7r2kZyJnLd9cHZ1MRc6XvKA2w+MF9ojlezAAqtvJ/AX8/binsPsPMr
-        nlObkJDN4q+SofdW7YwY=
-X-Received: by 2002:a05:6102:21a6:b0:3b1:33e5:5acb with SMTP id i6-20020a05610221a600b003b133e55acbmr2993342vsb.13.1670599768581;
-        Fri, 09 Dec 2022 07:29:28 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7ky2MlNa+sAz8KiDk6t/+IHaam2m3wqWx48VWywN86MEjgWnUkOfnKKO/ivSY7bjn+JM5uig==
-X-Received: by 2002:a05:6102:21a6:b0:3b1:33e5:5acb with SMTP id i6-20020a05610221a600b003b133e55acbmr2993326vsb.13.1670599768371;
-        Fri, 09 Dec 2022 07:29:28 -0800 (PST)
+        bh=TnfSWneK8MGkHTJmldzwfHxM+WYStFYZRT9qyOXWyWc=;
+        b=VrMINtlxKpiORAgkEdDQfSXl3z9ZcfIp8diJiVTAYAras+7dQ1crEEo5zF70ghAjfT
+         MaENMrp4eY+itIbEK6JKUes3AcLyprj6OZE2kwVkxJEf5rHv2WMgW9M/GwfX9GT/IQj+
+         bddSqOHfjwufE8QwqIppYl1PbmEsf2r6Mziu4k+e/UGohJj1RReko2S+GW3v+eYjRcSl
+         GC2y1KxXV4O/0SrrkRl2P8Qqqvv4O+4eA8NA/L3dAOCfopaLizkeO5Ahz4VHMHjNxoeg
+         2YhpYx5i+ZwfK9VWPTQvDRVf2tsms1fGIV7UTCG+UgLaumKzUDoNG92piBkPrK+42DP9
+         FmDA==
+X-Gm-Message-State: ANoB5pkoSikpQFvViZxo9u3xeWaKIHhIZGTAEGjeO0VE7t55ggdVKl/N
+        4rD5sXZsr/JJrd+LE2aCB9bp6Gj2GOOmyXZgmI1m6UKqiAQjLxtN9DVz7xGwpNDM7fqNhlFrd1f
+        Atq8MRqkjT+37FbTA6dQ=
+X-Received: by 2002:a0d:db14:0:b0:369:942d:a53a with SMTP id d20-20020a0ddb14000000b00369942da53amr8672045ywe.24.1670599764996;
+        Fri, 09 Dec 2022 07:29:24 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf5JeaOR0EfyY6wPKPH/FTeHYYzcfDIr3yr/PW7r9pEn+HIxT/Holis14oc7KZyf68d2nCBYpw==
+X-Received: by 2002:a0d:db14:0:b0:369:942d:a53a with SMTP id d20-20020a0ddb14000000b00369942da53amr8672022ywe.24.1670599764793;
+        Fri, 09 Dec 2022 07:29:24 -0800 (PST)
 Received: from klayman.redhat.com (net-2-34-28-158.cust.vodafonedsl.it. [2.34.28.158])
-        by smtp.gmail.com with ESMTPSA id dt26-20020a05620a479a00b006fbf88667bcsm29484qkb.77.2022.12.09.07.29.26
+        by smtp.gmail.com with ESMTPSA id dt26-20020a05620a479a00b006fbf88667bcsm29484qkb.77.2022.12.09.07.29.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 07:29:27 -0800 (PST)
+        Fri, 09 Dec 2022 07:29:24 -0800 (PST)
 From:   Marco Pagani <marpagan@redhat.com>
 To:     Dinh Nguyen <dinguyen@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Marco Pagani <marpagan@redhat.com>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] clk: socfpga: use of_clk_add_hw_provider and improve error handling
-Date:   Fri,  9 Dec 2022 16:29:12 +0100
-Message-Id: <20221209152913.1335068-6-marpagan@redhat.com>
+Subject: [PATCH 3/6] clk: socfpga: use of_clk_add_hw_provider and improve error handling
+Date:   Fri,  9 Dec 2022 16:29:10 +0100
+Message-Id: <20221209152913.1335068-4-marpagan@redhat.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221209152913.1335068-1-marpagan@redhat.com>
 References: <20221209152913.1335068-1-marpagan@redhat.com>
@@ -79,63 +79,55 @@ suggested replacement of_clk_add_hw_provider() instead.
 Since of_clk_add_hw_provider() can fail, like of_clk_add_provider(),
 check its return value and do the error handling.
 
-The return type of the init function has been changed to void since
-the return value was not used, and the indentation of the parameters has
-been aligned to match open parenthesis, as suggested by checkpatch.
-
-The err variable has been renamed rc for consistency.
+The err variable unnecessarily duplicates the functionality of the
+rc variable, so it has been removed.
 
 Signed-off-by: Marco Pagani <marpagan@redhat.com>
 ---
- drivers/clk/socfpga/clk-pll.c | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ drivers/clk/socfpga/clk-gate.c | 35 +++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index 127cc849c5ee..9dcc1b2d2cc0 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -70,8 +70,8 @@ static const struct clk_ops clk_pll_ops = {
- 	.get_parent = clk_pll_get_parent,
- };
- 
--static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
--	const struct clk_ops *ops)
-+static void __init __socfpga_pll_init(struct device_node *node,
-+				      const struct clk_ops *ops)
- {
- 	u32 reg;
- 	struct clk_hw *hw_clk;
-@@ -80,13 +80,13 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+index 0c18c55edf8c..32ccda960f28 100644
+--- a/drivers/clk/socfpga/clk-gate.c
++++ b/drivers/clk/socfpga/clk-gate.c
+@@ -126,17 +126,14 @@ void __init socfpga_gate_init(struct device_node *node)
  	struct clk_init_data init;
- 	struct device_node *clkmgr_np;
+ 	struct clk_ops *ops;
+ 	int rc;
 -	int err;
-+	int rc;
  
- 	of_property_read_u32(node, "reg", &reg);
+ 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+ 	if (WARN_ON(!socfpga_clk))
+ 		return;
  
- 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
- 	if (WARN_ON(!pll_clk))
--		return NULL;
-+		return;
+ 	ops = kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
+-	if (WARN_ON(!ops)) {
+-		kfree(socfpga_clk);
+-		return;
+-	}
++	if (WARN_ON(!ops))
++		goto err_kmemdup;
  
- 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
- 	clk_mgr_base_addr = of_iomap(clkmgr_np, 0);
-@@ -108,13 +108,25 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
+ 	rc = of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
+ 	if (rc)
+@@ -182,13 +179,25 @@ void __init socfpga_gate_init(struct device_node *node)
  
- 	hw_clk = &pll_clk->hw.hw;
+ 	hw_clk = &socfpga_clk->hw.hw;
  
 -	err = clk_hw_register(NULL, hw_clk);
 -	if (err) {
--		kfree(pll_clk);
--		return ERR_PTR(err);
+-		kfree(ops);
+-		kfree(socfpga_clk);
+-		return;
 +	rc = clk_hw_register(NULL, hw_clk);
 +	if (rc) {
 +		pr_err("Could not register clock:%s\n", clk_name);
 +		goto err_clk_hw_register;
  	}
--	of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
--	return hw_clk;
+-	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+-	if (WARN_ON(rc))
+-		return;
 +
 +	rc = of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw_clk);
 +	if (rc) {
@@ -149,10 +141,10 @@ index 127cc849c5ee..9dcc1b2d2cc0 100644
 +err_of_clk_add_hw_provider:
 +	clk_hw_unregister(hw_clk);
 +err_clk_hw_register:
-+	kfree(pll_clk);
++	kfree(ops);
++err_kmemdup:
++	kfree(socfpga_clk);
  }
- 
- void __init socfpga_pll_init(struct device_node *node)
 -- 
 2.38.1
 
