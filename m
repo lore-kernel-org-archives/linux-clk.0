@@ -2,74 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16120C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 18:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE32DC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 18:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229482AbiLIS01 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 13:26:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
+        id S229965AbiLIS2C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Dec 2022 13:28:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbiLIS00 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 13:26:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B88379F2;
-        Fri,  9 Dec 2022 10:26:25 -0800 (PST)
+        with ESMTP id S229978AbiLIS15 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 13:27:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E24532EE;
+        Fri,  9 Dec 2022 10:27:55 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 25F6AB828D3;
-        Fri,  9 Dec 2022 18:26:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A04ACC433EF;
-        Fri,  9 Dec 2022 18:26:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EA46622F2;
+        Fri,  9 Dec 2022 18:27:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 030F9C433EF;
+        Fri,  9 Dec 2022 18:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670610382;
-        bh=8dddKZ57UrjQDLb/S1ZbfLF3qt/bQhuZsCMUNXqyJko=;
+        s=k20201202; t=1670610474;
+        bh=8vekvIuMoN9SLcC/7erPZXNzxTduODMnP/xUFfZumk0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bVu1ndMVjwY0sf/bOz+KpWk5in5Jhk2RnpamkR2d7UFZ3zu/SNdLcKVN/gW0gpk/I
-         vQF2wU7mgmPxs1fR1D+EY/GMAgoctymOStuhbROTn3EapJTfPlSFUogn/bXnrEF8ew
-         WSqhdVt5vshb+XBQwxGfZH7TaSxLOEBZ2jnH61CaIY6w4q/LPSHB6y4cqFF0P1acdE
-         HohV9zOi4PvAmuvmgvu7Zoqf9CgzI5clqzsUCQ0eLjNu1l+d6hS+UzMDow+TXG88Ep
-         3QI7jpdSIihFHdCMoiU7BLY07Vm7UZW93ApHOpUevD4pjaxD/ZU5GtS84C01lzr4lM
-         Cnija2Gkr14Iw==
+        b=QlbIs+nYCnVPSeWpCGXFr7V/34JQdWLrL2HPd9fT3qfdB5e/1jzuJ5KI/pBbF1fxC
+         opMEULVsWXFUQVjHh+AAhi7sD+jrjxsy0SWLvb2RcxhPMmCP7i/0tsNTEeIGwI3fV5
+         ig5dskWhjhRPbOdREiLh0sp9+dzTYfElNGaXZmT2qrQH7nF/OZ2f0adBurr/wqDPzb
+         NhXOR1PuX/9iS+JjwlfpINMpzpmoLcrkojTyFIr7/6iJoFNoT9PU0msgIGXFvFi4r7
+         wqVJha22Rs9atFRgLw+lareBIKORzGyMzSIs/U6HWEu6ugRLoc4BgkCJojxkX5Njm3
+         b96HeDaW03ysw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221209002016.14776-1-rdunlap@infradead.org>
-References: <20221209002016.14776-1-rdunlap@infradead.org>
-Subject: Re: [PATCH] clk: nomadik: correct struct name kernel-doc warning
+In-Reply-To: <20221207081042.3897128-1-Qing-wu.Li@leica-geosystems.com.cn>
+References: <20221207081042.3897128-1-Qing-wu.Li@leica-geosystems.com.cn>
+Subject: Re: [PATCH V1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Date:   Fri, 09 Dec 2022 10:26:20 -0800
+Cc:     Qing-wu.Li@leica-geosystems.com.cn, 18701859600@163.com
+To:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>,
+        abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, s.hauer@pengutronix.de,
+        shawnguo@kernel.org
+Date:   Fri, 09 Dec 2022 10:27:51 -0800
 User-Agent: alot/0.10
-Message-Id: <20221209182622.A04ACC433EF@smtp.kernel.org>
+Message-Id: <20221209182754.030F9C433EF@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Randy Dunlap (2022-12-08 16:20:16)
-> Use the correct struct name for the kernel-doc notation to prevent
-> a kernel-doc warning:
+Quoting LI Qingwu (2022-12-07 00:10:42)
+> Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
+> but never assigned. It will cause the system to hang if using it.
+> Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
+> for backward compatibility.
 >=20
-> clk-nomadik.c:148: warning: expecting prototype for struct clk_pll1. Prot=
-otype was for struct clk_pll instead
->=20
-> Fixes: ef6eb322ce57 ("clk: nomadik: implement the Nomadik clocks properly=
-")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
+> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
 
-Applied to clk-next
+Any Fixes tag?
