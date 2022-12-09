@@ -2,75 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9B4C04FDE
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 09:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCEEC04FDE
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 10:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbiLIJoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 04:44:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
+        id S229723AbiLIKCG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Dec 2022 05:02:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbiLIJoB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 04:44:01 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B5B45E9FE;
-        Fri,  9 Dec 2022 01:44:00 -0800 (PST)
-Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NT5fy3nqtzmWYq;
-        Fri,  9 Dec 2022 17:43:06 +0800 (CST)
-Received: from huawei.com (10.175.112.208) by dggpeml500024.china.huawei.com
- (7.185.36.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Fri, 9 Dec
- 2022 17:43:54 +0800
-From:   Yuan Can <yuancan@huawei.com>
-To:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mperttunen@nvidia.com>, <tomeu.vizoso@collabora.com>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-CC:     <yuancan@huawei.com>
-Subject: [PATCH] clk: tegra: tegra124-emc: Fix potential memory leak
-Date:   Fri, 9 Dec 2022 09:41:24 +0000
-Message-ID: <20221209094124.71043-1-yuancan@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229651AbiLIKCE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 05:02:04 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34DE3C6FB
+        for <linux-clk@vger.kernel.org>; Fri,  9 Dec 2022 02:02:01 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id qk9so10336735ejc.3
+        for <linux-clk@vger.kernel.org>; Fri, 09 Dec 2022 02:02:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zVwm33p7IGnC1t4Ix5UJB9il1yTnApa1yovFHg3sYD0=;
+        b=TWRoqKOagURpFfubIXkAhfyYZkZRW0sVy7nYQZlMc70sJtkDIgxMF++XeSZXfJxaE6
+         Mte44bIKJn/WL1n2j5lYp+iLoRKfQXcV3TX29qonFg63gSs+0Bk1ZTmI/lknaD4KLG0K
+         Pn/GLMG83/GQ6IN0ug6HtUA/Ch28mxjl3wu7tyCksM0NAulWdM4wJirNuPniE41N4QkH
+         Ga3Ij85edxYg/XSvcL9bj9DN4OWLUTAHVnUUtl5/esIY9oHSK7SvkZEc2pvbdyxOuBqe
+         08tCUEqnsagZ4jhJbqfmVcC4OiDVUJVnogDdifPcVwcTI0YpWvY59uRc0qQK6gW7SR/j
+         Cmdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zVwm33p7IGnC1t4Ix5UJB9il1yTnApa1yovFHg3sYD0=;
+        b=7e0W+7I34KbPfZAZM9cEhnXwYZx85FdOSaCtx4uUa9EbeWFYFWlnybs3oov8wmJuUT
+         f/aLdis2Cmz6GXnffBJtSbS5ut+2MXjgVaeX6mxqpr1zzmcOIJGU0FzuUs/DpjYDihzH
+         znyvmGDYq0sLf1BbLCwBezcQMV17k0qZvwKANFUuP2r3xHKPkZe4b2BVKiTlc1OTwXqN
+         4xuNBFAvNEZep6bvQlvgjcobIPRaOOBf/RchCMoSki6P/SrfLlyFgUmdxDfOev2vfB6V
+         93Whn+0rJod1xp5WIbTvfPW3gZLtCKyRXE1zbR98ATP7CSx2cLSdFYB7ZWmCpmNRGOkr
+         I7qw==
+X-Gm-Message-State: ANoB5pktnPjTSiL8YtjWZce1xkzAf9mcRdTKqyyfiXpyy9aDeaxySf9n
+        M5Zx350vANbrfQYRnbsXW2XwIw==
+X-Google-Smtp-Source: AA0mqf7c83i4dVG2FHNYlz696PaMxupCy3G07olPpuYy+hbIDHhTF7MhzWrtX1ApGrmVMNwu4Nf1eg==
+X-Received: by 2002:a17:906:b7c6:b0:7c0:d60b:2887 with SMTP id fy6-20020a170906b7c600b007c0d60b2887mr4277759ejb.69.1670580120417;
+        Fri, 09 Dec 2022 02:02:00 -0800 (PST)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id cm10-20020a0564020c8a00b0046c4553010fsm456932edb.1.2022.12.09.02.01.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Dec 2022 02:01:59 -0800 (PST)
+Date:   Fri, 9 Dec 2022 11:01:58 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y5MHlrZYe11ZglUS@nanopsycho>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+ <Y4dNV14g7dzIQ3x7@nanopsycho>
+ <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4oj1q3VtcQdzeb3@nanopsycho>
+ <DM6PR11MB4657E9B921B67122DC884A529B1D9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y5HRc+B2s4APZ2n2@nanopsycho>
+ <DM6PR11MB4657D2286838A5A287D20D3F9B1D9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.112.208]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500024.china.huawei.com (7.185.36.10)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657D2286838A5A287D20D3F9B1D9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The tegra and tegra needs to be freed in the error handling path, otherwise
-it will be leaked.
+Fri, Dec 09, 2022 at 12:05:43AM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Thursday, December 8, 2022 12:59 PM
+>>
+>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>Sent: Friday, December 2, 2022 5:12 PM
+>>>>
+>>>>Fri, Dec 02, 2022 at 12:27:24PM CET, arkadiusz.kubalewski@intel.com
+>>wrote:
+>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>Sent: Wednesday, November 30, 2022 1:32 PM
+>>>>>>
+>>>>>>Tue, Nov 29, 2022 at 10:37:20PM CET, vfedorenko@novek.ru wrote:
 
-Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-Signed-off-by: Yuan Can <yuancan@huawei.com>
----
- drivers/clk/tegra/clk-tegra124-emc.c | 2 ++
- 1 file changed, 2 insertions(+)
+[...]
 
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 219c80653dbd..2a6db0434281 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -464,6 +464,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 		err = load_one_timing_from_dt(tegra, timing, child);
- 		if (err) {
- 			of_node_put(child);
-+			kfree(tegra->timings);
- 			return err;
- 		}
- 
-@@ -515,6 +516,7 @@ struct clk *tegra124_clk_register_emc(void __iomem *base, struct device_node *np
- 		err = load_timings_from_dt(tegra, node, node_ram_code);
- 		if (err) {
- 			of_node_put(node);
-+			kfree(tegra);
- 			return ERR_PTR(err);
- 		}
- 	}
--- 
-2.17.1
+>>>>This you have to clearly specify when you define driver API.
+>>>>This const attrs should be passed during pin creation/registration.
+>>>>
+>>>>Talking about dpll instance itself, the clock_id, clock_quality, these
+>>>>should be also const attrs.
+>>>>
+>>>
+>>>Actually, clock_quality can also vary on runtime (i.e. ext/synce). We
+>>cannot
+>>>determine what Quality Level signal user has connected to the SMA or was
+>>>received from the network. Only gnss/oscilattor could have const depending
+>>>on used HW. But generally it shall not be const.
+>>
+>>Sec. I'm talkign about the actual dpll quality, means the internal
+>>clock. How it can vary?
+>
+>Yes, the DPLL has some holdover capacity, thus can translate this into QL and
+>it shall not ever change. Sure, we could add this.
+>
+>I was thinking about a source Quality Level. If that would be available here,
+>the ptp-profiles implementation would be simpler, as ptp daemon could read it
+>and embed that information in its frames.
+>Although, this would have to be configurable from user space, at least for EXT
+>and SYNCE pin types.
+
+The kernel would serve as a holder or info shared from one daemon to
+another one. That does not sound correct. PTP should ask SyncE deamon
+directly, I believe.
 
