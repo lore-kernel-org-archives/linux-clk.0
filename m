@@ -2,193 +2,234 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DACEC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 17:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8E3C4167B
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 17:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229482AbiLIRLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 12:11:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33044 "EHLO
+        id S229498AbiLIRg7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Dec 2022 12:36:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiLIRLj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 12:11:39 -0500
-Received: from sender4-of-o53.zoho.com (sender4-of-o53.zoho.com [136.143.188.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 458E25592;
-        Fri,  9 Dec 2022 09:11:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1670605877; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=dqUmU4kn+tGnxur6vul1RsbGF+ZGkf/TW1CzDjDU2gHsRdn9BH8PGq6Ai/Tb78TO4aUqG80aQVNUM/AfbWbx4wbw8a0JPLb3lqgpws8ajzDkqbGstQW+oBZllCVG/jo9mtRDS0uAIEPmiACWOLjrXW6IMlXILHF5Y0/wTiscUWo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1670605877; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=9sVUNE7ZtDhPsg6xptOB+v9evo1nUx2EigI2yxXDtJo=; 
-        b=SBUpTpW3D0hNnhJmrPWkEYrNYVl6yvrT3USwiNbYAq+OKRkysE5WuMSjbESbc+OFCMkefTRkQpVfUYRRxdWOoOgsMUXN4X7KxhFQBX01T6n/w2G050a6ymTsGf8jX+XPd26qVqt77b7bon1OrGwZtY+fiIRyDK/hENZwVejJzBc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=machnikowski.net;
-        spf=pass  smtp.mailfrom=maciek@machnikowski.net;
-        dmarc=pass header.from=<maciek@machnikowski.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1670605877;
-        s=zoho; d=machnikowski.net; i=maciek@machnikowski.net;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=9sVUNE7ZtDhPsg6xptOB+v9evo1nUx2EigI2yxXDtJo=;
-        b=sP1NhS6HVTkKev+zD8zP+vQxfGI+RTy6GNYKJZ9LTIkhKVmfjEV7HojzI8pyk3j3
-        4w55ctrTWgn77hLsSqdjYjb96fldy0fkYOZ1dXjcpaOzBVdxFIm7QyeKrE+zQHK9SfX
-        YkJBOU4hDfPMpAgIsUwu+nacq/L0nHs2e2899yVJBswfYBhaZAWKkXrUe4uasORNGj5
-        aqqD3U2knN0b6fBWNMa0gwuPDQo+wvSPalulYGbCR0z4v3UYgps/o8j5YqDo6alxc2I
-        UBvyNyUtF3py6AWiR8pqQW1tlh15aWbH5qPb1DSHo70gRKLHG0yWrsOfvBzIY1+JMwd
-        Tv3bGZxyCQ==
-Received: from [192.168.1.227] (83.8.188.9.ipv4.supernova.orange.pl [83.8.188.9]) by mx.zohomail.com
-        with SMTPS id 167060587605489.14790061976214; Fri, 9 Dec 2022 09:11:16 -0800 (PST)
-Message-ID: <c4498ff8-74b0-a01f-d029-6e6df226bc1b@machnikowski.net>
-Date:   Fri, 9 Dec 2022 18:11:12 +0100
+        with ESMTP id S229982AbiLIRg4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 12:36:56 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142C382F9C
+        for <linux-clk@vger.kernel.org>; Fri,  9 Dec 2022 09:36:55 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so8845986pjs.4
+        for <linux-clk@vger.kernel.org>; Fri, 09 Dec 2022 09:36:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXsbmkoodLU/AwJjQ4JXkNGpOiLYdE4+WQE1E7o+Bwo=;
+        b=t86EOBMhIP/ldR8nxcwebrMd9ocR8tExby0yg2pG8hDVAeplTlpkAB6UlHdjUGL2b5
+         OQ8Ls6Okk6+BnUPMmDzTmJqEM8BRuNIHYChWzI/RnpKmNMT3ipirfQ/ZKwIDn+n9H+Ac
+         dFa1a+3eO+2Sw6svqf5F6CPOssBlL7/HJcVRRKRV6zreayrpLDquE0Zg8Jcfyxo/Y4pg
+         CjscTZcU+4ZQQmGN89+YHXMn6iH0H9Ihsfug23tfhKLS0dOfdg/fgggBFiLKd7soUUc3
+         KivDhsoDilYjezLZhtQUMnYVSn2EnUpu+jrvaa46iK29QVFbKVNkTS58yaBOx42Nd/w5
+         oyHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qXsbmkoodLU/AwJjQ4JXkNGpOiLYdE4+WQE1E7o+Bwo=;
+        b=RGI+vybN+axMk5Mlwi5j/hS5kgYhzCE3IVELIer3Hphx2hVKme4cHGf2kh7cY2ShXE
+         q1rOq7zu3IX8bv9eRFhkq9If3pzzHd+XvLSFRDxHncHk1rsfosINjLX7/Q4oVEGuDqiL
+         CtIqShcYtl6WPIuTl9HNpyB+l3QirW5kS4N2BJNbnLaL/XH+XrqxOKRlf8uQsgALvpBY
+         FcinWTdpcpdryUarPgI65UFtN4CLMxqxH/t8iqAIMMu62lVtJZzjEFVZTbawImDajS7N
+         0iku0j7iJm/XBZ1bgvgGM1WB+56xcGpsXQ4uppbWbWVK52c//2BerC/6oiS1gSezKJL+
+         Xibg==
+X-Gm-Message-State: ANoB5pk2xrB2SoljuEbode4TqBbji820BaSWnJWa/T/w5CzLr/Nx+fNX
+        KtXEf0E2MrJiruGQjEuT9bvvvFLPWEB6nyUspx/wmg==
+X-Google-Smtp-Source: AA0mqf7ateMtxBRPd0IFutE2MIFyHz0rRGBmqts6dBrsLB2FgXxkLDLjQoTz8MBCRkUTjg8zk1rHSrEfMZ8gVlOEGUM=
+X-Received: by 2002:a17:90a:7485:b0:219:ef02:a5eb with SMTP id
+ p5-20020a17090a748500b00219ef02a5ebmr15259474pjk.84.1670607414431; Fri, 09
+ Dec 2022 09:36:54 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Content-Language: en-US
-To:     Jakub Kicinski <kuba@kernel.org>,
-        Maciek Machnikowski <maciek@machnikowski.net>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
-        "'Kubalewski, Arkadiusz'" <arkadiusz.kubalewski@intel.com>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <Y4dNV14g7dzIQ3x7@nanopsycho>
- <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y4oj1q3VtcQdzeb3@nanopsycho> <20221206184740.28cb7627@kernel.org>
- <10bb01d90a45$77189060$6549b120$@gmail.com>
- <20221207152157.6185b52b@kernel.org>
- <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
- <Y5MW/7jpMUXAGFGX@nanopsycho>
- <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
- <20221209083104.2469ebd6@kernel.org>
-From:   Maciek Machnikowski <maciek@machnikowski.net>
-In-Reply-To: <20221209083104.2469ebd6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
+ <20221201225705.46r2m35ketvzipox@builder.lan> <CAPDyKFofsqcoFbYt-9BcisbPdreLGqAAMWorqHi0_D1kwCdYhg@mail.gmail.com>
+ <20221207165457.kwdwwiycbwjpogxl@builder.lan> <CAPDyKFpYgYkDdJ79xxkwr-Mqnj5CoBrV+ZZe6Xz4hGLNR4zUVw@mail.gmail.com>
+ <20221208210622.x656vbf7rum5hrl7@builder.lan>
+In-Reply-To: <20221208210622.x656vbf7rum5hrl7@builder.lan>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 9 Dec 2022 18:36:18 +0100
+Message-ID: <CAPDyKFpSXjcJZ=H491s74BChAV89pQ1Wm8PSdU0nVRfroK1=4A@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] clk/qcom: Support gdsc collapse polling using
+ 'reset' interface
+To:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        krzysztof.kozlowski@linaro.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 8 Dec 2022 at 22:06, Bjorn Andersson <andersson@kernel.org> wrote:
+>
+> On Thu, Dec 08, 2022 at 02:40:55PM +0100, Ulf Hansson wrote:
+> > On Wed, 7 Dec 2022 at 17:55, Bjorn Andersson <andersson@kernel.org> wrote:
+> > >
+> > > On Wed, Dec 07, 2022 at 05:00:51PM +0100, Ulf Hansson wrote:
+> > > > On Thu, 1 Dec 2022 at 23:57, Bjorn Andersson <andersson@kernel.org> wrote:
+> > > > >
+> > > > > On Wed, Oct 05, 2022 at 02:36:58PM +0530, Akhil P Oommen wrote:
+> > > > > >
+> > > > >
+> > > > > @Ulf, Akhil has a power-domain for a piece of hardware which may be
+> > > > > voted active by multiple different subsystems (co-processors/execution
+> > > > > contexts) in the system.
+> > > > >
+> > > > > As such, during the powering down sequence we don't wait for the
+> > > > > power-domain to turn off. But in the event of an error, the recovery
+> > > > > mechanism relies on waiting for the hardware to settle in a powered off
+> > > > > state.
+> > > > >
+> > > > > The proposal here is to use the reset framework to wait for this state
+> > > > > to be reached, before continuing with the recovery mechanism in the
+> > > > > client driver.
+> > > >
+> > > > I tried to review the series (see my other replies), but I am not sure
+> > > > I fully understand the consumer part.
+> > > >
+> > > > More exactly, when and who is going to pull the reset and at what point?
+> > > >
+> > > > >
+> > > > > Given our other discussions on quirky behavior, do you have any
+> > > > > input/suggestions on this?
+> > > > >
+> > > > > > Some clients like adreno gpu driver would like to ensure that its gdsc
+> > > > > > is collapsed at hardware during a gpu reset sequence. This is because it
+> > > > > > has a votable gdsc which could be ON due to a vote from another subsystem
+> > > > > > like tz, hyp etc or due to an internal hardware signal. To allow
+> > > > > > this, gpucc driver can expose an interface to the client driver using
+> > > > > > reset framework. Using this the client driver can trigger a polling within
+> > > > > > the gdsc driver.
+> > > > >
+> > > > > @Akhil, this description is fairly generic. As we've reached the state
+> > > > > where the hardware has settled and we return to the client, what
+> > > > > prevents it from being powered up again?
+> > > > >
+> > > > > Or is it simply a question of it hitting the powered-off state, not
+> > > > > necessarily staying there?
+> > > >
+> > > > Okay, so it's indeed the GPU driver that is going to assert/de-assert
+> > > > the reset at some point. Right?
+> > > >
+> > > > That seems like a reasonable approach to me, even if it's a bit
+> > > > unclear under what conditions that could happen.
+> > > >
+> > >
+> > > Generally the disable-path of the power-domain does not check that the
+> > > power-domain is actually turned off, because the status might indicate
+> > > that the hardware is voting for the power-domain to be on.
+> >
+> > Is there a good reason why the HW needs to vote too, when the GPU
+> > driver is already in control?
+> >
+> > Or perhaps that depends on the running use case?
+> >
+> > >
+> > > As part of the recovery of the GPU after some fatal fault, the GPU
+> > > driver does something which will cause the hardware votes for the
+> > > power-domain to be let go, and then the driver does pm_runtime_put().
+> >
+> > Okay. That "something", sounds like a device specific setting for the
+> > corresponding gdsc, right?
+> >
+> > So somehow the GPU driver needs to manage that setting, right?
+> >
+> > >
+> > > But in this case the GPU driver wants to ensure that the power-domain is
+> > > actually powered down, before it does pm_runtime_get() again. To ensure
+> > > that the hardware lost its state...
+> >
+> > I see.
+> >
+> > >
+> > > The proposal here is to use a reset to reach into the power-domain
+> > > provider and wait for the hardware to be turned off, before the GPU
+> > > driver attempts turning the power-domain on again.
+> > >
+> > >
+> > > In other words, there is no reset. This is a hack to make a normally
+> > > asynchronous pd.power_off() to be synchronous in this particular case.
+> >
+> > Alright, assuming I understood your clarifications above correctly
+> > (thanks!), I think I have got a much better picture now.
+> >
+> > Rather than abusing the reset interface, I think we should manage this
+> > through the genpd's power on/off notifiers (GENPD_NOTIFY_OFF). The GPU
+> > driver should register its corresponding device for them
+> > (dev_pm_genpd_add_notifier()).
+> >
+> > The trick however, is to make the behaviour of the power-domain for
+> > the gdsc (the genpd->power_off() callback) conditional on whether the
+> > HW is configured to vote or not. If the HW can vote, it should not
+> > poll for the state - and vice versa when the HW can't vote.
+> >
+>
+> Per Akhil's description I misunderstood who the other voters are; but
+> either way it's not the same "HW configured" mechanism as the one we're
+> already discussing.
 
+Okay, so this is another thing then.
 
-On 12/9/2022 5:31 PM, Jakub Kicinski wrote:
-> On Fri, 9 Dec 2022 15:09:08 +0100 Maciek Machnikowski wrote:
->> On 12/9/2022 12:07 PM, Jiri Pirko wrote:
->>> Looking at the documentation of the chips, they all have mupltiple DPLLs
->>> on a die. Arkadiusz, in your proposed implementation, do you model each
->>> DPLL separatelly? If yes, then I understand the urgency of need of a
->>> shared pin. So all DPLLs sharing the pin are part of the same chip?
->>>
->>> Question: can we have an entity, that would be 1:1 mapped to the actual
->>> device/chip here? Let's call is "a synchronizer". It would contain
->>> multiple DPLLs, user-facing-sources(input_connector),
->>> user-facing-outputs(output_connector), i/o pins.
->>>
->>> An example:
->>>                                SYNCHRONIZER
->>>
->>>                               ┌───────────────────────────────────────┐
->>>                               │                                       │
->>>                               │                                       │
->>>   SyncE in connector          │              ┌─────────┐              │     SyncE out connector
->>>                 ┌───┐         │in pin 1      │DPLL_1   │     out pin 1│    ┌───┐
->>>                 │   ├─────────┼──────────────┤         ├──────────────┼────┤   │
->>>                 │   │         │              │         │              │    │   │
->>>                 └───┘         │              │         │              │    └───┘
->>>                               │              │         │              │
->>>                               │           ┌──┤         │              │
->>>    GNSS in connector          │           │  └─────────┘              │
->>>                 ┌───┐         │in pin 2   │                  out pin 2│     EXT SMA connector
->>>                 │   ├─────────┼───────────┘                           │    ┌───┐
->>>                 │   │         │                           ┌───────────┼────┤   │
->>>                 └───┘         │                           │           │    │   │
->>>                               │                           │           │    └───┘
->>>                               │                           │           │
->>>    EXT SMA connector          │                           │           │
->>>                 ┌───┐   mux   │in pin 3      ┌─────────┐  │           │
->>>                 │   ├────┬────┼───────────┐  │         │  │           │
->>>                 │   │    │    │           │  │DPLL_2   │  │           │
->>>                 └───┘    │    │           │  │         │  │           │
->>>                          │    │           └──┤         ├──┘           │
->>>                          │    │              │         │              │
->>>    EXT SMA connector     │    │              │         │              │
->>>                 ┌───┐    │    │              │         │              │
->>>                 │   ├────┘    │              └─────────┘              │
->>>                 │   │         │                                       │
->>>                 └───┘         └───────────────────────────────────────┘
->>>
->>> Do I get that remotelly correct?  
->>
->> It looks goot, hence two corrections are needed:
->> - all inputs can go to all DPLLs, and a single source can drive more
->>   than one DPLL
->> - The external mux for SMA connector should not be a part of the
->>   Synchronizer subsystem - I believe there's already a separate MUX
->>   subsystem in the kernel and all external connections should be handled
->>   by a devtree or a similar concept.
->>
->> The only "muxing" thing that could potentially be modeled is a
->> synchronizer output to synchronizer input relation. Some synchronizers
->> does that internally and can use the output of one DPLL as a source for
->> another.
-> 
-> My experience with DT and muxes is rapidly aging, have you worked with
-> those recently? From what I remember the muxes were really.. "embedded"
-> and static compared to what we want here.
-> 
-> Using DT may work nicely for defining the topology, but for config we
-> still need a different mechanism.
-> 
->>> synch
->>> synchronizer_register(synch)
->>>    dpll_1
->>>    synchronizer_dpll_register(synch, dpll_1)
->>>    dpll_2
->>>    synchronizer_dpll_register(synch, dpll_2)
->>>    source_pin_1
->>>    synchronizer_pin_register(synch, source_pin_1)
->>>    output_pin_1
->>>    synchronizer_pin_register(synch, output_pin_1)
->>>    output_pin_2
->>>    synchronizer_pin_register(synch, output_pin_2)
->>>
->>> synch_board
->>>    synchronizer_board_register(synch_board)
->>>    synch
->>>    synchronizer_board_sync_register(synch_board, synch)
->>>    source_connector_1
->>>    synchronizer_board_connector_register(synch_board, source_connector_1, source_pin_1)
->>>    output_connector_1
->>>    synchronizer_board_connector_register(synch_board, output_connector_1, output_pin_1)
->>>    output_connector_2
->>>    synchronizer_board_connector_register(synch_board, output_connector_2, output_pin_2)  
->>
->> I'd rather not use pins at all - just stick to sources and outputs. Both
->> can use some labels to be identifiable.
-> 
-> TBH I can't comprehend your suggestion.
-> IIUC you want an object for a source, but my brain can't handle
-> modeling an external object. For instance the source could be GNSS, 
-> but this is not the GNSS subsystem. We have a pin connected to GNSS,
-> not the GNSS itself. 
-> Maybe a diagram would help?
+>
+>
+> But if we based on similar means could control if the power_off() ops
+> should be blocking, waiting for the status indication to show that the
+> hardware is indeed powered down, I think this would meet the needs.
 
-A source is just a more generic term for a frequency signal that can be
-used by a DPLL. For some solutions it can represent a pin, for others
-(integrated) it can represent an internal connection to a different
-DPLL/PHY/MAC/embedded oscillator or anything else that can produce
-periodic signal.
+Right.
 
-This object will have a subset of properties listed in a previous mail:
->>>> Sources can configure the expected frequency, input signal
->>>> monitoring (on multiple layers), expected signal levels, input
->>>> termination and so on. Outputs will need the enable flag, signal
->>>> format, frequency, phase offset etc. Multiple DPLLs can reuse a
->>>> single source inside the same package simultaneously.
+>
+> And GENPD_NOTIFY_OFF seems to provide the notification that it was
+> successful (i.e. happened within the timeout etc).
+>
+> > Would this work?
+> >
+>
+> If we can control the behavior of the genpd, I think it would.
 
-I'm absolutely not willing to connect the GNSS subsystem there :)
+Okay, it seems like we need a new dev_pm_genpd_* interface that
+consumers can call to instruct the genpd provider, that its
+->power_off() callback needs to temporarily switch to become
+synchronous.
 
-A "pin" is too ambiguous - especially for differential inputs.
+I guess this could be useful for other similar cases too, where the
+corresponding PM domain isn't actually being powered off, but rather
+just voted for to become powered off, thus relying on the HW to do the
+aggregation.
 
+In any case, I am still a bit skeptical of the reset approach, as is
+being suggested in the $subject series. Even if it's rather nice and
+clean (but somewhat abusing the interface), it looks like there will
+be synchronization problems between the calls to the
+pm_runtime_put_sync() and reset_control_reset() in the GPU driver. The
+"reset" may actually already have happened when the call to
+reset_control_reset() is done, so we may fail to detect the power
+collapse, right!?
+
+Let me cook a patch for the new genpd interface that I have in mind,
+then we can see how that plays out together with the other parts. I
+will post it on Monday!
+
+Kind regards
+Uffe
