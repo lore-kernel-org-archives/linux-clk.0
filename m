@@ -2,119 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A811C04FDE
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 16:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E84C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 16:19:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbiLIQQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 11:16:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56798 "EHLO
+        id S229556AbiLIQTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Dec 2022 11:19:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbiLIQP5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 11:15:57 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C9C80A11
-        for <linux-clk@vger.kernel.org>; Fri,  9 Dec 2022 08:15:56 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id cf42so7822655lfb.1
-        for <linux-clk@vger.kernel.org>; Fri, 09 Dec 2022 08:15:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9gkB3jWikV382tDMdk/lKwQHvi005PhmtU+XtsFNSOc=;
-        b=fXLQCdm2bwtxQGfCagSdGKK8arDQPPnboy468ZyLFKwYujCghll8jDRSGnYXd8mgWs
-         DsUH2ENUbqr4imGDatrB8vOXixSGev2LZNmNyvlsvWHpGdzStASWJMTUKfo6P1z3FXXv
-         VFV6nvF8hdidVoS/q2Mli8arH87DLGrjoq4KbQPQO2wS2guhbKIoMf6oYXhRCfazyvHy
-         DwT0S11dXidsfY7s7bL/BxvNpsAttxcfanpAHcKCBrJo2LerDtjDOJh/M7Wm5hOErR+F
-         rwEvqOt6gjERR51xOr6q7CpskrG/Wbh1rJhElhDzEkuj8Y4UprlcbtjEEgcKScIGHCkb
-         2G8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gkB3jWikV382tDMdk/lKwQHvi005PhmtU+XtsFNSOc=;
-        b=QEbYyQF2BpGQITcCDStG8Eayc9XKCQ0k+qHhPCQmaGAZNZaS+k/ycuKB8zO3put//4
-         /K+qcCOw7FoUXct0yoNddnAEkgLpZKOcQ1CC6O1jfwjma97I2r8WIhrak7Rw+K3Z7HqF
-         Z2o8hFGlS3yFeXAuz2L2zVijxBsGL565QS6TjgW/GIHPe7nKcjRKw/s5kxe2AHIhKBTk
-         0DAheAS/53BsH1im+1Hjn3rfFCmBxU0XUMIM5v7InhWhZhL6O5VrZfdBbGg2q3aRVP7h
-         Tb0ffGSjuTqJlVZv8fMFExtwNu+XFUnqugI/B/c3c/MCEeXwKDFmuIrB89IYYW8u20hf
-         NW4Q==
-X-Gm-Message-State: ANoB5pmPBTbcRKCQ6bJyBtQBP06rtZeK4/trFk5YTz6mJGoQeN/NTisE
-        Gt/1RhTmXTor9yYarYW9DEAKrQ==
-X-Google-Smtp-Source: AA0mqf4f9gutjPMCsHe520cRiGNJeLQhcmUr3JtOa3bAOvxTZ/0i4O8NkvBpedq2Qo3EkG4xVaQDLQ==
-X-Received: by 2002:a05:6512:2512:b0:4b1:f16b:6d53 with SMTP id be18-20020a056512251200b004b1f16b6d53mr2215380lfb.52.1670602555152;
-        Fri, 09 Dec 2022 08:15:55 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id h28-20020ac2597c000000b004b4f1ea713csm317239lfp.73.2022.12.09.08.15.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Dec 2022 08:15:54 -0800 (PST)
-Message-ID: <a79a2f16-3471-4fb9-be09-cb4a7f15ca2d@linaro.org>
-Date:   Fri, 9 Dec 2022 17:15:53 +0100
+        with ESMTP id S229517AbiLIQTp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 11:19:45 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E108801F6;
+        Fri,  9 Dec 2022 08:19:44 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A81860EB0;
+        Fri,  9 Dec 2022 16:19:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14B2CC433EF;
+        Fri,  9 Dec 2022 16:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670602783;
+        bh=VI1X+KqV+1YF/g9QdSwb46QdBvoGHfAFDaTzgHqOkEw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FGPFRjDqWBd9QbGMjxlLRfV0Q8l8aOR1AQE0EJ4jc1wWQ7banrCk9+fMzcPjnhH6V
+         0SmmbZt9y4Jpm9NoDFnqUNrWNHYR5p10xApoabNuBDhOUqUC1V+ZS0Q6w7jmpYLXtm
+         rzOE8Ow/8qeYCgxX/jV5zgJanYWyBp1njWLBVbucQqXNichzpEkX8PlaGr6kdvGvjN
+         SxxTeKMFsqy8xzQcM8k+Rquq0+U7+Kb/7EqpwUixUUpuPGnM9/hgudSH7EcI860cxh
+         lDsvcYpsGokgVbyOjoa/7Gv9PPn7XSkMfx40CxIfIcZumF9i3Rm4ub2mDSfwMGaJDm
+         GPhAyE77MzAXw==
+Date:   Fri, 9 Dec 2022 08:19:42 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
+Message-ID: <20221209081942.565bc422@kernel.org>
+In-Reply-To: <Y5MAEQ74trsNFQQc@nanopsycho>
+References: <Y43IpIQ3C0vGzHQW@nanopsycho>
+        <20221205161933.663ea611@kernel.org>
+        <Y48CS98KYCMJS9uM@nanopsycho>
+        <20221206092705.108ded86@kernel.org>
+        <Y5CQ0qddxuUQg8R8@nanopsycho>
+        <20221207085941.3b56bc8c@kernel.org>
+        <Y5Gc6E+mpWeVSBL7@nanopsycho>
+        <20221208081955.335ca36c@kernel.org>
+        <Y5IR2MzXfqgFXGHW@nanopsycho>
+        <20221208090517.643277e8@kernel.org>
+        <Y5MAEQ74trsNFQQc@nanopsycho>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2 00/18] clk: qcom: smd-rpm: drop platform names
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20221207001503.93790-1-dmitry.baryshkov@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221207001503.93790-1-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/12/2022 01:14, Dmitry Baryshkov wrote:
-> This series concludes the previous work on Qualcomm RPM and RPMH clock
-> drivers. It reworks the clk-smd-rpm driver to drop the SoC name from the
-> clock symbol name, as the clock definitions are shared between different
-> SoCs (platforms). Having an SoC name in the clock definition can lead to
-> all sources of confusion and/or errors.
+On Fri, 9 Dec 2022 10:29:53 +0100 Jiri Pirko wrote:
+> Thu, Dec 08, 2022 at 06:05:17PM CET, kuba@kernel.org wrote:
+> >On Thu, 8 Dec 2022 17:33:28 +0100 Jiri Pirko wrote:  
+> >> For any synce pin manipulation over dpll netlink, we can use the netns
+> >> check of the linked netdev. This is the netns aware leg of the dpll,
+> >> it should be checked for.  
+> >
+> >The OCP card is an atomic clock, it does not have any networking.  
 > 
-> Changes since v1:
->  - Split the MMXI/MMAXI and sm6375 vs sm6125 changes into two different
->    patches
->  - Reworked macro definitions and usage to remove empty arguments
->  - Dropped qcm2290_bimc_gpu_clk definition in the corresponding patch
->  - Alignment fixes
+> Sure, so why it has to be netns aware if it has nothing to do with
+> networking?
+
+That's a larger question, IDK if broadening the scope of the discussion
+will help us reach a conclusion. 
+
+The patchset as is uses network namespaces for permissions:
+
++		.flags	= GENL_UNS_ADMIN_PERM,
+
+so that's what I'm commenting on - aligning visibility of objects with
+already used permissions.
+
+> >> I can't imagine practically havind the whole dpll instance netns aware.
+> >> Omitting the fact that it really has no meaning for non-synce pins, what
+> >> would be the behaviour when for example pin 1 is in netns a, pin 2 in
+> >> netns b and dpll itself in netns c?  
+> >
+> >To be clear I don't think it's a bad idea in general, I've done 
+> >the same thing for my WIP PSP patches. But we already have one
+> >device without netdevs, hence I thought maybe devlink. So maybe
+> >we do the same thing with devlink? I mean - allow multiple devlink
+> >instances to be linked and require caps on any of them?  
 > 
-> Dmitry Baryshkov (18):
->   clk: qcom: smd-rpm: remove duplication between MMXI and MMAXI defines
->   clk: qcom: smd-rpm: enable pin-controlled ln_bb_clk clocks on qcs404
->   clk: qcom: smd-rpm: remove duplication between qcs404 and qcm2290
->     clocks
->   clk: qcom: smd-rpm: add missing ln_bb_clkN clocks
->   clk: qcom: smd-rpm: use msm8998_ln_bb_clk2 for qcm2290 SoC
->   clk: qcom: smd-rpm: rename msm8992_ln_bb_* clocks to qcs404_ln_bb_*
->   clk: qcom: smd-rpm: remove duplication between sm6375 and sm6125
->     clocks
->   clk: qcom: smd-rpm: add XO_BUFFER clock for each XO_BUFFER_PINCTRL
->     clock
->   clk: qcom: smd-rpm: drop the rpm_status_id field
->   clk: qcom: smd-rpm: fix alignment of line breaking backslashes
->   clk: qcom: smd-rpm: move clock definitions together
->   clk: qcom: smd-rpm: rename some msm8974 active-only clocks
->   clk: qcom: smd-rpm: simplify XO_BUFFER clocks definitions
->   clk: qcom: smd-rpm: simplify SMD_RPM/_BRANCH/_QDSS clock definitions
->   clk: qcom: smd-rpm: rename SMD_RPM_BRANCH clock symbols
->   clk: qcom: smd-rpm: rename the qcm2290 rf_clk3 clocks
->   clk: qcom: smd-rpm: rename SMD_RPM_BUS clocks
->   clk: qcom: smd-rpm: remove usage of platform name
-> 
->  drivers/clk/qcom/clk-smd-rpm.c         | 1441 ++++++++++++------------
->  include/dt-bindings/clock/qcom,rpmcc.h |    2 +
+> I read this 5 times, I'm lost, don't understand what you mean :/
 
-Please automate getting email addresses for sending emails.
+Sorry I was replying to both paragraphs here, sorry.
+What I thought you suggested is we scope the DPLL to whatever the
+linked netdevs are scoped to? If netns has any of the netdevs attached
+to the DPLL then it can see the DPLL and control it as well.
 
-Best regards,
-Krzysztof
-
+What I was saying is some DPLL have no netdevs. So we can do the same
+thing with devlinks. Let the driver link the DPLL to one or more
+devlink instances, and if any of the devlink instances is in current
+netns then you can see the DPLL.
