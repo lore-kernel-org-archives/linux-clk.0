@@ -2,77 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4A0C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 00:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4E0C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 00:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbiLIAUa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Dec 2022 19:20:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51914 "EHLO
+        id S229463AbiLIAgl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Dec 2022 19:36:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbiLIAU2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 19:20:28 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC2A92310;
-        Thu,  8 Dec 2022 16:20:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=l+5hAcahIcnFsY9xQ4Jx9rT+Tc2PRQQClCgcO5NdpQY=; b=OMrMRPxzvM3DHnZXXrwC6dwnax
-        ItlDN91IrP736ydfHjrGAqcmsLaTXwvqKv8CNrn/eNV7tjCaOW6rb2q4Jv8T4YZZonrKSRFkzRa+O
-        wvalgetE49rDr6uc5n+vgI8XVuoEdUeB+eevlQlWp+gEcdOuXfBL7RuQFXRkoyr0x/ZG/15TOB2eO
-        rCYuKDN7Z5Dj77qWtDIYCbolReXR0I5TMhcIBLrfPIDRQnY6P0OsMkXCPkZTSetLooEV/vcHHe80u
-        Yd3vKu0g2/p0s31fQa5OsKyLkO4zEEHJnKPa+QdSJ/q/X0BZCsaKIBMrwgGtKVN+H2IrTLsXFfIWK
-        gV+88ruw==;
-Received: from [2601:1c2:d80:3110::a2e7] (helo=casper.infradead.org)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p3R7t-007U9B-Gp; Fri, 09 Dec 2022 00:20:29 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: nomadik: correct struct name kernel-doc warning
-Date:   Thu,  8 Dec 2022 16:20:16 -0800
-Message-Id: <20221209002016.14776-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.38.1
+        with ESMTP id S229593AbiLIAgk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2022 19:36:40 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6DA9D2F7;
+        Thu,  8 Dec 2022 16:36:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4B51AB825BC;
+        Fri,  9 Dec 2022 00:36:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B02B0C433D2;
+        Fri,  9 Dec 2022 00:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670546196;
+        bh=eS8a/870Vq6o+U0jzi3hH5Q2d6yDRgQcjSD+pj6+cK0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YqDPDVPkIoOgfNNPiA/VU2t7Tu4QQkq5Oh/0Ydb3C/pq9+Sp7hgUU6/ECF5arn9xT
+         8SsMH/nH7P4nX9Qyz8l0SQFaLVz3JAs3KAMvyGb9eCSzo945CuaNiGZOATp1C+tjma
+         1qPP+H9GzkR+/nJI4WfqQU3Xc8kd5gwT6t1g1WWedSn3DMG0zx2uU03kOvkCNZD1bY
+         tLflDCXpPO9ZegkGEn6RU/0Py/52DH8pphno1Ek2NytOMpXuwc7Rp+Ynh3FRTVCFBm
+         0+aZ9HVv0Cl8klIqnq/UI8IQKtzVqOVkSTimnjtAwUSfiVtID4Avaqa+L8iKHtXbsB
+         PW15puTR9owsQ==
+Date:   Thu, 8 Dec 2022 16:36:34 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 4/4] ptp_ocp: implement DPLL ops
+Message-ID: <20221208163634.707c6e07@kernel.org>
+In-Reply-To: <Y5HI4deFBTvDFIGB@nanopsycho>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+        <20221129213724.10119-5-vfedorenko@novek.ru>
+        <Y4dPaHx1kT3A80n/@nanopsycho>
+        <DM6PR11MB4657D9753412AD9DEE7FAB7D9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <Y4n0H9BbzaX5pCpQ@nanopsycho>
+        <DM6PR11MB465721310114ECA13F556E8A9B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <20221206183313.713656f8@kernel.org>
+        <Y5CS2lO8WaoPmMbq@nanopsycho>
+        <20221207090524.3f562eeb@kernel.org>
+        <Y5HI4deFBTvDFIGB@nanopsycho>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use the correct struct name for the kernel-doc notation to prevent
-a kernel-doc warning:
+On Thu, 8 Dec 2022 12:22:09 +0100 Jiri Pirko wrote:
+> >To what practical benefit? Where do we draw the line? Do you want
+> >PTP clocks to also be auxdevs? DPLL lives in netdev, we don't have
+> >to complicate things. auxdev is a Conway's law solution.  
+> 
+> Auxdev infra is quite simple to implement, I'm not sure what do you mean
+> by complicating thing here.
 
-clk-nomadik.c:148: warning: expecting prototype for struct clk_pll1. Prototype was for struct clk_pll instead
+You didn't answer my question - what's the benefit?
+We're not faced with A or B choice. We have a A or nothing choice.
+Doing nothing is easy.
 
-Fixes: ef6eb322ce57 ("clk: nomadik: implement the Nomadik clocks properly")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
----
- drivers/clk/clk-nomadik.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >mlx5 already looks like sausage meat, it's already minced so you can
+> >fit it there quite easily, but don't force it on non-enterprise devices.  
+> 
+> Not forcing, just suggesting. It's a low-hanging fruit, why not reach
+> it?
 
-diff -- a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -138,7 +138,7 @@ out_put:
- }
- 
- /**
-- * struct clk_pll1 - Nomadik PLL1 clock
-+ * struct clk_pll - Nomadik PLL clock
-  * @hw: corresponding clock hardware entry
-  * @id: PLL instance: 1 or 2
-  */
+What is the fruit?
+
+> >There is non 1:1 relationship with a bus device and subsystem in Linux,
+> >LMK when you convinced Greg otherwise.  
+> 
+> Sure there is not. But maybe that is due to the simple fact that auxdev
+> was introduces, what, 2 years back? My point is, we are introducing new
+> subsystem, wouldn't it be nice to start it clean?
+
+Still not getting what you think is clean.. Making all driver-facing
+objects in the kernel be a fake bus-device?!
