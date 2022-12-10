@@ -2,84 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026FBC4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Dec 2022 19:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD959C4708D
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Dec 2022 19:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbiLJTLB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Dec 2022 14:11:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60476 "EHLO
+        id S229896AbiLJTbD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Dec 2022 14:31:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiLJTLA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Dec 2022 14:11:00 -0500
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D5D13FA2
-        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 11:10:58 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-3704852322fso94059387b3.8
-        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 11:10:58 -0800 (PST)
+        with ESMTP id S229683AbiLJTbC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Dec 2022 14:31:02 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81B1D167D3
+        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 11:30:57 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id s10so8442817ljg.1
+        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 11:30:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMKlZ/XsQ/RdDfIxg477G91ZfmGJ9kv/1t3NaSxe8I0=;
-        b=I2eH+MgR5SeGOdBzAAYEcMED5kcnPrFJUaA4zv9Id6KCJG62srQleG3RD2iSLuegkQ
-         vO5RVM7A3MdadypzwTtzkx9AldJp3b6kOwOKD2oID/EirUPBporFmeyCVgMLwpaqO+MP
-         sMbTaF73UHRm3Tk7xrAfZeIA5UfSYvWvXi0Wz6cCDPfdDEWCBHIRwnWJouv65wGAFcxE
-         E/y2E0J+crmQP66rt5v39yDHVMqoq1lHk7cS4Ojr1FZXGqcfZTwPekUiYjzW2CIe3NV/
-         XSyCw4eNY750eWFmFyPCOG0NeoQEwX7YP39yTUrgTUwKduCQWcWj6Qha6oqpfjcZ9UH7
-         LVMA==
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FHUxrTWEyWCbMTjMFrOhcmmMYjloA5mjsislly9TIB4=;
+        b=r8p55zxMDjZM/wWGpK5vatZJhI3dlsRyV1znBd/7pvjIFDNZLsi4Ggrgpr/JeAKgP3
+         ozrkfHzLD2YEV3ecJ7xLCQ3dM3wbgzMTOf2F8yiqdYiBJMmbXhBKfpPBXl0OATMD0ta4
+         tljuJkS1W2WyGLNjtNvqcj0fxcbQOhu6UnuitOcDwebor2uBX/9WUpG6jEbM0cBxpBfV
+         m261jgTnf6Nc+ti/c34Oux99Fl7BQaBdl54ald24T7yBfsNq6kZZRzF41SBGXwK1Vzb9
+         07u76A4NNse2LF0GO1BxJMX7QM/z9U+95teB8twoDikUWAPl6E4/jLneLy1Ei1VJYLua
+         ytMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wMKlZ/XsQ/RdDfIxg477G91ZfmGJ9kv/1t3NaSxe8I0=;
-        b=BdjLT1N+kw9y2P4Ec66T2jwX7ZcsuiozLdRWjAC6lA0O08GHzNGBjGzl2aP0islgAJ
-         cktPrX0913PchM92Chl9Vrz7iHfZZMtY2hCFZ/jJWl8hwTrsX0x1xwg3zsDvM/9Hz1sl
-         aloaP5j7evh3+gniys9pBAeY6cu9wni9ymh+d5jlt4sFvjeX8wNJwgpmUV+f7pSk3kvv
-         exPneb2ViBrWYDtOVe2S58CLeNOSnXF1mSSaXhnkSB/2EPe+h8lkBCtwoNPb/Y7CMIDK
-         V2prYL+VgB1yxBivAcQwItGlap+qsBT09HlZhP1REevETNbCccvg6vvsddYFWc1Mr+oe
-         YlfQ==
-X-Gm-Message-State: ANoB5pkMW102dnmTs9IO9//qINlIk8r5NqRFMCCi/ttsfwECM7ea18lN
-        YH1Hf/LlegEf9wWTHP3k23aS1Zhrd1O3N+Pcp06TYg==
-X-Google-Smtp-Source: AA0mqf7R+gG44S3wvy6vkMr40xZSszYJhEawjax/JeCM6OoYN/7Mej+y9NKqwfFUnbAf0kJMrJhf99A16SdxVN7YGQY=
-X-Received: by 2002:a81:6c52:0:b0:370:4c23:eacc with SMTP id
- h79-20020a816c52000000b003704c23eaccmr25291714ywc.127.1670699457998; Sat, 10
- Dec 2022 11:10:57 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHUxrTWEyWCbMTjMFrOhcmmMYjloA5mjsislly9TIB4=;
+        b=dUJbFnIQKYFa8/rm/7PX9OajBBkgSmpK37ygaJtDWlKwhHEDXg6OJokTL+TTc7M2MC
+         7uwIXpt1ezrOhUPsIvoneJSe4va/jzGkASGzZsRD8Cf4IjF4VlNTbdos20UE112y2L2k
+         9ujTPttdztOTiE127XejE5iEOXX/CaFEWqIhnuRYxXz+f7tvK/JmN+J22OJYCSJCpPRR
+         JQvd6XAdBhCqIDC6J1zYZvkfJ2DHuV9mcPupm84ndZyqLPNV8Pr+xPxOY1W4glgDL3zc
+         Z+MbahA5+PU08aMgpPxD0D8J+BcEEnB7jixgzWTKxZH5pVCmJGl35n21g/UCbQlwYcps
+         QHsA==
+X-Gm-Message-State: ANoB5pn3j9EZVzhBzXtSw5/Hltnw8bNWLkgJ2Z0dV8OxhO53CTlOk1gc
+        gxyzieTImvQOc38o1leG4Mb70A==
+X-Google-Smtp-Source: AA0mqf69x4E/NiIiGUwEelaF4HvuZxMhRIuAwLYpKJRUEHG+Xt9uo17Cr9Bo2q8BQ/By7Lc34BoRgg==
+X-Received: by 2002:a05:651c:551:b0:277:44ca:5dc7 with SMTP id q17-20020a05651c055100b0027744ca5dc7mr3502132ljp.9.1670700654864;
+        Sat, 10 Dec 2022 11:30:54 -0800 (PST)
+Received: from [192.168.1.101] (abxh44.neoplus.adsl.tpnet.pl. [83.9.1.44])
+        by smtp.gmail.com with ESMTPSA id k5-20020a05651c10a500b0026e04cc88cfsm718747ljn.124.2022.12.10.11.30.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Dec 2022 11:30:54 -0800 (PST)
+Message-ID: <b8575c43-44e0-de44-344f-47b0c4a31879@linaro.org>
+Date:   Sat, 10 Dec 2022 20:30:52 +0100
 MIME-Version: 1.0
-References: <20221208143945.50279-1-dmitry.baryshkov@linaro.org> <20221209012131.0054CC433F0@smtp.kernel.org>
-In-Reply-To: <20221209012131.0054CC433F0@smtp.kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 10 Dec 2022 22:10:47 +0300
-Message-ID: <CAA8EJppsZAhqwOcUzWQTh-ePwVWWxpfufaRF9TASTX0LfgUuHg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: clk-spmi-pmic-div: convert to use parent_data
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2 1/3] clk: qcom: dispcc-sm6115: use parent_hws for
+ disp_cc_mdss_rot_clk
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Andy Gross <agross@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221210190712.451247-1-dmitry.baryshkov@linaro.org>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20221210190712.451247-1-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 9 Dec 2022 at 04:21, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dmitry Baryshkov (2022-12-08 06:39:45)
-> > diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
-> > index f2cf55cee2fd..aa015c51ab4f 100644
-> > --- a/drivers/clk/qcom/clk-spmi-pmic-div.c
-> > +++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
-> > @@ -175,6 +175,10 @@ static const struct clk_ops clk_spmi_pmic_div_ops = {
-> >         .round_rate = clk_spmi_pmic_div_round_rate,
-> >  };
-> >
-> > +static const struct clk_parent_data clk_spmi_pmic_parent_data = {
-> > +       .index = 0,
-> > +};
->
-> Why not put this on the stack? clk core should be deep copying.
 
-Thanks, fixed in v2
 
--- 
-With best wishes
-Dmitry
+On 10.12.2022 20:07, Dmitry Baryshkov wrote:
+> Rework disp_cc_mdss_rot_clk to use parent_hws instead of parent_names.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>  drivers/clk/qcom/dispcc-sm6115.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+> index 818bb8f4637c..1937edf23f21 100644
+> --- a/drivers/clk/qcom/dispcc-sm6115.c
+> +++ b/drivers/clk/qcom/dispcc-sm6115.c
+> @@ -466,8 +466,8 @@ static struct clk_branch disp_cc_mdss_rot_clk = {
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "disp_cc_mdss_rot_clk",
+> -			.parent_names = (const char *[]){
+> -				"disp_cc_mdss_rot_clk_src",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&disp_cc_mdss_rot_clk_src.clkr.hw,
+>  			},
+>  			.num_parents = 1,
+>  			.flags = CLK_SET_RATE_PARENT,
