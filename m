@@ -2,82 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6059AC4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Dec 2022 15:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A075FC4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Dec 2022 19:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbiLJPPI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Dec 2022 10:15:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58602 "EHLO
+        id S229759AbiLJTHR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Dec 2022 14:07:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbiLJPPH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Dec 2022 10:15:07 -0500
-X-Greylist: delayed 644 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 10 Dec 2022 07:15:06 PST
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1D91AA32
-        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 07:15:06 -0800 (PST)
-DKIM-Signature: a=rsa-sha256; b=AIqE8nIidxFj9sQ70ILk6zwpDv+YydLmRhIrPXjz8t2I1d/UCkaeX77dbcMp7WnbgUf7fGNqAGXoNWbkt0TJTOr0mURi3y89+zIpphzAnaNoR8ECJn4Lp8oF8NwL+V6ElVRDKeH+QHMGkqMRxZ7OSDaXVWHb//4onJUfD7Lw7WaYXr5Hj524kj4JtzcFWaGtw0NCMJ0SBN1YVa7r4zkec8W8jt/VAriLr0zW+bcB6sArxM3feSKMbWOoW9cRN9e045P70bPQtKJQBqQ8vFWGxtbakxMv6iSooRNS4LpB8xYSUFmCEkce5MIjLEBiQI5zrFO/6BYbf71/YGoOzUli3A==; s=purelymail3; d=iskren.info; v=1; bh=cQLGZDbFHIKXmQ8daeDFExWP2epemSRMiQcQS0P5txE=; h=Received:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=3/WzdjgYAY/a2KOBdmeo6wWo9iW6qFGNblwHur235QqdpCYz4nqAT0rIiELo/fl8LVzNNp9HJE/EvKgNAa6yhz4XtNzz4J6qRGqJeWvnBznupFm48x/R039b9VGArqNcSJqZIHBxVU6Vhub/D6TsY9vRAa04UNgmQAXfhjnBwMBd/8cFgFjVFKOmwJ20q9tq0LlzSUokidDOp31PuAmaC3znd7ObLLhUKEKuDTRhWis4KIA0wFAk1gy1wlAWwzD4qwKENbNjeFz8TilOmFxySB2kgsnWWGSYm8ZGFChOlGtZ6QDeTqmB+V82Y0eTvTEX4UlMd2T0SAL3JZdZTAAhrQ==; s=purelymail3; d=purelymail.com; v=1; bh=cQLGZDbFHIKXmQ8daeDFExWP2epemSRMiQcQS0P5txE=; h=Feedback-ID:Received:Subject:To:From;
-Feedback-ID: 10275:2339:null:purelymail
-X-Pm-Original-To: linux-clk@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1405222646;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sat, 10 Dec 2022 15:03:51 +0000 (UTC)
-Message-ID: <fbb5fadd-c2b4-b689-1285-45440b55fe31@iskren.info>
-Date:   Sat, 10 Dec 2022 17:03:48 +0200
+        with ESMTP id S229545AbiLJTHQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Dec 2022 14:07:16 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA46D114
+        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 11:07:15 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id l8so8353719ljh.13
+        for <linux-clk@vger.kernel.org>; Sat, 10 Dec 2022 11:07:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rt87QwziOHZdtbJ1ao1dwblyqOKmgeduTTRhwjbbl/o=;
+        b=pvG6T4UPslaseHi8Os6nLg62w/nrpVwWxTtKrVaZyE9+VEGAzAHczmCnj3ONGTMOo/
+         2nPsJaxbWHstajBtqTMPNQ7nCFENCZ2bXDW1OSS2a3PzcSEqbCyOz98ByuCV7NnUMT7U
+         K4IKFgzziIlZg5lq1J1TYjnI/E2dG+iszWc0E3BPCcuEz02eXchFQy8AIhSOJxdbuway
+         kpuo74BKSzAPx5Mtd5wY6MFpKPJFNLRoqlq5+2chJVmHAk3klpe7niuY40wAGuMBnHF9
+         ZV0/B1YgpkOoY86ARC6v20ZAlz9VEnKluuygzr84bZyVWLljBDpAovwRLxuqPpceYkAY
+         KU5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rt87QwziOHZdtbJ1ao1dwblyqOKmgeduTTRhwjbbl/o=;
+        b=d9DYRsO+JydxT5XLZ2MZKjaGwbq63EH5lJUVwOKp5I/OsLv2AQdlNQyfEgMBQC82M3
+         GbWycV9aNeFOiiMVsAqhF0uhyuqqqKEoFyHoUvYXitO/Nzhyu+/K2ocPwEStx2KvBuYO
+         8M55rl8M6YPDt/drA9eKcM9ZWXvgtiBAuWjX2PiHLKYlo72F71pB/I6FjPcQbAaTf570
+         NFtr1yPUdp16uwPSCb9ZWQSOMFHrlrUpsUnJewRCSIdHU+/N3VfHOxErauG2Tnib6X3d
+         IZQlfKaFOXkKcW6DtPG8FjsrAuFnyf0g8VIsPCVawWt8qh69wXdJJs7A4afXMmQ7Dez+
+         50dQ==
+X-Gm-Message-State: ANoB5pn254B0L8XfkfmwZq88iKXcdGgO0ArlzofmQY11m2GXM0003m7T
+        mnXwOgI0FtoB5hWYjEkHD5okZg==
+X-Google-Smtp-Source: AA0mqf5onjlj9KftX6EzEHDyUq7fYgEQKLRJKp0bfF7W1KI+oiNFwO9gU3yESbI8U/GSQ3Jdmeo3Fg==
+X-Received: by 2002:a2e:be28:0:b0:26f:db35:2e96 with SMTP id z40-20020a2ebe28000000b0026fdb352e96mr5076618ljq.8.1670699233442;
+        Sat, 10 Dec 2022 11:07:13 -0800 (PST)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id v14-20020a2e7a0e000000b00279e93c9c25sm701622ljc.29.2022.12.10.11.07.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Dec 2022 11:07:12 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 1/3] clk: qcom: dispcc-sm6115: use parent_hws for disp_cc_mdss_rot_clk
+Date:   Sat, 10 Dec 2022 22:07:10 +0300
+Message-Id: <20221210190712.451247-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH] clk: qcom: gcc-sm6115: Use floor_ops for SDCC1/2 core clk
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org, krzysztof.kozlowski@linaro.org
-Cc:     patches@linaro.org, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20221209123910.178609-1-konrad.dybcio@linaro.org>
-From:   Iskren Chernev <me@iskren.info>
-In-Reply-To: <20221209123910.178609-1-konrad.dybcio@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Rework disp_cc_mdss_rot_clk to use parent_hws instead of parent_names.
 
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/dispcc-sm6115.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 12/9/22 14:39, Konrad Dybcio wrote:
-> Just like in case of other SoCs change SDCC1/SDCC2 ops
-> to floor to avoid overclocking the controller.
-> 
-> Fixes: cbe63bfdc54f ("clk: qcom: Add Global Clock controller (GCC) driver for SM6115")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+index 818bb8f4637c..1937edf23f21 100644
+--- a/drivers/clk/qcom/dispcc-sm6115.c
++++ b/drivers/clk/qcom/dispcc-sm6115.c
+@@ -466,8 +466,8 @@ static struct clk_branch disp_cc_mdss_rot_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "disp_cc_mdss_rot_clk",
+-			.parent_names = (const char *[]){
+-				"disp_cc_mdss_rot_clk_src",
++			.parent_hws = (const struct clk_hw*[]) {
++				&disp_cc_mdss_rot_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
+-- 
+2.30.2
 
-Reviewed-by: Iskren Chernev <me@iskren.info>
-
-> ---
->  drivers/clk/qcom/gcc-sm6115.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
-> index 565f9912039f..5b8222fea2f7 100644
-> --- a/drivers/clk/qcom/gcc-sm6115.c
-> +++ b/drivers/clk/qcom/gcc-sm6115.c
-> @@ -1258,7 +1258,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
->  		.name = "gcc_sdcc1_apps_clk_src",
->  		.parent_data = gcc_parents_1,
->  		.num_parents = ARRAY_SIZE(gcc_parents_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->  	},
->  };
->  
-> @@ -1305,7 +1305,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
->  		.name = "gcc_sdcc2_apps_clk_src",
->  		.parent_data = gcc_parents_11,
->  		.num_parents = ARRAY_SIZE(gcc_parents_11),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->  		.flags = CLK_OPS_PARENT_ENABLE,
->  	},
->  };
