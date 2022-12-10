@@ -2,146 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9273C10F31
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Dec 2022 22:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE76C4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Dec 2022 07:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbiLIWYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Dec 2022 17:24:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36744 "EHLO
+        id S229470AbiLJHDM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Dec 2022 02:03:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbiLIWYJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Dec 2022 17:24:09 -0500
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB2259D8BE
-        for <linux-clk@vger.kernel.org>; Fri,  9 Dec 2022 14:24:07 -0800 (PST)
-Received: by mail-oo1-xc36.google.com with SMTP id v62-20020a4a7c41000000b004a0a214dfbaso893894ooc.9
-        for <linux-clk@vger.kernel.org>; Fri, 09 Dec 2022 14:24:07 -0800 (PST)
+        with ESMTP id S229468AbiLJHDL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Dec 2022 02:03:11 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0448BC8;
+        Fri,  9 Dec 2022 23:03:09 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id jn7so7114053plb.13;
+        Fri, 09 Dec 2022 23:03:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0niFOJtseZKpNqdp7Vx1SkJWAbHvAgltgpslEU1rios=;
-        b=ZthfjG8mjewWB9eae366IW4b62xtMBDXTGmfIMRwYZeVDo9XwCKj3gbixD0w95mX7d
-         mHgExb1PF8V8wqmwB5OwisI4eDrmRc5fu0ptzV/55nCqzQNi1SCtxvLWW3MmC7NSJrMe
-         cXnW4IwbeKdBWO6R0lqa6uD77PsBY+ifPZxykrPR5yDyq6KeMPKR2ojHSUaeINq1AzKT
-         KidqCJkTyn1ANnE7cgACv665rsc6ktCRCBxlO8mEUBjlOs3oxSbfhXd/CxEoazW1H6M3
-         v8y1U8nE4ZJcsGx3Dtf/mm1kk7Dea6nO1LF6bXf12OdhSrVV397bXq4IuwbDWkKwPm5n
-         aoAA==
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2JRsLt5pIj5AWLVtbICugD8KtAqaAaJj0VNGP9H///Q=;
+        b=drYcMpVK9MQMYBULJ7xVbG6fl73I1AdoG2n1J4faUFphnPioQJcumks7+/VT/NXdiO
+         HptHhHOo5983tukdLvEB3K8/DdMo49WsRZqobeXgeHzWhfL46Hwgu0YWfhJl/wPvIb06
+         iAQM3TXfO4K/oqlC7eoiUsM2d/+Q+RbtByXDbtpZrZSwUQvzFLWUAlMoYUUN3gbA8mCR
+         6N3MrZ7bu1TurRBFWJqGd0ctq84a/taWlx0z9xvhG00s44UCu57yFdrKi9dQPM4Ziofw
+         ilm7sShvBEwhhpLrEeajVDYgN0haw+fQF0YJ+m63ANfTWE8YB2UQDlTGOiz/jKMrgov8
+         czcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0niFOJtseZKpNqdp7Vx1SkJWAbHvAgltgpslEU1rios=;
-        b=7Ek+p/ZxhaRHQ8m3jG0ntb0jUbhZH+LGC+FygLb2SwhHXyjX6BUy+6lGPR7Njosez0
-         6M2VUPm4+xFQEWzM5MXCgBzFtMEw2hGR4te14p4K+t4qkWK+AUmLCASMaf28nWJAp+OL
-         eVGgmyn2ry61ClNumkcEi6jIrhLHwWaHEVZzcLTEiqSlsRvGi/a0bSibMKQ84LZ8n4Ko
-         agBzDVLofS2YxCA5vUFEdRPl43y4r/U4MIGBrqwL5Jza25tujEK1HIjf71Y/nPZhqoXc
-         vcOET/QxRJHmVlvnbVNvJwMW/UFX1SWez193blNLzTeyaoOAYVW/3Ibeo3ogzM7v4BqF
-         qFxw==
-X-Gm-Message-State: ANoB5plty0+2EeDu7ktwP/4e1HTO/MlHje28w7Po7idebsZlMZfdYek1
-        7vde9qhxZSz5MUyXAgbM6Et7JvtzyGN3vD88
-X-Google-Smtp-Source: AA0mqf6YezcedWqO5/DfQ5Hh5KjmW+9LYC+dlAS/gPvAELaB4jrAICD5YQomLLQmCgeSgLlXx2Ehtg==
-X-Received: by 2002:a4a:dc8c:0:b0:4a0:c270:2f3f with SMTP id g12-20020a4adc8c000000b004a0c2702f3fmr4138546oou.3.1670624647102;
-        Fri, 09 Dec 2022 14:24:07 -0800 (PST)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id c127-20020a4a4f85000000b004a0ad937ccdsm882932oob.1.2022.12.09.14.24.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 14:24:06 -0800 (PST)
-Date:   Fri, 9 Dec 2022 17:24:03 -0500
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
-Message-ID: <Y5O1g8/69tCfmdW6@fedora>
-References: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
- <20221205225042.GA2812115-robh@kernel.org>
- <OS0PR01MB592211AD4D0AE23DA7075DD5861B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdX2=AwerQZS2cqR4exq_QNtt=Fwp5KBcmPr1qmOBNOSAg@mail.gmail.com>
- <87sfhsgb9e.ffs@tglx>
- <OS0PR01MB59228CED6187C7B19776CE22861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <878rjjfprw.ffs@tglx>
- <OS0PR01MB5922B590AB9791B9741E2A1D861A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <87sfhrdure.ffs@tglx>
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2JRsLt5pIj5AWLVtbICugD8KtAqaAaJj0VNGP9H///Q=;
+        b=yTHckDUajXOpk36XttkrtFGZLL6AVxJSFMcaDlBMXE4FsNFHx3Fky1+rDxX3t9rzGR
+         6DgX9GpwWsnSY0creXYs7qge6yA2r83coA33FStWFusb2LtA+0NTiFlCWC1mSBm/y2eg
+         d/Y0unwezPUTGuhExaJDwistkzTOdnGddeiYj9YggLHO3o1LOU8KIPtdjN7g4KwvPRCP
+         jnrp31ZzEIYTje3HrwpaPlXVrOygVIYYcVuVrJX1F2KThMv4IjiLbV9Rg6kFyJSdIYL7
+         i5jvvd3l6ogvV5eJvOSIpiCtJYL00ihlWoiNJjmWUq3yeMMLkObsT34ULcuGHGqiBkdL
+         Oqxg==
+X-Gm-Message-State: ANoB5pl/opgkPQWPBttU33M5hes1I2yh99W0OIdH1RdRM6bE1r0+WJPd
+        CeTGHx6cMMgiWm/tv2ImLiDnChCMsZrSDg==
+X-Google-Smtp-Source: AA0mqf42JD7hGze8TaqLHVToQM2Rts6joBYCSAFb1X8pzLtiZ3qC5ogUG19oZ/zbLBZyVzo9BF91Yg==
+X-Received: by 2002:a17:902:8a8d:b0:189:c536:c745 with SMTP id p13-20020a1709028a8d00b00189c536c745mr8421302plo.2.1670655788962;
+        Fri, 09 Dec 2022 23:03:08 -0800 (PST)
+Received: from Mahakal ([2401:4900:1cc4:a635:d9e5:2161:2ffd:ffe6])
+        by smtp.gmail.com with ESMTPSA id b7-20020a170903228700b00189951514c4sm2331108plh.206.2022.12.09.23.03.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Dec 2022 23:03:08 -0800 (PST)
+Date:   Sat, 10 Dec 2022 12:33:02 +0530
+From:   "<Vishal Badole>" <badolevishal1116@gmail.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
+        mintupatel89@gmail.com, vimal.kumar32@gmail.com
+Subject: Re: [PATCH v5] Common clock: To list active consumers of clocks
+Message-ID: <20221210070301.GA3846@Mahakal>
+References: <1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YkhtusH7Lbb0s/D9"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87sfhrdure.ffs@tglx>
+In-Reply-To: <1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Stephen,
+We are eagerly waiting for ypur response. As per your suggestions, we have updated and sent another gerrit with message Id
+<1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>. In this new patch we are listing the clock consumers name along 
+with consumer id in clk_summary.
 
---YkhtusH7Lbb0s/D9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please review the latest patch.
 
-On Wed, Dec 07, 2022 at 05:49:09PM +0100, Thomas Gleixner wrote:
-> On Wed, Dec 07 2022 at 11:35, Biju Das wrote:
-> > Counter, It can be used as measuring the processing time of DRP-AI.
->=20
-> Sigh. You can do that with the architected timer too, especially when
-> you are going to do the measurement in user space.
->=20
-> clock_gettime(), which uses the VDSO with the architected timer is fast
-> to access and accurate.
->=20
-> Thanks,
->=20
->         tglx
+New patch details:
 
-Hi Biju,
+Message ID:
+<1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>
+Subject:        [PATCH v5] Common clock: To list active consumers of
+clocks
 
-It's true that you could implement a Counter driver to achieve what you
-want here, but I don't think that's the most apt interface for this
-device. Your device is used to measure the processing time of DRP-AI, so
-modeling this as a clocksource seems like the right approach to take.
-
-Of course, if there is something missing from clocksource/clockevent
-that you need, then it should be added to the subsystem. So let's try to
-narrow down exactly what functionality you need.
-
-You gave a Counter use-case example earlier where you can configure the
-ceiling value of the timer (e.g. to 1usec or 10000000usec) and push
-Counter events on the interrupts that trigger off that that
-configuration; the Counter subsystem can logs the current system time
-everytime a Counter event is pushed.
-
-Could the same thing be achieved using clockevents framework instead?
-With this approach you would register an event to fire in the future
-(e.g. 1usec or 10000000usec) and then call clock_gettime() to get the
-current system when you're notified of the event. Would this approach
-work for your use-case, or is something else missing here?
-
-William Breathitt Gray
-
---YkhtusH7Lbb0s/D9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY5O1gwAKCRC1SFbKvhIj
-K8zuAP4uMkkxnrQ9VzRVJNsRxxSLOWknl898zSxxh2gIpvALaQD8DStd05P+6buF
-P9QDJciknANFclFf6QmJ5Pg8Sh6nCgs=
-=/qcp
------END PGP SIGNATURE-----
-
---YkhtusH7Lbb0s/D9--
+Regards,
+Vishal
