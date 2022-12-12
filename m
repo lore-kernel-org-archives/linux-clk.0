@@ -2,139 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BABC00145
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 13:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E937C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 13:58:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232901AbiLLNh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Dec 2022 08:37:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
+        id S233239AbiLLN66 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Dec 2022 08:58:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232866AbiLLNh1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 08:37:27 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CB3214
-        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 05:36:54 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id y16so12120698wrm.2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 05:36:54 -0800 (PST)
+        with ESMTP id S233244AbiLLN6x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 08:58:53 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAD9ECC4
+        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 05:58:50 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id ay14-20020a05600c1e0e00b003cf6ab34b61so5236682wmb.2
+        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 05:58:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ItHz6t2ewO4AnHbrSJqvbUyq3yTnXlKp1R0Fb2eFkds=;
-        b=N2O18U/7ySTvucEf23cqiCiMoo6yymhxiOdfsLFpMIFgk6WLdQebVN7kWzeF92iPPx
-         qS1jbp91dpwVJU9qD7lWfOdvnyB1Z9zXgzFeQCbFVAwa8Scx0qeyPKmgO9sRQRrafypm
-         9bd628nG3AkihVYcVcrYySalHBoPwgESBSq+r7CHOl7nnjd165JNugNl17u+Fd0HISHI
-         Tzf79Tl4ehrOCy36xXKEBwdVfGdLXMUjC3riORtfKG6FOQTIzvIJr7MXYF/9lrkw4d8C
-         5zXT6F4eEFMMsjRaPXfnA4RZsZBNDfvJbnc3GDaIyGLUbQtJG0U30JoNbigkqVmC0lpp
-         okXw==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SrwQ/Z4IreXW+hFxY6PA7uZd/VCLbBUnFznKWdDotp8=;
+        b=X/2sLRBjQ6U2PUOiuvTlhlKbZ9MAIT48e7tuvdfZYc2GfTVSLMe5YelNw1pdhp/Rl0
+         /3DrWvybkA1gdHu6FeW1Kkl8FQ4PN4vDRb6DQsQMIAGLE+agqhgKs1YnIN4FHVP2eSPV
+         fN6P7OWMMrXMpIiHaoS1tohZ/ldlr+14TU6gpbLsprtkR8fghASAVNBDENl5CDj+ZVLf
+         ZrtJ60s8DLKwazjCbFRODmvp9kf9SnJbJWR7wkg7c9JfNym4rj8V19cvlxv9O1Fyi0Ew
+         tky7tmmezS83sPCh85Jka361QWzVYnS1/4xG8j4wEliCBMU7GmUlr9KVM1tSZdHjZAGH
+         R6Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ItHz6t2ewO4AnHbrSJqvbUyq3yTnXlKp1R0Fb2eFkds=;
-        b=G5aUPajVW0Yb0j2plMMQARlEQ5+kW8ZZ/cX9l9BzMrqBcexQKx361YCzG1qyV14yer
-         r5IMFdu8H5AMShb5yvHZWXA0y6S6TlNzxCVGAPytNvMnN7We9m1V4laxRBKjzsETbfqR
-         lcMEQ/JGuZ6PZfperEfpiE438qUNbDP1AvHoNLEpDE3dPgNXnL/sf9nykG2N1WD4Q0dF
-         33b2admAWCg52GwIw9d3JqAZLd/tJ9w0NmfqOCV5BALJDYGfC579RllEYei7cqHpf5lL
-         Mg3DGRjmzfIjhu9iRtSEBkAVEgKme8ihP5IUEgFpF8AomcFDdgzFMyj3W0KcnfQdT06w
-         W0cw==
-X-Gm-Message-State: ANoB5pnlpKyKYC4XTivsrcvVTsV77t3JmgIMmNELHWfFCNqCPMdCiaGF
-        WSYeAx/PN9IViMTMNrCZRnpgTg==
-X-Google-Smtp-Source: AA0mqf5ntngcCwZ7wE+zvEqGbMy3mZDegjmfiiJz2eOr5l/VJzQ14Lcfn8R1BgC9kCYQO1pZ9DbrMQ==
-X-Received: by 2002:a5d:4888:0:b0:232:be5c:ec7e with SMTP id g8-20020a5d4888000000b00232be5cec7emr10190798wrq.58.1670852212799;
-        Mon, 12 Dec 2022 05:36:52 -0800 (PST)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SrwQ/Z4IreXW+hFxY6PA7uZd/VCLbBUnFznKWdDotp8=;
+        b=rY6O3Ni9J+Tos7QYWoNZBHP/OUiLeskzdcmpIV39VOehLFURTpbS98VDezbKtmXv29
+         ojm8cZAkm4lchVreDXR/zQEZkMpAQK5NF33Nv1ibDYQl0wzmEugjJOMpPR1J7rXZ1N/y
+         Pv+j0z2kkMFUk4HRHKagSR2WQuwdMVxTX9yWgebJWPph8et3KXgsXY0AaG7KuKSrCVgz
+         /eXsmBiDfEV5oAw6RMM//97N+Rlsf/Z06AJmG87KJY+LHRM4pd37RToiNsbThgVh5Q5Y
+         GxlUepYyOvAbIDnXwAye7TtCkdeKHxj8A7a4+V4CTLHIaku/j043EiH1euPTJdiJKhPx
+         0AAA==
+X-Gm-Message-State: ANoB5plBkvzek9ZSITVFa/UoncdqiFvQBsm2o9nQqcrYgF8/3i3evE8A
+        GfI1bydqicO6QVc/PJBDKLmXfQ==
+X-Google-Smtp-Source: AA0mqf6XAGOuVepLC5bcp6CjC+gBwt+ZuvWZE1L7CAhX0Z34rq43pHR19ttU9uAYyaSsdVhxkhBOUA==
+X-Received: by 2002:a1c:7c15:0:b0:3cf:7197:e67c with SMTP id x21-20020a1c7c15000000b003cf7197e67cmr12189388wmc.25.1670853529485;
+        Mon, 12 Dec 2022 05:58:49 -0800 (PST)
 Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
-        by smtp.gmail.com with ESMTPSA id z5-20020adff1c5000000b002258235bda3sm8944377wro.61.2022.12.12.05.36.51
+        by smtp.gmail.com with ESMTPSA id m5-20020a05600c4f4500b003d1e1f421bfsm10159615wmq.10.2022.12.12.05.58.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 05:36:51 -0800 (PST)
-Date:   Mon, 12 Dec 2022 14:36:50 +0100
+        Mon, 12 Dec 2022 05:58:48 -0800 (PST)
+Date:   Mon, 12 Dec 2022 14:58:47 +0100
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Vadim Fedorenko <vadfed@fb.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
-Message-ID: <Y5cucrZjsMgZcHDf@nanopsycho>
-References: <Y48CS98KYCMJS9uM@nanopsycho>
- <20221206092705.108ded86@kernel.org>
- <Y5CQ0qddxuUQg8R8@nanopsycho>
- <20221207085941.3b56bc8c@kernel.org>
- <Y5Gc6E+mpWeVSBL7@nanopsycho>
- <20221208081955.335ca36c@kernel.org>
- <Y5IR2MzXfqgFXGHW@nanopsycho>
- <20221208090517.643277e8@kernel.org>
- <Y5MAEQ74trsNFQQc@nanopsycho>
- <20221209081942.565bc422@kernel.org>
+Cc:     Maciek Machnikowski <maciek@machnikowski.net>,
+        "'Kubalewski, Arkadiusz'" <arkadiusz.kubalewski@intel.com>,
+        'Vadim Fedorenko' <vfedorenko@novek.ru>,
+        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
+        'Paolo Abeni' <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y5czl6HgY2GPKR4v@nanopsycho>
+References: <Y4dNV14g7dzIQ3x7@nanopsycho>
+ <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y4oj1q3VtcQdzeb3@nanopsycho>
+ <20221206184740.28cb7627@kernel.org>
+ <10bb01d90a45$77189060$6549b120$@gmail.com>
+ <20221207152157.6185b52b@kernel.org>
+ <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
+ <Y5MW/7jpMUXAGFGX@nanopsycho>
+ <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
+ <20221209083104.2469ebd6@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20221209081942.565bc422@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221209083104.2469ebd6@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Dec 09, 2022 at 05:19:42PM CET, kuba@kernel.org wrote:
->On Fri, 9 Dec 2022 10:29:53 +0100 Jiri Pirko wrote:
->> Thu, Dec 08, 2022 at 06:05:17PM CET, kuba@kernel.org wrote:
->> >On Thu, 8 Dec 2022 17:33:28 +0100 Jiri Pirko wrote:  
->> >> For any synce pin manipulation over dpll netlink, we can use the netns
->> >> check of the linked netdev. This is the netns aware leg of the dpll,
->> >> it should be checked for.  
->> >
->> >The OCP card is an atomic clock, it does not have any networking.  
+Fri, Dec 09, 2022 at 05:31:04PM CET, kuba@kernel.org wrote:
+>On Fri, 9 Dec 2022 15:09:08 +0100 Maciek Machnikowski wrote:
+>> On 12/9/2022 12:07 PM, Jiri Pirko wrote:
+>> > Looking at the documentation of the chips, they all have mupltiple DPLLs
+>> > on a die. Arkadiusz, in your proposed implementation, do you model each
+>> > DPLL separatelly? If yes, then I understand the urgency of need of a
+>> > shared pin. So all DPLLs sharing the pin are part of the same chip?
+>> > 
+>> > Question: can we have an entity, that would be 1:1 mapped to the actual
+>> > device/chip here? Let's call is "a synchronizer". It would contain
+>> > multiple DPLLs, user-facing-sources(input_connector),
+>> > user-facing-outputs(output_connector), i/o pins.
+>> > 
+>> > An example:
+>> >                                SYNCHRONIZER
+>> > 
+>> >                               ┌───────────────────────────────────────┐
+>> >                               │                                       │
+>> >                               │                                       │
+>> >   SyncE in connector          │              ┌─────────┐              │     SyncE out connector
+>> >                 ┌───┐         │in pin 1      │DPLL_1   │     out pin 1│    ┌───┐
+>> >                 │   ├─────────┼──────────────┤         ├──────────────┼────┤   │
+>> >                 │   │         │              │         │              │    │   │
+>> >                 └───┘         │              │         │              │    └───┘
+>> >                               │              │         │              │
+>> >                               │           ┌──┤         │              │
+>> >    GNSS in connector          │           │  └─────────┘              │
+>> >                 ┌───┐         │in pin 2   │                  out pin 2│     EXT SMA connector
+>> >                 │   ├─────────┼───────────┘                           │    ┌───┐
+>> >                 │   │         │                           ┌───────────┼────┤   │
+>> >                 └───┘         │                           │           │    │   │
+>> >                               │                           │           │    └───┘
+>> >                               │                           │           │
+>> >    EXT SMA connector          │                           │           │
+>> >                 ┌───┐   mux   │in pin 3      ┌─────────┐  │           │
+>> >                 │   ├────┬────┼───────────┐  │         │  │           │
+>> >                 │   │    │    │           │  │DPLL_2   │  │           │
+>> >                 └───┘    │    │           │  │         │  │           │
+>> >                          │    │           └──┤         ├──┘           │
+>> >                          │    │              │         │              │
+>> >    EXT SMA connector     │    │              │         │              │
+>> >                 ┌───┐    │    │              │         │              │
+>> >                 │   ├────┘    │              └─────────┘              │
+>> >                 │   │         │                                       │
+>> >                 └───┘         └───────────────────────────────────────┘
+>> > 
+>> > Do I get that remotelly correct?  
 >> 
->> Sure, so why it has to be netns aware if it has nothing to do with
->> networking?
->
->That's a larger question, IDK if broadening the scope of the discussion
->will help us reach a conclusion. 
->
->The patchset as is uses network namespaces for permissions:
->
->+		.flags	= GENL_UNS_ADMIN_PERM,
-
-Yeah, I wonder if just GENL_ADMIN_PERM wuldn't be more suitable here...
-
-
->
->so that's what I'm commenting on - aligning visibility of objects with
->already used permissions.
->
->> >> I can't imagine practically havind the whole dpll instance netns aware.
->> >> Omitting the fact that it really has no meaning for non-synce pins, what
->> >> would be the behaviour when for example pin 1 is in netns a, pin 2 in
->> >> netns b and dpll itself in netns c?  
->> >
->> >To be clear I don't think it's a bad idea in general, I've done 
->> >the same thing for my WIP PSP patches. But we already have one
->> >device without netdevs, hence I thought maybe devlink. So maybe
->> >we do the same thing with devlink? I mean - allow multiple devlink
->> >instances to be linked and require caps on any of them?  
+>> It looks goot, hence two corrections are needed:
+>> - all inputs can go to all DPLLs, and a single source can drive more
+>>   than one DPLL
+>> - The external mux for SMA connector should not be a part of the
+>>   Synchronizer subsystem - I believe there's already a separate MUX
+>>   subsystem in the kernel and all external connections should be handled
+>>   by a devtree or a similar concept.
 >> 
->> I read this 5 times, I'm lost, don't understand what you mean :/
+>> The only "muxing" thing that could potentially be modeled is a
+>> synchronizer output to synchronizer input relation. Some synchronizers
+>> does that internally and can use the output of one DPLL as a source for
+>> another.
 >
->Sorry I was replying to both paragraphs here, sorry.
->What I thought you suggested is we scope the DPLL to whatever the
->linked netdevs are scoped to? If netns has any of the netdevs attached
->to the DPLL then it can see the DPLL and control it as well.
+>My experience with DT and muxes is rapidly aging, have you worked with
+>those recently? From what I remember the muxes were really.. "embedded"
+>and static compared to what we want here.
 
-Okay, that would make sense.
-GENL_UNS_ADMIN_PERM | GENL_UNS_ADMIN_PERM
-then.
+Why do you think we need something "non-static"? The mux is part of the
+board, isn't it? That sounds quite static to me.
+
 
 >
->What I was saying is some DPLL have no netdevs. So we can do the same
->thing with devlinks. Let the driver link the DPLL to one or more
->devlink instances, and if any of the devlink instances is in current
->netns then you can see the DPLL.
+>Using DT may work nicely for defining the topology, but for config we
+>still need a different mechanism.
 
-I don't think that would be needed to pull devlink into the picture.
-If not netdev is linked to dpll, GENL_ADMIN_PERM would apply.
+"config" of what? Each item in topology would be configure according to
+the item type, won't it?
 
+[...]
