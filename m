@@ -2,114 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1357AC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 12:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BABC00145
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 13:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231817AbiLLMoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Dec 2022 07:44:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52738 "EHLO
+        id S232901AbiLLNh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Dec 2022 08:37:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231601AbiLLMoV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 07:44:21 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD8B911A2D
-        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 04:44:18 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id b24-20020a05600c4a9800b003d21efdd61dso3478144wmp.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 04:44:18 -0800 (PST)
+        with ESMTP id S232866AbiLLNh1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 08:37:27 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CB3214
+        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 05:36:54 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id y16so12120698wrm.2
+        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 05:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=n7ey5OE4WbD1JahXkqzMDy7rEZ6qWxzQ6t8f0HPSRNs=;
-        b=qUTeXZxuhuYycyobAALAsMsiPtMXWTK0cbENHii/uMQzfin6RsG6UXWghBAnEMZbX9
-         pLTDHrCfmf+gaM4wx+Z3w+++qqLWsUHw2TiVPC+gX5u0WCqV/oBny6cbQDTjmibNQ/0L
-         J2VSja4ME/RDtxUoM2MrSDnRXuqGITyuxog8Nc5kp+WrslUqLFD/0EizAilSrVAt9Nwr
-         b+E6Ts0aE7K07sTpFRlyxkwNHxj3RTOJy3YVPY4whhl14QrkZsIUps3ML6uX2g/LmheS
-         5gUiQg5x478OLPYtDTZ2U6RAJIKX7zrCS+HVXoTsDXHsfhgMWlVt3V4rxxTdZHsLYC36
-         qM2w==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ItHz6t2ewO4AnHbrSJqvbUyq3yTnXlKp1R0Fb2eFkds=;
+        b=N2O18U/7ySTvucEf23cqiCiMoo6yymhxiOdfsLFpMIFgk6WLdQebVN7kWzeF92iPPx
+         qS1jbp91dpwVJU9qD7lWfOdvnyB1Z9zXgzFeQCbFVAwa8Scx0qeyPKmgO9sRQRrafypm
+         9bd628nG3AkihVYcVcrYySalHBoPwgESBSq+r7CHOl7nnjd165JNugNl17u+Fd0HISHI
+         Tzf79Tl4ehrOCy36xXKEBwdVfGdLXMUjC3riORtfKG6FOQTIzvIJr7MXYF/9lrkw4d8C
+         5zXT6F4eEFMMsjRaPXfnA4RZsZBNDfvJbnc3GDaIyGLUbQtJG0U30JoNbigkqVmC0lpp
+         okXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7ey5OE4WbD1JahXkqzMDy7rEZ6qWxzQ6t8f0HPSRNs=;
-        b=NO9f9lNE7vemBhp/WdIk1S9A4HbQ2TZBRLzUYHj5Av8NQUYtHTRS1nfO40D6ncTBB/
-         GucjvzJMq7T5d4XN+rpEHCfsheLs+u0BTKqRqNbfp0cVV0d1KpQnu5TBy4KkPsg/pCJ7
-         EaITeN3WujyJAVi/Sj7pmVPBWlMR6GRTqAWo7nA0tGFGEMn3Q99m/hpZZH+moVBJwSkM
-         0PmRonZYoF1uFWTebjGOzDhSpiOpf1CC7MqzZOmkihtegQaQsv4fV0DCr4uien0EczOP
-         a/02cS6DJ3unFM6j0pg94tgilbIio+js5TlHgFCx9Oix2pJA1LEiXhOBy5n7n8hktmSm
-         rY2w==
-X-Gm-Message-State: ANoB5pkOHZP5Ci0wej+5kDpjPzwDxno+JzAKj4BE+KJ1DRT1ys+4ArYk
-        Oy3ImWF9003q/EBt+v5mtqbN2w==
-X-Google-Smtp-Source: AA0mqf5LTY9uPSvi1G6cqxJF3CcL4A+t/hPjYQhFazq21Aj9/MjvP9uQfiQ6LD0UD5sXSAcK4yzQGw==
-X-Received: by 2002:a05:600c:4691:b0:3d0:5254:8a43 with SMTP id p17-20020a05600c469100b003d052548a43mr15351923wmo.38.1670849057277;
-        Mon, 12 Dec 2022 04:44:17 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id c1-20020a05600c0a4100b003d1e3b1624dsm10251490wmq.2.2022.12.12.04.44.16
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ItHz6t2ewO4AnHbrSJqvbUyq3yTnXlKp1R0Fb2eFkds=;
+        b=G5aUPajVW0Yb0j2plMMQARlEQ5+kW8ZZ/cX9l9BzMrqBcexQKx361YCzG1qyV14yer
+         r5IMFdu8H5AMShb5yvHZWXA0y6S6TlNzxCVGAPytNvMnN7We9m1V4laxRBKjzsETbfqR
+         lcMEQ/JGuZ6PZfperEfpiE438qUNbDP1AvHoNLEpDE3dPgNXnL/sf9nykG2N1WD4Q0dF
+         33b2admAWCg52GwIw9d3JqAZLd/tJ9w0NmfqOCV5BALJDYGfC579RllEYei7cqHpf5lL
+         Mg3DGRjmzfIjhu9iRtSEBkAVEgKme8ihP5IUEgFpF8AomcFDdgzFMyj3W0KcnfQdT06w
+         W0cw==
+X-Gm-Message-State: ANoB5pnlpKyKYC4XTivsrcvVTsV77t3JmgIMmNELHWfFCNqCPMdCiaGF
+        WSYeAx/PN9IViMTMNrCZRnpgTg==
+X-Google-Smtp-Source: AA0mqf5ntngcCwZ7wE+zvEqGbMy3mZDegjmfiiJz2eOr5l/VJzQ14Lcfn8R1BgC9kCYQO1pZ9DbrMQ==
+X-Received: by 2002:a5d:4888:0:b0:232:be5c:ec7e with SMTP id g8-20020a5d4888000000b00232be5cec7emr10190798wrq.58.1670852212799;
+        Mon, 12 Dec 2022 05:36:52 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id z5-20020adff1c5000000b002258235bda3sm8944377wro.61.2022.12.12.05.36.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 04:44:16 -0800 (PST)
-Date:   Mon, 12 Dec 2022 13:44:13 +0100
-From:   Corentin LABBE <clabbe@baylibre.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     heiko@sntech.de, ardb@kernel.org, davem@davemloft.net,
-        herbert@gondor.apana.org.au, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v10 28/33] arm64: dts: rockchip: rk3399: add crypto node
-Message-ID: <Y5ciHdLeB5rpnPqj@Red>
-References: <20220927075511.3147847-1-clabbe@baylibre.com>
- <20220927075511.3147847-29-clabbe@baylibre.com>
- <CAL_JsqJkHR+iccEf=5SU40Qq+cQpGZRq26TLzec-_Nr-Buu2KQ@mail.gmail.com>
+        Mon, 12 Dec 2022 05:36:51 -0800 (PST)
+Date:   Mon, 12 Dec 2022 14:36:50 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
+Message-ID: <Y5cucrZjsMgZcHDf@nanopsycho>
+References: <Y48CS98KYCMJS9uM@nanopsycho>
+ <20221206092705.108ded86@kernel.org>
+ <Y5CQ0qddxuUQg8R8@nanopsycho>
+ <20221207085941.3b56bc8c@kernel.org>
+ <Y5Gc6E+mpWeVSBL7@nanopsycho>
+ <20221208081955.335ca36c@kernel.org>
+ <Y5IR2MzXfqgFXGHW@nanopsycho>
+ <20221208090517.643277e8@kernel.org>
+ <Y5MAEQ74trsNFQQc@nanopsycho>
+ <20221209081942.565bc422@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqJkHR+iccEf=5SU40Qq+cQpGZRq26TLzec-_Nr-Buu2KQ@mail.gmail.com>
+In-Reply-To: <20221209081942.565bc422@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le Sun, Dec 11, 2022 at 09:51:42AM -0600, Rob Herring a écrit :
-> On Tue, Sep 27, 2022 at 2:56 AM Corentin Labbe <clabbe@baylibre.com> wrote:
-> >
-> > The rk3399 has a crypto IP handled by the rk3288 crypto driver so adds a
-> > node for it.
-> >
-> > Tested-by Diederik de Haas <didi.debian@cknow.org>
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > index 92c2207e686c..4391aea25984 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > @@ -582,6 +582,26 @@ saradc: saradc@ff100000 {
-> >                 status = "disabled";
-> >         };
-> >
-> > +       crypto0: crypto@ff8b0000 {
-> > +               compatible = "rockchip,rk3399-crypto";
-> > +               reg = <0x0 0xff8b0000 0x0 0x4000>;
-> > +               interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +               clocks = <&cru HCLK_M_CRYPTO0>, <&cru HCLK_S_CRYPTO0>, <&cru SCLK_CRYPTO0>;
-> > +               clock-names = "hclk_master", "hclk_slave", "sclk";
-> > +               resets = <&cru SRST_CRYPTO0>, <&cru SRST_CRYPTO0_S>, <&cru SRST_CRYPTO0_M>;
-> > +               reset-names = "master", "lave", "crypto";
-> 
-> This doesn't match the binding:
-> 
-> crypto@ff8b8000: reset-names:2: 'crypto-rst' was expected
-> crypto@ff8b0000: reset-names:2: 'crypto-rst' was expected
-> crypto@ff8b0000: reset-names:1: 'slave' was expected
-> 
+Fri, Dec 09, 2022 at 05:19:42PM CET, kuba@kernel.org wrote:
+>On Fri, 9 Dec 2022 10:29:53 +0100 Jiri Pirko wrote:
+>> Thu, Dec 08, 2022 at 06:05:17PM CET, kuba@kernel.org wrote:
+>> >On Thu, 8 Dec 2022 17:33:28 +0100 Jiri Pirko wrote:  
+>> >> For any synce pin manipulation over dpll netlink, we can use the netns
+>> >> check of the linked netdev. This is the netns aware leg of the dpll,
+>> >> it should be checked for.  
+>> >
+>> >The OCP card is an atomic clock, it does not have any networking.  
+>> 
+>> Sure, so why it has to be netns aware if it has nothing to do with
+>> networking?
+>
+>That's a larger question, IDK if broadening the scope of the discussion
+>will help us reach a conclusion. 
+>
+>The patchset as is uses network namespaces for permissions:
+>
+>+		.flags	= GENL_UNS_ADMIN_PERM,
 
-Hello
+Yeah, I wonder if just GENL_ADMIN_PERM wuldn't be more suitable here...
 
-I will send a patch to fix that
 
-Regards
+>
+>so that's what I'm commenting on - aligning visibility of objects with
+>already used permissions.
+>
+>> >> I can't imagine practically havind the whole dpll instance netns aware.
+>> >> Omitting the fact that it really has no meaning for non-synce pins, what
+>> >> would be the behaviour when for example pin 1 is in netns a, pin 2 in
+>> >> netns b and dpll itself in netns c?  
+>> >
+>> >To be clear I don't think it's a bad idea in general, I've done 
+>> >the same thing for my WIP PSP patches. But we already have one
+>> >device without netdevs, hence I thought maybe devlink. So maybe
+>> >we do the same thing with devlink? I mean - allow multiple devlink
+>> >instances to be linked and require caps on any of them?  
+>> 
+>> I read this 5 times, I'm lost, don't understand what you mean :/
+>
+>Sorry I was replying to both paragraphs here, sorry.
+>What I thought you suggested is we scope the DPLL to whatever the
+>linked netdevs are scoped to? If netns has any of the netdevs attached
+>to the DPLL then it can see the DPLL and control it as well.
+
+Okay, that would make sense.
+GENL_UNS_ADMIN_PERM | GENL_UNS_ADMIN_PERM
+then.
+
+>
+>What I was saying is some DPLL have no netdevs. So we can do the same
+>thing with devlinks. Let the driver link the DPLL to one or more
+>devlink instances, and if any of the devlink instances is in current
+>netns then you can see the DPLL.
+
+I don't think that would be needed to pull devlink into the picture.
+If not netdev is linked to dpll, GENL_ADMIN_PERM would apply.
+
