@@ -2,136 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E82C10F31
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 17:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4782CC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 17:39:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbiLLR2R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Dec 2022 12:28:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
+        id S232575AbiLLRjB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Dec 2022 12:39:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232790AbiLLR2Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 12:28:16 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2C817E0F7;
-        Mon, 12 Dec 2022 09:28:15 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.96,239,1665414000"; 
-   d="scan'208";a="145905854"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 13 Dec 2022 02:28:14 +0900
-Received: from localhost.localdomain (unknown [10.226.93.82])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3F656406F1D2;
-        Tue, 13 Dec 2022 02:28:11 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 01/16] clk: renesas: r9a09g011: Add USB clock and reset entries
-Date:   Mon, 12 Dec 2022 17:27:49 +0000
-Message-Id: <20221212172804.1277751-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221212172804.1277751-1-biju.das.jz@bp.renesas.com>
-References: <20221212172804.1277751-1-biju.das.jz@bp.renesas.com>
+        with ESMTP id S232629AbiLLRiz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 12:38:55 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E7099581
+        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 09:38:54 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id z18so3724539ils.3
+        for <linux-clk@vger.kernel.org>; Mon, 12 Dec 2022 09:38:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TdFQHyfvuXS3dWpzBzfA/eYiqNVFYmQe6KA46+wVeF0=;
+        b=QEUYd8iH6ivq5ZndIww6CcGISu4oucIkeoSemO7r9vMYAu+Q8mnZXaSgmDhjoBkvXr
+         ZmQvKd7z/z+J38FahVjYhTtbw6ZA24XkymAFddvUXruuaCaLueXXaNGQKGnem7YHkPsI
+         tp2xzFQ9Mb4s4aR3KtrjTL5x07sHsjXG94xqetN2nXbrHX4rcv1QU+KgJ4HZks++7nMw
+         2qI8+gO2794L2vOVkPaLPR9wHn40Y9pBY9Z8nqiLjydipzjZUCCyGUwroc0HWt8fXEb/
+         L3c6r5IuLk96Xdh58s8uPbQfzItPqf/RQCYSc7glqZzslQ8fhjpMlpnaf7XE131XKpGy
+         X9kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TdFQHyfvuXS3dWpzBzfA/eYiqNVFYmQe6KA46+wVeF0=;
+        b=NNuLiujx/IC6/GMC2l9EfKBYC3/XXHTDXVQ+s5SrPRtVcabk9e7BhM6sNN2TLA0qjV
+         bSsYlLx8u0WdjuG+ktp5IQc/kutDxE2sSOneP89V1dlkgDAx4vdCWSI5so77oZjv5K4L
+         4UY0bXhcEvs5OtJjpaaWPsqWn4CsudEFFPJhZBNq1TQN1KNFRqTpW17KYkhoaJFcuYeE
+         jxDtpVatpcZu4+Ce4lHApcH7SeiWgLYrzlmdDIYNoOuhPc3jQeREygCI7MMPM/PTd3Ny
+         13hKPem2L9ZSsOOuSDo9YqOApYVT5OLjCZ6pQksGMAJUTdyww3aBiklXUFbNHrsRzi5C
+         VJOg==
+X-Gm-Message-State: ANoB5pmA48AXyk5fy6txwXV/5niqtO/b85TgLBLpOWqOwU8g2qiLnIm5
+        EGY17VngZPWQRfrIMuYzn9SOOA==
+X-Google-Smtp-Source: AA0mqf54ndLJTVC/YJbPgo1fKqSt16oCLfOSQJH2SjHAru1Yh2YZyonlGUjdFeXJRIJc6J23nUkhJA==
+X-Received: by 2002:a92:612:0:b0:303:2965:9617 with SMTP id x18-20020a920612000000b0030329659617mr9759515ilg.9.1670866733899;
+        Mon, 12 Dec 2022 09:38:53 -0800 (PST)
+Received: from [172.22.22.4] ([98.61.227.136])
+        by smtp.googlemail.com with ESMTPSA id k13-20020a02334d000000b00389def938dbsm112672jak.71.2022.12.12.09.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Dec 2022 09:38:53 -0800 (PST)
+Message-ID: <1ab39358-b3b1-e93f-ea65-32b53a5b6334@linaro.org>
+Date:   Mon, 12 Dec 2022 11:38:52 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v3 01/19] dt-bindings: clocks: qcom: rpmcc: add
+ LN_BB_CLK_PIN clocks
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20221209164855.128798-1-dmitry.baryshkov@linaro.org>
+ <20221209164855.128798-2-dmitry.baryshkov@linaro.org>
+From:   Alex Elder <elder@linaro.org>
+In-Reply-To: <20221209164855.128798-2-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add USB clock and reset entries to CPG driver.
+On 12/9/22 10:48 AM, Dmitry Baryshkov wrote:
+> Add pin-controlled Low-Noise BB clock definition.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g011-cpg.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Looks good to me.
 
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index b32f82860b2b..40c4c1fd8f07 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -23,10 +23,12 @@
- 
- #define DIV_A		DDIV_PACK(0x200, 0, 3)
- #define DIV_B		DDIV_PACK(0x204, 0, 2)
-+#define DIV_D		DDIV_PACK(0x204, 4, 2)
- #define DIV_E		DDIV_PACK(0x204, 8, 1)
- #define DIV_W		DDIV_PACK(0x328, 0, 3)
- 
- #define SEL_B		SEL_PLL_PACK(0x214, 0, 1)
-+#define SEL_D		SEL_PLL_PACK(0x214, 1, 1)
- #define SEL_E		SEL_PLL_PACK(0x214, 2, 1)
- #define SEL_W0		SEL_PLL_PACK(0x32C, 0, 1)
- 
-@@ -50,9 +52,11 @@ enum clk_ids {
- 	CLK_PLL4,
- 	CLK_DIV_A,
- 	CLK_DIV_B,
-+	CLK_DIV_D,
- 	CLK_DIV_E,
- 	CLK_DIV_W,
- 	CLK_SEL_B,
-+	CLK_SEL_D,
- 	CLK_SEL_B_D2,
- 	CLK_SEL_E,
- 	CLK_SEL_W0,
-@@ -81,6 +85,13 @@ static const struct clk_div_table dtable_divb[] = {
- 	{0, 0},
- };
- 
-+static const struct clk_div_table dtable_divd[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 4},
-+	{0, 0},
-+};
-+
- static const struct clk_div_table dtable_divw[] = {
- 	{0, 6},
- 	{1, 7},
-@@ -94,6 +105,7 @@ static const struct clk_div_table dtable_divw[] = {
- 
- /* Mux clock tables */
- static const char * const sel_b[] = { ".main", ".divb" };
-+static const char * const sel_d[] = { ".main", ".divd" };
- static const char * const sel_e[] = { ".main", ".dive" };
- static const char * const sel_w[] = { ".main", ".divw" };
- 
-@@ -115,10 +127,12 @@ static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
- 
- 	DEF_DIV_RO(".diva",	CLK_DIV_A,	CLK_PLL1,	DIV_A,	dtable_diva),
- 	DEF_DIV_RO(".divb",	CLK_DIV_B,	CLK_PLL2_400,	DIV_B,	dtable_divb),
-+	DEF_DIV_RO(".divd",	CLK_DIV_D,	CLK_PLL2_200,	DIV_D,	dtable_divd),
- 	DEF_DIV_RO(".dive",	CLK_DIV_E,	CLK_PLL2_100,	DIV_E,	NULL),
- 	DEF_DIV_RO(".divw",	CLK_DIV_W,	CLK_PLL4,	DIV_W,	dtable_divw),
- 
- 	DEF_MUX_RO(".selb",	CLK_SEL_B,	SEL_B,		sel_b),
-+	DEF_MUX_RO(".seld",	CLK_SEL_D,	SEL_D,		sel_d),
- 	DEF_MUX_RO(".sele",	CLK_SEL_E,	SEL_E,		sel_e),
- 	DEF_MUX(".selw0",	CLK_SEL_W0,	SEL_W0,		sel_w),
- 
-@@ -131,6 +145,9 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_COUPLED("eth_axi",	R9A09G011_ETH0_CLK_AXI,	 CLK_PLL2_200, 0x40c, 8),
- 	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
- 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
-+	DEF_MOD("usb_aclk_h",	R9A09G011_USB_ACLK_H,	 CLK_SEL_D,    0x40c, 4),
-+	DEF_MOD("usb_aclk_p",	R9A09G011_USB_ACLK_P,	 CLK_SEL_D,    0x40c, 5),
-+	DEF_MOD("usb_pclk",	R9A09G011_USB_PCLK,	 CLK_SEL_E,    0x40c, 6),
- 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
- 	DEF_MOD("iic_pclk0",	R9A09G011_IIC_PCLK0,	 CLK_SEL_E,    0x420, 12),
- 	DEF_MOD("cperi_grpb",	R9A09G011_CPERI_GRPB_PCLK, CLK_SEL_E,  0x424, 0),
-@@ -169,6 +186,10 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 
- static const struct rzg2l_reset r9a09g011_resets[] = {
- 	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
-+	DEF_RST(R9A09G011_USB_PRESET_N,		0x608, 7),
-+	DEF_RST(R9A09G011_USB_DRD_RESET,	0x608, 8),
-+	DEF_RST(R9A09G011_USB_ARESETN_P,	0x608, 9),
-+	DEF_RST(R9A09G011_USB_ARESETN_H,	0x608, 10),
- 	DEF_RST_MON(R9A09G011_ETH0_RST_HW_N,	0x608, 11, 11),
- 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
- 	DEF_RST(R9A09G011_TIM_GPB_PRESETN,	0x614, 1),
--- 
-2.25.1
+Reviewed-by: Alex Elder <elder@linaro.org>
+
+> ---
+>   include/dt-bindings/clock/qcom,rpmcc.h | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+> index c0ad624e930e..46309c9953b2 100644
+> --- a/include/dt-bindings/clock/qcom,rpmcc.h
+> +++ b/include/dt-bindings/clock/qcom,rpmcc.h
+> @@ -168,5 +168,7 @@
+>   #define RPM_SMD_MSS_CFG_AHB_CLK		122
+>   #define RPM_SMD_MSS_CFG_AHB_A_CLK		123
+>   #define RPM_SMD_BIMC_FREQ_LOG			124
+> +#define RPM_SMD_LN_BB_CLK_PIN			125
+> +#define RPM_SMD_LN_BB_A_CLK_PIN			126
+>   
+>   #endif
 
