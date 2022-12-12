@@ -2,174 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6FCC00145
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 17:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704D6C4167B
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 23:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232667AbiLLRuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Dec 2022 12:50:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51914 "EHLO
+        id S232930AbiLLXhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Dec 2022 18:37:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232100AbiLLRuD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 12:50:03 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44802BB9;
-        Mon, 12 Dec 2022 09:50:02 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BCGkQKh028589;
-        Mon, 12 Dec 2022 17:49:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=FQ/6lTyzpPWte9JtTBRaMG+LrtODMsTmst64lvQGnHc=;
- b=PqmQlOPlFdC6m5x3UbHIGMfoOIqpRaXdyYzj1vRVn2Lg+ey/LITk9grsR5vTtLf14rx8
- BvoJVwTPc9/bo91k1oiGN2+lKZpWkX5ZjbsuajT4MBorzN2Mko5kVD1pyyKxvD4CQECk
- NrqBem9UTOgEE1Vb+DIHZM3/FfEj7dYXxDYSDIzeKixIn8dCafoWRxqfnXw+Ap4NCkwA
- Vdbslq8qEiUKKZ0tB1sPiMcz7jyNcIvB32Ti2a5C4d5dBJxZptZpl5kQM9OMO5tDPgWA
- 1gfZK0TqfhFKvQBQb8UcRSJeEcgmDmZ1GBhFTWMMUtFpQ9M/wpHa4UZfoWi9SP/7WKN5 6w== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3me83sg6fh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Dec 2022 17:49:50 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BCHnnOH013750
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Dec 2022 17:49:49 GMT
-Received: from [10.216.43.29] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 12 Dec
- 2022 09:49:43 -0800
-Message-ID: <1be71e47-fba3-4795-6950-de3229961215@quicinc.com>
-Date:   Mon, 12 Dec 2022 23:19:40 +0530
+        with ESMTP id S232791AbiLLXhJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 18:37:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21202192A5;
+        Mon, 12 Dec 2022 15:37:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D7698B80F93;
+        Mon, 12 Dec 2022 23:37:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C419C433D2;
+        Mon, 12 Dec 2022 23:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670888226;
+        bh=Djj37c4gGhHcy/TCgXVD2eUrZ4pas0KvVlsKKNOhTNQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=JqE69LucO9qZIWAElN4CUCwwAlIBQJxrkL1lTmaYO/UObCARO+ktTV5RySUi3LCB5
+         7YsLSUmFNNzZl4JewOsbhOvKiKjM0RHsfIuUPfKAbs+Y0mVLq7NFuK9DKtRvBBqbVg
+         g917KtwjIY2YE0OBF5Udwyf90w+WByk9dUB+vR47v8BuJsrh7ZaUEWK/SHJVeHudyc
+         0weqMuFrEYAtB9hs/Y0NVpzzfGkDLm6R7QMW09zo1IbcO9ljJkGj2XrSdc5USpUoMs
+         x+dle18vHpIq8mAvzbihUE4xM/Q2P16omsQBYQeQVpTTMKO9McXduXtcCQhbUhU5Gm
+         A8S6LgCd3pEqQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v7 4/6] clk: qcom: gpucc-sc7280: Add cx collapse reset
- support
-Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>
-CC:     Ulf Hansson <ulf.hansson@linaro.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        <krzysztof.kozlowski@linaro.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8b42763d-5fc3-3853-c421-227494c0144a@seco.com>
+References: <20221027191113.403712-1-sean.anderson@seco.com> <20221027191113.403712-5-sean.anderson@seco.com> <20221027230331.19C2FC433D6@smtp.kernel.org> <5f00ede6-10f5-c11c-ee21-54460c1f98b0@seco.com> <d13ff3b2-79f0-2a72-c9da-2c310c4e3bb8@seco.com> <20221101201020.B6180C433C1@smtp.kernel.org> <45463950-7a4f-758d-d6a1-b8fdf9bfd319@seco.com> <20221207021742.A3596C433C1@smtp.kernel.org> <8b42763d-5fc3-3853-c421-227494c0144a@seco.com>
+Subject: Re: [PATCH v8 4/9] phy: fsl: Add Lynx 10G SerDes driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1664960824-20951-1-git-send-email-quic_akhilpo@quicinc.com>
- <20221005143618.v7.4.I5e64ff4b77bb9079eb2edeea8a02585c9e76778f@changeid>
- <CAPDyKFp8ynYSyMc+gXWuW8dC1j07X+8k3omsKKnLA_u+4X-vvA@mail.gmail.com>
- <76812eb1-ef4a-48b3-7b7a-231adc8c7c36@quicinc.com>
- <20221208210929.capfm7jaltxvgpvq@builder.lan>
-From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <20221208210929.capfm7jaltxvgpvq@builder.lan>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6k1emu0vcrTAQxsOXaRZ37Xmbmw3ybeD
-X-Proofpoint-ORIG-GUID: 6k1emu0vcrTAQxsOXaRZ37Xmbmw3ybeD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-12_02,2022-12-12_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2212120161
+        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
+Date:   Mon, 12 Dec 2022 15:37:04 -0800
+User-Agent: alot/0.10
+Message-Id: <20221212233706.6C419C433D2@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/9/2022 2:39 AM, Bjorn Andersson wrote:
-> On Thu, Dec 08, 2022 at 08:54:39PM +0530, Akhil P Oommen wrote:
->> On 12/7/2022 9:16 PM, Ulf Hansson wrote:
->>> On Wed, 5 Oct 2022 at 11:08, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>>> Allow a consumer driver to poll for cx gdsc collapse through Reset
->>>> framework.
->>> Would you mind extending this commit message, to allow us to better
->>> understand what part is really the consumer part.
->> Sure. I can do that.
->>> I was expecting the consumer part to be the GPU (adreno) driver, but I
->>> may have failed to understand correctly. It would be nice to see an
->>> example of a typical sequence, where the reset is being
->>> asserted/deasserted, from the consumer point of view. Would you mind
->>> explaining this a bit more?
->> https://elixir.bootlin.com/linux/v6.1-rc8/source/drivers/gpu/drm/msm/adreno/a6xx_gpu.c#L1309
->> You are correct. The consumer is adreno gpu driver. When there is a gpu fault, these sequences are followed:
->> 1. drop pm_runtime_put() for gpu device which will drops its vote on 'cx' genpd. line: 1306
->> 2. At this point, there could be vote from either smmu driver (smmu is under same power domain too) or from other subsystems (tz/hyp).
-> Can you confirm that this is happening completely independent of what
-> the kernel does?
-Yes, it is independent.
->
->> 3. So we call into gdsc driver through reset interface to poll the gdsc register to ensure it collapsed at least once. Line: 1309
-> I other words, if we engineered 1. such that it would wait in
-> gdsc_disable() until the condition for 3. is reached, that should work
-> for you? (Obviously depending on the ability for us to engineer this...)
-Yes, it will work.
+Quoting Sean Anderson (2022-12-08 07:36:45)
+> On 12/6/22 21:17, Stephen Boyd wrote:
+> > Quoting Sean Anderson (2022-11-01 16:27:21)
+> >> On 11/1/22 16:10, Stephen Boyd wrote:
+> >> >>=20
+> >> >> Oh, I remember why I did this. I need the reference clock for clk_h=
+w_round_rate,
+> >> >> which is AFAICT the only correct way to implement round_rate.
+> >> >>=20
+> >> >=20
+> >> > Is the reference clk the parent of the clk implementing
+> >> > clk_ops::round_rate()?
+> >>=20
+> >> Yes. We may be able to produce a given output with multiple reference
+> >> rates. However, the clock API provides no mechanism to say "Don't ask
+> >> for the parent clock to be rate X, you just tried it and the parent
+> >> clock can't support it." So instead, we loop over the possible referen=
+ce
+> >> rates and pick the first one which the parent says it can round to.
+> >>=20
+> >=20
+> > Sorry, I'm lost. Why can't you loop over possible reference rates in
+> > determine_rate/round_rate clk op here?
+>=20
+> This is what I do currently, but you need to have the parent clock to do
+> so. With your suggested method, we never actually get a struct clk(_hw)
+> which we can query for rate support.
 
--Akhil.
->
-> Regards,
-> Bjorn
->
->> 4. Then we turn ON gpu. line:1314.
->>
->> -Akhil.
->>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> Kind regards
->>> Uffe
->>>
->>>> ---
->>>>
->>>> (no changes since v3)
->>>>
->>>> Changes in v3:
->>>> - Convert 'struct qcom_reset_ops cx_gdsc_reset' to 'static const' (Krzysztof)
->>>>
->>>> Changes in v2:
->>>> - Minor update to use the updated custom reset ops implementation
->>>>
->>>>  drivers/clk/qcom/gpucc-sc7280.c | 10 ++++++++++
->>>>  1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/qcom/gpucc-sc7280.c b/drivers/clk/qcom/gpucc-sc7280.c
->>>> index 9a832f2..fece3f4 100644
->>>> --- a/drivers/clk/qcom/gpucc-sc7280.c
->>>> +++ b/drivers/clk/qcom/gpucc-sc7280.c
->>>> @@ -433,12 +433,22 @@ static const struct regmap_config gpu_cc_sc7280_regmap_config = {
->>>>         .fast_io = true,
->>>>  };
->>>>
->>>> +static const struct qcom_reset_ops cx_gdsc_reset = {
->>>> +       .reset = gdsc_wait_for_collapse,
->>>> +};
->>>> +
->>>> +static const struct qcom_reset_map gpucc_sc7280_resets[] = {
->>>> +       [GPU_CX_COLLAPSE] = { .ops = &cx_gdsc_reset, .priv = &cx_gdsc },
->>>> +};
->>>> +
->>>>  static const struct qcom_cc_desc gpu_cc_sc7280_desc = {
->>>>         .config = &gpu_cc_sc7280_regmap_config,
->>>>         .clks = gpu_cc_sc7280_clocks,
->>>>         .num_clks = ARRAY_SIZE(gpu_cc_sc7280_clocks),
->>>>         .gdscs = gpu_cc_sc7180_gdscs,
->>>>         .num_gdscs = ARRAY_SIZE(gpu_cc_sc7180_gdscs),
->>>> +       .resets = gpucc_sc7280_resets,
->>>> +       .num_resets = ARRAY_SIZE(gpucc_sc7280_resets),
->>>>  };
->>>>
->>>>  static const struct of_device_id gpu_cc_sc7280_match_table[] = {
->>>> --
->>>> 2.7.4
->>>>
-
+The clk_hw for the parent is given to the determine_rate clk_op in the
+clk_rate_request structure. It's stored in the best_parent_hw pointer
+when the determine_rate function is called. Does that work for you?
