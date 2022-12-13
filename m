@@ -2,88 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE867C10F1D
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 13:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A3BC4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 14:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235725AbiLMNeD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 08:34:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46896 "EHLO
+        id S235961AbiLMOiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 09:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235209AbiLMNdg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 08:33:36 -0500
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8050E2036D;
-        Tue, 13 Dec 2022 05:33:30 -0800 (PST)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 5FA6E40004;
-        Tue, 13 Dec 2022 13:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1670938409;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TLPDw6X3P96rTAItBGi4hPeRNBjrFsQIwpzfWFOX5ug=;
-        b=CdPwTxa1pN/lLKVCQuHAtmyg3j8StG7e9BjbbBHhfbBwgIC8WbeDImCUU2jXUu+NoY60Qf
-        MHrKKwiaBT5jP+pit+2EljJiyBiexqCvPLPx9SZ1SaDRe5FqNPJ0wMNBvaPA61HS9dEsm0
-        vW4wY+hlTcuLt/PExc3fgKkOGA0nXVQQ8eyOBrrqUy5qy3N1JlsIyOUrP/06gBb/tEgytp
-        awlbg9zDwgKNyw1RSwkB+0Oly4VgURC3W7Sg7h7u7OGEbUpZsnjh0B4Db3r0uVcRcIgkFn
-        rMcAUP/KnqpMGhg1zAdanC9GPcZWJbd4orefvGSjk8w94Z2PgNC15AsfNzD2NA==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S235980AbiLMOiQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 09:38:16 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BF9D2FD;
+        Tue, 13 Dec 2022 06:38:15 -0800 (PST)
+Received: by mail-qt1-f170.google.com with SMTP id h16so11951959qtu.2;
+        Tue, 13 Dec 2022 06:38:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d5aYjTNJZYeeZ1RYF7eUge01EmrTIBiLJUd67L8iu/E=;
+        b=nvUa9IIf5J5v1hJFfWqOxXhofyLEL8CGueUpGFjoNYa86YYHJbkYfddEnUviguAWI8
+         yk77Z26iAS0qwdqF2XwwXaLcbooIht5bYbvjaGJfFtPD+Wy55HKYQulgUtz67x6l+Fh+
+         LEhBapnjMcW+spQz1JfDkYHt6fPnxbXAmA160M68Ui0PjnHopbKpzcpgAf7bSLmoOLYi
+         hJSb8QUg1bZJa8MLeLyJeVySXwm+v7rjhqtYQmWm3uOx19ff7jXXu3ws7XHawVGPw0ED
+         HC+Dl4C+1GWisOef9/BttzdShKARlsTm3CjwN0kwbS1qWBRbYHY1O2hUb0S5Oar4XrJR
+         Zsvg==
+X-Gm-Message-State: ANoB5pkt9ln0VTW19VMtr+PdNvSV6UeRAMnOi8Z0z5k7RjvjDwYGHiiL
+        Vw0aFev5Noi1Xdon7xZMarBy1AExFM2HFQ==
+X-Google-Smtp-Source: AA0mqf7/u4gqFa7xRPLjsdBOhqwO8DD35xxHrG8biy07J/Mlq6ipLu9CjpEhu0vCkREOZ5fEnfzCYA==
+X-Received: by 2002:a05:622a:408e:b0:3a5:c775:59ec with SMTP id cg14-20020a05622a408e00b003a5c77559ecmr30826246qtb.28.1670942294752;
+        Tue, 13 Dec 2022 06:38:14 -0800 (PST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id b2-20020ac844c2000000b00342f8d4d0basm7698040qto.43.2022.12.13.06.38.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Dec 2022 06:38:14 -0800 (PST)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-3bf4ade3364so194369057b3.3;
+        Tue, 13 Dec 2022 06:38:14 -0800 (PST)
+X-Received: by 2002:a81:148c:0:b0:3e5:f2ca:7be8 with SMTP id
+ 134-20020a81148c000000b003e5f2ca7be8mr24137887ywu.358.1670942293763; Tue, 13
+ Dec 2022 06:38:13 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1670492384.git.geert+renesas@glider.be> <a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be>
+In-Reply-To: <a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 13 Dec 2022 15:38:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUjQNq61sKLsUVjpDgJnftkZDZB-CL4UDAdiyrARz92iQ@mail.gmail.com>
+Message-ID: <CAMuHMdUjQNq61sKLsUVjpDgJnftkZDZB-CL4UDAdiyrARz92iQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: rcar-gen4: Add support for fractional multiplication
+To:     geert+renesas@glider.be
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v4 5/5] MAINTAINERS: add the Renesas RZ/N1 USBF controller entry
-Date:   Tue, 13 Dec 2022 14:33:02 +0100
-Message-Id: <20221213133302.218955-6-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221213133302.218955-1-herve.codina@bootlin.com>
-References: <20221213133302.218955-1-herve.codina@bootlin.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tho Vu <tho.vu.wh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After contributing the driver, add myself as the maintainer
-for Renesas RZ/N1 USBF controller.
+On Thu, Dec 8, 2022 at 2:07 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> R-Car Gen4 PLLs support fractional multiplication, which can improve
+> accuracy when configuring a specific frequency.
+>
+> Add support for fractional multiplication to the custom clock driver
+> for PLLs, which is currently used only for PLL2 on R-Car V4H.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 886d3f69ee64..1df1f353b884 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17632,6 +17632,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
- F:	drivers/rtc/rtc-rzn1.c
- 
-+RENESAS RZ/N1 USBF CONTROLLER DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	linux-renesas-soc@vger.kernel.org
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
-+F:	drivers/usb/gadget/udc/renesas_usbf.c
-+
- RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
- M:	Miquel Raynal <miquel.raynal@bootlin.com>
- L:	linux-mtd@lists.infradead.org
--- 
-2.38.1
+> @@ -101,17 +126,31 @@ static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>                                 unsigned long parent_rate)
+>  {
+>         struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
+> -       unsigned int mult;
+> +       unsigned long prate = parent_rate * 2;
+> +       u32 cr0 = readl(pll_clk->pllcr0_reg);
+> +       unsigned int ni, nf;
+> +       int error;
 
+"error" is unused, and should be dropped.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
