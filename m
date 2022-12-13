@@ -2,144 +2,256 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C972C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 14:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C03C10F1D
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 15:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236090AbiLMOyr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 09:54:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
+        id S236136AbiLMP00 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 10:26:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236053AbiLMOyd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 09:54:33 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C16421822;
-        Tue, 13 Dec 2022 06:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
-        t=1670943238; bh=p2V7s/+ws7X71BvYRIZHw7xsRmehJjPbd5XZsH+u/kY=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=EfYG+kjIktEbtgitzOXzPiOmwbfKYZrdBcFfzvLXgM5ccUgKcRm6x57W46TG7PxBB
-         ORQ3ZDeBcniVBw3lYH0D9U6yORuMyftys+LFinsIWieI369Y/ZA9rzE7JFqMbTTizb
-         QbmeSraKJGkxs9N/AkewwQeI5upq0QdhwJEfi2gdKMQp9cN0cuEHiqJrV31NzAEY5D
-         taWNh7m8/ySvMNLj/QVXRUode3imfeaY6FB3rky6iD3CrE+HWIe0udQRr0PU8Mei7Q
-         BvwneEl4BmvQESWI9oqsCkW79E1sSzh/Dn/dqPS1DlGDURcZ+B9VUPM9bmcYiRV+6g
-         lvzJK8mURDP9g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([87.166.74.222]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKbgE-1pLggE305k-00Kvo9; Tue, 13
- Dec 2022 15:53:58 +0100
-Date:   Tue, 13 Dec 2022 15:53:54 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        with ESMTP id S236134AbiLMP0Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 10:26:25 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C184D2DC6
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 07:26:22 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id y25so5440188lfa.9
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 07:26:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qq0uorQWqSHSuV/ULmLyUOqP1G8s/X2+rF5AzuYEUHo=;
+        b=jNvxbd3tbb+fGqML28PP6ZizN7oMt7Jtey4WigScljn/RGGV+JueC471+RAabQG++h
+         m7cc1xBZYWvejrIJqiwNuqSGXtQNfvKeCFQBSmH9P33PrvDRGENIAK7Hsyqgfk7SEVaB
+         1RZqMXGmCAe5ygkZL9VPtDH6nDRRZh94YMJoMFWGCEiOSZCq2+oIhBpHH54g3GkOiCeQ
+         ZgKLsMKS2Hul1++qj5jWT2x6qCXAKxYJRN7U10ez23fAag+kA7zTHchhk0Hxhv6LrPdY
+         3xbH8wB4XTmAvR/E6mMxVtRxuymEpsUJD+EsoeGYtmiaJtVrqTlrEj4InAhPqwS+4Yi7
+         kmLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qq0uorQWqSHSuV/ULmLyUOqP1G8s/X2+rF5AzuYEUHo=;
+        b=YeeralVKBrOEILqol+832QZ0CQ9CzsUUgqxnyK1Ki7kLXHbA8Je75T3Wn3WiTsMKAx
+         HMG/ImBtgHqj7Zd8QghzbSvV3OU3Xri6vyLRICo8BxpCN8D15Cvj1a5i7oOvz34l0njE
+         1pI/8EJOKrfKBm7qX3zAew10j8ZBkM2dVgeNVrDESpoOvkGW9vdbcoIXOumUtDxVbe6y
+         2vO69xLbC4ALvHzkVRjfxXgYZbscwLDP4jeUQaWcFnHyspS6k215EnAs/SOoScBazChT
+         d/LOI+ZLQVdR/RBG4Zf43qazlvTv8sw4u9LUQJYjEd54D4KfSPkKiDPclP6Q37BFP4Yt
+         0GQQ==
+X-Gm-Message-State: ANoB5pm3pRi20a5nHmWfcRIATI8H825UXZTZRwalrBAJbZ0TmIqad1Qg
+        TVWkwlJ4ciA4uxdoRXu57tfpaQ==
+X-Google-Smtp-Source: AA0mqf52YnbaC+FzJZHzFO6RQPBRF/Z4ae26J3kUE1fmBn6xbjLdVtRw8kBboimpxnMmRC/t0AIHhQ==
+X-Received: by 2002:a19:e051:0:b0:4b5:b7be:136b with SMTP id g17-20020a19e051000000b004b5b7be136bmr4165398lfj.69.1670945181142;
+        Tue, 13 Dec 2022 07:26:21 -0800 (PST)
+Received: from localhost.localdomain (abxh44.neoplus.adsl.tpnet.pl. [83.9.1.44])
+        by smtp.gmail.com with ESMTPSA id s15-20020a056512214f00b004b58f51c7dcsm404149lfr.226.2022.12.13.07.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Dec 2022 07:26:20 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, krzysztof.kozlowski@linaro.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v5 5/6] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
- controller driver
-Message-ID: <Y5iSAmJimekv1vkZ@probook>
-References: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
- <20221104161850.2889894-6-j.neuschaefer@gmx.net>
- <CAP6Zq1hjbPpLMWST4cYyMQw_-jewFoSrudOC+FPP5qOxJz4=xw@mail.gmail.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clock: add QCOM SM6350 camera clock bindings
+Date:   Tue, 13 Dec 2022 16:26:15 +0100
+Message-Id: <20221213152617.296426-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BUhB5f8R8Qwj7WNX"
-Content-Disposition: inline
-In-Reply-To: <CAP6Zq1hjbPpLMWST4cYyMQw_-jewFoSrudOC+FPP5qOxJz4=xw@mail.gmail.com>
-X-Provags-ID: V03:K1:qAZlPKx9k174kKCeqsHXUbFKERd19qHGzg2rpCT1Cq/gwIE/rSl
- FRD4UBzf2HLKJoR7aa60QRyfVkCJGa9VbOQ1jjer8b+RJcBuIPAQhHQ0jL39MfHu+s3D9fJ
- bopLEv1LIDJV/csOPud+R4TcdnTC6IBl3Z9+aenIAy4/0aMtUHaRO2Na30U0jwK/AiwBf60
- uzB6JKiSf4O9zNEpE5zRg==
-UI-OutboundReport: notjunk:1;M01:P0:gGW4xdaesKw=;SkdxK5f2/9uUDiqfD41ZIZwzBaU
- cYDhwjj/Jlo5LplNONkgLkYWeDsGvV4zmUl05FeLi9Z1Aw+9eEUW5d/Z/8mGS3mIVGxQRqsfO
- jnXj/vjUwUnuighzSRS6OB0Xv+di8nE4pT3SV6bNVkdah57Mub8AehzI9UKff5R8AXpre6Cdq
- TibfIcKqI1Eq8EjF4zLyYtBzmLbo1Q5WgOFJeClw5s6bKzZHlO40S4i8ecPhKsNNORdsh/cgJ
- vlj0zIE0pebxFiTRPjvgu68m+fkx1Z0uhzJM5HqvYpgbUTg1HjWI/xYqEywwOjFNv+yVL7K97
- tKAiMLlz75qVZDugaXs/12CO3KCR+lestoqmmmfdWlsEvk/Yib09e5GbZ+P496ssNcE55EgJ4
- /oxp1bioFkHob84fR1Swd9oiU6f6eEe6AW9QrW/PemtTx8T+vEl/1etfOaX0DkrLSybXLpOMD
- 0T4HR1nJJyI7r1QEuT7WBUawXbj7l0Rd4vtK57d7lCY7qNu3nhFT5h1PTZbl+Bda4mhj83b5m
- w9qYEH9i8TfmqhevkTNz+F+NMEVr6rMCvAcxGqRLG6ljpMErZDmSbfbloRvIvh2YBrRwGHsoL
- O9tvF8m5QHXNJy403labgjzI1g+C4D1Xg6gNUkTbFaTWMfPDNbf/x6hRpzerHjDTV+wLpJOUO
- rn5/+BphkMigEtQ/xOu7oW8KLmWflIhcbYs5p2/Px2xE7fHyDYEpf6MoVitcQgoFb2pMmrF0i
- tbKdpfafkRkCf45kkdIupk1C94XzaqQygbBQX25RWsugFZrcLTgGzWbXX6EodQumGbVb3ArWw
- OZVfLeDkk0MDEV9y0gYBW2CP0wMs0Yk5C9EhIrSy1vMFldnR/XgpIML/BSJyenzy1+ejnlsSC
- oNR4o0IP1E7X1dDkFFj+pIoLuxgsRvaxpHhNcbLQWb5I/ti6sQV9XYSRT0Amjq3H9mXpEDuNf
- iorfu+Sxl1bq1yzK2mrnmRmZcms=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add device tree bindings for camera clock controller for
+Qualcomm Technology Inc's SM6350 SoC.
 
---BUhB5f8R8Qwj7WNX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ .../bindings/clock/qcom,sm6350-camcc.yaml     |  49 ++++++++
+ include/dt-bindings/clock/qcom,sm6350-camcc.h | 109 ++++++++++++++++++
+ 2 files changed, 158 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,sm6350-camcc.h
 
-On Mon, Dec 12, 2022 at 09:30:46AM +0200, Tomer Maimon wrote:
-> Hi Jonathan,
->=20
-> Thanks for your patch, and sorry for the late reply.
->=20
-> On Fri, 4 Nov 2022 at 18:19, Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.=
-net> wrote:
-[...]
-> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> > index de176c2fbad96..de5662830fce8 100644
-> > --- a/drivers/reset/Kconfig
-> > +++ b/drivers/reset/Kconfig
-> > @@ -208,7 +208,7 @@ config RESET_SCMI
-> >
-> >  config RESET_SIMPLE
-> >         bool "Simple Reset Controller Driver" if COMPILE_TEST || EXPERT
-> > -       default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REAL=
-TEK || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC
-> > +       default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REAL=
-TEK || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC || =
-ARCH_NPCM
-> Please modify the default ARCH_NPCM to the specific Hermon use,
-> ARCH_WPCM450, since NPCM7XX and NPCM8XX use a specific NPCM reset
-> driver.
-> https://elixir.bootlin.com/linux/v6.1-rc8/source/drivers/reset/reset-npcm=
-=2Ec
-> we prefer not to have two reset drivers when compiling ARCH_NPCM.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
+new file mode 100644
+index 000000000000..fd6658cb793d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sm6350-camcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Camera Clock & Reset Controller on SM6350
++
++maintainers:
++  - Konrad Dybcio <konrad.dybcio@linaro.org>
++
++description: |
++  Qualcomm camera clock control module provides the clocks, resets and  power
++  domains on SM6350.
++
++  See also:: include/dt-bindings/clock/qcom,sm6350-camcc.h
++
++properties:
++  compatible:
++    const: qcom,sm6350-camcc
++
++  clocks:
++    items:
++      - description: Board XO source
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@ad00000 {
++      compatible = "qcom,sm6350-camcc";
++      reg = <0x0ad00000 0x16000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,sm6350-camcc.h b/include/dt-bindings/clock/qcom,sm6350-camcc.h
+new file mode 100644
+index 000000000000..c6bcdc8fd485
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm6350-camcc.h
+@@ -0,0 +1,109 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2022, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2022, Linaro Limited
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_CAMCC_SM6350_H
++#define _DT_BINDINGS_CLK_QCOM_CAMCC_SM6350_H
++
++/* CAMCC clocks */
++#define CAMCC_PLL2_OUT_EARLY		0
++#define CAMCC_PLL0			1
++#define CAMCC_PLL0_OUT_EVEN		2
++#define CAMCC_PLL1			3
++#define CAMCC_PLL1_OUT_EVEN		4
++#define CAMCC_PLL2			5
++#define CAMCC_PLL2_OUT_MAIN		6
++#define CAMCC_PLL3			7
++#define CAMCC_BPS_AHB_CLK		8
++#define CAMCC_BPS_AREG_CLK		9
++#define CAMCC_BPS_AXI_CLK		10
++#define CAMCC_BPS_CLK			11
++#define CAMCC_BPS_CLK_SRC		12
++#define CAMCC_CAMNOC_ATB_CLK		13
++#define CAMCC_CAMNOC_AXI_CLK		14
++#define CAMCC_CCI_0_CLK		15
++#define CAMCC_CCI_0_CLK_SRC		16
++#define CAMCC_CCI_1_CLK		17
++#define CAMCC_CCI_1_CLK_SRC		18
++#define CAMCC_CORE_AHB_CLK		19
++#define CAMCC_CPAS_AHB_CLK		20
++#define CAMCC_CPHY_RX_CLK_SRC		21
++#define CAMCC_CSI0PHYTIMER_CLK		22
++#define CAMCC_CSI0PHYTIMER_CLK_SRC	23
++#define CAMCC_CSI1PHYTIMER_CLK		24
++#define CAMCC_CSI1PHYTIMER_CLK_SRC	25
++#define CAMCC_CSI2PHYTIMER_CLK		26
++#define CAMCC_CSI2PHYTIMER_CLK_SRC	27
++#define CAMCC_CSI3PHYTIMER_CLK		28
++#define CAMCC_CSI3PHYTIMER_CLK_SRC	29
++#define CAMCC_CSIPHY0_CLK		30
++#define CAMCC_CSIPHY1_CLK		31
++#define CAMCC_CSIPHY2_CLK		32
++#define CAMCC_CSIPHY3_CLK		33
++#define CAMCC_FAST_AHB_CLK_SRC		34
++#define CAMCC_ICP_APB_CLK		35
++#define CAMCC_ICP_ATB_CLK		36
++#define CAMCC_ICP_CLK			37
++#define CAMCC_ICP_CLK_SRC		38
++#define CAMCC_ICP_CTI_CLK		39
++#define CAMCC_ICP_TS_CLK		40
++#define CAMCC_IFE_0_AXI_CLK		41
++#define CAMCC_IFE_0_CLK		42
++#define CAMCC_IFE_0_CLK_SRC		43
++#define CAMCC_IFE_0_CPHY_RX_CLK	44
++#define CAMCC_IFE_0_CSID_CLK		45
++#define CAMCC_IFE_0_CSID_CLK_SRC	46
++#define CAMCC_IFE_0_DSP_CLK		47
++#define CAMCC_IFE_1_AXI_CLK		48
++#define CAMCC_IFE_1_CLK		49
++#define CAMCC_IFE_1_CLK_SRC		50
++#define CAMCC_IFE_1_CPHY_RX_CLK	51
++#define CAMCC_IFE_1_CSID_CLK		52
++#define CAMCC_IFE_1_CSID_CLK_SRC	53
++#define CAMCC_IFE_1_DSP_CLK		54
++#define CAMCC_IFE_2_AXI_CLK		55
++#define CAMCC_IFE_2_CLK		56
++#define CAMCC_IFE_2_CLK_SRC		57
++#define CAMCC_IFE_2_CPHY_RX_CLK	58
++#define CAMCC_IFE_2_CSID_CLK		59
++#define CAMCC_IFE_2_CSID_CLK_SRC	60
++#define CAMCC_IFE_2_DSP_CLK		61
++#define CAMCC_IFE_LITE_CLK		62
++#define CAMCC_IFE_LITE_CLK_SRC		63
++#define CAMCC_IFE_LITE_CPHY_RX_CLK	64
++#define CAMCC_IFE_LITE_CSID_CLK	65
++#define CAMCC_IFE_LITE_CSID_CLK_SRC	66
++#define CAMCC_IPE_0_AHB_CLK		67
++#define CAMCC_IPE_0_AREG_CLK		68
++#define CAMCC_IPE_0_AXI_CLK		69
++#define CAMCC_IPE_0_CLK		70
++#define CAMCC_IPE_0_CLK_SRC		71
++#define CAMCC_JPEG_CLK			72
++#define CAMCC_JPEG_CLK_SRC		73
++#define CAMCC_LRME_CLK			74
++#define CAMCC_LRME_CLK_SRC		75
++#define CAMCC_MCLK0_CLK		76
++#define CAMCC_MCLK0_CLK_SRC		77
++#define CAMCC_MCLK1_CLK		78
++#define CAMCC_MCLK1_CLK_SRC		79
++#define CAMCC_MCLK2_CLK		80
++#define CAMCC_MCLK2_CLK_SRC		81
++#define CAMCC_MCLK3_CLK		82
++#define CAMCC_MCLK3_CLK_SRC		83
++#define CAMCC_MCLK4_CLK		84
++#define CAMCC_MCLK4_CLK_SRC		85
++#define CAMCC_SLOW_AHB_CLK_SRC		86
++#define CAMCC_SOC_AHB_CLK		87
++#define CAMCC_SYS_TMR_CLK		88
++
++/* GDSCs */
++#define BPS_GDSC			0
++#define IPE_0_GDSC			1
++#define IFE_0_GDSC			2
++#define IFE_1_GDSC			3
++#define IFE_2_GDSC			4
++#define TITAN_TOP_GDSC			5
++
++#endif
+-- 
+2.39.0
 
-Good point. I'll fix that.
-
-
-Thanks,
-J.
-
---BUhB5f8R8Qwj7WNX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmOYkdgACgkQCDBEmo7z
-X9sOfw//QKFWxH0SCpUDv5aBRt3V5G0f9oCvOuHlRz1crGkrzdIWLF78mm+rva0m
-y+bUvpCoUuzhLTf8BGSfrnoaORrjzr4PgJXSaCMjjweSBMiG9PETkMtWKSA4rDCS
-X1vaU/OeVHy2eW4qhkgTKAmapy95wnk8lmRgjdeLLRWuuz06bX10wrnJWE8WOox8
-68QJNfQy76Ih5e/yh4lvhaWskzaUxuvLahWoZMMkX7xdUaV+bGfd4ad4tQXHwBy9
-BPHh63CTwUk/aGpPjOJuycdJX0MMZ4h1UNmuHfN/z2f+/rdLF3DtGMS9CYSK+N6z
-rosdZLiuzz3SQ3kB2IoCMbPq/RMtkqGlDTu/qvDh00mZd8DjaXS57u5Si4ElGjPH
-cj9b6YhDhWJO4hQbnHPaHY4hFt6PGqN/odIWYbIxa/ekiEUY8hP9h/LZMAb3d26N
-IUfbqHmb4iQqqLPL/E9NvAsMtrDbZcyHUtMztFThq16yNNEvWv1wqbO+UddcsfK1
-6d45sgggdIbGz2nnvzAf4Ex+SUsp3pVnbqfMmDYmRpGYkwZdOBSXJejqG/OEXzYY
-NVzMQcabti/Kw/u0rxyIYJUPgtdvR/lKWCtEACM7t6zqeVM/4DTsGGfmNXjyP+tJ
-uMivMhp96c6eW9lkZTeMFBMHWyyrA5kGx19FRDbCdURM0qdLr/c=
-=rO9G
------END PGP SIGNATURE-----
-
---BUhB5f8R8Qwj7WNX--
