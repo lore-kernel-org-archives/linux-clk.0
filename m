@@ -2,102 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE49C04FDE
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 10:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E6C04FDE
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 10:51:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234980AbiLMKoq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 05:44:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36760 "EHLO
+        id S235197AbiLMKvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 05:51:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234989AbiLMKoi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 05:44:38 -0500
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2132.outbound.protection.outlook.com [40.107.20.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263EE635C;
-        Tue, 13 Dec 2022 02:44:36 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OjX5nJjjzv0n39clJ+V96z/NeerZWfYrZ+Vi5wRzKQjJq2vPvI05Zwjmyu3YArZ2jMa3RGl95qhLamk4QFwz6qlOBJI73hXBr8yi1jHHsYNTQ9MnZUHe+vBnNsTXOC8+r14F7yf+ninVu6sU41IzfLyuynR7Rm8epkvkUollhbxCQ03jtb4f5be3yMcmTX5g1HgXKX7O3ertLezshnMgjVDko+wcDhhUBeYf+MYd7Hh7r2ZpB0AaxwWP/CUExRcCehMmLJTDpnh8d3bc8FePCJwt8s3lcf3kWCiA0zVyu+FRyn5IB3JXczzHlxQr2rAE9exhnbrEWPoo/EkM3OJw9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I50Suh0HbvYzvFN3YgdCP3bVtvvBEHQJwtuOi3WKugw=;
- b=M4Oiu2/fozJmkIz1xb4s17lKtuhPN04E0mBHcNuHPg9Rw7cDNBALaV2tSGUa1a5zKJ1+stYQIPCnodUX1UmzqhM/NNnO5kwSFMWZmcb+YiEV/7DbJ3R2msQby962nn/Q1WqUWz/QdbRdX6B+thINKZquQpxXoCQ3Lq2/1KRnotl/J5JNA8/PedMTgI7OEIWMHAbUOjttWPIBNslL0iwvjVxaArNXA2x3IDNZ2ZV/urpUqjTU5ojcn0NqLVThyF5na2QGByyPlwQ3Do798uR0cGGD7h8qCQ8A4H7v4jobSqMmbqNX4bkoUGiVsj+qI7GQ47s5b6Uee3L8+ZpJ14zc+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=kernel.org
- smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
- pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=leica-geosystems.com.cn; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I50Suh0HbvYzvFN3YgdCP3bVtvvBEHQJwtuOi3WKugw=;
- b=fnhEi5iS6O19VCAh649M7rr2nFmNBdf8Q0WS02J1jugZtikFL3HbQ8sF9HjwZUyDzvf5jBD9ngrlviiVXO0agMZ9ywbQw0ksn7cRBBspjBn+xP3hEIbk2NeV8/OP5uFzAXdkhIzxKZjpRGQoYqjSm7uAUkBy3fCUVNZnizBIxdc=
-Received: from DB6PR0301CA0016.eurprd03.prod.outlook.com (2603:10a6:4:3e::26)
- by HE1PR0601MB2556.eurprd06.prod.outlook.com (2603:10a6:3:51::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.19; Tue, 13 Dec
- 2022 10:44:31 +0000
-Received: from DB5EUR02FT026.eop-EUR02.prod.protection.outlook.com
- (2603:10a6:4:3e:cafe::ec) by DB6PR0301CA0016.outlook.office365.com
- (2603:10a6:4:3e::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.8 via Frontend
- Transport; Tue, 13 Dec 2022 10:44:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=aherlnxbspsrv01.lgs-net.com; pr=C
-Received: from aherlnxbspsrv01.lgs-net.com (193.8.40.94) by
- DB5EUR02FT026.mail.protection.outlook.com (10.13.58.112) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5901.21 via Frontend Transport; Tue, 13 Dec 2022 10:44:30 +0000
-From:   LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        with ESMTP id S235208AbiLMKvl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 05:51:41 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501B862DF
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 02:51:39 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1p52sh-0007xo-V7; Tue, 13 Dec 2022 11:51:27 +0100
+Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1p52se-0004jk-VU; Tue, 13 Dec 2022 11:51:24 +0100
+Date:   Tue, 13 Dec 2022 11:51:24 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
         festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Qing-wu.Li@leica-geosystems.com.cn, 18701859600@163.com,
-        bsp-development.geo@leica-geosystems.com
-Subject: [PATCH V3 0/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
-Date:   Tue, 13 Dec 2022 11:44:25 +0100
-Message-Id: <20221213104426.3864788-1-Qing-wu.Li@leica-geosystems.com.cn>
-X-Mailer: git-send-email 2.25.1
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        18701859600@163.com, bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH V3 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
+Message-ID: <20221213105124.rivhfvxcazrgum24@pengutronix.de>
+References: <20221213104426.3864788-1-Qing-wu.Li@leica-geosystems.com.cn>
+ <20221213104426.3864788-2-Qing-wu.Li@leica-geosystems.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5EUR02FT026:EE_|HE1PR0601MB2556:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 73e574b3-6328-46f9-a391-08dadcf703e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YIzUDxCUskB4j15TK63OD39e2a+YzDRNCdV5raQOyw513VA5kC63s160oDa3JMxt9Zc4/XSo2spV+/f7LUdiU5Vb3cwnJCJ301dllD27gYBChQMu8ZbjfkwL+kO0nWZ65WraR1QOPW46EHXP9FUChNvOVQCyiMiprjMxbxUTDfdJsG5PyMRLBanDzcK0rac2yUwMckyFpGxWJGsKw9pI4ucasm9AnNezol9KrlthDvK6dsHpDioIZzw8EhZbEK+RfCFLOiacn9Gj2Q6OFiCUl6koeObMgri4ILhP0uRUhssq1aFVBKWVOJZSI9D1vJEmvqvEmxIRefzQqvl0GkbqYeM0qpa2wzFvDGprqJuzMgKkpkaHZnttQfWRsYAcS/CSosj0Wwa6qKPfA6xx17gW4Hx8hlpnhiVNokAuHyHtIq/HjY24rWRGLA9X9wdLx2XQnTPRx+Vtuiw6Xz9ig+V1azYXz4IaBmmr/lNhMCFVjaFsKH2g8dIFE4lIcLCP5Lfq/txEbDS9gJ2iJNrUSHsoINgbxcGOYMdGXJ0Q05Hcy6pws11iMLIyT+uBYX4x1B6wAKNrtUizIOKYU5XPXBcrV1AGiJoISOnbB3v2YUlzQ1gssNDz4QW0/bS2qW6ljeJxQTon1CxeqYPtOM8ygJsL5DOF374RXtx0Mo/ceh4qNS7VGFV0xCZW6IvHOzEaPp+LIx2DjpmLr6X1Rac3BGXijBmYMCWpv8AcHWiq2Osh4/KTrcm1CGiu7IALtkCsHEck
-X-Forefront-Antispam-Report: CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:aherlnxbspsrv01.lgs-net.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(136003)(396003)(39860400002)(451199015)(46966006)(36840700001)(40470700004)(478600001)(336012)(1076003)(6486002)(186003)(6512007)(9316004)(956004)(6506007)(2616005)(82310400005)(26005)(47076005)(36860700001)(4326008)(558084003)(40460700003)(86362001)(2906002)(8676002)(36736006)(83380400001)(41300700001)(118246002)(70206006)(316002)(70586007)(921005)(40480700001)(7416002)(107886003)(5660300002)(6666004)(36756003)(82740400003)(8936002)(356005)(81166007)(32563001);DIR:OUT;SFP:1102;
-X-OriginatorOrg: leica-geosystems.com.cn
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2022 10:44:30.1020
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73e574b3-6328-46f9-a391-08dadcf703e8
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[aherlnxbspsrv01.lgs-net.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB5EUR02FT026.eop-EUR02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0601MB2556
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221213104426.3864788-2-Qing-wu.Li@leica-geosystems.com.cn>
+User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Changes in V3:
-  move IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV
-  close to IMX8MP_CLK_M7_CORE.
+Hi Li,
 
-LI Qingwu (1):
-  clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
+On 22-12-13, LI Qingwu wrote:
+> Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
+> but never assigned. It will cause the system to hang if using them.
+> Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
+> for backward compatibility.
+> 
+> Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
+> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 652ae58c2735..db03d632ea8d 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -522,6 +522,9 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
+>  	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
+>  	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
+> +	hws[IMX8MP_CLK_M7_DIV] = hws[IMX8MP_CLK_M7_CORE];
+> +	hws[IMX8MP_CLK_M7_SRC] = hws[IMX8MP_CLK_M7_CORE];
+> +
 
- drivers/clk/imx/clk-imx8mp.c | 3 +++
- 1 file changed, 3 insertions(+)
+Last nit, I wouldn't add a newline here. Apart from that
 
--- 
-2.25.1
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
 
+>  	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
+>  	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
+>  	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
+> -- 
+> 2.25.1
+> 
+> 
+> 
