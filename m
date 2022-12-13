@@ -2,92 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704D6C4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Dec 2022 23:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3605BC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 10:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232930AbiLLXhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Dec 2022 18:37:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45864 "EHLO
+        id S229667AbiLMKnk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 05:43:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232791AbiLLXhJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Dec 2022 18:37:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21202192A5;
-        Mon, 12 Dec 2022 15:37:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D7698B80F93;
-        Mon, 12 Dec 2022 23:37:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C419C433D2;
-        Mon, 12 Dec 2022 23:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670888226;
-        bh=Djj37c4gGhHcy/TCgXVD2eUrZ4pas0KvVlsKKNOhTNQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JqE69LucO9qZIWAElN4CUCwwAlIBQJxrkL1lTmaYO/UObCARO+ktTV5RySUi3LCB5
-         7YsLSUmFNNzZl4JewOsbhOvKiKjM0RHsfIuUPfKAbs+Y0mVLq7NFuK9DKtRvBBqbVg
-         g917KtwjIY2YE0OBF5Udwyf90w+WByk9dUB+vR47v8BuJsrh7ZaUEWK/SHJVeHudyc
-         0weqMuFrEYAtB9hs/Y0NVpzzfGkDLm6R7QMW09zo1IbcO9ljJkGj2XrSdc5USpUoMs
-         x+dle18vHpIq8mAvzbihUE4xM/Q2P16omsQBYQeQVpTTMKO9McXduXtcCQhbUhU5Gm
-         A8S6LgCd3pEqQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8b42763d-5fc3-3853-c421-227494c0144a@seco.com>
-References: <20221027191113.403712-1-sean.anderson@seco.com> <20221027191113.403712-5-sean.anderson@seco.com> <20221027230331.19C2FC433D6@smtp.kernel.org> <5f00ede6-10f5-c11c-ee21-54460c1f98b0@seco.com> <d13ff3b2-79f0-2a72-c9da-2c310c4e3bb8@seco.com> <20221101201020.B6180C433C1@smtp.kernel.org> <45463950-7a4f-758d-d6a1-b8fdf9bfd319@seco.com> <20221207021742.A3596C433C1@smtp.kernel.org> <8b42763d-5fc3-3853-c421-227494c0144a@seco.com>
-Subject: Re: [PATCH v8 4/9] phy: fsl: Add Lynx 10G SerDes driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        with ESMTP id S234027AbiLMKnj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 05:43:39 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90FB55F8A
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 02:43:38 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id n1so2875039ljg.3
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 02:43:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2E0qygprK2sYZwkFh7NifzS8fG2xh0C3icv9H7MjHJ4=;
+        b=QVnF+cvC6zmbGOTJI32I36lh9wzNKQDbFyTniN84PEYjPl3xg2sOD+Pnf/emQEwrMD
+         U/b0By/yq6DO+TW4izGWB3tLbMFNjg/ta6MmEcoNCSPcTk7FeP75H7SoUI8FmV9/8wzv
+         ijIoWxHG0KB0tepNQtXtpn1+6u6H5jhbFEK26n+MRROL98sLxb8lxdw8luYRv8fwbYDH
+         TXYotuOEKe8NKwP92dsQ/JOb5mPe6RCdvY+FS3ofxmQGMVSNLYz2SzWTI7DAOcTjKvbK
+         bOuwVYqvVosWPuNpP6sAv7zCaDQc5NSTwsMaZutuSLA4R+Q/14CZoetu0Oqfdo+ONe+k
+         MFXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2E0qygprK2sYZwkFh7NifzS8fG2xh0C3icv9H7MjHJ4=;
+        b=XtyeZNmvTOrj2a7N0EvG3GTACbMpZZpZWrX8/k8ilE/cpVJ7oTB6BE6dj56tJq1r4S
+         Izp1i2d06URmF9l0ElUSGK7epmBVK2wXGt7Ej9Dikk8Fdn3/yEim74Bxw1OaltszuZYM
+         9KjAbc6Y9hZIm/BFBWukeZdnOVtbOqpHTv3EOtoxxjM9++kH1djuF+9BlMnr1nW+bh1x
+         VknpA+QM87RSqb6/3UNHxHr9Sr9ih4Ry2dD462zCuE8PNbeZjMWIbkyEXmXnS2Y1VGyr
+         c/vVVFenFmo77HkA2/UhzH8VMTrUaiFAwvliCxIoSD/3sCNKaGcHkFV3NYrHT8RP4IYo
+         Btqw==
+X-Gm-Message-State: ANoB5pmoH3mR9vwR1HVkpz/9atLc3jnPbqjja/BHbRZwSUb6gbsWIPdi
+        vJ3qRmAQiGJThuWtLsizSN4xiQ==
+X-Google-Smtp-Source: AA0mqf45LGu9EHSkKKj759y7PxRYEKh1u1LPxFrm0B4KuUGx2TX0/dMsdxVzld6XCjYGf6Hfp7xbbA==
+X-Received: by 2002:a2e:7e0c:0:b0:27b:65aa:db22 with SMTP id z12-20020a2e7e0c000000b0027b65aadb22mr196657ljc.20.1670928216956;
+        Tue, 13 Dec 2022 02:43:36 -0800 (PST)
+Received: from localhost.localdomain (abxh44.neoplus.adsl.tpnet.pl. [83.9.1.44])
+        by smtp.gmail.com with ESMTPSA id u14-20020a2e91ce000000b00279a7266874sm213830ljg.98.2022.12.13.02.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Dec 2022 02:43:36 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, krzysztof.kozlowski@linaro.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
-Date:   Mon, 12 Dec 2022 15:37:04 -0800
-User-Agent: alot/0.10
-Message-Id: <20221212233706.6C419C433D2@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: dispcc-sm6115: Shrink single-parent definitions
+Date:   Tue, 13 Dec 2022 11:43:33 +0100
+Message-Id: <20221213104333.27548-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sean Anderson (2022-12-08 07:36:45)
-> On 12/6/22 21:17, Stephen Boyd wrote:
-> > Quoting Sean Anderson (2022-11-01 16:27:21)
-> >> On 11/1/22 16:10, Stephen Boyd wrote:
-> >> >>=20
-> >> >> Oh, I remember why I did this. I need the reference clock for clk_h=
-w_round_rate,
-> >> >> which is AFAICT the only correct way to implement round_rate.
-> >> >>=20
-> >> >=20
-> >> > Is the reference clk the parent of the clk implementing
-> >> > clk_ops::round_rate()?
-> >>=20
-> >> Yes. We may be able to produce a given output with multiple reference
-> >> rates. However, the clock API provides no mechanism to say "Don't ask
-> >> for the parent clock to be rate X, you just tried it and the parent
-> >> clock can't support it." So instead, we loop over the possible referen=
-ce
-> >> rates and pick the first one which the parent says it can round to.
-> >>=20
-> >=20
-> > Sorry, I'm lost. Why can't you loop over possible reference rates in
-> > determine_rate/round_rate clk op here?
->=20
-> This is what I do currently, but you need to have the parent clock to do
-> so. With your suggested method, we never actually get a struct clk(_hw)
-> which we can query for rate support.
+There's no need to provide both a parent map and a parent data struct when
+there's precisely a single parent. Collapse this to save a few bytes.
 
-The clk_hw for the parent is given to the determine_rate clk_op in the
-clk_rate_request structure. It's stored in the best_parent_hw pointer
-when the determine_rate function is called. Does that work for you?
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/dispcc-sm6115.c | 30 ++++++++----------------------
+ 1 file changed, 8 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+index 818bb8f4637c..a6105033ff7e 100644
+--- a/drivers/clk/qcom/dispcc-sm6115.c
++++ b/drivers/clk/qcom/dispcc-sm6115.c
+@@ -103,14 +103,6 @@ static const struct clk_parent_data disp_cc_parent_data_0[] = {
+ 	{ .index = DT_DSI0_PHY_PLL_OUT_BYTECLK },
+ };
+ 
+-static const struct parent_map disp_cc_parent_map_1[] = {
+-	{ P_BI_TCXO, 0 },
+-};
+-
+-static const struct clk_parent_data disp_cc_parent_data_1[] = {
+-	{ .index = DT_BI_TCXO },
+-};
+-
+ static const struct parent_map disp_cc_parent_map_2[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_GPLL0_OUT_MAIN, 4 },
+@@ -141,14 +133,6 @@ static const struct clk_parent_data disp_cc_parent_data_4[] = {
+ 	{ .index = DT_DSI0_PHY_PLL_OUT_DSICLK },
+ };
+ 
+-static const struct parent_map disp_cc_parent_map_5[] = {
+-	{ P_SLEEP_CLK, 0 },
+-};
+-
+-static const struct clk_parent_data disp_cc_parent_data_5[] = {
+-	{ .index = DT_SLEEP_CLK, },
+-};
+-
+ static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
+ 	.cmd_rcgr = 0x20bc,
+ 	.mnd_width = 0,
+@@ -284,12 +268,13 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
+ 	.cmd_rcgr = 0x20a4,
+ 	.mnd_width = 0,
+ 	.hid_width = 5,
+-	.parent_map = disp_cc_parent_map_1,
+ 	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_vsync_clk_src",
+-		.parent_data = disp_cc_parent_data_1,
+-		.num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
++		.parent_data = &(const struct clk_parent_data){
++			.index = DT_BI_TCXO,
++		},
++		.num_parents = 1,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -304,12 +289,13 @@ static struct clk_rcg2 disp_cc_sleep_clk_src = {
+ 	.cmd_rcgr = 0x6050,
+ 	.mnd_width = 0,
+ 	.hid_width = 5,
+-	.parent_map = disp_cc_parent_map_5,
+ 	.freq_tbl = ftbl_disp_cc_sleep_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_sleep_clk_src",
+-		.parent_data = disp_cc_parent_data_5,
+-		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
++		.parent_data = &(const struct clk_parent_data){
++			.index = DT_SLEEP_CLK,
++		},
++		.num_parents = 1,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+-- 
+2.39.0
+
