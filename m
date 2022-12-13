@@ -2,86 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E6C04FDE
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 10:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A64EC10F31
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 13:23:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235197AbiLMKvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 05:51:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42102 "EHLO
+        id S234490AbiLMNXH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 08:23:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235208AbiLMKvl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 05:51:41 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501B862DF
-        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 02:51:39 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1p52sh-0007xo-V7; Tue, 13 Dec 2022 11:51:27 +0100
-Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1p52se-0004jk-VU; Tue, 13 Dec 2022 11:51:24 +0100
-Date:   Tue, 13 Dec 2022 11:51:24 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        18701859600@163.com, bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH V3 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
-Message-ID: <20221213105124.rivhfvxcazrgum24@pengutronix.de>
-References: <20221213104426.3864788-1-Qing-wu.Li@leica-geosystems.com.cn>
- <20221213104426.3864788-2-Qing-wu.Li@leica-geosystems.com.cn>
+        with ESMTP id S230061AbiLMNXG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 08:23:06 -0500
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E53A17E20;
+        Tue, 13 Dec 2022 05:23:04 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 1C113240013;
+        Tue, 13 Dec 2022 13:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1670937782;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jL+xcBOYdD78r23PS31gaU3YWiITl+rwOOygEItoozc=;
+        b=R9lbeAi05SXD39ZRp974M2gOcfxUCkydItXUcL25E8l+i3X9Q10gtIXNvsjFoeHZ0mGAof
+        hlmzRAxYl2EBM+jdc/2tMtHqWNJUf3tASXMOhILMNJWwKgpccTEQgz7+c9sKsSpa5utsIN
+        hQ2zETYa1IjOKLpkNHZkh9r/c3B08ex+NbIteQYr2joiySEOj7D0Y4dqNlOrJxR69D7tAm
+        2iW0SMlg8c6mNtQyOI7Kdpp/l+XH3AzZACxHCmq4APQD84EzakheDHpDwpX3giYhWycz5c
+        ny1MOiwborctRk5UbT7cTWtbzIuOok26jp2YPH0P6KsscYO8dAmEhb+or5X0Uw==
+Date:   Tue, 13 Dec 2022 14:22:58 +0100
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v3 3/9] dt-bindings: PCI: renesas,pci-rcar-gen2:
+ 'depends-on' is no more optional
+Message-ID: <20221213142258.77767caf@bootlin.com>
+In-Reply-To: <15cb7a77-4308-15f0-4669-7a2673b4abcb@linaro.org>
+References: <20221207162435.1001782-1-herve.codina@bootlin.com>
+        <20221207162435.1001782-4-herve.codina@bootlin.com>
+        <36895e49-aea5-3676-e7df-78b30277e6a0@linaro.org>
+        <20221208100530.137fa8b7@bootlin.com>
+        <8dfb5b8a-766a-14ec-16d4-74fdd9f7d622@linaro.org>
+        <20221208165101.584e4b92@bootlin.com>
+        <15cb7a77-4308-15f0-4669-7a2673b4abcb@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221213104426.3864788-2-Qing-wu.Li@leica-geosystems.com.cn>
-User-Agent: NeoMutt/20180716
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Li,
+Hi Krzysztof,
 
-On 22-12-13, LI Qingwu wrote:
-> Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
-> but never assigned. It will cause the system to hang if using them.
-> Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
-> for backward compatibility.
-> 
-> Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
-> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 652ae58c2735..db03d632ea8d 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -522,6 +522,9 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
->  	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
->  	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
-> +	hws[IMX8MP_CLK_M7_DIV] = hws[IMX8MP_CLK_M7_CORE];
-> +	hws[IMX8MP_CLK_M7_SRC] = hws[IMX8MP_CLK_M7_CORE];
-> +
+On Fri, 9 Dec 2022 09:06:55 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Last nit, I wouldn't add a newline here. Apart from that
+> On 08/12/2022 16:51, Herve Codina wrote:
+> > Hi Krzysztof,
+> >=20
+> > On Thu, 8 Dec 2022 10:46:32 +0100
+> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> >  =20
+> >> On 08/12/2022 10:05, Herve Codina wrote: =20
+> >>> Hi Krzysztof,
+> >>>
+> >>> On Thu, 8 Dec 2022 09:26:41 +0100
+> >>> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> >>>    =20
+> >>>> On 07/12/2022 17:24, Herve Codina wrote:   =20
+> >>>>> The 'depends-on' property is set in involved DTS.
+> >>>>>
+> >>>>> Move it to a required property.
+> >>>>>
+> >>>>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> >>>>> ---
+> >>>>>  Documentation/devicetree/bindings/pci/renesas,pci-rcar-gen2.yaml |=
+ 1 +     =20
+> >>>>
+> >>>> This should be squashed with previous patch. There is no point to add
+> >>>> property and immediately in the next patch make it required. Remember
+> >>>> that bindings are separate from DTS.
+> >>>>
+> >>>> Best regards,
+> >>>> Krzysztof
+> >>>>   =20
+> >>>
+> >>> I though about make dtbs_check in case of git bisect.   =20
+> >>
+> >> And what would this commit change? In Git you will have
+> >> 1. dt-bindings: PCI: renesas,pci-rcar-gen2: Add depends-on for RZ/N1 S=
+oC
+> >> family
+> >> 2. dt-bindings: PCI: renesas,pci-rcar-gen2: 'depends-on' is no more op=
+tional
+> >>
+> >> so what is the difference for git bisect? =20
+> >=20
+> > Well, today, I have:
+> > 1. dt-bindings: Add depends-on
+> > 2. dts: Add depends-on
+> > 3. dt-bindings: Move depends-on to mandatory =20
+>=20
+> What does it mean "I have"? Patches on mailing list? But we talk about
+> Git and I wrote you bindings are DTS are not going the same tree.
+>=20
+> >=20
+> > If I squash dt-bindings commits, I am going to have:
+> >   1. dt-bindings: Add mandatory depends-on
+> >   2. dts: Add depends-on
+> > or
+> >   1. dts: Add depends-on
+> >   2. dt-bindings: Add mandatory depends-on =20
+>=20
+> And how does it matter? Anyway it goes separate trees.
 
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+I finally understand what you mean by separate trees.
+And indeed, you're right, my patches split does not make
+any sense.
 
->  	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
->  	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
->  	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
-> -- 
-> 2.25.1
-> 
-> 
-> 
+According to feedbacks on this v3 series, these 3 patches
+will be removed in v4.
+
+Thanks for the review,
+Herv=C3=A9
+
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
