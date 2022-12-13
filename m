@@ -2,98 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A3BC4167B
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 14:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C972C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 14:54:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235961AbiLMOiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 09:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57338 "EHLO
+        id S236090AbiLMOyr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 09:54:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235980AbiLMOiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 09:38:16 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BF9D2FD;
-        Tue, 13 Dec 2022 06:38:15 -0800 (PST)
-Received: by mail-qt1-f170.google.com with SMTP id h16so11951959qtu.2;
-        Tue, 13 Dec 2022 06:38:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d5aYjTNJZYeeZ1RYF7eUge01EmrTIBiLJUd67L8iu/E=;
-        b=nvUa9IIf5J5v1hJFfWqOxXhofyLEL8CGueUpGFjoNYa86YYHJbkYfddEnUviguAWI8
-         yk77Z26iAS0qwdqF2XwwXaLcbooIht5bYbvjaGJfFtPD+Wy55HKYQulgUtz67x6l+Fh+
-         LEhBapnjMcW+spQz1JfDkYHt6fPnxbXAmA160M68Ui0PjnHopbKpzcpgAf7bSLmoOLYi
-         hJSb8QUg1bZJa8MLeLyJeVySXwm+v7rjhqtYQmWm3uOx19ff7jXXu3ws7XHawVGPw0ED
-         HC+Dl4C+1GWisOef9/BttzdShKARlsTm3CjwN0kwbS1qWBRbYHY1O2hUb0S5Oar4XrJR
-         Zsvg==
-X-Gm-Message-State: ANoB5pkt9ln0VTW19VMtr+PdNvSV6UeRAMnOi8Z0z5k7RjvjDwYGHiiL
-        Vw0aFev5Noi1Xdon7xZMarBy1AExFM2HFQ==
-X-Google-Smtp-Source: AA0mqf7/u4gqFa7xRPLjsdBOhqwO8DD35xxHrG8biy07J/Mlq6ipLu9CjpEhu0vCkREOZ5fEnfzCYA==
-X-Received: by 2002:a05:622a:408e:b0:3a5:c775:59ec with SMTP id cg14-20020a05622a408e00b003a5c77559ecmr30826246qtb.28.1670942294752;
-        Tue, 13 Dec 2022 06:38:14 -0800 (PST)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id b2-20020ac844c2000000b00342f8d4d0basm7698040qto.43.2022.12.13.06.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Dec 2022 06:38:14 -0800 (PST)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-3bf4ade3364so194369057b3.3;
-        Tue, 13 Dec 2022 06:38:14 -0800 (PST)
-X-Received: by 2002:a81:148c:0:b0:3e5:f2ca:7be8 with SMTP id
- 134-20020a81148c000000b003e5f2ca7be8mr24137887ywu.358.1670942293763; Tue, 13
- Dec 2022 06:38:13 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1670492384.git.geert+renesas@glider.be> <a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be>
-In-Reply-To: <a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Dec 2022 15:38:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUjQNq61sKLsUVjpDgJnftkZDZB-CL4UDAdiyrARz92iQ@mail.gmail.com>
-Message-ID: <CAMuHMdUjQNq61sKLsUVjpDgJnftkZDZB-CL4UDAdiyrARz92iQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: rcar-gen4: Add support for fractional multiplication
-To:     geert+renesas@glider.be
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        with ESMTP id S236053AbiLMOyd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 09:54:33 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C16421822;
+        Tue, 13 Dec 2022 06:54:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1670943238; bh=p2V7s/+ws7X71BvYRIZHw7xsRmehJjPbd5XZsH+u/kY=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=EfYG+kjIktEbtgitzOXzPiOmwbfKYZrdBcFfzvLXgM5ccUgKcRm6x57W46TG7PxBB
+         ORQ3ZDeBcniVBw3lYH0D9U6yORuMyftys+LFinsIWieI369Y/ZA9rzE7JFqMbTTizb
+         QbmeSraKJGkxs9N/AkewwQeI5upq0QdhwJEfi2gdKMQp9cN0cuEHiqJrV31NzAEY5D
+         taWNh7m8/ySvMNLj/QVXRUode3imfeaY6FB3rky6iD3CrE+HWIe0udQRr0PU8Mei7Q
+         BvwneEl4BmvQESWI9oqsCkW79E1sSzh/Dn/dqPS1DlGDURcZ+B9VUPM9bmcYiRV+6g
+         lvzJK8mURDP9g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([87.166.74.222]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKbgE-1pLggE305k-00Kvo9; Tue, 13
+ Dec 2022 15:53:58 +0100
+Date:   Tue, 13 Dec 2022 15:53:54 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tho Vu <tho.vu.wh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v5 5/6] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
+ controller driver
+Message-ID: <Y5iSAmJimekv1vkZ@probook>
+References: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
+ <20221104161850.2889894-6-j.neuschaefer@gmx.net>
+ <CAP6Zq1hjbPpLMWST4cYyMQw_-jewFoSrudOC+FPP5qOxJz4=xw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BUhB5f8R8Qwj7WNX"
+Content-Disposition: inline
+In-Reply-To: <CAP6Zq1hjbPpLMWST4cYyMQw_-jewFoSrudOC+FPP5qOxJz4=xw@mail.gmail.com>
+X-Provags-ID: V03:K1:qAZlPKx9k174kKCeqsHXUbFKERd19qHGzg2rpCT1Cq/gwIE/rSl
+ FRD4UBzf2HLKJoR7aa60QRyfVkCJGa9VbOQ1jjer8b+RJcBuIPAQhHQ0jL39MfHu+s3D9fJ
+ bopLEv1LIDJV/csOPud+R4TcdnTC6IBl3Z9+aenIAy4/0aMtUHaRO2Na30U0jwK/AiwBf60
+ uzB6JKiSf4O9zNEpE5zRg==
+UI-OutboundReport: notjunk:1;M01:P0:gGW4xdaesKw=;SkdxK5f2/9uUDiqfD41ZIZwzBaU
+ cYDhwjj/Jlo5LplNONkgLkYWeDsGvV4zmUl05FeLi9Z1Aw+9eEUW5d/Z/8mGS3mIVGxQRqsfO
+ jnXj/vjUwUnuighzSRS6OB0Xv+di8nE4pT3SV6bNVkdah57Mub8AehzI9UKff5R8AXpre6Cdq
+ TibfIcKqI1Eq8EjF4zLyYtBzmLbo1Q5WgOFJeClw5s6bKzZHlO40S4i8ecPhKsNNORdsh/cgJ
+ vlj0zIE0pebxFiTRPjvgu68m+fkx1Z0uhzJM5HqvYpgbUTg1HjWI/xYqEywwOjFNv+yVL7K97
+ tKAiMLlz75qVZDugaXs/12CO3KCR+lestoqmmmfdWlsEvk/Yib09e5GbZ+P496ssNcE55EgJ4
+ /oxp1bioFkHob84fR1Swd9oiU6f6eEe6AW9QrW/PemtTx8T+vEl/1etfOaX0DkrLSybXLpOMD
+ 0T4HR1nJJyI7r1QEuT7WBUawXbj7l0Rd4vtK57d7lCY7qNu3nhFT5h1PTZbl+Bda4mhj83b5m
+ w9qYEH9i8TfmqhevkTNz+F+NMEVr6rMCvAcxGqRLG6ljpMErZDmSbfbloRvIvh2YBrRwGHsoL
+ O9tvF8m5QHXNJy403labgjzI1g+C4D1Xg6gNUkTbFaTWMfPDNbf/x6hRpzerHjDTV+wLpJOUO
+ rn5/+BphkMigEtQ/xOu7oW8KLmWflIhcbYs5p2/Px2xE7fHyDYEpf6MoVitcQgoFb2pMmrF0i
+ tbKdpfafkRkCf45kkdIupk1C94XzaqQygbBQX25RWsugFZrcLTgGzWbXX6EodQumGbVb3ArWw
+ OZVfLeDkk0MDEV9y0gYBW2CP0wMs0Yk5C9EhIrSy1vMFldnR/XgpIML/BSJyenzy1+ejnlsSC
+ oNR4o0IP1E7X1dDkFFj+pIoLuxgsRvaxpHhNcbLQWb5I/ti6sQV9XYSRT0Amjq3H9mXpEDuNf
+ iorfu+Sxl1bq1yzK2mrnmRmZcms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 8, 2022 at 2:07 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> R-Car Gen4 PLLs support fractional multiplication, which can improve
-> accuracy when configuring a specific frequency.
->
-> Add support for fractional multiplication to the custom clock driver
-> for PLLs, which is currently used only for PLL2 on R-Car V4H.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+--BUhB5f8R8Qwj7WNX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> @@ -101,17 +126,31 @@ static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->                                 unsigned long parent_rate)
->  {
->         struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
-> -       unsigned int mult;
-> +       unsigned long prate = parent_rate * 2;
-> +       u32 cr0 = readl(pll_clk->pllcr0_reg);
-> +       unsigned int ni, nf;
-> +       int error;
+On Mon, Dec 12, 2022 at 09:30:46AM +0200, Tomer Maimon wrote:
+> Hi Jonathan,
+>=20
+> Thanks for your patch, and sorry for the late reply.
+>=20
+> On Fri, 4 Nov 2022 at 18:19, Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.=
+net> wrote:
+[...]
+> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > index de176c2fbad96..de5662830fce8 100644
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -208,7 +208,7 @@ config RESET_SCMI
+> >
+> >  config RESET_SIMPLE
+> >         bool "Simple Reset Controller Driver" if COMPILE_TEST || EXPERT
+> > -       default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REAL=
+TEK || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC
+> > +       default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REAL=
+TEK || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC || =
+ARCH_NPCM
+> Please modify the default ARCH_NPCM to the specific Hermon use,
+> ARCH_WPCM450, since NPCM7XX and NPCM8XX use a specific NPCM reset
+> driver.
+> https://elixir.bootlin.com/linux/v6.1-rc8/source/drivers/reset/reset-npcm=
+=2Ec
+> we prefer not to have two reset drivers when compiling ARCH_NPCM.
 
-"error" is unused, and should be dropped.
+Good point. I'll fix that.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Thanks,
+J.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--BUhB5f8R8Qwj7WNX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmOYkdgACgkQCDBEmo7z
+X9sOfw//QKFWxH0SCpUDv5aBRt3V5G0f9oCvOuHlRz1crGkrzdIWLF78mm+rva0m
+y+bUvpCoUuzhLTf8BGSfrnoaORrjzr4PgJXSaCMjjweSBMiG9PETkMtWKSA4rDCS
+X1vaU/OeVHy2eW4qhkgTKAmapy95wnk8lmRgjdeLLRWuuz06bX10wrnJWE8WOox8
+68QJNfQy76Ih5e/yh4lvhaWskzaUxuvLahWoZMMkX7xdUaV+bGfd4ad4tQXHwBy9
+BPHh63CTwUk/aGpPjOJuycdJX0MMZ4h1UNmuHfN/z2f+/rdLF3DtGMS9CYSK+N6z
+rosdZLiuzz3SQ3kB2IoCMbPq/RMtkqGlDTu/qvDh00mZd8DjaXS57u5Si4ElGjPH
+cj9b6YhDhWJO4hQbnHPaHY4hFt6PGqN/odIWYbIxa/ekiEUY8hP9h/LZMAb3d26N
+IUfbqHmb4iQqqLPL/E9NvAsMtrDbZcyHUtMztFThq16yNNEvWv1wqbO+UddcsfK1
+6d45sgggdIbGz2nnvzAf4Ex+SUsp3pVnbqfMmDYmRpGYkwZdOBSXJejqG/OEXzYY
+NVzMQcabti/Kw/u0rxyIYJUPgtdvR/lKWCtEACM7t6zqeVM/4DTsGGfmNXjyP+tJ
+uMivMhp96c6eW9lkZTeMFBMHWyyrA5kGx19FRDbCdURM0qdLr/c=
+=rO9G
+-----END PGP SIGNATURE-----
+
+--BUhB5f8R8Qwj7WNX--
