@@ -2,146 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3605BC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 10:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70786C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Dec 2022 10:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbiLMKnk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 05:43:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36236 "EHLO
+        id S234954AbiLMKop (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Dec 2022 05:44:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234027AbiLMKnj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 05:43:39 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90FB55F8A
-        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 02:43:38 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id n1so2875039ljg.3
-        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 02:43:38 -0800 (PST)
+        with ESMTP id S234999AbiLMKoj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 05:44:39 -0500
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2127.outbound.protection.outlook.com [40.107.103.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786725F99;
+        Tue, 13 Dec 2022 02:44:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HGSp/tgwIKLXQfcDFA+u4VCfV00+rkd5zdEA3abaUiaaoAH2f/Hx81G4UIJTzHdMlwk2LyYG12zYjekMt86uXQGub/9jDO5Hgve7hP0fAyLZ1hgSDKsS8zCS8GaIFhbhsMtlM3w1qDEGSqLLQ9IF5P5Y9SaPB2fJpAxtkYc+6VURX68q6GM3YPJIC6OTuu2YIk+mYUER3nkYhG3FHj4CTU64sIxiO2XmfRuBoZCyzebnH2BLvG8l5ut/zGmKYxIPk0S+uZkNcfmo2p54AJZk/8ry6au87Og74f1iNque2csQbJX4ZcVkqk8a3jNBz0DAdUrGxc0iHtiqZ5vkVLEuKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/iWhMK7llkXEHkDptJuwul4jTQkGlzujIqvfGiYNDik=;
+ b=nWRhXeGgWZoG1712XD0wovbEsISOtpc6l9pXy9b5kEvO3UuEWHz6rOXYhiIWGvJt8RkFJRG2XXeAqZwtajJm7i48qb5ZV7Iy+mCFdiXoW1cBNstKMLWLyTPg7njw6f+IhhtV0+r4siVnWrZEIyP+u6s1d0/6Mc00XfB0qDwcwPIl3C/wmHf4NPUc4aQfOIKdoaMifmPzdiP2G+YYhworequcpKuB9XCIPSr1naiW+AuHXdehm3kX+fkA8yES8oKWpgYNzdEjo4VcPIgm0QN7mXZHwnnpy008u76MvG4A7MOBM8B6J64WhWBuR1efA4LvNdSo4NQIjSPL+tv1Kt1Jhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=kernel.org
+ smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
+ pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2E0qygprK2sYZwkFh7NifzS8fG2xh0C3icv9H7MjHJ4=;
-        b=QVnF+cvC6zmbGOTJI32I36lh9wzNKQDbFyTniN84PEYjPl3xg2sOD+Pnf/emQEwrMD
-         U/b0By/yq6DO+TW4izGWB3tLbMFNjg/ta6MmEcoNCSPcTk7FeP75H7SoUI8FmV9/8wzv
-         ijIoWxHG0KB0tepNQtXtpn1+6u6H5jhbFEK26n+MRROL98sLxb8lxdw8luYRv8fwbYDH
-         TXYotuOEKe8NKwP92dsQ/JOb5mPe6RCdvY+FS3ofxmQGMVSNLYz2SzWTI7DAOcTjKvbK
-         bOuwVYqvVosWPuNpP6sAv7zCaDQc5NSTwsMaZutuSLA4R+Q/14CZoetu0Oqfdo+ONe+k
-         MFXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2E0qygprK2sYZwkFh7NifzS8fG2xh0C3icv9H7MjHJ4=;
-        b=XtyeZNmvTOrj2a7N0EvG3GTACbMpZZpZWrX8/k8ilE/cpVJ7oTB6BE6dj56tJq1r4S
-         Izp1i2d06URmF9l0ElUSGK7epmBVK2wXGt7Ej9Dikk8Fdn3/yEim74Bxw1OaltszuZYM
-         9KjAbc6Y9hZIm/BFBWukeZdnOVtbOqpHTv3EOtoxxjM9++kH1djuF+9BlMnr1nW+bh1x
-         VknpA+QM87RSqb6/3UNHxHr9Sr9ih4Ry2dD462zCuE8PNbeZjMWIbkyEXmXnS2Y1VGyr
-         c/vVVFenFmo77HkA2/UhzH8VMTrUaiFAwvliCxIoSD/3sCNKaGcHkFV3NYrHT8RP4IYo
-         Btqw==
-X-Gm-Message-State: ANoB5pmoH3mR9vwR1HVkpz/9atLc3jnPbqjja/BHbRZwSUb6gbsWIPdi
-        vJ3qRmAQiGJThuWtLsizSN4xiQ==
-X-Google-Smtp-Source: AA0mqf45LGu9EHSkKKj759y7PxRYEKh1u1LPxFrm0B4KuUGx2TX0/dMsdxVzld6XCjYGf6Hfp7xbbA==
-X-Received: by 2002:a2e:7e0c:0:b0:27b:65aa:db22 with SMTP id z12-20020a2e7e0c000000b0027b65aadb22mr196657ljc.20.1670928216956;
-        Tue, 13 Dec 2022 02:43:36 -0800 (PST)
-Received: from localhost.localdomain (abxh44.neoplus.adsl.tpnet.pl. [83.9.1.44])
-        by smtp.gmail.com with ESMTPSA id u14-20020a2e91ce000000b00279a7266874sm213830ljg.98.2022.12.13.02.43.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Dec 2022 02:43:36 -0800 (PST)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org, krzysztof.kozlowski@linaro.org
-Cc:     marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: dispcc-sm6115: Shrink single-parent definitions
-Date:   Tue, 13 Dec 2022 11:43:33 +0100
-Message-Id: <20221213104333.27548-1-konrad.dybcio@linaro.org>
-X-Mailer: git-send-email 2.39.0
+ d=leica-geosystems.com.cn; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/iWhMK7llkXEHkDptJuwul4jTQkGlzujIqvfGiYNDik=;
+ b=ScHzP29RQW9L1CagIK9lFttrFQcPvbNkn1UjOf2mYFtm86dj32iRM/wTvnT/yXrQl8xoF+k3rFhbRh9Wv4eBsN2D0Z6UugV40jsH1cuK77VmyA9M8RXwwCMKMIvOBrtS7tOKeDHE2XWtAR3rBQJ+qfDK3mxN/s7d4zPxiPxBrz4=
+Received: from DB6PR0301CA0007.eurprd03.prod.outlook.com (2603:10a6:4:3e::17)
+ by AM6PR06MB4184.eurprd06.prod.outlook.com (2603:10a6:20b:16::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.19; Tue, 13 Dec
+ 2022 10:44:33 +0000
+Received: from DB5EUR02FT026.eop-EUR02.prod.protection.outlook.com
+ (2603:10a6:4:3e:cafe::d) by DB6PR0301CA0007.outlook.office365.com
+ (2603:10a6:4:3e::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.8 via Frontend
+ Transport; Tue, 13 Dec 2022 10:44:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=aherlnxbspsrv01.lgs-net.com; pr=C
+Received: from aherlnxbspsrv01.lgs-net.com (193.8.40.94) by
+ DB5EUR02FT026.mail.protection.outlook.com (10.13.58.112) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5901.21 via Frontend Transport; Tue, 13 Dec 2022 10:44:33 +0000
+From:   LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Qing-wu.Li@leica-geosystems.com.cn, 18701859600@163.com,
+        bsp-development.geo@leica-geosystems.com
+Subject: [PATCH V3 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
+Date:   Tue, 13 Dec 2022 11:44:26 +0100
+Message-Id: <20221213104426.3864788-2-Qing-wu.Li@leica-geosystems.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221213104426.3864788-1-Qing-wu.Li@leica-geosystems.com.cn>
+References: <20221213104426.3864788-1-Qing-wu.Li@leica-geosystems.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5EUR02FT026:EE_|AM6PR06MB4184:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 7cedfdb5-d87a-4e1b-2507-08dadcf705b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dQqkk8HGwy5pTIdvF90sBNSbvNZSxF15yKBC5CT2HH04YqWghs8vQ2QDxhMv7T0RvS2dc1r+1EJ1b1zRmJ+dzrucUP8p/RlLwGzFzJZDo/eY6w82U/DVj1kFd8//MljSWR3JeYuUKpq0JURF1NN+d4N+VVrhaTtg3zRJOehqqenlusqX4T+1pzDmyT4aV+rzSlp9A4GylNWR7xPowwKqqOHdXkn2SgBo6uSQXKkanh+yQz/uotkUeJM99OiC6W/0Hn3XhNLAzb89V19mobB0HIWLGBfJeGUDUb5M+2CoFNZ5KJInzwcUQeSNFAIQPRqUoiK21JTPDqWKAHu1CTYIRf6L+xEooPjKofKn2D34nT0m2JtKcmsoSYSYZcDzTDBOQ9if7IdYJMoPO4JO0TPGKWfkQbJAKCbMS39qffRe0dEfv8KvsCD1b7Z43qM4eTemG5TT7w+L2vsP67N+Sz3f+ZaWgF9Y30Y8VlAm/bjd3V256sdMFJ+b+T/IDax4/pX5D3sRf1WFYev6Cdjfpge8R7GsTwllKogLjoygGir3YSP3VfM5uqLpTqH4E43Qb5BPNcOngzmXVfnyTzfOt7K7Krs7sKnYHpp0gS2USPFUy2Jtz0huXu0gwmd1JfuQPsGyaXr+//CqXdp3UCJM81bl5c3YrSEYLn8hC9azsAas6au00F5IQJDS7Cb4AECNQaH/9E6MyEFTHLF+jkIZuSw1BNjDo9YDUi0gaPwZ6lYTPi0itf5yzWqqkYQjmhvMcIPr
+X-Forefront-Antispam-Report: CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:aherlnxbspsrv01.lgs-net.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(346002)(39860400002)(376002)(451199015)(40470700004)(36840700001)(46966006)(4326008)(41300700001)(40480700001)(5660300002)(70586007)(8936002)(7416002)(36736006)(316002)(86362001)(70206006)(8676002)(6486002)(9316004)(956004)(921005)(83380400001)(356005)(336012)(81166007)(82740400003)(118246002)(478600001)(2906002)(6512007)(1076003)(6666004)(186003)(6506007)(36756003)(47076005)(82310400005)(26005)(107886003)(2616005)(36860700001)(40460700003)(32563001);DIR:OUT;SFP:1102;
+X-OriginatorOrg: leica-geosystems.com.cn
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2022 10:44:33.1174
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cedfdb5-d87a-4e1b-2507-08dadcf705b7
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[aherlnxbspsrv01.lgs-net.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR02FT026.eop-EUR02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR06MB4184
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There's no need to provide both a parent map and a parent data struct when
-there's precisely a single parent. Collapse this to save a few bytes.
+Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
+but never assigned. It will cause the system to hang if using them.
+Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
+for backward compatibility.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
 ---
- drivers/clk/qcom/dispcc-sm6115.c | 30 ++++++++----------------------
- 1 file changed, 8 insertions(+), 22 deletions(-)
+ drivers/clk/imx/clk-imx8mp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
-index 818bb8f4637c..a6105033ff7e 100644
---- a/drivers/clk/qcom/dispcc-sm6115.c
-+++ b/drivers/clk/qcom/dispcc-sm6115.c
-@@ -103,14 +103,6 @@ static const struct clk_parent_data disp_cc_parent_data_0[] = {
- 	{ .index = DT_DSI0_PHY_PLL_OUT_BYTECLK },
- };
- 
--static const struct parent_map disp_cc_parent_map_1[] = {
--	{ P_BI_TCXO, 0 },
--};
--
--static const struct clk_parent_data disp_cc_parent_data_1[] = {
--	{ .index = DT_BI_TCXO },
--};
--
- static const struct parent_map disp_cc_parent_map_2[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 4 },
-@@ -141,14 +133,6 @@ static const struct clk_parent_data disp_cc_parent_data_4[] = {
- 	{ .index = DT_DSI0_PHY_PLL_OUT_DSICLK },
- };
- 
--static const struct parent_map disp_cc_parent_map_5[] = {
--	{ P_SLEEP_CLK, 0 },
--};
--
--static const struct clk_parent_data disp_cc_parent_data_5[] = {
--	{ .index = DT_SLEEP_CLK, },
--};
--
- static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
- 	.cmd_rcgr = 0x20bc,
- 	.mnd_width = 0,
-@@ -284,12 +268,13 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
- 	.cmd_rcgr = 0x20a4,
- 	.mnd_width = 0,
- 	.hid_width = 5,
--	.parent_map = disp_cc_parent_map_1,
- 	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_vsync_clk_src",
--		.parent_data = disp_cc_parent_data_1,
--		.num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_BI_TCXO,
-+		},
-+		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
-@@ -304,12 +289,13 @@ static struct clk_rcg2 disp_cc_sleep_clk_src = {
- 	.cmd_rcgr = 0x6050,
- 	.mnd_width = 0,
- 	.hid_width = 5,
--	.parent_map = disp_cc_parent_map_5,
- 	.freq_tbl = ftbl_disp_cc_sleep_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_sleep_clk_src",
--		.parent_data = disp_cc_parent_data_5,
--		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_SLEEP_CLK,
-+		},
-+		.num_parents = 1,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 652ae58c2735..db03d632ea8d 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -522,6 +522,9 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
+ 	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
+ 	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
++	hws[IMX8MP_CLK_M7_DIV] = hws[IMX8MP_CLK_M7_CORE];
++	hws[IMX8MP_CLK_M7_SRC] = hws[IMX8MP_CLK_M7_CORE];
++
+ 	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
+ 	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
+ 	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
 -- 
-2.39.0
+2.25.1
 
