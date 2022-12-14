@@ -2,120 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B6AC4167B
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Dec 2022 03:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35031C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Dec 2022 07:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237034AbiLNDHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Dec 2022 22:07:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53786 "EHLO
+        id S237434AbiLNHc0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Dec 2022 02:32:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237083AbiLNDHb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Dec 2022 22:07:31 -0500
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2138.outbound.protection.outlook.com [40.107.105.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA1823EAE;
-        Tue, 13 Dec 2022 19:07:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nuNV4r7xqgd4gCojnninbjVzeyML5LK7/SXOQ8Tv3SoZhvgQhc2IFbZs5zwZPmPVyk3vY5OZzkM/vaEfAQ0d6v4/YZsq2/kMjgOYleM2YaA+KOrrchdzDjCRc0RnAzHzYnpKL8cXHPmdRQVJPqORyD0QtmY4Xyf35afjttihEzRc+IxxjTXIHpmnkUFTsUFgViqERomCxIMgCEsPD5Ufh8QGBA7FZuTjVhFBN3zzKG0HqJ9Xci/z/t0nSbqK/N38L3VfL6XTmeKdmnAQYAQVzy9KbTjgakuLSm0VscfG/XpQtS+Teyl5vYjonBq5EL7DHWT1z0qTNDZEBwy4Nsi4PA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aTZxqgyTh5Qa7gdQgrB34dfPDBc4rzCVQtm3RyxgQ94=;
- b=DlhO0lhm7133Ga7U41xBicCxnq05wkk954OQg8GO3AihY8NsMfJKbEPkL6VqtwG2dmq9q9I/R6hB4f/sztO05NxAJ5cZXp+4kFd1ooSPdUi3YbEch7p1ybK6bv67IcCMuwBiQJt8zRqwYcauxlVPUGWCfwwas8se6x6VutXVXDGx5D6Pu6ntKKJUjS9HW7M5KA/Ti9BmAhFG8dNTWgPO72SdnO+rOZQSxLFkrC04ULc1Y4Dd5B43CNeoAdY/mDOuOAaOtX5pCWGOtAL1n7K+Kl04/kWM5oVT5xJirCROjk1Nldog091S1oDWILjT2Xun7MGkFagOwhpfSRB+6l8SDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=kernel.org
- smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
- pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
- not signed); arc=none
+        with ESMTP id S230088AbiLNHcZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Dec 2022 02:32:25 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7387213D05
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 23:32:23 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id d14so21231025edj.11
+        for <linux-clk@vger.kernel.org>; Tue, 13 Dec 2022 23:32:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=leica-geosystems.com.cn; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aTZxqgyTh5Qa7gdQgrB34dfPDBc4rzCVQtm3RyxgQ94=;
- b=KrPsIwSmlKvzYauTb7ReiQg2XuP5BihWbQMw5CE/8feBrr/c5/pO5TrAnlFVv+XOr/XzIoJiGTu3HyBdPi4wE6fGzQauWlOhX/efJST6IeR/vfMhFFUmIxCx8rypnOHa4dTz6fToYiTmyWuL1VZNVBTH5ntHdBVqFL3gHLFfjow=
-Received: from DB6PR1001CA0048.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:4:55::34)
- by DB6PR0602MB2838.eurprd06.prod.outlook.com (2603:10a6:4:9e::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.19; Wed, 14 Dec
- 2022 03:07:26 +0000
-Received: from DB5EUR02FT062.eop-EUR02.prod.protection.outlook.com
- (2603:10a6:4:55:cafe::9c) by DB6PR1001CA0048.outlook.office365.com
- (2603:10a6:4:55::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.19 via Frontend
- Transport; Wed, 14 Dec 2022 03:07:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=aherlnxbspsrv01.lgs-net.com; pr=C
-Received: from aherlnxbspsrv01.lgs-net.com (193.8.40.94) by
- DB5EUR02FT062.mail.protection.outlook.com (10.13.59.53) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5901.21 via Frontend Transport; Wed, 14 Dec 2022 03:07:25 +0000
-From:   LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Qing-wu.Li@leica-geosystems.com.cn, 18701859600@163.com,
-        bsp-development.geo@leica-geosystems.com,
-        Marco Felsch <m.felsch@pengutronix.de>
-Subject: [PATCH V4 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
-Date:   Wed, 14 Dec 2022 04:07:19 +0100
-Message-Id: <20221214030719.4123889-2-Qing-wu.Li@leica-geosystems.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221214030719.4123889-1-Qing-wu.Li@leica-geosystems.com.cn>
-References: <20221214030719.4123889-1-Qing-wu.Li@leica-geosystems.com.cn>
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1iX53ofpqrzk0YZ6KNxGxfiNC7kqMLlKM8UTuzJUTY=;
+        b=SqySALxQYMa1zWvs0VVjWBKFgrWM7hYJ6MjmSCsCJ0qS2z7Z5fL6KHXDZpKuD0TNd6
+         vSH8b9osSg0RdIBSRmszn9lNPxxF78sdkQjSMs3ySnWa7FBBlBzrHXOc7r+k7wVIllZ9
+         2MCRv/Hvy3qc6mKDv4bOPnAh3U0O5vispnqr4WYVuTaPlBAyRr+co+3DT82ca6m14wke
+         rCsgnfs+TliA+eGtBqGVV8B4gLeSbaKzLLMTwXZnz+qLuwkI9QVZYwxfYGA3I49+ee9l
+         rG7viLshSy8dbdy2whFJ+7mKkAHL2WW/EhZ5Q1nbUY0OwsRF2a3WTnsDt9brZwGhtRko
+         qdpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y1iX53ofpqrzk0YZ6KNxGxfiNC7kqMLlKM8UTuzJUTY=;
+        b=WWN9Gx24bvozNkCiHtjhwbJQvcsQwEW/SCeNcVeQAqiJ0+wih5LicSvkkhgugeRjU+
+         QEK2TC4IsNFgAzvXx8o+OZYCloa11z5K3OTdU5sjmMqyfAaj9Yz7xqVZgoqzowSO10Ul
+         YYUFn8vVP1oXpoNuuuCiLnDRbMVVcUzvziNjFuvpbSospST2DVjRSLZJuKdy/0eWEq9T
+         N67tGO8WShmvxSyrItMRyy93+Ga4cxle6WLBzuD8JCwFjfQsexMyWIXGAxlwahtKDhS/
+         /5N9UugL33yTKol/zyv9iwayuR9FOtHjBcwNY13FpXbpRu4h28tlhcs2ASjsJGnnLPP7
+         0i/A==
+X-Gm-Message-State: ANoB5pmmGUonFLWq5cHHBExrKHExdQS8hkvVkJrlaDK3EZcoXaIVxp9l
+        UrIeToo2W8uxlIgP0qvGSA2dKg==
+X-Google-Smtp-Source: AA0mqf5E5OyQJdElpwGM8XN0xgmPjPP6McLdDoWBZvqHNWy+h8HvDmPxb/C3ceS4wUuqqDTX+FDZWw==
+X-Received: by 2002:a05:6402:43ce:b0:46c:a43d:5e23 with SMTP id p14-20020a05640243ce00b0046ca43d5e23mr24265030edc.28.1671003141902;
+        Tue, 13 Dec 2022 23:32:21 -0800 (PST)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id bf8-20020a0564021a4800b0045cf4f72b04sm5803587edb.94.2022.12.13.23.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Dec 2022 23:32:20 -0800 (PST)
+Date:   Wed, 14 Dec 2022 08:32:19 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [RFC PATCH v4 2/4] dpll: Add DPLL framework base functions
+Message-ID: <Y5l8A+n5Vy5wRHXj@nanopsycho>
+References: <Y5CQ0qddxuUQg8R8@nanopsycho>
+ <20221207085941.3b56bc8c@kernel.org>
+ <Y5Gc6E+mpWeVSBL7@nanopsycho>
+ <20221208081955.335ca36c@kernel.org>
+ <Y5IR2MzXfqgFXGHW@nanopsycho>
+ <20221208090517.643277e8@kernel.org>
+ <Y5MAEQ74trsNFQQc@nanopsycho>
+ <20221209081942.565bc422@kernel.org>
+ <Y5cucrZjsMgZcHDf@nanopsycho>
+ <DM6PR11MB46577F9AB422103140778D529BE39@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5EUR02FT062:EE_|DB6PR0602MB2838:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 99132dc7-b20d-4599-ac1c-08dadd805421
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TZ6jUPJN7CSNpY3voXec6XnecVF66FGRF9Tj5+A0D0JCZB52DLdu6miMBTBk7jyRP3DaG7QNoFh8Xg6nuBDPRMfDpGcLo7m8an0MyLSdNqQLbKWygVZTiBvqFrt9J/3YJy1e8MUad+Dpf3It9txixLnzRix9ELoJjBil/w95qdLct5ZT89gGmhHuVgDvHRCo44WvnfjrcYLdFON282rU8t3OqRB2vse7yZ7Jzhucwtd0cqo9zWdIOzs4Z7DUswkmUjq7iZrcyxgLZv9bTcNnhrXvmacPWBYHCUHa94iejyIeKNrS1r7pswWhb5ow/a5wPkiVVATmYe9UxxMZofLuh2KOJI2eV8siQPkVEd5zv4ydZHEmRWkpTVdaeQLuGao6GdcbsYH3k8NJtmFOCp53iG3enSHVJHoOXdGoprpJpHLgcJOjE7DIXpPMrepP/LhotDaqH9+39I90mfYrQX2JJHteOeB4NN5zJlFm4fKbAnYIuH4Qq57mczRxyYBOHXur/whozZfHWMF266oHcUW7klikSGswFqxuJVVEjA0YLDVLaxpA75S4BGfzDXlbvDHoMot3u/ZYX/sv7fbp1F07MnDnjej/nWy7jrukj5fHqE2aRBXQd/O2HuIXqBClqk9JdqVwk3qq8fSPHWSS13V+ccim3jcbNlr2Viz/ClsMs3hBIrDw/xwu8xjuYWLTh8I5eQ9OPzNLCa7Wtp7yZGeYPQRConFajU9zaPH/xlsZHZX2ItGLwOMh5+5h47mF+7yE
-X-Forefront-Antispam-Report: CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:aherlnxbspsrv01.lgs-net.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(376002)(396003)(346002)(451199015)(40470700004)(36840700001)(46966006)(83380400001)(81166007)(86362001)(2906002)(118246002)(6486002)(478600001)(82740400003)(40480700001)(36756003)(40460700003)(36860700001)(2616005)(1076003)(82310400005)(336012)(356005)(9316004)(47076005)(956004)(6506007)(316002)(921005)(6512007)(70586007)(8676002)(26005)(186003)(4326008)(8936002)(70206006)(7416002)(6666004)(41300700001)(36736006)(5660300002)(32563001);DIR:OUT;SFP:1102;
-X-OriginatorOrg: leica-geosystems.com.cn
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2022 03:07:25.6829
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99132dc7-b20d-4599-ac1c-08dadd805421
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[aherlnxbspsrv01.lgs-net.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB5EUR02FT062.eop-EUR02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0602MB2838
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB46577F9AB422103140778D529BE39@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
-but never assigned. It will cause the system to hang if using them.
-Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
-for backward compatibility.
+Tue, Dec 13, 2022 at 07:08:13PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Monday, December 12, 2022 2:37 PM
+>>To: Jakub Kicinski <kuba@kernel.org>
+>>
+>>Fri, Dec 09, 2022 at 05:19:42PM CET, kuba@kernel.org wrote:
+>>>On Fri, 9 Dec 2022 10:29:53 +0100 Jiri Pirko wrote:
+>>>> Thu, Dec 08, 2022 at 06:05:17PM CET, kuba@kernel.org wrote:
+>>>> >On Thu, 8 Dec 2022 17:33:28 +0100 Jiri Pirko wrote:
+>>>> >> For any synce pin manipulation over dpll netlink, we can use the
+>>>> >> netns check of the linked netdev. This is the netns aware leg of
+>>>> >> the dpll, it should be checked for.
+>>>> >
+>>>> >The OCP card is an atomic clock, it does not have any networking.
+>>>>
+>>>> Sure, so why it has to be netns aware if it has nothing to do with
+>>>> networking?
+>>>
+>>>That's a larger question, IDK if broadening the scope of the discussion
+>>>will help us reach a conclusion.
+>>>
+>>>The patchset as is uses network namespaces for permissions:
+>>>
+>>>+		.flags	= GENL_UNS_ADMIN_PERM,
+>>
+>>Yeah, I wonder if just GENL_ADMIN_PERM wuldn't be more suitable here...
+>>
+>>
+>>>
+>>>so that's what I'm commenting on - aligning visibility of objects with
+>>>already used permissions.
+>>>
+>>>> >> I can't imagine practically havind the whole dpll instance netns
+>>aware.
+>>>> >> Omitting the fact that it really has no meaning for non-synce
+>>>> >> pins, what would be the behaviour when for example pin 1 is in
+>>>> >> netns a, pin 2 in netns b and dpll itself in netns c?
+>>>> >
+>>>> >To be clear I don't think it's a bad idea in general, I've done the
+>>>> >same thing for my WIP PSP patches. But we already have one device
+>>>> >without netdevs, hence I thought maybe devlink. So maybe we do the
+>>>> >same thing with devlink? I mean - allow multiple devlink instances
+>>>> >to be linked and require caps on any of them?
+>>>>
+>>>> I read this 5 times, I'm lost, don't understand what you mean :/
+>>>
+>>>Sorry I was replying to both paragraphs here, sorry.
+>>>What I thought you suggested is we scope the DPLL to whatever the
+>>>linked netdevs are scoped to? If netns has any of the netdevs attached
+>>>to the DPLL then it can see the DPLL and control it as well.
+>>
+>>Okay, that would make sense.
+>>GENL_UNS_ADMIN_PERM | GENL_UNS_ADMIN_PERM then.
+>>
+>
+>I guess a typo here? Shall be: 'GENL_UNS_ADMIN_PERM | GENL_ADMIN_PERM'?
 
-Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
----
- drivers/clk/imx/clk-imx8mp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Yes, sure.
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 652ae58c2735..601eea7ab99d 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -522,6 +522,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
- 	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
- 	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
-+	hws[IMX8MP_CLK_M7_DIV] = hws[IMX8MP_CLK_M7_CORE];
-+	hws[IMX8MP_CLK_M7_SRC] = hws[IMX8MP_CLK_M7_CORE];
- 	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
- 	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
- 	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
--- 
-2.25.1
+>Going to:
+>- apply those bits for all the dpll netlink commands,
+>- remove DPLLA_NETIFINDEX,
+>- leave pin DPLLA_PIN_NETIFINDEX as is.
+>
+>Or I have missed something?
 
+I believe it is ok.
+
+>
+>Thanks,
+>Arkadiusz
+>
+>>>
+>>>What I was saying is some DPLL have no netdevs. So we can do the same
+>>>thing with devlinks. Let the driver link the DPLL to one or more
+>>>devlink instances, and if any of the devlink instances is in current
+>>>netns then you can see the DPLL.
+>>
+>>I don't think that would be needed to pull devlink into the picture.
+>>If not netdev is linked to dpll, GENL_ADMIN_PERM would apply.
+>
