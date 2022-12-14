@@ -2,56 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AFEC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Dec 2022 09:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F4DC001B2
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Dec 2022 12:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237486AbiLNJKy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Dec 2022 04:10:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33330 "EHLO
+        id S238401AbiLNMjA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Dec 2022 07:39:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiLNJKv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Dec 2022 04:10:51 -0500
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DAA10FF5
-        for <linux-clk@vger.kernel.org>; Wed, 14 Dec 2022 01:10:50 -0800 (PST)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 31E208320D; Wed, 14 Dec 2022 09:10:44 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1671009049; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=Uj4pWxmOa10E8TGDtr5hrcoWCPjJYOkyW5q/jiFpyTGKMr+/MeyGaBaZ6iMaNXuij
-         u3OvZ/egw5AZ+X34Y0R5HuA8b21gQG1pWiL4vzH+Y/IxD0IMfCH37+XGmAcbOhzV1d
-         H5BXRYOhr0EpE995juHlOpHO3FRiygh+fpDc9MRUOAZCS146BUhqt8dEcLYLT8xBaS
-         jPpVGHW/6euuGkD/5XiBMOR7rNNXiHG8HTk8w9teb+AlW5dLdWvXPZBHDSbYKeGtEu
-         swIB+37/P69KQt1xqxH9FdmJRt6Z5X7Fl1v7ZSLI4smtCZADEaiqjEaItrakj6zQug
-         KdVawoz+LJzIw==
-Received: by mail.lokoho.com for <linux-clk@vger.kernel.org>; Wed, 14 Dec 2022 09:10:35 GMT
-Message-ID: <20221214074502-0.1.2t.9sg2.0.be1tdqe57i@lokoho.com>
-Date:   Wed, 14 Dec 2022 09:10:35 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        with ESMTP id S238297AbiLNMil (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Dec 2022 07:38:41 -0500
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 801CC23BC3;
+        Wed, 14 Dec 2022 04:37:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1671021430; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=HLzDDpFo+NMrWAFFyUZ9LuVUJTHVwxs+VXTyDfaqs9Q=;
+        b=xop6fV11aNUmenrUx59Oup4N5Niw2ZMg1q1ul/H5H7lsj2z9Ci1uiyTU528q8AiTyTzSCP
+        gX69xAHuHtARmUqSyjNNI+M61CdYnQeokcms2dEbkWQmRs8yugxr9XwDNztgvl89Cy9d/I
+        IpUOFSv9WkaFsPih5Lo7Ai3EzrPj3vI=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     list@opendingux.net, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
+Subject: [PATCH] clk: ingenic: jz4760: Update M/N/OD calculation algorithm
+Date:   Wed, 14 Dec 2022 13:37:04 +0100
+Message-Id: <20221214123704.7305-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+The previous algorithm was pretty broken.
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+- The inner loop had a '(m > m_max)' condition, and the value of 'm'
+  would increase in each iteration;
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+- Each iteration would actually multiply 'm' by two, so it is not needed
+  to re-compute the whole equation at each iteration;
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+- It would loop until (m & 1) == 0, which means it would loop at most
+  once.
 
+- The outer loop would divide the 'n' value by two at the end of each
+  iteration. This meant that for a 12 MHz parent clock and a 1.2 GHz
+  requested clock, it would first try n=12, then n=6, then n=3, then
+  n=1, none of which would work; the only valid value is n=2 in this
+  case.
 
-Pozdrawiam
-Adam Charachuta
+Simplify this algorithm with a single for loop, which decrements 'n'
+after each iteration, addressing all of the above problems.
+
+Fixes: bdbfc029374f ("clk: ingenic: Add support for the JZ4760")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/jz4760-cgu.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/ingenic/jz4760-cgu.c b/drivers/clk/ingenic/jz4760-cgu.c
+index ecd395ac8a28..e407f00bd594 100644
+--- a/drivers/clk/ingenic/jz4760-cgu.c
++++ b/drivers/clk/ingenic/jz4760-cgu.c
+@@ -58,7 +58,7 @@ jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
+ 		       unsigned long rate, unsigned long parent_rate,
+ 		       unsigned int *pm, unsigned int *pn, unsigned int *pod)
+ {
+-	unsigned int m, n, od, m_max = (1 << pll_info->m_bits) - 2;
++	unsigned int m, n, od, m_max = (1 << pll_info->m_bits) - 1;
+ 
+ 	/* The frequency after the N divider must be between 1 and 50 MHz. */
+ 	n = parent_rate / (1 * MHZ);
+@@ -66,19 +66,17 @@ jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
+ 	/* The N divider must be >= 2. */
+ 	n = clamp_val(n, 2, 1 << pll_info->n_bits);
+ 
+-	for (;; n >>= 1) {
+-		od = (unsigned int)-1;
++	rate /= MHZ;
++	parent_rate /= MHZ;
+ 
+-		do {
+-			m = (rate / MHZ) * (1 << ++od) * n / (parent_rate / MHZ);
+-		} while ((m > m_max || m & 1) && (od < 4));
+-
+-		if (od < 4 && m >= 4 && m <= m_max)
+-			break;
++	for (m = m_max; m >= m_max && n >= 2; n--) {
++		m = rate * n / parent_rate;
++		od = m & 1;
++		m <<= od;
+ 	}
+ 
+ 	*pm = m;
+-	*pn = n;
++	*pn = n + 1;
+ 	*pod = 1 << od;
+ }
+ 
+-- 
+2.35.1
+
