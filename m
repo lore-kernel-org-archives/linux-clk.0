@@ -2,108 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F4DC001B2
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Dec 2022 12:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF24C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Dec 2022 15:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238401AbiLNMjA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Dec 2022 07:39:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42376 "EHLO
+        id S238491AbiLNP76 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Dec 2022 10:59:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238297AbiLNMil (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Dec 2022 07:38:41 -0500
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 801CC23BC3;
-        Wed, 14 Dec 2022 04:37:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1671021430; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=HLzDDpFo+NMrWAFFyUZ9LuVUJTHVwxs+VXTyDfaqs9Q=;
-        b=xop6fV11aNUmenrUx59Oup4N5Niw2ZMg1q1ul/H5H7lsj2z9Ci1uiyTU528q8AiTyTzSCP
-        gX69xAHuHtARmUqSyjNNI+M61CdYnQeokcms2dEbkWQmRs8yugxr9XwDNztgvl89Cy9d/I
-        IpUOFSv9WkaFsPih5Lo7Ai3EzrPj3vI=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     list@opendingux.net, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
-Subject: [PATCH] clk: ingenic: jz4760: Update M/N/OD calculation algorithm
-Date:   Wed, 14 Dec 2022 13:37:04 +0100
-Message-Id: <20221214123704.7305-1-paul@crapouillou.net>
+        with ESMTP id S238500AbiLNP7c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Dec 2022 10:59:32 -0500
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A3B24091;
+        Wed, 14 Dec 2022 07:58:16 -0800 (PST)
+Received: by mail-oi1-f169.google.com with SMTP id s186so2960333oia.5;
+        Wed, 14 Dec 2022 07:58:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ohnzc1o66yIs2LOA/u0EnDBRAn8LEk4Wj9WsU7EuZSQ=;
+        b=MBlbyhZz0+evddHsQw1ARWYFOhVghEJCJE894cySRyRiSVKLTbr8v4RWUJ9cZsrBbG
+         ZSqC5IQr2NAkMey9aQlp6ezZSVyGbLC+Nk6CSL+4v4dHeerXm/9OF3qQYC7j9VORsevH
+         0uZbR6TZ1uN/dWzspsTlqf5vU5UvwXDm4iUKeHJ2imrTwJ5x2uzJtztg4DtfGXsGyeAZ
+         ojfn3afYykHs4/gd/F7SRzz62MUTYnferRE7LksugwL9yhCJH3Wks7AIoMjWRtEjoW9Z
+         xYlq/l/M6VNwS62MNse//x3OU4nai1VSipieQWPimtiS0LaCoYdoEdmL5VNx4iMsRobA
+         wxvQ==
+X-Gm-Message-State: ANoB5pnNC8EO3lco8ofD5CY+G1XibLd03MqEpr6DsvQGoaFukAetabJC
+        VVUf8l0Z42j0tGvBT1p40g==
+X-Google-Smtp-Source: AA0mqf5TAyAdXyKadPxASJjHqEwdmxYBxeu/KaNYrnJMRivzzFdvwgNTG0cS41y0oM000qVruUFJ0g==
+X-Received: by 2002:aca:b756:0:b0:35c:29d3:9379 with SMTP id h83-20020acab756000000b0035c29d39379mr10270832oif.35.1671033496077;
+        Wed, 14 Dec 2022 07:58:16 -0800 (PST)
+Received: from robh_at_kernel.org (rrcs-98-6-157-194.sw.biz.rr.com. [98.6.157.194])
+        by smtp.gmail.com with ESMTPSA id z6-20020a056808028600b0035b7002af8csm9291oic.56.2022.12.14.07.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Dec 2022 07:58:15 -0800 (PST)
+Received: (nullmailer pid 1135240 invoked by uid 1000);
+        Wed, 14 Dec 2022 15:58:14 -0000
+Date:   Wed, 14 Dec 2022 09:58:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 1/5] dt-bindings: usb: add the Renesas RZ/N1 USBF
+ controller
+Message-ID: <167103349424.1135180.17746497216489018146.robh@kernel.org>
+References: <20221213133302.218955-1-herve.codina@bootlin.com>
+ <20221213133302.218955-2-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221213133302.218955-2-herve.codina@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The previous algorithm was pretty broken.
 
-- The inner loop had a '(m > m_max)' condition, and the value of 'm'
-  would increase in each iteration;
+On Tue, 13 Dec 2022 14:32:58 +0100, Herve Codina wrote:
+> The Renesas RZ/N1 USBF controller is an USB2.0 device controller
+> (UDC) available in the Renesas r9a06g032 SoC (RZ/N1 family).
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  .../bindings/usb/renesas,rzn1-usbf.yaml       | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+> 
 
-- Each iteration would actually multiply 'm' by two, so it is not needed
-  to re-compute the whole equation at each iteration;
-
-- It would loop until (m & 1) == 0, which means it would loop at most
-  once.
-
-- The outer loop would divide the 'n' value by two at the end of each
-  iteration. This meant that for a 12 MHz parent clock and a 1.2 GHz
-  requested clock, it would first try n=12, then n=6, then n=3, then
-  n=1, none of which would work; the only valid value is n=2 in this
-  case.
-
-Simplify this algorithm with a single for loop, which decrements 'n'
-after each iteration, addressing all of the above problems.
-
-Fixes: bdbfc029374f ("clk: ingenic: Add support for the JZ4760")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/jz4760-cgu.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/ingenic/jz4760-cgu.c b/drivers/clk/ingenic/jz4760-cgu.c
-index ecd395ac8a28..e407f00bd594 100644
---- a/drivers/clk/ingenic/jz4760-cgu.c
-+++ b/drivers/clk/ingenic/jz4760-cgu.c
-@@ -58,7 +58,7 @@ jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
- 		       unsigned long rate, unsigned long parent_rate,
- 		       unsigned int *pm, unsigned int *pn, unsigned int *pod)
- {
--	unsigned int m, n, od, m_max = (1 << pll_info->m_bits) - 2;
-+	unsigned int m, n, od, m_max = (1 << pll_info->m_bits) - 1;
- 
- 	/* The frequency after the N divider must be between 1 and 50 MHz. */
- 	n = parent_rate / (1 * MHZ);
-@@ -66,19 +66,17 @@ jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
- 	/* The N divider must be >= 2. */
- 	n = clamp_val(n, 2, 1 << pll_info->n_bits);
- 
--	for (;; n >>= 1) {
--		od = (unsigned int)-1;
-+	rate /= MHZ;
-+	parent_rate /= MHZ;
- 
--		do {
--			m = (rate / MHZ) * (1 << ++od) * n / (parent_rate / MHZ);
--		} while ((m > m_max || m & 1) && (od < 4));
--
--		if (od < 4 && m >= 4 && m <= m_max)
--			break;
-+	for (m = m_max; m >= m_max && n >= 2; n--) {
-+		m = rate * n / parent_rate;
-+		od = m & 1;
-+		m <<= od;
- 	}
- 
- 	*pm = m;
--	*pn = n;
-+	*pn = n + 1;
- 	*pod = 1 << od;
- }
- 
--- 
-2.35.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
