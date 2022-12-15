@@ -2,113 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB58C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Dec 2022 07:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896A8C46467
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Dec 2022 10:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbiLOHkU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Dec 2022 02:40:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
+        id S229820AbiLOKCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Dec 2022 05:02:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbiLOHkP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Dec 2022 02:40:15 -0500
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E6002F65C
-        for <linux-clk@vger.kernel.org>; Wed, 14 Dec 2022 23:40:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=MXbGZi/uT236kTlDo/a7an6Zgc9j
-        j3vGUMDH7t/LADA=; b=NC7nWVv6RWI3U1eApcT+54ZynNQXYEgXlKVQ/3SNNsLt
-        hig76LkqBM78+BElQycqYB3XWnoZhqPCPs+wG29f5o3yef5ynQ/YEKg0xCgzh80u
-        MhhkJkO6hfcaron+Nhx4La68lWsVZovpG2+msxcQTO9YmzQX7D4PIMkzH5FczSA=
-Received: (qmail 2279799 invoked from network); 15 Dec 2022 08:40:08 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Dec 2022 08:40:08 +0100
-X-UD-Smtp-Session: l3s3148p1@vr1R9tjvOo4ujnt8
-Date:   Thu, 15 Dec 2022 08:40:07 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 3/4] mmc: renesas_sdhi: Add RZ/V2M compatible string
-Message-ID: <Y5rPV0m5+8Dh6Bfe@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-References: <20221213230129.549968-1-fabrizio.castro.jz@renesas.com>
- <20221213230129.549968-4-fabrizio.castro.jz@renesas.com>
+        with ESMTP id S230231AbiLOKBq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Dec 2022 05:01:46 -0500
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4AFD2A961;
+        Thu, 15 Dec 2022 02:01:45 -0800 (PST)
+Received: by mail-qt1-f171.google.com with SMTP id fu10so4801627qtb.0;
+        Thu, 15 Dec 2022 02:01:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JhtBCHHNjoXXg4T30Sb3fCu73wDFb0l1hMsSAjF0/fc=;
+        b=I4RFIuWgbHzPtr412BtFDCfKDHQ8ZvNbodm5TTanssloIpgUoCf8VG5EysLabbDXOu
+         PbH+aOxOZxDMinbn98lfCXnZcBc9MgDhURLo12ZsP9+DUjJJj+r5n0K8oVIu1yd1SHev
+         u61TspyPTvhdeSOM7EBC+oQ6jdxlNhcErx9iQM2eMYTDV6S2ZPccBIqcs7JeKpyedXKi
+         7xAGmYnUb3fm/f4D3HKrHqB9lcifEKToVC3I4DG2jplClsnc3sgN5SQWGXTJn5Cl8HGR
+         s1hPQyLfvIihcd+LJi+AaDilOkwt6JtZnEdyHH+Q811FQf/5rMWQgH9Ii+twkqw+O5cS
+         dzhg==
+X-Gm-Message-State: ANoB5pk0u0fzhlcclAA3BmwZb6FJKIX1paNdsJJR/nYqYJKdji+yMU/r
+        WhS3fZag5365g1XMeNh4PkbIUdNte5tEtQ==
+X-Google-Smtp-Source: AA0mqf5IkZdrOBZF4otQcCnpnY6ghJ5HQxT2GUgozP8oMpULmRVMDD/FomiRwYpxQaQbgUY5SvSk6A==
+X-Received: by 2002:a05:622a:488c:b0:3a7:ed31:a618 with SMTP id fc12-20020a05622a488c00b003a7ed31a618mr42865401qtb.7.1671098504492;
+        Thu, 15 Dec 2022 02:01:44 -0800 (PST)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id l14-20020ac84cce000000b0038b684a1642sm3190217qtv.32.2022.12.15.02.01.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Dec 2022 02:01:43 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id d131so2896458ybh.4;
+        Thu, 15 Dec 2022 02:01:43 -0800 (PST)
+X-Received: by 2002:a25:7204:0:b0:6f0:9ff5:1151 with SMTP id
+ n4-20020a257204000000b006f09ff51151mr66067110ybc.543.1671098503649; Thu, 15
+ Dec 2022 02:01:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IfgYU8RXIPQ3Ptmi"
-Content-Disposition: inline
-In-Reply-To: <20221213230129.549968-4-fabrizio.castro.jz@renesas.com>
+References: <20221213133302.218955-1-herve.codina@bootlin.com> <20221213133302.218955-2-herve.codina@bootlin.com>
+In-Reply-To: <20221213133302.218955-2-herve.codina@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 15 Dec 2022 11:01:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV7x_-PGfOnHxuXhE-cqSKeugscTe4b_9-_tF2MsSJGPg@mail.gmail.com>
+Message-ID: <CAMuHMdV7x_-PGfOnHxuXhE-cqSKeugscTe4b_9-_tF2MsSJGPg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] dt-bindings: usb: add the Renesas RZ/N1 USBF controller
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Dec 13, 2022 at 2:33 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> The Renesas RZ/N1 USBF controller is an USB2.0 device controller
+> (UDC) available in the Renesas r9a06g032 SoC (RZ/N1 family).
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
---IfgYU8RXIPQ3Ptmi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Dec 13, 2022 at 11:01:28PM +0000, Fabrizio Castro wrote:
-> The SDHI/eMMC IPs found with the RZ/V2M (a.k.a. r9a09g011), are
-> very similar to the ones found in R-Car Gen3, but they are not
-> exactly the same, and as a result need an SoC specific compatible
-> string for fine tuning driver support.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Gr{oetje,eeting}s,
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+                        Geert
 
-> +static const struct renesas_sdhi_quirks sdhi_quirks_r9a09g011 =3D {
-> +	.fixed_addr_mode =3D true,
-> +	.hs400_disabled =3D true,
-> +};
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Cool, seems like our quirk abstraction works reasonably well :)
-
-
---IfgYU8RXIPQ3Ptmi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmOaz1cACgkQFA3kzBSg
-Kbaw2RAAgL3RbR6t3/4u7yW4JYFKMjdthimKC9C2pKEy5N0poM/F/cTzTfFn+FTO
-qTkPwmcPKEUSNa0QUwGQ3wFDpFEEm4MV/86p+uaYzQV7XLp5Xcbx3g7de15FC8mf
-kU9UrLeWZg9ut62WaV9TVxo5lsiml1iGuG1/LsFkNy49OHqHY1ZHr7+NwcQDwAst
-toexiP4n2F47ZpW/JGubvZvbmuac+6Df6VzNaggfRj+q68hqjOmC42uQ3timJe7w
-Ts7/TgETLtSFMSHN5CKBUeNVzdumKIHX3DwHn/vSC8c+0SvW5QAu0/JiUc5ievx/
-jRvEr3t3WoHh7E3S9EUmQFI5MMOwob4atl7aGM887Ic8Fkhd2w9rcyJsqFV9aDlE
-C6TvVi5dwTC5wh5iOM5HroqnrXaf4btXMirULevey6pkM6nh93v20RRdJg1zNAFh
-Mz7d2/gJolSpNlkyhsOj3Ot4JxydIRtHfV9VsujzBYbTgrnW8IGsnjxTneg4J+Xf
-bwHGWjz1yqAjlbAf4P0dOgvjOqbRybWI0/2JW2JLseqOHBVOn2iiS1Oi4RogYNaf
-RwiCa+Bre4li1HVU1/WzD9ZrQdzG6Mj3a2bnj0Dam4HpuW507b+SjevZmeQHN2lz
-3s/8jJbWUgLEZMMo7QReNMB+TbspE3I81CZgeNTUpOT/qBz1EOA=
-=J7AR
------END PGP SIGNATURE-----
-
---IfgYU8RXIPQ3Ptmi--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
