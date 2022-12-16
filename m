@@ -2,170 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B6CC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Dec 2022 20:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D67C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Dec 2022 08:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbiLOUPe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Dec 2022 15:15:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
+        id S229495AbiLPIZH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Dec 2022 03:25:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbiLOUPc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Dec 2022 15:15:32 -0500
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22C042FBDF;
-        Thu, 15 Dec 2022 12:15:32 -0800 (PST)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-3e45d25de97so5288837b3.6;
-        Thu, 15 Dec 2022 12:15:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iK4o9jLvL400oAI7gEBPMmyw5mH/OfCQsL+GJz6EUHE=;
-        b=FYpzgSu9zxFCEB9DpsLOEbzthnkgW6+UtEfzlgYsMp+oEloOnYVB6FsMTKHc8ef7Ol
-         zvgSd0UaFf+unzNSBr8vkWFSnPGwxktncmDM0+ftf3XHHXdd9RyUEUiylE5Rs67rpd0o
-         xc0OTHWKVJ0cXXCP9bJJ5uBVEt/5uniVJtRnTw1MqpUj8Dd9eOgkL5qkQ9zq5BxVXGmj
-         ZqpO9fFkNYxbJqSUSNm7xBnEtPqaE0ktyBkbKXceEOCdOeDagmEVLgqHP+E8yDer/tdQ
-         UGocSBQ8f7Xn0aWerfyeTmQkjqf06ZBbe7hHoQB+iDt7r333slCqxyV2qG4W5Kx+XZ9E
-         eysw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iK4o9jLvL400oAI7gEBPMmyw5mH/OfCQsL+GJz6EUHE=;
-        b=ah+M4L4gI+k5PsbrftzHiunsiFklkAGT2CiX2JeYXiH1SgwJxSO9DUjlGasNPRPhZR
-         zRYszDAJltfiLH9HtphakuAOaFXUx9ojLJ1GsjL9I15SvbyCOoOdPycTuhj98JvzyQ/T
-         aUeVjC4nOkURA/HqM44VpNaHjfdbtLnIMn1crhNJNjbfTJM1h16+njBm4Lr1tgwl60ze
-         o7G6U5GoXJqcOvxCFV3+jPTirGBs2rGhA1SdDVXTL9nL1JumYcT8V320MLH9YCDO3r1V
-         G+OdushmJU/eeN81i/a5o/gmd8GqN0v/EVKWiHY3CGb8DUTZmbmDjgPF9mgxTkQMJ0ro
-         yP1A==
-X-Gm-Message-State: ANoB5plIQFF2JdWbyAmSjFhE+iTCdtYLUoNUiqdJ+ICC3T1qyDhY+0Og
-        1ceRa1qxi7L4GxuPaiA7AOY=
-X-Google-Smtp-Source: AA0mqf5kqRcoR1s9S1eHc44XGjbfjpzsT1/6GNL5vrgogObGEBdPweTHjesvj8jJUu38rHm17qyBbw==
-X-Received: by 2002:a81:9c7:0:b0:36b:eafd:ca50 with SMTP id 190-20020a8109c7000000b0036beafdca50mr34291075ywj.52.1671135331232;
-        Thu, 15 Dec 2022 12:15:31 -0800 (PST)
-Received: from [10.4.10.38] (pool-108-26-182-112.bstnma.fios.verizon.net. [108.26.182.112])
-        by smtp.gmail.com with ESMTPSA id c15-20020ae9ed0f000000b006e702033b15sm12450949qkg.66.2022.12.15.12.15.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Dec 2022 12:15:30 -0800 (PST)
-Message-ID: <f7f57361-8a4b-00e4-57fe-0ed103ddb10e@gmail.com>
-Date:   Thu, 15 Dec 2022 15:15:29 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH] clk: imx: fix compile testing imxrt1050
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        with ESMTP id S229453AbiLPIZG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Dec 2022 03:25:06 -0500
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5169120A0;
+        Fri, 16 Dec 2022 00:25:05 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 38AEE320024A;
+        Fri, 16 Dec 2022 03:25:04 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 16 Dec 2022 03:25:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1671179103; x=1671265503; bh=C4AE13Q1vq
+        ynMIdifRw1TSUR9jldWPJda3LvsUqHS74=; b=aYEaZVHP0vIKV0HFkFdbByykac
+        YC/eiNTz/VcrFZEbIGJLVcLR3NZK3mW8gABnN5mtpvD2eQ3EevW+vlov0yo0Ve3v
+        wexkKvK9IlfT611VdtoNr8EAqrmAqPsRjaKJh2C5Dcx3PhJ7arFC2kJZ69bJOCjk
+        egLSCFQwq2NF/tmYa9WO7KRm+0/RnTxF4fnPUGK72JkzTzZ4tCnofGx6yoPckBsr
+        RFwn9PiqhYD7kPriJwIhDvn5dxTREjGhSxwNaqKCOvASp3oi2y+f7PzDbq8bQeTt
+        ohR6YDKA6QctlIYETjmxNTjWok1OC92prm33ugm47PNUSVYrK/YCxBRmEaKw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1671179103; x=1671265503; bh=C4AE13Q1vqynMIdifRw1TSUR9jld
+        WPJda3LvsUqHS74=; b=njoQYOd4YEzKdVo2HLPwXxO2CaeFdl3/xvY8oCxQ0sXb
+        b6y4DP1Cts40eaPdC12+7aI/aRfLuFwiXGSGEDnP6lo7ryonFDjcuekMi4unGfko
+        MhYC9GXIP/eFe6gICpyi0FXfINsjLWcZvt6qCJcUOjkSjYZN5u+Ts9MkHRTogfBB
+        h5Jb4xer+2meXTy5G14+akKFH9c9JwNxP0cJAk/fF7oX9fNFB5zjv4FoG/KBKEAY
+        vrDUCI8RBs+DFi0V1P3w8LZYqMR705PIYIs2DSfRVYgrNtmVMlIVUNgv2evkftQa
+        KT2XtGoT9WGgVomgQ0QfPLpt7MhiMEdTVqoUqf4tsw==
+X-ME-Sender: <xms:XyucY9G69psmeuB0obP0c5skYtzD4pQAgWUwQAWmoiC8KILd9pLmIA>
+    <xme:XyucYyVth9Lozo1jzJ-Pr-GeNskKyNd4-fkKvAWOZqXKbyczHYTRYQ7WzVy7tRUvj
+    goNGY2crDgop-bEZiY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeigdduudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:XyucY_IONfuLcQojQx8Yn117mWx3h_vShIsE5HYHA9cjqxC85qSseg>
+    <xmx:XyucYzE1AInOd6utLvFJPhI-UNVmJJ61-RupqS1M1Xd2iHYntvfqnQ>
+    <xmx:XyucYzVwUEj7qXbzoScEEXYLJk0j8hYHl9exzV9pKAMaMDZTSI1czQ>
+    <xmx:XyucYwVJJtGoIVIJ7bCjtcaSH5wNHF45Nq5BaLrZheM5uqhMq_aR5A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 18EFFB60089; Fri, 16 Dec 2022 03:25:03 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <abb5af81-0f0c-4457-9562-8f29da4c85b7@app.fastmail.com>
+In-Reply-To: <f7f57361-8a4b-00e4-57fe-0ed103ddb10e@gmail.com>
+References: <20221215165836.2136448-1-arnd@kernel.org>
+ <f7f57361-8a4b-00e4-57fe-0ed103ddb10e@gmail.com>
+Date:   Fri, 16 Dec 2022 09:24:42 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Jesse Taube" <mr.bossman075@gmail.com>,
+        "Arnd Bergmann" <arnd@kernel.org>,
+        "Abel Vesa" <abelvesa@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Shawn Guo" <shawnguo@kernel.org>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>
+Cc:     "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        "Fabio Estevam" <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        "Peng Fan" <peng.fan@nxp.com>,
+        "Giulio Benetti" <giulio.benetti@benettiengineering.com>,
+        "Dario Binacchi" <dario.binacchi@amarulasolutions.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-References: <20221215165836.2136448-1-arnd@kernel.org>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20221215165836.2136448-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] clk: imx: fix compile testing imxrt1050
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Dec 15, 2022, at 21:15, Jesse Taube wrote:
+> On 12/15/22 11:58, Arnd Bergmann wrote:
 
+>>   config CLK_IMXRT1050
+>>   	tristate "IMXRT1050 CCM Clock Driver"
+>> -	depends on SOC_IMXRT
+>> +	depends on SOC_IMXRT || COMPILE_TEST
+> Not sure what COMPILE_TEST is but,
 
-On 12/15/22 11:58, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Randconfig testing revealed multiple issues with this driver:
-> 
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/imx/clk-imxrt1050.o
-> ERROR: modpost: "imx_clk_hw_pllv3" [drivers/clk/imx/clk-imxrt1050.ko] undefined!
-> ERROR: modpost: "imx_clk_hw_pfd" [drivers/clk/imx/clk-imxrt1050.ko] undefined!
-> 
-> Export the necessary symbols from the core clk driver and add the
-> license and author tags. To find this type of problem more easily
-> in the future, also enable building on other platforms, as we do for
-> the other i.MX clk drivers.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/clk/imx/Kconfig         | 2 +-
->   drivers/clk/imx/clk-imxrt1050.c | 4 ++++
->   drivers/clk/imx/clk-pfd.c       | 2 ++
->   drivers/clk/imx/clk-pllv3.c     | 2 ++
->   4 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> index 25785ec9c276..f6b82e0b9703 100644
-> --- a/drivers/clk/imx/Kconfig
-> +++ b/drivers/clk/imx/Kconfig
-> @@ -115,7 +115,7 @@ config CLK_IMX93
->   
->   config CLK_IMXRT1050
->   	tristate "IMXRT1050 CCM Clock Driver"
-> -	depends on SOC_IMXRT
-> +	depends on SOC_IMXRT || COMPILE_TEST
-Not sure what COMPILE_TEST is but,
-Acked-by: Jesse Taube <Mr.Bossman075@gmail.com>
+The idea is that you can enable the driver to be built in
+allmodconfig or randconfig regardless of the architecture,
+to see any compiler-time warnings creeping up without
+having to build an imxrt specific kernel.
 
-Sorry about the issues introduced.
+> Acked-by: Jesse Taube <Mr.Bossman075@gmail.com>
 
-Thanks,
-Jesse Taube
->   	select MXC_CLK
->   	help
->   	    Build the driver for i.MXRT1050 CCM Clock Driver
-> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
-> index e972abd299a8..fd5c51fc92c0 100644
-> --- a/drivers/clk/imx/clk-imxrt1050.c
-> +++ b/drivers/clk/imx/clk-imxrt1050.c
-> @@ -167,3 +167,7 @@ static struct platform_driver imxrt1050_clk_driver = {
->   	},
->   };
->   module_platform_driver(imxrt1050_clk_driver);
-> +
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_AUTHOR("Jesse Taube <Mr.Bossman075@gmail.com>");
-> +MODULE_AUTHOR("Giulio Benetti <giulio.benetti@benettiengineering.com>");
-> diff --git a/drivers/clk/imx/clk-pfd.c b/drivers/clk/imx/clk-pfd.c
-> index 5d2a9a3be95e..5cf0149dfa15 100644
-> --- a/drivers/clk/imx/clk-pfd.c
-> +++ b/drivers/clk/imx/clk-pfd.c
-> @@ -5,6 +5,7 @@
->    */
->   
->   #include <linux/clk-provider.h>
-> +#include <linux/export.h>
->   #include <linux/io.h>
->   #include <linux/slab.h>
->   #include <linux/err.h>
-> @@ -153,3 +154,4 @@ struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
->   
->   	return hw;
->   }
-> +EXPORT_SYMBOL_GPL(imx_clk_hw_pfd);
-> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> index eea32f87c60a..11fb238ee8f0 100644
-> --- a/drivers/clk/imx/clk-pllv3.c
-> +++ b/drivers/clk/imx/clk-pllv3.c
-> @@ -6,6 +6,7 @@
->   
->   #include <linux/clk-provider.h>
->   #include <linux/delay.h>
-> +#include <linux/export.h>
->   #include <linux/io.h>
->   #include <linux/iopoll.h>
->   #include <linux/slab.h>
-> @@ -486,3 +487,4 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
->   
->   	return hw;
->   }
-> +EXPORT_SYMBOL_GPL(imx_clk_hw_pllv3);
+Thanks
+
+   Arnd
