@@ -2,134 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45799C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Dec 2022 10:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC327C001B2
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Dec 2022 10:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230334AbiLPKWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Dec 2022 05:22:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
+        id S229620AbiLPKqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Dec 2022 05:46:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbiLPKWl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Dec 2022 05:22:41 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E11E50D6A;
-        Fri, 16 Dec 2022 02:22:32 -0800 (PST)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BGAAmjT002282;
-        Fri, 16 Dec 2022 10:21:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=7WZgQQGfLi75ZWNskFxxTaZq35gnqysSKNpwvvUbTxA=;
- b=SCXgLrkORiqWOfmhyNkKGkJlG+mvSM3T1zbsSLttZK8bfuykdkGyZ6k8loOWplx80w95
- 6W484tAQeuEpcE+BTVSM2wanLdJH2veox6GhooD8ArG7Wupm3foOkSSjTtCgy5x7h+VX
- Xc/h2S+/VXazNC9fwd0HKYpNCOG43LGNrS47E4hHiV12BQRVGMC8OB5EhFzRDbEltnUG
- T0QNigE6UcyaLMt/6UEM7i5a6fUQTFpydWSGEWMXcGOKb8+5AoispgP7KRmxNsm+moGQ
- nopWsJ/JiwdGhBzFgkiHbr6gM0TQHXCtt08UWgJALvTGD/vyWmbaFgn9UojBYJhIpOVq ow== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mgpdb02cq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Dec 2022 10:21:57 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BGALubP029954
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Dec 2022 10:21:56 GMT
-Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Fri, 16 Dec 2022 02:21:47 -0800
-From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
-To:     freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Andy Gross <agross@kernel.org>, Chia-I Wu <olvaffe@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Douglas Anderson" <dianders@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        "Len Brown" <len.brown@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sean Paul <sean@poorly.run>, Stephen Boyd <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v2 0/5] Improve GPU reset sequence for Adreno GPU
-Date:   Fri, 16 Dec 2022 15:51:19 +0530
-Message-ID: <1671186084-11356-1-git-send-email-quic_akhilpo@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S229561AbiLPKqS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Dec 2022 05:46:18 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7E01A7;
+        Fri, 16 Dec 2022 02:46:17 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id w15so2054001wrl.9;
+        Fri, 16 Dec 2022 02:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sO4cl5xjhBVd3+iJHoMx+vhvACtxqzk7PC5Y+IYSlGo=;
+        b=U+wbUqs6y5Ha3t9PLfeWlC2Tn5Exdl4K5spuYibUc5x4Tako5sn+lV2bE7eNBDrXHY
+         TphwwB5MfnzepvG/hWZZBVC2+59pd3VSdorV4S1rQRJpujtVaPon1fkyvAv35JO63SpW
+         DMAvbbLO8MAPK05sKTQWD/lsr6eZ1zmwpB0dM0PlrTWBFwMoso37SLjeIlIGak0TFaMq
+         Idfn+zrcnNvR7XcyxkzF1B65JRBzk+MjX6RVkutgYUJ8l1mDq5K6ze7/FVgvuow77c0q
+         7NioshZexPrE9jJ/SWXfGZFbNm65oL75dnovVmi1hDXz/AMqAdPaF3HezRiydofhTUcx
+         nJCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sO4cl5xjhBVd3+iJHoMx+vhvACtxqzk7PC5Y+IYSlGo=;
+        b=43W0/Q68SrbIgUOKt9UmTPqmsa/bCgHgxRrSHgdWbot/Mt6OiPDV4YnEk4heLS8Jcv
+         1eaIS8LfzQkMOEsP3K0ECby1Nole1rxbHgRPLNjaw8yIJYhD8MD7CfXV6If7IB6hfBPf
+         nrLhuhQLWYTvrxFjz4H+7bbmmz2D2uqd3AGCyPRTXuvlh6x0lB6e239Mn/qIPzIFVG9o
+         FwPUHMZGLvKeQgdBWzPcaTFHVlwvopKSnQmq/dJ3tVkrR+ewzHSEvXnH6+8A1jJau22q
+         ewYs1cxEUjIxFccIHlLFIVFxbKmbmrHpOpAiffnj8HwXyk5U07fuNh5ZcGOJN8yIpwOF
+         GqQw==
+X-Gm-Message-State: ANoB5pkGMVK/QsEgdMUE7y9kYVfXtBdNELBSNfKyAyM0plq5fr2UUsMX
+        ZIjwL0QyjmE7/xiGrknrEVY=
+X-Google-Smtp-Source: AA0mqf4HOHiYTqq0kp7OdkUCzJ8BQs4DBeNan81nRQTiiI1Wk2/CM9cRgA6TnfWggcAf6dckKY2Xsg==
+X-Received: by 2002:adf:a44f:0:b0:242:63e5:2449 with SMTP id e15-20020adfa44f000000b0024263e52449mr22819655wra.69.1671187575593;
+        Fri, 16 Dec 2022 02:46:15 -0800 (PST)
+Received: from [192.168.1.132] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id r4-20020adfa144000000b002367ad808a9sm1974295wrr.30.2022.12.16.02.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Dec 2022 02:46:14 -0800 (PST)
+Message-ID: <ebc435fd-0acb-6588-8acd-c8d504ad4289@gmail.com>
+Date:   Fri, 16 Dec 2022 11:46:12 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KkV3VQBqqnBlhADXXe1t6BFfV39C_5Jy
-X-Proofpoint-ORIG-GUID: KkV3VQBqqnBlhADXXe1t6BFfV39C_5Jy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-16_06,2022-12-15_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxlogscore=942 phishscore=0 mlxscore=0 adultscore=0 impostorscore=0
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2212160091
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v3 01/10] arm64: dts: mt8183: Fix Mali GPU clock
+Content-Language: en-US
+To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, wenst@chromium.org,
+        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, jose.exposito89@gmail.com,
+        drinkcat@chromium.org, weiyi.lu@mediatek.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        angelogioacchino.delregno@collabora.com
+References: <20220927101128.44758-1-angelogioacchino.delregno@collabora.com>
+ <20220927101128.44758-2-angelogioacchino.delregno@collabora.com>
+ <20221206183037.3jnssar4yxcx5hpb@notapiano>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20221206183037.3jnssar4yxcx5hpb@notapiano>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-This is a rework of [1] using genpd instead of 'reset' framework.
 
-As per the recommended reset sequence of Adreno gpu, we should ensure that
-gpucc-cx-gdsc has collapsed at hardware to reset gpu's internal hardware states.
-Because this gdsc is implemented as 'votable', gdsc driver doesn't poll and
-wait until its hw status says OFF.
+On 06/12/2022 19:30, Nícolas F. R. A. Prado wrote:
+> On Tue, Sep 27, 2022 at 12:11:19PM +0200, AngeloGioacchino Del Regno wrote:
+>> From: Chen-Yu Tsai <wenst@chromium.org>
+>>
+>> The actual clock feeding into the Mali GPU on the MT8183 is from the
+>> clock gate in the MFGCFG block, not CLK_TOP_MFGPLL_CK from the TOPCKGEN
+>> block, which itself is simply a pass-through placeholder for the MFGPLL
+>> in the APMIXEDSYS block.
+>>
+>> Fix the hardware description with the correct clock reference.
+>>
+>> Fixes: a8168cebf1bc ("arm64: dts: mt8183: Add node for the Mali GPU")
+>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> Hi,
+> 
+> it seems that while all other patches on this series were applied by Chen-Yu
+> through the clk tree, this commit never made it to the mediatek tree.
+> 
+> As a result, MT8183-based machines (or at least mt8183-kukui-jacuzzi, where I
+> tested on) currently hang during boot not only on next, but also on mainline,
+> v6.1-rc8. With this commit applied I've confirmed that the machine boots fine
+> again.
+> 
+> Matthias, could you please apply this commit and make sure it makes its way to
+> v6.1? Given the Fixes tag it should eventually make its way there anyway, but if
+> still possible would be good to have it fixed right from v6.1.
+> 
+> Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-So use the newly introduced genpd api (dev_pm_genpd_synced_poweroff()) to
-provide a hint to the gdsc driver to poll for the hw status and use genpd
-notifier to wait from adreno gpu driver until gdsc is turned OFF.
+Applied now.
 
-This series is rebased on top of linux-next (20221215) since the changes span
-multiple drivers.
+Sorry for the late reply.
+Matthias
 
-[1] https://patchwork.freedesktop.org/series/107507/
-
-Changes in v2:
-- Minor formatting fix
-- Select PM_GENERIC_DOMAINS from Kconfig
-
-Akhil P Oommen (4):
-  clk: qcom: gdsc: Support 'synced_poweroff' genpd flag
-  drm/msm/a6xx: Vote for cx gdsc from gpu driver
-  drm/msm/a6xx: Remove cx gdsc polling using 'reset'
-  drm/msm/a6xx: Use genpd notifier to ensure cx-gdsc collapse
-
-Ulf Hansson (1):
-  PM: domains: Allow a genpd consumer to require a synced power off
-
- drivers/base/power/domain.c           | 23 ++++++++++++++++++
- drivers/clk/qcom/gdsc.c               | 11 +++++----
- drivers/gpu/drm/msm/Kconfig           |  1 +
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 46 ++++++++++++++++++++++++++++++++---
- drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  7 ++++++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 13 +++++++---
- drivers/gpu/drm/msm/msm_gpu.c         |  4 ---
- drivers/gpu/drm/msm/msm_gpu.h         |  4 ---
- include/linux/pm_domain.h             |  5 ++++
- 9 files changed, 94 insertions(+), 20 deletions(-)
-
--- 
-2.7.4
-
+> 
+> Thanks,
+> Nícolas
+> 
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt8183.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+>> index a70b669c49ba..402136bfd535 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+>> @@ -1678,7 +1678,7 @@ gpu: gpu@13040000 {
+>>   				<GIC_SPI 278 IRQ_TYPE_LEVEL_LOW>;
+>>   			interrupt-names = "job", "mmu", "gpu";
+>>   
+>> -			clocks = <&topckgen CLK_TOP_MFGPLL_CK>;
+>> +			clocks = <&mfgcfg CLK_MFG_BG3D>;
+>>   
+>>   			power-domains =
+>>   				<&spm MT8183_POWER_DOMAIN_MFG_CORE0>,
+>> -- 
+>> 2.37.2
+>>
+>>
+>>
