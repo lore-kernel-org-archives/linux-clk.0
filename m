@@ -2,108 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0590C6379F
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Dec 2022 00:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8414C4167B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Dec 2022 14:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230324AbiLQAYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Dec 2022 19:24:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
+        id S229650AbiLQOrI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Dec 2022 09:47:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbiLQAXT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Dec 2022 19:23:19 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB157E298
-        for <linux-clk@vger.kernel.org>; Fri, 16 Dec 2022 16:17:44 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id z26so5868816lfu.8
-        for <linux-clk@vger.kernel.org>; Fri, 16 Dec 2022 16:17:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IakMGoNeAkiafUmQyTYpE4STAOzYx1wLgMpz/v+W8ao=;
-        b=gtUM7rgOl3NWuHdHVJ+11cJsj01C6/8ZgNNQ/DlRMO8KZoTb3WAeN8TQW2gTc0l/QL
-         6FRIJCuQBH1OEUCzXYkR52dMEAJyNxMfCm7Ao83or+QxGqPdMRu9ut5spBcRdOk8oDJ0
-         aUi/dv3zc3z1QZqsv6L08kaf/9n2YSJfpzcP07/Lqhj1TdZe21sgCvnhu1IiF8dcgkUR
-         UotVQdtVd0KtlNf1ColX1NRF2OdeGAGkmpjG5694VpQ4Xyy6MEk3qDfDIYZgNVX/mxeQ
-         MItvvdh0ETgtdhzDuVvEFvJeR+KkLW7H6ZujyQ05B1ofw6XV/Jw0pPB+2NRT4l0rU9NQ
-         urhA==
+        with ESMTP id S229537AbiLQOrH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Dec 2022 09:47:07 -0500
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6A812ABC;
+        Sat, 17 Dec 2022 06:47:06 -0800 (PST)
+Received: by mail-oi1-f169.google.com with SMTP id i127so3233424oif.8;
+        Sat, 17 Dec 2022 06:47:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IakMGoNeAkiafUmQyTYpE4STAOzYx1wLgMpz/v+W8ao=;
-        b=4pl4XZ+8AQIceCAcnIcomwES/jkzOB/GLJyjtZNM+MaKkC/Ao2LsRaTSt7lSKZDBAo
-         GTYMzbDOt5WFD8G2zbrC0wekZvW0qq5BDsT6ZtdqYVKByXHVpRExDNgH0fOdWTAVPyp+
-         Ctm6ObAfBd9OUm6xRJci54t8acSfCfttZdHP6zKc0esQwQxgKw1wY3bS9uFSDxIMVtKE
-         dP7xpOno97ZHeFwj1nqxfqdn1R9be9s0FVLifhccxmkta2zPL7U7nnB8QZsZmwuNK/sY
-         qaiCgs0mT8Ju2ncUkThuhwRHfqJ2l9oNgQuILA2J38tZcBUdIHDUCDPJArajkfV1qjjF
-         heUw==
-X-Gm-Message-State: ANoB5pmn5mIjATLCDrDmFPQd0tG29wGJpGM/LHcBqdQVrExFx+A6XTkH
-        lXzPydFyPjNZzSannAEK7p0JcQ==
-X-Google-Smtp-Source: AA0mqf7x2WdR/+5Wh61oqWdZBmYm7BWZfGQtYvK7acmOqBpQ6tod/EDIbGs+3nxToPHONFh7ye+lkA==
-X-Received: by 2002:a05:6512:7b:b0:4a9:9827:68e8 with SMTP id i27-20020a056512007b00b004a9982768e8mr7609075lfo.7.1671236263654;
-        Fri, 16 Dec 2022 16:17:43 -0800 (PST)
-Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id c19-20020a056512325300b004b5adb59ed5sm341228lfr.297.2022.12.16.16.17.42
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=H5syX+qSmHurj2XiBG1knkx8RD2uoui+as7dCzawJEg=;
+        b=IYpm8LPvbEYY36/+O7lWYBuM2Nfkbcz/wOtQV/GNoSlRjOf4UHPTw+lnY8CXrnNnB8
+         vAqr2cXYcA8EsJX4zd7KiYHVcC3zBhJEpTEorscnbfoSMI1oYO0lD/DIuOcrdSDtbAzp
+         r63msSYmtOSHZzWGSPVDaSOhNIZ87Enm5rfAcBUVEKZ1+UDxTtUgI3oVAvFY12yiZ+yR
+         fHQVzpI3529aAv+i0W0TyU7dWdek2idO+piYlVE9P8M0qxq6VL6xzpuM1t36FP0xnHxp
+         L6xkdpcJFKtXI/mc0Xr9JikmLSCxkP4FAiF5VSRlnkOd7ADagaPiGwSpLIEpJcysHrfB
+         G2Ww==
+X-Gm-Message-State: ANoB5pkLtssYSnDyMj7IeY+k+6v/GBqYlgXc9KCUWygZDbgquysBKCan
+        b5umxNVAq10GlS3q03ByTAKuAENS1w==
+X-Google-Smtp-Source: AA0mqf6LezE/1MlnqkahESlqzHzfohkqG8yMKqud0ueew2YZanl1DRlhpQjWaCSA8oCg2Voujzfjew==
+X-Received: by 2002:a05:6808:d5:b0:35e:b805:e34b with SMTP id t21-20020a05680800d500b0035eb805e34bmr6927835oic.15.1671288425769;
+        Sat, 17 Dec 2022 06:47:05 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id j9-20020aca1709000000b0035ec1384c9esm2102728oii.23.2022.12.17.06.47.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Dec 2022 16:17:43 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 15/15] arm64: dts: qcom: qcs404: add clocks to the gcc node
-Date:   Sat, 17 Dec 2022 02:17:30 +0200
-Message-Id: <20221217001730.540502-16-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221217001730.540502-1-dmitry.baryshkov@linaro.org>
-References: <20221217001730.540502-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
+        Sat, 17 Dec 2022 06:47:05 -0800 (PST)
+Received: (nullmailer pid 1510847 invoked by uid 1000);
+        Sat, 17 Dec 2022 14:47:04 -0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Melody Olvera <quic_molvera@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20221216230722.21404-2-quic_molvera@quicinc.com>
+References: <20221216230722.21404-1-quic_molvera@quicinc.com>
+ <20221216230722.21404-2-quic_molvera@quicinc.com>
+Message-Id: <167124498396.424274.14851039167580060223.robh@kernel.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clocks
+Date:   Sat, 17 Dec 2022 08:47:04 -0600
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Populate the gcc node with the clocks and clock-names properties to
-enable DT-based lookups for the parent clocks.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Fri, 16 Dec 2022 15:07:21 -0800, Melody Olvera wrote:
+> Add device tree bindings for global clock controller on QDU1000 and
+> QRU1000 SoCs.
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,qdu1000-gcc.yaml      |  51 +++++
+>  include/dt-bindings/clock/qcom,qdu1000-gcc.h  | 175 ++++++++++++++++++
+>  2 files changed, 226 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,qdu1000-gcc.h
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index b72542631337..ee337a3980fa 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -731,6 +731,19 @@ gcc: clock-controller@1800000 {
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
- 
-+			clocks = <&xo_board>,
-+				 <&sleep_clk>,
-+				 <&pcie_phy>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "cxo",
-+				      "sleep_clk",
-+				      "pcie_0_pipe_clk_src",
-+				      "dsi0pll",
-+				      "dsi0pllbyte",
-+				      "hdmi_pll";
-+
- 			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
- 			assigned-clock-rates = <19200000>;
- 		};
--- 
-2.35.1
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.example.dtb: clock-controller@100000: '#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221216230722.21404-2-quic_molvera@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
