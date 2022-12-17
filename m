@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F247AC4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Dec 2022 15:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03270C4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Dec 2022 15:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbiLQPIa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Dec 2022 10:08:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56970 "EHLO
+        id S229764AbiLQPIv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Dec 2022 10:08:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiLQPI3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Dec 2022 10:08:29 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8EF11810
-        for <linux-clk@vger.kernel.org>; Sat, 17 Dec 2022 07:08:27 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id c1so7716056lfi.7
-        for <linux-clk@vger.kernel.org>; Sat, 17 Dec 2022 07:08:27 -0800 (PST)
+        with ESMTP id S229659AbiLQPIu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Dec 2022 10:08:50 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9421408E
+        for <linux-clk@vger.kernel.org>; Sat, 17 Dec 2022 07:08:49 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id p36so7680165lfa.12
+        for <linux-clk@vger.kernel.org>; Sat, 17 Dec 2022 07:08:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFlgm8dLAZr4zybqwhTCtV9PL8PVKFLtxoAOe0zu1/Y=;
-        b=XLuJRNfQD/lpYxbxTNYK17IB9jB83z1dSErj0SRYCMuLVix7nRvvYJAxfUVDDgl2dV
-         ytjgj4sRcefoQcrofn58LiY8/DiOwf4aQS96u0i3m3rzhOm1uoYTSJqCi4/bOakrFoTd
-         G48whgmLn2W54tC9hvk8Uy2SMcESDkKF7QZ21+JKP/6c+fpslqcZ0NaWrosLF/u1Dtb8
-         xR2J3Luo7apZol10nJvV8HnSjEiUgYJCXaaj8B00T9r0uOKe/tMzGsoVvesECuVFCH28
-         OLZGuWFv7GpVZrk25NnuDMnxfl0KqK4beDwYpjHwtp4Lb8i+myinu1g53kwfTzjfxh7c
-         5FGA==
+        bh=7+AAXNyn7D4ZBGrHZRVwibl7ejUX7z4qDKo/f6e91EE=;
+        b=Sa0b8rbQmQVYQ/13uSKElmHawbEyW9ulmnd895VZB1yrJwLuyoWAp7+KyEbEbensFu
+         ZggpHWQ0UUKQSJkNBGpIrCmbWttGcEJ255BzfQpUPiAabL5VsQe1GQwbZlMAeKA1RzDR
+         /3iU07Wa2/Y7Fx/6E7JGvX7cUcBg57r39jH9N7YBx5QAiNWKZPX+wB9vbr53BDHxv04G
+         ukkRDWMIWuk5fGvZTr3sB9jV7/TQUhj6cZuQE0l02l+XzkTxMYjYpKlvM8ti07uJOr1w
+         IIDnqQkhecNWtx17gtCNa3HIy1b936wohLF0kBJJIo+xwAFJb+VTl3w7BkBUK0cNXdZN
+         qr4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFlgm8dLAZr4zybqwhTCtV9PL8PVKFLtxoAOe0zu1/Y=;
-        b=bhw2JvbBrA9+K2RENzQydgLCMvmP5gPXumdv0r0+BS/GwN6byKKQEH/fhNROjFUtLC
-         LYYLZtNdzj9avDTMYDNvm1ECZCufyHxl0TiI3CMQ8rcw6xtFTPl2RW5Y72PepAqq03QP
-         2Z/W/XLNozkTUx5fP/w8VmIIvJ0Ud6Prj40OpgXrknjp+h2nKRp8BvkwYV373hIiCoEw
-         jqg3CZ+VJ8tXAmQtd/jkwlgaUsXl9EafHzVLlEovFNve1PypE4irO8ecGMg6clC2jWc1
-         VFE4Chth2GWpaNhWTVSu/2+jGgQb6fT0Qj2wQ1r2PJZePlramaaQSj26Jch7RysA3Xg1
-         riSA==
-X-Gm-Message-State: ANoB5pkhtPfQuUQszcpClx4QCULq1a5eCdaf3tISJX27AclCbW1wWRBW
-        6+85LpbvBSReVQfLzVFnsr1s5g==
-X-Google-Smtp-Source: AA0mqf4qCEag+4aoBR0AU/MENAHAvHPv1oNUVhiN4TNBaMq0QabRPcZaOSa/CNen0CL1ozK7GlUgkQ==
-X-Received: by 2002:ac2:4c51:0:b0:4a4:8a04:4b37 with SMTP id o17-20020ac24c51000000b004a48a044b37mr13790055lfk.32.1671289705910;
-        Sat, 17 Dec 2022 07:08:25 -0800 (PST)
+        bh=7+AAXNyn7D4ZBGrHZRVwibl7ejUX7z4qDKo/f6e91EE=;
+        b=huYwSe68v6kPtJswMt0s9L4DWjkCB2uhxiHfTZoyPB4Vzxl/QFNfGMqyNftZMCR9KC
+         WDPDRE6JVEmdKiCWOnmIfj/Fdcs5twosaou5wevPz1vms7DbSBE3PHRwuWz2DtLBNa0q
+         kZHLD3/sFcXDYNvx9z94iutzvr2GCBTJ9OOBBss4XUAj6e+zkld+BmGUKfrTh8+CzBtY
+         m81hW4q2Y18HgNK0w12wn834hX+5oNthGipQ8jBx12XQN3e1hbM0XQDVA+/2E+K07k2n
+         ZL+q5+YDtnBPFVHYjkrLn2UpV++5UcQFqaiN/oWXBliVe2fgmBZSSfp2kiVTwbEduWzv
+         2SEg==
+X-Gm-Message-State: AFqh2krkOmvEDwdegMscBy1E+ZA/F5ZNZMclIipUTACUswYthh0QPl1+
+        /p176DCYASsJ52VGz96An82IvQ==
+X-Google-Smtp-Source: AMrXdXvUNttNkcx62RJR0XZ210Ami7+3OHcy8kcQI3gecJtPOddnwFLM29pf1svCB6q2tfPrPFrh1A==
+X-Received: by 2002:a05:6512:e96:b0:4c0:91d0:e7ae with SMTP id bi22-20020a0565120e9600b004c091d0e7aemr2404609lfb.28.1671289729083;
+        Sat, 17 Dec 2022 07:08:49 -0800 (PST)
 Received: from [192.168.1.101] (abxh44.neoplus.adsl.tpnet.pl. [83.9.1.44])
-        by smtp.gmail.com with ESMTPSA id z14-20020a056512370e00b004a0589786ddsm534448lfr.69.2022.12.17.07.08.24
+        by smtp.gmail.com with ESMTPSA id c14-20020ac25f6e000000b00497ab34bf5asm534973lfc.20.2022.12.17.07.08.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Dec 2022 07:08:25 -0800 (PST)
-Message-ID: <744cdde3-f43f-6545-fb83-a4474a84b84c@linaro.org>
-Date:   Sat, 17 Dec 2022 16:08:24 +0100
+        Sat, 17 Dec 2022 07:08:48 -0800 (PST)
+Message-ID: <0e4e1d76-cd47-f8e4-4ba1-e28578036b1b@linaro.org>
+Date:   Sat, 17 Dec 2022 16:08:47 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH 05/15] clk: qcom: gcc-qcs404: disable gpll[04]_out_aux
- parents
+Subject: Re: [PATCH 06/15] clk: qcom: gcc-qcs404: fix names of the DSI clocks
+ used as parents
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -68,9 +68,9 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20221217001730.540502-1-dmitry.baryshkov@linaro.org>
- <20221217001730.540502-6-dmitry.baryshkov@linaro.org>
+ <20221217001730.540502-7-dmitry.baryshkov@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20221217001730.540502-6-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221217001730.540502-7-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -80,153 +80,56 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 17.12.2022 01:17, Dmitry Baryshkov wrote:
-> On the QCS404 platform the driver for the Global Clock Controller
-> doens't define gpll0_out_aux and gpll4_out_aux clocks, so it's not
-> possible to use them as parents. Comment out entries for these clocks.
-> 
-> Note: backporting this patch to earlier kernels would also require a
-> previous patch which switches the gcc driver to use ARRAY_SIZE for
-> parent data arrays.
+> The QCS404 uses 28nm LPM DSI PHY, which registers dsi0pll and
+> dsi0pllbyte clocks. Fix all DSI PHY clock names used as parents inside
+> the GCC driver.
 > 
 > Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-Perhaps one could just remove them then?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/clk/qcom/gcc-qcs404.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
+>  drivers/clk/qcom/gcc-qcs404.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> index f60a0ab42da1..c48326da1bb3 100644
+> index c48326da1bb3..23562096298d 100644
 > --- a/drivers/clk/qcom/gcc-qcs404.c
 > +++ b/drivers/clk/qcom/gcc-qcs404.c
-> @@ -25,11 +25,11 @@ enum {
->  	P_CORE_BI_PLL_TEST_SE,
->  	P_DSI0_PHY_PLL_OUT_BYTECLK,
->  	P_DSI0_PHY_PLL_OUT_DSICLK,
-> -	P_GPLL0_OUT_AUX,
-> +	/* P_GPLL0_OUT_AUX, */
->  	P_GPLL0_OUT_MAIN,
->  	P_GPLL1_OUT_MAIN,
->  	P_GPLL3_OUT_MAIN,
-> -	P_GPLL4_OUT_AUX,
-> +	/* P_GPLL4_OUT_AUX, */
->  	P_GPLL4_OUT_MAIN,
->  	P_GPLL6_OUT_AUX,
->  	P_HDMI_PHY_PLL_CLK,
-> @@ -109,28 +109,28 @@ static const char * const gcc_parent_names_4[] = {
->  static const struct parent_map gcc_parent_map_5[] = {
->  	{ P_XO, 0 },
->  	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
-> -	{ P_GPLL0_OUT_AUX, 2 },
-> +	/* { P_GPLL0_OUT_AUX, 2 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
+> @@ -115,7 +115,7 @@ static const struct parent_map gcc_parent_map_5[] = {
 >  
 >  static const char * const gcc_parent_names_5[] = {
 >  	"cxo",
->  	"dsi0pll_byteclk_src",
-> -	"gpll0_out_aux",
-> +	/* "gpll0_out_aux", */
+> -	"dsi0pll_byteclk_src",
+> +	"dsi0pllbyte",
+>  	/* "gpll0_out_aux", */
 >  	"core_bi_pll_test_se",
 >  };
->  
->  static const struct parent_map gcc_parent_map_6[] = {
->  	{ P_XO, 0 },
->  	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 2 },
-> -	{ P_GPLL0_OUT_AUX, 3 },
-> +	/* { P_GPLL0_OUT_AUX, 3 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
+> @@ -129,7 +129,7 @@ static const struct parent_map gcc_parent_map_6[] = {
 >  
 >  static const char * const gcc_parent_names_6[] = {
 >  	"cxo",
->  	"dsi0_phy_pll_out_byteclk",
-> -	"gpll0_out_aux",
-> +	/* "gpll0_out_aux", */
+> -	"dsi0_phy_pll_out_byteclk",
+> +	"dsi0pllbyte",
+>  	/* "gpll0_out_aux", */
 >  	"core_bi_pll_test_se",
 >  };
->  
-> @@ -139,7 +139,7 @@ static const struct parent_map gcc_parent_map_7[] = {
->  	{ P_GPLL0_OUT_MAIN, 1 },
->  	{ P_GPLL3_OUT_MAIN, 2 },
->  	{ P_GPLL6_OUT_AUX, 3 },
-> -	{ P_GPLL4_OUT_AUX, 4 },
-> +	/* { P_GPLL4_OUT_AUX, 4 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
->  
-> @@ -148,7 +148,7 @@ static const char * const gcc_parent_names_7[] = {
+> @@ -175,7 +175,7 @@ static const struct parent_map gcc_parent_map_9[] = {
+>  static const char * const gcc_parent_names_9[] = {
+>  	"cxo",
 >  	"gpll0_out_main",
->  	"gpll3_out_main",
+> -	"dsi0_phy_pll_out_dsiclk",
+> +	"dsi0pll",
 >  	"gpll6_out_aux",
-> -	"gpll4_out_aux",
-> +	/* "gpll4_out_aux", */
 >  	"core_bi_pll_test_se",
 >  };
->  
-> @@ -207,14 +207,14 @@ static const char * const gcc_parent_names_11[] = {
->  static const struct parent_map gcc_parent_map_12[] = {
->  	{ P_XO, 0 },
->  	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
-> -	{ P_GPLL0_OUT_AUX, 2 },
-> +	/* { P_GPLL0_OUT_AUX, 2 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
+> @@ -213,7 +213,7 @@ static const struct parent_map gcc_parent_map_12[] = {
 >  
 >  static const char * const gcc_parent_names_12[] = {
 >  	"cxo",
->  	"dsi0pll_pclk_src",
-> -	"gpll0_out_aux",
-> +	/* "gpll0_out_aux", */
+> -	"dsi0pll_pclk_src",
+> +	"dsi0pll",
+>  	/* "gpll0_out_aux", */
 >  	"core_bi_pll_test_se",
 >  };
->  
-> @@ -237,40 +237,40 @@ static const char * const gcc_parent_names_13[] = {
->  static const struct parent_map gcc_parent_map_14[] = {
->  	{ P_XO, 0 },
->  	{ P_GPLL0_OUT_MAIN, 1 },
-> -	{ P_GPLL4_OUT_AUX, 2 },
-> +	/* { P_GPLL4_OUT_AUX, 2 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
->  
->  static const char * const gcc_parent_names_14[] = {
->  	"cxo",
->  	"gpll0_out_main",
-> -	"gpll4_out_aux",
-> +	/* "gpll4_out_aux", */
->  	"core_bi_pll_test_se",
->  };
->  
->  static const struct parent_map gcc_parent_map_15[] = {
->  	{ P_XO, 0 },
-> -	{ P_GPLL0_OUT_AUX, 2 },
-> +	/* { P_GPLL0_OUT_AUX, 2 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
->  
->  static const char * const gcc_parent_names_15[] = {
->  	"cxo",
-> -	"gpll0_out_aux",
-> +	/* "gpll0_out_aux", */
->  	"core_bi_pll_test_se",
->  };
->  
->  static const struct parent_map gcc_parent_map_16[] = {
->  	{ P_XO, 0 },
->  	{ P_GPLL0_OUT_MAIN, 1 },
-> -	{ P_GPLL0_OUT_AUX, 2 },
-> +	/* { P_GPLL0_OUT_AUX, 2 }, */
->  	{ P_CORE_BI_PLL_TEST_SE, 7 },
->  };
->  
->  static const char * const gcc_parent_names_16[] = {
->  	"cxo",
->  	"gpll0_out_main",
-> -	"gpll0_out_aux",
-> +	/* "gpll0_out_aux", */
->  	"core_bi_pll_test_se",
->  };
->  
