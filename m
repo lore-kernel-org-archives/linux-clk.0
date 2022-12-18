@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B82C4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Dec 2022 17:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466F8C46467
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Dec 2022 17:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbiLRRGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Dec 2022 12:06:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52308 "EHLO
+        id S233410AbiLRRIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Dec 2022 12:08:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233313AbiLRRFL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Dec 2022 12:05:11 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE8D12AF6;
-        Sun, 18 Dec 2022 08:21:50 -0800 (PST)
+        with ESMTP id S233385AbiLRRGn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Dec 2022 12:06:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D4E12D17;
+        Sun, 18 Dec 2022 08:23:05 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2757BB803F1;
-        Sun, 18 Dec 2022 16:21:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D74C433F0;
-        Sun, 18 Dec 2022 16:21:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 149BF60C99;
+        Sun, 18 Dec 2022 16:23:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EB6C433D2;
+        Sun, 18 Dec 2022 16:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671380507;
-        bh=JykKPLp5E47Pvk3hvRluPHp4WzY1rFpWUUIEsM5pWQY=;
+        s=k20201202; t=1671380584;
+        bh=3WqGSj+1m0F3VlMTs7183wM7F30z46aKwTvbELsoDwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GDd01DMt1j3bmwclC00qr3eeQnrhuIrTy9uuf1wHqNqrgZK9B3O17BMEeaolqicje
-         wBPYbcxzQpVGIyKvKFVe9KrIQDxGRM+RMHNMXEzZVFgq2T5wttysYZvDKUFTuvj4tj
-         zcYmU4oQ7cw9+No0ejjrN1oxm4SgJfqmnUX0V4Y6Q4pMkfcxYBLqIk1h9JRdXiYR7z
-         udEx4VzZCG0Z/qkUXmSaxuNmBsqdzgtENKYmFhBFj1TDn8czMS75jfYk1szLORXSsp
-         xBT7XKqu5jns/Wiyz5Jn+qc4wvl07qrMDNDJnaMQ7Aa/gfuDVIr4roqyGASPO61eII
-         P8fLYcCfZehrQ==
+        b=Lfkv4nhKVnfLJyaVNLOc+jd/LPq0yZx/6ccKLY7omFdLPLN6k6eWw1tAoz5sTRO0R
+         K9B7FMyFnEp1glErIogjlaE6W9NZpHP3J+12Komppgbwyawtb+FazWb70M6D8V2r0C
+         PDLH+Jl/E07VKmHZtF0RYga7kphW+Nf8Pxi64+RoZGsgtMND/DvcDWZZMhMgG/Bh2R
+         cnV50OXZf5QmNvf7/SOXXv6NEt6eMaL3LijiUbdkqu966NXdJDgMi49Fnc1PuGUTPB
+         bBKfs7JlOvcWW0PqNTNbis2cWsXaUZm8PYtw9gQNPZRxYHWjCvuMxKPwJAuJ4W2MpB
+         z0gwL/oO809Zg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>,
@@ -38,12 +38,12 @@ Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
         windhl@126.com, avolmat@me.com, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 26/26] clk: st: Fix memory leak in st_of_quadfs_setup()
-Date:   Sun, 18 Dec 2022 11:20:16 -0500
-Message-Id: <20221218162016.934280-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 23/23] clk: st: Fix memory leak in st_of_quadfs_setup()
+Date:   Sun, 18 Dec 2022 11:21:49 -0500
+Message-Id: <20221218162149.935047-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221218162016.934280-1-sashal@kernel.org>
-References: <20221218162016.934280-1-sashal@kernel.org>
+In-Reply-To: <20221218162149.935047-1-sashal@kernel.org>
+References: <20221218162149.935047-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -69,7 +69,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index a79d81985c4e..bbe113159bc6 100644
+index 14819d919df1..715c5d3a5cde 100644
 --- a/drivers/clk/st/clkgen-fsyn.c
 +++ b/drivers/clk/st/clkgen-fsyn.c
 @@ -948,9 +948,10 @@ static void __init st_of_quadfs_setup(struct device_node *np,
