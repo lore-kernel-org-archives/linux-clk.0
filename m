@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB721C3DA7B
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Dec 2022 16:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D99C10F1E
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Dec 2022 16:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231725AbiLRQRy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Dec 2022 11:17:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55512 "EHLO
+        id S232346AbiLRQfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Dec 2022 11:35:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231828AbiLRQRD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Dec 2022 11:17:03 -0500
+        with ESMTP id S232157AbiLRQdg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Dec 2022 11:33:36 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF96BCA9;
-        Sun, 18 Dec 2022 08:07:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733B7DFAC;
+        Sun, 18 Dec 2022 08:12:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A1E3660DD7;
-        Sun, 18 Dec 2022 16:07:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FCCDC433D2;
-        Sun, 18 Dec 2022 16:07:26 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11EE660DCB;
+        Sun, 18 Dec 2022 16:12:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 888B1C433D2;
+        Sun, 18 Dec 2022 16:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671379648;
+        s=k20201202; t=1671379952;
         bh=NR1KHJq5MOKt4EP/CbVWkTiDQtdI+ZXlOGWYGcjxais=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a/n89MEZImkNDOfAzUO4ugvBBKsVIavkw4DNCXP1JnXl5QmBxB4gcB7SE/M4mozmp
-         5+DPq0uGtiTbMlrDQKgHN6JrJUR0fIDXHVaAI8787PmWgU64iLz9GUTTKNMYvTd1Ce
-         tIwbualwxFEUqv5tHTWGBX+0H1Dss5BvgP1KpAtBLPYU/2+KPgsPTi0WESp8uNvyFh
-         USSUroTO1A9gg/3R/mBagdam7cfF4KmJXWGO2AHY3DD1mglTfA/Pl/ZTdsxg7RaEpA
-         OqHbuAy+PxY6885XYTnHZIhHt2EfZzDcF1npzytnan1YnOu9z8Sv6kWSb357XzpzQ4
-         qk3kKQKQ4GFvA==
+        b=GHYe00NYBFRiE1sJ/7NwOxF4/hA/nJ6y1MzeA7dtZNmYZKvPblGyLpBqdYbJfpaEE
+         780GbkUTH/1MQIKUkitE4RyV2bqfAKDVEWnzw7BroXgZ6aM9C2z7uhppsT8UuYaw+9
+         4xKYT+Pz7gLjAf6zENZKQrxcju0jr7StwXZKUTuhrf+sIej8CyPz5OnJZrg1I38Yne
+         0f5CuZf0abeV7rsE5/+Y8BdZMbf4s3/madiTDkU1zo5nUNFHPRn1W22KBMP7jx7s1V
+         JW9SbZ3PCnmPgDDhCs2GjsvaspQMOkQ5D3pWxlugI5fykZUp4xAvjjFT5nZSIFMKye
+         rgQow5vLFUrUA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>,
         Patrice Chotard <patrice.chotard@foss.st.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
-        avolmat@me.com, windhl@126.com, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 80/85] clk: st: Fix memory leak in st_of_quadfs_setup()
-Date:   Sun, 18 Dec 2022 11:01:37 -0500
-Message-Id: <20221218160142.925394-80-sashal@kernel.org>
+        windhl@126.com, avolmat@me.com, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.0 69/73] clk: st: Fix memory leak in st_of_quadfs_setup()
+Date:   Sun, 18 Dec 2022 11:07:37 -0500
+Message-Id: <20221218160741.927862-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221218160142.925394-1-sashal@kernel.org>
-References: <20221218160142.925394-1-sashal@kernel.org>
+In-Reply-To: <20221218160741.927862-1-sashal@kernel.org>
+References: <20221218160741.927862-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
