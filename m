@@ -2,167 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5B6C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 14:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30093C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 20:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233895AbiLTOUP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Dec 2022 09:20:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
+        id S233892AbiLTUB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Dec 2022 15:01:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233929AbiLTOTR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 09:19:17 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA911C412;
-        Tue, 20 Dec 2022 06:19:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A322AB811A0;
-        Tue, 20 Dec 2022 14:19:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C51C433EF;
-        Tue, 20 Dec 2022 14:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671545939;
-        bh=ZmYhdJ0NiW7EgZkM2EweGEW6KjCP+AMI/uCG55uUssM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=eU8BPN0PRRWn9a82TyBa0dPJVZC0sYs0y+G4R57qOgVz4FoRMys6McYz1ClQ3AAbP
-         y/y7hxaZwinXVxnObhFB/ckqKO0ndUEx4LRgHXOdl9ZDdqVgACFgubKCCzPcegtAfl
-         1n1/rnxWAYHq6nJdVF04svoQ6chU446ToA7DyxplC+5psMg+V4LTng+bHLZ8Y7p1a/
-         V2zcpS78dUPYsQpzFKT6GbvIl3O4wDiT8nsIgfrYdIxdjljrsUyUjuiX2TCIQfTna5
-         kmd6sWfOROKk0C5eT92N6ey1YUkSALO/yKjpAhgXKwsdGUxK8G3jiHbPuOXWI4eUpP
-         wHmdYtSKGhi0Q==
-Message-ID: <9b09cb33-2e47-7597-72b0-fdceb30985f0@kernel.org>
-Date:   Tue, 20 Dec 2022 15:18:55 +0100
+        with ESMTP id S232195AbiLTUB4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 15:01:56 -0500
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BE91AA3F;
+        Tue, 20 Dec 2022 12:01:53 -0800 (PST)
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-14449b7814bso16762620fac.3;
+        Tue, 20 Dec 2022 12:01:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XD55XyA+UeGl0x1txDw04g7E8lf7pFWIOBaB2ROk0Mk=;
+        b=WE2MiXk8UNCWd9iqPQq2ijZnMnH4DhOaIrBmO1/S8k5NqFSvhIrOGg+yDdYDDMu5lL
+         a6pJbe/LSIaNpiO/u3aPTAYLSYa3tm0i4BPkR6l2eDh6c3pP8r//GYjnNAwyugI6vCQU
+         Ua8WnE35a2ojc0hXtpw+v4OgGXIJuCO2uwtL5ci+JryptUB1qUnCrOF/XWrp4Rt+urim
+         WeO1yThmG9INeFfjqdJiSNd9Yx5aqznm7h6T4Y59+SKqRb8rhw8TdvGkIsPrCWmU1pN5
+         mLMQL2gSJiyrSAZg4VNV9WSe7ydzw2NZIZ47y0+rdyGb0Gt1RmE0E6pwr9N5v0q8T60Q
+         ORAg==
+X-Gm-Message-State: AFqh2kpim+zPaN5NO0LUetXbLlYc9KYsEv0TzHLo6GZ1exc0WsONPqYS
+        rZpHs30qmqEaeIEhZ0EHQFqaelhZwg==
+X-Google-Smtp-Source: AMrXdXuG/hfBvY1BIoKYZJjYitZjhW0WF1f7siHccRou8Yx+f0u8pDK0BGhqq69VNRSkB085zCtsMA==
+X-Received: by 2002:a05:6870:2888:b0:137:3ad9:bf0a with SMTP id gy8-20020a056870288800b001373ad9bf0amr5968171oab.20.1671566512847;
+        Tue, 20 Dec 2022 12:01:52 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id z36-20020a056870d6a400b0013669485016sm6379637oap.37.2022.12.20.12.01.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Dec 2022 12:01:51 -0800 (PST)
+Received: (nullmailer pid 991718 invoked by uid 1000);
+        Tue, 20 Dec 2022 20:01:50 -0000
+Date:   Tue, 20 Dec 2022 14:01:50 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        festevam@gmail.com, sboyd@kernel.org, abelvesa@kernel.org,
+        Anson.Huang@nxp.com, kernel@pengutronix.de,
+        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: clocks: imx8mp: make sai4 a dummy clock
+Message-ID: <167156651020.991660.2392640619605024450.robh@kernel.org>
+References: <20221219171058.164381-1-m.felsch@pengutronix.de>
+ <20221219171058.164381-2-m.felsch@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 1/2] dt-bindings: clk: si521xx: Add Skyworks Si521xx I2C
- PCIe clock generators
-Content-Language: en-US
-To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
-References: <20221216212158.600220-1-marex@denx.de>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20221216212158.600220-1-marex@denx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221219171058.164381-2-m.felsch@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/12/2022 22:21, Marek Vasut wrote:
-> Add binding for Skyworks Si521xx PCIe clock generators. This binding
-> is designed to support Si52144/Si52146/Si52147 series I2C PCIe clock
-> generators, tested model is Si52144. It should be possible to add
-> Si5213x series as well.
+
+On Mon, 19 Dec 2022 18:10:58 +0100, Marco Felsch wrote:
+> The hardware don't have a SAI4 instance so remove the define. Use a
+> comment to keep it as reference and to avoid confusion.
 > 
-> Signed-off-by: Marek Vasut <marex@denx.de>
+> Fixes: 108869144739 ("dt-bindings: imx: Add clock binding doc for i.MX8MP")
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 > ---
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
-
-> ---
->  .../bindings/clock/skyworks,si521xx.yaml      | 69 +++++++++++++++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
+>  include/dt-bindings/clock/imx8mp-clock.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml b/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
-> new file mode 100644
-> index 0000000000000..c30114e3a7631
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/skyworks,si521xx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Binding for Skyworks Si521xx I2C PCIe clock generators
 
-Drop "Binding for"
-
-
-> +
-> +description: |
-> +  The Skyworks Si521xx are I2C PCIe clock generators providing
-> +  from 4 to 9 output clocks.
-> +
-> +maintainers:
-> +  - Marek Vasut <marex@denx.de>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - skyworks,si52144
-> +      - skyworks,si52146
-> +      - skyworks,si52147
-> +
-> +  reg:
-> +    description: I2C device address
-
-Drop description. It seems you copied some old binding. Better to start
-from something recent or example-schema.
-
-> +    const: 0x6b
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: XTal input clock
-> +
-> +  skyworks,out-amplitude-microvolt:
-> +    enum: [ 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 ]
-> +    description: Output clock signal amplitude
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    /* 25MHz reference crystal */
-> +    ref25: ref25m {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-frequency = <25000000>;
-> +    };
-
-Drop this part, it's obvious. Example should show how to use this
-device, not fixed clocks. It is a common pattern appearing in many DTSes.
-
-> +
-> +    i2c@0 {
-> +        reg = <0x0 0x100>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        clock-generator@6b {
-> +            compatible = "skyworks,si52144";
-> +            reg = <0x6b>;
-> +            #clock-cells = <1>;
-> +
-> +            clocks = <&ref25m>;
-> +        };
-> +    };
-> +
-> +...
-
-Best regards,
-Krzysztof
-
+Acked-by: Rob Herring <robh@kernel.org>
