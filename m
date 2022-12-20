@@ -2,73 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30093C4167B
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 20:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8482C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 20:12:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233892AbiLTUB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Dec 2022 15:01:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
+        id S230142AbiLTUMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Dec 2022 15:12:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232195AbiLTUB4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 15:01:56 -0500
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BE91AA3F;
-        Tue, 20 Dec 2022 12:01:53 -0800 (PST)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-14449b7814bso16762620fac.3;
-        Tue, 20 Dec 2022 12:01:53 -0800 (PST)
+        with ESMTP id S229448AbiLTUMr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 15:12:47 -0500
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEEB81ADBA;
+        Tue, 20 Dec 2022 12:12:46 -0800 (PST)
+Received: by mail-oi1-f180.google.com with SMTP id o66so10116672oia.6;
+        Tue, 20 Dec 2022 12:12:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XD55XyA+UeGl0x1txDw04g7E8lf7pFWIOBaB2ROk0Mk=;
-        b=WE2MiXk8UNCWd9iqPQq2ijZnMnH4DhOaIrBmO1/S8k5NqFSvhIrOGg+yDdYDDMu5lL
-         a6pJbe/LSIaNpiO/u3aPTAYLSYa3tm0i4BPkR6l2eDh6c3pP8r//GYjnNAwyugI6vCQU
-         Ua8WnE35a2ojc0hXtpw+v4OgGXIJuCO2uwtL5ci+JryptUB1qUnCrOF/XWrp4Rt+urim
-         WeO1yThmG9INeFfjqdJiSNd9Yx5aqznm7h6T4Y59+SKqRb8rhw8TdvGkIsPrCWmU1pN5
-         mLMQL2gSJiyrSAZg4VNV9WSe7ydzw2NZIZ47y0+rdyGb0Gt1RmE0E6pwr9N5v0q8T60Q
-         ORAg==
-X-Gm-Message-State: AFqh2kpim+zPaN5NO0LUetXbLlYc9KYsEv0TzHLo6GZ1exc0WsONPqYS
-        rZpHs30qmqEaeIEhZ0EHQFqaelhZwg==
-X-Google-Smtp-Source: AMrXdXuG/hfBvY1BIoKYZJjYitZjhW0WF1f7siHccRou8Yx+f0u8pDK0BGhqq69VNRSkB085zCtsMA==
-X-Received: by 2002:a05:6870:2888:b0:137:3ad9:bf0a with SMTP id gy8-20020a056870288800b001373ad9bf0amr5968171oab.20.1671566512847;
-        Tue, 20 Dec 2022 12:01:52 -0800 (PST)
+        bh=ruopfQWSYHKaRdGSAx7Dg/pS9EkvkCSETDa10WdoTt4=;
+        b=2bTW2RR8pAIrPTLi3Ba5VyPQnyhSjy7PVQPEYx7fTzPS7j/mg+ul4BkPdyOhlcR5cl
+         nf2gH0l8fHB6bDrdW42khKfufp7Mnb2pmz0Ypx5poZ51vSX3BbeN48YXgdpeOC9p6qo0
+         n/0OjC/Zx6eXqGHisRykAqc76WK3keprk0eMmxEGG7PF36+BSRBx4XdjMg8ehGKk0tZs
+         qcs51LtSVxywBffFUgfn9yIFPN9EB/kcUqULOHt3jgd5ysubMVRKd8ReZGbfbw1heyPp
+         98mDKCB5i6n3cHjR98OxwHKCZuBuH4b/7SXkFFONjYgqoabhqGN7xEUfa5XtdvZeqIKS
+         r2aA==
+X-Gm-Message-State: ANoB5plmC41HTsM6ugwi5Lh28cavP7sudB9ymV0s+uwBmQzWPyW6laKW
+        QO8g+ifGrBqWyDpm/1tIJQ==
+X-Google-Smtp-Source: AA0mqf4cugXCw45dIuigYdKqlbQQdxQ6XRRSh82vk1TcCXWrfOyDbAEW0xr/gJePiBZs+Vqyjbs6+A==
+X-Received: by 2002:a05:6808:1719:b0:35b:e443:e5d0 with SMTP id bc25-20020a056808171900b0035be443e5d0mr25143898oib.17.1671567166187;
+        Tue, 20 Dec 2022 12:12:46 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z36-20020a056870d6a400b0013669485016sm6379637oap.37.2022.12.20.12.01.51
+        by smtp.gmail.com with ESMTPSA id q124-20020aca5c82000000b003509cc4ad4esm5872301oib.39.2022.12.20.12.12.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Dec 2022 12:01:51 -0800 (PST)
-Received: (nullmailer pid 991718 invoked by uid 1000);
-        Tue, 20 Dec 2022 20:01:50 -0000
-Date:   Tue, 20 Dec 2022 14:01:50 -0600
+        Tue, 20 Dec 2022 12:12:45 -0800 (PST)
+Received: (nullmailer pid 1009718 invoked by uid 1000);
+        Tue, 20 Dec 2022 20:12:44 -0000
+Date:   Tue, 20 Dec 2022 14:12:44 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        festevam@gmail.com, sboyd@kernel.org, abelvesa@kernel.org,
-        Anson.Huang@nxp.com, kernel@pengutronix.de,
-        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-        shawnguo@kernel.org, robh+dt@kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: clocks: imx8mp: make sai4 a dummy clock
-Message-ID: <167156651020.991660.2392640619605024450.robh@kernel.org>
-References: <20221219171058.164381-1-m.felsch@pengutronix.de>
- <20221219171058.164381-2-m.felsch@pengutronix.de>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Conor Dooley <conor@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Message-ID: <167156716420.1009655.13780070128515127974.robh@kernel.org>
+References: <20221220005054.34518-1-hal.feng@starfivetech.com>
+ <20221220005054.34518-8-hal.feng@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221219171058.164381-2-m.felsch@pengutronix.de>
+In-Reply-To: <20221220005054.34518-8-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 19 Dec 2022 18:10:58 +0100, Marco Felsch wrote:
-> The hardware don't have a SAI4 instance so remove the define. Use a
-> comment to keep it as reference and to avoid confusion.
+On Tue, 20 Dec 2022 08:50:50 +0800, Hal Feng wrote:
+> From: Emil Renner Berthing <kernel@esmil.dk>
 > 
-> Fixes: 108869144739 ("dt-bindings: imx: Add clock binding doc for i.MX8MP")
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> Add bindings for the system clock and reset generator (SYSCRG) on the
+> JH7110 RISC-V SoC by StarFive Ltd.
+> 
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 > ---
->  include/dt-bindings/clock/imx8mp-clock.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../clock/starfive,jh7110-syscrg.yaml         |  80 +++++++
+>  MAINTAINERS                                   |   8 +-
+>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 207 ++++++++++++++++++
+>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+>  4 files changed, 434 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
