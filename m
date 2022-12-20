@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70676C3DA7C
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 00:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F53C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 00:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232877AbiLTAvJ convert rfc822-to-8bit (ORCPT
+        id S232883AbiLTAvK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Dec 2022 19:51:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
+        Mon, 19 Dec 2022 19:51:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232782AbiLTAvE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Dec 2022 19:51:04 -0500
+        with ESMTP id S232789AbiLTAvF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Dec 2022 19:51:05 -0500
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300A4F589;
-        Mon, 19 Dec 2022 16:51:00 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48727FAF9;
+        Mon, 19 Dec 2022 16:51:03 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 3D50624DF02;
-        Tue, 20 Dec 2022 08:50:58 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 20 Dec
- 2022 08:50:58 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id CB6C624DFE2;
+        Tue, 20 Dec 2022 08:51:01 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 20 Dec
+ 2022 08:51:02 +0800
 Received: from ubuntu.localdomain (183.27.97.120) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 20 Dec
- 2022 08:50:57 +0800
+ 2022 08:51:00 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
@@ -39,9 +39,9 @@ CC:     Conor Dooley <conor@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 03/11] reset: Create subdirectory for StarFive drivers
-Date:   Tue, 20 Dec 2022 08:50:46 +0800
-Message-ID: <20221220005054.34518-4-hal.feng@starfivetech.com>
+Subject: [PATCH v3 08/11] dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
+Date:   Tue, 20 Dec 2022 08:50:51 +0800
+Message-ID: <20221220005054.34518-9-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221220005054.34518-1-hal.feng@starfivetech.com>
 References: <20221220005054.34518-1-hal.feng@starfivetech.com>
@@ -58,108 +58,148 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-This moves the StarFive JH7100 reset driver to a new subdirectory in
-preparation for adding more StarFive reset drivers.
+Add bindings for the always-on clock and reset generator (AONCRG) on the
+JH7110 RISC-V SoC by StarFive Ltd.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- MAINTAINERS                                          | 2 +-
- drivers/reset/Kconfig                                | 8 +-------
- drivers/reset/Makefile                               | 2 +-
- drivers/reset/starfive/Kconfig                       | 8 ++++++++
- drivers/reset/starfive/Makefile                      | 2 ++
- drivers/reset/{ => starfive}/reset-starfive-jh7100.c | 0
- 6 files changed, 13 insertions(+), 9 deletions(-)
- create mode 100644 drivers/reset/starfive/Kconfig
- create mode 100644 drivers/reset/starfive/Makefile
- rename drivers/reset/{ => starfive}/reset-starfive-jh7100.c (100%)
+ .../clock/starfive,jh7110-aoncrg.yaml         | 76 +++++++++++++++++++
+ .../dt-bindings/clock/starfive,jh7110-crg.h   | 18 +++++
+ .../dt-bindings/reset/starfive,jh7110-crg.h   | 12 +++
+ 3 files changed, 106 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fd90403c33bd..117024b52d06 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19651,7 +19651,7 @@ STARFIVE JH7100 RESET CONTROLLER DRIVER
- M:	Emil Renner Berthing <kernel@esmil.dk>
- S:	Maintained
- F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
--F:	drivers/reset/reset-starfive-jh7100.c
-+F:	drivers/reset/starfive/reset-starfive-jh7100.c
- F:	include/dt-bindings/reset/starfive-jh7100.h
- 
- STATIC BRANCH/CALL
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index de176c2fbad9..1e8e1c4954cd 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -232,13 +232,6 @@ config RESET_SOCFPGA
- 	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
- 	  driver gets initialized early during platform init calls.
- 
--config RESET_STARFIVE_JH7100
--	bool "StarFive JH7100 Reset Driver"
--	depends on SOC_STARFIVE || COMPILE_TEST
--	default SOC_STARFIVE
--	help
--	  This enables the reset controller driver for the StarFive JH7100 SoC.
--
- config RESET_SUNPLUS
- 	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
- 	default ARCH_SUNPLUS
-@@ -320,6 +313,7 @@ config RESET_ZYNQ
- 	help
- 	  This enables the reset controller driver for Xilinx Zynq SoCs.
- 
-+source "drivers/reset/starfive/Kconfig"
- source "drivers/reset/sti/Kconfig"
- source "drivers/reset/hisilicon/Kconfig"
- source "drivers/reset/tegra/Kconfig"
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e7e5fd633a8..fee17a0e3a16 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-y += core.o
- obj-y += hisilicon/
-+obj-$(CONFIG_SOC_STARFIVE) += starfive/
- obj-$(CONFIG_ARCH_STI) += sti/
- obj-$(CONFIG_ARCH_TEGRA) += tegra/
- obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
-@@ -30,7 +31,6 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
--obj-$(CONFIG_RESET_STARFIVE_JH7100) += reset-starfive-jh7100.o
- obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
-diff --git a/drivers/reset/starfive/Kconfig b/drivers/reset/starfive/Kconfig
+diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
 new file mode 100644
-index 000000000000..cddebdba7177
+index 000000000000..a3cf0570d950
 --- /dev/null
-+++ b/drivers/reset/starfive/Kconfig
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/starfive,jh7110-aoncrg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+config RESET_STARFIVE_JH7100
-+	bool "StarFive JH7100 Reset Driver"
-+	depends on SOC_STARFIVE || COMPILE_TEST
-+	default SOC_STARFIVE
-+	help
-+	  This enables the reset controller driver for the StarFive JH7100 SoC.
-diff --git a/drivers/reset/starfive/Makefile b/drivers/reset/starfive/Makefile
-new file mode 100644
-index 000000000000..670d049423f5
---- /dev/null
-+++ b/drivers/reset/starfive/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_RESET_STARFIVE_JH7100)		+= reset-starfive-jh7100.o
-diff --git a/drivers/reset/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh7100.c
-similarity index 100%
-rename from drivers/reset/reset-starfive-jh7100.c
-rename to drivers/reset/starfive/reset-starfive-jh7100.c
++title: StarFive JH7110 Always-On Clock and Reset Generator
++
++maintainers:
++  - Emil Renner Berthing <kernel@esmil.dk>
++
++properties:
++  compatible:
++    const: starfive,jh7110-aoncrg
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Main Oscillator (24 MHz)
++      - description: RTC Oscillator (32.768 kHz)
++      - description: GMAC0 RMII reference
++      - description: GMAC0 RGMII RX
++      - description: STG AXI/AHB
++      - description: APB Bus
++      - description: GMAC0 GTX
++
++  clock-names:
++    items:
++      - const: osc
++      - const: rtc_osc
++      - const: gmac0_rmii_refin
++      - const: gmac0_rgmii_rxin
++      - const: stg_axiahb
++      - const: apb_bus
++      - const: gmac0_gtxclk
++
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
++
++  '#reset-cells':
++    const: 1
++    description:
++      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/starfive,jh7110-crg.h>
++
++    clock-controller@17000000 {
++        compatible = "starfive,jh7110-aoncrg";
++        reg = <0x17000000 0x10000>;
++        clocks = <&osc>, <&rtc_osc>,
++                 <&gmac0_rmii_refin>, <&gmac0_rgmii_rxin>,
++                 <&syscrg JH7110_SYSCLK_STG_AXIAHB>,
++                 <&syscrg JH7110_SYSCLK_APB_BUS>,
++                 <&syscrg JH7110_SYSCLK_GMAC0_GTXCLK>;
++        clock-names = "osc", "rtc_osc", "gmac0_rmii_refin",
++                      "gmac0_rgmii_rxin", "stg_axiahb",
++                      "apb_bus", "gmac0_gtxclk";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
+index cda199084bcf..5e4f21ca0642 100644
+--- a/include/dt-bindings/clock/starfive,jh7110-crg.h
++++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+@@ -204,4 +204,22 @@
+ 
+ #define JH7110_SYSCLK_END			193
+ 
++/* AONCRG clocks */
++#define JH7110_AONCLK_OSC_DIV4			0
++#define JH7110_AONCLK_APB_FUNC			1
++#define JH7110_AONCLK_GMAC0_AHB			2
++#define JH7110_AONCLK_GMAC0_AXI			3
++#define JH7110_AONCLK_GMAC0_RMII_RTX		4
++#define JH7110_AONCLK_GMAC0_TX			5
++#define JH7110_AONCLK_GMAC0_TX_INV		6
++#define JH7110_AONCLK_GMAC0_RX			7
++#define JH7110_AONCLK_GMAC0_RX_INV		8
++#define JH7110_AONCLK_OTPC_APB			9
++#define JH7110_AONCLK_RTC_APB			10
++#define JH7110_AONCLK_RTC_INTERNAL		11
++#define JH7110_AONCLK_RTC_32K			12
++#define JH7110_AONCLK_RTC_CAL			13
++
++#define JH7110_AONCLK_END			14
++
+ #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
+diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
+index b88216a4fe40..d78e38690ceb 100644
+--- a/include/dt-bindings/reset/starfive,jh7110-crg.h
++++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
+@@ -139,4 +139,16 @@
+ 
+ #define JH7110_SYSRST_END			126
+ 
++/* AONCRG resets */
++#define JH7110_AONRST_GMAC0_AXI			0
++#define JH7110_AONRST_GMAC0_AHB			1
++#define JH7110_AONRST_IOMUX			2
++#define JH7110_AONRST_PMU_APB			3
++#define JH7110_AONRST_PMU_WKUP			4
++#define JH7110_AONRST_RTC_APB			5
++#define JH7110_AONRST_RTC_CAL			6
++#define JH7110_AONRST_RTC_32K			7
++
++#define JH7110_AONRST_END			8
++
+ #endif /* __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__ */
 -- 
 2.38.1
 
