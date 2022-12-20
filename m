@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60150C3DA6E
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 23:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B68C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 23:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234178AbiLTXOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Dec 2022 18:14:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58174 "EHLO
+        id S234198AbiLTXQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Dec 2022 18:16:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbiLTXOq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 18:14:46 -0500
+        with ESMTP id S234180AbiLTXQq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 18:16:46 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 911821F2D5;
-        Tue, 20 Dec 2022 15:14:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016A0140CA;
+        Tue, 20 Dec 2022 15:16:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3704D6160B;
-        Tue, 20 Dec 2022 23:14:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E418C433EF;
-        Tue, 20 Dec 2022 23:14:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 917606160D;
+        Tue, 20 Dec 2022 23:16:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89318C433D2;
+        Tue, 20 Dec 2022 23:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671578084;
-        bh=1qveDXbwTyZ9N1/g+135Ft0QqSPob+h8v7iVN3aBATg=;
+        s=k20201202; t=1671578204;
+        bh=S2yB6QVUy+DI02cvsnJRJN1BJTKDb8OD04gO/nAdPSQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i9cOOtng6EqNe5Mi1O9jX+BxuA1ZhQzp4Vy0mkLQzrWMMgs0OoP3OrhihIWguyUjG
-         zgYhKNiITUyuTxkQzcV5kxy426iM51Om3ARwP1dYwDHCa2XYE9+tebHZHnKxxh0NmO
-         0F58k1XBCS2DMcFuz3hfVZiuHw0d8LmFiGkwGIzv7anNIpwWlTXcMqzivbhxDICV1U
-         x3bIYMMYJkujGz459ooFeMY1ZwAMXVwp0WtHKKT+ZflSG6so6QomLOaRkgcuneOcG8
-         5OUETTXGSJyLCU0UYxz55DtvrjO0vUjRWkA8dsHocoGtOfNKSQCQE/gttRimMXFtK6
-         7tVyWoxQv0Lyw==
-Date:   Tue, 20 Dec 2022 23:14:39 +0000
+        b=ct+iSgbCvbMczqt/dL0+pl8OTJOs+cWhg5BpysQyODv73pwN/SkDHHzVFGA57BjTg
+         HkZQrB50VWmKYdj3ZtJ/EPFLtwOefFPo1OKpMQS8tY0KCVk7dICC/T3ZCrbn/D7nCc
+         t8zmB726IQITCrC6oiTd7EohXLCAbyvQC4/xIFXzr3C63wIUheWNzfGY7lsz7hFBjM
+         yDzy7pO4ILfBuGzIC63uB+6MFCmeURuG2cpSVy1lFnrS1RsKgk9rKZCMvklPn5srz/
+         esH6HS0F0q6NbSYFlQn0OY4weqwLlL9LoxF2k5eqTOMEkcKhxVAiVzrt6uFsgk6KeN
+         1MnbOl+7hW0ow==
+Date:   Tue, 20 Dec 2022 23:16:38 +0000
 From:   Conor Dooley <conor@kernel.org>
 To:     Hal Feng <hal.feng@starfivetech.com>
 Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -45,184 +45,61 @@ Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
  clock and reset generator
-Message-ID: <Y6JB37Pd5TZoGMy4@spud>
+Message-ID: <Y6JCVn2nsUi4nTeX@spud>
 References: <20221220005054.34518-1-hal.feng@starfivetech.com>
  <20221220005054.34518-8-hal.feng@starfivetech.com>
+ <Y6JB37Pd5TZoGMy4@spud>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5z5zKcEbEyZyLNXj"
+        protocol="application/pgp-signature"; boundary="KBoiHggTc0xQlLEN"
 Content-Disposition: inline
-In-Reply-To: <20221220005054.34518-8-hal.feng@starfivetech.com>
+In-Reply-To: <Y6JB37Pd5TZoGMy4@spud>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---5z5zKcEbEyZyLNXj
+--KBoiHggTc0xQlLEN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 20, 2022 at 08:50:50AM +0800, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
+On Tue, Dec 20, 2022 at 11:14:44PM +0000, Conor Dooley wrote:
+> On Tue, Dec 20, 2022 at 08:50:50AM +0800, Hal Feng wrote:
+> > +    clock-controller@13020000 {
+> > +        compatible =3D "starfive,jh7110-syscrg";
+> > +        reg =3D <0x13020000 0x10000>;
+> > +        clocks =3D <&osc>, <&gmac1_rmii_refin>,
+> > +                 <&gmac1_rgmii_rxin>,
+> > +                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+> > +                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+> > +                 <&tdm_ext>, <&mclk_ext>;
+> > +        clock-names =3D "osc", "gmac1_rmii_refin",
+> > +                      "gmac1_rgmii_rxin",
+> > +                      "i2stx_bclk_ext", "i2stx_lrck_ext",
+> > +                      "i2srx_bclk_ext", "i2srx_lrck_ext",
+> > +                      "tdm_ext", "mclk_ext";
+> > +        #clock-cells =3D <1>;
+> > +        #reset-cells =3D <1>;
+> > +    };
 >=20
-> Add bindings for the system clock and reset generator (SYSCRG) on the
-> JH7110 RISC-V SoC by StarFive Ltd.
->=20
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> ---
->  .../clock/starfive,jh7110-syscrg.yaml         |  80 +++++++
->  MAINTAINERS                                   |   8 +-
->  .../dt-bindings/clock/starfive,jh7110-crg.h   | 207 ++++++++++++++++++
->  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
->  4 files changed, 434 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh71=
-10-syscrg.yaml
->  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
->  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-sysc=
-rg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.ya=
-ml
-> new file mode 100644
-> index 000000000000..ec81504dcb27
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 System Clock and Reset Generator
-> +
-> +maintainers:
-> +  - Emil Renner Berthing <kernel@esmil.dk>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-syscrg
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Main Oscillator (24 MHz)
-> +      - description: GMAC1 RMII reference
-> +      - description: GMAC1 RGMII RX
-> +      - description: External I2S TX bit clock
-> +      - description: External I2S TX left/right channel clock
-> +      - description: External I2S RX bit clock
-> +      - description: External I2S RX left/right channel clock
-> +      - description: External TDM clock
-> +      - description: External audio master clock
+> Also, whatever happened to GMAC0? It has fixed-clocks defined in the DTS
+> but doesn't appear in the binding or driver?
 
-So, from peeking at the clock driver & the dt - it looks like a bunch of
-these are not actually required?
-I'd have ploughed through this, but having read Krzysztof's comments on
-the DTS I'm not sure that this binding is correct.
-https://lore.kernel.org/linux-riscv/20221220011247.35560-1-hal.feng@starfiv=
-etech.com/T/#mdf67621a2344dce801aa8015d4963593a2c28bcc
+Ah, I should have looked at the next patch...
 
-I *think* the DT is correct - the fixed clocks are all inputs from clock
-sources on the board and as such they are empty in soc.dtsi and are
-populated in board.dts?
-
-However, are they all actually required? In the driver I see:
-	JH71X0__MUX(JH7110_SYSCLK_GMAC1_RX, "gmac1_rx", 2,
-		    JH7110_SYSCLK_GMAC1_RGMII_RXIN,
-		    JH7110_SYSCLK_GMAC1_RMII_RTX),
-That macro is:
-#define JH71X0__MUX(_idx, _name, _nparents, ...) [_idx] =3D {			\
-	.name =3D _name,								\
-	.flags =3D 0,								\
-	.max =3D ((_nparents) - 1) << JH71X0_CLK_MUX_SHIFT,			\
-	.parents =3D { __VA_ARGS__ },						\
-}
-
-AFAICT, RMII reference feeds RMII_RTX & RGMII RX *is* RGMII_RXIN?
-Does that mean you need to populate only one of GMAC1 RMII reference
-and GMAC1 RMGII RX and the other is optional?
-
-What have I missed?
-
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
-> +      - const: gmac1_rmii_refin
-> +      - const: gmac1_rgmii_rxin
-> +      - const: i2stx_bclk_ext
-> +      - const: i2stx_lrck_ext
-> +      - const: i2srx_bclk_ext
-> +      - const: i2srx_lrck_ext
-> +      - const: tdm_ext
-> +      - const: mclk_ext
-
-If all clocks are in fact required though, isn't this kinda pointless to
-have since we already know that the order is fixed from the "clocks"
-property?
-Krzk/Rob?
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@13020000 {
-> +        compatible =3D "starfive,jh7110-syscrg";
-> +        reg =3D <0x13020000 0x10000>;
-> +        clocks =3D <&osc>, <&gmac1_rmii_refin>,
-> +                 <&gmac1_rgmii_rxin>,
-> +                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
-> +                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
-> +                 <&tdm_ext>, <&mclk_ext>;
-> +        clock-names =3D "osc", "gmac1_rmii_refin",
-> +                      "gmac1_rgmii_rxin",
-> +                      "i2stx_bclk_ext", "i2stx_lrck_ext",
-> +                      "i2srx_bclk_ext", "i2srx_lrck_ext",
-> +                      "tdm_ext", "mclk_ext";
-> +        #clock-cells =3D <1>;
-> +        #reset-cells =3D <1>;
-> +    };
-
-Also, whatever happened to GMAC0? It has fixed-clocks defined in the DTS
-but doesn't appear in the binding or driver?
-
-Thanks,
-Conor.
+D'oh.
 
 
---5z5zKcEbEyZyLNXj
+--KBoiHggTc0xQlLEN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY6JB3wAKCRB4tDGHoIJi
-0iDdAP97AduwIcoTKoPNnBB0gAM3K5QzthQrp2V3dnOQWEadiAEA7ILIoHeqrA45
-dIeJz/PtVaBTaAIHfCuDn/tpoSgf/gw=
-=Kng0
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY6JCVgAKCRB4tDGHoIJi
+0td2AP9qG5gfg6Ob/N5kAJ8ZjKIE8zJu2TvxPdAOzRTiZWkKRgEA/l0KFau1Ph7E
+XZQhhG9nYqDTXbh2i/793XGDS4PdcQg=
+=A5iT
 -----END PGP SIGNATURE-----
 
---5z5zKcEbEyZyLNXj--
+--KBoiHggTc0xQlLEN--
