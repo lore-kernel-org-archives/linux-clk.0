@@ -2,96 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C19DC41535
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Dec 2022 13:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91522C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Dec 2022 13:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbiLUNH7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Dec 2022 08:07:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54962 "EHLO
+        id S229931AbiLUNSZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Dec 2022 08:18:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiLUNH6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Dec 2022 08:07:58 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1742017E35;
-        Wed, 21 Dec 2022 05:07:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B4B87617B6;
-        Wed, 21 Dec 2022 13:07:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9146AC433EF;
-        Wed, 21 Dec 2022 13:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1671628076;
-        bh=+EOu1/5BqbwQ3wkQOLEjYswA7bEDV2SQxOgL1+TDpiU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LIiDybPxWb/iyL9My3P4dsYoLwivW0vheyC0UO/so4klJ9PSm4WSP9xupQXpU0pmW
-         5npPvNNyzQwspy5LoCKBQh5HBJaGvfj4X0Jph99T5L7e5OgSK1RkcE4gdzpdmCzCGM
-         rhTnQtWxPuxROkiF+uni6wzRCj6IJhexi6P6sYI4=
-Date:   Wed, 21 Dec 2022 14:07:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Herve Codina <herve.codina@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v4 3/5] usb: gadget: udc: add Renesas RZ/N1 USBF
- controller support
-Message-ID: <Y6MFKdOU4IUQo70L@kroah.com>
-References: <20221213133302.218955-1-herve.codina@bootlin.com>
- <20221213133302.218955-4-herve.codina@bootlin.com>
- <CAMuHMdV7QNZ8Rv6iFLhj_MmBHL-vGWuWZdKB=REWba1UAWgkHw@mail.gmail.com>
+        with ESMTP id S229522AbiLUNSY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Dec 2022 08:18:24 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB3D1EEFC;
+        Wed, 21 Dec 2022 05:18:23 -0800 (PST)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BLCQhMa011655;
+        Wed, 21 Dec 2022 13:18:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=wjsYk5Xn3nuoj50vklfGDoOMhx7eOhLfE4x/GbRnJ5M=;
+ b=FfuZWRpweFHcRHIiOYn7WqABNgBuqyAuvkgEHWDeK3yVWyKlG/wPGFl/iBIXSfZTl9LQ
+ XpFay6K4ORVdNVpTfO/kJ4DPl8Z1hm8LdLc/6TBN+qCs7lTxa2FzjsIjgR160pMlzurR
+ 00ynZCXp5DLEGle7ZmroicUzsl9FhVN/A7XGasINxPTWXDHfmL6inQJFapftDm7H9Pqm
+ 1oKI95zzTYwK91DfqEdCRBtfKBWhptic0eN0xFzosi7rnMAZCWd1GKRvgKYCDNzCteC6
+ qCdw70iJwIOpMnz2ZemqYFizCbSclTH1J3Ut6t3LLPbkIwlCI1W3LLdwMVAOr+yoDwMN Aw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mk39tbyfg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 13:18:15 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BLDIFlW027031
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 13:18:15 GMT
+Received: from [10.216.2.240] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 21 Dec
+ 2022 05:18:10 -0800
+Message-ID: <e7edd629-986f-3e64-f9db-5ee68cf4e6f3@quicinc.com>
+Date:   Wed, 21 Dec 2022 18:48:07 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdV7QNZ8Rv6iFLhj_MmBHL-vGWuWZdKB=REWba1UAWgkHw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 2/2] clk: qcom: lpasscc: Add resets for SC7280 audioreach
+ clock controller
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>,
+        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>
+References: <1671618061-6329-1-git-send-email-quic_srivasam@quicinc.com>
+ <1671618061-6329-3-git-send-email-quic_srivasam@quicinc.com>
+ <efde6373-f788-5c0c-4712-7b9caf7ad3d4@linaro.org>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <efde6373-f788-5c0c-4712-7b9caf7ad3d4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qpNI6SHiaKOg6hbEzPiaOCumjl8VvSC9
+X-Proofpoint-GUID: qpNI6SHiaKOg6hbEzPiaOCumjl8VvSC9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-21_07,2022-12-21_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1015 adultscore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212210109
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 21, 2022 at 02:03:43PM +0100, Geert Uytterhoeven wrote:
-> Hi Hervé,
-> 
-> On Tue, Dec 13, 2022 at 2:33 PM Herve Codina <herve.codina@bootlin.com> wrote:
-> > Add support for the Renesas USBF controller.
-> > This controller is an USB2.0 UDC controller available in the
-> > Renesas r9a06g032 SoC (RZ/N1 family).
-> >
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> 
-> Thanks for your patch!
-> 
-> > --- /dev/null
-> > +++ b/drivers/usb/gadget/udc/renesas_usbf.c
-> 
-> > +#ifdef DEBUG
-> > +#define TRACE(_fmt, ...) trace_printk("%s: " _fmt, __func__, ##__VA_ARGS__)
-> > +#define USBF_TRACE_EP_MASK 0x0ffff /* All the 16 endpoints */
-> > +#define TRACEEP(_ep, _fmt, ...)                                             \
-> > +       do {                                                                \
-> > +               if ((1 << (_ep)->id) & USBF_TRACE_EP_MASK)                  \
-> > +                       trace_printk("%s: " _fmt, __func__, ##__VA_ARGS__); \
-> > +       } while (0)
-> > +#else
-> > +#define TRACE(_fmt, ...) do { } while (0)
-> > +#define TRACEEP(_ep, _fmt, ...) do { } while (0)
-> 
-> Please use "no_printk(fmt, ##__VA_ARGS__)" instead of dummy loops,
-> to avoid bad callers going unnoticed if DEBUG is not defined.
 
-Even better, do NOT define custom debug/trace macros for a single
-driver, just use the ones that the rest of the kernel uses instead
-please.
+On 12/21/2022 4:09 PM, Krzysztof Kozlowski wrote:
+Thanks for your time Krzysztof!!!
+> On 21/12/2022 11:21, Srinivasa Rao Mandadapu wrote:
+>> The clock gating control for TX/RX/WSA core bus clocks would be required
+>> to be reset(moved from hardware control) from audio core driver. Thus
+>> add the support for the reset clocks in audioreach based clock driver.
+>>
+>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/lpasscc-sc7280.c | 18 ++++++++++++++++++
+>>   1 file changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
+>> index 5c1e17b..d81d81b 100644
+>> --- a/drivers/clk/qcom/lpasscc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
+>> @@ -12,10 +12,12 @@
+>>   #include <linux/regmap.h>
+>>   
+>>   #include <dt-bindings/clock/qcom,lpass-sc7280.h>
+>> +#include <dt-bindings/clock/qcom,lpassaudiocc-sc7280.h>
+> These are bindings for different device.
 
-thanks,
+They are not exactly for different device. It's for same device with 
+ADSP enabled platforms.
 
-greg k-h
+Basically lpassaudiocc-sc7280.c and lpasscorecc-sc7280.c are for legacy 
+path.
+
+lpasscc-sc7280.c is for ADSP based AudioReach Solution.
+
+>
+>>   
+>>   #include "clk-regmap.h"
+>>   #include "clk-branch.h"
+>>   #include "common.h"
+>> +#include "reset.h"
+>>   
+>>   static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
+>>   	.halt_reg = 0x0,
+>> @@ -102,6 +104,18 @@ static const struct qcom_cc_desc lpass_qdsp6ss_sc7280_desc = {
+>>   	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sc7280_clocks),
+>>   };
+>>   
+>> +static const struct qcom_reset_map lpass_cc_sc7280_resets[] = {
+>> +	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
+>> +	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
+>> +	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+> These are example the same - IDs and values - as
+> qcom,sc7280-lpassaudiocc. Aren't you duplicating same control?
+
+As explained above legacy path drivers and ADSP path drivers are 
+enabled/used exclusively,
+
+adding reset controls here.
+
+>
+> Best regards,
+> Krzysztof
+>
