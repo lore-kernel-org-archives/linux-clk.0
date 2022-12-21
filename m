@@ -2,106 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B28DC10F1B
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Dec 2022 15:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90040C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Dec 2022 17:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbiLUPCI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Dec 2022 10:02:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45282 "EHLO
+        id S234873AbiLURPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Dec 2022 12:15:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbiLUPCH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Dec 2022 10:02:07 -0500
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A9F722295;
-        Wed, 21 Dec 2022 07:02:07 -0800 (PST)
-Received: by mail-oi1-f181.google.com with SMTP id r130so13543335oih.2;
-        Wed, 21 Dec 2022 07:02:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZUouVsuH4nDvHqNLQ+k2JwBPwVSp7b+SrA5Adtq8QyU=;
-        b=BE1lw3gqL3acaBnun5oJAV3wxvNvCcQ1Dbmr6Sen++AT6qYOVyr3O7LvGCWoaXKdFd
-         cgKnFhO8ysKdhjJziutFhwcGts+joxRV/jT471jrxCpm2EBN+jMQ+9s/Q3G/H1pPftp3
-         hXj5FgZj0/cYtXTSprhcCgwMXkev3Krp5yZPB5eRlte6CmyfN4yNM5xVg7E7bHfTz9tN
-         nJn8AdsSu1q4jynHCuBbSbQ9OuGxzfPY5EYGkvG4AV0edhVPn/qZvHEykRdjM4C2QHG1
-         SdDcSV1lol2JQHomU+ja6LDYUnwh9uZvmT/ccCO1Ewby4nAoGbyNHnM4eqJjY3yJ9PLz
-         ZpQQ==
-X-Gm-Message-State: AFqh2kpoOHiNzJoB4moI8SmEPukbJ3ybC+kSUEIbn1ve04EWKHGusFkY
-        WWdpQ+Eo83ZQ5Nk7OEa3tstt1OH2IITHsw==
-X-Google-Smtp-Source: AMrXdXvNq0OApu+uBKwR+qJ2s7bsdWrjS5FAU3cILaQIa+Yr5KEkVTYR8aiIPBYUaq8AGn2UjDHuIw==
-X-Received: by 2002:a05:6808:1911:b0:360:e643:7e27 with SMTP id bf17-20020a056808191100b00360e6437e27mr1265875oib.36.1671634923973;
-        Wed, 21 Dec 2022 07:02:03 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id ay14-20020a05620a178e00b006b929a56a2bsm10964365qkb.3.2022.12.21.07.02.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Dec 2022 07:02:02 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-46198b81e5eso16931017b3.4;
-        Wed, 21 Dec 2022 07:02:02 -0800 (PST)
-X-Received: by 2002:a81:c84:0:b0:3b4:8af5:48e with SMTP id 126-20020a810c84000000b003b48af5048emr154231ywm.383.1671634922295;
- Wed, 21 Dec 2022 07:02:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20221213230129.549968-1-fabrizio.castro.jz@renesas.com> <20221213230129.549968-2-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20221213230129.549968-2-fabrizio.castro.jz@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 21 Dec 2022 16:01:50 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWpViKrCmnO-X0BTemJWqhmNZ-D5anzitJh6atbnFB6dQ@mail.gmail.com>
-Message-ID: <CAMuHMdWpViKrCmnO-X0BTemJWqhmNZ-D5anzitJh6atbnFB6dQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: renesas: r9a09g011: Add SDHI/eMMC clock and
- reset entries
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230103AbiLURPT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Dec 2022 12:15:19 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EEF8B4B;
+        Wed, 21 Dec 2022 09:14:42 -0800 (PST)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BLGnphm011216;
+        Wed, 21 Dec 2022 17:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=SFm4sYMp/c3P2qEYhneJ47yxJuztQysWAUYzINhpWsw=;
+ b=nbThkgGfnr/hDxuQZA6CLIEsqT80aXNWs0kBDnIAbQRZV0AUhb/LLkBI8DPg77Fby7f+
+ aPhC7OlWly/h7f6yKRux29fJmKqeijuqiYajlmMBFhGUp7wcEdFwD0W2HZezHyj4dqQ2
+ GD8ZvUz2eXX3zDh2s0NBvgSnCFnDnF3aALrfF0kXREOiTP4tM/tQTcRDSmqFl9nwFasV
+ IrQlL7fEHeA0CKVCM2OzvqCSm3Xyu+/8s+xg18SDfm8nFOwEIOfERPUxtUQclppyGdt4
+ TenQjFkiUgPZpTYdSbXPl/jjEscsbT7uJTWktV2vQDFUAi0yUwerVDMTqVKY+B/7qa1d tg== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mm4xkr6ma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 17:14:35 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BLHEYH1022866
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 17:14:34 GMT
+Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 21 Dec 2022 09:14:30 -0800
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+To:     freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 2/5] clk: qcom: gdsc: Support 'synced_poweroff' genpd flag
+Date:   Wed, 21 Dec 2022 22:44:00 +0530
+Message-ID: <20221221224338.v4.2.Ic128c1df50b7fc9a6b919932a3b41a799b5ed5e8@changeid>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1671642843-5244-1-git-send-email-quic_akhilpo@quicinc.com>
+References: <1671642843-5244-1-git-send-email-quic_akhilpo@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: a6rJ0FJEmWy7j7LoqvQEdWLJ-f2Uw8Np
+X-Proofpoint-ORIG-GUID: a6rJ0FJEmWy7j7LoqvQEdWLJ-f2Uw8Np
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-21_10,2022-12-21_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2212210144
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Fabrizio,
+Add support for the newly added 'synced_poweroff' genpd flag. This allows
+some clients (like adreno gpu driver) to request gdsc driver to ensure
+a votable gdsc (like gpucc cx gdsc) has collapsed at hardware.
 
-On Wed, Dec 14, 2022 at 12:01 AM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> From: Phil Edworthy <phil.edworthy@renesas.com>
->
-> Add SDHI/eMMC clock/reset entries to CPG driver.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
->
-> This patch can clash with the below patch (which hasn't been reviewed
-> yet):
-> https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221212172804.1277751-2-biju.das.jz@bp.renesas.com/
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+---
 
-I'll just ignore the overlap...
+(no changes since v3)
 
-I couldn't review the clock parents, as that information seems to
-be restricted, but the rest LGTM.
+Changes in v3:
+- Rename the var 'force_sync' to 'wait (Stephen)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.3.
+ drivers/clk/qcom/gdsc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 9e4d6ce891aa..5358e28122ab 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -136,7 +136,8 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
+ 	return 0;
+ }
+ 
+-static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
++static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status,
++		bool wait)
+ {
+ 	int ret;
+ 
+@@ -149,7 +150,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+ 	ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
+ 
+ 	/* If disabling votable gdscs, don't poll on status */
+-	if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
++	if ((sc->flags & VOTABLE) && status == GDSC_OFF && !wait) {
+ 		/*
+ 		 * Add a short delay here to ensure that an enable
+ 		 * right after it was disabled does not put it in an
+@@ -275,7 +276,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 		gdsc_deassert_clamp_io(sc);
+ 	}
+ 
+-	ret = gdsc_toggle_logic(sc, GDSC_ON);
++	ret = gdsc_toggle_logic(sc, GDSC_ON, false);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -352,7 +353,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	if (sc->pwrsts == PWRSTS_RET_ON)
+ 		return 0;
+ 
+-	ret = gdsc_toggle_logic(sc, GDSC_OFF);
++	ret = gdsc_toggle_logic(sc, GDSC_OFF, domain->synced_poweroff);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -392,7 +393,7 @@ static int gdsc_init(struct gdsc *sc)
+ 
+ 	/* Force gdsc ON if only ON state is supported */
+ 	if (sc->pwrsts == PWRSTS_ON) {
+-		ret = gdsc_toggle_logic(sc, GDSC_ON);
++		ret = gdsc_toggle_logic(sc, GDSC_ON, false);
+ 		if (ret)
+ 			return ret;
+ 	}
+-- 
+2.7.4
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
