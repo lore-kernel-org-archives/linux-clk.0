@@ -2,148 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A640C3DA6E
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Dec 2022 23:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33F9C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Dec 2022 10:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbiLTXTL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Dec 2022 18:19:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59966 "EHLO
+        id S234631AbiLUKXO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Dec 2022 05:23:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233782AbiLTXTK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Dec 2022 18:19:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8AF1F9EC;
-        Tue, 20 Dec 2022 15:19:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EC0B3615E7;
-        Tue, 20 Dec 2022 23:19:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D797AC433D2;
-        Tue, 20 Dec 2022 23:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671578349;
-        bh=qMUMHQtG6S21x4uF4KO8b+hnyWIfjJB888+0zqmuxAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mgWiKaioHWClemJ2WCkd0i7zKlWk2cbjoeyTwK2nSgdcgF1YAS62qojUink35rzQ0
-         4SIhzR47AodUfs5DfPN87n2ksgHHD5JskdAkaSwMiF82BbsU6zP6zdGih/pZo9TOZy
-         oBGZ13tp5Bdj9sMioswX5LXY+eWwsgl+5Y7zBPUVknTlooOgI98z3dF6VHfPWxwQzn
-         rZ6BufP85uZZ8ZNSOvKIWuJ03zdIwPlJm1zQjhPt9ui3kAIKJ6VNh6M1eVpNlqu7Lt
-         RlZYv0MrT/tqkTl17WOeaE4vxJC8j/Gv3dslLRaTNwbEFJNe3Vr/63dwjfatIhExSZ
-         qh4Rtxlo9nkxw==
-Date:   Tue, 20 Dec 2022 23:19:04 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/11] dt-bindings: clock: Add StarFive JH7110
- always-on clock and reset generator
-Message-ID: <Y6JC6PZaRMYxZG5Z@spud>
-References: <20221220005054.34518-1-hal.feng@starfivetech.com>
- <20221220005054.34518-9-hal.feng@starfivetech.com>
+        with ESMTP id S234633AbiLUKWM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Dec 2022 05:22:12 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F8213F87;
+        Wed, 21 Dec 2022 02:21:30 -0800 (PST)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BL8iXI5001160;
+        Wed, 21 Dec 2022 10:21:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=MCWvNDHZ4u8ehQkpYRwQotBi9IyItvZvp/bt9JT5p8s=;
+ b=pgfkrXEB/Xhn+SUDwnkRwktIcrKoBPhXZ+TNSWWh7m6uheuNpPF75OIj3owjbW4jKReD
+ sILelvhgsDsAf1Xf7jv9lfVd8NbjRQ1tCjdX7kJSHTwqxgtm9xyOl0ztFerIO1/bAXqZ
+ v2SqzceVQUW/O4tJt9L9AiEiNLRsq6RcyUP74gH0+xs+XgjLyNxRyA75kHL6PbLQP2eW
+ 2vk3ETtqeXkRkjBvETYfpw9rXtb9/fFW7vl8U4YrOVQQ5qot5JJnkfJk9hB8Xlu45u9e
+ 1vI2fDwwFxLUkqB9tL0aFqVcKkgFmiG021BtubbR9Dvcpl4xwURCDSO4/mv/0c+WKF11 hQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mk39tbntr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 10:21:22 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BLALLKs008565
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 10:21:21 GMT
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 21 Dec 2022 02:21:17 -0800
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>,
+        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH 0/2] Add resets for ADSP based audio clock controller driver.
+Date:   Wed, 21 Dec 2022 15:50:59 +0530
+Message-ID: <1671618061-6329-1-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WUqIxYHpBSMPOybA"
-Content-Disposition: inline
-In-Reply-To: <20221220005054.34518-9-hal.feng@starfivetech.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 15gR521WN9KUW8SFa4F8OCF_xISm7gbS
+X-Proofpoint-GUID: 15gR521WN9KUW8SFa4F8OCF_xISm7gbS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-21_04,2022-12-21_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=879 spamscore=0 clxscore=1011 adultscore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212210083
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add resets for audio clock controller on audioreach based platforms. 
 
---WUqIxYHpBSMPOybA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Srinivasa Rao Mandadapu (2):
+  dt-bindings: clock: SC7280:  Add resets for LPASS audio clock
+    controller
+  clk: qcom: lpasscc: Add resets for SC7280 audioreach clock controller
 
-On Tue, Dec 20, 2022 at 08:50:51AM +0800, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
->=20
-> Add bindings for the always-on clock and reset generator (AONCRG) on the
-> JH7110 RISC-V SoC by StarFive Ltd.
->=20
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> ---
->  .../clock/starfive,jh7110-aoncrg.yaml         | 76 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jh7110-crg.h   | 18 +++++
->  .../dt-bindings/reset/starfive,jh7110-crg.h   | 12 +++
->  3 files changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh71=
-10-aoncrg.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-aonc=
-rg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.ya=
-ml
-> new file mode 100644
-> index 000000000000..a3cf0570d950
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-aoncrg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 Always-On Clock and Reset Generator
-> +
-> +maintainers:
-> +  - Emil Renner Berthing <kernel@esmil.dk>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-aoncrg
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Main Oscillator (24 MHz)
-> +      - description: RTC Oscillator (32.768 kHz)
-> +      - description: GMAC0 RMII reference
-> +      - description: GMAC0 RGMII RX
+ .../devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml |  4 ++++
+ drivers/clk/qcom/lpasscc-sc7280.c                      | 18 ++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-Gotta ask the same question here about the muxing - are all of these
-clocks truly required?
+-- 
+2.7.4
 
-> +      - description: STG AXI/AHB
-> +      - description: APB Bus
-> +      - description: GMAC0 GTX
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
-> +      - const: rtc_osc
-> +      - const: gmac0_rmii_refin
-> +      - const: gmac0_rgmii_rxin
-> +      - const: stg_axiahb
-> +      - const: apb_bus
-> +      - const: gmac0_gtxclk
-
-And if they are, is this actually needed since the order must be as
-above?
-
-As I said in the previous patch, I've probably missed something...
-
-
---WUqIxYHpBSMPOybA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY6JC6AAKCRB4tDGHoIJi
-0hj8AP9mlofAGPd6eI/o8Pxq0+Ws0ZQUYZBn4pD5T51KEOWrnAEAqacpXoQxKO46
-3Voprv1hHNQASDRuQJzm1tEZBJNHAwQ=
-=Nwuo
------END PGP SIGNATURE-----
-
---WUqIxYHpBSMPOybA--
