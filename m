@@ -2,120 +2,216 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141BFC001B2
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 10:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5319BC4167B
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 11:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbiLVKoT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 05:44:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
+        id S235650AbiLVLyJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 06:54:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235029AbiLVKoS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 05:44:18 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3349418B15
-        for <linux-clk@vger.kernel.org>; Thu, 22 Dec 2022 02:44:17 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id m29so2100590lfo.11
-        for <linux-clk@vger.kernel.org>; Thu, 22 Dec 2022 02:44:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CKoTdtVMqmk/FQkPYk1zIuQnbeZQZJIlbUEh2ppiwm4=;
-        b=f/0ikqnITIxET4ZhVCuSY4rImkWCueaT68Nbvcs22Ksldw+sDH1sd9PKpstscMvmTt
-         hYBSqtGX0Vtw6e+iDenk/RuM82vIMi8DrHpkGMFTJZopxurJ/8xmUS6ztLusQcuTlrPf
-         zS4Da3EHGNLRmOO0kSo+QAsd/bmva5PdSf9+FmF4RLjIhpHdhR8bsp0sl/TheDXvWw0C
-         34CF75KSbylZ4AeyIIzZ5qzsontMRXiw6MRyoWhSThFoVDcl71ZuIfJTXeGWCWEzb9dz
-         BYqvScyiR+eAmb9CLMLPfZfGZzrYJQUHxSFE54GPcZRupcvGFDkFeWmLOHMacmH26qbA
-         l1kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKoTdtVMqmk/FQkPYk1zIuQnbeZQZJIlbUEh2ppiwm4=;
-        b=w69Hqoq+SSRx84ezXgVgbJJvQpFrUqzLAL9uLLlMB9y1uDOHZ50ggyI/NH0ltPxdab
-         mLtVYL0ClvF9IPtSmGQ6V0VkMqXK4rcp9iUV1S5CpXxQiJVetkWfYw5Nf4haCqHOq+Zm
-         ah4C0VzjWSozbupjaIr/k8zJtqLQbVfBNmfCJ69CdMgazW0ulRgHQPNzEi2D2i/8u5ly
-         ZPbpJp3tEHqwI4X8+WVa5b22f2IxSOhAG7QWUAOVU7oM9GkAI4eqPq0CeJb8Vx1dYjqB
-         qvr5oxrynVB7MCVwDyGBgH2CwyjYilko3zVLODmOio2R+ibk3lb7XfdSxfKRvd0vpzL6
-         4ETA==
-X-Gm-Message-State: AFqh2kpIERXN5l1ZOusS8gCgwqKnKHpRhPczD8Jaus48Jg+GQTuflIVb
-        i39jxphXHjp2XMGDCjQ/uHKhYA==
-X-Google-Smtp-Source: AMrXdXvYLzQffCt7nO5knfenTpVWX2ktxwfEZ3fuXtQ2OLFluSuTbS75oEGRtcHNzUguIzb7Bcc+CA==
-X-Received: by 2002:ac2:455c:0:b0:4b0:1b30:34a1 with SMTP id j28-20020ac2455c000000b004b01b3034a1mr1719394lfm.29.1671705855590;
-        Thu, 22 Dec 2022 02:44:15 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id c13-20020a19654d000000b004bc1dd05351sm28872lfj.206.2022.12.22.02.44.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Dec 2022 02:44:15 -0800 (PST)
-Message-ID: <60e388df-cd03-3e88-e9c5-460ebdde29c5@linaro.org>
-Date:   Thu, 22 Dec 2022 11:44:13 +0100
+        with ESMTP id S235639AbiLVLwl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 06:52:41 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918472B272;
+        Thu, 22 Dec 2022 03:49:16 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E15C26602C6F;
+        Thu, 22 Dec 2022 11:49:13 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1671709755;
+        bh=gRuxMXdNb3YdnArJGNrVzy/+fNO0scR2SKCD4jo+Pkg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KzESMOe95yU11aoiQES07lof1ztvb09NwpPBZMsFiVUM3H9WpU0uGBSXY97Vzh6MZ
+         qtal9oPtQJ/tjoSVoZy24ksj/tXorQ+bGFBjVOhhXSEZlEREWlNjWB+ol66tMuekfM
+         P/B3vyy797BaBFbk6u/gi44cSE7USEKD++PmVReurIBHjsBEo2LeC1SbWraUuuhWvN
+         BpwVvlEKHwlhpSoIhLKuSewVjBFjNKOBLnrdITVC22DtOJyvjIYeD26NzC+kFcbslk
+         GgavAHPvJJ7/TK7K1vuYA/+633hRZf1XkkfJHKaUZxzqezNyTH/D+m9nrZD29n2dFQ
+         OYw1unNXS/Cdw==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Subject: [PATCH v1 00/25] MediaTek clocks cleanups and improvements
+Date:   Thu, 22 Dec 2022 12:48:32 +0100
+Message-Id: <20221222114857.120060-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 2/2] clk: qcom: lpasscc: Add resets for SC7280 audioreach
- clock controller
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        swboyd@chromium.org, agross@kernel.org, andersson@kernel.org,
-        robh+dt@kernel.org, broonie@kernel.org, quic_plai@quicinc.com,
-        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com
-References: <1671618061-6329-1-git-send-email-quic_srivasam@quicinc.com>
- <1671618061-6329-3-git-send-email-quic_srivasam@quicinc.com>
- <efde6373-f788-5c0c-4712-7b9caf7ad3d4@linaro.org>
- <e7edd629-986f-3e64-f9db-5ee68cf4e6f3@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <e7edd629-986f-3e64-f9db-5ee68cf4e6f3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/12/2022 14:18, Srinivasa Rao Mandadapu wrote:
-> 
-> On 12/21/2022 4:09 PM, Krzysztof Kozlowski wrote:
-> Thanks for your time Krzysztof!!!
->> On 21/12/2022 11:21, Srinivasa Rao Mandadapu wrote:
->>> The clock gating control for TX/RX/WSA core bus clocks would be required
->>> to be reset(moved from hardware control) from audio core driver. Thus
->>> add the support for the reset clocks in audioreach based clock driver.
->>>
->>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
->>> ---
->>>   drivers/clk/qcom/lpasscc-sc7280.c | 18 ++++++++++++++++++
->>>   1 file changed, 18 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
->>> index 5c1e17b..d81d81b 100644
->>> --- a/drivers/clk/qcom/lpasscc-sc7280.c
->>> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
->>> @@ -12,10 +12,12 @@
->>>   #include <linux/regmap.h>
->>>   
->>>   #include <dt-bindings/clock/qcom,lpass-sc7280.h>
->>> +#include <dt-bindings/clock/qcom,lpassaudiocc-sc7280.h>
->> These are bindings for different device.
-> 
-> They are not exactly for different device. It's for same device with 
-> ADSP enabled platforms.
-> 
-> Basically lpassaudiocc-sc7280.c and lpasscorecc-sc7280.c are for legacy 
-> path.
-> 
-> lpasscc-sc7280.c is for ADSP based AudioReach Solution.
+This series performs cleanups and improvements on MediaTek clock
+drivers, greatly reducing code duplication (hence also reducing
+kernel size).
 
-I see two different devices:
-lpasscc@3000000
-clock-controller@3300000
+There would be a lot to say about it, but summarizing:
 
-clock inputs and outputs are different, so it does not look like for
-same device.
+* Propagates struct device where possible in order to introduce the
+  possibility of using Runtime PM on clock drivers as needed,
+  possibly enhancing reliability of some platforms (obviously, this
+  will do nothing unless power-domains are added to devicetree);
 
-Best regards,
-Krzysztof
+* Cleans up some duplicated clock(s) registration attempt(s): on
+  some platforms the 26M fixed factor clock is registered early,
+  but then upon platform_driver probe, an attempt to re-register
+  that clock was performed;
+
+* Removes some early clock registration where possible, moving
+  everything to platform_driver clock probe;
+
+* Breaks down the big MT8173 clock driver in multiple ones, as it's
+  already done with the others, cleans it up and adds possibility
+  possibility to compile non-boot-critical clock drivers (for 8173)
+  as modules;
+
+* Extends the common mtk_clk_simple_probe() function to be able to
+  register multiple MediaTek clock types;
+
+* Removes duplicated [...]_probe functions from multiple MediaTek SoC
+  clock drivers, migrating almost everything to the common functions
+  mtk_clk_simple_probe();
+
+* Adds a .remove() callback, pointing to the common mtk_clk_simple_remove()
+  function to all clock drivers that were migrated to the common probe;
+
+* Some more spare cleanups here and there.
+
+All of this was manually tested on various Chromebooks (with different MTK
+SoCs) and no regression was detected.
+
+Cheers!
+
+AngeloGioacchino Del Regno (25):
+  clk: mediatek: mt8192: Correctly unregister and free clocks on failure
+  clk: mediatek: mt8192: Propagate struct device for gate clocks
+  clk: mediatek: clk-gate: Propagate struct device with
+    mtk_clk_register_gates()
+  clk: mediatek: cpumux: Propagate struct device where possible
+  clk: mediatek: clk-mtk: Propagate struct device for composites
+  clk: mediatek: clk-mux: Propagate struct device for mtk-mux
+  clk: mediatek: clk-mtk: Add dummy clock ops
+  dt-bindings: clock: mt8173: Add dummy clock ID
+  clk: mediatek: mt8173: Migrate to platform driver and common probe
+  clk: mediatek: mt8173: Remove mtk_clk_enable_critical()
+  clk: mediatek: mt8173: Break down clock drivers and allow module build
+  dt-bindings: clock: mt2701/mt6779: Add dummy clock with ID 0
+  clk: mediatek: Switch to mtk_clk_simple_probe() where possible
+  clk: mediatek: clk-mtk: Extend mtk_clk_simple_probe()
+  clk: mediatek: mt8173: Migrate pericfg/topckgen to
+    mtk_clk_simple_probe()
+  clk: mediatek: clk-mt8192: Move CLK_TOP_CSW_F26M_D2 in top_divs
+  clk: mediatek: mt8192: Join top_adj_divs and top_muxes
+  clk: mediatek: mt8186: Join top_adj_div and top_muxes
+  clk: mediatek: clk-mt8183: Join top_aud_muxes and top_aud_divs
+  clk: mediatek: clk-mtk: Register MFG notifier in
+    mtk_clk_simple_probe()
+  clk: mediatek: clk-mt8192: Migrate topckgen to mtk_clk_simple_probe()
+  clk: mediatek: clk-mt8186-topckgen: Migrate to mtk_clk_simple_probe()
+  clk: mediatek: clk-mt6795-topckgen: Migrate to mtk_clk_simple_probe()
+  clk: mediatek: clk-mt7986-topckgen: Properly keep some clocks enabled
+  clk: mediatek: clk-mt7986-topckgen: Migrate to mtk_clk_simple_probe()
+
+ drivers/clk/mediatek/Kconfig                 |   30 +-
+ drivers/clk/mediatek/Makefile                |    6 +-
+ drivers/clk/mediatek/clk-cpumux.c            |    9 +-
+ drivers/clk/mediatek/clk-cpumux.h            |    3 +-
+ drivers/clk/mediatek/clk-gate.c              |   16 +-
+ drivers/clk/mediatek/clk-gate.h              |    8 +-
+ drivers/clk/mediatek/clk-mt2701-aud.c        |   26 +-
+ drivers/clk/mediatek/clk-mt2701-eth.c        |   34 +-
+ drivers/clk/mediatek/clk-mt2701-g3d.c        |   56 +-
+ drivers/clk/mediatek/clk-mt2701-hif.c        |   36 +-
+ drivers/clk/mediatek/clk-mt2701-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt2701.c            |   12 +-
+ drivers/clk/mediatek/clk-mt2712-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt2712.c            |   89 +-
+ drivers/clk/mediatek/clk-mt6765.c            |    8 +-
+ drivers/clk/mediatek/clk-mt6779-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt6779.c            |   50 +-
+ drivers/clk/mediatek/clk-mt6795-infracfg.c   |    6 +-
+ drivers/clk/mediatek/clk-mt6795-mm.c         |    3 +-
+ drivers/clk/mediatek/clk-mt6795-pericfg.c    |    5 +-
+ drivers/clk/mediatek/clk-mt6795-topckgen.c   |   84 +-
+ drivers/clk/mediatek/clk-mt6797-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt6797.c            |    4 +-
+ drivers/clk/mediatek/clk-mt7622-aud.c        |   49 +-
+ drivers/clk/mediatek/clk-mt7622-eth.c        |   82 +-
+ drivers/clk/mediatek/clk-mt7622-hif.c        |   85 +-
+ drivers/clk/mediatek/clk-mt7622.c            |   16 +-
+ drivers/clk/mediatek/clk-mt7629-eth.c        |    5 +-
+ drivers/clk/mediatek/clk-mt7629-hif.c        |   85 +-
+ drivers/clk/mediatek/clk-mt7629.c            |   12 +-
+ drivers/clk/mediatek/clk-mt7986-eth.c        |    6 +-
+ drivers/clk/mediatek/clk-mt7986-infracfg.c   |    4 +-
+ drivers/clk/mediatek/clk-mt7986-topckgen.c   |   98 +-
+ drivers/clk/mediatek/clk-mt8135.c            |    8 +-
+ drivers/clk/mediatek/clk-mt8167-aud.c        |    2 +-
+ drivers/clk/mediatek/clk-mt8167-img.c        |    2 +-
+ drivers/clk/mediatek/clk-mt8167-mfgcfg.c     |    2 +-
+ drivers/clk/mediatek/clk-mt8167-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt8167-vdec.c       |    3 +-
+ drivers/clk/mediatek/clk-mt8167.c            |    6 +-
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c |  157 +++
+ drivers/clk/mediatek/clk-mt8173-img.c        |   55 +
+ drivers/clk/mediatek/clk-mt8173-infracfg.c   |  154 +++
+ drivers/clk/mediatek/clk-mt8173-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt8173-pericfg.c    |  122 ++
+ drivers/clk/mediatek/clk-mt8173-topckgen.c   |  653 ++++++++++
+ drivers/clk/mediatek/clk-mt8173-vdecsys.c    |   57 +
+ drivers/clk/mediatek/clk-mt8173-vencsys.c    |   64 +
+ drivers/clk/mediatek/clk-mt8173.c            | 1125 ------------------
+ drivers/clk/mediatek/clk-mt8183-audio.c      |   19 +-
+ drivers/clk/mediatek/clk-mt8183-mm.c         |    2 +-
+ drivers/clk/mediatek/clk-mt8183.c            |  119 +-
+ drivers/clk/mediatek/clk-mt8186-mcu.c        |    2 +-
+ drivers/clk/mediatek/clk-mt8186-mm.c         |    3 +-
+ drivers/clk/mediatek/clk-mt8186-topckgen.c   |  112 +-
+ drivers/clk/mediatek/clk-mt8192-aud.c        |   24 +-
+ drivers/clk/mediatek/clk-mt8192-mm.c         |    3 +-
+ drivers/clk/mediatek/clk-mt8192.c            |  183 +--
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c |    3 +-
+ drivers/clk/mediatek/clk-mt8195-topckgen.c   |    7 +-
+ drivers/clk/mediatek/clk-mt8195-vdo0.c       |    3 +-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c       |    3 +-
+ drivers/clk/mediatek/clk-mt8365-mm.c         |    5 +-
+ drivers/clk/mediatek/clk-mt8365.c            |    9 +-
+ drivers/clk/mediatek/clk-mt8516-aud.c        |    2 +-
+ drivers/clk/mediatek/clk-mt8516.c            |    6 +-
+ drivers/clk/mediatek/clk-mtk.c               |  133 ++-
+ drivers/clk/mediatek/clk-mtk.h               |   33 +-
+ drivers/clk/mediatek/clk-mux.c               |    9 +-
+ drivers/clk/mediatek/clk-mux.h               |    3 +-
+ include/dt-bindings/clock/mt2701-clk.h       |    3 +
+ include/dt-bindings/clock/mt6779-clk.h       |    3 +
+ include/dt-bindings/clock/mt8173-clk.h       |    3 +
+ 73 files changed, 1920 insertions(+), 2121 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-pericfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-vencsys.c
+ delete mode 100644 drivers/clk/mediatek/clk-mt8173.c
+
+-- 
+2.39.0
 
