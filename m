@@ -2,135 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6A7C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 16:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D304FC4167B
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 20:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbiLVQ2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 11:28:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47250 "EHLO
+        id S229948AbiLVUc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 15:32:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbiLVQ2y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 11:28:54 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B633A46D;
-        Thu, 22 Dec 2022 08:28:53 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 07FAE60C17;
-        Thu, 22 Dec 2022 16:28:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4530C433D2;
-        Thu, 22 Dec 2022 16:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1671726532;
-        bh=quQ2OOb8SYWeKmOuvUZAVXbbPsSJZ2ipg0z5ydmhLNk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T+behxXYqfS5N7QM8iPekCkNaFdT/IsqRvsyEDTEEbtpgv1A+iBHwxjCH5Png/qfn
-         r+gDGvBk7+Xvpvv6tQsqrr4E0OQQN4FIEfsoNOixyOliGIDPhSgE7y0YsFG1poAcR2
-         XBhnHHDmkBP/BxVmWoaTXGWAIYDC5Pobcn85Iys8=
-Date:   Thu, 22 Dec 2022 17:28:49 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v4 3/5] usb: gadget: udc: add Renesas RZ/N1 USBF
- controller support
-Message-ID: <Y6SFwVqXXmobljwW@kroah.com>
-References: <20221213133302.218955-1-herve.codina@bootlin.com>
- <20221213133302.218955-4-herve.codina@bootlin.com>
- <CAMuHMdV7QNZ8Rv6iFLhj_MmBHL-vGWuWZdKB=REWba1UAWgkHw@mail.gmail.com>
- <Y6MFKdOU4IUQo70L@kroah.com>
- <20221222162438.4d06bd77@bootlin.com>
+        with ESMTP id S229495AbiLVUc1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 15:32:27 -0500
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46CD7101CE;
+        Thu, 22 Dec 2022 12:32:26 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-14449b7814bso3830445fac.3;
+        Thu, 22 Dec 2022 12:32:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKo5x56fWEtHMHUJX8UIjgCshUFHEZto8Kui+GBxvYQ=;
+        b=v1QSFckPta7Ht44+rhWlypEtxrmLpB+NeFAFSUh7NAteUHQvekEjR9dQYkc6kkvFFy
+         7F7Liv5dUI1Vy+Cycw+ldrat1B9zmiloDMcV7ySvGv5Qv7x8b7SyBCYretp+jm2+aY5w
+         vrvQwtffAc3kfrOx6UjRJ5dbK6axlDQiC/0UiWoyZvizls6kbxaAUzapwG08V/wqkdo3
+         Jj31XymFzixg+ymySh3oynVH5HiDiWL7OT4L699De2HeDlkyEsBxKtVS2749q353HDh4
+         cvZRWizBvFN/XJpvNGBWOK93RJaxshY/Yb9U+qByP/U/1HtoMmxrt0qk5vHcrkyUrTsD
+         ZFcQ==
+X-Gm-Message-State: AFqh2krKf0esRGYgR5fyOJRlqi2a7cCMbyczPPO4FtpaEQ0CIOcbzewm
+        /H3AiNLxb94Y/cVE0Dwx5Q==
+X-Google-Smtp-Source: AMrXdXsAQG+TQ1J9PaH2VrGeouezowxbWsEDBr58x+MvvBVdVq1BeKeiqTbSzSgb9jKcEk9x4SRB1Q==
+X-Received: by 2002:a05:6870:4d16:b0:144:a626:218b with SMTP id pn22-20020a0568704d1600b00144a626218bmr2904414oab.56.1671741145508;
+        Thu, 22 Dec 2022 12:32:25 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id fp15-20020a056870658f00b0013ae39d0575sm695769oab.15.2022.12.22.12.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Dec 2022 12:32:25 -0800 (PST)
+Received: (nullmailer pid 2072929 invoked by uid 1000);
+        Thu, 22 Dec 2022 20:32:24 -0000
+Date:   Thu, 22 Dec 2022 14:32:24 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     jose.exposito89@gmail.com, edward-jw.yang@mediatek.com,
+        wenst@chromium.org, miles.chen@mediatek.com,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        chun-jie.chen@mediatek.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        rex-bc.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        johnson.wang@mediatek.com, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, kernel@collabora.com
+Subject: Re: [PATCH v1 2/6] dt-bindings: clock: mediatek,mt8186-fhctl:
+ Support MT6795, MT8173/92/95
+Message-ID: <167174113268.2072682.12279599468554479055.robh@kernel.org>
+References: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
+ <20221222155147.158837-3-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221222162438.4d06bd77@bootlin.com>
+In-Reply-To: <20221222155147.158837-3-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 22, 2022 at 04:24:38PM +0100, Herve Codina wrote:
-> Hi Geert, Greg,
+
+On Thu, 22 Dec 2022 16:51:43 +0100, AngeloGioacchino Del Regno wrote:
+> MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
+> compatibles for them.
 > 
-> On Wed, 21 Dec 2022 14:07:53 +0100
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml   | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> > On Wed, Dec 21, 2022 at 02:03:43PM +0100, Geert Uytterhoeven wrote:
-> > > Hi Hervé,
-> > > 
-> > > On Tue, Dec 13, 2022 at 2:33 PM Herve Codina <herve.codina@bootlin.com> wrote:  
-> > > > Add support for the Renesas USBF controller.
-> > > > This controller is an USB2.0 UDC controller available in the
-> > > > Renesas r9a06g032 SoC (RZ/N1 family).
-> > > >
-> > > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
-> > > 
-> > > Thanks for your patch!
-> > >   
-> > > > --- /dev/null
-> > > > +++ b/drivers/usb/gadget/udc/renesas_usbf.c  
-> > >   
-> > > > +#ifdef DEBUG
-> > > > +#define TRACE(_fmt, ...) trace_printk("%s: " _fmt, __func__, ##__VA_ARGS__)
-> > > > +#define USBF_TRACE_EP_MASK 0x0ffff /* All the 16 endpoints */
-> > > > +#define TRACEEP(_ep, _fmt, ...)                                             \
-> > > > +       do {                                                                \
-> > > > +               if ((1 << (_ep)->id) & USBF_TRACE_EP_MASK)                  \
-> > > > +                       trace_printk("%s: " _fmt, __func__, ##__VA_ARGS__); \
-> > > > +       } while (0)
-> > > > +#else
-> > > > +#define TRACE(_fmt, ...) do { } while (0)
-> > > > +#define TRACEEP(_ep, _fmt, ...) do { } while (0)  
-> > > 
-> > > Please use "no_printk(fmt, ##__VA_ARGS__)" instead of dummy loops,
-> > > to avoid bad callers going unnoticed if DEBUG is not defined.  
-> > 
-> > Even better, do NOT define custom debug/trace macros for a single
-> > driver, just use the ones that the rest of the kernel uses instead
-> > please.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> I would like to keep some granularity in debug messages and
-> also keep the function name automatically added.
-> I propose 3 kinds of messages:
-> - general ones,
-> - specific Endpoint0 ones,
-> - other Endpoints ones.
 
-All of those can work just fine using dev_dbg() today, no need to make
-anything special for the driver.  You can turn those messages on/off
-with no need to ever rebuild your driver, which is the key point.
-
-> So before doing any modification in the source code, what do you
-> think about:
->     /*
->      * Suggested tracers:
->      * - no_printk:    Disable tracing
->      * - trace_printk: Print to trace buffer
->      */
->     #define usbf_dbg(_fmt, ...) no_printk("%s: " _fmt, __func__, ##__VA_ARGS__)
->     #define usbf_dbg_ep0(_fmt, ...) no_printk("%s: " _fmt, __func__, ##__VA_ARGS__)
->     #define usbf_dbg_epn(_fmt, ...) no_printk("%s: " _fmt, __func__, ##__VA_ARGS__)
-
-Nope, just use dev_dbg() only please.  It provides MUCH more
-funcationality and a unified interface with the rest of the kernel.
-Please do not attempt to "roll your own" version of debugging macros for
-just a single driver.
-
-thanks,
-
-greg k-h
+Acked-by: Rob Herring <robh@kernel.org>
