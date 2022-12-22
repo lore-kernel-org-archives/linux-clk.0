@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 903AAC3DA7D
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4948C10F1D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbiLVPwF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 10:52:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54086 "EHLO
+        id S230518AbiLVPwG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 10:52:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230298AbiLVPwA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:52:00 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F0A1A387;
-        Thu, 22 Dec 2022 07:51:59 -0800 (PST)
+        with ESMTP id S230288AbiLVPv7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:51:59 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8DD0165AA;
+        Thu, 22 Dec 2022 07:51:57 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F366B6602CDC;
-        Thu, 22 Dec 2022 15:51:56 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D31306602CE2;
+        Thu, 22 Dec 2022 15:51:55 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1671724317;
-        bh=DCBaqFa1rQQb65TEEI+vaOHem+nufnqwcpgQ2Fac8aE=;
+        s=mail; t=1671724316;
+        bh=mFHM5xUXIL/UjRznhQq9NsXo12GBCvWaVvgttW9tU1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eqs4cTe53tYOzNDdDzhAgcgtmpHQLQqPovEoliw/VcpKzQKsajXW+cDrni69gKraJ
-         kF/rwAZFjWjzmz2DibsXuBtcCVMrlWDXAuj+q3Pl4NTTEPSVxgPLlHJ2vMA7Fw2xdq
-         SEq0HOn6o+nbCe/5/zu1wCUsE/PmZ0uytk7zRR1ygE9D7s/qhasoNlcRXFHy7xAFCy
-         j7ol6Tnfo95nUZ3js6LSSqDbdgRVUhZ4fDSUcQuQ4dEHBV3VAn2p94Gl4fUaeoaLdQ
-         7NiPthp/V2TgHzSXYfsQQp7iEc9wOF1RJrHlAh2HlcnvftFkH8QiVZDWx9uz2DH5xE
-         eBUL+PIXP60xQ==
+        b=NRbdZMl6+1+qiHN2P0RK14zL20BUwoO8askrrZESJ2j8NnqfGN+TyRbmkB9KCdwnJ
+         /B/kLt09Isyf8fe1OLzXT1Hdza48byc7eYs2YKCj547yvXCg+4FH90OPs1IGYLxtec
+         oRdK47E0OOLJG5Rz5A68bZlhkQrMh9JvL5t8UzG9dma+9PHRrnAP8osoz5ROYts/9I
+         91krZzCtqnrzmn8q1bOnV5NynIQWzhcD6ZUB93v2d/I34fjokoxMdagqRjiJriBw/Z
+         hlSa1GKLGg7fTh2ZBGjB07xRoL2m/FlPnMu87ZnLchGUf0NqYL7dNQjOmP5mSkDXAW
+         eRC/sCPokF7xg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -44,9 +44,9 @@ Cc:     sboyd@kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v1 6/6] clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
-Date:   Thu, 22 Dec 2022 16:51:47 +0100
-Message-Id: <20221222155147.158837-7-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v1 5/6] clk: mediatek: mt8192: Add support for frequency hopping through FHCTL
+Date:   Thu, 22 Dec 2022 16:51:46 +0100
+Message-Id: <20221222155147.158837-6-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
 References: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
@@ -65,45 +65,46 @@ devicetree configuration.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c | 69 +++++++++++++++++++-
- 1 file changed, 66 insertions(+), 3 deletions(-)
+ drivers/clk/mediatek/clk-mt8192.c | 67 ++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-index f967e2592dea..090db18ea5d8 100644
---- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-@@ -3,9 +3,11 @@
- // Copyright (c) 2021 MediaTek Inc.
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+index adde457e6277..648f88d41622 100644
+--- a/drivers/clk/mediatek/clk-mt8192.c
++++ b/drivers/clk/mediatek/clk-mt8192.c
+@@ -12,10 +12,12 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
 +#include "clk-fhctl.h"
  #include "clk-gate.h"
  #include "clk-mtk.h"
+ #include "clk-mux.h"
  #include "clk-pll.h"
 +#include "clk-pllfh.h"
  
- #include <dt-bindings/clock/mt8195-clk.h>
- #include <linux/of_device.h>
-@@ -105,6 +107,61 @@ static const struct mtk_pll_data plls[] = {
- 	    0, 0, 22, 0x0158, 24, 0, 0, 0, 0x0158, 0, 0x0158, 0, 9),
+ #include <dt-bindings/clock/mt8192-clk.h>
+ #include <dt-bindings/reset/mt8192-resets.h>
+@@ -1042,6 +1044,57 @@ static const struct mtk_pll_data plls[] = {
+ 	      0, 0, 32, 0x0330, 24, 0, 0, 0, 0x0334, 0),
  };
  
 +enum fh_pll_id {
 +	FH_ARMPLL_LL,
-+	FH_ARMPLL_BL,
-+	FH_MEMPLL,
-+	FH_ADSPPLL,
-+	FH_NNAPLL,
++	FH_ARMPLL_BL0,
++	FH_ARMPLL_BL1,
++	FH_ARMPLL_BL2,
++	FH_ARMPLL_BL3,
 +	FH_CCIPLL,
 +	FH_MFGPLL,
-+	FH_TVDPLL2,
++	FH_MEMPLL,
 +	FH_MPLL,
 +	FH_MMPLL,
 +	FH_MAINPLL,
 +	FH_MSDCPLL,
-+	FH_IMGPLL,
-+	FH_VDECPLL,
-+	FH_TVDPLL1,
++	FH_ADSPPLL,
++	FH_APUPLL,
++	FH_TVDPLL,
 +	FH_NR_FH,
 +};
 +
@@ -131,60 +132,55 @@ index f967e2592dea..090db18ea5d8 100644
 +	}
 +
 +static struct mtk_pllfh_data pllfhs[] = {
-+	FH(CLK_APMIXED_ADSPPLL, FH_ADSPPLL, 0x78),
-+	FH(CLK_APMIXED_NNAPLL, FH_NNAPLL, 0x8c),
 +	FH(CLK_APMIXED_MFGPLL, FH_MFGPLL, 0xb4),
-+	FH(CLK_APMIXED_TVDPLL2, FH_TVDPLL2, 0xc8),
 +	FH(CLK_APMIXED_MMPLL, FH_MMPLL, 0xf0),
 +	FH(CLK_APMIXED_MAINPLL, FH_MAINPLL, 0x104),
 +	FH(CLK_APMIXED_MSDCPLL, FH_MSDCPLL, 0x118),
-+	FH(CLK_APMIXED_IMGPLL, FH_IMGPLL, 0x12c),
-+	FH(CLK_APMIXED_VDECPLL, FH_VDECPLL, 0x140),
-+	FH(CLK_APMIXED_TVDPLL2, FH_TVDPLL1, 0x154),
++	FH(CLK_APMIXED_ADSPPLL, FH_ADSPPLL, 0x12c),
++	FH(CLK_APMIXED_TVDPLL, FH_TVDPLL, 0x154),
 +};
 +
- static const struct of_device_id of_match_clk_mt8195_apmixed[] = {
- 	{ .compatible = "mediatek,mt8195-apmixedsys", },
- 	{}
-@@ -114,13 +171,17 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
+ /* Register mux notifier for MFG mux */
+ static int clk_mt8192_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
+ {
+@@ -1068,18 +1121,25 @@ static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
  {
  	struct clk_hw_onecell_data *clk_data;
  	struct device_node *node = pdev->dev.of_node;
-+	const u8 *fhctl_node = "mediatek,mt8195-fhctl";
++	const u8 *fhctl_node = "mediatek,mt8192-fhctl";
  	int r;
  
  	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
  	if (!clk_data)
  		return -ENOMEM;
  
--	r = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+-	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
 +	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
 +
 +	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
 +				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
++	if (r)
++		goto free_clk_data;
++
+ 	r = mtk_clk_register_gates(node, apmixed_clks,
+ 				   ARRAY_SIZE(apmixed_clks), clk_data,
+ 				   &pdev->dev);
  	if (r)
- 		goto free_apmixed_data;
+-		goto free_clk_data;
++		goto unregister_plls;
  
-@@ -140,7 +201,8 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	if (r)
+@@ -1089,6 +1149,9 @@ static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
+ 
  unregister_gates:
  	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
- unregister_plls:
--	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
++unregister_plls:
 +	mtk_clk_unregister_pllfhs(plls, ARRAY_SIZE(plls), pllfhs,
 +				  ARRAY_SIZE(pllfhs), clk_data);
- free_apmixed_data:
+ free_clk_data:
  	mtk_free_clk_data(clk_data);
  	return r;
-@@ -153,7 +215,8 @@ static int clk_mt8195_apmixed_remove(struct platform_device *pdev)
- 
- 	of_clk_del_provider(node);
- 	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
--	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+	mtk_clk_unregister_pllfhs(plls, ARRAY_SIZE(plls), pllfhs,
-+				  ARRAY_SIZE(pllfhs), clk_data);
- 	mtk_free_clk_data(clk_data);
- 
- 	return 0;
 -- 
 2.39.0
 
