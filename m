@@ -2,78 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D304FC4167B
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 20:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45539C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 21:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbiLVUc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 15:32:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
+        id S229659AbiLVVHX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 16:07:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiLVUc1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 15:32:27 -0500
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46CD7101CE;
-        Thu, 22 Dec 2022 12:32:26 -0800 (PST)
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-14449b7814bso3830445fac.3;
-        Thu, 22 Dec 2022 12:32:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FKo5x56fWEtHMHUJX8UIjgCshUFHEZto8Kui+GBxvYQ=;
-        b=v1QSFckPta7Ht44+rhWlypEtxrmLpB+NeFAFSUh7NAteUHQvekEjR9dQYkc6kkvFFy
-         7F7Liv5dUI1Vy+Cycw+ldrat1B9zmiloDMcV7ySvGv5Qv7x8b7SyBCYretp+jm2+aY5w
-         vrvQwtffAc3kfrOx6UjRJ5dbK6axlDQiC/0UiWoyZvizls6kbxaAUzapwG08V/wqkdo3
-         Jj31XymFzixg+ymySh3oynVH5HiDiWL7OT4L699De2HeDlkyEsBxKtVS2749q353HDh4
-         cvZRWizBvFN/XJpvNGBWOK93RJaxshY/Yb9U+qByP/U/1HtoMmxrt0qk5vHcrkyUrTsD
-         ZFcQ==
-X-Gm-Message-State: AFqh2krKf0esRGYgR5fyOJRlqi2a7cCMbyczPPO4FtpaEQ0CIOcbzewm
-        /H3AiNLxb94Y/cVE0Dwx5Q==
-X-Google-Smtp-Source: AMrXdXsAQG+TQ1J9PaH2VrGeouezowxbWsEDBr58x+MvvBVdVq1BeKeiqTbSzSgb9jKcEk9x4SRB1Q==
-X-Received: by 2002:a05:6870:4d16:b0:144:a626:218b with SMTP id pn22-20020a0568704d1600b00144a626218bmr2904414oab.56.1671741145508;
-        Thu, 22 Dec 2022 12:32:25 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id fp15-20020a056870658f00b0013ae39d0575sm695769oab.15.2022.12.22.12.32.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Dec 2022 12:32:25 -0800 (PST)
-Received: (nullmailer pid 2072929 invoked by uid 1000);
-        Thu, 22 Dec 2022 20:32:24 -0000
-Date:   Thu, 22 Dec 2022 14:32:24 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     jose.exposito89@gmail.com, edward-jw.yang@mediatek.com,
-        wenst@chromium.org, miles.chen@mediatek.com,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        chun-jie.chen@mediatek.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        rex-bc.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        johnson.wang@mediatek.com, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, kernel@collabora.com
-Subject: Re: [PATCH v1 2/6] dt-bindings: clock: mediatek,mt8186-fhctl:
- Support MT6795, MT8173/92/95
-Message-ID: <167174113268.2072682.12279599468554479055.robh@kernel.org>
-References: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
- <20221222155147.158837-3-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S229613AbiLVVHW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 16:07:22 -0500
+X-Greylist: delayed 326 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 22 Dec 2022 13:07:21 PST
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CA91A227
+        for <linux-clk@vger.kernel.org>; Thu, 22 Dec 2022 13:07:20 -0800 (PST)
+Received: from localhost.localdomain (94-209-172-39.cable.dynamic.v4.ziggo.nl [94.209.172.39])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 2F6DC3F34C;
+        Thu, 22 Dec 2022 22:01:50 +0100 (CET)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: dispcc-sm6125: Fix compatible string to match bindings
+Date:   Thu, 22 Dec 2022 22:01:40 +0100
+Message-Id: <20221222210140.278077-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221222155147.158837-3-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+According to generic rules the SoC name should be first:
 
-On Thu, 22 Dec 2022 16:51:43 +0100, AngeloGioacchino Del Regno wrote:
-> MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
-> compatibles for them.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml   | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
+        arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dtb: clock-controller@5f00000: compatible: 'oneOf' conditional failed, one must be fixed:
+                'qcom,dispcc-sm6125' does not match '^qcom,(apq|ipq|mdm|msm|qcm|qcs|sa|sc|sdm|sdx|sm)[0-9]+-.*$'
 
-Acked-by: Rob Herring <robh@kernel.org>
+And this is already reflected by the bindings submitted prior to the
+addition of this driver.  Any DTS following these rules will end up with
+a non-probing driver because of this mismatch.
+
+Fixes: 6e87c8f07407 ("clk: qcom: Add display clock controller driver for SM6125")
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+---
+ drivers/clk/qcom/dispcc-sm6125.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/dispcc-sm6125.c b/drivers/clk/qcom/dispcc-sm6125.c
+index b921456a2e0d..87b27053ddb6 100644
+--- a/drivers/clk/qcom/dispcc-sm6125.c
++++ b/drivers/clk/qcom/dispcc-sm6125.c
+@@ -667,7 +667,7 @@ static const struct qcom_cc_desc disp_cc_sm6125_desc = {
+ };
+ 
+ static const struct of_device_id disp_cc_sm6125_match_table[] = {
+-	{ .compatible = "qcom,dispcc-sm6125" },
++	{ .compatible = "qcom,sm6125-dispcc" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, disp_cc_sm6125_match_table);
+-- 
+2.39.0
+
