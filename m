@@ -2,41 +2,45 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6EBC4167B
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F9CC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbiLVPwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 10:52:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54086 "EHLO
+        id S229548AbiLVPyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 10:54:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbiLVPv5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:51:57 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC5B9326;
-        Thu, 22 Dec 2022 07:51:56 -0800 (PST)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+        with ESMTP id S229525AbiLVPyk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:54:40 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7148C286F4;
+        Thu, 22 Dec 2022 07:54:39 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B56126602CD7;
-        Thu, 22 Dec 2022 15:51:54 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5E98D6602CD4;
+        Thu, 22 Dec 2022 15:54:37 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1671724315;
-        bh=e4X/ACfo4PczeBKqlI21xK5AuMzs072mhIO7l0YAHu0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xy2WmJAsLPh5m93F5x2b4YkInrqBV+at/WurjEqjm/BMx1Rdb8qlTJAI2Gv3iE493
-         TrmkUnl/COnzXJmgqSwCMHp6XftKn9UneCnaFON1id5VabyQ6Q3K0g+/OhFRjRyOYT
-         JNHRXLoU6+ZqaeMgHdT2f8auY0sD3xyAFaD+4mP9utrFt8AfBqnnm09iSyCCUAiz5S
-         WhoMK7x7txrptSg6yXKk/fW5hUwbGPBLAW39TRG5pyn0YgUh0rxvecpdZRT0eiffZK
-         3o030uyy/2j9W8h3bwh6/PoSfKe0JBVyz1RAj5G+8Sivr8zzVYqz5r0vsTjehp2PkJ
-         fDMoMNkgAdGog==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
+        s=mail; t=1671724478;
+        bh=qAhG/99ma0oz2fsDZKxatykFyuHEp485BVRnZklODwo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=WBvNMLrJs1Tepv7wPgNfxOpPQHWNuLF5o77g3MDtDLkmjglKgBrnf+zXwUxaGUyls
+         6zWLBUY0IK0CHLi8muG6wytWp+gy1QtiR3WZgWCfsIenc2GG44a7yVoNH5EPsFxp9O
+         jmQAXq9FVX4/t/Wd9mRIB3LG8A7FIeTE4nu6lNXZJXzz83KKohxJpLzPw+FsI4OoMi
+         dhr+z6qlnjInxUUzIzPj8pXSuXo6Qr+tbwWdwulbaTJZIJrN+fuVSFTj78Dr5wDhvv
+         l/GUuSyDJdHzKUquLXP8W5ne2w51qobXAOpdq5aiflgMpC1F2qZXgb2ipEZy/o58x+
+         m5zAtEwM7s4gw==
+Message-ID: <372e5ab4-bc2c-1ccd-1f22-7bab635c36d1@collabora.com>
+Date:   Thu, 22 Dec 2022 16:54:34 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v1 0/6] MediaTek Frequency Hopping: MT6795/8173/92/95
+Content-Language: en-US
 To:     mturquette@baylibre.com
 Cc:     sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com,
         edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
         wenst@chromium.org, miles.chen@mediatek.com,
         chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
@@ -44,143 +48,62 @@ Cc:     sboyd@kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v1 4/6] clk: mediatek: mt8173: Add support for frequency hopping through FHCTL
-Date:   Thu, 22 Dec 2022 16:51:45 +0100
-Message-Id: <20221222155147.158837-5-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
 References: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add FHCTL parameters and register PLLs through FHCTL to add support
-for frequency hopping and SSC. FHCTL will be enabled only on PLLs
-specified in devicetree.
+Il 22/12/22 16:51, AngeloGioacchino Del Regno ha scritto:
+> This series adds support for Frequency Hopping (FHCTL) on more MediaTek
+> SoCs, specifically, MT6795, MT8173, MT8192 and MT8195.
+> 
+> In order to support older platforms like MT6795 and MT8173 it was
+> necessary to add a new register layout that is ever-so-slightly
+> different from the one that was previously introduced for MT8186.
+> 
+> Since the new layout refers to older SoCs, the one valid for MT8186
+> and newer SoCs was renamed to be a "v2" layout, while the new one
+> for older chips gets the "v1" name.
+> 
+> Note: These commits won't change any behavior unless FHCTL gets
+>        explicitly enabled and configured in devicetrees.
+> 
 
-This commit brings functional changes only upon addition of
-devicetree configuration.
+Forgot to write in the cover letter that this series can be applied on top
+of [1], but that's a dependency only because that big cleanup moves things
+around (hence these commits won't apply if not on top of [1]).
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 65 +++++++++++++++++++-
- 1 file changed, 62 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-index a56c5845d07a..0084203e67ad 100644
---- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-@@ -9,8 +9,10 @@
- #include <linux/of_address.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include "clk-fhctl.h"
- #include "clk-mtk.h"
- #include "clk-pll.h"
-+#include "clk-pllfh.h"
- 
- #define REGOFF_REF2USB		0x8
- #define REGOFF_HDMI_REF		0x40
-@@ -77,6 +79,58 @@ static const struct mtk_pll_data plls[] = {
- 	PLL(CLK_APMIXED_MSDCPLL2, "msdcpll2", 0x2f0, 0x2fc, 0, 0, 21, 0x2f0, 4, 0x0, 0x2f4, 0),
- };
- 
-+enum fh_pll_id {
-+	FH_ARMCA7PLL,
-+	FH_ARMCA15PLL,
-+	FH_MAINPLL,
-+	FH_MPLL,
-+	FH_MSDCPLL,
-+	FH_MMPLL,
-+	FH_VENCPLL,
-+	FH_TVDPLL,
-+	FH_VCODECPLL,
-+	FH_LVDSPLL,
-+	FH_MSDC2PLL,
-+	FH_NR_FH,
-+};
-+
-+#define FH(_pllid, _fhid, _offset) {					\
-+		.data = {						\
-+			.pll_id = _pllid,				\
-+			.fh_id = _fhid,					\
-+			.fh_ver = FHCTL_PLLFH_V1,			\
-+			.fhx_offset = _offset,				\
-+			.dds_mask = GENMASK(21, 0),			\
-+			.slope0_value = 0x6003c97,			\
-+			.slope1_value = 0x6003c97,			\
-+			.sfstrx_en = BIT(2),				\
-+			.frddsx_en = BIT(1),				\
-+			.fhctlx_en = BIT(0),				\
-+			.tgl_org = BIT(31),				\
-+			.dvfs_tri = BIT(31),				\
-+			.pcwchg = BIT(31),				\
-+			.dt_val = 0x0,					\
-+			.df_val = 0x9,					\
-+			.updnlmt_shft = 16,				\
-+			.msk_frddsx_dys = GENMASK(23, 20),		\
-+			.msk_frddsx_dts = GENMASK(19, 16),		\
-+		},							\
-+	}
-+
-+static struct mtk_pllfh_data pllfhs[] = {
-+	FH(CLK_APMIXED_ARMCA7PLL, FH_ARMCA7PLL, 0x38),
-+	FH(CLK_APMIXED_ARMCA15PLL, FH_ARMCA15PLL, 0x4c),
-+	FH(CLK_APMIXED_MAINPLL, FH_MAINPLL, 0x60),
-+	FH(CLK_APMIXED_MPLL, FH_MPLL, 0x74),
-+	FH(CLK_APMIXED_MSDCPLL, FH_MSDCPLL, 0x88),
-+	FH(CLK_APMIXED_MMPLL, FH_MMPLL, 0x9c),
-+	FH(CLK_APMIXED_VENCPLL, FH_VENCPLL, 0xb0),
-+	FH(CLK_APMIXED_TVDPLL, FH_TVDPLL, 0xc4),
-+	FH(CLK_APMIXED_VCODECPLL, FH_VCODECPLL, 0xd8),
-+	FH(CLK_APMIXED_LVDSPLL, FH_LVDSPLL, 0xec),
-+	FH(CLK_APMIXED_MSDCPLL2, FH_MSDC2PLL, 0x100),
-+};
-+
- static const struct of_device_id of_match_clk_mt8173_apmixed[] = {
- 	{ .compatible = "mediatek,mt8173-apmixedsys" },
- 	{ /* sentinel */ }
-@@ -84,6 +138,7 @@ static const struct of_device_id of_match_clk_mt8173_apmixed[] = {
- 
- static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- {
-+	const u8 *fhctl_node = "mediatek,mt8173-fhctl";
- 	struct device_node *node = pdev->dev.of_node;
- 	struct clk_hw_onecell_data *clk_data;
- 	void __iomem *base;
-@@ -98,7 +153,9 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- 	if (IS_ERR_OR_NULL(clk_data))
- 		return -ENOMEM;
- 
--	r = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-+	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
-+	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-+				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
- 	if (r)
- 		goto free_clk_data;
- 
-@@ -124,7 +181,8 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- unregister_ref2usb:
- 	mtk_clk_unregister_ref2usb_tx(clk_data->hws[CLK_APMIXED_REF2USB_TX]);
- unregister_plls:
--	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+	mtk_clk_unregister_pllfhs(plls, ARRAY_SIZE(plls), pllfhs,
-+				  ARRAY_SIZE(pllfhs), clk_data);
- free_clk_data:
- 	mtk_free_clk_data(clk_data);
- 	return r;
-@@ -137,7 +195,8 @@ static int clk_mt8173_apmixed_remove(struct platform_device *pdev)
- 
- 	of_clk_del_provider(node);
- 	mtk_clk_unregister_ref2usb_tx(clk_data->hws[CLK_APMIXED_REF2USB_TX]);
--	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+	mtk_clk_unregister_pllfhs(plls, ARRAY_SIZE(plls), pllfhs,
-+				  ARRAY_SIZE(pllfhs), clk_data);
- 	mtk_free_clk_data(clk_data);
- 
- 	return 0;
--- 
-2.39.0
+[1]: 
+https://lore.kernel.org/lkml/20221222114857.120060-1-angelogioacchino.delregno@collabora.com
+
+Cheers,
+Angelo
+
+> AngeloGioacchino Del Regno (6):
+>    clk: mediatek: fhctl: Add support for older fhctl register layout
+>    dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795,
+>      MT8173/92/95
+>    clk: mediatek: mt6795: Add support for frequency hopping through FHCTL
+>    clk: mediatek: mt8173: Add support for frequency hopping through FHCTL
+>    clk: mediatek: mt8192: Add support for frequency hopping through FHCTL
+>    clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
+> 
+>   .../bindings/clock/mediatek,mt8186-fhctl.yaml |  7 +-
+>   drivers/clk/mediatek/clk-fhctl.c              | 26 ++++++-
+>   drivers/clk/mediatek/clk-fhctl.h              |  9 ++-
+>   drivers/clk/mediatek/clk-mt6795-apmixedsys.c  | 63 ++++++++++++++++-
+>   drivers/clk/mediatek/clk-mt8173-apmixedsys.c  | 65 ++++++++++++++++-
+>   drivers/clk/mediatek/clk-mt8186-apmixedsys.c  |  2 +
+>   drivers/clk/mediatek/clk-mt8192.c             | 67 +++++++++++++++++-
+>   drivers/clk/mediatek/clk-mt8195-apmixedsys.c  | 69 ++++++++++++++++++-
+>   drivers/clk/mediatek/clk-pllfh.c              | 23 +++++--
+>   drivers/clk/mediatek/clk-pllfh.h              |  1 +
+>   10 files changed, 311 insertions(+), 21 deletions(-)
+> 
 
