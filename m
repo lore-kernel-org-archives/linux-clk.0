@@ -2,108 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F9CC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2D0C4167B
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 16:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbiLVPyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 10:54:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
+        id S229870AbiLVQGD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 11:06:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiLVPyk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:54:40 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7148C286F4;
-        Thu, 22 Dec 2022 07:54:39 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5E98D6602CD4;
-        Thu, 22 Dec 2022 15:54:37 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1671724478;
-        bh=qAhG/99ma0oz2fsDZKxatykFyuHEp485BVRnZklODwo=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=WBvNMLrJs1Tepv7wPgNfxOpPQHWNuLF5o77g3MDtDLkmjglKgBrnf+zXwUxaGUyls
-         6zWLBUY0IK0CHLi8muG6wytWp+gy1QtiR3WZgWCfsIenc2GG44a7yVoNH5EPsFxp9O
-         jmQAXq9FVX4/t/Wd9mRIB3LG8A7FIeTE4nu6lNXZJXzz83KKohxJpLzPw+FsI4OoMi
-         dhr+z6qlnjInxUUzIzPj8pXSuXo6Qr+tbwWdwulbaTJZIJrN+fuVSFTj78Dr5wDhvv
-         l/GUuSyDJdHzKUquLXP8W5ne2w51qobXAOpdq5aiflgMpC1F2qZXgb2ipEZy/o58x+
-         m5zAtEwM7s4gw==
-Message-ID: <372e5ab4-bc2c-1ccd-1f22-7bab635c36d1@collabora.com>
-Date:   Thu, 22 Dec 2022 16:54:34 +0100
+        with ESMTP id S229734AbiLVQGA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 11:06:00 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEC241AF20
+        for <linux-clk@vger.kernel.org>; Thu, 22 Dec 2022 08:05:58 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id t18so1514122pfq.13
+        for <linux-clk@vger.kernel.org>; Thu, 22 Dec 2022 08:05:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yNYj2+faAjMFDKAvbNk2y84zda8I1j/yCB/6Jq35uqw=;
+        b=yuaLOWS/FYiY3xwvYVkTZMNK3ghRu+trYkX1lJftsL9e/mHyQwKa6ntkfygZmqBGMj
+         H3qCTyo8k46QpqYgbgBC8rftntKZGhaYYbfIx5xLOjMAi4hrlK4aLEmfdYVYPDVjIQpz
+         gH4hFznFXTq9L2ENLd5JNb9vBhtuHunRlvOTqkQt1qTUEVtod+3fHRv3GLf+u0ziKNfL
+         yO9phnIdzuNhFmlWwuz1UQBBtyOruhm+NI2878FOD85MBskflZHTWXY3OJowCVRRRPUI
+         t9I8KjmAhuUD9WlHJJ2fPYaRUYCjUs+h3bQuIrsK+2tZ8t8Q7AFA+N8DN8aPKOHL/b3d
+         a7Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yNYj2+faAjMFDKAvbNk2y84zda8I1j/yCB/6Jq35uqw=;
+        b=NJePiLQrEkjVSiGd9Aluyt5abR4u0UNzFMZ3GBLmICbikrhMjXzPpfZ7xrNREKQXc8
+         YFpdBJZFVpAU1s0JvU5dVdQD3daEAanqZGdCnmY26v8hv4On6F34NGFeO5mzSCn5lWIV
+         m8bZR5Am/U30P1m1RHmxtqoitrG6akFrjMtjJAdx/OylRhUNPR13I6GmWzSV41rC5ogv
+         ChKl2kWVGzK1n7U3VbMc7CkqJ7NhBH4kBasOI3Xe9+PqcXvVYMy6iVcUqKuzq1UVTDt7
+         BzBe0j6WO4+xr0hMQw67OWlZChzBaxpvyP8Pu8SqcA2rCPXfklfvwf/4zaBMNBVG/jyb
+         QPUQ==
+X-Gm-Message-State: AFqh2kpTVi4M89BkYwChmCq4zn8vKIdvrN2sMryMTcNxpH/zOz0n4KUV
+        5/+6kHHkE7KmYN2PAPrrTydCaMpiw7ZKkb3aTNKyyA==
+X-Google-Smtp-Source: AMrXdXuucHOLti3ekPdYE6Bj1QKKm3rrotVU76QOg85NDX4pWDEjtUAZ1t5qIqPwXfgwa7ckwK0/p6ZVEpkdSq1dQes=
+X-Received: by 2002:a63:e4f:0:b0:493:d903:6616 with SMTP id
+ 15-20020a630e4f000000b00493d9036616mr259913pgo.541.1671725158143; Thu, 22 Dec
+ 2022 08:05:58 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v1 0/6] MediaTek Frequency Hopping: MT6795/8173/92/95
-Content-Language: en-US
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        wenst@chromium.org, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-References: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1671642843-5244-1-git-send-email-quic_akhilpo@quicinc.com> <20221221224338.v4.2.Ic128c1df50b7fc9a6b919932a3b41a799b5ed5e8@changeid>
+In-Reply-To: <20221221224338.v4.2.Ic128c1df50b7fc9a6b919932a3b41a799b5ed5e8@changeid>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 22 Dec 2022 17:05:21 +0100
+Message-ID: <CAPDyKFrKV4aHxTosQHkkbBHS3MOx=-i+sW=jQY=sYE4XnaQHmA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] clk: qcom: gdsc: Support 'synced_poweroff' genpd flag
+To:     Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 22/12/22 16:51, AngeloGioacchino Del Regno ha scritto:
-> This series adds support for Frequency Hopping (FHCTL) on more MediaTek
-> SoCs, specifically, MT6795, MT8173, MT8192 and MT8195.
-> 
-> In order to support older platforms like MT6795 and MT8173 it was
-> necessary to add a new register layout that is ever-so-slightly
-> different from the one that was previously introduced for MT8186.
-> 
-> Since the new layout refers to older SoCs, the one valid for MT8186
-> and newer SoCs was renamed to be a "v2" layout, while the new one
-> for older chips gets the "v1" name.
-> 
-> Note: These commits won't change any behavior unless FHCTL gets
->        explicitly enabled and configured in devicetrees.
-> 
+On Wed, 21 Dec 2022 at 18:14, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>
+> Add support for the newly added 'synced_poweroff' genpd flag. This allows
+> some clients (like adreno gpu driver) to request gdsc driver to ensure
+> a votable gdsc (like gpucc cx gdsc) has collapsed at hardware.
+>
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-Forgot to write in the cover letter that this series can be applied on top
-of [1], but that's a dependency only because that big cleanup moves things
-around (hence these commits won't apply if not on top of [1]).
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+Kind regards
+Uffe
 
-[1]: 
-https://lore.kernel.org/lkml/20221222114857.120060-1-angelogioacchino.delregno@collabora.com
-
-Cheers,
-Angelo
-
-> AngeloGioacchino Del Regno (6):
->    clk: mediatek: fhctl: Add support for older fhctl register layout
->    dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795,
->      MT8173/92/95
->    clk: mediatek: mt6795: Add support for frequency hopping through FHCTL
->    clk: mediatek: mt8173: Add support for frequency hopping through FHCTL
->    clk: mediatek: mt8192: Add support for frequency hopping through FHCTL
->    clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
-> 
->   .../bindings/clock/mediatek,mt8186-fhctl.yaml |  7 +-
->   drivers/clk/mediatek/clk-fhctl.c              | 26 ++++++-
->   drivers/clk/mediatek/clk-fhctl.h              |  9 ++-
->   drivers/clk/mediatek/clk-mt6795-apmixedsys.c  | 63 ++++++++++++++++-
->   drivers/clk/mediatek/clk-mt8173-apmixedsys.c  | 65 ++++++++++++++++-
->   drivers/clk/mediatek/clk-mt8186-apmixedsys.c  |  2 +
->   drivers/clk/mediatek/clk-mt8192.c             | 67 +++++++++++++++++-
->   drivers/clk/mediatek/clk-mt8195-apmixedsys.c  | 69 ++++++++++++++++++-
->   drivers/clk/mediatek/clk-pllfh.c              | 23 +++++--
->   drivers/clk/mediatek/clk-pllfh.h              |  1 +
->   10 files changed, 311 insertions(+), 21 deletions(-)
-> 
-
+> ---
+>
+> (no changes since v3)
+>
+> Changes in v3:
+> - Rename the var 'force_sync' to 'wait (Stephen)
+>
+>  drivers/clk/qcom/gdsc.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 9e4d6ce891aa..5358e28122ab 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -136,7 +136,8 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
+>         return 0;
+>  }
+>
+> -static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+> +static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status,
+> +               bool wait)
+>  {
+>         int ret;
+>
+> @@ -149,7 +150,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>         ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
+>
+>         /* If disabling votable gdscs, don't poll on status */
+> -       if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
+> +       if ((sc->flags & VOTABLE) && status == GDSC_OFF && !wait) {
+>                 /*
+>                  * Add a short delay here to ensure that an enable
+>                  * right after it was disabled does not put it in an
+> @@ -275,7 +276,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>                 gdsc_deassert_clamp_io(sc);
+>         }
+>
+> -       ret = gdsc_toggle_logic(sc, GDSC_ON);
+> +       ret = gdsc_toggle_logic(sc, GDSC_ON, false);
+>         if (ret)
+>                 return ret;
+>
+> @@ -352,7 +353,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>         if (sc->pwrsts == PWRSTS_RET_ON)
+>                 return 0;
+>
+> -       ret = gdsc_toggle_logic(sc, GDSC_OFF);
+> +       ret = gdsc_toggle_logic(sc, GDSC_OFF, domain->synced_poweroff);
+>         if (ret)
+>                 return ret;
+>
+> @@ -392,7 +393,7 @@ static int gdsc_init(struct gdsc *sc)
+>
+>         /* Force gdsc ON if only ON state is supported */
+>         if (sc->pwrsts == PWRSTS_ON) {
+> -               ret = gdsc_toggle_logic(sc, GDSC_ON);
+> +               ret = gdsc_toggle_logic(sc, GDSC_ON, false);
+>                 if (ret)
+>                         return ret;
+>         }
+> --
+> 2.7.4
+>
