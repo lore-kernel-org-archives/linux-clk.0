@@ -2,147 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2BDC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2D0C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Dec 2022 15:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235757AbiLVP0T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Dec 2022 10:26:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39560 "EHLO
+        id S230475AbiLVPwC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Dec 2022 10:52:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235759AbiLVPZ5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:25:57 -0500
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003E52B268;
-        Thu, 22 Dec 2022 07:24:42 -0800 (PST)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id A6BD140002;
-        Thu, 22 Dec 2022 15:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1671722681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=paTDVkvAnOW0G/nrH5hLopHfXkzR9wnPXZ3DRptHKzE=;
-        b=An1s8lISNjsPvQ1ituTK/aN3u0eD6UmoFmKwIL0GQfGp0XvXqvtsK7VWOQKsisikEGAN7q
-        muHMLfnUj9yHCYDEFEMNgMuF7RfsFT/acVCNbJH7UNgauLLskDpn43sPiZ/dBSMYF7lrzA
-        zP4cUUaSokxDZ4VxRXLq01Zun+/zSNg4/3lrpVCYkyojIls7kUtcdLgMNik5FrwTPJsBxp
-        c4pm2wnqiWjeg+ZliKFWAAp/2G1W+ZeGAyrooqc7g9jfxp5qHhp8AGzu5JDv61DkzHMALr
-        MDCoPNRIpRzb53IT9AqPTu59V4MlDFJOc2aZ9wTUQnOYjjAI8RhTisk42WDATg==
-Date:   Thu, 22 Dec 2022 16:24:38 +0100
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v4 3/5] usb: gadget: udc: add Renesas RZ/N1 USBF
- controller support
-Message-ID: <20221222162438.4d06bd77@bootlin.com>
-In-Reply-To: <Y6MFKdOU4IUQo70L@kroah.com>
-References: <20221213133302.218955-1-herve.codina@bootlin.com>
- <20221213133302.218955-4-herve.codina@bootlin.com>
- <CAMuHMdV7QNZ8Rv6iFLhj_MmBHL-vGWuWZdKB=REWba1UAWgkHw@mail.gmail.com>
- <Y6MFKdOU4IUQo70L@kroah.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        with ESMTP id S229545AbiLVPvx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2022 10:51:53 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 970FE326;
+        Thu, 22 Dec 2022 07:51:52 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 48CD06602CD4;
+        Thu, 22 Dec 2022 15:51:50 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1671724311;
+        bh=uMlzR3jzAgZKgQ0SsvIc9RuzeNPQqYhO11Dbd9G7z0U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FsqezhQ0340vo0CDb+ED7Q92XVeu1d+mK9Lik1j2SBpi5KjRWJWBcXUGiFms90yBS
+         yfP/HDrgdiP6u69tbMEYaeu2vNpY8Fsz+w9EmykXgwqBeGqo4ThhJp4nWcMaC66pGj
+         c+q9dr9R2f7YZAFXlsPJ/uqU+D23lj7b6pr/QQyNHU/LjLDe6iArHWLXh2VEoTBBqu
+         crxpIIosnH70dYgiTN2Z+TYLM3Uw1/iyhJqdKE7LIMhFzbAPYCCUvK0bcLkExVrR++
+         xN89VlCn+1hAplqfNEMKfb1T7BWq/exbuxrmHdJz3IBHzGqJ4JpbPCUl6vmOupbJwg
+         rX8Hxup7xFrLQ==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com,
+        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
+        wenst@chromium.org, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: [PATCH v1 0/6] MediaTek Frequency Hopping: MT6795/8173/92/95
+Date:   Thu, 22 Dec 2022 16:51:41 +0100
+Message-Id: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert, Greg,
+This series adds support for Frequency Hopping (FHCTL) on more MediaTek
+SoCs, specifically, MT6795, MT8173, MT8192 and MT8195.
 
-On Wed, 21 Dec 2022 14:07:53 +0100
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+In order to support older platforms like MT6795 and MT8173 it was
+necessary to add a new register layout that is ever-so-slightly
+different from the one that was previously introduced for MT8186.
 
-> On Wed, Dec 21, 2022 at 02:03:43PM +0100, Geert Uytterhoeven wrote:
-> > Hi Herv=C3=A9,
-> >=20
-> > On Tue, Dec 13, 2022 at 2:33 PM Herve Codina <herve.codina@bootlin.com>=
- wrote: =20
-> > > Add support for the Renesas USBF controller.
-> > > This controller is an USB2.0 UDC controller available in the
-> > > Renesas r9a06g032 SoC (RZ/N1 family).
-> > >
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
-> >=20
-> > Thanks for your patch!
-> >  =20
-> > > --- /dev/null
-> > > +++ b/drivers/usb/gadget/udc/renesas_usbf.c =20
-> >  =20
-> > > +#ifdef DEBUG
-> > > +#define TRACE(_fmt, ...) trace_printk("%s: " _fmt, __func__, ##__VA_=
-ARGS__)
-> > > +#define USBF_TRACE_EP_MASK 0x0ffff /* All the 16 endpoints */
-> > > +#define TRACEEP(_ep, _fmt, ...)                                     =
-        \
-> > > +       do {                                                         =
-       \
-> > > +               if ((1 << (_ep)->id) & USBF_TRACE_EP_MASK)           =
-       \
-> > > +                       trace_printk("%s: " _fmt, __func__, ##__VA_AR=
-GS__); \
-> > > +       } while (0)
-> > > +#else
-> > > +#define TRACE(_fmt, ...) do { } while (0)
-> > > +#define TRACEEP(_ep, _fmt, ...) do { } while (0) =20
-> >=20
-> > Please use "no_printk(fmt, ##__VA_ARGS__)" instead of dummy loops,
-> > to avoid bad callers going unnoticed if DEBUG is not defined. =20
->=20
-> Even better, do NOT define custom debug/trace macros for a single
-> driver, just use the ones that the rest of the kernel uses instead
-> please.
->=20
-> thanks,
->=20
-> greg k-h
+Since the new layout refers to older SoCs, the one valid for MT8186
+and newer SoCs was renamed to be a "v2" layout, while the new one
+for older chips gets the "v1" name.
 
-I would like to keep some granularity in debug messages and
-also keep the function name automatically added.
-I propose 3 kinds of messages:
-- general ones,
-- specific Endpoint0 ones,
-- other Endpoints ones.
+Note: These commits won't change any behavior unless FHCTL gets
+      explicitly enabled and configured in devicetrees.
 
-So before doing any modification in the source code, what do you
-think about:
-    /*
-     * Suggested tracers:
-     * - no_printk:    Disable tracing
-     * - trace_printk: Print to trace buffer
-     */
-    #define usbf_dbg(_fmt, ...) no_printk("%s: " _fmt, __func__, ##__VA_ARG=
-S__)
-    #define usbf_dbg_ep0(_fmt, ...) no_printk("%s: " _fmt, __func__, ##__VA=
-_ARGS__)
-    #define usbf_dbg_epn(_fmt, ...) no_printk("%s: " _fmt, __func__, ##__VA=
-_ARGS__)
+AngeloGioacchino Del Regno (6):
+  clk: mediatek: fhctl: Add support for older fhctl register layout
+  dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795,
+    MT8173/92/95
+  clk: mediatek: mt6795: Add support for frequency hopping through FHCTL
+  clk: mediatek: mt8173: Add support for frequency hopping through FHCTL
+  clk: mediatek: mt8192: Add support for frequency hopping through FHCTL
+  clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
 
-The code will use only these macros instead of the previously
-defined TRACE and TRACEEP as follow:
-- usbf_dbg() will be called instead of TRACE()
-- usbf_dbg_ep0() will be called instead of TRACEEP() for Endpoint0
-- usbf_dbg_epn() will be called instead of TRACEEP() for other Endpoints
+ .../bindings/clock/mediatek,mt8186-fhctl.yaml |  7 +-
+ drivers/clk/mediatek/clk-fhctl.c              | 26 ++++++-
+ drivers/clk/mediatek/clk-fhctl.h              |  9 ++-
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c  | 63 ++++++++++++++++-
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c  | 65 ++++++++++++++++-
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c  |  2 +
+ drivers/clk/mediatek/clk-mt8192.c             | 67 +++++++++++++++++-
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c  | 69 ++++++++++++++++++-
+ drivers/clk/mediatek/clk-pllfh.c              | 23 +++++--
+ drivers/clk/mediatek/clk-pllfh.h              |  1 +
+ 10 files changed, 311 insertions(+), 21 deletions(-)
 
-Is that ok for you ?
+-- 
+2.39.0
 
-Best regards,
-Herv=C3=A9
-
---=20
-Herv=C3=A9 Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
