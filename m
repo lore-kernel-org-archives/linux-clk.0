@@ -2,105 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F879C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Dec 2022 09:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396D0C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Dec 2022 10:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236292AbiLWJuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Dec 2022 04:50:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40818 "EHLO
+        id S235159AbiLWKRO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Dec 2022 05:17:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235896AbiLWJtc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2022 04:49:32 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F06108FE4;
-        Fri, 23 Dec 2022 01:45:59 -0800 (PST)
-Received: by mail-qt1-f169.google.com with SMTP id i20so3309890qtw.9;
-        Fri, 23 Dec 2022 01:45:59 -0800 (PST)
+        with ESMTP id S230038AbiLWKRM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2022 05:17:12 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DE81BEAE
+        for <linux-clk@vger.kernel.org>; Fri, 23 Dec 2022 02:17:11 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id g14so4519314ljh.10
+        for <linux-clk@vger.kernel.org>; Fri, 23 Dec 2022 02:17:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1u6P5JmEdjjPFnpioMwRM3NzE+xz8lzObWqbInEr8s4=;
+        b=jXAsYxD559/NjQFfafcFTttoHR6Ys1BrWj+r8tOjiWjfeeK8HPAjRUhRYgVBnavd2r
+         4qg7/Dwcn+2Jw1gjrwWJ8df4HhUAJW09R0FrBo/wt8ITYtQWRkffj7WZ37QiWX0zHXNB
+         dYXLSiAcLkfw73tgitA4z93l6cKJTkb6JF72vKL3Rk1se6q/2/z/w3duWUIuPmMPQMmO
+         evpIwuNdQ2W+91f27nPkMYUZUWRB0t912Wk9T7Il3aTJ5c6WIG5fSmbiEcwVNZ3Zqa9V
+         G+u1XKjKiE2GIi6IEm2Kgx/aoHVIfg5KxcIsb5NYF8tSV7Bl9Ph68PIpmvrCBNHchbF7
+         o5Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yset/1Xy0Y/0VkAi2M9vT3aKztL1wDsleDOE/lWQlFc=;
-        b=WJPqtGElsjMfNvNfrDKJ64MogHEaUJpKlCwqYX08V1RM/GZgWhKG8MWTmjaHovwVNg
-         jDcFJJa/8Y6ZAUbHi3o+A4C4u+/NIQPll9B5U7tT4WyZ436nWGy32jiTlGiAGWdX2eRR
-         cKst1KjWWre9CPICul7Mbvux1Wr2v4utYQ14SKBW+QJbbRbza2MD4lUdf1gP+O2zGdBw
-         EQsnxN8QO9P7lp9IwW5uB2+hJIJppI2JP3sCA6aufaLybmAkwnoLHNRSJ2OMsSQfuq0k
-         nCfzqFiL1ZkCFOjZ3+s67ysXnnYyxl09+s3+yoQJa5bGHQm/IGLZ1oZkGfDQlgRx8icj
-         SVLA==
-X-Gm-Message-State: AFqh2kptB6Azzd9l25Q2PtoIfZ7VP1tNPiUy294E+6FuXOAol8h+qMqt
-        ppRVaDicqr37V9kP7Cxp9t+qofvZDA0y+Q==
-X-Google-Smtp-Source: AMrXdXvELRO6sLXza4/8/TtdXCbUI5a5NGL0PtHcRiiGQ4RsH1U7PR466D7/U6KfdZBbSSHv2iLwVA==
-X-Received: by 2002:a05:622a:1b12:b0:3a8:a6f:fb7 with SMTP id bb18-20020a05622a1b1200b003a80a6f0fb7mr10317504qtb.11.1671788716421;
-        Fri, 23 Dec 2022 01:45:16 -0800 (PST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id i17-20020a05620a405100b006fcb77f3bd6sm2063608qko.98.2022.12.23.01.45.15
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1u6P5JmEdjjPFnpioMwRM3NzE+xz8lzObWqbInEr8s4=;
+        b=chJXZPco/8rNT5W8gv/aXhQxu0k5Tzow0XknQoSlbAD8GAxfWUM5JgGwZHPE5wrCkd
+         uFBoXZn1p21ZzKDVkfoRMH7LjjE+J94w23cbc6GVZjzHKvwT4KzbzZI2sFQo8HJZJMLy
+         A0xHJSGgY8klcyBJDZwl55Ly1BW/pwnHZDHbsczTxQXtSPvjeCNI6vk8GmqobaaIXYr6
+         KfsahDu2GbqTPdYy9yxq5iwj1OXgZzww8KTmy+p5KHtKR6gVwQUHCbWpSL3fpcYwms9N
+         PITPnTyI63TV5s8yVwSLkHCo00lOfJ75uHEetVC5iFGf5iQ/0DgUQ9H/xStYMgv1yG1f
+         MDFQ==
+X-Gm-Message-State: AFqh2krhQN3zl7x/DV4ez5vIgfPqYLXc/C/5VkdH0G9O5K6wQDTVD+SL
+        re3hTB36vxBEo+GJ970g2FY5bQ==
+X-Google-Smtp-Source: AMrXdXsAL9I5ivFgD05+3G4gmxiAbxxri3dP5ysr4h1VzcC1Q6dsVmI2cXuMZ+hLJph2sh341cwtKw==
+X-Received: by 2002:a2e:a376:0:b0:27b:620e:3dd with SMTP id i22-20020a2ea376000000b0027b620e03ddmr3093949ljn.13.1671790629798;
+        Fri, 23 Dec 2022 02:17:09 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id k6-20020a2ea266000000b00279e618444dsm359194ljm.122.2022.12.23.02.17.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Dec 2022 01:45:15 -0800 (PST)
-Received: by mail-yb1-f171.google.com with SMTP id 192so4753286ybt.6;
-        Fri, 23 Dec 2022 01:45:15 -0800 (PST)
-X-Received: by 2002:a25:ab49:0:b0:6de:6183:c5c3 with SMTP id
- u67-20020a25ab49000000b006de6183c5c3mr967754ybi.89.1671788715557; Fri, 23 Dec
- 2022 01:45:15 -0800 (PST)
+        Fri, 23 Dec 2022 02:17:09 -0800 (PST)
+Message-ID: <1f2901e3-c527-5528-9103-c722e56d046a@linaro.org>
+Date:   Fri, 23 Dec 2022 11:17:07 +0100
 MIME-Version: 1.0
-References: <1671747798-12935-1-git-send-email-khoroshilov@ispras.ru>
-In-Reply-To: <1671747798-12935-1-git-send-email-khoroshilov@ispras.ru>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Dec 2022 10:45:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXehA_n78nLXCwBdKV=So=6Vzjt5eye7ZE4bS_BvHnzEA@mail.gmail.com>
-Message-ID: <CAMuHMdXehA_n78nLXCwBdKV=So=6Vzjt5eye7ZE4bS_BvHnzEA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Fix use after free if
- cpg_mssr_common_init() failed
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Chris Brandt <chris.brandt@renesas.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v5 4/5] ARM: dts: qcom: fix various wrong definition for
+ kpss-gcc node
+Content-Language: en-US
+To:     Christian Marangi <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Marc Herbert <marc.herbert@intel.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Justin Tee <justin.tee@broadcom.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220914142256.28775-1-ansuelsmth@gmail.com>
+ <20220914142256.28775-5-ansuelsmth@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220914142256.28775-5-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Alexey,
+On 14/09/2022 16:22, Christian Marangi wrote:
+> Fix dtbs_check warning now that we have a correct kpss-gcc yaml
+> schema. Add additional qcom,kpss-gcc compatible to differentiate
+> devices where kpss-gcc should provide a clk and where kpss-gcc should
+> just provide the registers and the syscon phandle.
+> Add missing #clock-cells and remove useless clock-output-names for
+> ipq806x.
+> Add missing bindings for msm8960 and apq8064 kpss-gcc node.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  arch/arm/boot/dts/qcom-apq8064.dtsi | 5 ++++-
+>  arch/arm/boot/dts/qcom-ipq8064.dtsi | 4 ++--
+>  arch/arm/boot/dts/qcom-mdm9615.dtsi | 2 +-
+>  arch/arm/boot/dts/qcom-msm8660.dtsi | 2 +-
+>  arch/arm/boot/dts/qcom-msm8960.dtsi | 7 +++++--
+>  5 files changed, 13 insertions(+), 7 deletions(-)
 
-On Thu, Dec 22, 2022 at 11:23 PM Alexey Khoroshilov
-<khoroshilov@ispras.ru> wrote:
-> If cpg_mssr_common_init() fails after assigning priv to global variable
-> cpg_mssr_priv, it deallocates priv, but cpg_mssr_priv keeps dangling
-> pointer that potentially can be used later.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: 1f7db7bbf031 ("clk: renesas: cpg-mssr: Add early clock support")
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-Thanks for your patch!
+warning: 1 line adds whitespace errors.
+error: patch failed: arch/arm/boot/dts/qcom-apq8064.dtsi:845
+error: arch/arm/boot/dts/qcom-apq8064.dtsi: patch does not apply
+error: patch failed: arch/arm/boot/dts/qcom-ipq8064.dtsi:917
+error: arch/arm/boot/dts/qcom-ipq8064.dtsi: patch does not apply
+error: patch failed: arch/arm/boot/dts/qcom-msm8960.dtsi:63
+error: arch/arm/boot/dts/qcom-msm8960.dtsi: patch does not apply
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
 
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -1025,6 +1025,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
->         if (priv->base)
->                 iounmap(priv->base);
->         kfree(priv);
-> +       cpg_mssr_priv = NULL;
 
-While this is correct, I think it would be better to just postpone
-the initial assignment to cpg_mssr_priv until everything in
-cpg_mssr_common_init() has succeeded, i.e. just below the
-"return 0;" above.
+Best regards,
+Krzysztof
 
->
->         return error;
->  }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
