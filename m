@@ -2,36 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D744AC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Dec 2022 06:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C7DC4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Dec 2022 07:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbiLWGWO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Dec 2022 01:22:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
+        id S229930AbiLWHB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Dec 2022 02:01:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbiLWGWN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2022 01:22:13 -0500
+        with ESMTP id S229483AbiLWHBZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2022 02:01:25 -0500
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF87165A9;
-        Thu, 22 Dec 2022 22:22:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F81B60C6;
+        Thu, 22 Dec 2022 23:01:22 -0800 (PST)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id E996E24E035;
-        Fri, 23 Dec 2022 14:22:06 +0800 (CST)
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 0BF7324DFDC;
+        Fri, 23 Dec 2022 15:01:21 +0800 (CST)
 Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 23 Dec
- 2022 14:22:06 +0800
+ 2022 15:01:20 +0800
 Received: from [192.168.125.65] (183.27.97.120) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 23 Dec
- 2022 14:22:06 +0800
-Message-ID: <20e6b9af-3bee-6a4a-880f-df22ebcbe3b5@starfivetech.com>
-Date:   Fri, 23 Dec 2022 14:23:09 +0800
+ 2022 15:01:20 +0800
+Message-ID: <fec1b051-d5ca-c279-50f0-3ad1fd3f813c@starfivetech.com>
+Date:   Fri, 23 Dec 2022 15:02:23 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
-Subject: Re: [PATCH v3 02/11] clk: starfive: Rename "jh7100" to "jh71x0" for
- the common code
+Subject: Re: [PATCH v3 03/11] reset: Create subdirectory for StarFive drivers
 Content-Language: en-US
 To:     Conor Dooley <conor@kernel.org>
 CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
@@ -44,73 +43,121 @@ CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         <linux-kernel@vger.kernel.org>
 References: <20221220005054.34518-1-hal.feng@starfivetech.com>
- <20221220005054.34518-3-hal.feng@starfivetech.com> <Y6IyRlEtiS6ye96q@spud>
+ <20221220005054.34518-4-hal.feng@starfivetech.com> <Y6Iz7pzG3Zmecm3S@spud>
 From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <Y6IyRlEtiS6ye96q@spud>
+In-Reply-To: <Y6Iz7pzG3Zmecm3S@spud>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [183.27.97.120]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX172.cuchost.com
  (172.16.6.92)
 X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 20 Dec 2022 22:08:06 +0000, Conor Dooley wrote:
-> On Tue, Dec 20, 2022 at 08:50:45AM +0800, Hal Feng wrote:
+On Tue, 20 Dec 2022 22:15:10 +0000, Conor Dooley wrote:
+> On Tue, Dec 20, 2022 at 08:50:46AM +0800, Hal Feng wrote:
 > > From: Emil Renner Berthing <kernel@esmil.dk>
 > > 
-> > Rename "clk-starfive-jh7100.h" to "clk-starfive-jh71x0.h" and rename
-> > some variables from "jh7100" or "JH7100" to "jh71x0" or "JH71X0".
+> > This moves the StarFive JH7100 reset driver to a new subdirectory in
+> > preparation for adding more StarFive reset drivers.
 > > 
 > > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 > > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 > > ---
-> >  .../clk/starfive/clk-starfive-jh7100-audio.c  |  74 ++--
-> >  drivers/clk/starfive/clk-starfive-jh7100.c    | 388 +++++++++---------
-> >  drivers/clk/starfive/clk-starfive-jh7100.h    | 114 -----
-> >  drivers/clk/starfive/clk-starfive-jh71x0.c    | 284 ++++++-------
-> >  drivers/clk/starfive/clk-starfive-jh71x0.h    | 114 +++++
-> >  5 files changed, 487 insertions(+), 487 deletions(-)
-> >  delete mode 100644 drivers/clk/starfive/clk-starfive-jh7100.h
-> >  create mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.h
+> >  MAINTAINERS                                          | 2 +-
+> >  drivers/reset/Kconfig                                | 8 +-------
+> >  drivers/reset/Makefile                               | 2 +-
+> >  drivers/reset/starfive/Kconfig                       | 8 ++++++++
+> >  drivers/reset/starfive/Makefile                      | 2 ++
+> >  drivers/reset/{ => starfive}/reset-starfive-jh7100.c | 0
+> >  6 files changed, 13 insertions(+), 9 deletions(-)
+> >  create mode 100644 drivers/reset/starfive/Kconfig
+> >  create mode 100644 drivers/reset/starfive/Makefile
+> >  rename drivers/reset/{ => starfive}/reset-starfive-jh7100.c (100%)
 > > 
-> > diff --git a/drivers/clk/starfive/clk-starfive-jh7100-audio.c b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
-> > index 8473a65e219b..02aefb7264f8 100644
-> > --- a/drivers/clk/starfive/clk-starfive-jh7100-audio.c
-> > +++ b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
-> > @@ -16,7 +16,7 @@
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index fd90403c33bd..117024b52d06 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19651,7 +19651,7 @@ STARFIVE JH7100 RESET CONTROLLER DRIVER
+> >  M:	Emil Renner Berthing <kernel@esmil.dk>
+> >  S:	Maintained
+> >  F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+> > -F:	drivers/reset/reset-starfive-jh7100.c
+> > +F:	drivers/reset/starfive/reset-starfive-jh7100.c
+> >  F:	include/dt-bindings/reset/starfive-jh7100.h
 > >  
-> >  #include <dt-bindings/clock/starfive-jh7100-audio.h>
+> >  STATIC BRANCH/CALL
+> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > index de176c2fbad9..1e8e1c4954cd 100644
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -232,13 +232,6 @@ config RESET_SOCFPGA
+> >  	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
+> >  	  driver gets initialized early during platform init calls.
 > >  
-> > -#include "clk-starfive-jh7100.h"
-> > +#include "clk-starfive-jh71x0.h"
+> > -config RESET_STARFIVE_JH7100
+> > -	bool "StarFive JH7100 Reset Driver"
+> > -	depends on SOC_STARFIVE || COMPILE_TEST
+> > -	default SOC_STARFIVE
+> > -	help
+> > -	  This enables the reset controller driver for the StarFive JH7100 SoC.
+> > -
+> >  config RESET_SUNPLUS
+> >  	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
+> >  	default ARCH_SUNPLUS
+> > @@ -320,6 +313,7 @@ config RESET_ZYNQ
+> >  	help
+> >  	  This enables the reset controller driver for Xilinx Zynq SoCs.
 > >  
-> >  /* external clocks */
-> >  #define JH7100_AUDCLK_AUDIO_SRC			(JH7100_AUDCLK_END + 0)
-> > @@ -28,66 +28,66 @@
-> >  #define JH7100_AUDCLK_I2SDAC_LRCLK_IOPAD	(JH7100_AUDCLK_END + 6)
-> >  #define JH7100_AUDCLK_VAD_INTMEM                (JH7100_AUDCLK_END + 7)
-> >  
-> > -static const struct jh7100_clk_data jh7100_audclk_data[] = {
-> > -	JH7100__GMD(JH7100_AUDCLK_ADC_MCLK, "adc_mclk", 0, 15, 2,
-> > +static const struct jh71x0_clk_data jh7100_audclk_data[] = {
-> > +	JH71X0__GMD(JH7100_AUDCLK_ADC_MCLK, "adc_mclk", 0, 15, 2,
+> > +source "drivers/reset/starfive/Kconfig"
+> >  source "drivers/reset/sti/Kconfig"
+> >  source "drivers/reset/hisilicon/Kconfig"
+> >  source "drivers/reset/tegra/Kconfig"
+> > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> > index 3e7e5fd633a8..fee17a0e3a16 100644
+> > --- a/drivers/reset/Makefile
+> > +++ b/drivers/reset/Makefile
+> > @@ -1,6 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  obj-y += core.o
+> >  obj-y += hisilicon/
+> > +obj-$(CONFIG_SOC_STARFIVE) += starfive/
+> >  obj-$(CONFIG_ARCH_STI) += sti/
+> >  obj-$(CONFIG_ARCH_TEGRA) += tegra/
+> >  obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
+> > @@ -30,7 +31,6 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
+> >  obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
+> >  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+> >  obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+> > -obj-$(CONFIG_RESET_STARFIVE_JH7100) += reset-starfive-jh7100.o
+> >  obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
+> >  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+> >  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+> > diff --git a/drivers/reset/starfive/Kconfig b/drivers/reset/starfive/Kconfig
+> > new file mode 100644
+> > index 000000000000..cddebdba7177
+> > --- /dev/null
+> > +++ b/drivers/reset/starfive/Kconfig
+> > @@ -0,0 +1,8 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +config RESET_STARFIVE_JH7100
+> > +	bool "StarFive JH7100 Reset Driver"
+> > +	depends on SOC_STARFIVE || COMPILE_TEST
+> > +	default SOC_STARFIVE
 > 
-> Heh, I'm not sure what to think about these _s for alignment!
+> You could in theory drop the default that I added & replace it with a y,
+> since the subdir is gated by the symbol. I don't really care though tbh.
 
-Maybe it looks clearer. These code are made previously.
-
-> This one is a little harder to verify with my git show wizardary, but it
-> also looks like it does what it says on the tin. Might've been easier to
-> verify with git show if the renaming of variables and code movement had
-> been split.
-
-Should I split it?
+If you don't mind, I would like to keep it because the starfive clk subdir
+did the same before.
 
 Best regards,
 Hal
 
+> The movement seems fine to me..
 > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
