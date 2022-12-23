@@ -2,82 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE97C3DA6E
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Dec 2022 09:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AE6C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Dec 2022 09:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235933AbiLWJ1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Dec 2022 04:27:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52716 "EHLO
+        id S235996AbiLWJ3C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Dec 2022 04:29:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbiLWJ1C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2022 04:27:02 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2020836D7C;
-        Fri, 23 Dec 2022 01:27:01 -0800 (PST)
+        with ESMTP id S236087AbiLWJ3A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2022 04:29:00 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920B637233;
+        Fri, 23 Dec 2022 01:28:58 -0800 (PST)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1EF056602CE0;
-        Fri, 23 Dec 2022 09:26:59 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D0F4C6602CE0;
+        Fri, 23 Dec 2022 09:28:55 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1671787619;
-        bh=E1AtAP8t04wkzu6WeHM2BkXITsnCjN59DnHyrF0N5Ds=;
+        s=mail; t=1671787737;
+        bh=HMLMMep+mcr89+itvPl0BOj1Xg+OhOyXlyh2zXtaR5w=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=McUWUJBisrjCwKxmZRsTq9xcBctF1QsYnXNByR7B8uWzC3QbX+m3Iya3/Dbt/jL51
-         Z6QFqTPENgjP58lr1GVMBZIEKKxbQTVvaiDEbLcnc9YMiDV//LMhy2LiI1bJEjZPbz
-         p/05n77Sbl2cp1O7O1pNGeY+n2Asby+5jszV+OpT6GrTiXGELYjTK9/icWaIUoDmgI
-         3+TjR3pVv9CmYITcGoEExsu5cnTIifm1s850t1LCkdSVu84fI1LE5DHAHOsJQqCQ0V
-         FOBvcxHgUfGyHa8ujsm4Zfg5qxWUMCDaRvnT0lrWeL4LZC9aosmDwOARngBxLAOLwH
-         rMmG39lsrwmRg==
-Message-ID: <c4b75af0-76d7-7eb7-f0e5-53c7edd13304@collabora.com>
-Date:   Fri, 23 Dec 2022 10:26:55 +0100
+        b=brejs5DLGzFiWPzayUdJwPiSDH5WJUJB3VeuSuz2fvhsfXTAKhUF1zSYlsTfE4jww
+         w6k1k54mM7TNZiTWWA4L0BN2OTVP5ontwkm/KSMq7sqyfX6HvCkj3EfzarEnOIyKMU
+         8G9UumpxeoWpXVbzMUBnPExW9Cke8DdxuVK4Iy3eZ0OvEzh4qEnCF0lyc7z+GVLqNe
+         XN0YjSK3uN70e7jQrH4kQXeWUGviFiAZ2GOP4gijKj2dtVzm50r+k7GYwjUji5Hyti
+         EFJxUN3LeJwEd/Bkj6FGBw6eIxtGT0NtYfNgAHpSsmJuy554PNbkvp8rvIldtlRixa
+         eobv4Zotx0ZvQ==
+Message-ID: <a9f9a86d-459e-314d-446e-e24b5ee469fe@collabora.com>
+Date:   Fri, 23 Dec 2022 10:28:53 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH] clk: qcom: dispcc-sm6125: Fix compatible string to match
- bindings
+Subject: Re: [PATCH v1 08/25] dt-bindings: clock: mt8173: Add dummy clock ID
 Content-Language: en-US
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
-        phone-devel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221222210140.278077-1-marijn.suijten@somainline.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, wenst@chromium.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+References: <20221222114857.120060-1-angelogioacchino.delregno@collabora.com>
+ <20221222114857.120060-9-angelogioacchino.delregno@collabora.com>
+ <869ae494-d74e-03a0-3622-b3a2b0b10470@linaro.org>
+ <960b0707-f0e5-993b-3706-a7a275e0698f@collabora.com>
+ <46edd627-c128-b979-823f-0a94fe9d425b@linaro.org>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221222210140.278077-1-marijn.suijten@somainline.org>
+In-Reply-To: <46edd627-c128-b979-823f-0a94fe9d425b@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 22/12/22 22:01, Marijn Suijten ha scritto:
-> According to generic rules the SoC name should be first:
+Il 23/12/22 10:26, Krzysztof Kozlowski ha scritto:
+> On 23/12/2022 10:21, AngeloGioacchino Del Regno wrote:
+>> Il 23/12/22 09:52, Krzysztof Kozlowski ha scritto:
+>>> On 22/12/2022 12:48, AngeloGioacchino Del Regno wrote:
+>>>> Some old MediaTek clock drivers are starting the clock count (so, the
+>>>> clock ID) from one instead of zero and this is logically incorrect,
+>>>> as we should start from 0.
+>>>> During a cleanup an issue emerged due to that and the cleanest and
+>>>> shortest way to keep devicetree backwards compatibility while still
+>>>> performing the well deserved cleanup is to add a dummy clock where
+>>>> needed, with ID 0.
+>>>
+>>> Unfortunately I do not understand at all why adding dummy (fake) ID
+>>> cleans anything here. Unifying IDs to start from 0 is not an argument on
+>>> DT bindings header IDs.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>
+>>
+>> All clocks are in one or multiple arrays, and if we don't register ID 0,
+>> devicetrees will reference the wrong clock, as the IDs will shift back by
+>> one during registration.
 > 
->          arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dtb: clock-controller@5f00000: compatible: 'oneOf' conditional failed, one must be fixed:
->                  'qcom,dispcc-sm6125' does not match '^qcom,(apq|ipq|mdm|msm|qcm|qcs|sa|sc|sdm|sdx|sm)[0-9]+-.*$'
+> So what stops you to register some 0-dummy clock? Why do you need a
+> binding for it?
 > 
-> And this is already reflected by the bindings submitted prior to the
-> addition of this driver.  Any DTS following these rules will end up with
-> a non-probing driver because of this mismatch.
+>> This was done for a commonization of probe() and remove() callbacks for
+>> MediaTek clock drivers... since we have 3 affected SoCs (MT8173, MT2701
+>> and MT6779) out of *19* (soon 20), to me, it didn't make sense to write
+>> commonized code to address this just because of 3 out of 20 SoCs (note
+>> that each SoC has around 4 clock drivers).
+>>
+>> Any suggestion to keep this one short, while not touching dt-bindings?
 > 
-> Fixes: 6e87c8f07407 ("clk: qcom: Add display clock controller driver for SM6125")
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-
-Since there's no devicetree that is currently using the wrong compatible, you
-are *not* breaking anything - hence fixing that issue without any regression.
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Just add a clock or better empty entry in your table, without touching
+> bindings.
+> 
 
 
+Okay, now that's embarassing - that's a simpler and obvious solution I
+should've thought of before sending this series. Heh.
+
+Thanks, by the way!
+
+Regards,
+Angelo
