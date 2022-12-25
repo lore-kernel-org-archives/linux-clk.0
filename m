@@ -2,142 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF669C4708D
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Dec 2022 16:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A28D9C46467
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Dec 2022 21:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231329AbiLYQrS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Dec 2022 11:47:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
+        id S231231AbiLYV0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 16:26:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbiLYQrQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 11:47:16 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EF7C26D9
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 08:47:13 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so3875027wms.0
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 08:47:13 -0800 (PST)
+        with ESMTP id S229445AbiLYV0n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 16:26:43 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C73EB100C;
+        Sun, 25 Dec 2022 13:26:41 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id fc4so22959134ejc.12;
+        Sun, 25 Dec 2022 13:26:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IysiqGhcAWvth9Fs82ZOVpj2oIBJKpLWqo2AlytJcCY=;
-        b=d7E6ulsE2Z9rbTgYlZvmF/fIIy8FXGkmbNVF79cngXagX8AtuJa+3n6kHWn5D4FmZK
-         ArDEXYwGSY1rSYY/uaW7cbwSmGg9aqQV+JUzZr+Hh0UP3tU1rL3PEfV7FPkOOsBfnNsc
-         0YuUaH/NcagzNHwaZAHRIkSnLhery3ovncF5FYer1xNzP6D4ScKeGsrPPWcs7zhLQ5bm
-         9W538DXa55Ng05upr/yZ5u1wAoG38DInQbOz5vMQ+l2JvYrA7LAegAhTC/+XfFgHlNtu
-         7libcCW2qXC+5tKunIr1a8vIn4z6TNyQRjJpizKtBlwKtaqB29VA1zQ9hGBVk/NfiIko
-         pxCw==
+        d=googlemail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/E1jZmkwb1esjiwXZMefQocpoKRbXtxkKRar3SCHMA=;
+        b=az3jv0s85qiKaR442hQ2uE40XDD1xitIGabb+yE0b1hXUJKM4MAGrtp5RnvBrUbeNo
+         v2swLM9C9V8UOav15rdymBS/ExyElRz39AJoxm/pMtzJSS4O2+6/8Ex4HaHbhoxG9a7W
+         pFI99tBdvcmVVuLFpNbiTqka7lXP7YA4hbX7DrWC6MWs7oajo7Dp5kGgHQiDjow3BYw2
+         oLwpXx+ZaBRYhiT6odPADTODxH6oRDrbvhBebuCwWSieYRa1PVaAzR0TP9PkH1VL7/Om
+         gcepUpbf4Z5ohVp+6JeNwWsCABY2C5rMpV/2qVepLu5N4/j/Uu99iJkkI1pJARbY8HD8
+         QLPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IysiqGhcAWvth9Fs82ZOVpj2oIBJKpLWqo2AlytJcCY=;
-        b=Y24mMQwKIUM5Wr3t/segcJy3zzQgc/9XLORKiBAKFwjg2LTlBxGqZl+8Zdx+ylug5z
-         fFLGDxUGBBz0wOUpSbOgxKeq9QIiTfGvzjfPS9djB0H/5o0xUbza3NQrBurJoC8NTb/i
-         d8rhclBqWTmCKLWJ8ndAyDYcRKWOgsI4Ve1nQgLmOMq637/OcIdt0iF8nQvJVLXXuq7a
-         Lmoa1VHmkzrqPd5iez9Eet/mzRTNT3tWTZvyafhfr0C3wL6GdnEK0GY5yr3LgZhwKNbH
-         za532z5bMHk5OUhXQNLcRV56GMxbAZ2WMhoHP2JUFfDvJzbJ0soXSP9QBe2V19KoV8cP
-         ZOBw==
-X-Gm-Message-State: AFqh2kpm9wRhbDjJQ06v1Eh4cQz84QjdMVZ1F1amaUdTlxX6u1kvZqSF
-        9h2U7l1rOqBYXMzC4qeLwiq2KA==
-X-Google-Smtp-Source: AMrXdXv4mqxLWm+0qAs6B/nkLxlKRdsM23EFmLmxjrfIntdt78pszigJRdAMeWBQVE1pIRL0/5veRw==
-X-Received: by 2002:a05:600c:4d21:b0:3d2:2a72:2573 with SMTP id u33-20020a05600c4d2100b003d22a722573mr11496316wmp.11.1671986831688;
-        Sun, 25 Dec 2022 08:47:11 -0800 (PST)
-Received: from hackbox.lan ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id d9-20020a05600c3ac900b003d973d4fb28sm5507545wms.4.2022.12.25.08.47.10
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I/E1jZmkwb1esjiwXZMefQocpoKRbXtxkKRar3SCHMA=;
+        b=WbDc4ajjLgfHuSTHG7tsnkFqRXuEG+zL94YJNCyoqY+Lrb7eVCT/aLcW4gJV8AzZFd
+         qWMNUaB6sBSQIdNv0AzIbMKfvhHkFxgnMOQ0krkC2dYCUyMilNYuob3lTVUavcAQkLMb
+         4nkPb8P2VYImOdwF+I2DWDc6s5U4Gr9rZX/j8BjR+spQrdoKZSuxQ19X9P42/q5No7i+
+         lxVURKMjX9BnGhFtSii146KA6Z5fy4zG0WaCOCkxgGYI5s53dQ0YV2SxzEKviUl9GPdJ
+         RHXJ0s0wobYY+cad64ASBb0VF9Hl4wWor7TJrJRBpnSWWg00p1Tzj5KUJEFzKP8BPOGL
+         I5qg==
+X-Gm-Message-State: AFqh2kq3i7heRcFMjRkxdSl4YX4+yGIEphtXtey6eS5jFjlsnkTnbaQj
+        8CGYt6I7wKdL3Mo0SOtaaWQ=
+X-Google-Smtp-Source: AMrXdXvNfb+HnZA1tZA4Lpc1SIwFbLT4cjW/FBQ7b4LKAbTVQpf6Nwx5iz+9YwBlZ2ksbG/a+Fcu6w==
+X-Received: by 2002:a17:906:a186:b0:82d:e2a6:4b0d with SMTP id s6-20020a170906a18600b0082de2a64b0dmr14248970ejy.18.1672003600133;
+        Sun, 25 Dec 2022 13:26:40 -0800 (PST)
+Received: from localhost.localdomain (dynamic-2a01-0c23-c49f-b200-0000-0000-0000-0e63.c23.pool.telefonica.de. [2a01:c23:c49f:b200::e63])
+        by smtp.googlemail.com with ESMTPSA id ku22-20020a170907789600b007c10d47e748sm4062567ejc.36.2022.12.25.13.26.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Dec 2022 08:47:11 -0800 (PST)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: qcom: sdm845: Use generic clk_sync_state_disable_unused callback
-Date:   Sun, 25 Dec 2022 18:47:05 +0200
-Message-Id: <20221225164705.437944-2-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221225164705.437944-1-abel.vesa@linaro.org>
-References: <20221225164705.437944-1-abel.vesa@linaro.org>
+        Sun, 25 Dec 2022 13:26:39 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jbrunet@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v1 0/4] clk: meson: switch from .round_rate to .determine_rate
+Date:   Sun, 25 Dec 2022 22:26:28 +0100
+Message-Id: <20221225212632.2760126-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By adding the newly added clk_sync_state_disable_unused as sync_state
-callback to all sdm845 clock providers, we make sure that no clock
-belonging to these providers gets disabled on clk_disable_unused,
-but rather they are disabled on sync_state, when it is safe, since
-all the consumers build as modules have had their chance of enabling
-their own clocks.
+The goal of this series is to switch the meson sub-drivers to use
+clk_ops.determine_rate instead of clk_ops.round_rate. The former has
+lower precision (2^31 instead of 2^32 on 32-bit systems). Also the idea
+of the .determine_rate callback is that is replaces .round_rate so the
+latter can be removed at some point.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
----
+No functional changes (apart from the 2^31 to 2^32 difference mentioned
+bove) intended.
 
-Changes since v1:
- * None
 
- drivers/clk/qcom/camcc-sdm845.c  | 1 +
- drivers/clk/qcom/dispcc-sdm845.c | 1 +
- drivers/clk/qcom/gcc-sdm845.c    | 1 +
- drivers/clk/qcom/gpucc-sdm845.c  | 1 +
- 4 files changed, 4 insertions(+)
+Martin Blumenstingl (4):
+  clk: meson: mpll: Switch from .round_rate to .determine_rate
+  clk: meson: dualdiv: switch from .round_rate to .determine_rate
+  clk: meson: sclk-div: switch from .round_rate to .determine_rate
+  clk: meson: clk-cpu-dyndiv: switch from .round_rate to .determine_rate
 
-diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
-index 27d44188a7ab..e5aeb832e47b 100644
---- a/drivers/clk/qcom/camcc-sdm845.c
-+++ b/drivers/clk/qcom/camcc-sdm845.c
-@@ -1743,6 +1743,7 @@ static struct platform_driver cam_cc_sdm845_driver = {
- 	.driver	= {
- 		.name = "sdm845-camcc",
- 		.of_match_table = cam_cc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index 735adfefc379..1810d58bad09 100644
---- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -869,6 +869,7 @@ static struct platform_driver disp_cc_sdm845_driver = {
- 	.driver		= {
- 		.name	= "disp_cc-sdm845",
- 		.of_match_table = disp_cc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 6af08e0ca847..0ff05af515c4 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -4020,6 +4020,7 @@ static struct platform_driver gcc_sdm845_driver = {
- 	.driver		= {
- 		.name	= "gcc-sdm845",
- 		.of_match_table = gcc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
-index 110b54401bc6..622a54a67d32 100644
---- a/drivers/clk/qcom/gpucc-sdm845.c
-+++ b/drivers/clk/qcom/gpucc-sdm845.c
-@@ -205,6 +205,7 @@ static struct platform_driver gpu_cc_sdm845_driver = {
- 	.driver = {
- 		.name = "sdm845-gpucc",
- 		.of_match_table = gpu_cc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
+ drivers/clk/meson/clk-cpu-dyndiv.c |  9 ++++-----
+ drivers/clk/meson/clk-dualdiv.c    | 21 +++++++++++++--------
+ drivers/clk/meson/clk-mpll.c       | 20 +++++++++++++-------
+ drivers/clk/meson/sclk-div.c       | 11 ++++++-----
+ 4 files changed, 36 insertions(+), 25 deletions(-)
+
 -- 
-2.34.1
+2.39.0
 
