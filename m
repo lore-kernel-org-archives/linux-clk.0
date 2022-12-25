@@ -2,145 +2,175 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC093C4167B
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Dec 2022 21:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001FBC46467
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Dec 2022 16:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230434AbiLXVoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Dec 2022 16:44:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56918 "EHLO
+        id S229540AbiLYQ0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 11:26:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbiLXVoH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Dec 2022 16:44:07 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A36BC1A
-        for <linux-clk@vger.kernel.org>; Sat, 24 Dec 2022 13:44:07 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id f34so11434282lfv.10
-        for <linux-clk@vger.kernel.org>; Sat, 24 Dec 2022 13:44:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E6YG72yT6P2Xf4EVWM2/oNdMhJIz+PxjF3DxMSN/2MY=;
-        b=L6W+ILV89UzVX4p54i0Aiyfx2Tj/2KmrlTtXJVEpnFUvSw3ZjBtUuLoZQqzAx4Vqkr
-         PJBuaxG9/LCh4jNEFDEbr66CKzjdOcQn3v6IRjWzyu8LX/6UQvshUDAUsaMlkEhZJ6jg
-         EE/3aRAt6A5+FxIpP2y49WOc7zmUXaf2vfQ+1eacxJQWkrot30TygoNd6aW8hIRWBrTV
-         GWCgGZRPCJu/BdvW/+4wdSXmCYAYnY643YYxWQ5pqYdH83Z6xfv1voRe0VPym09rAKqw
-         8aZwS/Zu+D6SyDB2+cGTI4EjKJ+MnbnFATjF3nF7oyCMj7IvY4+BEc9IVQsHk60Q+Ffn
-         b0tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E6YG72yT6P2Xf4EVWM2/oNdMhJIz+PxjF3DxMSN/2MY=;
-        b=k15Fc8su+88UF1rO9wjB2dyrOCiMUjQDXW8vBw2m1L3gptKpDDD1ezyRyizNoZvyYK
-         Ky5CA//ep27PVCsZikJJhxce125eKqSZu7h5ya4fIdgZ8xY92WBXmjKhZo7SzECU+k51
-         mfatNVMvKhtw95tLWtI1Hml/oNuMOScDMseogLf46Pw7Mij/V1f1s1+hjg3IC5zd3edm
-         uHY/sstHOGsSbiPSbKkyOztq7S7ylVl4EsYUduaUeK6fyOUbm5RTysmmo4/EQX8BqfSm
-         HYyMtTEkwp5O0heXeoofxtObLtgF5zjcha/zE5Lj0JM0jP/6fqAa3pi3/hrB2wDwWsbD
-         HP5g==
-X-Gm-Message-State: AFqh2kqc9889fuU/O0wnZH48xWOMXJx/j3YZRtCjnLT3KsZIl7K9zSvV
-        +AttqhpO4u0H7Kn+OzJirZ6cGg==
-X-Google-Smtp-Source: AMrXdXtLymnfGtKqLGeilvw3UM7v35kiK5lgoSFpB1glWTmqhP7U2DQerc3OoHluZnDBc5HE0oSiCQ==
-X-Received: by 2002:a05:6512:168d:b0:4ca:fd5f:ce82 with SMTP id bu13-20020a056512168d00b004cafd5fce82mr794946lfb.49.1671918246547;
-        Sat, 24 Dec 2022 13:44:06 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id o4-20020ac25b84000000b004aa3d587c84sm1110903lfn.200.2022.12.24.13.44.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Dec 2022 13:44:06 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229445AbiLYQ0o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 11:26:44 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C07961114;
+        Sun, 25 Dec 2022 08:26:41 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 6CDB924E1EA;
+        Mon, 26 Dec 2022 00:26:34 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 26 Dec
+ 2022 00:26:34 +0800
+Received: from [192.168.2.237] (113.72.145.114) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 26 Dec
+ 2022 00:26:33 +0800
+Message-ID: <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
+Date:   Mon, 26 Dec 2022 00:26:32 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: clock: qcom,camcc-sm8250: extend clocks and power domains
-Date:   Sat, 24 Dec 2022 22:44:04 +0100
-Message-Id: <20221224214404.18280-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20221220005054.34518-1-hal.feng@starfivetech.com>
+ <20221220005054.34518-8-hal.feng@starfivetech.com> <Y6JB37Pd5TZoGMy4@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <Y6JB37Pd5TZoGMy4@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.145.114]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clocks and properties (power-domains, required-opps) already used in
-SM8250 DTS:
+On Tue, 20 Dec 2022 23:14:39 +0000, Conor Dooley wrote:
+> On Tue, Dec 20, 2022 at 08:50:50AM +0800, Hal Feng wrote:
+> > From: Emil Renner Berthing <kernel@esmil.dk>
+> > 
+> > Add bindings for the system clock and reset generator (SYSCRG) on the
+> > JH7110 RISC-V SoC by StarFive Ltd.
+> > 
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> > ---
+> >  .../clock/starfive,jh7110-syscrg.yaml         |  80 +++++++
+> >  MAINTAINERS                                   |   8 +-
+> >  .../dt-bindings/clock/starfive,jh7110-crg.h   | 207 ++++++++++++++++++
+> >  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+> >  4 files changed, 434 insertions(+), 3 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> >  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+> >  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> > new file mode 100644
+> > index 000000000000..ec81504dcb27
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> > @@ -0,0 +1,80 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: StarFive JH7110 System Clock and Reset Generator
+> > +
+> > +maintainers:
+> > +  - Emil Renner Berthing <kernel@esmil.dk>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: starfive,jh7110-syscrg
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: Main Oscillator (24 MHz)
+> > +      - description: GMAC1 RMII reference
+> > +      - description: GMAC1 RGMII RX
+> > +      - description: External I2S TX bit clock
+> > +      - description: External I2S TX left/right channel clock
+> > +      - description: External I2S RX bit clock
+> > +      - description: External I2S RX left/right channel clock
+> > +      - description: External TDM clock
+> > +      - description: External audio master clock
+> 
+> So, from peeking at the clock driver & the dt - it looks like a bunch of
+> these are not actually required?
 
-  sm8250-hdk.dtb: clock-controller@ad00000: clocks: [[46, 10], [44, 0], [44, 1], [45]] is too long
-  sm8250-hdk.dtb: clock-controller@ad00000: clock-names:0: 'bi_tcxo' was expected
-  sm8250-hdk.dtb: clock-controller@ad00000: 'power-domains', 'required-opps' do not match any of the regexes: 'pinctrl-[0-9]+'
+These clocks are used as root clocks or optional parent clocks in clock tree.
+Some of them are optional, but they are required if we want to describe the
+complete clock tree of JH7110 SoC.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/clock/qcom,camcc-sm8250.yaml     | 20 +++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+> I'd have ploughed through this, but having read Krzysztof's comments on
+> the DTS I'm not sure that this binding is correct.
+> https://lore.kernel.org/linux-riscv/20221220011247.35560-1-hal.feng@starfivetech.com/T/#mdf67621a2344dce801aa8015d4963593a2c28bcc
+> 
+> I *think* the DT is correct - the fixed clocks are all inputs from clock
+> sources on the board and as such they are empty in soc.dtsi and are
+> populated in board.dts?
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
-index 93ec1f598e6e..426335a2841c 100644
---- a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
-@@ -21,12 +21,16 @@ properties:
- 
-   clocks:
-     items:
-+      - description: AHB
-       - description: Board XO source
-+      - description: Board active XO source
-       - description: Sleep clock source
- 
-   clock-names:
-     items:
-+      - const: iface
-       - const: bi_tcxo
-+      - const: bi_tcxo_ao
-       - const: sleep_clk
- 
-   '#clock-cells':
-@@ -38,9 +42,18 @@ properties:
-   '#power-domain-cells':
-     const: 1
- 
-+  power-domains:
-+    items:
-+      - description: MMCX power domain
-+
-   reg:
-     maxItems: 1
- 
-+  required-opps:
-+    maxItems: 1
-+    description:
-+      OPP node describing required MMCX performance point.
-+
- required:
-   - compatible
-   - reg
-@@ -54,13 +67,16 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/clock/qcom,gcc-sm8250.h>
-     #include <dt-bindings/clock/qcom,rpmh.h>
-     clock-controller@ad00000 {
-       compatible = "qcom,sm8250-camcc";
-       reg = <0x0ad00000 0x10000>;
--      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-                <&sleep_clk>;
--      clock-names = "bi_tcxo", "sleep_clk";
-+      clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-       #clock-cells = <1>;
-       #reset-cells = <1>;
-       #power-domain-cells = <1>;
--- 
-2.34.1
+Yes, the fixed clocks are all clock sources on the board and input to the SoC.
 
+> 
+> However, are they all actually required? In the driver I see:
+> 	JH71X0__MUX(JH7110_SYSCLK_GMAC1_RX, "gmac1_rx", 2,
+> 		    JH7110_SYSCLK_GMAC1_RGMII_RXIN,
+> 		    JH7110_SYSCLK_GMAC1_RMII_RTX),
+> That macro is:
+> #define JH71X0__MUX(_idx, _name, _nparents, ...) [_idx] = {			\
+> 	.name = _name,								\
+> 	.flags = 0,								\
+> 	.max = ((_nparents) - 1) << JH71X0_CLK_MUX_SHIFT,			\
+> 	.parents = { __VA_ARGS__ },						\
+> }
+> 
+> AFAICT, RMII reference feeds RMII_RTX & RGMII RX *is* RGMII_RXIN?
+> Does that mean you need to populate only one of GMAC1 RMII reference
+> and GMAC1 RMGII RX and the other is optional?
+
+Yes, actually only one of them is chosen as the root clock
+source of the clock "gmac1_rx".
+
+> 
+> What have I missed?
+> 
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: osc
+> > +      - const: gmac1_rmii_refin
+> > +      - const: gmac1_rgmii_rxin
+> > +      - const: i2stx_bclk_ext
+> > +      - const: i2stx_lrck_ext
+> > +      - const: i2srx_bclk_ext
+> > +      - const: i2srx_lrck_ext
+> > +      - const: tdm_ext
+> > +      - const: mclk_ext
+> 
+> If all clocks are in fact required though, isn't this kinda pointless to
+> have since we already know that the order is fixed from the "clocks"
+> property?
+> Krzk/Rob?
+
+The clock-names are used to easily identify these clocks in the clock driver.
+
+Best regards,
+Hal
