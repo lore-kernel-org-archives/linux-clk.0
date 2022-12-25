@@ -2,89 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28D9C46467
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Dec 2022 21:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930C2C4708E
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Dec 2022 21:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbiLYV0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Dec 2022 16:26:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
+        id S231360AbiLYV0r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 16:26:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbiLYV0n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 16:26:43 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C73EB100C;
-        Sun, 25 Dec 2022 13:26:41 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id fc4so22959134ejc.12;
-        Sun, 25 Dec 2022 13:26:41 -0800 (PST)
+        with ESMTP id S231312AbiLYV0p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 16:26:45 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0669810FE;
+        Sun, 25 Dec 2022 13:26:44 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id u19so22998877ejm.8;
+        Sun, 25 Dec 2022 13:26:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I/E1jZmkwb1esjiwXZMefQocpoKRbXtxkKRar3SCHMA=;
-        b=az3jv0s85qiKaR442hQ2uE40XDD1xitIGabb+yE0b1hXUJKM4MAGrtp5RnvBrUbeNo
-         v2swLM9C9V8UOav15rdymBS/ExyElRz39AJoxm/pMtzJSS4O2+6/8Ex4HaHbhoxG9a7W
-         pFI99tBdvcmVVuLFpNbiTqka7lXP7YA4hbX7DrWC6MWs7oajo7Dp5kGgHQiDjow3BYw2
-         oLwpXx+ZaBRYhiT6odPADTODxH6oRDrbvhBebuCwWSieYRa1PVaAzR0TP9PkH1VL7/Om
-         gcepUpbf4Z5ohVp+6JeNwWsCABY2C5rMpV/2qVepLu5N4/j/Uu99iJkkI1pJARbY8HD8
-         QLPQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5KI4GVi+gdxgp2ZGUw6TN4YhL63JS7cfevWElXB6z0s=;
+        b=k1dJC42zQSl4nfLJ3K+ztzbqAJDFEdIdZPy7L1D89hkbY9HXKlLJuFXxqcw+FK/TVV
+         ORaWIG/HNaJQAbqAPyI+2xwzcx1ahZY8BJEoDP1sNYxx03NhCDNBQjPBeYlUjFko1CD/
+         1UIgfoKNhvBPrVy0u3EwiUhk86D0GXglDirGyqsPUsgX3Hbv+3r3k35idjNm+A6EXBKo
+         fSRIGXrsl5YQVLyIkXWZERnfTGb9NHOb316NquZAOWKF7AEOBy9GJ1o7Mf/aaU/F9nad
+         WUKlGJE3AeozEso1BQe9/tOHkRtMwjM+VjGdnVcAPbrJhBv9SQHd8qBjduSmTpkxxCLt
+         OFNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I/E1jZmkwb1esjiwXZMefQocpoKRbXtxkKRar3SCHMA=;
-        b=WbDc4ajjLgfHuSTHG7tsnkFqRXuEG+zL94YJNCyoqY+Lrb7eVCT/aLcW4gJV8AzZFd
-         qWMNUaB6sBSQIdNv0AzIbMKfvhHkFxgnMOQ0krkC2dYCUyMilNYuob3lTVUavcAQkLMb
-         4nkPb8P2VYImOdwF+I2DWDc6s5U4Gr9rZX/j8BjR+spQrdoKZSuxQ19X9P42/q5No7i+
-         lxVURKMjX9BnGhFtSii146KA6Z5fy4zG0WaCOCkxgGYI5s53dQ0YV2SxzEKviUl9GPdJ
-         RHXJ0s0wobYY+cad64ASBb0VF9Hl4wWor7TJrJRBpnSWWg00p1Tzj5KUJEFzKP8BPOGL
-         I5qg==
-X-Gm-Message-State: AFqh2kq3i7heRcFMjRkxdSl4YX4+yGIEphtXtey6eS5jFjlsnkTnbaQj
-        8CGYt6I7wKdL3Mo0SOtaaWQ=
-X-Google-Smtp-Source: AMrXdXvNfb+HnZA1tZA4Lpc1SIwFbLT4cjW/FBQ7b4LKAbTVQpf6Nwx5iz+9YwBlZ2ksbG/a+Fcu6w==
-X-Received: by 2002:a17:906:a186:b0:82d:e2a6:4b0d with SMTP id s6-20020a170906a18600b0082de2a64b0dmr14248970ejy.18.1672003600133;
-        Sun, 25 Dec 2022 13:26:40 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5KI4GVi+gdxgp2ZGUw6TN4YhL63JS7cfevWElXB6z0s=;
+        b=Ur/FFQPQwIEyVkrBMwAPRZ+VDEcashd+CPWu6HFNQyM3rmwW8fCIF1F7PiJlo9baaI
+         yqhslFwHi+9fL3nnXdVLBS8CPOV+Wcyz7tJBjEUmt0ESUplUu1bgcyhMqG6SP445FF4+
+         hd9Q4/3VbYqDv1jm5fzXhS9SBf7CrDINPxbn2Zm00cyyAoFGbbgHU3zNCTmPW8C6H8Iz
+         W6CiQcHhwWcH+mTg8dDAvbdlK2iADEOiimxZN5uCiETJSoyyrUuoyMCWjZvZPJScGulR
+         Ldf6GhIf2BxMpa/0W4BxmSV1OoLQ4hqJ9S2fF9BB/EAWY9/oHqRwkf4hoLosMpsxLyv5
+         mthQ==
+X-Gm-Message-State: AFqh2ko+OzmV/iH+BP9Znszv887sQBD+bH4WX6MD0qox0aTczwRc/D7X
+        GtGvDbv2r/6NWIChCKYzAML86e1Vszg=
+X-Google-Smtp-Source: AMrXdXs+KZaDdvm9udYW4BX/Q7fJqqvrvx1jef2GpmyfmYMmtA8FXASDVeM8/iE11rZbyMM520xcFA==
+X-Received: by 2002:a17:906:2813:b0:829:59d5:e661 with SMTP id r19-20020a170906281300b0082959d5e661mr13997700ejc.29.1672003602528;
+        Sun, 25 Dec 2022 13:26:42 -0800 (PST)
 Received: from localhost.localdomain (dynamic-2a01-0c23-c49f-b200-0000-0000-0000-0e63.c23.pool.telefonica.de. [2a01:c23:c49f:b200::e63])
-        by smtp.googlemail.com with ESMTPSA id ku22-20020a170907789600b007c10d47e748sm4062567ejc.36.2022.12.25.13.26.39
+        by smtp.googlemail.com with ESMTPSA id ku22-20020a170907789600b007c10d47e748sm4062567ejc.36.2022.12.25.13.26.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Dec 2022 13:26:39 -0800 (PST)
+        Sun, 25 Dec 2022 13:26:42 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-amlogic@lists.infradead.org
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         jbrunet@baylibre.com,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v1 0/4] clk: meson: switch from .round_rate to .determine_rate
-Date:   Sun, 25 Dec 2022 22:26:28 +0100
-Message-Id: <20221225212632.2760126-1-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v1 3/4] clk: meson: sclk-div: switch from .round_rate to .determine_rate
+Date:   Sun, 25 Dec 2022 22:26:31 +0100
+Message-Id: <20221225212632.2760126-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20221225212632.2760126-1-martin.blumenstingl@googlemail.com>
+References: <20221225212632.2760126-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The goal of this series is to switch the meson sub-drivers to use
-clk_ops.determine_rate instead of clk_ops.round_rate. The former has
-lower precision (2^31 instead of 2^32 on 32-bit systems). Also the idea
-of the .determine_rate callback is that is replaces .round_rate so the
-latter can be removed at some point.
+clk_ops.round_rate will be removed at some point. It's replacement is
+.determine_rate. Switch sclk-div over to use .determine_rate.
 
-No functional changes (apart from the 2^31 to 2^32 difference mentioned
-bove) intended.
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/sclk-div.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-
-Martin Blumenstingl (4):
-  clk: meson: mpll: Switch from .round_rate to .determine_rate
-  clk: meson: dualdiv: switch from .round_rate to .determine_rate
-  clk: meson: sclk-div: switch from .round_rate to .determine_rate
-  clk: meson: clk-cpu-dyndiv: switch from .round_rate to .determine_rate
-
- drivers/clk/meson/clk-cpu-dyndiv.c |  9 ++++-----
- drivers/clk/meson/clk-dualdiv.c    | 21 +++++++++++++--------
- drivers/clk/meson/clk-mpll.c       | 20 +++++++++++++-------
- drivers/clk/meson/sclk-div.c       | 11 ++++++-----
- 4 files changed, 36 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+index 76d31c0a3342..d12c45c4c261 100644
+--- a/drivers/clk/meson/sclk-div.c
++++ b/drivers/clk/meson/sclk-div.c
+@@ -96,16 +96,17 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
+ 	return bestdiv;
+ }
+ 
+-static long sclk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+-				unsigned long *prate)
++static int sclk_div_determine_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
+ 	int div;
+ 
+-	div = sclk_div_bestdiv(hw, rate, prate, sclk);
++	div = sclk_div_bestdiv(hw, req->rate, &req->best_parent_rate, sclk);
++	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
+ 
+-	return DIV_ROUND_UP_ULL((u64)*prate, div);
++	return 0;
+ }
+ 
+ static void sclk_apply_ratio(struct clk_regmap *clk,
+@@ -237,7 +238,7 @@ static int sclk_div_init(struct clk_hw *hw)
+ 
+ const struct clk_ops meson_sclk_div_ops = {
+ 	.recalc_rate	= sclk_div_recalc_rate,
+-	.round_rate	= sclk_div_round_rate,
++	.determine_rate	= sclk_div_determine_rate,
+ 	.set_rate	= sclk_div_set_rate,
+ 	.enable		= sclk_div_enable,
+ 	.disable	= sclk_div_disable,
 -- 
 2.39.0
 
