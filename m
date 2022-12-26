@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28F0C46467
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3D5C4708D
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231651AbiLZEWL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Dec 2022 23:22:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55236 "EHLO
+        id S231571AbiLZEWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 23:22:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231593AbiLZEWC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 23:22:02 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FA92BE3
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:00 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id b3so14708153lfv.2
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:00 -0800 (PST)
+        with ESMTP id S231604AbiLZEWD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 23:22:03 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2995D2BEE
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:02 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id bq39so6882957lfb.0
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TEK1xO+akKYSL/Q1yvebOP0P6T2vWjAhKb2drYFp8lQ=;
-        b=hi9frgQI9uQ8+XmyeRHVKc/adCVnQzmqKtBIU39Rl6UCvWqU0tfHYSpKASVlMBd8yK
-         /5iDOMxBo0LhPeBabCAxKPKkwV9MRYhRV+i8f18fSueCq8a1N88ld8ZMWr8Dtm6tZAc3
-         tdxMwRmlq/P1HvaEi9vCktL2bkzUaBd3YmA24zF8lK9LwrGT34JudKnT7DsED5uRVYwH
-         1lefuoNKoQ8bHIv/bLSWtgtTv3NuK29Rs2w/2b3lfiM1ifKekOK/AJjPwbtED4GabByo
-         2d4lIhoLfmq2a/FG657/kGAocRwNoeip7nPGit3zE5FPVTR8HWBmzlAKqqN/7Q9inuns
-         jmnQ==
+        bh=+BSMHD+c2gHpfQgRvnQWh7QBxsgW6TDMIYioeA0tiyU=;
+        b=GSG/uPASW5MnAW2J6MoCurBK4kTDfD09wDZMETAMkR2BQDSJZLXgPBxuC7WpCIsXfa
+         bhladb55cCu6v+AxHyDcUDrg6Vj/dYL98aez4hmlJUQfAcdc/Fww2Iu000YFNU6n6gB/
+         Qfk6QMBHB+ttNsUOnEgK5cSXB+zDgyLQ6P4V8UQKsKM283wN8mX4TuL0N5obbTXUjCX2
+         Od8mib1YgWK1Pu4zgR/Lfz9P7FVPLj3XsCbFmCmyvfMB5WND4V9yaWyE6DhdYvIt6fgm
+         VSfMjgP+DWCNG+orVpYrp5eNViOuoOAVAQXFkrBksd6yembPg6LyNsgw0u5ZEdO0f50/
+         ZXDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TEK1xO+akKYSL/Q1yvebOP0P6T2vWjAhKb2drYFp8lQ=;
-        b=sK3R0hXcwAJ6tPd4fqLmHIganOaOjuAnwW29V3qwEnlrwypisk8nEFEmh4KjEoShJC
-         Xcywd1FCmC3PrHlOn1fAN70zRhtonqoTiS7hXg9j6rKb86hANqCv1H4XyyRjeiMi6FBU
-         XwViUA3KhwdFPP9n0wf6uJqdjxs97DWw475JdAliGtWmMTGkbfY0xxHNbu1pl3brWFeF
-         n8YbJfwkU9FKrPpS9pFbvuxROjywYpvsHwdcZyG3FjXxwAK+1WWvLgii3jh18FKFEStM
-         GfbuvjX5wgO6haj2VXdRxo5Fd/w4abgZClOpRuGqIhf7iHV9gzpHuURIf5kBKxHFDt7p
-         Eulg==
-X-Gm-Message-State: AFqh2kpQ7UEaYikMjC1Lxje+pHgiXV+366/rNMSd4afLtrSHHTWUD2zM
-        tvj9VtF3xsogDbgyF8GUUpM1xw==
-X-Google-Smtp-Source: AMrXdXsye+FlQh3Q9ZtXo5HMPKdsjjzZdETxgGk7Nu7MRlpsmED0uTdvfUxl/FJcMtSJWLi2IqKqZA==
-X-Received: by 2002:a05:6512:340d:b0:4b5:69f1:61b1 with SMTP id i13-20020a056512340d00b004b569f161b1mr4474472lfr.42.1672028519134;
-        Sun, 25 Dec 2022 20:21:59 -0800 (PST)
+        bh=+BSMHD+c2gHpfQgRvnQWh7QBxsgW6TDMIYioeA0tiyU=;
+        b=NBCisWtQcI/rnYJSuIHtiVH7SQtau6s76fo9WZ2v4bddMCTd/K4IYc0U06H3So9c7u
+         3Y8STM7Yd3DsvZd5gMxGgc6ZkUFM2QBRoQLlLuXbtu4ixwVl+Q5+C7sr4T2nhVb+KwyO
+         WNzgVM3Z+t67vYG0jH0gZQ9NVLAjVFXt0c3XeHP5JDmwqQzApOjERctC3rWf3s1Yrf5y
+         SDAopfx2V7IrwB+C/2V7wPilDFRNMIavCObYJym8M2hcYdcb5KQ9ipj3hvy/w+cIoNXq
+         Ymb7qEAtrOzBVNiizK02hS0MGgqmPQshbisuAaU0zpSQZT7rZdue3d6JnqcEV9noPabz
+         1tFA==
+X-Gm-Message-State: AFqh2koj4TofvyRSeY20lzwpXf/PnNKB5aufT+3hqfegcVsYeTSjJ5Tn
+        DN+cBBGlCAJN8L0XemsBX9l9rg==
+X-Google-Smtp-Source: AMrXdXtny0j8UKNsOeIfUn/TQ+czvRnUPd4+0U0IkWIjg7Y9RXoIwpyLFJNU1J0wXAn08wzdm7GOvg==
+X-Received: by 2002:ac2:562d:0:b0:4b5:670e:b708 with SMTP id b13-20020ac2562d000000b004b5670eb708mr4155105lff.14.1672028520462;
+        Sun, 25 Dec 2022 20:22:00 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.21.58
+        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.21.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Dec 2022 20:21:58 -0800 (PST)
+        Sun, 25 Dec 2022 20:22:00 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 05/16] clk: qcom: gcc-qcs404: disable gpll[04]_out_aux parents
-Date:   Mon, 26 Dec 2022 06:21:43 +0200
-Message-Id: <20221226042154.2666748-6-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 07/16] clk: qcom: gcc-qcs404: fix the name of the HDMI PLL clock
+Date:   Mon, 26 Dec 2022 06:21:45 +0200
+Message-Id: <20221226042154.2666748-8-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
 References: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
@@ -72,134 +72,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the QCS404 platform the driver for the Global Clock Controller
-doens't define gpll0_out_aux and gpll4_out_aux clocks, so it's not
-possible to use them as parents. Remove entries for these clocks.
+The QCS404 uses 28nm HDMI PHY. The in-kernel driver doesn't provide the
+PLL (yet), but the out of tree patches used the name "hdmi_pll" for it.
+Other Qualcomm HDMI PHYs use either the name "hdmi_pll" (8960) or
+"hdmipll" (8996). Thus change the expected HDMI PLL clock name to
+"hdmi_pll".
 
-Note: backporting this patch to earlier kernels would also require a
-previous patch which switches the gcc driver to use ARRAY_SIZE for
-parent data arrays.
-
-Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/gcc-qcs404.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+ drivers/clk/qcom/gcc-qcs404.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index f60a0ab42da1..507c42d7f753 100644
+index 67a180d688c3..241768da2263 100644
 --- a/drivers/clk/qcom/gcc-qcs404.c
 +++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -25,11 +25,9 @@ enum {
- 	P_CORE_BI_PLL_TEST_SE,
- 	P_DSI0_PHY_PLL_OUT_BYTECLK,
- 	P_DSI0_PHY_PLL_OUT_DSICLK,
--	P_GPLL0_OUT_AUX,
- 	P_GPLL0_OUT_MAIN,
- 	P_GPLL1_OUT_MAIN,
- 	P_GPLL3_OUT_MAIN,
--	P_GPLL4_OUT_AUX,
- 	P_GPLL4_OUT_MAIN,
- 	P_GPLL6_OUT_AUX,
- 	P_HDMI_PHY_PLL_CLK,
-@@ -109,28 +107,24 @@ static const char * const gcc_parent_names_4[] = {
- static const struct parent_map gcc_parent_map_5[] = {
- 	{ P_XO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
--	{ P_GPLL0_OUT_AUX, 2 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
+@@ -152,7 +152,7 @@ static const struct parent_map gcc_parent_map_8[] = {
  
- static const char * const gcc_parent_names_5[] = {
+ static const char * const gcc_parent_names_8[] = {
  	"cxo",
- 	"dsi0pll_byteclk_src",
--	"gpll0_out_aux",
- 	"core_bi_pll_test_se",
- };
- 
- static const struct parent_map gcc_parent_map_6[] = {
- 	{ P_XO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 2 },
--	{ P_GPLL0_OUT_AUX, 3 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const char * const gcc_parent_names_6[] = {
- 	"cxo",
- 	"dsi0_phy_pll_out_byteclk",
--	"gpll0_out_aux",
- 	"core_bi_pll_test_se",
- };
- 
-@@ -139,7 +133,6 @@ static const struct parent_map gcc_parent_map_7[] = {
- 	{ P_GPLL0_OUT_MAIN, 1 },
- 	{ P_GPLL3_OUT_MAIN, 2 },
- 	{ P_GPLL6_OUT_AUX, 3 },
--	{ P_GPLL4_OUT_AUX, 4 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
-@@ -148,7 +141,6 @@ static const char * const gcc_parent_names_7[] = {
- 	"gpll0_out_main",
- 	"gpll3_out_main",
- 	"gpll6_out_aux",
--	"gpll4_out_aux",
- 	"core_bi_pll_test_se",
- };
- 
-@@ -207,14 +199,12 @@ static const char * const gcc_parent_names_11[] = {
- static const struct parent_map gcc_parent_map_12[] = {
- 	{ P_XO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
--	{ P_GPLL0_OUT_AUX, 2 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const char * const gcc_parent_names_12[] = {
- 	"cxo",
- 	"dsi0pll_pclk_src",
--	"gpll0_out_aux",
- 	"core_bi_pll_test_se",
- };
- 
-@@ -237,40 +227,34 @@ static const char * const gcc_parent_names_13[] = {
- static const struct parent_map gcc_parent_map_14[] = {
- 	{ P_XO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 1 },
--	{ P_GPLL4_OUT_AUX, 2 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const char * const gcc_parent_names_14[] = {
- 	"cxo",
- 	"gpll0_out_main",
--	"gpll4_out_aux",
- 	"core_bi_pll_test_se",
- };
- 
- static const struct parent_map gcc_parent_map_15[] = {
- 	{ P_XO, 0 },
--	{ P_GPLL0_OUT_AUX, 2 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const char * const gcc_parent_names_15[] = {
- 	"cxo",
--	"gpll0_out_aux",
- 	"core_bi_pll_test_se",
- };
- 
- static const struct parent_map gcc_parent_map_16[] = {
- 	{ P_XO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 1 },
--	{ P_GPLL0_OUT_AUX, 2 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const char * const gcc_parent_names_16[] = {
- 	"cxo",
- 	"gpll0_out_main",
--	"gpll0_out_aux",
+-	"hdmi_phy_pll_clk",
++	"hdmi_pll",
  	"core_bi_pll_test_se",
  };
  
