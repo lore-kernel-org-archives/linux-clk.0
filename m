@@ -2,139 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED75EC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 05:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14E4C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 06:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbiLZFku (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Dec 2022 00:40:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33974 "EHLO
+        id S229574AbiLZG4H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Dec 2022 01:56:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbiLZFks (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 00:40:48 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97307E8;
-        Sun, 25 Dec 2022 21:40:47 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BQ5UZPa024990;
-        Mon, 26 Dec 2022 05:40:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=aj/dFU/j7P3LxmLkkQI/79Xsrctnv4HD+wCspp1smKw=;
- b=VVPjjM9Xok/UEBBVd/7Qpl+1lM70iY6bkUicD8edkeJETTGzJ7Lbf6b2Mh25i5PRbNzv
- kXySoC5qwby8si2/iLUB1eVl1KiLfZthlpLpNdqoVVHsRulG9uIEXjIBiJBsf3LfYdxS
- xNsa0Lv6X4W5BtA6ANLpj5xtMDebvZJI+V8j3S+8OwU7aoZACvBo2TFuTYkBMYWoFLl2
- kOM6pGzlQ7saa4mhPMZ1cXggaEFb29yyw2ia6/67fXQH++62rUWc3ws0JW/0B4zLzHkm
- 9AUbKvfflRtzU4B0+TYqgsClXaBzs6QvCD7DtWpVRsIuhBGCITinLVMuN65dId89KOcG dg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mnreg2rfc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 26 Dec 2022 05:40:33 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BQ5eVT1021340
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 26 Dec 2022 05:40:31 GMT
-Received: from [10.216.63.118] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Sun, 25 Dec
- 2022 21:40:27 -0800
-Message-ID: <dd9ff450-917d-792d-debc-a504ff6ca8bd@quicinc.com>
-Date:   Mon, 26 Dec 2022 11:10:23 +0530
+        with ESMTP id S229626AbiLZG4F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 01:56:05 -0500
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8FDD64
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 22:56:04 -0800 (PST)
+Received: by mail-vs1-xe29.google.com with SMTP id 3so9636303vsq.7
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 22:56:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nKoRBsCZk8t5IRW6q7FXOzmG70vM+tRWxxCkDHcgI5s=;
+        b=Gh5L7i4lMdFGdpQcVXbyK2egNp5Z1yUnv6IBSCJIVgNBy8xEcu7FXNb0L5gzT9eP8z
+         C+nRl2MuAO3DcFB2eY31UCof7isEZbIuENKeIinzKjIcHW2xZR/p0Qt8ht2DLvLrlMdA
+         NtcVKDhvzKfjPGz17B1xY5nsAyPsyGGHsbTwE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nKoRBsCZk8t5IRW6q7FXOzmG70vM+tRWxxCkDHcgI5s=;
+        b=fOrlnsmzNNAVmmrD1zauF2IAgIa2c0UmhYVnTs/9lutCZtGsiTQKmmcwdXnxFF59xp
+         sYvrrdaDNBTQb30Um9vz5JUotElGWHjzXeSGL4eOrSRWLLZ+leHUfmaolHaqO/Dp5CgD
+         T8cynTrlU8dY8Th41fjfPb02EfVEpKIiUOMH1TdEeNPiPeMqtRb6qfCfvOJJ/tSGBAo7
+         2x4492Rc4HMx8vx8xW085JxNZk1cuPk1H4iv9P8xoqMNTtCMLFHpxRrM+Q/JNjW+peI7
+         G0ZON9E1JaDLQhd8ODQA4Az9repRq8uPBxrElR/+sI01Rlux0ezw8wJ/PLnx8rDV4DLP
+         vBqA==
+X-Gm-Message-State: AFqh2kom1Hi5WKtldxwvbiqipj4RNtuLmkBBO8BPD3O+6q8LDXsBCso6
+        2Jfv8RZKxI+BPIa1TYmyy1ATSFgayrjbUnz4XYoqfQ==
+X-Google-Smtp-Source: AMrXdXtihqlxHKqphDrGOCSc3OcIsPQPPIjiFqufrI1F9HDNZwbnCYgvr87cVSS4ITP2veDTDo3oR+pGal+18iKFQm8=
+X-Received: by 2002:a05:6102:4427:b0:3b0:6da7:39ba with SMTP id
+ df39-20020a056102442700b003b06da739bamr2383130vsb.26.1672037763548; Sun, 25
+ Dec 2022 22:56:03 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 2/2] clk: qcom: lpasscc: Add resets for SC7280 audioreach
- clock controller
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-References: <1671618061-6329-1-git-send-email-quic_srivasam@quicinc.com>
- <1671618061-6329-3-git-send-email-quic_srivasam@quicinc.com>
- <efde6373-f788-5c0c-4712-7b9caf7ad3d4@linaro.org>
- <e7edd629-986f-3e64-f9db-5ee68cf4e6f3@quicinc.com>
- <60e388df-cd03-3e88-e9c5-460ebdde29c5@linaro.org>
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Organization: Qualcomm
-In-Reply-To: <60e388df-cd03-3e88-e9c5-460ebdde29c5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _y8M7bvYB71A7VqTqbyCWY0WqTTJOr9E
-X-Proofpoint-ORIG-GUID: _y8M7bvYB71A7VqTqbyCWY0WqTTJOr9E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-26_02,2022-12-23_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2212260047
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221223094259.87373-2-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 26 Dec 2022 14:55:52 +0800
+Message-ID: <CAGXv+5EQDzgT+1VL7MDNGzHXCa4WheemP6Ysn5=3sF6Gft=V0A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/23] clk: mediatek: mt8192: Correctly unregister and
+ free clocks on failure
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 12/22/2022 4:14 PM, Krzysztof Kozlowski wrote:
-Thanks for Your Time Krzyszto!!!
-> On 21/12/2022 14:18, Srinivasa Rao Mandadapu wrote:
->> On 12/21/2022 4:09 PM, Krzysztof Kozlowski wrote:
->> Thanks for your time Krzysztof!!!
->>> On 21/12/2022 11:21, Srinivasa Rao Mandadapu wrote:
->>>> The clock gating control for TX/RX/WSA core bus clocks would be required
->>>> to be reset(moved from hardware control) from audio core driver. Thus
->>>> add the support for the reset clocks in audioreach based clock driver.
->>>>
->>>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
->>>> ---
->>>>    drivers/clk/qcom/lpasscc-sc7280.c | 18 ++++++++++++++++++
->>>>    1 file changed, 18 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
->>>> index 5c1e17b..d81d81b 100644
->>>> --- a/drivers/clk/qcom/lpasscc-sc7280.c
->>>> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
->>>> @@ -12,10 +12,12 @@
->>>>    #include <linux/regmap.h>
->>>>    
->>>>    #include <dt-bindings/clock/qcom,lpass-sc7280.h>
->>>> +#include <dt-bindings/clock/qcom,lpassaudiocc-sc7280.h>
->>> These are bindings for different device.
->> They are not exactly for different device. It's for same device with
->> ADSP enabled platforms.
->>
->> Basically lpassaudiocc-sc7280.c and lpasscorecc-sc7280.c are for legacy
->> path.
->>
->> lpasscc-sc7280.c is for ADSP based AudioReach Solution.
-> I see two different devices:
-> lpasscc@3000000
-> clock-controller@3300000
+On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
 >
-> clock inputs and outputs are different, so it does not look like for
-> same device.
-
-Actually, even though there are 2 different device nodes, they are being 
-used exclusively.
-
-In ADSP enabled path(on same sc7280 based platform it's enabled for some 
-vendors) only lpasscc node is being used
-
-and legacy path nodes are being disabled due to register region conflicts.
-
-Below is the patch for the same:
-https://patchwork.kernel.org/project/linux-arm-msm/patch/1671702170-24781-8-git-send-email-quic_srivasam@quicinc.com/
-
+> If anything fails during probe of the clock controller(s), unregister
+> (and kfree!) whatever we have previously registered to leave with a
+> clean state and prevent leaks.
 >
-> Best regards,
-> Krzysztof
->
+> Fixes: 710573dee31b ("clk: mediatek: Add MT8192 basic clocks support")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
