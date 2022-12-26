@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5F0C46467
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D131C3DA79
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231644AbiLZEWa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Dec 2022 23:22:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55276 "EHLO
+        id S231646AbiLZEWc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 23:22:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231490AbiLZEWL (ORCPT
+        with ESMTP id S231603AbiLZEWL (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 23:22:11 -0500
 Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B6C5593
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F8955A3
         for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:06 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id z26so14684798lfu.8
+Received: by mail-lf1-x12f.google.com with SMTP id y25so14675499lfa.9
         for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C/K3RoFVEkUUUw0DjLS0gT74F0yinCMJe2iA2VdQ2lI=;
-        b=atNI4M2yBuG99VOUYNrGxI77gagHmcuwTpqPUYjH0S7MqBQjtqbsY8kDIJRqMhbbls
-         0QlGX5d4pIpK9fe870P2yJstUxrrtz50oAqtZyYboaihEKnL0Z58ep4iVJIRlxPSgKhx
-         jk+yUPMxngfL76w4Ji4ZdU+WmHrQOXs2xq/wW/1Ve5/nDB+FWRHZbWBahG6zQqVonE0z
-         O2/hpCBwKSr3wN04uA7lhI78o7GKpdcUB7PJmrHE6JAqKVTbHi4xvHVMh45BLE4bqoj6
-         LcZafTWWCjgYzpZ+l9Qgtj5E/a3V+jJAqGLHKkJ+bFJ1pSk7y/905dG+S6w2bxGVc0aq
-         rYOw==
+        bh=bYtAPbaOIrpvmuNd+Z18UO1jiB4rVtL7fqIVx9X8Dkw=;
+        b=xijE81+qRG/+QaiHQUIrDo2nHp8Q1dJL8Ql4C5JNlw753HBQ3O5S/YpuZIZqCStDwS
+         ZdX3V88sgNikYIMeyqZP7DfvGPfCrnJq2/mNa6CnwilYPm0OJDE+rReKYbqgCIP51uHp
+         X95f/iS2fBm9HFmvcVAlahTlqF3UZV54F+5z62O3PyJ/uit8CwWQxS9yVMRuYPAwZJJn
+         6D+F7/mpXgjE1eD5MfQM92j8di0qwhKqwEfepXxFkpJ411qW7oylxYODP8TelsmnFqZu
+         lAkZxTMJhZlHfORpiTQ+27EO1vKCvp8JtWp6eqrdKsE+8G4nplC9zggZ6NRC/A3V8ml3
+         jJmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C/K3RoFVEkUUUw0DjLS0gT74F0yinCMJe2iA2VdQ2lI=;
-        b=mId47lEFxumNIKQdFLZZ9lkWp/0eL+8BsdHj5686z3AMAfQtYPPeInUQoQkrx29BNq
-         mANESuzxU2brOHdbf1ruB5ECiNEFPmdCbcSEQ9HfS3vyI/9Ssfmoi3U8hrrIED77Wnen
-         x8x/BHERYWFCux442KFlcfvm8YKtJmVlH9jHvGyPOmZbcL8Ev+pQp4H0IyGSTwarVBsB
-         C6f8k/OdhbCROYHad0ylEHTvEjkevkQuv2IwVrH3DI2zGezlEEHakJ6SwMghig1zWKqc
-         5sKDlRRDivJZtu68WVPVCM0R/9cfgyYoSdaDCqNP8kX6WZmJHAzyXQBftPlvlzTuGuud
-         9a5g==
-X-Gm-Message-State: AFqh2kpnj5eSPsrO7nLMLxwDsK2DbEsQQllYc+wUEqXeCloRrQLfuG4q
-        mt8syiw6wKLE+l67FPja/DR72g==
-X-Google-Smtp-Source: AMrXdXtgnAdvs6Bhe5nsUVzwTXoAOHs+6uPb0RY8k5M3CsSbbKB7Gp6wYIG5W3Oi9iSMkJ+zgDG+nQ==
-X-Received: by 2002:a05:6512:3a8f:b0:4b5:8a01:570e with SMTP id q15-20020a0565123a8f00b004b58a01570emr5288504lfu.45.1672028525821;
+        bh=bYtAPbaOIrpvmuNd+Z18UO1jiB4rVtL7fqIVx9X8Dkw=;
+        b=o3jWUe9wRqZNwsnwzatfZAPQsXvWqZG8BZ27TdmqpHxnfsgIhTonNiykI+Mop3UgwT
+         b2QQbSsIWhDf9vu9ps12Ts68JFA+Nh4TbMRizwfkXjfXUtBQyMr1JM8f9z2G9hiFuqAx
+         HXcD1Eg/frfVcVR7hwqxKsQAVqT5IXm1c+tQ627tVc07X9+gGUv0g9NcFwdXnMgtFW+S
+         pP813q375d6Ok6INoBHsYI8pPywj9pQx0qti9XdpB6M9dCQCImxXxU4CZDLcsrbtfg4e
+         Q1lS817TjFmtHzmVG76OpkwbiFazUYxZghnSZxliFXFWTeXlYfZxtng6GqW6e+27F9I4
+         3/gg==
+X-Gm-Message-State: AFqh2kqxOJAGrwVKNaloipmTBkrh4DCIpX7z/5Wdv+5jdmLgaEO/O3qV
+        5GkAOEAaXZ7ne7KPBnw0JCL8Yw==
+X-Google-Smtp-Source: AMrXdXtZFjRronhgYVZ5q4X6RAAPYK1UKVSP5s1hEQv9hUf3v2yfLOkSIuo9uN5Cb68mERnspmFs8A==
+X-Received: by 2002:a05:6512:b14:b0:4ca:f5a1:8896 with SMTP id w20-20020a0565120b1400b004caf5a18896mr4290367lfu.37.1672028525134;
         Sun, 25 Dec 2022 20:22:05 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.22.05
+        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.22.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Dec 2022 20:22:05 -0800 (PST)
+        Sun, 25 Dec 2022 20:22:04 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 15/16] arm64: dts: qcom: qcs404: add clocks to the gcc node
-Date:   Mon, 26 Dec 2022 06:21:53 +0200
-Message-Id: <20221226042154.2666748-16-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 14/16] arm64: dts: qcom: qcs404: add power-domains-cells to gcc node
+Date:   Mon, 26 Dec 2022 06:21:52 +0200
+Message-Id: <20221226042154.2666748-15-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
 References: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
@@ -72,33 +72,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Populate the gcc node with the clocks and clock-names properties to
-enable DT-based lookups for the parent clocks.
+As gcc now provides two GDSCs, add #power-domain-cells property to the
+gcc device node.
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index b72542631337..9206ab13977f 100644
+index ffc4b081bb62..b72542631337 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -731,6 +731,13 @@ gcc: clock-controller@1800000 {
+@@ -729,6 +729,7 @@ gcc: clock-controller@1800000 {
+ 			reg = <0x01800000 0x80000>;
+ 			#clock-cells = <1>;
  			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
++			#power-domain-cells = <1>;
  
-+			clocks = <&xo_board>,
-+				 <&sleep_clk>,
-+				 <&pcie_phy>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+
  			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
  			assigned-clock-rates = <19200000>;
- 		};
 -- 
 2.35.1
 
