@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B872EC3DA7D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A565C4708E
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231585AbiLZEWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Dec 2022 23:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
+        id S231586AbiLZEWH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 23:22:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbiLZEWB (ORCPT
+        with ESMTP id S231588AbiLZEWB (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 23:22:01 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F4CF0E
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:21:59 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id bf43so14689298lfb.6
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:21:59 -0800 (PST)
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 215F121B9
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:00 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id bf43so14689357lfb.6
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:22:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LS3CzouQUqu+qUJZ1aw23AQkTMax8Vw7vAt7vyr9HR4=;
-        b=x5pNBQgIdwhZAUWicZ16n0Px8dJbH6togfjisI5qTWsN8WEXvkrDdonh0Jq+drhLBb
-         KgTqvmxkb/pwsvECLJsLZxGPjCJZRPPePVHonLLQJ62v6iZ2ce/I6v8h3rU5adfNzv/G
-         w9cV7bo/y23DWG3kaqFoEpKqgQGBOedqNWvUut0x/vLWX5pr05VE4V38oYgzMDHc2kb2
-         trxDWr0sroDjmQVwRRRq0TF+i+fB/Gra7kqE0nBlv6odbIOOmQEwUUNr3/h/JO3Kj9uk
-         O8Mhl0eAv2Rw0lxgXgDfHLoLrUb2zYZOIepvoP7W0480U++WvZeTwBio5QNsANXzB+qP
-         HhUQ==
+        bh=CY5hvEc0maYUi8zObs7GPyxT+Q3yDiQfjteFiwlPy8A=;
+        b=oHbEjs9zYip4ahhhlcp7YMIL+EVsBrdYphfA9G6EhVXKQyamNqnmg64ZwlwKoQ5dfr
+         6240i4v5zg3BYfEE/czqWVvClwcVqP2+x10a4Q4To5cdWXuypf5l0WAQpHH2ce5en0kS
+         fZbzTlKwvPWCJeYTuxNj4iD2QDxLKiGJnToWRVxM4kSKaYkkKQ55vXpoidAtP1Ah4cFk
+         OyQ0pRXr3FByQfSqZFg93DFiFRv6VdVUDJh2zLjKyIcOE0Mbt1IvuL+RxX/0dqJpfYon
+         zYqobF3q+zIiVvmn/yyxfPVm9qBA8KTX7tH7S4CFQQUwkzaLQTt92C51BStoIwHRixTx
+         bLaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LS3CzouQUqu+qUJZ1aw23AQkTMax8Vw7vAt7vyr9HR4=;
-        b=4EmsbX+Wo5bWhBYEj0rWleinKphvjiTXbCShDmRATVf9SBGJ0ZAmeXWHEmoIZpLmoP
-         iEOVrLhdxRIrIVTbrc095Sc0nX/jvGjAou0PPpLIaOIkzdMMZNKhKikdOdFN+GMcUnII
-         Lym7JdpCGCHAXBVymltm8YzQ7YuhvqjuvkbGdw2616ZjOr8sPVwn6GjL0KUBbOTRzf9H
-         ZY1iis1L1r//b1OvfzI8DYsRgMnEhtlc5Qqcr6/QgztFRmwzS8WidFwYctqgSsJrMQbc
-         Dx1bktJONwf/NvuzkM4qcjZjSqkbdZXoW9k4zBfVsHUh0YY8DqF1/polvNg5h1mSgpnS
-         Iicw==
-X-Gm-Message-State: AFqh2koGEDb0kFupKX37xM5xat0bsAidchU9iRhTPkCcVJ6Fb3Smpit/
-        pcD86E1XcPHjW5mk8F/itR/CDw==
-X-Google-Smtp-Source: AMrXdXtta8bOQY5LLSAWhWXH/c+JujT8KDWBQh2m7ufqH8Pr9kDoXHwDRCbzXEg/X1Dk+NCoNMw39g==
-X-Received: by 2002:ac2:59c4:0:b0:4b6:f716:e832 with SMTP id x4-20020ac259c4000000b004b6f716e832mr4653973lfn.5.1672028517867;
-        Sun, 25 Dec 2022 20:21:57 -0800 (PST)
+        bh=CY5hvEc0maYUi8zObs7GPyxT+Q3yDiQfjteFiwlPy8A=;
+        b=MI2P/+nfNI7hA22ot4rqyujDM/hJ5dxtBHQejknYxoe3cbvC4SJf0LGr5GwW9DsYS6
+         o8Ve3a/8LKps3CI+bWIwk/qfVGr58blGhE9cfI6A0at9fq8MZ0LbxyDCMjwbiZBV0atT
+         vlWtEo0Ys3ulNGVwKO9hvp5iCHUtSEqGt1GuEWg5E8QQXnuIBaMSRx04VbKOzfzxT+2b
+         OHn2SnjULpgfws3M1JMExFQSLKDiRxonRRzmmflCZJ1qqx6HnltCzgkYDuTyfxOxij7s
+         M2t6Vsvz5lFNll8CvioC0N3hOoC3S7f6CBFh4/pfS5dJBVl5V69B59a5Us7fPTv+8I6Z
+         eKCw==
+X-Gm-Message-State: AFqh2kq+WB/atMFXPVB17wg57YjGem0Cwcm+Shqo7+8dUiLypEUCa7S3
+        H14eEZORAw4nMPfOdMflo7Qgfg==
+X-Google-Smtp-Source: AMrXdXtAn28SU+6QwnPRBXAHjbQ0HMJ98QTOgW0mgLoxxRpMhPTS7gHLTuYFktJqZlQgpJwko+Z5kA==
+X-Received: by 2002:a05:6512:2030:b0:4bc:df73:4459 with SMTP id s16-20020a056512203000b004bcdf734459mr4399684lfs.29.1672028519711;
+        Sun, 25 Dec 2022 20:21:59 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.21.57
+        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.21.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Dec 2022 20:21:57 -0800 (PST)
+        Sun, 25 Dec 2022 20:21:59 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,11 +59,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 03/16] dt-bindings: clock: qcom: gcc-qcs404: define clocks/clock-names for QCS404
-Date:   Mon, 26 Dec 2022 06:21:41 +0200
-Message-Id: <20221226042154.2666748-4-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 06/16] clk: qcom: gcc-qcs404: fix names of the DSI clocks used as parents
+Date:   Mon, 26 Dec 2022 06:21:44 +0200
+Message-Id: <20221226042154.2666748-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
 References: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
@@ -73,43 +72,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Define clock/clock-names properties of the GCC device node to be used
-on QCS404 platform.
+The QCS404 uses 28nm LPM DSI PHY, which registers dsi0pll and
+dsi0pllbyte clocks. Fix all DSI PHY clock names used as parents inside
+the GCC driver.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/clock/qcom,gcc-qcs404.yaml        | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/clk/qcom/gcc-qcs404.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
-index b70901e0d5cf..b2256f81b265 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
-@@ -20,6 +20,24 @@ properties:
-   compatible:
-     const: qcom,gcc-qcs404
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 507c42d7f753..67a180d688c3 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -112,7 +112,7 @@ static const struct parent_map gcc_parent_map_5[] = {
  
-+  clocks:
-+    items:
-+      - description: XO source
-+      - description: Sleep clock source
-+      - description: PCIe 0 PIPE clock (optional)
-+      - description: DSI phy instance 0 dsi clock
-+      - description: DSI phy instance 0 byte clock
-+      - description: HDMI phy PLL clock
-+
-+  clock-names:
-+    items:
-+      - const: cxo
-+      - const: sleep_clk
-+      - const: pcie_0_pipe_clk_src
-+      - const: dsi0pll
-+      - const: dsi0pllbyte
-+      - const: hdmi_pll
-+
- required:
-   - compatible
+ static const char * const gcc_parent_names_5[] = {
+ 	"cxo",
+-	"dsi0pll_byteclk_src",
++	"dsi0pllbyte",
+ 	"core_bi_pll_test_se",
+ };
+ 
+@@ -124,7 +124,7 @@ static const struct parent_map gcc_parent_map_6[] = {
+ 
+ static const char * const gcc_parent_names_6[] = {
+ 	"cxo",
+-	"dsi0_phy_pll_out_byteclk",
++	"dsi0pllbyte",
+ 	"core_bi_pll_test_se",
+ };
+ 
+@@ -167,7 +167,7 @@ static const struct parent_map gcc_parent_map_9[] = {
+ static const char * const gcc_parent_names_9[] = {
+ 	"cxo",
+ 	"gpll0_out_main",
+-	"dsi0_phy_pll_out_dsiclk",
++	"dsi0pll",
+ 	"gpll6_out_aux",
+ 	"core_bi_pll_test_se",
+ };
+@@ -204,7 +204,7 @@ static const struct parent_map gcc_parent_map_12[] = {
+ 
+ static const char * const gcc_parent_names_12[] = {
+ 	"cxo",
+-	"dsi0pll_pclk_src",
++	"dsi0pll",
+ 	"core_bi_pll_test_se",
+ };
  
 -- 
 2.35.1
