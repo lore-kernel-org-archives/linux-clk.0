@@ -2,76 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B97C3DA7D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 22:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF2AC4708D
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 22:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbiLZWhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Dec 2022 17:37:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40772 "EHLO
+        id S232197AbiLZWhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Dec 2022 17:37:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232405AbiLZWgU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 17:36:20 -0500
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0896238A8;
-        Mon, 26 Dec 2022 14:36:09 -0800 (PST)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1442977d77dso13821548fac.6;
-        Mon, 26 Dec 2022 14:36:09 -0800 (PST)
+        with ESMTP id S232429AbiLZWgW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 17:36:22 -0500
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B2805F9E;
+        Mon, 26 Dec 2022 14:36:17 -0800 (PST)
+Received: by mail-ot1-f54.google.com with SMTP id x44-20020a05683040ac00b006707c74330eso7284714ott.10;
+        Mon, 26 Dec 2022 14:36:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n8uuUFV9lNVBUl4JTj97LHUM/xGa74AJRrukYSs5QNU=;
-        b=Y9OKMWh+Hnls0J3Fihxe0/PAbsagKqi/JmRa41Tv/87AQHiH9X3VrNbJt3QyeGcIni
-         En3IiojCv8iKHLWtetRCXtEGwWdtTJgd2nr8k8jT5pRjdEdx955tr6tLPOLxtBOGE4YG
-         CPjJKED5irp8xkitiKT65zdu6sifZTpvPQfJIGVzdbuxytzLFVYgspnl1n8NxZgK13Ir
-         GkzGDbCziFhcXFz+jOMNwKjUib60UtN8cJxzX14UGZykAuLyL78YRPmv7LFPdTkELkXj
-         /OXuTXBgS/8oaOUYrsP8wOLVOHJJGFVQPj1VPw2/hWhRK9R6bO+VwPT6ZFIRs/zphHor
-         WFZg==
-X-Gm-Message-State: AFqh2kqOcjbrp/AkUyferctpyz/BfJwmcs7rs3M+jC0nBtHFnWbu0/S9
-        Kret0iuddde4YIiavQfYMA==
-X-Google-Smtp-Source: AMrXdXtJvskK+GjeKsygNF2zFzW3iflF8QjGcHz5bHiOqHCE/YBGgFxWhNfuduIh72HAEUsstCDEqg==
-X-Received: by 2002:a05:6871:4691:b0:144:e56a:1a3a with SMTP id ni17-20020a056871469100b00144e56a1a3amr8999629oab.4.1672094168358;
-        Mon, 26 Dec 2022 14:36:08 -0800 (PST)
+        bh=q4s4+/NGubPFhzsd7XtoobGhWqUUe1+gypHRvceHmmM=;
+        b=srueWP36il2MaS25JViLeIjDqCbbgIJxrxbYogz+fWkzAWfkH87icZcz4F5C4Yhj7P
+         S4mw6wACv2hXA5tZQDJEJuqhnLe1n0iRMBkOZXHAjMLV8dJwnJ7EutG6rlrqPaMxh55a
+         cq+lhna0vyK4L6M5Fg30pRx1YkrwTn6HEla2jYUXFNzTGIJCEvcSAre/lRcui+tEpTmg
+         JHV1ej6bQWzRb5DOZ1lhdUlDlacHrDa3p0qIG2NScaS5ZfaSxM1vyeGjT6SDFPnuy8MC
+         8l1PEjI486Z4KvmEujK6FxCI7XGBsaYDQ8Hfi9HEPL6alybngTqj6rLSUV9ttxbnvF6d
+         2oMg==
+X-Gm-Message-State: AFqh2kp3NZMfrJ2QSl6DfdR1bPJ8jSGpLm/vIU+uhRuzqfXGmokW6QnT
+        czXsd1w21GcL/v+rNdOrVg==
+X-Google-Smtp-Source: AMrXdXteY2POYEe6IkXXvZpaoe22a821KoXOt+bj+IJzvYn5Ych70TfBfuIKmylmp8zVO4/VHtRS0A==
+X-Received: by 2002:a05:6830:3886:b0:670:5e99:4528 with SMTP id bq6-20020a056830388600b006705e994528mr11789584otb.4.1672094176576;
+        Mon, 26 Dec 2022 14:36:16 -0800 (PST)
 Received: from robh_at_kernel.org ([2605:ef80:80e8:2792:eb0e:539f:f657:547b])
-        by smtp.gmail.com with ESMTPSA id s20-20020a056870e6d400b001375188dae9sm763146oak.16.2022.12.26.14.36.06
+        by smtp.gmail.com with ESMTPSA id u20-20020a9d4d94000000b0066871c3adb3sm5882141otk.28.2022.12.26.14.36.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Dec 2022 14:36:08 -0800 (PST)
-Received: (nullmailer pid 40042 invoked by uid 1000);
-        Mon, 26 Dec 2022 18:50:48 -0000
-Date:   Mon, 26 Dec 2022 12:50:48 -0600
+        Mon, 26 Dec 2022 14:36:16 -0800 (PST)
+Received: (nullmailer pid 52110 invoked by uid 1000);
+        Mon, 26 Dec 2022 19:01:11 -0000
+Date:   Mon, 26 Dec 2022 13:01:11 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abel.vesa@linaro.org, festevam@gmail.com,
-        devicetree@vger.kernel.org, s.hauer@pengutronix.de,
-        shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        abelvesa@kernel.org, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: imx8m-clock: correct i.MX8MQ node
- name
-Message-ID: <167208064819.39973.9894207215176809086.robh@kernel.org>
-References: <20221223030540.62018-1-peng.fan@oss.nxp.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: qcom,spmi-clkdiv: convert to DT
+ schema
+Message-ID: <167208127075.52057.8007089147765275120.robh@kernel.org>
+References: <20221223111835.37610-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221223030540.62018-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20221223111835.37610-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Fri, 23 Dec 2022 11:05:40 +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Fri, 23 Dec 2022 12:18:35 +0100, Krzysztof Kozlowski wrote:
+> Convert Qualcomm SPMI PMIC clock divider bindings to DT schema.
 > 
-> i.MX8MQ CCM is at address 0x30380000, so correct it.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/clock/qcom,spmi-clkdiv.txt       | 59 ---------------
+>  .../bindings/clock/qcom,spmi-clkdiv.yaml      | 71 +++++++++++++++++++
+>  2 files changed, 71 insertions(+), 59 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,spmi-clkdiv.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,spmi-clkdiv.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
