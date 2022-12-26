@@ -2,117 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61553C53210
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 09:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334DDC3DA7D
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 22:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbiLZJ6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Dec 2022 04:58:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39538 "EHLO
+        id S232471AbiLZWgv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Dec 2022 17:36:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiLZJ6F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 04:58:05 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 417D5267F;
-        Mon, 26 Dec 2022 01:58:04 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BQ9vo1x078249;
-        Mon, 26 Dec 2022 03:57:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1672048670;
-        bh=EhrgxjMr+d+cFtBbp3yJIKjSN0BrfSAFflBEkgd14AM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ioqaHRLumQfn/Offg7Xgn+W2uwYO0hj9QnivKsZ6QFOM01hDCaEKMd07+XHMx4U80
-         D+2u1yaROj7PfOHgNHD+33Za7ghzqg2Rx87VW8Zwfi4h9N5383AS2jpyeZ/cRvhOFo
-         qkhUvXEJ+/6K7VxCUqZBXgyLiF2lOA55+2Js0BAo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BQ9voZV126102
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Dec 2022 03:57:50 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 26
- Dec 2022 03:57:49 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 26 Dec 2022 03:57:49 -0600
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BQ9vmbc088703;
-        Mon, 26 Dec 2022 03:57:49 -0600
-From:   Aradhya Bhatia <a-bhatia1@ti.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     Tomi Valkeinen <tomba@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
+        with ESMTP id S232478AbiLZWgL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 17:36:11 -0500
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A691122;
+        Mon, 26 Dec 2022 14:36:03 -0800 (PST)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-14fb3809eaeso7875517fac.1;
+        Mon, 26 Dec 2022 14:36:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E75KchBQqDtNUprgzL6WlYr5wAjCueagQYKGTYt0RGQ=;
+        b=FNB0acv8vEbyGEBRknBYFJejFu/H+yVHbuMqlBoiJYiBGWj8CJlxYyMN6zlhQ0fYsq
+         onMwkUScGr5ANpcZnm4GQAsegN16MEbcX4quBuGZ8IZFWHFw8QQTIK6emyC10tvgBmYq
+         I0XsEZWRqbjFCfjY/Qgwv6DX/okazoWwgCEeSry3SQ/sMmXpD5YLIoisdhDbacTXmvhP
+         mvxDmwic8K9eBQX4YENK76li3ShDcrhWWPTfiKrERbGtoc2nVLpfqoDjW9Q3sMhE/K8g
+         Fvorpetha5R6+1u8fhCH1VnchVoct0/d6m3D0Pqh3+rs0ESd8G9bOCRQppbL4+IwU1W8
+         tTSg==
+X-Gm-Message-State: AFqh2ko4B/GhpuoJ8O+UVH9xKBrC2eJc7G2BV4jxpmdH0VAto/XAReMk
+        7UhEH1FedNt4AWsZPggEGg==
+X-Google-Smtp-Source: AMrXdXsbNGmzsOi/lM9QdNE9bSZnKRFOP5v+x+u1UpPXql/7Dhn/CWBkVyerVbVKZPShQ3fNqtEFew==
+X-Received: by 2002:a05:6870:ec88:b0:144:e875:5a1b with SMTP id eo8-20020a056870ec8800b00144e8755a1bmr10864512oab.57.1672094162781;
+        Mon, 26 Dec 2022 14:36:02 -0800 (PST)
+Received: from robh_at_kernel.org ([2605:ef80:80e8:2792:eb0e:539f:f657:547b])
+        by smtp.gmail.com with ESMTPSA id cm8-20020a056830650800b0066d2fc495a4sm6007286otb.48.2022.12.26.14.36.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Dec 2022 14:36:02 -0800 (PST)
+Received: (nullmailer pid 78411 invoked by uid 1000);
+        Mon, 26 Dec 2022 22:03:08 -0000
+Date:   Mon, 26 Dec 2022 16:03:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Aradhya Bhatia <a-bhatia1@ti.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
         Linux Clock List <linux-clk@vger.kernel.org>,
         Devicetree List <devicetree@vger.kernel.org>,
+        Jai Luthra <j-luthra@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Samuel Holland <samuel@sholland.org>,
         Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Jai Luthra <j-luthra@ti.com>, Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: [PATCH 2/2] clk: fixed-factor: Re-introduce support for clocks to set parent clock-rate
-Date:   Mon, 26 Dec 2022 15:27:45 +0530
-Message-ID: <20221226095745.19757-3-a-bhatia1@ti.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20221226095745.19757-1-a-bhatia1@ti.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Devarsh Thakkar <devarsht@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC
+ OLDI clock
+Message-ID: <167209218816.78357.6777018705990998631.robh@kernel.org>
 References: <20221226095745.19757-1-a-bhatia1@ti.com>
+ <20221226095745.19757-2-a-bhatia1@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221226095745.19757-2-a-bhatia1@ti.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the clock "ti,k3-am62-oldi-clk-div".
-Also add support for this clock to propagate the clock set request to
-its parent clock, by setting the CLK_SET_RATE_PARENT flag.
 
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
----
- drivers/clk/clk-fixed-factor.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+On Mon, 26 Dec 2022 15:27:44 +0530, Aradhya Bhatia wrote:
+> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible enum
+> list.
+> 
+> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
+> display subsystem request a pixel clock for itself and a corresponding
+> serial clock for its OLDI Transmitters. The serial clock is 7 times the
+> pixel clock. This clock needs the clock set rate request to be
+> propagated to the parent clock provider.
+> 
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> ---
+>  Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index f734e34735a9..1a78e2d870dd 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -245,10 +245,16 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
- EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
- 
- #ifdef CONFIG_OF
-+static const struct of_device_id set_rate_parent_matches[] = {
-+	{ .compatible = "ti,k3-am62-oldi-clk-div" },
-+	{ /* Sentinel */ },
-+};
-+
- static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
- {
- 	struct clk_hw *hw;
- 	const char *clk_name = node->name;
-+	unsigned long flags = 0;
- 	u32 div, mult;
- 	int ret;
- 
-@@ -264,10 +270,13 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
- 		return ERR_PTR(-EIO);
- 	}
- 
-+	if (of_match_node(set_rate_parent_matches, node))
-+		flags |= CLK_SET_RATE_PARENT;
-+
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0,
--					    0, mult, div, false);
-+					    flags, mult, div, false);
- 	if (IS_ERR(hw)) {
- 		/*
- 		 * Clear OF_POPULATED flag so that clock registration can be
--- 
-2.39.0
-
+Acked-by: Rob Herring <robh@kernel.org>
