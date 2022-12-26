@@ -2,43 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D2AC3DA79
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 09:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61553C53210
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 09:58:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231728AbiLZJ6G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Dec 2022 04:58:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39536 "EHLO
+        id S231846AbiLZJ6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Dec 2022 04:58:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiLZJ6E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 04:58:04 -0500
+        with ESMTP id S229556AbiLZJ6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Dec 2022 04:58:05 -0500
 Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087F12603;
-        Mon, 26 Dec 2022 01:58:02 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BQ9vk6R078242;
-        Mon, 26 Dec 2022 03:57:46 -0600
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 417D5267F;
+        Mon, 26 Dec 2022 01:58:04 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BQ9vo1x078249;
+        Mon, 26 Dec 2022 03:57:50 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1672048667;
-        bh=iHhOUXpNSlhf+aIXB7cwH4ZQHQG6+xLFZJXmmofWBM8=;
-        h=From:To:CC:Subject:Date;
-        b=QLs8CJTcw7OO2+SIzSsESij60DuJnA6+1qwFCX6vT9twmSPXyp5HEN8R7pnfwVJzk
-         czacw1K381uVNiUVG1QDKGZ65c8DNLVP+euEU9eGVUtzKi4psVndnyuz2ov1v6R257
-         DnugGubXoX57ytDRuSDsmcJSSgjRA0wkxCVBgAzk=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BQ9vk09112194
+        s=ti-com-17Q1; t=1672048670;
+        bh=EhrgxjMr+d+cFtBbp3yJIKjSN0BrfSAFflBEkgd14AM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=ioqaHRLumQfn/Offg7Xgn+W2uwYO0hj9QnivKsZ6QFOM01hDCaEKMd07+XHMx4U80
+         D+2u1yaROj7PfOHgNHD+33Za7ghzqg2Rx87VW8Zwfi4h9N5383AS2jpyeZ/cRvhOFo
+         qkhUvXEJ+/6K7VxCUqZBXgyLiF2lOA55+2Js0BAo=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BQ9voZV126102
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Dec 2022 03:57:46 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 26 Dec 2022 03:57:50 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 26
- Dec 2022 03:57:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2022 03:57:49 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 26 Dec 2022 03:57:46 -0600
+ Frontend Transport; Mon, 26 Dec 2022 03:57:49 -0600
 Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BQ9vjCi003614;
-        Mon, 26 Dec 2022 03:57:46 -0600
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BQ9vmbc088703;
+        Mon, 26 Dec 2022 03:57:49 -0600
 From:   Aradhya Bhatia <a-bhatia1@ti.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -54,10 +54,12 @@ CC:     Tomi Valkeinen <tomba@kernel.org>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         Devarsh Thakkar <devarsht@ti.com>,
         Jai Luthra <j-luthra@ti.com>, Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: [PATCH 0/2] Re-introduce parent clock-rate set for fixed-factor clock
-Date:   Mon, 26 Dec 2022 15:27:43 +0530
-Message-ID: <20221226095745.19757-1-a-bhatia1@ti.com>
+Subject: [PATCH 2/2] clk: fixed-factor: Re-introduce support for clocks to set parent clock-rate
+Date:   Mon, 26 Dec 2022 15:27:45 +0530
+Message-ID: <20221226095745.19757-3-a-bhatia1@ti.com>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20221226095745.19757-1-a-bhatia1@ti.com>
+References: <20221226095745.19757-1-a-bhatia1@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -66,37 +68,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
+Add support for the clock "ti,k3-am62-oldi-clk-div".
+Also add support for this clock to propagate the clock set request to
+its parent clock, by setting the CLK_SET_RATE_PARENT flag.
 
-The support for configuring CLK_SET_RATE_PARENT flag for a few specific
-clocks was only used by the legacy Allwinner A10 sunxi clock, and the
-reason its compatible was dropped was that the code supporting the
-legacy sunxi platforms was removed (as the below-mentioned patch set
-highlights) and no other fixed factor clock needed to do the same.
+Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+---
+ drivers/clk/clk-fixed-factor.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-https://lore.kernel.org/lkml/20220531051742.43273-1-samuel@sholland.org/T/
-
-
-The current patch series adds "ti,k3-am62-oldi-clk-div" (TI's display
-subsystem (DSS) clock for the 1st videoport (vp0) on the AM625 SoC) as
-a fixed factor clock and further, it also re-introduces the same support
-to set the CLK_SET_RATE_PARENT flag.
-
-Based on the clock-set request from DSS (equivalent to pixel frequency),
-this clock asks its parent for a serial clock (with 7 times the pixel
-frequrncy), which is required for the generation of serial LVDS signals.
-This clock thus requires the CLK_SET_RATE_PARENT flag to be set, in
-order to propagate the set clock-rate request to its parent clock.
-
-Aradhya Bhatia (2):
-  dt-bindings: clock: fixed-factor: Add TI AM62 SoC OLDI clock
-  clk: fixed-factor: Re-introduce support for clocks to set parent
-    clock-rate
-
- .../devicetree/bindings/clock/fixed-factor-clock.yaml |  1 +
- drivers/clk/clk-fixed-factor.c                        | 11 ++++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index f734e34735a9..1a78e2d870dd 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -245,10 +245,16 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+ 
+ #ifdef CONFIG_OF
++static const struct of_device_id set_rate_parent_matches[] = {
++	{ .compatible = "ti,k3-am62-oldi-clk-div" },
++	{ /* Sentinel */ },
++};
++
+ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ {
+ 	struct clk_hw *hw;
+ 	const char *clk_name = node->name;
++	unsigned long flags = 0;
+ 	u32 div, mult;
+ 	int ret;
+ 
+@@ -264,10 +270,13 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ 		return ERR_PTR(-EIO);
+ 	}
+ 
++	if (of_match_node(set_rate_parent_matches, node))
++		flags |= CLK_SET_RATE_PARENT;
++
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 
+ 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0,
+-					    0, mult, div, false);
++					    flags, mult, div, false);
+ 	if (IS_ERR(hw)) {
+ 		/*
+ 		 * Clear OF_POPULATED flag so that clock registration can be
 -- 
 2.39.0
 
