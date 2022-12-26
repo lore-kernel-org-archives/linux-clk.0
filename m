@@ -2,245 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAD2C4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 00:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C06FC3DA79
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Dec 2022 04:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbiLZAyh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Dec 2022 19:54:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53336 "EHLO
+        id S231572AbiLZEV7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Dec 2022 23:21:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbiLZAyg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 19:54:36 -0500
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99775101F
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 16:54:34 -0800 (PST)
-Received: by mail-yb1-xb2e.google.com with SMTP id e141so10560342ybh.3
-        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 16:54:34 -0800 (PST)
+        with ESMTP id S229748AbiLZEV6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Dec 2022 23:21:58 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49F25F0E
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:21:57 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id j17so5171588lfr.3
+        for <linux-clk@vger.kernel.org>; Sun, 25 Dec 2022 20:21:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EySMm2yHyan1KtzkpjHPhtjwc1DPUZ8nt91Q3dCNhcU=;
-        b=LKOMKPU36QHeSUEzwm0YnSwrR/M/z7XkhBb/M89D8iZEkfAq5La/EeWAh8tCQrsIlc
-         863aMtRg6szyzyK2b3GsO2KFxUYkBlyRKkHEPXjHR8kW0+cYANuwW64sLtfIUmUeIqB0
-         xOVUXGNF+hN3T5QVSEGBSGFsxUBWEhCfKVUuUGPRETunXA6uTzlHhkzWCZcBirWWwLnG
-         WOx+h1mD4Vtf1QrYxIPTCJKioSSZOgmpEcObJrMczToe30WAFcbRMHbRLpVfUR2fJHh4
-         8lqvAX3gxpCPCxxYEkbxx2Cd16cgLZF6bp9ovobsZsUpbvPBEhWRy42cY7wmCDVvQl9c
-         O8VQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3SEVXCpqtMQ7g1JXR22/XO6zUi+AE7nM2fHDOiRODo=;
+        b=xsINPV2IWkJHhVZvcG4Xea2uI16QV1FXkcXDJrc45h4mPuQxbsvlbrmQBc7Q9u992z
+         M2whfyxRnsO2LhhIzURRkPUdROLDNPIb7k8fdW65l3t82I9HYZQWwsDN7ZV35QIndMX3
+         2qro9LWR7C9YbZi/nPMJD7BD8mPJWeoTRpOP9cib8Cwsj6NJ+P4Xo4rqTndVBvFIz2NS
+         YbrGgB8HXNr9kh6MDdm3KqKMff1JNQ+KZKx2CXT1X7oCbDbWH3nuVjGap3Y+WNE9TbyZ
+         Bi1eDYNPDwghjub+RDxP2sKjLaIPBCthsSTGpbj4XX5Qj394PMkKOjbybigJqwGGIL3X
+         2Qjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EySMm2yHyan1KtzkpjHPhtjwc1DPUZ8nt91Q3dCNhcU=;
-        b=XWW7PvPysRMXy9EWBA554xazWEGjNDwZE96hTXZb42PDqAqwVOXJjKR3UP9S0ouBBe
-         Co1X0mquEzxXQHIr4yFmet6spwBXv/8UyRO4TJojcncHovEkkJPunFDGe5oxqM3ZoVZi
-         BgOpA6hU+y2ahwz+muLatlOfHQBcskRFy2BGPn3OZSE1xA0e3mpYuCEKmlMfwPIOaIo2
-         G6XKqmYq9uSavYjM+mmjZpJsX24h1z3kqO0eNoVKLNbutWP1TOcahcoQPv5Rogx5+sFo
-         OIm8iTwhBZBWnPUwP31xUH/VZOsEecnbEgiFSWzX3ZfHHxXi3MCUIteVKgoxCAL1Gi41
-         4heA==
-X-Gm-Message-State: AFqh2kpIdlAIWeD8utKAZBk5F7PPiXL7KrEXQsR2DRbGdnd0s6rMqg0v
-        cwYbjbX9WJ61BidRKW1yM72IeL+C2HjsPIe1ia8kvg==
-X-Google-Smtp-Source: AMrXdXuaDdBwTwlYJ8bWHJ/ndwWneh+8NrkzyAvRsXYaOwNMwNB3Cy8b2+moM9/DiAoCBn5/yeLFWtZCR0G+y5pRg08=
-X-Received: by 2002:a25:aa0d:0:b0:76d:bea0:8a05 with SMTP id
- s13-20020a25aa0d000000b0076dbea08a05mr856251ybi.153.1672016073586; Sun, 25
- Dec 2022 16:54:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20221225164705.437944-1-abel.vesa@linaro.org>
-In-Reply-To: <20221225164705.437944-1-abel.vesa@linaro.org>
+        bh=+3SEVXCpqtMQ7g1JXR22/XO6zUi+AE7nM2fHDOiRODo=;
+        b=65Uh/M4aStMtPnaoUmNBZRF5p6C0a7tT8z+jRPrpNzdkCTMEeOild23vZOf3hqrVkU
+         FL+FCnPTA098aHMa8y+zsQAixNhFh35y0VNe7wh9PHBSpdT3SmBAm2bbIJJrY1grF8rz
+         oFHTfx/fQrna+UdItNmYTc1Lg0qSjqVqmBbDBbRe6S+qe0nZE/bOjUvo3ePKICecMRVf
+         hfly2wSDRofHFyvDI2/1iOSrygK+CzUT/9fnlQ4f5TwaDvGjilkDyz8Mwh3hp41mYwYS
+         j26VqU1ECrkV9ez8b+f4Br7yTGxdMUsOXriBJJDo8aYRAT+BDpQUaxL1wzZGUUNEUgCs
+         qnmw==
+X-Gm-Message-State: AFqh2kqImrnf5PXNHhOL5Ziyyvz5JAwsnqS9L2z3fpJKXPXqL7f+qKgo
+        QuNJMAjvHQYOW4sbF8jzr8d4ZA==
+X-Google-Smtp-Source: AMrXdXtEyxcUu4KSqzIWG86PCTaQVWmuwiR94Vitd+SGffEoqiqVJMRnodhEC3A62MvlRWU6ZS+Fiw==
+X-Received: by 2002:a05:6512:1688:b0:4ca:fa75:a64a with SMTP id bu8-20020a056512168800b004cafa75a64amr2651323lfb.0.1672028515566;
+        Sun, 25 Dec 2022 20:21:55 -0800 (PST)
+Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id o9-20020ac25e29000000b004b4b5da5f80sm1641129lfg.219.2022.12.25.20.21.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Dec 2022 20:21:55 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 26 Dec 2022 02:54:22 +0200
-Message-ID: <CAA8EJpq0Ea_CEyRXwzoNmyoj7R3nzCpr0nVADB-koo6BTTLuiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: Add generic sync_state callback for disabling
- unused clocks
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 00/16] clk: qcom: gcc-qcs404: convert to parent_data
+Date:   Mon, 26 Dec 2022 06:21:38 +0200
+Message-Id: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 25 Dec 2022 at 18:47, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> There are unused clocks that need to remain untouched by clk_disable_unused,
-> and most likely could be disabled later on sync_state. So provide a generic
-> sync_state callback for the clock providers that register such clocks.
-> Then, use the same mechanism as clk_disable_unused from that generic
-> callback, but pass the device to make sure only the clocks belonging to
-> the current clock provider get disabled, if unused. Also, during the
-> default clk_disable_unused, if the driver that registered the clock has
-> the generic clk_sync_state_disable_unused callback set for sync_state,
-> skip disabling its clocks.
->
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->
-> Changes since v1:
->  * Dropped the 0 returned by __clk_disable_unused when clk_ignore_unused
->    is set.
->  * Dropped __initdata for clk_ignore_unused
->
->  drivers/clk/clk.c            | 59 +++++++++++++++++++++++++++++-------
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 49 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index e62552a75f08..5185b857fc65 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1302,14 +1302,27 @@ static void clk_core_disable_unprepare(struct clk_core *core)
->         clk_core_unprepare_lock(core);
->  }
->
-> -static void __init clk_unprepare_unused_subtree(struct clk_core *core)
-> +static void clk_unprepare_unused_subtree(struct clk_core *core,
-> +                                               struct device *dev)
->  {
-> +       bool from_sync_state = !!dev;
->         struct clk_core *child;
->
->         lockdep_assert_held(&prepare_lock);
->
->         hlist_for_each_entry(child, &core->children, child_node)
-> -               clk_unprepare_unused_subtree(child);
-> +               clk_unprepare_unused_subtree(child, dev);
-> +
-> +       if (from_sync_state && core->dev != dev)
-> +               return;
-> +
-> +       /*
-> +        * clock will be unprepared on sync_state,
-> +        * so leave as is for now
-> +        */
-> +       if (!from_sync_state && dev_has_sync_state(core->dev) &&
-> +               core->dev->driver->sync_state == clk_sync_state_disable_unused)
+This patchset reworks and improves the Qualcomm QCS404 global clock
+controller driver and it's platform usage.
 
-I link the overall approach, but I don't think we should check the
-sync_state function.
-Such a check would disallow a driver to wrap the
-clk_sync_state_disable_unused() into some driver-specific code.
+It fixes some omissions (MDSS and oxili GDSCs, incorrect clock names,
+direct number usage in the qcs404.dtsi). Then it converts the gcc driver
+to use parent_data/parent_hws where prefereable and finally applies
+these features and fixes to the qcs404.dtsi.
 
-> +               return;
->
->         if (core->prepare_count)
->                 return;
-> @@ -1332,15 +1345,28 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
->         clk_pm_runtime_put(core);
->  }
->
-> -static void __init clk_disable_unused_subtree(struct clk_core *core)
-> +static void clk_disable_unused_subtree(struct clk_core *core,
-> +                                       struct device *dev)
->  {
-> +       bool from_sync_state = !!dev;
->         struct clk_core *child;
->         unsigned long flags;
->
->         lockdep_assert_held(&prepare_lock);
->
->         hlist_for_each_entry(child, &core->children, child_node)
-> -               clk_disable_unused_subtree(child);
-> +               clk_disable_unused_subtree(child, dev);
-> +
-> +       if (from_sync_state && core->dev != dev)
-> +               return;
-> +
-> +       /*
-> +        * clock will be disabled on sync_state,
-> +        * so leave as is for now
-> +        */
-> +       if (!from_sync_state &&
-> +               core->dev->driver->sync_state == clk_sync_state_disable_unused)
-> +               return;
->
->         if (core->flags & CLK_OPS_PARENT_ENABLE)
->                 clk_core_prepare_enable(core->parent);
-> @@ -1378,7 +1404,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
->                 clk_core_disable_unprepare(core->parent);
->  }
->
-> -static bool clk_ignore_unused __initdata;
-> +static bool clk_ignore_unused;
->  static int __init clk_ignore_unused_setup(char *__unused)
->  {
->         clk_ignore_unused = true;
-> @@ -1386,35 +1412,46 @@ static int __init clk_ignore_unused_setup(char *__unused)
->  }
->  __setup("clk_ignore_unused", clk_ignore_unused_setup);
->
-> -static int __init clk_disable_unused(void)
-> +static void __clk_disable_unused(struct device *dev)
->  {
->         struct clk_core *core;
->
->         if (clk_ignore_unused) {
->                 pr_warn("clk: Not disabling unused clocks\n");
-> -               return 0;
-> +               return;
->         }
->
->         clk_prepare_lock();
->
->         hlist_for_each_entry(core, &clk_root_list, child_node)
-> -               clk_disable_unused_subtree(core);
-> +               clk_disable_unused_subtree(core, dev);
->
->         hlist_for_each_entry(core, &clk_orphan_list, child_node)
-> -               clk_disable_unused_subtree(core);
-> +               clk_disable_unused_subtree(core, dev);
->
->         hlist_for_each_entry(core, &clk_root_list, child_node)
-> -               clk_unprepare_unused_subtree(core);
-> +               clk_unprepare_unused_subtree(core, dev);
->
->         hlist_for_each_entry(core, &clk_orphan_list, child_node)
-> -               clk_unprepare_unused_subtree(core);
-> +               clk_unprepare_unused_subtree(core, dev);
->
->         clk_prepare_unlock();
-> +}
-> +
-> +static int __init clk_disable_unused(void)
-> +{
-> +       __clk_disable_unused(NULL);
->
->         return 0;
->  }
->  late_initcall_sync(clk_disable_unused);
->
-> +void clk_sync_state_disable_unused(struct device *dev)
-> +{
-> +       __clk_disable_unused(dev);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_sync_state_disable_unused);
-> +
->  static int clk_core_determine_round_nolock(struct clk_core *core,
->                                            struct clk_rate_request *req)
->  {
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 842e72a5348f..cf1adfeaf257 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -720,6 +720,7 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
->                 void __iomem *reg, u8 shift, u8 width,
->                 u8 clk_divider_flags, const struct clk_div_table *table,
->                 spinlock_t *lock);
-> +void clk_sync_state_disable_unused(struct device *dev);
->  /**
->   * clk_register_divider - register a divider clock with the clock framework
->   * @dev: device registering this clock
-> --
-> 2.34.1
->
+Dependency: [1] (for the qcs404.dtsi changes only)
 
+[1] https://lore.kernel.org/linux-arm-msm/20221226031059.2563165-1-dmitry.baryshkov@linaro.org
+
+Changes since v1:
+- Reworked the patchset to use indices for the clocks rather than fw
+  names (suggested by Konrad)
+- Added a patch to add the xo clock to the rpmcc node.
+
+Dmitry Baryshkov (16):
+  dt-bindings: clock: qcom: gcc-qcs404: add two GDSC entries
+  dt-bindings: clock: qcom: gcc-qcs404: switch to gcc.yaml
+  dt-bindings: clock: qcom: gcc-qcs404: define clocks/clock-names for
+    QCS404
+  clk: qcom: gcc-qcs404: use ARRAY_SIZE instead of specifying
+    num_parents
+  clk: qcom: gcc-qcs404: disable gpll[04]_out_aux parents
+  clk: qcom: gcc-qcs404: fix names of the DSI clocks used as parents
+  clk: qcom: gcc-qcs404: fix the name of the HDMI PLL clock
+  clk: qcom: gcc-qcs404: get rid of the test clock
+  clk: qcom: gcc-qcs404: move PLL clocks up
+  clk: qcom: gcc-qcs404: use parent_hws/_data instead of parent_names
+  clk: qcom: gcc-qcs404: sort out the cxo clock
+  clk: qcom: gcc-qcs404: add support for GDSCs
+  arm64: dts: qcom: qcs404: use symbol names for PCIe resets
+  arm64: dts: qcom: qcs404: add power-domains-cells to gcc node
+  arm64: dts: qcom: qcs404: add clocks to the gcc node
+  arm64: dts: qcom: qcs404: add xo clock to rpm clock controller
+
+ .../bindings/clock/qcom,gcc-qcs404.yaml       |  38 +-
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  22 +-
+ drivers/clk/qcom/gcc-qcs404.c                 | 841 +++++++++---------
+ include/dt-bindings/clock/qcom,gcc-qcs404.h   |   4 +
+ 4 files changed, 455 insertions(+), 450 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.35.1
+
