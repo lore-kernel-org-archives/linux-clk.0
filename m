@@ -2,59 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C402C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 12:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F16C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 13:04:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbiL0Mbs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Dec 2022 07:31:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41696 "EHLO
+        id S231527AbiL0NEO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Dec 2022 08:04:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiL0Mbr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 07:31:47 -0500
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42EED386
-        for <linux-clk@vger.kernel.org>; Tue, 27 Dec 2022 04:31:46 -0800 (PST)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-43ea87d0797so182320697b3.5
-        for <linux-clk@vger.kernel.org>; Tue, 27 Dec 2022 04:31:46 -0800 (PST)
+        with ESMTP id S229873AbiL0NEN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 08:04:13 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8008654E
+        for <linux-clk@vger.kernel.org>; Tue, 27 Dec 2022 05:04:12 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id bf43so19547162lfb.6
+        for <linux-clk@vger.kernel.org>; Tue, 27 Dec 2022 05:04:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+tl/MMO0LNH8CVE2OF2niAolP3jhRwKfQCRDYekLpNQ=;
-        b=zazgU0tXivH1SJAdqyqhQxpuVq3FENTRmfluatcJcxkl+XXOcYzDvqyF1taChqBxhV
-         DlO7vFZ095SKfSxgW/kgXKvANzWsIjExJg4UJsmn3MgrRhxZLU0iOnAWZcubpzHNRlkS
-         s3VdqO/klkDV9R208rDTm1c5ImlOa37awJMp494OFxluVQy9TsiehcqIt+qoHTNJfWJd
-         dASkaDn9rok8Heh+zuvyZvnZvcChk+gQ9oF0hGt2Q8Lwk1iZpnsyoPyCGb1RBwrIk+G4
-         sKnS8uG36+09mMdOHAylAHTxWQnfjpp0wLaSi49R7itpwkjbihF7z1HLDawAfjD8rFLd
-         Ehig==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qzvnqvpfZxu7B6kg0qSsGJfAG0LQru6+OuRh723noP4=;
+        b=lcM8TBfDGcFAIkWxg1oXJFAveTT1wDlhgbYoRMHLM32fkuXuk5cwJ0MwcnPOzaJQn9
+         yPX4grQok8/rcQrLNHb2ItB7WyWFo/9dH8dUAzGsG0U1CjToL+ZNgEXWy2pJoCK6cL9i
+         L5EEcP0qeiEkZe83BYl2OyVLNMS1UZfTy52faJ2s3vaJDBgx8WHYlp1/gXb381fpjRrw
+         i/p89WkmiWpUtc4mCXxsSma2uWk/t4h70H5zFARfL7jJz+p5v3EWS+zQLpJtDATFr9bG
+         x/BNmRKqR5HY/DqQsStLRHNMjo9hpOEvBWJw7qF9sLOGdecv6//4eMEwNR/QNyh7K4iR
+         7vHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+tl/MMO0LNH8CVE2OF2niAolP3jhRwKfQCRDYekLpNQ=;
-        b=58jQJnQQgSPRX7ie50SRf8enOxZYvukl6wvhQls5vqZLoFhlKksax7PmYa/RoP6f/3
-         /N1rA9Xvw4W7FfJoaNN0Gff6Uj2jRq6V21lR1ULRywmHfYKq9x6stRJcyksyDWiFYpwZ
-         WddsjMjMcWOnJ7NCafvSDinohbQ5IBuXPgZffonoLT32QhrONYyJi+YrhQ3JGeRXfd5m
-         yaw7cGHGE6uPyTE51wlgjteJymAyvaMH7xCYBdhlhxKBsRVkm09GbsiTGUluUEwQGaNU
-         enav/sPNW9zhQv9qXTiVCP8/q0PG1CTXcNNi4ncVCfpxihCD2efFq078d4QyQr/h8aW7
-         NITQ==
-X-Gm-Message-State: AFqh2kpjxYD1miBzIh3DZsiUTd13EV9fikk7Vu58ysjNxLRWtY9bTNHY
-        SkO+HePSy+xZ6yxSWlXHvK9MnCZbkN4lkL7qfT13NA==
-X-Google-Smtp-Source: AMrXdXufhet8xX2NEFv1dVmYX+HK7Wb2Pg01cOuGbRe8PqvIJtBO5ThL/Pjudw04zzo3ow3Ah0J0YglvG4PYKEGdsyw=
-X-Received: by 2002:a0d:e64a:0:b0:3c0:c065:7608 with SMTP id
- p71-20020a0de64a000000b003c0c0657608mr3352010ywe.378.1672144305428; Tue, 27
- Dec 2022 04:31:45 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qzvnqvpfZxu7B6kg0qSsGJfAG0LQru6+OuRh723noP4=;
+        b=oeBktPHKNberLnR3sAfMg9X+/1Fv8t0OtZk+wxyOCZA8l260VdReOXOkyLJXL2A1Jq
+         roNOsYgB77kXLSj5XPbvHbQ6sQQG6tEzBBG69OuZuO79YnnFS0i0JRynM1GD6teDqWkq
+         8GdJVNPw0ET3TBM0xlJ64fXxCiSlhicJ6+VvXfZAu0DmkAfVkgvDjUwLx1MGOlV7O31k
+         Ax/Q5nWVrXuOKQbXZKBfYLaQHXtoDVV7/56gVMtvFPBMqcg5S1ldEh0RpNBhwN8Q/fRE
+         jbGPGeqH2kr2ckmiwIl0RCNTNQD5QhVhaZ6lX9nzRsJvX5QXl8o19CdW9VWdMG0PGZpF
+         UdIQ==
+X-Gm-Message-State: AFqh2kpnPD5ERmeWQh11NXMMOWpl2zEVLrYyNs3gny1OKyu4EKxuyxO2
+        UUGhrXdXRYFdeS6exZqwzfksgg==
+X-Google-Smtp-Source: AMrXdXvY7JMniZ9MhKJxM4RFSmwoLcWJ7DaLanG9fsVliw3zc2taRQ0iQ2th+W2Ktkt0tTyWoOfSdg==
+X-Received: by 2002:ac2:5ec9:0:b0:4b5:b6e8:bb53 with SMTP id d9-20020ac25ec9000000b004b5b6e8bb53mr5742473lfq.24.1672146250976;
+        Tue, 27 Dec 2022 05:04:10 -0800 (PST)
+Received: from [192.168.1.101] (abyl184.neoplus.adsl.tpnet.pl. [83.9.31.184])
+        by smtp.gmail.com with ESMTPSA id be33-20020a056512252100b004b56de48f05sm2221142lfb.27.2022.12.27.05.04.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Dec 2022 05:04:10 -0800 (PST)
+Message-ID: <cf82c812-eafa-aa55-3958-44080da1b1d5@linaro.org>
+Date:   Tue, 27 Dec 2022 14:04:07 +0100
 MIME-Version: 1.0
-References: <20221227013225.2847382-1-dmitry.baryshkov@linaro.org>
- <20221227013225.2847382-13-dmitry.baryshkov@linaro.org> <a6622a6c-7378-4f3a-a34b-1227c51a3326@linaro.org>
-In-Reply-To: <a6622a6c-7378-4f3a-a34b-1227c51a3326@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 27 Dec 2022 14:31:34 +0200
-Message-ID: <CAA8EJpp0PJgrCv1oaeaDfhVq36X-XgXDTHvXjO97rQfaKyiPng@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
 Subject: Re: [RFC PATCH 12/12] ARM: dts: qcom: apq8084: add clocks and
  clock-names to gcc device
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -64,75 +67,85 @@ Cc:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20221227013225.2847382-1-dmitry.baryshkov@linaro.org>
+ <20221227013225.2847382-13-dmitry.baryshkov@linaro.org>
+ <a6622a6c-7378-4f3a-a34b-1227c51a3326@linaro.org>
+ <CAA8EJpp0PJgrCv1oaeaDfhVq36X-XgXDTHvXjO97rQfaKyiPng@mail.gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAA8EJpp0PJgrCv1oaeaDfhVq36X-XgXDTHvXjO97rQfaKyiPng@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 27 Dec 2022 at 14:08, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
->
->
-> On 27.12.2022 02:32, Dmitry Baryshkov wrote:
-> > Add clocks and clock-names nodes to the gcc device to bind clocks using
-> > the DT links.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->
-> Though - again at the end of reviewing - I noticed you could have
-> gone .index instead, like with qcs404.
-
-QCS404 driver was in a good shape, so I doubt there will be any
-significant changes for the bindings. On the other hand the apq8084 is
-in such a flux state, that I can easily imagine getting additional
-clock parents and/or removing existing parents. This can better be
-coped with by using the clock-names instead of indices. For example,
-see my comment regarding the pcie pipe clocks. I fear that apq8084 was
-not seriously touched for the last 5 years. And even back in those
-days not everything was plumbed together. None of MMCC (and thus
-display, camera, venus), SATA, PCIe are present in the
-qcom-apq8084.dtsi.
-
->
-> Konrad
->
-> >  arch/arm/boot/dts/qcom-apq8084.dtsi | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
-> > index fe30abfff90a..815b6c53f7b8 100644
-> > --- a/arch/arm/boot/dts/qcom-apq8084.dtsi
-> > +++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
-> > @@ -388,6 +388,24 @@ gcc: clock-controller@fc400000 {
-> >                       #reset-cells = <1>;
-> >                       #power-domain-cells = <1>;
-> >                       reg = <0xfc400000 0x4000>;
-> > +                     clocks = <&xo_board>,
-> > +                              <&sleep_clk>,
-> > +                              <0>, /* ufs */
-> > +                              <0>,
-> > +                              <0>,
-> > +                              <0>,
-> > +                              <0>, /* sata */
-> > +                              <0>,
-> > +                              <0>; /* pcie */
-> > +                     clock-names = "xo",
-> > +                                   "sleep_clk",
-> > +                                   "ufs_rx_symbol_0_clk_src",
-> > +                                   "ufs_rx_symbol_1_clk_src",
-> > +                                   "ufs_tx_symbol_0_clk_src",
-> > +                                   "ufs_tx_symbol_1_clk_src",
-> > +                                   "sata_asic0_clk",
-> > +                                   "sata_rx_clk",
-> > +                                   "pcie_pipe";
-> >               };
-> >
-> >               tcsr_mutex: hwlock@fd484000 {
 
 
+On 27.12.2022 13:31, Dmitry Baryshkov wrote:
+> On Tue, 27 Dec 2022 at 14:08, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>>
+>>
+>> On 27.12.2022 02:32, Dmitry Baryshkov wrote:
+>>> Add clocks and clock-names nodes to the gcc device to bind clocks using
+>>> the DT links.
+>>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>> Though - again at the end of reviewing - I noticed you could have
+>> gone .index instead, like with qcs404.
+> 
+> QCS404 driver was in a good shape, so I doubt there will be any
+> significant changes for the bindings. On the other hand the apq8084 is
+> in such a flux state, that I can easily imagine getting additional
+> clock parents and/or removing existing parents. This can better be
+> coped with by using the clock-names instead of indices. For example,
+> see my comment regarding the pcie pipe clocks. I fear that apq8084 was
+> not seriously touched for the last 5 years. And even back in those
+> days not everything was plumbed together. None of MMCC (and thus
+> display, camera, venus), SATA, PCIe are present in the
+> qcom-apq8084.dtsi.
+Sure, sounds reasonable!
 
--- 
-With best wishes
-Dmitry
+Konrad
+> 
+>>
+>> Konrad
+>>
+>>>  arch/arm/boot/dts/qcom-apq8084.dtsi | 18 ++++++++++++++++++
+>>>  1 file changed, 18 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
+>>> index fe30abfff90a..815b6c53f7b8 100644
+>>> --- a/arch/arm/boot/dts/qcom-apq8084.dtsi
+>>> +++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
+>>> @@ -388,6 +388,24 @@ gcc: clock-controller@fc400000 {
+>>>                       #reset-cells = <1>;
+>>>                       #power-domain-cells = <1>;
+>>>                       reg = <0xfc400000 0x4000>;
+>>> +                     clocks = <&xo_board>,
+>>> +                              <&sleep_clk>,
+>>> +                              <0>, /* ufs */
+>>> +                              <0>,
+>>> +                              <0>,
+>>> +                              <0>,
+>>> +                              <0>, /* sata */
+>>> +                              <0>,
+>>> +                              <0>; /* pcie */
+>>> +                     clock-names = "xo",
+>>> +                                   "sleep_clk",
+>>> +                                   "ufs_rx_symbol_0_clk_src",
+>>> +                                   "ufs_rx_symbol_1_clk_src",
+>>> +                                   "ufs_tx_symbol_0_clk_src",
+>>> +                                   "ufs_tx_symbol_1_clk_src",
+>>> +                                   "sata_asic0_clk",
+>>> +                                   "sata_rx_clk",
+>>> +                                   "pcie_pipe";
+>>>               };
+>>>
+>>>               tcsr_mutex: hwlock@fd484000 {
+> 
+> 
+> 
