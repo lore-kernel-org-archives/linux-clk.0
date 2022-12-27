@@ -2,150 +2,281 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F16C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 13:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A1BC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 13:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231527AbiL0NEO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Dec 2022 08:04:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49208 "EHLO
+        id S229679AbiL0NWZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Dec 2022 08:22:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbiL0NEN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 08:04:13 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8008654E
-        for <linux-clk@vger.kernel.org>; Tue, 27 Dec 2022 05:04:12 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id bf43so19547162lfb.6
-        for <linux-clk@vger.kernel.org>; Tue, 27 Dec 2022 05:04:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qzvnqvpfZxu7B6kg0qSsGJfAG0LQru6+OuRh723noP4=;
-        b=lcM8TBfDGcFAIkWxg1oXJFAveTT1wDlhgbYoRMHLM32fkuXuk5cwJ0MwcnPOzaJQn9
-         yPX4grQok8/rcQrLNHb2ItB7WyWFo/9dH8dUAzGsG0U1CjToL+ZNgEXWy2pJoCK6cL9i
-         L5EEcP0qeiEkZe83BYl2OyVLNMS1UZfTy52faJ2s3vaJDBgx8WHYlp1/gXb381fpjRrw
-         i/p89WkmiWpUtc4mCXxsSma2uWk/t4h70H5zFARfL7jJz+p5v3EWS+zQLpJtDATFr9bG
-         x/BNmRKqR5HY/DqQsStLRHNMjo9hpOEvBWJw7qF9sLOGdecv6//4eMEwNR/QNyh7K4iR
-         7vHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qzvnqvpfZxu7B6kg0qSsGJfAG0LQru6+OuRh723noP4=;
-        b=oeBktPHKNberLnR3sAfMg9X+/1Fv8t0OtZk+wxyOCZA8l260VdReOXOkyLJXL2A1Jq
-         roNOsYgB77kXLSj5XPbvHbQ6sQQG6tEzBBG69OuZuO79YnnFS0i0JRynM1GD6teDqWkq
-         8GdJVNPw0ET3TBM0xlJ64fXxCiSlhicJ6+VvXfZAu0DmkAfVkgvDjUwLx1MGOlV7O31k
-         Ax/Q5nWVrXuOKQbXZKBfYLaQHXtoDVV7/56gVMtvFPBMqcg5S1ldEh0RpNBhwN8Q/fRE
-         jbGPGeqH2kr2ckmiwIl0RCNTNQD5QhVhaZ6lX9nzRsJvX5QXl8o19CdW9VWdMG0PGZpF
-         UdIQ==
-X-Gm-Message-State: AFqh2kpnPD5ERmeWQh11NXMMOWpl2zEVLrYyNs3gny1OKyu4EKxuyxO2
-        UUGhrXdXRYFdeS6exZqwzfksgg==
-X-Google-Smtp-Source: AMrXdXvY7JMniZ9MhKJxM4RFSmwoLcWJ7DaLanG9fsVliw3zc2taRQ0iQ2th+W2Ktkt0tTyWoOfSdg==
-X-Received: by 2002:ac2:5ec9:0:b0:4b5:b6e8:bb53 with SMTP id d9-20020ac25ec9000000b004b5b6e8bb53mr5742473lfq.24.1672146250976;
-        Tue, 27 Dec 2022 05:04:10 -0800 (PST)
-Received: from [192.168.1.101] (abyl184.neoplus.adsl.tpnet.pl. [83.9.31.184])
-        by smtp.gmail.com with ESMTPSA id be33-20020a056512252100b004b56de48f05sm2221142lfb.27.2022.12.27.05.04.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Dec 2022 05:04:10 -0800 (PST)
-Message-ID: <cf82c812-eafa-aa55-3958-44080da1b1d5@linaro.org>
-Date:   Tue, 27 Dec 2022 14:04:07 +0100
+        with ESMTP id S229542AbiL0NWY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 08:22:24 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E94AB1D5;
+        Tue, 27 Dec 2022 05:22:22 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BRCQWqW029614;
+        Tue, 27 Dec 2022 13:22:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=FEkD/7L2yqfIqCP6f0tA+4AwwCo2FoWeZcYtHNDZaHk=;
+ b=Uh2byEhV323wMlr5kuSG9wXhEC98n18qCTGrTOmiPGjrYeYhQ2AMz6Qaw6+0EQECNPC9
+ ih1u8ijWOSXStEqSog5SMh+VN+/CzKM3PH/DbOmkvxCIgjzPGxuslUHao7BE/NSDPCcc
+ OQecDpS6XRmrERItASppVIozhnxB4HuKoW6dz+EVDYmrYz+pFxWj2SRKNGnir4SeVJ9s
+ FiHInf/f65SqNEYVn0gimc0MCQhaimwVCbWFPjqvjZ6RFeNINquj+4BNWGySGVB2O88W
+ ZkHNddDefhAx/sBayOZxamIZFhrEyQIOdZIaA+s8/BQxHbvuu10sTj1vfS5PXAiVtU9T xw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mnpsvnatv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Dec 2022 13:22:18 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BRDMH7Y031915
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Dec 2022 13:22:17 GMT
+Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Tue, 27 Dec 2022 05:22:14 -0800
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan R <quic_srichara@quicinc.com>,
+        Kathiravan T <quic_kathirav@quicinc.com>
+Subject: [PATCH] clk: qcom: clk-alpha-pll: Add support for Stromer PLLs
+Date:   Tue, 27 Dec 2022 18:51:55 +0530
+Message-ID: <20221227132155.1386-1-quic_kathirav@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RFC PATCH 12/12] ARM: dts: qcom: apq8084: add clocks and
- clock-names to gcc device
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20221227013225.2847382-1-dmitry.baryshkov@linaro.org>
- <20221227013225.2847382-13-dmitry.baryshkov@linaro.org>
- <a6622a6c-7378-4f3a-a34b-1227c51a3326@linaro.org>
- <CAA8EJpp0PJgrCv1oaeaDfhVq36X-XgXDTHvXjO97rQfaKyiPng@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAA8EJpp0PJgrCv1oaeaDfhVq36X-XgXDTHvXjO97rQfaKyiPng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8QF3W2glX1RTMzU0_3CRGKOtr_lcO3yj
+X-Proofpoint-ORIG-GUID: 8QF3W2glX1RTMzU0_3CRGKOtr_lcO3yj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-27_09,2022-12-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1011 bulkscore=0 adultscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212270110
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
 
+Add programming sequence support for managing the Stromer
+PLLs.
 
-On 27.12.2022 13:31, Dmitry Baryshkov wrote:
-> On Tue, 27 Dec 2022 at 14:08, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->>
->>
->> On 27.12.2022 02:32, Dmitry Baryshkov wrote:
->>> Add clocks and clock-names nodes to the gcc device to bind clocks using
->>> the DT links.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>
->> Though - again at the end of reviewing - I noticed you could have
->> gone .index instead, like with qcs404.
-> 
-> QCS404 driver was in a good shape, so I doubt there will be any
-> significant changes for the bindings. On the other hand the apq8084 is
-> in such a flux state, that I can easily imagine getting additional
-> clock parents and/or removing existing parents. This can better be
-> coped with by using the clock-names instead of indices. For example,
-> see my comment regarding the pcie pipe clocks. I fear that apq8084 was
-> not seriously touched for the last 5 years. And even back in those
-> days not everything was plumbed together. None of MMCC (and thus
-> display, camera, venus), SATA, PCIe are present in the
-> qcom-apq8084.dtsi.
-Sure, sounds reasonable!
+Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
+Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+---
+Changes since V2:
+	- splitted this patch from IPQ5018 series[1]
+	- Rebased on linux-6.2-rc1
+[1]
+https://lore.kernel.org/linux-arm-msm/20220621161126.15883-1-quic_srichara@quicinc.com/
 
-Konrad
-> 
->>
->> Konrad
->>
->>>  arch/arm/boot/dts/qcom-apq8084.dtsi | 18 ++++++++++++++++++
->>>  1 file changed, 18 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
->>> index fe30abfff90a..815b6c53f7b8 100644
->>> --- a/arch/arm/boot/dts/qcom-apq8084.dtsi
->>> +++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
->>> @@ -388,6 +388,24 @@ gcc: clock-controller@fc400000 {
->>>                       #reset-cells = <1>;
->>>                       #power-domain-cells = <1>;
->>>                       reg = <0xfc400000 0x4000>;
->>> +                     clocks = <&xo_board>,
->>> +                              <&sleep_clk>,
->>> +                              <0>, /* ufs */
->>> +                              <0>,
->>> +                              <0>,
->>> +                              <0>,
->>> +                              <0>, /* sata */
->>> +                              <0>,
->>> +                              <0>; /* pcie */
->>> +                     clock-names = "xo",
->>> +                                   "sleep_clk",
->>> +                                   "ufs_rx_symbol_0_clk_src",
->>> +                                   "ufs_rx_symbol_1_clk_src",
->>> +                                   "ufs_tx_symbol_0_clk_src",
->>> +                                   "ufs_tx_symbol_1_clk_src",
->>> +                                   "sata_asic0_clk",
->>> +                                   "sata_rx_clk",
->>> +                                   "pcie_pipe";
->>>               };
->>>
->>>               tcsr_mutex: hwlock@fd484000 {
-> 
-> 
-> 
+ drivers/clk/qcom/clk-alpha-pll.c | 100 ++++++++++++++++++++++++++++++-
+ drivers/clk/qcom/clk-alpha-pll.h |   7 ++-
+ 2 files changed, 105 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index f9e4cfd7261c..29866100df08 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -204,9 +204,24 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_CONFIG_CTL] = 0x1C,
+ 		[PLL_OFF_STATUS] = 0x20,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_STROMER] = {
++		[PLL_OFF_L_VAL] = 0x08,
++		[PLL_OFF_ALPHA_VAL] = 0x10,
++		[PLL_OFF_ALPHA_VAL_U] = 0x14,
++		[PLL_OFF_USER_CTL] = 0x18,
++		[PLL_OFF_USER_CTL_U] = 0x1c,
++		[PLL_OFF_CONFIG_CTL] = 0x20,
++		[PLL_OFF_CONFIG_CTL_U] = 0xff,
++		[PLL_OFF_TEST_CTL] = 0x30,
++		[PLL_OFF_TEST_CTL_U] = 0x34,
++		[PLL_OFF_STATUS] = 0x28,
++	},
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ 
++static unsigned long
++alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
++		     u32 alpha_width);
+ /*
+  * Even though 40 bits are present, use only 32 for ease of calculation.
+  */
+@@ -215,6 +230,8 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ #define ALPHA_BITWIDTH		32U
+ #define ALPHA_SHIFT(w)		min(w, ALPHA_BITWIDTH)
+ 
++#define	ALPHA_PLL_STATUS_REG_SHIFT	8
++
+ #define PLL_HUAYRA_M_WIDTH		8
+ #define PLL_HUAYRA_M_SHIFT		8
+ #define PLL_HUAYRA_M_MASK		0xff
+@@ -325,7 +342,7 @@ static void clk_alpha_pll_write_config(struct regmap *regmap, unsigned int reg,
+ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 			     const struct alpha_pll_config *config)
+ {
+-	u32 val, mask;
++	u32 val, val_u, mask, mask_u;
+ 
+ 	regmap_write(regmap, PLL_L_VAL(pll), config->l);
+ 	regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+@@ -355,14 +372,85 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	mask |= config->pre_div_mask;
+ 	mask |= config->post_div_mask;
+ 	mask |= config->vco_mask;
++	mask |= config->alpha_en_mask;
++	mask |= config->alpha_mode_mask;
+ 
+ 	regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
+ 
++	/* Stromer APSS PLL does not enable LOCK_DET by default, so enable it */
++	val_u = config->status_reg_val << ALPHA_PLL_STATUS_REG_SHIFT;
++	val_u |= config->lock_det;
++
++	mask_u = config->status_reg_mask;
++	mask_u |= config->lock_det;
++
++	if (val_u)
++		regmap_update_bits(regmap, PLL_USER_CTL_U(pll), mask_u, val_u);
++
++	if (config->test_ctl_val)
++		regmap_write(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
++
++	if (config->test_ctl_hi_val)
++		regmap_write(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
++
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+ 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+ }
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
+ 
++static int clk_alpha_pll_stromer_determine_rate(struct clk_hw *hw,
++						struct clk_rate_request *req)
++{
++	u32 l;
++	u64 a;
++
++	req->rate = alpha_pll_round_rate(req->rate, req->best_parent_rate,
++					 &l, &a, ALPHA_REG_BITWIDTH);
++
++	return 0;
++}
++
++static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned long rate,
++					  unsigned long prate)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 l;
++	int ret;
++	u64 a;
++
++	rate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_BITWIDTH);
++
++	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
++	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
++	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
++		     a >> ALPHA_BITWIDTH);
++
++	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
++			   PLL_ALPHA_EN, PLL_ALPHA_EN);
++
++	if (!clk_hw_is_enabled(hw))
++		return 0;
++
++	/*
++	 * Stromer PLL supports Dynamic programming.
++	 * It allows the PLL frequency to be changed on-the-fly without first
++	 * execution of a shutdown procedure followed by a bring up procedure.
++	 */
++
++	regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE,
++			   PLL_UPDATE);
++
++	ret = wait_for_pll_update(pll);
++	if (ret)
++		return ret;
++
++	ret = wait_for_pll_enable_lock(pll);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ {
+ 	int ret;
+@@ -1013,6 +1101,16 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
+ 
++const struct clk_ops clk_alpha_pll_stromer_ops = {
++	.enable = clk_alpha_pll_enable,
++	.disable = clk_alpha_pll_disable,
++	.is_enabled = clk_alpha_pll_is_enabled,
++	.recalc_rate = clk_alpha_pll_recalc_rate,
++	.determine_rate = clk_alpha_pll_stromer_determine_rate,
++	.set_rate = clk_alpha_pll_stromer_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_ops);
++
+ const struct clk_ops clk_alpha_pll_fixed_trion_ops = {
+ 	.enable = clk_trion_pll_enable,
+ 	.disable = clk_trion_pll_disable,
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 2bdae362c827..1d122919e275 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-/* Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved. */
++/* Copyright (c) 2015, 2018, 2021 The Linux Foundation. All rights reserved. */
+ 
+ #ifndef __QCOM_CLK_ALPHA_PLL_H__
+ #define __QCOM_CLK_ALPHA_PLL_H__
+@@ -22,6 +22,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
+ 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
++	CLK_ALPHA_PLL_TYPE_STROMER,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
+ };
+ 
+@@ -131,6 +132,9 @@ struct alpha_pll_config {
+ 	u32 post_div_mask;
+ 	u32 vco_val;
+ 	u32 vco_mask;
++	u32 status_reg_val;
++	u32 status_reg_mask;
++	u32 lock_det;
+ };
+ 
+ extern const struct clk_ops clk_alpha_pll_ops;
+@@ -139,6 +143,7 @@ extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_ops;
+ extern const struct clk_ops clk_alpha_pll_huayra_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_ro_ops;
++extern const struct clk_ops clk_alpha_pll_stromer_ops;
+ 
+ extern const struct clk_ops clk_alpha_pll_fabia_ops;
+ extern const struct clk_ops clk_alpha_pll_fixed_fabia_ops;
+-- 
+2.17.1
+
