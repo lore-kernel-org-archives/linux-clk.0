@@ -2,72 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 526F4C10F1B
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 16:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69258C4708E
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 18:04:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbiL0Q0z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Dec 2022 11:26:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53786 "EHLO
+        id S229566AbiL0SEL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Dec 2022 13:04:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiL0Q0x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 11:26:53 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEAD1DCC;
-        Tue, 27 Dec 2022 08:26:51 -0800 (PST)
-X-UUID: cc90011234494054a1a5540588d6def0-20221228
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=BMLmRnYKe0DUjWE9KTZYR6ehi2COBaLIxPdbImhUBAk=;
-        b=QO/GzbbAw4+qVjaPKCA9/GMUlhgaxwOzTMNumMtXL3xDdXD/EPTMRbhWeJD9AYUQhZ0KLqpvMBDCH55NAyXnHZXSDcysqvrfInwYz88P36/v2sShiIPhFGYMVav+P0A87qVe5jOxOOwCWe83chu29Ni0Vu3pY4C4agI+CyGzLvk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.14,REQID:c78b6fa0-49df-4fcc-9434-98409bea0297,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:95
-X-CID-INFO: VERSION:1.1.14,REQID:c78b6fa0-49df-4fcc-9434-98409bea0297,IP:0,URL
-        :0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTION
-        :quarantine,TS:95
-X-CID-META: VersionHash:dcaaed0,CLOUDID:143e1bf4-ff42-4fb0-b929-626456a83c14,B
-        ulkID:221228001822VHAH938K,BulkQuantity:9,Recheck:0,SF:28|17|19|48,TC:nil,
-        Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:40,QS:nil,BEC:nil,COL:0
-X-UUID: cc90011234494054a1a5540588d6def0-20221228
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1338281518; Wed, 28 Dec 2022 00:26:46 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Wed, 28 Dec 2022 00:26:45 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 28 Dec 2022 00:26:45 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <miles.chen@mediatek.com>
-CC:     <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
-        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
-        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
-        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <msp@baylibre.com>, <mturquette@baylibre.com>,
-        <nfraprado@collabora.com>, <pablo.sun@mediatek.com>,
-        <rex-bc.chen@mediatek.com>, <robh+dt@kernel.org>,
-        <ryder.lee@kernel.org>, <sam.shih@mediatek.com>,
-        <sboyd@kernel.org>, <weiyi.lu@mediatek.com>, <wenst@chromium.org>,
-        <y.oudjana@protonmail.com>, <yangyingliang@huawei.com>
-Subject: Re: [PATCH v2 12/23] clk: mediatek: clk-mtk: Extend mtk_clk_simple_probe()
-Date:   Wed, 28 Dec 2022 00:26:45 +0800
-Message-ID: <20221227162645.18483-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20221227161820.18186-1-miles.chen@mediatek.com>
-References: <20221227161820.18186-1-miles.chen@mediatek.com>
+        with ESMTP id S229742AbiL0SEJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 13:04:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3AF92706;
+        Tue, 27 Dec 2022 10:04:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 92196B8113A;
+        Tue, 27 Dec 2022 18:04:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79196C433F0;
+        Tue, 27 Dec 2022 18:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672164246;
+        bh=6WyKMNXhf2SQbsWTG/h7dwiMw1LXD9aP/E86/YvSFQ0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZYabOlnVDelbt39gVfFIQZgcVNpq06SPPY/N5LHf6cpP2NqKx98DRAO1hjpgYv37P
+         9Nq2HO/yB4vBcgWH/tJoZGi6zT2iAODgv1/0/ITHPJhl50eCBXhab7yPqzNiUkva5j
+         GNRFw/stsg8nSY+OYz8h82Ord9P8IgoV+VvOec1wNgD5w0zX1e+kiyVCE6S6qMLAMe
+         PP3MrO7k3RhcvzcsZbTL6FrSM6qqHXS9/HDqKBpv8hDAIe1EFRswnBrZEqEGZ12zdv
+         orsmX5DhV9D3Sew/syJkmc2hUltwWZVdAj5ExDCqzNc9aiXcy78HIcKp6RKQXRo6AJ
+         Fjjk+hG/4eoJQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
+        quic_tdas@quicinc.com, konrad.dybcio@linaro.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 00/16] clk: qcom: gcc-qcs404: convert to parent_data
+Date:   Tue, 27 Dec 2022 12:04:01 -0600
+Message-Id: <167216423711.744668.16828918538111701639.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
+References: <20221226042154.2666748-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Replying for the wrong patch - this message should go to patch 12.
+On Mon, 26 Dec 2022 06:21:38 +0200, Dmitry Baryshkov wrote:
+> This patchset reworks and improves the Qualcomm QCS404 global clock
+> controller driver and it's platform usage.
+> 
+> It fixes some omissions (MDSS and oxili GDSCs, incorrect clock names,
+> direct number usage in the qcs404.dtsi). Then it converts the gcc driver
+> to use parent_data/parent_hws where prefereable and finally applies
+> these features and fixes to the qcs404.dtsi.
+> 
+> [...]
+
+Applied, thanks!
+
+[13/16] arm64: dts: qcom: qcs404: use symbol names for PCIe resets
+        commit: 41a37d157a613444c97e8f71a5fb2a21116b70d7
+[14/16] arm64: dts: qcom: qcs404: add power-domains-cells to gcc node
+        commit: 1eb309964e6384eda56c2d2816c3857c0b7c3ea6
+[15/16] arm64: dts: qcom: qcs404: add clocks to the gcc node
+        commit: 3494938a7e9e436be5dc989aecc1c800ecf2dba9
+[16/16] arm64: dts: qcom: qcs404: add xo clock to rpm clock controller
+        commit: f961fd2f6717c34a20a6951dcf9782a29e648f6c
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
