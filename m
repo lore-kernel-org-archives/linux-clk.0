@@ -2,44 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF709C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 16:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4109C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Dec 2022 16:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbiL0QSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Dec 2022 11:18:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51864 "EHLO
+        id S229965AbiL0QXC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Dec 2022 11:23:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbiL0QSb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 11:18:31 -0500
+        with ESMTP id S229588AbiL0QXC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 11:23:02 -0500
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2383F1A6;
-        Tue, 27 Dec 2022 08:18:25 -0800 (PST)
-X-UUID: d76b027ce7db4314bf20c508f0d67277-20221228
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E737E241;
+        Tue, 27 Dec 2022 08:23:00 -0800 (PST)
+X-UUID: dcf7859e10b24e67ae363b780223352a-20221228
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
         h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=GmwG34WOnnehmf+JqdIsNLaLLdUUliz/XW6HtiMKxJo=;
-        b=g9ECc5etJBGDKQY8gY979h2AjelJioYQ4yZIBawjhdCZqWuaiBRbweMG9wzJALn3ljVWByuAJ2GusBT6eqy00AWPgTcorxiFJGo+EIFOJpasoIlySi8OQftPrwkD7xm22q6jAednzYggkRVi56KlC5m368xiYw73YX3+c3Si39s=;
+        b=OkuHOdOwRd3J6Tc+OmcttU1C+Raq0QJK5xNi/GUl442HEuIVlERN8yQ5QoSWXTjfLyJWw05vWMCp7imD8/+qHSxnQ+kb9KCYMR4kil89V9yMUCxnsFy9nP6a4vRpLSaJR02tqVcK94dE014tdArWNU1COMqi/wh77AdCz2+tJ0o=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.14,REQID:b5681920-e651-4833-b89f-ae64be98250e,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:45
-X-CID-INFO: VERSION:1.1.14,REQID:b5681920-e651-4833-b89f-ae64be98250e,IP:0,URL
-        :0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-        elease,TS:45
-X-CID-META: VersionHash:dcaaed0,CLOUDID:ca7ef152-dd49-462e-a4be-2143a3ddc739,B
-        ulkID:221228001822VHAH938K,BulkQuantity:0,Recheck:0,SF:28|17|19|48|102,TC:
-        nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: d76b027ce7db4314bf20c508f0d67277-20221228
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+X-CID-O-INFO: VERSION:1.1.14,REQID:fda8d6a2-47ab-45a2-b386-1ea3990536ec,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:dcaaed0,CLOUDID:b0868c8a-8530-4eff-9f77-222cf6e2895b,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: dcf7859e10b24e67ae363b780223352a-20221228
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 858340891; Wed, 28 Dec 2022 00:18:21 +0800
+        with ESMTP id 1434721578; Wed, 28 Dec 2022 00:22:55 +0800
 Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Wed, 28 Dec 2022 00:18:20 +0800
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Wed, 28 Dec 2022 00:22:54 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 28 Dec 2022 00:18:20 +0800
+ 15.2.792.15 via Frontend Transport; Wed, 28 Dec 2022 00:22:54 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <angelogioacchino.delregno@collabora.com>
 CC:     <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
@@ -58,11 +55,11 @@ CC:     <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
         <weiyi.lu@mediatek.com>, <wenst@chromium.org>,
         <y.oudjana@protonmail.com>, <yangyingliang@huawei.com>
 Subject: Re: [PATCH v2 12/23] clk: mediatek: clk-mtk: Extend mtk_clk_simple_probe()
-Date:   Wed, 28 Dec 2022 00:18:20 +0800
-Message-ID: <20221227161820.18186-1-miles.chen@mediatek.com>
+Date:   Wed, 28 Dec 2022 00:22:54 +0800
+Message-ID: <20221227162254.18359-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20221223094259.87373-24-angelogioacchino.delregno@collabora.com>
-References: <20221223094259.87373-24-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221223094259.87373-13-angelogioacchino.delregno@collabora.com>
+References: <20221223094259.87373-13-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
