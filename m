@@ -2,69 +2,147 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B17C46467
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 19:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961EEC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 20:23:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231183AbiL1TEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 14:04:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39914 "EHLO
+        id S230239AbiL1UXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 15:23:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232366AbiL1TEh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 14:04:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4404D140AA;
-        Wed, 28 Dec 2022 11:04:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DABC1B818BF;
-        Wed, 28 Dec 2022 19:04:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E7BBC433D2;
-        Wed, 28 Dec 2022 19:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672254273;
-        bh=2sPDqSv4XfgXtrU9TtQZwuf1yZc/sk1JV//l/lt6t30=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L+/rPCcrsgGsAHNyAcVTFV+3AGC5z5yhobjz/b5ixj6jx0z1YoUMgAThgkn/3iH2y
-         yonRij1Mhd3zwcazRc4h/x4Scu3E+5WGQxQFMGSJ4AyfbDBCV7LY7CpLOfllYnI0++
-         kqrmCRl2ABh3zYTJOyR62XeyxIpdo2KVG8XxRbP+2SR08ANSos0+N/3SrC7GIR545z
-         nKuhxQvIVj7j7fDKWcvSsXhNmIE3agDZioQpS69HS/KLsYInfy7FAZsV5jynJ0FDFY
-         WhjRecAlWXe/38bANu9N1R5aa5jVB85fy3hKU+vmx9b1feGxFwUyqLnb+zLMjia2En
-         OKWojytFpOFdA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, konrad.dybcio@linaro.org,
-        krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org
-Cc:     robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, konrad.dybcio@somainline.org,
-        marijn.suijten@somainline.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org
-Subject: Re: (subset) [PATCH 1/2] dt-bindings: clock: add QCOM SM6350 camera clock bindings
-Date:   Wed, 28 Dec 2022 13:04:28 -0600
-Message-Id: <167225426552.971585.7520385380811591762.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221213152617.296426-1-konrad.dybcio@linaro.org>
-References: <20221213152617.296426-1-konrad.dybcio@linaro.org>
+        with ESMTP id S230158AbiL1UXV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 15:23:21 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DDBA1573B
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:23:20 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id y25so25015927lfa.9
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:23:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WpKCaW3wuzKUXhWkvFOm3Ad81fixeY/4fQoaCaSrMK4=;
+        b=xdxWtCxyV0uRN+WWy2jdGw1ciyJ7Vdtr4SKvZE8dgwyYDKQoqFg0eSFRZVfoQ62mp3
+         5oUW0Kb1xRsWdlozt7wkuTd4XYdxJ+70zQCfervo/KFqfvpQBe59MuepBdL5gxbf6/Ys
+         bsFDzUKPpiHBXXdkCScW3Y8tX5r+jKkfGBFNUl4oGaCD4R7CppKRvBQBiiZ5b5J4XjF1
+         6taYmKYHBfZaJbNPTb6LZYtQvUWU/rV1MGv/liN9BUYArP9Qjm/LRJPnLLiPk8Wl+ef7
+         8tyNQT2++1uwzQTFOoGwM+Zzy8AFXX6tZWBL/QZcZDyY3btBjV8Z4VFoGFftrDA8+9BG
+         TGAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WpKCaW3wuzKUXhWkvFOm3Ad81fixeY/4fQoaCaSrMK4=;
+        b=7NPxfWcaVW0Qxt1HoisiEVj99y5l9X8gldHLJqRj34TQloIbfmAYfo+4g8wF95eXcH
+         WO5GEg9tNbVA1sVUYjVAXn/XHE18u4zWWox9mDTvw/BhzHkNnrboFm1PCTnN3OycgEr4
+         Hxw4B79W+eoNs/R2n/j/AGeb5O4gOI+lNUj1KhHNCZINpvCu2K7UZk7B6PdkqPcn8+Ql
+         Tzhj14hXdeO4rJ3ZY0T1Rl4giDv8f18F2LskS3i6DdePLAKl1mI0BemmQShltdpg8Zkr
+         uje/rXA8okECAjN2xr/SSIkpkY3Cjm0rz88OcljpTeePkAWn8bFKz5VMibr/3ctGImQI
+         tf3Q==
+X-Gm-Message-State: AFqh2koT3INv5o50gASM8a/h2vKZOL5mVbqUD0CwavUGChXjDzh53STS
+        9FzZsIEgHMEx1/2DMccAp8Eryg==
+X-Google-Smtp-Source: AMrXdXtcG+rqV76g0AimrIZqhqVXm/gBj+9hdpMittqVzRFq7YWL5F3FWjCa7SIiArSZzfDedL+CIg==
+X-Received: by 2002:a05:6512:1305:b0:4cb:e52:d1ac with SMTP id x5-20020a056512130500b004cb0e52d1acmr2498577lfu.20.1672258998655;
+        Wed, 28 Dec 2022 12:23:18 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id z12-20020ac24f8c000000b004b567e1f8e5sm2784966lfs.125.2022.12.28.12.23.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Dec 2022 12:23:18 -0800 (PST)
+Message-ID: <41788ef8-8bea-6a9d-d8cd-0953ba0aafad@linaro.org>
+Date:   Wed, 28 Dec 2022 22:23:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RFC PATCH 01/12] dt-bindings: clock: qcom,gcc-apq8084: define
+ clocks/clock-names
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20221227013225.2847382-1-dmitry.baryshkov@linaro.org>
+ <20221227013225.2847382-2-dmitry.baryshkov@linaro.org>
+ <262fb9c4-c7d3-989f-c3fb-3e36da26b081@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <262fb9c4-c7d3-989f-c3fb-3e36da26b081@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 13 Dec 2022 16:26:15 +0100, Konrad Dybcio wrote:
-> Add device tree bindings for camera clock controller for
-> Qualcomm Technology Inc's SM6350 SoC.
+On 28/12/2022 12:30, Krzysztof Kozlowski wrote:
+> On 27/12/2022 02:32, Dmitry Baryshkov wrote:
+>> Define clock/clock-names properties of the GCC device node to be used
+>> on APQ8084 platform.
+>>
+>> Note: the driver uses a single pcie_pipe clock, however most probably
+>> there are two pipe clocks, one from each of PCIe QMP PHYs.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   .../bindings/clock/qcom,gcc-apq8084.yaml      | 43 +++++++++++++++++++
+>>   1 file changed, 43 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+>> index 8ade176c24f4..02a856f14fbe 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+>> @@ -25,6 +25,30 @@ properties:
+>>     compatible:
+>>       const: qcom,gcc-apq8084
+>>   
+>> +  clocks:
+>> +    items:
+>> +      - description: XO source
+>> +      - description: Sleep clock source
+>> +      - description: UFS RX symbol 0 clock
+>> +      - description: UFS RX symbol 1 clock
+>> +      - description: UFS TX symbol 0 clock
+>> +      - description: UFS TX symbol 1 clock
+>> +      - description: SATA ASIC0 clock
+>> +      - description: SATA RX clock
+>> +      - description: PCIe PIPE clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: xo
+>> +      - const: sleep_clk
+>> +      - const: ufs_rx_symbol_0_clk_src
+>> +      - const: ufs_rx_symbol_1_clk_src
+>> +      - const: ufs_tx_symbol_0_clk_src
+>> +      - const: ufs_tx_symbol_1_clk_src
+>> +      - const: sata_asic0_clk
+>> +      - const: sata_rx_clk
+>> +      - const: pcie_pipe
+>> +
+>>   required:
+>>     - compatible
+>>   
+>> @@ -38,5 +62,24 @@ examples:
+>>           #clock-cells = <1>;
+>>           #reset-cells = <1>;
+>>           #power-domain-cells = <1>;
+>> +
+>> +        clocks = <&xo_board>,
+>> +                 <&sleep_clk>,
+>> +                 <&ufsphy 0>,
 > 
-> 
+> No IDs available yet?
 
-Applied, thanks!
+No. I didn't add IDs to the UFS symbol patchset. And anyway apq8084 
+seems to use different amount of UFS symbol clocks (4, while other 
+platforms use just 3).
 
-[1/2] dt-bindings: clock: add QCOM SM6350 camera clock bindings
-      commit: 7afc1f6977d0b0d1b722aaedf6d9796df9a82325
-[2/2] clk: qcom: Add camera clock controller driver for SM6350
-      commit: 80f5451d9a7c20d8c09f44f4eb1083fd861d7a46
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+With best wishes
+Dmitry
+
