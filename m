@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F9CC4708E
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 18:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7F0C5479D
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 18:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233008AbiL1Swo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 13:52:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36590 "EHLO
+        id S232168AbiL1Swq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 13:52:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231932AbiL1Swm (ORCPT
+        with ESMTP id S232770AbiL1Swm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 13:52:42 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5762715F08
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 10:52:41 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id s22so17286126ljp.5
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 10:52:41 -0800 (PST)
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F7B15F1C
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 10:52:42 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id v23so7155549ljj.9
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 10:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U7w7cv/rycyo9tLFe/RTS7bl/f0qnn9z8JqftMfFPoY=;
-        b=ssJAGw3OGc/uwlSkDVVP4yWViHQTldQNeYfRekBqa/1vZMnJv3z+RlYqThGQ+UVt4V
-         EEh5uQVUas2tD6OWXyUraEV6wWwHM0dd692wcmnZp/L0RA7kvhyegxMXH37PM9ZzD5PN
-         hdzGHov/Atbis8wGVbBWiqTziqZK6rwSHgvh8yPyne8UM3Iq08TssxjWRgOEDO+coiw6
-         AJbkLnEzRvYabNZa/ZoSPkNEhVmEDfKqH8beATj9aF5/yqiJUipqFacUvl+dFFBw9yW6
-         /fEYjz70P/WkLQrZuvJ8WvftckIGUWNr2stBth0DDku3N2QGHLTtieBOI/hAlChknPKL
-         /1Og==
+        bh=MuuDeykd0fWyvmdgCKovFBE0sMM/OGwl3dw5AGj6x9c=;
+        b=E5EEtHRxumfT6nN4kpWSTts5iN9mXfF93TS57v/567KycZ+2SmwkNTE5z6DsPcXMRB
+         kCXzoM/1FiclLZ1n+WYMRwkiNZ3FSm6lcm0lFckRROJaQTe6GNuhGXIKTvfz2EINHgh8
+         aNc9gtrncKt5am2uPkG5/UkzOl6IlIXweW0AD4Q70yi0In/pqeQJbAoUf4PYrLJRg1Zg
+         gagNEtXepv6KOCtxX/MBeCOHjiJ7IGs1zTpf+Wyq9FKErnAoRkGkFo7f7O7HgdoWMyeJ
+         97YH+cP8DeQQ4Oph024maq5iJNU2tnxl+jUWirk25pNwePsIDSikf94PiZuTQ4OcuMtv
+         tKqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U7w7cv/rycyo9tLFe/RTS7bl/f0qnn9z8JqftMfFPoY=;
-        b=3H+QJ68nECfCCy3WIgJtNy67XzBbsxTrRz3e8ekzrVRM+mmxpC9PvpmG/LpWQIsw1N
-         yh6+ymnC/j/k/rNVbXdgd9dY0Pi6pgPcRYCkFpp324aQsnM/yYs0PqCNzxHrmE+3g+v9
-         VAKx3J54uhfeOHpbfOw8TD0jtS88kyzzjW7u9fJfm8tiY7u0ZF/S85/5UF9fBZ3VzMBT
-         VdEJB9lQrJABzWH5Zt4tZEhVwFBtEZAV3ZGBkV5CdAUtC37ZP5HlMBwdN63uZUiUkKOH
-         Ufp4a+NoH36DTR2L6l6AkJ+/NJhxoFRLclg6EbPjh6WRdFwFg72H1iFNlZoEmjFiRn1A
-         JaZw==
-X-Gm-Message-State: AFqh2ko4ft9raUO6Sxai78qg3e9lFKbYSgp7qV1Sq5cWXSU6oA7imz8y
-        vsqwgpOZiC/py04aGm5OhgAWVQ==
-X-Google-Smtp-Source: AMrXdXsvzpwi/FuIhQ/1rnNN/ZuJ3dor/p/CpUsrlcpRii6ruHP0KtMLETkIXyjttXQuskBYoSTycw==
-X-Received: by 2002:a2e:b553:0:b0:279:ee82:e0f4 with SMTP id a19-20020a2eb553000000b00279ee82e0f4mr5748918ljn.32.1672253559704;
-        Wed, 28 Dec 2022 10:52:39 -0800 (PST)
+        bh=MuuDeykd0fWyvmdgCKovFBE0sMM/OGwl3dw5AGj6x9c=;
+        b=S5TQTfDovDvim92+kKYa9UM8It3wEvykxlh1h9awMmMlhBTC8MqQsWtm/RCLEKcu+g
+         XsFxvYAgcZRdC6tApJXlQSdt19qIsZu1h1irCRPhIi6qEmySfA/6Os3W+KRGhhHgomkZ
+         NIGatGQ9E2Ptec/CSa5RUfarVkMCDd9Vy3h/INmLdRRke1S0xL1pU871AOiGj12Fjjsp
+         /XHBg8TOVodhr++pa0a3KUYh/upzw1xLvWOj/LjvOttfC8TVLwn3WPweYurjh9k4WFhW
+         lKpB4rj4h+BztUQZZI1CI8EZt4HY1DwhcanJh/AkvJ5SCKFLlZd2cej9mQjPfmbljfaH
+         rhMg==
+X-Gm-Message-State: AFqh2kreY7XO9P6jNsT8fLEY4OesZ25JZliyBfELu/G7shHvMDPUQQSi
+        GaBvDOICnOrlsO6FYv6HFF6Q+g==
+X-Google-Smtp-Source: AMrXdXu+r3iM1uQ90G2yWnhNeYCGeEvXDj/kYPysaeAPHIhBgdV6QLA9CH5kKItOc5qmaJKTU8qeRA==
+X-Received: by 2002:a05:651c:1cb:b0:278:f690:b736 with SMTP id d11-20020a05651c01cb00b00278f690b736mr7965293ljn.34.1672253560448;
+        Wed, 28 Dec 2022 10:52:40 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id s7-20020a2e83c7000000b00279d206a43bsm2031893ljh.34.2022.12.28.10.52.38
+        by smtp.gmail.com with ESMTPSA id s7-20020a2e83c7000000b00279d206a43bsm2031893ljh.34.2022.12.28.10.52.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Dec 2022 10:52:39 -0800 (PST)
+        Wed, 28 Dec 2022 10:52:40 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 01/16] dt-bindings: clock: qcom,gcc-msm8998: drop core_bi_pll_test_se
-Date:   Wed, 28 Dec 2022 20:52:22 +0200
-Message-Id: <20221228185237.3111988-2-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 02/16] dt-bindings: clock: qcom,gcc-sdx55: drop core_bi_pll_test_se
+Date:   Wed, 28 Dec 2022 20:52:23 +0200
+Message-Id: <20221228185237.3111988-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
 References: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
@@ -76,42 +76,41 @@ The test clock apparently it's not used by anyone upstream. Remove it.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../devicetree/bindings/clock/qcom,gcc-msm8998.yaml         | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ .../devicetree/bindings/clock/qcom,gcc-sdx55.yaml        | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-index 2d5355cf9def..3c9729050d6f 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-@@ -25,7 +25,6 @@ properties:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+index 68d3099c96ae..428e954d7638 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+@@ -24,15 +24,11 @@ properties:
+     items:
        - description: Board XO source
        - description: Sleep clock source
-       - description: Audio reference clock (Optional clock)
 -      - description: PLL test clock source (Optional clock)
-     minItems: 2
+-    minItems: 2
  
    clock-names:
-@@ -33,7 +32,6 @@ properties:
-       - const: xo
+     items:
+       - const: bi_tcxo
        - const: sleep_clk
-       - const: aud_ref_clk # Optional clock
 -      - const: core_bi_pll_test_se # Optional clock
-     minItems: 2
+-    minItems: 2
  
  required:
-@@ -57,11 +55,9 @@ examples:
-       reg = <0x00100000 0xb0000>;
-       clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-                <&sleep>,
--               <0>,
-                <0>;
-       clock-names = "xo",
-                     "sleep_clk",
--                    "aud_ref_clk",
--                    "core_bi_pll_test_se";
-+                    "aud_ref_clk";
-     };
- ...
+   - compatible
+@@ -51,8 +47,9 @@ examples:
+       compatible = "qcom,gcc-sdx55";
+       reg = <0x00100000 0x1f0000>;
+       clocks = <&rpmhcc RPMH_CXO_CLK>,
+-               <&sleep_clk>, <&pll_test_clk>;
+-      clock-names = "bi_tcxo", "sleep_clk", "core_bi_pll_test_se";
++               <&sleep_clk>;
++      clock-names = "bi_tcxo",
++                    "sleep_clk";
+       #clock-cells = <1>;
+       #reset-cells = <1>;
+       #power-domain-cells = <1>;
 -- 
 2.39.0
 
