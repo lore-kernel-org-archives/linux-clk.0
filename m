@@ -2,191 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476D8C3DA7A
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 14:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92E1C3DA7D
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 15:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbiL1OJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 09:09:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53332 "EHLO
+        id S233580AbiL1PHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 10:07:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232720AbiL1OJZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 09:09:25 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE4AE0F1
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 06:09:24 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id v23so6499149ljj.9
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 06:09:24 -0800 (PST)
+        with ESMTP id S233584AbiL1PHQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 10:07:16 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038F413D79
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 07:07:16 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id w37so10718852pga.5
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 07:07:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m8mIKxk0N2DNE4tIxx9Wvugw4Q57es7J2KyF1r+n93E=;
-        b=b08Zg1mYsa/096BZ29j2kIk890KnkCcYsqvwWJwsG8P8g2RLFszeJwMQm7NrzuiX/j
-         CWgsgybOdmE2CgqRedW9/ZE+vZIaJlgF3R6WOkCFF+0SgDbk0wiyB0n1M1fOdiK1DFlX
-         q+wjqva49SDWPpxg+yGjlQXdc1FixnaAiv55gMPhRzd3KYoeLkpil0thjWQPO4O9nZgv
-         ALfOmtFERVeYL0uCB29mRYh49I3u0IYcx1tAVjrWa/rEXBmKJ1lsjAedSmmriyfpdTlo
-         PqtNF3szIT6fUvMoNo0kRX+1vNzbqqAaI8xlNTusJgRkP7TUA2ko8TGWvfYf2TTdbzDs
-         FumQ==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KgQT/alxlLYW0WFupTnnqaIko3uIyucGCDE9ru/lFUk=;
+        b=u+i9ifEFN8xTXhij5j2STaK7a8nJTPFtyzhvF1AfWoOJ9S0Q9Ti2Qhqs9a6QTBaXaK
+         j8qSX9KwDLTx1kZ+9Gpg7pbuUX44/1FBE3nsBTM93qUqDfGqkl651Rqf05uuBT0IfLQd
+         7VuNzwxzY2XKTnCly5ayNyNHE/U91Rg+5vwMREYwRQ1s5EK3y4wcQ7I0pvAekQWPFMaq
+         Wt9ckX2CutbfeQgmR74awci4X/2ONaUjdWmzIkTP7DX8cGxey59LmLz8tn011DnCxqNV
+         yWxbgXsuikRgwDdabdpVXGIbeqheWkmhvMCpymYNkqXWQYOTaIS8SMVqgslipJ9Tgwsh
+         p4KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m8mIKxk0N2DNE4tIxx9Wvugw4Q57es7J2KyF1r+n93E=;
-        b=77YzyEJbEsfz8sngblXnOkbyvAvS/wtscnu6fWzp0XF3tmUjLtX0yY97mHF41AwVMk
-         0Nct4z51DRdKm7KOFb3mLv18pz7GO7ZRt+wtaCsOf7h0L0nsCQcyd8gnRDqDnqOZTFdX
-         I1leQOyEHw3jL98vv8Nvzuw8cXoTIB+nTN4oQxGr7w8iujeKB1JT72yx7iUL8AepfsCQ
-         /DSOcKeidIWcaFc/hvOJk5Ikxvi+NSaazYFHSJ9sppWQ8fead5uhTHmjYM1lPePgi7sM
-         6bSUdeqoVjhMLMvjjT+AVqYu+aSk4CWtaXO63jYif5s3AUjp+n0asGP7kzT75rMVFAGX
-         hqow==
-X-Gm-Message-State: AFqh2kp/VmCmGQLqpEHVKENtpiOt5VSz9K8QkCPVZhljuZIJoq6LwoLD
-        T//42w5Bu+aYQPGjMUKDDdzDeA==
-X-Google-Smtp-Source: AMrXdXsfH6lFMsCCFpdrRbfsIgYDSH8L4sAH2+1+R6YNSIKdRBxGXFI2wjnve8NFE5+ziCsHbgeSow==
-X-Received: by 2002:a05:651c:1a14:b0:27f:976e:7126 with SMTP id by20-20020a05651c1a1400b0027f976e7126mr8681099ljb.33.1672236562577;
-        Wed, 28 Dec 2022 06:09:22 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id 20-20020a2eb954000000b002778801240asm1935017ljs.10.2022.12.28.06.09.21
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KgQT/alxlLYW0WFupTnnqaIko3uIyucGCDE9ru/lFUk=;
+        b=Wdu/k2/CSaNFLCB8ccmeXCpcN8Vohf3L8pKW6NZEwHWTJDpf/BSwmL7JwRs1axGQVH
+         0SMpU860f3nH94owAq0HqpCwd0vtOZT+BV7dwE/vsS+XUZTEM5WcdWieAhrLVxhflP5H
+         U3SXQbd5JfyiR0cGi+FgyI8VWg7MTDs+EQHmWYmoKODFifXAfP/CEmDqdchhkyhyZ0QU
+         PYsuOvroTv37m+tIS5nYReljA3C4YRW2MYTIfXQrIdBkpzz/owKx3cfyT/Aw3AQizlDB
+         f6e8L+/J25rVP+T8JZ9iPTALpDETBavf09MzgX3PNVJCA0U3Q9LWVnvSxS1NVciv1ekS
+         uxXw==
+X-Gm-Message-State: AFqh2kqik99R89twmiNLfS1s3Bm6YcDkiyEiQ62v/N479AbQWcggVjVL
+        JtNHao+SV6S6gDwAJePXd29p
+X-Google-Smtp-Source: AMrXdXtBESYjT/Prx4f+YrYEUwbmivOJ0hGM8ZWl3dM7aTOi6spZlddrNBZSu8CHzCESycLIaORBJA==
+X-Received: by 2002:a62:19cd:0:b0:580:9935:ffdb with SMTP id 196-20020a6219cd000000b005809935ffdbmr14481895pfz.20.1672240035482;
+        Wed, 28 Dec 2022 07:07:15 -0800 (PST)
+Received: from thinkpad ([117.217.178.100])
+        by smtp.gmail.com with ESMTPSA id c134-20020a624e8c000000b00572198393c2sm10380770pfb.194.2022.12.28.07.07.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Dec 2022 06:09:22 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
+        Wed, 28 Dec 2022 07:07:13 -0800 (PST)
+Date:   Wed, 28 Dec 2022 20:37:06 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/3] clk: gcc-sm8350: drop PLL test clock
-Date:   Wed, 28 Dec 2022 15:09:17 +0100
-Message-Id: <20221228140917.118861-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221228140917.118861-1-krzysztof.kozlowski@linaro.org>
-References: <20221228140917.118861-1-krzysztof.kozlowski@linaro.org>
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 00/16] clk: qcom: get rid of core_bi_pll_test_se
+Message-ID: <20221228150706.GD30143@thinkpad>
+References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no user of core_bi_pll_test_se test clock so drop it.
+On Wed, Dec 28, 2022 at 03:32:27PM +0200, Dmitry Baryshkov wrote:
+> Drop core_bi_pll_test_se from all Qualcomm clock controller's bindings
+> and drivers. The clock is not used by anyone.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/qcom/gcc-sm8350.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+For the series,
 
-diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
-index c3731f96c8e6..af4a1ea28421 100644
---- a/drivers/clk/qcom/gcc-sm8350.c
-+++ b/drivers/clk/qcom/gcc-sm8350.c
-@@ -22,7 +22,6 @@
- 
- enum {
- 	P_BI_TCXO,
--	P_CORE_BI_PLL_TEST_SE,
- 	P_GCC_GPLL0_OUT_EVEN,
- 	P_GCC_GPLL0_OUT_MAIN,
- 	P_GCC_GPLL4_OUT_MAIN,
-@@ -119,14 +118,12 @@ static const struct parent_map gcc_parent_map_0[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GCC_GPLL0_OUT_MAIN, 1 },
- 	{ P_GCC_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_0[] = {
- 	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gcc_gpll0.clkr.hw },
- 	{ .hw = &gcc_gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_1[] = {
-@@ -134,7 +131,6 @@ static const struct parent_map gcc_parent_map_1[] = {
- 	{ P_GCC_GPLL0_OUT_MAIN, 1 },
- 	{ P_SLEEP_CLK, 5 },
- 	{ P_GCC_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_1[] = {
-@@ -142,29 +138,24 @@ static const struct clk_parent_data gcc_parent_data_1[] = {
- 	{ .hw = &gcc_gpll0.clkr.hw },
- 	{ .fw_name = "sleep_clk" },
- 	{ .hw = &gcc_gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_2[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_SLEEP_CLK, 5 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_2[] = {
- 	{ .fw_name = "bi_tcxo" },
- 	{ .fw_name = "sleep_clk" },
--	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_3[] = {
- 	{ P_BI_TCXO, 0 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_3[] = {
- 	{ .fw_name = "bi_tcxo" },
--	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_4[] = {
-@@ -193,7 +184,6 @@ static const struct parent_map gcc_parent_map_6[] = {
- 	{ P_GCC_GPLL9_OUT_MAIN, 2 },
- 	{ P_GCC_GPLL4_OUT_MAIN, 5 },
- 	{ P_GCC_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_6[] = {
-@@ -202,7 +192,6 @@ static const struct clk_parent_data gcc_parent_data_6[] = {
- 	{ .hw = &gcc_gpll9.clkr.hw },
- 	{ .hw = &gcc_gpll4.clkr.hw },
- 	{ .hw = &gcc_gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_7[] = {
-@@ -267,25 +256,21 @@ static const struct clk_parent_data gcc_parent_data_12[] = {
- 
- static const struct parent_map gcc_parent_map_13[] = {
- 	{ P_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK, 0 },
--	{ P_CORE_BI_PLL_TEST_SE, 1 },
- 	{ P_BI_TCXO, 2 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_13[] = {
- 	{ .fw_name = "usb3_phy_wrapper_gcc_usb30_pipe_clk" },
--	{ .fw_name = "core_bi_pll_test_se" },
- 	{ .fw_name = "bi_tcxo" },
- };
- 
- static const struct parent_map gcc_parent_map_14[] = {
- 	{ P_USB3_UNI_PHY_SEC_GCC_USB30_PIPE_CLK, 0 },
--	{ P_CORE_BI_PLL_TEST_SE, 1 },
- 	{ P_BI_TCXO, 2 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_14[] = {
- 	{ .fw_name = "usb3_uni_phy_sec_gcc_usb30_pipe_clk" },
--	{ .fw_name = "core_bi_pll_test_se" },
- 	{ .fw_name = "bi_tcxo" },
- };
- 
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Thanks for the nice cleanup!
+
+-Mani
+
+> Dmitry Baryshkov (16):
+>   dt-bindings: clock: qcom,gcc-msm8998: drop core_bi_pll_test_se
+>   dt-bindings: clock: qcom,gcc-sdx55: drop core_bi_pll_test_se
+>   dt-bindings: clock: qcom,gcc-sdx65: drop core_bi_pll_test_se
+>   dt-bindings: clock: qcom,gcc-sm8350: drop core_bi_pll_test_se
+>   dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
+>   dt-bindings: clock: qcom: gcc-sm8350: drop test clock
+>   dt-bindings: clock: qcom: gcc-sm8450: drop test clock
+>   clk: qcom: dispcc-qcm2290: get rid of test clock
+>   clk: qcom: gcc-msm8998: get rid of test clock
+>   clk: qcom: gcc-sc7180: get rid of test clock
+>   clk: qcom: gcc-sdx55: use ARRAY_SIZE instead of specifying num_parents
+>   clk: qcom: gcc-sdx55: get rid of test clock
+>   clk: qcom: gcc-sm8150: get rid of test clock
+>   clk: qcom: gcc-sm8350: get rid of test clock
+>   clk: qcom: mmcc-msm8998: get rid of test clock
+>   arm64: dts: qcom: msm8998: get rid of test clock
+> 
+>  .../bindings/clock/qcom,gcc-msm8998.yaml      |  4 --
+>  .../bindings/clock/qcom,gcc-sdx55.yaml        |  9 +--
+>  .../bindings/clock/qcom,gcc-sdx65.yaml        |  8 +--
+>  .../bindings/clock/qcom,gcc-sm8350.yaml       |  2 -
+>  .../devicetree/bindings/clock/qcom,mmcc.yaml  |  2 -
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi         |  4 +-
+>  drivers/clk/qcom/dispcc-qcm2290.c             |  6 --
+>  drivers/clk/qcom/gcc-msm8998.c                | 13 ----
+>  drivers/clk/qcom/gcc-sc7180.c                 | 16 -----
+>  drivers/clk/qcom/gcc-sdx55.c                  | 64 ++++++++-----------
+>  drivers/clk/qcom/gcc-sm8150.c                 | 17 -----
+>  drivers/clk/qcom/gcc-sm8350.c                 | 15 -----
+>  drivers/clk/qcom/mmcc-msm8998.c               | 25 --------
+>  include/dt-bindings/clock/qcom,gcc-sm8350.h   |  1 -
+>  include/dt-bindings/clock/qcom,gcc-sm8450.h   |  1 -
+>  15 files changed, 32 insertions(+), 155 deletions(-)
+> 
+> -- 
+> 2.35.1
+> 
+
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
