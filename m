@@ -2,130 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63B3C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 20:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A65AC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 20:36:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231228AbiL1UYV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 15:24:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58414 "EHLO
+        id S230158AbiL1UgC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 15:36:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230460AbiL1UYT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 15:24:19 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1995C1573E
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:24:18 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id bn6so7609074ljb.13
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:24:18 -0800 (PST)
+        with ESMTP id S230106AbiL1UgB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 15:36:01 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D1C165A4
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:35:58 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id bq39so17258786lfb.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:35:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=snr2mEVbtvt9/YULF8dU82exFUSnK9OhTwPmhp5otFw=;
-        b=Vj/327wSacVZUKPPkf/g75nxhiAVAYMinU5wAxHVRxeBLQ6mC4TAGIAq1onOZZIg0G
-         O9oV5YvhTLazpPDOTyRSv/LUhA4rY3MFMBjpBXtbSuFs2G0uotAm+M1mGqCuMZzMeggf
-         HSvBhrEZtnHDTHEwlW6lau0/+/2hDl2BoDfjMrrLnyqzeTzF0trNDSJNKStT57q/pSg0
-         LMGibMV/OkR2bTrrP5fEG1oJjNXrxiex9t+8IJpqlFD9MtbvLY4DUHe3ID/kqu7ML5QI
-         VIjlQ2Ao/V/0ugR9+8MWMKR0OU9OQ3Qppo2SgdgN3cva1ndQ5v/7kOH7b5rzkYsorVaT
-         2FDg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VCmkjUXbYIg7r0qiPTGP/L4L4D6bah91h264EBnNYRo=;
+        b=wmFpkSvKTv2rgT1bkrLnjLYWXr82lF5+g5mpKy/Tr1QQ5a4yUgDKcTWDqEuC2jq0wl
+         btvoy3GDcyvSYJISZQyD1uJDdxpvjRH2S+3+kCjHaP6BaALxtNQfDnnvS6oni/L8Yl3f
+         gvia4slUTuJ0ecmDAtf+MIrXh3lO53/rx1Tnci4XNh2TLxYPQPu2a0r2X6AfO1THhw6D
+         3/YVpvdDVIPJePundb049QZdewpIOdGHtof/0Ey9+HXKwhYmvGeP2tqMqujCiB+FMxa4
+         pAyHhbM45W5W2/Yd+loEmEsKz3hvlMgxR8HRH0HsoPTJxDo8hOlQJS0ABJTindRPZ9pm
+         mxqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=snr2mEVbtvt9/YULF8dU82exFUSnK9OhTwPmhp5otFw=;
-        b=rwm53Nq/wpzqXxp5njik4W/+GTroRyFQOscmmcXRkMZ+Hp5JsM1MGlzSIxSt3xJWjE
-         p3ALZZ7SkdynWw2qxUlI6JbaePwr4dFwm2OCR39npPwrFQiGZ5+uSXfhDVJY8+cUtm6m
-         ViKV+QIeKO176hlZ1eVS+4Jb2OSIXgHevLOw4DfopdBvGU7/PfWYflTMAQvoNxf/IXlD
-         Te9xnTwvOXMfcVGWrxWB2xWLUjkzQTfVVZtlMHDh9jeVwPg1TKSN19nd4VGAzskOSGA8
-         3lq/Ylaa+/HlctaXOrHqszos0Kh7D7Yg1Ra2hXnsnx5+nrlAX2SCd2R+tiqUhb6Nm6VD
-         eOvA==
-X-Gm-Message-State: AFqh2kqbj4TR7NuenjaF4okYHjFXRS+orpb04qqClMjTjFogVaBB61FH
-        rSFebN5vQqVN6xhY0hpbqq2R8w==
-X-Google-Smtp-Source: AMrXdXsgypinOeUbWGNon9W9+A8ZTrvB/pcXkb076Fan+JLA73XOIvGKp4+ftj0F8J22NgrYtqVUOw==
-X-Received: by 2002:a2e:a311:0:b0:27f:b68e:9d99 with SMTP id l17-20020a2ea311000000b0027fb68e9d99mr4118205lje.32.1672259056362;
-        Wed, 28 Dec 2022 12:24:16 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id v11-20020ac258eb000000b004aa0870b5e5sm2791917lfo.147.2022.12.28.12.24.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Dec 2022 12:24:15 -0800 (PST)
-Message-ID: <4b1c7bcd-b8e0-9405-c758-cc2294871b37@linaro.org>
-Date:   Wed, 28 Dec 2022 22:24:15 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RFC PATCH 03/12] dt-bindings: clock: qcom,mmcc: define
- clocks/clock-names for APQ8084
-Content-Language: en-GB
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VCmkjUXbYIg7r0qiPTGP/L4L4D6bah91h264EBnNYRo=;
+        b=04t2fASiMZkAaiPdZq9nY9idRJOiaFOs2GRgKCJx6mEcjmNCr3rTqLYGsvJcXyvK+3
+         FN1L1FUTn28L30KXCykzYJn0lYKX1rvSe07UEEy4CxP04ZD6DdMVODjbJpgTlsvkGnAP
+         5Oody7a+O86seFjznJBXV4YoWxP9TVbc7RHBhaeepqMBsqu7PkUdU22E+EC07XfkB/4R
+         6MKczMSd2LZ5MRBXWVcSejtHMTRiAozqNaenjXHY9zEsgHPrwqRosBRPo7MDnAUZfj78
+         i01YLWtHANHmM2PSWpTtzOVQ79nw1tOAsBnAfjSJ/DU0fZ2WMhgyPtDm2JWevFOKsFeu
+         pVnA==
+X-Gm-Message-State: AFqh2kr3WQJPEL4ambUVEGvj1v6uMOVWmhHKQRpTjBmbypAW7GpoxinU
+        wL245kE6Oi6dtUQVcr7ZWGCrjQ==
+X-Google-Smtp-Source: AMrXdXtLqfzsD4NuV9Pozz/O3Ob5sEMQxs5F2ZeqeNcqLHEZ4NsP4L0STX+xl1Ts0n2tfW0ZhzUplg==
+X-Received: by 2002:a05:6512:4014:b0:4b6:f22c:8001 with SMTP id br20-20020a056512401400b004b6f22c8001mr12453563lfb.56.1672259756766;
+        Wed, 28 Dec 2022 12:35:56 -0800 (PST)
+Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id bi2-20020a0565120e8200b004b543f38b7csm2808384lfb.21.2022.12.28.12.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Dec 2022 12:35:56 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20221227013225.2847382-1-dmitry.baryshkov@linaro.org>
- <20221227013225.2847382-4-dmitry.baryshkov@linaro.org>
- <dfc193df-a3ca-e03e-9fcf-b9d3f9fe76f6@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <dfc193df-a3ca-e03e-9fcf-b9d3f9fe76f6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v2] clk: qcom: common: use parent_hws in _qcom_cc_register_board_clk()
+Date:   Wed, 28 Dec 2022 22:35:55 +0200
+Message-Id: <20221228203555.3130090-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/12/2022 12:31, Krzysztof Kozlowski wrote:
-> On 27/12/2022 02:32, Dmitry Baryshkov wrote:
->> Define clock/clock-names properties of the MMCC device node to be used
->> on APQ8084 platform.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,mmcc.yaml  | 40 +++++++++++++++++++
->>   1 file changed, 40 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
->> index e6d17426e903..fd926df80c64 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
->> @@ -137,6 +137,46 @@ allOf:
->>               - const: edp_link_clk
->>               - const: edp_vco_div
->>   
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - qcom,mmcc-apq8084
->> +    then:
->> +      properties:
->> +        clocks:
->> +          items:
->> +            - description: Board XO source
->> +            - description: Board sleep source
->> +            - description: MMSS GPLL0 voted clock
->> +            - description: GPLL0 clock
->> +            - description: GPLL0 voted clock
->> +            - description: GPLL1 clock
->> +            - description: DSI phy instance 0 dsi clock
->> +            - description: DSI phy instance 0 byte clock
->> +            - description: DSI phy instance 1 dsi clock
->> +            - description: DSI phy instance 1 byte clock
->> +            - description: HDMI phy PLL clock
->> +            - description: eDP phy PLL link clock
->> +            - description: eDP phy PLL vco clock
-> 
-> This looks like exceeding constraints set in top-level (max 10).
+Switch _qcom_cc_register_board_clk() to use parent_hws.
 
-Ack, I'll expand it for v2.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
 
+Changes since v1:
+- Properly fix the clock's parent data in case parent clock is present
+  in the dtsi.
+
+---
+ drivers/clk/qcom/common.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 75f09e6e057e..9f2bd37c9540 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -133,7 +133,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 	struct device_node *node = NULL;
+ 	struct device_node *clocks_node;
+ 	struct clk_fixed_factor *factor;
+-	struct clk_fixed_rate *fixed;
++	struct clk_fixed_rate *fixed = NULL;
+ 	struct clk_init_data init_data = { };
+ 	int ret;
+ 
+@@ -161,6 +161,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 	of_node_put(node);
+ 
+ 	if (add_factor) {
++		struct clk_parent_data parent_data;
++
+ 		factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
+ 		if (!factor)
+ 			return -EINVAL;
+@@ -168,8 +170,13 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		factor->mult = factor->div = 1;
+ 		factor->hw.init = &init_data;
+ 
++		if (fixed)
++			parent_data.hw = &fixed->hw;
++		else
++			parent_data.name = path;
++
+ 		init_data.name = name;
+-		init_data.parent_names = &path;
++		init_data.parent_data = &parent_data;
+ 		init_data.num_parents = 1;
+ 		init_data.flags = 0;
+ 		init_data.ops = &clk_fixed_factor_ops;
 -- 
-With best wishes
-Dmitry
+2.39.0
 
