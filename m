@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A65AC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 20:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A0C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 20:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbiL1UgC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 15:36:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60432 "EHLO
+        id S230012AbiL1Uha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 15:37:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230106AbiL1UgB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 15:36:01 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D1C165A4
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:35:58 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id bq39so17258786lfb.0
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:35:58 -0800 (PST)
+        with ESMTP id S229668AbiL1Uh3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 15:37:29 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D4D165BF
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:37:28 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id bf43so25054895lfb.6
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCmkjUXbYIg7r0qiPTGP/L4L4D6bah91h264EBnNYRo=;
-        b=wmFpkSvKTv2rgT1bkrLnjLYWXr82lF5+g5mpKy/Tr1QQ5a4yUgDKcTWDqEuC2jq0wl
-         btvoy3GDcyvSYJISZQyD1uJDdxpvjRH2S+3+kCjHaP6BaALxtNQfDnnvS6oni/L8Yl3f
-         gvia4slUTuJ0ecmDAtf+MIrXh3lO53/rx1Tnci4XNh2TLxYPQPu2a0r2X6AfO1THhw6D
-         3/YVpvdDVIPJePundb049QZdewpIOdGHtof/0Ey9+HXKwhYmvGeP2tqMqujCiB+FMxa4
-         pAyHhbM45W5W2/Yd+loEmEsKz3hvlMgxR8HRH0HsoPTJxDo8hOlQJS0ABJTindRPZ9pm
-         mxqw==
+        bh=vOB2BNWwETzT/PWHCgK09Lr+xKNMr+FYMdGX1/NYIf4=;
+        b=ITwWd+cnVms/1qZLMTx0e8qwcxdLBnaYhvApgSSaqOdG0yEXQZWcKVw3+gAgDpVLOv
+         kBoSlf2UJL8MqHlIwdVBrqjMS92UoxR44lWdnK2ymUlcRfxIJZ35t+xAg8QNfVFLCoPO
+         SJQv3ZqXEjCK6G09tV0UGtB5XZEvHv9Er2e5s8sn3Z2KBjwRmsPSN6DlOUKyZdL2yoNA
+         pmUKPyCUIuR7UEz/4QQieTP8NsqT5Mt2AJt6A0HwrbXZCFoXQ8f6bZE49MpJ5v58z7LQ
+         MtymHSxAS1TsC34DKXthdu32az4JsoHbe6chqghxrY641o1VPH8yqKjv1j7+2eFN0BqV
+         qQng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VCmkjUXbYIg7r0qiPTGP/L4L4D6bah91h264EBnNYRo=;
-        b=04t2fASiMZkAaiPdZq9nY9idRJOiaFOs2GRgKCJx6mEcjmNCr3rTqLYGsvJcXyvK+3
-         FN1L1FUTn28L30KXCykzYJn0lYKX1rvSe07UEEy4CxP04ZD6DdMVODjbJpgTlsvkGnAP
-         5Oody7a+O86seFjznJBXV4YoWxP9TVbc7RHBhaeepqMBsqu7PkUdU22E+EC07XfkB/4R
-         6MKczMSd2LZ5MRBXWVcSejtHMTRiAozqNaenjXHY9zEsgHPrwqRosBRPo7MDnAUZfj78
-         i01YLWtHANHmM2PSWpTtzOVQ79nw1tOAsBnAfjSJ/DU0fZ2WMhgyPtDm2JWevFOKsFeu
-         pVnA==
-X-Gm-Message-State: AFqh2kr3WQJPEL4ambUVEGvj1v6uMOVWmhHKQRpTjBmbypAW7GpoxinU
-        wL245kE6Oi6dtUQVcr7ZWGCrjQ==
-X-Google-Smtp-Source: AMrXdXtLqfzsD4NuV9Pozz/O3Ob5sEMQxs5F2ZeqeNcqLHEZ4NsP4L0STX+xl1Ts0n2tfW0ZhzUplg==
-X-Received: by 2002:a05:6512:4014:b0:4b6:f22c:8001 with SMTP id br20-20020a056512401400b004b6f22c8001mr12453563lfb.56.1672259756766;
-        Wed, 28 Dec 2022 12:35:56 -0800 (PST)
+        bh=vOB2BNWwETzT/PWHCgK09Lr+xKNMr+FYMdGX1/NYIf4=;
+        b=3AFRiI/dberiEC6xjtbhr49VVQ191lM6WysDpGCwo+zMVW+kRmKSb/L0soYwup2ynm
+         TUN7WFFoAqeDE4DdT1MfSt2Tlk1nZpZ1w+yZjeir6grv00bE6IhdNXEex1ZkfZaGfNzU
+         axC+kpl9wVLF9yHL3HaQNJBWSkztUs33+UG8/Wpby0HLVMXkuAhJxZnT4yPIVYJP2PRn
+         7YBydNzvBMqCPaJQug4yfnJhkEhVecyVRnJVHKxphqf+yOtUl2ou3Lco1E6XHHo/sMVt
+         dosEHU2rGNQiCNtsWuBxb9MiQ8j8FijynrbtpRdw+ljGb8CtcX3Q/t9G3ffs573vdOnu
+         lyLw==
+X-Gm-Message-State: AFqh2kqFBL/X/+8NifdF/2aaubudhbGmjSNgmtYtGikxW2b434Si+Unp
+        umXxbMxmyX7NM5Fkn/4QiU0DSQ==
+X-Google-Smtp-Source: AMrXdXuS/KatGX8neuVw/gQsgIFmzTYk8oxfx2PTno/VuDgQ2BFGZAMdbHV4mxJY5LkrOH4qID9SOw==
+X-Received: by 2002:a19:7513:0:b0:4b0:38f1:1266 with SMTP id y19-20020a197513000000b004b038f11266mr9797142lfe.34.1672259846766;
+        Wed, 28 Dec 2022 12:37:26 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id bi2-20020a0565120e8200b004b543f38b7csm2808384lfb.21.2022.12.28.12.35.55
+        by smtp.gmail.com with ESMTPSA id j4-20020a056512344400b004cb0dfe4993sm943001lfr.65.2022.12.28.12.37.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Dec 2022 12:35:56 -0800 (PST)
+        Wed, 28 Dec 2022 12:37:26 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -55,11 +55,10 @@ To:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v2] clk: qcom: common: use parent_hws in _qcom_cc_register_board_clk()
-Date:   Wed, 28 Dec 2022 22:35:55 +0200
-Message-Id: <20221228203555.3130090-1-dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-msm8974: switch from sleep_clk_src to sleep_clk
+Date:   Wed, 28 Dec 2022 22:37:25 +0200
+Message-Id: <20221228203725.3131237-1-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,57 +66,64 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch _qcom_cc_register_board_clk() to use parent_hws.
+gcc-msm8974 uses the registered sleep_clk_src clock, which is just a 1:1
+fixed factor clock register on top of the board's sleep_clk. Switch the
+driver to use the board sleep_clk directly.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
+ drivers/clk/qcom/gcc-msm8974.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Changes since v1:
-- Properly fix the clock's parent data in case parent clock is present
-  in the dtsi.
-
----
- drivers/clk/qcom/common.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 75f09e6e057e..9f2bd37c9540 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -133,7 +133,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 	struct device_node *node = NULL;
- 	struct device_node *clocks_node;
- 	struct clk_fixed_factor *factor;
--	struct clk_fixed_rate *fixed;
-+	struct clk_fixed_rate *fixed = NULL;
- 	struct clk_init_data init_data = { };
- 	int ret;
- 
-@@ -161,6 +161,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 	of_node_put(node);
- 
- 	if (add_factor) {
-+		struct clk_parent_data parent_data;
-+
- 		factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
- 		if (!factor)
- 			return -EINVAL;
-@@ -168,8 +170,13 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 		factor->mult = factor->div = 1;
- 		factor->hw.init = &init_data;
- 
-+		if (fixed)
-+			parent_data.hw = &fixed->hw;
-+		else
-+			parent_data.name = path;
-+
- 		init_data.name = name;
--		init_data.parent_names = &path;
-+		init_data.parent_data = &parent_data;
- 		init_data.num_parents = 1;
- 		init_data.flags = 0;
- 		init_data.ops = &clk_fixed_factor_ops;
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index 025cc9a20dbb..0231c1efd286 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -2110,7 +2110,7 @@ static struct clk_branch gcc_sdcc1_cdccal_sleep_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_sdcc1_cdccal_sleep_clk",
+ 			.parent_data = (const struct clk_parent_data[]){
+-				{ .fw_name = "sleep_clk", .name = "sleep_clk_src" }
++				{ .fw_name = "sleep_clk", .name = "sleep_clk" }
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+@@ -2275,7 +2275,7 @@ static struct clk_branch gcc_usb2a_phy_sleep_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_usb2a_phy_sleep_clk",
+ 			.parent_data = &(const struct clk_parent_data){
+-				.fw_name = "sleep_clk", .name = "sleep_clk_src",
++				.fw_name = "sleep_clk", .name = "sleep_clk",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+@@ -2291,7 +2291,7 @@ static struct clk_branch gcc_usb2b_phy_sleep_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_usb2b_phy_sleep_clk",
+ 			.parent_data = &(const struct clk_parent_data){
+-				.fw_name = "sleep_clk", .name = "sleep_clk_src",
++				.fw_name = "sleep_clk", .name = "sleep_clk",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+@@ -2341,7 +2341,7 @@ static struct clk_branch gcc_usb30_sleep_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_usb30_sleep_clk",
+ 			.parent_data = &(const struct clk_parent_data){
+-				.fw_name = "sleep_clk", .name = "sleep_clk_src",
++				.fw_name = "sleep_clk", .name = "sleep_clk",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+@@ -2440,7 +2440,7 @@ static struct clk_branch gcc_usb_hsic_io_cal_sleep_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_usb_hsic_io_cal_sleep_clk",
+ 			.parent_data = &(const struct clk_parent_data){
+-				.fw_name = "sleep_clk", .name = "sleep_clk_src",
++				.fw_name = "sleep_clk", .name = "sleep_clk",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
 -- 
 2.39.0
 
