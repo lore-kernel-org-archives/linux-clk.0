@@ -2,65 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4F8C54E76
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 04:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4564C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 07:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbiL1EhN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Dec 2022 23:37:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42696 "EHLO
+        id S229632AbiL1HY2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 02:24:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230356AbiL1EhJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Dec 2022 23:37:09 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3542ED2D2;
-        Tue, 27 Dec 2022 20:37:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9CCA261238;
-        Wed, 28 Dec 2022 04:37:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5EEC433F0;
-        Wed, 28 Dec 2022 04:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672202228;
-        bh=ppwC4LOwWHOKDutNAnDqBaDrC7JswL9fWVDPbALelcU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lU2pjDqAE8c3d7G8mZCQyMIZVlkz7gy3nh/vUNeoLtnSVwaoP1noZ4s2RHPg82cSq
-         OUAdCYhdi8ELl0dPOrxI0f+o5sepXtoszEKU1SvlSWuNn04WZUtiuG4g4SbZz3iKnu
-         H1IU8aSqXyvM8ys1po9dFjobX7/FBZ+b6e43HaJHFWBa5doGoe9H5C/5IINpwyGcrQ
-         ijXVfTRXT8Qpmh+iR7lvoFz7I46WIgvLxLp6oZJlnfNStQ/5He1VgP1S2hM2jKbUfv
-         Vzkl07PeKTRZs5BYu0v/aPEYeFfItF7uPJQTrlycOWoFhx62OnCs6NMf5L2ORKclT3
-         OL+rIilvn3uqA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     krzysztof.kozlowski@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, konrad.dybcio@linaro.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        me@iskren.info, mturquette@baylibre.com, sboyd@kernel.org,
-        patches@linaro.org
-Subject: Re: [PATCH] clk: qcom: gcc-sm6115: Use floor_ops for SDCC1/2 core clk
-Date:   Tue, 27 Dec 2022 22:36:42 -0600
-Message-Id: <167220221226.833009.4380587340113538324.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221209123910.178609-1-konrad.dybcio@linaro.org>
-References: <20221209123910.178609-1-konrad.dybcio@linaro.org>
+        with ESMTP id S229583AbiL1HY1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 02:24:27 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42683F03E;
+        Tue, 27 Dec 2022 23:24:22 -0800 (PST)
+X-UUID: d1a55c853375401c99250af0c921bfa3-20221228
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=8TGwloJUAR+sWvzTu+xAmrTJk0LoQNxpn5wak0pwHT4=;
+        b=LaxXbvQy8galBgQuPMrHSrwBJ/J5gKF9BqV7tc3eR4K6X57Cyzqy4Ww4nghH5daf/ilmsXg2QcBPLsUIfQOgHIYLA5t2yc5bsn+JrLYfyZfhwtBMVhDwOyvDIT49An3e7GkqoT8/gPMsqOAdTv5nvjkC0xnLzoyGL5dFZLS1yAU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.14,REQID:2115ecdf-936b-47f0-8317-d70b3ff57ced,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:dcaaed0,CLOUDID:71220253-dd49-462e-a4be-2143a3ddc739,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: d1a55c853375401c99250af0c921bfa3-20221228
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 523258031; Wed, 28 Dec 2022 15:24:15 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Wed, 28 Dec 2022 15:24:14 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Wed, 28 Dec 2022 15:24:14 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
+        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
+        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
+        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <msp@baylibre.com>,
+        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
+        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
+        <robh+dt@kernel.org>, <ryder.lee@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <weiyi.lu@mediatek.com>, <wenst@chromium.org>,
+        <y.oudjana@protonmail.com>, <yangyingliang@huawei.com>
+Subject: Re: [PATCH v2 07/23] clk: mediatek: clk-mtk: Add dummy clock ops
+Date:   Wed, 28 Dec 2022 15:24:14 +0800
+Message-ID: <20221228072414.26391-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20221223094259.87373-8-angelogioacchino.delregno@collabora.com>
+References: <20221223094259.87373-8-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 9 Dec 2022 13:39:09 +0100, Konrad Dybcio wrote:
-> Just like in case of other SoCs change SDCC1/SDCC2 ops
-> to floor to avoid overclocking the controller.
-> 
-> 
+Hi Angelo,
 
-Applied, thanks!
+> In order to migrate some (few) old clock drivers to the common
+> mtk_clk_simple_probe() function, add dummy clock ops to be able
+> to insert a dummy clock with ID 0 at the beginning of the list.
+>
 
-[1/1] clk: qcom: gcc-sm6115: Use floor_ops for SDCC1/2 core clk
-      commit: 85d4e6ea082d3905f3ede470ac337fddc2d47650
+...snip...
+ 
+> +/*
+> + * We need the clock IDs to start from zero but to maintain devicetree
+> + * backwards compatibility we can't change bindings to start from zero.
+> + * Only a few platforms are affected, so we solve issues given by the
+> + * commonized MTK clocks probe function(s) by adding a dummy clock at
+> + * the beginning where needed.
+> + */
+> +#define CLK_DUMMY		0
+>
 
-Best regards,
+Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
+
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.39.0
+
+
