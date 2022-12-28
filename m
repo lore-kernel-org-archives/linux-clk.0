@@ -2,104 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4C7C4167B
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 17:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E690C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 18:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234477AbiL1RQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 12:16:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36068 "EHLO
+        id S232366AbiL1Swm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 13:52:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234855AbiL1RQv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 12:16:51 -0500
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459DCB87E;
-        Wed, 28 Dec 2022 09:16:50 -0800 (PST)
-Received: by mail-io1-f43.google.com with SMTP id n63so8543948iod.7;
-        Wed, 28 Dec 2022 09:16:50 -0800 (PST)
+        with ESMTP id S230224AbiL1Swl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 13:52:41 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D59714D33
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 10:52:40 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id q2so17293386ljp.6
+        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 10:52:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CygB/IBP7kKgyl+CB0K9jPQziXFfGBJh9wohJieNZIE=;
+        b=Effu42plPtAOPfIlVDKsQ0q74R2KUMDHvtCyF3zm31nLA4HRW9YSmiMFr3Jg8zFmx3
+         M6VyNuJPm7f6bPPlKiaHAG+KdYS/im3kN3cNfH4ME8SrPZk2IlMvi1DTvhHKPMpjpoMb
+         TLhwevvKPMoJJSILw7BVbFSmhM3sHMMeUqGu/9Z+Bk1juSkU5Vokvs2EmLArmiz832A9
+         zB1EjEabuS4Mw94zUj1Hd2QHNmEtW2NG+7DxAZkH7MGWJ71GWWkdMCedtBqWnOaSl2i5
+         55CNXENkpH4dcx+0gjzoaq+1++5AxA6pb7xVYSa7rgs4M/EwVHMA3lNMrpUN+nRs6MTc
+         h9IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Kws3uwMtrY+FuMqLAlK4QwrZhceDZCqUsibK8/wgUTM=;
-        b=wFCwi63MzHQp192uxhIB8AMFRsIGy9ipOHJ6vJ/UUibimRSGSC+AQem9eqPrlQ9Cgc
-         eGOeuqLAbh2UqmUaW26gvRlLCZG7q45h3/0XjAE0PJIbg6hatmyV5YY413q6FEhTfzp5
-         Pnt7S+6q1A2k2jG+ijaYuMi4MbxkqK0XSzPtlI2sgvqEKaf8TlfWO3MeoxYefLjxFHYN
-         iL+Tx1aiw6j1WsFYKKTN8AE+mUUeNipW4wzsdOtMkkwSRpLPYTRxeRBaefif9Gmgxiqs
-         pb1srL13Th+iBGrtQrHunzzJGVATy1D7mSlBgrEsznVo6/2QVMNUOE/zc8lvWo/4NP3r
-         CAUw==
-X-Gm-Message-State: AFqh2kpBEj4RyLg0xJHQT4THeU/9LK1jVLWOUY3WIMUZ4/RmJzjJJUyQ
-        mzIFmsIeBa9c0tOMnr8c+sw4bj+o/Q==
-X-Google-Smtp-Source: AMrXdXsxtfXIdRf6NFPgIYsJl+SBmJxdpwxCgbwPWzfTt0i1r4DbvWN9npBTHgWET7TqkG0cH9wIkw==
-X-Received: by 2002:a5e:db4d:0:b0:6df:427:1ecd with SMTP id r13-20020a5edb4d000000b006df04271ecdmr26901601iop.8.1672247809362;
-        Wed, 28 Dec 2022 09:16:49 -0800 (PST)
-Received: from robh_at_kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id b10-20020a056638388a00b00374fbd37c72sm5350795jav.147.2022.12.28.09.16.48
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CygB/IBP7kKgyl+CB0K9jPQziXFfGBJh9wohJieNZIE=;
+        b=Jmsyy9BmDwF4MLe8Os7iiOAUjrb+HqurnWKja5/nTRjO7mEBhh+QJIJeJEEeQWuM2R
+         0vkbZWC8Vgr96gLyGi9EeqGh6VFRo7zdGqfikfykaaadvPxOcC7syunx/WyOyB0CQUo+
+         DK8PbiBM657HYzyiRFLYbV956MZ2/Fr91nbJNEbzOUNYC6xfXbsfcVQsfnC+dCkZD/Ls
+         /6JREETLFqxSPqdO/dtaEaggFJ3nYFjFI+tBOPPAqUC0gEQxeb2ZNDvOdbXjl3rwwzkU
+         cLDjUTUy3mAmpjeYq2xBBwLMrrTvlwftrqZ9ZYRcr1ofgl660tVs7MiPXtBiakhDlmyZ
+         zpxA==
+X-Gm-Message-State: AFqh2ko7LuwKZLPefZnZxojLzTjRNxwIo1XT6UKQKczf9jzYrX7Keip1
+        sA5I5X8sNbLUuqIKnlgW0y3Qog==
+X-Google-Smtp-Source: AMrXdXuDAT7XfAks4U71M1kJXyVIW13XligoL+JNKJkZeMCuj+mOvhCs857AnRs1Zor39crKjnnwbw==
+X-Received: by 2002:a05:651c:c8e:b0:279:e1ba:8c66 with SMTP id bz14-20020a05651c0c8e00b00279e1ba8c66mr7347365ljb.27.1672253558686;
+        Wed, 28 Dec 2022 10:52:38 -0800 (PST)
+Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id s7-20020a2e83c7000000b00279d206a43bsm2031893ljh.34.2022.12.28.10.52.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Dec 2022 09:16:48 -0800 (PST)
-Received: (nullmailer pid 1928463 invoked by uid 1000);
-        Wed, 28 Dec 2022 17:16:44 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Wed, 28 Dec 2022 10:52:37 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20221228133243.3052132-2-dmitry.baryshkov@linaro.org>
-References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
- <20221228133243.3052132-2-dmitry.baryshkov@linaro.org>
-Message-Id: <167224753985.1921575.2829498629927482782.robh@kernel.org>
-Subject: Re: [PATCH 01/16] dt-bindings: clock: qcom,gcc-msm8998: drop
- core_bi_pll_test_se
-Date:   Wed, 28 Dec 2022 11:16:44 -0600
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 00/16] clk: qcom: get rid of core_bi_pll_test_se
+Date:   Wed, 28 Dec 2022 20:52:21 +0200
+Message-Id: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Drop core_bi_pll_test_se from all Qualcomm clock controller's bindings
+and drivers. The clock is not used by anyone.
 
-On Wed, 28 Dec 2022 15:32:28 +0200, Dmitry Baryshkov wrote:
-> The test clock apparently it's not used by anyone upstream. Remove it.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml | 4 ----
->  1 file changed, 4 deletions(-)
-> 
+Changes since v1:
+- Fixed error in the qcom,gcc-msm8998 example.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Dmitry Baryshkov (16):
+  dt-bindings: clock: qcom,gcc-msm8998: drop core_bi_pll_test_se
+  dt-bindings: clock: qcom,gcc-sdx55: drop core_bi_pll_test_se
+  dt-bindings: clock: qcom,gcc-sdx65: drop core_bi_pll_test_se
+  dt-bindings: clock: qcom,gcc-sm8350: drop core_bi_pll_test_se
+  dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
+  dt-bindings: clock: qcom: gcc-sm8350: drop test clock
+  dt-bindings: clock: qcom: gcc-sm8450: drop test clock
+  clk: qcom: dispcc-qcm2290: get rid of test clock
+  clk: qcom: gcc-msm8998: get rid of test clock
+  clk: qcom: gcc-sc7180: get rid of test clock
+  clk: qcom: gcc-sdx55: use ARRAY_SIZE instead of specifying num_parents
+  clk: qcom: gcc-sdx55: get rid of test clock
+  clk: qcom: gcc-sm8150: get rid of test clock
+  clk: qcom: gcc-sm8350: get rid of test clock
+  clk: qcom: mmcc-msm8998: get rid of test clock
+  arm64: dts: qcom: msm8998: get rid of test clock
 
-yamllint warnings/errors:
+ .../bindings/clock/qcom,gcc-msm8998.yaml      |  6 +-
+ .../bindings/clock/qcom,gcc-sdx55.yaml        |  9 +--
+ .../bindings/clock/qcom,gcc-sdx65.yaml        |  8 +--
+ .../bindings/clock/qcom,gcc-sm8350.yaml       |  2 -
+ .../devicetree/bindings/clock/qcom,mmcc.yaml  |  2 -
+ arch/arm64/boot/dts/qcom/msm8998.dtsi         |  4 +-
+ drivers/clk/qcom/dispcc-qcm2290.c             |  6 --
+ drivers/clk/qcom/gcc-msm8998.c                | 13 ----
+ drivers/clk/qcom/gcc-sc7180.c                 | 16 -----
+ drivers/clk/qcom/gcc-sdx55.c                  | 64 ++++++++-----------
+ drivers/clk/qcom/gcc-sm8150.c                 | 17 -----
+ drivers/clk/qcom/gcc-sm8350.c                 | 15 -----
+ drivers/clk/qcom/mmcc-msm8998.c               | 25 --------
+ include/dt-bindings/clock/qcom,gcc-sm8350.h   |  1 -
+ include/dt-bindings/clock/qcom,gcc-sm8450.h   |  1 -
+ 15 files changed, 33 insertions(+), 156 deletions(-)
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.example.dts:31.9-10 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:434: Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.example.dtb] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1508: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221228133243.3052132-2-dmitry.baryshkov@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.39.0
 
