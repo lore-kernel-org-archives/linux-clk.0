@@ -2,139 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC27C3DA79
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Dec 2022 05:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C38C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Dec 2022 05:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbiL2FXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Dec 2022 00:23:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53738 "EHLO
+        id S229644AbiL2FaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Dec 2022 00:30:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiL2FXg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Dec 2022 00:23:36 -0500
-Received: from sender4-op-o18.zoho.com (sender4-op-o18.zoho.com [136.143.188.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3750511A3E;
-        Wed, 28 Dec 2022 21:23:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1672291383; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=S/D1jwJHCYVnMs6AAL7M6rO9rybFqGzL7npfFCil7nMljPmHsrJ4oMNKUCgDlsdTo8Sn6cjpQRrrYDHWn0W/+IJELu8LN3S3ylg8UrwVEJHiqN2X2DMyIx/9257mwexfRW43FWen6oHY3E5R0qlMcG1pn61ba8aoBQ/qD4XVfNI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1672291383; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=nnBr/n6lJ5YamGCsuAeKBbZ9w6fJvkjwmLE++C03dWo=; 
-        b=S1gvl0IwGAFQ96e69fbpYwWowIIN3rAMBRFwoiOt7TjSqy/6StSMUjBnMZ4fOwDNOzyQ01rrwJOT6387qyuniUxjToyxnV8eWOci8FYpvfqjHVUMQoSFox9Y8XFVPjfTjpW/as+kbTK/HTc2IOxSppp35qOZ5G/yJk2Dbfg6dNk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=icenowy.me;
-        spf=pass  smtp.mailfrom=uwu@icenowy.me;
-        dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1672291383;
-        s=zmail; d=icenowy.me; i=uwu@icenowy.me;
-        h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-        bh=nnBr/n6lJ5YamGCsuAeKBbZ9w6fJvkjwmLE++C03dWo=;
-        b=Y9bc5X2xlec+BYjpZCL0CVbTKsEoT4ZsVLFCwk+iyadvbciKXMHybs0QJdK8TfV8
-        8o9M5WZJQLVJ7M6iq6in2UnuL7nFlo1YW6f6JsGB9lvW8SRqFVgbQEEns/UUE3G62uL
-        tmAZ/99vompUzKdwxNzIK26H5I19oCHp7ueUe/U4=
-Received: from edelgard.fodlan.icenowy.me (120.85.98.122 [120.85.98.122]) by mx.zohomail.com
-        with SMTPS id 1672291381190125.36467730764525; Wed, 28 Dec 2022 21:23:01 -0800 (PST)
-Message-ID: <58b64e74466a572d472a13515dd481600dd2c63d.camel@icenowy.me>
+        with ESMTP id S229538AbiL2FaS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Dec 2022 00:30:18 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0B211C2A;
+        Wed, 28 Dec 2022 21:30:17 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 14FD15C008D;
+        Thu, 29 Dec 2022 00:30:15 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 29 Dec 2022 00:30:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1672291815; x=
+        1672378215; bh=LZQmgbwDcpKr9IztEIOfeJw0O3qCcf74sTNpf+LXgos=; b=Z
+        Ep9fH6QEx3q3eh1kAPLaG7WOCUmUSj4djncvkt6t7TzdAA7PI7bBi+j9/Se4Yihg
+        k69nhBofuttI/ccLbplcLL4fBcit6uy3bqgk8gxB9ehDDBzTa8dcUZ8wKXsR6j6G
+        8z/cwlt+K5ktdSTP3b89OAB7VgINTJTRtlkjfnlg+X5wmuUNxSy9z4+tEqx3gQrZ
+        1/lWcZpKKRqlb/TU1uEzsxeZs8rWbol3iPQyfJGnl3X7TfP3yhnjwoZBVY81V/Bj
+        /4rtG9BwCdjtl/raYR72vtVu6zXn+IeMc3IvdmkjztajD5CpIqnGH3HWyP8JbpIp
+        ZFgXYibsAZPJG01AMP7/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1672291815; x=
+        1672378215; bh=LZQmgbwDcpKr9IztEIOfeJw0O3qCcf74sTNpf+LXgos=; b=G
+        p2GOSGJs7uMlZYlVicY5yUAHZCwX11Hf22bOCPmXdMFi0TcaNoPu9fNPAowTBy8D
+        u80wu7jKSdw1UQfb874xR5VsBI0ld7Su3lGkf18PDsTlWWjufYivjg5DFJks5aek
+        D1oABkLWRk6rhWiobDyHj8zQ3mUgfEUZiMNe3sSVllaD3rucOvHWYKro5qkCJ1S6
+        q1ikDodA0eL0AnECP1zepahBk4oq3DwutLxPDR91FkvSBH3XDn9zoAbYOgk1/jKT
+        hNtbtIW1R/Pkyo5UEVApB4BnbJoKB0FXoYB8B30y6WvMB3DXS58PwRa5qCe//6ce
+        UXZudapmiWDtqHT/kaiAg==
+X-ME-Sender: <xms:5iWtY_cMVrIgn_b0ptD6RQsCHqtjNIitTBYlAsqfmQe1YO1QjWJBbQ>
+    <xme:5iWtY1OL86u14UakICqTOct5HDUK46n7-EAQ5Xx1IvGUmIPRVwBNm7392-VG3Bwhr
+    lqJHGPDownzLtx32A>
+X-ME-Received: <xmr:5iWtY4g8w2dZB2xEH8Ongq_B51OvhoDHsNXA-s67Sa2LfyMHl8spGQKVRPV3fSDVLp7oJT5g7IzMkhl-5HgcAWn9_UsgT1JI73Y8ubfEKzQKXTA5HgiGsWc2jg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieefgdekhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepgfdtgfelffekveelvdeuteetfefgleelhfejteeiuefhheetueef
+    fefgheefveefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:5iWtYw9ixpi-6shEc5oKqsZPkG4b-uDHBtMBUdjpKpiGD8aYrMK6bg>
+    <xmx:5iWtY7v-qOzGguswCIEjO8_OCIprKh-hPRmCLNuL7tRWWwGHRW5WAQ>
+    <xmx:5iWtY_ETGxiljIAGRTyoMMI2hxp9XoJp9ps9Hll4f0Nzz6zFrrJrtg>
+    <xmx:5yWtY0-Q8sNfFn0J1DYMstEvf-gd1HlI7iCLMv0JLHWnzDP8Nz2xWA>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 29 Dec 2022 00:30:14 -0500 (EST)
+Message-ID: <81ec4472-1aa8-deb4-d060-0b6b340103ab@sholland.org>
+Date:   Wed, 28 Dec 2022 23:30:14 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux ppc64le; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
 Subject: Re: [PATCH] clk: sunxi-ng: h3/h5: Model H3 CLK_DRAM as a fixed clock
-From:   Icenowy Zheng <uwu@icenowy.me>
-To:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+Content-Language: en-US
+To:     Icenowy Zheng <uwu@icenowy.me>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Date:   Thu, 29 Dec 2022 13:22:56 +0800
-In-Reply-To: <20221229042230.24532-1-samuel@sholland.org>
 References: <20221229042230.24532-1-samuel@sholland.org>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
-MIME-Version: 1.0
-X-ZohoMailClient: External
+ <58b64e74466a572d472a13515dd481600dd2c63d.camel@icenowy.me>
+From:   Samuel Holland <samuel@sholland.org>
+In-Reply-To: <58b64e74466a572d472a13515dd481600dd2c63d.camel@icenowy.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-5ZyoIDIwMjItMTItMjjmmJ/mnJ/kuInnmoQgMjI6MjIgLTA2MDDvvIxTYW11ZWwgSG9sbGFuZOWG
-memBk++8mgo+IFRoZSBEUkFNIGNvbnRyb2xsZXIgY2xvY2sgaXMgb25seSBhbGxvd2VkIHRvIGNo
-YW5nZSBmcmVxdWVuY3kgd2hpbGUKPiB0aGUKPiBEUkFNIGNoaXBzIGFyZSBpbiBzZWxmLXJlZnJl
-c2guIFRvIHN1cHBvcnQgdGhpcywgY2hhbmdlcyB0byB0aGUKPiBDTEtfRFJBTQo+IG11eCBhbmQg
-ZGl2aWRlciBoYXZlIG5vIGVmZmVjdCB1bnRpbCBhY2tub3dsZWRnZWQgYnkgdGhlIG1lbW9yeQo+
-IGR5bmFtaWMKPiBmcmVxdWVuY3kgc2NhbGluZyAoTURGUykgaGFyZHdhcmUgaW5zaWRlIHRoZSBE
-UkFNIGNvbnRyb2xsZXIuIChUaGVyZQo+IGlzCj4gYSBTRFJDTEtfVVBEIGJpdCBpbiBEUkFNX0NG
-R19SRUcgd2hpY2ggc2hvdWxkIHNlcnZlIGEgc2ltaWxhcgo+IHB1cnBvc2UsCj4gYnV0IHRoaXMg
-Yml0IGFjdHVhbGx5IGRvZXMgbm90aGluZy4pCj4gCj4gSG93ZXZlciwgdGhlIE1ERlMgaGFyZHdh
-cmUgaW4gSDMgYXBwZWFycyB0byBiZSBicm9rZW4uIFRyaWdnZXJpbmcgYQo+IGZyZXF1ZW5jeSBj
-aGFuZ2UgdXNpbmcgdGhlIHByb2NlZHVyZSBmcm9tIHNpbWlsYXIgU29DcyAoQTY0L0g1KSBoYW5n
-cwo+IHRoZSBoYXJkd2FyZS4gQWRkaXRpb25hbGx5LCB0aGUgdmVuZG9yIEJTUCBzcGVjaWZpY2Fs
-bHkgYXZvaWRzIHVzaW5nCj4gdGhlCj4gTURGUyBoYXJkd2FyZSBvbiBIMywgaW5zdGVhZCBwZXJm
-b3JtaW5nIGFsbCBEUkFNIFBIWSBwYXJhbWV0ZXIKPiB1cGRhdGVzCj4gYW5kIHJlc2V0cyBpbiBz
-b2Z0d2FyZS4KPiAKPiBUaHVzLCBpdCBpcyBlZmZlY3RpdmVseSBpbXBvc3NpYmxlIHRvIGNoYW5n
-ZSB0aGUgQ0xLX0RSQU0KPiBtdXgvZGl2aWRlciwKPiBzbyB0aG9zZSBmZWF0dXJlcyBzaG91bGQg
-bm90IGJlIG1vZGVsZWQuIEFkZCBDTEtfU0VUX1JBVEVfUEFSRU5UIHNvCj4gZnJlcXVlbmN5IGNo
-YW5nZXMgYXBwbHkgdG8gUExMX0REUiBpbnN0ZWFkLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFNhbXVl
-bCBIb2xsYW5kIDxzYW11ZWxAc2hvbGxhbmQub3JnPgo+IC0tLQo+IAo+IMKgZHJpdmVycy9jbGsv
-c3VueGktbmcvY2N1LXN1bjhpLWgzLmMgfCAxNSArKysrKysrKysrLS0tLS0KPiDCoDEgZmlsZSBj
-aGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VuOGktaDMuYyBiL2RyaXZlcnMvY2xrL3N1bnhp
-LQo+IG5nL2NjdS1zdW44aS1oMy5jCj4gaW5kZXggZDNmY2I5ODNjMTdjLi5iZmViZThkYmJlNjUg
-MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jbGsvc3VueGktbmcvY2N1LXN1bjhpLWgzLmMKPiArKysg
-Yi9kcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VuOGktaDMuYwo+IEBAIC00MzQsOCArNDM0LDEz
-IEBAIHN0YXRpYyBTVU5YSV9DQ1VfR0FURSh1c2Jfb2hjaTJfY2xrLMKgwqDCoMKgwqDCoMKgInVz
-Yi0KPiBvaGNpMiIswqDCoMKgwqAib3NjMjRNIiwKPiDCoHN0YXRpYyBTVU5YSV9DQ1VfR0FURSh1
-c2Jfb2hjaTNfY2xrLMKgwqDCoCJ1c2Itb2hjaTMiLMKgwqDCoMKgIm9zYzI0TSIsCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDB4MGNjLCBCSVQoMTkpLCAwKTsK
-PiDCoAo+IC1zdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IGRyYW1fcGFyZW50c1tdID0geyAicGxs
-LWRkciIsICJwbGwtCj4gcGVyaXBoMC0yeCIgfTsKPiAtc3RhdGljIFNVTlhJX0NDVV9NX1dJVEhf
-TVVYKGRyYW1fY2xrLCAiZHJhbSIsIGRyYW1fcGFyZW50cywKPiArLyogSDMgaGFzIGJyb2tlbiBN
-REZTIGhhcmR3YXJlLCBzbyB0aGUgbXV4L2RpdmlkZXIgY2Fubm90IGJlCj4gY2hhbmdlZC4gKi8K
-PiArc3RhdGljIENMS19GSVhFRF9GQUNUT1JfSFcoaDNfZHJhbV9jbGssICJkcmFtIiwKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJnBsbF9kZHJf
-Y2xrLmNvbW1vbi5odywKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgMSwgMSwgQ0xLX1NFVF9SQVRFX1BBUkVOVCB8Cj4gQ0xLX0lTX0NSSVRJQ0FM
-KTsKClNob3VsZCB3ZSBkbyBzb21lIHNhbml0eSBjaGVjayBvbiB0aGUgdmFsdWVzIHdoZW4gcHJv
-YmluZyBDQ1U/Cgo+ICsKPiArc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBoNV9kcmFtX3BhcmVu
-dHNbXSA9IHsgInBsbC1kZHIiLCAicGxsLQo+IHBlcmlwaDAtMngiIH07Cj4gK3N0YXRpYyBTVU5Y
-SV9DQ1VfTV9XSVRIX01VWChoNV9kcmFtX2NsaywgImRyYW0iLCBoNV9kcmFtX3BhcmVudHMsCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDB4
-MGY0LCAwLCA0LCAyMCwgMiwgQ0xLX0lTX0NSSVRJQ0FMKTsKPiDCoAo+IMKgc3RhdGljIFNVTlhJ
-X0NDVV9HQVRFKGRyYW1fdmVfY2xrLMKgwqDCoMKgwqAiZHJhbS12ZSIswqDCoMKgwqDCoMKgImRy
-YW0iLAo+IEBAIC01OTIsNyArNTk3LDcgQEAgc3RhdGljIHN0cnVjdCBjY3VfY29tbW9uICpzdW44
-aV9oM19jY3VfY2xrc1tdID0gewo+IMKgwqDCoMKgwqDCoMKgwqAmdXNiX29oY2kxX2Nsay5jb21t
-b24sCj4gwqDCoMKgwqDCoMKgwqDCoCZ1c2Jfb2hjaTJfY2xrLmNvbW1vbiwKPiDCoMKgwqDCoMKg
-wqDCoMKgJnVzYl9vaGNpM19jbGsuY29tbW9uLAo+IC3CoMKgwqDCoMKgwqDCoCZkcmFtX2Nsay5j
-b21tb24sCj4gK8KgwqDCoMKgwqDCoMKgJmg1X2RyYW1fY2xrLmNvbW1vbiwKPiDCoMKgwqDCoMKg
-wqDCoMKgJmRyYW1fdmVfY2xrLmNvbW1vbiwKPiDCoMKgwqDCoMKgwqDCoMKgJmRyYW1fY3NpX2Ns
-ay5jb21tb24sCj4gwqDCoMKgwqDCoMKgwqDCoCZkcmFtX2RlaW50ZXJsYWNlX2Nsay5jb21tb24s
-Cj4gQEAgLTczMiw3ICs3MzcsNyBAQCBzdGF0aWMgc3RydWN0IGNsa19od19vbmVjZWxsX2RhdGEK
-PiBzdW44aV9oM19od19jbGtzID0gewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-W0NMS19VU0JfT0hDSTFdwqDCoMKgwqDCoMKgwqDCoMKgPSAmdXNiX29oY2kxX2Nsay5jb21tb24u
-aHcsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBbQ0xLX1VTQl9PSENJMl3CoMKg
-wqDCoMKgwqDCoMKgwqA9ICZ1c2Jfb2hjaTJfY2xrLmNvbW1vbi5odywKPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoFtDTEtfVVNCX09IQ0kzXcKgwqDCoMKgwqDCoMKgwqDCoD0gJnVz
-Yl9vaGNpM19jbGsuY29tbW9uLmh3LAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBb
-Q0xLX0RSQU1dwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoD0gJmRyYW1fY2xrLmNvbW1vbi5o
-dywKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgW0NMS19EUkFNXcKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqA9ICZoM19kcmFtX2Nsay5odywKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoFtDTEtfRFJBTV9WRV3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgPSAmZHJhbV92
-ZV9jbGsuY29tbW9uLmh3LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgW0NMS19E
-UkFNX0NTSV3CoMKgwqDCoMKgwqDCoMKgwqDCoD0gJmRyYW1fY3NpX2Nsay5jb21tb24uaHcsCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBbQ0xLX0RSQU1fREVJTlRFUkxBQ0VdwqDC
-oD0KPiAmZHJhbV9kZWludGVybGFjZV9jbGsuY29tbW9uLmh3LAo+IEBAIC04NDgsNyArODUzLDcg
-QEAgc3RhdGljIHN0cnVjdCBjbGtfaHdfb25lY2VsbF9kYXRhCj4gc3VuNTBpX2g1X2h3X2Nsa3Mg
-PSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBbQ0xLX1VTQl9PSENJMV3CoMKg
-wqDCoMKgwqDCoMKgwqA9ICZ1c2Jfb2hjaTFfY2xrLmNvbW1vbi5odywKPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoFtDTEtfVVNCX09IQ0kyXcKgwqDCoMKgwqDCoMKgwqDCoD0gJnVz
-Yl9vaGNpMl9jbGsuY29tbW9uLmh3LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-W0NMS19VU0JfT0hDSTNdwqDCoMKgwqDCoMKgwqDCoMKgPSAmdXNiX29oY2kzX2Nsay5jb21tb24u
-aHcsCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFtDTEtfRFJBTV3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgPSAmZHJhbV9jbGsuY29tbW9uLmh3LAo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqBbQ0xLX0RSQU1dwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoD0g
-Jmg1X2RyYW1fY2xrLmNvbW1vbi5odywKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oFtDTEtfRFJBTV9WRV3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgPSAmZHJhbV92ZV9jbGsuY29tbW9u
-Lmh3LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgW0NMS19EUkFNX0NTSV3CoMKg
-wqDCoMKgwqDCoMKgwqDCoD0gJmRyYW1fY3NpX2Nsay5jb21tb24uaHcsCj4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBbQ0xLX0RSQU1fREVJTlRFUkxBQ0VdwqDCoD0KPiAmZHJhbV9k
-ZWludGVybGFjZV9jbGsuY29tbW9uLmh3LAoK
+On 12/28/22 23:22, Icenowy Zheng wrote:
+> 在 2022-12-28星期三的 22:22 -0600，Samuel Holland写道：
+>> The DRAM controller clock is only allowed to change frequency while
+>> the
+>> DRAM chips are in self-refresh. To support this, changes to the
+>> CLK_DRAM
+>> mux and divider have no effect until acknowledged by the memory
+>> dynamic
+>> frequency scaling (MDFS) hardware inside the DRAM controller. (There
+>> is
+>> a SDRCLK_UPD bit in DRAM_CFG_REG which should serve a similar
+>> purpose,
+>> but this bit actually does nothing.)
+>>
+>> However, the MDFS hardware in H3 appears to be broken. Triggering a
+>> frequency change using the procedure from similar SoCs (A64/H5) hangs
+>> the hardware. Additionally, the vendor BSP specifically avoids using
+>> the
+>> MDFS hardware on H3, instead performing all DRAM PHY parameter
+>> updates
+>> and resets in software.
+>>
+>> Thus, it is effectively impossible to change the CLK_DRAM
+>> mux/divider,
+>> so those features should not be modeled. Add CLK_SET_RATE_PARENT so
+>> frequency changes apply to PLL_DDR instead.
+>>
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> ---
+>>
+>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 15 ++++++++++-----
+>>  1 file changed, 10 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-
+>> ng/ccu-sun8i-h3.c
+>> index d3fcb983c17c..bfebe8dbbe65 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> @@ -434,8 +434,13 @@ static SUNXI_CCU_GATE(usb_ohci2_clk,       "usb-
+>> ohci2",    "osc24M",
+>>  static SUNXI_CCU_GATE(usb_ohci3_clk,   "usb-ohci3",    "osc24M",
+>>                       0x0cc, BIT(19), 0);
+>>  
+>> -static const char * const dram_parents[] = { "pll-ddr", "pll-
+>> periph0-2x" };
+>> -static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
+>> +/* H3 has broken MDFS hardware, so the mux/divider cannot be
+>> changed. */
+>> +static CLK_FIXED_FACTOR_HW(h3_dram_clk, "dram",
+>> +                          &pll_ddr_clk.common.hw,
+>> +                          1, 1, CLK_SET_RATE_PARENT |
+>> CLK_IS_CRITICAL);
+> 
+> Should we do some sanity check on the values when probing CCU?
+
+It is not necessary, because the register value is ignored. The register
+is interpreted as if it contains 0x80000000, regardless of what you
+write to it. So the parent/divider listed here will always be correct.
+
+Regards,
+Samuel
 
