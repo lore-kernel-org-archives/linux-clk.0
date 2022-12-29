@@ -2,128 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A0C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Dec 2022 20:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5143C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Dec 2022 04:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbiL1Uha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Dec 2022 15:37:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
+        id S230006AbiL2EWj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Dec 2022 23:22:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbiL1Uh3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 15:37:29 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D4D165BF
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:37:28 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id bf43so25054895lfb.6
-        for <linux-clk@vger.kernel.org>; Wed, 28 Dec 2022 12:37:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vOB2BNWwETzT/PWHCgK09Lr+xKNMr+FYMdGX1/NYIf4=;
-        b=ITwWd+cnVms/1qZLMTx0e8qwcxdLBnaYhvApgSSaqOdG0yEXQZWcKVw3+gAgDpVLOv
-         kBoSlf2UJL8MqHlIwdVBrqjMS92UoxR44lWdnK2ymUlcRfxIJZ35t+xAg8QNfVFLCoPO
-         SJQv3ZqXEjCK6G09tV0UGtB5XZEvHv9Er2e5s8sn3Z2KBjwRmsPSN6DlOUKyZdL2yoNA
-         pmUKPyCUIuR7UEz/4QQieTP8NsqT5Mt2AJt6A0HwrbXZCFoXQ8f6bZE49MpJ5v58z7LQ
-         MtymHSxAS1TsC34DKXthdu32az4JsoHbe6chqghxrY641o1VPH8yqKjv1j7+2eFN0BqV
-         qQng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vOB2BNWwETzT/PWHCgK09Lr+xKNMr+FYMdGX1/NYIf4=;
-        b=3AFRiI/dberiEC6xjtbhr49VVQ191lM6WysDpGCwo+zMVW+kRmKSb/L0soYwup2ynm
-         TUN7WFFoAqeDE4DdT1MfSt2Tlk1nZpZ1w+yZjeir6grv00bE6IhdNXEex1ZkfZaGfNzU
-         axC+kpl9wVLF9yHL3HaQNJBWSkztUs33+UG8/Wpby0HLVMXkuAhJxZnT4yPIVYJP2PRn
-         7YBydNzvBMqCPaJQug4yfnJhkEhVecyVRnJVHKxphqf+yOtUl2ou3Lco1E6XHHo/sMVt
-         dosEHU2rGNQiCNtsWuBxb9MiQ8j8FijynrbtpRdw+ljGb8CtcX3Q/t9G3ffs573vdOnu
-         lyLw==
-X-Gm-Message-State: AFqh2kqFBL/X/+8NifdF/2aaubudhbGmjSNgmtYtGikxW2b434Si+Unp
-        umXxbMxmyX7NM5Fkn/4QiU0DSQ==
-X-Google-Smtp-Source: AMrXdXuS/KatGX8neuVw/gQsgIFmzTYk8oxfx2PTno/VuDgQ2BFGZAMdbHV4mxJY5LkrOH4qID9SOw==
-X-Received: by 2002:a19:7513:0:b0:4b0:38f1:1266 with SMTP id y19-20020a197513000000b004b038f11266mr9797142lfe.34.1672259846766;
-        Wed, 28 Dec 2022 12:37:26 -0800 (PST)
-Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id j4-20020a056512344400b004cb0dfe4993sm943001lfr.65.2022.12.28.12.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Dec 2022 12:37:26 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S230419AbiL2EWh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2022 23:22:37 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8FA212740;
+        Wed, 28 Dec 2022 20:22:35 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2EBC25C02C8;
+        Wed, 28 Dec 2022 23:22:33 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 28 Dec 2022 23:22:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
+         s=fm3; t=1672287753; x=1672374153; bh=UHHIyJfdp+M76yk2yMa2U2mWK
+        RDFfFpLFlFWfeZpPHQ=; b=EW3hJKlIfV7kB0V9nmfQU2woQyesKsL3KBb/Yc34b
+        r4F+cpMPbNO82O3STXvGiBsv8MHeWi9t5nf1S7NB84WJkZ48V08JwtlBb6QgLR1E
+        nGM09ROQojLe4RUfMpfzCZ3P3/kB1fmTd+pttOggLzy/aQQb1w58/I/YY8M5OLoc
+        IUxPG6O7ApISZoHHdCmHSIweEF0Gj4jMYasIlglboWHS3XcBMXibO2FxX36NlKyQ
+        C+1QNwcYlS8YaDGp7uWZ/WdZ9NFAw+xfMHE6b9XIRRDC+j2AqMp6+av2xDbrVbFK
+        ThMcchrIJ1wghwIvQfbFlNrN+NbAfdeC3utdrxyjHIVhQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1672287753; x=1672374153; bh=UHHIyJfdp+M76yk2yMa2U2mWKRDFfFpLFlF
+        WfeZpPHQ=; b=Z0XE9nGdGFLPXiu1kL9g9KoQ1lOiP5urppR7zVPOJHTVnda61lr
+        j5hGfsZsId8NNMc+/jvJZUaDEYA8xeG0JSKRSqrAIBdqc2RbHbIO8LbfwUfM/z+Q
+        IsPqLxXpd1ElQJTwyDJBqL0yCu2zz0JtqQGgK7rXOHEcJbTSamraJnx+QGnQNGsp
+        rav0D/T3Rjc4SihCZt4BKg9gT1bJOfGmZrh9BA+CXj7AJSHqlY3aLPyzT04+Pxxg
+        hWjZiwZ5WhvTGCPa9DbJLsVosXe/wuEYK/CI9EQe7xrpIb+v+BbkBFnpIiGdNzda
+        3UPxOACxz1L68SLofrKzUoTphiY4rLZzgFw==
+X-ME-Sender: <xms:CBatY5Ld5IlOgNerONti26FXJxZa5qYdOh5LB1CwvZiGXhESZZsNVA>
+    <xme:CBatY1KfEXyhyywoSLiMKpourtBCXldF5iPbN5KmoclamHuIzzV_hwfmQX5o4YiFt
+    0Ez2cXqV5TbfBiaFw>
+X-ME-Received: <xmr:CBatYxvanJsQntro3LaUqeSHq0Q-aRUzDmsdS7sI2VQts4CXWV-9JWFTgH4rvcAtBIWFtMWBCjLOJ02XkDUWr4n8s8b0TX80QsI9FBJTLO-n4S-d3uT6wRFg4g71rnPIHHZFFA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieefgdejudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
+    htthgvrhhnpeekveelhfejueelleetvdejvdeffeetgeelheeujeffhefgffefkeehhffh
+    keekgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:CBatY6aLhO2PESMuEMzqRQ_HzCHz2lABofvoLnnoLUIt5w-dVLHorg>
+    <xmx:CBatYwZeMiQRfeoQ-Y1Exrht-tadVOuCUcOdpXg5uwXDhCxB7ET72g>
+    <xmx:CBatY-AIWgwZiyCs3uoD_A2JrNzIbCUBM19iFxWOmRczjFhoQOKZ1A>
+    <xmx:CRatYw6iSYeGeKBWleAkH-TxgsU1BHR2sTtky6yHDBzMUHMA0VftUw>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 28 Dec 2022 23:22:31 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Samuel Holland <samuel@sholland.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-msm8974: switch from sleep_clk_src to sleep_clk
-Date:   Wed, 28 Dec 2022 22:37:25 +0200
-Message-Id: <20221228203725.3131237-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.0
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH] clk: sunxi-ng: h3/h5: Model H3 CLK_DRAM as a fixed clock
+Date:   Wed, 28 Dec 2022 22:22:30 -0600
+Message-Id: <20221229042230.24532-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.37.4
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-gcc-msm8974 uses the registered sleep_clk_src clock, which is just a 1:1
-fixed factor clock register on top of the board's sleep_clk. Switch the
-driver to use the board sleep_clk directly.
+The DRAM controller clock is only allowed to change frequency while the
+DRAM chips are in self-refresh. To support this, changes to the CLK_DRAM
+mux and divider have no effect until acknowledged by the memory dynamic
+frequency scaling (MDFS) hardware inside the DRAM controller. (There is
+a SDRCLK_UPD bit in DRAM_CFG_REG which should serve a similar purpose,
+but this bit actually does nothing.)
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+However, the MDFS hardware in H3 appears to be broken. Triggering a
+frequency change using the procedure from similar SoCs (A64/H5) hangs
+the hardware. Additionally, the vendor BSP specifically avoids using the
+MDFS hardware on H3, instead performing all DRAM PHY parameter updates
+and resets in software.
+
+Thus, it is effectively impossible to change the CLK_DRAM mux/divider,
+so those features should not be modeled. Add CLK_SET_RATE_PARENT so
+frequency changes apply to PLL_DDR instead.
+
+Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- drivers/clk/qcom/gcc-msm8974.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 025cc9a20dbb..0231c1efd286 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -2110,7 +2110,7 @@ static struct clk_branch gcc_sdcc1_cdccal_sleep_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_sdcc1_cdccal_sleep_clk",
- 			.parent_data = (const struct clk_parent_data[]){
--				{ .fw_name = "sleep_clk", .name = "sleep_clk_src" }
-+				{ .fw_name = "sleep_clk", .name = "sleep_clk" }
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
-@@ -2275,7 +2275,7 @@ static struct clk_branch gcc_usb2a_phy_sleep_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb2a_phy_sleep_clk",
- 			.parent_data = &(const struct clk_parent_data){
--				.fw_name = "sleep_clk", .name = "sleep_clk_src",
-+				.fw_name = "sleep_clk", .name = "sleep_clk",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
-@@ -2291,7 +2291,7 @@ static struct clk_branch gcc_usb2b_phy_sleep_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb2b_phy_sleep_clk",
- 			.parent_data = &(const struct clk_parent_data){
--				.fw_name = "sleep_clk", .name = "sleep_clk_src",
-+				.fw_name = "sleep_clk", .name = "sleep_clk",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
-@@ -2341,7 +2341,7 @@ static struct clk_branch gcc_usb30_sleep_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb30_sleep_clk",
- 			.parent_data = &(const struct clk_parent_data){
--				.fw_name = "sleep_clk", .name = "sleep_clk_src",
-+				.fw_name = "sleep_clk", .name = "sleep_clk",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
-@@ -2440,7 +2440,7 @@ static struct clk_branch gcc_usb_hsic_io_cal_sleep_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb_hsic_io_cal_sleep_clk",
- 			.parent_data = &(const struct clk_parent_data){
--				.fw_name = "sleep_clk", .name = "sleep_clk_src",
-+				.fw_name = "sleep_clk", .name = "sleep_clk",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index d3fcb983c17c..bfebe8dbbe65 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -434,8 +434,13 @@ static SUNXI_CCU_GATE(usb_ohci2_clk,	"usb-ohci2",	"osc24M",
+ static SUNXI_CCU_GATE(usb_ohci3_clk,	"usb-ohci3",	"osc24M",
+ 		      0x0cc, BIT(19), 0);
+ 
+-static const char * const dram_parents[] = { "pll-ddr", "pll-periph0-2x" };
+-static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
++/* H3 has broken MDFS hardware, so the mux/divider cannot be changed. */
++static CLK_FIXED_FACTOR_HW(h3_dram_clk, "dram",
++			   &pll_ddr_clk.common.hw,
++			   1, 1, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++static const char * const h5_dram_parents[] = { "pll-ddr", "pll-periph0-2x" };
++static SUNXI_CCU_M_WITH_MUX(h5_dram_clk, "dram", h5_dram_parents,
+ 			    0x0f4, 0, 4, 20, 2, CLK_IS_CRITICAL);
+ 
+ static SUNXI_CCU_GATE(dram_ve_clk,	"dram-ve",	"dram",
+@@ -592,7 +597,7 @@ static struct ccu_common *sun8i_h3_ccu_clks[] = {
+ 	&usb_ohci1_clk.common,
+ 	&usb_ohci2_clk.common,
+ 	&usb_ohci3_clk.common,
+-	&dram_clk.common,
++	&h5_dram_clk.common,
+ 	&dram_ve_clk.common,
+ 	&dram_csi_clk.common,
+ 	&dram_deinterlace_clk.common,
+@@ -732,7 +737,7 @@ static struct clk_hw_onecell_data sun8i_h3_hw_clks = {
+ 		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
+ 		[CLK_USB_OHCI2]		= &usb_ohci2_clk.common.hw,
+ 		[CLK_USB_OHCI3]		= &usb_ohci3_clk.common.hw,
+-		[CLK_DRAM]		= &dram_clk.common.hw,
++		[CLK_DRAM]		= &h3_dram_clk.hw,
+ 		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
+ 		[CLK_DRAM_CSI]		= &dram_csi_clk.common.hw,
+ 		[CLK_DRAM_DEINTERLACE]	= &dram_deinterlace_clk.common.hw,
+@@ -848,7 +853,7 @@ static struct clk_hw_onecell_data sun50i_h5_hw_clks = {
+ 		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
+ 		[CLK_USB_OHCI2]		= &usb_ohci2_clk.common.hw,
+ 		[CLK_USB_OHCI3]		= &usb_ohci3_clk.common.hw,
+-		[CLK_DRAM]		= &dram_clk.common.hw,
++		[CLK_DRAM]		= &h5_dram_clk.common.hw,
+ 		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
+ 		[CLK_DRAM_CSI]		= &dram_csi_clk.common.hw,
+ 		[CLK_DRAM_DEINTERLACE]	= &dram_deinterlace_clk.common.hw,
 -- 
-2.39.0
+2.37.4
 
