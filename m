@@ -2,53 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F79DC3DA7C
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 04:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEEDC4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 05:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbiL3E6z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Dec 2022 23:58:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44384 "EHLO
+        id S229559AbiL3FMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Dec 2022 00:12:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231126AbiL3E6y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Dec 2022 23:58:54 -0500
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B307C17E2A
-        for <linux-clk@vger.kernel.org>; Thu, 29 Dec 2022 20:58:52 -0800 (PST)
-Received: by mail-vk1-xa2d.google.com with SMTP id i84so2812074vke.7
-        for <linux-clk@vger.kernel.org>; Thu, 29 Dec 2022 20:58:52 -0800 (PST)
+        with ESMTP id S229505AbiL3FMs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 00:12:48 -0500
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A03D15FD1
+        for <linux-clk@vger.kernel.org>; Thu, 29 Dec 2022 21:12:47 -0800 (PST)
+Received: by mail-vs1-xe31.google.com with SMTP id p30so14751561vsr.1
+        for <linux-clk@vger.kernel.org>; Thu, 29 Dec 2022 21:12:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/x+MdNC8Jc4+eNTwOHLucI15Q9uq7s3xxOLCxyhs/b0=;
-        b=LjPsiGFrTgmSn4tIRHOhLrMg3fJcnmKcZxCtS62E6agc8ePEclrniZjtyIpl9bMEPo
-         CAquYg4SGDRznluMIlx/ck4F4BpeQqTzVqkPxni3Z4uWPzeKOYB4v+DDXGE2W26NSWE9
-         qLj5wz1sPhZ/u0XEkn6NQRO3RxrpLKHDNKWFU=
+        bh=j4sxQBZTeARJaOtpQ26mu6MKSoj0k8stp/j0GJKpAsI=;
+        b=S2uvp+3QvQHmc53dc1Zb1zRkgnvTrqDFph6z1iQJ1dkE2S6Lmyw3pPi+ReQ+TZaYlj
+         +bKXUOQpdkzuNh3oeBy/xi3M8XP7xyHXoZqCEIFP8mjmmnjMsQAnKKXwimC5lwdvax/e
+         7Thkl1MUfROcmT+3COFvA0FOA1TwikZ6me+j4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/x+MdNC8Jc4+eNTwOHLucI15Q9uq7s3xxOLCxyhs/b0=;
-        b=bws1ObkKGJD8bwxCK2eTcMxdRCAVErhzHCWWsqIypNbL8ag6iwWL1IGqMMXfhi8BsF
-         jXDcO9ZJ/LXvpOBpuveAZYE9zRybqI3CdsYHHtxA04pUwakZ7NKsj7cliG/61VKetzo0
-         +Gxd5mgrqpbz60y3+1GnIsS1xv2P/+EAeLdycZ5hjU0z0isY1PXreugj3uwyh8JxWCOn
-         Drx47evG2YBUE3d7aa3Dn93d8Vzyv7a+eq1GubfbXZmI+E9gjJwoy6JnG5zBsYuArBMp
-         XPhoGiHsGbEOR6x8yj1s6GQMwzF0VVJQ91+yzslWbcxtO1bU4fOJ6c5BuG4NiWyVM55N
-         1J9w==
-X-Gm-Message-State: AFqh2krR6jeOiCFeROPbEuLqgRBFdGcxeLofJC+nQ3dUL1w4+CwKjUXC
-        TPrLnvFLNQ9UF7kv/N8E9xE48HBGtH72tIIoHBJiFQ==
-X-Google-Smtp-Source: AMrXdXvImd9LDPOcdvEHEB6jsiBaWZryQY0LDesdq8EZzB05sW28Of+Fy4fp0tIMM/zFQR+D/ChPctvniobNpYm2QWg=
-X-Received: by 2002:ac5:c382:0:b0:380:5dbd:1076 with SMTP id
- s2-20020ac5c382000000b003805dbd1076mr3384482vkk.22.1672376331473; Thu, 29 Dec
- 2022 20:58:51 -0800 (PST)
+        bh=j4sxQBZTeARJaOtpQ26mu6MKSoj0k8stp/j0GJKpAsI=;
+        b=nXzHBs6gF29q5qXzmQSuK/bFTENtKbFap1bp5likpK90roYv9vRk+wAdwaYZt5Hwgv
+         lwsIkKr3H/tl8D0I0OfVNqySyxYWPfFs72egJwY5laQRJdSw6k901+87QaTO4kJ5/Mke
+         RGJtHVHdEqePkv+PviFiVgZc71E77dxNp8NRhjpB3DI5xnw1MenZXY7L/9PSk0HFRnIQ
+         orMD3XrrZFzjKazV0Ei0JZxiUVOl2Ou0/05k+aYBXQagLM8hW5d+JFr1jBVeLIkHR1rS
+         JQZAO1bXmwLf9xTULIJ72IqC95DUSHjqAcoKoHmrn7gowjVz5bDVJ5PqLqQ5rUpCRKGL
+         pmFA==
+X-Gm-Message-State: AFqh2kp6ToIIySQgc0TFQPfteEjPOipal7Uel4/VTxgWVAqIr7I801+m
+        fqDLL6keyfZZKZxoC76i5YM1Ihpfut/y6Nl4r55erg==
+X-Google-Smtp-Source: AMrXdXvBIpfvv7eYq0qOFA9b8lukSrK2ZsYP9FnFRdTNpKcBJc7aHUFbMHI+JTfSPUyiqECr7ENUw3wXDtbCuyv/VHU=
+X-Received: by 2002:a05:6102:3d9f:b0:3c4:4918:80c with SMTP id
+ h31-20020a0561023d9f00b003c44918080cmr2639318vsv.9.1672377166648; Thu, 29 Dec
+ 2022 21:12:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-10-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221223094259.87373-10-angelogioacchino.delregno@collabora.com>
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-12-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221223094259.87373-12-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 30 Dec 2022 12:58:39 +0800
-Message-ID: <CAGXv+5Hk8kguJ=joLXF3OrRXxGvuFAJFKYoK+y7q+wqDBS-wtQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/23] clk: mediatek: mt8173: Remove mtk_clk_enable_critical()
+Date:   Fri, 30 Dec 2022 13:12:35 +0800
+Message-ID: <CAGXv+5GYk2wr-UnnshT3R2uDUSn7-i5KifyJ4qDDZbptSQ9G7A@mail.gmail.com>
+Subject: Re: [PATCH v2 11/23] clk: mediatek: Switch to mtk_clk_simple_probe()
+ where possible
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -72,143 +73,130 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> The entire point of mtk_clk_enable_critical() is to raise the refcount
-> of some clocks so that they won't be turned off during runtime, but
-> this is the same as what the CLK_IS_CRITICAL flag does.
->
-> Set CLK_IS_CRITICAL on all of the critical clocks and remove the
-> aforementioned function as a cleanup.
->
-> No functional changes.
+> mtk_clk_simple_probe() is a function that registers mtk gate clocks
+> and, if reset data is present, a reset controller and across all of
+> the MTK clock drivers, such a function is duplicated many times:
+> switch to the common mtk_clk_simple_probe() function for all of the
+> clock drivers that are registering as platform drivers.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
-Looks good to me,
-
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-
-However, if you move this patch before the previous one ...
-
 > ---
->  drivers/clk/mediatek/clk-mt8173.c | 41 ++++++++++++-------------------
->  1 file changed, 16 insertions(+), 25 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-> index 70cdc0719658..02231f8ba6d9 100644
-> --- a/drivers/clk/mediatek/clk-mt8173.c
-> +++ b/drivers/clk/mediatek/clk-mt8173.c
-> @@ -546,8 +546,11 @@ static const struct mtk_composite cpu_muxes[] = {
->  static const struct mtk_composite top_muxes[] = {
->         /* CLK_CFG_0 */
->         MUX(CLK_TOP_AXI_SEL, "axi_sel", axi_parents, 0x0040, 0, 3),
-> -       MUX(CLK_TOP_MEM_SEL, "mem_sel", mem_parents, 0x0040, 8, 1),
-> -       MUX_GATE(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel", ddrphycfg_parents, 0x0040, 16, 1, 23),
-> +       MUX_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parents, 0x0040, 8, 1,
-> +                 CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
-> +       MUX_GATE_FLAGS(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel",
-> +                      ddrphycfg_parents, 0x0040, 16, 1, 23,
-> +                      CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
->         MUX_GATE(CLK_TOP_MM_SEL, "mm_sel", mm_parents, 0x0040, 24, 4, 31),
->         /* CLK_CFG_1 */
->         MUX_GATE(CLK_TOP_PWM_SEL, "pwm_sel", pwm_parents, 0x0050, 0, 2, 7),
-> @@ -581,7 +584,9 @@ static const struct mtk_composite top_muxes[] = {
->          */
->         MUX_GATE_FLAGS(CLK_TOP_DPI0_SEL, "dpi0_sel", dpi0_parents, 0x00a0, 0, 3, 7, 0),
->         MUX_GATE(CLK_TOP_IRDA_SEL, "irda_sel", irda_parents, 0x00a0, 8, 2, 15),
-> -       MUX_GATE(CLK_TOP_CCI400_SEL, "cci400_sel", cci400_parents, 0x00a0, 16, 3, 23),
-> +       MUX_GATE_FLAGS(CLK_TOP_CCI400_SEL, "cci400_sel",
-> +                      cci400_parents, 0x00a0, 16, 3, 23,
-> +                      CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
->         MUX_GATE(CLK_TOP_AUD_1_SEL, "aud_1_sel", aud_1_parents, 0x00a0, 24, 2, 31),
->         /* CLK_CFG_7 */
->         MUX_GATE(CLK_TOP_AUD_2_SEL, "aud_2_sel", aud_2_parents, 0x00b0, 0, 2, 7),
-> @@ -596,7 +601,8 @@ static const struct mtk_composite top_muxes[] = {
->         MUX_GATE(CLK_TOP_MSDC50_2_H_SEL, "msdc50_2_h_sel", msdc50_2_h_parents, 0x00d0, 0, 3, 7),
->         MUX_GATE(CLK_TOP_HDCP_SEL, "hdcp_sel", hdcp_parents, 0x00d0, 8, 2, 15),
->         MUX_GATE(CLK_TOP_HDCP_24M_SEL, "hdcp_24m_sel", hdcp_24m_parents, 0x00d0, 16, 2, 23),
-> -       MUX(CLK_TOP_RTC_SEL, "rtc_sel", rtc_parents, 0x00d0, 24, 2),
-> +       MUX_FLAGS(CLK_TOP_RTC_SEL, "rtc_sel", rtc_parents, 0x00d0, 24, 2,
-> +                 CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
->
->         DIV_GATE(CLK_TOP_APLL1_DIV0, "apll1_div0", "aud_1_sel", 0x12c, 8, 0x120, 4, 24),
->         DIV_GATE(CLK_TOP_APLL1_DIV1, "apll1_div1", "aud_1_sel", 0x12c, 9, 0x124, 8, 0),
-> @@ -846,23 +852,8 @@ static const struct mtk_clk_rst_desc clk_rst_desc[] = {
->         }
+>  drivers/clk/mediatek/clk-mt2701-aud.c   | 26 +++----
+>  drivers/clk/mediatek/clk-mt2701-eth.c   | 34 +++------
+>  drivers/clk/mediatek/clk-mt2701-g3d.c   | 56 +++-----------
+>  drivers/clk/mediatek/clk-mt2701-hif.c   | 36 +++------
+>  drivers/clk/mediatek/clk-mt2712.c       | 83 ++++++++-------------
+>  drivers/clk/mediatek/clk-mt6779.c       | 42 ++++++-----
+>  drivers/clk/mediatek/clk-mt7622-aud.c   | 49 +++----------
+>  drivers/clk/mediatek/clk-mt7622-eth.c   | 82 ++++-----------------
+>  drivers/clk/mediatek/clk-mt7622-hif.c   | 85 ++++-----------------
+>  drivers/clk/mediatek/clk-mt7629-hif.c   | 85 ++++-----------------
+>  drivers/clk/mediatek/clk-mt8183-audio.c | 19 +++--
+>  drivers/clk/mediatek/clk-mt8183.c       | 75 ++++++++-----------
+>  drivers/clk/mediatek/clk-mt8192-aud.c   | 25 +++----
+>  drivers/clk/mediatek/clk-mt8192.c       | 98 ++++++++-----------------
+>  14 files changed, 236 insertions(+), 559 deletions(-)
+
+This looks mostly good, however ...
+
+> diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
+> index ab13ab618fb5..1fd6d96b34dc 100644
+> --- a/drivers/clk/mediatek/clk-mt2701-aud.c
+> +++ b/drivers/clk/mediatek/clk-mt2701-aud.c
+> @@ -76,6 +76,7 @@ static const struct mtk_gate_regs audio3_cg_regs = {
 >  };
 >
-> -static struct clk_hw_onecell_data *mt8173_top_clk_data;
-> -static struct clk_hw_onecell_data *mt8173_pll_clk_data;
-
-You wouldn't have to touch these lines twice?
-
-ChenYu
-
->  static struct clk_hw_onecell_data *infra_clk_data;
+>  static const struct mtk_gate audio_clks[] = {
+> +       GATE_DUMMY(CLK_DUMMY, "aud_dummy"),
+>         /* AUDIO0 */
+>         GATE_AUDIO0(CLK_AUD_AFE, "audio_afe", "aud_intbus_sel", 2),
+>         GATE_AUDIO0(CLK_AUD_HDMI, "audio_hdmi", "audpll_sel", 20),
+> @@ -138,29 +139,26 @@ static const struct mtk_gate audio_clks[] = {
+>         GATE_AUDIO3(CLK_AUD_MEM_ASRC5, "audio_mem_asrc5", "asm_h_sel", 14),
+>  };
 >
-> -static void mtk_clk_enable_critical(void)
-> -{
-> -       if (!mt8173_top_clk_data || !mt8173_pll_clk_data)
-> -               return;
-> -
-> -       clk_prepare_enable(mt8173_pll_clk_data->hws[CLK_APMIXED_ARMCA15PLL]->clk);
-> -       clk_prepare_enable(mt8173_pll_clk_data->hws[CLK_APMIXED_ARMCA7PLL]->clk);
-> -       clk_prepare_enable(mt8173_top_clk_data->hws[CLK_TOP_MEM_SEL]->clk);
-> -       clk_prepare_enable(mt8173_top_clk_data->hws[CLK_TOP_DDRPHYCFG_SEL]->clk);
-> -       clk_prepare_enable(mt8173_top_clk_data->hws[CLK_TOP_CCI400_SEL]->clk);
-> -       clk_prepare_enable(mt8173_top_clk_data->hws[CLK_TOP_RTC_SEL]->clk);
-> -}
-> -
->  static int clk_mt8173_topck_probe(struct platform_device *pdev)
+> +static const struct mtk_clk_desc audio_desc = {
+> +       .clks = audio_clks,
+> +       .num_clks = ARRAY_SIZE(audio_clks),
+> +};
+> +
+>  static const struct of_device_id of_match_clk_mt2701_aud[] = {
+> -       { .compatible = "mediatek,mt2701-audsys", },
+> -       {}
+> +       { .compatible = "mediatek,mt2701-audsys", .data = &audio_desc },
+> +       { /* sentinel */ }
+>  };
+>
+>  static int clk_mt2701_aud_probe(struct platform_device *pdev)
 >  {
->         struct device_node *node = pdev->dev.of_node;
-> @@ -874,7 +865,7 @@ static int clk_mt8173_topck_probe(struct platform_device *pdev)
->         if (IS_ERR(base))
->                 return PTR_ERR(base);
+> -       struct clk_hw_onecell_data *clk_data;
+> -       struct device_node *node = pdev->dev.of_node;
+>         int r;
 >
-> -       mt8173_top_clk_data = clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-> +       clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
->         if (IS_ERR_OR_NULL(clk_data))
->                 return -ENOMEM;
+> -       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
+> -
+> -       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> -                              clk_data, &pdev->dev);
+> -
+> -       r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> +       r = mtk_clk_simple_probe(pdev);
+>         if (r) {
+>                 dev_err(&pdev->dev,
+>                         "could not register clock provider: %s: %d\n",
+>                         pdev->name, r);
+> -
+> -               goto err_clk_provider;
+> +               return r;
+>         }
 >
-> @@ -895,7 +886,6 @@ static int clk_mt8173_topck_probe(struct platform_device *pdev)
->         if (r)
->                 goto unregister_composites;
->
-> -       mtk_clk_enable_critical();
+>         r = devm_of_platform_populate(&pdev->dev);
+> @@ -170,13 +168,13 @@ static int clk_mt2701_aud_probe(struct platform_device *pdev)
 >         return 0;
 >
->  unregister_composites:
-> @@ -1048,8 +1038,10 @@ static const struct mtk_pll_div_table mmpll_div_table[] = {
->  };
+>  err_plat_populate:
+> -       of_clk_del_provider(node);
+> -err_clk_provider:
+> +       mtk_clk_simple_remove(pdev);
+>         return r;
+>  }
 >
->  static const struct mtk_pll_data plls[] = {
-> -       PLL(CLK_APMIXED_ARMCA15PLL, "armca15pll", 0x200, 0x20c, 0, 0, 21, 0x204, 24, 0x0, 0x204, 0),
-> -       PLL(CLK_APMIXED_ARMCA7PLL, "armca7pll", 0x210, 0x21c, 0, 0, 21, 0x214, 24, 0x0, 0x214, 0),
-> +       PLL(CLK_APMIXED_ARMCA15PLL, "armca15pll", 0x200, 0x20c, 0, PLL_AO,
-> +           21, 0x204, 24, 0x0, 0x204, 0),
-> +       PLL(CLK_APMIXED_ARMCA7PLL, "armca7pll", 0x210, 0x21c, 0, PLL_AO,
-> +           21, 0x214, 24, 0x0, 0x214, 0),
->         PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x220, 0x22c, 0xf0000100, HAVE_RST_BAR, 21, 0x220, 4, 0x0, 0x224, 0),
->         PLL(CLK_APMIXED_UNIVPLL, "univpll", 0x230, 0x23c, 0xfe000000, HAVE_RST_BAR, 7, 0x230, 4, 0x0, 0x234, 14),
->         PLL_B(CLK_APMIXED_MMPLL, "mmpll", 0x240, 0x24c, 0, 0, 21, 0x244, 24, 0x0, 0x244, 0, mmpll_div_table),
-> @@ -1076,7 +1068,7 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
->         if (!base)
->                 return PTR_ERR(base);
+>  static struct platform_driver clk_mt2701_aud_drv = {
+>         .probe = clk_mt2701_aud_probe,
+> +       .remove = mtk_clk_simple_remove,
+
+I'm not a big fan of mixing devres and non-devres teardown code. Automatic
+devres teardown happens after the remove callback returns, so in this
+case you could have child devices being unregistered that touch clocks
+or resets that have already been unregistered and freed in the remove
+callback.
+
+>         .driver = {
+>                 .name = "clk-mt2701-aud",
+>                 .of_match_table = of_match_clk_mt2701_aud,
+
+[...]
+
+> --- a/drivers/clk/mediatek/clk-mt2712.c
+> +++ b/drivers/clk/mediatek/clk-mt2712.c
+
+[...]
+
+> @@ -1482,7 +1459,11 @@ static struct platform_driver clk_mt2712_drv = {
 >
-> -       mt8173_pll_clk_data = clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-> +       clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
->         if (IS_ERR_OR_NULL(clk_data))
->                 return -ENOMEM;
+>  static int __init clk_mt2712_init(void)
+>  {
+> -       return platform_driver_register(&clk_mt2712_drv);
+> +       int ret = platform_driver_register(&clk_mt2712_drv);
+> +
+> +       if (ret)
+> +               return ret;
+> +       return platform_driver_register(&clk_mt2712_simple_drv);
+>  }
 >
-> @@ -1101,7 +1093,6 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
->         if (r)
->                 goto unregister_ref2usb;
->
-> -       mtk_clk_enable_critical();
->         return 0;
->
->  unregister_ref2usb:
-> --
-> 2.39.0
->
+>  arch_initcall(clk_mt2712_init);
+
+Would this get cleaned up even more? I.e. have just one driver left and
+we could have the nice *_platform_driver() macros.
+
+Thanks
+ChenYu
