@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B26C3DA7C
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 08:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A32CC3DA7C
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 08:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234427AbiL3IN4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Dec 2022 03:13:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40862 "EHLO
+        id S234720AbiL3IOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Dec 2022 03:14:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234536AbiL3IN4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 03:13:56 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40D418E25
-        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:13:54 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id 128so20596972vsz.12
-        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:13:54 -0800 (PST)
+        with ESMTP id S234659AbiL3IOh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 03:14:37 -0500
+Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495EB193FE
+        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:14:36 -0800 (PST)
+Received: by mail-vk1-xa33.google.com with SMTP id bi24so2567139vkb.6
+        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+BW5cwmKaNCVLs9nRl+n6ibFBEWSsqnffbwe6y2wYCQ=;
-        b=nGPjclbubWrpPTtxt8FKiL1BFgbol42KKil8hX/0VmVLK0i8/1yA/SP4ogoO1eSLpR
-         OFPrEwUbyH9DylcRkRPvTa8+iLlXVqsLLYJ2/h0vxjUCsgedaM3/JW8hI8EkozA1MS2O
-         UnOJedj+iKcCyGhpeAaF5RccFV3t/B7LWrrAg=
+        bh=h/23SH/RDubUwtPhGDvvJ5R7dhk7aa2Q9znGGjv9398=;
+        b=hQL750/SptDyM5zC9SONd1+yKhS6sU/IIgcEppsoQ+cTBrkG0dJKYth3P6vkDRv1m2
+         rZSgt08UXmchg3fKG/2gV4l20jzUYuaKZ802nmCM+vwvC7x/OzXK0f1aVK4YC3dm/OYJ
+         +vLtcMX04P3A/R8rugf17ELK3VwPbMxjI21wI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+BW5cwmKaNCVLs9nRl+n6ibFBEWSsqnffbwe6y2wYCQ=;
-        b=uGiQQ+1shJa9f/rxFmozS92gK/cXO0I+IwMOsZBc0AuX/YRWAl9eGqd2LotBLVBbSu
-         Uc6TFJ3nOi2HxDr/nXUe9w4E4OKgrSG/dTY94vRobocpCP+hAJ8P/dV4Ki3W0XJ0c3p8
-         p54tEBUxTmZKngHqt7EAnqt6o5fHnLq84kfreo0+4KSCJ8qW/0jnGpUYoGa6vrErhLjR
-         u/fRxfh73G0cAcywSVovWdtUaKhSd46PqH7/v18GG2q013bGWtoTvzeDjK3d23ox6LXa
-         IX2k4sgYGyPFcO3SViDyaiXb5Ag4iZkmu7uJGLBmbUWMPfp3T+rIb59lg+NL9icAKPPn
-         kKgw==
-X-Gm-Message-State: AFqh2krIuWw46p0xZM3Jhdu8ct6MOgZlTXuWipN9qo/yF/KSRFzx3LFM
-        vMLmysP6dCeUlukvB5Fv5KnoXlymusfKG1A7i5mGCw==
-X-Google-Smtp-Source: AMrXdXv7CHafuypiXlQL438o48Sf7M0d8IvDMBWqWekllpFk+gsVlFTfotR7uZXiHjjbfDtmSkoKdZZraclEPUo0lLw=
-X-Received: by 2002:a05:6102:74b:b0:3ad:3d65:22b with SMTP id
- v11-20020a056102074b00b003ad3d65022bmr4419162vsg.65.1672388034106; Fri, 30
- Dec 2022 00:13:54 -0800 (PST)
+        bh=h/23SH/RDubUwtPhGDvvJ5R7dhk7aa2Q9znGGjv9398=;
+        b=1pWVjPYilPBGGQiWRY6irE1EGABIFkT5WZK12vDaYbIowqjXpKsseqZAQK8vX7DETX
+         Gz+Sa1jFdwb0vLMvinRrMmpvZCacfBQyW8yMxQc242shI9tj2cNvswu/yoOl1y6RDdLB
+         wMSj1pjJ73JqE1/zBU+wJwM5T/ncT5venQP5rP8fW0n2qQpWQlKKI27nXei80YXe7RMW
+         PF/EY+OzVcxCU0LlKTHb7PU9gCaHnsnx34XCEJubzUepgeq07ljyvvDqY0nUHFX8AUtr
+         ZiZZiYp9anmbDqZEKSlYWsknPk83PnxSuK/dfbkJRW3qxfVDvjUpHHwKxzGzeU3AO+Og
+         J0ig==
+X-Gm-Message-State: AFqh2krFiDyo8oQ+TgFwavWgg+JSEWGSPih0Xu8kl5DOyWxJLVxYZHHz
+        1jeLlIAbc/Xs2evpXpMPbDE4EwlbY6l4/8CSOBSbOQ==
+X-Google-Smtp-Source: AMrXdXv+RCjAisIysYzOgTd+TZASYGjgYmh6pgy5c7q3H14gY+3IMCe6R4lmwzLkmBOTPRmsWJgPiOASnjVqpAniq1Y=
+X-Received: by 2002:a1f:940a:0:b0:3bd:e439:84e4 with SMTP id
+ w10-20020a1f940a000000b003bde43984e4mr3202746vkd.11.1672388075447; Fri, 30
+ Dec 2022 00:14:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-22-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221223094259.87373-22-angelogioacchino.delregno@collabora.com>
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-24-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221223094259.87373-24-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 30 Dec 2022 16:13:42 +0800
-Message-ID: <CAGXv+5Eoiaf7RovpHeizYxpFO-xw2NHneig_CUc4cxL-i7Xhew@mail.gmail.com>
-Subject: Re: [PATCH v2 21/23] clk: mediatek: clk-mt6795-topckgen: Migrate to mtk_clk_simple_probe()
+Date:   Fri, 30 Dec 2022 16:14:24 +0800
+Message-ID: <CAGXv+5HtEE_1wFOHwXLe+gJrcEgs63g-UpiiRXoSqh+fZW=N+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 23/23] clk: mediatek: clk-mt7986-topckgen: Migrate to mtk_clk_simple_probe()
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -72,8 +72,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> Migrate away from custom probe functions and use the commonized
-> mtk_clk_simple_{probe, remove}().
+> There are no more non-common calls in clk_mt7986_topckgen_probe():
+> migrate this driver to mtk_clk_simple_probe().
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
