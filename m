@@ -2,83 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B3FC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 07:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3ACC4167B
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 08:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230405AbiL3HTZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Dec 2022 02:19:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50026 "EHLO
+        id S234234AbiL3IGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Dec 2022 03:06:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234570AbiL3HTY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 02:19:24 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C87117893;
-        Thu, 29 Dec 2022 23:19:19 -0800 (PST)
-X-UUID: 967324f2d82a487191d8c586b3579dc9-20221230
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=70/gSCKhTQzKbFYmgOhODv9+xC9MexRyBoezoF0q1aI=;
-        b=rHvLB2LpblGbYspgogHYKDPwQu/5j3rFhQhraW/HxfE7Tn/BQIMVqXM1myrP9jwGgenQkMl9iVsq4Om8zAUVTsz1rCDldCEA297M9Eg3UmMeX89uiBUl50mR2t6nyaNtmz+xnqXoCV7ZgUVV6v3KfH8PqJP4+6CRIlSHM2osFCs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.16,REQID:285007fc-3882-4aba-9b47-79663c382379,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:09771b1,CLOUDID:bfae3853-dd49-462e-a4be-2143a3ddc739,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-X-CID-BVR: 1,FCT|NGT
-X-UUID: 967324f2d82a487191d8c586b3579dc9-20221230
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1305728304; Fri, 30 Dec 2022 15:19:13 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Fri, 30 Dec 2022 15:19:12 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Fri, 30 Dec 2022 15:19:12 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <wenst@chromium.org>
-CC:     <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
-        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
-        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
-        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <msp@baylibre.com>,
-        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
-        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
-        <robh+dt@kernel.org>, <ryder.lee@kernel.org>,
-        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
-        <weiyi.lu@mediatek.com>, <y.oudjana@protonmail.com>,
-        <yangyingliang@huawei.com>
-Subject: Re: [PATCH v2 00/23] MediaTek clocks cleanups and improvements
-Date:   Fri, 30 Dec 2022 15:19:12 +0800
-Message-ID: <20221230071912.18135-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <CAGXv+5HqLc2xsz6b_d5hrPiAu363aMcJkQrqX32ukA2pcsj6kQ@mail.gmail.com>
-References: <CAGXv+5HqLc2xsz6b_d5hrPiAu363aMcJkQrqX32ukA2pcsj6kQ@mail.gmail.com>
+        with ESMTP id S229876AbiL3IGr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 03:06:47 -0500
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB09512AE3
+        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:06:46 -0800 (PST)
+Received: by mail-vs1-xe2b.google.com with SMTP id m129so14824755vsc.11
+        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:06:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iQdcqRijxUkHsak+jAfhkkvLukBS0vcYzdFtrdyXflw=;
+        b=hJrOI48JiYR65s9nCvSCbLB6/evML3aOoc6h+o+f3sjNM430ssdY4mTfsfoOuqiE77
+         SfnNNqM26q/P0n106if0Zu2bwW9SvUE5hjv4D9piG3JN02D1FVQl65JpTXlhhT0mEDhD
+         lf0+C7oAiy61ZM+ycfbYEnO9A6aiVYZIH5934=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iQdcqRijxUkHsak+jAfhkkvLukBS0vcYzdFtrdyXflw=;
+        b=T/ZfRbYwqcl3ZwR8AXs4TAzxAsvoO/JtWiiBZm5dnsDkc4zgMi5v2lyxWwPIMhjR+G
+         OCcxbzKJF4eXav24xm5uZz5inwD9hnsrq8FauQ6WVrIkC8IVOar+qP1spoLrhJCiFtU5
+         ZQEtq6xj7aNuJ9nox/up3xSW8/7JqEuNE911hsY2vWzKqkxx1aQdxSSDB41mRwTvLlEF
+         HnnSM86yHkYm0d2cw/iAaPLIV8vxidkPuNN/sORfEbUbLO3jiVRAc1Q1grSt/Q8AD7wT
+         OTPLx1zxdFGnEkPwSw5LSsvbQTM7bXtSLzENy8jmwQpVQBgLXWpNlzkqyHxlfG7eKyxk
+         YRLg==
+X-Gm-Message-State: AFqh2kr5fkNsw4rOLGEi2N85H1fkvE1tAbi407ZTuCU45kWqEdVrSY0c
+        LngSWADutNW0V5kPFk+lZeK2cQdetV/kwd2L0POIpw==
+X-Google-Smtp-Source: AMrXdXtUtwb9Xd2cX7zaHUb5ee4VgtB+nh99Dg/x/skgVf2ZCGUYciWzd1E+Ypz1KXO3wscCEMwAn2Ze8MjLtrhpUfM=
+X-Received: by 2002:a05:6102:74b:b0:3ad:3d65:22b with SMTP id
+ v11-20020a056102074b00b003ad3d65022bmr4417228vsg.65.1672387606063; Fri, 30
+ Dec 2022 00:06:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-16-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221223094259.87373-16-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Fri, 30 Dec 2022 16:06:35 +0800
+Message-ID: <CAGXv+5H9FqFeng+dev2A-W6FPuWvVuLMgSgVcubwE7NLCy58pw@mail.gmail.com>
+Subject: Re: [PATCH v2 15/23] clk: mediatek: mt8192: Join top_adj_divs and top_muxes
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->> >
->> > All of this was manually tested on various Chromebooks (with different MTK
->> > SoCs) and no regression was detected.
->> >
->> > Cheers!
->>
->> I tested this v2 series on mt6779 and mt8192 without any problem.
+On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
 >
->Please give Tested-by. :)
+> These two are both mtk_composite arrays, one dependent on another, but
+> that's something that the clock framework is supposed to sort out and
+> anyway registering them separately isn't going to ease the framework's
+> job in checking dependencies.
+>
+> Put the contents of top_adj_divs in top_muxes to join them together
+> and register them in one shot.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/clk/mediatek/clk-mt8192.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+> index ec9dc7fe848e..702770326286 100644
+> --- a/drivers/clk/mediatek/clk-mt8192.c
+> +++ b/drivers/clk/mediatek/clk-mt8192.c
+> @@ -698,9 +698,7 @@ static struct mtk_composite top_muxes[] = {
+>         MUX(CLK_TOP_APLL_I2S7_M_SEL, "apll_i2s7_m_sel", apll_i2s_m_parents, 0x320, 23, 1),
+>         MUX(CLK_TOP_APLL_I2S8_M_SEL, "apll_i2s8_m_sel", apll_i2s_m_parents, 0x320, 24, 1),
+>         MUX(CLK_TOP_APLL_I2S9_M_SEL, "apll_i2s9_m_sel", apll_i2s_m_parents, 0x320, 25, 1),
+> -};
+> -
+> -static const struct mtk_composite top_adj_divs[] = {
+> +       /* APLL_DIV */
 
-Sure for v2 and I expect a v3 series (I will newer series)
+This would be CLK_AUDDIV_2 ~ 4 actually. 4 dividers per register.
 
-Tested-by: Miles Chen <miles.chen@mediatek.com> 
+Otherwise,
+
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
