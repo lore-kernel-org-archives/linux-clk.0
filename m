@@ -2,104 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3ACC4167B
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 08:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0473C4167B
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 08:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234234AbiL3IGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Dec 2022 03:06:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38866 "EHLO
+        id S234710AbiL3IKO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Dec 2022 03:10:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbiL3IGr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 03:06:47 -0500
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB09512AE3
-        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:06:46 -0800 (PST)
-Received: by mail-vs1-xe2b.google.com with SMTP id m129so14824755vsc.11
-        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:06:46 -0800 (PST)
+        with ESMTP id S234703AbiL3IKM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 03:10:12 -0500
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4CED18682
+        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:10:10 -0800 (PST)
+Received: by mail-vs1-xe33.google.com with SMTP id 3so20601543vsq.7
+        for <linux-clk@vger.kernel.org>; Fri, 30 Dec 2022 00:10:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iQdcqRijxUkHsak+jAfhkkvLukBS0vcYzdFtrdyXflw=;
-        b=hJrOI48JiYR65s9nCvSCbLB6/evML3aOoc6h+o+f3sjNM430ssdY4mTfsfoOuqiE77
-         SfnNNqM26q/P0n106if0Zu2bwW9SvUE5hjv4D9piG3JN02D1FVQl65JpTXlhhT0mEDhD
-         lf0+C7oAiy61ZM+ycfbYEnO9A6aiVYZIH5934=
+        bh=6m26YMbks5w9j7aA1kyB8fHaCoQJomo7rPAPrntLOog=;
+        b=da0u9H3i2xBt3fWJah+Dv2qxTKOgSPA3AOzUFkMKqyZBIZZP1P0UGdJuaICzOxt4fH
+         Mm1wEa0yAJTOmV4DWB4J14oTVDAi63M5Vz3MP/SaMgYICVkVtF/81mtEBJvcpGuYIkY9
+         crEd8lqVWmWgaSLClDuFEAsKqpu5aflcbck8I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iQdcqRijxUkHsak+jAfhkkvLukBS0vcYzdFtrdyXflw=;
-        b=T/ZfRbYwqcl3ZwR8AXs4TAzxAsvoO/JtWiiBZm5dnsDkc4zgMi5v2lyxWwPIMhjR+G
-         OCcxbzKJF4eXav24xm5uZz5inwD9hnsrq8FauQ6WVrIkC8IVOar+qP1spoLrhJCiFtU5
-         ZQEtq6xj7aNuJ9nox/up3xSW8/7JqEuNE911hsY2vWzKqkxx1aQdxSSDB41mRwTvLlEF
-         HnnSM86yHkYm0d2cw/iAaPLIV8vxidkPuNN/sORfEbUbLO3jiVRAc1Q1grSt/Q8AD7wT
-         OTPLx1zxdFGnEkPwSw5LSsvbQTM7bXtSLzENy8jmwQpVQBgLXWpNlzkqyHxlfG7eKyxk
-         YRLg==
-X-Gm-Message-State: AFqh2kr5fkNsw4rOLGEi2N85H1fkvE1tAbi407ZTuCU45kWqEdVrSY0c
-        LngSWADutNW0V5kPFk+lZeK2cQdetV/kwd2L0POIpw==
-X-Google-Smtp-Source: AMrXdXtUtwb9Xd2cX7zaHUb5ee4VgtB+nh99Dg/x/skgVf2ZCGUYciWzd1E+Ypz1KXO3wscCEMwAn2Ze8MjLtrhpUfM=
-X-Received: by 2002:a05:6102:74b:b0:3ad:3d65:22b with SMTP id
- v11-20020a056102074b00b003ad3d65022bmr4417228vsg.65.1672387606063; Fri, 30
- Dec 2022 00:06:46 -0800 (PST)
+        bh=6m26YMbks5w9j7aA1kyB8fHaCoQJomo7rPAPrntLOog=;
+        b=KPAdOQuazIPxkc8OhjnjNaLlHHMOol53k7vlS2vVFV1X7UXIypdC8WyQpZU0OyvIOB
+         8KAyxw3kzPYChhTvvpb8MHx9T+kOWvMcC4+nBA6oQzyjUAVQsdJzKW0NBoNYS9yZHYrA
+         Bq9147M5rVWJU6AqECuZfDurtqbeCDRoB2zlFt65t77pPwd9qo57GVmDfwlaFfWWFU6Q
+         p8ycZfWd7dl/GR8IqJcT/CVcIruHAoU7SfBnPoODcuRif6e6IAXtw20wm523JuhtwjP7
+         a19F7IBGBdCNqfkElRr9wfNIHy184Dt+pcAx9lEQ6kuuB/WO9N4jZ/h9Y7cjXyj1odLL
+         Ua3Q==
+X-Gm-Message-State: AFqh2kq+9kg9YyGLrFW0YRuC85G2tlFaV7u4CeEV8n87fSkKMPh8j/V2
+        cfeBmt3D8RoAwxlgyKMKEf1HRKfmVsP0CuriXhDRZw==
+X-Google-Smtp-Source: AMrXdXu42OIXcFU1BSE54ydAcv7zw3Gqh5WM+YiUnvG/dZqYgZpVZP5X5dL1GmIq2Knsf9WEE8McGyC3+t2WX/bbKjs=
+X-Received: by 2002:a67:fbc2:0:b0:3cc:fb59:8c71 with SMTP id
+ o2-20020a67fbc2000000b003ccfb598c71mr21878vsr.65.1672387810048; Fri, 30 Dec
+ 2022 00:10:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-16-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221223094259.87373-16-angelogioacchino.delregno@collabora.com>
+References: <20221223094259.87373-16-angelogioacchino.delregno@collabora.com> <20221228083123.15298-1-miles.chen@mediatek.com>
+In-Reply-To: <20221228083123.15298-1-miles.chen@mediatek.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 30 Dec 2022 16:06:35 +0800
-Message-ID: <CAGXv+5H9FqFeng+dev2A-W6FPuWvVuLMgSgVcubwE7NLCy58pw@mail.gmail.com>
+Date:   Fri, 30 Dec 2022 16:09:59 +0800
+Message-ID: <CAGXv+5Hp3MFjLcP5z0t6QnYHN3VvVg_Og_HhvWNxm5o1q20B=g@mail.gmail.com>
 Subject: Re: [PATCH v2 15/23] clk: mediatek: mt8192: Join top_adj_divs and top_muxes
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        fparent@baylibre.com, chun-jie.chen@mediatek.com,
-        sam.shih@mediatek.com, y.oudjana@protonmail.com,
-        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
-        ryder.lee@kernel.org, daniel@makrotopia.org,
-        jose.exposito89@gmail.com, yangyingliang@huawei.com,
-        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
-        ikjn@chromium.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        devicetree@vger.kernel.org, fparent@baylibre.com,
+        ikjn@chromium.org, johnson.wang@mediatek.com,
+        jose.exposito89@gmail.com, kernel@collabora.com,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        matthias.bgg@gmail.com, msp@baylibre.com, mturquette@baylibre.com,
+        nfraprado@collabora.com, pablo.sun@mediatek.com,
+        rex-bc.chen@mediatek.com, robh+dt@kernel.org, ryder.lee@kernel.org,
+        sam.shih@mediatek.com, sboyd@kernel.org, weiyi.lu@mediatek.com,
+        y.oudjana@protonmail.com, yangyingliang@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Wed, Dec 28, 2022 at 4:31 PM Miles Chen <miles.chen@mediatek.com> wrote:
 >
-> These two are both mtk_composite arrays, one dependent on another, but
-> that's something that the clock framework is supposed to sort out and
-> anyway registering them separately isn't going to ease the framework's
-> job in checking dependencies.
+> Hi,
 >
-> Put the contents of top_adj_divs in top_muxes to join them together
-> and register them in one shot.
+> > These two are both mtk_composite arrays, one dependent on another, but
+> > that's something that the clock framework is supposed to sort out and
+> > anyway registering them separately isn't going to ease the framework's
+> > job in checking dependencies.
+> >
+> > Put the contents of top_adj_divs in top_muxes to join them together
+> > and register them in one shot.
+> >
 >
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt8192.c | 13 ++-----------
->  1 file changed, 2 insertions(+), 11 deletions(-)
+> In mt8192, we can join top_adj_divs and top_muxes:
 >
-> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-> index ec9dc7fe848e..702770326286 100644
-> --- a/drivers/clk/mediatek/clk-mt8192.c
-> +++ b/drivers/clk/mediatek/clk-mt8192.c
-> @@ -698,9 +698,7 @@ static struct mtk_composite top_muxes[] = {
->         MUX(CLK_TOP_APLL_I2S7_M_SEL, "apll_i2s7_m_sel", apll_i2s_m_parents, 0x320, 23, 1),
->         MUX(CLK_TOP_APLL_I2S8_M_SEL, "apll_i2s8_m_sel", apll_i2s_m_parents, 0x320, 24, 1),
->         MUX(CLK_TOP_APLL_I2S9_M_SEL, "apll_i2s9_m_sel", apll_i2s_m_parents, 0x320, 25, 1),
-> -};
-> -
-> -static const struct mtk_composite top_adj_divs[] = {
-> +       /* APLL_DIV */
+> mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base, &mt8192_clk_lock,
+>                 top_clk_data);
+> mtk_clk_register_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), base, &mt8192_clk_lock,
+>                 top_clk_data);
+>
+> However, there are other top_adj_divs[] and top_muxes[] in different types so
+> we cannot join them.
+>
+> For example:
+> in drivers/clk/mediatek/clk-mt8167.c:mtk_topckgen_init():
+>
+> mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base,
+>                 &mt8167_clk_lock, clk_data);
+> mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
+>                 base, &mt8167_clk_lock, clk_data);
+>
+> So we can join top_adj_divs and top_muxes in some platforms, but we
+> cannot join top_adj_divs and top_muxes in some other platforms.
+>
+> I'm afraid that this will confuses people.
 
-This would be CLK_AUDDIV_2 ~ 4 actually. 4 dividers per register.
+I think the confusion comes from the macro names. It's not exactly clear that
+DIV_GATE is for composite clocks, while DIV_ADJ is for divider clocks.
+Doubly so for the mux related types.
 
-Otherwise,
+Either way, using the wrong macro or the wrong type will cause the compiler
+to complain, so I think it's something we can live with. If it's still not
+working out, maybe we should rethink the naming.
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+ChenYu
