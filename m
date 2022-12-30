@@ -2,81 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8592FC10F1B
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 05:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A265C10F1B
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Dec 2022 05:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbiL3F2h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Dec 2022 00:28:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52744 "EHLO
+        id S230405AbiL3Fzn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Dec 2022 00:55:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiL3F1e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 00:27:34 -0500
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6CA186E6
-        for <linux-clk@vger.kernel.org>; Thu, 29 Dec 2022 21:24:04 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id 128so20352720vsz.12
-        for <linux-clk@vger.kernel.org>; Thu, 29 Dec 2022 21:24:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d2kO8pgMtBzZNlbzXFL36B4N197Fi4UW0BCO8fu4xqw=;
-        b=Jl6Crh7Mm8B+2BMASpdiBuOTVnQhVFGCt9wvg6YWVF8Sn+/cS2kn+Qjmt1syT0QYVO
-         vphIcYXev2LxGuz2zpb9Ea9eYlVyi5e94+rLvxxA2ltlA98SH9EnW2pGRYFziKBsiSyi
-         18xo3AUt8+af1atgoRPWyHq/iyretmjX6m+zM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d2kO8pgMtBzZNlbzXFL36B4N197Fi4UW0BCO8fu4xqw=;
-        b=7pZqWYqG7GrD/hiX6Wy/OZlG7i4zCfUqLwMgspXVAxOS7n5DR2qhlMEaAYsWJbQJVv
-         a9azbeux3MKydfpUAmw2Ah9LcNIPJWUCgvScZjCFXFTicdpIb+eVQ+xfAGNZZN50B/Yq
-         bCS+gVqCpl+1GQUSfp3rnhSbD+n1ImZlCyWDJgzmd2FOals81rleLeMQZFNJAnP5QPIo
-         WYbkNMtTLO0+f+zo1Osg7t+OzfJ0MT2l1EBIJGIauiGvO1cYuOIa8tTWbPwA4MU6tZKa
-         WF0VDyCwb+MA9rLUruEQBR8h/Qp0PhL6qnqzaVJjZOgxHUBq0eF283XxRH9zJ21VdG/1
-         J5dQ==
-X-Gm-Message-State: AFqh2kpXTel3hPrB7FO55VLw5wTz5jDWcElUcF4zYebTJGeBoj4R6Ow9
-        fa13P8XEUSvkVYLE7L7lfXd8mYcnPfc3cNGHj4O1kA==
-X-Google-Smtp-Source: AMrXdXsNEPEEDbmMNdTXQ66dzte31fV01YoUyu4VK+PpkfRFqDEmbhNsYqdkXtoVcZvmwH1OYa9y0JeRg/5FrrgR4TQ=
-X-Received: by 2002:a05:6102:3d9f:b0:3c4:4918:80c with SMTP id
- h31-20020a0561023d9f00b003c44918080cmr2641293vsv.9.1672377843567; Thu, 29 Dec
- 2022 21:24:03 -0800 (PST)
+        with ESMTP id S234615AbiL3Fz0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Dec 2022 00:55:26 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2932F15F02;
+        Thu, 29 Dec 2022 21:55:25 -0800 (PST)
+X-UUID: 58f7841651ff48ed8a13fe40e92fe8de-20221230
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=LWEebljfdFOyYEhD6BpamOQWMZl/LoHI045PBrJCSRc=;
+        b=tLXIQAEU0rhllbC035fO/X12zj8d+cF1D4J9edI+trMvaHr6HO35XKbt+J915Wpgp3EYJZm7uWhr81rQh+0MidNlk5HTbHVqhrKgPsSIk2WDvdsee8rXlYyiBj1f91jX7MfUwhyiJ2A4WlpWEx5YbuBJOASW57XVLS2v9IyqfbY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.16,REQID:94906b89-1517-42b7-847f-5130a11aac31,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:45
+X-CID-INFO: VERSION:1.1.16,REQID:94906b89-1517-42b7-847f-5130a11aac31,IP:0,URL
+        :0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+        elease,TS:45
+X-CID-META: VersionHash:09771b1,CLOUDID:05483653-dd49-462e-a4be-2143a3ddc739,B
+        ulkID:22123013552182WNUJH3,BulkQuantity:0,Recheck:0,SF:28|17|19|48|102,TC:
+        nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,O
+        SI:0,OSA:0
+X-CID-BVR: 1,FCT|NGT
+X-UUID: 58f7841651ff48ed8a13fe40e92fe8de-20221230
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1662278757; Fri, 30 Dec 2022 13:55:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Fri, 30 Dec 2022 13:55:18 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Fri, 30 Dec 2022 13:55:18 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
+        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
+        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
+        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <msp@baylibre.com>,
+        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
+        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
+        <robh+dt@kernel.org>, <ryder.lee@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <weiyi.lu@mediatek.com>, <wenst@chromium.org>,
+        <y.oudjana@protonmail.com>, <yangyingliang@huawei.com>
+Subject: Re: [PATCH v2 20/23] clk: mediatek: clk-mt8186-topckgen: Migrate to mtk_clk_simple_probe()
+Date:   Fri, 30 Dec 2022 13:55:18 +0800
+Message-ID: <20221230055518.16113-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20221223094259.87373-21-angelogioacchino.delregno@collabora.com>
+References: <20221223094259.87373-21-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com> <20221223094259.87373-23-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221223094259.87373-23-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 30 Dec 2022 13:23:52 +0800
-Message-ID: <CAGXv+5GcBCrHRUJHZG1XAXbh+BJxGnuYSbF-QgPY6Sh5nPEt1A@mail.gmail.com>
-Subject: Re: [PATCH v2 22/23] clk: mediatek: clk-mt7986-topckgen: Properly
- keep some clocks enabled
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        fparent@baylibre.com, chun-jie.chen@mediatek.com,
-        sam.shih@mediatek.com, y.oudjana@protonmail.com,
-        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
-        ryder.lee@kernel.org, daniel@makrotopia.org,
-        jose.exposito89@gmail.com, yangyingliang@huawei.com,
-        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
-        ikjn@chromium.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Instead of calling clk_prepare_enable() on a bunch of clocks at probe
-> time, set the CLK_IS_CRITICAL flag to the same as these are required
-> to be always on, and this is the right way of achieving that.
->
+> As done with MT8192, migrate MT8186 topckgen away from a custom probe
+> function and use mtk_clk_simple_{probe, remove}().
+> 
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
