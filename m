@@ -2,60 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35823C3DA7D
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 10:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CEAC3DA7D
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 10:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbiLaKQL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Dec 2022 05:16:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35374 "EHLO
+        id S231676AbiLaKry (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Dec 2022 05:47:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbiLaKQK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 05:16:10 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363F725E0
-        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:16:08 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id u9so56422925ejo.0
-        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:16:08 -0800 (PST)
+        with ESMTP id S229486AbiLaKrx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 05:47:53 -0500
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09BFC5FD8
+        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:47:51 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id jo4so56396278ejb.7
+        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:47:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pOc++n2L0f0xB181spyzmZCpRYCJrprxU4ITd13vOYU=;
-        b=eK8cwF/Xo1bv3PINIPzPRg9rOaKL88IMXEDXE6nk0CKD0VUUA0aB6vktI5TIRYhPb6
-         BYHECPGN6fN2Laz0qqvbvIJdXVNCS0eyW+oBdE8mv90gHdwfFvWDnTwDJTBQMpKgwsL/
-         HjNk0MCxTtdwkv1VVIli82hhrVn4wFnvp1rww=
+        bh=mEyhDLjUotgmC3JtXt/RMPu+Hko7HSi75jUhaPS/Wts=;
+        b=Q7ihk4LOj4p8w+nLZjeNXShVWZ67NNNje/AuDd5IQufoP47QxJgIuldn+X+o46xQ8i
+         AhWSy7tf636P11d11KqtmI5tCp4Iwo99zJefOwSN+8AcHLwzpvhESQL23dUDvLQDZflj
+         xm9+6T7RR3Wy4n9WKFoit7oXGUDhNvjZO2OnU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pOc++n2L0f0xB181spyzmZCpRYCJrprxU4ITd13vOYU=;
-        b=MGdbksT9WCtFFw/zB7aw0X6Z/F0xss3rKzPXBZsD2bloH4XlTc+BapZYQJwyiKZRUG
-         gvdo16pL6S2sK2cJJMYrOo82iAkq9GyHdacRLUhWjQtfm6mK8cwFMzdfJvKbB58x85Ig
-         QmF8LJYve0ZJvNK8bahugZnOeOf7b1o+rizPMvpjJyyV+MJvs9zv/thCzzXVUnXCiGsm
-         YyfRfY4BVDJsDoadEBtYT5EooZoXIDPBZEAeZjUxJ4aIF9arYtX5qiB7bd3oT++A/ybW
-         8jhSyAQHDYFUhw6c9gMLdUPKVf/PqDw2fCadWgkbdIrAa7FMiGRDI2KMGDL0Z3MhexPg
-         ZnSg==
-X-Gm-Message-State: AFqh2krqJfBp2iJZ5oIVjtC01Mm+tu7p1AUj+jepywCe4HwCdI6u+zr4
-        HhrWGNtllS0jRdo6nP9Pe0BUHg==
-X-Google-Smtp-Source: AMrXdXt+rZ6gnV4CsTejkX2xI4LZavUJfHDnt96jyqSLs3EjK9MPG3XSXalASVqnwIXPrhW0IyAtYw==
-X-Received: by 2002:a17:906:6b18:b0:7d3:8159:f35d with SMTP id q24-20020a1709066b1800b007d38159f35dmr28301367ejr.9.1672481766757;
-        Sat, 31 Dec 2022 02:16:06 -0800 (PST)
+        bh=mEyhDLjUotgmC3JtXt/RMPu+Hko7HSi75jUhaPS/Wts=;
+        b=dLCOyK85ViCk1arQ/QT+1Zr+8Ly5BCzXNVqntBOqPB9K9oeHVGkSjHNzY4/PdUprWC
+         Bp3dzyS2SKkSRXhAlBEDYTkjfyCdz4W2QR/wbxdpHSkdV7TM3MHQqdGKyUq8LYJSqxwK
+         Lqxjo3kvq6fePD2r2NyPcslGCuaHeYlo4s6Y1fRH+ec4OpCLJlFAX28GNu2/ZlyqxmCf
+         6iQZMCXNwgR4Zsu2Ut/zVtOeg1yz8/aFDw2YYnr2gzojK2y7C8aQxT4JDXDoPPOep6jp
+         lJfFuAdKyC2lm0K0NFI3LKWFs7xJIX8CAsl+OSAF2b4tq98Q+bAE1V6GImyIy3kvjP9d
+         UIzg==
+X-Gm-Message-State: AFqh2kqPNG3nji8B5QnCHdTUzj7aSv1RnzndGNXFN7VoYumbhmfZpxDk
+        Qrb9TY54PAPqF/dOQ+Jzh1H803GvXF9TwOsY2ko=
+X-Google-Smtp-Source: AMrXdXu1x8liAPz491BtUIf6hj5bm8qPI+F9cy8Jl1JSxQW5vdTGZNokloNsBS4HQ5CBnhvuMsfdxQ==
+X-Received: by 2002:a17:907:2918:b0:818:3f54:8db6 with SMTP id eq24-20020a170907291800b008183f548db6mr27872605ejc.6.1672483669569;
+        Sat, 31 Dec 2022 02:47:49 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-80-180-23-57.retail.telecomitalia.it. [80.180.23.57])
-        by smtp.gmail.com with ESMTPSA id s8-20020a170906354800b007ad2da5668csm10560240eja.112.2022.12.31.02.16.05
+        by smtp.gmail.com with ESMTPSA id z4-20020a17090655c400b0083ffb81f01esm10765438ejp.136.2022.12.31.02.47.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Dec 2022 02:16:06 -0800 (PST)
+        Sat, 31 Dec 2022 02:47:49 -0800 (PST)
 From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     linux-amarula@amarulasolutions.com,
+Cc:     tommaso.merciai@amarulasolutions.com,
+        linux-amarula@amarulasolutions.com,
+        Chen-Yu Tsai <wenst@chromium.org>, jagan@amarulasolutions.com,
+        angelo@amarulasolutions.com, anthony@amarulasolutions.com,
+        michael@amarulasolutions.com,
         Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Marek Vasut <marex@denx.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Stephen Boyd <sboyd@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: visconti: remove unused visconti_pll_provider::regmap
-Date:   Sat, 31 Dec 2022 11:16:01 +0100
-Message-Id: <20221231101601.4540-1-dario.binacchi@amarulasolutions.com>
+Subject: [RFC PATCH 00/11] clk: imx8mn: setup clocks from the device tree
+Date:   Sat, 31 Dec 2022 11:47:25 +0100
+Message-Id: <20221231104736.12635-1-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,27 +78,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Field regmap of struct visconti_pll_provider is never used. Remove it.
+The idea for this series was born back from Dublin (ELCE 2022) after
+having attended the talk entitled "Updating and Modernizing Clock
+Drivers" held by Chen-Yu Tsai and the availability of a board with
+imx8mn SOC.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+This series aims to setup all imx8mn's clocks from the device tree and
+remove the legacy setup code with hardwired parameters.
 
----
+I am well aware that the series lacks patches for the DT bindings. The
+effort up to this point has been important and so I thought I'd ask for
+feedback from the community before proceeding to implement them. If it
+is positive I will add the DT binding patches starting from version 2.
 
- drivers/clk/visconti/pll.h | 1 -
- 1 file changed, 1 deletion(-)
+The series has been tested on the BSH SystemMaster (SMM) S2 board:
+https://www.apertis.org/reference_hardware/imx8mn_bsh_smm_s2pro_setup
 
-diff --git a/drivers/clk/visconti/pll.h b/drivers/clk/visconti/pll.h
-index 16dae35ab370..01d07f1bf01b 100644
---- a/drivers/clk/visconti/pll.h
-+++ b/drivers/clk/visconti/pll.h
-@@ -15,7 +15,6 @@
- 
- struct visconti_pll_provider {
- 	void __iomem *reg_base;
--	struct regmap *regmap;
- 	struct clk_hw_onecell_data clk_data;
- 	struct device_node *node;
- };
+
+
+Dario Binacchi (11):
+  clk: imx: add structure to extend register accesses
+  clk: imx: add clk_hw based API imx_get_clk_hw_from_dt()
+  clk: imx8mn: add gate driver
+  clk: imx8mn: add mux driver
+  clk: imx8mn: add divider driver
+  clk: imx: pll14xx: add device tree support
+  clk: imx: composite-8m: add device tree support
+  clk: imx: gate2: add device tree support
+  clk: imx: cpu: add device tree support
+  arm64: dts: imx8mn: add dumy clock
+  arm64: dts: imx8mn: add clocks description
+
+ .../boot/dts/freescale/imx8mn-clocks.dtsi     | 1885 +++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi     |   51 +-
+ drivers/clk/imx/Makefile                      |    3 +
+ drivers/clk/imx/clk-composite-8m.c            |   83 +
+ drivers/clk/imx/clk-cpu.c                     |   54 +
+ drivers/clk/imx/clk-divider.c                 |  235 ++
+ drivers/clk/imx/clk-gate.c                    |  156 ++
+ drivers/clk/imx/clk-gate2.c                   |   86 +
+ drivers/clk/imx/clk-imx8mn.c                  |  716 ++-----
+ drivers/clk/imx/clk-mux.c                     |  258 +++
+ drivers/clk/imx/clk-pll14xx.c                 |  220 +-
+ drivers/clk/imx/clk.c                         |   21 +
+ drivers/clk/imx/clk.h                         |   15 +
+ 13 files changed, 3176 insertions(+), 607 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
+ create mode 100644 drivers/clk/imx/clk-divider.c
+ create mode 100644 drivers/clk/imx/clk-gate.c
+ create mode 100644 drivers/clk/imx/clk-mux.c
+
 -- 
 2.32.0
 
