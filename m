@@ -2,142 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC74C3DA7A
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 10:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9515EC4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 17:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbiLaKsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Dec 2022 05:48:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39158 "EHLO
+        id S231903AbiLaRVs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Dec 2022 12:21:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231946AbiLaKsK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 05:48:10 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178C0E0CC
-        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:48:08 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id s5so33552950edc.12
-        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:48:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i4BAr3YDTtam7xHcR497eo7kHS6EX5vNVSsGQ3XZdVg=;
-        b=ROLV5VC2YJKbZIZ4NSupPBjokbyz8XDtxDKZEsyZDegv7Y+nQwgg0Q77od8riAm9pN
-         p43uc2oajTE0nu4DFsjAsTSe9BrclZmI8xi7O8Dl+xMukDXIX+mkHEGyIauIsItG+zUG
-         LxA7cy/5n+BRZ4JdiD2454avSuVEdlMlUP+Js=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i4BAr3YDTtam7xHcR497eo7kHS6EX5vNVSsGQ3XZdVg=;
-        b=NIQrOC/Ah8/FAIOgCkdKNTrKh9RHxnpi+DeBHOhTXG6pjWwJExQMOcYKWoUN9R60TZ
-         XuNqsjfQ8foVVyu8MQ5JCAjYVjYGLAce6KcZ5ab08kRfzMO7dPCAO33QQ2PDAcUg5/K/
-         3bKNAUAKMUrsM8SclZg2T/e/RL0W4GmQieTiROfWTIwsMmXQACqlXzSeVxla1833yWg5
-         kRn2YzbCr5mGWHJBMgbqkMbp3Lu6Ntr8wS2oFH2u7DkrGGjG0FbpbhNVQtU36njLFxeS
-         jesimMDVBEFk5oPPDXWqtWUw1oU2XUGumzrgNncSEZ/Oq2IaMTcwgxsvduakOmnmuZ2x
-         keNg==
-X-Gm-Message-State: AFqh2koxxYgJ7+T4FyUTaDXwesSqXlksYgfJZaPmf8KaMm1fn1LyrieJ
-        aXysepDzOL398XOdKaxrEsAlFw==
-X-Google-Smtp-Source: AMrXdXu1wnYLFYK3qlYdujbtgm9DCm5pkd5o4YS26KynkC7DDnX2QN12NN+FZg2mjdguJa8CIhfhog==
-X-Received: by 2002:a05:6402:f05:b0:45c:834b:f28c with SMTP id i5-20020a0564020f0500b0045c834bf28cmr31101282eda.9.1672483686562;
-        Sat, 31 Dec 2022 02:48:06 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-80-180-23-57.retail.telecomitalia.it. [80.180.23.57])
-        by smtp.gmail.com with ESMTPSA id z4-20020a17090655c400b0083ffb81f01esm10765438ejp.136.2022.12.31.02.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Dec 2022 02:48:06 -0800 (PST)
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tommaso.merciai@amarulasolutions.com,
-        linux-amarula@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>, jagan@amarulasolutions.com,
-        angelo@amarulasolutions.com, anthony@amarulasolutions.com,
-        michael@amarulasolutions.com,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH 10/11] arm64: dts: imx8mn: add dumy clock
-Date:   Sat, 31 Dec 2022 11:47:35 +0100
-Message-Id: <20221231104736.12635-11-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20221231104736.12635-1-dario.binacchi@amarulasolutions.com>
-References: <20221231104736.12635-1-dario.binacchi@amarulasolutions.com>
+        with ESMTP id S230053AbiLaRVr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 12:21:47 -0500
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA51360D3;
+        Sat, 31 Dec 2022 09:21:46 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 506DA5C008F;
+        Sat, 31 Dec 2022 12:21:44 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Sat, 31 Dec 2022 12:21:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1672507304; x=
+        1672593704; bh=MwNzCwU4y8oThA8LV/hj9QJkdII91FpQFynEsjgAkEs=; b=u
+        wd8/4THVCiCZ6yOyZOn3iXMMSxbkDpU9Wp7C2rtX3lqNkbWiBmU65vxHibpimtqB
+        FDIGsvSPXwv9KADS4yI/eDIDD86qI6xUOOAMb0L8FaAUcZ4quFIXVHergOPZtKMJ
+        kWawKPRGGdwDob4TCmYe7lKGKaxLbNwT+qJTuqRzqyL6N3sQCRn+xBgmSX5+oLX8
+        s/nK3Yr6qF3/R8U102D61tMXDRWwwvElUeePjCCBVuUqxS0yLhohEb+1iTsY1apV
+        EApGYAWweeOfGOFHr3oFf2VgHBtsdb57nhe7HZI4t/OSezyici3xKyc4NfwsW4mv
+        jhidEBGvIrz+WbnDURkwg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1672507304; x=
+        1672593704; bh=MwNzCwU4y8oThA8LV/hj9QJkdII91FpQFynEsjgAkEs=; b=B
+        gE5QA+b/pAmKjQguidTWRC9uBV1l4TMzpXmujhet+PWepsARa7E6ruY2DMuXslBF
+        3pmBD36JHLIVLJws70LfVYM6CHAk+GdfaWJVF9+b1CVKBLZIpFHw5Q1lDNx/JLVF
+        lwLeOPsDPTdI0UpB4YO29sV0tVoxZCj1Nizot8DT2rkB4tuwFgwijI3DUV6gGA4J
+        Z4F1uACXhKEalZJcLybrbt+07awvDb/irYwAWcXS4yG8z0vogrOLq2LNjLqtNsHk
+        W6YsB4eC3bz6qHkeNDyq1q0ihrHSIzHbtuT16WTu2NdCHugjhdHbvraeSLI7SiKV
+        h8Qh/tExDj8XH++gdyDSA==
+X-ME-Sender: <xms:qG-wY7IbT_mbKLffc_Ju0N9wBXQfmqPZh18jde16jSPVDaEm_XDY6g>
+    <xme:qG-wY_LSnmX4xZOIoY107V4Mt0bSK1zOG1mQalsWq9N-rfnI5cBxJlQuIptTyrTt-
+    y0bAZrU96osaPipqw>
+X-ME-Received: <xmr:qG-wYzuVnUCIzrhHPqEDyLmpcFJ6fU6h64rZsjcEXIqg7ZaVfDje_KEn3BF9jnFg2pKkANAqm9j-RByQI2JftbC_W15m5H6kHcJbU1e9Hka1TMkU27NQJqH5bw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieekgddutddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpeejgfffhfdujeeftdeuudeguedttefgieetffffheejuefguedv
+    heejteeftdfftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:qG-wY0b4chipnTOVdIIS5QxMreekr0uDBgf3a1PqrHtSnPeE4aOtRw>
+    <xmx:qG-wYyZezoSnuelG5C4nWmQSTb6uJzdcD4TmaQ_81o6-kvBioDzhUQ>
+    <xmx:qG-wY4DWYjS_6v7885Gs3pTj7OF5X-URBeWMHx9j6jrg1Lj73qVAqg>
+    <xmx:qG-wY3PRYuPFLlZSgRnNVkmAq1WeV89QTlav3lQJXSmmJqJ0C5mtXg>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 31 Dec 2022 12:21:43 -0500 (EST)
+Message-ID: <ed4a1b6d-3979-652e-0181-c34bb5a40d5d@sholland.org>
+Date:   Sat, 31 Dec 2022 11:21:43 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux ppc64le; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+References: <20220810014024.27568-1-samuel@sholland.org>
+ <20220815172653.51C41C433D7@smtp.kernel.org>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH] clk: sunxi-ng: mp: Avoid computing the rate twice
+In-Reply-To: <20220815172653.51C41C433D7@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The dummy clock was the only fixed rate clock not initialized from the
-device tree. So let's add it to the device tree like we did for the
-others fixed rate clocks.
+Hi Stephen,
 
-This is a preparation patch for the upcoming support to setup all the
-clocks directly from the device tree.
+On 8/15/22 12:26, Stephen Boyd wrote:
+> Quoting Samuel Holland (2022-08-09 18:40:24)
+>> ccu_mp_find_best() already computes a best_rate at the same time as the
+>> best m and p factors. Return it so the caller does not need to duplicate
+>> the division.
+> 
+> Did the compiler figure this out and thus this patch makes no difference
+> to the final object code?
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
----
+It makes a difference at least on my gcc version 11.1.0.
 
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 11 +++++++++--
- drivers/clk/imx/clk-imx8mn.c              |  2 +-
- 2 files changed, 10 insertions(+), 3 deletions(-)
+Before:
+   text    data     bss     dec     hex filename
+  18257      12       0   18269    475d drivers/clk/sunxi-ng/sunxi-ccu.o
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index b7d91df71cc2..1949db3e08f7 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -217,6 +217,13 @@ clk_ext4: clock-ext4 {
- 		clock-output-names = "clk_ext4";
- 	};
- 
-+	clk_dummy: clock-dummy {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "dummy";
-+	};
-+
- 	pmu {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts = <GIC_PPI 7
-@@ -614,9 +621,9 @@ clk: clock-controller@30380000 {
- 				reg = <0x30380000 0x10000>;
- 				#clock-cells = <1>;
- 				clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
--					 <&clk_ext3>, <&clk_ext4>;
-+					 <&clk_ext3>, <&clk_ext4>, <&clk_dummy>;
- 				clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
--					      "clk_ext3", "clk_ext4";
-+					      "clk_ext3", "clk_ext4", "dummy";
- 				assigned-clocks = <&clk IMX8MN_CLK_A53_SRC>,
- 						<&clk IMX8MN_CLK_A53_CORE>,
- 						<&clk IMX8MN_CLK_NOC>,
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index af256ade554f..e1f059dc5afa 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -331,7 +331,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	clk_hw_data->num = IMX8MN_CLK_END;
- 	hws = clk_hw_data->hws;
- 
--	hws[IMX8MN_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
-+	hws[IMX8MN_CLK_DUMMY] = imx_get_clk_hw_by_name(np, "dummy");
- 	hws[IMX8MN_CLK_24M] = imx_get_clk_hw_by_name(np, "osc_24m");
- 	hws[IMX8MN_CLK_32K] = imx_get_clk_hw_by_name(np, "osc_32k");
- 	hws[IMX8MN_CLK_EXT1] = imx_get_clk_hw_by_name(np, "clk_ext1");
--- 
-2.32.0
+After:
+   text    data     bss     dec     hex filename
+  18083      12       0   18095    46af drivers/clk/sunxi-ng/sunxi-ccu.o
+
+I will send a v2 covering all of the CCU clock types.
+
+Regards,
+Samuel
 
