@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAF1C3DA7A
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 10:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E8C46467
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 10:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231920AbiLaKsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Dec 2022 05:48:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38996 "EHLO
+        id S231648AbiLaKsJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Dec 2022 05:48:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbiLaKsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 05:48:01 -0500
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCDD8D2C1
-        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:47:58 -0800 (PST)
-Received: by mail-ej1-x642.google.com with SMTP id t17so56349279eju.1
-        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:47:58 -0800 (PST)
+        with ESMTP id S231854AbiLaKsD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 05:48:03 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140A9D108
+        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:48:02 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id i15so33628628edf.2
+        for <linux-clk@vger.kernel.org>; Sat, 31 Dec 2022 02:48:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d8WEj9/C0OhSqYwiG2nnUMjHUoH+KTqQswi/Eb48WWY=;
-        b=faGsjlnuCzfCPHiRcZ1qw4oPmkoFMcCH2iMe8ETxugAl0liXMqMz8abSOkdc6/49Nv
-         gEDEsi4REBwJBqOHMJx3vaV8ZZhwvU6/yv5aUqtSi3SE7p41uRui3q6yJeWVcq1TTzxs
-         c3E86ljyETMwKYcAqklaVs17D/ctAHEzimSEA=
+        bh=lNTG6siRVvvtXsy+GAwDHHb+RGsPbfwrQN+hKdCck/s=;
+        b=h6suuaQS77Q7uXcGE0tPIOZR6gBZPftHQtxsZiWvYKzvoFpBLYY0mo7cbC6csHNPoF
+         3NaUYsD6S+p2Q+FZCE0OaBn+CWnPrJ7vDGapfHiNJKYuCUAnvARnT+N8olSAMNF1QW7K
+         O20zyLdNpY08v8qurYDkKtekosozQzLZuBqX0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d8WEj9/C0OhSqYwiG2nnUMjHUoH+KTqQswi/Eb48WWY=;
-        b=ykP5KduZF42JdeS6uyTkt5Y7+aYYzvzwq/fqmKMRmazOOiXHrsh5vKdrPRc8nCyIsl
-         8Tl7iphL/PjAtRmKmDgz0k4CLd8LxxjxmZhML0vR0sYMhKp/hQDsuOgP+cVDMo9OfApc
-         ojaG9Fjvv5Gx+eXFKmy5Wo9rG583ExWeCHiSUtybYsf7J1N18Rnn8J89RU26P6UdDV6L
-         XAKOzxM2/sZNRtoB+VQk0Yy42oJPKEPEVu/nL4SNvl3mUbbrBh8zUWdz/YvtsIqr02jm
-         HUkAEP7TYbYsPmHmT/zxehWVyTYlCNsZbaUdSgvVVMkpw1ixu9G98P1K5hjlxFCnIW7T
-         rCJQ==
-X-Gm-Message-State: AFqh2kofdpRSRsYu6Ac8ji5QGeyCkfwjH4Zwow/n819wqI9QgDx8XpEs
-        3+Au+vUfcSkVnCofjp0nIJOBv3c7eA2KlyBlTOE=
-X-Google-Smtp-Source: AMrXdXtQZ5PYyji1oGUrR72dCgZDGXss/dvqbdGt9E4S2rg3dCbMe5ImjH9I9Rna7/6Ly7y+KyLLLA==
-X-Received: by 2002:a17:907:80cb:b0:7c0:deb1:bb8a with SMTP id io11-20020a17090780cb00b007c0deb1bb8amr35195077ejc.28.1672483677349;
-        Sat, 31 Dec 2022 02:47:57 -0800 (PST)
+        bh=lNTG6siRVvvtXsy+GAwDHHb+RGsPbfwrQN+hKdCck/s=;
+        b=2fgu847/skCVwlUBMTUQiVxVnSRHOYBZ9rX2G+hj8CRTtZe1/OENhgUk1EMYbVhHr4
+         NoOg76ptmbueQ4RRnrEtrptt0bTYdPELxMvZdMqrGZCeuZTsxCLKgxNqDggq+b0C5w9C
+         itk3dvg85J/k++WbAHJY5KncDJyj9sJNsrN8Z6EE+Vs6kJjXkD0Rp2h59p+RLzl7HVMR
+         2DM7Jgno28paGvwgRGzCG5SHrJqlOBNhvv4IUFfz0rs0x8GKJH4DJxJlb9fpQ63tC58t
+         MNuKhTQ/y2ks9Jg4SpbCDWIdG1hyaX+3YlRMMsAoX4d1zCx3FPXIvJaorhllUofHdTWh
+         RpmA==
+X-Gm-Message-State: AFqh2koDBLRQT2Wz+z1BtIlx2k9p+SgSFuW63W8J7usSnWaH/4c0h3Nd
+        uBqnts0HAxNRpM3V7tgk0HgzSQ==
+X-Google-Smtp-Source: AMrXdXuM12mBzocEhuMcUaHxAAUx1SH1UDETPNtrsDAD8zfD6TsTHXBUEAZtLnOMm8WCM7+fJN+OCQ==
+X-Received: by 2002:a05:6402:1854:b0:483:6039:9801 with SMTP id v20-20020a056402185400b0048360399801mr22324086edy.22.1672483680664;
+        Sat, 31 Dec 2022 02:48:00 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-80-180-23-57.retail.telecomitalia.it. [80.180.23.57])
-        by smtp.gmail.com with ESMTPSA id z4-20020a17090655c400b0083ffb81f01esm10765438ejp.136.2022.12.31.02.47.56
+        by smtp.gmail.com with ESMTPSA id z4-20020a17090655c400b0083ffb81f01esm10765438ejp.136.2022.12.31.02.47.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Dec 2022 02:47:57 -0800 (PST)
+        Sat, 31 Dec 2022 02:48:00 -0800 (PST)
 From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     tommaso.merciai@amarulasolutions.com,
@@ -63,9 +63,9 @@ Cc:     tommaso.merciai@amarulasolutions.com,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH 05/11] clk: imx8mn: add divider driver
-Date:   Sat, 31 Dec 2022 11:47:30 +0100
-Message-Id: <20221231104736.12635-6-dario.binacchi@amarulasolutions.com>
+Subject: [RFC PATCH 07/11] clk: imx: composite-8m: add device tree support
+Date:   Sat, 31 Dec 2022 11:47:32 +0100
+Message-Id: <20221231104736.12635-8-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20221231104736.12635-1-dario.binacchi@amarulasolutions.com>
 References: <20221231104736.12635-1-dario.binacchi@amarulasolutions.com>
@@ -75,275 +75,120 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The patch adds support for imx8mn divider clocks to be initialized
-directly from the device tree. Currently all i.MX divider clocks are
-initialized by legacy code with hardwired parameters.
-
-So, let's start with this specific clock driver and hope that other
-variants can be handled in the future, causing the legacy code to be
-removed.
+The patch, backwards compatible, extends the driver to initialize the
+clock directly from the device tree.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
 
- drivers/clk/imx/Makefile      |   1 +
- drivers/clk/imx/clk-divider.c | 235 ++++++++++++++++++++++++++++++++++
- 2 files changed, 236 insertions(+)
- create mode 100644 drivers/clk/imx/clk-divider.c
+ drivers/clk/imx/clk-composite-8m.c | 83 ++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 1cffc5bebbe1..0e4337f0a020 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -7,6 +7,7 @@ mxc-clk-objs += clk-composite-8m.o
- mxc-clk-objs += clk-composite-93.o
- mxc-clk-objs += clk-fracn-gppll.o
- mxc-clk-objs += clk-cpu.o
-+mxc-clk-objs += clk-divider.o
- mxc-clk-objs += clk-divider-gate.o
- mxc-clk-objs += clk-fixup-div.o
- mxc-clk-objs += clk-fixup-mux.o
-diff --git a/drivers/clk/imx/clk-divider.c b/drivers/clk/imx/clk-divider.c
-new file mode 100644
-index 000000000000..4617aa906de4
---- /dev/null
-+++ b/drivers/clk/imx/clk-divider.c
-@@ -0,0 +1,235 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022 Amarula Solutions
-+ *
-+ * Dario Binacchi <dario.binacchi@amarulasolutions.com>
-+ */
-+
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index cbf0d7955a00..8c945d180318 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -7,6 +7,8 @@
+ #include <linux/errno.h>
+ #include <linux/export.h>
+ #include <linux/io.h>
 +#include <linux/of.h>
 +#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+
-+#include "clk.h"
-+
+ #include <linux/slab.h>
+ 
+ #include "clk.h"
+@@ -25,6 +27,9 @@
+ 
+ #define PCG_CGC_SHIFT		28
+ 
 +#undef pr_fmt
 +#define pr_fmt(fmt) "%s: " fmt, __func__
 +
-+#define to_clk_imx_divider(_hw) container_of(_hw, struct clk_imx_divider, hw)
+ static unsigned long imx8m_clk_composite_divider_recalc_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+@@ -250,3 +255,81 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+ 	return ERR_CAST(hw);
+ }
+ EXPORT_SYMBOL_GPL(__imx8m_clk_hw_composite);
 +
-+struct clk_imx_divider {
-+	struct clk_hw hw;
-+	struct imx_clk_reg reg;
-+	u8 shift;
-+	u8 width;
-+};
-+
-+static int imx_clk_divider_write(const struct imx_clk_reg *reg, u32 val)
++static void __init _of_imx_composite_clk_setup(struct device_node *node,
++					       u32 type)
 +{
-+	int ret = 0;
-+
-+	if (reg->base) {
-+		writel(val, reg->base + reg->offset);
-+	} else if (reg->regmap) {
-+		ret = regmap_write(reg->regmap, reg->offset, val);
-+	} else {
-+		pr_err("memory address not set\n");
-+		ret = -EIO;
-+	}
-+
-+	return ret;
-+}
-+
-+static int imx_clk_divider_read(const struct imx_clk_reg *reg, u32 *val)
-+{
-+	int ret = 0;
-+
-+	if (reg->base) {
-+		*val = readl(reg->base + reg->offset);
-+	} else if (reg->regmap) {
-+		ret = regmap_read(reg->regmap, reg->offset, val);
-+	} else {
-+		pr_err("memory address not set\n");
-+		ret = -EIO;
-+	}
-+
-+	return ret;
-+}
-+
-+static unsigned long imx_clk_divider_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = imx_clk_divider_read(&divider->reg, &val);
-+	if (ret)
-+		return 0;
-+
-+	val >>= divider->shift;
-+	val &= clk_div_mask(divider->width);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, NULL, 0,
-+				   divider->width);
-+}
-+
-+static long imx_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+				       unsigned long *prate)
-+{
-+	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
-+
-+	return divider_round_rate(hw, rate, prate, NULL, divider->width, 0);
-+}
-+
-+static int imx_clk_divider_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
-+
-+	return divider_determine_rate(hw, req, NULL, divider->width, 0);
-+}
-+
-+static int imx_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
-+	unsigned int val;
-+	int div, ret;
-+
-+	div = divider_get_val(rate, parent_rate, NULL, divider->width, 0);
-+	if (div < 0)
-+		return div;
-+
-+	ret = imx_clk_divider_read(&divider->reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	val &= ~(clk_div_mask(divider->width) << divider->shift);
-+	val |= div << divider->shift;
-+	return imx_clk_divider_write(&divider->reg, val);
-+}
-+
-+const struct clk_ops imx_clk_divider_ops = {
-+	.recalc_rate = imx_clk_divider_recalc_rate,
-+	.round_rate = imx_clk_divider_round_rate,
-+	.determine_rate = imx_clk_divider_determine_rate,
-+	.set_rate = imx_clk_divider_set_rate,
-+};
-+
-+static void imx_clk_hw_unregister_divider(struct clk_hw *hw)
-+{
-+	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
-+
-+	clk_hw_unregister(hw);
-+	kfree(divider);
-+}
-+
-+static struct clk_hw *imx_clk_hw_register_divider(struct device_node *node,
-+						  const char *name,
-+						  unsigned long flags,
-+						  struct imx_clk_reg *reg,
-+						  u8 shift, u8 width)
-+{
-+	struct clk_parent_data pdata = { .index = 0 };
-+	struct clk_init_data init = { NULL };
-+	struct clk_imx_divider *divider;
++	void __iomem *reg;
 +	struct clk_hw *hw;
-+	int ret;
++	const char *name = node->name;
++	unsigned int num_parents;
++	const char **parent_names;
++	unsigned long flags = IMX_COMPOSITE_CLK_FLAGS_DEFAULT;
 +
-+	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
-+	if (!divider)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.flags = flags;
-+	init.ops = &imx_clk_divider_ops;
-+	init.parent_data = &pdata;
-+	init.num_parents = 1;
-+
-+	memcpy(&divider->reg, reg, sizeof(*reg));
-+	divider->shift = shift;
-+	divider->width = width;
-+	divider->hw.init = &init;
-+
-+	hw = &divider->hw;
-+	ret = of_clk_hw_register(node, hw);
-+	if (ret) {
-+		kfree(divider);
-+		return ERR_PTR(ret);
++	reg = of_iomap(node, 0);
++	if (IS_ERR(reg)) {
++		pr_err("failed to get reg address for %pOFn\n", node);
++		return;
 +	}
 +
-+	return hw;
++	num_parents = of_clk_get_parent_count(node);
++	if (num_parents < 2) {
++		pr_err("%pOFn must have parents\n", node);
++		return;
++	}
++
++	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
++	if (!parent_names)
++		return;
++
++	of_clk_parent_fill(node, parent_names, num_parents);
++	of_property_read_string(node, "clock-output-names", &name);
++
++	if (of_property_read_bool(node, "fsl,get-rate-nocache"))
++		flags |= CLK_GET_RATE_NOCACHE;
++
++	if (of_property_read_bool(node, "fsl,is-critical"))
++		flags |= CLK_IS_CRITICAL;
++
++	hw = __imx8m_clk_hw_composite(name, parent_names, num_parents, reg,
++				      type, flags);
++	if (!IS_ERR(hw))
++		of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
++
++	kfree(parent_names);
 +}
 +
 +/**
-+ * of_imx_divider_clk_setup() - Setup function for imx gate clock
++ * of_imx_composite_clk_setup() - Setup function for imx composite  clock
 + * @node:	device node for the clock
 + */
-+static void __init of_imx_divider_clk_setup(struct device_node *node)
++void __init of_imx_composite_clk_setup(struct device_node *node)
 +{
-+	struct clk_hw *hw;
-+	struct imx_clk_reg reg = {};
-+	const char *name = node->name;
-+	u8 shift = 0;
-+	u8 width;
-+	u32 flags = 0;
-+	u32 val;
-+
-+	reg.regmap = syscon_regmap_lookup_by_phandle(node, "fsl,anatop");
-+	if (!IS_ERR(reg.regmap)) {
-+		if (of_property_read_u32_index(node, "fsl,anatop", 1, &val)) {
-+			pr_err("missing register offset for %pOFn\n", node);
-+			return;
-+		}
-+
-+		reg.offset = val;
-+	} else {
-+		reg.base = of_iomap(node, 0);
-+		if (IS_ERR(reg.base)) {
-+			pr_err("failed to get register address for %pOFn\n",
-+			       node);
-+			return;
-+		}
-+	}
-+
-+	if (!of_property_read_u32(node, "fsl,bit-shift", &val))
-+		shift = val;
-+
-+	if (of_property_read_u32(node, "fsl,width", &val)) {
-+		pr_err("missing width for %pOFn\n", node);
-+		return;
-+
-+	}
-+
-+	width = val;
-+
-+	if (of_property_read_bool(node, "fsl,ops-parent-enable"))
-+		flags |= CLK_OPS_PARENT_ENABLE;
-+
-+	if (of_property_read_bool(node, "fsl,set-rate-parent"))
-+		flags |= CLK_SET_RATE_PARENT;
-+
-+	if (of_clk_get_parent_count(node) != 1) {
-+		pr_err("%pOFn must have 1 parent clock\n", node);
-+		return;
-+	}
-+
-+	of_property_read_string(node, "clock-output-names", &name);
-+
-+	hw = imx_clk_hw_register_divider(node, name, flags, &reg, shift, width);
-+	if (IS_ERR(hw))
-+		return;
-+
-+	if (of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw)) {
-+		imx_clk_hw_unregister_divider(hw);
-+		return;
-+	}
-+
-+	pr_debug("name: %s, offset: 0x%x, shift: %d, width: %d\n", name,
-+		 reg.offset, shift, width);
++	_of_imx_composite_clk_setup(node, IMX_COMPOSITE_CORE);
 +}
-+CLK_OF_DECLARE(fsl_imx8mn_divider_clk, "fsl,imx8mn-divider-clock",
-+	       of_imx_divider_clk_setup);
++CLK_OF_DECLARE(fsl_composite_8m_clk, "fsl,imx8m-composite-clock",
++	       of_imx_composite_clk_setup);
++
++/**
++ * of_imx_composite_bus_clk_setup() - Setup function for imx composite  clock
++ * @node:	device node for the clock
++ */
++void __init of_imx_composite_bus_clk_setup(struct device_node *node)
++{
++	_of_imx_composite_clk_setup(node, IMX_COMPOSITE_BUS);
++}
++CLK_OF_DECLARE(fsl_composite_bus_8m_clk, "fsl,imx8m-composite-bus-clock",
++	       of_imx_composite_bus_clk_setup);
++
++/**
++ * of_imx_composite_fw_managed_clk_setup() - Setup function for imx
++ *		composite fw managed clock
++ * @node:	device node for the clock
++ */
++void __init of_imx_composite_fw_managed_clk_setup(struct device_node *node)
++{
++	_of_imx_composite_clk_setup(node, IMX_COMPOSITE_FW_MANAGED);
++}
++CLK_OF_DECLARE(fsl_composite_fw_managed_8m_clk,
++	       "fsl,imx8m-composite-fw-managed-clock",
++	       of_imx_composite_fw_managed_clk_setup);
 -- 
 2.32.0
 
