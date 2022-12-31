@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA14C3DA7A
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 23:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A06C3DA7D
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 23:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235867AbiLaXOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Dec 2022 18:14:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37296 "EHLO
+        id S235804AbiLaXOm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Dec 2022 18:14:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235846AbiLaXOg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 18:14:36 -0500
+        with ESMTP id S235892AbiLaXOj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 18:14:39 -0500
 Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBBE9C3E;
-        Sat, 31 Dec 2022 15:14:35 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 36F815C00B7;
-        Sat, 31 Dec 2022 18:14:35 -0500 (EST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF9CD88;
+        Sat, 31 Dec 2022 15:14:38 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1C8E25C00B2;
+        Sat, 31 Dec 2022 18:14:38 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sat, 31 Dec 2022 18:14:35 -0500
+  by compute6.internal (MEProxy); Sat, 31 Dec 2022 18:14:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1672528475; x=1672614875; bh=My
-        wK8XQVIROQv4XXNUdTIm5OEV55VdZpoN7GvL5f8u8=; b=rfWxAa4pgbnCWGg3Kh
-        LAEhDLeOaDs7WO86AkDHFoo5aqSh8OVOU/nF8pEdmYiptvIjKBGAFQAbQSJAktlH
-        iaga7IK56L+ZPoWFZsz2CNt6iJF1djWok711wW4QTIvjYfLXPhMMlIRf/ykagTQf
-        Aw2E5vaUgZfHtKIDNvu69XEAARG69l4bQ/UHlm/Wwlzk0rI+3B4uRcYjk6ACmjp1
-        Y9r2Q9iQxuPHXcQ1FdGwCd12A1b01JYNvNQMEpQBUCKulca1dvXrj7HK7tmVTjna
-        Xpde936a/zgvB+lHZGOP+q9aZQ1+FmeZOi30IMQ4UEQp0IXOFs9vmb/df8UEsXok
-        GrrA==
+        :subject:subject:to:to; s=fm3; t=1672528478; x=1672614878; bh=vV
+        7vYH4agevEo5q+yfciQz3W+RJ72+EvdN+fDOEeFek=; b=jlddHFvbspOwBPLYXf
+        qYITsjOeyq0HnzQCHkE3fAZjqQsTX9iSs9H4+Fo41ubJKLP7d+HXrHgfkzeWaMoV
+        9EJXlOYlDSca0TWW12LtCg+mzMuo8sL+oVdC8B+FVWjuFVTDiFDXpxCJpxLBfvmf
+        IGYDde2fw/OONOkKsrB1OBBLf67GvXKcPSWoQLZhNtmdXaE4RQXfNHe7BMLp0Oq0
+        hLcKiGJ6/Dy/3+Q6CAqb0oxkxOruBXz1QQU4mfMaTZpPBKKRYZTt8+nXppXyK8C9
+        PjJqrphtz0hHgzLSmw56P41mO0YSUwIc4oguovXBBAjx+M6hCXbBeNKYXk8F55Vw
+        C5Lw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1672528475; x=1672614875; bh=MywK8XQVIROQv
-        4XXNUdTIm5OEV55VdZpoN7GvL5f8u8=; b=lEjKy1DT/GdvL+ysODVlLU4xIh9OD
-        /oOF72PSUKvXEVLg3PIn0t8yAdvP+UDwSLeH6pF+c0X2RGRtRve4sfROMZ2AEWn8
-        RzOu0bFwHrzFk3Rwx4zKNSTsEw2AmfOGP6OGbsJsH86T7jpPWps5i030FdmSmZCZ
-        dRt6i2iBEol194HlazU7MFj34hPB2l9az5kyMkFYCQ+4+d9YgsslZcZBSMcminss
-        3HTtUA2my1GjoojhC7PQCPc6V79mn5KVyazQMuGuDv3C6lAyCVbthxHUOW8+JBC2
-        NH51uNffONqMydL/sLE81nQQDuvwU0ymWokISkiOljaerbstQTbQjnskw==
-X-ME-Sender: <xms:WsKwYwZcjSqTuMtiOGxQGKXtKMacDKgNgN_xojfiI7q73o4mUNaNWA>
-    <xme:WsKwY7auW3C3VEJRjS-gSHL6GGs1ajRatd6RSsoAd7ZC8s0aXJ67BGDSD3h2sN07L
-    e-ZVVEVu-gMp-TM3Q>
-X-ME-Received: <xmr:WsKwY68_KRHNXoZVpdL_noomz0xMbImjOQVaF50BHbrBS1gaIJ64J745s1Y0h3mn_9S_tkR8dkDNHWUyubGUIqxRnMKQIIvKZ4ghsK9VgKsJv9VkCBb0asELfYWiWnqCfFfU1g>
+        :x-sasl-enc; s=fm2; t=1672528478; x=1672614878; bh=vV7vYH4agevEo
+        5q+yfciQz3W+RJ72+EvdN+fDOEeFek=; b=WGx3j//KHynZU1d4sSGXSfeiYmt0R
+        t68DjBq6DWJi0hwSZ4NeJPZYIjRerFW1fg2s1cHmc2Kj5NrG0CINZug/sLbecTrR
+        dx91tl3eOymA9i5bGnHpxydhqsxYWz+IUSpnEP6vPZkj2VoiCmgZMtNx5hwBYfRX
+        TqnRHgsPYCZ9syD7fwFt66hSNjxlBGSgLU9/UWXy6pf0GWL95tJF03rbODG81CJk
+        4GbRye59LXM0Kh4PCPlJ5sLKKL5O5iJwi8UIoz+NqMGYR5zoiR6TUE06Uqzg8sab
+        QhET3CpReEkXgDCDIBkIk6WGhDq8S6Fp8fCFSLYnP359f883EfYhwBmCQ==
+X-ME-Sender: <xms:XcKwYwwD6aSSeHUBAhiRu4Dqm4PcmCdN5r34ThvcaEiE71bDivsWGw>
+    <xme:XcKwY0Qw-Q7U80vLpBwOJALBUgunVezKwskpgdH59aUKNfruwbtrC6Eny0TdsBDTZ
+    6v8b4LDH3mo6orVpg>
+X-ME-Received: <xmr:XcKwYyX9hq9mGAu0ftrOi5gT4dFCy6iGvjgsLd6p1uo4sj2SwHq71H5Ji2z2wxcCG8UZzTxAMyXY1q91Rs4fEILSGTpXCngHZwczYZ0wkib-Dg6gJZaRsI9W8S8rzUgughEHNA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieelgddtlecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -54,13 +54,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieelgddtlecutefuodetggdote
     frrghtthgvrhhnpedukeetueduhedtleetvefguddvvdejhfefudelgfduveeggeehgfdu
     feeitdevteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
     hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:WsKwY6rD_hnUmCSN4LGNtKi6beVmzJ-mkHmuntjX4Giqt-TaE_uRLw>
-    <xmx:WsKwY7rPP_5d-Vsz3Ydn-vOlyhzCKFF_0JLL2AO-Z3mwrGdUYvJV0A>
-    <xmx:WsKwY4QqK-IAC0NFXh2B26rdBslXjGiXIO70bIjHp0bXKgaNwuT5AA>
-    <xmx:W8KwYxaEg_Z29y6qZ2ThOqD6AQkLhQElO3pqK_aItnb3yYeRhBefRg>
+X-ME-Proxy: <xmx:XcKwY-hy6Lwm2hfLgsMOXh_Pu5nmVRIwFxR38GdQguQf7PQW2peVLw>
+    <xmx:XcKwYyAhWaAil7xuLU7CW5VppYACK_fTKb7tfll_-GvxBYQE7LDORw>
+    <xmx:XcKwY_J2HCRJvv02xicRYkln5vdV0QbH4otQLWsoehoG6ibokpiI_w>
+    <xmx:XsKwY8wzJWk0CC4eYsBFGZkYDSnZlMR6xfqVZ0PcCuC2otFm2F7LqA>
 Feedback-ID: i0ad843c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 31 Dec 2022 18:14:33 -0500 (EST)
+ 31 Dec 2022 18:14:37 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -77,9 +77,9 @@ Cc:     Samuel Holland <samuel@sholland.org>,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-sunxi@lists.linux.dev,
         Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 3/6] clk: sunxi-ng: d1: Allow building for R528/T113
-Date:   Sat, 31 Dec 2022 17:14:26 -0600
-Message-Id: <20221231231429.18357-4-samuel@sholland.org>
+Subject: [PATCH v2 5/6] dt-bindings: clock: Add D1 CAN bus gates and resets
+Date:   Sat, 31 Dec 2022 17:14:28 -0600
+Message-Id: <20221231231429.18357-6-samuel@sholland.org>
 X-Mailer: git-send-email 2.37.4
 In-Reply-To: <20221231231429.18357-1-samuel@sholland.org>
 References: <20221231231429.18357-1-samuel@sholland.org>
@@ -89,42 +89,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allwinner released some 32-bit ARM (sun8i) SoCs which use the same CCU
-as D1. Allow them to reuse the driver.
+The D1 CCU contains gates and resets for two CAN buses. While the CAN
+bus controllers are only documented for the T113 SoC, the CCU is the
+same across all SoC variants.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
 
-(no changes since v1)
+Changes in v2:
+ - Move dt-bindings header changes to a separate patch
 
- drivers/clk/sunxi-ng/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/dt-bindings/clock/sun20i-d1-ccu.h | 2 ++
+ include/dt-bindings/reset/sun20i-d1-ccu.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 78deee2996ce..b547198a2c65 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -13,14 +13,14 @@ config SUNIV_F1C100S_CCU
- 	depends on MACH_SUNIV || COMPILE_TEST
+diff --git a/include/dt-bindings/clock/sun20i-d1-ccu.h b/include/dt-bindings/clock/sun20i-d1-ccu.h
+index e3ac53315e1a..e143b9929763 100644
+--- a/include/dt-bindings/clock/sun20i-d1-ccu.h
++++ b/include/dt-bindings/clock/sun20i-d1-ccu.h
+@@ -152,5 +152,7 @@
+ #define CLK_FANOUT0		142
+ #define CLK_FANOUT1		143
+ #define CLK_FANOUT2		144
++#define CLK_BUS_CAN0		145
++#define CLK_BUS_CAN1		146
  
- config SUN20I_D1_CCU
--	tristate "Support for the Allwinner D1 CCU"
-+	tristate "Support for the Allwinner D1/R528/T113 CCU"
- 	default y
--	depends on RISCV || COMPILE_TEST
-+	depends on MACH_SUN8I || RISCV || COMPILE_TEST
+ #endif /* _DT_BINDINGS_CLK_SUN20I_D1_CCU_H_ */
+diff --git a/include/dt-bindings/reset/sun20i-d1-ccu.h b/include/dt-bindings/reset/sun20i-d1-ccu.h
+index de9ff5203239..f8001cf50bf1 100644
+--- a/include/dt-bindings/reset/sun20i-d1-ccu.h
++++ b/include/dt-bindings/reset/sun20i-d1-ccu.h
+@@ -73,5 +73,7 @@
+ #define RST_BUS_DSP_CFG		63
+ #define RST_BUS_DSP_DBG		64
+ #define RST_BUS_RISCV_CFG	65
++#define RST_BUS_CAN0		66
++#define RST_BUS_CAN1		67
  
- config SUN20I_D1_R_CCU
--	tristate "Support for the Allwinner D1 PRCM CCU"
-+	tristate "Support for the Allwinner D1/R528/T113 PRCM CCU"
- 	default y
--	depends on RISCV || COMPILE_TEST
-+	depends on MACH_SUN8I || RISCV || COMPILE_TEST
- 
- config SUN50I_A64_CCU
- 	tristate "Support for the Allwinner A64 CCU"
+ #endif /* _DT_BINDINGS_RST_SUN20I_D1_CCU_H_ */
 -- 
 2.37.4
 
