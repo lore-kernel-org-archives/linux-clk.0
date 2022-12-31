@@ -2,275 +2,207 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE51C4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 17:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483BAC4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 23:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbiLaRa7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Dec 2022 12:30:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38968 "EHLO
+        id S232462AbiLaXOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Dec 2022 18:14:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbiLaRa6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 12:30:58 -0500
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85E238AF;
-        Sat, 31 Dec 2022 09:30:57 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 41C305C0086;
-        Sat, 31 Dec 2022 12:30:57 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 31 Dec 2022 12:30:57 -0500
+        with ESMTP id S232148AbiLaXOf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 18:14:35 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D7E8C3E;
+        Sat, 31 Dec 2022 15:14:33 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 563015C00B6;
+        Sat, 31 Dec 2022 18:14:32 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sat, 31 Dec 2022 18:14:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm3; t=1672507857; x=1672594257; bh=rAkPHCX9plm+ABZSDox55LMS1
-        3uIo7UeVXFHjSskAHQ=; b=Qo+VuWcep4oeUtwyEADa6CHvTwfGVZbGjif7a2tDY
-        yaOJuMB+uFmLP4vDP1IpzFGe5v/SldOQBHCj6nuU2Klv87MY890lJnZ+VC6h3a6Q
-        qfGYvYMCIMyWKL/tRJQS/dmbUhBA3lJ/1qDgRp7QD0DHGm1eCI7PlgbEZPi4uiLY
-        kbfMrcsG7KMKC+MvAS9hUBLaR8bG8J0SmsYCaimRbn6hUZEGukaraUTpY/CzqASV
-        OMFOA4Ew9nR0oCTpk5EkRBUqs6BRAXTizGzB7tBZi8mhRm6ssqlPmQpPzPvj0Rac
-        CTsoTi6YSqYWK8jkM0YslUxGElEleE3fxJ1ZPkYcXnbXg==
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1672528472; x=1672614872; bh=Oc
+        Gtkt9Bv14YYpUDrmReERXmRLK8ON2avWRPl23IvSg=; b=biHwDqWNILuLJNtQYg
+        3j1fb0k21jDb4Ko5o6IDmurbl2UjIiIOuvZUYy+vO2OPeI6vWObUOog46/W0ULOp
+        Yr/25fV5oSosLtv73BrYbqEEjnz8rsYK4aqvih8fnfNudCCgriRteLtVU71avP23
+        Y4CDPhiK/EOtq2IPySjRHtl3l1otd4tefxiaQawVQB3IwTA7OQ3ihtjmCSpDB/DQ
+        AAlwACYwp9A+XTv2+Ep8qWvqk5OhFV1WIM9YqBUEyOhGLzwX8vF8sCYGJQGsivg9
+        AaeS6OIAvObrYzLsRCeC3U6qe85FK4XmrpoXfagCvsAgQ0FoxYgsMAgMrGZofRCq
+        Naiw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1672507857; x=1672594257; bh=rAkPHCX9plm+ABZSDox55LMS13uIo7UeVXF
-        HjSskAHQ=; b=jwAQQAoEnZQwzdJNOZ2c0YFbC8dROsSnDKxlPJ4ufuQuGuggjth
-        tF9zy3jo9BSw+GH97lJiGWbOudhd3Vis0H6wHpyL2y1Y48S8KFgF42QqbY321v81
-        /Q555sswcdpg2UuhpSxEDTdvsnbj2Uy5JcrjqX4MvaQpdCNKxS6+kPvakAEEZEP3
-        9k2zq2HQIzzz3Ks0kGndN2AVHWuhsLA8xFSaTjkhHV6kDc/KG5+lqWYhvkK+EzAI
-        eYBt4reUQlqScDr1N4D67Qplg+lXsOsPfAX78LieG2PJh00DYyrqNkWsJnOui0UW
-        y94odSVxCV56yKLP0RFoXDRkTpndYb8/++w==
-X-ME-Sender: <xms:0XGwY_ZKARe42eaPoYyQrjdvGJvaOsQe4KdjBr6FbJO_ehg00aWu3A>
-    <xme:0XGwY-YKpKselZ21u1O7gAOeCzSFkhXilr_XYFCqhxqyVzKiinEmSIweNs7o4q-FC
-    hIYpQdVS824rElLlA>
-X-ME-Received: <xmr:0XGwYx-gC-62ZyIB2s0zfYhSOJ-SmNxQ6Nn_OtDi8x0bXHoV-phi8D8nzo5EzmjBFSxE0oNDl_aqkTCbfBt2010jhLj51Re1KygY68e50BZyl9uBBn6nUlPyi2_su8swxyal1Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieekgddutddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuggftrf
-    grthhtvghrnhepkeevlefhjeeuleeltedvjedvfeefteegleehueejffehgffffeekhefh
-    hfekkeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:0XGwY1pzRpCQ9s53x8iqcIjQi_K2Z6lClej9oUXsQT4f6C2q3pJsDw>
-    <xmx:0XGwY6q93VhxHwswr2B5Fa-QFuJj16NeYiUy-cb4qYXd5RseQCt89A>
-    <xmx:0XGwY7QZb9SBPYQVPbxvVzTp-mHOHoy2DnWoaHUzheR8LsCz775CNQ>
-    <xmx:0XGwY6IaXv_YN69rcA21xtJcpMGecoJRpadLPWVVrRrzYV-rUWjp7w>
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1672528472; x=1672614872; bh=OcGtkt9Bv14YY
+        pUDrmReERXmRLK8ON2avWRPl23IvSg=; b=r2DkBNYttsQ7FkZcACYJmfYfh2hlg
+        /R55ReEj+mldF4kcsUqYiLfQzwkJ+IpoBgrZubXT3vud+5reWx2PiUpi9oly+LJI
+        VkZOaohaiitzwzMz+P/Kg1bO4415JEO81KYDGNBI/HYL9AqHCFkdmPdPtg5So53h
+        JGCagO23gh23MHylSbp8Lp2q++l3TbXlatSUG3ymz8JH6z6xFmIXudNtTbBZ0qF3
+        kh3o7/GLuEvGMAu99K8ekfK+ZD29Hzm5i+cwKofMMf7s6zya9nTONDtZK9ABsEze
+        CBiZ/OAiKTVDIJ/qmK3WwJ8RnjMLI1e8y3J8OhmBQ2M39NTZuvJtPDyCg==
+X-ME-Sender: <xms:WMKwY-RNRV1nJ17aPOjEv-D_ChyaI5Olg-W977LtlmFYYNfx5I04ag>
+    <xme:WMKwYzweo8g6dUCnDuahU23lb8CG3zHke6kfO7KOln0XHjoDdhmJ5NZ5xvLz_7XWI
+    WUIcabpk6t0E6xlqg>
+X-ME-Received: <xmr:WMKwY70fTtlISru6XN466V015zQaze06J08Zwr38key68vk1vg1IjPUdM4jESXtFmCPJlmnagklHFrx3ujaFHP0ZGE5IXA4o6x8_D9bpwWF2W4gjqP6XwauvlR6o-TJ_fFsBkA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieelgddtlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
+    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
+    frrghtthgvrhhnpedukeetueduhedtleetvefguddvvdejhfefudelgfduveeggeehgfdu
+    feeitdevteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:WMKwY6C95iMYnz4kv-zxQSvuKHc6yhWuLJEZguQyeB5nkDUcgCG8Eg>
+    <xmx:WMKwY3hBYGOmdzIsox-HGBR6Tpl7JT8Y3t37vhQuMFu8IkI2jlcLgQ>
+    <xmx:WMKwY2pMVLbU4fVsktzt76wHMFeFILX5JDn2dMiRhvIGQTk5W8x0KA>
+    <xmx:WMKwY3wyiB7SCGNT93bnZPrMt0oATMKZUIk3E3z_zvxogjgGdhdR3A>
 Feedback-ID: i0ad843c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 31 Dec 2022 12:30:56 -0500 (EST)
+ 31 Dec 2022 18:14:31 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Samuel Holland <samuel@sholland.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: [PATCH v2] clk: sunxi-ng: Avoid computing the rate twice
-Date:   Sat, 31 Dec 2022 11:30:55 -0600
-Message-Id: <20221231173055.42384-1-samuel@sholland.org>
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: [PATCH v2 1/6] clk: sunxi-ng: Remove duplicate ARCH_SUNXI dependencies
+Date:   Sat, 31 Dec 2022 17:14:24 -0600
+Message-Id: <20221231231429.18357-2-samuel@sholland.org>
 X-Mailer: git-send-email 2.37.4
+In-Reply-To: <20221231231429.18357-1-samuel@sholland.org>
+References: <20221231231429.18357-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The ccu_*_find_best() functions already compute a best_rate at the same
-time as the other factors. Return this value so the caller does not need
-to duplicate the computation.
+SUNXI_CCU already depends on ARCH_SUNXI, so adding the dependency to
+individual SoC drivers is redundant. Drivers stay disabled under
+COMPILE_TEST because of the `default ARCH_SUNXI` applied to SUNXI_CCU.
 
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
 
-Changes in v2:
- - Apply the same change also to nk, nkm, nkmp, and nm
- - Update the commit message
+(no changes since v1)
 
- drivers/clk/sunxi-ng/ccu_mp.c   | 11 ++++++-----
- drivers/clk/sunxi-ng/ccu_nk.c   |  9 +++++----
- drivers/clk/sunxi-ng/ccu_nkm.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu_nkmp.c | 10 +++++-----
- drivers/clk/sunxi-ng/ccu_nm.c   |  9 +++++----
- 5 files changed, 26 insertions(+), 23 deletions(-)
+ drivers/clk/sunxi-ng/Kconfig | 43 ++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-index 57cf2d615148..cc94a694cb67 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.c
-+++ b/drivers/clk/sunxi-ng/ccu_mp.c
-@@ -10,9 +10,9 @@
- #include "ccu_gate.h"
- #include "ccu_mp.h"
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 461537679c04..64cfa022e320 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -14,43 +14,43 @@ config SUNIV_F1C100S_CCU
  
--static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
--			     unsigned int max_m, unsigned int max_p,
--			     unsigned int *m, unsigned int *p)
-+static unsigned long ccu_mp_find_best(unsigned long parent, unsigned long rate,
-+				      unsigned int max_m, unsigned int max_p,
-+				      unsigned int *m, unsigned int *p)
- {
- 	unsigned long best_rate = 0;
- 	unsigned int best_m = 0, best_p = 0;
-@@ -35,6 +35,8 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
+ config SUN20I_D1_CCU
+ 	tristate "Support for the Allwinner D1 CCU"
+-	default RISCV && ARCH_SUNXI
+-	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
++	default RISCV
++	depends on RISCV || COMPILE_TEST
  
- 	*m = best_m;
- 	*p = best_p;
-+
-+	return best_rate;
- }
+ config SUN20I_D1_R_CCU
+ 	tristate "Support for the Allwinner D1 PRCM CCU"
+-	default RISCV && ARCH_SUNXI
+-	depends on (RISCV && ARCH_SUNXI) || COMPILE_TEST
++	default RISCV
++	depends on RISCV || COMPILE_TEST
  
- static unsigned long ccu_mp_find_best_with_parent_adj(struct clk_hw *hw,
-@@ -109,8 +111,7 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
- 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ config SUN50I_A64_CCU
+ 	tristate "Support for the Allwinner A64 CCU"
+-	default ARM64 && ARCH_SUNXI
+-	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default ARM64
++	depends on ARM64 || COMPILE_TEST
  
- 	if (!clk_hw_can_set_rate_parent(&cmp->common.hw)) {
--		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
--		rate = *parent_rate / p / m;
-+		rate = ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
- 	} else {
- 		rate = ccu_mp_find_best_with_parent_adj(hw, parent_rate, rate,
- 							max_m, max_p);
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-index c4fb82af97e8..8aa35d5804f3 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.c
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -15,8 +15,8 @@ struct _ccu_nk {
- 	unsigned long	k, min_k, max_k;
- };
+ config SUN50I_A100_CCU
+ 	tristate "Support for the Allwinner A100 CCU"
+-	default ARM64 && ARCH_SUNXI
+-	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default ARM64
++	depends on ARM64 || COMPILE_TEST
  
--static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
--			     struct _ccu_nk *nk)
-+static unsigned long ccu_nk_find_best(unsigned long parent, unsigned long rate,
-+				      struct _ccu_nk *nk)
- {
- 	unsigned long best_rate = 0;
- 	unsigned int best_k = 0, best_n = 0;
-@@ -39,6 +39,8 @@ static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
+ config SUN50I_A100_R_CCU
+ 	tristate "Support for the Allwinner A100 PRCM CCU"
+-	default ARM64 && ARCH_SUNXI
+-	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default ARM64
++	depends on ARM64 || COMPILE_TEST
  
- 	nk->k = best_k;
- 	nk->n = best_n;
-+
-+	return best_rate;
- }
+ config SUN50I_H6_CCU
+ 	tristate "Support for the Allwinner H6 CCU"
+-	default ARM64 && ARCH_SUNXI
+-	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default ARM64
++	depends on ARM64 || COMPILE_TEST
  
- static void ccu_nk_disable(struct clk_hw *hw)
-@@ -104,8 +106,7 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	_nk.min_k = nk->k.min ?: 1;
- 	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ config SUN50I_H616_CCU
+ 	tristate "Support for the Allwinner H616 CCU"
+-	default ARM64 && ARCH_SUNXI
+-	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default ARM64
++	depends on ARM64 || COMPILE_TEST
  
--	ccu_nk_find_best(*parent_rate, rate, &_nk);
--	rate = *parent_rate * _nk.n * _nk.k;
-+	rate = ccu_nk_find_best(*parent_rate, rate, &_nk);
+ config SUN50I_H6_R_CCU
+ 	tristate "Support for the Allwinner H6 and H616 PRCM CCU"
+-	default ARM64 && ARCH_SUNXI
+-	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default ARM64
++	depends on ARM64 || COMPILE_TEST
  
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate / nk->fixed_post_div;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 67da2c189b53..a0978a50edae 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -16,8 +16,8 @@ struct _ccu_nkm {
- 	unsigned long	m, min_m, max_m;
- };
+ config SUN4I_A10_CCU
+ 	tristate "Support for the Allwinner A10/A20 CCU"
+@@ -71,8 +71,7 @@ config SUN6I_A31_CCU
  
--static void ccu_nkm_find_best(unsigned long parent, unsigned long rate,
--			      struct _ccu_nkm *nkm)
-+static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
-+				       struct _ccu_nkm *nkm)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long best_n = 0, best_k = 0, best_m = 0;
-@@ -45,6 +45,8 @@ static void ccu_nkm_find_best(unsigned long parent, unsigned long rate,
- 	nkm->n = best_n;
- 	nkm->k = best_k;
- 	nkm->m = best_m;
-+
-+	return best_rate;
- }
+ config SUN6I_RTC_CCU
+ 	tristate "Support for the Allwinner H616/R329 RTC CCU"
+-	default ARCH_SUNXI
+-	depends on ARCH_SUNXI || COMPILE_TEST
++	default y
  
- static void ccu_nkm_disable(struct clk_hw *hw)
-@@ -122,9 +124,7 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nkm->fixed_post_div;
+ config SUN8I_A23_CCU
+ 	tristate "Support for the Allwinner A23 CCU"
+@@ -91,8 +90,8 @@ config SUN8I_A83T_CCU
  
--	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
--
--	rate = *parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+	rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm);
+ config SUN8I_H3_CCU
+ 	tristate "Support for the Allwinner H3 CCU"
+-	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+-	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++	default MACH_SUN8I || ARM64
++	depends on MACH_SUN8I || ARM64 || COMPILE_TEST
  
- 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /= nkm->fixed_post_div;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 39413cb0985c..99359a06892d 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -29,8 +29,8 @@ static unsigned long ccu_nkmp_calc_rate(unsigned long parent,
- 	return rate;
- }
+ config SUN8I_V3S_CCU
+ 	tristate "Support for the Allwinner V3s CCU"
+@@ -101,7 +100,7 @@ config SUN8I_V3S_CCU
  
--static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
--			       struct _ccu_nkmp *nkmp)
-+static unsigned long ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
-+					struct _ccu_nkmp *nkmp)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long best_n = 0, best_k = 0, best_m = 0, best_p = 0;
-@@ -65,6 +65,8 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
- 	nkmp->k = best_k;
- 	nkmp->m = best_m;
- 	nkmp->p = best_p;
-+
-+	return best_rate;
- }
+ config SUN8I_DE2_CCU
+ 	tristate "Support for the Allwinner SoCs DE2 CCU"
+-	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
++	default MACH_SUN8I || ARM64
  
- static void ccu_nkmp_disable(struct clk_hw *hw)
-@@ -150,10 +152,8 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	_nkmp.min_p = 1;
- 	_nkmp.max_p = nkmp->p.max ?: 1 << ((1 << nkmp->p.width) - 1);
+ config SUN8I_R40_CCU
+ 	tristate "Support for the Allwinner R40 CCU"
+@@ -115,6 +114,6 @@ config SUN9I_A80_CCU
  
--	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
-+	rate = ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
+ config SUN8I_R_CCU
+ 	tristate "Support for Allwinner SoCs' PRCM CCUs"
+-	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
++	default MACH_SUN8I || ARM64
  
--	rate = ccu_nkmp_calc_rate(*parent_rate, _nkmp.n, _nkmp.k,
--				  _nkmp.m, _nkmp.p);
- 	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate / nkmp->fixed_post_div;
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index 9ca9257f4426..c1fd11542c45 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -27,8 +27,8 @@ static unsigned long ccu_nm_calc_rate(unsigned long parent,
- 	return rate;
- }
- 
--static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
--			     struct _ccu_nm *nm)
-+static unsigned long ccu_nm_find_best(unsigned long parent, unsigned long rate,
-+				      struct _ccu_nm *nm)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long best_n = 0, best_m = 0;
-@@ -52,6 +52,8 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 
- 	nm->n = best_n;
- 	nm->m = best_m;
-+
-+	return best_rate;
- }
- 
- static void ccu_nm_disable(struct clk_hw *hw)
-@@ -157,8 +159,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
--	ccu_nm_find_best(*parent_rate, rate, &_nm);
--	rate = ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
-+	rate = ccu_nm_find_best(*parent_rate, rate, &_nm);
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /= nm->fixed_post_div;
+ endif
 -- 
 2.37.4
 
