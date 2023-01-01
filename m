@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD41EC4167B
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Jan 2023 17:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543B2C4167B
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Jan 2023 17:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbjAAR6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 Jan 2023 12:58:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        id S231720AbjAAR61 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Jan 2023 12:58:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231563AbjAAR6C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jan 2023 12:58:02 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F6A2DDE
-        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 09:57:58 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id x22so62219245ejs.11
-        for <linux-clk@vger.kernel.org>; Sun, 01 Jan 2023 09:57:58 -0800 (PST)
+        with ESMTP id S231367AbjAAR6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jan 2023 12:58:05 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1ED13886
+        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 09:58:00 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id tz12so62244213ejc.9
+        for <linux-clk@vger.kernel.org>; Sun, 01 Jan 2023 09:58:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S9smT0T74p/RoQNiIeBlvZXMl6kYsCsXSfs8qRvMbs0=;
-        b=OYKuiBkOOwjN29tPh1/cWMs8cLG1wN2gp0u2wLLC0QTtDK5gbTk2HFLUf7vAZNygrn
-         MzNeRUIkv5H3GMEoY2GSnne2ri+CNzGqq+W7e2d+T/6j+hrxmefHXrVCtdQIDCzgMN9l
-         iwrDTX42EVaqJ+VwQgXF6NcoaEHCF78TMprDI=
+        bh=5ANQd6bXt3IGDoNEOc8NxJt3wMiyzrQXu+RqmVmBeDs=;
+        b=mJe4b2RijturIL0i0gYMqhYyZrq5yE58888YGpw5SuKxqw11OTF1jgUQbEGXQes+Bj
+         g08qD16XDp9EIy/dlYAv4mIM2+7uit24d067Y03rx7bIcXGOOp7XK9OLAX1o2yySiGkP
+         C2cjT0tk2e8sJMMRCDKMq+lj+XjQjBLBXRzRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S9smT0T74p/RoQNiIeBlvZXMl6kYsCsXSfs8qRvMbs0=;
-        b=Smjv0PkSJpWjQzbwIRdXrVdnX5sE8T1OWW5JXlh0PrIog7bRf4yEn5gTZI+lte1590
-         Sta3exnCmCfAfjtsXhe9od8apJ76CcsIVXdACiqYExyGedw1on4eGPIQqr91vVgHp3xG
-         6TESA2y/DvsM8oaPqwrkyoEmljqycRZCMEBqRRUhN2CBQgB/rJGbBmCuSMzks7n2rUly
-         5Nv1NKfnDCaVD1MiaPs400Y9gK63O/bkB2yX+i77aBnghCF3pZ5UDfYJR2GhK6jhTZ0I
-         ICP8yNGy/nKRWso8cHGRmC9Y79J+TcavNtwZHLpjkAK91sEzaEV+m+xHn1OXeLECgS22
-         ULvQ==
-X-Gm-Message-State: AFqh2kqgTLgYKRsXf3V+VjGOliD1cQhnrP+tv83Z+S+S2jaw9cjPcOxB
-        /z5pNaOXX05KId/mFqs8TpESlg==
-X-Google-Smtp-Source: AMrXdXuHoqCnHo3KBHalc3f6+5m+hbvP47YUUOAyw97jYPbQA9FCYU2t2y8nZ1vFHoHMESB8PSzqXg==
-X-Received: by 2002:a17:906:910:b0:7c0:f71b:8b3 with SMTP id i16-20020a170906091000b007c0f71b08b3mr32097158ejd.57.1672595876863;
-        Sun, 01 Jan 2023 09:57:56 -0800 (PST)
+        bh=5ANQd6bXt3IGDoNEOc8NxJt3wMiyzrQXu+RqmVmBeDs=;
+        b=Z0hYM2xkOlZg4kej9tqxOJ+3FD0JdselLJ403NSe4ztclX6VvyeefDFp3JNTqnuPP7
+         zqzjz5t44nvACHPqSXGPv8Wj2Ju+sUPOHXDj0QGf6M845zeamK6h4EpUZYLs6K3MEJ61
+         VGh8o6Zya0Y45fV65n88vM10IZ2w7PcN8s52gakp0bdL3StJssUOOrNPtNPINb5NfO5e
+         5L1+O+m+KRYnX/XC0rS1M5ZHX60vilEchrJshl7uQiB3pH0ElFN2I53/nxJnwAnrLxKc
+         yg5Gg5WKdnaHAzjCchrLnLIKAF8QD1XlSNRJabzxXkCEKTRLtFzfxavwHWRYwTy994gp
+         PWmQ==
+X-Gm-Message-State: AFqh2kp0FXRlKdAgj5friFycJgjota44GJeyPsQRxDXARlkOBSPdubR5
+        xtbhoe9b66laJ5nVjzaOPCJuxg==
+X-Google-Smtp-Source: AMrXdXso8nbBqMtt1gTfs/eQvnUDWYvkn4cvq16z7m5ZY+eEiCoFsgF/aVFX8u9ZgdaZ0F7gZ9a+6w==
+X-Received: by 2002:a17:907:72d3:b0:7c0:fd1e:972e with SMTP id du19-20020a17090772d300b007c0fd1e972emr42553684ejc.46.1672595879577;
+        Sun, 01 Jan 2023 09:57:59 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-80-180-23-57.retail.telecomitalia.it. [80.180.23.57])
-        by smtp.gmail.com with ESMTPSA id q2-20020a1709063d4200b0082ddfb47d06sm12273018ejf.148.2023.01.01.09.57.55
+        by smtp.gmail.com with ESMTPSA id q2-20020a1709063d4200b0082ddfb47d06sm12273018ejf.148.2023.01.01.09.57.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jan 2023 09:57:56 -0800 (PST)
+        Sun, 01 Jan 2023 09:57:59 -0800 (PST)
 From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
@@ -54,7 +54,6 @@ Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
         linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
         jagan@amarulasolutions.com,
         Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        kernel test robot <lkp@intel.com>,
         Abel Vesa <abelvesa@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -64,9 +63,9 @@ Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH v2 07/11] clk: imx: composite-8m: add device tree support
-Date:   Sun,  1 Jan 2023 18:57:36 +0100
-Message-Id: <20230101175740.1010258-8-dario.binacchi@amarulasolutions.com>
+Subject: [RFC PATCH v2 09/11] clk: imx: cpu: add device tree support
+Date:   Sun,  1 Jan 2023 18:57:38 +0100
+Message-Id: <20230101175740.1010258-10-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
 References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
@@ -80,122 +79,75 @@ The patch, backwards compatible, extends the driver to initialize the
 clock directly from the device tree.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Reported-by: kernel test robot <lkp@intel.com>
-
 ---
 
-Changes in v2:
-- Fix compiler warnings reported by kernel test robot.
+(no changes since v1)
 
- drivers/clk/imx/clk-composite-8m.c | 84 ++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ drivers/clk/imx/clk-cpu.c | 54 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index cbf0d7955a00..fa5fdfff0b2d 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -7,6 +7,8 @@
- #include <linux/errno.h>
- #include <linux/export.h>
- #include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/slab.h>
- 
- #include "clk.h"
-@@ -25,6 +27,9 @@
- 
- #define PCG_CGC_SHIFT		28
- 
-+#undef pr_fmt
-+#define pr_fmt(fmt) "%s: " fmt, __func__
-+
- static unsigned long imx8m_clk_composite_divider_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
-@@ -250,3 +255,82 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 	return ERR_CAST(hw);
+diff --git a/drivers/clk/imx/clk-cpu.c b/drivers/clk/imx/clk-cpu.c
+index cb6ca4cf0535..28fb75c6ecea 100644
+--- a/drivers/clk/imx/clk-cpu.c
++++ b/drivers/clk/imx/clk-cpu.c
+@@ -106,3 +106,57 @@ struct clk_hw *imx_clk_hw_cpu(const char *name, const char *parent_name,
+ 	return hw;
  }
- EXPORT_SYMBOL_GPL(__imx8m_clk_hw_composite);
+ EXPORT_SYMBOL_GPL(imx_clk_hw_cpu);
 +
-+static void __init _of_imx_composite_clk_setup(struct device_node *node,
-+					       u32 type)
++/**
++ * of_imx_cpu_clk_setup - Setup function for imx low power gate
++ *                            clock
++ * @node:	device node for the clock
++ */
++static void __init of_imx_cpu_clk_setup(struct device_node *node)
 +{
-+	void __iomem *reg;
 +	struct clk_hw *hw;
-+	const char *name = node->name;
-+	unsigned int num_parents;
-+	const char **parent_names;
-+	unsigned long flags = IMX_COMPOSITE_CLK_FLAGS_DEFAULT;
++	struct clk *parent_clk, *div, *mux, *pll, *step;
++	const char *name = node->name, *parent_name;
 +
-+	reg = of_iomap(node, 0);
-+	if (IS_ERR(reg)) {
-+		pr_err("failed to get reg address for %pOFn\n", node);
++	parent_clk = of_clk_get_by_name(node, "fck");
++	if (IS_ERR(parent_clk)) {
++		pr_err("failed to get parent clock for %pOFn\n", node);
 +		return;
 +	}
 +
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents < 2) {
-+		pr_err("%pOFn must have parents\n", node);
++	div = of_clk_get_by_name(node, "div-clk");
++	if (IS_ERR(div)) {
++		pr_err("failed to get div clock for %pOFn\n", node);
 +		return;
 +	}
 +
-+	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
-+	if (!parent_names)
++	mux = of_clk_get_by_name(node, "mux-clk");
++	if (IS_ERR(div)) {
++		pr_err("failed to get mux clock for %pOFn\n", node);
 +		return;
++	}
 +
-+	of_clk_parent_fill(node, parent_names, num_parents);
++	pll = of_clk_get_by_name(node, "pll-clk");
++	if (IS_ERR(div)) {
++		pr_err("failed to get pll clock for %pOFn\n", node);
++		return;
++	}
++
++	step = of_clk_get_by_name(node, "step-clk");
++	if (IS_ERR(div)) {
++		pr_err("failed to get step clock for %pOFn\n", node);
++		return;
++	}
++
++	parent_name = __clk_get_name(parent_clk);
 +	of_property_read_string(node, "clock-output-names", &name);
 +
-+	if (of_property_read_bool(node, "fsl,get-rate-nocache"))
-+		flags |= CLK_GET_RATE_NOCACHE;
-+
-+	if (of_property_read_bool(node, "fsl,is-critical"))
-+		flags |= CLK_IS_CRITICAL;
-+
-+	hw = __imx8m_clk_hw_composite(name, parent_names, num_parents, reg,
-+				      type, flags);
++	hw = imx_clk_hw_cpu(name, parent_name, div, mux, pll, step);
 +	if (!IS_ERR(hw))
 +		of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
 +
-+	kfree(parent_names);
++	pr_debug("name: %s, parent: %s, div: %s, mux: %s, pll: %s, step: %s\n",
++		 name, parent_name, __clk_get_name(div), __clk_get_name(mux),
++		 __clk_get_name(pll), __clk_get_name(step));
 +}
-+
-+/**
-+ * of_imx_composite_clk_setup() - Setup function for imx composite  clock
-+ * @node:	device node for the clock
-+ */
-+static void __init of_imx_composite_clk_setup(struct device_node *node)
-+{
-+	_of_imx_composite_clk_setup(node, IMX_COMPOSITE_CORE);
-+}
-+CLK_OF_DECLARE(fsl_composite_8m_clk, "fsl,imx8m-composite-clock",
-+	       of_imx_composite_clk_setup);
-+
-+/**
-+ * of_imx_composite_bus_clk_setup() - Setup function for imx composite  clock
-+ * @node:	device node for the clock
-+ */
-+static void __init of_imx_composite_bus_clk_setup(struct device_node *node)
-+{
-+	_of_imx_composite_clk_setup(node, IMX_COMPOSITE_BUS);
-+}
-+CLK_OF_DECLARE(fsl_composite_bus_8m_clk, "fsl,imx8m-composite-bus-clock",
-+	       of_imx_composite_bus_clk_setup);
-+
-+/**
-+ * of_imx_composite_fw_managed_clk_setup() - Setup function for imx
-+ *		composite fw managed clock
-+ * @node:	device node for the clock
-+ */
-+static void __init
-+of_imx_composite_fw_managed_clk_setup(struct device_node *node)
-+{
-+	_of_imx_composite_clk_setup(node, IMX_COMPOSITE_FW_MANAGED);
-+}
-+CLK_OF_DECLARE(fsl_composite_fw_managed_8m_clk,
-+	       "fsl,imx8m-composite-fw-managed-clock",
-+	       of_imx_composite_fw_managed_clk_setup);
++CLK_OF_DECLARE(fsl_cpu_clk, "fsl,cpu-clock", of_imx_cpu_clk_setup);
 -- 
 2.32.0
 
