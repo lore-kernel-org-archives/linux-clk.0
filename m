@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC2BC46467
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Jan 2023 17:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F59C3DA7D
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Jan 2023 17:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjAAR55 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 Jan 2023 12:57:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53420 "EHLO
+        id S231580AbjAAR6D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Jan 2023 12:58:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbjAAR5z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jan 2023 12:57:55 -0500
+        with ESMTP id S231349AbjAAR54 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jan 2023 12:57:56 -0500
 Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34F8A2DC8
-        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 09:57:53 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id jo4so62252985ejb.7
-        for <linux-clk@vger.kernel.org>; Sun, 01 Jan 2023 09:57:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820C02DC6
+        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 09:57:55 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id jo4so62253066ejb.7
+        for <linux-clk@vger.kernel.org>; Sun, 01 Jan 2023 09:57:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SzWgtinayzWqOkE2ijmFHmqOXIKDSib2Is7Zd5a35gQ=;
-        b=EM/uGHg2iYqIbRUhx0y9T0X9TCSTDyC4lib+zCHiZaCDLXVtUn4+nGN6OCYp+Zq0Zu
-         wQYz67wT2i0DIFarnzNY3xkk/gfFjvP6BjiDenOX+PeFdg5f6ocLZ0RLtt52kWyEx7KK
-         3hkBMVPRt1+K+/cTaZM30hxlJ2KUehDqTEJIw=
+        bh=qlf+Dp2kJHM+5m2H40bK4TeYrEgXDehpSZmTNyJ9wJ8=;
+        b=COEWFXjuyIJ0Z0HXO/ioVJLk+GM65m+Ns9lkV17Uz4Tl9EqU9r/IKzTWDmk59HLAv8
+         BSRaCMMyrFSvtDHA1ENjMVe3xSQnr9GRhNKUFridebdcWtSNH2t7t42WUgLtZmyOkioU
+         MHtXtKYsgvYhM2JGFaRBtB/xPGvJrzpsI+0qc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SzWgtinayzWqOkE2ijmFHmqOXIKDSib2Is7Zd5a35gQ=;
-        b=nneczhS9S3HymiNwPw1uaPqquehGOa73y6dPZbJa+coKbgeNR5TAtqdyN9QhKPrZLf
-         TJTiW8oEzNPlPBYM8pHOBu5bzZ6M4oDx18h54oBSR8cZ4nY0tqpty0qk/mldqEBknXQL
-         XsChaEwG5YA5wE7bxH7g3uuChkQczuI65M3SCbmbL5NVYMpIRcSLoPcXn3FefRidtmxh
-         ybGtYX3U5v7pBYiAhkF8LB0Ie8Wx0ebRAhFhbB4qzJ5c6H+DAbkQZ14lUaCJ4iDocX5x
-         WuGW4j7GtuzR8ZxlYzmILSyGRPup3FubCiOnrgNvuTQTlR0rYQlSGWzVdDl9qi+WfXE1
-         iu6w==
-X-Gm-Message-State: AFqh2kr1Rz8Nl2CC9ymxC1y8Y9CFx1HQ76rTcV+o+5qox4ceUzs1poWR
-        GLzQm6z6G2p41N86LdJZUUWulQ==
-X-Google-Smtp-Source: AMrXdXtXQXtP+JRZ2PCIzEppWci1rqIph2WNNWQGjgW1m5qyvhjqMjB2g1RBlEZ/fryZ0lH5A+bnYA==
-X-Received: by 2002:a17:906:38d9:b0:84b:8885:9868 with SMTP id r25-20020a17090638d900b0084b88859868mr31536688ejd.58.1672595872816;
-        Sun, 01 Jan 2023 09:57:52 -0800 (PST)
+        bh=qlf+Dp2kJHM+5m2H40bK4TeYrEgXDehpSZmTNyJ9wJ8=;
+        b=WB5gv0Ko4AYE/i0WVufkvsfkbXKV3fUmGuQIt2tsD7GUCOICKbsuHo5v8JZ+JAMF1R
+         sjLyP8VLDySB8aJwMSUiPtaFCMjqlu4Yc6oQdC/iLh4/SRdCq15unCg1YKsUP+rmPrGv
+         5EftHpU6Z8iMxRNHRDeJJpL4pJttQSRbI0UMUJljeRbd2X09P9c+Pf3IgIat52lYkDqn
+         7OdsOn291TshLnpqHynxXOQ+po4Kgd9gbnTcjhSbYnf7h2YWsPYp2ff4OQOnB+cTwI5y
+         agaYfgqFjerpdxnGX/3TtEJQpszVQhNBHzP5dD97fY3NcOKytaWv+UrWPKAtEBgdMTRz
+         96mw==
+X-Gm-Message-State: AFqh2kptegQ2C9HlIWG4aqptIAok/iz/rgvKkHlqt0z0pdqSI144KH3F
+        VDK6x4Gwktsb5Dtc5BCsOhEsAQ==
+X-Google-Smtp-Source: AMrXdXvKxcZftrtHDzWDpFiwGCmyX1qebft2lOLs2c9YMEJ4s9zWl9wzOtgN6q9IRQWFRaE4+spFyw==
+X-Received: by 2002:a17:906:5611:b0:7c1:4e5d:d8a0 with SMTP id f17-20020a170906561100b007c14e5dd8a0mr36812366ejq.76.1672595874142;
+        Sun, 01 Jan 2023 09:57:54 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-80-180-23-57.retail.telecomitalia.it. [80.180.23.57])
-        by smtp.gmail.com with ESMTPSA id q2-20020a1709063d4200b0082ddfb47d06sm12273018ejf.148.2023.01.01.09.57.51
+        by smtp.gmail.com with ESMTPSA id q2-20020a1709063d4200b0082ddfb47d06sm12273018ejf.148.2023.01.01.09.57.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jan 2023 09:57:52 -0800 (PST)
+        Sun, 01 Jan 2023 09:57:53 -0800 (PST)
 From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
@@ -63,9 +63,9 @@ Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH v2 04/11] clk: imx8mn: add mux driver
-Date:   Sun,  1 Jan 2023 18:57:33 +0100
-Message-Id: <20230101175740.1010258-5-dario.binacchi@amarulasolutions.com>
+Subject: [RFC PATCH v2 05/11] clk: imx8mn: add divider driver
+Date:   Sun,  1 Jan 2023 18:57:34 +0100
+Message-Id: <20230101175740.1010258-6-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
 References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
@@ -75,17 +75,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The patch adds support for imx8mn mux clocks to be initialized directly
-from the device tree. Currently all i.MX mux clocks are initialized by
-legacy code with hardwired parameters. This approach has generated setup
-functions with unclear names:
-
-git grep "#define imx_clk_hw_mux" drivers/clk/imx/clk.h
-drivers/clk/imx/clk.h:#define imx_clk_hw_mux2(name, reg, shift, width, parents, num_parents) \
-drivers/clk/imx/clk.h:#define imx_clk_hw_mux(name, reg, shift, width, parents, num_parents) \
-drivers/clk/imx/clk.h:#define imx_clk_hw_mux_flags(name, reg, shift, width, parents, num_parents, flags) \
-drivers/clk/imx/clk.h:#define imx_clk_hw_mux_ldb(name, reg, shift, width, parents, num_parents) \
-drivers/clk/imx/clk.h:#define imx_clk_hw_mux2_flags(name, reg, shift, width, parents, num_parents, flags) \
+The patch adds support for imx8mn divider clocks to be initialized
+directly from the device tree. Currently all i.MX divider clocks are
+initialized by legacy code with hardwired parameters.
 
 So, let's start with this specific clock driver and hope that other
 variants can be handled in the future, causing the legacy code to be
@@ -96,29 +88,29 @@ Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 (no changes since v1)
 
- drivers/clk/imx/Makefile  |   1 +
- drivers/clk/imx/clk-mux.c | 258 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 259 insertions(+)
- create mode 100644 drivers/clk/imx/clk-mux.c
+ drivers/clk/imx/Makefile      |   1 +
+ drivers/clk/imx/clk-divider.c | 235 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 236 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-divider.c
 
 diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 72e1f08d49dc..1cffc5bebbe1 100644
+index 1cffc5bebbe1..0e4337f0a020 100644
 --- a/drivers/clk/imx/Makefile
 +++ b/drivers/clk/imx/Makefile
-@@ -15,6 +15,7 @@ mxc-clk-objs += clk-gate.o
- mxc-clk-objs += clk-gate2.o
- mxc-clk-objs += clk-gate-93.o
- mxc-clk-objs += clk-gate-exclusive.o
-+mxc-clk-objs += clk-mux.o
- mxc-clk-objs += clk-pfd.o
- mxc-clk-objs += clk-pfdv2.o
- mxc-clk-objs += clk-pllv1.o
-diff --git a/drivers/clk/imx/clk-mux.c b/drivers/clk/imx/clk-mux.c
+@@ -7,6 +7,7 @@ mxc-clk-objs += clk-composite-8m.o
+ mxc-clk-objs += clk-composite-93.o
+ mxc-clk-objs += clk-fracn-gppll.o
+ mxc-clk-objs += clk-cpu.o
++mxc-clk-objs += clk-divider.o
+ mxc-clk-objs += clk-divider-gate.o
+ mxc-clk-objs += clk-fixup-div.o
+ mxc-clk-objs += clk-fixup-mux.o
+diff --git a/drivers/clk/imx/clk-divider.c b/drivers/clk/imx/clk-divider.c
 new file mode 100644
-index 000000000000..426738d25582
+index 000000000000..4617aa906de4
 --- /dev/null
-+++ b/drivers/clk/imx/clk-mux.c
-@@ -0,0 +1,258 @@
++++ b/drivers/clk/imx/clk-divider.c
+@@ -0,0 +1,235 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2022 Amarula Solutions
@@ -126,7 +118,6 @@ index 000000000000..426738d25582
 + * Dario Binacchi <dario.binacchi@amarulasolutions.com>
 + */
 +
-+#include <linux/clk-provider.h>
 +#include <linux/mfd/syscon.h>
 +#include <linux/module.h>
 +#include <linux/slab.h>
@@ -139,17 +130,16 @@ index 000000000000..426738d25582
 +#undef pr_fmt
 +#define pr_fmt(fmt) "%s: " fmt, __func__
 +
-+#define to_clk_imx_mux(_hw) container_of(_hw, struct clk_imx_mux, hw)
++#define to_clk_imx_divider(_hw) container_of(_hw, struct clk_imx_divider, hw)
 +
-+struct clk_imx_mux {
++struct clk_imx_divider {
 +	struct clk_hw hw;
 +	struct imx_clk_reg reg;
-+	u32 mask;
 +	u8 shift;
-+	u8 saved_parent;
++	u8 width;
 +};
 +
-+static int imx_clk_mux_write(const struct imx_clk_reg *reg, u32 val)
++static int imx_clk_divider_write(const struct imx_clk_reg *reg, u32 val)
 +{
 +	int ret = 0;
 +
@@ -165,7 +155,7 @@ index 000000000000..426738d25582
 +	return ret;
 +}
 +
-+static int imx_clk_mux_read(const struct imx_clk_reg *reg, u32 *val)
++static int imx_clk_divider_read(const struct imx_clk_reg *reg, u32 *val)
 +{
 +	int ret = 0;
 +
@@ -181,116 +171,106 @@ index 000000000000..426738d25582
 +	return ret;
 +}
 +
-+static u8 imx_clk_mux_get_parent(struct clk_hw *hw)
++static unsigned long imx_clk_divider_recalc_rate(struct clk_hw *hw,
++						 unsigned long parent_rate)
 +{
-+
-+	struct clk_imx_mux *mux = to_clk_imx_mux(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
++	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
 +	unsigned int val;
 +	int ret;
 +
-+	ret = imx_clk_mux_read(&mux->reg, &val);
++	ret = imx_clk_divider_read(&divider->reg, &val);
 +	if (ret)
-+		return ret;
++		return 0;
 +
-+	val = (val >> mux->shift) && mux->mask;
++	val >>= divider->shift;
++	val &= clk_div_mask(divider->width);
 +
-+	if (val >= num_parents)
-+		return -EINVAL;
-+
-+	return val;
++	return divider_recalc_rate(hw, parent_rate, val, NULL, 0,
++				   divider->width);
 +}
 +
-+static int imx_clk_mux_set_parent(struct clk_hw *hw, u8 index)
++static long imx_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				       unsigned long *prate)
 +{
-+	struct clk_imx_mux *mux = to_clk_imx_mux(hw);
++	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
++
++	return divider_round_rate(hw, rate, prate, NULL, divider->width, 0);
++}
++
++static int imx_clk_divider_determine_rate(struct clk_hw *hw,
++					  struct clk_rate_request *req)
++{
++	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
++
++	return divider_determine_rate(hw, req, NULL, divider->width, 0);
++}
++
++static int imx_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
 +	unsigned int val;
-+	int ret;
++	int div, ret;
 +
-+	ret = imx_clk_mux_read(&mux->reg, &val);
++	div = divider_get_val(rate, parent_rate, NULL, divider->width, 0);
++	if (div < 0)
++		return div;
++
++	ret = imx_clk_divider_read(&divider->reg, &val);
 +	if (ret)
 +		return ret;
 +
-+	val &= ~(mux->mask << mux->shift);
-+	val |= index << mux->shift;
-+	return imx_clk_mux_write(&mux->reg, val);
++	val &= ~(clk_div_mask(divider->width) << divider->shift);
++	val |= div << divider->shift;
++	return imx_clk_divider_write(&divider->reg, val);
 +}
 +
-+/**
-+ * imx_clk_mux_save_context - Save the parent selcted in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the parent mux value.
-+ */
-+static int imx_clk_mux_save_context(struct clk_hw *hw)
-+{
-+	struct clk_imx_mux *mux = to_clk_imx_mux(hw);
-+
-+	mux->saved_parent = imx_clk_mux_get_parent(hw);
-+	return 0;
-+}
-+
-+/**
-+ * imx_clk_mux_restore_context - Restore the parent in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved parent mux value.
-+ */
-+static void imx_clk_mux_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_imx_mux *mux = to_clk_imx_mux(hw);
-+
-+	imx_clk_mux_set_parent(hw, mux->saved_parent);
-+}
-+
-+const struct clk_ops imx_clk_mux_ops = {
-+	.get_parent = imx_clk_mux_get_parent,
-+	.set_parent = imx_clk_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+	.save_context = imx_clk_mux_save_context,
-+	.restore_context = imx_clk_mux_restore_context,
++const struct clk_ops imx_clk_divider_ops = {
++	.recalc_rate = imx_clk_divider_recalc_rate,
++	.round_rate = imx_clk_divider_round_rate,
++	.determine_rate = imx_clk_divider_determine_rate,
++	.set_rate = imx_clk_divider_set_rate,
 +};
 +
-+static void imx_clk_hw_unregister_mux(struct clk_hw *hw)
++static void imx_clk_hw_unregister_divider(struct clk_hw *hw)
 +{
-+	struct clk_imx_mux *mux = to_clk_imx_mux(hw);
++	struct clk_imx_divider *divider = to_clk_imx_divider(hw);
 +
 +	clk_hw_unregister(hw);
-+	kfree(mux);
++	kfree(divider);
 +}
 +
-+static struct clk_hw *imx_clk_hw_register_mux(struct device_node *node,
-+					      const char *name,
-+					      const char * const *parent_names,
-+					      u8 num_parents,
-+					      unsigned long flags,
-+					      struct imx_clk_reg *reg, u8 shift,
-+					      u32 mask)
++static struct clk_hw *imx_clk_hw_register_divider(struct device_node *node,
++						  const char *name,
++						  unsigned long flags,
++						  struct imx_clk_reg *reg,
++						  u8 shift, u8 width)
 +{
++	struct clk_parent_data pdata = { .index = 0 };
 +	struct clk_init_data init = { NULL };
-+	struct clk_imx_mux *mux;
++	struct clk_imx_divider *divider;
 +	struct clk_hw *hw;
-+
 +	int ret;
 +
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
++	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
++	if (!divider)
 +		return ERR_PTR(-ENOMEM);
 +
 +	init.name = name;
 +	init.flags = flags;
-+	init.ops = &imx_clk_mux_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
++	init.ops = &imx_clk_divider_ops;
++	init.parent_data = &pdata;
++	init.num_parents = 1;
 +
-+	/* struct clk_mux assignments */
-+	memcpy(&mux->reg, reg, sizeof(*reg));
-+	mux->hw.init = &init;
++	memcpy(&divider->reg, reg, sizeof(*reg));
++	divider->shift = shift;
++	divider->width = width;
++	divider->hw.init = &init;
 +
-+	hw = &mux->hw;
++	hw = &divider->hw;
 +	ret = of_clk_hw_register(node, hw);
 +	if (ret) {
-+		kfree(mux);
++		kfree(divider);
 +		return ERR_PTR(ret);
 +	}
 +
@@ -298,20 +278,18 @@ index 000000000000..426738d25582
 +}
 +
 +/**
-+ * of_imx_mux_clk_setup() - Setup function for imx mux clock
++ * of_imx_divider_clk_setup() - Setup function for imx gate clock
 + * @node:	device node for the clock
 + */
-+static void __init of_imx_mux_clk_setup(struct device_node *node)
++static void __init of_imx_divider_clk_setup(struct device_node *node)
 +{
 +	struct clk_hw *hw;
-+	unsigned int num_parents;
-+	const char **parent_names;
-+	const char *name = node->name;
 +	struct imx_clk_reg reg = {};
-+	u32 shift = 0;
-+	u32 flags = CLK_SET_RATE_NO_REPARENT;
++	const char *name = node->name;
++	u8 shift = 0;
++	u8 width;
++	u32 flags = 0;
 +	u32 val;
-+	u32 mask;
 +
 +	reg.regmap = syscon_regmap_lookup_by_phandle(node, "fsl,anatop");
 +	if (!IS_ERR(reg.regmap)) {
@@ -330,22 +308,16 @@ index 000000000000..426738d25582
 +		}
 +	}
 +
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents < 2) {
-+		pr_err("%pOFn must have parents\n", node);
++	if (!of_property_read_u32(node, "fsl,bit-shift", &val))
++		shift = val;
++
++	if (of_property_read_u32(node, "fsl,width", &val)) {
++		pr_err("missing width for %pOFn\n", node);
 +		return;
++
 +	}
 +
-+	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
-+	if (!parent_names)
-+		return;
-+
-+	of_clk_parent_fill(node, parent_names, num_parents);
-+
-+	of_property_read_u32(node, "fsl,bit-shift", &shift);
-+
-+	if (of_property_read_bool(node, "fsl,is-critical"))
-+		flags |= CLK_IS_CRITICAL;
++	width = val;
 +
 +	if (of_property_read_bool(node, "fsl,ops-parent-enable"))
 +		flags |= CLK_OPS_PARENT_ENABLE;
@@ -353,30 +325,27 @@ index 000000000000..426738d25582
 +	if (of_property_read_bool(node, "fsl,set-rate-parent"))
 +		flags |= CLK_SET_RATE_PARENT;
 +
-+	/* Generate bit-mask based on parent info */
-+	mask = num_parents - 1;
-+	mask = (1 << fls(mask)) - 1;
++	if (of_clk_get_parent_count(node) != 1) {
++		pr_err("%pOFn must have 1 parent clock\n", node);
++		return;
++	}
 +
 +	of_property_read_string(node, "clock-output-names", &name);
 +
-+	hw = imx_clk_hw_register_mux(node, name, parent_names, num_parents,
-+				     flags, &reg, shift, mask);
++	hw = imx_clk_hw_register_divider(node, name, flags, &reg, shift, width);
 +	if (IS_ERR(hw))
-+		goto free_parent_names;
++		return;
 +
 +	if (of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw)) {
-+		imx_clk_hw_unregister_mux(hw);
-+		goto free_parent_names;
++		imx_clk_hw_unregister_divider(hw);
++		return;
 +	}
 +
-+	pr_debug("name: %s, offset: 0x%x, shift: %d, mask: 0x%x\n", name,
-+		 reg.offset, shift, mask);
-+
-+free_parent_names:
-+	kfree(parent_names);
++	pr_debug("name: %s, offset: 0x%x, shift: %d, width: %d\n", name,
++		 reg.offset, shift, width);
 +}
-+CLK_OF_DECLARE(fsl_imx8mn_mux_clk, "fsl,imx8mn-mux-clock",
-+	       of_imx_mux_clk_setup);
++CLK_OF_DECLARE(fsl_imx8mn_divider_clk, "fsl,imx8mn-divider-clock",
++	       of_imx_divider_clk_setup);
 -- 
 2.32.0
 
