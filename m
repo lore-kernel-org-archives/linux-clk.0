@@ -2,72 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E97DC3DA7A
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Dec 2022 23:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFEAC4332F
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Jan 2023 15:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232131AbiLaXOo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Dec 2022 18:14:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37342 "EHLO
+        id S231404AbjAAPiY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Jan 2023 10:38:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235903AbiLaXOl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Dec 2022 18:14:41 -0500
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DA7C3E;
-        Sat, 31 Dec 2022 15:14:39 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5CAEF5C00B3;
-        Sat, 31 Dec 2022 18:14:39 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Sat, 31 Dec 2022 18:14:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1672528479; x=1672614879; bh=pg
-        xRkLVAeO8dCA2lni0EjX3wjL3SuhpZ2d2IUeSoyX4=; b=uWwnaU0FUJybKnzekx
-        7GvVkb3zmMP4lUfD0rIW437xXNPx7wE2O1L6nz/EySfo0VwTMGjqO/ocDYxdNxi8
-        oeCP4A9XYFE6Od+lEqwukZawvIsD7h509NdAqQAJctJC0chA+2o6BsojKgXoAash
-        afSzVaecBM+sicUFhSaqHB1ewgIOdSXGJaDZyiDiP27vEf0yXAFQ9cJQGDkkXhTz
-        srCcKzxomOKUpwbEKgU2L69cbislukLbTXC7+golOfuW9NuDqNBHslubAjDi3leI
-        P2A9uMecpGzMJRfK4Pdc46zrrrQu9/VfL5eUkH/RpfCYm5s/sxTvWAi+SsBmMZ8l
-        pXIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1672528479; x=1672614879; bh=pgxRkLVAeO8dC
-        A2lni0EjX3wjL3SuhpZ2d2IUeSoyX4=; b=l/TuFeE4R9matdLE6FArCbqPjLdac
-        P6b8eiEbMOTVxvW5InqH9CjNuzr9UzoAHkBRqcCrOPcXvN/NIsa/hYjNkffExMRm
-        xdmL0MA022oOvU8WJ0K/q7LiGdW06AbGo+u2+vOsTs5ED39SEpaoJn72PXscQQfa
-        ViJeRm2/yj/vDgBbkDgQu0ti062iPfZ8hp9Ri2MlCUcx6Yy7/9qoNSo89ly6itmq
-        OFjiGEfCeNGehKlx1t0/lVMv0RrDXUdbzIn8jvvk/wo5OQ1XmXbMNaSUWuoIuIcK
-        PWh2RGIICUwSqW6LJ55pPmAmil9No4rV6wCnVJld/EjSNORKN41vAY8Kg==
-X-ME-Sender: <xms:X8KwYwxWQ_Y1KxWOhITxlHfDBkj4Ib9nXYl6bVjussY-LVpmIlwtfA>
-    <xme:X8KwY0SHAF2XW6O4DkDDGOXH0iTpG1hurMyATF3N6fpaVZ5ET_yPVtc2I_X_UR_3S
-    o1xxajGRpDIhmM4cg>
-X-ME-Received: <xmr:X8KwYyUI0bTe8GZTuXIS3ZRvb7pl4TlSGIRzErK4tgMwC968K7wovob4JnWYo6xXv3QnhKth-4_nMR2qo4thidrFySqYubRyO--kg-SjvCnOFMNmn_ter1cFMHXS0ID_mhauAw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieelgddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpedukeetueduhedtleetvefguddvvdejhfefudelgfduveeggeehgfdu
-    feeitdevteenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:X8KwY-ghUad1MtJqSqSQ4IiLKhSCXRd2kHBBvOp83BdSpB8nsS5Q-w>
-    <xmx:X8KwYyCkJdDpKZLYRLjWbrEvrVSA14fQBoW0deVIa4uRthTYNMCBMQ>
-    <xmx:X8KwY_I94v9zX9kps3R65XN5zCRri19Z_kVEbGLJBkqIeOx0eq9KUw>
-    <xmx:X8KwY62yi8Uez1pwDpsdEOr1hky3CoSnMhWwAf2iL0XUegc9hp4C6A>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 31 Dec 2022 18:14:38 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Chen-Yu Tsai <wens@csie.org>,
+        with ESMTP id S229682AbjAAPiX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jan 2023 10:38:23 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A7B8E7A
+        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 07:38:22 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id bf43so38400766lfb.6
+        for <linux-clk@vger.kernel.org>; Sun, 01 Jan 2023 07:38:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LMqST9j0lwVvsQWx+mDeXRBW/SiOgmTTyqqP9lmSk7U=;
+        b=pZKhZBLEhFFc5vgM1fgiFoU6ezRw+eK+rVcRo1QzaDwWKL0ioYBGCjCrMt8+vlyS7V
+         s3LC31QI5TmbjvVoQQuaC8UEbnmE9H0KIbpnbdPelNBE9H+rGq/xEgdy3RlRy5ZqqL5S
+         ZBHbf3Z3YRHgdG5OAGpKzPLzyb626IMKw7+Nr4inE768c0ZW5NZeeFlZf1JFy9dpHiU8
+         5kDk/VMDEIv8li+qbE7g7IarPexmyuyyJn9m85XLjKUvCeKeZVb3F4DCIwqecQuztjtu
+         Ij6E4TrzcPu0H8Dd1D8W3CtTcwIlDKuR9pFsCm9Mp8DZez8u126uB72Pbw5Ecf40RgUO
+         Am9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LMqST9j0lwVvsQWx+mDeXRBW/SiOgmTTyqqP9lmSk7U=;
+        b=rXeZxB4ZT4x3+fw48qtNOWMhZlsl4SDumhTi/4fyrR0PpCIVSfppQ2ZioO0oeNZmVT
+         lzCzVnTj0h/LoG3OkC7jgoSD7ba7ZrUnLjOT7x8OctlWXamK68DatMduvdktGeAB4nJq
+         EtgUKiclo4/S1s2l2d+92IvjSBLkoMWRFX6X/3Tiw0e2D1f/qMl+92aPylMNO8m1Td6/
+         OjRIgpjrwF1ljEqZsB091sOLbzk8JXu2LWSJq2QMO+hMoV8IX2kuLPr6vIuF56PexIZO
+         c7k/29mXXJTOKiX9Svkax5WLuLPR9BuxSYJpaQCYHQpPwReJ/tCPCX8UXO5ZKGLnMXdv
+         S/yQ==
+X-Gm-Message-State: AFqh2kp4jLP5AeIf36g7Ze2UzBSgLG3ajO4SHthe8fysiFNNtufkXgaa
+        Ht7WABNzBMQWH/sqnAZD98vjrA==
+X-Google-Smtp-Source: AMrXdXtfraPY0eklfVNzCRIbs0fWP2xLJx2ap9oHeP94jddPD1H7IFXA6HRBMFlJkTZFcSOwM/R0+w==
+X-Received: by 2002:a05:6512:2102:b0:4ca:f9bd:3390 with SMTP id q2-20020a056512210200b004caf9bd3390mr7955515lfr.31.1672587500363;
+        Sun, 01 Jan 2023 07:38:20 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id j13-20020ac2454d000000b004c7d0ed9619sm4220436lfm.123.2023.01.01.07.38.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Jan 2023 07:38:19 -0800 (PST)
+Message-ID: <1a0c8664-73d1-a963-2215-b3967e1475d3@linaro.org>
+Date:   Sun, 1 Jan 2023 16:38:18 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v2 5/6] dt-bindings: clock: Add D1 CAN bus gates and
+ resets
+Content-Language: en-US
+To:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+Cc:     Albert Ou <aou@eecs.berkeley.edu>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
@@ -76,93 +70,30 @@ Cc:     Samuel Holland <samuel@sholland.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-sunxi@lists.linux.dev,
-        Fabien Poussin <fabien.poussin@gmail.com>,
         Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 6/6] clk: sunxi-ng: d1: Add CAN bus gates and resets
-Date:   Sat, 31 Dec 2022 17:14:29 -0600
-Message-Id: <20221231231429.18357-7-samuel@sholland.org>
-X-Mailer: git-send-email 2.37.4
-In-Reply-To: <20221231231429.18357-1-samuel@sholland.org>
 References: <20221231231429.18357-1-samuel@sholland.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20221231231429.18357-6-samuel@sholland.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221231231429.18357-6-samuel@sholland.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Fabien Poussin <fabien.poussin@gmail.com>
+On 01/01/2023 00:14, Samuel Holland wrote:
+> The D1 CCU contains gates and resets for two CAN buses. While the CAN
+> bus controllers are only documented for the T113 SoC, the CCU is the
+> same across all SoC variants.
+> 
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+> 
 
-The D1 CCU contains gates and resets for two CAN buses. While the CAN
-bus controllers are only documented for the T113 SoC, the CCU is the
-same across all SoC variants.
 
-Signed-off-by: Fabien Poussin <fabien.poussin@gmail.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Changes in v2:
- - Move dt-bindings header changes to a separate patch
-
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c | 11 +++++++++++
- drivers/clk/sunxi-ng/ccu-sun20i-d1.h |  2 +-
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-index c5a7df93602c..48a8fb2c43b7 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-@@ -469,6 +469,11 @@ static SUNXI_CCU_GATE_HWS(bus_i2c2_clk, "bus-i2c2", apb1_hws,
- static SUNXI_CCU_GATE_HWS(bus_i2c3_clk, "bus-i2c3", apb1_hws,
- 			  0x91c, BIT(3), 0);
- 
-+static SUNXI_CCU_GATE_HWS(bus_can0_clk, "bus-can0", apb1_hws,
-+			  0x92c, BIT(0), 0);
-+static SUNXI_CCU_GATE_HWS(bus_can1_clk, "bus-can1", apb1_hws,
-+			  0x92c, BIT(1), 0);
-+
- static const struct clk_parent_data spi_parents[] = {
- 	{ .fw_name = "hosc" },
- 	{ .hw = &pll_periph0_clk.hw },
-@@ -997,6 +1002,8 @@ static struct ccu_common *sun20i_d1_ccu_clks[] = {
- 	&bus_i2c1_clk.common,
- 	&bus_i2c2_clk.common,
- 	&bus_i2c3_clk.common,
-+	&bus_can0_clk.common,
-+	&bus_can1_clk.common,
- 	&spi0_clk.common,
- 	&spi1_clk.common,
- 	&bus_spi0_clk.common,
-@@ -1147,6 +1154,8 @@ static struct clk_hw_onecell_data sun20i_d1_hw_clks = {
- 		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
- 		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
- 		[CLK_BUS_I2C3]		= &bus_i2c3_clk.common.hw,
-+		[CLK_BUS_CAN0]		= &bus_can0_clk.common.hw,
-+		[CLK_BUS_CAN1]		= &bus_can1_clk.common.hw,
- 		[CLK_SPI0]		= &spi0_clk.common.hw,
- 		[CLK_SPI1]		= &spi1_clk.common.hw,
- 		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
-@@ -1252,6 +1261,8 @@ static struct ccu_reset_map sun20i_d1_ccu_resets[] = {
- 	[RST_BUS_I2C1]		= { 0x91c, BIT(17) },
- 	[RST_BUS_I2C2]		= { 0x91c, BIT(18) },
- 	[RST_BUS_I2C3]		= { 0x91c, BIT(19) },
-+	[RST_BUS_CAN0]		= { 0x92c, BIT(16) },
-+	[RST_BUS_CAN1]		= { 0x92c, BIT(17) },
- 	[RST_BUS_SPI0]		= { 0x96c, BIT(16) },
- 	[RST_BUS_SPI1]		= { 0x96c, BIT(17) },
- 	[RST_BUS_EMAC]		= { 0x97c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.h b/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-index e303176f0d4e..b14da36e2537 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.h
-@@ -10,6 +10,6 @@
- #include <dt-bindings/clock/sun20i-d1-ccu.h>
- #include <dt-bindings/reset/sun20i-d1-ccu.h>
- 
--#define CLK_NUMBER		(CLK_FANOUT2 + 1)
-+#define CLK_NUMBER		(CLK_BUS_CAN1 + 1)
- 
- #endif /* _CCU_SUN20I_D1_H_ */
--- 
-2.37.4
+Best regards,
+Krzysztof
 
