@@ -2,132 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AAAC54EBF
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Jan 2023 15:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AA5C3DA7A
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Jan 2023 15:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236240AbjABPHb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Jan 2023 10:07:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49082 "EHLO
+        id S236340AbjABPYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Jan 2023 10:24:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236251AbjABPHU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Jan 2023 10:07:20 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E5D463EE
-        for <linux-clk@vger.kernel.org>; Mon,  2 Jan 2023 07:07:18 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id e21so9242810pfl.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Jan 2023 07:07:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nClTvw3x5UpoXSS3lmQgHVtktuQgAyEIPFgxXiI2CRU=;
-        b=ZAe5Zm8Lq4YLvVjJQ+pmrNnfMWOE/zOYifWmty4ralCouP2eBKqFNGGZ4YpaPydhKT
-         KNArdt0IHS/kg7wh0SHMKYo8AULNj9TjsV46Bl0jfAQGeyCNn/ChVX0SiPU0gu10cjS0
-         TOUGc9gh6LbvVw7B3lsh5n2fq3AyQnTw1bZeZGamr8wTiwdXXPyO+N+8BEspV5+JEZSG
-         3vR5jWkDHX04t2fwqUIOdFFSnkvM2eZZ0KHJAlYKAWr9aRERCGPLidIiPgV0dhSCns5p
-         TwFcDwLV4PKoEvztwG0x9EPA6GONvM8MAkux6xGTlm4rbG/8AXsGkAkpUJP8iWIbLj66
-         fDPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nClTvw3x5UpoXSS3lmQgHVtktuQgAyEIPFgxXiI2CRU=;
-        b=bCMjM8BvxKj9jMTcqohGbY4GS6dGUGaBNa6AIOgaon4pLgCR+bkrUvRBPfKb03ZUgX
-         olj4MVAhrHmtXjqzniLk/YeaM9MjKycMbqlOn/F61kx7hdWSuP3lu06sc4/F2QcyuGZV
-         q+w7Hf9/vkTu7nGZNxExIRs7YCvHugRMl8CUL3baP6Qkze1SG1TTacaILpjUn7tjq4n7
-         sQjvpFCL8d7iCMkSJQMB9Tesz3j/qlGlMmyws6U9sIgEEcVsy8eOqc/wvp7q2kWdqB47
-         JKyf3NmQV9++Q5zgsMg73zmF4WdZURyewkdQJ5piyHLpbfDIAOLEb2cJ1rCu/Ea4/6G0
-         sy3g==
-X-Gm-Message-State: AFqh2koXRhw6HOlqz1IjTmKEySpVBrsfHCS7rM3tRIXGYuyPE12UaueB
-        ZRVIB7pMC0fFYEDuAB2PMxyT6dBHoUkkGmQDCQ5hkg==
-X-Google-Smtp-Source: AMrXdXsb2gnvbcsfCCOAD77/bs/+lKzGdoQtyiaMmxIIZCeJ99couOSFA526lQDkn6TFwYzOkRTjF+oFokHMThfLQY4=
-X-Received: by 2002:a63:ba09:0:b0:479:2227:3aa1 with SMTP id
- k9-20020a63ba09000000b0047922273aa1mr1767902pgf.595.1672672038011; Mon, 02
- Jan 2023 07:07:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20221213230129.549968-1-fabrizio.castro.jz@renesas.com> <20221213230129.549968-4-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20221213230129.549968-4-fabrizio.castro.jz@renesas.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 2 Jan 2023 16:06:41 +0100
-Message-ID: <CAPDyKFoo3G-dsdfTQ1eN8SdVSakKRi3RHbX1eFJ2=AceXMDy_w@mail.gmail.com>
-Subject: Re: [PATCH 3/4] mmc: renesas_sdhi: Add RZ/V2M compatible string
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S236380AbjABPXu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Jan 2023 10:23:50 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E4F127
+        for <linux-clk@vger.kernel.org>; Mon,  2 Jan 2023 07:23:50 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <pza@pengutronix.de>)
+        id 1pCMf4-0005r2-4U; Mon, 02 Jan 2023 16:23:38 +0100
+Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <pza@pengutronix.de>)
+        id 1pCMf0-0007z1-VD; Mon, 02 Jan 2023 16:23:34 +0100
+Date:   Mon, 2 Jan 2023 16:23:34 +0100
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v2 5/6] dt-bindings: clock: Add D1 CAN bus gates and
+ resets
+Message-ID: <20230102152334.GB30338@pengutronix.de>
+References: <20221231231429.18357-1-samuel@sholland.org>
+ <20221231231429.18357-6-samuel@sholland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221231231429.18357-6-samuel@sholland.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: pza@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Dec 2022 at 00:01, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
->
-> The SDHI/eMMC IPs found with the RZ/V2M (a.k.a. r9a09g011), are
-> very similar to the ones found in R-Car Gen3, but they are not
-> exactly the same, and as a result need an SoC specific compatible
-> string for fine tuning driver support.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On Sat, Dec 31, 2022 at 05:14:28PM -0600, Samuel Holland wrote:
+> The D1 CCU contains gates and resets for two CAN buses. While the CAN
+> bus controllers are only documented for the T113 SoC, the CCU is the
+> same across all SoC variants.
+> 
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+[...]
+> diff --git a/include/dt-bindings/reset/sun20i-d1-ccu.h b/include/dt-bindings/reset/sun20i-d1-ccu.h
+> index de9ff5203239..f8001cf50bf1 100644
+> --- a/include/dt-bindings/reset/sun20i-d1-ccu.h
+> +++ b/include/dt-bindings/reset/sun20i-d1-ccu.h
+> @@ -73,5 +73,7 @@
+>  #define RST_BUS_DSP_CFG		63
+>  #define RST_BUS_DSP_DBG		64
+>  #define RST_BUS_RISCV_CFG	65
+> +#define RST_BUS_CAN0		66
+> +#define RST_BUS_CAN1		67
 
-Applied for next, thanks!
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Kind regards
-Uffe
-
-
-> ---
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> index 29f562115c66..f38003f6b1ca 100644
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -210,6 +210,11 @@ static const struct renesas_sdhi_quirks sdhi_quirks_r8a77990 = {
->         .manual_tap_correction = true,
->  };
->
-> +static const struct renesas_sdhi_quirks sdhi_quirks_r9a09g011 = {
-> +       .fixed_addr_mode = true,
-> +       .hs400_disabled = true,
-> +};
-> +
->  /*
->   * Note for r8a7796 / r8a774a1: we can't distinguish ES1.1 and 1.2 as of now.
->   * So, we want to treat them equally and only have a match for ES1.2 to enforce
-> @@ -251,6 +256,11 @@ static const struct renesas_sdhi_of_data_with_quirks of_r8a77990_compatible = {
->         .quirks = &sdhi_quirks_r8a77990,
->  };
->
-> +static const struct renesas_sdhi_of_data_with_quirks of_r9a09g011_compatible = {
-> +       .of_data = &of_data_rcar_gen3,
-> +       .quirks = &sdhi_quirks_r9a09g011,
-> +};
-> +
->  static const struct renesas_sdhi_of_data_with_quirks of_rcar_gen3_compatible = {
->         .of_data = &of_data_rcar_gen3,
->  };
-> @@ -274,6 +284,7 @@ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
->         { .compatible = "renesas,sdhi-r8a77970", .data = &of_r8a77970_compatible, },
->         { .compatible = "renesas,sdhi-r8a77990", .data = &of_r8a77990_compatible, },
->         { .compatible = "renesas,sdhi-r8a77995", .data = &of_rcar_gen3_nohs400_compatible, },
-> +       { .compatible = "renesas,sdhi-r9a09g011", .data = &of_r9a09g011_compatible, },
->         { .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
->         { .compatible = "renesas,rcar-gen4-sdhi", .data = &of_rcar_gen3_compatible, },
->         {},
-> --
-> 2.34.1
->
+regards
+Philipp
