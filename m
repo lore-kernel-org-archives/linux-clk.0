@@ -2,117 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2551AC3DA7A
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Jan 2023 16:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E61C4708E
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Jan 2023 23:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236090AbjABQGY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Jan 2023 11:06:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52734 "EHLO
+        id S230158AbjABXFA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Jan 2023 18:05:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232697AbjABQGW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Jan 2023 11:06:22 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A933215
-        for <linux-clk@vger.kernel.org>; Mon,  2 Jan 2023 08:06:21 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id bp15so42086169lfb.13
-        for <linux-clk@vger.kernel.org>; Mon, 02 Jan 2023 08:06:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+EMDzXKErZf+vN6mQ6zrYx42SBQGjtY/gt+5BMs6Xo=;
-        b=NByzatRvqGeMsX9gRB0PWiiFGd2j4qzqNkin5/k5I6Uqpzb5up4rRBkrmCAp9y9ApF
-         VgCfP4MF+im8kHjYmARUbu7QWAa3IlDHzfSOggE2q6EmWyOlJ4jWvuXx5SyATdBCMHsW
-         6TSo6iKP3fygGJ4u9KZbzbkXiHENbgS6i0g/TSF5KM8ccf6Zw+EbUxF9QbTAeCVtQtl1
-         Cs8C+suxQ61kf3f+KBbgUb2AEJEAZUPOBBgEGpGnsKBPETnnoAJFoEBoCeZaEuHA/xl1
-         4zmqp/W1ip3YVdhfKj/veOaVV4/3GzP95s1jRND2p0vsiBn5qjqHRqmBAoHYXvdEJ0tj
-         yDdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+EMDzXKErZf+vN6mQ6zrYx42SBQGjtY/gt+5BMs6Xo=;
-        b=Q+Ed6wgsYM0jzty/hHghFaQstyE7i08nlZqWu811bqnBTsvjPoByaq4v2vn4KcGCEw
-         xVuUIYGZ1RzSl5YHZx1oQjoXxJSz7bwzn5rOxVhpmkaXGiCqw72LmYLS4S5Az1zfEbGJ
-         XZg3HbXYg26BQK+Wjf2c553zhaF3wY6EaO9waivSNHBdqhjEv07P4EuDL0G3KUttNRsA
-         UTyW/2004nHutJsJZ3LA1GI4wWqEy/7jjT5uTNLiYUibwipxh7FzYExstEIyEtcCHO4A
-         kBHlRyI8InWo9Bbwu9C3l3kxFZwPJBYnknJDzHKxm9esNuRt0gO4CaeHAfaYuXABLUBw
-         6NfQ==
-X-Gm-Message-State: AFqh2kp1waWRTTwemFjp4P9bv8pnHusJRPX6Yh1pJbTkR11sGaSQFzS0
-        OjoI9jYr/jaSDIF80XqPt3jVFQ==
-X-Google-Smtp-Source: AMrXdXsI7m71wDiaaYCddxW/n9A0hM58yHs5YFdq547y5RSna47BOWVWEbwrzQagmNWSI52hIzY0sQ==
-X-Received: by 2002:a05:6512:2c8a:b0:4b6:fdc3:a65f with SMTP id dw10-20020a0565122c8a00b004b6fdc3a65fmr15349997lfb.11.1672675579318;
-        Mon, 02 Jan 2023 08:06:19 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id b17-20020ac25e91000000b004cb061887b5sm3342325lfq.126.2023.01.02.08.06.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jan 2023 08:06:18 -0800 (PST)
-Message-ID: <7b769e39-aa80-1de0-78e7-c0224e3513f5@linaro.org>
-Date:   Mon, 2 Jan 2023 17:06:17 +0100
+        with ESMTP id S229603AbjABXE7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Jan 2023 18:04:59 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064E225FE;
+        Mon,  2 Jan 2023 15:04:53 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 353B485248;
+        Tue,  3 Jan 2023 00:04:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1672700691;
+        bh=Dt6Bn0ykiFiQ6yaIgtrTmcFZQMlrk4/kuZ5biJWYY24=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=sPT1S+LOuwcrE5khvePPYkCHbXHyD/Dd/c9XFWVSqxYqwvV0sTp2Xov6uU3bUNkev
+         SxVqxMs/wTpOQrbWP0EPMz5zGFT4harnLB2PKUbZFyr0jXZmL86x7VykMHHk9tQzhu
+         DgXyenpdp7iyfOcEGN3JxRRy5HxtPncIGJmhLl3PU6ktHCdtkloFRFEuN9uaUUCZXB
+         wgEbTc3lO+NVbF343PZTpJUZ78rPq7DyrQLGWf6JqUufsdHqxVrXY3EVaXpW6hgTCi
+         nib/3u7QQF6grxr1hg64+kt3qcdCMYkjL/yOVCRV5RtveK9xAA3VPGi07lzBYbysdS
+         dRTfdBWnkVUkg==
+Message-ID: <73979439-2e41-c4ea-02e0-d382f7ae1459@denx.de>
+Date:   Tue, 3 Jan 2023 00:04:49 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v2 2/4] dt-bindings: clock: qcom,sc7280-lpasscc: Add
- resets for audioreach
+ Thunderbird/102.6.0
+Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device
+ tree
 Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        swboyd@chromium.org, agross@kernel.org, andersson@kernel.org,
-        robh+dt@kernel.org, broonie@kernel.org, quic_plai@quicinc.com,
-        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com
-References: <1672407799-13768-1-git-send-email-quic_srivasam@quicinc.com>
- <1672407799-13768-3-git-send-email-quic_srivasam@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1672407799-13768-3-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org
+Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
+        tommaso.merciai@amarulasolutions.com,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
+        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/12/2022 14:43, Srinivasa Rao Mandadapu wrote:
-> Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
-> for audioreach based SC7280 platforms.
+On 1/1/23 18:57, Dario Binacchi wrote:
+> The idea for this series was born back from Dublin (ELCE 2022) after
+> having attended the talk entitled "Updating and Modernizing Clock
+> Drivers" held by Chen-Yu Tsai and the availability of a board with
+> imx8mn SOC.
 > 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml         | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+> This series aims to setup all imx8mn's clocks from the device tree and
+> remove the legacy setup code with hardwired parameters.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-> index 9c72b8e..40fc6ab 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-> @@ -31,13 +31,18 @@ properties:
->    '#clock-cells':
->      const: 1
->  
-> +  '#reset-cells':
-> +    const: 1
-> +
->    reg:
->      items:
->        - description: LPASS top-cc register
-> +      - description: LPASS reset-cgcr register
+> I am well aware that the series lacks patches for the DT bindings. The
+> effort up to this point has been important and so I thought I'd ask for
+> feedback from the community before proceeding to implement them. If it
+> is positive I will add the DT binding patches starting from version 2.
+> 
+> The series has been tested on the BSH SystemMaster (SMM) S2 board:
+> https://www.apertis.org/reference_hardware/imx8mn_bsh_smm_s2pro_setup
 
-It's now even a bigger mess. First ABI break, then bring it back to
-previous stage - so two IO addresses - but with different values! There
-is no way this works with other systems or DTS users.
-
->  
->    reg-names:
->      items:
->        - const: top_cc
-> +      - const: reset_cgcr
-
-
-The 'reg-names' is only a helper, order and contents of 'reg' is fixed.
-
-Best regards,
-Krzysztof
-
+I might be wrong, but I vaguely recall AT91 (?) had this kind of massive 
+clock tree description in DT and they then switched to much simpler 
+clock description where the clock topology is encoded in the driver 
+instead (like what iMX does right now). It might be worth having a look 
+at that and the reasoning around that conversion.
