@@ -2,144 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2522EC4167B
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Jan 2023 17:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8739CC4167B
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Jan 2023 06:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231657AbjAAR6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 Jan 2023 12:58:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
+        id S229525AbjABGsJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Jan 2023 01:48:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231660AbjAAR6P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jan 2023 12:58:15 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE523896
-        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 09:58:02 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id m18so62166743eji.5
-        for <linux-clk@vger.kernel.org>; Sun, 01 Jan 2023 09:58:02 -0800 (PST)
+        with ESMTP id S229460AbjABGsI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Jan 2023 01:48:08 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CD9113C
+        for <linux-clk@vger.kernel.org>; Sun,  1 Jan 2023 22:48:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XsYrEdCaHlgX8drO/C/Unhu39WRz/1FMxnB9rmFaTNg=;
-        b=OEtlIibZSYDv4KHy0g5ZT8e7sDptPOx0fTR/kA+cE0JzCl4xqXwofj3NX30ebTdtEy
-         XKNXcGNIYorwvhatoXWPpI7o62BMeayGEfdLejTu6x4Tjhv1soh6y3qYosOGXQI2KDc8
-         Hxq0Hfw9VOWHEZ4UYecLq18VH/6W/tsI0XwIc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XsYrEdCaHlgX8drO/C/Unhu39WRz/1FMxnB9rmFaTNg=;
-        b=Nu37MA9WCQWQSXM/k2/d5d5B6zDBB5kEh+WU1d+XShbX7amyr5nUk3whJdOMmyaJvG
-         ulOFio5Tf4XK93+RSZH86rSasvucwkDtxNN5H7xgkpOknPK7zx+hsiNTMCiQ8nBzVRzt
-         05CtUuliumkxCFlaV1bx/5JrGcbXmjxZOyd5QGfVGBs/q1hF3wIWw7z38W+BtStlZ7VC
-         eTrsCNN0JNTlkcu6FX1G4UQ000pYLzS70x7epZHzKxEE3whY6AiZSlxLsVZocdGifCQF
-         y5HkDmNK8yeV0Mxnz4JUvKpIdcGglZJz6W89uaGHsV+S+tTuxbOoF2DXAlvwItnkOc6X
-         P/8w==
-X-Gm-Message-State: AFqh2kqxGSyuSLwvyjGxzRgoDub2OTxnC8LhteuvDIMrqfuRt6la9Hc4
-        U2cg/v9TjyCXkdYT74vKkMci8g==
-X-Google-Smtp-Source: AMrXdXuu991g9oTbSJB3EhShFeufVC0HBwXhEGZH63P1DyNgk/EnqXbULOn+ZNOhYczR53kB8jdbgg==
-X-Received: by 2002:a17:907:76ad:b0:7c0:f2cf:23fb with SMTP id jw13-20020a17090776ad00b007c0f2cf23fbmr35278937ejc.52.1672595881217;
-        Sun, 01 Jan 2023 09:58:01 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-80-180-23-57.retail.telecomitalia.it. [80.180.23.57])
-        by smtp.gmail.com with ESMTPSA id q2-20020a1709063d4200b0082ddfb47d06sm12273018ejf.148.2023.01.01.09.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jan 2023 09:58:00 -0800 (PST)
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
-        tommaso.merciai@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
-        jagan@amarulasolutions.com,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672642087; x=1704178087;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=sv/AgfXghztKK4vfj1fffmTCaPs0awcE88xjhBtD60Y=;
+  b=RPp/eK+1gt8m05goinAIVsq4Yq7fq5u02wZ1EnU3KV/YlnTmv+Y9OO7v
+   kz0IGy+a+GeqRw2GrfWXohfGOLrNwCL5A4PHoLKiIGC5EZxDq6OZlhYMl
+   K1vJ/f9uRyyOkNhcGUzJed7ArcHFHUxlV6Rei/io6sjosEGRRwJNjvvS6
+   clxO51zuzcDj7hrpFlpFo6ZJPdWTIbFzPsX1Zm1pb0tYnFBZA2a+tdqei
+   47jsymWpuiK/0ZizUytb2gnNojPa0bzEdNDKC/lX44XV+qyKqRuK4GCSZ
+   ug5qUTiIDwHNO2+do4kKvcfruaMOJt676qkrxPCJcAHH+WkriE3poPTYy
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,293,1665439200"; 
+   d="scan'208";a="28194568"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 02 Jan 2023 07:48:04 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Mon, 02 Jan 2023 07:48:04 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Mon, 02 Jan 2023 07:48:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672642084; x=1704178084;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=sv/AgfXghztKK4vfj1fffmTCaPs0awcE88xjhBtD60Y=;
+  b=g9AbTCZ0N8+qvxfB4gaHQtf+hgUDO+EDC4kHs2NmJjO+c9K9j4jC8mq7
+   MHc5tXH3gh4yNLTIFt88lvUNiyaZF9kaS2e2dX+fiCLKkX1Y+GFtKfr0j
+   etHzdbtFvkRNcJiMuJOVdd/YxrvCd7Ke7BKulizdvdmUYz+WFQy7GoVhW
+   LErwSmEIb+LnY375arEdlV137KPOLVZ5A7tvb66PAGi9aejgfWdoFyw0f
+   pLvPUPnYoLAvEgh8v5uRsZKemN3b/oiH+FfbrsVptQlgL2XTkv4VNV3TJ
+   AvOAVsM3x4JuNKtBejFQhwOkVV4jGvAEofO5vgAXJPR/DzlABlI8cuzsY
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,293,1665439200"; 
+   d="scan'208";a="28194567"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 02 Jan 2023 07:48:04 +0100
+Received: from steina-w.localnet (unknown [10.123.53.21])
+        by vtuxmail01.tq-net.de (Postfix) with ESMTP id 4C64F280056;
+        Mon,  2 Jan 2023 07:48:04 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     linux-clk@vger.kernel.org, Marek Vasut <marex@denx.de>
+Cc:     Marek Vasut <marex@denx.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH v2 10/11] arm64: dts: imx8mn: add dumy clock
-Date:   Sun,  1 Jan 2023 18:57:39 +0100
-Message-Id: <20230101175740.1010258-11-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
-References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: rs9: Drop unused pin_xin field
+Date:   Mon, 02 Jan 2023 07:48:04 +0100
+Message-ID: <12136118.O9o76ZdvQC@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20221216210922.592926-1-marex@denx.de>
+References: <20221216210922.592926-1-marex@denx.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The dummy clock was the only fixed rate clock not initialized from the
-device tree. So let's add it to the device tree like we did for the
-others fixed rate clocks.
+Hello Marek,
 
-This is a preparation patch for the upcoming support to setup all the
-clocks directly from the device tree.
+thanks for the cleanup.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
----
+Am Freitag, 16. Dezember 2022, 22:09:22 CET schrieb Marek Vasut:
+> The pin_xin field in struct rs9_driver_data is unused, drop it.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-renesas-pcie.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+> index e6247141d0c05..f91f30560820d 100644
+> --- a/drivers/clk/clk-renesas-pcie.c
+> +++ b/drivers/clk/clk-renesas-pcie.c
+> @@ -60,7 +60,6 @@ struct rs9_driver_data {
+>  	struct i2c_client	*client;
+>  	struct regmap		*regmap;
+>  	const struct rs9_chip_info *chip_info;
+> -	struct clk		*pin_xin;
+>  	struct clk_hw		*clk_dif[2];
+>  	u8			pll_amplitude;
+>  	u8			pll_ssc;
 
-(no changes since v1)
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 11 +++++++++--
- drivers/clk/imx/clk-imx8mn.c              |  2 +-
- 2 files changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index b7d91df71cc2..1949db3e08f7 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -217,6 +217,13 @@ clk_ext4: clock-ext4 {
- 		clock-output-names = "clk_ext4";
- 	};
- 
-+	clk_dummy: clock-dummy {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "dummy";
-+	};
-+
- 	pmu {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts = <GIC_PPI 7
-@@ -614,9 +621,9 @@ clk: clock-controller@30380000 {
- 				reg = <0x30380000 0x10000>;
- 				#clock-cells = <1>;
- 				clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
--					 <&clk_ext3>, <&clk_ext4>;
-+					 <&clk_ext3>, <&clk_ext4>, <&clk_dummy>;
- 				clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
--					      "clk_ext3", "clk_ext4";
-+					      "clk_ext3", "clk_ext4", "dummy";
- 				assigned-clocks = <&clk IMX8MN_CLK_A53_SRC>,
- 						<&clk IMX8MN_CLK_A53_CORE>,
- 						<&clk IMX8MN_CLK_NOC>,
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index af256ade554f..e1f059dc5afa 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -331,7 +331,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	clk_hw_data->num = IMX8MN_CLK_END;
- 	hws = clk_hw_data->hws;
- 
--	hws[IMX8MN_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
-+	hws[IMX8MN_CLK_DUMMY] = imx_get_clk_hw_by_name(np, "dummy");
- 	hws[IMX8MN_CLK_24M] = imx_get_clk_hw_by_name(np, "osc_24m");
- 	hws[IMX8MN_CLK_32K] = imx_get_clk_hw_by_name(np, "osc_32k");
- 	hws[IMX8MN_CLK_EXT1] = imx_get_clk_hw_by_name(np, "clk_ext1");
--- 
-2.32.0
 
