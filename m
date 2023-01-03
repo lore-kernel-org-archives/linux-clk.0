@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C8BC54EBD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EEAC54EBE
 	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 14:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238082AbjACOz5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 09:55:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60734 "EHLO
+        id S237821AbjACOz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 09:55:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237892AbjACOzp (ORCPT
+        with ESMTP id S237962AbjACOzp (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 09:55:45 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A8911C1F
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84AB412089
         for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 06:55:33 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id u12so28372163ljj.11
+Received: by mail-lj1-x22b.google.com with SMTP id e13so29502563ljn.0
         for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 06:55:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xxOVthWvasXwb6F3Ds1yi8gGSGtlriHch0mVVF3XhDs=;
-        b=oyD4NTrit1F+IOegSp1pbZgnwq/drcgx7Pb9rLU05AiVAtVb656b9Tc/LS+ag7MG3s
-         0W5VroR3jL7NflnfGobFkp4Df79vLhQb5oY3+2n7NrbvyeCK++IgpJkBpulRxKJJpEXq
-         Ft06fHBq0CZr4VSEF0XHpYa77PC0tIebyQFHB99eQ0mGYJtmAzVQAaKOEHq8rOxaOAQn
-         6sPutq6vb+D8jj25shdNGsqwu+qu6tl9upCg8bukrvgNqR/w0ZfThT/ll2CAO+hxg1DM
-         cQHu8NAGZnpKgXc2cuurFjshbD2vZSTJMWoMS88/5aNCfaotycncDCnDORQeRcdrTTQV
-         vfrw==
+        bh=JHb2vG/zHJu2ft1PmGfbVVwers8XZhZ9ShHXWJI54JQ=;
+        b=l/XkdR7ikpP4dx2SzvkusCfMHk+JXZgRyKWmtBjOMAmFw0CbMSUHosoGteyaJ7s5IS
+         OQFv6q/hFMxGXL5q038aTawH2VzRDut83CezaQ0VPlmhy6ry1ydFtMVYIUtIBbPkhLXP
+         GW3pSC0G9MRwxT/a9zJfMMD3VQoQlrxZMEz0K2Zb4PtuzfVJf2C51jE1JUwX6Y3Eue0X
+         nvp0xPDapYkpRr3ywi+1hPN3JAVqJNxi2dWKODoerJjgG7cD5HIzdQ37aZRUUewtiQfG
+         MwMn3ovFi0SxILkVjncdV7naMd9jqodfKoKGc5fsziGE716TzVAwOyFNH+buNGFmgDiB
+         UXHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xxOVthWvasXwb6F3Ds1yi8gGSGtlriHch0mVVF3XhDs=;
-        b=FnQc60S/3IgYM60oKvIfjzN9K2RUUk8ZXwnhXfEhguMAUVhLpq3/Yxg92EuBEyUcDh
-         Hn8UxHQ//teb1CLq1FQwZBBuadPSV6MD8A89XCKQ30VWUHSFwwEnoghkqgKJff8JD3ho
-         9uWOb8PnWBF7vsqP2wf5KkLunF+vcQnD4TDvkHTtlq0dBMbmICeAq66N8Z1maiRudJqG
-         HjQBpc7TyXTMwncWoGQpkTI4onx3U1xc6XkBYvt+PeHO9XEly78d0KWFTIuUzv99EQWL
-         bFrE4rH85e1cg1VKHazwHhdUYrCwszx+EjKltWGUeWG3+NPUsqBQ0mnc5USaR0DFZbXZ
-         ngIg==
-X-Gm-Message-State: AFqh2kq44rgLpIu5Js8TLE/LOokHfwtCyFR4prjUlPBhOrxs2A4/W62j
-        nzHEb3cupiNhrBXLaDdZWKmXIQ==
-X-Google-Smtp-Source: AMrXdXtwPePeGfh7VCC9gBqhPB7mIpYupKRbQaT2M5ap96vUN4yH59N7VBU5kXlaH3YyDc4amdDHjg==
-X-Received: by 2002:a2e:b16c:0:b0:27f:d80a:b7bf with SMTP id a12-20020a2eb16c000000b0027fd80ab7bfmr4558683ljm.35.1672757732930;
-        Tue, 03 Jan 2023 06:55:32 -0800 (PST)
+        bh=JHb2vG/zHJu2ft1PmGfbVVwers8XZhZ9ShHXWJI54JQ=;
+        b=hN1LLH1RnvYy0a13CZRHjesLqdvT2Y0UcY6ln/Xstlmes3C2GeSjCWdv8m3ZNNAUMb
+         BeCngyuoRtF/0zBDQpeHJCIQA1WXd0Spgg3Q79gbjcBO3V9ZiebZVaNDaV9nj4wXmr6E
+         phj4rE9pmrLCO5ngS9vL+iz6JlDGvCFuRAj6baqRPhyH4WeIWIURBgnk1WO+akKg9D0b
+         fQXwHwBvHOs93LyWMksMzTh+jebFUNrbhSLFhCKcJ3sRbmquzl4KGUKMuz20cNISgNfd
+         P+q5hsfLm3XezPN5UkprU7kq6mS+AU4LLYoRZKLe1q5eKR4rEzNloE7LNyaalr00HV6g
+         rwWg==
+X-Gm-Message-State: AFqh2kqPjWYxxnaY/iGwE1D9EijypmOA6iV/2fjI8Das+6RxjCJ+H+v6
+        o+4kdeCRQOy/a4FFPtRDWZ81Wg==
+X-Google-Smtp-Source: AMrXdXtjP8LO81VAk4mOgDLYr9fsMR7aO1WciAD7zGPbhDVIqne5LiUnRCycPxnncb5c5Dsfu6OHdw==
+X-Received: by 2002:a05:651c:b25:b0:280:117:c82a with SMTP id b37-20020a05651c0b2500b002800117c82amr429697ljr.39.1672757731968;
+        Tue, 03 Jan 2023 06:55:31 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id s24-20020a2eb638000000b00279cbcfd7dbsm3544015ljn.30.2023.01.03.06.55.32
+        by smtp.gmail.com with ESMTPSA id s24-20020a2eb638000000b00279cbcfd7dbsm3544015ljn.30.2023.01.03.06.55.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jan 2023 06:55:32 -0800 (PST)
+        Tue, 03 Jan 2023 06:55:31 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 16/21] clk: qcom: gpucc-sc7180: switch to parent_hws
-Date:   Tue,  3 Jan 2023 16:55:10 +0200
-Message-Id: <20230103145515.1164020-17-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
+Date:   Tue,  3 Jan 2023 16:55:09 +0200
+Message-Id: <20230103145515.1164020-16-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
 References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
@@ -74,24 +74,35 @@ results in slightly more ovbious code.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/gpucc-sc7180.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gpucc-msm8998.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
-index d738251cba17..c0b2c7af5f93 100644
---- a/drivers/clk/qcom/gpucc-sc7180.c
-+++ b/drivers/clk/qcom/gpucc-sc7180.c
-@@ -108,8 +108,8 @@ static struct clk_branch gpu_cc_cx_gmu_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_cx_gmu_clk",
--			.parent_data =  &(const struct clk_parent_data){
--				.hw = &gpu_cc_gmu_clk_src.clkr.hw,
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gpu_cc_gmu_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
+diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
+index a925ac90018d..f929e0f2333f 100644
+--- a/drivers/clk/qcom/gpucc-msm8998.c
++++ b/drivers/clk/qcom/gpucc-msm8998.c
+@@ -106,9 +106,9 @@ static const struct parent_map gpu_xo_gpupll0_map[] = {
+ 	{ P_GPUPLL0_OUT_EVEN, 1 },
+ };
+ 
+-static const struct clk_parent_data gpu_xo_gpupll0[] = {
+-	{ .hw = &gpucc_cxo_clk.clkr.hw },
+-	{ .hw = &gpupll0_out_even.clkr.hw },
++static const struct clk_hw *gpu_xo_gpupll0[] = {
++	&gpucc_cxo_clk.clkr.hw,
++	&gpupll0_out_even.clkr.hw,
+ };
+ 
+ static const struct freq_tbl ftbl_rbcpr_clk_src[] = {
+@@ -142,7 +142,7 @@ static struct clk_rcg2 gfx3d_clk_src = {
+ 	.freq_tbl = ftbl_gfx3d_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gfx3d_clk_src",
+-		.parent_data = gpu_xo_gpupll0,
++		.parent_hws = gpu_xo_gpupll0,
+ 		.num_parents = ARRAY_SIZE(gpu_xo_gpupll0),
+ 		.ops = &clk_rcg2_ops,
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
 -- 
 2.39.0
 
