@@ -2,108 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D54C3DA7D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 16:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B6FC53210
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 16:11:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbjACQIy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 11:08:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40766 "EHLO
+        id S233268AbjACQKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 11:10:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjACQIw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 11:08:52 -0500
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD38B497;
-        Tue,  3 Jan 2023 08:08:50 -0800 (PST)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-43ea87d0797so442469587b3.5;
-        Tue, 03 Jan 2023 08:08:50 -0800 (PST)
+        with ESMTP id S233158AbjACQKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 11:10:01 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC8C12777
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 08:10:00 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id e13so29780593ljn.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 08:10:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=42zZAHf1jxTjkV11A2s0BJ3xhHEnWIKWoo4gYXrvk0I=;
+        b=uXkgYDGeSAi7kzEdyXXMkuc2svB79GOyFQf6YY8NM/QOAcYzXJ4tX24K/r2z1NWvYf
+         i/hqrKc8nMH+OV2DhjQ1GPGMl1fb7ErXRyDOC71a5msAFCHUJ30RVEY1gAjWXxIB2mpN
+         byweSug2pKUY+BFvgefoLmC/ffDN3AYlAfV/garGV1ke38xZKOJKhvwYfD5XnD27Qysn
+         KQZxpDQ3GTPkgEozGj+kNp/mOn7nhKsGOv2w3+N+/b9yoHLC2DEdIgGpCMorRsk5i2Zs
+         sijPZ7KAPS1+YQZl17zXmmqQ6NWBjjQuzSFfuMtlqNWsAskW1d2U3DcX5X8YDai024Ae
+         ee+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DIKG5C+ANaI4L3mVlD3FS2d+S7EwT1ECAi/QAg1B1QA=;
-        b=Lb0sNbmQcYzUH0/1wy0gh4iu9y++Ez2FU1haHJC252vF1VDTF1Wp0B2GF4Yd0YfZPB
-         EPGOizyF+m2HwGoeMdWKniIy+SkxG6WEWAIvTBAAM8Rx9RAvu4XpKQmur1Ou3Wvd70N8
-         buLUMsn/zivUrh5Mrp/7sC2++zVLGSjxK1wHOip2pkILKGKryBPQc3mQN2c4s7cH3jBf
-         nYz5AvJOp06bZvUXFYHPTYzyMvdfJ91Y3R8QOrzPkQCtRXjtLjK6pYk4oLc/UQR1G9jV
-         8U+geNPTeGP0f5zWqS5kxji4YX4+bZazItV4+ORXdlAmdwqU27AT6MlFFZwqCRs4thrH
-         eoJg==
-X-Gm-Message-State: AFqh2kpCq5puadh2b7LcZc+/hFDLxh+AuFFG1JWTYqGG7Tg6HnL1FgRL
-        WnwSgMLcaojO1qL4doHw7bARPgtDqxTozQ==
-X-Google-Smtp-Source: AMrXdXu8c3qU5Pl8menG+Ice4eodg6lzpjSQBEe3ia126WCBgNT8XIjc5Nh+fV3sCZ4tClot2PwOXQ==
-X-Received: by 2002:a05:7500:3e8a:b0:ef:f78f:12f5 with SMTP id li10-20020a0575003e8a00b000eff78f12f5mr268061gab.47.1672762129122;
-        Tue, 03 Jan 2023 08:08:49 -0800 (PST)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id f1-20020a05620a280100b006fa43e139b5sm22360974qkp.59.2023.01.03.08.08.48
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=42zZAHf1jxTjkV11A2s0BJ3xhHEnWIKWoo4gYXrvk0I=;
+        b=0fkLMcB/Ocj1Idi0vvcbgsU6GiCHkCJCuytxckU/7R14nmI+94mB7lwMjvjXgmKvnN
+         t9LBIc5345aTUsmTlDr4TI/FDaUi8vSUTmar0Da+AFVhE41prZhEixhodvs5RL8CS1kf
+         Dnjz2ET/OZAHjaNwksHIrUWN1qNtVphBGE1VelDsMU9wORQu1IbhW2s15iT3+OAxDzVx
+         zfmRDfomK9HrHXFN797Lqqz+9V2VA1vu+5sKH13afClrUbOyXeHM1Z1LEqKWsfwEd+JX
+         LRGi6o3I1odcWHLNr9ICxpyz30Px50tFHXpprBSUJuRo7Tw05P0U0fcZURqCm8S5T5EI
+         PaeA==
+X-Gm-Message-State: AFqh2krlRtA2SmGJqu++iYsKRf1V5GOf3Xax9PBQb7xR3mSFLj1q8Mcf
+        sZGGdYTSFQ/kJ34lo+52c4Nuig==
+X-Google-Smtp-Source: AMrXdXsezd1AuOVRPAIJpP/L2NKRk9zglMYh3vW1w7m1xoPgT2UfTlkRwg0+k62Mxc8YF7PuWZQCBQ==
+X-Received: by 2002:a2e:95d9:0:b0:27f:bf70:e55c with SMTP id y25-20020a2e95d9000000b0027fbf70e55cmr8458899ljh.28.1672762198759;
+        Tue, 03 Jan 2023 08:09:58 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id q10-20020a2eb4aa000000b0027fd72dd6a1sm1528831ljm.70.2023.01.03.08.09.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jan 2023 08:08:48 -0800 (PST)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-47fc4e98550so300300727b3.13;
-        Tue, 03 Jan 2023 08:08:48 -0800 (PST)
-X-Received: by 2002:a81:7309:0:b0:475:f3f5:c6c with SMTP id
- o9-20020a817309000000b00475f3f50c6cmr4638123ywc.358.1672762128402; Tue, 03
- Jan 2023 08:08:48 -0800 (PST)
+        Tue, 03 Jan 2023 08:09:58 -0800 (PST)
+Message-ID: <cf1f65e4-338a-c519-1401-91e13b5fd937@linaro.org>
+Date:   Tue, 3 Jan 2023 18:09:57 +0200
 MIME-Version: 1.0
-References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com> <2ba4e002-9f27-2e36-2bd2-8753c455b21f@denx.de>
-In-Reply-To: <2ba4e002-9f27-2e36-2bd2-8753c455b21f@denx.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Jan 2023 17:08:36 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWmypkjeowpsQ0-7z7Kfa5NjPeGYr0vujrfdVia5qjevw@mail.gmail.com>
-Message-ID: <CAMuHMdWmypkjeowpsQ0-7z7Kfa5NjPeGYr0vujrfdVia5qjevw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: rs9: Check for vendor/device ID
-To:     Marek Vasut <marex@denx.de>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 05/16] dt-bindings: clock: qcom,mmcc-msm8998: drop
+ core_bi_pll_test_se
+Content-Language: en-GB
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
+ <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
+ <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marek,
+On 03/01/2023 17:38, Jeffrey Hugo wrote:
+> On Wed, Dec 28, 2022 at 6:33 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> The test clock apparently it's not used by anyone upstream. Remove it.
+> 
+> IMO, NACK,
+> 
+> This is not a valid justification.
+> 
+> The DT is supposed to describe the hardware, and should be complete in
+> that regard.  This clock exists in the hardware, so it should be
+> described.
 
-On Tue, Jan 3, 2023 at 4:45 PM Marek Vasut <marex@denx.de> wrote:
-> On 1/3/23 13:31, Alexander Stein wrote:
-> > This is in preparation to support additional devices which have different
-> > IDs as well as a slightly different register layout.
-> >
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> >   drivers/clk/clk-renesas-pcie.c | 24 ++++++++++++++++++++++++
-> >   1 file changed, 24 insertions(+)
-> >
-> > diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-> > index e6247141d0c0..0076ed8f11b0 100644
-> > --- a/drivers/clk/clk-renesas-pcie.c
-> > +++ b/drivers/clk/clk-renesas-pcie.c
-> > @@ -45,6 +45,13 @@
-> >   #define RS9_REG_DID                         0x6
-> >   #define RS9_REG_BCP                         0x7
-> >
-> > +#define RS9_REG_VID_IDT                              0x01
-> > +
-> > +#define RS9_REG_DID_TYPE_FGV                 (0x0 << RS9_REG_DID_TYPE_SHIFT)
-> > +#define RS9_REG_DID_TYPE_DBV                 (0x1 << RS9_REG_DID_TYPE_SHIFT)
-> > +#define RS9_REG_DID_TYPE_DMV                 (0x2 << RS9_REG_DID_TYPE_SHIFT)
->
-> I'm not entirely sure whether this shouldn't be using the BIT() macro,
-> what do you think ?
+Most of Qualcomm clock controllers can input clocks from 
+core_bi_pll_test_se. But we are listing them only for a small number of 
+them. And even on these platforms nobody provides this clock.
 
-They're not one-bit values (which bit does RS9_REG_DID_TYPE_FGV set? ;-),
-but values in a bitfield.
+Maybe you shed some light here, what is the source of this clock? Who 
+provides the clock, e.g. on msm8998 platform?
 
-So using FIELD_PREP() and friends would make more sense to me.
+> 
+> DT is supposed to be separate from Linux, that is it doesn't matter
+> that Linux doesn't consume this clock.  Maybe FreeBSD does, or some
+> other OS.  Linux doesn't own Device Tree any more than it owns BIOS or
+> ACPI.
+> 
+> Also, I'm listed as a maintainer for this binding, yet this series is
+> not addressed to me.  Seems like you might need to review how you are
+> composing your patches.
 
-Gr{oetje,eeting}s,
+Ack, excuse me. I missed the 'in file' maintainers.
 
-                        Geert
+-- 
+With best wishes
+Dmitry
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
