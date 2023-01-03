@@ -2,133 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8D3C4708E
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 08:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5739C3DA7D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 09:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbjACI5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 03:57:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32858 "EHLO
+        id S233070AbjACJYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 04:24:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233188AbjACI5I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 03:57:08 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FC62DE
-        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 00:57:06 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id i19so18251247ljg.8
-        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 00:57:06 -0800 (PST)
+        with ESMTP id S237216AbjACJXh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 04:23:37 -0500
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720D3114E
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 01:23:36 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id w3so362787ply.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 01:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FVam3FPvVcVUPkFARUn9WWGX9bvQ9k6HzVFVKcvWyZE=;
-        b=tbfh3qioo77N98XjSFjd7PWy0XS7UHqQ0rnPICB/GFgnLr36lA59Nnhk2zRCgNwf3E
-         yZfUrCAVxeP05N4N6KGfR+8H84WM+ckoAFIxPQlFOhVaJEc/2zev65dxW4n2if7eR/RB
-         Q76GsIylyfR9RUSXCXRyZyyj94MSAp2Us7ZP+TTLNv+NFUfQXAzu48phTLoc2x1YxADn
-         GzPuByvzjlv2WY2cs+5nocxxigfu99C5WmdAmD3ns4tKA1CA2O5w/6BhM2lgeSCWFxiq
-         5Dv6IJ3fvjIzabxCErbEWBLQ5C5cFq6iyXb21tkmYiFFkkgIAgh4JdN/yPOb782/X7yw
-         kqtg==
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AaEgQoi2wV88iETdzvSp20U7Cda3EBi9Iq1BYplBC3U=;
+        b=fRKiuLLPQXtm+PoLAnEO0C/uRszb5OZg3YHcvW2RCgSXdgYSqmUNIVOR6Yw5IkkkHr
+         +QjxZ3RVzCBOcOirYxxHt0r1WoqCp6tPnX+mb/UoZ6kAIx7Lm+E/ou+rSr9EZ2qoQeD6
+         bIpAN5WyNbnUdEwIzQE/O3pT9ZYGzuzsfHPQo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FVam3FPvVcVUPkFARUn9WWGX9bvQ9k6HzVFVKcvWyZE=;
-        b=kHdkHVAtavJUsik0UUbbDndUB4TKv43I4fP2qtB3GbzgKHrVD1wUnlBHeU7vWSSfrh
-         Fankj1BNjbIzcexuzzLEh9GSWo4W6a8DNckRl6UL+gSwKOVzx52U3RmfGditArpuN+qn
-         qjDhMZ9Gdv3jJE+3ynnACbRQ30xHB6wStIqx5BZnrydlIylFvHbbVcN6B603k+OASYAO
-         32lWGcV0LiU+oKuvSQNV9KSv2cBaTt9feZfzwr0DVVW1jOD8yRt+zhKaDOwB4CDPztJo
-         +ReZiNhYjmbxVujn7asl86xKnUCe78Bvfp4uw3LnFERloFQnUt7Ws0vWT2+fKkNRTPsp
-         g9EA==
-X-Gm-Message-State: AFqh2kr+TXRRyS/sHuNdrsPxdCgtaM9t0RCpa9qfCoX4YaNcXZYqVdEK
-        cmQBzD3nkNZ5hMBlRap1vP7G2V12+nPrm19q
-X-Google-Smtp-Source: AMrXdXsAmGHVUPFl2qLHgz7MtYi89rEbq9xWFBU46j9e11S6S1IWHRAtPUrkkcXlHtb2NXJtGJ+4xw==
-X-Received: by 2002:a2e:aa9f:0:b0:27f:cb0c:fd1b with SMTP id bj31-20020a2eaa9f000000b0027fcb0cfd1bmr7425321ljb.8.1672736225351;
-        Tue, 03 Jan 2023 00:57:05 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id f13-20020a05651c03cd00b0027fea3a3318sm608902ljp.23.2023.01.03.00.57.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jan 2023 00:57:04 -0800 (PST)
-Message-ID: <3267da40-5c53-0b79-fd65-3009ee17c7ee@linaro.org>
-Date:   Tue, 3 Jan 2023 09:57:03 +0100
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AaEgQoi2wV88iETdzvSp20U7Cda3EBi9Iq1BYplBC3U=;
+        b=sMIdTQfKHEoELmo4ysneJrFY63T6Vb5DQLuPFc919iBIYJxgDRJgivMRadTnUzVuu0
+         fzKG5qz0KxdSEdT9CaOZbnfIb2lFD4fr/24DYa+wX15gSju9YI99QIApnSqFqfHMGBgR
+         p1UTOOPg97QFfxCGwa/Cd0ntNmcoYI2fK2lKs8+6C0z/wqkrsUZOrNFawr7IJ1ZyvQa6
+         3uJKwFA3XxNzOuYLlfDvrGHfg0Cv/rO0VzCxapQIsOvJV5OwlDP6HEJzpoVZUi96mHHv
+         nk7oPeqonjU24qvpg/AJAYggmTsFJlujT+8iF52yqLWw2LaacP3iRnjqi7EJMO/WQBZn
+         pQxw==
+X-Gm-Message-State: AFqh2krDcdrwZ8+kH5cEommyeEKpIvnGIDTvl2UtlrQznh6xUqEgyOWE
+        8EsjFqGCLSVnWV2cc0J3ysEeiA==
+X-Google-Smtp-Source: AMrXdXscvLpHbGWlFWU5ZkobIrKEQnk7OF5Eruk64rC/Zl69xEwyZqBgAT2SpMsWhcqVpsg57yVxIg==
+X-Received: by 2002:a17:902:f112:b0:189:9ee0:cc8e with SMTP id e18-20020a170902f11200b001899ee0cc8emr40941085plb.57.1672737815982;
+        Tue, 03 Jan 2023 01:23:35 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:96d9:31a:590:4d72])
+        by smtp.gmail.com with ESMTPSA id y126-20020a636484000000b0049f5da82b12sm6868632pgb.93.2023.01.03.01.23.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jan 2023 01:23:35 -0800 (PST)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
+        <nfraprado@collabora.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] clk: core: Honor CLK_OPS_PARENT_ENABLE in clk_core_is_enabled
+Date:   Tue,  3 Jan 2023 17:23:30 +0800
+Message-Id: <20230103092330.494102-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom,sc7280-lpasscc: Remove
- qdsp6ss reg property
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        swboyd@chromium.org, agross@kernel.org, andersson@kernel.org,
-        robh+dt@kernel.org, broonie@kernel.org, quic_plai@quicinc.com,
-        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com
-References: <1672407799-13768-1-git-send-email-quic_srivasam@quicinc.com>
- <1672407799-13768-2-git-send-email-quic_srivasam@quicinc.com>
- <0d225fb0-7bc7-4de0-0f07-039502926e6b@linaro.org>
- <ca053156-7da1-f0f4-e23c-7c515a1e6afe@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ca053156-7da1-f0f4-e23c-7c515a1e6afe@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/01/2023 06:51, Srinivasa Rao Mandadapu wrote:
-> 
-> On 1/2/2023 9:33 PM, Krzysztof Kozlowski wrote:
-> Thanks for Your time Krzyszto!!!
->> On 30/12/2022 14:43, Srinivasa Rao Mandadapu wrote:
->>> The qdsp6ss memory region is being shared by ADSP remoteproc device and
->>> lpasscc clock device, hence causing memory conflict.
->>> As the qdsp6ss clocks are being enabled in remoteproc driver, remove
->>> clock controlling in the clock driver.
->>>
->> That's an ABI break change. You cannot just drop it because the driver
->> will fail now to probe with old DTS.
->>
->> This ABI break (and Fixes tag below) requires extensive justification
->> where is the bug and how it affects users. Otherwise, I see no reason
->> for ABI changes.
-> 
-> As ADSP path is not used so far due to various vendor requirements, we 
-> haven't seen this conflict till now.
+In the previous commits that added CLK_OPS_PARENT_ENABLE, support for
+this flag was only added to rate change operations (rate setting and
+reparent) and disabling unused subtree. It was not added to the
+clock gate related operations. Any hardware driver that needs it for
+these operations will either see bogus results, or worse, hang.
 
-The device is used in sc7280.dtsi (and it is not disabled), thus it is
-available in every board.
+This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
+drivers set this, but dumping debugfs clk_summary would cause it
+to hang.
 
-> 
-> Actually, in the below commit,  clock handling in remoteproc driver has 
-> already up-streamed by Bjorn.
-> 
-> If we add PIL device node and use remoteproc driver, qcom_q6v5_adsp.c, 
-> it's mandatory to remove it from clock
-> 
-> driver.
-> 
-> Also the memory region is used by clock driver is part of 
-> LPASS_QDSP6V67SS register region.
-> 
-> Here is the commit 0c6de4c299cc8f3283c38f3778777e00ed7e4b69 
-> ("remoteproc: qcom: qdsp6-adsp: Add support for QCS404 CDSP")
+Prepare parent on prepare and enable parent on enable dependencies are
+already handled automatically by the core as part of its sequencing.
+Whether the case for "enable parent on prepare" should be supported by
+this flag or not is not clear, and thus ignored for now.
 
-The commit introduces qcom,qcs404-cdsp-pil which is not used in upstream
-DTS...
+This change solely fixes the handling of clk_core_is_enabled, i.e.
+enabling the parent clock when reading the hardware state. Unfortunately
+clk_core_is_enabled is called in a variety of places, sometimes with
+the enable clock already held. To avoid deadlocking, the core will
+ignore readouts and just return false if CLK_OPS_PARENT_ENABLE is set
+but the parent isn't currently enabled.
 
-Anyway none of the reasons above explain to me why ABI has to be broken.
-To remind - valid reasons are usually only: "it never worked" or "I was
-introduced recently so there are no users".
+Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+This is a less invasive version of "clk: core: Honor CLK_OPS_PARENT_ENABLE
+for clk gate ops" [1] which caused regressions on i.MX platforms.
 
-> For ABI Break resolution shall I include, device tree changes also in 
-> this series? Or Could you please suggest better approach?
+My guess is that the i.MX clock driver uses clk_hw_is_enabled() in it's
+set_rate callback, in which the new code causes a deadlock.
 
-Lack of DTS changes causes upstream to be broken. This is independent of
-ABI break. ABI means supporting users of the binding, so firmware, other
-OS, out-of-tree DTS users etc. All of them are broken.
+v3 drops the enable parent on prepare/unprepare bits, as it's unclear
+who benefits from it, and the locking is hard to get right. The part in
+clk_core_is_enabled() is changed into a bypass path, as described in the
+commit message. This fixes the issue I'm seeing, and hopefully doesn't
+change the behavior on other platforms.
 
-You need to keep backwards compatibility.
-Best regards,
-Krzysztof
+[1] https://lore.kernel.org/linux-clk/20220822081424.1310926-2-wenst@chromium.org/
+
+ drivers/clk/clk.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e62552a75f08..496b86e2753c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -244,6 +244,17 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 		}
+ 	}
+ 
++	/*
++	 * This could be called with the enable lock held, or from atomic
++	 * context. If the parent isn't enabled already, we can't do
++	 * anything here. We can also assume this clock isn't enabled.
++	 */
++	if ((core->flags & CLK_OPS_PARENT_ENABLE) && core->parent)
++		if (!clk_core_is_enabled(core->parent)) {
++			ret = false;
++			goto done;
++		}
++
+ 	ret = core->ops->is_enabled(core->hw);
+ done:
+ 	if (core->rpm_enabled)
+-- 
+2.39.0.314.g84b9a713c41-goog
 
