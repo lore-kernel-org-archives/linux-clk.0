@@ -2,101 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84051C3DA7D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 13:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBEDC3DA7D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 13:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237519AbjACNR1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 08:17:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
+        id S237380AbjACNZa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 08:25:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237027AbjACNRP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 08:17:15 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2052811148
-        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 05:17:14 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id s25so31785885lji.2
-        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 05:17:13 -0800 (PST)
+        with ESMTP id S237324AbjACNZ0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 08:25:26 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073C31057F
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 05:25:24 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id n1so31792216ljg.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 05:25:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FI/7QHfOajTdVOFx3npU5LTfbLBIpMx67ZW4jlbDII4=;
-        b=Qm8nhinte/zhOwvr5PeUAjahL3rIkDxvy9KfKJCnjDHzK5p052c2oPoNZPlsmnuZDx
-         tlRkQWr4NR+5v3DMDnzul9blhVLy72dkMlNhkaGexrAJbm9q13wYwrKuWLNuMM2jSAL1
-         NzGMUsSJrv4ZJi3Irur8M1OfqstoNxeYfOfh0hZ3w9dR0uKMyNNRFkstHWBsFIZMVwMa
-         gsd3w8dxLiU6WCfTKltbXX/PO8aFbJ3kKRpzfNa39ibzG2RKDzUsZdoPDkuT+tBgmWAx
-         EFXVsYLMBDFioZA3yPr3vpDFrsSQpMxTnjncqlPjWERUxAl6ynf1FOItEGI6U3y33cU4
-         MSNQ==
+        bh=OQtAS7dRffwstL0NIoU7HOUw97BRuM+uBfBVehzzmcY=;
+        b=L8/yqW4KRK5t/QShxNfFug+/I9Ee8+aEk1YCcHUfjNK50qsHMaljqs7lDv7D3v8MM+
+         jvG7IIktaX/GuPJMXe8APHdU1SeTNRfkAUtrDmge9ZpSXbZykouKBJmoWAbGk8iiErZA
+         se91VMUi+fd//cAy8i/gubXZYnmzm/pG8pCmSVq3kHOOW3vxXuObu5P3HOSG2bZkRP4U
+         YW70cpb5lZdVeWDbA4vep5+5Yu8H2kFi0H2MVw1G6makH5VRjLw5w2dj/FkhORfBLNsS
+         n4Jo0iLAh7Kq4IRjmy41dxowg4xUDisdEAKIvN9fyAgf5HI2ZAP7zojyHosxXk4shXLx
+         Lbag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FI/7QHfOajTdVOFx3npU5LTfbLBIpMx67ZW4jlbDII4=;
-        b=agqr0iE1tOMF2wgyTYgIY/vBcAdBNU7wb96obqy9SVrvuOCfJudHh/e2seu6cEyZ0L
-         IJN/PXZ+23GM/6Lv38NL1oIhfVa4MrmLHZI2zrN9lmWV4YqiBkVgrmlUJZ0+JhLveF5E
-         Dri5cYuZ30m0eSs9nHBcqTpwETgDLUA5xiB8X69fjRlNFqJN3TW0PmHrJFmSXjGFU656
-         pEIFwtUKX+H13n7RjM2X9u353U+tUEJrv3NrNM7dsR8pQo9jX4t7DwhyAFCERXsr1FQI
-         Z02vOFMj7mQ0x2P23XkPxyVeLwG7ZCbWdiF9LTBXSHGqj6P3gbPFM5WVyRMuPPahcThB
-         o35Q==
-X-Gm-Message-State: AFqh2krWg7ea42S1fz3dQfpbfdBsFVi/pfsERRC0QBtH3Dp6ixrSmCV+
-        MeIW28NGMtByV4EKY4oKN/TeGg==
-X-Google-Smtp-Source: AMrXdXudwYsveyPqJ9OtE9wMlSXqrSoRIdSLjOph9VCasvn7M5dZ4SWP2QEHTP/JSYo+s0snvLerEA==
-X-Received: by 2002:a2e:3211:0:b0:27f:c428:c5ec with SMTP id y17-20020a2e3211000000b0027fc428c5ecmr10757597ljy.28.1672751832263;
-        Tue, 03 Jan 2023 05:17:12 -0800 (PST)
+        bh=OQtAS7dRffwstL0NIoU7HOUw97BRuM+uBfBVehzzmcY=;
+        b=u9o9J4TfPG93xL0bjoLMUyc0Fzl59rZU3W8WmR8IV9q7mNbIknUCpuhVtM5cH+SeWl
+         6IgWASbDbeDz9ZaWuvRpjuGJWbfXBtjaq9kxWG2DOMSr43Pr/lnGE3GNkhVErE408hZO
+         ZIPMz1LfMSlavmszcGA/GiGXcxOEghc4tJXvWruIchGGYM1KsvPMvDnNjS/IYBBk164z
+         gdBwbCQpLfEVvZ5i4ZA0+aNHJKlb/xtPw4JFFqGFhZcBHgUW5h30HOWbimAya8ZXOEMu
+         9Mogt0sem+gmPcyBemgG+KUye94WwmKKRSxD2k129CSQ7DmegXStMFuqURjeMuX8JGYM
+         rAkw==
+X-Gm-Message-State: AFqh2kpw+mk5/ItM3GKaUUiF0BgnThfw+ogdyqcaAfZZZbqfPz0Pu+8z
+        5fjbMXllIot1kBZZgUcQnWlVpg==
+X-Google-Smtp-Source: AMrXdXvXD+0fRDvbDETqqmRKV02pVToVMGeAb1YfTMy7x4T1bhDgESG879wR7yCj5oU6rbY1UKrQjw==
+X-Received: by 2002:a2e:80d9:0:b0:27f:e337:1ead with SMTP id r25-20020a2e80d9000000b0027fe3371eadmr3489840ljg.43.1672752323237;
+        Tue, 03 Jan 2023 05:25:23 -0800 (PST)
 Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id y22-20020a2e9d56000000b0027965d3cc9fsm3498226ljj.47.2023.01.03.05.17.11
+        by smtp.gmail.com with ESMTPSA id s4-20020a05651c048400b0027fbc576464sm2628850ljc.137.2023.01.03.05.25.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jan 2023 05:17:11 -0800 (PST)
-Message-ID: <414b2785-fba0-1426-d059-befeabe9ddac@linaro.org>
-Date:   Tue, 3 Jan 2023 14:17:09 +0100
+        Tue, 03 Jan 2023 05:25:22 -0800 (PST)
+Message-ID: <0d106f4d-4683-4117-0812-e83f8e5974c2@linaro.org>
+Date:   Tue, 3 Jan 2023 14:25:19 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 2/3] memory: atmel-sdramc: remove the driver
-To:     Claudiu.Beznea@microchip.com, mturquette@baylibre.com,
-        sboyd@kernel.org, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20221208114515.35179-1-claudiu.beznea@microchip.com>
- <20221208114515.35179-3-claudiu.beznea@microchip.com>
- <2f9793fb-8840-fd3c-8af1-42c6c11ed475@microchip.com>
- <9054a7cd-2993-840f-1f4b-7837b43a1800@linaro.org>
- <23389f8e-daf4-67ca-1e3b-c5a6433f3986@microchip.com>
- <4632f71b-2b67-b634-1cdb-69ac741a8ef0@linaro.org>
- <92347fcb-46b3-d1bf-82f1-960f69300a29@microchip.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clk: rs9: Add bindings for 9FGV0441
 Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Vasut <marex@denx.de>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
+ <20230103123154.3424817-2-alexander.stein@ew.tq-group.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <92347fcb-46b3-d1bf-82f1-960f69300a29@microchip.com>
+In-Reply-To: <20230103123154.3424817-2-alexander.stein@ew.tq-group.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/01/2023 13:45, Claudiu.Beznea@microchip.com wrote:
+On 03/01/2023 13:31, Alexander Stein wrote:
+> This is a 4-channel variant of 9FGV series.
 
->>>> Uh, why does it depend? I understood the changset is bisectable and
->>>> removal of unneeded driver will happen later. Otherwise it is not
->>>> bisectable...
->>>
->>> AT91 devices will fail to boot if this patch is applied and 1/3 is not
->>> there. This is because clock framework will disable DDR clocks because
->>> there will be no consumer for them.
->>
->> This I understand, but why do you need this patch to be able to apply
->> 1/3? 
-> 
-> To avoid having AT91 devices failing to boot in case your tree (containing
-> this patch) is merged  first.
+Subject: drop second, redundant "bindings for".
 
-But this patch is not going to be merged first. It will wait one more
-cycle, so the dependency is there.
 
-If you need to make it in one cycle for some reason, then I would need
-stable tag with the clock patch.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
