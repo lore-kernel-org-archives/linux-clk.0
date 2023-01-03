@@ -2,100 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE17C54EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 13:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAA4C3DA7D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 13:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233197AbjACNuG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 08:50:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45288 "EHLO
+        id S237598AbjACNyG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 08:54:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237766AbjACNuC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 08:50:02 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6EC11477;
-        Tue,  3 Jan 2023 05:50:00 -0800 (PST)
+        with ESMTP id S233354AbjACNyE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 08:54:04 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 124FF10C3
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 05:54:03 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id z8-20020a05600c220800b003d33b0bda11so16563703wml.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 05:54:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1672753801; x=1704289801;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WpLDfQkVCsUYAuYxOb9Sk3VMgL/XIHPK14s28skQZk8=;
-  b=iV7PCCkkC1gwyxqpenm0ZJFU5WzoXyww9fPDsM/IIt9PcePnT4vG+fvK
-   Okv82wiesCgB2DBtA5VH1McYRaGDqr/iMsBeER2b0XboipbRm34wdMogs
-   M+pTUj88jbNT7EoskBFYm04DOh0ogPWhsZUqmhBmXTju+2nBnYd5Kysb2
-   Tr2baWDvOyWweWOSvtZ0NsFYAspzzNLHF/C3cPOYLsqxFDItgAqUlrq6y
-   W6dFUOiprrd4iaoS/O+BH0m+W6Vqf1t/Yd0Ym6A3YYLvjnqJ7jTdqQ+Bo
-   c0NMzK8Wf7Rj08KFppqA9P3hfenWwtkZXN3KeVZP3UvoaDnvKPj25hXJG
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,297,1665439200"; 
-   d="scan'208";a="28222612"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 03 Jan 2023 14:49:59 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 03 Jan 2023 14:49:59 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 03 Jan 2023 14:49:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1672753799; x=1704289799;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WpLDfQkVCsUYAuYxOb9Sk3VMgL/XIHPK14s28skQZk8=;
-  b=FBR76nUyKbCaRiwWKPoiJhPeevuDXc3Cr+2Db+xNCNm/XikGf11SoOLq
-   XO0lauRxix6R8BHnBZj3MEsCNQ/U25zpHPQR5EjVCRnteN1LOO5px0UFi
-   O3NC1hnAIzORAAVV4Gdr8Btr8lQceB64Gfo0h/v1As1w1IeGVsY3p9MZy
-   Sb0vKYvjNnKQN4TEdevnOfGe2ITJBGSmdm1iHsr0jsunvDif7Z0Z7Ve3m
-   zhWbEQtvGEwMCQSVzAquMNhexoJGnvpnSimTiu4TydlQkf4zpuYsoRFsh
-   9i/UcR7O2L9z4ihG+FhSInYJgLPXgT35mwL9r0ljDaHFVeCRyOMso+oC6
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,297,1665439200"; 
-   d="scan'208";a="28222611"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 03 Jan 2023 14:49:59 +0100
-Received: from steina-w.localnet (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id E08D5280056;
-        Tue,  3 Jan 2023 14:49:58 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        d=linaro.org; s=google;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uMu7RcER/cl1kN+bllDzAcw7/9MhSmZW1knQnwZ259Y=;
+        b=Tgvdd7yCnWuRFtDRLX4oEg5COTW1ol2m+jpNYiUBsrIisRKetOqhvK4h8Ad9vcgLlh
+         z2/Ua1Arw3Gl4SnjwcL7pH029Ll1g7OF0LcnSvmUj+RWQ3TDj90uns4uKfKyijqckIAl
+         i2UTCrJYaUpDtQP/UtWnb0q490nczJcBzf6Qy7Aro9Ll7yk0XyTdTBsngrK34rO0CxQn
+         CxnK1XdYyU2C9kOdmYOT59X3I4rews83I/CxLdVpDM3OvjqnkigqXnS2lpdJFKw+8f7R
+         y3UwHljmFlDvOteqhOmHyJ0+Llq2brRMP7suAYodzEkxqq78nc0y4j35XRnV2QawYe4T
+         Tpwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uMu7RcER/cl1kN+bllDzAcw7/9MhSmZW1knQnwZ259Y=;
+        b=OZM1ud5od7rNaXowtO2LGMhN9MutGdTkHmr1c+u/s1EnBSnUnbrjRjSe5kDtWnkl8y
+         nhbbOdw0vQDEr6oL353hWU2kVccFU1PH7MpW2WnGQwdDvmmENHi3l6RyIgkZyhEqiE4A
+         ZnVyUmBofQsb/LPHNYZzi32dfS+btUebT4on5IcgUSxHGsjZUsnh2YrjW7OeEbagxaEK
+         xyh2C6zWhYjDpIXG4KiEoDBXERAMM+P09mHKdfgPy818d35dcVBMVisQx9xyaTnh13M1
+         Vwoee5yVzSA89IXOGdWs0Z+Ydz1uqq/yznUUmR+wswCVWRJv1r3EMkxenUfo9iLK9gvq
+         zSSg==
+X-Gm-Message-State: AFqh2kow0J5D0zxFn0wJ5aC2eK5bztsE5oes7KDYXwqMUvg+IB0Ca09s
+        zbYk4X5pmg+Rm16nHKaPd5eDig==
+X-Google-Smtp-Source: AMrXdXuJU86oke/l326mC1sgIqn+MgNJNNtZs+PhUT8abk5ByPXXZjZCOpBgN8Ktxkl/LA7X22QM4g==
+X-Received: by 2002:a05:600c:1e09:b0:3cf:b73f:bf8f with SMTP id ay9-20020a05600c1e0900b003cfb73fbf8fmr30985728wmb.7.1672754041529;
+        Tue, 03 Jan 2023 05:54:01 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ay39-20020a05600c1e2700b003cfa80443a0sm42138195wmb.35.2023.01.03.05.54.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jan 2023 05:54:00 -0800 (PST)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/3] clk: qcom: Add DISPCC driver for SM8550
+Date:   Tue, 03 Jan 2023 14:53:58 +0100
+Message-Id: <20230103-topic-sm8550-upstream-dispcc-v1-0-81bfcc26b2dc@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHYztGMC/x2NQQqDMBBFryKz7kBilJZepXSRjKMOaAwZLQXx7
+ h26+fD+4r0TlKuwwrM5ofJHVLZs4G8N0BzzxCiDMbSuDc67gPtWhFDXR987PIruleOKg2ghws77
+ FDqycXcwRYrKmGrMNJskH8tiZ6k8yvfffL2v6wfgQGJTgwAAAA==
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: clk: rs9: Add bindings for 9FGV0441
-Date:   Tue, 03 Jan 2023 14:49:56 +0100
-Message-ID: <2306967.n0HT0TaD9V@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <0d106f4d-4683-4117-0812-e83f8e5974c2@linaro.org>
-References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com> <20230103123154.3424817-2-alexander.stein@ew.tq-group.com> <0d106f4d-4683-4117-0812-e83f8e5974c2@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.11.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+Add the Display Clock Controller controller based on
+downstream and upstream SM8450 driver.
 
-Am Dienstag, 3. Januar 2023, 14:25:19 CET schrieb Krzysztof Kozlowski:
-> On 03/01/2023 13:31, Alexander Stein wrote:
-> > This is a 4-channel variant of 9FGV series.
-> 
-> Subject: drop second, redundant "bindings for".
-> 
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Andy Gross <agross@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Thanks, will drop it on next version.
+---
+Neil Armstrong (3):
+      dt-bindings: clock: document SM8550 DISPCC clock controller
+      clk: qcom: clk-alpha-pll: define alias of LUCID OLE reset ops to EVO reset ops
+      clk: qcom: add SM8550 DISPCC driver
+
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |  106 ++
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
+ drivers/clk/qcom/dispcc-sm8550.c                   | 1814 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8550-dispcc.h     |  101 ++
+ 6 files changed, 2032 insertions(+)
+---
+base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
+change-id: 20230103-topic-sm8550-upstream-dispcc-411b34c1b307
 
 Best regards,
-Alexander
-
-
-
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
