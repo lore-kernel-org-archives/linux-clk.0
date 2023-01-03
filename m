@@ -2,136 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5739C3DA7D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 09:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14591C46467
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 09:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233070AbjACJYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 04:24:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50260 "EHLO
+        id S233103AbjACJgf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 04:36:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237216AbjACJXh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 04:23:37 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720D3114E
-        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 01:23:36 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id w3so362787ply.3
-        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 01:23:36 -0800 (PST)
+        with ESMTP id S232995AbjACJge (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 04:36:34 -0500
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB411EF
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 01:36:33 -0800 (PST)
+Received: by mail-vs1-xe31.google.com with SMTP id s127so17193960vsb.5
+        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 01:36:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AaEgQoi2wV88iETdzvSp20U7Cda3EBi9Iq1BYplBC3U=;
-        b=fRKiuLLPQXtm+PoLAnEO0C/uRszb5OZg3YHcvW2RCgSXdgYSqmUNIVOR6Yw5IkkkHr
-         +QjxZ3RVzCBOcOirYxxHt0r1WoqCp6tPnX+mb/UoZ6kAIx7Lm+E/ou+rSr9EZ2qoQeD6
-         bIpAN5WyNbnUdEwIzQE/O3pT9ZYGzuzsfHPQo=
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2J2aTNhc8Fk+2QZu9B/DP3Bn+7R4y8GRLvltu/3lVbw=;
+        b=A5Zr2HT5mmyAp05QRJwAfVvnRBy65SHP+jupcFVWUT3FKrjLw1TpBJrXi5uhMZQq2R
+         e1Pno+FyNk66ZStSqsyz8L1zf5GHQuyP/tBoj0haHLKX6AwdIamttqpqQG3TxHKXrNOR
+         aDU+nLR7YBek0BvA/ibeZoZmQf4JWkzpB5yJo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AaEgQoi2wV88iETdzvSp20U7Cda3EBi9Iq1BYplBC3U=;
-        b=sMIdTQfKHEoELmo4ysneJrFY63T6Vb5DQLuPFc919iBIYJxgDRJgivMRadTnUzVuu0
-         fzKG5qz0KxdSEdT9CaOZbnfIb2lFD4fr/24DYa+wX15gSju9YI99QIApnSqFqfHMGBgR
-         p1UTOOPg97QFfxCGwa/Cd0ntNmcoYI2fK2lKs8+6C0z/wqkrsUZOrNFawr7IJ1ZyvQa6
-         3uJKwFA3XxNzOuYLlfDvrGHfg0Cv/rO0VzCxapQIsOvJV5OwlDP6HEJzpoVZUi96mHHv
-         nk7oPeqonjU24qvpg/AJAYggmTsFJlujT+8iF52yqLWw2LaacP3iRnjqi7EJMO/WQBZn
-         pQxw==
-X-Gm-Message-State: AFqh2krDcdrwZ8+kH5cEommyeEKpIvnGIDTvl2UtlrQznh6xUqEgyOWE
-        8EsjFqGCLSVnWV2cc0J3ysEeiA==
-X-Google-Smtp-Source: AMrXdXscvLpHbGWlFWU5ZkobIrKEQnk7OF5Eruk64rC/Zl69xEwyZqBgAT2SpMsWhcqVpsg57yVxIg==
-X-Received: by 2002:a17:902:f112:b0:189:9ee0:cc8e with SMTP id e18-20020a170902f11200b001899ee0cc8emr40941085plb.57.1672737815982;
-        Tue, 03 Jan 2023 01:23:35 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:96d9:31a:590:4d72])
-        by smtp.gmail.com with ESMTPSA id y126-20020a636484000000b0049f5da82b12sm6868632pgb.93.2023.01.03.01.23.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jan 2023 01:23:35 -0800 (PST)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
-        <nfraprado@collabora.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] clk: core: Honor CLK_OPS_PARENT_ENABLE in clk_core_is_enabled
-Date:   Tue,  3 Jan 2023 17:23:30 +0800
-Message-Id: <20230103092330.494102-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
+        bh=2J2aTNhc8Fk+2QZu9B/DP3Bn+7R4y8GRLvltu/3lVbw=;
+        b=MK/GyyDqx5wxjcBJDUbrvTiN+xHMCLkRKBXc8WNt+z2979B2rBqr4oWR6DPPJt/OuP
+         3ej5LJKIhH++G2VYVZ9Q0kOwddLyJJ0aJ40rtk4jXHJX7a+A7SE+8+VPtwxwCGVigXrX
+         XQJO3Lu8N5g+xpvoeVkGb8pu5JJdueANMPDUb1AThmAk0YJACrjhvO+YlY8wv6/tftWv
+         YpWh1F8bjVYuTYyRQh5NoDrvcsCWcsAKinLHouQCdWg8/e66FNyQKrWOmu+bWckuA6EI
+         j//F56Iep+PIeDR9xC9GV9BflvPW60CqdMT3Q52R/qxRlTnC6686nFMwJ6cfLf7t8R78
+         7ByQ==
+X-Gm-Message-State: AFqh2koOLmCRoncQzKstrJntKnLu/G1FPqQoZ20dBTXa8jqqa4IIwtyP
+        oRIODVUJgV3+Q2wFQN97nrGzW3i1XoBUkP7+AB4Tgw==
+X-Google-Smtp-Source: AMrXdXsjYNpn4DO5afgWKbBL3BZLMSMIQCd2hnTZosLQcX2by+boAHEHDPWQ1FXpr2KldsK58GYEH3IVdxFGAqoYF5U=
+X-Received: by 2002:a05:6102:3d9f:b0:3c4:4918:80c with SMTP id
+ h31-20020a0561023d9f00b003c44918080cmr3971152vsv.9.1672738592218; Tue, 03 Jan
+ 2023 01:36:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 3 Jan 2023 17:36:21 +0800
+Message-ID: <CAGXv+5GekZUSe34DxiKzdnPr-GDsmJBfAgkS1RjrN-xdeXMN6g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/23] MediaTek clocks cleanups and improvements
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the previous commits that added CLK_OPS_PARENT_ENABLE, support for
-this flag was only added to rate change operations (rate setting and
-reparent) and disabling unused subtree. It was not added to the
-clock gate related operations. Any hardware driver that needs it for
-these operations will either see bogus results, or worse, hang.
+On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+>
+> Changes in v2:
+>  - Moved dt-bindings CLK_DUMMY to clk-mtk.h instead
+>
+>
+> This series performs cleanups and improvements on MediaTek clock
+> drivers, greatly reducing code duplication (hence also reducing
+> kernel size).
+>
+> There would be a lot to say about it, but summarizing:
+>
+> * Propagates struct device where possible in order to introduce the
+>   possibility of using Runtime PM on clock drivers as needed,
+>   possibly enhancing reliability of some platforms (obviously, this
+>   will do nothing unless power-domains are added to devicetree);
+>
+> * Cleans up some duplicated clock(s) registration attempt(s): on
+>   some platforms the 26M fixed factor clock is registered early,
+>   but then upon platform_driver probe, an attempt to re-register
+>   that clock was performed;
+>
+> * Removes some early clock registration where possible, moving
+>   everything to platform_driver clock probe;
+>
+> * Breaks down the big MT8173 clock driver in multiple ones, as it's
+>   already done with the others, cleans it up and adds possibility
+>   possibility to compile non-boot-critical clock drivers (for 8173)
+>   as modules;
+>
+> * Extends the common mtk_clk_simple_probe() function to be able to
+>   register multiple MediaTek clock types;
+>
+> * Removes duplicated [...]_probe functions from multiple MediaTek SoC
+>   clock drivers, migrating almost everything to the common functions
+>   mtk_clk_simple_probe();
+>
+> * Adds a .remove() callback, pointing to the common mtk_clk_simple_remove()
+>   function to all clock drivers that were migrated to the common probe;
+>
+> * Some more spare cleanups here and there.
+>
+> All of this was manually tested on various Chromebooks (with different MTK
+> SoCs) and no regression was detected.
+>
+> Cheers!
+>
+> AngeloGioacchino Del Regno (23):
+>   clk: mediatek: mt8192: Correctly unregister and free clocks on failure
+>   clk: mediatek: mt8192: Propagate struct device for gate clocks
+>   clk: mediatek: clk-gate: Propagate struct device with
+>     mtk_clk_register_gates()
+>   clk: mediatek: cpumux: Propagate struct device where possible
+>   clk: mediatek: clk-mtk: Propagate struct device for composites
+>   clk: mediatek: clk-mux: Propagate struct device for mtk-mux
+>   clk: mediatek: clk-mtk: Add dummy clock ops
+>   clk: mediatek: mt8173: Migrate to platform driver and common probe
+>   clk: mediatek: mt8173: Remove mtk_clk_enable_critical()
+>   clk: mediatek: mt8173: Break down clock drivers and allow module build
+>   clk: mediatek: Switch to mtk_clk_simple_probe() where possible
+>   clk: mediatek: clk-mtk: Extend mtk_clk_simple_probe()
+>   clk: mediatek: mt8173: Migrate pericfg/topckgen to
+>     mtk_clk_simple_probe()
+>   clk: mediatek: clk-mt8192: Move CLK_TOP_CSW_F26M_D2 in top_divs
+>   clk: mediatek: mt8192: Join top_adj_divs and top_muxes
+>   clk: mediatek: mt8186: Join top_adj_div and top_muxes
+>   clk: mediatek: clk-mt8183: Join top_aud_muxes and top_aud_divs
+>   clk: mediatek: clk-mtk: Register MFG notifier in
+>     mtk_clk_simple_probe()
+>   clk: mediatek: clk-mt8192: Migrate topckgen to mtk_clk_simple_probe()
+>   clk: mediatek: clk-mt8186-topckgen: Migrate to mtk_clk_simple_probe()
+>   clk: mediatek: clk-mt6795-topckgen: Migrate to mtk_clk_simple_probe()
+>   clk: mediatek: clk-mt7986-topckgen: Properly keep some clocks enabled
+>   clk: mediatek: clk-mt7986-topckgen: Migrate to mtk_clk_simple_probe()
 
-This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
-drivers set this, but dumping debugfs clk_summary would cause it
-to hang.
+Boot tested on MT8183 and MT8192 (which needs CLK_OPS_PARENT_ENABLE fix
+I just sent), so for the whole series:
 
-Prepare parent on prepare and enable parent on enable dependencies are
-already handled automatically by the core as part of its sequencing.
-Whether the case for "enable parent on prepare" should be supported by
-this flag or not is not clear, and thus ignored for now.
-
-This change solely fixes the handling of clk_core_is_enabled, i.e.
-enabling the parent clock when reading the hardware state. Unfortunately
-clk_core_is_enabled is called in a variety of places, sometimes with
-the enable clock already held. To avoid deadlocking, the core will
-ignore readouts and just return false if CLK_OPS_PARENT_ENABLE is set
-but the parent isn't currently enabled.
-
-Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-This is a less invasive version of "clk: core: Honor CLK_OPS_PARENT_ENABLE
-for clk gate ops" [1] which caused regressions on i.MX platforms.
-
-My guess is that the i.MX clock driver uses clk_hw_is_enabled() in it's
-set_rate callback, in which the new code causes a deadlock.
-
-v3 drops the enable parent on prepare/unprepare bits, as it's unclear
-who benefits from it, and the locking is hard to get right. The part in
-clk_core_is_enabled() is changed into a bypass path, as described in the
-commit message. This fixes the issue I'm seeing, and hopefully doesn't
-change the behavior on other platforms.
-
-[1] https://lore.kernel.org/linux-clk/20220822081424.1310926-2-wenst@chromium.org/
-
- drivers/clk/clk.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e62552a75f08..496b86e2753c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -244,6 +244,17 @@ static bool clk_core_is_enabled(struct clk_core *core)
- 		}
- 	}
- 
-+	/*
-+	 * This could be called with the enable lock held, or from atomic
-+	 * context. If the parent isn't enabled already, we can't do
-+	 * anything here. We can also assume this clock isn't enabled.
-+	 */
-+	if ((core->flags & CLK_OPS_PARENT_ENABLE) && core->parent)
-+		if (!clk_core_is_enabled(core->parent)) {
-+			ret = false;
-+			goto done;
-+		}
-+
- 	ret = core->ops->is_enabled(core->hw);
- done:
- 	if (core->rpm_enabled)
--- 
-2.39.0.314.g84b9a713c41-goog
-
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
