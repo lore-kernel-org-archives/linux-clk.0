@@ -2,90 +2,135 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C55AC3DA7D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 15:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A311C3DA7D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 15:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237917AbjACPiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 10:38:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
+        id S233478AbjACPpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 10:45:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230397AbjACPiS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 10:38:18 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B9411C0E;
-        Tue,  3 Jan 2023 07:38:16 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id m18so74537009eji.5;
-        Tue, 03 Jan 2023 07:38:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qnD1cDOmNAJpkQ6T4dHEcYD9uVqliMR1LVDe+Z15bUE=;
-        b=Iv1X7xuxVaFSptHgLbIWWfPN9wFmWy5OetaEGRHUYf+22Qc0pMRgXhMJR52ZpXUwrh
-         XpifyNSEbtPqKt35Ofss4i2mxykqjemG0v3qLPLJP72K3ZtJzNb/94Qhz+fIlGHd3Jfq
-         1ABhT9xZLiu8AImzZgkeD3Om/BLz4VVs05Vd3Er/4CBFggQswMloVJj3ttYWgm3FmwNE
-         87X1puDaCguiScnZE4EhpNzr8EjnK6i6CI5ztjIdzFMSukLUP/DlPtncXIaQpbZsDVy/
-         sKDIa3oc3s6nJT3BT2U3hWCY6lnwrBk3Ryxvg+hQwYxwy6pW1FLMYDQ+q+9xSsX9c+Dh
-         27bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qnD1cDOmNAJpkQ6T4dHEcYD9uVqliMR1LVDe+Z15bUE=;
-        b=pV+9ccFLytlpLulJqY7caybps/tHn6Jh2DPnMWfgBtbs6A2uZ6SXophT3NbzClI3Yk
-         hw1p9TA5wHmRvtGY9bfKFsMuQuibnk03lg48CF9lBv/A4rzHC/GjOVCD5GM4I5prztDL
-         NbDNAiSPtrjfILfeLce50Z7zKBl7hWRpa7euR6UGk3Q3DiJ4LaFifB8FozB/VTAN4emI
-         b1DmpBf+kmpLoB3Vc7Q1dAxdkd8YYrQAiSdib/UOos0ix2vf+DWSKfVLqDNl8rR5TScH
-         aVMS/ynZb+dHA7e6El1WOXGv+ZmA+AVfF1uJVnF9o7FXjyzzam332azXEwDZpfTBe6kR
-         8vKg==
-X-Gm-Message-State: AFqh2kqyhn4qcMznGupwIzPxUoMULkW6LWlUSHwXA62TycZUAdiYujmQ
-        u3BpKTtt9uN70L0V37Pz286o3rEwOFm3ChY+87M=
-X-Google-Smtp-Source: AMrXdXsqsRWBmQm2rrCrJ26cXBP2shbcsB3baAFq/41tPZjRzMUN2eJ0DUIMQZfQvqKpoxQGfEpCn9x5+tmyeD1QNcM=
-X-Received: by 2002:a17:906:a3cd:b0:7c1:9b74:d27a with SMTP id
- ca13-20020a170906a3cd00b007c19b74d27amr5362235ejb.601.1672760295330; Tue, 03
- Jan 2023 07:38:15 -0800 (PST)
+        with ESMTP id S233348AbjACPpN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 10:45:13 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71A2411C10;
+        Tue,  3 Jan 2023 07:45:12 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 1B56D8556B;
+        Tue,  3 Jan 2023 16:45:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1672760709;
+        bh=7iNJcgcDAh7Ls4Cwi/5Xh89LG1+kct/Np5PWKTrZQZc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=L8AFUajdHQQmMdtM7NEqO3SpeBYw4Bn7tcdMJoVMIJmCyEVgwF4hGA7RCYum9y5mM
+         CYpDTPjolWXeMIpGiMnmqTbFsvrpVrRmvUTcqF5WCYCuhdhhVCL8Krolq+DmZO+gSZ
+         8mhrWIC6hvyiNXfIfpxNZWmx3FdX22H79BQRAyfp89w1rdQesE+2zZjOkffqAUARwx
+         MFmpPN/F3NEqTtTjYCdCROnBb+e/oRebwGCK72ToapRXlSUSdLIEzAT5/Dd+01f6sV
+         1oBV5rO/Ge3woRpgt4k5oOONXYGdZOkmBdU5d7cCmo5Qjfh18YjQt9CjVO/rgpo2wz
+         MfjYKuTUISwfQ==
+Message-ID: <2ba4e002-9f27-2e36-2bd2-8753c455b21f@denx.de>
+Date:   Tue, 3 Jan 2023 15:28:16 +0100
 MIME-Version: 1.0
-References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org> <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
-In-Reply-To: <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 3 Jan 2023 08:38:04 -0700
-Message-ID: <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
-Subject: Re: [PATCH 05/16] dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 1/4] clk: rs9: Check for vendor/device ID
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 28, 2022 at 6:33 AM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> The test clock apparently it's not used by anyone upstream. Remove it.
+On 1/3/23 13:31, Alexander Stein wrote:
+> This is in preparation to support additional devices which have different
+> IDs as well as a slightly different register layout.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>   drivers/clk/clk-renesas-pcie.c | 24 ++++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+> index e6247141d0c0..0076ed8f11b0 100644
+> --- a/drivers/clk/clk-renesas-pcie.c
+> +++ b/drivers/clk/clk-renesas-pcie.c
+> @@ -45,6 +45,13 @@
+>   #define RS9_REG_DID				0x6
+>   #define RS9_REG_BCP				0x7
+>   
+> +#define RS9_REG_VID_IDT				0x01
+> +
+> +#define RS9_REG_DID_TYPE_FGV			(0x0 << RS9_REG_DID_TYPE_SHIFT)
+> +#define RS9_REG_DID_TYPE_DBV			(0x1 << RS9_REG_DID_TYPE_SHIFT)
+> +#define RS9_REG_DID_TYPE_DMV			(0x2 << RS9_REG_DID_TYPE_SHIFT)
 
-IMO, NACK,
+I'm not entirely sure whether this shouldn't be using the BIT() macro, 
+what do you think ?
 
-This is not a valid justification.
+> +#define RS9_REG_DID_TYPE_SHIFT			0x6
+> +
+>   /* Supported Renesas 9-series models. */
+>   enum rs9_model {
+>   	RENESAS_9FGV0241,
+> @@ -54,6 +61,7 @@ enum rs9_model {
+>   struct rs9_chip_info {
+>   	const enum rs9_model	model;
+>   	unsigned int		num_clks;
+> +	u8			did;
 
-The DT is supposed to describe the hardware, and should be complete in
-that regard.  This clock exists in the hardware, so it should be
-described.
+Should this be const (and also the num_clks) ?
 
-DT is supposed to be separate from Linux, that is it doesn't matter
-that Linux doesn't consume this clock.  Maybe FreeBSD does, or some
-other OS.  Linux doesn't own Device Tree any more than it owns BIOS or
-ACPI.
+>   };
+>   
+>   struct rs9_driver_data {
+> @@ -270,6 +278,7 @@ static int rs9_probe(struct i2c_client *client)
+>   {
+>   	unsigned char name[5] = "DIF0";
+>   	struct rs9_driver_data *rs9;
+> +	unsigned int vid, did;
+>   	struct clk_hw *hw;
+>   	int i, ret;
+>   
+> @@ -306,6 +315,20 @@ static int rs9_probe(struct i2c_client *client)
+>   	if (ret < 0)
+>   		return ret;
+>   
+> +	ret = regmap_read(rs9->regmap, RS9_REG_VID, &vid);
+> +	if (ret < 0)
+> +		return ret;
 
-Also, I'm listed as a maintainer for this binding, yet this series is
-not addressed to me.  Seems like you might need to review how you are
-composing your patches.
+Newline here.
+
+> +	ret = regmap_read(rs9->regmap, RS9_REG_DID, &did);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if ((vid != RS9_REG_VID_IDT) || (did != rs9->chip_info->did)) {
+
+Drop the unnecessary inner () parenthesis .
+
+> +		dev_err(&client->dev,
+
+return dev_err_probe() might work better here ?
+
+> +			"Incorrect VID/DID: %#02x, %#02x. Expected %#02x, %#02x\n",
+> +			vid, did, RS9_REG_VID_IDT, rs9->chip_info->did);
+> +		return -ENODEV;
+> +	}
+
+[...]
