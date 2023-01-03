@@ -2,117 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400A4C46467
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 16:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906C8C46467
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 16:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237628AbjACQbr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 11:31:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54608 "EHLO
+        id S233692AbjACQpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 11:45:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233268AbjACQbo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 11:31:44 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D17FEC;
-        Tue,  3 Jan 2023 08:31:43 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id j16so12013918edw.11;
-        Tue, 03 Jan 2023 08:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S2YWh/dkKNhGC//4LIzOt+gAfTsIhfEKiR0SLS2Kg3o=;
-        b=FjoQIj8SceeC3CN8uhYrt2GPQ+hdG63GJIHDxj8eB1ism2E9WeRBKvIEqMwiMsOSBL
-         s2M1oJa/1kfcbgKOsE9GaNCUQ/1lPEZilCivryeEIPhyq4rKn+TIqOtfQI6dSMWazaCa
-         0Dx9pwyWSmCT4xDdXX9zY9MNoKCz09roeHnmzj2int0NrIVeUsMylruZiH+1y+idGKH7
-         cmXcZQ8TBgroWNIC9PqEkvpkZyRmS5y/sOH9OyR6U3Ez9uUYH8RRXnZVPFmcxYs2CTlO
-         OSEXCwhcMkMIpgLp3lGMqolr7kNwHYUY6rZVfk90zEzmd5BeFJZoZEsNdLzqVlDPMXd9
-         Uueg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S2YWh/dkKNhGC//4LIzOt+gAfTsIhfEKiR0SLS2Kg3o=;
-        b=B6aDn963fGPKTx9XongV98W8V1j8gDCu8NGyZooYtGMY0hyNnu/1r6bDK9kSUzFxn+
-         P9H1ovloHzoMafibK9KsTG6DzssJDJxjuvkU/owsI3Nf2TFsdNiTYsxg44oRuQDZPtOi
-         BIvXC/kATGy3M4hG3/fJEZnqadCidDXdCI6QwFXS7bFUfxvN468A4HiekytjlAhrdvam
-         n3fp0FRevRJZVHwshz1BXniJldaIWkA3FcUjYSinBwlSZzHDfSuj+OZqdKZN3V0jveim
-         rCxpqV2RKujqEd533oblzVcROT7TLbbA46m1eCyD6RzTzqrlsvHMjohtyIyE2+nKYzeq
-         1P6w==
-X-Gm-Message-State: AFqh2koIBFtGFbNpxQcIiWBata5Sd0xll3SyjsOS/GFAZIoPxhyMIwON
-        bGxg4YAeGqwxQmYiuNPfXlfdcRdt+UAuAw66L6w=
-X-Google-Smtp-Source: AMrXdXvDtW2HNNVSlMhARn6WFq5LvS7z3hnIol2vx6eCOKTHPrsGaQOMvorgjovpDKyIyW3xkCcc+TO3uQSguAg6SkQ=
-X-Received: by 2002:a50:ff07:0:b0:48e:b978:cb44 with SMTP id
- a7-20020a50ff07000000b0048eb978cb44mr455313edu.37.1672763502005; Tue, 03 Jan
- 2023 08:31:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
- <20221228133243.3052132-6-dmitry.baryshkov@linaro.org> <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
- <cf1f65e4-338a-c519-1401-91e13b5fd937@linaro.org>
-In-Reply-To: <cf1f65e4-338a-c519-1401-91e13b5fd937@linaro.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 3 Jan 2023 09:31:30 -0700
-Message-ID: <CAOCk7NrrwF8mO4tE3GG2KjajehuC7QthHjNjurZWCSXccZ=LVA@mail.gmail.com>
-Subject: Re: [PATCH 05/16] dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S233656AbjACQpf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 11:45:35 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD787BA2
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 08:45:34 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:f1ca:ff0d:9dea:806e])
+        by michel.telenet-ops.be with bizsmtp
+        id 4GlY2900w2YHDVW06GlYRb; Tue, 03 Jan 2023 17:45:33 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pCkPs-00203S-LF; Tue, 03 Jan 2023 17:45:32 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pCkPs-001TJk-68; Tue, 03 Jan 2023 17:45:32 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for allocating formatted strings
+Date:   Tue,  3 Jan 2023 17:45:30 +0100
+Message-Id: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 3, 2023 at 9:09 AM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On 03/01/2023 17:38, Jeffrey Hugo wrote:
-> > On Wed, Dec 28, 2022 at 6:33 AM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> >>
-> >> The test clock apparently it's not used by anyone upstream. Remove it.
-> >
-> > IMO, NACK,
-> >
-> > This is not a valid justification.
-> >
-> > The DT is supposed to describe the hardware, and should be complete in
-> > that regard.  This clock exists in the hardware, so it should be
-> > described.
->
-> Most of Qualcomm clock controllers can input clocks from
-> core_bi_pll_test_se. But we are listing them only for a small number of
-> them. And even on these platforms nobody provides this clock.
+In various places, string buffers of a fixed size are allocated, and
+filled using snprintf() with the same fixed size, which is error-prone.
 
-IMO the Qcom bindings could use some more rigor, I just don't have the
-cycles to help there.  The ones I've looked at appear to be written
-from the perspective of "what does the linux driver need" and not
-"what do we have in the schematic".  Often "what does the linux driver
-need" changes over time, which means the binding needs to evolve,
-which breaks the interface.  It's entirely valid to not use something
-in the Linux driver, especially as the platform implementation is
-probably minimal during early bringup, but such things are expected to
-be implemented eventually.
+Replace this by calling devm_kasprintf() instead, which always uses the
+appropriate size.
 
-There is a huge set of existing platforms where we probably can't go
-back and fix them since the binding is already defined, but going
-forward, new platforms can do better.
+While at it, remove an unneeded intermediate variable, which allows us
+to drop a cast as a bonus.
 
->
-> Maybe you shed some light here, what is the source of this clock? Who
-> provides the clock, e.g. on msm8998 platform?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/microchip/clk-mpfs-ccc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-It is an external input to the SoC, similar to CXO.
+diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
+index 32aae880a14f3b1c..0ddc73e07be42973 100644
+--- a/drivers/clk/microchip/clk-mpfs-ccc.c
++++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+@@ -164,12 +164,11 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
+ 
+ 	for (unsigned int i = 0; i < num_clks; i++) {
+ 		struct mpfs_ccc_out_hw_clock *out_hw = &out_hws[i];
+-		char *name = devm_kzalloc(dev, 23, GFP_KERNEL);
++		char *name = devm_kasprintf(dev, GFP_KERNEL, "%s_out%u", parent->name, i);
+ 
+ 		if (!name)
+ 			return -ENOMEM;
+ 
+-		snprintf(name, 23, "%s_out%u", parent->name, i);
+ 		out_hw->divider.hw.init = CLK_HW_INIT_HW(name, &parent->hw, &clk_divider_ops, 0);
+ 		out_hw->divider.reg = data->pll_base[i / MPFS_CCC_OUTPUTS_PER_PLL] +
+ 			out_hw->reg_offset;
+@@ -201,14 +200,13 @@ static int mpfs_ccc_register_plls(struct device *dev, struct mpfs_ccc_pll_hw_clo
+ 
+ 	for (unsigned int i = 0; i < num_clks; i++) {
+ 		struct mpfs_ccc_pll_hw_clock *pll_hw = &pll_hws[i];
+-		char *name = devm_kzalloc(dev, 18, GFP_KERNEL);
+ 
+-		if (!name)
++		pll_hw->name = devm_kasprintf(dev, GFP_KERNEL, "ccc%s_pll%u",
++					      strchrnul(dev->of_node->full_name, '@'), i);
++		if (!pll_hw->name)
+ 			return -ENOMEM;
+ 
+ 		pll_hw->base = data->pll_base[i];
+-		snprintf(name, 18, "ccc%s_pll%u", strchrnul(dev->of_node->full_name, '@'), i);
+-		pll_hw->name = (const char *)name;
+ 		pll_hw->hw.init = CLK_HW_INIT_PARENTS_DATA_FIXED_SIZE(pll_hw->name,
+ 								      pll_hw->parents,
+ 								      &mpfs_ccc_pll_ops, 0);
+-- 
+2.25.1
 
-On the laptops, TP88 (test point) on the main motherboard is routed to
-the SoC pin.  I don't have schematics for every platform in the wild,
-so I can't say if that is the norm.
-
--Jeff
