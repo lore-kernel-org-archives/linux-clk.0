@@ -2,109 +2,153 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBEBC3DA7D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 12:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D05C1C46467
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 12:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237540AbjACMAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 07:00:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50530 "EHLO
+        id S231196AbjACMcE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 07:32:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237525AbjACMAa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 07:00:30 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF29101E6
-        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 04:00:28 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id e13so29000917ljn.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 04:00:28 -0800 (PST)
+        with ESMTP id S230337AbjACMcD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 07:32:03 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8FBBFCE5;
+        Tue,  3 Jan 2023 04:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5WASsB7/AJqbpaPPWYR4utmgdw/hH8Pgkp8M5/xpRI4=;
-        b=Nth5ZQoNuZmn0yqe5lvb7E+hHBM8CT1C4aDINcQe8B9os4W9gWouhPkaymvvI0lyqO
-         8oAlAGPi8NvRIYvS7ZQj6ZRDP6ra1CyAedk2aJiooHMyOA13HKLk4gLRvJHqikAjJgw4
-         nxUQXIHZB7GnfcX3DdTbGzgKA3uomal39uupZGqFRgBVS81TQWUSDaqx3qYrRykXZRKc
-         O3sIWbqBpXH9vN1KnchuzUpwXxV92qY16PSQnaUlnaEFDkzzCSgPmxu6q43lT1tdHP6C
-         Uys+2Wxmp4j+RLqJC1c5UQKrbOr7zKylb8NmY8lwcYQIs7zuCOtGUiJCEboKQ8ViYnx8
-         WszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WASsB7/AJqbpaPPWYR4utmgdw/hH8Pgkp8M5/xpRI4=;
-        b=DOO2QrlNFeZuZy7qg8Ju66CN7sl+QqbgpANrUaVeW77znPMM244JtYrHtziXZ3SbCz
-         iIPX18hRsHEVyO9tk3ai1H83AXXOT03qxAdoNR23LytD5JpMxp/PpIbc/Bpu47oDRyJ/
-         OLZEWht3pDQI3XmbYBgV6z6bX/92OfNaI+mOMwuNXhkOgckeAYGHAzB4wWHw7PexTobL
-         kRyQUDQKycyHFUUbggicewWhBh2zcwDA0UlrLvG3OOx2gynrKiyAcwle1dg0lkpSCqxH
-         Vs+0Hm9Zehim9Rjp4bea94mDsae9UhMOCqQyLYHnn3jPFQWLUOZxKxuyprxr1jYiOa5D
-         CUzg==
-X-Gm-Message-State: AFqh2kr7oU4YpsmKF4SYhPtsHOlCPzgzVFFLRe3gATG0FL4z9fBMmWF4
-        /B36Pw8LvW57hBcIZ9SgFgv/zQ==
-X-Google-Smtp-Source: AMrXdXuz2e5a92GvjETuBtgsHW6dLugRBY6fhHbi60NEj86Q2I8xP5ItVbu4751AwOJsiucLKTLGwg==
-X-Received: by 2002:a2e:e1a:0:b0:27f:f46c:2ae5 with SMTP id 26-20020a2e0e1a000000b0027ff46c2ae5mr1457430ljo.6.1672747226522;
-        Tue, 03 Jan 2023 04:00:26 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id y4-20020a2e9784000000b0027fd238fd44sm1585676lji.100.2023.01.03.04.00.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jan 2023 04:00:26 -0800 (PST)
-Message-ID: <4632f71b-2b67-b634-1cdb-69ac741a8ef0@linaro.org>
-Date:   Tue, 3 Jan 2023 13:00:25 +0100
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672749121; x=1704285121;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nLxPG5ZflyIbDiAPayFzeCH+sTmiUJr2lS1ffkhrM50=;
+  b=E95jT1xHUkfaqVrIVODE0lY1hzBvQxU7cWBtiyhXfxGIj+GCEepjTCEj
+   hHeJOCl43nmuWf1rskp5z8jNUfs6phz/2fuzDVKZ5RYqFvX6ZL5ZTfl8y
+   Jq4BSYq+PmvwhJ+08w61qxCX4p3F6zftRLUtJb/sXzksv+mUks1H+7dH0
+   GApCui5x4cHYp8HNMIcA0FqPvQoWIKFuegbS4tyTjD3RuTsnctcA/RHaf
+   p36sIO4ja8yWSg0rpUwnwY/s36iJkdf7ZSedv/KYgrZVH7hn05FoT9wEK
+   sH7WqXGAvvcZAK1CFy9lkPjNXgZRP3BAwdBqE3eWqIK9B7BXk5FnTmZUx
+   w==;
+X-IronPort-AV: E=Sophos;i="5.96,296,1665439200"; 
+   d="scan'208";a="28221129"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 03 Jan 2023 13:31:59 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 03 Jan 2023 13:31:59 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 03 Jan 2023 13:31:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672749119; x=1704285119;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nLxPG5ZflyIbDiAPayFzeCH+sTmiUJr2lS1ffkhrM50=;
+  b=QOslpDj1pxs5ofnzt6D6sf7CcgUJO+icJBRzzJzcGD+i4ZjEAti2qs0G
+   s+Olt6vphiv96ZCpOmsNi5QJRs3MrCj+HTZDiENevCzW1zTgNe61JQxE6
+   sGxAy/O8NoRw/6opweBLvFDh3EKTd63tfoWFVsvuXmNoA3PYrNYZabaMU
+   JzytFZNP+7eeoGBee9vzOsHReVFPZOujWmFtym2L79M1NUB+JPpBVjssc
+   9iCxPmzyh96Xd9yXPTZKVsuKrZ2nhjtzVtTIQqSZQpoAkslDsTRfiRKKO
+   fPomBZWwgDg1LwbNj8N/N0npk95imS3ArmrmyPBdiy0LVFyk3UGCVFY5h
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,296,1665439200"; 
+   d="scan'208";a="28221128"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 03 Jan 2023 13:31:59 +0100
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id D694B280056;
+        Tue,  3 Jan 2023 13:31:58 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Vasut <marex@denx.de>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/4] clk: rs9: Check for vendor/device ID
+Date:   Tue,  3 Jan 2023 13:31:51 +0100
+Message-Id: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 2/3] memory: atmel-sdramc: remove the driver
-To:     Claudiu.Beznea@microchip.com, mturquette@baylibre.com,
-        sboyd@kernel.org, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20221208114515.35179-1-claudiu.beznea@microchip.com>
- <20221208114515.35179-3-claudiu.beznea@microchip.com>
- <2f9793fb-8840-fd3c-8af1-42c6c11ed475@microchip.com>
- <9054a7cd-2993-840f-1f4b-7837b43a1800@linaro.org>
- <23389f8e-daf4-67ca-1e3b-c5a6433f3986@microchip.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <23389f8e-daf4-67ca-1e3b-c5a6433f3986@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/01/2023 12:18, Claudiu.Beznea@microchip.com wrote:
-> On 03.01.2023 12:06, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 03/01/2023 11:00, Claudiu.Beznea@microchip.com wrote:
->>> Hi, Krzysztof,
->>>
->>> On 08.12.2022 13:45, Claudiu Beznea wrote:
->>>> Driver does only clock request + enable for DDR clocks. DDR clocks are
->>>> enabled by bootloader and need to stay that way in Linux. To avoid having
->>>> these clocks disabled by clock subsystem in case there are no Linux
->>>> consumers for them the clocks were marked as critical in clock drivers.
->>>> With this, there is no need to have a separate driver that only does
->>>> clock request + enable.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->>>
->>> As this patch depends on patch 1/3 from this series, can I have your ack
->>> for it to take it though clock tree?
->>
->> Uh, why does it depend? I understood the changset is bisectable and
->> removal of unneeded driver will happen later. Otherwise it is not
->> bisectable...
-> 
-> AT91 devices will fail to boot if this patch is applied and 1/3 is not
-> there. This is because clock framework will disable DDR clocks because
-> there will be no consumer for them.
+This is in preparation to support additional devices which have different
+IDs as well as a slightly different register layout.
 
-This I understand, but why do you need this patch to be able to apply
-1/3? This is problem of bisectability. Not the other way.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/clk/clk-renesas-pcie.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index e6247141d0c0..0076ed8f11b0 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -45,6 +45,13 @@
+ #define RS9_REG_DID				0x6
+ #define RS9_REG_BCP				0x7
+ 
++#define RS9_REG_VID_IDT				0x01
++
++#define RS9_REG_DID_TYPE_FGV			(0x0 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_DBV			(0x1 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_DMV			(0x2 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_SHIFT			0x6
++
+ /* Supported Renesas 9-series models. */
+ enum rs9_model {
+ 	RENESAS_9FGV0241,
+@@ -54,6 +61,7 @@ enum rs9_model {
+ struct rs9_chip_info {
+ 	const enum rs9_model	model;
+ 	unsigned int		num_clks;
++	u8			did;
+ };
+ 
+ struct rs9_driver_data {
+@@ -270,6 +278,7 @@ static int rs9_probe(struct i2c_client *client)
+ {
+ 	unsigned char name[5] = "DIF0";
+ 	struct rs9_driver_data *rs9;
++	unsigned int vid, did;
+ 	struct clk_hw *hw;
+ 	int i, ret;
+ 
+@@ -306,6 +315,20 @@ static int rs9_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = regmap_read(rs9->regmap, RS9_REG_VID, &vid);
++	if (ret < 0)
++		return ret;
++	ret = regmap_read(rs9->regmap, RS9_REG_DID, &did);
++	if (ret < 0)
++		return ret;
++
++	if ((vid != RS9_REG_VID_IDT) || (did != rs9->chip_info->did)) {
++		dev_err(&client->dev,
++			"Incorrect VID/DID: %#02x, %#02x. Expected %#02x, %#02x\n",
++			vid, did, RS9_REG_VID_IDT, rs9->chip_info->did);
++		return -ENODEV;
++	}
++
+ 	/* Register clock */
+ 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
+ 		snprintf(name, 5, "DIF%d", i);
+@@ -349,6 +372,7 @@ static int __maybe_unused rs9_resume(struct device *dev)
+ static const struct rs9_chip_info renesas_9fgv0241_info = {
+ 	.model		= RENESAS_9FGV0241,
+ 	.num_clks	= 2,
++	.did		= RS9_REG_DID_TYPE_FGV | 0x02,
+ };
+ 
+ static const struct i2c_device_id rs9_id[] = {
+-- 
+2.34.1
 
