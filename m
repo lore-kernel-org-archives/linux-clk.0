@@ -2,358 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6E0C3DA7D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 15:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C55AC3DA7D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 15:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237821AbjACPTl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 10:19:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46284 "EHLO
+        id S237917AbjACPiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 10:38:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230131AbjACPTR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 10:19:17 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21743DE84
-        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 07:19:16 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id az7so5400546wrb.5
-        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 07:19:16 -0800 (PST)
+        with ESMTP id S230397AbjACPiS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 10:38:18 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B9411C0E;
+        Tue,  3 Jan 2023 07:38:16 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id m18so74537009eji.5;
+        Tue, 03 Jan 2023 07:38:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=frkw+2sa4K20aCLL926sF1F1E/GGEbWHarFjJ8N3yrI=;
-        b=F9hGOop3WwWcmh4w7qMuVk4F8YT0chwuvKoBsSInv8Kpbt8wdbaYeHzTLeKx+Y3lSB
-         oZvLVvT5uA8myRxu5H6FJbS4UEcb0ICNHnUXu7kKLenVLCG2MxcG6kwaBfDg308H2MBe
-         NO7rRgHrXtzks08yNxUnVH3+tOb4G+s2rKPSDeRstc4GCD2kFoWD4ZLuie3sX5XHEysC
-         yXQD+HEgMxWm85KMVwJGoStPV51V1Zg4IZ+YWOQI8Me7o6K6sH4jB3tj1uIMR1kLJBqH
-         akp4Hv5eSU1dvF1jm4WaTshLfI6/cDWJna82Etws14It9Uay50M74pBdVHuEMKXUtGCP
-         qbtA==
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qnD1cDOmNAJpkQ6T4dHEcYD9uVqliMR1LVDe+Z15bUE=;
+        b=Iv1X7xuxVaFSptHgLbIWWfPN9wFmWy5OetaEGRHUYf+22Qc0pMRgXhMJR52ZpXUwrh
+         XpifyNSEbtPqKt35Ofss4i2mxykqjemG0v3qLPLJP72K3ZtJzNb/94Qhz+fIlGHd3Jfq
+         1ABhT9xZLiu8AImzZgkeD3Om/BLz4VVs05Vd3Er/4CBFggQswMloVJj3ttYWgm3FmwNE
+         87X1puDaCguiScnZE4EhpNzr8EjnK6i6CI5ztjIdzFMSukLUP/DlPtncXIaQpbZsDVy/
+         sKDIa3oc3s6nJT3BT2U3hWCY6lnwrBk3Ryxvg+hQwYxwy6pW1FLMYDQ+q+9xSsX9c+Dh
+         27bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=frkw+2sa4K20aCLL926sF1F1E/GGEbWHarFjJ8N3yrI=;
-        b=d3jfGEgDG6NrpB4bxZVNVct/s+kyworVgFvjqNMpADFxbLSrsDpT+OyOmmLsNmzCIi
-         jt7JdioeZu8SyIOxdysLEH51N+p5Hc/fnSJcqJiZL7Ku7nc5bkU30oH8Ue6MlRk7j94Z
-         fDKulLm5vUfSjzjjM9Z/zFNemAtn0PIVqgzlZ1yGZXIyldfaRYXnlp1c2wQ00XXzeLF2
-         z/Wn2EfhyqKPr2oUm5ugH557t4ZZlr+ZijCHj8743pslU3k4R5dkpKJvk1jXGmiAoopH
-         RREKJXetBPe0d3L784VOp9Zci9eNKimIrHceXbbfH1aX3Wzn/cnc7GdctYLUbOD+lxAu
-         ORgw==
-X-Gm-Message-State: AFqh2kpfQ+sBQvBDEh9bd/bMuqlz+szsy7s5MjWKmOn8yws5+cVr8wNW
-        uY3pHCgwr0WSdB585SYeAzxcYg==
-X-Google-Smtp-Source: AMrXdXvLZ3/BV8ElG0V+yLc45aUkVjMqqkEZPHqX3YIGP4eoBlETnnIEnu6xzhrdqqa9cfYDq9C64g==
-X-Received: by 2002:a5d:5c0e:0:b0:269:70f0:8142 with SMTP id cc14-20020a5d5c0e000000b0026970f08142mr29591186wrb.56.1672759154608;
-        Tue, 03 Jan 2023 07:19:14 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:581d:e915:a047:a9b4? ([2a01:e0a:982:cbb0:581d:e915:a047:a9b4])
-        by smtp.gmail.com with ESMTPSA id z13-20020adff74d000000b002366f9bd717sm36798222wrp.45.2023.01.03.07.19.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jan 2023 07:19:13 -0800 (PST)
-Message-ID: <423a4c05-ccd8-4bcb-b686-c1eba79a6a3d@linaro.org>
-Date:   Tue, 3 Jan 2023 16:19:12 +0100
+        bh=qnD1cDOmNAJpkQ6T4dHEcYD9uVqliMR1LVDe+Z15bUE=;
+        b=pV+9ccFLytlpLulJqY7caybps/tHn6Jh2DPnMWfgBtbs6A2uZ6SXophT3NbzClI3Yk
+         hw1p9TA5wHmRvtGY9bfKFsMuQuibnk03lg48CF9lBv/A4rzHC/GjOVCD5GM4I5prztDL
+         NbDNAiSPtrjfILfeLce50Z7zKBl7hWRpa7euR6UGk3Q3DiJ4LaFifB8FozB/VTAN4emI
+         b1DmpBf+kmpLoB3Vc7Q1dAxdkd8YYrQAiSdib/UOos0ix2vf+DWSKfVLqDNl8rR5TScH
+         aVMS/ynZb+dHA7e6El1WOXGv+ZmA+AVfF1uJVnF9o7FXjyzzam332azXEwDZpfTBe6kR
+         8vKg==
+X-Gm-Message-State: AFqh2kqyhn4qcMznGupwIzPxUoMULkW6LWlUSHwXA62TycZUAdiYujmQ
+        u3BpKTtt9uN70L0V37Pz286o3rEwOFm3ChY+87M=
+X-Google-Smtp-Source: AMrXdXsqsRWBmQm2rrCrJ26cXBP2shbcsB3baAFq/41tPZjRzMUN2eJ0DUIMQZfQvqKpoxQGfEpCn9x5+tmyeD1QNcM=
+X-Received: by 2002:a17:906:a3cd:b0:7c1:9b74:d27a with SMTP id
+ ca13-20020a170906a3cd00b007c19b74d27amr5362235ejb.601.1672760295330; Tue, 03
+ Jan 2023 07:38:15 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 3/3] clk: qcom: add SM8550 DISPCC driver
-Content-Language: en-US
+References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org> <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Tue, 3 Jan 2023 08:38:04 -0700
+Message-ID: <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
+Subject: Re: [PATCH 05/16] dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230103-topic-sm8550-upstream-dispcc-v1-0-81bfcc26b2dc@linaro.org>
- <20230103-topic-sm8550-upstream-dispcc-v1-3-81bfcc26b2dc@linaro.org>
- <CAA8EJprLTLCskyTOLzfchNt1mrCUu47qMH43REOKbY0c3CxYTw@mail.gmail.com>
-Organization: Linaro Developer Services
-In-Reply-To: <CAA8EJprLTLCskyTOLzfchNt1mrCUu47qMH43REOKbY0c3CxYTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/01/2023 15:24, Dmitry Baryshkov wrote:
-> On Tue, 3 Jan 2023 at 15:54, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>
->> Add support for the display clock controller found in SM8550
->> based devices.
->>
->> This clock controller feeds the Multimedia Display SubSystem (MDSS).
->> This driver is based on the SM8450 support.
-> 
-> Looks good, few minor nits below:
-> 
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/clk/qcom/Kconfig         |    9 +
->>   drivers/clk/qcom/Makefile        |    1 +
->>   drivers/clk/qcom/dispcc-sm8550.c | 1814 ++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 1824 insertions(+)
->>
-> 
-> [skipped]
-> 
->> +static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
->> +       .reg = 0x8120,
->> +       .shift = 0,
->> +       .width = 4,
->> +       .clkr.hw.init = &(struct clk_init_data) {
->> +               .name = "disp_cc_mdss_byte0_div_clk_src",
->> +               .parent_data = &(const struct clk_parent_data) {
->> +                       .hw = &disp_cc_mdss_byte0_clk_src.clkr.hw,
->> +               },
-> 
-> We can use parent_hws in such cases (here and below).
+On Wed, Dec 28, 2022 at 6:33 AM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> The test clock apparently it's not used by anyone upstream. Remove it.
 
-Sure, will switch to parent_hws for v2.
+IMO, NACK,
 
-> 
->> +               .num_parents = 1,
->> +               .ops = &clk_regmap_div_ops,
->> +       },
->> +};
->> +
->> +static struct clk_regmap_div disp_cc_mdss_byte1_div_clk_src = {
->> +       .reg = 0x813c,
->> +       .shift = 0,
->> +       .width = 4,
->> +       .clkr.hw.init = &(struct clk_init_data) {
->> +               .name = "disp_cc_mdss_byte1_div_clk_src",
->> +               .parent_data = &(const struct clk_parent_data) {
->> +                       .hw = &disp_cc_mdss_byte1_clk_src.clkr.hw,
->> +               },
->> +               .num_parents = 1,
->> +               .ops = &clk_regmap_div_ops,
->> +       },
->> +};
-> 
-> [skipped most of the clocks]
-> 
->> +static struct gdsc mdss_gdsc = {
->> +       .gdscr = 0x9000,
->> +       .pd = {
->> +               .name = "mdss_gdsc",
->> +       },
->> +       .pwrsts = PWRSTS_OFF_ON,
->> +       .flags = HW_CTRL | RETAIN_FF_ENABLE,
->> +};
->> +
->> +static struct gdsc mdss_int2_gdsc = {
->> +       .gdscr = 0xb000,
->> +       .pd = {
->> +               .name = "mdss_int2_gdsc",
->> +       },
->> +       .pwrsts = PWRSTS_OFF_ON,
->> +       .flags = HW_CTRL | RETAIN_FF_ENABLE,
->> +};
->> +
->> +static struct clk_regmap *disp_cc_sm8550_clocks[] = {
->> +       [DISP_CC_MDSS_ACCU_CLK] = &disp_cc_mdss_accu_clk.clkr,
->> +       [DISP_CC_MDSS_AHB1_CLK] = &disp_cc_mdss_ahb1_clk.clkr,
->> +       [DISP_CC_MDSS_AHB_CLK] = &disp_cc_mdss_ahb_clk.clkr,
->> +       [DISP_CC_MDSS_AHB_CLK_SRC] = &disp_cc_mdss_ahb_clk_src.clkr,
->> +       [DISP_CC_MDSS_BYTE0_CLK] = &disp_cc_mdss_byte0_clk.clkr,
->> +       [DISP_CC_MDSS_BYTE0_CLK_SRC] = &disp_cc_mdss_byte0_clk_src.clkr,
->> +       [DISP_CC_MDSS_BYTE0_DIV_CLK_SRC] = &disp_cc_mdss_byte0_div_clk_src.clkr,
->> +       [DISP_CC_MDSS_BYTE0_INTF_CLK] = &disp_cc_mdss_byte0_intf_clk.clkr,
->> +       [DISP_CC_MDSS_BYTE1_CLK] = &disp_cc_mdss_byte1_clk.clkr,
->> +       [DISP_CC_MDSS_BYTE1_CLK_SRC] = &disp_cc_mdss_byte1_clk_src.clkr,
->> +       [DISP_CC_MDSS_BYTE1_DIV_CLK_SRC] = &disp_cc_mdss_byte1_div_clk_src.clkr,
->> +       [DISP_CC_MDSS_BYTE1_INTF_CLK] = &disp_cc_mdss_byte1_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_AUX_CLK] = &disp_cc_mdss_dptx0_aux_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_AUX_CLK_SRC] = &disp_cc_mdss_dptx0_aux_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX0_CRYPTO_CLK] = &disp_cc_mdss_dptx0_crypto_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_LINK_CLK] = &disp_cc_mdss_dptx0_link_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_LINK_CLK_SRC] = &disp_cc_mdss_dptx0_link_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX0_LINK_DIV_CLK_SRC] = &disp_cc_mdss_dptx0_link_div_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX0_LINK_INTF_CLK] = &disp_cc_mdss_dptx0_link_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_PIXEL0_CLK] = &disp_cc_mdss_dptx0_pixel0_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC] = &disp_cc_mdss_dptx0_pixel0_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX0_PIXEL1_CLK] = &disp_cc_mdss_dptx0_pixel1_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC] = &disp_cc_mdss_dptx0_pixel1_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX0_USB_ROUTER_LINK_INTF_CLK] =
->> +               &disp_cc_mdss_dptx0_usb_router_link_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_AUX_CLK] = &disp_cc_mdss_dptx1_aux_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_AUX_CLK_SRC] = &disp_cc_mdss_dptx1_aux_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX1_CRYPTO_CLK] = &disp_cc_mdss_dptx1_crypto_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_LINK_CLK] = &disp_cc_mdss_dptx1_link_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_LINK_CLK_SRC] = &disp_cc_mdss_dptx1_link_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX1_LINK_DIV_CLK_SRC] = &disp_cc_mdss_dptx1_link_div_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX1_LINK_INTF_CLK] = &disp_cc_mdss_dptx1_link_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_PIXEL0_CLK] = &disp_cc_mdss_dptx1_pixel0_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC] = &disp_cc_mdss_dptx1_pixel0_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX1_PIXEL1_CLK] = &disp_cc_mdss_dptx1_pixel1_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC] = &disp_cc_mdss_dptx1_pixel1_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX1_USB_ROUTER_LINK_INTF_CLK] =
->> +               &disp_cc_mdss_dptx1_usb_router_link_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_AUX_CLK] = &disp_cc_mdss_dptx2_aux_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_AUX_CLK_SRC] = &disp_cc_mdss_dptx2_aux_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX2_CRYPTO_CLK] = &disp_cc_mdss_dptx2_crypto_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_LINK_CLK] = &disp_cc_mdss_dptx2_link_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_LINK_CLK_SRC] = &disp_cc_mdss_dptx2_link_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX2_LINK_DIV_CLK_SRC] = &disp_cc_mdss_dptx2_link_div_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX2_LINK_INTF_CLK] = &disp_cc_mdss_dptx2_link_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_PIXEL0_CLK] = &disp_cc_mdss_dptx2_pixel0_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC] = &disp_cc_mdss_dptx2_pixel0_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX2_PIXEL1_CLK] = &disp_cc_mdss_dptx2_pixel1_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC] = &disp_cc_mdss_dptx2_pixel1_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX3_AUX_CLK] = &disp_cc_mdss_dptx3_aux_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX3_AUX_CLK_SRC] = &disp_cc_mdss_dptx3_aux_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX3_CRYPTO_CLK] = &disp_cc_mdss_dptx3_crypto_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX3_LINK_CLK] = &disp_cc_mdss_dptx3_link_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX3_LINK_CLK_SRC] = &disp_cc_mdss_dptx3_link_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX3_LINK_DIV_CLK_SRC] = &disp_cc_mdss_dptx3_link_div_clk_src.clkr,
->> +       [DISP_CC_MDSS_DPTX3_LINK_INTF_CLK] = &disp_cc_mdss_dptx3_link_intf_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX3_PIXEL0_CLK] = &disp_cc_mdss_dptx3_pixel0_clk.clkr,
->> +       [DISP_CC_MDSS_DPTX3_PIXEL0_CLK_SRC] = &disp_cc_mdss_dptx3_pixel0_clk_src.clkr,
->> +       [DISP_CC_MDSS_ESC0_CLK] = &disp_cc_mdss_esc0_clk.clkr,
->> +       [DISP_CC_MDSS_ESC0_CLK_SRC] = &disp_cc_mdss_esc0_clk_src.clkr,
->> +       [DISP_CC_MDSS_ESC1_CLK] = &disp_cc_mdss_esc1_clk.clkr,
->> +       [DISP_CC_MDSS_ESC1_CLK_SRC] = &disp_cc_mdss_esc1_clk_src.clkr,
->> +       [DISP_CC_MDSS_MDP1_CLK] = &disp_cc_mdss_mdp1_clk.clkr,
->> +       [DISP_CC_MDSS_MDP_CLK] = &disp_cc_mdss_mdp_clk.clkr,
->> +       [DISP_CC_MDSS_MDP_CLK_SRC] = &disp_cc_mdss_mdp_clk_src.clkr,
->> +       [DISP_CC_MDSS_MDP_LUT1_CLK] = &disp_cc_mdss_mdp_lut1_clk.clkr,
->> +       [DISP_CC_MDSS_MDP_LUT_CLK] = &disp_cc_mdss_mdp_lut_clk.clkr,
->> +       [DISP_CC_MDSS_NON_GDSC_AHB_CLK] = &disp_cc_mdss_non_gdsc_ahb_clk.clkr,
->> +       [DISP_CC_MDSS_PCLK0_CLK] = &disp_cc_mdss_pclk0_clk.clkr,
->> +       [DISP_CC_MDSS_PCLK0_CLK_SRC] = &disp_cc_mdss_pclk0_clk_src.clkr,
->> +       [DISP_CC_MDSS_PCLK1_CLK] = &disp_cc_mdss_pclk1_clk.clkr,
->> +       [DISP_CC_MDSS_PCLK1_CLK_SRC] = &disp_cc_mdss_pclk1_clk_src.clkr,
->> +       [DISP_CC_MDSS_RSCC_AHB_CLK] = &disp_cc_mdss_rscc_ahb_clk.clkr,
->> +       [DISP_CC_MDSS_RSCC_VSYNC_CLK] = &disp_cc_mdss_rscc_vsync_clk.clkr,
->> +       [DISP_CC_MDSS_VSYNC1_CLK] = &disp_cc_mdss_vsync1_clk.clkr,
->> +       [DISP_CC_MDSS_VSYNC_CLK] = &disp_cc_mdss_vsync_clk.clkr,
->> +       [DISP_CC_MDSS_VSYNC_CLK_SRC] = &disp_cc_mdss_vsync_clk_src.clkr,
->> +       [DISP_CC_PLL0] = &disp_cc_pll0.clkr,
->> +       [DISP_CC_PLL1] = &disp_cc_pll1.clkr,
->> +       [DISP_CC_SLEEP_CLK] = &disp_cc_sleep_clk.clkr,
->> +       [DISP_CC_SLEEP_CLK_SRC] = &disp_cc_sleep_clk_src.clkr,
->> +       [DISP_CC_XO_CLK_SRC] = &disp_cc_xo_clk_src.clkr,
->> +};
->> +
->> +static const struct qcom_reset_map disp_cc_sm8550_resets[] = {
->> +       [DISP_CC_MDSS_CORE_BCR] = { 0x8000 },
->> +       [DISP_CC_MDSS_CORE_INT2_BCR] = { 0xa000 },
->> +       [DISP_CC_MDSS_RSCC_BCR] = { 0xc000 },
->> +};
->> +
->> +static struct gdsc *disp_cc_sm8550_gdscs[] = {
->> +       [MDSS_GDSC] = &mdss_gdsc,
->> +       [MDSS_INT2_GDSC] = &mdss_int2_gdsc,
->> +};
->> +
->> +static const struct regmap_config disp_cc_sm8550_regmap_config = {
->> +       .reg_bits = 32,
->> +       .reg_stride = 4,
->> +       .val_bits = 32,
->> +       .max_register = 0x11008,
->> +       .fast_io = true,
->> +};
->> +
->> +static struct qcom_cc_desc disp_cc_sm8550_desc = {
->> +       .config = &disp_cc_sm8550_regmap_config,
->> +       .clks = disp_cc_sm8550_clocks,
->> +       .num_clks = ARRAY_SIZE(disp_cc_sm8550_clocks),
->> +       .resets = disp_cc_sm8550_resets,
->> +       .num_resets = ARRAY_SIZE(disp_cc_sm8550_resets),
->> +       .gdscs = disp_cc_sm8550_gdscs,
->> +       .num_gdscs = ARRAY_SIZE(disp_cc_sm8550_gdscs),
->> +};
->> +
->> +static const struct of_device_id disp_cc_sm8550_match_table[] = {
->> +       { .compatible = "qcom,sm8550-dispcc" },
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, disp_cc_sm8550_match_table);
->> +
->> +static void disp_cc_sm8550_pm_runtime_disable(void *data)
->> +{
->> +       pm_runtime_disable(data);
->> +}
->> +
->> +static int disp_cc_sm8550_probe(struct platform_device *pdev)
->> +{
->> +       struct regmap *regmap;
->> +       int ret;
->> +
->> +       pm_runtime_enable(&pdev->dev);
-> 
-> We can use devm_pm_runtime_enable() here.
+This is not a valid justification.
 
-Ack
+The DT is supposed to describe the hardware, and should be complete in
+that regard.  This clock exists in the hardware, so it should be
+described.
 
-Thanks,
-Neil
+DT is supposed to be separate from Linux, that is it doesn't matter
+that Linux doesn't consume this clock.  Maybe FreeBSD does, or some
+other OS.  Linux doesn't own Device Tree any more than it owns BIOS or
+ACPI.
 
-> 
->> +
->> +       ret = devm_add_action_or_reset(&pdev->dev, disp_cc_sm8550_pm_runtime_disable, &pdev->dev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = pm_runtime_resume_and_get(&pdev->dev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       regmap = qcom_cc_map(pdev, &disp_cc_sm8550_desc);
->> +       if (IS_ERR(regmap))
->> +               return PTR_ERR(regmap);
->> +
->> +       clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
->> +       clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
->> +
->> +       /* Enable clock gating for MDP clocks */
->> +       regmap_update_bits(regmap, DISP_CC_MISC_CMD, 0x10, 0x10);
->> +
->> +       /*
->> +        * Keep clocks always enabled:
->> +        *      disp_cc_xo_clk
->> +        */
->> +       regmap_update_bits(regmap, 0xe054, BIT(0), BIT(0));
->> +
->> +       ret = qcom_cc_really_probe(pdev, &disp_cc_sm8550_desc, regmap);
->> +
->> +       pm_runtime_put(&pdev->dev);
->> +
->> +       return ret;
->> +}
->> +
->> +static struct platform_driver disp_cc_sm8550_driver = {
->> +       .probe = disp_cc_sm8550_probe,
->> +       .driver = {
->> +               .name = "disp_cc-sm8550",
->> +               .of_match_table = disp_cc_sm8550_match_table,
->> +       },
->> +};
->> +
->> +static int __init disp_cc_sm8550_init(void)
->> +{
->> +       return platform_driver_register(&disp_cc_sm8550_driver);
->> +}
->> +subsys_initcall(disp_cc_sm8550_init);
->> +
->> +static void __exit disp_cc_sm8550_exit(void)
->> +{
->> +       platform_driver_unregister(&disp_cc_sm8550_driver);
->> +}
->> +module_exit(disp_cc_sm8550_exit);
->> +
->> +MODULE_DESCRIPTION("QTI DISPCC SM8550 Driver");
->> +MODULE_LICENSE("GPL");
->>
->> --
->> 2.34.1
-> 
-> 
-> 
-
+Also, I'm listed as a maintainer for this binding, yet this series is
+not addressed to me.  Seems like you might need to review how you are
+composing your patches.
