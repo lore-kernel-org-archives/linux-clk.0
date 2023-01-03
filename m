@@ -2,119 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF71C54EBD
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 15:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBC2C3DA7D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Jan 2023 16:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237725AbjACPpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Jan 2023 10:45:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57634 "EHLO
+        id S233512AbjACQAd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Jan 2023 11:00:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233299AbjACPpN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 10:45:13 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA5911C22;
-        Tue,  3 Jan 2023 07:45:12 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id B881785569;
-        Tue,  3 Jan 2023 16:45:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1672760711;
-        bh=Ny4n0JEVF8y3jagsgv6Gt81L9Gok9NESzZwAFZRsUlc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=BL9x05ZvWcIsIkBbAM47qtqp6/l0P/ouM5+8krCAWqakSIu7t5+WgHIlqNBP1DTz0
-         ujRQLszhk5a3LrnBl3i8YMvIN4xTkoYfUaB82GKEF3GZRz+6mh5Zrg3lseM8GuJz8Y
-         Go2stngw3xjg1AJTcpgwFbRZfeg42lKTwmK4SEzSwrripW29HpWh1A10pq7JEgHR64
-         z5dtds3K6LeXYuQqSK1qKiynje4VebdqSwhKGfbLQAtAEdpj1q8zE0vS+y5I/1aVik
-         oKb4kTOJgfwUVqSdH8tbszVn/MxSSYDG0P5xBOTfVZXX5nXk9TSs5g8tH1XCmvCja4
-         dy5WiKpmrG+mA==
-Message-ID: <8e9cc8fa-cddc-3c99-9810-f2355a1e1913@denx.de>
-Date:   Tue, 3 Jan 2023 15:31:21 +0100
+        with ESMTP id S233348AbjACQAc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2023 11:00:32 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20486120B1
+        for <linux-clk@vger.kernel.org>; Tue,  3 Jan 2023 08:00:31 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id p36so46206844lfa.12
+        for <linux-clk@vger.kernel.org>; Tue, 03 Jan 2023 08:00:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fsEzWFiMVhRqX2IFEPw8asDdcQK9y3UraFOcKRzBzCg=;
+        b=BPV6b+Qwim5BalbzVnJ6nZUkbCljHaizqzeos+hbzBV2gcgFWYcp7JnVFN+jt86Pug
+         tP77izEL1ADvjJyz7zPTKK9sSnTzyuVVwUgEvrgiAbjXehtBlruJcjru2fEAmBnpa77P
+         vS1DFxQMcAPJGP1S/JIedx/eC+F1XFgjso66soIDLSSi5B5qMWUsOmp3/IyiZOS3dtvP
+         MsDT+DDteytECWc7QWND/4LfXSvLjAPi1Fcqu0dBVbwd3p974WXo3kjY6L6vf8D23gib
+         6RC9yKNnU9iq/q24e+OctmKXMdvpYbMbdKeV+z9fU1jvPDKk2slUov/q6BsHR2sIfEcw
+         O/lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fsEzWFiMVhRqX2IFEPw8asDdcQK9y3UraFOcKRzBzCg=;
+        b=UP1gWDOilzvHJYbcA+MXGRxBWTntSgS6//sg5LNijNwdCSJqDjydySt3kokYu1MgL8
+         eno9M/t2xpx/8OuumEgn7/6ujxIDMyhQr1oupUCxcGfu6hq3fFvUBu2cRraSOAZFCO2e
+         dQ4y/KU4rk6NYc0xABDsmK/OIk3QJKDv2MGPsvXANEoZgtSLWfmaUX079DT2ahqG42nV
+         Mfx1nKaSU9EGnFrNB8zHHhDghRxstLUVsPvcMOFxlKOSHdgsT3aAR8V49TMznQQ/zZny
+         tqwHCUua9SehcQ/++xkM06Xp3JWospIZ5KcxmsooGx/70U35iN6ucIFeQucW7RNRU7ev
+         DPvw==
+X-Gm-Message-State: AFqh2koRUeVoI1I0S8Em9vPUA84wgjJfKe9NkXLRQuJDb3Hi0v9hUUIz
+        DPHMDAQOjrB8uAiIJfcamJ56Cg==
+X-Google-Smtp-Source: AMrXdXucfa+6dsTdEF05zpniX4JCgXxQZApYR5KwR6nyG+e03FSeQg0Sm8IsDKLktspatDf/o4lBSA==
+X-Received: by 2002:a05:6512:2624:b0:4b5:8e1e:867b with SMTP id bt36-20020a056512262400b004b58e1e867bmr12760289lfb.59.1672761629251;
+        Tue, 03 Jan 2023 08:00:29 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id p14-20020ac24ece000000b004cb40db03desm242737lfr.55.2023.01.03.08.00.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jan 2023 08:00:28 -0800 (PST)
+Message-ID: <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
+Date:   Tue, 3 Jan 2023 18:00:28 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH 3/4] clk: rs9: Support device specific dif bit calculation
-Content-Language: en-US
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+Subject: Re: [PATCH 15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
+Content-Language: en-GB
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
- <20230103123154.3424817-3-alexander.stein@ew.tq-group.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230103123154.3424817-3-alexander.stein@ew.tq-group.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
+ <20230103145515.1164020-16-dmitry.baryshkov@linaro.org>
+ <CAOCk7Nr4smGnQS-yh1hGKFFXzeUUt86JSdiuoSun7vJ11z9SWQ@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <CAOCk7Nr4smGnQS-yh1hGKFFXzeUUt86JSdiuoSun7vJ11z9SWQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/3/23 13:31, Alexander Stein wrote:
-> The calculation DIFx is BIT(n) +1 is only true for 9FGV0241. With
-> additional devices this is getting more complicated.
-> Support a base bit for the DIF calculation, currently only devices
-> with consecutive bits are supported, e.g. the 6-channel device needs
-> additional logic.
+On 03/01/2023 17:08, Jeffrey Hugo wrote:
+> On Tue, Jan 3, 2023 at 7:56 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> Change several entries of parent_data to use parent_hws instead, which
+>> results in slightly more ovbious code.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->   drivers/clk/clk-renesas-pcie.c | 29 ++++++++++++++++-------------
->   1 file changed, 16 insertions(+), 13 deletions(-)
+> obvious -> obvious
 > 
-> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-> index 0076ed8f11b0..d19b8e759eea 100644
-> --- a/drivers/clk/clk-renesas-pcie.c
-> +++ b/drivers/clk/clk-renesas-pcie.c
-> @@ -18,7 +18,6 @@
->   #include <linux/regmap.h>
->   
->   #define RS9_REG_OE				0x0
-> -#define RS9_REG_OE_DIF_OE(n)			BIT((n) + 1)
->   #define RS9_REG_SS				0x1
->   #define RS9_REG_SS_AMP_0V6			0x0
->   #define RS9_REG_SS_AMP_0V7			0x1
-> @@ -31,9 +30,6 @@
->   #define RS9_REG_SS_SSC_MASK			(3 << 3)
->   #define RS9_REG_SS_SSC_LOCK			BIT(5)
->   #define RS9_REG_SR				0x2
-> -#define RS9_REG_SR_2V0_DIF(n)			0
-> -#define RS9_REG_SR_3V0_DIF(n)			BIT((n) + 1)
-> -#define RS9_REG_SR_DIF_MASK(n)		BIT((n) + 1)
->   #define RS9_REG_REF				0x3
->   #define RS9_REG_REF_OE				BIT(4)
->   #define RS9_REG_REF_OD				BIT(5)
-> @@ -62,6 +58,7 @@ struct rs9_chip_info {
->   	const enum rs9_model	model;
->   	unsigned int		num_clks;
->   	u8			did;
-> +	u8			(*calc_dif)(int idx);
->   };
->   
->   struct rs9_driver_data {
-> @@ -160,8 +157,14 @@ static const struct regmap_config rs9_regmap_config = {
->   	.reg_read = rs9_regmap_i2c_read,
->   };
->   
-> +static u8 rs9fgv0241_calc_dif(int idx)
-> +{
-> +	return BIT(idx) + 1;
+> Also, you are changing one of two parent_data structs in this file.
+> That's not "several".  It's really not clear why you are touching one,
+> but not the other.  Can you be more specific about what is going on in
+> this particular file?
 
-Can't we just do
+The other struct has .hw and .fw_data entries so it can not be switched 
+to just clk_hw enumeration.
 
-if (model == ...)
-  return BIT(idx) + 1
-else if (model == ...)
-  return BIT(idx);
-...
+I agree, that one is not 'several' (yeah, I was just using template for 
+commit messages), I can change that for v2.
 
-?
+-- 
+With best wishes
+Dmitry
 
-[...]
