@@ -2,104 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE49AC54EBE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 13:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6305AC54EF0
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 13:32:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236983AbjADNcF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S238920AbjADNcF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 4 Jan 2023 08:32:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34738 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239445AbjADNbV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 08:31:21 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A6E3D9DA;
-        Wed,  4 Jan 2023 05:27:06 -0800 (PST)
-Received: by mail-qt1-f169.google.com with SMTP id c7so27127172qtw.8;
-        Wed, 04 Jan 2023 05:27:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3apLs5SUEYCS8chIsKhmtTxwRF+eOByUathcApBcwhU=;
-        b=tREeZoatX4hC/sEGfSkC1T1RW1lXCIzjWw+rj9cIsb9iu8R8hZTL2c+vcMs+mEgx+r
-         2HASgJVSloNieaOSRBx6DCScq/wFT7yT0giPVLl95oOgwNzK2xQRWm22i/VWaJY1Fogl
-         Z7AKmlIq2i8zjj6Q/CW8vbB8ztiG9V+w0ANKO0bVbGVcwdJCoSUcWJOg2+DaQWAo0kd6
-         1SKd6TMi2W7pL2YzdHFr3HGSHrocdGEqnKSFpFP0MQ7bsqXX+XPf7NKAUfVdQD/LAVYF
-         7zKugAyV0elP7apZoW9LsUjzzFYj9T1kaFkV5PIl+aqC1F2lCbSmLDoAVtY5BKFdK0Pe
-         ubIA==
-X-Gm-Message-State: AFqh2kobJKjg+4uKtGowr/HMaFm4VeFeVzVF8+JVpcSPGwG+bM8ATn+Q
-        t50nxYqVvrRtlq73k0kpC/8fl2i2Lu4LKw==
-X-Google-Smtp-Source: AMrXdXsRMiUBdFPQxgwSndmnnsvCE17pTM+kW/eH0JJCydi8O/nTMKjYyO0fMfFeldbzuW4PnIow1Q==
-X-Received: by 2002:ac8:7457:0:b0:3a8:2122:7c28 with SMTP id h23-20020ac87457000000b003a821227c28mr69960797qtr.47.1672838825357;
-        Wed, 04 Jan 2023 05:27:05 -0800 (PST)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id g14-20020ac87d0e000000b003a7eceb8cbasm20494228qtb.90.2023.01.04.05.27.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jan 2023 05:27:05 -0800 (PST)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-43ea87d0797so476160087b3.5;
-        Wed, 04 Jan 2023 05:27:04 -0800 (PST)
-X-Received: by 2002:a81:1b0a:0:b0:37e:6806:a5f9 with SMTP id
- b10-20020a811b0a000000b0037e6806a5f9mr5542429ywb.47.1672838824691; Wed, 04
- Jan 2023 05:27:04 -0800 (PST)
+        with ESMTP id S239378AbjADNbe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 08:31:34 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB986598;
+        Wed,  4 Jan 2023 05:29:44 -0800 (PST)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304C2XI8005046;
+        Wed, 4 Jan 2023 13:29:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=qVxLVNi1vjauSf0iGsvDfnimrpo5LpqH79zwOIt7/GY=;
+ b=PLECV1xkzKzLGSpt8JUye6iuuHY6AfXobF+YlwZrqI7Km7ajT0hJ9RE75or1Isg4C+kI
+ vDGhVhC1PQAPJNPXOG0nGTwwEkq9GFXDuxMDauqyN5ddusLqVqC2Kg1q17eA56nWeroG
+ LPmwYcnn/d9pfU5eQICb7wZZ4tiD3yqs1qHptTtMV6WyBBJfDUCEltTNyaEpRd3ybSCs
+ rSVjzZQSuM929LPI7SPmr13TwN8n2uUFkR4YKkk4XrlFOWu6Ipil3WNeQ7z5xJEwY4VH
+ m4yHc7TsbQhRoH7l9RmuPr3g05dtjOu8bhu+rPu2HUMxHEZImG0ZdVUr40HI1f8XPd2b Pw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvwt0q8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Jan 2023 13:29:38 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304DTasa005660
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 4 Jan 2023 13:29:36 GMT
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 4 Jan 2023 05:29:31 -0800
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>,
+        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH v3 1/4] dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode property
+Date:   Wed, 4 Jan 2023 18:59:12 +0530
+Message-ID: <1672838955-7759-2-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1672838955-7759-1-git-send-email-quic_srivasam@quicinc.com>
+References: <1672838955-7759-1-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
-References: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
- <Y7RmnswYX+1g5vci@spud>
-In-Reply-To: <Y7RmnswYX+1g5vci@spud>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Jan 2023 14:26:53 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
-Message-ID: <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
-Subject: Re: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for
- allocating formatted strings
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AJZHsfQdua3cR68m-0oLf1Mk9lvAvy0L
+X-Proofpoint-ORIG-GUID: AJZHsfQdua3cR68m-0oLf1Mk9lvAvy0L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2023-01-04_07,2023-01-04_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 adultscore=13
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301040113
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Conor,
+When this property is set, the remoteproc is used to boot the
+LPASS and therefore qdsp6ss clocks would be used to bring LPASS
+out of reset, hence they are directly controlled by the remoteproc.
 
-On Tue, Jan 3, 2023 at 6:32 PM Conor Dooley <conor@kernel.org> wrote:
-> On Tue, Jan 03, 2023 at 05:45:30PM +0100, Geert Uytterhoeven wrote:
-> > In various places, string buffers of a fixed size are allocated, and
-> > filled using snprintf() with the same fixed size, which is error-prone.
-> >
-> > Replace this by calling devm_kasprintf() instead, which always uses the
-> > appropriate size.
-> >
-> > While at it, remove an unneeded intermediate variable, which allows us
-> > to drop a cast as a bonus.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Tested-by: Conor Dooley <conor.dooley@microchip.com>
+This is a cleanup done to handle overlap of regmap of lpasscc
+and adsp remoteproc blocks.
 
-Thanks!
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> I half wonder if this should actually have a fixes tag too. Since it
-> used what came after the @ in $full_name, it'd be possible to create
-> (an incorrect) DTS that would lead to a clash between pll names &
-> therefore probe would fail.
-> The tag would be:
-> Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+index 6151fde..97c6bd9 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+@@ -41,6 +41,12 @@ properties:
+       - const: qdsp6ss
+       - const: top_cc
+ 
++  qcom,adsp-pil-mode:
++    description:
++      Indicates if the LPASS would be brought out of reset using
++      remoteproc peripheral loader.
++    type: boolean
++
+ required:
+   - compatible
+   - reg
+@@ -60,6 +66,7 @@ examples:
+       reg-names = "qdsp6ss", "top_cc";
+       clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
+       clock-names = "iface";
++      qcom,adsp-pil-mode;
+       #clock-cells = <1>;
+     };
+ ...
+-- 
+2.7.4
 
-But I don't change any of that in my patch?
-/me confused.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
