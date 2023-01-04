@@ -2,147 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB186C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 10:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1EDC46467
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 10:49:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233892AbjADKpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 05:45:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
+        id S239170AbjADKtE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 05:49:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234693AbjADKpv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 05:45:51 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D3AE68
-        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 02:45:48 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id f34so49769091lfv.10
-        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 02:45:48 -0800 (PST)
+        with ESMTP id S234701AbjADKsZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 05:48:25 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B279C34758
+        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 02:46:58 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id v25so2407799lfe.12
+        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 02:46:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cg4BC+vc4cMgNMH7aEk78TMLGpHpjUUBSbYyFixGuO4=;
-        b=e4yVbFlHwU9Jfjm1orGT0XQq7QzJwb+hfN6FVW8KujVyaQxPeWAg8czESdb7jpL0pg
-         0iSLVXwxZU14KxGTVJ3XvS6JhgKw1hHlxEVfJg54irc2UOdtBENvxpO8YhgRKVTglh+Z
-         phnBEbtzY1CC4/4sMmzo0ZVYz2V4ZGH+CdJCFsvJ7NZVcX1dbYCG6OXlKZtbCTXQtRBX
-         adFswxqMUJYUhj3lWQaH1qO3drBQeSCPum3Zcq5OVLLKw8xSDHoKc69E6DZo1h7f6Tss
-         xNN0mduhZ+FjwD/W9up4sxCUtEnQqFpNg1H/sKo+oWisuL2FMN2uy1X+WThrzmWQc0KJ
-         GXJA==
+        bh=NfmlmwOicK+P4Fj19lQDKKUueXvm4uJUNgQaNuxICg4=;
+        b=JSuQn1rOdaxTDZtFChmYr1iKMXcr8UELgNW3/stAYotGA2EIeyL/+xXgdDBYkrU0/p
+         UL8uTjP1eQh2c+d71VwAcT5rxp2P4BygBNye1lDkReI41EsU0TC1246fndj1D5vRGfzB
+         W1mFcEVn5iNtdQunPlbie2r8kAq3HrvQ/fL1KCWI8mDLDbvgrmEFYv5jTZZHEBfV6xf+
+         XPNI6pPCG1EM42swVNv+3sWQqbF8B2eWRTsK/cgW9I/lMUFG95nd3wwvmWMNuMDZlMxg
+         CwtX8YOH31DatVuN7I8cl/naEd/i3kLV3Ppxf6ugAjx4q2IN89Q8lw4Y+GiOCfUHFaYt
+         a0OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cg4BC+vc4cMgNMH7aEk78TMLGpHpjUUBSbYyFixGuO4=;
-        b=k7VmlnrJbIHSuZVFKrM9m0rF+GuHjs39eVIAz6jH4HQc4jBi0zpP6V1QFf+R4Bqobw
-         6b0Jto2WPpVk+oCNxZaK6CfF0WvhkSZg9HHklAwO5O84P7/fC/rOhgzaos2741/LUYeX
-         ZVUsc57gUOHpRgqr/P/cdg6uIbMZXJIaj8/6+BXX9jP+isaD0kyiI1M9rqtbtzXUHJmq
-         iHfWNeZdXz2UHOzNAAMCqCBjJDskY3wWZJa9Y0Ruy8FYjIwfW9CrItBoo7X7D+qZ4ziZ
-         qyYBcTce9u8E/yi9IPJnolOREVJUh6wfNttMOBMi9ha+E8JjbIpIdTshzUQeKkOVRoQo
-         rPRQ==
-X-Gm-Message-State: AFqh2kqC6PHZo2/JFecCIL32ZxojUHVvll9DoInOa/t5+5LLgw7x6zKB
-        x77ALS0j+nhGfzhs+eEVvApgBA==
-X-Google-Smtp-Source: AMrXdXuSgV9Ik7Vl3wECpAIG5u4xVuxXxkhfzzYDNDQgqJSE5ER0jqkeg9X6FBdjufyfYOJ3u/hXGQ==
-X-Received: by 2002:a05:6512:340a:b0:4b4:f212:6173 with SMTP id i10-20020a056512340a00b004b4f2126173mr12896360lfr.4.1672829146604;
-        Wed, 04 Jan 2023 02:45:46 -0800 (PST)
+        bh=NfmlmwOicK+P4Fj19lQDKKUueXvm4uJUNgQaNuxICg4=;
+        b=xaLsdJKsr4VoA0Vcf32SV25CPRh4i08AMpgzZ6tleyK3YUbb6odOgD+/nOUsbW2Xxg
+         LzfqJF6o+mOczRBQ2OUBI1hIiAAykb3rv2Jt9zrO5G4G658TcDiyOayvJH1oXd8pKfZQ
+         +gX8XFPBXSj6DyuCM/fn0NZAkYZhZYhONtdP1uqL5ekopN6d0yaI+Mf3ILaGWd8Sbqew
+         PhJd01kKc4cvV0UGLMRwTdtl4/KKVaAWakwpHfqKizOEYv6sMknjsVex5qhia/qaHPBS
+         nJ2Abf907VMCFWOJp1MJfAPQBeJyuklFSRNXeCquoiQLbHhS/bgOgQsxZZiqjPUDePXZ
+         xKmA==
+X-Gm-Message-State: AFqh2kqhnB2oKKyARMRkDXWyJokQfzidxwUPCq7gAUvd0WGitWUyhWHO
+        1XMZ/Sk9cDpjT1jzV6RyfYCj5g==
+X-Google-Smtp-Source: AMrXdXvhE08HUtoKGH4kUNqXmHmA8bNtvf777aR10BcsOI6lrQfH9CSmNxcPQ4lE7kpI1o5TljnNmQ==
+X-Received: by 2002:a05:6512:2a90:b0:4ac:b7bf:697a with SMTP id dt16-20020a0565122a9000b004acb7bf697amr14010829lfb.4.1672829217065;
+        Wed, 04 Jan 2023 02:46:57 -0800 (PST)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id q6-20020ac24a66000000b004b59b43ec61sm5120846lfp.179.2023.01.04.02.45.45
+        by smtp.gmail.com with ESMTPSA id m6-20020a056512114600b004b584204b85sm5093407lfg.161.2023.01.04.02.46.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jan 2023 02:45:46 -0800 (PST)
-Message-ID: <bd1c3325-2bac-7b3e-89be-b78cdf9d874d@linaro.org>
-Date:   Wed, 4 Jan 2023 12:45:45 +0200
+        Wed, 04 Jan 2023 02:46:56 -0800 (PST)
+Message-ID: <07a849a9-03dc-f3af-1d3f-2369cb71451e@linaro.org>
+Date:   Wed, 4 Jan 2023 12:46:55 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH 05/16] dt-bindings: clock: qcom,mmcc-msm8998: drop
- core_bi_pll_test_se
+Subject: Re: [PATCH v8 3/4] clk: qcom: rpmh: Add support for SM8550 rpmh
+ clocks
 Content-Language: en-GB
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
+To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
- <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
- <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
- <cf1f65e4-338a-c519-1401-91e13b5fd937@linaro.org>
- <CAOCk7NrrwF8mO4tE3GG2KjajehuC7QthHjNjurZWCSXccZ=LVA@mail.gmail.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20230104093450.3150578-1-abel.vesa@linaro.org>
+ <20230104093450.3150578-4-abel.vesa@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <CAOCk7NrrwF8mO4tE3GG2KjajehuC7QthHjNjurZWCSXccZ=LVA@mail.gmail.com>
+In-Reply-To: <20230104093450.3150578-4-abel.vesa@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/01/2023 18:31, Jeffrey Hugo wrote:
-> On Tue, Jan 3, 2023 at 9:09 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->>
->> On 03/01/2023 17:38, Jeffrey Hugo wrote:
->>> On Wed, Dec 28, 2022 at 6:33 AM Dmitry Baryshkov
->>> <dmitry.baryshkov@linaro.org> wrote:
->>>>
->>>> The test clock apparently it's not used by anyone upstream. Remove it.
->>>
->>> IMO, NACK,
->>>
->>> This is not a valid justification.
->>>
->>> The DT is supposed to describe the hardware, and should be complete in
->>> that regard.  This clock exists in the hardware, so it should be
->>> described.
->>
->> Most of Qualcomm clock controllers can input clocks from
->> core_bi_pll_test_se. But we are listing them only for a small number of
->> them. And even on these platforms nobody provides this clock.
+On 04/01/2023 11:34, Abel Vesa wrote:
+> Adds the RPMH clocks present in SM8550 SoC.
 > 
-> IMO the Qcom bindings could use some more rigor, I just don't have the
-> cycles to help there.  The ones I've looked at appear to be written
-> from the perspective of "what does the linux driver need" and not
-> "what do we have in the schematic".  Often "what does the linux driver
-> need" changes over time, which means the binding needs to evolve,
-> which breaks the interface.  It's entirely valid to not use something
-> in the Linux driver, especially as the platform implementation is
-> probably minimal during early bringup, but such things are expected to
-> be implemented eventually.
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>   drivers/clk/qcom/clk-rpmh.c | 36 ++++++++++++++++++++++++++++++++++++
+>   1 file changed, 36 insertions(+)
 
-Well, the problem is that not all of us have access to lowlevel 
-documentation, thus we have to resort to the information provided by the 
-vendor kernel. Sometimes our approach to platform implementation changes.
-
-> 
-> There is a huge set of existing platforms where we probably can't go
-> back and fix them since the binding is already defined, but going
-> forward, new platforms can do better.
-
-Bindings can change (especially if the change is backwards-compatible). 
-We are finishing one of such migrations (to use DT to bind parent clocks).
-
-If you have anything particular in mind, please don't hesitate to 
-describe your ideas.
-
-> 
->>
->> Maybe you shed some light here, what is the source of this clock? Who
->> provides the clock, e.g. on msm8998 platform?
-> 
-> It is an external input to the SoC, similar to CXO.
-> 
-> On the laptops, TP88 (test point) on the main motherboard is routed to
-> the SoC pin.  I don't have schematics for every platform in the wild,
-> so I can't say if that is the norm.
-
-Ack, externally supplied clock. That's great. Thank you.
-
-Let's leave the question of having core_bi_pll clock to subsystem 
-(Bjorn and Stephen) and bindings (Rob, Krzysztof) maintainers.
+I think the plan was to have the _PAD clock as a child node of the 
+rpmcc. Is it still the planned implementation?
 
 -- 
 With best wishes
