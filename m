@@ -2,174 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B524C54EF0
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 09:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198D6C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 10:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239020AbjADJfz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 04:35:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50342 "EHLO
+        id S233994AbjADK1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 05:27:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239140AbjADJfa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 04:35:30 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B091743B
-        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 01:35:05 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id ay40so25145714wmb.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 01:35:05 -0800 (PST)
+        with ESMTP id S233659AbjADK1F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 05:27:05 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C4FFAD9;
+        Wed,  4 Jan 2023 02:27:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lXD5KP0HciAVDXVl730AdYcSTAHkVJnjRo0Wy80qdxE=;
-        b=MXRDp/ieAfqPeox19GoHBLah+mKqBI9r/PIV/vow4UvE+KRPKmMNBsURC8D8jg0fig
-         AjcS8d/JMfAL17xMbd5YTnrdzQOrPUC2T3WfGT+BfZzmdBWSh6xb12q9B42iXCMObTpv
-         yAMFFjBXyvRl2844bAIhVpKGNRK/nLYrrL0wmFY07dlf/hM0r++lMVwXhVK6fvbKzAcu
-         a7t3F/QB2A7xzIlmBDxf/Du7uEckiV7ruhVb4VgKRVEVzjjMo2bmrrnv+FQBwt+X3/Kl
-         rzrgTWsOTSadENxycH85H0q3pPyo8l+/uZa32O7xiZLUQVYcOxOeAgzH1PsisIF5ylWs
-         2HBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lXD5KP0HciAVDXVl730AdYcSTAHkVJnjRo0Wy80qdxE=;
-        b=q4pvf0pF2xTl6o0GPKQoy1m9tJ8dVxaub8xFGa6n4CtkuMDicFngQRa5aMqV1ET/YH
-         Atk9zbOaUWpyExJiuDy83EXollLri2JGZr9rQMwbvlFDx3WXOi7mrRfgU+6YcZi5UQuC
-         SBIBvsmxcFli00xZQq6iRY8GtwVbWZM/+CifkHSmcf62SKE9ooZWxYVklUHHh7XHBpDS
-         GtpGSc6zkvOuZ3EegYeD3eVka9A0MFyAZbAayBifJpDc58R/Yif169pUVZhRZudL9NKU
-         8XPvNQ9mrYEz0ycNEL7u1CTqtnBRrPYMCvyDUOan9qRZbG6hKDdxV96IOAFNRJpOswu0
-         0Tpg==
-X-Gm-Message-State: AFqh2kqR5XtXAwHcDKDLncgUu10UPC/EIL3kzA+rLKGihxruFXoUUtKJ
-        gRgpzEMKJB37T5Q0NGrOGGDCSA==
-X-Google-Smtp-Source: AMrXdXtX0pSOlG6C+UCgk6KAt7OzjBEBdKhV6wYdX3WFtO2zlezmmuk76YUzkUWk5zF1vNzCyVpZsw==
-X-Received: by 2002:a05:600c:3845:b0:3d1:caf1:3f56 with SMTP id s5-20020a05600c384500b003d1caf13f56mr37558566wmr.9.1672824904282;
-        Wed, 04 Jan 2023 01:35:04 -0800 (PST)
-Received: from hackbox.lan ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id b22-20020a05600c4e1600b003c6d21a19a0sm45561452wmq.29.2023.01.04.01.35.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 01:35:03 -0800 (PST)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672828024; x=1704364024;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vG8oAo7sN5yIKn7EExJUDy9QBn5sKrDpKcI3G4sxyqw=;
+  b=aQVT4OfwTzE9pvIfrzu7k0QLOcmbSP73fArrvfBAM0jYdGQrTK+y/sKs
+   hU1CXdY4iRkZONKcJosuCnUrFK7ByxLgmDxrmCMIZ7BvpMTPhnaI+GLdv
+   58y7USSz6pelfeuw8gJS0WS6oyLegq0M/kcLP9P57YZK5mow+/BirOYoU
+   SBD9zWnIoSkvX4V8Lw1Lrzb461F7KeTRL4SrWVwttNkNi9iDAdDxQoils
+   Pl1nBeFmS2oAI6E6oDCUxmis55Zfbg9n/ofw3BArEj1lkW0U1+XzOHQfD
+   5aoECs1+52sQseCB+CMFnL5QRLBZx9WkhslQtQfDQMsphSKEeakCFzkQC
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.96,299,1665439200"; 
+   d="scan'208";a="28238209"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 04 Jan 2023 11:27:01 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Wed, 04 Jan 2023 11:27:01 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Wed, 04 Jan 2023 11:27:01 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672828021; x=1704364021;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vG8oAo7sN5yIKn7EExJUDy9QBn5sKrDpKcI3G4sxyqw=;
+  b=alpjEprWIMDfB67MBA2pVXpBfkwuwCwnwZqnJUYtJglsq2qVYZCWF5ib
+   ypkvTzcPXToHqG5kO+jDEkDAWG09sx9TLNMROHF5I31tCNuwjJTDMuIv6
+   4JTxY0A5K+/LkKqQti2H2FYjKWyVSAVU6BjGk8go4ORJrJuoX/f/Dm8TR
+   uI2jj7mFKOKx0rf1l9ch+c/rDbmXJ4Ib1r5EK1g9jnZdTPeaIGxPaDdMh
+   He9i2BDeVrQ7nFIRszz89ivKQDJaTJ4vdU+NEfSWkRy++M7zLOZZrl4pB
+   82b0wbft89rWZg2hLI6FJB75q1SkDMmOsJqR0jKiHiK4XkXE8Zq2Hb6On
+   A==;
+X-IronPort-AV: E=Sophos;i="5.96,299,1665439200"; 
+   d="scan'208";a="28238208"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 04 Jan 2023 11:27:01 +0100
+Received: from steina-w.localnet (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 7C9CF280056;
+        Wed,  4 Jan 2023 11:27:01 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Marek Vasut <marex@denx.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v8 1/4] dt-bindings: clock: Add SM8550 TCSR CC clocks
-Date:   Wed,  4 Jan 2023 11:34:47 +0200
-Message-Id: <20230104093450.3150578-2-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230104093450.3150578-1-abel.vesa@linaro.org>
-References: <20230104093450.3150578-1-abel.vesa@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: rs9: Check for vendor/device ID
+Date:   Wed, 04 Jan 2023 11:26:59 +0100
+Message-ID: <47810610.MN2xkq1pzW@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <CAMuHMdWmypkjeowpsQ0-7z7Kfa5NjPeGYr0vujrfdVia5qjevw@mail.gmail.com>
+References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com> <2ba4e002-9f27-2e36-2bd2-8753c455b21f@denx.de> <CAMuHMdWmypkjeowpsQ0-7z7Kfa5NjPeGYr0vujrfdVia5qjevw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings documentation for clock TCSR driver on SM8550.
+Hi Geert,
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/clock/qcom,sm8550-tcsr.yaml      | 55 +++++++++++++++++++
- include/dt-bindings/clock/qcom,sm8550-tcsr.h  | 18 ++++++
- 2 files changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
- create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsr.h
+Am Dienstag, 3. Januar 2023, 17:08:36 CET schrieb Geert Uytterhoeven:
+> Hi Marek,
+> 
+> On Tue, Jan 3, 2023 at 4:45 PM Marek Vasut <marex@denx.de> wrote:
+> > On 1/3/23 13:31, Alexander Stein wrote:
+> > > This is in preparation to support additional devices which have
+> > > different
+> > > IDs as well as a slightly different register layout.
+> > > 
+> > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > > ---
+> > > 
+> > >   drivers/clk/clk-renesas-pcie.c | 24 ++++++++++++++++++++++++
+> > >   1 file changed, 24 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/clk-renesas-pcie.c
+> > > b/drivers/clk/clk-renesas-pcie.c index e6247141d0c0..0076ed8f11b0
+> > > 100644
+> > > --- a/drivers/clk/clk-renesas-pcie.c
+> > > +++ b/drivers/clk/clk-renesas-pcie.c
+> > > @@ -45,6 +45,13 @@
+> > > 
+> > >   #define RS9_REG_DID                         0x6
+> > >   #define RS9_REG_BCP                         0x7
+> > > 
+> > > +#define RS9_REG_VID_IDT                              0x01
+> > > +
+> > > +#define RS9_REG_DID_TYPE_FGV                 (0x0 <<
+> > > RS9_REG_DID_TYPE_SHIFT) +#define RS9_REG_DID_TYPE_DBV                
+> > > (0x1 << RS9_REG_DID_TYPE_SHIFT) +#define RS9_REG_DID_TYPE_DMV          
+> > >       (0x2 << RS9_REG_DID_TYPE_SHIFT)> 
+> > I'm not entirely sure whether this shouldn't be using the BIT() macro,
+> > what do you think ?
+> 
+> They're not one-bit values (which bit does RS9_REG_DID_TYPE_FGV set? ;-),
+> but values in a bitfield.
+> 
+> So using FIELD_PREP() and friends would make more sense to me.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-new file mode 100644
-index 000000000000..1bf1a41fd89c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm8550-tcsr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm TCSR Clock Controller on SM8550
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+
-+description: |
-+  Qualcomm TCSR clock control module provides the clocks, resets and
-+  power domains on SM8550
-+
-+  See also:: include/dt-bindings/clock/qcom,sm8550-tcsr.h
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: qcom,sm8550-tcsr
-+      - const: syscon
-+
-+  clocks:
-+    items:
-+      - description: TCXO pad clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+
-+    clock-controller@1fc0000 {
-+      compatible = "qcom,sm8550-tcsr", "syscon";
-+      reg = <0x1fc0000 0x30000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-+
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm8550-tcsr.h b/include/dt-bindings/clock/qcom,sm8550-tcsr.h
-new file mode 100644
-index 000000000000..091cb76f953a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8550-tcsr.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2022, Linaro Limited
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-+#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8550_H
-+
-+/* TCSR CC clocks */
-+#define TCSR_PCIE_0_CLKREF_EN					0
-+#define TCSR_PCIE_1_CLKREF_EN					1
-+#define TCSR_UFS_CLKREF_EN					2
-+#define TCSR_UFS_PAD_CLKREF_EN					3
-+#define TCSR_USB2_CLKREF_EN					4
-+#define TCSR_USB3_CLKREF_EN					5
-+
-+#endif
--- 
-2.34.1
+FIELD_PREP() seems pretty nice, but unless I miss something it can't be used 
+for initializing struct members. See renesas_9fgv0241_info.
+
+Best regards,
+Alexander
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 --
+> geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like
+> that. -- Linus Torvalds
+
+
+
 
