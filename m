@@ -2,121 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B30C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 13:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCD0C4708E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 14:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239116AbjADNo3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 08:44:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
+        id S236451AbjADOfH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 09:35:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239253AbjADNo1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 08:44:27 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F951A233;
-        Wed,  4 Jan 2023 05:44:25 -0800 (PST)
-Received: by mail-qt1-f169.google.com with SMTP id h21so27145454qta.12;
-        Wed, 04 Jan 2023 05:44:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mDWBQtfUue4D//RkJsCkT1dtQlk9Aei9WCaWskGbj98=;
-        b=B5Ux4fyJh0tM31q74XxMcEH77oNduGvAHOx+a+udKb/80L5eQyPiHvEbkMKSN18LAx
-         pCCoI11bEJe1oaAVsYmkA13B3A4qSBWrhwKeHvdXRbndEj+/sW3LVvQp98qjLubgIffC
-         H01BQjVQXLnVbf0PqhfDL2Q8h0RPMxETV+p/NolLTAlxXpLwsS7xPjq3UO9rjRguVz5s
-         H72ZqZJ7TKPQLHz8Jops7HliqpiuVR9aK+W9tgB9QFzyBAFXqttoPPQjwpxaTXIcAEhH
-         58ulCGqF71bz75T+DmfOA4uifzgPA3tGzWG0RsazOd1yaxVq7Y2m1MD5+V46NtxXipio
-         NZ6Q==
-X-Gm-Message-State: AFqh2kpL6YErio7bvGh9//vMKtX4dj7OImCVzJE0OKqgyZ5eCnTKzCV+
-        FjdeD3ZqqPfOvW8BZerCunec5luIUoqc6g==
-X-Google-Smtp-Source: AMrXdXvTHcfT75ncXVh2O8PiWGRT3HPtP8I7mZXbmFHvrxn0xFcaktoLvBx6DQoCCTVl9QjgZ5cRJg==
-X-Received: by 2002:ac8:4705:0:b0:3ab:5a62:453b with SMTP id f5-20020ac84705000000b003ab5a62453bmr61029070qtp.53.1672839864155;
-        Wed, 04 Jan 2023 05:44:24 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id t1-20020ac865c1000000b003a7e4129f83sm19848574qto.85.2023.01.04.05.44.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jan 2023 05:44:23 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id t15so36511485ybq.4;
-        Wed, 04 Jan 2023 05:44:23 -0800 (PST)
-X-Received: by 2002:a25:d243:0:b0:702:90b4:2e24 with SMTP id
- j64-20020a25d243000000b0070290b42e24mr3295573ybg.365.1672839863439; Wed, 04
- Jan 2023 05:44:23 -0800 (PST)
+        with ESMTP id S239579AbjADOfA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 09:35:00 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36CDE6375;
+        Wed,  4 Jan 2023 06:34:59 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 6914F80A55;
+        Wed,  4 Jan 2023 15:34:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1672842897;
+        bh=4HuVOKLU1b+mRBb/Z6L2Ottg2dm66pZwd0aaoiWQq6I=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=vVWbQNI75qWY35yslf5mEpxsxCuWeaG4UPY3b9p3PFVRBE6jL06mbYLmMEb2j4bWz
+         ANmt0OvYtBZd+AgQmiNKtujOeqwaRxxaESgFYWALhSOLxbuFMg9YdSM09ilhw+JjcK
+         WI8tewqrudR5h56s+yMa4slCq+2KBzBMDI+/TiswmnoUMiCKuYDlAGn69kNdfFF88D
+         ZpU18Mi6/ovTDPD/GxQM7gGEi5CSvHE+pPaNAPTSxHozEnO8/giRaCvSZnoFHcp0ra
+         7eEkxIgUDNs69+h6n5qcThI7KDGNny4eWWy194nLjXoVEv/nqmCn81UK7Cd5tIpYSI
+         V6XAE6GxYhc9g==
+Message-ID: <2ba20434-8976-a971-1fee-c393c670d5f7@denx.de>
+Date:   Wed, 4 Jan 2023 15:34:55 +0100
 MIME-Version: 1.0
-References: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
- <Y7RmnswYX+1g5vci@spud> <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
- <Y7WBtMmLzYvk60tD@spud>
-In-Reply-To: <Y7WBtMmLzYvk60tD@spud>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Jan 2023 14:44:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV22j=24mCsOUFfd0K001eUvVYH-PRkhhquApnm9bvokg@mail.gmail.com>
-Message-ID: <CAMuHMdV22j=24mCsOUFfd0K001eUvVYH-PRkhhquApnm9bvokg@mail.gmail.com>
-Subject: Re: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for
- allocating formatted strings
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 3/4] clk: rs9: Support device specific dif bit calculation
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
+ <20230103123154.3424817-3-alexander.stein@ew.tq-group.com>
+ <8e9cc8fa-cddc-3c99-9810-f2355a1e1913@denx.de> <5905764.31tnzDBltd@steina-w>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <5905764.31tnzDBltd@steina-w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Conor,
+On 1/4/23 11:32, Alexander Stein wrote:
+> Hi Marek,
 
-On Wed, Jan 4, 2023 at 2:40 PM Conor Dooley <conor@kernel.org> wrote:
-> On Wed, Jan 04, 2023 at 02:26:53PM +0100, Geert Uytterhoeven wrote:
-> > On Tue, Jan 3, 2023 at 6:32 PM Conor Dooley <conor@kernel.org> wrote:
-> > > I half wonder if this should actually have a fixes tag too. Since it
-> > > used what came after the @ in $full_name, it'd be possible to create
-> > > (an incorrect) DTS that would lead to a clash between pll names &
-> > > therefore probe would fail.
-> > > The tag would be:
-> > > Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
-> >
-> > But I don't change any of that in my patch?
-> > /me confused.
->
-> The numbers in there were chosen to fit exactly what is in mpfs.dtsi
-> (IOW the correct node address), so doing
-> @@ -201,14 +200,13 @@ static int mpfs_ccc_register_plls(struct device *dev, struct mpfs_ccc_pll_hw_clo
->
->         for (unsigned int i = 0; i < num_clks; i++) {
->                 struct mpfs_ccc_pll_hw_clock *pll_hw = &pll_hws[i];
-> -               char *name = devm_kzalloc(dev, 18, GFP_KERNEL);
->
-> -               if (!name)
-> +               pll_hw->name = devm_kasprintf(dev, GFP_KERNEL, "ccc%s_pll%u",
-> +                                             strchrnul(dev->of_node->full_name, '@'), i);
-> +               if (!pll_hw->name)
->                         return -ENOMEM;
->
->                 pll_hw->base = data->pll_base[i];
-> -               snprintf(name, 18, "ccc%s_pll%u", strchrnul(dev->of_node->full_name, '@'), i);
-> -               pll_hw->name = (const char *)name;
->                 pll_hw->hw.init = CLK_HW_INIT_PARENTS_DATA_FIXED_SIZE(pll_hw->name,
->                                                                       pll_hw->parents,
->                                                                       &mpfs_ccc_pll_ops, 0);
->
-> means that we no longer have to worry that someone would provide a
-> device tree with a node address that would make "ccc<node_address>_pll<N>"
-> exceed 18 characters. If that happened, the <N> would be cut off & both
-> pll 0 & 1 would be named identically. If that happens, pll1 would fail
-> to register.
+Hi,
 
-Oh right.  Yeah, before we would get collisions, now we would get
-a different broken system.
-DTS garbage in, garbage behavior out ;-)
+> Am Dienstag, 3. Januar 2023, 15:31:21 CET schrieb Marek Vasut:
+>> On 1/3/23 13:31, Alexander Stein wrote:
+>>> The calculation DIFx is BIT(n) +1 is only true for 9FGV0241. With
+>>> additional devices this is getting more complicated.
+>>> Support a base bit for the DIF calculation, currently only devices
+>>> with consecutive bits are supported, e.g. the 6-channel device needs
+>>> additional logic.
+>>>
+>>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>>> ---
+>>>
+>>>    drivers/clk/clk-renesas-pcie.c | 29 ++++++++++++++++-------------
+>>>    1 file changed, 16 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/clk-renesas-pcie.c
+>>> b/drivers/clk/clk-renesas-pcie.c index 0076ed8f11b0..d19b8e759eea 100644
+>>> --- a/drivers/clk/clk-renesas-pcie.c
+>>> +++ b/drivers/clk/clk-renesas-pcie.c
+>>> @@ -18,7 +18,6 @@
+>>>
+>>>    #include <linux/regmap.h>
+>>>    
+>>>    #define RS9_REG_OE				0x0
+>>>
+>>> -#define RS9_REG_OE_DIF_OE(n)			BIT((n) + 1)
+>>>
+>>>    #define RS9_REG_SS				0x1
+>>>    #define RS9_REG_SS_AMP_0V6			0x0
+>>>    #define RS9_REG_SS_AMP_0V7			0x1
+>>>
+>>> @@ -31,9 +30,6 @@
+>>>
+>>>    #define RS9_REG_SS_SSC_MASK			(3 << 3)
+>>>    #define RS9_REG_SS_SSC_LOCK			BIT(5)
+>>>    #define RS9_REG_SR				0x2
+>>>
+>>> -#define RS9_REG_SR_2V0_DIF(n)			0
+>>> -#define RS9_REG_SR_3V0_DIF(n)			BIT((n) + 1)
+>>> -#define RS9_REG_SR_DIF_MASK(n)		BIT((n) + 1)
+>>>
+>>>    #define RS9_REG_REF				0x3
+>>>    #define RS9_REG_REF_OE				BIT(4)
+>>>    #define RS9_REG_REF_OD				BIT(5)
+>>>
+>>> @@ -62,6 +58,7 @@ struct rs9_chip_info {
+>>>
+>>>    	const enum rs9_model	model;
+>>>    	unsigned int		num_clks;
+>>>    	u8			did;
+>>>
+>>> +	u8			(*calc_dif)(int idx);
+>>>
+>>>    };
+>>>    
+>>>    struct rs9_driver_data {
+>>>
+>>> @@ -160,8 +157,14 @@ static const struct regmap_config rs9_regmap_config =
+>>> {>
+>>>    	.reg_read = rs9_regmap_i2c_read,
+>>>    
+>>>    };
+>>>
+>>> +static u8 rs9fgv0241_calc_dif(int idx)
+>>> +{
+>>> +	return BIT(idx) + 1;
+>>
+>> Can't we just do
+>>
+>> if (model == ...)
+>>    return BIT(idx) + 1
+>> else if (model == ...)
+>>    return BIT(idx);
+>> ...
+> 
+> I was tempted going this way. But I opted for a callback due to the fact that
+> this driver might support 9FGV/9DBV/9DMV/9FGL/9DML/9QXL/9SQ as well(your
+> comment in the header).
+> Even just considering 9FVG, 9FGV0641 has an even more complex DIF offset
+> calculation.
+> The mapping is
+> * DIF OE0 - Bit 0
+> * DIF OE1 - Bit 2
+> * DIF OE2 - Bit 3
+> * DIF OE3 - Bit 4
+> * DIF OE4 - Bit 6
+> * DIF OE5 - Bit 7
+> 
+> So the calucation might not fit into one line, so the readability benefit is
+> gone.
 
-Gr{oetje,eeting}s,
+You can still do
 
-                        Geert
+if (model == ...)
+  return function1();
+else if (model == ...)
+  return function2();
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+which would work without any indirection via callback.
