@@ -2,129 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BAEC54EF1
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 13:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6F6C46467
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 13:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231130AbjADNcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 08:32:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34802 "EHLO
+        id S229582AbjADNkb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 08:40:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234317AbjADNbe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 08:31:34 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE5869FE4;
-        Wed,  4 Jan 2023 05:29:48 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304DR3Ux025991;
-        Wed, 4 Jan 2023 13:29:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=nLEGtR3xX/fAobQiHP8Fq1vCYtn2NPDHBpPXNLpRiNE=;
- b=KqgPpy1OF5gG9VsRl1unLXEda0gwMTDwhfKSj52l+9F1uDhAXAASWJUcxJtlEww5exb0
- 1f2XpPPWQ4JuWyhumXjxNkJbMxbcno3gvNpD9RaFYSRjwOMbuWKVyHax548HAE3O2bn8
- EyGWPVqjxqJd3HHpIzcPVaGNfTif1LgKh6U/+lzRx9++rkY4I5B9LO/+xJnmXEoelXEh
- E7c7JEdYcT6OP8F8TB7dE265gK99BlQfOibsKIGVdhzSpTrym0Jn59ZoNmRP/QiOnliE
- QZX6vKkvsNwXwQZ+4ecaH7Mau13QQMF+RKY4xccMeHmFpKriYbr4Dls/rcEX+INh5vIQ ow== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvut026-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 13:29:42 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304DTfwV003080
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 4 Jan 2023 13:29:41 GMT
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Wed, 4 Jan 2023 05:29:36 -0800
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v3 2/4] dt-bindings: clock: qcom,sc7280-lpasscc: Add resets for audioreach
-Date:   Wed, 4 Jan 2023 18:59:13 +0530
-Message-ID: <1672838955-7759-3-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1672838955-7759-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1672838955-7759-1-git-send-email-quic_srivasam@quicinc.com>
+        with ESMTP id S230225AbjADNkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 08:40:12 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414E31F9;
+        Wed,  4 Jan 2023 05:40:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D4249B815EB;
+        Wed,  4 Jan 2023 13:40:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05D8EC433D2;
+        Wed,  4 Jan 2023 13:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672839608;
+        bh=6RPhGmZBE71CH85bdeJy1dx/jV8rHmJ6XO+Ern62lKs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gs8F77rztURAEf8MKD5C1YBEKaa82rFqsFfeb5D59iVj64bfLI+jUC3r1f+l71P84
+         oU2p0kQK1ttDHHNcUd6yq9oC3uqjDWW2mgj4G/MAJPAOa8SKjDTnWl5d8biAXl7Wwb
+         RRpfx3y+GHSyD9VieHs+48LLQl9ZZRksNhouRewp9SURTqoJqfwgV+b6uXFWKrDs5a
+         vTlTeYPFohwTbQ8Ds5vB2B86xBy03yAbwkfoch6EL/uqXT2ZcZjGfiRvHNIAbS2chG
+         VG64FXR6CcuTywWpZLe4D9oZiHOeLrZJlR8eaCGNxyNXysuAj6X0MSQ7elm0k/w6Ji
+         pzTpQBHATHAiA==
+Date:   Wed, 4 Jan 2023 13:40:04 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for
+ allocating formatted strings
+Message-ID: <Y7WBtMmLzYvk60tD@spud>
+References: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
+ <Y7RmnswYX+1g5vci@spud>
+ <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QSrLZfOPR4vLHSEzGmnBKPfxh4rSw3sl
-X-Proofpoint-ORIG-GUID: QSrLZfOPR4vLHSEzGmnBKPfxh4rSw3sl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-04_06,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- spamscore=0 suspectscore=0 bulkscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2301040113
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Ruz8Lc2+jwA+2Ea0"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
-for audioreach based SC7280 platforms.
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- .../devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml       | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+--Ruz8Lc2+jwA+2Ea0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-index 97c6bd9..054c496 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-@@ -31,15 +31,20 @@ properties:
-   '#clock-cells':
-     const: 1
- 
-+  '#reset-cells':
-+    const: 1
-+
-   reg:
-     items:
-       - description: LPASS qdsp6ss register
-       - description: LPASS top-cc register
-+      - description: LPASS reset-cgcr register
- 
-   reg-names:
-     items:
-       - const: qdsp6ss
-       - const: top_cc
-+      - const: reset_cgcr
- 
-   qcom,adsp-pil-mode:
-     description:
-@@ -62,11 +67,14 @@ examples:
-     #include <dt-bindings/clock/qcom,lpass-sc7280.h>
-     clock-controller@3000000 {
-       compatible = "qcom,sc7280-lpasscc";
--      reg = <0x03000000 0x40>, <0x03c04000 0x4>;
--      reg-names = "qdsp6ss", "top_cc";
-+      reg = <0x03000000 0x40>,
-+            <0x03c04000 0x4>,
-+            <0x032a9000 0x1000>;
-+      reg-names = "qdsp6ss", "top_cc", "reset_cgcr";
-       clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
-       clock-names = "iface";
-       qcom,adsp-pil-mode;
-       #clock-cells = <1>;
-+      #reset-cells = <1>;
-     };
- ...
--- 
-2.7.4
+On Wed, Jan 04, 2023 at 02:26:53PM +0100, Geert Uytterhoeven wrote:
+> Hi Conor,
+>=20
+> On Tue, Jan 3, 2023 at 6:32 PM Conor Dooley <conor@kernel.org> wrote:
 
+> > I half wonder if this should actually have a fixes tag too. Since it
+> > used what came after the @ in $full_name, it'd be possible to create
+> > (an incorrect) DTS that would lead to a clash between pll names &
+> > therefore probe would fail.
+> > The tag would be:
+> > Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock su=
+pport")
+>=20
+> But I don't change any of that in my patch?
+> /me confused.
+
+The numbers in there were chosen to fit exactly what is in mpfs.dtsi
+(IOW the correct node address), so doing
+@@ -201,14 +200,13 @@ static int mpfs_ccc_register_plls(struct device *dev,=
+ struct mpfs_ccc_pll_hw_clo
+=20
+ 	for (unsigned int i =3D 0; i < num_clks; i++) {
+ 		struct mpfs_ccc_pll_hw_clock *pll_hw =3D &pll_hws[i];
+-		char *name =3D devm_kzalloc(dev, 18, GFP_KERNEL);
+=20
+-		if (!name)
++		pll_hw->name =3D devm_kasprintf(dev, GFP_KERNEL, "ccc%s_pll%u",
++					      strchrnul(dev->of_node->full_name, '@'), i);
++		if (!pll_hw->name)
+ 			return -ENOMEM;
+=20
+ 		pll_hw->base =3D data->pll_base[i];
+-		snprintf(name, 18, "ccc%s_pll%u", strchrnul(dev->of_node->full_name, '@'=
+), i);
+-		pll_hw->name =3D (const char *)name;
+ 		pll_hw->hw.init =3D CLK_HW_INIT_PARENTS_DATA_FIXED_SIZE(pll_hw->name,
+ 								      pll_hw->parents,
+ 								      &mpfs_ccc_pll_ops, 0);
+
+means that we no longer have to worry that someone would provide a
+device tree with a node address that would make "ccc<node_address>_pll<N>"
+exceed 18 characters. If that happened, the <N> would be cut off & both
+pll 0 & 1 would be named identically. If that happens, pll1 would fail
+to register.
+
+Or am I misunderstanding something? Probably am..
+
+Thanks,
+Conor.
+
+
+--Ruz8Lc2+jwA+2Ea0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY7WBtAAKCRB4tDGHoIJi
+0nJlAP0ehynrTFuwhxiPLMmtmC70nbFReqFv+jOE3ZccM7+A0AD/QybFXMjcM0ug
+EYLfXR2feFYwXb7Mrqs0dstLrI08vQg=
+=Z1hJ
+-----END PGP SIGNATURE-----
+
+--Ruz8Lc2+jwA+2Ea0--
