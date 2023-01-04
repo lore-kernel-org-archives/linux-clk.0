@@ -2,228 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C499C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 10:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAC5C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 11:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234103AbjADK5k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 05:57:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36474 "EHLO
+        id S234676AbjADLAr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 06:00:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239139AbjADK4y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 05:56:54 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B797537387
-        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 02:55:38 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id tz12so81647803ejc.9
-        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 02:55:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KYzNoKOy+4Ii/LBgF/mqJWtZMgLq9NsSywUWEWmmIBU=;
-        b=edVmHyF7sb/2wuzsN3dhIkbzzgEA7XkjqiNTyvjd5yf+K0cH1RAMXPTC0INzE+prR5
-         HWytGWkKI1lHWok7rPx/qHYvm/+mOhPaneyN1SkvHfaeMpK2VfaH3GHLWBCU0/QgGN/n
-         fypz7aZGG3DyGltQC0KyYnVtaYvPf8nTGWQuPrMluxYhu5AHAzbCRlc7ZHrv/F7P4ZP9
-         DQUdksqsdmc8hb+GztiI7cQyg6YlzM0Jl90XAxav2BQZYY21ANq3vpzBOnLagcLYqprB
-         1rF5HlbuCk8nmjImqDsE5wS33sh8ZHRI+ohYaI6FYY4pMgbwqz/D9EMAAHUTP20BCtwE
-         ek5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KYzNoKOy+4Ii/LBgF/mqJWtZMgLq9NsSywUWEWmmIBU=;
-        b=wNHoXcoO6nQk9XXJGM92434VVUCb/wv68TcihDsH2IVOA8/OcLfj+CQf+vNC8d+Vtq
-         SuNMxZpxVO02C/Mv8mR7fXycG4jiAVFESGlgUvMRX/t/vEQIIqWBTxFcv7YhwV9lrSul
-         x+0rwrL0N9yNI09Nh2f+dOFn0JAEY5WhtHZPKrlbVEp3U2lk1xJSoyK9GBRGj/VnyrN2
-         xLKgAc4i2h0qzqJxyA8F7DdljdVzZwQHlqki8ozXywKUoxJG7WeZOQn11PfI1rFPLEUP
-         nFAu8987CGrBI3oALFC4E4LyQ3vSotEJAAxB6BOSS4vPiIX+td3fS1ISeOOmilcunsSh
-         /MBQ==
-X-Gm-Message-State: AFqh2krywjirHOpYa++ryaSKCtnxEBakUL++R1KWUl1sIH7RXxAXOZNq
-        nALAa+ZzKy8NaAHM4I73wmoe1w==
-X-Google-Smtp-Source: AMrXdXtQXDvrP8Mm03QChyYcDDMYRpcDK1+orbzA94rpqde8WE46kHwaMtlBv9hBg6y++hjtgUpmAQ==
-X-Received: by 2002:a17:906:240f:b0:78d:f454:386d with SMTP id z15-20020a170906240f00b0078df454386dmr42633339eja.42.1672829737263;
-        Wed, 04 Jan 2023 02:55:37 -0800 (PST)
-Received: from blmsp ([2001:4091:a245:805c:8713:84e4:2a9e:cbe8])
-        by smtp.gmail.com with ESMTPSA id mj26-20020a170906af9a00b0073d71792c8dsm15153714ejb.180.2023.01.04.02.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 02:55:36 -0800 (PST)
-Date:   Wed, 4 Jan 2023 11:55:35 +0100
-From:   Markus Schneider-Pargmann <msp@baylibre.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        wenst@chromium.org, johnson.wang@mediatek.com,
-        miles.chen@mediatek.com, fparent@baylibre.com,
-        chun-jie.chen@mediatek.com, sam.shih@mediatek.com,
-        y.oudjana@protonmail.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, ryder.lee@kernel.org,
-        daniel@makrotopia.org, jose.exposito89@gmail.com,
-        yangyingliang@huawei.com, pablo.sun@mediatek.com,
-        weiyi.lu@mediatek.com, ikjn@chromium.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v2 01/23] clk: mediatek: mt8192: Correctly unregister and
- free clocks on failure
-Message-ID: <20230104105535.j7zasooq5u2xgng6@blmsp>
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
- <20221223094259.87373-2-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S234667AbjADLA3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 06:00:29 -0500
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2055.outbound.protection.outlook.com [40.107.247.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC827FD10;
+        Wed,  4 Jan 2023 02:59:14 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aYZ35swYtRkbrfvPeYuktDA2JLVuK3nx7gyXghYdQrSxepmBjZ0hXUD34dUSWWYk+1aD7XUUtV5eniCy8EWNfOII3UwBpWtNIWk4psgf18DPxUKzrs0oLZajPyxH3ZeYhYjAmtC3Bdvox2jTZCTv4MDqOn3bTWFryoRFin3ZtFes93JYxdpXkvBX3T8/Eczju8q5ifCTDOZy/1wH492JeTY2tZsz4s1L9b/ILmjbFSdxmRFEDctrVtbByaNysktNHy+4V+LzikbO1Uqo6dUI4777nXO3v3T8NlDJHR7xDAplUz5+1O6fEmxf79dI0XhoThel6E0aARjpYw19+wJjyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uvuGzmOxjdj59e+G3A3ayOxtYqmunzLFeU/qotaF/c8=;
+ b=NUEojnUe1NANcDL6ROjeEdhXw7LvWPzTCs7kNll8m7gD0j9pKO+vyIZAyHnRiNsoO6USNMumiDZQL56+yAESnCiqE8ZXJGPzJS20b0HgKlf1S651qYKxnEsRlHx9HTN+o5k09nv3rdKNjDyHDxuCRK/LcIrzWdzDc2zzxWrR+WWFM10VGxxRxW75MmxhpoJbvOi7/syetH2DpVrql7pZ9DYeWL569XqIuJUensHT8ayTcIDceorRNtCc+5BhpQNDLZFWD2lao+IyAsvVumQOmjxuQmSQueIpxr+8W0J2eb0yZbjg4J2LmoRO2Z3PPlYGvq1IyJq6WzTw+FMurG4W5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uvuGzmOxjdj59e+G3A3ayOxtYqmunzLFeU/qotaF/c8=;
+ b=D2uvKYKifL/aHtddRjLg7Ch3lnYsczlV9RtINBIx6UZ0//ufwR7XSEYA6ZAqbE81R9kgzKd8aGE95HKjtT28HZR1pnCorcjVWWOrZ7x/taSkRPKLcPkRxyFYoZeO1QIEn3nnFfzralLbb7vkcXGJoCN0jsvEJnapZd9td85L7lA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AM9PR04MB8440.eurprd04.prod.outlook.com (2603:10a6:20b:413::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.19; Wed, 4 Jan
+ 2023 10:59:11 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::29b9:5061:2054:174b]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::29b9:5061:2054:174b%7]) with mapi id 15.20.5944.019; Wed, 4 Jan 2023
+ 10:59:11 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aford173@gmail.com, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/4] clk: imx: imx_register_uart_clocks update
+Date:   Wed,  4 Jan 2023 19:00:28 +0800
+Message-Id: <20230104110032.1220721-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::19) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20221223094259.87373-2-angelogioacchino.delregno@collabora.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM9PR04MB8440:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3133d46e-a465-4079-2306-08daee42b5ac
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mPbDqCVkOtwBbBtOR36+aYaEOMy/KNY3AvlG0KoL63uefMIeGKH+HG4i3Ydasm21/+a3RCXYaQZgo7xLobnGKX+D8ydVHwy/epw9k5sW5BbvEEK2nibNSpaKP+KbJf2bhrKgerjJX/QuVst4vEis/XOhAV42TNUMFnZgCkP9HXu6GO9PkiRq6EVfQZBDbT63ZQDM6WqunM/lDZcfT2n61US8SR2oCGMMUm5SkVGllFNEy6q79pBaG+FcYwUdOOpX2YtmHFAfzGnLOqdNABnljuclHlpqjwn6eStLinwNK9wzoqob/Pc+JmQlon89rZsPcwvHY4sT7cVfShr/bWRR/WfM7MrDvlrvxz/h7cweRpKPBbM8SRi0PIrGaaKDnlpg2D20ad5gs8DkWy1n74B2HDmStU3UoQNBhL4hOxMPNooNZmcmynt/94iL6zMHP1AMQzSWPgrLWyEP9cOBmh2s3DeQReIRYnfLst0sbc/Zq3f0+I9+KU6FgU9FMMDQ0TKjFGa/EzBddj3bu7bPTgKB2MvxxS2lJTLD9e8PLYtLdKYmw2qtnqFSPKpsHC4j7MqDPfggMlt8EWHvD84T2CbR9TCCldYWjOwYBicKYu33YmfYPQi244gzhxw+ZFFALpt9IXdWEOwhJvgYzMYBPwyqrPGdMB+1I4JOpsmm+HY0Ad753lCzwUABZBmUhna1VThd8mi4A3LI62xxoepY63N+xQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(39860400002)(346002)(366004)(396003)(451199015)(6486002)(6506007)(6666004)(478600001)(6512007)(26005)(186003)(52116002)(66476007)(66556008)(8676002)(86362001)(66946007)(4326008)(316002)(2616005)(1076003)(41300700001)(38100700002)(38350700002)(8936002)(83380400001)(7416002)(5660300002)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Pv6kNPUR1NQQVqmUz30D716ODMZ5Ntti9nm/XNl5Xbh3aMScOxNgH56ABbQ+?=
+ =?us-ascii?Q?pwNkMIRX+d2wlSXcam/uQ45Vgaq3buhdbDHgXlr7TDMAPKornjBypstYK+F2?=
+ =?us-ascii?Q?U+KcvwUdWjErvS9VGul7Po+31RDllr1Sztqx9mKhO6JDD2A+Y+XLR9ZmphH+?=
+ =?us-ascii?Q?oeCNscznvSjHJigjFi/KKXX3+QqzYPhAo5cbn2Maw3ztULPiIvFsRzDELV8N?=
+ =?us-ascii?Q?/ojXbC0P3diyTeoQYiBzuMSTsMjDr5WF97QE8SkWdgFmsYZecQIgQAoBg5rl?=
+ =?us-ascii?Q?C8jNuEyAbfp/UVLazoqQJ42a2jbqE7sgIoihjdHC5xM2/vqnLqu1fCyuThsf?=
+ =?us-ascii?Q?rLu5wISs4t51ikL0i9I2e5qW0NSwWlKHboBgDHMpbQM/UrU2TrickqXxSlKZ?=
+ =?us-ascii?Q?NAbrFu6iB/5mzdgLhbxBgnrJEsTK6xHP2vcZ74ZpSlsedxSc+GGuO4/W+zwn?=
+ =?us-ascii?Q?iIU0jG8kpwJegcLekK9vBx8fbfQpoTCdLc4TXirkkdrFuRU37lCyL3XPqny5?=
+ =?us-ascii?Q?dEc+ym9BJluZSzlkvwk+1tVSN2ltHksJGN6jvLulVL03FQPQipDBoBCUCDB5?=
+ =?us-ascii?Q?U8E5fNseKnAmH2ON+Bl5d3sQ4rJ5lZqc466+2xUOC7f95LgWUnjWrKJbVdm1?=
+ =?us-ascii?Q?XS3DipWoCdmyLtMv5I2yQSAFggRXz7wvq7gIxTd6OE9T8O+8jy+FLQ0z277Y?=
+ =?us-ascii?Q?vLtbM98HQG5sKjuGLAd5WhBmPunrhYYKKqMmTvJCrinlwkB608f+QbpB8gB/?=
+ =?us-ascii?Q?WV83U7H2Vie6P9uwKLIYYcp6E9NNV0qTLHMjIY4B5He4j+eO74wOTzqFUijO?=
+ =?us-ascii?Q?L8lHJPggtvAzeS9nGbHsGp3Gg1LDsyCobk6lSx6bk2R1Y/K+bHq7aeMIGbkK?=
+ =?us-ascii?Q?vWXVYDgJVSORTi9gY2MAiRwRKYLtkMnBpOTxfbccuqIm38zy4vDZz50xdDg4?=
+ =?us-ascii?Q?9U3pGsWVNioyS5H0QTgOiOSGQMKNSxKYlU5DY1UZr/k2oBpEFkIKajk+tPy0?=
+ =?us-ascii?Q?CLTEDAuMi8Gyr/cxacCZ3wc1lyShOQrbyhNo9EdOV/G4B01MWNG9xCibzpsV?=
+ =?us-ascii?Q?J8TzBh4Y5lVnwEQfaxnx+q/abk9MuEmOvEQlqv/4PCIDNVBaAY+xthv3hEPX?=
+ =?us-ascii?Q?xiovK6B+RUE10aJzNY/oPaoE0FhoI9NQfhohv5OL5ONHM3V9bF4n25/Uqati?=
+ =?us-ascii?Q?AzK927rc9yPutPQfJyUXZwbU6ad4HuvsbxnWVr3MtOhhVH/od7ypWxBs+OaS?=
+ =?us-ascii?Q?ikC5Rd/TH5tF3YLTPE23Q+90NGPi+f8HIQk7fBtjxJ8d6EGTUhqxMew3n0sr?=
+ =?us-ascii?Q?vzc31jf+/zqBq25mVYFoR1kt2o7dIZnNHK3OFILqjU4U+FC2of1bDZcdpzbL?=
+ =?us-ascii?Q?6T3ujgntydHXXGG88reVNssHOKyMl0+FdNlWA56SFxty0zhJIjyEthiMcPBB?=
+ =?us-ascii?Q?CGOmmTskC5XWBlfJ5xZGlY8FSRPWQkzil18MLSmKMTGf1OWFT8sKfi9/bRCN?=
+ =?us-ascii?Q?a4bKn1mdSkelTOKLHh6R5yqQl61jxj3jNMIUmhpWcKTFVW4B+6w55N5g9nyo?=
+ =?us-ascii?Q?4vYS3CGOnkcr32M+Rr/Gf/xL5LsgMK1XiwFd8prC?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3133d46e-a465-4079-2306-08daee42b5ac
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jan 2023 10:59:11.2992
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VAnN0WqY6J4pUInbWYiI1O/R+U0z/C4rv0/IJnBht8P+k1te3gQVwvxUIyv0R9AD16AuctwnjFrbmdxHAEEVOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8440
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Angelo,
+From: Peng Fan <peng.fan@nxp.com>
 
-On Fri, Dec 23, 2022 at 10:42:37AM +0100, AngeloGioacchino Del Regno wrote:
-> If anything fails during probe of the clock controller(s), unregister
-> (and kfree!) whatever we have previously registered to leave with a
-> clean state and prevent leaks.
-> 
-> Fixes: 710573dee31b ("clk: mediatek: Add MT8192 basic clocks support")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt8192.c | 72 ++++++++++++++++++++++++-------
->  1 file changed, 56 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-> index 0e88588b2c49..eff66ca6c6a7 100644
-> --- a/drivers/clk/mediatek/clk-mt8192.c
-> +++ b/drivers/clk/mediatek/clk-mt8192.c
-> @@ -1100,27 +1100,61 @@ static int clk_mt8192_top_probe(struct platform_device *pdev)
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> -	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks), top_clk_data);
-> -	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs), top_clk_data);
-> -	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
-> -	mtk_clk_register_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), node, &mt8192_clk_lock,
-> -			       top_clk_data);
-> -	mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base, &mt8192_clk_lock,
-> -				    top_clk_data);
-> -	mtk_clk_register_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), base, &mt8192_clk_lock,
-> -				    top_clk_data);
-> -	r = mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks), top_clk_data);
-> +	r = mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks), top_clk_data);
->  	if (r)
->  		return r;
->  
-> +	r = mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs), top_clk_data);
-> +	if (r)
-> +		goto unregister_fixed_clks;
-> +
-> +	r = mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
-> +	if (r)
-> +		goto unregister_early_factors;
-> +
-> +	r = mtk_clk_register_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), node,
-> +				   &mt8192_clk_lock, top_clk_data);
-> +	if (r)
-> +		goto unregister_factors;
-> +
-> +	r = mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base,
-> +					&mt8192_clk_lock, top_clk_data);
-> +	if (r)
-> +		goto unregister_muxes;
-> +
-> +	r = mtk_clk_register_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), base,
-> +					&mt8192_clk_lock, top_clk_data);
-> +	if (r)
-> +		goto unregister_top_composites;
-> +
-> +	r = mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks), top_clk_data);
-> +	if (r)
-> +		goto unregister_adj_divs_composites;
-> +
->  	r = clk_mt8192_reg_mfg_mux_notifier(&pdev->dev,
->  					    top_clk_data->hws[CLK_TOP_MFG_PLL_SEL]->clk);
->  	if (r)
-> -		return r;
-> -
-> +		goto unregister_gates;
->  
->  	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
->  				      top_clk_data);
+This patchset is to cleanup the imx_register_uart_clocks usage, and
+use this API for i.MX93 clk driver.
 
-I think you may have missed this one. If of_clk_add_hw_provider fails
-you should unregister all of the above, right?
+Peng Fan (4):
+  clk: imx: avoid memory leak
+  clk: imx: get stdout clk count from device tree
+  clk: imx: remove clk_count of imx_register_uart_clocks
+  clk: imx: imx93: invoke imx_register_uart_clocks
 
-Otherwise:
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+ drivers/clk/imx/clk-imx25.c   |  2 +-
+ drivers/clk/imx/clk-imx27.c   |  2 +-
+ drivers/clk/imx/clk-imx35.c   |  2 +-
+ drivers/clk/imx/clk-imx5.c    |  6 +++---
+ drivers/clk/imx/clk-imx6q.c   |  2 +-
+ drivers/clk/imx/clk-imx6sl.c  |  2 +-
+ drivers/clk/imx/clk-imx6sll.c |  2 +-
+ drivers/clk/imx/clk-imx6sx.c  |  2 +-
+ drivers/clk/imx/clk-imx7d.c   |  2 +-
+ drivers/clk/imx/clk-imx7ulp.c |  4 ++--
+ drivers/clk/imx/clk-imx8mm.c  |  2 +-
+ drivers/clk/imx/clk-imx8mn.c  |  2 +-
+ drivers/clk/imx/clk-imx8mp.c  |  2 +-
+ drivers/clk/imx/clk-imx8mq.c  |  2 +-
+ drivers/clk/imx/clk-imx8ulp.c |  2 +-
+ drivers/clk/imx/clk-imx93.c   |  2 ++
+ drivers/clk/imx/clk.c         | 17 ++++++++++++-----
+ drivers/clk/imx/clk.h         |  4 ++--
+ 18 files changed, 34 insertions(+), 25 deletions(-)
 
-> +
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(top_clks, ARRAY_SIZE(top_clks), top_clk_data);
-> +unregister_adj_divs_composites:
-> +	mtk_clk_unregister_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), top_clk_data);
-> +unregister_top_composites:
-> +	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), top_clk_data);
-> +unregister_muxes:
-> +	mtk_clk_unregister_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), top_clk_data);
-> +unregister_factors:
-> +	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
-> +unregister_early_factors:
-> +	mtk_clk_unregister_factors(top_early_divs, ARRAY_SIZE(top_early_divs), top_clk_data);
-> +unregister_fixed_clks:
-> +	mtk_clk_unregister_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
-> +				      top_clk_data);
-> +	return r;
->  }
->  
->  static int clk_mt8192_infra_probe(struct platform_device *pdev)
-> @@ -1139,14 +1173,16 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
->  
->  	r = mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
->  	if (r)
-> -		goto free_clk_data;
-> +		goto unregister_gates;
->  
->  	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->  	if (r)
-> -		goto free_clk_data;
-> +		goto unregister_gates;
->  
->  	return r;
->  
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(infra_clks, ARRAY_SIZE(infra_clks), clk_data);
->  free_clk_data:
->  	mtk_free_clk_data(clk_data);
->  	return r;
-> @@ -1168,10 +1204,12 @@ static int clk_mt8192_peri_probe(struct platform_device *pdev)
->  
->  	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->  	if (r)
-> -		goto free_clk_data;
-> +		goto unregister_gates;
->  
->  	return r;
->  
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(peri_clks, ARRAY_SIZE(peri_clks), clk_data);
->  free_clk_data:
->  	mtk_free_clk_data(clk_data);
->  	return r;
-> @@ -1194,10 +1232,12 @@ static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
->  
->  	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->  	if (r)
-> -		goto free_clk_data;
-> +		goto unregister_gates;
->  
->  	return r;
->  
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
->  free_clk_data:
->  	mtk_free_clk_data(clk_data);
->  	return r;
-> -- 
-> 2.39.0
-> 
+-- 
+2.37.1
+
