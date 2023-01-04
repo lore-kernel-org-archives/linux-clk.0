@@ -2,177 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D134C5479D
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 10:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB186C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 10:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234463AbjADKch (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 05:32:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50504 "EHLO
+        id S233892AbjADKpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 05:45:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234333AbjADKcf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 05:32:35 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E0D95BE;
-        Wed,  4 Jan 2023 02:32:33 -0800 (PST)
+        with ESMTP id S234693AbjADKpv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 05:45:51 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D3AE68
+        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 02:45:48 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id f34so49769091lfv.10
+        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 02:45:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1672828354; x=1704364354;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ag5rlRoVANH4ZBzlzlE6lTj3OJTl7mId4PLIYfPay1Y=;
-  b=JHL8jl2d0L/js5BAvrK6AVv63adw9ogqozaK7fckAR8NySi3AGTYJ+r2
-   SiL1XDSoFuOlM2W3QS5BP5fPzTnfT5VQwEPkgNYiWD79t4YKCl+Y+G6YG
-   2m1HPnRT+4gMha6XuPWvh1AJJzpk5gpzhBB2oz2y53ejKDp2WyPLQtVYb
-   she/HzYN2BjqWmsO4mP2MsL+iCVNMMxf6hkjmnNRgh42wURuyr6ib8SOA
-   68OPS13FJF693cyWr5ddZ8wvMKfGMob9PoGKSy/GVDsdyn+ZnvlX4qoYv
-   dsOSEVBU+I8MHNP+vW2L1XGUUbN/N7j2prn/xw0jR6mug3Mfo9pwNSOJj
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,299,1665439200"; 
-   d="scan'208";a="28238335"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 04 Jan 2023 11:32:32 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 04 Jan 2023 11:32:32 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 04 Jan 2023 11:32:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1672828352; x=1704364352;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ag5rlRoVANH4ZBzlzlE6lTj3OJTl7mId4PLIYfPay1Y=;
-  b=Ck/ykvIHWW8c94aweQ3nmzsuS24QL0M6C76YwhX1nAFN2ZgAMsCVFdeQ
-   Wj9jXrK6tYEtZyLypA+iW8sPOEFqFChTMakyok92xDmJltsgy2mf/HsC5
-   cyV2eOgvS6W675qH7JTWExE9MhMqLykhn3ua/OcOYwq03ViHdCkYdVVLq
-   XYNmonq3ZmbCXFJKlKJxSimhMQ5w8eQV6OkNSyQsonENvxeXXvxa0piUE
-   4UgMa0jB8u8FQgbPd8LwsW7c6gJDjzqU8bYQHNCqYunNvi3utICetbU8x
-   V8VFyf2g9Rmcvs6DZYZFDGfsnHyu3UmVJk/Jww3MGpgx2dAD/hWJ287aF
-   w==;
-X-IronPort-AV: E=Sophos;i="5.96,299,1665439200"; 
-   d="scan'208";a="28238334"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 04 Jan 2023 11:32:32 +0100
-Received: from steina-w.localnet (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id F054E280056;
-        Wed,  4 Jan 2023 11:32:31 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cg4BC+vc4cMgNMH7aEk78TMLGpHpjUUBSbYyFixGuO4=;
+        b=e4yVbFlHwU9Jfjm1orGT0XQq7QzJwb+hfN6FVW8KujVyaQxPeWAg8czESdb7jpL0pg
+         0iSLVXwxZU14KxGTVJ3XvS6JhgKw1hHlxEVfJg54irc2UOdtBENvxpO8YhgRKVTglh+Z
+         phnBEbtzY1CC4/4sMmzo0ZVYz2V4ZGH+CdJCFsvJ7NZVcX1dbYCG6OXlKZtbCTXQtRBX
+         adFswxqMUJYUhj3lWQaH1qO3drBQeSCPum3Zcq5OVLLKw8xSDHoKc69E6DZo1h7f6Tss
+         xNN0mduhZ+FjwD/W9up4sxCUtEnQqFpNg1H/sKo+oWisuL2FMN2uy1X+WThrzmWQc0KJ
+         GXJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cg4BC+vc4cMgNMH7aEk78TMLGpHpjUUBSbYyFixGuO4=;
+        b=k7VmlnrJbIHSuZVFKrM9m0rF+GuHjs39eVIAz6jH4HQc4jBi0zpP6V1QFf+R4Bqobw
+         6b0Jto2WPpVk+oCNxZaK6CfF0WvhkSZg9HHklAwO5O84P7/fC/rOhgzaos2741/LUYeX
+         ZVUsc57gUOHpRgqr/P/cdg6uIbMZXJIaj8/6+BXX9jP+isaD0kyiI1M9rqtbtzXUHJmq
+         iHfWNeZdXz2UHOzNAAMCqCBjJDskY3wWZJa9Y0Ruy8FYjIwfW9CrItBoo7X7D+qZ4ziZ
+         qyYBcTce9u8E/yi9IPJnolOREVJUh6wfNttMOBMi9ha+E8JjbIpIdTshzUQeKkOVRoQo
+         rPRQ==
+X-Gm-Message-State: AFqh2kqC6PHZo2/JFecCIL32ZxojUHVvll9DoInOa/t5+5LLgw7x6zKB
+        x77ALS0j+nhGfzhs+eEVvApgBA==
+X-Google-Smtp-Source: AMrXdXuSgV9Ik7Vl3wECpAIG5u4xVuxXxkhfzzYDNDQgqJSE5ER0jqkeg9X6FBdjufyfYOJ3u/hXGQ==
+X-Received: by 2002:a05:6512:340a:b0:4b4:f212:6173 with SMTP id i10-20020a056512340a00b004b4f2126173mr12896360lfr.4.1672829146604;
+        Wed, 04 Jan 2023 02:45:46 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id q6-20020ac24a66000000b004b59b43ec61sm5120846lfp.179.2023.01.04.02.45.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Jan 2023 02:45:46 -0800 (PST)
+Message-ID: <bd1c3325-2bac-7b3e-89be-b78cdf9d874d@linaro.org>
+Date:   Wed, 4 Jan 2023 12:45:45 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 05/16] dt-bindings: clock: qcom,mmcc-msm8998: drop
+ core_bi_pll_test_se
+Content-Language: en-GB
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marek Vasut <marex@denx.de>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: rs9: Support device specific dif bit calculation
-Date:   Wed, 04 Jan 2023 11:32:31 +0100
-Message-ID: <5905764.31tnzDBltd@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <8e9cc8fa-cddc-3c99-9810-f2355a1e1913@denx.de>
-References: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com> <20230103123154.3424817-3-alexander.stein@ew.tq-group.com> <8e9cc8fa-cddc-3c99-9810-f2355a1e1913@denx.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20221228133243.3052132-1-dmitry.baryshkov@linaro.org>
+ <20221228133243.3052132-6-dmitry.baryshkov@linaro.org>
+ <CAOCk7Noa1A4mBqg3OAxk3hnnUg-qjCeCE0tyhq3ktbFcETicqw@mail.gmail.com>
+ <cf1f65e4-338a-c519-1401-91e13b5fd937@linaro.org>
+ <CAOCk7NrrwF8mO4tE3GG2KjajehuC7QthHjNjurZWCSXccZ=LVA@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <CAOCk7NrrwF8mO4tE3GG2KjajehuC7QthHjNjurZWCSXccZ=LVA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marek,
-
-Am Dienstag, 3. Januar 2023, 15:31:21 CET schrieb Marek Vasut:
-> On 1/3/23 13:31, Alexander Stein wrote:
-> > The calculation DIFx is BIT(n) +1 is only true for 9FGV0241. With
-> > additional devices this is getting more complicated.
-> > Support a base bit for the DIF calculation, currently only devices
-> > with consecutive bits are supported, e.g. the 6-channel device needs
-> > additional logic.
-> > 
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> > 
-> >   drivers/clk/clk-renesas-pcie.c | 29 ++++++++++++++++-------------
-> >   1 file changed, 16 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk-renesas-pcie.c
-> > b/drivers/clk/clk-renesas-pcie.c index 0076ed8f11b0..d19b8e759eea 100644
-> > --- a/drivers/clk/clk-renesas-pcie.c
-> > +++ b/drivers/clk/clk-renesas-pcie.c
-> > @@ -18,7 +18,6 @@
-> > 
-> >   #include <linux/regmap.h>
-> >   
-> >   #define RS9_REG_OE				0x0
-> > 
-> > -#define RS9_REG_OE_DIF_OE(n)			BIT((n) + 1)
-> > 
-> >   #define RS9_REG_SS				0x1
-> >   #define RS9_REG_SS_AMP_0V6			0x0
-> >   #define RS9_REG_SS_AMP_0V7			0x1
-> > 
-> > @@ -31,9 +30,6 @@
-> > 
-> >   #define RS9_REG_SS_SSC_MASK			(3 << 3)
-> >   #define RS9_REG_SS_SSC_LOCK			BIT(5)
-> >   #define RS9_REG_SR				0x2
-> > 
-> > -#define RS9_REG_SR_2V0_DIF(n)			0
-> > -#define RS9_REG_SR_3V0_DIF(n)			BIT((n) + 1)
-> > -#define RS9_REG_SR_DIF_MASK(n)		BIT((n) + 1)
-> > 
-> >   #define RS9_REG_REF				0x3
-> >   #define RS9_REG_REF_OE				BIT(4)
-> >   #define RS9_REG_REF_OD				BIT(5)
-> > 
-> > @@ -62,6 +58,7 @@ struct rs9_chip_info {
-> > 
-> >   	const enum rs9_model	model;
-> >   	unsigned int		num_clks;
-> >   	u8			did;
-> > 
-> > +	u8			(*calc_dif)(int idx);
-> > 
-> >   };
-> >   
-> >   struct rs9_driver_data {
-> > 
-> > @@ -160,8 +157,14 @@ static const struct regmap_config rs9_regmap_config =
-> > {> 
-> >   	.reg_read = rs9_regmap_i2c_read,
-> >   
-> >   };
-> > 
-> > +static u8 rs9fgv0241_calc_dif(int idx)
-> > +{
-> > +	return BIT(idx) + 1;
+On 03/01/2023 18:31, Jeffrey Hugo wrote:
+> On Tue, Jan 3, 2023 at 9:09 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> On 03/01/2023 17:38, Jeffrey Hugo wrote:
+>>> On Wed, Dec 28, 2022 at 6:33 AM Dmitry Baryshkov
+>>> <dmitry.baryshkov@linaro.org> wrote:
+>>>>
+>>>> The test clock apparently it's not used by anyone upstream. Remove it.
+>>>
+>>> IMO, NACK,
+>>>
+>>> This is not a valid justification.
+>>>
+>>> The DT is supposed to describe the hardware, and should be complete in
+>>> that regard.  This clock exists in the hardware, so it should be
+>>> described.
+>>
+>> Most of Qualcomm clock controllers can input clocks from
+>> core_bi_pll_test_se. But we are listing them only for a small number of
+>> them. And even on these platforms nobody provides this clock.
 > 
-> Can't we just do
+> IMO the Qcom bindings could use some more rigor, I just don't have the
+> cycles to help there.  The ones I've looked at appear to be written
+> from the perspective of "what does the linux driver need" and not
+> "what do we have in the schematic".  Often "what does the linux driver
+> need" changes over time, which means the binding needs to evolve,
+> which breaks the interface.  It's entirely valid to not use something
+> in the Linux driver, especially as the platform implementation is
+> probably minimal during early bringup, but such things are expected to
+> be implemented eventually.
+
+Well, the problem is that not all of us have access to lowlevel 
+documentation, thus we have to resort to the information provided by the 
+vendor kernel. Sometimes our approach to platform implementation changes.
+
 > 
-> if (model == ...)
->   return BIT(idx) + 1
-> else if (model == ...)
->   return BIT(idx);
-> ...
+> There is a huge set of existing platforms where we probably can't go
+> back and fix them since the binding is already defined, but going
+> forward, new platforms can do better.
 
-I was tempted going this way. But I opted for a callback due to the fact that 
-this driver might support 9FGV/9DBV/9DMV/9FGL/9DML/9QXL/9SQ as well(your 
-comment in the header).
-Even just considering 9FVG, 9FGV0641 has an even more complex DIF offset 
-calculation. 
-The mapping is
-* DIF OE0 - Bit 0
-* DIF OE1 - Bit 2
-* DIF OE2 - Bit 3
-* DIF OE3 - Bit 4
-* DIF OE4 - Bit 6
-* DIF OE5 - Bit 7
+Bindings can change (especially if the change is backwards-compatible). 
+We are finishing one of such migrations (to use DT to bind parent clocks).
 
-So the calucation might not fit into one line, so the readability benefit is 
-gone.
+If you have anything particular in mind, please don't hesitate to 
+describe your ideas.
 
-Best regards,
-Alexander
+> 
+>>
+>> Maybe you shed some light here, what is the source of this clock? Who
+>> provides the clock, e.g. on msm8998 platform?
+> 
+> It is an external input to the SoC, similar to CXO.
+> 
+> On the laptops, TP88 (test point) on the main motherboard is routed to
+> the SoC pin.  I don't have schematics for every platform in the wild,
+> so I can't say if that is the norm.
 
+Ack, externally supplied clock. That's great. Thank you.
+
+Let's leave the question of having core_bi_pll clock to subsystem 
+(Bjorn and Stephen) and bindings (Rob, Krzysztof) maintainers.
+
+-- 
+With best wishes
+Dmitry
 
